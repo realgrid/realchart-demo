@@ -17,7 +17,7 @@ let $$_hash = 0;
  * @see concepts.dev_guide 개발 가이드
  * @see concepts.about RealTouch 개요
  */
-export class RcObject {
+export abstract class RcObject {
     
     //-------------------------------------------------------------------------
     // static members
@@ -78,6 +78,10 @@ export class RcObject {
     //-------------------------------------------------------------------------
     public isMe(hash: string): boolean {
         return hash === this.$_hash;
+    }
+
+    protected _getProps(): string[] {
+        return;
     }
 
     /**

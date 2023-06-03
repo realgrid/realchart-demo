@@ -32,6 +32,10 @@ export class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    chart(): IChart {
+        return this._chart;
+    }
+
     /** visible */
     get visible(): boolean {
         return this._visible;
@@ -41,5 +45,12 @@ export class ChartItem extends RcObject {
             this._visible = value;
             this._chart?.visibleChanged(this);
         }
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _getProps(): string[] {
+        return ['visible'];
     }
 }
