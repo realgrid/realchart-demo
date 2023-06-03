@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+		"incremental": true,
+		"target": "es6",
+		"module": "es2015",
+        "declaration": true,
+        "removeComments": true,
+		"outDir": "out/realchart/js/src",                        /* Redirect output structure to the directory. */
+		"strictNullChecks": false,
+		"noImplicitUseStrict": true,
+		"esModuleInterop": true,
+		"moduleResolution": "node",            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
+    },
+    "files": [
+		"./src/main.ts"
+    ]
+}

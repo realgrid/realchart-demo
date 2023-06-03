@@ -1,0 +1,1136 @@
+////////////////////////////////////////////////////////////////////////////////
+// RcControl.ts
+// 2021. 11. 25. created by woori
+// -----------------------------------------------------------------------------
+// Copyright (c) 2021 Wooritech Inc.
+// All rights reserved.
+////////////////////////////////////////////////////////////////////////////////
+
+import { RcObject, RtWrappableObject, RtWrapper } from "./RcObject";
+import { RcEditTool } from "./RcEditTool";
+import { Path, throwFormat } from "./Types";
+import { Dom } from "./Dom";
+import { locale } from "./RcLocale";
+import { RtLog, SVGNS, isString, pickNum } from "./Common";
+import { Utils } from "./Utils";
+import { IRect, Rectangle } from "./Rectangle";
+import { SvgShapes } from "./impl/SvgShape";
+
+const BACK_STYLES = {
+    background: 'fill',
+    border: 'stroke',
+    borderWidth: 'strokeWidth',
+    borderRadius: 'borderRadius'
+}
+
+/** 
+ * @internal
+ *
+ * Control base.
+ */
+export abstract class RcControl extends RtWrappableObject {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _activeTool: RcEditTool;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _container: HTMLDivElement;
+    private _dom: HTMLDivElement;
+    private _svg: SVGSVGElement;
+    private _defs: SVGDefsElement;
+    private _root: RootElement;
+
+    private _inited = false;
+    private _testing = false;
+    private _dirty = true;
+    private _requestTimer: any;
+    private _defaultTool: RcEditTool;
+    private _tool: RcEditTool;
+    private _invalidElements: RcElement[] = [];
+    private _toAnimation = 0;
+    private _invalidateLock = false;
+    private _lockDirty = false;
+    private _cssVars = {};
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, container: string | HTMLDivElement, className: string) {
+        super();
+
+        if (!doc && container instanceof HTMLDivElement) {
+            doc = container.ownerDocument;
+        }
+        this.$_initControl(doc || document, container, className);
+        this._resigterEventHandlers(this._dom);
+        this._inited = true;
+    }
+
+    protected _doDestory(): void {
+        this._unresigterEventHandlers(this._dom);
+        Dom.remove(this._dom);
+        this._dom = null;
+        this._container = null;
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    isInited(): boolean {
+        return this._inited;
+    }
+
+    isTesting(): boolean {
+        return this._testing;
+    }
+
+    doc(): Document {
+        return this._dom.ownerDocument;
+    }
+
+    dom(): HTMLElement {
+        return this._dom;
+    }
+
+    width(): number {
+        return this._container.offsetWidth;
+    }
+
+    height(): number {
+        return this._container.offsetHeight;
+    }
+
+    activeTool(): RcEditTool {
+        return this._activeTool || this._tool;
+    }
+    setSctiveTool(value: RcEditTool) {
+        if (value !== this._activeTool) {
+            this._activeTool = value;
+            this._tool = value || this._defaultTool;
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    addElement(elt: RcElement): void {
+        elt && this._root.add(elt);
+    }
+
+    removeElement(elt: RcElement): void {
+        this._root.removeChild(elt);
+    }
+
+    invalidate(force = false): void {
+        if (force || !this._invalidateLock && !this._dirty && this._inited) {
+            this._dirty = true;
+            if (!this._requestTimer && !this._testing) {
+                this.$_requestRender();
+            }
+        } else if (this._invalidateLock /* && !_lockDirty */) {
+            this._lockDirty = true;
+        }
+    }
+
+    invalidateLayout(force = false): void {
+        this.invalidate(force);
+    }
+
+    setLock(): void {
+        this._invalidateLock = true;
+    }
+
+    releaseLock(validate = true): void {
+        if (this._invalidateLock) {
+            this._invalidateLock = false;
+        }
+        // lock 중에 invalidate()가 호출됐었다면
+        if (this._lockDirty && validate) {
+            this.invalidate();
+        } 
+        this._lockDirty = false;
+    }
+
+    lock(func: (control: RcControl) => void): void {
+        this.setLock();
+        try {
+            func(this);
+        } finally {
+            this.releaseLock();
+        }
+    }   
+
+    silentLock(func: (control: RcControl) => void): void {
+        this.setLock();
+        try {
+            func(this);
+        } finally {
+            this.releaseLock(false);
+        }
+    }   
+
+    getBounds(): DOMRect {
+        return this._dom.getBoundingClientRect();
+    }
+
+    setAnimation(to?: number): void {
+        this._toAnimation = to || 0;
+    }
+
+    fling(distance: number, duration: number): void {
+    }
+
+    getCssVar(name: string): string {
+        let v = this._cssVars[name];
+        
+        if (name in this._cssVars) {
+            return this._cssVars[name];
+        } else {
+            v = getComputedStyle(this._root.dom).getPropertyValue(name);
+            this._cssVars[name] = v;
+        }
+        return v;
+    }
+
+    abstract useImage(src: string): void; // 실제 이미지가 로드됐을 때 다시 그려지도록 한다.
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected _setTesting(): void {
+        this._testing = true;
+        (RcElement as any).TESTING = true;
+    }
+
+    protected _setSize(w: number, h: number): void {
+        if (!isNaN(w)) {
+            this._container.style.width = w + 'px';
+            // this._dom.style.width = isNaN(w) ? '100%' : w + 'px';
+        }
+        if (!isNaN(h)) {
+            this._container.style.height = h + 'px';
+            // this._dom.style.height = isNaN(h) ? '100%' : h + 'px';  // 왜 이렇게 했지?
+        }
+    }
+
+    private $_addListener(node: Node, event: string, handler: any): void {
+        node.addEventListener(event, handler);
+    }
+
+    protected _resigterEventHandlers(dom: HTMLElement): void {
+        window.addEventListener('resize', this._windowResizeHandler);
+
+        this.$_addListener(dom, "click", this._clickHandler);
+        this.$_addListener(dom, "dblclick", this._dblClickHandler);
+        // this.$_addListener(dom, "touchstart", this._touchStartHandler);
+        this.$_addListener(dom, "touchmove", this._touchMoveHandler);
+        this.$_addListener(dom, "pointerdown", this._pointerDownHandler);
+        this.$_addListener(dom, "pointermove", this._pointerMoveHandler);
+        this.$_addListener(dom, "pointerup", this._pointerUpHandler);
+        this.$_addListener(dom, "pointercancel", this._pointerCancelHandler);
+        this.$_addListener(dom, "pointerleave", this._pointerLeaveHandler);
+        // this.$_addListener(dom, "touchleave", this._touchLeaveHandler);
+        this.$_addListener(dom, "keypress", this._keyPressHandler);
+        this.$_addListener(dom, "wheel", this._wheelHandler);
+    }
+
+    protected _unresigterEventHandlers(dom: HTMLElement): void {
+        window.removeEventListener('resize', this._windowResizeHandler);
+
+        dom.removeEventListener("click", this._clickHandler);
+        dom.removeEventListener("dblclick", this._dblClickHandler);
+
+        // dom.removeEventListener("touchstart", this._touchStartHandler);
+        dom.removeEventListener("touchmove", this._touchMoveHandler);
+        dom.removeEventListener("pointerdown", this._pointerDownHandler);
+        dom.removeEventListener("pointermove", this._pointerMoveHandler);
+        dom.removeEventListener("pointerup", this._pointerUpHandler);
+        dom.removeEventListener("pointercancel", this._pointerCancelHandler);
+        dom.removeEventListener("pointerleave", this._pointerLeaveHandler);
+        // dom.removeEventListener("touchleave", this._touchLeaveHandler);
+        dom.removeEventListener("keypress", this._keyPressHandler);
+        dom.removeEventListener("wheel", this._wheelHandler);
+    }
+
+    protected abstract _creatDefaultTool(): RcEditTool;
+
+    // container div의 'rtc-renderers' 자식들을 사용할 수 있도록 한다.
+    protected _prepareRenderers(dom: HTMLElement): void {
+    }
+
+    private $_initControl(document: Document, container: string | HTMLDivElement, className: string): void {
+        if (this._inited) return;
+
+        if (container instanceof HTMLDivElement) {
+            this._container = container;
+        } else {
+            this._container = document.getElementById(container) as HTMLDivElement;
+        }
+        if (!(this._container instanceof HTMLDivElement)) {
+            throwFormat(locale.invalidOuterDiv, container);
+        }
+
+        const doc = this._container.ownerDocument;
+        const dom = this._dom = doc.createElement('div');
+
+        Object.assign(dom.style, {
+            position: 'relative',
+            width: '100%',
+            height: '100%',  
+            boxSizing: 'border-box',
+            overflow: 'hidden',
+            "-webkit-touch-callout": "none",
+            "-webkit-user-select": "none",
+            "user-select": "none",
+            "-webkit-tap-highlight-color": "rgba(0, 0, 0, 0)"
+        })
+        dom.className = className;
+        this._container.appendChild(dom);
+
+        // svg
+        const svg = this._svg = doc.createElementNS(SVGNS, 'svg');
+
+        svg.style.setProperty('overflow', 'visible', 'important');
+        svg.setAttribute('width', '100%');// contentDiv.clientWidth + 'px');
+        svg.setAttribute('height', '100%');//contentDiv.clientHeight + 'px');
+
+        const desc = doc.createElement('desc');
+        desc.textContent = 'Created with RealReport-Chart 1.0.0';
+        svg.appendChild(desc);
+
+        const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
+        svg.appendChild(defs);
+        this._dom.appendChild(defs);
+
+        this._root = new RootElement(this);
+        svg.appendChild(this._root['_dom']);
+
+        this._defaultTool = this._tool = this._creatDefaultTool();
+    }
+
+    protected _render(): void {
+        this.$_render();
+    }
+
+    private $_invalidateElement(elt: RcElement): void {
+        this._invalidElements.push(elt);
+        this.invalidate();
+    }
+
+    private $_requestRender(): void {
+        if (window.requestAnimationFrame) {
+            this._requestTimer = requestAnimationFrame(() => this.$_render());
+        } else {
+            setTimeout(() => {
+                this.$_render();
+            }, 0);
+        }
+    }
+
+    updateNow(): void {
+        this.$_render();
+    }
+
+    private $_render(): void {
+        const t = +new Date();
+        
+        // animation 중이면 종료 후에 다시 그리도록 한다.
+        if (t <= this._toAnimation) {
+            this.$_requestRender();
+            return;
+        }
+
+        try {
+            this._doBeforeRender();
+
+            const w = this._dom.clientWidth;
+            const h = this._dom.clientHeight;
+
+            this._doRender({x: 0, y: 0, width: w, height: h});
+            
+        } finally {
+            this._dirty = false;
+            this._requestTimer = null;
+            // this._invalidElements.forEach(elt => elt.validate());
+            this._invalidElements = [];
+            this._doAfterRender();
+        }
+
+        RtLog.log('render in ' + (+new Date() - t) + 'ms.');
+    }
+
+    protected abstract _doRender(bounds: IRect): void;
+    protected _doBeforeRender(): void {}
+    protected _doAfterRender(): void {}
+
+    //-------------------------------------------------------------------------
+    // event handlers
+    //-------------------------------------------------------------------------
+    protected _doClick(event: PointerEvent): void {}
+    protected _doDblClick(event: PointerEvent): void {}
+    protected _doTouchMove(event: TouchEvent): boolean { return false; }
+    protected _doPointerDown(event: PointerEvent): boolean { return false; }
+    protected _doPointerMove(event: PointerEvent): void {}
+    protected _doPointerUp(event: PointerEvent): void {}
+    protected _doPointerCancel(event: PointerEvent): void {}
+    protected _doPointerLeave(event: PointerEvent): void {}
+    // protected _doTouchLeave(event: TouchEvent): void {}
+    protected _doKeyPress(event: KeyboardEvent): void {}
+    protected _doWheel(event: WheelEvent): void {}
+
+    protected _windowResizeHandler = (event: Event) => {
+        this._windowResized();
+    }
+
+    protected _windowResized(): void {
+        this.invalidateLayout();
+    }
+
+    private _clickHandler = (event: PointerEvent) => {
+        this._doClick(event);
+        this._tool.click(event);
+    }
+
+    private _dblClickHandler = (event: PointerEvent) => {
+        this._doDblClick(event);
+        this._tool.dblClick(event);
+    }
+
+    private _touchMoveHandler = (ev: TouchEvent) => {
+        this._doTouchMove(ev);
+        this._tool.touchMove(ev);
+    }
+
+    /*
+    pointerEvent, touchEvent, mouseEvent 
+
+    pointerEvent는 touchEvent와 mouseEvent 외에도 스타일러스 등을 위해서 만들어졌다.
+    touchEvent를 사용할때 문제가 되던 click관련 문제는 여전히 존재한다.
+    다만 이해하기는 쉬워졌다. 동일 element(event.currentTarget)내에서는 항상 발생한다고 가정하면 된다.
+    mouse도 down => move => up 이 다른 element에서 이루어지면 click이 발생하지 않는다.
+    항상 발생하기 때문에 제어할 방법만 찾으면 된다.
+
+    또한 첫번째 pointer는 isPrimary라는 값이 true이기 때문에 이것만 고민하면 touch를 찾기 위해 노력할 필요가 없다.
+
+    각 pointer, mouse, touch관련 event의 return값
+    일반적으로 return false하게 되면 브라우저의 기본동작을 하지 말라는 의미가 된다.
+    return false; event.preventDefault(); event.returnValue = false 대충다 비슷한 의미.
+    가능하다면 eventHandler에서도 동일하게 브라우저 기본동작을 제한한다면 preventDefault후 false를 return하자.
+    */
+    private _pointerDownHandler = (ev: PointerEvent) => {
+        if (this._doPointerDown(ev) || this._tool.pointerDown(ev)) {
+            // ev.preventDefault();
+            // ev.stopImmediatePropagation();
+        }
+    }
+
+    private _pointerMoveHandler = (ev: PointerEvent) => {
+        // 여러개의 touch는 TODO
+        this._doPointerMove(ev);
+        this._tool.pointerMove(ev);
+    }
+
+    private _pointerUpHandler = (ev: PointerEvent) => {
+        this._doPointerUp(ev);
+        this._tool.pointerUp(ev);
+    }
+
+    private _pointerCancelHandler = (ev: PointerEvent) => {
+        this._doPointerCancel(ev);
+        this._tool.pointerCancel(ev);
+    }
+
+    private _pointerLeaveHandler = (ev: PointerEvent) => {
+        this._doPointerLeave(ev);
+        this._tool.pointerLeave(ev);
+    }
+    // private _touchLeaveHandler = (ev: TouchEvent) => {
+    //     // DLog.log('> TOUCHE LEAVE', ev);
+    //     this._doTouchLeave(ev);
+    //     this._tool.touchLeave(ev);
+    // }
+
+    private _keyPressHandler = (ev: KeyboardEvent) => {
+        this._doKeyPress(ev);
+        this._tool.keyPress(ev);
+    }
+
+    private _wheelHandler = (ev: WheelEvent) => {
+        this._doWheel(ev);
+        this._tool.wheel(ev);
+    }
+}
+
+export type RtControlOrWrapper = RcControl | RtWrapper<RcControl>;
+
+/**
+ * @internal
+ * 
+ * RcContainer 구성 요소. 
+ * SVGElement들로 구현된다.
+ */
+export class RcElement extends RcObject {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly TESTING = false;
+
+    //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _visible = true;
+    private _x: number;
+    private _y: number;
+    private _width: number;
+    private _height: number;
+    private _zIndex = 0;
+    private _translateX: number;
+    private _translateY: number;
+    private _scaleX = 1;
+    private _scaleY = 1;
+    private _rotation = 0;
+    private _originX: number;
+    private _originY: number;
+    private _matrix: number[];
+    protected _styles: any = {};
+    protected _styleDirty = false;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _dom: SVGElement;
+    private _parent: RcElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, tag = 'g', className = '') {
+        super();
+
+        this._dom = doc.createElementNS(SVGNS, tag);
+        className && this.setAttr('class', className);
+    }
+
+    protected _doDestory(): void {
+        this.remove();
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    get doc(): Document {
+        return this._dom.ownerDocument;
+    }
+
+    get dom(): SVGElement {
+        return this._dom;
+    }
+
+    get parent(): RcElement {
+        return this._parent;
+    }
+
+    get control(): RcControl {
+        return this._parent && this._parent.control;
+    }
+
+    get zIndex(): number {
+        return this._zIndex;
+    }
+    set zIndex(value: number) {
+        if (value !== this._zIndex) {
+            this._zIndex = value;
+            // TODO: dom들의 위치를 변경한다.
+        }
+    }
+
+    get x(): number {
+        return this._x;
+    }
+    set x(value: number) {
+        if (value !== this._x) {
+            this._x = value;
+            this.setAttr('x', this._x);
+        }
+    }
+
+    get y(): number {
+        return this._x;
+    }
+    set y(value: number) {
+        if (value !== this._y) {
+            this._y = value;
+            this.setAttr('y', this._y);
+        }
+    }
+
+    get width(): number {
+        return this._width;
+    }
+    set width(value: number) {
+        if (value !== this._width) {
+            this._width = value;
+            this.setAttr('width', isNaN(value) ? '' : value);
+        }
+    }
+
+    get height(): number {
+        return this._height;
+    }
+    set height(value: number) {
+        if (value !== this._height) {
+            this._height = value;
+            this.setAttr('height', isNaN(value) ? '' : value);
+        }
+    }
+
+    /**
+     * visible
+     */
+    get visible(): boolean {
+        return this._visible;
+    }
+    set visible(value: boolean) {
+        if (value !== this._visible) {
+            this._visible = value;
+            if (this._dom) {
+                this._dom.style.display = this._visible ? '' : 'none';
+            }
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getStyle(prop: string): string {
+        return window.getComputedStyle(this._dom).getPropertyValue(prop);
+    }
+
+    hasStyle(className: string): boolean {
+        return this.dom.classList.contains(className);
+    }
+
+    add(child: RcElement): RcElement {
+        if (child && child._parent !== this) {
+            child._parent = this;
+            this._dom.appendChild(child._dom);
+            child['_doAttached'](this);
+        }
+        return child;
+    }
+
+    insertChild(child: RcElement, before: RcElement): RcElement {
+        if (child && child._parent !== this) {
+            child._parent = this;
+            this._dom.insertBefore(child._dom, before._dom);
+            child['_doAttached'](this);
+        }
+        return child;
+    }
+
+    insertFirst(child: RcElement): RcElement {
+        if (child && child._parent !== this) {
+            child._parent = this;
+            this._dom.insertBefore(child._dom, this._dom.firstChild);
+            child['_doAttached'](this);
+        }
+        return child;
+    }
+
+    removeChild(child: RcElement): void {
+        if (child && child._parent === this) {//} child._dom.parentNode === this._dom) {
+            this._dom.removeChild(child._dom);
+            child._parent = null;
+            child['_doDetached'](this);
+        }
+    }
+
+    remove(): RcElement {
+        this._parent && this._parent.removeChild(this);
+        return this;
+    }
+
+    getAttr(attr: string): any {
+        return this.dom.getAttribute(attr);
+    }
+
+    setAttr(attr: string, value: any): RcElement {
+        this.dom.setAttribute(attr, value);
+        return this;
+    }
+
+    setAttrs(...attrs: any[]): RcElement {
+        for (let attr in attrs) {
+            this.dom.setAttribute(attr, attrs[attr]);
+        }
+        return this;
+    }
+
+    unsetAttr(attr: string): RcElement {
+        this.dom.removeAttribute(attr);
+        return this;
+    }
+
+    setBounds(x: number, y: number, width: number, height: number): RcElement {
+        this.translate(x, y);
+        this.resize(width, height);
+        return this;
+    }
+
+    setRect(rect: IRect): RcElement {
+        this.translate(rect.x, rect.y);
+        this.resize(rect.width, rect.height);
+        return this;
+    }
+
+    getRect(): IRect {
+        return Rectangle.create(this._translateX, this._translateY, this.width, this.height);
+    }
+
+    translate(x: number, y: number): void {
+        if (x !== this._translateX || y !== this._translateY) {
+            if (Utils.isValidNumber(x)) this._translateX = x;
+            if (Utils.isValidNumber(y)) this._translateY = y;
+            this._updateTransform();
+        }
+    }
+
+    resize(width: number, height: number, attr = true): RcElement {
+        if (width !== this._width) {
+            attr && this.setAttr('width', this._width = width);
+        }
+        if (height !== this._height) {
+            attr && this.setAttr('height', this._height = height);
+        }
+        return this;
+    }
+
+    appendDom(dom: Node): Node {
+        dom && this._dom.appendChild(dom);
+        return dom;
+    }
+
+    insertDom(dom: Node, before: Node): Node {
+        dom && this._dom.insertBefore(dom, before);
+        return dom;
+    }
+
+    clearDom(): void {
+        const dom = this._dom;
+        let child: Node;
+
+        while (child = dom.lastChild) {
+            dom.removeChild(child);
+        }
+    }
+
+    clearStyles(): boolean {
+        const css = (this.dom as SVGElement | HTMLElement).style;
+        let changed = false;
+
+        for (let p in this._styles) {
+            css.removeProperty(p);
+            changed = true;
+        }
+        
+        this._styles = {};
+        if (changed) this._styleDirty = true;
+        return changed;
+    }
+
+    clearStyle(props: string[]): boolean {
+        const css = (this.dom as SVGElement | HTMLElement).style;
+        let changed = false;
+
+        if (props) {
+            for (let p of props) {
+                if (p in this._styles) {
+                    css.removeProperty(p);
+                    delete this._styles[p];
+                    changed = true;
+                }                
+            }
+            if (changed) this._styleDirty = true;
+        }
+        return changed;
+    }
+
+    setStyles(styles: any): boolean {
+        const css = (this.dom as SVGElement | HTMLElement).style;
+        let changed = false;
+
+        if (styles) {
+            for (let p in styles) {
+                if (!(p in BACK_STYLES) && this._styles[p] !== styles[p]) {
+                    css[p] = this._styles[p] = styles[p];
+                    changed = true;
+                }
+            }
+            if (changed) this._styleDirty = true;
+        }
+        return changed;
+    }
+
+    resetStyles(styles: any): boolean {
+        const r = this.clearStyles();
+        return this.setStyles(styles) || r;        
+    }
+
+    protected _setBackgroundBorderRadius(value: number): void {
+    }
+
+    setBackStyles(styles: any): boolean {
+        const css = (this.dom as SVGElement | HTMLElement).style;
+        let changed = false;
+
+        if (styles) {
+            for (let p in styles) {
+                if ((p in BACK_STYLES) && this._styles[p] !== styles[p]) {
+                    if (p === 'borderRadius') {
+                        this._setBackgroundBorderRadius(pickNum(parseFloat(styles[p]), 0));
+                        this._styles[p] = styles[p];
+                    } else if ((p in BACK_STYLES)) {
+                        const p2 = BACK_STYLES[p]
+                        css[p2] = this._styles[p2] = styles[p];
+                    }
+                    changed = true;
+                }
+            }
+            if (changed) this._styleDirty = true;
+        }
+        return changed;
+    }
+
+    setStyle(prop: string, value: string): boolean {
+        let changed = false;
+
+        if (!(prop in BACK_STYLES) && value !== this._styles[prop]) {
+            changed = this._styleDirty = true;
+            this._styles[prop] = value;
+            (this.dom as SVGElement | HTMLElement).style[prop] = value;
+        }
+        return changed;
+    }
+
+    setBackStyle(prop: string, value: string): boolean {
+        let changed = false;
+
+        if (prop in BACK_STYLES && value !== this._styles[prop]) {
+            changed = this._styleDirty = true;
+            this._styles[prop] = value;
+            (this.dom as SVGElement | HTMLElement).style[prop] = value;
+        }
+        return changed;
+    }
+
+    putStyles(styles: any, buff?: any): any {
+        buff = buff || {};
+        if (styles) {
+            for (let p in styles) {
+                buff[p] = styles[p];
+            }
+        }
+        return buff;
+    }
+
+    putStyle(prop: string, value: string, buff?: any): any {
+        buff = buff || {};
+        buff[prop] = value;
+        return buff;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected _testing(): boolean {
+        return RcElement.TESTING;
+    }
+
+    protected _updateTransform(): void {
+        const dom = this._dom;
+        let tx = this._translateX;
+        let ty = this._translateY;
+
+        // translate
+        let tf = [];
+
+        if (Utils.isValidNumber(tx) || Utils.isValidNumber(ty)) {
+            tx = tx || 0;
+            ty = ty || 0;
+            tf = ['translate(' + tx + ',' + ty + ')'];
+        }
+
+        // matrix
+        if (Utils.isNotEmpty(this._matrix)) {
+            tf.push('matrix(' + this._matrix.join(',') + ')');
+        }
+        
+        // rotation
+        if (this._rotation) {
+            tf.push('rotate(' + this._rotation + ' ' +
+            Utils.pick(this._originX, dom.getAttribute('x'), 0) +
+            ' ' +
+            Utils.pick(this._originY, dom.getAttribute('y') || 0) + ')');
+        }
+
+        // scale
+        const sx = Utils.getNumber(this._scaleX, 1);
+        const sy = Utils.getNumber(this._scaleY, 1);
+        if (sx !== 1 || sy !== 1) {
+            tf.push('scale(' + sx + ' ' + sy + ')');
+        }
+
+        if (tf.length) {
+            this._dom.setAttribute('transform', tf.join(' '));
+        }
+    }
+}
+
+class RootElement extends RcElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _control: RcControl;
+
+
+    //-------------------------------------------------------------------------
+    // constructors
+    //-------------------------------------------------------------------------
+    constructor(control: RcControl) {
+        super(control.doc());
+
+        this._control = control;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    get control(): RcControl {
+        return this._control;
+    }
+}
+
+export class ClipElement extends RcElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _id: string;
+    private _rect: RcElement;
+
+
+    //-------------------------------------------------------------------------
+    // constructors
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, x: number, y: number, width: number, height: number, rx = 0, ry = 0) {
+        super(doc, 'clipPath');
+
+        const id = this._id = Utils.uniqueKey() + '-';
+        this.setAttr('id', id);
+
+        const rect = this._rect = new RcElement(doc, 'rect');
+        rect.setAttr('fill', 'none');
+        rx > 0 && rect.setAttr('rx', String(rx));
+        ry > 0 && this.dom.setAttribute('rx', String(ry));
+        rect.setBounds(x, y, width, height);
+        this.add(rect);
+    }
+
+
+	//-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    get id(): string {
+        return this._id;
+    }
+
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setBounds(x: number, y: number, w: number, h: number): RcElement {
+        this._rect.setBounds(x, y, w, h);
+        return this;
+    }
+
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    get x(): number {
+        return this._rect.x;
+    }
+    set x(value: number) {
+        this._rect.x = value;
+    }
+    
+    get y(): number {
+        return this._rect.y;
+    }
+    set y(value: number) {
+        this._rect.y = value;
+    }
+
+    get width(): number {
+        return this._rect.width;
+    }
+    set width(value: number) {
+        this._rect.width = value;
+    }
+    
+    get height(): number {
+        return this._rect.height;
+    }
+    set height(value: number) {
+        this._rect.height = value;
+    }
+
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+}
+
+export class PathElement extends RcElement {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _path: any[] | string;
+
+
+    //-------------------------------------------------------------------------
+    // constructors
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, path: Path = null, styleName = '') {
+        super(doc, 'path', styleName);
+
+        path && this.setPath(path);
+    }
+
+
+	//-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setPath(path: string | Path): void {
+        if (path !== this._path) {
+            this._path = path;
+
+            if (isString(path)) {
+                this.setAttr('d', path);
+            } else {
+                this.setAttr('d', path.join(' '));
+            }
+        }
+    }
+
+    renderShape(shape: string, x: number, y: number, rd: number): void {
+        let path: any;
+        
+        switch (shape) {
+            case 'squre':
+            case 'diamond':
+            case 'triangle':
+            case 'itriangle':
+                path = SvgShapes[shape](x - rd, y - rd, rd * 2, rd * 2);
+                break;
+
+            default:
+                path = SvgShapes.circle(x, y, rd);
+                break;
+        }
+        this.setPath(path);
+    }
+
+    
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+}
+
+
+export class ClipPathElement extends RcElement {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _id: string;
+    private _path: PathElement;
+
+
+    //-------------------------------------------------------------------------
+    // constructors
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'clipPath');
+
+        const id = this._id = Utils.uniqueKey() + '-';
+        this.setAttr('id', id);
+
+        this._path = new PathElement(doc);
+        this.add(this._path);
+    }
+
+
+	//-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    get id(): string {
+        return this._id;
+    }
+
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setPath(path: Path): void {
+        this._path.setPath(path);
+    }
+
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+}

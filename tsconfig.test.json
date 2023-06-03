@@ -1,0 +1,7 @@
+// mocha는 "commonjs"에서만 동작한다.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs"
+  }
+}

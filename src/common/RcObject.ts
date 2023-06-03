@@ -1,0 +1,306 @@
+////////////////////////////////////////////////////////////////////////////////
+// RcObject.ts
+// 2021. 11. 30. created by woori
+// -----------------------------------------------------------------------------
+// Copyright (c) 2021 Wooritech Inc.
+// All rights reserved.
+////////////////////////////////////////////////////////////////////////////////
+
+import { isObject } from "./Common";
+
+let $$_hash = 0;
+
+/**
+ * RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
+ * <br>
+ * 
+ * @see concepts.dev_guide 개발 가이드
+ * @see concepts.about RealTouch 개요
+ */
+export class RcObject {
+    
+    //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    static destroy(obj: RcObject): null {
+        return obj && obj.destroy();
+    }
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private $_hash: string;
+    private $_destroyed = false;
+    private $_destroying = false;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+	constructor(noHash?: boolean) {
+        if (!noHash) {
+            this.$_hash = String($$_hash++);
+        }
+	}
+
+    /**
+     * 객체가 소유한 참조 등을 해제하고 null을 리턴한다.
+     * 
+     * ```
+     * list = lis.destroy();
+     * ```
+     * 
+     * @returns null
+     */
+    destroy(): null {
+        if (!this.$_destroyed && !this.$_destroying) {
+            this.$_destroyed = true;
+            this.$_destroying = true;
+            this._doDestory();
+        }
+        return null;
+    }
+    
+    protected _doDestory(): void {}
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    get destroying(): boolean {
+        return this.$_destroying;
+    }
+
+    get hash(): string {
+        return this.$_hash;
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    public isMe(hash: string): boolean {
+        return hash === this.$_hash;
+    }
+
+    /**
+     * @internal
+     *
+     * true를 리턴하면 assignProps()이 진행되지 않는다.
+     */
+    protected _doAssignProps(source: any): boolean {
+        return false;
+    }
+
+    /**
+     * @internal
+     *
+     * 객체의 여러 속성들을 한꺼번에 설정한다.
+     * 
+     * @param source 속성 원본 object
+     * //@param valueCallback 
+     * @returns 객체 자신
+     */
+    // assignProps(source: any, valueCallback?: (v: any) => any): DObject {
+    assignProps(source: any): RcObject {
+        if (this._doAssignProps(source) === true) {
+            return this;
+        }
+
+        if (source) {
+            const proto = Object.getPrototypeOf(this); 
+            // const proto = Reflect.getPrototypeOf(this); 
+
+            for (let k in source) {
+                // const v = valueCallback ? valueCallback(source[k]) : source[k];
+                const v = source[k];
+                let p = Object.getOwnPropertyDescriptor(proto, k);
+
+                if (p) {
+                    if (p.set) {
+                        p.set.call(this, v);
+                    } else if (p.get) {
+                        const obj = p.get.call(this);
+                        if (obj instanceof RcObject) {
+                            obj.assignProps(v);
+                        }
+                    }
+                } else {
+                    let proto2 = Object.getPrototypeOf(proto);
+
+                    while (proto2) {
+                        let p = Object.getOwnPropertyDescriptor(proto2, k);
+                        if (p) {
+                            if (p.set) {
+                                p.set.call(this, v);
+                            } else if (p.get) {
+                                const obj = p.get.call(this);
+                                if (obj instanceof RcObject) {
+                                    obj.assignProps(v);
+                                }
+                            }
+                            break;
+                        } else {
+                            proto2 = Object.getPrototypeOf(proto2);
+                        }
+                    }
+                }
+            }
+        }
+        return this;
+	}
+
+    assignObject(source: any, excludes: string[]): RcObject {
+        if (this._doAssignProps(source) !== true) {
+            if (isObject(source)) {
+                if (Array.isArray(excludes) && excludes.length > 0) {
+                    const src = Object.assign({}, source);
+                    excludes.forEach(ex => delete src[ex]);
+                    Object.assign(this, src);
+                } else {
+                    Object.assign(this, source);
+                }
+            }
+        }
+        return this;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    toString(): string {
+        return this.constructor.name;
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    /**
+     * @internal
+     * 
+     * template param으로부터 생성되는 값은 문자열일 수 있다.
+     */
+    toBool(v: any): boolean {
+        return typeof v === 'string' ? v === 'true': v;
+    }
+
+    toNum(v: any, def: number = NaN): number {
+        v = parseFloat(v);
+        return isNaN(v) ? def : v;
+    }
+}
+
+export abstract class RtWrappableObject extends RcObject {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    protected _wrapper: any;
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    wrapper(): any {
+        return this._wrapper;
+    }
+
+    wrapperOrThis(): any {
+        return this._wrapper || this;
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    createWrapper<T>(clazz: { new(): T}): T {
+        const w = this._wrapper = new clazz();
+        w['$_c'] = this;
+        return w;
+    } 
+
+    setWrapper<T>(wrapper: T): T {
+        this._wrapper = wrapper;
+        wrapper['$_c'] = this;
+        return wrapper;
+    } 
+
+    isWrapper(w: any): boolean {
+        return w === this._wrapper;
+    }
+}
+
+export abstract class RtWrapper<T extends RtWrappableObject>  extends RcObject {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    protected $_c: T;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    protected _doDestory(): void {
+        this.$_c = null;
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+}
+
+export abstract class RtEventProvider<T> extends RcObject {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _listeners: T[] = [];
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    addListener(listener: T): void {
+        if (listener && this._listeners.indexOf(listener) < 0) {
+            this._listeners.push(listener);
+        }
+    }
+
+    removeListener(listener: T): void {
+        const i = this._listeners.indexOf(listener);
+        if (i >= 0) {
+            this._listeners.splice(i, 1);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    /**
+     * event로 지정한 함수가 정의된 모든 리스너에 대해 실행한다.
+     * 리스너 scope으로 실행하고, 첫번째 매개변수로 이 객체가 전달된다.
+     * 다만, 리스너들 중 하나라도 undefined가 아닌 값을 리턴하면,
+     * 그 값을 리턴하면서 멈춘다.
+     */
+    protected _fireEvent(event: string, ...args: any[]): any {
+        const arr = Array.prototype.slice.call(arguments, 0);
+        arr[0] = this;
+
+        for (const listener of this._listeners) {
+            const func = listener[event];
+            if (func) {
+                const rslt = func.apply(listener, arr);
+                if (rslt !== void 0) {
+                    return rslt;
+                }
+            }
+        }
+    }
+}
+
+export interface IEventArgs {
+}
+
+/**
+ * @internal
+ * 
+ * {@link RtListControl} 및 {@link RtDataSource} 이벤트 콜백 형식.
+ * <br>
+ * 여러 값이 포함된 단일 매개변수로 호출된다.
+ */
+export type RtEventHandler<T extends IEventArgs> = (args?: T) => void;
+export type RtSimpleEventhandler = (arg: any) => void;

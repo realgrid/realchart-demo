@@ -1,0 +1,12 @@
+{
+    "entryPoints": [
+        "./src/DListControl.ts"
+    ],
+    "out": "api/typedoc",
+    "exclude": ["./node_modules/**/*"],
+    "externalPattern": ["./node_modules/**/*"],
+    "excludeExternals": true,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "disableSources": true
+}
