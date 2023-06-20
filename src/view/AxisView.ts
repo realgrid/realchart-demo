@@ -1,29 +1,20 @@
 ////////////////////////////////////////////////////////////////////////////////
-// ChartElement.ts
-// 2023. 05. 28. created by woori
+// AxisView.ts
+// 2023. 06. 20. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcElement } from "../common/RcControl";
-import { ChartItem } from "../model/ChartItem";
+import { Axis } from "../model/Axis";
+import { ChartElement } from "./ChartElement";
 
-export abstract class ChartElement<T extends ChartItem> extends RcElement {
+export class AxisView extends ChartElement<Axis> {
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    protected _model: T;
-
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    model(): T {
-        return this._model;
-    }
-    setModel(value: T) {
-        if (value !== this._model) {
-            this._model = value;
-        }
-    }
 }

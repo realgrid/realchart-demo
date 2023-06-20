@@ -19,7 +19,7 @@
     "pbundle": "tsc && rollup --config rollup.config.js --environment BUILD:prod",
     "pub": "tsc && rollup --config rollup.config.js --environment BUILD:pub",
     "pdeploy": "npm run pbundle && node compress.js",
-    "test": "mocha --exit --timeout 10000 -r ts-node/register -r test/dom-mock.js test/**/*.spec.ts test/**/*Test*.ts",
+    "test": "mocha --exit --timeout 10000 -r ts-node/register -r test/dom-mock.js 'test/**/*.spec.ts' 'test/**/*Test*.ts'",
     "dldoc": "rm -rf web/docs && node dldoc",
     "tsdoc": "rm -rf api/typedoc && npx typedoc",
     "jsdoc": "rm -rf api/jsdoc && npx jsdoc -c jsdoc.json",

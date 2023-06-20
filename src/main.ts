@@ -9,5 +9,8 @@
 import { Globals } from "./globals";
 
 export const getVersion = Globals.getVersion;
+export const createChartControl = Globals.createChartControl;
+export const loadChart = Globals.loadChart;
 
 export { ChartControl } from "./ChartControl";
+export { Chart } from "./model/Chart";

@@ -20,7 +20,7 @@ export class AxisItem extends ChartItem {
     // constructors
     //-------------------------------------------------------------------------
     constructor(axis: Axis) {
-        super(axis.chart());
+        super(axis?.chart);
 
         this._axis = axis;
     }
@@ -73,25 +73,87 @@ export class AxisTickLine extends AxisItem {
 }
 
 export class AxisTick extends AxisItem {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    ticks: number[];
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
 }
 
-export class Axis extends ChartItem {
+export interface IAxisTick {
+    pos: number;
+    label: string;
+}
+
+/**
+ * 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.
+ */
+export abstract class Axis extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private categories: any[];
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _title: AxisTitle;
-    private _grid: AxisGrid;
-    private _tick: AxisTick;
+    readonly name: string;
+    readonly title: AxisTitle;
+    readonly tick: AxisTick;
+    readonly grid: AxisGrid;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, public name?: string) {
+    constructor(chart: IChart, name?: string) {
         super(chart);
 
-        this._title = new AxisTitle(this);
-        this._grid = new AxisGrid(this);
-        this._tick = new AxisTick(this);
+        this.name = name;
+        this.title = new AxisTitle(this);
+        this.tick = new AxisTick(this);
+        this.grid = new AxisGrid(this);
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    abstract collectTicks(min: number, max: number, length: number): IAxisTick[];
+}
+
+export class AxisCollection {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _chart: IChart;
+    private _items: Axis[] = [];
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        this._chart = chart;
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    first(): Axis {
+        return this._items[0];
+    }
+
+    items(): Axis[] {
+        return this._items.slice(0);
     }
 }

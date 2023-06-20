@@ -8,5 +8,10 @@
 
 import { ChartItem } from "./ChartItem";
 
+export enum LegendSource {
+    SERIES,
+    POINT
+}
+
 export class Legend extends ChartItem {
 }

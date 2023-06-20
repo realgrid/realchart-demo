@@ -7,12 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject } from "../common/RcObject";
-import { Axis } from "./Axis";
+import { Axis, AxisCollection } from "./Axis";
 import { ChartItem } from "./ChartItem";
-import { SeriesCollection } from "./Series";
+import { Series, SeriesCollection } from "./Series";
 
 export interface IChart {
-    visibleChanged(item: ChartItem): void;
+    _visibleChanged(item: ChartItem): void;
+    _modelChanged(item: ChartItem): void;
 }
 
 export class Chart extends RcObject implements IChart {
@@ -23,17 +24,37 @@ export class Chart extends RcObject implements IChart {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _xAxis: Axis;
-    private _yAxis: Axis;
+    private _xAxes: AxisCollection;
+    private _yAxes: AxisCollection;
     private _series: SeriesCollection;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
+    constructor() {
+        super();
+
+        this._xAxes = new AxisCollection(this);
+        this._yAxes = new AxisCollection(this);
+        this._series = new SeriesCollection(this);
+    }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    visibleChanged(item: ChartItem): void {
+    load(source: any): void {
+    }
+
+    prepareRender(): void {
+        // series를 axis에 연결한다.
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    _visibleChanged(item: ChartItem): void {
+    }
+
+    _modelChanged(item: ChartItem): void {
     }
 }

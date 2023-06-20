@@ -1,12 +1,13 @@
 ////////////////////////////////////////////////////////////////////////////////
-// ChartView.ts
-// 2023. 05. 28. created by woori
+// TitleView.ts
+// 2023. 06. 20. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcElement } from "../common/RcControl";
+import { Title } from "../model/Title";
+import { ChartElement } from "./ChartElement";
 
-export class ChartView extends RcElement {
+export class TitleView extends ChartElement<Title> {
 }

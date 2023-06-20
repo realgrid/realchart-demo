@@ -14,7 +14,7 @@ export class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private _chart: IChart;
+    readonly chart: IChart;
     private _visible = true;
 
     //-------------------------------------------------------------------------
@@ -26,24 +26,20 @@ export class ChartItem extends RcObject {
     constructor(chart: IChart) {
         super();
 
-        this._chart = chart;
+        this.chart = chart;
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    chart(): IChart {
-        return this._chart;
-    }
-
     /** visible */
-    get visible(): boolean {
+    visible(): boolean {
         return this._visible;
     }
-    set visible(value: boolean) {
+    setVisible(value: boolean) {
         if (value !== this._visible) {
             this._visible = value;
-            this._chart?.visibleChanged(this);
+            this.chart?._visibleChanged(this);
         }
     }
 
@@ -52,5 +48,9 @@ export class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     protected _getProps(): string[] {
         return ['visible'];
+    }
+
+    protected _changed(): void {
+        this.chart?._modelChanged(this);
     }
 }

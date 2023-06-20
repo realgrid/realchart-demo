@@ -10,12 +10,17 @@ import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 import { DataPointCollection } from "./DataPoint";
 
-export class Series extends ChartItem {
+export interface ISeries {
+}
+
+export abstract class Series extends ChartItem implements ISeries {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     private _group: string;
+    private _xAxis: string | number;
+    private _yAxis: string | number;
 
     //-------------------------------------------------------------------------
     // fields
@@ -33,12 +38,23 @@ export class SeriesCollection {
     // fields
     //-------------------------------------------------------------------------
     private _chart: IChart;
-    private _series: Series[] = [];
+    private _items: Series[] = [];
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
         this._chart = chart;
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    first(): Series {
+        return this._items[0];
+    }
+
+    items(): Series[] {
+        return this._items.slice(0);
     }
 }

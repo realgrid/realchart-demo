@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartControl } from "./ChartControl";
+import { Chart } from "./model/Chart";
 
 // [주의]main.ts에서 직접 구현하면 되지만, dldoc에서 global을 별도 구성할 수 있도록 자체 class에서 구현한다.
 /**
@@ -51,5 +52,13 @@ export class Globals {
      */
     static createChartControl(doc: Document, container: string | HTMLDivElement): ChartControl {
         return new ChartControl(doc, container);
+    }
+    /**
+     * 차트 객체를 생성한다.
+     * 
+     * @returns 
+     */
+    static loadChart(): Chart {
+        return new Chart();
     }
 }
