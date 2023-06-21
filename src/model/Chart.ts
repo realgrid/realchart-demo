@@ -25,6 +25,14 @@ export class Chart extends RcObject implements IChart {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    /**
+     * 기본 시리즈 type.
+     * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
+     * 
+     * @default 'column'
+     */
+    type = 'column';
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -74,7 +82,19 @@ export class Chart extends RcObject implements IChart {
     }
 
     prepareRender(): void {
-        // series를 axis에 연결한다.
+        this._xAxes.prepareRender();
+        this._yAxes.prepareRender();
+        this._series.prepareRender();
+    }
+
+    // 여러번 호출될 수 있다.
+    layoutAxes(width: number, height: number, phase: number): void {
+    }
+
+    /**
+     * 데이터 및 속성 변경 후 다시 그리게 한다.
+     */
+    update(): void {
     }
 
     //-------------------------------------------------------------------------

@@ -88,7 +88,7 @@ export class AxisTick extends AxisItem {
 }
 
 export interface IAxisTick {
-    pos: number;
+    value: number;
     label: string;
 }
 
@@ -100,6 +100,8 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    unit: number;
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -107,6 +109,9 @@ export abstract class Axis extends ChartItem implements IAxis {
     readonly title: AxisTitle;
     readonly tick: AxisTick;
     readonly grid: AxisGrid;
+
+    protected _series: ISeries[];
+    protected _range: { min: number, max: number };
 
     //-------------------------------------------------------------------------
     // constructor
@@ -123,8 +128,16 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    abstract calcluateRange(field: string | number, series: ISeries[]): { min: number, max: number };
-    abstract collectTicks(min: number, max: number, length: number): IAxisTick[];
+    abstract calcluateRange(): { min: number, max: number };
+    protected abstract _doPrepareTicks(min: number, max: number, length: number): IAxisTick[];
+
+    prepareRender(): void {
+        this._range = this.calcluateRange();
+    }
+
+    prepareTicks(length: number): void {
+        const ticks = this._doPrepareTicks(this._range.min, this._range.max, length);
+    }
 }
 
 export class AxisCollection {
@@ -159,5 +172,9 @@ export class AxisCollection {
     //-------------------------------------------------------------------------
     get(name: string): Axis {
         return this._map.get(name);
+    }
+
+    prepareRender(): void {
+        this._items.forEach(axis => axis.prepareRender());
     }
 }

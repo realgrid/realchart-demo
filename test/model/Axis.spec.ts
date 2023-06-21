@@ -11,7 +11,12 @@ import { describe, it } from 'mocha';
 import { Axis, IAxisTick } from '../../src/model/Axis';
 
 class AxisImpl extends Axis {
-    collectTicks(min: number, max: number, length: number): IAxisTick[] {
+
+    calcluateRange(): { min: number; max: number; } {
+        return;
+    }
+
+    protected _doPrepareTicks(min: number, max: number, length: number): IAxisTick[] {
         return [];
     }
 }

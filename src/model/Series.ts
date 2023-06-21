@@ -6,10 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isNone } from "../common/Common";
 import { RcObject } from "../common/RcObject";
 import { IChart } from "./Chart";
 import { ChartItem, IAxis, ISeries } from "./ChartItem";
-import { DataPointCollection } from "./DataPoint";
+import { DataPoint, DataPointCollection } from "./DataPoint";
+import { CategoryAxis } from "./axis/CategoryAxis";
 
 export abstract class Series extends ChartItem implements ISeries {
 
@@ -20,8 +22,14 @@ export abstract class Series extends ChartItem implements ISeries {
     group: string;
     xAxis: string | number;
     yAxis: string | number;
-    xField = 'x';
-    yField = 'y';
+    /**
+     * undefined이면 data point의 값이 array일 때는 0, 객체이면 'x'.
+     */
+    xField: string | number;
+    /**
+     * undefined이면 data point의 값이 array일 때는 1, 객체이면 'y'.
+     */
+    yField: string | number;
 
     //-------------------------------------------------------------------------
     // fields
@@ -49,6 +57,55 @@ export abstract class Series extends ChartItem implements ISeries {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getValue(point: DataPoint, axis: IAxis): number {
+        const pv = point.value;
+
+        if (pv != null) {
+            const fld = this._getField(axis);
+            const v = pv[fld];
+
+        } else {
+            return NaN;
+        }
+    }
+
+    collectCategories(axis: IAxis): string[] {
+        if (axis instanceof CategoryAxis) {
+            let fld = axis.categoryField;
+
+            if (fld != null) {
+                return this._points.getValues(fld);
+            } else {
+                const prop = this._getField(axis);
+
+                if (isNone(prop)) {
+                    if (axis === this._xAxisObj) {
+                        this._points.getValues(this.xField || 'x' || 'name' || 'label', 0);
+                    } else {
+                        this._points.getValues(this.yField || 'y' || 'name' || 'label', 1);
+                    }
+                } else {
+                    this._points.getValues(prop);
+                }
+            }
+        }
+    }
+
+    collectValues(axis: IAxis, categories: string[]): number[] {
+        const vals: number[] = [];
+
+        return vals;
+    }
+
+    prepareRender(): void {
+    }
+    
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected _getField(axis: IAxis): any {
+        return axis === this._xAxisObj ? this.xField : this.xField;
+    }
 }
 
 export class SeriesCollection {
@@ -83,6 +140,10 @@ export class SeriesCollection {
     //-------------------------------------------------------------------------
     get(name: string): Series {
         return this._map.get(name);
+    }
+
+    prepareRender(): void {
+        this._items.forEach(ser => ser.prepareRender());
     }
 }
 

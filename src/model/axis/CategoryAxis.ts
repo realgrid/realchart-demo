@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray } from "../../common/Common";
-import { Utils } from "../../common/Utils";
 import { Axis, IAxisTick } from "../Axis";
 import { ISeries } from "../ChartItem";
 
@@ -24,12 +23,20 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _categories: string[];
+    private _cats: string[];
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    categoryField = 'name';
+    /**
+     * 카테고리로 사용되는 dataPoint 속성.
+     * {@link categories}가 지정되면 이 속성은 무시된다.
+     */
+    categoryField: string | number;
+    /**
+     * 명시적으로 지정하는 카테고리 목록.
+     * 첫 번째 값이 0에 해당한다.
+     */
     categories: any[];
     unit = 1;
     interval = 1;
@@ -38,28 +45,37 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    calcluateRange(field: string | number, series: ISeries[]): { min: number; max: number; } {
-        this._collectCategories(field, series);
+    calcluateRange(): { min: number; max: number; } {
+        this._collectCategories(this._series);
 
         return;
     }
 
-    collectTicks(min: number, max: number, length: number): IAxisTick[] {
+    protected _doPrepareTicks(min: number, max: number, length: number): IAxisTick[] {
         return;
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private _collectCategories(field: string | number, series: ISeries[]): void {
-        const cats = this.categories;
+    private _collectCategories(series: ISeries[]): void {
+        const categories = this.categories;
 
-        if (isArray(cats) && cats.length > 0) {
-            this._categories = cats.filter(c => c != null && c != '').map(c => c.toString());
+        if (isArray(categories) && categories.length > 0) {
+            this._cats = categories.filter(c => c != null).map(c => c.toString());
         } else {
-            this._categories = [];
+            const cats = this._cats = [];
 
             if (isArray(series)) {
+                for (const ser of series) {
+                    const cats2 = ser.collectCategories(this);
+
+                    for (const c of cats2) {
+                        if (!cats.includes(c)) {
+                            cats.push(c);
+                        }
+                    }
+                }
             }
         }
     }

@@ -8,7 +8,7 @@
 
 import { RcObject } from "../common/RcObject";
 import { IChart } from "./Chart";
-import { DataPointCollection } from "./DataPoint";
+import { DataPoint, DataPointCollection } from "./DataPoint";
 
 export class ChartItem extends RcObject {
 
@@ -77,11 +77,15 @@ export class ChartItem extends RcObject {
 }
 
 export interface IAxis {
+    unit: number;
 }
 
 export interface ISeries {
 
     points(): DataPointCollection;
+    getValue(point: DataPoint, axis: IAxis): number;
+    collectCategories(axis: IAxis): string[];
+    collectValues(axis: IAxis, categories: string[]): number[];
 }
 
 export interface ISeriesGroup {

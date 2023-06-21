@@ -11,6 +11,7 @@ export const isObject = function (v: any): boolean { return v && typeof v === 'o
 export const isArray = Array.isArray;
 export const isFunc = function (v: any): v is Function { return typeof v === 'function'; }
 export const isString = function (v: any): v is string { return typeof v === 'string'; }
+export const isNone = function (v: any): boolean { return v == null || isNaN(v); }
 export const pickNum = function(v1: any, v2: any): number {
     v1 = parseFloat(v1);
     return !isNaN(v1) ? v1 : parseFloat(v2);
