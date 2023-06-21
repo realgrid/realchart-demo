@@ -6,7 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isArray } from "../../common/Common";
+import { Utils } from "../../common/Utils";
 import { Axis, IAxisTick } from "../Axis";
+import { ISeries } from "../ChartItem";
 
 /**
  * data point들의 이 축의 값들 중 문자열인 값들, 혹은 categoryField에 해당하는 값들을 수집하거나,
@@ -21,16 +24,43 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _categoryField = 'name';
-    private _categories: any[];
-    private _unit = 1;
-    private _interval = 1;
-    private _showLast = false;
+    private _categories: string[];
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    categoryField = 'name';
+    categories: any[];
+    unit = 1;
+    interval = 1;
+    showLast = false;
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    calcluateRange(field: string | number, series: ISeries[]): { min: number; max: number; } {
+        this._collectCategories(field, series);
+
+        return;
+    }
+
     collectTicks(min: number, max: number, length: number): IAxisTick[] {
-        throw new Error("Method not implemented.");
+        return;
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private _collectCategories(field: string | number, series: ISeries[]): void {
+        const cats = this.categories;
+
+        if (isArray(cats) && cats.length > 0) {
+            this._categories = cats.filter(c => c != null && c != '').map(c => c.toString());
+        } else {
+            this._categories = [];
+
+            if (isArray(series)) {
+            }
+        }
     }
 }

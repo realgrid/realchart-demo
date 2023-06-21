@@ -8,6 +8,7 @@
 
 import { RcObject } from "../common/RcObject";
 import { IChart } from "./Chart";
+import { DataPointCollection } from "./DataPoint";
 
 export class ChartItem extends RcObject {
 
@@ -44,6 +45,17 @@ export class ChartItem extends RcObject {
     }
 
     //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    load(source: any): void {
+        this._doLoad(source);
+    }
+
+    prepareRender(): void {
+        this._doPrepareRender(this.chart);
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _getProps(): string[] {
@@ -53,4 +65,24 @@ export class ChartItem extends RcObject {
     protected _changed(): void {
         this.chart?._modelChanged(this);
     }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected _doLoad(source: any): void {
+    }
+
+    protected _doPrepareRender(chart: IChart): void {
+    }
+}
+
+export interface IAxis {
+}
+
+export interface ISeries {
+
+    points(): DataPointCollection;
+}
+
+export interface ISeriesGroup {
 }

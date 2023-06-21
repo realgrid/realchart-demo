@@ -6,10 +6,19 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ChartItem } from "./ChartItem";
+export class DataPoint {
 
-export class DataPoint extends ChartItem {
+    value: any;
 }
 
 export class DataPointCollection {
+
+    private _points: DataPoint[];
+
+    get count(): number {
+        return this._points.length;
+    }
+
+    load(source: any): void {
+    }
 }

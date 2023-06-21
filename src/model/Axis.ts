@@ -7,14 +7,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { IChart } from "./Chart";
-import { ChartItem } from "./ChartItem";
+import { ChartItem, IAxis, ISeries } from "./ChartItem";
 
 export class AxisItem extends ChartItem {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    protected _axis: Axis;
+    readonly axis: Axis;
 
     //-------------------------------------------------------------------------
     // constructors
@@ -22,15 +22,12 @@ export class AxisItem extends ChartItem {
     constructor(axis: Axis) {
         super(axis?.chart);
 
-        this._axis = axis;
+        this.axis = axis;
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    axis(): Axis {
-        return this._axis;
-    }
 }
 
 export class AxisTitle extends AxisItem {
@@ -80,7 +77,7 @@ export class AxisTick extends AxisItem {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    ticks: number[];
+    private _ticks: number[];
 
     //-------------------------------------------------------------------------
     // properties
@@ -98,13 +95,11 @@ export interface IAxisTick {
 /**
  * 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.
  */
-export abstract class Axis extends ChartItem {
+export abstract class Axis extends ChartItem implements IAxis {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private categories: any[];
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -128,6 +123,7 @@ export abstract class Axis extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    abstract calcluateRange(field: string | number, series: ISeries[]): { min: number, max: number };
     abstract collectTicks(min: number, max: number, length: number): IAxisTick[];
 }
 
@@ -136,14 +132,15 @@ export class AxisCollection {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _chart: IChart;
+    readonly chart: IChart;
     private _items: Axis[] = [];
+    private _map = new Map<string, Axis>();
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
-        this._chart = chart;
+        this.chart = chart;
     }
 
     //-------------------------------------------------------------------------
@@ -155,5 +152,12 @@ export class AxisCollection {
 
     items(): Axis[] {
         return this._items.slice(0);
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    get(name: string): Axis {
+        return this._map.get(name);
     }
 }
