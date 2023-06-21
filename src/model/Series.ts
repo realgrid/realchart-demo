@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isNone } from "../common/Common";
+import { isArray, isNone, pickNum, pickProp } from "../common/Common";
 import { RcObject } from "../common/RcObject";
 import { IChart } from "./Chart";
 import { ChartItem, IAxis, ISeries } from "./ChartItem";
@@ -30,6 +30,10 @@ export abstract class Series extends ChartItem implements ISeries {
      * undefined이면 data point의 값이 array일 때는 1, 객체이면 'y'.
      */
     yField: string | number;
+    /**
+     * undefined이면 "data".
+     */
+    private _dataProp: string;
 
     //-------------------------------------------------------------------------
     // fields
@@ -45,11 +49,22 @@ export abstract class Series extends ChartItem implements ISeries {
         super(chart);
 
         this.name = name;
+        this._points = new DataPointCollection(this);
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * dataProp
+     */
+    get dataProp(): string {
+        return pickProp(this._dataProp, "data");
+    }
+    set dataProp(value: string) {
+        this._dataProp = value;
+    }
+
     points(): DataPointCollection {
         return this._points;
     }
@@ -57,6 +72,9 @@ export abstract class Series extends ChartItem implements ISeries {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    load(source: any): void {
+    }
+
     getValue(point: DataPoint, axis: IAxis): number {
         const pv = point.value;
 
@@ -98,6 +116,10 @@ export abstract class Series extends ChartItem implements ISeries {
     }
 
     prepareRender(): void {
+        this._xAxisObj = null;
+        this._yAxisObj = null;
+
+        this._points.prepareRender(this._xAxisObj, this._yAxisObj);
     }
     
     //-------------------------------------------------------------------------
@@ -105,6 +127,16 @@ export abstract class Series extends ChartItem implements ISeries {
     //-------------------------------------------------------------------------
     protected _getField(axis: IAxis): any {
         return axis === this._xAxisObj ? this.xField : this.xField;
+    }
+
+    protected _doLoad(src: any): void {
+        super._doLoad(src);
+
+        const data = src[this.dataProp];
+
+        if (isArray(data)) {
+            this._points.load(data);
+        }
     }
 }
 

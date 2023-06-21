@@ -84,7 +84,11 @@ export class Chart extends RcObject implements IChart {
     prepareRender(): void {
         this._xAxes.prepareRender();
         this._yAxes.prepareRender();
+        
         this._series.prepareRender();
+
+        this._xAxes.calculateRange();
+        this._yAxes.calculateRange();
     }
 
     // 여러번 호출될 수 있다.

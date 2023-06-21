@@ -45,9 +45,11 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    calcluateRange(): { min: number; max: number; } {
+    protected _doPrepareRender(): void {
         this._collectCategories(this._series);
+    }
 
+    protected _doCalcluateRange(): { min: number; max: number; } {
         return;
     }
 

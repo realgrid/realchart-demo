@@ -6,12 +6,14 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNone } from "../common/Common";
-import { IAxis } from "./ChartItem";
+import { isArray, isNone, isObject } from "../common/Common";
+import { IAxis, ISeries } from "./ChartItem";
 
 export class DataPoint {
 
     value: any;
+    x: number;
+    y: number;
 
     constructor(source: any) {
         this.value = source;
@@ -26,7 +28,12 @@ export class DataPoint {
 
 export class DataPointCollection {
 
+    private _owner: ISeries;
     private _points: DataPoint[];
+
+    constructor(owner: ISeries) {
+        this._owner = owner;
+    }
 
     get count(): number {
         return this._points.length;
@@ -50,6 +57,17 @@ export class DataPointCollection {
      * 각 point의 두 축에 대한 값을 설정한다.
      * 값이 null인 것들은 별도로 모아서 axis unit 단위로 순서대로 설정한다.
      */
-    prepareRender(xAxis: IAxis, xField: string, yAxis: IAxis, yField: string): void {
+    prepareRender(xAxis: IAxis, yAxis: IAxis): void {
+        this._points.forEach(p => {
+            const v = p.value;
+
+            if (isArray(v)) {
+            } else if (isObject(v)) {
+            } else if (!isNaN(v)) {
+            } else {
+                p.x = null;
+                p.y = null;
+            }
+        });
     }
 }

@@ -128,11 +128,16 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    abstract calcluateRange(): { min: number, max: number };
+    protected abstract _doCalcluateRange(): { min: number, max: number };
+    protected abstract _doPrepareRender(): void;
     protected abstract _doPrepareTicks(min: number, max: number, length: number): IAxisTick[];
 
     prepareRender(): void {
-        this._range = this.calcluateRange();
+        this._doPrepareRender();
+    }
+
+    calcluateRange(): void {
+        this._range = this._doCalcluateRange();
     }
 
     prepareTicks(length: number): void {
@@ -176,5 +181,9 @@ export class AxisCollection {
 
     prepareRender(): void {
         this._items.forEach(axis => axis.prepareRender());
+    }
+
+    calculateRange(): void {
+        this._items.forEach(axis => axis.calcluateRange());
     }
 }

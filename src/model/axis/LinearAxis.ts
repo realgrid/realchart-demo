@@ -14,7 +14,10 @@ export class LinearAxis extends Axis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    calcluateRange(): { min: number; max: number; } {
+    protected _doPrepareRender(): void {
+    }
+
+    protected _doCalcluateRange(): { min: number; max: number; } {
         throw new Error("Method not implemented.");
     }
 

@@ -16,6 +16,9 @@ export const pickNum = function(v1: any, v2: any): number {
     v1 = parseFloat(v1);
     return !isNaN(v1) ? v1 : parseFloat(v2);
 }
+export const pickProp = function(v1: any, v2: any): any {
+    return v1 !== void 0 ? v1 : v2;
+}
 
 export class RtLog {
 

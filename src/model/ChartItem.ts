@@ -70,6 +70,11 @@ export class ChartItem extends RcObject {
     // internal members
     //-------------------------------------------------------------------------
     protected _doLoad(source: any): void {
+        this._getProps().forEach(p => {
+            if (source.hasOwnProperty(p)) {
+                this[p] = source[p];
+            }
+        });
     }
 
     protected _doPrepareRender(chart: IChart): void {

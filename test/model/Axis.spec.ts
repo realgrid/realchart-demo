@@ -12,7 +12,10 @@ import { Axis, IAxisTick } from '../../src/model/Axis';
 
 class AxisImpl extends Axis {
 
-    calcluateRange(): { min: number; max: number; } {
+    protected _doPrepareRender(): void {
+    }
+
+    protected _doCalcluateRange(): { min: number; max: number; } {
         return;
     }
 
