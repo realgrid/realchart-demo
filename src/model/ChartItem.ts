@@ -82,13 +82,14 @@ export class ChartItem extends RcObject {
 }
 
 export interface IAxis {
-    unit: number;
 }
 
 export interface ISeries {
 
     xAxis: string | number;
     yAxis: string | number;
+    xField: string | number;
+    yField: string | number;
 
     isCategorized(): boolean;
     getPoints(): DataPointCollection;

@@ -43,7 +43,7 @@ import { LinearAxis } from '../../src/model/axis/LinearAxis';
         series.prepareRender();
         
         const xAxis = series['_xAxisObj'];
-        const yAxis = series['_yyAxisObj'];
+        const yAxis = series['_yAxisObj'];
 
         expect(xAxis).instanceOf(CategoryAxis);
         expect(yAxis).instanceOf(LinearAxis);
@@ -52,8 +52,18 @@ import { LinearAxis } from '../../src/model/axis/LinearAxis';
     it ('prepare points', () => {
         const json = loadChartJson("column-01");
         const chart = new Chart(json);
-        const series = chart.series;
-        const points = series.getPoints
+        const series = chart.series as Series;
+        const points = series.getPoints();
 
+        series.prepareRender();
+
+        expect(json.series.data.length).gte(5);
+        expect(points.count).eq(json.series.data.length);
+
+        // series data가 숫자 배열이다.
+        points.forEach((p, i) => {
+            expect(p.x).eq(i);
+            expect(p.y).eq(p.value);
+        })
     })
 });

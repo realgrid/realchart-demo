@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNone, isObject, pickNum, pickProp } from "../common/Common";
+import { isArray, isNone, isObject, isString, pickNum, pickProp } from "../common/Common";
 import { RcObject } from "../common/RcObject";
 import { IChart } from "./Chart";
 import { ChartItem, IAxis, ISeries } from "./ChartItem";
@@ -38,8 +38,8 @@ export abstract class Series extends ChartItem implements ISeries {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _xAxisObj: IAxis;
-    private _yAxisObj: IAxis;
+    _xAxisObj: IAxis;
+    _yAxisObj: IAxis;
     private _points: DataPointCollection;
 
     //-------------------------------------------------------------------------
@@ -87,19 +87,9 @@ export abstract class Series extends ChartItem implements ISeries {
             let fld = axis.categoryField;
 
             if (fld != null) {
-                return this._points.getValues(fld);
+                return this._points.getProps(fld);
             } else {
-                const prop = this._getField(axis);
-
-                if (isNone(prop)) {
-                    if (axis === this._xAxisObj) {
-                        this._points.getValues(this.xField || 'x' || 'name' || 'label', 0);
-                    } else {
-                        this._points.getValues(this.yField || 'y' || 'name' || 'label', 1);
-                    }
-                } else {
-                    this._points.getValues(prop);
-                }
+                return this._points.getValues(axis === this._xAxisObj ? 'x' : 'y').filter(v => isString(v));
             }
         }
     }
@@ -111,17 +101,17 @@ export abstract class Series extends ChartItem implements ISeries {
     }
 
     prepareRender(): void {
-        this._xAxisObj = this.chart.axisOfSeries(this, true);
-        this._yAxisObj = this.chart.axisOfSeries(this, false);
+        this._xAxisObj = this.chart.connectSeries(this, true);
+        this._yAxisObj = this.chart.connectSeries(this, false);
 
-        this._points.prepareRender(this._xAxisObj, this._yAxisObj);
+        this._points.prepareRender();
     }
     
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
     protected _getField(axis: IAxis): any {
-        return axis === this._xAxisObj ? this.xField : this.xField;
+        return axis === this._xAxisObj ? this.xField : this.yField;
     }
 
     protected _doLoad(src: any): void {
@@ -177,6 +167,12 @@ export class SeriesCollection {
 
     get(name: string): Series {
         return this._map.get(name);
+    }
+
+    forEach(callback: (p: Series, i?: number) => any): void {
+        for (let i = 0, n = this._items.length; i < n; i++) {
+            if (callback(this._items[i], i) === true) break;
+        }
     }
 
     prepareRender(): void {

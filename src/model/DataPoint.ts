@@ -6,22 +6,22 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNone, isObject } from "../common/Common";
+import { isArray, isNone, isNumber, isObject, pickNum } from "../common/Common";
 import { IAxis, ISeries } from "./ChartItem";
 
 export class DataPoint {
 
     value: any;
-    x: number;
-    y: number;
+    index: number;
+    x: number | string;
+    y: number | string;
 
     constructor(source: any) {
         this.value = source;
     }
 
-    getValue(fld: any, index: number): any {
+    getProp(fld: string | number): any {
         if (isNone(this.value)) return this.value;
-        if (isArray(this.value)) return this.value[index];
         else return this.value[fld];
     }
 }
@@ -41,35 +41,49 @@ export class DataPointCollection {
 
     load(source: any): void {
         if (isArray(source)) {
-            this._points = source.map(s => new DataPoint(s));
+            // x 축에 대한 정보가 없으므로 홑 값들은 앞으로 이동시킨다.
+            source = source.sort((a, b) => (!isArray(a) && !isObject(a)) ? -1 : 0);
+            this._points = source.map((s: any) => new DataPoint(s));
         } else {
             this._points = [];
         }
     }
 
-    getValues(fld: any, index = -1): any[] {
-        if (index >= 0) {
-            return this._points.map(p => p.getValue(fld, index));
-        } else {
-            return this._points.map(p => isNone(p.value) ? p.value : p.value[fld]);
-        }
+    getProps(prop: string | number): any[] {
+        return this._points.map(p => p.getProp(prop));
+    }
+
+    getValues(axis: string): any[] {
+        return this._points.map(p => p[axis]);
     }
 
     /**
      * 각 point의 두 축에 대한 값을 설정한다.
-     * 값이 null인 것들은 별도로 모아서 axis unit 단위로 순서대로 설정한다.
      */
-    prepareRender(xAxis: IAxis, yAxis: IAxis): void {
-        this._points.forEach(p => {
+    prepareRender(): void {
+        const series = this._owner;
+
+        this._points.forEach((p, i) => {
             const v = p.value;
 
+            p.index = i;
+
             if (isArray(v)) {
+                p.x = v[pickNum(series.xField, 0)];
+                p.y = v[pickNum(series.yField, 1)];
             } else if (isObject(v)) {
-            } else if (!isNaN(v)) {
+                p.x = v[series.xField] || v.x || v.name || v.label;
+                p.y = v[series.xField] || v.y || v.value;
             } else {
-                p.x = null;
-                p.y = null;
+                p.x = i;
+                p.y = v;
             }
         });
+    }
+
+    forEach(callback: (p: DataPoint, i?: number) => any): void {
+        for (let i = 0, n = this._points.length; i < n; i++) {
+            if (callback(this._points[i], i) === true) break;
+        }
     }
 }

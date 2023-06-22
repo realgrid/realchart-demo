@@ -15,6 +15,6 @@ export class LogAxis extends LinearAxis {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doPrepareTicks(min: number, max: number, length: number): IAxisTick[] {
-        throw new Error("Method not implemented.");
+        return;
     }
 }

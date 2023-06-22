@@ -34,7 +34,7 @@ export interface IChart {
     getYAxes(): AxisCollection;
     seriesByBame(series: string): Series;
     axisByName(axis: string): Axis;
-    axisOfSeries(series: Series, isX: boolean): Axis;
+    connectSeries(series: Series, isX: boolean): Axis;
     getGroup(group: String): SeriesGroup;
     _visibleChanged(item: ChartItem): void;
     _modelChanged(item: ChartItem): void;
@@ -130,10 +130,6 @@ export class Chart extends RcObject implements IChart {
         return this._xAxes.get(axis) || this._yAxes.get(axis);
     }
 
-    axisOfSeries(series: Series, isX: boolean): Axis {
-        return;
-    }
-
     getGroup(group: string): SeriesGroup {
         return this._groups.get(group);
     }
@@ -146,10 +142,15 @@ export class Chart extends RcObject implements IChart {
         this._yAxes.load(source["yAxes"] || source["yAxis"]);
     }
 
+    connectSeries(series: Series, isX: boolean): Axis {
+        return isX ? this._xAxes.connect(series) : this._yAxes.connect(series);
+    }
+
     prepareRender(): void {
         this._xAxes.prepareRender();
         this._yAxes.prepareRender();
         
+        // 축들에 연결한다.
         this._series.prepareRender();
 
         this._xAxes.calculateRange();
@@ -158,6 +159,8 @@ export class Chart extends RcObject implements IChart {
 
     // 여러번 호출될 수 있다.
     layoutAxes(width: number, height: number, phase: number): void {
+        this._xAxes.prepareTicks(width);
+        this._yAxes.prepareTicks(height);
     }
 
     /**

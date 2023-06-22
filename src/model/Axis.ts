@@ -111,7 +111,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     readonly tick: AxisTick;
     readonly grid: AxisGrid;
 
-    protected _series: ISeries[];
+    protected _series: ISeries[] = [];
     protected _range: { min: number, max: number };
 
     //-------------------------------------------------------------------------
@@ -122,27 +122,40 @@ export abstract class Axis extends ChartItem implements IAxis {
 
         this.name = name;
         this.title = new AxisTitle(this);
-        this.tick = new AxisTick(this);
+        this.tick = this._createTick();
         this.grid = new AxisGrid(this);
+    }
+
+    protected _createTick(): AxisTick {
+        return new AxisTick(this);
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    protected abstract _doCalcluateRange(): { min: number, max: number };
     protected abstract _doPrepareRender(): void;
+    protected abstract _doCalcluateRange(): { min: number, max: number };
     protected abstract _doPrepareTicks(min: number, max: number, length: number): IAxisTick[];
 
     prepareRender(): void {
         this._doPrepareRender();
     }
 
-    calcluateRange(): void {
+    calculateRange(): void {
         this._range = this._doCalcluateRange();
     }
 
     prepareTicks(length: number): void {
         const ticks = this._doPrepareTicks(this._range.min, this._range.max, length);
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    _connect(series: ISeries): void {
+        if (series && !this._series.includes(series)) {
+            this._series.push(series);
+        }
     }
 }
 
@@ -197,7 +210,37 @@ export class AxisCollection {
     }
 
     calculateRange(): void {
-        this._items.forEach(axis => axis.calcluateRange());
+        this._items.forEach(axis => axis.calculateRange());
+    }
+
+    prepareTicks(length: number): void {
+        this._items.forEach(axis => axis.prepareTicks(length));
+    }
+
+    connect(series: ISeries): Axis {
+        const items = this._items;
+        const a = this.isX ? series.xAxis : series.yAxis;
+        let axis: Axis;
+
+        if (isNumber(a) && a >= 0 && items.length) {
+            axis = items[a];
+        } else if (isString(a)) {
+            axis = items.find(item => item.name === a);
+        }
+        if (!axis) {
+            axis = items[0];
+        }
+
+        if (axis) {
+            axis._connect(series);
+        }
+        return axis;
+    }
+
+    forEach(callback: (p: Axis, i?: number) => any): void {
+        for (let i = 0, n = this._items.length; i < n; i++) {
+            if (callback(this._items[i], i) === true) break;
+        }
     }
 
     //-------------------------------------------------------------------------

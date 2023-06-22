@@ -18,10 +18,10 @@ export class LinearAxis extends Axis {
     }
 
     protected _doCalcluateRange(): { min: number; max: number; } {
-        throw new Error("Method not implemented.");
+        return;
     }
 
     protected _doPrepareTicks(min: number, max: number, length: number): IAxisTick[] {
-        throw new Error("Method not implemented.");
+        return;
     }
 }
