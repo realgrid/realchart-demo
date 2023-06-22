@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { Series } from "../Series";
+import { BarSeries } from "./BarSeries";
 
-export class BoxPlotSeries extends Series {
+export class BoxPlotSeries extends BarSeries {
 }

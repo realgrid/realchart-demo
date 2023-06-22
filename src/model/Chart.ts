@@ -8,16 +8,54 @@
 
 import { RcObject } from "../common/RcObject";
 import { Axis, AxisCollection } from "./Axis";
-import { ChartItem } from "./ChartItem";
+import { ChartItem, IAxis, ISeries } from "./ChartItem";
 import { Series, SeriesCollection, SeriesGroup } from "./Series";
+import { CategoryAxis } from "./axis/CategoryAxis";
+import { LinearAxis } from "./axis/LinearAxis";
+import { LogAxis } from "./axis/LogAxis";
+import { TimeAxis } from "./axis/TimeAxis";
+import { BarSeries, ColumnSeries } from "./series/BarSeries";
+import { BoxPlotSeries } from "./series/BoxPlotSeries";
+import { BubbleSeries } from "./series/BubbleSeries";
+import { LineSeries } from "./series/LineSeries";
+import { PieSeries } from "./series/PieSeries";
+import { ScatterSeries } from "./series/ScatterSeries";
 
 export interface IChart {
 
-    getSeries(series: string): Series;
-    getAxis(axis: string): Axis;
+    series: ISeries;
+    xAxis: IAxis;
+    yAxis: IAxis;
+
+    _getSeriesType(type: string): any;
+    _getAxisType(type: string): any;
+    getSeries(): SeriesCollection;
+    getXAxes(): AxisCollection;
+    getYAxes(): AxisCollection;
+    seriesByBame(series: string): Series;
+    axisByName(axis: string): Axis;
+    axisOfSeries(series: Series, isX: boolean): Axis;
     getGroup(group: String): SeriesGroup;
     _visibleChanged(item: ChartItem): void;
     _modelChanged(item: ChartItem): void;
+}
+
+const series_types = {
+    'bar': BarSeries,
+    'column': ColumnSeries,
+    'line': LineSeries,
+    'boxplot': BoxPlotSeries,
+    'bubble': BubbleSeries,
+    'scatter': ScatterSeries,
+    'pine': PieSeries
+};
+
+const axis_types = {
+    'linear': LinearAxis,
+    'category': CategoryAxis,
+    'time': TimeAxis,
+    'date': TimeAxis,
+    'log': LogAxis
 }
 
 export class Chart extends RcObject implements IChart {
@@ -36,42 +74,64 @@ export class Chart extends RcObject implements IChart {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _series: SeriesCollection;
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
-    private _series: SeriesCollection;
     private _groups = new Map<string, SeriesGroup>();
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor() {
+    constructor(source?: any) {
         super();
 
-        this._xAxes = new AxisCollection(this);
-        this._yAxes = new AxisCollection(this);
         this._series = new SeriesCollection(this);
+        this._xAxes = new AxisCollection(this, true);
+        this._yAxes = new AxisCollection(this, false);
+
+        source && this.load(source);
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    series(): SeriesCollection {
+    get series(): ISeries {
+        return this._series.first;
+    }
+
+    get xAxis(): IAxis {
+        return this._xAxes.first;
+    }
+
+    get yAxis(): IAxis {
+        return this._yAxes.first;
+    }
+
+    getSeries(): SeriesCollection {
         return this._series;
     }
 
-    axis(): AxisCollection {
+    getXAxes(): AxisCollection {
         return this._xAxes;
+    }
+
+    getYAxes(): AxisCollection {
+        return this._yAxes;
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getSeries(series: string): Series {
+    seriesByBame(series: string): Series {
         return this._series.get(series);
     }
 
-    getAxis(axis: string): Axis {
+    axisByName(axis: string): Axis {
         return this._xAxes.get(axis) || this._yAxes.get(axis);
+    }
+
+    axisOfSeries(series: Series, isX: boolean): Axis {
+        return;
     }
 
     getGroup(group: string): SeriesGroup {
@@ -79,6 +139,11 @@ export class Chart extends RcObject implements IChart {
     }
 
     load(source: any): void {
+        // series - 시리즈를 먼저 로드해야 디폴트 axis를 지정할 수 있다.
+        this._series.load(source["series"])
+        // axes
+        this._xAxes.load(source["xAxes"] || source["xAxis"]);
+        this._yAxes.load(source["yAxes"] || source["yAxis"]);
     }
 
     prepareRender(): void {
@@ -104,6 +169,14 @@ export class Chart extends RcObject implements IChart {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    _getSeriesType(type: string): any {
+        return series_types[type];
+    }
+
+    _getAxisType(type: string): any {
+        return axis_types[type];
+    }
+
     _visibleChanged(item: ChartItem): void {
     }
 

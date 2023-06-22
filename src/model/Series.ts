@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNone, pickNum, pickProp } from "../common/Common";
+import { isArray, isNone, isObject, pickNum, pickProp } from "../common/Common";
 import { RcObject } from "../common/RcObject";
 import { IChart } from "./Chart";
 import { ChartItem, IAxis, ISeries } from "./ChartItem";
@@ -33,7 +33,7 @@ export abstract class Series extends ChartItem implements ISeries {
     /**
      * undefined이면 "data".
      */
-    private _dataProp: string;
+    dataProp: string;
 
     //-------------------------------------------------------------------------
     // fields
@@ -55,24 +55,19 @@ export abstract class Series extends ChartItem implements ISeries {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * dataProp
-     */
-    get dataProp(): string {
-        return pickProp(this._dataProp, "data");
-    }
-    set dataProp(value: string) {
-        this._dataProp = value;
+    getPoints(): DataPointCollection {
+        return this._points;
     }
 
-    points(): DataPointCollection {
-        return this._points;
+    isCategorized(): boolean {
+        return false;
     }
     
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     load(source: any): void {
+        this._points.load(source[this.dataProp || 'data']);
     }
 
     getValue(point: DataPoint, axis: IAxis): number {
@@ -116,8 +111,8 @@ export abstract class Series extends ChartItem implements ISeries {
     }
 
     prepareRender(): void {
-        this._xAxisObj = null;
-        this._yAxisObj = null;
+        this._xAxisObj = this.chart.axisOfSeries(this, true);
+        this._yAxisObj = this.chart.axisOfSeries(this, false);
 
         this._points.prepareRender(this._xAxisObj, this._yAxisObj);
     }
@@ -159,23 +154,51 @@ export class SeriesCollection {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    first(): Series {
+    get first(): Series {
         return this._items[0];
     }
 
-    items(): Series[] {
+    get items(): Series[] {
         return this._items.slice(0);
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    load(src: any): void {
+        const chart = this.chart;
+
+        if (isArray(src)) {
+            src.forEach(s => this._items.push(this.$_loadSeries(chart, s)));
+        } else if (isObject(src)) {
+            this._items.push(this.$_loadSeries(chart, src));
+        }
+    }
+
     get(name: string): Series {
         return this._map.get(name);
     }
 
     prepareRender(): void {
         this._items.forEach(ser => ser.prepareRender());
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_loadSeries(chart: IChart, src: any): Series {
+        let cls = chart._getSeriesType(src.type);
+
+        if (!cls) {
+        }
+        if (!cls) {
+            cls = chart._getSeriesType('column');
+        }
+
+        const ser = new cls(chart, src.name);
+
+        ser.load(src);
+        return ser;
     }
 }
 

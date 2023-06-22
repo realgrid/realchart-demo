@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isArray, isNumber, isObject, isString } from "../common/Common";
 import { IChart } from "./Chart";
 import { ChartItem, IAxis, ISeries } from "./ChartItem";
 
@@ -151,30 +152,42 @@ export class AxisCollection {
     // fields
     //-------------------------------------------------------------------------
     readonly chart: IChart;
+    readonly isX: boolean;
     private _items: Axis[] = [];
     private _map = new Map<string, Axis>();
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart) {
+    constructor(chart: IChart, isX: boolean) {
         this.chart = chart;
+        this.isX = isX;
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    first(): Axis {
+    get first(): Axis {
         return this._items[0];
     }
 
-    items(): Axis[] {
+    get items(): Axis[] {
         return this._items.slice(0);
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    load(src: any): void {
+        const chart = this.chart;
+
+        if (isArray(src)) {
+            src.forEach((s, i) => this._items.push(this.$_loadAxis(chart, s, i)));
+        } else if (isObject(src)) {
+            this._items.push(this.$_loadAxis(chart, src, 0));
+        }
+    }
+
     get(name: string): Axis {
         return this._map.get(name);
     }
@@ -185,5 +198,46 @@ export class AxisCollection {
 
     calculateRange(): void {
         this._items.forEach(axis => axis.calcluateRange());
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_loadAxis(chart: IChart, src: any, index: number): Axis {
+        let cls = chart._getAxisType(src.type);
+
+        if (!cls) {
+            let t: string;
+
+            if (isArray(src.categories)) {
+                t = 'category';
+            } else if (this.isX) {
+                for (const ser of chart.getSeries().items) {
+                    if (ser.isCategorized()) {
+                        if (src.name && ser.xAxis === src.name) {
+                            t = 'category';
+                            break;
+                        } else if (isNumber(ser.xAxis) && ser.xAxis === index) {
+                            t = 'category';
+                            break;
+                        }
+                    }   
+                }
+                if (!t && chart.series.isCategorized()) {
+                    t = 'category';
+                }
+            }
+            if (t) {
+                cls = chart._getAxisType(t);
+            }
+        }
+        if (!cls) {
+            cls = chart._getAxisType('linear');
+        }
+
+        const axis = new cls(chart, src.name);
+
+        axis.load(src);
+        return axis;
     }
 }

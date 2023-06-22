@@ -87,7 +87,11 @@ export interface IAxis {
 
 export interface ISeries {
 
-    points(): DataPointCollection;
+    xAxis: string | number;
+    yAxis: string | number;
+
+    isCategorized(): boolean;
+    getPoints(): DataPointCollection;
     getValue(point: DataPoint, axis: IAxis): number;
     collectCategories(axis: IAxis): string[];
     collectValues(axis: IAxis, categories: string[]): number[];

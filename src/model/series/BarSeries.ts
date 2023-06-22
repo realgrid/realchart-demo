@@ -38,4 +38,14 @@ export class BarSeries extends Series {
     set barWidth(value) {
         this._barWidth = value;
     }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    isCategorized(): boolean {
+        return true;
+    }
+}
+
+export class ColumnSeries extends BarSeries {
 }

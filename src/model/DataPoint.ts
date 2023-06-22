@@ -42,6 +42,8 @@ export class DataPointCollection {
     load(source: any): void {
         if (isArray(source)) {
             this._points = source.map(s => new DataPoint(s));
+        } else {
+            this._points = [];
         }
     }
 
