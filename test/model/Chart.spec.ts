@@ -33,4 +33,14 @@ import { LinearAxis } from '../../src/model/axis/LinearAxis';
         expect(chart.xAxis).instanceOf(CategoryAxis);
         expect(chart.yAxis).instanceOf(LinearAxis);
     });
+
+    it ('축은 반드시 존재해야 한다.', () => {
+        const json = {
+            series: { data: [1, 2, 3] }
+        };
+        const chart = new Chart(json)
+
+        expect(chart.xAxis).instanceOf(CategoryAxis);
+        expect(chart.yAxis).instanceOf(LinearAxis);
+    })
 });

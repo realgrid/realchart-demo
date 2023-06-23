@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { Axis, IAxisTick } from "../Axis";
-import { ISeries } from "../ChartItem";
 
 export class LinearAxis extends Axis {
 
@@ -17,8 +16,8 @@ export class LinearAxis extends Axis {
     protected _doPrepareRender(): void {
     }
 
-    protected _doCalcluateRange(): { min: number; max: number; } {
-        return;
+    protected _doCalcluateRange(values: number[]): { min: number; max: number; } {
+        return super._doCalcluateRange(values);
     }
 
     protected _doPrepareTicks(min: number, max: number, length: number): IAxisTick[] {

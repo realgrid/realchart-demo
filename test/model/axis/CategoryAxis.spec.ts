@@ -50,6 +50,31 @@ import { Chart } from '../../../src/model/Chart';
         chart.prepareRender();
 
         expect(axis).instanceOf(CategoryAxis);
+        expect(series.getPoints().count).eq(json.series.data.length);
         expect((axis as CategoryAxis).getCategories().length).eq(series.getPoints().count);
+    });
+
+    it('calculate min max', () => {
+        const json = loadChartJson("column-01");
+        const chart = new Chart(json);
+        const series = chart.series;
+        const axis = chart.xAxis as CategoryAxis;
+
+        chart.prepareRender();
+
+        expect(axis._range.min).eq(0);        
+        expect(axis._range.max).eq(series.getPoints().count - 1);        
+    });
+
+    it('calculate min max 2', () => {
+        const json = loadChartJson("column-02");
+        const chart = new Chart(json);
+        const series = chart.series;
+        const axis = chart.xAxis as CategoryAxis;
+
+        chart.prepareRender();
+
+        expect(axis._range.min).eq(0);        
+        expect(axis._range.max).eq(series.getPoints().count - 1);        
     });
 });

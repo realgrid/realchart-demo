@@ -8,7 +8,15 @@
 
 import { isArray, isNumber, isObject, isString } from "../common/Common";
 import { IChart } from "./Chart";
-import { ChartItem, IAxis, ISeries } from "./ChartItem";
+import { ChartItem } from "./ChartItem";
+import { ISeries } from "./Series";
+
+export interface IAxis {
+    /**
+     * data point의 값을 축 상의 값으로 리턴한다.
+     */
+    getValue(value: any): number;
+}
 
 export class AxisItem extends ChartItem {
 
@@ -112,7 +120,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     readonly grid: AxisGrid;
 
     protected _series: ISeries[] = [];
-    protected _range: { min: number, max: number };
+    _range: { min: number, max: number };
 
     //-------------------------------------------------------------------------
     // constructor
@@ -134,19 +142,25 @@ export abstract class Axis extends ChartItem implements IAxis {
     // methods
     //-------------------------------------------------------------------------
     protected abstract _doPrepareRender(): void;
-    protected abstract _doCalcluateRange(): { min: number, max: number };
     protected abstract _doPrepareTicks(min: number, max: number, length: number): IAxisTick[];
 
     prepareRender(): void {
         this._doPrepareRender();
-    }
 
-    calculateRange(): void {
-        this._range = this._doCalcluateRange();
+        let vals: number[] = [];
+
+        this._series.forEach(ser => {
+            vals = vals.concat(ser.collectValues(this));
+        })
+        this._range = this._doCalcluateRange(vals);
     }
 
     prepareTicks(length: number): void {
         const ticks = this._doPrepareTicks(this._range.min, this._range.max, length);
+    }
+
+    getValue(value: any): number {
+        return +value;
     }
 
     //-------------------------------------------------------------------------
@@ -156,6 +170,23 @@ export abstract class Axis extends ChartItem implements IAxis {
         if (series && !this._series.includes(series)) {
             this._series.push(series);
         }
+    }
+
+    protected _doCalcluateRange(values: number[]): { min: number, max: number } {
+        let min = NaN;
+        let max = NaN;
+
+        values.forEach(v => {
+            if (!isNaN(v)) {
+                if (isNaN(min)) {
+                    min = max = v;
+                } else {
+                    min = Math.min(min, v);
+                    max = Math.max(max, v);
+                }
+            }
+        })
+        return { min, max };
     }
 }
 
@@ -180,6 +211,10 @@ export class AxisCollection {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    get count(): number {
+        return this._items.length;
+    }
+
     get first(): Axis {
         return this._items[0];
     }
@@ -193,11 +228,22 @@ export class AxisCollection {
     //-------------------------------------------------------------------------
     load(src: any): void {
         const chart = this.chart;
+        const series = chart.series;
+        const items = this._items;
 
         if (isArray(src)) {
-            src.forEach((s, i) => this._items.push(this.$_loadAxis(chart, s, i)));
+            src.forEach((s, i) => items.push(this.$_loadAxis(chart, s, i)));
         } else if (isObject(src)) {
-            this._items.push(this.$_loadAxis(chart, src, 0));
+            items.push(this.$_loadAxis(chart, src, 0));
+        }
+
+        // 축은 반드시 존재해야 한다.
+        if (items.length === 0) {
+            if (series.isCategorized() && this.isX) {
+                items.push(new (chart._getAxisType('category'))());
+            } else {
+                items.push(new (chart._getAxisType('linear'))());
+            }
         }
     }
 
@@ -207,10 +253,6 @@ export class AxisCollection {
 
     prepareRender(): void {
         this._items.forEach(axis => axis.prepareRender());
-    }
-
-    calculateRange(): void {
-        this._items.forEach(axis => axis.calculateRange());
     }
 
     prepareTicks(length: number): void {

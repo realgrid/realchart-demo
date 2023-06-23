@@ -15,10 +15,6 @@ class AxisImpl extends Axis {
     protected _doPrepareRender(): void {
     }
 
-    protected _doCalcluateRange(): { min: number; max: number; } {
-        return;
-    }
-
     protected _doPrepareTicks(min: number, max: number, length: number): IAxisTick[] {
         return [];
     }

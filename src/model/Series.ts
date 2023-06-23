@@ -6,13 +6,30 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNone, isObject, isString, pickNum, pickProp } from "../common/Common";
+import { isArray, isNone, isObject, isString } from "../common/Common";
 import { RcObject } from "../common/RcObject";
+import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
-import { ChartItem, IAxis, ISeries } from "./ChartItem";
+import { ChartItem } from "./ChartItem";
 import { DataPoint, DataPointCollection } from "./DataPoint";
 import { CategoryAxis } from "./axis/CategoryAxis";
 
+export interface ISeries {
+
+    xAxis: string | number;
+    yAxis: string | number;
+    xField: string | number;
+    yField: string | number;
+
+    isCategorized(): boolean;
+    getPoints(): DataPointCollection;
+    getValue(point: DataPoint, axis: IAxis): number;
+    collectCategories(axis: IAxis): string[];
+    collectValues(axis: IAxis): number[];
+}
+
+export interface ISeriesGroup {
+}
 export abstract class Series extends ChartItem implements ISeries {
 
     //-------------------------------------------------------------------------
@@ -82,6 +99,12 @@ export abstract class Series extends ChartItem implements ISeries {
         }
     }
 
+    prepareRender(): void {
+        this._xAxisObj = this.chart.connectSeries(this, true);
+        this._yAxisObj = this.chart.connectSeries(this, false);
+        this._points.prepare();
+    }
+
     collectCategories(axis: IAxis): string[] {
         if (axis instanceof CategoryAxis) {
             let fld = axis.categoryField;
@@ -94,17 +117,8 @@ export abstract class Series extends ChartItem implements ISeries {
         }
     }
 
-    collectValues(axis: IAxis, categories: string[]): number[] {
-        const vals: number[] = [];
-
-        return vals;
-    }
-
-    prepareRender(): void {
-        this._xAxisObj = this.chart.connectSeries(this, true);
-        this._yAxisObj = this.chart.connectSeries(this, false);
-
-        this._points.prepareRender();
+    collectValues(axis: IAxis): number[] {
+        return this._points.getValues(axis === this._xAxisObj ? 'x' : 'y').map(v => axis.getValue(v));
     }
     
     //-------------------------------------------------------------------------

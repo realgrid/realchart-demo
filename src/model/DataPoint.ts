@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNone, isNumber, isObject, pickNum } from "../common/Common";
-import { IAxis, ISeries } from "./ChartItem";
+import { ISeries } from "./Series";
 
 export class DataPoint {
 
@@ -57,10 +57,18 @@ export class DataPointCollection {
         return this._points.map(p => p[axis]);
     }
 
+    getCategories(axis: String): string[] {
+        if (axis = 'x') {
+
+        } else {
+            return;
+        }
+    }
+
     /**
      * 각 point의 두 축에 대한 값을 설정한다.
      */
-    prepareRender(): void {
+    prepare(): void {
         const series = this._owner;
 
         this._points.forEach((p, i) => {
@@ -75,6 +83,7 @@ export class DataPointCollection {
                 p.x = v[series.xField] || v.x || v.name || v.label;
                 p.y = v[series.xField] || v.y || v.value;
             } else {
+                // x 축에 대한 정보가 없으므로 홑 값들은 순서대로 값을 지정한다.
                 p.x = i;
                 p.y = v;
             }

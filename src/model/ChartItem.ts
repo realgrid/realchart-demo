@@ -80,23 +80,3 @@ export class ChartItem extends RcObject {
     protected _doPrepareRender(chart: IChart): void {
     }
 }
-
-export interface IAxis {
-}
-
-export interface ISeries {
-
-    xAxis: string | number;
-    yAxis: string | number;
-    xField: string | number;
-    yField: string | number;
-
-    isCategorized(): boolean;
-    getPoints(): DataPointCollection;
-    getValue(point: DataPoint, axis: IAxis): number;
-    collectCategories(axis: IAxis): string[];
-    collectValues(axis: IAxis, categories: string[]): number[];
-}
-
-export interface ISeriesGroup {
-}

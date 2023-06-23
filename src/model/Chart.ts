@@ -7,9 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject } from "../common/RcObject";
-import { Axis, AxisCollection } from "./Axis";
-import { ChartItem, IAxis, ISeries } from "./ChartItem";
-import { Series, SeriesCollection, SeriesGroup } from "./Series";
+import { Axis, AxisCollection, IAxis } from "./Axis";
+import { ChartItem } from "./ChartItem";
+import { ISeries, Series, SeriesCollection, SeriesGroup } from "./Series";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
 import { LogAxis } from "./axis/LogAxis";
@@ -147,14 +147,13 @@ export class Chart extends RcObject implements IChart {
     }
 
     prepareRender(): void {
-        this._xAxes.prepareRender();
-        this._yAxes.prepareRender();
-        
-        // 축들에 연결한다.
+        // 축에 연결한다.
         this._series.prepareRender();
 
-        this._xAxes.calculateRange();
-        this._yAxes.calculateRange();
+        // 카테고리 목록을 만든다.
+        // 축의 값 범위를 계산한다.
+        this._xAxes.prepareRender();
+        this._yAxes.prepareRender();
     }
 
     // 여러번 호출될 수 있다.

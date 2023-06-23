@@ -6,9 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray } from "../../common/Common";
+import { isArray, isNumber } from "../../common/Common";
 import { Axis, AxisTick, IAxisTick } from "../Axis";
-import { ISeries } from "../ChartItem";
+import { ISeries } from "../Series";
 
 export class CategoryAxisTick extends AxisTick {
 
@@ -66,12 +66,20 @@ export class CategoryAxis extends Axis {
         return new CategoryAxisTick(this);
     }
 
-    protected _doPrepareRender(): void {
+    getValue(value: any): number {
+        if (isNumber(value)) {
+            return value;
+        } else {
+            return this._map.get(value);
+        }
     }
 
-    protected _doCalcluateRange(): { min: number; max: number; } {
+    protected _doPrepareRender(): void {
         this._collectCategories(this._series);
-        return;
+    }
+
+    protected _doCalcluateRange(values: number[]): { min: number; max: number; } {
+        return super._doCalcluateRange(values);
     }
 
     protected _doPrepareTicks(min: number, max: number, length: number): IAxisTick[] {
