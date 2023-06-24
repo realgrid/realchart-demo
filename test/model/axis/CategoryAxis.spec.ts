@@ -77,4 +77,28 @@ import { Chart } from '../../../src/model/Chart';
         expect(axis._range.min).eq(0);        
         expect(axis._range.max).eq(series.getPoints().count - 1);        
     });
+
+    it('categories', () => {
+        const json = {
+            xAxis: {
+                categories: ["aa", "bb", "cc", "dd"]
+            },
+            series: {
+                data: [
+                    ['a', 1], ['b', 2], ['c', 3]
+                ]
+            }
+        };
+        const chart = new Chart(json);
+        const axis = chart.xAxis as CategoryAxis;
+
+        expect(axis).instanceof(CategoryAxis);
+        expect(axis.categories).deep.eq(json.xAxis.categories);
+    });
+
+    it('number ticks', () => {
+        const json = loadChartJson("column-01");
+        const chart = new Chart(json);
+
+    });
 });

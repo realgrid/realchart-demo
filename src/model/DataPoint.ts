@@ -13,8 +13,8 @@ export class DataPoint {
 
     value: any;
     index: number;
-    x: number | string;
-    y: number | string;
+    x: number;
+    y: number;
 
     constructor(source: any) {
         this.value = source;
@@ -57,14 +57,6 @@ export class DataPointCollection {
         return this._points.map(p => p[axis]);
     }
 
-    getCategories(axis: String): string[] {
-        if (axis = 'x') {
-
-        } else {
-            return;
-        }
-    }
-
     /**
      * 각 point의 두 축에 대한 값을 설정한다.
      */
@@ -94,5 +86,9 @@ export class DataPointCollection {
         for (let i = 0, n = this._points.length; i < n; i++) {
             if (callback(this._points[i], i) === true) break;
         }
+    }
+
+    getVisibles(): DataPoint[] {
+        return this._points.filter(p => this._owner.isVisible(p));
     }
 }

@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isArray, isObject } from "../common/Common";
 import { RcObject } from "../common/RcObject";
 import { IChart } from "./Chart";
 import { DataPoint, DataPointCollection } from "./DataPoint";
@@ -58,10 +59,6 @@ export class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _getProps(): string[] {
-        return ['visible'];
-    }
-
     protected _changed(): void {
         this.chart?._modelChanged(this);
     }
@@ -70,11 +67,16 @@ export class ChartItem extends RcObject {
     // internal members
     //-------------------------------------------------------------------------
     protected _doLoad(source: any): void {
-        this._getProps().forEach(p => {
-            if (source.hasOwnProperty(p)) {
-                this[p] = source[p];
+        for (const p in source) {
+            let v = source[p];
+
+            if (isArray(v)) {
+                v = v.slice(0);
+            } else if (isObject(v)) {
+                v = Object.assign({}, v);
             }
-        });
+            this[p] = v;
+        }
     }
 
     protected _doPrepareRender(chart: IChart): void {

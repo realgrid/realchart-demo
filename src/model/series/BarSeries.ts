@@ -14,9 +14,9 @@ export class BarSeries extends Series {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    private static Defaults = {
+    static Defaults = Object.assign({
         barWidth: 0.7,
-    };
+    }, Series.Defaults);
 
     //-------------------------------------------------------------------------
     // property fields

@@ -14,7 +14,7 @@ export class LogAxis extends LinearAxis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doPrepareTicks(min: number, max: number, length: number): IAxisTick[] {
+    protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
         return;
     }
 }

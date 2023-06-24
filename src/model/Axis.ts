@@ -16,6 +16,7 @@ export interface IAxis {
      * data point의 값을 축 상의 값으로 리턴한다.
      */
     getValue(value: any): number;
+    contains(value: number): boolean;
 }
 
 export class AxisItem extends ChartItem {
@@ -50,9 +51,6 @@ export class AxisTitle extends AxisItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _getProps(): string[] {
-        return ['text', 'margin'].concat(super._getProps());
-    }
 }
 
 export class AxisGrid extends AxisItem {
@@ -67,9 +65,6 @@ export class AxisGrid extends AxisItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _getProps(): string[] {
-        return ['circular', 'startVisible', 'endVisible'].concat(super._getProps());
-    }
 }
 
 export class AxisTickLabel extends AxisItem {
@@ -83,17 +78,28 @@ export class AxisTick extends AxisItem {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    prefix: string;
+    suffix: string;
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _ticks: number[];
-
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getTick(v: any): string {
+        if (v != null) {
+            let s = String(v);
+            if (this.prefix) s = this.prefix + s;
+            if (this.suffix) s += this.suffix;
+            return s;
+        } else {
+            return '';
+        }
+    }
 }
 
 export interface IAxisTick {
@@ -121,6 +127,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     protected _series: ISeries[] = [];
     _range: { min: number, max: number };
+    _ticks: AxisTick[];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -142,7 +149,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     // methods
     //-------------------------------------------------------------------------
     protected abstract _doPrepareRender(): void;
-    protected abstract _doPrepareTicks(min: number, max: number, length: number): IAxisTick[];
+    protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[];
 
     prepareRender(): void {
         this._doPrepareRender();
@@ -155,14 +162,21 @@ export abstract class Axis extends ChartItem implements IAxis {
         this._range = this._doCalcluateRange(vals);
     }
 
-    prepareTicks(length: number): void {
-        const ticks = this._doPrepareTicks(this._range.min, this._range.max, length);
+    buildTicks(length: number): void {
+        const ticks = this._doBuildTicks(this._range.min, this._range.max, length);
     }
 
     getValue(value: any): number {
         return +value;
     }
 
+    contains(value: number): boolean {
+        return value >= this._range.min && value <= this._range.max;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -173,19 +187,9 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     protected _doCalcluateRange(values: number[]): { min: number, max: number } {
-        let min = NaN;
-        let max = NaN;
+        let min = Math.min(...values);
+        let max = Math.max(...values);
 
-        values.forEach(v => {
-            if (!isNaN(v)) {
-                if (isNaN(min)) {
-                    min = max = v;
-                } else {
-                    min = Math.min(min, v);
-                    max = Math.max(max, v);
-                }
-            }
-        })
         return { min, max };
     }
 }
@@ -236,15 +240,6 @@ export class AxisCollection {
         } else if (isObject(src)) {
             items.push(this.$_loadAxis(chart, src, 0));
         }
-
-        // 축은 반드시 존재해야 한다.
-        if (items.length === 0) {
-            if (series.isCategorized() && this.isX) {
-                items.push(new (chart._getAxisType('category'))());
-            } else {
-                items.push(new (chart._getAxisType('linear'))());
-            }
-        }
     }
 
     get(name: string): Axis {
@@ -255,8 +250,8 @@ export class AxisCollection {
         this._items.forEach(axis => axis.prepareRender());
     }
 
-    prepareTicks(length: number): void {
-        this._items.forEach(axis => axis.prepareTicks(length));
+    buildTicks(length: number): void {
+        this._items.forEach(axis => axis.buildTicks(length));
     }
 
     connect(series: ISeries): Axis {

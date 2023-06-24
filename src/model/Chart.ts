@@ -137,9 +137,11 @@ export class Chart extends RcObject implements IChart {
     load(source: any): void {
         // series - 시리즈를 먼저 로드해야 디폴트 axis를 지정할 수 있다.
         this._series.load(source["series"])
+
         // axes
-        this._xAxes.load(source["xAxes"] || source["xAxis"]);
-        this._yAxes.load(source["yAxes"] || source["yAxis"]);
+        // 축은 반드시 존재해야 한다.
+        this._xAxes.load(source["xAxes"] || source["xAxis"] || {});
+        this._yAxes.load(source["yAxes"] || source["yAxis"] || {});
     }
 
     connectSeries(series: Series, isX: boolean): Axis {
@@ -158,8 +160,8 @@ export class Chart extends RcObject implements IChart {
 
     // 여러번 호출될 수 있다.
     layoutAxes(width: number, height: number, phase: number): void {
-        this._xAxes.prepareTicks(width);
-        this._yAxes.prepareTicks(height);
+        this._xAxes.buildTicks(width);
+        this._yAxes.buildTicks(height);
     }
 
     /**

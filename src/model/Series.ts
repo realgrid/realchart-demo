@@ -26,11 +26,18 @@ export interface ISeries {
     getValue(point: DataPoint, axis: IAxis): number;
     collectCategories(axis: IAxis): string[];
     collectValues(axis: IAxis): number[];
+    isVisible(p: DataPoint): boolean;
 }
 
 export interface ISeriesGroup {
 }
 export abstract class Series extends ChartItem implements ISeries {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static Defaults = {
+    };
 
     //-------------------------------------------------------------------------
     // property fields
@@ -120,7 +127,14 @@ export abstract class Series extends ChartItem implements ISeries {
     collectValues(axis: IAxis): number[] {
         return this._points.getValues(axis === this._xAxisObj ? 'x' : 'y').map(v => axis.getValue(v));
     }
+
+    isVisible(point: DataPoint): boolean {
+        return this._xAxisObj.contains(point.x) && this._yAxisObj.contains(point.y);
+    }
     
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

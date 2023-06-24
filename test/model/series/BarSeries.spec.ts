@@ -20,4 +20,10 @@ import { BarSeries } from '../../../src/model/series/BarSeries';
 
         expect(series).exist;
     });
+
+    it('props', () => {
+        let series = new BarSeries(null);
+
+        expect(series.barWidth).eq(BarSeries.Defaults.barWidth);
+    });
 });

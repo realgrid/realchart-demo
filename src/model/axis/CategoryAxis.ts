@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber } from "../../common/Common";
-import { Axis, AxisTick, IAxisTick } from "../Axis";
+import { Axis, AxisTick, IAxis, IAxisTick } from "../Axis";
 import { ISeries } from "../Series";
 
 export class CategoryAxisTick extends AxisTick {
@@ -35,7 +35,7 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _cats: string[];
+    _cats: string[];
     private _map = new Map<string, number>(); // data point의 축 위치를 찾기 위해 사용한다.
 
     //-------------------------------------------------------------------------
@@ -78,12 +78,21 @@ export class CategoryAxis extends Axis {
         this._collectCategories(this._series);
     }
 
-    protected _doCalcluateRange(values: number[]): { min: number; max: number; } {
-        return super._doCalcluateRange(values);
-    }
+    protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
+        const cats = this._cats;
+        const nCat = cats.length;
+        const ticks: IAxisTick[] = [];
 
-    protected _doPrepareTicks(min: number, max: number, length: number): IAxisTick[] {
-        return;
+        min = Math.floor(min);
+        max = Math.ceil(max);
+
+        for (let i = min; i <= max; i++) {
+            ticks.push({
+                value: i,
+                label: this.tick.getTick(i < nCat ? cats[i] : i)
+            })
+        }
+        return ticks;
     }
 
     //-------------------------------------------------------------------------
