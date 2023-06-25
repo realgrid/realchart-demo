@@ -39,6 +39,10 @@ export class DataPointCollection {
         return this._points.length;
     }
 
+    get(index: number): DataPoint {
+        return this._points[index];
+    }
+
     load(source: any): void {
         if (isArray(source)) {
             // x 축에 대한 정보가 없으므로 홑 값들은 앞으로 이동시킨다.

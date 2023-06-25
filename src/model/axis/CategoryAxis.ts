@@ -6,9 +6,22 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber } from "../../common/Common";
-import { Axis, AxisTick, IAxis, IAxisTick } from "../Axis";
+import { isArray, isNumber, pickNum } from "../../common/Common";
+import { Axis, AxisTick, AxisTickMark, IAxisTick } from "../Axis";
 import { ISeries } from "../Series";
+
+export enum CategoryTickMarkPosition {
+    TICK = 'tick',
+    EDGE = 'edge'
+}
+
+export class CategoryAxisTickMark extends AxisTickMark {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    position = CategoryTickMarkPosition.TICK;
+}
 
 export class CategoryAxisTick extends AxisTick {
 
@@ -20,6 +33,13 @@ export class CategoryAxisTick extends AxisTick {
      * true이면 interval과 상관없이 마지막 tick은 항상 표시된다.
      */
     showLast = false;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _createMark(): AxisTickMark {
+        return new CategoryAxisTickMark(this.axis);
+    }
 }
 
 /**
@@ -29,6 +49,10 @@ export class CategoryAxisTick extends AxisTick {
  * data point들의 이 축의 값들 중 문자열인 값들, 혹은 categoryField에 해당하는 값들을 수집하거나,
  * categories로 지정한 것들로 중복을 제거하고 tick 목록으로 구성한다.
  * 수집된 category들은 0부터 시작해서 unit 속성에 지정된 값(기본값 1)씩 차례대로 증가한 값을 갖게된다.
+ * 
+ * tick들은 축을 카테고리 수로 등분된(TODO: 혹은, 비율대로 - category axis의 특징) 영역(카테고리 크기가 된다)의 중앙에 생성된다.
+ * tick mark는 tick 위치나, 양 옆에 표시될 수 있다.
+ * tick label은 tick 위치에 표시된다.
  */
 export class CategoryAxis extends Axis {
 
@@ -81,13 +105,20 @@ export class CategoryAxis extends Axis {
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
         const cats = this._cats;
         const nCat = cats.length;
+        const minPad = pickNum(this.minPadding, 0);
+        const maxPad = pickNum(this.maxPadding, 0);
         const ticks: IAxisTick[] = [];
 
         min = Math.floor(min);
         max = Math.ceil(max);
 
+        const len = max - min + 1;
+        const interval = length / (len + minPad + maxPad);
+        const pad = minPad * interval;
+
         for (let i = min; i <= max; i++) {
             ticks.push({
+                pos: pad + i * interval + interval / 2,
                 value: i,
                 label: this.tick.getTick(i < nCat ? cats[i] : i)
             })

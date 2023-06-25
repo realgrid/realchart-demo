@@ -70,9 +70,23 @@ export class AxisGrid extends AxisItem {
 export class AxisTickLabel extends AxisItem {
 }
 
-export class AxisTickLine extends AxisItem {
+/**
+ * 기본적으로 tick 위치에 선으로 표시된다.
+ */
+export class AxisTickMark extends AxisItem {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
 }
 
+export class AxisBreak extends AxisItem {
+}
+
+/**
+ * 축 상의 특정 값 위치를 나타낸다.
+ * 카테고리 축의 경우 각 카테고리 값의 위치이다.
+ */
 export class AxisTick extends AxisItem {
 
     //-------------------------------------------------------------------------
@@ -84,6 +98,17 @@ export class AxisTick extends AxisItem {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    mark: AxisTickMark;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(axis: Axis) {
+        super(axis);
+
+        this.mark = this._createMark();
+    }
+
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -100,9 +125,17 @@ export class AxisTick extends AxisItem {
             return '';
         }
     }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected _createMark(): AxisTickMark {
+        return new AxisTickMark(this.axis);
+    }
 }
 
 export interface IAxisTick {
+    pos: number;
     value: number;
     label: string;
 }
@@ -116,6 +149,8 @@ export abstract class Axis extends ChartItem implements IAxis {
     // property fields
     //-------------------------------------------------------------------------
     unit: number;
+    minPadding = 0;
+    maxPadding = 0;
 
     //-------------------------------------------------------------------------
     // fields
@@ -127,7 +162,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     protected _series: ISeries[] = [];
     _range: { min: number, max: number };
-    _ticks: AxisTick[];
+    _ticks: IAxisTick[];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -163,7 +198,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     buildTicks(length: number): void {
-        const ticks = this._doBuildTicks(this._range.min, this._range.max, length);
+        this._ticks = this._doBuildTicks(this._range.min, this._range.max, length);
     }
 
     getValue(value: any): number {

@@ -92,6 +92,8 @@ import { Chart } from '../../../src/model/Chart';
         const chart = new Chart(json);
         const axis = chart.xAxis as CategoryAxis;
 
+        chart.prepareRender();
+
         expect(axis).instanceof(CategoryAxis);
         expect(axis.categories).deep.eq(json.xAxis.categories);
     });
@@ -99,6 +101,22 @@ import { Chart } from '../../../src/model/Chart';
     it('number ticks', () => {
         const json = loadChartJson("column-01");
         const chart = new Chart(json);
+        const axis = chart.xAxis as CategoryAxis;
 
+        chart.prepareRender();
+        chart.layoutAxes(500, 500, 1);
+
+        const series = chart.series;
+        const ticks = axis._ticks;
+
+        expect(ticks.length).gt(0);
+        expect(ticks.length).eq(series.getPoints().count);
+
+        ticks.forEach((t, i) => {
+            expect(t.value).eq(i);
+            expect(t.value).eq(series.getPoints().get(i).x);
+            expect(t.value.toString()).eq(t.label);
+        });
+        expect(ticks[0].pos).gte(0);
     });
 });
