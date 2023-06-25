@@ -28,9 +28,9 @@ export class CategoryAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    interval = 1;
+    steps = 1;
     /**
-     * true이면 interval과 상관없이 마지막 tick은 항상 표시된다.
+     * true이면 steps 상관없이 마지막 tick은 항상 표시된다.
      */
     showLast = false;
 
@@ -65,6 +65,11 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * Category 목록을 수집하는 시리즈.
+     * 지정하지 않으면 모든 시리즈에서 카테고리를 수집한다.
+     */
+    categorySeries: string;
     /**
      * 카테고리로 사용되는 dataPoint 속성.
      * {@link categories}가 지정되면 이 속성은 무시된다.

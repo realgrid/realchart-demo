@@ -53,4 +53,13 @@ import { LinearAxis } from '../../../src/model/axis/LinearAxis';
         expect(axis._range.min).eq(Math.min(...json.series.data.map((v: number[]) => v[1])));                
         expect(axis._range.max).eq(Math.max(...json.series.data.map((v: number[]) => v[1])));        
     });
+
+    it ('build ticks', () => {
+        const json = loadChartJson("column-02");
+        const chart = new Chart(json);
+        const axis = chart.yAxis as LinearAxis;
+
+        chart.prepareRender();
+        chart.layoutAxes(500, 500, 1);
+    })
 });
