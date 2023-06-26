@@ -16,6 +16,13 @@ export const ZWSP = '&#8203;';
 export const ELLIPSIS = '\u2026';
 
 export type Path = string | any[];
+
+export const floor = Math.floor;
+export const ceil = Math.ceil;
+export function fixnum(value: number): number {
+    return parseFloat(value.toPrecision(12));
+}
+
 /**
  * 123, '10%' 형식으로 크기를 지정한다.
  */

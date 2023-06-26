@@ -6,7 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { assert, ceil, fixnum } from "../../common/Types";
 import { Axis, AxisTick, IAxisTick } from "../Axis";
+import { IChart } from "../Chart";
 
 export class LinearAxisTick extends AxisTick {
 
@@ -17,10 +19,175 @@ export class LinearAxisTick extends AxisTick {
     stepPixels = 72;
     stepCount: number;
     steps: number[];
+    /**
+     * true면 소수점값이 표시되지 않도록 한다.
+     */
+    integral = false;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    buildSteps(length: number, base: number, min: number, max: number): number[] {
+        let pts: number[];
+
+        if (Array.isArray(this.steps)) {
+            // 지정한 위치대로 tick들을 생성한다.
+            pts = this.steps.slice(0);
+        } else if (this.stepCount > 0) {
+            pts = this._getStepsByCount(this.stepCount, base, min, max);
+        } else if (this.stepSize > 0) {
+            pts = this._getStepsBySize(this.stepSize, base, min, max);
+        } else if (this.stepPixels > 0) {
+            pts = this._getStepsByPixels(length, this.stepPixels, base, min, max);
+        } else {
+            pts = [min, max];
+        }
+        return pts;
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private _getStepsByCount(count: number, base: number, min: number, max: number): number[] {
+        if (min > base) {
+            min = base;
+            base = NaN;
+        } else if (max < base) {
+            max = base;
+            base = NaN;
+        }
+
+        const integral = isNaN(base) && this.integral;
+        const len = max - min;
+        let step = len / (count - 1);
+        const scale = Math.pow(10, Math.floor(Math.log10(step)));
+        const steps: number[] = [];
+
+        step = Math.ceil(step / scale) * scale;
+
+        if (!isNaN(base)) { // min이 base 아래, max가 base 위에 있다.
+            assert(min < base && max > base, "base error");
+            count = Math.max(3, count);
+
+            while (true) {
+                const n = ceil((base - min) / step) + ceil((max - base) / step) + 1; // +1은 base
+                if (n > count) {
+                    step += scale;
+                } else {
+                    break;
+                }
+            }
+            min = base - ceil((base - min) / step) * step;
+
+        } else {
+            if (min > Math.floor(min / scale) * scale) {
+                min = Math.floor(min / scale) * scale;
+            } else if (min < Math.ceil(min / scale) * scale) {
+                min = Math.ceil(min / scale) * scale;
+            }
+        }
+
+        steps.push(min);
+        for (let i = 1; i < count; i++) {
+            steps.push(fixnum(steps[i - 1] + step));
+        }
+        return steps;
+    }
+
+    private _getStepsBySize(size: number, base: number, min: number, max: number): number[] {
+        const steps: number[] = [];
+        let v: number;
+
+        if (!isNaN(base)) {
+            steps.push(v = base);
+            while (v > min) {
+                steps.unshift(v -= size);
+            }
+            v = base;
+            while (v < max) {
+                steps.push(v += size);
+            }
+        } else {
+            steps.push(v = min);
+            while (v < max) {
+                steps.push(v += size);
+            }
+        }
+        return steps;
+    }
+
+    protected _getStepMultiples(step: number): number[] {
+        return [1, 2, 2.5, 5, 10];
+    }
+
+    private _getStepsByPixels(length: number, pixels: number, base: number, min: number, max: number): number[] {
+        if (min > base) {
+            min = base;
+            base = NaN;
+        } else if (max < base) {
+            max = base;
+            base = NaN;
+        }
+
+        const len = max - min;
+        let count = Math.floor(length / this.stepPixels) + 1;
+        let step = len / (count - 1);
+        const scale = Math.pow(10, Math.floor(Math.log10(step)));
+        const multiples = this._getStepMultiples(step);
+        const steps: number[] = [];
+        let v: number;
+
+        step = step / scale;
+        if (multiples) {
+            if (step > multiples[0]) {
+                let i = 0;
+                for (; i < multiples.length - 1; i++) {
+                    if (step > multiples[i] && step < multiples[i + 1]) {
+                        step = multiples[i + 1];
+                        break;
+                    }
+                }
+                if (i >= multiples.length) {
+                    debugger;
+                    step = multiples[multiples.length - 1];
+                }
+            } else {
+                step = multiples[0];
+            }
+        }
+        step *= scale;
+
+        if (!isNaN(base)) { // min이 base 아래, max가 base 위에 있다.
+            assert(min < base && max > base, "base error");
+            count = Math.max(3, count);
+
+            while (true) {
+                const n = ceil((base - min) / step) + ceil((max - base) / step) + 1; // +1은 base
+                if (n > count) {
+                    step += scale;
+                } else {
+                    break;
+                }
+            }
+            min = base - ceil((base - min) / step) * step;
+
+        } else {
+            if (min > Math.floor(min / scale) * scale) {
+                min = Math.floor(min / scale) * scale;
+            } else if (min < Math.ceil(min / scale) * scale) {
+                min = Math.ceil(min / scale) * scale;
+            }
+        }
+
+        steps.push(fixnum(v = min));
+        while (v < max) {
+            steps.push(fixnum(v += step));
+        }
+        return steps;
+    }
 }
 
 export class LinearAxis extends Axis {
@@ -35,7 +202,7 @@ export class LinearAxis extends Axis {
     /**
      * 적어도 이 값이 최소값으로 표시된다.
      */
-    baseValue = 0;
+    baseValue: number;
     minValue: number;
     maxValue: number;
     /**
@@ -51,6 +218,15 @@ export class LinearAxis extends Axis {
     //-------------------------------------------------------------------------
     private _hardMin: number;
     private _hardMax: number;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart, name?: string) {
+        super(chart, name);
+
+        this.baseValue = 0;
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -70,19 +246,7 @@ export class LinearAxis extends Axis {
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
         const tick = this.tick as LinearAxisTick;
         const { min, max } = this.$_adjustMinMax(calcedMin, calcedMax);
-        let steps: number[];
-
-        if (Array.isArray(tick.steps)) {
-            steps = tick.steps.slice(0);
-        } else if (tick.stepCount > 0) {
-            steps = this._getStepsByCount(tick.stepCount, min, max);
-        } else if (tick.stepSize > 0) {
-            steps = this._getStepsBySize(tick.stepSize, min, max);
-        } else if (tick.stepPixels > 0) {
-            steps = this._getStepsByPixels(length, tick.stepPixels, min, max);
-        } else {
-            steps = [min, max];
-        }
+        const steps = tick.buildSteps(length, this.baseValue, min, max);
         return;
     }
 
@@ -120,19 +284,5 @@ export class LinearAxis extends Axis {
         }
 
         return { min, max };
-    }
-
-    private _getStepsByCount(count: number, min: number, max: number): number[] {
-        return;
-    }
-
-    private _getStepsBySize(size: number, min: number, max: number): number[] {
-        const unit = Math.pow(10, Math.floor(Math.log10(size)));
-
-        return;
-    }
-
-    private _getStepsByPixels(length: number, pixels: number, min: number, max: number): number[] {
-        return;
     }
 }
