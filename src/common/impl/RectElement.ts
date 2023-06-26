@@ -10,7 +10,6 @@ import { RcElement } from '../RcControl';
 import { IRect } from '../Rectangle';
 
 export interface IRectShape extends IRect {
-
     r?: number;
     rx?: number;
     ry?: number;
@@ -37,22 +36,19 @@ export class RectElement extends RcElement {
         }, styleName);
     }
 
-
     //-------------------------------------------------------------------------
     // fields   
     //-------------------------------------------------------------------------
     private _rect: IRectShape;
 
-
     //-------------------------------------------------------------------------
-    // constructors
+    // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, rect: IRectShape = null, styleName = '') {
         super(doc, 'rect', styleName);
 
         this.rect = rect;
     }
-
 
 	//-------------------------------------------------------------------------
     // properties
@@ -74,7 +70,6 @@ export class RectElement extends RcElement {
             }
         }
     }
-
 
     //-------------------------------------------------------------------------
     // methods
@@ -100,7 +95,6 @@ export class RectElement extends RcElement {
     protected _setBackgroundBorderRadius(value: number): void {
         this.setRadius(value);
     }
-
 
     //-------------------------------------------------------------------------
     // internal members

@@ -402,3 +402,15 @@ export const throwFormat = (format: string, value: any) => {
     throw new Error(formatMessage(format, value));
 }
 
+export enum Align {
+    LEFT = 'left',
+    CENTER = 'center',
+    RIGHT = 'right'
+}
+
+export enum VerticalAlign {
+    TOP = 'top',
+    MIDDLE = 'middle',
+    BOTTOM = 'bottom'
+}
+

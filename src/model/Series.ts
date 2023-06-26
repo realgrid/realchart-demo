@@ -6,12 +6,13 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNone, isObject, isString } from "../common/Common";
+import { isArray, isObject, isString } from "../common/Common";
 import { RcObject } from "../common/RcObject";
 import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 import { DataPoint, DataPointCollection } from "./DataPoint";
+import { ILegendSource } from "./Legend";
 import { CategoryAxis } from "./axis/CategoryAxis";
 
 export interface ISeries {
@@ -21,6 +22,7 @@ export interface ISeries {
     xField: string | number;
     yField: string | number;
 
+    createPoint(source: any): DataPoint;
     isCategorized(): boolean;
     getPoints(): DataPointCollection;
     getValue(point: DataPoint, axis: IAxis): number;
@@ -31,7 +33,7 @@ export interface ISeries {
 
 export interface ISeriesGroup {
 }
-export abstract class Series extends ChartItem implements ISeries {
+export abstract class Series extends ChartItem implements ISeries, ILegendSource {
 
     //-------------------------------------------------------------------------
     // consts
@@ -64,7 +66,7 @@ export abstract class Series extends ChartItem implements ISeries {
     //-------------------------------------------------------------------------
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
-    private _points: DataPointCollection;
+    protected _points: DataPointCollection;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -86,12 +88,28 @@ export abstract class Series extends ChartItem implements ISeries {
     isCategorized(): boolean {
         return false;
     }
+
+    legendColor(): string {
+        return 'red';
+    }
+
+    legendLabel(): string {
+        return this.name;
+    }
+
+    legendVisible(): boolean {
+        return this.visible();
+    }
     
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     load(source: any): void {
         this._points.load(source[this.dataProp || 'data']);
+    }
+
+    createPoint(source: any): DataPoint {
+        return new DataPoint(source);
     }
 
     getValue(point: DataPoint, axis: IAxis): number {
@@ -130,6 +148,10 @@ export abstract class Series extends ChartItem implements ISeries {
 
     isVisible(point: DataPoint): boolean {
         return this._xAxisObj.contains(point.x) && this._yAxisObj.contains(point.y);
+    }
+
+    getLegendSources(list: ILegendSource[]) {
+        list.push(this);
     }
     
     //-------------------------------------------------------------------------
@@ -197,6 +219,15 @@ export class SeriesCollection {
         return this._map.get(name);
     }
 
+    getLegendSources(): ILegendSource[] {
+        const legends: ILegendSource[] = [];
+
+        this._items.forEach(ser => {
+            ser.getLegendSources(legends);
+        })
+        return legends;
+    }
+
     forEach(callback: (p: Series, i?: number) => any): void {
         for (let i = 0, n = this._items.length; i < n; i++) {
             if (callback(this._items[i], i) === true) break;
@@ -216,7 +247,7 @@ export class SeriesCollection {
         if (!cls) {
         }
         if (!cls) {
-            cls = chart._getSeriesType('column');
+            cls = chart._getSeriesType(chart.type);
         }
 
         const ser = new cls(chart, src.name);
@@ -227,5 +258,4 @@ export class SeriesCollection {
 }
 
 export class SeriesGroup extends RcObject {
-
 }

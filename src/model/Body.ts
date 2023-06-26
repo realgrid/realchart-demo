@@ -1,25 +1,35 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Title.ts
+// Body.ts
 // 2023. 05. 28. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { SizeValue } from "../common/Types";
 import { ChartItem } from "./ChartItem";
 
-export class Title extends ChartItem {
+/**
+ * 시리즈들이 그려지는 plot 영역 모델.
+ */
+export class Body extends ChartItem {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    text = 'Title';
 }
 
-export class Subtitle extends Title {
+/**
+ * Pie 시리즈 등 radial 시리즈가 그려지는 영역.
+ */
+export class PolarBody extends Body {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    text = 'Sub Title';
+    startAngle = 0;
+    endAngle = 360;
+    centerX: SizeValue = '50%';
+    centerY: SizeValue = '50%';
+    size: SizeValue = '80%';
 }

@@ -23,9 +23,8 @@ export class ImageElement extends RcElement {
     private _dirty = true;
     private _bounds: IRect;
 
-
     //-------------------------------------------------------------------------
-    // constructors
+    // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, imageUrl?: string, styleName?: string) {
         super(doc, 'image', styleName);
@@ -35,7 +34,6 @@ export class ImageElement extends RcElement {
         }
         this.setAttr('preserveAspectRatio', 'none');
     }
-
 
 	//-------------------------------------------------------------------------
     // properties
@@ -50,7 +48,6 @@ export class ImageElement extends RcElement {
             value ? this.setAttr('href', value) : this.unsetAttr('href');
         }
     }
-
 
     //-------------------------------------------------------------------------
     // methods
@@ -69,7 +66,6 @@ export class ImageElement extends RcElement {
     protected _doSizeChanged(): void {
         this._dirty = true;
     }
-
 
     //-------------------------------------------------------------------------
     // internal members

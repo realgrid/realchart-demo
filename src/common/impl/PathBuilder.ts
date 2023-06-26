@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { IPoint } from "../Point";
-import { ILine } from "./PathElement";
 
 const num = function (v: number): number {
     return isNaN(v) ? 0 : v;
@@ -19,7 +18,6 @@ export class PathBuilder {
     // fields
     //-------------------------------------------------------------------------
     private _path: (string | number)[] = [];
-
 
     //-------------------------------------------------------------------------
     // methods

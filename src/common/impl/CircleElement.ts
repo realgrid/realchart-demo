@@ -20,7 +20,7 @@ export class CircleElement extends RcElement {
     // fields
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
-    // constructors
+    // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, cx?: number, cy?: number, radius?: number, styleName = '') {
         super(doc, 'circle', styleName);
@@ -29,7 +29,6 @@ export class CircleElement extends RcElement {
             this.setCircle(cx, cy, radius);
         }
     }
-
 
 	//-------------------------------------------------------------------------
     // properties

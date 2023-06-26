@@ -11,7 +11,6 @@ import { Utils } from '../Utils';
 import { SvgShapes } from './SvgShape';
 
 export interface ILine {
-
     x1: number;
     y1: number;
     x2: number;
@@ -32,14 +31,13 @@ export class LineElement extends PathElement {
     // fields
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
-    // constructors
+    // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, line?: ILine, styleName = '') {
         super(doc, null, styleName);
 
         this.setLine(line);
     }
-
 
     //-------------------------------------------------------------------------
     // properties
@@ -82,14 +80,12 @@ export class LineElement extends PathElement {
     }
 }
 
-
 export class LineElementEx extends PathElement {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     private _line: ILine;
-
 
     //-------------------------------------------------------------------------
     // constructors
@@ -99,7 +95,6 @@ export class LineElementEx extends PathElement {
 
         this.setLine(line);
     }
-
 
     //-------------------------------------------------------------------------
     // properties
@@ -114,7 +109,6 @@ export class LineElementEx extends PathElement {
             this.$_render();
         }
     }
-
 
     //-------------------------------------------------------------------------
     // methods
@@ -184,7 +178,6 @@ export class LineElementEx extends PathElement {
         }
         this.$_update(x1, y, x2, y);
     }
-
 
     //-------------------------------------------------------------------------
     // internal members

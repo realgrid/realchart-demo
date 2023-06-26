@@ -13,8 +13,8 @@ export class DataPoint {
 
     value: any;
     index: number;
-    x: number;
-    y: number;
+    x: any;
+    y: any;
 
     constructor(source: any) {
         this.value = source;

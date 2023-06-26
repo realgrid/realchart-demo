@@ -196,6 +196,6 @@ export class SvgShapes {
             'L', x + w, y,
             'L', x + w / 2, y + h,
             'Z'
-];
+        ];
     }
 }

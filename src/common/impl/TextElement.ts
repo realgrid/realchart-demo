@@ -40,12 +40,10 @@ export class TextElement extends RcElement {
         return new TextElement(doc, text, styleName);
     }
 
-
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     private _layout = TextLayout.TOP;
-
 
     //-------------------------------------------------------------------------
     // fields
@@ -53,7 +51,6 @@ export class TextElement extends RcElement {
     private _dirty = true;
     private _text = '';
     private _bounds: IRect;
-
 
     //-------------------------------------------------------------------------
     // constructor
@@ -64,7 +61,6 @@ export class TextElement extends RcElement {
         this.setAttr('text-anchor', 'middle');
         if (text) this.text = text;
     }
-
 
 	//-------------------------------------------------------------------------
     // properties
@@ -118,7 +114,6 @@ export class TextElement extends RcElement {
     set opacity(value: number) {
         this.setAttr('fill-opacity', value);
     }
-
 
     //-------------------------------------------------------------------------
     // methods
@@ -228,7 +223,6 @@ export class TextElement extends RcElement {
         }
         return this._bounds;
     }
-
 
     //-------------------------------------------------------------------------
     // internal members

@@ -18,7 +18,6 @@ export class GroupElement extends RcElement {
         height: ''
     }
 
-
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
@@ -33,7 +32,6 @@ export class GroupElement extends RcElement {
 
         this._doInitChildren(doc);
     }
-
 
 	//-------------------------------------------------------------------------
     // properties
@@ -54,7 +52,6 @@ export class GroupElement extends RcElement {
         }
         return this;
     }
-    
 
     //-------------------------------------------------------------------------
     // internal members

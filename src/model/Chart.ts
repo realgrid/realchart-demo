@@ -9,6 +9,7 @@
 import { RcObject } from "../common/RcObject";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { ChartItem } from "./ChartItem";
+import { ILegendSource } from "./Legend";
 import { ISeries, Series, SeriesCollection, SeriesGroup } from "./Series";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
@@ -23,6 +24,10 @@ import { ScatterSeries } from "./series/ScatterSeries";
 
 export interface IChart {
 
+    /**
+     * 기본 시리즈 타입.
+     */
+    type: string;
     series: ISeries;
     xAxis: IAxis;
     yAxis: IAxis;
@@ -36,6 +41,7 @@ export interface IChart {
     axisByName(axis: string): Axis;
     connectSeries(series: Series, isX: boolean): Axis;
     getGroup(group: String): SeriesGroup;
+    getLegendSources(): ILegendSource[];
     _visibleChanged(item: ChartItem): void;
     _modelChanged(item: ChartItem): void;
 }
@@ -132,6 +138,10 @@ export class Chart extends RcObject implements IChart {
 
     getGroup(group: string): SeriesGroup {
         return this._groups.get(group);
+    }
+
+    getLegendSources(): ILegendSource[] {
+        return this._series.getLegendSources();
     }
 
     load(source: any): void {
