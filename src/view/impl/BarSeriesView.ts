@@ -1,30 +1,22 @@
 ////////////////////////////////////////////////////////////////////////////////
-// AxisView.ts
-// 2023. 06. 20. created by woori
+// BarSeriesView.ts
+// 2023. 06. 27. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ISize } from "../common/Size";
-import { Axis } from "../model/Axis";
-import { ChartElement } from "./ChartElement";
+import { BarSeries } from "../../model/series/BarSeries";
+import { SeriesView } from "../SeriesView";
 
-export class AxisView extends ChartElement<Axis> {
+export class BarSeriesView extends SeriesView<BarSeries> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(model: Axis, hintWidth: number, hintHeight: number, phase: number): ISize {
-        return;
-    }
-    
-    protected _doLayout(): void {
+    protected _renderSeries(width: number, height: number): void {
     }
 }

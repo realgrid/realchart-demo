@@ -17,7 +17,7 @@ export class ChartItem extends RcObject {
     // property fields
     //-------------------------------------------------------------------------
     readonly chart: IChart;
-    private _visible = true;
+    private _visible: boolean;
 
     //-------------------------------------------------------------------------
     // fields
@@ -25,10 +25,11 @@ export class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart) {
+    constructor(chart: IChart, visible = true) {
         super();
 
         this.chart = chart;
+        this._visible = visible;
     }
 
     //-------------------------------------------------------------------------

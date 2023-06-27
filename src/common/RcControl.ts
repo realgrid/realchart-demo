@@ -487,7 +487,7 @@ export class RcElement extends RcObject {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly TESTING = false;
+    static TESTING = false;
 
     //-------------------------------------------------------------------------
     // static members
@@ -631,7 +631,7 @@ export class RcElement extends RcObject {
         if (child && child._parent !== this) {
             child._parent = this;
             this._dom.appendChild(child._dom);
-            child['_doAttached'](this);
+            child._doAttached(this);
         }
         return child;
     }
@@ -640,7 +640,7 @@ export class RcElement extends RcObject {
         if (child && child._parent !== this) {
             child._parent = this;
             this._dom.insertBefore(child._dom, before._dom);
-            child['_doAttached'](this);
+            child._doAttached(this);
         }
         return child;
     }
@@ -649,7 +649,7 @@ export class RcElement extends RcObject {
         if (child && child._parent !== this) {
             child._parent = this;
             this._dom.insertBefore(child._dom, this._dom.firstChild);
-            child['_doAttached'](this);
+            child._doAttached(this);
         }
         return child;
     }
@@ -658,7 +658,7 @@ export class RcElement extends RcObject {
         if (child && child._parent === this) {//} child._dom.parentNode === this._dom) {
             this._dom.removeChild(child._dom);
             child._parent = null;
-            child['_doDetached'](this);
+            child._doDetached(this);
         }
     }
 
@@ -864,6 +864,12 @@ export class RcElement extends RcObject {
     //-------------------------------------------------------------------------
     protected _testing(): boolean {
         return RcElement.TESTING;
+    }
+
+    protected _doAttached(parent: RcElement) {
+    }
+
+    protected _doDetached(parent: RcElement) {
     }
 
     protected _updateTransform(): void {

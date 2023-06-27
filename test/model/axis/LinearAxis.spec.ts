@@ -8,9 +8,9 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { loadChartJson } from '../../Tester';
 import { Chart } from '../../../src/model/Chart';
 import { LinearAxis } from '../../../src/model/axis/LinearAxis';
+import { Tester } from '../../Tester';
 
 /**
  * Tests for LinearAxis class.
@@ -32,7 +32,7 @@ import { LinearAxis } from '../../../src/model/axis/LinearAxis';
     });
 
     it('calculate min max', () => {
-        const json = loadChartJson("column-01");
+        const json = Tester.loadChartJson("column-01");
         const chart = new Chart(json);
         const series = chart.series;
         const axis = chart.yAxis as LinearAxis;
@@ -44,7 +44,7 @@ import { LinearAxis } from '../../../src/model/axis/LinearAxis';
     });
 
     it('calculate min max 2', () => {
-        const json = loadChartJson("column-02");
+        const json = Tester.loadChartJson("column-02");
         const chart = new Chart(json);
         const axis = chart.yAxis as LinearAxis;
 
@@ -55,7 +55,7 @@ import { LinearAxis } from '../../../src/model/axis/LinearAxis';
     });
 
     it ('build ticks', () => {
-        const json = loadChartJson("column-02");
+        const json = Tester.loadChartJson("column-02");
         const chart = new Chart(json);
         const axis = chart.yAxis as LinearAxis;
 

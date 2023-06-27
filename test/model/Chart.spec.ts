@@ -9,10 +9,10 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { Chart } from '../../src/model/Chart';
-import { loadChartJson } from '../Tester';
 import { ColumnSeries } from '../../src/model/series/BarSeries';
 import { CategoryAxis } from '../../src/model/axis/CategoryAxis';
 import { LinearAxis } from '../../src/model/axis/LinearAxis';
+import { Tester } from '../Tester';
 
 /**
  * Tests for Chart class.
@@ -26,7 +26,7 @@ import { LinearAxis } from '../../src/model/axis/LinearAxis';
     });
 
     it ('load simple', () => {
-        const json = loadChartJson("chart-01");
+        const json = Tester.loadChartJson("chart-01");
         const chart = new Chart(json);
 
         expect(chart.series).instanceOf(ColumnSeries);

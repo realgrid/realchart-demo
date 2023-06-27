@@ -125,8 +125,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     prepareRender(): void {
-        this._xAxisObj = this.chart.connectSeries(this, true);
-        this._yAxisObj = this.chart.connectSeries(this, false);
+        this._xAxisObj = this.chart._connectSeries(this, true);
+        this._yAxisObj = this.chart._connectSeries(this, false);
         this._points.prepare();
     }
 

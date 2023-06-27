@@ -9,6 +9,8 @@
 import { RcControl } from "./common/RcControl";
 import { RcEditTool } from "./common/RcEditTool";
 import { IRect } from "./common/Rectangle";
+import { Chart } from "./main";
+import { ChartView } from "./view/ChartView";
 
 export class ChartControl extends RcControl {
 
@@ -18,32 +20,53 @@ export class ChartControl extends RcControl {
     static readonly CLASS_NAME = 'rtc-control';
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _model: Chart;
+    private _chartView: ChartView;
+
+    //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, container: string | HTMLDivElement) {
         super(doc, container, ChartControl.CLASS_NAME);
+
+        this.addElement(this._chartView = new ChartView(doc));
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * chart model.
+     */
+    get model(): Chart {
+        return this._model;
+    }
+    set model(value: Chart) {
+        if (value !== this._model) {
+            this._model = value;
+            this.invalidateLayout();
+        }
+    }
+
+    chartView(): ChartView {
+        return this._chartView;
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     useImage(src: string): void {
-        throw new Error("Method not implemented.");
     }
 
     protected _creatDefaultTool(): RcEditTool {
-        throw new Error("Method not implemented.");
-    }
-
-    protected _doInitModel(): void {
-        throw new Error("Method not implemented.");
-    }
-
-    protected _doInitView(doc: Document): void {
-        throw new Error("Method not implemented.");
+        return;
     }
 
     protected _doRender(bounds: IRect): void {
-        throw new Error("Method not implemented.");
+        this._chartView.measure(this.doc(), this._model, bounds.width, bounds.height, 1);
+        this._chartView.resize(bounds.width, bounds.height);
+        this._chartView.layout();
     }
 }

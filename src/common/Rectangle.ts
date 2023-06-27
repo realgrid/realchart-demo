@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { ISize } from './Size';
 import { Utils } from './Utils';
 
 export interface IRect {
@@ -13,6 +14,10 @@ export interface IRect {
 	y: number;
 	width: number;
 	height: number;
+}
+
+export function toSize(r: IRect): ISize {
+    return { width: r.width, height: r.height };
 }
 
 export const equalsRect = function (r1: IRect, r2: IRect): boolean {

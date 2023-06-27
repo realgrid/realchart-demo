@@ -139,7 +139,7 @@ export class Legend extends ChartItem {
     // internal members
     //-------------------------------------------------------------------------
     private $_collectItems(): LegendItem[] {
-        return this.chart.getLegendSources().map(src => {
+        return this.chart._getLegendSources().map(src => {
             return new LegendItem(this, src);
         });
     }

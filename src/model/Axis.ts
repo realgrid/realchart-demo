@@ -327,7 +327,7 @@ export class AxisCollection {
             if (isArray(src.categories)) {
                 t = 'category';
             } else if (this.isX) {
-                for (const ser of chart.getSeries().items) {
+                for (const ser of chart._getSeries().items) {
                     if (ser.isCategorized()) {
                         if (src.name && ser.xAxis === src.name) {
                             t = 'category';

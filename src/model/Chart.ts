@@ -11,6 +11,7 @@ import { Axis, AxisCollection, IAxis } from "./Axis";
 import { ChartItem } from "./ChartItem";
 import { ILegendSource } from "./Legend";
 import { ISeries, Series, SeriesCollection, SeriesGroup } from "./Series";
+import { Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
 import { LogAxis } from "./axis/LogAxis";
@@ -18,6 +19,7 @@ import { TimeAxis } from "./axis/TimeAxis";
 import { BarSeries, ColumnSeries } from "./series/BarSeries";
 import { BoxPlotSeries } from "./series/BoxPlotSeries";
 import { BubbleSeries } from "./series/BubbleSeries";
+import { HistogramSeries } from "./series/HistogramSeries";
 import { LineSeries } from "./series/LineSeries";
 import { PieSeries } from "./series/PieSeries";
 import { ScatterSeries } from "./series/ScatterSeries";
@@ -32,16 +34,17 @@ export interface IChart {
     xAxis: IAxis;
     yAxis: IAxis;
 
-    _getSeriesType(type: string): any;
-    _getAxisType(type: string): any;
-    getSeries(): SeriesCollection;
-    getXAxes(): AxisCollection;
-    getYAxes(): AxisCollection;
     seriesByBame(series: string): Series;
     axisByName(axis: string): Axis;
-    connectSeries(series: Series, isX: boolean): Axis;
     getGroup(group: String): SeriesGroup;
-    getLegendSources(): ILegendSource[];
+
+    _getSeriesType(type: string): any;
+    _getAxisType(type: string): any;
+    _getSeries(): SeriesCollection;
+    _getXAxes(): AxisCollection;
+    _getYAxes(): AxisCollection;
+    _connectSeries(series: Series, isX: boolean): Axis;
+    _getLegendSources(): ILegendSource[];
     _visibleChanged(item: ChartItem): void;
     _modelChanged(item: ChartItem): void;
 }
@@ -53,7 +56,8 @@ const series_types = {
     'boxplot': BoxPlotSeries,
     'bubble': BubbleSeries,
     'scatter': ScatterSeries,
-    'pine': PieSeries
+    'histogram': HistogramSeries,
+    'pie': PieSeries
 };
 
 const axis_types = {
@@ -80,6 +84,8 @@ export class Chart extends RcObject implements IChart {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _title: Title;
+    private _subtitle: Title;
     private _series: SeriesCollection;
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
@@ -91,6 +97,8 @@ export class Chart extends RcObject implements IChart {
     constructor(source?: any) {
         super();
 
+        this._title = new Title(this);
+        this._subtitle = new Title(this, false);
         this._series = new SeriesCollection(this);
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new AxisCollection(this, false);
@@ -101,6 +109,14 @@ export class Chart extends RcObject implements IChart {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    get title(): Title {
+        return this._title;
+    }
+
+    get subtitle(): Title {
+        return this._subtitle;
+    }
+
     get series(): ISeries {
         return this._series.first;
     }
@@ -113,15 +129,15 @@ export class Chart extends RcObject implements IChart {
         return this._yAxes.first;
     }
 
-    getSeries(): SeriesCollection {
+    _getSeries(): SeriesCollection {
         return this._series;
     }
 
-    getXAxes(): AxisCollection {
+    _getXAxes(): AxisCollection {
         return this._xAxes;
     }
 
-    getYAxes(): AxisCollection {
+    _getYAxes(): AxisCollection {
         return this._yAxes;
     }
 
@@ -140,11 +156,15 @@ export class Chart extends RcObject implements IChart {
         return this._groups.get(group);
     }
 
-    getLegendSources(): ILegendSource[] {
+    _getLegendSources(): ILegendSource[] {
         return this._series.getLegendSources();
     }
 
     load(source: any): void {
+        // titles
+        this._title.load(source["title"]);
+        this._subtitle.load(source["subtitle"]);
+
         // series - 시리즈를 먼저 로드해야 디폴트 axis를 지정할 수 있다.
         this._series.load(source["series"])
 
@@ -154,7 +174,7 @@ export class Chart extends RcObject implements IChart {
         this._yAxes.load(source["yAxes"] || source["yAxis"] || {});
     }
 
-    connectSeries(series: Series, isX: boolean): Axis {
+    _connectSeries(series: Series, isX: boolean): Axis {
         return isX ? this._xAxes.connect(series) : this._yAxes.connect(series);
     }
 

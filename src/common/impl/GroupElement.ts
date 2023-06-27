@@ -8,7 +8,7 @@
 
 import { RcElement } from '../RcControl';
 
-export class GroupElement extends RcElement {
+export abstract class GroupElement extends RcElement {
 
     //-------------------------------------------------------------------------
     // consts

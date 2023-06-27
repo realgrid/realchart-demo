@@ -7,23 +7,39 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcElement } from "../common/RcControl";
+import { ISize } from "../common/Size";
 import { ChartItem } from "../model/ChartItem";
 
 export abstract class ChartElement<T extends ChartItem> extends RcElement {
+ 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    protected _model: T;
+    model: T;
+    mw: number;
+    mh: number;
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    model(): T {
-        return this._model;
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    measure(model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+        const sz = this._doMeasure(this.model = model, hintWidth, hintHeight, phase);
+
+        this.mw = sz.width;
+        this.mh = sz.height;
+        return sz;
     }
-    setModel(value: T) {
-        if (value !== this._model) {
-            this._model = value;
-        }
+
+    layout(): void {
+        this._doLayout();
     }
+
+    //-------------------------------------------------------------------------
+    // internal methods
+    //-------------------------------------------------------------------------
+    protected abstract _doMeasure(model: T, intWidth: number, hintHeight: number, phase: number): ISize;
+    protected abstract _doLayout(): void;
 }

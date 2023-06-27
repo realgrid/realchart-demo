@@ -9,8 +9,8 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { CategoryAxis } from '../../../src/model/axis/CategoryAxis';
-import { loadChartJson } from '../../Tester';
 import { Chart } from '../../../src/model/Chart';
+import { Tester } from '../../Tester';
 
 /**
  * Tests for CategoryAxis class.
@@ -31,7 +31,7 @@ import { Chart } from '../../../src/model/Chart';
     });
 
     it('collect categories - numbers', () => {
-        const json = loadChartJson("column-01");
+        const json = Tester.loadChartJson("column-01");
         const chart = new Chart(json);
         const axis = chart.xAxis;
 
@@ -42,7 +42,7 @@ import { Chart } from '../../../src/model/Chart';
     });
 
     it('collect categories - number arrays', () => {
-        const json = loadChartJson("column-02");
+        const json = Tester.loadChartJson("column-02");
         const chart = new Chart(json);
         const series = chart.series;
         const axis = chart.xAxis;
@@ -55,7 +55,7 @@ import { Chart } from '../../../src/model/Chart';
     });
 
     it('calculate min max', () => {
-        const json = loadChartJson("column-01");
+        const json = Tester.loadChartJson("column-01");
         const chart = new Chart(json);
         const series = chart.series;
         const axis = chart.xAxis as CategoryAxis;
@@ -67,7 +67,7 @@ import { Chart } from '../../../src/model/Chart';
     });
 
     it('calculate min max 2', () => {
-        const json = loadChartJson("column-02");
+        const json = Tester.loadChartJson("column-02");
         const chart = new Chart(json);
         const series = chart.series;
         const axis = chart.xAxis as CategoryAxis;
@@ -99,7 +99,7 @@ import { Chart } from '../../../src/model/Chart';
     });
 
     it('number ticks', () => {
-        const json = loadChartJson("column-01");
+        const json = Tester.loadChartJson("column-01");
         const chart = new Chart(json);
         const axis = chart.xAxis as CategoryAxis;
 

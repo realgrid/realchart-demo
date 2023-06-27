@@ -36,10 +36,6 @@ export class TextElement extends RcElement {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
-    static create(doc: Document, text: string = '', styleName = ''): TextElement {
-        return new TextElement(doc, text, styleName);
-    }
-
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
@@ -208,7 +204,6 @@ export class TextElement extends RcElement {
     }
 
     setStyle(prop: string, value: string): boolean {
-        //if (this._text === '미국') debugger;
         let changed = super.setStyle(prop, value);
         if (changed) {
             this.layoutText();
@@ -219,6 +214,19 @@ export class TextElement extends RcElement {
     getBBounds(): IRect {
         if (this._dirty || this._styleDirty) {
             this._bounds = (this.dom as SVGGraphicsElement).getBBox();
+            this._dirty = this._styleDirty = false;
+        }
+        return this._bounds;
+    }
+
+    getBBoundsTest(): IRect {
+        if (this._dirty || this._styleDirty) {
+            this._bounds = {
+                x: this.x,
+                y: this.y,
+                width: 100,
+                height: 30
+            };
             this._dirty = this._styleDirty = false;
         }
         return this._bounds;
