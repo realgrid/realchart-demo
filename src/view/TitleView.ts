@@ -32,7 +32,7 @@ export class TitleView extends ChartElement<Title> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(model: Title, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected _doMeasure(doc: Document, model: Title, hintWidth: number, hintHeight: number, phase: number): ISize {
         let w = 0;
         let h = 0;
 

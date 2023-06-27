@@ -8,11 +8,15 @@
 
 import { RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
+import { SectionDir } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { Chart } from "../main";
-import { Title } from "../model/Title";
+import { Axis } from "../model/Axis";
+import { Legend } from "../model/Legend";
 import { PieSeries } from "../model/series/PieSeries";
+import { AxisView } from "./AxisView";
 import { BodyView } from "./BodyView";
+import { LegendView } from "./LegendView";
 import { TitleView } from "./TitleView";
 
 abstract class SectionView extends GroupElement {
@@ -37,10 +41,15 @@ abstract class SectionView extends GroupElement {
         return sz;
     }
 
+    layout(): void {
+        this._doLayout();
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    abstract _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize;
+    protected abstract _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize;
+    protected abstract _doLayout(): void;
 }
 
 class TitleSectionView extends SectionView {
@@ -59,53 +68,101 @@ class TitleSectionView extends SectionView {
         this.add(this.subtitleView = new TitleView(doc));
     }
 
-    _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
-        // const title = chart.
+    protected _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
         let width = hintWidth;
         let height = 0;
         let sz: ISize;
 
         if (this.titleView.visible = chart.title.visible()) {
-            sz = this.titleView.measure(chart.title, hintWidth, hintHeight, phase);
+            sz = this.titleView.measure(doc, chart.title, hintWidth, hintHeight, phase);
             height += sz.height;
+            hintHeight -= sz.height;
         }
         if (this.subtitleView.visible = chart.subtitle.visible()) {
-            sz = this.subtitleView.measure(chart.subtitle, hintWidth, hintHeight, phase);
+            sz = this.subtitleView.measure(doc, chart.subtitle, hintWidth, hintHeight, phase);
             height += sz.height;
+            hintHeight -= sz.height;
         }
-
         return { width, height };
     }
-}
 
-class AxisSectionView extends SectionView {
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
-        return;
+    protected _doLayout(): void {
     }
 }
 
 class LegendSectionView extends SectionView {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _legendView: LegendView;
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doInitChildren(doc: Document): void {
+        this.add(this._legendView = new LegendView(doc));
+    }
+
     _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
         return;
+    }
+
+    protected _doLayout(): void {
+    }
+}
+
+class AxisSectionView extends SectionView {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    axes: Axis[]; 
+    views: AxisView[] = [];
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, public dir: SectionDir) {
+        super(doc);
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    prepare(doc: Document, axes: Axis[]): void {
+        const views = this.views;
+
+        while (views.length < axes.length) {
+            const v = new AxisView(doc);
+
+            this.add(v);
+            views.push(v);
+        }
+        while (views.length > axes.length) {
+            views.pop().remove();
+        }
+
+        this.axes = axes;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
+        const axes = this.axes;
+
+        this.views.forEach((v, i) => {
+            v.measure(doc, axes[i], hintWidth, hintHeight, phase);
+        })
+        return;
+    }
+
+    protected _doLayout(): void {
     }
 }
 
 class EmptyView extends GroupElement {
-}
-
-enum Dirs {
-    LEFT,
-    TOP,
-    BOTTOM,
-    RIGHT
 }
 
 export class ChartView extends RcElement {
@@ -117,8 +174,8 @@ export class ChartView extends RcElement {
 
     _emptyView: EmptyView;
     private _titleSectionView: TitleSectionView;
-    private _axisSectionViews = new Map<Dirs, AxisSectionView>();
-    private _legendSectionViews = new Map<Dirs, LegendSectionView>();
+    private _legendSectionView: LegendSectionView;
+    private _axisSectionViews = new Map<SectionDir, AxisSectionView>();
     private _bodyView: BodyView;
 
     //-------------------------------------------------------------------------

@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject } from "../common/RcObject";
+import { SectionDir } from "../common/Types";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { ChartItem } from "./ChartItem";
 import { ILegendSource } from "./Legend";
@@ -37,6 +38,7 @@ export interface IChart {
     seriesByBame(series: string): Series;
     axisByName(axis: string): Axis;
     getGroup(group: String): SeriesGroup;
+    getAxes(dir: SectionDir): Axis[];
 
     _getSeriesType(type: string): any;
     _getAxisType(type: string): any;
@@ -141,6 +143,10 @@ export class Chart extends RcObject implements IChart {
         return this._yAxes;
     }
 
+    inverted(): boolean {
+        return false;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -154,6 +160,45 @@ export class Chart extends RcObject implements IChart {
 
     getGroup(group: string): SeriesGroup {
         return this._groups.get(group);
+    }
+
+    getAxes(dir: SectionDir): Axis[] {
+        const xAxes = this._xAxes.items;
+        const yAxes = this._yAxes.items;
+        let axes: Axis[];
+
+        if (this.inverted()) {
+            switch (dir) {
+                case SectionDir.LEFT:
+                    axes = yAxes.filter(a => !a.opposite);
+                    break;
+                case SectionDir.RIGHT:
+                    axes = yAxes.filter(a => a.opposite);
+                    break;
+                case SectionDir.BOTTOM:
+                    axes = xAxes.filter(a => !a.opposite);
+                    break;
+                case SectionDir.TOP:
+                    axes = xAxes.filter(a => a.opposite);
+                    break;
+            } 
+        } else {
+            switch (dir) {
+                case SectionDir.LEFT:
+                    axes = xAxes.filter(a => !a.opposite);
+                    break;
+                case SectionDir.RIGHT:
+                    axes = xAxes.filter(a => a.opposite);
+                    break;
+                case SectionDir.BOTTOM:
+                    axes = yAxes.filter(a => !a.opposite);
+                    break;
+                case SectionDir.TOP:
+                    axes = yAxes.filter(a => a.opposite);
+                    break;
+            } 
+        }
+        return axes || [];
     }
 
     _getLegendSources(): ILegendSource[] {
@@ -186,6 +231,8 @@ export class Chart extends RcObject implements IChart {
         // 축의 값 범위를 계산한다.
         this._xAxes.prepareRender();
         this._yAxes.prepareRender();
+
+        // legend 위치를 결정한다.
     }
 
     // 여러번 호출될 수 있다.

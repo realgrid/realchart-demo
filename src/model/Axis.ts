@@ -148,6 +148,11 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    /**
+     * true면 기본 위치(x축: bottom, y축: left)의 반대편에 표시된다.
+     */
+    opposite = false;
+    reversed = false;
     unit: number;
     minPadding = 0;
     maxPadding = 0;

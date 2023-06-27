@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { VerticalAlign } from "../common/Types";
 import { ChartItem } from "./ChartItem";
 
 export class Title extends ChartItem {
@@ -16,10 +17,20 @@ export class Title extends ChartItem {
     text = 'Title';
 }
 
+export enum SubtitlePosition {
+    BOTTOM = 'bottom',
+    RIGHT = 'right',
+    LEFT = 'left',
+    TOP = 'top'
+}
+
 export class Subtitle extends Title {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    titleGap = 4;
+    position = SubtitlePosition.BOTTOM;
+    verticalAlign = VerticalAlign.BOTTOM;
     text = 'Sub Title';
 }

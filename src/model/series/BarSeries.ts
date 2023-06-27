@@ -6,7 +6,6 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
 import { Series } from "../Series";
 
 export class BarSeries extends Series {
@@ -14,14 +13,15 @@ export class BarSeries extends Series {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static Defaults = Object.assign({
-        barWidth: 0.7,
-    }, Series.Defaults);
+    static readonly POINT_WIDTH = 0.7;
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private _barWidth: number;
+    /**
+     * point bar 등이 축의 한 카테고리 내에서 차지하는 영역에 대한 크기 비율.
+     */
+    pointWidth = BarSeries.POINT_WIDTH;
 
     //-------------------------------------------------------------------------
     // fields
@@ -29,16 +29,6 @@ export class BarSeries extends Series {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * bar width.
-     */
-    get barWidth(): number {
-        return pickNum(this._barWidth, BarSeries.Defaults.barWidth);
-    }
-    set barWidth(value) {
-        this._barWidth = value;
-    }
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

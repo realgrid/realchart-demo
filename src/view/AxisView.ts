@@ -21,7 +21,7 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(model: Axis, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected _doMeasure(doc: Document, model: Axis, hintWidth: number, hintHeight: number, phase: number): ISize {
         return;
     }
     

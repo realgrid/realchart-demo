@@ -60,6 +60,15 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * undefined이면 "data".
      */
     dataProp: string;
+    /**
+     * 시리즈 데이타에 x축 값이 설정되지 않은 경우, 첫 포인트의 자동 지정 x값.
+     */
+    pointStart = 0;
+    /**
+     * 시리즈 데이타에 x축 값이 설정되지 않은 경우, 포인트 간의 간격 크기.
+     * time 축일 때, 정수 값 대신 시간 단위로 지정할 수 있다.
+     */
+    pointStep: number | string = 1;
 
     //-------------------------------------------------------------------------
     // fields

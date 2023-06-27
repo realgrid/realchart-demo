@@ -48,7 +48,7 @@ class GridView extends ChartElement<AxisGrid> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(model: AxisGrid, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected _doMeasure(doc: Document, model: AxisGrid, hintWidth: number, hintHeight: number, phase: number): ISize {
         throw new Error("Method not implemented.");
     }
 
@@ -74,7 +74,7 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
         throw new Error("Method not implemented.");
     }
     

@@ -402,6 +402,18 @@ export const throwFormat = (format: string, value: any) => {
     throw new Error(formatMessage(format, value));
 }
 
+export interface StyleProps {
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: string;
+    color?: string;
+    minWidth?: string;
+    maxWidth?: string;
+    minHeight?: string;
+    maxHeight?: string;
+    strokeDasharray?: string;
+}
+
 export enum Align {
     LEFT = 'left',
     CENTER = 'center',
@@ -412,5 +424,12 @@ export enum VerticalAlign {
     TOP = 'top',
     MIDDLE = 'middle',
     BOTTOM = 'bottom'
+}
+
+export enum SectionDir {
+    LEFT,
+    TOP,
+    BOTTOM,
+    RIGHT
 }
 

@@ -15,7 +15,7 @@ export class LegendView extends ChartElement<Legend> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(model: Legend, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected _doMeasure(doc: Document, model: Legend, hintWidth: number, hintHeight: number, phase: number): ISize {
         throw new Error("Method not implemented.");
     }
     

@@ -18,7 +18,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         return Size.create(hintWidth, hintHeight);
     }
 

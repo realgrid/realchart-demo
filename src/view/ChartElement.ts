@@ -25,8 +25,8 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    measure(model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
-        const sz = this._doMeasure(this.model = model, hintWidth, hintHeight, phase);
+    measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+        const sz = this._doMeasure(doc, this.model = model, hintWidth, hintHeight, phase);
 
         this.mw = sz.width;
         this.mh = sz.height;
@@ -40,6 +40,6 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     //-------------------------------------------------------------------------
     // internal methods
     //-------------------------------------------------------------------------
-    protected abstract _doMeasure(model: T, intWidth: number, hintHeight: number, phase: number): ISize;
+    protected abstract _doMeasure(doc: Document, model: T, intWidth: number, hintHeight: number, phase: number): ISize;
     protected abstract _doLayout(): void;
 }
