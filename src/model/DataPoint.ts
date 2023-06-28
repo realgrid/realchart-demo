@@ -39,6 +39,10 @@ export class DataPointCollection {
         return this._points.length;
     }
 
+    isEmpty(): boolean {
+        return this._points.length < 1;
+    }
+
     get(index: number): DataPoint {
         return this._points[index];
     }

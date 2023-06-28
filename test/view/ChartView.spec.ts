@@ -36,4 +36,30 @@ import { ChartControl } from '../../src/main';
         expect(view._emptyView).exist;
         expect(view._emptyView.visible).is.true;
     })
+
+    it('measure - empty', () => {
+        const json = Tester.loadChartJson("chart-01");
+        const chart = new Chart(json);
+        const view = control.chartView();
+
+        expect(chart.isEmpty()).is.true;
+        view.measure(control.doc(), chart, 500, 500, 1);
+        expect(view._emptyView).exist;
+    })
+
+    it('measure', () => {
+        const json = Tester.loadChartJson("column-01");
+        const chart = new Chart(json);
+        const view = control.chartView();
+
+        expect(chart.isEmpty()).is.false;
+        view.measure(control.doc(), chart, 500, 500, 1);
+        expect(view._emptyView).not.exist;
+
+        expect(view['_titleSectionView'].visible).is.true;
+        expect(view.titleView().visible).is.true;
+        expect(view.subtitleView().visible).is.false;
+
+        expect(view['_legendSectionView'].visible).is.true;
+    })
 });

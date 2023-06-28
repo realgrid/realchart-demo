@@ -95,6 +95,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return this._points;
     }
 
+    isEmpty(): boolean {
+        return this._points.isEmpty();
+    }
+
     isCategorized(): boolean {
         return false;
     }
@@ -209,7 +213,12 @@ export class SeriesCollection {
     }
 
     isEmpty(): boolean {
-        return this._items.length < 1;
+        if (this._items.length > 0) {
+            for (const ser of this._items) {
+                if (!ser.isEmpty()) return false;
+            }
+        }
+        return true;
     }
 
     items(): Series[] {

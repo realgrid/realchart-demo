@@ -105,7 +105,8 @@ class LegendSectionView extends SectionView {
     }
 
     _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
-        return;
+        const sz = this._legendView.measure(doc, chart.legend, hintWidth, hintHeight, phase);
+        return sz;
     }
 
     protected _doLayout(): void {
@@ -217,6 +218,10 @@ export class ChartView extends RcElement {
     }
 
     measure(doc: Document, model: Chart, hintWidth: number, hintHeight: number, phase: number): void {
+        if (model && phase == 1) {
+            model.prepareRender();
+        }
+        
         if (this.$_checkEmpty(doc, model, hintWidth, hintHeight)) {
             return;
         }
@@ -234,14 +239,15 @@ export class ChartView extends RcElement {
         // legend
         if (this._legendSectionView.visible = (legend.visible() && !legend.isEmpty())) {
             sz = this._legendSectionView.measure(doc, m, w, h, phase);
+            
             switch (legend.position) {
+                case LegendPosition.TOP:
                 case LegendPosition.BOTTOM:
+                    h -= sz.height;
                     break;
                 case LegendPosition.RIGHT:
-                    break;
-                case LegendPosition.TOP:
-                    break;
                 case LegendPosition.LEFT:
+                    w -= sz.width;
                     break;
             }
         }
