@@ -12,7 +12,7 @@ import { SectionDir } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
-import { Legend } from "../model/Legend";
+import { Legend, LegendPosition } from "../model/Legend";
 import { PieSeries } from "../model/series/PieSeries";
 import { AxisView } from "./AxisView";
 import { BodyView } from "./BodyView";
@@ -185,6 +185,7 @@ export class ChartView extends RcElement {
         super(doc);
 
         this.add(this._titleSectionView = new TitleSectionView(doc));
+        this.add(this._legendSectionView = new LegendSectionView(doc));
     }
 
     //-------------------------------------------------------------------------
@@ -201,10 +202,8 @@ export class ChartView extends RcElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    measure(doc: Document, model: Chart, hintWidth: number, hintHeight: number, phase: number): void {
-        const m = this._model = model;
-
-        if (m) {
+    private $_checkEmpty(doc: Document, m: Chart, hintWidth: number, hintHeight: number): boolean {
+        if (m && !m.isEmpty()) {
             if (this._emptyView) {
                 this._emptyView.visible = false;
             }
@@ -213,16 +212,41 @@ export class ChartView extends RcElement {
                 this._emptyView = new EmptyView(doc);
             }
             this._emptyView.resize(hintWidth, hintHeight);
+            return true;
+        }
+    }
+
+    measure(doc: Document, model: Chart, hintWidth: number, hintHeight: number, phase: number): void {
+        if (this.$_checkEmpty(doc, model, hintWidth, hintHeight)) {
             return;
         }
-
+        
+        const m = this._model = model;
+        const legend = m.legend;
         let w = hintWidth;
         let h = hintHeight;
-        let sz = this._titleSectionView.measure(doc, m, w, h, phase);
+        let sz: ISize;
+        
+        // titles
+        sz = this._titleSectionView.measure(doc, m, w, h, phase);
+        h -= sz.height;
 
-        if (this._emptyView) {
-            this._emptyView.visible = false;
+        // legend
+        if (this._legendSectionView.visible = (legend.visible() && !legend.isEmpty())) {
+            sz = this._legendSectionView.measure(doc, m, w, h, phase);
+            switch (legend.position) {
+                case LegendPosition.BOTTOM:
+                    break;
+                case LegendPosition.RIGHT:
+                    break;
+                case LegendPosition.TOP:
+                    break;
+                case LegendPosition.LEFT:
+                    break;
+            }
         }
+
+        // axes
     }
 
     layout(): void {
@@ -242,4 +266,4 @@ export class ChartView extends RcElement {
     private $_createBodyView(doc: Document): BodyView {
         return (this._model && this._model.series instanceof PieSeries) ? null : new BodyView(doc);
     }
-}``
+}

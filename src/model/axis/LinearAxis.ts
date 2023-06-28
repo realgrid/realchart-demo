@@ -250,6 +250,10 @@ export class LinearAxis extends Axis {
         return;
     }
 
+    getPosition(length: number, value: number): number {
+        return;
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

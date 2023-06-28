@@ -73,6 +73,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    index = -1;
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
     protected _points: DataPointCollection;
@@ -207,8 +208,16 @@ export class SeriesCollection {
         return this._items[0];
     }
 
-    get items(): Series[] {
+    isEmpty(): boolean {
+        return this._items.length < 1;
+    }
+
+    items(): Series[] {
         return this._items.slice(0);
+    }
+
+    visibles(): Series[] {
+        return this._items.filter(ser => ser.visible());
     }
 
     //-------------------------------------------------------------------------
@@ -222,6 +231,7 @@ export class SeriesCollection {
         } else if (isObject(src)) {
             this._items.push(this.$_loadSeries(chart, src));
         }
+        this._items.forEach((ser, i) => ser.index = i);
     }
 
     get(name: string): Series {
@@ -232,7 +242,7 @@ export class SeriesCollection {
         const legends: ILegendSource[] = [];
 
         this._items.forEach(ser => {
-            ser.getLegendSources(legends);
+            ser.visible() && ser.getLegendSources(legends);
         })
         return legends;
     }

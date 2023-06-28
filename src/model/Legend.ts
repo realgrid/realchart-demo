@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isArray } from "../common/Common";
 import { Align, VerticalAlign } from "../common/Types";
 import { ChartItem } from "./ChartItem";
 
@@ -22,6 +23,13 @@ export class LegendItem extends ChartItem {
     //-------------------------------------------------------------------------
     constructor(legend: Legend, public source: ILegendSource) {
         super(legend.chart)
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    text(): string {
+        return this.source.legendLabel();
     }
 }
 
@@ -114,6 +122,10 @@ export class Legend extends ChartItem {
         return this._items.slice(0);
     }
 
+    isEmpty(): boolean {
+        return !this._items || this._items.length < 1;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -133,6 +145,13 @@ export class Legend extends ChartItem {
 
     prepareRender(): void {
         this._items = this.$_collectItems();
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doLoad(source: any): void {
+        super._doLoad(source);
     }
 
     //-------------------------------------------------------------------------

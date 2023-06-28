@@ -152,10 +152,30 @@ export abstract class Axis extends ChartItem implements IAxis {
      * true면 기본 위치(x축: bottom, y축: left)의 반대편에 표시된다.
      */
     opposite = false;
+    /**
+     * true면 반대 방향으로 point 위치들이 지정된다.
+     */
     reversed = false;
-    unit: number;
+    /**
+     * 축 최소값 위치에서 축 바깥 방향으로 추가되는 여백 크기.
+     */
     minPadding = 0;
+    /**
+     * 축 최대값 위치에서 축 바깥 방향으로 추가되는 여백 크기.
+     */
     maxPadding = 0;
+    /**
+     * 축 시작 위치에 tick이 표시되지 않게 계산될 때,
+     * (ex, 첫번째 tick 이전에 data point가 표시될 수 있다.)
+     * tick이 표시되도록 조정한다.
+     */
+    tickStart = false;
+    /**
+     * 축 끝 위치에 tick이 표시되지 않게 계산될 때,
+     * (ex, 마자믹 tick 이후에 data point가 표시될 수 있다.)
+     * tick이 표시되도록 조정한다.
+     */
+    tickEnd = false;
 
     //-------------------------------------------------------------------------
     // fields
@@ -205,6 +225,11 @@ export abstract class Axis extends ChartItem implements IAxis {
     buildTicks(length: number): void {
         this._ticks = this._doBuildTicks(this._range.min, this._range.max, length);
     }
+
+    /**
+     * value에 해당하는 축상의 위치.
+     */
+    abstract getPosition(length: number, value: number): number;
 
     getValue(value: any): number {
         return +value;
@@ -332,7 +357,7 @@ export class AxisCollection {
             if (isArray(src.categories)) {
                 t = 'category';
             } else if (this.isX) {
-                for (const ser of chart._getSeries().items) {
+                for (const ser of chart._getSeries().items()) {
                     if (ser.isCategorized()) {
                         if (src.name && ser.xAxis === src.name) {
                             t = 'category';

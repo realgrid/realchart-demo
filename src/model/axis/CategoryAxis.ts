@@ -63,7 +63,7 @@ export class CategoryAxis extends Axis {
     private _map = new Map<string, number>(); // data point의 축 위치를 찾기 위해 사용한다.
 
     //-------------------------------------------------------------------------
-    // properties
+    // property fields
     //-------------------------------------------------------------------------
     /**
      * Category 목록을 수집하는 시리즈.
@@ -80,12 +80,22 @@ export class CategoryAxis extends Axis {
      * 첫 번째 값이 0에 해당한다.
      */
     categories: any[];
+    /**
+     * 축의 양 끝 카테고리 값 위치에 여백으로 추가되는 크기.
+     */
+    endPadding: 0.5;
+    weights: number[];
+    weightCallback: (value: number) => number;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     getCategories(): string[] {
         return this._cats;
+    }
+
+    getWdith(length: number, category: number): number {
+        return 0;
     }
 
     //-------------------------------------------------------------------------
@@ -129,6 +139,10 @@ export class CategoryAxis extends Axis {
             })
         }
         return ticks;
+    }
+
+    getPosition(length: number, value: number): number {
+        return 0;
     }
 
     //-------------------------------------------------------------------------

@@ -488,6 +488,7 @@ export class RcElement extends RcObject {
     // consts
     //-------------------------------------------------------------------------
     static TESTING = false;
+    static DEBUGGING = false;
 
     //-------------------------------------------------------------------------
     // static members

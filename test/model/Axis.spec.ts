@@ -18,6 +18,10 @@ class AxisImpl extends Axis {
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
         return [];
     }
+
+    getPosition(length: number, value: number): number {
+        return 0;
+    }
 }
 
 /**

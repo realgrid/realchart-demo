@@ -34,4 +34,8 @@ export class LogAxis extends LinearAxis {
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
         return;
     }
+
+    getPosition(length: number, value: number): number {
+        return;
+    }
 }

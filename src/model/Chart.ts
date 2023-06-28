@@ -10,7 +10,7 @@ import { RcObject } from "../common/RcObject";
 import { SectionDir } from "../common/Types";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { ChartItem } from "./ChartItem";
-import { ILegendSource } from "./Legend";
+import { ILegendSource, Legend } from "./Legend";
 import { ISeries, Series, SeriesCollection, SeriesGroup } from "./Series";
 import { Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
@@ -88,6 +88,7 @@ export class Chart extends RcObject implements IChart {
     //-------------------------------------------------------------------------
     private _title: Title;
     private _subtitle: Title;
+    private _legend: Legend;
     private _series: SeriesCollection;
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
@@ -101,6 +102,7 @@ export class Chart extends RcObject implements IChart {
 
         this._title = new Title(this);
         this._subtitle = new Title(this, false);
+        this._legend = new Legend(this);
         this._series = new SeriesCollection(this);
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new AxisCollection(this, false);
@@ -121,6 +123,10 @@ export class Chart extends RcObject implements IChart {
 
     get series(): ISeries {
         return this._series.first;
+    }
+
+    get legend(): Legend {
+        return this._legend;
     }
 
     get xAxis(): IAxis {
@@ -145,6 +151,10 @@ export class Chart extends RcObject implements IChart {
 
     inverted(): boolean {
         return false;
+    }
+
+    isEmpty(): boolean {
+        return this._series.isEmpty();
     }
 
     //-------------------------------------------------------------------------
@@ -207,16 +217,19 @@ export class Chart extends RcObject implements IChart {
 
     load(source: any): void {
         // titles
-        this._title.load(source["title"]);
-        this._subtitle.load(source["subtitle"]);
+        this._title.load(source.title);
+        this._subtitle.load(source.subtitle);
+
+        // legend
+        this._legend.load(source.legend);
 
         // series - 시리즈를 먼저 로드해야 디폴트 axis를 지정할 수 있다.
-        this._series.load(source["series"])
+        this._series.load(source.series);
 
         // axes
         // 축은 반드시 존재해야 한다.
-        this._xAxes.load(source["xAxes"] || source["xAxis"] || {});
-        this._yAxes.load(source["yAxes"] || source["yAxis"] || {});
+        this._xAxes.load(source.xAxes || source.xAxis || {});
+        this._yAxes.load(source.yAxes || source.yAxis || {});
     }
 
     _connectSeries(series: Series, isX: boolean): Axis {
@@ -233,6 +246,7 @@ export class Chart extends RcObject implements IChart {
         this._yAxes.prepareRender();
 
         // legend 위치를 결정한다.
+        this._legend.prepareRender();
     }
 
     // 여러번 호출될 수 있다.
