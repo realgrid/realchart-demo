@@ -136,7 +136,7 @@ export class CategoryAxis extends Axis {
                 pos: pad + i * interval + interval / 2,
                 value: i,
                 label: this.tick.getTick(i < nCat ? cats[i] : i)
-            })
+            });
         }
         return ticks;
     }

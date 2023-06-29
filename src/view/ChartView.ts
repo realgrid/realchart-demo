@@ -6,14 +6,15 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isNumber } from "../common/Common";
 import { RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
 import { SectionDir } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
+import { Body } from "../model/Body";
 import { Legend, LegendPosition } from "../model/Legend";
-import { PieSeries } from "../model/series/PieSeries";
 import { AxisView } from "./AxisView";
 import { BodyView } from "./BodyView";
 import { LegendView } from "./LegendView";
@@ -39,6 +40,11 @@ abstract class SectionView extends GroupElement {
         this.mw = sz.width;
         this.mh = sz.height;
         return sz;
+    }
+
+    resizeByMeasured(): SectionView {
+        this.resize(this.mw, this.mh);
+        return this;
     }
 
     layout(): void {
@@ -144,7 +150,35 @@ class AxisSectionView extends SectionView {
             views.pop().remove();
         }
 
+        // 추측 계산을 위해 모델을 미리 설정할 필요가 있다.
+        views.forEach((v, i) => v.model = axes[i]);
+
         this.axes = axes;
+        this.visible = views.length > 0;
+    }
+
+    /**
+     * 수평 축들의 높이를 기본 설정에 따라 추측한다.
+     */
+    checkHeights(doc: Document, width: number): number {
+        let h = 0;
+
+        this.views.forEach(view => {
+            h += view.checkHeight(doc, width);
+        });
+        return h;
+    }
+
+    /**
+     * 수직 축들의 너비를 기본 설정에 따라 추측한다.
+     */
+    checkWidths(doc: Document, height: number): number {
+        let w = 0;
+
+        this.views.forEach(view => {
+            w += view.checkWidth(doc, height);
+        });
+        return w;
     }
 
     //-------------------------------------------------------------------------
@@ -172,12 +206,13 @@ export class ChartView extends RcElement {
     // fields
     //-------------------------------------------------------------------------
     private _model: Chart;
+    _flipped = false;   // bar 시리즈 계열이 포함되면 true, x축이 수직, y축이 수평으로 그려진다.
 
     _emptyView: EmptyView;
     private _titleSectionView: TitleSectionView;
     private _legendSectionView: LegendSectionView;
-    private _axisSectionViews = new Map<SectionDir, AxisSectionView>();
     private _bodyView: BodyView;
+    private _axisSectionViews = new Map<SectionDir, AxisSectionView>();
 
     //-------------------------------------------------------------------------
     // constructor
@@ -187,6 +222,16 @@ export class ChartView extends RcElement {
 
         this.add(this._titleSectionView = new TitleSectionView(doc));
         this.add(this._legendSectionView = new LegendSectionView(doc));
+        this.add(this._bodyView = new BodyView(doc));
+
+        Object.values(SectionDir).forEach(dir => {
+            if (isNumber(dir)) {
+                const v = new AxisSectionView(doc, dir);
+
+                this.add(v);
+                this._axisSectionViews.set(dir, v);
+            }
+        });
     }
 
     //-------------------------------------------------------------------------
@@ -200,8 +245,70 @@ export class ChartView extends RcElement {
         return this._titleSectionView.subtitleView;
     }
 
+    bodyView(): BodyView {
+        return this._bodyView;
+    }
+
     //-------------------------------------------------------------------------
     // methods
+    //-------------------------------------------------------------------------
+    measure(doc: Document, model: Chart, hintWidth: number, hintHeight: number, phase: number): void {
+        if (model && phase == 1) {
+            model.prepareRender();
+        }
+        
+        if (this.$_checkEmpty(doc, model, hintWidth, hintHeight)) {
+            return;
+        }
+        
+        const m = this._model = model;
+        const legend = m.legend;
+        let w = hintWidth;
+        let h = hintHeight;
+        let sz: ISize;
+
+        this._flipped = m._getSeries().containsBar();
+        
+        // titles
+        sz = this._titleSectionView.measure(doc, m, w, h, phase);
+        h -= sz.height;
+
+        // legend
+        if (this._legendSectionView.visible = (legend.visible() && !legend.isEmpty())) {
+            sz = this._legendSectionView.measure(doc, m, w, h, phase);
+
+            switch (legend.position) {
+                case LegendPosition.TOP:
+                case LegendPosition.BOTTOM:
+                    h -= sz.height;
+                    break;
+                case LegendPosition.RIGHT:
+                case LegendPosition.LEFT:
+                    w -= sz.width;
+                    break;
+            }
+        }
+
+        this.$_measurePlot(doc, m, w, h, 1);
+    }
+
+    layout(): void {
+        const w = this.width;
+        const h = this.height;
+
+        if (this._emptyView?.visible) {
+            this._emptyView.resize(w, h);
+            return;
+        }
+
+        const m = this._model;
+
+        // title
+        this._titleSectionView.resizeByMeasured().layout();
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
     //-------------------------------------------------------------------------
     private $_checkEmpty(doc: Document, m: Chart, hintWidth: number, hintHeight: number): boolean {
         if (m && !m.isEmpty()) {
@@ -217,59 +324,34 @@ export class ChartView extends RcElement {
         }
     }
 
-    measure(doc: Document, model: Chart, hintWidth: number, hintHeight: number, phase: number): void {
-        if (model && phase == 1) {
-            model.prepareRender();
-        }
-        
-        if (this.$_checkEmpty(doc, model, hintWidth, hintHeight)) {
-            return;
-        }
-        
-        const m = this._model = model;
-        const legend = m.legend;
-        let w = hintWidth;
-        let h = hintHeight;
-        let sz: ISize;
-        
-        // titles
-        sz = this._titleSectionView.measure(doc, m, w, h, phase);
-        h -= sz.height;
+    private $_prepareAxes(doc: Document, m: Chart): void {
+        const map = this._axisSectionViews;
 
-        // legend
-        if (this._legendSectionView.visible = (legend.visible() && !legend.isEmpty())) {
-            sz = this._legendSectionView.measure(doc, m, w, h, phase);
-            
-            switch (legend.position) {
-                case LegendPosition.TOP:
-                case LegendPosition.BOTTOM:
-                    h -= sz.height;
-                    break;
-                case LegendPosition.RIGHT:
-                case LegendPosition.LEFT:
-                    w -= sz.width;
-                    break;
-            }
+        for (const dir of map.keys()) {
+            const v = map.get(dir);
+            const axes = m.getAxes(dir);
+
+            v.prepare(doc, axes);
         }
+    }
+
+    private $_measurePlot(doc: Document, m: Chart, w: number, h: number, phase: number): void {
+        const map = this._axisSectionViews;
+
+        m.layoutAxes(w, h, phase);
 
         // axes
-    }
+        this.$_prepareAxes(doc, m);
 
-    layout(): void {
-        const m = this._model;
-        const w = this.width;
-        const h = this.height;
-
-        if (m) {
+        if (this._flipped) {
+            w -= map.get(SectionDir.LEFT).checkWidths(doc, h);
+            w -= map.get(SectionDir.RIGHT).checkWidths(doc, h);
         } else {
-            this._emptyView.resize(w, h);
+            h -= map.get(SectionDir.BOTTOM).checkHeights(doc, w);
+            h -= map.get(SectionDir.TOP).checkHeights(doc, w);
         }
-    }
 
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
-    private $_createBodyView(doc: Document): BodyView {
-        return (this._model && this._model.series instanceof PieSeries) ? null : new BodyView(doc);
+        // body
+        this._bodyView.measure(doc, m.body, w, h, phase);
     }
 }

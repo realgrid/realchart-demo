@@ -78,6 +78,10 @@ export class AxisTickMark extends AxisItem {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    /**
+     * axis tick line length.
+     */
+    length = 7;
 }
 
 export class AxisBreak extends AxisItem {

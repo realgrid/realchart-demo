@@ -8,7 +8,7 @@
 
 import { Series } from "../Series";
 
-export class BarSeries extends Series {
+export class ColumnSeries extends Series {
 
     //-------------------------------------------------------------------------
     // consts
@@ -21,7 +21,7 @@ export class BarSeries extends Series {
     /**
      * point bar 등이 축의 한 카테고리 내에서 차지하는 영역에 대한 크기 비율.
      */
-    pointWidth = BarSeries.POINT_WIDTH;
+    pointWidth = ColumnSeries.POINT_WIDTH;
 
     //-------------------------------------------------------------------------
     // fields
@@ -37,5 +37,12 @@ export class BarSeries extends Series {
     }
 }
 
-export class ColumnSeries extends BarSeries {
+export class BarSeries extends ColumnSeries {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    isBar(): boolean {
+        return true;
+    }
 }

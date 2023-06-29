@@ -24,42 +24,44 @@ import { ChartControl } from '../../src/main';
     });
 
     it('init', () => {
-        const view = control.chartView();
+        const cv = control.chartView();
 
-        expect(view).exist;
+        expect(cv).exist;
     });
 
     it('measure empty', () => {
-        const view = control.chartView();
+        const cv = control.chartView();
 
-        view.measure(control.doc(), null, 100, 100, 1);
-        expect(view._emptyView).exist;
-        expect(view._emptyView.visible).is.true;
+        cv.measure(control.doc(), null, 100, 100, 1);
+        expect(cv._emptyView).exist;
+        expect(cv._emptyView.visible).is.true;
     })
 
     it('measure - empty', () => {
         const json = Tester.loadChartJson("chart-01");
         const chart = new Chart(json);
-        const view = control.chartView();
+        const cv = control.chartView();
 
         expect(chart.isEmpty()).is.true;
-        view.measure(control.doc(), chart, 500, 500, 1);
-        expect(view._emptyView).exist;
+        cv.measure(control.doc(), chart, 500, 500, 1);
+        expect(cv._emptyView).exist;
     })
 
     it('measure', () => {
         const json = Tester.loadChartJson("column-01");
         const chart = new Chart(json);
-        const view = control.chartView();
+        const cv = control.chartView();
 
         expect(chart.isEmpty()).is.false;
-        view.measure(control.doc(), chart, 500, 500, 1);
-        expect(view._emptyView).not.exist;
+        cv.measure(control.doc(), chart, 500, 500, 1);
+        expect(cv._emptyView).not.exist;
 
-        expect(view['_titleSectionView'].visible).is.true;
-        expect(view.titleView().visible).is.true;
-        expect(view.subtitleView().visible).is.false;
+        expect(cv['_titleSectionView'].visible).is.true;
+        expect(cv.titleView().visible).is.true;
+        expect(cv.subtitleView().visible).is.false;
 
-        expect(view['_legendSectionView'].visible).is.true;
+        expect(cv['_legendSectionView'].visible).is.true;
+
+        expect(cv.bodyView().visible).is.true;
     })
 });

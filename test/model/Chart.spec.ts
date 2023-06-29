@@ -29,6 +29,8 @@ import { Tester } from '../Tester';
         const json = Tester.loadChartJson("chart-01");
         const chart = new Chart(json);
 
+        expect(chart.title.text).eq(json.title);
+        expect(chart.subtitle.text).eq(json.subtitle);
         expect(chart.series).instanceOf(ColumnSeries);
         expect(chart.xAxis).instanceOf(CategoryAxis);
         expect(chart.yAxis).instanceOf(LinearAxis);

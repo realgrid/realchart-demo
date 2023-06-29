@@ -41,7 +41,7 @@ const series_types = new Map<any, any>([
     [PieSeries, PieSeriesView],
 ]);
 
-class GridView extends ChartElement<AxisGrid> {
+class AxisGridView extends ChartElement<AxisGrid> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -67,8 +67,9 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _polar = false;
     private _gridContainer: RcElement;
-    private _gridViews: GridView[];
+    private _gridViews: AxisGridView[];
     private _seriesContainer: RcElement;
     private _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
@@ -81,6 +82,15 @@ export class BodyView extends ChartElement<Body> {
 
         this.add(this._gridContainer = new RcElement(doc));
         this.add(this._seriesContainer = new RcElement(doc));
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setPolar(value: boolean): void {
+        if (value !== this._polar) {
+            this._polar = value;
+        }
     }
 
     //-------------------------------------------------------------------------

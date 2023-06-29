@@ -31,7 +31,7 @@ import { Chart } from '../src/model/Chart';
         expect(chartView._emptyView.visible).is.true;
     })
 
-    it('render', () => {
+    it('render empty series', () => {
         const json = Tester.loadChartJson("chart-01");
         const chart = new Chart(json);
         const control = Tester.createControl();
@@ -39,7 +39,17 @@ import { Chart } from '../src/model/Chart';
 
         control.model = chart;
         control.testRender();
-        expect(chartView._emptyView).not.exist;
+        expect(chartView._emptyView.visible).is.true;
+    })
 
+    it('render', () => {
+        const json = Tester.loadChartJson("column-01");
+        const chart = new Chart(json);
+        const control = Tester.createControl();
+        const chartView = control.chartView();
+
+        control.model = chart;
+        control.testRender();
+        expect(chartView._emptyView).not.exist;
     })
 });

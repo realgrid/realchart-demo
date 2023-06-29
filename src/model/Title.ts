@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isString } from "../common/Common";
 import { VerticalAlign } from "../common/Types";
 import { ChartItem } from "./ChartItem";
 
@@ -15,6 +16,16 @@ export class Title extends ChartItem {
     // property fields
     //-------------------------------------------------------------------------
     text = 'Title';
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doLoadSimple(source: any): boolean {
+        if (isString(source)) {
+            this.text = source;
+            return true;
+        }
+    }
 }
 
 export enum SubtitlePosition {

@@ -313,7 +313,7 @@ export abstract class RcControl extends RtWrappableObject {
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
         svg.appendChild(defs);
-        this._dom.appendChild(defs);
+        this._dom.appendChild(svg);
 
         this._root = new RootElement(this);
         svg.appendChild(this._root['_dom']);
@@ -401,37 +401,21 @@ export abstract class RcControl extends RtWrappableObject {
 
     private _clickHandler = (event: PointerEvent) => {
         this._doClick(event);
-        this._tool.click(event);
+        this._tool?.click(event);
     }
 
     private _dblClickHandler = (event: PointerEvent) => {
         this._doDblClick(event);
-        this._tool.dblClick(event);
+        this._tool?.dblClick(event);
     }
 
     private _touchMoveHandler = (ev: TouchEvent) => {
         this._doTouchMove(ev);
-        this._tool.touchMove(ev);
+        this._tool?.touchMove(ev);
     }
 
-    /*
-    pointerEvent, touchEvent, mouseEvent 
-
-    pointerEvent는 touchEvent와 mouseEvent 외에도 스타일러스 등을 위해서 만들어졌다.
-    touchEvent를 사용할때 문제가 되던 click관련 문제는 여전히 존재한다.
-    다만 이해하기는 쉬워졌다. 동일 element(event.currentTarget)내에서는 항상 발생한다고 가정하면 된다.
-    mouse도 down => move => up 이 다른 element에서 이루어지면 click이 발생하지 않는다.
-    항상 발생하기 때문에 제어할 방법만 찾으면 된다.
-
-    또한 첫번째 pointer는 isPrimary라는 값이 true이기 때문에 이것만 고민하면 touch를 찾기 위해 노력할 필요가 없다.
-
-    각 pointer, mouse, touch관련 event의 return값
-    일반적으로 return false하게 되면 브라우저의 기본동작을 하지 말라는 의미가 된다.
-    return false; event.preventDefault(); event.returnValue = false 대충다 비슷한 의미.
-    가능하다면 eventHandler에서도 동일하게 브라우저 기본동작을 제한한다면 preventDefault후 false를 return하자.
-    */
     private _pointerDownHandler = (ev: PointerEvent) => {
-        if (this._doPointerDown(ev) || this._tool.pointerDown(ev)) {
+        if (this._doPointerDown(ev) || this._tool?.pointerDown(ev)) {
             // ev.preventDefault();
             // ev.stopImmediatePropagation();
         }
@@ -440,37 +424,37 @@ export abstract class RcControl extends RtWrappableObject {
     private _pointerMoveHandler = (ev: PointerEvent) => {
         // 여러개의 touch는 TODO
         this._doPointerMove(ev);
-        this._tool.pointerMove(ev);
+        this._tool?.pointerMove(ev);
     }
 
     private _pointerUpHandler = (ev: PointerEvent) => {
         this._doPointerUp(ev);
-        this._tool.pointerUp(ev);
+        this._tool?.pointerUp(ev);
     }
 
     private _pointerCancelHandler = (ev: PointerEvent) => {
         this._doPointerCancel(ev);
-        this._tool.pointerCancel(ev);
+        this._tool?.pointerCancel(ev);
     }
 
     private _pointerLeaveHandler = (ev: PointerEvent) => {
         this._doPointerLeave(ev);
-        this._tool.pointerLeave(ev);
+        this._tool?.pointerLeave(ev);
     }
     // private _touchLeaveHandler = (ev: TouchEvent) => {
     //     // DLog.log('> TOUCHE LEAVE', ev);
     //     this._doTouchLeave(ev);
-    //     this._tool.touchLeave(ev);
+    //     this._tool?.touchLeave(ev);
     // }
 
     private _keyPressHandler = (ev: KeyboardEvent) => {
         this._doKeyPress(ev);
-        this._tool.keyPress(ev);
+        this._tool?.keyPress(ev);
     }
 
     private _wheelHandler = (ev: WheelEvent) => {
         this._doWheel(ev);
-        this._tool.wheel(ev);
+        this._tool?.wheel(ev);
     }
 }
 
@@ -922,7 +906,7 @@ class RootElement extends RcElement {
 
 
     //-------------------------------------------------------------------------
-    // constructors
+    // constructor
     //-------------------------------------------------------------------------
     constructor(control: RcControl) {
         super(control.doc());
@@ -946,9 +930,8 @@ export class ClipElement extends RcElement {
     private _id: string;
     private _rect: RcElement;
 
-
     //-------------------------------------------------------------------------
-    // constructors
+    // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, x: number, y: number, width: number, height: number, rx = 0, ry = 0) {
         super(doc, 'clipPath');
@@ -964,14 +947,12 @@ export class ClipElement extends RcElement {
         this.add(rect);
     }
 
-
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     get id(): string {
         return this._id;
     }
-
 
     //-------------------------------------------------------------------------
     // methods
@@ -980,7 +961,6 @@ export class ClipElement extends RcElement {
         this._rect.setBounds(x, y, w, h);
         return this;
     }
-
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -1013,7 +993,6 @@ export class ClipElement extends RcElement {
         this._rect.height = value;
     }
 
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -1032,16 +1011,14 @@ export class PathElement extends RcElement {
     //-------------------------------------------------------------------------
     private _path: any[] | string;
 
-
     //-------------------------------------------------------------------------
-    // constructors
+    // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, path: Path = null, styleName = '') {
         super(doc, 'path', styleName);
 
         path && this.setPath(path);
     }
-
 
 	//-------------------------------------------------------------------------
     // properties
@@ -1078,7 +1055,6 @@ export class PathElement extends RcElement {
         }
         this.setPath(path);
     }
-
     
     //-------------------------------------------------------------------------
     // overriden members
@@ -1103,9 +1079,8 @@ export class ClipPathElement extends RcElement {
     private _id: string;
     private _path: PathElement;
 
-
     //-------------------------------------------------------------------------
-    // constructors
+    // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'clipPath');
@@ -1117,7 +1092,6 @@ export class ClipPathElement extends RcElement {
         this.add(this._path);
     }
 
-
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -1125,14 +1099,12 @@ export class ClipPathElement extends RcElement {
         return this._id;
     }
 
-
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     setPath(path: Path): void {
         this._path.setPath(path);
     }
-
 
     //-------------------------------------------------------------------------
     // overriden members

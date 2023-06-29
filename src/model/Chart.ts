@@ -9,6 +9,7 @@
 import { RcObject } from "../common/RcObject";
 import { SectionDir } from "../common/Types";
 import { Axis, AxisCollection, IAxis } from "./Axis";
+import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
 import { ILegendSource, Legend } from "./Legend";
 import { ISeries, Series, SeriesCollection, SeriesGroup } from "./Series";
@@ -93,6 +94,7 @@ export class Chart extends RcObject implements IChart {
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
     private _groups = new Map<string, SeriesGroup>();
+    private _body: Body;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -106,6 +108,7 @@ export class Chart extends RcObject implements IChart {
         this._series = new SeriesCollection(this);
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new AxisCollection(this, false);
+        this._body = new Body(this);
 
         source && this.load(source);
     }
@@ -135,6 +138,10 @@ export class Chart extends RcObject implements IChart {
 
     get yAxis(): IAxis {
         return this._yAxes.first;
+    }
+
+    get body(): Body {
+        return this._body;
     }
 
     _getSeries(): SeriesCollection {
@@ -230,6 +237,9 @@ export class Chart extends RcObject implements IChart {
         // 축은 반드시 존재해야 한다.
         this._xAxes.load(source.xAxes || source.xAxis || {});
         this._yAxes.load(source.yAxes || source.yAxis || {});
+
+        // body
+        this._body.load(source.body);
     }
 
     _connectSeries(series: Series, isX: boolean): Axis {

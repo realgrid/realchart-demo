@@ -58,7 +58,7 @@ export class Globals {
      * 
      * @returns 
      */
-    static loadChart(): Chart {
-        return new Chart();
+    static loadChart(source: any): Chart {
+        return new Chart(source);
     }
 }

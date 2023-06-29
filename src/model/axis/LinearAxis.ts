@@ -247,7 +247,16 @@ export class LinearAxis extends Axis {
         const tick = this.tick as LinearAxisTick;
         const { min, max } = this.$_adjustMinMax(calcedMin, calcedMax);
         const steps = tick.buildSteps(length, this.baseValue, min, max);
-        return;
+        const ticks: IAxisTick[] = [];
+
+        for (let i = 0; i < steps.length; i++) {
+            ticks.push({
+                pos: steps[i],
+                value: steps[i],
+                label: String(steps[i])
+            });
+        }
+        return ticks;
     }
 
     getPosition(length: number, value: number): number {

@@ -50,7 +50,9 @@ export class ChartItem extends RcObject {
     // methods
     //-------------------------------------------------------------------------
     load(source: any): void {
-        this._doLoad(source);
+        if (!this._doLoadSimple(source)) {
+            this._doLoad(source);
+        }
     }
 
     prepareRender(): void {
@@ -67,6 +69,10 @@ export class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _doLoadSimple(source: any): boolean {
+        return false;
+    }
+
     protected _doLoad(source: any): void {
         for (const p in source) {
             let v = source[p];

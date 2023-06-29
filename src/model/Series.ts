@@ -91,6 +91,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    isBar(): boolean {
+        return false;
+    }
+
     getPoints(): DataPointCollection {
         return this._points;
     }
@@ -227,6 +231,14 @@ export class SeriesCollection {
 
     visibles(): Series[] {
         return this._items.filter(ser => ser.visible());
+    }
+
+    containsBar(): boolean {
+        for (const ser of this._items) {
+            if (ser.visible() && ser.isBar()) {
+                return true;
+            }
+        }
     }
 
     //-------------------------------------------------------------------------
