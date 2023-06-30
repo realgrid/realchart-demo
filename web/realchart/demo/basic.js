@@ -15,5 +15,5 @@ export function init() {
     // RealTouch.setDebugging(true);
 
     const chart = RealChart.createChartControl(document, 'realchart');
-    chart.chart = RealChart.loadChart(config);
+    chart.model = RealChart.loadChart(config);
 }

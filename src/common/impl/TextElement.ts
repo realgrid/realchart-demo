@@ -51,11 +51,10 @@ export class TextElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, text: string = '', styleName = '') {
+    constructor(doc: Document, styleName = '') {
         super(doc, 'text', styleName);
 
         this.setAttr('text-anchor', 'middle');
-        if (text) this.text = text;
     }
 
 	//-------------------------------------------------------------------------
@@ -253,11 +252,11 @@ export class LabelElement extends GroupElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, text: string = '', styleName = '') {
+    constructor(doc: Document, styleName = '') {
         super(doc);
 
         this.add(this._back = new RectElement(doc));
-        this.add(this._text = new TextElement(doc, text, styleName));
+        this.add(this._text = new TextElement(doc, styleName));
     }
 
 

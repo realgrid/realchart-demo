@@ -9,7 +9,6 @@
 import { isArray, isObject } from "../common/Common";
 import { RcObject } from "../common/RcObject";
 import { IChart } from "./Chart";
-import { DataPoint, DataPointCollection } from "./DataPoint";
 
 export class ChartItem extends RcObject {
 

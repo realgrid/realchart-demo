@@ -248,11 +248,10 @@ export class SeriesCollection {
         const chart = this.chart;
 
         if (isArray(src)) {
-            src.forEach(s => this._items.push(this.$_loadSeries(chart, s)));
+            src.forEach((s, i) => this._items.push(this.$_loadSeries(chart, s, i)));
         } else if (isObject(src)) {
-            this._items.push(this.$_loadSeries(chart, src));
+            this._items.push(this.$_loadSeries(chart, src, 0));
         }
-        this._items.forEach((ser, i) => ser.index = i);
     }
 
     get(name: string): Series {
@@ -281,7 +280,7 @@ export class SeriesCollection {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_loadSeries(chart: IChart, src: any): Series {
+    private $_loadSeries(chart: IChart, src: any, index: number): Series {
         let cls = chart._getSeriesType(src.type);
 
         if (!cls) {
@@ -290,9 +289,10 @@ export class SeriesCollection {
             cls = chart._getSeriesType(chart.type);
         }
 
-        const ser = new cls(chart, src.name);
+        const ser = new cls(chart, src.name || `Series ${index + 1}`);
 
         ser.load(src);
+        ser.index = index;
         return ser;
     }
 }

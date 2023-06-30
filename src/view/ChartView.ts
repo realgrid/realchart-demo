@@ -13,8 +13,7 @@ import { SectionDir } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
-import { Body } from "../model/Body";
-import { Legend, LegendPosition } from "../model/Legend";
+import { LegendPosition } from "../model/Legend";
 import { AxisView } from "./AxisView";
 import { BodyView } from "./BodyView";
 import { LegendView } from "./LegendView";
@@ -70,8 +69,8 @@ class TitleSectionView extends SectionView {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doInitChildren(doc: Document): void {
-        this.add(this.titleView = new TitleView(doc));
-        this.add(this.subtitleView = new TitleView(doc));
+        this.add(this.titleView = new TitleView(doc, false));
+        this.add(this.subtitleView = new TitleView(doc, true));
     }
 
     protected _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
@@ -93,6 +92,7 @@ class TitleSectionView extends SectionView {
     }
 
     protected _doLayout(): void {
+        this.titleView.resizeByMeasured().layout().translate(100, 10);
     }
 }
 
@@ -116,6 +116,8 @@ class LegendSectionView extends SectionView {
     }
 
     protected _doLayout(): void {
+        this._legendView.resize(this.width, this.height);
+        this._legendView.layout();
     }
 }
 
@@ -295,6 +297,8 @@ export class ChartView extends RcElement {
     layout(): void {
         const w = this.width;
         const h = this.height;
+        let x = 0;
+        let y = 0;
 
         if (this._emptyView?.visible) {
             this._emptyView.resize(w, h);
@@ -305,6 +309,17 @@ export class ChartView extends RcElement {
 
         // title
         this._titleSectionView.resizeByMeasured().layout();
+        this._titleSectionView.translate(x, y);
+        y += this._titleSectionView.height;
+
+        // legend
+        if (this._legendSectionView.visible) {
+            this._legendSectionView.resizeByMeasured().layout();
+            this._legendSectionView.translate(200, h - this._legendSectionView.height);
+        }
+
+        // body
+        this._bodyView.resizeByMeasured().layout().translate(0, y);
     }
 
     //-------------------------------------------------------------------------

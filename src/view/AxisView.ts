@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcElement } from "../common/RcControl";
+import { toSize } from "../common/Rectangle";
 import { ISize } from "../common/Size";
 import { TextElement } from "../common/impl/TextElement";
 import { Axis, AxisTitle } from "../model/Axis";
@@ -17,11 +18,26 @@ export class AxisTitleView extends ChartElement<AxisTitle> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _textView: TextElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-axis-title');
+    }
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: AxisTitle, intWidth: number, hintHeight: number, phase: number): ISize {
-        return;
+        this._textView.text = this.model.text;
+
+        return toSize(this._textView.getBBounds());
     }
 
     protected _doLayout(): void {
+        this._textView.layoutText();
     }
 }
 
@@ -39,7 +55,7 @@ export class AxisView extends ChartElement<Axis> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc);
+        super(doc, 'rct-axis');
 
         this.add(this._titleView = new AxisTitleView(doc));
         this.add(this._labelContainer = new RcElement(doc));
@@ -85,7 +101,7 @@ export class AxisView extends ChartElement<Axis> {
         let t = this._labelViews[0];
 
         if (!t) {
-            t = new TextElement(doc);
+            t = new TextElement(doc, 'rct-axis-label');
             this._labelContainer.add(t);
             this._labelViews.push(t);
         }

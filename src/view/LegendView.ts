@@ -7,10 +7,34 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ISize, Size } from "../common/Size";
+import { RectElement } from "../common/impl/RectElement";
+import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Legend, LegendItem, LegendLayout, LegendPosition } from "../model/Legend";
 import { ChartElement } from "./ChartElement";
 
 export class LegendItemView extends ChartElement<LegendItem> {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _enabled = true;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _marker: RectElement;
+    private _label: TextElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-legend-item');
+
+        this.add(this._marker = RectElement.create(doc, 0, 0, 12, 12, 6, 'rct-legend-item-marker'));
+        this.add(this._label = new TextElement(doc, 'rct-legend-item-label'));
+        this._label.anchor = TextAnchor.START;
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -19,10 +43,13 @@ export class LegendItemView extends ChartElement<LegendItem> {
         let w = 70;
         let h = 30;
 
+        this._label.text = model.text();
+
         return Size.create(w, h);
     }
 
     protected _doLayout(): void {
+        this._label.translate(16, 0);
     }
 }
 
@@ -31,8 +58,18 @@ export class LegendView extends ChartElement<Legend> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _background: RectElement;
     private _itemViews: LegendItemView[] = [];
     vertical: boolean;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-legend');
+
+        this.add(this._background = new RectElement(doc));
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -68,6 +105,8 @@ export class LegendView extends ChartElement<Legend> {
     }
     
     protected _doLayout(): void {
+        this._background.setBounds(0, 0, this.width, this.height);
+        this._itemViews.forEach(v => v.resizeByMeasured().layout());
     }
 
     //-------------------------------------------------------------------------

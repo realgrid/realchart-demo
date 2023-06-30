@@ -8,6 +8,7 @@
 
 import { RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
+import { RectElement } from "../common/impl/RectElement";
 import { Chart } from "../main";
 import { AxisGrid } from "../model/Axis";
 import { Body } from "../model/Body";
@@ -47,6 +48,13 @@ class AxisGridView extends ChartElement<AxisGrid> {
     // fields
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-axis-grid');
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: AxisGrid, hintWidth: number, hintHeight: number, phase: number): ISize {
@@ -68,6 +76,7 @@ export class BodyView extends ChartElement<Body> {
     // fields
     //-------------------------------------------------------------------------
     private _polar = false;
+    private _background: RectElement;
     private _gridContainer: RcElement;
     private _gridViews: AxisGridView[];
     private _seriesContainer: RcElement;
@@ -78,8 +87,9 @@ export class BodyView extends ChartElement<Body> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc);
+        super(doc, 'rct-body');
 
+        this.add(this._background = new RectElement(doc));
         this.add(this._gridContainer = new RcElement(doc));
         this.add(this._seriesContainer = new RcElement(doc));
     }
@@ -109,7 +119,7 @@ export class BodyView extends ChartElement<Body> {
     // internal members
     //-------------------------------------------------------------------------
     private $_createSeriesView(doc: Document, series: Series): SeriesView<Series> {
-        for (const cls in series_types) {
+        for (const cls of series_types.keys()) {
             if (series instanceof (cls as any)) {
                 return new (series_types.get(cls))(doc);
             }

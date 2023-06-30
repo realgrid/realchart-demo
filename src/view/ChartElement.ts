@@ -8,6 +8,7 @@
 
 import { RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
+import { RectElement } from "../common/impl/RectElement";
 import { ChartItem } from "../model/ChartItem";
 
 export abstract class ChartElement<T extends ChartItem> extends RcElement {
@@ -18,6 +19,16 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     model: T;
     mw: number;
     mh: number;
+    _debugRect: RectElement;
+    
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, styleName = '') {
+        super(doc, 'g', styleName);
+
+        this.add(this._debugRect = new RectElement(doc));
+    }
 
     //-------------------------------------------------------------------------
     // properties
@@ -33,8 +44,20 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
         return sz;
     }
 
-    layout(): void {
+    layout(): ChartElement<ChartItem> {
         this._doLayout();
+
+        this._debugRect.setBounds(0, 0, this.width, this.height);
+        this._debugRect.setStyles({
+            fill: 'transparent',
+            stroke: 'lightgray'
+        })
+        return this;
+    }
+
+    resizeByMeasured(): ChartElement<ChartItem> {
+        this.resize(this.mw, this.mh);
+        return this;
     }
 
     //-------------------------------------------------------------------------

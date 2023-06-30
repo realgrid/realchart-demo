@@ -74,6 +74,7 @@ export abstract class RcControl extends RtWrappableObject {
         this.$_initControl(doc || document, container, className);
         this._resigterEventHandlers(this._dom);
         this._inited = true;
+        this.invalidate(true);
     }
 
     protected _doDestory(): void {

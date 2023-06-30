@@ -8,7 +8,7 @@
 
 import { toSize } from "../common/Rectangle";
 import { ISize } from "../common/Size";
-import { TextElement } from "../common/impl/TextElement";
+import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Title } from "../model/Title";
 import { ChartElement } from "./ChartElement";
 
@@ -22,12 +22,12 @@ export class TitleView extends ChartElement<Title> {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc);
+    constructor(doc: Document, isSub: boolean) {
+        super(doc, isSub ? 'rct-subtitle' : 'rct-title');
 
         this.add(this._textView = new TextElement(doc));
+        this._textView.anchor = TextAnchor.START;
     }
-
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -42,5 +42,6 @@ export class TitleView extends ChartElement<Title> {
     }
 
     protected _doLayout(): void {
+        this._textView.layoutText();
     }
 }

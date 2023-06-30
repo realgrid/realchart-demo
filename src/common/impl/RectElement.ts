@@ -27,12 +27,13 @@ export class RectElement extends RcElement {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
-    static create(doc: Document, x: number, y: number, width: number, height: number, styleName = ''): RectElement {
+    static create(doc: Document, x: number, y: number, width: number, height: number, r = 0, styleName = ''): RectElement {
         return new RectElement(doc, {
             x: x,
             y: y,
             width: width,
-            height: height
+            height: height,
+            r: r
         }, styleName);
     }
 
