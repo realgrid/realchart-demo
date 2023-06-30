@@ -8,7 +8,7 @@
 
 import { isNumber } from "../common/Common";
 import { RcElement } from "../common/RcControl";
-import { ISize } from "../common/Size";
+import { ISize, Size } from "../common/Size";
 import { SectionDir } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { Chart } from "../main";
@@ -92,7 +92,7 @@ class TitleSectionView extends SectionView {
     }
 
     protected _doLayout(): void {
-        this.titleView.resizeByMeasured().layout().translate(100, 10);
+        this.titleView.resizeByMeasured().layout().translate(0, 0);
     }
 }
 
@@ -188,11 +188,13 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
         const axes = this.axes;
+        let w = 0;
+        let h = 0;
 
         this.views.forEach((v, i) => {
             v.measure(doc, axes[i], hintWidth, hintHeight, phase);
         })
-        return;
+        return Size.create(w, h);
     }
 
     protected _doLayout(): void {
@@ -262,7 +264,7 @@ export class ChartView extends RcElement {
         if (this.$_checkEmpty(doc, model, hintWidth, hintHeight)) {
             return;
         }
-        
+
         const m = this._model = model;
         const legend = m.legend;
         let w = hintWidth;
@@ -295,8 +297,8 @@ export class ChartView extends RcElement {
     }
 
     layout(): void {
-        const w = this.width;
-        const h = this.height;
+        let w = this.width;
+        let h = this.height;
         let x = 0;
         let y = 0;
 
@@ -311,15 +313,25 @@ export class ChartView extends RcElement {
         this._titleSectionView.resizeByMeasured().layout();
         this._titleSectionView.translate(x, y);
         y += this._titleSectionView.height;
+        h -= this._titleSectionView.height;
 
         // legend
         if (this._legendSectionView.visible) {
             this._legendSectionView.resizeByMeasured().layout();
-            this._legendSectionView.translate(200, h - this._legendSectionView.height);
+            this._legendSectionView.translate(200, this.height - this._legendSectionView.height);
+            h -= this._legendSectionView.height;
+        }
+
+        // axes
+        const axisMap = this._axisSectionViews;
+        let asv = axisMap.get(SectionDir.LEFT);
+
+        if (asv.visible) {
         }
 
         // body
-        this._bodyView.resizeByMeasured().layout().translate(0, y);
+        this._bodyView.resize(w, h);
+        this._bodyView.layout().translate(0, y);
     }
 
     //-------------------------------------------------------------------------
@@ -368,5 +380,10 @@ export class ChartView extends RcElement {
 
         // body
         this._bodyView.measure(doc, m.body, w, h, phase);
+
+        // axes
+        for (const asv of map.keys()) {
+            map.get(asv).measure(doc, m, w, h, phase);
+        }
     }
 }

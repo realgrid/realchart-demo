@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcControl } from "./common/RcControl";
+import { RcControl, RcElement } from "./common/RcControl";
 import { RcEditTool } from "./common/RcEditTool";
 import { IRect } from "./common/Rectangle";
 import { Chart } from "./main";
@@ -23,6 +23,7 @@ export class ChartControl extends RcControl {
     // fields
     //-------------------------------------------------------------------------
     private _model: Chart;
+    private _chartContainer: HTMLDivElement;
     private _chartView: ChartView;
 
     //-------------------------------------------------------------------------
@@ -65,6 +66,10 @@ export class ChartControl extends RcControl {
     }
 
     protected _doRender(bounds: IRect): void {
+        if (this._model) {
+            // Object.assign(this.dom().style, this._model.style);
+        }
+
         this._chartView.measure(this.doc(), this._model, bounds.width, bounds.height, 1);
         this._chartView.resize(bounds.width, bounds.height);
         this._chartView.layout();

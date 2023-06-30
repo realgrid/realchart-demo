@@ -43,6 +43,10 @@
     --rct-flip-x: 0;
 }
 
+.rtc-control {
+    padding: 20px;
+}
+
 .rct-title {
     font-size: 20px;
 }

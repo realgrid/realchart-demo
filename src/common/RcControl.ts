@@ -46,6 +46,7 @@ export abstract class RcControl extends RtWrappableObject {
     //-------------------------------------------------------------------------
     private _container: HTMLDivElement;
     private _dom: HTMLDivElement;
+    private _htmlRoot: HTMLDivElement;
     private _svg: SVGSVGElement;
     private _defs: SVGDefsElement;
     private _root: RootElement;
@@ -124,6 +125,10 @@ export abstract class RcControl extends RtWrappableObject {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    appendDom(elt: HTMLElement): void {
+        elt && this._htmlRoot.append(elt);
+    }
+
     addElement(elt: RcElement): void {
         elt && this._root.add(elt);
     }
@@ -314,11 +319,19 @@ export abstract class RcControl extends RtWrappableObject {
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
         svg.appendChild(defs);
-        this._dom.appendChild(svg);
+        dom.appendChild(svg);
 
         this._root = new RootElement(this);
         svg.appendChild(this._root['_dom']);
 
+        // html root
+        this._htmlRoot = doc.createElement('div');
+        dom.appendChild(this._htmlRoot);
+        Object.assign(this._htmlRoot.style, {
+            position: 'absolute'
+        });
+
+        // tool
         this._defaultTool = this._tool = this._creatDefaultTool();
     }
 
@@ -357,8 +370,13 @@ export abstract class RcControl extends RtWrappableObject {
         try {
             this._doBeforeRender();
 
-            const w = this._dom.clientWidth;
-            const h = this._dom.clientHeight;
+            const cr = this._dom.getBoundingClientRect();
+            const sr = this._svg.getBoundingClientRect();
+            const w = this._svg.clientWidth;
+            const h = this._svg.clientHeight;
+
+            this._htmlRoot.style.left = (sr.left - cr.left) + 'px';
+            this._htmlRoot.style.top = (sr.top - cr.top) + 'px';
 
             this._doRender({x: 0, y: 0, width: w, height: h});
             

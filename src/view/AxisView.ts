@@ -8,7 +8,7 @@
 
 import { RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
-import { ISize } from "../common/Size";
+import { ISize, Size } from "../common/Size";
 import { TextElement } from "../common/impl/TextElement";
 import { Axis, AxisTitle } from "../model/Axis";
 import { ChartElement } from "./ChartElement";
@@ -87,7 +87,14 @@ export class AxisView extends ChartElement<Axis> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: Axis, hintWidth: number, hintHeight: number, phase: number): ISize {
-        return;
+        const sz = Size.create(hintWidth, hintHeight);
+        
+        if (this._isHorz) {
+            debugger;
+        } else {
+            debugger;
+        }
+        return sz;
     }
     
     protected _doLayout(): void {
