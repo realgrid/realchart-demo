@@ -6,9 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { BarSeriesView } from "./BarSeriesView";
+import { ColumnSeries } from "../../model/series/BarSeries";
+import { SeriesView } from "../SeriesView";
 
-export class ColumnSeriesView extends BarSeriesView {
+export class ColumnSeriesView extends SeriesView<ColumnSeries> {
 
     //-------------------------------------------------------------------------
     // fields

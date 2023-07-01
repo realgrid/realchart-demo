@@ -113,6 +113,10 @@ export class BodyView extends ChartElement<Body> {
     }
     
     protected _doLayout(): void {
+        this._seriesViews.forEach(v => {
+            v.resize(this.width, this.height);
+            v.layout();
+        })
     }
 
     //-------------------------------------------------------------------------

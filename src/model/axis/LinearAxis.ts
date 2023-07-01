@@ -246,8 +246,8 @@ export class LinearAxis extends Axis {
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
         const tick = this.tick as LinearAxisTick;
         const { min, max } = this.$_adjustMinMax(calcedMin, calcedMax);
-        const len = max - min;
         const steps = tick.buildSteps(length, this.baseValue, min, max);
+        const len = steps[steps.length - 1] - steps[0];
         const ticks: IAxisTick[] = [];
 
         for (let i = 0; i < steps.length; i++) {
@@ -278,7 +278,7 @@ export class LinearAxis extends Axis {
     
                 max = base + v;
                 min = base - v;
-            } 
+            }
          
             if (!isNaN(this._hardMin)) {
                 min = this._hardMin;

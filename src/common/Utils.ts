@@ -744,6 +744,21 @@ export class Utils {
             return str.indexOf(search, -str.length) === (str.length - search.length);
         }
     }
+
+    static scaleNumber(value: number, symbols: string[], force: boolean): { value: number, symbol: string } {
+        const abs = Math.abs(value);
+        
+        if (abs >= 1000) {
+            let i = symbols.length - 1;
+            while (i) {
+                const m = Math.pow(1000, i--);
+                const v = Math.pow(10, Math.log(abs) * Math.LOG10E);
+                if (m <= v && (force || (abs * 10) % m === 0)) {
+                    return { value: value / m, symbol: symbols[i] };
+                }
+            }
+        }
+    }
 }
 
 export class Stopwatch {

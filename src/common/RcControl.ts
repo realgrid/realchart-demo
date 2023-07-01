@@ -521,6 +521,7 @@ export class RcElement extends RcObject {
     //-------------------------------------------------------------------------
     private _dom: SVGElement;
     private _parent: RcElement;
+    removing: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -871,6 +872,16 @@ export class RcElement extends RcObject {
         buff = buff || {};
         buff[prop] = value;
         return buff;
+    }
+
+    // TODO
+    removeLater(moveToFirst = true, duration = 0.5): RcElement {
+        return this;
+    }
+
+    // TODO
+    fadeout(removeDelay: number, startOpacity: number): RcElement {
+        return this;
     }
 
     //-------------------------------------------------------------------------

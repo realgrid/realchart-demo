@@ -15,6 +15,7 @@ export class DataPoint {
     index: number;
     x: any;
     y: any;
+    visible: boolean;
 
     constructor(source: any) {
         this.value = source;

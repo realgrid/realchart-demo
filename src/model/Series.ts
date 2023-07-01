@@ -7,13 +7,141 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, isString } from "../common/Common";
+import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
+import { Align, VerticalAlign } from "../common/Types";
+import { Utils } from "../common/Utils";
 import { IAxis } from "./Axis";
-import { IChart } from "./Chart";
+import { Chart, IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource } from "./Legend";
 import { CategoryAxis } from "./axis/CategoryAxis";
+
+export enum PointItemPosition {
+    AUTO = 'auto',
+    INSIDE = 'inside',
+    OUTSIDE = 'outside',
+    INSIDE_FIRST = 'insideFirst',
+    OUTSIDE_FIRST = 'outsideFirst',
+}
+
+export const BRIGHT_COLOR = 'white';
+export const DARK_COLOR = 'black';
+
+export const NUMBER_SYMBOLS = 'k,M,G,T,P,E';
+export const NUMBER_FORMAT = '#,##0.#';
+
+/**
+ * Series data point label options.
+ */
+export class DataPointLabel extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    /**
+     * 포인트 label 표시 위치.
+     */
+    position = PointItemPosition.AUTO;
+    /**
+     * position 위치에서 수평 정렬 상태.
+     * pie 시리즈에서는 무시.
+     */
+    align = Align.CENTER;
+    /**
+     * position 위치에서 수직 정렬 상태.
+     */
+    verticalAlign = VerticalAlign.MIDDLE;
+    /**
+     * true면 텍스트 색상과 대조되는 색상의 배경을 표시한다.
+     */
+    outlined = true;
+    /**
+     * true면 포인트 색상과 대조되는 흰색 혹은 검정색으로 표시한다.
+     */
+    autoContrast = true;
+    /**
+     * autoContrast가 true일 때 밝은 쪽 텍스트 색상.
+     */
+    brightColor = BRIGHT_COLOR;
+    /**
+     * autoContrast가 true일 때 어두운 쪽 텍스트 색상.
+     */
+    darkColor = DARK_COLOR;
+    /**
+     * position으로 지정된 위치로 부터 떨어진 간격.
+     * center나 middle일 때는 무시.
+     * 파이 시리즈 처럼 label 연결선이 있을 때는 연결선과의 간격.
+     */
+    offset = 4;
+    prefix: string;
+    suffix: string;
+    numberSymbols = NUMBER_SYMBOLS;
+    numberFormat = NUMBER_FORMAT;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _numSymbols: string[];
+    private _numberFormatter: NumberFormatter;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: Chart) {
+        super(chart, false);
+    }
+
+	//-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getText(value: any): string {
+        if (Utils.isValidNumber(value)) {
+            let s = this._format(null, value, Math.abs(value) > 1000, true);
+            return s;
+        }
+        return value;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doLoad(source: any): void {
+        super._doLoad(source);
+
+        this._numSymbols = this.numberSymbols && this.numberSymbols.split(',');
+        this._numberFormatter = this.numberFormat && NumberFormatter.getFormatter(this.numberFormat);
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_getNumberText(value: any, useSymbols: boolean, forceSymbols: boolean): string {
+        if (Utils.isValidNumber(value)) {
+            const sv = this._numSymbols && useSymbols && Utils.scaleNumber(value, this._numSymbols, forceSymbols);
+
+            if (this._numberFormatter) {
+                if (sv) {
+                    return this._numberFormatter.toStr(sv.value) + sv.symbol;
+                } else {
+                    return this._numberFormatter.toStr(value);
+                }
+            }
+            return String(value);
+        }
+        return 'NaN';
+    }
+    
+    protected _format(text: string, value: any, useSymbols: boolean, forceSymbols = false): string {
+        let s = text || this.$_getNumberText(value, useSymbols, forceSymbols);
+        s = this.prefix + (s || value) + this.suffix;
+        return s;
+    }
+}
 
 export interface ISeries {
 
