@@ -6,14 +6,21 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { ElementPool } from "../../common/ElementPool";
+import { PathElement } from "../../common/RcControl";
 import { ColumnSeries } from "../../model/series/BarSeries";
 import { SeriesView } from "../SeriesView";
+
+class BarElement extends PathElement {
+}
 
 export class ColumnSeriesView extends SeriesView<ColumnSeries> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _bars: ElementPool<BarElement>;
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
