@@ -246,12 +246,13 @@ export class LinearAxis extends Axis {
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
         const tick = this.tick as LinearAxisTick;
         const { min, max } = this.$_adjustMinMax(calcedMin, calcedMax);
+        const len = max - min;
         const steps = tick.buildSteps(length, this.baseValue, min, max);
         const ticks: IAxisTick[] = [];
 
         for (let i = 0; i < steps.length; i++) {
             ticks.push({
-                pos: steps[i],
+                pos: length * (len - steps[i]) / (len),
                 value: steps[i],
                 label: String(steps[i])
             });

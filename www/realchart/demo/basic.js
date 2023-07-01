@@ -5,13 +5,7 @@ const config = {
     yAxis: {
     },
     series: {
-        data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['def', 9], 
-            ['지리산', 15], 
-            ['zzz', 13]
-        ]
+        data: [7, 11, 9, 15]
     }
 }
 

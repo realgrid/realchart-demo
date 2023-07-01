@@ -187,31 +187,31 @@ export class Chart extends RcObject implements IChart {
         if (this.inverted()) {
             switch (dir) {
                 case SectionDir.LEFT:
-                    axes = yAxes.filter(a => !a.opposite);
-                    break;
-                case SectionDir.RIGHT:
-                    axes = yAxes.filter(a => a.opposite);
-                    break;
-                case SectionDir.BOTTOM:
                     axes = xAxes.filter(a => !a.opposite);
                     break;
-                case SectionDir.TOP:
+                case SectionDir.RIGHT:
                     axes = xAxes.filter(a => a.opposite);
+                    break;
+                case SectionDir.BOTTOM:
+                    axes = yAxes.filter(a => !a.opposite);
+                    break;
+                case SectionDir.TOP:
+                    axes = yAxes.filter(a => a.opposite);
                     break;
             } 
         } else {
             switch (dir) {
                 case SectionDir.LEFT:
-                    axes = xAxes.filter(a => !a.opposite);
-                    break;
-                case SectionDir.RIGHT:
-                    axes = xAxes.filter(a => a.opposite);
-                    break;
-                case SectionDir.BOTTOM:
                     axes = yAxes.filter(a => !a.opposite);
                     break;
-                case SectionDir.TOP:
+                case SectionDir.RIGHT:
                     axes = yAxes.filter(a => a.opposite);
+                    break;
+                case SectionDir.BOTTOM:
+                    axes = xAxes.filter(a => !a.opposite);
+                    break;
+                case SectionDir.TOP:
+                    axes = xAxes.filter(a => a.opposite);
                     break;
             } 
         }

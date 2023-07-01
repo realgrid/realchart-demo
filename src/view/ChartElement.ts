@@ -44,8 +44,8 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
         return sz;
     }
 
-    layout(): ChartElement<ChartItem> {
-        this._doLayout();
+    layout(param?: any): ChartElement<ChartItem> {
+        this._doLayout(param);
 
         this._debugRect.setBounds(0, 0, this.width, this.height);
         this._debugRect.setStyles({
@@ -64,5 +64,5 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     // internal methods
     //-------------------------------------------------------------------------
     protected abstract _doMeasure(doc: Document, model: T, intWidth: number, hintHeight: number, phase: number): ISize;
-    protected abstract _doLayout(): void;
+    protected abstract _doLayout(param: any): void;
 }

@@ -620,6 +620,19 @@ export class RcElement extends RcObject {
         }
     }
 
+    /**
+     * rotation
+     */
+    get rotation(): number {
+        return this._rotation;
+    }
+    set rotation(value: number) {
+        if (value != this._rotation) {
+            this._rotation = value;
+            this._updateTransform();
+        }
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
