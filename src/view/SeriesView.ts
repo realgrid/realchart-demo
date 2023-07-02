@@ -321,6 +321,8 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this._prepareSeries(doc, model);
+        
         return Size.create(hintWidth, hintHeight);
     }
 
@@ -331,5 +333,6 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
 }

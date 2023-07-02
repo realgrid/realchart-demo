@@ -17,6 +17,9 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _prepareSeries(doc: Document, model: BubbleSeries): void {
+    }
+
     protected _renderSeries(width: number, height: number): void {
     }
 }

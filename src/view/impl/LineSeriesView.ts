@@ -17,6 +17,9 @@ export class LineSeriesView extends SeriesView<LineSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _prepareSeries(doc: Document, model: LineSeries): void {
+    }
+
     protected _renderSeries(width: number, height: number): void {
     }
 }

@@ -17,6 +17,9 @@ export class HistogramSeriesView extends SeriesView<HistogramSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _prepareSeries(doc: Document, model: HistogramSeries): void {
+    }
+
     protected _renderSeries(width: number, height: number): void {
     }
 }

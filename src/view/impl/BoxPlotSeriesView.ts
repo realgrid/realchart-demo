@@ -17,6 +17,9 @@ export class BoxPlotSeriesView extends SeriesView<BoxPlotSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _prepareSeries(doc: Document, model: BoxPlotSeries): void {
+    }
+
     protected _renderSeries(width: number, height: number): void {
     }
 }

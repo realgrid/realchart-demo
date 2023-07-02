@@ -17,6 +17,9 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _prepareSeries(doc: Document, model: PieSeries): void {
+    }
+
     protected _renderSeries(width: number, height: number): void {
     }
 }

@@ -17,6 +17,9 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _prepareSeries(doc: Document, model: ScatterSeries): void {
+    }
+
     protected _renderSeries(width: number, height: number): void {
     }
 }

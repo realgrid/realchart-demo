@@ -29,7 +29,7 @@ export class ElementPool<T extends RcElement> extends RcObject {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _owner: GroupElement;
+    private _owner: RcElement;
     private _creator: { new (doc: Document, className?: string): T };
     private _pool: T[] = [];
     private _views: T[] = [];
@@ -40,7 +40,7 @@ export class ElementPool<T extends RcElement> extends RcObject {
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
-    constructor(owner: GroupElement, creator: { new (doc: Document): T }, styleName?: string, removeDelay = 0) {
+    constructor(owner: RcElement, creator: { new (doc: Document): T }, styleName?: string, removeDelay = 0) {
         super();
 
         this._owner = owner;
