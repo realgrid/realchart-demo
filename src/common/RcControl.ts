@@ -634,6 +634,11 @@ export class RcElement extends RcObject {
         }
     }
 
+    setOrigin(x: number, y: number): void {
+        this._originX = x;
+        this._originY = y;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------

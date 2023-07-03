@@ -28,13 +28,14 @@ export class AxisTitleView extends ChartElement<AxisTitle> {
         super(doc, 'rct-axis-title');
 
         this.add(this._textView = new TextElement(doc));
-        this._textView.anchor = TextAnchor.START;
+        // this._textView.anchor = TextAnchor.START;
     }
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: AxisTitle, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this._textView.rotation = 0;
         this._textView.text = model.text;
 
         return toSize(this._textView.getBBounds());
@@ -43,11 +44,9 @@ export class AxisTitleView extends ChartElement<AxisTitle> {
     protected _doLayout(isHorz: boolean): void {
         if (isHorz) {
         } else {
-            this._textView.translate(this.mh / 2, this.mw / 2);
-            this._textView.rotation = 270;
-
-            // this._textView.translate(0, -this.mw / 2);
-            // this._textView.rotation = 90;
+            // this._textView.setOrigin(this._textView.getBBounds().width / 2, this._textView.getBBounds().height / 2);
+            this._textView.setOrigin(0, this._textView.getBBounds().height / 2);
+            this._textView.rotation = 90;
         }
     }
 }
@@ -114,6 +113,9 @@ export class AxisView extends ChartElement<Axis> {
             this._labelSize = this._labelViews[0].getBBounds().height;
         } else {
             this._labelSize = this._labelViews[0].getBBounds().width;
+            for (let i = 1; i < this._labelViews.length; i++) {
+                this._labelSize = Math.max(this._labelSize, this._labelViews[i].getBBounds().width);
+            }
         }
         sz += this._labelSize;
 
@@ -153,9 +155,10 @@ export class AxisView extends ChartElement<Axis> {
             titleView.resizeByMeasured().layout(horz);
 
             if (horz) {
-                titleView.translate((w - titleView.width) / 2, this._markLen + this._labelSize);
+                // titleView.translate((w - titleView.width) / 2, this._markLen + this._labelSize);
+                titleView.translate(w / 2, this._markLen + this._labelSize);
             } else {
-                titleView.translate(w - this._markLen - this._labelSize - titleView.height, h / 2);// (h - titleView.height) / 2);
+                titleView.translate(w - this._markLen - this._labelSize - titleView.height / 2, (h - titleView.height) / 2);
             }
         }
     }
