@@ -634,9 +634,14 @@ export class RcElement extends RcObject {
         }
     }
 
-    setOrigin(x: number, y: number): void {
-        this._originX = x;
-        this._originY = y;
+    setRotaion(originX: number, originY: number, rotation: number): RcElement {
+        if (originX !== this._originX || originY !== this._originY || rotation !== this._rotation) {
+            this._originX = originX;
+            this._originY = originY;;
+            this._rotation = rotation;
+            this._updateTransform();
+        }
+        return this;
     }
 
     //-------------------------------------------------------------------------

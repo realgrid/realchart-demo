@@ -12,6 +12,7 @@ import { ISize, Size } from "../common/Size";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Chart } from "../main";
 import { Axis, AxisTitle } from "../model/Axis";
+import { ChartItem } from "../model/ChartItem";
 import { ChartElement } from "./ChartElement";
 
 export class AxisTitleView extends ChartElement<AxisTitle> {
@@ -20,6 +21,7 @@ export class AxisTitleView extends ChartElement<AxisTitle> {
     // fields
     //-------------------------------------------------------------------------
     private _textView: TextElement;
+    private _isHorz: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -42,12 +44,19 @@ export class AxisTitleView extends ChartElement<AxisTitle> {
     }
 
     protected _doLayout(isHorz: boolean): void {
-        if (isHorz) {
+        if (this._isHorz = isHorz) {
         } else {
-            // this._textView.setOrigin(this._textView.getBBounds().width / 2, this._textView.getBBounds().height / 2);
-            this._textView.setOrigin(0, this._textView.getBBounds().height / 2);
-            this._textView.rotation = 90;
+            this._textView.setRotaion(0, this._textView.getBBounds().height / 2, 270);
         }
+    }
+    layout(param?: any): ChartElement<ChartItem> {
+        super.layout(param);
+
+        this._debugRect.setBounds(-this.width / 2, 0, this.width, this.height)
+        if (!this._isHorz) {
+            this._debugRect.setRotaion(this.width / 2, this.height / 2, 270);
+        }
+        return this;
     }
 }
 
