@@ -15,6 +15,13 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
     // fields
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-scatter-series')
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: ScatterSeries): void {

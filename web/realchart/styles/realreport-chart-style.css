@@ -61,3 +61,8 @@
 .rct-legend-item {
     fill: #333;
 }
+
+.rct-axis-line {
+    stroke: red;
+    stroke-width: 1px;
+}

@@ -264,6 +264,10 @@ export class LinearAxis extends Axis {
         return;
     }
 
+    getPointWidth(length: number): number {
+        return;
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

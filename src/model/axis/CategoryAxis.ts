@@ -145,6 +145,10 @@ export class CategoryAxis extends Axis {
         return 0;
     }
 
+    getPointWidth(length: number): number {
+        return;
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

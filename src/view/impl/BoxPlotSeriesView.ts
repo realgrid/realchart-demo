@@ -15,6 +15,13 @@ export class BoxPlotSeriesView extends SeriesView<BoxPlotSeries> {
     // fields
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-boxplot-series')
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: BoxPlotSeries): void {

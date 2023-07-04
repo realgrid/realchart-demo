@@ -7,10 +7,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isNumber } from "../common/Common";
+import { IPoint, Point } from "../common/Point";
 import { RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { SectionDir } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
+import { LineElement } from "../common/impl/PathElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
 import { LegendPosition } from "../model/Legend";
@@ -165,11 +167,11 @@ class AxisSectionView extends SectionView {
     /**
      * 수평 축들의 높이를 기본 설정에 따라 추측한다.
      */
-    checkHeights(doc: Document, width: number): number {
+    checkHeights(doc: Document, width: number, height: number): number {
         let h = 0;
 
         this.views.forEach(view => {
-            h += view.checkHeight(doc, width);
+            h += view.checkHeight(doc, width, height);
         });
         return h;
     }
@@ -177,11 +179,11 @@ class AxisSectionView extends SectionView {
     /**
      * 수직 축들의 너비를 기본 설정에 따라 추측한다.
      */
-    checkWidths(doc: Document, height: number): number {
+    checkWidths(doc: Document, width: number, height: number): number {
         let w = 0;
 
         this.views.forEach(view => {
-            w += view.checkWidth(doc, height);
+            w += view.checkWidth(doc, width, height);
         });
         return w;
     }
@@ -227,6 +229,11 @@ export class ChartView extends RcElement {
     private _legendSectionView: LegendSectionView;
     private _bodyView: BodyView;
     private _axisSectionViews = new Map<SectionDir, AxisSectionView>();
+    private _hAxisLine: LineElement;
+    private _vAxisLine: LineElement;
+    private _org: IPoint;
+    private _plotWidth: number;
+    private _plotHeight: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -237,6 +244,9 @@ export class ChartView extends RcElement {
         this.add(this._titleSectionView = new TitleSectionView(doc));
         this.add(this._legendSectionView = new LegendSectionView(doc));
         this.add(this._bodyView = new BodyView(doc));
+
+        this.add(this._hAxisLine = new LineElement(doc, null, 'rct-axis-line'));
+        this.add(this._vAxisLine = new LineElement(doc, null, 'rct-axis-line'));
 
         Object.values(SectionDir).forEach(dir => {
             if (isNumber(dir)) {
@@ -334,25 +344,49 @@ export class ChartView extends RcElement {
         }
 
         // axes
-        const axisMap = this._axisSectionViews;
+        const axisMap = new Map(this._axisSectionViews);
         let asv: AxisSectionView;
 
         if ((asv = axisMap.get(SectionDir.LEFT)) && asv.visible) {
-            asv.resize(asv.mw, h);
-            asv.layout();
             w -= asv.mw;
-            x += asv.mw;
+        } else {
+            axisMap.delete(SectionDir.LEFT);
         }
         if ((asv = axisMap.get(SectionDir.BOTTOM)) && asv.visible) {
+            h -= asv.mh;
+        } else {
+            axisMap.delete(SectionDir.BOTTOM);
+        }
+
+        y = this.height - hLegend;
+
+        if (asv = axisMap.get(SectionDir.LEFT)) {
+            asv.resize(asv.mw, h);
+            asv.layout();
+            x += asv.mw;
+        }
+        if (asv = axisMap.get(SectionDir.BOTTOM)) {
             asv.resize(w, asv.mh);
             asv.layout();
-            asv.translate(x, this.height - hLegend - asv.mh);
-            h -= asv.mh;
+            y -= asv.mh;
+        }
+
+        const org = this._org = Point.create(x, y);
+        this._plotWidth = w;
+        this._plotHeight = h;
+
+        if (this._vAxisLine.visible = !!(asv = axisMap.get(SectionDir.LEFT))) {
+            this._vAxisLine.setVLineC(org.x, org.y, org.y - h);
+            asv.translate(org.x - asv.mw, org.y - asv.height);
+        }
+        if (this._hAxisLine.visible = !!(asv = axisMap.get(SectionDir.BOTTOM))) {
+            this._hAxisLine.setHLineC(org.y, org.x, org.x + w);
+            asv.translate(org.x, org.y);
         }
 
         // body
-        this._bodyView.resize(w, h);
-        this._bodyView.layout().translate(x, y);
+        this._bodyView.resize(this._plotWidth, this._plotHeight);
+        this._bodyView.layout().translate(org.x, org.y - this._plotHeight);
     }
 
     //-------------------------------------------------------------------------
@@ -386,18 +420,22 @@ export class ChartView extends RcElement {
     private $_measurePlot(doc: Document, m: Chart, w: number, h: number, phase: number): void {
         const map = this._axisSectionViews;
 
-        m.layoutAxes(w, h, phase);
-
         // axes
         this.$_prepareAxes(doc, m);
 
-        if (this._flipped) {
-            w -= map.get(SectionDir.LEFT).checkWidths(doc, h);
-            w -= map.get(SectionDir.RIGHT).checkWidths(doc, h);
-        } else {
-            h -= map.get(SectionDir.BOTTOM).checkHeights(doc, w);
-            h -= map.get(SectionDir.TOP).checkHeights(doc, w);
-        }
+        // 아래 checkWidth를 위해 tick을 생성한다.
+        m.layoutAxes(w, h, phase);
+
+        // if (this._flipped) {
+            w -= map.get(SectionDir.LEFT).checkWidths(doc, w, h);
+            w -= map.get(SectionDir.RIGHT).checkWidths(doc, w, h);
+        // } else {
+            h -= map.get(SectionDir.BOTTOM).checkHeights(doc, w, h);
+            h -= map.get(SectionDir.TOP).checkHeights(doc, w, h);
+        // }
+
+        // 조정된 크기로 tick을 다시 생성한다.
+        m.layoutAxes(w, h, phase);
 
         // body
         this._bodyView.measure(doc, m.body, w, h, phase);

@@ -9,6 +9,7 @@
 import { RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
+import { LineElement } from "../common/impl/PathElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Chart } from "../main";
 import { Axis, AxisTitle } from "../model/Axis";
@@ -88,20 +89,28 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    checkHeight(doc: Document, width: number): number {
+    checkHeight(doc: Document, width: number, height: number): number {
         const m = this.model;
         const t = this.$_prepareChecker(doc);
         let h = m.tick.mark.length;; 
 
-        return h + t.getBBounds().height;
+        h += t.getBBounds().height;
+        if (this._titleView.visible = m.title.visible()) {
+            h += this._titleView.measure(doc, m.title, width, height, 1).height;
+        }
+        return h;
     }
 
-    checkWidth(doc: Document, height: number): number {
+    checkWidth(doc: Document, width: number, height: number): number {
         const m = this.model;
         const t = this.$_prepareChecker(doc);
         let w = m.tick.mark.length;; 
 
-        return w + t.getBBounds().width;
+        w += t.getBBounds().width;
+        if (this._titleView.visible = m.title.visible()) {
+            w += this._titleView.measure(doc, m.title, width, height, 1).height;
+        }
+        return w;
     }
 
     //-------------------------------------------------------------------------
@@ -129,8 +138,11 @@ export class AxisView extends ChartElement<Axis> {
         sz += this._labelSize;
 
         // title
-        if (titleView.visible = model.title.visible()) {
-            sz += titleView.measure(doc, model.title, hintWidth, hintHeight, phase).height;
+        // if (titleView.visible = model.title.visible()) {
+        //     sz += titleView.measure(doc, model.title, hintWidth, hintHeight, phase).height;
+        // }
+        if (titleView.visible) {
+            sz += titleView.mh;
         }
 
         return Size.create(horz ? hintWidth : sz, horz ? sz : hintHeight);
@@ -181,6 +193,7 @@ export class AxisView extends ChartElement<Axis> {
 
         if (!t) {
             t = new TextElement(doc, 'rct-axis-label');
+            t.anchor = TextAnchor.START;
             this._labelContainer.add(t);
             this._labelViews.push(t);
         }

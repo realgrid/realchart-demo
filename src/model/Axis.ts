@@ -17,6 +17,11 @@ export interface IAxis {
      */
     getValue(value: any): number;
     contains(value: number): boolean;
+    getPosition(length: number, value: number): number;
+    /**
+     * 축 단위 값에 해당하는 너비. 
+     */
+    getPointWidth(length: number): number;
 }
 
 export class AxisItem extends ChartItem {
@@ -234,6 +239,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      * value에 해당하는 축상의 위치.
      */
     abstract getPosition(length: number, value: number): number;
+    abstract getPointWidth(length: number): number;
 
     getValue(value: any): number {
         return +value;

@@ -16,6 +16,8 @@ export class DataPoint {
     x: any;
     y: any;
 
+    xValue: number;
+    yValue: number;
     visible: boolean;
     color: string;
 
@@ -100,6 +102,7 @@ export class DataPointCollection {
     }
 
     getVisibles(): DataPoint[] {
-        return this._points.filter(p => this._owner.isVisible(p));
+        return this._points;
+        // return this._points.filter(p => this._owner.isVisible(p));
     }
 }

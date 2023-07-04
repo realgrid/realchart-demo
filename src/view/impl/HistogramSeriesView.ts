@@ -15,6 +15,13 @@ export class HistogramSeriesView extends SeriesView<HistogramSeries> {
     // fields
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-histogram-series')
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: HistogramSeries): void {

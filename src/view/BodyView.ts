@@ -82,6 +82,7 @@ export class BodyView extends ChartElement<Body> {
     private _seriesContainer: RcElement;
     private _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
+    private _series: Series[];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -109,6 +110,10 @@ export class BodyView extends ChartElement<Body> {
     protected _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
         this.$_prepareSeries(doc, model.chart._getSeries().visibles())
 
+        this._seriesViews.forEach((v, i) => {
+            v.measure(doc, this._series[i], hintWidth, hintHeight, phase);
+        })
+
         return Size.create(hintWidth, hintHeight);
     }
     
@@ -135,6 +140,7 @@ export class BodyView extends ChartElement<Body> {
         const map = this._seriesMap;
         const views = this._seriesViews;
 
+        this._series = series;
         views.forEach(v => v.remove());
         views.length = 0;
 

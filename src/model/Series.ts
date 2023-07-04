@@ -289,7 +289,15 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     collectValues(axis: IAxis): number[] {
-        return this._points.getValues(axis === this._xAxisObj ? 'x' : 'y').map(v => axis.getValue(v));
+        const a = axis === this._xAxisObj ? 'x' : 'y';
+        const v = a + 'Value';
+        const vals: number[] = [];
+
+        this._points.forEach(p => {
+            vals.push(p[v] = axis.getValue(p[a]));
+        })
+
+        return vals;
     }
 
     isVisible(point: DataPoint): boolean {

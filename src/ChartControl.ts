@@ -66,6 +66,8 @@ export class ChartControl extends RcControl {
     }
 
     protected _doRender(bounds: IRect): void {
+        console.time('render chart');
+
         if (this._model) {
             // Object.assign(this.dom().style, this._model.style);
         }
@@ -73,5 +75,7 @@ export class ChartControl extends RcControl {
         this._chartView.measure(this.doc(), this._model, bounds.width, bounds.height, 1);
         this._chartView.resize(bounds.width, bounds.height);
         this._chartView.layout();
+
+        console.timeEnd('render chart');
     }
 }

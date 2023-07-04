@@ -313,8 +313,8 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc, 'rct-series');
+    constructor(doc: Document, styleName: string) {
+        super(doc, 'rct-series ' + styleName);
     }
 
     //-------------------------------------------------------------------------
