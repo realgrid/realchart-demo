@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcControl, RcElement } from "./common/RcControl";
+import { RcControl } from "./common/RcControl";
 import { RcEditTool } from "./common/RcEditTool";
 import { IRect } from "./common/Rectangle";
 import { Chart } from "./main";
@@ -23,7 +23,6 @@ export class ChartControl extends RcControl {
     // fields
     //-------------------------------------------------------------------------
     private _model: Chart;
-    private _chartContainer: HTMLDivElement;
     private _chartView: ChartView;
 
     //-------------------------------------------------------------------------

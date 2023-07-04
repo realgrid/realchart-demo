@@ -6,8 +6,28 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { SvgShapes } from "../../common/impl/SvgShape";
 import { BarSeries } from "../../model/series/BarSeries";
-import { SeriesView } from "../SeriesView";
+import { BoxPointElement, SeriesView } from "../SeriesView";
+
+class BarElement extends BoxPointElement {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, null, 'rct-series-bar');
+    }
+
+    render(x: number, y: number): void {
+        this.setPath(SvgShapes.rect({
+            x: x - this.wPoint / 2,
+            y,
+            width: this.wPoint,
+            height: -this.hPoint
+        }));
+    }
+}
 
 export class BarSeriesView extends SeriesView<BarSeries> {
 

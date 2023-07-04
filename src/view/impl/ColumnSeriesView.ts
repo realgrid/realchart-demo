@@ -7,22 +7,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
-import { PathElement, RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
-import { Axis } from "../../model/Axis";
 import { DataPoint } from "../../model/DataPoint";
 import { ColumnSeries } from "../../model/series/BarSeries";
-import { PointLabelView, SeriesView } from "../SeriesView";
+import { BoxPointElement, SeriesView } from "../SeriesView";
 
-class BarElement extends PathElement {
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    point: DataPoint;
-    labelViews: PointLabelView[] = [];
-    wPoint: number;
-    hPoint: number;
+class BarElement extends BoxPointElement {
 
     //-------------------------------------------------------------------------
     // constructor

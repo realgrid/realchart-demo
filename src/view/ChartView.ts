@@ -13,6 +13,7 @@ import { ISize, Size } from "../common/Size";
 import { SectionDir } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LineElement } from "../common/impl/PathElement";
+import { RectElement } from "../common/impl/RectElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
 import { LegendPosition } from "../model/Legend";
@@ -331,16 +332,17 @@ export class ChartView extends RcElement {
         const m = this._model;
 
         // title
+        const yTitle = y;
         this._titleSectionView.resizeByMeasured().layout();
-        this._titleSectionView.translate(x, y);
         y += this._titleSectionView.height;
         h -= this._titleSectionView.height;
 
         // legend
+        let yLegend: number;
         if (this._legendSectionView.visible) {
             this._legendSectionView.resizeByMeasured().layout();
-            this._legendSectionView.translate((w - this._legendSectionView.width) / 2, this.height - this._legendSectionView.height);
             h -= hLegend = this._legendSectionView.height;
+            yLegend = this.height - hLegend;
         }
 
         // axes
@@ -387,6 +389,16 @@ export class ChartView extends RcElement {
         // body
         this._bodyView.resize(this._plotWidth, this._plotHeight);
         this._bodyView.layout().translate(org.x, org.y - this._plotHeight);
+
+        let v: RcElement = this._titleSectionView;
+        x = org.x;
+
+        // title
+        v.visible && v.translate(x + (w - v.width) / 2, yTitle);
+
+        // legend
+        v = this._legendSectionView;
+        v.visible && v.translate(x + (w - v.width) / 2, yLegend);
     }
 
     //-------------------------------------------------------------------------

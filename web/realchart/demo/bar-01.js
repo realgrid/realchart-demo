@@ -1,5 +1,5 @@
 const config = {
-    title: "Basic Real-Chart",
+    title: "Bar Series 01",
     xAxis: {
     },
     yAxis: {

@@ -49,7 +49,8 @@ export class LegendItemView extends ChartElement<LegendItem> {
     }
 
     protected _doLayout(): void {
-        this._label.translate(16, 0);
+        this._marker.translate(0, (this.height - this._marker.height) / 2);
+        this._label.translate(16, (this.height - this._label.getBBounds().height) / 2);
     }
 }
 

@@ -1,5 +1,5 @@
 const config = {
-    title: "Hello Real-Chart",
+    title: "Basic Real-Chart",
     xAxis: {
     },
     yAxis: {
@@ -9,8 +9,9 @@ const config = {
             ['home', 7], 
             ['sky', 11], 
             ['def', 9], 
-            ['지리산', 15], 
-            ['zzz', 13]
+            ['지리산', 14.3], 
+            ['zzz', 13],
+            ['낙동강', 12.5]
         ]
     }
 }
