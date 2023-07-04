@@ -9,6 +9,8 @@
 import { assert, ceil, fixnum } from "../../common/Types";
 import { Axis, AxisTick, IAxisTick } from "../Axis";
 import { IChart } from "../Chart";
+import { DataPoint } from "../DataPoint";
+import { ISeries } from "../Series";
 
 export class LinearAxisTick extends AxisTick {
 
@@ -218,6 +220,8 @@ export class LinearAxis extends Axis {
     //-------------------------------------------------------------------------
     private _hardMin: number;
     private _hardMax: number;
+    private _min: number;
+    private _max: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -245,14 +249,18 @@ export class LinearAxis extends Axis {
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
         const tick = this.tick as LinearAxisTick;
-        const { min, max } = this.$_adjustMinMax(calcedMin, calcedMax);
+        let { min, max } = this.$_adjustMinMax(calcedMin, calcedMax);
         const steps = tick.buildSteps(length, this.baseValue, min, max);
-        const len = steps[steps.length - 1] - steps[0];
+
+        min = this._min = Math.min(min, steps[0]);
+        max = this._max = Math.max(max, steps[steps.length - 1]);
+
+        const len = max - min;// steps[steps.length - 1] - steps[0];
         const ticks: IAxisTick[] = [];
 
         for (let i = 0; i < steps.length; i++) {
             ticks.push({
-                pos: length * (len - steps[i]) / (len),
+                pos: this.getPosition(length, len - steps[i]),// length * (len - steps[i]) / (len),
                 value: steps[i],
                 label: String(steps[i])
             });
@@ -261,10 +269,10 @@ export class LinearAxis extends Axis {
     }
 
     getPosition(length: number, value: number): number {
-        return;
+        return length * value / (this._max - this._min);
     }
 
-    getPointWidth(length: number): number {
+    getPointWidth(length: number, series: ISeries, point: DataPoint): number {
         return;
     }
 

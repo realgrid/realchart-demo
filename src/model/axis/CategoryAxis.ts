@@ -8,6 +8,7 @@
 
 import { isArray, isNumber, pickNum } from "../../common/Common";
 import { Axis, AxisTick, AxisTickMark, IAxisTick } from "../Axis";
+import { DataPoint } from "../DataPoint";
 import { ISeries } from "../Series";
 
 export enum CategoryTickMarkPosition {
@@ -57,12 +58,6 @@ export class CategoryAxisTick extends AxisTick {
 export class CategoryAxis extends Axis {
 
     //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    _cats: string[];
-    private _map = new Map<string, number>(); // data point의 축 위치를 찾기 위해 사용한다.
-
-    //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     /**
@@ -86,6 +81,17 @@ export class CategoryAxis extends Axis {
     endPadding: 0.5;
     weights: number[];
     weightCallback: (value: number) => number;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _cats: string[];
+    private _map = new Map<string, number>(); // data point의 축 위치를 찾기 위해 사용한다.
+    private _min: number;
+    private _max: number;
+    private _minPad: number;
+    private _maxPad: number;
+    private _interval: number;
 
     //-------------------------------------------------------------------------
     // methods
@@ -120,20 +126,19 @@ export class CategoryAxis extends Axis {
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
         const cats = this._cats;
         const nCat = cats.length;
-        const minPad = pickNum(this.minPadding, 0);
-        const maxPad = pickNum(this.maxPadding, 0);
         const ticks: IAxisTick[] = [];
 
-        min = Math.floor(min);
-        max = Math.ceil(max);
+        this._minPad = pickNum(this.minPadding, 0);
+        this._maxPad = pickNum(this.maxPadding, 0);
+        min = this._min = Math.floor(min);
+        max = this._max = Math.ceil(max);
 
         const len = max - min + 1;
-        const interval = length / (len + minPad + maxPad);
-        const pad = minPad * interval;
+        this._interval = length / (len + this._minPad + this._maxPad);
 
         for (let i = min; i <= max; i++) {
             ticks.push({
-                pos: pad + i * interval + interval / 2,
+                pos: this.getPosition(length, i),
                 value: i,
                 label: this.tick.getTick(i < nCat ? cats[i] : i)
             });
@@ -142,11 +147,11 @@ export class CategoryAxis extends Axis {
     }
 
     getPosition(length: number, value: number): number {
-        return 0;
+        return this._minPad * this._interval + value * this._interval + this._interval / 2;
     }
 
-    getPointWidth(length: number): number {
-        return;
+    getPointWidth(length: number, series: ISeries, point: DataPoint): number {
+        return length / series.getPoints().count;
     }
 
     //-------------------------------------------------------------------------

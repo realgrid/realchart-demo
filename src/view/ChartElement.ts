@@ -50,7 +50,7 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
         this._debugRect.setBounds(0, 0, this.width, this.height);
         this._debugRect.setStyles({
             fill: 'transparent',
-            stroke: 'lightgray'
+            stroke: '#00000018'
         })
         return this;
     }

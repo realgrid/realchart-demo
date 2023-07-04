@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNone, isNumber, isObject, pickNum } from "../common/Common";
+import { isArray, isNone, isObject, pickNum } from "../common/Common";
 import { ISeries } from "./Series";
 
 export class DataPoint {

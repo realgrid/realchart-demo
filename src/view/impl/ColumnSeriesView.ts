@@ -65,11 +65,16 @@ export class ColumnSeriesView extends SeriesView<ColumnSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
-        const ticks = (this.model._xAxisObj as Axis)._ticks;
+        const m = this.model;
+        const xAxis = this.model._xAxisObj;
+        const yAxis = this.model._yAxisObj;
         const y = this.height;
 
-        this._bars.forEach((bar, i) => {
-            const x = ticks[i].pos;
+        this._bars.forEach((bar, i, count) => {
+            const x = xAxis.getPosition(width, i);
+
+            bar.wPoint = xAxis.getPointWidth(width, m, bar.point) * m.pointWidth;
+            bar.hPoint = yAxis.getPosition(height, bar.point.yValue);
             bar.render(x, y);
         })
     }
@@ -78,16 +83,11 @@ export class ColumnSeriesView extends SeriesView<ColumnSeries> {
     // internal members
     //-------------------------------------------------------------------------
     private $_parepareBars(doc: Document, points: DataPoint[]): void {
-        const xAxis = this.model._xAxisObj;
-        const yAxis = this.model._yAxisObj;
-
         if (!this._bars) {
             this._bars = new ElementPool(this, BarElement);
         }
         this._bars.prepare(points.length, (v, i) => {
             v.point = points[i];
-            v.wPoint = 50;
-            v.hPoint = 100;
         });
     }
 }
