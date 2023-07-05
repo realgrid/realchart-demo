@@ -255,12 +255,12 @@ export class LinearAxis extends Axis {
         min = this._min = Math.min(min, steps[0]);
         max = this._max = Math.max(max, steps[steps.length - 1]);
 
-        const len = max - min;// steps[steps.length - 1] - steps[0];
+        const len = max - min;
         const ticks: IAxisTick[] = [];
 
         for (let i = 0; i < steps.length; i++) {
             ticks.push({
-                pos: this.getPosition(length, len - steps[i]),// length * (len - steps[i]) / (len),
+                pos: this.getPosition(length, steps[i]),
                 value: steps[i],
                 label: String(steps[i])
             });

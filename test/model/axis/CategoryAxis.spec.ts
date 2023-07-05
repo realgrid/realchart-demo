@@ -104,7 +104,7 @@ import { Tester } from '../../Tester';
         const axis = chart.xAxis as CategoryAxis;
 
         chart.prepareRender();
-        chart.layoutAxes(500, 500, 1);
+        chart.layoutAxes(500, 500, false, 1);
 
         const series = chart.series;
         const ticks = axis._ticks;

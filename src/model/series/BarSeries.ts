@@ -42,7 +42,7 @@ export class BarSeries extends ColumnSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    isBar(): boolean {
+    isInverted(): boolean {
         return true;
     }
 }

@@ -198,6 +198,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected _series: ISeries[] = [];
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
+    _reversed: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -222,6 +223,8 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[];
 
     prepareRender(): void {
+        this._reversed = this.chart.isInverted();
+
         this._doPrepareRender();
 
         let vals: number[] = [];

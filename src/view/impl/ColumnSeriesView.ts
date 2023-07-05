@@ -60,7 +60,7 @@ export class ColumnSeriesView extends SeriesView<ColumnSeries> {
         const yAxis = this.model._yAxisObj;
         const y = this.height;
 
-        this._bars.forEach((bar, i, count) => {
+        this._bars.forEach((bar, i) => {
             const x = xAxis.getPosition(width, i);
 
             bar.wPoint = xAxis.getPointWidth(width, m, bar.point) * m.pointWidth;

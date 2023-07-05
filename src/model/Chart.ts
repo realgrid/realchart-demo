@@ -36,6 +36,8 @@ export interface IChart {
     xAxis: IAxis;
     yAxis: IAxis;
 
+    isInverted(): boolean;
+
     seriesByBame(series: string): Series;
     axisByName(axis: string): Axis;
     getGroup(group: String): SeriesGroup;
@@ -156,8 +158,8 @@ export class Chart extends RcObject implements IChart {
         return this._yAxes;
     }
 
-    inverted(): boolean {
-        return false;
+    isInverted(): boolean {
+        return this._series.isInverted();
     }
 
     isEmpty(): boolean {
@@ -184,7 +186,7 @@ export class Chart extends RcObject implements IChart {
         const yAxes = this._yAxes.items;
         let axes: Axis[];
 
-        if (this.inverted()) {
+        if (this.isInverted()) {
             switch (dir) {
                 case SectionDir.LEFT:
                     axes = xAxes.filter(a => !a.opposite);
@@ -260,9 +262,9 @@ export class Chart extends RcObject implements IChart {
     }
 
     // 여러번 호출될 수 있다.
-    layoutAxes(width: number, height: number, phase: number): void {
-        this._xAxes.buildTicks(width);
-        this._yAxes.buildTicks(height);
+    layoutAxes(width: number, height: number, inverted: boolean, phase: number): void {
+        this._xAxes.buildTicks(inverted ? height : width);
+        this._yAxes.buildTicks(inverted ? width : height);
     }
 
     /**

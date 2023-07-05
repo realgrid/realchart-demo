@@ -60,6 +60,6 @@ import { Tester } from '../../Tester';
         const axis = chart.yAxis as LinearAxis;
 
         chart.prepareRender();
-        chart.layoutAxes(500, 500, 1);
+        chart.layoutAxes(500, 500, false, 1);
     })
 });

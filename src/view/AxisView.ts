@@ -9,9 +9,7 @@
 import { RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
-import { LineElement } from "../common/impl/PathElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Chart } from "../main";
 import { Axis, AxisTitle } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { ChartElement } from "./ChartElement";
@@ -162,12 +160,14 @@ export class AxisView extends ChartElement<Axis> {
         if (horz) {
             const y = this._markLen;
             labelViews.forEach((v, i) => {
-                v.translate(ticks[i].pos - v.getBBounds().width / 2, y);
+                // v.translate(ticks[i].pos - v.getBBounds().width / 2, y);
+                v.anchor = TextAnchor.MIDDLE;
+                v.translate(ticks[i].pos, y);
             });
         } else {
             const x = w - this._markLen;
             labelViews.forEach((v, i) => {
-                v.translate(x - v.getBBounds().width, ticks[i].pos - v.getBBounds().height / 2);
+                v.translate(x - v.getBBounds().width, h - ticks[i].pos - v.getBBounds().height / 2);
             });
         }
 

@@ -219,7 +219,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    isBar(): boolean {
+    isInverted(): boolean {
         return false;
     }
 
@@ -369,9 +369,9 @@ export class SeriesCollection {
         return this._items.filter(ser => ser.visible());
     }
 
-    containsBar(): boolean {
+    isInverted(): boolean {
         for (const ser of this._items) {
-            if (ser.visible() && ser.isBar()) {
+            if (ser.visible() && ser.isInverted()) {
                 return true;
             }
         }

@@ -5,6 +5,7 @@ const config = {
     yAxis: {
     },
     series: {
+        type: 'bar',
         data: [
             ['home', 7], 
             ['sky', 11], 

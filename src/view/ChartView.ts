@@ -13,7 +13,6 @@ import { ISize, Size } from "../common/Size";
 import { SectionDir } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LineElement } from "../common/impl/PathElement";
-import { RectElement } from "../common/impl/RectElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
 import { LegendPosition } from "../model/Legend";
@@ -223,7 +222,7 @@ export class ChartView extends RcElement {
     // fields
     //-------------------------------------------------------------------------
     private _model: Chart;
-    _flipped = false;   // bar 시리즈 계열이 포함되면 true, x축이 수직, y축이 수평으로 그려진다.
+    _inverted = false;   // bar 시리즈 계열이 포함되면 true, x축이 수직, y축이 수평으로 그려진다.
 
     _emptyView: EmptyView;
     private _titleSectionView: TitleSectionView;
@@ -292,7 +291,7 @@ export class ChartView extends RcElement {
         let h = hintHeight;
         let sz: ISize;
 
-        this._flipped = m._getSeries().containsBar();
+        this._inverted = m._getSeries().isInverted();
         
         // titles
         sz = this._titleSectionView.measure(doc, m, w, h, phase);
@@ -431,12 +430,14 @@ export class ChartView extends RcElement {
 
     private $_measurePlot(doc: Document, m: Chart, w: number, h: number, phase: number): void {
         const map = this._axisSectionViews;
+        const wSave = w;
+        const hSave = h;
 
         // axes
         this.$_prepareAxes(doc, m);
 
         // 아래 checkWidth를 위해 tick을 생성한다.
-        m.layoutAxes(w, h, phase);
+        m.layoutAxes(w, h, this._inverted, phase);
 
         // if (this._flipped) {
             w -= map.get(SectionDir.LEFT).checkWidths(doc, w, h);
@@ -447,14 +448,34 @@ export class ChartView extends RcElement {
         // }
 
         // 조정된 크기로 tick을 다시 생성한다.
-        m.layoutAxes(w, h, phase);
+        m.layoutAxes(w, h, this._inverted, phase);
+
+        // axes
+        for (const dir of map.keys()) {
+            const asv = map.get(dir);
+            
+            if (asv.visible) {
+                asv.measure(doc, m, w, h, phase);
+            }
+        }
+
+        // 조정된 크기로 tick을 다시 생성한다 2.
+        w = wSave;
+        h = hSave;
+        for (const dir of map.keys()) {
+            const asv = map.get(dir);
+            
+            if (asv.visible) {
+                if (dir === SectionDir.LEFT) {
+                    w -= asv.mw;
+                } else if (dir === SectionDir.BOTTOM) {
+                    h -= asv.mh;
+                }
+            }
+        }
+        m.layoutAxes(w, h, this._inverted, phase);
 
         // body
         this._bodyView.measure(doc, m.body, w, h, phase);
-
-        // axes
-        for (const asv of map.keys()) {
-            map.get(asv).measure(doc, m, w, h, phase);
-        }
     }
 }
