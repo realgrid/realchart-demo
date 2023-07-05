@@ -243,7 +243,6 @@ export class ChartView extends RcElement {
 
         this.add(this._titleSectionView = new TitleSectionView(doc));
         this.add(this._legendSectionView = new LegendSectionView(doc));
-        this.add(this._bodyView = new BodyView(doc));
 
         this.add(this._hAxisLine = new LineElement(doc, null, 'rct-axis-line'));
         this.add(this._vAxisLine = new LineElement(doc, null, 'rct-axis-line'));
@@ -256,6 +255,9 @@ export class ChartView extends RcElement {
                 this._axisSectionViews.set(dir, v);
             }
         });
+
+        // plot 영역이 마지막이어야 line marker 등이 축 상에 표시될 수 있다.
+        this.add(this._bodyView = new BodyView(doc));
     }
 
     //-------------------------------------------------------------------------

@@ -1,11 +1,11 @@
 const config = {
-    title: "Line Series 01",
+    title: "Area Series 01",
     xAxis: {
     },
     yAxis: {
     },
     series: {
-        type: 'line',
+        type: 'area',
         data: [
             ['home', 7], 
             ['sky', 11], 
@@ -18,14 +18,14 @@ const config = {
 }
 
 const config2 = {
-    title: "Line Series 01",
+    title: "Area Series 01",
     xAxis: {
         type: 'category'
     },
     yAxis: {
     },
     series: {
-        type: 'line',
+        type: 'area',
         data: [
             ['home', 7], 
             ['sky', 11], 

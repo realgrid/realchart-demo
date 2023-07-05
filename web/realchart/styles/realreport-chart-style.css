@@ -67,6 +67,18 @@
     stroke-width: 1px;
 }
 
+/** bar series */
 .rct-series-bar {
     fill: #00aaff;
+}
+
+/** line series */
+.rct-line-series-line {
+    fill: none;
+    stroke: gray;
+}
+
+/** area series */
+.rct-area-series-area {
+    fill: #0088ff40;
 }

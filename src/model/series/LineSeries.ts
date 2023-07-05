@@ -7,14 +7,25 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { StyleProps } from "../../common/Types";
+import { Shape } from "../../common/impl/SvgShape";
 import { IChart } from "../Chart";
+import { DataPoint } from "../DataPoint";
 import { MarerVisibility, Series, SeriesMarker } from "../Series";
+
+export class LineSeriesPoint extends DataPoint {
+
+    radius: number;
+    shape: Shape;
+    xPos: number;
+    yPos: number;
+}
 
 export class LineSeriesMarker extends SeriesMarker {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    radius = 4;
     /**
      * baseValue 보다 작은 값을 가진 point를 그릴 때 추가로 적용되는 style.
      */
@@ -59,6 +70,13 @@ export class LineSeries extends Series {
         super(chart, name);
 
         this.marker = new LineSeriesMarker(this);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    createPoint(source: any): DataPoint {
+        return new LineSeriesPoint(source);
     }
 }
 

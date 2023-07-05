@@ -232,7 +232,7 @@ export class ElementPool<T extends RcElement> extends RcObject {
         }
     }
 
-    forEach(visitor: (v: T, i: number, count: number) => void): void {
+    forEach(visitor: (v: T, i?: number, count?: number) => void): void {
         const views = this._views;
 
         for (let i = 0, cnt = views.length; i < cnt; i++) {
@@ -262,6 +262,10 @@ export class ElementPool<T extends RcElement> extends RcObject {
     sort(compare: (v1: T, v2: T) => number): ElementPool<T> {
         this._views = this._views.sort(compare);
         return this;
+    }
+
+    map(callback: (v: T) => any): any[] {
+        return this._views.map(callback);
     }
 
 
