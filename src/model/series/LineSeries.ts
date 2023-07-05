@@ -14,6 +14,9 @@ import { MarerVisibility, Series, SeriesMarker } from "../Series";
 
 export class LineSeriesPoint extends DataPoint {
 
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
     radius: number;
     shape: Shape;
     xPos: number;
