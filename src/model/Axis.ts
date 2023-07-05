@@ -13,6 +13,8 @@ import { DataPoint } from "./DataPoint";
 import { ISeries } from "./Series";
 
 export interface IAxis {
+
+    valueUnit: number;
     /**
      * data point의 값을 축 상의 값으로 리턴한다.
      */
@@ -186,6 +188,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      * tick이 표시되도록 조정한다.
      */
     tickEnd = false;
+    valueUnit = 1;
 
     //-------------------------------------------------------------------------
     // fields
@@ -266,8 +269,8 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     protected _doCalcluateRange(values: number[]): { min: number, max: number } {
-        let min = Math.min(...values);
-        let max = Math.max(...values);
+        let min = Math.min(...values) || 0;
+        let max = Math.max(...values) || 0;
 
         return { min, max };
     }
@@ -311,7 +314,6 @@ export class AxisCollection {
     //-------------------------------------------------------------------------
     load(src: any): void {
         const chart = this.chart;
-        const series = chart.series;
         const items = this._items;
 
         if (isArray(src)) {

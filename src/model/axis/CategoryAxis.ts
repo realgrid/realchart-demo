@@ -111,14 +111,6 @@ export class CategoryAxis extends Axis {
         return new CategoryAxisTick(this);
     }
 
-    getValue(value: any): number {
-        if (isNumber(value)) {
-            return value;
-        } else {
-            return this._map.get(value);
-        }
-    }
-
     protected _doPrepareRender(): void {
         this._collectCategories(this._series);
     }
@@ -152,6 +144,14 @@ export class CategoryAxis extends Axis {
 
     getPointWidth(length: number, series: ISeries, point: DataPoint): number {
         return length / series.getPoints().count;
+    }
+
+    getValue(value: any): number {
+        if (isNumber(value)) {
+            return value;
+        } else {
+            return this._map.get(value);
+        }
     }
 
     //-------------------------------------------------------------------------

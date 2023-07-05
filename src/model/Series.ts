@@ -11,12 +11,14 @@ import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { Align, VerticalAlign } from "../common/Types";
 import { Utils } from "../common/Utils";
+import { Shape } from "../common/impl/SvgShape";
 import { IAxis } from "./Axis";
 import { Chart, IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource } from "./Legend";
 import { CategoryAxis } from "./axis/CategoryAxis";
+import { LinearAxis } from "./axis/LinearAxis";
 
 export enum PointItemPosition {
     AUTO = 'auto',
@@ -291,10 +293,21 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     collectValues(axis: IAxis): number[] {
         const a = axis === this._xAxisObj ? 'x' : 'y';
         const v = a + 'Value';
+        const numeric = axis instanceof LinearAxis;
         const vals: number[] = [];
+        let x = 0;
 
-        this._points.forEach(p => {
-            vals.push(p[v] = axis.getValue(p[a]));
+        this._points.forEach((p, i) => {
+            let val = axis.getValue(p[a]);
+
+            // linear axis이고 'x'값이 숫자가 아니면 
+            // (시리즈별이 아니라)모든 시리즈를 기준으로 0부터 순서대로 값을 부여한다.
+            // TODO: 여기서 이렇게 하는 게 맞나?
+            if (isNaN(val) && numeric && a === 'x') {
+                val = x;
+                x += axis.valueUnit;
+            }
+            vals.push(p[v] = val);
         })
 
         return vals;
@@ -435,3 +448,35 @@ export class SeriesCollection {
 
 export class SeriesGroup extends RcObject {
 }
+
+export enum MarerVisibility {
+    /** visible 속성에 따른다. */
+    DEFAULT = 'default',
+    /** visible 속성과 상관없이 항상 표시한다. */
+    VISIBLE = 'visible',
+    /** visible 속성과 상관없이 항상 표시하지 않는다. */
+    HIDDEN = 'hidden'
+}
+
+export abstract class SeriesMarker extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    /**
+     * 명시적으로 지정하지 않으면 typeIndex에 따라 Shapes 중 하나로 돌아가면서 설정된다.
+     */
+    shape: Shape;
+    /**
+     * shape의 반지름.
+     */
+    radius = 3;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public series: Series) {
+        super(series.chart);
+    }
+}
+

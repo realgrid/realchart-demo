@@ -126,15 +126,20 @@ export class LinearAxisTick extends AxisTick {
     }
 
     private _getStepsByPixels(length: number, pixels: number, base: number, min: number, max: number): number[] {
-        if (min > base) {
+        if (min >= base) {
             min = base;
             base = NaN;
-        } else if (max < base) {
+        } else if (max <= base) {
             max = base;
             base = NaN;
         }
 
         const len = max - min;
+
+        if (len === 0) {
+            return [];
+        }
+
         let count = Math.floor(length / this.stepPixels) + 1;
         let step = len / (count - 1);
         const scale = Math.pow(10, Math.floor(Math.log10(step)));
@@ -236,7 +241,8 @@ export class LinearAxis extends Axis {
     // overriden members
     //-------------------------------------------------------------------------
     contains(value: number): boolean {
-        return (this.nullable && isNaN(value)) || super.contains(value);
+        return !isNaN(value);
+        // return (this.nullable && isNaN(value)) || super.contains(value);
     }
 
     protected _createTick(): AxisTick {

@@ -92,7 +92,7 @@ export class AxisView extends ChartElement<Axis> {
         const t = this.$_prepareChecker(doc);
         let h = m.tick.mark.length;; 
 
-        h += t.getBBounds().height;
+        h += t ?  t.getBBounds().height : 0;
         if (this._titleView.visible = m.title.visible()) {
             h += this._titleView.measure(doc, m.title, width, height, 1).height;
         }
@@ -104,7 +104,7 @@ export class AxisView extends ChartElement<Axis> {
         const t = this.$_prepareChecker(doc);
         let w = m.tick.mark.length;; 
 
-        w += t.getBBounds().width;
+        w += t ? t.getBBounds().width : 0;
         if (this._titleView.visible = m.title.visible()) {
             w += this._titleView.measure(doc, m.title, width, height, 1).height;
         }
@@ -117,6 +117,7 @@ export class AxisView extends ChartElement<Axis> {
     protected _doMeasure(doc: Document, model: Axis, hintWidth: number, hintHeight: number, phase: number): ISize {
         const horz = this._isHorz;
         const titleView = this._titleView;
+        const labelViews = this._labelViews;
         let sz = 0;
 
         // tick mark 
@@ -125,15 +126,20 @@ export class AxisView extends ChartElement<Axis> {
         // labels
         this.$_prepareLabels(doc, model);
 
-        if (horz) {
-            this._labelSize = this._labelViews[0].getBBounds().height;
-        } else {
-            this._labelSize = this._labelViews[0].getBBounds().width;
-            for (let i = 1; i < this._labelViews.length; i++) {
-                this._labelSize = Math.max(this._labelSize, this._labelViews[i].getBBounds().width);
+        if (labelViews.length > 0) {
+            if (horz) {
+                this._labelSize = labelViews[0].getBBounds().height;
+            } else {
+                this._labelSize = labelViews[0].getBBounds().width;
+                for (let i = 1; i < labelViews.length; i++) {
+                    this._labelSize = Math.max(this._labelSize, labelViews[i].getBBounds().width);
+                }
             }
+            sz += this._labelSize;
+
+        } else {
+            this._labelSize = 0;
         }
-        sz += this._labelSize;
 
         // title
         // if (titleView.visible = model.title.visible()) {
@@ -189,17 +195,20 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     private $_prepareChecker(doc: Document): TextElement {
         const tick = this.model._ticks[0];
-        let t = this._labelViews[0];
 
-        if (!t) {
-            t = new TextElement(doc, 'rct-axis-label');
-            t.anchor = TextAnchor.START;
-            this._labelContainer.add(t);
-            this._labelViews.push(t);
+        if (tick) {
+            let t = this._labelViews[0];
+
+            if (!t) {
+                t = new TextElement(doc, 'rct-axis-label');
+                t.anchor = TextAnchor.START;
+                this._labelContainer.add(t);
+                this._labelViews.push(t);
+            }
+    
+            t.text = tick.label
+            return t;
         }
-
-        t.text = tick.label
-        return t;
     }
 
     private $_prepareLabels(doc: Document, m: Axis): void {

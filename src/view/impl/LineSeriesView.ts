@@ -6,8 +6,18 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { PathElement } from "../../common/RcControl";
+import { DataPoint } from "../../model/DataPoint";
 import { LineSeries } from "../../model/series/LineSeries";
 import { SeriesView } from "../SeriesView";
+
+class MarkerView extends PathElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    point: DataPoint;
+}
 
 export class LineSeriesView extends SeriesView<LineSeries> {
 

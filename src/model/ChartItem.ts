@@ -77,11 +77,12 @@ export class ChartItem extends RcObject {
             let v = source[p];
 
             if (isArray(v)) {
-                v = v.slice(0);
+                this[p] = v.slice(0);
+            } else if (this[p] instanceof ChartItem) {
+                this[p].load(v);
             } else if (isObject(v)) {
-                v = Object.assign({}, v);
+                this[p] = Object.assign({}, v);
             }
-            this[p] = v;
         }
     }
 
