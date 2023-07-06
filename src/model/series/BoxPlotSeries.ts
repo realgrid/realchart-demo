@@ -6,7 +6,88 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { BarSeries } from "./BarSeries";
+import { isArray, isObject, pickNum, pickProp, pickProp3 } from "../../common/Common";
+import { IRect } from "../../common/Rectangle";
+import { DataPoint } from "../DataPoint";
+import { ISeries } from "../Series";
+import { ColumnSeries } from "./BarSeries";
 
-export class BoxPlotSeries extends BarSeries {
+export class BoxPlotSeriesPoint extends DataPoint {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    min: any;
+    low: any;    // first quartile(q1, 25th percentile)
+    mid: any;    // median (q2, 50th percentile)
+    high: any;   // third quartile (q3 75th percentile)
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    minValue: number;
+    lowValue: number;
+    midValue: number;
+    highValue: number;
+
+    width: number;
+    height: number; 
+    lowPos: number;
+    midPos: number;
+    highPos: number;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getInside(): IRect {
+        return { x: 0, y: 0, width: this.width, height: this.height };
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    prepare(series: BoxPlotSeries): void {
+        super.prepare(series);
+
+        const v = this.value;
+
+        if (isArray(v)) {
+            this.min = v[pickNum(series.minField, 1)];
+            this.low = v[pickNum(series.lowField, 2)];
+            this.mid = v[pickNum(series.midField, 3)];
+            this.high = v[pickNum(series.highField, 4)];
+            this.y = v[pickNum(series.yField, 5)];
+        } else if (isObject(v)) {
+            this.min = pickProp(v[series.minField], v.min);
+            this.low = pickProp(v[series.lowField], v.low);
+            this.mid = pickProp(v[series.midField], v.mid);
+            this.high = pickProp(v[series.highField], v.high);
+            this.y = pickProp3(v[series.yField], v.y, v.value);
+        } else {
+            this.min = this.low = this.mid = this.high = this.y;
+        }
+
+        this.minValue = +this.min;
+        this.lowValue = +this.low;
+        this.midValue = +this.mid;
+        this.highValue = +this.high;
+    }
+}
+
+export class BoxPlotSeries extends ColumnSeries {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    minField: string;
+    lowField: string;
+    midField: string;
+    highField: string;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    createPoint(source: any): DataPoint {
+        return new BoxPlotSeriesPoint(source);
+    }
 }
