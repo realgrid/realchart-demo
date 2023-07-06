@@ -29,6 +29,22 @@ export class DataPoint {
         if (isNone(this.value)) return this.value;
         else return this.value[fld];
     }
+
+    prepare(series: ISeries): void {
+        const v = this.value;
+
+        if (isArray(v)) {
+            this.x = v[pickNum(series.xField, 0)];
+            this.y = v[pickNum(series.yField, 1)];
+        } else if (isObject(v)) {
+            this.x = v[series.xField] || v.x || v.name || v.label;
+            this.y = v[series.xField] || v.y || v.value;
+        } else {
+            // x 축에 대한 정보가 없으므로 홑 값들은 순서대로 값을 지정한다.
+            this.x = this.index;
+            this.y = v;
+        }
+    }
 }
 
 export class DataPointCollection {
@@ -56,7 +72,7 @@ export class DataPointCollection {
         if (isArray(source)) {
             // x 축에 대한 정보가 없으므로 홑 값들은 앞으로 이동시킨다.
             source = source.sort((a, b) => (!isArray(a) && !isObject(a)) ? -1 : 0);
-            this._points = source.map((s: any) => new DataPoint(s));
+            this._points = source.map((s: any) => this._owner.createPoint(s));
         } else {
             this._points = [];
         }
@@ -77,21 +93,8 @@ export class DataPointCollection {
         const series = this._owner;
 
         this._points.forEach((p, i) => {
-            const v = p.value;
-
             p.index = i;
-
-            if (isArray(v)) {
-                p.x = v[pickNum(series.xField, 0)];
-                p.y = v[pickNum(series.yField, 1)];
-            } else if (isObject(v)) {
-                p.x = v[series.xField] || v.x || v.name || v.label;
-                p.y = v[series.xField] || v.y || v.value;
-            } else {
-                // x 축에 대한 정보가 없으므로 홑 값들은 순서대로 값을 지정한다.
-                p.x = i;
-                p.y = v;
-            }
+            p.prepare(series);
         });
     }
 

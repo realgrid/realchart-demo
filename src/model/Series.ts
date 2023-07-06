@@ -276,6 +276,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._xAxisObj = this.chart._connectSeries(this, true);
         this._yAxisObj = this.chart._connectSeries(this, false);
         this._points.prepare();
+        this._doPrepareRender();
     }
 
     collectCategories(axis: IAxis): string[] {
@@ -339,6 +340,9 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         if (isArray(data)) {
             this._points.load(data);
         }
+    }
+
+    protected _doPrepareRender(): void {
     }
 }
 

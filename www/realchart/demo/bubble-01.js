@@ -1,11 +1,11 @@
 const config = {
-    title: "Bar Series 01",
+    title: "Bubble Series 01",
     xAxis: {
     },
     yAxis: {
     },
     series: {
-        type: 'bar',
+        type: 'bubble',
         data: [
             ['home', 7], 
             ['sky', 11], 

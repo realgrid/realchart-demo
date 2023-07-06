@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// LineSeriesView.ts
+// AreaRangeSeriesView.ts
 // 2023. 06. 27. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
@@ -9,16 +9,16 @@
 import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { Utils } from "../../common/Utils";
-import { AreaSeries, LineSeriesPoint } from "../../model/series/LineSeries";
+import { AreaRangeSeries, AreaSeries, LineSeriesPoint } from "../../model/series/LineSeries";
 import { LineSeriesView } from "./LineSeriesView";
 
-export class AreaSeriesView extends LineSeriesView<AreaSeries> {
+export class AreaRangeSeriesView extends LineSeriesView<AreaRangeSeries> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _areaContainer: RcElement;
-    private _area: PathElement;
+    // private _areaContainer: RcElement;
+    // private _area: PathElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -26,8 +26,8 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
     constructor(doc: Document) {
         super(doc, 'rct-area-series');
 
-        this.insertFirst(this._areaContainer = new RcElement(doc));
-        this._areaContainer.add(this._area = new PathElement(doc, null, 'rct-area-series-area'));
+        // this.insertFirst(this._areaContainer = new RcElement(doc));
+        // this._areaContainer.add(this._area = new PathElement(doc, null, 'rct-area-series-area'));
     }
 
     //-------------------------------------------------------------------------
@@ -43,18 +43,18 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
     // internal members
     //-------------------------------------------------------------------------
     private $_layoutArea(pts: LineSeriesPoint[]): void {
-        const series = this.model;
-        const len = this.height;
-        const y = Utils.isNotEmpty(series.baseValue) ? series._yAxisObj.getPosition(len, series.baseValue) : len;
-        const sb = new PathBuilder();
+    //     const series = this.model;
+    //     const len = this.height;
+    //     const y = Utils.isNotEmpty(series.baseValue) ? series._yAxisObj.getPosition(len, series.baseValue) : len;
+    //     const sb = new PathBuilder();
 
-        sb.move(pts[0].xPos, y);
-        sb.line(pts[0].xPos, pts[0].yPos);
-        for (let i = 1; i < pts.length; i++) {
-            sb.line(pts[i].xPos, pts[i].yPos);
-        }
-        // this._buildLines(points, sb, step, curved);
-        sb.line(pts[pts.length - 1].xPos, y);
-        this._area.setPath(sb.end());
+    //     sb.move(pts[0].xPos, y);
+    //     sb.line(pts[0].xPos, pts[0].yPos);
+    //     for (let i = 1; i < pts.length; i++) {
+    //         sb.line(pts[i].xPos, pts[i].yPos);
+    //     }
+    //     // this._buildLines(points, sb, step, curved);
+    //     sb.line(pts[pts.length - 1].xPos, y);
+    //     this._area.setPath(sb.end());
     }
 }

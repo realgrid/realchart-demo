@@ -15,6 +15,8 @@ import { ISeries } from "./Series";
 export interface IAxis {
 
     valueUnit: number;
+    _length: number;
+
     /**
      * data point의 값을 축 상의 값으로 리턴한다.
      */
@@ -76,6 +78,20 @@ export class AxisGrid extends AxisItem {
 }
 
 export class AxisTickLabel extends AxisItem {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * label 표시 간격.
+     * <br>
+     * 예) 2이면 짝수만 표시된다.
+     */
+    step = 1;
+    /**
+     * step이 2 이상일 때, 표시가 시작되는 label 위치.
+     */
+    start = 0;
 }
 
 /**
@@ -202,6 +218,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
     _reversed: boolean;
+    _length: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -239,7 +256,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     buildTicks(length: number): void {
-        this._ticks = this._doBuildTicks(this._range.min, this._range.max, length);
+        this._ticks = this._doBuildTicks(this._range.min, this._range.max, this._length = length);
     }
 
     /**

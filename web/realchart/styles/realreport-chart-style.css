@@ -82,3 +82,9 @@
 .rct-area-series-area {
     fill: #0088ff40;
 }
+
+/** bubble series */
+.rct-bubble-series-marker {
+    fill: #0088ff40;
+    stroke: #0088ff;
+}

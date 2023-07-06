@@ -10,7 +10,6 @@ import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
-import { DataPoint } from "../../model/DataPoint";
 import { LineSeries, LineSeriesPoint } from "../../model/series/LineSeries";
 import { SeriesView } from "../SeriesView";
 
@@ -110,7 +109,7 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
         });
     }
 
-    protected _layoutMarker(i: number, yProp = 'yPos'): void {
+    protected _layoutMarker(i: number): void {
         const series = this.model;
         const m = this._markers.get(i);
         const p = m.point as LineSeriesPoint;
