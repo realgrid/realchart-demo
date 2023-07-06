@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isArray, isObject, pickNum, pickProp, pickProp3 } from "../../common/Common";
 import { StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IChart } from "../Chart";
@@ -91,9 +92,57 @@ export class AreaSeries extends LineSeries {
     areaStyle: StyleProps;
 }
 
+export class AreaRangeSeriesPoint extends LineSeriesPoint {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    low: any;
+    high: any;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    lowValue: number;
+    highValue: number;
+    yLow: number;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    prepare(series: AreaRangeSeries): void {
+        super.prepare(series);
+
+        const v = this.value;
+
+        if (isArray(v)) {
+            this.low = v[pickNum(series.lowField, 1)];
+            this.high = v[pickNum(series.highField, 2)];
+        } else if (isObject(v)) {
+            this.low = pickProp(v[series.lowField], v.low);
+            this.high = pickProp(v[series.lowField], v.high);
+        } else {
+            this.low = v;
+        }
+
+        this.y = this.high = pickProp(this.high, this.low);
+        this.lowValue = +this.low;
+        this.highValue = this.yValue = +this.high;
+    }
+}
+
 export class AreaRangeSeries extends AreaSeries {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    lowField: string;
+    highField: string;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    createPoint(source: any): DataPoint {
+        return new AreaRangeSeriesPoint(source);
+    }
 }

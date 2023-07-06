@@ -22,7 +22,7 @@ import { BarSeries, ColumnSeries } from "./series/BarSeries";
 import { BoxPlotSeries } from "./series/BoxPlotSeries";
 import { BubbleSeries } from "./series/BubbleSeries";
 import { HistogramSeries } from "./series/HistogramSeries";
-import { AreaSeries, LineSeries } from "./series/LineSeries";
+import { AreaRangeSeries, AreaSeries, LineSeries } from "./series/LineSeries";
 import { PieSeries } from "./series/PieSeries";
 import { ScatterSeries } from "./series/ScatterSeries";
 
@@ -59,6 +59,7 @@ const series_types = {
     'column': ColumnSeries,
     'line': LineSeries,
     'area': AreaSeries,
+    'arearange': AreaRangeSeries,
     'boxplot': BoxPlotSeries,
     'bubble': BubbleSeries,
     'scatter': ScatterSeries,

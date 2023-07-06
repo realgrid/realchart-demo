@@ -261,7 +261,6 @@ export class LinearAxis extends Axis {
         min = this._min = Math.min(min, steps[0]);
         max = this._max = Math.max(max, steps[steps.length - 1]);
 
-        const len = max - min;
         const ticks: IAxisTick[] = [];
 
         for (let i = 0; i < steps.length; i++) {
@@ -275,7 +274,7 @@ export class LinearAxis extends Axis {
     }
 
     getPosition(length: number, value: number): number {
-        return length * value / (this._max - this._min);
+        return length * (value - this._min) / (this._max - this._min);
     }
 
     getPointWidth(length: number, series: ISeries, point: DataPoint): number {

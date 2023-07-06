@@ -16,11 +16,12 @@ import { BarSeries, ColumnSeries } from "../model/series/BarSeries";
 import { BoxPlotSeries } from "../model/series/BoxPlotSeries";
 import { BubbleSeries } from "../model/series/BubbleSeries";
 import { HistogramSeries } from "../model/series/HistogramSeries";
-import { AreaSeries, LineSeries } from "../model/series/LineSeries";
+import { AreaRangeSeries, AreaSeries, LineSeries } from "../model/series/LineSeries";
 import { PieSeries } from "../model/series/PieSeries";
 import { ScatterSeries } from "../model/series/ScatterSeries";
 import { ChartElement } from "./ChartElement";
 import { SeriesView } from "./SeriesView";
+import { AreaRangeSeriesView } from "./impl/AreaRangeSeriesView";
 import { AreaSeriesView } from "./impl/AreaSeriesView";
 import { BarSeriesView } from "./impl/BarSeriesView";
 import { BoxPlotSeriesView } from "./impl/BoxPlotSeriesView";
@@ -34,6 +35,7 @@ import { ScatterSeriesView } from "./impl/ScatterSeriesView";
 const series_types = new Map<any, any>([
     [BarSeries, BarSeriesView],
     [ColumnSeries, ColumnSeriesView],
+    [AreaRangeSeries, AreaRangeSeriesView],
     [AreaSeries, AreaSeriesView],
     [LineSeries, LineSeriesViewImpl],
     [BoxPlotSeries, BoxPlotSeriesView],

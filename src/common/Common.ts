@@ -20,6 +20,12 @@ export const pickNum = function(v1: any, v2: any): number {
 export const pickProp = function(v1: any, v2: any): any {
     return v1 !== void 0 ? v1 : v2;
 }
+export const pickProp3 = function(v1: any, v2: any, v3: any): any {
+    return v1 !== void 0 ? v1 : v2 !== void 0 ? v2 : v3;
+}
+export const pickProp4 = function(v1: any, v2: any, v3: any, v4: any): any {
+    return v1 !== void 0 ? v1 : v2 !== void 0 ? v2 : v3 != void 0 ? v3 : v4;
+}
 
 export class RtLog {
 

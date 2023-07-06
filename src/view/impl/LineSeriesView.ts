@@ -13,7 +13,7 @@ import { SvgShapes } from "../../common/impl/SvgShape";
 import { LineSeries, LineSeriesPoint } from "../../model/series/LineSeries";
 import { SeriesView } from "../SeriesView";
 
-class MarkerView extends PathElement {
+export class LineMarkerView extends PathElement {
 
     //-------------------------------------------------------------------------
     // fields
@@ -33,10 +33,10 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _lineContainer: RcElement;
+    protected _lineContainer: RcElement;
     private _line: PathElement;
     private _markerContainer: RcElement;
-    private _markers: ElementPool<MarkerView>;
+    protected _markers: ElementPool<LineMarkerView>;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -47,22 +47,19 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
         this.add(this._lineContainer = new RcElement(doc));
         this._lineContainer.add(this._line = new PathElement(doc, null, 'rct-line-series-line'));
         this.add(this._markerContainer = new RcElement(doc));
-        this._markers = new ElementPool(this._markerContainer, MarkerView);
+        this._markers = new ElementPool(this._markerContainer, LineMarkerView);
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: T): void {
-        const pts = model.getPoints().getVisibles();
-
-        this.$_prepareMarkser(pts as LineSeriesPoint[]);
+        this.$_prepareMarkser(model._visPoints as LineSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
-        const pts = this._layoutMarkers();
-
-        this._layoutLines(pts);
+        this._layoutMarkers(this.model._visPoints as LineSeriesPoint[]);
+        this._layoutLines(this.model._visPoints as LineSeriesPoint[]);
     }
 
     //-------------------------------------------------------------------------
@@ -109,16 +106,11 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
         });
     }
 
-    protected _layoutMarker(i: number): void {
-        const series = this.model;
-        const m = this._markers.get(i);
+    protected _layoutMarker(m: LineMarkerView, x: number, y: number): void {
         const p = m.point as LineSeriesPoint;
-        let x = p.xPos = series._xAxisObj.getPosition(this.width, p.xValue);
-        let y = p.yPos = this.height - series._yAxisObj.getPosition(this.height, p.yValue);
         const s = p.shape;
         const sz = p.radius;
         let path: (string | number)[];
-
 
         switch (s) {
             case 'square':
@@ -140,12 +132,19 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
         // }
     }
 
-    protected _layoutMarkers(): LineSeriesPoint[] {
-        for (let i = 0, cnt = this._markers.count; i < cnt; i++) {
-            this._layoutMarker(i);
-        }
+    protected _layoutMarkers(pts: LineSeriesPoint[]): void {
+        const series = this.model;
+        const xAxis = series._xAxisObj;
+        const yAxis = series._yAxisObj;
 
-        return this._markers.map(m => m.point);
+        for (let i = 0, cnt = pts.length; i < cnt; i++) {
+            const p = pts[i];
+
+            p.xPos = xAxis.getPosition(this.width, p.xValue);
+            p.yPos = this.height - yAxis.getPosition(this.height, p.yValue);
+
+            this._layoutMarker(this._markers.get(i), p.xPos, p.yPos);
+        }
     }
 
     protected _layoutLines(pts: LineSeriesPoint[]): void {

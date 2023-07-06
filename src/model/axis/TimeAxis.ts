@@ -82,6 +82,13 @@ export class TimeAxis extends LinearAxis {
     }
 
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
-        return;
+        const ticks = super._doBuildTicks(min, max, length);
+
+        ticks.forEach(tick => {
+            tick.pos = tick.pos - 32500;
+            tick.label = String(((+tick.label) / 3600 / 24 / 30 / 365) >> 0);
+        })
+
+        return ticks;
     }
 }

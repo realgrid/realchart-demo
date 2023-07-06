@@ -9,52 +9,79 @@
 import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { Utils } from "../../common/Utils";
-import { AreaRangeSeries, AreaSeries, LineSeriesPoint } from "../../model/series/LineSeries";
-import { LineSeriesView } from "./LineSeriesView";
+import { AreaRangeSeries, AreaRangeSeriesPoint, AreaSeries, LineSeriesPoint } from "../../model/series/LineSeries";
+import { AreaSeriesView } from "./AreaSeriesView";
+import { LineMarkerView, LineSeriesView } from "./LineSeriesView";
 
-export class AreaRangeSeriesView extends LineSeriesView<AreaRangeSeries> {
+export class AreaRangeSeriesView extends AreaSeriesView {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    // private _areaContainer: RcElement;
-    // private _area: PathElement;
+    private _lowerLine: PathElement;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-area-series');
+        super(doc);
 
-        // this.insertFirst(this._areaContainer = new RcElement(doc));
-        // this._areaContainer.add(this._area = new PathElement(doc, null, 'rct-area-series-area'));
+        this._lineContainer.add(this._lowerLine = new PathElement(doc, null, 'rct-line-series-line'));
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _layoutLines(pts: LineSeriesPoint[]): void {
+    protected _markersPerPoint(): number {
+        return 2;
+    }
+
+    protected _layoutArea(path: PathElement, pts: AreaRangeSeriesPoint[]): void {
+        const series = this.model;
+        const len = this.height;
+        const sb = new PathBuilder();
+        const cnt = pts.length;
+
+        sb.move(pts[0].xPos, pts[0].yPos);
+        for (let i = 1; i < pts.length; i++) {
+            sb.line(pts[i].xPos, pts[i].yPos);
+        }
+        sb.line(pts[cnt - 1].xPos, pts[cnt - 1].yLow);
+        for (let i = cnt - 2; i >= 0; i--) {
+            sb.line(pts[i].xPos, pts[i].yLow);
+        }
+        path.setPath(sb.end());
+    }
+
+    protected _layoutLines(pts: AreaRangeSeriesPoint[]): void {
         super._layoutLines(pts);
 
-        this.$_layoutArea(pts);
+        // low lines
+        const sb = new PathBuilder();
+        const cnt = pts.length;
+
+        sb.move(pts[cnt - 1].xPos, pts[cnt - 1].yLow);
+        for (let i = cnt - 2; i >= 0; i--) {
+            sb.line(pts[i].xPos, pts[i].yLow);
+        }
+        this._lowerLine.setPath(sb.end());
+    }
+
+    protected _layoutMarkers(pts: AreaRangeSeriesPoint[]): void {
+        super._layoutMarkers(pts);
+
+        const series = this.model;
+        const yAxis = series._yAxisObj;
+
+        for (let i = 0, cnt = pts.length; i < cnt; i++) {
+            const p = pts[i];
+
+            p.yLow = this.height - yAxis.getPosition(this.height, p.lowValue);
+            this._layoutMarker(this._markers.get(i + cnt), p.xPos, p.yLow);
+        }
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_layoutArea(pts: LineSeriesPoint[]): void {
-    //     const series = this.model;
-    //     const len = this.height;
-    //     const y = Utils.isNotEmpty(series.baseValue) ? series._yAxisObj.getPosition(len, series.baseValue) : len;
-    //     const sb = new PathBuilder();
-
-    //     sb.move(pts[0].xPos, y);
-    //     sb.line(pts[0].xPos, pts[0].yPos);
-    //     for (let i = 1; i < pts.length; i++) {
-    //         sb.line(pts[i].xPos, pts[i].yPos);
-    //     }
-    //     // this._buildLines(points, sb, step, curved);
-    //     sb.line(pts[pts.length - 1].xPos, y);
-    //     this._area.setPath(sb.end());
-    }
 }

@@ -11,7 +11,7 @@ import { IPercentSize, RtPercentSize, SizeValue, calcPercent, parsePercentSize }
 import { Shape } from "../../common/impl/SvgShape";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { ISeries, Series, SeriesMarker } from "../Series";
+import { Series, SeriesMarker } from "../Series";
 
 export class BubbleSeriesPoint extends DataPoint {
 
@@ -19,11 +19,13 @@ export class BubbleSeriesPoint extends DataPoint {
     // property fields
     //-------------------------------------------------------------------------
     z: any;
-    zValue: number;
-
     radius: number;
     shape: Shape;
 
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    zValue: number;
     xPos: number;
     yPos: number;
 

@@ -36,13 +36,13 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
     protected _layoutLines(pts: LineSeriesPoint[]): void {
         super._layoutLines(pts);
 
-        this.$_layoutArea(pts);
+        this._layoutArea(this._area, pts);
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_layoutArea(pts: LineSeriesPoint[]): void {
+    protected _layoutArea(path: PathElement, pts: LineSeriesPoint[]): void {
         const series = this.model;
         const len = this.height;
         const y = Utils.isNotEmpty(series.baseValue) ? series._yAxisObj.getPosition(len, series.baseValue) : len;
@@ -55,6 +55,6 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
         }
         // this._buildLines(points, sb, step, curved);
         sb.line(pts[pts.length - 1].xPos, y);
-        this._area.setPath(sb.end());
+        path.setPath(sb.end());
     }
 }
