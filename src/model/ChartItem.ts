@@ -82,6 +82,8 @@ export class ChartItem extends RcObject {
                 this[p].load(v);
             } else if (isObject(v)) {
                 this[p] = Object.assign({}, v);
+            } else {
+                this[p] = v;
             }
         }
     }

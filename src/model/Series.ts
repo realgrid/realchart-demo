@@ -252,10 +252,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    load(source: any): void {
-        this._points.load(source[this.dataProp || 'data']);
-    }
-
     createPoint(source: any): DataPoint {
         return new DataPoint(source);
     }
@@ -308,7 +304,9 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 val = x;
                 x += axis.valueUnit;
             }
-            vals.push(p[v] = val);
+            if (!isNaN(val)) {
+                vals.push(p[v] = val);
+            }
         })
 
         return vals;
@@ -335,7 +333,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     protected _doLoad(src: any): void {
         super._doLoad(src);
 
-        const data = src[this.dataProp];
+        const data = src[this.dataProp || 'data'];
 
         if (isArray(data)) {
             this._points.load(data);

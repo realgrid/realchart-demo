@@ -38,7 +38,7 @@ export class DataPoint {
             this.y = v[pickNum(series.yField, 1)];
         } else if (isObject(v)) {
             this.x = v[series.xField] || v.x || v.name || v.label;
-            this.y = v[series.xField] || v.y || v.value;
+            this.y = v[series.yField] || v.y || v.value;
         } else {
             // x 축에 대한 정보가 없으므로 홑 값들은 순서대로 값을 지정한다.
             this.x = this.index;

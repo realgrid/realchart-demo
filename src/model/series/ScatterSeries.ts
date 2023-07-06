@@ -7,25 +7,50 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { Shape } from "../../common/impl/SvgShape";
+import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { Series, SeriesMarker } from "../Series";
 
-export class LineSeriesPoint extends DataPoint {
+export class ScatterSeriesPoint extends DataPoint {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // fields
     //-------------------------------------------------------------------------
-    radius: number;
-    shape: Shape;
+    xPos: number;
+    yPos: number;
 }
 
-export class LineSeriesMarker extends SeriesMarker {
+export class ScatterSeriesMarker extends SeriesMarker {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    radius = 4;
+    radius = 5;
 }
 
 export class ScatterSeries extends Series {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    marker: ScatterSeriesMarker;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart, name?: string) {
+        super(chart, name);
+
+        this.marker = new ScatterSeriesMarker(this);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    createPoint(source: any): DataPoint {
+        return new ScatterSeriesPoint(source);
+    }
 }

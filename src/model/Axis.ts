@@ -61,6 +61,12 @@ export class AxisTitle extends AxisItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doLoadSimple(source: any): boolean {
+        if (isString(source)) {
+            this.text = source;
+            return true;
+        }
+    }
 }
 
 export class AxisGrid extends AxisItem {
@@ -214,6 +220,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     readonly tick: AxisTick;
     readonly grid: AxisGrid;
 
+    _isX: boolean;
     protected _series: ISeries[] = [];
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
@@ -415,6 +422,7 @@ export class AxisCollection {
 
         const axis = new cls(chart, src.name);
 
+        axis._isX = this.isX;
         axis.load(src);
         return axis;
     }

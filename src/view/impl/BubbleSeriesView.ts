@@ -8,8 +8,6 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { PathElement, RcElement } from "../../common/RcControl";
-import { calcPercent } from "../../common/Types";
-import { Utils } from "../../common/Utils";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { BubbleSeries, BubbleSeriesPoint } from "../../model/series/BubbleSeries";
 import { SeriesView } from "../SeriesView";

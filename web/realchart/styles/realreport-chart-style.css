@@ -88,3 +88,9 @@
     fill: #0088ff40;
     stroke: #0088ff;
 }
+
+/** scatter series */
+.rct-scatter-series-marker {
+    fill: #0088ff40;
+    stroke: #0088ff;
+}
