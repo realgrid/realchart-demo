@@ -26,7 +26,7 @@ export class DataPoint {
     xValue: number;
     yValue: number;
 
-    visible: boolean;
+    visible = true;
     color: string;
     xPos: number;
     yPos: number;

@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { PathElement } from '../RcControl';
+import { SvgShapes } from './SvgShape';
 
 export interface ISectorShape {
     cx: number;
@@ -109,6 +110,21 @@ export class SectorElement extends PathElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    equals(shape: ISectorShape): boolean {
+        return shape.cx === this.cx &&
+                shape.cy === this.cy &&
+                shape.rx === this.rx &&
+                shape.ry === this.ry &&
+                shape.innerRadius === this.innerRadius &&
+                shape.start === this.start &&
+                shape.angle === this.angle &&
+                shape.clockwise === this.clockwise;
+    }
+
+    setSector(shape: ISectorShape): void {
+        this._assignShape(shape);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -134,5 +150,19 @@ export class SectorElement extends PathElement {
         this.start = shape.start;
         this.angle = shape.angle;
         this.clockwise = shape.clockwise;
+        this._updateShape();
+    }
+
+    protected _updateShape(): void {
+        this.setPath(SvgShapes.sector(
+            this.cx, 
+            this.cy, 
+            this.rx * this.rate, 
+            this.ry * this.rate, 
+            this.innerRadius || 0, 
+            this.start, 
+            this.start + this.angle, 
+            this.clockwise
+        ));
     }
 }

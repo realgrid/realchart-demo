@@ -6,16 +6,29 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { RtPercentSize } from "../../common/Types";
 import { DataPoint } from "../DataPoint";
 import { ILegendSource } from "../Legend";
-import { Series } from "../Series";
+import { RadialSeries, Series } from "../Series";
 
-class PiePoint extends DataPoint implements ILegendSource {
+export class PieSeriesPoint extends DataPoint implements ILegendSource {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    visible = true;
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    sliced = false;
+    startAngle = 0;
+    angle = 0;
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    get endAngle(): number {
+        return this.startAngle + this.angle;
+    }
 
     //-------------------------------------------------------------------------
     // methods
@@ -33,18 +46,44 @@ class PiePoint extends DataPoint implements ILegendSource {
     }
 }
 
-export class PieSeries extends Series {
+export class PieSeries extends RadialSeries {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    centerX = 0;
+    centerY = 0;
+    singleColor = false;
+    innerSize: RtPercentSize = 0;
+    size: RtPercentSize;
+    slicedOffset: RtPercentSize = 10;
+    labelDistance = 25;
+    /**
+     * true이면 섹터 하나만 마우스 클릭으로 sliced 상태가 될 수 있다.
+     * Point의 sliced 속성을 직접 지정하는 경우에는 이 속성이 무시된다.
+     */
+    exclusive = true;
+    /**
+     * Slice animation duration.
+     * 밀리세컨드 단위로 지정.
+     * @default 300ms.
+     */
+    sliceDuration = 300;
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    isPolar(): boolean {
+        return true;
+    }
+
     createPoint(source: any): DataPoint {
-        return new PiePoint(source);
+        return new PieSeriesPoint(source);
     }
 
     getLegendSources(list: ILegendSource[]): void {
         this._points.forEach(p => {
-            list.push(p as PiePoint);
+            list.push(p as PieSeriesPoint);
         })        
     }
 }

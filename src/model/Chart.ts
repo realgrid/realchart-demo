@@ -148,6 +148,10 @@ export class Chart extends RcObject implements IChart {
         return this._body;
     }
 
+    isPolar(): boolean {
+        return this._series.first?.isPolar();
+    }
+
     _getSeries(): SeriesCollection {
         return this._series;
     }

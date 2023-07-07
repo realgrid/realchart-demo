@@ -153,6 +153,7 @@ export interface ISeries {
     yField: string | number;
 
     createPoint(source: any): DataPoint;
+    isPolar(): boolean;
     isCategorized(): boolean;
     getPoints(): DataPointCollection;
     getValue(point: DataPoint, axis: IAxis): number;
@@ -234,6 +235,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     isEmpty(): boolean {
         return this._points.isEmpty();
+    }
+
+    isPolar(): boolean {
+        return false;
     }
 
     isCategorized(): boolean {
@@ -492,5 +497,13 @@ export abstract class SeriesMarker extends ChartItem {
     constructor(public series: Series) {
         super(series.chart);
     }
+}
+
+export class RadialSeries extends Series {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    startAngle = 0;
 }
 

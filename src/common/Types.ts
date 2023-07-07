@@ -14,6 +14,7 @@ const ASTERISK = '*'.charCodeAt(0);
 const PERCENT = '%'.charCodeAt(0);
 export const ZWSP = '&#8203;';
 export const ELLIPSIS = '\u2026';
+export const ORG_ANGLE = -Math.PI / 2;
 
 export type Path = string | any[];
 
@@ -21,6 +22,9 @@ export const floor = Math.floor;
 export const ceil = Math.ceil;
 export function fixnum(value: number): number {
     return parseFloat(value.toPrecision(12));
+}
+export function deg2rad(degree: number): number {
+    return degree * Math.PI * 2 / 360;
 }
 
 /**

@@ -704,7 +704,7 @@ export class RcElement extends RcObject {
         return this;
     }
 
-    setAttrs(...attrs: any[]): RcElement {
+    setAttrs(attrs: any): RcElement {
         for (let attr in attrs) {
             this.dom.setAttribute(attr, attrs[attr]);
         }
