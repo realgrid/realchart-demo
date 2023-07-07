@@ -190,7 +190,18 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     }
 
     private $_prepareSectors(points: PieSeriesPoint[]): void {
+        const colors = this.model.chart.colors;
         const count = points.length;
+        const sum = points.map(p => p.yValue).reduce((a, c) => a + c, 0);
+        let start = ORG_ANGLE + deg2rad(this.model.startAngle);
+
+        points.forEach(p => {
+            const angle = p.y * 2 * Math.PI / sum;
+
+            p.startAngle = start;
+            p.angle = angle;
+            start += angle;
+        });
 
         this._sectors.prepare(count, (sector, i) => {
             const a = i < count - 1 ? points[i + 1].startAngle : points[i].endAngle;
@@ -198,13 +209,15 @@ export class PieSeriesView extends SeriesView<PieSeries> {
             sector.start = a;
             sector.angle = 0;
             sector.point = points[i];
+
+            sector.setStyle('fill', points[i].color);
+            sector.setStyle('stroke', 'white');
         })
     }
 
     private $_layoutSectors(): void {
         const labels = null;// this.labelContainer;
         const lines = null;//this.lineContainer;
-        let start = ORG_ANGLE + deg2rad(this.model.startAngle);
 
         this._sectors.forEach((sector) => {
             const p = sector.point;
@@ -221,8 +234,8 @@ export class PieSeriesView extends SeriesView<PieSeries> {
             // }
 
             sector.setSectorEx(labels, lines, {
-                cx: cx,
-                cy: cy,
+                cx: cx + dx,
+                cy: cy + dx,
                 rx: this._rd,
                 ry: this._rd,
                 innerRadius: this._rdInner,
@@ -230,7 +243,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
                 angle: p.angle,
                 clockwise: true
             }, false);
-            sector.translate(dx, dy);
+            // sector.translate(dx, dy);
         })
     }
 }

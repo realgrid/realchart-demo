@@ -82,8 +82,20 @@ export class PieSeries extends RadialSeries {
     }
 
     getLegendSources(list: ILegendSource[]): void {
-        this._points.forEach(p => {
+        this._visPoints.forEach(p => {
             list.push(p as PieSeriesPoint);
         })        
+    }
+
+    protected _doPrepareRender(): void {
+        super._doPrepareRender();
+
+        const colors = this.chart.colors;
+
+        this._visPoints.forEach((p, i) => {
+            if (!p.color) {
+                p.color = colors[i % colors.length];
+            }
+        })
     }
 }

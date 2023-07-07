@@ -35,6 +35,7 @@ export interface IChart {
     series: ISeries;
     xAxis: IAxis;
     yAxis: IAxis;
+    colors: string[];
 
     isInverted(): boolean;
 
@@ -100,6 +101,8 @@ export class Chart extends RcObject implements IChart {
     private _groups = new Map<string, SeriesGroup>();
     private _body: Body;
 
+    colors = ["#2caffe", "#544fc5", "#00e272", "#fe6a35", "#6b8abc", "#d568fb", "#2ee0ca", "#fa4b42", "#feb56a", "#91e8e12"];
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -149,7 +152,7 @@ export class Chart extends RcObject implements IChart {
     }
 
     isPolar(): boolean {
-        return this._series.first?.isPolar();
+        return this._series.isPolar();
     }
 
     _getSeries(): SeriesCollection {

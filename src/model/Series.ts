@@ -409,6 +409,15 @@ export class SeriesCollection {
         }
     }
 
+    isPolar(): boolean {
+        for (const ser of this._items) {
+            if (ser.visible() && !ser.isPolar()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------

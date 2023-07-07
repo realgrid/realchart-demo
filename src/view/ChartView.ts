@@ -141,27 +141,31 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepare(doc: Document, axes: Axis[], isHorz: boolean): void {
-        const views = this.views;
+    prepare(doc: Document, polar: boolean, axes: Axis[], isHorz: boolean): void {
+        if (polar) {
+            this.visible = false;
+        } else {
+            const views = this.views;
 
-        while (views.length < axes.length) {
-            const v = new AxisView(doc);
-
-            this.add(v);
-            views.push(v);
+            while (views.length < axes.length) {
+                const v = new AxisView(doc);
+    
+                this.add(v);
+                views.push(v);
+            }
+            while (views.length > axes.length) {
+                views.pop().remove();
+            }
+    
+            // 추측 계산을 위해 모델을 미리 설정할 필요가 있다.
+            views.forEach((v, i) => {
+                v.model = axes[i];
+                v._isHorz = isHorz;
+            });
+    
+            this.axes = axes;
+            this.visible = views.length > 0;
         }
-        while (views.length > axes.length) {
-            views.pop().remove();
-        }
-
-        // 추측 계산을 위해 모델을 미리 설정할 필요가 있다.
-        views.forEach((v, i) => {
-            v.model = axes[i];
-            v._isHorz = isHorz;
-        });
-
-        this.axes = axes;
-        this.visible = views.length > 0;
     }
 
     /**
@@ -288,6 +292,7 @@ export class ChartView extends RcElement {
         }
 
         const m = this._model = model;
+        const polar = m.isPolar();
         const legend = m.legend;
         let w = hintWidth;
         let h = hintHeight;
@@ -315,7 +320,7 @@ export class ChartView extends RcElement {
             }
         }
 
-        this.$_measurePlot(doc, m, w, h, 1);
+        this.$_measurePlot(doc, m, polar, w, h, 1);
     }
 
     layout(): void {
@@ -419,24 +424,24 @@ export class ChartView extends RcElement {
         }
     }
 
-    private $_prepareAxes(doc: Document, m: Chart): void {
+    private $_prepareAxes(doc: Document, m: Chart, polar: boolean): void {
         const map = this._axisSectionViews;
 
         for (const dir of map.keys()) {
             const v = map.get(dir);
             const axes = m.getAxes(dir);
 
-            v.prepare(doc, axes, dir === SectionDir.BOTTOM || dir === SectionDir.TOP);
+            v.prepare(doc, polar, axes, dir === SectionDir.BOTTOM || dir === SectionDir.TOP);
         }
     }
 
-    private $_measurePlot(doc: Document, m: Chart, w: number, h: number, phase: number): void {
+    private $_measurePlot(doc: Document, m: Chart, polar: boolean, w: number, h: number, phase: number): void {
         const map = this._axisSectionViews;
         const wSave = w;
         const hSave = h;
 
         // axes
-        this.$_prepareAxes(doc, m);
+        this.$_prepareAxes(doc, m, polar);
 
         // 아래 checkWidth를 위해 tick을 생성한다.
         m.layoutAxes(w, h, this._inverted, phase);
