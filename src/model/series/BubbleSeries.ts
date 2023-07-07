@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum } from "../../common/Common";
+import { isArray, isObject, pickNum, pickProp } from "../../common/Common";
 import { IPercentSize, RtPercentSize, SizeValue, calcPercent, parsePercentSize } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IChart } from "../Chart";
@@ -40,8 +40,9 @@ export class BubbleSeriesPoint extends DataPoint {
         if (isArray(v)) {
             this.z = v[pickNum(series.zField, 2)];
         } else if (isObject(v)) {
-            this.z = v[series.zField] || v.z;
+            this.z = pickProp(v[series.zField], v.z);
         } else {
+            this.z = this.y;
         }
 
         this.zValue = +this.z;
@@ -125,7 +126,7 @@ export class BubbleSeries extends Series {
         this._zMin = Number.MAX_VALUE;
         this._zMax = Number.MIN_VALUE;
 
-        this._points.forEach((p: BubbleSeriesPoint) => {
+        this._visPoints.forEach((p: BubbleSeriesPoint) => {
             this._zMin = Math.min(this._zMin, p.zValue);
             this._zMax = Math.max(this._zMax, p.zValue);
         })

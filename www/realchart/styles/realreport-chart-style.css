@@ -93,4 +93,26 @@
 .rct-scatter-series-marker {
     fill: #0088ff40;
     stroke: #0088ff;
+<<<<<<< HEAD
 }
+=======
+}
+
+/** boxplot series */
+.rct-boxplot-series {
+    stroke-width: 1;
+    fill: white;
+}
+.rct-boxplot-series-box {
+    fill: white;
+} 
+.rct-boxplot-series-min {
+    stroke-width: 2;
+}
+.rct-boxplot-series-max {
+    stroke-width: 2;
+}
+.rct-boxplot-series-stem {
+    stroke-dasharray: 2;
+}
+>>>>>>> c414284505d595dec97ae200e02c0bd932a87847

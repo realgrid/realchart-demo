@@ -6,8 +6,35 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
-import { Series } from "../Series";
+import { isArray, isObject, pickNum, pickProp3 } from "../../common/Common";
+import { DataPoint } from "../DataPoint";
+import { ISeries, Series } from "../Series";
+
+export class HistogramSeriesPoint extends DataPoint {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    min: number;
+    max: number;
+    width: number;
+    height: number;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    prepare(series: ISeries): void {
+        super.prepare(series);
+
+        const v = this.value;
+
+        this.min = v.min;
+        this.max = v.max;
+    }
+}
 
 export enum BinsNumber {
     SQURE_ROOT = 'squreRoot',   // Squre-root choice
@@ -55,5 +82,92 @@ export class HistogramSeries extends Series {
         if (cnt < 1) {
             return binsNumberFunc[this.binsNumber || BinsNumber.SQURE_ROOT](length);
         }
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    createPoint(source: any): DataPoint {
+        return new HistogramSeriesPoint(source);
+    }
+
+    protected _doLoadPoints(src: any[]): void {
+
+        function getValue(v: any): number {
+            let y;
+
+            if (isArray(v)) {
+                y = v[pickNum(this.yField, 0)];
+            } else if (isObject(v)) {
+                y = pickProp3(v[this.yField], v.y, v.value);
+            } else {
+                y = v;
+            }
+            return +y;
+        }
+
+        let sample: number[ ] = [];
+
+        for (let i = 0; i < src.length; i++) {
+            const v = getValue(src[i]);
+
+            if (!isNaN(v)) {
+                sample.push(v);
+            }
+        }
+
+        if (sample.length > 0) {
+            sample = sample.sort((v1, v2) => v1 - v2);
+            if (this.minValue < sample[0]) {
+                sample.unshift(this.minValue);
+            }
+            if (this.maxValue > sample[sample.length - 1]) {
+                sample.push(this.maxValue);
+            }
+
+            const len = sample.length;
+            const min = sample[0];
+            const max = sample[len - 1];
+            const count = this.getBinCount(len);//max - min);
+            const interval = (max - min) / count;
+            let n = 0;
+            let x = min;
+            let x2 = x + interval;
+            const pts = [];
+
+            for (let i = 0; i < count; i++) {
+                let f = 0;
+
+                if (i == count - 1) {
+                    f = len - n;
+                } else {
+                    while (n < len && (sample[n] < x2)) {
+                        f++;
+                        n++;
+                    }
+                }
+
+                pts.push({
+                    x: x,
+                    y: f,
+                    min: x,
+                    max: (i === count - 1) ? max : x2 
+                })
+                
+                // const p = new HistogramPoint(this, source[i], { x: x, y: f});
+                // p.min = x;
+                // p.max = (i === count - 1) ? max : x2;
+                // pts.push(p);
+
+                x = x2;
+                x2 = x + interval;
+            }
+
+            this._points.load(pts);
+        }
+    }
+
+    protected _doPrepareRender(): void {
+        const pts = this._visPoints;
     }
 }
