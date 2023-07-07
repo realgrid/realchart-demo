@@ -34,7 +34,7 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
     // methods
     //-------------------------------------------------------------------------
     legendColor(): string {
-        return 'red';
+        return this.color;
     }
 
     legendLabel(): string {

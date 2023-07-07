@@ -22,8 +22,8 @@ export class LegendItemView extends ChartElement<LegendItem> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _marker: RectElement;
-    private _label: TextElement;
+    _marker: RectElement;
+    _label: TextElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -86,6 +86,8 @@ export class LegendView extends ChartElement<Legend> {
         this.$_prepareItems(doc, items);
 
         views.forEach((v, i) => {
+            v._marker.setStyle('fill', items[i].source.legendColor());
+
             const sz = v.measure(doc, items[i], hintWidth, hintHeight, phase);
 
             if (vertical) {
@@ -106,8 +108,16 @@ export class LegendView extends ChartElement<Legend> {
     }
     
     protected _doLayout(): void {
+        const gap = this.model.itemGap;
+        let x = 0;
+        let y = 0;
+
         this._background.setBounds(0, 0, this.width, this.height);
-        this._itemViews.forEach(v => v.resizeByMeasured().layout());
+        this._itemViews.forEach(v => {
+            v.resizeByMeasured().layout();
+            v.translate(x, y);
+            x += v.width + gap;
+        });
     }
 
     //-------------------------------------------------------------------------

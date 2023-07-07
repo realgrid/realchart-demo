@@ -93,26 +93,32 @@
 .rct-scatter-series-marker {
     fill: #0088ff40;
     stroke: #0088ff;
-<<<<<<< HEAD
-}
-=======
 }
 
 /** boxplot series */
+.rct-boxplot-series-back {
+    fill: transparent;
+}
 .rct-boxplot-series {
     stroke-width: 1;
     fill: white;
 }
 .rct-boxplot-series-box {
-    fill: white;
+    fill: #0088ff80;
 } 
 .rct-boxplot-series-min {
+    stroke: gray;
+    stroke-width: 2;
+}
+.rct-boxplot-series-mid {
+    stroke: gray;
     stroke-width: 2;
 }
 .rct-boxplot-series-max {
+    stroke: gray;
     stroke-width: 2;
 }
 .rct-boxplot-series-stem {
+    stroke: gray;
     stroke-dasharray: 2;
 }
->>>>>>> c414284505d595dec97ae200e02c0bd932a87847

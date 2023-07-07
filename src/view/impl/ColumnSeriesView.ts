@@ -32,7 +32,7 @@ export class ColumnSeriesView extends SeriesView<ColumnSeries> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _bars: ElementPool<BarElement>;
+    private _bars = new ElementPool(this, BarElement);
 
     //-------------------------------------------------------------------------
     // constructor
@@ -67,11 +67,11 @@ export class ColumnSeriesView extends SeriesView<ColumnSeries> {
     // internal members
     //-------------------------------------------------------------------------
     private $_parepareBars(doc: Document, points: DataPoint[]): void {
-        if (!this._bars) {
-            this._bars = new ElementPool(this, BarElement);
-        }
+        const color = this.model.color;
+
         this._bars.prepare(points.length, (v, i) => {
             v.point = points[i];
+            v.setStyle('fill', color);
         });
     }
 }

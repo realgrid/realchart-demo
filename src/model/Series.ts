@@ -152,6 +152,8 @@ export interface ISeries {
     xField: string | number;
     yField: string | number;
 
+    color: string;
+
     createPoint(source: any): DataPoint;
     isPolar(): boolean;
     isCategorized(): boolean;
@@ -211,6 +213,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _yAxisObj: IAxis;
     protected _points: DataPointCollection;
     _visPoints: DataPoint[];
+    color: string;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -246,7 +249,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     legendColor(): string {
-        return 'red';
+        return this.color;
     }
 
     legendLabel(): string {
@@ -451,7 +454,14 @@ export class SeriesCollection {
     }
 
     prepareRender(): void {
-        this._items.forEach(ser => ser.prepareRender());
+        const colors = this.chart.colors;
+
+        this._items.forEach((ser, i) => {
+            if (ser.visible()) {
+                ser.color = colors[i % colors.length];
+                ser.prepareRender();
+            }
+        });
     }
 
     //-------------------------------------------------------------------------
