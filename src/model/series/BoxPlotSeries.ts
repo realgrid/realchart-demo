@@ -30,8 +30,6 @@ export class BoxPlotSeriesPoint extends DataPoint {
     midValue: number;
     highValue: number;
 
-    width: number;
-    height: number; 
     lowPos: number;
     midPos: number;
     highPos: number;
@@ -39,33 +37,47 @@ export class BoxPlotSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getInside(): IRect {
-        return { x: 0, y: 0, width: this.width, height: this.height };
-    }
+    // getInside(): IRect {
+    //     return { x: 0, y: 0, width: this.width, height: this.height };
+    // }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _readArray(series: BoxPlotSeries, v: any[]): void {
+        const d = v.length > 5 ? 1 : 0;
+
+        this.min = v[pickNum(series.minField, 0 + d)];
+        this.low = v[pickNum(series.lowField, 1 + d)];
+        this.mid = v[pickNum(series.midField, 2 + d)];
+        this.high = v[pickNum(series.highField, 3 + d)];
+        this.y = v[pickNum(series.yField, 4 + d)];
+
+        if (d > 0) {
+            this.x = v[pickNum(series.xField, 0)];
+        } else {
+            this.x = this.index;
+        }
+    }
+
+    protected _readObject(series: BoxPlotSeries, v: any): void {
+        super._readObject(series, v);
+
+        this.min = pickProp(v[series.minField], v.min);
+        this.low = pickProp(v[series.lowField], v.low);
+        this.mid = pickProp(v[series.midField], v.mid);
+        this.high = pickProp(v[series.highField], v.high);
+        this.y = pickProp3(v[series.yField], v.y, v.value);
+    }
+
+    protected _readSingle(v: any): void {
+        super._readSingle(v);
+
+        this.min = this.low = this.mid = this.high = this.y;
+    }
+
     prepare(series: BoxPlotSeries): void {
         super.prepare(series);
-
-        const v = this.value;
-
-        if (isArray(v)) {
-            this.min = v[pickNum(series.minField, 1)];
-            this.low = v[pickNum(series.lowField, 2)];
-            this.mid = v[pickNum(series.midField, 3)];
-            this.high = v[pickNum(series.highField, 4)];
-            this.y = v[pickNum(series.yField, 5)];
-        } else if (isObject(v)) {
-            this.min = pickProp(v[series.minField], v.min);
-            this.low = pickProp(v[series.lowField], v.low);
-            this.mid = pickProp(v[series.midField], v.mid);
-            this.high = pickProp(v[series.highField], v.high);
-            this.y = pickProp3(v[series.yField], v.y, v.value);
-        } else {
-            this.min = this.low = this.mid = this.high = this.y;
-        }
 
         this.minValue = +this.min;
         this.lowValue = +this.low;

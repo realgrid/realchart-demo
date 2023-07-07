@@ -33,12 +33,12 @@ import { PieSeriesView } from "./impl/PieSeriesView";
 import { ScatterSeriesView } from "./impl/ScatterSeriesView";
 
 const series_types = new Map<any, any>([
+    [BoxPlotSeries, BoxPlotSeriesView],
     [BarSeries, BarSeriesView],
     [ColumnSeries, ColumnSeriesView],
     [AreaRangeSeries, AreaRangeSeriesView],
     [AreaSeries, AreaSeriesView],
     [LineSeries, LineSeriesViewImpl],
-    [BoxPlotSeries, BoxPlotSeriesView],
     [BubbleSeries, BubbleSeriesView],
     [ScatterSeries, ScatterSeriesView],
     [HistogramSeries, HistogramSeriesView],

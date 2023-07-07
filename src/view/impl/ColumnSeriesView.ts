@@ -49,9 +49,7 @@ export class ColumnSeriesView extends SeriesView<ColumnSeries> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: ColumnSeries): void {
-        const pts = model.getPoints().getVisibles();
-
-        this.$_parepareBars(doc, pts);
+        this.$_parepareBars(doc, model._visPoints);
     }
 
     protected _renderSeries(width: number, height: number): void {

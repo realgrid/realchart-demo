@@ -51,7 +51,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
     protected _prepareSeries(doc: Document, model: BubbleSeries): void {
         const pts = model.getPoints().getVisibles();
 
-        this.$_prepareMarkser(pts as BubbleSeriesPoint[]);
+        this.$_prepareMarkser(model._visPoints as BubbleSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -75,7 +75,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
             p.radius = series.getRadius(p.zValue, min, max);
             p.shape = marker.shape;
             m.point = p;
-        })
+        });
     }
 
     private $_layoutMarkers(): void {

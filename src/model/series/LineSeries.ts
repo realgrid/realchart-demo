@@ -11,7 +11,7 @@ import { StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { MarerVisibility, Series, SeriesMarker } from "../Series";
+import { ISeries, MarerVisibility, Series, SeriesMarker } from "../Series";
 
 export class LineSeriesPoint extends DataPoint {
 
@@ -20,8 +20,6 @@ export class LineSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     radius: number;
     shape: Shape;
-    xPos: number;
-    yPos: number;
 }
 
 export class LineSeriesMarker extends SeriesMarker {
@@ -113,21 +111,35 @@ export class AreaRangeSeriesPoint extends LineSeriesPoint {
     prepare(series: AreaRangeSeries): void {
         super.prepare(series);
 
-        const v = this.value;
-
-        if (isArray(v)) {
-            this.low = v[pickNum(series.lowField, 1)];
-            this.high = v[pickNum(series.highField, 2)];
-        } else if (isObject(v)) {
-            this.low = pickProp(v[series.lowField], v.low);
-            this.high = pickProp(v[series.lowField], v.high);
-        } else {
-            this.low = v;
-        }
-
         this.y = this.high = pickProp(this.high, this.low);
         this.lowValue = +this.low;
         this.highValue = this.yValue = +this.high;
+    }
+
+    protected _readArray(series: AreaRangeSeries, v: any[]): void {
+        const d = v.length > 2 ? 1 : 0;
+
+        this.low = v[pickNum(series.lowField, 0 + d)];
+        this.high = v[pickNum(series.highField, 1 + d)];
+
+        if (d > 0) {
+            this.x = v[pickNum(series.xField, 0)];
+        } else {
+            this.x = this.index;
+        }
+    }
+
+    protected _readObject(series: AreaRangeSeries, v: any): void {
+        super._readObject(series, v);
+
+        this.low = pickProp(v[series.lowField], v.low);
+        this.high = pickProp(v[series.lowField], v.high);
+    }
+
+    protected _readSingle(v: any): void {
+        super._readSingle(v);
+
+        this.low = this.y;
     }
 }
 

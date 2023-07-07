@@ -11,7 +11,7 @@ import { IPercentSize, RtPercentSize, SizeValue, calcPercent, parsePercentSize }
 import { Shape } from "../../common/impl/SvgShape";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { Series, SeriesMarker } from "../Series";
+import { ISeries, Series, SeriesMarker } from "../Series";
 
 export class BubbleSeriesPoint extends DataPoint {
 
@@ -26,8 +26,6 @@ export class BubbleSeriesPoint extends DataPoint {
     // fields
     //-------------------------------------------------------------------------
     zValue: number;
-    xPos: number;
-    yPos: number;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -35,17 +33,32 @@ export class BubbleSeriesPoint extends DataPoint {
     prepare(series: BubbleSeries): void {
         super.prepare(series);
 
-        const v = this.value;
-
-        if (isArray(v)) {
-            this.z = v[pickNum(series.zField, 2)];
-        } else if (isObject(v)) {
-            this.z = pickProp(v[series.zField], v.z);
-        } else {
-            this.z = this.y;
-        }
-
         this.zValue = +this.z;
+    }
+
+    protected _readArray(series: BubbleSeries, v: any[]): void {
+        const d = v.length > 2 ? 1 : 0;
+
+        this.y = v[pickNum(series.yField, 0 + d)];
+        this.z = v[pickNum(series.zField, 1 + d)];
+
+        if (d > 0) {
+            this.x = v[pickNum(series.xField, 0)];
+        } else {
+            this.x = this.index;
+        }
+    }
+
+    protected _readObject(series: BubbleSeries, v: any): void {
+        super._readObject(series, v);
+
+        this.z = pickProp(v[series.zField], v.z);
+    }
+
+    protected _readSingle(v: any): void {
+        super._readSingle(v);
+
+        this.z = this.y;
     }
 }
 

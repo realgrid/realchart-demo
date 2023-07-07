@@ -6,7 +6,6 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { Shape } from "../../common/impl/SvgShape";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { Series, SeriesMarker } from "../Series";
@@ -16,8 +15,6 @@ export class ScatterSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    xPos: number;
-    yPos: number;
 }
 
 export class ScatterSeriesMarker extends SeriesMarker {

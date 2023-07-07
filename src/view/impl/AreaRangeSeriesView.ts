@@ -7,11 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { PathBuilder } from "../../common/PathBuilder";
-import { PathElement, RcElement } from "../../common/RcControl";
-import { Utils } from "../../common/Utils";
-import { AreaRangeSeries, AreaRangeSeriesPoint, AreaSeries, LineSeriesPoint } from "../../model/series/LineSeries";
+import { PathElement } from "../../common/RcControl";
+import { AreaRangeSeriesPoint } from "../../model/series/LineSeries";
 import { AreaSeriesView } from "./AreaSeriesView";
-import { LineMarkerView, LineSeriesView } from "./LineSeriesView";
 
 export class AreaRangeSeriesView extends AreaSeriesView {
 

@@ -6,13 +6,14 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { ElementPool } from "../../common/ElementPool";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
 import { BoxPlotSeries, BoxPlotSeriesPoint } from "../../model/series/BoxPlotSeries";
 import { SeriesView } from "../SeriesView";
 
-class BoxElement extends GroupElement {
+class BoxView extends GroupElement {
 
     //-------------------------------------------------------------------------
     // fields
@@ -35,7 +36,7 @@ class BoxElement extends GroupElement {
         const w = this.width;
         const h = this.height;
         const len = p.yValue - p.minValue;
-        const x = p.width / 2;
+        const x = w / 2;// p.width / 2;
         let y = 0;
         const yLow = y + h - h * (p.lowValue - p.minValue) / len;
         const yHigh = y + h - h * (p.highValue - p.minValue) / len;
@@ -53,7 +54,7 @@ class BoxElement extends GroupElement {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doInitChildren(doc: Document): void {
-        this.add(this._back = new RectElement(doc));
+        this.add(this._back = new RectElement(doc, null, 'rct-boxplot-series-back'));
         this.add(this._stemUp = new LineElement(doc, null, 'rct-boxplot-series-stem'));
         this.add(this._stemDown = new LineElement(doc, null, 'rct-boxplot-series-stem'));
         this.add(this._box = new RectElement(doc, null, 'rct-boxplot-series-box'));
@@ -68,19 +69,51 @@ export class BoxPlotSeriesView extends SeriesView<BoxPlotSeries> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _boxes: ElementPool<BoxView>;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-boxplot-series')
+
+        this._boxes = new ElementPool(this, BoxView);
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: BoxPlotSeries): void {
+        this.$_prepareBoxes(model._visPoints as BoxPlotSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
+        this.$_layoutBoxes(width, height);
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_prepareBoxes(points: BoxPlotSeriesPoint[]): void {
+        this._boxes.prepare(points.length, (box, i) => {
+            box.point = points[i];
+        })
+    }
+
+    private $_layoutBoxes(width: number, height: number): void {
+        const series = this.model;
+        const xAxis = series._xAxisObj;
+        const yAxis = series._yAxisObj;
+
+        this._boxes.forEach((box) => {
+            const p = box.point;
+            const x = p.xPos = xAxis.getPosition(this.width, p.xValue);
+            const y = p.yPos = this.height - yAxis.getPosition(this.height, p.yValue);
+            const w = xAxis.getPointWidth(width, series, p) * series.pointWidth;
+            const h = Math.abs(yAxis.getPosition(height, p.minValue) - y);
+
+            box.setBounds(x, y, w, h);
+            box.layout();
+        })
     }
 }

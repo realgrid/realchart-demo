@@ -22,10 +22,14 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    // Series.collectValues()에서 결정된다.
     xValue: number;
     yValue: number;
+
     visible: boolean;
     color: string;
+    xPos: number;
+    yPos: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -46,16 +50,36 @@ export class DataPoint {
         const v = this.value;
 
         if (isArray(v)) {
+            this._readArray(series, v);
+        } else if (isObject(v)) {
+            this._readObject(series, v);
+        } else {
+            this._readSingle(v);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected _readArray(series: ISeries, v: any[]): void {
+        if (v.length > 1) {
             this.x = v[pickNum(series.xField, 0)];
             this.y = v[pickNum(series.yField, 1)];
-        } else if (isObject(v)) {
-            this.x = pickProp4(v[series.xField], v.x, v.name, v.label);
-            this.y = pickProp3(v[series.yField], v.y, v.value);
         } else {
-            // x 축에 대한 정보가 없으므로 홑 값들은 순서대로 값을 지정한다.
             this.x = this.index;
-            this.y = v;
+            this.y = v[pickNum(series.yField, 0)];
         }
+    }
+
+    protected _readObject(series: ISeries, v: any): void {
+        this.x = pickProp4(v[series.xField], v.x, v.name, v.label);
+        this.y = pickProp3(v[series.yField], v.y, v.value);
+    }
+
+    protected _readSingle(v: any): void {
+        // x 축에 대한 정보가 없으므로 홑 값들은 순서대로 값을 지정한다.
+        this.x = this.index;
+        this.y = v;
     }
 }
 
