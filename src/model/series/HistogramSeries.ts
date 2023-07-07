@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, pickNum, pickProp3 } from "../../common/Common";
+import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { ISeries, Series } from "../Series";
 
@@ -70,6 +71,11 @@ export class HistogramSeries extends Series {
     binWidth: number;
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _binInterval: number;
+
+    //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     getBinCount(length: number): number {
@@ -87,6 +93,10 @@ export class HistogramSeries extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    ignoreAxisBase(axis: IAxis): boolean {
+        return axis === this._xAxisObj;
+    }
+
     createPoint(source: any): DataPoint {
         return new HistogramSeriesPoint(source);
     }
@@ -94,7 +104,7 @@ export class HistogramSeries extends Series {
     protected _doLoadPoints(src: any[]): void {
 
         function getValue(v: any): number {
-            let y;
+            let y: number;
 
             if (isArray(v)) {
                 y = v[pickNum(this.yField, 0)];
@@ -129,7 +139,7 @@ export class HistogramSeries extends Series {
             const min = sample[0];
             const max = sample[len - 1];
             const count = this.getBinCount(len);//max - min);
-            const interval = (max - min) / count;
+            const interval = this._binInterval = (max - min) / count;
             let n = 0;
             let x = min;
             let x2 = x + interval;
@@ -153,11 +163,6 @@ export class HistogramSeries extends Series {
                     min: x,
                     max: (i === count - 1) ? max : x2 
                 })
-                
-                // const p = new HistogramPoint(this, source[i], { x: x, y: f});
-                // p.min = x;
-                // p.max = (i === count - 1) ? max : x2;
-                // pts.push(p);
 
                 x = x2;
                 x2 = x + interval;
@@ -167,7 +172,13 @@ export class HistogramSeries extends Series {
         }
     }
 
-    protected _doPrepareRender(): void {
-        const pts = this._visPoints;
+    collectValues(axis: IAxis): number[] {
+        const vals = super.collectValues(axis);
+
+        // point.x가 point.min과 같은 값이므로 축 범위에 마지막 bin의 max가 포함되어야 한다.
+        if (axis === this._xAxisObj) {
+            vals.push((this._visPoints[this._visPoints.length - 1] as HistogramSeriesPoint).max);
+        }
+        return vals;
     }
 }

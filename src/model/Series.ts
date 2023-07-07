@@ -159,6 +159,8 @@ export interface ISeries {
     collectCategories(axis: IAxis): string[];
     collectValues(axis: IAxis): number[];
     isVisible(p: DataPoint): boolean;
+    // axis에 설정된 baseValue를 무시하라!
+    ignoreAxisBase(axis: IAxis): boolean;
 }
 
 export interface ISeriesGroup {
@@ -249,6 +251,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     legendVisible(): boolean {
         return this.visible();
     }
+
+    ignoreAxisBase(axis: IAxis): boolean {
+        return false;
+    }
     
     //-------------------------------------------------------------------------
     // methods
@@ -296,7 +302,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         const vals: number[] = [];
         let x = 0;
 
-        this._points.forEach((p, i) => {
+        this._visPoints.forEach((p, i) => {
             let val = axis.getValue(p[a]);
 
             // linear axis이고 'x'값이 숫자가 아니면 

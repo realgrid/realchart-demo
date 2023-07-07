@@ -209,7 +209,7 @@ export class LinearAxis extends Axis {
     /**
      * 적어도 이 값이 최소값으로 표시된다.
      */
-    baseValue: number;
+    baseValue = 0;
     minValue: number;
     maxValue: number;
     /**
@@ -227,14 +227,13 @@ export class LinearAxis extends Axis {
     private _hardMax: number;
     private _min: number;
     private _max: number;
+    private _base: number;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart, name?: string) {
         super(chart, name);
-
-        this.baseValue = 0;
     }
 
     //-------------------------------------------------------------------------
@@ -251,12 +250,20 @@ export class LinearAxis extends Axis {
 
     protected _doPrepareRender(): void {
         this._hardMin = this.minValue;
+
+        if (isNaN(this.baseValue)) {
+            this._base = NaN;
+        } else if (this.baseValue === null || this._series.find(s => s.ignoreAxisBase(this))) {
+            this._base = NaN;
+        } else {
+            this._base = +this.baseValue;
+        }
     }
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
         const tick = this.tick as LinearAxisTick;
         let { min, max } = this.$_adjustMinMax(calcedMin, calcedMax);
-        const steps = tick.buildSteps(length, this.baseValue, min, max);
+        const steps = tick.buildSteps(length, this._base, min, max);
 
         min = this._min = Math.min(min, steps[0]);
         max = this._max = Math.max(max, steps[steps.length - 1]);
@@ -285,7 +292,7 @@ export class LinearAxis extends Axis {
     // internal members
     //-------------------------------------------------------------------------
     private $_adjustMinMax(min: number, max: number): { min: number, max: number } {
-        const base = this.baseValue;
+        const base = this._base;
         const minPad = this.minPadding;
         const maxPad = this.maxPadding;
 

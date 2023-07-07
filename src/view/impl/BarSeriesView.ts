@@ -15,12 +15,8 @@ import { BoxPointElement, SeriesView } from "../SeriesView";
 class BarElement extends BoxPointElement {
 
     //-------------------------------------------------------------------------
-    // constructor
+    // overriden members
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc, null, 'rct-series-bar');
-    }
-
     render(x: number, y: number): void {
         this.setPath(SvgShapes.rect({
             x,

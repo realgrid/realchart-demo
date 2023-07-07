@@ -6,10 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum, pickProp, pickProp3 } from "../../common/Common";
-import { IRect } from "../../common/Rectangle";
+import { pickNum, pickProp, pickProp3 } from "../../common/Common";
 import { DataPoint } from "../DataPoint";
-import { ISeries } from "../Series";
 import { ColumnSeries } from "./BarSeries";
 
 export class BoxPlotSeriesPoint extends DataPoint {

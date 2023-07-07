@@ -346,4 +346,12 @@ export class BoxPointElement extends PathElement {
     labelViews: PointLabelView[] = [];
     wPoint: number;
     hPoint: number;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, null, 'rct-series-bar');
+    }
+
 }
