@@ -74,17 +74,19 @@ export class ChartItem extends RcObject {
 
     protected _doLoad(source: any): void {
         for (const p in source) {
-            let v = source[p];
+            //if (this.hasOwnProperty(p)) {
+                let v = source[p];
 
-            if (isArray(v)) {
-                this[p] = v.slice(0);
-            } else if (this[p] instanceof ChartItem) {
-                this[p].load(v);
-            } else if (isObject(v)) {
-                this[p] = Object.assign({}, v);
-            } else {
-                this[p] = v;
-            }
+                if (isArray(v)) {
+                    this[p] = v.slice(0);
+                } else if (this[p] instanceof ChartItem) {
+                    this[p].load(v);
+                } else if (isObject(v)) {
+                    this[p] = Object.assign({}, v);
+                } else {
+                    this[p] = v;
+                }
+            //}
         }
     }
 

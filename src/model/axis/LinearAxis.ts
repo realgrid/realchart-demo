@@ -284,7 +284,7 @@ export class LinearAxis extends Axis {
         return length * (value - this._min) / (this._max - this._min);
     }
 
-    getPointWidth(length: number, series: ISeries, point: DataPoint): number {
+    getUnitLength(length: number, value: number): number {
         return;
     }
 

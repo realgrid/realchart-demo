@@ -9,7 +9,6 @@
 import { isArray, isNumber, isObject, isString } from "../common/Common";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
-import { DataPoint } from "./DataPoint";
 import { ISeries } from "./Series";
 
 export interface IAxis {
@@ -22,11 +21,16 @@ export interface IAxis {
      */
     getValue(value: any): number;
     contains(value: number): boolean;
+    /**
+     * 값(축 상 위치)에 해당하는 픽셀 위치.
+     */
     getPosition(length: number, value: number): number;
     /**
-     * 축 단위 값에 해당하는 너비. 
+     * 값(축 상 위치)에 해당하는 축 단위 픽셀 크기. 
+     * <br>
+     * 값에 따라 크기가 다를 수도 있다.
      */
-    getPointWidth(length: number, series: ISeries, point: DataPoint): number;
+    getUnitLength(length: number, value: number): number;
 }
 
 export class AxisItem extends ChartItem {
@@ -270,7 +274,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      * value에 해당하는 축상의 위치.
      */
     abstract getPosition(length: number, value: number): number;
-    abstract getPointWidth(length: number, series: ISeries, point: DataPoint): number;
+    abstract getUnitLength(length: number, value: number): number;
 
     getValue(value: any): number {
         return +value;

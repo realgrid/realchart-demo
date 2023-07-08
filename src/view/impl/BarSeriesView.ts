@@ -56,7 +56,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         this._bars.forEach((bar, i) => {
             const y = height - xAxis.getPosition(height, i);
 
-            bar.wPoint = xAxis.getPointWidth(height, m, bar.point) * m.pointWidth;
+            bar.wPoint = xAxis.getUnitLength(height, i) * (1 - m.pointPadding * 2);
             bar.hPoint = yAxis.getPosition(width, bar.point.yValue);
             bar.render(0, y);
         })

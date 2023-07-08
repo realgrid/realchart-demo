@@ -12,7 +12,7 @@ import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
 import { ILegendSource, Legend } from "./Legend";
-import { ISeries, Series, SeriesCollection, SeriesGroup } from "./Series";
+import { ISeries, Series, SeriesCollection, SeriesGroup, SeriesGroupCollection } from "./Series";
 import { Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
@@ -96,9 +96,9 @@ export class Chart extends RcObject implements IChart {
     private _subtitle: Title;
     private _legend: Legend;
     private _series: SeriesCollection;
+    private _groups: SeriesGroupCollection;
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
-    private _groups = new Map<string, SeriesGroup>();
     private _body: Body;
 
     colors = ["#2caffe", "#544fc5", "#00e272", "#fe6a35", "#6b8abc", "#d568fb", "#2ee0ca", "#fa4b42", "#feb56a", "#91e8e12"];
@@ -113,6 +113,7 @@ export class Chart extends RcObject implements IChart {
         this._subtitle = new Title(this, false);
         this._legend = new Legend(this);
         this._series = new SeriesCollection(this);
+        this._groups = new SeriesGroupCollection(this);
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new AxisCollection(this, false);
         this._body = new Body(this);
@@ -133,6 +134,10 @@ export class Chart extends RcObject implements IChart {
 
     get series(): ISeries {
         return this._series.first;
+    }
+
+    get group(): SeriesGroup {
+        return this._groups.first;
     }
 
     get legend(): Legend {
@@ -157,6 +162,10 @@ export class Chart extends RcObject implements IChart {
 
     _getSeries(): SeriesCollection {
         return this._series;
+    }
+
+    _getGroups(): SeriesGroupCollection {
+        return this._groups;
     }
 
     _getXAxes(): AxisCollection {
@@ -243,6 +252,8 @@ export class Chart extends RcObject implements IChart {
 
         // series - 시리즈를 먼저 로드해야 디폴트 axis를 지정할 수 있다.
         this._series.load(source.series);
+        // series group
+        this._groups.load(source.groups);
 
         // axes
         // 축은 반드시 존재해야 한다.
@@ -260,6 +271,7 @@ export class Chart extends RcObject implements IChart {
     prepareRender(): void {
         // 축에 연결한다.
         this._series.prepareRender();
+        this._groups.prepareRender();
 
         // 카테고리 목록을 만든다.
         // 축의 값 범위를 계산한다.

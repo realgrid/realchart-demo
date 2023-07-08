@@ -89,6 +89,7 @@ export class CategoryAxis extends Axis {
     private _map = new Map<string, number>(); // data point의 축 위치를 찾기 위해 사용한다.
     private _min: number;
     private _max: number;
+    private _len: number;
     private _minPad: number;
     private _maxPad: number;
     private _interval: number;
@@ -125,7 +126,7 @@ export class CategoryAxis extends Axis {
         min = this._min = Math.floor(min);
         max = this._max = Math.ceil(max);
 
-        const len = max - min + 1;
+        const len = this._len = max - min + 1;
         this._interval = length / (len + this._minPad + this._maxPad);
 
         for (let i = min; i <= max; i++) {
@@ -142,8 +143,8 @@ export class CategoryAxis extends Axis {
         return this._minPad * this._interval + value * this._interval + this._interval / 2;
     }
 
-    getPointWidth(length: number, series: ISeries, point: DataPoint): number {
-        return length / series.getPoints().count;
+    getUnitLength(length: number, value: number): number {
+        return length / this._len;
     }
 
     getValue(value: any): number {

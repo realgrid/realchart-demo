@@ -24,6 +24,6 @@ import { BarSeries } from '../../../src/model/series/BarSeries';
     it('props', () => {
         let series = new BarSeries(null);
 
-        expect(series.pointWidth).eq(BarSeries.POINT_WIDTH);
+        expect(series.pointPadding).gt(0);
     });
 });
