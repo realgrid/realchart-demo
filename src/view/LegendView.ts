@@ -40,7 +40,7 @@ export class LegendItemView extends ChartElement<LegendItem> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: LegendItem, intWidth: number, hintHeight: number, phase: number): ISize {
-        let w = 70;
+        let w = 75;
         let h = 30;
 
         this._label.text = model.text();

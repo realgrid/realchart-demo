@@ -255,6 +255,10 @@ export class Chart extends RcObject implements IChart {
     }
 
     load(source: any): void {
+        if ('type' in source) {
+            this.type = source.type;
+        }
+
         // titles
         this._title.load(source.title);
         this._subtitle.load(source.subtitle);
