@@ -9,7 +9,6 @@
 import { ElementPool } from "../../common/ElementPool";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { DataPoint } from "../../model/DataPoint";
-import { SeriesGroupLayout } from "../../model/Series";
 import { ColumnSeries } from "../../model/series/BarSeries";
 import { BoxPointElement, SeriesView } from "../SeriesView";
 
@@ -50,18 +49,18 @@ export class ColumnSeriesView extends SeriesView<ColumnSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
-        const m = this.model;
+        const series = this.model;
         const xAxis = this.model._xAxisObj;
         const yAxis = this.model._yAxisObj;
         const yOrg = this.height;
 
         this._bars.forEach((bar, i) => {
             const wUnit = xAxis.getUnitLength(width, i);
-            const wPoint = m.getPointWidth(wUnit);
+            const wPoint = series.getPointWidth(wUnit);
             let x = xAxis.getPosition(width, i) - wUnit / 2;
             let y = yOrg;
 
-            x += m.getPointPos(wUnit) + wPoint / 2;
+            x += series.getPointPos(wUnit) + wPoint / 2;
 
             bar.wPoint = wPoint;
             bar.hPoint = yAxis.getPosition(height, bar.point.yValue);

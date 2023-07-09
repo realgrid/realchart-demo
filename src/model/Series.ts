@@ -9,7 +9,7 @@
 import { isArray, isNumber, isObject, isString } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
-import { Align, VerticalAlign } from "../common/Types";
+import { Align, RtPercentSize, VerticalAlign } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { Shape } from "../common/impl/SvgShape";
 import { IAxis } from "./Axis";
@@ -591,9 +591,9 @@ export class SeriesGroup extends RcObject {
     //-------------------------------------------------------------------------
     load(src: any): void {
         for (const p in src) {
-            if (this.hasOwnProperty(p)) {
+            // if (this.hasOwnProperty(p)) {
                 this[p] = src[p];
-            }
+            // }
         }
     }
 
@@ -736,11 +736,17 @@ export abstract class SeriesMarker extends ChartItem {
     }
 }
 
+/**
+ * Chart가 polar가 아닌 경우, plot area 영역을 기준으로 size, centerX, centerY가 적용된다.
+ */
 export class RadialSeries extends Series {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     startAngle = 0;
+    centerX = 0;
+    centerY = 0;
+    size: RtPercentSize;
 }
 

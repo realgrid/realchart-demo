@@ -51,11 +51,8 @@ export class PieSeries extends RadialSeries {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    centerX = 0;
-    centerY = 0;
     singleColor = false;
     innerSize: RtPercentSize = 0;
-    size: RtPercentSize;
     slicedOffset: RtPercentSize = 10;
     labelDistance = 25;
     /**

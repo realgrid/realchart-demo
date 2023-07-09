@@ -83,11 +83,19 @@ export class Chart extends RcObject implements IChart {
     //-------------------------------------------------------------------------
     /**
      * 기본 시리즈 type.
+     * <br>
      * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
      * 
      * @default 'column'
      */
     type = 'column';
+    /**
+     * true면 x축이 수직, y축이 수평으로 배치된다.
+     * <br>
+     * 기본값은 undefined로 첫번째 series의 종류에 따라 결정된다.
+     * 즉, bar 시리즈 계통이면 true가 된다.
+     */
+    inverted: boolean;
 
     //-------------------------------------------------------------------------
     // fields
@@ -156,6 +164,10 @@ export class Chart extends RcObject implements IChart {
         return this._body;
     }
 
+    /**
+     * polar가 아닌 시리지가 하나라도 포함되면 polar가 아니고,
+     * 직교 x, y축이 표시된다.
+     */
     isPolar(): boolean {
         return this._series.isPolar();
     }
@@ -177,7 +189,7 @@ export class Chart extends RcObject implements IChart {
     }
 
     isInverted(): boolean {
-        return this._series.isInverted();
+        return this.inverted === true ? true : this.inverted === false ? false : this._series.isInverted();
     }
 
     isEmpty(): boolean {
@@ -271,6 +283,7 @@ export class Chart extends RcObject implements IChart {
     prepareRender(): void {
         // 축에 연결한다.
         this._series.prepareRender();
+        // group에 연결한다.
         this._groups.prepareRender();
 
         // 카테고리 목록을 만든다.

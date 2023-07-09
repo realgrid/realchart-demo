@@ -49,16 +49,22 @@ export class BarSeriesView extends SeriesView<BarSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
-        const m = this.model;
+        const series = this.model;
         const xAxis = this.model._xAxisObj;
         const yAxis = this.model._yAxisObj;
+        const xOrg = 0;
 
         this._bars.forEach((bar, i) => {
-            const y = height - xAxis.getPosition(height, i);
+            const wUnit = xAxis.getUnitLength(height, i);
+            const wPoint = series.getPointWidth(wUnit);
+            let y = height - xAxis.getPosition(height, i) - wUnit / 2;
+            let x = xOrg;
 
-            bar.wPoint = xAxis.getUnitLength(height, i) * (1 - m.pointPadding * 2);
+            y += series.getPointPos(wUnit) + wPoint / 2;
+
+            bar.wPoint = wPoint;
             bar.hPoint = yAxis.getPosition(width, bar.point.yValue);
-            bar.render(0, y);
+            bar.render(x, y);
         })
     }
 

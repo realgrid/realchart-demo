@@ -104,12 +104,15 @@ export class BoxPlotSeriesView extends SeriesView<BoxPlotSeries> {
         const series = this.model;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
+        const yOrg = this.height;
 
         this._boxes.forEach((box, i) => {
+            const wUnit = xAxis.getUnitLength(width, i);
+            const wPoint = series.getPointWidth(wUnit);
             const p = box.point;
-            const x = p.xPos = xAxis.getPosition(this.width, p.xValue);
-            const y = p.yPos = this.height - yAxis.getPosition(this.height, p.yValue);
-            const w = xAxis.getUnitLength(width, i) * (1 - series.pointPadding * 2)
+            const x = p.xPos = xAxis.getPosition(this.width, p.xValue) - wPoint / 2;
+            const y = p.yPos = yOrg - yAxis.getPosition(this.height, p.yValue);
+            const w = wPoint;
             const h = Math.abs(yAxis.getPosition(height, p.minValue) - y);
 
             box.setBounds(x, y, w, h);
