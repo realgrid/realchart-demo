@@ -233,8 +233,8 @@ export class ChartView extends RcElement {
     private _legendSectionView: LegendSectionView;
     private _bodyView: BodyView;
     private _axisSectionViews = new Map<SectionDir, AxisSectionView>();
-    private _hAxisLine: LineElement;
-    private _vAxisLine: LineElement;
+    // private _hAxisLine: LineElement;
+    // private _vAxisLine: LineElement;
     private _org: IPoint;
     private _plotWidth: number;
     private _plotHeight: number;
@@ -248,8 +248,8 @@ export class ChartView extends RcElement {
         this.add(this._titleSectionView = new TitleSectionView(doc));
         this.add(this._legendSectionView = new LegendSectionView(doc));
 
-        this.add(this._hAxisLine = new LineElement(doc, null, 'rct-axis-line'));
-        this.add(this._vAxisLine = new LineElement(doc, null, 'rct-axis-line'));
+        // this.add(this._hAxisLine = new LineElement(doc, null, 'rct-axis-line'));
+        // this.add(this._vAxisLine = new LineElement(doc, null, 'rct-axis-line'));
 
         Object.values(SectionDir).forEach(dir => {
             if (isNumber(dir)) {
@@ -383,12 +383,10 @@ export class ChartView extends RcElement {
         this._plotWidth = w;
         this._plotHeight = h;
 
-        if (this._vAxisLine.visible = !!(asv = axisMap.get(SectionDir.LEFT))) {
-            this._vAxisLine.setVLineC(org.x, org.y, org.y - h);
+        if (asv = axisMap.get(SectionDir.LEFT)) {
             asv.translate(org.x - asv.mw, org.y - asv.height);
         }
-        if (this._hAxisLine.visible = !!(asv = axisMap.get(SectionDir.BOTTOM))) {
-            this._hAxisLine.setHLineC(org.y, org.x, org.x + w);
+        if (asv = axisMap.get(SectionDir.BOTTOM)) {
             asv.translate(org.x, org.y);
         }
 

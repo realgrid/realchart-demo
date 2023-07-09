@@ -54,6 +54,9 @@ export class AxisItem extends ChartItem {
     //-------------------------------------------------------------------------
 }
 
+export class AxisLine extends AxisItem {
+}
+
 export class AxisTitle extends AxisItem {
 
     //-------------------------------------------------------------------------
@@ -220,9 +223,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     // fields
     //-------------------------------------------------------------------------
     readonly name: string;
-    readonly title: AxisTitle;
+    readonly title = new AxisTitle(this);
+    readonly line = new AxisLine(this);
     readonly tick: AxisTick;
-    readonly grid: AxisGrid;
+    readonly grid = new AxisGrid(this);
 
     _isX: boolean;
     protected _series: ISeries[] = [];
@@ -238,9 +242,7 @@ export abstract class Axis extends ChartItem implements IAxis {
         super(chart);
 
         this.name = name;
-        this.title = new AxisTitle(this);
         this.tick = this._createTick();
-        this.grid = new AxisGrid(this);
     }
 
     protected _createTick(): AxisTick {

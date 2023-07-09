@@ -9,6 +9,7 @@
 import { RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
+import { LineElement } from "../common/impl/PathElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Axis, AxisTitle } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
@@ -65,7 +66,10 @@ export class AxisView extends ChartElement<Axis> {
     // fields
     //-------------------------------------------------------------------------
     _isHorz: boolean;
+    private _lineView: LineElement;
     private _titleView: AxisTitleView;
+    private _markContainer: RcElement;
+    private _markViews: RcElement[] = [];
     private _labelContainer: RcElement;
     private _labelViews: TextElement[] = []; 
     private _markLen: number;
@@ -77,7 +81,10 @@ export class AxisView extends ChartElement<Axis> {
     constructor(doc: Document) {
         super(doc, 'rct-axis');
 
+
+        this.add(this._lineView = new LineElement(doc, null, 'rct-axis-line'));
         this.add(this._titleView = new AxisTitleView(doc));
+        this.add(this._markContainer = new RcElement(doc));
         this.add(this._labelContainer = new RcElement(doc));
     }
 
@@ -120,6 +127,9 @@ export class AxisView extends ChartElement<Axis> {
         const labelViews = this._labelViews;
         let sz = 0;
 
+        // line
+        this._lineView.visible = model.line.visible();
+
         // tick mark 
         sz += this._markLen = model.tick.mark.length;;
 
@@ -129,6 +139,9 @@ export class AxisView extends ChartElement<Axis> {
         if (labelViews.length > 0) {
             if (horz) {
                 this._labelSize = labelViews[0].getBBounds().height;
+                for (let i = 1; i < labelViews.length; i++) {
+                    this._labelSize = Math.max(this._labelSize, labelViews[i].getBBounds().height);
+                }
             } else {
                 this._labelSize = labelViews[0].getBBounds().width;
                 for (let i = 1; i < labelViews.length; i++) {
@@ -159,6 +172,15 @@ export class AxisView extends ChartElement<Axis> {
         const labelViews = this._labelViews;
         const w = this.width;
         const h = this.height;
+
+        // line
+        if (this._lineView.visible) {
+            if (this._isHorz) {
+                this._lineView.setHLineC(0, 0, w);
+            } else {
+                this._lineView.setVLineC(w, 0, h);
+            }
+        }
 
         // tick marks
 
