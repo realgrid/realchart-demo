@@ -132,13 +132,16 @@ export class BodyView extends ChartElement<Body> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
+        // series
         this.$_prepareSeries(doc, model.chart._getSeries().visibles())
 
         this._seriesViews.forEach((v, i) => {
             v.measure(doc, this._series[i], hintWidth, hintHeight, phase);
         })
 
+        // axis grids
         this.$_prepareGrids(doc);
+
         for (const axis of this._gridViews.keys()) {
             this._gridViews.get(axis).measure(doc, axis.grid, hintWidth, hintHeight, phase);
         }
@@ -150,11 +153,13 @@ export class BodyView extends ChartElement<Body> {
         const w = this.width;
         const h = this.height;
 
+        // series
         this._seriesViews.forEach(v => {
             v.resize(w, h);
             v.layout();
         })
         
+        // axis grids
         for (const v of this._gridViews.values()) {
             v.resize(w, h);
             v.layout();

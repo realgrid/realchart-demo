@@ -289,7 +289,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._xAxisObj = this.chart._connectSeries(this, true);
         this._yAxisObj = this.chart._connectSeries(this, false);
         this._points.prepare();
-        this._visPoints = this._points.getVisibles();
+        this._visPoints = this._points.getVisibles().sort((p1, p2) => p1.xValue - p2.xValue);
         this._doPrepareRender();
     }
 

@@ -31,6 +31,8 @@ export class DataPoint {
     xPos: number;
     yPos: number;
 
+    _prevVal: number;   // for stacking
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -56,6 +58,7 @@ export class DataPoint {
         } else {
             this._readSingle(v);
         }
+        this.yValue = +this.y;
     }
 
     //-------------------------------------------------------------------------

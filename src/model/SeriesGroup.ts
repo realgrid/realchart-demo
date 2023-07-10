@@ -13,6 +13,7 @@ import { Shape } from "../common/impl/SvgShape";
 import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
+import { DataPoint } from "./DataPoint";
 import { ISeries, Series } from "./Series";
 import { BoxSeries } from "./series/BarSeries";
 
@@ -120,6 +121,7 @@ export class SeriesGroup extends RcObject {
     // 축 단위 내에서 이 그룹이 시작하는 위치. 0 ~ 1 사이의 상대 값.
     _groupPos = 0;
     _series: Series[] = [];
+    _stackPoints: Map<number, DataPoint[]>;
 
     //-------------------------------------------------------------------------
     // methods
@@ -129,17 +131,6 @@ export class SeriesGroup extends RcObject {
             // if (this.hasOwnProperty(p)) {
                 this[p] = src[p];
             // }
-        }
-    }
-
-    private $_validate(): void {
-        const series = this._series;
-
-        // 모든 시리즈가 같은 축을 공유해야 한다.
-        for (let i = 1; i < series.length; i++) {
-            if (series[i]._xAxisObj !== series[i - 1]._xAxisObj || series[i]._yAxisObj !== series[i - 1]._yAxisObj) {
-                throw new Error('같은 그룹 내의 시리즈들은 동일한 축들에 연결돼야 한다.');
-            }
         }
     }
 
@@ -166,12 +157,65 @@ export class SeriesGroup extends RcObject {
     }
 
     collectValues(axis: IAxis): number[] {
+        if (axis === this._series[0]._yAxisObj) {
+            switch (this._layout) {
+                case SeriesGroupLayout.STACK:
+                    return this.$_collectStack(axis);
+    
+                case SeriesGroupLayout.DEFAULT:
+                case SeriesGroupLayout.OVERLAP:
+                case SeriesGroupLayout.FILL:
+                    return this.$_collectValues(axis);
+            }
+        } else {
+            return this.$_collectValues(axis);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_validate(): void {
+        const series = this._series;
+
+        // 모든 시리즈가 같은 축을 공유해야 한다.
+        for (let i = 1; i < series.length; i++) {
+            if (series[i]._xAxisObj !== series[i - 1]._xAxisObj || series[i]._yAxisObj !== series[i - 1]._yAxisObj) {
+                throw new Error('같은 그룹 내의 시리즈들은 동일한 축들에 연결돼야 한다.');
+            }
+        }
+    }
+
+    private $_collectValues(axis: IAxis): number[] {
         let vals: number[] = [];
 
         this._series.forEach(ser => {
             vals = vals.concat(ser.collectValues(axis));
         })
         return vals;
+    }
+
+    private $_collectStack(axis: IAxis): number[] {
+        const series = this._series;
+        const pts = this._stackPoints = new Map();
+        const vals = new Map<any, number>();
+
+        series[0]._visPoints.forEach(p => pts.set(p.xValue, [p]));
+        for (let i = 1; i < series.length; i++) {
+            series[i]._visPoints.forEach(p => {
+                const arr = pts.get(p.xValue);
+                
+                if (arr) {
+                    arr.push(p);
+                } else {
+                    pts.set(p.xValue, [p]);
+                }
+            });
+        }
+
+        return new Array<DataPoint[]>(...pts.values())
+                .map(arr => arr.map(p => p.yValue))
+                .map(arr => arr.reduce((a, c) => a + c));
     }
 }
 
