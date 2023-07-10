@@ -6,10 +6,13 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { ElementPool } from "../common/ElementPool";
 import { RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
+import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
-import { AxisGrid } from "../model/Axis";
+import { Chart } from "../main";
+import { Axis, AxisGrid } from "../model/Axis";
 import { Body } from "../model/Body";
 import { Series } from "../model/Series";
 import { BarSeries, ColumnSeries } from "../model/series/BarSeries";
@@ -45,11 +48,13 @@ const series_types = new Map<any, any>([
     [PieSeries, PieSeriesView],
 ]);
 
-class AxisGridView extends ChartElement<AxisGrid> {
+export class AxisGridView extends ChartElement<AxisGrid> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _lines = new ElementPool(this, LineElement);
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -61,11 +66,27 @@ class AxisGridView extends ChartElement<AxisGrid> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: AxisGrid, hintWidth: number, hintHeight: number, phase: number): ISize {
-        throw new Error("Method not implemented.");
+        const axis = model.axis;
+        const ticks = axis._ticks;
+
+        this._lines.prepare(ticks.length, (line) => {
+        });
+        return Size.create(hintWidth, hintHeight);
     }
 
     protected _doLayout(): void {
-        throw new Error("Method not implemented.");
+        const axis = this.model.axis;
+        const ticks = axis._ticks;
+
+        if (axis._isHorz) {
+            this._lines.forEach((line, i) => {
+                line.setVLineC(ticks[i].pos, 0, this.height);
+            });
+        } else {
+            this._lines.forEach((line, i) => {
+                line.setHLineC(ticks[i].pos, 0, this.width);
+            });
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -81,7 +102,7 @@ export class BodyView extends ChartElement<Body> {
     private _polar = false;
     private _background: RectElement;
     private _gridContainer: RcElement;
-    private _gridViews: AxisGridView[];
+    private _gridViews = new Map<Axis, AxisGridView>();
     private _seriesContainer: RcElement;
     private _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
@@ -117,14 +138,27 @@ export class BodyView extends ChartElement<Body> {
             v.measure(doc, this._series[i], hintWidth, hintHeight, phase);
         })
 
+        this.$_prepareGrids(doc);
+        for (const axis of this._gridViews.keys()) {
+            this._gridViews.get(axis).measure(doc, axis.grid, hintWidth, hintHeight, phase);
+        }
+
         return Size.create(hintWidth, hintHeight);
     }
     
     protected _doLayout(): void {
+        const w = this.width;
+        const h = this.height;
+
         this._seriesViews.forEach(v => {
-            v.resize(this.width, this.height);
+            v.resize(w, h);
             v.layout();
         })
+        
+        for (const v of this._gridViews.values()) {
+            v.resize(w, h);
+            v.layout();
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -136,6 +170,29 @@ export class BodyView extends ChartElement<Body> {
                 return new (series_types.get(cls))(doc);
             }
         }
+    }
+
+    private $_prepareGrids(doc: Document): void {
+        const chart = this.model.chart as Chart;
+        const polar = chart.isPolar();
+        const container = this._gridContainer;
+        const views = this._gridViews;
+
+        for (const axis of views.keys()) {
+            if (polar || !chart.containsAxis(axis) || !axis.grid.isVisible()) {
+                views.get(axis).remove();
+                views.delete(axis);
+            }
+        }
+
+        [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
+            if (!polar && axis.grid.isVisible() && !views.has(axis)) {
+                const v = new AxisGridView(doc);
+
+                views.set(axis, v);
+                container.add(v);
+            }
+        }));
     }
 
     private $_prepareSeries(doc: Document, series: Series[]): void {

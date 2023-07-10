@@ -10,6 +10,7 @@ import { isArray, isNumber, isObject, isString } from "../common/Common";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 import { ISeries } from "./Series";
+import { ISeriesGroup } from "./SeriesGroup";
 
 export interface IAxis {
 
@@ -43,8 +44,8 @@ export class AxisItem extends ChartItem {
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
-    constructor(axis: Axis) {
-        super(axis?.chart);
+    constructor(axis: Axis, visible = true) {
+        super(axis?.chart, visible);
 
         this.axis = axis;
     }
@@ -76,6 +77,11 @@ export class AxisTitle extends AxisItem {
     }
 }
 
+/**
+ * visible 기본값이 undefined이다.
+ * <br>
+ * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
+ */
 export class AxisGrid extends AxisItem {
 
     //-------------------------------------------------------------------------
@@ -85,6 +91,20 @@ export class AxisGrid extends AxisItem {
     startVisible = true;
     endVisible = true;
 
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(axis: Axis) {
+        super(axis, null);
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    isVisible(): boolean {
+        return this.visible() == null ? !this.axis._isX : this.visible();
+    }
+            
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -119,6 +139,10 @@ export class AxisTickMark extends AxisItem {
      * axis tick line length.
      */
     length = 7;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
 }
 
 export class AxisBreak extends AxisItem {
@@ -229,10 +253,11 @@ export abstract class Axis extends ChartItem implements IAxis {
     readonly grid = new AxisGrid(this);
 
     _isX: boolean;
+    _isHorz: boolean;
     protected _series: ISeries[] = [];
+    protected _groups: ISeriesGroup[] = [];
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
-    _reversed: boolean;
     _length: number;
 
     //-------------------------------------------------------------------------
@@ -256,14 +281,14 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[];
 
     prepareRender(): void {
-        this._reversed = this.chart.isInverted();
+        this._isHorz = this.chart.isInverted() ? !this._isX : this._isX;
 
         this._doPrepareRender();
 
         let vals: number[] = [];
 
-        this._series.forEach(ser => {
-            vals = vals.concat(ser.collectValues(this));
+        this._groups.forEach(g => {
+            vals = vals.concat(g.collectValues(this));
         })
         this._range = this._doCalcluateRange(vals);
     }
@@ -295,6 +320,9 @@ export abstract class Axis extends ChartItem implements IAxis {
     _connect(series: ISeries): void {
         if (series && !this._series.includes(series)) {
             this._series.push(series);
+            if (!this._groups.includes(series._group)) {
+                this._groups.push(series._group);
+            }
         }
     }
 
@@ -351,6 +379,10 @@ export class AxisCollection {
         } else if (isObject(src)) {
             items.push(this.$_loadAxis(chart, src, 0));
         }
+    }
+
+    contains(axis: Axis): boolean {
+        return this._items.indexOf(axis) >= 0;
     }
 
     get(name: string): Axis {

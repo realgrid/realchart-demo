@@ -6,7 +6,6 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { DataPoint } from "../DataPoint";
 import { Series } from "../Series";
 
 export abstract class BoxSeries extends Series {

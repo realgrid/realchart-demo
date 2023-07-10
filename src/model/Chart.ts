@@ -12,7 +12,8 @@ import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
 import { ILegendSource, Legend } from "./Legend";
-import { ISeries, Series, SeriesCollection, SeriesGroup, SeriesGroupCollection } from "./Series";
+import { ISeries, Series, SeriesCollection } from "./Series";
+import { SeriesGroup, SeriesGroupCollection } from "./SeriesGroup";
 import { Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
@@ -209,6 +210,10 @@ export class Chart extends RcObject implements IChart {
 
     getGroup(group: string): SeriesGroup {
         return this._groups.get(group);
+    }
+
+    containsAxis(axis: Axis): boolean {
+        return this._xAxes.contains(axis) || this._yAxes.contains(axis);
     }
 
     getAxes(dir: SectionDir): Axis[] {

@@ -12,7 +12,6 @@ import { RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { SectionDir } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
-import { LineElement } from "../common/impl/PathElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
 import { LegendPosition } from "../model/Legend";

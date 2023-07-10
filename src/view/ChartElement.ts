@@ -47,11 +47,13 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     layout(param?: any): ChartElement<ChartItem> {
         this._doLayout(param);
 
-        this._debugRect.setBounds(0, 0, this.width, this.height);
-        this._debugRect.setStyles({
-            fill: 'transparent',
-            stroke: '#00000018'
-        })
+        if (this.width > 1 && this.height > 1) {
+            this._debugRect.setBounds(0, 0, this.width, this.height);
+            this._debugRect.setStyles({
+                fill: 'transparent',
+                stroke: '#00000018'
+            })
+        }
         return this;
     }
 

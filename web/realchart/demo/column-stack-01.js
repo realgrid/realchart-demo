@@ -7,6 +7,10 @@ const config = {
     yAxis: {
         title: "Vertical 수직축 Axis",
     },
+    groups: [{
+        // layout: 'overlap',
+        layout: 'stack',
+    }],
     series: [{
         name: 'column1',
         // pointWidth: '100%',

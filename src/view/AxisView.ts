@@ -11,7 +11,7 @@ import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { LineElement } from "../common/impl/PathElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis, AxisTitle } from "../model/Axis";
+import { Axis, AxisGrid, AxisTickMark, AxisTitle } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { ChartElement } from "./ChartElement";
 
@@ -60,6 +60,38 @@ export class AxisTitleView extends ChartElement<AxisTitle> {
     }
 }
 
+class AxisTickMarkView extends ChartElement<AxisTickMark> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _lineView: LineElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-axis-tick-mark');
+
+        this.add(this._lineView = new LineElement(doc));
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doMeasure(doc: Document, model: AxisTickMark, hintWidth: number, hintHeight: number, phase: number): ISize {
+        return Size.create(hintWidth, hintHeight);
+    }
+
+    protected _doLayout(param: any): void {
+        if (this.model.axis._isHorz) {
+            this._lineView.setVLineC(0, 0, this.height);
+        } else {
+            this._lineView.setHLineC(0, 0, this.width);
+        }
+    }
+}
+
 export class AxisView extends ChartElement<Axis> {
 
     //-------------------------------------------------------------------------
@@ -69,7 +101,7 @@ export class AxisView extends ChartElement<Axis> {
     private _lineView: LineElement;
     private _titleView: AxisTitleView;
     private _markContainer: RcElement;
-    private _markViews: RcElement[] = [];
+    private _markViews: AxisTickMarkView[] = [];
     private _labelContainer: RcElement;
     private _labelViews: TextElement[] = []; 
     private _markLen: number;
@@ -80,7 +112,6 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-axis');
-
 
         this.add(this._lineView = new LineElement(doc, null, 'rct-axis-line'));
         this.add(this._titleView = new AxisTitleView(doc));
@@ -132,6 +163,8 @@ export class AxisView extends ChartElement<Axis> {
 
         // tick mark 
         sz += this._markLen = model.tick.mark.length;;
+        this.$_prepareTickMarks(doc, model);
+        this._markViews.forEach(v => v.measure(doc, model.tick.mark, hintWidth, hintHeight, phase));
 
         // labels
         this.$_prepareLabels(doc, model);
@@ -170,6 +203,7 @@ export class AxisView extends ChartElement<Axis> {
         const ticks = this.model._ticks;
         const titleView = this._titleView;
         const labelViews = this._labelViews;
+        const markLen = this._markLen;
         const w = this.width;
         const h = this.height;
 
@@ -183,17 +217,28 @@ export class AxisView extends ChartElement<Axis> {
         }
 
         // tick marks
+        if (horz) {
+            this._markViews.forEach((v, i) => {
+                v.resize(1, markLen);
+                v.layout().translate(ticks[i].pos, 0);
+            })
+        } else {
+            this._markViews.forEach((v, i) => {
+                v.resize(markLen, 1);
+                v.layout().translate(w - markLen, ticks[i].pos);
+            })
+        }
 
         // tick labels
         if (horz) {
-            const y = this._markLen;
             labelViews.forEach((v, i) => {
                 // v.translate(ticks[i].pos - v.getBBounds().width / 2, y);
                 v.anchor = TextAnchor.MIDDLE;
-                v.translate(ticks[i].pos, y);
+                v.translate(ticks[i].pos, markLen);
             });
         } else {
-            const x = w - this._markLen;
+            const x = w - markLen;
+
             labelViews.forEach((v, i) => {
                 v.translate(x - v.getBBounds().width, h - ticks[i].pos - v.getBBounds().height / 2);
             });
@@ -233,8 +278,25 @@ export class AxisView extends ChartElement<Axis> {
         }
     }
 
+    private $_prepareTickMarks(doc: Document, m: Axis): void {
+        const ticks = m._ticks;
+        const nTick = ticks.length;
+        const container = this._markContainer;
+        const views = this._markViews;
+
+        while (views.length < nTick) {
+            const v = new AxisTickMarkView(doc);
+
+            container.add(v);
+            views.push(v);
+        }
+        while (views.length > nTick) {
+            views.pop().remove();
+        }
+    }
+
     private $_prepareLabels(doc: Document, m: Axis): void {
-        const ticks = this.model._ticks;
+        const ticks = m._ticks;
         const nTick = ticks.length;
         const container = this._labelContainer;
         const views = this._labelViews;
