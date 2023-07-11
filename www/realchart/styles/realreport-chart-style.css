@@ -47,6 +47,7 @@
     padding: 20px;
 }
 
+/** title */
 .rct-title {
     font-size: 20px;
 }
@@ -55,6 +56,7 @@
     font-size: 16px;
 }
 
+/** legend */
 .rct-legend {
     fill: transparent;
 }
@@ -62,8 +64,17 @@
     fill: #333;
 }
 
+/** axis */
 .rct-axis-line {
     stroke: red;
+    stroke-width: 1px;
+}
+.rct-axis-tick-mark {
+    stroke: #333;
+    stroke-width: 1px;
+}
+.rct-axis-grid {
+    stroke: lightgray;
     stroke-width: 1px;
 }
 

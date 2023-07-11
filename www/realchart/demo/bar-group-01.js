@@ -1,5 +1,6 @@
 const config = {
-    title: "Column Group - Stack",
+    type: 'bar',
+    title: "Bar Group",
     xAxis: {
         title: "일일 Daily fat",
         categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도']
@@ -9,7 +10,7 @@ const config = {
     },
     groups: [{
         // layout: 'overlap',
-        layout: 'stack',
+        // layout: 'stack',
     }],
     series: [{
         name: 'column1',

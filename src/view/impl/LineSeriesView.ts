@@ -58,7 +58,7 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
     }
 
     protected _renderSeries(width: number, height: number): void {
-        this._layoutMarkers(this.model._visPoints as LineSeriesPoint[]);
+        this._layoutMarkers(this.model._visPoints as LineSeriesPoint[], width, height);
         this._layoutLines(this.model._visPoints as LineSeriesPoint[]);
     }
 
@@ -106,8 +106,9 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
         });
     }
 
-    protected _layoutMarker(m: LineMarkerView, x: number, y: number): void {
-        const p = m.point as LineSeriesPoint;
+    protected _layoutMarker(mv: LineMarkerView, x: number, y: number): void {
+        const color = this.model.color;
+        const p = mv.point as LineSeriesPoint;
         const s = p.shape;
         const sz = p.radius;
         let path: (string | number)[];
@@ -127,21 +128,24 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
                 break;
         }
         // if (m.visible = this._containsMarker(x, y)) {
-            m.translate(x, y);
-            m.setPath(path);
+            mv.translate(x, y);
+            mv.setPath(path);
+            mv.setStyle('stroke', 'gray');
+            mv.setStyle('fill', color);
         // }
     }
 
-    protected _layoutMarkers(pts: LineSeriesPoint[]): void {
+    protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
         const series = this.model;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
+        const yOrg = height;
 
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
 
-            p.xPos = xAxis.getPosition(this.width, p.xValue);
-            p.yPos = this.height - yAxis.getPosition(this.height, p.yValue);
+            p.xPos = xAxis.getPosition(width, p.xValue);
+            p.yPos = yOrg - yAxis.getPosition(height, p.yGroup);
 
             this._layoutMarker(this._markers.get(i), p.xPos, p.yPos);
         }
@@ -155,6 +159,7 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
             sb.line(pts[i].xPos, pts[i].yPos);
         }
         this._line.setPath(sb.end());
+        this._line.setStyle('stroke', this.model.color);
     }
 }
 

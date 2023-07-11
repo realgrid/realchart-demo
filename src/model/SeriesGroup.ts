@@ -153,9 +153,11 @@ export class SeriesGroup extends RcObject {
             } else if (cnt === 1) {
                 series[0]._groupWidth = 1;
             }
+        } else if (this._layout === SeriesGroupLayout.STACK) {
         }
     }
 
+    // Axis에서 요청한다.
     collectValues(axis: IAxis): number[] {
         if (axis === this._series[0]._yAxisObj) {
             switch (this._layout) {
@@ -197,10 +199,10 @@ export class SeriesGroup extends RcObject {
 
     private $_collectStack(axis: IAxis): number[] {
         const series = this._series;
-        const pts = this._stackPoints = new Map();
-        const vals = new Map<any, number>();
+        const pts: Map<number, DataPoint[]> = this._stackPoints = new Map();
 
         series[0]._visPoints.forEach(p => pts.set(p.xValue, [p]));
+
         for (let i = 1; i < series.length; i++) {
             series[i]._visPoints.forEach(p => {
                 const arr = pts.get(p.xValue);
@@ -213,9 +215,19 @@ export class SeriesGroup extends RcObject {
             });
         }
 
-        return new Array<DataPoint[]>(...pts.values())
-                .map(arr => arr.map(p => p.yValue))
-                .map(arr => arr.reduce((a, c) => a + c));
+        const vals: number[] = [];
+
+        for (const arr of pts.values()) {
+            for (let i = 1; i < arr.length; i++) {
+                arr[i].yGroup = arr[i - 1].yGroup + arr[i].yValue;
+            }
+            vals.push(arr[arr.length - 1].yGroup);
+        }
+        return vals;
+
+        // return new Array<DataPoint[]>(...pts.values())
+        //         .map(arr => arr.map(p => p.yValue))
+        //         .map(arr => arr.reduce((a, c) => a + c));
     }
 }
 
@@ -251,7 +263,7 @@ export class SeriesGroupCollection {
     // methods
     //-------------------------------------------------------------------------
     get(name: string | number): SeriesGroup {
-        return  this._map[name] || this._items[name] || this._items[0] || SeriesGroupCollection.DEFAULT;
+        return  this._map[name] || this._items[name] || this._items[0];
     }
 
     load(src: any): void {
@@ -264,6 +276,10 @@ export class SeriesGroupCollection {
             src.forEach((s, i) => this._items.push(this.$_loadGroup(chart, s)));
         } else if (isObject(src)) {
             this._items.push(this.$_loadGroup(chart, src));
+        } else {
+            const g = SeriesGroupCollection.DEFAULT;
+            g._series = [];
+            this._items.push(g);
         }
 
         chart._getSeries().forEach(ser => {
@@ -276,7 +292,9 @@ export class SeriesGroupCollection {
     }
 
     prepareRender(): void {
-        if (this._items.length > 0) {
+        const n = this._items.length;
+
+        if (n > 1) {
             const sum = this._items.map(g => g.groupWidth).reduce((a, c) => a + c, 0);
             let x = 0;
 
@@ -286,7 +304,7 @@ export class SeriesGroupCollection {
                 x += g._groupWidth;
                 g.prepareRender();
             });
-        } else {
+        } else if (n === 1) {
             const g = this.first;
 
             g._groupWidth = 1;

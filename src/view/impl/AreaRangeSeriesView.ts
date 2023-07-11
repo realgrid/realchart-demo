@@ -7,23 +7,29 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { PathBuilder } from "../../common/PathBuilder";
-import { PathElement } from "../../common/RcControl";
-import { AreaRangeSeriesPoint } from "../../model/series/LineSeries";
+import { PathElement, RcElement } from "../../common/RcControl";
+import { AreaRangeSeries, AreaRangeSeriesPoint } from "../../model/series/LineSeries";
 import { AreaSeriesView } from "./AreaSeriesView";
+import { LineSeriesView, LineSeriesViewImpl } from "./LineSeriesView";
 
-export class AreaRangeSeriesView extends AreaSeriesView {
+export class AreaRangeSeriesView extends LineSeriesView<AreaRangeSeries> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _lowerLine: PathElement;
+    private _areaContainer: RcElement;
+    private _area: PathElement;
+
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc);
+        super(doc, 'rct-area-range');
 
+        this.insertFirst(this._areaContainer = new RcElement(doc));
+        this._areaContainer.add(this._area = new PathElement(doc, null, 'rct-area-series-area'));
         this._lineContainer.add(this._lowerLine = new PathElement(doc, null, 'rct-line-series-line'));
     }
 
@@ -49,6 +55,9 @@ export class AreaRangeSeriesView extends AreaSeriesView {
             sb.line(pts[i].xPos, pts[i].yLow);
         }
         path.setPath(sb.end());
+
+        path.setStyle('fill', series.color);
+        path.setStyle('fillOpacity', '0.5');
     }
 
     protected _layoutLines(pts: AreaRangeSeriesPoint[]): void {
@@ -63,18 +72,21 @@ export class AreaRangeSeriesView extends AreaSeriesView {
             sb.line(pts[i].xPos, pts[i].yLow);
         }
         this._lowerLine.setPath(sb.end());
+
+        this._layoutArea(this._area, pts);
     }
 
-    protected _layoutMarkers(pts: AreaRangeSeriesPoint[]): void {
-        super._layoutMarkers(pts);
+    protected _layoutMarkers(pts: AreaRangeSeriesPoint[], width: number, height: number): void {
+        super._layoutMarkers(pts, width, height);
 
         const series = this.model;
         const yAxis = series._yAxisObj;
+        const yOrg = height;
 
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
 
-            p.yLow = this.height - yAxis.getPosition(this.height, p.lowValue);
+            p.yLow = yOrg - yAxis.getPosition(height, p.lowValue);
             this._layoutMarker(this._markers.get(i + cnt), p.xPos, p.yLow);
         }
     }

@@ -6,12 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum, pickProp, pickProp3 } from "../../common/Common";
+import { pickNum, pickProp } from "../../common/Common";
 import { StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { ISeries, MarerVisibility, Series, SeriesMarker } from "../Series";
+import { MarerVisibility, Series, SeriesMarker } from "../Series";
 
 export class LineSeriesPoint extends DataPoint {
 
@@ -82,15 +82,33 @@ export class LineSeries extends Series {
     }
 }
 
+export class AreaSeriesPoint extends LineSeriesPoint {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    yLow: number;
+}
+
 export class AreaSeries extends LineSeries {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     areaStyle: StyleProps;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    createPoint(source: any): DataPoint {
+        return new AreaSeriesPoint(source);
+    }
 }
 
-export class AreaRangeSeriesPoint extends LineSeriesPoint {
+export class AreaRangeSeriesPoint extends AreaSeriesPoint {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -103,7 +121,6 @@ export class AreaRangeSeriesPoint extends LineSeriesPoint {
     //-------------------------------------------------------------------------
     lowValue: number;
     highValue: number;
-    yLow: number;
 
     //-------------------------------------------------------------------------
     // overriden members

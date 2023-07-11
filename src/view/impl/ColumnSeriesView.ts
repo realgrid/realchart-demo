@@ -52,7 +52,7 @@ export class ColumnSeriesView extends SeriesView<ColumnSeries> {
         const series = this.model;
         const xAxis = this.model._xAxisObj;
         const yAxis = this.model._yAxisObj;
-        const yOrg = this.height;
+        const yOrg = height;
 
         this._bars.forEach((bar, i) => {
             const wUnit = xAxis.getUnitLength(width, i);
@@ -60,10 +60,12 @@ export class ColumnSeriesView extends SeriesView<ColumnSeries> {
             let x = xAxis.getPosition(width, i) - wUnit / 2;
             let y = yOrg;
 
-            x += series.getPointPos(wUnit) + wPoint / 2;
-
             bar.wPoint = wPoint;
             bar.hPoint = yAxis.getPosition(height, bar.point.yValue);
+
+            x += series.getPointPos(wUnit) + wPoint / 2;
+            y -= yAxis.getPosition(height, bar.point.yGroup) - bar.hPoint;
+
             bar.render(x, y);
         })
     }

@@ -60,10 +60,13 @@ export class BarSeriesView extends SeriesView<BarSeries> {
             let y = height - xAxis.getPosition(height, i) - wUnit / 2;
             let x = xOrg;
 
-            y += series.getPointPos(wUnit) + wPoint / 2;
 
             bar.wPoint = wPoint;
             bar.hPoint = yAxis.getPosition(width, bar.point.yValue);
+
+            y += series.getPointPos(wUnit) + wPoint / 2;
+            x += yAxis.getPosition(width, bar.point.yGroup) - bar.hPoint;
+
             bar.render(x, y);
         })
     }
