@@ -163,10 +163,12 @@ export class SeriesGroup extends RcObject {
             switch (this._layout) {
                 case SeriesGroupLayout.STACK:
                     return this.$_collectStack(axis);
+
+                case SeriesGroupLayout.FILL:
+                    return this.$_collectFill(axis);
     
                 case SeriesGroupLayout.DEFAULT:
                 case SeriesGroupLayout.OVERLAP:
-                case SeriesGroupLayout.FILL:
                     return this.$_collectValues(axis);
             }
         } else {
@@ -199,43 +201,55 @@ export class SeriesGroup extends RcObject {
 
     private $_collectPoints(): Map<number, DataPoint[]> {
         const series = this._series;
-        const pts: Map<number, DataPoint[]> = this._stackPoints = new Map();
+        const map: Map<number, DataPoint[]> = this._stackPoints = new Map();
 
-        series[0]._visPoints.forEach(p => pts.set(p.xValue, [p]));
+        series[0]._visPoints.forEach(p => map.set(p.xValue, [p]));
 
         for (let i = 1; i < series.length; i++) {
             series[i]._visPoints.forEach(p => {
-                const arr = pts.get(p.xValue);
+                const pts = map.get(p.xValue);
                 
-                if (arr) {
-                    arr.push(p);
+                if (pts) {
+                    pts.push(p);
                 } else {
-                    pts.set(p.xValue, [p]);
+                    map.set(p.xValue, [p]);
                 }
             });
         }
-        return pts;
+        return map;
     }
 
     private $_collectStack(axis: IAxis): number[] {
-        const pts = this.$_collectPoints();
+        const map = this.$_collectPoints();
         const vals: number[] = [];
 
-        for (const arr of pts.values()) {
-            for (let i = 1; i < arr.length; i++) {
-                arr[i].yGroup = arr[i - 1].yGroup + arr[i].yValue;
+        for (const pts of map.values()) {
+            for (let i = 1; i < pts.length; i++) {
+                pts[i].yGroup = pts[i - 1].yGroup + pts[i].yValue;
             }
-            vals.push(arr[arr.length - 1].yGroup);
+            vals.push(pts[pts.length - 1].yGroup);
         }
         return vals;
-
-        // return new Array<DataPoint[]>(...pts.values())
-        //         .map(arr => arr.map(p => p.yValue))
-        //         .map(arr => arr.reduce((a, c) => a + c));
     }
 
     private $_collectFill(axis: IAxis): number[] {
-        return;
+        const map = this.$_collectPoints();
+        const vals: number[] = [];
+
+        for (const pts of map.values()) {
+            let sum = 0;
+            for (const p of pts) {
+                sum += p.yValue || 0;
+            }
+            let prev = 0;
+            for (const p of pts) {
+                p.yValue = p.yValue / sum * 100;
+                prev = p.yGroup = p.yValue + prev;
+            }
+            vals.push(100);
+        }
+         
+        return vals;
     }
 }
 

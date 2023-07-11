@@ -10,7 +10,7 @@ import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { Utils } from "../../common/Utils";
 import { SeriesGroupLayout } from "../../model/SeriesGroup";
-import { AreaRangeSeriesPoint, AreaSeries, AreaSeriesPoint, LineSeriesPoint } from "../../model/series/LineSeries";
+import { AreaSeries, AreaSeriesPoint } from "../../model/series/LineSeries";
 import { LineSeriesView } from "./LineSeriesView";
 
 export class AreaSeriesView extends LineSeriesView<AreaSeries> {
@@ -63,7 +63,7 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
         const y = Utils.isNotEmpty(series.baseValue) ? series._yAxisObj.getPosition(len, series.baseValue) : len;
         const sb = new PathBuilder();
 
-        if (g.layout === SeriesGroupLayout.STACK) {
+        if (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL) {
             sb.move(pts[0].xPos, pts[0].yLow);
             sb.line(pts[0].xPos, pts[0].yPos);
             for (let i = 1; i < pts.length; i++) {
