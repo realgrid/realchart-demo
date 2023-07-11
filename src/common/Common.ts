@@ -12,6 +12,7 @@ export const isArray = Array.isArray;
 export const isFunc = function (v: any): v is Function { return typeof v === 'function'; }
 export const isString = function (v: any): v is string { return typeof v === 'string'; }
 export const isNumber = function (v: any): v is number { return typeof v === 'number'; }
+export const isBoolean = function (v: any): v is boolean { return typeof v === 'boolean'; }
 export const isNone = function (v: any): boolean { return v == null || isNaN(v); }
 export const pickNum = function(v1: any, v2: any): number {
     v1 = parseFloat(v1);

@@ -75,16 +75,18 @@ export class SeriesGroup extends RcObject {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    private _layout = SeriesGroupLayout.DEFAULT;
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
     /**
      * 그룹 이름.
      * <br>
      * 시리즈에서 이 값으로 자신이 속하는 그룹을 지정할 수 있다.
      */
     name: string;
-    /**
-     * 그룹 내의 포인트들을 배치하는 방식.
-     */
-    private _layout = SeriesGroupLayout.DEFAULT;
+
     /**
      * 이 group이 축의 단위 너비 내에서 차지하는 영역의 상대 크기.
      * <br>
@@ -92,6 +94,7 @@ export class SeriesGroup extends RcObject {
      * group이 여러 개인 경우 이 너비를 모두 합한 크기에 대한 상대값으로 group의 너비가 결정된다.
      */
     groupWidth = 1;
+
     /**
      * 시리즈 point bar들의 양 끝을 점유하는 빈 공간 크기 비율.
      * <br>
@@ -99,9 +102,9 @@ export class SeriesGroup extends RcObject {
      */
     groupPadding = 0.2;
 
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
+    /**
+     * 그룹 내의 포인트들을 배치하는 방식.
+     */
     get layout(): SeriesGroupLayout {
         return this._layout;
     }
@@ -112,6 +115,14 @@ export class SeriesGroup extends RcObject {
             this._layout = value;
         }
     }
+
+    /**
+     * {@link layout}이 {@link SeriesGroupLayout.FILL}일 때 상대적 최대값.
+     * <br>
+     * 
+     * @default 100
+     */
+    layoutMax = 100;
 
     //-------------------------------------------------------------------------
     // methods
@@ -233,6 +244,7 @@ export class SeriesGroup extends RcObject {
     }
 
     private $_collectFill(axis: IAxis): number[] {
+        const max = this.layoutMax || 100;
         const map = this.$_collectPoints();
         const vals: number[] = [];
 
@@ -243,10 +255,10 @@ export class SeriesGroup extends RcObject {
             }
             let prev = 0;
             for (const p of pts) {
-                p.yValue = p.yValue / sum * 100;
+                p.yValue = p.yValue / sum * max;
                 prev = p.yGroup = p.yValue + prev;
             }
-            vals.push(100);
+            vals.push(max);
         }
          
         return vals;

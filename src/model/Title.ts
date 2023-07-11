@@ -7,15 +7,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isString } from "../common/Common";
+import { Sides } from "../common/Sides";
 import { VerticalAlign } from "../common/Types";
 import { ChartItem } from "./ChartItem";
 
 export class Title extends ChartItem {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // properties
     //-------------------------------------------------------------------------
     text = 'Title';
+    margin = Sides.createFrom('4');
 
     //-------------------------------------------------------------------------
     // overriden members

@@ -1,5 +1,6 @@
 const config = {
-    title: "Column Group - Fill",
+    title: "Bar Group - Fill",
+    type: 'bar',
     xAxis: {
         title: "일일 Daily fat",
         categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도']
@@ -8,9 +9,7 @@ const config = {
         title: "Vertical 수직축 Axis",
     },
     groups: [{
-        // layout: 'overlap',
         layout: 'fill',
-        // layoutMax: 111
     }],
     series: [{
         name: 'column1',
