@@ -14,7 +14,7 @@ import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
-import { ISeries, Series } from "./Series";
+import { Series } from "./Series";
 import { BoxSeries } from "./series/BarSeries";
 
 export enum SeriesGroupLayout {
@@ -197,7 +197,7 @@ export class SeriesGroup extends RcObject {
         return vals;
     }
 
-    private $_collectStack(axis: IAxis): number[] {
+    private $_collectPoints(): Map<number, DataPoint[]> {
         const series = this._series;
         const pts: Map<number, DataPoint[]> = this._stackPoints = new Map();
 
@@ -214,7 +214,11 @@ export class SeriesGroup extends RcObject {
                 }
             });
         }
+        return pts;
+    }
 
+    private $_collectStack(axis: IAxis): number[] {
+        const pts = this.$_collectPoints();
         const vals: number[] = [];
 
         for (const arr of pts.values()) {
@@ -228,6 +232,10 @@ export class SeriesGroup extends RcObject {
         // return new Array<DataPoint[]>(...pts.values())
         //         .map(arr => arr.map(p => p.yValue))
         //         .map(arr => arr.reduce((a, c) => a + c));
+    }
+
+    private $_collectFill(axis: IAxis): number[] {
+        return;
     }
 }
 

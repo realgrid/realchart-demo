@@ -29,10 +29,9 @@ import { ScatterSeries } from "./series/ScatterSeries";
 
 export interface IChart {
 
-    /**
-     * 기본 시리즈 타입.
-     */
     type: string;
+    xStart: number;
+    xStep: number;
     series: ISeries;
     xAxis: IAxis;
     yAxis: IAxis;
@@ -85,6 +84,7 @@ export class Chart extends RcObject implements IChart {
     /**
      * 기본 시리즈 type.
      * <br>
+     * {@link Series.type}의 기본값.
      * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
      * 
      * @default 'column'
@@ -97,6 +97,17 @@ export class Chart extends RcObject implements IChart {
      * 즉, bar 시리즈 계통이면 true가 된다.
      */
     inverted: boolean;
+    /**
+     * x값이 설정되지 않은 포인트들의 시작 x값.
+     * {@link Series.xStart}의 기본값.
+     */
+    xStart: number;
+    /**
+     * 시리즈 데이타에 x축 값이 설정되지 않은 경우, 포인트 간의 간격 x 크기.
+     * {@link Series.xStep}의 기본값.
+     * time 축일 때, 정수 값 대신 시간 단위로 지정할 수 있다.
+     */
+    xStep = 1;
 
     //-------------------------------------------------------------------------
     // fields
@@ -260,9 +271,12 @@ export class Chart extends RcObject implements IChart {
     }
 
     load(source: any): void {
-        if ('type' in source) {
-            this.type = source.type;
-        }
+        // properites
+        ['type', 'xStart', 'xStep'].forEach(prop => {
+            if (prop in source) {
+                this[prop] = source[prop];
+            }
+        })
 
         // titles
         this._title.load(source.title);
