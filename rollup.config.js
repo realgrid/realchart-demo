@@ -139,12 +139,12 @@ const rollup_pub_config = {
             hook: 'writeBundle',
             targets: [
                 { src: './web/realchart/lib/realreport-chart.js', dest: `./`, rename: `${filename}.min.js` },
-                { src: './web/', dest: './', rename: 'www' }
+                // { src: './web/', dest: './', rename: 'www' }
             ],
             flatten: false
         }),
         del({
-            targets:['./www/realchart/lib/realreport-chart.js.map'],
+            // targets:['./www/realchart/lib/realreport-chart.js.map'],
             hook: "closeBundle"
         })
     ]
