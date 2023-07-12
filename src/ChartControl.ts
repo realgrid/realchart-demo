@@ -17,8 +17,6 @@ export class ChartControl extends RcControl {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly CLASS_NAME = 'rtc-control';
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -29,7 +27,7 @@ export class ChartControl extends RcControl {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, container: string | HTMLDivElement) {
-        super(doc, container, ChartControl.CLASS_NAME);
+        super(doc, container);
 
         this.addElement(this._chartView = new ChartView(doc));
     }

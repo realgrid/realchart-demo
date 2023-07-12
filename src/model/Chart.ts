@@ -101,7 +101,7 @@ export class Chart extends RcObject implements IChart {
      * x값이 설정되지 않은 포인트들의 시작 x값.
      * {@link Series.xStart}의 기본값.
      */
-    xStart: number;
+    xStart = 0;
     /**
      * 시리즈 데이타에 x축 값이 설정되지 않은 경우, 포인트 간의 간격 x 크기.
      * {@link Series.xStep}의 기본값.

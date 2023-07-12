@@ -81,7 +81,7 @@ export class DataPoint {
 
     protected _readSingle(v: any): void {
         // x 축에 대한 정보가 없으므로 홑 값들은 순서대로 값을 지정한다.
-        this.x = this.index;
+        //this.x = this.index;
         this.y = v;
     }
 }

@@ -60,10 +60,10 @@ export class ColumnSeriesView extends SeriesView<ColumnSeries> {
             const wPoint = series.getPointWidth(wUnit);
             let x = xAxis.getPosition(width, i) - wUnit / 2;
             let y = yOrg;
-            const y2 = yAxis.getPosition(height, bar.point.yValue);
+            const yVal = yAxis.getPosition(height, bar.point.yValue);
 
             bar.wPoint = wPoint;
-            bar.hPoint = y2 - yBase;
+            bar.hPoint = yVal - yBase;
 
             x += series.getPointPos(wUnit) + wPoint / 2;
             y -= yAxis.getPosition(height, bar.point.yGroup) - bar.hPoint;

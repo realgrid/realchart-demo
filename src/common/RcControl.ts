@@ -34,6 +34,8 @@ export abstract class RcControl extends RtWrappableObject {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
+    static readonly CLASS_NAME = 'rct-control';
+
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
@@ -67,13 +69,13 @@ export abstract class RcControl extends RtWrappableObject {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, container: string | HTMLDivElement, className: string) {
+    constructor(doc: Document, container: string | HTMLDivElement, className?: string) {
         super();
 
         if (!doc && container instanceof HTMLDivElement) {
             doc = container.ownerDocument;
         }
-        this.$_initControl(doc || document, container, className);
+        this.$_initControl(doc || document, container, className || RcControl.CLASS_NAME);
         this._resigterEventHandlers(this._dom);
         this._inited = true;
         this.invalidate(true);
@@ -310,6 +312,7 @@ export abstract class RcControl extends RtWrappableObject {
         // svg
         const svg = this._svg = doc.createElementNS(SVGNS, 'svg');
 
+        svg.classList.add('rct-root');
         svg.style.setProperty('overflow', 'visible', 'important');
         svg.setAttribute('width', '100%');// contentDiv.clientWidth + 'px');
         svg.setAttribute('height', '100%');//contentDiv.clientHeight + 'px');

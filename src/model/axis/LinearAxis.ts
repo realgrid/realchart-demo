@@ -262,7 +262,7 @@ export class LinearAxis extends Axis {
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
         const tick = this.tick as LinearAxisTick;
-        let { min, max } = this.$_adjustMinMax(calcedMin, calcedMax);
+        let { min, max } = this._adjustMinMax(calcedMin, calcedMax);
         const steps = tick.buildSteps(length, this._base, min, max);
 
         min = this._min = Math.min(min, steps[0]);
@@ -272,7 +272,7 @@ export class LinearAxis extends Axis {
 
         for (let i = 0; i < steps.length; i++) {
             ticks.push({
-                pos: this.getPosition(length, steps[i]),
+                pos: this.getStepPosition(length, steps[i]),
                 value: steps[i],
                 label: String(steps[i])
             });
@@ -284,6 +284,10 @@ export class LinearAxis extends Axis {
         return length * (value - this._min) / (this._max - this._min);
     }
 
+    getStepPosition(length: number, value: number): number {
+        return this.getPosition(length, value);
+    }
+
     getUnitLength(length: number, value: number): number {
         return;
     }
@@ -291,7 +295,7 @@ export class LinearAxis extends Axis {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_adjustMinMax(min: number, max: number): { min: number, max: number } {
+    protected _adjustMinMax(min: number, max: number): { min: number, max: number } {
         const base = this._base;
         const minPad = this.minPadding;
         const maxPad = this.maxPadding;

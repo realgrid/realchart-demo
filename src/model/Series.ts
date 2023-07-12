@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString } from "../common/Common";
+import { isArray, isObject, isString, pickNum } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { Align, RtPercentSize, VerticalAlign } from "../common/Types";
 import { Utils } from "../common/Utils";
@@ -200,7 +200,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * <br>
      * 이 속성이 지징되지 않은 경우 {@link Chart.xStart}가 적용된다.
      */
-    xStart = 0;
+    xStart: number;
     /**
      * 시리즈 데이타에 x축 값이 설정되지 않은 경우, 포인트 간의 간격 크기.
      * time 축일 때, 정수 값 대신 시간 단위로 지정할 수 있다.
@@ -269,12 +269,20 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     ignoreAxisBase(axis: IAxis): boolean {
         return false;
     }
-    
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     createPoint(source: any): DataPoint {
         return new DataPoint(source);
+    }
+
+    getXStart(): number {
+        return pickNum(this.xStart, this.chart.xStart);
+    }
+
+    getXStep(): number {
+        return pickNum(this.xStep, this.chart.xStep);
     }
 
     getValue(point: DataPoint, axis: IAxis): number {
@@ -314,7 +322,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         const v = a + 'Value';
         const numeric = axis instanceof LinearAxis;
         const vals: number[] = [];
-        let x = 0;
+        const xStep = this.getXStep() || 1;
+        let x = this.getXStart() || 0;
 
         this._visPoints.forEach((p, i) => {
             let val = axis.getValue(p[a]);
@@ -322,9 +331,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             // linear axis이고 'x'값이 숫자가 아니면 
             // (시리즈별이 아니라)모든 시리즈를 기준으로 0부터 순서대로 값을 부여한다.
             // TODO: 여기서 이렇게 하는 게 맞나?
-            if (isNaN(val) && numeric && a === 'x') {
+            if (isNaN(val) && a === 'x') {
+            // if (isNaN(val) && numeric && a === 'x') {
                 val = x;
-                x += axis.valueUnit;
+                x += xStep;
             }
             if (!isNaN(val)) {
                 vals.push(p[v] = val);

@@ -43,13 +43,14 @@
     --rct-flip-x: 0;
 }
 
-.rtc-control {
+/** control */
+.rct-control {
     padding: 20px;
 }
 
 /** title */
 .rct-title {
-    font-size: 20px;
+    font-size: 24px;
     margin-bottom: 8px;
 }
 /* .rct-title-background {
