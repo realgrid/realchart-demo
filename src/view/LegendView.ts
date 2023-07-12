@@ -6,11 +6,13 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "../common/Common";
+import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Legend, LegendItem, LegendLayout, LegendPosition } from "../model/Legend";
-import { ChartElement } from "./ChartElement";
+import { Legend, LegendItem, LegendLayout } from "../model/Legend";
+import { BoundableElement, ChartElement } from "./ChartElement";
 
 export class LegendItemView extends ChartElement<LegendItem> {
 
@@ -24,6 +26,7 @@ export class LegendItemView extends ChartElement<LegendItem> {
     //-------------------------------------------------------------------------
     _marker: RectElement;
     _label: TextElement;
+    _gap: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -40,21 +43,21 @@ export class LegendItemView extends ChartElement<LegendItem> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: LegendItem, intWidth: number, hintHeight: number, phase: number): ISize {
-        let w = 75;
-        let h = 30;
-
         this._label.text = model.text();
 
-        return Size.create(w, h);
+        const sz = toSize(this._label.getBBounds());
+        this._gap = pickNum(model.legend.markerGap, 0);
+
+        return Size.create(this._marker.width + this._gap + sz.width, Math.max(this._marker.height, sz.height));
     }
 
     protected _doLayout(): void {
         this._marker.translate(0, (this.height - this._marker.height) / 2);
-        this._label.translate(16, (this.height - this._label.getBBounds().height) / 2);
+        this._label.translate(this._marker.width + this._gap, (this.height - this._label.getBBounds().height) / 2);
     }
 }
 
-export class LegendView extends ChartElement<Legend> {
+export class LegendView extends BoundableElement<Legend> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -69,7 +72,7 @@ export class LegendView extends ChartElement<Legend> {
     constructor(doc: Document) {
         super(doc, 'rct-legend');
 
-        this.add(this._background = new RectElement(doc));
+        this.add(this._background = new RectElement(doc, null, 'rct-legend-background'));
     }
 
     //-------------------------------------------------------------------------
@@ -109,10 +112,13 @@ export class LegendView extends ChartElement<Legend> {
     
     protected _doLayout(): void {
         const gap = this.model.itemGap;
-        let x = 0;
-        let y = 0;
+        const margin = this._margins;
+        let x = margin.left;
+        const y = margin.top;
+        const w = this.width - margin.left - margin.right;
+        const h = this.height - margin.top - margin.bottom;
 
-        this._background.setBounds(0, 0, this.width, this.height);
+        this._background.setBounds(x, y, w, h);
         this._itemViews.forEach(v => {
             v.resizeByMeasured().layout();
             v.translate(x, y);

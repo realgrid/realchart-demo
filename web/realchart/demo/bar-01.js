@@ -18,9 +18,9 @@ const config = {
 }
 
 export function init() {
-    // console.log(RealTouch.getVersion());
-    // RealTouch.setLogging(true);
-    // RealTouch.setDebugging(true);
+    // console.log(RealChart.getVersion());
+    // RealChart.setLogging(true);
+    RealChart.setDebugging(true);
 
     const chart = RealChart.createChartControl(document, 'realchart');
     chart.model = RealChart.loadChart(config);

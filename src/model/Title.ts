@@ -17,7 +17,6 @@ export class Title extends ChartItem {
     // properties
     //-------------------------------------------------------------------------
     text = 'Title';
-    margin = Sides.createFrom('4');
 
     //-------------------------------------------------------------------------
     // overriden members

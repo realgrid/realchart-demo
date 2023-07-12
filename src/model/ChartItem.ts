@@ -8,7 +8,6 @@
 
 import { isArray, isBoolean, isObject } from "../common/Common";
 import { RcObject } from "../common/RcObject";
-import { Sides } from "../common/Sides";
 import { IChart } from "./Chart";
 
 export class ChartItem extends RcObject {
@@ -95,28 +94,5 @@ export class ChartItem extends RcObject {
     }
 
     protected _doPrepareRender(chart: IChart): void {
-    }
-}
-
-export class BoundableItem extends ChartItem {
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    padding = Sides.Empty;
-    margin = Sides.Empty;
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    protected _doLoad(source: any): void {
-        super._doLoad(source);
-
-        if ('padding' in source) {
-            this.padding = Sides.create(source('padding'));
-        }
-        if ('margin' in source) {
-            this.margin = Sides.create(source('margin'));
-        }
     }
 }

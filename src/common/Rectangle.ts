@@ -217,7 +217,7 @@ export class Rectangle {
 		return this;
     }
     
-	inflate(left: number = 0, top: number = undefined, right: number = undefined, bottom: number = undefined): Rectangle {
+	inflate(left: number = 0, top?: number, right?: number, bottom?: number): Rectangle {
 		top = top !== undefined ? top : left;
 		right = right !== undefined ? right : left;
 		bottom = bottom !== undefined ? bottom : top;

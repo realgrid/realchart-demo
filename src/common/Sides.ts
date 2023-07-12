@@ -6,6 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "./Common";
+import { IRect } from "./Rectangle";
+
 export interface ISides {
 	left: number;
 	right: number;
@@ -63,6 +66,31 @@ export class Sides {
     //-------------------------------------------------------------------------
     clone(): Sides {
         return new Sides(this.top, this.bottom, this.left, this.right);
+    }
+
+    applyPadding(cs: CSSStyleDeclaration): Sides {
+        this.left = pickNum(cs.paddingLeft, 0);
+        this.right = pickNum(cs.paddingRight, 0);
+        this.top = pickNum(cs.paddingTop, 0);
+        this.bottom = pickNum(cs.paddingBottom, 0);
+        return this;
+    }
+
+    applyMargin(cs: CSSStyleDeclaration): Sides {
+        this.left = pickNum(cs.marginLeft, 0);
+        this.right = pickNum(cs.marginRight, 0);
+        this.top = pickNum(cs.marginTop, 0);
+        this.bottom = pickNum(cs.marginBottom, 0);
+        return this;
+    }
+
+    shrink(r: IRect): IRect {
+        return {
+            x: r.x + this.left,
+            y: r.y + this.top,
+            width: r.width - this.left - this.right,
+            height: r.height - this.top - this.bottom
+        };
     }
 
 	//-------------------------------------------------------------------------

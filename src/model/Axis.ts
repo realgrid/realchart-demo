@@ -64,7 +64,7 @@ export class AxisTitle extends AxisItem {
     // properties
     //-------------------------------------------------------------------------
     text = 'Axis Title';
-    margin = 8;
+    gap = 8;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -157,9 +157,6 @@ export class AxisTick extends AxisItem {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    prefix: string;
-    suffix: string;
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -177,6 +174,9 @@ export class AxisTick extends AxisItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    prefix: string;
+    suffix: string;
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -211,7 +211,38 @@ export interface IAxisTick {
 export abstract class Axis extends ChartItem implements IAxis {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // fields
+    //-------------------------------------------------------------------------
+    readonly name: string;
+    readonly title = new AxisTitle(this);
+    readonly line = new AxisLine(this);
+    readonly tick: AxisTick;
+    readonly grid = new AxisGrid(this);
+
+    _isX: boolean;
+    _isHorz: boolean;
+    protected _series: ISeries[] = [];
+    protected _groups: ISeriesGroup[] = [];
+    _range: { min: number, max: number };
+    _ticks: IAxisTick[];
+    _length: number;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart, name?: string) {
+        super(chart);
+
+        this.name = name;
+        this.tick = this._createTick();
+    }
+
+    protected _createTick(): AxisTick {
+        return new AxisTick(this);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
     //-------------------------------------------------------------------------
     /**
      * true면 기본 위치(x축: bottom, y축: left)의 반대편에 표시된다.
@@ -242,37 +273,6 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     tickEnd = false;
     valueUnit = 1;
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    readonly name: string;
-    readonly title = new AxisTitle(this);
-    readonly line = new AxisLine(this);
-    readonly tick: AxisTick;
-    readonly grid = new AxisGrid(this);
-
-    _isX: boolean;
-    _isHorz: boolean;
-    protected _series: ISeries[] = [];
-    protected _groups: ISeriesGroup[] = [];
-    _range: { min: number, max: number };
-    _ticks: IAxisTick[];
-    _length: number;
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(chart: IChart, name?: string) {
-        super(chart);
-
-        this.name = name;
-        this.tick = this._createTick();
-    }
-
-    protected _createTick(): AxisTick {
-        return new AxisTick(this);
-    }
 
     //-------------------------------------------------------------------------
     // methods

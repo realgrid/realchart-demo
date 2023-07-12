@@ -21,7 +21,7 @@ export class LegendItem extends ChartItem {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(legend: Legend, public source: ILegendSource) {
+    constructor(public legend: Legend, public source: ILegendSource) {
         super(legend.chart)
     }
 
@@ -113,6 +113,10 @@ export class Legend extends ChartItem {
      * legend 아이템들 사이의 간격.
      */
     itemGap = 12;
+    /**
+     * marker와 text사이의 간격.
+     */
+    markerGap = 4;
 
     items(): LegendItem[] {
         return this._items.slice(0);

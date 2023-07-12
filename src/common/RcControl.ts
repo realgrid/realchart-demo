@@ -15,6 +15,7 @@ import { RtLog, SVGNS, isString, pickNum } from "./Common";
 import { Utils } from "./Utils";
 import { IRect, Rectangle } from "./Rectangle";
 import { SvgShapes } from "./impl/SvgShape";
+import { ISize } from "./Size";
 
 const BACK_STYLES = {
     background: 'fill',
@@ -730,6 +731,10 @@ export class RcElement extends RcObject {
 
     getRect(): IRect {
         return Rectangle.create(this._translateX, this._translateY, this.width, this.height);
+    }
+
+    getSize(): ISize {
+        return { width: this.width, height: this.height };
     }
 
     translate(x: number, y: number): void {

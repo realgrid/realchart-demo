@@ -50,16 +50,27 @@
 /** title */
 .rct-title {
     font-size: 20px;
+    margin-bottom: 8px;
 }
-
+/* .rct-title-background {
+    fill: transparent;
+} */
 .rct-subtitle {
     font-size: 16px;
+    margin-bottom: 4px;
 }
+/* .rct-subtitle-background {
+    fill: transparent;
+} */
 
 /** legend */
 .rct-legend {
     fill: transparent;
+    margin: 8px;
 }
+/* .rct-legend-background {
+    fill: transparent;
+} */
 .rct-legend-item {
     fill: #333;
 }
