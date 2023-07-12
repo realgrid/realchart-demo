@@ -16,6 +16,7 @@ export interface IAxis {
 
     valueUnit: number;
     _length: number;
+    baseValue: number;
 
     /**
      * data point의 값을 축 상의 값으로 리턴한다.
@@ -273,6 +274,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     tickEnd = false;
     valueUnit = 1;
+    baseValue: number;
 
     //-------------------------------------------------------------------------
     // methods
