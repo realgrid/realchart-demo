@@ -45,14 +45,21 @@ const time_multiples = [
 export class TimeAxisTick extends LinearAxisTick {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    unit: number;
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _getStepMultiples(step: number): number[] {
         for (let i = TimeScale.MS; i < TimeScale.YEAR; i++) {
             if (step <= time_scales[i]) {
+                this.unit = i;
                 return time_multiples[i];
             }
         }
+        this.unit = TimeScale.YEAR;
         return null;
     }
 }
@@ -81,14 +88,22 @@ export class TimeAxis extends LinearAxis {
         return new TimeAxisTick(this);
     }
 
+    protected _adjustMinMax(min: number, max: number): { min: number; max: number; } {
+        const v = super._adjustMinMax(min, max);
+        return v;
+    }
+
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
         const ticks = super._doBuildTicks(min, max, length);
 
         ticks.forEach(tick => {
-            tick.pos = tick.pos - 32500;
-            tick.label = String(((+tick.label) / 3600 / 24 / 30 / 365) >> 0);
+            tick.label = new Date(tick.value).getFullYear().toString()
         })
 
         return ticks;
     }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
 }

@@ -1,15 +1,17 @@
 const config = {
-    title: "Time Axis",
+    title: "Time Axis 02",
     xAxis: {
         type: 'time',
-        title: 'Time'
+        title: false
     },
     yAxis: {
-        title: 'Temparature'
+        title: 'Exchange Rate',
+        minValue: 0.6
     },
     series: {
-        type: 'line',
-        data: range_data
+        type: 'area',
+        marker: false,
+        data: usdeur_data
     }
 }
 

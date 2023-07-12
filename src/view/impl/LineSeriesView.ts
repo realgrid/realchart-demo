@@ -71,39 +71,40 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
 
     private $_prepareMarkser(points: LineSeriesPoint[]): void {
         const series = this.model;
-        const base = series.baseValue;
         const marker = series.marker;
-        const vis = marker.visible();
-        const mpp = this._markersPerPoint();
-        const count = points.length;
 
-        this._markers.prepare(count * mpp, (mv, i) => {
-            const n = i % count;
-            const p = points[n];
-
-            if (n === count - 1) {
-
-            } else if (n === 0) {
-
-            } else {
-
-            }
-
-            p.radius = marker.radius;
-            p.shape = marker.shape;
-            mv.point = p;
-
-            // mv.className = vis ? '' : 'dlchart-line-marker-hidden';
-            // mv.clearStyles();
-            // if (color) {
-            //     m.setStyles({
-            //         fill: color,
-            //         stroke: color
-            //     })
-            // }
-            // m.setStyles(styles);
-            // this._needNegative && m.point.value < base && m.setStyles(negativeStyles);
-        });
+        if (this._markerContainer.visible = marker.visible()) {
+            const mpp = this._markersPerPoint();
+            const count = points.length;
+    
+            this._markers.prepare(count * mpp, (mv, i) => {
+                const n = i % count;
+                const p = points[n];
+    
+                if (n === count - 1) {
+    
+                } else if (n === 0) {
+    
+                } else {
+    
+                }
+    
+                p.radius = marker.radius;
+                p.shape = marker.shape;
+                mv.point = p;
+    
+                // mv.className = vis ? '' : 'dlchart-line-marker-hidden';
+                // mv.clearStyles();
+                // if (color) {
+                //     m.setStyles({
+                //         fill: color,
+                //         stroke: color
+                //     })
+                // }
+                // m.setStyles(styles);
+                // this._needNegative && m.point.value < base && m.setStyles(negativeStyles);
+            });
+        }
     }
 
     protected _layoutMarker(mv: LineMarkerView, x: number, y: number): void {
@@ -137,6 +138,7 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
 
     protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
         const series = this.model;
+        const vis = series.marker.visible();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const yOrg = height;
@@ -147,7 +149,7 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
             p.xPos = xAxis.getPosition(width, p.xValue);
             p.yPos = yOrg - yAxis.getPosition(height, p.yGroup);
 
-            this._layoutMarker(this._markers.get(i), p.xPos, p.yPos);
+            vis && this._layoutMarker(this._markers.get(i), p.xPos, p.yPos);
         }
     }
 

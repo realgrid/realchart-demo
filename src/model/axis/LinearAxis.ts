@@ -9,8 +9,6 @@
 import { assert, ceil, fixnum } from "../../common/Types";
 import { Axis, AxisTick, IAxisTick } from "../Axis";
 import { IChart } from "../Chart";
-import { DataPoint } from "../DataPoint";
-import { ISeries } from "../Series";
 
 export class LinearAxisTick extends AxisTick {
 
@@ -200,7 +198,23 @@ export class LinearAxisTick extends AxisTick {
 export class LinearAxis extends Axis {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // fields
+    //-------------------------------------------------------------------------
+    private _hardMin: number;
+    private _hardMax: number;
+    private _min: number;
+    private _max: number;
+    private _base: number;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart, name?: string) {
+        super(chart, name);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
     //-------------------------------------------------------------------------
     /**
      * data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.
@@ -219,22 +233,6 @@ export class LinearAxis extends Axis {
      * 두 시리즈가 양쪽으로 벌어지는 컬럼/바 시리즈에 활용할 수 있다.
      */
     syncMinMax = false;
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    private _hardMin: number;
-    private _hardMax: number;
-    private _min: number;
-    private _max: number;
-    private _base: number;
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(chart: IChart, name?: string) {
-        super(chart, name);
-    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -307,13 +305,15 @@ export class LinearAxis extends Axis {
                 max = base + v;
                 min = base - v;
             }
+        }
          
-            if (!isNaN(this._hardMin)) {
-                min = this._hardMin;
-            }
-            if (!isNaN(this._hardMax)) {
-                max = this._hardMax;
-            }
+        if (!isNaN(this._hardMin)) {
+            min = this._hardMin;
+            if (base < min) this._base = NaN;
+        }
+        if (!isNaN(this._hardMax)) {
+            max = this._hardMax;
+            if (base > max) this._base = NaN;
         }
 
         let len = Math.max(0, max - min);
