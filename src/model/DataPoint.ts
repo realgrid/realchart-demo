@@ -9,6 +9,8 @@
 import { isArray, isNone, isObject, pickNum, pickProp3, pickProp4 } from "../common/Common";
 import { ISeries } from "./Series";
 
+let __point_id__ = 0;
+
 export class DataPoint {
 
     //-------------------------------------------------------------------------
@@ -22,6 +24,8 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    readonly id = __point_id__++;
+
     // Series.collectValues()에서 결정된다. x, y와 각각 다른 값으로 설정될 수 있다.
     xValue: number;
     yValue: number;
@@ -38,6 +42,13 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     constructor(source: any) {
         this.value = source;
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    labelCount(): number {
+        return 1;
     }
 
     //-------------------------------------------------------------------------

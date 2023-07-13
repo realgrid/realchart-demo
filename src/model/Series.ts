@@ -92,7 +92,7 @@ export class DataPointLabel extends ChartItem {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: Chart) {
+    constructor(chart: IChart) {
         super(chart, false);
     }
 
@@ -181,6 +181,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     // property fields
     //-------------------------------------------------------------------------
     readonly name: string;
+    readonly pointLabel: DataPointLabel;
+
     group: string;
     xAxis: string | number;
     yAxis: string | number;
@@ -229,6 +231,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         super(chart);
 
         this.name = name;
+        this.pointLabel = new DataPointLabel(chart);
         this._points = new DataPointCollection(this);
     }
 

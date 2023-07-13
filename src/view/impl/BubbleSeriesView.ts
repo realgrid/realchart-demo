@@ -32,7 +32,6 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _markerContainer: RcElement;
     private _markers: ElementPool<MarkerView>;
 
     //-------------------------------------------------------------------------
@@ -41,8 +40,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
     constructor(doc: Document) {
         super(doc, 'rct-bubble-series')
 
-        this.add(this._markerContainer = new RcElement(doc));
-        this._markers = new ElementPool(this._markerContainer, MarkerView);
+        this._markers = new ElementPool(this._pointContainer, MarkerView);
     }
 
     //-------------------------------------------------------------------------

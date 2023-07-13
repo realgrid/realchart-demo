@@ -8,7 +8,7 @@
 
 import { Color } from "../common/Color";
 import { ElementPool } from "../common/ElementPool";
-import { PathElement } from "../common/RcControl";
+import { PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
@@ -180,32 +180,32 @@ export class PointLabelContainer extends GroupElement {
     }
 
     prepare(model: Series): void {
-        // const labels = this._labels;
-        // const points = model.getViewPoints();
-        // const pointLabel = model.series.pointLabel;
+        const labels = this._labels;
+        const points = model.getPoints();
+        const pointLabel = model.pointLabel;
         // const svgFormat = pointLabel.svgFormat;
 
-        // if (pointLabel.visible) {
-        //     const maps = this._maps;
-        //     const styles = pointLabel.styles;
+        if (pointLabel.visible()) {
+            const maps = this._maps;
+            // const styles = pointLabel.styles;
 
-        //     // TODO: scroll 시에는 reprepare 필요?
-        //     labels[0].prepare(points.length);
-        //     labels[1].prepare(points.length);
-        //     maps[0] = {};
-        //     maps[1] = {};
+            // TODO: scroll 시에는 reprepare 필요?
+            labels[0].prepare(points.count);
+            labels[1].prepare(points.count);
+            maps[0] = {};
+            maps[1] = {};
 
-        //     points.forEach((p, i) => {
-        //         for (let j = 0; j < p.yLabelCount; j++) {
-        //             const label = labels[j].get(i);
+            points.forEach((p, i) => {
+                for (let j = 0; j < p.labelCount(); j++) {
+                    const label = labels[j].get(i);
 
-        //             this.prepareLabel(label, j, p, pointLabel);
-        //             maps[j][p.id] = label;
-        //         }
-        //     })
-        // } else {
-        //     this.clear();
-        // }
+                    this.prepareLabel(label, j, p, pointLabel);
+                    maps[j][p.id] = label;
+                }
+            })
+        } else {
+            this.clear();
+        }
     }
 
     // get(point: DataPoint, index: number): PointLabelView {
@@ -307,14 +307,17 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _pointContainer: GroupElement;
-    private _labelContainer: any;
+    protected _pointContainer: RcElement;
+    private _labelContainer: PointLabelContainer;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, styleName: string) {
         super(doc, 'rct-series ' + styleName);
+
+        this.add(this._pointContainer = new RcElement(doc));
+        this.add(this._labelContainer = new PointLabelContainer(doc));
     }
 
     //-------------------------------------------------------------------------
@@ -322,6 +325,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         this._prepareSeries(doc, model);
+        this._labelContainer.prepare(model);
         
         return Size.create(hintWidth, hintHeight);
     }

@@ -69,15 +69,13 @@ export class BoxPlotSeriesView extends SeriesView<BoxPlotSeries> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _boxes: ElementPool<BoxView>;
+    private _boxes = new ElementPool(this._pointContainer, BoxView);
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-boxplot-series')
-
-        this._boxes = new ElementPool(this, BoxView);
     }
 
     //-------------------------------------------------------------------------

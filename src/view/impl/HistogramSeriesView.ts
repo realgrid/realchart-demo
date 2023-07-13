@@ -31,7 +31,7 @@ export class HistogramSeriesView extends SeriesView<HistogramSeries> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _bars: ElementPool<BarElement> = new ElementPool(this, BarElement);
+    private _bars: ElementPool<BarElement> = new ElementPool(this._pointContainer, BarElement);
 
     //-------------------------------------------------------------------------
     // constructor

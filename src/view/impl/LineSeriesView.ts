@@ -35,7 +35,6 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
     //-------------------------------------------------------------------------
     protected _lineContainer: RcElement;
     private _line: PathElement;
-    private _markerContainer: RcElement;
     protected _markers: ElementPool<LineMarkerView>;
 
     //-------------------------------------------------------------------------
@@ -44,10 +43,9 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
     constructor(doc: Document, styleName: string) {
         super(doc, styleName);
 
-        this.add(this._lineContainer = new RcElement(doc));
+        this.insertFirst(this._lineContainer = new RcElement(doc));
         this._lineContainer.add(this._line = new PathElement(doc, null, 'rct-line-series-line'));
-        this.add(this._markerContainer = new RcElement(doc));
-        this._markers = new ElementPool(this._markerContainer, LineMarkerView);
+        this._markers = new ElementPool(this._pointContainer, LineMarkerView);
     }
 
     //-------------------------------------------------------------------------
@@ -73,7 +71,7 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
         const series = this.model;
         const marker = series.marker;
 
-        if (this._markerContainer.visible = marker.visible()) {
+        if (this._pointContainer.visible = marker.visible()) {
             const mpp = this._markersPerPoint();
             const count = points.length;
     

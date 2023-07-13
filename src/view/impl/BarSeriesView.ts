@@ -32,7 +32,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _bars = new ElementPool(this, BarElement);
+    private _bars = new ElementPool(this._pointContainer, BarElement);
 
     //-------------------------------------------------------------------------
     // constructor

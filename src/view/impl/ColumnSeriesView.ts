@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
+import { RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { DataPoint } from "../../model/DataPoint";
 import { ColumnSeries } from "../../model/series/BarSeries";
@@ -32,14 +33,14 @@ export class ColumnSeriesView extends SeriesView<ColumnSeries> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _bars = new ElementPool(this, BarElement);
+    private _bars = new ElementPool(this._pointContainer, BarElement);
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-column-series')
-    }
+}
 
     //-------------------------------------------------------------------------
     // overriden members

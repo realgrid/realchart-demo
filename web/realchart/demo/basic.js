@@ -5,6 +5,7 @@ const config = {
     yAxis: {
     },
     series: {
+        pointLabel: true,
         data: [
             ['home', 7], 
             ['sky', 11], 

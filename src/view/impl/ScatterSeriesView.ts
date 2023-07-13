@@ -32,7 +32,6 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _markerContainer: RcElement;
     private _markers: ElementPool<MarkerView>;
 
     //-------------------------------------------------------------------------
@@ -41,8 +40,7 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
     constructor(doc: Document) {
         super(doc, 'rct-scatter-series')
 
-        this.add(this._markerContainer = new RcElement(doc));
-        this._markers = new ElementPool(this._markerContainer, MarkerView);
+        this._markers = new ElementPool(this._pointContainer, MarkerView);
     }
 
     //-------------------------------------------------------------------------

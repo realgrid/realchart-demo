@@ -134,7 +134,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     // fields
     //-------------------------------------------------------------------------
     private _circle: CircleElement;
-    private _sectors = new ElementPool(this, SectorView, null, 0.5);
+    private _sectors = new ElementPool(this._pointContainer, SectorView, null, 0.5);
     private _cx = 0;
     private _cy = 0;
     private _rd = 0;
