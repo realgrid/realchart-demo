@@ -36,6 +36,7 @@ export class Tester {
     
     static createControl(width?: number, height?: number): TestChartControl {
         RcElement.TESTING = true;
+        RcElement.DEBUGGING = true;
 
         TextElement.prototype.getBBounds = TextElement.prototype.getBBoundsTest;
 

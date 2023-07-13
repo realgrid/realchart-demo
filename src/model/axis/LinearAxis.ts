@@ -51,7 +51,7 @@ export class LinearAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private _getStepsByCount(count: number, base: number, min: number, max: number): number[] {
+    protected _getStepsByCount(count: number, base: number, min: number, max: number): number[] {
         if (min > base) {
             min = base;
             base = NaN;
@@ -97,7 +97,7 @@ export class LinearAxisTick extends AxisTick {
         return steps;
     }
 
-    private _getStepsBySize(size: number, base: number, min: number, max: number): number[] {
+    protected _getStepsBySize(size: number, base: number, min: number, max: number): number[] {
         const steps: number[] = [];
         let v: number;
 
@@ -123,7 +123,7 @@ export class LinearAxisTick extends AxisTick {
         return [1, 2, 2.5, 5, 10];
     }
 
-    private _getStepsByPixels(length: number, pixels: number, base: number, min: number, max: number): number[] {
+    protected _getStepsByPixels(length: number, pixels: number, base: number, min: number, max: number): number[] {
         if (min >= base) {
             min = base;
             base = NaN;

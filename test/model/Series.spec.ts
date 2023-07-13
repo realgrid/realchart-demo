@@ -62,7 +62,7 @@ import { Tester } from '../Tester';
 
         // series data가 숫자 배열이다.
         points.forEach((p, i) => {
-            expect(p.x).eq(i);
+            expect(p.x).undefined;
             expect(p.y).eq(p.value);
         })
     })

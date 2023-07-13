@@ -19,6 +19,7 @@ import { ILegendSource } from "./Legend";
 import { ISeriesGroup } from "./SeriesGroup";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
+import { TimeAxis } from "./axis/TimeAxis";
 
 export enum PointItemPosition {
     AUTO = 'auto',
@@ -278,7 +279,17 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     getXStart(): number {
-        return pickNum(this.xStart, this.chart.xStart);
+        let s = this.xStart;
+        let s2 = this.chart.xStart;
+
+        if (this._xAxisObj instanceof TimeAxis) {
+            if (isString(s)) {
+                s = new Date(s).getTime();
+            } else if (isString(s2)) {
+                s2 = new Date(s2).getTime();
+            }
+        }
+        return pickNum(s, s2);
     }
 
     getXStep(): number {
@@ -328,12 +339,9 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._visPoints.forEach((p, i) => {
             let val = axis.getValue(p[a]);
 
-            // linear axis이고 'x'값이 숫자가 아니면 
-            // (시리즈별이 아니라)모든 시리즈를 기준으로 0부터 순서대로 값을 부여한다.
-            // TODO: 여기서 이렇게 하는 게 맞나?
             if (isNaN(val) && a === 'x') {
-            // if (isNaN(val) && numeric && a === 'x') {
                 val = x;
+                // if (p[a] === void 0) p[a] = val;
                 x += xStep;
             }
             if (!isNaN(val)) {

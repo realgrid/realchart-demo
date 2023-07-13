@@ -114,7 +114,7 @@ import { Tester } from '../../Tester';
 
         ticks.forEach((t, i) => {
             expect(t.value).eq(i);
-            expect(t.value).eq(series.getPoints().get(i).x);
+            expect(t.value).eq(series.getPoints().get(i).xValue);
             expect(t.value.toString()).eq(t.label);
         });
         expect(ticks[0].pos).gte(0);
