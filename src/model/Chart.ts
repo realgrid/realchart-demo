@@ -76,6 +76,14 @@ const axis_types = {
     'log': LogAxis
 }
 
+export class Credit extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    text = 'realreport-chart.com';
+}
+
 export class Chart extends RcObject implements IChart {
 
     //-------------------------------------------------------------------------

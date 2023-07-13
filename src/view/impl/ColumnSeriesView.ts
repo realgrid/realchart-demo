@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
-import { RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { DataPoint } from "../../model/DataPoint";
 import { ColumnSeries } from "../../model/series/BarSeries";
@@ -50,27 +49,7 @@ export class ColumnSeriesView extends SeriesView<ColumnSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
-        const series = this.model;
-        const xAxis = this.model._xAxisObj;
-        const yAxis = this.model._yAxisObj;
-        const yBase = yAxis.getPosition(height, yAxis.baseValue);
-        const yOrg = height;
-
-        this._bars.forEach((bar, i) => {
-            const wUnit = xAxis.getUnitLength(width, i);
-            const wPoint = series.getPointWidth(wUnit);
-            let x = xAxis.getPosition(width, i) - wUnit / 2;
-            let y = yOrg;
-            const yVal = yAxis.getPosition(height, bar.point.yValue);
-
-            bar.wPoint = wPoint;
-            bar.hPoint = yVal - yBase;
-
-            x += series.getPointPos(wUnit) + wPoint / 2;
-            y -= yAxis.getPosition(height, bar.point.yGroup) - bar.hPoint;
-
-            bar.render(x, y);
-        })
+        this.$_layoutBars(width, height);
     }
 
     //-------------------------------------------------------------------------
@@ -83,5 +62,41 @@ export class ColumnSeriesView extends SeriesView<ColumnSeries> {
             v.point = points[i];
             v.setStyle('fill', color);
         });
+    }
+
+    private $_layoutBars(width: number, height: number): void {
+        const series = this.model;
+        const labels = series.pointLabel;
+        const labelOff = labels.offset;
+        const labelViews = this._labelContainer;
+        const xAxis = this.model._xAxisObj;
+        const yAxis = this.model._yAxisObj;
+        const yBase = yAxis.getPosition(height, yAxis.baseValue);
+        const yOrg = height;
+
+        this._bars.forEach((bar, i) => {
+            const p = bar.point;
+            const wUnit = xAxis.getUnitLength(width, i);
+            const wPoint = series.getPointWidth(wUnit);
+            let x = xAxis.getPosition(width, i) - wUnit / 2;
+            let y = yOrg;
+            const yVal = yAxis.getPosition(height, p.yValue);
+
+            bar.wPoint = wPoint;
+            bar.hPoint = yVal - yBase;
+
+            x += series.getPointPos(wUnit) + wPoint / 2;
+            y -= yAxis.getPosition(height, p.yGroup) - bar.hPoint;
+
+            bar.render(x, y);
+
+            // label
+            const view = labelViews.get(p, 0);
+            if (view) {
+                const r = view.getBBounds();
+
+                view.translate(x - r.width / 2, y - bar.hPoint - r.height - labelOff);
+            }
+        })
     }
 }

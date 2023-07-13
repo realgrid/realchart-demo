@@ -740,6 +740,10 @@ export class RcElement extends RcObject {
         return { width: this.width, height: this.height };
     }
 
+    getBBounds(): IRect {
+        return (this._dom as SVGGraphicsElement).getBBox();
+    }
+
     translate(x: number, y: number): void {
         if (x !== this._translateX || y !== this._translateY) {
             if (Utils.isValidNumber(x)) this._translateX = x;

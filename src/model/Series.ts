@@ -77,7 +77,7 @@ export class DataPointLabel extends ChartItem {
      * center나 middle일 때는 무시.
      * 파이 시리즈 처럼 label 연결선이 있을 때는 연결선과의 간격.
      */
-    offset = 4;
+    offset = 2;
     prefix: string;
     suffix: string;
     numberSymbols = NUMBER_SYMBOLS;
@@ -141,7 +141,9 @@ export class DataPointLabel extends ChartItem {
     
     protected _format(text: string, value: any, useSymbols: boolean, forceSymbols = false): string {
         let s = text || this.$_getNumberText(value, useSymbols, forceSymbols);
-        s = this.prefix + (s || value) + this.suffix;
+
+        this.prefix && (s = this.prefix + s);
+        this.suffix && (s += this.suffix);
         return s;
     }
 }

@@ -9,6 +9,7 @@
 import { Color } from "../common/Color";
 import { ElementPool } from "../common/ElementPool";
 import { PathElement, RcElement } from "../common/RcControl";
+import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
@@ -39,7 +40,7 @@ export class PointLabelView extends GroupElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'dlchart-point-label');
+        super(doc, 'rct-point-label');
 
         this.add(this._outline = new TextElement(doc));
         this._outline.anchor = TextAnchor.START;
@@ -138,7 +139,7 @@ export class PointLabelContainer extends GroupElement {
     // constructors
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'dlchart-series-labels');
+        super(doc, 'rct-series-labels');
     }
 
     protected _doDestory(): void {
@@ -172,7 +173,7 @@ export class PointLabelContainer extends GroupElement {
                 //      .setStyles(styles);
             // } else {
                 //label.setValueEx(p.value, true, 1)
-                label.setText(model.getText(p.value))//getYLabel(index)))
+                label.setText(model.getText(p.yValue))// (p.value))//getYLabel(index)))
                     .setOutline(model.outlined)
             //         .setStyles(styles);
             // }
@@ -208,10 +209,10 @@ export class PointLabelContainer extends GroupElement {
         }
     }
 
-    // get(point: DataPoint, index: number): PointLabelView {
-    //     const map = this._maps[index]
-    //     return map && map[point.id];
-    // }
+    get(point: DataPoint, index: number): PointLabelView {
+        const map = this._maps[index]
+        return map && map[point.id];
+    }
 
     borrow(index: number): PointLabelView { 
         return this._labels[index].borrow();
@@ -268,7 +269,7 @@ export class PointLabelLineContainer extends GroupElement {
     // constructors
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'dlchart-point-label-line');
+        super(doc, 'rct-point-label-line');
     }
 
 	//-------------------------------------------------------------------------
@@ -308,7 +309,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     // fields
     //-------------------------------------------------------------------------
     protected _pointContainer: RcElement;
-    private _labelContainer: PointLabelContainer;
+    protected _labelContainer: PointLabelContainer;
 
     //-------------------------------------------------------------------------
     // constructor

@@ -90,6 +90,13 @@
     stroke-width: 1px;
 }
 
+/** series */
+.rct-point-label {
+    font-size: 0.8em;
+    font-weight: bold;
+    fill: #558;
+}
+
 /** bar series */
 .rct-series-bar {
     fill: #00aaff;
