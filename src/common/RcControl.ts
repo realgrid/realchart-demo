@@ -756,12 +756,19 @@ export class RcElement extends RcObject {
         return (this._dom as SVGGraphicsElement).getBBox();
     }
 
-    translate(x: number, y: number): void {
+    move(x: number, y: number): RcElement {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
+
+    translate(x: number, y: number): RcElement {
         if (x !== this._translateX || y !== this._translateY) {
             if (Utils.isValidNumber(x)) this._translateX = x;
             if (Utils.isValidNumber(y)) this._translateY = y;
             this._updateTransform();
         }
+        return this;
     }
 
     resize(width: number, height: number, attr = true): RcElement {

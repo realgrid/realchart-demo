@@ -129,8 +129,7 @@
 
 /** scatter series */
 .rct-scatter-series-marker {
-    fill: #0088ff40;
-    stroke: #0088ff;
+    fill-opacity: 0.7;
 }
 
 /** boxplot series */

@@ -6,7 +6,10 @@ const config = {
     },
     series: {
         type: 'bubble',
-        pointLabel: true,
+        pointLabel: {
+            visible: true,
+            format: '${z}'
+        },
         data: [
             [9, 81, 63],
             [98, 5, 89],

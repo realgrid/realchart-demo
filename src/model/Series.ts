@@ -8,7 +8,7 @@
 
 import { isArray, isObject, isString, pickNum } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
-import { Align, RtPercentSize, VerticalAlign } from "../common/Types";
+import { Align, IPercentSize, RtPercentSize, VerticalAlign, calcPercent, getPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { Shape } from "../common/impl/SvgShape";
 import { IAxis } from "./Axis";
@@ -80,7 +80,7 @@ export class DataPointLabel extends FormattableText {
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
-        super(chart, '');
+        super(chart, false);
     }
 
 	//-------------------------------------------------------------------------
@@ -142,6 +142,31 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     readonly name: string;
     readonly pointLabel: DataPointLabel;
 
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    index = -1;
+    gindex = -1;
+    _group: ISeriesGroup;
+    _xAxisObj: IAxis;
+    _yAxisObj: IAxis;
+    protected _points: DataPointCollection;
+    _visPoints: DataPoint[];
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart, name?: string) {
+        super(chart);
+
+        this.name = name;
+        this.pointLabel = new DataPointLabel(chart);
+        this._points = new DataPointCollection(this);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
     group: string;
     xAxis: string | number;
     yAxis: string | number;
@@ -170,33 +195,18 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * 이 속성이 지정되지 않으면 {@link Chart.xStep}이 적용된다.
      */
     xStep: number | string;
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    index = -1;
-    gindex = -1;
-    _group: ISeriesGroup;
-    _xAxisObj: IAxis;
-    _yAxisObj: IAxis;
-    protected _points: DataPointCollection;
-    _visPoints: DataPoint[];
+    /**
+     * 데이터 포인트 기본 색.
+     */
     color: string;
+    /**
+     * 데이터 포인트별 색들을 지정한다.
+     * <br>
+     * true로 지정하면 기본 색들로 표시된다.
+     * 색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.
+     */
+    pointColors: boolean | string[];
 
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(chart: IChart, name?: string) {
-        super(chart);
-
-        this.name = name;
-        this.pointLabel = new DataPointLabel(chart);
-        this._points = new DataPointCollection(this);
-    }
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
     isInverted(): boolean {
         return false;
     }
@@ -511,11 +521,32 @@ export abstract class SeriesMarker extends ChartItem {
 export class RadialSeries extends Series {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // fields
+    //-------------------------------------------------------------------------
+    private _sizeDim: IPercentSize;
+
+    //-------------------------------------------------------------------------
+    // properties
     //-------------------------------------------------------------------------
     startAngle = 0;
     centerX = 0;
     centerY = 0;
     size: RtPercentSize;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getSize(width: number, height: number): number {
+        return calcPercent(this._sizeDim, Math.min(width, height));
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doLoad(src: any): void {
+        super._doLoad(src);
+
+        this._sizeDim = parsePercentSize(this.size, true) || { size: 80, fixed: false };
+    }
 }
 

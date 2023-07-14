@@ -6,6 +6,7 @@ const config = {
     },
     series: {
         type: 'pie',
+        pointLabel: true,
         data: [ 
             { name: 'moon', y: 53, sliced: false }, 
             { name: 'yeon', y: 97, color: '#0088ff' }, 

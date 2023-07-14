@@ -758,6 +758,21 @@ export class Utils {
             }
         }
     }
+
+    static isNorth(angle: number, off = 0.1): boolean {
+        const a = Math.PI * 1.5;
+        if (angle < 0) angle += Math.PI * 2;
+        return angle >= a - off && angle <= a + off;
+    }
+
+    static isSouth(angle: number, off = 0.1): boolean {
+        const a = Math.PI * .5;
+        return angle >= a - off && angle <= a + off;
+    }
+
+    static isLeft(angle: number): boolean {
+        return angle > Math.PI * .5 && angle < Math.PI * 1.5
+    }
 }
 
 export class Stopwatch {

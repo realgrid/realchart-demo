@@ -8,9 +8,10 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { PathElement, RcElement } from "../../common/RcControl";
+import { IRect } from "../../common/Rectangle";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { ScatterSeries, ScatterSeriesPoint } from "../../model/series/ScatterSeries";
-import { SeriesView } from "../SeriesView";
+import { PointLabelView, SeriesView } from "../SeriesView";
 
 class MarkerView extends PathElement {
 
@@ -56,20 +57,31 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
 
     private $_prepareMarkser(points: ScatterSeriesPoint[]): void {
         const series = this.model;
+        const color = series.color;
         const marker = series.marker;
         const count = points.length;
 
+        this._pointContainer.setStyle('fill', color);
+
         this._markers.prepare(count, (m, i) => {
             const p = points[i];
+
             m.point = p;
+            // m.setStyle('fill', color);
         })
     }
 
     private $_layoutMarkers(): void {
         const series = this.model;
         const marker = series.marker;
+        const labels = series.pointLabel;
+        const labelVis = labels.visible;
+        const labelOff = labels.offset;
+        const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
+        let labelView: PointLabelView;
+        let r: IRect;
 
         this._markers.forEach((m, i) => {
             const p = m.point;
@@ -96,6 +108,14 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
             }
             m.setPath(path);
             m.translate(x, y);
+
+            // label
+            if (labelVis) {
+                if (labelView = labelViews.get(p, 0)) {
+                    r = labelView.getBBounds();
+                    labelView.translate(x - r.width / 2, y - r.height / 2);
+                }
+            }
         });
     }
 }

@@ -9,7 +9,7 @@
 import { isArray, isBoolean, isObject } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
-import { SvgRichText, RichTextParamCallback } from "../common/SvgRichText";
+import { SvgRichText, RichTextParamCallback } from "../common/RichText";
 import { NUMBER_FORMAT, NUMBER_SYMBOLS } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
@@ -121,8 +121,8 @@ export class FormattableText extends ChartItem {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, styleName: string) {
-        super(chart, true);
+    constructor(chart: IChart, visible: boolean) {
+        super(chart, visible);
 
         this.numberSymbols = NUMBER_SYMBOLS;
         this.numberFormat = NUMBER_FORMAT;

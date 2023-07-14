@@ -7,11 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
+import { PathBuilder } from "../../common/PathBuilder";
 import { ORG_ANGLE, deg2rad } from "../../common/Types";
+import { Utils } from "../../common/Utils";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
 import { PieSeries, PieSeriesPoint } from "../../model/series/PieSeries";
-import { PointLabelContainer, PointLabelLineContainer, SeriesView } from "../SeriesView";
+import { PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView } from "../SeriesView";
 
 class SectorView extends SectorElement {
 
@@ -163,16 +165,16 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
-        const sz = this.$_getSize(width, height);
+        const sz = this.model.getSize(width, height);
 
         this._rd = Math.floor(sz / 2);
         this._rdInner = 0;//this.model.getInnerSize(this._rd);
         this._cx = Math.floor(width / 2);
         this._cy = Math.floor(height / 2);
 
-        // if (this._circle.visible = this._sectors.isEmpty) {
+        if (this._circle.visible = this._sectors.isEmpty) {
             this._circle.setCircle(this._cx, this._cy, this._rd);
-        // }
+        }
 
         this.$_layoutSectors();
     }
@@ -180,15 +182,6 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_getSize(width: number, height: number): number {
-        // let sz = this.model.size;
-
-        // sz = Utils.isEmpty(sz) ? '80%' : sz;
-        // sz = Utils.getPercentage(sz, Math.min(width, height));
-        // return sz;
-        return height * 0.8;
-    }
-
     private $_prepareSectors(points: PieSeriesPoint[]): void {
         const colors = this.model.chart.colors;
         const count = points.length;
@@ -216,8 +209,13 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     }
 
     private $_layoutSectors(): void {
-        const labels = null;// this.labelContainer;
-        const lines = null;//this.lineContainer;
+        const series = this.model;
+        const labels = series.pointLabel;
+        const labelVis = labels.visible;
+        const labelOff = labels.offset;
+        const labelViews = this._labelContainer;
+        const pb = new PathBuilder();
+        let labelView: PointLabelView;
 
         this._sectors.forEach((sector) => {
             const p = sector.point;
@@ -233,7 +231,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
             //     dy += Math.sin(a) * slicedOff;
             // }
 
-            sector.setSectorEx(labels, lines, {
+            sector.setSectorEx(labelViews, /*lines*/null, {
                 cx: cx + dx,
                 cy: cy + dx,
                 rx: this._rd,
@@ -244,6 +242,81 @@ export class PieSeriesView extends SeriesView<PieSeries> {
                 clockwise: true
             }, false);
             // sector.translate(dx, dy);
+
+            // label
+            if (labelVis && (labelView = labelViews.get(p, 0))) {
+                // this.$_layoutLabel(p, labelView, line, off, dist, slicedOff, pb);
+                this.$_layoutLabel(p, labelView, null, 0, 0, 0, pb);
+
+                // line.visible = false;
+                // this.$_layoutLabelInner(p, label, off, dist, slicedOff);
+                this.$_layoutLabelInner(p, labelView, 0, 0, 0);
+            }
         })
+    }
+    
+    private $_layoutLabel(p: PieSeriesPoint, label: PointLabelView, line: PointLabelLine, off: number, dist: number, slicedOff: number, pb: PathBuilder): void {
+        const r = label.getBBounds();
+        const a = p.startAngle + p.angle / 2;
+        const isLeft = Utils.isLeft(a);
+        let cx = this._cx;
+        let cy = this._cy;
+        let rd = this._rd + dist * 0.8;
+        let dx = 0;
+        let dy = 0;
+
+        if (p.sliced) {
+            dx = Math.cos(a) * slicedOff;
+            dy = Math.sin(a) * slicedOff;
+        }
+
+        let x1 = cx + Math.cos(a) * this._rd;
+        let y1 = cy + Math.sin(a) * this._rd;
+        let x2 = cx + Math.cos(a) * rd;
+        let y2 = cy + Math.sin(a) * rd;
+        let x3: number;
+
+        if (isLeft) {
+            x3 = x2 - dist * 0.2;
+        } else {
+            x3 = x2 + dist * 0.2;
+        }
+
+        if (line) {
+            line.visible = true;
+            line.move(x1, y1);
+            //line.setPath(pb.move(x1, y1).lines(x2, y2, x3, y2).end())
+            line.setLine(pb.move(0, 0).q(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end())
+            !label.moving && line.translate(x1 + dx, y1 + dy);
+        }
+
+        if (isLeft) {
+            x3 -= r.width + off;
+            y2 -= r.height / 2;
+        } else {
+            x3 += off;
+            y2 -= r.height / 2;
+        }
+        label.move(x3, y2); // 위치 정보 저장.
+        !label.moving && label.translate(x3 + dx, y2 + dy);
+    }
+
+    private $_layoutLabelInner(p: PieSeriesPoint, view: PointLabelView, off: number, dist: number, slicedOff: number): void {
+        const r = view.getBBounds();
+        const a = p.startAngle + p.angle / 2;
+        let cx = this._cx;
+        let cy = this._cy;
+        let dx = 0;
+        let dy = 0;
+
+        if (p.sliced) {
+            dx = Math.cos(a) * slicedOff;
+            dy = Math.sin(a) * slicedOff;
+        }
+
+        let x1 = cx + Math.cos(a) * this._rd + dx;
+        let y1 = cy + Math.sin(a) * this._rd + dy;
+
+        view.translate(cx + (x1 - cx - r.width) / 2, cy + (y1 - cy - r.height) / 2);
     }
 }

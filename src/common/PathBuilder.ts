@@ -39,6 +39,10 @@ export class PathBuilder {
         return s;
     }
 
+    close(): string {
+        return this.end(true);
+    }
+
     move(x: number | IPoint, y?: number): PathBuilder {
         if (isNumber(x)) {
             this._path.push('M', _num(x), _num(y));

@@ -49,7 +49,7 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
 export class PieSeries extends RadialSeries {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // properties
     //-------------------------------------------------------------------------
     singleColor = false;
     innerSize: RtPercentSize = 0;
@@ -67,6 +67,9 @@ export class PieSeries extends RadialSeries {
      */
     sliceDuration = 300;
 
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

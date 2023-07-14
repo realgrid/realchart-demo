@@ -249,9 +249,7 @@ export class LinearAxis extends Axis {
     protected _doPrepareRender(): void {
         this._hardMin = this.minValue;
 
-        if (isNaN(this.baseValue)) {
-            this._base = NaN;
-        } else if (this.baseValue === null || this._series.find(s => s.ignoreAxisBase(this))) {
+        if (isNaN(this.baseValue) || this.baseValue === null || this._series.find(s => s.ignoreAxisBase(this))) {
             this._base = NaN;
         } else {
             this._base = +this.baseValue;
