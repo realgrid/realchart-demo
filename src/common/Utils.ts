@@ -20,7 +20,6 @@ export const _isSafari = Object.prototype.toString.call(HTMLElement).indexOf('Co
 export const _isSamsung = navigator.userAgent.toLocaleLowerCase().indexOf('samsungbrowser') >= 0;
 export const _isMiui = navigator.userAgent.toLocaleLowerCase().indexOf('miuibrowser') >= 0;
 
-export const ZWSP = '&#8203';
 export const LINE_SEP = /\r\n|\n/g;
 export const CSV_SPLIT = /,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)(?=(?:[^\']*\'[^\']*\')*[^\']*$)/;
 export const TAB_SPLIT = /\t/g;

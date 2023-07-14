@@ -5,7 +5,11 @@ const config = {
     yAxis: {
     },
     series: {
-        pointLabel: true,
+        pointLabel: {
+            visible: true,
+            // format: '${x}'
+            format: '<b style="fill:red">${x}</b>'
+        },
         data: [
             ['home', 7], 
             ['sky', 11], 

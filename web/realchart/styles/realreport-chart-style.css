@@ -48,6 +48,14 @@
     padding: 20px;
 }
 
+/** rich text */
+.rct-text-bold {
+    font-weight: bold;
+}
+.rct-text-italic {
+    font-style: italic;
+}
+
 /** title */
 .rct-title {
     font-size: 24px;

@@ -9,9 +9,9 @@
 import { Color } from "../common/Color";
 import { ElementPool } from "../common/ElementPool";
 import { PathElement, RcElement } from "../common/RcControl";
-import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
+import { SvgShapes } from "../common/impl/SvgShape";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { DataPoint } from "../model/DataPoint";
 import { DataPointLabel, Series } from "../model/Series";
@@ -34,7 +34,7 @@ export class PointLabelView extends GroupElement {
     point: DataPoint;
     moving = false;
     private _outline: TextElement;
-    private _text: TextElement;
+    _text: TextElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -157,26 +157,26 @@ export class PointLabelContainer extends GroupElement {
         this._labels[1].prepare(0);
     }
 
-    public prepareLabel(label: PointLabelView, index: number, p: DataPoint, model: DataPointLabel): void {
-        if (label.visible = p.visible) {
+    public prepareLabel(view: PointLabelView, index: number, p: DataPoint, model: DataPointLabel): void {
+        if (view.visible = p.visible) {
         // if (label.visible = !p.isNull && p.visible) {
-            // const svgFormat = model.svgFormat;
+            const richFormat = model.format;
             // const styles = model.styles;
 
-            label.point = p;
-            !model.autoContrast && label.setStyle('fill', '');
+            view.point = p;
+            !model.autoContrast && view.setStyle('fill', '');
 
-            // if (svgFormat) {
-            //     model.buildSvg(label['_text'], model, p.getValueOf);
-            //     label.setStyles(styles);
+            if (richFormat) {
+                model.buildSvg(view._text, model, p.getValueOf);
+                // label.setStyles(styles);
                 // label.setSvg(pointLabel.getSvg(p.getValueOf))
                 //      .setStyles(styles);
-            // } else {
+            } else {
                 //label.setValueEx(p.value, true, 1)
-                label.setText(model.getText(p.yValue))// (p.value))//getYLabel(index)))
+                view.setText(model.getText(p.getYLabel(index)))
                     .setOutline(model.outlined)
             //         .setStyles(styles);
-            // }
+            }
         }
     }
 
@@ -186,7 +186,7 @@ export class PointLabelContainer extends GroupElement {
         const pointLabel = model.pointLabel;
         // const svgFormat = pointLabel.svgFormat;
 
-        if (pointLabel.visible()) {
+        if (pointLabel.visible) {
             const maps = this._maps;
             // const styles = pointLabel.styles;
 
@@ -359,4 +359,24 @@ export class BoxPointElement extends PathElement {
         super(doc, null, 'rct-series-bar');
     }
 
+}
+
+export class BarElement extends BoxPointElement {
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    render(x: number, y: number, inverted: boolean): void {
+        this.setPath(SvgShapes.rect(inverted ? {
+            x,
+            y: y - this.wPoint / 2,
+            width: this.hPoint,
+            height: this.wPoint
+        } : {
+            x: x - this.wPoint / 2,
+            y,
+            width: this.wPoint,
+            height: -this.hPoint
+        }));
+    }
 }

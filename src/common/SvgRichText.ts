@@ -1,0 +1,373 @@
+////////////////////////////////////////////////////////////////////////////////
+// SvgRichText.ts
+// 2023. 07. 14. created by woori
+// -----------------------------------------------------------------------------
+// Copyright (c) 2023 Wooritech Inc.
+// All rights reserved.
+////////////////////////////////////////////////////////////////////////////////
+
+import { pickNum } from "./Common";
+import { ZWSP } from "./Types";
+import { TextElement } from "./impl/TextElement";
+
+const HEIGHT = '$_TH';
+const WIDTH = '$_TW';
+
+export type RichTextParamCallback = (target: any, param: string) => string;
+
+class Word {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    text: string;
+    private _literals: string[];
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    get type(): string {
+        return '';
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    parse(str: string): Word {
+        this.text = str;
+        this._doParse(str);
+        return this;
+    }
+
+    getText(target: any, callback: RichTextParamCallback): string {
+        const literals = this._literals;
+
+        if (literals && callback) {
+            let s = this.text;
+
+            for (let i = 0; i < literals.length; i += 3) {
+                s = s.replace(literals[i], callback(target, literals[i + 1]));//, literals[i + 2]));
+            }
+            return s;
+        }
+        return this.text;
+    }
+
+    prepareSpan(span: SVGTSpanElement, target: any, domain: RichTextParamCallback): SVGTSpanElement {
+        const s = this.getText(target, domain);
+        span.textContent = s;
+        //console.log(span.textContent, span.getBBox().y, span.getBBox().height);
+        return span;
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected _doParse(str: string): Word {
+        this._literals = [];
+
+        let x = 0;
+
+        while (x < str.length) {
+            const i = str.indexOf('${', x);
+            if (i < 0) break;
+
+            const j = str.indexOf('}', i + 2);
+            if (j < 0) break;
+            
+            const s = str.substring(i, j + 1);
+            const s2 = s.substring(2, s.length - 1);
+            const k = s2.indexOf(':');
+
+            if (k > 0) {
+                this._literals.push(s, s2.substring(0, k), s2.substr(k + 1));
+            } else {
+                this._literals.push(s, s2, '');
+            }
+
+            x = j + 1;
+        }
+
+        if (this._literals.length == 0) this._literals = null;
+        return this;
+    }
+}
+
+abstract class SpanWoard extends Word {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    prepareSpan(span: SVGTSpanElement, target: any, domain: RichTextParamCallback): SVGTSpanElement {
+        const s = this.getText(target, domain);
+        const x1 = s.indexOf('>') + 1;
+        const x2 = s.indexOf('<', x1);
+
+        this._doPrepare(span, s, x1, x2);
+
+        //console.log(span.textContent, span.getBBox().y, span.getBBox().height);
+        return span;
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected _doPrepare(span: SVGTSpanElement, s: string, x1: number, x2: number): void {
+        span.textContent = s.substring(x1, x2);
+
+        const i = s.indexOf('style=');
+
+        if (i > 0 && i < x1) {
+            const c = s[i + 6];
+            const j = s.indexOf(c, i + 7);
+            
+            if (j > 0 && j < x1) {
+                span.setAttribute('style', s.substring(i + 7, j));
+            }
+        }
+    }
+}
+
+class NormalWord extends SpanWoard {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    get type(): string {
+        return 't';
+    }
+}
+
+class BoldWord extends SpanWoard {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    get type(): string {
+        return 'b';
+    }
+
+    protected _doPrepare(span: SVGTSpanElement, s: string, x1: number, x2: number): void {
+        super._doPrepare(span, s, x1, x2);
+        span.setAttribute('class', 'rct-text-bold')
+    }
+}
+
+class ItalicWord extends SpanWoard {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    get type(): string {
+        return 'i';
+    }
+
+    protected _doPrepare(span: SVGTSpanElement, s: string, x1: number, x2: number): void {
+        super._doPrepare(span, s, x1, x2);
+        span.setAttribute('class', 'rct-text-italic')
+    }
+}
+
+const Words = {
+    't': NormalWord,
+    'b': BoldWord,
+    'i': ItalicWord
+}
+
+class SvgLine {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _words: Word[];
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    get words(): Word[] {
+        return this._words.slice();
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    parse(s: string): SvgLine {
+
+        function addPlain(s: string): void {
+            const cnt = words.length;
+
+            if (cnt > 0 && words[cnt - 1].type === '') {
+                words[cnt - 1].text += s;
+            } else {
+                words.push(new Word().parse(s));
+            }
+        }
+
+        const words = this._words = [];
+        let x = 0;
+
+        while (x < s.length) {
+            const c = s[x];
+            const c2 = s[x + 1];
+
+            if (c == '<') {
+                let w: Word;
+
+                if (c2 in Words) {
+                    const i = s.indexOf('>', x + 2);
+                    if (i >= 0) {
+                        const s2 = '</' + c2 + '>';
+                        const j = s.indexOf(s2, i + 1);
+                        if (j >= 0) {
+                            const s3 = s.substring(x, j + s2.length);
+                            w = new Words[c2]().parse(s3);
+                            x += s3.length;
+                        }
+                    }
+                }
+
+                if (w) {
+                    this._words.push(w);
+                } else {
+                    addPlain(s.substr(x));
+                    break;
+                }
+            } else {
+                const i = s.indexOf('<', x + 1);
+
+                if (i >= 0) {
+                    addPlain(s.substring(x, i));
+                    x = i;
+                } else {
+                    addPlain(s.substr(x));
+                    break;
+                }
+            }
+        }
+        return this;
+    }
+
+    getText(target: any, domain: RichTextParamCallback): string {
+        let s = '';
+        
+        for (let w of this._words) {
+            s += w.getText(target, domain);
+        }
+        return s;
+    }
+}
+
+/**
+ * <t>, <b>, <i>, <br>,
+ * <b>${label}</b><br><t style="fill:#c00;">${endValue}</t>
+ */
+export class SvgRichText {
+	
+    //-------------------------------------------------------------------------
+    // static members
+	//-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _format: string;
+    lineHeight = 1;
+
+    //-------------------------------------------------------------------------
+    // fields
+	//-------------------------------------------------------------------------
+    private _lines: SvgLine[];
+
+	//-------------------------------------------------------------------------
+    // constructors
+    //-------------------------------------------------------------------------
+	constructor(format?: string) {
+		this.format = format;
+	}
+
+	//-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /** format */
+	get format(): string {
+		return this._format;
+    }
+    set format(value: string) {
+        if (value !== this._format) {
+            this._format = value;
+            value && this.$_parse(value);
+        }
+    }
+
+    get lines(): SvgLine[] {
+        return this._lines.slice();
+    }
+
+	//-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getSvg(target: any, domain: RichTextParamCallback): string {
+        let s = '';
+
+        for (let line of this._lines) {
+            s += line.getText(target, domain);
+        }
+        return s;
+    }
+
+    build(view: TextElement, target: any, domain: RichTextParamCallback): void {
+        const doc = view.doc;
+        const hLine = pickNum(this.lineHeight, 1);
+        let hMax = 0;
+        const lines = this._lines;
+        const cnt = lines.length;
+        const firsts: Node[] = [];
+
+        view.clearDom();
+        target = target || view;
+
+        for (let i = 0; i < cnt; i++) {
+            const line = lines[i];
+            let h = 0;
+            let first: Node = null;
+
+            for (let word of line.words) {
+                const span = word.prepareSpan(view.appendElement(doc, 'tspan') as SVGTSpanElement, target, domain);
+                const r = span.getBBox();
+                span[WIDTH] = r.width;
+                h = Math.max(h, span[HEIGHT] = r.height);
+
+                if (!first) first = span;
+            }
+            firsts.push(first);
+            line[HEIGHT] = h * hLine;
+            hMax = Math.max(h, hMax);
+        }
+         
+        for (let i = 1; i < firsts.length; i++) {
+            const span = view.insertElement(doc, 'tspan', firsts[i]);
+            const h: any = Math.ceil(view.getAscent(this._lines[i][HEIGHT]));
+
+            span.setAttribute('x', '0');
+            span.setAttribute('dy', h);
+            span.innerHTML = ZWSP;
+        }
+
+        //parent.layoutText(lines[0][HEIGHT]);
+        view.layoutText(hMax); // 가장 큰 높이의 행 높이를 전달한다. 맞나?
+    }
+
+	//-------------------------------------------------------------------------
+    // internal members
+	//-------------------------------------------------------------------------
+    $_parse(fmt: string): void {
+        const lines = this._lines = [];
+
+        if (fmt) {
+            const strs = fmt.split(/<br.*?>|\r\n|\n/);
+
+            for (let s of strs) {
+                lines.push(new SvgLine().parse(s));
+            }
+        }
+    }
+}

@@ -71,7 +71,7 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
         const series = this.model;
         const marker = series.marker;
 
-        if (this._pointContainer.visible = marker.visible()) {
+        if (this._pointContainer.visible = marker.visible) {
             const mpp = this._markersPerPoint();
             const count = points.length;
     
@@ -136,7 +136,11 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
 
     protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
         const series = this.model;
-        const vis = series.marker.visible();
+        const vis = series.marker.visible;
+        const labels = series.pointLabel;
+        const labelVis = labels.visible;
+        const labelOff = labels.offset;
+        const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const yOrg = height;
@@ -147,7 +151,18 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
             p.xPos = xAxis.getPosition(width, p.xValue);
             p.yPos = yOrg - yAxis.getPosition(height, p.yGroup);
 
-            vis && this._layoutMarker(this._markers.get(i), p.xPos, p.yPos);
+            if (vis) {
+                this._layoutMarker(this._markers.get(i), p.xPos, p.yPos);
+            }
+            if (labelVis) {
+                const view = labelViews.get(p, 0);
+
+                if (view) {
+                    const r = view.getBBounds();
+
+                    view.translate(p.xPos - r.width / 2, p.yPos - r.height - labelOff - (vis ? p.radius : 0));
+                }
+            }
         }
     }
 

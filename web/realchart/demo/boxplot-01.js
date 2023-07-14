@@ -7,6 +7,7 @@ const config = {
     },
     series: {
         type: 'boxplot',
+        pointLabel: true,
         data: [
             [560, 651, 748, 895, 965],
             [533, 753, 939, 980, 1080],

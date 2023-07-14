@@ -7,11 +7,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
+import { IRect } from "../../common/Rectangle";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
 import { BoxPlotSeries, BoxPlotSeriesPoint } from "../../model/series/BoxPlotSeries";
-import { SeriesView } from "../SeriesView";
+import { PointLabelView, SeriesView } from "../SeriesView";
 
 class BoxView extends GroupElement {
 
@@ -100,6 +101,10 @@ export class BoxPlotSeriesView extends SeriesView<BoxPlotSeries> {
 
     private $_layoutBoxes(width: number, height: number): void {
         const series = this.model;
+        const labels = series.pointLabel;
+        const labelVis = labels.visible;
+        const labelOff = labels.offset;
+        const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const yOrg = this.height;
@@ -115,6 +120,20 @@ export class BoxPlotSeriesView extends SeriesView<BoxPlotSeries> {
 
             box.setBounds(x, y, w, h);
             box.layout();
+
+            if (labelVis) {
+                let view: PointLabelView;
+                let r: IRect;
+
+                if (view = labelViews.get(p, 1)) {
+                    r = view.getBBounds();
+                    view.translate(x + (w - r.width) / 2, y - r.height - labelOff);
+                }
+                if (view = labelViews.get(p, 0)) {
+                    r = view.getBBounds();
+                    view.translate(x + (w - r.width) / 2, y + h + labelOff);
+                }
+            }
         })
     }
 }

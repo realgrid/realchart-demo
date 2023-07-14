@@ -699,6 +699,18 @@ export class RcElement extends RcObject {
         return this;
     }
 
+    appendElement(doc: Document, tag: string): SVGElement {
+        const elt = doc.createElementNS(SVGNS, tag);
+        this._dom.appendChild(elt);
+        return elt;
+    }   
+
+    insertElement(doc: Document, tag: string, before: Node): SVGElement {
+        const elt = doc.createElementNS(SVGNS, tag);
+        this._dom.insertBefore(elt, before);
+        return elt;
+    }   
+
     getAttr(attr: string): any {
         return this.dom.getAttribute(attr);
     }

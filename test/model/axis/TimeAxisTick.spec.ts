@@ -8,7 +8,7 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { TimeAxisTick } from '../../../src/model/axis/TimeAxis';
+import { TimeAxis, TimeAxisTick } from '../../../src/model/axis/TimeAxis';
 
 /**
  * Tests for TimeAxisTick class.
@@ -67,7 +67,7 @@ import { TimeAxisTick } from '../../../src/model/axis/TimeAxis';
     });
 
     it('build steps - stepPixels', () => {
-        const model = new TimeAxisTick(null);
+        const model = new TimeAxisTick(new TimeAxis(null));
         const min = 15;
         const max = 111;
 

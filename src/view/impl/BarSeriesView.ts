@@ -7,27 +7,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
-import { SvgShapes } from "../../common/impl/SvgShape";
 import { DataPoint } from "../../model/DataPoint";
-import { BarSeries } from "../../model/series/BarSeries";
-import { BoxPointElement, SeriesView } from "../SeriesView";
+import { BarSeries, ColumnSeries } from "../../model/series/BarSeries";
+import { BarElement, SeriesView } from "../SeriesView";
 
-class BarElement extends BoxPointElement {
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    render(x: number, y: number): void {
-        this.setPath(SvgShapes.rect({
-            x,
-            y: y - this.wPoint / 2,
-            width: this.hPoint,
-            height: this.wPoint
-        }));
-    }
-}
-
-export class BarSeriesView extends SeriesView<BarSeries> {
+export class BarSeriesView extends SeriesView<ColumnSeries> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -49,27 +33,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
-        const series = this.model;
-        const xAxis = this.model._xAxisObj;
-        const yAxis = this.model._yAxisObj;
-        const yBase = yAxis.getPosition(width, yAxis.baseValue);
-        const xOrg = 0;
-
-        this._bars.forEach((bar, i) => {
-            const wUnit = xAxis.getUnitLength(height, i);
-            const wPoint = series.getPointWidth(wUnit);
-            let y = height - xAxis.getPosition(height, i) - wUnit / 2;
-            let x = xOrg;
-            const yVal = yAxis.getPosition(width, bar.point.yValue);
-
-            bar.wPoint = wPoint;
-            bar.hPoint = yVal - yBase;
-
-            y += series.getPointPos(wUnit) + wPoint / 2;
-            x += yAxis.getPosition(width, bar.point.yGroup) - bar.hPoint;
-
-            bar.render(x, y);
-        })
+        this.$_layoutBars(width, height);
     }
 
     //-------------------------------------------------------------------------
@@ -82,5 +46,65 @@ export class BarSeriesView extends SeriesView<BarSeries> {
             v.point = points[i];
             v.setStyle('fill', color);
         });
+    }
+
+    protected $_layoutBars(width: number, height: number): void {
+        const series = this.model;
+        const inverted = series.isInverted();
+        const labels = series.pointLabel;
+        const labelVis = labels.visible;
+        const labelOff = labels.offset;
+        const labelViews = this._labelContainer;
+        const xAxis = this.model._xAxisObj;
+        const yAxis = this.model._yAxisObj;
+        const yBase = yAxis.getPosition(width, yAxis.baseValue);
+        const len = inverted ? width : height;
+        const wLen = inverted ? height : width;
+        const org = inverted ? 0 : height;
+
+        this._bars.forEach((bar, i) => {
+            const p = bar.point;
+            const wUnit = xAxis.getUnitLength(wLen, i);
+            const wPoint = series.getPointWidth(wUnit);
+            const yVal = yAxis.getPosition(len, p.yValue);
+            let x: number;
+            let y: number;
+
+            if (inverted) {
+                y = wLen - xAxis.getPosition(wLen, i) - wUnit / 2;
+                x = org;
+            } else {
+                x = xAxis.getPosition(wLen, i) - wUnit / 2;
+                y = org;
+            }
+
+            bar.wPoint = wPoint;
+            bar.hPoint = yVal - yBase;
+
+            if (inverted) {
+                y += series.getPointPos(wUnit) + wPoint / 2;
+                x += yAxis.getPosition(len, p.yGroup) - bar.hPoint;
+            } else {
+                x += series.getPointPos(wUnit) + wPoint / 2;
+                y -= yAxis.getPosition(len, p.yGroup) - bar.hPoint;
+            }
+
+            bar.render(x, y, inverted);
+
+            // label
+            if (labelVis) {
+                const view = labelViews.get(p, 0);
+
+                if (view) {
+                    const r = view.getBBounds();
+    
+                    if (inverted) {
+                        view.translate(x + bar.hPoint + labelOff, y - r.height / 2);
+                    } else {
+                        view.translate(x - r.width / 2, y - bar.hPoint - r.height - labelOff);
+                    }
+                }
+            }
+        })
     }
 }

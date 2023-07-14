@@ -7,7 +7,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isBoolean, isObject } from "../common/Common";
+import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
+import { SvgRichText, RichTextParamCallback } from "../common/SvgRichText";
+import { NUMBER_FORMAT, NUMBER_SYMBOLS } from "../common/Types";
+import { Utils } from "../common/Utils";
+import { TextElement } from "../common/impl/TextElement";
 import { IChart } from "./Chart";
 
 export class ChartItem extends RcObject {
@@ -35,10 +40,10 @@ export class ChartItem extends RcObject {
     // properties
     //-------------------------------------------------------------------------
     /** visible */
-    visible(): boolean {
+    get visible(): boolean {
         return this._visible;
     }
-    setVisible(value: boolean) {
+    set visible(value: boolean) {
         if (value !== this._visible) {
             this._visible = value;
             this.chart?._visibleChanged(this);
@@ -70,7 +75,7 @@ export class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     protected _doLoadSimple(source: any): boolean {
         if (isBoolean(source)) {
-            this.setVisible(source);
+            this.visible = source;
             return true;
         }
     }
@@ -94,5 +99,146 @@ export class ChartItem extends RcObject {
     }
 
     protected _doPrepareRender(chart: IChart): void {
+    }
+}
+
+export class FormattableText extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _numberSymbols: string;
+    private _numberFormat: string;
+    private _format: string;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _numSymbols: string[];
+    private _numberFormatter: NumberFormatter;
+    private _richText: SvgRichText;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart, styleName: string) {
+        super(chart, true);
+
+        this.numberSymbols = NUMBER_SYMBOLS;
+        this.numberFormat = NUMBER_FORMAT;
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * label 문자열 앞에 추가되는 문자열.
+     */
+    prefix: string;
+
+    /**
+     * label 문자열 끝에 추가되는 문자열.
+     */
+    suffix: string;
+
+    /**
+     * 축의 tick 간격이 1000 이상인 큰 수를 표시할 때 
+     * 이 속성에 지정한 symbol을 이용해서 축약형으로 표시한다.
+     */
+    get numberSymbols(): string {
+        return this._numberSymbols;
+    }
+    set numberSymbols(value: string) {
+        if (value !== this._numberSymbols) {
+            this._numberSymbols = value;
+            this._numSymbols = value && value.split(',');
+        }
+    }
+
+    /**
+     * label이 숫자일 때 표시 형식.
+     */
+    get numberFormat(): string {
+        return this._numberFormat;
+    }
+    set numberFormat(value: string) {
+        if (value !== this._numberFormat) {
+            this._numberFormat = value;
+            this._numberFormatter = value ? NumberFormatter.getFormatter(value) : null;
+        }
+    }
+
+    /**
+     * point label:
+     * position으로 지정된 위치로 부터 떨어진 간격.
+     * center나 middle일 때는 무시.
+     * 파이 시리즈 처럼 label 연결선이 있을 때는 연결선과의 간격.
+     * 
+     * axis label:
+     * 축 line과의 간격.
+     */
+    offset = 2;
+
+    /**
+     * rich text format
+     */
+    get format(): string {
+        return this._format;
+    }
+    set format(value: string) {
+        if (value !== this._format) {
+            this._format = value;
+            if (value) {
+                if (!this._richText) this._richText = new SvgRichText()
+                this._richText.format = value;
+            } else {
+                this._richText = null;
+            }
+        }
+    }
+
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getSvg(target: any, callback: RichTextParamCallback): string {
+        if (this._richText) {
+            return this._richText.getSvg(target, callback);
+        }
+    }
+
+    buildSvg(view: TextElement, target: any, callback: RichTextParamCallback): void {
+        this._richText.build(view, target, callback);
+    }
+
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_getNumberText(value: any, useSymbols: boolean, forceSymbols: boolean): string {
+        if (Utils.isValidNumber(value)) {
+            const sv = this._numSymbols && useSymbols && Utils.scaleNumber(value, this._numSymbols, forceSymbols);
+
+            if (this._numberFormatter) {
+                if (sv) {
+                    return this._numberFormatter.toStr(sv.value) + sv.symbol;
+                } else {
+                    return this._numberFormatter.toStr(value);
+                }
+            }
+            return String(value);
+        }
+        return 'NaN';
+    }
+    
+    protected _getText(text: string, value: any, useSymbols: boolean, forceSymbols = false): string {
+        let s = text || this.$_getNumberText(value, useSymbols, forceSymbols) || value;
+        
+        if (this.prefix) s = this.prefix + s;
+        if (this.suffix) s += this.suffix;
+        return s;
     }
 }

@@ -26,6 +26,7 @@ const config2 = {
     },
     series: {
         type: 'line',
+        pointLabel: true,
         data: [
             ['home', 7], 
             ['sky', 11], 

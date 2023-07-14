@@ -29,7 +29,6 @@ import { AreaSeriesView } from "./impl/AreaSeriesView";
 import { BarSeriesView } from "./impl/BarSeriesView";
 import { BoxPlotSeriesView } from "./impl/BoxPlotSeriesView";
 import { BubbleSeriesView } from "./impl/BubbleSeriesView";
-import { ColumnSeriesView } from "./impl/ColumnSeriesView";
 import { HistogramSeriesView } from "./impl/HistogramSeriesView";
 import { LineSeriesViewImpl } from "./impl/LineSeriesView";
 import { PieSeriesView } from "./impl/PieSeriesView";
@@ -38,7 +37,7 @@ import { ScatterSeriesView } from "./impl/ScatterSeriesView";
 const series_types = new Map<any, any>([
     [BoxPlotSeries, BoxPlotSeriesView],
     [BarSeries, BarSeriesView],
-    [ColumnSeries, ColumnSeriesView],
+    [ColumnSeries, BarSeriesView],
     [AreaRangeSeries, AreaRangeSeriesView],
     [AreaSeries, AreaSeriesView],
     [LineSeries, LineSeriesViewImpl],

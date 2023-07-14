@@ -42,6 +42,14 @@ export class BoxPlotSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    labelCount(): number {
+        return 2;
+    }
+
+    getYLabel(index: number) {
+        return index === 0 ? this.minValue : this.yValue;
+    }
+
     protected _readArray(series: BoxPlotSeries, v: any[]): void {
         const d = v.length > 5 ? 1 : 0;
 

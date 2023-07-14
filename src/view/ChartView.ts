@@ -79,12 +79,12 @@ class TitleSectionView extends SectionView {
         let height = 0;
         let sz: ISize;
 
-        if (this.titleView.visible = chart.title.visible()) {
+        if (this.titleView.visible = chart.title.visible) {
             sz = this.titleView.measure(doc, chart.title, hintWidth, hintHeight, phase);
             height += sz.height;
             hintHeight -= sz.height;
         }
-        if (this.subtitleView.visible = chart.subtitle.visible()) {
+        if (this.subtitleView.visible = chart.subtitle.visible) {
             sz = this.subtitleView.measure(doc, chart.subtitle, hintWidth, hintHeight, phase);
             height += sz.height;
             hintHeight -= sz.height;
@@ -304,7 +304,7 @@ export class ChartView extends RcElement {
         h -= sz.height;
 
         // legend
-        if (this._legendSectionView.visible = (legend.visible() && !legend.isEmpty())) {
+        if (this._legendSectionView.visible = (legend.visible && !legend.isEmpty())) {
             sz = this._legendSectionView.measure(doc, m, w, h, phase);
 
             switch (legend.position) {

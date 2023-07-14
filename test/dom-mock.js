@@ -13,7 +13,7 @@ jsdomGlobal("<!DOCTYPE html><html><head></head><body><div id='chart-control'></d
 window.innerWidth = 1024;
 window.innerHeight = 1920;
 window.alert = (s) => { console.log('ALERT:', s); }
-window.SVGSVGElement = window.HTMLDivElement;
+// window.SVGSVGElement = window.HTMLDivElement;
 
 const head = document.getElementsByTagName('head')[0];
 const style = document.createElement("style");
@@ -279,5 +279,12 @@ const buttonProps = {
 };
 // <button>
 Object.defineProperties(window.HTMLButtonElement.prototype, buttonProps);
+
+// window.SVGSVGElement.prototype.getBBox = function () {
+//     return { x: 0, y: 0, width: 0, height: 0 }
+// }
+window.SVGElement.prototype.getBBox = function () {
+    return { x: 0, y: 0, width: 0, height: 0 }
+}
 
 console.log('> DOM mock prepared for testing.');

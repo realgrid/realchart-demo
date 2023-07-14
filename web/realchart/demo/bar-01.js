@@ -6,6 +6,7 @@ const config = {
     },
     series: {
         type: 'bar',
+        pointLabel: true,
         data: [
             ['home', 7], 
             ['sky', 11], 

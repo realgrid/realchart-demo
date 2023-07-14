@@ -16,6 +16,9 @@ export const ZWSP = '&#8203;';
 export const ELLIPSIS = '\u2026';
 export const ORG_ANGLE = -Math.PI / 2;
 
+export const NUMBER_SYMBOLS = 'k,M,G,T,P,E';
+export const NUMBER_FORMAT = '#,##0.#';
+
 export type Path = string | any[];
 
 export const floor = Math.floor;

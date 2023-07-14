@@ -72,6 +72,14 @@ export class DataPoint {
         this.yValue = +this.y;
     }
 
+    getYLabel(index: number): any {
+        return this.yValue;
+    }
+
+    getValueOf = (traget: any, param: string): any => {
+        return this[param] || this.value[param];
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

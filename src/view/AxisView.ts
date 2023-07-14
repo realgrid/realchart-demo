@@ -131,7 +131,7 @@ export class AxisView extends ChartElement<Axis> {
         let h = m.tick.mark.length;; 
 
         h += t ?  t.getBBounds().height : 0;
-        if (this._titleView.visible = m.title.visible()) {
+        if (this._titleView.visible = m.title.visible) {
             h += this._titleView.measure(doc, m.title, width, height, 1).height;
         }
         return h;
@@ -143,7 +143,7 @@ export class AxisView extends ChartElement<Axis> {
         let w = m.tick.mark.length;; 
 
         w += t ? t.getBBounds().width : 0;
-        if (this._titleView.visible = m.title.visible()) {
+        if (this._titleView.visible = m.title.visible) {
             w += this._titleView.measure(doc, m.title, width, height, 1).height;
         }
         return w;
@@ -159,7 +159,7 @@ export class AxisView extends ChartElement<Axis> {
         let sz = 0;
 
         // line
-        this._lineView.visible = model.line.visible();
+        this._lineView.visible = model.line.visible;
 
         // tick mark 
         sz += this._markLen = model.tick.mark.length;;

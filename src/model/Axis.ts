@@ -8,7 +8,7 @@
 
 import { isArray, isNumber, isObject, isString } from "../common/Common";
 import { IChart } from "./Chart";
-import { ChartItem } from "./ChartItem";
+import { ChartItem, FormattableText } from "./ChartItem";
 import { ISeries } from "./Series";
 import { ISeriesGroup } from "./SeriesGroup";
 
@@ -103,7 +103,7 @@ export class AxisGrid extends AxisItem {
     // methods
     //-------------------------------------------------------------------------
     isVisible(): boolean {
-        return this.visible() == null ? !this.axis._isX : this.visible();
+        return this.visible == null ? !this.axis._isX : this.visible;
     }
             
     //-------------------------------------------------------------------------
@@ -111,7 +111,7 @@ export class AxisGrid extends AxisItem {
     //-------------------------------------------------------------------------
 }
 
-export class AxisTickLabel extends AxisItem {
+export class AxisTickLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
     // properties

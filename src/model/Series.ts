@@ -13,7 +13,7 @@ import { Utils } from "../common/Utils";
 import { Shape } from "../common/impl/SvgShape";
 import { IAxis } from "./Axis";
 import { Chart, IChart } from "./Chart";
-import { ChartItem } from "./ChartItem";
+import { ChartItem, FormattableText } from "./ChartItem";
 import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource } from "./Legend";
 import { ISeriesGroup } from "./SeriesGroup";
@@ -38,7 +38,7 @@ export const NUMBER_FORMAT = '#,##0.#';
 /**
  * Series data point label options.
  */
-export class DataPointLabel extends ChartItem {
+export class DataPointLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -72,28 +72,15 @@ export class DataPointLabel extends ChartItem {
      * autoContrast가 true일 때 어두운 쪽 텍스트 색상.
      */
     darkColor = DARK_COLOR;
-    /**
-     * position으로 지정된 위치로 부터 떨어진 간격.
-     * center나 middle일 때는 무시.
-     * 파이 시리즈 처럼 label 연결선이 있을 때는 연결선과의 간격.
-     */
-    offset = 2;
-    prefix: string;
-    suffix: string;
-    numberSymbols = NUMBER_SYMBOLS;
-    numberFormat = NUMBER_FORMAT;
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _numSymbols: string[];
-    private _numberFormatter: NumberFormatter;
-
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
-        super(chart, false);
+        super(chart, '');
     }
 
 	//-------------------------------------------------------------------------
@@ -104,7 +91,7 @@ export class DataPointLabel extends ChartItem {
     //-------------------------------------------------------------------------
     getText(value: any): string {
         if (Utils.isValidNumber(value)) {
-            let s = this._format(null, value, Math.abs(value) > 1000, true);
+            let s = this._getText(null, value, Math.abs(value) > 1000, true);
             return s;
         }
         return value;
@@ -113,39 +100,9 @@ export class DataPointLabel extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoad(source: any): void {
-        super._doLoad(source);
-
-        this._numSymbols = this.numberSymbols && this.numberSymbols.split(',');
-        this._numberFormatter = this.numberFormat && NumberFormatter.getFormatter(this.numberFormat);
-    }
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_getNumberText(value: any, useSymbols: boolean, forceSymbols: boolean): string {
-        if (Utils.isValidNumber(value)) {
-            const sv = this._numSymbols && useSymbols && Utils.scaleNumber(value, this._numSymbols, forceSymbols);
-
-            if (this._numberFormatter) {
-                if (sv) {
-                    return this._numberFormatter.toStr(sv.value) + sv.symbol;
-                } else {
-                    return this._numberFormatter.toStr(value);
-                }
-            }
-            return String(value);
-        }
-        return 'NaN';
-    }
-    
-    protected _format(text: string, value: any, useSymbols: boolean, forceSymbols = false): string {
-        let s = text || this.$_getNumberText(value, useSymbols, forceSymbols);
-
-        this.prefix && (s = this.prefix + s);
-        this.suffix && (s += this.suffix);
-        return s;
-    }
 }
 
 export interface ISeries {
@@ -269,7 +226,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     legendVisible(): boolean {
-        return this.visible();
+        return this.visible;
     }
 
     ignoreAxisBase(axis: IAxis): boolean {
@@ -430,12 +387,12 @@ export class SeriesCollection {
     }
 
     visibles(): Series[] {
-        return this._items.filter(ser => ser.visible());
+        return this._items.filter(ser => ser.visible);
     }
 
     isInverted(): boolean {
         for (const ser of this._items) {
-            if (ser.visible() && ser.isInverted()) {
+            if (ser.visible && ser.isInverted()) {
                 return true;
             }
         }
@@ -443,7 +400,7 @@ export class SeriesCollection {
 
     isPolar(): boolean {
         for (const ser of this._items) {
-            if (ser.visible() && !ser.isPolar()) {
+            if (ser.visible && !ser.isPolar()) {
                 return false;
             }
         }
@@ -474,7 +431,7 @@ export class SeriesCollection {
         const legends: ILegendSource[] = [];
 
         this._items.forEach(ser => {
-            ser.visible() && ser.getLegendSources(legends);
+            ser.visible && ser.getLegendSources(legends);
         })
         return legends;
     }
@@ -489,7 +446,7 @@ export class SeriesCollection {
         const colors = this.chart.colors;
 
         this._items.forEach((ser, i) => {
-            if (ser.visible()) {
+            if (ser.visible) {
                 ser.color = colors[i % colors.length];
                 ser.prepareRender();
             }
