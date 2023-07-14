@@ -176,14 +176,13 @@ export class PieSeriesView extends SeriesView<PieSeries> {
             this._circle.setCircle(this._cx, this._cy, this._rd);
         }
 
-        this.$_layoutSectors();
+        this.$_layoutSectors(this._cx, this._cy, this._rd);
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
     private $_prepareSectors(points: PieSeriesPoint[]): void {
-        const colors = this.model.chart.colors;
         const count = points.length;
         const sum = points.map(p => p.yValue).reduce((a, c) => a + c, 0);
         let start = ORG_ANGLE + deg2rad(this.model.startAngle);
@@ -208,34 +207,33 @@ export class PieSeriesView extends SeriesView<PieSeries> {
         })
     }
 
-    private $_layoutSectors(): void {
+    private $_layoutSectors(cx: number, cy: number, rd: number): void {
         const series = this.model;
         const labels = series.pointLabel;
         const labelVis = labels.visible;
         const labelOff = labels.offset;
         const labelViews = this._labelContainer;
+        const sliceOff = this._slicedOff = series.getSliceOffset(rd);
         const pb = new PathBuilder();
         let labelView: PointLabelView;
 
         this._sectors.forEach((sector) => {
             const p = sector.point;
             const start = p.startAngle;
-            let cx = this._cx;
-            let cy = this._cy;
             let dx = 0;
             let dy = 0;
 
-            // if (p.sliced) {
-            //     const a = start + p.angle / 2;
-            //     dx += Math.cos(a) * slicedOff;
-            //     dy += Math.sin(a) * slicedOff;
-            // }
+            if (p.sliced) {
+                const a = start + p.angle / 2;
+                dx += Math.cos(a) * sliceOff;
+                dy += Math.sin(a) * sliceOff;
+            }
 
             sector.setSectorEx(labelViews, /*lines*/null, {
                 cx: cx + dx,
-                cy: cy + dx,
-                rx: this._rd,
-                ry: this._rd,
+                cy: cy + dy,
+                rx: rd,
+                ry: rd,
                 innerRadius: this._rdInner,
                 start: start,
                 angle: p.angle,
@@ -246,29 +244,24 @@ export class PieSeriesView extends SeriesView<PieSeries> {
             // label
             if (labelVis && (labelView = labelViews.get(p, 0))) {
                 // this.$_layoutLabel(p, labelView, line, off, dist, slicedOff, pb);
-                this.$_layoutLabel(p, labelView, null, 0, 0, 0, pb);
+                this.$_layoutLabel(p, labelView, null, 0, 0, p.sliced ? sliceOff : 0, pb);
 
                 // line.visible = false;
                 // this.$_layoutLabelInner(p, label, off, dist, slicedOff);
-                this.$_layoutLabelInner(p, labelView, 0, 0, 0);
+                this.$_layoutLabelInner(p, labelView, 0, 0, p.sliced ? sliceOff : 0);
             }
         })
     }
     
-    private $_layoutLabel(p: PieSeriesPoint, label: PointLabelView, line: PointLabelLine, off: number, dist: number, slicedOff: number, pb: PathBuilder): void {
-        const r = label.getBBounds();
+    private $_layoutLabel(p: PieSeriesPoint, view: PointLabelView, line: PointLabelLine, off: number, dist: number, sliceOff: number, pb: PathBuilder): void {
+        const r = view.getBBounds();
         const a = p.startAngle + p.angle / 2;
         const isLeft = Utils.isLeft(a);
         let cx = this._cx;
         let cy = this._cy;
         let rd = this._rd + dist * 0.8;
-        let dx = 0;
-        let dy = 0;
-
-        if (p.sliced) {
-            dx = Math.cos(a) * slicedOff;
-            dy = Math.sin(a) * slicedOff;
-        }
+        let dx = Math.cos(a) * sliceOff;
+        let dy = Math.sin(a) * sliceOff;
 
         let x1 = cx + Math.cos(a) * this._rd;
         let y1 = cy + Math.sin(a) * this._rd;
@@ -287,7 +280,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
             line.move(x1, y1);
             //line.setPath(pb.move(x1, y1).lines(x2, y2, x3, y2).end())
             line.setLine(pb.move(0, 0).q(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end())
-            !label.moving && line.translate(x1 + dx, y1 + dy);
+            !view.moving && line.translate(x1 + dx, y1 + dy);
         }
 
         if (isLeft) {
@@ -297,26 +290,16 @@ export class PieSeriesView extends SeriesView<PieSeries> {
             x3 += off;
             y2 -= r.height / 2;
         }
-        label.move(x3, y2); // 위치 정보 저장.
-        !label.moving && label.translate(x3 + dx, y2 + dy);
+        view.move(x3, y2); // 위치 정보 저장.
+        !view.moving && view.translate(x3 + dx, y2 + dy);
     }
 
-    private $_layoutLabelInner(p: PieSeriesPoint, view: PointLabelView, off: number, dist: number, slicedOff: number): void {
+    private $_layoutLabelInner(p: PieSeriesPoint, view: PointLabelView, off: number, dist: number, sliceOff: number): void {
         const r = view.getBBounds();
         const a = p.startAngle + p.angle / 2;
-        let cx = this._cx;
-        let cy = this._cy;
-        let dx = 0;
-        let dy = 0;
+        let x = this._cx + Math.cos(a) * (sliceOff + this._rd * 0.7);
+        let y = this._cy + Math.sin(a) * (sliceOff + this._rd * 0.7);
 
-        if (p.sliced) {
-            dx = Math.cos(a) * slicedOff;
-            dy = Math.sin(a) * slicedOff;
-        }
-
-        let x1 = cx + Math.cos(a) * this._rd + dx;
-        let y1 = cy + Math.sin(a) * this._rd + dy;
-
-        view.translate(cx + (x1 - cx - r.width) / 2, cy + (y1 - cy - r.height) / 2);
+        view.translate(x - r.width / 2, y - r.height / 2);
     }
 }

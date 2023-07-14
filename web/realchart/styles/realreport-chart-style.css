@@ -99,10 +99,12 @@
 }
 
 /** series */
-.rct-point-label {
+.rct-series-labels {
     font-size: 0.8em;
     font-weight: bold;
     fill: #558;
+}
+.rct-point-label {
 }
 
 /** bar series */

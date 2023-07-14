@@ -6,10 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RtPercentSize } from "../../common/Types";
+import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { DataPoint } from "../DataPoint";
 import { ILegendSource } from "../Legend";
-import { RadialSeries, Series } from "../Series";
+import { ISeries, RadialSeries, Series } from "../Series";
 
 export class PieSeriesPoint extends DataPoint implements ILegendSource {
 
@@ -44,16 +44,31 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
     legendVisible(): boolean {
         return this.visible;
     }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    prepare(series: ISeries): void {
+        super.prepare(series);
+
+        this.sliced = this.value.sliced;
+    }
 }
 
 export class PieSeries extends RadialSeries {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _innerDim: IPercentSize;
+    private _sliceDim: IPercentSize;
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     singleColor = false;
     innerSize: RtPercentSize = 0;
-    slicedOffset: RtPercentSize = 10;
+    sliceOffset: RtPercentSize = '17%';
     labelDistance = 25;
     /**
      * true이면 섹터 하나만 마우스 클릭으로 sliced 상태가 될 수 있다.
@@ -70,6 +85,14 @@ export class PieSeries extends RadialSeries {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getInnerSize(rd: number): number {
+        return this._innerDim ? calcPercent(this._innerDim, rd) : 0;
+    }
+
+    getSliceOffset(rd: number): number {
+        return this._sliceDim ? calcPercent(this._sliceDim, rd) : 0;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -85,6 +108,13 @@ export class PieSeries extends RadialSeries {
         this._visPoints.forEach(p => {
             list.push(p as PieSeriesPoint);
         })        
+    }
+
+    protected _doLoad(src: any): void {
+        super._doLoad(src);
+
+        this._innerDim = parsePercentSize(this.innerSize, true);
+        this._sliceDim = parsePercentSize(this.sliceOffset, true);
     }
 
     protected _doPrepareRender(): void {
