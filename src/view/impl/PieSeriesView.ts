@@ -137,6 +137,8 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     //-------------------------------------------------------------------------
     private _circle: CircleElement;
     private _sectors = new ElementPool(this._pointContainer, SectorView, null, 0.5);
+    private _lineContainer: PointLabelLineContainer;
+
     private _cx = 0;
     private _cy = 0;
     private _rd = 0;
@@ -155,6 +157,8 @@ export class PieSeriesView extends SeriesView<PieSeries> {
             fill: 'none',
             strokeDasharray: '2'
         });
+
+        this.add(this._lineContainer = new PointLabelLineContainer(doc));
     }
 
     //-------------------------------------------------------------------------

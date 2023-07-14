@@ -68,7 +68,7 @@ export class PieSeries extends RadialSeries {
     //-------------------------------------------------------------------------
     singleColor = false;
     innerSize: RtPercentSize = 0;
-    sliceOffset: RtPercentSize = '17%';
+    sliceOffset: RtPercentSize = '7%';
     labelDistance = 25;
     /**
      * true이면 섹터 하나만 마우스 클릭으로 sliced 상태가 될 수 있다.
