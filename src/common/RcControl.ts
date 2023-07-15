@@ -8,7 +8,7 @@
 
 import { RcObject, RtWrappableObject, RtWrapper } from "./RcObject";
 import { RcEditTool } from "./RcEditTool";
-import { Path, throwFormat } from "./Types";
+import { Path, SVGStyleOrClass, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
 import { RtLog, SVGNS, isString, pickNum } from "./Common";
@@ -517,6 +517,8 @@ export class RcElement extends RcObject {
     private _originX: number;
     private _originY: number;
     private _matrix: number[];
+
+    protected _className: string;
     protected _styles: any = {};
     protected _styleDirty = false;
 
@@ -534,7 +536,7 @@ export class RcElement extends RcObject {
         super();
 
         this._dom = doc.createElementNS(SVGNS, tag);
-        className && this.setAttr('class', className);
+        (this._className = className || '') && this.setAttr('class', className);
     }
 
     protected _doDestory(): void {
@@ -850,6 +852,19 @@ export class RcElement extends RcObject {
     resetStyles(styles: any): boolean {
         const r = this.clearStyles();
         return this.setStyles(styles) || r;        
+    }
+
+    protected _resetClass(): void {
+        this.setAttr('class', this._className);
+    }
+
+    setStyleOrClass(style: SVGStyleOrClass): void {
+        if (isString(style)) {
+            this._resetClass();
+            this._dom.classList.add(style);
+        } else {
+            this.resetStyles(style);
+        }
     }
 
     protected _setBackgroundBorderRadius(value: number): void {

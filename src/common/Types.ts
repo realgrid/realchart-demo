@@ -143,6 +143,18 @@ export function getRelativeSize(dim: IPercentSize): number {
     return dim && !dim.fixed ? dim.size : NaN;
 }
 
+export interface SVGStyles {
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: string;
+    fontFamily?: string;
+    fontSize?: string;
+    fontWeight?: string;
+    fontStyle?: string;
+}
+
+export type SVGStyleOrClass = SVGStyles | string;
+
 export interface CSSStyles {
     background?: string;
     backgroundAttachment?: string;

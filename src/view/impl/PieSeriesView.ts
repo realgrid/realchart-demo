@@ -200,13 +200,15 @@ export class PieSeriesView extends SeriesView<PieSeries> {
         });
 
         this._sectors.prepare(count, (sector, i) => {
-            const a = i < count - 1 ? points[i + 1].startAngle : points[i].endAngle;
+            const p = points[i];
+            const a = i < count - 1 ? points[i + 1].startAngle : p.endAngle;
 
             sector.start = a;
             sector.angle = 0;
-            sector.point = points[i];
+            sector.point = p;
 
-            sector.setStyle('fill', points[i].color);
+            sector.setAttr('aria-label', p.ariaHint());
+            sector.setStyle('fill', p.color);
             sector.setStyle('stroke', 'white');
         })
     }

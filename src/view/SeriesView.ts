@@ -142,10 +142,6 @@ export class PointLabelContainer extends GroupElement {
         super(doc, 'rct-series-labels');
     }
 
-    protected _doDestory(): void {
-        super._doDestory();
-    }
-
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -204,6 +200,9 @@ export class PointLabelContainer extends GroupElement {
                     maps[j][p.id] = label;
                 }
             })
+
+            this.setStyleOrClass(pointLabel.style);
+
         } else {
             this.clear();
         }

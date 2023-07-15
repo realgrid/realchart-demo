@@ -40,11 +40,9 @@ export class BarSeriesView extends SeriesView<ColumnSeries> {
     // internal members
     //-------------------------------------------------------------------------
     private $_parepareBars(doc: Document, points: DataPoint[]): void {
-        const color = this.model.color;
-
         this._bars.prepare(points.length, (v, i) => {
             v.point = points[i];
-            v.setStyle('fill', color);
+            v.setStyle('fill', points[i].color);
         });
     }
 

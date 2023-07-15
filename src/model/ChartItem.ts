@@ -10,7 +10,7 @@ import { isArray, isBoolean, isObject } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { SvgRichText, RichTextParamCallback } from "../common/RichText";
-import { NUMBER_FORMAT, NUMBER_SYMBOLS } from "../common/Types";
+import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
 import { IChart } from "./Chart";
@@ -49,6 +49,8 @@ export class ChartItem extends RcObject {
             this.chart?._visibleChanged(this);
         }
     }
+
+    style: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // methods

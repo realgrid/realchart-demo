@@ -213,6 +213,12 @@ export interface IAxisTick {
     label: string;
 }
 
+export enum AxisPosition {
+    NORMAL = 'normal',
+    OPPOSITE = 'opposite',
+    INSIDE = 'insider'
+}
+
 /**
  * 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.
  */

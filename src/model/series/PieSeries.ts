@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isArray } from "../../common/Common";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { DataPoint } from "../DataPoint";
 import { ILegendSource } from "../Legend";
@@ -22,6 +23,7 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
     sliced = false;
     startAngle = 0;
     angle = 0;
+    borderRaidus: number;
 
     //-------------------------------------------------------------------------
     // properties
@@ -66,7 +68,6 @@ export class PieSeries extends RadialSeries {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    singleColor = false;
     innerSize: RtPercentSize = 0;
     sliceOffset: RtPercentSize = '7%';
     labelDistance = 25;
@@ -81,6 +82,7 @@ export class PieSeries extends RadialSeries {
      * @default 300ms.
      */
     sliceDuration = 300;
+    borderRadius = 0;
 
     //-------------------------------------------------------------------------
     // methods
@@ -97,6 +99,10 @@ export class PieSeries extends RadialSeries {
     // overriden members
     //-------------------------------------------------------------------------
     isPolar(): boolean {
+        return true;
+    }
+
+    protected _colorByPoint(): boolean {
         return true;
     }
 
@@ -120,12 +126,21 @@ export class PieSeries extends RadialSeries {
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
-        const colors = this.chart.colors;
+        // let color: string;
+        // let colors: string[];
 
-        this._visPoints.forEach((p, i) => {
-            if (!p.color) {
-                p.color = colors[i % colors.length];
-            }
-        })
+        // if (this.pointColors === false) {
+        //     color = this.color;
+        // } else if (isArray(this.pointColors)) {
+        //     colors = this.pointColors;
+        // } else {
+        //     colors = this.chart.colors;
+        // }
+
+        // this._visPoints.forEach((p, i) => {
+        //     if (!p.color) {
+        //         p.color = color || colors[i % colors.length];
+        //     }
+        // })
     }
 }

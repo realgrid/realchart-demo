@@ -1,6 +1,9 @@
 const config = {
     title: "Basic Real-Chart",
     xAxis: {
+        // position: 'apposite'
+        // position: 'base',
+        // baseAxis: 1
     },
     yAxis: {
     },

@@ -47,6 +47,10 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    ariaHint(): string {
+        return this.x + ', ' + this.yValue;
+    }
+
     labelCount(): number {
         return 1;
     }
