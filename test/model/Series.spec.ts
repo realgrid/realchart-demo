@@ -40,7 +40,7 @@ import { Tester } from '../Tester';
         const chart = new Chart(json);
         const series = chart.series as Series;
 
-        series.prepareRender();
+        chart.prepareRender();
         
         const xAxis = series['_xAxisObj'];
         const yAxis = series['_yAxisObj'];
@@ -55,7 +55,7 @@ import { Tester } from '../Tester';
         const series = chart.series as Series;
         const points = series.getPoints();
 
-        series.prepareRender();
+        chart.prepareRender();
 
         expect(json.series.data.length).gte(5);
         expect(points.count).eq(json.series.data.length);
