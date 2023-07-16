@@ -316,7 +316,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     constructor(doc: Document, styleName: string) {
         super(doc, 'rct-series ' + styleName);
 
-        this.add(this._pointContainer = new RcElement(doc));
+        this.add(this._pointContainer = new RcElement(doc, null, 'rct-series-points'));
         this.add(this._labelContainer = new PointLabelContainer(doc));
     }
 

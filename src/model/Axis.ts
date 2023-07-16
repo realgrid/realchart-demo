@@ -214,8 +214,24 @@ export interface IAxisTick {
 }
 
 export enum AxisPosition {
+    /**
+     * X축은 아래쪽에 수평으로, Y축은 왼쪽에 수직으로 표시된다.
+     * <br>
+     * {@link Chart.inverted}이면 Y축이 아래쪽에 수평으로, X축은 왼쪽에 수직으로 표시된다.
+     */
     NORMAL = 'normal',
+    /**
+     * X축은 위쪽에 수평으로, Y축은 오른쪽에 수직으로 표시된다.
+     * <br>
+     * {@link Chart.inverted}이면 Y축이 위쪽에 수평으로, X축은 오른쪽에 수직으로 표시된다.
+     */
     OPPOSITE = 'opposite',
+    /**
+     * 상대 축의 baseValue 지점에 표시된다.
+     * <br>
+     * 상대 축이 **linear** 가 아니거나 {@link LinearAxis.baseValue}가 min 보다 작거나 max보다 크면 이 값은 무시되고,
+     * {@link NORMAL}로 적용된다.
+     */
     INSIDE = 'insider'
 }
 
@@ -267,25 +283,55 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     reversed = false;
     /**
-     * 축 최소값 위치에서 축 바깥 방향으로 추가되는 여백 크기.
+     * 축 최소값 쪽에서 축 안쪽으로 설정되는 여백 크기.
+     * <br>
+     * 이 값을 설정하지 않으면 {@link padding}에 지정한 값으로 설정된다.
      */
-    minPadding = 0;
+    minPadding: number;
     /**
-     * 축 최대값 위치에서 축 바깥 방향으로 추가되는 여백 크기.
+     * 축 최대값 쪽에서 축 안쪽으로 설정되는 여백 크기.
+     * <br>
+     * 이 값을 설정하지 않으면 {@link padding}에 지정한 값으로 설정된다.
      */
-    maxPadding = 0;
+    maxPadding: number;
     /**
-     * 축 시작 위치에 tick이 표시되지 않게 계산될 때,
+     * 축 양쪽 끝에서 축 안쪽으로 설정되는 여백 크기.
+     * <br>
+     * {@link minPadding}, {@link maxPadding}으로 양 끝을 별도 설정할 수 있다.
+     */
+    padding = 0;
+    /**
+     * Plot 영역이나 앞쪽 축 사이의 여백 크기.
+     */
+    marginNear = 0;
+    /**
+     * 차트 경계나 뒤쪽 축 사이의 여백 크기.
+     */
+    marginFar = 0;
+    /**
+     * 축 시작 위치에 tick 표시 여부.
+     * <br>
+     * undefined나 null등으로 값을 지정하지 않으면 tick 설정에 따라 표시 여부가 자동 지정된다.
+     * <br>
+     * true로 지정하면 축 시작 위치에 tick이 표시되지 않게 계산될 때,
      * (ex, 첫번째 tick 이전에 data point가 표시될 수 있다.)
-     * tick이 표시되도록 조정한다.
+     * 시작 위치에 tick이 표시되도록 조정한다.
+     * <br>
+     * false로 지정하면 축 시작 위치에 tick이 생성된 경우에도 표시하지 않는다.
      */
-    tickStart = false;
+    tickStart: boolean;
     /**
-     * 축 끝 위치에 tick이 표시되지 않게 계산될 때,
-     * (ex, 마자믹 tick 이후에 data point가 표시될 수 있다.)
-     * tick이 표시되도록 조정한다.
+     * 축 끝 위치에 tick 표시 여부.
+     * <br>
+     * undefined나 null등으로 값을 지정하지 않으면 tick 설정에 따라 표시 여부가 자동 지정된다.
+     * <br>
+     * true로 지정하면 축 끝 위치에 tick이 표시되지 않게 계산될 때,
+     * (ex, 마지막 tick 이후에 data point가 표시될 수 있다.)
+     * 끝 위치에 tick이 표시되도록 조정한다.
+     * <br>
+     * false로 지정하면 축 끝 위치에 tick이 생성된 경우에도 표시하지 않는다.
      */
-    tickEnd = false;
+    tickEnd: boolean;
     valueUnit = 1;
     baseValue: number;
 

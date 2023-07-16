@@ -535,7 +535,7 @@ export class RcElement extends RcObject {
     constructor(doc: Document, tag = 'g', className = '') {
         super();
 
-        this._dom = doc.createElementNS(SVGNS, tag);
+        this._dom = doc.createElementNS(SVGNS, tag || 'g');
         (this._className = className || '') && this.setAttr('class', className);
     }
 

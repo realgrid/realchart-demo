@@ -161,3 +161,8 @@
     stroke: gray;
     stroke-dasharray: 2;
 }
+
+/** pie series */
+.rct-pie-series .rct-series-points {
+    stroke: white;
+}

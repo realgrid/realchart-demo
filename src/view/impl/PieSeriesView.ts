@@ -12,6 +12,7 @@ import { ORG_ANGLE, deg2rad } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
+import { SeriesGroup, SeriesGroupLayout } from "../../model/SeriesGroup";
 import { PieSeries, PieSeriesPoint } from "../../model/series/PieSeries";
 import { PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView } from "../SeriesView";
 
@@ -169,23 +170,46 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
-        const sz = this.model.getSize(width, height);
-
-        this._rd = Math.floor(sz / 2);
-        this._rdInner = 0;//this.model.getInnerSize(this._rd);
         this._cx = Math.floor(width / 2);
         this._cy = Math.floor(height / 2);
+
+        if (!isNaN(this.model._groupPos)) {
+            this.$_calcGroup(width, height);
+        } else {
+            this.$_calcNormal(width, height);
+        }
 
         if (this._circle.visible = this._sectors.isEmpty) {
             this._circle.setCircle(this._cx, this._cy, this._rd);
         }
 
-        this.$_layoutSectors(this._cx, this._cy, this._rd);
+        this.$_layoutSectors(this._cx, this._cy, this._rd, this._rdInner);
+    }
+
+    private $_calcNormal(width: number, height: number): void {
+        const sz = this.model.getSize(width, height);
+
+        this._rd = Math.floor(sz / 2);
+        this._rdInner = this.model.getInnerRadius(this._rd);
+    }
+
+    private $_calcGroup(width: number, height: number): void {
+        const m = this.model;
+        const sz = Math.floor(m._group.getPolarSize(width, height) / 2);
+        const szInner = m._group.getInnerRadius(sz) * sz;
+        const len = sz - szInner;
+
+        this._rd = szInner + (m._groupPos + m._groupSize) * len;
+        this._rdInner = (szInner + m._groupPos * len) / this._rd;
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    private $_checkGroup(): SeriesGroup {
+        return;
+    }
+
     private $_prepareSectors(points: PieSeriesPoint[]): void {
         const count = points.length;
         const sum = points.map(p => p.yValue).reduce((a, c) => a + c, 0);
@@ -209,11 +233,11 @@ export class PieSeriesView extends SeriesView<PieSeries> {
 
             sector.setAttr('aria-label', p.ariaHint());
             sector.setStyle('fill', p.color);
-            sector.setStyle('stroke', 'white');
+            // sector.setStyle('stroke', 'white'); <= css에서
         })
     }
 
-    private $_layoutSectors(cx: number, cy: number, rd: number): void {
+    private $_layoutSectors(cx: number, cy: number, rd: number, rdInner: number): void {
         const series = this.model;
         const labels = series.pointLabel;
         const labelVis = labels.visible;
@@ -240,12 +264,11 @@ export class PieSeriesView extends SeriesView<PieSeries> {
                 cy: cy + dy,
                 rx: rd,
                 ry: rd,
-                innerRadius: this._rdInner,
+                innerRadius: rdInner,
                 start: start,
                 angle: p.angle,
                 clockwise: true
             }, false);
-            // sector.translate(dx, dy);
 
             // label
             if (labelVis && (labelView = labelViews.get(p, 0))) {

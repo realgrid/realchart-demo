@@ -6,9 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject } from "../common/Common";
+import { isArray, isObject, pickNum } from "../common/Common";
 import { RcObject } from "../common/RcObject";
-import { RtPercentSize } from "../common/Types";
+import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../common/Types";
 import { Shape } from "../common/impl/SvgShape";
 import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
@@ -16,6 +16,7 @@ import { ChartItem } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
 import { Series } from "./Series";
 import { BoxSeries } from "./series/BarSeries";
+import { PieSeries } from "./series/PieSeries";
 
 export enum SeriesGroupLayout {
 
@@ -24,6 +25,7 @@ export enum SeriesGroupLayout {
      * <br>
      * bar 종류의 시리즈인 경우 포인트들을 순서대로 옆으로 배치하고,
      * line 종류인 경우 {@link OVERLAP}과 동일하게 순서대로 표시된다.
+     * pie 종류인 경우 {@link FILL}과 동일하다.
      * <br>
      * 기본 값이다.
      */
@@ -41,23 +43,15 @@ export enum SeriesGroupLayout {
     STACK = 'stack',
     /**
      * 포인트 그룹 내에서 각 포인트의 비율을 표시한다.
+     * <br>
      * 그룹 합은 SeriesGroup.max로 지정한다.
      * 각 포인트들은 STACK과 마찬가지로 순서대로 쌓여서 표시된다.
      * SeriesGroup.baseValue 보다 값이 큰 point는 baseValue 위쪽에 작은 값을 가진
      * 포인트들은 baseValue 아래쪽에 표시된다.
+     * <br>
+     * Pie 시리즈에서는 {@link FILL}과 동일하다.
      */
     FILL = 'fill',
-    /**
-     * FILL과 동일히다.
-     * 다만 baseValue보다 작은 point들도 baseValue 위쪽에 표시한다.
-     */
-    //FILL_POSITIVE = 'fillPositive',
-    /**
-     * FILL과 동일히다.
-     * 다만 baseValue를 기준으로 양쪽에 속한 포인트들의 합이 SeriesGroup.max가 
-     * 되도록 표시한다.
-     */
-    //FILL_BOTH = 'fillBoth'
 }
 
 export interface ISeriesGroup {
@@ -67,6 +61,8 @@ export interface ISeriesGroup {
     _groupPos: number;
     groupPadding: number;
 
+    getPolarSize(width: number, height: number): number;
+    getInnerRadius(rd: number): number
     collectValues(axis: IAxis): number[];
 }
 
@@ -78,8 +74,16 @@ export class SeriesGroup extends RcObject {
     private _layout = SeriesGroupLayout.DEFAULT;
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _polarDim: IPercentSize;
+    private _innerDim: IPercentSize;
+
+    //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    visible = true;
+
     /**
      * 그룹 이름.
      * <br>
@@ -124,6 +128,26 @@ export class SeriesGroup extends RcObject {
      */
     layoutMax = 100;
 
+    /**
+     * polar 그룹일 때 원형 플롯 영역의 크기.
+     * <br>
+     * 픽셀 크기나 차지할 수 있는 전체 크기에 대한 상대적 크기로 지정할 수 있다.
+     * <br>
+     * Pie 시리즈들의 그룹이고, 
+     * {@link layout}이 {@link SeriesGroupLayout.FILL}이나 {@link SeriesGroupLayout.STACK}인 경우
+     * 개별 시리즈의 size 대신 이 속성값으로 표시되고,
+     * 각 시리즈의 size는 상대 크기로 적용된다.
+     */
+    polarSize: RtPercentSize = '80%';
+    /**
+     * Pie 시리즈들의 그룹이고, 
+     * {@link layout}이 {@link SeriesGroupLayout.FILL}이나 {@link SeriesGroupLayout.STACK}인 경우,
+     * 경우 0보다 큰 값을 지정해서 도넛 형태로 표시할 수 있다.
+     * <br>
+     * 포함된 pie 시리즈들의 innerSize는 무시된다.
+     */
+    innerSize: RtPercentSize = 0;
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -143,28 +167,58 @@ export class SeriesGroup extends RcObject {
                 this[p] = src[p];
             // }
         }
+
+        this._polarDim = parsePercentSize(this.polarSize, true) || { size: 80, fixed: false };
+        this._innerDim = parsePercentSize(this.innerSize, true);
+    }
+
+    getPolarSize(width: number, height: number): number {
+        return calcPercent(this._polarDim, Math.min(width, height));
+    }
+
+    getInnerRadius(rd: number): number {
+        // 반지름에 대한 비율로 전달해야 한다.
+        const dim = this._innerDim;
+        return dim ? dim.size / (dim.fixed ? rd : 100) : 0;
     }
 
     prepareRender(): void {
-        this.$_validate();
+        let series = this._series.filter(ser => ser.visible).sort((s1, s2) => (s1.zOrder || 0) - (s2.zOrder || 0));
 
-        if (this._layout === SeriesGroupLayout.DEFAULT) {
-            const series = this._series.filter(ser => ser instanceof BoxSeries) as BoxSeries[];
-            const cnt = series.length;
+        if (series.length > 0) {
+            this.$_validate();
 
-            if (cnt > 1) {
-                const sum = series.map(ser => ser.pointWidth).reduce((a, c) => a + c);
-                let x = 0;
-                
-                series.forEach(ser => {
-                    ser._groupWidth = ser.pointWidth / sum;
-                    ser._groupPos = x;
-                    x += ser._groupWidth;
-                });
-            } else if (cnt === 1) {
-                series[0]._groupWidth = 1;
+            if (series[0] instanceof PieSeries) {
+                if (this._layout === SeriesGroupLayout.STACK || this._layout === SeriesGroupLayout.FILL) {
+                    const sum = series.map(ser => (ser as PieSeries).groupSize).reduce((a, c) => a + pickNum(c, 1), 0);
+                    let p = 0;
+                    
+                    series.forEach((ser: PieSeries) => {
+                        ser._groupPos = p;
+                        p += ser._groupSize = pickNum(ser.groupSize, 1) / sum;
+                    });
+                }
+            } else {
+                if (this._layout === SeriesGroupLayout.DEFAULT) {
+                    const series2 = series.filter(ser => ser instanceof BoxSeries) as BoxSeries[];
+                    
+                    const cnt = series2.length;
+    
+                    if (cnt > 1) {
+                        const sum = series2.map(ser => ser.pointWidth).reduce((a, c) => a + c);
+                        let x = 0;
+                        
+                        series2.forEach(ser => {
+                            ser._groupWidth = ser.pointWidth / sum;
+                            ser._groupPos = x;
+                            x += ser._groupWidth;
+                        });
+                    } else if (cnt === 1) {
+                        series2[0]._groupWidth = 1;
+                    }
+                } else if (this._layout === SeriesGroupLayout.STACK) {
+                }
             }
-        } else if (this._layout === SeriesGroupLayout.STACK) {
         }
     }
 
@@ -188,13 +242,20 @@ export class SeriesGroup extends RcObject {
     }
 
     //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
     private $_validate(): void {
         const series = this._series;
+        const polar = series[0].isPolar();
 
         // 모든 시리즈가 같은 축을 공유해야 한다.
         for (let i = 1; i < series.length; i++) {
+            if (series[i].isPolar() != polar) {
+                throw new Error('같은 그룹에 포함될 수 없는 시리지들입니다.');
+            }
             if (series[i]._xAxisObj !== series[i - 1]._xAxisObj || series[i]._yAxisObj !== series[i - 1]._yAxisObj) {
                 throw new Error('같은 그룹 내의 시리즈들은 동일한 축들에 연결돼야 한다.');
             }

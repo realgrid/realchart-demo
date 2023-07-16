@@ -167,6 +167,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     // properties
     //-------------------------------------------------------------------------
     group: string;
+    zOrder = 0;
     xAxis: string | number;
     yAxis: string | number;
     /**
@@ -554,6 +555,11 @@ export class RadialSeries extends Series {
     startAngle = 0;
     centerX = 0;
     centerY = 0;
+    /**
+     * 원형 플롯 영역의 크기.
+     * <br>
+     * 픽셀 크기나 차지할 수 있는 전체 크기에 대한 상대적 크기로 지정할 수 있다.
+     */
     size: RtPercentSize;
 
     //-------------------------------------------------------------------------

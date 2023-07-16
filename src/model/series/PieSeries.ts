@@ -64,10 +64,16 @@ export class PieSeries extends RadialSeries {
     //-------------------------------------------------------------------------
     private _innerDim: IPercentSize;
     private _sliceDim: IPercentSize;
+    _groupPos: number;
+    _groupSize: number;
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    groupSize = 1;
+    /**
+     * 0보다 큰 값을 지정해서 도넛 형태로 표시할 수 있다.
+     */
     innerSize: RtPercentSize = 0;
     sliceOffset: RtPercentSize = '7%';
     labelDistance = 25;
@@ -87,8 +93,10 @@ export class PieSeries extends RadialSeries {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getInnerSize(rd: number): number {
-        return this._innerDim ? calcPercent(this._innerDim, rd) : 0;
+    getInnerRadius(rd: number): number {
+        // 반지름에 대한 비율로 전달해야 한다.
+        const dim = this._innerDim;
+        return dim ? dim.size / (dim.fixed ? rd : 100) : 0;
     }
 
     getSliceOffset(rd: number): number {
@@ -126,21 +134,7 @@ export class PieSeries extends RadialSeries {
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
-        // let color: string;
-        // let colors: string[];
-
-        // if (this.pointColors === false) {
-        //     color = this.color;
-        // } else if (isArray(this.pointColors)) {
-        //     colors = this.pointColors;
-        // } else {
-        //     colors = this.chart.colors;
-        // }
-
-        // this._visPoints.forEach((p, i) => {
-        //     if (!p.color) {
-        //         p.color = color || colors[i % colors.length];
-        //     }
-        // })
+        // group에서 필요하면 설정한다. 이 값의 여부로 pieseriesview에서 stacking 상태인 지 확인한다.
+        this._groupPos = NaN; 
     }
 }

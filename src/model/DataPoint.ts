@@ -47,6 +47,14 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    get yAbs(): number {
+        return Math.abs(this.yValue);
+    }
+
+    get xAbs(): number {
+        return Math.abs(this.xValue);
+    }
+
     ariaHint(): string {
         return this.x + ', ' + this.yValue;
     }
@@ -74,6 +82,8 @@ export class DataPoint {
             this._readSingle(v);
         }
         this.yValue = +this.y;
+
+        this.color = v.color;
     }
 
     getYLabel(index: number): any {
