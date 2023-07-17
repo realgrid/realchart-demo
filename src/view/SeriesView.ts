@@ -156,7 +156,7 @@ export class PointLabelContainer extends GroupElement {
     public prepareLabel(view: PointLabelView, index: number, p: DataPoint, model: DataPointLabel): void {
         if (view.visible = p.visible) {
         // if (label.visible = !p.isNull && p.visible) {
-            const richFormat = model.format;
+            const richFormat = model.text;
             // const styles = model.styles;
 
             view.point = p;

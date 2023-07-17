@@ -111,7 +111,7 @@ export class FormattableText extends ChartItem {
     //-------------------------------------------------------------------------
     private _numberSymbols: string;
     private _numberFormat: string;
-    private _format: string;
+    private _text: string;
 
     //-------------------------------------------------------------------------
     // fields
@@ -184,12 +184,12 @@ export class FormattableText extends ChartItem {
     /**
      * rich text format
      */
-    get format(): string {
-        return this._format;
+    get text(): string {
+        return this._text;
     }
-    set format(value: string) {
-        if (value !== this._format) {
-            this._format = value;
+    set text(value: string) {
+        if (value !== this._text) {
+            this._text = value;
             if (value) {
                 if (!this._richText) this._richText = new SvgRichText()
                 this._richText.format = value;

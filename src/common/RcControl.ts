@@ -532,11 +532,11 @@ export class RcElement extends RcObject {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, tag = 'g', className = '') {
+    constructor(doc: Document, tag?: string, className?: string) {
         super();
 
         this._dom = doc.createElementNS(SVGNS, tag || 'g');
-        (this._className = className || '') && this.setAttr('class', className);
+        (this._className = className) && this.setAttr('class', className);
     }
 
     protected _doDestory(): void {
@@ -995,6 +995,16 @@ export class RcElement extends RcObject {
         if (tf.length) {
             this._dom.setAttribute('transform', tf.join(' '));
         }
+    }
+}
+
+export class LayerElement extends RcElement {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, styleName?: string) {
+        super(doc, 'g', styleName);
     }
 }
 

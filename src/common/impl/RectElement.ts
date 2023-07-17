@@ -45,7 +45,7 @@ export class RectElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, rect: IRectShape = null, styleName = '') {
+    constructor(doc: Document, rect: IRectShape = null, styleName?: string) {
         super(doc, 'rect', styleName);
 
         this.rect = rect;

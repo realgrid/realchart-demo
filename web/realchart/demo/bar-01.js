@@ -3,6 +3,13 @@ const config = {
     xAxis: {
     },
     yAxis: {
+        guides: [{
+            type: 'line',
+            value: 5.5,
+            style: {
+                stroke: 'red'
+            }
+        }]
     },
     series: {
         type: 'bar',

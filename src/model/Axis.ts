@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isObject, isString } from "../common/Common";
+import { Align, VerticalAlign } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { ISeries } from "./Series";
@@ -109,6 +110,84 @@ export class AxisGrid extends AxisItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+}
+
+export class AxisGuideLabel extends FormattableText {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart, true);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 수평 정렬.
+     */
+    align = Align.LEFT;
+
+    /**
+     * 수직 정렬.
+     */
+    verticalAlign = VerticalAlign.TOP;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+}
+
+export enum AxisGuideType {
+    LINE = 'line',
+    RANGE = 'range'
+}
+
+export abstract class AxisGuide extends AxisItem {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    readonly label: AxisGuideLabel;
+
+    /**
+     * true면 시리즈들보다 위에 표시된다.
+     */
+    front = true;
+    /**
+     * 모든 guide들 중에서 값이 클수록 나중에 그려진다.
+     */
+    zindex = 0;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(axis: Axis) {
+        super(axis);
+
+        this.label = new AxisGuideLabel(axis.chart);
+    }
+}
+
+export class AxisGuideLine extends AxisGuide {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    value: number;
+}
+
+export class AxisGuideRange extends AxisGuide {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    startValue: number;
+    endValue: number;
 }
 
 export class AxisTickLabel extends FormattableText {
@@ -248,6 +327,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     readonly line = new AxisLine(this);
     readonly tick: AxisTick;
     readonly grid = new AxisGrid(this);
+    readonly guides: AxisGuide[] = [];
 
     _isX: boolean;
     _isHorz: boolean;
@@ -375,9 +455,35 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doLoad(source: any): void {
+        super._doLoad(source);
+
+        this.$_loadGuids();
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    private $_loadGuids(): void {
+        // 소스 정보가 this.guides에 로드된 상태이다.
+        const guides = this.guides;
+
+        if (guides.length > 0) {
+            for (let i = 0; i < guides.length; i++) {
+                const g: any = guides[i]
+                let guide: AxisGuide;
+
+                if (g.type === 'range') {
+                    guide = new AxisGuideRange(this);
+                } else {
+                    guide = new AxisGuideLine(this);
+                }
+                guide.load(g);
+                guides[i] = guide;
+            }
+        }
+    }
+
     _connect(series: ISeries): void {
         if (series && !this._series.includes(series)) {
             this._series.push(series);

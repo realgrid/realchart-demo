@@ -7,12 +7,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../common/ElementPool";
-import { RcElement } from "../common/RcControl";
+import { LayerElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
+import { Align, VerticalAlign } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
+import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { Chart } from "../main";
-import { Axis, AxisGrid } from "../model/Axis";
+import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange } from "../model/Axis";
 import { Body } from "../model/Body";
 import { Series } from "../model/Series";
 import { BarSeries, ColumnSeries } from "../model/series/BarSeries";
@@ -93,6 +95,233 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     //-------------------------------------------------------------------------
 }
 
+export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    model: T;
+    protected _label: TextElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc);
+
+        this.add(this._label = new TextElement(doc));
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    vertical(): boolean {
+        return !this.model.axis._isHorz;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    prepare(model: T): void {
+        this.model = model;
+        this._label.text = model.label.text;
+        this._label.setStyles(model.label.style);
+    }
+
+    abstract layout(width: number, height: number): void;
+}
+
+export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _line: LineElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc);
+
+        this.insertFirst(this._line = new LineElement(doc, null, 'rct-axis-guide-line'));
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    prepare(model: AxisGuideLine): void {
+        super.prepare(model);
+
+        this._line.setStyles(model.style);
+    }
+
+    layout(width: number, height: number): void {
+        const label = this.model.label;
+        const labelView = this._label;
+        let x: number;
+        let y: number;
+        let anchor: TextAnchor;
+        let layout: TextLayout;
+
+        if (this.vertical) {
+            this._line.setVLineC(0, 0, height);
+
+            switch (label.align) {
+                case Align.CENTER:
+                    x = 0;
+                    anchor = TextAnchor.MIDDLE;
+                    break;
+
+                case Align.RIGHT:
+                    x = 0;
+                    anchor = TextAnchor.START;
+                    break;
+
+                default:
+                    x = 0;
+                    anchor = TextAnchor.END;
+                    break;
+            }
+
+            switch (label.verticalAlign) {
+                case VerticalAlign.BOTTOM:
+                    y = height;
+                    layout = TextLayout.BOTTOM;
+                    break;
+
+                case VerticalAlign.MIDDLE:
+                    y = height / 2;
+                    layout = TextLayout.MIDDLE;
+                    break;
+
+                default:
+                    y = 0;
+                    layout = TextLayout.TOP;
+                    break;
+            }
+        } else {
+            this._line.setHLineC(0, 0, width);
+
+            switch (label.align) {
+                case Align.CENTER:
+                    x = width / 2;
+                    anchor = TextAnchor.MIDDLE;
+                    break;
+
+                case Align.RIGHT:
+                    x = width;
+                    anchor = TextAnchor.END;
+                    break;
+
+                default:
+                    x = 0;
+                    anchor = TextAnchor.START;
+                    break;
+            }
+
+            switch (label.verticalAlign) {
+                case VerticalAlign.BOTTOM:
+                    y = 1;
+                    layout = TextLayout.TOP;
+                    break;
+
+                case VerticalAlign.MIDDLE:
+                    y = 0;
+                    layout = TextLayout.MIDDLE;
+                    break;
+
+                default:
+                    // y = -3; 
+                    // layout = TextLayout.BOTTOM;
+                    y = -labelView.getBBounds().height;
+                    layout = TextLayout.TOP;
+                    break;
+            }
+        }
+        labelView.anchor = anchor;
+        labelView.layout = layout;
+        labelView.translate(x, y);
+    }
+}
+
+export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _rect: RectElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc);
+
+        this.insertFirst(this._rect = new RectElement(doc, null, 'rct-axis-guide-range'));
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    prepare(model: AxisGuideRange): void {
+        super.prepare(model);
+    }
+
+    layout(width: number, height: number): void {
+        const label = this._label;
+
+        if (this.vertical) {
+        } else {
+            const m = this.model.label;
+            let x: number;
+            let y: number;
+            let anchor: TextAnchor;
+            let layout: TextLayout;
+
+            switch (m.align) {
+                case Align.CENTER:
+                    x = width / 2;
+                    anchor = TextAnchor.MIDDLE;
+                    break;
+
+                case Align.RIGHT:
+                    x = width;
+                    anchor = TextAnchor.END;
+                    break;
+
+                default:
+                    x = 0;
+                    anchor = TextAnchor.START;
+                    break;
+            }
+
+            switch (m.verticalAlign) {
+                case VerticalAlign.BOTTOM:
+                    y = height - label.getBBounds().height;
+                    layout = TextLayout.TOP;
+                    break;
+
+                case VerticalAlign.MIDDLE:
+                    y = height / 2;
+                    layout = TextLayout.MIDDLE;
+                    break;
+
+                default:
+                    y = 0;
+                    layout = TextLayout.TOP;
+                    break;
+            }
+
+            label.anchor = anchor;
+            label.layout = layout;
+            label.translate(x, y);
+
+            this._rect.setBounds(0, 0, width, height);
+        }
+    }
+}
+
 export class BodyView extends ChartElement<Body> {
 
     //-------------------------------------------------------------------------
@@ -106,6 +335,14 @@ export class BodyView extends ChartElement<Body> {
     private _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
     private _series: Series[];
+    // guide
+    private _guideMap: any = {};
+    private _guideContainer: RcElement;
+    private _guideLines = new ElementPool(this, AxisGuideLineView);
+    private _guideRanges = new ElementPool(this, AxisGuideRangeView);
+    private _frontGuideContainer: RcElement;
+    private _frontGuideLines = new ElementPool(this, AxisGuideLineView);
+    private _frontGuideRanges = new ElementPool(this, AxisGuideRangeView);
 
     //-------------------------------------------------------------------------
     // constructor
@@ -114,8 +351,10 @@ export class BodyView extends ChartElement<Body> {
         super(doc, 'rct-body');
 
         this.add(this._background = new RectElement(doc));
-        this.add(this._gridContainer = new RcElement(doc));
-        this.add(this._seriesContainer = new RcElement(doc));
+        this.add(this._gridContainer = new LayerElement(doc, 'rct-grids'));
+        this.add(this._guideContainer = new LayerElement(doc, 'rct-guides'));
+        this.add(this._seriesContainer = new LayerElement(doc, 'rct-series-container'));
+        this.add(this._frontGuideContainer = new LayerElement(doc, 'rct-front-guides'));
     }
 
     //-------------------------------------------------------------------------
