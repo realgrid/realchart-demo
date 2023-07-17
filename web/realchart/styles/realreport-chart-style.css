@@ -115,6 +115,9 @@
 }
 .rct-point-label {
 }
+.rct-point-label-lines {
+    stroke: black;
+}
 
 /** bar series */
 .rct-series-bar {

@@ -268,7 +268,7 @@ export class PointLabelLineContainer extends GroupElement {
     // constructors
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-point-label-line');
+        super(doc, 'rct-point-label-lines');
     }
 
 	//-------------------------------------------------------------------------
@@ -277,29 +277,29 @@ export class PointLabelLineContainer extends GroupElement {
 	//-------------------------------------------------------------------------
     // metehods
     //-------------------------------------------------------------------------
-    // prepare(model: PieSeriesViewModel): void {
-    //     const lines = this._lines;
-    //     const points = model.getViewPoints();
-    //     const pointLabel = model.series.pointLabel;
+    prepare(model: Series): void {
+        const lines = this._lines;
+        const points = model.getPoints();
+        const pointLabel = model.pointLabel;
 
-    //     if (pointLabel.visible) {
-    //         const map = this._map = {};
+        if (pointLabel.visible) {
+            const map = this._map = {};
 
-    //         lines.prepare(points.length).forEach((line, i) => {
-    //             const p = points[i];
+            lines.prepare(points.count).forEach((line, i) => {
+                const p = points.get(i);
 
-    //             if (line.visible = p.visible) {
-    //             }
-    //             map[p.id] = line;
-    //         })
-    //     } else {
-    //         lines.prepare(0);
-    //     }
-    // }
+                if (line.visible = p.visible) {
+                }
+                map[p.id] = line;
+            })
+        } else {
+            lines.prepare(0);
+        }
+    }
 
-    // get(point: DataPoint): PointLabelLine {
-    //     return this._map[point.id];
-    // }
+    get(point: DataPoint): PointLabelLine {
+        return this._map[point.id];
+    }
 }
 
 export abstract class SeriesView<T extends Series> extends ChartElement<T> {

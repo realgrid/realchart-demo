@@ -12,6 +12,7 @@ import { ORG_ANGLE, deg2rad } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
+import { PointItemPosition } from "../../model/Series";
 import { SeriesGroup, SeriesGroupLayout } from "../../model/SeriesGroup";
 import { PieSeries, PieSeriesPoint } from "../../model/series/PieSeries";
 import { PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView } from "../SeriesView";
@@ -167,6 +168,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: PieSeries): void {
         this.$_prepareSectors(model._visPoints as PieSeriesPoint[]);
+        this._lineContainer.prepare(model);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -206,10 +208,6 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_checkGroup(): SeriesGroup {
-        return;
-    }
-
     private $_prepareSectors(points: PieSeriesPoint[]): void {
         const count = points.length;
         const sum = points.map(p => p.yValue).reduce((a, c) => a + c, 0);
@@ -241,8 +239,10 @@ export class PieSeriesView extends SeriesView<PieSeries> {
         const series = this.model;
         const labels = series.pointLabel;
         const labelVis = labels.visible;
+        const labelInside = series.pointLabel.position === PointItemPosition.INSIDE;
         const labelOff = labels.offset;
         const labelViews = this._labelContainer;
+        const lineViews = this._lineContainer;
         const sliceOff = this._slicedOff = series.getSliceOffset(rd);
         const pb = new PathBuilder();
         let labelView: PointLabelView;
@@ -272,12 +272,17 @@ export class PieSeriesView extends SeriesView<PieSeries> {
 
             // label
             if (labelVis && (labelView = labelViews.get(p, 0))) {
-                // this.$_layoutLabel(p, labelView, line, off, dist, slicedOff, pb);
-                this.$_layoutLabel(p, labelView, null, 0, 0, p.sliced ? sliceOff : 0, pb);
+                const line = lineViews.get(p);
 
-                // line.visible = false;
-                // this.$_layoutLabelInner(p, label, off, dist, slicedOff);
-                this.$_layoutLabelInner(p, labelView, 0, 0, p.sliced ? sliceOff : 0);
+                if (labelInside) {
+                    line.visible = false;
+                    // this.$_layoutLabelInner(p, label, off, dist, slicedOff);
+                    this.$_layoutLabelInner(p, labelView, 0, 0, p.sliced ? sliceOff : 0);
+                } else {
+                    line.visible = true;
+                    // this.$_layoutLabel(p, labelView, line, off, dist, slicedOff, pb);
+                    this.$_layoutLabel(p, labelView, line, 0, 0, p.sliced ? sliceOff : 0, pb);
+                }
             }
         })
     }

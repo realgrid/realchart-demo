@@ -35,7 +35,7 @@ const config = {
             // 17,
             // 13
         ],
-}
+    }
 }
 
 export function init() {
