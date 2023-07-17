@@ -29,7 +29,10 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     constructor(doc: Document, styleName = '') {
         super(doc, 'g', styleName);
 
-        RcElement.DEBUGGING && this.add(this._debugRect = new RectElement(doc));
+        if (RcElement.DEBUGGING) {
+            this.add(this._debugRect = new RectElement(doc));
+            this._debugRect.setAttr('pointerEvents', 'none');
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -39,6 +42,8 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     // methods
     //-------------------------------------------------------------------------
     measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this.setStyleOrClass(model.style);
+
         const sz = this._doMeasure(doc, this.model = model, hintWidth, hintHeight, phase);
 
         this.mw = sz.width;
@@ -96,6 +101,8 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     }
 
     measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this.setStyleOrClass(model.style);
+
         const cs = getComputedStyle(this.dom);
         const padding = this._paddings;
         const margin = this._margins;

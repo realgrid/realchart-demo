@@ -817,10 +817,11 @@ export class RcElement extends RcObject {
     }
 
     clearStyle(props: string[]): boolean {
-        const css = (this.dom as SVGElement | HTMLElement).style;
         let changed = false;
 
         if (props) {
+            const css = (this.dom as SVGElement | HTMLElement).style;
+
             for (let p of props) {
                 if (p in this._styles) {
                     css.removeProperty(p);
@@ -834,10 +835,11 @@ export class RcElement extends RcObject {
     }
 
     setStyles(styles: any): boolean {
-        const css = (this.dom as SVGElement | HTMLElement).style;
         let changed = false;
 
         if (styles) {
+            const css = (this.dom as SVGElement | HTMLElement).style;
+
             for (let p in styles) {
                 if (!(p in BACK_STYLES) && this._styles[p] !== styles[p]) {
                     css[p] = this._styles[p] = styles[p];

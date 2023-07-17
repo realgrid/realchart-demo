@@ -38,7 +38,7 @@ export enum LegendPosition {
     TOP = 'top',
     RIGHT = 'right',
     LEFT = 'left',
-    PLOT = 'plot'
+    INSIDE = 'inside'
 }
 
 export enum LegendAlignBase {
@@ -96,23 +96,11 @@ export class Legend extends ChartItem {
     /**
      * 수직 정렬
      */
-    verticalAlign = VerticalAlign.MIDDLE;
-    /**
-     * align 기준 경계와의 간격.
-     */
-    offsetX = 0;
-    /**
-     * verticalAlign 기준 경계와의 간격.
-     */
-    offsetY = 0;
-    /**
-     * 외부와의 간격.
-     */
-    margin = Sides.createFrom('4');
+    valign = VerticalAlign.MIDDLE;
     /**
      * legend 아이템들 사이의 간격.
      */
-    itemGap = 12;
+    itemGap = 8;
     /**
      * marker와 text사이의 간격.
      */
@@ -130,7 +118,7 @@ export class Legend extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     getLayout(): LegendLayout {
-        if (this.layout === LegendLayout.AUTO && this.position !== LegendPosition.PLOT) {
+        if (this.layout === LegendLayout.AUTO && this.position !== LegendPosition.INSIDE) {
             switch (this.position) {
                 case LegendPosition.BOTTOM:
                 case LegendPosition.TOP:
@@ -150,10 +138,6 @@ export class Legend extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoad(source: any): void {
-        super._doLoad(source);
-    }
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

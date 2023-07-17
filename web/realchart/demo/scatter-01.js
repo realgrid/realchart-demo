@@ -10,13 +10,13 @@ const config = {
     },
     series: [{
         data: olympic_data.slice(0, 200).filter(v => v.height > 1),
-        xField: 'height',
-        yField: 'weight',
+        xProp: 'height',
+        yProp: 'weight',
         // pointLabel: true
     }, {
         data: olympic_data.slice(1000, 1200).filter(v => v.height > 1),
-        xField: 'height',
-        yField: 'weight'
+        xProp: 'height',
+        yProp: 'weight'
     }]
 }
 

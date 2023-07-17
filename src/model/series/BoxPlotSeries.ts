@@ -57,10 +57,10 @@ export class BoxPlotSeriesPoint extends DataPoint {
         this.low = v[pickNum(series.lowField, 1 + d)];
         this.mid = v[pickNum(series.midField, 2 + d)];
         this.high = v[pickNum(series.highField, 3 + d)];
-        this.y = v[pickNum(series.yField, 4 + d)];
+        this.y = v[pickNum(series.yProp, 4 + d)];
 
         if (d > 0) {
-            this.x = v[pickNum(series.xField, 0)];
+            this.x = v[pickNum(series.xProp, 0)];
         } else {
             this.x = this.index;
         }
@@ -73,7 +73,7 @@ export class BoxPlotSeriesPoint extends DataPoint {
         this.low = pickProp(v[series.lowField], v.low);
         this.mid = pickProp(v[series.midField], v.mid);
         this.high = pickProp(v[series.highField], v.high);
-        this.y = pickProp3(v[series.yField], v.y, v.value);
+        this.y = pickProp3(v[series.yProp], v.y, v.value);
     }
 
     protected _readSingle(v: any): void {

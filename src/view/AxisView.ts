@@ -52,9 +52,11 @@ export class AxisTitleView extends ChartElement<AxisTitle> {
     layout(param?: any): ChartElement<ChartItem> {
         super.layout(param);
 
-        this._debugRect.setBounds(-this.width / 2, 0, this.width, this.height)
-        if (!this._isHorz) {
-            this._debugRect.setRotaion(this.width / 2, this.height / 2, 270);
+        if (this._debugRect) {
+            this._debugRect.setBounds(-this.width / 2, 0, this.width, this.height)
+            if (!this._isHorz) {
+                this._debugRect.setRotaion(this.width / 2, this.height / 2, 270);
+            }
         }
         return this;
     }

@@ -39,11 +39,11 @@ export class BubbleSeriesPoint extends DataPoint {
     protected _readArray(series: BubbleSeries, v: any[]): void {
         const d = v.length > 2 ? 1 : 0;
 
-        this.y = v[pickNum(series.yField, 0 + d)];
-        this.z = v[pickNum(series.zField, 1 + d)];
+        this.y = v[pickNum(series.yProp, 0 + d)];
+        this.z = v[pickNum(series.zProp, 1 + d)];
 
         if (d > 0) {
-            this.x = v[pickNum(series.xField, 0)];
+            this.x = v[pickNum(series.xProp, 0)];
         } else {
             this.x = this.index;
         }
@@ -52,7 +52,7 @@ export class BubbleSeriesPoint extends DataPoint {
     protected _readObject(series: BubbleSeries, v: any): void {
         super._readObject(series, v);
 
-        this.z = pickProp(v[series.zField], v.z);
+        this.z = pickProp(v[series.zProp], v.z);
     }
 
     protected _readSingle(v: any): void {
@@ -76,7 +76,7 @@ export class BubbleSeries extends Series {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    zField: string;
+    zProp: string;
     sizeMode = BubbleSizeMode.AREA;
     minSize: RtPercentSize = 8;
     maxSize: RtPercentSize = '20%';

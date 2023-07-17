@@ -110,8 +110,8 @@ export interface ISeries {
 
     xAxis: string | number;
     yAxis: string | number;
-    xField: string | number;
-    yField: string | number;
+    xProp: string | number;
+    yProp: string | number;
 
     color: string;
 
@@ -173,11 +173,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     /**
      * undefined이면 data point의 값이 array일 때는 0, 객체이면 'x'.
      */
-    xField: string | number;
+    xProp: string | number;
     /**
      * undefined이면 data point의 값이 array일 때는 1, 객체이면 'y'.
      */
-    yField: string | number;
+    yProp: string | number;
     /**
      * undefined이면 "data".
      */
@@ -341,7 +341,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     // internal members
     //-------------------------------------------------------------------------
     protected _getField(axis: IAxis): any {
-        return axis === this._xAxisObj ? this.xField : this.yField;
+        return axis === this._xAxisObj ? this.xProp : this.yProp;
     }
 
     protected _colorByPoint(): boolean {

@@ -10,7 +10,7 @@ import { isNumber } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
-import { SectionDir } from "../common/Types";
+import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
@@ -244,9 +244,6 @@ export class ChartView extends RcElement {
     constructor(doc: Document) {
         super(doc);
 
-        this.add(this._titleSectionView = new TitleSectionView(doc));
-        this.add(this._legendSectionView = new LegendSectionView(doc));
-
         // this.add(this._hAxisLine = new LineElement(doc, null, 'rct-axis-line'));
         // this.add(this._vAxisLine = new LineElement(doc, null, 'rct-axis-line'));
 
@@ -261,6 +258,9 @@ export class ChartView extends RcElement {
 
         // plot 영역이 마지막이어야 line marker 등이 축 상에 표시될 수 있다.
         this.add(this._bodyView = new BodyView(doc));
+
+        this.add(this._titleSectionView = new TitleSectionView(doc));
+        this.add(this._legendSectionView = new LegendSectionView(doc));
     }
 
     //-------------------------------------------------------------------------
@@ -327,7 +327,6 @@ export class ChartView extends RcElement {
         let h = this.height;
         let x = 0;
         let y = 0;
-        let hLegend = 0;
 
         if (this._emptyView?.visible) {
             this._emptyView.resize(w, h);
@@ -335,19 +334,55 @@ export class ChartView extends RcElement {
         }
 
         const m = this._model;
+        const legend = m.legend;
 
         // title
+        const vTitle = this._titleSectionView;
+        let hTitle = 0;
         const yTitle = y;
-        this._titleSectionView.resizeByMeasured().layout();
-        y += this._titleSectionView.height;
-        h -= this._titleSectionView.height;
+
+        if (vTitle.visible) {
+            vTitle.resizeByMeasured().layout();
+            h -= hTitle = vTitle.height;
+        }
+
+        // body
+        y = this.height;
 
         // legend
+        const vLegend = this._legendSectionView;
+        let hLegend = 0;
+        let wLegend = 0;
         let yLegend: number;
-        if (this._legendSectionView.visible) {
-            this._legendSectionView.resizeByMeasured().layout();
-            h -= hLegend = this._legendSectionView.height;
-            yLegend = this.height - hLegend;
+        let xLegend: number;
+
+        if (vLegend.visible) {
+            vLegend.resizeByMeasured().layout();
+            hLegend = vLegend.height;
+            wLegend = vLegend.width;
+
+            switch (legend.position) {
+                case LegendPosition.TOP:
+                    yLegend = hTitle;
+                    h -= hLegend;
+                    break;
+
+                case LegendPosition.BOTTOM:
+                    h -= hLegend;
+                    yLegend = this.height - hLegend;
+                    y -= hLegend;
+                    break;
+    
+                case LegendPosition.RIGHT:
+                    w -= wLegend;
+                    xLegend = this.width - wLegend;
+                    break;
+
+                case LegendPosition.LEFT:
+                    w -= wLegend;
+                    x += wLegend;
+                    break;
+            }
         }
 
         // axes
@@ -365,8 +400,6 @@ export class ChartView extends RcElement {
             axisMap.delete(SectionDir.BOTTOM);
         }
 
-        y = this.height - hLegend;
-
         if (asv = axisMap.get(SectionDir.LEFT)) {
             asv.resize(asv.mw, h);
             asv.layout();
@@ -379,6 +412,7 @@ export class ChartView extends RcElement {
         }
 
         const org = this._org = Point.create(x, y);
+
         this._plotWidth = w;
         this._plotHeight = h;
 
@@ -390,18 +424,48 @@ export class ChartView extends RcElement {
         }
 
         // body
-        this._bodyView.resize(this._plotWidth, this._plotHeight);
-        this._bodyView.layout().translate(org.x, org.y - this._plotHeight);
+        const hPlot = this._plotHeight;
+        const wPlot = this._plotWidth;
 
-        let v: RcElement = this._titleSectionView;
         x = org.x;
+        y = org.y - hPlot;
+
+        this._bodyView.resize(wPlot, hPlot);
+        this._bodyView.layout().translate(x, y);
 
         // title
-        v.visible && v.translate(x + (w - v.width) / 2, yTitle);
+        vTitle.visible && vTitle.translate(x + (w - vTitle.width) / 2, yTitle);
 
         // legend
-        v = this._legendSectionView;
-        v.visible && v.translate(x + (w - v.width) / 2, yLegend);
+        if (vLegend.visible) {
+            if (legend.position === LegendPosition.INSIDE) {
+                switch (legend.valign) {
+                    case VerticalAlign.TOP:
+                        break;
+                    case VerticalAlign.BOTTOM:
+                        y += hPlot - hLegend;
+                        break;
+                    default:
+                        y += (hPlot - hLegend) / 2;
+                }
+                switch (legend.align) {
+                    case Align.LEFT:
+                        break;
+                    case Align.RIGHT:
+                        x += wPlot - wLegend;
+                        break;
+                    default:
+                        x += (wPlot - wLegend) / 2;
+                }
+            } else if (!isNaN(yLegend)) {
+                x += (w - wLegend) / 2;
+                y = yLegend;
+            } else {
+                x = xLegend;
+                y = y + (h - hLegend) / 2;
+            }
+            vLegend.translate(x, y);
+        }
     }
 
     //-------------------------------------------------------------------------

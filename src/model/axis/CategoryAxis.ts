@@ -79,8 +79,10 @@ export class CategoryAxis extends Axis {
      * 축의 양 끝 카테고리 값 위치에 여백으로 추가되는 크기.
      */
     endPadding: 0.5;
-    weights: number[];
-    weightCallback: (value: number) => number;
+
+    // weights: number[];
+    // weightCallback: (value: number) => number;
+    weightSeries: string | number;
 
     //-------------------------------------------------------------------------
     // fields

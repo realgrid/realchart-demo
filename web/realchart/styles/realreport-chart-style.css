@@ -43,6 +43,10 @@
     --rct-flip-x: 0;
 }
 
+.rct-root text {
+    stroke: none;
+}
+
 /** control */
 .rct-control {
     padding: 20px;
@@ -74,14 +78,19 @@
 
 /** legend */
 .rct-legend {
+    stroke: #ddd;
     fill: transparent;
     margin: 8px;
+    padding: 4px;
 }
 /* .rct-legend-background {
     fill: transparent;
 } */
 .rct-legend-item {
     fill: #333;
+}
+.rct-legend-item-marker {
+    stroke: none;
 }
 
 /** axis */
