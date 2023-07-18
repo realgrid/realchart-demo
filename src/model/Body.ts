@@ -17,10 +17,10 @@ export class Body extends ChartItem {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    // polar props
-    startAngle = 0;
-    endAngle = 360;
+    name: string;
+    size: SizeValue = '80%';
     centerX: SizeValue = '50%';
     centerY: SizeValue = '50%';
-    size: SizeValue = '80%';
+    startAngle = 0;
+    endAngle = 360;
 }

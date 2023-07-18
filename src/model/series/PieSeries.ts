@@ -106,8 +106,8 @@ export class PieSeries extends RadialSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    isPolar(): boolean {
-        return true;
+    needAxes(): boolean {
+        return false;
     }
 
     protected _colorByPoint(): boolean {

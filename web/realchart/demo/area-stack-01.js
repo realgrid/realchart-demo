@@ -1,6 +1,6 @@
 const config = {
-    title: "Area Stack",
     type: "area",
+    title: "Area Stack",
     xAxis: {
         title: "일일 Daily fat",
     },

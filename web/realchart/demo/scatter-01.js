@@ -1,6 +1,6 @@
 const config = {
-    title: "Scatter Series 01",
     type: 'scatter',
+    title: "Scatter Series 01",
     xAxis: {
         title: 'Height',
         baseValue: null,

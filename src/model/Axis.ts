@@ -415,6 +415,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     valueUnit = 1;
     baseValue: number;
 
+    isEmpty(): boolean {
+        return this._series.length < 1;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------

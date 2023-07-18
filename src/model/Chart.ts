@@ -84,20 +84,24 @@ export class Credit extends ChartItem {
     text = 'realreport-chart.com';
 }
 
-export class Chart extends RcObject implements IChart {
+export class ChartOptions extends ChartItem {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // properties
     //-------------------------------------------------------------------------
     /**
-     * 기본 시리즈 type.
+     * true면 차트가 {@link https://en.wikipedia.org/wiki/Polar_coordinate_system 극좌표계}로 표시된다.
      * <br>
-     * {@link Series.type}의 기본값.
-     * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
-     * 
-     * @default 'column'
+     * 기본은 {@link https://en.wikipedia.org/wiki/Cartesian_coordinate_system 직교좌표계}이다.
+     * <br>
+     * 극좌표계일 때,
+     * x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이 있다.
+     * 1. x축은 첫번째 축 하나만 사용된다.
+     * 2. axis.position 속성은 무시된다.
+     * 3. chart, series의 inverted 속성이 무시된다.
+     * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
      */
-    type = 'column';
+    polar = false;
     /**
      * true면 x축이 수직, y축이 수평으로 배치된다.
      * <br>
@@ -118,8 +122,29 @@ export class Chart extends RcObject implements IChart {
     xStep = 1;
 
     //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+}
+
+export class Chart extends RcObject implements IChart {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    /**
+     * 기본 시리즈 type.
+     * <br>
+     * {@link Series.type}의 기본값.
+     * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
+     * 
+     * @default 'column'
+     */
+    type = 'column';
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _options: ChartOptions;
     private _title: Title;
     private _subtitle: Title;
     private _legend: Legend;
@@ -137,6 +162,7 @@ export class Chart extends RcObject implements IChart {
     constructor(source?: any) {
         super();
 
+        this._options = new ChartOptions(this);
         this._title = new Title(this);
         this._subtitle = new Title(this, false);
         this._legend = new Legend(this);
@@ -150,8 +176,23 @@ export class Chart extends RcObject implements IChart {
     }
 
     //-------------------------------------------------------------------------
+    // IChart
+    //-------------------------------------------------------------------------
+    get xStart(): number {
+        return this._options.xStart;
+    }
+
+    get xStep(): number {
+        return this._options.xStep;
+    }
+
+    //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    get options(): ChartOptions {
+        return this._options;
+    }
+
     get title(): Title {
         return this._title;
     }
@@ -185,11 +226,13 @@ export class Chart extends RcObject implements IChart {
     }
 
     /**
-     * polar가 아닌 시리지가 하나라도 포함되면 polar가 아니고,
-     * 직교 x, y축이 표시된다.
+     * 좌표축이 필요하면true이다.
+     * <br>
+     * 현재, 모든 시리즈가 pie 이면 false가 된다.
+     * false이면 직교 좌표가 표시되지 않는다.
      */
-    isPolar(): boolean {
-        return this._series.isPolar();
+    needAxes(): boolean {
+        return this._series.needAxes();
     }
 
     _getSeries(): SeriesCollection {
@@ -209,7 +252,7 @@ export class Chart extends RcObject implements IChart {
     }
 
     isInverted(): boolean {
-        return this.inverted === true ? true : this.inverted === false ? false : this._series.isInverted();
+        return this._options.inverted === true ? true : this._options.inverted === false ? false : this._series.isInverted();
     }
 
     isEmpty(): boolean {
@@ -280,11 +323,14 @@ export class Chart extends RcObject implements IChart {
 
     load(source: any): void {
         // properites
-        ['type', 'xStart', 'xStep'].forEach(prop => {
+        ['type'].forEach(prop => {
             if (prop in source) {
                 this[prop] = source[prop];
             }
         })
+
+        // options
+        this._options.load(source.options);
 
         // titles
         this._title.load(source.title);

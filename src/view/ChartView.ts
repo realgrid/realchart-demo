@@ -232,8 +232,6 @@ export class ChartView extends RcElement {
     private _legendSectionView: LegendSectionView;
     private _bodyView: BodyView;
     private _axisSectionViews = new Map<SectionDir, AxisSectionView>();
-    // private _hAxisLine: LineElement;
-    // private _vAxisLine: LineElement;
     private _org: IPoint;
     private _plotWidth: number;
     private _plotHeight: number;
@@ -243,9 +241,6 @@ export class ChartView extends RcElement {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc);
-
-        // this.add(this._hAxisLine = new LineElement(doc, null, 'rct-axis-line'));
-        // this.add(this._vAxisLine = new LineElement(doc, null, 'rct-axis-line'));
 
         Object.values(SectionDir).forEach(dir => {
             if (isNumber(dir)) {
@@ -291,7 +286,7 @@ export class ChartView extends RcElement {
         }
 
         const m = this._model = model;
-        const polar = m.isPolar();
+        const polar = m.needAxes();
         const legend = m.legend;
         let w = hintWidth;
         let h = hintHeight;

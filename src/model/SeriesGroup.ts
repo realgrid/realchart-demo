@@ -249,11 +249,11 @@ export class SeriesGroup extends RcObject {
     //-------------------------------------------------------------------------
     private $_validate(): void {
         const series = this._series;
-        const polar = series[0].isPolar();
+        const polar = series[0].needAxes();
 
         // 모든 시리즈가 같은 축을 공유해야 한다.
         for (let i = 1; i < series.length; i++) {
-            if (series[i].isPolar() != polar) {
+            if (series[i].needAxes() != polar) {
                 throw new Error('같은 그룹에 포함될 수 없는 시리지들입니다.');
             }
             if (series[i]._xAxisObj !== series[i - 1]._xAxisObj || series[i]._yAxisObj !== series[i - 1]._yAxisObj) {

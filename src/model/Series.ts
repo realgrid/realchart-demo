@@ -116,7 +116,7 @@ export interface ISeries {
     color: string;
 
     createPoint(source: any): DataPoint;
-    isPolar(): boolean;
+    needAxes(): boolean;
     isCategorized(): boolean;
     getPoints(): DataPointCollection;
     getValue(point: DataPoint, axis: IAxis): number;
@@ -221,8 +221,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return this._points.isEmpty();
     }
 
-    isPolar(): boolean {
-        return false;
+    needAxes(): boolean {
+        return true;
     }
 
     isCategorized(): boolean {
@@ -432,13 +432,13 @@ export class SeriesCollection {
         }
     }
 
-    isPolar(): boolean {
+    needAxes(): boolean {
         for (const ser of this._items) {
-            if (ser.visible && !ser.isPolar()) {
-                return false;
+            if (ser.visible && !ser.needAxes()) {
+                return true;
             }
         }
-        return true;
+        return this._items.length === 0;
     }
 
     //-------------------------------------------------------------------------

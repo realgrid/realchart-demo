@@ -1,6 +1,6 @@
 const config = {
-    title: "Bar Group - Fill",
     type: 'bar',
+    title: "Bar Group - Fill",
     xAxis: {
         title: "일일 Daily fat",
         categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도']

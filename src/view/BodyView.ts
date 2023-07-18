@@ -327,7 +327,7 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _polar = false;
+    private _polar: boolean;
     private _background: RectElement;
     private _gridContainer: RcElement;
     private _gridViews = new Map<Axis, AxisGridView>();
@@ -360,12 +360,6 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    setPolar(value: boolean): void {
-        if (value !== this._polar) {
-            this._polar = value;
-        }
-    }
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -417,7 +411,7 @@ export class BodyView extends ChartElement<Body> {
 
     private $_prepareGrids(doc: Document): void {
         const chart = this.model.chart as Chart;
-        const polar = chart.isPolar();
+        const polar = chart.needAxes();
         const container = this._gridContainer;
         const views = this._gridViews;
 

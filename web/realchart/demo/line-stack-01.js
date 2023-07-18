@@ -1,6 +1,6 @@
 const config = {
-    title: "Line Group - Stack",
     type: "line",
+    title: "Line Group - Stack",
     xAxis: {
         title: "일일 Daily fat",
     },

@@ -1,6 +1,6 @@
 const config = {
-    title: "Area Fill",
     type: "area",
+    title: "Area Fill",
     xAxis: {
         title: "일일 Daily fat",
     },
