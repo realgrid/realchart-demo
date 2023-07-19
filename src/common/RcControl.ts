@@ -8,7 +8,7 @@
 
 import { RcObject, RtWrappableObject, RtWrapper } from "./RcObject";
 import { RcEditTool } from "./RcEditTool";
-import { Path, SVGStyleOrClass, throwFormat } from "./Types";
+import { Path, SVGStyleOrClass, _undefined, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
 import { RtLog, SVGNS, isString, pickNum } from "./Common";
@@ -518,7 +518,7 @@ export class RcElement extends RcObject {
     private _originY: number;
     private _matrix: number[];
 
-    protected _className: string;
+    protected _styleName: string;
     protected _styles: any = {};
     protected _styleDirty = false;
 
@@ -532,11 +532,11 @@ export class RcElement extends RcObject {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, tag?: string, className?: string) {
+    constructor(doc: Document, styleName: string, tag: string = _undefined) {
         super();
 
         this._dom = doc.createElementNS(SVGNS, tag || 'g');
-        (this._className = className) && this.setAttr('class', className);
+        (this._styleName = styleName) && this.setAttr('class', styleName);
     }
 
     protected _doDestory(): void {
@@ -857,7 +857,7 @@ export class RcElement extends RcObject {
     }
 
     protected _resetClass(): void {
-        this.setAttr('class', this._className);
+        this.setAttr('class', this._styleName);
     }
 
     setStyleOrClass(style: SVGStyleOrClass): void {
@@ -1003,8 +1003,8 @@ export class LayerElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName?: string) {
-        super(doc, 'g', styleName);
+    constructor(doc: Document, styleName: string) {
+        super(doc, styleName, 'g');
     }
 }
 
@@ -1015,12 +1015,11 @@ class RootElement extends RcElement {
     //-------------------------------------------------------------------------
     private _control: RcControl;
 
-
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(control: RcControl) {
-        super(control.doc());
+        super(control.doc(), null);
 
         this._control = control;
     }
@@ -1045,7 +1044,7 @@ export class ClipElement extends RcElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, x: number, y: number, width: number, height: number, rx = 0, ry = 0) {
-        super(doc, 'clipPath');
+        super(doc, _undefined, 'clipPath');
 
         const id = this._id = Utils.uniqueKey() + '-';
         this.setAttr('id', id);
@@ -1125,8 +1124,8 @@ export class PathElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, path: Path = null, styleName = '') {
-        super(doc, 'path', styleName);
+    constructor(doc: Document, styleName: string = void 0, path: Path = void 0) {
+        super(doc, styleName, 'path');
 
         path && this.setPath(path);
     }
@@ -1194,7 +1193,7 @@ export class ClipPathElement extends RcElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'clipPath');
+        super(doc, _undefined, 'clipPath');
 
         const id = this._id = Utils.uniqueKey() + '-';
         this.setAttr('id', id);

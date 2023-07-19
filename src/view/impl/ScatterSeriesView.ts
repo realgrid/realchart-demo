@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
-import { PathElement, RcElement } from "../../common/RcControl";
+import { PathElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { ScatterSeries, ScatterSeriesPoint } from "../../model/series/ScatterSeries";
@@ -24,7 +24,7 @@ class MarkerView extends PathElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, null, 'rct-scatter-series-marker');
+        super(doc, 'rct-scatter-series-marker');
     }
 }
 

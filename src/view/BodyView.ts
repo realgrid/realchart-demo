@@ -9,7 +9,7 @@
 import { ElementPool } from "../common/ElementPool";
 import { LayerElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
-import { Align, VerticalAlign } from "../common/Types";
+import { Align, VerticalAlign, _undefined } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
@@ -107,7 +107,7 @@ export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc);
+        super(doc, 'rct-axis-guid');
 
         this.add(this._label = new TextElement(doc));
     }
@@ -144,7 +144,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
     constructor(doc: Document) {
         super(doc);
 
-        this.insertFirst(this._line = new LineElement(doc, null, 'rct-axis-guide-line'));
+        this.insertFirst(this._line = new LineElement(doc, 'rct-axis-guide-line'));
     }
 
     //-------------------------------------------------------------------------
@@ -258,7 +258,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
     constructor(doc: Document) {
         super(doc);
 
-        this.insertFirst(this._rect = new RectElement(doc, null, 'rct-axis-guide-range'));
+        this.insertFirst(this._rect = new RectElement(doc, 'rct-axis-guide-range'));
     }
 
     //-------------------------------------------------------------------------

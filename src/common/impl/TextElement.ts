@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ELLIPSIS } from '../Types';
+import { ELLIPSIS, _undefined } from '../Types';
 import { RcElement } from '../RcControl';
 import { IRect } from '../Rectangle';
 import { GroupElement } from './GroupElement';
@@ -51,8 +51,8 @@ export class TextElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName = '') {
-        super(doc, 'text', styleName);
+    constructor(doc: Document, styleName: string = _undefined) {
+        super(doc, styleName, 'text');
 
         this.setAttr('text-anchor', 'middle');
     }
@@ -252,7 +252,7 @@ export class LabelElement extends GroupElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName = '') {
+    constructor(doc: Document, styleName: string = _undefined) {
         super(doc);
 
         this.add(this._back = new RectElement(doc));

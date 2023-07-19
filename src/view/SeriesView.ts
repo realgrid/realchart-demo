@@ -316,7 +316,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     constructor(doc: Document, styleName: string) {
         super(doc, 'rct-series ' + styleName);
 
-        this.add(this._pointContainer = new RcElement(doc, null, 'rct-series-points'));
+        this.add(this._pointContainer = new RcElement(doc, 'rct-series-points'));
         this.add(this._labelContainer = new PointLabelContainer(doc));
     }
 
@@ -355,7 +355,7 @@ export class BoxPointElement extends PathElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, null, 'rct-series-bar');
+        super(doc, 'rct-series-bar');
     }
 
 }

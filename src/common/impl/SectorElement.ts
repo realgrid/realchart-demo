@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { PathElement } from '../RcControl';
+import { _undefined } from '../Types';
 import { SvgShapes } from './SvgShape';
 
 export interface ISectorShape {
@@ -26,8 +27,8 @@ export class SectorElement extends PathElement {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
-    static create(doc: Document, x: number, y: number, rx: number, ry: number, start: number, angle: number, clockwise = true, styleName = ''): SectorElement {
-        return new SectorElement(doc, {
+    static create(doc: Document, styleName: string, x: number, y: number, rx: number, ry: number, start: number, angle: number, clockwise = true): SectorElement {
+        return new SectorElement(doc, styleName, {
             cx: x,
             cy: y,
             rx: rx,
@@ -36,11 +37,11 @@ export class SectorElement extends PathElement {
             start: start,
             angle: angle,
             clockwise: clockwise
-        }, styleName)
+        })
     }
 
-    static createInner(doc: Document, x: number, y: number, rx: number, ry: number, innerRadius: number, start: number, angle: number, clockwise = true, styleName = ''): SectorElement {
-        return new SectorElement(doc, {
+    static createInner(doc: Document, styleName = '', x: number, y: number, rx: number, ry: number, innerRadius: number, start: number, angle: number, clockwise = true): SectorElement {
+        return new SectorElement(doc, styleName, {
             cx: x,
             cy: y,
             rx: rx,
@@ -49,7 +50,7 @@ export class SectorElement extends PathElement {
             start: start,
             angle: angle,
             clockwise: clockwise
-        }, styleName)
+        })
     }
     
     //-------------------------------------------------------------------------
@@ -58,8 +59,8 @@ export class SectorElement extends PathElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, shape?: ISectorShape, styleName = '') {
-        super(doc, null, styleName);
+    constructor(doc: Document, styleName: string = _undefined, shape: ISectorShape = _undefined) {
+        super(doc, styleName);
 
         shape && this._assignShape(shape);
 

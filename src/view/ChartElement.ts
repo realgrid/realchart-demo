@@ -10,6 +10,7 @@ import { RcElement } from "../common/RcControl";
 import { IRect } from "../common/Rectangle";
 import { Sides } from "../common/Sides";
 import { ISize } from "../common/Size";
+import { _undefined } from "../common/Types";
 import { RectElement } from "../common/impl/RectElement";
 import { ChartItem } from "../model/ChartItem";
 
@@ -26,11 +27,11 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName = '') {
-        super(doc, 'g', styleName);
+    constructor(doc: Document, styleName = _undefined) {
+        super(doc, styleName, 'g');
 
         if (RcElement.DEBUGGING) {
-            this.add(this._debugRect = new RectElement(doc));
+            this.add(this._debugRect = new RectElement(doc, 'rct-debug'));
             this._debugRect.setAttr('pointerEvents', 'none');
         }
     }

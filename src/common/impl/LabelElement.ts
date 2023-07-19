@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { _undefined } from "../Types";
 import { GroupElement } from "./GroupElement";
 import { RectElement } from "./RectElement";
 import { TextAnchor, TextElement, TextLayout } from "./TextElement";
@@ -24,7 +25,7 @@ export class LabelElement extends GroupElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName?: string) {
+    constructor(doc: Document, styleName: string = _undefined) {
         super(doc);
 
         this.add(this._back = new RectElement(doc));

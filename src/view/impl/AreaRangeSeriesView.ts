@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { PathBuilder } from "../../common/PathBuilder";
-import { PathElement, RcElement } from "../../common/RcControl";
+import { LayerElement, PathElement, RcElement } from "../../common/RcControl";
 import { AreaRangeSeries, AreaRangeSeriesPoint } from "../../model/series/LineSeries";
 import { AreaSeriesView } from "./AreaSeriesView";
 import { LineSeriesView, LineSeriesViewImpl } from "./LineSeriesView";
@@ -28,9 +28,9 @@ export class AreaRangeSeriesView extends LineSeriesView<AreaRangeSeries> {
     constructor(doc: Document) {
         super(doc, 'rct-area-range');
 
-        this.insertFirst(this._areaContainer = new RcElement(doc));
-        this._areaContainer.add(this._area = new PathElement(doc, null, 'rct-area-series-area'));
-        this._lineContainer.add(this._lowerLine = new PathElement(doc, null, 'rct-line-series-line'));
+        this.insertFirst(this._areaContainer = new LayerElement(doc, 'rct-area-series-areas'));
+        this._areaContainer.add(this._area = new PathElement(doc, 'rct-area-series-area'));
+        this._lineContainer.add(this._lowerLine = new PathElement(doc, 'rct-line-series-line'));
     }
 
     //-------------------------------------------------------------------------

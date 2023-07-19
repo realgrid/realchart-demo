@@ -27,7 +27,7 @@ export class TitleView extends BoundableElement<Title> {
     constructor(doc: Document, isSub: boolean) {
         super(doc, isSub ? 'rct-subtitle' : 'rct-title');
 
-        this.add(this._background = new RectElement(doc, null, isSub ? 'rct-subtitle-background' : 'rct-title-background'));
+        this.add(this._background = new RectElement(doc, isSub ? 'rct-subtitle-background' : 'rct-title-background'));
         this.add(this._textView = new TextElement(doc));
         this._textView.anchor = TextAnchor.START;
     }

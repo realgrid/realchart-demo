@@ -115,10 +115,10 @@ export class AxisView extends ChartElement<Axis> {
     constructor(doc: Document) {
         super(doc, 'rct-axis');
 
-        this.add(this._lineView = new LineElement(doc, null, 'rct-axis-line'));
+        this.add(this._lineView = new LineElement(doc, 'rct-axis-line'));
         this.add(this._titleView = new AxisTitleView(doc));
-        this.add(this._markContainer = new RcElement(doc));
-        this.add(this._labelContainer = new RcElement(doc));
+        this.add(this._markContainer = new RcElement(doc, 'rct-axis-marks'));
+        this.add(this._labelContainer = new RcElement(doc, 'rct-axis-labels'));
     }
 
     //-------------------------------------------------------------------------
@@ -163,7 +163,7 @@ export class AxisView extends ChartElement<Axis> {
         // line
         this._lineView.visible = model.line.visible;
 
-        // tick mark 
+        // tick marks 
         sz += this._markLen = model.tick.mark.length;;
         this.$_prepareTickMarks(doc, model);
         this._markViews.forEach(v => v.measure(doc, model.tick.mark, hintWidth, hintHeight, phase));

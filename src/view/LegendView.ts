@@ -35,7 +35,7 @@ export class LegendItemView extends ChartElement<LegendItem> {
     constructor(doc: Document) {
         super(doc, 'rct-legend-item');
 
-        this.add(this._marker = RectElement.create(doc, 0, 0, 12, 12, 6, 'rct-legend-item-marker'));
+        this.add(this._marker = RectElement.create(doc, 'rct-legend-item-marker', 0, 0, 12, 12, 6));
         this.add(this._label = new TextElement(doc, 'rct-legend-item-label'));
         this._label.anchor = TextAnchor.START;
     }
@@ -73,7 +73,7 @@ export class LegendView extends BoundableElement<Legend> {
     constructor(doc: Document) {
         super(doc, 'rct-legend');
 
-        this.add(this._background = new RectElement(doc, null, 'rct-legend-background'));
+        this.add(this._background = new RectElement(doc, 'rct-legend-background'));
     }
 
     //-------------------------------------------------------------------------

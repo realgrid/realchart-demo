@@ -24,7 +24,7 @@ export class LineMarkerView extends PathElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, null, 'rct-line-series-marker');
+        super(doc, 'rct-line-series-marker');
     }
 }
 
@@ -43,8 +43,8 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
     constructor(doc: Document, styleName: string) {
         super(doc, styleName);
 
-        this.insertFirst(this._lineContainer = new RcElement(doc));
-        this._lineContainer.add(this._line = new PathElement(doc, null, 'rct-line-series-line'));
+        this.insertFirst(this._lineContainer = new RcElement(doc, 'rct-line-series-lines'));
+        this._lineContainer.add(this._line = new PathElement(doc, 'rct-line-series-line'));
         this._markers = new ElementPool(this._pointContainer, LineMarkerView);
     }
 

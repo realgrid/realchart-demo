@@ -240,7 +240,7 @@ export class ChartView extends RcElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc);
+        super(doc, 'rct-chart');
 
         Object.values(SectionDir).forEach(dir => {
             if (isNumber(dir)) {

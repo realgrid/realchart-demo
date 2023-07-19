@@ -8,6 +8,7 @@
 
 import { RcElement } from '../RcControl';
 import { IRect } from '../Rectangle';
+import { _undefined } from '../Types';
 
 export class ImageElement extends RcElement {
 
@@ -26,8 +27,8 @@ export class ImageElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, imageUrl?: string, styleName?: string) {
-        super(doc, 'image', styleName);
+    constructor(doc: Document, imageUrl: string = _undefined, styleName: string = _undefined) {
+        super(doc, styleName, 'image');
 
         if (imageUrl) {
             this.setAttr('href', imageUrl);

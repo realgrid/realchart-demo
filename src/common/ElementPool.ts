@@ -30,7 +30,7 @@ export class ElementPool<T extends RcElement> extends RcObject {
     // fields
     //-------------------------------------------------------------------------
     private _owner: RcElement;
-    private _creator: { new (doc: Document, className?: string): T };
+    private _creator: { new (doc: Document, styleName?: string): T };
     private _pool: T[] = [];
     private _views: T[] = [];
     private _removes: T[] = [];
@@ -40,7 +40,7 @@ export class ElementPool<T extends RcElement> extends RcObject {
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
-    constructor(owner: RcElement, creator: { new (doc: Document): T }, styleName?: string, removeDelay = 0) {
+    constructor(owner: RcElement, creator: { new (doc: Document, styleName?: string): T }, styleName?: string, removeDelay = 0) {
         super();
 
         this._owner = owner;
@@ -107,12 +107,13 @@ export class ElementPool<T extends RcElement> extends RcObject {
         const pool = this._pool;
         const views = this._views;
 
-        // TODO: 왜 이런 일이 발생하지?
-        for (let v of views) {
-            if (!v.parent) {
-                this._owner.add(v);
-            }
-        }
+        // // TODO: 왜 이런 일이 발생하지?
+        // for (let v of views) {
+        //     if (!v.parent) {
+        //         this._owner.add(v);
+        //     }
+        // }
+
         while (views.length > count) {
             pool.push(views.pop().remove() as T);
         }

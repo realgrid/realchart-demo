@@ -22,8 +22,8 @@ export class CircleElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, cx?: number, cy?: number, radius?: number, styleName = '') {
-        super(doc, 'circle', styleName);
+    constructor(doc: Document, styleName?: string, cx?: number, cy?: number, radius?: number) {
+        super(doc, styleName, 'circle');
 
         if (typeof cx === 'number') {
             this.setCircle(cx, cy, radius);

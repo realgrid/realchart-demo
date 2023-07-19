@@ -8,6 +8,7 @@
 
 import { RcElement } from '../RcControl';
 import { IRect } from '../Rectangle';
+import { _undefined } from '../Types';
 
 export interface IRectShape extends IRect {
     r?: number;
@@ -27,14 +28,14 @@ export class RectElement extends RcElement {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
-    static create(doc: Document, x: number, y: number, width: number, height: number, r = 0, styleName = ''): RectElement {
-        return new RectElement(doc, {
+    static create(doc: Document, styleName: string, x: number, y: number, width: number, height: number, r = 0): RectElement {
+        return new RectElement(doc, styleName, {
             x: x,
             y: y,
             width: width,
             height: height,
             r: r
-        }, styleName);
+        });
     }
 
     //-------------------------------------------------------------------------
@@ -45,8 +46,8 @@ export class RectElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, rect: IRectShape = null, styleName?: string) {
-        super(doc, 'rect', styleName);
+    constructor(doc: Document, styleName: string = _undefined, rect: IRectShape = _undefined) {
+        super(doc, styleName, 'rect');
 
         this.rect = rect;
     }
@@ -108,8 +109,8 @@ export class BackElement extends RectElement {
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
-    constructor(doc: Document, rect: IRectShape = null) {
-        super(doc, rect, 'dlchart-point-back');
+    constructor(doc: Document, rect: IRectShape = _undefined) {
+        super(doc, 'dlchart-point-back', rect);
 
         // this.setStyle('opacity', '0');
     }

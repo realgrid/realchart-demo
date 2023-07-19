@@ -55,13 +55,13 @@ class BoxView extends GroupElement {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doInitChildren(doc: Document): void {
-        this.add(this._back = new RectElement(doc, null, 'rct-boxplot-series-back'));
-        this.add(this._stemUp = new LineElement(doc, null, 'rct-boxplot-series-stem'));
-        this.add(this._stemDown = new LineElement(doc, null, 'rct-boxplot-series-stem'));
-        this.add(this._box = new RectElement(doc, null, 'rct-boxplot-series-box'));
-        this.add(this._mid = new LineElement(doc, null, 'rct-boxplot-series-mid'));
-        this.add(this._min = new LineElement(doc, null, 'rct-boxplot-series-min'));
-        this.add(this._max = new LineElement(doc, null, 'rct-boxplot-series-max'));
+        this.add(this._back = new RectElement(doc, 'rct-boxplot-series-back'));
+        this.add(this._stemUp = new LineElement(doc, 'rct-boxplot-series-stem'));
+        this.add(this._stemDown = new LineElement(doc, 'rct-boxplot-series-stem'));
+        this.add(this._box = new RectElement(doc, 'rct-boxplot-series-box'));
+        this.add(this._mid = new LineElement(doc, 'rct-boxplot-series-mid'));
+        this.add(this._min = new LineElement(doc, 'rct-boxplot-series-min'));
+        this.add(this._max = new LineElement(doc, 'rct-boxplot-series-max'));
     }
 }
 

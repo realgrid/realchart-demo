@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { PathElement } from '../RcControl';
+import { _undefined } from '../Types';
 import { Utils } from '../Utils';
 import { SvgShapes } from './SvgShape';
 
@@ -33,8 +34,8 @@ export class LineElement extends PathElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, line?: ILine, styleName = '') {
-        super(doc, null, styleName);
+    constructor(doc: Document, styleName: string = _undefined, line: ILine = _undefined) {
+        super(doc, styleName);
 
         this.setLine(line);
     }
@@ -90,7 +91,7 @@ export class LineElementEx extends PathElement {
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
-    constructor(doc: Document, line?: ILine, styleName = '') {
+    constructor(doc: Document, styleName = _undefined, line: ILine = _undefined) {
         super(doc, null, styleName);
 
         this.setLine(line);
@@ -200,7 +201,7 @@ export class ArcElement extends PathElement {
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
-    constructor(doc: Document, cx: number, cy: number, r: number, start: number, end: number, styleName = '') {
-        super(doc, SvgShapes.arc(cx, cy, r, r, start, end), styleName);
+    constructor(doc: Document, styleName: string, cx: number, cy: number, r: number, start: number, end: number) {
+        super(doc, styleName, SvgShapes.arc(cx, cy, r, r, start, end));
     }
 }
