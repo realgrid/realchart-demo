@@ -7,8 +7,24 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartItem } from "./ChartItem";
+import { ILegendSource } from "./Legend";
 
-export abstract class PlotItem extends ChartItem {
+export abstract class PlotItem extends ChartItem implements ILegendSource {
+
+    //-------------------------------------------------------------------------
+    // ILegendSource
+    //-------------------------------------------------------------------------
+    legendColor(): string {
+        return;
+    }
+
+    legendLabel(): string {
+        return this.legend;
+    }
+
+    legendVisible(): boolean {
+        return !!this.legend;
+    }
 
     //-------------------------------------------------------------------------
     // properties
@@ -18,6 +34,10 @@ export abstract class PlotItem extends ChartItem {
     top: number;
     bottom: number;
     front = true;
+    /**
+     * 문자열을 지정하면 legend 아이템으로 표시된다.
+     */
+    legend: string;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -40,4 +60,11 @@ export class ImageItem extends PlotItem {
     url: string;
     width: number;
     height: number;
+}
+
+export abstract class ShapeItem extends PlotItem {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
 }

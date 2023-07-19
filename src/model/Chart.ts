@@ -37,7 +37,9 @@ export interface IChart {
     yAxis: IAxis;
     colors: string[];
 
+    _polar: boolean;
     isInverted(): boolean;
+    startAngle(): number;
 
     seriesByBame(series: string): Series;
     axisByName(axis: string): Axis;
@@ -154,6 +156,7 @@ export class Chart extends RcObject implements IChart {
     private _yAxes: AxisCollection;
     private _body: Body;
 
+    _polar: boolean;
     colors = ["#2caffe", "#544fc5", "#00e272", "#fe6a35", "#6b8abc", "#d568fb", "#2ee0ca", "#fa4b42", "#feb56a", "#91e8e12"];
 
     //-------------------------------------------------------------------------
@@ -173,11 +176,16 @@ export class Chart extends RcObject implements IChart {
         this._body = new Body(this);
 
         source && this.load(source);
+        this._polar = this.options.polar === true;
     }
 
     //-------------------------------------------------------------------------
     // IChart
     //-------------------------------------------------------------------------
+    startAngle(): number {
+        return this.body.getStartAngle();
+    }
+
     get xStart(): number {
         return this._options.xStart;
     }

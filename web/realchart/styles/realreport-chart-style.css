@@ -107,6 +107,20 @@
     stroke-width: 1px;
 }
 
+/** polar axis */
+.rct-polar-xaxis-line {
+    stroke: #333;
+}
+.rct-polar-xaxis-grid-line {
+    stroke: #ccc;
+}
+.rct-polar-yaxis-line {
+    stroke: red;
+}
+.rct-polar-yaxis-grid-line {
+    stroke: #0000ff20;
+}
+
 /** series */
 .rct-series-labels {
     font-size: 0.8em;

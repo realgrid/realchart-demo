@@ -15,7 +15,7 @@ export interface ISectorShape {
     cy: number; 
     rx: number;
     ry: number;
-    innerRadius: number;
+    innerRadius?: number;
     start: number;
     angle: number; 
     borderRadius?: number;

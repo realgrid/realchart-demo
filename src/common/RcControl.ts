@@ -626,6 +626,10 @@ export class RcElement extends RcObject {
             }
         }
     }
+    setVisible(value: boolean): RcElement {
+        this.visible = value;
+        return this;
+    }
 
     /**
      * rotation

@@ -330,9 +330,9 @@ export class BodyView extends ChartElement<Body> {
     private _polar: boolean;
     private _background: RectElement;
     private _gridContainer: RcElement;
-    private _gridViews = new Map<Axis, AxisGridView>();
+    protected _gridViews = new Map<Axis, AxisGridView>();
     private _seriesContainer: RcElement;
-    private _seriesViews: SeriesView<Series>[] = [];
+    protected _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
     private _series: Series[];
     // guide
@@ -371,11 +371,13 @@ export class BodyView extends ChartElement<Body> {
             v.measure(doc, this._series[i], hintWidth, hintHeight, phase);
         })
 
-        // axis grids
-        this.$_prepareGrids(doc);
+        if (!model.chart._polar) {
+            // axis grids
+            this.$_prepareGrids(doc);
 
-        for (const axis of this._gridViews.keys()) {
-            this._gridViews.get(axis).measure(doc, axis.grid, hintWidth, hintHeight, phase);
+            for (const axis of this._gridViews.keys()) {
+                this._gridViews.get(axis).measure(doc, axis.grid, hintWidth, hintHeight, phase);
+            }
         }
 
         return Size.create(hintWidth, hintHeight);
@@ -391,10 +393,12 @@ export class BodyView extends ChartElement<Body> {
             v.layout();
         })
         
-        // axis grids
-        for (const v of this._gridViews.values()) {
-            v.resize(w, h);
-            v.layout();
+        if (!this.model.chart._polar) {
+            // axis grids
+            for (const v of this._gridViews.values()) {
+                v.resize(w, h);
+                v.layout();
+            }
         }
     }
 
@@ -411,7 +415,7 @@ export class BodyView extends ChartElement<Body> {
 
     private $_prepareGrids(doc: Document): void {
         const chart = this.model.chart as Chart;
-        const polar = chart.needAxes();
+        const polar = !chart.needAxes();
         const container = this._gridContainer;
         const views = this._gridViews;
 

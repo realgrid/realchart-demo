@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { SizeValue } from "../common/Types";
+import { IPercentSize, ORG_ANGLE, SizeValue, calcPercent, deg2rad, parsePercentSize } from "../common/Types";
 import { ChartItem } from "./ChartItem";
 
 /**
@@ -15,12 +15,51 @@ import { ChartItem } from "./ChartItem";
 export class Body extends ChartItem {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // fields
+    //-------------------------------------------------------------------------
+    private _sizeDim: IPercentSize;
+    private _cxDim: IPercentSize;
+    private _cyDim: IPercentSize;
+    _cx: number;
+    _cy: number;
+    _rd: number; 
+
+    //-------------------------------------------------------------------------
+    // properties
     //-------------------------------------------------------------------------
     name: string;
-    size: SizeValue = '80%';
+    size: SizeValue = '90%';
     centerX: SizeValue = '50%';
     centerY: SizeValue = '50%';
     startAngle = 0;
-    endAngle = 360;
+    circular = true;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getSize(width: number, height: number): number {
+        return calcPercent(this._sizeDim, Math.min(width, height));
+    }
+
+    getCenter(width: number, height: number): {cx: number, cy: number} {
+        return {
+            cx: calcPercent(this._cxDim, width),
+            cy: calcPercent(this._cyDim, height)
+        };
+    }
+
+    getStartAngle(): number {
+        return ORG_ANGLE + deg2rad(this.startAngle);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doLoad(source: any): void {
+        super._doLoad(source);
+
+        this._sizeDim = parsePercentSize(this.size, true) || { size: 90, fixed: false };
+        this._cxDim = parsePercentSize(this.centerX, true) || { size: 50, fixed: false };
+        this._cyDim = parsePercentSize(this.centerY, true) || { size: 50, fixed: false };
+    }
 }

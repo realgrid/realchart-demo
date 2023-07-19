@@ -434,7 +434,7 @@ export class SeriesCollection {
 
     needAxes(): boolean {
         for (const ser of this._items) {
-            if (ser.visible && !ser.needAxes()) {
+            if (ser.visible && ser.needAxes()) {
                 return true;
             }
         }
