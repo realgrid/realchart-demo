@@ -7,9 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { DataPoint } from "../DataPoint";
-import { Series } from "../Series";
+import { PolarableSeries, Series } from "../Series";
 
-export abstract class BoxSeries extends Series {
+export abstract class BoxSeries extends PolarableSeries {
 
     //-------------------------------------------------------------------------
     // fields

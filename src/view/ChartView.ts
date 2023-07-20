@@ -323,19 +323,20 @@ export class ChartView extends RcElement {
 
     layout(): void {
         const m = this._model;
-        const polar = m.options.polar;
         let w = this.width;
         let h = this.height;
-        let x = 0;
-        let y = 0;
 
         if (this._emptyView?.visible) {
             this._emptyView.resize(w, h);
             return;
         }
 
-        // title
+        const polar = m.options.polar;
         const legend = m.legend;
+        let x = 0;
+        let y = 0;
+
+        // title
         const vTitle = this._titleSectionView;
         let hTitle = 0;
         const yTitle = y;

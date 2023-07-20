@@ -13,7 +13,6 @@ import { Utils } from "../../common/Utils";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
 import { PointItemPosition } from "../../model/Series";
-import { SeriesGroup, SeriesGroupLayout } from "../../model/SeriesGroup";
 import { PieSeries, PieSeriesPoint } from "../../model/series/PieSeries";
 import { PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView } from "../SeriesView";
 

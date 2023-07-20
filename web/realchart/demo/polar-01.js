@@ -2,7 +2,7 @@ const config = {
     options: {
         polar: true
     },
-    title: "Bar Polar",
+    title: "Polar Chart",
     xAxis: {
     },
     yAxis: {
@@ -14,7 +14,7 @@ const config = {
             }
         }]
     },
-    series: {
+    series: [{
         type: 'bar',
         pointLabel: true,
         data: [
@@ -25,7 +25,18 @@ const config = {
             ['zzz', 13],
             ['낙동강', 12.5]
         ]
-    }
+    }, {
+        type: 'area',
+        pointLabel: true,
+        data: [
+            ['home', 13], 
+            ['sky', 9], 
+            ['def', 11], 
+            ['지리산', 12.3], 
+            ['zzz', 11],
+            ['낙동강', 15.5]
+        ]
+    }]
 }
 
 export function init() {

@@ -6,8 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { IPercentSize, ORG_ANGLE, SizeValue, calcPercent, deg2rad, parsePercentSize } from "../common/Types";
+import { IPercentSize, ORG_ANGLE, SizeValue, _undefined, calcPercent, deg2rad, parsePercentSize } from "../common/Types";
 import { ChartItem } from "./ChartItem";
+import { PolarableSeries } from "./Series";
 
 /**
  * 시리즈들이 그려지는 plot 영역 모델.
@@ -50,6 +51,16 @@ export class Body extends ChartItem {
 
     getStartAngle(): number {
         return ORG_ANGLE + deg2rad(this.startAngle);
+    }
+
+    getPolar(series: PolarableSeries): {start: number, cx: number, cy: number, rd: number, deg: number} {
+        return this.chart._polar ? {
+            start: this.getStartAngle(),
+            cx: this._cx,
+            cy: this._cy,
+            rd: this._rd,
+            deg: Math.PI * 2 / series._visPoints.length
+        } : _undefined;
     }
 
     //-------------------------------------------------------------------------

@@ -540,7 +540,19 @@ export abstract class SeriesMarker extends ChartItem {
 }
 
 /**
- * Chart가 polar가 아닌 경우, plot area 영역을 기준으로 size, centerX, centerY가 적용된다.
+ * Polar 좌표계에 표시될 수 있는 시리즈.
+ */
+export class PolarableSeries extends Series {
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+}
+
+/**
+ * 직교 좌표계가 표시된 경우, plot area 영역을 기준으로 size, centerX, centerY가 적용된다.
+ * <br>
+ * TODO: 현재 PieSeris만 계승하고 있다. 추후 PieSeries에 합칠 것.
  */
 export class RadialSeries extends Series {
 

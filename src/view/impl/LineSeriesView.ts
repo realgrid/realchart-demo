@@ -10,6 +10,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
+import { Chart } from "../../main";
 import { LineSeries, LineSeriesPoint } from "../../model/series/LineSeries";
 import { SeriesView } from "../SeriesView";
 
@@ -36,6 +37,7 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
     protected _lineContainer: RcElement;
     private _line: PathElement;
     protected _markers: ElementPool<LineMarkerView>;
+    protected _polar: any;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -136,6 +138,7 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
 
     protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
         const series = this.model;
+        const polar = this._polar = (series.chart as Chart).body.getPolar(series);
         const vis = series.marker.visible;
         const labels = series.pointLabel;
         const labelVis = labels.visible;
@@ -148,8 +151,16 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
 
-            p.xPos = xAxis.getPosition(width, p.xValue);
-            p.yPos = yOrg - yAxis.getPosition(height, p.yGroup);
+            if (polar) {
+                const a = polar.start + i * polar.deg;
+                const y = yAxis.getPosition(polar.rd, p.yGroup);
+
+                p.xPos = polar.cx + y * Math.cos(a);
+                p.yPos = polar.cy + y * Math.sin(a);
+            } else {
+                p.xPos = xAxis.getPosition(width, p.xValue);
+                p.yPos = yOrg - yAxis.getPosition(height, p.yGroup);
+            }
 
             if (vis) {
                 this._layoutMarker(this._markers.get(i), p.xPos, p.yPos);
@@ -173,7 +184,7 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
         for (let i = 1; i < pts.length; i++) {
             sb.line(pts[i].xPos, pts[i].yPos);
         }
-        this._line.setPath(sb.end());
+        this._line.setPath(sb.end(this._polar));
         this._line.setStyle('stroke', this.model.color);
     }
 }

@@ -35,7 +35,6 @@ export class Color {
         return (r << 16) + (g << 8) + b;
     }
 
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -43,7 +42,6 @@ export class Color {
     private g = 0;
     private b = 0;
     private a = 1;
-
 
     //-------------------------------------------------------------------------
     // constructors
@@ -60,7 +58,6 @@ export class Color {
         }
     }
 
-
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -68,19 +65,10 @@ export class Color {
         return "rgba(" + [this.r, this.g, this.b, this.a].join(',') + ")";
     }
 
-
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     getContrast(darkColor: string, brightColor: string): string {
-        // from HI
-        // The threshold may be discussed. Here's a proposal for adding
-        // different weight to the color channels (#6216)
-        // const r = this.r * 1;
-        // const g = this.g * 1.2;
-        // const b = this.b * 0.5;
-        // return r + g + b > 1.8 * 255 ? '#000000' : '#FFFFFF';
-
         const r = this.r * 0.299;
         const g = this.g * 0.587;
         const b = this.b * 0.114;
@@ -98,14 +86,12 @@ export class Color {
         return color
     }
 
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
 	toString(): string {
 		return this.rgba;
 	}
-
 
     //-------------------------------------------------------------------------
     // internal members

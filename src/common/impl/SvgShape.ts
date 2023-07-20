@@ -23,6 +23,8 @@ export enum Shape {
 
 export const Shapes = Utils.getEnumValues(Shape);
 
+const SECTOR_ERROR = 0.001;
+
 export class SvgShapes {
 
     //-------------------------------------------------------------------------
@@ -75,19 +77,25 @@ export class SvgShapes {
     }
 
     static circle(cx: number, cy: number, rd: number): SizeValue[] {
-        return this.arc(cx, cy, rd, rd, 0, Math.PI * 2, false);
+        return [
+            'M',
+            cx, cy,
+            'm',
+            rd, 0,
+            'a',
+            rd, rd, 0, 1, 1, -rd * 2, 0,
+            'a',
+            rd, rd, 0, 1, 1, rd * 2, 0
+        ];
     }
 
-    static arc(x: number, y: number, rx: number, ry: number, start: number, end: number, open?: boolean): SizeValue[] {
-        const proximity = 0.001;
-        const fullCircle = Math.abs(end - start - 2 * Math.PI) < proximity;
-        end = end - proximity;
-        open = Utils.pick(open, fullCircle);
+    // TODO: 개선할 것!
+    static arc(x: number, y: number, rx: number, ry: number, start: number, end: number): SizeValue[] {
         const cosStart = Math.cos(start);
         const sinStart = Math.sin(start);
-        const cosEnd = Math.cos(end);
+        const cosEnd = Math.cos(end -= SECTOR_ERROR);
         const sinEnd = Math.sin(end);
-        const longArc = end - start - Math.PI < proximity ? 0 : 1;
+        const longArc = end - start - Math.PI < SECTOR_ERROR ? 0 : 1;
         const clockwise = 1;
         const path = [];
 
@@ -103,54 +111,50 @@ export class SvgShapes {
             longArc,
             clockwise,
             x + rx * cosEnd,
-            y + ry * sinEnd
+            y + ry * sinEnd,
+            'Z'
         );
-        if (!open) {
-            path.push('Z');
-        }
         return path;
     }
 
-    // FROM HI
-    static sector(x: number, y: number, rx: number, ry: number, innerRadius: number, start: number, end: number, clockwise: boolean): SizeValue[] {
-        const proximity = 0.001;
-        const fullCircle = Math.abs(end - start - 2 * Math.PI) < proximity;
-        end = end - proximity;
-        const cosStart = Math.cos(start);
-        const sinStart = Math.sin(start);
-        const cosEnd = Math.cos(end);
-        const sinEnd = Math.sin(end);
+    // TODO: 개선할 것!
+    static sector(cx: number, cy: number, rx: number, ry: number, rInner: number, start: number, end: number, clockwise: boolean): SizeValue[] {
+        const circled = Math.abs(end - start - 2 * Math.PI) < SECTOR_ERROR;
+        const long = end - start - Math.PI < SECTOR_ERROR ? 0 : 1;
+        const x1 = Math.cos(start);
+        const y1 = Math.sin(start);
+        const x2 = Math.cos(end -= circled ? SECTOR_ERROR : 0);
+        const y2 = Math.sin(end);
         const cw = clockwise ? 1 : 0;
-        const longArc = end - start - Math.PI < proximity ? 0 : 1;
-        const innerX = rx * innerRadius;
-        const innerY = ry * innerRadius;
+        const innerX = rx * rInner;
+        const innerY = ry * rInner;
         const path = [];
 
         path.push(
             'M',
-            x + rx * cosStart,
-            y + ry * sinStart,
+            cx + rx * x1,
+            cy + ry * y1,
             'A',
             rx,
             ry,
             0,
-            longArc,
+            long,
             cw,
-            x + rx * cosEnd,
-            y + ry * sinEnd
+            cx + rx * x2,
+            cy + ry * y2
         );
 
-        if (fullCircle) {
+        if (circled) {
             path.push(
                 'M',
-                x + innerX * cosEnd,
-                y + innerY * sinEnd
+                cx + innerX * x2,
+                cy + innerY * y2
             )
         } else {
             path.push(
                 'L',
-                x + innerX * cosEnd,
-                y + innerY * sinEnd
+                cx + innerX * x2,
+                cy + innerY * y2
             )
         }
         path.push(
@@ -158,16 +162,14 @@ export class SvgShapes {
             innerX,
             innerY,
             0,
-            longArc,
+            long,
             // 바깥쪽 원호와 반대 방향으로...
             1 - cw,
-            x + innerX * cosStart,
-            y + innerY * sinStart
+            cx + innerX * x1,
+            cy + innerY * y1
         );
 
-        if (!fullCircle) {
-            path.push('Z');
-        }
+        path.push('Z');
         return path;
     }
 

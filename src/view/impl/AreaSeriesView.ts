@@ -37,7 +37,11 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
     protected _layoutLines(pts: AreaSeriesPoint[]): void {
         super._layoutLines(pts);
 
-        this._layoutArea(this._area, pts);
+        if (this._polar) {
+            this._layoutPolar(this._area, pts);
+        } else {
+            this._layoutArea(this._area, pts);
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -83,6 +87,37 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
             }
             // this._buildLines(points, sb, step, curved);
             sb.line(pts[pts.length - 1].xPos, y);
+            path.setPath(sb.end());
+        }
+
+        path.setStyle('fill', series.color);
+        path.setStyle('fillOpacity', '0.5');
+    }
+
+    protected _layoutPolar(path: PathElement, pts: AreaSeriesPoint[]): void {
+        const series = this.model;
+        const g = series._group;
+        const len = this.height;
+        const y = Utils.isNotEmpty(series.baseValue) ? series._yAxisObj.getPosition(len, series.baseValue) : len;
+        const sb = new PathBuilder();
+
+        if (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL) {
+            sb.move(pts[0].xPos, pts[0].yLow);
+            sb.line(pts[0].xPos, pts[0].yPos);
+            for (let i = 1; i < pts.length; i++) {
+                sb.line(pts[i].xPos, pts[i].yPos);
+            }
+            // this._buildLines(points, sb, step, curved);
+            sb.line(pts[pts.length - 1].xPos, pts[pts.length - 1].yLow);
+            for (let i = pts.length - 1; i >= 0; i--) {
+                sb.line(pts[i].xPos, pts[i].yLow);
+            }
+            path.setPath(sb.end());
+        } else {
+            sb.move(pts[0].xPos, pts[0].yPos);
+            for (let i = 1; i < pts.length; i++) {
+                sb.line(pts[i].xPos, pts[i].yPos);
+            }
             path.setPath(sb.end());
         }
 

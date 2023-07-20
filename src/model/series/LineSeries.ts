@@ -11,7 +11,7 @@ import { StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { MarerVisibility, Series, SeriesMarker } from "../Series";
+import { MarerVisibility, PolarableSeries, Series, SeriesMarker } from "../Series";
 
 export class LineSeriesPoint extends DataPoint {
 
@@ -50,7 +50,7 @@ export class LineSeriesMarker extends SeriesMarker {
     maxVisible = MarerVisibility.DEFAULT;
 }
 
-export class LineSeries extends Series {
+export class LineSeries extends PolarableSeries {
 
     //-------------------------------------------------------------------------
     // property fields

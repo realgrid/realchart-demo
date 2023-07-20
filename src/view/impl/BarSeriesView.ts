@@ -143,23 +143,20 @@ export class BarSeriesView extends SeriesView<ColumnSeries> {
         const body = (m.chart as Chart).body;
         const xAxis = m._xAxisObj;
         const yAxis = m._yAxisObj;
-        const start = body.getStartAngle();
-        const cx = body._cx;
-        const cy = body._cy;
-        const rd = body._rd;
-        const deg = Math.PI * 2 / this._sectors.count;
+        const polar = body.getPolar(m);
 
         this._sectors.forEach((view, i) => {
             const p = view.point;
-            const y = yAxis.getPosition(rd, p.yGroup);
+            const y = yAxis.getPosition(polar.rd, p.yGroup);
             const wUnit = xAxis.getUnitLength(Math.PI * 2, i);
             const wPoint = m.getPointWidth(wUnit);
     
             view.setSector({
-                cx, cy, 
+                cx: polar.cx, 
+                cy: polar.cy, 
                 rx: y, 
                 ry: y,
-                start: start + i * deg,
+                start: polar.start + i * polar.deg,
                 angle: wPoint,
                 clockwise: true
             })
