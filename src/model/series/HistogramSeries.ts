@@ -30,7 +30,7 @@ export class HistogramSeriesPoint extends DataPoint {
     prepare(series: ISeries): void {
         super.prepare(series);
 
-        const v = this.value;
+        const v = this.source;
 
         this.min = v.min;
         this.max = v.max;

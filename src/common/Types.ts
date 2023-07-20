@@ -77,6 +77,11 @@ export function parsePercentSize(sv: RtPercentSize, enableNull: boolean): IPerce
     }
     return { size, fixed }; 
 }
+
+export function parsePercentSize2(sv: RtPercentSize, def: RtPercentSize): IPercentSize {
+    return parsePercentSize(sv, true) || parsePercentSize(def, false);
+}
+
 export function getPercent(size: IPercentSize): number {
     return size && !size.fixed ? size.size : NaN;
 }

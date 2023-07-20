@@ -11,7 +11,7 @@ import { SectorElement } from "../../common/impl/SectorElement";
 import { Chart } from "../../main";
 import { DataPoint } from "../../model/DataPoint";
 import { BarSeries, ColumnSeries } from "../../model/series/BarSeries";
-import { BarElement, SeriesView } from "../SeriesView";
+import { BarElement, PointLabelView, SeriesView } from "../SeriesView";
 
 class BarSectorView extends SectorElement {
 
@@ -91,6 +91,7 @@ export class BarSeriesView extends SeriesView<ColumnSeries> {
         const len = inverted ? width : height;
         const wLen = inverted ? height : width;
         const org = inverted ? 0 : height;
+        let labelView: PointLabelView;
 
         this._bars.forEach((bar, i) => {
             const p = bar.point;
@@ -122,17 +123,13 @@ export class BarSeriesView extends SeriesView<ColumnSeries> {
             bar.render(x, y, inverted);
 
             // label
-            if (labelVis) {
-                const view = labelViews.get(p, 0);
+            if (labelVis && (labelView = labelViews.get(p, 0))) {
+                const r = labelView.getBBounds();
 
-                if (view) {
-                    const r = view.getBBounds();
-    
-                    if (inverted) {
-                        view.translate(x + bar.hPoint + labelOff, y - r.height / 2);
-                    } else {
-                        view.translate(x - r.width / 2, y - bar.hPoint - r.height - labelOff);
-                    }
+                if (inverted) {
+                    labelView.translate(x + bar.hPoint + labelOff, y - r.height / 2);
+                } else {
+                    labelView.translate(x - r.width / 2, y - bar.hPoint - r.height - labelOff);
                 }
             }
         })

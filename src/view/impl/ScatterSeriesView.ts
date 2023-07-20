@@ -48,14 +48,14 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: ScatterSeries): void {
-        this.$_prepareMarkser(model._visPoints as ScatterSeriesPoint[]);
+        this.$_prepareMarkers(model._visPoints as ScatterSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
         this.$_layoutMarkers();
     }
 
-    private $_prepareMarkser(points: ScatterSeriesPoint[]): void {
+    private $_prepareMarkers(points: ScatterSeriesPoint[]): void {
         const series = this.model;
         const color = series.color;
         const marker = series.marker;

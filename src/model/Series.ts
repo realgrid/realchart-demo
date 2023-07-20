@@ -271,7 +271,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     getValue(point: DataPoint, axis: IAxis): number {
-        const pv = point.value;
+        const pv = point.source;
 
         if (pv != null) {
             const fld = this._getField(axis);
@@ -549,6 +549,17 @@ export class PolarableSeries extends Series {
     //-------------------------------------------------------------------------
 }
 
+
+export class WidgetSeries extends Series {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    needAxes(): boolean {
+        return false;
+    }
+}
+
 /**
  * 직교 좌표계가 표시된 경우, plot area 영역을 기준으로 size, centerX, centerY가 적용된다.
  * <br>
@@ -590,4 +601,3 @@ export class RadialSeries extends Series {
         this._sizeDim = parsePercentSize(this.size, true) || { size: 80, fixed: false };
     }
 }
-

@@ -16,7 +16,7 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    value: any;
+    source: any;
     index: number;
     x: any;
     y: any;
@@ -41,7 +41,7 @@ export class DataPoint {
     // constructor
     //-------------------------------------------------------------------------
     constructor(source: any) {
-        this.value = source;
+        this.source = source;
     }
 
     //-------------------------------------------------------------------------
@@ -67,12 +67,12 @@ export class DataPoint {
     // methods
     //-------------------------------------------------------------------------
     getProp(fld: string | number): any {
-        if (isNone(this.value)) return this.value;
-        else return this.value[fld];
+        if (isNone(this.source)) return this.source;
+        else return this.source[fld];
     }
 
     prepare(series: ISeries): void {
-        const v = this.value;
+        const v = this.source;
 
         if (isArray(v)) {
             this._readArray(series, v);
@@ -91,7 +91,7 @@ export class DataPoint {
     }
 
     getValueOf = (traget: any, param: string): any => {
-        return this[param] || this.value[param];
+        return this[param] || this.source[param];
     }
 
     //-------------------------------------------------------------------------

@@ -20,6 +20,7 @@ import { Series } from "../model/Series";
 import { BarSeries, ColumnSeries } from "../model/series/BarSeries";
 import { BoxPlotSeries } from "../model/series/BoxPlotSeries";
 import { BubbleSeries } from "../model/series/BubbleSeries";
+import { FunnelSeries } from "../model/series/FunnelSeries";
 import { HistogramSeries } from "../model/series/HistogramSeries";
 import { AreaRangeSeries, AreaSeries, LineSeries } from "../model/series/LineSeries";
 import { PieSeries } from "../model/series/PieSeries";
@@ -31,6 +32,7 @@ import { AreaSeriesView } from "./impl/AreaSeriesView";
 import { BarSeriesView } from "./impl/BarSeriesView";
 import { BoxPlotSeriesView } from "./impl/BoxPlotSeriesView";
 import { BubbleSeriesView } from "./impl/BubbleSeriesView";
+import { FunnelSeriesView } from "./impl/FunnelSeriesView";
 import { HistogramSeriesView } from "./impl/HistogramSeriesView";
 import { LineSeriesViewImpl } from "./impl/LineSeriesView";
 import { PieSeriesView } from "./impl/PieSeriesView";
@@ -47,6 +49,7 @@ const series_types = new Map<any, any>([
     [ScatterSeries, ScatterSeriesView],
     [HistogramSeries, HistogramSeriesView],
     [PieSeries, PieSeriesView],
+    [FunnelSeries, FunnelSeriesView]
 ]);
 
 export class AxisGridView extends ChartElement<AxisGrid> {

@@ -6,11 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray } from "../../common/Common";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { DataPoint } from "../DataPoint";
 import { ILegendSource } from "../Legend";
-import { ISeries, RadialSeries, Series } from "../Series";
+import { ISeries, RadialSeries } from "../Series";
 
 export class PieSeriesPoint extends DataPoint implements ILegendSource {
 
@@ -53,7 +52,7 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
     prepare(series: ISeries): void {
         super.prepare(series);
 
-        this.sliced = this.value.sliced;
+        this.sliced = this.source.sliced;
     }
 }
 
@@ -106,10 +105,6 @@ export class PieSeries extends RadialSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    needAxes(): boolean {
-        return false;
-    }
-
     protected _colorByPoint(): boolean {
         return true;
     }

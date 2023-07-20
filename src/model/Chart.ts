@@ -22,6 +22,7 @@ import { TimeAxis } from "./axis/TimeAxis";
 import { BarSeries, ColumnSeries } from "./series/BarSeries";
 import { BoxPlotSeries } from "./series/BoxPlotSeries";
 import { BubbleSeries } from "./series/BubbleSeries";
+import { FunnelSeries } from "./series/FunnelSeries";
 import { HistogramSeries } from "./series/HistogramSeries";
 import { AreaRangeSeries, AreaSeries, LineSeries } from "./series/LineSeries";
 import { PieSeries } from "./series/PieSeries";
@@ -67,7 +68,8 @@ const series_types = {
     'bubble': BubbleSeries,
     'scatter': ScatterSeries,
     'histogram': HistogramSeries,
-    'pie': PieSeries
+    'pie': PieSeries,
+    'funnel': FunnelSeries
 };
 
 const axis_types = {
