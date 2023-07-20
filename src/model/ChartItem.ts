@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isBoolean, isObject } from "../common/Common";
+import { isArray, isBoolean, isObject, isString } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { SvgRichText, RichTextParamCallback } from "../common/RichText";
@@ -15,7 +15,7 @@ import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
 import { IChart } from "./Chart";
 
-export class ChartItem extends RcObject {
+export abstract class ChartItem extends RcObject {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -100,11 +100,10 @@ export class ChartItem extends RcObject {
         }
     }
 
-    protected _doPrepareRender(chart: IChart): void {
-    }
+    protected _doPrepareRender(chart: IChart): void {}
 }
 
-export class FormattableText extends ChartItem {
+export abstract class FormattableText extends ChartItem {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -217,6 +216,13 @@ export class FormattableText extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doLoadSimple(source: any): boolean {
+        if (isString(source)) {
+            this.text = source;
+            return true;
+        }
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

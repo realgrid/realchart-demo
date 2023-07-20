@@ -6,6 +6,11 @@ const config = {
         // baseAxis: 1
     },
     yAxis: {
+        guides: [{
+            type: 'line',
+            value: 12,
+            label: 'guide one'
+        }]
     },
     series: {
         pointLabel: {

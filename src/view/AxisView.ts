@@ -6,13 +6,15 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcElement } from "../common/RcControl";
+import { ElementPool } from "../common/ElementPool";
+import { LayerElement, RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { LineElement } from "../common/impl/PathElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis, AxisGrid, AxisTickMark, AxisTitle } from "../model/Axis";
+import { Axis, AxisGrid, AxisGuide, AxisGuideArea, AxisGuideRange, AxisTickMark, AxisTitle } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
+import { AxisGuideAreaView, AxisGuideLineView, AxisGuideRangeView, AxisGuideView } from "./BodyView";
 import { ChartElement } from "./ChartElement";
 
 export class AxisTitleView extends ChartElement<AxisTitle> {
@@ -109,6 +111,9 @@ export class AxisView extends ChartElement<Axis> {
     private _markLen: number;
     private _labelSize: number;
 
+    _guideViews: AxisGuideView<AxisGuide>[];
+    _frontGuideViews: AxisGuideView<AxisGuide>[];
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -149,6 +154,49 @@ export class AxisView extends ChartElement<Axis> {
             w += this._titleView.measure(doc, m.title, width, height, 1).height;
         }
         return w;
+    }
+
+    prepareGuides(doc: Document, container: LayerElement, frontContainer: LayerElement): void {
+
+        function createView(model: AxisGuide): AxisGuideView<AxisGuide> {
+            if (model instanceof AxisGuideArea) {
+                return new AxisGuideAreaView(doc);
+            } else if (model instanceof AxisGuideRange) {
+                return new AxisGuideRangeView(doc);
+            } else {
+                return new AxisGuideLineView(doc);
+            }
+        }
+
+        let guides = this.model.guides.filter(g => !g.front);
+
+        if (guides.length > 0) {
+            if (!this._guideViews) {
+                this._guideViews = []
+                guides.forEach(g => {
+                    const v = createView(g);
+
+                    container.add(v);
+                    this._guideViews.push(v);
+                    v.prepare(g);
+                });
+            }
+        }
+
+        guides = this.model.guides.filter(g => g.front);
+
+        if (guides.length > 0) {
+            if (!this._frontGuideViews) {
+                this._frontGuideViews = []
+                guides.forEach(g => {
+                    const v = createView(g);
+
+                    frontContainer.add(v);
+                    this._frontGuideViews.push(v);
+                    v.prepare(g);
+                });
+            }
+        }
     }
 
     //-------------------------------------------------------------------------

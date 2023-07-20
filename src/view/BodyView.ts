@@ -14,7 +14,7 @@ import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { Chart } from "../main";
-import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange } from "../model/Axis";
+import { Axis, AxisGrid, AxisGuide, AxisGuideArea, AxisGuideLine, AxisGuideRange } from "../model/Axis";
 import { Body } from "../model/Body";
 import { PlotItem } from "../model/PlotItem";
 import { Series } from "../model/Series";
@@ -111,16 +111,16 @@ export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-axis-guid');
+        super(doc, 'rct-axis-guide');
 
-        this.add(this._label = new TextElement(doc));
+        this.add(this._label = new TextElement(doc, 'rct-axis-guide-label'));
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     vertical(): boolean {
-        return !this.model.axis._isHorz;
+        return this.model.axis._isHorz;
     }
 
     //-------------------------------------------------------------------------
@@ -168,7 +168,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
         let anchor: TextAnchor;
         let layout: TextLayout;
 
-        if (this.vertical) {
+        if (this.vertical()) {
             this._line.setVLineC(0, 0, height);
 
             switch (label.align) {
@@ -205,7 +205,9 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
                     break;
             }
         } else {
-            this._line.setHLineC(0, 0, width);
+            const p = height - this.model.axis.getPosition(height, this.model.value);
+
+            this._line.setHLineC(p, 0, width);
 
             switch (label.align) {
                 case Align.CENTER:
@@ -226,19 +228,19 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
 
             switch (label.verticalAlign) {
                 case VerticalAlign.BOTTOM:
-                    y = 1;
+                    y = p + 1;
                     layout = TextLayout.TOP;
                     break;
 
                 case VerticalAlign.MIDDLE:
-                    y = 0;
+                    y = p;
                     layout = TextLayout.MIDDLE;
                     break;
 
                 default:
                     // y = -3; 
                     // layout = TextLayout.BOTTOM;
-                    y = -labelView.getBBounds().height;
+                    y = p - labelView.getBBounds().height;
                     layout = TextLayout.TOP;
                     break;
             }
@@ -326,6 +328,31 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
     }
 }
 
+export class AxisGuideAreaView extends AxisGuideView<AxisGuideArea> {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    layout(width: number, height: number): void {
+    }
+}
+
+export class GuideContainer extends LayerElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _views: AxisGuideView<AxisGuide>[] = [];
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    add(child: AxisGuideView<AxisGuide>): RcElement {
+        this._views.push(child);
+        return super.add(child);
+    }
+}
+
 export class BodyView extends ChartElement<Body> {
 
     //-------------------------------------------------------------------------
@@ -340,13 +367,8 @@ export class BodyView extends ChartElement<Body> {
     private _seriesMap = new Map<Series, SeriesView<Series>>();
     private _series: Series[];
     // guides
-    private _guideMap: any = {};
-    private _guideContainer: RcElement;
-    private _guideLines: ElementPool<AxisGuideLineView>;
-    private _guideRanges: ElementPool<AxisGuideRangeView>;
-    private _frontGuideContainer: RcElement;
-    private _frontGuideLines: ElementPool<AxisGuideLineView>;
-    private _frontGuideRanges: ElementPool<AxisGuideRangeView>;
+    _guideContainer: GuideContainer;
+    _frontGuideContainer: GuideContainer;
     // items
     // private _itemMap = new Map<PlotItem, PlotItemView>();
 
@@ -358,14 +380,9 @@ export class BodyView extends ChartElement<Body> {
 
         this.add(this._background = new RectElement(doc));
         this.add(this._gridContainer = new LayerElement(doc, 'rct-grids'));
-        this.add(this._guideContainer = new LayerElement(doc, 'rct-guides'));
+        this.add(this._guideContainer = new GuideContainer(doc, 'rct-guides'));
         this.add(this._seriesContainer = new LayerElement(doc, 'rct-series-container'));
-        this.add(this._frontGuideContainer = new LayerElement(doc, 'rct-front-guides'));
-
-        this._guideLines = new ElementPool(this._guideContainer, AxisGuideLineView);
-        this._guideRanges = new ElementPool(this._guideContainer, AxisGuideRangeView);
-        this._frontGuideLines = new ElementPool(this._frontGuideContainer, AxisGuideLineView);
-        this._frontGuideRanges = new ElementPool(this._frontGuideContainer, AxisGuideRangeView);
+        this.add(this._frontGuideContainer = new GuideContainer(doc, 'rct-front-guides'));
     }
 
     //-------------------------------------------------------------------------
@@ -393,9 +410,6 @@ export class BodyView extends ChartElement<Body> {
             for (const axis of this._gridViews.keys()) {
                 this._gridViews.get(axis).measure(doc, axis.grid, hintWidth, hintHeight, phase);
             }
-
-            // guides
-            this.$_prepareGuides(doc, chart);
         }
 
         return Size.create(hintWidth, hintHeight);
@@ -417,6 +431,11 @@ export class BodyView extends ChartElement<Body> {
                 v.resize(w, h);
                 v.layout();
             }
+
+            // axis guides
+            [this._guideContainer, this._frontGuideContainer].forEach(c => {
+                c._views.forEach(v => v.layout(w, h));
+            });
         }
     }
 
@@ -432,28 +451,25 @@ export class BodyView extends ChartElement<Body> {
     }
 
     private $_prepareGrids(doc: Document, chart: Chart): void {
-        const polar = !chart.needAxes();
+        const needAxes = chart.needAxes();
         const container = this._gridContainer;
         const views = this._gridViews;
 
         for (const axis of views.keys()) {
-            if (polar || !chart.containsAxis(axis) || !axis.grid.isVisible()) {
+            if (!needAxes || !chart.containsAxis(axis) || !axis.grid.isVisible()) {
                 views.get(axis).remove();
                 views.delete(axis);
             }
         }
 
         [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
-            if (!polar && axis.grid.isVisible() && !views.has(axis)) {
+            if (needAxes && axis.grid.isVisible() && !views.has(axis)) {
                 const v = new AxisGridView(doc);
 
                 views.set(axis, v);
                 container.add(v);
             }
         }));
-    }
-
-    private $_prepareGuides(doc: Document, chart: Chart): void {
     }
 
     private $_prepareSeries(doc: Document, series: Series[]): void {

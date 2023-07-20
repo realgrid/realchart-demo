@@ -8,7 +8,7 @@
 
 import { isNumber } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
-import { RcElement } from "../common/RcControl";
+import { LayerElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
@@ -141,7 +141,7 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepare(doc: Document, axes: Axis[], isHorz: boolean): void {
+    prepare(doc: Document, axes: Axis[], isHorz: boolean, guideContainer: LayerElement, frontGuideContainer: LayerElement): void {
         const views = this.views;
 
         while (views.length < axes.length) {
@@ -158,6 +158,7 @@ class AxisSectionView extends SectionView {
         views.forEach((v, i) => {
             v.model = axes[i];
             v._isHorz = isHorz;
+            v.prepareGuides(doc, guideContainer, frontGuideContainer);
         });
 
         this.axes = axes;
@@ -508,6 +509,8 @@ export class ChartView extends RcElement {
     }
 
     private $_prepareAxes(doc: Document, m: Chart): void {
+        const guideContainer = this._currBody._guideContainer;
+        const frontGuideContainer = this._currBody._frontGuideContainer;
         const need = !m.options.polar && m.needAxes();
         const map = this._axisSectionViews;
 
@@ -518,7 +521,7 @@ export class ChartView extends RcElement {
                 const axes = m.getAxes(dir);
 
                 v.visible = true;
-                v.prepare(doc, axes, dir === SectionDir.BOTTOM || dir === SectionDir.TOP);
+                v.prepare(doc, axes, dir === SectionDir.BOTTOM || dir === SectionDir.TOP, guideContainer, frontGuideContainer);
             } else {
                 v.visible = false;
             }

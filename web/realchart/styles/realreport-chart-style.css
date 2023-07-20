@@ -106,6 +106,14 @@
     stroke: lightgray;
     stroke-width: 1px;
 }
+.rct-axis-guide-label {
+    fill: blue;
+}
+.rct-axis-guide-line {
+    stroke: blue;
+    stroke-width: 2px;
+    stroke-dasharray: 4;
+}
 
 /** polar axis */
 .rct-polar-xaxis-line {

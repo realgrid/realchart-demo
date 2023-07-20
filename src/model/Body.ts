@@ -7,6 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { IPercentSize, ORG_ANGLE, SizeValue, _undefined, calcPercent, deg2rad, parsePercentSize } from "../common/Types";
+import { AxisGuide } from "./Axis";
+import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 import { PolarableSeries } from "./Series";
 
@@ -24,6 +26,9 @@ export class Body extends ChartItem {
     _cx: number;
     _cy: number;
     _rd: number; 
+
+    _guides: AxisGuide[] = [];
+    _frontGuides: AxisGuide[] = [];
 
     //-------------------------------------------------------------------------
     // properties
@@ -72,5 +77,18 @@ export class Body extends ChartItem {
         this._sizeDim = parsePercentSize(this.size, true) || { size: 90, fixed: false };
         this._cxDim = parsePercentSize(this.centerX, true) || { size: 50, fixed: false };
         this._cyDim = parsePercentSize(this.centerY, true) || { size: 50, fixed: false };
+    }
+
+    protected _doPrepareRender(chart: IChart): void {
+        super._doPrepareRender(chart);
+
+        const guides = this._guides = [];
+        const frontGuides = this._frontGuides = [];
+
+        chart._getXAxes().forEach(axis => {
+            axis.guides.forEach(g => {
+                g.front ? frontGuides.push(g) : guides.push(g);
+            })
+        });
     }
 }

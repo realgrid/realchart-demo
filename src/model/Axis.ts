@@ -36,7 +36,7 @@ export interface IAxis {
     getUnitLength(length: number, value: number): number;
 }
 
-export class AxisItem extends ChartItem {
+export abstract class AxisItem extends ChartItem {
 
     //-------------------------------------------------------------------------
     // fields
@@ -479,13 +479,13 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected _doLoad(source: any): void {
         super._doLoad(source);
 
-        this.$_loadGuids();
+        this.$_loadGuides();
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_loadGuids(): void {
+    private $_loadGuides(): void {
         // 소스 정보가 this.guides에 로드된 상태이다.
         const guides = this.guides;
 
@@ -494,11 +494,21 @@ export abstract class Axis extends ChartItem implements IAxis {
                 const g: any = guides[i]
                 let guide: AxisGuide;
 
-                if (g.type === 'range') {
-                    guide = new AxisGuideRange(this);
-                } else {
-                    guide = new AxisGuideLine(this);
+                switch (g.type) {
+                    case 'range':
+                        guide = new AxisGuideRange(this);
+                        break;
+
+                    case 'area':
+                        guide = new AxisGuideArea(this);
+                        break;
+
+                    case 'line':
+                    default:    
+                        guide = new AxisGuideLine(this);
+                        break;
                 }
+
                 guide.load(g);
                 guides[i] = guide;
             }
