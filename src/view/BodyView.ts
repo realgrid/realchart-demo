@@ -28,16 +28,16 @@ import { PieSeries } from "../model/series/PieSeries";
 import { ScatterSeries } from "../model/series/ScatterSeries";
 import { ChartElement } from "./ChartElement";
 import { SeriesView } from "./SeriesView";
-import { AreaRangeSeriesView } from "./impl/AreaRangeSeriesView";
-import { AreaSeriesView } from "./impl/AreaSeriesView";
-import { BarSeriesView } from "./impl/BarSeriesView";
-import { BoxPlotSeriesView } from "./impl/BoxPlotSeriesView";
-import { BubbleSeriesView } from "./impl/BubbleSeriesView";
-import { FunnelSeriesView } from "./impl/FunnelSeriesView";
-import { HistogramSeriesView } from "./impl/HistogramSeriesView";
-import { LineSeriesViewImpl } from "./impl/LineSeriesView";
-import { PieSeriesView } from "./impl/PieSeriesView";
-import { ScatterSeriesView } from "./impl/ScatterSeriesView";
+import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
+import { AreaSeriesView } from "./series/AreaSeriesView";
+import { BarSeriesView } from "./series/BarSeriesView";
+import { BoxPlotSeriesView } from "./series/BoxPlotSeriesView";
+import { BubbleSeriesView } from "./series/BubbleSeriesView";
+import { FunnelSeriesView } from "./series/FunnelSeriesView";
+import { HistogramSeriesView } from "./series/HistogramSeriesView";
+import { LineSeriesViewImpl } from "./series/LineSeriesView";
+import { PieSeriesView } from "./series/PieSeriesView";
+import { ScatterSeriesView } from "./series/ScatterSeriesView";
 
 const series_types = new Map<any, any>([
     [BoxPlotSeries, BoxPlotSeriesView],
