@@ -29,13 +29,14 @@ export class DataPoint {
     // Series.collectValues()에서 결정된다. x, y와 각각 다른 값으로 설정될 수 있다.
     xValue: number;
     yValue: number;
+    yRate: number;      // 전체 point 합 내에서 비율(백분율)
 
     visible = true;
     color: string;
     xPos: number;
     yPos: number;
 
-    yGroup: number;   // for stacking
+    yGroup: number;     // for stacking
 
     //-------------------------------------------------------------------------
     // constructor

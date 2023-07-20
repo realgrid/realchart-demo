@@ -213,11 +213,9 @@ export class PieSeriesView extends SeriesView<PieSeries> {
         let start = ORG_ANGLE + deg2rad(this.model.startAngle);
 
         points.forEach(p => {
-            const angle = p.y * 2 * Math.PI / sum;
-
+            p.yRate = p.yValue / sum
             p.startAngle = start;
-            p.angle = angle;
-            start += angle;
+            start += p.angle = p.yRate * Math.PI * 2;
         });
 
         this._sectors.prepare(count, (sector, i) => {

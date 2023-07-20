@@ -16,6 +16,7 @@ import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement"
 import { Chart } from "../main";
 import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange } from "../model/Axis";
 import { Body } from "../model/Body";
+import { PlotItem } from "../model/PlotItem";
 import { Series } from "../model/Series";
 import { BarSeries, ColumnSeries } from "../model/series/BarSeries";
 import { BoxPlotSeries } from "../model/series/BoxPlotSeries";
@@ -338,14 +339,16 @@ export class BodyView extends ChartElement<Body> {
     protected _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
     private _series: Series[];
-    // guide
+    // guides
     private _guideMap: any = {};
     private _guideContainer: RcElement;
-    private _guideLines = new ElementPool(this, AxisGuideLineView);
-    private _guideRanges = new ElementPool(this, AxisGuideRangeView);
+    private _guideLines: ElementPool<AxisGuideLineView>;
+    private _guideRanges: ElementPool<AxisGuideRangeView>;
     private _frontGuideContainer: RcElement;
-    private _frontGuideLines = new ElementPool(this, AxisGuideLineView);
-    private _frontGuideRanges = new ElementPool(this, AxisGuideRangeView);
+    private _frontGuideLines: ElementPool<AxisGuideLineView>;
+    private _frontGuideRanges: ElementPool<AxisGuideRangeView>;
+    // items
+    // private _itemMap = new Map<PlotItem, PlotItemView>();
 
     //-------------------------------------------------------------------------
     // constructor
@@ -358,6 +361,11 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._guideContainer = new LayerElement(doc, 'rct-guides'));
         this.add(this._seriesContainer = new LayerElement(doc, 'rct-series-container'));
         this.add(this._frontGuideContainer = new LayerElement(doc, 'rct-front-guides'));
+
+        this._guideLines = new ElementPool(this._guideContainer, AxisGuideLineView);
+        this._guideRanges = new ElementPool(this._guideContainer, AxisGuideRangeView);
+        this._frontGuideLines = new ElementPool(this._frontGuideContainer, AxisGuideLineView);
+        this._frontGuideRanges = new ElementPool(this._frontGuideContainer, AxisGuideRangeView);
     }
 
     //-------------------------------------------------------------------------
@@ -367,20 +375,27 @@ export class BodyView extends ChartElement<Body> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
+        const chart = model.chart as Chart;
+
         // series
-        this.$_prepareSeries(doc, model.chart._getSeries().visibles())
+        this.$_prepareSeries(doc, chart._getSeries().visibles())
 
         this._seriesViews.forEach((v, i) => {
             v.measure(doc, this._series[i], hintWidth, hintHeight, phase);
         })
 
-        if (!model.chart._polar) {
+        this._polar = chart._polar;
+
+        if (!this._polar) {
             // axis grids
-            this.$_prepareGrids(doc);
+            this.$_prepareGrids(doc, chart);
 
             for (const axis of this._gridViews.keys()) {
                 this._gridViews.get(axis).measure(doc, axis.grid, hintWidth, hintHeight, phase);
             }
+
+            // guides
+            this.$_prepareGuides(doc, chart);
         }
 
         return Size.create(hintWidth, hintHeight);
@@ -396,7 +411,7 @@ export class BodyView extends ChartElement<Body> {
             v.layout();
         })
         
-        if (!this.model.chart._polar) {
+        if (!this._polar) {
             // axis grids
             for (const v of this._gridViews.values()) {
                 v.resize(w, h);
@@ -416,8 +431,7 @@ export class BodyView extends ChartElement<Body> {
         }
     }
 
-    private $_prepareGrids(doc: Document): void {
-        const chart = this.model.chart as Chart;
+    private $_prepareGrids(doc: Document, chart: Chart): void {
         const polar = !chart.needAxes();
         const container = this._gridContainer;
         const views = this._gridViews;
@@ -437,6 +451,9 @@ export class BodyView extends ChartElement<Body> {
                 container.add(v);
             }
         }));
+    }
+
+    private $_prepareGuides(doc: Document, chart: Chart): void {
     }
 
     private $_prepareSeries(doc: Document, series: Series[]): void {

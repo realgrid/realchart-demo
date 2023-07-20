@@ -143,8 +143,18 @@ export class AxisGuideLabel extends FormattableText {
 }
 
 export enum AxisGuideType {
+    /**
+     * 축 위의 특정한 값에 선분을 표시한다.
+     */
     LINE = 'line',
-    RANGE = 'range'
+    /**
+     * 축 위 특정한 두 값 사이의 영역을 구분 표시한다.
+     */
+    RANGE = 'range',
+    /**
+     * Plot 영역에 (x, y)로 지정하는 값 좌표의 배열로 설정되는 다각형을 표시한다.
+     */
+    AREA = 'area'
 }
 
 export abstract class AxisGuide extends AxisItem {
@@ -188,6 +198,13 @@ export class AxisGuideRange extends AxisGuide {
     //-------------------------------------------------------------------------
     startValue: number;
     endValue: number;
+}
+
+export class AxisGuideArea extends AxisGuide {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
 }
 
 export class AxisTickLabel extends FormattableText {

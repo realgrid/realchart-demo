@@ -7,8 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ISize } from "../../common/Size";
-import { IPercentSize, SizeValue, calcPercent, fixnum, parsePercentSize, parsePercentSize2 } from "../../common/Types";
-import { Utils } from "../../common/Utils";
+import { IPercentSize, SizeValue, calcPercent, fixnum, parsePercentSize2 } from "../../common/Types";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { WidgetSeries } from "../Series";
@@ -113,6 +112,7 @@ export class FunnelSeries extends WidgetSeries {
             const p = pts[i];
             const h = fixnum(p.yValue / sum);
 
+            p.yRate = h * 100;
             p.yPos = y;
             p.height = h;
             y += h;

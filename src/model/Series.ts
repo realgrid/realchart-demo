@@ -565,7 +565,7 @@ export class WidgetSeries extends Series {
  * <br>
  * TODO: 현재 PieSeris만 계승하고 있다. 추후 PieSeries에 합칠 것.
  */
-export class RadialSeries extends Series {
+export class RadialSeries extends WidgetSeries {
 
     //-------------------------------------------------------------------------
     // fields
