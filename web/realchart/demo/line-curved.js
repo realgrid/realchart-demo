@@ -1,26 +1,6 @@
 const config = {
     title: "Line Series - Curved",
     xAxis: {
-    },
-    yAxis: {
-    },
-    series: {
-        type: 'line',
-        curved: true,
-        data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['def', 9], 
-            ['지리산', 15.3], 
-            ['zzz', 13],
-            ['낙동강', 12.5]
-        ]
-    }
-}
-
-const config2 = {
-    title: "Line Series - Curved",
-    xAxis: {
         type: 'category'
     },
     yAxis: {
@@ -28,6 +8,7 @@ const config2 = {
     series: {
         type: 'line',
         curved: true,
+        pointLabel: true,
         data: [
             ['home', 7], 
             ['sky', 11], 
@@ -45,6 +26,5 @@ export function init() {
     RealChart.setDebugging(true);
 
     const chart = RealChart.createChartControl(document, 'realchart');
-    // chart.model = RealChart.loadChart(config);
-    chart.model = RealChart.loadChart(config2);
+    chart.model = RealChart.loadChart(config);
 }

@@ -181,11 +181,105 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
         const sb = new PathBuilder();
 
         sb.move(pts[0].xPos, pts[0].yPos);
-        for (let i = 1; i < pts.length; i++) {
-            sb.line(pts[i].xPos, pts[i].yPos);
+        if (this.model.curved) {
+            this._drawCurve(pts, sb, 'yPos', false);
+        } else {
+            this._drawLine(pts, sb, 'yPos');
         }
         this._line.setPath(sb.end(this._polar));
         this._line.setStyle('stroke', this.model.color);
+    }
+
+    protected _drawLine(pts: LineSeriesPoint[], sb: PathBuilder, yProp = 'yPos'): void {
+        for (let i = 1; i < pts.length; i++) {
+            sb.line(pts[i].xPos, pts[i][yProp]);
+        }
+    }
+
+    protected _drawCurve(pts: LineSeriesPoint[], sb: PathBuilder, yProp = 'yPos', reversed = false): void {
+        if (pts && pts.length > 1) {
+            const d = reversed ? -1 : 1;
+            const start = reversed ? pts.length - 1 : 0;
+            const end = reversed ? 0 : pts.length - 1;
+            let p = start;
+
+            if (pts.length == 2) {
+                sb.move(pts[p].xPos, pts[p][yProp]);
+                sb.line(pts[p + d].xPos, pts[p + d][yProp]);
+                return;
+            }
+
+            const tension = 0.23;
+            const tLeft = { x: 0, y: 0 };
+            const tanRight = { x: 0, y: 0 };
+            const v1 = { x: 0, y: 0 };
+            const v2 = { x: pts[p + d].xPos - pts[p].xPos, y: pts[p + d][yProp] - pts[p][yProp] };
+            const p1 = { x: 0, y: 0 };
+            const p2 = { x: 0, y: 0 };
+            const mp = { x: 0, y: 0 };
+            let tan = { x: 0, y: 0 };
+            let len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+
+            v2.x /= len;
+            v2.y /= len;
+
+            let tFactor = pts[p + d].xPos - pts[p].xPos;
+            let prevX = pts[p].xPos;
+            let prevY = pts[p][yProp];
+
+            for (p += d; p != end; p += d) {
+                v1.x = -v2.x;
+                v1.y = -v2.y;
+
+                v2.x = pts[p + d].xPos - pts[p].xPos;
+                v2.y = pts[p + d][yProp] - pts[p][yProp];
+
+                len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+                v2.x /= len;
+                v2.y /= len;
+
+                if (v2.x < v1.x) {
+                    tan.x = v1.x - v2.x;
+                    tan.y = v1.y - v2.y;
+                } else {
+                    tan.x = v2.x - v1.x;
+                    tan.y = v2.y - v1.y;
+                }
+
+                const tlen = Math.sqrt(tan.x * tan.x + tan.y * tan.y);
+                tan.x /= tlen;
+                tan.y /= tlen;
+
+                if (v1.y * v2.y >= 0) {
+                    tan = { x: 1, y: 0 };
+                }
+
+                tLeft.x = -tan.x * tFactor * tension;
+                tLeft.y = -tan.y * tFactor * tension;
+
+                if (p == (d + start)) {
+                    sb.q(pts[p].xPos + tLeft.x, pts[p][yProp] + tLeft.y, pts[p].xPos, pts[p][yProp]);
+                } else {
+                    p1.x = prevX + tanRight.x;
+                    p1.y = prevY + tanRight.y;
+                    p2.x = pts[p].xPos + tLeft.x;
+                    p2.y = pts[p][yProp] + tLeft.y;
+                    mp.x = (p1.x + p2.x) / 2;
+                    mp.y = (p1.y + p2.y) / 2;
+
+                    sb.q(p1.x, p1.y, mp.x, mp.y);
+                    sb.q(p2.x, p2.y, pts[p].xPos, pts[p][yProp]);
+                }
+
+                tFactor = pts[p + d].xPos - pts[p].xPos;
+                tanRight.x = tan.x * tFactor * tension;
+                tanRight.y = tan.y * tFactor * tension;
+                prevX = pts[p].xPos;
+                prevY = pts[p][yProp];
+            }
+
+            sb.q(prevX + tanRight.x, prevY + tanRight.y, pts[p].xPos, pts[p][yProp]);
+        }
     }
 }
 
