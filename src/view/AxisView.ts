@@ -6,15 +6,14 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ElementPool } from "../common/ElementPool";
 import { LayerElement, RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { LineElement } from "../common/impl/PathElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis, AxisGrid, AxisGuide, AxisGuideArea, AxisGuideRange, AxisTickMark, AxisTitle } from "../model/Axis";
+import { Axis, AxisGuide, AxisGuideRange, AxisTickMark, AxisTitle } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
-import { AxisGuideAreaView, AxisGuideLineView, AxisGuideRangeView, AxisGuideView } from "./BodyView";
+import { AxisGuideLineView, AxisGuideRangeView, AxisGuideView } from "./BodyView";
 import { ChartElement } from "./ChartElement";
 
 export class AxisTitleView extends ChartElement<AxisTitle> {
@@ -159,9 +158,7 @@ export class AxisView extends ChartElement<Axis> {
     prepareGuides(doc: Document, container: LayerElement, frontContainer: LayerElement): void {
 
         function createView(model: AxisGuide): AxisGuideView<AxisGuide> {
-            if (model instanceof AxisGuideArea) {
-                return new AxisGuideAreaView(doc);
-            } else if (model instanceof AxisGuideRange) {
+            if (model instanceof AxisGuideRange) {
                 return new AxisGuideRangeView(doc);
             } else {
                 return new AxisGuideLineView(doc);

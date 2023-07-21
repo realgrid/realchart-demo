@@ -14,7 +14,7 @@ import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { Chart } from "../main";
-import { Axis, AxisGrid, AxisGuide, AxisGuideArea, AxisGuideLine, AxisGuideRange } from "../model/Axis";
+import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange } from "../model/Axis";
 import { Body } from "../model/Body";
 import { PlotItem } from "../model/PlotItem";
 import { Series } from "../model/Series";
@@ -188,7 +188,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
                     break;
             }
 
-            switch (label.verticalAlign) {
+            switch (label.valign) {
                 case VerticalAlign.BOTTOM:
                     y = height;
                     layout = TextLayout.BOTTOM;
@@ -226,7 +226,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
                     break;
             }
 
-            switch (label.verticalAlign) {
+            switch (label.valign) {
                 case VerticalAlign.BOTTOM:
                     y = p + 1;
                     layout = TextLayout.TOP;
@@ -275,17 +275,19 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
     }
 
     layout(width: number, height: number): void {
+        const m = this.model;
         const label = this._label;
 
-        if (this.vertical) {
+        if (this.vertical()) {
         } else {
-            const m = this.model.label;
+            const y1 = height - this.model.axis.getPosition(height, Math.min(m.start, m.end));
+            const y2 = height - this.model.axis.getPosition(height, Math.max(m.start, m.end));
             let x: number;
             let y: number;
             let anchor: TextAnchor;
             let layout: TextLayout;
 
-            switch (m.align) {
+            switch (m.label.align) {
                 case Align.CENTER:
                     x = width / 2;
                     anchor = TextAnchor.MIDDLE;
@@ -302,19 +304,19 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
                     break;
             }
 
-            switch (m.verticalAlign) {
+            switch (m.label.valign) {
                 case VerticalAlign.BOTTOM:
-                    y = height - label.getBBounds().height;
-                    layout = TextLayout.TOP;
+                    y = y1;
+                    layout = TextLayout.BOTTOM;
                     break;
 
                 case VerticalAlign.MIDDLE:
-                    y = height / 2;
+                    y = y2 + (y1 - y2) / 2;
                     layout = TextLayout.MIDDLE;
                     break;
 
                 default:
-                    y = 0;
+                    y = y2;
                     layout = TextLayout.TOP;
                     break;
             }
@@ -323,17 +325,8 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
             label.layout = layout;
             label.translate(x, y);
 
-            this._rect.setBounds(0, 0, width, height);
+            this._rect.setBounds(0, y2, width, y1 - y2);
         }
-    }
-}
-
-export class AxisGuideAreaView extends AxisGuideView<AxisGuideArea> {
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    layout(width: number, height: number): void {
     }
 }
 

@@ -9,7 +9,15 @@ const config = {
         guides: [{
             type: 'line',
             value: 12,
-            label: 'guide one'
+            label: 'line guide'
+        }, {
+            type: 'range',
+            start: 3,
+            end: 6,
+            label: {
+                text: 'range guide',
+                align: 'right'
+            }
         }]
     },
     series: {

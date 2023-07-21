@@ -114,6 +114,10 @@
     stroke-width: 2px;
     stroke-dasharray: 4;
 }
+.rct-axis-guide-range {
+    stroke: none;
+    fill: #0088ff40;
+}
 
 /** polar axis */
 .rct-polar-xaxis-line {

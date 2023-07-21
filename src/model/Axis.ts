@@ -135,7 +135,7 @@ export class AxisGuideLabel extends FormattableText {
     /**
      * 수직 정렬.
      */
-    verticalAlign = VerticalAlign.TOP;
+    valign = VerticalAlign.TOP;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -196,15 +196,8 @@ export class AxisGuideRange extends AxisGuide {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    startValue: number;
-    endValue: number;
-}
-
-export class AxisGuideArea extends AxisGuide {
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
+    start: number;
+    end: number;
 }
 
 export class AxisTickLabel extends FormattableText {
@@ -497,10 +490,6 @@ export abstract class Axis extends ChartItem implements IAxis {
                 switch (g.type) {
                     case 'range':
                         guide = new AxisGuideRange(this);
-                        break;
-
-                    case 'area':
-                        guide = new AxisGuideArea(this);
                         break;
 
                     case 'line':

@@ -29,6 +29,7 @@ export abstract class PlotItem extends ChartItem implements ILegendSource {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    //target: string; // series name
     left: number;
     right: number;
     top: number;
@@ -63,6 +64,13 @@ export class ImageItem extends PlotItem {
 }
 
 export abstract class ShapeItem extends PlotItem {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+}
+
+export abstract class PolygonItem extends PlotItem {
 
     //-------------------------------------------------------------------------
     // property fields
