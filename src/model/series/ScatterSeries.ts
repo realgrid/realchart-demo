@@ -47,7 +47,7 @@ export class ScatterSeries extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    createPoint(source: any): DataPoint {
+    protected _createPoint(source: any): DataPoint {
         return new ScatterSeriesPoint(source);
     }
 }

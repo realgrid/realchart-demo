@@ -115,7 +115,7 @@ export interface ISeries {
 
     color: string;
 
-    createPoint(source: any): DataPoint;
+    createPoints(source: any[]): DataPoint[];
     needAxes(): boolean;
     isCategorized(): boolean;
     getPoints(): DataPointCollection;
@@ -248,8 +248,19 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    createPoint(source: any): DataPoint {
+    protected _createPoint(source: any): DataPoint {
         return new DataPoint(source);
+    }
+
+    createPoints(source: any[]): DataPoint[] {
+        return source.map((s, i) => {
+            const p = this._createPoint(s);
+
+            p.index = i;
+            p.parse(this);
+            p.yGroup = p.y; // 추 후 Axis에서 변경할 수 있다.
+            return p;
+        });
     }
 
     getXStart(): number {
@@ -305,7 +316,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     collectValues(axis: IAxis): number[] {
         const a = axis === this._xAxisObj ? 'x' : 'y';
         const v = a + 'Value';
-        const numeric = axis instanceof LinearAxis;
         const vals: number[] = [];
         const xStep = this.getXStep() || 1;
         let x = this.getXStart() || 0;
@@ -340,6 +350,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    _referOtherSeries(series: Series): boolean {
+        // true 리턴하면 더 이상 참조하지 않는 다는 뜻.
+        return true;
+    }
+
     protected _getField(axis: IAxis): any {
         return axis === this._xAxisObj ? this.xProp : this.yProp;
     }
@@ -353,7 +368,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
         const data = src[this.dataProp || 'data'];
 
-        if (isArray(data)) {
+        if (isArray(data) && data.length > 0) {
             this._doLoadPoints(data);
         }
     }
@@ -452,6 +467,14 @@ export class SeriesCollection {
 
         if (isArray(src)) {
             src.forEach((s, i) => this._items.push(this.$_loadSeries(chart, s, i)));
+
+            this._items.forEach(ser => {
+                for (const ser2 of this._items) {
+                    if (ser2 !== ser && ser._referOtherSeries(ser2)) {
+                        break;
+                    }
+                }
+            });
         } else if (isObject(src)) {
             this._items.push(this.$_loadSeries(chart, src, 0));
         }

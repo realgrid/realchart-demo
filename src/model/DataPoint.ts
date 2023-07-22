@@ -72,7 +72,7 @@ export class DataPoint {
         else return this.source[fld];
     }
 
-    prepare(series: ISeries): void {
+    parse(series: ISeries): void {
         const v = this.source;
 
         if (isArray(v)) {
@@ -155,11 +155,13 @@ export class DataPointCollection {
 
     load(source: any): void {
         if (isArray(source)) {
+            const series = this._owner;
+
             // x 축에 대한 정보가 없으므로 홑 값들은 앞으로 이동시킨다.
             source = source.sort((a, b) => {
                 return ((isArray(a) || isObject(a)) ? 1 : 0) - ((isArray(b) || isObject(b)) ? 1 : 0);
             });
-            this._points = source.map((s: any) => this._owner.createPoint(s));
+            this._points = this._owner.createPoints(source);
         } else {
             this._points = [];
         }
@@ -173,23 +175,17 @@ export class DataPointCollection {
         return this._points.map(p => p[axis]);
     }
 
-    /**
-     * 각 point의 두 축에 대한 값을 설정한다.
-     */
     prepare(): void {
-        const series = this._owner;
-
-        this._points.forEach((p, i) => {
-            p.index = i;
-            p.prepare(series);
-            p.yGroup = p.y; // 추 후 Axis에서 변경할 수 있다.
-        });
     }
 
     forEach(callback: (p: DataPoint, i?: number) => any): void {
         for (let i = 0, n = this._points.length; i < n; i++) {
             if (callback(this._points[i], i) === true) break;
         }
+    }
+
+    getPoints(): DataPoint[] {
+        return this._points;
     }
 
     getVisibles(): DataPoint[] {

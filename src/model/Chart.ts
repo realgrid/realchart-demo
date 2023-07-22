@@ -20,6 +20,7 @@ import { LinearAxis } from "./axis/LinearAxis";
 import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
 import { BarSeries, ColumnSeries } from "./series/BarSeries";
+import { BellCurveSeries } from "./series/BellCurveSeries";
 import { BoxPlotSeries } from "./series/BoxPlotSeries";
 import { BubbleSeries } from "./series/BubbleSeries";
 import { FunnelSeries } from "./series/FunnelSeries";
@@ -68,6 +69,7 @@ const series_types = {
     'bubble': BubbleSeries,
     'scatter': ScatterSeries,
     'histogram': HistogramSeries,
+    'bellcurve': BellCurveSeries,
     'pie': PieSeries,
     'funnel': FunnelSeries
 };

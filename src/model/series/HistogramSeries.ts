@@ -27,8 +27,8 @@ export class HistogramSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepare(series: ISeries): void {
-        super.prepare(series);
+    parse(series: ISeries): void {
+        super.parse(series);
 
         const v = this.source;
 
@@ -97,7 +97,7 @@ export class HistogramSeries extends Series {
         return axis === this._xAxisObj;
     }
 
-    createPoint(source: any): DataPoint {
+    protected _createPoint(source: any): DataPoint {
         return new HistogramSeriesPoint(source);
     }
 
@@ -116,6 +116,7 @@ export class HistogramSeries extends Series {
             return +y;
         }
 
+        const pts = [];
         let sample: number[ ] = [];
 
         for (let i = 0; i < src.length; i++) {
@@ -143,7 +144,6 @@ export class HistogramSeries extends Series {
             let n = 0;
             let x = min;
             let x2 = x + interval;
-            const pts = [];
 
             for (let i = 0; i < count; i++) {
                 let f = 0;
@@ -167,9 +167,8 @@ export class HistogramSeries extends Series {
                 x = x2;
                 x2 = x + interval;
             }
-
-            this._points.load(pts);
         }
+        super._doLoadPoints(pts);
     }
 
     collectValues(axis: IAxis): number[] {

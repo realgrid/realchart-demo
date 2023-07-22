@@ -11,7 +11,8 @@ import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Chart } from "../../main";
-import { LineSeries, LineSeriesPoint } from "../../model/series/LineSeries";
+import { DataPoint } from "../../model/DataPoint";
+import { LineSeries, LineSeriesBase, LineSeriesPoint } from "../../model/series/LineSeries";
 import { SeriesView } from "../SeriesView";
 
 export class LineMarkerView extends PathElement {
@@ -29,7 +30,7 @@ export class LineMarkerView extends PathElement {
     }
 }
 
-export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T> {
+export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesView<T> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -177,7 +178,7 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
         }
     }
 
-    protected _layoutLines(pts: LineSeriesPoint[]): void {
+    protected _layoutLines(pts: DataPoint[]): void {
         const sb = new PathBuilder();
 
         sb.move(pts[0].xPos, pts[0].yPos);
@@ -190,13 +191,13 @@ export abstract class LineSeriesView<T extends LineSeries> extends SeriesView<T>
         this._line.setStyle('stroke', this.model.color);
     }
 
-    protected _drawLine(pts: LineSeriesPoint[], sb: PathBuilder, yProp = 'yPos'): void {
+    protected _drawLine(pts: DataPoint[], sb: PathBuilder, yProp = 'yPos'): void {
         for (let i = 1; i < pts.length; i++) {
             sb.line(pts[i].xPos, pts[i][yProp]);
         }
     }
 
-    protected _drawCurve(pts: LineSeriesPoint[], sb: PathBuilder, yProp = 'yPos', reversed = false): void {
+    protected _drawCurve(pts: DataPoint[], sb: PathBuilder, yProp = 'yPos', reversed = false): void {
         if (pts && pts.length > 1) {
             const d = reversed ? -1 : 1;
             const start = reversed ? pts.length - 1 : 0;

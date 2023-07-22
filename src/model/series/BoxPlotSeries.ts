@@ -82,8 +82,8 @@ export class BoxPlotSeriesPoint extends DataPoint {
         this.min = this.low = this.mid = this.high = this.y;
     }
 
-    prepare(series: BoxPlotSeries): void {
-        super.prepare(series);
+    parse(series: BoxPlotSeries): void {
+        super.parse(series);
 
         this.minValue = +this.min;
         this.lowValue = +this.low;
@@ -105,7 +105,7 @@ export class BoxPlotSeries extends ColumnSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    createPoint(source: any): DataPoint {
+    protected _createPoint(source: any): DataPoint {
         return new BoxPlotSeriesPoint(source);
     }
 }

@@ -19,6 +19,7 @@ import { Body } from "../model/Body";
 import { PlotItem } from "../model/PlotItem";
 import { Series } from "../model/Series";
 import { BarSeries, ColumnSeries } from "../model/series/BarSeries";
+import { BellCurveSeries } from "../model/series/BellCurveSeries";
 import { BoxPlotSeries } from "../model/series/BoxPlotSeries";
 import { BubbleSeries } from "../model/series/BubbleSeries";
 import { FunnelSeries } from "../model/series/FunnelSeries";
@@ -31,6 +32,7 @@ import { SeriesView } from "./SeriesView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
 import { AreaSeriesView } from "./series/AreaSeriesView";
 import { BarSeriesView } from "./series/BarSeriesView";
+import { BellCurveSeriesView } from "./series/BellCurveSeriesView";
 import { BoxPlotSeriesView } from "./series/BoxPlotSeriesView";
 import { BubbleSeriesView } from "./series/BubbleSeriesView";
 import { FunnelSeriesView } from "./series/FunnelSeriesView";
@@ -43,6 +45,7 @@ const series_types = new Map<any, any>([
     [BoxPlotSeries, BoxPlotSeriesView],
     [BarSeries, BarSeriesView],
     [ColumnSeries, BarSeriesView],
+    [BellCurveSeries, BellCurveSeriesView],
     [AreaRangeSeries, AreaRangeSeriesView],
     [AreaSeries, AreaSeriesView],
     [LineSeries, LineSeriesViewImpl],
@@ -161,7 +164,8 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
     }
 
     layout(width: number, height: number): void {
-        const label = this.model.label;
+        const m = this.model;
+        const label = m.label;
         const labelView = this._label;
         let x: number;
         let y: number;
@@ -169,21 +173,23 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
         let layout: TextLayout;
 
         if (this.vertical()) {
-            this._line.setVLineC(0, 0, height);
+            const p = m.axis.getPosition(width, m.value);
+
+            this._line.setVLineC(p, 0, height);
 
             switch (label.align) {
                 case Align.CENTER:
-                    x = 0;
+                    x = p;
                     anchor = TextAnchor.MIDDLE;
                     break;
 
                 case Align.RIGHT:
-                    x = 0;
+                    x = p;
                     anchor = TextAnchor.START;
                     break;
 
                 default:
-                    x = 0;
+                    x = p;
                     anchor = TextAnchor.END;
                     break;
             }
@@ -205,7 +211,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
                     break;
             }
         } else {
-            const p = height - this.model.axis.getPosition(height, this.model.value);
+            const p = height - m.axis.getPosition(height, m.value);
 
             this._line.setHLineC(p, 0, width);
 
@@ -279,6 +285,54 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
         const label = this._label;
 
         if (this.vertical()) {
+            const x1 = m.axis.getPosition(width, m.start);
+            const x2 = m.axis.getPosition(width, m.end);
+
+            let x: number;
+            let y: number;
+            let anchor: TextAnchor;
+            let layout: TextLayout;
+
+            switch (m.label.align) {
+                case Align.CENTER:
+                    x = x + (x2 - x1) / 2;
+                    anchor = TextAnchor.MIDDLE;
+                    break;
+
+                case Align.RIGHT:
+                    x = x2;
+                    anchor = TextAnchor.END;
+                    break;
+
+                default:
+                    x = x1;
+                    anchor = TextAnchor.START;
+                    break;
+            }
+
+            switch (m.label.valign) {
+                case VerticalAlign.BOTTOM:
+                    y = height;
+                    layout = TextLayout.BOTTOM;
+                    break;
+
+                case VerticalAlign.MIDDLE:
+                    y = height / 2;
+                    layout = TextLayout.MIDDLE;
+                    break;
+
+                default:
+                    y = 0;
+                    layout = TextLayout.TOP;
+                    break;
+            }
+
+            label.anchor = anchor;
+            label.layout = layout;
+            label.translate(x, y);
+
+            this._rect.setBounds(x1, 0, x2 - x1, height);
+
         } else {
             const y1 = height - this.model.axis.getPosition(height, Math.min(m.start, m.end));
             const y2 = height - this.model.axis.getPosition(height, Math.max(m.start, m.end));

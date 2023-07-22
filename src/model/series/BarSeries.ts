@@ -96,7 +96,7 @@ export class ColumnSeries extends BoxSeries {
         return true;
     }
 
-    createPoint(source: any): DataPoint {
+    protected _createPoint(source: any): DataPoint {
         return new BarSeriesPoint(source);
     }
 }

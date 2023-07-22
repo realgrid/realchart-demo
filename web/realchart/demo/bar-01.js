@@ -6,8 +6,18 @@ const config = {
         guides: [{
             type: 'line',
             value: 5.5,
+            label: "Hello?",
             style: {
                 stroke: 'red'
+            }
+        }, {
+            type: 'range',
+            start: 9,
+            end: 11.5,
+            label: {
+                text: 'range guide',
+                align: 'right',
+                valign: 'bottom'
             }
         }]
     },

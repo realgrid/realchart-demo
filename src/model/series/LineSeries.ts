@@ -50,15 +50,7 @@ export class LineSeriesMarker extends SeriesMarker {
     maxVisible = MarerVisibility.DEFAULT;
 }
 
-export class LineSeries extends PolarableSeries {
-
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
-    curved = false;
-    baseValue = 0;
-    negativeStyle: StyleProps;
-    connectNulls = false;
+export class LineSeriesBase extends PolarableSeries {
 
     //-------------------------------------------------------------------------
     // fields
@@ -75,11 +67,36 @@ export class LineSeries extends PolarableSeries {
     }
 
     //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    curved = false;
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    createPoint(source: any): DataPoint {
+    protected _createPoint(source: any): DataPoint {
         return new LineSeriesPoint(source);
     }
+}
+
+export class LineSeries extends LineSeriesBase {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    baseValue = 0;
+    negativeStyle: StyleProps;
+    connectNulls = false;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
 }
 
 export class AreaSeriesPoint extends LineSeriesPoint {
@@ -103,7 +120,7 @@ export class AreaSeries extends LineSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    createPoint(source: any): DataPoint {
+    protected _createPoint(source: any): DataPoint {
         return new AreaSeriesPoint(source);
     }
 }
@@ -125,8 +142,8 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepare(series: AreaRangeSeries): void {
-        super.prepare(series);
+    parse(series: AreaRangeSeries): void {
+        super.parse(series);
 
         this.y = this.high = pickProp(this.high, this.low);
         this.lowValue = +this.low;
@@ -171,7 +188,7 @@ export class AreaRangeSeries extends AreaSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    createPoint(source: any): DataPoint {
+    protected _createPoint(source: any): DataPoint {
         return new AreaRangeSeriesPoint(source);
     }
 }

@@ -81,7 +81,7 @@ export class FunnelSeries extends WidgetSeries {
         return true;
     }
 
-    createPoint(source: any): DataPoint {
+    protected _createPoint(source: any): DataPoint {
         return new FunnelSeriesPoint(source);
     }
 

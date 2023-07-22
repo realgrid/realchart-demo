@@ -49,8 +49,8 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepare(series: ISeries): void {
-        super.prepare(series);
+    parse(series: ISeries): void {
+        super.parse(series);
 
         this.sliced = this.source.sliced;
     }
@@ -109,7 +109,7 @@ export class PieSeries extends RadialSeries {
         return true;
     }
 
-    createPoint(source: any): DataPoint {
+    protected _createPoint(source: any): DataPoint {
         return new PieSeriesPoint(source);
     }
 

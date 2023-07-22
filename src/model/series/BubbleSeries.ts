@@ -6,12 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum, pickProp } from "../../common/Common";
-import { IPercentSize, RtPercentSize, SizeValue, calcPercent, parsePercentSize } from "../../common/Types";
+import { pickNum, pickProp } from "../../common/Common";
+import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { ISeries, Series, SeriesMarker } from "../Series";
+import { Series, SeriesMarker } from "../Series";
 
 export class BubbleSeriesPoint extends DataPoint {
 
@@ -30,8 +30,8 @@ export class BubbleSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepare(series: BubbleSeries): void {
-        super.prepare(series);
+    parse(series: BubbleSeries): void {
+        super.parse(series);
 
         this.zValue = +this.z;
     }
@@ -124,7 +124,7 @@ export class BubbleSeries extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    createPoint(source: any): DataPoint {
+    protected _createPoint(source: any): DataPoint {
         return new BubbleSeriesPoint(source);
     }
 
