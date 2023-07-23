@@ -11,11 +11,10 @@ import { Align, VerticalAlign } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { ISeries } from "./Series";
-import { ISeriesGroup } from "./SeriesGroup";
+import { ISeriesGroup2 } from "./SeriesGroup2";
 
 export interface IAxis {
 
-    valueUnit: number;
     _length: number;
     baseValue: number;
 
@@ -342,7 +341,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     _isX: boolean;
     _isHorz: boolean;
     protected _series: ISeries[] = [];
-    protected _groups: ISeriesGroup[] = [];
+    protected _groups: ISeriesGroup2[] = [];
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
     _length: number;
@@ -422,7 +421,6 @@ export abstract class Axis extends ChartItem implements IAxis {
      * false로 지정하면 축 끝 위치에 tick이 생성된 경우에도 표시하지 않는다.
      */
     tickEnd: boolean;
-    valueUnit = 1;
     baseValue: number;
 
     isEmpty(): boolean {

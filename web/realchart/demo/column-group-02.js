@@ -32,6 +32,17 @@ const config = {
         group: 1,
         name: 'column5',
         data: [15, 19, 19, 6, 21, 21]
+    }],
+    series2: [{
+        type: 'column',
+        layout: 'stack',
+        series: [{
+
+        }]
+    }, {
+        series: [{
+
+        }]
     }]
 }
 

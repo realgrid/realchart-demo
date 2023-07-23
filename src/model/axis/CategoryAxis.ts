@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, pickNum } from "../../common/Common";
+import { isArray, isNumber, isString, pickNum } from "../../common/Common";
 import { Axis, AxisTick, AxisTickMark, IAxisTick } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { ISeries } from "../Series";
@@ -44,22 +44,23 @@ export class CategoryAxisTick extends AxisTick {
 }
 
 /**
- * 카테고리는 data point의 축 상 위치를 찾을 때 비교되는 값이다. 
- * 또, 기본적인 tick 라벨로 쓰인다.
- * 
- * data point들의 이 축의 값들 중 문자열인 값들, 혹은 categoryField에 해당하는 값들을 수집하거나,
- * categories로 지정한 것들로 중복을 제거하고 tick 목록으로 구성한다.
- * 수집된 category들은 0부터 시작해서 unit 속성에 지정된 값(기본값 1)씩 차례대로 증가한 값을 갖게된다.
- * 
- * tick들은 축을 카테고리 수로 등분된(TODO: 혹은, 비율대로 - category axis의 특징) 영역(카테고리 크기가 된다)의 중앙에 생성된다.
- * tick mark는 tick 위치나, 양 옆에 표시될 수 있다.
- * tick label은 tick 위치에 표시된다.
+ * 지정된 카테고리 수로 축을 분할해서 각 카테고리에 연결된 데이터포인트들이 표시되게 한다.
+ * <br>
+ * 1. categories 속성으로 카테고리 목록을 구성한다.
+ * 2. 이 축에 연결된 시리즈들에 포함된 data point들의 문자열인 값들, 혹은 categoryField에 해당하는 값들을 수집한다.
+ *    수집된 category들 중 숫자가 아닌 것들은 {@link startValue}부터 시작해서 {@link valueStep} 속성에 지정된 값씩 차례대로 증가한 값을 갖게된다.
+ * 3. 각 카테고리 영역의 크기는 기본적으로 동일하게 배분되고, 카테고리 영역 중간점이 카테고리 값의 위치가 된다.
+ *    {@link categories} 속성으로 카테고리를 지정할 때, 상대적 크기를 width로 지정해서 각 카테고리의 값을 다르게 표시할 수 있다.
+ * 4. tick mark나 label은 기본적으로 카테고리 값 위치에 표시된다.
+ *    tick mark는 카테고리 양끝에 표시될 수 있다.
  */
 export class CategoryAxis extends Axis {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    startValue = 0;
+    valueStep = 1;
     /**
      * Category 목록을 수집하는 시리즈.
      * 지정하지 않으면 모든 시리즈에서 카테고리를 수집한다.
@@ -72,7 +73,10 @@ export class CategoryAxis extends Axis {
     categoryField: string | number;
     /**
      * 명시적으로 지정하는 카테고리 목록.
-     * 첫 번째 값이 0에 해당한다.
+     * <br>
+     * 카테고리 항목을 object로 지정할 때에는 label 속성에 카테고리 이름을 width에 상대 너비를 지정한다.
+     * 첫 번째 값이 {@link startValue}에 해당하고 {@link valueStep}씩 증가한다.
+     * 각 카테고리의 상대적 너비를 지정할 수 있다.
      */
     categories: any[];
     /**
@@ -83,11 +87,14 @@ export class CategoryAxis extends Axis {
     // weights: number[];
     // weightCallback: (value: number) => number;
     weightSeries: string | number;
+    tickInterval = 1;
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     _cats: string[];
+    _widths: number[];
+    _widthSum: number;
     private _map = new Map<string, number>(); // data point의 축 위치를 찾기 위해 사용한다.
     private _min: number;
     private _max: number;
@@ -128,10 +135,11 @@ export class CategoryAxis extends Axis {
         min = this._min = Math.floor(min);
         max = this._max = Math.ceil(max);
 
+        const interval = this.tickInterval || 1;
         const len = this._len = max - min + 1;
         this._interval = length / (len + this._minPad + this._maxPad);
 
-        for (let i = min; i <= max; i++) {
+        for (let i = min; i <= max; i += interval) {
             ticks.push({
                 pos: this.getPosition(length, i),
                 value: i,
@@ -164,9 +172,20 @@ export class CategoryAxis extends Axis {
         const categories = this.categories;
 
         if (isArray(categories) && categories.length > 0) {
-            this._cats = categories.map(c => c == null ? null : c.toString());
+            this._cats = categories.map(c => {
+                if (c == null) return null;
+                if (isString(c)) return c;
+                return c.label;
+            });
+            this._widthSum = 0;
+            this._widths = categories.map(c => {
+                const w = c == null ? 1 : pickNum(c.width, 1);
+                this._widthSum += w;
+                return w;
+            });
         } else {
             const cats = this._cats = [];
+            const widths = this._widths = [];
 
             if (isArray(series)) {
                 for (const ser of series) {
@@ -175,13 +194,18 @@ export class CategoryAxis extends Axis {
                     for (const c of cats2) {
                         if (!cats.includes(c)) {
                             cats.push(c);
+                            widths.push(1);
                         }
                     }
                 }
             }
+            this._widthSum = widths.length;
         }
 
+        const start = pickNum(this.startValue, 0);
+        const step = this.valueStep || 1;
+
         this._map.clear();
-        this._cats.forEach((c, i) => this._map.set(c, i));
+        this._cats.forEach((c, i) => this._map.set(c, start + i * step));
     }
 }

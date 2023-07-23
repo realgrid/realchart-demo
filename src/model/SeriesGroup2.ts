@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// SeriesGroup.ts
+// SeriesGroup2.ts
 // 2023. 05. 28. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
@@ -54,7 +54,7 @@ export enum SeriesGroupLayout {
     FILL = 'fill',
 }
 
-export interface ISeriesGroup {
+export interface ISeriesGroup2 {
 
     layout: SeriesGroupLayout;
     _groupWidth: number;
@@ -66,7 +66,7 @@ export interface ISeriesGroup {
     collectValues(axis: IAxis): number[];
 }
 
-export class SeriesGroup extends RcObject {
+export class SeriesGroup2 extends RcObject {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -326,19 +326,19 @@ export class SeriesGroup extends RcObject {
     }
 }
 
-export class SeriesGroupCollection {
+export class SeriesGroupCollection2 {
 
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    private static readonly DEFAULT = new SeriesGroup();
+    private static readonly DEFAULT = new SeriesGroup2();
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     readonly chart: IChart;
-    private _items: SeriesGroup[] = [];
-    private _map = new Map<string, SeriesGroup>();
+    private _items: SeriesGroup2[] = [];
+    private _map = new Map<string, SeriesGroup2>();
 
     //-------------------------------------------------------------------------
     // constructor
@@ -350,14 +350,14 @@ export class SeriesGroupCollection {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    get first(): SeriesGroup {
-        return this._items[0] || SeriesGroupCollection.DEFAULT;
+    get first(): SeriesGroup2 {
+        return this._items[0] || SeriesGroupCollection2.DEFAULT;
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    get(name: string | number): SeriesGroup {
+    get(name: string | number): SeriesGroup2 {
         return  this._map[name] || this._items[name] || this._items[0];
     }
 
@@ -372,7 +372,7 @@ export class SeriesGroupCollection {
         } else if (isObject(src)) {
             this._items.push(this.$_loadGroup(chart, src));
         } else {
-            const g = SeriesGroupCollection.DEFAULT;
+            const g = SeriesGroupCollection2.DEFAULT;
             g._series = [];
             this._items.push(g);
         }
@@ -410,57 +410,11 @@ export class SeriesGroupCollection {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_loadGroup(chart: IChart, src: any): SeriesGroup {
-        const g = new SeriesGroup();
+    private $_loadGroup(chart: IChart, src: any): SeriesGroup2 {
+        const g = new SeriesGroup2();
 
         g.load(src);
         src.name && this._map.set(src.name, g);
         return g;
     }
 }
-
-export enum MarerVisibility {
-    /** visible 속성에 따른다. */
-    DEFAULT = 'default',
-    /** visible 속성과 상관없이 항상 표시한다. */
-    VISIBLE = 'visible',
-    /** visible 속성과 상관없이 항상 표시하지 않는다. */
-    HIDDEN = 'hidden'
-}
-
-export abstract class SeriesMarker extends ChartItem {
-
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
-    /**
-     * 명시적으로 지정하지 않으면 typeIndex에 따라 Shapes 중 하나로 돌아가면서 설정된다.
-     */
-    shape: Shape;
-    /**
-     * shape의 반지름.
-     */
-    radius = 3;
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(public series: Series) {
-        super(series.chart);
-    }
-}
-
-/**
- * Chart가 polar가 아닌 경우, plot area 영역을 기준으로 size, centerX, centerY가 적용된다.
- */
-export class RadialSeries extends Series {
-
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
-    startAngle = 0;
-    centerX = 0;
-    centerY = 0;
-    size: RtPercentSize;
-}
-

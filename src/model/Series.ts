@@ -15,7 +15,7 @@ import { Chart, IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource } from "./Legend";
-import { ISeriesGroup } from "./SeriesGroup";
+import { ISeriesGroup2 } from "./SeriesGroup2";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
 import { TimeAxis } from "./axis/TimeAxis";
@@ -106,7 +106,7 @@ export class DataPointLabel extends FormattableText {
 
 export interface ISeries {
 
-    _group: ISeriesGroup;
+    _group: ISeriesGroup2;
 
     xAxis: string | number;
     yAxis: string | number;
@@ -146,7 +146,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     index = -1;
     gindex = -1;
-    _group: ISeriesGroup;
+    _group: ISeriesGroup2;
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
     protected _points: DataPointCollection;
@@ -323,9 +323,9 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._visPoints.forEach((p, i) => {
             let val = axis.getValue(p[a]);
 
+            // 카테고리에 포함되지 않는 숫자 값들은 자동으로 값을 지정한다.
             if (isNaN(val) && a === 'x') {
                 val = x;
-                // if (p[a] === void 0) p[a] = val;
                 x += xStep;
             }
             if (!isNaN(val)) {

@@ -13,7 +13,7 @@ import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
 import { ILegendSource, Legend } from "./Legend";
 import { ISeries, Series, SeriesCollection } from "./Series";
-import { SeriesGroup, SeriesGroupCollection } from "./SeriesGroup";
+import { SeriesGroup2, SeriesGroupCollection2 } from "./SeriesGroup2";
 import { Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
@@ -45,7 +45,7 @@ export interface IChart {
 
     seriesByBame(series: string): Series;
     axisByName(axis: string): Axis;
-    getGroup(group: String): SeriesGroup;
+    getGroup(group: String): SeriesGroup2;
     getAxes(dir: SectionDir): Axis[];
 
     _getSeriesType(type: string): any;
@@ -155,7 +155,7 @@ export class Chart extends RcObject implements IChart {
     private _subtitle: Title;
     private _legend: Legend;
     private _series: SeriesCollection;
-    private _groups: SeriesGroupCollection;
+    private _groups: SeriesGroupCollection2;
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
     private _body: Body;
@@ -174,7 +174,7 @@ export class Chart extends RcObject implements IChart {
         this._subtitle = new Title(this, false);
         this._legend = new Legend(this);
         this._series = new SeriesCollection(this);
-        this._groups = new SeriesGroupCollection(this);
+        this._groups = new SeriesGroupCollection2(this);
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new AxisCollection(this, false);
         this._body = new Body(this);
@@ -217,7 +217,7 @@ export class Chart extends RcObject implements IChart {
         return this._series.first;
     }
 
-    get group(): SeriesGroup {
+    get group(): SeriesGroup2 {
         return this._groups.first;
     }
 
@@ -251,7 +251,7 @@ export class Chart extends RcObject implements IChart {
         return this._series;
     }
 
-    _getGroups(): SeriesGroupCollection {
+    _getGroups(): SeriesGroupCollection2 {
         return this._groups;
     }
 
@@ -282,7 +282,7 @@ export class Chart extends RcObject implements IChart {
         return this._xAxes.get(axis) || this._yAxes.get(axis);
     }
 
-    getGroup(group: string): SeriesGroup {
+    getGroup(group: string): SeriesGroup2 {
         return this._groups.get(group);
     }
 
