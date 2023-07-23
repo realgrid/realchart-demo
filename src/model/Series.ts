@@ -104,20 +104,25 @@ export class DataPointLabel extends FormattableText {
     //-------------------------------------------------------------------------
 }
 
-export interface ISeries {
-
-    _group: ISeriesGroup2;
+export interface IPlottingItem {
 
     xAxis: string | number;
     yAxis: string | number;
+
+    needAxes(): boolean;
+    isCategorized(): boolean;
+}
+
+export interface ISeries extends IPlottingItem {
+
+    _group: ISeriesGroup2;
+
     xProp: string | number;
     yProp: string | number;
 
     color: string;
 
     createPoints(source: any[]): DataPoint[];
-    needAxes(): boolean;
-    isCategorized(): boolean;
     getPoints(): DataPointCollection;
     getValue(point: DataPoint, axis: IAxis): number;
     collectCategories(axis: IAxis): string[];
