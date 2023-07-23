@@ -264,7 +264,7 @@ export class Chart extends RcObject implements IChart {
     }
 
     isInverted(): boolean {
-        return this._options.inverted === true ? true : this._options.inverted === false ? false : this._series.isInverted();
+        return this._options.inverted === true;
     }
 
     isEmpty(): boolean {

@@ -1,5 +1,8 @@
 const config = {
     title: "Bar BaseLine 01",
+    options: {
+        inverted: true
+    },
     xAxis: {
     },
     yAxis: {

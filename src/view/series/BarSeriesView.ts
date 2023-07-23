@@ -80,7 +80,7 @@ export class BarSeriesView extends SeriesView<ColumnSeries> {
 
     protected $_layoutBars(width: number, height: number): void {
         const series = this.model;
-        const inverted = series.isInverted();
+        const inverted = series.chart.isInverted();
         const labels = series.pointLabel;
         const labelVis = labels.visible;
         const labelOff = labels.offset;

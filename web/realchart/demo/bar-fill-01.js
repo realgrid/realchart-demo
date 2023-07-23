@@ -1,5 +1,8 @@
 const config = {
     type: 'bar',
+    options: {
+        inverted: true
+    },
     title: "Bar Group - Fill",
     xAxis: {
         title: "일일 Daily fat",

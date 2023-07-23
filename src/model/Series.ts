@@ -209,10 +209,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     pointColors: boolean | string[];
 
-    isInverted(): boolean {
-        return false;
-    }
-
     getPoints(): DataPointCollection {
         return this._points;
     }
@@ -437,14 +433,6 @@ export class SeriesCollection {
 
     visibles(): Series[] {
         return this._items.filter(ser => ser.visible);
-    }
-
-    isInverted(): boolean {
-        for (const ser of this._items) {
-            if (ser.visible && ser.isInverted()) {
-                return true;
-            }
-        }
     }
 
     needAxes(): boolean {

@@ -1,5 +1,8 @@
 const config = {
     title: "Bar Series 01",
+    options: {
+        inverted: true
+    },
     xAxis: {
     },
     yAxis: {

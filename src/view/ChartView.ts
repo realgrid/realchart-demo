@@ -292,7 +292,7 @@ export class ChartView extends RcElement {
         let h = hintHeight;
         let sz: ISize;
 
-        this._inverted = m._getSeries().isInverted();
+        this._inverted = model.isInverted();
         
         // titles
         sz = this._titleSectionView.measure(doc, m, w, h, phase);

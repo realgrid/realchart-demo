@@ -49,7 +49,8 @@ export class CategoryAxisTick extends AxisTick {
  * 1. categories 속성으로 카테고리 목록을 구성한다.
  * 2. 이 축에 연결된 시리즈들에 포함된 data point들의 문자열인 값들, 혹은 categoryField에 해당하는 값들을 수집한다.
  *    수집된 category들 중 숫자가 아닌 것들은 {@link startValue}부터 시작해서 {@link valueStep} 속성에 지정된 값씩 차례대로 증가한 값을 갖게된다.
- * 3. 각 카테고리 영역의 크기는 기본적으로 동일하게 배분되고, 카테고리 영역 중간점이 카테고리 값의 위치가 된다.
+ * 3. 각 카테고리 영역의 크기는 {@link categoryWidth} 설정값에 따라 기본적으로 동일하게 배분되고, 
+ *    카테고리 영역 중간점이 카테고리 값의 위치가 된다.
  *    {@link categories} 속성으로 카테고리를 지정할 때, 상대적 크기를 width로 지정해서 각 카테고리의 값을 다르게 표시할 수 있다.
  * 4. tick mark나 label은 기본적으로 카테고리 값 위치에 표시된다.
  *    tick mark는 카테고리 양끝에 표시될 수 있다.
@@ -59,7 +60,13 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    /**
+     * 카테고리가 지정되지 않은 데이터포인트들의 이 축에 해당하는 값을 지정할 때 최초 값.
+     */
     startValue = 0;
+    /**
+     * 카테고리가 지정되지 않은 데이터포인트들의 이 축에 해당하는 값을 지정할 때 값 사이의 간격.
+     */
     valueStep = 1;
     /**
      * Category 목록을 수집하는 시리즈.
@@ -83,18 +90,17 @@ export class CategoryAxis extends Axis {
      * 축의 양 끝 카테고리 값 위치에 여백으로 추가되는 크기.
      */
     endPadding: 0.5;
-
-    // weights: number[];
-    // weightCallback: (value: number) => number;
-    weightSeries: string | number;
-    tickInterval = 1;
+    /** 
+     * 카테고리 하나의 값 크기.
+     */
+    categoryWidth = 1;
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     _cats: string[];
-    _widths: number[];
-    _widthSum: number;
+    _widths: number[];  // ? 한 카테고리의 너비. 한 카테고리의 값 크기는 1 ?
+    _widthSum: number;  // ?
     private _map = new Map<string, number>(); // data point의 축 위치를 찾기 위해 사용한다.
     private _min: number;
     private _max: number;
@@ -135,7 +141,7 @@ export class CategoryAxis extends Axis {
         min = this._min = Math.floor(min);
         max = this._max = Math.ceil(max);
 
-        const interval = this.tickInterval || 1;
+        const interval = this.categoryWidth || 1;
         const len = this._len = max - min + 1;
         this._interval = length / (len + this._minPad + this._maxPad);
 
