@@ -339,12 +339,12 @@ export class SeriesGroupCollection2 {
             this._items.push(g);
         }
 
-        chart._getSeries2().forEach(ser => {
-            const g = this.get(ser.group);
+        // chart._getSeries2().forEach(ser => {
+        //     const g = this.get('');//ser.group);
 
-            ser._group = g;
-            g._series.push(ser);
-        })
+        //     ser._group = g;
+        //     g._series.push(ser);
+        // })
     }
 
     prepareRender(): void {

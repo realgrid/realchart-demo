@@ -442,7 +442,7 @@ export class BodyView extends ChartElement<Body> {
         const chart = model.chart as Chart;
 
         // series
-        this.$_prepareSeries(doc, chart._getSeries2().visibles())
+        this.$_prepareSeries(doc, chart._getSeries().visibleSeries());
 
         this._seriesViews.forEach((v, i) => {
             v.measure(doc, this._series[i], hintWidth, hintHeight, phase);

@@ -23,13 +23,13 @@ import { Tester } from '../Tester';
     it('init', () => {
         let chart = new Chart();
 
-        expect(chart.series2).not.exist;
+        expect(chart.firstSeries).not.exist;
     });
 
     it ('load simple', () => {
         const json = Tester.loadChartJson("column-01");
         const chart = new Chart(json);
-        const series = chart.series2;
+        const series = chart.firstSeries;
 
         expect(series).instanceOf(BarSeries);
         expect(series.getPoints().count).eq(json.series.data.length);
@@ -38,7 +38,7 @@ import { Tester } from '../Tester';
     it ('prepare', () => {
         const json = Tester.loadChartJson("column-01");
         const chart = new Chart(json);
-        const series = chart.series2 as Series;
+        const series = chart.firstSeries;
 
         chart.prepareRender();
         
@@ -52,7 +52,7 @@ import { Tester } from '../Tester';
     it ('prepare points', () => {
         const json = Tester.loadChartJson("column-01");
         const chart = new Chart(json);
-        const series = chart.series2 as Series;
+        const series = chart.firstSeries;
         const points = series.getPoints();
 
         chart.prepareRender();

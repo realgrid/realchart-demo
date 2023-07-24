@@ -12,7 +12,7 @@ import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
 import { ILegendSource, Legend } from "./Legend";
-import { ISeries, PlottingItemCollection, Series, SeriesCollection } from "./Series";
+import { IPlottingItem, ISeries, PlottingItemCollection, Series, SeriesCollection } from "./Series";
 import { SeriesGroup2, SeriesGroupCollection2 } from "./SeriesGroup2";
 import { Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
@@ -34,7 +34,9 @@ export interface IChart {
     type: string;
     xStart: number;
     xStep: number;
-    series2: ISeries;
+    // series2: ISeries;
+    first: IPlottingItem;
+    firstSeries: Series;
     xAxis: IAxis;
     yAxis: IAxis;
     colors: string[];
@@ -45,13 +47,14 @@ export interface IChart {
 
     seriesByBame(series: string): Series;
     axisByName(axis: string): Axis;
-    getGroup(group: String): SeriesGroup2;
+    // getGroup(group: String): SeriesGroup2;
     getAxes(dir: SectionDir): Axis[];
 
     _getGroupType(type: string): any;
     _getSeriesType(type: string): any;
     _getAxisType(type: string): any;
-    _getSeries2(): SeriesCollection;
+    _getSeries(): PlottingItemCollection;
+    // _getSeries2(): SeriesCollection;
     _getXAxes(): AxisCollection;
     _getYAxes(): AxisCollection;
     _connectSeries(series: Series, isX: boolean): Axis;
@@ -160,9 +163,9 @@ export class Chart extends RcObject implements IChart {
     private _title: Title;
     private _subtitle: Title;
     private _legend: Legend;
-    private _series = new PlottingItemCollection(this);
-    private _series2: SeriesCollection;
-    private _groups2: SeriesGroupCollection2;
+    private _series: PlottingItemCollection;
+    // private _series2: SeriesCollection;
+    // private _groups2: SeriesGroupCollection2;
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
     private _body: Body;
@@ -180,8 +183,9 @@ export class Chart extends RcObject implements IChart {
         this._title = new Title(this);
         this._subtitle = new Title(this, false);
         this._legend = new Legend(this);
-        this._series2 = new SeriesCollection(this);
-        this._groups2 = new SeriesGroupCollection2(this);
+        this._series = new PlottingItemCollection(this);
+        // this._series2 = new SeriesCollection(this);
+        // this._groups2 = new SeriesGroupCollection2(this);
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new AxisCollection(this, false);
         this._body = new Body(this);
@@ -220,9 +224,17 @@ export class Chart extends RcObject implements IChart {
         return this._subtitle;
     }
 
-    get series2(): ISeries {
-        return this._series2.first;
+    get first(): IPlottingItem {
+        return this._series.first;
     }
+
+    get firstSeries(): Series {
+        return this._series.firstSeries;
+    }
+
+    // get series2(): ISeries {
+    //     return this._series2.first;
+    // }
 
     get legend(): Legend {
         return this._legend;
@@ -247,20 +259,20 @@ export class Chart extends RcObject implements IChart {
      * false이면 직교 좌표가 표시되지 않는다.
      */
     needAxes(): boolean {
-        return this._series2.needAxes();
+        return this._series.needAxes();
     }
 
     _getSeries(): PlottingItemCollection {
         return this._series;
     }
 
-    _getSeries2(): SeriesCollection {
-        return this._series2;
-    }
+    // _getSeries2(): SeriesCollection {
+    //     return this._series2;
+    // }
 
-    _getGroups2(): SeriesGroupCollection2 {
-        return this._groups2;
-    }
+    // _getGroups2(): SeriesGroupCollection2 {
+    //     return this._groups2;
+    // }
 
     _getXAxes(): AxisCollection {
         return this._xAxes;
@@ -275,23 +287,23 @@ export class Chart extends RcObject implements IChart {
     }
 
     isEmpty(): boolean {
-        return this._series2.isEmpty();
+        return this._series.isEmpty();
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     seriesByBame(series: string): Series {
-        return this._series2.get(series);
+        return this._series.get(series);
     }
 
     axisByName(axis: string): Axis {
         return this._xAxes.get(axis) || this._yAxes.get(axis);
     }
 
-    getGroup(group: string): SeriesGroup2 {
-        return this._groups2.get(group);
-    }
+    // getGroup(group: string): SeriesGroup2 {
+    //     return this._groups2.get(group);
+    // }
 
     containsAxis(axis: Axis): boolean {
         return this._xAxes.contains(axis) || this._yAxes.contains(axis);
@@ -337,7 +349,7 @@ export class Chart extends RcObject implements IChart {
     }
 
     _getLegendSources(): ILegendSource[] {
-        return this._series2.getLegendSources();
+        return this._series.getLegendSources();
     }
 
     load(source: any): void {
@@ -360,9 +372,9 @@ export class Chart extends RcObject implements IChart {
 
         // series - 시리즈를 먼저 로드해야 디폴트 axis를 지정할 수 있다.
         this._series.load(source.series);
-        this._series2.load(source.series);
+        // this._series2.load(source.series);
         // series group
-        this._groups2.load(source.groups);
+        // this._groups2.load(source.groups);
 
         // axes
         // 축은 반드시 존재해야 한다.
@@ -379,10 +391,10 @@ export class Chart extends RcObject implements IChart {
 
     prepareRender(): void {
         // 축에 연결한다.
-        // this._series.prepareRender();
-        this._series2.prepareRender();
+        this._series.prepareRender();
+        // this._series2.prepareRender();
         // group에 연결한다.
-        this._groups2.prepareRender();
+        // this._groups2.prepareRender();
 
         // 카테고리 목록을 만든다.
         // 축의 값 범위를 계산한다.

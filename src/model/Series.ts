@@ -113,8 +113,32 @@ export interface IPlottingItem {
     needAxes(): boolean;
     isEmpty(): boolean;
     isCategorized(): boolean;
-
     prepareRender(): void;
+}
+
+/**
+ * 옆으로 나누어 배치 가능한가? ex) bar series/group
+ */
+export interface IClusterable {
+
+    // 축 단위 내에서 이 그룹이 차지하는 계산된 영역 너비. 0 ~ 1 사이의 값.
+    _clusterWidth: number;
+    // 축 단위 내에서 이 그룹이 시작하는 위치. 0 ~ 1 사이의 상대 값.
+    _clusterPos: number;
+
+    /**
+     * 이 아이템이 축의 단위 너비 내에서 차지하는 영역의 상대 크기.
+     * <br>
+     * 0보다 큰 값으로 지정한다.
+     * group이 여러 개인 경우 이 너비를 모두 합한 크기에 대한 상대값으로 group의 너비가 결정된다.
+     */
+    clusterWidth: number;
+    /**
+     * 시리즈 point bar들의 양 끝을 점유하는 빈 공간 크기 비율.
+     * <br>
+     * 0 ~ 1 사이의 비율 값으로 지정한다.
+     */
+    clusterPadding: number;
 }
 
 export interface ISeriesGroup extends IPlottingItem {
@@ -193,7 +217,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     // properties
     //-------------------------------------------------------------------------
     parent: SeriesGroup;
-    group: string;
+    // group: string;
     zOrder = 0;
     xAxis: string | number;
     yAxis: string | number;
@@ -560,6 +584,10 @@ export class PlottingItemCollection  {
         return this._items[0];
     }
 
+    get firstSeries(): Series {
+        return this._series[0];
+    }
+
     isEmpty(): boolean {
         return !this._items.find(item => item.visible && !item.isEmpty());
     }
@@ -576,6 +604,10 @@ export class PlottingItemCollection  {
         return this._series.slice(0);
     }
 
+    visibleSeries(): Series[] {
+        return this._series.filter(ser => ser.visible);
+    }
+
     needAxes(): boolean {
         if (this._items.filter(item => item.visible && item.needAxes())) {
             return true;
@@ -586,6 +618,19 @@ export class PlottingItemCollection  {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    get(name: string): Series {
+        return this._map[name];
+    }
+
+    getLegendSources(): ILegendSource[] {
+        const legends: ILegendSource[] = [];
+
+        this._items.forEach(ser => {
+            ser.visible && ser instanceof Series && ser.getLegendSources(legends);
+        })
+        return legends;
+    }
+
     load(src: any): void {
         const chart = this.chart;
         const items = this._items = [];
@@ -792,10 +837,19 @@ export abstract class SeriesGroup extends ChartItem implements ISeriesGroup {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    /**
+     * {@link layout}이 {@link SeriesGroupLayout.FILL}일 때 상대적 최대값.
+     * <br>
+     * 
+     * @default 100
+     */
+    layoutMax = 100;
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _series: Series[] = [];
+    _stackPoints: Map<number, DataPoint[]>;
 
     //-------------------------------------------------------------------------
     // ISeriesGroup
@@ -823,9 +877,25 @@ export abstract class SeriesGroup extends ChartItem implements ISeriesGroup {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
+    // Axis에서 요청한다.
+    collectValues(axis: IAxis): number[] {
+        if (axis === this._series[0]._yAxisObj) {
+            switch (this.layout) {
+                case SeriesGroupLayout.STACK:
+                    return this.$_collectStack(axis);
+
+                case SeriesGroupLayout.FILL:
+                    return this.$_collectFill(axis);
+    
+                case SeriesGroupLayout.DEFAULT:
+                case SeriesGroupLayout.OVERLAP:
+                    return this.$_collectValues(axis);
+            }
+        } else {
+            return this.$_collectValues(axis);
+        }
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -872,5 +942,67 @@ export abstract class SeriesGroup extends ChartItem implements ISeriesGroup {
         } else {
             throw new Error('이 그룹에 포함될 수 없는 시리즈입니다: ' + series);
         }
+    }
+    private $_collectValues(axis: IAxis): number[] {
+        let vals: number[] = [];
+
+        this._series.forEach(ser => {
+            vals = vals.concat(ser.collectValues(axis));
+        })
+        return vals;
+    }
+
+    private $_collectPoints(): Map<number, DataPoint[]> {
+        const series = this._series;
+        const map: Map<number, DataPoint[]> = this._stackPoints = new Map();
+
+        series[0]._visPoints.forEach(p => map.set(p.xValue, [p]));
+
+        for (let i = 1; i < series.length; i++) {
+            series[i]._visPoints.forEach(p => {
+                const pts = map.get(p.xValue);
+                
+                if (pts) {
+                    pts.push(p);
+                } else {
+                    map.set(p.xValue, [p]);
+                }
+            });
+        }
+        return map;
+    }
+
+    private $_collectStack(axis: IAxis): number[] {
+        const map = this.$_collectPoints();
+        const vals: number[] = [];
+
+        for (const pts of map.values()) {
+            for (let i = 1; i < pts.length; i++) {
+                pts[i].yGroup = pts[i - 1].yGroup + pts[i].yValue;
+            }
+            vals.push(pts[pts.length - 1].yGroup);
+        }
+        return vals;
+    }
+
+    private $_collectFill(axis: IAxis): number[] {
+        const max = this.layoutMax || 100;
+        const map = this.$_collectPoints();
+        const vals: number[] = [];
+
+        for (const pts of map.values()) {
+            let sum = 0;
+            for (const p of pts) {
+                sum += p.yValue || 0;
+            }
+            let prev = 0;
+            for (const p of pts) {
+                p.yValue = p.yValue / sum * max;
+                prev = p.yGroup = p.yValue + prev;
+            }
+            vals.push(max);
+        }
+         
+        return vals;
     }
 }

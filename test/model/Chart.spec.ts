@@ -31,7 +31,7 @@ import { Tester } from '../Tester';
 
         expect(chart.title.text).eq(json.title);
         expect(chart.subtitle.text).eq(json.subtitle);
-        expect(chart.series2).instanceOf(BarSeries);
+        expect(chart.first).instanceOf(BarSeries);
         expect(chart.xAxis).instanceOf(CategoryAxis);
         expect(chart.yAxis).instanceOf(LinearAxis);
     });

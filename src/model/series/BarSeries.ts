@@ -7,19 +7,24 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { DataPoint } from "../DataPoint";
-import { PolarableSeries, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
+import { IClusterable, PolarableSeries, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
 
-export abstract class BoxSeries extends PolarableSeries {
+export abstract class BoxSeries extends PolarableSeries implements IClusterable {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _clusterWidth = 1;
+    _clusterPos = 0;
     _groupWidth = 1;    // group내에서 이 시리즈의 상대적 너비
     _groupPos = 0;      // group내에서 이 시리즈의 상대적 위치
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    clusterWidth = 1;
+    clusterPadding = 0.2;
+
     /**
      * CategoryAxis가 weight 값 목록을 가져올 data point 속성 이름.
      */
@@ -101,7 +106,19 @@ export class BarSeries extends BoxSeries {
     }
 }
 
-export class BarSeriesGroup extends SeriesGroup {
+export class BarSeriesGroup extends SeriesGroup implements IClusterable {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _clusterWidth = 1;
+    _clusterPos = 0;
+    
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    clusterWidth = 1;
+    clusterPadding = 0.2;
 
     //-------------------------------------------------------------------------
     // overriden members

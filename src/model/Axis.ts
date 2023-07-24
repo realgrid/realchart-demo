@@ -620,7 +620,7 @@ export class AxisCollection {
             if (isArray(src.categories)) {
                 t = 'category';
             } else if (this.isX) {
-                for (const ser of chart._getSeries2().items()) {
+                for (const ser of chart._getSeries().items()) {
                     if (ser.isCategorized()) {
                         if (src.name && ser.xAxis === src.name) {
                             t = 'category';
@@ -631,7 +631,7 @@ export class AxisCollection {
                         }
                     }   
                 }
-                if (!t && chart.series2.isCategorized()) {
+                if (!t && chart.first.isCategorized()) {
                     t = 'category';
                 }
             }
