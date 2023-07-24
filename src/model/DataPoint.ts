@@ -83,8 +83,6 @@ export class DataPoint {
             this._readSingle(v);
         }
         this.yValue = +this.y;
-
-        this.color = v.color;
     }
 
     getYLabel(index: number): any {
@@ -111,6 +109,7 @@ export class DataPoint {
     protected _readObject(series: ISeries, v: any): void {
         this.x = pickProp4(v[series.xProp], v.x, v.name, v.label);
         this.y = pickProp3(v[series.yProp], v.y, v.value);
+        this.color = v.color;
     }
 
     protected _readSingle(v: any): void {

@@ -16,7 +16,6 @@ import { Chart, IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource } from "./Legend";
-import { ISeriesGroup2 } from "./SeriesGroup2";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { TimeAxis } from "./axis/TimeAxis";
 
@@ -113,6 +112,11 @@ export interface IPlottingItem {
     needAxes(): boolean;
     isEmpty(): boolean;
     isCategorized(): boolean;
+    // axis에 설정된 baseValue를 무시하라!
+    ignoreAxisBase(axis: IAxis): boolean;
+    collectValues(axis: IAxis): number[];
+    collectCategories(axis: IAxis): string[];
+    collectValues(axis: IAxis): number[];
     prepareRender(): void;
 }
 
@@ -146,7 +150,8 @@ export interface ISeriesGroup extends IPlottingItem {
 
 export interface ISeries extends IPlottingItem {
 
-    _group: ISeriesGroup2;
+    // _group: ISeriesGroup2;
+    group: ISeriesGroup;
 
     xProp: string | number;
     yProp: string | number;
@@ -156,11 +161,7 @@ export interface ISeries extends IPlottingItem {
     createPoints(source: any[]): DataPoint[];
     getPoints(): DataPointCollection;
     getValue(point: DataPoint, axis: IAxis): number;
-    collectCategories(axis: IAxis): string[];
-    collectValues(axis: IAxis): number[];
     isVisible(p: DataPoint): boolean;
-    // axis에 설정된 baseValue를 무시하라!
-    ignoreAxisBase(axis: IAxis): boolean;
 }
 
 export abstract class Series extends ChartItem implements ISeries, ILegendSource {
@@ -196,7 +197,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _group: ISeriesGroup2;
+    group: SeriesGroup;
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
     protected _points: DataPointCollection;
@@ -216,7 +217,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    parent: SeriesGroup;
     // group: string;
     zOrder = 0;
     xAxis: string | number;
@@ -609,7 +609,7 @@ export class PlottingItemCollection  {
     }
 
     needAxes(): boolean {
-        if (this._items.filter(item => item.visible && item.needAxes())) {
+        if (this._items.find(item => item.visible && item.needAxes())) {
             return true;
         }
         return this._items.length === 0;
@@ -680,7 +680,7 @@ export class PlottingItemCollection  {
     // internal members
     //-------------------------------------------------------------------------
     private $_loadItem(chart: IChart, src: any, index: number): IPlottingItem {
-        let cls = chart._getGroupType(src.type);
+        let cls = src.series && (chart._getGroupType(src.type) || chart._getGroupType(chart.type));
 
         if (cls) {
             const g = new cls(chart);
@@ -689,10 +689,7 @@ export class PlottingItemCollection  {
             return g;
         }
 
-        cls = chart._getSeriesType(src.type);
-        if (!cls) {
-            cls = chart._getSeriesType(chart.type);
-        }
+        cls = chart._getSeriesType(src.type) || chart._getSeriesType(chart.type);
 
         const ser = new cls(chart, src.name || `Series ${index + 1}`);
 
@@ -849,6 +846,8 @@ export abstract class SeriesGroup extends ChartItem implements ISeriesGroup {
     // fields
     //-------------------------------------------------------------------------
     private _series: Series[] = [];
+    _xAxisObj: IAxis;
+    _yAxisObj: IAxis;
     _stackPoints: Map<number, DataPoint[]>;
 
     //-------------------------------------------------------------------------
@@ -896,6 +895,19 @@ export abstract class SeriesGroup extends ChartItem implements ISeriesGroup {
         }
     }
 
+    collectCategories(axis: IAxis): string[] {
+        let cats: string[] = [];
+
+        this._series.forEach(ser => cats = cats.concat(ser.collectCategories(axis)));
+        return cats;
+    }
+
+    ignoreAxisBase(axis: IAxis): boolean {
+        for (const ser of this._series) {
+            if (ser.ignoreAxisBase(axis)) return true;
+        }
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -916,6 +928,9 @@ export abstract class SeriesGroup extends ChartItem implements ISeriesGroup {
     protected _doPrepareRender(chart: IChart): void {
         const series = this._series.filter(ser => ser.visible).sort((s1, s2) => (s1.zOrder || 0) - (s2.zOrder || 0));
         
+        this._xAxisObj = this.chart._connectSeries(this, true);
+        this._yAxisObj = this.chart._connectSeries(this, false);
+
         if (series.length > 0) {
             series.forEach(ser => ser.prepareRender());
             this._doPrepareSeries(series);
@@ -938,7 +953,7 @@ export abstract class SeriesGroup extends ChartItem implements ISeriesGroup {
     private $_add(series: Series): void {
         if (this._canContain(series)) {
             this._series.push(series);
-            series.parent = this;
+            series.group = this;
         } else {
             throw new Error('이 그룹에 포함될 수 없는 시리즈입니다: ' + series);
         }

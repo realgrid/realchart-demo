@@ -52,19 +52,24 @@ export abstract class BoxSeries extends PolarableSeries implements IClusterable 
     getPointWidth(length: number): number {
         let w = length;
         
-        w *= this._group._groupWidth;           // 그룹 영역
-        w *= 1 - this._group.groupPadding * 2;  // 그룹 padding
+        if (this.group instanceof BarSeriesGroup) {
+            w *= this.group._clusterWidth;           // 그룹 영역
+            w *= 1 - this.group.clusterPadding * 2;  // 그룹 padding
+        }
         w *= this._groupWidth;                  // 그룹 내 시리즈 영역
         w *= 1 - this.pointPadding * 2;         // 시리즈 padding
         return w;
     }
 
     getPointPos(length: number): number {
-        let p = length * this._group._groupPos;
+        let p = 0;
 
-        length *= this._group._groupWidth;
-        p += length * this._group.groupPadding;
-        length *= 1 - this._group.groupPadding * 2;
+        if (this.group instanceof BarSeriesGroup) {
+            p = length * this.group._clusterPos;
+            length *= this.group._clusterWidth;
+            p += length * this.group.clusterPadding;
+            length *= 1 - this.group.clusterPadding * 2;
+        }
 
         p += length * this._groupPos;
         length *= this._groupWidth;

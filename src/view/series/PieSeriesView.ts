@@ -13,7 +13,7 @@ import { Utils } from "../../common/Utils";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
 import { PointItemPosition } from "../../model/Series";
-import { PieSeries, PieSeriesPoint } from "../../model/series/PieSeries";
+import { PieSeries, PieSeriesGroup, PieSeriesPoint } from "../../model/series/PieSeries";
 import { PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView } from "../SeriesView";
 
 class SectorView extends SectorElement {
@@ -196,8 +196,9 @@ export class PieSeriesView extends SeriesView<PieSeries> {
 
     private $_calcGroup(width: number, height: number): void {
         const m = this.model;
-        const sz = Math.floor(m._group.getPolarSize(width, height) / 2);
-        const szInner = m._group.getInnerRadius(sz) * sz;
+        const g = m.group as PieSeriesGroup;
+        const sz = Math.floor(g ? g.getPolarSize(width, height) / 2 : m.getSize(width, height) / 2);
+        const szInner = g ? g.getInnerRadius(sz) * sz : m.getInnerRadius(sz);
         const len = sz - szInner;
 
         this._rd = szInner + (m._groupPos + m._groupSize) * len;

@@ -9,7 +9,7 @@
 import { isArray, isNumber, isString, pickNum } from "../../common/Common";
 import { Axis, AxisTick, AxisTickMark, IAxisTick } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { ISeries } from "../Series";
+import { IPlottingItem, ISeries } from "../Series";
 
 export enum CategoryTickMarkPosition {
     TICK = 'tick',
@@ -174,7 +174,7 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private _collectCategories(series: ISeries[]): void {
+    private _collectCategories(series: IPlottingItem[]): void {
         const categories = this.categories;
 
         if (isArray(categories) && categories.length > 0) {

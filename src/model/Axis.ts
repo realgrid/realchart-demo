@@ -10,8 +10,7 @@ import { isArray, isNumber, isObject, isString } from "../common/Common";
 import { Align, VerticalAlign } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
-import { ISeries } from "./Series";
-import { ISeriesGroup2 } from "./SeriesGroup2";
+import { IPlottingItem } from "./Series";
 
 export interface IAxis {
 
@@ -340,8 +339,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     _isX: boolean;
     _isHorz: boolean;
-    protected _series: ISeries[] = [];
-    protected _groups: ISeriesGroup2[] = [];
+    protected _series: IPlottingItem[] = [];
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
     _length: number;
@@ -440,8 +438,8 @@ export abstract class Axis extends ChartItem implements IAxis {
 
         let vals: number[] = [];
 
-        this._groups.forEach(g => {
-            vals = vals.concat(g.collectValues(this));
+        this._series.forEach(item => {
+            vals = vals.concat(item.collectValues(this));
         })
         this._range = this._doCalcluateRange(vals);
     }
@@ -502,12 +500,9 @@ export abstract class Axis extends ChartItem implements IAxis {
         }
     }
 
-    _connect(series: ISeries): void {
+    _connect(series: IPlottingItem): void {
         if (series && !this._series.includes(series)) {
             this._series.push(series);
-            if (!this._groups.includes(series._group)) {
-                this._groups.push(series._group);
-            }
         }
     }
 
@@ -582,7 +577,7 @@ export class AxisCollection {
         this._items.forEach(axis => axis.buildTicks(length));
     }
 
-    connect(series: ISeries): Axis {
+    connect(series: IPlottingItem): Axis {
         const items = this._items;
         const a = this.isX ? series.xAxis : series.yAxis;
         let axis: Axis;

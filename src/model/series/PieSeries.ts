@@ -187,6 +187,10 @@ export class PieSeriesGroup extends SeriesGroup {
         return 'pie';
     }
 
+    needAxes(): boolean {
+        return false;
+    }
+
     protected _canContain(ser: Series): boolean {
         return ser instanceof PieSeries;
     }

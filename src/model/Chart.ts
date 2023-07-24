@@ -12,8 +12,7 @@ import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
 import { ILegendSource, Legend } from "./Legend";
-import { IPlottingItem, ISeries, PlottingItemCollection, Series, SeriesCollection } from "./Series";
-import { SeriesGroup2, SeriesGroupCollection2 } from "./SeriesGroup2";
+import { IPlottingItem, PlottingItemCollection, Series } from "./Series";
 import { Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
@@ -57,16 +56,16 @@ export interface IChart {
     // _getSeries2(): SeriesCollection;
     _getXAxes(): AxisCollection;
     _getYAxes(): AxisCollection;
-    _connectSeries(series: Series, isX: boolean): Axis;
+    _connectSeries(series: IPlottingItem, isX: boolean): Axis;
     _getLegendSources(): ILegendSource[];
     _visibleChanged(item: ChartItem): void;
     _modelChanged(item: ChartItem): void;
 }
 
 const group_types = {
-    'barGroup': BarSeriesGroup,
-    'lineGroup': LineSeriesGroup,
-    'pieGroup': PieSeriesGroup,
+    'bar': BarSeriesGroup,
+    'line': LineSeriesGroup,
+    'pie': PieSeriesGroup,
 };
 
 const series_types = {
@@ -385,7 +384,7 @@ export class Chart extends RcObject implements IChart {
         this._body.load(source.body);
     }
 
-    _connectSeries(series: Series, isX: boolean): Axis {
+    _connectSeries(series: IPlottingItem, isX: boolean): Axis {
         return isX ? this._xAxes.connect(series) : this._yAxes.connect(series);
     }
 
@@ -425,11 +424,11 @@ export class Chart extends RcObject implements IChart {
     }
 
     _getSeriesType(type: string): any {
-        return series_types[type];
+        return series_types[String(type).toLowerCase()];
     }
 
     _getAxisType(type: string): any {
-        return axis_types[type];
+        return axis_types[String(type).toLowerCase()];
     }
 
     _visibleChanged(item: ChartItem): void {

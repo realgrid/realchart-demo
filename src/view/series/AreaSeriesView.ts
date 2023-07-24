@@ -62,12 +62,12 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
 
     protected _layoutArea(path: PathElement, pts: AreaSeriesPoint[]): void {
         const series = this.model;
-        const g = series._group;
+        const g = series.group;
         const len = this.height;
         const y = Utils.isNotEmpty(series.baseValue) ? series._yAxisObj.getPosition(len, series.baseValue) : len;
         const sb = new PathBuilder();
 
-        if (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL) {
+        if (g && (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
             sb.move(pts[0].xPos, pts[0].yLow);
             sb.line(pts[0].xPos, pts[0].yPos);
             for (let i = 1; i < pts.length; i++) {
@@ -96,12 +96,12 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
 
     protected _layoutPolar(path: PathElement, pts: AreaSeriesPoint[]): void {
         const series = this.model;
-        const g = series._group;
+        const g = series.group;
         const len = this.height;
         const y = Utils.isNotEmpty(series.baseValue) ? series._yAxisObj.getPosition(len, series.baseValue) : len;
         const sb = new PathBuilder();
 
-        if (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL) {
+        if (g && (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
             sb.move(pts[0].xPos, pts[0].yLow);
             sb.line(pts[0].xPos, pts[0].yPos);
             for (let i = 1; i < pts.length; i++) {
