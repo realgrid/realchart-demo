@@ -9,7 +9,7 @@
 import { PathBuilder } from "../../common/PathBuilder";
 import { LayerElement, PathElement, RcElement } from "../../common/RcControl";
 import { Utils } from "../../common/Utils";
-import { SeriesGroupLayout } from "../../model/SeriesGroup2";
+import { SeriesGroupLayout } from "../../model/Series";
 import { AreaSeries, AreaSeriesPoint } from "../../model/series/LineSeries";
 import { LineSeriesView } from "./LineSeriesView";
 

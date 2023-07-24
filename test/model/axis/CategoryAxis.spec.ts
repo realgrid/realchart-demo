@@ -44,7 +44,7 @@ import { Tester } from '../../Tester';
     it('collect categories - number arrays', () => {
         const json = Tester.loadChartJson("column-02");
         const chart = new Chart(json);
-        const series = chart.series;
+        const series = chart.series2;
         const axis = chart.xAxis;
 
         chart.prepareRender();
@@ -57,7 +57,7 @@ import { Tester } from '../../Tester';
     it('calculate min max', () => {
         const json = Tester.loadChartJson("column-01");
         const chart = new Chart(json);
-        const series = chart.series;
+        const series = chart.series2;
         const axis = chart.xAxis as CategoryAxis;
 
         chart.prepareRender();
@@ -69,7 +69,7 @@ import { Tester } from '../../Tester';
     it('calculate min max 2', () => {
         const json = Tester.loadChartJson("column-02");
         const chart = new Chart(json);
-        const series = chart.series;
+        const series = chart.series2;
         const axis = chart.xAxis as CategoryAxis;
 
         chart.prepareRender();
@@ -106,7 +106,7 @@ import { Tester } from '../../Tester';
         chart.prepareRender();
         chart.layoutAxes(500, 500, false, 1);
 
-        const series = chart.series;
+        const series = chart.series2;
         const ticks = axis._ticks;
 
         expect(ticks.length).gt(0);

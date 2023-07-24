@@ -9,50 +9,12 @@
 import { isArray, isObject, pickNum } from "../common/Common";
 import { RcObject } from "../common/RcObject";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../common/Types";
-import { Shape } from "../common/impl/SvgShape";
 import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
-import { ChartItem } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
-import { Series } from "./Series";
+import { Series, SeriesGroupLayout } from "./Series";
 import { BoxSeries } from "./series/BarSeries";
 import { PieSeries } from "./series/PieSeries";
-
-export enum SeriesGroupLayout {
-
-    /**
-     * 시리즈 종류에 따른 기본 표시 방식.
-     * <br>
-     * bar 종류의 시리즈인 경우 포인트들을 순서대로 옆으로 배치하고,
-     * line 종류인 경우 {@link OVERLAP}과 동일하게 순서대로 표시된다.
-     * pie 종류인 경우 {@link FILL}과 동일하다.
-     * <br>
-     * 기본 값이다.
-     */
-    DEFAULT = 'default',
-    /**
-     * 포인트들을 순서대로 겹쳐서 표시한다.
-     * <br>
-     * bar 종류의 시리지은 경우, 
-     * 마지막 시리즈의 포인트 값이 큰 경우 이전 포인트들은 보이지 않을 수 있다.
-     */
-    OVERLAP = 'overlap',
-    /**
-     * 포인트 그룹 내에서 각 포인트들을 순서대로 쌓아서 표시한다.
-     */
-    STACK = 'stack',
-    /**
-     * 포인트 그룹 내에서 각 포인트의 비율을 표시한다.
-     * <br>
-     * 그룹 합은 SeriesGroup.max로 지정한다.
-     * 각 포인트들은 STACK과 마찬가지로 순서대로 쌓여서 표시된다.
-     * SeriesGroup.baseValue 보다 값이 큰 point는 baseValue 위쪽에 작은 값을 가진
-     * 포인트들은 baseValue 아래쪽에 표시된다.
-     * <br>
-     * Pie 시리즈에서는 {@link FILL}과 동일하다.
-     */
-    FILL = 'fill',
-}
 
 export interface ISeriesGroup2 {
 
@@ -377,11 +339,10 @@ export class SeriesGroupCollection2 {
             this._items.push(g);
         }
 
-        chart._getSeries().forEach(ser => {
+        chart._getSeries2().forEach(ser => {
             const g = this.get(ser.group);
 
             ser._group = g;
-            ser.gindex = g._series.length;
             g._series.push(ser);
         })
     }
@@ -418,3 +379,4 @@ export class SeriesGroupCollection2 {
         return g;
     }
 }
+

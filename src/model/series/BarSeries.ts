@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { DataPoint } from "../DataPoint";
-import { PolarableSeries, Series } from "../Series";
+import { PolarableSeries, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
 
 export abstract class BoxSeries extends PolarableSeries {
 
@@ -76,7 +76,7 @@ export class BarSeriesPoint extends DataPoint {
     borderRaidus: number;
 }
 
-export class ColumnSeries extends BoxSeries {
+export class BarSeries extends BoxSeries {
 
     //-------------------------------------------------------------------------
     // consts
@@ -101,12 +101,38 @@ export class ColumnSeries extends BoxSeries {
     }
 }
 
-export class BarSeries extends ColumnSeries {
+export class BarSeriesGroup extends SeriesGroup {
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    isInverted(): boolean {
-        return true;
+    protected _seriesType(): string {
+        return 'bar';
+    }
+
+    protected _canContain(ser: Series): boolean {
+        return ser instanceof BarSeries;
+    }
+
+    protected _doPrepareSeries(series: Series[]): void {
+        if (this.layout === SeriesGroupLayout.DEFAULT) {
+            const series2 = series.filter(ser => ser instanceof BoxSeries) as BoxSeries[];
+            
+            const cnt = series2.length;
+
+            if (cnt > 1) {
+                const sum = series2.map(ser => ser.pointWidth).reduce((a, c) => a + c);
+                let x = 0;
+                
+                series2.forEach(ser => {
+                    ser._groupWidth = ser.pointWidth / sum;
+                    ser._groupPos = x;
+                    x += ser._groupWidth;
+                });
+            } else if (cnt === 1) {
+                series2[0]._groupWidth = 1;
+            }
+        } else if (this.layout === SeriesGroupLayout.STACK) {
+        }
     }
 }

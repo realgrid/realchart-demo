@@ -36,7 +36,7 @@ export class BellCurveSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    refSeries: string | number;
+    refSeries: string;
     sigmas = 3;
     pointsInSigma = 5;
 
@@ -61,7 +61,7 @@ export class BellCurveSeries extends LineSeriesBase {
 
     _referOtherSeries(series: Series): boolean {
         if (!this._points.isEmpty()) return true;
-        if (series.index === this.index || series.name === this.refSeries) {
+        if (series.name === this.refSeries) {
             this.$_loadTable(series.getPoints().getVisibles());
             return true;
         }

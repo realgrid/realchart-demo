@@ -12,21 +12,21 @@ import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
 import { ILegendSource, Legend } from "./Legend";
-import { ISeries, Series, SeriesCollection } from "./Series";
+import { ISeries, PlottingItemCollection, Series, SeriesCollection } from "./Series";
 import { SeriesGroup2, SeriesGroupCollection2 } from "./SeriesGroup2";
 import { Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
 import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
-import { BarSeries, ColumnSeries } from "./series/BarSeries";
+import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";
 import { BoxPlotSeries } from "./series/BoxPlotSeries";
 import { BubbleSeries } from "./series/BubbleSeries";
 import { FunnelSeries } from "./series/FunnelSeries";
 import { HistogramSeries } from "./series/HistogramSeries";
-import { AreaRangeSeries, AreaSeries, LineSeries } from "./series/LineSeries";
-import { PieSeries } from "./series/PieSeries";
+import { AreaRangeSeries, AreaSeries, LineSeries, LineSeriesGroup } from "./series/LineSeries";
+import { PieSeries, PieSeriesGroup } from "./series/PieSeries";
 import { ScatterSeries } from "./series/ScatterSeries";
 
 export interface IChart {
@@ -34,7 +34,7 @@ export interface IChart {
     type: string;
     xStart: number;
     xStep: number;
-    series: ISeries;
+    series2: ISeries;
     xAxis: IAxis;
     yAxis: IAxis;
     colors: string[];
@@ -48,9 +48,10 @@ export interface IChart {
     getGroup(group: String): SeriesGroup2;
     getAxes(dir: SectionDir): Axis[];
 
+    _getGroupType(type: string): any;
     _getSeriesType(type: string): any;
     _getAxisType(type: string): any;
-    _getSeries(): SeriesCollection;
+    _getSeries2(): SeriesCollection;
     _getXAxes(): AxisCollection;
     _getYAxes(): AxisCollection;
     _connectSeries(series: Series, isX: boolean): Axis;
@@ -59,9 +60,14 @@ export interface IChart {
     _modelChanged(item: ChartItem): void;
 }
 
+const group_types = {
+    'barGroup': BarSeriesGroup,
+    'lineGroup': LineSeriesGroup,
+    'pieGroup': PieSeriesGroup,
+};
+
 const series_types = {
     'bar': BarSeries,
-    'column': ColumnSeries,
     'line': LineSeries,
     'area': AreaSeries,
     'arearange': AreaRangeSeries,
@@ -143,9 +149,9 @@ export class Chart extends RcObject implements IChart {
      * {@link Series.type}의 기본값.
      * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
      * 
-     * @default 'column'
+     * @default 'bar'
      */
-    type = 'column';
+    type = 'bar';
 
     //-------------------------------------------------------------------------
     // fields
@@ -154,8 +160,9 @@ export class Chart extends RcObject implements IChart {
     private _title: Title;
     private _subtitle: Title;
     private _legend: Legend;
-    private _series: SeriesCollection;
-    private _groups: SeriesGroupCollection2;
+    private _series = new PlottingItemCollection(this);
+    private _series2: SeriesCollection;
+    private _groups2: SeriesGroupCollection2;
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
     private _body: Body;
@@ -173,8 +180,8 @@ export class Chart extends RcObject implements IChart {
         this._title = new Title(this);
         this._subtitle = new Title(this, false);
         this._legend = new Legend(this);
-        this._series = new SeriesCollection(this);
-        this._groups = new SeriesGroupCollection2(this);
+        this._series2 = new SeriesCollection(this);
+        this._groups2 = new SeriesGroupCollection2(this);
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new AxisCollection(this, false);
         this._body = new Body(this);
@@ -213,12 +220,8 @@ export class Chart extends RcObject implements IChart {
         return this._subtitle;
     }
 
-    get series(): ISeries {
-        return this._series.first;
-    }
-
-    get group(): SeriesGroup2 {
-        return this._groups.first;
+    get series2(): ISeries {
+        return this._series2.first;
     }
 
     get legend(): Legend {
@@ -244,15 +247,19 @@ export class Chart extends RcObject implements IChart {
      * false이면 직교 좌표가 표시되지 않는다.
      */
     needAxes(): boolean {
-        return this._series.needAxes();
+        return this._series2.needAxes();
     }
 
-    _getSeries(): SeriesCollection {
+    _getSeries(): PlottingItemCollection {
         return this._series;
     }
 
-    _getGroups(): SeriesGroupCollection2 {
-        return this._groups;
+    _getSeries2(): SeriesCollection {
+        return this._series2;
+    }
+
+    _getGroups2(): SeriesGroupCollection2 {
+        return this._groups2;
     }
 
     _getXAxes(): AxisCollection {
@@ -268,14 +275,14 @@ export class Chart extends RcObject implements IChart {
     }
 
     isEmpty(): boolean {
-        return this._series.isEmpty();
+        return this._series2.isEmpty();
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     seriesByBame(series: string): Series {
-        return this._series.get(series);
+        return this._series2.get(series);
     }
 
     axisByName(axis: string): Axis {
@@ -283,7 +290,7 @@ export class Chart extends RcObject implements IChart {
     }
 
     getGroup(group: string): SeriesGroup2 {
-        return this._groups.get(group);
+        return this._groups2.get(group);
     }
 
     containsAxis(axis: Axis): boolean {
@@ -330,7 +337,7 @@ export class Chart extends RcObject implements IChart {
     }
 
     _getLegendSources(): ILegendSource[] {
-        return this._series.getLegendSources();
+        return this._series2.getLegendSources();
     }
 
     load(source: any): void {
@@ -353,8 +360,9 @@ export class Chart extends RcObject implements IChart {
 
         // series - 시리즈를 먼저 로드해야 디폴트 axis를 지정할 수 있다.
         this._series.load(source.series);
+        this._series2.load(source.series);
         // series group
-        this._groups.load(source.groups);
+        this._groups2.load(source.groups);
 
         // axes
         // 축은 반드시 존재해야 한다.
@@ -371,9 +379,10 @@ export class Chart extends RcObject implements IChart {
 
     prepareRender(): void {
         // 축에 연결한다.
-        this._series.prepareRender();
+        // this._series.prepareRender();
+        this._series2.prepareRender();
         // group에 연결한다.
-        this._groups.prepareRender();
+        this._groups2.prepareRender();
 
         // 카테고리 목록을 만든다.
         // 축의 값 범위를 계산한다.
@@ -399,6 +408,10 @@ export class Chart extends RcObject implements IChart {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    _getGroupType(type: string): any {
+        return group_types[type];
+    }
+
     _getSeriesType(type: string): any {
         return series_types[type];
     }

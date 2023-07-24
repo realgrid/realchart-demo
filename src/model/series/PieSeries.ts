@@ -6,10 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "../../common/Common";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
+import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { ILegendSource } from "../Legend";
-import { ISeries, RadialSeries } from "../Series";
+import { ISeries, RadialSeries, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
 
 export class PieSeriesPoint extends DataPoint implements ILegendSource {
 
@@ -131,5 +133,80 @@ export class PieSeries extends RadialSeries {
 
         // group에서 필요하면 설정한다. 이 값의 여부로 pieseriesview에서 stacking 상태인 지 확인한다.
         this._groupPos = NaN; 
+    }
+}
+
+export class PieSeriesGroup extends SeriesGroup {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _polarDim: IPercentSize;
+    private _innerDim: IPercentSize;
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * polar 그룹일 때 원형 플롯 영역의 크기.
+     * <br>
+     * 픽셀 크기나 차지할 수 있는 전체 크기에 대한 상대적 크기로 지정할 수 있다.
+     * <br>
+     * Pie 시리즈들의 그룹이고, 
+     * {@link layout}이 {@link SeriesGroupLayout.FILL}이나 {@link SeriesGroupLayout.STACK}인 경우
+     * 개별 시리즈의 size 대신 이 속성값으로 표시되고,
+     * 각 시리즈의 size는 상대 크기로 적용된다.
+     */
+    polarSize: RtPercentSize = '80%';
+    /**
+     * Pie 시리즈들의 그룹이고, 
+     * {@link layout}이 {@link SeriesGroupLayout.FILL}이나 {@link SeriesGroupLayout.STACK}인 경우,
+     * 경우 0보다 큰 값을 지정해서 도넛 형태로 표시할 수 있다.
+     * <br>
+     * 포함된 pie 시리즈들의 innerSize는 무시된다.
+     */
+    innerSize: RtPercentSize = 0;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getPolarSize(width: number, height: number): number {
+        return calcPercent(this._polarDim, Math.min(width, height));
+    }
+
+    getInnerRadius(rd: number): number {
+        // 반지름에 대한 비율로 전달해야 한다.
+        const dim = this._innerDim;
+        return dim ? dim.size / (dim.fixed ? rd : 100) : 0;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _seriesType(): string {
+        return 'pie';
+    }
+
+    protected _canContain(ser: Series): boolean {
+        return ser instanceof PieSeries;
+    }
+
+    protected _doLoad(source: any): void {
+        super._doLoad(source);
+
+        this._polarDim = parsePercentSize(this.polarSize, true) || { size: 80, fixed: false };
+        this._innerDim = parsePercentSize(this.innerSize, true);
+    }
+
+    protected _doPrepareSeries(series: Series[]): void {
+        if (this.layout === SeriesGroupLayout.STACK || this.layout === SeriesGroupLayout.FILL) {
+            const sum = series.map(ser => (ser as PieSeries).groupSize).reduce((a, c) => a + pickNum(c, 1), 0);
+            let p = 0;
+            
+            series.forEach((ser: PieSeries) => {
+                ser._groupPos = p;
+                p += ser._groupSize = pickNum(ser.groupSize, 1) / sum;
+            });
+        }
     }
 }

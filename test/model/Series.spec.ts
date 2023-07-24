@@ -9,7 +9,7 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { Chart } from '../../src/model/Chart';
-import { ColumnSeries } from '../../src/model/series/BarSeries';
+import { BarSeries } from '../../src/model/series/BarSeries';
 import { Series } from '../../src/model/Series';
 import { CategoryAxis } from '../../src/model/axis/CategoryAxis';
 import { LinearAxis } from '../../src/model/axis/LinearAxis';
@@ -23,22 +23,22 @@ import { Tester } from '../Tester';
     it('init', () => {
         let chart = new Chart();
 
-        expect(chart.series).not.exist;
+        expect(chart.series2).not.exist;
     });
 
     it ('load simple', () => {
         const json = Tester.loadChartJson("column-01");
         const chart = new Chart(json);
-        const series = chart.series;
+        const series = chart.series2;
 
-        expect(series).instanceOf(ColumnSeries);
+        expect(series).instanceOf(BarSeries);
         expect(series.getPoints().count).eq(json.series.data.length);
     });
 
     it ('prepare', () => {
         const json = Tester.loadChartJson("column-01");
         const chart = new Chart(json);
-        const series = chart.series as Series;
+        const series = chart.series2 as Series;
 
         chart.prepareRender();
         
@@ -52,7 +52,7 @@ import { Tester } from '../Tester';
     it ('prepare points', () => {
         const json = Tester.loadChartJson("column-01");
         const chart = new Chart(json);
-        const series = chart.series as Series;
+        const series = chart.series2 as Series;
         const points = series.getPoints();
 
         chart.prepareRender();

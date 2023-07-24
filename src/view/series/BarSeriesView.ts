@@ -10,7 +10,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { Chart } from "../../main";
 import { DataPoint } from "../../model/DataPoint";
-import { BarSeries, ColumnSeries } from "../../model/series/BarSeries";
+import { BarSeries } from "../../model/series/BarSeries";
 import { BarElement, PointLabelView, SeriesView } from "../SeriesView";
 
 class BarSectorView extends SectorElement {
@@ -21,7 +21,7 @@ class BarSectorView extends SectorElement {
     point: DataPoint;
 }
 
-export class BarSeriesView extends SeriesView<ColumnSeries> {
+export class BarSeriesView extends SeriesView<BarSeries> {
 
     //-------------------------------------------------------------------------
     // fields

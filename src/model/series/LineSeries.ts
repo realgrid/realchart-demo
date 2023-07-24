@@ -11,7 +11,7 @@ import { StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { MarerVisibility, PolarableSeries, Series, SeriesMarker } from "../Series";
+import { MarerVisibility, PolarableSeries, Series, SeriesGroup, SeriesMarker } from "../Series";
 
 export class LineSeriesPoint extends DataPoint {
 
@@ -190,5 +190,22 @@ export class AreaRangeSeries extends AreaSeries {
     //-------------------------------------------------------------------------
     protected _createPoint(source: any): DataPoint {
         return new AreaRangeSeriesPoint(source);
+    }
+}
+
+export class LineSeriesGroup extends SeriesGroup {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _seriesType(): string {
+        return 'line';
+    }
+
+    protected _canContain(ser: Series): boolean {
+        return ser instanceof LineSeries;
+    }
+
+    protected _doPrepareSeries(series: Series[]): void {
     }
 }

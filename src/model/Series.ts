@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, isString, pickNum } from "../common/Common";
+import { RcObject } from "../common/RcObject";
 import { Align, IPercentSize, RtPercentSize, VerticalAlign, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { Shape } from "../common/impl/SvgShape";
@@ -17,7 +18,6 @@ import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource } from "./Legend";
 import { ISeriesGroup2 } from "./SeriesGroup2";
 import { CategoryAxis } from "./axis/CategoryAxis";
-import { LinearAxis } from "./axis/LinearAxis";
 import { TimeAxis } from "./axis/TimeAxis";
 
 export enum PointItemPosition {
@@ -109,8 +109,15 @@ export interface IPlottingItem {
     xAxis: string | number;
     yAxis: string | number;
 
+    visible: boolean;
     needAxes(): boolean;
+    isEmpty(): boolean;
     isCategorized(): boolean;
+
+    prepareRender(): void;
+}
+
+export interface ISeriesGroup extends IPlottingItem {
 }
 
 export interface ISeries extends IPlottingItem {
@@ -141,6 +148,22 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     };
 
     //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    static _loadSeries(chart: IChart, src: any, defType?: string): Series {
+        let cls = chart._getSeriesType(src.type);
+
+        if (!cls) {
+            cls = chart._getSeriesType(defType || chart.type);
+        }
+
+        const ser = new cls(chart, src.name);
+
+        ser.load(src);
+        return ser;
+    }
+
+    //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     readonly name: string;
@@ -149,8 +172,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    index = -1;
-    gindex = -1;
     _group: ISeriesGroup2;
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
@@ -171,6 +192,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    parent: SeriesGroup;
     group: string;
     zOrder = 0;
     xAxis: string | number;
@@ -459,7 +481,7 @@ export class SeriesCollection {
         this._map.clear();
 
         if (isArray(src)) {
-            src.forEach((s, i) => this._items.push(this.$_loadSeries(chart, s, i)));
+            src.forEach((s, i) => this._items.push(this.$_loadSeries(chart, s)));
 
             this._items.forEach(ser => {
                 for (const ser2 of this._items) {
@@ -469,7 +491,7 @@ export class SeriesCollection {
                 }
             });
         } else if (isObject(src)) {
-            this._items.push(this.$_loadSeries(chart, src, 0));
+            this._items.push(this.$_loadSeries(chart, src));
         }
     }
 
@@ -506,11 +528,123 @@ export class SeriesCollection {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_loadSeries(chart: IChart, src: any, index: number): Series {
-        let cls = chart._getSeriesType(src.type);
+    private $_loadSeries(chart: IChart, src: any): Series {
+        const ser = Series._loadSeries(chart, src);
 
-        if (!cls) {
+        src.name && this._map.set(src.name, ser);
+        return ser;
+    }
+}
+
+export class PlottingItemCollection  {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    readonly chart: IChart;
+    private _items: IPlottingItem[] = [];
+    private _series: Series[] = [];
+    private _map: {[name: string]: Series} = {};
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        this.chart = chart;
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    get first(): IPlottingItem {
+        return this._items[0];
+    }
+
+    isEmpty(): boolean {
+        return !this._items.find(item => item.visible && !item.isEmpty());
+    }
+
+    items(): IPlottingItem[] {
+        return this._items.slice(0);
+    }
+
+    visibles(): IPlottingItem[] {
+        return this._items.filter(item => item.visible);
+    }
+
+    series(): Series[] {
+        return this._series.slice(0);
+    }
+
+    needAxes(): boolean {
+        if (this._items.filter(item => item.visible && item.needAxes())) {
+            return true;
         }
+        return this._items.length === 0;
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    load(src: any): void {
+        const chart = this.chart;
+        const items = this._items = [];
+        const series = this._series = [];
+        const map = this._map = {};
+
+        if (isArray(src)) {
+            src.forEach((s, i) => {
+                items.push(this.$_loadItem(chart, s, i));
+            });
+        } else if (isObject(src)) {
+            items.push(this.$_loadItem(chart, src, 0));
+        }
+
+        // series
+        items.forEach(item => {
+            if (item instanceof SeriesGroup) {
+                series.push(...item.series);
+            } else {
+                series.push(item);
+            }
+        })
+
+        series.forEach(ser => {
+            if (ser.name) map[ser.name] = ser;
+            for (const ser2 of this._series) {
+                if (ser2 !== ser && ser._referOtherSeries(ser2)) {
+                    break;
+                }
+            }
+        });
+    }
+
+    prepareRender(): void {
+        const colors = this.chart.colors;
+        
+        this._series.forEach((ser, i) => {
+            if (ser.visible) {
+                ser.color = colors[i % colors.length];
+            }
+        });
+
+        this._items.forEach(item => item.prepareRender());
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_loadItem(chart: IChart, src: any, index: number): IPlottingItem {
+        let cls = chart._getGroupType(src.type);
+
+        if (cls) {
+            const g = new cls(chart);
+
+            g.load(src);
+            return g;
+        }
+
+        cls = chart._getSeriesType(src.type);
         if (!cls) {
             cls = chart._getSeriesType(chart.type);
         }
@@ -519,7 +653,6 @@ export class SeriesCollection {
 
         ser.load(src);
         ser.index = index;
-        src.name && this._map.set(src.name, ser);
         return ser;
     }
 }
@@ -615,5 +748,129 @@ export class RadialSeries extends WidgetSeries {
         super._doLoad(src);
 
         this._sizeDim = parsePercentSize(this.size, true) || { size: 80, fixed: false };
+    }
+}
+
+export enum SeriesGroupLayout {
+
+    /**
+     * 시리즈 종류에 따른 기본 표시 방식.
+     * <br>
+     * bar 종류의 시리즈인 경우 포인트들을 순서대로 옆으로 배치하고,
+     * line 종류인 경우 {@link OVERLAP}과 동일하게 순서대로 표시된다.
+     * pie 종류인 경우 {@link FILL}과 동일하다.
+     * <br>
+     * 기본 값이다.
+     */
+    DEFAULT = 'default',
+    /**
+     * 포인트들을 순서대로 겹쳐서 표시한다.
+     * <br>
+     * bar 종류의 시리지은 경우, 
+     * 마지막 시리즈의 포인트 값이 큰 경우 이전 포인트들은 보이지 않을 수 있다.
+     */
+    OVERLAP = 'overlap',
+    /**
+     * 포인트 그룹 내에서 각 포인트들을 순서대로 쌓아서 표시한다.
+     */
+    STACK = 'stack',
+    /**
+     * 포인트 그룹 내에서 각 포인트의 비율을 표시한다.
+     * <br>
+     * 그룹 합은 SeriesGroup.max로 지정한다.
+     * 각 포인트들은 STACK과 마찬가지로 순서대로 쌓여서 표시된다.
+     * SeriesGroup.baseValue 보다 값이 큰 point는 baseValue 위쪽에 작은 값을 가진
+     * 포인트들은 baseValue 아래쪽에 표시된다.
+     * <br>
+     * Pie 시리즈에서는 {@link FILL}과 동일하다.
+     */
+    FILL = 'fill',
+}
+
+export abstract class SeriesGroup extends ChartItem implements ISeriesGroup {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _series: Series[] = [];
+
+    //-------------------------------------------------------------------------
+    // ISeriesGroup
+    //-------------------------------------------------------------------------
+    layout = SeriesGroupLayout.DEFAULT;
+    xAxis: string | number;
+    yAxis: string | number;
+
+    get series(): Series[] {
+        return this._series.slice(0);
+    }
+
+    needAxes(): boolean {
+        return true;
+    }
+
+    isEmpty(): boolean {
+        return false;
+    }
+
+    isCategorized(): boolean {
+        return true;
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    protected _doLoadProp(prop: string, value: any): boolean {
+        if (prop === 'series') {
+            this.$_loadSeries(this.chart, value);
+            return true;
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected abstract _seriesType(): string;
+    protected abstract _canContain(ser: Series): boolean;
+    protected abstract _doPrepareSeries(series: Series[]): void;
+
+    protected _doPrepareRender(chart: IChart): void {
+        const series = this._series.filter(ser => ser.visible).sort((s1, s2) => (s1.zOrder || 0) - (s2.zOrder || 0));
+        
+        if (series.length > 0) {
+            series.forEach(ser => ser.prepareRender());
+            this._doPrepareSeries(series);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_loadSeries(chart: IChart, src: any) {
+        const type = this._seriesType();
+
+        if (isArray(src)) {
+            src.forEach((s, i) => this.$_add(Series._loadSeries(chart, s, type)));
+        } else if (isObject(src)) {
+            this.$_add(Series._loadSeries(chart, src, type));
+        }
+    }
+
+    private $_add(series: Series): void {
+        if (this._canContain(series)) {
+            this._series.push(series);
+            series.parent = this;
+        } else {
+            throw new Error('이 그룹에 포함될 수 없는 시리즈입니다: ' + series);
+        }
     }
 }

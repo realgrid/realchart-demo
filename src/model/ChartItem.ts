@@ -87,7 +87,8 @@ export abstract class ChartItem extends RcObject {
             //if (this.hasOwnProperty(p)) {
                 let v = source[p];
 
-                if (isArray(v)) {
+                if (this._doLoadProp(p, v)) {
+                } else if (isArray(v)) {
                     this[p] = v.slice(0);
                 } else if (this[p] instanceof ChartItem) {
                     this[p].load(v);
@@ -98,6 +99,10 @@ export abstract class ChartItem extends RcObject {
                 }
             //}
         }
+    }
+
+    protected _doLoadProp(prop: string, value: any): boolean {
+        return false;
     }
 
     protected _doPrepareRender(chart: IChart): void {}

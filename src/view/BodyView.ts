@@ -18,7 +18,7 @@ import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange } from "../mod
 import { Body } from "../model/Body";
 import { PlotItem } from "../model/PlotItem";
 import { Series } from "../model/Series";
-import { BarSeries, ColumnSeries } from "../model/series/BarSeries";
+import { BarSeries } from "../model/series/BarSeries";
 import { BellCurveSeries } from "../model/series/BellCurveSeries";
 import { BoxPlotSeries } from "../model/series/BoxPlotSeries";
 import { BubbleSeries } from "../model/series/BubbleSeries";
@@ -44,7 +44,7 @@ import { ScatterSeriesView } from "./series/ScatterSeriesView";
 const series_types = new Map<any, any>([
     [BoxPlotSeries, BoxPlotSeriesView],
     [BarSeries, BarSeriesView],
-    [ColumnSeries, BarSeriesView],
+    [BarSeries, BarSeriesView],
     [BellCurveSeries, BellCurveSeriesView],
     [AreaRangeSeries, AreaRangeSeriesView],
     [AreaSeries, AreaSeriesView],
@@ -442,7 +442,7 @@ export class BodyView extends ChartElement<Body> {
         const chart = model.chart as Chart;
 
         // series
-        this.$_prepareSeries(doc, chart._getSeries().visibles())
+        this.$_prepareSeries(doc, chart._getSeries2().visibles())
 
         this._seriesViews.forEach((v, i) => {
             v.measure(doc, this._series[i], hintWidth, hintHeight, phase);

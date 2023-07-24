@@ -34,7 +34,7 @@ import { Tester } from '../../Tester';
     it('calculate min max', () => {
         const json = Tester.loadChartJson("column-01");
         const chart = new Chart(json);
-        const series = chart.series;
+        const series = chart.series2;
         const axis = chart.yAxis as LinearAxis;
 
         chart.prepareRender();
