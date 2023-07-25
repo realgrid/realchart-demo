@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isString, pickNum } from "../../common/Common";
-import { Axis, AxisTick, AxisTickMark, IAxisTick } from "../Axis";
+import { Axis, AxisGrid, AxisTick, AxisTickMark, IAxisTick } from "../Axis";
 import { IPlottingItem, ISeries } from "../Series";
 
 export enum CategoryTickMarkPosition {
@@ -18,7 +18,7 @@ export enum CategoryTickMarkPosition {
 export class CategoryAxisTickMark extends AxisTickMark {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // properties
     //-------------------------------------------------------------------------
     position = CategoryTickMarkPosition.TICK;
 }
@@ -26,7 +26,7 @@ export class CategoryAxisTickMark extends AxisTickMark {
 export class CategoryAxisTick extends AxisTick {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // properties
     //-------------------------------------------------------------------------
     steps = 1;
     /**
@@ -39,6 +39,26 @@ export class CategoryAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     protected _createMark(): AxisTickMark {
         return new CategoryAxisTickMark(this.axis);
+    }
+}
+
+class CategoryAxisGrid extends AxisGrid {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    getPoints(): number[] {
+        const axis = this.axis as CategoryAxis;
+        const interval = axis._interval;
+        const n = axis._ticks.length;
+        const pts: number[] = [];
+        let p = axis._minPad;
+
+        for (let i = 0; i <= n; i++) {
+            pts.push(p);
+            p += interval;
+        }
+        return pts;
     }
 }
 
@@ -108,9 +128,9 @@ export class CategoryAxis extends Axis {
     private _min: number;
     private _max: number;
     private _len: number;
-    private _minPad: number;
+    _minPad: number;
     private _maxPad: number;
-    private _interval: number;
+    _interval: number;
 
     //-------------------------------------------------------------------------
     // methods
@@ -126,6 +146,10 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _createGrid(): AxisGrid {
+        return new CategoryAxisGrid(this);
+    }
+
     protected _createTick(): AxisTick {
         return new CategoryAxisTick(this);
     }

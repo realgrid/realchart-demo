@@ -61,6 +61,7 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _pts: number[];
     private _lines = new ElementPool(this, LineElement);
 
     //-------------------------------------------------------------------------
@@ -74,25 +75,23 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: AxisGrid, hintWidth: number, hintHeight: number, phase: number): ISize {
-        const axis = model.axis;
-        const ticks = axis._ticks;
-
-        this._lines.prepare(ticks.length, (line) => {
+        this._pts = model.getPoints();
+        this._lines.prepare(this._pts.length, (line) => {
         });
         return Size.create(hintWidth, hintHeight);
     }
 
     protected _doLayout(): void {
         const axis = this.model.axis;
-        const ticks = axis._ticks;
+        const pts = this._pts;
 
         if (axis._isHorz) {
             this._lines.forEach((line, i) => {
-                line.setVLineC(ticks[i].pos, 0, this.height);
+                line.setVLineC(pts[i], 0, this.height);
             });
         } else {
             this._lines.forEach((line, i) => {
-                line.setHLineC(ticks[i].pos, 0, this.width);
+                line.setHLineC(pts[i], 0, this.width);
             });
         }
     }

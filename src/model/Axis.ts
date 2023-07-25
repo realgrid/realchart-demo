@@ -104,6 +104,10 @@ export class AxisGrid extends AxisItem {
     isVisible(): boolean {
         return this.visible == null ? !this.axis._isX : this.visible;
     }
+
+    getPoints(): number[] {
+        return this.axis._ticks.map(tick => tick.pos);
+    }
             
     //-------------------------------------------------------------------------
     // overriden members
@@ -334,7 +338,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     readonly title = new AxisTitle(this);
     readonly line = new AxisLine(this);
     readonly tick: AxisTick;
-    readonly grid = new AxisGrid(this);
+    readonly grid = this._createGrid();
     readonly guides: AxisGuide[] = [];
 
     _isX: boolean;
@@ -489,6 +493,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _createGrid(): AxisGrid {
+        return new AxisGrid(this);
+    }
+
     private $_loadGuides(): void {
         // 소스 정보가 this.guides에 로드된 상태이다.
         const guides = this.guides;

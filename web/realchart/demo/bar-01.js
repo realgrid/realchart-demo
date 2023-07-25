@@ -4,6 +4,7 @@ const config = {
         inverted: true
     },
     xAxis: {
+        // grid: true
     },
     yAxis: {
         guides: [{

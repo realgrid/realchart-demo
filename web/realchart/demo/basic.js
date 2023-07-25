@@ -1,11 +1,12 @@
 const config = {
     title: "Basic Real-Chart",
     xAxis: {
-        type: 'linear',
+        // type: 'linear',
         // type: 'category',
         // position: 'apposite'
         // position: 'base',
-        // baseAxis: 1
+        // baseAxis: 1,
+        grid: true
     },
     yAxis: {
         guides: [{
