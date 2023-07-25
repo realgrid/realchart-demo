@@ -15,7 +15,7 @@ import { IClusterable, IPlottingItem } from "./Series";
 export interface IAxis {
 
     _length: number;
-    baseValue: number;
+    // baseValue: number;
 
     /**
      * data point의 값을 축 상의 값으로 리턴한다.
@@ -446,7 +446,6 @@ export abstract class Axis extends ChartItem implements IAxis {
      * false로 지정하면 축 끝 위치에 tick이 생성된 경우에도 표시하지 않는다.
      */
     tickEnd: boolean;
-    baseValue: number;
 
     isEmpty(): boolean {
         return this._series.length < 1;

@@ -224,9 +224,15 @@ export class LinearAxis extends Axis {
      */
     nullable = true;
     /**
-     * 적어도 이 값이 최소값으로 표시된다.
+     * x축으로 사용될 때 계산된 최소값이 이 값보다 클 때 최소값이 되고,
+     * 계산된 최대값이 이 값보다 작을 때 최대값이 된다.
      */
-    baseValue = 0;
+    xBase: number;
+    /**
+     * y축으로 사용될 때 계산된 최소값이 이 값보다 클 때 최소값이 되고,
+     * 계산된 최대값이 이 값보다 작을 때 최대값이 된다.
+     */
+    yBase = 0;
     minValue: number;
     maxValue: number;
     /**
@@ -252,12 +258,14 @@ export class LinearAxis extends Axis {
     }
 
     protected _doPrepareRender(): void {
+        const base = this._isX ? this.xBase : this.yBase;
+
         this._hardMin = this.minValue;
 
-        if (isNaN(this.baseValue) || this.baseValue === null || this._series.find(s => s.ignoreAxisBase(this))) {
+        if (isNaN(base) || base === null || this._series.find(s => s.ignoreAxisBase(this))) {
             this._base = NaN;
         } else {
-            this._base = +this.baseValue;
+            this._base = +base;
         }
 
         this._unitLen = NaN;

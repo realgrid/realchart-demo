@@ -11,6 +11,7 @@ import { SectorElement } from "../../common/impl/SectorElement";
 import { Chart } from "../../main";
 import { DataPoint } from "../../model/DataPoint";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
+import { LinearAxis } from "../../model/axis/LinearAxis";
 import { BarSeries } from "../../model/series/BarSeries";
 import { BarElement, PointLabelView, SeriesView } from "../SeriesView";
 
@@ -89,25 +90,26 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPadding * 2 : 0;
-        const yBase = yAxis.getPosition(width, yAxis.baseValue);
-        const len = inverted ? width : height;
-        const wLen = inverted ? height : width;
-        const org = inverted ? 0 : height;
+        const yLen = inverted ? width : height;
+        const xLen = inverted ? height : width;
+        //const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
+        const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.yBase : 0);
+        const org = inverted ? 0 : height;;
         let labelView: PointLabelView;
 
         this._bars.forEach((bar, i) => {
             const p = bar.point;
-            const wUnit = xAxis.getUnitLength(wLen, i) * (1 - wPad);
+            const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
-            const yVal = yAxis.getPosition(len, p.yValue);
+            const yVal = yAxis.getPosition(yLen, p.yValue);
             let x: number;
             let y: number;
 
             if (inverted) {
-                y = wLen - xAxis.getPosition(wLen, i) - wUnit / 2;
+                y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
                 x = org;
             } else {
-                x = xAxis.getPosition(wLen, i) - wUnit / 2;
+                x = xAxis.getPosition(xLen, i) - wUnit / 2;
                 y = org;
             }
 
@@ -116,10 +118,10 @@ export class BarSeriesView extends SeriesView<BarSeries> {
 
             if (inverted) {
                 y += series.getPointPos(wUnit) + wPoint / 2;
-                x += yAxis.getPosition(len, p.yGroup) - bar.hPoint;
+                x += yAxis.getPosition(yLen, p.yGroup) - bar.hPoint;
             } else {
                 x += series.getPointPos(wUnit) + wPoint / 2;
-                y -= yAxis.getPosition(len, p.yGroup) - bar.hPoint;
+                y -= yAxis.getPosition(yLen, p.yGroup) - bar.hPoint;
             }
 
             bar.render(x, y, inverted);
