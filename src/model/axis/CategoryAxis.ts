@@ -128,8 +128,6 @@ export class CategoryAxis extends Axis {
     private _min: number;
     private _max: number;
     private _len: number;
-    _minPad: number;
-    private _maxPad: number;
     _interval: number;
 
     //-------------------------------------------------------------------------

@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isObject, isString, pickNum } from "../common/Common";
-import { Align, VerticalAlign } from "../common/Types";
+import { Align, IPercentSize, SizeValue, VerticalAlign, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { IClusterable, IPlottingItem } from "./Series";
@@ -348,6 +348,11 @@ export abstract class Axis extends ChartItem implements IAxis {
     _ticks: IAxisTick[];
     _length: number;
 
+    _minPadDim: IPercentSize;
+    _maxPadDim: IPercentSize;
+    _minPad = 0;
+    _maxPad = 0;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -374,25 +379,43 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     reversed = false;
     /**
-     * 축 최소값 쪽에서 축 안쪽으로 설정되는 여백 크기.
+     * 명시적으로 지정하는 최소값.
      * <br>
+     * 축에 연결된 data point들의 값으로 계산된 최소값 대신 이 값이 축의 최소값이 된다.
+     * {@link minPadding}도 무시된다.
+     */
+    min: number;
+    /**
+     * 명시적으로 지정하는 최대값.
+     * <br>
+     * 축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.
+     * {@link maxPadding}도 무시된다.
+     */
+    max: number;
+    /**
+     * 명시적 최소값이 지정되지 않은 경우, 축 최소값 쪽에서 축 안쪽으로 설정되는 여백 크기.
+     * <br>
+     * data point 값을 숫자로 지정하거나 전체 축 길이에 대한 상대 크기를 백분율로 지정할 수 있다.
      * 이 값을 설정하지 않으면 {@link padding}에 지정한 값으로 설정된다.
      */
-    minPadding: number;
+    minPadding: SizeValue;
     /**
-     * 축 최대값 쪽에서 축 안쪽으로 설정되는 여백 크기.
+     * 명시적 최대값이 지정되지 않은 경우, 축 최대값 쪽에서 축 안쪽으로 설정되는 여백 크기.
      * <br>
+     * data point 값을 숫자로 지정하거나 전체 축 길이에 대한 상대 크기를 백분율로 지정할 수 있다.
      * 이 값을 설정하지 않으면 {@link padding}에 지정한 값으로 설정된다.
      */
-    maxPadding: number;
+    maxPadding: SizeValue;
     /**
-     * 축 양쪽 끝에서 축 안쪽으로 설정되는 여백 크기.
+     * {@link minPadding}, {@link maxPadding}을 동시에 설정한다.
      * <br>
+     * data point 값을 숫자로 지정하거나 전체 축 길이에 대한 상대 크기를 백분율로 지정할 수 있다.
      * {@link minPadding}, {@link maxPadding}으로 양 끝을 별도 설정할 수 있다.
      */
-    padding = 0;
+    padding: SizeValue = 0;
     /**
      * Plot 영역이나 앞쪽 축 사이의 여백 크기.
+     * <br>
      */
     marginNear = 0;
     /**
@@ -488,6 +511,9 @@ export abstract class Axis extends ChartItem implements IAxis {
         super._doLoad(source);
 
         this.$_loadGuides();
+
+        this._minPadDim = parsePercentSize(this.minPadding, true);
+        this._maxPadDim = parsePercentSize(this.maxPadding, true);
     }
 
     //-------------------------------------------------------------------------

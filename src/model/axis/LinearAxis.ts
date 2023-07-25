@@ -237,6 +237,8 @@ export class LinearAxis extends Axis {
      */
     syncMinMax = false;
 
+    padding = "5%";
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -301,8 +303,8 @@ export class LinearAxis extends Axis {
     //-------------------------------------------------------------------------
     protected _adjustMinMax(min: number, max: number): { min: number, max: number } {
         const base = this._base;
-        const minPad = this.minPadding;
-        const maxPad = this.maxPadding;
+        const minPad = this._minPad;
+        const maxPad = this._maxPad;
 
         if (!isNaN(base)) {
             if (this.syncMinMax && min <= base && max >= base) {
@@ -324,12 +326,8 @@ export class LinearAxis extends Axis {
 
         let len = Math.max(0, max - min);
 
-        if (!isNaN(minPad)) {
-            min -= len * minPad;
-        }
-        if (!isNaN(maxPad)) {
-            max += len * maxPad;
-        }
+        min -= len * this._minPad;
+        max += len * this._maxPad;
 
         return { min, max };
     }
