@@ -6,9 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "../../common/Common";
 import { assert, ceil, fixnum } from "../../common/Types";
 import { Axis, AxisTick, IAxisTick } from "../Axis";
 import { IChart } from "../Chart";
+import { DataPoint } from "../DataPoint";
 
 export class LinearAxisTick extends AxisTick {
 
@@ -205,6 +207,7 @@ export class LinearAxis extends Axis {
     private _min: number;
     private _max: number;
     private _base: number;
+    private _unitLen: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -254,6 +257,8 @@ export class LinearAxis extends Axis {
         } else {
             this._base = +this.baseValue;
         }
+
+        this._unitLen = NaN;
     }
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
@@ -285,7 +290,10 @@ export class LinearAxis extends Axis {
     }
 
     getUnitLength(length: number, value: number): number {
-        return;
+        if (isNaN(this._unitLen)) {
+            this._unitLen = this.$_calcUnitLength(length);
+        }
+        return this._unitLen;
     }
 
     //-------------------------------------------------------------------------
@@ -324,5 +332,27 @@ export class LinearAxis extends Axis {
         }
 
         return { min, max };
+    }
+
+    protected $_calcUnitLength(length: number): number {
+        const pts: DataPoint[] = [];
+
+        this._series.forEach(ser => {
+            if (ser.visible && ser.clusterable()) {
+                pts.push(...ser.getVisiblePoints());
+            }
+        })
+
+        const isX = this._isX;
+        const vals = pts.map(p => isX ? p.xValue : p.yValue).sort();
+        let min = vals[1] - vals[0];
+
+        for (let i = 2; i < vals.length; i++) {
+            min = Math.min(vals[i] - vals[i - 1]);
+        }
+
+        // 이 축에 연결된 clsuterable 시리즈들의 point 최소 간격.
+        length *= min / (this._max - this._min);
+        return this._unitLen = pickNum(length, 1);
     }
 }

@@ -6,11 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isObject, isString } from "../common/Common";
+import { isArray, isNumber, isObject, isString, pickNum } from "../common/Common";
 import { Align, VerticalAlign } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
-import { IPlottingItem } from "./Series";
+import { IClusterable, IPlottingItem } from "./Series";
 
 export interface IAxis {
 
@@ -436,12 +436,27 @@ export abstract class Axis extends ChartItem implements IAxis {
 
         this._doPrepareRender();
 
+        let sum = 0;
         let vals: number[] = [];
 
         this._series.forEach(item => {
             vals = vals.concat(item.collectValues(this));
+            if (item.clusterable()) {
+                sum += pickNum((item as any as IClusterable).groupWidth, 1);
+            }
         })
         this._range = this._doCalcluateRange(vals);
+
+        let p = 0;
+
+        this._series.forEach(item => {
+            if (item.clusterable()) {
+                const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;
+
+                (item as any as IClusterable).setCluster(w, p);
+                p += w;
+            }
+        })
     }
 
     buildTicks(length: number): void {
@@ -616,7 +631,7 @@ export class AxisCollection {
                 t = 'category';
             } else if (this.isX) {
                 for (const ser of chart._getSeries().items()) {
-                    if (ser.isCategorized()) {
+                    if (ser.canCategorized()) {
                         if (src.name && ser.xAxis === src.name) {
                             t = 'category';
                             break;
@@ -626,7 +641,7 @@ export class AxisCollection {
                         }
                     }   
                 }
-                if (!t && chart.first.isCategorized()) {
+                if (!t && chart.first.canCategorized()) {
                     t = 'category';
                 }
             }

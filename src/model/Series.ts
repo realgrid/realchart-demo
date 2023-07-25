@@ -109,9 +109,12 @@ export interface IPlottingItem {
     yAxis: string | number;
 
     visible: boolean;
+    getVisiblePoints(): DataPoint[];
+    getLegendSources(list: ILegendSource[]): void;
     needAxes(): boolean;
     isEmpty(): boolean;
-    isCategorized(): boolean;
+    canCategorized(): boolean;
+    clusterable(): boolean;
     // axis에 설정된 baseValue를 무시하라!
     ignoreAxisBase(axis: IAxis): boolean;
     collectValues(axis: IAxis): number[];
@@ -125,9 +128,17 @@ export interface IPlottingItem {
  */
 export interface IClusterable {
 
-    // 축 단위 내에서 이 그룹이 차지하는 계산된 영역 너비. 0 ~ 1 사이의 값.
+    /**
+     * @internal
+     * 축 단위 내에서 이 그룹이 차지하는 계산된 영역 너비. 0 ~ 1 사이의 값. 
+     * 그룹들의 groupWidth로 정해진다.
+     */
     _clusterWidth: number;
-    // 축 단위 내에서 이 그룹이 시작하는 위치. 0 ~ 1 사이의 상대 값.
+    /**
+     * @internal
+     * 축 단위 내에서 이 그룹이 시작하는 위치. 0 ~ 1 사이의 상대 값.
+     * 그룹들의 groupWidth와 groupPadding으로 정해진다.
+     */
     _clusterPos: number;
 
     /**
@@ -136,13 +147,15 @@ export interface IClusterable {
      * 0보다 큰 값으로 지정한다.
      * group이 여러 개인 경우 이 너비를 모두 합한 크기에 대한 상대값으로 group의 너비가 결정된다.
      */
-    clusterWidth: number;
+    groupWidth: number;
     /**
      * 시리즈 point bar들의 양 끝을 점유하는 빈 공간 크기 비율.
      * <br>
      * 0 ~ 1 사이의 비율 값으로 지정한다.
      */
-    clusterPadding: number;
+    groupPadding: number;
+
+    setCluster(width: number, pos: number): void;
 }
 
 export interface ISeriesGroup extends IPlottingItem {
@@ -197,7 +210,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    group: SeriesGroup;
+    group: SeriesGroup<Series>;
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
     protected _points: DataPointCollection;
@@ -264,6 +277,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return this._points;
     }
 
+    getVisiblePoints(): DataPoint[] {
+        return this._points.getVisibles();
+    }
+
     isEmpty(): boolean {
         return this._points.isEmpty();
     }
@@ -272,7 +289,21 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return true;
     }
 
-    isCategorized(): boolean {
+    /**
+     * @internal
+     * 
+     * CategoryAxis에 연결 가능한가?
+     */
+    canCategorized(): boolean {
+        return false;
+    }
+
+    /**
+     * @internal
+     * 
+     * 병렬 배치 가능한가?
+     */
+    clusterable(): boolean {
         return false;
     }
 
@@ -341,8 +372,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     prepareRender(): void {
-        this._xAxisObj = this.chart._connectSeries(this, true);
-        this._yAxisObj = this.chart._connectSeries(this, false);
+        this._xAxisObj = this.group ? this.group._xAxisObj : this.chart._connectSeries(this, true);
+        this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
         this._points.prepare();
         this._visPoints = this._points.getVisibles();//.sort((p1, p2) => p1.xValue - p2.xValue);
         this._doPrepareRender();
@@ -387,7 +418,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return this._xAxisObj.contains(point.x) && this._yAxisObj.contains(point.y);
     }
 
-    getLegendSources(list: ILegendSource[]) {
+    getLegendSources(list: ILegendSource[]): void {
         list.push(this);
     }
     
@@ -626,7 +657,7 @@ export class PlottingItemCollection  {
         const legends: ILegendSource[] = [];
 
         this._items.forEach(ser => {
-            ser.visible && ser instanceof Series && ser.getLegendSources(legends);
+            ser.visible && ser.getLegendSources(legends);
         })
         return legends;
     }
@@ -829,7 +860,7 @@ export enum SeriesGroupLayout {
     FILL = 'fill',
 }
 
-export abstract class SeriesGroup extends ChartItem implements ISeriesGroup {
+export abstract class SeriesGroup<T extends Series> extends ChartItem implements ISeriesGroup {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -845,7 +876,7 @@ export abstract class SeriesGroup extends ChartItem implements ISeriesGroup {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _series: Series[] = [];
+    private _series: T[] = [];
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
     _stackPoints: Map<number, DataPoint[]>;
@@ -857,7 +888,7 @@ export abstract class SeriesGroup extends ChartItem implements ISeriesGroup {
     xAxis: string | number;
     yAxis: string | number;
 
-    get series(): Series[] {
+    get series(): T[] {
         return this._series.slice(0);
     }
 
@@ -869,12 +900,16 @@ export abstract class SeriesGroup extends ChartItem implements ISeriesGroup {
         return false;
     }
 
-    isCategorized(): boolean {
+    canCategorized(): boolean {
         return true;
     }
 
+    clusterable(): boolean {
+        return false;
+    }
+
     //-------------------------------------------------------------------------
-    // properties
+    // methods
     //-------------------------------------------------------------------------
     // Axis에서 요청한다.
     collectValues(axis: IAxis): number[] {
@@ -908,22 +943,26 @@ export abstract class SeriesGroup extends ChartItem implements ISeriesGroup {
         }
     }
 
+    getLegendSources(list: ILegendSource[]) {
+        this._series.forEach(ser => ser.visible && list.push(ser));
+    }
+
     //-------------------------------------------------------------------------
-    // methods
+    // overriden members
     //-------------------------------------------------------------------------
+    getVisiblePoints(): DataPoint[] {
+        const pts: DataPoint[] = [];
+
+        this._series.forEach(ser => ser.visible && pts.push(...ser.getVisiblePoints()));
+        return pts;
+    }
+
     protected _doLoadProp(prop: string, value: any): boolean {
         if (prop === 'series') {
             this.$_loadSeries(this.chart, value);
             return true;
         }
     }
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    protected abstract _seriesType(): string;
-    protected abstract _canContain(ser: Series): boolean;
-    protected abstract _doPrepareSeries(series: Series[]): void;
 
     protected _doPrepareRender(chart: IChart): void {
         const series = this._series.filter(ser => ser.visible).sort((s1, s2) => (s1.zOrder || 0) - (s2.zOrder || 0));
@@ -940,17 +979,21 @@ export abstract class SeriesGroup extends ChartItem implements ISeriesGroup {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected abstract _seriesType(): string;
+    protected abstract _canContain(ser: Series): boolean;
+    protected abstract _doPrepareSeries(series: T[]): void;
+
     private $_loadSeries(chart: IChart, src: any) {
         const type = this._seriesType();
 
         if (isArray(src)) {
-            src.forEach((s, i) => this.$_add(Series._loadSeries(chart, s, type)));
+            src.forEach((s, i) => this.$_add(Series._loadSeries(chart, s, type) as T));
         } else if (isObject(src)) {
-            this.$_add(Series._loadSeries(chart, src, type));
+            this.$_add(Series._loadSeries(chart, src, type) as T);
         }
     }
 
-    private $_add(series: Series): void {
+    private $_add(series: T): void {
         if (this._canContain(series)) {
             this._series.push(series);
             series.group = this;

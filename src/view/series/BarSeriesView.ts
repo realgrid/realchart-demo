@@ -10,6 +10,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { Chart } from "../../main";
 import { DataPoint } from "../../model/DataPoint";
+import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { BarSeries } from "../../model/series/BarSeries";
 import { BarElement, PointLabelView, SeriesView } from "../SeriesView";
 
@@ -87,6 +88,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
+        const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPadding * 2 : 0;
         const yBase = yAxis.getPosition(width, yAxis.baseValue);
         const len = inverted ? width : height;
         const wLen = inverted ? height : width;
@@ -95,7 +97,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
 
         this._bars.forEach((bar, i) => {
             const p = bar.point;
-            const wUnit = xAxis.getUnitLength(wLen, i);
+            const wUnit = xAxis.getUnitLength(wLen, i) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(len, p.yValue);
             let x: number;

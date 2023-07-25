@@ -136,7 +136,7 @@ export class PieSeries extends RadialSeries {
     }
 }
 
-export class PieSeriesGroup extends SeriesGroup {
+export class PieSeriesGroup extends SeriesGroup<PieSeries> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -202,7 +202,7 @@ export class PieSeriesGroup extends SeriesGroup {
         this._innerDim = parsePercentSize(this.innerSize, true);
     }
 
-    protected _doPrepareSeries(series: Series[]): void {
+    protected _doPrepareSeries(series: PieSeries[]): void {
         if (this.layout === SeriesGroupLayout.STACK || this.layout === SeriesGroupLayout.FILL) {
             const sum = series.map(ser => (ser as PieSeries).groupSize).reduce((a, c) => a + pickNum(c, 1), 0);
             let p = 0;

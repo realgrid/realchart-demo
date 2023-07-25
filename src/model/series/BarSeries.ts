@@ -16,20 +16,22 @@ export abstract class BoxSeries extends PolarableSeries implements IClusterable 
     //-------------------------------------------------------------------------
     _clusterWidth = 1;
     _clusterPos = 0;
-    _groupWidth = 1;    // group내에서 이 시리즈의 상대적 너비
-    _groupPos = 0;      // group내에서 이 시리즈의 상대적 위치
+    _childWidth = 1;    // group내에서 이 시리즈의 상대적 너비
+    _childPos = 0;      // group내에서 이 시리즈의 상대적 위치
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    clusterWidth = 1;
-    clusterPadding = 0.2;
-
     /**
-     * CategoryAxis가 weight 값 목록을 가져올 data point 속성 이름.
+     * 시리즈가 group에 포함되지 않은 경우 기본 group에 포함되는 데,
+     * 그 그룹이 축 단위 너비에서 차지하는 상대적 너비.
      */
-    weightProp: string;
-
+    groupWidth = 1;
+    /**
+     * 시리즈가 group에 포함되지 않은 경우 기본 group에 포함되는 데,
+     * 그 그룹의 너비에서 포인트들이 표시되기 전후의 상대적 여백 크기.
+     */
+    groupPadding = 0.2;
     /**
      * point bar가 시리즈가 속한 group 내에서 차지하는 영역의 상대 크기.
      * <br>
@@ -52,11 +54,9 @@ export abstract class BoxSeries extends PolarableSeries implements IClusterable 
     getPointWidth(length: number): number {
         let w = length;
         
-        if (this.group instanceof BarSeriesGroup) {
-            w *= this.group._clusterWidth;           // 그룹 영역
-            w *= 1 - this.group.clusterPadding * 2;  // 그룹 padding
-        }
-        w *= this._groupWidth;                  // 그룹 내 시리즈 영역
+        w *= this._clusterWidth;           
+        w *= 1 - this.groupPadding * 2;  
+        w *= this._childWidth;                  // 그룹 내 시리즈 영역
         w *= 1 - this.pointPadding * 2;         // 시리즈 padding
         return w;
     }
@@ -64,17 +64,27 @@ export abstract class BoxSeries extends PolarableSeries implements IClusterable 
     getPointPos(length: number): number {
         let p = 0;
 
-        if (this.group instanceof BarSeriesGroup) {
-            p = length * this.group._clusterPos;
-            length *= this.group._clusterWidth;
-            p += length * this.group.clusterPadding;
-            length *= 1 - this.group.clusterPadding * 2;
-        }
+        p = length * this._clusterPos;
+        length *= this._clusterWidth;
+        p += length * this.groupPadding;
+        length *= 1 - this.groupPadding * 2;
 
-        p += length * this._groupPos;
-        length *= this._groupWidth;
+        p += length * this._childPos;
+        length *= this._childWidth;
         p += length * this.pointPadding;
         return p;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden mebers
+    //-------------------------------------------------------------------------
+    clusterable(): boolean {
+        return true;
+    }
+
+    setCluster(width: number, pos: number): void {
+        this._clusterWidth = width;
+        this._clusterPos = pos;
     }
 }
 
@@ -102,7 +112,7 @@ export class BarSeries extends BoxSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    isCategorized(): boolean {
+    canCategorized(): boolean {
         return true;
     }
 
@@ -111,7 +121,7 @@ export class BarSeries extends BoxSeries {
     }
 }
 
-export class BarSeriesGroup extends SeriesGroup implements IClusterable {
+export class BarSeriesGroup extends SeriesGroup<BarSeries> implements IClusterable {
 
     //-------------------------------------------------------------------------
     // fields
@@ -122,8 +132,14 @@ export class BarSeriesGroup extends SeriesGroup implements IClusterable {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    clusterWidth = 1;
-    clusterPadding = 0.2;
+    /**
+     * 축 단위 너비에서 이 그룹이 차지하는 상대적 너비.
+     */
+    groupWidth = 1;
+    /**
+     * 이 그룹의 너비에서 포인트들이 표시되기 전후의 상대적 여백 크기.
+     */
+    groupPadding = 0.2;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -136,23 +152,30 @@ export class BarSeriesGroup extends SeriesGroup implements IClusterable {
         return ser instanceof BarSeries;
     }
 
-    protected _doPrepareSeries(series: Series[]): void {
+    clusterable(): boolean {
+        return true;
+    }
+
+    setCluster(width: number, pos: number): void {
+        this._clusterWidth = width;
+        this._clusterPos = pos;
+    }
+
+    protected _doPrepareSeries(series: BarSeries[]): void {
         if (this.layout === SeriesGroupLayout.DEFAULT) {
-            const series2 = series.filter(ser => ser instanceof BoxSeries) as BoxSeries[];
-            
-            const cnt = series2.length;
+            const cnt = series.length;
 
             if (cnt > 1) {
-                const sum = series2.map(ser => ser.pointWidth).reduce((a, c) => a + c);
+                const sum = series.map(ser => ser.pointWidth).reduce((a, c) => a + c);
                 let x = 0;
                 
-                series2.forEach(ser => {
-                    ser._groupWidth = ser.pointWidth / sum;
-                    ser._groupPos = x;
-                    x += ser._groupWidth;
+                series.forEach(ser => {
+                    ser._childWidth = ser.pointWidth / sum;
+                    ser._childPos = x;
+                    x += ser._childWidth;
                 });
             } else if (cnt === 1) {
-                series2[0]._groupWidth = 1;
+                series[0]._childWidth = 1;
             }
         } else if (this.layout === SeriesGroupLayout.STACK) {
         }

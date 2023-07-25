@@ -193,7 +193,7 @@ export class AreaRangeSeries extends AreaSeries {
     }
 }
 
-export class LineSeriesGroup extends SeriesGroup {
+export class LineSeriesGroup extends SeriesGroup<LineSeries> {
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -206,6 +206,6 @@ export class LineSeriesGroup extends SeriesGroup {
         return ser instanceof LineSeries;
     }
 
-    protected _doPrepareSeries(series: Series[]): void {
+    protected _doPrepareSeries(series: LineSeries[]): void {
     }
 }

@@ -1,6 +1,8 @@
 const config = {
     title: "Basic Real-Chart",
     xAxis: {
+        type: 'linear',
+        // type: 'category',
         // position: 'apposite'
         // position: 'base',
         // baseAxis: 1
@@ -24,7 +26,7 @@ const config = {
         pointLabel: {
             visible: true,
             // format: '${x}'
-            format: '<b style="fill:red">${x}</b>'
+            text: '<b style="fill:red">${x}</b>'
         },
         data: [
             ['home', 7], 

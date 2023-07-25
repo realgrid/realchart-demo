@@ -24,6 +24,8 @@ const config = {
         }]
     }, {
         groupPadding: 0.1,
+        // layout: 'overlap',
+        layout: 'stack',
         series: [{
             group: 1,
             name: 'column4',
