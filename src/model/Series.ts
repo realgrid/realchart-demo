@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, isString, pickNum } from "../common/Common";
-import { RcObject } from "../common/RcObject";
 import { Align, IPercentSize, RtPercentSize, VerticalAlign, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { Shape } from "../common/impl/SvgShape";
@@ -119,7 +118,6 @@ export interface IPlottingItem {
     ignoreAxisBase(axis: IAxis): boolean;
     collectValues(axis: IAxis): number[];
     collectCategories(axis: IAxis): string[];
-    collectValues(axis: IAxis): number[];
     prepareRender(): void;
 }
 

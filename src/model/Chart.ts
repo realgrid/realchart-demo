@@ -18,6 +18,7 @@ import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
 import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
+import { BarRangeSeries } from "./series/BarRangeSeries";
 import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";
 import { BoxPlotSeries } from "./series/BoxPlotSeries";
@@ -70,6 +71,7 @@ const group_types = {
 
 const series_types = {
     'bar': BarSeries,
+    'barrange': BarRangeSeries,
     'line': LineSeries,
     'area': AreaSeries,
     'arearange': AreaRangeSeries,

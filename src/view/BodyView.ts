@@ -18,6 +18,7 @@ import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange } from "../mod
 import { Body } from "../model/Body";
 import { PlotItem } from "../model/PlotItem";
 import { Series } from "../model/Series";
+import { BarRangeSeries } from "../model/series/BarRangeSeries";
 import { BarSeries } from "../model/series/BarSeries";
 import { BellCurveSeries } from "../model/series/BellCurveSeries";
 import { BoxPlotSeries } from "../model/series/BoxPlotSeries";
@@ -31,6 +32,7 @@ import { ChartElement } from "./ChartElement";
 import { SeriesView } from "./SeriesView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
 import { AreaSeriesView } from "./series/AreaSeriesView";
+import { BarRangeSeriesView } from "./series/BarRangeSeriesView";
 import { BarSeriesView } from "./series/BarSeriesView";
 import { BellCurveSeriesView } from "./series/BellCurveSeriesView";
 import { BoxPlotSeriesView } from "./series/BoxPlotSeriesView";
@@ -43,6 +45,7 @@ import { ScatterSeriesView } from "./series/ScatterSeriesView";
 
 const series_types = new Map<any, any>([
     [BoxPlotSeries, BoxPlotSeriesView],
+    [BarRangeSeries, BarRangeSeriesView],
     [BarSeries, BarSeriesView],
     [BarSeries, BarSeriesView],
     [BellCurveSeries, BellCurveSeriesView],
