@@ -1,6 +1,7 @@
 const config = {
     title: "Basic Real-Chart",
     xAxis: {
+        // reversed: true,
         // type: 'linear',
         // type: 'category',
         // position: 'apposite'

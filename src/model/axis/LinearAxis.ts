@@ -292,7 +292,8 @@ export class LinearAxis extends Axis {
     }
 
     getPosition(length: number, value: number): number {
-        return length * (value - this._min) / (this._max - this._min);
+        const v = length * (value - this._min) / (this._max - this._min);
+        return this.reversed ? length - v : v;
     }
 
     getStepPosition(length: number, value: number): number {

@@ -181,7 +181,8 @@ export class CategoryAxis extends Axis {
     }
 
     getPosition(length: number, value: number): number {
-        return this._minPad * this._interval + (value - this._min) * this._interval + this._interval / 2;
+        const v = this._minPad * this._interval + (value - this._min) * this._interval + this._interval / 2;
+        return this.reversed ? length - v : v;
     }
 
     getUnitLength(length: number, value: number): number {

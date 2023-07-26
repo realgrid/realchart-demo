@@ -6,9 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcElement } from '../RcControl';
+import { PathElement, RcElement } from '../RcControl';
 import { IRect } from '../Rectangle';
 import { _undefined } from '../Types';
+import { SvgShapes } from './SvgShape';
 
 export interface IRectShape extends IRect {
     r?: number;
@@ -103,6 +104,26 @@ export class RectElement extends RcElement {
     //-------------------------------------------------------------------------
 }
 
+export class BoxElement extends PathElement {
+
+    //-------------------------------------------------------------------------
+    // fields   
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, styleName: string = _undefined) {
+        super(doc, styleName);
+    }
+
+	//-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setBox(x1: number, y1: number, x2: number, y2: number): BoxElement {
+        this.setPath(SvgShapes.box(x1, y1, x2, y2));
+        return this;
+    }
+}
 
 export class BackElement extends RectElement {
 

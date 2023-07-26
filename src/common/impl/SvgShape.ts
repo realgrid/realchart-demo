@@ -45,6 +45,16 @@ export class SvgShapes {
         return vals;
     }
 
+    static box(x1: number, y1: number, x2: number, y2: number): SizeValue[] {
+        return [
+            'M', x1, y1,
+            'L', x2, y1,
+            'L', x2, y2,
+            'L', x1, y2,
+            'Z'
+        ];
+    }
+
     static rect(r: IRect): SizeValue[] {
         return this.rectangle(r.x, r.y ,r.width, r.height);
     }

@@ -1,12 +1,13 @@
 const config = {
     title: "Bar Series 01",
     options: {
-        inverted: true
+        inverted: true,
     },
     xAxis: {
-        // grid: true
+        // grid: true,
     },
     yAxis: {
+        reversed: true,
         guides: [{
             type: 'line',
             value: 5.5,

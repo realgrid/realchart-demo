@@ -11,7 +11,7 @@ import { LayerElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { Align, VerticalAlign, _undefined } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
-import { RectElement } from "../common/impl/RectElement";
+import { BoxElement, RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { Chart } from "../main";
 import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange } from "../model/Axis";
@@ -264,7 +264,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _rect: RectElement;
+    private _box: BoxElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -272,7 +272,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
     constructor(doc: Document) {
         super(doc);
 
-        this.insertFirst(this._rect = new RectElement(doc, 'rct-axis-guide-range'));
+        this.insertFirst(this._box = new BoxElement(doc, 'rct-axis-guide-range'));
     }
 
     //-------------------------------------------------------------------------
@@ -333,7 +333,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
             label.layout = layout;
             label.translate(x, y);
 
-            this._rect.setBounds(x1, 0, x2 - x1, height);
+            this._box.setBox(x1, 0, x2, height);
 
         } else {
             const y1 = height - this.model.axis.getPosition(height, Math.min(m.start, m.end));
@@ -381,7 +381,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
             label.layout = layout;
             label.translate(x, y);
 
-            this._rect.setBounds(0, y2, width, y1 - y2);
+            this._box.setBox(0, y2, width, y1);
         }
     }
 }
