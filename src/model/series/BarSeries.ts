@@ -23,25 +23,29 @@ export abstract class BoxSeries extends PolarableSeries implements IClusterable 
     // properties
     //-------------------------------------------------------------------------
     /**
-     * 시리즈가 group에 포함되지 않은 경우 기본 group에 포함되는 데,
+     * 시리즈가 group에 포함되지 않은 경우 자동 생성되는 기본 group에 포함되는 데,
      * 그 그룹이 축 단위 너비에서 차지하는 상대적 너비.
+     * <br>
+     * 명시적으로 설정된 그룹에 포함되면 이 속성은 무시된다.
      */
     groupWidth = 1;
     /**
-     * 시리즈가 group에 포함되지 않은 경우 기본 group에 포함되는 데,
+     * 시리즈가 group에 포함되지 않은 경우 자동 생성되는 기본 group에 포함되는 데,
      * 그 그룹의 너비에서 포인트들이 표시되기 전후의 상대적 여백 크기.
+     * <br>
+     * 명시적으로 설정된 그룹에 포함되면 이 속성은 무시된다.
      */
     groupPadding = 0.2;
     /**
-     * point bar가 시리즈가 속한 group 내에서 차지하는 영역의 상대 크기.
+     * 시리즈가 포함된 그룹의 layout이 {@link SeriesGroupLayout.DEFAULT}이거나 특별히 설정되지 않아서,
+     * 그룹에 포함된 시리즈들의 data point가 옆으로 나열되어 표시될 때,
+     * 포인트 표시 영역 내에서 이 시리즈의 포인트가 차지하는 영역의 상대 크기.
      * <br>
-     * group내에 속한 모든 시리즈의 값을 합한 것에 대한 상대 크기로,
-     * 이 시리즈 포인트가 차지할 영역의 크기가 정해진다.
-     * group의 layout이 {@link SeriesGroupLayout.DEFAULT}인 경우에만 의미가 있다.
+     * 예를 들어 이 시리즈의 속성값이 1이고 다른 시리즈의 값이 2이면 다른 시리즈의 data point가 두 배 두껍게 표시된다.
      */
     pointWidth = 1;
     /**
-     * point bar 양쪽 끝에 채워지는 빈 영역의 크기.
+     * 이 시리즈의 point가 차지하는 영역 중에서 point bar 양쪽 끝에 채워지는 빈 영역의 크기.
      * <br>
      * point가 차지할 원래 크기에 대한 상대 값으로서,
      * 0 ~ 1 사이의 비율 값으로 지정한다.
