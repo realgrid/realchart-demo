@@ -148,6 +148,7 @@
 /** bar series */
 .rct-series-bar {
     fill: #00aaff;
+    fill-opacity: 0.8;
 }
 
 /** line series */

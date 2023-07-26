@@ -457,3 +457,6 @@ export enum SectionDir {
     RIGHT
 }
 
+export const HORZ_SECTIONS = [SectionDir.LEFT, SectionDir.RIGHT];
+export const VERT_SECTIONS = [SectionDir.TOP, SectionDir.BOTTOM];
+

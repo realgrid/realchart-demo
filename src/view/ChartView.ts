@@ -10,7 +10,7 @@ import { isNumber } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { LayerElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
-import { Align, SectionDir, VerticalAlign } from "../common/Types";
+import { Align, HORZ_SECTIONS, SectionDir, VERT_SECTIONS, VerticalAlign } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
@@ -141,7 +141,7 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepare(doc: Document, axes: Axis[], isHorz: boolean, guideContainer: LayerElement, frontGuideContainer: LayerElement): void {
+    prepare(doc: Document, axes: Axis[], guideContainer: LayerElement, frontGuideContainer: LayerElement): void {
         const views = this.views;
 
         while (views.length < axes.length) {
@@ -157,7 +157,6 @@ class AxisSectionView extends SectionView {
         // 추측 계산을 위해 모델을 미리 설정할 필요가 있다.
         views.forEach((v, i) => {
             v.model = axes[i];
-            v._isHorz = isHorz;
             v.prepareGuides(doc, guideContainer, frontGuideContainer);
         });
 
@@ -393,26 +392,38 @@ export class ChartView extends RcElement {
         if (!polar) {
             axisMap = new Map(this._axisSectionViews);
     
-            if ((asv = axisMap.get(SectionDir.LEFT)) && asv.visible) {
-                w -= asv.mw;
-            } else {
-                axisMap.delete(SectionDir.LEFT);
-            }
-            if ((asv = axisMap.get(SectionDir.BOTTOM)) && asv.visible) {
-                h -= asv.mh;
-            } else {
-                axisMap.delete(SectionDir.BOTTOM);
-            }
+            HORZ_SECTIONS.forEach(dir => {
+                if ((asv = axisMap.get(dir)) && asv.visible) {
+                    w -= asv.mw;
+                } else {
+                    axisMap.delete(dir);
+                }
+            });
+            VERT_SECTIONS.forEach(dir => {
+                if ((asv = axisMap.get(dir)) && asv.visible) {
+                    h -= asv.mh;
+                } else {
+                    axisMap.delete(dir);
+                }
+            });
     
             if ((asv = axisMap.get(SectionDir.LEFT)) && asv.visible) {
                 asv.resize(asv.mw, h);
                 asv.layout();
                 x += asv.mw;
             }
+            if ((asv = axisMap.get(SectionDir.RIGHT)) && asv.visible) {
+                asv.resize(asv.mw, h);
+                asv.layout();
+            }
             if ((asv = axisMap.get(SectionDir.BOTTOM)) && asv.visible) {
                 asv.resize(w, asv.mh);
                 asv.layout();
                 y -= asv.mh;
+            }
+            if ((asv = axisMap.get(SectionDir.TOP)) && asv.visible) {
+                asv.resize(w, asv.mh);
+                asv.layout();
             }
         }
 
@@ -425,8 +436,14 @@ export class ChartView extends RcElement {
             if (asv = axisMap.get(SectionDir.LEFT)) {
                 asv.translate(org.x - asv.mw, org.y - asv.height);
             }
+            if (asv = axisMap.get(SectionDir.RIGHT)) {
+                asv.translate(org.x + w, org.y - asv.height);
+            }
             if (asv = axisMap.get(SectionDir.BOTTOM)) {
                 asv.translate(org.x, org.y);
+            }
+            if (asv = axisMap.get(SectionDir.TOP)) {
+                asv.translate(org.x, org.y - h - asv.height);
             }
         }
 
@@ -518,10 +535,7 @@ export class ChartView extends RcElement {
             const v = map.get(dir);
 
             if (need) {
-                const axes = m.getAxes(dir);
-
-                v.visible = true;
-                v.prepare(doc, axes, dir === SectionDir.BOTTOM || dir === SectionDir.TOP, guideContainer, frontGuideContainer);
+                v.prepare(doc, m.getAxes(dir), guideContainer, frontGuideContainer);
             } else {
                 v.visible = false;
             }
@@ -566,9 +580,9 @@ export class ChartView extends RcElement {
             const asv = map.get(dir);
             
             if (asv.visible) {
-                if (dir === SectionDir.LEFT) {
+                if (dir === SectionDir.LEFT || dir === SectionDir.RIGHT) {
                     w -= asv.mw;
-                } else if (dir === SectionDir.BOTTOM) {
+                } else if (dir === SectionDir.BOTTOM || dir === SectionDir.TOP) {
                     h -= asv.mh;
                 }
             }

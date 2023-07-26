@@ -7,7 +7,7 @@ const config = {
         // grid: true,
     },
     yAxis: {
-        reversed: true,
+        // reversed: true,
         guides: [{
             type: 'line',
             value: 5.5,

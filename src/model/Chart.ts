@@ -8,7 +8,7 @@
 
 import { RcObject } from "../common/RcObject";
 import { SectionDir } from "../common/Types";
-import { Axis, AxisCollection, IAxis } from "./Axis";
+import { Axis, AxisCollection, AxisPosition, IAxis } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
 import { ILegendSource, Legend } from "./Legend";
@@ -318,31 +318,31 @@ export class Chart extends RcObject implements IChart {
         if (this.isInverted()) {
             switch (dir) {
                 case SectionDir.LEFT:
-                    axes = xAxes.filter(a => !a.opposite);
+                    axes = xAxes.filter(a => !a._isOpposite);
                     break;
                 case SectionDir.RIGHT:
-                    axes = xAxes.filter(a => a.opposite);
+                    axes = xAxes.filter(a => a._isOpposite);
                     break;
                 case SectionDir.BOTTOM:
-                    axes = yAxes.filter(a => !a.opposite);
+                    axes = yAxes.filter(a => !a._isOpposite);
                     break;
                 case SectionDir.TOP:
-                    axes = yAxes.filter(a => a.opposite);
+                    axes = yAxes.filter(a => a._isOpposite);
                     break;
             } 
         } else {
             switch (dir) {
                 case SectionDir.LEFT:
-                    axes = yAxes.filter(a => !a.opposite);
+                    axes = yAxes.filter(a => !a._isOpposite);
                     break;
                 case SectionDir.RIGHT:
-                    axes = yAxes.filter(a => a.opposite);
+                    axes = yAxes.filter(a => a._isOpposite);
                     break;
                 case SectionDir.BOTTOM:
-                    axes = xAxes.filter(a => !a.opposite);
+                    axes = xAxes.filter(a => !a._isOpposite);
                     break;
                 case SectionDir.TOP:
-                    axes = xAxes.filter(a => a.opposite);
+                    axes = xAxes.filter(a => a._isOpposite);
                     break;
             } 
         }

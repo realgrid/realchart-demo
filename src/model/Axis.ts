@@ -343,6 +343,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     _isX: boolean;
     _isHorz: boolean;
+    _isOpposite: boolean;
     protected _series: IPlottingItem[] = [];
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
@@ -371,9 +372,9 @@ export abstract class Axis extends ChartItem implements IAxis {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * true면 기본 위치(x축: bottom, y축: left)의 반대편에 표시된다.
+     * 표시 위치.
      */
-    opposite = false;
+    position = AxisPosition.NORMAL;
     /**
      * true면 반대 방향으로 point 위치들이 지정된다.
      */
@@ -459,6 +460,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     prepareRender(): void {
         this._isHorz = this.chart.isInverted() ? !this._isX : this._isX;
+        this._isOpposite = this.position === AxisPosition.OPPOSITE;
 
         this._doPrepareRender();
 

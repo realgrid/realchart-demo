@@ -619,15 +619,15 @@ export class RcElement extends RcObject {
         return this._visible;
     }
     set visible(value: boolean) {
+        this.setVisible(value);
+    }
+    setVisible(value: boolean): RcElement {
         if (value !== this._visible) {
             this._visible = value;
             if (this._dom) {
                 this._dom.style.display = this._visible ? '' : 'none';
             }
         }
-    }
-    setVisible(value: boolean): RcElement {
-        this.visible = value;
         return this;
     }
 

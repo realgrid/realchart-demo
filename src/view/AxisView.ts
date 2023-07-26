@@ -100,7 +100,6 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _isHorz: boolean;
     private _lineView: LineElement;
     private _titleView: AxisTitleView;
     private _markContainer: RcElement;
@@ -200,7 +199,7 @@ export class AxisView extends ChartElement<Axis> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: Axis, hintWidth: number, hintHeight: number, phase: number): ISize {
-        const horz = this._isHorz;
+        const horz = model._isHorz;
         const titleView = this._titleView;
         const labelViews = this._labelViews;
         let sz = 0;
@@ -246,8 +245,10 @@ export class AxisView extends ChartElement<Axis> {
     }
     
     protected _doLayout(): void {
-        const horz = this._isHorz;
-        const ticks = this.model._ticks;
+        const model = this.model;
+        const horz = model._isHorz;
+        const opp = model._isOpposite;
+        const ticks = model._ticks;
         const titleView = this._titleView;
         const labelViews = this._labelViews;
         const markLen = this._markLen;
@@ -256,10 +257,10 @@ export class AxisView extends ChartElement<Axis> {
 
         // line
         if (this._lineView.visible) {
-            if (this._isHorz) {
-                this._lineView.setHLineC(0, 0, w);
+            if (horz) {
+                this._lineView.setHLineC(opp ? h : 0, 0, w);
             } else {
-                this._lineView.setVLineC(w, 0, h);
+                this._lineView.setVLineC(opp ? 0 : w, 0, h);
             }
         }
 
@@ -267,39 +268,50 @@ export class AxisView extends ChartElement<Axis> {
         if (horz) {
             this._markViews.forEach((v, i) => {
                 v.resize(1, markLen);
-                v.layout().translate(ticks[i].pos, 0);
+                v.layout().translate(ticks[i].pos, opp ? h - markLen : 0);
             })
         } else {
             this._markViews.forEach((v, i) => {
                 v.resize(markLen, 1);
-                v.layout().translate(w - markLen, ticks[i].pos);
+                v.layout().translate(opp ? 0 : w - markLen, ticks[i].pos);
             })
         }
 
         // tick labels
         if (horz) {
             labelViews.forEach((v, i) => {
+                const y = opp ? h - markLen - v.getBBounds().height : markLen;
+
                 // v.translate(ticks[i].pos - v.getBBounds().width / 2, y);
                 v.anchor = TextAnchor.MIDDLE;
-                v.translate(ticks[i].pos, markLen);
+                v.translate(ticks[i].pos, y);
             });
         } else {
-            const x = w - markLen;
+            const x = opp ? markLen : w - markLen;
 
             labelViews.forEach((v, i) => {
-                v.translate(x - v.getBBounds().width, h - ticks[i].pos - v.getBBounds().height / 2);
+                const r = v.getBBounds();
+                const x2 = opp ? x : x - r.width;
+
+                v.translate(x2, h - ticks[i].pos - r.height / 2);
             });
         }
 
         // title
         if (titleView.visible) {
+            const labelSize = this._labelSize;
+
             titleView.resizeByMeasured().layout(horz);
 
             if (horz) {
-                // titleView.translate((w - titleView.width) / 2, this._markLen + this._labelSize);
-                titleView.translate(w / 2, this._markLen + this._labelSize);
+                const y = opp ? 0 : markLen + labelSize;
+
+                // titleView.translate((w - titleView.width) / 2, this._markLen + labelSize);
+                titleView.translate(w / 2, y);
             } else {
-                titleView.translate(w - this._markLen - this._labelSize - titleView.height / 2, (h - titleView.height) / 2);
+                const x = opp ? markLen + labelSize + titleView.height / 2 : w - markLen - labelSize - titleView.height / 2;
+
+                titleView.translate(x, (h - titleView.height) / 2);
             }
         }
     }
