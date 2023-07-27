@@ -108,7 +108,38 @@ export abstract class ChartItem extends RcObject {
     protected _doPrepareRender(chart: IChart): void {}
 }
 
-export abstract class FormattableText extends ChartItem {
+export const BRIGHT_COLOR = 'white';
+export const DARK_COLOR = 'black';
+
+export enum ChartTextDisplay {
+    AUTO = 'auto',
+    OUTLINE = 'outline',
+    CONTRAST = 'contrast',
+    BACKGROUND = 'background'
+}
+
+export abstract class ChartText extends ChartItem {
+    /**
+     * true면 텍스트 색상과 대조되는 색상의 배경을 표시한다.
+     * <br>
+     * autoContrast가 true면 무시된다.
+     */
+    outline = false;
+    /**
+     * true면 포인트 색상과 대조되는 흰색 혹은 검정색으로 표시한다.
+     */
+    autoContrast = true;// true;
+    /**
+     * autoContrast가 true일 때 밝은 쪽 텍스트 색상.
+     */
+    brightColor = BRIGHT_COLOR;
+    /**
+     * autoContrast가 true일 때 어두운 쪽 텍스트 색상.
+     */
+    darkColor = DARK_COLOR;
+}
+
+export abstract class FormattableText extends ChartText {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -203,7 +234,6 @@ export abstract class FormattableText extends ChartItem {
         }
     }
 
-
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -217,7 +247,6 @@ export abstract class FormattableText extends ChartItem {
         this._richText.build(view, target, callback);
     }
 
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -226,6 +255,7 @@ export abstract class FormattableText extends ChartItem {
             this.text = source;
             return true;
         }
+        return super._doLoadSimple(source);
     }
 
     //-------------------------------------------------------------------------

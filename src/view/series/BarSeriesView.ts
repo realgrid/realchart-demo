@@ -10,6 +10,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { Chart } from "../../main";
 import { DataPoint } from "../../model/DataPoint";
+import { PointItemPosition } from "../../model/Series";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { LinearAxis } from "../../model/axis/LinearAxis";
 import { BarSeries } from "../../model/series/BarSeries";
@@ -23,6 +24,18 @@ class BarSectorView extends SectorElement {
     point: DataPoint;
 }
 
+type LabelInfo = {
+    inverted: boolean,
+    labelPos: PointItemPosition,
+    labelOff: number,
+    width: number,
+    height: number,
+    labelView: PointLabelView,
+    bar: BarElement,
+    x: number,
+    y: number
+};
+
 export class BarSeriesView extends SeriesView<BarSeries> {
 
     //-------------------------------------------------------------------------
@@ -30,6 +43,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
     //-------------------------------------------------------------------------
     private _bars: ElementPool<BarElement>;
     private _sectors: ElementPool<BarSectorView>;
+    private _labelInfo: LabelInfo = {} as any;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -43,9 +57,9 @@ export class BarSeriesView extends SeriesView<BarSeries> {
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: BarSeries): void {
         if (model.chart._polar) {
-            this.$_parepareSectors(doc, model._visPoints);
+            this.$_parepareSectors(doc, model, model._visPoints);
         } else {
-            this.$_parepareBars(doc, model._visPoints);
+            this.$_parepareBars(doc, model, model._visPoints);
         }
     }
 
@@ -60,23 +74,29 @@ export class BarSeriesView extends SeriesView<BarSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_parepareBars(doc: Document, points: DataPoint[]): void {
+    private $_parepareBars(doc: Document, model: BarSeries, points: DataPoint[]): void {
+        const style = model.style;
+
         if (!this._bars) {
             this._bars = new ElementPool(this._pointContainer, BarElement);
         }
         this._bars.prepare(points.length, (v, i) => {
             v.point = points[i];
             v.setStyle('fill', points[i].color);
+            v.setStyleOrClass(style);
         });
     }
 
-    private $_parepareSectors(doc: Document, points: DataPoint[]): void {
+    private $_parepareSectors(doc: Document, model: BarSeries, points: DataPoint[]): void {
+        const style = model.style;
+
         if (!this._sectors) {
             this._sectors = new ElementPool(this._pointContainer, BarSectorView);
         }
         this._sectors.prepare(points.length, (v, i) => {
             v.point = points[i];
             v.setStyle('fill', points[i].color);
+            v.setStyleOrClass(style);
         });
     }
 
@@ -84,8 +104,6 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         const series = this.model;
         const inverted = series.chart.isInverted();
         const labels = series.pointLabel;
-        const labelVis = labels.visible;
-        const labelOff = labels.offset;
         const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
@@ -95,13 +113,19 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         //const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
         const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.yBase : 0);
         const org = inverted ? 0 : height;;
-        let labelView: PointLabelView;
+        const labelInfo: LabelInfo = labels.visible && Object.assign(this._labelInfo, {
+            inverted,
+            labelPos: series.getLabelPosition(),
+            labelOff: labels.offset,
+            width, height
+        });
 
         this._bars.forEach((bar, i) => {
             const p = bar.point;
             const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
+            let labelView: PointLabelView;
             let x: number;
             let y: number;
 
@@ -127,16 +151,62 @@ export class BarSeriesView extends SeriesView<BarSeries> {
             bar.render(x, y, inverted);
 
             // label
-            if (labelVis && (labelView = labelViews.get(p, 0))) {
-                const r = labelView.getBBounds();
-
-                if (inverted) {
-                    labelView.translate(x + bar.hPoint + labelOff, y - r.height / 2);
-                } else {
-                    labelView.translate(x - r.width / 2, y - bar.hPoint - r.height - labelOff);
-                }
+            if (labelInfo && (labelView = labelViews.get(p, 0))) {
+                labelInfo.labelView = labelView;
+                labelInfo.bar = bar;
+                labelInfo.x = x;
+                labelInfo.y = y;
+                this.$_layoutLabel(labelInfo);
             }
         })
+    }
+
+    private $_layoutLabel(info: LabelInfo): void {
+        const r = info.labelView.getBBounds();
+        let {inverted, x, y, bar, labelOff} = info;
+
+        if (inverted) {
+            y -= r.height / 2;
+        } else {
+            x -= r.width / 2;
+        }
+
+        switch (info.labelPos) {
+            case PointItemPosition.INSIDE:
+                if (info.inverted) {
+                    x += bar.hPoint / 2 + labelOff;
+                } else {
+                    y -= (bar.hPoint + r.height) / 2 + labelOff;
+                }
+                break;
+
+            case PointItemPosition.HEAD:
+                if (info.inverted) {
+                    x += bar.hPoint - r.width - labelOff;
+                } else {
+                    y -= bar.hPoint - labelOff;
+                }
+                break;
+
+            case PointItemPosition.FOOT:
+                break;
+
+            case PointItemPosition.OUTSIDE:
+            default:
+                if (info.inverted) {
+                    x += bar.hPoint + labelOff;
+                } else {
+                    y -= bar.hPoint + r.height + labelOff;
+                }
+                break;
+        }
+
+        const contrast = this.model.pointLabel.autoContrast;
+        const darkColor = this.model.pointLabel.darkColor;
+        const brightColor = this.model.pointLabel.brightColor;
+
+        info.labelView.translate(x, y);
+        contrast && info.labelView.setContrast(info.bar.dom, darkColor, brightColor);
     }
 
     private $_layoutSectors(): void {

@@ -28,7 +28,11 @@ const config = {
     },
     series: {
         type: 'bar',
-        pointLabel: true,
+        pointLabel: {
+            visible: true,
+            position: 'head',
+            // text: '<b style="fill:red">${x}</b>'
+        },
         data: [
             ['home', 7], 
             ['sky', 11], 

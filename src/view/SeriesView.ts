@@ -91,8 +91,8 @@ export class PointLabelView extends GroupElement {
         if (this._outline) {
             if (this._outline.setStyles(styles)) {
                 changed = true;
-                this.$_setOutline(Color.getContrast(getComputedStyle(this._text.dom).fill));
             }
+            this.$_setOutline(Color.getContrast(getComputedStyle(this._text.dom).fill));
         }
         return changed;
     }
@@ -103,8 +103,8 @@ export class PointLabelView extends GroupElement {
         if (this._outline) {
             if (this._outline.setStyle(prop, value)) {
                 changed = true;
-                this.$_setOutline(Color.getContrast(getComputedStyle(this._text.dom).fill));
             }
+            this.$_setOutline(Color.getContrast(getComputedStyle(this._text.dom).fill));
         }
         return changed;
     }
@@ -153,11 +153,11 @@ export class PointLabelContainer extends GroupElement {
         this._labels[1].prepare(0);
     }
 
-    public prepareLabel(view: PointLabelView, index: number, p: DataPoint, model: DataPointLabel): void {
+    prepareLabel(view: PointLabelView, index: number, p: DataPoint, model: DataPointLabel): void {
         if (view.visible = p.visible) {
         // if (label.visible = !p.isNull && p.visible) {
             const richFormat = model.text;
-            // const styles = model.styles;
+            const styles = model.style;
 
             view.point = p;
             !model.autoContrast && view.setStyle('fill', '');
@@ -170,8 +170,8 @@ export class PointLabelContainer extends GroupElement {
             } else {
                 //label.setValueEx(p.value, true, 1)
                 view.setText(model.getText(p.getYLabel(index)))
-                    .setOutline(model.outlined)
-            //         .setStyles(styles);
+                    .setOutline(model.outline)
+                    .setStyles(styles);
             }
         }
     }

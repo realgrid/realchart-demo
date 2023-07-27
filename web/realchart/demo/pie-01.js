@@ -18,8 +18,9 @@ const config = {
         type: 'pie',
         pointLabel: {
             visible: true,
+            // outline: true,
             style: {
-                fill: '#eee'
+                // fill: '#eee'
             }
         },
         data: [ 

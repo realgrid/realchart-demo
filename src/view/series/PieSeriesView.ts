@@ -12,7 +12,6 @@ import { ORG_ANGLE, deg2rad } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
-import { PointItemPosition } from "../../model/Series";
 import { PieSeries, PieSeriesGroup, PieSeriesPoint } from "../../model/series/PieSeries";
 import { PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView } from "../SeriesView";
 
@@ -237,7 +236,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
         const series = this.model;
         const labels = series.pointLabel;
         const labelVis = labels.visible;
-        const labelInside = series.pointLabel.position === PointItemPosition.INSIDE;
+        const labelInside = series.getLabelPosition();
         const labelOff = labels.offset;
         const labelViews = this._labelContainer;
         const lineViews = this._lineContainer;

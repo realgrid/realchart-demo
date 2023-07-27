@@ -22,12 +22,11 @@ export enum PointItemPosition {
     AUTO = 'auto',
     INSIDE = 'inside',
     OUTSIDE = 'outside',
+    HEAD = 'head',
+    FOOT = 'foot',
     INSIDE_FIRST = 'insideFirst',
     OUTSIDE_FIRST = 'outsideFirst',
 }
-
-export const BRIGHT_COLOR = 'white';
-export const DARK_COLOR = 'black';
 
 export const NUMBER_SYMBOLS = 'k,M,G,T,P,E';
 export const NUMBER_FORMAT = '#,##0.#';
@@ -44,31 +43,18 @@ export class DataPointLabel extends FormattableText {
      * 포인트 label 표시 위치.
      */
     position = PointItemPosition.AUTO;
-    /**
-     * position 위치에서 수평 정렬 상태.
-     * pie 시리즈에서는 무시.
-     */
-    align = Align.CENTER;
-    /**
-     * position 위치에서 수직 정렬 상태.
-     */
-    verticalAlign = VerticalAlign.MIDDLE;
-    /**
-     * true면 텍스트 색상과 대조되는 색상의 배경을 표시한다.
-     */
-    outlined = true;
-    /**
-     * true면 포인트 색상과 대조되는 흰색 혹은 검정색으로 표시한다.
-     */
-    autoContrast = true;
-    /**
-     * autoContrast가 true일 때 밝은 쪽 텍스트 색상.
-     */
-    brightColor = BRIGHT_COLOR;
-    /**
-     * autoContrast가 true일 때 어두운 쪽 텍스트 색상.
-     */
-    darkColor = DARK_COLOR;
+    
+    // /**
+    //  * position 위치에서 수평 정렬 상태.
+    //  * pie 시리즈에서는 무시.
+    //  */
+    // align = Align.CENTER;
+    // /**
+    //  * position 위치에서 수직 정렬 상태.
+    //  */
+    // valign = VerticalAlign.MIDDLE;
+
+    offset = 4;
 
     //-------------------------------------------------------------------------
     // fields

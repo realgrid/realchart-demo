@@ -11,7 +11,7 @@ import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../.
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { ILegendSource } from "../Legend";
-import { ISeries, RadialSeries, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
+import { ISeries, PointItemPosition, RadialSeries, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
 
 export class PieSeriesPoint extends DataPoint implements ILegendSource {
 
@@ -102,6 +102,11 @@ export class PieSeries extends RadialSeries {
 
     getSliceOffset(rd: number): number {
         return this._sliceDim ? calcPercent(this._sliceDim, rd) : 0;
+    }
+
+    getLabelPosition(): PointItemPosition {
+        const p = this.pointLabel.position;
+        return p === PointItemPosition.AUTO ? PointItemPosition.INSIDE : p;
     }
 
     //-------------------------------------------------------------------------

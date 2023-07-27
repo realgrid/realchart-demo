@@ -27,8 +27,10 @@ const config = {
     series: {
         pointLabel: {
             visible: true,
-            // format: '${x}'
-            text: '<b style="fill:red">${x}</b>'
+            position: 'head',
+            // outline: false,
+            // offset: 10,
+            // text: '<b style="fill:red">${x}</b>'
         },
         data: [
             ['home', 7], 
@@ -37,7 +39,10 @@ const config = {
             ['지리산', 14.3], 
             ['zzz', 13],
             ['낙동강', 12.5]
-        ]
+        ],
+        style: {
+            // fill: 'yellow'
+        }
     }
 }
 

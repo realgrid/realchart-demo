@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { DataPoint } from "../DataPoint";
-import { IClusterable, PolarableSeries, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
+import { IClusterable, PointItemPosition, PolarableSeries, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
 
 export abstract class BoxSeries extends PolarableSeries implements IClusterable {
 
@@ -77,6 +77,11 @@ export abstract class BoxSeries extends PolarableSeries implements IClusterable 
         length *= this._childWidth;
         p += length * this.pointPadding;
         return p;
+    }
+
+    getLabelPosition(): PointItemPosition {
+        const p = this.pointLabel.position;
+        return p === PointItemPosition.AUTO ? PointItemPosition.OUTSIDE_FIRST : p;
     }
 
     //-------------------------------------------------------------------------
