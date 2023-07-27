@@ -233,4 +233,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
             })
         })
     }
+
+    private $_layoutSectorLabel(info: LabelInfo): void {
+    }
 }
