@@ -1,6 +1,7 @@
 const config = {
     title: "Multi Axes 02",
     xAxis: [{
+        // position: 'opposite',
         categories: [
             '일반모', '미세모', '이중모', '특일반모', '특미세모', '특이중모'
         ]

@@ -130,6 +130,8 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     axes: Axis[]; 
     views: AxisView[] = [];
+    isHorz: boolean;
+    isOpposite: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -162,6 +164,7 @@ class AxisSectionView extends SectionView {
 
         this.axes = axes;
         this.visible = views.length > 0;
+        this.isHorz = views[0]?.model._isHorz;
     }
 
     /**
@@ -206,9 +209,30 @@ class AxisSectionView extends SectionView {
     }
 
     protected _doLayout(): void {
+        const w = this.width;
+        const h = this.height;
+        let p = 0;
+
         this.views.forEach(v => {
-            v.resize(this.width, this.height);
+            let x: number;
+            let y: number;
+
+            if (this.isHorz) {
+                v.resize(w, v.mh);
+            } else {
+                v.resize(v.mw, h);
+            }
             v.layout();
+
+            if (this.isHorz) {
+                v.translateY(this.dir === SectionDir.TOP ? h - p - v.mh : p);
+                p += v.mh;
+            } else {
+                v.translateX(this.dir === SectionDir.RIGHT ? p : w - p - v.mw);
+                p += v.mw;
+            }
+
+            v.move(x, y);
         });
     }
 }

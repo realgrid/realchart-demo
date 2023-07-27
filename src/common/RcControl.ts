@@ -777,6 +777,22 @@ export class RcElement extends RcObject {
         return this;
     }
 
+    translateX(x: number): RcElement {
+        if (x !== this._translateX) {
+            if (Utils.isValidNumber(x)) this._translateX = x;
+            this._updateTransform();
+        }
+        return this;
+    }
+
+    translateY(y: number): RcElement {
+        if (y !== this._translateY) {
+            if (Utils.isValidNumber(y)) this._translateY = y;
+            this._updateTransform();
+        }
+        return this;
+    }
+
     resize(width: number, height: number, attr = true): RcElement {
         if (width !== this._width) {
             attr && this.setAttr('width', this._width = width);

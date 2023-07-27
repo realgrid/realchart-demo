@@ -6,6 +6,7 @@ const config = {
         ]
     },
     yAxis: [{
+        // position: 'opposite'
     }, {
         position: 'opposite'
     }],
