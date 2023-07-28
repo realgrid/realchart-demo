@@ -274,8 +274,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
 
-    protected _afterRender(): void {
-    }
+    protected _afterRender(): void {}
 }
 
 export class BoxPointElement extends PathElement {

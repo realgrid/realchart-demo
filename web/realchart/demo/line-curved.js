@@ -7,7 +7,7 @@ const config = {
     },
     series: {
         type: 'line',
-        curved: true,
+        lineType: 'spline',
         pointLabel: true,
         data: [
             ['home', 7], 

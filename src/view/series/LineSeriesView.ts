@@ -12,7 +12,7 @@ import { PathElement, RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Chart } from "../../main";
 import { DataPoint } from "../../model/DataPoint";
-import { LineSeries, LineSeriesBase, LineSeriesPoint } from "../../model/series/LineSeries";
+import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection, LineType } from "../../model/series/LineSeries";
 import { SeriesView } from "../SeriesView";
 
 export class LineMarkerView extends PathElement {
@@ -193,25 +193,43 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     }
 
     protected _layoutLines(pts: DataPoint[]): void {
+        const m = this.model;
+        const t = m.getLineType();
         const sb = new PathBuilder();
 
         sb.move(pts[0].xPos, pts[0].yPos);
-        if (this.model.curved) {
+        if (t === LineType.SPLINE) {
             this._drawCurve(pts, sb, 'yPos', false);
+        } else if (m instanceof LineSeries && t === LineType.STEP) {
+            this._drawStep(pts, sb, 'yPos', m.stepDir);
         } else {
             this._drawLine(pts, sb, 'yPos');
         }
         this._line.setPath(sb.end(this._polar));
-        this._line.setStyle('stroke', this.model.color);
+        this._line.setStyle('stroke', m.color);
     }
 
-    protected _drawLine(pts: DataPoint[], sb: PathBuilder, yProp = 'yPos'): void {
+    protected _drawLine(pts: DataPoint[], sb: PathBuilder, yProp: string): void {
         for (let i = 1; i < pts.length; i++) {
             sb.line(pts[i].xPos, pts[i][yProp]);
         }
     }
 
-    protected _drawCurve(pts: DataPoint[], sb: PathBuilder, yProp = 'yPos', reversed = false): void {
+    protected _drawStep(pts: DataPoint[], sb: PathBuilder, yProp: string, dir: LineStepDirection): void {
+        if (dir === LineStepDirection.BACKWARD) {
+            for (let i = 1; i < pts.length; i++) {
+                sb.line(pts[i - 1].xPos, pts[i][yProp]);
+                sb.line(pts[i].xPos, pts[i][yProp]);
+            }
+        } else {
+            for (let i = 1; i < pts.length; i++) {
+                sb.line(pts[i].xPos, pts[i - 1][yProp]);
+                sb.line(pts[i].xPos, pts[i][yProp]);
+            }
+        }
+    }
+
+    protected _drawCurve(pts: DataPoint[], sb: PathBuilder, yProp: string, reversed = false): void {
         if (pts && pts.length > 1) {
             const d = reversed ? -1 : 1;
             const start = reversed ? pts.length - 1 : 0;

@@ -50,7 +50,13 @@ export class LineSeriesMarker extends SeriesMarker {
     maxVisible = MarerVisibility.DEFAULT;
 }
 
-export class LineSeriesBase extends PolarableSeries {
+export enum LineType {
+    DEFAULT = 'default',
+    SPLINE = 'spline',
+    STEP = 'step'
+}
+
+export abstract class LineSeriesBase extends PolarableSeries {
 
     //-------------------------------------------------------------------------
     // fields
@@ -69,14 +75,22 @@ export class LineSeriesBase extends PolarableSeries {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    curved = false;
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _createPoint(source: any): DataPoint {
         return new LineSeriesPoint(source);
     }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    abstract getLineType(): LineType;
+}
+
+export enum LineStepDirection {
+    FORWARD = 'forward',
+    BACKWARD = 'backward'
 }
 
 export class LineSeries extends LineSeriesBase {
@@ -90,6 +104,8 @@ export class LineSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    lineType = LineType.DEFAULT;
+    stepDir = LineStepDirection.FORWARD;
     baseValue = 0;
     negativeStyle: StyleProps;
     connectNulls = false;
@@ -97,6 +113,9 @@ export class LineSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    getLineType(): LineType {
+        return this.lineType;
+    }
 }
 
 export class AreaSeriesPoint extends LineSeriesPoint {

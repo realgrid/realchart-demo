@@ -79,7 +79,7 @@ export class TimeAxisTick extends LinearAxisTick {
 
         const axis = this.axis as TimeAxis;
         let count = Math.floor(length / this.stepPixels) + 1;
-        let step = Math.floor(len / (count - 1));
+        let step = Math.max(1, Math.floor(len / (count - 1)));
         // const scale = Math.pow(10, Math.floor(Math.log10(step)));
         const multiples = this._getStepMultiples(step);
         const scale = time_scales[this.scale];
@@ -274,6 +274,14 @@ export class TimeAxis extends LinearAxis {
                 } else {
                     return `${d.getHours()}:00`;
                 }
+            case TimeScale.MIN:
+                // TODO
+                return `${d.getMinutes()}`;
+            case TimeScale.SEC:
+                // TODO
+                return `${d.getSeconds()}`;
+            case TimeScale.MS:
+                return String(value);         
         }
     }
 }

@@ -8,7 +8,7 @@
 
 import { DataPoint } from "../DataPoint";
 import { ISeries, Series } from "../Series";
-import { LineSeriesBase, LineSeriesPoint } from "./LineSeries";
+import { LineSeriesBase, LineSeriesPoint, LineType } from "./LineSeries";
 
 export class BellCurveSeriesPoint extends LineSeriesPoint {
 
@@ -49,6 +49,10 @@ export class BellCurveSeries extends LineSeriesBase {
     // ignoreAxisBase(axis: IAxis): boolean {
     //     return axis === this._xAxisObj;
     // }
+
+    getLineType(): LineType {
+        return LineType.SPLINE;
+    }
 
     createPoints(source: any[]): DataPoint[] {
         const pts = super.createPoints(source);
