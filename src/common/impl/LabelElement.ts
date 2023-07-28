@@ -6,11 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { ChartText, ChartTextEffect } from "../../model/ChartItem";
 import { Color } from "../Color";
 import { _undefined } from "../Types";
 import { GroupElement } from "./GroupElement";
 import { RectElement } from "./RectElement";
-import { TextAnchor, TextElement, TextLayout } from "./TextElement";
+import { TextAnchor, TextElement } from "./TextElement";
 
 /**
  * ChartText를 표시하는 텍스트 view.
@@ -22,13 +23,14 @@ export class LabelElement extends GroupElement {
     //-------------------------------------------------------------------------
     private _back: RectElement;
     private _outline: TextElement;
-    private _text: TextElement;
+    _text: TextElement;
+    private _model: ChartText;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, styleName: string = _undefined) {
-        super(doc, styleName);
+        super(doc);
 
         // this.add(this._back = new RectElement(doc));
 
@@ -56,7 +58,7 @@ export class LabelElement extends GroupElement {
     // methods
     //-------------------------------------------------------------------------
     setText(s: string): LabelElement {
-        this._outline.text = s;
+        this._outline && (this._outline.text = s);
         this._text.text = s;
         return this;
     }
@@ -66,60 +68,54 @@ export class LabelElement extends GroupElement {
         return this;
     }
 
-    setOutline(value: boolean): LabelElement {
-        this._outline.visible = value;
+    setModel(doc: Document, model: ChartText, contrastTarget: Element): LabelElement {
+        const e = model.effect;
+
+        this._model = model;
+        this._text.setStyleOrClass(model.style);
+
+        if (e === ChartTextEffect.BACKGROUND) {
+            this._outline?.remove();
+            if (!this._back) {
+                this._back = new RectElement(doc, 'rct-label-background');
+            }
+            this.insertFirst(this._back);
+            this._back.setStyleOrClass(model.backgroundStyle);
+
+        } else if (e === ChartTextEffect.OUTLINE) {
+            this._back?.remove();
+            if (!this._outline) {
+                this._outline = new TextElement(doc);
+            }
+            this.insertFirst(this._outline);
+
+            this._outline.setStyleOrClass(model.style);
+            const color = Color.getContrast(getComputedStyle(this._text.dom).fill)
+            this._outline.setStyles({
+                fill: color,
+                stroke: color,
+                strokeWidth: '2px'
+            });
+
+        } else {
+            this._back?.remove();
+            this._outline?.remove();
+        }
+
         return this;
     }
 
-    setContrast(target: Element, darkColor: string, brightColor: string): LabelElement {
-        this._outline.visible = false;
-        this._text.setContrast(target, darkColor, brightColor);
+    setContrast(target: Element): LabelElement {
+        if (this._model.effect === ChartTextEffect.CONTRAST) {
+            this._text.setContrast(target, this._model.darkStyle || 'rct-label-dark', this._model.brightStyle || 'rct-label-bright');
+        }
         return this;
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    // setStyles(styles: any): boolean {
-    //     return this._back.setBackStyles(styles) || this._text.setStyles(styles);
-    // }
-
-    // setStyle(prop: string, value: string): boolean {
-    //     return this._back.setBackStyle(prop, value) || this._text.setStyle(prop, value);
-    // }
-
-    setStyles(styles: any): boolean {
-        let changed = this._text.setStyles(styles);
-
-        if (this._outline) {
-            if (this._outline.setStyles(styles)) {
-                changed = true;
-            }
-            this.$_setOutline(Color.getContrast(getComputedStyle(this._text.dom).fill));
-        }
-        return changed;
-    }
-
-    setStyle(prop: string, value: string): boolean {
-        let changed = this._text.setStyle(prop, value);
-
-        if (this._outline) {
-            if (this._outline.setStyle(prop, value)) {
-                changed = true;
-            }
-            this.$_setOutline(Color.getContrast(getComputedStyle(this._text.dom).fill));
-        }
-        return changed;
-    }
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_setOutline(color: string): void {
-        this._outline.setStyles({
-            fill: color,
-            stroke: color,
-            strokeWidth: '2px'
-        });
-    }
 }

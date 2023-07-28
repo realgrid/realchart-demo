@@ -17,6 +17,10 @@ export class Color {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
+    static isBright(color: string): boolean {
+        return new Color(color).isBright();
+    }
+
     static getContrast(color: string, darkColor?: string, brightColor?: string): string {
         return new Color(color).getContrast(darkColor, brightColor);
     }
@@ -68,13 +72,17 @@ export class Color {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getContrast(darkColor: string, brightColor: string): string {
+    isBright(): boolean {
         const r = this.r * 0.299;
         const g = this.g * 0.587;
         const b = this.b * 0.114;
-        // return r + g + b > 186 ? '#000000' : '#FFFFFF';
-        return r + g + b > 140 ? (darkColor || '#000000') : (brightColor || '#FFFFFF');
-        //return r + g + b > 150 ? (darkColor || '#000000') : (brightColor || '#FFFFFF');
+        // return r + g + b > 186;
+        return r + g + b > 140;
+        //return r + g + b > 150;
+    }
+
+    getContrast(darkColor: string, brightColor: string): string {
+        return this.isBright() ? (darkColor || '#000000') : (brightColor || '#FFFFFF');
     }
 
     brighten(rate: number, color: Color = null): Color {

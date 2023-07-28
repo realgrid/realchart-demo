@@ -60,6 +60,17 @@
     font-style: italic;
 }
 
+/** label */
+.rct-label-dark {
+    fill: black;
+}
+.rct-label-bright {
+    fill: white;
+}
+.rct-label-background {
+    fill: lightgray;
+}
+
 /** title */
 .rct-title {
     font-size: 24px;

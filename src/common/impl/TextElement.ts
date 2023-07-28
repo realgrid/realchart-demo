@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ELLIPSIS, _undefined } from '../Types';
+import { ELLIPSIS, SVGStyleOrClass, _undefined } from '../Types';
 import { RcElement } from '../RcControl';
 import { IRect } from '../Rectangle';
 import { GroupElement } from './GroupElement';
@@ -180,8 +180,13 @@ export class TextElement extends RcElement {
         }
     }
 
-    setContrast(target: Element, darkColor = 'black', brightColor = 'white'): TextElement {
-        this.setStyle('fill', Color.getContrast(getComputedStyle(target).fill, darkColor, brightColor));
+    // setContrast(target: Element, darkColor = 'black', brightColor = 'white'): TextElement {
+    //     this.setStyle('fill', Color.getContrast(getComputedStyle(target).fill, darkColor, brightColor));
+    //     return this;
+    // }
+
+    setContrast(target: Element, darkStyle: SVGStyleOrClass, brightStyle: SVGStyleOrClass): TextElement {
+        this.setStyleOrClass(Color.isBright(getComputedStyle(target).fill) ? darkStyle : brightStyle);
         return this;
     }
 

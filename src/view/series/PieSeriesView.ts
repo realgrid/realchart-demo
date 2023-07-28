@@ -275,6 +275,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
                     line.visible = false;
                     // this.$_layoutLabelInner(p, label, off, dist, slicedOff);
                     this.$_layoutLabelInner(p, labelView, 0, 0, p.sliced ? sliceOff : 0);
+                    labelView.setContrast(sector.dom);
                 } else {
                     line.visible = true;
                     // this.$_layoutLabel(p, labelView, line, off, dist, slicedOff, pb);

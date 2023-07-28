@@ -163,6 +163,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
 
     private $_layoutLabel(info: LabelInfo): void {
         const r = info.labelView.getBBounds();
+        let inner = true;
         let {inverted, x, y, bar, labelOff} = info;
 
         if (inverted) {
@@ -198,15 +199,12 @@ export class BarSeriesView extends SeriesView<BarSeries> {
                 } else {
                     y -= bar.hPoint + r.height + labelOff;
                 }
+                inner = false;
                 break;
         }
 
-        const contrast = this.model.pointLabel.autoContrast;
-        const darkColor = this.model.pointLabel.darkColor;
-        const brightColor = this.model.pointLabel.brightColor;
-
+        inner && info.labelView.setContrast(info.bar.dom);
         info.labelView.translate(x, y);
-        contrast && info.labelView.setContrast(info.bar.dom, darkColor, brightColor);
     }
 
     private $_layoutSectors(): void {

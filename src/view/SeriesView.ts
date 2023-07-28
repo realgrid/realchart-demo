@@ -11,13 +11,14 @@ import { ElementPool } from "../common/ElementPool";
 import { PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
+import { LabelElement } from "../common/impl/LabelElement";
 import { SvgShapes } from "../common/impl/SvgShape";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { DataPoint } from "../model/DataPoint";
 import { DataPointLabel, Series } from "../model/Series";
 import { ChartElement } from "./ChartElement";
 
-export class PointLabelView extends GroupElement {
+export class PointLabelView extends LabelElement {
 
     //-------------------------------------------------------------------------
     // consts
@@ -33,92 +34,26 @@ export class PointLabelView extends GroupElement {
     //-------------------------------------------------------------------------
     point: DataPoint;
     moving = false;
-    private _outline: TextElement;
-    _text: TextElement;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-point-label');
-
-        this.add(this._outline = new TextElement(doc));
-        this._outline.anchor = TextAnchor.START;
-
-        this.add(this._text = new TextElement(doc));
-        this._text.anchor = TextAnchor.START;
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /** text */
-    get text(): string {
-        return this._text.text;
-    }
-
 	//-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    setText(s: string): PointLabelView {
-        this._outline.text = s;
-        this._text.text = s;
-        return this;
-    }
-
-    setSvg(s: string): PointLabelView {
-        this._text.svg = s;
-        return this;
-    }
-
-    setOutline(value: boolean): PointLabelView {
-        this._outline.visible = value;
-        return this;
-    }
-
-    setContrast(target: Element, darkColor: string, brightColor: string): PointLabelView {
-        this._outline.visible = false;
-        this._text.setContrast(target, darkColor, brightColor);
-        return this;
-    }
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    setStyles(styles: any): boolean {
-        let changed = this._text.setStyles(styles);
-
-        if (this._outline) {
-            if (this._outline.setStyles(styles)) {
-                changed = true;
-            }
-            this.$_setOutline(Color.getContrast(getComputedStyle(this._text.dom).fill));
-        }
-        return changed;
-    }
-
-    setStyle(prop: string, value: string): boolean {
-        let changed = this._text.setStyle(prop, value);
-
-        if (this._outline) {
-            if (this._outline.setStyle(prop, value)) {
-                changed = true;
-            }
-            this.$_setOutline(Color.getContrast(getComputedStyle(this._text.dom).fill));
-        }
-        return changed;
-    }
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_setOutline(color: string): void {
-        this._outline.setStyles({
-            fill: color,
-            stroke: color,
-            strokeWidth: '2px'
-        });
-    }
 }
 
 export class PointLabelContainer extends GroupElement {
@@ -153,14 +88,14 @@ export class PointLabelContainer extends GroupElement {
         this._labels[1].prepare(0);
     }
 
-    prepareLabel(view: PointLabelView, index: number, p: DataPoint, model: DataPointLabel): void {
+    prepareLabel(doc: Document, view: PointLabelView, index: number, p: DataPoint, model: DataPointLabel): void {
         if (view.visible = p.visible) {
         // if (label.visible = !p.isNull && p.visible) {
             const richFormat = model.text;
             const styles = model.style;
 
             view.point = p;
-            !model.autoContrast && view.setStyle('fill', '');
+            view.setModel(doc, model, null);
 
             if (richFormat) {
                 model.buildSvg(view._text, model, p.getValueOf);
@@ -170,13 +105,12 @@ export class PointLabelContainer extends GroupElement {
             } else {
                 //label.setValueEx(p.value, true, 1)
                 view.setText(model.getText(p.getYLabel(index)))
-                    .setOutline(model.outline)
                     .setStyles(styles);
             }
         }
     }
 
-    prepare(model: Series): void {
+    prepare(doc: Document, model: Series): void {
         const labels = this._labels;
         const points = model.getPoints();
         const pointLabel = model.pointLabel;
@@ -196,7 +130,7 @@ export class PointLabelContainer extends GroupElement {
                 for (let j = 0; j < p.labelCount(); j++) {
                     const label = labels[j].get(i);
 
-                    this.prepareLabel(label, j, p, pointLabel);
+                    this.prepareLabel(doc, label, j, p, pointLabel);
                     maps[j][p.id] = label;
                 }
             })
@@ -325,7 +259,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         this._prepareSeries(doc, model);
-        this._labelContainer.prepare(model);
+        this._labelContainer.prepare(doc, model);
         
         return Size.create(hintWidth, hintHeight);
     }
