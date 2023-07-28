@@ -18,16 +18,14 @@ export class TitleView extends BoundableElement<Title> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _background: RectElement;
     private _textView: TextElement;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, isSub: boolean) {
-        super(doc, isSub ? 'rct-subtitle' : 'rct-title');
+        super(doc, isSub ? 'rct-subtitle' : 'rct-title', isSub ? 'rct-subtitle-background' : 'rct-title-background');
 
-        this.add(this._background = new RectElement(doc, isSub ? 'rct-subtitle-background' : 'rct-title-background'));
         this.add(this._textView = new TextElement(doc));
         this._textView.anchor = TextAnchor.START;
     }
@@ -35,17 +33,18 @@ export class TitleView extends BoundableElement<Title> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: Title, hintWidth: number, hintHeight: number, phase: number): ISize {
-        let w = 0;
-        let h = 0;
+    protected _setBackgroundStyle(back: RectElement): void {
+        back.setStyleOrClass(this.model.backgroundStyle);
+    }
 
+    protected _doMeasure(doc: Document, model: Title, hintWidth: number, hintHeight: number, phase: number): ISize {
         this._textView.text = this.model.text;
 
-        const sz = toSize(this._textView.getBBounds());
-        return sz;
+        return toSize(this._textView.getBBounds());
     }
 
     protected _doLayout(): void {
+        this._textView.translate(this._margins.left + this._paddings.left, this._margins.top + this._paddings.top);
         this._textView.layoutText();
     }
 }

@@ -203,8 +203,8 @@ export class BarSeriesView extends SeriesView<BarSeries> {
                 break;
         }
 
-        inner && info.labelView.setContrast(info.bar.dom);
-        info.labelView.translate(x, y);
+        info.labelView.setContrast(inner && info.bar.dom);
+        info.labelView.layout().translate(x, y);
     }
 
     private $_layoutSectors(): void {

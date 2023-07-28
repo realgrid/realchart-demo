@@ -91,8 +91,19 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _background: RectElement;
     protected _margins = new Sides();
     protected _paddings = new Sides();
+    private _borderRadius: number;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, styleName: string, backStyle: string) {
+        super(doc, styleName);
+
+        this.add(this._background = new RectElement(doc, backStyle));
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -102,16 +113,21 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     }
 
     measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this.model = model;
         this.setStyleOrClass(model.style);
+        this._setBackgroundStyle(this._background);
 
+        // TODO: 캐쉬!
         const cs = getComputedStyle(this.dom);
+        const csBack = getComputedStyle(this._background.dom);
         const padding = this._paddings;
         const margin = this._margins;
 
-        padding.applyPadding(cs);
+        padding.applyPadding(csBack);
+        this._borderRadius = parseFloat(csBack.borderRadius) || 0;
         margin.applyMargin(cs);
 
-        const sz = this._doMeasure(doc, this.model = model, hintWidth, hintHeight, phase);
+        const sz = this._doMeasure(doc, model, hintWidth, hintHeight, phase);
 
         sz.height += margin.top + margin.bottom + padding.top + padding.bottom;
         sz.width += margin.left + margin.right + padding.left + padding.right;
@@ -119,5 +135,31 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
         this.mw = sz.width;
         this.mh = sz.height;
         return sz;
+    }
+
+    layout(param?: any): ChartElement<ChartItem> {
+        super.layout(param);
+
+        // background
+        const margin = this._margins;
+
+        this._background.setBounds(
+            margin.left + this._getBackOffset(), 
+            margin.top, 
+            this.width - margin.left - margin.right,
+            this.height - margin.top - margin.bottom,
+            this._borderRadius
+        );
+
+        return this;
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected abstract _setBackgroundStyle(back: RectElement): void;
+    
+    protected _getBackOffset(): number {
+        return 0;
     }
 }

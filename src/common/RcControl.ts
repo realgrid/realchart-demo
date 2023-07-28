@@ -17,12 +17,12 @@ import { IRect, Rectangle } from "./Rectangle";
 import { SvgShapes } from "./impl/SvgShape";
 import { ISize } from "./Size";
 
-const BACK_STYLES = {
-    background: 'fill',
-    border: 'stroke',
-    borderWidth: 'strokeWidth',
-    borderRadius: 'borderRadius'
-}
+// const BACK_STYLES = {
+//     background: 'fill',
+//     border: 'stroke',
+//     borderWidth: 'strokeWidth',
+//     borderRadius: 'borderRadius'
+// }
 
 /** 
  * @internal
@@ -861,7 +861,8 @@ export class RcElement extends RcObject {
             const css = (this.dom as SVGElement | HTMLElement).style;
 
             for (let p in styles) {
-                if (!(p in BACK_STYLES) && this._styles[p] !== styles[p]) {
+                // if (!(p in BACK_STYLES) && this._styles[p] !== styles[p]) {
+                if (this._styles[p] !== styles[p]) {
                     css[p] = this._styles[p] = styles[p];
                     changed = true;
                 }
@@ -889,46 +890,11 @@ export class RcElement extends RcObject {
         }
     }
 
-    protected _setBackgroundBorderRadius(value: number): void {
-    }
-
-    setBackStyles(styles: any): boolean {
-        const css = (this.dom as SVGElement | HTMLElement).style;
-        let changed = false;
-
-        if (styles) {
-            for (let p in styles) {
-                if ((p in BACK_STYLES) && this._styles[p] !== styles[p]) {
-                    if (p === 'borderRadius') {
-                        this._setBackgroundBorderRadius(pickNum(parseFloat(styles[p]), 0));
-                        this._styles[p] = styles[p];
-                    } else if ((p in BACK_STYLES)) {
-                        const p2 = BACK_STYLES[p]
-                        css[p2] = this._styles[p2] = styles[p];
-                    }
-                    changed = true;
-                }
-            }
-            if (changed) this._styleDirty = true;
-        }
-        return changed;
-    }
-
     setStyle(prop: string, value: string): boolean {
         let changed = false;
 
-        if (!(prop in BACK_STYLES) && value !== this._styles[prop]) {
-            changed = this._styleDirty = true;
-            this._styles[prop] = value;
-            (this.dom as SVGElement | HTMLElement).style[prop] = value;
-        }
-        return changed;
-    }
-
-    setBackStyle(prop: string, value: string): boolean {
-        let changed = false;
-
-        if (prop in BACK_STYLES && value !== this._styles[prop]) {
+        //if (!(prop in BACK_STYLES) && value !== this._styles[prop]) {
+        if (value !== this._styles[prop]) {
             changed = this._styleDirty = true;
             this._styles[prop] = value;
             (this.dom as SVGElement | HTMLElement).style[prop] = value;

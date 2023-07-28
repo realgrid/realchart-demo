@@ -275,12 +275,12 @@ export class PieSeriesView extends SeriesView<PieSeries> {
                     line.visible = false;
                     // this.$_layoutLabelInner(p, label, off, dist, slicedOff);
                     this.$_layoutLabelInner(p, labelView, 0, 0, p.sliced ? sliceOff : 0);
-                    labelView.setContrast(sector.dom);
                 } else {
                     line.visible = true;
                     // this.$_layoutLabel(p, labelView, line, off, dist, slicedOff, pb);
                     this.$_layoutLabel(p, labelView, line, 0, 0, p.sliced ? sliceOff : 0, pb);
                 }
+                labelView.setContrast(labelInside && sector.dom);
             }
         })
     }
@@ -323,7 +323,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
             y2 -= r.height / 2;
         }
         view.move(x3, y2); // 위치 정보 저장.
-        !view.moving && view.translate(x3 + dx, y2 + dy);
+        !view.moving && view.layout().translate(x3 + dx, y2 + dy);
     }
 
     private $_layoutLabelInner(p: PieSeriesPoint, view: PointLabelView, off: number, dist: number, sliceOff: number): void {
@@ -332,6 +332,6 @@ export class PieSeriesView extends SeriesView<PieSeries> {
         let x = this._cx + Math.cos(a) * (sliceOff + this._rd * 0.7);
         let y = this._cy + Math.sin(a) * (sliceOff + this._rd * 0.7);
 
-        view.translate(x - r.width / 2, y - r.height / 2);
+        view.layout().translate(x - r.width / 2, y - r.height / 2);
     }
 }

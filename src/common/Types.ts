@@ -30,6 +30,10 @@ export function deg2rad(degree: number): number {
     return degree * Math.PI * 2 / 360;
 }
 
+export function pixel(v: number): string {
+    return v + 'px';
+}
+
 /**
  * 123, '10%' 형식으로 크기를 지정한다.
  */

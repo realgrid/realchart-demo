@@ -63,7 +63,6 @@ export class LegendView extends BoundableElement<Legend> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _background: RectElement;
     private _itemViews = new ElementPool(this, LegendItemView);
     private _vertical: boolean;
 
@@ -71,14 +70,16 @@ export class LegendView extends BoundableElement<Legend> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-legend');
-
-        this.add(this._background = new RectElement(doc, 'rct-legend-background'));
+        super(doc, 'rct-legend', 'rct-legend-background');
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _setBackgroundStyle(back: RectElement): void {
+        back.setStyleOrClass(this.model.backgroundStyles);
+    }
+
     protected _doMeasure(doc: Document, model: Legend, hintWidth: number, hintHeight: number, phase: number): ISize {
         const items = model.items();
         const vertical = this._vertical = model.getLayout() === LegendLayout.VERTICAL;
@@ -118,10 +119,7 @@ export class LegendView extends BoundableElement<Legend> {
         const pad = this._paddings;
         let x = margin.left;
         let y = margin.top;
-        const w = this.width - margin.left - margin.right;
-        const h = this.height - margin.top - margin.bottom;
 
-        this._background.setBounds(x, y, w, h);
         x += pad.left;
         y += pad.top;
 

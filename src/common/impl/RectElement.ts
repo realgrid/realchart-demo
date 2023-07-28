@@ -95,10 +95,6 @@ export class RectElement extends RcElement {
         }
     }
 
-    protected _setBackgroundBorderRadius(value: number): void {
-        this.setRadius(value);
-    }
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

@@ -118,15 +118,6 @@ export enum ChartTextEffect {
      */
     OUTLINE = 'outline',
     /**
-     * 텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
-     * <br>
-     * 밝게 표시할 때는 {@link brightStyle}을 적용하고,
-     * 어둡게 표시할 때는 {@link darkStyle}이 적용된다.
-     * brightStyle이 지정되지 않으면 'rct-text-bright'이,
-     * darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.
-     */
-    CONTRAST = 'contrast',
-    /**
      * 텍스트 배경 상자를 표시한다.
      * <br>
      * 배경 상자에 {@link backgroundStyle}이 적용된다.
@@ -136,35 +127,19 @@ export enum ChartTextEffect {
 }
 
 export abstract class ChartText extends ChartItem {
-    effect = ChartTextEffect.CONTRAST;
+    effect = ChartTextEffect.NONE;
     brightStyle: SVGStyleOrClass;
     darkStyle: SVGStyleOrClass;
     backgroundStyle: SVGStyleOrClass;
-
     /**
-     * true면 텍스트 색상과 대조되는 색상의 배경을 표시한다.
+     * 텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
      * <br>
-     * autoContrast가 true면 무시된다.
-     */
-    outline = false;
-    /**
-     * true면 포인트 색상과 대조되는 흰색 혹은 검정색으로 표시한다.
+     * 밝게 표시할 때는 {@link brightStyle}을 적용하고,
+     * 어둡게 표시할 때는 {@link darkStyle}이 적용된다.
+     * brightStyle이 지정되지 않으면 'rct-text-bright'이,
+     * darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.
      */
     autoContrast = true;// true;
-    /**
-     * autoContrast가 true일 때 밝은 쪽 텍스트 색상.
-     * <br>
-     * 
-     * @default 'white'
-     */
-    brightColor = BRIGHT_COLOR;
-    /**
-     * autoContrast가 true일 때 어두운 쪽 텍스트 색상.
-     * <br>
-     * 
-     * @default 'black'
-     */
-    darkColor = DARK_COLOR;
 }
 
 export abstract class FormattableText extends ChartText {

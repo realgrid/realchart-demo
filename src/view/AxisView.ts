@@ -10,25 +10,25 @@ import { LayerElement, RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { LineElement } from "../common/impl/PathElement";
+import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Axis, AxisGuide, AxisGuideRange, AxisTickMark, AxisTitle } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { AxisGuideLineView, AxisGuideRangeView, AxisGuideView } from "./BodyView";
-import { ChartElement } from "./ChartElement";
+import { BoundableElement, ChartElement } from "./ChartElement";
 
-export class AxisTitleView extends ChartElement<AxisTitle> {
+export class AxisTitleView extends BoundableElement<AxisTitle> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _textView: TextElement;
-    private _isHorz: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-axis-title');
+        super(doc, 'rct-axis-title', 'rct-axis-title-background');
 
         this.add(this._textView = new TextElement(doc));
         // this._textView.anchor = TextAnchor.START;
@@ -37,27 +37,39 @@ export class AxisTitleView extends ChartElement<AxisTitle> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    protected _setBackgroundStyle(back: RectElement): void {
+        back.setStyleOrClass(this.model.backgroundStyle);
+    }
+
+    protected _getBackOffset(): number {
+        return -this.width / 2; // text anchor가 MIDDLE이라서...
+    }
+
     protected _doMeasure(doc: Document, model: AxisTitle, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this._textView.rotation = 0;
+        this.rotation = 0;
         this._textView.text = model.text;
 
         return toSize(this._textView.getBBounds());
     }
 
     protected _doLayout(isHorz: boolean): void {
-        if (this._isHorz = isHorz) {
-        } else {
-            this._textView.setRotaion(0, this._textView.getBBounds().height / 2, 270);
+        const padding = this._paddings;
+        const margin = this._margins;
+
+        // rotation
+        if (!isHorz) {
+            this.setRotaion(0, this.height / 2, 270);
         }
+
+        // text
+        this._textView.translateY(margin.top + padding.top);
     }
+
     layout(param?: any): ChartElement<ChartItem> {
         super.layout(param);
 
         if (this._debugRect) {
             this._debugRect.setBounds(-this.width / 2, 0, this.width, this.height)
-            if (!this._isHorz) {
-                this._debugRect.setRotaion(this.width / 2, this.height / 2, 270);
-            }
         }
         return this;
     }

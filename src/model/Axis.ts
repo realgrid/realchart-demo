@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isObject, isString, pickNum } from "../common/Common";
-import { Align, IPercentSize, SizeValue, VerticalAlign, parsePercentSize } from "../common/Types";
+import { Align, IPercentSize, SVGStyleOrClass, SizeValue, VerticalAlign, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { IClusterable, IPlottingItem } from "./Series";
@@ -63,8 +63,9 @@ export class AxisTitle extends AxisItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    text = 'Axis Title';
+    text: string;
     gap = 8;
+    backgroundStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // overriden members

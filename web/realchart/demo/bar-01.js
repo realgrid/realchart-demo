@@ -4,9 +4,11 @@ const config = {
         inverted: true,
     },
     xAxis: {
+        title: 'X Axis',
         // grid: true,
     },
     yAxis: {
+        title: 'Y Axis',
         // reversed: true,
         guides: [{
             type: 'line',

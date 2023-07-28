@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { Sides } from "../common/Sides";
-import { Align, VerticalAlign } from "../common/Types";
+import { Align, SVGStyleOrClass, VerticalAlign } from "../common/Types";
 import { ChartItem } from "./ChartItem";
 
 export interface ILegendSource {
@@ -105,6 +105,7 @@ export class Legend extends ChartItem {
      * marker와 text사이의 간격.
      */
     markerGap = 4;
+    backgroundStyles: SVGStyleOrClass;
 
     items(): LegendItem[] {
         return this._items.slice(0);

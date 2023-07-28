@@ -6,14 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { Color } from "../common/Color";
 import { ElementPool } from "../common/ElementPool";
 import { PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { SvgShapes } from "../common/impl/SvgShape";
-import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { DataPoint } from "../model/DataPoint";
 import { DataPointLabel, Series } from "../model/Series";
 import { ChartElement } from "./ChartElement";
@@ -99,6 +97,7 @@ export class PointLabelContainer extends GroupElement {
 
             if (richFormat) {
                 model.buildSvg(view._text, model, p.getValueOf);
+                view.setStyles(styles);
                 // label.setStyles(styles);
                 // label.setSvg(pointLabel.getSvg(p.getValueOf))
                 //      .setStyles(styles);

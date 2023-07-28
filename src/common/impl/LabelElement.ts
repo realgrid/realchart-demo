@@ -86,16 +86,11 @@ export class LabelElement extends GroupElement {
             this._back?.remove();
             if (!this._outline) {
                 this._outline = new TextElement(doc);
+                this._outline.anchor = TextAnchor.START;
             }
             this.insertFirst(this._outline);
 
             this._outline.setStyleOrClass(model.style);
-            const color = Color.getContrast(getComputedStyle(this._text.dom).fill)
-            this._outline.setStyles({
-                fill: color,
-                stroke: color,
-                strokeWidth: '2px'
-            });
 
         } else {
             this._back?.remove();
@@ -106,8 +101,38 @@ export class LabelElement extends GroupElement {
     }
 
     setContrast(target: Element): LabelElement {
-        if (this._model.effect === ChartTextEffect.CONTRAST) {
+        // contrast
+        if (target && this._model.autoContrast) {
             this._text.setContrast(target, this._model.darkStyle || 'rct-label-dark', this._model.brightStyle || 'rct-label-bright');
+        }
+        // outline
+        if (this._outline && this._outline.parent) {
+            const color = Color.getContrast(getComputedStyle(this._text.dom).fill)
+            this._outline.setStyles({
+                fill: color,
+                stroke: color,
+                strokeWidth: '2px'
+            });
+        }
+        return this;
+    }
+
+    layout(): LabelElement {
+        // background
+        if (this._back && this._back.parent) {
+            const cs = getComputedStyle(this._back.dom);
+            const r = this._text.getBBounds();
+            const left = parseFloat(cs.paddingLeft) || 0;
+            const top = parseFloat(cs.paddingTop) || 0;
+
+            this._back.setBounds(
+                -left,//-r.width / 2, 
+                -top,//-r.height / 2,
+                r.width + left + (parseFloat(cs.paddingRight) || 0),
+                r.height + top + (parseFloat(cs.paddingBottom) || 0),
+                3
+            )
+            // this._text.translate(left, top);
         }
         return this;
     }
