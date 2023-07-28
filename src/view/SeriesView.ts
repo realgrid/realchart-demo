@@ -265,6 +265,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 
     protected _doLayout(): void {
         this._renderSeries(this.width, this.height);
+        this._afterRender();
     }
 
     //-------------------------------------------------------------------------
@@ -272,6 +273,9 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
+
+    protected _afterRender(): void {
+    }
 }
 
 export class BoxPointElement extends PathElement {
@@ -300,13 +304,13 @@ export class BarElement extends BoxPointElement {
     //-------------------------------------------------------------------------
     render(x: number, y: number, inverted: boolean): void {
         this.setPath(SvgShapes.rect(inverted ? {
-            x,
+            x: x,
             y: y - this.wPoint / 2,
             width: this.hPoint,
             height: this.wPoint
         } : {
             x: x - this.wPoint / 2,
-            y,
+            y: y,
             width: this.wPoint,
             height: -this.hPoint
         }));

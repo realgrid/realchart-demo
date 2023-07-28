@@ -211,6 +211,31 @@ export abstract class RcControl extends RtWrappableObject {
         return v;
     }
 
+    /**
+     * defs에 직사각형 clipPath를 등록한다.
+     */
+    clipBounds(x = 0, y = 0, width = 0, height = 0, rd = 0): ClipElement {
+        const clip = new ClipElement(this.doc(), x, y, width, height, rd, rd);
+
+        this._defs.appendChild(clip.dom);
+        return clip;
+    }
+
+    clipRect(r: IRect): ClipElement {
+        return this.clipBounds(r.x, r.y, r.width, r.height);
+    }
+
+    clipPath(): ClipPathElement {
+        const clip = new ClipPathElement(this.doc());
+
+        this._defs.appendChild(clip.dom);
+        return clip;
+    }
+
+    removeDef(element: RcElement): void {
+        this._defs.removeChild(element.dom);
+    }
+
     abstract useImage(src: string): void; // 실제 이미지가 로드됐을 때 다시 그려지도록 한다.
 
     //-------------------------------------------------------------------------
@@ -1035,7 +1060,7 @@ export class ClipElement extends RcElement {
         const id = this._id = Utils.uniqueKey() + '-';
         this.setAttr('id', id);
 
-        const rect = this._rect = new RcElement(doc, 'rect');
+        const rect = this._rect = new RcElement(doc, null, 'rect');
         rect.setAttr('fill', 'none');
         rx > 0 && rect.setAttr('rx', String(rx));
         ry > 0 && this.dom.setAttribute('rx', String(ry));

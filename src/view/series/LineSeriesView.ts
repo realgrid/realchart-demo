@@ -63,6 +63,20 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
         this._layoutLines(this.model._visPoints as LineSeriesPoint[]);
     }
 
+    protected _afterRender(): void {
+        // const cr = this.clipRect(0, -this.height / 2, this.width, this.height * 2);
+        
+        // cr.dom.firstElementChild.animate([
+        //     { width: '0'},
+        //     { width: this.width + 'px'}
+        // ], {
+        //     duration: 1000,
+        //     fill: 'none'
+        // })?.addEventListener('finish', () => {
+        //     this.control.removeDef(cr);
+        // });
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
