@@ -214,6 +214,26 @@
     stroke-dasharray: 2;
 }
 
+/** candlestick series */
+.rct-candlestick-series {
+    stroke-width: 1;
+}
+.rct-candlestick-series-back {
+    fill: none;
+}
+.rct-candlestick-series-border {
+    stroke: #333;
+}
+.rct-candlestick-series-wick {
+    stroke: #003;
+}
+.rct-candlestick-series-body {
+    fill: #800;
+}
+.rct-candlestick-series-body-fall {
+    fill: #008;
+}
+
 /** pie series */
 .rct-pie-series .rct-series-points {
     stroke: white;

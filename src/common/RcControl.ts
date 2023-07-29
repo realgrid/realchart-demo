@@ -915,6 +915,10 @@ export class RcElement extends RcObject {
         }
     }
 
+    setStyleName(value: string): void {
+        this.setAttr('class', value);
+    }
+
     setStyle(prop: string, value: string): boolean {
         let changed = false;
 
