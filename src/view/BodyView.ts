@@ -29,6 +29,7 @@ import { HistogramSeries } from "../model/series/HistogramSeries";
 import { AreaRangeSeries, AreaSeries, LineSeries } from "../model/series/LineSeries";
 import { PieSeries } from "../model/series/PieSeries";
 import { ScatterSeries } from "../model/series/ScatterSeries";
+import { WaterfallSeries } from "../model/series/WaterfallSeries";
 import { ChartElement } from "./ChartElement";
 import { SeriesView } from "./SeriesView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
@@ -44,8 +45,10 @@ import { HistogramSeriesView } from "./series/HistogramSeriesView";
 import { LineSeriesViewImpl } from "./series/LineSeriesView";
 import { PieSeriesView } from "./series/PieSeriesView";
 import { ScatterSeriesView } from "./series/ScatterSeriesView";
+import { WaterfallSeriesView } from "./series/WaterfallSeriesView";
 
 const series_types = new Map<any, any>([
+    [WaterfallSeries, WaterfallSeriesView],
     [BoxPlotSeries, BoxPlotSeriesView],
     [BarRangeSeries, BarRangeSeriesView],
     [BarSeries, BarSeriesView],

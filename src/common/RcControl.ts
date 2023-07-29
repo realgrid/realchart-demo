@@ -909,7 +909,7 @@ export class RcElement extends RcObject {
     setStyleOrClass(style: SVGStyleOrClass): void {
         if (isString(style)) {
             this._resetClass();
-            this._dom.classList.add(style);
+            style && this._dom.classList.add(style);
         } else {
             this.resetStyles(style);
         }

@@ -102,7 +102,7 @@ export class BarSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    borderRaidus: number;
+    // borderRaidus: number;
 }
 
 export class BarSeries extends BoxSeries {

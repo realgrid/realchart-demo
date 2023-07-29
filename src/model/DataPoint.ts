@@ -26,9 +26,9 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     readonly id = __point_id__++;
 
-    // Series.collectValues()에서 결정된다. x, y와 각각 다른 값으로 설정될 수 있다.
-    xValue: number;
-    yValue: number;
+    // Series.collectValues() 등에서 결정된다. x, y와 각각 다른 값으로 설정될 수 있다.
+    xValue: number;     // x 좌표상의 value
+    yValue: number;     // y 좌표상의 value
     yRate: number;      // 전체 point 합 내에서 비율(백분율)
 
     visible = true;
@@ -82,11 +82,13 @@ export class DataPoint {
         } else {
             this._readSingle(v);
         }
+
+        // series.collectValue 등에서 재설정될 수 있다.
         this.yValue = +this.y;
     }
 
     getYLabel(index: number): any {
-        return this.yValue;
+        return this.y;// this.yValue;
     }
 
     getValueOf = (traget: any, param: string): any => {

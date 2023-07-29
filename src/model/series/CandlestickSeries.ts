@@ -100,6 +100,10 @@ export class CandlestickSeries extends BoxSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    canCategorized(): boolean {
+        return true;
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new CandlestickSeriesPoint(source);
     }

@@ -29,6 +29,7 @@ import { HistogramSeries } from "./series/HistogramSeries";
 import { AreaRangeSeries, AreaSeries, LineSeries, LineSeriesGroup } from "./series/LineSeries";
 import { PieSeries, PieSeriesGroup } from "./series/PieSeries";
 import { ScatterSeries } from "./series/ScatterSeries";
+import { WaterfallSeries } from "./series/WaterfallSeries";
 
 export interface IChart {
 
@@ -80,6 +81,7 @@ const series_types = {
     'bubble': BubbleSeries,
     'scatter': ScatterSeries,
     'candlestick': CandlestickSeries,
+    'waterfall': WaterfallSeries,
     'histogram': HistogramSeries,
     'bellcurve': BellCurveSeries,
     'pie': PieSeries,

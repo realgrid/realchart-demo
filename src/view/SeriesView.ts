@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../common/ElementPool";
-import { PathElement, RcElement } from "../common/RcControl";
+import { LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
@@ -240,7 +240,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    protected _pointContainer: RcElement;
+    protected _pointContainer: LayerElement;
     protected _labelContainer: PointLabelContainer;
 
     //-------------------------------------------------------------------------
@@ -249,7 +249,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     constructor(doc: Document, styleName: string) {
         super(doc, 'rct-series ' + styleName);
 
-        this.add(this._pointContainer = new RcElement(doc, 'rct-series-points'));
+        this.add(this._pointContainer = new LayerElement(doc, 'rct-series-points'));
         this.add(this._labelContainer = new PointLabelContainer(doc));
     }
 

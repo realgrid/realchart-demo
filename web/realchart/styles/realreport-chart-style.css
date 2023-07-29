@@ -234,6 +234,18 @@
     fill: #008;
 }
 
+/** waterfall series */
+.rct-waterfall-series-negative {
+    fill: #dd5500;
+}
+.rct-waterfall-series-sum {
+    fill: #0055cc;
+}
+.rct-waterfall-series-lines {
+    stroke: #779;
+    stroke-dasharray: 2;
+}
+
 /** pie series */
 .rct-pie-series .rct-series-points {
     stroke: white;
