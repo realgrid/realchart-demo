@@ -89,7 +89,7 @@ export class DataPointLabel extends FormattableText {
 }
 
 export interface IPlottingItem {
-
+    index: number;
     xAxis: string | number;
     yAxis: string | number;
 
@@ -194,6 +194,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    index = -1;
     group: SeriesGroup<Series>;
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
@@ -667,7 +668,8 @@ export class PlottingItemCollection  {
         }
 
         // series
-        items.forEach(item => {
+        items.forEach((item, i) => {
+            item.index = i;
             if (item instanceof SeriesGroup) {
                 series.push(...item.series);
             } else if (item instanceof Series) {
@@ -871,6 +873,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    index = -1;
     private _series: T[] = [];
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
@@ -992,6 +995,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         if (this._canContain(series)) {
             this._series.push(series);
             series.group = this;
+            series.index = this._series.length - 1;
         } else {
             throw new Error('이 그룹에 포함될 수 없는 시리즈입니다: ' + series);
         }

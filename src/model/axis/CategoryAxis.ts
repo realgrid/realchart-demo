@@ -144,6 +144,10 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    type(): string {
+        return 'category';
+    }
+
     protected _createGrid(): AxisGrid {
         return new CategoryAxisGrid(this);
     }

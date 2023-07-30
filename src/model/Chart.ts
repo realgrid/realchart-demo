@@ -23,7 +23,6 @@ import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";
 import { BoxPlotSeries } from "./series/BoxPlotSeries";
 import { BubbleSeries } from "./series/BubbleSeries";
-import { BumpSeries } from "./series/BumpSeries";
 import { CandlestickSeries } from "./series/CandlestickSeries";
 import { FunnelSeries } from "./series/FunnelSeries";
 import { HistogramSeries } from "./series/HistogramSeries";
@@ -78,7 +77,6 @@ const series_types = {
     'line': LineSeries,
     'area': AreaSeries,
     'arearange': AreaRangeSeries,
-    'bump': BumpSeries,
     'boxplot': BoxPlotSeries,
     'bubble': BubbleSeries,
     'scatter': ScatterSeries,

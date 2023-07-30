@@ -14,6 +14,8 @@ import { IClusterable, IPlottingItem } from "./Series";
 
 export interface IAxis {
 
+    type(): string;
+
     _length: number;
     // baseValue: number;
 
@@ -394,6 +396,12 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    abstract type(): string;
+
+    canBeX(): boolean {
+        return true;
+    }
+
     /**
      * 표시 위치.
      */

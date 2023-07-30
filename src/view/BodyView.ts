@@ -23,7 +23,6 @@ import { BarSeries } from "../model/series/BarSeries";
 import { BellCurveSeries } from "../model/series/BellCurveSeries";
 import { BoxPlotSeries } from "../model/series/BoxPlotSeries";
 import { BubbleSeries } from "../model/series/BubbleSeries";
-import { BumpSeries } from "../model/series/BumpSeries";
 import { CandlestickSeries } from "../model/series/CandlestickSeries";
 import { FunnelSeries } from "../model/series/FunnelSeries";
 import { HistogramSeries } from "../model/series/HistogramSeries";
@@ -40,7 +39,6 @@ import { BarSeriesView } from "./series/BarSeriesView";
 import { BellCurveSeriesView } from "./series/BellCurveSeriesView";
 import { BoxPlotSeriesView } from "./series/BoxPlotSeriesView";
 import { BubbleSeriesView } from "./series/BubbleSeriesView";
-import { BumpSeriesView } from "./series/BumpSeriesView";
 import { CandlestickSeriesView } from "./series/CandlestickSeriesView";
 import { FunnelSeriesView } from "./series/FunnelSeriesView";
 import { HistogramSeriesView } from "./series/HistogramSeriesView";
@@ -58,7 +56,6 @@ const series_types = new Map<any, any>([
     [BellCurveSeries, BellCurveSeriesView],
     [AreaRangeSeries, AreaRangeSeriesView],
     [AreaSeries, AreaSeriesView],
-    [BumpSeries, BumpSeriesView],
     [LineSeries, LineSeriesViewImpl],
     [BubbleSeries, BubbleSeriesView],
     [ScatterSeries, ScatterSeriesView],

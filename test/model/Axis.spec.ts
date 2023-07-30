@@ -12,6 +12,7 @@ import { Axis, IAxisTick } from '../../src/model/Axis';
 
 class AxisImpl extends Axis {
 
+    type(): string { return 'test'; }
     protected _doPrepareRender(): void {}
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] { return [];}
     getPosition(length: number, value: number): number { return 0; }

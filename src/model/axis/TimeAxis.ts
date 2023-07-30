@@ -8,7 +8,7 @@
 
 import { AxisTick, IAxisTick } from "../Axis";
 import { IChart } from "../Chart";
-import { LinearAxis, LinearAxisTick } from "./LinearAxis";
+import { ContinuousAxis, LinearAxis, LinearAxisTick } from "./LinearAxis";
 
 const enum TimeScale {
     MS,
@@ -192,7 +192,7 @@ export class TimeAxisTick extends LinearAxisTick {
 /**
  *  timeUnit(기본값 1)밀리초가 1에 해당한다.
  */
-export class TimeAxis extends LinearAxis {
+export class TimeAxis extends ContinuousAxis {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -222,6 +222,10 @@ export class TimeAxis extends LinearAxis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    type(): string {
+        return 'time';
+    }
+
     protected _createTick(): AxisTick {
         return new TimeAxisTick(this);
     }

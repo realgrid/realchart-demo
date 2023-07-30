@@ -197,7 +197,7 @@ export class LinearAxisTick extends AxisTick {
     }
 }
 
-export class LinearAxis extends Axis {
+export abstract class ContinuousAxis extends Axis {
 
     //-------------------------------------------------------------------------
     // fields
@@ -212,10 +212,6 @@ export class LinearAxis extends Axis {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, name?: string) {
-        super(chart, name);
-    }
-
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -361,5 +357,15 @@ export class LinearAxis extends Axis {
         // 이 축에 연결된 clsuterable 시리즈들의 point 최소 간격.
         length *= min / (this._max - this._min);
         return this._unitLen = pickNum(length, 1);
+    }
+}
+
+export class LinearAxis extends ContinuousAxis {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    type(): string {
+        return 'linear';
     }
 }
