@@ -93,6 +93,10 @@ export class HistogramSeries extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    type(): string {
+        return 'histogram';
+    }
+
     ignoreAxisBase(axis: IAxis): boolean {
         return axis === this._xAxisObj;
     }

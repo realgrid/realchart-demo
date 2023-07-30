@@ -77,6 +77,10 @@ export class FunnelSeries extends WidgetSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    type(): string {
+        return 'funnel';
+    }
+
     protected _colorByPoint(): boolean {
         return true;
     }

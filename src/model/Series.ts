@@ -214,6 +214,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    abstract type(): string; // for debugging, ...
+
     // group: string;
     zOrder = 0;
     xAxis: string | number;
@@ -305,6 +307,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     ignoreAxisBase(axis: IAxis): boolean {
         return false;
+    }
+
+    canMixWith(other: IPlottingItem): boolean {
+        return true;
     }
 
     //-------------------------------------------------------------------------
@@ -648,8 +654,8 @@ export class PlottingItemCollection  {
 
     load(src: any): void {
         const chart = this.chart;
-        const items = this._items = [];
-        const series = this._series = [];
+        const items: IPlottingItem[] = this._items = [];
+        const series: Series[] = this._series = [];
         const map = this._map = {};
 
         if (isArray(src)) {
@@ -664,7 +670,7 @@ export class PlottingItemCollection  {
         items.forEach(item => {
             if (item instanceof SeriesGroup) {
                 series.push(...item.series);
-            } else {
+            } else if (item instanceof Series) {
                 series.push(item);
             }
         })
@@ -672,8 +678,13 @@ export class PlottingItemCollection  {
         series.forEach(ser => {
             if (ser.name) map[ser.name] = ser;
             for (const ser2 of this._series) {
-                if (ser2 !== ser && ser._referOtherSeries(ser2)) {
-                    break;
+                if (ser2 !== ser) {
+                    if (!ser.canMixWith(ser2)) {
+                        throw new Error('동시에 표시할 수 없는 시리즈들입니다: ' + ser.type() + ', ' + ser2.type());
+                    }
+                    if (ser._referOtherSeries(ser2)) {
+                        break;
+                    }
                 }
             }
         });
@@ -748,7 +759,7 @@ export abstract class SeriesMarker extends ChartItem {
 /**
  * Polar 좌표계에 표시될 수 있는 시리즈.
  */
-export class PolarableSeries extends Series {
+export abstract class PolarableSeries extends Series {
 
     //-------------------------------------------------------------------------
     // methods
@@ -756,7 +767,7 @@ export class PolarableSeries extends Series {
 }
 
 
-export class WidgetSeries extends Series {
+export abstract class WidgetSeries extends Series {
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -771,7 +782,7 @@ export class WidgetSeries extends Series {
  * <br>
  * TODO: 현재 PieSeris만 계승하고 있다. 추후 PieSeries에 합칠 것.
  */
-export class RadialSeries extends WidgetSeries {
+export abstract class RadialSeries extends WidgetSeries {
 
     //-------------------------------------------------------------------------
     // fields

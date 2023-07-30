@@ -81,6 +81,10 @@ export class BarRangeSeries extends BarSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    type(): string {
+        return 'barrange';
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new BarRangeSeriesPoint(source);
     }

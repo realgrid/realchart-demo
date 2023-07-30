@@ -112,6 +112,10 @@ export class PieSeries extends RadialSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    type(): string {
+        return 'pie';
+    }
+
     protected _colorByPoint(): boolean {
         return true;
     }

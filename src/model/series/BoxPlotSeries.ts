@@ -105,6 +105,10 @@ export class BoxPlotSeries extends BarSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    type(): string {
+        return 'boxplot';
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new BoxPlotSeriesPoint(source);
     }

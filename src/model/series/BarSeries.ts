@@ -121,6 +121,10 @@ export class BarSeries extends BoxSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    type(): string {
+        return 'bar';
+    }
+
     canCategorized(): boolean {
         return true;
     }

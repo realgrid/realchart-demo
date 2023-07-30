@@ -124,6 +124,10 @@ export class BubbleSeries extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    type(): string {
+        return 'bubble';
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new BubbleSeriesPoint(source);
     }

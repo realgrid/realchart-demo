@@ -100,6 +100,10 @@ export class CandlestickSeries extends BoxSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    type(): string {
+        return 'candlestick';
+    }
+
     canCategorized(): boolean {
         return true;
     }

@@ -113,6 +113,10 @@ export class LineSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    type(): string {
+        return 'line';
+        
+    }
     getLineType(): LineType {
         return this.lineType;
     }

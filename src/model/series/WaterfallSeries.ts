@@ -52,6 +52,10 @@ export class WaterfallSeries extends BoxSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    type(): string {
+        return 'waterfall';
+    }
+
     canCategorized(): boolean {
         return true;
     }

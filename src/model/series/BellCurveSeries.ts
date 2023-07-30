@@ -46,6 +46,10 @@ export class BellCurveSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    type(): string {
+        return 'bellcurve';
+    }
+
     // ignoreAxisBase(axis: IAxis): boolean {
     //     return axis === this._xAxisObj;
     // }
