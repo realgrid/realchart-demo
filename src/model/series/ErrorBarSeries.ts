@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
-// BarRangeSeries.ts
-// 2023. 07. 25. created by woori
+// ErrorBarSeries.ts
+// 2023. 07. 31. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
@@ -9,9 +9,9 @@
 import { pickNum, pickProp, pickProp3 } from "../../common/Common";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { BarSeries } from "./BarSeries";
+import { BoxSeries } from "./BarSeries";
 
-export class BarRangeSeriesPoint extends DataPoint {
+export class ErrorBarSeriesPoint extends DataPoint {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -37,7 +37,7 @@ export class BarRangeSeriesPoint extends DataPoint {
         return index === 1 ? this.lowValue : this.yValue;
     }
 
-    protected _readArray(series: BarRangeSeries, v: any[]): void {
+    protected _readArray(series: ErrorBarSeries, v: any[]): void {
         const d = v.length > 2 ? 1 : 0;
 
         this.low = v[pickNum(series.lowField, 0 + d)];
@@ -50,7 +50,7 @@ export class BarRangeSeriesPoint extends DataPoint {
         }
     }
 
-    protected _readObject(series: BarRangeSeries, v: any): void {
+    protected _readObject(series: ErrorBarSeries, v: any): void {
         super._readObject(series, v);
 
         this.low = pickProp(v[series.lowField], v.low);
@@ -63,36 +63,42 @@ export class BarRangeSeriesPoint extends DataPoint {
         this.low = this.y;
     }
 
-    parse(series: BarRangeSeries): void {
+    parse(series: ErrorBarSeries): void {
         super.parse(series);
 
         this.lowValue = +this.low;
     }
 }
 
-export class BarRangeSeries extends BarSeries {
+export class ErrorBarSeries extends BoxSeries {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     lowField: string;
 
+    pointPadding = 0.3;
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     type(): string {
-        return 'barrange';
+        return 'errorbar';
+    }
+
+    clusterable(): boolean {
+        return false;
     }
 
     protected _createPoint(source: any): DataPoint {
-        return new BarRangeSeriesPoint(source);
+        return new ErrorBarSeriesPoint(source);
     }
 
     collectValues(axis: IAxis): number[] {
         const vals = super.collectValues(axis);
 
         if (axis === this._yAxisObj) {
-            this._visPoints.forEach(p => vals.push((p as BarRangeSeriesPoint).lowValue))
+            this._visPoints.forEach(p => vals.push((p as ErrorBarSeriesPoint).lowValue))
         }
         return vals;
     }

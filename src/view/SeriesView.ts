@@ -293,7 +293,6 @@ export class BoxPointElement extends PathElement {
     constructor(doc: Document) {
         super(doc, 'rct-series-bar');
     }
-
 }
 
 export class BarElement extends BoxPointElement {

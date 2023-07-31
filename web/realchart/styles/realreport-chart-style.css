@@ -246,6 +246,15 @@
     stroke-dasharray: 2;
 }
 
+/** errobar series */
+.rct-errorbar-series {
+    stroke: #008;
+}
+.rct-errorbar-back {
+    fill: none;
+    stroke: none;
+}
+
 /** pie series */
 .rct-pie-series .rct-series-points {
     stroke: white;

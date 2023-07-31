@@ -25,6 +25,7 @@ import { BoxPlotSeries } from "./series/BoxPlotSeries";
 import { BubbleSeries } from "./series/BubbleSeries";
 import { BumpSeriesGroup } from "./series/BumpSeriesGroup";
 import { CandlestickSeries } from "./series/CandlestickSeries";
+import { ErrorBarSeries } from "./series/ErrorBarSeries";
 import { FunnelSeries } from "./series/FunnelSeries";
 import { HistogramSeries } from "./series/HistogramSeries";
 import { AreaRangeSeries, AreaSeries, LineSeries, LineSeriesGroup } from "./series/LineSeries";
@@ -84,6 +85,7 @@ const series_types = {
     'scatter': ScatterSeries,
     'candlestick': CandlestickSeries,
     'waterfall': WaterfallSeries,
+    'errorbar': ErrorBarSeries,
     'histogram': HistogramSeries,
     'bellcurve': BellCurveSeries,
     'pie': PieSeries,

@@ -1,18 +1,60 @@
 ////////////////////////////////////////////////////////////////////////////////
-// BarRangeSeriesView.ts
-// 2023. 07. 25. created by woori
+// ErrorBarSeriesView.ts
+// 2023. 07. 31. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
+import { GroupElement } from "../../common/impl/GroupElement";
+import { LineElement } from "../../common/impl/PathElement";
+import { RectElement } from "../../common/impl/RectElement";
 import { DataPoint } from "../../model/DataPoint";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
-import { BarRangeSeries, BarRangeSeriesPoint } from "../../model/series/BarRangeSeries";
-import { BarElement, PointLabelView, SeriesView } from "../SeriesView";
+import { ErrorBarSeries, ErrorBarSeriesPoint } from "../../model/series/ErrorBarSeries";
+import { BoxPointElement, PointLabelView, SeriesView } from "../SeriesView";
 
-export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
+class BarElement extends GroupElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _back: RectElement;
+    private _whiskerUp: LineElement;
+    private _whiskerDown: LineElement;
+    private _stem: LineElement;
+
+    point: ErrorBarSeriesPoint;
+
+    //-------------------------------------------------------------------------
+    // constructors
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc);
+
+        this.add(this._back = new RectElement(doc, 'rct-errorbar-back'));
+        this.add(this._stem = new LineElement(doc, 'rct-errorbar-stem'));
+        this.add(this._whiskerUp = new LineElement(doc, 'rct-errorbar-whisker dlchart-errorBar-series-whisker-up'));
+        this.add(this._whiskerDown = new LineElement(doc, 'rct-errorbar-whisker dlchart-errorBar-series-whisker-down'));
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    layout(inverted: boolean): void {
+        const w = this.width
+        const h = this.height;
+        const x = w / 2;
+
+        this._back.setBounds(0, 0, w, h);
+        this._stem.setVLine(x, 0, h);
+        this._whiskerUp.setHLine(0, 0, w);
+        this._whiskerDown.setHLine(h, 0, w);
+    }
+}
+
+export class ErrorBarSeriesView extends SeriesView<ErrorBarSeries> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -23,14 +65,14 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-barrange-series')
+        super(doc, 'rct-errorbar-series')
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _prepareSeries(doc: Document, model: BarRangeSeries): void {
-        this.$_parepareBars(doc, model._visPoints);
+    protected _prepareSeries(doc: Document, model: ErrorBarSeries): void {
+        this.$_parepareBars(model._visPoints as ErrorBarSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -40,7 +82,7 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_parepareBars(doc: Document, points: DataPoint[]): void {
+    private $_parepareBars(points: ErrorBarSeriesPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
             v.point = points[i];
             v.setStyle('fill', points[i].color);
@@ -59,13 +101,11 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPadding * 2 : 0;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
-        // const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
-        // const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.yBase : 0);
         const org = inverted ? 0 : height;;
         let labelView: PointLabelView;
 
         this._bars.forEach((bar, i) => {
-            const p = bar.point as BarRangeSeriesPoint;
+            const p = bar.point;
             const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
@@ -75,24 +115,14 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
 
             if (inverted) {
                 y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
-                x = org;
+                x = org + yVal;
             } else {
-                x = xAxis.getPosition(xLen, i) - wUnit / 2;
-                y = org;
+                x = xAxis.getPosition(xLen, i) - wPoint / 2;
+                y = org - yVal;
             }
 
-            bar.wPoint = wPoint;
-            bar.hPoint = hPoint;// yVal - yBase;
-
-            if (inverted) {
-                y += series.getPointPos(wUnit) + wPoint / 2;
-                x += yAxis.getPosition(yLen, p.yGroup) - hPoint;
-            } else {
-                x += series.getPointPos(wUnit) + wPoint / 2;
-                y -= yAxis.getPosition(yLen, p.yGroup) - hPoint;
-            }
-
-            bar.render(x, y, inverted);
+            bar.setBounds(x, y, wPoint, hPoint);
+            bar.layout(inverted);
 
             // labels
             if (labelVis) {
