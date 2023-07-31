@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
-// LollipopSeries.ts
-// 2023. 07. 31. created by woori
+// DumbbellSeries.ts
+// 2023. 08. 01. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
@@ -11,7 +11,7 @@ import { DataPoint } from "../DataPoint";
 import { SeriesMarker } from "../Series";
 import { BoxSeries } from "./BarSeries";
 
-export class LollipopSeriesMarker extends SeriesMarker {
+export class DumbbellSeriesMarker extends SeriesMarker {
 
     //-------------------------------------------------------------------------
     // properties
@@ -20,7 +20,7 @@ export class LollipopSeriesMarker extends SeriesMarker {
     shape = Shape.CIRCLE;
 }
 
-export class LollipopSeriesPoint extends DataPoint {
+export class DumbbellSeriesPoint extends DataPoint {
 
     //-------------------------------------------------------------------------
     // properties
@@ -30,14 +30,14 @@ export class LollipopSeriesPoint extends DataPoint {
 }
 
 /**
- * Bar 시리즈 변종.
+ * BarRange 시리즈 변종.
  */
-export class LollipopSeries extends BoxSeries {
+export class DumbbellSeries extends BoxSeries {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    marker = new LollipopSeriesMarker(this);
+    marker = new DumbbellSeriesMarker(this);
 
     //-------------------------------------------------------------------------
     // property fields
@@ -46,11 +46,11 @@ export class LollipopSeries extends BoxSeries {
     // overriden members
     //-------------------------------------------------------------------------
     type(): string {
-        return 'lollipop';
+        return 'Dumbbell';
     }
 
     protected _createPoint(source: any): DataPoint {
-        return new LollipopSeriesPoint(source);
+        return new DumbbellSeriesPoint(source);
     }
 
     protected _doPrepareRender(): void {
@@ -59,7 +59,7 @@ export class LollipopSeries extends BoxSeries {
         const radius = this.marker.radius;
         const shape = this.marker.shape;
 
-        this._visPoints.forEach((p: LollipopSeriesPoint) => {
+        this._visPoints.forEach((p: DumbbellSeriesPoint) => {
             p.radius = radius;
             p.shape = shape;
         })
