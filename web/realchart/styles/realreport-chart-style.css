@@ -255,6 +255,16 @@
     stroke: none;
 }
 
+/** lollipop series */
+.rct-lollipop-series {
+    stroke: #008;
+    stroke-width: 2px;
+}
+.rct-lollipop-series-marker {
+    stroke: none;
+    fill: #008;
+}
+
 /** pie series */
 .rct-pie-series .rct-series-points {
     stroke: white;

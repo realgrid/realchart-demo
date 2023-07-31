@@ -28,6 +28,7 @@ import { ErrorBarSeries } from "../model/series/ErrorBarSeries";
 import { FunnelSeries } from "../model/series/FunnelSeries";
 import { HistogramSeries } from "../model/series/HistogramSeries";
 import { AreaRangeSeries, AreaSeries, LineSeries } from "../model/series/LineSeries";
+import { LollipopSeries } from "../model/series/LollipopSeries";
 import { PieSeries } from "../model/series/PieSeries";
 import { ScatterSeries } from "../model/series/ScatterSeries";
 import { WaterfallSeries } from "../model/series/WaterfallSeries";
@@ -45,6 +46,7 @@ import { ErrorBarSeriesView } from "./series/ErrorBarSeriesView";
 import { FunnelSeriesView } from "./series/FunnelSeriesView";
 import { HistogramSeriesView } from "./series/HistogramSeriesView";
 import { LineSeriesViewImpl } from "./series/LineSeriesView";
+import { LollipopSeriesView } from "./series/LollipopSeriesView";
 import { PieSeriesView } from "./series/PieSeriesView";
 import { ScatterSeriesView } from "./series/ScatterSeriesView";
 import { WaterfallSeriesView } from "./series/WaterfallSeriesView";
@@ -54,7 +56,7 @@ const series_types = new Map<any, any>([
     [BoxPlotSeries, BoxPlotSeriesView],
     [BarRangeSeries, BarRangeSeriesView],
     [BarSeries, BarSeriesView],
-    [BarSeries, BarSeriesView],
+    [LollipopSeries, LollipopSeriesView],
     [BellCurveSeries, BellCurveSeriesView],
     [AreaRangeSeries, AreaRangeSeriesView],
     [AreaSeries, AreaSeriesView],

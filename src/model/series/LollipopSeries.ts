@@ -6,26 +6,35 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { Shape } from "../../common/impl/SvgShape";
 import { DataPoint } from "../DataPoint";
+import { SeriesMarker } from "../Series";
 import { BoxSeries } from "./BarSeries";
+
+export class LollipopSeriesMarker extends SeriesMarker {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    radius = 4;
+    shape = Shape.CIRCLE;
+}
 
 export class LollipopSeriesPoint extends DataPoint {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // properties
     //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
+    radius: number;
+    shape: Shape;
 }
 
 export class LollipopSeries extends BoxSeries {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    marker = new LollipopSeriesMarker(this);
 
     //-------------------------------------------------------------------------
     // property fields
@@ -39,5 +48,17 @@ export class LollipopSeries extends BoxSeries {
 
     protected _createPoint(source: any): DataPoint {
         return new LollipopSeriesPoint(source);
+    }
+
+    protected _doPrepareRender(): void {
+        super._doPrepareRender();
+
+        const radius = this.marker.radius;
+        const shape = this.marker.shape;
+
+        this._visPoints.forEach((p: LollipopSeriesPoint) => {
+            p.radius = radius;
+            p.shape = shape;
+        })
     }
 }

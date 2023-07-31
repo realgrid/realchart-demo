@@ -29,6 +29,7 @@ import { ErrorBarSeries } from "./series/ErrorBarSeries";
 import { FunnelSeries } from "./series/FunnelSeries";
 import { HistogramSeries } from "./series/HistogramSeries";
 import { AreaRangeSeries, AreaSeries, LineSeries, LineSeriesGroup } from "./series/LineSeries";
+import { LollipopSeries } from "./series/LollipopSeries";
 import { PieSeries, PieSeriesGroup } from "./series/PieSeries";
 import { ScatterSeries } from "./series/ScatterSeries";
 import { WaterfallSeries } from "./series/WaterfallSeries";
@@ -77,6 +78,7 @@ const group_types = {
 const series_types = {
     'bar': BarSeries,
     'barrange': BarRangeSeries,
+    'lollipop': LollipopSeries,
     'line': LineSeries,
     'area': AreaSeries,
     'arearange': AreaRangeSeries,
