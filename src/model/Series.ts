@@ -875,6 +875,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     index = -1;
     private _series: T[] = [];
+    protected _visibles: T[] = [];
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
     _stackPoints: Map<number, DataPoint[]>;
@@ -895,7 +896,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     isEmpty(): boolean {
-        return false;
+        return this._visibles.length < 1;
     }
 
     canCategorized(): boolean {
@@ -911,7 +912,9 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     // Axis에서 요청한다.
     collectValues(axis: IAxis): number[] {
-        if (axis === this._series[0]._yAxisObj) {
+        if (this.isEmpty()) {
+            return [];
+        } else if (axis === this._visibles[0]._yAxisObj) {
             switch (this.layout) {
                 case SeriesGroupLayout.STACK:
                     return this.$_collectStack(axis);
@@ -931,18 +934,18 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     collectCategories(axis: IAxis): string[] {
         let cats: string[] = [];
 
-        this._series.forEach(ser => cats = cats.concat(ser.collectCategories(axis)));
+        this._visibles.forEach(ser => cats = cats.concat(ser.collectCategories(axis)));
         return cats;
     }
 
     ignoreAxisBase(axis: IAxis): boolean {
-        for (const ser of this._series) {
+        for (const ser of this._visibles) {
             if (ser.ignoreAxisBase(axis)) return true;
         }
     }
 
     getLegendSources(list: ILegendSource[]) {
-        this._series.forEach(ser => ser.visible && list.push(ser));
+        list.push(...this._visibles);
     }
 
     //-------------------------------------------------------------------------
@@ -951,7 +954,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     getVisiblePoints(): DataPoint[] {
         const pts: DataPoint[] = [];
 
-        this._series.forEach(ser => ser.visible && pts.push(...ser.getVisiblePoints()));
+        this._visibles.forEach(ser => pts.push(...ser.getVisiblePoints()));
         return pts;
     }
 
@@ -962,8 +965,14 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         }
     }
 
+    prepareRender(): void {
+        this._visibles = this._series.filter(ser => ser.visible);
+
+        super.prepareRender();
+    }
+
     protected _doPrepareRender(chart: IChart): void {
-        const series = this._series.filter(ser => ser.visible).sort((s1, s2) => (s1.zOrder || 0) - (s2.zOrder || 0));
+        const series = this._visibles.sort((s1, s2) => (s1.zOrder || 0) - (s2.zOrder || 0));
         
         this._xAxisObj = this.chart._connectSeries(this, true);
         this._yAxisObj = this.chart._connectSeries(this, false);
@@ -979,7 +988,8 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     protected abstract _seriesType(): string;
     protected abstract _canContain(ser: Series): boolean;
-    protected abstract _doPrepareSeries(series: T[]): void;
+
+    protected _doPrepareSeries(series: T[]): void {}
 
     private $_loadSeries(chart: IChart, src: any) {
         const type = this._seriesType();
@@ -1003,14 +1013,14 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     private $_collectValues(axis: IAxis): number[] {
         let vals: number[] = [];
 
-        this._series.forEach(ser => {
+        this._visibles.forEach(ser => {
             vals = vals.concat(ser.collectValues(axis));
         })
         return vals;
     }
 
     private $_collectPoints(): Map<number, DataPoint[]> {
-        const series = this._series;
+        const series = this._visibles;
         const map: Map<number, DataPoint[]> = this._stackPoints = new Map();
 
         series[0]._visPoints.forEach(p => map.set(p.xValue, [p]));
@@ -1062,4 +1072,24 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
          
         return vals;
     }
+}
+
+export abstract class ConstraintSeriesGroup<T extends Series> extends SeriesGroup<T> {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    collectValues(axis: IAxis): number[] {
+        let vals = super.collectValues(axis);
+
+        if (axis === this._yAxisObj) {
+            vals = this._doConstraintYValues(this._visibles) || vals;
+        }
+        return vals;
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected abstract _doConstraintYValues(series: Series[]): number[];
 }

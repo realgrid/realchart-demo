@@ -228,7 +228,4 @@ export class LineSeriesGroup extends SeriesGroup<LineSeries> {
     protected _canContain(ser: Series): boolean {
         return ser instanceof LineSeries;
     }
-
-    protected _doPrepareSeries(series: LineSeries[]): void {
-    }
 }

@@ -36,7 +36,8 @@ export class DataPoint {
     xPos: number;
     yPos: number;
 
-    yGroup: number;     // for stacking
+    yGroup: number;     // for stacking. stacking 가능한 경우 이 값으로 축 상 위치를 계산한다.
+                        // [주의] yValue를 강제로 재설정하는 경우 이 값도 재설정할 것!
 
     //-------------------------------------------------------------------------
     // constructor

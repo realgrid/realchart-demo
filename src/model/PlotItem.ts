@@ -76,3 +76,11 @@ export abstract class PolygonItem extends PlotItem {
     // property fields
     //-------------------------------------------------------------------------
 }
+
+/**
+ * 특정 시리즈를 기준으로 [x1, y1] ~ [x2, y2]의 영역을 특정한 스타일로 표시.
+ * <br>
+ * ex) yBase 아래 쪽 영역을 다른 색으로 표시한다.
+ */
+export class RegionItem extends PlotItem {
+}

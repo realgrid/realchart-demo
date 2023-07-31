@@ -495,19 +495,23 @@ export abstract class Axis extends ChartItem implements IAxis {
 
         this._doPrepareRender();
 
-        let sum = 0;
+        // range
         let vals: number[] = [];
 
         this._series.forEach(item => {
             vals = vals.concat(item.collectValues(this));
+        })
+        this._range = this._doCalcluateRange(vals);
+
+        // clustering
+        let sum = 0;
+        let p = 0;
+
+        this._series.forEach(item => {
             if (item.clusterable()) {
                 sum += pickNum((item as any as IClusterable).groupWidth, 1);
             }
         })
-        this._range = this._doCalcluateRange(vals);
-
-        let p = 0;
-
         this._series.forEach(item => {
             if (item.clusterable()) {
                 const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;

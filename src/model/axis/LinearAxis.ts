@@ -9,7 +9,6 @@
 import { pickNum } from "../../common/Common";
 import { assert, ceil, fixnum } from "../../common/Types";
 import { Axis, AxisTick, IAxisTick } from "../Axis";
-import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 
 export class LinearAxisTick extends AxisTick {
@@ -271,11 +270,12 @@ export abstract class ContinuousAxis extends Axis {
         const tick = this.tick as LinearAxisTick;
         let { min, max } = this._adjustMinMax(calcedMin, calcedMax);
         const steps = tick.buildSteps(length, this._base, min, max);
-
-        min = this._min = Math.min(min, steps[0]);
-        max = this._max = Math.max(max, steps[steps.length - 1]);
-
         const ticks: IAxisTick[] = [];
+
+        this._setMinMax(
+            Math.min(min, steps[0]), 
+            Math.max(max, steps[steps.length - 1])
+        );
 
         for (let i = 0; i < steps.length; i++) {
             ticks.push({
@@ -335,6 +335,11 @@ export abstract class ContinuousAxis extends Axis {
         max += len * this._maxPad;
 
         return { min, max };
+    }
+
+    protected _setMinMax(min: number, max: number): void {
+        this._min = min;
+        this._max = max;
     }
 
     protected $_calcUnitLength(length: number): number {

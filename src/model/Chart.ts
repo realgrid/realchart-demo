@@ -23,6 +23,7 @@ import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";
 import { BoxPlotSeries } from "./series/BoxPlotSeries";
 import { BubbleSeries } from "./series/BubbleSeries";
+import { BumpSeriesGroup } from "./series/BumpSeriesGroup";
 import { CandlestickSeries } from "./series/CandlestickSeries";
 import { FunnelSeries } from "./series/FunnelSeries";
 import { HistogramSeries } from "./series/HistogramSeries";
@@ -69,6 +70,7 @@ const group_types = {
     'bar': BarSeriesGroup,
     'line': LineSeriesGroup,
     'pie': PieSeriesGroup,
+    'bump': BumpSeriesGroup
 };
 
 const series_types = {
@@ -89,8 +91,8 @@ const series_types = {
 };
 
 const axis_types = {
-    'linear': LinearAxis,
     'category': CategoryAxis,
+    'linear': LinearAxis,
     'time': TimeAxis,
     'date': TimeAxis,
     'log': LogAxis
