@@ -8,7 +8,7 @@
 
 import { RcObject } from "../common/RcObject";
 import { SectionDir } from "../common/Types";
-import { Axis, AxisCollection, AxisPosition, IAxis } from "./Axis";
+import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
 import { ILegendSource, Legend } from "./Legend";
@@ -29,11 +29,14 @@ import { DumbbellSeries } from "./series/DumbbellSeries";
 import { EqualizerSeries } from "./series/EqualizerSeries";
 import { ErrorBarSeries } from "./series/ErrorBarSeries";
 import { FunnelSeries } from "./series/FunnelSeries";
+import { HeatmapSeries } from "./series/HeatmapSeries";
 import { HistogramSeries } from "./series/HistogramSeries";
 import { AreaRangeSeries, AreaSeries, LineSeries, LineSeriesGroup } from "./series/LineSeries";
 import { LollipopSeries } from "./series/LollipopSeries";
 import { PieSeries, PieSeriesGroup } from "./series/PieSeries";
 import { ScatterSeries } from "./series/ScatterSeries";
+import { TreemapSeries } from "./series/TreemapSeries";
+import { VectorSeries } from "./series/VectorSeries";
 import { WaterfallSeries } from "./series/WaterfallSeries";
 
 export interface IChart {
@@ -94,6 +97,9 @@ const series_types = {
     'errorbar': ErrorBarSeries,
     'histogram': HistogramSeries,
     'bellcurve': BellCurveSeries,
+    'heatmap': HeatmapSeries,
+    'treemap': TreemapSeries,
+    'vector': VectorSeries,
     'pie': PieSeries,
     'funnel': FunnelSeries
 };

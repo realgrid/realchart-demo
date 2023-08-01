@@ -774,7 +774,10 @@ export class AxisCollection {
                 if (!t && chart.first.canCategorized()) {
                     t = 'category';
                 }
+            } else {
+                t = chart._getSeries().first.defaultYAxisType();
             }
+
             if (t) {
                 cls = chart._getAxisType(t);
             }

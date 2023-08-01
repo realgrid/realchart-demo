@@ -99,6 +99,7 @@ export interface IPlottingItem {
     needAxes(): boolean;
     isEmpty(): boolean;
     canCategorized(): boolean;
+    defaultYAxisType(): string;
     clusterable(): boolean;
     // axis에 설정된 baseValue를 무시하라!
     ignoreAxisBase(axis: IAxis): boolean;
@@ -283,6 +284,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     canCategorized(): boolean {
         return false;
+    }
+
+    defaultYAxisType(): string {
+        return 'linear';
     }
 
     /**
@@ -901,6 +906,10 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
 
     canCategorized(): boolean {
         return true;
+    }
+
+    defaultYAxisType(): string {
+        return 'linear';
     }
 
     clusterable(): boolean {
