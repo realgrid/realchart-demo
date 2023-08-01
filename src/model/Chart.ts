@@ -26,6 +26,7 @@ import { BubbleSeries } from "./series/BubbleSeries";
 import { BumpSeriesGroup } from "./series/BumpSeriesGroup";
 import { CandlestickSeries } from "./series/CandlestickSeries";
 import { DumbbellSeries } from "./series/DumbbellSeries";
+import { EqualizerSeries } from "./series/EqualizerSeries";
 import { ErrorBarSeries } from "./series/ErrorBarSeries";
 import { FunnelSeries } from "./series/FunnelSeries";
 import { HistogramSeries } from "./series/HistogramSeries";
@@ -81,6 +82,7 @@ const series_types = {
     'barrange': BarRangeSeries,
     'lollipop': LollipopSeries,
     'dumbbell': DumbbellSeries,
+    'equalizer': EqualizerSeries,
     'line': LineSeries,
     'area': AreaSeries,
     'arearange': AreaRangeSeries,

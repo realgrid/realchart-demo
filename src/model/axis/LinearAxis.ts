@@ -240,6 +240,14 @@ export abstract class ContinuousAxis extends Axis {
 
     padding = "5%";
 
+    axisMin(): number {
+        return this._min;
+    }
+
+    axisMax(): number {
+        return this._max;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
