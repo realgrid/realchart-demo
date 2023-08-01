@@ -275,6 +275,12 @@
     fill: #008;
 }
 
+/** vector series */
+.rct-vector-series {
+    stroke-width: 2px;
+    /* stroke-linejoin: round; */
+}
+
 /** pie series */
 .rct-pie-series .rct-series-points {
     stroke: white;

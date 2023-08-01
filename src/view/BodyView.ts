@@ -28,11 +28,14 @@ import { DumbbellSeries } from "../model/series/DumbbellSeries";
 import { EqualizerSeries } from "../model/series/EqualizerSeries";
 import { ErrorBarSeries } from "../model/series/ErrorBarSeries";
 import { FunnelSeries } from "../model/series/FunnelSeries";
+import { HeatmapSeries } from "../model/series/HeatmapSeries";
 import { HistogramSeries } from "../model/series/HistogramSeries";
 import { AreaRangeSeries, AreaSeries, LineSeries } from "../model/series/LineSeries";
 import { LollipopSeries } from "../model/series/LollipopSeries";
 import { PieSeries } from "../model/series/PieSeries";
 import { ScatterSeries } from "../model/series/ScatterSeries";
+import { TreemapSeries } from "../model/series/TreemapSeries";
+import { VectorSeries } from "../model/series/VectorSeries";
 import { WaterfallSeries } from "../model/series/WaterfallSeries";
 import { ChartElement } from "./ChartElement";
 import { SeriesView } from "./SeriesView";
@@ -48,11 +51,14 @@ import { DumbbellSeriesView } from "./series/DumbbellSeriesView";
 import { EqualizerSeriesView } from "./series/EqualizerSeriesView";
 import { ErrorBarSeriesView } from "./series/ErrorBarSeriesView";
 import { FunnelSeriesView } from "./series/FunnelSeriesView";
+import { HeatmapSeriesView } from "./series/HeatmapSeriesView";
 import { HistogramSeriesView } from "./series/HistogramSeriesView";
 import { LineSeriesViewImpl } from "./series/LineSeriesView";
 import { LollipopSeriesView } from "./series/LollipopSeriesView";
 import { PieSeriesView } from "./series/PieSeriesView";
 import { ScatterSeriesView } from "./series/ScatterSeriesView";
+import { TreemapSeriesView } from "./series/TreemapSeriesView";
+import { VectorSeriesView } from "./series/VectorSeriesView";
 import { WaterfallSeriesView } from "./series/WaterfallSeriesView";
 
 const series_types = new Map<any, any>([
@@ -72,6 +78,9 @@ const series_types = new Map<any, any>([
     [CandlestickSeries, CandlestickSeriesView],
     [ErrorBarSeries, ErrorBarSeriesView],
     [HistogramSeries, HistogramSeriesView],
+    [VectorSeries, VectorSeriesView],
+    [HeatmapSeries, HeatmapSeriesView],
+    [TreemapSeries, TreemapSeriesView],
     [PieSeries, PieSeriesView],
     [FunnelSeries, FunnelSeriesView]
 ]);

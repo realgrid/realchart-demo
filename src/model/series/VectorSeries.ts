@@ -12,6 +12,9 @@ import { Utils } from "../../common/Utils";
 import { DataPoint } from "../DataPoint";
 import { BoxSeries } from "./BarSeries";
 
+/**
+ * [x, y, length, angle]
+ */
 export class VectorSeriesPoint extends DataPoint {
 
     //-------------------------------------------------------------------------
@@ -26,8 +29,8 @@ export class VectorSeriesPoint extends DataPoint {
     lengthValue: number;
     angleValue: number;
 
-    _u: number;
-    _o: number; 
+    _len: number;
+    _off: number; 
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -35,9 +38,9 @@ export class VectorSeriesPoint extends DataPoint {
     protected _readArray(series: VectorSeries, v: any[]): void {
         const d = v.length > 3 ? 1 : 0;
 
-        this.length = v[pickNum(series.lengthField, 0 + d)];
-        this.angle = v[pickNum(series.angleField, 1 + d)];
-        this.y = v[pickNum(series.yProp, 4 + d)];
+        this.y = v[pickNum(series.yProp, 0 + d)];
+        this.length = v[pickNum(series.lengthField, 1 + d)];
+        this.angle = v[pickNum(series.angleField, 2 + d)];
 
         if (d > 0) {
             this.x = v[pickNum(series.xProp, 0)];
@@ -74,6 +77,12 @@ export enum VectorOrigin {
     END = 'end'
 }
 
+export enum ArrowHead {
+    NONE = 'none',
+    CLOSE = 'close',
+    OPEN = 'open',
+}
+
 /**
  */
 export class VectorSeries extends BoxSeries {
@@ -85,6 +94,8 @@ export class VectorSeries extends BoxSeries {
     angleField: string;
     origin = VectorOrigin.CENTER;
     maxLength = 20;
+    startAngle = 0;
+    arrowHead = ArrowHead.CLOSE;
 
     //-------------------------------------------------------------------------
     // fields
@@ -109,5 +120,27 @@ export class VectorSeries extends BoxSeries {
 
     protected _doPrepareRender(): void {
         super._doPrepareRender();
+
+        const pts = this._visPoints as VectorSeriesPoint[];
+        const len = this.maxLength;
+        const org = this.origin;
+        const max = pts.map(p => p.length).reduce((r, c) => Math.max(r, c));
+
+        pts.forEach(p => {
+            const f = p.length / max;
+            
+            p._len = f * len;
+            switch (org) {
+                case VectorOrigin.START:
+                    p._off =  p._len / 2;
+                    break;
+                case VectorOrigin.END:
+                    p._off = p._len / 2;
+                    break;
+                default:
+                    p._off = 0;
+                    break;
+            }
+        });
     }
 }

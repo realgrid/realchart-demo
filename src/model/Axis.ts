@@ -193,15 +193,18 @@ export class AxisGuideLine extends AxisGuide {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    value: number;
+    value: number; // TODO: RtPercentSize
 }
 
+/**
+ * range -> zone ?
+ */
 export class AxisGuideRange extends AxisGuide {
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    start: number;
+    start: number;  // TODO: RtPercentSize
     end: number;
 }
 

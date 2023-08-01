@@ -8,7 +8,6 @@
 
 import { pickNum } from "../../common/Common";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
-import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { ILegendSource } from "../Legend";
 import { ISeries, PointItemPosition, RadialSeries, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
