@@ -22,7 +22,8 @@ class BarElement extends GroupElement {
     // fields
     //-------------------------------------------------------------------------
     private _line: LineElement;
-    private _marker: PathElement;
+    private _hmarker: PathElement;
+    private _lmarker: PathElement;
 
     point: DumbbellSeriesPoint;
 
@@ -33,7 +34,8 @@ class BarElement extends GroupElement {
         super(doc);
 
         this.add(this._line = new LineElement(doc));
-        this.add(this._marker = new PathElement(doc, 'rct-Dumbbell-series-marker'));
+        this.add(this._hmarker = new PathElement(doc, 'rct-Dumbbell-series-marker'));
+        this.add(this._lmarker = new PathElement(doc, 'rct-Dumbbell-series-marker'));
     }
 
     //-------------------------------------------------------------------------
@@ -41,7 +43,8 @@ class BarElement extends GroupElement {
     //-------------------------------------------------------------------------
     layout(inverted: boolean): void {
         this._line.setVLineC(this.width / 2, 0, this.height);
-        this._marker.renderShape(this.point.shape, this.width / 2, 0, this.point.radius);
+        this._hmarker.renderShape(this.point.shape, this.width / 2, 0, this.point.radius);
+        this._lmarker.renderShape(this.point.shape, this.width / 2, this.height, this.point.radius);
     }
 }
 
@@ -69,7 +72,7 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-Dumbbell-series')
+        super(doc, 'rct-dumbbell-series')
     }
 
     //-------------------------------------------------------------------------
@@ -103,6 +106,8 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
         const series = this.model;
         const inverted = series.chart.isInverted();
         const labels = series.pointLabel;
+        const labelVis = labels.visible;
+        const labelOff = labels.offset;
         const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
@@ -124,7 +129,7 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
             const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
-            const hPoint = yVal - yBase;
+            const hPoint = Math.abs(yAxis.getPosition(yLen, p.lowValue) - yVal);
             let labelView: PointLabelView;
             let x: number;
             let y: number;
@@ -148,14 +153,36 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
             bar.setBounds(x, y, wPoint, hPoint);
             bar.layout(inverted);
 
-            // label
-            if (labelInfo && (labelView = labelViews.get(p, 0))) {
-                labelInfo.labelView = labelView;
-                labelInfo.bar = bar;
-                labelInfo.x = x + wPoint / 2;
-                labelInfo.y = y;
-                this.$_layoutLabel(labelInfo);
+            // labels
+            if (labelVis) {
+                if (labelView = labelViews.get(p, 0)) {
+                    const r = labelView.getBBounds();
+
+                    if (inverted) {
+                        labelView.translate(x + hPoint + labelOff, y - r.height / 2);
+                    } else {
+                        labelView.translate(x - r.width / 2, y - hPoint - r.height - labelOff);
+                    }
+                }
+                if (labelView = labelViews.get(p, 1)) {
+                    const r = labelView.getBBounds();
+
+                    if (inverted) {
+                        labelView.translate(x - r.width - labelOff, y - r.height / 2);
+                    } else {
+                        labelView.translate(x - r.width / 2, y + labelOff);
+                    }
+                }
             }
+
+            // // label
+            // if (labelInfo && (labelView = labelViews.get(p, 0))) {
+            //     labelInfo.labelView = labelView;
+            //     labelInfo.bar = bar;
+            //     labelInfo.x = x + wPoint / 2;
+            //     labelInfo.y = y;
+            //     this.$_layoutLabel(labelInfo);
+            // }
         })
     }
 

@@ -49,6 +49,10 @@ export class LollipopSeries extends BoxSeries {
         return 'lollipop';
     }
 
+    canCategorized(): boolean {
+        return true;
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new LollipopSeriesPoint(source);
     }

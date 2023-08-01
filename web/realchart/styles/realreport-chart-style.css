@@ -265,6 +265,16 @@
     fill: #008;
 }
 
+/** dumbbell series */
+.rct-dumbbell-series {
+    stroke: #008;
+    stroke-width: 2px;
+}
+.rct-dumbbell-series-marker {
+    stroke: none;
+    fill: #008;
+}
+
 /** pie series */
 .rct-pie-series .rct-series-points {
     stroke: white;
