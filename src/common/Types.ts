@@ -26,6 +26,9 @@ export const ceil = Math.ceil;
 export function fixnum(value: number): number {
     return parseFloat(value.toPrecision(12));
 }
+export function toStr(value: any): string {
+    return value == null ? null : String(value);
+}
 export function deg2rad(degree: number): number {
     return degree * Math.PI * 2 / 360;
 }

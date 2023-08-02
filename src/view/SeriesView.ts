@@ -130,7 +130,7 @@ export class PointLabelContainer extends GroupElement {
                     const label = labels[j].get(i);
 
                     this.prepareLabel(doc, label, j, p, pointLabel);
-                    maps[j][p.id] = label;
+                    maps[j][p.pid] = label;
                 }
             })
 
@@ -143,7 +143,7 @@ export class PointLabelContainer extends GroupElement {
 
     get(point: DataPoint, index: number): PointLabelView {
         const map = this._maps[index]
-        return map && map[point.id];
+        return map && map[point.pid];
     }
 
     borrow(index: number): PointLabelView { 
@@ -223,7 +223,7 @@ export class PointLabelLineContainer extends GroupElement {
 
                 if (line.visible = p.visible) {
                 }
-                map[p.id] = line;
+                map[p.pid] = line;
             })
         } else {
             lines.prepare(0);
@@ -231,7 +231,7 @@ export class PointLabelLineContainer extends GroupElement {
     }
 
     get(point: DataPoint): PointLabelLine {
-        return this._map[point.id];
+        return this._map[point.pid];
     }
 }
 
