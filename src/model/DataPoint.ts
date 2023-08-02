@@ -101,17 +101,17 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     protected _readArray(series: ISeries, v: any[]): void {
         if (v.length > 1) {
-            this.x = v[pickNum(series.xProp, 0)];
-            this.y = v[pickNum(series.yProp, 1)];
+            this.x = v[pickNum(series.xField, 0)];
+            this.y = v[pickNum(series.yField, 1)];
         } else {
             this.x = this.index;
-            this.y = v[pickNum(series.yProp, 0)];
+            this.y = v[pickNum(series.yField, 0)];
         }
     }
 
     protected _readObject(series: ISeries, v: any): void {
-        this.x = pickProp4(v[series.xProp], v.x, v.name, v.label);
-        this.y = pickProp3(v[series.yProp], v.y, v.value);
+        this.x = pickProp4(v[series.xField], v.x, v.name, v.label);
+        this.y = pickProp3(v[series.yField], v.y, v.value);
         this.color = v.color;
     }
 

@@ -121,5 +121,20 @@ export class Color {
     }
 
     private $_parseNumber(s: string): void {
+        const len = s.length;
+        let color: number;
+
+        if (len > 6) {
+            color = parseInt(s.substr(0, 6), 16);
+            this.a = parseInt(s.substring(6), 16) / 0xff;
+        } else if (len > 0) {
+            if (len === 3) {
+                s = s.charAt(0) + s.charAt(0) + s.charAt(1) + s.charAt(1) + s.charAt(2) + s.charAt(2);
+            }
+            color = parseInt(s, 16);
+        }
+        this.r = (color & 0xff0000) >> 16;
+        this.g = (color & 0xff00) >> 8;
+        this.b = color & 0xff;
     }
 }

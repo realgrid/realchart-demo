@@ -174,7 +174,7 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
         this.high = v[pickNum(series.highField, 1 + d)];
 
         if (d > 0) {
-            this.x = v[pickNum(series.xProp, 0)];
+            this.x = v[pickNum(series.xField, 0)];
         } else {
             this.x = this.index;
         }

@@ -55,10 +55,10 @@ export class DumbbellSeriesPoint extends DataPoint {
         const d = v.length > 2 ? 1 : 0;
 
         this.low = v[pickNum(series.lowField, 0 + d)];
-        this.y = v[pickNum(series.yProp, 1 + d)];
+        this.y = v[pickNum(series.yField, 1 + d)];
 
         if (d > 0) {
-            this.x = v[pickNum(series.xProp, 0)];
+            this.x = v[pickNum(series.xField, 0)];
         } else {
             this.x = this.index;
         }
@@ -68,7 +68,7 @@ export class DumbbellSeriesPoint extends DataPoint {
         super._readObject(series, v);
 
         this.low = pickProp(v[series.lowField], v.low);
-        this.y = pickProp3(v[series.yProp], v.y, v.value);
+        this.y = pickProp3(v[series.yField], v.y, v.value);
     }
 
     protected _readSingle(v: any): void {

@@ -6,14 +6,15 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { Color } from "../../common/Color";
 import { ElementPool } from "../../common/ElementPool";
 import { PathElement } from "../../common/RcControl";
-import { IRect } from "../../common/Rectangle";
-import { SvgShapes } from "../../common/impl/SvgShape";
+import { RectElement } from "../../common/impl/RectElement";
+import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { HeatmapSeries, HeatmapSeriesPoint } from "../../model/series/HeatmapSeries";
 import { PointLabelView, SeriesView } from "../SeriesView";
 
-class CellView extends PathElement {
+class CellView extends RectElement {
 
     //-------------------------------------------------------------------------
     // fields
@@ -23,9 +24,6 @@ class CellView extends PathElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc, 'rct-Heatmap-series-marker');
-    }
 }
 
 export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
@@ -33,28 +31,85 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _markers: ElementPool<CellView>;
+    private _cells: ElementPool<CellView>;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-Heatmap-series')
+        super(doc, 'rct-heatmap-series')
 
-        this._markers = new ElementPool(this._pointContainer, CellView);
+        this._cells = new ElementPool(this._pointContainer, CellView);
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: HeatmapSeries): void {
-        const pts = model.getPoints().getVisibles();
+        this.$_parepareCells(model._visPoints as HeatmapSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
+        this.$_layoutCells(width, height);
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    private $_parepareCells(points: HeatmapSeriesPoint[]): void {
+        this._cells.prepare(points.length, (v, i) => {
+            v.point = points[i];
+        });
+    }
+
+    protected $_layoutCells(width: number, height: number): void {
+        const series = this.model;
+        const inverted = series.chart.isInverted();
+        const labels = series.pointLabel;
+        const labelVis = labels.visible;
+        const labelOff = labels.offset;
+        const labelViews = this._labelContainer;
+        const xAxis = series._xAxisObj;
+        const yAxis = series._yAxisObj;
+        const xPad = xAxis instanceof CategoryAxis ? xAxis.categoryPadding * 2 : 0;
+        const yPad = yAxis instanceof CategoryAxis ? yAxis.categoryPadding * 2 : 0;
+        const yLen = inverted ? width : height;
+        const xLen = inverted ? height : width;
+        const color = new Color(series.color);
+
+        this._cells.forEach(cell => {
+            const p = cell.point as HeatmapSeriesPoint;
+            console.log(p.xValue, p.yValue);
+            const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - xPad);
+            const wPoint = wUnit;//series.getPointWidth(wUnit);
+            const hUnit = yAxis.getUnitLength(yLen, p.yValue) * (1 - yPad);
+            const hPoint = hUnit;// series.getPointWidth(hUnit);
+            const org = inverted ? 0 : height;;
+            let x: number;
+            let y: number;
+            let labelView: PointLabelView;
+
+            if (inverted) {
+                y = xLen - xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
+                x = org;
+            } else {
+                x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
+                y = org - yAxis.getPosition(yLen, p.yValue) - wUnit / 2;
+            }
+
+            cell.setBounds(x, y, wPoint, hPoint);
+            cell.setStyle('fill', color.brighten(1 - p.colorValue / series._colorMax).toString());
+
+            // label
+            if (labelVis && (labelView = labelViews.get(p, 0))) {
+                const r = labelView.getBBounds();
+
+                if (inverted) {
+                    labelView.translate(x, y - r.height / 2);
+                } else {
+                    labelView.translate(x + wPoint / 2 - r.width / 2, y + hPoint / 2 - r.height / 2);
+                }
+            }
+        });
+    }
 }

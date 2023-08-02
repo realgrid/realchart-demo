@@ -15,12 +15,12 @@ export class HeatmapSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    z: any;
+    color: any;
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    zValue: number;
+    colorValue: number;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -28,17 +28,17 @@ export class HeatmapSeriesPoint extends DataPoint {
     parse(series: HeatmapSeries): void {
         super.parse(series);
 
-        this.zValue = +this.z;
+        this.colorValue = +this.color;
     }
 
     protected _readArray(series: HeatmapSeries, v: any[]): void {
         const d = v.length > 2 ? 1 : 0;
 
-        this.y = v[pickNum(series.yProp, 0 + d)];
-        this.z = v[pickNum(series.zProp, 1 + d)];
+        this.y = v[pickNum(series.yField, 0 + d)];
+        this.color = v[pickNum(series.colorField, 1 + d)];
 
         if (d > 0) {
-            this.x = v[pickNum(series.xProp, 0)];
+            this.x = v[pickNum(series.xField, 0)];
         } else {
             this.x = this.index;
         }
@@ -47,31 +47,43 @@ export class HeatmapSeriesPoint extends DataPoint {
     protected _readObject(series: HeatmapSeries, v: any): void {
         super._readObject(series, v);
 
-        this.z = pickProp(v[series.zProp], v.z);
+        this.color = pickProp(v[series.colorField], v.color);
     }
 
     protected _readSingle(v: any): void {
         super._readSingle(v);
+    }
 
-        this.z = this.y;
+    getYLabel(index: number) {
+        return this.color;
     }
 }
 
 /**
- * BarRange 시리즈 변종.
+ * [셀 색상]
+ * 1. color-axis가 연결되면 거기에서 색을 가져온다.
+ * 2. series의 minColor, maxColor 사이의 색으로 가져온다.
+ * 3. series의 기본 색상과 흰색 사이의 색으로 가져온다.
  */
 export class HeatmapSeries extends BoxSeries {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    zProp: string;
+    colorField: string;
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _zMin: number;
-    _zMax: number;
+    _colorMin: number;
+    _colorMax: number;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getColor(value: number): string {
+        return;
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -95,12 +107,12 @@ export class HeatmapSeries extends BoxSeries {
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
-        this._zMin = Number.MAX_VALUE;
-        this._zMax = Number.MIN_VALUE;
+        this._colorMin = Number.MAX_VALUE;
+        this._colorMax = Number.MIN_VALUE;
 
         (this._visPoints as HeatmapSeriesPoint[]).forEach(p => {
-            this._zMin = Math.min(this._zMin, p.zValue);
-            this._zMax = Math.max(this._zMax, p.zValue);
+            this._colorMin = Math.min(this._colorMin, p.colorValue);
+            this._colorMax = Math.max(this._colorMax, p.colorValue);
         })
     }
 }

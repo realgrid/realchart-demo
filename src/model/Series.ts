@@ -151,8 +151,8 @@ export interface ISeries extends IPlottingItem {
     // _group: ISeriesGroup2;
     group: ISeriesGroup;
 
-    xProp: string | number;
-    yProp: string | number;
+    xField: string | number;
+    yField: string | number;
 
     color: string;
 
@@ -225,11 +225,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     /**
      * undefined이면 data point의 값이 array일 때는 0, 객체이면 'x'.
      */
-    xProp: string | number;
+    xField: string | number;
     /**
      * undefined이면 data point의 값이 array일 때는 1, 객체이면 'y'.
      */
-    yProp: string | number;
+    yField: string | number;
     /**
      * undefined이면 "data".
      */
@@ -430,7 +430,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     protected _getField(axis: IAxis): any {
-        return axis === this._xAxisObj ? this.xProp : this.yProp;
+        return axis === this._xAxisObj ? this.xField : this.yField;
     }
 
     protected _colorByPoint(): boolean {

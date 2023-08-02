@@ -30,7 +30,7 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: BarRangeSeries): void {
-        this.$_parepareBars(doc, model._visPoints);
+        this.$_parepareBars(model._visPoints);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -40,7 +40,7 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_parepareBars(doc: Document, points: DataPoint[]): void {
+    private $_parepareBars(points: DataPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
             v.point = points[i];
             v.setStyle('fill', points[i].color);

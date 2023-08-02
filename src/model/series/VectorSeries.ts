@@ -38,12 +38,12 @@ export class VectorSeriesPoint extends DataPoint {
     protected _readArray(series: VectorSeries, v: any[]): void {
         const d = v.length > 3 ? 1 : 0;
 
-        this.y = v[pickNum(series.yProp, 0 + d)];
+        this.y = v[pickNum(series.yField, 0 + d)];
         this.length = v[pickNum(series.lengthField, 1 + d)];
         this.angle = v[pickNum(series.angleField, 2 + d)];
 
         if (d > 0) {
-            this.x = v[pickNum(series.xProp, 0)];
+            this.x = v[pickNum(series.xField, 0)];
         } else {
             this.x = this.index;
         }
@@ -54,7 +54,7 @@ export class VectorSeriesPoint extends DataPoint {
 
         this.length = pickProp(v[series.lengthField], v.length);
         this.angle = pickProp(v[series.angleField], v.angle);
-        this.y = pickProp3(v[series.yProp], v.y, v.value);
+        this.y = pickProp3(v[series.yField], v.y, v.value);
     }
 
     protected _readSingle(v: any): void {
