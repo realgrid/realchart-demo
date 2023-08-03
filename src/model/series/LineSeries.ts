@@ -9,7 +9,6 @@
 import { pickNum, pickProp } from "../../common/Common";
 import { StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
-import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { MarerVisibility, PolarableSeries, Series, SeriesGroup, SeriesMarker } from "../Series";
 

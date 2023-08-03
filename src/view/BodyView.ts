@@ -32,6 +32,7 @@ import { HeatmapSeries } from "../model/series/HeatmapSeries";
 import { HistogramSeries } from "../model/series/HistogramSeries";
 import { AreaRangeSeries, AreaSeries, LineSeries } from "../model/series/LineSeries";
 import { LollipopSeries } from "../model/series/LollipopSeries";
+import { ParetoSeries } from "../model/series/ParetoSeries";
 import { PieSeries } from "../model/series/PieSeries";
 import { ScatterSeries } from "../model/series/ScatterSeries";
 import { TreemapSeries } from "../model/series/TreemapSeries";
@@ -55,6 +56,7 @@ import { HeatmapSeriesView } from "./series/HeatmapSeriesView";
 import { HistogramSeriesView } from "./series/HistogramSeriesView";
 import { LineSeriesViewImpl } from "./series/LineSeriesView";
 import { LollipopSeriesView } from "./series/LollipopSeriesView";
+import { ParetoSeriesView } from "./series/ParetoSeriesView";
 import { PieSeriesView } from "./series/PieSeriesView";
 import { ScatterSeriesView } from "./series/ScatterSeriesView";
 import { TreemapSeriesView } from "./series/TreemapSeriesView";
@@ -73,6 +75,7 @@ const series_types = new Map<any, any>([
     [AreaRangeSeries, AreaRangeSeriesView],
     [AreaSeries, AreaSeriesView],
     [LineSeries, LineSeriesViewImpl],
+    [ParetoSeries, ParetoSeriesView],
     [BubbleSeries, BubbleSeriesView],
     [ScatterSeries, ScatterSeriesView],
     [CandlestickSeries, CandlestickSeriesView],

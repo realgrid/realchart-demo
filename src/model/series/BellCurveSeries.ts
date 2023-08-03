@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { DataPoint } from "../DataPoint";
-import { ISeries, Series } from "../Series";
+import { Series } from "../Series";
 import { LineSeriesBase, LineSeriesPoint, LineType } from "./LineSeries";
 
 export class BellCurveSeriesPoint extends LineSeriesPoint {

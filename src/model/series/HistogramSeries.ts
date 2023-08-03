@@ -21,8 +21,6 @@ export class HistogramSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     min: number;
     max: number;
-    width: number;
-    height: number;
 
     //-------------------------------------------------------------------------
     // overriden members

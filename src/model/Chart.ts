@@ -33,6 +33,7 @@ import { HeatmapSeries } from "./series/HeatmapSeries";
 import { HistogramSeries } from "./series/HistogramSeries";
 import { AreaRangeSeries, AreaSeries, LineSeries, LineSeriesGroup } from "./series/LineSeries";
 import { LollipopSeries } from "./series/LollipopSeries";
+import { ParetoSeries } from "./series/ParetoSeries";
 import { PieSeries, PieSeriesGroup } from "./series/PieSeries";
 import { ScatterSeries } from "./series/ScatterSeries";
 import { TreemapSeries } from "./series/TreemapSeries";
@@ -97,6 +98,7 @@ const series_types = {
     'histogram': HistogramSeries,
     'line': LineSeries,
     'lollipop': LollipopSeries,
+    'pareto': ParetoSeries,
     'pie': PieSeries,
     'scatter': ScatterSeries,
     'treemap': TreemapSeries,

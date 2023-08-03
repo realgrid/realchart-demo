@@ -288,7 +288,7 @@ export abstract class ContinuousAxis extends Axis {
             ticks.push({
                 pos: this.getStepPosition(length, steps[i]),
                 value: steps[i],
-                label: String(steps[i])
+                label: this.tick.getTick(steps[i])// String(steps[i])
             });
         }
         return ticks;
