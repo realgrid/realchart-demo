@@ -1,0 +1,72 @@
+const config = {
+    title: "Treemap 01",
+    xAxis: {
+    },
+    yAxis: {
+    },
+    series: {
+        type: 'treemap',
+        startDir: 'vertical',
+        // algorithm: 'sliceDice',
+        pointLabel: {
+            visible: true,
+            // offset: 10,
+            text: '${x}',
+            effect: 'outline',// 'background',
+            style: {
+            },
+            // backgroundStyle: {
+            //     fill: '#004',
+            //     padding: '5px'
+            // }
+        },
+        data: [{
+            "name": "A",
+            "value": 6,
+            "colorValue": 1
+        }, {
+            "name": "B",
+            "value": 5,
+            "colorValue": 2
+        }, {
+            "name": "C",
+            "value": 4,
+            "colorValue": 3
+        }, {
+            "name": "D",
+            "value": 3,
+            "colorValue": 4
+        }, {
+            "name": "E",
+            "value": 2,
+            "colorValue": 5
+        }, {
+            "name": "F",
+            "value": 2,
+            "colorValue": 6
+        }, {
+            "name": "G",
+            "value": 1,
+            "colorValue": 7
+        }, {
+            "name": "H",
+            "value": 1,
+            "colorValue": 7
+        }, {
+            "name": "I",
+            "value": 1,
+            "colorValue": 7
+        }],
+        style: {
+        }
+    }
+}
+
+export function init() {
+    // console.log(RealChart.getVersion());
+    // RealChart.setLogging(true);
+    RealChart.setDebugging(true);
+
+    const chart = RealChart.createChartControl(document, 'realchart');
+    chart.model = RealChart.loadChart(config);
+}

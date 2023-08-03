@@ -81,27 +81,27 @@ const group_types = {
 };
 
 const series_types = {
-    'bar': BarSeries,
-    'barrange': BarRangeSeries,
-    'lollipop': LollipopSeries,
-    'dumbbell': DumbbellSeries,
-    'equalizer': EqualizerSeries,
-    'line': LineSeries,
     'area': AreaSeries,
     'arearange': AreaRangeSeries,
+    'bar': BarSeries,
+    'barrange': BarRangeSeries,
+    'bellcurve': BellCurveSeries,
     'boxplot': BoxPlotSeries,
     'bubble': BubbleSeries,
-    'scatter': ScatterSeries,
     'candlestick': CandlestickSeries,
-    'waterfall': WaterfallSeries,
+    'dumbbell': DumbbellSeries,
+    'equalizer': EqualizerSeries,
     'errorbar': ErrorBarSeries,
-    'histogram': HistogramSeries,
-    'bellcurve': BellCurveSeries,
+    'funnel': FunnelSeries,
     'heatmap': HeatmapSeries,
+    'histogram': HistogramSeries,
+    'line': LineSeries,
+    'lollipop': LollipopSeries,
+    'pie': PieSeries,
+    'scatter': ScatterSeries,
     'treemap': TreemapSeries,
     'vector': VectorSeries,
-    'pie': PieSeries,
-    'funnel': FunnelSeries
+    'waterfall': WaterfallSeries,
 };
 
 const axis_types = {

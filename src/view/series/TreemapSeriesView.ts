@@ -6,11 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { Color } from "../../common/Color";
 import { ElementPool } from "../../common/ElementPool";
 import { PathElement } from "../../common/RcControl";
-import { IRect } from "../../common/Rectangle";
 import { SvgShapes } from "../../common/impl/SvgShape";
-import { TreemapSeries, TreemapSeriesPoint } from "../../model/series/TreemapSeries";
+import { TreeNode, TreemapSeries, TreemapSeriesPoint } from "../../model/series/TreemapSeries";
 import { PointLabelView, SeriesView } from "../SeriesView";
 
 class NodeView extends PathElement {
@@ -18,13 +18,22 @@ class NodeView extends PathElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    point: TreemapSeriesPoint;
+    node: TreeNode
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-Treemap-series-marker');
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    render(): void {
+        const n = this.node;
+
+        this.setPath(SvgShapes.rect(this.node));
     }
 }
 
@@ -33,7 +42,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _markers: ElementPool<NodeView>;
+    private _nodeViews: ElementPool<NodeView>;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -41,17 +50,39 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
     constructor(doc: Document) {
         super(doc, 'rct-Treemap-series')
 
-        this._markers = new ElementPool(this._pointContainer, NodeView);
+        this._nodeViews = new ElementPool(this._pointContainer, NodeView);
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: TreemapSeries): void {
-        const pts = model.getPoints().getVisibles();
     }
 
     protected _renderSeries(width: number, height: number): void {
+        const series = this.model;
+        const labels = series.pointLabel;
+        const labelVis = labels.visible;
+        const labelViews = this._labelContainer;
+        const nodes = series.buildMap(width, height);
+        const sum = series._sum;
+        const color = new Color(series.color);
+        let labelView: PointLabelView;
+
+        this._nodeViews.prepare(nodes.length, (v, i, count) => {
+            const m = nodes[i];
+
+            v.node = m;
+            v.setStyle('fill', color.brighten(m.index / count).toString());
+            v.render();
+
+            // label
+            if (labelVis && (labelView = labelViews.get(m.point, 0))) {
+                const r = labelView.getBBounds();
+
+                labelView.translate(m.x + m.width / 2 - r.width / 2, m.y + m.height / 2 - r.height / 2);
+            }
+        })
     }
 
     //-------------------------------------------------------------------------

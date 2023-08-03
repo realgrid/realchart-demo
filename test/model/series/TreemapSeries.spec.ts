@@ -47,4 +47,55 @@ import { Chart } from '../../../src/model/Chart';
 
         series.chart._getSeries().prepareRender();
     });
+
+    it('prepare leveled', () => {
+        const series = loadSeries("treemap-02");
+
+        series.chart._getSeries().prepareRender();
+        expect(series._roots.length).lt(series.getPoints().count);
+    });
+
+    it('buildMap - squarify', () => {
+        const series = loadSeries("treemap-01");
+
+        series.chart._getSeries().prepareRender();
+        series.buildMap(500, 400);
+        expect(series._leafs.length).eq(series.getPoints().count);
+    });
+
+    it('buildMap - level - squarify', () => {
+        const series = loadSeries("treemap-02");
+
+        series.chart._getSeries().prepareRender();
+        series.buildMap(500, 400);
+    });
+
+    it('buildMap - sliceDice', () => {
+        const series = loadSeries("treemap-01");
+
+        series.chart._getSeries().prepareRender();
+        series.alternate = false;
+        series.buildMap(500, 400);
+    });
+
+    it('buildMap - level - sliceDice', () => {
+        const series = loadSeries("treemap-02");
+
+        series.chart._getSeries().prepareRender();
+        series.buildMap(500, 400);
+    });
+
+    it('buildMap - sliceDice alternate', () => {
+        const series = loadSeries("treemap-01");
+
+        series.chart._getSeries().prepareRender();
+        series.buildMap(500, 400);
+    });
+
+    it('buildMap - level - sliceDice alternate', () => {
+        const series = loadSeries("treemap-02");
+
+        series.chart._getSeries().prepareRender();
+        series.buildMap(500, 400);
+    });
 });

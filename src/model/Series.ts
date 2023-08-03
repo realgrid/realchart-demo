@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, isString, pickNum } from "../common/Common";
-import { Align, IPercentSize, RtPercentSize, VerticalAlign, calcPercent, parsePercentSize } from "../common/Types";
+import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { Shape } from "../common/impl/SvgShape";
 import { IAxis } from "./Axis";
