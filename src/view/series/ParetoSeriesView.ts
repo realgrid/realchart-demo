@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ParetoSeries } from "../../model/series/ParetoSeries";
+import { SlideAnimation } from "../animation/SeriesAnimation";
 import { LineSeriesView } from "./LineSeriesView";
 
 export class ParetoSeriesView extends LineSeriesView<ParetoSeries> {

@@ -35,8 +35,19 @@ export class ParetoSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    /**
+     * 이 시리즈 data point들을 구성할 수 있는 데이터를 포함한 원본 시리즈.
+     * <br>
+     * 시리즈 이름이나 index로 지정한다.
+     */
     source: string | number;
-    lineType = LineType.DEFAULT;
+    /**
+     * true면 spline 곡선으로 표시한다.
+     * <br>
+     * 
+     * @default false
+     */
+    curved = false;
 
     //-------------------------------------------------------------------------
     // fields
@@ -52,7 +63,7 @@ export class ParetoSeries extends LineSeriesBase {
     }
 
     getLineType(): LineType {
-        return this.lineType;
+        return this.curved ? LineType.SPLINE : LineType.DEFAULT;
     }
 
     protected _createPoint(source: any): DataPoint {

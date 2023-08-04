@@ -20,6 +20,7 @@ const config = {
         name: 'pareto',
         type: 'pareto',
         source: 'main',
+        curved: true,
         yAxis: 1
     }]
 }

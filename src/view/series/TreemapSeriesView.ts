@@ -10,8 +10,9 @@ import { Color } from "../../common/Color";
 import { ElementPool } from "../../common/ElementPool";
 import { PathElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
-import { TreeNode, TreemapSeries, TreemapSeriesPoint } from "../../model/series/TreemapSeries";
+import { TreeNode, TreemapSeries } from "../../model/series/TreemapSeries";
 import { PointLabelView, SeriesView } from "../SeriesView";
+import { SlideAnimation } from "../animation/SeriesAnimation";
 
 class NodeView extends PathElement {
 
@@ -83,6 +84,10 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
                 labelView.translate(m.x + m.width / 2 - r.width / 2, m.y + m.height / 2 - r.height / 2);
             }
         })
+    }
+
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && new SlideAnimation(this);
     }
 
     //-------------------------------------------------------------------------

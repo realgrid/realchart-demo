@@ -14,6 +14,7 @@ import { Chart } from "../../main";
 import { DataPoint } from "../../model/DataPoint";
 import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection, LineType } from "../../model/series/LineSeries";
 import { SeriesView } from "../SeriesView";
+import { SlideAnimation } from "../animation/SeriesAnimation";
 
 export class LineMarkerView extends PathElement {
 
@@ -63,18 +64,8 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
         this._layoutLines(this.model._visPoints as LineSeriesPoint[]);
     }
 
-    protected _afterRender(): void {
-        // const cr = this.clipRect(0, -this.height / 2, this.width, this.height * 2);
-        
-        // cr.dom.firstElementChild.animate([
-        //     { width: '0'},
-        //     { width: this.width + 'px'}
-        // ], {
-        //     duration: 1000,
-        //     fill: 'none'
-        // })?.addEventListener('finish', () => {
-        //     this.control.removeDef(cr);
-        // });
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && new SlideAnimation(this);
     }
 
     //-------------------------------------------------------------------------
