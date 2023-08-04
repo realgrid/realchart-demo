@@ -82,8 +82,8 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         }
         this._bars.prepare(points.length, (v, i) => {
             v.point = points[i];
-            v.setStyle('fill', points[i].color);
             v.setStyleOrClass(style);
+            points[i].color && v.setStyle('fill', points[i].color);
         });
     }
 
@@ -95,8 +95,8 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         }
         this._sectors.prepare(points.length, (v, i) => {
             v.point = points[i];
-            v.setStyle('fill', points[i].color);
             v.setStyleOrClass(style);
+            points[i].color && v.setStyle('fill', points[i].color);
         });
     }
 

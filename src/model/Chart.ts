@@ -194,7 +194,8 @@ export class Chart extends RcObject implements IChart {
     private _body: Body;
 
     _polar: boolean;
-    colors = ["#2caffe", "#544fc5", "#00e272", "#fe6a35", "#6b8abc", "#d568fb", "#2ee0ca", "#fa4b42", "#feb56a", "#91e8e12"];
+    colors = ["#1bafdc", "#12d365", "#343ec3", "#81d8c1", 
+    "#fe6a35", "#6b8abc", "#d568fb", "#2ee0ca", "#fa4b42", "#feb56a"];
 
     //-------------------------------------------------------------------------
     // constructor

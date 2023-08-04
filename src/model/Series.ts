@@ -483,119 +483,119 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 }
 
-export class SeriesCollection {
+// export class SeriesCollection {
 
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    readonly chart: IChart;
-    private _items: Series[] = [];
-    private _map = new Map<string, Series>();
+//     //-------------------------------------------------------------------------
+//     // fields
+//     //-------------------------------------------------------------------------
+//     readonly chart: IChart;
+//     private _items: Series[] = [];
+//     private _map = new Map<string, Series>();
 
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(chart: IChart) {
-        this.chart = chart;
-    }
+//     //-------------------------------------------------------------------------
+//     // constructor
+//     //-------------------------------------------------------------------------
+//     constructor(chart: IChart) {
+//         this.chart = chart;
+//     }
 
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    get first(): Series {
-        return this._items[0];
-    }
+//     //-------------------------------------------------------------------------
+//     // properties
+//     //-------------------------------------------------------------------------
+//     get first(): Series {
+//         return this._items[0];
+//     }
 
-    isEmpty(): boolean {
-        if (this._items.length > 0) {
-            for (const ser of this._items) {
-                if (!ser.isEmpty()) return false;
-            }
-        }
-        return true;
-    }
+//     isEmpty(): boolean {
+//         if (this._items.length > 0) {
+//             for (const ser of this._items) {
+//                 if (!ser.isEmpty()) return false;
+//             }
+//         }
+//         return true;
+//     }
 
-    items(): Series[] {
-        return this._items.slice(0);
-    }
+//     items(): Series[] {
+//         return this._items.slice(0);
+//     }
 
-    visibles(): Series[] {
-        return this._items.filter(ser => ser.visible);
-    }
+//     visibles(): Series[] {
+//         return this._items.filter(ser => ser.visible);
+//     }
 
-    needAxes(): boolean {
-        for (const ser of this._items) {
-            if (ser.visible && ser.needAxes()) {
-                return true;
-            }
-        }
-        return this._items.length === 0;
-    }
+//     needAxes(): boolean {
+//         for (const ser of this._items) {
+//             if (ser.visible && ser.needAxes()) {
+//                 return true;
+//             }
+//         }
+//         return this._items.length === 0;
+//     }
 
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    load(src: any): void {
-        const chart = this.chart;
+//     //-------------------------------------------------------------------------
+//     // methods
+//     //-------------------------------------------------------------------------
+//     load(src: any): void {
+//         const chart = this.chart;
 
-        this._items = [];
-        this._map.clear();
+//         this._items = [];
+//         this._map.clear();
 
-        if (isArray(src)) {
-            src.forEach((s, i) => this._items.push(this.$_loadSeries(chart, s)));
+//         if (isArray(src)) {
+//             src.forEach((s, i) => this._items.push(this.$_loadSeries(chart, s)));
 
-            this._items.forEach(ser => {
-                for (const ser2 of this._items) {
-                    if (ser2 !== ser && ser._referOtherSeries(ser2)) {
-                        break;
-                    }
-                }
-            });
-        } else if (isObject(src)) {
-            this._items.push(this.$_loadSeries(chart, src));
-        }
-    }
+//             this._items.forEach(ser => {
+//                 for (const ser2 of this._items) {
+//                     if (ser2 !== ser && ser._referOtherSeries(ser2)) {
+//                         break;
+//                     }
+//                 }
+//             });
+//         } else if (isObject(src)) {
+//             this._items.push(this.$_loadSeries(chart, src));
+//         }
+//     }
 
-    get(name: string): Series {
-        return this._map.get(name);
-    }
+//     get(name: string): Series {
+//         return this._map.get(name);
+//     }
 
-    getLegendSources(): ILegendSource[] {
-        const legends: ILegendSource[] = [];
+//     getLegendSources(): ILegendSource[] {
+//         const legends: ILegendSource[] = [];
 
-        this._items.forEach(ser => {
-            ser.visible && ser.getLegendSources(legends);
-        })
-        return legends;
-    }
+//         this._items.forEach(ser => {
+//             ser.visible && ser.getLegendSources(legends);
+//         })
+//         return legends;
+//     }
 
-    forEach(callback: (p: Series, i?: number) => any): void {
-        for (let i = 0, n = this._items.length; i < n; i++) {
-            if (callback(this._items[i], i) === true) break;
-        }
-    }
+//     forEach(callback: (p: Series, i?: number) => any): void {
+//         for (let i = 0, n = this._items.length; i < n; i++) {
+//             if (callback(this._items[i], i) === true) break;
+//         }
+//     }
 
-    prepareRender(): void {
-        const colors = this.chart.colors;
+//     prepareRender(): void {
+//         const colors = this.chart.colors;
 
-        this._items.forEach((ser, i) => {
-            if (ser.visible) {
-                ser.color = colors[i % colors.length];
-                ser.prepareRender();
-            }
-        });
-    }
+//         this._items.forEach((ser, i) => {
+//             if (ser.visible) {
+//                 ser.color = colors[i % colors.length];
+//                 ser.prepareRender();
+//             }
+//         });
+//     }
 
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
-    private $_loadSeries(chart: IChart, src: any): Series {
-        const ser = Series._loadSeries(chart, src);
+//     //-------------------------------------------------------------------------
+//     // internal members
+//     //-------------------------------------------------------------------------
+//     private $_loadSeries(chart: IChart, src: any): Series {
+//         const ser = Series._loadSeries(chart, src);
 
-        src.name && this._map.set(src.name, ser);
-        return ser;
-    }
-}
+//         src.name && this._map.set(src.name, ser);
+//         return ser;
+//     }
+// }
 
 export class PlottingItemCollection  {
 

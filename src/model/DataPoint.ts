@@ -104,6 +104,12 @@ export class DataPoint {
     }
 
     protected _readArray(series: ISeries, v: any[]): void {
+        const f = +series.colorField;
+
+        if (!isNaN(f)) {
+            this.color = v[f];
+        }
+
         if (v.length > 1) {
             this.x = v[pickNum(series.xField, 0)];
             this.y = v[pickNum(series.yField, 1)];
