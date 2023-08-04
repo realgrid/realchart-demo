@@ -111,7 +111,7 @@ export class PointLabelContainer extends GroupElement {
 
     prepare(doc: Document, model: Series): void {
         const labels = this._labels;
-        const points = model.getPoints();
+        const points = model.getLabeledPoints();
         const pointLabel = model.pointLabel;
         // const svgFormat = pointLabel.svgFormat;
 
@@ -120,8 +120,8 @@ export class PointLabelContainer extends GroupElement {
             // const styles = pointLabel.styles;
 
             // TODO: scroll 시에는 reprepare 필요?
-            labels[0].prepare(points.count);
-            labels[1].prepare(points.count);
+            labels[0].prepare(points.length);
+            labels[1].prepare(points.length);
             maps[0] = {};
             maps[1] = {};
 
@@ -258,7 +258,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         this._prepareSeries(doc, model);
-        this._labelContainer.prepare(doc, model);
+        !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
         
         return Size.create(hintWidth, hintHeight);
     }
@@ -275,6 +275,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
 
+    protected _lazyPrepareLabels(): boolean { return false; }
     protected _afterRender(): void {}
     protected _runShowEffect(firstTime: boolean): void {}
 }

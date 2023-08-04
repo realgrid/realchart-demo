@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { Color } from "../../common/Color";
 import { toStr } from "../../common/Types";
 import { DataPoint } from "../DataPoint";
 import { BoxSeries } from "./BarSeries";
@@ -43,6 +44,8 @@ export class TreemapSeriesPoint extends DataPoint {
 }
 
 interface IArea {
+    x: number, 
+    y: number,
     width: number;
     height: number;
 }
@@ -57,18 +60,49 @@ export class TreeNode {
     width: number;
     height: number;
 
-    area: IArea;
+    _color: Color;
 
     constructor(public point: TreemapSeriesPoint) {}
+
+    getArea(): IArea {
+        return {x: this.x, y: this.y, width: this.width, height: this.height};
+    }
+
+    setArea(x: number, y: number, w: number, h: number): void {
+        this.x = x;
+        this.y = y;
+        this.width = w;
+        this.height = h;
+    }
+
+    getTotal(): number {
+        return this.children.reduce((a, c) => a + c.value, 0);
+    }
 }
 
 export enum TreemapAlgorithm {
     /**
      * 최대한 정사각형에 가까운 비율을 유지한다.
      * <br>
+     * 줄마다 배치 방향을 바꾼다.
      * 사용자가 크기를 비교하기에 유리하다.
      */
     SQUARIFY = 'squarify',
+    /**
+     * 최대한 정사각형에 가까운 비율을 유지한다.
+     * <br>
+     * 같은 방향을 유지하면 배치한다.
+     */
+    STRIP = 'strip',
+    /**
+     * 수평/수직 한 쪽 방향으로 나눈다.
+     * <br>
+     * level이 바뀌면 방향을 바꾼다.
+     */
+    SLICE = 'slice',
+    /**
+     * 방향을 번갈아 가면서 나눈다.
+     */
     SLICE_DICE = 'sliceDice'
 }
 
@@ -78,10 +112,7 @@ export enum TreemapAlgorithm {
  * 3. 일정 표시 공간을 100% 사용한다.
  * 4. 초기 공간을 재귀적으로 나누어 가면서 구성한다.
  * 
- * [알고리즘]
- * 1. slice and dice
- *    - 가장 단순하다.
- *    - 각 level에서 자르는 방향을 바꾼다.
+ * // TODO: grouping된 data 설정 가능하도록 한다. data[{data:[]}, {data:[]}]
  */
 export class TreemapSeries extends BoxSeries {
 
@@ -108,7 +139,6 @@ export class TreemapSeries extends BoxSeries {
     _roots: TreeNode[];
     _leafs: TreeNode[];
     private _map: {[id: string]: TreeNode} = {};
-    _sum = 0;
 
     //-------------------------------------------------------------------------
     // methods
@@ -119,13 +149,15 @@ export class TreemapSeries extends BoxSeries {
             if (node.children) {
                 let sum = 0;
 
-                node.children.forEach((c, i) => {
-                    c.index = i;
-                    visit(c);
-                    sum += c.value;
+                node.children.forEach((node, i) => {
+                    visit(node);
+                    sum += node.value;
                 })
                 node.value = sum;
-                node.children = node.children.sort((n1, n2) => n1.value - n2.value);
+                node.children = node.children.sort((n1, n2) => n2.value - n1.value);
+                node.children.forEach((node, i) => {
+                    node.index = i;
+                });
             } else {
                 leafs.push(node);
                 node.value = node.point ? node.point.yValue : 0;
@@ -135,12 +167,13 @@ export class TreemapSeries extends BoxSeries {
         const vertical = this.startDir === 'vertical' || height > width;
         const leafs = this._leafs = [];
 
-        this._sum = 0;
-        this._roots = this._roots.sort((n1, n2) => n1.value - n2.value);
+        this._roots.forEach((node, i) => {
+            visit(node);
+        });
+
+        this._roots = this._roots.sort((n1, n2) => n2.value - n1.value);
         this._roots.forEach((node, i) => {
             node.index = i;
-            visit(node);
-            this._sum += node.value;
         });
 
         (this[this.algorithm] || this.squarify).call(this, this._roots, width, height, vertical);
@@ -162,6 +195,10 @@ export class TreemapSeries extends BoxSeries {
         return new TreemapSeriesPoint(source);
     }
 
+    getLabeledPoints(): DataPoint[] {
+        return this._leafs.map(node => node.point);
+    }
+
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
@@ -173,7 +210,7 @@ export class TreemapSeries extends BoxSeries {
     //-------------------------------------------------------------------------
     private $_buildTree(pts: TreemapSeriesPoint[]): TreeNode[] {
         const roots: TreeNode[] = [];
-        const leafs = [];
+        const list = [];
         const map = this._map;
 
         pts.forEach(p => {
@@ -183,136 +220,112 @@ export class TreemapSeries extends BoxSeries {
                 map[p.id] = node;
             } 
             if (p.group) {
-                leafs.push(node);
+                list.push(node);
             } else {
                 roots.push(node);
             }
         })
 
-        for (let i = leafs.length - 1; i >= 0; i--) {
-            const node = leafs[i];
+        for (let i = list.length - 1; i >= 0; i--) {
+            const node = list[i];
             const g = map[node.point.group];
 
             if (node.parent = g) {
                 if (!g.children) g.children = [];
                 g.children.push(node);
-                if (node.children) leafs.splice(i, 1);
+                if (node.children) list.splice(i, 1);
             } else {
                 roots.push(node);
-                leafs.splice(i, 1);
+                list.splice(i, 1);
             }
         };
         return roots;
     }
 
-    private $_squarify(nodes: TreeNode[], x: number, y: number, width: number, height: number, dir: number, total: number): void {
-        const n = nodes.length;
-        const totalArea = width * height;
+    private $_squarifyRow(nodes: TreeNode[], area: IArea, dir: number, total: number): number {
+        const totalArea = area.width * area.height;
+        const w = area.width;
+        const h = area.height;
+        let x = area.x;
+        let y = area.y;
         let prevRate = Number.MAX_VALUE;
-        let node: TreeNode;
-        let x1 = x;
-        let y1 = y;
-        let w = width;
-        let h = height;
+        let sum = 0;
         const list: TreeNode[] = [];
-        let wNode: number;
-        let hNode: number;
-        let area: number;
-        let rate: number;
-        let sum: number;
 
-        for (let i = 0; i < n; i++) {
-            node = nodes[i];
+        while (nodes.length > 0) {
+            let node: TreeNode;
+            let wNode: number;
+            let hNode: number;
+            let pArea: number;
+            let rate: number;
 
-            if (list.length == 0) {
-                area = node.value * totalArea / total;
-                if (dir === 1) {
-                    hNode = h;
-                    wNode = area / hNode;
-                } else {
-                    wNode = w;
-                    hNode = area / wNode;
-                }
-                sum = node.value;
+            node = nodes.shift();
+            sum += node.value;
+            pArea = sum * totalArea / total;
+
+            if (dir === 1) {
+                wNode = pArea / h;
+                hNode = h * node.value / sum;
             } else {
-                sum += node.value;
-                area = sum * totalArea / total;
-                if (dir === 1) {
-                    wNode = area / h;
-                    hNode = h * node.value / sum;
-                } else {
-                    hNode = area / w;
-                    wNode = w * node.value / sum;
-                }
+                hNode = pArea / w;
+                wNode = w * node.value / sum;
             }
             rate = Math.max(wNode / hNode, hNode / wNode);
 
-            if (i < n - 1 && rate > prevRate) {
+            if (nodes.length > 0 && rate > prevRate) {
+                nodes.unshift(node);
                 sum -= node.value;
-                area = totalArea * sum / total;
+                pArea = totalArea * sum / total;
 
                 if (dir === 1) {
                     hNode = h;
-                    wNode = area / hNode;
+                    wNode = pArea / hNode;
                 } else {
                     wNode = w;
-                    hNode = area / wNode;
+                    hNode = pArea / wNode;
                 }
 
                 list.forEach(node => {
                     if (dir === 1) {
-                        node.y = y;
-                        node.x = x1;
-                        node.height = h * node.value / sum;
-                        node.width = wNode;
+                        node.setArea(x, y, wNode, h * node.value / sum);
                         y += node.height;
                     } else {
-                        node.x = x;
-                        node.y = y1;
-                        node.width = w * node.value / sum;
-                        node.height = hNode;
+                        node.setArea(x, y, w * node.value / sum, hNode);
                         x += node.width;
                     }
                 })
 
-                // 초기화
-                list.length = 0;
-                prevRate = Number.MAX_VALUE;
                 if (dir === 1) {
-                    y = y1;
-                    x1 += wNode;
+                    area.x += wNode;
+                    area.width -= wNode;
                 } else {
-                    x = x1;
-                    y1 += hNode;
+                    area.y += hNode;
+                    area.height -= hNode;
                 }
-                i--;
-                // dir = 1 - dir;
-            } else if (i === n - 1) {
-                area = totalArea * sum / total;
+                return total - sum;
+
+            } else if (nodes.length === 0) {
+                pArea = totalArea * sum / total;
                 if (dir === 1) {
                     hNode = h;
-                    wNode = area / hNode;
+                    wNode = pArea / hNode;
                 } else {
                     wNode = w;
-                    hNode = area / wNode;
+                    hNode = pArea / wNode;
                 }
 
                 list.push(node);
                 list.forEach(node => {
                     if (dir === 1) {
-                        node.y = y;
-                        node.x = x1;
-                        node.height = h * node.value / sum;
-                        node.width = wNode;
+                        node.setArea(x, y, wNode, h * node.value / sum);
                         y += node.height;
                     } else {
-                        node.x = x;
-                        node.y = y1;
-                        node.width = w * node.value / sum;
-                        node.height = hNode;
+                        node.setArea(x, y, w * node.value / sum, hNode);
                         x += node.width;
                     }
                 })
+                return 0;
+
             } else {
                 prevRate = rate;
                 list.push(node);
@@ -320,58 +333,76 @@ export class TreemapSeries extends BoxSeries {
         }
     }
 
-    private squarify(roots: TreeNode[], width: number, height: number, vertical: boolean): void {
-        this.$_squarify(roots, 0, 0, width, height, vertical ? 1 : 0, this._sum);
+    private $_squarify(roots: TreeNode[], area: IArea, vertical: boolean, changeDir: boolean): void {
+        const nodes = roots.slice(0);
+        let dir = vertical ? 1 : 0;
+        let sum = roots.reduce((a, c) => a + c.value, 0);
+
+        do {
+            sum = this.$_squarifyRow(nodes, area, dir, sum);
+            if (changeDir) {
+                dir = 1 - dir;
+            }
+        } while (sum > 0);
+
+        roots.forEach(node => {
+            if (node.children) {
+                this.$_squarify(node.children, node.getArea(), !vertical, true);
+            }
+        })
     }
 
-    private $_slice(nodes: TreeNode[], width: number, height: number, dir: number, sum: number): void {
-        const n = nodes.length;
-        let node: TreeNode;
+    private squarify(roots: TreeNode[], width: number, height: number, vertical: boolean): void {
+        this.$_squarify(roots, {x: 0, y: 0, width, height}, vertical, true);
+    }
+
+    private strip(roots: TreeNode[], width: number, height: number, vertical: boolean): void {
+        this.$_squarify(roots, {x: 0, y: 0, width, height}, vertical, false);
+    }
+
+    private $_sliceNext(node: TreeNode, area: IArea, dir: number, sum: number): void {
+        node.x = area.x;
+        node.y = area.y;
 
         if (dir === 1) { // vertical
-            let y = 0;
-            let h = height;
-
-            for (let i = 0; i < n - 1; i++) {
-                node = nodes[i];
-                const h2 = height * node.value / sum;
-
-                node.x = 0;
-                node.y = y;
-                node.height = h2;
-                node.width = width;
-                h -= h2;
-                y += h2;
-            }
-            node = nodes[n - 1];
-            node.y = y;
-            node.x = 0;
+            const h = area.height * node.value / sum;
+            
+            node.width = area.width;
             node.height = h;
-            node.width = width;
+            area.y += h;
+            area.height -= h;
         } else {
-            let x = 0;
-            let w = width;
+            const w = area.width * node.value / sum;
 
-            for (let i = 0; i < n - 1; i++) {
-                node = nodes[i];
-                const w2 = width * node.value / sum;
-
-                node.x = x;
-                node.y = 0;
-                node.width = w2;
-                node.height = height;
-                w -= w2;
-                x += w2;
-            }
-            node = nodes[n - 1];
-            node.x = x;
-            node.y = 0;
+            node.height = area.height;
             node.width = w;
-            node.height = height;
+            area.x += w;
+            area.width -= w;
+        }
+
+        if (node.children) {
+            this.$_slice(node.children, node.getArea(), dir === 0, true);
         }
     }
 
+    private $_slice(roots: TreeNode[], area: IArea, vertical: boolean, changeDir: boolean): void {
+        let sum = roots.reduce((a, c) => a + c.value, 0);
+        let dir = vertical ? 1 : 0;
+
+        roots.forEach(node => {
+            this.$_sliceNext(node, area, dir, sum);
+            sum -= node.value;
+            if (changeDir) {
+                dir = 1 - dir;
+            }
+        })
+    }
+    
+    private slice(roots: TreeNode[], width: number, height: number, vertical: boolean): void {
+        this.$_slice(roots, {x: 0, y: 0, width, height}, vertical, false);
+    }
+
     private sliceDice(roots: TreeNode[], width: number, height: number, vertical: boolean): void {
-        this.$_slice(roots, width, height, vertical ? 1 : 0, this._sum);
+        this.$_slice(roots, {x: 0, y: 0, width, height}, vertical, true);
     }
 }

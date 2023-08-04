@@ -6,19 +6,16 @@ const config = {
     },
     series: {
         type: 'treemap',
-        startDir: 'vertical',
+        // startDir: 'vertical',
+        algorithm: 'squarify',
         // algorithm: 'sliceDice',
+        // algorithm: 'slice',
         pointLabel: {
             visible: true,
-            // offset: 10,
             text: '${x}',
-            effect: 'outline',// 'background',
+            effect: 'outline',
             style: {
             },
-            // backgroundStyle: {
-            //     fill: '#004',
-            //     padding: '5px'
-            // }
         },
         data: [{
             "name": "A",

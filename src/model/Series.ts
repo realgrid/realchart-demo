@@ -153,6 +153,7 @@ export interface ISeries extends IPlottingItem {
 
     xField: string | number;
     yField: string | number;
+    colorField: string | number;
 
     color: string;
 
@@ -223,13 +224,17 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     xAxis: string | number;
     yAxis: string | number;
     /**
-     * undefined이면 data point의 값이 array일 때는 0, 객체이면 'x'.
+     * undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'.
      */
     xField: string | number;
     /**
-     * undefined이면 data point의 값이 array일 때는 1, 객체이면 'y'.
+     * undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'.
      */
     yField: string | number;
+    /**
+     * undefined이면, data point의 값이 객체일 때 'color'.
+     */
+    colorField: string;
     /**
      * undefined이면 "data".
      */
@@ -263,6 +268,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     getPoints(): DataPointCollection {
         return this._points;
+    }
+
+
+    getLabeledPoints(): DataPoint[] {
+        return this._points.getPoints();
     }
 
     getVisiblePoints(): DataPoint[] {

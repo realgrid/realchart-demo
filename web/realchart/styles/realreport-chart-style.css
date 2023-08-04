@@ -281,6 +281,11 @@
     /* stroke-linejoin: round; */
 }
 
+/** treemap series */
+.rct-treemap-series-node {
+    stroke: white;
+}
+
 /** pie series */
 .rct-pie-series .rct-series-points {
     stroke: white;

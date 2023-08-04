@@ -25,7 +25,7 @@ class NodeView extends PathElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-Treemap-series-marker');
+        super(doc, 'rct-treemap-series-node');
     }
 
     //-------------------------------------------------------------------------
@@ -57,6 +57,10 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _lazyPrepareLabels(): boolean {
+        return true;
+    }
+
     protected _prepareSeries(doc: Document, model: TreemapSeries): void {
     }
 
@@ -66,28 +70,45 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
         const labelVis = labels.visible;
         const labelViews = this._labelContainer;
         const nodes = series.buildMap(width, height);
-        const sum = series._sum;
         const color = new Color(series.color);
         let labelView: PointLabelView;
 
+        // buildMap()으로 leafs가 결정돼야 한다.
+        labelViews.prepare(this.doc, series);
+
         this._nodeViews.prepare(nodes.length, (v, i, count) => {
             const m = nodes[i];
+            const g = m.parent;
+            let c = color;
+
+            if (g) {
+                if (!g._color && g.point.color) {
+                    c = g._color = new Color(g.point.color);
+                }
+                if (g._color) {
+                    c = g._color;
+                }
+            }
 
             v.node = m;
-            v.setStyle('fill', color.brighten(m.index / count).toString());
+            v.setStyle('fill', c.brighten(m.index / count).toString());
             v.render();
 
             // label
             if (labelVis && (labelView = labelViews.get(m.point, 0))) {
                 const r = labelView.getBBounds();
 
-                labelView.translate(m.x + m.width / 2 - r.width / 2, m.y + m.height / 2 - r.height / 2);
+                // 너비나 높이가 모두 한글자는 표시할 수 있을 정도가 돼야 표시.
+                if (labelView.setVisible(m.width >= r.height && m.height >= r.height)) {
+                // if (labelView.setVisible(m.width >= r.width && m.height >= r.height)) {
+                    labelView.translate(m.x + m.width / 2 - r.width / 2, m.y + m.height / 2 - r.height / 2);
+                }
             }
         })
     }
 
     protected _runShowEffect(firstTime: boolean): void {
-        firstTime && new SlideAnimation(this);
+        // firstTime && new SlideAnimation(this);
     }
 
     //-------------------------------------------------------------------------

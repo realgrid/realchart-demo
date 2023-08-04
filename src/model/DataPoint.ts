@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNone, isObject, pickNum, pickProp3, pickProp4 } from "../common/Common";
+import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4 } from "../common/Common";
 import { ISeries } from "./Series";
 
 let __point_id__ = 0;
@@ -99,6 +99,10 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _colorIndex(): number {
+        return 2;
+    }
+
     protected _readArray(series: ISeries, v: any[]): void {
         if (v.length > 1) {
             this.x = v[pickNum(series.xField, 0)];
@@ -112,7 +116,7 @@ export class DataPoint {
     protected _readObject(series: ISeries, v: any): void {
         this.x = pickProp4(v[series.xField], v.x, v.name, v.label);
         this.y = pickProp3(v[series.yField], v.y, v.value);
-        this.color = v.color;
+        this.color = pickProp(v[series.colorField], v.color);
     }
 
     protected _readSingle(v: any): void {
