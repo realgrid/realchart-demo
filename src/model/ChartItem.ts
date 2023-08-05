@@ -82,6 +82,10 @@ export abstract class ChartItem extends RcObject {
         }
     }
 
+    protected _getDefObjProp(prop: string): any {
+        return;
+    }
+
     protected _doLoad(source: any): void {
         for (const p in source) {
             //if (this.hasOwnProperty(p)) {
@@ -93,7 +97,7 @@ export abstract class ChartItem extends RcObject {
                 } else if (this[p] instanceof ChartItem) {
                     this[p].load(v);
                 } else if (isObject(v)) {
-                    this[p] = Object.assign({}, v);
+                    this[p] = Object.assign({}, this._getDefObjProp(p), v);
                 } else {
                     this[p] = v;
                 }

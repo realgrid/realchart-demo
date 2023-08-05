@@ -123,9 +123,14 @@ export class MovingAverage {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    interval = 5;
-    type: 'simple' | 'weighted' | 'exponential' | 'triangualr' = 'simple';
+    interval: number;
+    type: 'simple' | 'weighted' | 'exponential' | 'triangualr';
 }
+
+const _movingAverage = {
+    interval: 5,
+    type: 'simple'
+};
 
 /**
  * 시리즈 추세선.
@@ -158,6 +163,13 @@ export class Trendline extends ChartItem {
     //-------------------------------------------------------------------------
     protected _doPrepareRender(chart: IChart): void {
         (this['$_' + this.type] || this.$_linear).call(this, this.series._visPoints, this._points = []);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _getDefObjProp(prop: string) {
+        if (prop === 'movingAverage') return _movingAverage;
     }
 
     //-------------------------------------------------------------------------
@@ -201,19 +213,21 @@ export class Trendline extends ChartItem {
     $_exponential(pts: DataPoint[], list: {x: number, y: number}[]): void {
     }
 
-    private $_movingAverage(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    $_movingAverage(pts: DataPoint[], list: {x: number, y: number}[]): void {
         const ma = this.movingAverage;
-        const interval = ma.interval;
+        const length = pts.length;
+        const interval = Math.max(1, Math.min(length, ma.interval));
         let index = interval - 1;
-        const length = pts.length + 1;
 
-        while (index < length) {
+        while (index <= length) {
             index = index + 1;
 
             const slice = pts.slice(index - interval, index);
             const sum = slice.reduce((a, c) => a + c.yValue, 0);
 
-            list.push({x: pts[index].xValue, y: sum / ma.interval});
+            if (index <= length) {
+                list.push({x: pts[index - 1].xValue, y: sum / interval});
+            }
         }
     }
 }
