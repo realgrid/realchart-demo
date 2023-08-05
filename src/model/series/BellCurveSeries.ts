@@ -6,9 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
 import { Series } from "../Series";
-import { LineSeriesBase, LineSeriesPoint, LineType } from "./LineSeries";
+import { LineSeriesBase, LineSeriesPoint } from "./LineSeries";
 
 export class BellCurveSeriesPoint extends LineSeriesPoint {
 

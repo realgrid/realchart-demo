@@ -13,6 +13,7 @@ import { Shape } from "../common/impl/SvgShape";
 import { IAxis } from "./Axis";
 import { Chart, IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
+import { LineType } from "./ChartTypes";
 import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource } from "./Legend";
 import { CategoryAxis } from "./axis/CategoryAxis";
@@ -108,6 +109,115 @@ export interface IPlottingItem {
     prepareRender(): void;
 }
 
+export enum TrendType {
+    LINEAR = 'linear',
+    LOGARITHMIC = 'logarithmic', 
+    POLYNOMIAL = 'polynomial', 
+    POWER = 'power', 
+    EXPONENTIAL = 'exponential', 
+    MOVING_AVERAGE = 'movingAverage'
+}
+
+export class MovingAverage {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    interval = 5;
+    type: 'simple' | 'weighted' | 'exponential' | 'triangualr' = 'simple';
+}
+
+/**
+ * 시리즈 추세선.
+ */
+export class Trendline extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _points: {x: number, y: number}[];
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public series: Series) {
+        super(series.chart);
+
+        this.visible = false;
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    type = TrendType.LINEAR;
+    lineType = LineType.DEFAULT;
+    movingAverage = new MovingAverage();
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    protected _doPrepareRender(chart: IChart): void {
+        (this['$_' + this.type] || this.$_linear).call(this, this.series._visPoints, this._points = []);
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    $_linear(pts: DataPoint[], list: {x: number, y: number}[]): void {
+        const len = pts.length;
+
+        if (len > 1) {
+            let sx = 0;
+            let sy = 0;
+            let sxx = 0;
+            let syy = 0;
+            let sxy = 0;
+
+            pts.forEach(p => {
+                sx += p.xValue;
+                sy += p.yValue;
+                sxx += p.xValue * p.xValue;
+                syy += p.yValue + p.yValue;
+                sxy += p.xValue * p.yValue;
+            });
+
+            const slope  = ((len * sxy) - (sx * sy)) / (len * sxx - (sx * sx));
+            const intercept = (sy - slope * sx) / len;
+
+            list.push({x: pts[0].xValue, y: slope * pts[0].xValue + intercept});
+            list.push({x: pts[len - 1].xValue, y: slope * pts[len - 1].xValue + intercept});
+        }
+    }
+
+    $_logarithmic(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    }
+
+    $_polynomial(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    }
+
+    $_power(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    }
+
+    $_exponential(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    }
+
+    private $_movingAverage(pts: DataPoint[], list: {x: number, y: number}[]): void {
+        const ma = this.movingAverage;
+        const interval = ma.interval;
+        let index = interval - 1;
+        const length = pts.length + 1;
+
+        while (index < length) {
+            index = index + 1;
+
+            const slice = pts.slice(index - interval, index);
+            const sum = slice.reduce((a, c) => a + c.yValue, 0);
+
+            list.push({x: pts[index].xValue, y: sum / ma.interval});
+        }
+    }
+}
+
 /**
  * 옆으로 나누어 배치 가능한가? ex) bar series/group
  */
@@ -192,6 +302,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     readonly name: string;
     readonly pointLabel: DataPointLabel;
+    readonly trendline: Trendline;
 
     //-------------------------------------------------------------------------
     // fields
@@ -211,6 +322,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
         this.name = name;
         this.pointLabel = new DataPointLabel(chart);
+        this.trendline = new Trendline(this);
+
         this._points = new DataPointCollection(this);
     }
 
@@ -417,6 +530,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             }
         })
 
+        // DataPoint.xValue가 필요하다.
+        this.trendline.visible && this.trendline.prepareRender();
         return vals;
     }
 

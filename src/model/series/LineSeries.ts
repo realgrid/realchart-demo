@@ -9,6 +9,7 @@
 import { pickNum, pickProp } from "../../common/Common";
 import { StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
+import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
 import { MarerVisibility, PolarableSeries, Series, SeriesGroup, SeriesMarker } from "../Series";
 
@@ -47,12 +48,6 @@ export class LineSeriesMarker extends SeriesMarker {
      * 최대값 point들의 marker 표시 여부.
      */
     maxVisible = MarerVisibility.DEFAULT;
-}
-
-export enum LineType {
-    DEFAULT = 'default',
-    SPLINE = 'spline',
-    STEP = 'step'
 }
 
 export abstract class LineSeriesBase extends PolarableSeries {

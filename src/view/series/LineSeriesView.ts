@@ -11,8 +11,9 @@ import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Chart } from "../../main";
+import { LineType } from "../../model/ChartTypes";
 import { DataPoint } from "../../model/DataPoint";
-import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection, LineType } from "../../model/series/LineSeries";
+import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
 import { SeriesView } from "../SeriesView";
 import { SlideAnimation } from "../animation/SeriesAnimation";
 

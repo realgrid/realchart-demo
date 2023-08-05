@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../common/ElementPool";
+import { PathBuilder } from "../common/PathBuilder";
 import { LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
@@ -242,6 +243,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     protected _pointContainer: LayerElement;
     protected _labelContainer: PointLabelContainer;
+    private _trendLineView: PathElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -259,12 +261,24 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         this._prepareSeries(doc, model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
+
+        if (model.trendline.visible) {
+            if (!this._trendLineView) {
+                this.add(this._trendLineView = new PathElement(doc, 'rct-series-trendline'));
+            }
+            this._trendLineView.setVisible(true);
+        } else if (this._trendLineView) {
+            this._trendLineView.setVisible(false);
+        }
         
         return Size.create(hintWidth, hintHeight);
     }
 
     protected _doLayout(): void {
         this._renderSeries(this.width, this.height);
+        if (this._trendLineView && this._trendLineView.visible) {
+            this.$_renderTrendline();       
+        }
         this._afterRender();
         this._runShowEffect(true);
     }
@@ -278,6 +292,18 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected _lazyPrepareLabels(): boolean { return false; }
     protected _afterRender(): void {}
     protected _runShowEffect(firstTime: boolean): void {}
+
+    private $_renderTrendline(): void {
+        const m = this.model;
+        const xAxis = m._xAxisObj;
+        const yAxis = m._yAxisObj;
+        const pts = m.trendline._points.map(pt => ({x: xAxis.getPosition(xAxis._length, pt.x), y: yAxis._length - yAxis.getPosition(yAxis._length, pt.y)}));
+        const sb = new PathBuilder();
+
+        sb.move(pts[0].x, pts[0].y);
+        sb.lines(...pts);
+        this._trendLineView.setPath(sb.end(false));
+    }
 }
 
 export class BoxPointElement extends PathElement {

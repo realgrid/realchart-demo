@@ -152,7 +152,12 @@
     font-weight: bold;
     fill: #558;
 }
+.rct-series-trendline {
+    stroke: red;
+    stroke-width: 2px;
+}
 .rct-point-label {
+    stroke: #333;
 }
 .rct-point-label-lines {
     stroke: black;

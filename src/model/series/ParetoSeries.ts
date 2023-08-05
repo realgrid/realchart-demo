@@ -6,9 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
 import { ISeries, Series } from "../Series";
-import { LineSeriesBase, LineType } from "./LineSeries";
+import { LineSeriesBase } from "./LineSeries";
 
 export class ParetoSeriesPoint extends DataPoint {
 
