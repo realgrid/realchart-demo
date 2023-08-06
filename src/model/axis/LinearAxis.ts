@@ -6,9 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
-import { assert, ceil, fixnum } from "../../common/Types";
-import { Axis, AxisTick, IAxisTick } from "../Axis";
+import { isArray, isObject, pickNum } from "../../common/Common";
+import { RtPercentSize, assert, ceil, fixnum } from "../../common/Types";
+import { Axis, AxisItem, AxisTick, IAxisTick } from "../Axis";
 import { DataPoint } from "../DataPoint";
 
 export class LinearAxisTick extends AxisTick {
@@ -196,6 +196,42 @@ export class LinearAxisTick extends AxisTick {
     }
 }
 
+/**
+ * from에서 to 이전까지의 값은 from으로 표시된다.
+ * space는 break line 등을 표시하기 위한 공간.
+ * 
+ * 1. to가 from보다 커야 한다.
+ * 2. ratio가 0보다 크고 1보다 작은 값으로 반드시 설정돼야 한다.
+ * 3. 이전 break의 ratio보다 큰 값으로 설정돼야 한다.
+ * 4. 1, 2, 3 중 하나라도 위반하면 병합에서 제외시킨다.
+ * 5. 이전 범위와 겹치면 병합된다.
+ */
+export class AxisBreak extends AxisItem {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    enabled = true;
+    from: number;
+    to: number;
+    ratio: RtPercentSize = '30%';
+    space = 12;
+    rx = 3;
+    ry = 2;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doLoad(source: any): void {
+        super._doLoad(source);
+
+        this.space = pickNum(this.space, 0);
+    }
+}
+
 export abstract class ContinuousAxis extends Axis {
 
     //-------------------------------------------------------------------------
@@ -207,6 +243,9 @@ export abstract class ContinuousAxis extends Axis {
     private _max: number;
     private _base: number;
     private _unitLen: number;
+
+    private _lastBreak = new AxisBreak(null);
+    private _runBreaks: AxisBreak[];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -238,6 +277,9 @@ export abstract class ContinuousAxis extends Axis {
 
     padding = "5%";
 
+    /** y축으로 사용될 때만 적용한다. */
+    readonly breaks: AxisBreak[] = [];
+
     axisMin(): number {
         return this._min;
     }
@@ -256,6 +298,13 @@ export abstract class ContinuousAxis extends Axis {
 
     protected _createTick(): AxisTick {
         return new LinearAxisTick(this);
+    }
+
+    protected _doLoadProp(prop: string, value: any): boolean {
+        if (prop ==='break') {
+            this.$_loadBreaks(value);
+            return true;
+        }
     }
 
     protected _doPrepareRender(): void {
@@ -283,6 +332,10 @@ export abstract class ContinuousAxis extends Axis {
             Math.min(min, steps[0]), 
             Math.max(max, steps[steps.length - 1])
         );
+
+        if (this._runBreaks) {
+            debugger;
+        }
 
         for (let i = 0; i < steps.length; i++) {
             ticks.push({
@@ -370,10 +423,68 @@ export abstract class ContinuousAxis extends Axis {
         length *= min / (this._max - this._min);
         return this._unitLen = pickNum(length, 1);
     }
+    private $_loadBreak(source: any): AxisBreak {
+        if (isObject(source) && 'from' in source && 'to' in source) {
+            return new AxisBreak(this).load(source) as AxisBreak;
+        }
+    }
+
+    private $_loadBreaks(source: any): void {
+        if (isArray(source)) {
+            for (let src of source) {
+                const br = this.$_loadBreak(src);
+                br && this.breaks.push(br);
+            }
+        } else if (source) {
+            const br = this.$_loadBreak(source);
+            br && this.breaks.push(br);
+        }
+        this.$_mergeBreaks();
+    }
+
+    /**
+     * 1. rate가 0보다 크고 1보다 작은 값으로 반드시 설정돼야 한다.
+     * 2. 이전 break의 rate보다 큰 값으로 설정돼야 한다.
+     * 3. 1, 2 중 하나라도 위반하면 병합에서 제외시킨다.
+     */
+    private $_mergeBreaks(): void {
+
+        function intersects(br1: AxisBreak, br2: AxisBreak): boolean {
+            return br2.from < br1.to;
+        }
+
+        function merge(br1: AxisBreak, br2: AxisBreak): void {
+            br1.to = br2.to;
+        }
+
+        const breaks = this.breaks.sort((b1, b2) => b1.from - b2.from).filter(b => b.to > b.from);
+
+        this._runBreaks = null;
+
+        if (breaks.length > 0) {
+            const runs = this._runBreaks = [];
+
+            runs.push(Object.assign(new AxisBreak(this), breaks[0]));
+
+            for (let i = 1; i < breaks.length; i++) {
+                const r = runs[runs.length - 1];
+                const b = breaks[i];
+
+                if (intersects(r, b)) {
+                    merge(r, b);
+                } else {
+                    runs.push(Object.assign(new AxisBreak(this), b));
+                }
+            }
+        }
+    }
 }
 
 export class LinearAxis extends ContinuousAxis {
 
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

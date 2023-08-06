@@ -6,7 +6,7 @@ const config = {
     xAxis: {
     },
     yAxis: {
-        guides: [{
+        guide: [{
             type: 'line',
             value: 5.5,
             style: {

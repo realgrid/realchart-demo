@@ -10,7 +10,7 @@ const config = {
     },
     yAxis: {
         title: 'Y Axis',
-        guides: [{
+        guide: [{
             type: 'line',
             value: 12,
             label: 'line guide'

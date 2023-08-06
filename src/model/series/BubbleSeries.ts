@@ -132,11 +132,12 @@ export class BubbleSeries extends Series {
         return new BubbleSeriesPoint(source);
     }
 
-    load(src: any): void {
+    load(src: any): BubbleSeries {
         super.load(src);
 
         this._minDim = parsePercentSize(this.minSize, true);
         this._maxDim = parsePercentSize(this.maxSize, true);
+        return this;
     }
 
     protected _doPrepareRender(): void {

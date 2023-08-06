@@ -41,7 +41,7 @@ const config = {
                 borderRadius: '5px'
             }
         },
-        guides: [{
+        guide: [{
             type: 'line',
             value: 12,
             label: 'line guide'

@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isObject, isString, pickNum } from "../common/Common";
-import { Align, IPercentSize, SVGStyleOrClass, SizeValue, VerticalAlign, parsePercentSize } from "../common/Types";
+import { Align, IPercentSize, RtPercentSize, SVGStyleOrClass, SizeValue, VerticalAlign, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { IClusterable, IPlottingItem } from "./Series";
@@ -307,26 +307,6 @@ export interface IAxisTick {
     label: string;
 }
 
-/**
- * from에서 to 이전까지의 값은 from으로 표시된다.
- * space는 break line 등을 표시하기 위한 공간.
- * 
- * 1. to가 from보다 커야 한다.
- * 2. ratio가 0보다 크고 1보다 작은 값으로 반드시 설정돼야 한다.
- * 3. 이전 break의 ratio보다 큰 값으로 설정돼야 한다.
- * 4. 1, 2, 3 중 하나라도 위반하면 병합에서 제외시킨다.
- * 5. 이전 범위와 겹치면 병합된다.
- */
-export class AxisBreak {
-    enabled = true;
-    from = NaN;
-    to = NaN;
-    ratio: SizeValue = '30%';
-    space = 12;
-    rx = 3;
-    ry = 2;
-}
-
 export enum AxisPosition {
     /**
      * X축은 아래쪽에 수평으로, Y축은 왼쪽에 수직으로 표시된다.
@@ -365,7 +345,6 @@ export abstract class Axis extends ChartItem implements IAxis {
     readonly tick: AxisTick;
     readonly grid = this._createGrid();
     readonly guides: AxisGuide[] = [];
-    readonly breaks: AxisBreak[] = [];
 
     _isX: boolean;
     _isHorz: boolean;
@@ -379,8 +358,6 @@ export abstract class Axis extends ChartItem implements IAxis {
     _maxPadDim: IPercentSize;
     _minPad = 0;
     _maxPad = 0;
-
-    private _runBreaks: AxisBreak[];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -549,10 +526,16 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected _doLoad(source: any): void {
         super._doLoad(source);
 
-        this.$_loadGuides();
-
         this._minPadDim = parsePercentSize(this.minPadding, true);
         this._maxPadDim = parsePercentSize(this.maxPadding, true);
+    }
+
+    protected _doLoadProp(prop: string, value: any): boolean {
+        if (prop === 'guide') {
+            if (isArray(value)) this.$_loadGuides(value);
+            else if (isObject(value)) this.$_loadGuides([value]);
+            return true;
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -562,89 +545,24 @@ export abstract class Axis extends ChartItem implements IAxis {
         return new AxisGrid(this);
     }
 
-    private $_loadGuides(): void {
-        // 소스 정보가 this.guides에 로드된 상태이다.
-        const guides = this.guides;
+    private $_loadGuides(source: any[]): void {
+        for (let i = 0; i < source.length; i++) {
+            const g: any = source[i]
+            let guide: AxisGuide;
 
-        if (guides.length > 0) {
-            for (let i = 0; i < guides.length; i++) {
-                const g: any = guides[i]
-                let guide: AxisGuide;
+            switch (g.type) {
+                case 'range':
+                    guide = new AxisGuideRange(this);
+                    break;
 
-                switch (g.type) {
-                    case 'range':
-                        guide = new AxisGuideRange(this);
-                        break;
-
-                    case 'line':
-                    default:    
-                        guide = new AxisGuideLine(this);
-                        break;
-                }
-
-                guide.load(g);
-                guides[i] = guide;
+                case 'line':
+                default:    
+                    guide = new AxisGuideLine(this);
+                    break;
             }
-        }
-    }
 
-    private $_loadBreak(source: any): AxisBreak {
-        if (isObject(source) && 'from' in source && 'to' in source) {
-            return Object.assign(new AxisBreak(), source);
-        }
-    }
-
-    private $_loadBreaks(source: any): void {
-        if (isArray(source)) {
-            for (let src of source) {
-                const br = this.$_loadBreak(src);
-                br && this.breaks.push(br);
-            }
-        } else if (source) {
-            const br = this.$_loadBreak(source);
-            br && this.breaks.push(br);
-        }
-        this.$_mergeBreaks();
-    }
-
-    /**
-     * 1. rate가 0보다 크고 1보다 작은 값으로 반드시 설정돼야 한다.
-     * 2. 이전 break의 rate보다 큰 값으로 설정돼야 한다.
-     * 3. 1, 2 중 하나라도 위반하면 병합에서 제외시킨다.
-     */
-    private $_mergeBreaks(): void {
-
-        function intersects(br1: AxisBreak, br2: AxisBreak): boolean {
-            return br2.from < br1.to;
-        }
-
-        function merge(br1: AxisBreak, br2: AxisBreak): void {
-            br1.to = br2.to;
-        }
-
-        let breaks = this.breaks;
-
-        this._runBreaks = null;
-
-        if (breaks && breaks.length > 1) {
-            breaks = breaks.sort((b1, b2) => b1.from - b2.from).filter(b => b.to > b.from);
-
-            if (breaks.length > 0) {
-                const runs = this._runBreaks = [];
-
-                runs.push(Object.assign(new AxisBreak(), breaks[0]));
-
-                for (let i = 1; i < breaks.length; i++) {
-                    const r = runs[runs.length - 1];
-                    const b = breaks[i];
-
-                    if (intersects(r, b)) {
-                        merge(r, b);
-                    } else {
-                        runs.push(Object.assign(new AxisBreak(), b));
-                    }
-                }
-            }
+            guide.load(g);
+            this.guides.push(guide);
         }
     }
 

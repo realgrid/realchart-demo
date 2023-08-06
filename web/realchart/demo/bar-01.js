@@ -10,7 +10,7 @@ const config = {
     yAxis: {
         title: 'Y Axis',
         // reversed: true,
-        guides: [{
+        guide: [{
             type: 'line',
             value: 5.5,
             label: "Hello?",

@@ -168,7 +168,7 @@ export class Trendline extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _getDefObjProp(prop: string) {
+    protected _getDefObjProps(prop: string) {
         if (prop === 'movingAverage') return _movingAverage;
     }
 

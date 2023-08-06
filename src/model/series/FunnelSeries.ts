@@ -89,13 +89,14 @@ export class FunnelSeries extends WidgetSeries {
         return new FunnelSeriesPoint(source);
     }
 
-    load(src: any): void {
+    load(src: any): FunnelSeries {
         super.load(src);
 
         this._widthDim = parsePercentSize2(this.width, FunnelSeries.DEF_WIDTH);
         this._heightDim = parsePercentSize2(this.height, FunnelSeries.DEF_HEIGHT);
         this._neckWidthDim = parsePercentSize2(this.neckWidth, FunnelSeries.DEF_NECK_WIDTH);
         this._neckHeightDim = parsePercentSize2(this.neckHeight, FunnelSeries.DEF_NECK_HEIGHT);
+        return this;
     }
 
     protected _doPrepareRender(): void {

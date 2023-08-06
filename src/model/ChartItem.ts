@@ -10,7 +10,7 @@ import { isArray, isBoolean, isObject, isString } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { SvgRichText, RichTextParamCallback } from "../common/RichText";
-import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass } from "../common/Types";
+import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
 import { IChart } from "./Chart";
@@ -55,10 +55,11 @@ export abstract class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    load(source: any): void {
+    load(source: any): ChartItem {
         if (!this._doLoadSimple(source)) {
             this._doLoad(source);
         }
+        return this;
     }
 
     prepareRender(): void {
@@ -82,7 +83,7 @@ export abstract class ChartItem extends RcObject {
         }
     }
 
-    protected _getDefObjProp(prop: string): any {
+    protected _getDefObjProps(prop: string): any {
         return;
     }
 
@@ -97,7 +98,7 @@ export abstract class ChartItem extends RcObject {
                 } else if (this[p] instanceof ChartItem) {
                     this[p].load(v);
                 } else if (isObject(v)) {
-                    this[p] = Object.assign({}, this._getDefObjProp(p), v);
+                    this[p] = Object.assign({}, this._getDefObjProps(p), v);
                 } else {
                     this[p] = v;
                 }
