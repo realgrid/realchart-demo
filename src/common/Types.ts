@@ -57,7 +57,7 @@ export const sizeToCssEx = function (size: IPercentSize): string {
     return size ? (size.fixed ? (size.size + 'px') : (size.size + '%')) : '';
 }
 
-export function parsePercentSize(sv: RtPercentSize, enableNull: boolean): IPercentSize {
+export function parsePercentSize(sv: RtPercentSize, enableNull: boolean, def?: number): IPercentSize {
     let fixed: boolean;
     let size: number;
 
@@ -79,7 +79,7 @@ export function parsePercentSize(sv: RtPercentSize, enableNull: boolean): IPerce
     } else if (enableNull) {
         return null;
     } else {
-        size = 0;
+        size = def || 0;
         fixed = true;
     }
     return { size, fixed }; 

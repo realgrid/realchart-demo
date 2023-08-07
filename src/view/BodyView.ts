@@ -7,7 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../common/ElementPool";
-import { LayerElement, RcElement } from "../common/RcControl";
+import { PathBuilder } from "../common/PathBuilder";
+import { LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { Align, VerticalAlign, _undefined } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
@@ -16,6 +17,7 @@ import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement"
 import { Chart } from "../main";
 import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange } from "../model/Axis";
 import { Body } from "../model/Body";
+import { IChart } from "../model/Chart";
 import { PlotItem } from "../model/PlotItem";
 import { Series } from "../model/Series";
 import { BarRangeSeries } from "../model/series/BarRangeSeries";
@@ -115,15 +117,17 @@ export class AxisGridView extends ChartElement<AxisGrid> {
 
     protected _doLayout(): void {
         const axis = this.model.axis;
+        const w = this.width;
+        const h = this.height;
         const pts = this._pts;
 
         if (axis._isHorz) {
             this._lines.forEach((line, i) => {
-                line.setVLineC(pts[i], 0, this.height);
+                line.setVLineC(pts[i], 0, h);
             });
         } else {
             this._lines.forEach((line, i) => {
-                line.setHLineC(pts[i], 0, this.width);
+                line.setHLineC(h - pts[i], 0, w);
             });
         }
     }
@@ -131,6 +135,33 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+}
+
+export class AxisBrokenView extends RcElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _mask: PathElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-axis-broken');
+
+        this.add(this._mask = new PathElement(doc));
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    layout(width: number, height: number): void {
+        const pb = new PathBuilder();
+
+        pb.rect(0, 0, width, height);
+        this._mask.setPath(pb.end());
+    }
 }
 
 export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
@@ -440,6 +471,7 @@ export class BodyView extends ChartElement<Body> {
     private _background: RectElement;
     private _gridContainer: RcElement;
     protected _gridViews = new Map<Axis, AxisGridView>();
+    private _brokenViews: AxisBrokenView[] = [];
     private _seriesContainer: RcElement;
     protected _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
@@ -488,6 +520,8 @@ export class BodyView extends ChartElement<Body> {
             for (const axis of this._gridViews.keys()) {
                 this._gridViews.get(axis).measure(doc, axis.grid, hintWidth, hintHeight, phase);
             }
+
+            this.$_prepareAxisBreaks(doc, chart);
         }
 
         return Size.create(hintWidth, hintHeight);
@@ -576,5 +610,10 @@ export class BodyView extends ChartElement<Body> {
             container.add(v);
             map.set(series[i], v);
         });
+    }
+
+    private $_prepareAxisBreaks(doc: Document, chart: IChart): void {
+        [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
+        }));
     }
 }

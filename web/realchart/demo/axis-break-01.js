@@ -8,17 +8,17 @@ const config = {
     yAxis: {
         title: "Vertical 수직축 Axis",
         break: [{
-            from: 50,
+            from: 500,
             to: 3000,
             inclusive: false,
-            space: 13
+            space: 5
         }]
     },
     series: [{
         name: 'column1',
         pointLabel: true,
         // pointWidth: '100%',
-        data: [44, 128, 180, 345, 3050, 3590, 3840, 3630, 3120, 420, 240, 80]
+        data: [499, 128, 180, 345, 3050, 3590, 3840, 3630, 3120, 520, 240, 80]
     }, {
         name: 'column3',
         pointLabel: true,

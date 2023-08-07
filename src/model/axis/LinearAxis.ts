@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, pickNum } from "../../common/Common";
-import { RtPercentSize, assert, ceil, fixnum } from "../../common/Types";
+import { IPercentSize, RtPercentSize, assert, calcPercent, ceil, fixnum, parsePercentSize } from "../../common/Types";
 import { Axis, AxisItem, AxisTick, IAxisTick } from "../Axis";
 import { DataPoint } from "../DataPoint";
 
@@ -214,14 +214,22 @@ export class AxisBreak extends AxisItem {
     enabled = true;
     from: number;
     to: number;
-    ratio: RtPercentSize = '30%';
+    size: RtPercentSize = '30%';
     space = 12;
-    rx = 3;
-    ry = 2;
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _sizeDim: IPercentSize;
+    _sect: AxisBreakSect;
+
+    //-------------------------------------------------------------------------
+    // method
+    //-------------------------------------------------------------------------
+    getSize(domain: number): number {
+        return calcPercent(this._sizeDim, domain);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -229,7 +237,15 @@ export class AxisBreak extends AxisItem {
         super._doLoad(source);
 
         this.space = pickNum(this.space, 0);
+        this._sizeDim = parsePercentSize(this.size, false);
     }
+}
+
+interface AxisBreakSect {
+    from: number;
+    to: number;
+    pos: number;
+    len: number;
 }
 
 export abstract class ContinuousAxis extends Axis {
@@ -244,8 +260,9 @@ export abstract class ContinuousAxis extends Axis {
     private _base: number;
     private _unitLen: number;
 
-    private _lastBreak = new AxisBreak(null);
     private _runBreaks: AxisBreak[];
+    private _sects: AxisBreakSect[];
+    private _lastSect: AxisBreakSect;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -288,6 +305,14 @@ export abstract class ContinuousAxis extends Axis {
         return this._max;
     }
 
+    hasBreak(): boolean {
+        return !!this._runBreaks;
+    }
+
+    runBreaks(): AxisBreak[] {
+        return this._runBreaks && this._runBreaks.slice(0);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -305,6 +330,7 @@ export abstract class ContinuousAxis extends Axis {
             this.$_loadBreaks(value);
             return true;
         }
+        return super._doLoadProp(prop, value);
     }
 
     protected _doPrepareRender(): void {
@@ -325,31 +351,110 @@ export abstract class ContinuousAxis extends Axis {
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
         const tick = this.tick as LinearAxisTick;
         let { min, max } = this._adjustMinMax(calcedMin, calcedMax);
-        const steps = tick.buildSteps(length, this._base, min, max);
+        let steps = tick.buildSteps(length, this._base, min, max);
         const ticks: IAxisTick[] = [];
 
         this._setMinMax(
-            Math.min(min, steps[0]), 
-            Math.max(max, steps[steps.length - 1])
+            min = Math.min(min, steps[0]), 
+            max = Math.max(max, steps[steps.length - 1])
         );
 
         if (this._runBreaks) {
-            debugger;
+            steps = this.$_getBrokenSteps(this._runBreaks, length, min, max);
         }
 
         for (let i = 0; i < steps.length; i++) {
             ticks.push({
                 pos: this.getStepPosition(length, steps[i]),
                 value: steps[i],
-                label: this.tick.getTick(steps[i])// String(steps[i])
+                label: this.tick.getTick(steps[i]) || String(steps[i])
             });
         }
         return ticks;
     }
 
+    private $_buildBrokenSteps(sect: AxisBreakSect): number[] {
+        const tick = this.tick as LinearAxisTick;
+        const steps = tick.buildSteps(sect.len, void 0, sect.from, sect.to);
+
+        return steps;
+    }
+
+    private $_getBrokenSteps(breaks: AxisBreak[], len: number, min: number, max: number): number[] {
+        let p = 0;
+        let start = min;
+        const steps: number[] = [start];
+        const sects = this._sects = [];
+        
+        len -= breaks.reduce((a, c) => a + c.space, 0);
+
+        breaks.forEach(br => {
+            const sz = br.getSize(len);
+            const sect = {
+                from: start,
+                to: br.from,
+                pos: p,
+                len: sz
+            };
+
+            p += sz;
+
+            sects.push(sect, br._sect = {
+                from: br.from,
+                to: br.to,
+                pos: p,
+                len: br.space
+            })
+
+            p += br.space;
+
+            const steps2 = this.$_buildBrokenSteps(sect);
+
+            steps2.forEach(s => {
+                if (s > sect.from && s <= sect.to) {
+                    steps.push(s);
+                }
+            })
+            if (br.space > 0) {
+                steps.push(br.to);
+            }
+        });
+
+        const last = breaks[breaks.length - 1];
+
+        if (max > last.to) {
+            const sect = {
+                from: last.to,
+                to: max,
+                pos: p,
+                len: this._length - p
+            };
+
+            sects.push(sect);
+
+            const steps2 = this.$_buildBrokenSteps(sect);
+            steps2.forEach(s => {
+                if (s > sect.from && s <= sect.to) {
+                    steps.push(s);
+                }
+            })
+        }
+
+        this._lastSect = sects[sects.length - 1];
+        return steps;
+    }
+
     getPosition(length: number, value: number): number {
-        const v = length * (value - this._min) / (this._max - this._min);
-        return this.reversed ? length - v : v;
+        if (this._runBreaks) {
+            const sect = this._sects.find(s => value < s.to) || this._lastSect;
+            const p = sect.len * (value - sect.from) / (sect.to - sect.from);
+
+            return (this.reversed ? length - p : p) + sect.pos;
+        } else {
+            const p = length * (value - this._min) / (this._max - this._min);
+
+            return this.reversed ? length - p : p;
+        }
     }
 
     getStepPosition(length: number, value: number): number {

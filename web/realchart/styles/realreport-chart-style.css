@@ -119,6 +119,10 @@
     stroke: lightgray;
     stroke-width: 1px;
 }
+.rct-axis-broken {
+    stroke: none;
+    fill: white;
+}
 .rct-axis-guide-label {
     fill: blue;
 }

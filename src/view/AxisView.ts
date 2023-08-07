@@ -285,7 +285,7 @@ export class AxisView extends ChartElement<Axis> {
         } else {
             this._markViews.forEach((v, i) => {
                 v.resize(markLen, 1);
-                v.layout().translate(opp ? 0 : w - markLen, ticks[i].pos);
+                v.layout().translate(opp ? 0 : w - markLen, h - ticks[i].pos);
             })
         }
 
