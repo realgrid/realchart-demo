@@ -8,11 +8,12 @@
 
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
-import { LayerElement, PathElement, RcElement } from "../common/RcControl";
+import { LayerElement, PathElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { SvgShapes } from "../common/impl/SvgShape";
+import { RcAnimation } from "../model/Animation";
 import { DataPoint } from "../model/DataPoint";
 import { DataPointLabel, Series } from "../model/Series";
 import { ChartElement } from "./ChartElement";
@@ -291,7 +292,10 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 
     protected _lazyPrepareLabels(): boolean { return false; }
     protected _afterRender(): void {}
-    protected _runShowEffect(firstTime: boolean): void {}
+    protected _getShowAnimation(): RcAnimation { return }
+    protected _runShowEffect(firstTime: boolean): void {
+        //this._getShowAnimation()?.run(this);
+    }
 
     private $_renderTrendline(): void {
         const m = this.model;

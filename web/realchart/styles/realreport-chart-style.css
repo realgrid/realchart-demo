@@ -119,7 +119,7 @@
     stroke: lightgray;
     stroke-width: 1px;
 }
-.rct-axis-broken {
+.rct-axis-break {
     stroke: none;
     fill: white;
 }

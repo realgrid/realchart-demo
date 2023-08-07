@@ -20,6 +20,7 @@ import { Body } from "../model/Body";
 import { IChart } from "../model/Chart";
 import { PlotItem } from "../model/PlotItem";
 import { Series } from "../model/Series";
+import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
 import { BarRangeSeries } from "../model/series/BarRangeSeries";
 import { BarSeries } from "../model/series/BarSeries";
 import { BellCurveSeries } from "../model/series/BellCurveSeries";
@@ -137,18 +138,19 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     //-------------------------------------------------------------------------
 }
 
-export class AxisBrokenView extends RcElement {
+export class AxisBreakView extends RcElement {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _model: AxisBreak;
     private _mask: PathElement;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-axis-broken');
+        super(doc, 'rct-axis-break');
 
         this.add(this._mask = new PathElement(doc));
     }
@@ -156,10 +158,15 @@ export class AxisBrokenView extends RcElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    setModel(model: AxisBreak): void {
+        this._model = model;
+    }
+
     layout(width: number, height: number): void {
+        const m = this._model;
         const pb = new PathBuilder();
 
-        pb.rect(0, 0, width, height);
+        pb.rect(0, 0, width, m._sect.len);
         this._mask.setPath(pb.end());
     }
 }
@@ -471,7 +478,7 @@ export class BodyView extends ChartElement<Body> {
     private _background: RectElement;
     private _gridContainer: RcElement;
     protected _gridViews = new Map<Axis, AxisGridView>();
-    private _brokenViews: AxisBrokenView[] = [];
+    private _breakViews: AxisBreakView[] = [];
     private _seriesContainer: RcElement;
     protected _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
@@ -479,6 +486,8 @@ export class BodyView extends ChartElement<Body> {
     // guides
     _guideContainer: GuideContainer;
     _frontGuideContainer: GuideContainer;
+    // axis breaks
+    _axisBreakContainer: RcElement;
     // items
     // private _itemMap = new Map<PlotItem, PlotItemView>();
 
@@ -492,6 +501,7 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._gridContainer = new LayerElement(doc, 'rct-grids'));
         this.add(this._guideContainer = new GuideContainer(doc, 'rct-guides'));
         this.add(this._seriesContainer = new LayerElement(doc, 'rct-series-container'));
+        this.add(this._axisBreakContainer = new LayerElement(doc, 'rct-axis-breaks'));
         this.add(this._frontGuideContainer = new GuideContainer(doc, 'rct-front-guides'));
     }
 
@@ -543,6 +553,12 @@ export class BodyView extends ChartElement<Body> {
                 v.resize(w, h);
                 v.layout();
             }
+
+            // axis breaks
+            this._breakViews.forEach(v => {
+                v.translate(0, h - v._model._sect.pos - v._model._sect.len);
+                v.layout(w, h);
+            });
 
             // axis guides
             [this._guideContainer, this._frontGuideContainer].forEach(c => {
@@ -613,7 +629,26 @@ export class BodyView extends ChartElement<Body> {
     }
 
     private $_prepareAxisBreaks(doc: Document, chart: IChart): void {
+        const container = this._axisBreakContainer;
+        const views = this._breakViews;
+        const breaks: AxisBreak[] = [];
+
         [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
+            if (axis instanceof LinearAxis) {
+                breaks.push(...(axis.runBreaks() || []));
+            }
         }));
+
+        while (views.length < breaks.length) {
+            const view = new AxisBreakView(doc);
+
+            container.add(view);
+            views.push(view);
+        }
+        while (views.length > breaks.length) {
+            views.pop().remove();
+        }
+
+        views.forEach((v, i) => v.setModel(breaks[i]));
     }
 }
