@@ -24,11 +24,16 @@ const config = {
         data: [13, 17, 15, 11, 23, 17]
     }]
 }
+let chart;
 
 function setActions(container) {
+    createCheckBox(container, 'Debug', function (e) {
+        RealChart.setDebugging(_getChecked(e));
+        chart.refresh();
+    }, true);
     createButton(container, 'Test', function(e) {
         alert('hello');
-    })
+    });
 }
 
 export function init() {
@@ -36,8 +41,6 @@ export function init() {
     // RealChart.setLogging(true);
     RealChart.setDebugging(true);
 
-    const chart = RealChart.createChartControl(document, 'realchart');
-    chart.model = RealChart.loadChart(config);
-
+    chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')
 }
