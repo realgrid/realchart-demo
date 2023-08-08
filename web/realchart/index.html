@@ -1,23 +1,232 @@
 ﻿<!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>RealChart Demo</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>RealChart Demo</title>
+<style>
+html {
+	height: 100%;
+	margin: 5px 5px 0px 5px;
+	overflow: hidden;
+}
+body {
+	height: 100%;
+	margin: 0px 0px 0px 0px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+#app {
+	display: flex;
+	flex: 1 1 auto;
+	overflow: hidden;
+}
+.sidebar {
+	flex: 0 0 170px;
+	height: 100%;
+	overflow: auto;
+	border-right: 1px solid #ccc;
+}
+.menu {
+	width: 100%;
+	padding-bottom: 30px;
+    font-family: open-sans-semibold, "malgun gothic", Arial;
+}
+.menu li {
+	display: block;
+	padding-left: 7px;
+	padding-right: 5px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	font-size: 13px;
+	cursor: pointer;
+}
+.menu a {
+	padding: 2px 3px;
+	border-radius: 2px;
+	text-decoration: none;
+	color: #555;
+}
+.menu a:hover {
+	color: white;
+	background-color: gray;
+}
+.menu-group {
+	margin-top: 4px;
+	margin-bottom: 4px;
+	font-weight: 500;
+}
+.menu-group:hover {
+	color: red;
+}
+.menu-group[data-state='1'] {
+	color: red;
+}
+.menu-leaf {
+	margin-left: 12px;
+}
+.menu-leaf a {
+	color: #777;
+	font-size: 12px;
+}
+.menu-leaf[data-focus] a {
+	color: #333;
+	text-decoration: underline;
+}
+.content {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	height: 100%;
+	overflow: auto;
+}
+.frame {
+	flex: 1 1 auto;
+	border: none;
+	overflow: hidden;
+}
+</style>
+<script type="text/javascript" src="/lib/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="/lib/domutils.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+	init();
+});
 </script>
+<script type="text/javascript" src="./index.js"></script>
 </head>
-<body style="padding: 20px;">
-    <h1>RealChart v1.0</h1>
-    <ul>
-        <li><h2><a href="./demo/index.html">Demo</a></h2></li>
-        <li><h2><a href="./exam/index.html">Exam</a></h2></li>
-        <li><h2><a href="./docs/index.html">Docs</a></h2></li>
-        <li><h2><a href="./exam/index.html">Examples</a></h2></li>
-    </ul>
-    <div style="display:flex; width: 500px; height: 200px; background: yellow; border: 1px solid gray;">
-        <span style="flex-shrink: 1; background-color: green; width: 100px; height: 100px"></span>
-        <span style="background-color: blue; width: 600px; height: 100px"></span>
-    </div>
+<body onclick="clickHandler(event)">
+	<h3 style="margin-left: 20px;">RealChart Demo</h3>
+	<div id="app">
+		<div class="sidebar">
+			<div class="menu" id="menu">
+				<li class="menu-group">Bar</li>
+				<li class="menu-leaf"><a href='./demo/bar.html' target="blank" onclick="return clickRef(event);">Basic</a></li>
+				<li class="menu-leaf"><a href='./demo/bar-negative.html' target="blank" onclick="return clickRef(event);">Bar Negative</a></li>
+				<li class="menu-leaf"><a href='./demo/bargroup.html' target="blank" onclick="return clickRef(event);">Multiple Bars</a></li>
+				<li class="menu-leaf"><a href='./demo/bargroup-multi.html' target="blank" onclick="return clickRef(event);">Multiple Groups</a></li>
+				<li class="menu-leaf"><a href='./demo/bargroup-negative.html' target="blank" onclick="return clickRef(event);">Negative Bars</a></li>
+
+				<li class="menu-group">Bar Range</li>
+				<li class="menu-leaf"><a href='./demo/barrange.html' target="blank" onclick="return clickRef(event);">Bar Range</a></li>
+
+				<li class="menu-group">Waterfall</li>
+				<li class="menu-leaf"><a href='./demo/waterfall.html' target="blank" onclick="return clickRef(event);">Waterfall</a></li>
+
+				<li class="menu-group">Line</li>
+				<li class="menu-leaf"><a href='./demo/line.html' target="blank" onclick="return clickRef(event);">Line</a></li>
+				<li class="menu-leaf"><a href='./demo/spline.html' target="blank" onclick="return clickRef(event);">Spline</a></li>
+				<li class="menu-leaf"><a href='./demo/step.html' target="blank" onclick="return clickRef(event);">Stepped Line</a></li>
+				<li class="menu-leaf"><a href='./demo/line-negative.html' target="blank" onclick="return clickRef(event);">Negative Lines</a></li>
+				<li class="menu-leaf"><a href='./demo/linegroup.html' target="blank" onclick="return clickRef(event);">Multiple Lines</a></li>
+
+				<li class="menu-group">Area</li>
+				<li class="menu-leaf"><a href='./demo/area.html' target="blank" onclick="return clickRef(event);">Area</a></li>
+				<li class="menu-leaf"><a href='./demo/areagroup.html' target="blank" onclick="return clickRef(event);">Multiple Areas</a></li>
+				<li class="menu-leaf"><a href='./demo/area-step.html' target="blank" onclick="return clickRef(event);">Stepped Area</a></li>
+				<li class="menu-leaf"><a href='./demo/arearange.html' target="blank" onclick="return clickRef(event);">Area Range</a></li>
+				<li class="menu-leaf"><a href='./demo/area-negative.html' target="blank" onclick="return clickRef(event);">Negative Areas</a></li>
+
+				<li class="menu-group">Pareto</li>
+				<li  class="menu-leaf"><a href='./demo/pareto.html' target="blank" onclick="return clickRef(event);">Pareto</a></li>
+
+				<li class="menu-group">Bump</li>
+				<li  class="menu-leaf"><a href='./demo/bump.html' target="blank" onclick="return clickRef(event);">Bump</a></li>
+
+				<li class="menu-group">Scatter</li>
+				<li  class="menu-leaf"><a href='./demo/scatter.html' target="blank" onclick="return clickRef(event);">Scatter</a></li>
+
+				<li class="menu-group">Bubble</li>
+				<li  class="menu-leaf"><a href='./demo/bubble.html' target="blank" onclick="return clickRef(event);">Bubble</a></li>
+
+				<li class="menu-group">Boxplot</li>
+				<li  class="menu-leaf"><a href='./demo/boxplot.html' target="blank" onclick="return clickRef(event);">BoxPlot</a></li>
+
+				<li class="menu-group">Error Bar</li>
+				<li  class="menu-leaf"><a href='./demo/errorbar.html' target="blank" onclick="return clickRef(event);">ErrorBar</a></li>
+
+				<li class="menu-group">Candlestick</li>
+				<li  class="menu-leaf"><a href='./demo/candlestick.html' target="blank" onclick="return clickRef(event);">Candlestick</a></li>
+
+				<li class="menu-group">Ohlc</li>
+				<li  class="menu-leaf"><a href='./demo/ohlc.html' target="blank" onclick="return clickRef(event);">Ohlc</a></li>
+
+				<li class="menu-group">Lollipop</li>
+				<li  class="menu-leaf"><a href='./demo/lollipop.html' target="blank" onclick="return clickRef(event);">Lollipop</a></li>
+				<li  class="menu-leaf"><a href='./demo/dumbbell.html' target="blank" onclick="return clickRef(event);">Dumbbell</a></li>
+
+				<li class="menu-group">Equalizer</li>
+				<li  class="menu-leaf"><a href='./demo/equalizer.html' target="blank" onclick="return clickRef(event);">Equalizer</a></li>
+				<li  class="menu-leaf"><a href='./demo/equalizer-multi.html' target="blank" onclick="return clickRef(event);">Multiple Equalizer</a></li>
+
+				<li class="menu-group">Histogram</li>
+				<li  class="menu-leaf"><a href='./demo/histogram.html' target="blank" onclick="return clickRef(event);">Histogram</a></li>
+
+				<li class="menu-group">Vector</li>
+				<li  class="menu-leaf"><a href='./demo/vector.html' target="blank" onclick="return clickRef(event);">Vector</a></li>
+
+				<li class="menu-group">Heatmap</li>
+				<li  class="menu-leaf"><a href='./demo/heatmap.html' target="blank" onclick="return clickRef(event);">Heatmap</a></li>
+
+				<li class="menu-group">Treemap</li>
+				<li  class="menu-leaf"><a href='./demo/treemap.html' target="blank" onclick="return clickRef(event);">Treemap</a></li>
+
+				<li class="menu-group">Pie</li>
+				<li  class="menu-leaf"><a href='./demo/pie.html' target="blank" onclick="return clickRef(event);">Pie</a></li>
+				<li  class="menu-leaf"><a href='./demo/donut.html' target="blank" onclick="return clickRef(event);">Donut</a></li>
+
+				<li class="menu-group">Polar</li>
+				<li  class="menu-leaf"><a href='./demo/spiderweb.html' target="blank" onclick="return clickRef(event);">SpiderWeb</a></li>
+				<li  class="menu-leaf"><a href='./demo/radar.html' target="blank" onclick="return clickRef(event);">Radar</a></li>
+				<li  class="menu-leaf"><a href='./demo/windrose.html' target="blank" onclick="return clickRef(event);">WindRose</a></li>
+
+				<li class="menu-group">Funnel</li>
+				<li  class="menu-leaf"><a href='./demo/funnel.html' target="blank" onclick="return clickRef(event);">Funnel</a></li>
+				<li  class="menu-leaf"><a href='./demo/pyramid.html' target="blank" onclick="return clickRef(event);">Pyramid</a></li>
+
+				<li class="menu-group">Word Cloud</li>
+				<li  class="menu-leaf"><a href='./demo/wordcloud.html' target="blank" onclick="return clickRef(event);">Wordcloud</a></li>
+
+				<li class="menu-group">Sub-Chart</li>
+				<li  class="menu-leaf"><a href='./demo/wing.html' target="blank" onclick="return clickRef(event);">Wing Chart</a></li>
+
+				<li class="menu-group">Axis</li>
+				<li  class="menu-leaf"><a href='./demo/axis-crosshair.html' target="blank" onclick="return clickRef(event);">Crosshair</a></li>
+				<li  class="menu-leaf"><a href='./demo/categoryaxis.html' target="blank" onclick="return clickRef(event);">Category Axis</a></li>
+				<li  class="menu-leaf"><a href='./demo/categoryaxis2.html' target="blank" onclick="return clickRef(event);">Category Axis 2</a></li>
+				<li  class="menu-leaf"><a href='./demo/linearaxis.html' target="blank" onclick="return clickRef(event);">Linear Axis</a></li>
+				<li  class="menu-leaf"><a href='./demo/logaxis.html' target="blank" onclick="return clickRef(event);">Log Axis</a></li>
+				<li  class="menu-leaf"><a href='./demo/dateaxis.html' target="blank" onclick="return clickRef(event);">DateTime Axis</a></li>
+				<li  class="menu-leaf"><a href='./demo/axisbreak.html' target="blank" onclick="return clickRef(event);">Axis Breaks</a></li>
+				<li  class="menu-leaf"><a href='./demo/axislabel.html' target="blank" onclick="return clickRef(event);">Axis Tick Labels</a></li>
+				<li  class="menu-leaf"><a href='./demo/multiaxis.html' target="blank" onclick="return clickRef(event);">Multiple Axis</a></li>
+
+				<li class="menu-group">Titles</li>
+				<li  class="menu-leaf"><a href='./demo/titles.html' target="blank" onclick="return clickRef(event);">Titles</a></li>
+
+				<li class="menu-group">Legends</li>
+				<li  class="menu-leaf"><a href='./demo/legend.html' target="blank" onclick="return clickRef(event);">Legend</a></li>
+
+				<li class="menu-group">Plot Area</li>
+				<li  class="menu-leaf"><a href='./demo/indicators.html' target="blank" onclick="return clickRef(event);">Plot Indicators</a></li>
+				<li  class="menu-leaf"><a href='./demo/background.html' target="blank" onclick="return clickRef(event);">Backgrounds</a></li>		
+
+				<li class="menu-group">Chart</li>
+				<li  class="menu-leaf"><a href='./demo/chart.html' target="blank" onclick="return clickRef(event);">Chart</a></li>
+				<li  class="menu-leaf"><a href='./demo/zooming.html' target="blank" onclick="return clickRef(event);">Zooming</a></li>
+				<li  class="menu-leaf"><a href='./demo/scrolling.html' target="blank" onclick="return clickRef(event);">Scrolling</a></li>
+				<li  class="menu-leaf"><a href='./demo/navigator.html' target="blank" onclick="return clickRef(event);">Navigator</a></li>
+
+				<li class="menu-group">Data</li>
+				<li  class="menu-leaf"><a href='./data/data.html' target="blank" onclick="return clickRef(event);">Data</a></li>
+			</div>
+		</div>
+		<div class="content">
+			<iframe id="frame" scrolling="no" frameborder="no" class="frame" onload="resizeFrame(this)" src="./demo/column.html">
+			</iframe>
+		</div>
+	</div>
 </body>
 </html>		
