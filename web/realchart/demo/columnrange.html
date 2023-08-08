@@ -4,7 +4,7 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>RealChart - 기본</title>
+<title>RealChart - Column Range</title>
 <style>
 html {
 	margin: 0px;
@@ -13,13 +13,14 @@ body {
 	margin: 20px 30px;
 }
 #realchart {
-	position: absolute;
 	width: 850px;
 	height: 550px;
     border: 1px solid lightgray;
+    margin-bottom: 20px;
 }
 </style>
 <link href="../styles/realreport-chart-style.css" rel="stylesheet">
+<script type="text/javascript" src="../lib/domutils.js"></script>
 <link href="./demo.css" rel="stylesheet">
 <style>
 .green-layout {
@@ -30,11 +31,10 @@ body {
 }
 </style>
 <script type="text/javascript" src="../lib/jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="../lib/domutils.js"></script>
 <!-- <script type="text/javascript" src="../lib/realgrid-touch-lic.js"></script> -->
 <script type="text/javascript" src="../lib/realreport-chart.js"></script>
 <script type="module">
-	import { init } from './basic.js';
+	import { init } from './columnrange.js';
 	window.addEventListener('DOMContentLoaded', function () {
 		try {
 			init();

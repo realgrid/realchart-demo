@@ -1,0 +1,130 @@
+////////////////////////////////////////////////////////////////////////////////
+// OhlcSeriesView.ts
+// 2023. 08. 08. created by woori
+// -----------------------------------------------------------------------------
+// Copyright (c) 2023 Wooritech Inc.
+// All rights reserved.
+////////////////////////////////////////////////////////////////////////////////
+
+import { ElementPool } from "../../common/ElementPool";
+import { IRect } from "../../common/Rectangle";
+import { GroupElement } from "../../common/impl/GroupElement";
+import { LineElement } from "../../common/impl/PathElement";
+import { OhlcSeries, OhlcSeriesPoint } from "../../model/series/OhlcSeries";
+import { PointLabelView, SeriesView } from "../SeriesView";
+
+class StickView extends GroupElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _back: LineElement;
+    private _tickOpen: LineElement;
+    private _tickClose: LineElement;
+    private _bar: LineElement;
+    point: OhlcSeriesPoint;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    layout(): void {
+        const p = this.point;
+        const w = this.width;
+        const h = this.height;
+        const len = p.highValue - p.lowValue;
+        const x = this.width / 2;
+        let y = 0;
+        const yOpen = y + h - h * (Math.min(p.openValue, p.closeValue) - p.lowValue) / len;
+        const yClose = y + h - h * (Math.max(p.openValue, p.closeValue) - p.lowValue) / len;
+
+        this._back.setBounds(0, 0, w, h);
+        this._tickOpen.setHLine(yOpen, 0, x);
+        this._tickClose.setHLine(yClose, x, this.width);
+        this._bar.setVLine(x, y, y + h);
+        //this._bar.setBounds(0, Math.min(yClose, yOpen), w, Math.max(1, Math.abs(yOpen - yClose)));
+        this._bar.setStyleName(p.close < p.open ? 'rct-ohlc-series-bar-fall' : 'rct-ohlc-series-bar')
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doInitChildren(doc: Document): void {
+        this.add(this._back = new LineElement(doc, 'rct-ohlc-series-back'));
+        this.add(this._tickOpen = new LineElement(doc, 'rct-ohlc-series-tick'));
+        this.add(this._tickClose = new LineElement(doc, 'rct-ohlc-series-tick'));
+        this.add(this._bar = new LineElement(doc));
+    }
+}
+
+export class OhlcSeriesView extends SeriesView<OhlcSeries> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _sticks = new ElementPool(this._pointContainer, StickView);
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-ohlc-series')
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _prepareSeries(doc: Document, model: OhlcSeries): void {
+        this.$_prepareSticks(model._visPoints as OhlcSeriesPoint[]);
+    }
+
+    protected _renderSeries(width: number, height: number): void {
+        this.$_layoutSticks(width, height);
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_prepareSticks(points: OhlcSeriesPoint[]): void {
+        this._sticks.prepare(points.length, (box, i) => {
+            box.point = points[i];
+        })
+    }
+
+    private $_layoutSticks(width: number, height: number): void {
+        const series = this.model;
+        const labels = series.pointLabel;
+        const labelVis = labels.visible;
+        const labelOff = labels.offset;
+        const labelViews = this._labelContainer;
+        const xAxis = series._xAxisObj;
+        const yAxis = series._yAxisObj;
+        const yOrg = this.height;
+
+        this._sticks.forEach((box, i) => {
+            const wUnit = xAxis.getUnitLength(width, i);
+            const wPoint = series.getPointWidth(wUnit);
+            const p = box.point;
+            const x = p.xPos = xAxis.getPosition(this.width, p.xValue) - wPoint / 2;
+            const y = p.yPos = yOrg - yAxis.getPosition(this.height, p.yValue);
+            const w = wPoint;
+            const h = Math.abs(yOrg - yAxis.getPosition(height, p.lowValue) - y);
+
+            box.setBounds(x, y, w, h);
+            box.layout();
+
+            if (labelVis) {
+                let view: PointLabelView;
+                let r: IRect;
+
+                if (view = labelViews.get(p, 1)) {
+                    r = view.getBBounds();
+                    view.translate(x + (w - r.width) / 2, y - r.height - labelOff);
+                }
+                if (view = labelViews.get(p, 0)) {
+                    r = view.getBBounds();
+                    view.translate(x + (w - r.width) / 2, y + h + labelOff);
+                }
+            }
+        })
+    }
+}

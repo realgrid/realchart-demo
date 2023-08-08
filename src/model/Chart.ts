@@ -34,6 +34,7 @@ import { HeatmapSeries } from "./series/HeatmapSeries";
 import { HistogramSeries } from "./series/HistogramSeries";
 import { AreaRangeSeries, AreaSeries, LineSeries, LineSeriesGroup } from "./series/LineSeries";
 import { LollipopSeries } from "./series/LollipopSeries";
+import { OhlcSeries } from "./series/OhlcSeries";
 import { ParetoSeries } from "./series/ParetoSeries";
 import { PieSeries, PieSeriesGroup } from "./series/PieSeries";
 import { ScatterSeries } from "./series/ScatterSeries";
@@ -91,6 +92,7 @@ const series_types = {
     'boxplot': BoxPlotSeries,
     'bubble': BubbleSeries,
     'candlestick': CandlestickSeries,
+    'ohlc': OhlcSeries,
     'dumbbell': DumbbellSeries,
     'equalizer': EqualizerSeries,
     'errorbar': ErrorBarSeries,

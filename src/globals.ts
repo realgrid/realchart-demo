@@ -43,15 +43,10 @@ export class Globals {
         RcElement.DEBUGGING = debug;
     }
     /**
-     * {@link RtListControl 리스트 컨트롤}을 생성한다.
-     * 
-     * @see createListData
-     * @see createDataView
-     * @see createDataLink
+     * {@link ChartControl Chart 컨트롤}을 생성한다.
      * 
      * @param doc
-     * @param container 리스트컨트롤이 생성되는 div 엘리먼트나 id
-     * @param renderMode 
+     * @param container 컨트롤이 생성되는 div 엘리먼트나 id
      * @returns 
      */
     static createChartControl(doc: Document, container: string | HTMLDivElement): ChartControl {
@@ -64,5 +59,18 @@ export class Globals {
      */
     static loadChart(source: any): Chart {
         return new Chart(source);
+    }
+    /**
+     * {@link ChartControl Chart 컨트롤}을 생성한다.
+     * 
+     * @param doc
+     * @param container 컨트롤이 생성되는 div 엘리먼트나 id
+     * @param config 차트 모델 설정 객체
+     * @returns 
+     */
+    static createChart(doc: Document, container: string | HTMLDivElement, config: any): ChartControl {
+        const c = new ChartControl(doc, container);
+        c.model = new Chart(config);
+        return c;
     }
 }

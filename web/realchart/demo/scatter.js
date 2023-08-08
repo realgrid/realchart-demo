@@ -1,6 +1,6 @@
 const config = {
     type: 'scatter',
-    title: "Scatter Series 01",
+    title: "Scatter Series",
     xAxis: {
         title: 'Height',
         baseValue: null,
@@ -20,6 +20,12 @@ const config = {
     }]
 }
 
+function setActions(container) {
+    createButton(container, 'Test', function(e) {
+        alert('hello');
+    })
+}
+
 export function init() {
     // console.log(RealChart.getVersion());
     // RealChart.setLogging(true);
@@ -27,4 +33,6 @@ export function init() {
 
     const chart = RealChart.createChartControl(document, 'realchart');
     chart.model = RealChart.loadChart(config);
+
+    setActions('actions')
 }

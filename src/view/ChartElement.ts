@@ -55,12 +55,21 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     layout(param?: any): ChartElement<ChartItem> {
         this._doLayout(param);
 
-        if (this._debugRect && this.width > 1 && this.height > 1) {
-            this._debugRect.setRect(this._getDebugRect());
-            this._debugRect.setStyles({
-                fill: 'transparent',
-                stroke: '#00000018'
-            })
+        if (RcElement.DEBUGGING) {
+            if (!this._debugRect) {
+                this.insertFirst(this._debugRect = new RectElement(this.doc, 'rct-debug'));
+                this._debugRect.setAttr('pointerEvents', 'none');
+            }
+            if (this.width > 1 && this.height > 1) {
+                this._debugRect.setRect(this._getDebugRect());
+                this._debugRect.setStyles({
+                    fill: 'transparent',
+                    stroke: '#00000018'
+                })
+            }
+        } else if (this._debugRect) {
+            this._debugRect.remove();
+            this._debugRect = null;
         }
         return this;
     }

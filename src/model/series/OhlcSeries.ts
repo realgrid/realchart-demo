@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
-// CandlestickSeries.ts
-// 2023. 07. 29. created by woori
+// OhlcSeries.ts
+// 2023. 08. 08. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
@@ -12,10 +12,15 @@ import { DataPoint } from "../DataPoint";
 import { BoxSeries } from "./BarSeries";
 
 /**
+ * Low/Open/Close/High 네 값을 수직선(low-high)과 
+ * 왼쪽(open), 오른쪽(close) 수평 선분으로 표시한다.<br>
+ * close가 open보다 큰 경와 작은 경우를 다른 색으로 표시할 수 있다.<br>
+ * 일정 기간 동안 한 값의 대체적인 변화를 표시한다.
+ *
  * [low, open, close, high]
  * [x, low, open, close, high]
  */
-export class CandlestickSeriesPoint extends DataPoint {
+export class OhlcSeriesPoint extends DataPoint {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -36,7 +41,7 @@ export class CandlestickSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    parse(series: CandlestickSeries): void {
+    parse(series: OhlcSeries): void {
         super.parse(series);
 
         this.lowValue = +this.low;
@@ -45,7 +50,7 @@ export class CandlestickSeriesPoint extends DataPoint {
         this.highValue = +this.high;
     }
 
-    protected _readArray(series: CandlestickSeries, v: any[]): void {
+    protected _readArray(series: OhlcSeries, v: any[]): void {
         const d = v.length > 4 ? 1 : 0;
 
         this.low = v[pickNum(series.lowField, 0 + d)];
@@ -60,7 +65,7 @@ export class CandlestickSeriesPoint extends DataPoint {
         }
     }
 
-    protected _readObject(series: CandlestickSeries, v: any): void {
+    protected _readObject(series: OhlcSeries, v: any): void {
         super._readObject(series, v);
 
         this.low = pickProp(v[series.lowField], v.row);
@@ -78,7 +83,7 @@ export class CandlestickSeriesPoint extends DataPoint {
     }
 }
 
-export class CandlestickSeries extends BoxSeries {
+export class OhlcSeries extends BoxSeries {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -101,7 +106,7 @@ export class CandlestickSeries extends BoxSeries {
     // overriden members
     //-------------------------------------------------------------------------
     type(): string {
-        return 'candlestick';
+        return 'ohlc';
     }
 
     canCategorized(): boolean {
@@ -109,14 +114,14 @@ export class CandlestickSeries extends BoxSeries {
     }
 
     protected _createPoint(source: any): DataPoint {
-        return new CandlestickSeriesPoint(source);
+        return new OhlcSeriesPoint(source);
     }
 
     collectValues(axis: IAxis): number[] {
         const vals = super.collectValues(axis);
 
         if (axis === this._yAxisObj) {
-            this._visPoints.forEach((p: CandlestickSeriesPoint) => {
+            this._visPoints.forEach((p: OhlcSeriesPoint) => {
                 vals.push(p.lowValue);
             })
         }

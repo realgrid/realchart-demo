@@ -244,6 +244,23 @@
     fill: #008;
 }
 
+/** ohlc series */
+.rct-ohlc-series {
+    stroke-width: 1;
+}
+.rct-ohlc-series-back {
+    fill: none;
+}
+.rct-ohlc-series-tick {
+    stroke: #003;
+}
+.rct-ohlc-series-bar {
+    stroke: #800;
+}
+.rct-ohlc-series-bar-fall {
+    stroke: #008;
+}
+
 /** waterfall series */
 .rct-waterfall-series-negative {
     fill: #dd5500;

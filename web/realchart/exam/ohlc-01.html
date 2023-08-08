@@ -4,7 +4,7 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>RealChart - 기본</title>
+<title>RealChart - Ohlc 01</title>
 <style>
 html {
 	margin: 0px;
@@ -30,11 +30,10 @@ body {
 }
 </style>
 <script type="text/javascript" src="../lib/jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="../lib/domutils.js"></script>
 <!-- <script type="text/javascript" src="../lib/realgrid-touch-lic.js"></script> -->
 <script type="text/javascript" src="../lib/realreport-chart.js"></script>
 <script type="module">
-	import { init } from './basic.js';
+	import { init } from './ohlc-01.js';
 	window.addEventListener('DOMContentLoaded', function () {
 		try {
 			init();
@@ -47,6 +46,5 @@ body {
 </head>
 <body>
 	<div id="realchart"></div>
-	<div id="actions"></div>
 </body>
 </html>		
