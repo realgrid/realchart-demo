@@ -52,6 +52,13 @@
     padding: 20px;
 }
 
+/** debug border */
+.rct-debug {
+    fill: none;
+    stroke: #00880018;
+    pointer-events: none;
+}
+
 /** rich text */
 .rct-text-bold {
     font-weight: bold;

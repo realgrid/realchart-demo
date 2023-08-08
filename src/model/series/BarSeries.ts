@@ -14,6 +14,7 @@ export abstract class BoxSeries extends PolarableSeries implements IClusterable 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _pointPad = 0;
     _clusterWidth = 1;
     _clusterPos = 0;
     _childWidth = 1;    // group내에서 이 시리즈의 상대적 너비
@@ -23,19 +24,18 @@ export abstract class BoxSeries extends PolarableSeries implements IClusterable 
     // properties
     //-------------------------------------------------------------------------
     /**
-     * 시리즈가 group에 포함되지 않은 경우 자동 생성되는 기본 group에 포함되는 데,
-     * 그 그룹이 축 단위 너비에서 차지하는 상대적 너비.
+     * 시리즈가 group에 포함되지 않은 경우, 축 단위 너비에서 이 시리즈가 차지하는 상대적 너비.
      * <br>
-     * 명시적으로 설정된 그룹에 포함되면 이 속성은 무시된다.
+     * 그룹에 포함되면 이 속성은 무시된다.
      */
-    groupWidth = 1;
-    /**
-     * 시리즈가 group에 포함되지 않은 경우 자동 생성되는 기본 group에 포함되는 데,
-     * 그 그룹의 너비에서 포인트들이 표시되기 전후의 상대적 여백 크기.
-     * <br>
-     * 명시적으로 설정된 그룹에 포함되면 이 속성은 무시된다.
-     */
-    groupPadding = 0.2;
+    groupWidth = 1; // _clusterWidth 계산에 사용된다. TODO: clusterWidth로 변경해야 하나?
+    // /**
+    //  * 시리즈가 group에 포함되지 않은 경우 자동 생성되는 기본 group에 포함되는 데,
+    //  * 그 그룹의 너비에서 포인트들이 표시되기 전후의 상대적 여백 크기.
+    //  * <br>
+    //  * 명시적으로 설정된 그룹에 포함되면 이 속성은 무시된다.
+    //  */
+    // groupPadding = 0.2;
     /**
      * 시리즈가 포함된 그룹의 layout이 {@link SeriesGroupLayout.DEFAULT}이거나 특별히 설정되지 않아서,
      * 그룹에 포함된 시리즈들의 data point가 옆으로 나열되어 표시될 때,
@@ -50,18 +50,27 @@ export abstract class BoxSeries extends PolarableSeries implements IClusterable 
      * point가 차지할 원래 크기에 대한 상대 값으로서,
      * 0 ~ 1 사이의 비율 값으로 지정한다.
      */
-    pointPadding = 0.1;
+    pointPadding: number;// = 0.1;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    private $_getPointPadding(length: number): number {
+        if (isNaN(this.pointPadding)) {
+            return this.group ? 0.1 : 0.3;
+        } else {
+            return this.pointPadding;
+        }
+    }
+
     getPointWidth(length: number): number {
         let w = length;
         
         w *= this._clusterWidth;           
-        w *= 1 - this.groupPadding * 2;  
+        // w *= 1 - this.groupPadding * 2;  
         w *= this._childWidth;                  // 그룹 내 시리즈 영역
-        w *= 1 - this.pointPadding * 2;         // 시리즈 padding
+        // w *= 1 - this.pointPadding * 2;         // 시리즈 padding
+        w *= 1 - this._pointPad * 2;         // 시리즈 padding
         return w;
     }
 
@@ -70,12 +79,13 @@ export abstract class BoxSeries extends PolarableSeries implements IClusterable 
 
         p = length * this._clusterPos;
         length *= this._clusterWidth;
-        p += length * this.groupPadding;
-        length *= 1 - this.groupPadding * 2;
+        // p += length * this.groupPadding;
+        // length *= 1 - this.groupPadding * 2;
 
         p += length * this._childPos;
         length *= this._childWidth;
-        p += length * this.pointPadding;
+        // p += length * this.pointPadding;
+        p += length * this._pointPad;
         return p;
     }
 
@@ -95,6 +105,12 @@ export abstract class BoxSeries extends PolarableSeries implements IClusterable 
         this._clusterWidth = width;
         this._clusterPos = pos;
     }
+
+    protected _doPrepareRender(): void {
+        super._doPrepareRender();
+
+        this._pointPad = isNaN(this.pointPadding) ? (this.group ? 0.1 : 0.3) : this.pointPadding;
+ }
 }
 
 export class BarSeriesPoint extends DataPoint {

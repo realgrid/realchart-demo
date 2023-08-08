@@ -1,30 +1,22 @@
 const config = {
-    title: "Basic Real-Chart",
+    options: {
+        polar: true
+    },
+    title: "Polar Chart",
     xAxis: {
-        // type: 'category',
-        // position: 'apposite'
-        // position: 'base',
-        // baseAxis: 1,
-        title: 'X Axis',
-        grid: true
     },
     yAxis: {
-        title: 'Y Axis',
-    },
-    series: {
-        pointLabel: {
-            visible: true,
-            position: 'head',
-            // offset: 10,
-            // text: '<b style="fill:red">${x}</b>',
-            effect: 'outline',// 'background',
+        guide: [{
+            type: 'line',
+            value: 5.5,
             style: {
-            },
-            // backgroundStyle: {
-            //     fill: '#004',
-            //     padding: '5px'
-            // }
-        },
+                stroke: 'red'
+            }
+        }]
+    },
+    series: [{
+        type: 'bar',
+        pointLabel: true,
         data: [
             ['home', 7], 
             ['sky', 11], 
@@ -32,11 +24,19 @@ const config = {
             ['지리산', 14.3], 
             ['zzz', 13],
             ['낙동강', 12.5]
-        ],
-        style: {
-            // fill: 'yellow'
-        }
-    }
+        ]
+    }, {
+        type: 'area',
+        pointLabel: true,
+        data: [
+            ['home', 13], 
+            ['sky', 9], 
+            ['def', 11], 
+            ['지리산', 12.3], 
+            ['zzz', 11],
+            ['낙동강', 15.5]
+        ]
+    }]
 }
 let chart;
 

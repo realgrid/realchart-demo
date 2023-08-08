@@ -59,6 +59,10 @@ export class ChartControl extends RcControl {
         this.invalidateLayout();
     }
 
+    update(config: any): void {
+        this.model = new Chart(config);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

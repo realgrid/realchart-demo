@@ -208,7 +208,7 @@ export class TimeAxis extends ContinuousAxis {
     constructor(chart: IChart, name?: string) {
         super(chart, name);
 
-        this.xBase = this.yBase = NaN;
+        this.baseValue = NaN;
     }
 
     //-------------------------------------------------------------------------

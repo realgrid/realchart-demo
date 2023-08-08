@@ -1,5 +1,5 @@
 const config = {
-    title: "Basic Real-Chart",
+    title: "Axis Guides",
     xAxis: {
         // type: 'category',
         // position: 'apposite'
@@ -10,6 +10,19 @@ const config = {
     },
     yAxis: {
         title: 'Y Axis',
+        guide: [{
+            type: 'line',
+            value: 12,
+            label: 'line guide'
+        }, {
+            type: 'range',
+            start: 3,
+            end: 6,
+            label: {
+                text: 'range guide',
+                align: 'right'
+            }
+        }]
     },
     series: {
         pointLabel: {

@@ -111,7 +111,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
         //const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
-        const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.yBase : 0);
+        const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.baseValue : 0);
         const org = inverted ? 0 : height;;
         const labelInfo: LabelInfo = labels.visible && Object.assign(this._labelInfo, {
             inverted,

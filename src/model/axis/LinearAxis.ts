@@ -275,15 +275,10 @@ export abstract class ContinuousAxis extends Axis {
      */
     nullable = true;
     /**
-     * x축으로 사용될 때 계산된 최소값이 이 값보다 클 때 최소값이 되고,
+     * 계산된 최소값이 이 값보다 클 때 최소값이 되고,
      * 계산된 최대값이 이 값보다 작을 때 최대값이 된다.
      */
-    xBase = 0;//: number;
-    /**
-     * y축으로 사용될 때 계산된 최소값이 이 값보다 클 때 최소값이 되고,
-     * 계산된 최대값이 이 값보다 작을 때 최대값이 된다.
-     */
-    yBase = 0;
+    baseValue = 0;//: number;
     /**
      * baseValue가 설정되고,
      * 계산된 최소값이 baseValue보다 작고 최대값이 baseValue보다 클 때,
@@ -334,7 +329,7 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected _doPrepareRender(): void {
-        const base = this._isX ? this.xBase : this.yBase;
+        const base = this.baseValue;
 
         this._hardMin = this.min;
         this._hardMax = this.max;

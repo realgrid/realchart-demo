@@ -257,12 +257,12 @@ export interface IClusterable {
      * group이 여러 개인 경우 이 너비를 모두 합한 크기에 대한 상대값으로 group의 너비가 결정된다.
      */
     groupWidth: number;
-    /**
-     * 시리즈 point bar들의 양 끝을 점유하는 빈 공간 크기 비율.
-     * <br>
-     * 0 ~ 1 사이의 비율 값으로 지정한다.
-     */
-    groupPadding: number;
+    // /**
+    //  * 시리즈 point bar들의 양 끝을 점유하는 빈 공간 크기 비율.
+    //  * <br>
+    //  * 0 ~ 1 사이의 비율 값으로 지정한다.
+    //  */
+    // groupPadding: number;
 
     setCluster(width: number, pos: number): void;
 }

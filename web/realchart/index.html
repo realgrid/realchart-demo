@@ -73,6 +73,7 @@ body {
 }
 .menu-leaf[data-focus] a {
 	color: #333;
+    font-weight: bold;
 	text-decoration: underline;
 }
 .content {
@@ -107,18 +108,19 @@ window.addEventListener('DOMContentLoaded', function () {
 
                 <li class="menu-group">Column</li>
 				<li class="menu-leaf"><a href='./demo/column.html' target="blank" onclick="return clickRef(event);">Column</a></li>
-				<li class="menu-leaf"><a href='./demo/column-multi.html' target="blank" onclick="return clickRef(event);">Multi Series</a></li>
-				<li class="menu-leaf"><a href='./demo/column-negative.html' target="blank" onclick="return clickRef(event);">Column Negative</a></li>
+				<li class="menu-leaf"><a href='./demo/column-multi.html' target="blank" onclick="return clickRef(event);">Multi Columns</a></li>
 				<li class="menu-leaf"><a href='./demo/columngroup.html' target="blank" onclick="return clickRef(event);">Column Group</a></li>
 				<li class="menu-leaf"><a href='./demo/columngroup-multi.html' target="blank" onclick="return clickRef(event);">Multiple Groups</a></li>
+				<li class="menu-leaf"><a href='./demo/column-negative.html' target="blank" onclick="return clickRef(event);">Column Negative</a></li>
 				<li class="menu-leaf"><a href='./demo/columngroup-negative.html' target="blank" onclick="return clickRef(event);">Negative Columns</a></li>
 				<li class="menu-leaf"><a href='./demo/columnrange.html' target="blank" onclick="return clickRef(event);">Column Range</a></li>
 
                 <li class="menu-group">Bar</li>
 				<li class="menu-leaf"><a href='./demo/bar.html' target="blank" onclick="return clickRef(event);">Bar</a></li>
-				<li class="menu-leaf"><a href='./demo/bar-negative.html' target="blank" onclick="return clickRef(event);">Bar Negative</a></li>
-				<li class="menu-leaf"><a href='./demo/bargroup.html' target="blank" onclick="return clickRef(event);">Multiple Bars</a></li>
+				<li class="menu-leaf"><a href='./demo/bar-multi.html' target="blank" onclick="return clickRef(event);">Multi Bars</a></li>
+				<li class="menu-leaf"><a href='./demo/bargroup.html' target="blank" onclick="return clickRef(event);">Bar Group</a></li>
 				<li class="menu-leaf"><a href='./demo/bargroup-multi.html' target="blank" onclick="return clickRef(event);">Multiple Groups</a></li>
+				<li class="menu-leaf"><a href='./demo/bar-negative.html' target="blank" onclick="return clickRef(event);">Bar Negative</a></li>
 				<li class="menu-leaf"><a href='./demo/bargroup-negative.html' target="blank" onclick="return clickRef(event);">Negative Bars</a></li>
 				<li class="menu-leaf"><a href='./demo/barrange.html' target="blank" onclick="return clickRef(event);">Bar Range</a></li>
 
@@ -180,14 +182,15 @@ window.addEventListener('DOMContentLoaded', function () {
 
 				<li class="menu-group">Treemap</li>
 				<li  class="menu-leaf"><a href='./demo/treemap.html' target="blank" onclick="return clickRef(event);">Treemap</a></li>
+				<li  class="menu-leaf"><a href='./demo/treemap-level.html' target="blank" onclick="return clickRef(event);">Treemap Leveled</a></li>
 
 				<li class="menu-group">Pie</li>
 				<li  class="menu-leaf"><a href='./demo/pie.html' target="blank" onclick="return clickRef(event);">Pie</a></li>
-				<li  class="menu-leaf"><a href='./demo/donut.html' target="blank" onclick="return clickRef(event);">Donut</a></li>
+				<li  class="menu-leaf"><a href='./demo/pie-donut.html' target="blank" onclick="return clickRef(event);">Donut</a></li>
 
 				<li class="menu-group">Polar</li>
 				<!-- <li  class="menu-leaf"><a href='./demo/spiderweb.html' target="blank" onclick="return clickRef(event);">SpiderWeb</a></li> -->
-				<li  class="menu-leaf"><a href='./demo/radar.html' target="blank" onclick="return clickRef(event);">Radar</a></li>
+				<li  class="menu-leaf"><a href='./demo/polar.html' target="blank" onclick="return clickRef(event);">Polar(Radar)</a></li>
 				<!-- <li  class="menu-leaf"><a href='./demo/windrose.html' target="blank" onclick="return clickRef(event);">WindRose</a></li> -->
 
 				<li class="menu-group">Funnel</li>
@@ -218,8 +221,9 @@ window.addEventListener('DOMContentLoaded', function () {
 				<li  class="menu-leaf"><a href='./demo/legend.html' target="blank" onclick="return clickRef(event);">Legend</a></li>
 
 				<li class="menu-group">Plot Area</li>
-				<li  class="menu-leaf"><a href='./demo/guides.html' target="blank" onclick="return clickRef(event);">Guides</a></li>
-				<li  class="menu-leaf"><a href='./demo/background.html' target="blank" onclick="return clickRef(event);">Backgrounds</a></li>		
+				<li  class="menu-leaf"><a href='./demo/axis-guide.html' target="blank" onclick="return clickRef(event);">Guides</a></li>
+				<li  class="menu-leaf"><a href='./demo/crosshair.html' target="blank" onclick="return clickRef(event);">Crosshair</a></li>
+				<!-- <li  class="menu-leaf"><a href='./demo/background.html' target="blank" onclick="return clickRef(event);">Backgrounds</a></li>		 -->
 
 				<!-- <li class="menu-group">Chart</li>
 				<li  class="menu-leaf"><a href='./demo/chart.html' target="blank" onclick="return clickRef(event);">Chart</a></li>
