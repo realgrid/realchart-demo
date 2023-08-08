@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { Chart } from "../../main";
@@ -15,6 +16,7 @@ import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { LinearAxis } from "../../model/axis/LinearAxis";
 import { BarSeries } from "../../model/series/BarSeries";
 import { BarElement, PointLabelView, SeriesView } from "../SeriesView";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class BarSectorView extends SectorElement {
 
@@ -71,6 +73,10 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         }
     }
 
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.grow(this);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -108,12 +114,11 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPadding * 2 : 0;
-        const yLen = inverted ? width : height;
+        const yLen = (inverted ? width : height) * pickNum(this._viewRate, 1);
         const xLen = inverted ? height : width;
-        //const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
         const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.baseValue : 0);
         const org = inverted ? 0 : height;;
-        const labelInfo: LabelInfo = labels.visible && Object.assign(this._labelInfo, {
+        const labelInfo: LabelInfo = (labels.visible && !isNaN(this._viewRate)) && Object.assign(this._labelInfo, {
             inverted,
             labelPos: series.getLabelPosition(),
             labelOff: labels.offset,
@@ -233,5 +238,9 @@ export class BarSeriesView extends SeriesView<BarSeries> {
     }
 
     private $_layoutSectorLabel(info: LabelInfo): void {
+    }
+
+    protected _doViewRateChanged(rate: number): void {
+        this.$_layoutBars(this.width, this.height);
     }
 }

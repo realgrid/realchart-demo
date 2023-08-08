@@ -1,10 +1,13 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Animation.ts
+// RcAnimation.ts
 // 2023. 08. 07. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
+
+import { pickNum } from "./Common";
+import { fixnum } from "./Types";
 
 const pow = Math.pow;
 const sqrt = Math.sqrt;
@@ -166,8 +169,8 @@ export abstract class RcAnimation {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly DURATION = 0.7;
-    static readonly SHORT_DURATION = 0.3;
+    static readonly DURATION = 700;
+    static readonly SHORT_DURATION = 300;
 
     //-------------------------------------------------------------------------
     // property fields
@@ -179,6 +182,24 @@ export abstract class RcAnimation {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _easing: (x: number) => number;
+    private _started: number;
+    private _timer: any;
+    private _handler = () => {
+        const dt = +new Date() - this._started - this.delay;
+        let rate = Math.min(1, Math.max(0, fixnum(dt / this.duration)));
+
+        if (this._easing) {
+            rate = this._easing(rate);
+        }
+
+        this._doUpdate(rate);
+        
+        if (dt >= this.duration) {
+            this._stop();
+        }
+    }
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -188,10 +209,41 @@ export abstract class RcAnimation {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    start(): void {
+        this._start(this.duration, this.delay, this.easing);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _start(duration: number, delay = 0, easing: string = null): void {
+        this._stop();
+
+        this.duration = pickNum(duration, RcAnimation.DURATION);
+        this.delay = delay || 0;
+        this._easing = Easings[easing];
+        this._doStart();
+        this._started = +new Date();
+        this._timer = setInterval(this._handler, 30);
+        this._handler();
+    }
+
+    protected _stop(): void {
+        if (this._timer) {
+            clearInterval(this._timer);
+            this._timer = null;
+            this._doStop();
+        }
+    }
+
+    protected _doStart(): void {
+    }
+
+    protected _doStop(): void {
+    }
+
+    protected abstract _doUpdate(rate: number): void;
 }

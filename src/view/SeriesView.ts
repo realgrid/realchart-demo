@@ -8,12 +8,12 @@
 
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
+import { RcAnimation } from "../common/RcAnimation";
 import { LayerElement, PathElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { SvgShapes } from "../common/impl/SvgShape";
-import { RcAnimation } from "../model/Animation";
 import { DataPoint } from "../model/DataPoint";
 import { DataPointLabel, Series } from "../model/Series";
 import { ChartElement } from "./ChartElement";
@@ -246,6 +246,8 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected _labelContainer: PointLabelContainer;
     private _trendLineView: PathElement;
 
+    protected _viewRate = NaN;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -257,9 +259,27 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setViewRate(rate: number): void {
+        if ((!isNaN(rate) || !isNaN(this._viewRate)) && rate !== this._viewRate) {
+            this._viewRate = rate;
+            if (isNaN(rate)) {
+                this.control.invalidateLayout();
+            } else {
+                this._doViewRateChanged(rate);
+            }
+        }
+    }
+
+    protected _doViewRateChanged(rate: number): void {
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this._viewRate = 1;
         this._prepareSeries(doc, model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
 
@@ -281,7 +301,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
             this.$_renderTrendline();       
         }
         this._afterRender();
-        this._runShowEffect(true);
+        this._runShowEffect(this._modelChanged);
     }
 
     //-------------------------------------------------------------------------

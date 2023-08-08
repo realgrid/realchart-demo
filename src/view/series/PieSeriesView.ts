@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ORG_ANGLE, deg2rad } from "../../common/Types";
@@ -14,6 +15,7 @@ import { CircleElement } from "../../common/impl/CircleElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
 import { PieSeries, PieSeriesGroup, PieSeriesPoint } from "../../model/series/PieSeries";
 import { PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView } from "../SeriesView";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class SectorView extends SectorElement {
 
@@ -170,20 +172,13 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
-        this._cx = Math.floor(width / 2);
-        this._cy = Math.floor(height / 2);
-
         if (!isNaN(this.model._groupPos)) {
             this.$_calcGroup(width, height);
         } else {
             this.$_calcNormal(width, height);
         }
 
-        if (this._circle.visible = this._sectors.isEmpty) {
-            this._circle.setCircle(this._cx, this._cy, this._rd);
-        }
-
-        this.$_layoutSectors(this._cx, this._cy, this._rd, this._rdInner);
+        this.$_layoutSectors(this.model._visPoints as PieSeriesPoint[], width, height);
     }
 
     private $_calcNormal(width: number, height: number): void {
@@ -204,26 +199,30 @@ export class PieSeriesView extends SeriesView<PieSeries> {
         this._rdInner = (szInner + m._groupPos * len) / this._rd;
     }
 
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.grow(this);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
     private $_prepareSectors(points: PieSeriesPoint[]): void {
         const count = points.length;
-        const sum = points.map(p => p.yValue).reduce((a, c) => a + c, 0);
-        let start = ORG_ANGLE + deg2rad(this.model.startAngle);
+        // const sum = points.map(p => p.yValue).reduce((a, c) => a + c, 0);
+        // let start = this._startAngle = ORG_ANGLE + deg2rad(this.model.startAngle);
 
-        points.forEach(p => {
-            p.yRate = p.yValue / sum
-            p.startAngle = start;
-            start += p.angle = p.yRate * Math.PI * 2;
-        });
+        // points.forEach(p => {
+        //     p.yRate = p.yValue / sum
+        //     p.startAngle = start;
+        //     start += p.angle = p.yRate * Math.PI * 2;
+        // });
 
         this._sectors.prepare(count, (sector, i) => {
             const p = points[i];
-            const a = i < count - 1 ? points[i + 1].startAngle : p.endAngle;
+            // const a = i < count - 1 ? points[i + 1].startAngle : p.endAngle;
 
-            sector.start = a;
-            sector.angle = 0;
+            // sector.start = a;
+            // sector.angle = 0;
             sector.point = p;
 
             sector.setAttr('aria-label', p.ariaHint());
@@ -232,17 +231,40 @@ export class PieSeriesView extends SeriesView<PieSeries> {
         })
     }
 
-    private $_layoutSectors(cx: number, cy: number, rd: number, rdInner: number): void {
+    private $_calcAngles(points: PieSeriesPoint[]): void {
+        const viewRate = pickNum(this._viewRate, 1);
+        const sum = points.map(p => p.yValue).reduce((a, c) => a + c, 0);
+        let start = ORG_ANGLE + deg2rad(this.model.startAngle);
+
+        points.forEach(p => {
+            p.yRate = p.yValue / sum
+            p.startAngle = start;
+            start += p.angle = p.yRate * Math.PI * 2 * viewRate;
+        });
+    }
+
+    private $_layoutSectors(points: PieSeriesPoint[], width: number, height: number): void {
         const series = this.model;
+        const viewRate = pickNum(this._viewRate, 1);
+        const cx = this._cx = Math.floor(width / 2);
+        const cy = this._cy = Math.floor(height / 2);
+        const rd = this._rd;
+        const rdInner = this._rdInner;
         const labels = series.pointLabel;
         const labelVis = labels.visible;
         const labelInside = series.getLabelPosition();
         const labelOff = labels.offset;
         const labelViews = this._labelContainer;
         const lineViews = this._lineContainer;
-        const sliceOff = this._slicedOff = series.getSliceOffset(rd);
+        const sliceOff = this._slicedOff = series.getSliceOffset(rd) * viewRate; // TODO: sector 후에...
         const pb = new PathBuilder();
         let labelView: PointLabelView;
+
+        if (this._circle.visible = this._sectors.isEmpty) {
+            this._circle.setCircle(this._cx, this._cy, this._rd);
+        }
+
+        this.$_calcAngles(points);
 
         this._sectors.forEach((sector) => {
             const p = sector.point;
@@ -333,5 +355,9 @@ export class PieSeriesView extends SeriesView<PieSeries> {
         let y = this._cy + Math.sin(a) * (sliceOff + this._rd * 0.7);
 
         view.layout().translate(x - r.width / 2, y - r.height / 2);
+    }
+
+    protected _doViewRateChanged(rate: number): void {
+        this.$_layoutSectors(this.model._visPoints as PieSeriesPoint[], this.width, this.height)
     }
 }

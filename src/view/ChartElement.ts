@@ -22,6 +22,7 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     model: T;
     mw: number;
     mh: number;
+    protected _modelChanged: boolean;
     _debugRect: RectElement;
     
     //-------------------------------------------------------------------------
@@ -44,6 +45,7 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     //-------------------------------------------------------------------------
     measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         this.setStyleOrClass(model.style);
+        this._modelChanged = model !== this.model;
 
         const sz = this._doMeasure(doc, this.model = model, hintWidth, hintHeight, phase);
 

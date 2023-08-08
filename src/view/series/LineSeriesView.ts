@@ -15,7 +15,7 @@ import { LineType } from "../../model/ChartTypes";
 import { DataPoint } from "../../model/DataPoint";
 import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
 import { SeriesView } from "../SeriesView";
-import { SlideAnimation } from "../animation/SeriesAnimation";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 export class LineMarkerView extends PathElement {
 
@@ -66,7 +66,7 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     }
 
     protected _runShowEffect(firstTime: boolean): void {
-        firstTime && new SlideAnimation(this);
+        firstTime && SeriesAnimation.slide(this);
     }
 
     //-------------------------------------------------------------------------
