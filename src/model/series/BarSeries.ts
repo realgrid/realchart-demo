@@ -14,11 +14,12 @@ export abstract class BoxSeries extends PolarableSeries implements IClusterable 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _pointPad = 0;
     _clusterWidth = 1;
     _clusterPos = 0;
     _childWidth = 1;    // group내에서 이 시리즈의 상대적 너비
     _childPos = 0;      // group내에서 이 시리즈의 상대적 위치
+
+    _pointPad = 0;
 
     //-------------------------------------------------------------------------
     // properties
@@ -64,28 +65,39 @@ export abstract class BoxSeries extends PolarableSeries implements IClusterable 
     }
 
     getPointWidth(length: number): number {
+        const g = this.group as BarSeriesGroup;
         let w = length;
         
-        w *= this._clusterWidth;           
-        // w *= 1 - this.groupPadding * 2;  
-        w *= this._childWidth;                  // 그룹 내 시리즈 영역
-        // w *= 1 - this.pointPadding * 2;         // 시리즈 padding
-        w *= 1 - this._pointPad * 2;         // 시리즈 padding
+        if (g) {
+            w *= g._clusterWidth;
+            w *= 1 - g.groupPadding * 2;  
+            w *= this._childWidth;      // 그룹 내 시리즈 영역
+        } else {
+            w *= this._clusterWidth;           
+        }
+        w *= 1 - this._pointPad * 2;    // 시리즈 padding
         return w;
     }
 
     getPointPos(length: number): number {
+        const g = this.group as BarSeriesGroup;
+        let w = length;
         let p = 0;
 
-        p = length * this._clusterPos;
-        length *= this._clusterWidth;
-        // p += length * this.groupPadding;
-        // length *= 1 - this.groupPadding * 2;
+        if (g) {
+            p = w * g._clusterPos;
+            w *= g._clusterWidth;
 
-        p += length * this._childPos;
-        length *= this._childWidth;
-        // p += length * this.pointPadding;
-        p += length * this._pointPad;
+            p += w * g.groupPadding;
+            w -= w * g.groupPadding * 2;
+
+            p += w * this._childPos;
+            w *= this._childWidth;
+        } else {
+            p = w * this._clusterPos;
+            w *= this._clusterWidth;
+        }
+        p += w * this._pointPad;
         return p;
     }
 
