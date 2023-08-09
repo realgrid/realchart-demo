@@ -249,6 +249,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected _labelContainer: PointLabelContainer;
     private _trendLineView: PathElement;
 
+    protected _inverted = false;
     private _viewRate = NaN;
 
     //-------------------------------------------------------------------------
@@ -276,6 +277,10 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     protected _doViewRateChanged(rate: number): void {
+    }
+
+    _setInverted(value: boolean): void {
+        this._inverted = value;
     }
 
     //-------------------------------------------------------------------------

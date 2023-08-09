@@ -6,7 +6,6 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { Chart } from "../../main";
@@ -91,9 +90,9 @@ export class BarSeriesView extends SeriesView<BarSeries> {
             this._bars = new ElementPool(this._pointContainer, BarElement);
         }
         this._bars.prepare(points.length, (v, i) => {
-            v.point = points[i];
+            const p = v.point = points[i];
             v.setStyleOrClass(style);
-            points[i].color && v.setStyle('fill', points[i].color);
+            p.color && v.setStyle('fill', p.color);
         });
     }
 
@@ -104,15 +103,15 @@ export class BarSeriesView extends SeriesView<BarSeries> {
             this._sectors = new ElementPool(this._pointContainer, BarSectorView);
         }
         this._sectors.prepare(points.length, (v, i) => {
-            v.point = points[i];
+            const p = v.point = points[i];
             v.setStyleOrClass(style);
-            points[i].color && v.setStyle('fill', points[i].color);
+            p.color && v.setStyle('fill', p.color);
         });
     }
 
     protected $_layoutBars(width: number, height: number): void {
         const series = this.model;
-        const inverted = series.chart.isInverted();
+        const inverted = this._inverted;
         const vr = this._getViewRate();
         const labels = series.pointLabel;
         const labelVis = labels.visible && !this._animating();
@@ -138,7 +137,6 @@ export class BarSeriesView extends SeriesView<BarSeries> {
             const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
-            let labelView: PointLabelView;
             let x: number;
             let y: number;
 
@@ -164,8 +162,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
             bar.render(x, y, inverted);
 
             // label
-            if (labelInfo && (labelView = labelViews.get(p, 0))) {
-                labelInfo.labelView = labelView;
+            if (labelInfo && (labelInfo.labelView = labelViews.get(p, 0))) {
                 labelInfo.bar = bar;
                 labelInfo.x = x;
                 labelInfo.y = y;

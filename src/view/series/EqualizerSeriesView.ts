@@ -9,13 +9,12 @@
 import { ElementPool } from "../../common/ElementPool";
 import { PathElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
-import { RectElement } from "../../common/impl/RectElement";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { DataPoint } from "../../model/DataPoint";
 import { PointItemPosition } from "../../model/Series";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
-import { ContinuousAxis, LinearAxis } from "../../model/axis/LinearAxis";
-import { EqualizerSeries, EqualizerSeriesPoint } from "../../model/series/EqualizerSeries";
+import { ContinuousAxis } from "../../model/axis/LinearAxis";
+import { EqualizerSeries } from "../../model/series/EqualizerSeries";
 import { PointLabelView, SeriesView } from "../SeriesView";
 
 class BarElement extends GroupElement {
@@ -23,7 +22,6 @@ class BarElement extends GroupElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _back: RectElement;
     private _backs = new ElementPool<PathElement>(this, PathElement);
     private _segments = new ElementPool<PathElement>(this, PathElement);
     private _decimal = 0;
@@ -35,15 +33,12 @@ class BarElement extends GroupElement {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc);
-
-        this.add(this._back = new RectElement(doc));
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepare(point: EqualizerSeriesPoint, backs: boolean, total: number, count: number, decimal: number, backStyle: string): void {
-        this.point = point;
+    prepareSegments(backs: boolean, total: number, count: number, decimal: number, backStyle: string): void {
         this._decimal = decimal;
         this._backs
             .prepare(backs ? total : 0)
@@ -62,11 +57,11 @@ class BarElement extends GroupElement {
         const w = this.width;
         const h = this.height;
 
-        this._back.setBounds(0, 0, w, h);
         // back steps
         this._backs.forEach((step, i) => {
             step.setPath(SvgShapes.rectangle(0, pts[i * 2 + 1] - y, w, pts[i * 2] - pts[i * 2 + 1]));
         })
+
         // steps
         this._segments.forEach((step, i, count) => {
             if (i === count - 1 && this._decimal > 0) {
@@ -112,19 +107,26 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: EqualizerSeries): void {
+        this.$_parepareBars(this.model._visPoints);
     }
 
     protected _renderSeries(width: number, height: number): void {
-        this.$_parepareBars(this.model, this.model._visPoints, width, height);
         this.$_layoutBars(width, height);
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_parepareBars(series: EqualizerSeries, points: DataPoint[], width: number, height: number): void {
+    private $_parepareBars(points: DataPoint[]): void {
+        this._bars.prepare(points.length, (v, i) => {
+            const p = v.point = points[i];
+            p.color && v.setStyle('fill', p.color);
+        })
+    }
+
+    private $_parepareSegments(series: EqualizerSeries, width: number, height: number): void {
         const backs = series.backSegments;
-        const max = (series._yAxisObj as ContinuousAxis).axisMax();
+        const max = series._yAxisObj.axisMax();
         const segmented = series.segmented;
         const gap = series.segmentGap;
         let sz: number;
@@ -145,32 +147,30 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
         }
         pts[pts.length - 1] = 0;
 
-        this._bars
-            .prepare(points.length)
-            .forEach((bar, i) => {
-                const total = pts.length / 2;
-                const v = 1 - points[i].yValue / max;
-                let n = -1;
-                let decimal = 0;
+        this._bars.forEach((bar, i) => {
+            const total = pts.length / 2;
+            const v = 1 - bar.point.yValue / max;
+            let n = -1;
+            let decimal = 0;
 
-                for (let i = 0; i < total - 1; i++) {
-                    if (v <= pts[i * 2] / height && v > pts[(i + 1) * 2] / height) {
-                        n = i + 1;
-                        if (!segmented && v > pts[i * 2 + 1] / height) {
-                            decimal = pts[i * 2] - v * height;
-                        } else {
-                            decimal = sz;
-                        }
-                        break;
+            for (let i = 0; i < total - 1; i++) {
+                if (v <= pts[i * 2] / height && v > pts[(i + 1) * 2] / height) {
+                    n = i + 1;
+                    if (!segmented && v > pts[i * 2 + 1] / height) {
+                        decimal = pts[i * 2] - v * height;
+                    } else {
+                        decimal = sz;
                     }
+                    break;
                 }
-                if (n < 0) {
-                    n = total;
-                    decimal = sz;
-                }
-                // bar.getStyle = model.getPointStyle(i);
-                bar.prepare(points[i], backs, total, n, decimal, series.backStyle as string);
-            })
+            }
+            if (n < 0) {
+                n = total;
+                decimal = sz;
+            }
+            // bar.getStyle = model.getPointStyle(i);
+            bar.prepareSegments(backs, total, n, decimal, series.backStyle as string);
+        });
     }
 
     protected $_layoutBars(width: number, height: number): void {
@@ -184,7 +184,7 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
         //const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
-        const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.baseValue : 0);
+        const yBase = yAxis.getPosition(yLen, yAxis instanceof ContinuousAxis ? yAxis.baseValue : 0);
         const org = inverted ? 0 : height;;
         const labelInfo: LabelInfo = labels.visible && Object.assign(this._labelInfo, {
             inverted,
@@ -192,6 +192,8 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
             labelOff: labels.offset,
             width, height
         });
+
+        this.$_parepareSegments(series, width, height);
 
         this._bars.forEach((bar, i) => {
             const p = bar.point;
@@ -214,15 +216,21 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
             // bar.hPoint = yVal - yBase;
 
             if (inverted) {
-                y += series.getPointPos(wUnit) + wPoint / 2;
+                y += series.getPointPos(wUnit);// + wPoint / 2;
                 x += yAxis.getPosition(yLen, p.yGroup) - bar.height;
             } else {
-                x += series.getPointPos(wUnit) + wPoint / 2;
+                x += series.getPointPos(wUnit);// + wPoint / 2;
                 y -= yAxis.getPosition(yLen, p.yGroup) - bar.height;
             }
 
             bar.setBounds(x, y, wPoint, yVal - yBase);
             bar.layout(this._pts, inverted);
+
+            if (inverted) {
+                y += wPoint / 2;
+            } else {
+                x += wPoint / 2;
+            }
 
             // label
             if (labelInfo && (labelView = labelViews.get(p, 0))) {

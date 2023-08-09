@@ -132,8 +132,8 @@ export class AxisView extends ChartElement<Axis> {
 
         this.add(this._lineView = new LineElement(doc, 'rct-axis-line'));
         this.add(this._titleView = new AxisTitleView(doc));
-        this.add(this._markContainer = new RcElement(doc, 'rct-axis-marks'));
-        this.add(this._labelContainer = new RcElement(doc, 'rct-axis-labels'));
+        this.add(this._markContainer = new RcElement(doc, 'rct-axis-tick-marks'));
+        this.add(this._labelContainer = new RcElement(doc, 'rct-axis-tick-labels'));
     }
 
     //-------------------------------------------------------------------------

@@ -197,6 +197,8 @@ export abstract class RcAnimation {
         
         if (dt >= this.duration) {
             this._stop();
+        } else {
+            window.requestAnimationFrame(this._handler)
         }
     }
 
@@ -227,14 +229,15 @@ export abstract class RcAnimation {
         this._easing = Easings[easing];
         this._doStart();
         this._started = +new Date();
-        this._timer = setInterval(this._handler, 30);
+        // this._timer = setInterval(this._handler, 30);
         this._handler();
     }
 
     protected _stop(): void {
-        if (this._timer) {
-            clearInterval(this._timer);
-            this._timer = null;
+        if (this._started) {//} this._timer) {
+            // clearInterval(this._timer);
+            // this._timer = null;
+            this._started = null;
             this._doStop();
         }
     }

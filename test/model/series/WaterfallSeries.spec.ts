@@ -24,6 +24,6 @@ import { WaterfallSeries } from '../../../src/model/series/WaterfallSeries';
     it('props', () => {
         let series = new WaterfallSeries(null);
 
-        expect(series.pointPadding).gt(0);
+        expect(series.pointPadding).undefined;
     });
 });

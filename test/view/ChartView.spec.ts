@@ -42,9 +42,9 @@ import { ChartControl } from '../../src/main';
         const chart = new Chart(json);
         const cv = control.chartView();
 
-        expect(chart.isEmpty()).is.true;
         cv.measure(control.doc(), chart, 500, 500, 1);
         expect(cv._emptyView).exist;
+        expect(chart.isEmpty()).is.true;
     })
 
     it('measure', () => {
@@ -52,9 +52,9 @@ import { ChartControl } from '../../src/main';
         const chart = new Chart(json);
         const cv = control.chartView();
 
-        expect(chart.isEmpty()).is.false;
         cv.measure(control.doc(), chart, 500, 500, 1);
         expect(cv._emptyView).not.exist;
+        expect(chart.isEmpty()).is.false;
 
         expect(cv['_titleSectionView'].visible).is.true;
         expect(cv.titleView().visible).is.true;

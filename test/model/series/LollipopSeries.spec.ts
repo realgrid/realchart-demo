@@ -24,6 +24,6 @@ import { LollipopSeries } from '../../../src/model/series/LollipopSeries';
     it('props', () => {
         let series = new LollipopSeries(null);
 
-        expect(series.pointPadding).gt(0);
+        expect(series.pointPadding).undefined;
     });
 });

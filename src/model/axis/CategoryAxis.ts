@@ -141,6 +141,14 @@ export class CategoryAxis extends Axis {
         return 0;
     }
 
+    axisMin(): number {
+        return this._min;
+    }
+
+    axisMax(): number {
+        return this._max;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

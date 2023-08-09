@@ -24,6 +24,6 @@ import { BarRangeSeries } from '../../../src/model/series/BarRangeSeries';
     it('props', () => {
         let series = new BarRangeSeries(null);
 
-        expect(series.pointPadding).gt(0);
+        expect(series.pointPadding).undefined;
     });
 });

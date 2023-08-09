@@ -12,7 +12,8 @@ jsdomGlobal("<!DOCTYPE html><html><head></head><body><div id='chart-control'></d
 // window.resizeTo(1024, 1920); // Not impleneted.
 window.innerWidth = 1024;
 window.innerHeight = 1920;
-window.alert = (s) => { console.log('ALERT:', s); }
+window.alert = (s) => { console.log('ALERT:', s); };
+window['requestAnimationFrame'] = () => {};
 // window.SVGSVGElement = window.HTMLDivElement;
 
 const head = document.getElementsByTagName('head')[0];

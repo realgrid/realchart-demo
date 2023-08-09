@@ -375,7 +375,7 @@ export abstract class RcControl extends RtWrappableObject {
 
     private $_requestRender(): void {
         if (window.requestAnimationFrame) {
-            this._requestTimer = requestAnimationFrame(() => this.$_render());
+            this._requestTimer = window.requestAnimationFrame(() => this.$_render());
         } else {
             setTimeout(() => {
                 this.$_render();

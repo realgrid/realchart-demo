@@ -24,6 +24,6 @@ import { BoxPlotSeries } from '../../../src/model/series/BoxPlotSeries';
     it('props', () => {
         let series = new BoxPlotSeries(null);
 
-        expect(series.pointPadding).gt(0);
+        expect(series.pointPadding).undefined;
     });
 });

@@ -24,6 +24,6 @@ import { EqualizerSeries } from '../../../src/model/series/EqualizerSeries';
     it('props', () => {
         let series = new EqualizerSeries(null);
 
-        expect(series.pointPadding).gt(0);
+        expect(series.pointPadding).undefined;
     });
 });

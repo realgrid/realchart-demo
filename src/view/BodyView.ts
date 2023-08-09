@@ -605,6 +605,7 @@ export class BodyView extends ChartElement<Body> {
 
     private $_prepareSeries(doc: Document, series: Series[]): void {
         const container = this._seriesContainer;
+        const inverted = this.model.chart.isInverted();
         const map = this._seriesMap;
         const views = this._seriesViews;
 
@@ -626,6 +627,7 @@ export class BodyView extends ChartElement<Body> {
         map.clear();
 
         views.forEach((v, i) => {
+            v._setInverted(inverted);
             container.add(v);
             map.set(series[i], v);
         });

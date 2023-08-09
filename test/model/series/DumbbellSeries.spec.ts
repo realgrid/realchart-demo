@@ -24,6 +24,6 @@ import { DumbbellSeries } from '../../../src/model/series/DumbbellSeries';
     it('props', () => {
         let series = new DumbbellSeries(null);
 
-        expect(series.pointPadding).gt(0);
+        expect(series.pointPadding).undefined;
     });
 });

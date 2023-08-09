@@ -17,7 +17,9 @@ export interface IAxis {
     type(): string;
 
     _length: number;
-    // baseValue: number;
+
+    axisMax(): number;
+    axisMin(): number;
 
     /**
      * data point의 값을 축 상의 값으로 리턴한다.
@@ -462,6 +464,9 @@ export abstract class Axis extends ChartItem implements IAxis {
     isEmpty(): boolean {
         return this._series.length < 1;
     }
+
+    abstract axisMin(): number;
+    abstract axisMax(): number;
 
     //-------------------------------------------------------------------------
     // methods
