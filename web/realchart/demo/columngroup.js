@@ -35,7 +35,7 @@ function setActions(container) {
         chart.refresh();
     }, true);
     createButton(container, 'Test', function(e) {
-        alert('hello');
+        alert('hello2');
     });
 }
 

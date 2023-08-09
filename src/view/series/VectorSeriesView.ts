@@ -10,6 +10,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { PathElement } from "../../common/RcControl";
 import { ArrowHead, VectorSeries, VectorSeriesPoint } from "../../model/series/VectorSeries";
 import { SeriesView } from "../SeriesView";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class ArrowView extends PathElement {
 
@@ -114,6 +115,10 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
             v.translate(x, y);
             v.layout(head, p.angleValue + start, false);
         });
+    }
+
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.fadeIn(this);
     }
 
     //-------------------------------------------------------------------------

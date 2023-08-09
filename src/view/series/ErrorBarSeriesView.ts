@@ -10,10 +10,10 @@ import { ElementPool } from "../../common/ElementPool";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
-import { DataPoint } from "../../model/DataPoint";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { ErrorBarSeries, ErrorBarSeriesPoint } from "../../model/series/ErrorBarSeries";
-import { BoxPointElement, PointLabelView, SeriesView } from "../SeriesView";
+import { PointLabelView, SeriesView } from "../SeriesView";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class BarElement extends GroupElement {
 
@@ -79,6 +79,14 @@ export class ErrorBarSeriesView extends SeriesView<ErrorBarSeries> {
         this.$_layoutBars(width, height);
     }
 
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.grow(this);
+    }
+
+    protected _doViewRateChanged(rate: number): void {
+        this.$_layoutBars(this.width, this.height);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -92,8 +100,9 @@ export class ErrorBarSeriesView extends SeriesView<ErrorBarSeries> {
     protected $_layoutBars(width: number, height: number): void {
         const series = this.model;
         const inverted = series.chart.isInverted();
+        const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelVis = labels.visible;
+        const labelVis = labels.visible && this._animating();
         const labelOff = labels.offset;
         const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
@@ -104,21 +113,23 @@ export class ErrorBarSeriesView extends SeriesView<ErrorBarSeries> {
         const org = inverted ? 0 : height;;
         let labelView: PointLabelView;
 
+        this._labelContainer.setVisible(labelVis);
+
         this._bars.forEach((bar, i) => {
             const p = bar.point;
             const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
-            const hPoint = Math.abs(yAxis.getPosition(yLen, p.lowValue) - yVal);
+            const hPoint = Math.abs(yAxis.getPosition(yLen, p.lowValue) - yVal) * vr;
             let x: number;
             let y: number;
 
             if (inverted) {
                 y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
-                x = org + yVal;
+                x = org + yVal * vr;
             } else {
                 x = xAxis.getPosition(xLen, i) - wPoint / 2;
-                y = org - yVal;
+                y = org - yVal * vr;
             }
 
             bar.setBounds(x, y, wPoint, hPoint);

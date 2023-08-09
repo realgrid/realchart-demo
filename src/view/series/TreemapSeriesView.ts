@@ -108,7 +108,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
     }
 
     protected _runShowEffect(firstTime: boolean): void {
-        // firstTime && new SlideAnimation(this);
+        firstTime && new SlideAnimation(this);
     }
 
     //-------------------------------------------------------------------------

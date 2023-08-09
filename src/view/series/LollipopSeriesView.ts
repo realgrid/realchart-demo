@@ -15,6 +15,7 @@ import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { LinearAxis } from "../../model/axis/LinearAxis";
 import { LollipopSeries, LollipopSeriesPoint } from "../../model/series/LollipopSeries";
 import { PointLabelView, SeriesView } from "../SeriesView";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class BarElement extends GroupElement {
 
@@ -83,6 +84,14 @@ export class LollipopSeriesView extends SeriesView<LollipopSeries> {
         this.$_layoutBars(width, height);
     }
 
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.grow(this);
+    }
+
+    protected _doViewRateChanged(rate: number): void {
+        this.$_layoutBars(this.width, this.height);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -102,22 +111,26 @@ export class LollipopSeriesView extends SeriesView<LollipopSeries> {
     protected $_layoutBars(width: number, height: number): void {
         const series = this.model;
         const inverted = series.chart.isInverted();
+        const vr = this._getViewRate();
         const labels = series.pointLabel;
+        const labelVis = labels.visible && !this._animating();
         const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPadding * 2 : 0;
-        const yLen = inverted ? width : height;
+        const yLen = (inverted ? width : height) * vr;
         const xLen = inverted ? height : width;
         //const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
         const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.baseValue : 0);
         const org = inverted ? 0 : height;;
-        const labelInfo: LabelInfo = labels.visible && Object.assign(this._labelInfo, {
+        const labelInfo: LabelInfo = labelVis && Object.assign(this._labelInfo, {
             inverted,
             labelPos: series.getLabelPosition(),
             labelOff: labels.offset,
             width, height
         });
+
+        this._labelContainer.visible = labelVis;
 
         this._bars.forEach((bar, i) => {
             const p = bar.point;

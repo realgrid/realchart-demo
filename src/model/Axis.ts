@@ -469,6 +469,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected abstract _doPrepareRender(): void;
     protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[];
 
+    disconnect(): void {
+        this._series = [];
+    }
+
     prepareRender(): void {
         this._isHorz = this.chart.isInverted() ? !this._isX : this._isX;
         this._isOpposite = this.position === AxisPosition.OPPOSITE;
@@ -633,6 +637,10 @@ export class AxisCollection {
 
     get(name: string): Axis {
         return this._map.get(name);
+    }
+
+    disconnect(): void {
+        this._items.forEach(axis => axis.disconnect());
     }
 
     prepareRender(): void {

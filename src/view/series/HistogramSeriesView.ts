@@ -10,6 +10,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { HistogramSeries, HistogramSeriesPoint } from "../../model/series/HistogramSeries";
 import { BoxPointElement, SeriesView } from "../SeriesView";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class BarElement extends BoxPointElement {
 
@@ -48,20 +49,15 @@ export class HistogramSeriesView extends SeriesView<HistogramSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
-        const xAxis = this.model._xAxisObj;
-        const yAxis = this.model._yAxisObj;
-        const y = this.height;
+        this.$_layoutBars(width, height);
+    }
 
-        this._bars.forEach((bar, i) => {
-            const p = bar.point as HistogramSeriesPoint;
-            const x1 = xAxis.getPosition(width, p.min);
-            const x2 = xAxis.getPosition(width, p.max);
-            const x = x1 + (x2 - x1) / 2;
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.grow(this);
+    }
 
-            bar.wPoint = Math.max(1, x2 - x1 - 1);
-            bar.hPoint = yAxis.getPosition(height, bar.point.yValue);
-            bar.render(x, y);
-        })
+    protected _doViewRateChanged(rate: number): void {
+        this.$_layoutBars(this.width, this.height);
     }
 
     //-------------------------------------------------------------------------
@@ -71,5 +67,23 @@ export class HistogramSeriesView extends SeriesView<HistogramSeries> {
         this._bars.prepare(points.length, (v, i) => {
             v.point = points[i];
         });
+    }
+
+    private $_layoutBars(width: number, height: number): void {
+        const xAxis = this.model._xAxisObj;
+        const yAxis = this.model._yAxisObj;
+        const y = this.height;
+        const vr = this._getViewRate();
+
+        this._bars.forEach((bar, i) => {
+            const p = bar.point as HistogramSeriesPoint;
+            const x1 = xAxis.getPosition(width, p.min);
+            const x2 = xAxis.getPosition(width, p.max);
+            const x = x1 + (x2 - x1) / 2;
+
+            bar.wPoint = Math.max(1, x2 - x1 - 1);
+            bar.hPoint = yAxis.getPosition(height, bar.point.yValue) * vr;
+            bar.render(x, y);
+        })
     }
 }

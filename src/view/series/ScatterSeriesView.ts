@@ -12,6 +12,7 @@ import { IRect } from "../../common/Rectangle";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { ScatterSeries, ScatterSeriesPoint } from "../../model/series/ScatterSeries";
 import { PointLabelView, SeriesView } from "../SeriesView";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class MarkerView extends PathElement {
 
@@ -53,6 +54,10 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
 
     protected _renderSeries(width: number, height: number): void {
         this.$_layoutMarkers();
+    }
+
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.slide(this);
     }
 
     private $_prepareMarkers(points: ScatterSeriesPoint[]): void {

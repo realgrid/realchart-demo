@@ -190,8 +190,6 @@ export class Chart extends RcObject implements IChart {
     private _subtitle: Title;
     private _legend: Legend;
     private _series: PlottingItemCollection;
-    // private _series2: SeriesCollection;
-    // private _groups2: SeriesGroupCollection2;
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
     private _body: Body;
@@ -212,8 +210,6 @@ export class Chart extends RcObject implements IChart {
         this._subtitle = new Title(this, false);
         this._legend = new Legend(this);
         this._series = new PlottingItemCollection(this);
-        // this._series2 = new SeriesCollection(this);
-        // this._groups2 = new SeriesGroupCollection2(this);
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new AxisCollection(this, false);
         this._body = new Body(this);
@@ -260,10 +256,6 @@ export class Chart extends RcObject implements IChart {
     get firstSeries(): Series {
         return this._series.firstSeries;
     }
-
-    // get series2(): ISeries {
-    //     return this._series2.first;
-    // }
 
     get legend(): Legend {
         return this._legend;
@@ -423,13 +415,12 @@ export class Chart extends RcObject implements IChart {
     }
 
     prepareRender(): void {
+        this._xAxes.disconnect();
+        this._yAxes.disconnect();
+
         // 축에 연결한다.
         this._series.prepareRender();
-        // this._series2.prepareRender();
-        // group에 연결한다.
-        // this._groups2.prepareRender();
 
-        // 카테고리 목록을 만든다.
         // 축의 값 범위를 계산한다.
         this._xAxes.prepareRender();
         this._yAxes.prepareRender();

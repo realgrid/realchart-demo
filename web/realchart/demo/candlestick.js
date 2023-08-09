@@ -4,7 +4,7 @@ const config = {
         type: 'category',
     },
     yAxis: {
-        yBase: null
+        baseValue: null
     },
     series: {
         type: 'candlestick',

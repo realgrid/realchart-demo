@@ -232,20 +232,20 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     }
 
     private $_calcAngles(points: PieSeriesPoint[]): void {
-        const viewRate = pickNum(this._viewRate, 1);
+        const vr = this._getViewRate();
         const sum = points.map(p => p.yValue).reduce((a, c) => a + c, 0);
         let start = ORG_ANGLE + deg2rad(this.model.startAngle);
 
         points.forEach(p => {
             p.yRate = p.yValue / sum
             p.startAngle = start;
-            start += p.angle = p.yRate * Math.PI * 2 * viewRate;
+            start += p.angle = p.yRate * Math.PI * 2 * vr;
         });
     }
 
     private $_layoutSectors(points: PieSeriesPoint[], width: number, height: number): void {
         const series = this.model;
-        const viewRate = pickNum(this._viewRate, 1);
+        const vr = this._getViewRate();
         const cx = this._cx = Math.floor(width / 2);
         const cy = this._cy = Math.floor(height / 2);
         const rd = this._rd;
@@ -256,7 +256,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
         const labelOff = labels.offset;
         const labelViews = this._labelContainer;
         const lineViews = this._lineContainer;
-        const sliceOff = this._slicedOff = series.getSliceOffset(rd) * viewRate; // TODO: sector 후에...
+        const sliceOff = this._slicedOff = series.getSliceOffset(rd) * vr; // TODO: sector 후에...
         const pb = new PathBuilder();
         let labelView: PointLabelView;
 

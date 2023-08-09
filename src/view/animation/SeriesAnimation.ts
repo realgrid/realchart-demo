@@ -15,8 +15,12 @@ export abstract class SeriesAnimation {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
-    static slide(series: SeriesView<Series>): void {
-        new SlideAnimation(series);
+    static slide(series: SeriesView<Series>, options?: { from: string }): void {
+        new SlideAnimation(series, options);
+    }
+
+    static fadeIn(series: SeriesView<Series>): void {
+        new StyleAnimation(series, {prop: 'opacity', start: '0', end: '1'});
     }
 
     static grow(series: SeriesView<Series>): void {
@@ -29,8 +33,8 @@ export abstract class SeriesAnimation {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(series: SeriesView<Series>) {
-        this._createAnimation(series);
+    constructor(series: SeriesView<Series>, options?: any) {
+        this._createAnimation(series, options);
     }
 
     //-------------------------------------------------------------------------
@@ -39,15 +43,49 @@ export abstract class SeriesAnimation {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    protected abstract _createAnimation(series: SeriesView<Series>): Animation | RcAnimation;
+    protected abstract _createAnimation(series: SeriesView<Series>, options?: any): Animation | RcAnimation;
+}
+
+export class StyleAnimation extends SeriesAnimation {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(series: SeriesView<Series>, options: {prop: string, start: string, end: string}) {
+        super(series, options);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _createAnimation(v: SeriesView<Series>, options: {prop: string, start: string, end: string}): Animation {
+        const start = {};
+        const end = {};
+        start[options.prop] = options.start;
+        end[options.prop] = options.end;
+        const ani = v.dom.animate([
+            start, end
+        ], {
+            duration: RcAnimation.DURATION,
+            fill: 'none'
+        });
+        return ani;
+    }   
 }
 
 export class SlideAnimation extends SeriesAnimation {
 
     //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(series: SeriesView<Series>, options?: {from: string}) {
+        super(series, options);
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _createAnimation(v: SeriesView<Series>): Animation {
+    protected _createAnimation(v: SeriesView<Series>, options: {from: string}): Animation {
         const cr = v.clipRect(0, -v.height / 2, v.width, v.height * 2);
         const ani = cr.dom.firstElementChild.animate([
             { width: '0'},

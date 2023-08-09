@@ -13,6 +13,7 @@ import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
 import { BoxPlotSeries, BoxPlotSeriesPoint } from "../../model/series/BoxPlotSeries";
 import { PointLabelView, SeriesView } from "../SeriesView";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class BoxView extends GroupElement {
 
@@ -90,6 +91,14 @@ export class BoxPlotSeriesView extends SeriesView<BoxPlotSeries> {
         this.$_layoutBoxes(width, height);
     }
 
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.grow(this);
+    }
+
+    protected _doViewRateChanged(rate: number): void {
+        this.$_layoutBoxes(this.width, this.height);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -101,22 +110,25 @@ export class BoxPlotSeriesView extends SeriesView<BoxPlotSeries> {
 
     private $_layoutBoxes(width: number, height: number): void {
         const series = this.model;
+        const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelVis = labels.visible;
+        const labelVis = labels.visible && !this._animating();
         const labelOff = labels.offset;
         const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const yOrg = this.height;
 
+        this._labelContainer.setVisible(labelVis);
+
         this._boxes.forEach((box, i) => {
             const p = box.point;
             const wUnit = xAxis.getUnitLength(width, i);
             const wPoint = series.getPointWidth(wUnit);
             const x = p.xPos = xAxis.getPosition(this.width, p.xValue) - wPoint / 2;
-            const y = p.yPos = yOrg - yAxis.getPosition(this.height, p.yValue);
+            const y = p.yPos = yOrg - yAxis.getPosition(this.height, p.yValue) * vr;
             const w = wPoint;
-            const h = Math.abs(yAxis.getPosition(height, p.minValue) - y);
+            const h = Math.abs(yAxis.getPosition(height, p.minValue) - y) * vr;
 
             box.setBounds(x, y, w, h);
             box.layout();

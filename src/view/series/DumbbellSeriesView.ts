@@ -15,6 +15,7 @@ import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { LinearAxis } from "../../model/axis/LinearAxis";
 import { DumbbellSeries, DumbbellSeriesPoint } from "../../model/series/DumbbellSeries";
 import { PointLabelView, SeriesView } from "../SeriesView";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class BarElement extends GroupElement {
 
@@ -86,6 +87,14 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
         this.$_layoutBars(width, height);
     }
 
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.grow(this);
+    }
+
+    protected _doViewRateChanged(rate: number): void {
+        this.$_layoutBars(this.width, this.height);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -105,8 +114,9 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
     protected $_layoutBars(width: number, height: number): void {
         const series = this.model;
         const inverted = series.chart.isInverted();
+        const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelVis = labels.visible;
+        const labelVis = labels.visible && !this._animating();
         const labelOff = labels.offset;
         const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
@@ -117,19 +127,21 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
         //const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
         const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.baseValue : 0);
         const org = inverted ? 0 : height;;
-        const labelInfo: LabelInfo = labels.visible && Object.assign(this._labelInfo, {
+        const labelInfo: LabelInfo = labelVis && Object.assign(this._labelInfo, {
             inverted,
             labelPos: series.getLabelPosition(),
             labelOff: labels.offset,
             width, height
         });
 
+        this._labelContainer.setVisible(labelVis);
+
         this._bars.forEach((bar, i) => {
             const p = bar.point;
             const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
-            const hPoint = Math.abs(yAxis.getPosition(yLen, p.lowValue) - yVal);
+            const hPoint = Math.abs(yAxis.getPosition(yLen, p.lowValue) - yVal) * vr;
             let labelView: PointLabelView;
             let x: number;
             let y: number;
@@ -144,10 +156,10 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
 
             if (inverted) {
                 y += series.getPointPos(wUnit);// + wPoint / 2;
-                x += yAxis.getPosition(yLen, p.yGroup);// - hPoint;
+                x += yAxis.getPosition(yLen, p.yGroup) * vr;// - hPoint;
             } else {
                 x += series.getPointPos(wUnit);// + wPoint / 2;
-                y -= yAxis.getPosition(yLen, p.yGroup);// - hPoint;
+                y -= yAxis.getPosition(yLen, p.yGroup) * vr;// - hPoint;
             }
 
             bar.setBounds(x, y, wPoint, hPoint);

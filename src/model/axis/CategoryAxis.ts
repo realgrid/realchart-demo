@@ -112,7 +112,7 @@ export class CategoryAxis extends Axis {
     /**
      * 축의 양 끝 카테고리 값 위치에 여백으로 추가되는 크기.
      */
-    endPadding = 0.5;
+    padding = 0.5;
     /**
      * 각 카테고리의 양 끝에 추가되는 여백의 카테고리에 너비에 대한 상대적 크기.
      */

@@ -11,6 +11,7 @@ import { DataPoint } from "../../model/DataPoint";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { BarRangeSeries, BarRangeSeriesPoint } from "../../model/series/BarRangeSeries";
 import { BarElement, PointLabelView, SeriesView } from "../SeriesView";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
 
@@ -37,6 +38,14 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
         this.$_layoutBars(width, height);
     }
 
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.grow(this);
+    }
+
+    protected _doViewRateChanged(rate: number): void {
+        this.$_layoutBars(this.width, this.height);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -50,8 +59,9 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
     protected $_layoutBars(width: number, height: number): void {
         const series = this.model;
         const inverted = series.chart.isInverted();
+        const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelVis = labels.visible;
+        const labelVis = labels.visible && !this._animating();
         const labelOff = labels.offset;
         const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
@@ -64,12 +74,14 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
         const org = inverted ? 0 : height;;
         let labelView: PointLabelView;
 
+        this._labelContainer.setVisible(labelVis);
+
         this._bars.forEach((bar, i) => {
             const p = bar.point as BarRangeSeriesPoint;
             const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
-            const hPoint = Math.abs(yAxis.getPosition(yLen, p.lowValue) - yVal);
+            const hPoint = Math.abs(yAxis.getPosition(yLen, p.lowValue) - yVal) * vr;
             let x: number;
             let y: number;
 
@@ -82,14 +94,14 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
             }
 
             bar.wPoint = wPoint;
-            bar.hPoint = hPoint;// yVal - yBase;
+            bar.hPoint = hPoint;
 
             if (inverted) {
                 y += series.getPointPos(wUnit) + wPoint / 2;
-                x += yAxis.getPosition(yLen, p.yGroup) - hPoint;
+                x += yAxis.getPosition(yLen, p.yGroup) * vr - hPoint;
             } else {
                 x += series.getPointPos(wUnit) + wPoint / 2;
-                y -= yAxis.getPosition(yLen, p.yGroup) - hPoint;
+                y -= yAxis.getPosition(yLen, p.yGroup) * vr - hPoint;
             }
 
             bar.render(x, y, inverted);

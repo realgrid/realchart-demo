@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
@@ -14,8 +15,10 @@ import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { SvgShapes } from "../common/impl/SvgShape";
+import { Axis, IAxis } from "../model/Axis";
 import { DataPoint } from "../model/DataPoint";
 import { DataPointLabel, Series } from "../model/Series";
+import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { ChartElement } from "./ChartElement";
 
 export class PointLabelView extends LabelElement {
@@ -246,7 +249,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected _labelContainer: PointLabelContainer;
     private _trendLineView: PathElement;
 
-    protected _viewRate = NaN;
+    private _viewRate = NaN;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -279,7 +282,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this._viewRate = 1;
+        this._viewRate = NaN;
         this._prepareSeries(doc, model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
 
@@ -309,6 +312,18 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
+
+    protected _categoryPadding(axis: IAxis): number {
+        return axis instanceof CategoryAxis ? axis.categoryPadding * 2 : 0;
+    }
+
+    protected _getViewRate(): number {
+        return pickNum(this._viewRate, 1);
+    }
+
+    protected _animating(): boolean {
+        return !isNaN(this._viewRate);
+    }
 
     protected _lazyPrepareLabels(): boolean { return false; }
     protected _afterRender(): void {}

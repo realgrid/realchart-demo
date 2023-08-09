@@ -13,6 +13,7 @@ import { RectElement } from "../../common/impl/RectElement";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { HeatmapSeries, HeatmapSeriesPoint } from "../../model/series/HeatmapSeries";
 import { PointLabelView, SeriesView } from "../SeriesView";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class CellView extends RectElement {
 
@@ -51,6 +52,10 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
 
     protected _renderSeries(width: number, height: number): void {
         this.$_layoutCells(width, height);
+    }
+
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.slide(this);
     }
 
     //-------------------------------------------------------------------------

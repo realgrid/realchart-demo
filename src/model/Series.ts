@@ -323,6 +323,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     index = -1;
     group: SeriesGroup<Series>;
+    _single: boolean;
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
     protected _points: DataPointCollection;
@@ -612,129 +613,17 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 }
 
-// export class SeriesCollection {
-
-//     //-------------------------------------------------------------------------
-//     // fields
-//     //-------------------------------------------------------------------------
-//     readonly chart: IChart;
-//     private _items: Series[] = [];
-//     private _map = new Map<string, Series>();
-
-//     //-------------------------------------------------------------------------
-//     // constructor
-//     //-------------------------------------------------------------------------
-//     constructor(chart: IChart) {
-//         this.chart = chart;
-//     }
-
-//     //-------------------------------------------------------------------------
-//     // properties
-//     //-------------------------------------------------------------------------
-//     get first(): Series {
-//         return this._items[0];
-//     }
-
-//     isEmpty(): boolean {
-//         if (this._items.length > 0) {
-//             for (const ser of this._items) {
-//                 if (!ser.isEmpty()) return false;
-//             }
-//         }
-//         return true;
-//     }
-
-//     items(): Series[] {
-//         return this._items.slice(0);
-//     }
-
-//     visibles(): Series[] {
-//         return this._items.filter(ser => ser.visible);
-//     }
-
-//     needAxes(): boolean {
-//         for (const ser of this._items) {
-//             if (ser.visible && ser.needAxes()) {
-//                 return true;
-//             }
-//         }
-//         return this._items.length === 0;
-//     }
-
-//     //-------------------------------------------------------------------------
-//     // methods
-//     //-------------------------------------------------------------------------
-//     load(src: any): void {
-//         const chart = this.chart;
-
-//         this._items = [];
-//         this._map.clear();
-
-//         if (isArray(src)) {
-//             src.forEach((s, i) => this._items.push(this.$_loadSeries(chart, s)));
-
-//             this._items.forEach(ser => {
-//                 for (const ser2 of this._items) {
-//                     if (ser2 !== ser && ser._referOtherSeries(ser2)) {
-//                         break;
-//                     }
-//                 }
-//             });
-//         } else if (isObject(src)) {
-//             this._items.push(this.$_loadSeries(chart, src));
-//         }
-//     }
-
-//     get(name: string): Series {
-//         return this._map.get(name);
-//     }
-
-//     getLegendSources(): ILegendSource[] {
-//         const legends: ILegendSource[] = [];
-
-//         this._items.forEach(ser => {
-//             ser.visible && ser.getLegendSources(legends);
-//         })
-//         return legends;
-//     }
-
-//     forEach(callback: (p: Series, i?: number) => any): void {
-//         for (let i = 0, n = this._items.length; i < n; i++) {
-//             if (callback(this._items[i], i) === true) break;
-//         }
-//     }
-
-//     prepareRender(): void {
-//         const colors = this.chart.colors;
-
-//         this._items.forEach((ser, i) => {
-//             if (ser.visible) {
-//                 ser.color = colors[i % colors.length];
-//                 ser.prepareRender();
-//             }
-//         });
-//     }
-
-//     //-------------------------------------------------------------------------
-//     // internal members
-//     //-------------------------------------------------------------------------
-//     private $_loadSeries(chart: IChart, src: any): Series {
-//         const ser = Series._loadSeries(chart, src);
-
-//         src.name && this._map.set(src.name, ser);
-//         return ser;
-//     }
-// }
-
 export class PlottingItemCollection  {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     readonly chart: IChart;
-    private _items: IPlottingItem[] = [];
-    private _series: Series[] = [];
     private _map: {[name: string]: Series} = {};
+    private _items: IPlottingItem[] = [];
+    private _visibles: IPlottingItem[] = [];
+    private _series: Series[] = [];
+    private _visibleSeries: Series[] = [];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -754,8 +643,16 @@ export class PlottingItemCollection  {
         return this._series[0];
     }
 
+    get firstVisible(): IPlottingItem {
+        return this._visibles[0];
+    }
+
+    get firstVisibleSeries(): Series {
+        return this._visibleSeries[0];
+    }
+
     isEmpty(): boolean {
-        return !this._items.find(item => item.visible && !item.isEmpty());
+        return !this._visibles.find(item => !item.isEmpty());
     }
 
     items(): IPlottingItem[] {
@@ -763,7 +660,7 @@ export class PlottingItemCollection  {
     }
 
     visibles(): IPlottingItem[] {
-        return this._items.filter(item => item.visible);
+        return this._visibles.slice(0);
     }
 
     series(): Series[] {
@@ -771,14 +668,14 @@ export class PlottingItemCollection  {
     }
 
     visibleSeries(): Series[] {
-        return this._series.filter(ser => ser.visible);
+        return this._visibleSeries.slice(0);
     }
 
     needAxes(): boolean {
-        if (this._items.find(item => item.visible && item.needAxes())) {
+        if (this._visibles.find(item => item.needAxes())) {
             return true;
         }
-        return this._items.length === 0;
+        return this._visibleSeries.length === 0;
     }
 
     //-------------------------------------------------------------------------
@@ -791,9 +688,7 @@ export class PlottingItemCollection  {
     getLegendSources(): ILegendSource[] {
         const legends: ILegendSource[] = [];
 
-        this._items.forEach(ser => {
-            ser.visible && ser.getLegendSources(legends);
-        })
+        this._items.forEach(ser => ser.getLegendSources(legends));
         return legends;
     }
 
@@ -839,13 +734,14 @@ export class PlottingItemCollection  {
     prepareRender(): void {
         const colors = this.chart.colors;
         
-        this._series.forEach((ser, i) => {
-            if (ser.visible) {
-                ser.color = colors[i % colors.length];
-            }
+        this._visibleSeries = this._series.filter(ser => ser.visible);
+        this._visibleSeries.forEach((ser, i, arr) => {
+            ser.color = colors[i++ % colors.length];
+            ser._single = arr.length === 1;
         });
 
-        this._items.forEach(item => item.prepareRender());
+        this._visibles = this._items.filter(item => item.visible);
+        this._visibles.forEach(item => item.prepareRender());
     }
 
     //-------------------------------------------------------------------------

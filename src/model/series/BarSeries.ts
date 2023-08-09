@@ -50,20 +50,14 @@ export abstract class BoxSeries extends PolarableSeries implements IClusterable 
      * <br>
      * point가 차지할 원래 크기에 대한 상대 값으로서,
      * 0 ~ 1 사이의 비율 값으로 지정한다.
+     * 
+     * @default 카테고리에 시리즈 하나만 표시되면 0.3, group에 포함된 경우 0.1, 여러 시리즈와 같이 표시되면 0.2 이다.
      */
-    pointPadding: number;// = 0.1;
+    pointPadding: number;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    private $_getPointPadding(length: number): number {
-        if (isNaN(this.pointPadding)) {
-            return this.group ? 0.1 : 0.3;
-        } else {
-            return this.pointPadding;
-        }
-    }
-
     getPointWidth(length: number): number {
         const g = this.group as BarSeriesGroup;
         let w = length;
@@ -121,7 +115,7 @@ export abstract class BoxSeries extends PolarableSeries implements IClusterable 
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
-        this._pointPad = isNaN(this.pointPadding) ? (this.group ? 0.1 : 0.3) : this.pointPadding;
+        this._pointPad = isNaN(this.pointPadding) ? (this._single ? 0.3 : this.group ? 0.1 : 0.2) : this.pointPadding;
  }
 }
 

@@ -12,6 +12,7 @@ import { IRect } from "../../common/Rectangle";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { BubbleSeries, BubbleSeriesPoint } from "../../model/series/BubbleSeries";
 import { PointLabelView, SeriesView } from "../SeriesView";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class MarkerView extends PathElement {
 
@@ -54,7 +55,15 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
-        this.$_layoutMarkers();
+        this.$_layoutMarkers(width, height);
+    }
+
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.grow(this);
+    }
+
+    protected _doViewRateChanged(rate: number): void {
+        this.$_layoutMarkers(this.width, this.height);
     }
 
     //-------------------------------------------------------------------------
@@ -77,10 +86,11 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         });
     }
 
-    private $_layoutMarkers(): void {
+    private $_layoutMarkers(width: number, height: number): void {
         const series = this.model;
+        const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelVis = labels.visible;
+        const labelVis = labels.visible && !this._animating();
         const labelOff = labels.offset;
         const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
@@ -88,14 +98,16 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         let labelView: PointLabelView;
         let r: IRect;
 
+        this._labelContainer.visible = labelVis;
+
         this._markers.forEach((m, i) => {
             const p = m.point;
 
             if (!isNaN(p.zValue)) {
-                const x = p.xPos = xAxis.getPosition(this.width, p.xValue);
-                const y = p.yPos = this.height - yAxis.getPosition(this.height, p.yValue);
+                const x = p.xPos = xAxis.getPosition(width, p.xValue);
+                const y = p.yPos = this.height - yAxis.getPosition(height, p.yValue);
                 const s = p.shape;
-                const sz = p.radius * 1;//this._sizeRate;
+                const sz = p.radius * vr;
                 let path: (string | number)[];
     
                 // m.className = model.getPointStyle(i);
