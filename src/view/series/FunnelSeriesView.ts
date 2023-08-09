@@ -12,6 +12,7 @@ import { PathElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { FunnelSeries, FunnelSeriesPoint } from "../../model/series/FunnelSeries";
 import { PointLabelView, SeriesView } from "../SeriesView";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class FunnelSegment extends PathElement {
 
@@ -55,6 +56,13 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
         this.$_layoutSegments(width, height);
     }
 
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.slide(this, { from: 'bottom'});
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
     private $_prepareSegments(points: FunnelSeriesPoint[]): void {
         const count = points.length;
 
