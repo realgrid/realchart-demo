@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isString } from "../common/Common";
-import { SVGStyleOrClass, VerticalAlign } from "../common/Types";
+import { Align, SVGStyleOrClass, VerticalAlign, isEmpty } from "../common/Types";
 import { ChartItem } from "./ChartItem";
 
 export class Title extends ChartItem {
@@ -16,8 +16,16 @@ export class Title extends ChartItem {
     // properties
     //-------------------------------------------------------------------------
     text = 'Title';
+    align = Align.CENTER;
     backgroundStyle: SVGStyleOrClass;
 
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    isVisible(): boolean {
+        return this.visible && !isEmpty(this.text);
+    }
+    
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -41,8 +49,7 @@ export class Subtitle extends Title {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    titleGap = 4;
     position = SubtitlePosition.BOTTOM;
-    verticalAlign = VerticalAlign.BOTTOM;
-    text = 'Sub Title';
+    valign = VerticalAlign.BOTTOM;
+    text = '';
 }

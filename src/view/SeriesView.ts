@@ -309,7 +309,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
             this.$_renderTrendline();       
         }
         this._afterRender();
-        this._runShowEffect(this._modelChanged);
+        this._runShowEffect(!this.control.loaded); //this._modelChanged);
     }
 
     //-------------------------------------------------------------------------

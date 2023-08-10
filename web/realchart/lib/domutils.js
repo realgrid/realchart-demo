@@ -18,6 +18,13 @@ function createButtons(parentId, actions) {
 	}
 }
 
+function linefeed(parentId) {
+	var parent = document.getElementById(parentId);
+	if (parent) {
+		parent.appendChild(document.createElement('br'));
+	}
+}
+
 function createCheckBox(parentId, label, handler, checked) {
 	var parent = document.getElementById(parentId);
 	if (parent) {

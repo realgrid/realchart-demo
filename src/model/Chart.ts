@@ -14,7 +14,7 @@ import { ChartItem } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
 import { ILegendSource, Legend } from "./Legend";
 import { IPlottingItem, PlottingItemCollection, Series } from "./Series";
-import { Title } from "./Title";
+import { Subtitle, Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
 import { LogAxis } from "./axis/LogAxis";
@@ -187,7 +187,7 @@ export class Chart extends RcObject implements IChart {
     //-------------------------------------------------------------------------
     private _options: ChartOptions;
     private _title: Title;
-    private _subtitle: Title;
+    private _subtitle: Subtitle;
     private _legend: Legend;
     private _series: PlottingItemCollection;
     private _xAxes: AxisCollection;
@@ -207,7 +207,7 @@ export class Chart extends RcObject implements IChart {
 
         this._options = new ChartOptions(this);
         this._title = new Title(this);
-        this._subtitle = new Title(this, false);
+        this._subtitle = new Subtitle(this);
         this._legend = new Legend(this);
         this._series = new PlottingItemCollection(this);
         this._xAxes = new AxisCollection(this, true);
@@ -245,7 +245,7 @@ export class Chart extends RcObject implements IChart {
         return this._title;
     }
 
-    get subtitle(): Title {
+    get subtitle(): Subtitle {
         return this._subtitle;
     }
 

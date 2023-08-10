@@ -81,13 +81,13 @@
 /** title */
 .rct-title {
     font-size: 24px;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 .rct-title-background {
     fill: transparent;
 }
 .rct-subtitle {
-    font-size: 16px;
+    font-size: 18px;
     margin-bottom: 4px;
 }
 .rct-subtitle-background {

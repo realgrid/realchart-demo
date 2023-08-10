@@ -91,7 +91,7 @@ export class SlideAnimation extends SeriesAnimation {
     // overriden members
     //-------------------------------------------------------------------------
     protected _createAnimation(v: SeriesView<Series>, options: ISlideAnimation): Animation {
-        switch (options.from) {
+        switch (options &&options.from) {
             case 'top':
                 return this.$_top(v, options);
             case 'bottom':

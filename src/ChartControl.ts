@@ -59,7 +59,8 @@ export class ChartControl extends RcControl {
         this.invalidateLayout();
     }
 
-    update(config: any): void {
+    update(config: any, loadAnimation = false): void {
+        this.loaded = !loadAnimation; 
         this.model = new Chart(config);
     }
 

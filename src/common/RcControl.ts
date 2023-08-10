@@ -66,6 +66,8 @@ export abstract class RcControl extends RtWrappableObject {
     private _lockDirty = false;
     private _cssVars = {};
 
+    loaded = false;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -410,6 +412,7 @@ export abstract class RcControl extends RtWrappableObject {
             this._doRender({x: 0, y: 0, width: w, height: h});
             
         } finally {
+            this.loaded = true;
             this._dirty = false;
             this._requestTimer = null;
             // this._invalidElements.forEach(elt => elt.validate());

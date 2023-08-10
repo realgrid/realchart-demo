@@ -19,8 +19,6 @@ export const ORG_ANGLE = -Math.PI / 2;
 export const NUMBER_SYMBOLS = 'k,M,G,T,P,E';
 export const NUMBER_FORMAT = '#,##0.#';
 
-export type Path = string | any[];
-
 export const floor = Math.floor;
 export const ceil = Math.ceil;
 export function fixnum(value: number): number {
@@ -32,10 +30,14 @@ export function toStr(value: any): string {
 export function deg2rad(degree: number): number {
     return degree * Math.PI * 2 / 360;
 }
-
 export function pixel(v: number): string {
     return v + 'px';
 }
+export function isEmpty(v: any): boolean {
+    return v == null || Number.isNaN(v) || v === '';
+}
+
+export type Path = string | any[];
 
 /**
  * 123, '10%' 형식으로 크기를 지정한다.

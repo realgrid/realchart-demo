@@ -9,12 +9,14 @@
 import { isNumber } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { LayerElement, RcElement } from "../common/RcControl";
+import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { Align, HORZ_SECTIONS, SectionDir, VERT_SECTIONS, VerticalAlign } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
 import { LegendPosition } from "../model/Legend";
+import { Subtitle } from "../model/Title";
 import { AxisView } from "./AxisView";
 import { BodyView } from "./BodyView";
 import { LegendView } from "./LegendView";
@@ -48,15 +50,16 @@ abstract class SectionView extends GroupElement {
         return this;
     }
 
-    layout(): void {
-        this._doLayout();
+    layout(param?: any): SectionView {
+        this._doLayout(param);
+        return this;
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
     protected abstract _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize;
-    protected abstract _doLayout(): void;
+    protected abstract _doLayout(param?: any): void;
 }
 
 class TitleSectionView extends SectionView {
@@ -76,25 +79,73 @@ class TitleSectionView extends SectionView {
     }
 
     protected _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
+        const v = this.titleView;
+        const sv = this.subtitleView;
         let width = hintWidth;
         let height = 0;
         let sz: ISize;
 
-        if (this.titleView.visible = chart.title.visible) {
-            sz = this.titleView.measure(doc, chart.title, hintWidth, hintHeight, phase);
+        if (v.visible = chart.title.isVisible()) {
+            sz = v.measure(doc, chart.title, hintWidth, hintHeight, phase);
             height += sz.height;
             hintHeight -= sz.height;
         }
-        if (this.subtitleView.visible = chart.subtitle.visible) {
-            sz = this.subtitleView.measure(doc, chart.subtitle, hintWidth, hintHeight, phase);
+        if (sv.visible = chart.subtitle.isVisible()) {
+            sz = sv.measure(doc, chart.subtitle, hintWidth, hintHeight, phase);
             height += sz.height;
             hintHeight -= sz.height;
         }
         return { width, height };
     }
 
-    protected _doLayout(): void {
-        this.titleView.resizeByMeasured().layout().translate((this.width - this.titleView.width) / 2, 0);
+    protected _doLayout(body: IRect): void {
+        const v = this.titleView;
+        const sv = this.subtitleView;
+        const m = v.model;
+        const sm = sv.model as Subtitle;
+        const w = body.width;
+        let y = 0;
+
+        if (v.visible) {
+            let x = 0;;
+
+            v.resizeByMeasured().layout();
+
+            switch (m.align) {
+                case Align.LEFT:
+                    break;
+                case Align.RIGHT:
+                    x += w - v.width;
+                    break;
+                default:
+                    x += (w - v.width) / 2;
+                    break;
+            }
+            v.translate(x, y);
+            y += v.height;
+        }
+        if (sv.visible) {
+            let x = 0;
+
+            sv.resizeByMeasured().layout();
+
+            switch (sm.position) {
+                default:
+                    switch (sm.align) {
+                        case Align.LEFT:
+                            break;
+                        case Align.RIGHT:
+                            x += w - sv.width;
+                            break;
+                        default:
+                            x += (w - sv.width) / 2;
+                            break;
+                    }
+                    break;
+            }
+
+            sv.translate(x, y);
+        }
     }
 }
 
@@ -366,7 +417,7 @@ export class ChartView extends RcElement {
         const yTitle = y;
 
         if (vTitle.visible) {
-            vTitle.resizeByMeasured().layout();
+            vTitle.resizeByMeasured();
             h -= hTitle = vTitle.height;
         }
 
@@ -482,7 +533,9 @@ export class ChartView extends RcElement {
         this._currBody.layout().translate(x, y);
 
         // title
-        vTitle.visible && vTitle.translate(x + (w - vTitle.width) / 2, yTitle);
+        if (vTitle.visible) {
+            vTitle.layout(this._currBody.getRect()).translate(x, yTitle);
+        }
 
         // legend
         if (vLegend.visible) {
