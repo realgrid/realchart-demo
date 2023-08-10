@@ -151,11 +151,11 @@ export class LollipopSeriesView extends SeriesView<LollipopSeries> {
             }
 
             if (inverted) {
-                y += series.getPointPos(wUnit);// + wPoint / 2;
-                x += yAxis.getPosition(yLen, p.yGroup);// - hPoint;
+                y += series.getPointPos(wUnit);
+                x += yAxis.getPosition(yLen, p.yGroup);
             } else {
-                x += series.getPointPos(wUnit);// + wPoint / 2;
-                y -= yAxis.getPosition(yLen, p.yGroup);// - hPoint;
+                x += series.getPointPos(wUnit);;
+                y -= yAxis.getPosition(yLen, p.yGroup);
             }
 
             bar.setBounds(x, y, wPoint, hPoint);

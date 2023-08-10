@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcAnimation } from "../../common/RcAnimation";
+import { pixel } from "../../common/Types";
 import { Series } from "../../model/Series";
 import { SeriesView } from "../SeriesView";
 
@@ -15,7 +16,7 @@ export abstract class SeriesAnimation {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
-    static slide(series: SeriesView<Series>, options?: { from: string }): void {
+    static slide(series: SeriesView<Series>, options?: ISlideAnimation): void {
         new SlideAnimation(series, options);
     }
 
@@ -73,33 +74,69 @@ export class StyleAnimation extends SeriesAnimation {
     }   
 }
 
+export interface ISlideAnimation {
+    from: 'left' | 'right' | 'top' | 'bottom';
+}
+
 export class SlideAnimation extends SeriesAnimation {
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(series: SeriesView<Series>, options?: {from: string}) {
+    constructor(series: SeriesView<Series>, options?: ISlideAnimation) {
         super(series, options);
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _createAnimation(v: SeriesView<Series>, options: {from: string}): Animation {
-        const cr = v.clipRect(0, -v.height / 2, v.width, v.height * 2);
-        const ani = cr.dom.firstElementChild.animate([
-            { width: '0'},
-            { width: v.width + 'px'}
-        ], {
+    protected _createAnimation(v: SeriesView<Series>, options: ISlideAnimation): Animation {
+        switch (options.from) {
+            case 'top':
+                return this.$_top(v, options);
+            case 'bottom':
+                return this.$_bottom(v, options);
+            default:
+                return this.$_left(v, options);
+        }
+    }   
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_aniOptions(options: ISlideAnimation): KeyframeAnimationOptions {
+        return {
             duration: RcAnimation.DURATION,
             fill: 'none'
-        });
-        
-        ani?.addEventListener('finish', () => {
-            v.control.removeDef(cr);
-        });
-        return ani;
-    }   
+        };
+    }
+
+    private $_left(v: SeriesView<Series>, options: ISlideAnimation): Animation {
+        const cr = v.clipRect(0, -v.height / 2, v.width, v.height * 2);
+
+        return cr.dom.firstElementChild.animate([
+            { width: '0'},
+            { width: pixel(v.width)}
+        ], this.$_aniOptions(options));
+    }
+
+    private $_top(v: SeriesView<Series>, options: ISlideAnimation): Animation {
+        const cr = v.clipRect(0, 0, v.width, v.height);
+
+        return cr.dom.firstElementChild.animate([
+            { height: '0'},
+            { height: pixel(v.height)}
+        ], this.$_aniOptions(options));
+    }
+
+    private $_bottom(v: SeriesView<Series>, options: ISlideAnimation): Animation {
+        const cr = v.clipRect(0, 0, v.width, v.height);
+
+        return cr.dom.firstElementChild.animate([
+            { transform: `translateY(${v.height}px)` },
+            { transform: 'tranlsateY(0)' }
+        ], this.$_aniOptions(options));
+    }
 }
 
 export class GrowAnimation extends RcAnimation {

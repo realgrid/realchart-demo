@@ -57,7 +57,7 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
     }
 
     protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.slide(this, { from: 'bottom'});
+        firstTime && SeriesAnimation.slide(this, { from: this.model.reversed ? 'bottom' : 'top'});
     }
 
     //-------------------------------------------------------------------------

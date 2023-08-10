@@ -10,6 +10,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { PathElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
+import { TextAnchor } from "../../common/impl/TextElement";
 import { PointItemPosition } from "../../model/Series";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { LinearAxis } from "../../model/axis/LinearAxis";
@@ -155,11 +156,11 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
             }
 
             if (inverted) {
-                y += series.getPointPos(wUnit);// + wPoint / 2;
-                x += yAxis.getPosition(yLen, p.yGroup) * vr;// - hPoint;
+                y += series.getPointPos(wUnit);
+                x += yAxis.getPosition(yLen, p.yGroup) * vr;
             } else {
-                x += series.getPointPos(wUnit);// + wPoint / 2;
-                y -= yAxis.getPosition(yLen, p.yGroup) * vr;// - hPoint;
+                x += series.getPointPos(wUnit);
+                y -= yAxis.getPosition(yLen, p.yGroup) * vr;
             }
 
             bar.setBounds(x, y, wPoint, hPoint);
@@ -167,50 +168,27 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
 
             // labels
             if (labelVis) {
-                if (labelView = labelViews.get(p, 0)) {
+                if (labelView = labelViews.get(p, 1)) {
                     const r = labelView.getBBounds();
 
                     if (inverted) {
                         labelView.translate(x + hPoint + labelOff, y - r.height / 2);
                     } else {
-                        labelView.translate(x - r.width / 2, y - hPoint - r.height - labelOff);
+                        x += wPoint / 2 - r.width / 2;
+                        labelView.translate(x, y - r.height - labelOff);
                     }
                 }
-                if (labelView = labelViews.get(p, 1)) {
+                if (labelView = labelViews.get(p, 0)) {
                     const r = labelView.getBBounds();
 
                     if (inverted) {
                         labelView.translate(x - r.width - labelOff, y - r.height / 2);
                     } else {
-                        labelView.translate(x - r.width / 2, y + labelOff);
+                        x += wPoint / 2 - r.width / 2;
+                        labelView.translate(x, y + hPoint + labelOff);
                     }
                 }
             }
-
-            // // label
-            // if (labelInfo && (labelView = labelViews.get(p, 0))) {
-            //     labelInfo.labelView = labelView;
-            //     labelInfo.bar = bar;
-            //     labelInfo.x = x + wPoint / 2;
-            //     labelInfo.y = y;
-            //     this.$_layoutLabel(labelInfo);
-            // }
         })
-    }
-
-    private $_layoutLabel(info: LabelInfo): void {
-        const r = info.labelView.getBBounds();
-        let inner = true;
-        let {inverted, x, y, bar, labelOff} = info;
-
-        if (inverted) {
-            y -= r.height;
-        } else {
-            x -= r.width / 2;
-            y -= r.height + labelOff;
-        }
-
-        info.labelView.setContrast(inner && info.bar.dom);
-        info.labelView.layout().translate(x, y);
     }
 }
