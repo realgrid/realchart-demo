@@ -39,8 +39,25 @@ function setActions(container) {
         chart.update(config);
     }, true)
     createListBox(container, "position", ['bottom', 'top', 'right', 'left', 'plot'], function (e) {
-        chart.model.legend.position = _getValue(e);
+        config.legend.position = _getValue(e);
+        chart.update(config);
     }, 'bottom');
+    createListBox(container, "left", ['', 10, 15, 20, 25], function (e) {
+        config.legend.left = _getValue(e);
+        chart.update(config);
+    }, '');
+    createListBox(container, "right", ['', 10, 15, 20, 25], function (e) {
+        config.legend.right = _getValue(e);
+        chart.update(config);
+    }, '');
+    createListBox(container, "top", ['', 10, 15, 20, 25], function (e) {
+        config.legend.top = _getValue(e);
+        chart.update(config);
+    }, '');
+    createListBox(container, "bottom", ['', 10, 15, 20, 25], function (e) {
+        config.legend.bottom = _getValue(e);
+        chart.update(config);
+    }, '');
     // createListBox(container, "layout", ['auto', 'horizontal', 'vertical'], function (e) {
     //     chart.model.legend.layout = _getValue(e);
     // }, 'auto');

@@ -38,7 +38,8 @@ export enum LegendPosition {
     TOP = 'top',
     RIGHT = 'right',
     LEFT = 'left',
-    INSIDE = 'inside'
+    PLOT = 'plot',
+    SUBPLOT = 'subplot'
 }
 
 export enum LegendAlignBase {
@@ -90,13 +91,25 @@ export class Legend extends ChartItem {
      */
     alignBase = LegendAlignBase.PLOT;
     /**
-     * 수평 정렬
+     * {@link position}이 {@link LegendPosition.PLOT plot}일 때, plot 영역의 좌측 모서리와 legend의 간격.
      */
-    align = Align.CENTER;
+    left: number;
     /**
-     * 수직 정렬
+     * {@link position}이 {@link LegendPosition.PLOT plot}일 때, plot 영역의 우측 모서리와 legend의 간격.
+     * <br>
+     * {@link left}가 지정되면 이 속성은 무시된다.
      */
-    valign = VerticalAlign.MIDDLE;
+    right: number;
+    /**
+     * {@link position}이 {@link LegendPosition.PLOT plot}일 때, plot 영역의 상단 모서리와 legend의 간격.
+     */
+    top: number;
+    /**
+     * {@link position}이 {@link LegendPosition.PLOT plot}일 때, plot 영역의 하단 모서리와 legend의 간격.
+     * <br>
+     * {@link top}이 지정되면 이 속성은 무시된다.
+     */
+    bottom: number;
     /**
      * legend 아이템들 사이의 간격.
      */
@@ -119,7 +132,7 @@ export class Legend extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     getLayout(): LegendLayout {
-        if (this.layout === LegendLayout.AUTO && this.position !== LegendPosition.INSIDE) {
+        if (this.layout === LegendLayout.AUTO && this.position !== LegendPosition.PLOT) {
             switch (this.position) {
                 case LegendPosition.BOTTOM:
                 case LegendPosition.TOP:

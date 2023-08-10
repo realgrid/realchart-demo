@@ -1,4 +1,6 @@
 const config = {
+    options: {
+    },
     title: "Axis Guides",
     xAxis: {
         // type: 'category',
@@ -61,6 +63,11 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'inverted', function (e) {
+        RealChart.setDebugging(_getChecked(e));
+        config.options.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
 }
 
 export function init() {

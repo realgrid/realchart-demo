@@ -11,7 +11,7 @@ import { IPoint, Point } from "../common/Point";
 import { LayerElement, RcElement } from "../common/RcControl";
 import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
-import { Align, HORZ_SECTIONS, SectionDir, VERT_SECTIONS, VerticalAlign } from "../common/Types";
+import { Align, HORZ_SECTIONS, SectionDir, VERT_SECTIONS } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
@@ -456,6 +456,7 @@ export class ChartView extends RcElement {
                 case LegendPosition.LEFT:
                     w -= wLegend;
                     x += wLegend;
+                    xLegend = 0;
                     break;
             }
         }
@@ -539,24 +540,21 @@ export class ChartView extends RcElement {
 
         // legend
         if (vLegend.visible) {
-            if (legend.position === LegendPosition.INSIDE) {
-                switch (legend.valign) {
-                    case VerticalAlign.TOP:
-                        break;
-                    case VerticalAlign.BOTTOM:
-                        y += hPlot - hLegend;
-                        break;
-                    default:
-                        y += (hPlot - hLegend) / 2;
+            if (legend.position === LegendPosition.PLOT) {
+                if (!isNaN(+legend.left)) {
+                    x += +legend.left;
+                } else if (!isNaN(+legend.right)) {
+                    x += wPlot - wLegend - +legend.right;
+                } else {
+                    x += (wPlot - wLegend) / 2;
                 }
-                switch (legend.align) {
-                    case Align.LEFT:
-                        break;
-                    case Align.RIGHT:
-                        x += wPlot - wLegend;
-                        break;
-                    default:
-                        x += (wPlot - wLegend) / 2;
+
+                if (!isNaN(+legend.top)) {
+                    y += +legend.top;
+                } else if (!isNaN(+legend.bottom)) {
+                    y += hPlot - hLegend - +legend.bottom;
+                } else {
+                    y += (hPlot - hLegend) / 2;
                 }
             } else if (!isNaN(yLegend)) {
                 x += (w - wLegend) / 2;
