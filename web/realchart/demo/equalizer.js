@@ -14,7 +14,7 @@ const config = {
         type: 'equalizer',
         pointLabel: {
             visible: true,
-            position: 'head',
+            // position: 'head',
             // offset: 10,
             // text: '<b style="fill:red">${x}</b>',
             effect: 'outline',// 'background',
@@ -26,7 +26,7 @@ const config = {
             // }
         },
         data: [
-            ['home', 7], 
+            ['home', 10], 
             ['sky', 11], 
             ['def', 9], 
             ['지리산', 14.3], 

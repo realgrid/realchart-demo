@@ -7,7 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../../common/Types";
+import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
+import { PointItemPosition } from "../Series";
 import { BoxSeries } from "./BarSeries";
 
 export class EqualizerSeriesPoint extends DataPoint {
@@ -37,6 +39,9 @@ export class EqualizerSeries extends BoxSeries {
     segmented = false;
     backSegments = false;
 
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------

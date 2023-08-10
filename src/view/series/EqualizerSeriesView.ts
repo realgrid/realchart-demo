@@ -16,6 +16,7 @@ import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
 import { EqualizerSeries } from "../../model/series/EqualizerSeries";
 import { PointLabelView, SeriesView } from "../SeriesView";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class BarElement extends GroupElement {
 
@@ -27,6 +28,8 @@ class BarElement extends GroupElement {
     private _decimal = 0;
 
     point: DataPoint;
+    wPoint: number;
+    hPoint: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -52,22 +55,24 @@ class BarElement extends GroupElement {
             });
     }
 
-    layout(pts: number[], inverted: boolean): void {
-        const y = 0;//this.point.yPos;
-        const w = this.width;
-        const h = this.height;
+    layout(pts: number[], x: number, y: number, inverted: boolean): void {
+        const w = this.wPoint;
+        const h = this.hPoint;
+        
+        x -= w / 2;
 
         // back steps
         this._backs.forEach((step, i) => {
-            step.setPath(SvgShapes.rectangle(0, pts[i * 2 + 1] - y, w, pts[i * 2] - pts[i * 2 + 1]));
+            step.setPath(SvgShapes.rectangle(0, y - pts[i * 2], w, Math.min(-1, pts[i * 2] - pts[i * 2 + 1])));
         })
 
         // steps
         this._segments.forEach((step, i, count) => {
+            // Math.min(-1, ): 0에 가까운 값이면 svg가 line을 표시하지 않는다.(TODO: 다르 방법?)
             if (i === count - 1 && this._decimal > 0) {
-                step.setPath(SvgShapes.rectangle(0, pts[i * 2] - y - this._decimal, w, this._decimal));
+                step.setPath(SvgShapes.rectangle(x, y - pts[i * 2], w, Math.min(-1, -this._decimal)));
             } else {
-                step.setPath(SvgShapes.rectangle(0, pts[i * 2 + 1] - y, w, pts[i * 2] - pts[i * 2 + 1]));
+                step.setPath(SvgShapes.rectangle(x, y - pts[i * 2], w, Math.min(-1, pts[i * 2] - pts[i * 2 + 1])));
             }
         })
     }
@@ -114,6 +119,14 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
         this.$_layoutBars(width, height);
     }
 
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.grow(this);
+    }
+
+    protected _doViewRateChanged(rate: number): void {
+        this.$_layoutBars(this.width, this.height);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -124,40 +137,41 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
         })
     }
 
-    private $_parepareSegments(series: EqualizerSeries, width: number, height: number): void {
+    private $_buildSegments(series: EqualizerSeries, len: number): void {
         const backs = series.backSegments;
         const max = series._yAxisObj.axisMax();
         const segmented = series.segmented;
-        const gap = series.segmentGap;
+        const gap = series.segmentGap || 0;
+        const pts = this._pts = [];
+        let y = 0;
         let sz: number;
         let cnt: number;
-        const pts = this._pts = [];
-        let y = height;
 
         if (series.maxCount > 0) {
             cnt = series.maxCount;
         } else {
-            cnt = Math.round(height / (series.getSegmentSize(height) + gap / 2));
+            cnt = Math.round(len / (series.getSegmentSize(len) + gap / 2));
         }
-        sz = (height - gap * (cnt - 1)) / cnt;
+        sz = (len - gap * (cnt - 1)) / cnt;
 
         while (pts.length < cnt * 2) {
-            pts.push(y, y - sz);
-            y -= sz + gap;
+            pts.push(y, y + sz);
+            y += sz + gap;
         }
-        pts[pts.length - 1] = 0;
+        pts[pts.length - 1] = len;
 
-        this._bars.forEach((bar, i) => {
-            const total = pts.length / 2;
-            const v = 1 - bar.point.yValue / max;
+        const total = pts.length / 2;
+
+        this._bars.forEach(bar => {
+            const v = bar.point.yValue / max;
             let n = -1;
             let decimal = 0;
 
             for (let i = 0; i < total - 1; i++) {
-                if (v <= pts[i * 2] / height && v > pts[(i + 1) * 2] / height) {
+                if (v >= pts[i * 2] / len && v < pts[(i + 1) * 2] / len) {
                     n = i + 1;
-                    if (!segmented && v > pts[i * 2 + 1] / height) {
-                        decimal = pts[i * 2] - v * height;
+                    if (!segmented && v < pts[i * 2 + 1] / len) {
+                        decimal = v * len - pts[i * 2];
                     } else {
                         decimal = sz;
                     }
@@ -176,12 +190,13 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
     protected $_layoutBars(width: number, height: number): void {
         const series = this.model;
         const inverted = series.chart.isInverted();
+        const vr = this._getViewRate();
         const labels = series.pointLabel;
         const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPadding * 2 : 0;
-        const yLen = inverted ? width : height;
+        const yLen = (inverted ? width : height) * vr;
         const xLen = inverted ? height : width;
         //const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
         const yBase = yAxis.getPosition(yLen, yAxis instanceof ContinuousAxis ? yAxis.baseValue : 0);
@@ -193,14 +208,13 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
             width, height
         });
 
-        this.$_parepareSegments(series, width, height);
+        this.$_buildSegments(series, yLen);
 
         this._bars.forEach((bar, i) => {
             const p = bar.point;
             const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
-            let labelView: PointLabelView;
             let x: number;
             let y: number;
 
@@ -212,29 +226,19 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
                 y = org;
             }
 
-            // bar.wPoint = wPoint;
-            // bar.hPoint = yVal - yBase;
+            bar.wPoint = wPoint;
+            bar.hPoint = yVal - yBase;
 
             if (inverted) {
-                y += series.getPointPos(wUnit);// + wPoint / 2;
-                x += yAxis.getPosition(yLen, p.yGroup) - bar.height;
+                y += series.getPointPos(wUnit) + wPoint / 2;
             } else {
-                x += series.getPointPos(wUnit);// + wPoint / 2;
-                y -= yAxis.getPosition(yLen, p.yGroup) - bar.height;
+                x += series.getPointPos(wUnit) + wPoint / 2;
             }
 
-            bar.setBounds(x, y, wPoint, yVal - yBase);
-            bar.layout(this._pts, inverted);
-
-            if (inverted) {
-                y += wPoint / 2;
-            } else {
-                x += wPoint / 2;
-            }
+            bar.layout(this._pts, x, y, inverted);
 
             // label
-            if (labelInfo && (labelView = labelViews.get(p, 0))) {
-                labelInfo.labelView = labelView;
+            if (labelInfo && (labelInfo.labelView = labelViews.get(p, 0))) {
                 labelInfo.bar = bar;
                 labelInfo.x = x;
                 labelInfo.y = y;
@@ -257,17 +261,17 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
         switch (info.labelPos) {
             case PointItemPosition.INSIDE:
                 if (info.inverted) {
-                    x += bar.height / 2 + labelOff;
+                    x += bar.hPoint / 2 + labelOff;
                 } else {
-                    y -= (bar.height + r.height) / 2 + labelOff;
+                    y -= (bar.hPoint + r.height) / 2 + labelOff;
                 }
                 break;
 
             case PointItemPosition.HEAD:
                 if (info.inverted) {
-                    x += bar.height - r.width - labelOff;
+                    x += bar.hPoint - r.width - labelOff;
                 } else {
-                    y -= bar.height - labelOff;
+                    y -= bar.hPoint - labelOff;
                 }
                 break;
 
@@ -277,9 +281,9 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
             case PointItemPosition.OUTSIDE:
             default:
                 if (info.inverted) {
-                    x += bar.height + labelOff;
+                    x += bar.hPoint + labelOff;
                 } else {
-                    y -= bar.height + r.height + labelOff;
+                    y -= bar.hPoint + r.height + labelOff;
                 }
                 inner = false;
                 break;

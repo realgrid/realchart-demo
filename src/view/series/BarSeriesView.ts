@@ -153,10 +153,8 @@ export class BarSeriesView extends SeriesView<BarSeries> {
 
             if (inverted) {
                 y += series.getPointPos(wUnit) + wPoint / 2;
-                x += yAxis.getPosition(yLen, p.yGroup) - bar.hPoint;
             } else {
                 x += series.getPointPos(wUnit) + wPoint / 2;
-                y -= yAxis.getPosition(yLen, p.yGroup) - bar.hPoint;
             }
 
             bar.render(x, y, inverted);
