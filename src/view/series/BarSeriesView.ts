@@ -8,6 +8,7 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { SectorElement } from "../../common/impl/SectorElement";
+import { TextAnchor } from "../../common/impl/TextElement";
 import { Chart } from "../../main";
 import { DataPoint } from "../../model/DataPoint";
 import { PointItemPosition } from "../../model/Series";
@@ -77,7 +78,11 @@ export class BarSeriesView extends SeriesView<BarSeries> {
     }
 
     protected _doViewRateChanged(rate: number): void {
-        this.$_layoutBars(this.width, this.height);
+        if (this.model.chart._polar) {
+            this.$_layoutSectors();
+        } else {
+            this.$_layoutBars(this.width, this.height);
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -216,17 +221,25 @@ export class BarSeriesView extends SeriesView<BarSeries> {
     }
 
     private $_layoutSectors(): void {
-        const m = this.model;
-        const body = (m.chart as Chart).body;
-        const xAxis = m._xAxisObj;
-        const yAxis = m._yAxisObj;
-        const polar = body.getPolar(m);
+        const series = this.model;
+        const vr = this._getViewRate();
+        const labels = series.pointLabel;
+        const labelVis = labels.visible && !this._animating();
+        const labelViews = this._labelContainer;
+        const body = (series.chart as Chart).body;
+        const xAxis = series._xAxisObj;
+        const yAxis = series._yAxisObj;
+        const polar = body.getPolar(series);
+        const labelInfo: LabelInfo = labelVis && Object.assign(this._labelInfo, {
+            labelPos: series.getLabelPosition(),
+            labelOff: labels.offset,
+        });
 
         this._sectors.forEach((view, i) => {
             const p = view.point;
-            const y = yAxis.getPosition(polar.rd, p.yGroup);
+            const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
             const wUnit = xAxis.getUnitLength(Math.PI * 2, i);
-            const wPoint = m.getPointWidth(wUnit);
+            const wPoint = series.getPointWidth(wUnit);
     
             view.setSector({
                 cx: polar.cx, 
@@ -237,9 +250,21 @@ export class BarSeriesView extends SeriesView<BarSeries> {
                 angle: wPoint,
                 clockwise: true
             })
+
+            // label
+            if (labelVis && (labelInfo.labelView = labelViews.get(p, 0))) {
+                this.$_layoutSectorLabel(labelInfo, view);
+            }
         })
     }
 
-    private $_layoutSectorLabel(info: LabelInfo): void {
+    private $_layoutSectorLabel(info: LabelInfo, view: BarSectorView): void {
+        const a = view.start + view.angle
+        const x = view.cx + view.rx / 2 * Math.cos(a);
+        const y = view.cy + view.ry / 2 * Math.sin(a);
+        const r = info.labelView.getBBounds();
+
+        info.labelView._text.anchor = TextAnchor.MIDDLE;
+        info.labelView.translate(x - r.width / 2, y - r.height / 2);
     }
 }

@@ -57,7 +57,7 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: T): void {
-        this.$_prepareMarkser(model._visPoints as LineSeriesPoint[]);
+        this.$_prepareMarkers(model._visPoints as LineSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -66,7 +66,16 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     }
 
     protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.slide(this);
+        if (this._polar) {
+            firstTime && SeriesAnimation.grow(this);
+        } else {
+            firstTime && SeriesAnimation.slide(this);
+        }
+    }
+
+    protected _doViewRateChanged(rate: number): void {
+        this._layoutMarkers(this.model._visPoints as LineSeriesPoint[], this.width, this.height);
+        this._layoutLines(this.model._visPoints as LineSeriesPoint[]);
     }
 
     //-------------------------------------------------------------------------
@@ -76,7 +85,7 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
         return 1;
     }
 
-    private $_prepareMarkser(points: LineSeriesPoint[]): void {
+    private $_prepareMarkers(points: LineSeriesPoint[]): void {
         const series = this.model;
         const marker = series.marker;
 
@@ -145,6 +154,7 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
 
     protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
         const series = this.model;
+        const vr = this._getViewRate();
         const polar = this._polar = (series.chart as Chart).body.getPolar(series);
         const vis = series.marker.visible;
         const labels = series.pointLabel;
@@ -160,7 +170,7 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
 
             if (polar) {
                 const a = polar.start + i * polar.deg;
-                const y = yAxis.getPosition(polar.rd, p.yGroup);
+                const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
 
                 p.xPos = polar.cx + y * Math.cos(a);
                 p.yPos = polar.cy + y * Math.sin(a);

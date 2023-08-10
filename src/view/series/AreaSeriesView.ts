@@ -11,6 +11,7 @@ import { LayerElement, PathElement, RcElement } from "../../common/RcControl";
 import { Utils } from "../../common/Utils";
 import { SeriesGroupLayout } from "../../model/Series";
 import { AreaSeries, AreaSeriesPoint } from "../../model/series/LineSeries";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 import { LineSeriesView } from "./LineSeriesView";
 
 export class AreaSeriesView extends LineSeriesView<AreaSeries> {
