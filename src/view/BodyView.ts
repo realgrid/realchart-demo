@@ -10,7 +10,7 @@ import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
-import { Align, VerticalAlign, _undefined } from "../common/Types";
+import { Align, VerticalAlign, _undefined, assert } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
@@ -456,12 +456,52 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
     }
 }
 
-export class GuideContainer extends LayerElement {
+export class AxisGuideContainer extends LayerElement {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _linePool: AxisGuideLineView[] = []; 
+    _rangePool: AxisGuideRangeView[] = [];
     _views: AxisGuideView<AxisGuide>[] = [];
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    prepare(): void {
+        const views = this._views as (AxisGuideLineView | AxisGuideRangeView)[];
+
+        // 뒤쪽에서 부터 pool로 return 시킨다.
+        for (let i = views.length - 1; i >= 0; i--) {
+            const v = views.pop();
+
+            v.remove();
+            if (v instanceof AxisGuideRangeView) {
+                this._rangePool.push(v);
+            } else {
+                this._linePool.push(v);
+            }
+        }
+        assert(views.length === 0, 'GuideContainer.prepare');
+    }
+
+    addAll(doc: Document, guides: AxisGuide[]): void {
+        guides.forEach(g => {
+            if (g instanceof AxisGuideRange) {
+                let v = this._rangePool.pop() || new AxisGuideRangeView(doc);
+
+                this.add(v);
+                v.prepare(g)
+                this._views.push(v);
+            } else if (g instanceof AxisGuideLine) {
+                let v = this._linePool.pop() || new AxisGuideLineView(doc);
+
+                this.add(v);
+                v.prepare(g)
+                this._views.push(v);
+            }
+        });
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -487,8 +527,8 @@ export class BodyView extends ChartElement<Body> {
     private _seriesMap = new Map<Series, SeriesView<Series>>();
     private _series: Series[];
     // guides
-    _guideContainer: GuideContainer;
-    _frontGuideContainer: GuideContainer;
+    _guideContainer: AxisGuideContainer;
+    _frontGuideContainer: AxisGuideContainer;
     // axis breaks
     _axisBreakContainer: RcElement;
     // items
@@ -502,15 +542,20 @@ export class BodyView extends ChartElement<Body> {
 
         this.add(this._background = new RectElement(doc));
         this.add(this._gridContainer = new LayerElement(doc, 'rct-grids'));
-        this.add(this._guideContainer = new GuideContainer(doc, 'rct-guides'));
+        this.add(this._guideContainer = new AxisGuideContainer(doc, 'rct-guides'));
         this.add(this._seriesContainer = new LayerElement(doc, 'rct-series-container'));
         this.add(this._axisBreakContainer = new LayerElement(doc, 'rct-axis-breaks'));
-        this.add(this._frontGuideContainer = new GuideContainer(doc, 'rct-front-guides'));
+        this.add(this._frontGuideContainer = new AxisGuideContainer(doc, 'rct-front-guides'));
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    prepareGuideContainers(): void {
+        this._guideContainer.prepare();
+        this._frontGuideContainer.prepare();
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

@@ -22,7 +22,10 @@ const config = {
             end: 6,
             label: {
                 text: 'range guide',
-                align: 'right'
+                align: 'right',
+                style: {
+                    fill: 'red'
+                }
             }
         }]
     },

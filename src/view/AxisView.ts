@@ -14,7 +14,7 @@ import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Axis, AxisGuide, AxisGuideRange, AxisTickMark, AxisTitle } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
-import { AxisGuideLineView, AxisGuideRangeView, AxisGuideView } from "./BodyView";
+import { AxisGuideContainer, AxisGuideLineView, AxisGuideRangeView, AxisGuideView } from "./BodyView";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
 export class AxisTitleView extends BoundableElement<AxisTitle> {
@@ -166,45 +166,12 @@ export class AxisView extends ChartElement<Axis> {
         return w;
     }
 
-    prepareGuides(doc: Document, container: LayerElement, frontContainer: LayerElement): void {
-
-        function createView(model: AxisGuide): AxisGuideView<AxisGuide> {
-            if (model instanceof AxisGuideRange) {
-                return new AxisGuideRangeView(doc);
-            } else {
-                return new AxisGuideLineView(doc);
-            }
-        }
-
+    prepareGuides(doc: Document, container: AxisGuideContainer, frontContainer: AxisGuideContainer): void {
         let guides = this.model.guides.filter(g => !g.front);
-
-        if (guides.length > 0) {
-            if (!this._guideViews) {
-                this._guideViews = []
-                guides.forEach(g => {
-                    const v = createView(g);
-
-                    container.add(v);
-                    this._guideViews.push(v);
-                    v.prepare(g);
-                });
-            }
-        }
+        container.addAll(doc, guides);
 
         guides = this.model.guides.filter(g => g.front);
-
-        if (guides.length > 0) {
-            if (!this._frontGuideViews) {
-                this._frontGuideViews = []
-                guides.forEach(g => {
-                    const v = createView(g);
-
-                    frontContainer.add(v);
-                    this._frontGuideViews.push(v);
-                    v.prepare(g);
-                });
-            }
-        }
+        frontContainer.addAll(doc, guides);
     }
 
     //-------------------------------------------------------------------------

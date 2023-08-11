@@ -18,7 +18,7 @@ import { Axis } from "../model/Axis";
 import { LegendPosition } from "../model/Legend";
 import { Subtitle } from "../model/Title";
 import { AxisView } from "./AxisView";
-import { BodyView } from "./BodyView";
+import { AxisGuideContainer, BodyView } from "./BodyView";
 import { LegendView } from "./LegendView";
 import { PolarBodyView } from "./PolarBodyView";
 import { TitleView } from "./TitleView";
@@ -194,7 +194,7 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepare(doc: Document, axes: Axis[], guideContainer: LayerElement, frontGuideContainer: LayerElement): void {
+    prepare(doc: Document, axes: Axis[], guideContainer: AxisGuideContainer, frontGuideContainer: AxisGuideContainer): void {
         const views = this.views;
 
         while (views.length < axes.length) {
@@ -621,6 +621,9 @@ export class ChartView extends RcElement {
         const map = this._axisSectionViews;
         const wSave = w;
         const hSave = h;
+
+        // guides - axis view에서 guide view들을 추가할 수 있도록 초기화한다.
+        this._bodyView.prepareGuideContainers();
 
         // axes
         this.$_prepareAxes(doc, m);
