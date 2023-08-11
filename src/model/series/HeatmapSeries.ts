@@ -8,6 +8,7 @@
 
 import { pickNum, pickProp, pickProp3 } from "../../common/Common";
 import { DataPoint } from "../DataPoint";
+import { Series } from "../Series";
 import { BoxSeries } from "./BarSeries";
 
 export class HeatmapSeriesPoint extends DataPoint {
@@ -65,7 +66,7 @@ export class HeatmapSeriesPoint extends DataPoint {
  * 2. series의 minColor, maxColor 사이의 색으로 가져온다.
  * 3. series의 기본 색상과 흰색 사이의 색으로 가져온다.
  */
-export class HeatmapSeries extends BoxSeries {
+export class HeatmapSeries extends Series {
 
     //-------------------------------------------------------------------------
     // property fields

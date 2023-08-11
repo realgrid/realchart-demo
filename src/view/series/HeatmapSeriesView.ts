@@ -76,8 +76,6 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
-        const xPad = xAxis instanceof CategoryAxis ? xAxis.categoryPadding * 2 : 0;
-        const yPad = yAxis instanceof CategoryAxis ? yAxis.categoryPadding * 2 : 0;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
         const color = new Color(series.color);
@@ -85,9 +83,9 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         this._cells.forEach(cell => {
             const p = cell.point as HeatmapSeriesPoint;
             console.log(p.xValue, p.yValue);
-            const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - xPad);
+            const wUnit = xAxis.getUnitLength(xLen, p.xValue);
             const wPoint = wUnit;//series.getPointWidth(wUnit);
-            const hUnit = yAxis.getUnitLength(yLen, p.yValue) * (1 - yPad);
+            const hUnit = yAxis.getUnitLength(yLen, p.yValue);
             const hPoint = hUnit;// series.getPointWidth(hUnit);
             const org = inverted ? 0 : height;;
             let x: number;

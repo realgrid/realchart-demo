@@ -318,10 +318,6 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
 
-    protected _categoryPadding(axis: IAxis): number {
-        return axis instanceof CategoryAxis ? axis.categoryPadding * 2 : 0;
-    }
-
     protected _getViewRate(): number {
         return pickNum(this._viewRate, 1);
     }

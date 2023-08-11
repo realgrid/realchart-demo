@@ -7,8 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isString, pickNum } from "../../common/Common";
+import { isEmpty } from "../../common/Types";
 import { Axis, AxisGrid, AxisTick, AxisTickMark, IAxisTick } from "../Axis";
-import { IPlottingItem, ISeries } from "../Series";
+import { IPlottingItem, ISeries, SeriesGroup } from "../Series";
 
 export enum CategoryTickMarkPosition {
     TICK = 'tick',
@@ -79,6 +80,22 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _cats: string[];
+    _widths: number[];  // ? 한 카테고리의 너비. 한 카테고리의 값 크기는 1 ?
+    _widthSum: number;  // ?
+    private _map = new Map<string, number>(); // data point의 축 위치를 찾기 위해 사용한다.
+    private _min: number;
+    private _max: number;
+    private _len: number;
+    _interval: number;
+    private _catPad = 0;
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
     /**
      * 카테고리가 지정되지 않은 데이터포인트들의 이 축에 해당하는 값을 지정할 때 최초 값.
      */
@@ -115,20 +132,10 @@ export class CategoryAxis extends Axis {
     padding = 0.5;
     /**
      * 각 카테고리의 양 끝에 추가되는 여백의 카테고리에 너비에 대한 상대적 크기.
+     * <br>
+     * @default 0.1.
      */
-    categoryPadding = 0;
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    _cats: string[];
-    _widths: number[];  // ? 한 카테고리의 너비. 한 카테고리의 값 크기는 1 ?
-    _widthSum: number;  // ?
-    private _map = new Map<string, number>(); // data point의 축 위치를 찾기 위해 사용한다.
-    private _min: number;
-    private _max: number;
-    private _len: number;
-    _interval: number;
+    categoryPadding = 0.1;
 
     //-------------------------------------------------------------------------
     // methods
@@ -149,6 +156,10 @@ export class CategoryAxis extends Axis {
         return this._max;
     }
 
+    categoryPad(): number {
+        return this._catPad;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -166,6 +177,9 @@ export class CategoryAxis extends Axis {
 
     protected _doPrepareRender(): void {
         this._collectCategories(this._series);
+
+        // category padding
+        this._catPad = pickNum(this.categoryPadding, 0);
     }
 
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {

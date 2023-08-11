@@ -122,7 +122,7 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
         const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
-        const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPadding * 2 : 0;
+        const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
         //const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
