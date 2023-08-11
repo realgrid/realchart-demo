@@ -512,6 +512,16 @@ export class AxisGuideContainer extends LayerElement {
     }
 }
 
+class CrosshairLineView extends LineElement {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-crosshair-line');
+    }
+}
+
 export class BodyView extends ChartElement<Body> {
 
     //-------------------------------------------------------------------------
@@ -533,6 +543,9 @@ export class BodyView extends ChartElement<Body> {
     _axisBreakContainer: RcElement;
     // items
     // private _itemMap = new Map<PlotItem, PlotItemView>();
+    // feedbacks
+    private _feedbackContainer: LayerElement;
+    private _crosshairLines: ElementPool<CrosshairLineView>;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -546,6 +559,7 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._seriesContainer = new LayerElement(doc, 'rct-series-container'));
         this.add(this._axisBreakContainer = new LayerElement(doc, 'rct-axis-breaks'));
         this.add(this._frontGuideContainer = new AxisGuideContainer(doc, 'rct-front-guides'));
+        this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
     }
 
     //-------------------------------------------------------------------------

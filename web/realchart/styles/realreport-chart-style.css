@@ -328,3 +328,22 @@
 .rct-pie-series .rct-series-points {
     stroke: white;
 }
+
+/** crosshair */
+.rct-crosshair-line {
+    fill: none;
+    stroke-width: 1;
+    stroke: #80808080;
+}
+.rct-crosshair-bar {
+    stroke: none;
+    fill: #88888840;
+}
+.rct-crosshair-label {
+    stroke: none;
+    fill: #fff;    
+}
+.rct-crosshair-label-back {
+    stroke: #555;
+    fill: #777;    
+}
