@@ -8,7 +8,6 @@ const config = {
         title: 'Y Axis',
     },
     series: [{
-        type: 'bar',
         data: [11, 22, 15, 9, 13, 27]
     }, {
         type: 'errorbar',
