@@ -11,7 +11,6 @@ import { SectionDir, isNull } from "../common/Types";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
-import { Crosshair } from "./Crosshair";
 import { ILegendSource, Legend } from "./Legend";
 import { IPlottingItem, PlottingItemCollection, Series } from "./Series";
 import { Subtitle, Title } from "./Title";
@@ -43,7 +42,6 @@ import { VectorSeries } from "./series/VectorSeries";
 import { WaterfallSeries } from "./series/WaterfallSeries";
 
 export interface IChart {
-
     type: string;
     xStart: number;
     xStep: number;
@@ -186,7 +184,6 @@ export class Chart extends RcObject implements IChart {
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
     private _body: Body;
-    private _crosshair: Crosshair;
 
     private _inverted: boolean;
     _polar: boolean;
@@ -207,7 +204,6 @@ export class Chart extends RcObject implements IChart {
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new AxisCollection(this, false);
         this._body = new Body(this);
-        this._crosshair = new Crosshair(this);
 
         source && this.load(source);
         this._polar = this.options.polar === true;
@@ -275,10 +271,6 @@ export class Chart extends RcObject implements IChart {
 
     get body(): Body {
         return this._body;
-    }
-
-    get crosshair(): Crosshair {
-        return this._crosshair;
     }
 
     /**

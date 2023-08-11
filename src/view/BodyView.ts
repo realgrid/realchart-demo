@@ -18,6 +18,7 @@ import { Chart } from "../main";
 import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange } from "../model/Axis";
 import { Body } from "../model/Body";
 import { IChart } from "../model/Chart";
+import { Crosshair } from "../model/Crosshair";
 import { PlotItem } from "../model/PlotItem";
 import { Series } from "../model/Series";
 import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
@@ -515,10 +516,24 @@ export class AxisGuideContainer extends LayerElement {
 class CrosshairLineView extends LineElement {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _model: Crosshair;
+
+    //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-crosshair-line');
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setModel(model: Crosshair): void {
+        if (model != this._model) {
+            this._model = model;
+        }
     }
 }
 
@@ -560,6 +575,8 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._axisBreakContainer = new LayerElement(doc, 'rct-axis-breaks'));
         this.add(this._frontGuideContainer = new AxisGuideContainer(doc, 'rct-front-guides'));
         this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
+        
+        this._crosshairLines = new ElementPool(this._feedbackContainer, CrosshairLineView);
     }
 
     //-------------------------------------------------------------------------
@@ -568,6 +585,11 @@ export class BodyView extends ChartElement<Body> {
     prepareGuideContainers(): void {
         this._guideContainer.prepare();
         this._frontGuideContainer.prepare();
+    }
+
+    moveCrosshairs(x: number, y: number): void {
+        this._crosshairLines.forEach(v => {
+        });
     }
 
     //-------------------------------------------------------------------------
@@ -594,6 +616,7 @@ export class BodyView extends ChartElement<Body> {
             }
 
             this.$_prepareAxisBreaks(doc, chart);
+            this.$_preppareCrosshairs(doc, chart);
         }
 
         return Size.create(hintWidth, hintHeight);
@@ -714,5 +737,18 @@ export class BodyView extends ChartElement<Body> {
         }
 
         views.forEach((v, i) => v.setModel(breaks[i]));
+    }
+
+    private $_preppareCrosshairs(doc: Document, chart: IChart): void {
+        const views = this._crosshairLines;
+        const hairs: Crosshair[] = [];
+
+        [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
+            axis.crosshair.visible && hairs.push(axis.crosshair);
+        }));
+
+        views.prepare(hairs.length, (v, i) => {
+            v.setModel(hairs[i])
+        });
     }
 }

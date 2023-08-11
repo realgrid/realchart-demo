@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { SVGStyleOrClass } from "../common/Types";
-import { IChart } from "./Chart";
+import { IAxis } from "./Axis";
 import { ChartItem } from "./ChartItem";
 
 export class Crosshair extends ChartItem {
@@ -21,8 +21,8 @@ export class Crosshair extends ChartItem {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart) {
-        super(chart);
+    constructor(public axis: IAxis) {
+        super(axis.chart);
 
         this.visible = false;
     }
@@ -31,14 +31,14 @@ export class Crosshair extends ChartItem {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * true면 마우스 위치를 따라가고, false면 point 위에 마우스가 있을 때만 crosshair를 표시한다.
+     * true면 마우스 위치를 따라 항상 표시하고, false면 data point 위에 마우스가 있을 때만 표시한다.
      */
-    followPointer = true;
+    showAlways = true;
 
-    /**
-     * true면 포인트가 차지하는 배경 영역 크기에 맞게 line대신 bar를 표시한다.
-     */
-    pointBar = false;
+    // /**
+    //  * true면 포인트가 차지하는 배경 영역 크기에 맞게 line대신 bar를 표시한다.
+    //  */
+    // pointBar = false;
 
     /**
      * true면 축 label 위치에 crosshair 지점에 해당하는 값을 표시한다.
@@ -46,12 +46,20 @@ export class Crosshair extends ChartItem {
     showLabel = true;
 
     /**
-     * pointBar가 true일 때 표시되는 bar의 스타일.
+     * {@link showLabel}이 true일 때 표시될 텍스트 형식.
+     * <br>
+     * 별도로 지정하지 않으면 현재 위치에 해당하는 축 값을 표시한다.
+     * Category 축인 경위 위치에 해당하는 category 이름을 표시한다.
      */
-    barStyles: SVGStyleOrClass;
+    labelFormat: string;
+
+    // /**
+    //  * pointBar가 true일 때 표시되는 bar의 스타일.
+    //  */
+    // barStyles: SVGStyleOrClass;
 
     /**
-     * showLabel이 true일 때 표시되는 crosshair 라벨의 스타일.
+     * {@link showLabel}이 true일 때 표시되는 라벨의 스타일.
      */
     labelStyles: SVGStyleOrClass;
 

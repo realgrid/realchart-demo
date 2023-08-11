@@ -7,9 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcControl } from "./common/RcControl";
-import { RcEditTool } from "./common/RcEditTool";
 import { IRect } from "./common/Rectangle";
-import { Chart } from "./main";
+import { Chart } from "./model/Chart";
 import { ChartView } from "./view/ChartView";
 
 export class ChartControl extends RcControl {
@@ -68,10 +67,6 @@ export class ChartControl extends RcControl {
     // overriden members
     //-------------------------------------------------------------------------
     useImage(src: string): void {
-    }
-
-    protected _creatDefaultTool(): RcEditTool {
-        return;
     }
 
     protected _doRender(bounds: IRect): void {

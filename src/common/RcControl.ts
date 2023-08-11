@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject, RtWrappableObject, RtWrapper } from "./RcObject";
-import { RcEditTool } from "./RcEditTool";
 import { Path, SVGStyleOrClass, _undefined, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
@@ -16,6 +15,13 @@ import { Utils } from "./Utils";
 import { IRect, Rectangle } from "./Rectangle";
 import { SvgShapes } from "./impl/SvgShape";
 import { ISize } from "./Size";
+
+export interface IPointerHandler {
+    handleMove(ev: PointerEvent): void;
+    handleClick(ev: PointerEvent): void;
+    handleDblClick(ev: PointerEvent): void;
+    handleWheel(ev: WheelEvent): void;
+}
 
 // const BACK_STYLES = {
 //     background: 'fill',
@@ -42,8 +48,6 @@ export abstract class RcControl extends RtWrappableObject {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private _activeTool: RcEditTool;
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -54,12 +58,12 @@ export abstract class RcControl extends RtWrappableObject {
     private _defs: SVGDefsElement;
     private _root: RootElement;
 
+    private _pointerHandler: IPointerHandler;
+
     private _inited = false;
     private _testing = false;
     private _dirty = true;
     private _requestTimer: any;
-    private _defaultTool: RcEditTool;
-    private _tool: RcEditTool;
     private _invalidElements: RcElement[] = [];
     private _toAnimation = 0;
     private _invalidateLock = false;
@@ -117,16 +121,6 @@ export abstract class RcControl extends RtWrappableObject {
         return this._container.offsetHeight;
     }
 
-    activeTool(): RcEditTool {
-        return this._activeTool || this._tool;
-    }
-    setSctiveTool(value: RcEditTool) {
-        if (value !== this._activeTool) {
-            this._activeTool = value;
-            this._tool = value || this._defaultTool;
-        }
-    }
-
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -140,6 +134,10 @@ export abstract class RcControl extends RtWrappableObject {
 
     removeElement(elt: RcElement): void {
         this._root.removeChild(elt);
+    }
+
+    setPointerHandler(handler: IPointerHandler): void {
+        this._pointerHandler = handler;
     }
 
     invalidate(force = false): void {
@@ -301,8 +299,6 @@ export abstract class RcControl extends RtWrappableObject {
         dom.removeEventListener("wheel", this._wheelHandler);
     }
 
-    protected abstract _creatDefaultTool(): RcEditTool;
-
     // container div의 'rtc-renderers' 자식들을 사용할 수 있도록 한다.
     protected _prepareRenderers(dom: HTMLElement): void {
     }
@@ -361,9 +357,6 @@ export abstract class RcControl extends RtWrappableObject {
         Object.assign(this._htmlRoot.style, {
             position: 'absolute'
         });
-
-        // tool
-        this._defaultTool = this._tool = this._creatDefaultTool();
     }
 
     protected _render(): void {
@@ -430,18 +423,6 @@ export abstract class RcControl extends RtWrappableObject {
     //-------------------------------------------------------------------------
     // event handlers
     //-------------------------------------------------------------------------
-    protected _doClick(event: PointerEvent): void {}
-    protected _doDblClick(event: PointerEvent): void {}
-    protected _doTouchMove(event: TouchEvent): boolean { return false; }
-    protected _doPointerDown(event: PointerEvent): boolean { return false; }
-    protected _doPointerMove(event: PointerEvent): void {}
-    protected _doPointerUp(event: PointerEvent): void {}
-    protected _doPointerCancel(event: PointerEvent): void {}
-    protected _doPointerLeave(event: PointerEvent): void {}
-    // protected _doTouchLeave(event: TouchEvent): void {}
-    protected _doKeyPress(event: KeyboardEvent): void {}
-    protected _doWheel(event: WheelEvent): void {}
-
     protected _windowResizeHandler = (event: Event) => {
         this._windowResized();
     }
@@ -451,61 +432,33 @@ export abstract class RcControl extends RtWrappableObject {
     }
 
     private _clickHandler = (event: PointerEvent) => {
-        this._doClick(event);
-        this._tool?.click(event);
     }
 
     private _dblClickHandler = (event: PointerEvent) => {
-        this._doDblClick(event);
-        this._tool?.dblClick(event);
     }
 
     private _touchMoveHandler = (ev: TouchEvent) => {
-        this._doTouchMove(ev);
-        this._tool?.touchMove(ev);
     }
 
     private _pointerDownHandler = (ev: PointerEvent) => {
-        if (this._doPointerDown(ev) || this._tool?.pointerDown(ev)) {
-            // ev.preventDefault();
-            // ev.stopImmediatePropagation();
-        }
     }
 
     private _pointerMoveHandler = (ev: PointerEvent) => {
-        // 여러개의 touch는 TODO
-        this._doPointerMove(ev);
-        this._tool?.pointerMove(ev);
     }
 
     private _pointerUpHandler = (ev: PointerEvent) => {
-        this._doPointerUp(ev);
-        this._tool?.pointerUp(ev);
     }
 
     private _pointerCancelHandler = (ev: PointerEvent) => {
-        this._doPointerCancel(ev);
-        this._tool?.pointerCancel(ev);
     }
 
     private _pointerLeaveHandler = (ev: PointerEvent) => {
-        this._doPointerLeave(ev);
-        this._tool?.pointerLeave(ev);
     }
-    // private _touchLeaveHandler = (ev: TouchEvent) => {
-    //     // DLog.log('> TOUCHE LEAVE', ev);
-    //     this._doTouchLeave(ev);
-    //     this._tool?.touchLeave(ev);
-    // }
 
     private _keyPressHandler = (ev: KeyboardEvent) => {
-        this._doKeyPress(ev);
-        this._tool?.keyPress(ev);
     }
 
     private _wheelHandler = (ev: WheelEvent) => {
-        this._doWheel(ev);
-        this._tool?.wheel(ev);
     }
 }
 

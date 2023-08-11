@@ -9,7 +9,7 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { Chart } from '../../src/model/Chart';
-import { BarSeries } from '../../src/model/series/BarSeries';
+import { BarSeries, ColumnSeries } from '../../src/model/series/BarSeries';
 import { Series } from '../../src/model/Series';
 import { CategoryAxis } from '../../src/model/axis/CategoryAxis';
 import { LinearAxis } from '../../src/model/axis/LinearAxis';
@@ -31,7 +31,7 @@ import { Tester } from '../Tester';
         const chart = new Chart(json);
         const series = chart.firstSeries;
 
-        expect(series).instanceOf(BarSeries);
+        expect(series).instanceOf(ColumnSeries);
         expect(series.getPoints().count).eq(json.series.data.length);
     });
 

@@ -10,11 +10,13 @@ import { isArray, isNumber, isObject, isString, pickNum } from "../common/Common
 import { Align, IPercentSize, SVGStyleOrClass, SizeValue, VerticalAlign, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
+import { Crosshair } from "./Crosshair";
 import { IClusterable, IPlottingItem } from "./Series";
 
 export interface IAxis {
 
     type(): string;
+    chart: IChart;
 
     _length: number;
 
@@ -347,6 +349,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     readonly tick: AxisTick;
     readonly grid = this._createGrid();
     readonly guides: AxisGuide[] = [];
+    readonly crosshair = new Crosshair(this);
 
     _isX: boolean;
     _isHorz: boolean;
