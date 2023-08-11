@@ -8,7 +8,7 @@ const config = {
     yAxis: {
     },
     series: {
-        type: 'barrange',
+        type: 'columnrange',
         pointLabel: {
             visible: true,
             // format: '${x}'

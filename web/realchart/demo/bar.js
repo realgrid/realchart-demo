@@ -1,7 +1,6 @@
 const config = {
     title: "Bar Series 01",
     options: {
-        inverted: true,
     },
     xAxis: {
         title: 'X Axis',
@@ -9,24 +8,6 @@ const config = {
     },
     yAxis: {
         title: 'Y Axis',
-        // reversed: true,
-        guide: [{
-            type: 'line',
-            value: 5.5,
-            label: "Hello?",
-            style: {
-                stroke: 'red'
-            }
-        }, {
-            type: 'range',
-            start: 9,
-            end: 11.5,
-            label: {
-                text: 'range guide',
-                align: 'right',
-                valign: 'bottom'
-            }
-        }]
     },
     series: {
         type: 'bar',

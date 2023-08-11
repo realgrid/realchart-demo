@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject } from "../common/RcObject";
-import { SectionDir } from "../common/Types";
+import { SectionDir, isNull } from "../common/Types";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
@@ -19,8 +19,8 @@ import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
 import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
-import { BarRangeSeries } from "./series/BarRangeSeries";
-import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
+import { BarRangeSeries, ColumnRangeSeries } from "./series/BarRangeSeries";
+import { BarSeries, BarSeriesGroup, ColumnSeries, ColumnSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";
 import { BoxPlotSeries } from "./series/BoxPlotSeries";
 import { BubbleSeries } from "./series/BubbleSeries";
@@ -78,6 +78,7 @@ export interface IChart {
 
 const group_types = {
     'bar': BarSeriesGroup,
+    'column': ColumnSeriesGroup,
     'line': LineSeriesGroup,
     'pie': PieSeriesGroup,
     'bump': BumpSeriesGroup
@@ -87,7 +88,9 @@ const series_types = {
     'area': AreaSeries,
     'arearange': AreaRangeSeries,
     'bar': BarSeries,
+    'column': ColumnSeries,
     'barrange': BarRangeSeries,
+    'columnRange': ColumnRangeSeries,
     'bellcurve': BellCurveSeries,
     'boxplot': BoxPlotSeries,
     'bubble': BubbleSeries,
@@ -172,16 +175,6 @@ export class Chart extends RcObject implements IChart {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    /**
-     * 기본 시리즈 type.
-     * <br>
-     * {@link Series.type}의 기본값.
-     * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
-     * 
-     * @default 'bar'
-     */
-    type = 'bar';
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -195,6 +188,7 @@ export class Chart extends RcObject implements IChart {
     private _body: Body;
     private _crosshair: Crosshair;
 
+    private _inverted: boolean;
     _polar: boolean;
     colors = ["#1bafdc", "#12d365", "#343ec3", "#81d8c1", 
     "#fe6a35", "#6b8abc", "#d568fb", "#2ee0ca", "#fa4b42", "#feb56a"];
@@ -237,6 +231,16 @@ export class Chart extends RcObject implements IChart {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 기본 시리즈 type.
+     * <br>
+     * {@link Series.type}의 기본값.
+     * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
+     * 
+     * @default 'column'
+     */
+    type = 'column';
+
     get options(): ChartOptions {
         return this._options;
     }
@@ -308,7 +312,7 @@ export class Chart extends RcObject implements IChart {
     }
 
     isInverted(): boolean {
-        return this._options.inverted === true;
+        return this._inverted;
     }
 
     isEmpty(): boolean {
@@ -408,6 +412,12 @@ export class Chart extends RcObject implements IChart {
 
         // body
         this._body.load(source.body);
+
+        // inverted
+        this._inverted = this._options.inverted;
+        if (isNull(this._inverted)) {
+            this._inverted = this._series.firstSeries.inverted();
+        }
     }
 
     _connectSeries(series: IPlottingItem, isX: boolean): Axis {

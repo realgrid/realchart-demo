@@ -14,7 +14,7 @@ import { DataPoint } from "../../model/DataPoint";
 import { PointItemPosition } from "../../model/Series";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { LinearAxis } from "../../model/axis/LinearAxis";
-import { BarSeries } from "../../model/series/BarSeries";
+import { BarSeries, ColumnSeries } from "../../model/series/BarSeries";
 import { BarElement, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
@@ -88,7 +88,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_parepareBars(doc: Document, model: BarSeries, points: DataPoint[]): void {
+    private $_parepareBars(doc: Document, model: ColumnSeries, points: DataPoint[]): void {
         const style = model.style;
 
         if (!this._bars) {
@@ -101,7 +101,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         });
     }
 
-    private $_parepareSectors(doc: Document, model: BarSeries, points: DataPoint[]): void {
+    private $_parepareSectors(doc: Document, model: ColumnSeries, points: DataPoint[]): void {
         const style = model.style;
 
         if (!this._sectors) {
@@ -158,8 +158,10 @@ export class BarSeriesView extends SeriesView<BarSeries> {
 
             if (inverted) {
                 y += series.getPointPos(wUnit) + wPoint / 2;
+                x += yAxis.getPosition(yLen, p.yGroup) - bar.hPoint; // for stack/fill
             } else {
                 x += series.getPointPos(wUnit) + wPoint / 2;
+                y -= yAxis.getPosition(yLen, p.yGroup) - bar.hPoint; // for stack/fill
             }
 
             bar.render(x, y, inverted);

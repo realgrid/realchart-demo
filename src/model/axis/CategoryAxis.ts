@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isString, pickNum } from "../../common/Common";
-import { isEmpty } from "../../common/Types";
+import { isNull } from "../../common/Types";
 import { Axis, AxisGrid, AxisTick, AxisTickMark, IAxisTick } from "../Axis";
 import { IPlottingItem, ISeries, SeriesGroup } from "../Series";
 

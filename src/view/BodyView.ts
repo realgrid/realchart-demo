@@ -21,8 +21,8 @@ import { IChart } from "../model/Chart";
 import { PlotItem } from "../model/PlotItem";
 import { Series } from "../model/Series";
 import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
-import { BarRangeSeries } from "../model/series/BarRangeSeries";
-import { BarSeries } from "../model/series/BarSeries";
+import { BarRangeSeries, ColumnRangeSeries } from "../model/series/BarRangeSeries";
+import { BarSeries, ColumnSeries } from "../model/series/BarSeries";
 import { BellCurveSeries } from "../model/series/BellCurveSeries";
 import { BoxPlotSeries } from "../model/series/BoxPlotSeries";
 import { BubbleSeries } from "../model/series/BubbleSeries";
@@ -71,11 +71,11 @@ import { WaterfallSeriesView } from "./series/WaterfallSeriesView";
 const series_types = new Map<any, any>([
     [WaterfallSeries, WaterfallSeriesView],
     [BoxPlotSeries, BoxPlotSeriesView],
-    [BarRangeSeries, BarRangeSeriesView],
+    [ColumnRangeSeries, BarRangeSeriesView],
     [LollipopSeries, LollipopSeriesView],
     [DumbbellSeries, DumbbellSeriesView],
     [EqualizerSeries, EqualizerSeriesView],
-    [BarSeries, BarSeriesView],
+    [ColumnSeries, BarSeriesView],
     [BellCurveSeries, BellCurveSeriesView],
     [AreaRangeSeries, AreaRangeSeriesView],
     [AreaSeries, AreaSeriesView],

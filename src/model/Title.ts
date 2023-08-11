@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isString } from "../common/Common";
-import { Align, SVGStyleOrClass, VerticalAlign, isEmpty } from "../common/Types";
+import { Align, SVGStyleOrClass, VerticalAlign, isNull } from "../common/Types";
 import { ChartItem } from "./ChartItem";
 
 export class Title extends ChartItem {
@@ -23,7 +23,7 @@ export class Title extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     isVisible(): boolean {
-        return this.visible && !isEmpty(this.text);
+        return this.visible && !isNull(this.text);
     }
     
     //-------------------------------------------------------------------------

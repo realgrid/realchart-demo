@@ -33,7 +33,7 @@ export function deg2rad(degree: number): number {
 export function pixel(v: number): string {
     return v + 'px';
 }
-export function isEmpty(v: any): boolean {
+export function isNull(v: any): boolean {
     return v == null || Number.isNaN(v) || v === '';
 }
 

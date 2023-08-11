@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ISize } from './Size';
-import { isEmpty } from './Types';
+import { isNull } from './Types';
 import { Utils } from './Utils';
 
 export interface IRect {
@@ -51,9 +51,9 @@ export class Rectangle {
 	static create(x: any, y?: number, width?: number, height?: number): Rectangle {
         if (Utils.isObject(x)) {
 			return new Rectangle(x.x, x.y, x.width, x.height);
-        } else if (isEmpty(y)) {
+        } else if (isNull(y)) {
 			return new Rectangle(x, x, x, x);
-		} else if (isEmpty(width)) {
+		} else if (isNull(width)) {
 			return new Rectangle(x, y, x, y);
 		} else {
 			return new Rectangle(x, y, width, height);

@@ -457,6 +457,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return true;
     }
 
+    inverted(): boolean {
+        return false;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------

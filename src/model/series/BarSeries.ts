@@ -127,7 +127,7 @@ export class BarSeriesPoint extends DataPoint {
     // borderRaidus: number;
 }
 
-export class BarSeries extends BoxSeries {
+export class ColumnSeries extends BoxSeries {
 
     //-------------------------------------------------------------------------
     // consts
@@ -144,7 +144,7 @@ export class BarSeries extends BoxSeries {
     // overriden members
     //-------------------------------------------------------------------------
     type(): string {
-        return 'bar';
+        return 'column';
     }
 
     canCategorized(): boolean {
@@ -156,7 +156,21 @@ export class BarSeries extends BoxSeries {
     }
 }
 
-export class BarSeriesGroup extends SeriesGroup<BarSeries> implements IClusterable {
+export class BarSeries extends ColumnSeries {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    type(): string {
+        return 'bar';
+    }
+
+    inverted(): boolean {
+        return true;
+    }
+}
+
+export class ColumnSeriesGroup extends SeriesGroup<ColumnSeries> implements IClusterable {
 
     //-------------------------------------------------------------------------
     // fields
@@ -180,11 +194,11 @@ export class BarSeriesGroup extends SeriesGroup<BarSeries> implements IClusterab
     // overriden members
     //-------------------------------------------------------------------------
     protected _seriesType(): string {
-        return 'bar';
+        return 'column';
     }
 
     protected _canContain(ser: Series): boolean {
-        return ser instanceof BarSeries;
+        return ser instanceof ColumnSeries;
     }
 
     clusterable(): boolean {
@@ -196,7 +210,7 @@ export class BarSeriesGroup extends SeriesGroup<BarSeries> implements IClusterab
         this._clusterPos = pos;
     }
 
-    protected _doPrepareSeries(series: BarSeries[]): void {
+    protected _doPrepareSeries(series: ColumnSeries[]): void {
         if (this.layout === SeriesGroupLayout.DEFAULT) {
             const cnt = series.length;
 
@@ -214,5 +228,15 @@ export class BarSeriesGroup extends SeriesGroup<BarSeries> implements IClusterab
             }
         } else if (this.layout === SeriesGroupLayout.STACK) {
         }
+    }
+}
+
+export class BarSeriesGroup extends ColumnSeriesGroup {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _seriesType(): string {
+        return 'bar';
     }
 }
