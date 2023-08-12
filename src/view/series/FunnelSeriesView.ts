@@ -24,7 +24,7 @@ class FunnelSegment extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-scatter-series-marker');
+        super(doc, SeriesView.POINT_STYLE + ' rct-funnel-series-segment');
     }
 }
 
@@ -39,7 +39,7 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-scatter-series')
+        super(doc, 'rct-funnel-series')
 
         this._segments = new ElementPool(this._pointContainer, FunnelSegment);
     }

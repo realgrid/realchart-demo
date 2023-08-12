@@ -28,7 +28,7 @@ export class LineMarkerView extends PathElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-line-series-marker');
+        super(doc, SeriesView.POINT_STYLE + ' rct-line-series-marker');
     }
 }
 

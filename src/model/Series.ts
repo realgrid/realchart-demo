@@ -16,6 +16,7 @@ import { ChartItem, FormattableText } from "./ChartItem";
 import { LineType } from "./ChartTypes";
 import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource } from "./Legend";
+import { Tooltip } from "./Tooltip";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { TimeAxis } from "./axis/TimeAxis";
 
@@ -272,7 +273,7 @@ export interface ISeriesGroup extends IPlottingItem {
 
 export interface ISeries extends IPlottingItem {
 
-    // _group: ISeriesGroup2;
+    chart: IChart;
     group: ISeriesGroup;
 
     xField: string | number;
@@ -315,8 +316,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     // property fields
     //-------------------------------------------------------------------------
     readonly name: string;
+    readonly label: string;
     readonly pointLabel: DataPointLabel;
     readonly trendline: Trendline;
+    readonly tooltip: Tooltip;
 
     //-------------------------------------------------------------------------
     // fields
@@ -338,6 +341,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this.name = name;
         this.pointLabel = new DataPointLabel(chart);
         this.trendline = new Trendline(this);
+        this.tooltip = new Tooltip(this);
 
         this._points = new DataPointCollection(this);
     }
@@ -398,7 +402,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return this._points;
     }
 
-
     getLabeledPoints(): DataPoint[] {
         return this._points.getPoints();
     }
@@ -437,12 +440,16 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return false;
     }
 
+    displayText(): string {
+        return this.label || this.name;
+    }
+
     legendColor(): string {
         return this.color;
     }
 
     legendLabel(): string {
-        return this.name;
+        return this.label || this.name;
     }
 
     legendVisible(): boolean {

@@ -194,6 +194,11 @@
     fill: none;
     stroke: gray;
 }
+.rct-line-series-marker[data-focus] {
+    scale: 2;
+    stroke: red !important;
+    stroke-width: 2px;
+}
 
 /** area series */
 .rct-area-series-area {
@@ -319,6 +324,12 @@
 .rct-dumbbell-series-marker {
     stroke: none;
     fill: #008;
+}
+
+/** funnel series */
+.rct-funnel-series-segment[data-focus] {
+    stroke: red;
+    stroke-width: 2px;
 }
 
 /** vector series */
