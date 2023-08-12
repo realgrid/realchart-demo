@@ -14,7 +14,7 @@ import { Chart } from "../../main";
 import { LineType } from "../../model/ChartTypes";
 import { DataPoint } from "../../model/DataPoint";
 import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
-import { SeriesView } from "../SeriesView";
+import { PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 export class LineMarkerView extends PathElement {
@@ -158,14 +158,12 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
         const polar = this._polar = (series.chart as Chart).body.getPolar(series);
         const vis = series.marker.visible;
         const labels = series.pointLabel;
-        const labelVis = labels.visible && !this._animating();
         const labelOff = labels.offset;
-        const labelViews = this._labelContainer;
+        const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const yOrg = height;
-
-        this._labelContainer.setVisible(labelVis);
+        let labelView: PointLabelView;
 
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
@@ -184,14 +182,10 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
             if (vis) {
                 this._layoutMarker(this._markers.get(i), p.xPos, p.yPos);
             }
-            if (labelVis) {
-                const view = labelViews.get(p, 0);
+            if (labelViews && (labelView = labelViews.get(p, 0))) {
+                const r = labelView.getBBounds();
 
-                if (view) {
-                    const r = view.getBBounds();
-
-                    view.translate(p.xPos - r.width / 2, p.yPos - r.height - labelOff - (vis ? p.radius : 0));
-                }
+                labelView.translate(p.xPos - r.width / 2, p.yPos - r.height - labelOff - (vis ? p.radius : 0));
             }
         }
     }

@@ -90,15 +90,12 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         const series = this.model;
         const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelVis = labels.visible && !this._animating();
         const labelOff = labels.offset;
-        const labelViews = this._labelContainer;
+        const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         let labelView: PointLabelView;
         let r: IRect;
-
-        this._labelContainer.visible = labelVis;
 
         this._markers.forEach((m, i) => {
             const p = m.point;
@@ -128,7 +125,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
                 m.translate(x, y);
 
                 // label
-                if (labelVis && (labelView = labelViews.get(p, 0))) {
+                if (labelViews && (labelView = labelViews.get(p, 0))) {
                     r = labelView.getBBounds();
                     labelView.translate(x - r.width / 2, y - r.height / 2);
                 }

@@ -71,9 +71,8 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         const series = this.model;
         const inverted = series.chart.isInverted();
         const labels = series.pointLabel;
-        const labelVis = labels.visible;
         const labelOff = labels.offset;
-        const labelViews = this._labelContainer;
+        const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const yLen = inverted ? width : height;
@@ -104,7 +103,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
             cell.setStyle('fill', color.brighten(1 - p.colorValue / series._colorMax).toString());
 
             // label
-            if (labelVis && (labelView = labelViews.get(p, 0))) {
+            if (labelViews && (labelView = labelViews.get(p, 0))) {
                 const r = labelView.getBBounds();
 
                 if (inverted) {

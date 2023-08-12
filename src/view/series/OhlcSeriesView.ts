@@ -104,14 +104,11 @@ export class OhlcSeriesView extends SeriesView<OhlcSeries> {
         const inverted = this._inverted;
         const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelVis = labels.visible && !this._animating();
         const labelOff = labels.offset;
-        const labelViews = this._labelContainer;
+        const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const yOrg = this.height;
-
-        this._labelContainer.setVisible(labelVis);
 
         this._sticks.forEach((box, i) => {
             const wUnit = xAxis.getUnitLength(width, i);
@@ -126,7 +123,7 @@ export class OhlcSeriesView extends SeriesView<OhlcSeries> {
             box.setBounds(x, y, w, h);
             box.layout();
 
-            if (labelVis && (view = labelViews.get(p, 0))) {
+            if (labelViews && (view = labelViews.get(p, 0))) {
                 const r = view.getBBounds();
                 view.translate(x + (w - r.width) / 2, y - r.height - labelOff);
             }

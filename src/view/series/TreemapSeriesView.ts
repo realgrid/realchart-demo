@@ -67,8 +67,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
     protected _renderSeries(width: number, height: number): void {
         const series = this.model;
         const labels = series.pointLabel;
-        const labelVis = labels.visible;
-        const labelViews = this._labelContainer;
+        const labelViews = this._labelViews();
         const nodes = series.buildMap(width, height);
         const color = new Color(series.color);
         let labelView: PointLabelView;
@@ -95,7 +94,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
             v.render();
 
             // label
-            if (labelVis && (labelView = labelViews.get(m.point, 0))) {
+            if (labelViews && (labelView = labelViews.get(m.point, 0))) {
                 const r = labelView.getBBounds();
 
                 // 너비나 높이가 모두 한글자는 표시할 수 있을 정도가 돼야 표시.

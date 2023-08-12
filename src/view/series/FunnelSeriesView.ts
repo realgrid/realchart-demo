@@ -86,8 +86,7 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
 
         const series = this.model;
         const labels = series.pointLabel;
-        const labelVis = labels.visible && !this._animating();
-        const labelViews = this._labelContainer;
+        const labelViews = this._labelViews();
         const reversed = series.reversed;
         const sz = series.getSize(width, height);
         const szNeck = series.getNeckSize(width, height);
@@ -100,8 +99,6 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
         const yNeck = reversed ? yEnd - pNeck : y1 + pNeck;
         const xNeck = x1 + (sz.width - szNeck.width) / 2;
         let labelView: PointLabelView;
-
-        this._labelContainer.setVisible(labelVis);
 
         this._segments.forEach((seg) => {
             const p = seg.point;
@@ -137,7 +134,7 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
             // p.rect = new Rectangle(x, y, x2 - x, y2 - y);
 
             // label
-            if (labelVis && (labelView = labelViews.get(p, 0))) {
+            if (labelViews && (labelView = labelViews.get(p, 0))) {
                 const r = labelView.getBBounds();
 
                 labelView.translate(xMid - r.width / 2, y + ((y2 - y) - r.height) / 2);

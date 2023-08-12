@@ -80,9 +80,8 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
         const series = this.model;
         const marker = series.marker;
         const labels = series.pointLabel;
-        const labelVis = labels.visible;
         const labelOff = labels.offset;
-        const labelViews = this._labelContainer;
+        const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         let labelView: PointLabelView;
@@ -115,7 +114,7 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
             m.translate(x, y);
 
             // label
-            if (labelVis) {
+            if (labelViews) {
                 if (labelView = labelViews.get(p, 0)) {
                     r = labelView.getBBounds();
                     labelView.translate(x - r.width / 2, y - r.height / 2);

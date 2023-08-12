@@ -61,9 +61,8 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
         const inverted = series.chart.isInverted();
         const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelVis = labels.visible && !this._animating();
         const labelOff = labels.offset;
-        const labelViews = this._labelContainer;
+        const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
@@ -73,8 +72,6 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
         // const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.yBase : 0);
         const org = inverted ? 0 : height;;
         let labelView: PointLabelView;
-
-        this._labelContainer.setVisible(labelVis);
 
         this._bars.forEach((bar, i) => {
             const p = bar.point as BarRangeSeriesPoint;
@@ -107,7 +104,7 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
             bar.render(x, y, inverted);
 
             // labels
-            if (labelVis) {
+            if (labelViews) {
                 if (labelView = labelViews.get(p, 0)) {
                     const r = labelView.getBBounds();
 

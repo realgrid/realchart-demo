@@ -192,8 +192,7 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
         const inverted = series.chart.isInverted();
         const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelVis = labels.visible && !this._animating();
-        const labelViews = this._labelContainer;
+        const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
@@ -202,14 +201,13 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
         //const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
         const yBase = yAxis.getPosition(yLen, yAxis instanceof ContinuousAxis ? yAxis.baseValue : 0);
         const org = inverted ? 0 : height;;
-        const labelInfo: LabelInfo = labelVis && Object.assign(this._labelInfo, {
+        const labelInfo: LabelInfo = labelViews && Object.assign(this._labelInfo, {
             inverted,
             labelPos: series.getLabelPosition(),
             labelOff: labels.offset,
             width, height
         });
 
-        this._labelContainer.setVisible(labelVis);
         this.$_buildSegments(series, yLen);
 
         this._bars.forEach((bar, i) => {

@@ -246,7 +246,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     // fields
     //-------------------------------------------------------------------------
     protected _pointContainer: LayerElement;
-    protected _labelContainer: PointLabelContainer;
+    private _labelContainer: PointLabelContainer;
     private _trendLineView: PathElement;
 
     protected _inverted = false;
@@ -314,12 +314,13 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     protected _doLayout(): void {
+        this._labelViews();
         this._renderSeries(this.width, this.height);
         if (this._trendLineView && this._trendLineView.visible) {
             this.$_renderTrendline();       
         }
         this._afterRender();
-        this._runShowEffect(!this.control.loaded); //this._modelChanged);
+        this._runShowEffect(!this.control.loaded);
     }
 
     //-------------------------------------------------------------------------
@@ -327,6 +328,11 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
+
+    protected _labelViews(): PointLabelContainer {
+        this._labelContainer.setVisible(this.model.pointLabel.visible && !this._animating());
+        return this._labelContainer.visible && this._labelContainer;
+    }
 
     protected _getViewRate(): number {
         return pickNum(this._viewRate, 1);

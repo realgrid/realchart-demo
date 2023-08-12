@@ -103,14 +103,11 @@ export class CandlestickSeriesView extends SeriesView<CandlestickSeries> {
         const series = this.model;
         const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelVis = labels.visible && !this._animating();
         const labelOff = labels.offset;
-        const labelViews = this._labelContainer;
+        const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const yOrg = this.height;
-
-        this._labelContainer.setVisible(labelVis);
 
         this._sticks.forEach((box, i) => {
             const wUnit = xAxis.getUnitLength(width, i);
@@ -124,7 +121,7 @@ export class CandlestickSeriesView extends SeriesView<CandlestickSeries> {
             box.setBounds(x, y, w, h);
             box.layout();
 
-            if (labelVis) {
+            if (labelViews) {
                 let view: PointLabelView;
                 let r: IRect;
 

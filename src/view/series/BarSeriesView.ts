@@ -119,8 +119,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         const inverted = this._inverted;
         const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelVis = labels.visible && !this._animating();
-        const labelViews = this._labelContainer;
+        const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
@@ -128,14 +127,12 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         const xLen = inverted ? height : width;
         const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.baseValue : 0);
         const org = inverted ? 0 : height;;
-        const labelInfo: LabelInfo = labelVis && Object.assign(this._labelInfo, {
+        const labelInfo: LabelInfo = labelViews && Object.assign(this._labelInfo, {
             inverted,
             labelPos: series.getLabelPosition(),
             labelOff: labels.offset,
             width, height
         });
-
-        this._labelContainer.visible = labelVis;
 
         this._bars.forEach((bar, i) => {
             const p = bar.point;
@@ -226,18 +223,15 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         const series = this.model;
         const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelVis = labels.visible && !this._animating();
-        const labelViews = this._labelContainer;
+        const labelViews = this._labelViews();
         const body = (series.chart as Chart).body;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const polar = body.getPolar(series);
-        const labelInfo: LabelInfo = labelVis && Object.assign(this._labelInfo, {
+        const labelInfo: LabelInfo = labelViews && Object.assign(this._labelInfo, {
             labelPos: series.getLabelPosition(),
             labelOff: labels.offset,
         });
-
-        this._labelContainer.setVisible(labelVis);
 
         this._sectors.forEach((view, i) => {
             const p = view.point;
@@ -256,7 +250,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
             })
 
             // label
-            if (labelVis && (labelInfo.labelView = labelViews.get(p, 0))) {
+            if (labelViews && (labelInfo.labelView = labelViews.get(p, 0))) {
                 this.$_layoutSectorLabel(labelInfo, view);
             }
         })
