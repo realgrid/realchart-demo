@@ -8,13 +8,14 @@
 
 import { Color } from "../../common/Color";
 import { ElementPool } from "../../common/ElementPool";
-import { PathElement } from "../../common/RcControl";
+import { PathElement, RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
+import { DataPoint } from "../../model/DataPoint";
 import { TreeNode, TreemapSeries } from "../../model/series/TreemapSeries";
-import { PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SlideAnimation } from "../animation/SeriesAnimation";
 
-class NodeView extends PathElement {
+class NodeView extends PathElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -28,12 +29,14 @@ class NodeView extends PathElement {
         super(doc, 'rct-treemap-series-node');
     }
 
+    get point(): DataPoint {
+        return this.node.point;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     render(): void {
-        const n = this.node;
-
         this.setPath(SvgShapes.rect(this.node));
     }
 }
@@ -59,6 +62,10 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
     //-------------------------------------------------------------------------
     protected _lazyPrepareLabels(): boolean {
         return true;
+    }
+
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._nodeViews;
     }
 
     protected _prepareSeries(doc: Document, model: TreemapSeries): void {

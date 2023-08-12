@@ -12,6 +12,7 @@ import { Sides } from "../common/Sides";
 import { ISize } from "../common/Size";
 import { _undefined } from "../common/Types";
 import { RectElement } from "../common/impl/RectElement";
+import { IChart } from "../model/Chart";
 import { ChartItem } from "../model/ChartItem";
 
 export abstract class ChartElement<T extends ChartItem> extends RcElement {
@@ -40,6 +41,10 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    chart(): IChart {
+        return this.model.chart;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------

@@ -7,9 +7,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
+import { RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { HistogramSeries, HistogramSeriesPoint } from "../../model/series/HistogramSeries";
-import { BoxPointElement, SeriesView } from "../SeriesView";
+import { BoxPointElement, IPointView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class BarElement extends BoxPointElement {
@@ -44,6 +45,10 @@ export class HistogramSeriesView extends SeriesView<HistogramSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._bars;
+    }
+
     protected _prepareSeries(doc: Document, model: HistogramSeries): void {
         this.$_parepareBars(doc, model._visPoints as HistogramSeriesPoint[]);
     }

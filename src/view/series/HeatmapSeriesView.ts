@@ -8,14 +8,14 @@
 
 import { Color } from "../../common/Color";
 import { ElementPool } from "../../common/ElementPool";
-import { PathElement } from "../../common/RcControl";
+import { PathElement, RcElement } from "../../common/RcControl";
 import { RectElement } from "../../common/impl/RectElement";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { HeatmapSeries, HeatmapSeriesPoint } from "../../model/series/HeatmapSeries";
-import { PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class CellView extends RectElement {
+class CellView extends RectElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -46,6 +46,10 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._cells;
+    }
+
     protected _prepareSeries(doc: Document, model: HeatmapSeries): void {
         this.$_parepareCells(model._visPoints as HeatmapSeriesPoint[]);
     }

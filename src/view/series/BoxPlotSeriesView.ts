@@ -7,12 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
+import { RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
 import { BoxPlotSeries, BoxPlotSeriesPoint } from "../../model/series/BoxPlotSeries";
-import { PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class BoxView extends GroupElement {
@@ -20,6 +21,8 @@ class BoxView extends GroupElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    point: BoxPlotSeriesPoint;
+
     private _back: RectElement;
     private _stemUp: LineElement;
     private _stemDown: LineElement;
@@ -27,8 +30,6 @@ class BoxView extends GroupElement {
     private _mid: LineElement;
     private _min: LineElement;
     private _max: LineElement;
-
-    point: BoxPlotSeriesPoint;
 
     //-------------------------------------------------------------------------
     // methods
@@ -83,6 +84,10 @@ export class BoxPlotSeriesView extends SeriesView<BoxPlotSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._boxes;
+    }
+
     protected _prepareSeries(doc: Document, model: BoxPlotSeries): void {
         this.$_prepareBoxes(model._visPoints as BoxPlotSeriesPoint[]);
     }

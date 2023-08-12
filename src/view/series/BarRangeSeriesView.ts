@@ -7,10 +7,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
+import { RcElement } from "../../common/RcControl";
 import { DataPoint } from "../../model/DataPoint";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { BarRangeSeries, BarRangeSeriesPoint, ColumnRangeSeries } from "../../model/series/BarRangeSeries";
-import { BarElement, PointLabelView, SeriesView } from "../SeriesView";
+import { BarElement, IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
@@ -30,6 +31,10 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._bars;
+    }
+
     protected _prepareSeries(doc: Document, model: ColumnRangeSeries): void {
         this.$_parepareBars(model._visPoints);
     }

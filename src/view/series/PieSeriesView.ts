@@ -9,15 +9,16 @@
 import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
+import { RcElement } from "../../common/RcControl";
 import { ORG_ANGLE, deg2rad } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
 import { PieSeries, PieSeriesGroup, PieSeriesPoint } from "../../model/series/PieSeries";
-import { PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class SectorView extends SectorElement {
+class SectorView extends SectorElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -166,6 +167,10 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._sectors;
+    }
+
     protected _prepareSeries(doc: Document, model: PieSeries): void {
         this.$_prepareSectors(model._visPoints as PieSeriesPoint[]);
         this._lineContainer.prepare(model);

@@ -7,25 +7,25 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
-import { PathElement } from "../../common/RcControl";
+import { PathElement, RcElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { PointItemPosition } from "../../model/Series";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { LinearAxis } from "../../model/axis/LinearAxis";
 import { LollipopSeries, LollipopSeriesPoint } from "../../model/series/LollipopSeries";
-import { PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class BarElement extends GroupElement {
+class BarElement extends GroupElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    point: LollipopSeriesPoint;
+
     private _line: LineElement;
     private _marker: PathElement;
-
-    point: LollipopSeriesPoint;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -76,6 +76,10 @@ export class LollipopSeriesView extends SeriesView<LollipopSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._bars;
+    }
+
     protected _prepareSeries(doc: Document, model: LollipopSeries): void {
         this.$_parepareBars(doc, model, model._visPoints as LollipopSeriesPoint[]);
     }

@@ -8,13 +8,12 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
-import { PathElement } from "../../common/RcControl";
-import { IRect } from "../../common/Rectangle";
+import { PathElement, RcElement } from "../../common/RcControl";
 import { FunnelSeries, FunnelSeriesPoint } from "../../model/series/FunnelSeries";
-import { PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class FunnelSegment extends PathElement {
+class FunnelSegment extends PathElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -48,6 +47,10 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._segments;
+    }
+
     protected _prepareSeries(doc: Document, model: FunnelSeries): void {
         this.$_prepareSegments(model._visPoints as FunnelSeriesPoint[]);
     }

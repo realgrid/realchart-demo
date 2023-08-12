@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
+import { RcElement } from "../../common/RcControl";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextAnchor } from "../../common/impl/TextElement";
 import { Chart } from "../../main";
@@ -15,7 +16,7 @@ import { PointItemPosition } from "../../model/Series";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { LinearAxis } from "../../model/axis/LinearAxis";
 import { BarSeries, ColumnSeries } from "../../model/series/BarSeries";
-import { BarElement, PointLabelView, SeriesView } from "../SeriesView";
+import { BarElement, IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class BarSectorView extends SectorElement {
@@ -57,6 +58,10 @@ export class BarSeriesView extends SeriesView<BarSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this.chart()._polar ? this._sectors : this._bars;
+    }
+
     protected _prepareSeries(doc: Document, model: BarSeries): void {
         if (model.chart._polar) {
             this.$_parepareSectors(doc, model, model._visPoints);

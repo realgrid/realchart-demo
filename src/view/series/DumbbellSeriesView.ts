@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
-import { PathElement } from "../../common/RcControl";
+import { PathElement, RcElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { TextAnchor } from "../../common/impl/TextElement";
@@ -15,7 +15,7 @@ import { PointItemPosition } from "../../model/Series";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { LinearAxis } from "../../model/axis/LinearAxis";
 import { DumbbellSeries, DumbbellSeriesPoint } from "../../model/series/DumbbellSeries";
-import { PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class BarElement extends GroupElement {
@@ -23,11 +23,11 @@ class BarElement extends GroupElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    point: DumbbellSeriesPoint;
+
     private _line: LineElement;
     private _hmarker: PathElement;
     private _lmarker: PathElement;
-
-    point: DumbbellSeriesPoint;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -80,6 +80,10 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._bars;
+    }
+
     protected _prepareSeries(doc: Document, model: DumbbellSeries): void {
         this.$_parepareBars(doc, model, model._visPoints as DumbbellSeriesPoint[]);
     }

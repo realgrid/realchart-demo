@@ -6,15 +6,15 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { LayerElement, RcElement } from "../common/RcControl";
+import { RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis, AxisGuide, AxisGuideRange, AxisTickMark, AxisTitle } from "../model/Axis";
+import { Axis, AxisGuide, AxisTickMark, AxisTitle } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
-import { AxisGuideContainer, AxisGuideLineView, AxisGuideRangeView, AxisGuideView } from "./BodyView";
+import { AxisGuideContainer, AxisGuideView } from "./BodyView";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
 export class AxisTitleView extends BoundableElement<AxisTitle> {

@@ -7,25 +7,26 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
+import { RcElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { ErrorBarSeries, ErrorBarSeriesPoint } from "../../model/series/ErrorBarSeries";
-import { PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class BarElement extends GroupElement {
+class BarElement extends GroupElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    point: ErrorBarSeriesPoint;
+
     private _back: RectElement;
     private _whiskerUp: LineElement;
     private _whiskerDown: LineElement;
     private _stem: LineElement;
-
-    point: ErrorBarSeriesPoint;
 
     //-------------------------------------------------------------------------
     // constructors
@@ -71,6 +72,10 @@ export class ErrorBarSeriesView extends SeriesView<ErrorBarSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._bars;
+    }
+
     protected _prepareSeries(doc: Document, model: ErrorBarSeries): void {
         this.$_parepareBars(model._visPoints as ErrorBarSeriesPoint[]);
     }

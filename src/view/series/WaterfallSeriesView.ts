@@ -7,13 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
-import { LayerElement } from "../../common/RcControl";
+import { LayerElement, RcElement } from "../../common/RcControl";
 import { LineElement } from "../../common/impl/PathElement";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { PointItemPosition } from "../../model/Series";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { WaterfallSeries, WaterfallSeriesPoint } from "../../model/series/WaterfallSeries";
-import { BoxPointElement, PointLabelView, SeriesView } from "../SeriesView";
+import { BoxPointElement, IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class BarElement extends BoxPointElement {
@@ -66,6 +66,10 @@ export class WaterfallSeriesView extends SeriesView<WaterfallSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._bars;
+    }
+
     protected _prepareSeries(doc: Document, model: WaterfallSeries): void {
         this.$_parepareBars(doc, model._visPoints as WaterfallSeriesPoint[]);
     }

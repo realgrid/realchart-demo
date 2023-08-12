@@ -15,6 +15,7 @@ import { Utils } from "./Utils";
 import { IRect, Rectangle } from "./Rectangle";
 import { SvgShapes } from "./impl/SvgShape";
 import { ISize } from "./Size";
+import { IPoint } from "./Point";
 
 export interface IPointerHandler {
     handleMove(ev: PointerEvent): void;
@@ -236,6 +237,13 @@ export abstract class RcControl extends RtWrappableObject {
         this._defs.removeChild(element.dom);
     }
 
+    containerToElement(element: RcElement, x: number, y: number): IPoint {
+        const cr = this._container.getBoundingClientRect();
+        const br = element.dom.getBoundingClientRect();
+
+        return { x: x + cr.x - br.x, y: y + cr.y - br.y };
+    }
+
     abstract useImage(src: string): void; // 실제 이미지가 로드됐을 때 다시 그려지도록 한다.
 
     //-------------------------------------------------------------------------
@@ -431,6 +439,14 @@ export abstract class RcControl extends RtWrappableObject {
         this.invalidateLayout();
     }
 
+    toOffset(event: any): any {
+        //const r = event.target.getBoundingClientRect();
+        const r = this._container.getBoundingClientRect();
+        event.pointX = event.clientX - r.left;
+        event.pointY = event.clientY - r.top;
+        return event;
+    }
+
     private _clickHandler = (event: PointerEvent) => {
     }
 
@@ -444,6 +460,7 @@ export abstract class RcControl extends RtWrappableObject {
     }
 
     private _pointerMoveHandler = (ev: PointerEvent) => {
+        this._pointerHandler && this._pointerHandler.handleMove(this.toOffset(ev));
     }
 
     private _pointerUpHandler = (ev: PointerEvent) => {
@@ -743,6 +760,10 @@ export class RcElement extends RcObject {
         return (this._dom as SVGGraphicsElement).getBBox();
     }
 
+    controlToElement(x: number, y: number): IPoint {
+        return this.control.containerToElement(this, x, y);
+    }
+
     move(x: number, y: number): RcElement {
         this.x = x;
         this.y = y;
@@ -901,6 +922,14 @@ export class RcElement extends RcObject {
         buff = buff || {};
         buff[prop] = value;
         return buff;
+    }
+
+    setData(data: string, value?: string): void {
+        this.dom.dataset[data] = value || '';
+    }
+
+    unsetData(data: string): void {
+        delete this.dom.dataset[data];
     }
 
     // TODO

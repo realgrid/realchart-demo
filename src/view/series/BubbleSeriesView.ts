@@ -7,14 +7,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
-import { PathElement } from "../../common/RcControl";
+import { PathElement, RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { BubbleSeries, BubbleSeriesPoint } from "../../model/series/BubbleSeries";
-import { PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class MarkerView extends PathElement {
+class MarkerView extends PathElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -48,6 +48,10 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._markers;
+    }
+
     protected _prepareSeries(doc: Document, model: BubbleSeries): void {
         const pts = model.getPoints().getVisibles();
 

@@ -9,6 +9,7 @@
 import { RcControl } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
 import { Chart } from "./model/Chart";
+import { ChartPointerHandler } from "./tool/PointerHandler";
 import { ChartView } from "./view/ChartView";
 
 export class ChartControl extends RcControl {
@@ -29,6 +30,8 @@ export class ChartControl extends RcControl {
         super(doc, container);
 
         this.addElement(this._chartView = new ChartView(doc));
+
+        this.setPointerHandler(new ChartPointerHandler(this));
     }
 
     //-------------------------------------------------------------------------

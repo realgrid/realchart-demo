@@ -19,6 +19,9 @@ export interface IAxis {
     chart: IChart;
 
     _length: number;
+    _isX: boolean;
+    _isHorz: boolean;
+    _isOpposite: boolean;
 
     axisMax(): number;
     axisMin(): number;

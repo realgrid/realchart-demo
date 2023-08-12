@@ -7,12 +7,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
-import { PathElement } from "../../common/RcControl";
+import { PathElement, RcElement } from "../../common/RcControl";
 import { ArrowHead, VectorSeries, VectorSeriesPoint } from "../../model/series/VectorSeries";
-import { SeriesView } from "../SeriesView";
+import { IPointView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class ArrowView extends PathElement {
+class ArrowView extends PathElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -94,6 +94,10 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._arrows;
+    }
+
     protected _prepareSeries(doc: Document, model: VectorSeries): void {
         const pts = model.getPoints().getVisibles() as VectorSeriesPoint[];
 

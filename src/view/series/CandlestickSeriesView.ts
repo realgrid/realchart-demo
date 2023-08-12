@@ -7,12 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
+import { RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
 import { CandlestickSeries, CandlestickSeriesPoint } from "../../model/series/CandlestickSeries";
-import { PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class StickView extends GroupElement {
@@ -20,11 +21,12 @@ class StickView extends GroupElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    point: CandlestickSeriesPoint;
+
     private _back: RectElement;
     private _wickUpper: LineElement;
     private _wickLower: LineElement;
     private _body: RectElement;
-    point: CandlestickSeriesPoint;
 
     //-------------------------------------------------------------------------
     // methods
@@ -74,6 +76,10 @@ export class CandlestickSeriesView extends SeriesView<CandlestickSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._sticks;
+    }
+
     protected _prepareSeries(doc: Document, model: CandlestickSeries): void {
         this.$_prepareSticks(model._visPoints as CandlestickSeriesPoint[]);
     }

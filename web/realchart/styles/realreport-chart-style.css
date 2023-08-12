@@ -184,6 +184,10 @@
     fill: #00aaff;
     fill-opacity: 0.8;
 }
+.rct-series-bar[data-focus] {
+    stroke: red;
+    stroke-width: 2px;
+}
 
 /** line series */
 .rct-line-series-line {
@@ -205,6 +209,10 @@
 /** scatter series */
 .rct-scatter-series-marker {
     fill-opacity: 0.7;
+}
+.rct-scatter-series-marker[data-focus] {
+    stroke: red;
+    stroke-width: 2px;
 }
 
 /** boxplot series */

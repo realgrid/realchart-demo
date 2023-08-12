@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
-import { PathElement } from "../../common/RcControl";
+import { PathElement, RcElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { DataPoint } from "../../model/DataPoint";
@@ -15,19 +15,20 @@ import { PointItemPosition } from "../../model/Series";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
 import { EqualizerSeries } from "../../model/series/EqualizerSeries";
-import { PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class BarElement extends GroupElement {
+class BarElement extends GroupElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    point: DataPoint;
+
     private _backs = new ElementPool<PathElement>(this, PathElement);
     private _segments = new ElementPool<PathElement>(this, PathElement);
     private _decimal = 0;
 
-    point: DataPoint;
     wPoint: number;
     hPoint: number;
 
@@ -130,6 +131,10 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._bars;
+    }
+
     private $_parepareBars(points: DataPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
             const p = v.point = points[i];

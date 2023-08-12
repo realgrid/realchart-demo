@@ -7,14 +7,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
-import { PathElement } from "../../common/RcControl";
+import { PathElement, RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { ScatterSeries, ScatterSeriesPoint } from "../../model/series/ScatterSeries";
-import { PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class MarkerView extends PathElement {
+class MarkerView extends PathElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -25,7 +25,7 @@ class MarkerView extends PathElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-scatter-series-marker');
+        super(doc, SeriesView.POINT_STYLE + ' rct-scatter-series-marker');
     }
 }
 
@@ -48,6 +48,10 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._markers;
+    }
+
     protected _prepareSeries(doc: Document, model: ScatterSeries): void {
         this.$_prepareMarkers(model._visPoints as ScatterSeriesPoint[]);
     }

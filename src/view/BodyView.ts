@@ -8,6 +8,7 @@
 
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
+import { IPoint } from "../common/Point";
 import { LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { Align, VerticalAlign, _undefined, assert } from "../common/Types";
@@ -22,8 +23,8 @@ import { Crosshair } from "../model/Crosshair";
 import { PlotItem } from "../model/PlotItem";
 import { Series } from "../model/Series";
 import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
-import { BarRangeSeries, ColumnRangeSeries } from "../model/series/BarRangeSeries";
-import { BarSeries, ColumnSeries } from "../model/series/BarSeries";
+import { ColumnRangeSeries } from "../model/series/BarRangeSeries";
+import { ColumnSeries } from "../model/series/BarSeries";
 import { BellCurveSeries } from "../model/series/BellCurveSeries";
 import { BoxPlotSeries } from "../model/series/BoxPlotSeries";
 import { BubbleSeries } from "../model/series/BubbleSeries";
@@ -44,7 +45,7 @@ import { TreemapSeries } from "../model/series/TreemapSeries";
 import { VectorSeries } from "../model/series/VectorSeries";
 import { WaterfallSeries } from "../model/series/WaterfallSeries";
 import { ChartElement } from "./ChartElement";
-import { SeriesView } from "./SeriesView";
+import { IPointView, SeriesView } from "./SeriesView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
 import { AreaSeriesView } from "./series/AreaSeriesView";
 import { BarRangeSeriesView } from "./series/BarRangeSeriesView";
@@ -525,6 +526,8 @@ class CrosshairLineView extends LineElement {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-crosshair-line');
+
+        this.setStyle('pointerEvents', 'none');
     }
 
     //-------------------------------------------------------------------------
@@ -533,6 +536,14 @@ class CrosshairLineView extends LineElement {
     setModel(model: Crosshair): void {
         if (model != this._model) {
             this._model = model;
+        }
+    }
+
+    layout(x: number, y: number, width: number, height: number): void {
+        if (this._model.axis._isHorz) {
+            this.setVLine(x, 0, height);
+        } else {
+            this.setHLine(y, 0, width);
         }
     }
 }
@@ -561,6 +572,7 @@ export class BodyView extends ChartElement<Body> {
     // feedbacks
     private _feedbackContainer: LayerElement;
     private _crosshairLines: ElementPool<CrosshairLineView>;
+    private _focused: IPointView = null;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -587,9 +599,41 @@ export class BodyView extends ChartElement<Body> {
         this._frontGuideContainer.prepare();
     }
 
-    moveCrosshairs(x: number, y: number): void {
+    pointerMoved(p: IPoint, target: EventTarget): void {
+        const w = this.width;
+        const h = this.height;
+
         this._crosshairLines.forEach(v => {
+            if (v.setVisible(p.x >= 0 && p.x < w && p.y >= 0 && p.y < h)) {
+                v.layout(p.x, p.y, w, h);
+            }
         });
+
+        if (target instanceof SVGElement && target.classList.contains(SeriesView.POINT_STYLE)) {
+            for (let i = this._seriesViews.length - 1; i >= 0; i--) {
+                const p = this._seriesViews[i].pointByDom(target) as IPointView;
+
+                if (p) {
+                    this.$_setFocused(p);
+                    break;
+                }
+            }
+        } else {
+            this.$_setFocused(null);
+        }
+    }
+
+    private $_setFocused(p: IPointView): boolean {
+        if (p != this._focused) {
+            if (this._focused) {
+                (this._focused as any as RcElement).unsetData(SeriesView.DATA_FOUCS);
+            }
+            this._focused = p;
+            if (this._focused) {
+                (this._focused as any as RcElement).setData(SeriesView.DATA_FOUCS);
+            }
+            return true;
+        }
     }
 
     //-------------------------------------------------------------------------

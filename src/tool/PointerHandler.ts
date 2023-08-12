@@ -1,29 +1,51 @@
 ////////////////////////////////////////////////////////////////////////////////
-// ParetoSeriesView.ts
-// 2023. 07. 22. created by woori
+// PointerHandler.ts
+// 2023. 08. 12. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ParetoSeries } from "../../model/series/ParetoSeries";
-import { LineSeriesView } from "./LineSeriesView";
+import { IPointerHandler } from "../common/RcControl";
+import { ChartControl } from "../main";
+import { SeriesView } from "../view/SeriesView";
 
-export class ParetoSeriesView extends LineSeriesView<ParetoSeries> {
+const DRAG_THRESHOLD = 3;
+
+export class ChartPointerHandler implements IPointerHandler {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _chart: ChartControl;
+
     //-------------------------------------------------------------------------
-    // constructor
+    // constructors
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc, 'rct-pareto-series');
+    constructor(chart: ChartControl) {
+        this._chart = chart;
     }
 
     //-------------------------------------------------------------------------
-    // overriden members
+    // IPointerHandler
     //-------------------------------------------------------------------------
+    handleMove(ev: PointerEvent): void {
+        const x = (ev as any).pointX;
+        const y = (ev as any).pointY;
+        const body = this._chart.chartView().bodyView();
+
+        body.pointerMoved(body.controlToElement(x, y), ev.target);
+    }
+
+    handleClick(ev: PointerEvent): void {
+    }
+
+    handleDblClick(ev: PointerEvent): void {
+    }
+
+    handleWheel(ev: WheelEvent): void {
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

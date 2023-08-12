@@ -10,16 +10,18 @@ import { pickNum } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
-import { LayerElement, PathElement } from "../common/RcControl";
+import { LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { SvgShapes } from "../common/impl/SvgShape";
-import { Axis, IAxis } from "../model/Axis";
 import { DataPoint } from "../model/DataPoint";
 import { DataPointLabel, Series } from "../model/Series";
-import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { ChartElement } from "./ChartElement";
+
+export interface IPointView {
+    point: DataPoint;
+}
 
 export class PointLabelView extends LabelElement {
 
@@ -243,6 +245,12 @@ export class PointLabelLineContainer extends GroupElement {
 export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 
     //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly POINT_STYLE = 'rct-data-point';
+    static readonly DATA_FOUCS = 'focus'
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     protected _pointContainer: LayerElement;
@@ -291,6 +299,12 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 
     _animationFinished(ani: Animation): void {
         this._invalidate();
+    }
+
+    protected abstract _getPointPool(): ElementPool<RcElement>;
+
+    pointByDom(elt: SVGElement): IPointView {
+        return this._getPointPool().elementOf(elt) as any;
     }
 
     //-------------------------------------------------------------------------
@@ -362,7 +376,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 }
 
-export class BoxPointElement extends PathElement {
+export class BoxPointElement extends PathElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -376,7 +390,7 @@ export class BoxPointElement extends PathElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-series-bar');
+        super(doc, SeriesView.POINT_STYLE + ' rct-series-bar');
     }
 }
 

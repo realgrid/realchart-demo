@@ -7,23 +7,25 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
+import { RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { OhlcSeries, OhlcSeriesPoint } from "../../model/series/OhlcSeries";
-import { PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class StickView extends GroupElement {
+class StickView extends GroupElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    point: OhlcSeriesPoint;
+
     private _back: LineElement;
     private _tickOpen: LineElement;
     private _tickClose: LineElement;
     private _bar: LineElement;
-    point: OhlcSeriesPoint;
 
     //-------------------------------------------------------------------------
     // methods
@@ -74,6 +76,10 @@ export class OhlcSeriesView extends SeriesView<OhlcSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._sticks;
+    }
+
     protected _prepareSeries(doc: Document, model: OhlcSeries): void {
         this.$_prepareSticks(model._visPoints as OhlcSeriesPoint[]);
     }
