@@ -237,6 +237,8 @@ export class BarSeriesView extends SeriesView<BarSeries> {
             labelOff: labels.offset,
         });
 
+        this._labelContainer.setVisible(labelVis);
+
         this._sectors.forEach((view, i) => {
             const p = view.point;
             const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;

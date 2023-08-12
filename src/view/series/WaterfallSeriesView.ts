@@ -101,7 +101,7 @@ export class WaterfallSeriesView extends SeriesView<WaterfallSeries> {
         const inverted = series.chart.isInverted();
         const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelVis = labels.visible && this._animating();
+        const labelVis = labels.visible && !this._animating();
         const labelOff = labels.offset;
         const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;

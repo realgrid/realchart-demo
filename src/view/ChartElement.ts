@@ -106,6 +106,10 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
 
     protected abstract _doMeasure(doc: Document, model: T, intWidth: number, hintHeight: number, phase: number): ISize;
     protected abstract _doLayout(param: any): void;
+
+    protected _invalidate(): void {
+        this.control?.invalidateLayout();
+    }
 }
 
 export abstract class BoundableElement<T extends ChartItem> extends ChartElement<T> {

@@ -251,7 +251,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
         const rd = this._rd;
         const rdInner = this._rdInner;
         const labels = series.pointLabel;
-        const labelVis = labels.visible;
+        const labelVis = labels.visible && !this._animating();
         const labelInside = series.getLabelPosition();
         const labelOff = labels.offset;
         const labelViews = this._labelContainer;
@@ -259,6 +259,8 @@ export class PieSeriesView extends SeriesView<PieSeries> {
         const sliceOff = this._slicedOff = series.getSliceOffset(rd) * vr; // TODO: sector 후에...
         const pb = new PathBuilder();
         let labelView: PointLabelView;
+
+        this._labelContainer.setVisible(labelVis);
 
         if (this._circle.visible = this._sectors.isEmpty) {
             this._circle.setCircle(this._cx, this._cy, this._rd);

@@ -283,6 +283,16 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         this._inverted = value;
     }
 
+    _animationStarted(ani: Animation): void {
+        if (this._labelContainer && this._labelContainer.visible) {
+            this._labelContainer.setVisible(false);
+        }
+    }
+
+    _animationFinished(ani: Animation): void {
+        this._invalidate();
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

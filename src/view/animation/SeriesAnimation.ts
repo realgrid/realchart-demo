@@ -35,7 +35,14 @@ export abstract class SeriesAnimation {
     // constructor
     //-------------------------------------------------------------------------
     constructor(series: SeriesView<Series>, options?: any) {
-        this._createAnimation(series, options);
+        const ani = this._createAnimation(series, options);
+
+        if (ani instanceof Animation) {
+            ani.addEventListener('finish', () => {
+                series._animationFinished(ani);
+            });
+            series._animationStarted(ani);
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -62,15 +69,16 @@ export class StyleAnimation extends SeriesAnimation {
     protected _createAnimation(v: SeriesView<Series>, options: {prop: string, start: string, end: string}): Animation {
         const start = {};
         const end = {};
+
         start[options.prop] = options.start;
         end[options.prop] = options.end;
-        const ani = v.dom.animate([
+
+        return v.dom.animate([
             start, end
         ], {
             duration: RcAnimation.DURATION,
             fill: 'none'
         });
-        return ani;
     }   
 }
 

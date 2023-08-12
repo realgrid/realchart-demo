@@ -128,11 +128,11 @@ export class CandlestickSeriesView extends SeriesView<CandlestickSeries> {
                 let view: PointLabelView;
                 let r: IRect;
 
-                if (view = labelViews.get(p, 1)) {
+                if (view = labelViews.get(p, 0)) {
                     r = view.getBBounds();
                     view.translate(x + (w - r.width) / 2, y - r.height - labelOff);
                 }
-                if (view = labelViews.get(p, 0)) {
+                if (view = labelViews.get(p, 1)) {
                     r = view.getBBounds();
                     view.translate(x + (w - r.width) / 2, y + h + labelOff);
                 }

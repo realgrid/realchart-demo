@@ -158,12 +158,14 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
         const polar = this._polar = (series.chart as Chart).body.getPolar(series);
         const vis = series.marker.visible;
         const labels = series.pointLabel;
-        const labelVis = labels.visible;
+        const labelVis = labels.visible && !this._animating();
         const labelOff = labels.offset;
         const labelViews = this._labelContainer;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const yOrg = height;
+
+        this._labelContainer.setVisible(labelVis);
 
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
