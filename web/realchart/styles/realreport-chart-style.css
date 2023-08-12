@@ -195,7 +195,7 @@
     stroke: gray;
 }
 .rct-line-series-marker[data-focus] {
-    scale: 2;
+    /* scale: 2; */
     stroke: red !important;
     stroke-width: 2px;
 }
@@ -346,6 +346,19 @@
 /** pie series */
 .rct-pie-series .rct-series-points {
     stroke: white;
+}
+
+/** tooltip */
+.rct-tooltip {
+    opacity: 0.9;
+}
+.rct-tooltip-back {
+    fill: white;
+    stroke: #333;
+}
+.rct-tooltip-text {
+    fill: #333;
+    stroke: none;
 }
 
 /** crosshair */

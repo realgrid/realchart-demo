@@ -9,8 +9,6 @@
 import { ELLIPSIS, SVGStyleOrClass, _undefined } from '../Types';
 import { RcElement } from '../RcControl';
 import { IRect } from '../Rectangle';
-import { GroupElement } from './GroupElement';
-import { RectElement } from './RectElement';
 import { Color } from '../Color';
 
 export enum TextAnchor {

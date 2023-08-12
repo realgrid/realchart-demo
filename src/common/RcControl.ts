@@ -10,7 +10,7 @@ import { RcObject, RtWrappableObject, RtWrapper } from "./RcObject";
 import { Path, SVGStyleOrClass, _undefined, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
-import { RtLog, SVGNS, isString, pickNum } from "./Common";
+import { RtLog, SVGNS, isString } from "./Common";
 import { Utils } from "./Utils";
 import { IRect, Rectangle } from "./Rectangle";
 import { SvgShapes } from "./impl/SvgShape";
@@ -42,6 +42,7 @@ export abstract class RcControl extends RtWrappableObject {
     // consts
     //-------------------------------------------------------------------------
     static readonly CLASS_NAME = 'rct-control';
+    static readonly SHADOW_FILTER = 'rr-chart-shadow-filter';
 
     //-------------------------------------------------------------------------
     // static members
@@ -353,6 +354,7 @@ export abstract class RcControl extends RtWrappableObject {
         svg.appendChild(desc);
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
+        this._initDefs(doc, defs);
         svg.appendChild(defs);
         dom.appendChild(svg);
 
@@ -365,6 +367,21 @@ export abstract class RcControl extends RtWrappableObject {
         Object.assign(this._htmlRoot.style, {
             position: 'absolute'
         });
+    }
+
+    protected _initDefs(doc: Document, defs: SVGElement): void {
+        let filter = doc.createElementNS(SVGNS, 'filter');
+        const ds = doc.createElementNS(SVGNS, 'feDropShadow'); 
+
+        filter.setAttribute('id', RcControl.SHADOW_FILTER);
+        ds.setAttribute('dx', '1');
+        ds.setAttribute('dy', '1');
+        ds.setAttribute('flood-olor', '#000');
+        ds.setAttribute('flood-pacity', '0.75');
+        ds.setAttribute('stdDeviation', '2.5');
+
+        filter.appendChild(ds);
+        defs.appendChild(filter);
     }
 
     protected _render(): void {
