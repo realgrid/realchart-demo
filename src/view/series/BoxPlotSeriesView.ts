@@ -52,8 +52,6 @@ class BoxView extends GroupElement implements IPointView {
         const yLow = y + h - h * (p.lowValue - p.minValue) / len;
         const yHigh = y + h - h * (p.highValue - p.minValue) / len;
 
-        this.resize(w, h);
-
         this._back.setBounds(0, 0, w, h);
         this._stemUp.setVLine(x, y, yHigh);
         this._stemDown.setVLine(x, yLow, h);
@@ -74,8 +72,9 @@ class BoxView extends GroupElement implements IPointView {
         this.add(this._min = new LineElement(doc, 'rct-boxplot-point-min'));
         this.add(this._max = new LineElement(doc, 'rct-boxplot-point-max'));
 
+        // for hit testing
         this.add(this._back = new RectElement(doc, SeriesView.POINT_STYLE + ' rct-boxplot-point-back'));
-        Dom.setImportantStyle(this._back.dom.style, 'fill', 'transparent'); // 'none'으로 지정하면 hittesting이 되지 않는다.
+        Dom.setImportantStyle(this._back.dom.style, 'fill', 'transparent'); // 'none'으로 지정하면 hit testing이 되지 않는다.
     }
 }
 

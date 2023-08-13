@@ -24,7 +24,7 @@ class FunnelSegment extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-funnel-series-segment');
+        super(doc, SeriesView.POINT_STYLE + ' rct-funnel-point');
     }
 }
 
@@ -134,7 +134,9 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
 
             const path = builder.close();
             seg.setPath(path);
-            // p.rect = new Rectangle(x, y, x2 - x, y2 - y);
+
+            p.xPos = xMid;
+            p.yPos = y + (y2 - y) / 2;
 
             // label
             if (labelViews && (labelView = labelViews.get(p, 0))) {

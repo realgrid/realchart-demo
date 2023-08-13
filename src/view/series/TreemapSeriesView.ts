@@ -20,13 +20,13 @@ class NodeView extends PathElement implements IPointView {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    node: TreeNode
+    node: TreeNode;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-treemap-series-node');
+        super(doc, SeriesView.POINT_STYLE + ' rct-treemap-point');
     }
 
     get point(): DataPoint {
@@ -99,6 +99,8 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
             v.node = m;
             v.setStyle('fill', c.brighten(m.index / count).toString());
             v.render();
+            m.point.xPos = m.x + m.width / 2;
+            m.point.yPos = m.y + m.height / 2;
 
             // label
             if (labelViews && (labelView = labelViews.get(m.point, 0))) {

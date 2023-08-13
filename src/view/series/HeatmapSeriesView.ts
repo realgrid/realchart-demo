@@ -8,9 +8,8 @@
 
 import { Color } from "../../common/Color";
 import { ElementPool } from "../../common/ElementPool";
-import { PathElement, RcElement } from "../../common/RcControl";
+import { RcElement } from "../../common/RcControl";
 import { RectElement } from "../../common/impl/RectElement";
-import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { HeatmapSeries, HeatmapSeriesPoint } from "../../model/series/HeatmapSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
@@ -25,6 +24,9 @@ class CellView extends RectElement implements IPointView {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, SeriesView.POINT_STYLE + ' rct-heatmap-point');
+    }
 }
 
 export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
@@ -87,20 +89,20 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
             const p = cell.point as HeatmapSeriesPoint;
             console.log(p.xValue, p.yValue);
             const wUnit = xAxis.getUnitLength(xLen, p.xValue);
-            const wPoint = wUnit;//series.getPointWidth(wUnit);
+            const wPoint = wUnit;
             const hUnit = yAxis.getUnitLength(yLen, p.yValue);
-            const hPoint = hUnit;// series.getPointWidth(hUnit);
+            const hPoint = hUnit;
             const org = inverted ? 0 : height;;
             let x: number;
             let y: number;
             let labelView: PointLabelView;
 
             if (inverted) {
-                y = xLen - xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
-                x = org;
+                y = (p.yPos = xLen - xAxis.getPosition(xLen, p.xValue)) - wUnit / 2;
+                x = (p.xPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
             } else {
-                x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
-                y = org - yAxis.getPosition(yLen, p.yValue) - wUnit / 2;
+                x = (p.xPos = xAxis.getPosition(xLen, p.xValue)) - wUnit / 2;
+                y = (p.yPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
             }
 
             cell.setBounds(x, y, wPoint, hPoint);

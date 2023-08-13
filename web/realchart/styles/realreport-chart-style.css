@@ -238,20 +238,23 @@
 .rct-candlestick-series {
     stroke-width: 1;
 }
-.rct-candlestick-series-back {
-    fill: none;
-}
-.rct-candlestick-series-border {
+.rct-candlestick-point-border {
     stroke: #333;
 }
-.rct-candlestick-series-wick {
+.rct-candlestick-point-wick {
     stroke: #003;
 }
-.rct-candlestick-series-body {
+.rct-candlestick-point-body {
     fill: #800;
 }
-.rct-candlestick-series-body-fall {
+.rct-candlestick-point[data-focus] .rct-candlestick-point-body {
+    fill-opacity: 0.5;
+}
+.rct-candlestick-point-body-fall {
     fill: #008;
+}
+.rct-candlestick-point[data-focus] .rct-candlestick-point-body-fall {
+    fill-opacity: 0.5;
 }
 
 /** ohlc series */
@@ -272,10 +275,10 @@
 }
 
 /** waterfall series */
-.rct-waterfall-series-negative {
+.rct-waterfall-point-negative {
     fill: #dd5500;
 }
-.rct-waterfall-series-sum {
+.rct-waterfall-point-sum {
     fill: #0055cc;
 }
 .rct-waterfall-series-lines {
@@ -313,7 +316,7 @@
 }
 
 /** funnel series */
-.rct-funnel-series-segment[data-focus] {
+.rct-funnel-point[data-focus] {
     stroke: red;
     stroke-width: 2px;
 }
@@ -323,10 +326,23 @@
     stroke-width: 2px;
     /* stroke-linejoin: round; */
 }
+.rct-vector-point[data-focus] {
+    stroke-width: 3px;
+}
+
+/** heatmpa series */
+.rct-heatmap-point[data-focus] {
+    stroke: var(--rct-focus-border);
+    stroke-width: 2px;
+}
 
 /** treemap series */
-.rct-treemap-series-node {
+.rct-treemap-point {
     stroke: white;
+}
+.rct-treemap-point[data-focus] {
+    stroke: var(--rct-focus-border);
+    stroke-width: 2px;
 }
 
 /** pie series */

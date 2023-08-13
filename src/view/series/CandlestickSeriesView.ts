@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
@@ -16,7 +17,7 @@ import { CandlestickSeries, CandlestickSeriesPoint } from "../../model/series/Ca
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class StickView extends GroupElement {
+class StickView extends GroupElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -27,6 +28,13 @@ class StickView extends GroupElement {
     private _wickUpper: LineElement;
     private _wickLower: LineElement;
     private _body: RectElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, SeriesView.POINT_STYLE + ' rct-candlestick-point');
+    }
 
     //-------------------------------------------------------------------------
     // methods
@@ -45,17 +53,20 @@ class StickView extends GroupElement {
         this._wickUpper.setVLine(x, y, yClose);
         this._wickLower.setVLine(x, yOpen, h);
         this._body.setBounds(0, Math.min(yClose, yOpen), w, Math.max(1, Math.abs(yOpen - yClose)));
-        this._body.setStyleName(p.close < p.open ? 'rct-candlestick-series-body-fall' : 'rct-candlestick-series-body')
+        this._body.setStyleName(p.close < p.open ? 'rct-candlestick-point-body-fall' : 'rct-candlestick-point-body')
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _doInitChildren(doc: Document): void {
-        this.add(this._back = new RectElement(doc, 'rct-candlestick-series-back'));
-        this.add(this._wickUpper = new LineElement(doc, 'rct-candlestick-series-wick'));
-        this.add(this._wickLower = new LineElement(doc, 'rct-candlestick-series-wick'));
+        this.add(this._wickUpper = new LineElement(doc, 'rct-candlestick-point-wick'));
+        this.add(this._wickLower = new LineElement(doc, 'rct-candlestick-point-wick'));
         this.add(this._body = new RectElement(doc));
+
+        // for hit testing
+        this.add(this._back = new RectElement(doc, SeriesView.POINT_STYLE + ' rct-candlestick-point-back'));
+        Dom.setImportantStyle(this._back.dom.style, 'fill', 'transparent'); // 'none'으로 지정하면 hit testing이 되지 않는다.
     }
 }
 

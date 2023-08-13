@@ -6,7 +6,6 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { RcElement } from "../../common/RcControl";
@@ -24,6 +23,13 @@ class SectorView extends SectorElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     point: PieSeriesPoint;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, SeriesView.POINT_STYLE + ' rct-pie-point');
+    }
 
     //-------------------------------------------------------------------------
     // methods
@@ -281,6 +287,10 @@ export class PieSeriesView extends SeriesView<PieSeries> {
                 dx += Math.cos(a) * sliceOff;
                 dy += Math.sin(a) * sliceOff;
             }
+
+            const a = p.startAngle + p.angle / 2;
+            p.xPos = cx + Math.cos(a) * (sliceOff + rd * 0.7);
+            p.yPos = cy + Math.sin(a) * (sliceOff + rd * 0.7);
 
             sector.setSectorEx(labelViews, /*lines*/null, {
                 cx: cx + dx,

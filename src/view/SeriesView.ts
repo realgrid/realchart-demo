@@ -80,6 +80,8 @@ export class PointLabelContainer extends GroupElement {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-series-labels');
+
+        this.setStyle('pointerEvents', 'none');
     }
 
 	//-------------------------------------------------------------------------

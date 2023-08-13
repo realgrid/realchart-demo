@@ -94,7 +94,7 @@ export class WaterfallSeriesView extends SeriesView<WaterfallSeries> {
             const p = points[i];
 
             v.point = p;
-            v.setStyleOrClass(p._isSum ? 'rct-waterfall-series-sum' : p.y < 0 ? 'rct-waterfall-series-negative' : '');
+            v.setStyleOrClass(p._isSum ? 'rct-waterfall-point-sum' : p.y < 0 ? 'rct-waterfall-point-negative' : '');
         });
 
         this._lines.prepare(points.length - 1);
@@ -151,8 +151,9 @@ export class WaterfallSeriesView extends SeriesView<WaterfallSeries> {
                 y += series.getPointPos(wUnit) + wPoint / 2;
                 x += yAxis.getPosition(yLen, p.yValue) * vr - hPoint;
             } else {
-                x += series.getPointPos(wUnit) + wPoint / 2;
-                y -= yAxis.getPosition(yLen, p.yValue * vr) - hPoint;
+                p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
+                p.yPos = y -= p.yPos = yAxis.getPosition(yLen, p.yValue * vr);
+                y += hPoint;
             }
 
             bar.render(x, y, inverted);
