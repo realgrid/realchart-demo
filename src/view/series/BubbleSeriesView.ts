@@ -25,7 +25,7 @@ class MarkerView extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-bubble-series-marker');
+        super(doc, SeriesView.POINT_STYLE + ' rct-bubble-series-marker');
     }
 }
 

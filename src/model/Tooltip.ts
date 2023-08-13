@@ -13,6 +13,11 @@ import { ISeries } from "./Series";
 export class Tooltip extends ChartItem {
 
     //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly HIDE_DELAY = 1000;
+
+    //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -29,25 +34,28 @@ export class Tooltip extends ChartItem {
     // properties
     //-------------------------------------------------------------------------
     html: string;
-    text: string;
+    text = '<b>${point.x}</b><br>${series}:<b> ${point.y}</b>';
+    offset = 8;
+    hideDelay = Tooltip.HIDE_DELAY;
+    minWidth = 100;
+    minHeight = 40;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     getValue(point: DataPoint, param: string): string {
-        let v: any;
-
         switch (param) {
+            case 'series':
             case 'series.name':
-                break;
-            case 'point.xValue':
-                break;
-            case 'point.yValue':
-                break;
+                return this.series.displayName();
+            case 'point.x':
+                return point.x;
+            case 'point':
+            case 'point.y':
+                return point.y;
             default:
-                break;
+                return param;
         }
-        return v;
     }
 
     //-------------------------------------------------------------------------

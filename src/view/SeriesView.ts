@@ -390,7 +390,7 @@ export class BoxPointElement extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-series-bar');
+        super(doc, SeriesView.POINT_STYLE + ' rct-box-point');
     }
 }
 

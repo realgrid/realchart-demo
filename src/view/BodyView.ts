@@ -20,6 +20,7 @@ import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange } from "../mod
 import { Body } from "../model/Body";
 import { IChart } from "../model/Chart";
 import { Crosshair } from "../model/Crosshair";
+import { DataPoint } from "../model/DataPoint";
 import { PlotItem } from "../model/PlotItem";
 import { Series } from "../model/Series";
 import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
@@ -548,11 +549,18 @@ class CrosshairLineView extends LineElement {
     }
 }
 
+export interface IPlottingOwner {
+
+    showTooltip(series: Series, point: DataPoint): void;
+    hideTooltip(): void;
+}
+
 export class BodyView extends ChartElement<Body> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _owner: IPlottingOwner;
     private _polar: boolean;
     private _background: RectElement;
     private _gridContainer: RcElement;
@@ -577,9 +585,10 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
+    constructor(doc: Document, owner: IPlottingOwner) {
         super(doc, 'rct-body');
 
+        this._owner = owner;
         this.add(this._background = new RectElement(doc));
         this.add(this._gridContainer = new LayerElement(doc, 'rct-grids'));
         this.add(this._guideContainer = new AxisGuideContainer(doc, 'rct-guides'));
@@ -614,16 +623,16 @@ export class BodyView extends ChartElement<Body> {
                 const p = this._seriesViews[i].pointByDom(target) as IPointView;
 
                 if (p) {
-                    this.$_setFocused(p);
+                    this.$_setFocused(this._seriesViews[i].model, p);
                     break;
                 }
             }
         } else {
-            this.$_setFocused(null);
+            this.$_setFocused(null, null);
         }
     }
 
-    private $_setFocused(p: IPointView): boolean {
+    private $_setFocused(series: Series, p: IPointView): boolean {
         if (p != this._focused) {
             if (this._focused) {
                 (this._focused as any as RcElement).unsetData(SeriesView.DATA_FOUCS);
@@ -631,6 +640,9 @@ export class BodyView extends ChartElement<Body> {
             this._focused = p;
             if (this._focused) {
                 (this._focused as any as RcElement).setData(SeriesView.DATA_FOUCS);
+                this._owner.showTooltip(series, p.point);
+            } else {
+                this._owner.hideTooltip();
             }
             return true;
         }

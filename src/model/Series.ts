@@ -282,6 +282,7 @@ export interface ISeries extends IPlottingItem {
 
     color: string;
 
+    displayName(): string;
     createPoints(source: any[]): DataPoint[];
     getPoints(): DataPointCollection;
     getValue(point: DataPoint, axis: IAxis): number;
@@ -440,7 +441,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return false;
     }
 
-    displayText(): string {
+    displayName(): string {
         return this.label || this.name;
     }
 

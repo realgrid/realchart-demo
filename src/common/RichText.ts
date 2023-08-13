@@ -55,6 +55,7 @@ class Word {
 
     prepareSpan(span: SVGTSpanElement, target: any, domain: RichTextParamCallback): SVGTSpanElement {
         const s = this.getText(target, domain);
+
         span.textContent = s;
         //console.log(span.textContent, span.getBBox().y, span.getBBox().height);
         return span;
@@ -229,7 +230,7 @@ class SvgLine {
                 if (w) {
                     this._words.push(w);
                 } else {
-                    addPlain(s.substr(x));
+                    addPlain(s.substring(x));
                     break;
                 }
             } else {
@@ -239,7 +240,7 @@ class SvgLine {
                     addPlain(s.substring(x, i));
                     x = i;
                 } else {
-                    addPlain(s.substr(x));
+                    addPlain(s.substring(x));
                     break;
                 }
             }
@@ -333,6 +334,7 @@ export class SvgRichText {
             for (let word of line.words) {
                 const span = word.prepareSpan(view.appendElement(doc, 'tspan') as SVGTSpanElement, target, domain);
                 const r = span.getBBox();
+                
                 span[WIDTH] = r.width;
                 h = Math.max(h, span[HEIGHT] = r.height);
 

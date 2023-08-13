@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
@@ -16,7 +17,7 @@ import { BoxPlotSeries, BoxPlotSeriesPoint } from "../../model/series/BoxPlotSer
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class BoxView extends GroupElement {
+class BoxView extends GroupElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -32,6 +33,13 @@ class BoxView extends GroupElement {
     private _max: LineElement;
 
     //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, SeriesView.POINT_STYLE + ' rct-boxplot-point');
+    }
+
+    //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     layout(): void {
@@ -43,6 +51,8 @@ class BoxView extends GroupElement {
         let y = 0;
         const yLow = y + h - h * (p.lowValue - p.minValue) / len;
         const yHigh = y + h - h * (p.highValue - p.minValue) / len;
+
+        this.resize(w, h);
 
         this._back.setBounds(0, 0, w, h);
         this._stemUp.setVLine(x, y, yHigh);
@@ -57,13 +67,15 @@ class BoxView extends GroupElement {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doInitChildren(doc: Document): void {
-        this.add(this._back = new RectElement(doc, 'rct-boxplot-series-back'));
-        this.add(this._stemUp = new LineElement(doc, 'rct-boxplot-series-stem'));
-        this.add(this._stemDown = new LineElement(doc, 'rct-boxplot-series-stem'));
-        this.add(this._box = new RectElement(doc, 'rct-boxplot-series-box'));
-        this.add(this._mid = new LineElement(doc, 'rct-boxplot-series-mid'));
-        this.add(this._min = new LineElement(doc, 'rct-boxplot-series-min'));
-        this.add(this._max = new LineElement(doc, 'rct-boxplot-series-max'));
+        this.add(this._stemUp = new LineElement(doc, 'rct-boxplot-point-stem'));
+        this.add(this._stemDown = new LineElement(doc, 'rct-boxplot-point-stem'));
+        this.add(this._box = new RectElement(doc, 'rct-boxplot-point-box'));
+        this.add(this._mid = new LineElement(doc, 'rct-boxplot-point-mid'));
+        this.add(this._min = new LineElement(doc, 'rct-boxplot-point-min'));
+        this.add(this._max = new LineElement(doc, 'rct-boxplot-point-max'));
+
+        this.add(this._back = new RectElement(doc, SeriesView.POINT_STYLE + ' rct-boxplot-point-back'));
+        Dom.setImportantStyle(this._back.dom.style, 'fill', 'transparent'); // 'none'으로 지정하면 hittesting이 되지 않는다.
     }
 }
 

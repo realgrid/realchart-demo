@@ -159,11 +159,13 @@ export class BarSeriesView extends SeriesView<BarSeries> {
             bar.hPoint = yVal - yBase;
 
             if (inverted) {
-                y += series.getPointPos(wUnit) + wPoint / 2;
-                x += yAxis.getPosition(yLen, p.yGroup) - bar.hPoint; // for stack/fill
+                p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+                p.xPos = x += yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
+                x -= bar.hPoint;
             } else {
-                x += series.getPointPos(wUnit) + wPoint / 2;
-                y -= yAxis.getPosition(yLen, p.yGroup) - bar.hPoint; // for stack/fill
+                p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
+                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
+                y += bar.hPoint; 
             }
 
             bar.render(x, y, inverted);

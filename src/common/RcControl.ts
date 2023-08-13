@@ -377,8 +377,8 @@ export abstract class RcControl extends RtWrappableObject {
         ds.setAttribute('dx', '1');
         ds.setAttribute('dy', '1');
         ds.setAttribute('flood-olor', '#000');
-        ds.setAttribute('flood-pacity', '0.75');
-        ds.setAttribute('stdDeviation', '2.5');
+        ds.setAttribute('flood-opacity', '0.75');
+        ds.setAttribute('stdDeviation', '1.5');
 
         filter.appendChild(ds);
         defs.appendChild(filter);
@@ -597,6 +597,10 @@ export class RcElement extends RcObject {
         }
     }
 
+    get tx(): number {
+        return this._translateX;
+    }
+
     get y(): number {
         return this._x;
     }
@@ -605,6 +609,10 @@ export class RcElement extends RcObject {
             this._y = value;
             this.setAttr('y', this._y);
         }
+    }
+
+    get ty(): number {
+        return this._translateY;
     }
 
     get width(): number {

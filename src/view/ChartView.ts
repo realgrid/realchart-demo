@@ -8,20 +8,23 @@
 
 import { isNumber } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
-import { LayerElement, RcElement } from "../common/RcControl";
+import { RcElement } from "../common/RcControl";
 import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { Align, HORZ_SECTIONS, SectionDir, VERT_SECTIONS } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
+import { DataPoint } from "../model/DataPoint";
 import { LegendPosition } from "../model/Legend";
+import { ISeries, Series } from "../model/Series";
 import { Subtitle } from "../model/Title";
 import { AxisView } from "./AxisView";
 import { AxisGuideContainer, BodyView } from "./BodyView";
 import { LegendView } from "./LegendView";
 import { PolarBodyView } from "./PolarBodyView";
 import { TitleView } from "./TitleView";
+import { TooltipView } from "./TooltipView";
 
 abstract class SectionView extends GroupElement {
 
@@ -306,6 +309,8 @@ export class ChartView extends RcElement {
     private _polarView: PolarBodyView;
     private _currBody: BodyView;
     private _axisSectionViews = new Map<SectionDir, AxisSectionView>();
+    private _tooltipView: TooltipView;
+
     private _org: IPoint;
     private _plotWidth: number;
     private _plotHeight: number;
@@ -326,10 +331,11 @@ export class ChartView extends RcElement {
         });
 
         // plot 영역이 마지막이어야 line marker 등이 축 상에 표시될 수 있다.
-        this.add(this._currBody = this._bodyView = new BodyView(doc));
+        this.add(this._currBody = this._bodyView = new BodyView(doc, this));
 
         this.add(this._titleSectionView = new TitleSectionView(doc));
         this.add(this._legendSectionView = new LegendSectionView(doc));
+        this.add(this._tooltipView = new TooltipView(doc));
     }
 
     //-------------------------------------------------------------------------
@@ -565,6 +571,19 @@ export class ChartView extends RcElement {
             }
             vLegend.translate(x, y);
         }
+
+        this._tooltipView.hide(true, false);
+    }
+
+    showTooltip(series: Series, point: DataPoint): void {
+        const x = point.xPos + this._bodyView.tx;
+        const y = point.yPos + this._bodyView.ty;
+
+        this._tooltipView.show(series.tooltip, point, x, y, true);
+    }
+
+    hideTooltip(): void {
+        this._tooltipView.hide(false, true);
     }
 
     //-------------------------------------------------------------------------
@@ -587,7 +606,7 @@ export class ChartView extends RcElement {
     private $_prepareBody(doc: Document, polar: boolean): void {
         if (polar) {
             if (!this._polarView) {
-                this._polarView = new PolarBodyView(doc);
+                this._polarView = new PolarBodyView(doc, this);
                 this.insertChild(this._polarView, this._bodyView);
             }
             this._currBody = this._polarView;
