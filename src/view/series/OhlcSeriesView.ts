@@ -6,11 +6,13 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
+import { RectElement } from "../../common/impl/RectElement";
 import { OhlcSeries, OhlcSeriesPoint } from "../../model/series/OhlcSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
@@ -22,10 +24,17 @@ class StickView extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     point: OhlcSeriesPoint;
 
-    private _back: LineElement;
+    private _back: RectElement;
     private _tickOpen: LineElement;
     private _tickClose: LineElement;
     private _bar: LineElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, SeriesView.POINT_STYLE + ' rct-ohlc-point');
+    }
 
     //-------------------------------------------------------------------------
     // methods
@@ -45,17 +54,19 @@ class StickView extends GroupElement implements IPointView {
         this._tickClose.setHLine(yClose, x, this.width);
         this._bar.setVLine(x, y, y + h);
         //this._bar.setBounds(0, Math.min(yClose, yOpen), w, Math.max(1, Math.abs(yOpen - yClose)));
-        this._bar.setStyleName(p.close < p.open ? 'rct-ohlc-series-bar-fall' : 'rct-ohlc-series-bar')
+        this._bar.setStyleName(p.close < p.open ? 'rct-ohlc-point-bar-fall' : 'rct-ohlc-point-bar')
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _doInitChildren(doc: Document): void {
-        this.add(this._back = new LineElement(doc, 'rct-ohlc-series-back'));
-        this.add(this._tickOpen = new LineElement(doc, 'rct-ohlc-series-tick'));
-        this.add(this._tickClose = new LineElement(doc, 'rct-ohlc-series-tick'));
+        this.add(this._tickOpen = new LineElement(doc, 'rct-ohlc-point-tick'));
+        this.add(this._tickClose = new LineElement(doc, 'rct-ohlc-point-tick'));
         this.add(this._bar = new LineElement(doc));
+        this.add(this._back = new RectElement(doc, 'rct-ohlc-point-back'));
+
+        Dom.setImportantStyle(this._back.dom.style, 'fill', 'transparent'); // for hit testing
     }
 }
 
@@ -120,7 +131,7 @@ export class OhlcSeriesView extends SeriesView<OhlcSeries> {
             const wUnit = xAxis.getUnitLength(width, i);
             const wPoint = series.getPointWidth(wUnit);
             const p = box.point;
-            const x = p.xPos = xAxis.getPosition(width, p.xValue) - wPoint / 2;
+            const x = (p.xPos = xAxis.getPosition(width, p.xValue)) - wPoint / 2;
             const y = p.yPos = yOrg - yAxis.getPosition(height, p.yValue) * vr;
             const w = wPoint;
             const h = Math.abs(yOrg - yAxis.getPosition(height, p.lowValue) - y) * vr;

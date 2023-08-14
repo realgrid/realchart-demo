@@ -749,7 +749,7 @@ export class PlottingItemCollection  {
         
         this._visibleSeries = this._series.filter(ser => ser.visible);
         this._visibleSeries.forEach((ser, i, arr) => {
-            ser.color = colors[i++ % colors.length];
+            ser.color = ser.color || colors[i++ % colors.length];
             ser._single = arr.length === 1;
         });
 

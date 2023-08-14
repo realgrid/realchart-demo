@@ -219,19 +219,19 @@
     stroke-width: 2px;
 }
 .rct-boxplot-point-min {
-    stroke: gray;
+    stroke: #333;
     stroke-width: 2;
 }
 .rct-boxplot-point-mid {
-    stroke: gray;
+    stroke: #333;
     stroke-width: 2;
 }
 .rct-boxplot-point-max {
-    stroke: gray;
+    stroke: #333;
     stroke-width: 2;
 }
 .rct-boxplot-point-stem {
-    stroke: gray;
+    stroke: #333;
     stroke-dasharray: 2;
 }
 .rct-boxplot-point[data-focus] .rct-boxplot-point-stem {
@@ -264,19 +264,16 @@
 }
 
 /** ohlc series */
-.rct-ohlc-series {
+.rct-ohlc-point {
     stroke-width: 1;
 }
-.rct-ohlc-series-back {
-    fill: none;
-}
-.rct-ohlc-series-tick {
+.rct-ohlc-point-tick {
     stroke: #003;
 }
-.rct-ohlc-series-bar {
+.rct-ohlc-point-bar {
     stroke: #800;
 }
-.rct-ohlc-series-bar-fall {
+.rct-ohlc-point-bar-fall {
     stroke: #008;
 }
 

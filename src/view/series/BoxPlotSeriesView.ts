@@ -47,6 +47,8 @@ class BoxView extends GroupElement implements IPointView {
         const h = this.height;
         const len = p.yValue - p.minValue;
 
+        this._box.setStyle('fill', p.color);
+
         if (inverted) {
             let x = 0;
             const y = h / 2;

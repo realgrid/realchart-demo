@@ -36,7 +36,7 @@ class BarElement extends GroupElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc);
+        super(doc, SeriesView.POINT_STYLE + ' rct-equalizer-point');
     }
 
     //-------------------------------------------------------------------------
@@ -220,6 +220,7 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
             const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
+            const h = yVal - yBase;
             let x: number;
             let y: number;
 
@@ -231,15 +232,18 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
                 y = org;
             }
 
-            bar.wPoint = wPoint;
-            bar.hPoint = yVal - yBase;
-
             if (inverted) {
-                y += series.getPointPos(wUnit) + wPoint / 2;
+                p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+                p.xPos = x += yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
+                x -= h;
             } else {
-                x += series.getPointPos(wUnit) + wPoint / 2;
+                p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
+                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
+                y += h; 
             }
 
+            bar.wPoint = wPoint;
+            bar.hPoint = h * vr;
             bar.layout(this._pts, x, y, inverted);
 
             // label

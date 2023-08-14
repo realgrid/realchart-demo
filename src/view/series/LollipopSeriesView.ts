@@ -41,8 +41,8 @@ class BarElement extends GroupElement implements IPointView {
     // methods
     //-------------------------------------------------------------------------
     layout(inverted: boolean): void {
-        this._line.setVLineC(this.width / 2, 0, this.height);
-        this._marker.renderShape(this.point.shape, this.width / 2, 0, this.point.radius);
+        this._line.setVLineC(0, 0, this.height);
+        this._marker.renderShape(this.point.shape, 0, 0, this.point.radius);
     }
 }
 
@@ -144,29 +144,29 @@ export class LollipopSeriesView extends SeriesView<LollipopSeries> {
             let y: number;
 
             if (inverted) {
-                y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
+                y = xLen - xAxis.getPosition(xLen, i);
                 x = org;
             } else {
-                x = xAxis.getPosition(xLen, i) - wUnit / 2;
+                x = xAxis.getPosition(xLen, i);
                 y = org;
             }
 
             if (inverted) {
-                y += series.getPointPos(wUnit);
-                x += yAxis.getPosition(yLen, p.yGroup);
+                p.yPos = y += series.getPointPos(wUnit) - wPoint / 2;
+                p.xPos = x += yAxis.getPosition(yLen, p.yGroup);
             } else {
-                x += series.getPointPos(wUnit);;
-                y -= yAxis.getPosition(yLen, p.yGroup);
+                p.xPos = x += series.getPointPos(wUnit) - wPoint / 2;
+                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup);
             }
 
-            bar.setBounds(x, y, wPoint, hPoint);
+            bar.setBounds(x, y, 1, hPoint);
             bar.layout(inverted);
 
             // label
             if (labelInfo && (labelView = labelViews.get(p, 0))) {
                 labelInfo.labelView = labelView;
                 labelInfo.bar = bar;
-                labelInfo.x = x + wPoint / 2;
+                labelInfo.x = x;
                 labelInfo.y = y;
                 this.$_layoutLabel(labelInfo);
             }
