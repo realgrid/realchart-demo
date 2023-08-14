@@ -1,7 +1,6 @@
 const config = {
     type: 'boxplot',
     options: {
-        // inverted: true,
     },
     title: "Multiple BoxPlot",
     xAxis: {
@@ -12,7 +11,7 @@ const config = {
     series: [{
         pointLabel: true,
         data: [
-            [560, 651, 748, 895, 965],
+            [60, 101, 748, 895, 965],
             [533, 753, 939, 980, 1080],
             [514, 662, 817, 870, 918],
             [624, 802, 816, 871, 950],
@@ -22,7 +21,7 @@ const config = {
         color: 'green',
         pointLabel: true,
         data: [
-            [460, 651, 748, 895, 965],
+            [60, 651, 748, 895, 965],
             [633, 753, 939, 980, 1080],
             [554, 662, 817, 870, 918],
             [724, 802, 816, 871, 950],
@@ -40,6 +39,10 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'Inverted', function (e) {
+        config.options.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
 }
 
 export function init() {

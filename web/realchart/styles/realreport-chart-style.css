@@ -293,12 +293,9 @@
 }
 
 /** errobar series */
-.rct-errorbar-series {
+.rct-errorbar-point {
     stroke: #008;
-}
-.rct-errorbar-back {
-    fill: none;
-    stroke: none;
+    stroke-width: 2px;
 }
 
 /** lollipop series */

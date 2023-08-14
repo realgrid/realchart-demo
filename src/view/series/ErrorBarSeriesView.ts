@@ -32,12 +32,11 @@ class BarElement extends GroupElement implements IPointView {
     // constructors
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc);
+        super(doc, SeriesView.POINT_STYLE + ' rct-errorbar-point');
 
-        this.add(this._back = new RectElement(doc, 'rct-errorbar-back'));
-        this.add(this._stem = new LineElement(doc, 'rct-errorbar-stem'));
-        this.add(this._whiskerUp = new LineElement(doc, 'rct-errorbar-whisker dlchart-errorBar-series-whisker-up'));
-        this.add(this._whiskerDown = new LineElement(doc, 'rct-errorbar-whisker dlchart-errorBar-series-whisker-down'));
+        this.add(this._stem = new LineElement(doc));
+        this.add(this._whiskerUp = new LineElement(doc));
+        this.add(this._whiskerDown = new LineElement(doc));
     }
 
     //-------------------------------------------------------------------------
@@ -48,7 +47,6 @@ class BarElement extends GroupElement implements IPointView {
         const h = this.height;
         const x = w / 2;
 
-        this._back.setBounds(0, 0, w, h);
         this._stem.setVLine(x, 0, h);
         this._whiskerUp.setHLine(0, 0, w);
         this._whiskerDown.setHLine(h, 0, w);
@@ -127,11 +125,11 @@ export class ErrorBarSeriesView extends SeriesView<ErrorBarSeries> {
             let y: number;
 
             if (inverted) {
-                y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
-                x = org + yVal * vr;
+                y = (p.yPos = xLen - xAxis.getPosition(xLen, i)) - wUnit / 2;
+                x = p.xPos = org + yVal * vr;
             } else {
-                x = xAxis.getPosition(xLen, i) - wPoint / 2;
-                y = org - yVal * vr;
+                x = (p.xPos = xAxis.getPosition(xLen, i)) - wPoint / 2;
+                y = p.yPos = org - yVal * vr;
             }
 
             bar.setBounds(x, y, wPoint, hPoint);

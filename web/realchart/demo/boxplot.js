@@ -1,4 +1,5 @@
 const config = {
+    options: {},
     title: "BoxPlot",
     xAxis: {
         categories: ['쓰리엠', '아디다스', '디즈니', 'Amazon', '이마트'],
@@ -27,6 +28,10 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'Inverted', function (e) {
+        config.options.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
 }
 
 export function init() {

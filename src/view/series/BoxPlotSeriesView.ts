@@ -53,12 +53,12 @@ class BoxView extends GroupElement implements IPointView {
             const xLow = x + w * (p.lowValue - p.minValue) / len;
             const xHigh = x + w * (p.highValue - p.minValue) / len;
 
-            this._stemUp.setHLine(y, x, xHigh);
+            this._stemUp.setHLine(y, x + w, xHigh);
             this._stemDown.setHLine(y, x, xLow);
-            this._min.setVLine(x, w / 4, w * 3 / 4);
-            this._max.setVLine(x + h, w / 4, w * 3 / 4);
+            this._min.setVLine(x, y - h / 4, y + h / 4);
+            this._max.setVLine(x + w, y - h / 4, y + h / 4);
             this._box.setBounds(xLow, 0, w * (p.highValue - p.lowValue) / len, h);
-            this._mid.setVLine(x + h - h * (p.midValue - p.minValue) / len, 0, w);
+            this._mid.setVLine(x + w * (p.midValue - p.minValue) / len, 0, h);
         } else {
             const x = w / 2;;
             let y = 0;
@@ -165,11 +165,11 @@ export class BoxPlotSeriesView extends SeriesView<BoxPlotSeries> {
             }
 
             if (inverted) {
-                p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+                p.yPos = y += series.getPointPos(wUnit);
                 p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
                 x -= hPoint;
             } else {
-                p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
+                p.xPos = x += series.getPointPos(wUnit);
                 p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
             }
 
@@ -187,7 +187,7 @@ export class BoxPlotSeriesView extends SeriesView<BoxPlotSeries> {
                 if (view = labelViews.get(p, 1)) {
                     r = view.getBBounds();
                     if (inverted) {
-                        view.translate(x + hPoint + labelOff, y - (wPoint - r.height) / 2);
+                        view.translate(x + hPoint + labelOff, y + (wPoint - r.height) / 2);
                     } else {
                         view.translate(x + (wPoint - r.width) / 2, y - r.height - labelOff);
                     }
@@ -195,7 +195,7 @@ export class BoxPlotSeriesView extends SeriesView<BoxPlotSeries> {
                 if (view = labelViews.get(p, 0)) {
                     r = view.getBBounds();
                     if (inverted) {
-                        view.translate(x - r.width - labelOff, y - (wPoint - r.height) / 2);
+                        view.translate(x - r.width - labelOff, y + (wPoint - r.height) / 2);
                     } else {
                         view.translate(x + (wPoint - r.width) / 2, y + hPoint + labelOff);
                     }
