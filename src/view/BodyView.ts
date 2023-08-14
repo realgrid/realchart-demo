@@ -618,7 +618,7 @@ export class BodyView extends ChartElement<Body> {
             }
         });
 
-        if (target instanceof SVGElement && target.classList.contains(SeriesView.POINT_STYLE)) {
+        if (target instanceof SVGElement && (target.classList.contains(SeriesView.POINT_STYLE) || target.parentElement instanceof SVGElement && target.parentElement.classList.contains(SeriesView.POINT_STYLE))) {
             for (let i = this._seriesViews.length - 1; i >= 0; i--) {
                 const p = this._seriesViews[i].pointByDom(target) as IPointView;
 

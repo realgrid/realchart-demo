@@ -36,7 +36,8 @@ type LabelInfo = {
     labelView: PointLabelView,
     bar: BarElement,
     x: number,
-    y: number
+    y: number,
+    below: boolean
 };
 
 export class BarSeriesView extends SeriesView<BarSeries> {
@@ -128,7 +129,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
-        const yLen = (inverted ? width : height) * vr;
+        const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
         const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.baseValue : 0);
         const org = inverted ? 0 : height;;
@@ -144,6 +145,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
             const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
+            const h = yVal - yBase;
             let x: number;
             let y: number;
 
@@ -155,19 +157,18 @@ export class BarSeriesView extends SeriesView<BarSeries> {
                 y = org;
             }
 
-            bar.wPoint = wPoint;
-            bar.hPoint = yVal - yBase;
-
             if (inverted) {
                 p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
                 p.xPos = x += yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
-                x -= bar.hPoint;
+                x -= h;
             } else {
                 p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
                 p.yPos = y -= yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
-                y += bar.hPoint; 
+                y += h; 
             }
 
+            bar.wPoint = wPoint;
+            bar.hPoint = h * vr;
             bar.render(x, y, inverted);
 
             // label
@@ -175,6 +176,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
                 labelInfo.bar = bar;
                 labelInfo.x = x;
                 labelInfo.y = y;
+                labelInfo.below = p.yValue < (yAxis as LinearAxis).baseValue;
                 this.$_layoutLabel(labelInfo);
             }
         })
@@ -202,9 +204,17 @@ export class BarSeriesView extends SeriesView<BarSeries> {
 
             case PointItemPosition.HEAD:
                 if (info.inverted) {
-                    x += bar.hPoint - r.width - labelOff;
+                    if (info.below) {
+                        x += bar.hPoint + r.width - labelOff;
+                    } else {
+                        x += bar.hPoint - r.width - labelOff;
+                    }
                 } else {
-                    y -= bar.hPoint - labelOff;
+                    if (info.below) {
+                        y -= bar.hPoint + r.height + labelOff;
+                    } else {
+                        y -= bar.hPoint - labelOff;
+                    }
                 }
                 break;
 
@@ -214,9 +224,17 @@ export class BarSeriesView extends SeriesView<BarSeries> {
             case PointItemPosition.OUTSIDE:
             default:
                 if (info.inverted) {
-                    x += bar.hPoint + labelOff;
+                    if (info.below) {
+                        x += bar.hPoint - r.width - labelOff;
+                    } else {
+                        x += bar.hPoint + labelOff;
+                    }
                 } else {
-                    y -= bar.hPoint + r.height + labelOff;
+                    if (info.below) {
+                        y -= bar.hPoint - r.height + labelOff;
+                    } else {
+                        y -= bar.hPoint + r.height + labelOff;
+                    }
                 }
                 inner = false;
                 break;

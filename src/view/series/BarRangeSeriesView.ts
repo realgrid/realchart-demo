@@ -99,11 +99,13 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
             bar.hPoint = hPoint;
 
             if (inverted) {
-                y += series.getPointPos(wUnit) + wPoint / 2;
-                x += yAxis.getPosition(yLen, p.yGroup) * vr - hPoint;
+                p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+                p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
+                x -= hPoint;
             } else {
-                x += series.getPointPos(wUnit) + wPoint / 2;
-                y -= yAxis.getPosition(yLen, p.yGroup) * vr - hPoint;
+                p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
+                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
+                y += hPoint;
             }
 
             bar.render(x, y, inverted);

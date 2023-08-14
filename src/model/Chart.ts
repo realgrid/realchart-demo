@@ -88,7 +88,7 @@ const series_types = {
     'bar': BarSeries,
     'column': ColumnSeries,
     'barrange': BarRangeSeries,
-    'columnRange': ColumnRangeSeries,
+    'columnrange': ColumnRangeSeries,
     'bellcurve': BellCurveSeries,
     'boxplot': BoxPlotSeries,
     'bubble': BubbleSeries,
