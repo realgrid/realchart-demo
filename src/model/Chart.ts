@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcObject } from "../common/RcObject";
+import { RcObject, RcEventProvider } from "../common/RcObject";
 import { SectionDir, isNull } from "../common/Types";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
@@ -168,7 +168,11 @@ export class ChartOptions extends ChartItem {
     //-------------------------------------------------------------------------
 }
 
-export class Chart extends RcObject implements IChart {
+export interface IChartEventListener {
+    onVisibleChanged?(chart: Chart, item: ChartItem): void;
+}
+
+export class Chart extends RcEventProvider<IChartEventListener> implements IChart {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -459,6 +463,7 @@ export class Chart extends RcObject implements IChart {
     }
 
     _visibleChanged(item: ChartItem): void {
+        this._fireEvent('onVisibleChanged', item);
     }
 
     _modelChanged(item: ChartItem): void {

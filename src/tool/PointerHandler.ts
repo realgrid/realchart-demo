@@ -38,6 +38,12 @@ export class ChartPointerHandler implements IPointerHandler {
     }
 
     handleClick(ev: PointerEvent): void {
+        const chart = this._chart.chartView();
+        const legend = chart.legendByDom(ev.target as Element);
+
+        if (legend) {
+            legend.source.visible = !legend.source.visible;
+        }
     }
 
     handleDblClick(ev: PointerEvent): void {

@@ -105,7 +105,7 @@ export abstract class RcObject {
     }
 }
 
-export abstract class RtWrappableObject extends RcObject {
+export abstract class RcWrappableObject extends RcObject {
 
     //-------------------------------------------------------------------------
     // fields
@@ -143,7 +143,7 @@ export abstract class RtWrappableObject extends RcObject {
     }
 }
 
-export abstract class RtWrapper<T extends RtWrappableObject>  extends RcObject {
+export abstract class RcWrapper<T extends RcWrappableObject>  extends RcObject {
 
     //-------------------------------------------------------------------------
     // fields
@@ -162,7 +162,7 @@ export abstract class RtWrapper<T extends RtWrappableObject>  extends RcObject {
     //-------------------------------------------------------------------------
 }
 
-export abstract class RtEventProvider<T> extends RcObject {
+export abstract class RcEventProvider<T> extends RcObject {
 
     //-------------------------------------------------------------------------
     // fields
@@ -220,5 +220,5 @@ export interface IEventArgs {
  * <br>
  * 여러 값이 포함된 단일 매개변수로 호출된다.
  */
-export type RtEventHandler<T extends IEventArgs> = (args?: T) => void;
-export type RtSimpleEventhandler = (arg: any) => void;
+export type RcEventHandler<T extends IEventArgs> = (args?: T) => void;
+export type RcSimpleEventhandler = (arg: any) => void;

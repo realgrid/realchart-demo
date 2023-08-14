@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcObject, RtWrappableObject, RtWrapper } from "./RcObject";
+import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
 import { Path, SVGStyleOrClass, _undefined, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
@@ -36,7 +36,7 @@ export interface IPointerHandler {
  *
  * Control base.
  */
-export abstract class RcControl extends RtWrappableObject {
+export abstract class RcControl extends RcWrappableObject {
 
     //-------------------------------------------------------------------------
     // consts
@@ -464,7 +464,8 @@ export abstract class RcControl extends RtWrappableObject {
         return event;
     }
 
-    private _clickHandler = (event: PointerEvent) => {
+    private _clickHandler = (ev: PointerEvent) => {
+        this._pointerHandler && this._pointerHandler.handleClick(this.toOffset(ev));
     }
 
     private _dblClickHandler = (event: PointerEvent) => {
@@ -496,7 +497,7 @@ export abstract class RcControl extends RtWrappableObject {
     }
 }
 
-export type RtControlOrWrapper = RcControl | RtWrapper<RcControl>;
+export type RtControlOrWrapper = RcControl | RcWrapper<RcControl>;
 
 /**
  * @internal

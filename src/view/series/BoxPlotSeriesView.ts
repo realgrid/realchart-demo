@@ -6,13 +6,13 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
+import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { BoxPlotSeries, BoxPlotSeriesPoint } from "../../model/series/BoxPlotSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
@@ -41,22 +41,37 @@ class BoxView extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    layout(): void {
+    layout(inverted: boolean): void {
         const p = this.point;
         const w = this.width;
         const h = this.height;
         const len = p.yValue - p.minValue;
-        const x = w / 2;// p.width / 2;
-        let y = 0;
-        const yLow = y + h - h * (p.lowValue - p.minValue) / len;
-        const yHigh = y + h - h * (p.highValue - p.minValue) / len;
 
-        this._stemUp.setVLine(x, y, yHigh);
-        this._stemDown.setVLine(x, yLow, h);
-        this._min.setHLine(y, w / 4, w * 3 / 4);
-        this._max.setHLine(y + h, w / 4, w * 3 / 4);
-        this._box.setBounds(0, yHigh, w, h * (p.highValue - p.lowValue) / len);
-        this._mid.setHLine(y + h - h * (p.midValue - p.minValue) / len, 0, w);
+        if (inverted) {
+            let x = 0;
+            const y = h / 2;
+            const xLow = x + w * (p.lowValue - p.minValue) / len;
+            const xHigh = x + w * (p.highValue - p.minValue) / len;
+
+            this._stemUp.setHLine(y, x, xHigh);
+            this._stemDown.setHLine(y, x, xLow);
+            this._min.setVLine(x, w / 4, w * 3 / 4);
+            this._max.setVLine(x + h, w / 4, w * 3 / 4);
+            this._box.setBounds(xLow, 0, w * (p.highValue - p.lowValue) / len, h);
+            this._mid.setVLine(x + h - h * (p.midValue - p.minValue) / len, 0, w);
+        } else {
+            const x = w / 2;;
+            let y = 0;
+            const yLow = y + h - h * (p.lowValue - p.minValue) / len;
+            const yHigh = y + h - h * (p.highValue - p.minValue) / len;
+
+            this._stemUp.setVLine(x, y, yHigh);
+            this._stemDown.setVLine(x, yLow, h);
+            this._min.setHLine(y, w / 4, w * 3 / 4);
+            this._max.setHLine(y + h, w / 4, w * 3 / 4);
+            this._box.setBounds(0, yHigh, w, h * (p.highValue - p.lowValue) / len);
+            this._mid.setHLine(y + h - h * (p.midValue - p.minValue) / len, 0, w);
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -120,25 +135,50 @@ export class BoxPlotSeriesView extends SeriesView<BoxPlotSeries> {
 
     private $_layoutBoxes(width: number, height: number): void {
         const series = this.model;
+        const inverted = series.chart.isInverted();
         const vr = this._getViewRate();
         const labels = series.pointLabel;
         const labelOff = labels.offset;
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
-        const yOrg = this.height;
+        const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
+        const yLen = inverted ? width : height;
+        const xLen = inverted ? height : width;
+        const org = inverted ? 0 : height;;
 
         this._boxes.forEach((box, i) => {
             const p = box.point;
-            const wUnit = xAxis.getUnitLength(width, i);
+            const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
-            const x = p.xPos = xAxis.getPosition(this.width, p.xValue) - wPoint / 2;
-            const y = p.yPos = yOrg - yAxis.getPosition(this.height, p.yValue) * vr;
-            const w = wPoint;
-            const h = Math.abs(yAxis.getPosition(height, p.minValue) - y) * vr;
+            const yVal = yAxis.getPosition(yLen, p.yValue);
+            const hPoint = Math.abs(yAxis.getPosition(yLen, p.minValue) - yVal) * vr;
+            let x: number;
+            let y: number;
 
-            box.setBounds(x, y, w, h);
-            box.layout();
+            if (inverted) {
+                y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
+                x = org;
+            } else {
+                x = xAxis.getPosition(xLen, i) - wUnit / 2;
+                y = org;
+            }
+
+            if (inverted) {
+                p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+                p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
+                x -= hPoint;
+            } else {
+                p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
+                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
+            }
+
+            if (inverted) {
+                box.setBounds(x, y, hPoint, wPoint);
+            } else {
+                box.setBounds(x, y, wPoint, hPoint);
+            }
+            box.layout(inverted);
 
             if (labelViews) {
                 let view: PointLabelView;
@@ -146,11 +186,19 @@ export class BoxPlotSeriesView extends SeriesView<BoxPlotSeries> {
 
                 if (view = labelViews.get(p, 1)) {
                     r = view.getBBounds();
-                    view.translate(x + (w - r.width) / 2, y - r.height - labelOff);
+                    if (inverted) {
+                        view.translate(x + hPoint + labelOff, y - (wPoint - r.height) / 2);
+                    } else {
+                        view.translate(x + (wPoint - r.width) / 2, y - r.height - labelOff);
+                    }
                 }
                 if (view = labelViews.get(p, 0)) {
                     r = view.getBBounds();
-                    view.translate(x + (w - r.width) / 2, y + h + labelOff);
+                    if (inverted) {
+                        view.translate(x - r.width - labelOff, y - (wPoint - r.height) / 2);
+                    } else {
+                        view.translate(x + (wPoint - r.width) / 2, y + hPoint + labelOff);
+                    }
                 }
             }
         })

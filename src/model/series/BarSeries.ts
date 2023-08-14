@@ -212,20 +212,14 @@ export class ColumnSeriesGroup extends SeriesGroup<ColumnSeries> implements IClu
 
     protected _doPrepareSeries(series: ColumnSeries[]): void {
         if (this.layout === SeriesGroupLayout.DEFAULT) {
-            const cnt = series.length;
-
-            if (cnt > 1) {
-                const sum = series.map(ser => ser.pointWidth).reduce((a, c) => a + c);
-                let x = 0;
-                
-                series.forEach(ser => {
-                    ser._childWidth = ser.pointWidth / sum;
-                    ser._childPos = x;
-                    x += ser._childWidth;
-                });
-            } else if (cnt === 1) {
-                series[0]._childWidth = 1;
-            }
+            const sum = series.length > 1 ? series.map(ser => ser.pointWidth).reduce((a, c) => a + c) : series[0].pointWidth;
+            let x = 0;
+            
+            series.forEach(ser => {
+                ser._childWidth = ser.pointWidth / sum;
+                ser._childPos = x;
+                x += ser._childWidth;
+            });
         } else if (this.layout === SeriesGroupLayout.STACK) {
         }
     }

@@ -15,8 +15,10 @@ import { Align, HORZ_SECTIONS, SectionDir, VERT_SECTIONS } from "../common/Types
 import { GroupElement } from "../common/impl/GroupElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
+import { IChartEventListener } from "../model/Chart";
+import { ChartItem } from "../model/ChartItem";
 import { DataPoint } from "../model/DataPoint";
-import { LegendPosition } from "../model/Legend";
+import { LegendItem, LegendPosition } from "../model/Legend";
 import { ISeries, Series } from "../model/Series";
 import { Subtitle } from "../model/Title";
 import { AxisView } from "./AxisView";
@@ -157,8 +159,11 @@ class LegendSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _legendView: LegendView;
+    _legendView: LegendView;
 
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -584,6 +589,10 @@ export class ChartView extends RcElement {
 
     hideTooltip(): void {
         this._tooltipView.hide(false, true);
+    }
+
+    legendByDom(dom: Element): LegendItem {
+        return this._legendSectionView._legendView.legendByDom(dom);
     }
 
     //-------------------------------------------------------------------------

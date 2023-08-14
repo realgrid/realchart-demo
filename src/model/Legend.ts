@@ -6,11 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { Sides } from "../common/Sides";
-import { Align, SVGStyleOrClass, VerticalAlign } from "../common/Types";
+import { SVGStyleOrClass } from "../common/Types";
 import { ChartItem } from "./ChartItem";
 
 export interface ILegendSource {
+    visible: boolean;
+    
     legendColor(): string;
     legendLabel(): string;
     legendVisible(): boolean;

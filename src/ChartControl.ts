@@ -8,11 +8,13 @@
 
 import { RcControl } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
-import { Chart } from "./model/Chart";
+import { Chart, IChartEventListener } from "./model/Chart";
+import { ChartItem } from "./model/ChartItem";
+import { Series } from "./model/Series";
 import { ChartPointerHandler } from "./tool/PointerHandler";
 import { ChartView } from "./view/ChartView";
 
-export class ChartControl extends RcControl {
+export class ChartControl extends RcControl implements IChartEventListener {
 
     //-------------------------------------------------------------------------
     // consts
@@ -35,6 +37,15 @@ export class ChartControl extends RcControl {
     }
 
     //-------------------------------------------------------------------------
+    // IChartEventListener
+    //-------------------------------------------------------------------------
+    onVisibleChanged(chart: Chart, item: ChartItem): void {
+        if (item instanceof Series) {
+            this.invalidateLayout();
+        }
+    }
+
+    //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     /**
@@ -45,7 +56,9 @@ export class ChartControl extends RcControl {
     }
     set model(value: Chart) {
         if (value !== this._model) {
+            this._model && this._model.removeListener(this);
             this._model = value;
+            this._model && this._model.addListener(this);
             this.invalidateLayout();
         }
     }

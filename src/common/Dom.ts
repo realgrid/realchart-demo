@@ -303,7 +303,7 @@ export class Dom {
 		return document.createElement('a').appendChild(document.createTextNode(text)).parentNode["innerHTML"];
     }
 
-    static setData(elt: HTMLElement | SVGSVGElement, name: string, value: any): void {
+    static setData(elt: HTMLElement | SVGElement, name: string, value: any): void {
         if (value == null || value === '') {
             delete elt.dataset[name];
         } else {
@@ -311,7 +311,7 @@ export class Dom {
         }
     }
 
-    static toggleData(elt: HTMLElement | SVGSVGElement, name: string, value: boolean): void {
+    static toggleData(elt: HTMLElement | SVGElement, name: string, value: boolean): void {
         if (value) {
             elt.dataset[name] = '1';
         } else {

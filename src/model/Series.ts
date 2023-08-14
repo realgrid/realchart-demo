@@ -664,7 +664,8 @@ export class PlottingItemCollection  {
     }
 
     isEmpty(): boolean {
-        return !this._visibles.find(item => !item.isEmpty());
+        return !this._items.find(item => !item.isEmpty());
+        // return !this._visibles.find(item => !item.isEmpty());
     }
 
     items(): IPlottingItem[] {
@@ -948,7 +949,8 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     isEmpty(): boolean {
-        return this._visibles.length < 1;
+        return this._series.length < 1;
+        // return this._visibles.length < 1;
     }
 
     canCategorized(): boolean {
@@ -968,7 +970,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     // Axis에서 요청한다.
     collectValues(axis: IAxis): number[] {
-        if (this.isEmpty()) {
+        if (this._visibles.length < 1) {
             return [];
         } else if (axis === this._visibles[0]._yAxisObj) {
             switch (this.layout) {
@@ -1001,7 +1003,8 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     getLegendSources(list: ILegendSource[]) {
-        list.push(...this._visibles);
+        // list.push(...this._visibles);
+        list.push(...this._series);
     }
 
     //-------------------------------------------------------------------------

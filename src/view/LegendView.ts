@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "../common/Common";
+import { Dom } from "../common/Dom";
 import { ElementPool } from "../common/ElementPool";
 import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
@@ -44,6 +45,9 @@ export class LegendItemView extends ChartElement<LegendItem> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: LegendItem, intWidth: number, hintHeight: number, phase: number): ISize {
+        Dom.setData(this._label.dom, 'hidden', model.source.visible ? '' : 1);
+        Dom.setData(this._marker.dom, 'hidden', model.source.visible ? '' : 1);
+
         this._label.text = model.text();
 
         const sz = toSize(this._label.getBBounds());
@@ -71,6 +75,11 @@ export class LegendView extends BoundableElement<Legend> {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-legend', 'rct-legend-background');
+    }
+
+    legendByDom(dom: Element): LegendItem {
+        const v = this._itemViews.elementOf(dom);
+        return v && v.model;
     }
 
     //-------------------------------------------------------------------------

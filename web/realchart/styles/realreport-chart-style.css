@@ -86,8 +86,14 @@
 .rct-legend-item {
     fill: #333;
 }
+.rct-legend-item-label[data-hidden] {
+    fill: #aaa;
+}
 .rct-legend-item-marker {
     stroke: none;
+}
+.rct-legend-item-marker[data-hidden] {
+    fill: #aaa !important;
 }
 
 /** axis */

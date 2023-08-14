@@ -354,16 +354,18 @@ export abstract class ContinuousAxis extends Axis {
             max = Math.max(max, steps[steps.length - 1])
         );
 
-        if (this._runBreaks) {
-            steps = this.$_getBrokenSteps(this._runBreaks, length, min, max);
-        }
-
-        for (let i = 0; i < steps.length; i++) {
-            ticks.push({
-                pos: this.getStepPosition(length, steps[i]),
-                value: steps[i],
-                label: this.tick.getTick(steps[i]) || String(steps[i])
-            });
+        if (min !== max) {
+            if (this._runBreaks) {
+                steps = this.$_getBrokenSteps(this._runBreaks, length, min, max);
+            }
+    
+            for (let i = 0; i < steps.length; i++) {
+                ticks.push({
+                    pos: this.getStepPosition(length, steps[i]),
+                    value: steps[i],
+                    label: this.tick.getTick(steps[i]) || String(steps[i])
+                });
+            }
         }
         return ticks;
     }
