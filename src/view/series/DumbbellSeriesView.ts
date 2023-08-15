@@ -10,7 +10,6 @@ import { ElementPool } from "../../common/ElementPool";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
-import { TextAnchor } from "../../common/impl/TextElement";
 import { PointItemPosition } from "../../model/Series";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { LinearAxis } from "../../model/axis/LinearAxis";
@@ -18,7 +17,7 @@ import { DumbbellSeries, DumbbellSeriesPoint } from "../../model/series/Dumbbell
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class BarElement extends GroupElement {
+class BarElement extends GroupElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -33,20 +32,29 @@ class BarElement extends GroupElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc);
+        super(doc, SeriesView.POINT_STYLE + ' rct-dumbbell-point');
 
         this.add(this._line = new LineElement(doc));
-        this.add(this._hmarker = new PathElement(doc, 'rct-Dumbbell-series-marker'));
-        this.add(this._lmarker = new PathElement(doc, 'rct-Dumbbell-series-marker'));
+        this.add(this._hmarker = new PathElement(doc, 'rct-dumbbell-point-marker'));
+        this.add(this._lmarker = new PathElement(doc, 'rct-dumbbell-point-marker'));
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    layout(inverted: boolean): void {
-        this._line.setVLineC(this.width / 2, 0, this.height);
-        this._hmarker.renderShape(this.point.shape, this.width / 2, 0, this.point.radius);
-        this._lmarker.renderShape(this.point.shape, this.width / 2, this.height, this.point.radius);
+    layout(inverted: boolean): BarElement {
+        const h = this.point.hPoint;
+
+        if (inverted) {
+            this._line.setHLineC(0, 0, h);
+            this._hmarker.renderShape(this.point.shape, 0, 0, this.point.radius);
+            this._lmarker.renderShape(this.point.shape, h, 0, this.point.radius);
+        } else {
+            this._line.setVLineC(0, 0, h);
+            this._hmarker.renderShape(this.point.shape, 0, 0, this.point.radius);
+            this._lmarker.renderShape(this.point.shape, 0, h, this.point.radius);
+        }
+        return this;
     }
 }
 
@@ -149,44 +157,45 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
             let y: number;
 
             if (inverted) {
-                y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
+                y = xLen - xAxis.getPosition(xLen, i);
                 x = org;
             } else {
-                x = xAxis.getPosition(xLen, i) - wUnit / 2;
+                x = xAxis.getPosition(xLen, i);
                 y = org;
             }
 
             if (inverted) {
-                y += series.getPointPos(wUnit);
-                x += yAxis.getPosition(yLen, p.yGroup) * vr;
+                p.yPos = y += series.getPointPos(wUnit) - wPoint / 2;
+                p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
+                x -= hPoint;
             } else {
-                x += series.getPointPos(wUnit);
-                y -= yAxis.getPosition(yLen, p.yGroup) * vr;
+                p.xPos = x += series.getPointPos(wUnit) - wPoint / 2;
+                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
             }
 
-            bar.setBounds(x, y, wPoint, hPoint);
-            bar.layout(inverted);
+            p.hPoint = hPoint;
+            bar.layout(inverted).translate(x, y);
 
             // labels
             if (labelViews) {
+                // high
                 if (labelView = labelViews.get(p, 1)) {
                     const r = labelView.getBBounds();
 
                     if (inverted) {
-                        labelView.translate(x + hPoint + labelOff, y - r.height / 2);
+                        labelView.translate(x + hPoint + labelOff + p.radius, y - r.height / 2);
                     } else {
-                        x += wPoint / 2 - r.width / 2;
-                        labelView.translate(x, y - r.height - labelOff);
+                        labelView.translate(x - r.width / 2, y - r.height - labelOff - p.radius);
                     }
                 }
+                // low
                 if (labelView = labelViews.get(p, 0)) {
                     const r = labelView.getBBounds();
 
                     if (inverted) {
-                        labelView.translate(x - r.width - labelOff, y - r.height / 2);
+                        labelView.translate(x - r.width - labelOff - p.radius, y - r.height / 2);
                     } else {
-                        x += wPoint / 2 - r.width / 2;
-                        labelView.translate(x, y + hPoint + labelOff);
+                        labelView.translate(x - r.width / 2, y + hPoint + labelOff + p.radius);
                     }
                 }
             }

@@ -14,6 +14,17 @@ let __point_id__ = 0;
 export class DataPoint {
 
     //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    static reverse(pts: DataPoint[]): {xPos: number, yPos: number}[] {
+        const list = [];
+        for (let i = 0; i < pts.length; i++) {
+            list.push({xPos: pts[i].yPos, yPos: pts[pts.length - 1 - i].xPos});
+        }
+        return list;
+    }
+
+    //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     source: any;
@@ -94,6 +105,12 @@ export class DataPoint {
 
     getValueOf = (traget: any, param: string): any => {
         return this[param] || this.source[param];
+    }
+
+    swap(): void {
+        const x = this.xPos;
+        this.xPos = this.yPos;
+        this.yPos = x;
     }
 
     //-------------------------------------------------------------------------

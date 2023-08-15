@@ -296,7 +296,7 @@
 }
 
 /** lollipop series */
-.rct-lollipop-series {
+.rct-lollipop-point {
     stroke: #008;
     stroke-width: 2px;
 }
@@ -306,11 +306,11 @@
 }
 
 /** dumbbell series */
-.rct-dumbbell-series {
+.rct-dumbbell-point {
     stroke: #008;
     stroke-width: 2px;
 }
-.rct-dumbbell-series-marker {
+.rct-dumbbell-point-marker {
     stroke: none;
     fill: #008;
 }

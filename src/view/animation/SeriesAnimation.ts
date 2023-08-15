@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcAnimation } from "../../common/RcAnimation";
+import { ClipElement } from "../../common/RcControl";
 import { pixel } from "../../common/Types";
 import { Series } from "../../model/Series";
 import { SeriesView } from "../SeriesView";
@@ -119,8 +120,13 @@ export class SlideAnimation extends SeriesAnimation {
         };
     }
 
+    private $_clipRect(v: SeriesView<Series>): ClipElement {
+        // plot area 경계에 걸친 point들이 표시되도록 infliate한다.
+        return v.clipRect(-v.width * .1, -v.height * .1, v.width * 1.2, v.height * 1.2);
+    }
+
     private $_left(v: SeriesView<Series>, options: ISlideAnimation): Animation {
-        const cr = v.clipRect(0, -v.height / 2, v.width, v.height * 2);
+        const cr = this.$_clipRect(v);
 
         return cr.dom.firstElementChild.animate([
             { width: '0'},
@@ -129,7 +135,7 @@ export class SlideAnimation extends SeriesAnimation {
     }
 
     private $_top(v: SeriesView<Series>, options: ISlideAnimation): Animation {
-        const cr = v.clipRect(0, 0, v.width, v.height);
+        const cr = this.$_clipRect(v);
 
         return cr.dom.firstElementChild.animate([
             { height: '0'},
@@ -138,7 +144,7 @@ export class SlideAnimation extends SeriesAnimation {
     }
 
     private $_bottom(v: SeriesView<Series>, options: ISlideAnimation): Animation {
-        const cr = v.clipRect(0, 0, v.width, v.height);
+        const cr = this.$_clipRect(v);
 
         return cr.dom.firstElementChild.animate([
             { transform: `translateY(${v.height}px)` },

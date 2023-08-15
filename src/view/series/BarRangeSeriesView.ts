@@ -11,7 +11,7 @@ import { RcElement } from "../../common/RcControl";
 import { DataPoint } from "../../model/DataPoint";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { BarRangeSeries, BarRangeSeriesPoint, ColumnRangeSeries } from "../../model/series/BarRangeSeries";
-import { BarElement, IPointView, PointLabelView, SeriesView } from "../SeriesView";
+import { BarElement, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {

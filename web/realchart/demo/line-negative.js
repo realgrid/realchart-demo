@@ -1,35 +1,20 @@
 const config = {
-    options: {
-        // inverted: true
-    },
-    title: "Dumbbell Series",
+    options: {},
+    title: "Line - Negative",
     xAxis: {
-        grid: true,
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
     yAxis: {
     },
     series: {
-        type: 'dumbbell',
-        pointLabel: {
-            visible: true,
-            // format: '${x}'
-            // text: '<b style="fill:red">${x}</b>'
-        },
+        type: 'line',
         data: [
-            [-13.9, 5.2],
-            [-16.7, 10.6],
-            [-4.7, 11.6],
-            [-4.4, 16.8],
-            [-2.1, 27.2],
-            [5.9, 29.4],
-            [6.5, 29.1],
-            [4.7, 25.4],
-            [4.3, 21.6],
-            [-3.5, 15.1],
-            [-9.8, 12.5],
-            [-11.5, 8.4]
+            ['home', 7], 
+            ['sky', 11], 
+            ['def', 9], 
+            ['곽재식', -3], 
+            ['지리산', 15.3], 
+            ['zzz', 13],
+            ['낙동강', 12.5]
         ]
     }
 }

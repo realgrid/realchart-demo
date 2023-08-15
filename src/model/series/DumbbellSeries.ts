@@ -37,6 +37,7 @@ export class DumbbellSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    hPoint: number;
     radius: number;
     shape: Shape;
 

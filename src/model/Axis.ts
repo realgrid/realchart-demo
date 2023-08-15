@@ -17,11 +17,13 @@ export interface IAxis {
 
     type(): string;
     chart: IChart;
-
+    
     _length: number;
     _isX: boolean;
     _isHorz: boolean;
     _isOpposite: boolean;
+
+    reversed: boolean;
 
     axisMax(): number;
     axisMin(): number;

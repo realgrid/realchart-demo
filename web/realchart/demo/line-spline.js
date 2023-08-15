@@ -1,4 +1,5 @@
 const config = {
+    options: {},
     title: "Line Series - Spline",
     xAxis: {
         type: 'category'
@@ -16,16 +17,28 @@ const config = {
             ['def', 7.5], 
             ['지리산', 15.3], 
             ['zzz', 13],
+            ['ttt', 7],
+            ['taaatt', 9],
             ['백두산', 11],
-            ['낙동강', 12.5]
+            ['낙동강', 2.5]
         ]
     }
 }
 
+let chart;
+
 function setActions(container) {
+    createCheckBox(container, 'Debug', function (e) {
+        RealChart.setDebugging(_getChecked(e));
+        chart.refresh();
+    }, true);
     createButton(container, 'Test', function(e) {
         alert('hello');
-    })
+    });
+    createCheckBox(container, 'Inverted', function (e) {
+        config.options.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
 }
 
 export function init() {
@@ -33,8 +46,6 @@ export function init() {
     // RealChart.setLogging(true);
     RealChart.setDebugging(true);
 
-    const chart = RealChart.createChartControl(document, 'realchart');
-    chart.model = RealChart.loadChart(config);
-
+    chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')
 }

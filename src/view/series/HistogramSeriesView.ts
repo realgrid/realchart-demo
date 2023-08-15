@@ -88,6 +88,8 @@ export class HistogramSeriesView extends SeriesView<HistogramSeries> {
 
             bar.wPoint = Math.max(1, x2 - x1 - 1);
             bar.hPoint = yAxis.getPosition(height, bar.point.yValue) * vr;
+            p.xPos = x;
+            p.yPos = y - bar.hPoint;
             bar.render(x, y);
         })
     }
