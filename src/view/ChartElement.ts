@@ -82,21 +82,6 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
         return this;
     }
 
-    clipRect(x: number, y: number, width: number, height: number, rd = 0): ClipElement {
-        const cr = this.control.clipBounds(x, y, width, height, rd);
-
-        this.setClip(cr);
-        return cr;
-    }
-
-    setClip(cr?: ClipElement | ClipPathElement | string): void {
-        if (cr) {
-            this.setAttr('clip-path', 'url(#' + (cr['id'] || cr) + ')');
-        } else {
-            this.unsetAttr('clip-path');
-        }
-    }
-
     //-------------------------------------------------------------------------
     // internal methods
     //-------------------------------------------------------------------------

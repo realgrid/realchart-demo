@@ -177,7 +177,6 @@
 
 /** line series */
 .rct-line-series-line {
-    fill: none;
     stroke: gray;
 }
 .rct-line-series-marker[data-focus] {

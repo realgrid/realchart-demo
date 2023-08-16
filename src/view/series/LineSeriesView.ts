@@ -6,13 +6,15 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
-import { PathElement, RcElement } from "../../common/RcControl";
+import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Chart } from "../../main";
 import { LineType } from "../../model/ChartTypes";
 import { DataPoint, IPointPos } from "../../model/DataPoint";
+import { ContinuousAxis } from "../../model/axis/LinearAxis";
 import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
@@ -63,7 +65,11 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     //-------------------------------------------------------------------------
     protected _lineContainer: LineContainer;
     private _line: PathElement;
-    private _tester: PathElement;
+    private _needBelow = false;
+    private _lowLine: PathElement;
+    protected _lineClip: ClipElement;
+    protected _upperClip: ClipElement;
+    protected _lowerClip: ClipElement;
     protected _markers: ElementPool<LineMarkerView>;
     protected _polar: any;
 
@@ -75,9 +81,7 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
 
         this.insertFirst(this._lineContainer = new LineContainer(doc, 'rct-line-series-lines'));
         this._lineContainer.add(this._line = new PathElement(doc, 'rct-line-series-line'));
-        this._lineContainer.add(this._tester = new PathElement(doc));
-        this._tester.setStyle('stroke', 'red');
-        this._tester.setStyle('fill', 'none');
+        Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
         this._markers = new ElementPool(this._pointContainer, LineMarkerView);
     }
 
@@ -94,6 +98,7 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
 
     protected _renderSeries(width: number, height: number): void {
         this._lineContainer.invert(this.model.chart.isInverted(), height);
+        this.$_prepareBelow(width, height);
         this._layoutMarkers(this.model._visPoints as LineSeriesPoint[], width, height);
         this._layoutLines(this.model._visPoints as LineSeriesPoint[]);
     }
@@ -116,6 +121,39 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     //-------------------------------------------------------------------------
     protected _markersPerPoint(): number {
         return 1;
+    }
+
+    private $_prepareBelow(w: number, h: number): void {
+        const control = this.control;
+        const series = this.model;
+
+        if (this._needBelow = series.belowStyle && series._minValue < (series._yAxisObj as ContinuousAxis).baseValue) {
+            if (!this._lowLine) {
+                this._lineContainer.insertChild(this._lowLine = new PathElement(this.doc), this._line);
+                Dom.setImportantStyle(this._lowLine.dom.style, 'fill', 'none');
+                this._upperClip = control.clipBounds();
+                this._lowerClip = control.clipBounds();
+            }
+            this._lowLine.setStyleOrClass(series.style);
+            this._lowLine.setStyleOrClass(series.belowStyle);
+            this._line.setClip(this._upperClip);
+            this._lowLine.setClip(this._lowerClip);
+        } else if (this._lowLine) {
+
+        } else {
+
+        }
+    }
+
+    private $_resetClips(w: number, h: number, base: number): void {
+        let clip = this._upperClip;
+
+        if (clip) {
+            clip.setBounds(0, 0, w, base);                
+        }
+        if (clip = this._lowerClip) {
+            clip.setBounds(0, base, w, h - base);                
+        }
     }
 
     private $_prepareMarkers(points: LineSeriesPoint[]): void {
@@ -239,8 +277,16 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
         sb.move(pts[0].xPos, pts[0].yPos);
         this._buildLines(pts, sb, false);
 
-        this._line.setPath(sb.end(this._polar));
+        let s: string;
+
+        this._line.setPath(s = sb.end(this._polar));
         this._line.setStyle('stroke', this.model.color);
+
+        if (this._needBelow) {
+            const axis = this.model._yAxisObj as ContinuousAxis;
+            this.$_resetClips(this.width, this.height, this.height - axis.getPosition(this.height, axis.baseValue));
+            this._lowLine.setPath(s);//this._line.path());
+        }
     }
 
     protected _buildLines(pts: IPointPos[], sb: PathBuilder, reversed: boolean): void {

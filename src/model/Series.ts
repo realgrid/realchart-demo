@@ -108,6 +108,7 @@ export interface IPlottingItem {
     collectValues(axis: IAxis): number[];
     collectCategories(axis: IAxis): string[];
     prepareRender(): void;
+    prepareAfter(): void;
 }
 
 export enum TrendType {
@@ -332,6 +333,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _yAxisObj: IAxis;
     protected _points: DataPointCollection;
     _visPoints: DataPoint[];
+    _minValue: number;
+    _maxValue: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -482,6 +485,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
             p.index = i;
             p.parse(this);
+            p.yGroup = p.yValue;
             return p;
         });
     }
@@ -554,10 +558,12 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             if (!isNaN(val)) {
                 vals.push(p[v] = val);
             }
-        })
+        });
 
-        // DataPoint.xValue가 필요하다.
-        this.trendline.visible && this.trendline.prepareRender();
+        if (a === 'y') {
+            this._minValue = Math.min(...vals);
+            this._maxValue = Math.max(...vals);
+        }
         return vals;
     }
 
@@ -621,6 +627,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 p.color = color || colors[i % colors.length];
             }
         })
+    }
+
+    prepareAfter(): void {
+        // DataPoint.xValue가 필요하다.
+        this.trendline.visible && this.trendline.prepareRender();
     }
 }
 
@@ -754,6 +765,10 @@ export class PlottingItemCollection  {
 
         this._visibles = this._items.filter(item => item.visible);
         this._visibles.forEach(item => item.prepareRender());
+    }
+
+    prepareAfter(): void {
+        this._visibles.forEach(item => item.prepareAfter());
     }
 
     //-------------------------------------------------------------------------
@@ -1039,6 +1054,10 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
             series.forEach(ser => ser.prepareRender());
             this._doPrepareSeries(series);
         }
+    }
+
+    prepareAfter(): void {
+        this._visibles.forEach(ser => ser.prepareAfter());
     }
 
     //-------------------------------------------------------------------------

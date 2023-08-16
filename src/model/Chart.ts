@@ -432,6 +432,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._xAxes.prepareRender();
         this._yAxes.prepareRender();
 
+        // 축이 설정된 후
+        this._series.prepareAfter();
+
         // legend 위치를 결정한다.
         this._legend.prepareRender();
     }

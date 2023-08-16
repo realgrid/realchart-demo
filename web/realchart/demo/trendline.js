@@ -1,29 +1,22 @@
 const config = {
-    options: {},
-    title: "Line - Negative",
+    title: "Trendline",
     xAxis: {
     },
     yAxis: {
     },
     series: {
         type: 'line',
-        style: {
-            strokeWidth: '3px'
+        trendline: {
+            visible: true,
+            type: 'movingAverage',
+            movingAverage: {
+                interval: 4,
+            }
         },
-        belowStyle: {
-            stroke: 'red',
-        },
-        data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['def', 9], 
-            ['곽재식', -3], 
-            ['지리산', 15.3], 
-            ['zzz', 13],
-            ['낙동강', 12.5]
-        ]
+        data: [5, 7, 11, 9, 3, 6, 9, 15, 4, 6, 8, 10, 15, 17, 11, 19, 18]
     }
 }
+
 let chart;
 
 function setActions(container) {
@@ -34,10 +27,6 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createCheckBox(container, 'Inverted', function (e) {
-        config.options.inverted = _getChecked(e);
-        chart.update(config);
-    }, false);
 }
 
 export function init() {

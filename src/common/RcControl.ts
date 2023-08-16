@@ -968,6 +968,21 @@ export class RcElement extends RcObject {
         return this;
     }
 
+    clipRect(x: number, y: number, width: number, height: number, rd = 0): ClipElement {
+        const cr = this.control.clipBounds(x, y, width, height, rd);
+
+        this.setClip(cr);
+        return cr;
+    }
+
+    setClip(cr?: ClipElement | ClipPathElement | string): void {
+        if (cr) {
+            this.setAttr('clip-path', 'url(#' + (cr['id'] || cr) + ')');
+        } else {
+            this.unsetAttr('clip-path');
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -1145,7 +1160,7 @@ export class PathElement extends RcElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _path: any[] | string;
+    private _path: Path;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1159,10 +1174,14 @@ export class PathElement extends RcElement {
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    path(): Path {
+        return this._path;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    setPath(path: string | Path): void {
+    setPath(path: Path): void {
         if (path !== this._path) {
             this._path = path;
 

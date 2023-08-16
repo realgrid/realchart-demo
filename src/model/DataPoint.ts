@@ -101,7 +101,7 @@ export class DataPoint {
         }
 
         // series.collectValue 등에서 재설정될 수 있다.
-        this.yGroup = this.yValue = +this.y;
+        this.yValue = +this.y;
     }
 
     getYLabel(index: number): any {

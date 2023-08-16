@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp } from "../../common/Common";
-import { StyleProps } from "../../common/Types";
+import { SVGStyleOrClass, StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
@@ -63,6 +63,8 @@ export abstract class LineSeriesBase extends PolarableSeries {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    belowStyle: SVGStyleOrClass;
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
