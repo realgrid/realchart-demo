@@ -1,5 +1,6 @@
 const config = {
     title: "Column Range Series",
+    options: {},
     xAxis: {
         grid: true,
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -30,6 +31,7 @@ const config = {
         ]
     }
 }
+
 let chart;
 
 function setActions(container) {
@@ -40,6 +42,18 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'Inverted', function (e) {
+        config.options.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
 }
 
 export function init() {

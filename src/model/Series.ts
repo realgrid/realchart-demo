@@ -482,7 +482,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
             p.index = i;
             p.parse(this);
-            p.yGroup = p.y; // 추 후 Axis에서 변경할 수 있다.
             return p;
         });
     }
@@ -1082,7 +1081,10 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         const series = this._visibles;
         const map: Map<number, DataPoint[]> = this._stackPoints = new Map();
 
-        series[0]._visPoints.forEach(p => map.set(p.xValue, [p]));
+        series[0]._visPoints.forEach(p => {
+            p.yGroup = p.yValue;
+            map.set(p.xValue, [p]);
+        });
 
         for (let i = 1; i < series.length; i++) {
             series[i]._visPoints.forEach(p => {
@@ -1093,6 +1095,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
                 } else {
                     map.set(p.xValue, [p]);
                 }
+                p.yGroup = p.yValue;
             });
         }
         return map;

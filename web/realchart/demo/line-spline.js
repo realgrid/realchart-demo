@@ -2,7 +2,7 @@ const config = {
     options: {},
     title: "Line Series - Spline",
     xAxis: {
-        type: 'category'
+        type: 'category',
     },
     yAxis: {
     },
@@ -37,6 +37,14 @@ function setActions(container) {
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.options.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
         chart.update(config);
     }, false);
 }

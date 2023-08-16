@@ -75,7 +75,6 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         if (this.model.chart._polar) {
             this.$_layoutSectors();
         } else {
-            this._pointContainer.invert(this.model.chart.isInverted(), height);
             this.$_layoutBars(width, height);
         }
     }
@@ -150,12 +149,23 @@ export class BarSeriesView extends SeriesView<BarSeries> {
             let x: number;
             let y: number;
 
-            x = xAxis.getPosition(xLen, i) - wUnit / 2;
-            y = org;
+            if (inverted) {
+                y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
+                x = org;
+            } else {
+                x = xAxis.getPosition(xLen, i) - wUnit / 2;
+                y = org;
+            }
 
-            p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-            p.yPos = y -= yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
-            y += h; 
+            if (inverted) {
+                p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+                p.xPos = x += yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
+                x -= h;
+            } else {
+                p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
+                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
+                y += h; 
+            }
 
             bar.wPoint = wPoint;
             bar.hPoint = h * vr;
@@ -163,13 +173,6 @@ export class BarSeriesView extends SeriesView<BarSeries> {
 
             // label
             if (labelInfo && (labelInfo.labelView = labelViews.get(p, 0))) {
-                if (inverted) {
-                    y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
-                    x = org;
-                    p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
-                    p.xPos = x += yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
-                    x -= h;
-                }
                 labelInfo.bar = bar;
                 labelInfo.x = x;
                 labelInfo.y = y;

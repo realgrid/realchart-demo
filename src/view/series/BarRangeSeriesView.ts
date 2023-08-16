@@ -40,6 +40,7 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
+        this._pointContainer.invert(this.model.chart.isInverted(), height);
         this.$_layoutBars(width, height);
     }
 
@@ -87,31 +88,39 @@ export class BarRangeSeriesView extends SeriesView<BarRangeSeries> {
             let x: number;
             let y: number;
 
-            if (inverted) {
-                y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
-                x = org;
-            } else {
+            // if (inverted) {
+            //     y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
+            //     x = org;
+            // } else {
                 x = xAxis.getPosition(xLen, i) - wUnit / 2;
                 y = org;
-            }
+            // }
 
             bar.wPoint = wPoint;
             bar.hPoint = hPoint;
 
-            if (inverted) {
-                p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
-                p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
-                x -= hPoint;
-            } else {
+            // if (inverted) {
+            //     p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+            //     p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
+            //     x -= hPoint;
+            // } else {
                 p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
                 p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
                 y += hPoint;
-            }
+            // }
 
             bar.render(x, y, inverted);
 
             // labels
             if (labelViews) {
+                if (inverted) {
+                    y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
+                    x = org;
+                    p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+                    p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
+                    x -= hPoint;
+                }
+
                 if (labelView = labelViews.get(p, 0)) {
                     const r = labelView.getBBounds();
 

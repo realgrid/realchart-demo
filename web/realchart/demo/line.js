@@ -20,6 +20,7 @@ const config = {
         ]
     }
 }
+
 let chart;
 
 function setActions(container) {
@@ -30,8 +31,20 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
+        config.series.lineType = _getValue(e);
+        chart.update(config);
+    }, 'default');
     createCheckBox(container, 'Inverted', function (e) {
         config.options.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
         chart.update(config);
     }, false);
 }

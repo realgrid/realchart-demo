@@ -1,21 +1,29 @@
 const config = {
-    title: "Column Series",
+    title: "AreaRange Series",
     options: {},
     xAxis: {
-        title: "일일 Daily fat",
-        categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도'],
-        grid: true,
+        type: 'time',
+        title: 'Time'
     },
     yAxis: {
-        title: "Vertical 수직축 Axis"
+        title: 'Temparature'
     },
-    series: [{
-        name: 'column1',
-        pointLabel: true,
-        // pointWidth: '100%',
-        data: [11, 22, 15, 9, 13, 27]
-    }]
+    series: {
+        type: 'arearange',
+        // data: range_data,
+        data: [
+            ['home', 7, 12], 
+            ['sky', 11, 17], 
+            ['def', 9, 13], 
+            ['지리산', 15.3, 21], 
+            ['zzz', 13, 19],
+            ['낙동강', 12.5, 17]
+        ],
+        pointLabel: {},
+        marker: {}
+    }
 }
+
 let chart;
 
 function setActions(container) {
@@ -26,6 +34,14 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
+        config.series.lineType = _getValue(e);
+        chart.update(config);
+    }, 'default');
+    createCheckBox(container, 'Point Marker', function (e) {
+        config.series.marker.visible = _getChecked(e);
+        chart.update(config);
+    }, true);
     createCheckBox(container, 'Inverted', function (e) {
         config.options.inverted = _getChecked(e);
         chart.update(config);

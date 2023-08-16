@@ -94,7 +94,6 @@ export class LineSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     lineType = LineType.DEFAULT;
     stepDir = LineStepDirection.FORWARD;
-    baseValue = 0;
     negativeStyle: StyleProps;
     connectNulls = false;
 
@@ -215,5 +214,19 @@ export class LineSeriesGroup extends SeriesGroup<LineSeries> {
 
     protected _canContain(ser: Series): boolean {
         return ser instanceof LineSeries;
+    }
+}
+
+export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _seriesType(): string {
+        return 'area';
+    }
+
+    protected _canContain(ser: Series): boolean {
+        return ser instanceof AreaSeries;
     }
 }

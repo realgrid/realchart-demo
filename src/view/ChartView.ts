@@ -695,6 +695,15 @@ export class ChartView extends RcElement {
         }
         m.layoutAxes(w, h, this._inverted, phase);
 
+        // axes
+        for (const dir of map.keys()) {
+            const asv = map.get(dir);
+            
+            if (asv.visible) {
+                asv.measure(doc, m, w, h, phase);
+            }
+        }
+
         // body
         this._bodyView.measure(doc, m.body, w, h, phase);
     }

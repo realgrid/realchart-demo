@@ -6,10 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "../../common/Common";
 import { PathBuilder } from "../../common/PathBuilder";
 import { LayerElement, PathElement, RcElement } from "../../common/RcControl";
 import { Utils } from "../../common/Utils";
 import { SeriesGroupLayout } from "../../model/Series";
+import { LinearAxis } from "../../model/axis/LinearAxis";
 import { AreaSeries, AreaSeriesPoint } from "../../model/series/LineSeries";
 import { LineSeriesView } from "./LineSeriesView";
 
@@ -18,7 +20,7 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _areaContainer: RcElement;
+    // private _areaContainer: RcElement;
     private _area: PathElement;
 
     //-------------------------------------------------------------------------
@@ -27,8 +29,10 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
     constructor(doc: Document) {
         super(doc, 'rct-area-series');
 
-        this.insertFirst(this._areaContainer = new LayerElement(doc, 'rct-area-series-areas'));
-        this._areaContainer.add(this._area = new PathElement(doc, 'rct-area-series-area'));
+        // this.insertFirst(this._areaContainer = new LayerElement(doc, 'rct-area-series-areas'));
+        // this._areaContainer.add(this._area = new PathElement(doc, 'rct-area-series-area'));
+
+        this._lineContainer.insertFirst(this._area = new PathElement(doc, 'rct-area-series-area'));
     }
 
     //-------------------------------------------------------------------------
@@ -63,33 +67,35 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
     protected _layoutArea(path: PathElement, pts: AreaSeriesPoint[]): void {
         const series = this.model;
         const g = series.group;
-        const len = this.height;
-        const y = Utils.isNotEmpty(series.baseValue) ? series._yAxisObj.getPosition(len, series.baseValue) : len;
+        const inverted = series.chart.isInverted();
+        const yAxis = series._yAxisObj;
+        const len = inverted ? this.width : this.height;
+        const base = yAxis instanceof LinearAxis ? yAxis.baseValue : NaN;
+        const yMin = this.height - yAxis.getPosition(len, pickNum(base, yAxis.axisMin()));
         const sb = new PathBuilder();
 
         if (g && (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
             sb.move(pts[0].xPos, pts[0].yLow);
+            
             sb.line(pts[0].xPos, pts[0].yPos);
             for (let i = 1; i < pts.length; i++) {
                 sb.line(pts[i].xPos, pts[i].yPos);
             }
-            // this._buildLines(points, sb, step, curved);
+
             sb.line(pts[pts.length - 1].xPos, pts[pts.length - 1].yLow);
             for (let i = pts.length - 1; i >= 0; i--) {
                 sb.line(pts[i].xPos, pts[i].yLow);
             }
-            path.setPath(sb.end());
         } else {
-            sb.move(pts[0].xPos, y);
+            sb.move(pts[0].xPos, yMin);
             sb.line(pts[0].xPos, pts[0].yPos);
-            for (let i = 1; i < pts.length; i++) {
-                sb.line(pts[i].xPos, pts[i].yPos);
-            }
-            // this._buildLines(points, sb, step, curved);
-            sb.line(pts[pts.length - 1].xPos, y);
-            path.setPath(sb.end());
+
+            this._buildLines(pts, sb, false);
+
+            sb.line(pts[pts.length - 1].xPos, yMin);
         }
 
+        path.setPath(sb.end());
         path.setStyle('fill', series.color);
         path.setStyle('fillOpacity', '0.5');
     }
@@ -97,8 +103,10 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
     protected _layoutPolar(path: PathElement, pts: AreaSeriesPoint[]): void {
         const series = this.model;
         const g = series.group;
+        const yAxis = series._yAxisObj;
+        const base = yAxis instanceof LinearAxis ? yAxis.baseValue : NaN;
         const len = this.height;
-        const y = Utils.isNotEmpty(series.baseValue) ? series._yAxisObj.getPosition(len, series.baseValue) : len;
+        const y = yAxis.getPosition(len, Utils.isNotEmpty(base) ? base : yAxis.axisMax());
         const sb = new PathBuilder();
 
         if (g && (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {

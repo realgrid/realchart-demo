@@ -11,15 +11,20 @@ import { ISeries } from "./Series";
 
 let __point_id__ = 0;
 
+export interface IPointPos {
+    xPos: number;
+    yPos: number;
+}
+
 export class DataPoint {
 
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
-    static reverse(pts: DataPoint[]): {xPos: number, yPos: number}[] {
+    static swap(pts: IPointPos[]): IPointPos[] {
         const list = [];
         for (let i = 0; i < pts.length; i++) {
-            list.push({xPos: pts[i].yPos, yPos: pts[pts.length - 1 - i].xPos});
+            list.push({xPos: pts[i].yPos, yPos: pts[i].xPos});
         }
         return list;
     }
@@ -96,7 +101,7 @@ export class DataPoint {
         }
 
         // series.collectValue 등에서 재설정될 수 있다.
-        this.yValue = +this.y;
+        this.yGroup = this.yValue = +this.y;
     }
 
     getYLabel(index: number): any {

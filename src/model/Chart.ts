@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcObject, RcEventProvider } from "../common/RcObject";
+import { RcEventProvider } from "../common/RcObject";
 import { SectionDir, isNull } from "../common/Types";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
@@ -31,7 +31,7 @@ import { ErrorBarSeries } from "./series/ErrorBarSeries";
 import { FunnelSeries } from "./series/FunnelSeries";
 import { HeatmapSeries } from "./series/HeatmapSeries";
 import { HistogramSeries } from "./series/HistogramSeries";
-import { AreaRangeSeries, AreaSeries, LineSeries, LineSeriesGroup } from "./series/LineSeries";
+import { AreaRangeSeries, AreaSeries, AreaSeriesGroup, LineSeries, LineSeriesGroup } from "./series/LineSeries";
 import { LollipopSeries } from "./series/LollipopSeries";
 import { OhlcSeries } from "./series/OhlcSeries";
 import { ParetoSeries } from "./series/ParetoSeries";
@@ -78,6 +78,7 @@ const group_types = {
     'bar': BarSeriesGroup,
     'column': ColumnSeriesGroup,
     'line': LineSeriesGroup,
+    'area': AreaSeriesGroup,
     'pie': PieSeriesGroup,
     'bump': BumpSeriesGroup
 };

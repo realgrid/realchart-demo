@@ -38,6 +38,7 @@ const config = {
         }
     }
 }
+
 let chart;
 
 function setActions(container) {

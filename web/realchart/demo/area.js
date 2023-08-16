@@ -1,11 +1,14 @@
 const config = {
     title: "Area Series",
+    options: {},
     xAxis: {
+        type: 'category'
     },
     yAxis: {
     },
     series: {
         type: 'area',
+        marker: {},
         data: [
             ['home', 7], 
             ['sky', 11], 
@@ -17,10 +20,36 @@ const config = {
     }
 }
 
+let chart;
+
 function setActions(container) {
+    createCheckBox(container, 'Debug', function (e) {
+        RealChart.setDebugging(_getChecked(e));
+        chart.refresh();
+    }, true);
     createButton(container, 'Test', function(e) {
         alert('hello');
-    })
+    });
+    createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
+        config.series.lineType = _getValue(e);
+        chart.update(config);
+    }, 'default');
+    createCheckBox(container, 'Point Marker', function (e) {
+        config.series.marker.visible = _getChecked(e);
+        chart.update(config);
+    }, true);
+    createCheckBox(container, 'Inverted', function (e) {
+        config.options.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
 }
 
 export function init() {
@@ -28,8 +57,6 @@ export function init() {
     // RealChart.setLogging(true);
     RealChart.setDebugging(true);
 
-    const chart = RealChart.createChartControl(document, 'realchart');
-    chart.model = RealChart.loadChart(config);
-
+    chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')
 }

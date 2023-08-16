@@ -12,7 +12,7 @@ import { PathElement, RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Chart } from "../../main";
 import { LineType } from "../../model/ChartTypes";
-import { DataPoint } from "../../model/DataPoint";
+import { DataPoint, IPointPos } from "../../model/DataPoint";
 import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
@@ -32,12 +32,36 @@ export class LineMarkerView extends PathElement implements IPointView {
     }
 }
 
+export class LineContainer extends RcElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    inverted = false;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    invert(v: boolean, height: number): boolean {
+        if (v !== this.inverted) {
+            if (this.inverted = v) {
+                this.dom.style.transform = `translate(${height}px, ${height}px) rotate(-90deg) scale(1, -1)`;
+                // this.dom.style.transform = `translate(0px, ${height}px) rotate(90deg) scale(-1, 1)`;
+                // this.dom.style.transform = `rotate(-90deg) scale(-1, 1)`;
+            } else {
+                this.dom.style.transform = ``;
+            }
+        }
+        return this.inverted;
+    }
+}
+
 export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesView<T> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    protected _lineContainer: RcElement;
+    protected _lineContainer: LineContainer;
     private _line: PathElement;
     private _tester: PathElement;
     protected _markers: ElementPool<LineMarkerView>;
@@ -49,7 +73,7 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     constructor(doc: Document, styleName: string) {
         super(doc, styleName);
 
-        this.insertFirst(this._lineContainer = new RcElement(doc, 'rct-line-series-lines'));
+        this.insertFirst(this._lineContainer = new LineContainer(doc, 'rct-line-series-lines'));
         this._lineContainer.add(this._line = new PathElement(doc, 'rct-line-series-line'));
         this._lineContainer.add(this._tester = new PathElement(doc));
         this._tester.setStyle('stroke', 'red');
@@ -69,6 +93,7 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     }
 
     protected _renderSeries(width: number, height: number): void {
+        this._lineContainer.invert(this.model.chart.isInverted(), height);
         this._layoutMarkers(this.model._visPoints as LineSeriesPoint[], width, height);
         this._layoutLines(this.model._visPoints as LineSeriesPoint[]);
     }
@@ -178,6 +203,8 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
 
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
+            let px: number;
+            let py: number;
 
             if (polar) {
                 const a = polar.start + i * polar.deg;
@@ -186,59 +213,62 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
                 p.xPos = polar.cx + y * Math.cos(a);
                 p.yPos = polar.cy + y * Math.sin(a);
             } else {
+                px = p.xPos = xAxis.getPosition(xLen, p.xValue);
+                py = p.yPos = yOrg - yAxis.getPosition(yLen, p.yGroup);
+
                 if (inverted) {
-                    p.xPos = yAxis.getPosition(yLen, p.yGroup);
-                    p.yPos = yOrg - xAxis.getPosition(xLen, p.xValue);
-                } else {
-                    p.xPos = xAxis.getPosition(xLen, p.xValue);
-                    p.yPos = yOrg - yAxis.getPosition(yLen, p.yGroup);
+                    px = yAxis.getPosition(yLen, p.yGroup);
+                    py = yOrg - xAxis.getPosition(xLen, p.xValue);
                 }
             }
 
             if (vis) {
-                this._layoutMarker(this._markers.get(i), p.xPos, p.yPos);
+                this._layoutMarker(this._markers.get(i), px, py);
             }
             if (labelViews && (labelView = labelViews.get(p, 0))) {
                 const r = labelView.getBBounds();
 
-                labelView.translate(p.xPos - r.width / 2, p.yPos - r.height - labelOff - (vis ? p.radius : 0));
+                labelView.translate(px - r.width / 2, py - r.height - labelOff - (vis ? p.radius : 0));
             }
         }
     }
 
     protected _layoutLines(pts: DataPoint[]): void {
-        const m = this.model;
-        const t = m.getLineType();
         const sb = new PathBuilder();
 
-        if (t === LineType.SPLINE) {
-            if (m.chart.isInverted()) {
-                this._lineContainer.dom.style.transform = `translate(0px, ${this.height}px) rotate(-90deg)`;
-                this._drawCurve(DataPoint.reverse(pts), sb, false);
-            } else {
-                this._lineContainer.dom.style.transform = '';
-                this._drawCurve(pts, sb, false);
-            }
-        } else if (m instanceof LineSeries && t === LineType.STEP) {
-            this._drawStep(pts, sb, m.stepDir);
-        } else {
-            this._drawLine(pts, sb);
-        }
+        sb.move(pts[0].xPos, pts[0].yPos);
+        this._buildLines(pts, sb, false);
+
         this._line.setPath(sb.end(this._polar));
-        this._line.setStyle('stroke', m.color);
+        this._line.setStyle('stroke', this.model.color);
     }
 
-    protected _drawLine(pts: DataPoint[], sb: PathBuilder): void {
-        sb.move(pts[0].xPos, pts[0].yPos);
+    protected _buildLines(pts: IPointPos[], sb: PathBuilder, reversed: boolean): void {
+        const m = this.model;
+        const t = m.getLineType();
 
-        for (let i = 1; i < pts.length; i++) {
-            sb.line(pts[i].xPos, pts[i].yPos);
+        if (t === LineType.SPLINE) {
+            this._drawCurve(pts, sb, reversed);
+        } else if (m instanceof LineSeries && t === LineType.STEP) {
+            this._drawStep(pts, sb, m.stepDir, reversed);
+        } else {
+            this._drawLine(pts, sb, reversed);
         }
     }
 
-    protected _drawStep(pts: DataPoint[], sb: PathBuilder, dir: LineStepDirection): void {
-        sb.move(pts[0].xPos, pts[0].yPos);
+    protected _drawLine(pts: IPointPos[], sb: PathBuilder, reversed: boolean): void {
+        if (reversed) {
+            for (let i = pts.length - 2; i >= 0; i--) {
+                sb.line(pts[i].xPos, pts[i].yPos);
+            }
+        } else {
+            for (let i = 1; i < pts.length; i++) {
+                sb.line(pts[i].xPos, pts[i].yPos);
+            }
+        }
+    }
 
+    protected _drawStep(pts: IPointPos[], sb: PathBuilder, dir: LineStepDirection, reversed: boolean): void {
         if (dir === LineStepDirection.BACKWARD) {
             for (let i = 1; i < pts.length; i++) {
                 sb.line(pts[i - 1].xPos, pts[i].yPos);
@@ -252,14 +282,12 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
         }
     }
 
-    protected _drawCurve(pts: {xPos: number, yPos: number}[], sb: PathBuilder, reversed: boolean): void {
+    protected _drawCurve(pts: IPointPos[], sb: PathBuilder, reversed: boolean): void {
         if (pts && pts.length > 1) {
             const d = reversed ? -1 : 1;
             const start = reversed ? pts.length - 1 : 0;
             const end = reversed ? 0 : pts.length - 1;
             let p = start;
-
-            sb.move(pts[p].xPos, pts[p].yPos);
 
             if (pts.length == 2) {
                 sb.line(pts[p + d].xPos, pts[p + d].yPos);

@@ -57,7 +57,8 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
-        this.$_layoutMarkers();
+        // this._pointContainer.invert(this.model.chart.isInverted(), height);
+        this.$_layoutMarkers(width, height);
     }
 
     protected _runShowEffect(firstTime: boolean): void {
@@ -80,27 +81,38 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
         })
     }
 
-    private $_layoutMarkers(): void {
+    private $_layoutMarkers(width: number, height: number): void {
         const series = this.model;
+        const inverted = this._inverted;
         const marker = series.marker;
         const labels = series.pointLabel;
         const labelOff = labels.offset;
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
+        const yLen = inverted ? width : height;
+        const xLen = inverted ? height : width;
+        const yOrg = height;
         let labelView: PointLabelView;
         let r: IRect;
 
         this._markers.forEach((m, i) => {
             const p = m.point;
 
-            const x = p.xPos = xAxis.getPosition(this.width, p.xValue);
-            const y = p.yPos = this.height - yAxis.getPosition(this.height, p.yValue);
             const s = marker.shape;
             const sz = marker.radius;
             let path: (string | number)[];
+            let x: number;
+            let y: number;
 
             // m.className = model.getPointStyle(i);
+
+            x = p.xPos = xAxis.getPosition(xLen, p.xValue);
+            y = p.yPos = yOrg - yAxis.getPosition(yLen, p.yValue);
+            if (inverted) {
+                x = yAxis.getPosition(yLen, p.yGroup);
+                y = yOrg - xAxis.getPosition(xLen, p.xValue);
+            }
 
             switch (s) {
                 case 'square':

@@ -244,6 +244,28 @@ export class PointLabelLineContainer extends GroupElement {
     }
 }
 
+export class PointContainer extends LayerElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    inverted = false;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    invert(v: boolean, height: number): boolean {
+        if (v !== this.inverted) {
+            if (this.inverted = v) {
+                this.dom.style.transform = `translate(0px, ${height}px) rotate(90deg) scale(-1, 1)`;
+            } else {
+                this.dom.style.transform = ``;
+            }
+        }
+        return this.inverted;
+    }
+}
+
 export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 
     //-------------------------------------------------------------------------
@@ -255,7 +277,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    protected _pointContainer: LayerElement;
+    protected _pointContainer: PointContainer;
     private _labelContainer: PointLabelContainer;
     private _trendLineView: PathElement;
 
@@ -268,7 +290,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     constructor(doc: Document, styleName: string) {
         super(doc, 'rct-series ' + styleName);
 
-        this.add(this._pointContainer = new LayerElement(doc, 'rct-series-points'));
+        this.add(this._pointContainer = new PointContainer(doc, 'rct-series-points'));
         this.add(this._labelContainer = new PointLabelContainer(doc));
     }
 
@@ -402,13 +424,22 @@ export class BarElement extends BoxPointElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    render(x: number, y: number, inverted: boolean): void {
+    render_save(x: number, y: number, inverted: boolean): void {
         this.setPath(SvgShapes.rect(inverted ? {
             x: x,
             y: y - this.wPoint / 2,
             width: this.hPoint,
             height: this.wPoint
         } : {
+            x: x - this.wPoint / 2,
+            y: y,
+            width: this.wPoint,
+            height: -this.hPoint
+        }));
+    }
+
+    render(x: number, y: number, inverted: boolean): void {
+        this.setPath(SvgShapes.rect({
             x: x - this.wPoint / 2,
             y: y,
             width: this.wPoint,

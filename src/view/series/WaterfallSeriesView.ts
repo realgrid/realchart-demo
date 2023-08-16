@@ -75,6 +75,7 @@ export class WaterfallSeriesView extends SeriesView<WaterfallSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
+        this._pointContainer.invert(this.model.chart.isInverted(), height);
         this.$_layoutBars(width, height);
     }
 
@@ -112,8 +113,6 @@ export class WaterfallSeriesView extends SeriesView<WaterfallSeries> {
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
-        // const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
-        // const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.yBase : 0);
         const org = inverted ? 0 : height;;
         const labelInfo: LabelInfo = labelViews && Object.assign(this._labelInfo, {
             inverted,
@@ -127,6 +126,12 @@ export class WaterfallSeriesView extends SeriesView<WaterfallSeries> {
         let hPrev: number;
         let labelView: PointLabelView;
 
+        if (inverted) {
+            this._lineContainer.dom.style.transform = `translate(0px, ${height}px) rotate(90deg) scale(-1, 1)`;
+        } else {
+            this._lineContainer.dom.style.transform = '';
+        }
+
         this._bars.forEach((bar, i) => {
             const p = bar.point as WaterfallSeriesPoint;
             const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
@@ -136,37 +141,23 @@ export class WaterfallSeriesView extends SeriesView<WaterfallSeries> {
             let x: number;
             let y: number;
 
-            if (inverted) {
-                y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
-                x = org;
-            } else {
-                x = xAxis.getPosition(xLen, i) - wUnit / 2;
-                y = org;
-            }
+            x = xAxis.getPosition(xLen, i) - wUnit / 2;
+            y = org;
 
             bar.wPoint = wPoint;
             bar.hPoint = hPoint;
 
-            if (inverted) {
-                y += series.getPointPos(wUnit) + wPoint / 2;
-                x += yAxis.getPosition(yLen, p.yValue) * vr - hPoint;
-            } else {
-                p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-                p.yPos = y -= p.yPos = yAxis.getPosition(yLen, p.yValue * vr);
-                y += hPoint;
-            }
+            p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
+            p.yPos = y -= p.yPos = yAxis.getPosition(yLen, p.yValue * vr);
+            y += hPoint;
 
             bar.render(x, y, inverted);
 
             if (i > 0) {
                 const line = this._lines.get(i - 1);
 
-                if (inverted) {
-
-                } else {
-                    const y2 = p._isSum ? y - hPoint : p.y >= 0 ? y : y - hPoint;
-                    line.setHLine(y2, xPrev + wPrev / 2, x - wPoint / 2);
-                }
+                const y2 = p._isSum ? y - hPoint : p.y >= 0 ? y : y - hPoint;
+                line.setHLine(y2, xPrev + wPrev / 2, x - wPoint / 2);
             }
 
             xPrev = x;
@@ -177,6 +168,13 @@ export class WaterfallSeriesView extends SeriesView<WaterfallSeries> {
             // TODO: BarSeries와 합칠 것!
             // label
             if (labelInfo && (labelView = labelViews.get(p, 0))) {
+                if (inverted) {
+                    y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
+                    x = org;
+                    p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+                    p.xPos = x += yAxis.getPosition(yLen, p.yValue) * vr - hPoint;
+                }
+
                 labelInfo.labelView = labelView;
                 labelInfo.bar = bar;
                 labelInfo.x = x;
