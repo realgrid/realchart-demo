@@ -1,8 +1,7 @@
 const config = {
-    title: "Column Range Series",
-    options: {
-        animatable: false,
-    },
+    title: "Multiple Column Ranges",
+    type: 'columnrange',
+    options: {},
     xAxis: {
         grid: true,
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -10,8 +9,7 @@ const config = {
     },
     yAxis: {
     },
-    series: {
-        type: 'columnrange',
+    series: [{
         pointLabel: {
             visible: true,
             // format: '${x}'
@@ -31,7 +29,27 @@ const config = {
             [-9.8, 12.5],
             [-11.5, 8.4]
         ]
-    }
+    }, {
+        pointLabel: {
+            visible: true,
+            // format: '${x}'
+            // text: '<b style="fill:red">${x}</b>'
+        },
+        data: [
+            [-11.9, 6.2],
+            [-16.7, 11.6],
+            [-3.7, 9.6],
+            [-4.4, 16.8],
+            [-2.1, 27.2],
+            [5.9, 29.4],
+            [6.5, 29.1],
+            [4.7, 25.4],
+            [4.3, 21.6],
+            [-3.5, 15.1],
+            [-9.8, 12.5],
+            [-13.5, 9.4]
+        ]
+    }]
 }
 
 let chart;

@@ -10,11 +10,8 @@ import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
-import { RectElement } from "../../common/impl/RectElement";
-import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { ErrorBarSeries, ErrorBarSeriesPoint } from "../../model/series/ErrorBarSeries";
-import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
-import { SeriesAnimation } from "../animation/SeriesAnimation";
+import { IPointView, RangedSeriesView, SeriesView } from "../SeriesView";
 
 class BarElement extends GroupElement implements IPointView {
 
@@ -23,7 +20,6 @@ class BarElement extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     point: ErrorBarSeriesPoint;
 
-    private _back: RectElement;
     private _whiskerUp: LineElement;
     private _whiskerDown: LineElement;
     private _stem: LineElement;
@@ -42,7 +38,7 @@ class BarElement extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    layout(inverted: boolean): void {
+    layout(): void {
         const w = this.width
         const h = this.height;
         const x = w / 2;
@@ -53,7 +49,7 @@ class BarElement extends GroupElement implements IPointView {
     }
 }
 
-export class ErrorBarSeriesView extends SeriesView<ErrorBarSeries> {
+export class ErrorBarSeriesView extends RangedSeriesView<ErrorBarSeries> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -74,88 +70,19 @@ export class ErrorBarSeriesView extends SeriesView<ErrorBarSeries> {
         return this._bars;
     }
 
-    protected _prepareSeries(doc: Document, model: ErrorBarSeries): void {
-        this.$_parepareBars(model._visPoints as ErrorBarSeriesPoint[]);
+    protected _getLowValue(p: ErrorBarSeriesPoint): number {
+        return p.lowValue;
     }
 
-    protected _renderSeries(width: number, height: number): void {
-        this.$_layoutBars(width, height);
+    protected _layoutPointView(box: BarElement, x: number, y: number, wPoint: number, hPoint: number): void {
+        box.setBounds(x - wPoint / 2, y, wPoint, hPoint);
+        box.layout();
     }
 
-    protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.grow(this);
-    }
-
-    protected _doViewRateChanged(rate: number): void {
-        this.$_layoutBars(this.width, this.height);
-    }
-
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
-    private $_parepareBars(points: ErrorBarSeriesPoint[]): void {
+    protected _preparePointViews (points: ErrorBarSeriesPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
             v.point = points[i];
-            v.setStyle('fill', points[i].color);
+            v.setStyle('stroke', points[i].color);
         });
-    }
-
-    protected $_layoutBars(width: number, height: number): void {
-        const series = this.model;
-        const inverted = series.chart.isInverted();
-        const vr = this._getViewRate();
-        const labels = series.pointLabel;
-        const labelOff = labels.offset;
-        const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
-        const yAxis = series._yAxisObj;
-        const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
-        const yLen = inverted ? width : height;
-        const xLen = inverted ? height : width;
-        const org = inverted ? 0 : height;;
-        let labelView: PointLabelView;
-
-        this._bars.forEach((bar, i) => {
-            const p = bar.point;
-            const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
-            const wPoint = series.getPointWidth(wUnit);
-            const yVal = yAxis.getPosition(yLen, p.yValue);
-            const hPoint = Math.abs(yAxis.getPosition(yLen, p.lowValue) - yVal) * vr;
-            let x: number;
-            let y: number;
-
-            if (inverted) {
-                y = (p.yPos = xLen - xAxis.getPosition(xLen, i)) - wUnit / 2;
-                x = p.xPos = org + yVal * vr;
-            } else {
-                x = (p.xPos = xAxis.getPosition(xLen, i)) - wPoint / 2;
-                y = p.yPos = org - yVal * vr;
-            }
-
-            bar.setBounds(x, y, wPoint, hPoint);
-            bar.layout(inverted);
-
-            // labels
-            if (labelViews) {
-                if (labelView = labelViews.get(p, 0)) {
-                    const r = labelView.getBBounds();
-
-                    if (inverted) {
-                        labelView.translate(x + hPoint + labelOff, y - r.height / 2);
-                    } else {
-                        labelView.translate(x - r.width / 2, y - hPoint - r.height - labelOff);
-                    }
-                }
-                if (labelView = labelViews.get(p, 1)) {
-                    const r = labelView.getBBounds();
-
-                    if (inverted) {
-                        labelView.translate(x - r.width - labelOff, y - r.height / 2);
-                    } else {
-                        labelView.translate(x - r.width / 2, y + labelOff);
-                    }
-                }
-            }
-        })
     }
 }

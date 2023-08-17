@@ -137,7 +137,8 @@ export class WaterfallSeriesView extends SeriesView<WaterfallSeries> {
             const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
-            const hPoint = Math.abs(yAxis.getPosition(yLen, p.low) - yVal) * vr;
+            // const hPoint = Math.abs(yAxis.getPosition(yLen, p.low) - yVal) * vr;
+            const hPoint = (yVal - yAxis.getPosition(yLen, p.low)) * vr;
             let x: number;
             let y: number;
 

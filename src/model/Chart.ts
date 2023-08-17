@@ -54,6 +54,7 @@ export interface IChart {
 
     _polar: boolean;
     isInverted(): boolean;
+    animatable(): boolean;
     startAngle(): number;
 
     seriesByBame(series: string): Series;
@@ -163,6 +164,10 @@ export class ChartOptions extends ChartItem {
      * time 축일 때, 정수 값 대신 시간 단위로 지정할 수 있다.
      */
     xStep = 1;
+    /**
+     * false로 지정하면 차트 전체척으로 animation 효과를 실행하지 않는다.
+     */
+    animatable = true;
 
     //-------------------------------------------------------------------------
     // methods
@@ -227,6 +232,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     get xStep(): number {
         return this._options.xStep;
+    }
+
+    animatable(): boolean {
+        return this._options.animatable !== false;
     }
 
     //-------------------------------------------------------------------------

@@ -25,7 +25,7 @@ class MarkerView extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-bubble-series-marker');
+        super(doc, SeriesView.POINT_STYLE + ' rct-bubble-point-marker');
     }
 }
 
@@ -92,12 +92,16 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
 
     private $_layoutMarkers(width: number, height: number): void {
         const series = this.model;
+        const inverted = this._inverted;
         const vr = this._getViewRate();
         const labels = series.pointLabel;
         const labelOff = labels.offset;
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
+        const yLen = inverted ? width : height;
+        const xLen = inverted ? height : width;
+        const yOrg = height;
         let labelView: PointLabelView;
         let r: IRect;
 
@@ -105,26 +109,21 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
             const p = m.point;
 
             if (!isNaN(p.zValue)) {
-                const x = p.xPos = xAxis.getPosition(width, p.xValue);
-                const y = p.yPos = this.height - yAxis.getPosition(height, p.yValue);
-                const s = p.shape;
                 const sz = p.radius * vr;
                 let path: (string | number)[];
-    
+                let x: number;
+                let y: number;
+
                 // m.className = model.getPointStyle(i);
-    
-                switch (s) {
-                    case 'square':
-                    case 'diamond':
-                    case 'triangle':
-                    case 'itriangle':
-                        path = SvgShapes[s](0 - sz, 0 - sz, sz * 2, sz * 2);
-                        break;
-    
-                    default:
-                        path = SvgShapes.circle(0, 0, sz);
-                        break;
+
+                x = p.xPos = xAxis.getPosition(xLen, p.xValue);
+                y = p.yPos = yOrg - yAxis.getPosition(yLen, p.yValue);
+                if (inverted) {
+                    x = yAxis.getPosition(yLen, p.yGroup);
+                    y = yOrg - xAxis.getPosition(xLen, p.xValue);
                 }
+    
+                path = SvgShapes.circle(0, 0, sz);
                 m.setPath(path);
                 m.translate(x, y);
 

@@ -493,9 +493,10 @@ export abstract class Axis extends ChartItem implements IAxis {
         this._doPrepareRender();
 
         // range
+        const series = this._series;
         let vals: number[] = [];
 
-        this._series.forEach(item => {
+        series.forEach(item => {
             vals = vals.concat(item.collectValues(this));
         })
         this._range = this._doCalcluateRange(vals);
@@ -504,19 +505,20 @@ export abstract class Axis extends ChartItem implements IAxis {
         let sum = 0;
         let p = 0;
 
-        this._series.forEach(item => {
+        series.forEach(item => {
             if (item.clusterable()) {
                 sum += pickNum((item as any as IClusterable).groupWidth, 1);
             }
-        })
-        this._series.forEach(item => {
+        });
+        series.forEach(item => {
             if (item.clusterable()) {
                 const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;
 
                 (item as any as IClusterable).setCluster(w, p);
                 p += w;
             }
-        })
+        });
+        // console.log(this._series.map(s => (s as any)._clusterPos));
     }
 
     buildTicks(length: number): void {

@@ -1,5 +1,7 @@
 const config = {
-    title: "Bubble Series 01",
+    options: {
+    },
+    title: "Bubble Series",
     xAxis: {
     },
     yAxis: {
@@ -28,6 +30,7 @@ const config = {
         ]
     }
 }
+
 let chart;
 
 function setActions(container) {
@@ -38,6 +41,18 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'Inverted', function (e) {
+        config.options.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
 }
 
 export function init() {

@@ -1,0 +1,38 @@
+[분류]
+
+1. 차원
+  - 논리적
+    -- 1차원: pie, widget
+    -- 2차원: 나머지
+  - 감각적
+    -- 2차원
+    -- 3차원: (v2.0)
+
+2. 형태
+  - bar: bar, lollipop, equalizer, histogram, wing(v1.1)
+  - range: barrange, boxplot, candlestick, errorbar, ohlc, waterfall
+  - line: line, area, arearange, bellcurve, pareto,
+  - scatter: scatter, bubble, vector
+  - map: heatmap, treemap
+  - pie: pie
+  - widget: funnel, gauge(v1.1)
+  - polar: bar, line, range(?), scatter(?), map(?) <- ?: 의미가 있는가?
+
+3. more (highcharts 등)(v2.0~)
+  - sankey diagram
+  - dependency wheel diagram
+  - arc diagram
+  - venn diagram
+  - pictorial diagram
+  - gantt
+  - general graph
+  - treegraph
+  - network graph
+  - word cloud
+  - pivot points, macd
+
+[ Key Features ]
+
+1. inverted, reversed
+2. category width
+3. theme

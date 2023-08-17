@@ -169,7 +169,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
 
             bar.wPoint = wPoint;
             bar.hPoint = h * vr;
-            bar.render(x, y, inverted);
+            bar.layout(x, y);
 
             // label
             if (labelInfo && (labelInfo.labelView = labelViews.get(p, 0))) {

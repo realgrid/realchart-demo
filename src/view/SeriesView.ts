@@ -11,13 +11,17 @@ import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
 import { LayerElement, PathElement, RcElement } from "../common/RcControl";
+import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { SvgShapes } from "../common/impl/SvgShape";
 import { DataPoint } from "../model/DataPoint";
 import { DataPointLabel, Series } from "../model/Series";
+import { CategoryAxis } from "../model/axis/CategoryAxis";
+import { BoxSeries } from "../model/series/BarSeries";
 import { ChartElement } from "./ChartElement";
+import { SeriesAnimation } from "./animation/SeriesAnimation";
 
 export interface IPointView {
     point: DataPoint;
@@ -282,6 +286,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     private _trendLineView: PathElement;
 
     protected _inverted = false;
+    protected _animatable = true;
     private _viewRate = NaN;
 
     //-------------------------------------------------------------------------
@@ -311,8 +316,9 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected _doViewRateChanged(rate: number): void {
     }
 
-    _setInverted(value: boolean): void {
-        this._inverted = value;
+    _setChartOptions(inverted: boolean, animatable: boolean): void {
+        this._inverted = inverted;
+        this._animatable = animatable;
     }
 
     _animationStarted(ani: Animation): void {
@@ -359,7 +365,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
             this.$_renderTrendline();       
         }
         this._afterRender();
-        this._runShowEffect(!this.control.loaded);
+        this._animatable && this._runShowEffect(!this.control.loaded);
     }
 
     //-------------------------------------------------------------------------
@@ -424,21 +430,7 @@ export class BarElement extends BoxPointElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    render_save(x: number, y: number, inverted: boolean): void {
-        this.setPath(SvgShapes.rect(inverted ? {
-            x: x,
-            y: y - this.wPoint / 2,
-            width: this.hPoint,
-            height: this.wPoint
-        } : {
-            x: x - this.wPoint / 2,
-            y: y,
-            width: this.wPoint,
-            height: -this.hPoint
-        }));
-    }
-
-    render(x: number, y: number, inverted: boolean): void {
+    layout(x: number, y: number): void {
         this.setPath(SvgShapes.rect({
             x: x - this.wPoint / 2,
             y: y,
@@ -446,4 +438,120 @@ export class BarElement extends BoxPointElement {
             height: -this.hPoint
         }));
     }
+}
+
+export abstract class BoxedSeriesView<T extends BoxSeries> extends SeriesView<T> {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _prepareSeries(doc: Document, model: T): void {
+        this._preparePointViews(model._visPoints);
+    }
+
+    protected _renderSeries(width: number, height: number): void {
+        this._pointContainer.invert(this.model.chart.isInverted(), height);
+        this._layoutPointViews(width, height);
+    }
+
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.grow(this);
+    }
+
+    protected _doViewRateChanged(rate: number): void {
+        this._layoutPointViews(this.width, this.height);
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected abstract _preparePointViews(points: DataPoint[]): void;
+    protected abstract _layoutPointViews(width: number, height: number): void;
+    protected abstract _getLowValue(p: DataPoint): number;
+    protected abstract _layoutPointView(view: RcElement, x: number, y: number, wPoint: number, hPoint: number): void;
+}
+
+export abstract class RangedSeriesView<T extends BoxSeries> extends BoxedSeriesView<T> {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _layoutPointViews(width: number, height: number): void {
+        const series = this.model;
+        const inverted = series.chart.isInverted();
+        const vr = this._getViewRate();
+        const labels = series.pointLabel;
+        const labelOff = labels.offset;
+        const labelViews = this._labelViews();
+        const xAxis = series._xAxisObj;
+        const yAxis = series._yAxisObj;
+        const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
+        const yLen = inverted ? width : height;
+        const xLen = inverted ? height : width;
+        // const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
+        // const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.yBase : 0);
+        const org = inverted ? 0 : height;;
+
+        this._getPointPool().forEach((pointView, i) => {
+            const p = (pointView as any as IPointView).point;
+            const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
+            const wPoint = series.getPointWidth(wUnit);
+            const yVal = yAxis.getPosition(yLen, p.yValue);
+            const hPoint = (yVal - yAxis.getPosition(yLen, this._getLowValue(p))) * vr;
+            let x: number;
+            let y: number;
+
+            x = xAxis.getPosition(xLen, i) - wUnit / 2;
+            y = org;
+
+            p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
+            p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
+
+            // y += hPoint;
+            // bar.wPoint = wPoint;
+            // bar.hPoint = hPoint;
+            // bar.render(x, y, inverted);
+
+            this._layoutPointView(pointView, x, y, wPoint, hPoint);
+
+            // labels
+            if (labelViews) {
+                if (inverted) {
+                    // y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2; // 위에서 아래로 내려갈 때
+                    y = xLen - xAxis.getPosition(xLen, i) + wUnit / 2;
+                    x = org;
+                    // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+                    p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
+                    p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
+                    x -= hPoint;
+                }
+
+                let view: PointLabelView;
+                let r: IRect;
+
+                // top
+                if (view = labelViews.get(p, 0)) {
+                    r = view.getBBounds();
+                    if (inverted) {
+                        view.translate(x + hPoint + labelOff, y - r.height / 2);
+                    } else {
+                        view.translate(x - r.width / 2, y - r.height - labelOff);
+                    }
+                }
+                // bottom
+                if (view = labelViews.get(p, 1)) {
+                    r = view.getBBounds();
+                    if (inverted) {
+                        view.translate(x - r.width - labelOff, y - r.height / 2);
+                    } else {
+                        view.translate(x - r.width / 2, y + hPoint + labelOff);
+                    }
+                }
+            }
+        })
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
 }

@@ -25,7 +25,7 @@ class MarkerView extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-scatter-series-marker');
+        super(doc, SeriesView.POINT_STYLE + ' rct-scatter-point-marker');
     }
 }
 
@@ -130,11 +130,9 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
             m.translate(x, y);
 
             // label
-            if (labelViews) {
-                if (labelView = labelViews.get(p, 0)) {
-                    r = labelView.getBBounds();
-                    labelView.translate(x - r.width / 2, y - r.height / 2);
-                }
+            if (labelViews && (labelView = labelViews.get(p, 0))) {
+                r = labelView.getBBounds();
+                labelView.translate(x - r.width / 2, y - r.height / 2);
             }
         });
     }

@@ -159,21 +159,23 @@ export class BarSeriesView extends SeriesView<BarSeries> {
 
             bar.wPoint = wPoint;
             bar.hPoint = h * vr;
-            bar.render(x, y, inverted);
+            bar.layout(x, y);
 
             // label
             if (labelInfo && (labelInfo.labelView = labelViews.get(p, 0))) {
                 if (inverted) {
-                    y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
+                    // y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2; // 위에서 아래로 내려갈 때
+                    y = xLen - xAxis.getPosition(xLen, i) + wUnit / 2;
                     x = org;
-                    p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+                    p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
+                    // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
                     p.xPos = x += yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
                     x -= h;
                 }
                 labelInfo.bar = bar;
                 labelInfo.x = x;
                 labelInfo.y = y;
-                labelInfo.below = h < 0;// p.yValue < (yAxis as LinearAxis).baseValue;
+                labelInfo.below = h < 0;
                 this.$_layoutLabel(labelInfo);
             }
         })

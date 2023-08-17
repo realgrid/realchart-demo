@@ -1,5 +1,7 @@
 const config = {
     title: "Error Bar",
+    options: {
+    },
     xAxis: {
         title: 'X Axis',
         categories: ['쓰리엠', '아디다스', '디즈니', 'Amazon', '이마트'],
@@ -8,15 +10,20 @@ const config = {
         title: 'Y Axis',
     },
     series: [{
+        pointLabel: {
+            visible: true,
+            position: 'inside',
+            effect: 'outline',
+        },
         data: [11, 22, 15, 9, 13, 27]
     }, {
         type: 'errorbar',
+        pointLabel: true,
         data: [[10, 12], [20, 23], [14, 16], [8, 11], [12, 14], [25, 26]],
-        styles: {
-            stroke: '#333'
-        },
+        color: '#333',
     }]
 }
+
 let chart;
 
 function setActions(container) {
@@ -27,6 +34,18 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'Inverted', function (e) {
+        config.options.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
 }
 
 export function init() {

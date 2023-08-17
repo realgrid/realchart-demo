@@ -179,7 +179,7 @@
 .rct-line-series-line {
     stroke: gray;
 }
-.rct-line-series-marker[data-focus] {
+.rct-line-point-marker[data-focus] {
     /* scale: 2; */
     stroke: var(--rct-focus-border) !important;
     stroke-width: 2px;
@@ -191,16 +191,16 @@
 }
 
 /** bubble series */
-.rct-bubble-series-marker {
+.rct-bubble-point-marker {
     fill: #0088ff40;
     stroke: #0088ff;
 }
 
 /** scatter series */
-.rct-scatter-series-marker {
+.rct-scatter-point-marker {
     fill-opacity: 0.7;
 }
-.rct-scatter-series-marker[data-focus] {
+.rct-scatter-point-marker[data-focus] {
     stroke: var(--rct-focus-border);
     stroke-width: 2px;
 }

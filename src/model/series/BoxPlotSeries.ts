@@ -47,7 +47,7 @@ export class BoxPlotSeriesPoint extends DataPoint {
     }
 
     getYLabel(index: number) {
-        return index === 0 ? this.minValue : this.yValue;
+        return index === 0 ? this.yValue : this.minValue;
     }
 
     protected _readArray(series: BoxPlotSeries, v: any[]): void {

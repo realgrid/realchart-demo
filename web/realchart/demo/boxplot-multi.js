@@ -43,6 +43,14 @@ function setActions(container) {
         config.options.inverted = _getChecked(e);
         chart.update(config);
     }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
 }
 
 export function init() {
