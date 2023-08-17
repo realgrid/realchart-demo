@@ -85,6 +85,14 @@ export class RectElement extends RcElement {
         return this;
     }
 
+    setBox(x: number, y: number, width: number, height: number): void {
+        if (height < 0) {
+            this.rect = {x, y: y + height, width, height: -height};
+        } else {
+            this.rect = {x, y, width, height};
+        }
+    }
+
     setRadius(value: number): void {
         if (value > 0) {
             if (this._rect) {

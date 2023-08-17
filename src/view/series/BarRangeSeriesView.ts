@@ -8,12 +8,9 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
-import { IRect } from "../../common/Rectangle";
 import { DataPoint } from "../../model/DataPoint";
-import { CategoryAxis } from "../../model/axis/CategoryAxis";
-import { BarRangeSeries, BarRangeSeriesPoint, ColumnRangeSeries } from "../../model/series/BarRangeSeries";
-import { BarElement, PointLabelView, RangedSeriesView, SeriesView } from "../SeriesView";
-import { SeriesAnimation } from "../animation/SeriesAnimation";
+import { BarRangeSeries, BarRangeSeriesPoint } from "../../model/series/BarRangeSeries";
+import { BarElement, RangedSeriesView } from "../SeriesView";
 
 export class BarRangeSeriesView extends RangedSeriesView<BarRangeSeries> {
 

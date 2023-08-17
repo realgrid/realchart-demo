@@ -13,8 +13,9 @@ import { IRect } from "../../common/Rectangle";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
+import { DataPoint } from "../../model/DataPoint";
 import { CandlestickSeries, CandlestickSeriesPoint } from "../../model/series/CandlestickSeries";
-import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, RangedSeriesView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class StickView extends GroupElement implements IPointView {
@@ -24,7 +25,7 @@ class StickView extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     point: CandlestickSeriesPoint;
 
-    private _back: RectElement;
+    // private _back: RectElement;
     private _wickUpper: LineElement;
     private _wickLower: LineElement;
     private _body: RectElement;
@@ -44,16 +45,21 @@ class StickView extends GroupElement implements IPointView {
         const w = this.width;
         const h = this.height;
         const len = p.highValue - p.lowValue;
-        const x = this.width / 2;
+        const x = 0;
         let y = 0;
         const yOpen = y + h - h * (Math.min(p.openValue, p.closeValue) - p.lowValue) / len;
         const yClose = y + h - h * (Math.max(p.openValue, p.closeValue) - p.lowValue) / len;
+        const yBox = Math.min(yClose, yOpen);
+        const hBox = Math.max(1, Math.abs(yOpen - yClose));
+        const fall = p.close < p.open;
 
-        this._back.setBounds(0, 0, w, h);
+        this._body.setStyle('fill', fall ? '' : p.color);
+
+        // this._back.setBox(-w / 2, 0, w, h);
         this._wickUpper.setVLine(x, y, yClose);
         this._wickLower.setVLine(x, yOpen, h);
-        this._body.setBounds(0, Math.min(yClose, yOpen), w, Math.max(1, Math.abs(yOpen - yClose)));
-        this._body.setStyleName(p.close < p.open ? 'rct-candlestick-point-body-fall' : 'rct-candlestick-point-body')
+        this._body.setBox(-w / 2, yBox, w, hBox);
+        this._body.setStyleName(fall ? 'rct-candlestick-point-fall' : '')
     }
 
     //-------------------------------------------------------------------------
@@ -65,12 +71,12 @@ class StickView extends GroupElement implements IPointView {
         this.add(this._body = new RectElement(doc));
 
         // for hit testing
-        this.add(this._back = new RectElement(doc, SeriesView.POINT_STYLE + ' rct-candlestick-point-back'));
-        Dom.setImportantStyle(this._back.dom.style, 'fill', 'transparent'); // 'none'으로 지정하면 hit testing이 되지 않는다.
+        // this.add(this._back = new RectElement(doc, SeriesView.POINT_STYLE + ' rct-candlestick-point-back'));
+        // Dom.setImportantStyle(this._back.dom.style, 'fill', 'transparent'); // 'none'으로 지정하면 hit testing이 되지 않는다.
     }
 }
 
-export class CandlestickSeriesView extends SeriesView<CandlestickSeries> {
+export class CandlestickSeriesView extends RangedSeriesView<CandlestickSeries> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -91,26 +97,16 @@ export class CandlestickSeriesView extends SeriesView<CandlestickSeries> {
         return this._sticks;
     }
 
-    protected _prepareSeries(doc: Document, model: CandlestickSeries): void {
-        this.$_prepareSticks(model._visPoints as CandlestickSeriesPoint[]);
+    protected _getLowValue(p: CandlestickSeriesPoint): number {
+        return p.lowValue;
     }
 
-    protected _renderSeries(width: number, height: number): void {
-        this.$_layoutSticks(width, height);
-    }
+    protected _layoutPointView(box: StickView, x: number, y: number, wPoint: number, hPoint: number): void {
+        box.setBounds(x, y, wPoint, hPoint);
+        box.layout();
+    } 
 
-    protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.grow(this);
-    }
-
-    protected _doViewRateChanged(rate: number): void {
-        this.$_layoutSticks(this.width, this.height);
-    }
-
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
-    private $_prepareSticks(points: CandlestickSeriesPoint[]): void {
+    protected _preparePointViews(points: CandlestickSeriesPoint[]): void {
         this._sticks.prepare(points.length, (box, i) => {
             box.point = points[i];
         })

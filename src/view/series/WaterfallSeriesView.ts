@@ -13,7 +13,7 @@ import { SvgShapes } from "../../common/impl/SvgShape";
 import { PointItemPosition } from "../../model/Series";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { WaterfallSeries, WaterfallSeriesPoint } from "../../model/series/WaterfallSeries";
-import { BoxPointElement, IPointView, PointLabelView, SeriesView } from "../SeriesView";
+import { BoxPointElement, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class BarElement extends BoxPointElement {
@@ -21,7 +21,7 @@ class BarElement extends BoxPointElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    render(x: number, y: number, inverted: boolean): void {
+    render(x: number, y: number): void {
         this.setPath(SvgShapes.rect({
             x: x - this.wPoint / 2,
             y,
@@ -152,7 +152,7 @@ export class WaterfallSeriesView extends SeriesView<WaterfallSeries> {
             p.yPos = y -= p.yPos = yAxis.getPosition(yLen, p.yValue * vr);
             y += hPoint;
 
-            bar.render(x, y, inverted);
+            bar.render(x, y);
 
             if (i > 0) {
                 const line = this._lines.get(i - 1);

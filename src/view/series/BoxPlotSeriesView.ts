@@ -40,27 +40,22 @@ class BoxView extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     layout(): void {
         const p = this.point;
-        const len = p.yValue - p.minValue;
         const w = this.width;
         const h = this.height;
-
-        this._box.setStyle('fill', p.color);
-
+        const len = p.yValue - p.minValue;
         const x = w / 2;
         let y = 0;
         const yLow = y + h - h * (p.lowValue - p.minValue) / len;
         const yHigh = y + h - h * (p.highValue - p.minValue) / len;
         const hBox = h * (p.highValue - p.lowValue) / len;
 
+        this._box.setStyle('fill', p.color);
+
         this._stemUp.setVLine(x, y, yHigh);
         this._stemDown.setVLine(x, yLow, h);
         this._min.setHLine(y, w / 4, w * 3 / 4);
         this._max.setHLine(y + h, w / 4, w * 3 / 4);
-        if (hBox < 0) {
-            this._box.setBounds(0, yHigh + hBox, w, -hBox);
-        } else {
-            this._box.setBounds(0, yHigh, w, hBox);
-        }
+        this._box.setBox(0, yHigh, w, hBox);
         this._mid.setHLine(y + h - h * (p.midValue - p.minValue) / len, 0, w);
     }
 

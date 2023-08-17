@@ -249,13 +249,10 @@
 .rct-candlestick-point-wick {
     stroke: #003;
 }
-.rct-candlestick-point-body {
-    fill: #800;
-}
-.rct-candlestick-point[data-focus] .rct-candlestick-point-body {
+.rct-candlestick-point[data-focus] {
     fill-opacity: 0.5;
 }
-.rct-candlestick-point-body-fall {
+.rct-candlestick-point-fall {
     fill: #008;
 }
 .rct-candlestick-point[data-focus] .rct-candlestick-point-body-fall {
