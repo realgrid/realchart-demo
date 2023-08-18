@@ -974,9 +974,12 @@ export abstract class ClusterableSeries extends PolarableSeries implements IClus
         return p;
     }
 
-    getLabelPosition(): PointItemPosition {
-        const p = this.pointLabel.position;
+    getLabelPosition(p: PointItemPosition): PointItemPosition {
         return p === PointItemPosition.AUTO ? PointItemPosition.OUTSIDE_FIRST : p;
+    }
+
+    getLabelOff(off: number): number {
+        return off;
     }
 
     //-------------------------------------------------------------------------

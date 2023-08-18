@@ -130,10 +130,12 @@ export class AxisGridView extends ChartElement<AxisGrid> {
 
         if (axis._isHorz) {
             this._lines.forEach((line, i) => {
+                // line.setVLine(pts[i], 0, h);
                 line.setVLineC(pts[i], 0, h);
             });
         } else {
             this._lines.forEach((line, i) => {
+                // line.setHLine(h - pts[i], 0, w);
                 line.setHLineC(h - pts[i], 0, w);
             });
         }

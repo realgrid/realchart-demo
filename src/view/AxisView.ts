@@ -100,8 +100,10 @@ class AxisTickMarkView extends ChartElement<AxisTickMark> {
 
     protected _doLayout(param: any): void {
         if (this.model.axis._isHorz) {
+            // this._lineView.setVLine(0, 0, this.height);
             this._lineView.setVLineC(0, 0, this.height);
         } else {
+            // this._lineView.setHLine(0, 0, this.width);
             this._lineView.setHLineC(0, 0, this.width);
         }
     }
@@ -237,9 +239,11 @@ export class AxisView extends ChartElement<Axis> {
         // line
         if (this._lineView.visible) {
             if (horz) {
-                this._lineView.setHLineC(opp ? h : 0, 0, w);
+                this._lineView.setHLine(opp ? h : 0, 0, w);
+                // this._lineView.setHLineC(opp ? h : 0, 0, w);
             } else {
-                this._lineView.setVLineC(opp ? 0 : w, 0, h);
+                this._lineView.setVLine(opp ? 0 : w, 0, h);
+                // this._lineView.setVLineC(opp ? 0 : w, 0, h);
             }
         }
 

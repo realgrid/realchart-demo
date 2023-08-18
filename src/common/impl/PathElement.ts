@@ -37,7 +37,8 @@ export class LineElement extends PathElement {
     constructor(doc: Document, styleName: string = _undefined, line: ILine = _undefined) {
         super(doc, styleName);
 
-        this.setLine(line);
+        this.setAttr('shapeRendering', 'cripsEdges');
+        line && this.setLine(line);
     }
 
     //-------------------------------------------------------------------------
@@ -59,11 +60,11 @@ export class LineElement extends PathElement {
     }
 
     setVLineC(x: number, y1: number, y2: number): void {
-        const w = parseFloat(this.getStyle('stroke-width'));
+        // const w = parseFloat(this.getStyle('stroke-width'));
 
-        if (!isNaN(w)) {
-            x = Math.round(x) - (w % 2 / 2);
-        }
+        // if (!isNaN(w)) {
+        //     x = Math.round(x) - (w % 2 / 2);
+        // }
         this.setPath(SvgShapes.line(x, y1, x, y2));
     }
 
@@ -72,11 +73,11 @@ export class LineElement extends PathElement {
     }
 
     setHLineC(y: number, x1: number, x2: number): void {
-        const w = parseFloat(this.getStyle('stroke-width'));
+        // const w = parseFloat(this.getStyle('stroke-width'));
         
-        if (!isNaN(w)) {
-            y = Math.round(y) - (w % 2 / 2);
-        }
+        // if (!isNaN(w)) {
+        //     y = Math.round(y) - (w % 2 / 2);
+        // }
         this.setPath(SvgShapes.line(x1, y, x2, y));
     }
 }
@@ -129,20 +130,20 @@ export class LineElementEx extends PathElement {
     }
 
     updateVLineC(x: number, y1: number, y2: number): void {
-        const w = parseFloat(this.getStyle('stroke-width'));
+        // const w = parseFloat(this.getStyle('stroke-width'));
 
-        if (!isNaN(w)) {
-            x = Math.round(x) - (w % 2 / 2);
-        }
+        // if (!isNaN(w)) {
+        //     x = Math.round(x) - (w % 2 / 2);
+        // }
         this.updateLine({x1: x, y1: y1, x2: x, y2: y2});
     }
 
     updateHLineC(y: number, x1: number, x2: number, animate = false): void {
-        const w = parseFloat(this.getStyle('stroke-width'));
+        // const w = parseFloat(this.getStyle('stroke-width'));
 
-        if (!isNaN(w)) {
-            y = Math.round(y) - (w % 2 / 2);
-        }
+        // if (!isNaN(w)) {
+        //     y = Math.round(y) - (w % 2 / 2);
+        // }
         this.updateLine({x1: x1, y1: y, x2: x2, y2: y});
     }
 
@@ -159,11 +160,11 @@ export class LineElementEx extends PathElement {
     }
 
     setVLineC(x: number, y1: number, y2: number): void {
-        const w = parseFloat(this.getStyle('stroke-width'));
+        // const w = parseFloat(this.getStyle('stroke-width'));
 
-        if (!isNaN(w)) {
-            x = Math.round(x) - (w % 2 / 2);
-        }
+        // if (!isNaN(w)) {
+        //     x = Math.round(x) - (w % 2 / 2);
+        // }
         this.$_update(x, y1, x, y2);
     }
 
@@ -172,11 +173,11 @@ export class LineElementEx extends PathElement {
     }
 
     setHLineC(y: number, x1: number, x2: number): void {
-        const w = parseFloat(this.getStyle('stroke-width'));
+        // const w = parseFloat(this.getStyle('stroke-width'));
 
-        if (!isNaN(w)) {
-            y = Math.round(y) - (w % 2 / 2);
-        }
+        // if (!isNaN(w)) {
+        //     y = Math.round(y) - (w % 2 / 2);
+        // }
         this.$_update(x1, y, x2, y);
     }
 

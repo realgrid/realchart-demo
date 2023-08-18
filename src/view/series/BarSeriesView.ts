@@ -107,8 +107,8 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         const yAxis = series._yAxisObj;
         const polar = body.getPolar(series);
         const labelInfo: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
-            labelPos: series.getLabelPosition(),
-            labelOff: labels.offset,
+            labelPos: series.getLabelPosition(labels.position),
+            labelOff: series.getLabelOff(labels.offset)
         });
 
         this._sectors.forEach((view, i) => {

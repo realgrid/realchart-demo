@@ -52,6 +52,10 @@ export class LollipopSeries extends ClusterableSeries {
         return true;
     }
 
+    getLabelOff(off: number): number {
+        return off + this.marker.radius;
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new LollipopSeriesPoint(source);
     }

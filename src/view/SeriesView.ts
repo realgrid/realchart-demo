@@ -590,8 +590,8 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const org = inverted ? 0 : height;;
         const info: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
             inverted,
-            labelPos: series.getLabelPosition(),
-            labelOff: labels.offset
+            labelPos: series.getLabelPosition(labels.position),
+            labelOff: series.getLabelOff(labels.offset)
         });
 
         this._getPointPool().forEach((pointView: RcElement, i) => {
@@ -609,6 +609,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
             p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
             p.yPos = y -= yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
 
+            // 아래에서 위로 올라가는 animation을 위해 바닥 지점을 전달한다.
             this._layoutPointView(pointView, x, y + hPoint, wPoint, hPoint * vr);
 
             // label
@@ -655,8 +656,8 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
         const org = inverted ? 0 : height;;
         const info: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
             inverted,
-            labelPos: series.getLabelPosition(),
-            labelOff: labels.offset
+            labelPos: series.getLabelPosition(labels.position),
+            labelOff: series.getLabelOff(labels.offset)
         });
 
         this._getPointPool().forEach((pointView, i) => {

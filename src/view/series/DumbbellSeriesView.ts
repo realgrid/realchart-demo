@@ -141,7 +141,7 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
         const org = inverted ? 0 : height;;
         const labelInfo: LabelInfo = labelViews && Object.assign(this._labelInfo, {
             inverted,
-            labelPos: series.getLabelPosition(),
+            labelPos: series.getLabelPosition(labels.position),
             labelOff: labels.offset,
             width, height
         });

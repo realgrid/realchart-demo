@@ -294,7 +294,7 @@
 /** lollipop series */
 .rct-lollipop-point {
     stroke: #008;
-    stroke-width: 2px;
+    stroke-width: 3px;
 }
 .rct-lollipop-point-marker {
     stroke: none;

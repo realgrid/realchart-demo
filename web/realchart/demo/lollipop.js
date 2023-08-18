@@ -1,4 +1,5 @@
 const config = {
+    options: {},
     title: "Lollipop Series",
     xAxis: {
         type: 'category',
@@ -11,7 +12,6 @@ const config = {
         type: 'lollipop',
         pointLabel: {
             visible: true,
-            position: 'head',
             // offset: 10,
             // text: '<b style="fill:red">${x}</b>',
             // effect: 'outline',// 'background',
@@ -27,6 +27,7 @@ const config = {
             ['home', 7], 
             ['sky', 11], 
             ['def', 9], 
+            ['소홍', 10], 
             ['지리산', 14.3], 
             ['zzz', 13],
             ['낙동강', 12.5]
@@ -36,6 +37,7 @@ const config = {
         }
     }
 }
+
 let chart;
 
 function setActions(container) {
@@ -46,6 +48,18 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'Inverted', function (e) {
+        config.options.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
 }
 
 export function init() {
