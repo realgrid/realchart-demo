@@ -1,0 +1,75 @@
+{
+    "title": "Chart Title",
+    "subtitle": "Sub Title",
+    "xAxis": {
+        "title": "xAxis"
+    },
+    "yAxis": {
+        "type": "test",
+        "title": {
+            "text": "axis title",
+            "gap": 10,
+            "backgroundStyle": {
+                "fill": "red"
+            }
+        },
+        "tick": {
+            "mark": 10,
+            "prefix:": "강",
+            "suffix": ""
+        },
+        "grid": {
+            "circular": true,
+            "statVisible": false,
+            "endVisible": true,
+            "visible": true
+        },
+        "guide": [{
+            "type": "line",
+            "value": 12,
+            "label": "line guide"
+        }, {
+            "type": "range",
+            "start": 3,
+            "end": 6,
+            "label": {
+                "text": "range guide",
+                "align": "right",
+                "style": {
+                    "fill": "red"
+                }
+            }
+        }],
+        "crosshair": true,
+        "position": "normal",
+        "reversed": false,
+        "min": 0,
+        "max": 20,
+        "minPadding": 10,
+        "maxPadding": 0,
+        "padding": 0,
+        "marginNear": 0,
+        "marginFar": 0,
+        "tickStart": true,
+        "tickEnd": true
+    },
+    "series": [{
+        "pointLabel": {
+            "visible": true,
+            "position": "head",
+            "effect": "outline",
+            "style": {
+            }
+        },
+        "data": [
+            ["home", 7], 
+            ["sky", 11], 
+            ["def", 9], 
+            ["지리산", 14.3], 
+            ["zzz", 13],
+            ["낙동강", 12.5]
+        ],
+        "style": {
+        }
+    }]
+}
