@@ -11,12 +11,8 @@ import { PathElement, RcElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { DataPoint } from "../../model/DataPoint";
-import { PointItemPosition } from "../../model/Series";
-import { CategoryAxis } from "../../model/axis/CategoryAxis";
-import { ContinuousAxis } from "../../model/axis/LinearAxis";
 import { EqualizerSeries } from "../../model/series/EqualizerSeries";
-import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
-import { SeriesAnimation } from "../animation/SeriesAnimation";
+import { BoxedSeriesView, IPointView, SeriesView } from "../SeriesView";
 
 class BarElement extends GroupElement implements IPointView {
 
@@ -56,49 +52,40 @@ class BarElement extends GroupElement implements IPointView {
             });
     }
 
-    layout(pts: number[], x: number, y: number, inverted: boolean): void {
+    layout(pts: number[], x: number, y: number): void {
         const w = this.wPoint;
         const h = this.hPoint;
+        const m = h < 0 ? Math.max : Math.min;
         
         x -= w / 2;
+        if (h < 0) {
+            pts = pts.map(p => -p);
+        }
 
         // back steps
         this._backs.forEach((step, i) => {
-            step.setPath(SvgShapes.rectangle(0, y - pts[i * 2], w, Math.min(-1, pts[i * 2] - pts[i * 2 + 1])));
+            step.setPath(SvgShapes.rectangle(0, y - pts[i * 2], w, m(-1, (pts[i * 2] - pts[i * 2 + 1]))));
         })
 
         // steps
         this._segments.forEach((step, i, count) => {
             // Math.min(-1, ): 0에 가까운 값이면 svg가 line을 표시하지 않는다.(TODO: 다르 방법?)
             if (i === count - 1 && this._decimal > 0) {
-                step.setPath(SvgShapes.rectangle(x, y - pts[i * 2], w, Math.min(-1, -this._decimal)));
+                step.setPath(SvgShapes.rectangle(x, y - pts[i * 2], w, h < 0 ? m(1, this._decimal) : m(-1, -this._decimal)));
             } else {
-                step.setPath(SvgShapes.rectangle(x, y - pts[i * 2], w, Math.min(-1, pts[i * 2] - pts[i * 2 + 1])));
+                step.setPath(SvgShapes.rectangle(x, y - pts[i * 2], w, m(-1, (pts[i * 2] - pts[i * 2 + 1]))));
             }
         })
     }
 }
 
-type LabelInfo = {
-    inverted: boolean,
-    labelPos: PointItemPosition,
-    labelOff: number,
-    width: number,
-    height: number,
-    labelView: PointLabelView,
-    bar: BarElement,
-    x: number,
-    y: number
-};
-
-export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
+export class EqualizerSeriesView extends BoxedSeriesView<EqualizerSeries> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _bars: ElementPool<BarElement>;
     private _pts: number[];
-    private _labelInfo: LabelInfo = {} as any;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -112,29 +99,31 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _prepareSeries(doc: Document, model: EqualizerSeries): void {
-        this.$_parepareBars(this.model._visPoints);
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._bars;
     }
 
-    protected _renderSeries(width: number, height: number): void {
-        this.$_layoutBars(width, height);
+    protected _preparePointViews(doc: Document, model: EqualizerSeries, points: DataPoint[]): void {
+        this.$_parepareBars(points);
+    }        
+
+    protected _layoutPointViews(width: number, height: number): void {
+        const len = (this._inverted ? width : height) * this._getViewRate();
+
+        this.$_buildSegments(this.model, len);
+
+        super._layoutPointViews(width, height);
     }
 
-    protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.grow(this);
-    }
-
-    protected _doViewRateChanged(rate: number): void {
-        this.$_layoutBars(this.width, this.height);
+    protected _layoutPointView(view: BarElement, x: number, y: number, wPoint: number, hPoint: number): void {
+        view.wPoint = wPoint;
+        view.hPoint = hPoint;
+        view.layout(this._pts, x, y);
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    protected _getPointPool(): ElementPool<RcElement> {
-        return this._bars;
-    }
-
     private $_parepareBars(points: DataPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
@@ -192,113 +181,113 @@ export class EqualizerSeriesView extends SeriesView<EqualizerSeries> {
         });
     }
 
-    protected $_layoutBars(width: number, height: number): void {
-        const series = this.model;
-        const inverted = series.chart.isInverted();
-        const vr = this._getViewRate();
-        const labels = series.pointLabel;
-        const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
-        const yAxis = series._yAxisObj;
-        const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
-        const yLen = (inverted ? width : height) * vr;
-        const xLen = inverted ? height : width;
-        //const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
-        const yBase = yAxis.getPosition(yLen, yAxis instanceof ContinuousAxis ? yAxis.baseValue : 0);
-        const org = inverted ? 0 : height;;
-        const labelInfo: LabelInfo = labelViews && Object.assign(this._labelInfo, {
-            inverted,
-            labelPos: series.getLabelPosition(),
-            labelOff: labels.offset,
-            width, height
-        });
+    // protected $_layoutBars(width: number, height: number): void {
+    //     const series = this.model;
+    //     const inverted = series.chart.isInverted();
+    //     const vr = this._getViewRate();
+    //     const labels = series.pointLabel;
+    //     const labelViews = this._labelViews();
+    //     const xAxis = series._xAxisObj;
+    //     const yAxis = series._yAxisObj;
+    //     const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
+    //     const yLen = (inverted ? width : height) * vr;
+    //     const xLen = inverted ? height : width;
+    //     //const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
+    //     const yBase = yAxis.getPosition(yLen, yAxis instanceof ContinuousAxis ? yAxis.baseValue : 0);
+    //     const org = inverted ? 0 : height;;
+    //     const labelInfo: LabelInfo = labelViews && Object.assign(this._labelInfo, {
+    //         inverted,
+    //         labelPos: series.getLabelPosition(),
+    //         labelOff: labels.offset,
+    //         width, height
+    //     });
 
-        this.$_buildSegments(series, yLen);
+    //     this.$_buildSegments(series, yLen);
 
-        this._bars.forEach((bar, i) => {
-            const p = bar.point;
-            const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
-            const wPoint = series.getPointWidth(wUnit);
-            const yVal = yAxis.getPosition(yLen, p.yValue);
-            const h = yVal - yBase;
-            let x: number;
-            let y: number;
+    //     this._bars.forEach((bar, i) => {
+    //         const p = bar.point;
+    //         const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
+    //         const wPoint = series.getPointWidth(wUnit);
+    //         const yVal = yAxis.getPosition(yLen, p.yValue);
+    //         const h = yVal - yBase;
+    //         let x: number;
+    //         let y: number;
 
-            if (inverted) {
-                y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
-                x = org;
-            } else {
-                x = xAxis.getPosition(xLen, i) - wUnit / 2;
-                y = org;
-            }
+    //         if (inverted) {
+    //             y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2;
+    //             x = org;
+    //         } else {
+    //             x = xAxis.getPosition(xLen, i) - wUnit / 2;
+    //             y = org;
+    //         }
 
-            if (inverted) {
-                p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
-                p.xPos = x += yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
-                x -= h;
-            } else {
-                p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
-                y += h; 
-            }
+    //         if (inverted) {
+    //             p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+    //             p.xPos = x += yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
+    //             x -= h;
+    //         } else {
+    //             p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
+    //             p.yPos = y -= yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
+    //             y += h; 
+    //         }
 
-            bar.wPoint = wPoint;
-            bar.hPoint = h * vr;
-            bar.layout(this._pts, x, y, inverted);
+    //         bar.wPoint = wPoint;
+    //         bar.hPoint = h * vr;
+    //         bar.layout(this._pts, x, y);
 
-            // label
-            if (labelInfo && (labelInfo.labelView = labelViews.get(p, 0))) {
-                labelInfo.bar = bar;
-                labelInfo.x = x;
-                labelInfo.y = y;
-                this.$_layoutLabel(labelInfo);
-            }
-        })
-    }
+    //         // label
+    //         if (labelInfo && (labelInfo.labelView = labelViews.get(p, 0))) {
+    //             labelInfo.bar = bar;
+    //             labelInfo.x = x;
+    //             labelInfo.y = y;
+    //             this.$_layoutLabel(labelInfo);
+    //         }
+    //     })
+    // }
 
-    private $_layoutLabel(info: LabelInfo): void {
-        const r = info.labelView.getBBounds();
-        let inner = true;
-        let {inverted, x, y, bar, labelOff} = info;
+    // private $_layoutLabel(info: LabelInfo): void {
+    //     const r = info.labelView.getBBounds();
+    //     let inner = true;
+    //     let {inverted, x, y, bar, labelOff} = info;
 
-        if (inverted) {
-            y -= r.height / 2;
-        } else {
-            x -= r.width / 2;
-        }
+    //     if (inverted) {
+    //         y -= r.height / 2;
+    //     } else {
+    //         x -= r.width / 2;
+    //     }
 
-        switch (info.labelPos) {
-            case PointItemPosition.INSIDE:
-                if (info.inverted) {
-                    x += bar.hPoint / 2 + labelOff;
-                } else {
-                    y -= (bar.hPoint + r.height) / 2 + labelOff;
-                }
-                break;
+    //     switch (info.labelPos) {
+    //         case PointItemPosition.INSIDE:
+    //             if (info.inverted) {
+    //                 x += bar.hPoint / 2 + labelOff;
+    //             } else {
+    //                 y -= (bar.hPoint + r.height) / 2 + labelOff;
+    //             }
+    //             break;
 
-            case PointItemPosition.HEAD:
-                if (info.inverted) {
-                    x += bar.hPoint - r.width - labelOff;
-                } else {
-                    y -= bar.hPoint - labelOff;
-                }
-                break;
+    //         case PointItemPosition.HEAD:
+    //             if (info.inverted) {
+    //                 x += bar.hPoint - r.width - labelOff;
+    //             } else {
+    //                 y -= bar.hPoint - labelOff;
+    //             }
+    //             break;
 
-            case PointItemPosition.FOOT:
-                break;
+    //         case PointItemPosition.FOOT:
+    //             break;
 
-            case PointItemPosition.OUTSIDE:
-            default:
-                if (info.inverted) {
-                    x += bar.hPoint + labelOff;
-                } else {
-                    y -= bar.hPoint + r.height + labelOff;
-                }
-                inner = false;
-                break;
-        }
+    //         case PointItemPosition.OUTSIDE:
+    //         default:
+    //             if (info.inverted) {
+    //                 x += bar.hPoint + labelOff;
+    //             } else {
+    //                 y -= bar.hPoint + r.height + labelOff;
+    //             }
+    //             inner = false;
+    //             break;
+    //     }
 
-        info.labelView.setContrast(inner && info.bar.dom);
-        info.labelView.layout().translate(x, y);
-    }
+    //     info.labelView.setContrast(inner && info.bar.dom);
+    //     info.labelView.layout().translate(x, y);
+    // }
 }

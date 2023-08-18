@@ -16,6 +16,7 @@ const config = {
         data: [11, 22, 15, 9, 13, 27]
     }]
 }
+
 let chart;
 
 function setActions(container) {
