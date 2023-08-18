@@ -8,7 +8,7 @@
 
 import { pickNum, pickProp, pickProp3 } from "../../common/Common";
 import { DataPoint } from "../DataPoint";
-import { BarSeries, ColumnSeries } from "./BarSeries";
+import { ColumnSeries } from "./BarSeries";
 
 export class BoxPlotSeriesPoint extends DataPoint {
 

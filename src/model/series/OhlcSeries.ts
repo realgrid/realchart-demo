@@ -9,7 +9,7 @@
 import { pickNum, pickProp } from "../../common/Common";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { BoxSeries } from "./BarSeries";
+import { ClusterableSeries } from "../Series";
 
 /**
  * Low/Open/Close/High 네 값을 수직선(low-high)과 
@@ -83,7 +83,7 @@ export class OhlcSeriesPoint extends DataPoint {
     }
 }
 
-export class OhlcSeries extends BoxSeries {
+export class OhlcSeries extends ClusterableSeries {
 
     //-------------------------------------------------------------------------
     // property fields

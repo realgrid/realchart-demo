@@ -106,7 +106,7 @@ export class CandlestickSeriesView extends RangedSeriesView<CandlestickSeries> {
         box.layout();
     } 
 
-    protected _preparePointViews(points: CandlestickSeriesPoint[]): void {
+    protected _preparePointViews(doc: Document, model: CandlestickSeries, points: CandlestickSeriesPoint[]): void {
         this._sticks.prepare(points.length, (box, i) => {
             box.point = points[i];
         })

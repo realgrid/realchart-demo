@@ -7,10 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp, pickProp3 } from "../../common/Common";
-import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../../common/Types";
-import { Utils } from "../../common/Utils";
 import { DataPoint } from "../DataPoint";
-import { BoxSeries } from "./BarSeries";
+import { Series } from "../Series";
 
 /**
  * [x, y, length, angle]
@@ -85,7 +83,7 @@ export enum ArrowHead {
 
 /**
  */
-export class VectorSeries extends BoxSeries {
+export class VectorSeries extends Series {
 
     //-------------------------------------------------------------------------
     // property fields

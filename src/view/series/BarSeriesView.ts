@@ -12,12 +12,8 @@ import { SectorElement } from "../../common/impl/SectorElement";
 import { TextAnchor } from "../../common/impl/TextElement";
 import { Chart } from "../../main";
 import { DataPoint } from "../../model/DataPoint";
-import { PointItemPosition } from "../../model/Series";
-import { CategoryAxis } from "../../model/axis/CategoryAxis";
-import { LinearAxis } from "../../model/axis/LinearAxis";
 import { BarSeries, ColumnSeries } from "../../model/series/BarSeries";
-import { BarElement, IPointView, PointLabelView, SeriesView } from "../SeriesView";
-import { SeriesAnimation } from "../animation/SeriesAnimation";
+import { BarElement, BoxedSeriesView, IPointView, LabelLayoutInfo } from "../SeriesView";
 
 class BarSectorView extends SectorElement implements IPointView {
 
@@ -27,27 +23,14 @@ class BarSectorView extends SectorElement implements IPointView {
     point: DataPoint;
 }
 
-type LabelInfo = {
-    inverted: boolean,
-    labelPos: PointItemPosition,
-    labelOff: number,
-    width: number,
-    height: number,
-    labelView: PointLabelView,
-    bar: BarElement,
-    x: number,
-    y: number,
-    below: boolean
-};
-
-export class BarSeriesView extends SeriesView<BarSeries> {
+export class BarSeriesView extends BoxedSeriesView<BarSeries> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _bars: ElementPool<BarElement>;
     private _sectors: ElementPool<BarSectorView>;
-    private _labelInfo: LabelInfo = {} as any;
+    protected _labelInfo: LabelLayoutInfo = {} as any;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -63,7 +46,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         return this.chart()._polar ? this._sectors : this._bars;
     }
 
-    protected _prepareSeries(doc: Document, model: BarSeries): void {
+    protected _preparePointViews(doc: Document, model: BarSeries, points: DataPoint[]): void {
         if (model.chart._polar) {
             this.$_parepareSectors(doc, model, model._visPoints);
         } else {
@@ -71,25 +54,18 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         }
     }
 
-    protected _renderSeries(width: number, height: number): void {
+    protected _layoutPointViews(width: number, height: number): void {
         if (this.model.chart._polar) {
             this.$_layoutSectors();
         } else {
-            this._pointContainer.invert(this.model.chart.isInverted(), height);
-            this.$_layoutBars(width, height);
+            super._layoutPointViews(width, height);
         }
     }
 
-    protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.grow(this);
-    }
-
-    protected _doViewRateChanged(rate: number): void {
-        if (this.model.chart._polar) {
-            this.$_layoutSectors();
-        } else {
-            this.$_layoutBars(this.width, this.height);
-        }
+    protected _layoutPointView(view: BarElement, x: number, y: number, wPoint: number, hPoint: number): void {
+        view.wPoint = wPoint;
+        view.hPoint = hPoint;
+        view.layout(x, y);
     }
 
     //-------------------------------------------------------------------------
@@ -121,128 +97,6 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         });
     }
 
-    protected $_layoutBars(width: number, height: number): void {
-        const series = this.model;
-        const inverted = this._inverted;
-        const vr = this._getViewRate();
-        const labels = series.pointLabel;
-        const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
-        const yAxis = series._yAxisObj;
-        const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
-        const yLen = inverted ? width : height;
-        const xLen = inverted ? height : width;
-        const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.baseValue : 0);
-        const org = inverted ? 0 : height;;
-        const labelInfo: LabelInfo = labelViews && Object.assign(this._labelInfo, {
-            inverted,
-            labelPos: series.getLabelPosition(),
-            labelOff: labels.offset,
-            width, height
-        });
-
-        this._bars.forEach((bar, i) => {
-            const p = bar.point;
-            const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
-            const wPoint = series.getPointWidth(wUnit);
-            const yVal = yAxis.getPosition(yLen, p.yValue);
-            const h = yVal - yBase;
-            let x: number;
-            let y: number;
-
-            x = xAxis.getPosition(xLen, i) - wUnit / 2;
-            y = org;
-
-            p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-            p.yPos = y -= yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
-            y += h; 
-
-            bar.wPoint = wPoint;
-            bar.hPoint = h * vr;
-            bar.layout(x, y);
-
-            // label
-            if (labelInfo && (labelInfo.labelView = labelViews.get(p, 0))) {
-                if (inverted) {
-                    // y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2; // 위에서 아래로 내려갈 때
-                    y = xLen - xAxis.getPosition(xLen, i) + wUnit / 2;
-                    x = org;
-                    p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
-                    // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
-                    p.xPos = x += yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
-                    x -= h;
-                }
-                labelInfo.bar = bar;
-                labelInfo.x = x;
-                labelInfo.y = y;
-                labelInfo.below = h < 0;
-                this.$_layoutLabel(labelInfo);
-            }
-        })
-    }
-
-    private $_layoutLabel(info: LabelInfo): void {
-        const r = info.labelView.getBBounds();
-        let inner = true;
-        let {inverted, x, y, bar, labelOff} = info;
-
-        if (inverted) {
-            y -= r.height / 2;
-        } else {
-            x -= r.width / 2;
-        }
-
-        switch (info.labelPos) {
-            case PointItemPosition.INSIDE:
-                if (info.inverted) {
-                    x += bar.hPoint / 2 + labelOff;
-                } else {
-                    y -= (bar.hPoint + r.height) / 2 + labelOff;
-                }
-                break;
-
-            case PointItemPosition.HEAD:
-                if (info.inverted) {
-                    if (info.below) {
-                        x += bar.hPoint + r.width - labelOff;
-                    } else {
-                        x += bar.hPoint - r.width - labelOff;
-                    }
-                } else {
-                    if (info.below) {
-                        y -= bar.hPoint + r.height + labelOff;
-                    } else {
-                        y -= bar.hPoint - labelOff;
-                    }
-                }
-                break;
-
-            case PointItemPosition.FOOT:
-                break;
-
-            case PointItemPosition.OUTSIDE:
-            default:
-                if (info.inverted) {
-                    if (info.below) {
-                        x += bar.hPoint - r.width - labelOff;
-                    } else {
-                        x += bar.hPoint + labelOff;
-                    }
-                } else {
-                    if (info.below) {
-                        y -= bar.hPoint - labelOff;
-                    } else {
-                        y -= bar.hPoint + r.height + labelOff;
-                    }
-                }
-                inner = false;
-                break;
-        }
-
-        info.labelView.setContrast(inner && info.bar.dom);
-        info.labelView.layout().translate(x, y);
-    }
-
     private $_layoutSectors(): void {
         const series = this.model;
         const vr = this._getViewRate();
@@ -252,7 +106,7 @@ export class BarSeriesView extends SeriesView<BarSeries> {
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const polar = body.getPolar(series);
-        const labelInfo: LabelInfo = labelViews && Object.assign(this._labelInfo, {
+        const labelInfo: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
             labelPos: series.getLabelPosition(),
             labelOff: labels.offset,
         });
@@ -275,18 +129,14 @@ export class BarSeriesView extends SeriesView<BarSeries> {
 
             // label
             if (labelViews && (labelInfo.labelView = labelViews.get(p, 0))) {
-                this.$_layoutSectorLabel(labelInfo, view);
+                const a = view.start + view.angle
+                const x = view.cx + view.rx / 2 * Math.cos(a);
+                const y = view.cy + view.ry / 2 * Math.sin(a);
+                const r = labelInfo.labelView.getBBounds();
+
+                labelInfo.labelView._text.anchor = TextAnchor.MIDDLE;
+                labelInfo.labelView.translate(x - r.width / 2, y - r.height / 2);
             }
         })
-    }
-
-    private $_layoutSectorLabel(info: LabelInfo, view: BarSectorView): void {
-        const a = view.start + view.angle
-        const x = view.cx + view.rx / 2 * Math.cos(a);
-        const y = view.cy + view.ry / 2 * Math.sin(a);
-        const r = info.labelView.getBBounds();
-
-        info.labelView._text.anchor = TextAnchor.MIDDLE;
-        info.labelView.translate(x - r.width / 2, y - r.height / 2);
     }
 }

@@ -9,7 +9,7 @@
 import { pickNum, pickProp, pickProp3 } from "../../common/Common";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { BoxSeries } from "./BarSeries";
+import { ClusterableSeries } from "../Series";
 
 export class ErrorBarSeriesPoint extends DataPoint {
 
@@ -70,7 +70,7 @@ export class ErrorBarSeriesPoint extends DataPoint {
     }
 }
 
-export class ErrorBarSeries extends BoxSeries {
+export class ErrorBarSeries extends ClusterableSeries {
 
     //-------------------------------------------------------------------------
     // property fields

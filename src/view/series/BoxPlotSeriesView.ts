@@ -102,7 +102,7 @@ export class BoxPlotSeriesView extends RangedSeriesView<BoxPlotSeries> {
         box.layout();
     }
 
-    protected _preparePointViews(points: BoxPlotSeriesPoint[]): void {
+    protected _preparePointViews(doc: Document, model: BoxPlotSeries, points: BoxPlotSeriesPoint[]): void {
         this._boxes.prepare(points.length, (box, i) => {
             box.point = points[i];
         })

@@ -36,7 +36,7 @@ export class BarRangeSeriesView extends RangedSeriesView<BarRangeSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    protected _preparePointViews(points: DataPoint[]): void {
+    protected _preparePointViews(doc: Document, model: BarRangeSeries, points: DataPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
             v.point = points[i];
             v.setStyle('fill', points[i].color);

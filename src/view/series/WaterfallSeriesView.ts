@@ -21,7 +21,7 @@ class BarElement extends BoxPointElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    render(x: number, y: number): void {
+    layout(x: number, y: number): void {
         this.setPath(SvgShapes.rect({
             x: x - this.wPoint / 2,
             y,
@@ -35,8 +35,8 @@ type LabelInfo = {
     inverted: boolean,
     labelPos: PointItemPosition,
     labelOff: number,
-    width: number,
-    height: number,
+    // width: number,
+    // height: number,
     labelView: PointLabelView,
     bar: BarElement,
     x: number,
@@ -152,7 +152,7 @@ export class WaterfallSeriesView extends SeriesView<WaterfallSeries> {
             p.yPos = y -= p.yPos = yAxis.getPosition(yLen, p.yValue * vr);
             y += hPoint;
 
-            bar.render(x, y);
+            bar.layout(x, y);
 
             if (i > 0) {
                 const line = this._lines.get(i - 1);

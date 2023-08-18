@@ -18,7 +18,7 @@ class BarElement extends BoxPointElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    render(x: number, y: number): void {
+    layout(x: number, y: number): void {
         this.setPath(SvgShapes.rect({
             x: x - this.wPoint / 2,
             y,
@@ -90,7 +90,7 @@ export class HistogramSeriesView extends SeriesView<HistogramSeries> {
             bar.hPoint = yAxis.getPosition(height, bar.point.yValue) * vr;
             p.xPos = x;
             p.yPos = y - bar.hPoint;
-            bar.render(x, y);
+            bar.layout(x, y);
         })
     }
 }

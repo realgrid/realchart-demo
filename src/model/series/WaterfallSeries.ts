@@ -9,7 +9,7 @@
 import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { BoxSeries } from "./BarSeries";
+import { ClusterableSeries } from "../Series";
 
 export class WaterfallSeriesPoint extends DataPoint {
 
@@ -34,7 +34,7 @@ export class WaterfallSeriesPoint extends DataPoint {
     }
 }
 
-export class WaterfallSeries extends BoxSeries {
+export class WaterfallSeries extends ClusterableSeries {
 
     //-------------------------------------------------------------------------
     // property fields

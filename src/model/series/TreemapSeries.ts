@@ -9,7 +9,7 @@
 import { Color } from "../../common/Color";
 import { toStr } from "../../common/Types";
 import { DataPoint } from "../DataPoint";
-import { BoxSeries } from "./BarSeries";
+import { Series } from "../Series";
 
 export class TreemapSeriesPoint extends DataPoint {
 
@@ -114,7 +114,7 @@ export enum TreemapAlgorithm {
  * 
  * // TODO: grouping된 data 설정 가능하도록 한다. data[{data:[]}, {data:[]}]
  */
-export class TreemapSeries extends BoxSeries {
+export class TreemapSeries extends Series {
 
     //-------------------------------------------------------------------------
     // property fields

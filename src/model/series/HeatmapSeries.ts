@@ -6,10 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, pickProp3 } from "../../common/Common";
+import { pickNum, pickProp } from "../../common/Common";
 import { DataPoint } from "../DataPoint";
 import { Series } from "../Series";
-import { BoxSeries } from "./BarSeries";
 
 export class HeatmapSeriesPoint extends DataPoint {
 

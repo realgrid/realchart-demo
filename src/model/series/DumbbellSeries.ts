@@ -10,8 +10,7 @@ import { pickNum, pickProp, pickProp3 } from "../../common/Common";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { SeriesMarker } from "../Series";
-import { BoxSeries } from "./BarSeries";
+import { ClusterableSeries, SeriesMarker } from "../Series";
 
 export class DumbbellSeriesMarker extends SeriesMarker {
 
@@ -88,7 +87,7 @@ export class DumbbellSeriesPoint extends DataPoint {
 /**
  * BarRange 시리즈 변종.
  */
-export class DumbbellSeries extends BoxSeries {
+export class DumbbellSeries extends ClusterableSeries {
 
     //-------------------------------------------------------------------------
     // fields

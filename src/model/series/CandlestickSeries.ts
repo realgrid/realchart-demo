@@ -9,7 +9,7 @@
 import { pickNum, pickProp } from "../../common/Common";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { BoxSeries } from "./BarSeries";
+import { ClusterableSeries } from "../Series";
 
 /**
  * [low, open, close, high]
@@ -78,7 +78,7 @@ export class CandlestickSeriesPoint extends DataPoint {
     }
 }
 
-export class CandlestickSeries extends BoxSeries {
+export class CandlestickSeries extends ClusterableSeries {
 
     //-------------------------------------------------------------------------
     // property fields

@@ -8,7 +8,8 @@ const config = {
     series: {
         pointLabel: {
             visible: true,
-            // position: 'head'
+            // position: 'foot',
+            effect: 'outline'
         },
         data: [
             ['home', 7], 
@@ -44,6 +45,10 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.update(config);
     }, false);
+    createListBox(container, "PointLabel Position", ['auto', 'inside', 'outside', 'head', 'foot'], function (e) {
+        config.series.pointLabel.position = _getValue(e);
+        chart.update(config);
+    }, 'auto');
 }
 
 export function init() {

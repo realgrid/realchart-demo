@@ -11,15 +11,14 @@ import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
 import { LayerElement, PathElement, RcElement } from "../common/RcControl";
-import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { SvgShapes } from "../common/impl/SvgShape";
 import { DataPoint } from "../model/DataPoint";
-import { DataPointLabel, Series } from "../model/Series";
+import { ClusterableSeries, DataPointLabel, PointItemPosition, Series } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
-import { BoxSeries } from "../model/series/BarSeries";
+import { LinearAxis } from "../model/axis/LinearAxis";
 import { ChartElement } from "./ChartElement";
 import { SeriesAnimation } from "./animation/SeriesAnimation";
 
@@ -270,6 +269,20 @@ export class PointContainer extends LayerElement {
     }
 }
 
+export type LabelLayoutInfo = {
+    inverted: boolean
+    // point 위치, 크기
+    pointView: RcElement,
+    x: number,  
+    y: number,
+    hPoint: number,
+    wPoint: number,
+    // label 설정
+    labelView: PointLabelView,
+    labelPos: PointItemPosition,
+    labelOff: number
+};
+
 export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 
     //-------------------------------------------------------------------------
@@ -405,9 +418,86 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         sb.lines(...pts);
         this._trendLineView.setPath(sb.end(false));
     }
+
+    protected _layoutLabel(info: LabelLayoutInfo): void {
+        // below이면 hPoint가 음수이다.
+        let {inverted, x, y, wPoint, hPoint, labelView, labelOff} = info;
+        const below = hPoint < 0;
+        const r = labelView.getBBounds();
+        let inner = true;
+
+        if (inverted) {
+            y -= r.height / 2;
+        } else {
+            x -= r.width / 2;
+        }
+
+        switch (info.labelPos) {
+            case PointItemPosition.INSIDE:
+                if (inverted) {
+                    x -= hPoint / 2 + labelOff;
+                } else {
+                    y += (hPoint - r.height) / 2 + labelOff;
+                }
+                break;
+
+            case PointItemPosition.HEAD:
+                if (inverted) {
+                    if (below) {
+                        x += r.width - labelOff;
+                    } else {
+                        x -= r.width + labelOff;
+                    }
+                } else {
+                    if (below) {
+                        y -= r.height + labelOff;
+                    } else {
+                        y += labelOff;
+                    }
+                }
+                break;
+
+            case PointItemPosition.FOOT:
+                if (inverted) {
+                    if (below) {
+                        x -= hPoint + r.width + labelOff;
+                    } else {
+                        x -= hPoint - labelOff;
+                    }
+                } else {
+                    if (below) {
+                        y += hPoint + labelOff;
+                    } else {
+                        y += hPoint - r.height - labelOff;
+                    }
+                }
+                break;
+
+            case PointItemPosition.OUTSIDE:
+            default:
+                if (inverted) {
+                    if (below) {
+                        x -= r.width + labelOff;
+                    } else {
+                        x += labelOff;
+                    }
+                } else {
+                    if (below) {
+                        y += labelOff;
+                    } else {
+                        y -= r.height + labelOff;
+                    }
+                }
+                inner = false;
+                break;
+        }
+
+        labelView.setContrast(inner && info.pointView.dom);
+        labelView.layout().translate(x, y);
+    }
 }
 
-export class BoxPointElement extends PathElement implements IPointView {
+export abstract class BoxPointElement extends PathElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -423,12 +513,17 @@ export class BoxPointElement extends PathElement implements IPointView {
     constructor(doc: Document) {
         super(doc, SeriesView.POINT_STYLE + ' rct-box-point');
     }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    public abstract layout(x: number, y: number): void;
 }
 
 export class BarElement extends BoxPointElement {
 
     //-------------------------------------------------------------------------
-    // methods
+    // overriden members
     //-------------------------------------------------------------------------
     layout(x: number, y: number): void {
         this.setPath(SvgShapes.rect({
@@ -440,13 +535,18 @@ export class BarElement extends BoxPointElement {
     }
 }
 
-export abstract class BoxedSeriesView<T extends BoxSeries> extends SeriesView<T> {
+export abstract class ClusterableSeriesView<T extends ClusterableSeries> extends SeriesView<T> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    protected _labelInfo: LabelLayoutInfo = {} as any;
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: T): void {
-        this._preparePointViews(model._visPoints);
+        this._preparePointViews(doc, model, model._visPoints);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -465,17 +565,81 @@ export abstract class BoxedSeriesView<T extends BoxSeries> extends SeriesView<T>
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    protected abstract _preparePointViews(points: DataPoint[]): void;
+    protected abstract _preparePointViews(doc: Document, model: T, points: DataPoint[]): void;
     protected abstract _layoutPointViews(width: number, height: number): void;
-    protected abstract _getLowValue(p: DataPoint): number;
     protected abstract _layoutPointView(view: RcElement, x: number, y: number, wPoint: number, hPoint: number): void;
 }
 
-export abstract class RangedSeriesView<T extends BoxSeries> extends BoxedSeriesView<T> {
+export abstract class BoxedSeriesView<T extends ClusterableSeries> extends ClusterableSeriesView<T> {
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _layoutPointViews(width: number, height: number): void {
+        const series = this.model;
+        const inverted = this._inverted;
+        const vr = this._getViewRate();
+        const labels = series.pointLabel;
+        const labelViews = this._labelViews();
+        const xAxis = series._xAxisObj;
+        const yAxis = series._yAxisObj;
+        const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
+        const yLen = inverted ? width : height;
+        const xLen = inverted ? height : width;
+        const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.baseValue : 0);
+        const org = inverted ? 0 : height;;
+        const info: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
+            inverted,
+            labelPos: series.getLabelPosition(),
+            labelOff: labels.offset
+        });
+
+        this._getPointPool().forEach((pointView: RcElement, i) => {
+            const p = (pointView as any as IPointView).point;
+            const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
+            const wPoint = series.getPointWidth(wUnit);
+            const yVal = yAxis.getPosition(yLen, p.yValue);
+            const hPoint = yVal - yBase;
+            let x: number;
+            let y: number;
+
+            x = xAxis.getPosition(xLen, i) - wUnit / 2;
+            y = org;
+
+            p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
+            p.yPos = y -= yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
+
+            this._layoutPointView(pointView, x, y + hPoint, wPoint, hPoint * vr);
+
+            // label
+            if (info && (info.labelView = labelViews.get(p, 0))) {
+                if (inverted) {
+                    // y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2; // 위에서 아래로 내려갈 때
+                    y = xLen - xAxis.getPosition(xLen, i) + wUnit / 2;
+                    x = org;
+                    p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
+                    // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+                    p.xPos = x += yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
+                }
+
+                info.pointView = pointView;
+                info.x = x;
+                info.y = y;
+                info.wPoint = wPoint;
+                info.hPoint = hPoint;
+                this._layoutLabel(info);
+            }
+        })
+    }
+}
+
+export abstract class RangedSeriesView<T extends ClusterableSeries> extends ClusterableSeriesView<T> {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected abstract _getLowValue(p: DataPoint): number;
+
     protected _layoutPointViews(width: number, height: number): void {
         const series = this.model;
         const inverted = series.chart.isInverted();
@@ -488,9 +652,12 @@ export abstract class RangedSeriesView<T extends BoxSeries> extends BoxedSeriesV
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
-        // const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
-        // const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.yBase : 0);
         const org = inverted ? 0 : height;;
+        const info: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
+            inverted,
+            labelPos: series.getLabelPosition(),
+            labelOff: labels.offset
+        });
 
         this._getPointPool().forEach((pointView, i) => {
             const p = (pointView as any as IPointView).point;
@@ -498,19 +665,11 @@ export abstract class RangedSeriesView<T extends BoxSeries> extends BoxedSeriesV
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
             const hPoint = (yVal - yAxis.getPosition(yLen, this._getLowValue(p))) * vr;
-            let x: number;
-            let y: number;
-
-            x = xAxis.getPosition(xLen, i) - wUnit / 2;
-            y = org;
+            let x = xAxis.getPosition(xLen, i) - wUnit / 2;
+            let y = org;
 
             p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
             p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
-
-            // y += hPoint;
-            // bar.wPoint = wPoint;
-            // bar.hPoint = hPoint;
-            // bar.render(x, y, inverted);
 
             this._layoutPointView(pointView, x, y, wPoint, hPoint);
 
@@ -523,29 +682,23 @@ export abstract class RangedSeriesView<T extends BoxSeries> extends BoxedSeriesV
                     // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
                     p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
                     p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
-                    x -= hPoint;
                 }
-
-                let view: PointLabelView;
-                let r: IRect;
+                info.pointView = pointView;
+                info.hPoint = hPoint;
+                info.x = x;
+                info.y = y;
 
                 // top
-                if (view = labelViews.get(p, 0)) {
-                    r = view.getBBounds();
-                    if (inverted) {
-                        view.translate(x + hPoint + labelOff, y - r.height / 2);
-                    } else {
-                        view.translate(x - r.width / 2, y - r.height - labelOff);
-                    }
+                if (info.labelView = labelViews.get(p, 0)) {
+                    info.hPoint = hPoint;
+                    this._layoutLabel(info);
                 }
                 // bottom
-                if (view = labelViews.get(p, 1)) {
-                    r = view.getBBounds();
-                    if (inverted) {
-                        view.translate(x - r.width - labelOff, y - r.height / 2);
-                    } else {
-                        view.translate(x - r.width / 2, y + hPoint + labelOff);
-                    }
+                if (info.labelView = labelViews.get(p, 1)) {
+                    if (inverted) info.x -= hPoint;
+                    else info.y += hPoint;
+                    info.hPoint = -hPoint;
+                    this._layoutLabel(info);
                 }
             }
         })
