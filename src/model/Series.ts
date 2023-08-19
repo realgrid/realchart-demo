@@ -576,6 +576,14 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     getLegendSources(list: ILegendSource[]): void {
         list.push(this);
     }
+
+    getLabelPosition(p: PointItemPosition): PointItemPosition {
+        return p;
+    }
+
+    getLabelOff(off: number): number {
+        return off;
+    }
     
     //-------------------------------------------------------------------------
     // overriden members
@@ -978,10 +986,6 @@ export abstract class ClusterableSeries extends PolarableSeries implements IClus
 
     getLabelPosition(p: PointItemPosition): PointItemPosition {
         return p === PointItemPosition.AUTO ? PointItemPosition.OUTSIDE_FIRST : p;
-    }
-
-    getLabelOff(off: number): number {
-        return off;
     }
 
     //-------------------------------------------------------------------------

@@ -528,14 +528,14 @@ export class BarElement extends BoxPointElement {
     layout(x: number, y: number): void {
         this.setPath(SvgShapes.rect({
             x: x - this.wPoint / 2,
-            y: y,
+            y,
             width: this.wPoint,
             height: -this.hPoint
         }));
     }
 }
 
-export abstract class ClusterableSeriesView<T extends ClusterableSeries> extends SeriesView<T> {
+export abstract class ClusterableSeriesView<T extends Series> extends SeriesView<T> {
 
     //-------------------------------------------------------------------------
     // fields

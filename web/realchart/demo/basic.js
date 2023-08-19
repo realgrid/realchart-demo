@@ -1,4 +1,6 @@
 const config = {
+    options: {
+    },
     title: "Basic Real-Chart",
     xAxis: {
         // type: 'category',

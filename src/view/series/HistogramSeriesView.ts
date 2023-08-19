@@ -9,8 +9,10 @@
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
+import { DataPoint } from "../../model/DataPoint";
+import { LinearAxis } from "../../model/axis/LinearAxis";
 import { HistogramSeries, HistogramSeriesPoint } from "../../model/series/HistogramSeries";
-import { BoxPointElement, IPointView, SeriesView } from "../SeriesView";
+import { BoxPointElement, BoxedSeriesView, ClusterableSeriesView, LabelLayoutInfo, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class BarElement extends BoxPointElement {
@@ -28,7 +30,7 @@ class BarElement extends BoxPointElement {
     }
 }
 
-export class HistogramSeriesView extends SeriesView<HistogramSeries> {
+export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -49,20 +51,66 @@ export class HistogramSeriesView extends SeriesView<HistogramSeries> {
         return this._bars;
     }
 
-    protected _prepareSeries(doc: Document, model: HistogramSeries): void {
-        this.$_parepareBars(doc, model._visPoints as HistogramSeriesPoint[]);
+    protected _preparePointViews(doc: Document, model: HistogramSeries, points: HistogramSeriesPoint[]): void {
+        this.$_parepareBars(doc, points);
     }
 
-    protected _renderSeries(width: number, height: number): void {
-        this.$_layoutBars(width, height);
+    protected _layoutPointView(bar: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
+        bar.wPoint = wPoint;
+        bar.hPoint = hPoint;
+        bar.layout(x, y);
     }
 
-    protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.grow(this);
-    }
+    protected _layoutPointViews(width: number, height: number): void {
+        const series = this.model;
+        const inverted = this._inverted;
+        const vr = this._getViewRate();
+        const labels = series.pointLabel;
+        const labelViews = this._labelViews();
+        const xAxis = series._xAxisObj;
+        const yAxis = series._yAxisObj;
+        const yLen = inverted ? width : height;
+        const xLen = inverted ? height : width;
+        const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.baseValue : 0);
+        const org = inverted ? 0 : height;;
+        const info: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
+            inverted,
+            labelPos: series.getLabelPosition(labels.position),
+            labelOff: series.getLabelOff(labels.offset)
+        });
 
-    protected _doViewRateChanged(rate: number): void {
-        this.$_layoutBars(this.width, this.height);
+        this._getPointPool().forEach((pointView: BarElement, i) => {
+            const p = pointView.point as HistogramSeriesPoint;
+            const x1 = xAxis.getPosition(xLen, p.min);
+            const x2 = xAxis.getPosition(xLen, p.max);
+            const yVal = yAxis.getPosition(yLen, p.yValue);
+            const w = (x2 - x1) + (x2 > x1 ? -1 : 1);
+            const h = yVal - yBase;
+            let x = x1 + (x2 - x1) / 2;
+            let y = org;
+
+            p.xPos = x;
+            p.yPos = y -= yVal;
+
+            // 아래에서 위로 올라가는 animation을 위해 바닥 지점을 전달한다.
+            this._layoutPointView(pointView, i, x, y + h, w, h * vr);
+
+            if (info && (info.labelView = labelViews.get(p, 0))) {
+                if (inverted) {
+                    y = xLen - x;
+                    x = org;
+                    p.yPos = y;
+                    p.xPos = x += yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
+                }
+
+                info.pointView = pointView;
+                info.x = x;
+                info.y = y;
+                info.wPoint = w;
+                info.hPoint = h;
+                this._layoutLabel(info);
+            }
+        })
     }
 
     //-------------------------------------------------------------------------
@@ -85,11 +133,14 @@ export class HistogramSeriesView extends SeriesView<HistogramSeries> {
             const x1 = xAxis.getPosition(width, p.min);
             const x2 = xAxis.getPosition(width, p.max);
             const x = x1 + (x2 - x1) / 2;
+            const h = yAxis.getPosition(height, bar.point.yValue) * vr;
+            const w = Math.max(1, x2 - x1 - 1);
 
-            bar.wPoint = Math.max(1, x2 - x1 - 1);
-            bar.hPoint = yAxis.getPosition(height, bar.point.yValue) * vr;
             p.xPos = x;
-            p.yPos = y - bar.hPoint;
+            p.yPos = y - h;
+
+            bar.wPoint = w;
+            bar.hPoint = h;
             bar.layout(x, y);
         })
     }
