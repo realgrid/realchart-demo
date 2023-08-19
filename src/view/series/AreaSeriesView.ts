@@ -131,7 +131,7 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
         }
     }
 
-    protected _layoutPolar(path: PathElement, pts: AreaSeriesPoint[]): void {
+    protected _layoutPolar(area: PathElement, pts: AreaSeriesPoint[]): void {
         const series = this.model;
         const g = series.group;
         const yAxis = series._yAxisObj;
@@ -151,16 +151,17 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
             for (let i = pts.length - 1; i >= 0; i--) {
                 sb.line(pts[i].xPos, pts[i].yLow);
             }
-            path.setPath(sb.end());
+            area.setPath(sb.end());
         } else {
             sb.move(pts[0].xPos, pts[0].yPos);
             for (let i = 1; i < pts.length; i++) {
                 sb.line(pts[i].xPos, pts[i].yPos);
             }
-            path.setPath(sb.end());
+            area.setPath(sb.end());
         }
 
-        path.setStyle('fill', series.color);
-        path.setStyle('fillOpacity', '0.5');
+        area.clearStyleAndClass();
+        area.setStyle('fill', series.color);
+        area.addStyleOrClass(series.style);
     }
 }

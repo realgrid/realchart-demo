@@ -95,7 +95,7 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     }
 
     protected _renderSeries(width: number, height: number): void {
-        this._lineContainer.invert(this.model.chart.isInverted(), height);
+        this._lineContainer.invert(this._inverted, height);
         this._prepareBelow(width, height);
         this._layoutMarkers(this.model._visPoints as LineSeriesPoint[], width, height);
         this._layoutLines(this.model._visPoints as LineSeriesPoint[]);
@@ -271,8 +271,8 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
                 const a = polar.start + i * polar.deg;
                 const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
 
-                p.xPos = polar.cx + y * Math.cos(a);
-                p.yPos = polar.cy + y * Math.sin(a);
+                px = p.xPos = polar.cx + y * Math.cos(a);
+                py = p.yPos = polar.cy + y * Math.sin(a);
             } else {
                 px = p.xPos = xAxis.getPosition(xLen, p.xValue);
                 py = p.yPos = yOrg - yAxis.getPosition(yLen, p.yGroup);

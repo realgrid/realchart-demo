@@ -318,7 +318,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     isInverted(): boolean {
-        return this._inverted;
+        return !this._polar && this._inverted;
     }
 
     isEmpty(): boolean {
