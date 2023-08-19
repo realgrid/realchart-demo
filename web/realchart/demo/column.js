@@ -7,7 +7,8 @@ const config = {
         grid: true,
     },
     yAxis: {
-        title: "Vertical 수직축 Axis"
+        title: "Vertical 수직축 Axis",
+        // reversed: true
     },
     series: [{
         name: 'column1',
@@ -17,6 +18,7 @@ const config = {
     }]
 }
 
+let animate = false;
 let chart;
 
 function setActions(container) {
@@ -24,20 +26,23 @@ function setActions(container) {
         RealChart.setDebugging(_getChecked(e));
         chart.refresh();
     }, true);
+    createCheckBox(container, 'Always Animate', function (e) {
+        animate = _getChecked(e);
+    }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.options.inverted = _getChecked(e);
-        chart.update(config);
+        chart.update(config, animate);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.update(config, animate);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.update(config, animate);
     }, false);
 }
 
