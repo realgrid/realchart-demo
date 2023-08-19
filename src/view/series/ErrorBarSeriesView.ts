@@ -74,15 +74,15 @@ export class ErrorBarSeriesView extends RangedSeriesView<ErrorBarSeries> {
         return p.lowValue;
     }
 
-    protected _layoutPointView(box: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
-        box.setBounds(x - wPoint / 2, y, wPoint, hPoint);
-        box.layout();
-    }
-
     protected _preparePointViews(doc: Document, model: ErrorBarSeries, points: ErrorBarSeriesPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
             v.point = points[i];
             v.setStyle('stroke', points[i].color);
         });
+    }
+
+    protected _layoutPointView(box: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
+        box.setBounds(x - wPoint / 2, y, wPoint, hPoint);
+        box.layout();
     }
 }

@@ -6,17 +6,13 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
-import { IRect } from "../../common/Rectangle";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
-import { DataPoint } from "../../model/DataPoint";
 import { CandlestickSeries, CandlestickSeriesPoint } from "../../model/series/CandlestickSeries";
-import { IPointView, PointLabelView, RangedSeriesView, SeriesView } from "../SeriesView";
-import { SeriesAnimation } from "../animation/SeriesAnimation";
+import { IPointView, RangedSeriesView, SeriesView } from "../SeriesView";
 
 class StickView extends GroupElement implements IPointView {
 
@@ -101,52 +97,14 @@ export class CandlestickSeriesView extends RangedSeriesView<CandlestickSeries> {
         return p.lowValue;
     }
 
-    protected _layoutPointView(box: StickView, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
-        box.setBounds(x, y, wPoint, hPoint);
-        box.layout();
-    } 
-
     protected _preparePointViews(doc: Document, model: CandlestickSeries, points: CandlestickSeriesPoint[]): void {
         this._sticks.prepare(points.length, (box, i) => {
             box.point = points[i];
         })
     }
 
-    private $_layoutSticks(width: number, height: number): void {
-        const series = this.model;
-        const vr = this._getViewRate();
-        const labels = series.pointLabel;
-        const labelOff = labels.offset;
-        const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
-        const yAxis = series._yAxisObj;
-        const yOrg = this.height;
-
-        this._sticks.forEach((box, i) => {
-            const wUnit = xAxis.getUnitLength(width, i);
-            const wPoint = series.getPointWidth(wUnit);
-            const p = box.point;
-            const x = p.xPos = xAxis.getPosition(this.width, p.xValue) - wPoint / 2;
-            const y = p.yPos = yOrg - yAxis.getPosition(this.height, p.yValue) * vr;
-            const w = wPoint;
-            const h = Math.abs(yOrg - yAxis.getPosition(height, p.lowValue) - y) * vr;
-
-            box.setBounds(x, y, w, h);
-            box.layout();
-
-            if (labelViews) {
-                let view: PointLabelView;
-                let r: IRect;
-
-                if (view = labelViews.get(p, 0)) {
-                    r = view.getBBounds();
-                    view.translate(x + (w - r.width) / 2, y - r.height - labelOff);
-                }
-                if (view = labelViews.get(p, 1)) {
-                    r = view.getBBounds();
-                    view.translate(x + (w - r.width) / 2, y + h + labelOff);
-                }
-            }
-        })
-    }
+    protected _layoutPointView(box: StickView, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
+        box.setBounds(x, y, wPoint, hPoint);
+        box.layout();
+    } 
 }

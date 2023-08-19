@@ -13,8 +13,9 @@ import { IRect } from "../../common/Rectangle";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
+import { DataPoint } from "../../model/DataPoint";
 import { OhlcSeries, OhlcSeriesPoint } from "../../model/series/OhlcSeries";
-import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, RangedSeriesView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class StickView extends GroupElement implements IPointView {
@@ -44,13 +45,14 @@ class StickView extends GroupElement implements IPointView {
         const w = this.width;
         const h = this.height;
         const len = p.highValue - p.lowValue;
-        const x = this.width / 2;
+        const x = 0;//this.width / 2;
+        const x1 = -w / 2;
         let y = 0;
         const yOpen = y + h - h * (Math.min(p.openValue, p.closeValue) - p.lowValue) / len;
         const yClose = y + h - h * (Math.max(p.openValue, p.closeValue) - p.lowValue) / len;
 
-        this._back.setBounds(0, 0, w, h);
-        this._tickOpen.setHLine(yOpen, 0, x);
+        this._back.setBox(x1, 0, w, h);
+        this._tickOpen.setHLine(yOpen, x1, x);
         this._tickClose.setHLine(yClose, x, this.width);
         this._bar.setVLine(x, y, y + h);
         //this._bar.setBounds(0, Math.min(yClose, yOpen), w, Math.max(1, Math.abs(yOpen - yClose)));
@@ -70,7 +72,7 @@ class StickView extends GroupElement implements IPointView {
     }
 }
 
-export class OhlcSeriesView extends SeriesView<OhlcSeries> {
+export class OhlcSeriesView extends RangedSeriesView<OhlcSeries> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -91,20 +93,17 @@ export class OhlcSeriesView extends SeriesView<OhlcSeries> {
         return this._sticks;
     }
 
-    protected _prepareSeries(doc: Document, model: OhlcSeries): void {
-        this.$_prepareSticks(model._visPoints as OhlcSeriesPoint[]);
+    protected _getLowValue(p: OhlcSeriesPoint): number {
+        return p.lowValue;
     }
 
-    protected _renderSeries(width: number, height: number): void {
-        this.$_layoutSticks(width, height);
+    protected _preparePointViews(doc: Document, model: OhlcSeries, points: OhlcSeriesPoint[]): void {
+        this.$_prepareSticks(points);
     }
 
-    protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.grow(this);
-    }
-
-    protected _doViewRateChanged(rate: number): void {
-        this.$_layoutSticks(this.width, this.height);
+    protected _layoutPointView(view: StickView, index: number, x: number, y: number, wPoint: number, hPoint: number): void {
+        view.setBounds(x, y, wPoint, hPoint);
+        view.layout();
     }
 
     //-------------------------------------------------------------------------
