@@ -67,7 +67,7 @@ export class LollipopSeriesView extends BoxedSeriesView<LollipopSeries> {
         this.$_parepareBars(doc, model, points);
     }
 
-    protected _layoutPointView(view: BarElement, x: number, y: number, wPoint: number, hPoint: number): void {
+    protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         view.setBounds(x, y - hPoint, 0, hPoint);
         view.layout();
     }

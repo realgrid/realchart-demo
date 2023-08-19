@@ -550,7 +550,7 @@ export abstract class ClusterableSeriesView<T extends ClusterableSeries> extends
     }
 
     protected _renderSeries(width: number, height: number): void {
-        this._pointContainer.invert(this.model.chart.isInverted(), height);
+        this._pointContainer.invert(this._inverted, height);
         this._layoutPointViews(width, height);
     }
 
@@ -567,7 +567,7 @@ export abstract class ClusterableSeriesView<T extends ClusterableSeries> extends
     //-------------------------------------------------------------------------
     protected abstract _preparePointViews(doc: Document, model: T, points: DataPoint[]): void;
     protected abstract _layoutPointViews(width: number, height: number): void;
-    protected abstract _layoutPointView(view: RcElement, x: number, y: number, wPoint: number, hPoint: number): void;
+    protected abstract _layoutPointView(view: RcElement, index: number, x: number, y: number, wPoint: number, hPoint: number): void;
 }
 
 export abstract class BoxedSeriesView<T extends ClusterableSeries> extends ClusterableSeriesView<T> {
@@ -610,7 +610,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
             p.yPos = y -= yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
 
             // 아래에서 위로 올라가는 animation을 위해 바닥 지점을 전달한다.
-            this._layoutPointView(pointView, x, y + hPoint, wPoint, hPoint * vr);
+            this._layoutPointView(pointView, i, x, y + hPoint, wPoint, hPoint * vr);
 
             // label
             if (info && (info.labelView = labelViews.get(p, 0))) {
@@ -646,7 +646,6 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
         const inverted = series.chart.isInverted();
         const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelOff = labels.offset;
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
@@ -672,7 +671,7 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
             p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
             p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
 
-            this._layoutPointView(pointView, x, y, wPoint, hPoint);
+            this._layoutPointView(pointView, i, x, y, wPoint, hPoint);
 
             // labels
             if (labelViews) {

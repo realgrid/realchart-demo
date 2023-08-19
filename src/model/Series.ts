@@ -541,7 +541,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     collectValues(axis: IAxis): number[] {
-        const a = axis === this._xAxisObj ? 'x' : 'y';
+        const isX = axis === this._xAxisObj;
+        const a = isX ? 'x' : 'y';
         const v = a + 'Value';
         const vals: number[] = [];
         const xStep = this.getXStep() || 1;
@@ -551,16 +552,17 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             let val = axis.getValue(p[a]);
 
             // 카테고리에 포함되지 않는 숫자 값들은 자동으로 값을 지정한다.
-            if (isNaN(val) && a === 'x') {
+            if (isNaN(val) && isX) {
                 val = x;
                 x += xStep;
             }
             if (!isNaN(val)) {
                 vals.push(p[v] = val);
+                if (!isX) p.yGroup = p[v];
             }
         });
 
-        if (a === 'y') {
+        if (!isX) {
             this._minValue = Math.min(...vals);
             this._maxValue = Math.max(...vals);
         }

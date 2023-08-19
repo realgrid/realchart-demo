@@ -1,5 +1,6 @@
 const config = {
     options: {
+        animatable: false
     },
     title: "Waterfall Series",
     xAxis: {

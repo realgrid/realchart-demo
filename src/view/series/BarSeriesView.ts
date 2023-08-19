@@ -62,7 +62,7 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         }
     }
 
-    protected _layoutPointView(view: BarElement, x: number, y: number, wPoint: number, hPoint: number): void {
+    protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         view.wPoint = wPoint;
         view.hPoint = hPoint;
         view.layout(x, y);
