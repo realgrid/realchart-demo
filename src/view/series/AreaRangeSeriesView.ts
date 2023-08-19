@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "../../common/Common";
+import { Dom } from "../../common/Dom";
 import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement } from "../../common/RcControl";
 import { IPointPos } from "../../model/DataPoint";
@@ -34,6 +35,7 @@ export class AreaRangeSeriesView extends LineSeriesView<AreaRangeSeries> {
         this._areaContainer.add(this._area = new PathElement(doc, 'rct-area-series-area'));
         // this._lineContainer.add(this._area = new PathElement(doc, 'rct-line-series-line'));
         this._lineContainer.add(this._lowerLine = new PathElement(doc, 'rct-line-series-line'));
+        Dom.setImportantStyle(this._lowerLine.dom.style, 'fill', 'none');
     }
 
     //-------------------------------------------------------------------------

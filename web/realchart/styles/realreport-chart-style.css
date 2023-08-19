@@ -187,7 +187,8 @@
 
 /** area series */
 .rct-area-series-area {
-    fill: #0088ff40;
+    fill: #0088ff;
+    fill-opacity: 0.5;
 }
 
 /** bubble series */

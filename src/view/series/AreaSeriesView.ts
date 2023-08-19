@@ -22,15 +22,13 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
     //-------------------------------------------------------------------------
     // private _areaContainer: RcElement;
     private _area: PathElement;
+    private _lowArea: PathElement;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-area-series');
-
-        // this.insertFirst(this._areaContainer = new LayerElement(doc, 'rct-area-series-areas'));
-        // this._areaContainer.add(this._area = new PathElement(doc, 'rct-area-series-area'));
 
         this._lineContainer.insertFirst(this._area = new PathElement(doc, 'rct-area-series-area'));
     }
@@ -51,6 +49,26 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _prepareBelow(w: number, h: number): boolean {
+        const series = this.model;
+        let lowArea = this._lowArea;
+
+        this._area.setStyle('fill', this.model.color);
+        this._lowArea?.setStyle('fill', this.model.color);
+
+        if (super._prepareBelow(w, h)) {
+            if (!lowArea) {
+                this._lineContainer.insertChild(lowArea = this._lowArea = new PathElement(this.doc, 'rct-area-series-area'), this._area);
+            }
+            this._area.setClip(this._upperClip);
+            lowArea.setClip(this._lowerClip);
+            return true;
+        } else {
+            lowArea?.setClip();
+            this._area.setClip();
+        }
+    }
+
     protected _layoutMarkers(pts: AreaSeriesPoint[], width: number, height: number): void {
         super._layoutMarkers(pts, width, height);
 
@@ -64,8 +82,9 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
         }
     }
 
-    protected _layoutArea(path: PathElement, pts: AreaSeriesPoint[]): void {
+    protected _layoutArea(area: PathElement, pts: AreaSeriesPoint[]): void {
         const series = this.model;
+        const lowArea = this._needBelow ? this._lowArea : void 0;
         const g = series.group;
         const inverted = series.chart.isInverted();
         const yAxis = series._yAxisObj;
@@ -73,6 +92,7 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
         const base = yAxis instanceof LinearAxis ? yAxis.baseValue : NaN;
         const yMin = this.height - yAxis.getPosition(len, pickNum(base, yAxis.axisMin()));
         const sb = new PathBuilder();
+        let s: string;
 
         if (g && (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
             sb.move(pts[0].xPos, pts[0].yLow);
@@ -95,9 +115,20 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
             sb.line(pts[pts.length - 1].xPos, yMin);
         }
 
-        path.setPath(sb.end());
-        path.setStyle('fill', series.color);
-        path.setStyle('fillOpacity', '0.5');
+        area.setPath(s = sb.end());
+
+        area.clearStyleAndClass();
+        area.setStyle('fill', series.color);
+        area.addStyleOrClass(series.style);
+
+        if (lowArea) {
+            lowArea.setPath(s);
+
+            lowArea.clearStyleAndClass();
+            lowArea.setStyle('fill', series.color);
+            lowArea.setStyleOrClass(series.style);
+            lowArea.setStyleOrClass(series.belowStyle);
+        }
     }
 
     protected _layoutPolar(path: PathElement, pts: AreaSeriesPoint[]): void {

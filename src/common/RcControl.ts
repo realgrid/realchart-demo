@@ -10,7 +10,7 @@ import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
 import { Path, SVGStyleOrClass, _undefined, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
-import { RtLog, SVGNS, isString } from "./Common";
+import { RtLog, SVGNS, isObject, isString } from "./Common";
 import { Utils } from "./Utils";
 import { IRect, Rectangle } from "./Rectangle";
 import { SvgShapes } from "./impl/SvgShape";
@@ -910,7 +910,12 @@ export class RcElement extends RcObject {
     }
 
     protected _resetClass(): void {
-        this.setAttr('class', this._styleName);
+        this._styleName ? this.setAttr('class', this._styleName) : this.unsetAttr('class');
+    }
+
+    clearStyleAndClass(): void {
+        this.clearStyles();
+        this._resetClass();
     }
 
     setStyleOrClass(style: SVGStyleOrClass): void {
@@ -919,6 +924,14 @@ export class RcElement extends RcObject {
             style && this._dom.classList.add(style);
         } else {
             this.resetStyles(style);
+        }
+    }
+
+    addStyleOrClass(style: SVGStyleOrClass): void {
+        if (isString(style)) {
+            style && this._dom.classList.add(style);
+        } else if (isObject(style)) {
+            this.setStyles(style);
         }
     }
 

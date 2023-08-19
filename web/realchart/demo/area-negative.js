@@ -1,18 +1,19 @@
 const config = {
     options: {},
-    title: "Line - Negative",
+    title: "Area - Negative",
     xAxis: {
         type: 'category'
     },
     yAxis: {
     },
     series: {
-        type: 'line',
+        type: 'area',
         style: {
             strokeWidth: '3px'
         },
         belowStyle: {
             stroke: 'red',
+            fill: 'red'
         },
         data: [
             ['home', 7], 

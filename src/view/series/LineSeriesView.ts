@@ -65,7 +65,7 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     //-------------------------------------------------------------------------
     protected _lineContainer: LineContainer;
     private _line: PathElement;
-    private _needBelow = false;
+    protected _needBelow = false;
     private _lowLine: PathElement;
     protected _upperClip: ClipElement;
     protected _lowerClip: ClipElement;
@@ -80,7 +80,6 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
 
         this.insertFirst(this._lineContainer = new LineContainer(doc, 'rct-line-series-lines'));
         this._lineContainer.add(this._line = new PathElement(doc, 'rct-line-series-line'));
-        Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
         this._markers = new ElementPool(this._pointContainer, LineMarkerView);
     }
 
@@ -97,7 +96,7 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
 
     protected _renderSeries(width: number, height: number): void {
         this._lineContainer.invert(this.model.chart.isInverted(), height);
-        this.$_prepareBelow(width, height);
+        this._prepareBelow(width, height);
         this._layoutMarkers(this.model._visPoints as LineSeriesPoint[], width, height);
         this._layoutLines(this.model._visPoints as LineSeriesPoint[]);
     }
@@ -122,7 +121,7 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
         return 1;
     }
 
-    private $_prepareBelow(w: number, h: number): void {
+    protected _prepareBelow(w: number, h: number): boolean {
         const control = this.control;
         const series = this.model;
         let lowLine = this._lowLine;
@@ -130,18 +129,15 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
         if (this._needBelow = series.belowStyle && series._minValue < (series._yAxisObj as ContinuousAxis).baseValue) {
             if (!lowLine) {
                 this._lineContainer.insertChild(lowLine = this._lowLine = new PathElement(this.doc), this._line);
-                Dom.setImportantStyle(lowLine.dom.style, 'fill', 'none');
                 this._upperClip = control.clipBounds();
                 this._lowerClip = control.clipBounds();
             }
-            lowLine.setStyleOrClass(series.style);
-            lowLine.setStyleOrClass(series.belowStyle);
             this._line.setClip(this._upperClip);
             lowLine.setClip(this._lowerClip);
-        } else if (lowLine) {
-
+            return true;
         } else {
-
+            lowLine?.setClip();
+            this._line.setClip();
         }
     }
 
@@ -299,25 +295,35 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     }
 
     protected _layoutLines(pts: DataPoint[]): void {
+        const series = this.model;
         const sb = new PathBuilder();
+        let s: string;
 
         sb.move(pts[0].xPos, pts[0].yPos);
         this._buildLines(pts, sb, false);
-
-        let s: string;
-
         this._line.setPath(s = sb.end(this._polar));
-        this._line.setStyle('stroke', this.model.color);
+
+        this._line.clearStyleAndClass();
+        this._line.setStyle('stroke', series.color);
+        this._line.addStyleOrClass(series.style);
+        Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
 
         if (this._needBelow) {
-            const axis = this.model._yAxisObj as ContinuousAxis;
+            const axis = series._yAxisObj as ContinuousAxis;
             
             if (this._inverted) {
                 this.$_resetClips(this.width, this.height, axis.getPosition(this.width, axis.baseValue), true);
             } else {
                 this.$_resetClips(this.width, this.height, this.height - axis.getPosition(this.height, axis.baseValue), false);
             }
+
             this._lowLine.setPath(s);//this._line.path());
+
+            this._lowLine.clearStyleAndClass();
+            this._lowLine.setStyle('stroke', series.color);
+            this._lowLine.addStyleOrClass(series.style);
+            this._lowLine.addStyleOrClass(series.belowStyle);
+            Dom.setImportantStyle(this._lowLine.dom.style, 'fill', 'none');
         }
     }
 
