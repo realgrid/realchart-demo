@@ -9,14 +9,11 @@
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
-import { IRect } from "../../common/Rectangle";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
-import { DataPoint } from "../../model/DataPoint";
 import { OhlcSeries, OhlcSeriesPoint } from "../../model/series/OhlcSeries";
 import { IPointView, PointLabelView, RangedSeriesView, SeriesView } from "../SeriesView";
-import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class StickView extends GroupElement implements IPointView {
 

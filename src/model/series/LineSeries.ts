@@ -63,6 +63,15 @@ export abstract class LineSeriesBase extends PolarableSeries {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * {@link belowStyle}이 적용되는 기준 값.
+     * <br>
+     * 이 값이 지정되지 않으면 y축의 baseValue가 기준이 된다.
+     */
+    baseValue: number;
+    /**
+     * {@link baseValue} 혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.
+     */
     belowStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
@@ -96,7 +105,6 @@ export class LineSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     lineType = LineType.DEFAULT;
     stepDir = LineStepDirection.FORWARD;
-    negativeStyle: StyleProps;
     connectNulls = false;
 
     //-------------------------------------------------------------------------

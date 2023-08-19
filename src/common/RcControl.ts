@@ -126,6 +126,10 @@ export abstract class RcControl extends RcWrappableObject {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    clearDefs(): void {
+        Dom.clearChildren(this._defs);
+    }
+
     appendDom(elt: HTMLElement): void {
         elt && this._htmlRoot.append(elt);
     }

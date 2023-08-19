@@ -2,6 +2,7 @@ const config = {
     options: {},
     title: "Line - Negative",
     xAxis: {
+        type: 'category'
     },
     yAxis: {
     },
@@ -16,6 +17,7 @@ const config = {
         data: [
             ['home', 7], 
             ['sky', 11], 
+            ['정우성', -7], 
             ['def', 9], 
             ['곽재식', -3], 
             ['지리산', 15.3], 
@@ -24,6 +26,7 @@ const config = {
         ]
     }
 }
+
 let chart;
 
 function setActions(container) {
@@ -36,6 +39,14 @@ function setActions(container) {
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.options.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
         chart.update(config);
     }, false);
 }

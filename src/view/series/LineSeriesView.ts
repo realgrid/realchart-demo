@@ -67,7 +67,6 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     private _line: PathElement;
     private _needBelow = false;
     private _lowLine: PathElement;
-    protected _lineClip: ClipElement;
     protected _upperClip: ClipElement;
     protected _lowerClip: ClipElement;
     protected _markers: ElementPool<LineMarkerView>;
@@ -126,33 +125,61 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     private $_prepareBelow(w: number, h: number): void {
         const control = this.control;
         const series = this.model;
+        let lowLine = this._lowLine;
 
         if (this._needBelow = series.belowStyle && series._minValue < (series._yAxisObj as ContinuousAxis).baseValue) {
-            if (!this._lowLine) {
-                this._lineContainer.insertChild(this._lowLine = new PathElement(this.doc), this._line);
-                Dom.setImportantStyle(this._lowLine.dom.style, 'fill', 'none');
+            if (!lowLine) {
+                this._lineContainer.insertChild(lowLine = this._lowLine = new PathElement(this.doc), this._line);
+                Dom.setImportantStyle(lowLine.dom.style, 'fill', 'none');
                 this._upperClip = control.clipBounds();
                 this._lowerClip = control.clipBounds();
             }
-            this._lowLine.setStyleOrClass(series.style);
-            this._lowLine.setStyleOrClass(series.belowStyle);
+            lowLine.setStyleOrClass(series.style);
+            lowLine.setStyleOrClass(series.belowStyle);
             this._line.setClip(this._upperClip);
-            this._lowLine.setClip(this._lowerClip);
-        } else if (this._lowLine) {
+            lowLine.setClip(this._lowerClip);
+        } else if (lowLine) {
 
         } else {
 
         }
     }
 
-    private $_resetClips(w: number, h: number, base: number): void {
-        let clip = this._upperClip;
+    private $_resetClips(w: number, h: number, base: number, inverted: boolean): void {
+        const reversed = this.model._yAxisObj.reversed;
+        const x = 0;
+        const y = 0;
+        let clip: ClipElement;
 
-        if (clip) {
-            clip.setBounds(0, 0, w, base);                
+        if (clip = this._upperClip) {
+            if (inverted) {
+                if (reversed) {
+                    clip.setBounds(x, h - base, h, w);                
+                } else {
+                    clip.setBounds(x, h - w, h, w - base);                
+                }
+            } else {
+                if (reversed) {
+                    clip.setBounds(x, y + base, w, h - base);                
+                } else {
+                    clip.setBounds(x, y, w, base);                
+                }
+            }
         }
         if (clip = this._lowerClip) {
-            clip.setBounds(0, base, w, h - base);                
+            if (this._inverted) {
+                if (reversed) {
+                    clip.setBounds(x, h - w, h, w - base);                
+                } else {
+                    clip.setBounds(x, h - base, h, w);                
+                }
+            } else {
+                if (reversed) {
+                    clip.setBounds(x, y, w, base);                
+                } else {
+                    clip.setBounds(x, y + base, w, h - base);                
+                }
+            }
         }
     }
 
@@ -284,7 +311,12 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
 
         if (this._needBelow) {
             const axis = this.model._yAxisObj as ContinuousAxis;
-            this.$_resetClips(this.width, this.height, this.height - axis.getPosition(this.height, axis.baseValue));
+            
+            if (this._inverted) {
+                this.$_resetClips(this.width, this.height, axis.getPosition(this.width, axis.baseValue), true);
+            } else {
+                this.$_resetClips(this.width, this.height, this.height - axis.getPosition(this.height, axis.baseValue), false);
+            }
             this._lowLine.setPath(s);//this._line.path());
         }
     }

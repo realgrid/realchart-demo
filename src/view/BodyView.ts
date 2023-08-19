@@ -755,22 +755,12 @@ export class BodyView extends ChartElement<Body> {
         views.length = 0;
 
         series.forEach(ser => {
-            let v = map.get(ser);
-            
-            if (v) {
-                map.delete(ser);
-            } else {
-                v = this.$_createSeriesView(doc, ser);
-            }
-            views.push(v);
-        });
-    
-        map.clear();
+            const v = map.get(ser) ||this.$_createSeriesView(doc, ser);
 
-        views.forEach((v, i) => {
             v._setChartOptions(inverted, animatable);
             container.add(v);
-            map.set(series[i], v);
+            map.set(ser, v);
+            views.push(v);
         });
     }
 
