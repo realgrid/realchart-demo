@@ -14,6 +14,7 @@ const config = {
             ['sky', 11], 
             ['카눈', 8], 
             ['def', 9], 
+            ['머핀', 12], 
             ['지리산', 15.3], 
             ['zzz', 13],
             ['낙동강', 12.5]
@@ -21,6 +22,7 @@ const config = {
     }
 }
 
+let animate = false;
 let chart;
 
 function setActions(container) {
@@ -28,24 +30,27 @@ function setActions(container) {
         RealChart.setDebugging(_getChecked(e));
         chart.refresh();
     }, true);
+    createCheckBox(container, 'Always Animate', function (e) {
+        animate = _getChecked(e);
+    }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
     createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
         config.series.lineType = _getValue(e);
-        chart.update(config);
+        chart.update(config, animate);
     }, 'default');
     createCheckBox(container, 'Inverted', function (e) {
         config.options.inverted = _getChecked(e);
-        chart.update(config);
+        chart.update(config, animate);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.update(config, animate);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.update(config, animate);
     }, false);
 }
 

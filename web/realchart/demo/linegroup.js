@@ -1,7 +1,7 @@
 const config = {
-    type: "area",
+    type: "line",
     options: {},
-    title: "Area Group",
+    title: "Line Group",
     xAxis: {
         title: "일일 Daily fat",
     },

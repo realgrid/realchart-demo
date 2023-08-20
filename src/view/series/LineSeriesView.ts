@@ -17,7 +17,7 @@ import { DataPoint, IPointPos } from "../../model/DataPoint";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
 import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
-import { SeriesAnimation } from "../animation/SeriesAnimation";
+import { ISlideAnimation, SeriesAnimation } from "../animation/SeriesAnimation";
 
 export class LineMarkerView extends PathElement implements IPointView {
 
@@ -102,10 +102,21 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     }
 
     protected _runShowEffect(firstTime: boolean): void {
+
+        function getFrom(self: LineSeriesView<any>): 'left' | 'right' | 'top' | 'bottom' {
+            const reversed = self.model._xAxisObj.reversed;
+
+            if (self._inverted) {
+                return reversed ? 'top' : 'bottom';
+            } else {
+                return reversed ? 'right' : 'left';
+            }
+        }
+
         if (this._polar) {
             firstTime && SeriesAnimation.grow(this);
         } else {
-            firstTime && SeriesAnimation.slide(this);
+            firstTime && SeriesAnimation.slide(this, { from: getFrom(this) });
         }
     }
 

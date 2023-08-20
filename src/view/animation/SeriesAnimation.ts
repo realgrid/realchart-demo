@@ -105,6 +105,8 @@ export class SlideAnimation extends SeriesAnimation {
                 return this.$_top(v, options);
             case 'bottom':
                 return this.$_bottom(v, options);
+            case 'right':
+                return this.$_right(v, options);
             default:
                 return this.$_left(v, options);
         }
@@ -134,6 +136,15 @@ export class SlideAnimation extends SeriesAnimation {
         ], this.$_aniOptions(options));
     }
 
+    private $_right(v: SeriesView<Series>, options: ISlideAnimation): Animation {
+        const cr = this.$_clipRect(v);
+
+        return cr.dom.firstElementChild.animate([
+            { transform: `translateX(${v.width}px)` },
+            { transform: '' }
+        ], this.$_aniOptions(options));
+    }
+
     private $_top(v: SeriesView<Series>, options: ISlideAnimation): Animation {
         const cr = this.$_clipRect(v);
 
@@ -148,7 +159,7 @@ export class SlideAnimation extends SeriesAnimation {
 
         return cr.dom.firstElementChild.animate([
             { transform: `translateY(${v.height}px)` },
-            { transform: 'tranlsateY(0)' }
+            { transform: '' }
         ], this.$_aniOptions(options));
     }
 }
