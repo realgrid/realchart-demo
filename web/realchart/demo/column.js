@@ -1,6 +1,8 @@
 const config = {
     title: "Column Series",
-    options: {},
+    options: {
+        animatable: false
+    },
     xAxis: {
         title: "일일 Daily fat",
         categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도'],
@@ -8,7 +10,8 @@ const config = {
     },
     yAxis: {
         title: "Vertical 수직축 Axis",
-        // reversed: true
+        // reversed: true,
+        // baseValue: -1
     },
     series: [{
         name: 'column1',

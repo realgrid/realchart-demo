@@ -1,0 +1,24 @@
+[ Base Value ]
+- 시리즈 종류에 따라 위/아래를 구분하기 위해 base value가 필요한 경우가 있다. 
+  (boxed(column...), line, area)
+- base value가 지정되면(기본값 0) 시리즈의 최소 최대 계산에 반영된다.
+- 시리즈그룹에 포함된 경우 group의 설정을 따른다.
+- 축의 baseValue가 지정되면 시리즈들의 설정대신 이 값이 사용되는 데,
+  계산된 min이 baseValue보다 크면 baseValue를,
+  계산된 max가 baseValue보다 작으면 baseValue가 대신 사용된다. 
+
+[ 범위(LinearAxis) ]
+- (baseValue 적용을 포함해서)기본적으로 시리즈들로 부터 계산된 값으로 축의 범위가 정해진다.
+- 축의 min/max가 설정되면 시리즈들로 부터 계산된 값의 범위가 min/max에 모자란 경우 적용된다.
+  축의 strictMin/strictMax가 지정되면 계산된 범위 대신 이 값들로 범위가 지정된다.
+- 이렇게 정해진 범위로 tick들을 생성할 때, 양 끝 tick이 축에 지정된 범위를 벗어 날 수 있고,
+  tick들에 따라 축의 범위가 조정된다.
+  이 때, 축의 startAlign, endAlign(기본값 'default', linear: 'tick', category: 'value')을 'value'로 지정해서 
+  tick 범위 대신 축에서 설정된 범위를 유지하게 할 수 있다. 
+  양 끝에 tick이 표시되지 못하게 되는데,
+  AxisTick.forceStart, forceEnd(기본값 false)를 true로 지정해서 양 끝 tick을 강제로 추가할 수 있다. 
+- 축 tick들을 직접 지정한 경우에는 위의 것들이 무시된다.
+
+[ Padding ]
+- Linear
+- Category
