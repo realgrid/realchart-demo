@@ -399,6 +399,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     pointColors: boolean | string[];
 
+    /**
+     * body 영역을 벗어난 data point view는 잘라낸다.
+     */
+    clipped = false;
+
     getPoints(): DataPointCollection {
         return this._points;
     }

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isString, pickNum } from "../../common/Common";
+import { isArray, isNumber, isString, pickNum, pickNum3 } from "../../common/Common";
 import { isNull } from "../../common/Types";
 import { Axis, AxisGrid, AxisTick, AxisTickMark, IAxisTick } from "../Axis";
 import { IPlottingItem, ISeries, SeriesGroup } from "../Series";
@@ -127,9 +127,32 @@ export class CategoryAxis extends Axis {
      */
     categoryStep = 1;
     /**
-     * 축의 양 끝 카테고리 값 위치에 여백으로 추가되는 크기.
+     * 축의 양 끝 카테고리 위치 전후에 여백으로 추가되는 크기.
+     * <br>
+     * 각각 시작/끝 카테고리에 대한 상대적 크기로 지정한다.
+     * {@link minPadding}, {@link maxPadding}으로 별도 지정할 수 있다.
+     * 
+     * @default 0
      */
-    padding = 0.5;
+    padding = 0;
+    /**
+     * 축의 시작 카테고리 위치 이 전에 여백으로 추가되는 크기.
+     * <br>
+     * 시작 카테고리에 대한 상대적 크기로 지정한다.
+     * {@link padding} 속성으로 양끝 padding을 한꺼번에 지정할 수 있다.
+     * 
+     * @default undefined
+     */
+    minPadding: number;
+    /**
+     * 축의 끝 카테고리 위치 이 후에 여백으로 추가되는 크기.
+     * <br>
+     * 시작 카테고리에 대한 상대적 크기로 지정한다.
+     * {@link padding} 속성으로 양끝 padding을 한꺼번에 지정할 수 있다.
+     * 
+     * @default undefined
+     */
+    maxPadding: number;
     /**
      * 각 카테고리의 양 끝에 추가되는 여백의 카테고리에 너비에 대한 상대적 크기.
      * <br>
@@ -187,8 +210,8 @@ export class CategoryAxis extends Axis {
         const nCat = cats.length;
         const ticks: IAxisTick[] = [];
 
-        this._minPad = pickNum(this.minPadding, 0);
-        this._maxPad = pickNum(this.maxPadding, 0);
+        this._minPad = pickNum3(this.minPadding, this.padding, 0);
+        this._maxPad = pickNum3(this.maxPadding, this.padding, 0);
         min = this._min = Math.floor(min);
         max = this._max = Math.ceil(max);
 

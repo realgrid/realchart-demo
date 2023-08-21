@@ -20,5 +20,5 @@
 - 축 tick들을 직접 지정한 경우에는 위의 것들이 무시된다.
 
 [ Padding ]
-- Linear
-- Category
+- Linear: 축 전체 길이에 대한 상대 크기.
+- Category: 각각 첫번째/마지막 카테고리 길이에 대한 상대 크기.  

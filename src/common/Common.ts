@@ -18,6 +18,12 @@ export const pickNum = function(v1: any, v2: any): number {
     v1 = parseFloat(v1);
     return !isNaN(v1) ? v1 : parseFloat(v2);
 }
+export const pickNum3 = function(v1: any, v2: any, v3: any): number {
+    let v = parseFloat(v1);
+    if (!isNaN(v)) return v;
+    v = parseFloat(v2);
+    return !isNaN(v) ? v : parseFloat(v3);
+}
 export const pickProp = function(v1: any, v2: any): any {
     return v1 !== void 0 ? v1 : v2;
 }

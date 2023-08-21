@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, pickNum } from "../../common/Common";
-import { IPercentSize, RtPercentSize, assert, calcPercent, ceil, fixnum, parsePercentSize } from "../../common/Types";
+import { IPercentSize, RtPercentSize, SizeValue, assert, calcPercent, ceil, fixnum, parsePercentSize } from "../../common/Types";
 import { Axis, AxisItem, AxisTick, IAxisTick } from "../Axis";
 import { DataPoint } from "../DataPoint";
 
@@ -285,7 +285,26 @@ export abstract class ContinuousAxis extends Axis {
      */
     syncMinMax = false;
 
-    padding = "5%";
+    /**
+     * {@link minPadding}, {@link maxPadding}의 기본값이다.
+     */
+    padding = 0.05;
+    /**
+     * 첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
+     * <br>
+     * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.
+     * data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
+     * {@link strictMin}이 지정돼도 이 속성은 무시된다.
+     */
+    minPadding: number;
+    /**
+     * 마지막 tick 뒤쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
+     * <br>
+     * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.
+     * data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
+     * {@link strictMax}가 지정돼도 이 속성은 무시된다.
+     */
+    maxPadding: number;
 
     /** y축으로 사용될 때만 적용한다. */
     readonly breaks: AxisBreak[] = [];
