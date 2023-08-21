@@ -1,5 +1,6 @@
 const config = {
-    title: "Column Group",
+    type: 'area',
+    title: "Area Group - Negative",
     options: {
         // inverted: true,
     },
@@ -9,10 +10,12 @@ const config = {
     },
     yAxis: {
         title: "Vertical 수직축 Axis",
-        // reversed: true
+        // reversed: true,
+        // min: -20,
+        // baseValue: -20
     },
     series: [{
-        // layout: 'default',
+        // layout: 'stack',
         series: [{
             name: 'column1',
             pointLabel: {
@@ -30,7 +33,7 @@ const config = {
                 position: 'inside',
                 effect: 'outline'
             },
-            data: [15, 19, 19, 6, 21, 21]
+            data: [15, -19, 19, -6, 21, 21]
         }, {
             name: 'column3',
             pointLabel: {
@@ -38,7 +41,7 @@ const config = {
                 position: 'inside',
                 effect: 'outline'
             },
-            data: [13, 17, 15, 11, 23, 17]
+            data: [13, 17, 15, -11, 23, 17]
         }]
     }]
 }

@@ -9,9 +9,10 @@
 import { pickNum, pickProp } from "../../common/Common";
 import { SVGStyleOrClass, StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
+import { IAxis } from "../Axis";
 import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
-import { MarerVisibility, PolarableSeries, Series, SeriesGroup, SeriesMarker } from "../Series";
+import { MarerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
 
 export class LineSeriesPoint extends DataPoint {
 
@@ -50,12 +51,13 @@ export class LineSeriesMarker extends SeriesMarker {
     maxVisible = MarerVisibility.DEFAULT;
 }
 
-export abstract class LineSeriesBase extends PolarableSeries {
+export abstract class LineSeriesBase extends Series {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     marker = new LineSeriesMarker(this);
+    private _base: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -68,17 +70,31 @@ export abstract class LineSeriesBase extends PolarableSeries {
      * <br>
      * 이 값이 지정되지 않으면 y축의 baseValue가 기준이 된다.
      */
-    baseValue: number;
+    baseValue = 0;
     /**
      * {@link baseValue} 혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.
      */
     belowStyle: SVGStyleOrClass;
+
+
+    getBaseValue(axis: IAxis): number {
+        return pickNum(this._base, axis.axisMin());
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _createPoint(source: any): DataPoint {
         return new LineSeriesPoint(source);
+    }
+
+    protected _doPrepareRender(): void {
+        super._doPrepareRender();
+
+        this._base = pickNum(
+            this.group ? (this.group as LineSeriesGroup).baseValue: this.baseValue, 
+            this._yAxisObj.getBaseValue()
+        );
     }
 
     //-------------------------------------------------------------------------
@@ -216,6 +232,11 @@ export class AreaRangeSeries extends AreaSeries {
 export class LineSeriesGroup extends SeriesGroup<LineSeries> {
 
     //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    baseValue = 0;
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _seriesType(): string {
@@ -225,9 +246,18 @@ export class LineSeriesGroup extends SeriesGroup<LineSeries> {
     protected _canContain(ser: Series): boolean {
         return ser instanceof LineSeries;
     }
+
+    getBaseValue(axis: IAxis): number {
+        return pickNum(this.baseValue, axis.getBaseValue());
+    }
 }
 
 export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    baseValue = 0;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -238,5 +268,9 @@ export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
 
     protected _canContain(ser: Series): boolean {
         return ser instanceof AreaSeries;
+    }
+
+    getBaseValue(axis: IAxis): number {
+        return pickNum(this.baseValue, axis.getBaseValue());
     }
 }

@@ -1,7 +1,7 @@
 const config = {
     title: "Column Series",
     options: {
-        animatable: false
+        // animatable: false
     },
     xAxis: {
         title: "일일 Daily fat",

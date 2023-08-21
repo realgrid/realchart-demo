@@ -14,7 +14,7 @@ const config = {
         // baseValue: -20
     },
     series: [{
-        layout: 'stack',
+        // layout: 'stack',
         series: [{
             name: 'column1',
             pointLabel: {
@@ -32,7 +32,7 @@ const config = {
                 position: 'inside',
                 effect: 'outline'
             },
-            data: [15, -19, 19, 6, 21, 21]
+            data: [15, -19, 19, -6, 21, 21]
         }, {
             name: 'column3',
             pointLabel: {

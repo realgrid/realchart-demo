@@ -25,6 +25,7 @@ export interface IAxis {
 
     reversed: boolean;
 
+    getBaseValue(): number;
     axisMax(): number;
     axisMin(): number;
 
@@ -473,6 +474,10 @@ export abstract class Axis extends ChartItem implements IAxis {
         return this._series.length < 1;
     }
 
+    getBaseValue(): number {
+        return NaN;
+    }
+    
     abstract axisMin(): number;
     abstract axisMax(): number;
 

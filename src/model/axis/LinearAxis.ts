@@ -275,12 +275,8 @@ export abstract class ContinuousAxis extends Axis {
      */
     nullable = true;
     /**
-     * 음수/양수의 기준이 되는 값.
-     * <br>
-     * {@link min}이 지정되지 않은 경우, 계산된 최소값이 이 값보다 클 때 최소값이 되고,
-     * {@link max}가 지정되지 않은 경우, 계산된 최대값이 이 값보다 작을 때 최대값이 된다.
      */
-    baseValue = 0;
+    baseValue: number;
     /**
      * baseValue가 설정되고,
      * 계산된 최소값이 baseValue보다 작고 최대값이 baseValue보다 클 때,
@@ -293,6 +289,10 @@ export abstract class ContinuousAxis extends Axis {
 
     /** y축으로 사용될 때만 적용한다. */
     readonly breaks: AxisBreak[] = [];
+
+    getBaseValue(): number {
+        return this.baseValue;
+    }
 
     axisMin(): number {
         return this._min;
@@ -336,10 +336,10 @@ export abstract class ContinuousAxis extends Axis {
         this._hardMin = this.min;
         this._hardMax = this.max;
 
-        if (isNaN(base) || base === null || this._series.find(s => s.ignoreAxisBase(this))) {
+        if (this._series.find(s => s.ignoreAxisBase(this))) {
             this._base = NaN;
         } else {
-            this._base = +base;
+            this._base = pickNum(+base, 0);
         }
 
         this._unitLen = NaN;

@@ -1,9 +1,9 @@
 [ Base Value ]
 - 시리즈 종류에 따라 위/아래를 구분하기 위해 base value가 필요한 경우가 있다. 
   (boxed(column...), line, area)
-- base value가 지정되면(기본값 0) 시리즈의 최소 최대 계산에 반영된다.
 - 시리즈그룹에 포함된 경우 group의 설정을 따른다.
-- 축의 baseValue가 지정되면 시리즈들의 설정대신 이 값이 사용되는 데,
+- 시리즈나 그룹에서 설정되지 않으면 축의 baseValue(기본값 NaN)가 사용된다.
+- base value가 지정되면(기본값 0) 시리즈의 최소 최대 계산에 반영된다.
   계산된 min이 baseValue보다 크면 baseValue를,
   계산된 max가 baseValue보다 작으면 baseValue가 대신 사용된다. 
 

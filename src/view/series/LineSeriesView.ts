@@ -137,7 +137,7 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
         const series = this.model;
         let lowLine = this._lowLine;
 
-        if (this._needBelow = series.belowStyle && series._minValue < (series._yAxisObj as ContinuousAxis).baseValue) {
+        if (this._needBelow = series.belowStyle && series._minValue < series.getBaseValue(series._yAxisObj)) {
             if (!lowLine) {
                 this._lineContainer.insertChild(lowLine = this._lowLine = new PathElement(this.doc), this._line);
                 this._upperClip = control.clipBounds();
@@ -321,11 +321,12 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
 
         if (this._needBelow) {
             const axis = series._yAxisObj as ContinuousAxis;
+            const base = series.getBaseValue(axis);
             
             if (this._inverted) {
-                this.$_resetClips(this.width, this.height, axis.getPosition(this.width, axis.baseValue), true);
+                this.$_resetClips(this.width, this.height, axis.getPosition(this.width, base), true);
             } else {
-                this.$_resetClips(this.width, this.height, this.height - axis.getPosition(this.height, axis.baseValue), false);
+                this.$_resetClips(this.width, this.height, this.height - axis.getPosition(this.height, base), false);
             }
 
             this._lowLine.setPath(s);//this._line.path());

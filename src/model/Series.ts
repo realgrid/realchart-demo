@@ -832,17 +832,6 @@ export abstract class SeriesMarker extends ChartItem {
     }
 }
 
-/**
- * Polar 좌표계에 표시될 수 있는 시리즈.
- */
-export abstract class PolarableSeries extends Series {
-
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-}
-
-
 export abstract class WidgetSeries extends Series {
 
     //-------------------------------------------------------------------------
@@ -895,7 +884,7 @@ export abstract class RadialSeries extends WidgetSeries {
     }
 }
 
-export abstract class ClusterableSeries extends PolarableSeries implements IClusterable {
+export abstract class ClusterableSeries extends Series implements IClusterable {
 
     //-------------------------------------------------------------------------
     // fields
@@ -940,6 +929,10 @@ export abstract class ClusterableSeries extends PolarableSeries implements IClus
      * @default 한 카테고리에 시리즈 하나만 표시되면 0.25, group에 포함된 경우 0.1, 여러 시리즈와 같이 표시되면 0.2.
      */
     pointPadding: number;
+
+    getBaseValue(axis: IAxis): number {
+        return axis.axisMin();
+    }
 
     //-------------------------------------------------------------------------
     // methods
@@ -1095,6 +1088,10 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         return false;
     }
 
+    getBaseValue(axis: IAxis): number {
+        return axis.getBaseValue();
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -1237,36 +1234,90 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     private $_collectStack(axis: IAxis): number[] {
+        const base = this.getBaseValue(axis);
         const map = this.$_collectPoints();
         const vals: number[] = [];
 
-        for (const pts of map.values()) {
-            for (let i = 1; i < pts.length; i++) {
-                pts[i].yGroup = pts[i - 1].yGroup + pts[i].yValue;
+        if (!isNaN(base)) {
+            for (const pts of map.values()) {
+                let v = pts[0].yValue;
+                let prev = v >= base ? 0 : -1;
+                let nprev = v < base ? 0 : -1;
+
+                for (let i = 1; i < pts.length; i++) {
+                    v = pts[i].yValue;
+
+                    if (v >= base) {    
+                        if (prev >= 0) {
+                            pts[i].yGroup = pts[prev].yGroup + v;
+                        }
+                        prev = i;
+                    } else {
+                        if (nprev >= 0) {
+                            pts[i].yGroup = pts[nprev].yGroup + v;
+                        }
+                        nprev = i;
+                    }
+                }
+                if (prev >= 0) {
+                    vals.push(pts[prev].yGroup);
+                }
+                if (nprev >= 0) {
+                    vals.push(pts[nprev].yGroup);
+                }
             }
-            vals.push(pts[pts.length - 1].yGroup);
+        } else {
+            for (const pts of map.values()) {
+                for (let i = 1; i < pts.length; i++) {
+                    pts[i].yGroup = pts[i - 1].yGroup + pts[i].yValue;
+                }
+                vals.push(pts[pts.length - 1].yGroup);
+            }
         }
         return vals;
     }
 
     private $_collectFill(axis: IAxis): number[] {
+        const base = this.getBaseValue(axis);
         const max = this.layoutMax || 100;
         const map = this.$_collectPoints();
         const vals: number[] = [];
 
-        for (const pts of map.values()) {
-            let sum = 0;
-            for (const p of pts) {
-                sum += p.yValue || 0;
+        if (!isNaN(base)) {
+            for (const pts of map.values()) {
+                let sum = 0;
+                for (const p of pts) {
+                    sum += Math.abs(p.yValue) || 0;
+                }
+
+                let prev = 0;
+                let nprev = 0;
+                
+                for (const p of pts) {
+                    p.yValue = p.yValue / sum * max;
+
+                    if (p.yValue < base) {
+                        nprev = p.yGroup = p.yValue + nprev;
+                    } else {
+                        prev = p.yGroup = p.yValue + prev;
+                    }
+                }
+                vals.push(nprev, prev);
             }
-            let prev = 0;
-            for (const p of pts) {
-                p.yValue = p.yValue / sum * max;
-                prev = p.yGroup = p.yValue + prev;
+        } else {
+            for (const pts of map.values()) {
+                let sum = 0;
+                for (const p of pts) {
+                    sum += p.yValue || 0;
+                }
+                let prev = 0;
+                for (const p of pts) {
+                    p.yValue = p.yValue / sum * max;
+                    prev = p.yGroup = p.yValue + prev;
+                }
+                vals.push(max);
             }
-            vals.push(max);
         }
-         
         return vals;
     }
 }

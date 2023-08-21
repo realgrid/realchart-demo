@@ -10,7 +10,7 @@ import { IPercentSize, ORG_ANGLE, SizeValue, _undefined, calcPercent, deg2rad, p
 import { AxisGuide } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
-import { PolarableSeries } from "./Series";
+import { Series } from "./Series";
 
 /**
  * 시리즈들이 그려지는 plot 영역 모델.
@@ -58,7 +58,7 @@ export class Body extends ChartItem {
         return ORG_ANGLE + deg2rad(this.startAngle);
     }
 
-    getPolar(series: PolarableSeries): {start: number, cx: number, cy: number, rd: number, deg: number} {
+    getPolar(series: Series): {start: number, cx: number, cy: number, rd: number, deg: number} {
         return this.chart._polar ? {
             start: this.getStartAngle(),
             cx: this._cx,

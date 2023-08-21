@@ -8,7 +8,7 @@
 
 import { pickNum } from "../../common/Common";
 import { PathBuilder } from "../../common/PathBuilder";
-import { LayerElement, PathElement, RcElement } from "../../common/RcControl";
+import { PathElement } from "../../common/RcControl";
 import { Utils } from "../../common/Utils";
 import { SeriesGroupLayout } from "../../model/Series";
 import { LinearAxis } from "../../model/axis/LinearAxis";
@@ -89,7 +89,7 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
         const inverted = series.chart.isInverted();
         const yAxis = series._yAxisObj;
         const len = inverted ? this.width : this.height;
-        const base = yAxis instanceof LinearAxis ? yAxis.baseValue : NaN;
+        const base = series.getBaseValue(yAxis);
         const yMin = this.height - yAxis.getPosition(len, pickNum(base, yAxis.axisMin()));
         const sb = new PathBuilder();
         let s: string;
@@ -135,7 +135,7 @@ export class AreaSeriesView extends LineSeriesView<AreaSeries> {
         const series = this.model;
         const g = series.group;
         const yAxis = series._yAxisObj;
-        const base = yAxis instanceof LinearAxis ? yAxis.baseValue : NaN;
+        const base = yAxis instanceof LinearAxis ? series.getBaseValue(yAxis) : NaN;
         const len = this.height;
         const y = yAxis.getPosition(len, Utils.isNotEmpty(base) ? base : yAxis.axisMax());
         const sb = new PathBuilder();
