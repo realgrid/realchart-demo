@@ -69,6 +69,7 @@ export class WaterfallSeries extends ClusterableSeries {
 
         if (axis === this._yAxisObj) {
             this._visPoints.forEach((p: WaterfallSeriesPoint) => p.y = p.save);
+            vals.push(0); // 잠재적 시작값이 0이다.
         }
         return vals;
     }
@@ -84,9 +85,9 @@ export class WaterfallSeries extends ClusterableSeries {
         let prev = yPrev;
         let total = yPrev;  // 전체 total
         let sum = yPrev;    // 중간 total
+        let low = 0;        // 시작값
         let v: number;
         let y: number;
-        let low: number;
 
         for (let i = 1, cnt = pts.length; i < cnt; i++) {
             p = pts[i];

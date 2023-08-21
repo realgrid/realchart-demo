@@ -52,6 +52,10 @@ export class ScatterSeries extends Series {
         return 'scatter';
     }
 
+    ignoreAxisBase(axis: IAxis): boolean {
+        return true;
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new ScatterSeriesPoint(source);
     }

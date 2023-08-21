@@ -994,7 +994,49 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
         super._doPrepareRender();
 
         this._pointPad = isNaN(this.pointPadding) ? (this._single ? 0.25 : this.group ? 0.1 : 0.2) : this.pointPadding;
- }
+    }
+}
+
+export abstract class BasedSeries extends ClusterableSeries {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _base: number;
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    baseValue = 0;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doPrepareRender(): void {
+        super._doPrepareRender();
+
+        this._base = pickNum(this._getGroupBase(), this._yAxisObj.getBaseValue());
+    }
+
+    collectValues(axis: IAxis): number[] {
+        const vals = super.collectValues(axis);
+
+        if (axis === this._yAxisObj) {
+            vals.push(this._base);
+        }
+        return vals;
+    }
+
+    getBaseValue(axis: IAxis): number {
+        return pickNum(this._base, axis.axisMin());
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected _getGroupBase(): number {
+        return this.baseValue;
+    }
 }
 
 export enum SeriesGroupLayout {

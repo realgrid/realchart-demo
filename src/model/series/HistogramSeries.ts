@@ -72,6 +72,12 @@ export class HistogramSeries extends Series {
     // fields
     //-------------------------------------------------------------------------
     _binInterval: number;
+    private _base: number;
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    baseValue = 0;
 
     //-------------------------------------------------------------------------
     // methods
@@ -179,7 +185,20 @@ export class HistogramSeries extends Series {
         // point.x가 point.min과 같은 값이므로 축 범위에 마지막 bin의 max가 포함되어야 한다.
         if (axis === this._xAxisObj) {
             vals.push((this._visPoints[this._visPoints.length - 1] as HistogramSeriesPoint).max);
+        } else if (axis === this._yAxisObj) {
+            vals.push(this._base);
         }
         return vals;
     }
+
+    protected _doPrepareRender(): void {
+        super._doPrepareRender();
+
+        this._base = pickNum(this.baseValue, this._yAxisObj.getBaseValue());
+    }
+
+    getBaseValue(axis: IAxis): number {
+        return pickNum(this._base, axis.axisMin());
+    }
+
 }

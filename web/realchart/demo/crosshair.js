@@ -3,12 +3,10 @@ const config = {
     title: "Crosshair",
     xAxis: {
         title: 'Height',
-        baseValue: null,
         crosshair: true,
     },
     yAxis: {
         title: 'Weight',
-        baseValue: null,
         crosshair: true,
     },
     series: { 

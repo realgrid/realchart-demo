@@ -8,7 +8,7 @@
 
 import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../../common/Types";
 import { DataPoint } from "../DataPoint";
-import { ClusterableSeries } from "../Series";
+import { BasedSeries } from "../Series";
 
 export class EqualizerSeriesPoint extends DataPoint {
 
@@ -20,7 +20,7 @@ export class EqualizerSeriesPoint extends DataPoint {
 /**
  * Bar 시리즈 변종.
  */
-export class EqualizerSeries extends ClusterableSeries {
+export class EqualizerSeries extends BasedSeries {
 
     //-------------------------------------------------------------------------
     // fields

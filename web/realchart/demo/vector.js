@@ -2,11 +2,11 @@ const config = {
     title: "Vector Series",
     xAxis: {
         title: 'X Axis',
-        max: 100
+        // min: 0,
+        // max: 100
     },
     yAxis: {
         title: 'Y Axis',
-        max: 100
     },
     series: {
         type: 'vector',

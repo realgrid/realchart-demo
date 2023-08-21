@@ -8,7 +8,7 @@
 
 import { Shape } from "../../common/impl/SvgShape";
 import { DataPoint } from "../DataPoint";
-import { ClusterableSeries, SeriesMarker } from "../Series";
+import { BasedSeries, ClusterableSeries, SeriesMarker } from "../Series";
 
 export class LollipopSeriesMarker extends SeriesMarker {
 
@@ -31,7 +31,7 @@ export class LollipopSeriesPoint extends DataPoint {
 /**
  * Bar 시리즈 변종.
  */
-export class LollipopSeries extends ClusterableSeries {
+export class LollipopSeries extends BasedSeries {
 
     //-------------------------------------------------------------------------
     // fields

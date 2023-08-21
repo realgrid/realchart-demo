@@ -9,7 +9,7 @@
 import { pickNum } from "../../common/Common";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { ClusterableSeries, ClustrableSeriesGroup, IClusterable, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
+import { BasedSeries, ClusterableSeries, ClustrableSeriesGroup, IClusterable, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
 
 export class BarSeriesPoint extends DataPoint {
     
@@ -19,7 +19,7 @@ export class BarSeriesPoint extends DataPoint {
     // borderRaidus: number;
 }
 
-export class ColumnSeries extends ClusterableSeries {
+export class ColumnSeries extends BasedSeries {
 
     //-------------------------------------------------------------------------
     // consts
@@ -27,12 +27,9 @@ export class ColumnSeries extends ClusterableSeries {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _base: number;
-
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    baseValue = 0;
     borderRaidus = 0;
 
     //-------------------------------------------------------------------------
@@ -49,30 +46,12 @@ export class ColumnSeries extends ClusterableSeries {
         return true;
     }
 
-    getBaseValue(axis: IAxis): number {
-        return pickNum(this._base, axis.axisMin());
-    }
-
     protected _createPoint(source: any): DataPoint {
         return new BarSeriesPoint(source);
     }
 
-    protected _doPrepareRender(): void {
-        super._doPrepareRender();
-
-        this._base = pickNum(
-            this.group ? (this.group as ColumnSeriesGroup).baseValue: this.baseValue, 
-            this._yAxisObj.getBaseValue()
-        );
-    }
-
-    collectValues(axis: IAxis): number[] {
-        const vals = super.collectValues(axis);
-
-        if (axis === this._yAxisObj) {
-            vals.push(this._base);
-        }
-        return vals;
+    protected _getGroupBase(): number {
+        return this.group ? (this.group as ColumnSeriesGroup).baseValue: this.baseValue;
     }
 }
 

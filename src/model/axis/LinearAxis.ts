@@ -331,16 +331,18 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected _doPrepareRender(): void {
-        const base = this.baseValue;
+        // const base = this.baseValue;
 
         this._hardMin = this.min;
         this._hardMax = this.max;
 
-        if (this._series.find(s => s.ignoreAxisBase(this))) {
-            this._base = NaN;
-        } else {
-            this._base = pickNum(+base, 0);
-        }
+        // if (this._series.find(s => s.ignoreAxisBase(this))) {
+        //     this._base = NaN;
+        // } else {
+        //     this._base = pickNum(+base, 0);
+        // }
+
+        this._base = parseFloat(this.baseValue as any);
 
         this._unitLen = NaN;
     }

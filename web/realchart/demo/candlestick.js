@@ -6,7 +6,6 @@ const config = {
         type: 'category',
     },
     yAxis: {
-        baseValue: null
     },
     series: {
         type: 'candlestick',

@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp, pickProp3 } from "../../common/Common";
+import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { Series } from "../Series";
 
@@ -106,6 +107,10 @@ export class VectorSeries extends Series {
     //-------------------------------------------------------------------------
     type(): string {
         return 'vector';
+    }
+
+    ignoreAxisBase(axis: IAxis): boolean {
+        return true;
     }
 
     protected _createPoint(source: any): DataPoint {

@@ -8,6 +8,7 @@
 
 import { pickNum, pickProp, pickProp3 } from "../../common/Common";
 import { DataPoint } from "../DataPoint";
+import { ClusterableSeries } from "../Series";
 import { ColumnSeries } from "./BarSeries";
 
 export class BoxPlotSeriesPoint extends DataPoint {
@@ -92,7 +93,7 @@ export class BoxPlotSeriesPoint extends DataPoint {
     }
 }
 
-export class BoxPlotSeries extends ColumnSeries {
+export class BoxPlotSeries extends ClusterableSeries {
 
     //-------------------------------------------------------------------------
     // property fields

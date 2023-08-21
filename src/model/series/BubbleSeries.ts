@@ -9,6 +9,7 @@
 import { pickNum, pickProp } from "../../common/Common";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
+import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { Series, SeriesMarker } from "../Series";
@@ -126,6 +127,10 @@ export class BubbleSeries extends Series {
     //-------------------------------------------------------------------------
     type(): string {
         return 'bubble';
+    }
+
+    ignoreAxisBase(axis: IAxis): boolean {
+        return true;
     }
 
     protected _createPoint(source: any): DataPoint {
