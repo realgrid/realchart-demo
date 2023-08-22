@@ -325,7 +325,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     index = -1;
     group: SeriesGroup<Series>;
-    _single: boolean;
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
     protected _points: DataPointCollection;
@@ -770,9 +769,14 @@ export class PlottingItemCollection  {
         const colors = this.chart.colors;
         
         this._visibleSeries = this._series.filter(ser => ser.visible);
-        this._visibleSeries.forEach((ser, i, arr) => {
+
+        const nCluster = this._visibleSeries.filter(ser => ser.clusterable()).length;
+
+        this._visibleSeries.forEach((ser, i) => {
             ser.color = ser.color || colors[i++ % colors.length];
-            ser._single = arr.length === 1;
+            if (ser instanceof ClusterableSeries) {
+                ser._single = nCluster === 1;
+            }
         });
 
         this._visibles = this._items.filter(item => item.visible);
@@ -899,6 +903,7 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
     _childWidth = 1;    // group내에서 이 시리즈의 상대적 너비
     _childPos = 0;      // group내에서 이 시리즈의 상대적 위치
 
+    _single: boolean;
     _pointPad = 0;
 
     //-------------------------------------------------------------------------
@@ -931,7 +936,7 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
      * point가 차지할 원래 크기에 대한 상대 값으로서,
      * 0 ~ 1 사이의 비율 값으로 지정한다.
      * 
-     * @default 한 카테고리에 시리즈 하나만 표시되면 0.25, group에 포함된 경우 0.1, 여러 시리즈와 같이 표시되면 0.2.
+     * @default 한 카테고리에 cluster 가능한 시리즈가 하나만 표시되면 0.25, group에 포함된 경우 0.1, 여러 시리즈와 같이 표시되면 0.2.
      */
     pointPadding: number;
 
@@ -1042,6 +1047,28 @@ export abstract class BasedSeries extends ClusterableSeries {
     protected _getGroupBase(): number {
         return this.baseValue;
     }
+}
+
+export abstract class RangedSeries extends ClusterableSeries {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    collectValues(axis: IAxis): number[] {
+        const vals = super.collectValues(axis);
+
+        if (axis === this._yAxisObj) {
+            this._visPoints.forEach((p: DataPoint) => {
+                vals.push(this._getBottomValue(p));
+            })
+        }
+        return vals;
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected abstract _getBottomValue(p: DataPoint): number;
 }
 
 export enum SeriesGroupLayout {

@@ -7,8 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp, pickProp3 } from "../../common/Common";
+import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { ClusterableSeries } from "../Series";
+import { ClusterableSeries, RangedSeries } from "../Series";
 import { ColumnSeries } from "./BarSeries";
 
 export class BoxPlotSeriesPoint extends DataPoint {
@@ -93,7 +94,7 @@ export class BoxPlotSeriesPoint extends DataPoint {
     }
 }
 
-export class BoxPlotSeries extends ClusterableSeries {
+export class BoxPlotSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -112,5 +113,9 @@ export class BoxPlotSeries extends ClusterableSeries {
 
     protected _createPoint(source: any): DataPoint {
         return new BoxPlotSeriesPoint(source);
+    }
+
+    protected _getBottomValue(p: BoxPlotSeriesPoint): number {
+        return p.minValue;
     }
 }

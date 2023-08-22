@@ -384,7 +384,7 @@ export abstract class ContinuousAxis extends Axis {
     
             for (let i = 0; i < steps.length; i++) {
                 ticks.push({
-                    pos: this.getStepPosition(length, steps[i]),
+                    pos: this.getPosition(length, steps[i]),
                     value: steps[i],
                     label: this.tick.getTick(steps[i]) || String(steps[i])
                 });
@@ -475,10 +475,6 @@ export abstract class ContinuousAxis extends Axis {
 
             return this.reversed ? length - p : p;
         }
-    }
-
-    getStepPosition(length: number, value: number): number {
-        return this.getPosition(length, value);
     }
 
     getUnitLength(length: number, value: number): number {

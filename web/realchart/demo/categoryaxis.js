@@ -1,7 +1,7 @@
 const config = {
     title: "Category Axis",
     options: {
-        // animatable: false
+        animatable: false
     },
     xAxis: {
         title: "일일 Daily fat",
@@ -27,7 +27,10 @@ const config = {
         type: 'line',
         pointLabel: true,
         color: 'black',
-        data: [9, 17, 19, 11, 10, 21]
+        data: [9, 17, 19, 11, 10, 21],
+        style: {
+            strokeDasharray: '5'
+        }
     }]
 }
 

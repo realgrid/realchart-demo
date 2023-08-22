@@ -7,9 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isString, pickNum, pickNum3 } from "../../common/Common";
-import { isNull } from "../../common/Types";
 import { Axis, AxisGrid, AxisTick, AxisTickMark, IAxisTick } from "../Axis";
-import { IPlottingItem, ISeries, SeriesGroup } from "../Series";
+import { IPlottingItem } from "../Series";
 
 export enum CategoryTickMarkPosition {
     TICK = 'tick',
@@ -49,15 +48,12 @@ class CategoryAxisGrid extends AxisGrid {
     // properties
     //-------------------------------------------------------------------------
     getPoints(): number[] {
-        const axis = this.axis as CategoryAxis;
-        const interval = axis._interval;
-        const n = axis._ticks.length;
+        const apts = (this.axis as CategoryAxis)._pts;
+        const n = (this.axis as CategoryAxis)._ticks.length;
         const pts: number[] = [];
-        let p = axis._minPad;
 
-        for (let i = 0; i <= n; i++) {
-            pts.push(p);
-            p += interval;
+        for (let i = 0; i < n; i++) {
+            pts.push(apts[i + 2]);
         }
         return pts;
     }
@@ -84,14 +80,14 @@ export class CategoryAxis extends Axis {
     // fields
     //-------------------------------------------------------------------------
     _cats: string[];
-    _widths: number[];  // ? 한 카테고리의 너비. 한 카테고리의 값 크기는 1 ?
-    _widthSum: number;  // ?
+    _widths: number[];  // 한 카테고리의 상대 너비. 한 카테고리의 기본 크기는 1
+    _len: number;
+    private _step = 1;
     private _map = new Map<string, number>(); // data point의 축 위치를 찾기 위해 사용한다.
     private _min: number;
     private _max: number;
-    private _len: number;
-    _interval: number;
     private _catPad = 0;
+    _pts: number[];
 
     //-------------------------------------------------------------------------
     // properties
@@ -117,7 +113,8 @@ export class CategoryAxis extends Axis {
     /**
      * 명시적으로 지정하는 카테고리 목록.
      * <br>
-     * 카테고리 항목을 object로 지정할 때에는 label 속성에 카테고리 이름을 width에 상대 너비를 지정한다.
+     * 카테고리 항목을 object로 지정할 때에는 name(혹은 label) 속성에 카테고리 이름을,
+     * width 속성에 상대 너비(1이 기본 너비)를 지정한다.
      * 첫 번째 값이 {@link startValue}에 해당하고 {@link valueStep}씩 증가한다.
      * 각 카테고리의 상대적 너비를 지정할 수 있다.
      */
@@ -138,7 +135,7 @@ export class CategoryAxis extends Axis {
     /**
      * 축의 시작 카테고리 위치 이 전에 여백으로 추가되는 크기.
      * <br>
-     * 시작 카테고리에 대한 상대적 크기로 지정한다.
+     * 카테고리 기본 너비(1)에 대한 상대적 크기로 지정한다.
      * {@link padding} 속성으로 양끝 padding을 한꺼번에 지정할 수 있다.
      * 
      * @default undefined
@@ -147,7 +144,7 @@ export class CategoryAxis extends Axis {
     /**
      * 축의 끝 카테고리 위치 이 후에 여백으로 추가되는 크기.
      * <br>
-     * 시작 카테고리에 대한 상대적 크기로 지정한다.
+     * 카테고리 기본 너비(1)에 대한 상대적 크기로 지정한다.
      * {@link padding} 속성으로 양끝 padding을 한꺼번에 지정할 수 있다.
      * 
      * @default undefined
@@ -207,7 +204,7 @@ export class CategoryAxis extends Axis {
 
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
         const cats = this._cats;
-        const nCat = cats.length;
+        const widths = this._widths;
         const ticks: IAxisTick[] = [];
 
         this._minPad = pickNum3(this.minPadding, this.padding, 0);
@@ -215,27 +212,44 @@ export class CategoryAxis extends Axis {
         min = this._min = Math.floor(min);
         max = this._max = Math.ceil(max);
 
-        const interval = this.categoryStep || 1;
-        const len = this._len = max - min + 1;
-        this._interval = length / (len + this._minPad + this._maxPad);
-
-        for (let i = min; i <= max; i += interval) {
-            ticks.push({
-                pos: this.getPosition(length, i),
-                value: i,
-                label: this.tick.getTick(i < nCat ? cats[i] : i)
-            });
+        while (cats.length <= max) {
+            cats.push(String(cats.length));
+            widths.push(1);
         }
+
+        const len = this._len = this._minPad + this._maxPad + widths.reduce((a, c) => a + c);
+        const step = this._step = this.categoryStep || 1;
+        let p = this._minPad;
+        const pts = this._pts = [0];
+
+        for (let i = min; i <= max; i += step) {
+            const w = widths[i];
+
+            pts.push(length * p / len);
+
+            ticks.push({
+                pos: length * (p + w / 2) / this._len,
+                value: i,
+                label: this.tick.getTick(cats[i]),
+            });
+            p += widths[i];// step
+        }
+        pts.push(length * p / len);
+        pts.push(length * (p + this._maxPad) / len);
         return ticks;
     }
 
-    getPosition(length: number, value: number): number {
-        const v = this._minPad * this._interval + (value - this._min) * this._interval + this._interval / 2;
-        return this.reversed ? length - v : v;
+    getPosition(length: number, value: number, point = true): number {
+        // data point view는 카테고리 중앙을 기준으로 표시한다.
+        if (point) value += this._step / 2;
+        const v = Math.floor(value);
+        const p = this._pts[v + 1] + (this._pts[v + 2] - this._pts[v + 1]) * (value - v);
+        return this.reversed ? length - p : p;
     }
 
     getUnitLength(length: number, value: number): number {
-        return length / this._len;
+        const v = Math.floor(value);
+        return (this._pts[v + 2] - this._pts[v + 1]);
     }
 
     getValue(value: any): number {
@@ -256,12 +270,12 @@ export class CategoryAxis extends Axis {
             this._cats = categories.map(c => {
                 if (c == null) return null;
                 if (isString(c)) return c;
-                return c.label;
+                return c.name || c.label;
             });
-            this._widthSum = 0;
+            this._len = 0;
             this._widths = categories.map(c => {
                 const w = c == null ? 1 : pickNum(c.width, 1);
-                this._widthSum += w;
+                this._len += w;
                 return w;
             });
         } else {
@@ -280,7 +294,6 @@ export class CategoryAxis extends Axis {
                     }
                 }
             }
-            this._widthSum = widths.length;
         }
 
         const start = pickNum(this.startValue, 0);

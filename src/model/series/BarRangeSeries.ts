@@ -9,6 +9,7 @@
 import { pickNum, pickProp, pickProp3 } from "../../common/Common";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
+import { ClusterableSeries, RangedSeries } from "../Series";
 import { ColumnSeries } from "./BarSeries";
 
 export class BarRangeSeriesPoint extends DataPoint {
@@ -70,7 +71,7 @@ export class BarRangeSeriesPoint extends DataPoint {
     }
 }
 
-export class ColumnRangeSeries extends ColumnSeries {
+export class ColumnRangeSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -88,13 +89,8 @@ export class ColumnRangeSeries extends ColumnSeries {
         return new BarRangeSeriesPoint(source);
     }
 
-    collectValues(axis: IAxis): number[] {
-        const vals = super.collectValues(axis);
-
-        if (axis === this._yAxisObj) {
-            this._visPoints.forEach(p => vals.push((p as BarRangeSeriesPoint).lowValue))
-        }
-        return vals;
+    protected _getBottomValue(p: BarRangeSeriesPoint): number {
+        return p.lowValue;
     }
 }
 

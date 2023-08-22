@@ -9,7 +9,7 @@
 import { pickNum, pickProp, pickProp3 } from "../../common/Common";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { ClusterableSeries } from "../Series";
+import { ClusterableSeries, RangedSeries } from "../Series";
 
 export class ErrorBarSeriesPoint extends DataPoint {
 
@@ -70,7 +70,7 @@ export class ErrorBarSeriesPoint extends DataPoint {
     }
 }
 
-export class ErrorBarSeries extends ClusterableSeries {
+export class ErrorBarSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -94,12 +94,7 @@ export class ErrorBarSeries extends ClusterableSeries {
         return new ErrorBarSeriesPoint(source);
     }
 
-    collectValues(axis: IAxis): number[] {
-        const vals = super.collectValues(axis);
-
-        if (axis === this._yAxisObj) {
-            this._visPoints.forEach(p => vals.push((p as ErrorBarSeriesPoint).lowValue))
-        }
-        return vals;
+    protected _getBottomValue(p: ErrorBarSeriesPoint): number {
+        return p.lowValue;
     }
 }

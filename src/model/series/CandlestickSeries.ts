@@ -9,7 +9,7 @@
 import { pickNum, pickProp } from "../../common/Common";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { ClusterableSeries } from "../Series";
+import { ClusterableSeries, RangedSeries } from "../Series";
 
 /**
  * [low, open, close, high]
@@ -78,7 +78,7 @@ export class CandlestickSeriesPoint extends DataPoint {
     }
 }
 
-export class CandlestickSeries extends ClusterableSeries {
+export class CandlestickSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -112,14 +112,7 @@ export class CandlestickSeries extends ClusterableSeries {
         return new CandlestickSeriesPoint(source);
     }
 
-    collectValues(axis: IAxis): number[] {
-        const vals = super.collectValues(axis);
-
-        if (axis === this._yAxisObj) {
-            this._visPoints.forEach((p: CandlestickSeriesPoint) => {
-                vals.push(p.lowValue);
-            })
-        }
-        return vals;
+    protected _getBottomValue(p: CandlestickSeriesPoint): number {
+        return p.lowValue;
     }
 }

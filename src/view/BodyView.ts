@@ -116,7 +116,7 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: AxisGrid, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this._pts = model.getPoints();
+        this._pts = model.getPoints(model.axis._isHorz ? hintWidth : hintHeight);
         this._lines.prepare(this._pts.length, (line) => {
         });
         return Size.create(hintWidth, hintHeight);
@@ -250,7 +250,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
         let layout: TextLayout;
 
         if (this.vertical()) {
-            const p = m.axis.getPosition(width, m.value);
+            const p = m.axis.getPosition(width, m.value, true);
 
             this._line.setVLineC(p, 0, height);
 
@@ -288,7 +288,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
                     break;
             }
         } else {
-            const p = height - m.axis.getPosition(height, m.value);
+            const p = height - m.axis.getPosition(height, m.value, true);
 
             this._line.setHLineC(p, 0, width);
 
@@ -362,8 +362,8 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
         const label = this._label;
 
         if (this.vertical()) {
-            const x1 = m.axis.getPosition(width, m.start);
-            const x2 = m.axis.getPosition(width, m.end);
+            const x1 = m.axis.getPosition(width, m.start, true);
+            const x2 = m.axis.getPosition(width, m.end, true);
 
             let x: number;
             let y: number;
@@ -411,8 +411,8 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
             this._box.setBox(x1, 0, x2, height);
 
         } else {
-            const y1 = height - this.model.axis.getPosition(height, Math.min(m.start, m.end));
-            const y2 = height - this.model.axis.getPosition(height, Math.max(m.start, m.end));
+            const y1 = height - this.model.axis.getPosition(height, Math.min(m.start, m.end), true);
+            const y2 = height - this.model.axis.getPosition(height, Math.max(m.start, m.end), true);
             let x: number;
             let y: number;
             let anchor: TextAnchor;
@@ -565,10 +565,10 @@ export class BodyView extends ChartElement<Body> {
     private _owner: IPlottingOwner;
     private _polar: boolean;
     private _background: RectElement;
-    private _gridContainer: RcElement;
+    private _gridContainer: LayerElement;
     protected _gridViews = new Map<Axis, AxisGridView>();
     private _breakViews: AxisBreakView[] = [];
-    private _seriesContainer: RcElement;
+    private _seriesContainer: LayerElement;
     protected _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
     private _series: Series[];
@@ -576,7 +576,7 @@ export class BodyView extends ChartElement<Body> {
     _guideContainer: AxisGuideContainer;
     _frontGuideContainer: AxisGuideContainer;
     // axis breaks
-    _axisBreakContainer: RcElement;
+    _axisBreakContainer: LayerElement;
     // items
     // private _itemMap = new Map<PlotItem, PlotItemView>();
     // feedbacks

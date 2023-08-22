@@ -37,7 +37,7 @@ export interface IAxis {
     /**
      * 값(축 상 위치)에 해당하는 픽셀 위치.
      */
-    getPosition(length: number, value: number): number;
+    getPosition(length: number, value: number, point?: boolean): number;
     /**
      * 값(축 상 위치)에 해당하는 축 단위 픽셀 크기. 
      * <br>
@@ -118,8 +118,9 @@ export class AxisGrid extends AxisItem {
         return this.visible == null ? !this.axis._isX : this.visible;
     }
 
-    getPoints(): number[] {
-        return this.axis._ticks.map(tick => tick.pos);
+    getPoints(length: number): number[] {
+        const axis = this.axis;
+        return this.axis._ticks.map(tick => axis.getPosition(length, tick.value, false));
     }
             
     //-------------------------------------------------------------------------
@@ -533,7 +534,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     /**
      * value에 해당하는 축상의 위치.
      */
-    abstract getPosition(length: number, value: number): number;
+    abstract getPosition(length: number, value: number, point?: boolean): number;
     abstract getUnitLength(length: number, value: number): number;
 
     getValue(value: any): number {

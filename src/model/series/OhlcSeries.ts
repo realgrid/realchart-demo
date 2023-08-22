@@ -9,7 +9,7 @@
 import { pickNum, pickProp } from "../../common/Common";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { ClusterableSeries } from "../Series";
+import { ClusterableSeries, RangedSeries } from "../Series";
 
 /**
  * Low/Open/Close/High 네 값을 수직선(low-high)과 
@@ -83,7 +83,7 @@ export class OhlcSeriesPoint extends DataPoint {
     }
 }
 
-export class OhlcSeries extends ClusterableSeries {
+export class OhlcSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -117,14 +117,7 @@ export class OhlcSeries extends ClusterableSeries {
         return new OhlcSeriesPoint(source);
     }
 
-    collectValues(axis: IAxis): number[] {
-        const vals = super.collectValues(axis);
-
-        if (axis === this._yAxisObj) {
-            this._visPoints.forEach((p: OhlcSeriesPoint) => {
-                vals.push(p.lowValue);
-            })
-        }
-        return vals;
+    protected _getBottomValue(p: OhlcSeriesPoint): number {
+        return p.lowValue;
     }
 }

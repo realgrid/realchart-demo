@@ -74,8 +74,4 @@ export class LogAxis extends ContinuousAxis {
         value = value > 0 ? Math.log10(value) : 0;
         return super.getPosition(length, value);
     }
-
-    getStepPosition(length: number, value: number): number {
-        return super.getPosition(length, value);
-    }
 }

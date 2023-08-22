@@ -9,7 +9,7 @@
 import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { ClusterableSeries } from "../Series";
+import { ClusterableSeries, RangedSeries } from "../Series";
 
 export class WaterfallSeriesPoint extends DataPoint {
 
@@ -34,7 +34,7 @@ export class WaterfallSeriesPoint extends DataPoint {
     }
 }
 
-export class WaterfallSeries extends ClusterableSeries {
+export class WaterfallSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -64,14 +64,8 @@ export class WaterfallSeries extends ClusterableSeries {
         return new WaterfallSeriesPoint(source);
     }
 
-    collectValues(axis: IAxis): number[] {
-        const vals = super.collectValues(axis);
-
-        if (axis === this._yAxisObj) {
-            this._visPoints.forEach((p: WaterfallSeriesPoint) => p.y = p.save);
-            vals.push(0); // 잠재적 시작값이 0이다.
-        }
-        return vals;
+    protected _getBottomValue(p: WaterfallSeriesPoint): number {
+        return p.y = p.save;
     }
 
     protected _doPrepareRender(): void {
