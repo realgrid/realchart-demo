@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Puppetear.spec.ts
+// column.spec.ts
 // 2023. 08. 22. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
@@ -11,15 +11,15 @@ import { describe, it } from 'mocha';
 import puppeteer, { Browser } from 'puppeteer';
 
 /**
- * Puppetear Tests.
+ * Puppetear Tests for column.html
  */
- describe("Puppetear test", async function() {
+ describe("column.html test", async function() {
 
-    const opts = {    
-        headless: true,    
+    const opts: any = {    
+        headless: "new",    
         slowMo: 100,    
         timeout: 0,    
-        args: ['--start-maximized', '--window-size=1920,1040'] 
+        args: ['--start-maximized'] 
     }
     let browser: Browser;
 
@@ -65,6 +65,6 @@ import puppeteer, { Browser } from 'puppeteer';
                 expect(rBar.height < rPrev.height).is.true;
             }
         }
-        //await page.screenshot({path: 'out/test.png'});
+        await page.screenshot({path: 'out/test.png'});
     });
 });

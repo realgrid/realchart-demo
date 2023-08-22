@@ -12,7 +12,7 @@ import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
-import { MarerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
+import { BasedSeries, MarerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
 
 export class LineSeriesPoint extends DataPoint {
 
@@ -51,13 +51,12 @@ export class LineSeriesMarker extends SeriesMarker {
     maxVisible = MarerVisibility.DEFAULT;
 }
 
-export abstract class LineSeriesBase extends Series {
+export abstract class LineSeriesBase extends BasedSeries {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     marker = new LineSeriesMarker(this);
-    private _base: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -66,35 +65,15 @@ export abstract class LineSeriesBase extends Series {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * {@link belowStyle}이 적용되는 기준 값.
-     * <br>
-     * 이 값이 지정되지 않으면 y축의 baseValue가 기준이 된다.
-     */
-    baseValue = 0;
-    /**
      * {@link baseValue} 혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.
      */
     belowStyle: SVGStyleOrClass;
-
-
-    getBaseValue(axis: IAxis): number {
-        return pickNum(this._base, axis.axisMin());
-    }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _createPoint(source: any): DataPoint {
         return new LineSeriesPoint(source);
-    }
-
-    protected _doPrepareRender(): void {
-        super._doPrepareRender();
-
-        this._base = pickNum(
-            this.group ? (this.group as LineSeriesGroup).baseValue: this.baseValue, 
-            this._yAxisObj.getBaseValue()
-        );
     }
 
     //-------------------------------------------------------------------------
