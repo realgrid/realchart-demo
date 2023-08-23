@@ -94,7 +94,7 @@ class Word {
     }
 }
 
-abstract class SpanWoard extends Word {
+abstract class SpanWord extends Word {
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -129,7 +129,7 @@ abstract class SpanWoard extends Word {
     }
 }
 
-class NormalWord extends SpanWoard {
+class NormalWord extends SpanWord {
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -139,7 +139,7 @@ class NormalWord extends SpanWoard {
     }
 }
 
-class BoldWord extends SpanWoard {
+class BoldWord extends SpanWord {
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -154,7 +154,7 @@ class BoldWord extends SpanWoard {
     }
 }
 
-class ItalicWord extends SpanWoard {
+class ItalicWord extends SpanWord {
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -306,14 +306,14 @@ export class SvgRichText {
 	//-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getSvg(target: any, domain: RichTextParamCallback): string {
-        let s = '';
+    // getSvg(target: any, domain: RichTextParamCallback): string {
+    //     let s = '';
 
-        for (let line of this._lines) {
-            s += line.getText(target, domain);
-        }
-        return s;
-    }
+    //     for (let line of this._lines) {
+    //         s += line.getText(target, domain);
+    //     }
+    //     return s;
+    // }
 
     build(view: TextElement, target: any, domain: RichTextParamCallback): void {
         const doc = view.doc;

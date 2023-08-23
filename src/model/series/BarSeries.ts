@@ -9,7 +9,7 @@
 import { pickNum } from "../../common/Common";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { BasedSeries, ClusterableSeries, ClustrableSeriesGroup, IClusterable, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
+import { BasedSeries, ClustrableSeriesGroup, IClusterable, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
 
 export class BarSeriesPoint extends DataPoint {
     
@@ -19,7 +19,7 @@ export class BarSeriesPoint extends DataPoint {
     // borderRaidus: number;
 }
 
-export class ColumnSeries extends BasedSeries {
+export class BarSeries extends BasedSeries {
 
     //-------------------------------------------------------------------------
     // consts
@@ -39,7 +39,7 @@ export class ColumnSeries extends BasedSeries {
     // overriden members
     //-------------------------------------------------------------------------
     type(): string {
-        return 'column';
+        return 'bar';
     }
 
     canCategorized(): boolean {
@@ -51,25 +51,11 @@ export class ColumnSeries extends BasedSeries {
     }
 
     protected _getGroupBase(): number {
-        return this.group ? (this.group as ColumnSeriesGroup).baseValue: this.baseValue;
+        return this.group ? (this.group as BarSeriesGroup).baseValue: this.baseValue;
     }
 }
 
-export class BarSeries extends ColumnSeries {
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    type(): string {
-        return 'bar';
-    }
-
-    inverted(): boolean {
-        return true;
-    }
-}
-
-export class ColumnSeriesGroup extends ClustrableSeriesGroup<ColumnSeries> implements IClusterable {
+export class BarSeriesGroup extends ClustrableSeriesGroup<BarSeries> implements IClusterable {
 
     //-------------------------------------------------------------------------
     // fields
@@ -83,11 +69,11 @@ export class ColumnSeriesGroup extends ClustrableSeriesGroup<ColumnSeries> imple
     // overriden members
     //-------------------------------------------------------------------------
     protected _seriesType(): string {
-        return 'column';
+        return 'bar';
     }
 
     protected _canContain(ser: Series): boolean {
-        return ser instanceof ColumnSeries;
+        return ser instanceof BarSeries;
     }
 
     clusterable(): boolean {
@@ -103,7 +89,7 @@ export class ColumnSeriesGroup extends ClustrableSeriesGroup<ColumnSeries> imple
         return pickNum(this.baseValue, axis.getBaseValue());
     }
 
-    protected _doPrepareSeries(series: ColumnSeries[]): void {
+    protected _doPrepareSeries(series: BarSeries[]): void {
         if (this.layout === SeriesGroupLayout.DEFAULT) {
             const sum = series.length > 1 ? series.map(ser => ser.pointWidth).reduce((a, c) => a + c) : series[0].pointWidth;
             let x = 0;
@@ -115,15 +101,5 @@ export class ColumnSeriesGroup extends ClustrableSeriesGroup<ColumnSeries> imple
             });
         } else if (this.layout === SeriesGroupLayout.STACK) {
         }
-    }
-}
-
-export class BarSeriesGroup extends ColumnSeriesGroup {
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    protected _seriesType(): string {
-        return 'bar';
     }
 }

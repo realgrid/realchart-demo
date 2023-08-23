@@ -32,31 +32,29 @@ import { Tester } from '../../Tester';
     });
 
     it('calculate min max', () => {
-        const json = Tester.loadChartJson("column-01");
+        const json = Tester.loadChartJson("bar-01");
         const chart = new Chart(json);
         const axis = chart.yAxis as LinearAxis;
-        const base = 0;
 
         chart.prepareRender();
 
-        expect(axis._range.min).eq(Math.min(...json.series.data, base));        
-        expect(axis._range.max).eq(Math.max(...json.series.data, base));        
+        expect(axis._range.min).eq(Math.min(...json.series.data));        
+        expect(axis._range.max).eq(Math.max(...json.series.data));        
     });
 
     it('calculate min max 2', () => {
-        const json = Tester.loadChartJson("column-02");
+        const json = Tester.loadChartJson("bar-02");
         const chart = new Chart(json);
         const axis = chart.yAxis as LinearAxis;
-        const base = 0;
 
         chart.prepareRender();
 
-        expect(axis._range.min).eq(Math.min(...json.series.data.map((v: number[]) => v[1]), base));                
-        expect(axis._range.max).eq(Math.max(...json.series.data.map((v: number[]) => v[1]), base));        
+        expect(axis._range.min).eq(Math.min(...json.series.data.map((v: number[]) => v[1])));                
+        expect(axis._range.max).eq(Math.max(...json.series.data.map((v: number[]) => v[1])));        
     });
 
     it ('build ticks', () => {
-        const json = Tester.loadChartJson("column-02");
+        const json = Tester.loadChartJson("bar-02");
         const chart = new Chart(json);
         const axis = chart.yAxis as LinearAxis;
 

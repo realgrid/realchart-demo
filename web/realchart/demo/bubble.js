@@ -10,7 +10,7 @@ const config = {
         type: 'bubble',
         pointLabel: {
             visible: true,
-            format: '${z}'
+            suffix: 'm'
         },
         data: [
             [9, 81, 63],
@@ -42,7 +42,7 @@ function setActions(container) {
         alert('hello');
     });
     createCheckBox(container, 'Inverted', function (e) {
-        config.options.inverted = _getChecked(e);
+        config.inverted = _getChecked(e);
         chart.update(config);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
@@ -51,6 +51,14 @@ function setActions(container) {
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'ColorByPoint', function (e) {
+        config.series.colorByPoint = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Outlined Label', function (e) {
+        config.series.pointLabel.effect = _getChecked(e) ? 'outline' : 'none';
         chart.update(config);
     }, false);
 }

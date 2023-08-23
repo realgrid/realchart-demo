@@ -1,7 +1,7 @@
 const config = {
     title: "Variable Category Axis",
     options: {
-        animatable: false
+        // animatable: false
     },
     xAxis: {
         title: "일일 Daily fat",
@@ -60,7 +60,7 @@ function setActions(container) {
         chart.update(config, animate);
     }, false);
     createCheckBox(container, 'Inverted', function (e) {
-        config.options.inverted = _getChecked(e);
+        config.inverted = _getChecked(e);
         chart.update(config, animate);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {

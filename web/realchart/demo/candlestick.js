@@ -1,7 +1,7 @@
 const config = {
     title: "Candlestick",
     options: {
-        animatable: false,
+        // animatable: false,
     },
     xAxis: {
         type: 'category',
@@ -262,7 +262,7 @@ function setActions(container) {
         alert('hello');
     });
     createCheckBox(container, 'Inverted', function (e) {
-        config.options.inverted = _getChecked(e);
+        config.inverted = _getChecked(e);
         chart.update(config);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {

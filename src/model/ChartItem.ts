@@ -161,7 +161,7 @@ export abstract class FormattableText extends ChartText {
     //-------------------------------------------------------------------------
     private _numSymbols: string[];
     private _numberFormatter: NumberFormatter;
-    private _richText: SvgRichText;
+    private _richTextImpl: SvgRichText;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -225,7 +225,7 @@ export abstract class FormattableText extends ChartText {
     offset = 2;
 
     /**
-     * rich text format
+     * rich text format을 지정할 수 있다.
      */
     get text(): string {
         return this._text;
@@ -234,10 +234,10 @@ export abstract class FormattableText extends ChartText {
         if (value !== this._text) {
             this._text = value;
             if (value) {
-                if (!this._richText) this._richText = new SvgRichText()
-                this._richText.format = value;
+                if (!this._richTextImpl) this._richTextImpl = new SvgRichText()
+                this._richTextImpl.format = value;
             } else {
-                this._richText = null;
+                this._richTextImpl = null;
             }
         }
     }
@@ -245,14 +245,14 @@ export abstract class FormattableText extends ChartText {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getSvg(target: any, callback: RichTextParamCallback): string {
-        if (this._richText) {
-            return this._richText.getSvg(target, callback);
-        }
-    }
+    // getSvg(target: any, callback: RichTextParamCallback): string {
+    //     if (this._richText) {
+    //         return this._richText.getSvg(target, callback);
+    //     }
+    // }
 
     buildSvg(view: TextElement, target: any, callback: RichTextParamCallback): void {
-        this._richText.build(view, target, callback);
+        this._richTextImpl.build(view, target, callback);
     }
 
     //-------------------------------------------------------------------------

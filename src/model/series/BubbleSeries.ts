@@ -81,6 +81,7 @@ export class BubbleSeries extends Series {
     sizeMode = BubbleSizeMode.AREA;
     minSize: RtPercentSize = 8;
     maxSize: RtPercentSize = '20%';
+    colorByPoint = false;
 
     //-------------------------------------------------------------------------
     // fields
@@ -137,6 +138,10 @@ export class BubbleSeries extends Series {
         return new BubbleSeriesPoint(source);
     }
 
+    protected _colorByPoint(): boolean {
+        return this.colorByPoint;
+    }
+
     load(src: any): BubbleSeries {
         super.load(src);
 
@@ -146,6 +151,8 @@ export class BubbleSeries extends Series {
     }
 
     protected _doPrepareRender(): void {
+        super._doPrepareRender();
+
         this._zMin = Number.MAX_VALUE;
         this._zMax = Number.MIN_VALUE;
 

@@ -1,14 +1,16 @@
 const config = {
-    type: 'bar',
     title: "Bar Negative",
+    options: {},
     xAxis: {
     },
     yAxis: {
     },
     series: {
+        // baseValue: null,
         pointLabel: {
             visible: true,
-            position: 'head'
+            // position: 'foot',
+            effect: 'outline'
         },
         data: [
             ['home', 7], 
@@ -21,6 +23,8 @@ const config = {
         ]
     }
 }
+
+let animate = false;
 let chart;
 
 function setActions(container) {
@@ -28,9 +32,28 @@ function setActions(container) {
         RealChart.setDebugging(_getChecked(e));
         chart.refresh();
     }, true);
+    createCheckBox(container, 'Always Animate', function (e) {
+        animate = _getChecked(e);
+    }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'Inverted', function (e) {
+        config.inverted = _getChecked(e);
+        chart.update(config, animate);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config, animate);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.update(config, animate);
+    }, false);
+    createListBox(container, "PointLabel Position", ['auto', 'inside', 'outside', 'head', 'foot'], function (e) {
+        config.series.pointLabel.position = _getValue(e);
+        chart.update(config, animate);
+    }, 'auto');
 }
 
 export function init() {

@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// column.spec.ts
+// bar.spec.ts
 // 2023. 08. 22. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
@@ -8,23 +8,19 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import puppeteer, { Browser } from 'puppeteer';
+import { Browser } from 'puppeteer';
+import { PPTester } from '../../Puppetear';
 
 /**
- * Puppetear Tests for column.html
+ * Puppetear Tests for bar.html
  */
- describe("column.html test", async function() {
+ describe("bar.html test", async function() {
 
-    const opts: any = {    
-        headless: "new",    
-        slowMo: 100,    
-        timeout: 0,    
-        args: ['--start-maximized'] 
-    }
+    const url = "http://localhost:6010/realchart/demo/bar.html";
     let browser: Browser;
 
     before(async () => {
-        browser = await puppeteer.launch(opts);
+        browser = await PPTester.init();
     });
 
     after(async () => {
@@ -32,9 +28,7 @@ import puppeteer, { Browser } from 'puppeteer';
     });
 
     it('init', async () => {
-        const page = await browser.newPage();
-        await page.setViewport({width: 1920, height: 1080});
-        await page.goto("http://localhost:6010/realchart/demo/column.html")
+        const page = await PPTester.newPage(browser, url);
 
         const container = await page.$('#realchart');
         expect(container).exist;

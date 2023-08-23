@@ -51,12 +51,13 @@ export class LineSeriesMarker extends SeriesMarker {
     maxVisible = MarerVisibility.DEFAULT;
 }
 
-export abstract class LineSeriesBase extends BasedSeries {
+export abstract class LineSeriesBase extends Series {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     marker = new LineSeriesMarker(this);
+    private _base: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -64,6 +65,11 @@ export abstract class LineSeriesBase extends BasedSeries {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 위/아래 구분의 기준이 되는 값.
+     * <br>
+     */
+    baseValue = 0;
     /**
      * {@link baseValue} 혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.
      */
@@ -75,6 +81,17 @@ export abstract class LineSeriesBase extends BasedSeries {
     protected _createPoint(source: any): DataPoint {
         return new LineSeriesPoint(source);
     }
+
+    protected _doPrepareRender(): void {
+        super._doPrepareRender();
+
+        this._base = pickNum(this.baseValue, this._yAxisObj.getBaseValue());
+    }
+
+    getBaseValue(axis: IAxis): number {
+        return this._base;
+    }
+
 
     //-------------------------------------------------------------------------
     // internal members

@@ -365,9 +365,6 @@ export abstract class Axis extends ChartItem implements IAxis {
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
     _length: number;
-
-    _minPadDim: IPercentSize;
-    _maxPadDim: IPercentSize;
     _minPad = 0;
     _maxPad = 0;
 
@@ -416,27 +413,6 @@ export abstract class Axis extends ChartItem implements IAxis {
      * {@link maxPadding}도 무시된다.
      */
     max: number;
-    /**
-     * 명시적 최소값이 지정되지 않은 경우, 축 최소값 쪽에서 축 안쪽으로 설정되는 여백 크기.
-     * <br>
-     * data point 값을 숫자로 지정하거나 전체 축 길이에 대한 상대 크기를 백분율로 지정할 수 있다.
-     * 이 값을 설정하지 않으면 {@link padding}에 지정한 값으로 설정된다.
-     */
-    minPadding: SizeValue;
-    /**
-     * 명시적 최대값이 지정되지 않은 경우, 축 최대값 쪽에서 축 안쪽으로 설정되는 여백 크기.
-     * <br>
-     * data point 값을 숫자로 지정하거나 전체 축 길이에 대한 상대 크기를 백분율로 지정할 수 있다.
-     * 이 값을 설정하지 않으면 {@link padding}에 지정한 값으로 설정된다.
-     */
-    maxPadding: SizeValue;
-    /**
-     * {@link minPadding}, {@link maxPadding}을 동시에 설정한다.
-     * <br>
-     * data point 값을 숫자로 지정하거나 전체 축 길이에 대한 상대 크기를 백분율로 지정할 수 있다.
-     * {@link minPadding}, {@link maxPadding}으로 양 끝을 별도 설정할 수 있다.
-     */
-    padding: SizeValue = 0;
     /**
      * Plot 영역이나 앞쪽 축 사이의 여백 크기.
      * <br>
@@ -548,13 +524,6 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoad(source: any): void {
-        super._doLoad(source);
-
-        this._minPadDim = parsePercentSize(this.minPadding, true);
-        this._maxPadDim = parsePercentSize(this.maxPadding, true);
-    }
-
     protected _doLoadProp(prop: string, value: any): boolean {
         if (prop === 'guide') {
             if (isArray(value)) this.$_loadGuides(value);

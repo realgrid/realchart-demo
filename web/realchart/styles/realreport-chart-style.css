@@ -193,8 +193,13 @@
 
 /** bubble series */
 .rct-bubble-point-marker {
-    fill: #0088ff40;
+    fill: #0088ff;
+    fill-opacity: 0.75;
     stroke: #0088ff;
+}
+.rct-bubble-point-marker[data-focus] {
+    stroke: var(--rct-focus-border);
+    stroke-width: 2px;
 }
 
 /** scatter series */

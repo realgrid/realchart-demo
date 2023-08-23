@@ -110,6 +110,11 @@ export class PointLabelContainer extends GroupElement {
             if (richFormat) {
                 model.buildSvg(view._text, model, p.getValueOf);
                 view.setStyles(styles);
+
+                if (view ._outline) {
+                    model.buildSvg(view._outline, model, p.getValueOf);
+                }
+
                 // label.setStyles(styles);
                 // label.setSvg(pointLabel.getSvg(p.getValueOf))
                 //      .setStyles(styles);
@@ -421,7 +426,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 
     protected _layoutLabel(info: LabelLayoutInfo): void {
         // below이면 hPoint가 음수이다.
-        let {inverted, x, y, wPoint, hPoint, labelView, labelOff} = info;
+        let {inverted, x, y, hPoint, labelView, labelOff} = info;
         const below = hPoint < 0;
         const r = labelView.getBBounds();
         let inner = true;
@@ -586,8 +591,11 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
         const yLen = (inverted ? width : height);
         const xLen = inverted ? height : width;
-        const yBase = yAxis.getPosition(yLen, series.getBaseValue(yAxis));
         const org = inverted ? 0 : height;;
+        const yMin = yAxis.getPosition(yLen, yAxis.axisMin());
+        const base = series.getBaseValue(yAxis);
+        const yBase = pickNum(yAxis.getPosition(yLen, base), yMin);
+        const based = !isNaN(base);
         const info: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
             inverted,
             labelPos: series.getLabelPosition(labels.position),
@@ -607,7 +615,11 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
             y = org;
 
             p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-            p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr); // stack/fill일 때 org와 다르다.
+            if (based) { // TODO: 합칠 수 있나?
+                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr); // stack/fill일 때 org와 다르다.
+            } else {
+                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr; 
+            }
 
             // 아래에서 위로 올라가는 animation을 위해 바닥 지점을 전달한다.
             this._layoutPointView(pointView, i, x, y + hPoint, wPoint, hPoint);
@@ -620,7 +632,11 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                     x = org;
                     p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
                     // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
-                    p.xPos = x += yAxis.getPosition(yLen, p.yGroup * vr); // stack/fill일 때 org와 다르다.
+                    if (based) {
+                        p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr; // stack/fill일 때 org와 다르다.
+                    } else {
+                        p.xPos = x += yAxis.getPosition(yLen, p.yGroup * vr);
+                    }
                 }
 
                 info.pointView = pointView;

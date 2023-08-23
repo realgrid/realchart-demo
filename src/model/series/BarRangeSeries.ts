@@ -9,8 +9,7 @@
 import { pickNum, pickProp, pickProp3 } from "../../common/Common";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { ClusterableSeries, RangedSeries } from "../Series";
-import { ColumnSeries } from "./BarSeries";
+import { RangedSeries } from "../Series";
 
 export class BarRangeSeriesPoint extends DataPoint {
 
@@ -38,7 +37,7 @@ export class BarRangeSeriesPoint extends DataPoint {
         return index === 1 ? this.lowValue : this.yValue;
     }
 
-    protected _readArray(series: ColumnRangeSeries, v: any[]): void {
+    protected _readArray(series: BarRangeSeries, v: any[]): void {
         const d = v.length > 2 ? 1 : 0;
 
         this.low = v[pickNum(series.lowField, 0 + d)];
@@ -51,7 +50,7 @@ export class BarRangeSeriesPoint extends DataPoint {
         }
     }
 
-    protected _readObject(series: ColumnRangeSeries, v: any): void {
+    protected _readObject(series: BarRangeSeries, v: any): void {
         super._readObject(series, v);
 
         this.low = pickProp(v[series.lowField], v.low);
@@ -64,14 +63,14 @@ export class BarRangeSeriesPoint extends DataPoint {
         this.low = this.y;
     }
 
-    parse(series: ColumnRangeSeries): void {
+    parse(series: BarRangeSeries): void {
         super.parse(series);
 
         this.lowValue = +this.low;
     }
 }
 
-export class ColumnRangeSeries extends RangedSeries {
+export class BarRangeSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -92,7 +91,4 @@ export class ColumnRangeSeries extends RangedSeries {
     protected _getBottomValue(p: BarRangeSeriesPoint): number {
         return p.lowValue;
     }
-}
-
-export class BarRangeSeries extends ColumnRangeSeries {
 }

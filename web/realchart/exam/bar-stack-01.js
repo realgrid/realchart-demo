@@ -1,9 +1,5 @@
 const config = {
-    type: 'bar',
-    options: {
-        inverted: true
-    },
-    title: "Bar Group - Stack",
+    title: "Column Group - Stack",
     xAxis: {
         title: "일일 Daily fat",
         categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도']

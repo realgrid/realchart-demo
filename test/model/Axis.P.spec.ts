@@ -121,22 +121,6 @@ class AxisImpl extends Axis {
         expect(axis.max).eq(source.max);
     });
 
-    it('minPadding', () => {
-        expect(axis.minPadding).eq(source.minPadding);
-    });
-
-    it('maxPadding', () => {
-        expect(axis.maxPadding).eq(source.maxPadding);
-    });
-
-    it('maxPadding', () => {
-        expect(axis.maxPadding).eq(source.maxPadding);
-    });
-
-    it('padding', () => {
-        expect(axis.padding).eq(source.padding);
-    });
-
     it('marginNear', () => {
         expect(axis.marginNear).eq(source.marginNear);
     });

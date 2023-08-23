@@ -1,34 +1,35 @@
 const config = {
-    options: {},
+    options: {
+        animatable: false
+    },
     title: "Linear Axis",
     xAxis: {
-        type: 'category'
     },
     yAxis: {
     },
     series: {
-        type: 'line',
-        pointLabel: true,
+        type: 'bubble',
+        colorByPoint: true,
+        pointLabel: {
+            visible: true,
+            effect: 'outline'
+        },
+        pointColors: ['#ddd', '#ccc', '#bbb', '#aaa', '#999', '#888', '#777', '#666'],
         data: [
-            ['대한민국', 34980],
-            ['중국', 11890],
-            ['인도', 2170],
-            ['인도네시아', 4140],
-            ['일본', 42620],
-            ['사우디아라비아', 22270],
-            ['튀르키예', 9830],
-            ['캐나다', 48310],
-            ['멕시코', 9380],
-            ['미국', 70430],
-            ['아르헨티나', 10050],
-            ['브라질', 7720],
-            ['프랑스', 43880],
-            ['독일', 51040],
-            ['이탈리아', 35710],
-            ['러시아', 11600],
-            ['영국', 45380],
-            ['남아프리카공화국', 6440],
-            ['오스트레일리아', 56760],
+            [9, 81, 63],
+            [98, 5, 89],
+            [51, 50, 73],
+            [41, 22, 14],
+            [58, 24, 20],
+            [78, 37, 34],
+            [55, 56, 53],
+            [18, 45, 70],
+            [42, 44, 28],
+            [3, 52, 59],
+            [31, 18, 97],
+            [79, 91, 63],
+            [93, 23, 23],
+            [44, 83, 22]
         ]
     }
 }
@@ -43,9 +44,25 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'Inverted', function (e) {
+        config.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createListBox(container, "X Min Padding", ['0.05', '0', '0.2'], function (e) {
+        config.xAxis.minPadding = _getValue(e);
+        chart.update(config);
+    }, '0.05');
 }
 
-export function init() {
+function init() {
     // console.log(RealChart.getVersion());
     // RealChart.setLogging(true);
     RealChart.setDebugging(true);

@@ -198,7 +198,7 @@ export class HistogramSeries extends Series {
     }
 
     getBaseValue(axis: IAxis): number {
-        return pickNum(this._base, axis.axisMin());
+        return axis === this._yAxisObj ? this._base : NaN;
     }
 
 }

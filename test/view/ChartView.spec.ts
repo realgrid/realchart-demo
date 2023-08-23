@@ -48,7 +48,7 @@ import { ChartControl } from '../../src/main';
     })
 
     it('measure', () => {
-        const json = Tester.loadChartJson("column-01");
+        const json = Tester.loadChartJson("bar-01");
         const chart = new Chart(json);
         const cv = control.chartView();
 

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
-// area-multi.spec.ts
-// 2023. 08. 22. created by woori
+// linearaxis.spec.ts
+// 2023. 08. 23. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
@@ -12,11 +12,11 @@ import { Browser } from 'puppeteer';
 import { PPTester } from '../../Puppetear';
 
 /**
- * Puppetear Tests for area-multi.html
+ * Puppetear Tests for linearaxis.html
  */
- describe("area-multi.html test", async function() {
+ describe("linearaxis.html test", async function() {
 
-    const url = "http://localhost:6010/realchart/demo/area-multi.html";
+    const url = "http://localhost:6010/realchart/demo/linearaxis.html";
     let browser: Browser;
 
     before(async () => {
@@ -37,11 +37,7 @@ import { PPTester } from '../../Puppetear';
         expect(markers.length > 0).is.true;
 
         const config: any = await page.evaluate('config');
-        const data = [];
-
-        for (let i = 0; i < config.series.length; i++) {
-            data.push(...config.series[i].data);
-        }
+        const data = config.series.data;
         expect(data.length).eq(markers.length);        
     });
 });

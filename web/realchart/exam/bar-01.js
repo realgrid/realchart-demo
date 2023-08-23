@@ -1,49 +1,28 @@
 const config = {
-    title: "Bar Series 01",
-    options: {
-        inverted: true,
-    },
+    title: "Column Multi",
     xAxis: {
-        title: 'X Axis',
-        // grid: true,
+        title: "일일 Daily fat",
+        categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도'],
+        grid: true,
     },
     yAxis: {
-        title: 'Y Axis',
-        // reversed: true,
-        guide: [{
-            type: 'line',
-            value: 5.5,
-            label: "Hello?",
-            style: {
-                stroke: 'red'
-            }
-        }, {
-            type: 'range',
-            start: 9,
-            end: 11.5,
-            label: {
-                text: 'range guide',
-                align: 'right',
-                valign: 'bottom'
-            }
-        }]
+        title: "Vertical 수직축 Axis",
     },
-    series: {
-        type: 'bar',
-        pointLabel: {
-            visible: true,
-            position: 'head',
-            // text: '<b style="fill:red">${x}</b>'
-        },
-        data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['def', 9], 
-            ['지리산', 14.3], 
-            ['zzz', 13],
-            ['낙동강', 12.5]
-        ]
-    }
+    series: [{
+        name: 'column1',
+        pointLabel: true,
+        // pointWidth: '100%',
+        data: [11, 22, 15, 9, 13, 27]
+    }, {
+        name: 'column2',    
+        groupWidth: 2,
+        pointLabel: true,
+        data: [15, 19, 19, 6, 21, 21]
+    }, {
+        name: 'column3',
+        pointLabel: true,
+        data: [13, 17, 15, 11, 23, 17]
+    }]
 }
 
 export function init() {

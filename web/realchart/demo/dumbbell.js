@@ -44,7 +44,7 @@ function setActions(container) {
         alert('hello');
     });
     createCheckBox(container, 'Inverted', function (e) {
-        config.options.inverted = _getChecked(e);
+        config.inverted = _getChecked(e);
         chart.update(config);
     }, false);
 }

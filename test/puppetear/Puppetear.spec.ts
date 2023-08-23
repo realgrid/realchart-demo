@@ -34,7 +34,7 @@ import puppeteer, { Browser } from 'puppeteer';
     it('init', async () => {
         const page = await browser.newPage();
         await page.setViewport({width: 1920, height: 1080});
-        await page.goto("http://localhost:6010/realchart/demo/column.html")
+        await page.goto("http://localhost:6010/realchart/demo/bar.html")
 
         const container = await page.$('#realchart');
         expect(container).exist;

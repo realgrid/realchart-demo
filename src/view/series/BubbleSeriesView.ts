@@ -29,6 +29,11 @@ class MarkerView extends PathElement implements IPointView {
     }
 }
 
+/**
+ * @internal 
+ * 
+ * View for BubbleSeries.
+ */
 export class BubbleSeriesView extends SeriesView<BubbleSeries> {
 
     //-------------------------------------------------------------------------
@@ -82,11 +87,11 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         const {min, max} = series.getPxMinMax(len);
 
         this._markers.prepare(count, (m, i) => {
-            const p = points[i];
+            const p = m.point = points[i];
 
             p.radius = series.getRadius(p.zValue, min, max);
             p.shape = marker.shape;
-            m.point = p;
+            p.color && m.setStyle('fill', p.color);
         });
     }
 
@@ -129,8 +134,12 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
 
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
+                    labelView.setContrast(m.dom);
+                    labelView.layout();
                     r = labelView.getBBounds();
-                    labelView.translate(x - r.width / 2, y - r.height / 2);
+                    if (labelView.setVisible(r.width <= p.radius)) {
+                        labelView.translate(x - r.width / 2, y - r.height / 2);
+                    }
                 }
             }
         });

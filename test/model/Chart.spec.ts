@@ -9,10 +9,10 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { Chart } from '../../src/model/Chart';
-import { BarSeries, ColumnSeries } from '../../src/model/series/BarSeries';
 import { CategoryAxis } from '../../src/model/axis/CategoryAxis';
 import { LinearAxis } from '../../src/model/axis/LinearAxis';
 import { Tester } from '../Tester';
+import { BarSeries } from '../../src/model/series/BarSeries';
 
 /**
  * Tests for Chart class.
@@ -31,7 +31,7 @@ import { Tester } from '../Tester';
 
         expect(chart.title.text).eq(json.title);
         expect(chart.subtitle.text).eq(json.subtitle);
-        expect(chart.first).instanceOf(ColumnSeries);
+        expect(chart.first).instanceOf(BarSeries);
         expect(chart.xAxis).instanceOf(CategoryAxis);
         expect(chart.yAxis).instanceOf(LinearAxis);
     });

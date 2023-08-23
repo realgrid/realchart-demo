@@ -14,6 +14,7 @@ const config = {
         title: 'Y Axis',
     },
     series: {
+        baseValue: null,
         pointLabel: {
             visible: true,
             position: 'head',

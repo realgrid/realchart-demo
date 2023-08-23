@@ -1,6 +1,6 @@
 const config = {
-    type: "bar",
     title: "Bar Multi",
+    options: {},
     xAxis: {
         title: "일일 Daily fat",
         categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도'],
@@ -10,21 +10,22 @@ const config = {
         title: "Vertical 수직축 Axis",
     },
     series: [{
-        name: 'bar1',
+        name: 'column1',
         pointLabel: true,
         // pointWidth: '100%',
         data: [11, 22, 15, 9, 13, 27]
     }, {
-        name: 'bar2',    
+        name: 'column2',    
         groupWidth: 2,
         pointLabel: true,
         data: [15, 19, 19, 6, 21, 21]
     }, {
-        name: 'bar3',
+        name: 'column3',
         pointLabel: true,
         data: [13, 17, 15, 11, 23, 17]
     }]
 }
+
 let chart;
 
 function setActions(container) {
@@ -35,6 +36,18 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'Inverted', function (e) {
+        config.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
 }
 
 export function init() {

@@ -1,8 +1,5 @@
 const config = {
-    options: {
-        inverted: true
-    },
-    title: "Bar Range Series",
+    title: "Column Range Series",
     xAxis: {
         grid: true,
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',

@@ -18,8 +18,8 @@ import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
 import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
-import { BarRangeSeries, ColumnRangeSeries } from "./series/BarRangeSeries";
-import { BarSeries, BarSeriesGroup, ColumnSeries, ColumnSeriesGroup } from "./series/BarSeries";
+import { BarRangeSeries } from "./series/BarRangeSeries";
+import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";
 import { BoxPlotSeries } from "./series/BoxPlotSeries";
 import { BubbleSeries } from "./series/BubbleSeries";
@@ -77,7 +77,7 @@ export interface IChart {
 
 const group_types = {
     'bar': BarSeriesGroup,
-    'column': ColumnSeriesGroup,
+    'column': BarSeriesGroup,
     'line': LineSeriesGroup,
     'area': AreaSeriesGroup,
     'pie': PieSeriesGroup,
@@ -88,9 +88,9 @@ const series_types = {
     'area': AreaSeries,
     'arearange': AreaRangeSeries,
     'bar': BarSeries,
-    'column': ColumnSeries,
+    'column': BarSeries,
     'barrange': BarRangeSeries,
-    'columnrange': ColumnRangeSeries,
+    'columnrange': BarRangeSeries,
     'bellcurve': BellCurveSeries,
     'boxplot': BoxPlotSeries,
     'bubble': BubbleSeries,
@@ -146,13 +146,6 @@ export class ChartOptions extends ChartItem {
      * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
      */
     polar = false;
-    /**
-     * true면 x축이 수직, y축이 수평으로 배치된다.
-     * <br>
-     * 기본값은 undefined로 첫번째 series의 종류에 따라 결정된다.
-     * 즉, bar 시리즈 계통이면 true가 된다.
-     */
-    inverted: boolean;
     /**
      * x값이 설정되지 않은 포인트들의 시작 x값.
      * {@link Series.xStart}의 기본값.
@@ -247,9 +240,17 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * {@link Series.type}의 기본값.
      * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
      * 
-     * @default 'column'
+     * @default 'bar'
      */
-    type = 'column';
+    type = 'bar';
+
+    /**
+     * true면 x축이 수직, y축이 수평으로 배치된다.
+     * <br>
+     * 기본값은 undefined로 첫번째 series의 종류에 따라 결정된다.
+     * 즉, bar 시리즈 계통이면 true가 된다.
+     */
+    inverted: boolean;
 
     get options(): ChartOptions {
         return this._options;
@@ -389,7 +390,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     load(source: any): void {
         // properites
-        ['type'].forEach(prop => {
+        ['type', 'inverted'].forEach(prop => {
             if (prop in source) {
                 this[prop] = source[prop];
             }
@@ -420,10 +421,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._body.load(source.body);
 
         // inverted
-        this._inverted = this._options.inverted;
-        if (isNull(this._inverted)) {
-            this._inverted = this._series.firstSeries.inverted();
-        }
+        this._inverted = this.inverted;
     }
 
     _connectSeries(series: IPlottingItem, isX: boolean): Axis {

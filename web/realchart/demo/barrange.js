@@ -1,8 +1,8 @@
 const config = {
-    options: {
-        inverted: true
-    },
     title: "Bar Range Series",
+    options: {
+        // animatable: false,
+    },
     xAxis: {
         grid: true,
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -11,7 +11,7 @@ const config = {
     yAxis: {
     },
     series: {
-        type: 'barrange',
+        type: 'columnrange',
         pointLabel: {
             visible: true,
             // format: '${x}'
@@ -33,6 +33,7 @@ const config = {
         ]
     }
 }
+
 let chart;
 
 function setActions(container) {
@@ -43,6 +44,18 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'Inverted', function (e) {
+        config.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
 }
 
 export function init() {

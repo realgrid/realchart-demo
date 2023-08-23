@@ -22,7 +22,7 @@ export class LabelElement extends GroupElement {
     // fields
     //-------------------------------------------------------------------------
     private _back: RectElement;
-    private _outline: TextElement;
+    _outline: TextElement;
     _text: TextElement;
     private _model: ChartText;
 

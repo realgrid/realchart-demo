@@ -43,7 +43,7 @@ import { Chart } from '../src/model/Chart';
     })
 
     it('render', () => {
-        const json = Tester.loadChartJson("column-01");
+        const json = Tester.loadChartJson("bar-01");
         const chart = new Chart(json);
         const control = Tester.createControl();
         const chartView = control.chartView();

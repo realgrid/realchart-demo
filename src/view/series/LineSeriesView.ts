@@ -135,9 +135,10 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     protected _prepareBelow(w: number, h: number): boolean {
         const control = this.control;
         const series = this.model;
+        const yAxis = series._yAxisObj;
         let lowLine = this._lowLine;
 
-        if (this._needBelow = series.belowStyle && series._minValue < series.getBaseValue(series._yAxisObj)) {
+        if (this._needBelow = series.belowStyle && series._minValue < series.getBaseValue(yAxis)) {
             if (!lowLine) {
                 this._lineContainer.insertChild(lowLine = this._lowLine = new PathElement(this.doc), this._line);
                 this._upperClip = control.clipBounds();

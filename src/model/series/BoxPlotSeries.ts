@@ -7,10 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp, pickProp3 } from "../../common/Common";
-import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { ClusterableSeries, RangedSeries } from "../Series";
-import { ColumnSeries } from "./BarSeries";
+import { RangedSeries } from "../Series";
 
 export class BoxPlotSeriesPoint extends DataPoint {
 

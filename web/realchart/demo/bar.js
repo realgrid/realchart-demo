@@ -1,32 +1,28 @@
 const config = {
-    title: "Bar Series 01",
+    title: "Bar Series",
     options: {
+        // animatable: false
     },
     xAxis: {
-        title: 'X Axis',
-        // grid: true,
+        title: "일일 Daily fat",
+        categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도'],
+        grid: true,
     },
     yAxis: {
-        title: 'Y Axis',
+        title: "Vertical 수직축 Axis",
+        // reversed: true,
+        // baseValue: -1
     },
     series: {
-        type: 'bar',
-        pointLabel: {
-            visible: true,
-            position: 'head',
-            // text: '<b style="fill:red">${x}</b>'
-        },
-        data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['def', 9], 
-            ['지리산', 14.3], 
-            ['zzz', 13],
-            ['낙동강', 12.5]
-        ]
+        name: 'bar1',
+        // baseValue: null,
+        pointLabel: true,
+        // pointWidth: '100%',
+        data: [11, 22, 15, 9, 13, 27]
     }
 }
 
+let animate = false;
 let chart;
 
 function setActions(container) {
@@ -34,16 +30,27 @@ function setActions(container) {
         RealChart.setDebugging(_getChecked(e));
         chart.refresh();
     }, true);
+    createCheckBox(container, 'Always Animate', function (e) {
+        animate = _getChecked(e);
+    }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
     createCheckBox(container, 'Inverted', function (e) {
-        config.options.inverted = _getChecked(e);
-        chart.update(config);
+        config.inverted = _getChecked(e);
+        chart.update(config, animate);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config, animate);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.update(config, animate);
     }, false);
 }
 
-export function init() {
+function init() {
     // console.log(RealChart.getVersion());
     // RealChart.setLogging(true);
     RealChart.setDebugging(true);

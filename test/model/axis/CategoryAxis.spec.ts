@@ -31,7 +31,7 @@ import { Tester } from '../../Tester';
     });
 
     it('collect categories - numbers', () => {
-        const json = Tester.loadChartJson("column-01");
+        const json = Tester.loadChartJson("bar-01");
         const chart = new Chart(json);
         const axis = chart.xAxis;
 
@@ -42,7 +42,7 @@ import { Tester } from '../../Tester';
     });
 
     it('collect categories - number arrays', () => {
-        const json = Tester.loadChartJson("column-02");
+        const json = Tester.loadChartJson("bar-02");
         const chart = new Chart(json);
         const series = chart.firstSeries;
         const axis = chart.xAxis;
@@ -55,7 +55,7 @@ import { Tester } from '../../Tester';
     });
 
     it('calculate min max', () => {
-        const json = Tester.loadChartJson("column-01");
+        const json = Tester.loadChartJson("bar-01");
         const chart = new Chart(json);
         const series = chart.firstSeries;
         const axis = chart.xAxis as CategoryAxis;
@@ -67,7 +67,7 @@ import { Tester } from '../../Tester';
     });
 
     it('calculate min max 2', () => {
-        const json = Tester.loadChartJson("column-02");
+        const json = Tester.loadChartJson("bar-02");
         const chart = new Chart(json);
         const series = chart.firstSeries;
         const axis = chart.xAxis as CategoryAxis;
@@ -99,7 +99,7 @@ import { Tester } from '../../Tester';
     });
 
     it('number ticks', () => {
-        const json = Tester.loadChartJson("column-01");
+        const json = Tester.loadChartJson("bar-01");
         const chart = new Chart(json);
         const axis = chart.xAxis as CategoryAxis;
 

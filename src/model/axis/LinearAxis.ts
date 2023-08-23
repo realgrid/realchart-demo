@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum } from "../../common/Common";
+import { isArray, isObject, pickNum, pickNum3 } from "../../common/Common";
 import { IPercentSize, RtPercentSize, SizeValue, assert, calcPercent, ceil, fixnum, parsePercentSize } from "../../common/Types";
 import { Axis, AxisItem, AxisTick, IAxisTick } from "../Axis";
 import { DataPoint } from "../DataPoint";
@@ -259,6 +259,10 @@ export abstract class ContinuousAxis extends Axis {
     private _max: number;
     private _base: number;
     private _unitLen: number;
+    private _calcedMin: number;
+    private _calcedMax: number;
+    private _minBased: boolean;
+    private _maxBased: boolean;
 
     private _runBreaks: AxisBreak[];
     private _sects: AxisBreakSect[];
@@ -277,18 +281,11 @@ export abstract class ContinuousAxis extends Axis {
     /**
      */
     baseValue: number;
-    /**
-     * baseValue가 설정되고,
-     * 계산된 최소값이 baseValue보다 작고 최대값이 baseValue보다 클 때,
-     * min max를 둘 중 큰 절대값으로 맞춘다.
-     * 두 시리즈가 양쪽으로 벌어지는 컬럼/바 시리즈에 활용할 수 있다.
-     */
-    syncMinMax = false;
 
     /**
      * {@link minPadding}, {@link maxPadding}의 기본값이다.
      */
-    padding = 0.05;
+    padding = 0;//.05;
     /**
      * 첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
      * <br>
@@ -362,14 +359,19 @@ export abstract class ContinuousAxis extends Axis {
         // }
 
         this._base = parseFloat(this.baseValue as any);
-
         this._unitLen = NaN;
     }
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
         const tick = this.tick as LinearAxisTick;
-        let { min, max } = this._adjustMinMax(calcedMin, calcedMax);
-        let steps = tick.buildSteps(length, this._base, min, max);
+        let { min, max } = this._adjustMinMax(this._calcedMin = calcedMin, this._calcedMax = calcedMax);
+        let base = this._base;
+
+        if (isNaN(base) && min < 0 && max > 0) {
+            base = 0;
+        } 
+
+        let steps = tick.buildSteps(length, base, min, max);
         const ticks: IAxisTick[] = [];
 
         this._setMinMax(
@@ -488,26 +490,31 @@ export abstract class ContinuousAxis extends Axis {
     // internal members
     //-------------------------------------------------------------------------
     protected _adjustMinMax(min: number, max: number): { min: number, max: number } {
-        const base = this._base;
-        const minPad = this._minPad;
-        const maxPad = this._maxPad;
+        this._minBased = this._maxBased = false;
 
-        if (!isNaN(base)) {
-            if (this.syncMinMax && min <= base && max >= base) {
-                const v = Math.max(Math.abs(min), Math.abs(max));
-    
-                max = base + v;
-                min = base - v;
+        this._series.forEach(ser => {
+            const base = ser.getBaseValue(this);
+            
+            if (!isNaN(base)) {
+                if (isNaN(this._hardMin) && base < min) {
+                    min = base;
+                    this._minBased = true;
+                } else if (isNaN(this._hardMax) && base > max) {
+                    max = base;
+                    this._maxBased = true;
+                }
             }
+        })
+
+        if (!this._minBased) {
+            this._minPad = pickNum3(this.minPadding, this.padding, 0);
+        } else {
+            this._minPad = 0;
         }
-         
-        if (!isNaN(this._hardMin)) {
-            min = this._hardMin;
-            if (base < min) this._base = NaN;
-        }
-        if (!isNaN(this._hardMax)) {
-            max = this._hardMax;
-            if (base > max) this._base = NaN;
+        if (!this._maxBased) {
+            this._maxPad = pickNum3(this.maxPadding, this.padding, 0);
+        } else {
+            this._maxPad = 0;
         }
 
         let len = Math.max(0, max - min);

@@ -1,20 +1,16 @@
 const config = {
-    title: "Bar BaseLine 01",
-    options: {
-        inverted: true
-    },
+    title: "Column BaseLine 01",
     xAxis: {
     },
     yAxis: {
     },
     series: {
-        type: 'bar',
         data: [
             ['home', 7], 
             ['sky', 11], 
             ['def', -9], 
             ['지리산', 14.3], 
-            ['zzz', -4.5],
+            ['zzz', 13],
             ['낙동강', 12.5]
         ]
     }

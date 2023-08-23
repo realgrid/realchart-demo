@@ -12,7 +12,7 @@ import { SectorElement } from "../../common/impl/SectorElement";
 import { TextAnchor } from "../../common/impl/TextElement";
 import { Chart } from "../../main";
 import { DataPoint } from "../../model/DataPoint";
-import { BarSeries, ColumnSeries } from "../../model/series/BarSeries";
+import { BarSeries } from "../../model/series/BarSeries";
 import { BarElement, BoxedSeriesView, IPointView, LabelLayoutInfo } from "../SeriesView";
 
 class BarSectorView extends SectorElement implements IPointView {
@@ -71,7 +71,7 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_parepareBars(doc: Document, model: ColumnSeries, points: DataPoint[]): void {
+    private $_parepareBars(doc: Document, model: BarSeries, points: DataPoint[]): void {
         const style = model.style;
 
         if (!this._bars) {
@@ -79,12 +79,13 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         }
         this._bars.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
+            
             v.setStyleOrClass(style);
             p.color && v.setStyle('fill', p.color);
         });
     }
 
-    private $_parepareSectors(doc: Document, model: ColumnSeries, points: DataPoint[]): void {
+    private $_parepareSectors(doc: Document, model: BarSeries, points: DataPoint[]): void {
         const style = model.style;
 
         if (!this._sectors) {

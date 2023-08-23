@@ -198,6 +198,9 @@ export class CategoryAxis extends Axis {
     protected _doPrepareRender(): void {
         this._collectCategories(this._series);
 
+        this._minPad = pickNum3(this.minPadding, this.padding, 0);
+        this._maxPad = pickNum3(this.maxPadding, this.padding, 0);
+
         // category padding
         this._catPad = pickNum(this.categoryPadding, 0);
     }
@@ -207,8 +210,6 @@ export class CategoryAxis extends Axis {
         const widths = this._widths;
         const ticks: IAxisTick[] = [];
 
-        this._minPad = pickNum3(this.minPadding, this.padding, 0);
-        this._maxPad = pickNum3(this.maxPadding, this.padding, 0);
         min = this._min = Math.floor(min);
         max = this._max = Math.ceil(max);
 

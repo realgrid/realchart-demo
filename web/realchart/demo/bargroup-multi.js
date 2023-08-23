@@ -1,6 +1,7 @@
 const config = {
-    type: 'bar',
-    title: "Multi Bar Groups",
+    options: {
+    },
+    title: "Bar Group",
     xAxis: {
         title: "일일 Daily fat",
         categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도'],
@@ -40,11 +41,47 @@ const config = {
     }]
 }
 
+let animate = false;
+let chart;
+
+function setActions(container) {
+    createCheckBox(container, 'Debug', function (e) {
+        RealChart.setDebugging(_getChecked(e));
+        chart.refresh();
+    }, true);
+    createCheckBox(container, 'Always Animate', function (e) {
+        animate = _getChecked(e);
+    }, false);
+    createButton(container, 'Test', function(e) {
+        alert('hello');
+    });
+    createListBox(container, "layout1", ['default', 'stack', 'fill', 'overlap'], function (e) {
+        config.series[0].layout = _getValue(e);
+        chart.update(config, animate);
+    }, 'default');
+    createListBox(container, "layout2", ['default', 'stack', 'fill', 'overlap'], function (e) {
+        config.series[1].layout = _getValue(e);
+        chart.update(config, animate);
+    }, 'stack');
+    createCheckBox(container, 'Inverted', function (e) {
+        config.inverted = _getChecked(e);
+        chart.update(config, animate);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config, animate);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.update(config, animate);
+    }, false);
+}
+
 export function init() {
     // console.log(RealChart.getVersion());
     // RealChart.setLogging(true);
     RealChart.setDebugging(true);
 
-    const chart = RealChart.createChartControl(document, 'realchart');
-    chart.model = RealChart.loadChart(config);
+    chart = RealChart.createChart(document, 'realchart', config);
+    setActions('actions')
 }

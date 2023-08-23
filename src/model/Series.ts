@@ -103,6 +103,7 @@ export interface IPlottingItem {
     canCategorized(): boolean;
     defaultYAxisType(): string;
     clusterable(): boolean;
+    getBaseValue(axis: IAxis): number;
     // axis에 설정된 baseValue를 무시하라!
     ignoreAxisBase(axis: IAxis): boolean;
     collectValues(axis: IAxis): number[];
@@ -469,8 +470,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return true;
     }
 
-    inverted(): boolean {
-        return false;
+    getBaseValue(axis: IAxis): number {
+        return NaN;
     }
 
     //-------------------------------------------------------------------------
@@ -940,10 +941,6 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
      */
     pointPadding: number;
 
-    getBaseValue(axis: IAxis): number {
-        return axis.axisMin();
-    }
-
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -1020,6 +1017,7 @@ export abstract class BasedSeries extends ClusterableSeries {
     /**
      * 위/아래 구분의 기준이 되는 값.
      * <br>
+     * 숫자가 아닌 값으로 지정하면 0으로 간주한다.
      */
     baseValue = 0;
 
@@ -1032,17 +1030,8 @@ export abstract class BasedSeries extends ClusterableSeries {
         this._base = pickNum(this._getGroupBase(), this._yAxisObj.getBaseValue());
     }
 
-    collectValues(axis: IAxis): number[] {
-        const vals = super.collectValues(axis);
-
-        if (axis === this._yAxisObj) {
-            vals.push(this._base);
-        }
-        return vals;
-    }
-
     getBaseValue(axis: IAxis): number {
-        return pickNum(this._base, axis.axisMin());
+        return this._base;
     }
 
     //-------------------------------------------------------------------------
