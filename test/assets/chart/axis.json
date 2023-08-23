@@ -54,6 +54,7 @@
         "tickEnd": true
     },
     "series": [{
+        "label": "legend label",
         "pointLabel": {
             "visible": true,
             "position": "head",
