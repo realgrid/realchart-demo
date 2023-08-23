@@ -28,7 +28,7 @@ class BarElement extends GroupElement implements IPointView {
     // constructors
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-errorbar-point');
+        super(doc, SeriesView.POINT_CLASS + ' rct-errorbar-point');
 
         this.add(this._stem = new LineElement(doc));
         this.add(this._whiskerUp = new LineElement(doc));

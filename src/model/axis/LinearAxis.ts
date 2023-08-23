@@ -303,6 +303,9 @@ export abstract class ContinuousAxis extends Axis {
      */
     maxPadding: number;
 
+    strictMin: number;
+    strictMax: number;
+
     /** y축으로 사용될 때만 적용한다. */
     readonly breaks: AxisBreak[] = [];
 

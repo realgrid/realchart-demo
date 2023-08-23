@@ -24,7 +24,7 @@ class FunnelSegment extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-funnel-point');
+        super(doc, SeriesView.POINT_CLASS + ' rct-funnel-point');
     }
 }
 

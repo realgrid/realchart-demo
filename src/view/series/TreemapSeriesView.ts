@@ -26,7 +26,7 @@ class NodeView extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-treemap-point');
+        super(doc, SeriesView.POINT_CLASS + ' rct-treemap-point');
     }
 
     get point(): DataPoint {

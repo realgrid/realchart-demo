@@ -16,6 +16,12 @@ import { BoundableElement } from "./ChartElement";
 export class TitleView extends BoundableElement<Title> {
 
     //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly TITLE_CLASS = 'rct-title';
+    static readonly SUBTITLE_CLASS = 'rct-subtitle';
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _textView: TextElement;
@@ -24,7 +30,7 @@ export class TitleView extends BoundableElement<Title> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, isSub: boolean) {
-        super(doc, isSub ? 'rct-subtitle' : 'rct-title', isSub ? 'rct-subtitle-background' : 'rct-title-background');
+        super(doc, isSub ? TitleView.TITLE_CLASS : TitleView.SUBTITLE_CLASS, isSub ? 'rct-subtitle-background' : 'rct-title-background');
 
         this.add(this._textView = new TextElement(doc));
         this._textView.anchor = TextAnchor.START;

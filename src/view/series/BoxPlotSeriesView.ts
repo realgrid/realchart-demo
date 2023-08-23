@@ -32,7 +32,7 @@ class BoxView extends GroupElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-boxplot-point');
+        super(doc, SeriesView.POINT_CLASS + ' rct-boxplot-point');
     }
 
     //-------------------------------------------------------------------------

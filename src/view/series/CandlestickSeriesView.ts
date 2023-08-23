@@ -30,7 +30,7 @@ class StickView extends GroupElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-candlestick-point');
+        super(doc, SeriesView.POINT_CLASS + ' rct-candlestick-point');
     }
 
     //-------------------------------------------------------------------------

@@ -293,7 +293,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly POINT_STYLE = 'rct-data-point';
+    static readonly POINT_CLASS = 'rct-data-point';
     static readonly DATA_FOUCS = 'focus'
 
     //-------------------------------------------------------------------------
@@ -516,7 +516,7 @@ export abstract class BoxPointElement extends PathElement implements IPointView 
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-box-point');
+        super(doc, SeriesView.POINT_CLASS + ' rct-box-point');
     }
 
     //-------------------------------------------------------------------------

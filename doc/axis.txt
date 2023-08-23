@@ -15,8 +15,6 @@
   tick들에 따라 축의 범위가 조정된다.
   이 때, 축의 startAlign, endAlign(기본값 'default', linear: 'tick', category: 'value')을 'value'로 지정해서 
   tick 범위 대신 축에서 설정된 범위를 유지하게 할 수 있다. 
-  양 끝에 tick이 표시되지 못하게 되는데,
-  AxisTick.forceStart, forceEnd(기본값 false)를 true로 지정해서 양 끝 tick을 강제로 추가할 수 있다. 
 - 축 tick들을 직접 지정한 경우에는 위의 것들이 무시된다.
 
 [ Padding ]

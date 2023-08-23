@@ -27,7 +27,7 @@ class BarElement extends GroupElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-lollipop-point');
+        super(doc, SeriesView.POINT_CLASS + ' rct-lollipop-point');
 
         this.add(this._line = new LineElement(doc));
         this.add(this._marker = new PathElement(doc, 'rct-lollipop-point-marker'));

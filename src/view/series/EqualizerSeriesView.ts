@@ -32,7 +32,7 @@ class BarElement extends GroupElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-equalizer-point');
+        super(doc, SeriesView.POINT_CLASS + ' rct-equalizer-point');
     }
 
     //-------------------------------------------------------------------------

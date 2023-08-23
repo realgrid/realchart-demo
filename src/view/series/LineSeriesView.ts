@@ -30,7 +30,7 @@ export class LineMarkerView extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-line-point-marker');
+        super(doc, SeriesView.POINT_CLASS + ' rct-line-point-marker');
     }
 }
 

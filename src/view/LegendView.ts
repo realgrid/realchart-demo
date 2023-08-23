@@ -65,6 +65,11 @@ export class LegendItemView extends ChartElement<LegendItem> {
 export class LegendView extends BoundableElement<Legend> {
 
     //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly LEGEND_CLASS = 'rct-legend';
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _itemViews = new ElementPool(this, LegendItemView);
@@ -74,7 +79,7 @@ export class LegendView extends BoundableElement<Legend> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-legend', 'rct-legend-background');
+        super(doc, LegendView.LEGEND_CLASS, 'rct-legend-background');
     }
 
     legendByDom(dom: Element): LegendItem {

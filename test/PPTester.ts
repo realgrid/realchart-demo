@@ -6,7 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import puppeteer, { Browser, Page } from 'puppeteer';
+import puppeteer, { Browser, Page, ElementHandle } from 'puppeteer';
+import { IRect } from '../src/common/Rectangle';
 
 export class PPTester {
 
@@ -37,5 +38,12 @@ export class PPTester {
         await page.setViewport(this.VIEWPORT_SIZE);
         await page.goto(url)
         return page;
+    }
+
+    static async getBounds(elt: ElementHandle): Promise<IRect> {
+        return await elt.evaluate(elt => {
+            const {x, y, width, height} = elt.getBoundingClientRect()
+            return {x, y, width, height}
+        });
     }
 }

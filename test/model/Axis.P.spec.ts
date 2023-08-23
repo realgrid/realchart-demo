@@ -129,14 +129,6 @@ class AxisImpl extends Axis {
         expect(axis.marginFar).eq(source.marginFar);
     });
 
-    it('tickStart', () => {
-        expect(axis.tickStart).eq(source.tickStart);
-    });
-
-    it('tickEnd', () => {
-        expect(axis.tickEnd).eq(source.tickEnd);
-    });
-
     it('isEmpty()', () => {
         chart.load(json);
         chart.prepareRender();

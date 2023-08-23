@@ -22,13 +22,18 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    static readonly TITLE_CLASS = 'rct-axis-title';
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
     private _textView: TextElement;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-axis-title', 'rct-axis-title-background');
+        super(doc, AxisTitleView.TITLE_CLASS, 'rct-axis-title-background');
 
         this.add(this._textView = new TextElement(doc));
         // this._textView.anchor = TextAnchor.START;
@@ -112,6 +117,11 @@ class AxisTickMarkView extends ChartElement<AxisTickMark> {
 export class AxisView extends ChartElement<Axis> {
 
     //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly AXIS_CLASS = 'rct-axis';
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _lineView: LineElement;
@@ -130,7 +140,7 @@ export class AxisView extends ChartElement<Axis> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-axis');
+        super(doc, AxisView.AXIS_CLASS);
 
         this.add(this._lineView = new LineElement(doc, 'rct-axis-line'));
         this.add(this._titleView = new AxisTitleView(doc));

@@ -9,7 +9,8 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { Browser } from 'puppeteer';
-import { PPTester } from '../../Puppetear';
+import { PPTester } from '../../PPTester';
+import { SeriesView } from '../../../src/view/SeriesView';
 
 /**
  * Puppetear Tests for linearaxis.html
@@ -33,7 +34,7 @@ import { PPTester } from '../../Puppetear';
         const container = await page.$('#realchart');
         expect(container).exist;
 
-        const markers = await page.$$('.rct-data-point')
+        const markers = await page.$$('.' + SeriesView.POINT_CLASS);
         expect(markers.length > 0).is.true;
 
         const config: any = await page.evaluate('config');

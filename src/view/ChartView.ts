@@ -15,11 +15,9 @@ import { Align, HORZ_SECTIONS, SectionDir, VERT_SECTIONS } from "../common/Types
 import { GroupElement } from "../common/impl/GroupElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
-import { IChartEventListener } from "../model/Chart";
-import { ChartItem } from "../model/ChartItem";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem, LegendPosition } from "../model/Legend";
-import { ISeries, Series } from "../model/Series";
+import { Series } from "../model/Series";
 import { Subtitle } from "../model/Title";
 import { AxisView } from "./AxisView";
 import { AxisGuideContainer, BodyView } from "./BodyView";
@@ -261,6 +259,7 @@ class AxisSectionView extends SectionView {
         this.views.forEach((v, i) => {
             const sz = v.measure(doc, axes[i], hintWidth, hintHeight, phase);
 
+            v.setAttr('xy', axes[i]._isX ? 'x' : 'y');
             w += sz.width;
             h += sz.height;
         })

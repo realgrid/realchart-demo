@@ -28,7 +28,7 @@ class SectorView extends SectorElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-pie-point');
+        super(doc, SeriesView.POINT_CLASS + ' rct-pie-point');
     }
 
     //-------------------------------------------------------------------------

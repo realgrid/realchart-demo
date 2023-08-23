@@ -560,6 +560,11 @@ export interface IPlottingOwner {
 export class BodyView extends ChartElement<Body> {
 
     //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly BODY_CLASS = 'rct-body';
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _owner: IPlottingOwner;
@@ -588,7 +593,7 @@ export class BodyView extends ChartElement<Body> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, owner: IPlottingOwner) {
-        super(doc, 'rct-body');
+        super(doc, BodyView.BODY_CLASS);
 
         this._owner = owner;
         this.add(this._background = new RectElement(doc));
@@ -620,7 +625,7 @@ export class BodyView extends ChartElement<Body> {
             }
         });
 
-        if (target instanceof SVGElement && (target.classList.contains(SeriesView.POINT_STYLE) || target.parentElement instanceof SVGElement && target.parentElement.classList.contains(SeriesView.POINT_STYLE))) {
+        if (target instanceof SVGElement && (target.classList.contains(SeriesView.POINT_CLASS) || target.parentElement instanceof SVGElement && target.parentElement.classList.contains(SeriesView.POINT_CLASS))) {
             for (let i = this._seriesViews.length - 1; i >= 0; i--) {
                 const p = this._seriesViews[i].pointByDom(target) as IPointView;
 

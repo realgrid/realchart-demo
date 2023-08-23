@@ -23,7 +23,7 @@ class ArrowView extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-vector-point');
+        super(doc, SeriesView.POINT_CLASS + ' rct-vector-point');
     }
 
     //-------------------------------------------------------------------------

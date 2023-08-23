@@ -32,7 +32,7 @@ class BarElement extends GroupElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-dumbbell-point');
+        super(doc, SeriesView.POINT_CLASS + ' rct-dumbbell-point');
 
         this.add(this._line = new LineElement(doc));
         this.add(this._hmarker = new PathElement(doc, 'rct-dumbbell-point-marker'));

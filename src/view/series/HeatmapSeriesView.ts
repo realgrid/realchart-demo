@@ -25,7 +25,7 @@ class CellView extends RectElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_STYLE + ' rct-heatmap-point');
+        super(doc, SeriesView.POINT_CLASS + ' rct-heatmap-point');
     }
 }
 

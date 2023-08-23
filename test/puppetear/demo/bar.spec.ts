@@ -9,7 +9,7 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { Browser } from 'puppeteer';
-import { PPTester } from '../../Puppetear';
+import { PPTester } from '../../PPTester';
 
 /**
  * Puppetear Tests for bar.html
@@ -44,14 +44,8 @@ import { PPTester } from '../../Puppetear';
             const prev = bars[i - 1];
             const bar = bars[i];
 
-            const rPrev = await page.evaluate((elt) => {
-                const {x, y, width, height} = elt.getBoundingClientRect()
-                return {x, y, width, height}
-            }, prev)
-            const rBar = await page.evaluate((elt) => {
-                const {x, y, width, height} = elt.getBoundingClientRect()
-                return {x, y, width, height}
-            }, bar)
+            const rPrev = await PPTester.getBounds(prev);
+            const rBar = await PPTester.getBounds(bar);
 
             if (data[i] >= data[i - 1]) {
                 expect(rBar.height >= rPrev.height).is.true;
