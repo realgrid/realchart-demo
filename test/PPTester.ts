@@ -36,6 +36,16 @@ export class PPTester {
     //-------------------------------------------------------------------------
     static browser: Browser;
 
+    static same(v1: number, v2: number, round = true): boolean {
+        return round ? Math.round(v1) === Math.round(v2) : v1 === v2;
+    }
+
+    static delay(interval: number) {
+        return new Promise(( resolve ) => {
+            setTimeout(resolve, interval * 1000);
+        });
+    }
+
     static async init(launch = false): Promise<Browser> {
         // if (!PPTester.browser || launch) {
             // screenshot folder
@@ -72,14 +82,15 @@ export class PPTester {
         return await page.$('.' + AxisView.AXIS_CLASS + `[xy=${xy}]`);
     }
 
+    static async getAxisLine(page: Page, xy: 'x' | 'y'): Promise<ElementHandle> {
+        const axis = await this.getAxis(page, xy);
+        return await axis.$('.' + AxisView.LINE_CLASS);
+    }
+
     static async getTranslate(elt: ElementHandle): Promise<IPoint> {
         const cs = await elt.evaluate(elt => getComputedStyle(elt).getPropertyValue('transform'));
         const vals = cs.substring('matrix('.length, cs.length - 1).split(/\,\s*/);
         
         return { x: +vals[4], y: +vals[5] };
-    }
-
-    static same(v1: number, v2: number, round = true): boolean {
-        return round ? Math.round(v1) === Math.round(v2) : v1 === v2;
     }
 }
