@@ -42,15 +42,15 @@ describe('Title test', function() {
     });
 
     it('text', () => {
-        expect(title.text).eq(source.text);
+        expect(title.text).eq(title_source.text);
     });
 
     it('align', () => {
-        expect(title.align).eq(source.align);
+        expect(title.align).eq(title_source.align);
     });
 
     it('backgroundStyle', () => {
-        expect(title.backgroundStyle).eql(source.backgroundStyle);
+        expect(title.backgroundStyle).eql(title_source.backgroundStyle);
     });
 
     it('isVisible()', () => {
