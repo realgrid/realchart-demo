@@ -40,5 +40,8 @@ import { SeriesView } from '../../../src/view/SeriesView';
         const config: any = await page.evaluate('config');
         const data = config.series.data;
         expect(data.length).eq(markers.length);        
+
+        // await page.screenshot({path: 'out/ss/linearaxis.png'});
+        page.close();
     });
 });

@@ -42,24 +42,24 @@ export class Globals {
     static setDebugging(debug: boolean): void {
         RcElement.DEBUGGING = debug;
     }
-    /**
-     * {@link ChartControl Chart 컨트롤}을 생성한다.
-     * 
-     * @param doc
-     * @param container 컨트롤이 생성되는 div 엘리먼트나 id
-     * @returns 
-     */
-    static createChartControl(doc: Document, container: string | HTMLDivElement): ChartControl {
-        return new ChartControl(doc, container);
-    }
-    /**
-     * 차트 객체를 생성한다.
-     * 
-     * @returns 
-     */
-    static loadChart(source: any): Chart {
-        return new Chart(source);
-    }
+    // /**
+    //  * {@link ChartControl Chart 컨트롤}을 생성한다.
+    //  * 
+    //  * @param doc
+    //  * @param container 컨트롤이 생성되는 div 엘리먼트나 id
+    //  * @returns 
+    //  */
+    // static createChartControl(doc: Document, container: string | HTMLDivElement): ChartControl {
+    //     return new ChartControl(doc, container);
+    // }
+    // /**
+    //  * 차트 객체를 생성한다.
+    //  * 
+    //  * @returns 
+    //  */
+    // static loadChart(source: any): Chart {
+    //     return new Chart(source);
+    // }
     /**
      * {@link ChartControl Chart 컨트롤}을 생성한다.
      * 

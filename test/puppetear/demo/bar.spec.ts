@@ -10,6 +10,7 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { Browser } from 'puppeteer';
 import { PPTester } from '../../PPTester';
+import { SeriesView } from '../../../src/view/SeriesView';
 
 /**
  * Puppetear Tests for bar.html
@@ -33,7 +34,7 @@ import { PPTester } from '../../PPTester';
         const container = await page.$('#realchart');
         expect(container).exist;
 
-        const bars = await page.$$('.rct-data-point')
+        const bars = await page.$$('.' + SeriesView.POINT_CLASS);
         expect(bars.length > 0).is.true;
 
         const config: any = await page.evaluate('config');
@@ -53,6 +54,8 @@ import { PPTester } from '../../PPTester';
                 expect(rBar.height < rPrev.height).is.true;
             }
         }
-        await page.screenshot({path: 'out/test.png'});
+
+        // await page.screenshot({path: 'out/ss/bar.png'});
+        page.close();
     });
 });

@@ -13,9 +13,16 @@ import { TextAnchor } from "../../common/impl/TextElement";
 import { Chart } from "../../main";
 import { DataPoint } from "../../model/DataPoint";
 import { BarSeries } from "../../model/series/BarSeries";
-import { BarElement, BoxedSeriesView, IPointView, LabelLayoutInfo } from "../SeriesView";
+import { BarElement, BoxedSeriesView, IPointView, LabelLayoutInfo, SeriesView } from "../SeriesView";
 
 class BarSectorView extends SectorElement implements IPointView {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, SeriesView.POINT_CLASS + ' rct-bar-point');
+    }
 
     //-------------------------------------------------------------------------
     // fields

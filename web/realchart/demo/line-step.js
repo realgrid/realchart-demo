@@ -38,9 +38,17 @@ function setActions(container) {
         config.inverted = _getChecked(e);
         chart.update(config);
     }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.update(config);
+    }, false);
 }
 
-export function init() {
+function init() {
     // console.log(RealChart.getVersion());
     // RealChart.setLogging(true);
     RealChart.setDebugging(true);

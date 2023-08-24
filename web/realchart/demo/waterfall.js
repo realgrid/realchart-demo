@@ -69,7 +69,7 @@ function setActions(container) {
     }, false);
 }
 
-export function init() {
+function init() {
     // console.log(RealChart.getVersion());
     // RealChart.setLogging(true);
     RealChart.setDebugging(true);

@@ -1,7 +1,7 @@
 const config = {
     title: "Category Axis",
     options: {
-        animatable: false
+        // animatable: false
     },
     xAxis: {
         title: "일일 Daily fat",
@@ -70,7 +70,7 @@ function setActions(container) {
     }, false);
 }
 
-export function init() {
+function init() {
     // console.log(RealChart.getVersion());
     // RealChart.setLogging(true);
     RealChart.setDebugging(true);

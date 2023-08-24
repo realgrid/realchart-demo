@@ -1,0 +1,54 @@
+////////////////////////////////////////////////////////////////////////////////
+// histogram.spec.ts
+// 2023. 08. 24. created by woori
+// -----------------------------------------------------------------------------
+// Copyright (c) 2023 Wooritech Inc.
+// All rights reserved.
+////////////////////////////////////////////////////////////////////////////////
+
+import { expect } from 'chai';
+import { describe, it } from 'mocha';
+import { Browser } from 'puppeteer';
+import { PPTester } from '../../PPTester';
+import { SeriesView } from '../../../src/view/SeriesView';
+import { Chart } from '../../../src/main';
+import { HistogramSeries } from '../../../src/model/series/HistogramSeries';
+
+/**
+ * Puppetear Tests for histogram.html
+ */
+ describe("histogram.html test", async function() {
+
+    const url = "http://localhost:6010/realchart/demo/histogram.html";
+    let browser: Browser;
+
+    before(async () => {
+        browser = await PPTester.init();
+    });
+
+    after(async () => {
+        browser.close();
+    });
+
+    it('init', async () => {
+        const page = await PPTester.newPage(browser, url);
+
+        const container = await page.$('#realchart');
+        expect(container).exist;
+
+        const bars = await page.$$('.' + SeriesView.POINT_CLASS);
+        expect(bars.length > 0).is.true;
+
+        const config: any = await page.evaluate('config');
+        const data = (config.series || config.series[0]).data;
+
+        const chart = new Chart(config);
+        const series = chart.firstSeries as HistogramSeries;
+        const bins = series.getBinCount(data.length);
+
+        expect(bins).eq(bars.length);
+
+        // await page.screenshot({path: 'out/ss/histogram.png'});
+        page.close();
+    });
+});

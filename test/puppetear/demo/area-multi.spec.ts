@@ -44,5 +44,8 @@ import { SeriesView } from '../../../src/view/SeriesView';
             data.push(...config.series[i].data);
         }
         expect(data.length).eq(markers.length);        
+
+        await page.screenshot({path: 'out/ss/area-multi.png'});
+        page.close();
     });
 });

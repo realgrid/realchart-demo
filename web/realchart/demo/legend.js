@@ -17,7 +17,8 @@ const config = {
         pointLabel: true,
         data: [15, 19, 19, 6, 21, 21]
     }, {
-        name: 'column3',
+        name: 'line1',
+        type: 'line',
         pointLabel: true,
         data: [13, 17, 15, 11, 23, 17]
     }],
@@ -97,7 +98,7 @@ function setActions(container) {
     // }, false)
 }
 
-export function init() {
+function init() {
     // console.log(RealChart.getVersion());
     // RealChart.setLogging(true);
     RealChart.setDebugging(true);

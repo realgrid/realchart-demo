@@ -79,5 +79,8 @@ import { BodyView } from '../../../src/view/BodyView';
         const config: any = await page.evaluate('config');
         const data = config.series.data;
         expect(data.length).eq(bars.length);        
+        
+        // await page.screenshot({path: 'out/ss/basic.png'});
+        page.close();
     });
 });

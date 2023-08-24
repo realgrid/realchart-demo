@@ -24,7 +24,7 @@ const config = {
     }
 }
 
-let chart;
+let chart = {};
 
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
@@ -48,7 +48,7 @@ function setActions(container) {
     }, false);
 }
 
-export function init() {
+function init() {
     // console.log(RealChart.getVersion());
     // RealChart.setLogging(true);
     RealChart.setDebugging(true);
