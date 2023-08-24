@@ -7,9 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { BellCurveSeries } from "../../model/series/BellCurveSeries";
-import { LineSeriesView } from "./LineSeriesView";
+import { LineSeriesBaseView } from "./LineSeriesView";
 
-export class BellCurveSeriesView extends LineSeriesView<BellCurveSeries> {
+export class BellCurveSeriesView extends LineSeriesBaseView<BellCurveSeries> {
 
     //-------------------------------------------------------------------------
     // fields

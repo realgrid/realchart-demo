@@ -9,6 +9,8 @@
 import * as fs from 'fs';
 import puppeteer, { Browser, Page, ElementHandle } from 'puppeteer';
 import { IRect } from '../src/common/Rectangle';
+import { AxisView } from '../src/view/AxisView';
+import { IPoint } from '../src/common/Point';
 
 /**
  * [주의] 소스 변경 후 yarn dbundle이나 yanr pub으로 번들링한 후 테스트해야 한다.
@@ -64,5 +66,20 @@ export class PPTester {
             const {x, y, width, height} = elt.getBoundingClientRect()
             return {x, y, width, height}
         });
+    }
+
+    static async getAxis(page: Page, xy: 'x' | 'y'): Promise<ElementHandle> {
+        return await page.$('.' + AxisView.AXIS_CLASS + `[xy=${xy}]`);
+    }
+
+    static async getTranslate(elt: ElementHandle): Promise<IPoint> {
+        const cs = await elt.evaluate(elt => getComputedStyle(elt).getPropertyValue('transform'));
+        const vals = cs.substring('matrix('.length, cs.length - 1).split(/\,\s*/);
+        
+        return { x: +vals[4], y: +vals[5] };
+    }
+
+    static same(v1: number, v2: number, round = true): boolean {
+        return round ? Math.round(v1) === Math.round(v2) : v1 === v2;
     }
 }

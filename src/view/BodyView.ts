@@ -61,7 +61,7 @@ import { ErrorBarSeriesView } from "./series/ErrorBarSeriesView";
 import { FunnelSeriesView } from "./series/FunnelSeriesView";
 import { HeatmapSeriesView } from "./series/HeatmapSeriesView";
 import { HistogramSeriesView } from "./series/HistogramSeriesView";
-import { LineSeriesViewImpl } from "./series/LineSeriesView";
+import { LineSeriesView } from "./series/LineSeriesView";
 import { LollipopSeriesView } from "./series/LollipopSeriesView";
 import { OhlcSeriesView } from "./series/OhlcSeriesView";
 import { ParetoSeriesView } from "./series/ParetoSeriesView";
@@ -82,7 +82,7 @@ const series_types = new Map<any, any>([
     [BellCurveSeries, BellCurveSeriesView],
     [AreaRangeSeries, AreaRangeSeriesView],
     [AreaSeries, AreaSeriesView],
-    [LineSeries, LineSeriesViewImpl],
+    [LineSeries, LineSeriesView],
     [ParetoSeries, ParetoSeriesView],
     [BubbleSeries, BubbleSeriesView],
     [ScatterSeries, ScatterSeriesView],

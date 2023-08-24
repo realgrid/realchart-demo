@@ -13,9 +13,9 @@ import { PathElement } from "../../common/RcControl";
 import { IPointPos } from "../../model/DataPoint";
 import { LinearAxis } from "../../model/axis/LinearAxis";
 import { AreaRangeSeries, AreaRangeSeriesPoint } from "../../model/series/LineSeries";
-import { LineContainer, LineSeriesView } from "./LineSeriesView";
+import { LineContainer, LineSeriesBaseView } from "./LineSeriesView";
 
-export class AreaRangeSeriesView extends LineSeriesView<AreaRangeSeries> {
+export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
 
     //-------------------------------------------------------------------------
     // fields

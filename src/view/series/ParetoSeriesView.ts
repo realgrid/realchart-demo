@@ -7,9 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ParetoSeries } from "../../model/series/ParetoSeries";
-import { LineSeriesView } from "./LineSeriesView";
+import { LineSeriesBaseView } from "./LineSeriesView";
 
-export class ParetoSeriesView extends LineSeriesView<ParetoSeries> {
+export class ParetoSeriesView extends LineSeriesBaseView<ParetoSeries> {
 
     //-------------------------------------------------------------------------
     // fields

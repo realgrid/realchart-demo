@@ -13,9 +13,9 @@ import { Utils } from "../../common/Utils";
 import { SeriesGroupLayout } from "../../model/Series";
 import { LinearAxis } from "../../model/axis/LinearAxis";
 import { AreaSeries, AreaSeriesPoint } from "../../model/series/LineSeries";
-import { LineSeriesView } from "./LineSeriesView";
+import { LineSeriesBaseView } from "./LineSeriesView";
 
-export class AreaSeriesView extends LineSeriesView<AreaSeries> {
+export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
 
     //-------------------------------------------------------------------------
     // fields

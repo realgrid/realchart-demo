@@ -58,7 +58,7 @@ export class LineContainer extends RcElement {
     }
 }
 
-export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesView<T> {
+export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends SeriesView<T> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -103,7 +103,7 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
 
     protected _runShowEffect(firstTime: boolean): void {
 
-        function getFrom(self: LineSeriesView<any>): 'left' | 'right' | 'top' | 'bottom' {
+        function getFrom(self: LineSeriesBaseView<any>): 'left' | 'right' | 'top' | 'bottom' {
             const reversed = self.model._xAxisObj.reversed;
 
             if (self._inverted) {
@@ -465,12 +465,17 @@ export abstract class LineSeriesView<T extends LineSeriesBase> extends SeriesVie
     }
 }
 
-export class LineSeriesViewImpl extends LineSeriesView<LineSeries> {
+export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly CLASS = 'rct-line-series';
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-line-series');
+        super(doc, LineSeriesView.CLASS);
     }
 }

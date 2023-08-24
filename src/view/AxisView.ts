@@ -91,7 +91,7 @@ class AxisTickMarkView extends ChartElement<AxisTickMark> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-axis-tick-mark');
+        super(doc, AxisView.TICK_CLASS);
 
         this.add(this._lineView = new LineElement(doc));
     }
@@ -120,6 +120,8 @@ export class AxisView extends ChartElement<Axis> {
     // consts
     //-------------------------------------------------------------------------
     static readonly AXIS_CLASS = 'rct-axis';
+    static readonly LINE_CLASS = 'rct-axis-line';
+    static readonly TICK_CLASS = 'rct-axis-tick-mark';
 
     //-------------------------------------------------------------------------
     // fields
@@ -142,7 +144,7 @@ export class AxisView extends ChartElement<Axis> {
     constructor(doc: Document) {
         super(doc, AxisView.AXIS_CLASS);
 
-        this.add(this._lineView = new LineElement(doc, 'rct-axis-line'));
+        this.add(this._lineView = new LineElement(doc, AxisView.LINE_CLASS));
         this.add(this._titleView = new AxisTitleView(doc));
         this.add(this._markContainer = new RcElement(doc, 'rct-axis-tick-marks'));
         this.add(this._labelContainer = new RcElement(doc, 'rct-axis-tick-labels'));
