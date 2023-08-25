@@ -13,6 +13,7 @@ const config = {
     yAxis: {
         title: 'Y Axis',
         // maxPadding: 0
+        // strictMin: 1
     },
     series: {
         // baseValue: null,
@@ -29,7 +30,7 @@ const config = {
             //     padding: '5px'
             // }
         },
-        data2: [
+        data: [
             ['home', 7], 
             ['sky', 11], 
             ['def', 9], 
@@ -38,7 +39,7 @@ const config = {
             ['zzz', 13],
             ['낙동강', 12.5]
         ],
-        data: [
+        data2: [
             [1, 7], 
             [2, 11], 
             [3, 9], 

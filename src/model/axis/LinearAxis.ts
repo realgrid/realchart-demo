@@ -355,11 +355,13 @@ export abstract class ContinuousAxis extends Axis {
     /**
      * 축 시작 위치에 tick 표시 여부.
      * <br>
+     * {@link strictMin}이 설정되고 {@link AxisFit.VALUE}로 적용된다.
      */
     startFit = AxisFit.DEFAULT;
     /**
      * 축 끝 위치에 tick 표시 여부.
      * <br>
+     * {@link strictMax}가 설정되면 무시되고 {@link AxisFit.VALUE}로 적용된다.
      */
     endFit = AxisFit.DEFAULT;
 
@@ -442,7 +444,7 @@ export abstract class ContinuousAxis extends Axis {
         let steps = tick.buildSteps(length, base, min, max);
         const ticks: IAxisTick[] = [];
 
-        if (this.getStartFit() === AxisFit.VALUE) {
+        if (!isNaN(this.strictMin) || this.getStartFit() === AxisFit.VALUE) {
             if (steps.length > 1 && min > steps[0]) {
                 steps = steps.slice(1);
             }
@@ -451,7 +453,7 @@ export abstract class ContinuousAxis extends Axis {
         } else {
             min = Math.min(min, steps[0]); 
         }
-        if (this.getEndFit() === AxisFit.VALUE) {
+        if (!isNaN(this.strictMax) || this.getEndFit() === AxisFit.VALUE) {
             if (max < steps[steps.length - 1] && steps.length > 1) {
                 steps.pop();
             }
@@ -593,10 +595,15 @@ export abstract class ContinuousAxis extends Axis {
         let minPad = 0;
         let maxPad = 0;
 
-        if (!this._minBased) {
+        if (!isNaN(this.strictMin)) {
+            min = this.strictMin;
+        } else if (!this._minBased) {
             minPad = pickNum3(this.minPadding, this.padding, 0);
         }
-        if (!this._maxBased) {
+
+        if (!isNaN(this.strictMax)) {
+            max = this.strictMax;
+        } else if (!this._maxBased) {
             maxPad = pickNum3(this.maxPadding, this.padding, 0);
         }
 

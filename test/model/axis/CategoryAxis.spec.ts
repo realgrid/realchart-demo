@@ -51,7 +51,7 @@ import { Tester } from '../../Tester';
 
         expect(axis).instanceOf(CategoryAxis);
         expect(series.getPoints().count).eq(json.series.data.length);
-        expect((axis as CategoryAxis).getCategories().length).eq(series.getPoints().count);
+        expect((axis as CategoryAxis)._categories.length).eq(series.getPoints().count);
     });
 
     it('calculate min max', () => {
