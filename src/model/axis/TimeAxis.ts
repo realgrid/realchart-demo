@@ -8,7 +8,7 @@
 
 import { AxisTick, IAxisTick } from "../Axis";
 import { IChart } from "../Chart";
-import { ContinuousAxis, LinearAxis, LinearAxisTick } from "./LinearAxis";
+import { ContinuousAxis, LinearAxis, ContinuousAxisTick } from "./LinearAxis";
 
 const enum TimeScale {
     MS,
@@ -43,7 +43,7 @@ const time_multiples = [
     [1, 2, 3, 4, 6]                                 // mon
 ]
 
-export class TimeAxisTick extends LinearAxisTick {
+export class TimeAxisTick extends ContinuousAxisTick {
 
     //-------------------------------------------------------------------------
     // fields

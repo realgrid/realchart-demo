@@ -4,8 +4,13 @@ const config = {
         // animatable: false
     },
     xAxis: {
-        title: "일일 Daily fat",
         categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도'],
+        title: {
+            text: "일일 Daily fat",
+        },
+        tick: {
+            mark: {}
+        },
         grid: true,
     },
     yAxis: {
@@ -52,10 +57,6 @@ function setActions(container) {
         config.xAxis.position = _getChecked(e) ? 'opposite': 'normal';
         chart.update(config, animate);
     }, false);
-    createListBox(container, "padding", ['0', '-0.5', '0.5'], function (e) {
-        config.xAxis.padding = _getValue(e);
-        chart.update(config);
-    }, '0');
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
         chart.update(config, animate);
@@ -68,6 +69,30 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.update(config, animate);
     }, false);
+    createListBox(container, "Axis.padding", ['0', '-0.2', '-0.4', '-0.5', '0.5'], function (e) {
+        config.xAxis.padding = _getValue(e);
+        chart.update(config);
+    }, '0');
+    createListBox(container, "Axis.categoryPadding", ['0', '0.1', '0.15', '0.2'], function (e) {
+        config.xAxis.categoryPadding = _getValue(e);
+        chart.update(config);
+    }, '0.1');
+    createCheckBox(container, 'Axis.title', function (e) {
+        config.xAxis.title.visible = _getChecked(e);
+        chart.update(config, animate);
+    }, true);
+    createCheckBox(container, 'Axis.tick', function (e) {
+        config.xAxis.tick.visible = _getChecked(e);
+        chart.update(config, animate);
+    }, true);
+    createCheckBox(container, 'Axis.tick.mark', function (e) {
+        config.xAxis.tick.mark.visible = _getChecked(e);
+        chart.update(config, animate);
+    }, true);
+    createListBox(container, "Axis.tick.mark.position", ['point', 'edge'], function (e) {
+        config.xAxis.tick.mark.position = _getValue(e);
+        chart.update(config);
+    }, 'point');
 }
 
 function init() {

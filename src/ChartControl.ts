@@ -59,7 +59,6 @@ export class ChartControl extends RcControl implements IChartEventListener {
             this._model && this._model.removeListener(this);
             this._model = value;
             this._model && this._model.addListener(this);
-            this.clearDefs();
             this.invalidateLayout();
         }
     }
@@ -88,6 +87,8 @@ export class ChartControl extends RcControl implements IChartEventListener {
 
     protected _doRender(bounds: IRect): void {
         console.time('render chart');
+
+        this.clearTemporaryDefs();
 
         if (this._model) {
             // Object.assign(this.dom().style, this._model.style);

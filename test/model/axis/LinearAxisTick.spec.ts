@@ -8,7 +8,7 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { LinearAxisTick } from '../../../src/model/axis/LinearAxis';
+import { ContinuousAxisTick } from '../../../src/model/axis/LinearAxis';
 
 /**
  * Tests for LinearAxisTick class.
@@ -16,13 +16,13 @@ import { LinearAxisTick } from '../../../src/model/axis/LinearAxis';
  describe("LinearAxisTick test", function() {
 
     it('init', () => {
-        const model = new LinearAxisTick(null);
+        const model = new ContinuousAxisTick(null);
 
         expect(model).exist;
     });
 
     it('build steps - steps', () => {
-        const model = new LinearAxisTick(null);
+        const model = new ContinuousAxisTick(null);
         model.steps = [1, 2, 3, 4];
 
         const steps = model.buildSteps(1000, 0, 0, 10);
@@ -30,7 +30,7 @@ import { LinearAxisTick } from '../../../src/model/axis/LinearAxis';
     });
 
     it('build steps - stepCount', () => {
-        const model = new LinearAxisTick(null);
+        const model = new ContinuousAxisTick(null);
         const base = NaN;
         const min = -19;
         const max = 163;
@@ -43,7 +43,7 @@ import { LinearAxisTick } from '../../../src/model/axis/LinearAxis';
     });
 
     it('build steps - based stepCount', () => {
-        const model = new LinearAxisTick(null);
+        const model = new ContinuousAxisTick(null);
         const base = NaN;
         const min = 5;//-19;
         const max = 163;
@@ -56,7 +56,7 @@ import { LinearAxisTick } from '../../../src/model/axis/LinearAxis';
     });
 
     it('build steps - stepSize', () => {
-        const model = new LinearAxisTick(null);
+        const model = new ContinuousAxisTick(null);
         const min = 5;
         const max = 111;
 
@@ -67,7 +67,7 @@ import { LinearAxisTick } from '../../../src/model/axis/LinearAxis';
     });
 
     it('build steps - stepPixels', () => {
-        const model = new LinearAxisTick(null);
+        const model = new ContinuousAxisTick(null);
         const min = 15;
         const max = 111;
 

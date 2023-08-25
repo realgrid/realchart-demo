@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcAnimation } from "../../common/RcAnimation";
-import { ClipElement } from "../../common/RcControl";
+import { ClipElement, RcElement } from "../../common/RcControl";
 import { pixel } from "../../common/Types";
 import { Series } from "../../model/Series";
 import { SeriesView } from "../SeriesView";
@@ -100,16 +100,24 @@ export class SlideAnimation extends SeriesAnimation {
     // overriden members
     //-------------------------------------------------------------------------
     protected _createAnimation(v: SeriesView<Series>, options: ISlideAnimation): Animation {
+        const cr = this.$_clipRect(v);
+        let ani: Animation;
+
         switch (options &&options.from) {
             case 'top':
-                return this.$_top(v, options);
+                ani = this.$_top(v, cr, options);
             case 'bottom':
-                return this.$_bottom(v, options);
+                ani = this.$_bottom(v, cr, options);
             case 'right':
-                return this.$_right(v, options);
+                ani = this.$_right(v, cr, options);
             default:
-                return this.$_left(v, options);
+                ani = this.$_left(v, cr, options);
         }
+
+        ani.addEventListener('finish', () => {
+            cr.dom.remove();
+        });
+        return ani;
     }   
 
     //-------------------------------------------------------------------------
@@ -122,41 +130,34 @@ export class SlideAnimation extends SeriesAnimation {
         };
     }
 
-    private $_clipRect(v: SeriesView<Series>): ClipElement {
+    private $_clipRect(v: SeriesView<Series>): RcElement {
         // plot area 경계에 걸친 point들이 표시되도록 infliate한다.
-        return v.clipRect(-v.width * .1, -v.height * .1, v.width * 1.2, v.height * 1.2);
+        return v.clipRect(-v.width * .1, -v.height * .1, v.width * 1.2, v.height * 1.2)
+                .setTemporary();
     }
 
-    private $_left(v: SeriesView<Series>, options: ISlideAnimation): Animation {
-        const cr = this.$_clipRect(v);
-
+    private $_left(v: SeriesView<Series>, cr: RcElement, options: ISlideAnimation): Animation {
         return cr.dom.firstElementChild.animate([
             { width: '0'},
             { width: pixel(v.width)}
         ], this.$_aniOptions(options));
     }
 
-    private $_right(v: SeriesView<Series>, options: ISlideAnimation): Animation {
-        const cr = this.$_clipRect(v);
-
+    private $_right(v: SeriesView<Series>, cr: RcElement, options: ISlideAnimation): Animation {
         return cr.dom.firstElementChild.animate([
             { transform: `translateX(${v.width}px)` },
             { transform: '' }
         ], this.$_aniOptions(options));
     }
 
-    private $_top(v: SeriesView<Series>, options: ISlideAnimation): Animation {
-        const cr = this.$_clipRect(v);
-
+    private $_top(v: SeriesView<Series>, cr: RcElement, options: ISlideAnimation): Animation {
         return cr.dom.firstElementChild.animate([
             { height: '0'},
             { height: pixel(v.height)}
         ], this.$_aniOptions(options));
     }
 
-    private $_bottom(v: SeriesView<Series>, options: ISlideAnimation): Animation {
-        const cr = this.$_clipRect(v);
-
+    private $_bottom(v: SeriesView<Series>, cr: RcElement, options: ISlideAnimation): Animation {
         return cr.dom.firstElementChild.animate([
             { transform: `translateY(${v.height}px)` },
             { transform: '' }
@@ -182,11 +183,16 @@ export class GrowAnimation extends RcAnimation {
     }
 
     protected _doUpdate(rate: number): void {
-        this._series.setViewRate(rate);
+        if (this._series.parent) {
+            this._series.setViewRate(rate);
+        }
     }
 
     protected _doStop(): void {
-        this._series.setViewRate(NaN);
+        // animation 기간 중 제거됐을 수 있다.
+        if (this._series.parent) {
+            this._series.setViewRate(NaN);
+        }
         this._series = null;
     }
 }

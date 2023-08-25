@@ -8,10 +8,13 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { Axis, IAxisTick } from '../../src/model/Axis';
+import { Axis, AxisTick, IAxisTick } from '../../src/model/Axis';
 
 class AxisImpl extends Axis {
 
+    protected _createTick(): AxisTick {
+        throw new Error('Method not implemented.');
+    }
     type(): string { return 'test'; }
     protected _doPrepareRender(): void {}
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] { return [];}

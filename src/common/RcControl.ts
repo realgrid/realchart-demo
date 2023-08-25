@@ -130,6 +130,17 @@ export abstract class RcControl extends RcWrappableObject {
         Dom.clearChildren(this._defs);
     }
 
+    clearTemporaryDefs(): void {
+        const defs = this._defs;
+        const childs = defs.children;
+
+        for (let i = 0; i < childs.length; i++) {
+            if (childs[i].hasAttribute(RcElement.TEMP_KEY)) {
+                defs.removeChild(childs[i]);
+            }
+        }
+    }
+
     appendDom(elt: HTMLElement): void {
         elt && this._htmlRoot.append(elt);
     }
@@ -220,7 +231,7 @@ export abstract class RcControl extends RcWrappableObject {
     /**
      * defs에 직사각형 clipPath를 등록한다.
      */
-    clipBounds(x = 0, y = 0, width = 0, height = 0, rd = 0): ClipElement {
+    clipBounds(x = NaN, y = NaN, width = NaN, height = NaN, rd = 0): ClipElement {
         const clip = new ClipElement(this.doc(), x, y, width, height, rd, rd);
 
         this._defs.appendChild(clip.dom);
@@ -516,6 +527,7 @@ export class RcElement extends RcObject {
     //-------------------------------------------------------------------------
     static TESTING = false;
     static DEBUGGING = false;
+    static TEMP_KEY = '_temp_';
 
     //-------------------------------------------------------------------------
     // static members
@@ -1000,6 +1012,11 @@ export class RcElement extends RcObject {
         }
     }
 
+    setTemporary(): RcElement {
+        this.setAttr(RcElement.TEMP_KEY, 1);
+        return this;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -1111,7 +1128,9 @@ export class ClipElement extends RcElement {
         rect.setAttr('fill', 'none');
         rx > 0 && rect.setAttr('rx', String(rx));
         ry > 0 && this.dom.setAttribute('rx', String(ry));
-        rect.setBounds(x, y, width, height);
+        if (!isNaN(x)) {
+            rect.setBounds(x, y, width, height);
+        }
         this.add(rect);
     }
 
@@ -1126,7 +1145,10 @@ export class ClipElement extends RcElement {
     // methods
     //-------------------------------------------------------------------------
     setBounds(x: number, y: number, w: number, h: number): RcElement {
-        this._rect.setBounds(x, y, w, h);
+        //this._rect.setBounds(x, y, w, h);
+        // this._rect.setAttr('transform', '');
+        this._rect.move(x, y);
+        this._rect.resize(w, h);
         return this;
     }
 

@@ -159,7 +159,7 @@ export class AxisView extends ChartElement<Axis> {
     checkHeight(doc: Document, width: number, height: number): number {
         const m = this.model;
         const t = this.$_prepareChecker(doc);
-        let h = m.tick.mark.length;; 
+        let h = m.tick.visible ? m.tick.mark.length : 0; 
 
         h += t ?  t.getBBounds().height : 0;
         if (this._titleView.visible = m.title.visible) {
@@ -171,7 +171,7 @@ export class AxisView extends ChartElement<Axis> {
     checkWidth(doc: Document, width: number, height: number): number {
         const m = this.model;
         const t = this.$_prepareChecker(doc);
-        let w = m.tick.mark.length;; 
+        let w = m.tick.visible ? m.tick.mark.length : 0; 
 
         w += t ? t.getBBounds().width : 0;
         if (this._titleView.visible = m.title.visible) {
@@ -201,9 +201,10 @@ export class AxisView extends ChartElement<Axis> {
         this._lineView.visible = model.line.visible;
 
         // tick marks 
-        sz += this._markLen = model.tick.mark.length;;
-        this.$_prepareTickMarks(doc, model);
-        this._markViews.forEach(v => v.measure(doc, model.tick.mark, hintWidth, hintHeight, phase));
+        sz += this._markLen = model.tick.visible ? model.tick.mark.length : 0; // tick.mark.visible이 false이어도 자리는 차지한다.
+        if (this.$_prepareTickMarks(doc, model)) {
+            this._markViews.forEach(v => v.measure(doc, model.tick.mark, hintWidth, hintHeight, phase));
+        }
 
         // labels
         this.$_prepareLabels(doc, model);
@@ -227,10 +228,7 @@ export class AxisView extends ChartElement<Axis> {
         }
 
         // title
-        // if (titleView.visible = model.title.visible()) {
-        //     sz += titleView.measure(doc, model.title, hintWidth, hintHeight, phase).height;
-        // }
-        if (titleView.visible) {
+        if (titleView.visible) { // checkHeight/checkWidth 에서 visible 설정.
             sz += titleView.mh;
         }
 
@@ -242,6 +240,7 @@ export class AxisView extends ChartElement<Axis> {
         const horz = model._isHorz;
         const opp = model._isOpposite;
         const ticks = model._ticks;
+        const markPts = model._markPoints;
         const titleView = this._titleView;
         const labelViews = this._labelViews;
         const markLen = this._markLen;
@@ -260,36 +259,41 @@ export class AxisView extends ChartElement<Axis> {
         }
 
         // tick marks
-        if (horz) {
-            this._markViews.forEach((v, i) => {
-                v.resize(1, markLen);
-                v.layout().translate(ticks[i].pos, opp ? h - markLen : 0);
-            })
-        } else {
-            this._markViews.forEach((v, i) => {
-                v.resize(markLen, 1);
-                v.layout().translate(opp ? 0 : w - markLen, h - ticks[i].pos);
-            })
+        if (this._markContainer.visible) {
+            if (horz) {
+                this._markViews.forEach((v, i) => {
+                    v.resize(1, markLen);
+                    v.layout().translate(markPts[i], opp ? h - markLen : 0);
+                })
+            } else {
+                this._markViews.forEach((v, i) => {
+                    v.resize(markLen, 1);
+                    v.layout().translate(opp ? 0 : w - markLen, h - markPts[i]);
+                })
+            }
         }
 
         // tick labels
-        if (horz) {
-            labelViews.forEach((v, i) => {
-                const y = opp ? h - markLen - v.getBBounds().height : markLen;
-
-                // v.translate(ticks[i].pos - v.getBBounds().width / 2, y);
-                v.anchor = TextAnchor.MIDDLE;
-                v.translate(ticks[i].pos, y);
-            });
-        } else {
-            const x = opp ? markLen : w - markLen;
-
-            labelViews.forEach((v, i) => {
-                const r = v.getBBounds();
-                const x2 = opp ? x : x - r.width;
-
-                v.translate(x2, h - ticks[i].pos - r.height / 2);
-            });
+        if (this._labelContainer.visible) {
+            if (horz) {
+                labelViews.forEach((v, i) => {
+                    const y = opp ? h - markLen - v.getBBounds().height : markLen;
+    
+                    // v.translate(ticks[i].pos - v.getBBounds().width / 2, y);
+                    v.anchor = TextAnchor.MIDDLE;
+                    v.translate(ticks[i].pos, y);
+                });
+            } else {
+                const x = opp ? markLen : w - markLen;
+    
+                labelViews.forEach((v, i) => {
+                    const r = v.getBBounds();
+                    const x2 = opp ? x : x - r.width;
+    
+                    v.translate(x2, h - ticks[i].pos - r.height / 2);
+                });
+            }
+    
         }
 
         // title
@@ -315,57 +319,67 @@ export class AxisView extends ChartElement<Axis> {
     // internal members
     //-------------------------------------------------------------------------
     private $_prepareChecker(doc: Document): TextElement {
-        const tick = this.model._ticks[0];
+        if (this._labelContainer.visible = this.model.tick.visible) {
+            const tick = this.model._ticks[0];
 
-        if (tick) {
-            let t = this._labelViews[0];
+            if (tick) {
+                let t = this._labelViews[0];
+    
+                if (!t) {
+                    t = new TextElement(doc, 'rct-axis-label');
+                    t.anchor = TextAnchor.START;
+                    this._labelContainer.add(t);
+                    this._labelViews.push(t);
+                }
+        
+                t.text = tick.label
+                return t;
+            }
+        }
+    }
 
-            if (!t) {
-                t = new TextElement(doc, 'rct-axis-label');
+    private $_prepareTickMarks(doc: Document, m: Axis): boolean {
+        const container = this._markContainer;
+
+        if (container.visible = m.tick.visible && m.tick.mark.visible) {
+            const pts = m._markPoints;
+            const nMark = pts.length;
+            const views = this._markViews;
+    
+            while (views.length < nMark) {
+                const v = new AxisTickMarkView(doc);
+    
+                container.add(v);
+                views.push(v);
+            }
+            while (views.length > nMark) {
+                views.pop().remove();
+            }
+            return true;
+        }
+    }
+
+    private $_prepareLabels(doc: Document, m: Axis): boolean {
+        const container = this._labelContainer;
+
+        if (container.visible) {
+            const ticks = m._ticks;
+            const nTick = ticks.length;
+            const views = this._labelViews;
+    
+            while (views.length < nTick) {
+                const t = new TextElement(doc, 'rct-axis-label');
+    
                 t.anchor = TextAnchor.START;
-                this._labelContainer.add(t);
-                this._labelViews.push(t);
+                container.add(t);
+                views.push(t);
+            }
+            while (views.length > nTick) {
+                views.pop().remove();
             }
     
-            t.text = tick.label
-            return t;
+            views.forEach((v, i) => v.text = ticks[i].label);
+            return true;
         }
-    }
-
-    private $_prepareTickMarks(doc: Document, m: Axis): void {
-        const ticks = m._ticks;
-        const nTick = ticks.length;
-        const container = this._markContainer;
-        const views = this._markViews;
-
-        while (views.length < nTick) {
-            const v = new AxisTickMarkView(doc);
-
-            container.add(v);
-            views.push(v);
-        }
-        while (views.length > nTick) {
-            views.pop().remove();
-        }
-    }
-
-    private $_prepareLabels(doc: Document, m: Axis): void {
-        const ticks = m._ticks;
-        const nTick = ticks.length;
-        const container = this._labelContainer;
-        const views = this._labelViews;
-
-        while (views.length < nTick) {
-            const t = new TextElement(doc, 'rct-axis-label');
-
-            t.anchor = TextAnchor.START;
-            container.add(t);
-            views.push(t);
-        }
-        while (views.length > nTick) {
-            views.pop().remove();
-        }
-
-        views.forEach((v, i) => v.text = ticks[i].label);
     }
 }

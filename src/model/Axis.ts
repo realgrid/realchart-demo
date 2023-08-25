@@ -219,13 +219,13 @@ export class AxisGuideRange extends AxisGuide {
     end: number;
 }
 
-export class AxisTickLabel extends FormattableText {
+export abstract class AxisTickLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart) {
-        super(chart, true);
+    constructor(public axis: Axis) {
+        super(axis.chart, true);
     }
 
     //-------------------------------------------------------------------------
@@ -241,6 +241,11 @@ export class AxisTickLabel extends FormattableText {
      * step이 2 이상일 때, 표시가 시작되는 label 위치.
      */
     start = 0;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    abstract getTick(v: any): string;
 }
 
 /**
@@ -265,7 +270,7 @@ export class AxisTickMark extends AxisItem {
  * 축 상의 특정 값 위치를 나타낸다.
  * 카테고리 축의 경우 각 카테고리 값의 위치이다.
  */
-export class AxisTick extends AxisItem {
+export abstract class AxisTick extends AxisItem {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -274,6 +279,7 @@ export class AxisTick extends AxisItem {
     // fields
     //-------------------------------------------------------------------------
     mark: AxisTickMark;
+    label: AxisTickLabel;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -282,6 +288,7 @@ export class AxisTick extends AxisItem {
         super(axis);
 
         this.mark = this._createMark();
+        this.label = this._createLabel();
     }
 
     //-------------------------------------------------------------------------
@@ -293,23 +300,14 @@ export class AxisTick extends AxisItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getTick(v: any): string {
-        if (v != null) {
-            let s = String(v);
-            if (this.prefix) s = this.prefix + s;
-            if (this.suffix) s += this.suffix;
-            return s;
-        } else {
-            return '';
-        }
-    }
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
     protected _createMark(): AxisTickMark {
         return new AxisTickMark(this.axis);
     }
+
+    protected abstract _createLabel(): AxisTickLabel;
 }
 
 export interface IAxisTick {
@@ -383,6 +381,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected _series: IPlottingItem[] = [];
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
+    _markPoints: number[];
     _length: number;
     _minPad = 0;
     _maxPad = 0;
@@ -395,10 +394,6 @@ export abstract class Axis extends ChartItem implements IAxis {
 
         this.name = name;
         this.tick = this._createTick();
-    }
-
-    protected _createTick(): AxisTick {
-        return new AxisTick(this);
     }
 
     //-------------------------------------------------------------------------
@@ -466,8 +461,9 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    protected abstract _createTick(): AxisTick;
     protected abstract _doPrepareRender(): void;
-    protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[];
+    protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[] | { ticks: IAxisTick[], markPoints: number[] };
 
     disconnect(): void {
         this._series = [];
@@ -509,7 +505,15 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     buildTicks(length: number): void {
-        this._ticks = this._doBuildTicks(this._range.min, this._range.max, this._length = length);
+        const ts = this._doBuildTicks(this._range.min, this._range.max, this._length = length);
+
+        if (isArray(ts)) {
+            this._ticks = ts;
+            this._markPoints = ts.map(t => t.pos);
+        } else {
+            this._ticks = ts.ticks;
+            this._markPoints = ts.markPoints;
+        }
     }
 
     /**

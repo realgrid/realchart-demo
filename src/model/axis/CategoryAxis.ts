@@ -7,11 +7,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isString, pickNum, pickNum3 } from "../../common/Common";
-import { Axis, AxisGrid, AxisTick, AxisTickMark, IAxisTick } from "../Axis";
+import { Axis, AxisGrid, AxisTick, AxisTickLabel, AxisTickMark, IAxisTick } from "../Axis";
 import { IPlottingItem } from "../Series";
 
 export enum CategoryTickMarkPosition {
-    TICK = 'tick',
+    /**
+     * 카테고리 중심에 표시한다.
+     */
+    POINT = 'point',
+    /**
+     * 축 양끝과 카테고리들 사이에 표시한다.
+     */
     EDGE = 'edge'
 }
 
@@ -20,7 +26,21 @@ export class CategoryAxisTickMark extends AxisTickMark {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    position = CategoryTickMarkPosition.TICK;
+    position = CategoryTickMarkPosition.POINT;
+}
+
+class CategoryAxisTickLabel extends AxisTickLabel {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    getTick(v: any): string {
+        if (v != null) {
+            return this._getText(v, v, false);
+        } else {
+            return '';
+        }
+    }
 }
 
 export class CategoryAxisTick extends AxisTick {
@@ -39,6 +59,10 @@ export class CategoryAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     protected _createMark(): AxisTickMark {
         return new CategoryAxisTickMark(this.axis);
+    }
+
+    protected _createLabel(): AxisTickLabel {
+        return new CategoryAxisTickLabel(this.axis);
     }
 }
 
@@ -82,7 +106,7 @@ export class CategoryAxis extends Axis {
     _cats: string[];
     _weights: number[];  // 한 카테고리의 상대 너비. 한 카테고리의 기본 크기는 1
     _len: number;
-    private _step = 1;
+    // private _step = 1;
     private _map = new Map<string, number>(); // data point의 축 위치를 찾기 위해 사용한다.
     private _min: number;
     private _max: number;
@@ -92,14 +116,14 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * 카테고리가 지정되지 않은 데이터포인트들의 이 축에 해당하는 값을 지정할 때 최초 값.
-     */
-    startValue = 0;
-    /**
-     * 카테고리가 지정되지 않은 데이터포인트들의 이 축에 해당하는 값을 지정할 때 값 사이의 간격.
-     */
-    valueStep = 1;
+    // /**
+    //  * 카테고리가 지정되지 않은 데이터포인트들의 이 축에 해당하는 값을 지정할 때 최초 값.
+    //  */
+    // startValue = 0;
+    // /**
+    //  * 카테고리가 지정되지 않은 데이터포인트들의 이 축에 해당하는 값을 지정할 때 값 사이의 간격.
+    //  */
+    // valueStep = 1;
     /**
      * Category 목록을 수집하는 시리즈.
      * 지정하지 않으면 모든 시리즈에서 카테고리를 수집한다.
@@ -119,10 +143,10 @@ export class CategoryAxis extends Axis {
      * 각 카테고리의 상대적 너비를 지정할 수 있다.
      */
     categories: any[];
-    /** 
-     * 카테고리 하나의 값 크기.
-     */
-    categoryStep = 1;
+    // /** 
+    //  * 카테고리 하나의 값 크기.
+    //  */
+    // categoryStep = 1;
     /**
      * 축의 양 끝 카테고리 위치 전후에 여백으로 추가되는 크기.
      * <br>
@@ -205,9 +229,10 @@ export class CategoryAxis extends Axis {
         this._catPad = pickNum(this.categoryPadding, 0);
     }
 
-    protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
+    protected _doBuildTicks(min: number, max: number, length: number): { ticks: IAxisTick[], markPoints: number[] } {
+        const tick = this.tick as CategoryAxisTick;
         const cats = this._cats;
-        const widths = this._weights;
+        const weights = this._weights;
         const ticks: IAxisTick[] = [];
 
         min = this._min = Math.floor(min);
@@ -215,34 +240,45 @@ export class CategoryAxis extends Axis {
 
         while (cats.length <= max) {
             cats.push(String(cats.length));
-            widths.push(1);
+            weights.push(1);
         }
 
-        const len = this._len = this._minPad + this._maxPad + widths.reduce((a, c) => a + c);
-        const step = this._step = this.categoryStep || 1;
-        let p = this._minPad;
+        const len = this._len = this._minPad + this._maxPad + weights.reduce((a, c) => a + c);
+        // const step = this._step = this.categoryStep || 1;
         const pts = this._pts = [0];
+        let p = this._minPad;
 
-        for (let i = min; i <= max; i += step) {
-            const w = widths[i];
+        for (let i = min; i <= max; i++) {// += step) {
+            const w = weights[i];
 
             pts.push(length * p / len);
-
-            ticks.push({
-                pos: length * (p + w / 2) / this._len,
-                value: i,
-                label: this.tick.getTick(cats[i]),
-            });
-            p += widths[i];// step
+            p += weights[i];// step
         }
         pts.push(length * p / len);
         pts.push(length * (p + this._maxPad) / len);
-        return ticks;
+
+        for (let i = 1; i < pts.length - 2; i++) {
+            ticks.push({
+                pos: (pts[i] + (pts[i + 1] - pts[i]) / 2),
+                value: i - 1,
+                label: tick.label.getTick(cats[i - 1]),
+            });
+        }
+
+        let markPoints: number[];
+
+        if ((tick.mark as CategoryAxisTickMark).position === CategoryTickMarkPosition.EDGE) {
+            markPoints = pts.slice(1, pts.length - 1);
+        } else {
+            markPoints = ticks.map(t => t.pos);
+        }
+ 
+        return { ticks, markPoints };
     }
 
     getPosition(length: number, value: number, point = true): number {
         // data point view는 카테고리 중앙을 기준으로 표시한다.
-        if (point) value += this._step / 2;
+        if (point) value += 0.5;//this._step / 2;
         const v = Math.floor(value);
         const p = this._pts[v + 1] + (this._pts[v + 2] - this._pts[v + 1]) * (value - v);
         return this.reversed ? length - p : p;
@@ -297,10 +333,10 @@ export class CategoryAxis extends Axis {
             }
         }
 
-        const start = pickNum(this.startValue, 0);
-        const step = this.valueStep || 1;
+        // const start = pickNum(this.startValue, 0);
+        // const step = this.valueStep || 1;
 
         this._map.clear();
-        this._cats.forEach((c, i) => this._map.set(c, start + i * step));
+        this._cats.forEach((c, i) => this._map.set(c, i));//start + i * step));
     }
 }

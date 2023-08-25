@@ -17,7 +17,7 @@ import { DataPoint, IPointPos } from "../../model/DataPoint";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
 import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
-import { ISlideAnimation, SeriesAnimation } from "../animation/SeriesAnimation";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 export class LineMarkerView extends PathElement implements IPointView {
 
@@ -86,6 +86,10 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    getClipContainer(): RcElement {
+        return null;
+    }
+
     protected _getPointPool(): ElementPool<RcElement> {
         return this._markers;
     }

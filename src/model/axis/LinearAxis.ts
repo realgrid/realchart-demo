@@ -7,11 +7,26 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, pickNum, pickNum3 } from "../../common/Common";
-import { IPercentSize, RtPercentSize, SizeValue, assert, calcPercent, ceil, fixnum, parsePercentSize } from "../../common/Types";
-import { Axis, AxisItem, AxisTick, IAxisTick } from "../Axis";
+import { IPercentSize, RtPercentSize, assert, calcPercent, ceil, fixnum, parsePercentSize } from "../../common/Types";
+import { Axis, AxisItem, AxisTick, AxisTickLabel, IAxisTick } from "../Axis";
 import { DataPoint } from "../DataPoint";
 
-export class LinearAxisTick extends AxisTick {
+class ContinuousAxisTickLabel extends AxisTickLabel {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    useSymbols = true;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    getTick(v: any): string {
+        return this._getText(null, v, this.useSymbols && (this.axis.tick as ContinuousAxisTick)._step > 100);
+    }
+}
+
+export class ContinuousAxisTick extends AxisTick {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -24,6 +39,11 @@ export class LinearAxisTick extends AxisTick {
      * true면 소수점값이 표시되지 않도록 한다.
      */
     integral = false;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _step: number;
 
     //-------------------------------------------------------------------------
     // methods
@@ -49,6 +69,10 @@ export class LinearAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _createLabel(): AxisTickLabel {
+        return new ContinuousAxisTickLabel(this.axis);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -67,7 +91,7 @@ export class LinearAxisTick extends AxisTick {
         const scale = Math.pow(10, Math.floor(Math.log10(step)));
         const steps: number[] = [];
 
-        step = Math.ceil(step / scale) * scale;
+        step = this._step = Math.ceil(step / scale) * scale;
 
         if (!isNaN(base)) { // min이 base 아래, max가 base 위에 있다.
             assert(min < base && max > base, "base error");
@@ -117,6 +141,7 @@ export class LinearAxisTick extends AxisTick {
                 steps.push(v += size);
             }
         }
+        this._step = size;
         return steps;
     }
 
@@ -188,6 +213,7 @@ export class LinearAxisTick extends AxisTick {
             }
         }
 
+        this._step = step;
         steps.push(fixnum(v = min));
         while (v < max) {
             steps.push(fixnum(v += step));
@@ -338,7 +364,7 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected _createTick(): AxisTick {
-        return new LinearAxisTick(this);
+        return new ContinuousAxisTick(this);
     }
 
     protected _doLoadProp(prop: string, value: any): boolean {
@@ -366,7 +392,7 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
-        const tick = this.tick as LinearAxisTick;
+        const tick = this.tick as ContinuousAxisTick;
         let { min, max } = this._adjustMinMax(this._calcedMin = calcedMin, this._calcedMax = calcedMax);
         let base = this._base;
 
@@ -391,7 +417,7 @@ export abstract class ContinuousAxis extends Axis {
                 ticks.push({
                     pos: this.getPosition(length, steps[i]),
                     value: steps[i],
-                    label: this.tick.getTick(steps[i]) || String(steps[i])
+                    label: tick.label.getTick(steps[i]) || String(steps[i])
                 });
             }
         }
@@ -399,7 +425,7 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     private $_buildBrokenSteps(sect: AxisBreakSect): number[] {
-        const tick = this.tick as LinearAxisTick;
+        const tick = this.tick as ContinuousAxisTick;
         const steps = tick.buildSteps(sect.len, void 0, sect.from, sect.to);
 
         return steps;

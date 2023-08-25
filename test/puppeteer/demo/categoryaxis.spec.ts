@@ -62,13 +62,16 @@ import { LineSeriesView } from '../../../src/view/series/LineSeriesView';
         const line = await axis.$('.' + AxisView.LINE_CLASS);
         const ticks = await axis.$$('.' + AxisView.TICK_CLASS);
         const rLine = await PPTester.getBounds(line);
-        const pTick = await PPTester.getTranslate(ticks[0]);
+        let pTick = await PPTester.getTranslate(ticks[0]);
 
         expect(markers.length).eq(ticks.length);
         expect(PPTester.same(pTick.x, rLine.width / ticks.length / 2)).is.true;
 
         // padding -> -0.5
         await page.evaluate('config.xAxis.padding = -0.5; chart.update(config)');
+
+        pTick = await PPTester.getTranslate(ticks[0]);
+        expect(PPTester.same(pTick.x, 0)).is.true;
 
         await page.evaluate('config.xAxis.padding = 0; chart.update(config)');
     });

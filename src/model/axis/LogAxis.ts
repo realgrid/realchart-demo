@@ -7,9 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { AxisTick, IAxisTick } from "../Axis";
-import { ContinuousAxis, LinearAxis, LinearAxisTick } from "./LinearAxis";
+import { ContinuousAxis, LinearAxis, ContinuousAxisTick } from "./LinearAxis";
 
-export class LogAxisTick extends LinearAxisTick {
+export class LogAxisTick extends ContinuousAxisTick {
 
     //-------------------------------------------------------------------------
     // overriden members

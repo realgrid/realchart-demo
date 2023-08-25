@@ -9,7 +9,7 @@
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
-import { LayerElement, PathElement, RcElement } from "../common/RcControl";
+import { ClipElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { Align, VerticalAlign, _undefined, assert } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
@@ -553,6 +553,7 @@ class CrosshairLineView extends LineElement {
 
 export interface IPlottingOwner {
 
+    clipSeries(view: RcElement, x: number, y: number, w: number, h: number): void;
     showTooltip(series: Series, point: DataPoint): void;
     hideTooltip(): void;
 }
@@ -691,6 +692,7 @@ export class BodyView extends ChartElement<Body> {
 
         // series
         this._seriesViews.forEach(v => {
+            this._owner.clipSeries(v.getClipContainer(), 0, 0, w, h);
             v.resize(w, h);
             v.layout();
         })
@@ -754,6 +756,13 @@ export class BodyView extends ChartElement<Body> {
         const animatable = this.model.chart.animatable();
         const map = this._seriesMap;
         const views = this._seriesViews;
+
+        // series들이 다시 생성됐을 수 있다.
+        for (const ser of map.keys()) {
+            if (series.indexOf(ser) < 0) {
+                map.delete(ser);
+            }
+        }
 
         this._series = series;
         views.forEach(v => v.remove());

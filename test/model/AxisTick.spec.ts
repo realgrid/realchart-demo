@@ -8,7 +8,14 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { AxisTick } from '../../src/model/Axis';
+import { AxisTick, AxisTickLabel } from '../../src/model/Axis';
+
+class TestAxisTick extends AxisTick {
+
+    protected _createLabel(): AxisTickLabel {
+        throw new Error('Method not implemented.');
+    }
+}
 
 /**
  * Tests for AxisTick class.
@@ -16,7 +23,7 @@ import { AxisTick } from '../../src/model/Axis';
  describe("AxisTick test", function() {
 
     it('init', () => {
-        const ticks = new AxisTick(null);
+        const ticks = new TestAxisTick(null);
 
         expect(ticks).exist;
     });

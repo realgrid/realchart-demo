@@ -8,7 +8,7 @@
 
 import { isNumber } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
-import { RcElement } from "../common/RcControl";
+import { ClipElement, RcElement } from "../common/RcControl";
 import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { Align, HORZ_SECTIONS, SectionDir, VERT_SECTIONS } from "../common/Types";
@@ -314,6 +314,7 @@ export class ChartView extends RcElement {
     private _currBody: BodyView;
     private _axisSectionViews = new Map<SectionDir, AxisSectionView>();
     private _tooltipView: TooltipView;
+    private _seriesClip: ClipElement;
 
     private _org: IPoint;
     private _plotWidth: number;
@@ -592,6 +593,24 @@ export class ChartView extends RcElement {
 
     legendByDom(dom: Element): LegendItem {
         return this._legendSectionView._legendView.legendByDom(dom);
+    }
+
+    clipSeries(view: RcElement, x: number, y: number, w: number, h: number): void {
+        if (view) {
+            if (this._model.inverted) {
+                this._seriesClip.setBounds(0, -w, h, w);
+            } else {
+                this._seriesClip.setBounds(0, 0, w, h);
+            }
+            view.setClip(this._seriesClip);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doAttached(parent: RcElement): void {
+        this._seriesClip = this.control.clipBounds();
     }
 
     //-------------------------------------------------------------------------

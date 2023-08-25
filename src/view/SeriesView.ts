@@ -265,9 +265,9 @@ export class PointContainer extends LayerElement {
     invert(v: boolean, height: number): boolean {
         if (v !== this.inverted) {
             if (this.inverted = v) {
-                this.dom.style.transform = `translate(0px, ${height}px) rotate(90deg) scale(-1, 1)`;
+                this.setAttr('transform', `translate(0,${height}) rotate(90) scale(-1,1)`);
             } else {
-                this.dom.style.transform = ``;
+                this.setAttr('transform', '');
             }
         }
         return this.inverted;
@@ -320,6 +320,10 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getClipContainer(): RcElement {
+        return this._pointContainer;
+    }
+
     setViewRate(rate: number): void {
         if ((!isNaN(rate) || !isNaN(this._viewRate)) && rate !== this._viewRate) {
             this._viewRate = rate;
