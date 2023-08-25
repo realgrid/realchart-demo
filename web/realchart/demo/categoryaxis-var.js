@@ -7,9 +7,9 @@ const config = {
         title: "일일 Daily fat",
         categories: [
             { name: '쓰리엠' }, 
-            { name: '아디다스', width: 1.5 }, 
+            { name: '아디다스', weight: 1.5 }, 
             { name: '디즈니' }, 
-            { name: '이마트', width: 2 }, 
+            { name: '이마트', weight: 2 }, 
             { name: '메리어트' }, 
             { name: '시세이도' }
         ],

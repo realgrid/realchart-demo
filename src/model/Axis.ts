@@ -332,12 +332,13 @@ export enum AxisPosition {
      */
     OPPOSITE = 'opposite',
     /**
-     * 상대 축의 baseValue 지점에 표시된다.
+     * Y축의 baseValue 지점에 표시된다.
      * <br>
-     * 상대 축이 **linear** 가 아니거나 {@link LinearAxis.baseValue}가 min 보다 작거나 max보다 크면 이 값은 무시되고,
-     * {@link NORMAL}로 적용된다.
-     * <br>
-     * [주의] 연결된 시리즈들이 BarSeries일 때만 가능하다.
+     * [주의] 
+     * 1. 축에 연결된 시리즈들이 BarSeries 계열일 때만 가능하다.
+     * 2. 차트의 X축 하나에만 적용할 수 있다. 두번째로 지정된 축의 속성은 {@link NORMAL}로 적용된다.
+     * 3. 상대 축이 **linear** 가 아니거나 {@link LinearAxis.baseValue}가 min 보다 작거나 max보다 크면 이 값은 무시되고,
+     *    {@link NORMAL}로 적용된다.
      */
     BASE = 'base'
 }

@@ -12,7 +12,6 @@ import { Browser, Page } from 'puppeteer';
 import { PPTester } from '../../PPTester';
 import { SeriesView } from '../../../src/view/SeriesView';
 import { AxisView } from '../../../src/view/AxisView';
-import { relative } from 'path';
 import { LineSeriesView } from '../../../src/view/series/LineSeriesView';
 
 /**

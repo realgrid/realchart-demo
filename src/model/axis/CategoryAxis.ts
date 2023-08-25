@@ -80,7 +80,7 @@ export class CategoryAxis extends Axis {
     // fields
     //-------------------------------------------------------------------------
     _cats: string[];
-    _widths: number[];  // 한 카테고리의 상대 너비. 한 카테고리의 기본 크기는 1
+    _weights: number[];  // 한 카테고리의 상대 너비. 한 카테고리의 기본 크기는 1
     _len: number;
     private _step = 1;
     private _map = new Map<string, number>(); // data point의 축 위치를 찾기 위해 사용한다.
@@ -207,7 +207,7 @@ export class CategoryAxis extends Axis {
 
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
         const cats = this._cats;
-        const widths = this._widths;
+        const widths = this._weights;
         const ticks: IAxisTick[] = [];
 
         min = this._min = Math.floor(min);
@@ -274,14 +274,14 @@ export class CategoryAxis extends Axis {
                 return c.name || c.label;
             });
             this._len = 0;
-            this._widths = categories.map(c => {
-                const w = c == null ? 1 : pickNum(c.width, 1);
+            this._weights = categories.map(c => {
+                const w = c == null ? 1 : pickNum(c.weight, 1);
                 this._len += w;
                 return w;
             });
         } else {
             const cats = this._cats = [];
-            const widths = this._widths = [];
+            const weights = this._weights = [];
 
             if (isArray(series)) {
                 for (const ser of series) {
@@ -290,7 +290,7 @@ export class CategoryAxis extends Axis {
                     for (const c of cats2) {
                         if (!cats.includes(c)) {
                             cats.push(c);
-                            widths.push(1);
+                            weights.push(1);
                         }
                     }
                 }
