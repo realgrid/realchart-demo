@@ -122,7 +122,7 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         this._sectors.forEach((view, i) => {
             const p = view.point;
             const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
-            const wUnit = xAxis.getUnitLength(Math.PI * 2, i);
+            const wUnit = xAxis.getUnitLength(Math.PI * 2, p.xValue);
             const wPoint = series.getPointWidth(wUnit);
     
             view.setSector({

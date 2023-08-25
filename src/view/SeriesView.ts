@@ -608,14 +608,14 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
 
         this._getPointPool().forEach((pointView: RcElement, i) => {
             const p = (pointView as any as IPointView).point;
-            const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
+            const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
             const hPoint = (yVal - yBase) * vr;
             let x: number;
             let y: number;
 
-            x = xAxis.getPosition(xLen, i) - wUnit / 2;
+            x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
             y = org;
 
             p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
@@ -631,8 +631,8 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
             // label
             if (info && (info.labelView = labelViews.get(p, 0))) {
                 if (inverted) {
-                    // y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2; // 위에서 아래로 내려갈 때
-                    y = xLen - xAxis.getPosition(xLen, i) + wUnit / 2;
+                    // y = xLen - xAxis.getPosition(xLen, p.xValue) - wUnit / 2; // 위에서 아래로 내려갈 때
+                    y = xLen - xAxis.getPosition(xLen, p.xValue) + wUnit / 2;
                     x = org;
                     p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
                     // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
@@ -681,11 +681,11 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
 
         this._getPointPool().forEach((pointView, i) => {
             const p = (pointView as any as IPointView).point;
-            const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
+            const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
             const hPoint = (yVal - yAxis.getPosition(yLen, this._getLowValue(p))) * vr;
-            let x = xAxis.getPosition(xLen, i) - wUnit / 2;
+            let x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
             let y = org;
 
             p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
@@ -696,8 +696,8 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
             // labels
             if (labelViews) {
                 if (inverted) {
-                    // y = xLen - xAxis.getPosition(xLen, i) - wUnit / 2; // 위에서 아래로 내려갈 때
-                    y = xLen - xAxis.getPosition(xLen, i) + wUnit / 2;
+                    // y = xLen - xAxis.getPosition(xLen, p.xVAlue) - wUnit / 2; // 위에서 아래로 내려갈 때
+                    y = xLen - xAxis.getPosition(xLen, p.xValue) + wUnit / 2;
                     x = org;
                     // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
                     p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;

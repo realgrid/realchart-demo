@@ -148,7 +148,7 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
 
         this._bars.forEach((bar, i) => {
             const p = bar.point;
-            const wUnit = xAxis.getUnitLength(xLen, i) * (1 - wPad);
+            const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
             const hPoint = Math.abs(yAxis.getPosition(yLen, p.lowValue) - yVal) * vr;
@@ -157,10 +157,10 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
             let y: number;
 
             if (inverted) {
-                y = xLen - xAxis.getPosition(xLen, i);
+                y = xLen - xAxis.getPosition(xLen, p.xValue);
                 x = org;
             } else {
-                x = xAxis.getPosition(xLen, i);
+                x = xAxis.getPosition(xLen, p.xValue);
                 y = org;
             }
 

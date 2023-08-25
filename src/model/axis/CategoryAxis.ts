@@ -103,6 +103,7 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _categories: {c: string, w: number}[];
     _cats: string[];
     _weights: number[];  // 한 카테고리의 상대 너비. 한 카테고리의 기본 크기는 1
     _len: number;
@@ -220,6 +221,9 @@ export class CategoryAxis extends Axis {
     }
 
     protected _doPrepareRender(): void {
+        this._cats = [];
+        this._weights = [];
+
         this._collectCategories(this._series);
 
         this._minPad = pickNum3(this.minPadding, this.padding, 0);
@@ -231,8 +235,8 @@ export class CategoryAxis extends Axis {
 
     protected _doBuildTicks(min: number, max: number, length: number): { ticks: IAxisTick[], markPoints: number[] } {
         const tick = this.tick as CategoryAxisTick;
-        const cats = this._cats;
-        const weights = this._weights;
+        let cats = this._cats = this._categories.map(cat => cat.c);
+        let weights = this._weights = this._categories.map(cat => cat.w);
         const ticks: IAxisTick[] = [];
 
         min = this._min = Math.floor(min);
@@ -243,26 +247,32 @@ export class CategoryAxis extends Axis {
             weights.push(1);
         }
 
+        cats = this._cats = cats.slice(min, max + 1);
+        weights = weights.slice(min, max + 1);
+
         const len = this._len = this._minPad + this._maxPad + weights.reduce((a, c) => a + c);
         // const step = this._step = this.categoryStep || 1;
         const pts = this._pts = [0];
         let p = this._minPad;
 
         for (let i = min; i <= max; i++) {// += step) {
-            const w = weights[i];
+            const w = weights[i - min];
 
             pts.push(length * p / len);
-            p += weights[i];// step
+            p += weights[i - min];// step
         }
         pts.push(length * p / len);
         pts.push(length * (p + this._maxPad) / len);
 
+        this._map.clear();
+
         for (let i = 1; i < pts.length - 2; i++) {
             ticks.push({
                 pos: (pts[i] + (pts[i + 1] - pts[i]) / 2),
-                value: i - 1,
+                value: min + i - 1,
                 label: tick.label.getTick(cats[i - 1]),
             });
+            this._map.set(cats[i - 1], min + i - 1);
         }
 
         let markPoints: number[];
@@ -277,6 +287,7 @@ export class CategoryAxis extends Axis {
     }
 
     getPosition(length: number, value: number, point = true): number {
+        value -= this._min;
         // data point view는 카테고리 중앙을 기준으로 표시한다.
         if (point) value += 0.5;//this._step / 2;
         const v = Math.floor(value);
@@ -285,7 +296,7 @@ export class CategoryAxis extends Axis {
     }
 
     getUnitLength(length: number, value: number): number {
-        const v = Math.floor(value);
+        const v = Math.floor(value - this._min);
         return (this._pts[v + 2] - this._pts[v + 1]);
     }
 
@@ -302,31 +313,30 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     private _collectCategories(series: IPlottingItem[]): void {
         const categories = this.categories;
+        const cats = this._categories = [];
 
         if (isArray(categories) && categories.length > 0) {
-            this._cats = categories.map(c => {
-                if (c == null) return null;
-                if (isString(c)) return c;
-                return c.name || c.label;
-            });
             this._len = 0;
-            this._weights = categories.map(c => {
-                const w = c == null ? 1 : pickNum(c.weight, 1);
-                this._len += w;
-                return w;
-            });
-        } else {
-            const cats = this._cats = [];
-            const weights = this._weights = [];
 
+            categories.forEach(cat => {
+                let w = cat == null ? 1 : pickNum(cat.weight, 1);
+                let c: string;
+
+                if (cat == null) c = null;
+                else if (isString(cat)) c = cat;
+                else c = cat.name || cat.label;
+
+                this._len += w;
+                cats.push({c, w});
+            })
+        } else {
             if (isArray(series)) {
                 for (const ser of series) {
                     const cats2 = ser.collectCategories(this);
 
                     for (const c of cats2) {
-                        if (!cats.includes(c)) {
-                            cats.push(c);
-                            weights.push(1);
+                        if (!cats.find(cat => cat.c === c)) {
+                            cats.push({c, w: 1});
                         }
                     }
                 }
@@ -336,7 +346,7 @@ export class CategoryAxis extends Axis {
         // const start = pickNum(this.startValue, 0);
         // const step = this.valueStep || 1;
 
-        this._map.clear();
-        this._cats.forEach((c, i) => this._map.set(c, i));//start + i * step));
+        // this._map.clear();
+        // this._cats.forEach((c, i) => this._map.set(c, i));//start + i * step));
     }
 }

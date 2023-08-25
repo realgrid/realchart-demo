@@ -29,7 +29,7 @@ const config = {
             //     padding: '5px'
             // }
         },
-        data: [
+        data2: [
             ['home', 7], 
             ['sky', 11], 
             ['def', 9], 
@@ -38,12 +38,22 @@ const config = {
             ['zzz', 13],
             ['낙동강', 12.5]
         ],
+        data: [
+            [1, 7], 
+            [2, 11], 
+            [3, 9], 
+            [4, 10], 
+            [5, 14.3], 
+            [6, 13],
+            [7, 12.5]
+        ],
         style: {
             // fill: 'yellow'
         }
     }
 }
 
+let animate;
 let chart;
 
 function setActions(container) {
@@ -54,6 +64,18 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'Inverted', function (e) {
+        config.inverted = _getChecked(e);
+        chart.update(config, animate);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.update(config, animate);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.update(config, animate);
+    }, false);
 }
 
 function init() {
