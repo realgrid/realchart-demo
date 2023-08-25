@@ -31,6 +31,10 @@ export class BubbleSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    getLabel(index: number) {
+        return this.z;
+    }
+
     parse(series: BubbleSeries): void {
         super.parse(series);
 

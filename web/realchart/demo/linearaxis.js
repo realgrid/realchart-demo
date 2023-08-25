@@ -20,7 +20,9 @@ const config = {
         colorByPoint: true,
         pointLabel: {
             visible: true,
-            effect: 'outline'
+            effect: 'outline',
+            suffix: '%',
+            style: { fill: '#008' }
         },
         pointColors: ['#ddd', '#ccc', '#bbb', '#aaa', '#999', '#888', '#777', '#666'],
         data: [
@@ -56,19 +58,47 @@ function setActions(container) {
         config.inverted = _getChecked(e);
         chart.update(config);
     }, false);
-    createCheckBox(container, 'X Reversed', function (e) {
+    createCheckBox(container, 'X.reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
         chart.update(config);
     }, false);
-    createCheckBox(container, 'Y Reversed', function (e) {
+    createCheckBox(container, 'Y.reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
         chart.update(config);
     }, false);
-    createListBox(container, "X Min Padding", ['0.05', '0', '0.2'], function (e) {
+    createListBox(container, "X.startFit", ['value', 'tick'], function (e) {
+        config.xAxis.startFit = _getValue(e);
+        chart.update(config);
+    }, 'value');
+    createListBox(container, "X.endFit", ['value', 'tick'], function (e) {
+        config.xAxis.endFit = _getValue(e);
+        chart.update(config);
+    }, 'value');
+    createListBox(container, "X.minPadding", ['0.05', '0', '0.2'], function (e) {
         config.xAxis.minPadding = _getValue(e);
         chart.update(config);
     }, '0.05');
-    createCheckBox(container, 'UseSymbols', function (e) {
+    createListBox(container, "X.maxPadding", ['0.05', '0', '0.2'], function (e) {
+        config.xAxis.maxPadding = _getValue(e);
+        chart.update(config);
+    }, '0.05');
+    createListBox(container, "Y.startFit", ['value', 'tick'], function (e) {
+        config.yAxis.startFit = _getValue(e);
+        chart.update(config);
+    }, 'tick');
+    createListBox(container, "Y.endFit", ['value', 'tick'], function (e) {
+        config.yAxis.endFit = _getValue(e);
+        chart.update(config);
+    }, 'tick');
+    createListBox(container, "Y.minPadding", ['0.05', '0', '0.2'], function (e) {
+        config.yAxis.minPadding = _getValue(e);
+        chart.update(config);
+    }, '0.05');
+    createListBox(container, "Y.maxPadding", ['0.05', '0', '0.2'], function (e) {
+        config.yAxis.maxPadding = _getValue(e);
+        chart.update(config);
+    }, '0.05');
+    createCheckBox(container, 'Y.tick.label.useSymbols', function (e) {
         config.yAxis.tick.label.useSymbols = _getChecked(e);
         chart.update(config);
     }, true);

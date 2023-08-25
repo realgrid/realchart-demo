@@ -54,7 +54,7 @@ export class HeatmapSeriesPoint extends DataPoint {
         super._readSingle(v);
     }
 
-    getYLabel(index: number) {
+    getLabel(index: number) {
         return this.color;
     }
 }

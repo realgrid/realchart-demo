@@ -225,7 +225,7 @@ export abstract class AxisTickLabel extends FormattableText {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public axis: Axis) {
-        super(axis.chart, true);
+        super(axis && axis.chart, true);
     }
 
     //-------------------------------------------------------------------------
@@ -342,24 +342,6 @@ export enum AxisPosition {
 }
 
 /**
- * 축 양 끝 맞춤 방식.
- */
-export enum AxisFit {
-    /**
-     * linear: 'tick', category: 'value'
-     */
-    DEFAULT = 'default', 
-    /**
-     * 축의 min/max가 tick에 해당하지 않는 경우 tick이 표시될 수 있도록 증가 시킨다.
-     */
-    TICK = 'tick',
-    /**
-     * 축의 min/max에 맞춰 표시한다.
-     */
-    VALUE = 'value'
-}
-
-/**
  * 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.
  */
 export abstract class Axis extends ChartItem implements IAxis {
@@ -436,16 +418,6 @@ export abstract class Axis extends ChartItem implements IAxis {
      * 차트 경계나 뒤쪽 축 사이의 여백 크기.
      */
     marginFar = 0;
-    /**
-     * 축 시작 위치에 tick 표시 여부.
-     * <br>
-     */
-    startFit = AxisFit.DEFAULT;
-    /**
-     * 축 끝 위치에 tick 표시 여부.
-     * <br>
-     */
-    endFit = AxisFit.DEFAULT;
 
     isEmpty(): boolean {
         return this._series.length < 1;

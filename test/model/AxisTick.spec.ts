@@ -13,7 +13,7 @@ import { AxisTick, AxisTickLabel } from '../../src/model/Axis';
 class TestAxisTick extends AxisTick {
 
     protected _createLabel(): AxisTickLabel {
-        throw new Error('Method not implemented.');
+        return;
     }
 }
 

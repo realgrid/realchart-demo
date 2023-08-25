@@ -274,6 +274,24 @@ interface AxisBreakSect {
     len: number;
 }
 
+/**
+ * 축 양 끝 맞춤 방식.
+ */
+export enum AxisFit {
+    /**
+     * x축이면 {@link VALUE}, y축이면 {@link TICK}.
+     */
+    DEFAULT = 'default',
+    /**
+     * 축의 min/max가 tick에 해당하지 않는 경우 tick이 표시될 수 있도록 증가 시킨다.
+     */
+    TICK = 'tick',
+    /**
+     * 축의 min/max에 맞춰 표시한다.
+     */
+    VALUE = 'value'
+}
+
 export abstract class ContinuousAxis extends Axis {
 
     //-------------------------------------------------------------------------
@@ -311,11 +329,12 @@ export abstract class ContinuousAxis extends Axis {
     /**
      * {@link minPadding}, {@link maxPadding}의 기본값이다.
      */
-    padding = 0;//.05;
+    padding = 0.05;
     /**
      * 첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
      * <br>
      * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.
+     * {@link startFit}이 {@link AxitFit.TICK}일 때,
      * data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
      * {@link strictMin}이 지정돼도 이 속성은 무시된다.
      */
@@ -324,6 +343,7 @@ export abstract class ContinuousAxis extends Axis {
      * 마지막 tick 뒤쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
      * <br>
      * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.
+     * {@link endFit}이 {@link AxitFit.TICK}일 때,
      * data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
      * {@link strictMax}가 지정돼도 이 속성은 무시된다.
      */
@@ -331,6 +351,17 @@ export abstract class ContinuousAxis extends Axis {
 
     strictMin: number;
     strictMax: number;
+
+    /**
+     * 축 시작 위치에 tick 표시 여부.
+     * <br>
+     */
+    startFit = AxisFit.DEFAULT;
+    /**
+     * 축 끝 위치에 tick 표시 여부.
+     * <br>
+     */
+    endFit = AxisFit.DEFAULT;
 
     /** y축으로 사용될 때만 적용한다. */
     readonly breaks: AxisBreak[] = [];
@@ -353,6 +384,14 @@ export abstract class ContinuousAxis extends Axis {
 
     runBreaks(): AxisBreak[] {
         return this._runBreaks && this._runBreaks.slice(0);
+    }
+
+    getStartFit(): AxisFit {
+        return this.startFit === AxisFit.DEFAULT ? (this._isX ? AxisFit.VALUE : AxisFit.TICK) : this.startFit;
+    }
+
+    getEndFit(): AxisFit {
+        return this.endFit === AxisFit.DEFAULT ? (this._isX ? AxisFit.VALUE : AxisFit.TICK) : this.endFit;
     }
 
     //-------------------------------------------------------------------------
@@ -403,10 +442,26 @@ export abstract class ContinuousAxis extends Axis {
         let steps = tick.buildSteps(length, base, min, max);
         const ticks: IAxisTick[] = [];
 
-        this._setMinMax(
-            min = Math.min(min, steps[0]), 
-            max = Math.max(max, steps[steps.length - 1])
-        );
+        if (this.getStartFit() === AxisFit.VALUE) {
+            if (steps.length > 1 && min > steps[0]) {
+                steps = steps.slice(1);
+            }
+        } else if (steps.length > 2 && steps[1] <= min) {
+            steps.slice(1);
+        } else {
+            min = Math.min(min, steps[0]); 
+        }
+        if (this.getEndFit() === AxisFit.VALUE) {
+            if (max < steps[steps.length - 1] && steps.length > 1) {
+                steps.pop();
+            }
+        } else if (steps.length > 2 && steps[steps.length - 2] > max) {
+            steps.pop();
+        } else {
+            max = Math.max(max, steps[steps.length - 1]);
+        }
+
+        this._setMinMax(min, max);
 
         if (min !== max) {
             if (this._runBreaks) {
@@ -535,21 +590,20 @@ export abstract class ContinuousAxis extends Axis {
             }
         })
 
+        let minPad = 0;
+        let maxPad = 0;
+
         if (!this._minBased) {
-            this._minPad = pickNum3(this.minPadding, this.padding, 0);
-        } else {
-            this._minPad = 0;
+            minPad = pickNum3(this.minPadding, this.padding, 0);
         }
         if (!this._maxBased) {
-            this._maxPad = pickNum3(this.maxPadding, this.padding, 0);
-        } else {
-            this._maxPad = 0;
+            maxPad = pickNum3(this.maxPadding, this.padding, 0);
         }
 
         let len = Math.max(0, max - min);
 
-        min -= len * this._minPad;
-        max += len * this._maxPad;
+        min -= len * (this._minPad = minPad);
+        max += len * (this._maxPad = maxPad);
 
         return { min, max };
     }

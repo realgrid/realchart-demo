@@ -47,7 +47,7 @@ export class DumbbellSeriesPoint extends DataPoint {
         return 2;
     }
 
-    getYLabel(index: number) {
+    getLabel(index: number) {
         return index === 0 ? this.lowValue : this.yValue;
     }
 

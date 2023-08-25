@@ -104,7 +104,7 @@ export class DataPoint {
         this.yValue = +this.y;
     }
 
-    getYLabel(index: number): any {
+    getLabel(index: number): any {
         return this.y;// this.yValue;
     }
 

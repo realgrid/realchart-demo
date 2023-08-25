@@ -33,7 +33,7 @@ export class BarRangeSeriesPoint extends DataPoint {
         return 2;
     }
 
-    getYLabel(index: number) {
+    getLabel(index: number) {
         return index === 1 ? this.lowValue : this.yValue;
     }
 

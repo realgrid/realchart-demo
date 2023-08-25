@@ -120,7 +120,7 @@ export class PointLabelContainer extends GroupElement {
                 //      .setStyles(styles);
             } else {
                 //label.setValueEx(p.value, true, 1)
-                view.setText(model.getText(p.getYLabel(index)))
+                view.setText(model.getText(p.getLabel(index)))
                     .setStyles(styles);
             }
         }

@@ -12,12 +12,13 @@ const config = {
     },
     yAxis: {
         title: 'Y Axis',
+        // maxPadding: 0
     },
     series: {
         // baseValue: null,
         pointLabel: {
             visible: true,
-            position: 'head',
+            //position: 'head',
             // offset: 10,
             // text: '<b style="fill:red">${x}</b>',
             effect: 'outline',// 'background',
