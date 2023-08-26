@@ -12,6 +12,8 @@ const config = {
         max: 100,
         position: 'opposite',
         tick: {
+        },
+        label: {
             suffix: '%'
         }
     }],

@@ -8,11 +8,11 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { AxisTick, AxisTickLabel } from '../../src/model/Axis';
+import { AxisTick, AxisLabel } from '../../src/model/Axis';
 
 class TestAxisTick extends AxisTick {
 
-    protected _createLabel(): AxisTickLabel {
+    protected _createLabel(): AxisLabel {
         return;
     }
 }

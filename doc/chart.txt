@@ -11,7 +11,8 @@
 2. 형태 (axis-base)
   - bar: bar, lollipop, equalizer, histogram, wing(v1.1)
   - range: barrange, boxplot, candlestick, errorbar, ohlc, waterfall
-  - line: line, area, arearange, bellcurve, pareto,
+  - line: line, arearange, bellcurve, pareto,
+  - area: area, (line 계열이 아니라 bar 계열이다! (baseValue))
   - scatter: scatter, bubble, vector
   - map: heatmap, treemap
   - pie: pie

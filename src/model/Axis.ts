@@ -219,7 +219,60 @@ export class AxisGuideRange extends AxisGuide {
     end: number;
 }
 
-export abstract class AxisTickLabel extends FormattableText {
+/**
+ * 기본적으로 tick 위치에 선으로 표시된다.
+ */
+export class AxisTickMark extends AxisItem {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    /**
+     * axis tick line length.
+     */
+    length = 7;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+}
+
+/**
+ * 축에 표시되는 tick 위치와 표시 마크에 관한 설정 모델.
+ */
+export abstract class AxisTick extends AxisItem {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    /**
+     * axis tick line length.
+     */
+    length = 7;
+    margin = 3;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(axis: Axis) {
+        super(axis);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+}
+
+export abstract class AxisLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
     // constructor
@@ -246,68 +299,6 @@ export abstract class AxisTickLabel extends FormattableText {
     // methods
     //-------------------------------------------------------------------------
     abstract getTick(v: any): string;
-}
-
-/**
- * 기본적으로 tick 위치에 선으로 표시된다.
- */
-export class AxisTickMark extends AxisItem {
-
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
-    /**
-     * axis tick line length.
-     */
-    length = 7;
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-}
-
-/**
- * 축 상의 특정 값 위치를 나타낸다.
- * 카테고리 축의 경우 각 카테고리 값의 위치이다.
- */
-export abstract class AxisTick extends AxisItem {
-
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    mark: AxisTickMark;
-    label: AxisTickLabel;
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(axis: Axis) {
-        super(axis);
-
-        this.mark = this._createMark();
-        this.label = this._createLabel();
-    }
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    prefix: string;
-    suffix: string;
-
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
-    protected _createMark(): AxisTickMark {
-        return new AxisTickMark(this.axis);
-    }
-
-    protected abstract _createLabel(): AxisTickLabel;
 }
 
 export interface IAxisTick {
@@ -353,6 +344,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     readonly title = new AxisTitle(this);
     readonly line = new AxisLine(this);
     readonly tick: AxisTick;
+    readonly label: AxisLabel;
     readonly grid = this._createGrid();
     readonly guides: AxisGuide[] = [];
     readonly crosshair = new Crosshair(this);
@@ -376,6 +368,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
         this.name = name;
         this.tick = this._createTickModel();
+        this.label = this._createLabelModel();
     }
 
     //-------------------------------------------------------------------------
@@ -434,6 +427,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     // methods
     //-------------------------------------------------------------------------
     protected abstract _createTickModel(): AxisTick;
+    protected abstract _createLabelModel(): AxisLabel;
     protected abstract _doPrepareRender(): void;
     protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[] | { ticks: IAxisTick[], markPoints: number[] };
 

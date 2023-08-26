@@ -5,15 +5,13 @@ const config = {
     title: "Linear Axis",
     xAxis: {
         tick: {
-            mark: {},
-            label: {}
-        }
+        },
+        label: {}
     },
     yAxis: {
         tick: {
-            mark: {},
-            label: {}
-        }
+        },
+        label: {}
     },
     series: {
         type: 'bubble',
@@ -99,7 +97,7 @@ function setActions(container) {
         chart.update(config);
     }, '0.05');
     createCheckBox(container, 'Y.tick.label.useSymbols', function (e) {
-        config.yAxis.tick.label.useSymbols = _getChecked(e);
+        config.yAxis.label.useSymbols = _getChecked(e);
         chart.update(config);
     }, true);
 }

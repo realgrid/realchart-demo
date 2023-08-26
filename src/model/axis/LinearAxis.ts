@@ -8,23 +8,8 @@
 
 import { isArray, isObject, pickNum, pickNum3 } from "../../common/Common";
 import { IPercentSize, RtPercentSize, assert, calcPercent, ceil, fixnum, parsePercentSize } from "../../common/Types";
-import { Axis, AxisItem, AxisTick, AxisTickLabel, IAxisTick } from "../Axis";
+import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick } from "../Axis";
 import { DataPoint } from "../DataPoint";
-
-class ContinuousAxisTickLabel extends AxisTickLabel {
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    useSymbols = true;
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    getTick(v: any): string {
-        return this._getText(null, v, this.useSymbols && (this.axis.tick as ContinuousAxisTick)._step > 100);
-    }
-}
 
 export class ContinuousAxisTick extends AxisTick {
 
@@ -69,10 +54,6 @@ export class ContinuousAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _createLabel(): AxisTickLabel {
-        return new ContinuousAxisTickLabel(this.axis);
-    }
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -219,6 +200,21 @@ export class ContinuousAxisTick extends AxisTick {
             steps.push(fixnum(v += step));
         }
         return steps;
+    }
+}
+
+class ContinuousAxisLabel extends AxisLabel {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    useSymbols = true;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    getTick(v: any): string {
+        return this._getText(null, v, this.useSymbols && (this.axis.tick as ContinuousAxisTick)._step > 100);
     }
 }
 
@@ -408,6 +404,10 @@ export abstract class ContinuousAxis extends Axis {
         return new ContinuousAxisTick(this);
     }
 
+    protected _createLabelModel(): AxisLabel {
+        return new ContinuousAxisLabel(this);
+    }
+
     protected _doLoadProp(prop: string, value: any): boolean {
         if (prop ==='break') {
             this.$_loadBreaks(value);
@@ -479,7 +479,7 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected _getTickLabel(value: number): string {
-        return this.tick.label.getTick(value) || String(value);
+        return this.label.getTick(value) || String(value);
     }
 
     protected _createTick(length: number, step: number): IAxisTick {

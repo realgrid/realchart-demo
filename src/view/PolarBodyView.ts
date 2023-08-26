@@ -76,7 +76,7 @@ abstract class PolarAxisView extends RcElement {
         this._model = model;
 
         // tick marks
-        this._markLen = model.tick.mark.length;;
+        this._markLen = model.tick.length;;
         this.$_prepareTickMarks(doc, model);
         //this._markViews.forEach(v => v.measure(doc, model.tick.mark, hintWidth, hintHeight, phase));
 
@@ -160,7 +160,7 @@ class PolarXAxisView extends PolarAxisView {
         });
 
         // labels
-        const rd2 = rd + axis.tick.mark.length;
+        const rd2 = rd + axis.tick.length;
 
         this._labelViews.forEach((view, i) => {
             const tick = ticks[i];

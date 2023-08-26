@@ -7,10 +7,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isString, pickNum, pickNum3 } from "../../common/Common";
-import { Axis, AxisGrid, AxisTick, AxisTickLabel, AxisTickMark, IAxisTick } from "../Axis";
+import { Axis, AxisGrid, AxisTick, AxisLabel, AxisTickMark, IAxisTick } from "../Axis";
 import { IPlottingItem } from "../Series";
 
-export enum CategoryTickMarkPosition {
+export enum CategoryTickPosition {
+    /**
+     * x축이면 {@link POINT}, y축이면 {@link EDGE}이다.
+     */
+    DEFAULT = 'default',
     /**
      * 카테고리 중심에 표시한다.
      */
@@ -21,15 +25,34 @@ export enum CategoryTickMarkPosition {
     EDGE = 'edge'
 }
 
-export class CategoryAxisTickMark extends AxisTickMark {
+export class CategoryAxisTick extends AxisTick {
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    position = CategoryTickMarkPosition.POINT;
+    position = CategoryTickPosition.POINT;
+    steps = 1;
+    /**
+     * true이면 steps 상관없이 마지막 tick은 항상 표시된다.
+     */
+    showLast = false;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getPosition(): CategoryTickPosition {
+        if (this.position === CategoryTickPosition.POINT || this.position === CategoryTickPosition.EDGE) {
+            return this.position;
+        } else {
+            return this.axis._isX ? CategoryTickPosition.POINT : CategoryTickPosition.EDGE;
+        }
+    }
 }
 
-class CategoryAxisTickLabel extends AxisTickLabel {
+/**
+ * TODO: y축으로 사용되면 edge 위치에 표시한다.
+ */
+class CategoryAxisLabel extends AxisLabel {
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -40,29 +63,6 @@ class CategoryAxisTickLabel extends AxisTickLabel {
         } else {
             return '';
         }
-    }
-}
-
-export class CategoryAxisTick extends AxisTick {
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    steps = 1;
-    /**
-     * true이면 steps 상관없이 마지막 tick은 항상 표시된다.
-     */
-    showLast = false;
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    protected _createMark(): AxisTickMark {
-        return new CategoryAxisTickMark(this.axis);
-    }
-
-    protected _createLabel(): AxisTickLabel {
-        return new CategoryAxisTickLabel(this.axis);
     }
 }
 
@@ -220,6 +220,10 @@ export class CategoryAxis extends Axis {
         return new CategoryAxisTick(this);
     }
 
+    protected _createLabelModel(): AxisLabel {
+        return new CategoryAxisLabel(this);
+    }
+
     protected _doPrepareRender(): void {
         this._cats = [];
         this._weights = [];
@@ -235,6 +239,7 @@ export class CategoryAxis extends Axis {
 
     protected _doBuildTicks(min: number, max: number, length: number): { ticks: IAxisTick[], markPoints: number[] } {
         const tick = this.tick as CategoryAxisTick;
+        const label = this.label as CategoryAxisLabel;
         let cats = this._cats = this._categories.map(cat => cat.c);
         let weights = this._weights = this._categories.map(cat => cat.w);
         const ticks: IAxisTick[] = [];
@@ -270,14 +275,14 @@ export class CategoryAxis extends Axis {
             ticks.push({
                 pos: (pts[i] + (pts[i + 1] - pts[i]) / 2),
                 value: min + i - 1,
-                label: tick.label.getTick(cats[i - 1]),
+                label: label.getTick(cats[i - 1]),
             });
             this._map.set(cats[i - 1], min + i - 1);
         }
 
         let markPoints: number[];
 
-        if ((tick.mark as CategoryAxisTickMark).position === CategoryTickMarkPosition.EDGE) {
+        if (tick.getPosition() === CategoryTickPosition.EDGE) {
             markPoints = pts.slice(1, pts.length - 1);
         } else {
             markPoints = ticks.map(t => t.pos);

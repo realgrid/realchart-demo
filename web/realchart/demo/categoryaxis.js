@@ -9,7 +9,8 @@ const config = {
             text: "일일 Daily fat",
         },
         tick: {
-            mark: {}
+        },
+        label: {
         },
         grid: true,
     },
@@ -85,14 +86,14 @@ function setActions(container) {
         config.xAxis.tick.visible = _getChecked(e);
         chart.update(config, animate);
     }, true);
-    createCheckBox(container, 'Axis.tick.mark', function (e) {
-        config.xAxis.tick.mark.visible = _getChecked(e);
-        chart.update(config, animate);
-    }, true);
-    createListBox(container, "Axis.tick.mark.position", ['point', 'edge'], function (e) {
-        config.xAxis.tick.mark.position = _getValue(e);
+    createListBox(container, "Axis.tick.position", ['point', 'edge'], function (e) {
+        config.xAxis.tick.position = _getValue(e);
         chart.update(config);
     }, 'point');
+    createCheckBox(container, 'Axis.label', function (e) {
+        config.xAxis.label.visible = _getChecked(e);
+        chart.update(config, animate);
+    }, true);
 }
 
 function init() {

@@ -158,8 +158,8 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     checkHeight(doc: Document, width: number, height: number): number {
         const m = this.model;
-        const t = this.$_prepareChecker(doc);
-        let h = m.tick.visible ? m.tick.mark.length : 0; 
+        const t = this.$_prepareChecker(doc, m);
+        let h = m.tick.visible ? m.tick.length : 0; 
 
         h += t ?  t.getBBounds().height : 0;
         if (this._titleView.visible = m.title.visible) {
@@ -170,8 +170,8 @@ export class AxisView extends ChartElement<Axis> {
 
     checkWidth(doc: Document, width: number, height: number): number {
         const m = this.model;
-        const t = this.$_prepareChecker(doc);
-        let w = m.tick.visible ? m.tick.mark.length : 0; 
+        const t = this.$_prepareChecker(doc, m);
+        let w = m.tick.visible ? m.tick.length : 0; 
 
         w += t ? t.getBBounds().width : 0;
         if (this._titleView.visible = m.title.visible) {
@@ -201,9 +201,13 @@ export class AxisView extends ChartElement<Axis> {
         this._lineView.visible = model.line.visible;
 
         // tick marks 
-        sz += this._markLen = model.tick.visible ? model.tick.mark.length : 0; // tick.mark.visible이 false이어도 자리는 차지한다.
+        this._markLen = model.tick.length || 0; // tick.mark.visible이 false이어도 자리는 차지한다.
+        if (this._markLen > 0) {
+            sz += model.tick.margin || 0;
+        }
+        sz += this._markLen;
         if (this.$_prepareTickMarks(doc, model)) {
-            this._markViews.forEach(v => v.measure(doc, model.tick.mark, hintWidth, hintHeight, phase));
+            this._markViews.forEach(v => v.measure(doc, model.tick, hintWidth, hintHeight, phase));
         }
 
         // labels
@@ -260,20 +264,22 @@ export class AxisView extends ChartElement<Axis> {
 
         // tick marks
         if (this._markContainer.visible) {
+            const len = markLen - (model.tick.margin || 0);
+
             if (horz) {
                 this._markViews.forEach((v, i) => {
                     v.resize(1, markLen);
-                    v.layout().translate(markPts[i], opp ? h - markLen : 0);
+                    v.layout().translate(markPts[i], opp ? h - len : 0);
                 })
             } else {
                 this._markViews.forEach((v, i) => {
                     v.resize(markLen, 1);
-                    v.layout().translate(opp ? 0 : w - markLen, h - markPts[i]);
+                    v.layout().translate(opp ? 0 : w - len, h - markPts[i]);
                 })
             }
         }
 
-        // tick labels
+        // labels
         if (this._labelContainer.visible) {
             if (horz) {
                 labelViews.forEach((v, i) => {
@@ -318,9 +324,9 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_prepareChecker(doc: Document): TextElement {
-        if (this._labelContainer.visible = this.model.tick.visible) {
-            const tick = this.model._ticks[0];
+    private $_prepareChecker(doc: Document, m: Axis): TextElement {
+        if (this._labelContainer.visible = m.label.visible) {
+            const tick = m._ticks[0];
 
             if (tick) {
                 let t = this._labelViews[0];
@@ -341,7 +347,7 @@ export class AxisView extends ChartElement<Axis> {
     private $_prepareTickMarks(doc: Document, m: Axis): boolean {
         const container = this._markContainer;
 
-        if (container.visible = m.tick.visible && m.tick.mark.visible) {
+        if (container.visible = m.tick.visible) {
             const pts = m._markPoints;
             const nMark = pts.length;
             const views = this._markViews;

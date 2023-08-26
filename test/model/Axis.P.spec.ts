@@ -8,7 +8,7 @@
 
 import { expect } from 'chai';
 import { beforeEach, describe, it } from 'mocha';
-import { Axis, AxisTick, IAxisTick } from '../../src/model/Axis';
+import { Axis, AxisLabel, AxisTick, IAxisTick } from '../../src/model/Axis';
 import { Tester } from '../Tester';
 import { Chart } from '../../src/model/Chart';
 import { Utils } from '../../src/common/Utils';
@@ -67,7 +67,8 @@ const source = {
 }
 
 class AxisImpl extends Axis {
-    protected _createTickModel(): AxisTick { return new CategoryAxisTick(this); }
+    protected _createTickModel(): AxisTick { return }
+    protected _createLabelModel(): AxisLabel { return }
     type(): string { return type; }
     protected _doPrepareRender(): void {}
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] { return [];}
