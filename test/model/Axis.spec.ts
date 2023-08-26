@@ -13,7 +13,7 @@ import { CategoryAxisTick } from '../../src/model/axis/CategoryAxis';
 
 class AxisImpl extends Axis {
 
-    protected _createTick(): AxisTick { return new CategoryAxisTick(this); }
+    protected _createTickModel(): AxisTick { return new CategoryAxisTick(this); }
     type(): string { return 'test'; }
     protected _doPrepareRender(): void {}
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] { return [];}

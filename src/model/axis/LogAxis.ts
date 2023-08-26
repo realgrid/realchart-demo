@@ -41,7 +41,7 @@ export class LogAxis extends ContinuousAxis {
         return false;
     }
 
-    protected _createTick(): AxisTick {
+    protected _createTickModel(): AxisTick {
         return new LogAxisTick(this);
     }
 
@@ -53,21 +53,8 @@ export class LogAxis extends ContinuousAxis {
         return v;
     }
 
-    // protected _adjustMinMax(min: number, max: number): { min: number; max: number; } {
-    //     const v = super._adjustMinMax(min, max);
-
-    //     v.min = Math.log10(v.min);
-    //     v.max = Math.log10(v.max);
-    //     return v;
-    // }
-
-    protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
-        const ticks =  super._doBuildTicks(min, max, length);
-
-        ticks.forEach(t => {
-            t.label = String(Math.pow(10, t.value));
-        });
-        return ticks;
+    protected _createTick(length: number, step: number): IAxisTick {
+        return super._createTick(length, Math.pow(10, step));
     }
 
     getPosition(length: number, value: number): number {

@@ -404,7 +404,7 @@ export abstract class ContinuousAxis extends Axis {
         // return (this.nullable && isNaN(value)) || super.contains(value);
     }
 
-    protected _createTick(): AxisTick {
+    protected _createTickModel(): AxisTick {
         return new ContinuousAxisTick(this);
     }
 
@@ -471,14 +471,23 @@ export abstract class ContinuousAxis extends Axis {
             }
     
             for (let i = 0; i < steps.length; i++) {
-                ticks.push({
-                    pos: this.getPosition(length, steps[i]),
-                    value: steps[i],
-                    label: tick.label.getTick(steps[i]) || String(steps[i])
-                });
+                const tick = this._createTick(length, steps[i]);
+                ticks.push(tick);
             }
         }
         return ticks;
+    }
+
+    protected _getTickLabel(value: number): string {
+        return this.tick.label.getTick(value) || String(value);
+    }
+
+    protected _createTick(length: number, step: number): IAxisTick {
+        return {
+            pos: this.getPosition(length, step),
+            value: step,
+            label: this._getTickLabel(step)
+        }
     }
 
     private $_buildBrokenSteps(sect: AxisBreakSect): number[] {

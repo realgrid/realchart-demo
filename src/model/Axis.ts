@@ -375,7 +375,7 @@ export abstract class Axis extends ChartItem implements IAxis {
         super(chart);
 
         this.name = name;
-        this.tick = this._createTick();
+        this.tick = this._createTickModel();
     }
 
     //-------------------------------------------------------------------------
@@ -433,7 +433,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    protected abstract _createTick(): AxisTick;
+    protected abstract _createTickModel(): AxisTick;
     protected abstract _doPrepareRender(): void;
     protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[] | { ticks: IAxisTick[], markPoints: number[] };
 

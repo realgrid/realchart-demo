@@ -216,7 +216,7 @@ export class CategoryAxis extends Axis {
         return new CategoryAxisGrid(this);
     }
 
-    protected _createTick(): AxisTick {
+    protected _createTickModel(): AxisTick {
         return new CategoryAxisTick(this);
     }
 

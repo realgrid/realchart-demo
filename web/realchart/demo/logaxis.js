@@ -4,9 +4,9 @@ const config = {
     },
     title: "Log Axis",
     xAxis: {
-        type: 'category',
+        // type: 'category',
         // type: 'linear'
-        // type: 'log'
+        type: 'log'
     },
     yAxis: {
         type: 'log'
@@ -32,10 +32,6 @@ function setActions(container) {
         config.series.lineType = _getValue(e);
         chart.update(config);
     }, 'default');
-    createCheckBox(container, 'Point Marker', function (e) {
-        config.series.marker.visible = _getChecked(e);
-        chart.update(config);
-    }, true);
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
         chart.update(config);
@@ -48,6 +44,14 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.update(config);
     }, false);
+    createListBox(container, "XAxis.type", ['linear', 'log', 'category'], function (e) {
+        config.xAxis.type = _getValue(e);
+        chart.update(config);
+    }, 'log');
+    createListBox(container, "YAxis.type", ['linear', 'log'], function (e) {
+        config.yAxis.type = _getValue(e);
+        chart.update(config);
+    }, 'log');
 }
 
 function init() {

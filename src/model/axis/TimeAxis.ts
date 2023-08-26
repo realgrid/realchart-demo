@@ -226,7 +226,7 @@ export class TimeAxis extends ContinuousAxis {
         return 'time';
     }
 
-    protected _createTick(): AxisTick {
+    protected _createTickModel(): AxisTick {
         return new TimeAxisTick(this);
     }
 
