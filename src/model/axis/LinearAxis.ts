@@ -591,13 +591,19 @@ export abstract class ContinuousAxis extends Axis {
             const base = ser.getBaseValue(this);
             
             if (!isNaN(base)) {
-                if (isNaN(this._hardMin) && base < min) {
+                if (isNaN(this._hardMin) && base <= min) {
                     min = base;
                     this._minBased = true;
-                } else if (isNaN(this._hardMax) && base > max) {
+                } else if (isNaN(this._hardMax) && base >= max) {
                     max = base;
                     this._maxBased = true;
                 }
+            }
+            if (!this._minBased && !ser.canMinPadding(this)) {
+                this._minBased = true;
+            }
+            if (!this._maxBased && !ser.canMaxPadding(this)) {
+                this._maxBased = true;
             }
         })
 

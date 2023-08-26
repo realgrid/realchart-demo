@@ -86,7 +86,7 @@ export class BarSeriesGroup extends ClustrableSeriesGroup<BarSeries> implements 
     }
 
     getBaseValue(axis: IAxis): number {
-        return pickNum(this.baseValue, axis.getBaseValue());
+        return axis._isX ? NaN : pickNum(this.baseValue, axis.getBaseValue());
     }
 
     protected _doPrepareSeries(series: BarSeries[]): void {

@@ -57,7 +57,6 @@ export abstract class LineSeriesBase extends Series {
     // fields
     //-------------------------------------------------------------------------
     marker = new LineSeriesMarker(this);
-    private _base: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -81,17 +80,6 @@ export abstract class LineSeriesBase extends Series {
     protected _createPoint(source: any): DataPoint {
         return new LineSeriesPoint(source);
     }
-
-    protected _doPrepareRender(): void {
-        super._doPrepareRender();
-
-        this._base = pickNum(this.baseValue, this._yAxisObj.getBaseValue());
-    }
-
-    getBaseValue(axis: IAxis): number {
-        return this._base;
-    }
-
 
     //-------------------------------------------------------------------------
     // internal members
@@ -145,6 +133,11 @@ export class AreaSeriesPoint extends LineSeriesPoint {
 export class AreaSeries extends LineSeries {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _base: number;
+
+    //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     areaStyle: StyleProps;
@@ -154,6 +147,16 @@ export class AreaSeries extends LineSeries {
     //-------------------------------------------------------------------------
     protected _createPoint(source: any): DataPoint {
         return new AreaSeriesPoint(source);
+    }
+
+    protected _doPrepareRender(): void {
+        super._doPrepareRender();
+
+        this._base = pickNum(this.baseValue, this._yAxisObj.getBaseValue());
+    }
+
+    getBaseValue(axis: IAxis): number {
+        return this._base;
     }
 }
 
@@ -244,7 +247,7 @@ export class LineSeriesGroup extends SeriesGroup<LineSeries> {
     }
 
     getBaseValue(axis: IAxis): number {
-        return pickNum(this.baseValue, axis.getBaseValue());
+        return axis === this._yAxisObj ? pickNum(this.baseValue, axis.getBaseValue()) : NaN;
     }
 }
 
@@ -267,6 +270,6 @@ export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
     }
 
     getBaseValue(axis: IAxis): number {
-        return pickNum(this.baseValue, axis.getBaseValue());
+        return axis === this._yAxisObj ? pickNum(this.baseValue, axis.getBaseValue()) : NaN;
     }
 }

@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pad2 } from "../../common/Types";
 import { AxisTick, IAxisTick } from "../Axis";
 import { IChart } from "../Chart";
 import { ContinuousAxis, LinearAxis, ContinuousAxisTick } from "./LinearAxis";
@@ -238,8 +239,8 @@ export class TimeAxis extends ContinuousAxis {
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
         const ticks = super._doBuildTicks(min, max, length);
 
-        ticks.forEach(tick => {
-            tick.label = this.$_getLabel(tick.value);
+        ticks.forEach((tick, i) => {
+            tick.label = this.$_getLabel(tick.value, i);
         })
 
         return ticks;
@@ -253,30 +254,31 @@ export class TimeAxis extends ContinuousAxis {
         // return this.utc ? new Date(value + this._offset) : new Date(value);
     }
 
-    private $_getLabel(value: number): string {
+    private $_getLabel(value: number, index: number): string {
         const d = this.date(value);
+        let t: number;
 
         switch ((this.tick as TimeAxisTick).scale) {
             case TimeScale.YEAR:
                 return `${d.getFullYear()}`;
             case TimeScale.MONTH:
-                if (d.getMonth() === 0) {
-                    return `${d.getFullYear()}-01`;
+                if (index === 0 || d.getMonth() === 0) {
+                    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}`;
                 } else {
                     return `${d.getMonth() + 1}`;
                 }      
             case TimeScale.WEEK:
             case TimeScale.DAY:
-                if (d.getDate() === 1) {
-                    return `${d.getMonth() + 1}-01`;
+                if (index === 0 || d.getDate() === 1) {
+                    return `${d.getMonth() + 1}-${pad2(d.getDate())}`;
                 } else {
                     return `${d.getDate()}`;
                 }      
             case TimeScale.HOUR:
-                if (d.getHours() === 0) {
-                    return `${d.getDate()} 00:00`;
+                if (index === 0 || d.getHours() === 0) {
+                    return `${d.getDate()} ${pad2(d.getHours())}:00`;
                 } else {
-                    return `${d.getHours()}:00`;
+                    return `${pad2(d.getHours())}:00`;
                 }
             case TimeScale.MIN:
                 // TODO

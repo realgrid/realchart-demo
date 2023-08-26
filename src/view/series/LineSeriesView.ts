@@ -142,7 +142,9 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const yAxis = series._yAxisObj;
         let lowLine = this._lowLine;
 
-        if (this._needBelow = series.belowStyle && series._minValue < series.getBaseValue(yAxis)) {
+        this._needBelow = series.belowStyle && series._minValue < series.baseValue; // series.getBaseValue(yAxis)
+
+        if (this._needBelow) {
             if (!lowLine) {
                 this._lineContainer.insertChild(lowLine = this._lowLine = new PathElement(this.doc), this._line);
                 this._upperClip = control.clipBounds();
@@ -326,7 +328,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
         if (this._needBelow) {
             const axis = series._yAxisObj as ContinuousAxis;
-            const base = series.getBaseValue(axis);
+            const base = series.baseValue;// series.getBaseValue(axis);
             
             if (this._inverted) {
                 this.$_resetClips(this.width, this.height, axis.getPosition(this.width, base), true);

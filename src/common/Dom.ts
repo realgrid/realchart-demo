@@ -8,7 +8,6 @@
 
 import { RtDebug } from "./Common";
 import { IRect } from "./Rectangle";
-import { CSSStyles2, IPadding, ISides } from "./Types";
 
 export interface IDomContaner {
     dom(): Element;
@@ -268,37 +267,6 @@ export class Dom {
         elt.style.cssText = '';
     }
 
-    static removeStyles(css: CSSStyleDeclaration, style: CSSStyles2) {
-        if (style) {
-            for (const p in style) {
-                css[p] = '';
-            }
-        }
-    }
-
-    static setStyle(elt: HTMLElement, style: CSSStyles2): void {
-        style && Object.assign(elt.style, style);
-    }
-
-    static replaceStyle(css: CSSStyleDeclaration, style: CSSStyles2, prevStyle: CSSStyles2): CSSStyles2 {
-        if (style != prevStyle) {
-            if (prevStyle) {
-                for (const p in prevStyle) {
-                    css[p] = '';
-                }
-            }
-            style && Object.assign(css, style);
-            return style;
-        }
-        return prevStyle;
-    }
-
-    static createElement<K extends keyof HTMLElementTagNameMap>(doc: Document, tagName: K, style: CSSStyles2): HTMLElementTagNameMap[K] {
-        const elt = doc.createElement(tagName);
-        style && Object.assign(elt.style, style);
-        return elt;
-    }
-
     static htmlEncode(text: string): string {
 		return document.createElement('a').appendChild(document.createTextNode(text)).parentNode["innerHTML"];
     }
@@ -371,68 +339,6 @@ export class Dom {
 
     static getDomId(): string {
         return '-rtc-' + _dom_id_++;
-    }
-
-    static createBR(doc: Document, className: string): HTMLBRElement {
-        const br = doc.createElement('br');
-        br.className = className;
-        return br;
-    }
-
-    static createSpan(doc: Document, style: CSSStyles2): HTMLSpanElement {
-        const span = doc.createElement('span');
-        style && Object.assign(span.style, style);
-        return span;
-    }
-
-    static createCheckBox(doc: Document, style: CSSStyles2): HTMLInputElement {
-        const chk = doc.createElement('input');
-        chk.type = 'checkbox';
-        style && Object.assign(chk.style, style);
-        return chk;
-    }
-
-    static createRadio(doc: Document, style: CSSStyles2): HTMLInputElement {
-        const chk = doc.createElement('input');
-        chk.type = 'radio';
-        style && Object.assign(chk.style, style);
-        return chk;
-    }
-
-    static getPadding(dom: HTMLElement | SVGSVGElement): ISides {
-        // css selector에서 설정할 수도 있으므로 dom.style 만으로는 부족하다.
-        // padding % 는 자신 크기에 대한 비율이 아니라 상위 block에 대한 상대값이다.
-        // touch 컨트롤에서는 (거의) 사용할 수 없다.
-        const cs = getComputedStyle(dom);
-        
-        return {
-            left: parseFloat(cs.paddingLeft) || 0,
-            right: parseFloat(cs.paddingRight) || 0,
-            top: parseFloat(cs.paddingTop) || 0,
-            bottom: parseFloat(cs.paddingBottom) || 0
-        }
-    }
-
-    static getPaddingEx(dom: HTMLElement | SVGSVGElement): ISides {
-        const s = this.getPadding(dom);
-        s.horz = s.left + s.right;
-        s.vert = s.top + s.bottom;
-        return s;
-    }
-
-    static getPaddingBorder(dom: HTMLElement): IPadding {
-        const cs = getComputedStyle(dom);
-        
-        return {
-            left: parseFloat(cs.paddingLeft) || 0,
-            right: parseFloat(cs.paddingRight) || 0,
-            top: parseFloat(cs.paddingTop) || 0,
-            bottom: parseFloat(cs.paddingBottom) || 0,
-            borderLeft: parseFloat(cs.borderLeftWidth) || 0,
-            borderRight: parseFloat(cs.borderRightWidth) || 0,
-            borderTop: parseFloat(cs.borderTopWidth) || 0,
-            borderBottom: parseFloat(cs.borderBottomWidth) || 0
-        }
     }
 
     static stopAnimation(ani: Animation): null {

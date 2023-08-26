@@ -36,6 +36,9 @@ export function pixel(v: number): string {
 export function isNull(v: any): boolean {
     return v == null || Number.isNaN(v) || v === '';
 }
+export function pad2(v: number): string {
+    return v < 10 ? `0${v}` : String(v);
+}
 
 export type Path = string | any[];
 
@@ -169,152 +172,6 @@ export interface SVGStyles {
 
 export type SVGStyleOrClass = SVGStyles | string;
 
-export interface CSSStyles {
-    background?: string;
-    backgroundAttachment?: string;
-    backgroundBlendMode?: string;
-    backgroundClip?: string;
-    backgroundColor?: string;
-    backgroundImage?: string;
-    backgroundOrigin?: string;
-    backgroundPosition?: string;
-    backgroundPositionX?: string;
-    backgroundPositionY?: string;
-    backgroundRepeat?: string;
-    backgroundSize?: string;
-    border?: string;
-    borderBlock?: string;
-    borderBlockColor?: string;
-    borderBlockEnd?: string;
-    borderBlockEndColor?: string;
-    borderBlockEndStyle?: string;
-    borderBlockEndWidth?: string;
-    borderBlockStart?: string;
-    borderBlockStartColor?: string;
-    borderBlockStartStyle?: string;
-    borderBlockStartWidth?: string;
-    borderBlockStyle?: string;
-    borderBlockWidth?: string;
-    borderBottom?: string;
-    borderBottomColor?: string;
-    borderBottomLeftRadius?: string;
-    borderBottomRightRadius?: string;
-    borderBottomStyle?: string;
-    borderBottomWidth?: string;
-    borderCollapse?: string;
-    borderColor?: string;
-    borderEndEndRadius?: string;
-    borderEndStartRadius?: string;
-    borderImage?: string;
-    borderImageOutset?: string;
-    borderImageRepeat?: string;
-    borderImageSlice?: string;
-    borderImageSource?: string;
-    borderImageWidth?: string;
-    borderInline?: string;
-    borderInlineColor?: string;
-    borderInlineEnd?: string;
-    borderInlineEndColor?: string;
-    borderInlineEndStyle?: string;
-    borderInlineEndWidth?: string;
-    borderInlineStart?: string;
-    borderInlineStartColor?: string;
-    borderInlineStartStyle?: string;
-    borderInlineStartWidth?: string;
-    borderInlineStyle?: string;
-    borderInlineWidth?: string;
-    borderLeft?: string;
-    borderLeftColor?: string;
-    borderLeftStyle?: string;
-    borderLeftWidth?: string;
-    borderRadius?: string;
-    borderRight?: string;
-    borderRightColor?: string;
-    borderRightStyle?: string;
-    borderRightWidth?: string;
-    borderSpacing?: string;
-    borderStartEndRadius?: string;
-    borderStartStartRadius?: string;
-    borderStyle?: string;
-    borderTop?: string;
-    borderTopColor?: string;
-    borderTopLeftRadius?: string;
-    borderTopRightRadius?: string;
-    borderTopStyle?: string;
-    borderTopWidth?: string;
-    borderWidth?: string;
-    boxSizing?: 'content-box' | 'border-box' | '';
-    color?: string;
-    font?: string;
-    fontFamily?: string;
-    fontFeatureSettings?: string;
-    fontKerning?: string;
-    fontOpticalSizing?: string;
-    fontSize?: string;
-    fontSizeAdjust?: string;
-    fontStretch?: string;
-    fontStyle?: string;
-    fontSynthesis?: string;
-    fontVariant?: string;
-    fontVariantCaps?: string;
-    fontVariantEastAsian?: string;
-    fontVariantLigatures?: string;
-    fontVariantNumeric?: string;
-    fontVariantPosition?: string;
-    fontVariationSettings?: string;
-    fontWeight?: string;
-    padding?: string;
-    paddingBlock?: string;
-    paddingBlockEnd?: string;
-    paddingBlockStart?: string;
-    paddingBottom?: string;
-    paddingInline?: string;
-    paddingInlineEnd?: string;
-    paddingInlineStart?: string;
-    paddingLeft?: string;
-    paddingRight?: string;
-    paddingTop?: string;
-    textOverflow?: string;
-
-    // svg
-    fill?: string;
-    stroke?: string;
-    strokeWidth?: string;
-}
-
-/** @internal */
-export interface CSSStyles2 extends CSSStyles {
-    display?: string;
-    position?: string;
-    alignItems?: string;
-    justifyContent?: string;
-    flexDirection?: string;
-    flexWrap?: string;
-    gap?: string;
-    flex?: string;
-    width?: string;
-    height?: string;
-    minHeight?: string;
-    minWidth?: string;
-    maxWidth?: string;
-    left?: string;
-    top?: string;
-    overflow?: string;
-    marginRight?: string;
-    whiteSpace?: string;
-    margin?: string;
-    marginLeft?: string;
-    pointerEvents?: string;
-}
-
-export type StyleOrClass = CSSStyles | string;
-
-export const getPaddingFrom = function(style: CSSStyles): IPadding {
-    const padding = Object.assign({}, PADDING_ZERO);
-
-    return padding;
-}
-
 export class RtAbortError extends Error {
     static check(err: any): boolean {
         if (err instanceof RtAbortError) return true;
@@ -360,32 +217,6 @@ export const ZERO_SIDES = Object.freeze({
     right: 0,
     top: 0,
     bottom: 0,
-    horz: 0,
-    vert: 0
-});
-
-export interface IPadding {
-    left: number;
-    right: number;
-    top: number;
-    bottom: number;
-    borderLeft: number;
-    borderRight: number;
-    borderTop: number;
-    borderBottom: number;
-    horz?: number;
-    vert?: number;
-}
-
-export const PADDING_ZERO = Object.freeze({
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    borderLeft: 0,
-    borderRight: 0,
-    borderTop: 0,
-    borderBottom: 0,
     horz: 0,
     vert: 0
 });

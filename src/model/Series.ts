@@ -105,6 +105,8 @@ export interface IPlottingItem {
     clusterable(): boolean;
     getBaseValue(axis: IAxis): number;
     // axis에 설정된 baseValue를 무시하라!
+    canMinPadding(axis: IAxis): boolean; 
+    canMaxPadding(axis: IAxis): boolean; 
     ignoreAxisBase(axis: IAxis): boolean;
     collectValues(axis: IAxis): number[];
     collectCategories(axis: IAxis): string[];
@@ -470,8 +472,19 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return true;
     }
 
+    /**
+     * BarSeries 계열처럼 base를 기준으로 표시하는 방향이 달라지는 경우 기준 값.
+     */
     getBaseValue(axis: IAxis): number {
         return NaN;
+    }
+
+    canMinPadding(axis: IAxis): boolean {
+        return true;
+    }
+
+    canMaxPadding(axis: IAxis): boolean {
+        return true;
     }
 
     //-------------------------------------------------------------------------
@@ -1031,7 +1044,7 @@ export abstract class BasedSeries extends ClusterableSeries {
     }
 
     getBaseValue(axis: IAxis): number {
-        return this._base;
+        return axis === this._yAxisObj ? this._base : NaN;
     }
 
     //-------------------------------------------------------------------------
@@ -1156,7 +1169,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     getBaseValue(axis: IAxis): number {
-        return axis.getBaseValue();
+        return NaN;//axis.getBaseValue();
     }
 
     //-------------------------------------------------------------------------
@@ -1199,6 +1212,14 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     getLegendSources(list: ILegendSource[]) {
         // list.push(...this._visibles);
         list.push(...this._series);
+    }
+
+    canMinPadding(axis: IAxis): boolean {
+        return true;
+    }
+
+    canMaxPadding(axis: IAxis): boolean {
+        return this.layout !== SeriesGroupLayout.FILL;
     }
 
     //-------------------------------------------------------------------------

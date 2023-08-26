@@ -1,7 +1,7 @@
 const config = {
     title: "Bar Group",
     options: {
-        // inverted: true,
+        animatable: false
     },
     xAxis: {
         title: "일일 Daily fat",
