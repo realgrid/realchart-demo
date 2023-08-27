@@ -12,7 +12,7 @@ import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
-import { BasedSeries, MarerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
+import { MarerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
 
 export class LineSeriesPoint extends DataPoint {
 
@@ -64,16 +64,6 @@ export abstract class LineSeriesBase extends Series {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * 위/아래 구분의 기준이 되는 값.
-     * <br>
-     */
-    baseValue = 0;
-    /**
-     * {@link baseValue} 혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.
-     */
-    belowStyle: SVGStyleOrClass;
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -105,7 +95,18 @@ export class LineSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     lineType = LineType.DEFAULT;
     stepDir = LineStepDirection.FORWARD;
+
     connectNulls = false;
+    /**
+     * 위/아래 구분의 기준이 되는 값.
+     * <br>
+     */
+    baseValue = 0;
+    /**
+     * {@link baseValue} 혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.
+     */
+    belowStyle: SVGStyleOrClass;
+
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -212,19 +213,44 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
     }
 }
 
-export class AreaRangeSeries extends AreaSeries {
+export class AreaRangeSeries extends LineSeriesBase {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     lowField: string;
     highField: string;
+    areaStyle: StyleProps;
+    /**
+     * true면 spline 곡선으로 표시한다.
+     * <br>
+     * 
+     * @default false
+     */
+    curved = false;
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    type(): string {
+        return 'arearange';
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new AreaRangeSeriesPoint(source);
+    }
+
+    getLineType(): LineType {
+        return this.curved ? LineType.SPLINE : LineType.DEFAULT;
+    }
+
+    collectValues(axis: IAxis): number[] {
+        const vals = super.collectValues(axis);
+
+        if (axis === this._yAxisObj) {
+            this._visPoints.forEach((p: AreaRangeSeriesPoint) => vals.push(p.lowValue));
+        }
+        return vals;
     }
 }
 

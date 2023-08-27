@@ -12,7 +12,7 @@ import { PathElement } from "../../common/RcControl";
 import { Utils } from "../../common/Utils";
 import { SeriesGroupLayout } from "../../model/Series";
 import { LinearAxis } from "../../model/axis/LinearAxis";
-import { AreaSeries, AreaSeriesPoint } from "../../model/series/LineSeries";
+import { AreaSeries, AreaSeriesPoint, LineSeries } from "../../model/series/LineSeries";
 import { LineSeriesBaseView } from "./LineSeriesView";
 
 export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
@@ -49,14 +49,13 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    protected _prepareBelow(w: number, h: number): boolean {
-        const series = this.model;
+    protected _prepareBelow(series: AreaSeries, w: number, h: number): boolean {
         let lowArea = this._lowArea;
 
         this._area.setStyle('fill', this.model.color);
         this._lowArea?.setStyle('fill', this.model.color);
 
-        if (super._prepareBelow(w, h)) {
+        if (super._prepareBelow(series, w, h)) {
             if (!lowArea) {
                 this._lineContainer.insertChild(lowArea = this._lowArea = new PathElement(this.doc, 'rct-area-series-area'), this._area);
             }

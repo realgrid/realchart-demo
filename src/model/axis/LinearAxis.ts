@@ -187,10 +187,10 @@ export class ContinuousAxisTick extends AxisTick {
             min = base - ceil((base - min) / step) * step;
 
         } else {
-            if (min > Math.floor(min / scale) * scale) {
-                min = Math.floor(min / scale) * scale;
-            } else if (min < Math.ceil(min / scale) * scale) {
-                min = Math.ceil(min / scale) * scale;
+            if (min > Math.floor(min / step) * step) {
+                min = Math.floor(min / step) * step;
+            } else if (min < Math.ceil(min / step) * step) {
+                min = Math.ceil(min / step) * step;
             }
         }
 

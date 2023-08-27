@@ -99,10 +99,12 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     }
 
     protected _renderSeries(width: number, height: number): void {
+        const series = this.model;
+
         this._lineContainer.invert(this._inverted, height);
-        this._prepareBelow(width, height);
-        this._layoutMarkers(this.model._visPoints as LineSeriesPoint[], width, height);
-        this._layoutLines(this.model._visPoints as LineSeriesPoint[]);
+        series instanceof LineSeries && this._prepareBelow(series, width, height);
+        this._layoutMarkers(series._visPoints as LineSeriesPoint[], width, height);
+        this._layoutLines(series._visPoints as LineSeriesPoint[]);
     }
 
     protected _runShowEffect(firstTime: boolean): void {
@@ -136,9 +138,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         return 1;
     }
 
-    protected _prepareBelow(w: number, h: number): boolean {
+    protected _prepareBelow(series: LineSeries, w: number, h: number): boolean {
         const control = this.control;
-        const series = this.model;
         const yAxis = series._yAxisObj;
         let lowLine = this._lowLine;
 
@@ -326,7 +327,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         this._line.addStyleOrClass(series.style);
         Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
 
-        if (this._needBelow) {
+        if (series instanceof LineSeries && this._needBelow) {
             const axis = series._yAxisObj as ContinuousAxis;
             const base = series.baseValue;// series.getBaseValue(axis);
             
