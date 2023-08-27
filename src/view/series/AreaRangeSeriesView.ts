@@ -101,14 +101,18 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         super._layoutMarkers(pts, width, height);
 
         const series = this.model;
+        const inverted = this._inverted;
+        const yAxis = series._yAxisObj;
+        const yLen = inverted ? width : height;
+        const yOrg = height;
+
+        for (let i = 0, cnt = pts.length; i < cnt; i++) {
+            const p = pts[i];
+
+            p.yLow = yOrg - yAxis.getPosition(yLen, p.lowValue);
+        }
 
         if (series.marker.visible) {
-            const inverted = series.chart.isInverted();
-            const xAxis = series._xAxisObj;
-            const yAxis = series._yAxisObj;
-            const yLen = inverted ? width : height;
-            const xLen = inverted ? height : width;
-                const yOrg = height;
             const markers = this._markers;
     
             for (let i = 0, cnt = pts.length; i < cnt; i++) {
@@ -116,12 +120,12 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
                 let x: number;
                 let y: number;
 
-                x = p.xPos;
-                y = p.yLow = yOrg - yAxis.getPosition(yLen, p.lowValue);
-
                 if (inverted) {
                     x = yAxis.getPosition(yLen, p.lowValue);
                     y = markers.get(i).ty;
+                } else {
+                    x = p.xPos;
+                    y = p.yLow;
                 }
 
                 this._layoutMarker(markers.get(i + cnt), x, y);
