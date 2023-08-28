@@ -106,12 +106,16 @@ export class SlideAnimation extends SeriesAnimation {
         switch (options &&options.from) {
             case 'top':
                 ani = this.$_top(v, cr, options);
+                break;
             case 'bottom':
                 ani = this.$_bottom(v, cr, options);
+                break;
             case 'right':
                 ani = this.$_right(v, cr, options);
+                break;
             default:
                 ani = this.$_left(v, cr, options);
+                break;
         }
 
         ani.addEventListener('finish', () => {
@@ -134,6 +138,8 @@ export class SlideAnimation extends SeriesAnimation {
         // plot area 경계에 걸친 point들이 표시되도록 infliate한다.
         return v.clipRect(-v.width * .1, -v.height * .1, v.width * 1.2, v.height * 1.2)
                 .setTemporary();
+        // return v.clipRect(0, 0, v.width, v.height)
+        // .setTemporary();
     }
 
     private $_left(v: SeriesView<Series>, cr: RcElement, options: ISlideAnimation): Animation {
