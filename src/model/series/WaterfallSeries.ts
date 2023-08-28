@@ -9,7 +9,7 @@
 import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { ClusterableSeries, RangedSeries } from "../Series";
+import { RangedSeries } from "../Series";
 
 export class WaterfallSeriesPoint extends DataPoint {
 
@@ -62,10 +62,6 @@ export class WaterfallSeries extends RangedSeries {
 
     protected _createPoint(source: any): DataPoint {
         return new WaterfallSeriesPoint(source);
-    }
-
-    protected _getBottomValue(p: WaterfallSeriesPoint): number {
-        return p.y = p.save;
     }
 
     protected _doPrepareRender(): void {
@@ -134,5 +130,11 @@ export class WaterfallSeries extends RangedSeries {
             p.y = yPrev = y;
             p.low = low;
         }
+    }
+
+    protected _getBottomValue(p: WaterfallSeriesPoint): number {
+        // [NOTE] low value를 axis에 포함시키지 않는다. 다른 ranged 시리즈와 다르다.
+        p.y = p.save;
+        return NaN;
     }
 }

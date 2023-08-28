@@ -279,8 +279,11 @@ export abstract class FormattableText extends ChartText {
                 } else {
                     return this._numberFormatter.toStr(value);
                 }
+            } else if (sv) {
+                return sv.value + sv.symbol;
+            } else {
+                return String(value);
             }
-            return String(value);
         }
         return 'NaN';
     }

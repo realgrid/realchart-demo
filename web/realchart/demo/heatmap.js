@@ -2,7 +2,10 @@ const config = {
     title: "Heatmap Series",
     xAxis: {
         title: 'X Axis',
-        grid: true
+        grid: true,
+        label: {
+            rotation: -45
+        }
     },
     yAxis: {
         title: 'Y Axis',

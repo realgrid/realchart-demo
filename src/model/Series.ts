@@ -1065,7 +1065,8 @@ export abstract class RangedSeries extends ClusterableSeries {
 
         if (axis === this._yAxisObj) {
             this._visPoints.forEach((p: DataPoint) => {
-                vals.push(this._getBottomValue(p));
+                const v = this._getBottomValue(p);
+                !isNaN(v) && vals.push(v);
             })
         }
         return vals;
