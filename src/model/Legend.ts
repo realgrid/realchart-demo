@@ -7,7 +7,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { SVGStyleOrClass } from "../common/Types";
+import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
+
+export interface ILegendRenderer {
+}
 
 export interface ILegendSource {
     visible: boolean;
@@ -64,6 +68,12 @@ export enum LegendLayout {
     VERTICAL = 'vertical'
 }
 
+/**
+ * 차트 범례 설정 모델.
+ * <br>
+ * visible 기본값이 undefined이고,
+ * 따로 지정하지 않으면 시리즈가 둘 이상 포함돼야 legend를 표시한다.
+ */
 export class Legend extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -73,6 +83,13 @@ export class Legend extends ChartItem {
     // fields
     //-------------------------------------------------------------------------
     private _items: LegendItem[];
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart, void 0)
+    }
 
     //-------------------------------------------------------------------------
     // properties
@@ -127,6 +144,10 @@ export class Legend extends ChartItem {
 
     isEmpty(): boolean {
         return !this._items || this._items.length < 1;
+    }
+
+    isVisible(): boolean {
+        return this._items.length > 1;
     }
 
     //-------------------------------------------------------------------------

@@ -14,7 +14,8 @@
   - line: line, arearange, bellcurve, pareto,
   - area: area, (line 계열이 아니라 bar 계열이다! (baseValue))
   - scatter: scatter, bubble, vector
-  - map: heatmap, treemap
+  - map: heatmap
+  - map: treemap (no axis)
   - pie: pie
   - widget: funnel, gauge(v1.1)
   - polar: bar, line, range(?), scatter(?), map(?) <- ?: 의미가 있는가?

@@ -193,12 +193,14 @@ export abstract class RcAnimation {
             rate = this._easing(rate);
         }
 
-        this._doUpdate(rate);
-        
-        if (dt >= this.duration) {
-            this._stop();
-        } else {
-            window.requestAnimationFrame(this._handler)
+        try {
+            this._doUpdate(rate);
+        } finally {
+            if (dt >= this.duration) {
+                this._stop();
+            } else {
+                window.requestAnimationFrame(this._handler)
+            }
         }
     }
 
@@ -229,14 +231,14 @@ export abstract class RcAnimation {
         this._easing = Easings[easing];
         this._doStart();
         this._started = +new Date();
-        // this._timer = setInterval(this._handler, 30);
+        this._timer = setTimeout(() => this._stop(), this.duration * 1.2); // 안전 장치
         this._handler();
     }
 
     protected _stop(): void {
-        if (this._started) {//} this._timer) {
-            // clearInterval(this._timer);
-            // this._timer = null;
+        if (this._started) {
+            clearTimeout(this._timer);
+            this._timer = null;
             this._started = null;
             this._doStop();
         }

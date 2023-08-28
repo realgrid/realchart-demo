@@ -23,7 +23,6 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     model: T;
     mw: number;
     mh: number;
-    protected _modelChanged: boolean;
     _debugRect: RectElement;
     
     //-------------------------------------------------------------------------
@@ -50,9 +49,12 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     //-------------------------------------------------------------------------
     measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         this.setStyleOrClass(model.style);
-        this._modelChanged = model !== this.model;
+        if (model !== this.model) {
+            this.model = model;
+            this._doModelChanged();
+        }
 
-        const sz = this._doMeasure(doc, this.model = model, hintWidth, hintHeight, phase);
+        const sz = this._doMeasure(doc, this.model, hintWidth, hintHeight, phase);
 
         this.mw = sz.width;
         this.mh = sz.height;
@@ -100,6 +102,9 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     protected _invalidate(): void {
         this.control?.invalidateLayout();
     }
+
+    protected _doModelChanged(): void {
+    }
 }
 
 export abstract class BoundableElement<T extends ChartItem> extends ChartElement<T> {
@@ -129,8 +134,11 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     }
 
     measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this.model = model;
         this.setStyleOrClass(model.style);
+        if (model !== this.model) {
+            this.model = model;
+            this._doModelChanged();
+        }
         this._setBackgroundStyle(this._background);
 
         // TODO: 캐쉬!

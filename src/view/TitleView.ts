@@ -30,7 +30,7 @@ export class TitleView extends BoundableElement<Title> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, isSub: boolean) {
-        super(doc, isSub ? TitleView.TITLE_CLASS : TitleView.SUBTITLE_CLASS, isSub ? 'rct-subtitle-background' : 'rct-title-background');
+        super(doc, isSub ? TitleView.SUBTITLE_CLASS : TitleView.TITLE_CLASS, isSub ? 'rct-subtitle-background' : 'rct-title-background');
 
         this.add(this._textView = new TextElement(doc));
         this._textView.anchor = TextAnchor.START;

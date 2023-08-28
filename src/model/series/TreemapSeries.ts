@@ -9,7 +9,7 @@
 import { Color } from "../../common/Color";
 import { toStr } from "../../common/Types";
 import { DataPoint } from "../DataPoint";
-import { Series } from "../Series";
+import { IPlottingItem, Series } from "../Series";
 
 export class TreemapSeriesPoint extends DataPoint {
 
@@ -188,6 +188,10 @@ export class TreemapSeries extends Series {
     }
 
     needAxes(): boolean {
+        return false;
+    }
+
+    canMixWith(other: IPlottingItem): boolean {
         return false;
     }
 

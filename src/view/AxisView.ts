@@ -12,7 +12,7 @@ import { ISize, Size } from "../common/Size";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis, AxisGuide, AxisTickMark, AxisTitle } from "../model/Axis";
+import { Axis, AxisGuide, AxisPosition, AxisTickMark, AxisTitle } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
 import { BoundableElement, ChartElement } from "./ChartElement";
@@ -63,7 +63,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
 
         // rotation
         if (!isHorz) {
-            this.setRotaion(0, this.height / 2, 270);
+            this.setRotaion(0, this.height / 2, this.model.axis.position === AxisPosition.OPPOSITE ? 90 : 270);
         }
 
         // text
@@ -234,6 +234,7 @@ export class AxisView extends ChartElement<Axis> {
         // title
         if (titleView.visible) { // checkHeight/checkWidth 에서 visible 설정.
             sz += titleView.mh;
+            sz += model.title.gap || 0;
         }
 
         return Size.create(horz ? hintWidth : sz, horz ? sz : hintHeight);
@@ -264,33 +265,33 @@ export class AxisView extends ChartElement<Axis> {
 
         // tick marks
         if (this._markContainer.visible) {
-            const len = markLen - (model.tick.margin || 0);
-
             if (horz) {
                 this._markViews.forEach((v, i) => {
                     v.resize(1, markLen);
-                    v.layout().translate(markPts[i], opp ? h - len : 0);
+                    v.layout().translate(markPts[i], opp ? h - markLen : 0);
                 })
             } else {
                 this._markViews.forEach((v, i) => {
                     v.resize(markLen, 1);
-                    v.layout().translate(opp ? 0 : w - len, h - markPts[i]);
+                    v.layout().translate(opp ? 0 : w - markLen, h - markPts[i]);
                 })
             }
         }
 
         // labels
+        const len = markLen + (model.tick.margin || 0);
+
         if (this._labelContainer.visible) {
             if (horz) {
                 labelViews.forEach((v, i) => {
-                    const y = opp ? h - markLen - v.getBBounds().height : markLen;
+                    const y = opp ? h - len - v.getBBounds().height : len;
     
                     // v.translate(ticks[i].pos - v.getBBounds().width / 2, y);
                     v.anchor = TextAnchor.MIDDLE;
                     v.translate(ticks[i].pos, y);
                 });
             } else {
-                const x = opp ? markLen : w - markLen;
+                const x = opp ? len : w - len;
     
                 labelViews.forEach((v, i) => {
                     const r = v.getBBounds();
@@ -305,16 +306,17 @@ export class AxisView extends ChartElement<Axis> {
         // title
         if (titleView.visible) {
             const labelSize = this._labelSize;
+            const gap = model.title.gap || 0;
 
             titleView.resizeByMeasured().layout(horz);
 
             if (horz) {
-                const y = opp ? 0 : markLen + labelSize;
+                const y = opp ? 0 : len + labelSize + gap;
 
                 // titleView.translate((w - titleView.width) / 2, this._markLen + labelSize);
                 titleView.translate(w / 2, y);
             } else {
-                const x = opp ? markLen + labelSize + titleView.height / 2 : w - markLen - labelSize - titleView.height / 2;
+                const x = opp ? len + labelSize + gap + titleView.height / 2 : w - len - labelSize - gap - titleView.height / 2;
 
                 titleView.translate(x, (h - titleView.height) / 2);
             }

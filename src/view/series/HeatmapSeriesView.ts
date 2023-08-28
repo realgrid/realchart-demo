@@ -57,6 +57,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
+        this._pointContainer.invert(this._inverted, height);
         this.$_layoutCells(width, height);
     }
 
@@ -97,13 +98,8 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
             let y: number;
             let labelView: PointLabelView;
 
-            if (inverted) {
-                y = (p.yPos = xLen - xAxis.getPosition(xLen, p.xValue)) - wUnit / 2;
-                x = (p.xPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
-            } else {
-                x = (p.xPos = xAxis.getPosition(xLen, p.xValue)) - wUnit / 2;
-                y = (p.yPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
-            }
+            x = (p.xPos = xAxis.getPosition(xLen, p.xValue)) - wUnit / 2;
+            y = (p.yPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
 
             cell.setBounds(x, y, wPoint, hPoint);
             cell.setStyle('fill', color.brighten(1 - p.colorValue / series._colorMax).toString());
@@ -113,10 +109,16 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
                 const r = labelView.getBBounds();
 
                 if (inverted) {
-                    labelView.translate(x, y - r.height / 2);
+                    y = xLen - xAxis.getPosition(xLen, p.xValue);
+                    x = org;
+                    y -= r.height / 2;
+                    x += yAxis.getPosition(yLen, p.yValue) - r.width / 2;
                 } else {
-                    labelView.translate(x + wPoint / 2 - r.width / 2, y + hPoint / 2 - r.height / 2);
+                    x += (wPoint - r.width) / 2;
+                    y += (hPoint - r.height) / 2;
                 }
+
+                labelView.translate(x, y);
             }
         });
     }

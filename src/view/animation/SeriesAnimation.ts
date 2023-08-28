@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcAnimation } from "../../common/RcAnimation";
-import { ClipElement, RcElement } from "../../common/RcControl";
+import { RcElement } from "../../common/RcControl";
 import { pixel } from "../../common/Types";
 import { Series } from "../../model/Series";
 import { SeriesView } from "../SeriesView";

@@ -54,12 +54,12 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createCheckBox(container, 'Opposite', function (e) {
-        config.xAxis.position = _getChecked(e) ? 'opposite': 'normal';
-        chart.update(config, animate);
-    }, false);
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
+        chart.update(config, animate);
+    }, false);
+    createCheckBox(container, 'X.Opposite', function (e) {
+        config.xAxis.position = _getChecked(e) ? 'opposite': 'normal';
         chart.update(config, animate);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {

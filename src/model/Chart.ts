@@ -69,6 +69,7 @@ export interface IChart {
     // _getSeries2(): SeriesCollection;
     _getXAxes(): AxisCollection;
     _getYAxes(): AxisCollection;
+    getAxesGap(): number;
     _connectSeries(series: IPlottingItem, isX: boolean): Axis;
     _getLegendSources(): ILegendSource[];
     _visibleChanged(item: ChartItem): void;
@@ -147,6 +148,10 @@ export class ChartOptions extends ChartItem {
      */
     polar = false;
     /**
+     * false로 지정하면 차트 전체척으로 animation 효과를 실행하지 않는다.
+     */
+    animatable = true;
+    /**
      * x값이 설정되지 않은 포인트들의 시작 x값.
      * {@link Series.xStart}의 기본값.
      */
@@ -158,9 +163,11 @@ export class ChartOptions extends ChartItem {
      */
     xStep = 1;
     /**
-     * false로 지정하면 차트 전체척으로 animation 효과를 실행하지 않는다.
+     * 복수 axis가 표시되는 경우 axis 사이의 간격
+     * <br>
+     * @default 8 pixels
      */
-    animatable = true;
+    axisGap = 8;
 
     //-------------------------------------------------------------------------
     // methods
@@ -471,6 +478,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     _getAxisType(type: string): any {
         return axis_types[String(type).toLowerCase()];
+    }
+
+    getAxesGap(): number {
+        return this._options.axisGap || 0;
     }
 
     _visibleChanged(item: ChartItem): void {

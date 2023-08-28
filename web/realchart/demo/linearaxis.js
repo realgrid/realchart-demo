@@ -4,11 +4,13 @@ const config = {
     },
     title: "Linear Axis",
     xAxis: {
+        title: 'X Axis',
         tick: {
         },
         label: {}
     },
     yAxis: {
+        title: 'Y Axis',
         tick: {
         },
         label: {}
@@ -54,6 +56,10 @@ function setActions(container) {
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Y.Opposite', function (e) {
+        config.yAxis.position = _getChecked(e) ? 'opposite': 'normal';
         chart.update(config);
     }, false);
     createCheckBox(container, 'X.reversed', function (e) {

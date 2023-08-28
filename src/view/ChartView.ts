@@ -189,6 +189,7 @@ class AxisSectionView extends SectionView {
     views: AxisView[] = [];
     isHorz: boolean;
     isOpposite: boolean;
+    private _gap = 0;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -220,8 +221,10 @@ class AxisSectionView extends SectionView {
         });
 
         this.axes = axes;
-        this.visible = views.length > 0;
-        this.isHorz = views[0]?.model._isHorz;
+        if (this.visible = views.length > 0) {
+            this.isHorz = views[0].model._isHorz;
+            this._gap = views[0].model.chart.getAxesGap();  
+        }
     }
 
     /**
@@ -233,7 +236,7 @@ class AxisSectionView extends SectionView {
         this.views.forEach(view => {
             h += view.checkHeight(doc, width, height);
         });
-        return h;
+        return h + (this.views.length - 1) * this._gap;
     }
 
     /**
@@ -245,7 +248,7 @@ class AxisSectionView extends SectionView {
         this.views.forEach(view => {
             w += view.checkWidth(doc, width, height);
         });
-        return w;
+        return w + (this.views.length - 1) * this._gap;
     }
 
     //-------------------------------------------------------------------------
@@ -263,6 +266,11 @@ class AxisSectionView extends SectionView {
             w += sz.width;
             h += sz.height;
         })
+        if (this.isHorz) {
+            h += (this.views.length - 1) * this._gap;
+        } else {
+            w += (this.views.length - 1) * this._gap;
+        }
         return Size.create(w, h);
     }
 
@@ -284,10 +292,10 @@ class AxisSectionView extends SectionView {
 
             if (this.isHorz) {
                 v.translateY(this.dir === SectionDir.TOP ? h - p - v.mh : p);
-                p += v.mh;
+                p += v.mh + this._gap;
             } else {
                 v.translateX(this.dir === SectionDir.RIGHT ? p : w - p - v.mw);
-                p += v.mw;
+                p += v.mw + this._gap;
             }
 
             v.move(x, y);
@@ -384,7 +392,7 @@ export class ChartView extends RcElement {
         h -= sz.height;
 
         // legend
-        if (this._legendSectionView.visible = (legend.visible && !legend.isEmpty())) {
+        if (this._legendSectionView.visible = (legend.isVisible())) {
             sz = this._legendSectionView.measure(doc, m, w, h, phase);
 
             switch (legend.position) {

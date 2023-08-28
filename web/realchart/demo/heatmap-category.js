@@ -1,26 +1,20 @@
 const config = {
-    options: {
-        // animatable: false
-    },
-    title: "Basic Real-Chart",
+    title: "Heatmap - Category Axis",
     xAxis: {
-        // type: 'category',
-        // position: 'apposite'
-        // position: 'base',
-        // baseAxis: 1,
         title: 'X Axis',
+        categories: ['Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', 'Maria', 'Leon', 'Anna', 'Tim', 'Laura'],
         grid: true
     },
     yAxis: {
         title: 'Y Axis',
-        // maxPadding: 0
-        // strictMin: 1
+        categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        grid: true
     },
     series: {
-        // baseValue: null,
+        type: 'heatmap',
         pointLabel: {
             visible: true,
-            //position: 'head',
+            position: 'head',
             // offset: 10,
             // text: '<b style="fill:red">${x}</b>',
             effect: 'outline',// 'background',
@@ -32,22 +26,16 @@ const config = {
             // }
         },
         data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['def', 9], 
-            ['소홍', 10], 
-            ['지리산', 14.3], 
-            ['zzz', 13],
-            ['낙동강', 12.5]
-        ],
-        data2: [
-            [1, 7], 
-            [2, 11], 
-            [3, 9], 
-            [4, 10], 
-            [5, 14.3], 
-            [6, 13],
-            [7, 12.5]
+            [0, 0, 10], [0, 1, 19], [0, 2, 8], [0, 3, 24], [0, 4, 67],
+            [1, 0, 92], [1, 1, 58], [1, 2, 78], [1, 3, 117], [1, 4, 48],
+            [2, 0, 35], [2, 1, 15], [2, 2, 123], [2, 3, 64], [2, 4, 52],
+            [3, 0, 72], [3, 1, 132], [3, 2, 114], [3, 3, 19], [3, 4, 16],
+            [4, 0, 38], [4, 1, 5], [4, 2, 8], [4, 3, 117], [4, 4, 115],
+            [5, 0, 88], [5, 1, 32], [5, 2, 12], [5, 3, 6], [5, 4, 120],
+            [6, 0, 13], [6, 1, 44], [6, 2, 88], [6, 3, 98], [6, 4, 96],
+            [7, 0, 31], [7, 1, 1], [7, 2, 82], [7, 3, 32], [7, 4, 30],
+            [8, 0, 85], [8, 1, 97], [8, 2, 123], [8, 3, 64], [8, 4, 84],
+            [9, 0, 47], [9, 1, 114], [9, 2, 31], [9, 3, 48], [9, 4, 91]
         ],
         style: {
             // fill: 'yellow'
@@ -55,7 +43,7 @@ const config = {
     }
 }
 
-let animate;
+let animate = false;
 let chart;
 
 function setActions(container) {
@@ -63,6 +51,9 @@ function setActions(container) {
         RealChart.setDebugging(_getChecked(e));
         chart.refresh();
     }, true);
+    createCheckBox(container, 'Always Animate', function (e) {
+        animate = _getChecked(e);
+    }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });

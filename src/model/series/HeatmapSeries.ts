@@ -8,7 +8,7 @@
 
 import { pickNum, pickProp } from "../../common/Common";
 import { DataPoint } from "../DataPoint";
-import { Series } from "../Series";
+import { IPlottingItem, Series } from "../Series";
 
 export class HeatmapSeriesPoint extends DataPoint {
 
@@ -90,6 +90,10 @@ export class HeatmapSeries extends Series {
     //-------------------------------------------------------------------------
     type(): string {
         return 'heatmap';
+    }
+
+    canMixWith(other: IPlottingItem): boolean {
+        return false;
     }
 
     canCategorized(): boolean {

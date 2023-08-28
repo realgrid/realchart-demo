@@ -272,12 +272,14 @@ export class CategoryAxis extends Axis {
         this._map.clear();
 
         for (let i = 1; i < pts.length - 2; i++) {
+            const v = min + i - 1;
+
             ticks.push({
-                pos: (pts[i] + (pts[i + 1] - pts[i]) / 2),
-                value: min + i - 1,
+                pos: this.getPosition(length, v),
+                value: v,
                 label: label.getTick(cats[i - 1]),
             });
-            this._map.set(cats[i - 1], min + i - 1);
+            this._map.set(cats[i - 1], v);
         }
 
         let markPoints: number[];

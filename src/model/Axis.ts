@@ -75,8 +75,17 @@ export class AxisTitle extends AxisItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 타이틀 텍스트.
+     */
     text: string;
-    gap = 8;
+    /**
+     * 타이틀과 label 혹은 축 선 사이의 간격.
+     * <br>
+     * 
+     * @default 5 pixels
+     */
+    gap = 5;
     backgroundStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
@@ -279,6 +288,8 @@ export abstract class AxisLabel extends FormattableText {
     //-------------------------------------------------------------------------
     constructor(public axis: Axis) {
         super(axis && axis.chart, true);
+
+        this.numberFormat = '';
     }
 
     //-------------------------------------------------------------------------
