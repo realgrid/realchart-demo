@@ -7,12 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcElement } from "../common/RcControl";
-import { toSize } from "../common/Rectangle";
+import { IRect, toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
+import { DEG_RAD } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis, AxisGuide, AxisPosition, AxisTickMark, AxisTitle } from "../model/Axis";
+import { Axis, AxisGuide, AxisPosition, AxisTickMark, AxisTitle, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
 import { BoundableElement, ChartElement } from "./ChartElement";
@@ -114,6 +115,24 @@ class AxisTickMarkView extends ChartElement<AxisTickMark> {
     }
 }
 
+class AxisLabelElement extends TextElement {
+
+    col = 0;
+    row = 0;
+    tickWidth = 0;
+    bbox: IRect;
+
+    get rotatedWidth(): number {
+        const r = this.rotation * DEG_RAD;
+        return Math.abs(Math.sin(r) * this.bbox.height) + Math.abs(Math.cos(r) * this.bbox.width);
+    }
+
+    get rotatedHeight(): number {
+        const r = this.rotation * DEG_RAD;
+        return Math.abs(Math.cos(r) * this.bbox.height) + Math.abs(Math.sin(r) * this.bbox.width);
+    }
+}
+
 export class AxisView extends ChartElement<Axis> {
 
     //-------------------------------------------------------------------------
@@ -131,7 +150,7 @@ export class AxisView extends ChartElement<Axis> {
     private _markContainer: RcElement;
     private _markViews: AxisTickMarkView[] = [];
     private _labelContainer: RcElement;
-    private _labelViews: TextElement[] = []; 
+    private _labelViews: AxisLabelElement[] = []; 
     private _markLen: number;
     private _labelSize: number;
 
@@ -215,18 +234,10 @@ export class AxisView extends ChartElement<Axis> {
 
         if (labelViews.length > 0) {
             if (horz) {
-                this._labelSize = labelViews[0].getBBounds().height;
-                for (let i = 1; i < labelViews.length; i++) {
-                    this._labelSize = Math.max(this._labelSize, labelViews[i].getBBounds().height);
-                }
+                sz += this._labelSize = this.$_measureLabelsHorz(labelViews);
             } else {
-                this._labelSize = labelViews[0].getBBounds().width;
-                for (let i = 1; i < labelViews.length; i++) {
-                    this._labelSize = Math.max(this._labelSize, labelViews[i].getBBounds().width);
-                }
+                sz += this._labelSize = this.$_measureLabelsVert(labelViews);
             }
-            sz += this._labelSize;
-
         } else {
             this._labelSize = 0;
         }
@@ -283,24 +294,10 @@ export class AxisView extends ChartElement<Axis> {
 
         if (this._labelContainer.visible) {
             if (horz) {
-                labelViews.forEach((v, i) => {
-                    const y = opp ? h - len - v.getBBounds().height : len;
-    
-                    // v.translate(ticks[i].pos - v.getBBounds().width / 2, y);
-                    v.anchor = TextAnchor.MIDDLE;
-                    v.translate(ticks[i].pos, y);
-                });
+                this.$_layoutLabelsHorz(labelViews, ticks, opp, w, h, len);
             } else {
-                const x = opp ? len : w - len;
-    
-                labelViews.forEach((v, i) => {
-                    const r = v.getBBounds();
-                    const x2 = opp ? x : x - r.width;
-    
-                    v.translate(x2, h - ticks[i].pos - r.height / 2);
-                });
+                this.$_layoutLabelsVert(labelViews, ticks, opp, w, h, len);
             }
-    
         }
 
         // title
@@ -328,13 +325,30 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     private $_prepareChecker(doc: Document, m: Axis): TextElement {
         if (this._labelContainer.visible = m.label.visible) {
-            const tick = m._ticks[0];
+            const ticks = m._ticks;
+            let tick = ticks[0];
+            let t: AxisLabelElement;
 
             if (tick) {
-                let t = this._labelViews[0];
+                if (m.label.getRotation() !== 0) {
+                    let len = tick.label.length;
+                    let j = 0;
+
+                    for (let i = 1; i < ticks.length; i++) {
+                        if (ticks[i].label.length > len) {
+                            len = ticks[i].label.length;
+                            tick = ticks[i];
+                            j = i;
+                        }
+                    }
+                    t = this._labelViews[j];
+
+                } else {
+                    t = this._labelViews[0];
+                }
     
                 if (!t) {
-                    t = new TextElement(doc, 'rct-axis-label');
+                    t = new AxisLabelElement(doc, 'rct-axis-label');
                     t.anchor = TextAnchor.START;
                     this._labelContainer.add(t);
                     this._labelViews.push(t);
@@ -376,7 +390,7 @@ export class AxisView extends ChartElement<Axis> {
             const views = this._labelViews;
     
             while (views.length < nTick) {
-                const t = new TextElement(doc, 'rct-axis-label');
+                const t = new AxisLabelElement(doc, 'rct-axis-label');
     
                 t.anchor = TextAnchor.START;
                 container.add(t);
@@ -390,4 +404,43 @@ export class AxisView extends ChartElement<Axis> {
             return true;
         }
     }
+
+    private $_measureLabelsHorz(views: TextElement[]): number {
+        let sz = views[0].getBBounds().height;
+
+        for (let i = 1; i < views.length; i++) {
+            sz = Math.max(sz, views[i].getBBounds().height);
+        }
+        return sz;
+    }
+
+    private $_measureLabelsVert(views: AxisLabelElement[]): number {
+        let sz = views[0].getBBounds().width;
+
+        for (let i = 1; i < views.length; i++) {
+            sz = Math.max(sz, views[i].getBBounds().width);
+        }
+        return sz;
+    }
+
+    private $_layoutLabelsHorz(views: AxisLabelElement[], ticks: IAxisTick[], opp: boolean, w: number, h: number, len: number): void {
+        views.forEach((v, i) => {
+            const y = opp ? h - len - v.getBBounds().height : len;
+
+            // v.translate(ticks[i].pos - v.getBBounds().width / 2, y);
+            v.anchor = TextAnchor.MIDDLE;
+            v.translate(ticks[i].pos, y);
+        });
+    }
+
+    private $_layoutLabelsVert(views: AxisLabelElement[], ticks: IAxisTick[], opp: boolean, w: number, h: number, len: number): void {
+        const x = opp ? len : w - len;
+    
+        views.forEach((v, i) => {
+            const r = v.getBBounds();
+            const x2 = opp ? x : x - r.width;
+
+            v.translate(x2, h - ticks[i].pos - r.height / 2);
+        });
+}
 }

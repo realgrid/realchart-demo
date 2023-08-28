@@ -3,6 +3,7 @@ const config = {
         // animatable: false
     },
     title: "Basic Real-Chart",
+    legend: true,
     xAxis: {
         // type: 'category',
         // position: 'apposite'

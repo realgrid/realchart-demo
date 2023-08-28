@@ -15,6 +15,7 @@ const PERCENT = '%'.charCodeAt(0);
 export const ZWSP = '&#8203;';
 export const ELLIPSIS = '\u2026';
 export const ORG_ANGLE = -Math.PI / 2;
+export const DEG_RAD = Math.PI * 2 / 360;
 
 export const NUMBER_SYMBOLS = 'k,M,G,T,P,E';
 export const NUMBER_FORMAT = '#,##0.#';

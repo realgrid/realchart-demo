@@ -60,7 +60,8 @@ import { ChartControl } from '../../src/main';
         expect(cv.titleView().visible).is.true;
         expect(cv.subtitleView().visible).is.false;
 
-        expect(cv['_legendSectionView'].visible).is.true;
+        // 기본적으로 시리즈가 하나면 legend가 표시되지 않는다.
+        expect(cv['_legendSectionView'].visible).is.false;
 
         expect(cv.bodyView().visible).is.true;
     })

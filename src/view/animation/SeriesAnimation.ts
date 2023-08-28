@@ -182,9 +182,10 @@ export class GrowAnimation extends RcAnimation {
         this.start();
     }
 
-    protected _doUpdate(rate: number): void {
+    protected _doUpdate(rate: number): boolean {
         if (this._series.parent) {
             this._series.setViewRate(rate);
+            return true;
         }
     }
 

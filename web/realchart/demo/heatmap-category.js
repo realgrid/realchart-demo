@@ -3,7 +3,10 @@ const config = {
     xAxis: {
         title: 'X Axis',
         categories: ['Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', 'Maria', 'Leon', 'Anna', 'Tim', 'Laura'],
-        grid: true
+        grid: true,
+        label: {
+            rotation: 90
+        }
     },
     yAxis: {
         title: 'Y Axis',

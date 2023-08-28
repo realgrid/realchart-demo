@@ -89,6 +89,8 @@ export class Legend extends ChartItem {
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
         super(chart, void 0)
+
+        this.visible = void 0;
     }
 
     //-------------------------------------------------------------------------
@@ -147,7 +149,7 @@ export class Legend extends ChartItem {
     }
 
     isVisible(): boolean {
-        return this._items.length > 1;
+        return this.visible || (this.visible !== false && this._items.length > 1);
     }
 
     //-------------------------------------------------------------------------

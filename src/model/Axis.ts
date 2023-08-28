@@ -289,7 +289,8 @@ export abstract class AxisLabel extends FormattableText {
     constructor(public axis: Axis) {
         super(axis && axis.chart, true);
 
-        this.numberFormat = '';
+        // 기본은 ','이 포함된다. axis label에 ','를 포함시키지 않도록 한다.
+        this.numberFormat = null;
     }
 
     //-------------------------------------------------------------------------
@@ -298,18 +299,40 @@ export abstract class AxisLabel extends FormattableText {
     /**
      * label 표시 간격.
      * <br>
-     * 예) 2이면 짝수만 표시된다.
+     * 1이면 모든 tick 표시. 2이면 하나씩 건너 띄어서 표시.
+     * 명시적으로 지정하지 않으면(undefined) label들이 겹치지 않도록 자동 계산된다.
      */
     step = 1;
     /**
      * step이 2 이상일 때, 표시가 시작되는 label 위치.
      */
     start = 0;
+    /**
+     * 수평 축일 때 tick label 배치 행 수.
+     */
+    lines = 1;
+    /**
+     * 수평 축일 때, tick label 표시 회전 각도.
+     * -90 ~ 90 사이의 각도로 지정할 수 있다.
+     */
+    rotation: number;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     abstract getTick(v: any): string;
+
+    getRotation(): number {
+        return this.rotation || 0;
+    }
+
+    protected _doLoad(source: any): void {
+        super._doLoad(source);
+
+        if (!isNaN(this.rotation)) {
+            this.rotation = Math.max(-90, Math.min(90, this.rotation));
+        }
+    }
 }
 
 export interface IAxisTick {

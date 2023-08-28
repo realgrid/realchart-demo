@@ -194,11 +194,13 @@ export abstract class RcAnimation {
         }
 
         try {
-            this._doUpdate(rate);
+            if (!this._doUpdate(rate)) {
+                this._stop();
+            }
         } finally {
             if (dt >= this.duration) {
                 this._stop();
-            } else {
+            } else if (this._started) {
                 window.requestAnimationFrame(this._handler)
             }
         }
@@ -250,5 +252,5 @@ export abstract class RcAnimation {
     protected _doStop(): void {
     }
 
-    protected abstract _doUpdate(rate: number): void;
+    protected abstract _doUpdate(rate: number): boolean;
 }
