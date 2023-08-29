@@ -120,16 +120,20 @@ class AxisLabelElement extends TextElement {
     col = 0;
     row = 0;
     tickWidth = 0;
-    bbox: IRect;
+    // bbox: IRect;
 
     get rotatedWidth(): number {
-        const r = this.rotation * DEG_RAD;
-        return Math.abs(Math.sin(r) * this.bbox.height) + Math.abs(Math.cos(r) * this.bbox.width);
+        const d = this.rotation * DEG_RAD;
+        const r = this.getBBounds();
+
+        return Math.abs(Math.sin(d) * r.height) + Math.abs(Math.cos(d) * r.width);
     }
 
     get rotatedHeight(): number {
-        const r = this.rotation * DEG_RAD;
-        return Math.abs(Math.cos(r) * this.bbox.height) + Math.abs(Math.sin(r) * this.bbox.width);
+        const d = this.rotation * DEG_RAD;
+        const r = this.getBBounds();
+
+        return Math.abs(Math.cos(d) * r.height) + Math.abs(Math.sin(d) * r.width);
     }
 }
 
@@ -180,7 +184,8 @@ export class AxisView extends ChartElement<Axis> {
         const t = this.$_prepareChecker(doc, m);
         let h = m.tick.visible ? m.tick.length : 0; 
 
-        h += t ?  t.getBBounds().height : 0;
+        h += t ? (t.rotation != 0 ? t.rotatedHeight : t.getBBounds().height) : 0;
+
         if (this._titleView.visible = m.title.visible) {
             h += this._titleView.measure(doc, m.title, width, height, 1).height;
         }
@@ -214,6 +219,7 @@ export class AxisView extends ChartElement<Axis> {
         const horz = model._isHorz;
         const titleView = this._titleView;
         const labelViews = this._labelViews;
+        const rotation = horz ? (model.label.rotation || 0) % 360 : 0;
         let sz = 0;
 
         // line
@@ -230,11 +236,11 @@ export class AxisView extends ChartElement<Axis> {
         }
 
         // labels
-        this.$_prepareLabels(doc, model);
+        this.$_prepareLabels(doc, model, rotation);
 
         if (labelViews.length > 0) {
             if (horz) {
-                sz += this._labelSize = this.$_measureLabelsHorz(labelViews);
+                sz += this._labelSize = this.$_measureLabelsHorz(labelViews, rotation);
             } else {
                 sz += this._labelSize = this.$_measureLabelsVert(labelViews);
             }
@@ -323,7 +329,7 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_prepareChecker(doc: Document, m: Axis): TextElement {
+    private $_prepareChecker(doc: Document, m: Axis): AxisLabelElement {
         if (this._labelContainer.visible = m.label.visible) {
             const ticks = m._ticks;
             let tick = ticks[0];
@@ -381,7 +387,7 @@ export class AxisView extends ChartElement<Axis> {
         }
     }
 
-    private $_prepareLabels(doc: Document, m: Axis): boolean {
+    private $_prepareLabels(doc: Document, m: Axis, rotation: number): boolean {
         const container = this._labelContainer;
 
         if (container.visible) {
@@ -400,16 +406,27 @@ export class AxisView extends ChartElement<Axis> {
                 views.pop().remove();
             }
     
-            views.forEach((v, i) => v.text = ticks[i].label);
+            views.forEach((v, i) => {
+                v.text = ticks[i].label;
+                v.rotation = rotation;
+            });
             return true;
         }
     }
 
-    private $_measureLabelsHorz(views: TextElement[]): number {
-        let sz = views[0].getBBounds().height;
+    private $_measureLabelsHorz(views: AxisLabelElement[], rotation: number): number {
+        let sz: number;
 
-        for (let i = 1; i < views.length; i++) {
-            sz = Math.max(sz, views[i].getBBounds().height);
+        if (rotation != 0) {
+            sz = views[0].rotatedHeight;
+            for (let i = 1; i < views.length; i++) {
+                sz = Math.max(sz, views[i].rotatedHeight);
+            }
+        } else {
+            sz = views[0].getBBounds().height;
+            for (let i = 1; i < views.length; i++) {
+                sz = Math.max(sz, views[i].getBBounds().height);
+            }
         }
         return sz;
     }
@@ -425,11 +442,25 @@ export class AxisView extends ChartElement<Axis> {
 
     private $_layoutLabelsHorz(views: AxisLabelElement[], ticks: IAxisTick[], opp: boolean, w: number, h: number, len: number): void {
         views.forEach((v, i) => {
-            const y = opp ? h - len - v.getBBounds().height : len;
+            const rot = v.rotation;
+            const a = rot * DEG_RAD;
+            const r = v.getBBounds();
+            const ascent = Math.floor(v.getAscent(r.height));
+            let x = ticks[i].pos;
+            let y = opp ? h - len - r.height : len;
 
-            // v.translate(ticks[i].pos - v.getBBounds().width / 2, y);
-            v.anchor = TextAnchor.MIDDLE;
-            v.translate(ticks[i].pos, y);
+            if (rot < -15 && rot >= -90) {
+                v.anchor = TextAnchor.END;
+                x += -Math.sin(a) * ascent / 2 - 1;
+                y += Math.cos(a) * ascent - ascent;
+            } else if (rot > 15 && rot <= 90) {
+                v.anchor = TextAnchor.START;
+                x -= Math.sin(a) * ascent / 2 - 1;
+                y += Math.cos(a) * ascent - ascent;
+            } else {
+                v.anchor = TextAnchor.MIDDLE;
+            }
+            v.translate(x, y);
         });
     }
 

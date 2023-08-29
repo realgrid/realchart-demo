@@ -2,25 +2,23 @@ const config = {
     options: {
         animatable: false
     },
-    title: "Heatmap - Category Axis",
+    title: "Heatmap - Axis Label",
     xAxis: {
         title: 'X Axis',
         categories: ['Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', '마리아', 'Leon', 'Anna', 'Tim', 'Laura'],
         grid: true,
         label: {
-            rotation: -45
+            rotation: -90
         }
     },
     yAxis: {
         title: 'Y Axis',
-        categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
         grid: true
     },
     series: {
-        type: 'heatmap',
         pointLabel: {
             visible: true,
-            position: 'head',
+            // position: 'head',
             // offset: 10,
             // text: '<b style="fill:red">${x}</b>',
             effect: 'outline',// 'background',
@@ -32,16 +30,7 @@ const config = {
             // }
         },
         data: [
-            [0, 0, 10], [0, 1, 19], [0, 2, 8], [0, 3, 24], [0, 4, 67],
-            [1, 0, 92], [1, 1, 58], [1, 2, 78], [1, 3, 117], [1, 4, 48],
-            [2, 0, 35], [2, 1, 15], [2, 2, 123], [2, 3, 64], [2, 4, 52],
-            [3, 0, 72], [3, 1, 132], [3, 2, 114], [3, 3, 19], [3, 4, 16],
-            [4, 0, 38], [4, 1, 5], [4, 2, 8], [4, 3, 117], [4, 4, 115],
-            [5, 0, 88], [5, 1, 32], [5, 2, 12], [5, 3, 6], [5, 4, 120],
-            [6, 0, 13], [6, 1, 44], [6, 2, 88], [6, 3, 98], [6, 4, 96],
-            [7, 0, 31], [7, 1, 1], [7, 2, 82], [7, 3, 32], [7, 4, 30],
-            [8, 0, 85], [8, 1, 97], [8, 2, 123], [8, 3, 64], [8, 4, 84],
-            [9, 0, 47], [9, 1, 114], [9, 2, 31], [9, 3, 48], [9, 4, 91]
+            31231, 12311, 53453, 43242, 19953, 12000, 39021, 41001, 37800, 25123 
         ],
         style: {
             // fill: 'yellow'
@@ -75,6 +64,18 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.update(config, animate);
     }, false);
+    createCheckBox(container, 'X.Opposite', function (e) {
+        config.xAxis.position = _getChecked(e) ? 'opposite': 'normal';
+        chart.update(config, animate);
+    }, false);
+    createListBox(container, "X.rotation", ['0', '-90', '-80', '-70', '-60', '-50', '-45', '-40', '-30', '-20', '-16'], function (e) {
+        config.xAxis.label.rotation = _getValue(e);
+        chart.update(config);
+    }, '-90');
+    createListBox(container, "X.rotation", ['0', '90', '80', '70', '60', '50', '45', '40', '30', '20', '16'], function (e) {
+        config.xAxis.label.rotation = _getValue(e);
+        chart.update(config);
+    }, '-90');
 }
 
 function init() {

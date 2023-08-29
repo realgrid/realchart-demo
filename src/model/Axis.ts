@@ -325,14 +325,6 @@ export abstract class AxisLabel extends FormattableText {
     getRotation(): number {
         return this.rotation || 0;
     }
-
-    protected _doLoad(source: any): void {
-        super._doLoad(source);
-
-        if (!isNaN(this.rotation)) {
-            this.rotation = Math.max(-90, Math.min(90, this.rotation));
-        }
-    }
 }
 
 export interface IAxisTick {
