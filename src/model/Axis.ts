@@ -281,6 +281,22 @@ export abstract class AxisTick extends AxisItem {
     //-------------------------------------------------------------------------
 }
 
+export enum AxisLabelArrange {
+    NONE = 'none',
+    ROTATE = 'rotate',
+    STEP = 'step',
+    STAGGER = 'stagger'
+}
+
+/**
+ * [겹치는 경우가 발생할 때]
+ * 1. autoStagger가 true이면 여러 줄로 배치한다.
+ * 2. autoStep이 true이면 step을 증가시킨다.
+ * 3. rotation -45 로 배치한다.
+ * 4. step이 0보다 큰 값으로 설정되면 1-3을 무시한다.
+ * 5. staggerRows가 0보다 큰값으로 설정되면 1-3을 무시한다.
+ * 6. 4-5의 경우 wrap, ellipsis로 조정한다.
+ */
 export abstract class AxisLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
@@ -302,20 +318,25 @@ export abstract class AxisLabel extends FormattableText {
      * 1이면 모든 tick 표시. 2이면 하나씩 건너 띄어서 표시.
      * 명시적으로 지정하지 않으면(undefined) label들이 겹치지 않도록 자동 계산된다.
      */
-    step = 1;
+    step: number;
     /**
      * step이 2 이상일 때, 표시가 시작되는 label 위치.
      */
     start = 0;
     /**
      * 수평 축일 때 tick label 배치 행 수.
+     * <br>
+     * 명시적으로 지정하지 않으면(undefined) label들이 겹치지 않도록 자동 계산된다.
      */
-    lines = 1;
+    staggerRows: number;
     /**
      * 수평 축일 때, tick label 표시 회전 각도.
      * -90 ~ 90 사이의 각도로 지정할 수 있다.
      */
     rotation: number;
+
+    autoStagger: boolean;
+    autoStep: boolean;
 
     //-------------------------------------------------------------------------
     // methods
