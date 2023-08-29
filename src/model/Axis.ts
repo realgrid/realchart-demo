@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isObject, isString, pickNum } from "../common/Common";
-import { Align, IPercentSize, SVGStyleOrClass, SizeValue, VerticalAlign, parsePercentSize } from "../common/Types";
+import { Align, IPercentSize, SVGStyleOrClass, SizeValue, VerticalAlign, isNull, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
@@ -87,6 +87,13 @@ export class AxisTitle extends AxisItem {
      */
     gap = 5;
     backgroundStyle: SVGStyleOrClass;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    isVisible(): boolean {
+        return this.visible && !isNull(this.text);
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -285,16 +292,17 @@ export enum AxisLabelArrange {
     NONE = 'none',
     ROTATE = 'rotate',
     STEP = 'step',
-    STAGGER = 'stagger'
+    ROWS = 'rows'
 }
 
 /**
  * [겹치는 경우가 발생할 때]
- * 1. autoStagger가 true이면 여러 줄로 배치한다.
- * 2. autoStep이 true이면 step을 증가시킨다.
+ * 1. autoStaggerRows가 true이면 겹치지 않게 여러 줄로 배치한다.
+ * 2. autoStep이 true이면 겹치지 않게 step을 증가시킨다.
  * 3. rotation -45 로 배치한다.
+ * 
  * 4. step이 0보다 큰 값으로 설정되면 1-3을 무시한다.
- * 5. staggerRows가 0보다 큰값으로 설정되면 1-3을 무시한다.
+ * 5. staggerRows가 0보다 큰 값으로 설정되면 1-3을 무시한다.
  * 6. 4-5의 경우 wrap, ellipsis로 조정한다.
  */
 export abstract class AxisLabel extends FormattableText {
@@ -315,27 +323,48 @@ export abstract class AxisLabel extends FormattableText {
     /**
      * label 표시 간격.
      * <br>
+     * 0보다 큰 값으로 지정하지 않으면
+     * {@link autoStep}이 true일 때, label들이 겹치지 않도록 자동 계산된다.
+     * <br>
      * 1이면 모든 tick 표시. 2이면 하나씩 건너 띄어서 표시.
-     * 명시적으로 지정하지 않으면(undefined) label들이 겹치지 않도록 자동 계산된다.
+     * 2 이상일 때 {@link startStep}으로 지정된 step부터 배치된다.
      */
-    step: number;
+    step = 0;
     /**
      * step이 2 이상일 때, 표시가 시작되는 label 위치.
      */
-    start = 0;
+    startStep = 0;
     /**
      * 수평 축일 때 tick label 배치 행 수.
      * <br>
-     * 명시적으로 지정하지 않으면(undefined) label들이 겹치지 않도록 자동 계산된다.
+     * 0보다 큰 값으로 지정하지 않으면
+     * {@link autoRows}가 true일 때, label들이 겹치지 않도록 자동 계산된다.
+     * <br>
      */
-    staggerRows: number;
+    rows = 0;
     /**
      * 수평 축일 때, tick label 표시 회전 각도.
      * -90 ~ 90 사이의 각도로 지정할 수 있다.
      */
     rotation: number;
-
-    autoStagger: boolean;
+    /**
+     * label들이 겹치지 않도록 여러 줄로 나누어 배치한다.
+     * <br>
+     * {@link autoStep}은 무시된다.
+     * {@link rows}나 {@link step}이 명시적으로 설정되면 이 속성은 무시된다.
+     * 
+     * @default false
+     */
+    autoRows = false;
+    /**
+     * label들이 겹치지 않도록 건너 뛰면서 배치한다.
+     * <br>
+     * {@link autoRows}가 설정되거나,
+     * {@link rows}나 {@link step}이 명시적으로 설정되면 이 속성은 무시된다.
+     * <br>
+     * 계산된 step이 2 이상일 때 {@link startStep}으로 지정된 step부터 배치된다.
+     * @default false
+     */
     autoStep: boolean;
 
     //-------------------------------------------------------------------------

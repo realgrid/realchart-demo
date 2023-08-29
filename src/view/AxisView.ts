@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcElement } from "../common/RcControl";
-import { IRect, toSize } from "../common/Rectangle";
+import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { DEG_RAD } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
@@ -117,6 +117,7 @@ class AxisTickMarkView extends ChartElement<AxisTickMark> {
 
 class AxisLabelElement extends TextElement {
 
+    index = -1;
     col = 0;
     row = 0;
     tickWidth = 0;
@@ -181,12 +182,20 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     checkHeight(doc: Document, width: number, height: number): number {
         const m = this.model;
-        const t = this.$_prepareChecker(doc, m);
-        let h = m.tick.visible ? m.tick.length : 0; 
+        let h = 0;
 
-        h += t ? (t.rotation != 0 ? t.rotatedHeight : t.getBBounds().height) : 0;
+        // labels
+        // const t = this.$_prepareChecker(doc, m);
+        // let h = m.tick.visible ? m.tick.length : 0; 
 
-        if (this._titleView.visible = m.title.visible) {
+        // h += t ? (t.rotation != 0 ? t.rotatedHeight : t.getBBounds().height) : 0;
+
+        if (this.$_prepareLabels(doc, m)) {
+            h += this.$_measureLabelsHorz(m, this._labelViews);
+        }
+
+        // title
+        if (this._titleView.visible = m.title.isVisible()) {
             h += this._titleView.measure(doc, m.title, width, height, 1).height;
         }
         return h;
@@ -194,12 +203,21 @@ export class AxisView extends ChartElement<Axis> {
 
     checkWidth(doc: Document, width: number, height: number): number {
         const m = this.model;
-        const t = this.$_prepareChecker(doc, m);
-        let w = m.tick.visible ? m.tick.length : 0; 
+        let w = 0;
+        
+        // labels
+        // const t = this.$_prepareChecker(doc, m);
+        // let w = m.tick.visible ? m.tick.length : 0; 
 
-        w += t ? t.getBBounds().width : 0;
-        if (this._titleView.visible = m.title.visible) {
-            w += this._titleView.measure(doc, m.title, width, height, 1).height;
+        // w += t ? t.getBBounds().width : 0;
+
+        if (this.$_prepareLabels(doc, m)) {
+            w += this.$_measureLabelsVert(this._labelViews);
+        }
+
+        // title
+        if (this._titleView.visible = m.title.isVisible()) {
+            w += this._titleView.measure(doc, m.title, width, height, 1).height; // [NOTE] width가 아니다.
         }
         return w;
     }
@@ -219,7 +237,6 @@ export class AxisView extends ChartElement<Axis> {
         const horz = model._isHorz;
         const titleView = this._titleView;
         const labelViews = this._labelViews;
-        const rotation = horz ? (model.label.rotation || 0) % 360 : 0;
         let sz = 0;
 
         // line
@@ -236,11 +253,9 @@ export class AxisView extends ChartElement<Axis> {
         }
 
         // labels
-        this.$_prepareLabels(doc, model, rotation);
-
-        if (labelViews.length > 0) {
+        if (this.$_prepareLabels(doc, model)) {
             if (horz) {
-                sz += this._labelSize = this.$_measureLabelsHorz(labelViews, rotation);
+                sz += this._labelSize = this.$_measureLabelsHorz(model, labelViews);
             } else {
                 sz += this._labelSize = this.$_measureLabelsVert(labelViews);
             }
@@ -329,42 +344,42 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_prepareChecker(doc: Document, m: Axis): AxisLabelElement {
-        if (this._labelContainer.visible = m.label.visible) {
-            const ticks = m._ticks;
-            let tick = ticks[0];
-            let t: AxisLabelElement;
+    // private $_prepareChecker(doc: Document, m: Axis): AxisLabelElement {
+    //     if (this._labelContainer.visible = m.label.visible) {
+    //         const ticks = m._ticks;
+    //         let tick = ticks[0];
+    //         let t: AxisLabelElement;
 
-            if (tick) {
-                if (m.label.getRotation() !== 0) {
-                    let len = tick.label.length;
-                    let j = 0;
+    //         if (tick) {
+    //             if (m.label.getRotation() !== 0) {
+    //                 let len = tick.label.length;
+    //                 let j = 0;
 
-                    for (let i = 1; i < ticks.length; i++) {
-                        if (ticks[i].label.length > len) {
-                            len = ticks[i].label.length;
-                            tick = ticks[i];
-                            j = i;
-                        }
-                    }
-                    t = this._labelViews[j];
+    //                 for (let i = 1; i < ticks.length; i++) {
+    //                     if (ticks[i].label.length > len) {
+    //                         len = ticks[i].label.length;
+    //                         tick = ticks[i];
+    //                         j = i;
+    //                     }
+    //                 }
+    //                 t = this._labelViews[j];
 
-                } else {
-                    t = this._labelViews[0];
-                }
+    //             } else {
+    //                 t = this._labelViews[0];
+    //             }
     
-                if (!t) {
-                    t = new AxisLabelElement(doc, 'rct-axis-label');
-                    t.anchor = TextAnchor.START;
-                    this._labelContainer.add(t);
-                    this._labelViews.push(t);
-                }
+    //             if (!t) {
+    //                 t = new AxisLabelElement(doc, 'rct-axis-label');
+    //                 t.anchor = TextAnchor.START;
+    //                 this._labelContainer.add(t);
+    //                 this._labelViews.push(t);
+    //             }
         
-                t.text = tick.label
-                return t;
-            }
-        }
-    }
+    //             t.text = tick.label
+    //             return t;
+    //         }
+    //     }
+    // }
 
     private $_prepareTickMarks(doc: Document, m: Axis): boolean {
         const container = this._markContainer;
@@ -387,14 +402,14 @@ export class AxisView extends ChartElement<Axis> {
         }
     }
 
-    private $_prepareLabels(doc: Document, m: Axis, rotation: number): boolean {
+    private $_prepareLabels(doc: Document, m: Axis): number {
         const container = this._labelContainer;
 
-        if (container.visible) {
+        if (container.visible = m.label.visible) {
             const ticks = m._ticks;
             const nTick = ticks.length;
             const views = this._labelViews;
-    
+
             while (views.length < nTick) {
                 const t = new AxisLabelElement(doc, 'rct-axis-label');
     
@@ -405,19 +420,53 @@ export class AxisView extends ChartElement<Axis> {
             while (views.length > nTick) {
                 views.pop().remove();
             }
-    
+
             views.forEach((v, i) => {
                 v.text = ticks[i].label;
-                v.rotation = rotation;
             });
-            return true;
+            return views.length;
         }
+        return 0;
     }
 
-    private $_measureLabelsHorz(views: AxisLabelElement[], rotation: number): number {
+    private $_measureLabelsHorz(axis: Axis, views: AxisLabelElement[]): number {
+        const m = axis.label;
+        const step = m.step >> 0;
+        const rows = m.rows >> 0;
+        let rotation = m.rotation % 360;
+        let overlapped = false;
         let sz: number;
 
-        if (rotation != 0) {
+        if (step > 0 || rows > 0) {
+        } else if (m.autoRows) {
+        } else if (m.autoStep) {
+        }
+
+        if (step > 1) {
+            const start = Math.max(0, m.startStep || 0);
+            
+            views.forEach(v => v.index = -1);
+            for (let i = start; i < views.length; i += step) {
+                views[i].index = i;
+            }
+            views.forEach(v => v.setVisible(v.index >= 0));
+            views = views.filter(v => v.visible);
+        } else {
+            views.forEach((v, i) => {
+                v.index = i;
+                v.setVisible(true);
+            });
+        }
+
+        if (isNaN(rotation)) {
+        }
+
+        rotation = rotation || 0;
+        views.forEach(v => {
+            v.rotation = rotation;
+        });
+
+        if (!isNaN(rotation) && rotation != 0) {
             sz = views[0].rotatedHeight;
             for (let i = 1; i < views.length; i++) {
                 sz = Math.max(sz, views[i].rotatedHeight);
@@ -441,26 +490,28 @@ export class AxisView extends ChartElement<Axis> {
     }
 
     private $_layoutLabelsHorz(views: AxisLabelElement[], ticks: IAxisTick[], opp: boolean, w: number, h: number, len: number): void {
-        views.forEach((v, i) => {
-            const rot = v.rotation;
-            const a = rot * DEG_RAD;
-            const r = v.getBBounds();
-            const ascent = Math.floor(v.getAscent(r.height));
-            let x = ticks[i].pos;
-            let y = opp ? h - len - r.height : len;
-
-            if (rot < -15 && rot >= -90) {
-                v.anchor = TextAnchor.END;
-                x += -Math.sin(a) * ascent / 2 - 1;
-                y += Math.cos(a) * ascent - ascent;
-            } else if (rot > 15 && rot <= 90) {
-                v.anchor = TextAnchor.START;
-                x -= Math.sin(a) * ascent / 2 - 1;
-                y += Math.cos(a) * ascent - ascent;
-            } else {
-                v.anchor = TextAnchor.MIDDLE;
+        views.forEach(v => {
+            if (v.visible) {
+                const rot = v.rotation;
+                const a = rot * DEG_RAD;
+                const r = v.getBBounds();
+                const ascent = Math.floor(v.getAscent(r.height));
+                let x = ticks[v.index].pos;
+                let y = opp ? h - len - r.height : len;
+    
+                if (rot < -15 && rot >= -90) {
+                    v.anchor = TextAnchor.END;
+                    x += -Math.sin(a) * ascent / 2 - 1;
+                    y += Math.cos(a) * ascent - ascent;
+                } else if (rot > 15 && rot <= 90) {
+                    v.anchor = TextAnchor.START;
+                    x -= Math.sin(a) * ascent / 2 - 1;
+                    y += Math.cos(a) * ascent - ascent;
+                } else {
+                    v.anchor = TextAnchor.MIDDLE;
+                }
+                v.translate(x, y);
             }
-            v.translate(x, y);
         });
     }
 
@@ -468,10 +519,12 @@ export class AxisView extends ChartElement<Axis> {
         const x = opp ? len : w - len;
     
         views.forEach((v, i) => {
-            const r = v.getBBounds();
-            const x2 = opp ? x : x - r.width;
-
-            v.translate(x2, h - ticks[i].pos - r.height / 2);
+            if (v.visible) {
+                const r = v.getBBounds();
+                const x2 = opp ? x : x - r.width;
+    
+                v.translate(x2, h - ticks[i].pos - r.height / 2);
+            }
         });
 }
 }

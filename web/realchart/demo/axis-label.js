@@ -2,13 +2,13 @@ const config = {
     options: {
         animatable: false
     },
-    title: "Heatmap - Axis Label",
+    title: "Axis Labels",
     xAxis: {
         title: 'X Axis',
         categories: ['Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', '마리아', 'Leon', 'Anna', 'Tim', 'Laura'],
         grid: true,
         label: {
-            rotation: -90
+            // rotation: -90
         }
     },
     yAxis: {
@@ -68,14 +68,26 @@ function setActions(container) {
         config.xAxis.position = _getChecked(e) ? 'opposite': 'normal';
         chart.update(config, animate);
     }, false);
-    createListBox(container, "X.rotation", ['0', '-90', '-80', '-70', '-60', '-50', '-45', '-40', '-30', '-20', '-16'], function (e) {
-        config.xAxis.label.rotation = _getValue(e);
+    createCheckBox(container, 'Y.Opposite', function (e) {
+        config.yAxis.position = _getChecked(e) ? 'opposite': 'normal';
+        chart.update(config, animate);
+    }, false);
+    createListBox(container, "X.step", ['0', '1', '2'], function (e) {
+        config.xAxis.label.step = +_getValue(e);
         chart.update(config);
-    }, '-90');
-    createListBox(container, "X.rotation", ['0', '90', '80', '70', '60', '50', '45', '40', '30', '20', '16'], function (e) {
-        config.xAxis.label.rotation = _getValue(e);
+    }, '0');
+    createListBox(container, "X.rows", ['0', '1', '2'], function (e) {
+        config.xAxis.label.rows = +_getValue(e);
         chart.update(config);
-    }, '-90');
+    }, '0');
+    createListBox(container, "X.rotation", ['NaN', '0', '-90', '-80', '-70', '-60', '-50', '-45', '-40', '-30', '-20', '-16'], function (e) {
+        config.xAxis.label.rotation = +_getValue(e);
+        chart.update(config);
+    }, 'NaN');
+    createListBox(container, "X.rotation2", ['NaN', '0', '90', '80', '70', '60', '50', '45', '40', '30', '20', '16'], function (e) {
+        config.xAxis.label.rotation = +_getValue(e);
+        chart.update(config);
+    }, 'NaN');
 }
 
 function init() {
