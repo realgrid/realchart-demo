@@ -659,6 +659,10 @@ export class BodyView extends ChartElement<Body> {
         }
     }
 
+    seriesByDom(elt: Element): SeriesView<Series> {
+        return this._seriesViews.find(v => v.dom.contains(elt));
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

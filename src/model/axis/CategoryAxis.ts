@@ -255,7 +255,7 @@ export class CategoryAxis extends Axis {
         cats = this._cats = cats.slice(min, max + 1);
         weights = weights.slice(min, max + 1);
 
-        const len = this._len = this._minPad + this._maxPad + weights.reduce((a, c) => a + c);
+        const len = this._len = this._minPad + this._maxPad + weights.reduce((a, c) => a + c, 0);
         // const step = this._step = this.categoryStep || 1;
         const pts = this._pts = [0];
         let p = this._minPad;

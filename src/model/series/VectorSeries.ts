@@ -125,25 +125,28 @@ export class VectorSeries extends Series {
         super._doPrepareRender();
 
         const pts = this._visPoints as VectorSeriesPoint[];
-        const len = this.maxLength;
-        const org = this.origin;
-        const max = pts.map(p => p.length).reduce((r, c) => Math.max(r, c));
 
-        pts.forEach(p => {
-            const f = p.length / max;
-            
-            p._len = f * len;
-            switch (org) {
-                case VectorOrigin.START:
-                    p._off =  p._len / 2;
-                    break;
-                case VectorOrigin.END:
-                    p._off = p._len / 2;
-                    break;
-                default:
-                    p._off = 0;
-                    break;
-            }
-        });
+        if (pts.length > 0) {
+            const len = this.maxLength;
+            const org = this.origin;
+            const max = pts.map(p => p.length).reduce((r, c) => Math.max(r, c));
+    
+            pts.forEach(p => {
+                const f = p.length / max;
+                
+                p._len = f * len;
+                switch (org) {
+                    case VectorOrigin.START:
+                        p._off =  p._len / 2;
+                        break;
+                    case VectorOrigin.END:
+                        p._off = p._len / 2;
+                        break;
+                    default:
+                        p._off = 0;
+                        break;
+                }
+            });
+        }
     }
 }

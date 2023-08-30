@@ -193,7 +193,7 @@ export class AxisView extends ChartElement<Axis> {
         // h += t ? (t.rotation != 0 ? t.rotatedHeight : t.getBBounds().height) : 0;
 
         if (this.$_prepareLabels(doc, m)) {
-            h += this.$_measureLabelsHorz(m, this._labelViews);
+            h += this.$_measureLabelsHorz(m, this._labelViews, width);
         }
 
         // title
@@ -257,7 +257,7 @@ export class AxisView extends ChartElement<Axis> {
         // labels
         if (this.$_prepareLabels(doc, model)) {
             if (horz) {
-                sz += this._labelSize = this.$_measureLabelsHorz(model, labelViews);
+                sz += this._labelSize = this.$_measureLabelsHorz(model, labelViews, hintWidth);
             } else {
                 sz += this._labelSize = this.$_measureLabelsVert(labelViews);
             }
@@ -440,7 +440,7 @@ export class AxisView extends ChartElement<Axis> {
         return 2;
     }
 
-    private $_measureLabelsHorz(axis: Axis, views: AxisLabelElement[]): number {
+    private $_measureLabelsHorz(axis: Axis, views: AxisLabelElement[], width: number): number {
         const m = axis.label;
         let step = m.step >> 0;
         let rows = m.rows >> 0;
@@ -452,7 +452,7 @@ export class AxisView extends ChartElement<Axis> {
         } else {
             // check overalpped
             for (let i = 0; i < views.length - 1; i++) {
-                const w = axis.getUnitLength(this.width, views[i].value);
+                const w = axis.getLabelLength(width, views[i].value);
 
                 if (views[i].getBBounds().width >= w) {
                     overlapped = true;

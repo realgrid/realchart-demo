@@ -199,7 +199,6 @@ export class PointLabelLine extends GroupElement {
     }
 }
 
-
 export class PointLabelLineContainer extends GroupElement {
 
     //-------------------------------------------------------------------------
@@ -355,8 +354,18 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 
     protected abstract _getPointPool(): ElementPool<RcElement>;
 
-    pointByDom(elt: SVGElement): IPointView {
+    pointByDom(elt: Element): IPointView {
         return this._getPointPool().elementOf(elt) as any;
+    }
+
+    clicked(elt: Element): void {
+        const view = this.pointByDom(elt);
+
+        view && this._doPointClicked(view);
+    }
+
+    protected _doPointClicked(view: IPointView): void {
+        // console.log('CLICKED: ' + view.point.yValue);
     }
 
     //-------------------------------------------------------------------------

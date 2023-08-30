@@ -91,7 +91,7 @@ export class BarSeriesGroup extends ClustrableSeriesGroup<BarSeries> implements 
 
     protected _doPrepareSeries(series: BarSeries[]): void {
         if (this.layout === SeriesGroupLayout.DEFAULT) {
-            const sum = series.length > 1 ? series.map(ser => ser.pointWidth).reduce((a, c) => a + c) : series[0].pointWidth;
+            const sum = series.length > 1 ? series.map(ser => ser.pointWidth).reduce((a, c) => a + c, 0) : series[0].pointWidth;
             let x = 0;
             
             series.forEach(ser => {

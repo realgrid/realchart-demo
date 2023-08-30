@@ -23,6 +23,7 @@ import { AxisView } from "./AxisView";
 import { AxisGuideContainer, BodyView } from "./BodyView";
 import { LegendView } from "./LegendView";
 import { PolarBodyView } from "./PolarBodyView";
+import { SeriesView } from "./SeriesView";
 import { TitleView } from "./TitleView";
 import { TooltipView } from "./TooltipView";
 
@@ -601,6 +602,10 @@ export class ChartView extends RcElement {
 
     legendByDom(dom: Element): LegendItem {
         return this._legendSectionView._legendView.legendByDom(dom);
+    }
+
+    seriesByDom(dom: Element): SeriesView<Series> {
+        return this._bodyView.seriesByDom(dom);
     }
 
     clipSeries(view: RcElement, x: number, y: number, w: number, h: number): void {

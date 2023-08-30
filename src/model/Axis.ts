@@ -570,6 +570,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     abstract getPosition(length: number, value: number, point?: boolean): number;
     abstract getUnitLength(length: number, value: number): number;
 
+    getLabelLength(length: number, value: number): number {
+        return this.getUnitLength(length, value);
+    }
+
     getValue(value: any): number {
         return +value;
     }

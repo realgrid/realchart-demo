@@ -214,6 +214,9 @@ export class PieSeriesView extends SeriesView<PieSeries> {
         firstTime && SeriesAnimation.grow(this);
     }
 
+    protected _doPointClicked(view: IPointView): void {
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

@@ -581,6 +581,10 @@ export abstract class ContinuousAxis extends Axis {
         return this._unitLen;
     }
 
+    getLabelLength(length: number, value: number): number {
+        return Math.floor(length / this._ticks.length);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

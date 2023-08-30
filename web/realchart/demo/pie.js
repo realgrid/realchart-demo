@@ -1,12 +1,11 @@
 const config = {
     title: "Pie Series",
     legend: {
-        position: 'inside',
-        layout: 'vertical',
+        position: 'right',
+        layout: 'auto',
         align: 'right',
         valign: 'top',
         style: {
-            marginTop: '16px',
             marginRight: '20px'
         }
     },
@@ -38,6 +37,8 @@ const config = {
         ],
     }
 }
+
+let animate = false;
 let chart;
 
 function setActions(container) {
@@ -45,9 +46,20 @@ function setActions(container) {
         RealChart.setDebugging(_getChecked(e));
         chart.refresh();
     }, true);
+    createCheckBox(container, 'Always Animate', function (e) {
+        animate = _getChecked(e);
+    }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createListBox(container, "Legend.position", ['bottom', 'top', 'right', 'left'], function (e) {
+        config.legend.position = _getValue(e);
+        chart.update(config, animate);
+    }, 'right');
+    createListBox(container, "startAngle", [0, 90, 180, 270], function (e) {
+        config.series.startAngle = _getValue(e);
+        chart.update(config, animate);
+    }, 0);
 }
 
 function init() {
