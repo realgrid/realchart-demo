@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "./Common";
-import { fixnum } from "./Types";
+import { fixnum, newObject } from "./Types";
 
 const pow = Math.pow;
 const sqrt = Math.sqrt;
@@ -162,6 +162,16 @@ const Easings: any = {
     //     }
     //     return cb(x, 0.000, 0.775, 0.005, 1.005);
     // }
+}
+
+export const createAnimation = function (dom: Element, styleProp: string, toValue: any, duration: number, finishHandler: () => void): Animation {
+    const frame = newObject(styleProp, toValue);
+    const ani = dom.animate([{}, frame], {
+        duration: duration,
+        fill: 'none'
+    });
+    ani && finishHandler && ani.addEventListener('finish', finishHandler);
+    return ani;
 }
 
 export abstract class RcAnimation {

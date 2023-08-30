@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { PathBuilder } from "../common/PathBuilder";
+import { createAnimation } from "../common/RcAnimation";
 import { PathElement, RcControl, RcElement } from "../common/RcControl";
 import { SvgRichText } from "../common/RichText";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
@@ -28,7 +29,7 @@ export class TooltipView extends RcElement {
     }
     private _hideTimer: any;
     private _hideHandler = () => {
-        this.setStyle('visibility', 'hidden');
+        this.$_hide();
         this._hideTimer = void 0;
     }
 
@@ -97,7 +98,7 @@ export class TooltipView extends RcElement {
             ], {
                 duration: 300,
                 fill: 'none'
-            })
+            });
         } else {
             this.setStyle('visibility', 'visible');
         }
@@ -109,7 +110,7 @@ export class TooltipView extends RcElement {
                 clearTimeout(this._hideTimer);
                 this._hideTimer = void 0;
             }
-            this.setStyle('visibility', 'hidden');
+            this.$_hide();
         } else if (!this._hideTimer) {
             this._hideTimer = setTimeout(this._hideHandler, this._model ? this._model.hideDelay : Tooltip.HIDE_DELAY)
         }
@@ -121,6 +122,12 @@ export class TooltipView extends RcElement {
     //-------------------------------------------------------------------------
     // internal methods
     //-------------------------------------------------------------------------
+    private $_hide(): void {
+        createAnimation(this.dom, 'opacity', 0, 200, () => {
+            this.setStyle('visibility', 'hidden');
+        })
+    }
+
     // M402.5,134.5
     // A1,1,0,0,1,401.5,133.5
     // L401.5,85.5

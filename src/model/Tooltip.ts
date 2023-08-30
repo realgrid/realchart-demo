@@ -15,7 +15,7 @@ export class Tooltip extends ChartItem {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly HIDE_DELAY = 1000;
+    static readonly HIDE_DELAY = 700;
 
     //-------------------------------------------------------------------------
     // property fields
@@ -39,6 +39,15 @@ export class Tooltip extends ChartItem {
     hideDelay = Tooltip.HIDE_DELAY;
     minWidth = 100;
     minHeight = 40;
+    /**
+     * true이면 툴팁 상자가 마우스 포인터를 따라 다닌다.
+     * <br>
+     * false, true를 명시적으로 지정하지 않으면 시리즈 종류에 따라 자동 설정된다.
+     * ex) pie 시리즈는 true, bar 시리즈는 false가 된다.
+     * 
+     * @default undefined
+     */
+    followPointer: boolean;
 
     //-------------------------------------------------------------------------
     // methods

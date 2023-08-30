@@ -40,6 +40,11 @@ export function isNull(v: any): boolean {
 export function pad2(v: number): string {
     return v < 10 ? `0${v}` : String(v);
 }
+export function newObject(prop: string, value: any): {} {
+    const obj = {};
+    obj[prop] = value;
+    return obj;
+}
 
 export type Path = string | any[];
 
