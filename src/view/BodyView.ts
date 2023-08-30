@@ -9,9 +9,10 @@
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
-import { ImageElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
+import { LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { Align, VerticalAlign, _undefined, assert } from "../common/Types";
+import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";

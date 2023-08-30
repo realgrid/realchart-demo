@@ -10,7 +10,7 @@ import { RcEventProvider } from "../common/RcObject";
 import { SVGStyleOrClass, SectionDir, isNull } from "../common/Types";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
-import { ChartItem } from "./ChartItem";
+import { BackgroundImage, ChartItem } from "./ChartItem";
 import { ILegendSource, Legend } from "./Legend";
 import { IPlottingItem, PlottingItemCollection, Series } from "./Series";
 import { Subtitle, Title } from "./Title";
@@ -168,7 +168,7 @@ export class ChartOptions extends ChartItem {
      * @default 8 pixels
      */
     axisGap = 8;
-    backgroundImage: string;
+    backgroundImage = new BackgroundImage(null);
     backgroundStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------

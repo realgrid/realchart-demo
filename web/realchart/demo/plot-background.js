@@ -401,11 +401,11 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createListBox(container, "fill", ['none', 'black', 'yellow'], function (e) {
+    createListBox(container, "plot.style.fill", ['none', 'black', 'yellow'], function (e) {
         config.plot.style.fill = _getValue(e);
         chart.update(config);
     }, 'none');
-    createCheckBox(container, 'image', function (e) {
+    createCheckBox(container, 'plot.image', function (e) {
         config.plot.image.url = _getChecked(e) ? '../assets/mountain.jpeg' : '';
         chart.update(config);
     }, false);

@@ -1,7 +1,16 @@
 const config = {
     title: "Chart Background",
     options: {
-        // animatable: false
+        // animatable: false,
+        backgroundImage: {
+            // url: '../assets/mountain.jpeg',
+            style: {
+                opacity: 0.2
+            }
+        },
+        backgroundStyle: {
+            fill: 'none'
+        }
     },
     xAxis: {
         categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도'],
@@ -58,42 +67,14 @@ function setActions(container) {
         config.inverted = _getChecked(e);
         chart.update(config, animate);
     }, false);
-    createCheckBox(container, 'X.Opposite', function (e) {
-        config.xAxis.position = _getChecked(e) ? 'opposite': 'normal';
-        chart.update(config, animate);
-    }, false);
-    createCheckBox(container, 'X Reversed', function (e) {
-        config.xAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
-    }, false);
-    createCheckBox(container, 'Y Reversed', function (e) {
-        config.yAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
-    }, false);
-    createListBox(container, "Axis.padding", ['0', '-0.2', '-0.4', '-0.5', '0.5'], function (e) {
-        config.xAxis.padding = _getValue(e);
+    createListBox(container, "backgroundStyle.fill", ['none', 'black', 'yellow'], function (e) {
+        config.options.backgroundStyle.fill = _getValue(e);
         chart.update(config);
-    }, '0');
-    createListBox(container, "Axis.categoryPadding", ['0', '0.1', '0.15', '0.2'], function (e) {
-        config.xAxis.categoryPadding = _getValue(e);
+    }, 'none');
+    createCheckBox(container, 'backgroundImage', function (e) {
+        config.options.backgroundImage.url = _getChecked(e) ? '../assets/mountain.jpeg' : '';
         chart.update(config);
-    }, '0.1');
-    createCheckBox(container, 'Axis.title', function (e) {
-        config.xAxis.title.visible = _getChecked(e);
-        chart.update(config, animate);
-    }, true);
-    createCheckBox(container, 'Axis.tick', function (e) {
-        config.xAxis.tick.visible = _getChecked(e);
-        chart.update(config, animate);
-    }, true);
-    createListBox(container, "Axis.tick.position", ['point', 'edge'], function (e) {
-        config.xAxis.tick.position = _getValue(e);
-        chart.update(config);
-    }, 'point');
-    createCheckBox(container, 'Axis.label', function (e) {
-        config.xAxis.label.visible = _getChecked(e);
-        chart.update(config, animate);
-    }, true);
+    }, false);
 }
 
 function init() {
