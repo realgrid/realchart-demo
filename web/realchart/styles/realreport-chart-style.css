@@ -58,6 +58,11 @@
     fill: lightgray;
 }
 
+/** background */
+.rct-background {
+    fill: none;
+}
+
 /** title */
 .rct-title {
     font-size: 24px;
