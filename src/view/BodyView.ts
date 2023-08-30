@@ -9,7 +9,7 @@
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
-import { ClipElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
+import { ImageElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { Align, VerticalAlign, _undefined, assert } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
@@ -563,7 +563,7 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly BODY_CLASS = 'rct-body';
+    static readonly BODY_CLASS = 'rct-plot';
 
     //-------------------------------------------------------------------------
     // fields
@@ -571,6 +571,7 @@ export class BodyView extends ChartElement<Body> {
     private _owner: IPlottingOwner;
     private _polar: boolean;
     private _background: RectElement;
+    private _image: ImageElement;
     private _gridContainer: LayerElement;
     protected _gridViews = new Map<Axis, AxisGridView>();
     private _breakViews: AxisBreakView[] = [];
@@ -597,7 +598,8 @@ export class BodyView extends ChartElement<Body> {
         super(doc, BodyView.BODY_CLASS);
 
         this._owner = owner;
-        this.add(this._background = new RectElement(doc));
+        this.add(this._background = new RectElement(doc, 'rct-plot-background'));
+        this.add(this._image = new ImageElement(doc, 'rct-plot-image'));
         this.add(this._gridContainer = new LayerElement(doc, 'rct-grids'));
         this.add(this._guideContainer = new AxisGuideContainer(doc, 'rct-guides'));
         this.add(this._seriesContainer = new LayerElement(doc, 'rct-series-container'));
@@ -662,6 +664,9 @@ export class BodyView extends ChartElement<Body> {
     protected _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
         const chart = model.chart as Chart;
 
+        // background
+        this._background.setStyleOrClass(model.style);
+
         // series
         this.$_prepareSeries(doc, chart._getSeries().visibleSeries());
 
@@ -689,6 +694,14 @@ export class BodyView extends ChartElement<Body> {
     protected _doLayout(): void {
         const w = this.width;
         const h = this.height;
+        const img = this._image;
+
+        // background
+        this._background.resize(w, h);
+
+        if (img.setVisible(img.setImage(this.model.image.url, w, h))) {
+            img.setStyleOrClass(this.model.image.style);
+        }
 
         // series
         this._seriesViews.forEach(v => {

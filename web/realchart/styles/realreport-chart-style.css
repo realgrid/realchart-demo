@@ -96,12 +96,17 @@
     fill: #aaa !important;
 }
 
+/** plot area */
+.rct-plot-background {
+    fill: none;
+}
+
 /** axis */
 .rct-axis-title {
     font-size: 16px;
 }
 .rct-axis-title-background {
-    fill: transparent;
+    fill: none;
 }
 .rct-axis-line {
     stroke: red;

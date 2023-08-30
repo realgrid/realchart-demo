@@ -290,20 +290,31 @@ export abstract class AxisTick extends AxisItem {
 
 export enum AxisLabelArrange {
     NONE = 'none',
+    /**
+     * -45도 회전시킨다.
+     */
     ROTATE = 'rotate',
+    /**
+     * label들이 겹치지 않도록 건너 뛰면서 배치한다.
+     * <br>
+     * {@link startStep}으로 지정된 step부터 배치된다.
+     */
     STEP = 'step',
+    /**
+     * label들이 겹치지 않도록 여러 줄로 나누어 배치한다.
+     * <br>
+     */
     ROWS = 'rows'
 }
 
 /**
  * [겹치는 경우가 발생할 때]
- * 1. autoStaggerRows가 true이면 겹치지 않게 여러 줄로 배치한다.
- * 2. autoStep이 true이면 겹치지 않게 step을 증가시킨다.
- * 3. rotation -45 로 배치한다.
- * 
- * 4. step이 0보다 큰 값으로 설정되면 1-3을 무시한다.
- * 5. staggerRows가 0보다 큰 값으로 설정되면 1-3을 무시한다.
- * 6. 4-5의 경우 wrap, ellipsis로 조정한다.
+ * 1. step이 0보다 큰 값으로 설정되면 반영한다.
+ * 2. staggerRows가 0보다 큰 값으로 설정되면 반영한다.
+ * 3. rotation이 0이 아닌 명시적 값으로 설정되면 반영한다.
+ * 4. 1~3 모두 설정되지 않은 경우 autoArrange 설정에 따라 자동 배치한다.
+ * 5. 배치 후 공간을 초과하는 label은 wrap 속성에 따라 줄나누기를 하거나, 
+ *    ellipsis('...')로 처리해서 표시한다.
  */
 export abstract class AxisLabel extends FormattableText {
 
@@ -348,24 +359,19 @@ export abstract class AxisLabel extends FormattableText {
      */
     rotation: number;
     /**
-     * label들이 겹치지 않도록 여러 줄로 나누어 배치한다.
+     * label들이 본래 차지하는 공간을 초과할 때,
+     * {@link step}이나 {@link rows}가 1 이상으로 설정되지 않고,
+     * {@link rotation}이 0이 아닌 명시적 값으로도 설정되지 않은 경우,
+     * label들을 재배치하는 방식을 지정한다.
      * <br>
-     * {@link autoStep}은 무시된다.
-     * {@link rows}나 {@link step}이 명시적으로 설정되면 이 속성은 무시된다.
-     * 
-     * @default false
      */
-    autoRows = false;
+    autoArrange = AxisLabelArrange.ROTATE;
     /**
-     * label들이 겹치지 않도록 건너 뛰면서 배치한다.
+     * label 배치 후 텍스트가 차지하는 공간을 넘치는 경우 줄 나누기를 한다.
      * <br>
-     * {@link autoRows}가 설정되거나,
-     * {@link rows}나 {@link step}이 명시적으로 설정되면 이 속성은 무시된다.
-     * <br>
-     * 계산된 step이 2 이상일 때 {@link startStep}으로 지정된 step부터 배치된다.
-     * @default false
+     * false이면 줄 나누기 대신 ellipsis('...')로 표시한다.
      */
-    autoStep: boolean;
+    wrap = false;
 
     //-------------------------------------------------------------------------
     // methods

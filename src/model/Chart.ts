@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcEventProvider } from "../common/RcObject";
-import { SectionDir, isNull } from "../common/Types";
+import { SVGStyleOrClass, SectionDir, isNull } from "../common/Types";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
@@ -168,6 +168,8 @@ export class ChartOptions extends ChartItem {
      * @default 8 pixels
      */
     axisGap = 8;
+    backgroundImage: string;
+    backgroundStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // methods
@@ -425,7 +427,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._yAxes.load(source.yAxes || source.yAxis || {});
 
         // body
-        this._body.load(source.body);
+        this._body.load(source.plot);
 
         // inverted
         this._inverted = this.inverted;

@@ -296,3 +296,12 @@ export abstract class FormattableText extends ChartText {
         return s;
     }
 }
+
+export class BackgroundImage extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    url: string;
+    style: SVGStyleOrClass;
+}

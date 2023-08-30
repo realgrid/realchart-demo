@@ -6,10 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { IPercentSize, ORG_ANGLE, SizeValue, _undefined, calcPercent, deg2rad, parsePercentSize } from "../common/Types";
+import { IPercentSize, ORG_ANGLE, SVGStyleOrClass, SizeValue, _undefined, calcPercent, deg2rad, parsePercentSize } from "../common/Types";
 import { AxisGuide } from "./Axis";
 import { IChart } from "./Chart";
-import { ChartItem } from "./ChartItem";
+import { BackgroundImage, ChartItem } from "./ChartItem";
 import { Series } from "./Series";
 
 /**
@@ -33,12 +33,13 @@ export class Body extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    name: string;
+    // name: string;
     size: SizeValue = '90%';
     centerX: SizeValue = '50%';
     centerY: SizeValue = '50%';
     startAngle = 0;
     circular = true;
+    image = new BackgroundImage(null);
 
     //-------------------------------------------------------------------------
     // methods

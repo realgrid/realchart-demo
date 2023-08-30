@@ -7,13 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcElement } from "../common/RcControl";
-import { toSize } from "../common/Rectangle";
+import { intersectsRect, toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { DEG_RAD } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis, AxisGuide, AxisPosition, AxisTickMark, AxisTitle, IAxisTick } from "../model/Axis";
+import { Axis, AxisGuide, AxisLabelArrange, AxisPosition, AxisTickMark, AxisTitle, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
 import { BoundableElement, ChartElement } from "./ChartElement";
@@ -118,6 +118,7 @@ class AxisTickMarkView extends ChartElement<AxisTickMark> {
 class AxisLabelElement extends TextElement {
 
     index = -1;
+    value: number;
     col = 0;
     row = 0;
     tickWidth = 0;
@@ -158,6 +159,7 @@ export class AxisView extends ChartElement<Axis> {
     private _labelViews: AxisLabelElement[] = []; 
     private _markLen: number;
     private _labelSize: number;
+    private _labelRowPts: number[];
 
     _guideViews: AxisGuideView<AxisGuide>[];
     _frontGuideViews: AxisGuideView<AxisGuide>[];
@@ -422,6 +424,7 @@ export class AxisView extends ChartElement<Axis> {
             }
 
             views.forEach((v, i) => {
+                v.value = ticks[i].value;
                 v.text = ticks[i].label;
             });
             return views.length;
@@ -429,17 +432,47 @@ export class AxisView extends ChartElement<Axis> {
         return 0;
     }
 
+    private $_getRows(views: AxisLabelElement[]): number {
+        return 2;
+    }
+
+    private $_getStep(view: AxisLabelElement[]): number {
+        return 2;
+    }
+
     private $_measureLabelsHorz(axis: Axis, views: AxisLabelElement[]): number {
         const m = axis.label;
-        const step = m.step >> 0;
-        const rows = m.rows >> 0;
+        let step = m.step >> 0;
+        let rows = m.rows >> 0;
         let rotation = m.rotation % 360;
         let overlapped = false;
         let sz: number;
 
-        if (step > 0 || rows > 0) {
-        } else if (m.autoRows) {
-        } else if (m.autoStep) {
+        if (step > 0 || rows > 0 || rotation > 0 || rotation < 0 ) {
+        } else {
+            // check overalpped
+            for (let i = 0; i < views.length - 1; i++) {
+                const w = axis.getUnitLength(this.width, views[i].value);
+
+                if (views[i].getBBounds().width >= w) {
+                    overlapped = true;
+                    break;
+                }
+            }
+            if (overlapped) {
+                switch (m.autoArrange) {
+                    case AxisLabelArrange.ROTATE:
+                        rotation = -45;
+                        break;
+                    case AxisLabelArrange.ROWS:
+                        rows = this.$_getRows(views);
+                        break;
+                    case AxisLabelArrange.STEP:
+                        step = this.$_getStep(views);
+                        break;
+                }
+                overlapped = false;
+            }
         }
 
         if (step > 1) {
@@ -458,23 +491,58 @@ export class AxisView extends ChartElement<Axis> {
             });
         }
 
-        if (isNaN(rotation)) {
+        if (rows > 1) {
+            views.forEach((v, i) => v.row = i % rows);
+            // this._labelRowPts = new Array<number>(rows).fill(0);
+            this._labelRowPts = [];
+        } else {
+            views.forEach(v => v.row = 0);
+            this._labelRowPts = [0];
         }
 
-        rotation = rotation || 0;
+        if (overlapped) {
+            rotation = -45;
+        } else {
+            rotation = rotation || 0;
+        }
         views.forEach(v => {
             v.rotation = rotation;
         });
 
-        if (!isNaN(rotation) && rotation != 0) {
-            sz = views[0].rotatedHeight;
-            for (let i = 1; i < views.length; i++) {
-                sz = Math.max(sz, views[i].rotatedHeight);
+        if (rows > 1) {
+            const pts = this._labelRowPts;
+
+            for (let i = 0; i < rows; i++) {
+                pts.push(0);
             }
+
+            if (!isNaN(rotation) && rotation != 0) {
+                views.forEach(v => {
+                    pts[v.row] = Math.max(pts[v.row], v.rotatedHeight);
+                })
+            } else {
+                views.forEach(v => {
+                    pts[v.row] = Math.max(pts[v.row], v.getBBounds().height);
+                })
+            }
+
+            pts.unshift(0);
+            for (let i = 2; i < pts.length; i++) {
+                pts[i] += pts[i - 1];
+            }
+            return pts[pts.length - 1];
+
         } else {
-            sz = views[0].getBBounds().height;
-            for (let i = 1; i < views.length; i++) {
-                sz = Math.max(sz, views[i].getBBounds().height);
+            if (!isNaN(rotation) && rotation != 0) {
+                sz = views[0].rotatedHeight;
+                for (let i = 1; i < views.length; i++) {
+                    sz = Math.max(sz, views[i].rotatedHeight);
+                }
+            } else {
+                sz = views[0].getBBounds().height;
+                for (let i = 1; i < views.length; i++) {
+                    sz = Math.max(sz, views[i].getBBounds().height);
+                }
             }
         }
         return sz;
@@ -490,6 +558,8 @@ export class AxisView extends ChartElement<Axis> {
     }
 
     private $_layoutLabelsHorz(views: AxisLabelElement[], ticks: IAxisTick[], opp: boolean, w: number, h: number, len: number): void {
+        const pts = this._labelRowPts;
+
         views.forEach(v => {
             if (v.visible) {
                 const rot = v.rotation;
@@ -497,7 +567,7 @@ export class AxisView extends ChartElement<Axis> {
                 const r = v.getBBounds();
                 const ascent = Math.floor(v.getAscent(r.height));
                 let x = ticks[v.index].pos;
-                let y = opp ? h - len - r.height : len;
+                let y = opp ? (h - len - r.height - pts[v.row]) : (len + pts[v.row]);
     
                 if (rot < -15 && rot >= -90) {
                     v.anchor = TextAnchor.END;

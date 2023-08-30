@@ -1307,3 +1307,27 @@ export class ClipPathElement extends RcElement {
     // internal members
     //-------------------------------------------------------------------------
 }
+
+export class ImageElement extends RcElement {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, styleName: string) {
+        super(doc, styleName, 'image');
+
+        this.setAttr('preserveAspectRatio', 'none');
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setImage(url: string, width: number, height: number): boolean {
+        if (url) {
+            this.setAttr('href', url);
+            this.resize(width, height);
+            return true;
+        }
+        return false;
+    }
+}
