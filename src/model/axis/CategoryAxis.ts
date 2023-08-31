@@ -113,6 +113,7 @@ export class CategoryAxis extends Axis {
     private _max: number;
     private _catPad = 0;
     _pts: number[];
+    _length: number;
 
     //-------------------------------------------------------------------------
     // properties
@@ -263,11 +264,11 @@ export class CategoryAxis extends Axis {
         for (let i = min; i <= max; i++) {// += step) {
             const w = weights[i - min];
 
-            pts.push(length * p / len);
+            pts.push(p / len);
             p += weights[i - min];// step
         }
-        pts.push(length * p / len);
-        pts.push(length * (p + this._maxPad) / len);
+        pts.push(p / len);
+        pts.push((p + this._maxPad) / len);
 
         this._map.clear();
 
@@ -275,22 +276,50 @@ export class CategoryAxis extends Axis {
             const v = min + i - 1;
 
             ticks.push({
-                pos: this.getPosition(length, v),
+                pos: NaN,//this.getPosition(length, v),
                 value: v,
                 label: label.getTick(cats[i - 1]),
             });
             this._map.set(cats[i - 1], v);
         }
 
+        // let markPoints: number[];
+
+        // if (tick.getPosition() === CategoryTickPosition.EDGE) {
+        //     markPoints = pts.slice(1, pts.length - 1);
+        // } else {
+        //     markPoints = ticks.map(t => t.pos);
+        // }
+ 
+        return { ticks, markPoints: null };
+    }
+
+    calcPoints(length: number, phase: number): void {
+        const pts = this._pts;
+
+        if (phase > 0) {
+            for (let i = 0; i < pts.length; i++) {
+                pts[i] /= this._length;
+            }
+        }
+
+        this._length = length;
+        
+        for (let i = 0; i < pts.length; i++) {
+            pts[i] *= length;
+        }
+
+        const tick = this.tick as CategoryAxisTick;
         let markPoints: number[];
 
         if (tick.getPosition() === CategoryTickPosition.EDGE) {
             markPoints = pts.slice(1, pts.length - 1);
         } else {
-            markPoints = ticks.map(t => t.pos);
+            markPoints = this._ticks.map(t => t.pos);
         }
- 
-        return { ticks, markPoints };
+        this._markPoints = markPoints;
+
+        super.calcPoints(length, phase);
     }
 
     getPosition(length: number, value: number, point = true): number {

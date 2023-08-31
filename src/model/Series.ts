@@ -501,6 +501,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             p.index = i;
             p.parse(this);
             p.yGroup = p.yValue;
+            p.isNull = s == null;
             return p;
         });
     }

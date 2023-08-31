@@ -564,6 +564,10 @@ export abstract class Axis extends ChartItem implements IAxis {
         }
     }
 
+    calcPoints(length: number, phase: number): void {
+        this._ticks.forEach(t => t.pos = this.getPosition(length, t.value));
+    }
+
     /**
      * value에 해당하는 축상의 위치.
      */

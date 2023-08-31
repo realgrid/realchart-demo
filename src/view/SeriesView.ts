@@ -620,7 +620,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
             const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
             const wPoint = series.getPointWidth(wUnit);
             const yVal = yAxis.getPosition(yLen, p.yValue);
-            const hPoint = (yVal - yBase) * vr;
+            const hPoint = p.isNull ? 0 : (yVal - yBase) * vr;
             let x: number;
             let y: number;
 

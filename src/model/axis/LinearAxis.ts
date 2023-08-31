@@ -133,10 +133,10 @@ export class ContinuousAxisTick extends AxisTick {
     protected _getStepsByPixels(length: number, pixels: number, base: number, min: number, max: number): number[] {
         if (min >= base) {
             min = base;
-            base = NaN;
+            // base = NaN;
         } else if (max <= base) {
             max = base;
-            base = NaN;
+            // base = NaN;
         }
 
         const len = max - min;
@@ -173,7 +173,7 @@ export class ContinuousAxisTick extends AxisTick {
         step *= scale;
 
         if (!isNaN(base)) { // min이 base 아래, max가 base 위에 있다.
-            assert(min < base && max > base, "base error");
+            assert(min <= base && max >= base, "base error");
             count = Math.max(3, count);
 
             while (true) {
@@ -484,7 +484,7 @@ export abstract class ContinuousAxis extends Axis {
 
     protected _createTick(length: number, step: number): IAxisTick {
         return {
-            pos: this.getPosition(length, step),
+            pos: NaN,//this.getPosition(length, step),
             value: step,
             label: this._getTickLabel(step)
         }

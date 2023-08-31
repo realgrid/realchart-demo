@@ -459,6 +459,22 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     layoutAxes(width: number, height: number, inverted: boolean, phase: number): void {
         this._xAxes.buildTicks(inverted ? height : width);
         this._yAxes.buildTicks(inverted ? width : height);
+        this.$_calcAxesPoints(width, height, inverted, 0);
+    }
+
+    calcAxesPoints(width: number, height: number, inverted: boolean): void {
+        this.$_calcAxesPoints(width, height, inverted, 1);
+    }
+
+    private $_calcAxesPoints(width: number, height: number, inverted: boolean, phase: number): void {
+        let len = inverted ? height : width;
+        this._xAxes.forEach(axis => {
+            axis.calcPoints(len, phase);
+        });
+        len = inverted ? width : height;
+        this._yAxes.forEach(axis => {
+            axis.calcPoints(len, phase);
+        });
     }
 
     /**

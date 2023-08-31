@@ -690,13 +690,10 @@ export class ChartView extends RcElement {
         // 아래 checkWidth를 위해 tick을 생성한다.
         m.layoutAxes(w, h, this._inverted, phase);
 
-        // if (this._flipped) {
-            w -= map.get(SectionDir.LEFT).checkWidths(doc, w, h);
-            w -= map.get(SectionDir.RIGHT).checkWidths(doc, w, h);
-        // } else {
-            h -= map.get(SectionDir.BOTTOM).checkHeights(doc, w, h);
-            h -= map.get(SectionDir.TOP).checkHeights(doc, w, h);
-        // }
+        w -= map.get(SectionDir.LEFT).checkWidths(doc, w, h);
+        w -= map.get(SectionDir.RIGHT).checkWidths(doc, w, h);
+        h -= map.get(SectionDir.BOTTOM).checkHeights(doc, w, h);
+        h -= map.get(SectionDir.TOP).checkHeights(doc, w, h);
 
         // 조정된 크기로 tick을 다시 생성한다.
         m.layoutAxes(w, h, this._inverted, phase);
@@ -726,7 +723,6 @@ export class ChartView extends RcElement {
         }
         m.layoutAxes(w, h, this._inverted, phase);
 
-        // axes
         for (const dir of map.keys()) {
             const asv = map.get(dir);
             
@@ -734,6 +730,22 @@ export class ChartView extends RcElement {
                 asv.measure(doc, m, w, h, phase);
             }
         }
+
+        // 계산된 axis view에 맞춰 tick 위치를 조정한다.
+        w = wSave;
+        h = hSave;
+        for (const dir of map.keys()) {
+            const asv = map.get(dir);
+            
+            if (asv.visible) {
+                if (dir === SectionDir.LEFT || dir === SectionDir.RIGHT) {
+                    w -= asv.mw;
+                } else if (dir === SectionDir.BOTTOM || dir === SectionDir.TOP) {
+                    h -= asv.mh;
+                }
+            }
+        }
+        m.calcAxesPoints(w, h, this._inverted);
 
         // body
         this._bodyView.measure(doc, m.body, w, h, phase);
