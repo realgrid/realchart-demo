@@ -10,6 +10,7 @@ import { isArray, isObject, pickNum, pickNum3 } from "../../common/Common";
 import { IPercentSize, RtPercentSize, assert, calcPercent, ceil, fixnum, parsePercentSize } from "../../common/Types";
 import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick } from "../Axis";
 import { DataPoint } from "../DataPoint";
+import { SeriesGroup, SeriesGroupLayout } from "../Series";
 
 export class ContinuousAxisTick extends AxisTick {
 
@@ -727,5 +728,15 @@ export class LinearAxis extends ContinuousAxis {
     //-------------------------------------------------------------------------
     type(): string {
         return 'linear';
+    }
+
+    protected _adjustMinMax(min: number, max: number): { min: number; max: number; } {
+        const v = super._adjustMinMax(min, max);
+        const series = this._series;
+
+        if (series.length === 1 && series[0] instanceof SeriesGroup && series[0].layout === SeriesGroupLayout.FILL) {
+            v.max = series[0].layoutMax;
+        }
+        return v;
     }
 }

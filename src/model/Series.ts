@@ -582,6 +582,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 if (!isNaN(val)) {
                     vals.push(p.yValue = val);
                     p.yGroup = p.yValue
+                } else {
+                    p.yGroup = 0;
                 }
             });
 
@@ -1314,7 +1316,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         const map: Map<number, DataPoint[]> = this._stackPoints = new Map();
 
         series[0]._visPoints.forEach(p => {
-            p.yGroup = p.yValue;
+            p.yGroup = p.yValue || 0;
             map.set(p.xValue, [p]);
         });
 
@@ -1327,7 +1329,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
                 } else {
                     map.set(p.xValue, [p]);
                 }
-                p.yGroup = p.yValue;
+                p.yGroup = p.yValue || 0;
             });
         }
         return map;
@@ -1340,12 +1342,14 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
 
         if (!isNaN(base)) {
             for (const pts of map.values()) {
-                let v = pts[0].yValue;
+                let v = pts[0].yValue || 0;
                 let prev = v >= base ? 0 : -1;
                 let nprev = v < base ? 0 : -1;
 
+                pts[0].yGroup = pts[0].yValue || 0;
+
                 for (let i = 1; i < pts.length; i++) {
-                    v = pts[i].yValue;
+                    v = pts[i].yValue || 0;
 
                     if (v >= base) {    
                         if (prev >= 0) {
@@ -1368,8 +1372,10 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
             }
         } else {
             for (const pts of map.values()) {
+                pts[0].yGroup = pts[0].yValue || 0;
+
                 for (let i = 1; i < pts.length; i++) {
-                    pts[i].yGroup = pts[i - 1].yGroup + pts[i].yValue;
+                    pts[i].yGroup = pts[i - 1].yGroup + (pts[i].yValue || 0);
                 }
                 vals.push(pts[pts.length - 1].yGroup);
             }
@@ -1394,12 +1400,12 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
                 let nprev = 0;
                 
                 for (const p of pts) {
-                    p.yValue = p.yValue / sum * max;
+                    p.yValue = (p.yValue || 0) / sum * max;
 
                     if (p.yValue < base) {
-                        nprev = p.yGroup = p.yValue + nprev;
+                        nprev = p.yGroup = (p.yValue || 0) + nprev;
                     } else {
-                        prev = p.yGroup = p.yValue + prev;
+                        prev = p.yGroup = (p.yValue || 0) + prev;
                     }
                 }
                 vals.push(nprev, prev);
@@ -1412,8 +1418,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
                 }
                 let prev = 0;
                 for (const p of pts) {
-                    p.yValue = p.yValue / sum * max;
-                    prev = p.yGroup = p.yValue + prev;
+                    prev = p.yGroup = (p.yValue || 0) / sum * max + prev;
                 }
                 vals.push(max);
             }

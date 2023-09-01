@@ -10,21 +10,21 @@ const config = {
     },
     series: {
         series: [{
-            name: 'Installation & Developers',
-            marker: {},
-            data: [43934, 48656, 65165, 81827, 112143, 142383,
-                171533, 165174, 155157, 161454, 154610]
-        }, {
-            name: 'Manufacturing',
-            marker: {},
-            data: [24916, 37941, 29742, 29851, 32490, 30282,
-                38121, 36885, 33726, 34243, 31050]
-        }, {
-            name: 'Sales & Distribution',
-            marker: {},
-            data: [11744, 30000, 16005, 19771, 20185, 24377,
-                32147, 30912, 29243, 29213, 25663]
-        }, {
+        //     name: 'Installation & Developers',
+        //     marker: {},
+        //     data: [43934, 48656, 65165, 81827, 112143, 142383,
+        //         171533, 165174, 155157, 161454, 154610]
+        // }, {
+        //     name: 'Manufacturing',
+        //     marker: {},
+        //     data: [24916, 37941, 29742, 29851, 32490, 30282,
+        //         38121, 36885, 33726, 34243, 31050]
+        // }, {
+        //     name: 'Sales & Distribution',
+        //     marker: {},
+        //     data: [11744, 30000, 16005, 19771, 20185, 24377,
+        //         32147, 30912, 29243, 29213, 25663]
+        // }, {
             name: 'Operations & Maintenance',
             marker: {},
             data: [null, null, null, null, null, null, null,

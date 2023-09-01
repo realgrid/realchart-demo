@@ -73,10 +73,10 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
 
         const yAxis = this.model._yAxisObj;
         const yOrg = height;
+        const base = this.model.baseValue || 0;
 
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
-
             p.yLow = yOrg - yAxis.getPosition(height, p.yGroup - p.yValue);
         }
     }
@@ -99,23 +99,29 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         }
 
         if (g && (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
+            const iSave = i;
+
             sb.move(pts[i].xPos, pts[i].yLow);
             sb.line(pts[i].xPos, pts[i].yPos);
             
             i++;
             while (i < pts.length) {
                 sb.line(pts[i].xPos, pts[i].yPos);
+                i++;
             }
 
-            sb.line(pts[pts.length - 1].xPos, pts[pts.length - 1].yLow);
-            for (let i = pts.length - 1; i >= 0; i--) {
+            i = pts.length - 1;
+            sb.line(pts[i].xPos, pts[i].yLow);
+
+            while (i >= iSave) {
                 sb.line(pts[i].xPos, pts[i].yLow);
+                i--;
             }
         } else {
             sb.move(pts[i].xPos, yMin);
             sb.line(pts[i].xPos, pts[i].yPos);
 
-            this._buildLines(pts, i, sb, false);
+            this._buildLines(pts, i + 1, sb, false);
 
             const path = sb._path;
 
@@ -127,7 +133,9 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
                     path.splice(i, 0, 'M', path[i + 1], yMin);
                     path[i + 3] = 'L';
                     i += 6;
-                } else {
+                } else if (path[i] === 'Q') {
+                    i += 4;
+                } else { // 'L'
                     i += 3;
                 }
             }

@@ -3,6 +3,7 @@ const config = {
     options: {},
     title: "Multiple Areas",
     xAxis: {
+        type: 'category',
         title: "일일 Daily fat",
     },
     yAxis: {
