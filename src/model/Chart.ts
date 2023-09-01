@@ -168,7 +168,6 @@ export class ChartOptions extends ChartItem {
      * @default 8 pixels
      */
     axisGap = 8;
-    backgroundImage = new BackgroundImage(null);
     backgroundStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------

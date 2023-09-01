@@ -1,15 +1,7 @@
 const config = {
     title: "Chart Background",
     options: {
-        // animatable: false,
-        backgroundImage: {
-            // url: '../assets/mountain.jpeg',
-            style: {
-                opacity: 0.2
-            }
-        },
         backgroundStyle: {
-            fill: 'none'
         }
     },
     xAxis: {
@@ -68,11 +60,11 @@ function setActions(container) {
         chart.update(config, animate);
     }, false);
     createListBox(container, "backgroundStyle.fill", ['none', 'black', 'yellow'], function (e) {
-        config.options.backgroundStyle.fill = _getValue(e);
+        config.options.backgroundStyle.backgroundColor = _getValue(e);
         chart.update(config);
     }, 'none');
     createCheckBox(container, 'backgroundImage', function (e) {
-        config.options.backgroundImage.url = _getChecked(e) ? '../assets/mountain.jpeg' : '';
+        config.options.backgroundStyle.backgroundImage = _getChecked(e) ? 'url(../assets/mountain.jpeg)' : '';
         chart.update(config);
     }, false);
 }

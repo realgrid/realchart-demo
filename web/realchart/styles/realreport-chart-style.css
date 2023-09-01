@@ -4,7 +4,7 @@
     font-family: var(--rct-font-family);
     font-size: var(--rct-font-size);
     color: #000;
-    background-color: white;
+    /* background-color: white; */
     /* word-break: break-all;
     word-wrap: break-word; */
     -webkit-touch-callout: default;

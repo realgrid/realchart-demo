@@ -443,7 +443,8 @@ export abstract class RcControl extends RcWrappableObject {
             this._htmlRoot.style.top = (sr.top - cr.top) + 'px';
 
             this._doRender({x: 0, y: 0, width: w, height: h});
-            
+            this._doRenderBackground(this._container.firstElementChild as HTMLDivElement, w, h);
+
         } finally {
             this.loaded = true;
             this._dirty = false;
@@ -459,6 +460,7 @@ export abstract class RcControl extends RcWrappableObject {
     protected abstract _doRender(bounds: IRect): void;
     protected _doBeforeRender(): void {}
     protected _doAfterRender(): void {}
+    protected _doRenderBackground(elt: HTMLDivElement, width: number, height: number): void {}
 
     //-------------------------------------------------------------------------
     // event handlers
