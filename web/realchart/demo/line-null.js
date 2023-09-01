@@ -1,23 +1,18 @@
 const config = {
     options: {},
-    title: "Line Series 01",
+    title: "Line - Null Point",
     xAxis: {
-        type: 'category'
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     },
     yAxis: {
     },
     series: {
         type: 'line',
+        // lineType: 'spline',
         pointLabel: true,
         data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['카눈', 8], 
-            ['def', 9], 
-            ['머핀'], 
-            ['지리산', 15.3], 
-            ['zzz', 13],
-            ['낙동강', 12.5]
+            // 5.2, 5.7, 7.9, 13.9, 18.2, 21.4, 25.0, 26.4, 22.8, 17.5, 12.1, 7.6
+            5.2, 5.7, 7.9, null, 18.2, 21.4, 25.0, 26.4, 22.8, 17.5, 12.1, 7.6
         ]
     }
 }
@@ -36,8 +31,9 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
-        config.series.lineType = _getValue(e);
+    createListBox(container, "Line Type", ['default', 'spline', 'step', 'step-backward'], function (e) {
+        config.series.lineType = _getValue(e).split('-')[0];
+        config.series.stepDir = _getValue(e).indexOf('backward') >= 0 ? 'backward' : 'forward';
         chart.update(config, animate);
     }, 'default');
     createCheckBox(container, 'Inverted', function (e) {

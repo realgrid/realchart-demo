@@ -209,29 +209,28 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             this._markers.prepare(count * mpp, (mv, i) => {
                 const n = i % count;
                 const p = points[n];
-    
-                if (n === count - 1) {
-    
-                } else if (n === 0) {
-    
-                } else {
-    
+
+                if (!p.isNull) {
+                    if (n === count - 1) {
+                    } else if (n === 0) {
+                    } else {
+                    }
+        
+                    p.radius = marker.radius;
+                    p.shape = marker.shape;
+                    mv.point = p;
+        
+                    // mv.className = vis ? '' : 'dlchart-line-marker-hidden';
+                    // mv.clearStyles();
+                    // if (color) {
+                    //     m.setStyles({
+                    //         fill: color,
+                    //         stroke: color
+                    //     })
+                    // }
+                    // m.setStyles(styles);
+                    // this._needNegative && m.point.value < base && m.setStyles(negativeStyles);
                 }
-    
-                p.radius = marker.radius;
-                p.shape = marker.shape;
-                mv.point = p;
-    
-                // mv.className = vis ? '' : 'dlchart-line-marker-hidden';
-                // mv.clearStyles();
-                // if (color) {
-                //     m.setStyles({
-                //         fill: color,
-                //         stroke: color
-                //     })
-                // }
-                // m.setStyles(styles);
-                // this._needNegative && m.point.value < base && m.setStyles(negativeStyles);
             });
         }
     }
@@ -302,13 +301,23 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                 }
             }
 
-            if (vis) {
-                this._layoutMarker(this._markers.get(i), px, py);
-            }
-            if (labelViews && (labelView = labelViews.get(p, 0))) {
-                const r = labelView.getBBounds();
+            const mv = this._markers.get(i);
+            const lv = labelViews && labelViews.get(p, 0);
 
-                labelView.translate(px - r.width / 2, py - r.height - labelOff - (vis ? p.radius : 0));
+            if (p.isNull) {
+                mv.visible = false;
+                lv && (lv.visible = false);
+            } else {
+                if (vis) {
+                    mv.visible = true;
+                    this._layoutMarker(mv, px, py);
+                }
+                if (lv) {
+                    const r = lv.getBBounds();
+
+                    lv.visible = true;
+                    lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? p.radius : 0));
+                }
             }
         }
     }
@@ -316,159 +325,236 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     protected _layoutLines(pts: DataPoint[]): void {
         const series = this.model;
         const sb = new PathBuilder();
+        let i = 0;
         let s: string;
 
-        sb.move(pts[0].xPos, pts[0].yPos);
-        this._buildLines(pts, sb, false);
-        this._line.setPath(s = sb.end(this._polar));
+        while (i < pts.length) {
+            const p = pts[i++];
 
-        this._line.clearStyleAndClass();
-        this._line.setStyle('stroke', series.color);
-        this._line.addStyleOrClass(series.style);
-        Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
-
-        if (series instanceof LineSeries && this._needBelow) {
-            const axis = series._yAxisObj as ContinuousAxis;
-            const base = series.baseValue;// series.getBaseValue(axis);
-            
-            if (this._inverted) {
-                this.$_resetClips(this.width, this.height, axis.getPosition(this.width, base), true);
-            } else {
-                this.$_resetClips(this.width, this.height, this.height - axis.getPosition(this.height, base), false);
+            if (!p.isNull) {
+                sb.move(p.xPos, p.yPos);
+                break;
             }
+        }
 
-            this._lowLine.setPath(s);//this._line.path());
-
-            this._lowLine.clearStyleAndClass();
-            this._lowLine.setStyle('stroke', series.color);
-            this._lowLine.addStyleOrClass(series.style);
-            this._lowLine.addStyleOrClass(series.belowStyle);
-            Dom.setImportantStyle(this._lowLine.dom.style, 'fill', 'none');
+        if (i < pts.length - 1) {
+            this._buildLines(pts, i, sb, false);
+            this._line.setPath(s = sb.end(this._polar));
+    
+            this._line.clearStyleAndClass();
+            this._line.setStyle('stroke', series.color);
+            this._line.addStyleOrClass(series.style);
+            Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
+    
+            if (series instanceof LineSeries && this._needBelow) {
+                const axis = series._yAxisObj as ContinuousAxis;
+                const base = series.baseValue;// series.getBaseValue(axis);
+                
+                if (this._inverted) {
+                    this.$_resetClips(this.width, this.height, axis.getPosition(this.width, base), true);
+                } else {
+                    this.$_resetClips(this.width, this.height, this.height - axis.getPosition(this.height, base), false);
+                }
+    
+                this._lowLine.setPath(s);//this._line.path());
+    
+                this._lowLine.clearStyleAndClass();
+                this._lowLine.setStyle('stroke', series.color);
+                this._lowLine.addStyleOrClass(series.style);
+                this._lowLine.addStyleOrClass(series.belowStyle);
+                Dom.setImportantStyle(this._lowLine.dom.style, 'fill', 'none');
+            }
         }
     }
 
-    protected _buildLines(pts: IPointPos[], sb: PathBuilder, reversed: boolean): void {
+    protected _buildLines(pts: IPointPos[], from: number, sb: PathBuilder, reversed: boolean): void {
         const m = this.model;
         const t = m.getLineType();
 
         if (t === LineType.SPLINE) {
-            this._drawCurve(pts, sb, reversed);
+            this._drawCurve(pts, from - 1, sb, reversed);
         } else if (m instanceof LineSeries && t === LineType.STEP) {
-            this._drawStep(pts, sb, m.stepDir, reversed);
+            this._drawStep(pts, from, sb, m.stepDir);
         } else {
-            this._drawLine(pts, sb, reversed);
+            this._drawLine(pts, from, sb, reversed);
         }
     }
 
-    protected _drawLine(pts: IPointPos[], sb: PathBuilder, reversed: boolean): void {
-        if (reversed) {
-            for (let i = pts.length - 2; i >= 0; i--) {
+    protected _drawLine(pts: IPointPos[], from: number, sb: PathBuilder, reversed: boolean): void {
+        const len = pts.length;
+        let i: number;
+
+        if (reversed) { // areaRange에서 호출한다.
+            i = pts.length - 1 - from;
+            while (i >= 0) {
                 sb.line(pts[i].xPos, pts[i].yPos);
+                i--;
             }
         } else {
-            for (let i = 1; i < pts.length; i++) {
-                sb.line(pts[i].xPos, pts[i].yPos);
+            i = from;
+            while (i < len) {
+                if (pts[i].isNull) {
+                    do {
+                        i++;
+                    } while (i < len && pts[i].isNull);
+
+                    if (i < len) {
+                        sb.move(pts[i].xPos, pts[i].yPos);
+                        i++;
+                    }
+                } else {
+                    sb.line(pts[i].xPos, pts[i].yPos);
+                    i++;
+                }
             }
         }
     }
 
-    protected _drawStep(pts: IPointPos[], sb: PathBuilder, dir: LineStepDirection, reversed: boolean): void {
-        if (dir === LineStepDirection.BACKWARD) {
-            for (let i = 1; i < pts.length; i++) {
-                sb.line(pts[i - 1].xPos, pts[i].yPos);
-                sb.line(pts[i].xPos, pts[i].yPos);
-            }
-        } else {
-            for (let i = 1; i < pts.length; i++) {
-                sb.line(pts[i].xPos, pts[i - 1].yPos);
-                sb.line(pts[i].xPos, pts[i].yPos);
+    protected _drawStep(pts: IPointPos[], from: number, sb: PathBuilder, dir: LineStepDirection): void {
+        const len = pts.length;
+        let i = from;
+
+        while (i < len) {
+            if (pts[i].isNull) {
+                do {
+                    i++;
+                } while (i < len && pts[i].isNull);
+
+                if (i < len) {
+                    sb.move(pts[i].xPos, pts[i].yPos);
+                    i++;
+                }
+            } else {
+                if (dir === LineStepDirection.BACKWARD) {
+                    sb.line(pts[i - 1].xPos, pts[i].yPos);
+                    sb.line(pts[i].xPos, pts[i].yPos);
+                } else {
+                    sb.line(pts[i].xPos, pts[i - 1].yPos);
+                    sb.line(pts[i].xPos, pts[i].yPos);
+                }
+                i++
             }
         }
     }
+    
+    protected _drawCurve(pts: IPointPos[], from: number, sb: PathBuilder, reversed: boolean): void {
+        const len = pts.length;
+        let i: number;
 
-    protected _drawCurve(pts: IPointPos[], sb: PathBuilder, reversed: boolean): void {
         if (pts && pts.length > 1) {
-            const d = reversed ? -1 : 1;
-            const start = reversed ? pts.length - 1 : 0;
-            const end = reversed ? 0 : pts.length - 1;
-            let p = start;
+            if (reversed) {
+                const start = pts.length - 1 - from;
+                const end = 0;
 
-            if (pts.length == 2) {
-                sb.line(pts[p + d].xPos, pts[p + d].yPos);
-                return;
+                this.$_drawCurve(pts, start, end, -1, sb);
+            } else {
+                let start = from;
+
+                i = from;
+                while (i < len) {
+                    if (pts[i].isNull) {
+                        if (i - 1 > start) {
+                            this.$_drawCurve(pts, start, i - 1, 1, sb);
+                        }
+                        do {
+                            i++;
+                        } while (i < len && pts[i].isNull);
+
+                        start = i;
+
+                        if (i < len) {
+                            sb.move(pts[i].xPos, pts[i].yPos);
+                            i++;
+                        }
+                    } else {
+                        i++;
+                    }
+                }
+                if (i - 1 > start) {
+                    this.$_drawCurve(pts, start, i - 1, 1, sb);
+                }
             }
+        }
+    }
 
-            const tension = 0.23;
-            const tLeft = { x: 0, y: 0 };
-            const tRight = { x: 0, y: 0 };
-            const v1 = { x: 0, y: 0 };
-            const v2 = { x: pts[p + d].xPos - pts[p].xPos, y: pts[p + d].yPos - pts[p].yPos };
-            const p1 = { x: 0, y: 0 };
-            const p2 = { x: 0, y: 0 };
-            const mp = { x: 0, y: 0 };
-            let tan = { x: 0, y: 0 };
-            let len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+    private $_drawCurve(pts: IPointPos[], start: number, end: number, d: number, sb: PathBuilder): void {
+        let p = start;
 
+        if (Math.abs(end - start) === 1) {
+            sb.line(pts[p + d].xPos, pts[p + d].yPos);
+            return;
+        }
+
+        const tension = 0.23;
+        const tLeft = { x: 0, y: 0 };
+        const tRight = { x: 0, y: 0 };
+        const v1 = { x: 0, y: 0 };
+        const v2 = { x: pts[p + d].xPos - pts[p].xPos, y: pts[p + d].yPos - pts[p].yPos };
+        const p1 = { x: 0, y: 0 };
+        const p2 = { x: 0, y: 0 };
+        const mp = { x: 0, y: 0 };
+        let tan = { x: 0, y: 0 };
+        let len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+
+        v2.x /= len;
+        v2.y /= len;
+
+        let tFactor = (pts[p + d].xPos - pts[p].xPos)
+        let prevX = pts[p].xPos;
+        let prevY = pts[p].yPos;
+
+        for (p += d; p != end; p += d) {
+            v1.x = -v2.x;
+            v1.y = -v2.y;
+
+            v2.x = pts[p + d].xPos - pts[p].xPos;
+            v2.y = pts[p + d].yPos - pts[p].yPos;
+
+            len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
             v2.x /= len;
             v2.y /= len;
 
-            let tFactor = (pts[p + d].xPos - pts[p].xPos)
-            let prevX = pts[p].xPos;
-            let prevY = pts[p].yPos;
-
-            for (p += d; p != end; p += d) {
-                v1.x = -v2.x;
-                v1.y = -v2.y;
-
-                v2.x = pts[p + d].xPos - pts[p].xPos;
-                v2.y = pts[p + d].yPos - pts[p].yPos;
-
-                len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
-                v2.x /= len;
-                v2.y /= len;
-
-                if (v2.x < v1.x) {
-                    tan.x = v1.x - v2.x;
-                    tan.y = v1.y - v2.y;
-                } else {
-                    tan.x = v2.x - v1.x;
-                    tan.y = v2.y - v1.y;
-                }
-
-                const tlen = Math.sqrt(tan.x * tan.x + tan.y * tan.y);
-                tan.x /= tlen;
-                tan.y /= tlen;
-
-                if (v1.y * v2.y >= 0) {
-                    tan = { x: 1, y: 0 };
-                }
-
-                tLeft.x = -tan.x * tFactor * tension;
-                tLeft.y = -tan.y * tFactor * tension;
-
-                if (p == (d + start)) {
-                    sb.q(pts[p].xPos + tLeft.x, pts[p].yPos + tLeft.y, pts[p].xPos, pts[p].yPos);
-                } else {
-                    p1.x = prevX + tRight.x;
-                    p1.y = prevY + tRight.y;
-                    p2.x = pts[p].xPos + tLeft.x;
-                    p2.y = pts[p].yPos + tLeft.y;
-                    mp.x = (p1.x + p2.x) / 2;
-                    mp.y = (p1.y + p2.y) / 2;
-
-                    sb.q(p1.x, p1.y, mp.x, mp.y);
-                    sb.q(p2.x, p2.y, pts[p].xPos, pts[p].yPos);
-                }
-
-                tFactor = (pts[p + d].xPos - pts[p].xPos);
-                tRight.x = tan.x * tFactor * tension;
-                tRight.y = tan.y * tFactor * tension;
-                prevX = pts[p].xPos;
-                prevY = pts[p].yPos;
+            if (v2.x < v1.x) {
+                tan.x = v1.x - v2.x;
+                tan.y = v1.y - v2.y;
+            } else {
+                tan.x = v2.x - v1.x;
+                tan.y = v2.y - v1.y;
             }
 
-            sb.q(prevX + tRight.x, prevY + tRight.y, pts[p].xPos, pts[p].yPos);
+            const tlen = Math.sqrt(tan.x * tan.x + tan.y * tan.y);
+            tan.x /= tlen;
+            tan.y /= tlen;
+
+            if (v1.y * v2.y >= 0) {
+                tan = { x: 1, y: 0 };
+            }
+
+            tLeft.x = -tan.x * tFactor * tension;
+            tLeft.y = -tan.y * tFactor * tension;
+
+            if (p == (d + start)) {
+                sb.q(pts[p].xPos + tLeft.x, pts[p].yPos + tLeft.y, pts[p].xPos, pts[p].yPos);
+            } else {
+                p1.x = prevX + tRight.x;
+                p1.y = prevY + tRight.y;
+                p2.x = pts[p].xPos + tLeft.x;
+                p2.y = pts[p].yPos + tLeft.y;
+                mp.x = (p1.x + p2.x) / 2;
+                mp.y = (p1.y + p2.y) / 2;
+
+                sb.q(p1.x, p1.y, mp.x, mp.y);
+                sb.q(p2.x, p2.y, pts[p].xPos, pts[p].yPos);
+            }
+
+            tFactor = (pts[p + d].xPos - pts[p].xPos);
+            tRight.x = tan.x * tFactor * tension;
+            tRight.y = tan.y * tFactor * tension;
+            prevX = pts[p].xPos;
+            prevY = pts[p].yPos;
         }
+
+        sb.q(prevX + tRight.x, prevY + tRight.y, pts[p].xPos, pts[p].yPos);
     }
 }
 

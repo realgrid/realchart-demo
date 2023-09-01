@@ -14,6 +14,7 @@ let __point_id__ = 0;
 export interface IPointPos {
     xPos: number;
     yPos: number;
+    isNull: boolean;
 }
 
 export class DataPoint {
@@ -102,7 +103,7 @@ export class DataPoint {
         }
 
         // series.collectValue 등에서 재설정될 수 있다.
-        this.yValue = +this.y;
+        this.yValue = parseFloat(this.y);
     }
 
     getLabel(index: number): any {

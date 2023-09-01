@@ -38,7 +38,7 @@ export class BubbleSeriesPoint extends DataPoint {
     parse(series: BubbleSeries): void {
         super.parse(series);
 
-        this.zValue = +this.z;
+        this.zValue = parseFloat(this.z);
     }
 
     protected _readArray(series: BubbleSeries, v: any[]): void {

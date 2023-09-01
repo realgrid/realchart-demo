@@ -91,13 +91,19 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         const base = series.getBaseValue(yAxis);
         const yMin = this.height - yAxis.getPosition(len, pickNum(base, yAxis.axisMin()));
         const sb = new PathBuilder();
+        let i = 0;
         let s: string;
 
+        while (i < pts.length && pts[i].isNull) {
+            i++;
+        }
+
         if (g && (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
-            sb.move(pts[0].xPos, pts[0].yLow);
+            sb.move(pts[i].xPos, pts[i].yLow);
+            sb.line(pts[i].xPos, pts[i].yPos);
             
-            sb.line(pts[0].xPos, pts[0].yPos);
-            for (let i = 1; i < pts.length; i++) {
+            i++;
+            while (i < pts.length) {
                 sb.line(pts[i].xPos, pts[i].yPos);
             }
 
@@ -106,12 +112,27 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
                 sb.line(pts[i].xPos, pts[i].yLow);
             }
         } else {
-            sb.move(pts[0].xPos, yMin);
-            sb.line(pts[0].xPos, pts[0].yPos);
+            sb.move(pts[i].xPos, yMin);
+            sb.line(pts[i].xPos, pts[i].yPos);
 
-            this._buildLines(pts, sb, false);
+            this._buildLines(pts, i, sb, false);
 
-            sb.line(pts[pts.length - 1].xPos, yMin);
+            const path = sb._path;
+
+            i = 6;
+            while (i < path.length) {
+                if (path[i] === 'M') {
+                    path.splice(i, 0, 'L', path[i - 2], yMin);
+                    i += 3;
+                    path.splice(i, 0, 'M', path[i + 1], yMin);
+                    path[i + 3] = 'L';
+                    i += 6;
+                } else {
+                    i += 3;
+                }
+            }
+
+            sb.line(path[path.length - 2] as number, yMin);
         }
 
         area.setPath(s = sb.end());

@@ -66,7 +66,7 @@ export class BarRangeSeriesPoint extends DataPoint {
     parse(series: BarRangeSeries): void {
         super.parse(series);
 
-        this.lowValue = +this.low;
+        this.lowValue = parseFloat(this.low);
     }
 }
 

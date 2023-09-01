@@ -44,10 +44,10 @@ export class OhlcSeriesPoint extends DataPoint {
     parse(series: OhlcSeries): void {
         super.parse(series);
 
-        this.lowValue = +this.low;
-        this.openValue = +this.open;
-        this.closeValue = +this.close;
-        this.highValue = +this.high;
+        this.lowValue = parseFloat(this.low);
+        this.openValue = parseFloat(this.open);
+        this.closeValue = parseFloat(this.close);
+        this.highValue = parseFloat(this.high);
     }
 
     protected _readArray(series: OhlcSeries, v: any[]): void {

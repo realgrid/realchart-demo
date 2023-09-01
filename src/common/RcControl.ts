@@ -425,7 +425,7 @@ export abstract class RcControl extends RcWrappableObject {
 
     private $_render(): void {
         // animation 중이면 종료 후에 다시 그리도록 한다.
-        if (t <= this._toAnimation) {
+        if (+new Date() <= this._toAnimation) {
             this.$_requestRender();
             return;
         }

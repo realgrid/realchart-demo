@@ -7,9 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { Utils } from "../../common/Utils";
-import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { ConstraintSeriesGroup, Series, SeriesGroup } from "../Series";
+import { ConstraintSeriesGroup, Series } from "../Series";
 import { LineSeries } from "./LineSeries";
 
 /**

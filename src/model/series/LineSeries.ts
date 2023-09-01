@@ -64,6 +64,11 @@ export abstract class LineSeriesBase extends Series {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * null인 y값을 {@link baseValue}로 간주한다.
+     */
+    nullAsBase = false;
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -182,8 +187,8 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
         super.parse(series);
 
         this.y = this.high = pickProp(this.high, this.low);
-        this.lowValue = +this.low;
-        this.highValue = this.yValue = +this.high;
+        this.lowValue = parseFloat(this.low);
+        this.highValue = this.yValue = parseFloat(this.high);
     }
 
     protected _readArray(series: AreaRangeSeries, v: any[]): void {

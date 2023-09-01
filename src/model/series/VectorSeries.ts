@@ -65,8 +65,8 @@ export class VectorSeriesPoint extends DataPoint {
     parse(series: VectorSeries): void {
         super.parse(series);
 
-        this.lengthValue = +this.length;
-        this.angleValue = +this.angle;
+        this.lengthValue = parseFloat(this.length);
+        this.angleValue = parseFloat(this.angle);
     }
 }
 

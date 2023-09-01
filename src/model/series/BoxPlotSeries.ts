@@ -85,10 +85,10 @@ export class BoxPlotSeriesPoint extends DataPoint {
     parse(series: BoxPlotSeries): void {
         super.parse(series);
 
-        this.minValue = +this.min;
-        this.lowValue = +this.low;
-        this.midValue = +this.mid;
-        this.highValue = +this.high;
+        this.minValue = parseFloat(this.min);
+        this.lowValue = parseFloat(this.low);
+        this.midValue = parseFloat(this.mid);
+        this.highValue = parseFloat(this.high);
     }
 }
 

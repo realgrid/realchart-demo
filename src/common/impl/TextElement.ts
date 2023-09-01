@@ -23,6 +23,12 @@ export enum TextLayout {
     BOTTOM = 'bottom'
 }
 
+export enum TextOverflow {
+    TRUNCATE = 'truncate',
+    WRAP = 'wrap',
+    ELLIPSIS = 'ellipsis'
+}
+
 /**
  * Background, padding 등을 이용하려면 HtmlTextElement를 사용한다.
  */
@@ -38,6 +44,7 @@ export class TextElement extends RcElement {
     // property fields
     //-------------------------------------------------------------------------
     private _layout = TextLayout.TOP;
+    private _overflow = TextOverflow.WRAP;
 
     //-------------------------------------------------------------------------
     // fields
@@ -88,6 +95,17 @@ export class TextElement extends RcElement {
     set layout(value: TextLayout) {
         if (value !== this._layout) {
             this._layout = value;
+            this.layoutText();
+        }
+    }
+
+    /** overflow */
+    get overflow(): TextOverflow {
+        return this._overflow;
+    }
+    set overflow(value: TextOverflow) {
+        if (value !== this._overflow) {
+            this._overflow = value;
             this.layoutText();
         }
     }

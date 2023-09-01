@@ -501,7 +501,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             p.index = i;
             p.parse(this);
             p.yGroup = p.yValue;
-            p.isNull = s == null;
+            p.isNull = s == null || isNaN(p.yValue);
             return p;
         });
     }
@@ -557,28 +557,34 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     collectValues(axis: IAxis): number[] {
-        const isX = axis === this._xAxisObj;
-        const a = isX ? 'x' : 'y';
-        const v = a + 'Value';
         const vals: number[] = [];
-        const xStep = this.getXStep() || 1;
-        let x = this.getXStart() || 0;
 
-        this._visPoints.forEach((p, i) => {
-            let val = axis.getValue(p[a]);
+        if (axis === this._xAxisObj) {
+            let x = this.getXStart() || 0;
+            const xStep = this.getXStep() || 1;
 
-            // 카테고리에 포함되지 않는 숫자 값들은 자동으로 값을 지정한다.
-            if (isNaN(val) && isX) {
-                val = x;
-                x += xStep;
-            }
-            if (!isNaN(val)) {
-                vals.push(p[v] = val);
-                if (!isX) p.yGroup = p[v];
-            }
-        });
+            this._visPoints.forEach((p, i) => {
+                let val = axis.getValue(p.x);
+    
+                // 카테고리에 포함되지 않는 숫자 값들은 자동으로 값을 지정한다.
+                if (isNaN(val)) {
+                    val = x;
+                    x += xStep;
+                }
+                if (!isNaN(val)) {
+                    vals.push(p.xValue = val);
+                }
+            });
+        } else {
+            this._visPoints.forEach((p, i) => {
+                let val = p.isNull ? NaN : axis.getValue(p.y);
+    
+                if (!isNaN(val)) {
+                    vals.push(p.yValue = val);
+                    p.yGroup = p.yValue
+                }
+            });
 
-        if (!isX) {
             this._minValue = Math.min(...vals);
             this._maxValue = Math.max(...vals);
         }
@@ -1034,6 +1040,10 @@ export abstract class BasedSeries extends ClusterableSeries {
      * 숫자가 아닌 값으로 지정하면 0으로 간주한다.
      */
     baseValue = 0;
+    /**
+     * null인 y값을 {@link baseValue}로 간주한다.
+     */
+    nullAsBase = false;
 
     //-------------------------------------------------------------------------
     // overriden members

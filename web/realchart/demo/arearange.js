@@ -34,10 +34,10 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
-        config.series.lineType = _getValue(e);
+    createCheckBox(container, 'Curved', function (e) {
+        config.series.curved = _getChecked(e);
         chart.update(config);
-    }, 'default');
+    }, false);
     createCheckBox(container, 'Point Marker', function (e) {
         config.series.marker.visible = _getChecked(e);
         chart.update(config);

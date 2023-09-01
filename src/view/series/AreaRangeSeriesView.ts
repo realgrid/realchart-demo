@@ -56,13 +56,13 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
 
         // low lines
         const pts = points.map(p => {
-            return {xPos: p.xPos, yPos: p.yLow};
+            return {xPos: p.xPos, yPos: p.yLow, isNull: p.isNull};
         });
         const sb = new PathBuilder();
         const cnt = pts.length;
 
         sb.move(pts[cnt - 1].xPos, pts[cnt - 1].yPos);
-        this._buildLines(pts, sb, true);
+        this._buildLines(pts, 1, sb, true);
 
         this._lowerLine.setPath(sb.end(false));
         this._lowerLine.setStyle('stroke', this.model.color);
@@ -84,13 +84,13 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         let pts = points as IPointPos[];
 
         sb.move(pts[0].xPos, pts[0].yPos);
-        this._buildLines(pts, sb, false);
+        this._buildLines(pts, 1, sb, false);
 
         pts = points.map(p => {
-            return {xPos: p.xPos, yPos: p.yLow};
+            return {xPos: p.xPos, yPos: p.yLow, isNull: p.isNull};
         });
         sb.line(pts[cnt - 1].xPos, pts[cnt - 1].yPos);
-        this._buildLines(pts, sb, true);
+        this._buildLines(pts, 1, sb, true);
         
         path.setPath(sb.end());
         path.setStyle('fill', series.color);

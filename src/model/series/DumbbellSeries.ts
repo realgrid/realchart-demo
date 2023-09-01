@@ -80,7 +80,7 @@ export class DumbbellSeriesPoint extends DataPoint {
     parse(series: DumbbellSeries): void {
         super.parse(series);
 
-        this.lowValue = +this.low;
+        this.lowValue = parseFloat(this.low);
     }
 }
 

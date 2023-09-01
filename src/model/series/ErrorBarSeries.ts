@@ -66,7 +66,7 @@ export class ErrorBarSeriesPoint extends DataPoint {
     parse(series: ErrorBarSeries): void {
         super.parse(series);
 
-        this.lowValue = +this.low;
+        this.lowValue = parseFloat(this.low);
     }
 }
 

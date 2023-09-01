@@ -28,7 +28,7 @@ export class HeatmapSeriesPoint extends DataPoint {
     parse(series: HeatmapSeries): void {
         super.parse(series);
 
-        this.colorValue = +this.color;
+        this.colorValue = parseFloat(this.color);
     }
 
     protected _readArray(series: HeatmapSeries, v: any[]): void {
