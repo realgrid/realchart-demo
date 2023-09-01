@@ -348,6 +348,7 @@ export abstract class RcControl extends RcWrappableObject {
             height: '100%',  
             boxSizing: 'border-box',
             overflow: 'hidden',
+            padding: '20px',
             "-webkit-touch-callout": "none",
             "-webkit-user-select": "none",
             "user-select": "none",
@@ -423,14 +424,13 @@ export abstract class RcControl extends RcWrappableObject {
     }
 
     private $_render(): void {
-        const t = +new Date();
-        
         // animation 중이면 종료 후에 다시 그리도록 한다.
         if (t <= this._toAnimation) {
             this.$_requestRender();
             return;
         }
 
+        console.time('render chart');
         try {
             this._doBeforeRender();
 
@@ -452,9 +452,8 @@ export abstract class RcControl extends RcWrappableObject {
             // this._invalidElements.forEach(elt => elt.validate());
             this._invalidElements = [];
             this._doAfterRender();
+            console.timeEnd('render chart');
         }
-
-        RtLog.log('render in ' + (+new Date() - t) + 'ms.');
     }
 
     protected abstract _doRender(bounds: IRect): void;

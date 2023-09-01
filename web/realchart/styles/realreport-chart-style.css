@@ -27,11 +27,6 @@
     stroke: none;
 }
 
-/** control */
-.rct-control {
-    padding: 20px;
-}
-
 /** debug border */
 .rct-debug {
     fill: none;

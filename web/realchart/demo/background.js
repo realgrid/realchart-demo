@@ -1,7 +1,7 @@
 const config = {
     title: "Chart Background",
     options: {
-        backgroundStyle: {
+        style: {
         }
     },
     xAxis: {
@@ -59,12 +59,12 @@ function setActions(container) {
         config.inverted = _getChecked(e);
         chart.update(config, animate);
     }, false);
-    createListBox(container, "backgroundStyle.fill", ['none', 'black', 'yellow'], function (e) {
-        config.options.backgroundStyle.backgroundColor = _getValue(e);
+    createListBox(container, "backgroundStyle.fill", ['', 'black', 'yellow'], function (e) {
+        config.options.style.backgroundColor = _getValue(e);
         chart.update(config);
-    }, 'none');
+    }, '');
     createCheckBox(container, 'backgroundImage', function (e) {
-        config.options.backgroundStyle.backgroundImage = _getChecked(e) ? 'url(../assets/mountain.jpeg)' : '';
+        config.options.style.backgroundImage = _getChecked(e) ? 'url(../assets/mountain.jpeg)' : '';
         chart.update(config);
     }, false);
 }
