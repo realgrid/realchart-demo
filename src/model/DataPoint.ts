@@ -101,9 +101,6 @@ export class DataPoint {
         } else {
             this._readSingle(v);
         }
-
-        // series.collectValue 등에서 재설정될 수 있다.
-        this.yValue = parseFloat(this.y);
     }
 
     getLabel(index: number): any {

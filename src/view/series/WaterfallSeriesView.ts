@@ -66,7 +66,7 @@ export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
 
     protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         const p = view.point as WaterfallSeriesPoint;
- 
+
         view.wPoint = wPoint;
         view.hPoint = hPoint;
         y += hPoint;
@@ -74,8 +74,8 @@ export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
         
         if (i > 0) {
             const line = this._lines.get(i - 1);
-
             const y2 = p._isSum ? y - hPoint : p.y >= 0 ? y : y - hPoint;
+
             line.setHLine(y2, this._xPrev + this._wPrev / 2, x - wPoint / 2);
         }
 
@@ -104,6 +104,8 @@ export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
             v.setStyleOrClass(p._isSum ? 'rct-waterfall-point-sum' : p.y < 0 ? 'rct-waterfall-point-negative' : '');
         });
 
-        this._lines.prepare(points.length - 1);
+        this._lines.prepare(points.length - 1, (v, i) => {
+            v.visible = !points[i].isNull && !points[i + 1].isNull;
+        });
     }
 }

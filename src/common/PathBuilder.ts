@@ -21,6 +21,13 @@ export class PathBuilder {
     _path: (string | number)[] = [];
 
     //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    isEmpty(): boolean {
+        return this._path.length === 0;
+    }
+
+    //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     clear(): PathBuilder {
@@ -29,14 +36,8 @@ export class PathBuilder {
     }
 
     end(close = false): string {
-        if (close) {
-            this._path.push('Z');
-        }
-        
-        const s = this._path.join(' ');
-
-        this._path = [];
-        return s;
+        close && this._path.push('Z');
+        return this._path.join(' ');
     }
 
     close(): string {
@@ -102,5 +103,35 @@ export class PathBuilder {
         this.lines(...pts);
         this._path.push('Z');
         return this;
+    }
+
+    getMove(p = 0, remove = true): IPoint {
+        if (p < this._path.length && this._path[p] === 'M') {
+            const pt = {x: this._path[p + 1] as number, y: this._path[p + 2] as number};
+            remove && this._path.splice(p, 3);
+            return pt;
+        }
+    }
+
+    getLine(p = 0, remove = true): IPoint {
+        if (p < this._path.length && this._path[p] === 'L') {
+            const pt = {x: this._path[p + 1] as number, y: this._path[p + 2] as number};
+            remove && this._path.splice(p, 3);
+            return pt;
+        }
+    }
+
+    getPoints(p: number, count: number, remove = true): IPoint[] {
+        const pts: IPoint[] = [];
+
+        while (p < this._path.length && pts.length < count) {
+            if (p < this._path.length && (this._path[p] === 'M' || this._path[p] === 'L')) {
+                pts.push({x: this._path[p + 1] as number, y: this._path[p + 2] as number});
+                remove && this._path.splice(p, 3);
+            } else {
+                break;
+            }
+        }
+        return pts;
     }
 }

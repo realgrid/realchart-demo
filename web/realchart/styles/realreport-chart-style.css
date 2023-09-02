@@ -97,10 +97,8 @@
 }
 
 /** plot area */
-.rct-plot {
-    stroke: #ddd;
-}
 .rct-plot-background {
+    stroke: #ddd;
     fill: none;
 }
 
@@ -179,7 +177,7 @@
 /** bar series */
 .rct-box-point {
     fill: #00aaff;
-    fill-opacity: 0.8;
+    fill-opacity: 0.85;
 }
 .rct-box-point[data-focus] {
     stroke: var(--rct-focus-border);
@@ -298,7 +296,8 @@
     fill: #0055cc;
 }
 .rct-waterfall-series-lines {
-    stroke: #779;
+    stroke: #77f;
+    stroke-width: 2;
     stroke-dasharray: 2;
 }
 

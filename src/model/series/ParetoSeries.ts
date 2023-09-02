@@ -22,9 +22,6 @@ export class ParetoSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    parse(series: ISeries): void {
-        super.parse(series);
-    }
 }
 
 /**

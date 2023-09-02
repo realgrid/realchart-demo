@@ -126,12 +126,11 @@ export class DumbbellSeries extends ClusterableSeries {
         })
     }
 
-    collectValues(axis: IAxis): number[] {
-        const vals = super.collectValues(axis);
+    collectValues(axis: IAxis, vals: number[]): void {
+        super.collectValues(axis, vals);
 
-        if (axis === this._yAxisObj) {
+        if (vals && axis === this._yAxisObj) {
             this._visPoints.forEach(p => vals.push((p as DumbbellSeriesPoint).lowValue))
         }
-        return vals;
     }
 }

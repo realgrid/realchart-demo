@@ -179,16 +179,17 @@ export class HistogramSeries extends Series {
         super._doLoadPoints(pts);
     }
 
-    collectValues(axis: IAxis): number[] {
-        const vals = super.collectValues(axis);
+    collectValues(axis: IAxis, vals: number[]): void {
+        super.collectValues(axis, vals);
 
-        // point.x가 point.min과 같은 값이므로 축 범위에 마지막 bin의 max가 포함되어야 한다.
-        if (axis === this._xAxisObj) {
-            vals.push((this._visPoints[this._visPoints.length - 1] as HistogramSeriesPoint).max);
-        } else if (axis === this._yAxisObj) {
-            vals.push(this._base);
+        if (vals) {
+            // point.x가 point.min과 같은 값이므로 축 범위에 마지막 bin의 max가 포함되어야 한다.
+            if (axis === this._xAxisObj) {
+                vals.push((this._visPoints[this._visPoints.length - 1] as HistogramSeriesPoint).max);
+            } else if (axis === this._yAxisObj) {
+                vals.push(this._base);
+            }
         }
-        return vals;
     }
 
     protected _doPrepareRender(): void {

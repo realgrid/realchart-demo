@@ -1,47 +1,33 @@
 const config = {
-    options: {
-        animatable: false
-    },
-    title: "Waterfall Series",
+    title: "AreaRange Null Point",
+    options: {},
     xAxis: {
-        title: "일일 Daily fat",
-        grid: true,
+        type: 'time',
+        title: 'Time'
     },
     yAxis: {
-        title: "Vertical 수직축 Axis",
+        title: 'Temparature'
     },
     series: {
-        type: 'waterfall',
-        pointLabel: {
-            visible: true,
-            position: 'inside',
-            effect: 'outline'
-        },
-        data: [{
-            name: 'Start',
-            y: 120000
-        }, {
-            name: 'Product Revenue',
-            y: 569000
-        }, {
-            name: 'Service Revenue',
-            y: 231000
-        }, {
-            name: 'Positive Balance',
-            isSum: true,
-        }, {
-            name: 'Fixed Costs',
-            y: -342000
-        }, {
-            name: 'Variable Costs',
-            y: -233000
-        // }, {
-        //     name: 'Positive Balance2',
-        //     isSum: true,
-        }, {
-            name: 'Balance',
-            isSum: true,
-        }]
+        type: 'arearange',
+        // data: range_data,
+        data: [
+            [13.7, 25.6],
+            [13.3, 21.8],
+            [11.2, null],
+            [7.9, 17.3],
+            [4.9, 20.6],
+            [5.1, 16.8],
+            [9.3, 21.1],
+            [11.1, 20.5],
+            [8.9, 18.4],
+            [4.6, 23.2],
+            [7.5, 25.7],
+            [5.5, 24.3],
+            [10.4, 21.2]
+        ],
+        pointLabel: {},
+        marker: {}
     }
 }
 
@@ -55,6 +41,14 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'Curved', function (e) {
+        config.series.curved = _getChecked(e);
+        chart.update(config);
+    }, false);
+    createCheckBox(container, 'Point Marker', function (e) {
+        config.series.marker.visible = _getChecked(e);
+        chart.update(config);
+    }, true);
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
         chart.update(config);

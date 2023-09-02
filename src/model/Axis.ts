@@ -68,6 +68,13 @@ export abstract class AxisItem extends ChartItem {
 }
 
 export class AxisLine extends AxisItem {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(axis: Axis) {
+        super(axis, false);
+    }
 }
 
 export class AxisTitle extends AxisItem {
@@ -525,10 +532,10 @@ export abstract class Axis extends ChartItem implements IAxis {
 
         // range
         const series = this._series;
-        let vals: number[] = [];
+        const vals: number[] = [];
 
         series.forEach(item => {
-            vals = vals.concat(item.collectValues(this));
+            item.collectValues(this, vals);
         })
         this._range = this._doCalcluateRange(vals);
 
@@ -571,7 +578,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     getValue(value: any): number {
-        return +value;
+        return value == null ? NaN : parseFloat(value);
     }
 
     contains(value: number): boolean {

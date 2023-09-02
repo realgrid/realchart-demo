@@ -73,7 +73,6 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
 
         const yAxis = this.model._yAxisObj;
         const yOrg = height;
-        const base = this.model.baseValue || 0;
 
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
@@ -121,7 +120,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             sb.move(pts[i].xPos, yMin);
             sb.line(pts[i].xPos, pts[i].yPos);
 
-            this._buildLines(pts, i + 1, sb, false);
+            this._buildLines(pts, i + 1, sb);
 
             const path = sb._path;
 

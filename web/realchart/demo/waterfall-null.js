@@ -2,7 +2,7 @@ const config = {
     options: {
         animatable: false
     },
-    title: "Waterfall Series",
+    title: "Waterfall Null Point",
     xAxis: {
         title: "일일 Daily fat",
         grid: true,
@@ -12,6 +12,7 @@ const config = {
     },
     series: {
         type: 'waterfall',
+        pointPadding: 0.15,
         pointLabel: {
             visible: true,
             position: 'inside',
@@ -22,7 +23,7 @@ const config = {
             y: 120000
         }, {
             name: 'Product Revenue',
-            y: 569000
+            y: null//569000
         }, {
             name: 'Service Revenue',
             y: 231000

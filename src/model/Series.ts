@@ -108,7 +108,7 @@ export interface IPlottingItem {
     canMinPadding(axis: IAxis): boolean; 
     canMaxPadding(axis: IAxis): boolean; 
     ignoreAxisBase(axis: IAxis): boolean;
-    collectValues(axis: IAxis): number[];
+    collectValues(axis: IAxis, vals: number[]): void;
     collectCategories(axis: IAxis): string[];
     prepareRender(): void;
     prepareAfter(): void;
@@ -500,8 +500,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
             p.index = i;
             p.parse(this);
-            p.yGroup = p.yValue;
-            p.isNull = s == null || isNaN(p.yValue);
+            p.isNull = s == null || p.y == null;
             return p;
         });
     }
@@ -556,9 +555,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         }
     }
 
-    collectValues(axis: IAxis): number[] {
-        const vals: number[] = [];
-
+    /**
+     * vals가 지정되지 않은 상태로 호추될 수 있다.
+     */
+    collectValues(axis: IAxis, vals: number[]): void {
         if (axis === this._xAxisObj) {
             let x = this.getXStart() || 0;
             const xStep = this.getXStep() || 1;
@@ -572,25 +572,31 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                     x += xStep;
                 }
                 if (!isNaN(val)) {
-                    vals.push(p.xValue = val);
+                    p.xValue = val;
+                    vals && vals.push(val);
                 }
             });
         } else {
             this._visPoints.forEach((p, i) => {
-                let val = p.isNull ? NaN : axis.getValue(p.y);
+                // p.y가 point 생성 시 null이었지만 series.prepareRender() 중 정상 값으로 설정될 수 있다. (waterfall)
+                // isNull은 유지하면서 p.y 값이 재설정될 수 있도록 한다.
+                // let val = p.isNull ? NaN : axis.getValue(p.y);
+                let val = p.y == null ? NaN : axis.getValue(p.y);
     
                 if (!isNaN(val)) {
-                    vals.push(p.yValue = val);
-                    p.yGroup = p.yValue
+                    p.yGroup = p.yValue = val;
+                    vals && vals.push(val);
                 } else {
                     p.yGroup = 0;
                 }
+                p.isNull ||= isNaN(p.yValue);
             });
 
-            this._minValue = Math.min(...vals);
-            this._maxValue = Math.max(...vals);
+            if (vals) {
+                this._minValue = Math.min(...vals);
+                this._maxValue = Math.max(...vals);
+            }
         }
-        return vals;
     }
 
     isVisible(point: DataPoint): boolean {
@@ -1073,16 +1079,15 @@ export abstract class RangedSeries extends ClusterableSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    collectValues(axis: IAxis): number[] {
-        const vals = super.collectValues(axis);
+    collectValues(axis: IAxis, vals: number[]): void {
+        super.collectValues(axis, vals);
 
         if (axis === this._yAxisObj) {
             this._visPoints.forEach((p: DataPoint) => {
                 const v = this._getBottomValue(p);
-                !isNaN(v) && vals.push(v);
+                vals && !isNaN(v) && vals.push(v);
             })
         }
-        return vals;
     }
 
     //-------------------------------------------------------------------------
@@ -1190,23 +1195,26 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     // methods
     //-------------------------------------------------------------------------
     // Axis에서 요청한다.
-    collectValues(axis: IAxis): number[] {
-        if (this._visibles.length < 1) {
-            return [];
-        } else if (axis === this._visibles[0]._yAxisObj) {
-            switch (this.layout) {
-                case SeriesGroupLayout.STACK:
-                    return this.$_collectStack(axis);
+    collectValues(axis: IAxis, vals: number[]): void {
+        if (this._visibles.length > 0) {
+            if (axis === this._visibles[0]._yAxisObj) {
+                switch (this.layout) {
+                    case SeriesGroupLayout.STACK:
+                        this.$_collectStack(axis, vals);
+                        break;
 
-                case SeriesGroupLayout.FILL:
-                    return this.$_collectFill(axis);
-    
-                case SeriesGroupLayout.DEFAULT:
-                case SeriesGroupLayout.OVERLAP:
-                    return this.$_collectValues(axis);
+                    case SeriesGroupLayout.FILL:
+                        this.$_collectFill(axis, vals);
+                        break;
+        
+                    case SeriesGroupLayout.DEFAULT:
+                    case SeriesGroupLayout.OVERLAP:
+                        this.$_collectValues(axis, vals);
+                        break;
+                }
+            } else {
+                this.$_collectValues(axis, vals);
             }
-        } else {
-            return this.$_collectValues(axis);
         }
     }
 
@@ -1302,21 +1310,23 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
             throw new Error('이 그룹에 포함될 수 없는 시리즈입니다: ' + series);
         }
     }
-    private $_collectValues(axis: IAxis): number[] {
-        let vals: number[] = [];
-
+    private $_collectValues(axis: IAxis, vals: number[]): void {
         this._visibles.forEach(ser => {
-            vals = vals.concat(ser.collectValues(axis));
+            ser.collectValues(axis, vals);
         })
-        return vals;
     }
 
-    private $_collectPoints(): Map<number, DataPoint[]> {
+    private $_collectPoints(axis: IAxis): Map<number, DataPoint[]> {
         const series = this._visibles;
         const map: Map<number, DataPoint[]> = this._stackPoints = new Map();
 
+        // point들의 yValue를 준비한다.
+        series.forEach(ser => {
+            ser.collectValues(axis, null);
+        });
+
         series[0]._visPoints.forEach(p => {
-            p.yGroup = p.yValue || 0;
+            // p.yGroup = p.yValue || 0;
             map.set(p.xValue, [p]);
         });
 
@@ -1329,16 +1339,15 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
                 } else {
                     map.set(p.xValue, [p]);
                 }
-                p.yGroup = p.yValue || 0;
+                // p.yGroup = p.yValue || 0;
             });
         }
         return map;
     }
 
-    private $_collectStack(axis: IAxis): number[] {
+    private $_collectStack(axis: IAxis, vals: number[]): void {
         const base = this.getBaseValue(axis);
-        const map = this.$_collectPoints();
-        const vals: number[] = [];
+        const map = this.$_collectPoints(axis);
 
         if (!isNaN(base)) {
             for (const pts of map.values()) {
@@ -1380,14 +1389,12 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
                 vals.push(pts[pts.length - 1].yGroup);
             }
         }
-        return vals;
     }
 
-    private $_collectFill(axis: IAxis): number[] {
+    private $_collectFill(axis: IAxis, vals: number[]): void {
         const base = this.getBaseValue(axis);
         const max = this.layoutMax || 100;
-        const map = this.$_collectPoints();
-        const vals: number[] = [];
+        const map = this.$_collectPoints(axis);
 
         if (!isNaN(base)) {
             for (const pts of map.values()) {
@@ -1423,7 +1430,6 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
                 vals.push(max);
             }
         }
-        return vals;
     }
 }
 
@@ -1432,13 +1438,12 @@ export abstract class ConstraintSeriesGroup<T extends Series> extends SeriesGrou
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    collectValues(axis: IAxis): number[] {
-        let vals = super.collectValues(axis);
+    collectValues(axis: IAxis, vals: number[]): void {
+        super.collectValues(axis, vals);
 
         if (axis === this._yAxisObj) {
             vals = this._doConstraintYValues(this._visibles) || vals;
         }
-        return vals;
     }
 
     //-------------------------------------------------------------------------

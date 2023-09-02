@@ -1,6 +1,8 @@
 const config = {
     title: "AreaRange Series",
-    options: {},
+    options: {
+        animatable: false
+    },
     xAxis: {
         type: 'time',
         title: 'Time'
@@ -24,6 +26,7 @@ const config = {
     }
 }
 
+let animate = false;
 let chart;
 
 function setActions(container) {

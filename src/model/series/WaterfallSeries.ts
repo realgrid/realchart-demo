@@ -6,7 +6,6 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { RangedSeries } from "../Series";
@@ -29,6 +28,7 @@ export class WaterfallSeriesPoint extends DataPoint {
 
         this._isSum = this.source.isSum === true;
         this._intermediate = this.source.intermediate;
+        if (this._isSum) this.y = 0; // 이렇게 하지 않으면 isNull이 true가 된다.
         // series에서 this.y를 변경하므로 원본을 저장하고 나중에 복원한다.
         this.save = this.y;
     }
@@ -87,6 +87,8 @@ export class WaterfallSeries extends RangedSeries {
                 const inter = p._intermediate === true || i < cnt - 1 && p._intermediate !== false;
                 const v = p.save = p.y = inter ? sum : total;
 
+                p.yGroup = p.yValue = p.y;
+
                 if (inter) {
                     if (sum < 0) {
                         low = pPrev.low;
@@ -129,6 +131,7 @@ export class WaterfallSeries extends RangedSeries {
             prev = p.y;
             p.y = yPrev = y;
             p.low = low;
+
         }
     }
 

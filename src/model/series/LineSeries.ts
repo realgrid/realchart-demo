@@ -249,13 +249,12 @@ export class AreaRangeSeries extends LineSeriesBase {
         return this.curved ? LineType.SPLINE : LineType.DEFAULT;
     }
 
-    collectValues(axis: IAxis): number[] {
-        const vals = super.collectValues(axis);
+    collectValues(axis: IAxis, vals: number[]): void {
+        super.collectValues(axis, vals);
 
-        if (axis === this._yAxisObj) {
+        if (vals && axis === this._yAxisObj) {
             this._visPoints.forEach((p: AreaRangeSeriesPoint) => vals.push(p.lowValue));
         }
-        return vals;
     }
 }
 

@@ -13,6 +13,7 @@ const config = {
         label: {
         },
         grid: true,
+        line: true,
     },
     yAxis: {
         title: "Vertical 수직축 Axis",
