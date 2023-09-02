@@ -8,7 +8,7 @@
 
 import { pickNum } from "../../common/Common";
 import { Dom } from "../../common/Dom";
-import { PathBuilder } from "../../common/PathBuilder";
+import { IPoint2, PathBuilder } from "../../common/PathBuilder";
 import { IPoint } from "../../common/Point";
 import { PathElement } from "../../common/RcControl";
 import { IPointPos } from "../../model/DataPoint";
@@ -98,9 +98,10 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         super._layoutLines(points);
 
         // low lines
-        const pts = points.map(p => {
+        const lowPts = points.map(p => {
             return {xPos: p.xPos, yPos: p.yLow, isNull: p.isNull};
-        }).reverse();
+        });
+        const pts = lowPts.slice().reverse();
         const sb = new PathBuilder();
         let i = 0;
 

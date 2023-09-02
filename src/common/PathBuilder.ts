@@ -13,6 +13,13 @@ const _num = function (v: number): number {
     return isNaN(v) ? 0 : v;
 }
 
+export interface IPoint2 {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+}
+
 export class PathBuilder {
 
     //-------------------------------------------------------------------------
@@ -23,6 +30,10 @@ export class PathBuilder {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    length(): number {
+        return this._path.length;
+    }
+
     isEmpty(): boolean {
         return this._path.length === 0;
     }
@@ -76,8 +87,12 @@ export class PathBuilder {
         return this;
     }
 
-    q(x1: number, y1: number, x2: number, y2: number): PathBuilder {
-        this._path.push('Q', x1, y1, x2, y2);
+    quad(x1: number | IPoint2, y1?: number, x2?: number, y2?: number): PathBuilder {
+        if (isNumber(x1)) {
+            this._path.push('Q', x1, y1, x2, y2);
+        } else {
+            this._path.push('Q', x1.x1, x1.y1, x1.x2, x1.y2);
+        }
         return this;
     }
 
@@ -117,6 +132,19 @@ export class PathBuilder {
         if (p < this._path.length && this._path[p] === 'L') {
             const pt = {x: this._path[p + 1] as number, y: this._path[p + 2] as number};
             remove && this._path.splice(p, 3);
+            return pt;
+        }
+    }
+
+    getQuad(p = 0, remove = true): IPoint2 {
+        if (p < this._path.length && this._path[p] === 'Q') {
+            const pt = {
+                x1: this._path[p + 1] as number, 
+                y1: this._path[p + 2] as number,
+                x2: this._path[p + 3] as number, 
+                y2: this._path[p + 4] as number,
+            };
+            remove && this._path.splice(p, 5);
             return pt;
         }
     }

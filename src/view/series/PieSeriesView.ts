@@ -350,7 +350,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
             line.visible = true;
             line.move(x1, y1);
             //line.setPath(pb.move(x1, y1).lines(x2, y2, x3, y2).end())
-            line.setLine(pb.move(0, 0).q(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end())
+            line.setLine(pb.move(0, 0).quad(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end())
             !view.moving && line.translate(x1 + dx, y1 + dy);
         }
 

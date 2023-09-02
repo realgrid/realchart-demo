@@ -494,7 +494,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             tLeft.y = -tan.y * tFactor * tension;
 
             if (p === start + 1) {
-                sb.q(pts[p].xPos + tLeft.x, pts[p].yPos + tLeft.y, pts[p].xPos, pts[p].yPos);
+                sb.quad(pts[p].xPos + tLeft.x, pts[p].yPos + tLeft.y, pts[p].xPos, pts[p].yPos);
             } else {
                 p1.x = prevX + tRight.x;
                 p1.y = prevY + tRight.y;
@@ -503,8 +503,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                 mp.x = (p1.x + p2.x) / 2;
                 mp.y = (p1.y + p2.y) / 2;
 
-                sb.q(p1.x, p1.y, mp.x, mp.y);
-                sb.q(p2.x, p2.y, pts[p].xPos, pts[p].yPos);
+                sb.quad(p1.x, p1.y, mp.x, mp.y);
+                sb.quad(p2.x, p2.y, pts[p].xPos, pts[p].yPos);
             }
 
             tFactor = (pts[p + 1].xPos - pts[p].xPos);
@@ -514,7 +514,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             prevY = pts[p].yPos;
         }
 
-        sb.q(prevX + tRight.x, prevY + tRight.y, pts[p].xPos, pts[p].yPos);
+        sb.quad(prevX + tRight.x, prevY + tRight.y, pts[p].xPos, pts[p].yPos);
     }
 
     protected _drawStep(pts: IPointPos[], from: number, sb: PathBuilder, dir: LineStepDirection): void {
