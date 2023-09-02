@@ -491,6 +491,12 @@ export abstract class ContinuousAxis extends Axis {
         }
     }
 
+    calcPoints(length: number, phase: number): void {
+        super.calcPoints(length, phase);
+
+        this._markPoints = this._ticks.map(t => t.pos);
+    }
+
     private $_buildBrokenSteps(sect: AxisBreakSect): number[] {
         const tick = this.tick as ContinuousAxisTick;
         const steps = tick.buildSteps(sect.len, void 0, sect.from, sect.to);

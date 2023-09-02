@@ -238,7 +238,7 @@ export class CategoryAxis extends Axis {
         this._catPad = pickNum(this.categoryPadding, 0);
     }
 
-    protected _doBuildTicks(min: number, max: number, length: number): { ticks: IAxisTick[], markPoints: number[] } {
+    protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
         const tick = this.tick as CategoryAxisTick;
         const label = this.label as CategoryAxisLabel;
         let cats = this._cats = this._categories.map(cat => cat.c);
@@ -291,10 +291,12 @@ export class CategoryAxis extends Axis {
         //     markPoints = ticks.map(t => t.pos);
         // }
  
-        return { ticks, markPoints: null };
+        return ticks;
     }
 
     calcPoints(length: number, phase: number): void {
+        super.calcPoints(length, phase);
+
         const pts = this._pts;
 
         if (phase > 0) {
@@ -318,8 +320,6 @@ export class CategoryAxis extends Axis {
             markPoints = this._ticks.map(t => t.pos);
         }
         this._markPoints = markPoints;
-
-        super.calcPoints(length, phase);
     }
 
     getPosition(length: number, value: number, point = true): number {

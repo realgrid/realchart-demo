@@ -50,7 +50,7 @@ function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
         chart.refresh();
-    }, true);
+    }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
@@ -109,9 +109,8 @@ function setActions(container) {
 }
 
 function init() {
-    // console.log(RealChart.getVersion());
-    // RealChart.setLogging(true);
-    RealChart.setDebugging(true);
+    console.log('RealChart v' + RealChart.getVersion());
+    // RealChart.setDebugging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

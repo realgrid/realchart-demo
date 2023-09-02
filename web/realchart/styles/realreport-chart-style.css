@@ -30,7 +30,7 @@
 /** debug border */
 .rct-debug {
     fill: none;
-    stroke: #00880018;
+    stroke: #ff000040;
     pointer-events: none;
 }
 
@@ -97,6 +97,9 @@
 }
 
 /** plot area */
+.rct-plot {
+    stroke: #ddd;
+}
 .rct-plot-background {
     fill: none;
 }
@@ -109,7 +112,7 @@
     fill: none;
 }
 .rct-axis-line {
-    stroke: red;
+    stroke: #ddd;
     stroke-width: 1px;
 }
 .rct-axis-tick-marks {
@@ -121,7 +124,7 @@
     fill: #111;
 }
 .rct-axis-grid {
-    stroke: lightgray;
+    stroke: #ddd;
     stroke-width: 1px;
 }
 .rct-axis-break {

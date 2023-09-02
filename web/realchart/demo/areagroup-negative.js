@@ -53,7 +53,7 @@ function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
         chart.refresh();
-    }, true);
+    }, false);
     createCheckBox(container, 'Always Animate', function (e) {
         animate = _getChecked(e);
     }, false);
@@ -79,9 +79,8 @@ function setActions(container) {
 }
 
 function init() {
-    // console.log(RealChart.getVersion());
-    // RealChart.setLogging(true);
-    RealChart.setDebugging(true);
+    console.log('RealChart v' + RealChart.getVersion());
+    // RealChart.setDebugging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcElement } from "../common/RcControl";
-import { intersectsRect, toSize } from "../common/Rectangle";
+import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { DEG_RAD } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";

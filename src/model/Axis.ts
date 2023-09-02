@@ -511,7 +511,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected abstract _createTickModel(): AxisTick;
     protected abstract _createLabelModel(): AxisLabel;
     protected abstract _doPrepareRender(): void;
-    protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[] | { ticks: IAxisTick[], markPoints: number[] };
+    protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[];
 
     disconnect(): void {
         this._series = [];
@@ -553,15 +553,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     buildTicks(length: number): void {
-        const ts = this._doBuildTicks(this._range.min, this._range.max, this._length = length);
-
-        if (isArray(ts)) {
-            this._ticks = ts;
-            this._markPoints = ts.map(t => t.pos);
-        } else {
-            this._ticks = ts.ticks;
-            this._markPoints = ts.markPoints;
-        }
+        this._ticks = this._doBuildTicks(this._range.min, this._range.max, this._length = length);
     }
 
     calcPoints(length: number, phase: number): void {
