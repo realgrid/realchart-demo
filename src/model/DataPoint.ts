@@ -17,6 +17,9 @@ export interface IPointPos {
     isNull: boolean;
 }
 
+/**
+ * 데이터 포인트를 표시할 수 없는 값을 설정하면 null로 간주한다.
+ */
 export class DataPoint {
 
     //-------------------------------------------------------------------------
@@ -125,25 +128,33 @@ export class DataPoint {
     }
 
     protected _readArray(series: ISeries, v: any[]): void {
-        const f = +series.colorField;
-
-        if (!isNaN(f)) {
-            this.color = v[f];
-        }
-
-        if (v.length > 1) {
-            this.x = v[pickNum(series.xField, 0)];
-            this.y = v[pickNum(series.yField, 1)];
+        if (v == null) {
+            this.isNull = true;
         } else {
-            this.x = this.index;
-            this.y = v[pickNum(series.yField, 0)];
+            const f = +series.colorField;
+
+            if (!isNaN(f)) {
+                this.color = v[f];
+            }
+
+            if (v.length > 1) {
+                this.x = v[pickNum(series.xField, 0)];
+                this.y = v[pickNum(series.yField, 1)];
+            } else {
+                this.x = this.index;
+                this.y = v[pickNum(series.yField, 0)];
+            }
         }
     }
 
     protected _readObject(series: ISeries, v: any): void {
-        this.x = pickProp4(v[series.xField], v.x, v.name, v.label);
-        this.y = pickProp3(v[series.yField], v.y, v.value);
-        this.color = pickProp(v[series.colorField], v.color);
+        if (v == null) {
+            this.isNull = true;
+        } else {
+            this.x = pickProp4(v[series.xField], v.x, v.name, v.label);
+            this.y = pickProp3(v[series.yField], v.y, v.value);
+            this.color = pickProp(v[series.colorField], v.color);
+        }
     }
 
     protected _readSingle(v: any): void {

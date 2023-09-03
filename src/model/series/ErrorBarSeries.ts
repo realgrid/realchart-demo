@@ -67,6 +67,7 @@ export class ErrorBarSeriesPoint extends DataPoint {
         super.parse(series);
 
         this.lowValue = parseFloat(this.low);
+        this.isNull ||= isNaN(this.lowValue);
     }
 }
 

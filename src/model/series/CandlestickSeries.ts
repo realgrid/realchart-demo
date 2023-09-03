@@ -43,6 +43,8 @@ export class CandlestickSeriesPoint extends DataPoint {
         this.openValue = parseFloat(this.open);
         this.closeValue = parseFloat(this.close);
         this.highValue = parseFloat(this.high);
+
+        this.isNull ||= isNaN(this.lowValue) || isNaN(this.openValue) || isNaN(this.closeValue);
     }
 
     protected _readArray(series: CandlestickSeries, v: any[]): void {

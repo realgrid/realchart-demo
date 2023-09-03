@@ -501,7 +501,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
             p.index = i;
             p.parse(this);
-            p.isNull = s == null || p.y == null;
+            p.isNull ||= s == null || p.y == null;
             return p;
         });
     }
@@ -571,18 +571,22 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             });
         } else {
             this._visPoints.forEach((p, i) => {
-                // p.y가 point 생성 시 null이었지만 series.prepareRender() 중 정상 값으로 설정될 수 있다. (waterfall)
-                // isNull은 유지하면서 p.y 값이 재설정될 수 있도록 한다.
-                // let val = p.isNull ? NaN : axis.getValue(p.y);
-                let val = p.y == null ? NaN : axis.getValue(p.y);
-    
-                if (!isNaN(val)) {
-                    p.yGroup = p.yValue = val;
-                    vals && vals.push(val);
+                if (p.isNull) {
+                    p.y = p.yGroup = NaN;
                 } else {
-                    p.yGroup = 0;
+                    // p.y가 point 생성 시 null이었지만 series.prepareRender() 중 정상 값으로 설정될 수 있다. (waterfall)
+                    // isNull은 유지하면서 p.y 값이 재설정될 수 있도록 한다.
+                    // let val = p.isNull ? NaN : axis.getValue(p.y);
+                    let val = p.y == null ? NaN : axis.getValue(p.y);
+        
+                    if (!isNaN(val)) {
+                        p.yGroup = p.yValue = val;
+                        vals && vals.push(val);
+                    } else {
+                        p.yGroup = 0;
+                    }
+                    p.isNull = isNaN(p.yValue);
                 }
-                p.isNull ||= isNaN(p.yValue);
             });
 
             if (vals) {

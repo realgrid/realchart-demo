@@ -96,43 +96,45 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
         let labelView: PointLabelView;
         let r: IRect;
 
-        this._markers.forEach((m, i) => {
-            const p = m.point;
+        this._markers.forEach((mv, i) => {
+            const p = mv.point;
 
-            const s = marker.shape;
-            const sz = marker.radius;
-            let path: (string | number)[];
-            let x: number;
-            let y: number;
+            if (mv.setVisible(!p.isNull)) {
+                const s = marker.shape;
+                const sz = marker.radius;
+                let path: (string | number)[];
+                let x: number;
+                let y: number;
 
-            // m.className = model.getPointStyle(i);
+                // m.className = model.getPointStyle(i);
 
-            x = p.xPos = xAxis.getPosition(xLen, p.xValue);
-            y = p.yPos = yOrg - yAxis.getPosition(yLen, p.yValue);
-            if (inverted) {
-                x = yAxis.getPosition(yLen, p.yGroup);
-                y = yOrg - xAxis.getPosition(xLen, p.xValue);
-            }
+                x = p.xPos = xAxis.getPosition(xLen, p.xValue);
+                y = p.yPos = yOrg - yAxis.getPosition(yLen, p.yValue);
+                if (inverted) {
+                    x = yAxis.getPosition(yLen, p.yGroup);
+                    y = yOrg - xAxis.getPosition(xLen, p.xValue);
+                }
 
-            switch (s) {
-                case 'square':
-                case 'diamond':
-                case 'triangle':
-                case 'itriangle':
-                    path = SvgShapes[s](0 - sz, 0 - sz, sz * 2, sz * 2);
-                    break;
+                switch (s) {
+                    case 'square':
+                    case 'diamond':
+                    case 'triangle':
+                    case 'itriangle':
+                        path = SvgShapes[s](0 - sz, 0 - sz, sz * 2, sz * 2);
+                        break;
 
-                default:
-                    path = SvgShapes.circle(0, 0, sz);
-                    break;
-            }
-            m.setPath(path);
-            m.translate(x, y);
+                    default:
+                        path = SvgShapes.circle(0, 0, sz);
+                        break;
+                }
+                mv.setPath(path);
+                mv.translate(x, y);
 
-            // label
-            if (labelViews && (labelView = labelViews.get(p, 0))) {
-                r = labelView.getBBounds();
-                labelView.translate(x - r.width / 2, y - r.height / 2);
+                // label
+                if (labelViews && (labelView = labelViews.get(p, 0))) {
+                    r = labelView.getBBounds();
+                    labelView.translate(x - r.width / 2, y - r.height / 2);
+                }
             }
         });
     }

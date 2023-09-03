@@ -38,3 +38,11 @@
 1. inverted, reversed
 2. category width
 3. theme
+
+[ Test ]
+1. model unit test
+2. puppeteer integration test
+
+[ Publish ]
+1. 의미있는 데이터로 demo sample을 만든다.
+2. theme 셋 준비.

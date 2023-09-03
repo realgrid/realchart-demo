@@ -614,49 +614,52 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
             labelOff: series.getLabelOff(labels.offset)
         });
 
-        this._getPointPool().forEach((pointView: RcElement, i) => {
-            const p = (pointView as any as IPointView).point;
-            const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
-            const wPoint = series.getPointWidth(wUnit);
-            const yVal = yAxis.getPosition(yLen, p.yValue);
-            const hPoint = p.isNull ? 0 : (yVal - yBase) * vr;
-            let x: number;
-            let y: number;
+        this._getPointPool().forEach((pv: RcElement, i) => {
+            const p = (pv as any as IPointView).point;
 
-            x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
-            y = org;
+            if (pv.setVisible(!p.isNull)) {
+                const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
+                const wPoint = series.getPointWidth(wUnit);
+                const yVal = yAxis.getPosition(yLen, p.yValue);
+                const hPoint = (yVal - yBase) * vr;
+                let x: number;
+                let y: number;
 
-            p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-            if (based) { // TODO: 합칠 수 있나?
-                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr); // stack/fill일 때 org와 다르다.
-            } else {
-                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr; 
-            }
+                x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
+                y = org;
 
-            // 아래에서 위로 올라가는 animation을 위해 바닥 지점을 전달한다.
-            this._layoutPointView(pointView, i, x, y + hPoint, wPoint, hPoint);
-
-            // label
-            if (info && (info.labelView = labelViews.get(p, 0))) {
-                if (inverted) {
-                    // y = xLen - xAxis.getPosition(xLen, p.xValue) - wUnit / 2; // 위에서 아래로 내려갈 때
-                    y = xLen - xAxis.getPosition(xLen, p.xValue) + wUnit / 2;
-                    x = org;
-                    p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
-                    // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
-                    if (based) {
-                        p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr; // stack/fill일 때 org와 다르다.
-                    } else {
-                        p.xPos = x += yAxis.getPosition(yLen, p.yGroup * vr);
-                    }
+                p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
+                if (based) { // TODO: 합칠 수 있나?
+                    p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr); // stack/fill일 때 org와 다르다.
+                } else {
+                    p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr; 
                 }
 
-                info.pointView = pointView;
-                info.x = x;
-                info.y = y;
-                info.wPoint = wPoint;
-                info.hPoint = hPoint;
-                this._layoutLabel(info);
+                // 아래에서 위로 올라가는 animation을 위해 바닥 지점을 전달한다.
+                this._layoutPointView(pv, i, x, y + hPoint, wPoint, hPoint);
+
+                // label
+                if (info && (info.labelView = labelViews.get(p, 0))) {
+                    if (inverted) {
+                        // y = xLen - xAxis.getPosition(xLen, p.xValue) - wUnit / 2; // 위에서 아래로 내려갈 때
+                        y = xLen - xAxis.getPosition(xLen, p.xValue) + wUnit / 2;
+                        x = org;
+                        p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
+                        // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+                        if (based) {
+                            p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr; // stack/fill일 때 org와 다르다.
+                        } else {
+                            p.xPos = x += yAxis.getPosition(yLen, p.yGroup * vr);
+                        }
+                    }
+
+                    info.pointView = pv;
+                    info.x = x;
+                    info.y = y;
+                    info.wPoint = wPoint;
+                    info.hPoint = hPoint;
+                    this._layoutLabel(info);
+                }
             }
         })
     }
@@ -687,46 +690,49 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
             labelOff: series.getLabelOff(labels.offset)
         });
 
-        this._getPointPool().forEach((pointView, i) => {
-            const p = (pointView as any as IPointView).point;
-            const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
-            const wPoint = series.getPointWidth(wUnit);
-            const yVal = yAxis.getPosition(yLen, p.yValue);
-            const hPoint = (yVal - yAxis.getPosition(yLen, this._getLowValue(p))) * vr;
-            let x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
-            let y = org;
+        this._getPointPool().forEach((pv, i) => {
+            const p = (pv as any as IPointView).point;
 
-            p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-            p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
+            if (pv.setVisible(!p.isNull)) {
+                const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
+                const wPoint = series.getPointWidth(wUnit);
+                const yVal = yAxis.getPosition(yLen, p.yValue);
+                const hPoint = (yVal - yAxis.getPosition(yLen, this._getLowValue(p))) * vr;
+                let x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
+                let y = org;
 
-            this._layoutPointView(pointView, i, x, y, wPoint, hPoint);
+                p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
+                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
 
-            // labels
-            if (labelViews) {
-                if (inverted) {
-                    // y = xLen - xAxis.getPosition(xLen, p.xVAlue) - wUnit / 2; // 위에서 아래로 내려갈 때
-                    y = xLen - xAxis.getPosition(xLen, p.xValue) + wUnit / 2;
-                    x = org;
-                    // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
-                    p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
-                    p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
-                }
-                info.pointView = pointView;
-                info.hPoint = hPoint;
-                info.x = x;
-                info.y = y;
+                this._layoutPointView(pv, i, x, y, wPoint, hPoint);
 
-                // top
-                if (info.labelView = labelViews.get(p, 0)) {
+                // labels
+                if (labelViews) {
+                    if (inverted) {
+                        // y = xLen - xAxis.getPosition(xLen, p.xVAlue) - wUnit / 2; // 위에서 아래로 내려갈 때
+                        y = xLen - xAxis.getPosition(xLen, p.xValue) + wUnit / 2;
+                        x = org;
+                        // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+                        p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
+                        p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
+                    }
+                    info.pointView = pv;
                     info.hPoint = hPoint;
-                    this._layoutLabel(info);
-                }
-                // bottom
-                if (info.labelView = labelViews.get(p, 1)) {
-                    if (inverted) info.x -= hPoint;
-                    else info.y += hPoint;
-                    info.hPoint = -hPoint;
-                    this._layoutLabel(info);
+                    info.x = x;
+                    info.y = y;
+
+                    // top
+                    if (info.labelView = labelViews.get(p, 0)) {
+                        info.hPoint = hPoint;
+                        this._layoutLabel(info);
+                    }
+                    // bottom
+                    if (info.labelView = labelViews.get(p, 1)) {
+                        if (inverted) info.x -= hPoint;
+                        else info.y += hPoint;
+                        info.hPoint = -hPoint;
+                        this._layoutLabel(info);
+                    }
                 }
             }
         })

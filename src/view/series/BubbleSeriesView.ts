@@ -110,10 +110,10 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         let labelView: PointLabelView;
         let r: IRect;
 
-        this._markers.forEach((m, i) => {
-            const p = m.point;
+        this._markers.forEach((mv, i) => {
+            const p = mv.point;
 
-            if (!isNaN(p.zValue)) {
+            if (mv.setVisible(!p.isNull && !isNaN(p.zValue))) {
                 const sz = p.radius * vr;
                 let path: (string | number)[];
                 let x: number;
@@ -129,12 +129,12 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
                 }
     
                 path = SvgShapes.circle(0, 0, sz);
-                m.setPath(path);
-                m.translate(x, y);
+                mv.setPath(path);
+                mv.translate(x, y);
 
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
-                    labelView.setContrast(m.dom);
+                    labelView.setContrast(mv.dom);
                     labelView.layout();
                     r = labelView.getBBounds();
                     if (labelView.setVisible(r.width <= p.radius)) {
