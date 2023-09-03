@@ -1,6 +1,8 @@
 const config = {
     title: "AreaRange Null Point",
-    options: {},
+    options: {
+        animatable: false
+    },
     xAxis: {
         type: 'time',
         title: 'Time'

@@ -118,14 +118,58 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         this.$_layoutArea(this._area, this._linePts, pts);
     }
 
-    private $_layoutArea(area: PathElement, upPts: IPointPos[], lowPts: IPointPos[]): void {
+    private $_layoutArea(area: PathElement, pts: IPointPos[], lowPts: IPointPos[]): void {
         const sb = new PathBuilder();
+        let i = 0;
 
-        sb.move(upPts[0].xPos, upPts[0].yPos)
-        this._buildLines(upPts, 1, sb);
-        sb.line(lowPts[0].xPos, lowPts[0].yPos);
-        this._buildLines(lowPts, 1, sb);
+        // sb.move(pts[0].xPos, upPts[0].yPos)
+        // this._buildLines(pts, 1, sb);
+        // sb.line(lowPts[0].xPos, lowPts[0].yPos);
+        // this._buildLines(lowPts, 1, sb);
 
+        while (i < pts.length && pts[i].isNull) {
+            i++;
+        }
+
+        const len = pts.length;
+        let start = i++;
+        let end: number;
+        let pts2: IPointPos[];
+        let lowPts2: IPointPos[];
+
+        while (i < len) {
+            if (pts[i].isNull) {
+                end = i;
+
+                if (end > start) {
+                    pts2 = pts.slice(start, end);
+                    lowPts2 = lowPts.slice(len - end, len - start);
+    
+                    sb.move(pts2[0].xPos, pts2[0].yPos);
+                    this._buildLines(pts2, 1, sb);
+                    sb.line(lowPts2[0].xPos, lowPts2[0].yPos);
+                    this._buildLines(lowPts2, 1, sb);
+                }
+
+                while (i < len && pts[i].isNull) {
+                    i++;
+                }
+                start = i;
+            } else {
+                i++;
+            }
+        }
+
+        if (i > start) {
+            end = i;
+            pts2 = pts.slice(start, end);
+            lowPts2 = lowPts.slice(len - end, len - start);
+    
+            sb.move(pts2[0].xPos, pts2[0].yPos);
+            this._buildLines(pts2, 1, sb);
+            sb.line(lowPts2[0].xPos, lowPts2[0].yPos);
+            this._buildLines(lowPts2, 1, sb);
+        }
         area.setPath(sb.end());
     }
 
