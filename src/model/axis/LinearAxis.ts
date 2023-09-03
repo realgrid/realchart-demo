@@ -623,14 +623,24 @@ export abstract class ContinuousAxis extends Axis {
 
         if (!isNaN(this.strictMin)) {
             min = this.strictMin;
-        } else if (!this._minBased) {
-            minPad = pickNum3(this.minPadding, this.padding, 0);
+        } else {
+            if (this._hardMin < min) {
+                min = this._hardMin;
+            }
+            if (!this._minBased) {
+                minPad = pickNum3(this.minPadding, this.padding, 0);
+            }
         }
 
         if (!isNaN(this.strictMax)) {
             max = this.strictMax;
-        } else if (!this._maxBased) {
-            maxPad = pickNum3(this.maxPadding, this.padding, 0);
+        } else {
+            if (this._hardMax > max) {
+                max = this._hardMax;
+            }
+            if (!this._maxBased) {
+                maxPad = pickNum3(this.maxPadding, this.padding, 0);
+            }
         }
 
         let len = Math.max(0, max - min);
@@ -729,6 +739,17 @@ export class LinearAxis extends ContinuousAxis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * tick 개수를 맞춰야 하는 대상 axis.
+     * <br>
+     * base의 strictMin, strictMax가 설정되지 않아야 한다.
+     * base의 startFit, endFilt의 {@link AxisFit.TICK}으로 설정되어야 한다.
+     */
+    tickBase: number | string
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isObject, isString, pickNum } from "../common/Common";
-import { Align, IPercentSize, SVGStyleOrClass, SizeValue, VerticalAlign, isNull, parsePercentSize } from "../common/Types";
+import { Align, IPercentSize, SVGStyleOrClass, SizeValue, VerticalAlign, fixnum, isNull, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
@@ -33,6 +33,7 @@ export interface IAxis {
      * data point의 값을 축 상의 값으로 리턴한다.
      */
     getValue(value: any): number;
+    parseValue(value: any): number;
     contains(value: number): boolean;
     /**
      * 값(축 상 위치)에 해당하는 픽셀 위치.
@@ -448,6 +449,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     _length: number;
     _minPad = 0;
     _maxPad = 0;
+    _values: number[] = [];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -464,10 +466,6 @@ export abstract class Axis extends ChartItem implements IAxis {
     // properties
     //-------------------------------------------------------------------------
     abstract type(): string;
-
-    canBeX(): boolean {
-        return true;
-    }
 
     /**
      * 표시 위치.
@@ -522,6 +520,19 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     disconnect(): void {
         this._series = [];
+        this._values = [];
+    }
+
+    collectValues(): void {
+        this._series.forEach(item => {
+            item.collectValues(this, this._values);
+        })
+    }
+
+    collectReferentsValues(): void {
+        this._series.forEach(item => {
+            item.pointValuesPrepared(this);
+        })
     }
 
     prepareRender(): void {
@@ -532,11 +543,14 @@ export abstract class Axis extends ChartItem implements IAxis {
 
         // range
         const series = this._series;
-        const vals: number[] = [];
+        const vals: number[] = this._values;// [];
 
-        series.forEach(item => {
-            item.collectValues(this, vals);
-        })
+        // series.forEach(item => {
+        //     item.collectValues(this, vals);
+        // })
+        // series.forEach(item => {
+        //     item.pointValuesPrepared(this);
+        // })
         this._range = this._doCalcluateRange(vals);
 
         // clustering
@@ -579,6 +593,10 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     getValue(value: any): number {
         return value == null ? NaN : parseFloat(value);
+    }
+
+    parseValue(value: any): number {
+        return parseFloat(value);
     }
 
     contains(value: number): boolean {
@@ -631,8 +649,8 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     protected _doCalcluateRange(values: number[]): { min: number, max: number } {
-        let min = Math.min(...values) || 0;
-        let max = Math.max(...values) || 0;
+        let min = fixnum(Math.min(...values) || 0);
+        let max = fixnum(Math.max(...values) || 0);
 
         return { min, max };
     }
@@ -695,6 +713,14 @@ export class AxisCollection {
 
     disconnect(): void {
         this._items.forEach(axis => axis.disconnect());
+    }
+
+    collectValues(): void {
+        this._items.forEach(axis => axis.collectValues());
+    }
+
+    collectReferentsValues(): void {
+        this._items.forEach(axis => axis.collectReferentsValues());
     }
 
     prepareRender(): void {

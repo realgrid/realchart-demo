@@ -37,10 +37,6 @@ export class LogAxis extends ContinuousAxis {
         return 'log';
     }
 
-    canBeX(): boolean {
-        return false;
-    }
-
     protected _createTickModel(): AxisTick {
         return new LogAxisTick(this);
     }

@@ -445,6 +445,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         // 축의 값 범위를 계산한다. 
         // [주의] 반드시 x축을 먼저 준비해야 한다. seriesGroup.$_collectPoints에서 point.xValue를 사용한다.
+        this._xAxes.collectValues();
+        this._yAxes.collectValues();
+        this._xAxes.collectReferentsValues();
+        this._yAxes.collectReferentsValues();
         this._xAxes.prepareRender();
         this._yAxes.prepareRender();
 

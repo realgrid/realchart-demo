@@ -18,7 +18,6 @@ import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource } from "./Legend";
 import { Tooltip } from "./Tooltip";
 import { CategoryAxis } from "./axis/CategoryAxis";
-import { TimeAxis } from "./axis/TimeAxis";
 
 export enum PointItemPosition {
     AUTO = 'auto',
@@ -108,10 +107,11 @@ export interface IPlottingItem {
     canMinPadding(axis: IAxis): boolean; 
     canMaxPadding(axis: IAxis): boolean; 
     ignoreAxisBase(axis: IAxis): boolean;
-    collectValues(axis: IAxis, vals: number[]): void;
     collectCategories(axis: IAxis): string[];
     prepareRender(): void;
     prepareAfter(): void;
+    collectValues(axis: IAxis, vals: number[]): void;
+    pointValuesPrepared(axis: IAxis): void;
 }
 
 export enum TrendType {
@@ -334,6 +334,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _visPoints: DataPoint[];
     _minValue: number;
     _maxValue: number;
+    _referents: Series[];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -506,17 +507,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     getXStart(): number {
-        let s = this.xStart;
-        let s2 = this.chart.xStart;
+        let s = this._xAxisObj.parseValue(this.xStart);
 
-        if (this._xAxisObj instanceof TimeAxis) {
-            if (isString(s)) {
-                s = new Date(s).getTime();
-            } else if (isString(s2)) {
-                s2 = new Date(s2).getTime();
-            }
-        }
-        return pickNum(s, s2);
+        if (!isNaN(s)) return s;
+        return this._xAxisObj.parseValue(this.chart.xStart);
     }
 
     getXStep(): number {
@@ -598,6 +592,15 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         }
     }
 
+    pointValuesPrepared(axis: IAxis): void {
+        if (this._referents) {
+            this._referents.forEach(r => r.reference(this, axis));
+        }
+    }
+
+    reference(other: Series, axis: IAxis): void {
+    }
+
     isVisible(point: DataPoint): boolean {
         return this._xAxisObj.contains(point.x) && this._yAxisObj.contains(point.y);
     }
@@ -612,6 +615,16 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     getLabelOff(off: number): number {
         return off;
+    }
+
+    referBy(ref: Series): void {
+        if (ref) {
+            if (!this._referents) {
+                this._referents = [ref];
+            } else if (this._referents.indexOf(ref) < 0) {
+                this._referents.push(ref);
+            }
+        }
     }
     
     //-------------------------------------------------------------------------
@@ -1215,6 +1228,10 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
                 this.$_collectValues(axis, vals);
             }
         }
+    }
+
+    pointValuesPrepared(axis: IAxis): void {
+        this._series.forEach(ser => ser.pointValuesPrepared(axis));
     }
 
     collectCategories(axis: IAxis): string[] {

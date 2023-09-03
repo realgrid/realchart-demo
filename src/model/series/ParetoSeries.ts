@@ -6,10 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isNone, pickNum } from "../../common/Common";
+import { pickNum } from "../../common/Common";
+import { Axis, IAxis } from "../Axis";
 import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
-import { Series } from "../Series";
+import { ISeries, Series } from "../Series";
 import { LineSeriesBase } from "./LineSeries";
 
 export class ParetoSeriesPoint extends DataPoint {
@@ -23,6 +24,12 @@ export class ParetoSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    parse(series: ISeries): void {
+        super.parse(series);
+
+        this.xValue = this.x;
+        this.yValue = this.y;
+    }
 }
 
 /**
@@ -71,44 +78,37 @@ export class ParetoSeries extends LineSeriesBase {
 
     _referOtherSeries(series: Series): boolean {
         if (series.name === this.source || series.index === this.source) {
-            const src = this.$_loadPoints(series.getPoints().getPoints());
-            this._doLoadPoints(src);
+            series.referBy(this);
             return true;
         }
-        return;
     }
 
-    prepareAfter(): void {
-        // this.chart._getSeries().series().forEach(series => {
-        //     if (series.name === this.source || series.index === this.source) {
-        //         const src = this.$_loadPoints(series.getPoints().getPoints());
-        //         this._doLoadPoints(src);
-        //         this._visPoints.forEach(p => p.yGroup = p.yValue = p.y)
-        //     }
-        // })
-
-        super.prepareAfter();
+    reference(other: Series, axis: IAxis): void {
+        if (!axis._isX) {
+            this.$_loadPoints(other._visPoints);
+            this.collectValues(this._xAxisObj, (this._xAxisObj as Axis)._values);
+            this.collectValues(this._yAxisObj, (this._yAxisObj as Axis)._values);
+        }
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_loadPoints(pts: DataPoint[]): any[] {
+    private $_loadPoints(pts: DataPoint[]): void {
         const list = [];
-        // const sum = pts.reduce((a, c) => a + c.yValue, 0); // TODO: yValue로 해야 한다?
-        const sum = pts.reduce((a, c) => a + pickNum(c.y, 0), 0);
+        const sum = pts.reduce((a, c) => a + pickNum(c.yValue, 0), 0);
         let acc = 0;
 
-        pts.forEach((p, i) => {
-            if (!isNone(p.y)) {
-                const v = p.y * 100 / sum;
-
+        pts.forEach(p => {
+            if (!p.isNull) {
                 list.push({
-                    x: i,//p.x, 
-                    y: acc += v
+                    x: p.xValue, 
+                    y: acc += p.yValue * 100 / sum
                 });
             }
         })
-        return list;
+
+        this._doLoadPoints(list);
+        this._visPoints = this._points.getVisibles();
     }
 }

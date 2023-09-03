@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isString } from "../../common/Common";
 import { pad2 } from "../../common/Types";
 import { AxisTick, IAxisTick } from "../Axis";
 import { IChart } from "../Chart";
@@ -244,6 +245,14 @@ export class TimeAxis extends ContinuousAxis {
         })
 
         return ticks;
+    }
+
+    parseValue(value: any): number {
+        if (!isNaN(value)) {
+            return +value;
+        } else if (isString(value)) {
+            return new Date(value).getTime();
+        }
     }
 
     //-------------------------------------------------------------------------

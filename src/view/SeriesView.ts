@@ -18,7 +18,6 @@ import { SvgShapes } from "../common/impl/SvgShape";
 import { DataPoint } from "../model/DataPoint";
 import { ClusterableSeries, DataPointLabel, PointItemPosition, Series } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
-import { LinearAxis } from "../model/axis/LinearAxis";
 import { ChartElement } from "./ChartElement";
 import { SeriesAnimation } from "./animation/SeriesAnimation";
 
@@ -138,7 +137,7 @@ export class PointLabelContainer extends GroupElement {
 
             // TODO: scroll 시에는 reprepare 필요?
             labels[0].prepare(points.length);
-            labels[1].prepare(points.length);
+            labels[1].prepare(points.length); // TODO: 필요할 때만!
             maps[0] = {};
             maps[1] = {};
 

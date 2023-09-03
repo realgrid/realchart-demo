@@ -103,10 +103,6 @@ class AxisImpl extends Axis {
         expect(axis.type).eq(source.type);
     });
 
-    it('canBeX()', () => {
-        expect(axis.canBeX()).true
-    });
-
     it('position', () => {
         expect(axis.position).eq(source.position);
     });
