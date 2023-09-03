@@ -188,8 +188,6 @@ export class DataPointCollection {
 
     load(source: any): void {
         if (isArray(source)) {
-            const series = this._owner;
-
             // x 축에 대한 정보가 없으므로 홑 값들은 앞으로 이동시킨다.
             source = source.sort((a, b) => {
                 return ((isArray(a) || isObject(a)) ? 1 : 0) - ((isArray(b) || isObject(b)) ? 1 : 0);
@@ -206,9 +204,6 @@ export class DataPointCollection {
 
     getValues(axis: string): any[] {
         return this._points.map(p => p[axis]);
-    }
-
-    prepare(): void {
     }
 
     forEach(callback: (p: DataPoint, i?: number) => any): void {

@@ -6,9 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isNone, pickNum } from "../../common/Common";
 import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
-import { ISeries, Series } from "../Series";
+import { Series } from "../Series";
 import { LineSeriesBase } from "./LineSeries";
 
 export class ParetoSeriesPoint extends DataPoint {
@@ -74,6 +75,19 @@ export class ParetoSeries extends LineSeriesBase {
             this._doLoadPoints(src);
             return true;
         }
+        return;
+    }
+
+    prepareAfter(): void {
+        // this.chart._getSeries().series().forEach(series => {
+        //     if (series.name === this.source || series.index === this.source) {
+        //         const src = this.$_loadPoints(series.getPoints().getPoints());
+        //         this._doLoadPoints(src);
+        //         this._visPoints.forEach(p => p.yGroup = p.yValue = p.y)
+        //     }
+        // })
+
+        super.prepareAfter();
     }
 
     //-------------------------------------------------------------------------
@@ -81,16 +95,19 @@ export class ParetoSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     private $_loadPoints(pts: DataPoint[]): any[] {
         const list = [];
-        const sum = pts.reduce((a, c) => a + c.yValue, 0);
+        // const sum = pts.reduce((a, c) => a + c.yValue, 0); // TODO: yValue로 해야 한다?
+        const sum = pts.reduce((a, c) => a + pickNum(c.y, 0), 0);
         let acc = 0;
 
-        pts.forEach(p => {
-            const v = p.yValue * 100 / sum;
+        pts.forEach((p, i) => {
+            if (!isNone(p.y)) {
+                const v = p.y * 100 / sum;
 
-            list.push({
-                x: p.x, 
-                y: acc += v
-            });
+                list.push({
+                    x: i,//p.x, 
+                    y: acc += v
+                });
+            }
         })
         return list;
     }

@@ -1,5 +1,5 @@
 const config = {
-    title: "Pareto Series",
+    title: "Pareto Null Point",
     options: {
     },
     xAxis: {
@@ -20,13 +20,13 @@ const config = {
     series: [{
         name: 'main',
         pointLabel: true,
-        data: [755, 222, 151, 86, 72, 51, 36, 10],
+        data: [755, 172, 131, null, 86, 72, 51, 36, 10],
     }, {
         name: 'pareto',
         type: 'pareto',
         pointLabel: true,
-        curved: true,
         source: 'main',
+        curved: false,
         yAxis: 1
     }]
 }
