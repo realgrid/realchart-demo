@@ -6592,8 +6592,8 @@
     class TreemapSeriesPoint extends DataPoint {
         _readArray(series, v) {
             super._readArray(series, v);
-            this.id = toStr(v[+series.idField]);
-            this.group = toStr(v[+series.groupField]);
+            this.id = toStr(v[parseInt(series.idField)]);
+            this.group = toStr(v[parseInt(series.groupField)]);
         }
         _readObject(series, v) {
             super._readObject(series, v);
@@ -6689,15 +6689,17 @@
             const list = [];
             const map = this._map;
             pts.forEach(p => {
-                const node = new TreeNode(p);
-                if (p.id) {
-                    map[p.id] = node;
-                }
-                if (p.group) {
-                    list.push(node);
-                }
-                else {
-                    roots.push(node);
+                if (!p.isNull) {
+                    const node = new TreeNode(p);
+                    if (p.id) {
+                        map[p.id] = node;
+                    }
+                    if (p.group) {
+                        list.push(node);
+                    }
+                    else {
+                        roots.push(node);
+                    }
                 }
             });
             for (let i = list.length - 1; i >= 0; i--) {
@@ -9429,9 +9431,9 @@
             const xAxis = series._xAxisObj;
             const yAxis = series._yAxisObj;
             const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
-            const yLen = (inverted ? width : height);
+            const yLen = inverted ? width : height;
             const xLen = inverted ? height : width;
-            const org = inverted ? 0 : height;
+            const yOrg = inverted ? 0 : height;
             const yMin = yAxis.getPosition(yLen, yAxis.axisMin());
             const base = series.getBaseValue(yAxis);
             const yBase = pickNum(yAxis.getPosition(yLen, base), yMin);
@@ -9451,9 +9453,9 @@
                     let x;
                     let y;
                     x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
-                    y = org;
+                    y = yOrg;
                     p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-                    if (based) {
+                    if (based && yBase !== yMin) {
                         p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr);
                     }
                     else {
@@ -9463,7 +9465,7 @@
                     if (info && (info.labelView = labelViews.get(p, 0))) {
                         if (inverted) {
                             y = xLen - xAxis.getPosition(xLen, p.xValue) + wUnit / 2;
-                            x = org;
+                            x = yOrg;
                             p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
                             if (based) {
                                 p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;

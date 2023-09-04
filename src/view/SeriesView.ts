@@ -603,9 +603,9 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
-        const yLen = (inverted ? width : height);
+        const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
-        const org = inverted ? 0 : height;;
+        const yOrg = inverted ? 0 : height;;
         const yMin = yAxis.getPosition(yLen, yAxis.axisMin());
         const base = series.getBaseValue(yAxis);
         const yBase = pickNum(yAxis.getPosition(yLen, base), yMin);
@@ -628,11 +628,11 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 let y: number;
 
                 x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
-                y = org;
+                y = yOrg;
 
                 p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-                if (based) { // TODO: 합칠 수 있나?
-                    p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr); // stack/fill일 때 org와 다르다.
+                if (based && yBase !== yMin) { // 양쪽으로 'grow'할 때 (#48)
+                    p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr);
                 } else {
                     p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr; 
                 }
@@ -645,7 +645,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                     if (inverted) {
                         // y = xLen - xAxis.getPosition(xLen, p.xValue) - wUnit / 2; // 위에서 아래로 내려갈 때
                         y = xLen - xAxis.getPosition(xLen, p.xValue) + wUnit / 2;
-                        x = org;
+                        x = yOrg;
                         p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
                         // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
                         if (based) {

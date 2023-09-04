@@ -31,8 +31,8 @@ export class TreemapSeriesPoint extends DataPoint {
     protected _readArray(series: TreemapSeries, v: any[]): void {
         super._readArray(series, v);
 
-        this.id = toStr(v[+series.idField]);
-        this.group = toStr(v[+series.groupField]);
+        this.id = toStr(v[parseInt(series.idField)]);
+        this.group = toStr(v[parseInt(series.groupField)]);
     }
 
     protected _readObject(series: TreemapSeries, v: any): void {
@@ -218,15 +218,17 @@ export class TreemapSeries extends Series {
         const map = this._map;
 
         pts.forEach(p => {
-            const node = new TreeNode(p);
+            if (!p.isNull) {
+                const node = new TreeNode(p);
 
-            if (p.id) {
-                map[p.id] = node;
-            } 
-            if (p.group) {
-                list.push(node);
-            } else {
-                roots.push(node);
+                if (p.id) {
+                    map[p.id] = node;
+                } 
+                if (p.group) {
+                    list.push(node);
+                } else {
+                    roots.push(node);
+                }
             }
         })
 
