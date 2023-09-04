@@ -12,7 +12,6 @@ import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { PointItemPosition } from "../../model/Series";
 import { CategoryAxis } from "../../model/axis/CategoryAxis";
-import { LinearAxis } from "../../model/axis/LinearAxis";
 import { DumbbellSeries, DumbbellSeriesPoint } from "../../model/series/DumbbellSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
@@ -136,66 +135,61 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
-        //const xBase = xAxis instanceof LinearAxis ? xAxis.getPosition(xLen, xAxis.xBase) : 0;
-        const yBase = yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.baseValue : 0);
         const org = inverted ? 0 : height;;
-        const labelInfo: LabelInfo = labelViews && Object.assign(this._labelInfo, {
-            inverted,
-            labelPos: series.getLabelPosition(labels.position),
-            labelOff: labels.offset,
-            width, height
-        });
 
         this._bars.forEach((bar, i) => {
             const p = bar.point;
-            const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
-            const wPoint = series.getPointWidth(wUnit);
-            const yVal = yAxis.getPosition(yLen, p.yValue);
-            const hPoint = Math.abs(yAxis.getPosition(yLen, p.lowValue) - yVal) * vr;
-            let labelView: PointLabelView;
-            let x: number;
-            let y: number;
 
-            if (inverted) {
-                y = xLen - xAxis.getPosition(xLen, p.xValue);
-                x = org;
-            } else {
-                x = xAxis.getPosition(xLen, p.xValue);
-                y = org;
-            }
-
-            if (inverted) {
-                p.yPos = y += series.getPointPos(wUnit) - wPoint / 2;
-                p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
-                x -= hPoint;
-            } else {
-                p.xPos = x += series.getPointPos(wUnit) - wPoint / 2;
-                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
-            }
-
-            p.hPoint = hPoint;
-            bar.layout(inverted).translate(x, y);
-
-            // labels
-            if (labelViews) {
-                // high
-                if (labelView = labelViews.get(p, 1)) {
-                    const r = labelView.getBBounds();
-
-                    if (inverted) {
-                        labelView.translate(x + hPoint + labelOff + p.radius, y - r.height / 2);
-                    } else {
-                        labelView.translate(x - r.width / 2, y - r.height - labelOff - p.radius);
-                    }
+            if (bar.setVisible(!p.isNull)) {
+                const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
+                const wPoint = series.getPointWidth(wUnit);
+                const yVal = yAxis.getPosition(yLen, p.yValue);
+                const hPoint = Math.abs(yAxis.getPosition(yLen, p.lowValue) - yVal) * vr;
+                let labelView: PointLabelView;
+                let x: number;
+                let y: number;
+    
+                if (inverted) {
+                    y = xLen - xAxis.getPosition(xLen, p.xValue);
+                    x = org;
+                } else {
+                    x = xAxis.getPosition(xLen, p.xValue);
+                    y = org;
                 }
-                // low
-                if (labelView = labelViews.get(p, 0)) {
-                    const r = labelView.getBBounds();
-
-                    if (inverted) {
-                        labelView.translate(x - r.width - labelOff - p.radius, y - r.height / 2);
-                    } else {
-                        labelView.translate(x - r.width / 2, y + hPoint + labelOff + p.radius);
+    
+                if (inverted) {
+                    p.yPos = y += series.getPointPos(wUnit) - wPoint / 2;
+                    p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
+                    x -= hPoint;
+                } else {
+                    p.xPos = x += series.getPointPos(wUnit) - wPoint / 2;
+                    p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
+                }
+    
+                p.hPoint = hPoint;
+                bar.layout(inverted).translate(x, y);
+    
+                // labels
+                if (labelViews) {
+                    // high
+                    if (labelView = labelViews.get(p, 1)) {
+                        const r = labelView.getBBounds();
+    
+                        if (inverted) {
+                            labelView.translate(x + hPoint + labelOff + p.radius, y - r.height / 2);
+                        } else {
+                            labelView.translate(x - r.width / 2, y - r.height - labelOff - p.radius);
+                        }
+                    }
+                    // low
+                    if (labelView = labelViews.get(p, 0)) {
+                        const r = labelView.getBBounds();
+    
+                        if (inverted) {
+                            labelView.translate(x - r.width - labelOff - p.radius, y - r.height / 2);
+                        } else {
+                            labelView.translate(x - r.width / 2, y + hPoint + labelOff + p.radius);
+                        }
                     }
                 }
             }

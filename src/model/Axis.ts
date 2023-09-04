@@ -543,7 +543,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
         // range
         const series = this._series;
-        const vals: number[] = this._values;// [];
+        const vals: number[] = this._values;
 
         // series.forEach(item => {
         //     item.collectValues(this, vals);

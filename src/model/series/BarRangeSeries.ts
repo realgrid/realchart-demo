@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp, pickProp3 } from "../../common/Common";
-import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { RangedSeries } from "../Series";
 
