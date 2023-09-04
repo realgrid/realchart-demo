@@ -19,6 +19,7 @@ import { CandlestickSeries } from '../../../src/model/series/CandlestickSeries';
         let series = new CandlestickSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('candlestick');
     });
 
     it('props', () => {

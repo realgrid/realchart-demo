@@ -145,8 +145,10 @@ export class PointLabelContainer extends GroupElement {
                 for (let j = 0; j < p.labelCount(); j++) {
                     const label = labels[j].get(i);
 
-                    this.prepareLabel(doc, label, j, p, pointLabel);
-                    maps[j][p.pid] = label;
+                    if (label.setVisible(!p.isNull)) {
+                        this.prepareLabel(doc, label, j, p, pointLabel);
+                        maps[j][p.pid] = label;
+                    }
                 }
             })
 

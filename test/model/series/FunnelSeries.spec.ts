@@ -19,6 +19,7 @@ import { FunnelSeries } from '../../../src/model/series/FunnelSeries';
         let series = new FunnelSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('funnel');
     });
 
     it('props', () => {

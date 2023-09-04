@@ -19,6 +19,7 @@ import { LineSeries } from '../../../src/model/series/LineSeries';
         let series = new LineSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('line');
     });
 
     it('props', () => {

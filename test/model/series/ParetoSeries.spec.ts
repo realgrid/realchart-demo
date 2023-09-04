@@ -25,6 +25,7 @@ const config = {
         let series = new ParetoSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('pareto');
     });
 
     it('props', () => {

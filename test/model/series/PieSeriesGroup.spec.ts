@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
-// ScatterSeries.spec.ts
-// 2023. 08. 03. created by woori
+// PieSeriesGroup.spec.ts
+// 2023. 09. 04. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
@@ -8,21 +8,22 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { ScatterSeries } from '../../../src/model/series/ScatterSeries';
+import { PieSeriesGroup } from '../../../src/model/series/PieSeries';
 
 /**
- * Tests for ScatterSeries class.
+ * Tests for PieSeriesGroup class.
  */
- describe("ScatterSeries test", function() {
+ describe("PieSeriesGroup test", function() {
 
     it('init', () => {
-        let series = new ScatterSeries(null);
+        let group = new PieSeriesGroup(null);
 
-        expect(series).exist;
-        expect(series._type()).eq('scatter');
+        expect(group).exist;
+        expect(group._type()).eq('pie');
+        expect(group._seriesType()).eq('pie');
     });
 
     it('props', () => {
-        let series = new ScatterSeries(null);
+        let group = new PieSeriesGroup(null);
     });
 });

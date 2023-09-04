@@ -28,6 +28,7 @@ import { Tester } from '../../Tester';
         let axis = new CategoryAxis(null, name);
 
         expect(axis.name).eq(name);
+        expect(axis.padding).eq(0);
     });
 
     it('collect categories - numbers', () => {

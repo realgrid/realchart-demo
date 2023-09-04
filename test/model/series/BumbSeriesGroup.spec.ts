@@ -16,12 +16,14 @@ import { BumpSeriesGroup } from '../../../src/model/series/BumpSeriesGroup';
  describe("BumpSeriesGroup test", function() {
 
     it('init', () => {
-        let series = new BumpSeriesGroup(null);
+        let group = new BumpSeriesGroup(null);
 
-        expect(series).exist;
+        expect(group).exist;
+        expect(group._type()).eq('bump');
+        expect(group._seriesType()).eq('line');
     });
 
     it('props', () => {
-        let series = new BumpSeriesGroup(null);
+        let group = new BumpSeriesGroup(null);
     });
 });

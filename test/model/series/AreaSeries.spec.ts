@@ -19,9 +19,11 @@ import { AreaSeries } from '../../../src/model/series/LineSeries';
         let series = new AreaSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('area');
     });
 
     it('props', () => {
         let series = new AreaSeries(null);
+
     });
 });

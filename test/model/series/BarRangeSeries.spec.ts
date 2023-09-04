@@ -19,6 +19,7 @@ import { BarRangeSeries } from '../../../src/model/series/BarRangeSeries';
         let series = new BarRangeSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('barrange');
     });
 
     it('props', () => {

@@ -29,6 +29,7 @@ import { Chart } from '../../../src/model/Chart';
         const series = new TreemapSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('treemap');
     });
 
     it('props', () => {

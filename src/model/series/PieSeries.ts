@@ -191,7 +191,7 @@ export class PieSeriesGroup extends SeriesGroup<PieSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _seriesType(): string {
+    _seriesType(): string {
         return 'pie';
     }
 

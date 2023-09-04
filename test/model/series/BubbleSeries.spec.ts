@@ -19,6 +19,7 @@ import { BubbleSeries } from '../../../src/model/series/BubbleSeries';
         let series = new BubbleSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('bubble');
     });
 
     it('props', () => {

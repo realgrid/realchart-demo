@@ -19,6 +19,7 @@ import { LollipopSeries } from '../../../src/model/series/LollipopSeries';
         let series = new LollipopSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('lollipop');
     });
 
     it('props', () => {

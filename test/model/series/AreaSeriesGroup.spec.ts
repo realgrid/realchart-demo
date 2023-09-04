@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
-// ScatterSeries.spec.ts
-// 2023. 08. 03. created by woori
+// AreaSeriesGroup.spec.ts
+// 2023. 09. 04. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
@@ -8,21 +8,22 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { ScatterSeries } from '../../../src/model/series/ScatterSeries';
+import { AreaSeriesGroup } from '../../../src/model/series/LineSeries';
 
 /**
- * Tests for ScatterSeries class.
+ * Tests for AreaSeriesGroup class.
  */
- describe("ScatterSeries test", function() {
+ describe("AreaSeriesGroup test", function() {
 
     it('init', () => {
-        let series = new ScatterSeries(null);
+        let group = new AreaSeriesGroup(null);
 
-        expect(series).exist;
-        expect(series._type()).eq('scatter');
+        expect(group).exist;
+        expect(group._type()).eq('area');
+        expect(group._seriesType()).eq('area');
     });
 
     it('props', () => {
-        let series = new ScatterSeries(null);
+        let group = new AreaSeriesGroup(null);
     });
 });

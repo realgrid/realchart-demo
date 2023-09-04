@@ -12,7 +12,7 @@ import { PathElement } from "../../common/RcControl";
 import { Utils } from "../../common/Utils";
 import { SeriesGroupLayout } from "../../model/Series";
 import { LinearAxis } from "../../model/axis/LinearAxis";
-import { AreaSeries, AreaSeriesPoint, LineSeries } from "../../model/series/LineSeries";
+import { AreaSeries, AreaSeriesPoint } from "../../model/series/LineSeries";
 import { LineSeriesBaseView } from "./LineSeriesView";
 
 export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {

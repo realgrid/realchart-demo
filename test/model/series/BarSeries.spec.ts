@@ -19,6 +19,7 @@ import { BarSeries } from '../../../src/model/series/BarSeries';
         let series = new BarSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('bar');
     });
 
     it('props', () => {

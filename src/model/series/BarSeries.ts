@@ -68,7 +68,7 @@ export class BarSeriesGroup extends ClustrableSeriesGroup<BarSeries> implements 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _seriesType(): string {
+    _seriesType(): string {
         return 'bar';
     }
 

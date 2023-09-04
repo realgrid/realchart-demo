@@ -78,7 +78,6 @@ export interface IChart {
 
 const group_types = {
     'bar': BarSeriesGroup,
-    'column': BarSeriesGroup,
     'line': LineSeriesGroup,
     'area': AreaSeriesGroup,
     'pie': PieSeriesGroup,

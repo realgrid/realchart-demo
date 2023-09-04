@@ -19,6 +19,7 @@ import { EqualizerSeries } from '../../../src/model/series/EqualizerSeries';
         let series = new EqualizerSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('equalizer');
     });
 
     it('props', () => {

@@ -19,6 +19,7 @@ import { PieSeries } from '../../../src/model/series/PieSeries';
         let series = new PieSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('pie');
     });
 
     it('props', () => {

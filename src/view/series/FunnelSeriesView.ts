@@ -105,44 +105,47 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
 
         this._segments.forEach((seg) => {
             const p = seg.point;
-            let start = p.yPos * sz.height;
-            let end = (p.yPos + p.height) * sz.height;
-            let y = reversed ? (yEnd - start) : y1 + start;
-            let y2 = reversed ? (yEnd - end) : y1 + end;
-            let x: number;
-            let x2: number;
-            let x3: number;
-            let x4: number;
 
-            if (start >= pNeck) {
-                x = xNeck;
-                x2 = x + szNeck.width;
-                builder.move(x, y).lines(x2, y, x2, y2, x, y2);   
-            } else if (end < pNeck) {
-                x = getPosAt(y);
-                x2 = x + (xMid - x) * 2;
-                x3 = getPosAt(y2);
-                x4 = x3 + (xMid - x3) * 2;
-                builder.move(x, y).lines(x2, y, x4, y2, x3, y2);
-            } else {
-                x = getPosAt(y);
-                x2 = x + (xMid - x) * 2;
-                x3 = xNeck;
-                x4 = x3 + szNeck.width;
-                builder.move(x, y).lines(x2, y, x4, yNeck, x4, y2, x3, y2, x3, yNeck);
-            }
+            if (seg.setVisible(!p.isNull)) {
+                const start = p.yPos * sz.height;
+                const end = (p.yPos + p.height) * sz.height;
+                const y = reversed ? (yEnd - start) : y1 + start;
+                const y2 = reversed ? (yEnd - end) : y1 + end;
+                let x: number;
+                let x2: number;
+                let x3: number;
+                let x4: number;
 
-            const path = builder.close();
-            seg.setPath(path);
-
-            p.xPos = xMid;
-            p.yPos = y + (y2 - y) / 2;
-
-            // label
-            if (labelViews && (labelView = labelViews.get(p, 0))) {
-                const r = labelView.getBBounds();
-
-                labelView.translate(xMid - r.width / 2, y + ((y2 - y) - r.height) / 2);
+                if (start >= pNeck) {
+                    x = xNeck;
+                    x2 = x + szNeck.width;
+                    builder.move(x, y).lines(x2, y, x2, y2, x, y2);   
+                } else if (end < pNeck) {
+                    x = getPosAt(y);
+                    x2 = x + (xMid - x) * 2;
+                    x3 = getPosAt(y2);
+                    x4 = x3 + (xMid - x3) * 2;
+                    builder.move(x, y).lines(x2, y, x4, y2, x3, y2);
+                } else {
+                    x = getPosAt(y);
+                    x2 = x + (xMid - x) * 2;
+                    x3 = xNeck;
+                    x4 = x3 + szNeck.width;
+                    builder.move(x, y).lines(x2, y, x4, yNeck, x4, y2, x3, y2, x3, yNeck);
+                }
+    
+                const path = builder.close(true);
+                seg.setPath(path);
+    
+                p.xPos = xMid;
+                p.yPos = y + (y2 - y) / 2;
+    
+                // label
+                if (labelViews && (labelView = labelViews.get(p, 0))) {
+                    const r = labelView.getBBounds();
+    
+                    labelView.translate(xMid - r.width / 2, y + ((y2 - y) - r.height) / 2);
+                }
             }
         });
     }

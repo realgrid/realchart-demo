@@ -19,6 +19,7 @@ import { HeatmapSeries } from '../../../src/model/series/HeatmapSeries';
         const series = new HeatmapSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('heatmap');
     });
 
     it('props', () => {

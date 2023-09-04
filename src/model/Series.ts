@@ -1213,6 +1213,12 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    _type(): string {
+        return this._seriesType();
+    }
+
+    abstract _seriesType(): string;
+
     // Axis에서 요청한다.
     collectValues(axis: IAxis, vals: number[]): void {
         if (this._visibles.length > 0) {
@@ -1309,7 +1315,6 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    protected abstract _seriesType(): string;
     protected abstract _canContain(ser: Series): boolean;
 
     protected _doPrepareSeries(series: T[]): void {}

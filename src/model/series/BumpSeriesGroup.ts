@@ -33,11 +33,11 @@ export class BumpSeriesGroup extends ConstraintSeriesGroup<LineSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'bump';
     }
 
-    protected _seriesType(): string {
+    _seriesType(): string {
         return 'line';
     }
 

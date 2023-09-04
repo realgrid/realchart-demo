@@ -19,6 +19,7 @@ import { ErrorBarSeries } from '../../../src/model/series/ErrorBarSeries';
         let series = new ErrorBarSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('errorbar');
     });
 
     it('props', () => {

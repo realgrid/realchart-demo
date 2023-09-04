@@ -19,6 +19,7 @@ import { BellCurveSeries } from '../../../src/model/series/BellCurveSeries';
         let series = new BellCurveSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('bellcurve');
     });
 
     it('props', () => {

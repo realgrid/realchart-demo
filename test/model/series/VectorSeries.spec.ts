@@ -19,6 +19,7 @@ import { VectorSeries } from '../../../src/model/series/VectorSeries';
         let series = new VectorSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('vector');
     });
 
     it('props', () => {

@@ -19,6 +19,7 @@ import { DumbbellSeries } from '../../../src/model/series/DumbbellSeries';
         let series = new DumbbellSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('dumbbell');
     });
 
     it('props', () => {

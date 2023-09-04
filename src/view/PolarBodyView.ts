@@ -12,7 +12,7 @@ import { ISize } from "../common/Size";
 import { CircleElement } from "../common/impl/CircleElement";
 import { LineElement } from "../common/impl/PathElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
-import { Axis, AxisLine, AxisTick, IAxisTick } from "../model/Axis";
+import { Axis, AxisTick, IAxisTick } from "../model/Axis";
 import { Body } from "../model/Body";
 import { BodyView } from "./BodyView";
 
@@ -153,8 +153,9 @@ class PolarXAxisView extends PolarAxisView {
         // grid lines
         this._gridLines.forEach((view, i) => {
             const tick = ticks[i];
-            const x = cx + Math.cos(start + tick.pos) * rd;
-            const y = cy + Math.sin(start + tick.pos) * rd;
+            const p = tick.pos * Math.PI * 2;
+            const x = cx + Math.cos(start + p) * rd;
+            const y = cy + Math.sin(start + p) * rd;
 
             view.setLine(cx, cy, x, y);
         });
@@ -170,8 +171,9 @@ class PolarXAxisView extends PolarAxisView {
             view.text = tick.label;
 
             const r = view.getBBounds();
-            const x = cx + Math.cos(start + tick.pos) * (rd2 + r.width / 2);
-            const y = cy + Math.sin(start + tick.pos) * (rd2 + r.height / 2);
+            const p = tick.pos * Math.PI * 2;
+            const x = cx + Math.cos(start + p) * (rd2 + r.width / 2);
+            const y = cy + Math.sin(start + p) * (rd2 + r.height / 2);
 
             view.translate(x, y);
         });

@@ -151,6 +151,10 @@ export class AreaSeries extends LineSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    _type(): string {
+        return 'area';
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new AreaSeriesPoint(source);
     }
@@ -268,7 +272,7 @@ export class LineSeriesGroup extends SeriesGroup<LineSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _seriesType(): string {
+    _seriesType(): string {
         return 'line';
     }
 
@@ -291,7 +295,7 @@ export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _seriesType(): string {
+    _seriesType(): string {
         return 'area';
     }
 

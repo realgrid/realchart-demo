@@ -1,5 +1,8 @@
 const config = {
     title: "Funnel Series",
+    options: {
+        // animatable: false
+    },
     legend: {
         position: 'right',
         layout: 'vertical',

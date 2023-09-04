@@ -19,6 +19,7 @@ import { WaterfallSeries } from '../../../src/model/series/WaterfallSeries';
         let series = new WaterfallSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('waterfall');
     });
 
     it('props', () => {

@@ -19,6 +19,7 @@ import { HistogramSeries } from '../../../src/model/series/HistogramSeries';
         let series = new HistogramSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('histogram');
     });
 
     it('props', () => {

@@ -19,6 +19,7 @@ import { BoxPlotSeries } from '../../../src/model/series/BoxPlotSeries';
         let series = new BoxPlotSeries(null);
 
         expect(series).exist;
+        expect(series._type()).eq('boxplot');
     });
 
     it('props', () => {

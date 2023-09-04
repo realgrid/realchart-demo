@@ -51,8 +51,10 @@ export class PathBuilder {
         return this._path.join(' ');
     }
 
-    close(): string {
-        return this.end(true);
+    close(clear: boolean): string {
+        const s = this.end(true);
+        clear && this.clear();
+        return s;
     }
 
     move(x: number | IPoint, y?: number): PathBuilder {
