@@ -52,7 +52,8 @@
 3. 제품 비교표 - highchart, riamore, sbchart, amChart, chartjs, gogglechart, ...
 4. npm
 5. jsfiddle, codepen
-6. GS 인증 - 기능 목록
-7. Sites: 제품, api
-8. Report embed
-9. Java migration
+6. 라이선스, 크레딧
+7. GS 인증 - 기능 목록
+8. Sites: 제품, api
+9. Report embed
+10. Java migration
