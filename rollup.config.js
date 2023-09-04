@@ -14,7 +14,7 @@ import exportDefault from './exportDefault.js';
 const pkg = JSON.parse(fs.readFileSync("./package.json"));
 const version = pkg.version;// + '.' + pkg.buildNo;
 const currYear = new Date().getFullYear();
-const filename = `realreport-chart.${pkg.version}`;
+const filename = `realchart.${pkg.version}`;
 const namespace = 'RealChart';
 
 const copyright = `
@@ -32,7 +32,7 @@ const rollup_debug_config = {
         format: 'umd',
         name: namespace,
         sourcemap: true,
-        file: './web/realchart/lib/realreport-chart.js'
+        file: './web/realchart/lib/realchart.js'
     },
     plugins: [
         // sourcemap과 modify를 함께 사용하면 sourcemap이 정상적으로 표시되지 않음.
@@ -60,7 +60,7 @@ const rollup_debug_config2 = {
         format: 'umd',
         name: namespace,
         sourcemap: true,
-        file: './web/realchart/lib/realreport-chart.js'
+        file: './web/realchart/lib/realchart.js'
     },
     plugins: [
         typescript({
@@ -121,7 +121,7 @@ const rollup_pub_config = {
     output: [{
         format: 'umd',
         name: namespace,
-        file: './web/realchart/lib/realreport-chart.js'
+        file: './web/realchart/lib/realchart.js'
     }],
     plugins: [
         modify({
@@ -138,7 +138,7 @@ const rollup_pub_config = {
         copy({
             hook: 'writeBundle',
             targets: [
-                { src: './web/realchart/lib/realreport-chart.js', dest: `./`, rename: `${filename}.min.js` },
+                { src: './web/realchart/lib/realchart.js', dest: `./`, rename: `${filename}.min.js` },
                 // { src: './web/', dest: './', rename: 'www' }
             ],
             flatten: false
