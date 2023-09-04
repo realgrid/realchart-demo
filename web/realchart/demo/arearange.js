@@ -1,7 +1,7 @@
 const config = {
     title: "AreaRange Series",
     options: {
-        animatable: false
+        // animatable: false
     },
     xAxis: {
         type: 'time',

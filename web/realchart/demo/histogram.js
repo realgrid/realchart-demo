@@ -2,9 +2,8 @@ const config = {
     options: {
         // animatable: false
     },
-    title: "Histogram 01",
+    title: "Histogram Series",
     xAxis: {
-        baseValue: NaN,
     },
     yAxis: {
     },

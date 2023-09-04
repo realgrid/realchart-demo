@@ -2,7 +2,7 @@
 
 1. 차원
   - 논리적
-    -- 1차원: pie, widget
+    -- 1차원: pie, funnel, treemap, widget(v1.1)
     -- 2차원: 나머지
   - 감각적
     -- 2차원
@@ -11,14 +11,15 @@
 2. 형태 (axis-base)
   - bar: bar, lollipop, equalizer, histogram, wing(v1.1)
   - range: barrange, boxplot, candlestick, errorbar, ohlc, waterfall
-  - line: line, arearange, bellcurve, pareto,
-  - area: area, (line 계열이 아니라 bar 계열이다! (baseValue))
+  - line: line, area,
+  - arearange
+  - referant: bellcurve, pareto
   - scatter: scatter, bubble, vector
-  - map: heatmap
-  - map: treemap (no axis)
-  - pie: pie
+  - matrix: heatmap
+  - treemap (no axis)
+  - pie: pie(donut)
   - widget: funnel, gauge(v1.1)
-  - polar: bar, line, range(?), scatter(?), map(?) <- ?: 의미가 있는가?
+  - polar: bar, line, range(?), scatter(?), heatmap(?) <- ?: 의미가 있는가?
 
 3. more (highcharts 등)(v2.0~)
   - sankey diagram
@@ -34,7 +35,7 @@
   - pivot points, macd
 
 [ Key Features ]
-
+* 아직 특별할 게 없다!
 1. inverted, reversed
 2. category width
 3. theme
@@ -42,7 +43,15 @@
 [ Test ]
 1. model unit test
 2. puppeteer integration test
+3. service site sample charts 등록  
 
 [ Publish ]
 1. 의미있는 데이터로 demo sample을 만든다.
 2. theme 셋 준비.
+3. 제품 비교표 - highchart, riamore, sbchart, amChart, chartjs, gogglechart, ...
+4. npm
+5. jsfiddle, codepen
+6. GS 인증 - 기능 목록
+7. Sites: 제품, api
+8. Report embed
+9. Java migration

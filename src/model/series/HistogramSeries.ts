@@ -57,6 +57,7 @@ const binsNumberFunc = {
 /**
  * 각 bin은 하한값을 포함하고 상한값은 포함하지 않는다. 마지막 bin은 상한값을 포함한다.
  * https://en.wikipedia.org/wiki/Histogram
+ * X축이 'linear'이어야 한다.
  */
 export class HistogramSeries extends Series {
 
@@ -112,7 +113,7 @@ export class HistogramSeries extends Series {
     protected _doLoadPoints(src: any[]): void {
 
         function getValue(v: any): number {
-            let y: number;
+            let y: any;
 
             if (isArray(v)) {
                 y = v[pickNum(this.yField, 0)];
@@ -121,7 +122,7 @@ export class HistogramSeries extends Series {
             } else {
                 y = v;
             }
-            return +y;
+            return parseFloat(y);
         }
 
         const pts = [];

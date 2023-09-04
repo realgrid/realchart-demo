@@ -157,27 +157,31 @@ export class EqualizerSeriesView extends BoxedSeriesView<EqualizerSeries> {
         const total = pts.length / 2;
 
         this._bars.forEach(bar => {
-            const v = bar.point.yValue / max;
-            let n = -1;
-            let decimal = 0;
+            const p = bar.point;
 
-            for (let i = 0; i < total - 1; i++) {
-                if (v >= pts[i * 2] / len && v < pts[(i + 1) * 2] / len) {
-                    n = i + 1;
-                    if (!segmented && v < pts[i * 2 + 1] / len) {
-                        decimal = v * len - pts[i * 2];
-                    } else {
-                        decimal = sz;
+            if (bar.setVisible(!p.isNull)) {
+                const v = p.yValue / max;
+                let n = -1;
+                let decimal = 0;
+    
+                for (let i = 0; i < total - 1; i++) {
+                    if (v >= pts[i * 2] / len && v < pts[(i + 1) * 2] / len) {
+                        n = i + 1;
+                        if (!segmented && v < pts[i * 2 + 1] / len) {
+                            decimal = v * len - pts[i * 2];
+                        } else {
+                            decimal = sz;
+                        }
+                        break;
                     }
-                    break;
                 }
+                if (n < 0) {
+                    n = total;
+                    decimal = sz;
+                }
+                // bar.getStyle = model.getPointStyle(i);
+                bar.prepareSegments(backs, total, n, decimal, series.backStyle as string);
             }
-            if (n < 0) {
-                n = total;
-                decimal = sz;
-            }
-            // bar.getStyle = model.getPointStyle(i);
-            bar.prepareSegments(backs, total, n, decimal, series.backStyle as string);
         });
     }
 }

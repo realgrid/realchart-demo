@@ -67,16 +67,4 @@ export class EqualizerSeries extends BasedSeries {
 
         this._segmentDim = parsePercentSize(this.segmentSize, false);
     }
-
-    protected _doPrepareRender(): void {
-        super._doPrepareRender();
-
-        // const radius = this.marker.radius;
-        // const shape = this.marker.shape;
-
-        // this._visPoints.forEach((p: EqualizerSeriesPoint) => {
-        //     p.radius = radius;
-        //     p.shape = shape;
-        // })
-    }
 }

@@ -89,6 +89,8 @@ export class BoxPlotSeriesPoint extends DataPoint {
         this.lowValue = parseFloat(this.low);
         this.midValue = parseFloat(this.mid);
         this.highValue = parseFloat(this.high);
+
+        this.isNull ||= isNaN(this.minValue) || isNaN(this.lowValue) || isNaN(this.midValue) || isNaN(this.highValue);
     }
 }
 

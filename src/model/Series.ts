@@ -553,6 +553,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     collectValues(axis: IAxis, vals: number[]): void {
         if (axis === this._xAxisObj) {
+            const cat = axis instanceof CategoryAxis;
             let x = this.getXStart() || 0;
             const xStep = this.getXStep() || 1;
 
@@ -560,13 +561,15 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 let val = axis.getValue(p.x);
     
                 // 카테고리에 포함되지 않는 숫자 값들은 자동으로 값을 지정한다.
-                if (isNaN(val)) {
+                if (isNaN(val) && cat) {
                     val = x;
                     x += xStep;
                 }
                 if (!isNaN(val)) {
                     p.xValue = val;
                     vals && vals.push(val);
+                } else {
+                    p.isNull = true;
                 }
             });
         } else {

@@ -1,35 +1,42 @@
 const config = {
-    title: "AreaRange Null Point",
-    options: {
-        // animatable: false
-    },
+    options: {},
+    title: "Equalizer Null Point",
     xAxis: {
-        type: 'time',
-        title: 'Time'
+        // type: 'category',
+        // position: 'apposite'
+        // position: 'base',
+        // baseAxis: 1,
+        title: 'X Axis',
     },
     yAxis: {
-        title: 'Temparature'
+        title: 'Y Axis',
     },
     series: {
-        type: 'arearange',
-        // data: range_data,
+        type: 'equalizer',
+        pointLabel: {
+            visible: true,
+            // position: 'head',
+            // offset: 10,
+            // text: '<b style="fill:red">${x}</b>',
+            effect: 'outline',// 'background',
+            style: {
+            },
+            // backgroundStyle: {
+            //     fill: '#004',
+            //     padding: '5px'
+            // }
+        },
         data: [
-            [13.7, 25.6],
-            [13.3, 21.8],
-            [11.2, null],
-            [7.9, 17.3],
-            [4.9, 20.6],
-            [5.1, 16.8],
-            [9.3, 21.1],
-            [11.1, 20.5],
-            [8.9, 18.4],
-            [4.6, 23.2],
-            [7.5, 25.7],
-            [5.5, 24.3],
-            [10.4, 21.2]
+            ['home', 10], 
+            ['sky', null], 
+            ['def', 9], 
+            ['지리산', 14.3], 
+            ['zzz', 13],
+            ['낙동강', 12.5]
         ],
-        pointLabel: {},
-        marker: {}
+        style: {
+            // fill: 'yellow'
+        }
     }
 }
 
@@ -43,14 +50,6 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createCheckBox(container, 'Curved', function (e) {
-        config.series.curved = _getChecked(e);
-        chart.update(config);
-    }, false);
-    createCheckBox(container, 'Point Marker', function (e) {
-        config.series.marker.visible = _getChecked(e);
-        chart.update(config);
-    }, true);
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
         chart.update(config);

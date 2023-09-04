@@ -67,6 +67,8 @@ export class VectorSeriesPoint extends DataPoint {
 
         this.lengthValue = parseFloat(this.length);
         this.angleValue = parseFloat(this.angle);
+
+        this.isNull ||= isNaN(this.lengthValue) || isNaN(this.angleValue);
     }
 }
 
