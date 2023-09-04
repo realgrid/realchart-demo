@@ -550,18 +550,18 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     /**
      * vals가 지정되지 않은 상태로 호추될 수 있다.
+     * x값이 숫자가 아닐 때 axis가 해석하지 못하면 xStart 부터 xStep으로 증가 시켜 가면서 순서대로 지정한다.
      */
     collectValues(axis: IAxis, vals: number[]): void {
         if (axis === this._xAxisObj) {
-            const cat = axis instanceof CategoryAxis;
             let x = this.getXStart() || 0;
             const xStep = this.getXStep() || 1;
 
             this._visPoints.forEach((p, i) => {
                 let val = axis.getValue(p.x);
     
-                // 카테고리에 포함되지 않는 숫자 값들은 자동으로 값을 지정한다.
-                if (isNaN(val) && cat) {
+                // 축이 해석하지 못한 값은 자동으로 값을 지정한다.
+                if (isNaN(val)) {
                     val = x;
                     x += xStep;
                 }
@@ -1465,7 +1465,10 @@ export abstract class ConstraintSeriesGroup<T extends Series> extends SeriesGrou
         super.collectValues(axis, vals);
 
         if (axis === this._yAxisObj) {
-            vals = this._doConstraintYValues(this._visibles) || vals;
+            const vals2 = this._doConstraintYValues(this._visibles);
+
+            vals.length = 0;
+            vals.push(...vals2);
         }
     }
 

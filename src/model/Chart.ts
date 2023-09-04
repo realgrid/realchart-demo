@@ -57,7 +57,7 @@ export interface IChart {
     animatable(): boolean;
     startAngle(): number;
 
-    seriesByBame(series: string): Series;
+    seriesByName(series: string): Series;
     axisByName(axis: string): Axis;
     // getGroup(group: String): SeriesGroup2;
     getAxes(dir: SectionDir): Axis[];
@@ -335,7 +335,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    seriesByBame(series: string): Series {
+    seriesByName(series: string): Series {
         return this._series.get(series);
     }
 

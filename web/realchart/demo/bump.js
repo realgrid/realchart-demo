@@ -9,6 +9,7 @@ const config = {
     },
     xAxis: {
         title: "일일 Daily fat",
+        type: 'category'
     },
     yAxis: {
         title: "Vertical 수직축 Axis",

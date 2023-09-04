@@ -545,12 +545,6 @@ export abstract class Axis extends ChartItem implements IAxis {
         const series = this._series;
         const vals: number[] = this._values;
 
-        // series.forEach(item => {
-        //     item.collectValues(this, vals);
-        // })
-        // series.forEach(item => {
-        //     item.pointValuesPrepared(this);
-        // })
         this._range = this._doCalcluateRange(vals);
 
         // clustering

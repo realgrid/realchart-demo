@@ -14,6 +14,7 @@
   - line: line, area,
   - arearange
   - referant: bellcurve, pareto
+  - referant group: bump
   - scatter: scatter, bubble, vector
   - matrix: heatmap
   - treemap (no axis)

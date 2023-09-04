@@ -279,7 +279,6 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
         const yOrg = height;
-        let labelView: PointLabelView;
 
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
@@ -305,20 +304,17 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             const mv = this._markers.get(i);
             const lv = labelViews && labelViews.get(p, 0);
 
-            if (p.isNull) {
-                mv.visible = false;
-                lv && (lv.visible = false);
-            } else {
-                if (vis) {
-                    mv.visible = true;
-                    this._layoutMarker(mv, px, py);
-                }
+            if (mv && mv.setVisible(!p.isNull)) {
+                this._layoutMarker(mv, px, py);
+
                 if (lv) {
                     const r = lv.getBBounds();
 
                     lv.visible = true;
                     lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? p.radius : 0));
                 }
+            } else if (lv) {
+                lv.visible = false;
             }
         }
     }
