@@ -108,7 +108,7 @@ const rollup_prod_config = {
         copy({
             hook: "writeBundle",
             targets: [
-                { src: './web/realchart/styles/realreport-chart-style.css', dest: `./dist/deploy/${filename}` },
+                { src: './web/realchart/styles/realchart-style.css', dest: `./dist/deploy/${filename}` },
                 { src: `./dist/deploy/${filename}/${filename}.min.js`, dest: `./web/realchart/lib` },
                 { src: `./dist/deploy/${filename}/${filename}.min.js`, dest: `./web/realchart/lib`, rename: 'realreport-chart.js' },
             ]
@@ -182,7 +182,7 @@ const rollup_lib_config = {
         // }),
         copy({
             targets: [
-                { src: './web/realchart/styles/realreport-chart-style.css', dest: `dist/${npmdist}/dist` },
+                { src: './web/realchart/styles/realchart-style.css', dest: `dist/${npmdist}/dist` },
                 { src: './license.txt', dest: `dist/${npmdist}`},
                 { src: './README.md', dest: `dist/${npmdist}`}
               ]
@@ -208,7 +208,7 @@ const copyToE2e = {
             targets: [
                 { src: './dist/.npm/dist/index.js', dest: './e2e/src/js', rename: 'realreport-chart.js'},
                 { src: './dist/.npm/dist/index.d.ts', dest: './e2e/src/js', rename: 'realreport-chart.d.ts'},
-                { src: './dist/.npm/dist/realreport-chart-style.css', dest: './e2e/src/styles'},
+                { src: './dist/.npm/dist/realchart-style.css', dest: './e2e/src/styles'},
             ]
         })
     ],

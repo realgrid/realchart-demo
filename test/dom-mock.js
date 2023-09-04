@@ -18,7 +18,7 @@ window['requestAnimationFrame'] = () => {};
 
 const head = document.getElementsByTagName('head')[0];
 const style = document.createElement("style");
-const data = fs.readFileSync('web/realchart/styles/realreport-chart-style.css').toString();
+const data = fs.readFileSync('web/realchart/styles/realchart-style.css').toString();
 
 style.innerHTML = data;
 head.appendChild(style);
