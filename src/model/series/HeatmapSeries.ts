@@ -10,6 +10,10 @@ import { pickNum, pickProp } from "../../common/Common";
 import { DataPoint } from "../DataPoint";
 import { IPlottingItem, Series } from "../Series";
 
+/**
+ * [y, color],
+ * [x, y, color]
+ */
 export class HeatmapSeriesPoint extends DataPoint {
 
     //-------------------------------------------------------------------------
@@ -29,6 +33,8 @@ export class HeatmapSeriesPoint extends DataPoint {
         super.parse(series);
 
         this.colorValue = parseFloat(this.color);
+
+        this.isNull ||= isNaN(this.colorValue);
     }
 
     protected _readArray(series: HeatmapSeries, v: any[]): void {
@@ -115,8 +121,10 @@ export class HeatmapSeries extends Series {
         this._colorMax = Number.MIN_VALUE;
 
         (this._visPoints as HeatmapSeriesPoint[]).forEach(p => {
-            this._colorMin = Math.min(this._colorMin, p.colorValue);
-            this._colorMax = Math.max(this._colorMax, p.colorValue);
+            if (!isNaN(p.colorValue)) {
+                this._colorMin = Math.min(this._colorMin, p.colorValue);
+                this._colorMax = Math.max(this._colorMax, p.colorValue);
+            }
         })
     }
 }

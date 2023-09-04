@@ -88,37 +88,40 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
 
         this._cells.forEach(cell => {
             const p = cell.point as HeatmapSeriesPoint;
-            const wUnit = xAxis.getUnitLength(xLen, p.xValue);
-            const wPoint = wUnit;
-            const hUnit = yAxis.getUnitLength(yLen, p.yValue);
-            const hPoint = hUnit;
-            const org = inverted ? 0 : height;;
-            let x: number;
-            let y: number;
-            let labelView: PointLabelView;
 
-            x = (p.xPos = xAxis.getPosition(xLen, p.xValue)) - wUnit / 2;
-            y = (p.yPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
-
-            cell.setBounds(x, y, wPoint, hPoint);
-            cell.setStyle('fill', color.brighten(1 - p.colorValue / series._colorMax).toString());
-
-            // label
-            if (labelViews && (labelView = labelViews.get(p, 0))) {
-                const r = labelView.getBBounds();
-
-                if (inverted) {
-                    y = xLen - xAxis.getPosition(xLen, p.xValue);
-                    x = org;
-                    y -= r.height / 2;
-                    x += yAxis.getPosition(yLen, p.yValue) - r.width / 2;
-                } else {
-                    x += (wPoint - r.width) / 2;
-                    y += (hPoint - r.height) / 2;
+            if (cell.setVisible(!p.isNull)) {
+                const wUnit = xAxis.getUnitLength(xLen, p.xValue);
+                const wPoint = wUnit;
+                const hUnit = yAxis.getUnitLength(yLen, p.yValue);
+                const hPoint = hUnit;
+                const org = inverted ? 0 : height;;
+                let x: number;
+                let y: number;
+                let labelView: PointLabelView;
+    
+                x = (p.xPos = xAxis.getPosition(xLen, p.xValue)) - wUnit / 2;
+                y = (p.yPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
+    
+                cell.setBounds(x, y, wPoint, hPoint);
+                cell.setStyle('fill', color.brighten(1 - p.colorValue / series._colorMax).toString());
+    
+                // label
+                if (labelViews && (labelView = labelViews.get(p, 0))) {
+                    const r = labelView.getBBounds();
+    
+                    if (inverted) {
+                        y = xLen - xAxis.getPosition(xLen, p.xValue);
+                        x = org;
+                        y -= r.height / 2;
+                        x += yAxis.getPosition(yLen, p.yValue) - r.width / 2;
+                    } else {
+                        x += (wPoint - r.width) / 2;
+                        y += (hPoint - r.height) / 2;
+                    }
+    
+                    labelView.translate(x, y);
                 }
-
-                labelView.translate(x, y);
             }
-        });
+       });
     }
 }

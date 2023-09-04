@@ -4,7 +4,7 @@ const config = {
         title: 'X Axis',
         grid: true,
         label: {
-            rotation: -45
+            // rotation: -45
         }
     },
     yAxis: {
