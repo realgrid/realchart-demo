@@ -1,7 +1,7 @@
 {
-  "name": "realreport-chart",
-  "version": "0.0.1",
-  "description": "Charting Library for RealReport",
+  "name": "realchart",
+  "version": "0.9.1",
+  "description": "Wooritech charting library",
   "main": "index.js",
   "author": "",
   "license": "license.txt",
