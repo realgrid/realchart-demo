@@ -52,7 +52,7 @@ export class WaterfallSeries extends RangedSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'waterfall';
     }
 

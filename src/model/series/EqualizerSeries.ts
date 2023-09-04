@@ -50,7 +50,7 @@ export class EqualizerSeries extends BasedSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'equalizer';
     }
 

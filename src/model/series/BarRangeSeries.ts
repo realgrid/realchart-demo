@@ -80,7 +80,7 @@ export class BarRangeSeries extends RangedSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'barrange';
     }
 

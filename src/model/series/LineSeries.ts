@@ -116,7 +116,7 @@ export class LineSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'line';
         
     }
@@ -237,7 +237,7 @@ export class AreaRangeSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'arearange';
     }
 

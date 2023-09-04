@@ -111,7 +111,7 @@ export class PieSeries extends RadialSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'pie';
     }
 

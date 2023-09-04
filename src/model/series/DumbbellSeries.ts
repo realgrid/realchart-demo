@@ -102,8 +102,8 @@ export class DumbbellSeries extends ClusterableSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
-        return 'Dumbbell';
+    _type(): string {
+        return 'dumbbell';
     }
 
     canCategorized(): boolean {

@@ -183,7 +183,7 @@ export class TreemapSeries extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'treemap';
     }
 

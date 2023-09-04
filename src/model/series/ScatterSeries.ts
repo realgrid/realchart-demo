@@ -57,7 +57,7 @@ export class ScatterSeries extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'scatter';
     }
 

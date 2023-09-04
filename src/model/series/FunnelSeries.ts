@@ -77,7 +77,7 @@ export class FunnelSeries extends WidgetSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'funnel';
     }
 

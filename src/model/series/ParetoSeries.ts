@@ -64,7 +64,7 @@ export class ParetoSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'pareto';
     }
 

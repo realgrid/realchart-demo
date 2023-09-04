@@ -125,20 +125,23 @@ export class OhlcSeriesView extends RangedSeriesView<OhlcSeries> {
 
         this._sticks.forEach((box, i) => {
             const p = box.point;
-            const wUnit = xAxis.getUnitLength(width, p.xValue);
-            const wPoint = series.getPointWidth(wUnit);
-            const x = (p.xPos = xAxis.getPosition(width, p.xValue)) - wPoint / 2;
-            const y = p.yPos = yOrg - yAxis.getPosition(height, p.yValue) * vr;
-            const w = wPoint;
-            const h = Math.abs(yOrg - yAxis.getPosition(height, p.lowValue) - y) * vr;
-            let view: PointLabelView;
 
-            box.setBounds(x, y, w, h);
-            box.layout();
-
-            if (labelViews && (view = labelViews.get(p, 0))) {
-                const r = view.getBBounds();
-                view.translate(x + (w - r.width) / 2, y - r.height - labelOff);
+            if (box.setVisible(!p.isNull)) {
+                const wUnit = xAxis.getUnitLength(width, p.xValue);
+                const wPoint = series.getPointWidth(wUnit);
+                const x = (p.xPos = xAxis.getPosition(width, p.xValue)) - wPoint / 2;
+                const y = p.yPos = yOrg - yAxis.getPosition(height, p.yValue) * vr;
+                const w = wPoint;
+                const h = Math.abs(yOrg - yAxis.getPosition(height, p.lowValue) - y) * vr;
+                let view: PointLabelView;
+    
+                box.setBounds(x, y, w, h);
+                box.layout();
+    
+                if (labelViews && (view = labelViews.get(p, 0))) {
+                    const r = view.getBBounds();
+                    view.translate(x + (w - r.width) / 2, y - r.height - labelOff);
+                }
             }
         })
     }

@@ -38,7 +38,7 @@ export class BarSeries extends BasedSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'bar';
     }
 

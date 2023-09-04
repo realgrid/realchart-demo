@@ -44,7 +44,7 @@ export class LollipopSeries extends BasedSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'lollipop';
     }
 

@@ -1,6 +1,6 @@
 const config = {
     title: "Multiple Bar Ranges",
-    type: 'columnrange',
+    type: 'barrange',
     options: {},
     xAxis: {
         grid: true,

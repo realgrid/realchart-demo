@@ -88,7 +88,7 @@ export class HeatmapSeries extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'heatmap';
     }
 

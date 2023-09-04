@@ -89,14 +89,11 @@ const series_types = {
     'area': AreaSeries,
     'arearange': AreaRangeSeries,
     'bar': BarSeries,
-    'column': BarSeries,
     'barrange': BarRangeSeries,
-    'columnrange': BarRangeSeries,
     'bellcurve': BellCurveSeries,
     'boxplot': BoxPlotSeries,
     'bubble': BubbleSeries,
     'candlestick': CandlestickSeries,
-    'ohlc': OhlcSeries,
     'dumbbell': DumbbellSeries,
     'equalizer': EqualizerSeries,
     'errorbar': ErrorBarSeries,
@@ -105,6 +102,7 @@ const series_types = {
     'histogram': HistogramSeries,
     'line': LineSeries,
     'lollipop': LollipopSeries,
+    'ohlc': OhlcSeries,
     'pareto': ParetoSeries,
     'pie': PieSeries,
     'scatter': ScatterSeries,
@@ -245,7 +243,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     /**
      * 기본 시리즈 type.
      * <br>
-     * {@link Series.type}의 기본값.
+     * {@link Series._type}의 기본값.
      * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
      * 
      * @default 'bar'

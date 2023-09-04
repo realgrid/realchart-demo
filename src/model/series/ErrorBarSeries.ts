@@ -83,7 +83,7 @@ export class ErrorBarSeries extends RangedSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'errorbar';
     }
 

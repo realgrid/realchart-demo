@@ -97,7 +97,7 @@ export class HistogramSeries extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'histogram';
     }
 

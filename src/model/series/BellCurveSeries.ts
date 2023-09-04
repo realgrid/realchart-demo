@@ -47,7 +47,7 @@ export class BellCurveSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'bellcurve';
     }
 

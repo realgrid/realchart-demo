@@ -7,9 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp } from "../../common/Common";
-import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { ClusterableSeries, RangedSeries } from "../Series";
+import { RangedSeries } from "../Series";
 
 /**
  * [low, open, close, high]
@@ -102,7 +101,7 @@ export class CandlestickSeries extends RangedSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'candlestick';
     }
 

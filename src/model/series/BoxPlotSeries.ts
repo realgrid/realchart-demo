@@ -109,7 +109,7 @@ export class BoxPlotSeries extends RangedSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'boxplot';
     }
 

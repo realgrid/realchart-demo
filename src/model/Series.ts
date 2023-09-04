@@ -353,7 +353,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    abstract type(): string; // for debugging, ...
+    abstract _type(): string; // for debugging, ...
 
     // group: string;
     zOrder = 0;
@@ -800,7 +800,7 @@ export class PlottingItemCollection  {
             for (const ser2 of this._series) {
                 if (ser2 !== ser) {
                     if (!ser.canMixWith(ser2)) {
-                        throw new Error('동시에 표시할 수 없는 시리즈들입니다: ' + ser.type() + ', ' + ser2.type());
+                        throw new Error('동시에 표시할 수 없는 시리즈들입니다: ' + ser._type() + ', ' + ser2._type());
                     }
                     if (ser._referOtherSeries(ser2)) {
                         break;

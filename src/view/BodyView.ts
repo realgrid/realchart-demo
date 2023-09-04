@@ -72,31 +72,31 @@ import { TreemapSeriesView } from "./series/TreemapSeriesView";
 import { VectorSeriesView } from "./series/VectorSeriesView";
 import { WaterfallSeriesView } from "./series/WaterfallSeriesView";
 
-const series_types = new Map<any, any>([
-    [WaterfallSeries, WaterfallSeriesView],
-    [BoxPlotSeries, BoxPlotSeriesView],
-    [BarRangeSeries, BarRangeSeriesView],
-    [LollipopSeries, LollipopSeriesView],
-    [DumbbellSeries, DumbbellSeriesView],
-    [EqualizerSeries, EqualizerSeriesView],
-    [BarSeries, BarSeriesView],
-    [BellCurveSeries, BellCurveSeriesView],
-    [AreaRangeSeries, AreaRangeSeriesView],
-    [AreaSeries, AreaSeriesView],
-    [LineSeries, LineSeriesView],
-    [ParetoSeries, ParetoSeriesView],
-    [BubbleSeries, BubbleSeriesView],
-    [ScatterSeries, ScatterSeriesView],
-    [CandlestickSeries, CandlestickSeriesView],
-    [OhlcSeries, OhlcSeriesView],
-    [ErrorBarSeries, ErrorBarSeriesView],
-    [HistogramSeries, HistogramSeriesView],
-    [VectorSeries, VectorSeriesView],
-    [HeatmapSeries, HeatmapSeriesView],
-    [TreemapSeries, TreemapSeriesView],
-    [PieSeries, PieSeriesView],
-    [FunnelSeries, FunnelSeriesView]
-]);
+const series_types = {
+    'area': AreaSeriesView,
+    'arearange': AreaRangeSeriesView,
+    'bar': BarSeriesView,
+    'barrange': BarRangeSeriesView,
+    'bellcurve': BellCurveSeriesView,
+    'boxplot': BoxPlotSeriesView,
+    'bubble': BubbleSeriesView,
+    'candlestick': CandlestickSeriesView,
+    'dumbbell': DumbbellSeriesView,
+    'equalizer': EqualizerSeriesView,
+    'errorbar': ErrorBarSeriesView,
+    'funnel': FunnelSeriesView,
+    'heatmap': HeatmapSeriesView,
+    'histogram': HistogramSeriesView,
+    'line': LineSeriesView,
+    'lollipop': LollipopSeriesView,
+    'ohlc': OhlcSeriesView,
+    'pareto': ParetoSeriesView,
+    'pie': PieSeriesView,
+    'scatter': ScatterSeriesView,
+    'treemap': TreemapSeriesView,
+    'vector': VectorSeriesView,
+    'waterfall': WaterfallSeriesView,
+}
 
 export class AxisGridView extends ChartElement<AxisGrid> {
 
@@ -739,11 +739,13 @@ export class BodyView extends ChartElement<Body> {
     // internal members
     //-------------------------------------------------------------------------
     private $_createSeriesView(doc: Document, series: Series): SeriesView<Series> {
-        for (const cls of series_types.keys()) {
-            if (series instanceof (cls as any)) {
-                return new (series_types.get(cls))(doc);
-            }
-        }
+        return new series_types[series._type()](doc);
+
+        // for (const cls of series_types.keys()) {
+        //     if (series instanceof (cls as any)) {
+        //         return new (series_types.get(cls))(doc);
+        //     }
+        // }
     }
 
     private $_prepareGrids(doc: Document, chart: Chart): void {

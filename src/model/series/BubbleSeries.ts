@@ -130,7 +130,7 @@ export class BubbleSeries extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'bubble';
     }
 
