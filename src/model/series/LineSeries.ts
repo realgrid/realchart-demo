@@ -166,7 +166,7 @@ export class AreaSeries extends LineSeries {
     }
 
     getBaseValue(axis: IAxis): number {
-        return this._base;
+        return axis._isX ? NaN : this._base;
     }
 }
 
@@ -200,11 +200,8 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
 
         this.low = v[pickNum(series.lowField, 0 + d)];
         this.high = v[pickNum(series.highField, 1 + d)];
-
         if (d > 0) {
             this.x = v[pickNum(series.xField, 0)];
-        } else {
-            this.x = this.index;
         }
     }
 

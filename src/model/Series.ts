@@ -656,11 +656,16 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     protected _doLoad(src: any): void {
         super._doLoad(src);
 
-        const data = src[this.dataProp || 'data'];
+        const data = this._loadData(src);
 
         if (isArray(data) && data.length > 0) {
             this._doLoadPoints(data);
         }
+    }
+
+    protected _loadData(src: any): any {
+        const data = src[this.dataProp || 'data'];
+        return data;
     }
 
     protected _doLoadPoints(src: any[]): void {

@@ -43,6 +43,10 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'Curved', function (e) {
+        config.series[1].curved = _getChecked(e);
+        chart.update(config);
+    }, false);
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
         chart.update(config);

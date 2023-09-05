@@ -42,11 +42,8 @@ export class ErrorBarSeriesPoint extends DataPoint {
 
         this.low = v[pickNum(series.lowField, 0 + d)];
         this.y = v[pickNum(series.yField, 1 + d)];
-
         if (d > 0) {
             this.x = v[pickNum(series.xField, 0)];
-        } else {
-            this.x = this.index;
         }
     }
 

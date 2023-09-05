@@ -270,7 +270,6 @@ export class PieSeriesView extends SeriesView<PieSeries> {
         const labelViews = this._labelViews();
         const lineViews = this._lineContainer;
         const sliceOff = this._slicedOff = series.getSliceOffset(rd) * vr; // TODO: sector 후에...
-        const pb = new PathBuilder();
         let labelView: PointLabelView;
 
         if (this._circle.visible = this._sectors.isEmpty) {
@@ -281,50 +280,53 @@ export class PieSeriesView extends SeriesView<PieSeries> {
 
         this._sectors.forEach((sector) => {
             const p = sector.point;
-            const start = p.startAngle;
-            let dx = 0;
-            let dy = 0;
 
-            if (p.sliced) {
-                const a = start + p.angle / 2;
-                dx += Math.cos(a) * sliceOff;
-                dy += Math.sin(a) * sliceOff;
-            }
-
-            const a = p.startAngle + p.angle / 2;
-            p.xPos = cx + Math.cos(a) * (sliceOff + rd * 0.7);
-            p.yPos = cy + Math.sin(a) * (sliceOff + rd * 0.7);
-
-            sector.setSectorEx(labelViews, /*lines*/null, {
-                cx: cx + dx,
-                cy: cy + dy,
-                rx: rd,
-                ry: rd,
-                innerRadius: rdInner,
-                start: start,
-                angle: p.angle,
-                clockwise: true
-            }, false);
-
-            // label
-            if (labelViews && (labelView = labelViews.get(p, 0))) {
-                const line = lineViews.get(p);
-
-                if (labelInside) {
-                    line.visible = false;
-                    // this.$_layoutLabelInner(p, label, off, dist, slicedOff);
-                    this.$_layoutLabelInner(p, labelView, 0, 0, p.sliced ? sliceOff : 0);
-                } else {
-                    line.visible = true;
-                    // this.$_layoutLabel(p, labelView, line, off, dist, slicedOff, pb);
-                    this.$_layoutLabel(p, labelView, line, 0, 0, p.sliced ? sliceOff : 0, pb);
+            if (!p.isNull) {
+                const start = p.startAngle;
+                let dx = 0;
+                let dy = 0;
+    
+                if (p.sliced) {
+                    const a = start + p.angle / 2;
+                    dx += Math.cos(a) * sliceOff;
+                    dy += Math.sin(a) * sliceOff;
                 }
-                labelView.setContrast(labelInside && sector.dom);
+    
+                const a = p.startAngle + p.angle / 2;
+                p.xPos = cx + Math.cos(a) * (sliceOff + rd * 0.7);
+                p.yPos = cy + Math.sin(a) * (sliceOff + rd * 0.7);
+    
+                sector.setSectorEx(labelViews, /*lines*/null, {
+                    cx: cx + dx,
+                    cy: cy + dy,
+                    rx: rd,
+                    ry: rd,
+                    innerRadius: rdInner,
+                    start: start,
+                    angle: p.angle,
+                    clockwise: true
+                }, false);
+    
+                // label
+                if (labelViews && (labelView = labelViews.get(p, 0))) {
+                    const line = lineViews.get(p);
+    
+                    if (labelInside) {
+                        line.visible = false;
+                        // this.$_layoutLabelInner(p, label, off, dist, slicedOff);
+                        this.$_layoutLabelInner(p, labelView, 0, 0, p.sliced ? sliceOff : 0);
+                    } else {
+                        line.visible = true;
+                        // this.$_layoutLabel(p, labelView, line, off, dist, slicedOff, pb);
+                        this.$_layoutLabel(p, labelView, line, 0, 0, p.sliced ? sliceOff : 0);
+                    }
+                    labelView.setContrast(labelInside && sector.dom);
+                }
             }
         })
     }
     
-    private $_layoutLabel(p: PieSeriesPoint, view: PointLabelView, line: PointLabelLine, off: number, dist: number, sliceOff: number, pb: PathBuilder): void {
+    private $_layoutLabel(p: PieSeriesPoint, view: PointLabelView, line: PointLabelLine, off: number, dist: number, sliceOff: number): void {
         const r = view.getBBounds();
         const a = p.startAngle + p.angle / 2;
         const isLeft = Utils.isLeft(a);
@@ -350,7 +352,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
             line.visible = true;
             line.move(x1, y1);
             //line.setPath(pb.move(x1, y1).lines(x2, y2, x3, y2).end())
-            line.setLine(pb.move(0, 0).quad(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end())
+            line.setLine(new PathBuilder().move(0, 0).quad(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end())
             !view.moving && line.translate(x1 + dx, y1 + dy);
         }
 

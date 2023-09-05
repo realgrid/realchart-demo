@@ -40,11 +40,8 @@ export class VectorSeriesPoint extends DataPoint {
         this.y = v[pickNum(series.yField, 0 + d)];
         this.length = v[pickNum(series.lengthField, 1 + d)];
         this.angle = v[pickNum(series.angleField, 2 + d)];
-
         if (d > 0) {
             this.x = v[pickNum(series.xField, 0)];
-        } else {
-            this.x = this.index;
         }
     }
 

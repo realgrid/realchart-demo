@@ -141,7 +141,6 @@ export class DataPoint {
                 this.x = v[pickNum(series.xField, 0)];
                 this.y = v[pickNum(series.yField, 1)];
             } else {
-                this.x = this.index;
                 this.y = v[pickNum(series.yField, 0)];
             }
         }

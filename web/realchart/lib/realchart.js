@@ -3523,7 +3523,6 @@
                     this.y = v[pickNum(series.yField, 1)];
                 }
                 else {
-                    this.x = this.index;
                     this.y = v[pickNum(series.yField, 0)];
                 }
             }
@@ -4112,10 +4111,14 @@
         }
         _doLoad(src) {
             super._doLoad(src);
-            const data = src[this.dataProp || 'data'];
+            const data = this._loadData(src);
             if (isArray(data) && data.length > 0) {
                 this._doLoadPoints(data);
             }
+        }
+        _loadData(src) {
+            const data = src[this.dataProp || 'data'];
+            return data;
         }
         _doLoadPoints(src) {
             this._points.load(src);
@@ -5421,9 +5424,6 @@
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
             }
-            else {
-                this.x = this.index;
-            }
         }
         _readObject(series, v) {
             super._readObject(series, v);
@@ -5562,7 +5562,7 @@
             this._base = pickNum(this.baseValue, this._yAxisObj.getBaseValue());
         }
         getBaseValue(axis) {
-            return this._base;
+            return axis._isX ? NaN : this._base;
         }
     }
     class AreaRangeSeriesPoint extends AreaSeriesPoint {
@@ -5578,9 +5578,6 @@
             this.high = v[pickNum(series.highField, 1 + d)];
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
-            }
-            else {
-                this.x = this.index;
             }
         }
         _readObject(series, v) {
@@ -5645,37 +5642,47 @@
         }
     }
 
-    class BellCurveSeriesPoint extends LineSeriesPoint {
+    class BellCurveSeriesPoint extends AreaSeriesPoint {
     }
-    class BellCurveSeries extends LineSeriesBase {
+    class BellCurveSeries extends AreaSeries {
         constructor() {
             super(...arguments);
             this.sigmas = 3;
             this.pointsInSigma = 5;
+            this.curved = false;
         }
         _type() {
             return 'bellcurve';
         }
         getLineType() {
-            return LineType.SPLINE;
+            return this.curved ? LineType.SPLINE : LineType.DEFAULT;
         }
-        createPoints(source) {
-            const pts = super.createPoints(source);
-            if (pts && pts.length > 0) {
-                return this.$_loadTable(pts);
+        _createPoint(source) {
+            return new BellCurveSeriesPoint(source);
+        }
+        _loadData(src) {
+            const data = super._loadData(src);
+            if (isArray(data)) {
+                return this.$_loadTable(data);
             }
-            return [];
         }
         _referOtherSeries(series) {
-            if (!this._points.isEmpty())
-                return true;
-            if (series.name === this.refSeries) {
-                this.$_loadTable(series.getPoints().getVisibles());
+            if (this._points.isEmpty() && (series.name === this.source || series.index === this.source)) {
+                series.referBy(this);
                 return true;
             }
         }
-        $_loadTable(pts) {
-            const vals = pts.map(p => p.yValue).filter(v => !isNaN(v));
+        reference(other, axis) {
+            if (!axis._isX) {
+                const vals = other._visPoints.map(p => p.yValue).filter(v => !isNaN(v));
+                const pts = this.$_loadTable(vals);
+                this._doLoadPoints(pts);
+                this._visPoints = this._points.getVisibles();
+                this.collectValues(this._xAxisObj, this._xAxisObj._values);
+                this.collectValues(this._yAxisObj, this._yAxisObj._values);
+            }
+        }
+        $_loadTable(vals) {
             const len = vals.length;
             if (len < 1) {
                 return;
@@ -5687,32 +5694,26 @@
             const min = mean - this.sigmas * stdv;
             const max = mean + this.sigmas * stdv;
             let sigma = mean;
-            pts = [];
-            pts.push(this.$_getDenstiy(mean, stdv, sigma));
+            const pts2 = [];
+            pts2.push(this.$_getDenstiy(mean, stdv, sigma));
             while (sigma > min) {
                 sigma -= step;
-                pts.unshift(this.$_getDenstiy(mean, stdv, sigma));
+                pts2.unshift(this.$_getDenstiy(mean, stdv, sigma));
             }
             sigma = mean;
             while (sigma < max) {
                 sigma += step;
-                pts.push(this.$_getDenstiy(mean, stdv, sigma));
+                pts2.push(this.$_getDenstiy(mean, stdv, sigma));
             }
-            pts.forEach((p, i) => {
-                p.index = i;
-                p.x = p.source.x;
-                p.y = p.source.y;
-                p.yGroup = p.y;
-            });
-            return pts;
+            return pts2;
         }
         $_getDenstiy(mean, stdv, sigma) {
             const dist = sigma - mean;
             const y = Math.exp(-(dist * dist) / (2 * stdv * stdv)) / (stdv * Math.sqrt(2 * Math.PI));
-            return new BellCurveSeriesPoint({
+            return {
                 x: sigma,
                 y: y
-            });
+            };
         }
     }
 
@@ -5732,9 +5733,6 @@
             this.y = v[pickNum(series.yField, 4 + d)];
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
-            }
-            else {
-                this.x = this.index;
             }
         }
         _readObject(series, v) {
@@ -5784,9 +5782,6 @@
             this.z = v[pickNum(series.zProp, 1 + d)];
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
-            }
-            else {
-                this.x = this.index;
             }
         }
         _readObject(series, v) {
@@ -5909,9 +5904,6 @@
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
             }
-            else {
-                this.x = this.index;
-            }
         }
         _readObject(series, v) {
             super._readObject(series, v);
@@ -5964,9 +5956,6 @@
             this.y = v[pickNum(series.yField, 1 + d)];
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
-            }
-            else {
-                this.x = this.index;
             }
         }
         _readObject(series, v) {
@@ -6058,9 +6047,6 @@
             this.y = v[pickNum(series.yField, 1 + d)];
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
-            }
-            else {
-                this.x = this.index;
             }
         }
         _readObject(series, v) {
@@ -6176,9 +6162,6 @@
             this.color = v[pickNum(series.colorField, 1 + d)];
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
-            }
-            else {
-                this.x = this.index;
             }
         }
         _readObject(series, v) {
@@ -6877,9 +6860,6 @@
             this.angle = v[pickNum(series.angleField, 2 + d)];
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
-            }
-            else {
-                this.x = this.index;
             }
         }
         _readObject(series, v) {
@@ -10076,8 +10056,8 @@
     }
 
     class AreaSeriesView extends LineSeriesBaseView {
-        constructor(doc) {
-            super(doc, 'rct-area-series');
+        constructor(doc, className) {
+            super(doc, className || 'rct-area-series');
             this._lineContainer.insertFirst(this._area = new PathElement(doc, 'rct-area-series-area'));
         }
         _layoutLines(pts) {
@@ -10414,7 +10394,7 @@
         }
     }
 
-    class BellCurveSeriesView extends LineSeriesBaseView {
+    class BellCurveSeriesView extends AreaSeriesView {
         constructor(doc) {
             super(doc, 'rct-bellcurve-series');
         }
@@ -11390,7 +11370,6 @@
             const labelViews = this._labelViews();
             const lineViews = this._lineContainer;
             const sliceOff = this._slicedOff = series.getSliceOffset(rd) * vr;
-            const pb = new PathBuilder();
             let labelView;
             if (this._circle.visible = this._sectors.isEmpty) {
                 this._circle.setCircle(this._cx, this._cy, this._rd);
@@ -11398,42 +11377,44 @@
             this.$_calcAngles(points);
             this._sectors.forEach((sector) => {
                 const p = sector.point;
-                const start = p.startAngle;
-                let dx = 0;
-                let dy = 0;
-                if (p.sliced) {
-                    const a = start + p.angle / 2;
-                    dx += Math.cos(a) * sliceOff;
-                    dy += Math.sin(a) * sliceOff;
-                }
-                const a = p.startAngle + p.angle / 2;
-                p.xPos = cx + Math.cos(a) * (sliceOff + rd * 0.7);
-                p.yPos = cy + Math.sin(a) * (sliceOff + rd * 0.7);
-                sector.setSectorEx(labelViews, null, {
-                    cx: cx + dx,
-                    cy: cy + dy,
-                    rx: rd,
-                    ry: rd,
-                    innerRadius: rdInner,
-                    start: start,
-                    angle: p.angle,
-                    clockwise: true
-                }, false);
-                if (labelViews && (labelView = labelViews.get(p, 0))) {
-                    const line = lineViews.get(p);
-                    if (labelInside) {
-                        line.visible = false;
-                        this.$_layoutLabelInner(p, labelView, 0, 0, p.sliced ? sliceOff : 0);
+                if (!p.isNull) {
+                    const start = p.startAngle;
+                    let dx = 0;
+                    let dy = 0;
+                    if (p.sliced) {
+                        const a = start + p.angle / 2;
+                        dx += Math.cos(a) * sliceOff;
+                        dy += Math.sin(a) * sliceOff;
                     }
-                    else {
-                        line.visible = true;
-                        this.$_layoutLabel(p, labelView, line, 0, 0, p.sliced ? sliceOff : 0, pb);
+                    const a = p.startAngle + p.angle / 2;
+                    p.xPos = cx + Math.cos(a) * (sliceOff + rd * 0.7);
+                    p.yPos = cy + Math.sin(a) * (sliceOff + rd * 0.7);
+                    sector.setSectorEx(labelViews, null, {
+                        cx: cx + dx,
+                        cy: cy + dy,
+                        rx: rd,
+                        ry: rd,
+                        innerRadius: rdInner,
+                        start: start,
+                        angle: p.angle,
+                        clockwise: true
+                    }, false);
+                    if (labelViews && (labelView = labelViews.get(p, 0))) {
+                        const line = lineViews.get(p);
+                        if (labelInside) {
+                            line.visible = false;
+                            this.$_layoutLabelInner(p, labelView, 0, 0, p.sliced ? sliceOff : 0);
+                        }
+                        else {
+                            line.visible = true;
+                            this.$_layoutLabel(p, labelView, line, 0, 0, p.sliced ? sliceOff : 0);
+                        }
+                        labelView.setContrast(labelInside && sector.dom);
                     }
-                    labelView.setContrast(labelInside && sector.dom);
                 }
             });
         }
-        $_layoutLabel(p, view, line, off, dist, sliceOff, pb) {
+        $_layoutLabel(p, view, line, off, dist, sliceOff) {
             const r = view.getBBounds();
             const a = p.startAngle + p.angle / 2;
             const isLeft = Utils.isLeft(a);
@@ -11456,7 +11437,7 @@
             if (line) {
                 line.visible = true;
                 line.move(x1, y1);
-                line.setLine(pb.move(0, 0).quad(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end());
+                line.setLine(new PathBuilder().move(0, 0).quad(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end());
                 !view.moving && line.translate(x1 + dx, y1 + dy);
             }
             if (isLeft) {
@@ -13193,7 +13174,7 @@
 
     class Globals {
         static getVersion() {
-            return '0.9.1';
+            return '0.9.2';
         }
         static setDebugging(debug) {
             RcElement.DEBUGGING = debug;
