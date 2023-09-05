@@ -272,7 +272,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
                     break;
             }
 
-            switch (label.valign) {
+            switch (label.verticalAlign) {
                 case VerticalAlign.BOTTOM:
                     y = height;
                     layout = TextLayout.BOTTOM;
@@ -310,7 +310,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
                     break;
             }
 
-            switch (label.valign) {
+            switch (label.verticalAlign) {
                 case VerticalAlign.BOTTOM:
                     y = p + 1;
                     layout = TextLayout.TOP;
@@ -388,7 +388,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
                     break;
             }
 
-            switch (m.label.valign) {
+            switch (m.label.verticalAlign) {
                 case VerticalAlign.BOTTOM:
                     y = height;
                     layout = TextLayout.BOTTOM;
@@ -436,7 +436,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
                     break;
             }
 
-            switch (m.label.valign) {
+            switch (m.label.verticalAlign) {
                 case VerticalAlign.BOTTOM:
                     y = y1;
                     layout = TextLayout.BOTTOM;

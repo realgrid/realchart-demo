@@ -19,7 +19,7 @@ const namespace = 'RealChart';
 
 const copyright = `
 /** 
- * RealReport-Chart v${version}
+ * RealChart v${version}
  * Copyright (C) 2023-${currYear} WooriTech Inc.
  * All Rights Reserved. 
  */\n`;

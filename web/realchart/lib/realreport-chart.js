@@ -3032,7 +3032,7 @@
         constructor(chart) {
             super(chart, true);
             this.align = Align.LEFT;
-            this.verticalAlign = VerticalAlign.TOP;
+            this.valign = VerticalAlign.TOP;
         }
     }
     var AxisGuideType;
@@ -3523,6 +3523,7 @@
                     this.y = v[pickNum(series.yField, 1)];
                 }
                 else {
+                    this.x = this.index;
                     this.y = v[pickNum(series.yField, 0)];
                 }
             }
@@ -4043,9 +4044,6 @@
                         p.xValue = val;
                         vals && vals.push(val);
                     }
-                    else {
-                        p.isNull = true;
-                    }
                 });
             }
             else {
@@ -4111,14 +4109,10 @@
         }
         _doLoad(src) {
             super._doLoad(src);
-            const data = this._loadData(src);
+            const data = src[this.dataProp || 'data'];
             if (isArray(data) && data.length > 0) {
                 this._doLoadPoints(data);
             }
-        }
-        _loadData(src) {
-            const data = src[this.dataProp || 'data'];
-            return data;
         }
         _doLoadPoints(src) {
             this._points.load(src);
@@ -4226,7 +4220,7 @@
                 for (const ser2 of this._series) {
                     if (ser2 !== ser) {
                         if (!ser.canMixWith(ser2)) {
-                            throw new Error('동시에 표시할 수 없는 시리즈들입니다: ' + ser._type() + ', ' + ser2._type());
+                            throw new Error('동시에 표시할 수 없는 시리즈들입니다: ' + ser.type() + ', ' + ser2.type());
                         }
                         if (ser._referOtherSeries(ser2)) {
                             break;
@@ -4421,9 +4415,6 @@
         }
         getBaseValue(axis) {
             return NaN;
-        }
-        _type() {
-            return this._seriesType();
         }
         collectValues(axis, vals) {
             if (this._visibles.length > 0) {
@@ -4628,9 +4619,7 @@
         collectValues(axis, vals) {
             super.collectValues(axis, vals);
             if (axis === this._yAxisObj) {
-                const vals2 = this._doConstraintYValues(this._visibles);
-                vals.length = 0;
-                vals.push(...vals2);
+                vals = this._doConstraintYValues(this._visibles) || vals;
             }
         }
     }
@@ -4671,7 +4660,7 @@
         constructor() {
             super(...arguments);
             this.position = SubtitlePosition.BOTTOM;
-            this.verticalAlign = VerticalAlign.BOTTOM;
+            this.valign = VerticalAlign.BOTTOM;
             this.text = '';
         }
     }
@@ -5424,6 +5413,9 @@
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
             }
+            else {
+                this.x = this.index;
+            }
         }
         _readObject(series, v) {
             super._readObject(series, v);
@@ -5440,7 +5432,7 @@
         }
     }
     class BarRangeSeries extends RangedSeries {
-        _type() {
+        type() {
             return 'barrange';
         }
         _createPoint(source) {
@@ -5458,7 +5450,7 @@
             super(...arguments);
             this.borderRaidus = 0;
         }
-        _type() {
+        type() {
             return 'bar';
         }
         canCategorized() {
@@ -5541,7 +5533,7 @@
             this.connectNulls = false;
             this.baseValue = 0;
         }
-        _type() {
+        type() {
             return 'line';
         }
         getLineType() {
@@ -5551,9 +5543,6 @@
     class AreaSeriesPoint extends LineSeriesPoint {
     }
     class AreaSeries extends LineSeries {
-        _type() {
-            return 'area';
-        }
         _createPoint(source) {
             return new AreaSeriesPoint(source);
         }
@@ -5562,7 +5551,7 @@
             this._base = pickNum(this.baseValue, this._yAxisObj.getBaseValue());
         }
         getBaseValue(axis) {
-            return axis._isX ? NaN : this._base;
+            return this._base;
         }
     }
     class AreaRangeSeriesPoint extends AreaSeriesPoint {
@@ -5578,6 +5567,9 @@
             this.high = v[pickNum(series.highField, 1 + d)];
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
+            }
+            else {
+                this.x = this.index;
             }
         }
         _readObject(series, v) {
@@ -5595,7 +5587,7 @@
             super(...arguments);
             this.curved = false;
         }
-        _type() {
+        type() {
             return 'arearange';
         }
         _createPoint(source) {
@@ -5642,47 +5634,37 @@
         }
     }
 
-    class BellCurveSeriesPoint extends AreaSeriesPoint {
+    class BellCurveSeriesPoint extends LineSeriesPoint {
     }
-    class BellCurveSeries extends AreaSeries {
+    class BellCurveSeries extends LineSeriesBase {
         constructor() {
             super(...arguments);
             this.sigmas = 3;
             this.pointsInSigma = 5;
-            this.curved = false;
         }
-        _type() {
+        type() {
             return 'bellcurve';
         }
         getLineType() {
-            return this.curved ? LineType.SPLINE : LineType.DEFAULT;
+            return LineType.SPLINE;
         }
-        _createPoint(source) {
-            return new BellCurveSeriesPoint(source);
-        }
-        _loadData(src) {
-            const data = super._loadData(src);
-            if (isArray(data)) {
-                return this.$_loadTable(data);
+        createPoints(source) {
+            const pts = super.createPoints(source);
+            if (pts && pts.length > 0) {
+                return this.$_loadTable(pts);
             }
+            return [];
         }
         _referOtherSeries(series) {
-            if (this._points.isEmpty() && (series.name === this.source || series.index === this.source)) {
-                series.referBy(this);
+            if (!this._points.isEmpty())
+                return true;
+            if (series.name === this.refSeries) {
+                this.$_loadTable(series.getPoints().getVisibles());
                 return true;
             }
         }
-        reference(other, axis) {
-            if (!axis._isX) {
-                const vals = other._visPoints.map(p => p.yValue).filter(v => !isNaN(v));
-                const pts = this.$_loadTable(vals);
-                this._doLoadPoints(pts);
-                this._visPoints = this._points.getVisibles();
-                this.collectValues(this._xAxisObj, this._xAxisObj._values);
-                this.collectValues(this._yAxisObj, this._yAxisObj._values);
-            }
-        }
-        $_loadTable(vals) {
+        $_loadTable(pts) {
+            const vals = pts.map(p => p.yValue).filter(v => !isNaN(v));
             const len = vals.length;
             if (len < 1) {
                 return;
@@ -5694,26 +5676,32 @@
             const min = mean - this.sigmas * stdv;
             const max = mean + this.sigmas * stdv;
             let sigma = mean;
-            const pts2 = [];
-            pts2.push(this.$_getDenstiy(mean, stdv, sigma));
+            pts = [];
+            pts.push(this.$_getDenstiy(mean, stdv, sigma));
             while (sigma > min) {
                 sigma -= step;
-                pts2.unshift(this.$_getDenstiy(mean, stdv, sigma));
+                pts.unshift(this.$_getDenstiy(mean, stdv, sigma));
             }
             sigma = mean;
             while (sigma < max) {
                 sigma += step;
-                pts2.push(this.$_getDenstiy(mean, stdv, sigma));
+                pts.push(this.$_getDenstiy(mean, stdv, sigma));
             }
-            return pts2;
+            pts.forEach((p, i) => {
+                p.index = i;
+                p.x = p.source.x;
+                p.y = p.source.y;
+                p.yGroup = p.y;
+            });
+            return pts;
         }
         $_getDenstiy(mean, stdv, sigma) {
             const dist = sigma - mean;
             const y = Math.exp(-(dist * dist) / (2 * stdv * stdv)) / (stdv * Math.sqrt(2 * Math.PI));
-            return {
+            return new BellCurveSeriesPoint({
                 x: sigma,
                 y: y
-            };
+            });
         }
     }
 
@@ -5734,6 +5722,9 @@
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
             }
+            else {
+                this.x = this.index;
+            }
         }
         _readObject(series, v) {
             super._readObject(series, v);
@@ -5753,11 +5744,10 @@
             this.lowValue = parseFloat(this.low);
             this.midValue = parseFloat(this.mid);
             this.highValue = parseFloat(this.high);
-            this.isNull || (this.isNull = isNaN(this.minValue) || isNaN(this.lowValue) || isNaN(this.midValue) || isNaN(this.highValue));
         }
     }
     class BoxPlotSeries extends RangedSeries {
-        _type() {
+        type() {
             return 'boxplot';
         }
         _createPoint(source) {
@@ -5782,6 +5772,9 @@
             this.z = v[pickNum(series.zProp, 1 + d)];
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
+            }
+            else {
+                this.x = this.index;
             }
         }
         _readObject(series, v) {
@@ -5823,7 +5816,7 @@
             r = Math.ceil(pxMin + r * (pxMax - pxMin)) / 2;
             return r;
         }
-        _type() {
+        type() {
             return 'bubble';
         }
         ignoreAxisBase(axis) {
@@ -5853,7 +5846,7 @@
     }
 
     class BumpSeriesGroup extends ConstraintSeriesGroup {
-        _type() {
+        type() {
             return 'bump';
         }
         _seriesType() {
@@ -5904,6 +5897,9 @@
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
             }
+            else {
+                this.x = this.index;
+            }
         }
         _readObject(series, v) {
             super._readObject(series, v);
@@ -5922,7 +5918,7 @@
         }
     }
     class CandlestickSeries extends RangedSeries {
-        _type() {
+        type() {
             return 'candlestick';
         }
         canCategorized() {
@@ -5957,6 +5953,9 @@
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
             }
+            else {
+                this.x = this.index;
+            }
         }
         _readObject(series, v) {
             super._readObject(series, v);
@@ -5977,8 +5976,8 @@
             super(...arguments);
             this.marker = new DumbbellSeriesMarker(this);
         }
-        _type() {
-            return 'dumbbell';
+        type() {
+            return 'Dumbbell';
         }
         canCategorized() {
             return true;
@@ -5998,10 +5997,7 @@
         collectValues(axis, vals) {
             super.collectValues(axis, vals);
             if (vals && axis === this._yAxisObj) {
-                this._visPoints.forEach(p => {
-                    const v = p.lowValue;
-                    !isNaN(v) && vals.push(v);
-                });
+                this._visPoints.forEach(p => vals.push(p.lowValue));
             }
         }
     }
@@ -6019,7 +6015,7 @@
         getSegmentSize(domain) {
             return calcPercent(this._segmentDim, domain);
         }
-        _type() {
+        type() {
             return 'equalizer';
         }
         canCategorized() {
@@ -6031,6 +6027,9 @@
         _doLoad(src) {
             super._doLoad(src);
             this._segmentDim = parsePercentSize(this.segmentSize, false);
+        }
+        _doPrepareRender() {
+            super._doPrepareRender();
         }
     }
 
@@ -6047,6 +6046,9 @@
             this.y = v[pickNum(series.yField, 1 + d)];
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
+            }
+            else {
+                this.x = this.index;
             }
         }
         _readObject(series, v) {
@@ -6069,7 +6071,7 @@
             super(...arguments);
             this.pointPadding = 0.3;
         }
-        _type() {
+        type() {
             return 'errorbar';
         }
         clusterable() {
@@ -6106,7 +6108,7 @@
                 height: calcPercent(this._neckHeightDim, plotHeight)
             };
         }
-        _type() {
+        type() {
             return 'funnel';
         }
         _colorByPoint() {
@@ -6123,8 +6125,8 @@
             this._neckHeightDim = parsePercentSize2(this.neckHeight, FunnelSeries.DEF_NECK_HEIGHT);
             return this;
         }
-        prepareAfter() {
-            super.prepareAfter();
+        _doPrepareRender() {
+            super._doPrepareRender();
             const pts = this._visPoints;
             let sum = 0;
             let y = 0;
@@ -6154,7 +6156,6 @@
         parse(series) {
             super.parse(series);
             this.colorValue = parseFloat(this.color);
-            this.isNull || (this.isNull = isNaN(this.colorValue));
         }
         _readArray(series, v) {
             const d = v.length > 2 ? 1 : 0;
@@ -6162,6 +6163,9 @@
             this.color = v[pickNum(series.colorField, 1 + d)];
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
+            }
+            else {
+                this.x = this.index;
             }
         }
         _readObject(series, v) {
@@ -6179,7 +6183,7 @@
         getColor(value) {
             return;
         }
-        _type() {
+        type() {
             return 'heatmap';
         }
         canMixWith(other) {
@@ -6199,10 +6203,8 @@
             this._colorMin = Number.MAX_VALUE;
             this._colorMax = Number.MIN_VALUE;
             this._visPoints.forEach(p => {
-                if (!isNaN(p.colorValue)) {
-                    this._colorMin = Math.min(this._colorMin, p.colorValue);
-                    this._colorMax = Math.max(this._colorMax, p.colorValue);
-                }
+                this._colorMin = Math.min(this._colorMin, p.colorValue);
+                this._colorMax = Math.max(this._colorMax, p.colorValue);
             });
         }
     }
@@ -6248,7 +6250,7 @@
                 return binsNumberFunc[this.binsNumber || BinsNumber.SQURE_ROOT](length);
             }
         }
-        _type() {
+        type() {
             return 'histogram';
         }
         ignoreAxisBase(axis) {
@@ -6269,7 +6271,7 @@
                 else {
                     y = v;
                 }
-                return parseFloat(y);
+                return +y;
             }
             const pts = [];
             let sample = [];
@@ -6352,7 +6354,7 @@
             super(...arguments);
             this.marker = new LollipopSeriesMarker(this);
         }
-        _type() {
+        type() {
             return 'lollipop';
         }
         canCategorized() {
@@ -6375,14 +6377,55 @@
         }
     }
 
-    class OhlcSeriesPoint extends CandlestickSeriesPoint {
+    class OhlcSeriesPoint extends DataPoint {
+        parse(series) {
+            super.parse(series);
+            this.lowValue = parseFloat(this.low);
+            this.openValue = parseFloat(this.open);
+            this.closeValue = parseFloat(this.close);
+            this.highValue = parseFloat(this.high);
+        }
+        _readArray(series, v) {
+            const d = v.length > 4 ? 1 : 0;
+            this.low = v[pickNum(series.lowField, 0 + d)];
+            this.open = v[pickNum(series.openField, 1 + d)];
+            this.close = v[pickNum(series.closeField, 2 + d)];
+            this.y = this.high = v[pickNum(series.highField, 3 + d)];
+            if (d > 0) {
+                this.x = v[pickNum(series.xField, 0)];
+            }
+            else {
+                this.x = this.index;
+            }
+        }
+        _readObject(series, v) {
+            super._readObject(series, v);
+            this.low = pickProp(v[series.lowField], v.row);
+            this.open = pickProp(v[series.openField], v.open);
+            this.close = pickProp(v[series.closeField], v.close);
+            this.high = pickProp(v[series.highField], v.high);
+            if (!isNaN(this.high))
+                this.y = this.high;
+            else if (!isNaN(this.y))
+                this.high = this.y;
+        }
+        _readSingle(v) {
+            super._readSingle(v);
+            this.low = this.close = this.open = this.high = this.y;
+        }
     }
-    class OhlcSeries extends CandlestickSeries {
-        _type() {
+    class OhlcSeries extends RangedSeries {
+        type() {
             return 'ohlc';
+        }
+        canCategorized() {
+            return true;
         }
         _createPoint(source) {
             return new OhlcSeriesPoint(source);
+        }
+        _getBottomValue(p) {
+            return p.lowValue;
         }
     }
 
@@ -6398,7 +6441,7 @@
             super(...arguments);
             this.curved = false;
         }
-        _type() {
+        type() {
             return 'pareto';
         }
         getLineType() {
@@ -6483,7 +6526,7 @@
             const p = this.pointLabel.position;
             return p === PointItemPosition.AUTO ? PointItemPosition.INSIDE : p;
         }
-        _type() {
+        type() {
             return 'pie';
         }
         _colorByPoint() {
@@ -6561,7 +6604,7 @@
             this.jitterY = 0;
             this.marker = new ScatterSeriesMarker(this);
         }
-        _type() {
+        type() {
             return 'scatter';
         }
         ignoreAxisBase(axis) {
@@ -6575,8 +6618,8 @@
     class TreemapSeriesPoint extends DataPoint {
         _readArray(series, v) {
             super._readArray(series, v);
-            this.id = toStr(v[parseInt(series.idField)]);
-            this.group = toStr(v[parseInt(series.groupField)]);
+            this.id = toStr(v[+series.idField]);
+            this.group = toStr(v[+series.groupField]);
         }
         _readObject(series, v) {
             super._readObject(series, v);
@@ -6648,7 +6691,7 @@
             (this[this.algorithm] || this.squarify).call(this, this._roots, width, height, vertical);
             return this._leafs;
         }
-        _type() {
+        type() {
             return 'treemap';
         }
         needAxes() {
@@ -6672,17 +6715,15 @@
             const list = [];
             const map = this._map;
             pts.forEach(p => {
-                if (!p.isNull) {
-                    const node = new TreeNode(p);
-                    if (p.id) {
-                        map[p.id] = node;
-                    }
-                    if (p.group) {
-                        list.push(node);
-                    }
-                    else {
-                        roots.push(node);
-                    }
+                const node = new TreeNode(p);
+                if (p.id) {
+                    map[p.id] = node;
+                }
+                if (p.group) {
+                    list.push(node);
+                }
+                else {
+                    roots.push(node);
                 }
             });
             for (let i = list.length - 1; i >= 0; i--) {
@@ -6861,6 +6902,9 @@
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
             }
+            else {
+                this.x = this.index;
+            }
         }
         _readObject(series, v) {
             super._readObject(series, v);
@@ -6876,7 +6920,6 @@
             super.parse(series);
             this.lengthValue = parseFloat(this.length);
             this.angleValue = parseFloat(this.angle);
-            this.isNull || (this.isNull = isNaN(this.lengthValue) || isNaN(this.angleValue));
         }
     }
     var VectorOrigin;
@@ -6899,7 +6942,7 @@
             this.startAngle = 0;
             this.arrowHead = ArrowHead.CLOSE;
         }
-        _type() {
+        type() {
             return 'vector';
         }
         ignoreAxisBase(axis) {
@@ -6955,7 +6998,7 @@
         constructor(chart, name) {
             super(chart, name);
         }
-        _type() {
+        type() {
             return 'waterfall';
         }
         canCategorized() {
@@ -7038,6 +7081,7 @@
 
     const group_types = {
         'bar': BarSeriesGroup,
+        'column': BarSeriesGroup,
         'line': LineSeriesGroup,
         'area': AreaSeriesGroup,
         'pie': PieSeriesGroup,
@@ -7047,11 +7091,14 @@
         'area': AreaSeries,
         'arearange': AreaRangeSeries,
         'bar': BarSeries,
+        'column': BarSeries,
         'barrange': BarRangeSeries,
+        'columnrange': BarRangeSeries,
         'bellcurve': BellCurveSeries,
         'boxplot': BoxPlotSeries,
         'bubble': BubbleSeries,
         'candlestick': CandlestickSeries,
+        'ohlc': OhlcSeries,
         'dumbbell': DumbbellSeries,
         'equalizer': EqualizerSeries,
         'errorbar': ErrorBarSeries,
@@ -7060,7 +7107,6 @@
         'histogram': HistogramSeries,
         'line': LineSeries,
         'lollipop': LollipopSeries,
-        'ohlc': OhlcSeries,
         'pareto': ParetoSeries,
         'pie': PieSeries,
         'scatter': ScatterSeries,
@@ -7075,18 +7121,6 @@
         'date': TimeAxis,
         'log': LogAxis
     };
-    class Credit extends ChartItem {
-        constructor() {
-            super(...arguments);
-            this.text = 'Realchart v1.0';
-            this.url = 'http://realgrid.com';
-            this.floating = false;
-            this.align = Align.RIGHT;
-            this.verticalAlign = VerticalAlign.BOTTOM;
-            this.offsetX = 10;
-            this.offsetY = 5;
-        }
-    }
     class ChartOptions extends ChartItem {
         constructor() {
             super(...arguments);
@@ -7095,7 +7129,6 @@
             this.xStart = 0;
             this.xStep = 1;
             this.axisGap = 8;
-            this.credit = new Credit(null);
         }
     }
     class Chart extends RcEventProvider {
@@ -7172,7 +7205,7 @@
         isEmpty() {
             return this._series.isEmpty();
         }
-        seriesByName(series) {
+        seriesByBame(series) {
             return this._series.get(series);
         }
         axisByName(axis) {
@@ -7427,6 +7460,34 @@
         width: '',
         height: ''
     };
+
+    class LineElement extends PathElement {
+        constructor(doc, styleName = _undefined, line = _undefined) {
+            super(doc, styleName);
+            this.setAttr('shapeRendering', 'cripsEdges');
+            line && this.setLine(line);
+        }
+        setLine(x1, y1, x2, y2) {
+            if (Utils.isNumber(x1)) {
+                this.setPath(SvgShapes.line(x1, y1, x2, y2));
+            }
+            else if (x1) {
+                this.setPath(SvgShapes.line(x1.x1, x1.y1, x1.x2, x1.y2));
+            }
+        }
+        setVLine(x, y1, y2) {
+            this.setPath(SvgShapes.line(x, y1, x, y2));
+        }
+        setVLineC(x, y1, y2) {
+            this.setPath(SvgShapes.line(x, y1, x, y2));
+        }
+        setHLine(y, x1, x2) {
+            this.setPath(SvgShapes.line(x1, y, x2, y));
+        }
+        setHLineC(y, x1, x2) {
+            this.setPath(SvgShapes.line(x1, y, x2, y));
+        }
+    }
 
     class Color {
         static isBright(color) {
@@ -7692,34 +7753,6 @@
                 this._dirty = this._styleDirty = false;
             }
             return this._bounds;
-        }
-    }
-
-    class LineElement extends PathElement {
-        constructor(doc, styleName = _undefined, line = _undefined) {
-            super(doc, styleName);
-            this.setAttr('shapeRendering', 'cripsEdges');
-            line && this.setLine(line);
-        }
-        setLine(x1, y1, x2, y2) {
-            if (Utils.isNumber(x1)) {
-                this.setPath(SvgShapes.line(x1, y1, x2, y2));
-            }
-            else if (x1) {
-                this.setPath(SvgShapes.line(x1.x1, x1.y1, x1.x2, x1.y2));
-            }
-        }
-        setVLine(x, y1, y2) {
-            this.setPath(SvgShapes.line(x, y1, x, y2));
-        }
-        setVLineC(x, y1, y2) {
-            this.setPath(SvgShapes.line(x, y1, x, y2));
-        }
-        setHLine(y, x1, x2) {
-            this.setPath(SvgShapes.line(x1, y, x2, y));
-        }
-        setHLineC(y, x1, x2) {
-            this.setPath(SvgShapes.line(x1, y, x2, y));
         }
     }
 
@@ -8531,10 +8564,8 @@
             close && this._path.push('Z');
             return this._path.join(' ');
         }
-        close(clear) {
-            const s = this.end(true);
-            clear && this.clear();
-            return s;
+        close() {
+            return this.end(true);
         }
         move(x, y) {
             if (isNumber(x)) {
@@ -9094,7 +9125,7 @@
             this._labels[1].prepare(0);
         }
         prepareLabel(doc, view, index, p, model) {
-            if (view.setVisible(p.visible && !p.isNull)) {
+            if (view.visible = p.visible) {
                 const richFormat = model.text;
                 const styles = model.style;
                 view.point = p;
@@ -9125,10 +9156,8 @@
                 points.forEach((p, i) => {
                     for (let j = 0; j < p.labelCount(); j++) {
                         const label = labels[j].get(i);
-                        if (label.setVisible(!p.isNull)) {
-                            this.prepareLabel(doc, label, j, p, pointLabel);
-                            maps[j][p.pid] = label;
-                        }
+                        this.prepareLabel(doc, label, j, p, pointLabel);
+                        maps[j][p.pid] = label;
                     }
                 });
                 this.setStyleOrClass(pointLabel.style);
@@ -9424,9 +9453,9 @@
             const xAxis = series._xAxisObj;
             const yAxis = series._yAxisObj;
             const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
-            const yLen = inverted ? width : height;
+            const yLen = (inverted ? width : height);
             const xLen = inverted ? height : width;
-            const yOrg = inverted ? 0 : height;
+            const org = inverted ? 0 : height;
             const yMin = yAxis.getPosition(yLen, yAxis.axisMin());
             const base = series.getBaseValue(yAxis);
             const yBase = pickNum(yAxis.getPosition(yLen, base), yMin);
@@ -9446,9 +9475,9 @@
                     let x;
                     let y;
                     x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
-                    y = yOrg;
+                    y = org;
                     p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-                    if (based && yBase !== yMin) {
+                    if (based) {
                         p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr);
                     }
                     else {
@@ -9458,7 +9487,7 @@
                     if (info && (info.labelView = labelViews.get(p, 0))) {
                         if (inverted) {
                             y = xLen - xAxis.getPosition(xLen, p.xValue) + wUnit / 2;
-                            x = yOrg;
+                            x = org;
                             p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
                             if (based) {
                                 p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
@@ -9744,16 +9773,20 @@
                 }
                 const mv = this._markers.get(i);
                 const lv = labelViews && labelViews.get(p, 0);
-                if (mv && mv.setVisible(!p.isNull)) {
-                    this._layoutMarker(mv, px, py);
+                if (p.isNull) {
+                    mv.visible = false;
+                    lv && (lv.visible = false);
+                }
+                else {
+                    if (vis) {
+                        mv.visible = true;
+                        this._layoutMarker(mv, px, py);
+                    }
                     if (lv) {
                         const r = lv.getBBounds();
                         lv.visible = true;
                         lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? p.radius : 0));
                     }
-                }
-                else if (lv) {
-                    lv.visible = false;
                 }
             }
         }
@@ -10069,8 +10102,8 @@
     }
 
     class AreaSeriesView extends LineSeriesBaseView {
-        constructor(doc, className) {
-            super(doc, className || 'rct-area-series');
+        constructor(doc) {
+            super(doc, 'rct-area-series');
             this._lineContainer.insertFirst(this._area = new PathElement(doc, 'rct-area-series-area'));
         }
         _layoutLines(pts) {
@@ -10407,7 +10440,7 @@
         }
     }
 
-    class BellCurveSeriesView extends AreaSeriesView {
+    class BellCurveSeriesView extends LineSeriesBaseView {
         constructor(doc) {
             super(doc, 'rct-bellcurve-series');
         }
@@ -10664,54 +10697,59 @@
             const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
             const yLen = inverted ? width : height;
             const xLen = inverted ? height : width;
+            yAxis.getPosition(yLen, yAxis instanceof LinearAxis ? yAxis.baseValue : 0);
             const org = inverted ? 0 : height;
+            labelViews && Object.assign(this._labelInfo, {
+                inverted,
+                labelPos: series.getLabelPosition(labels.position),
+                labelOff: labels.offset,
+                width, height
+            });
             this._bars.forEach((bar, i) => {
                 const p = bar.point;
-                if (bar.setVisible(!p.isNull)) {
-                    const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
-                    const wPoint = series.getPointWidth(wUnit);
-                    const yVal = yAxis.getPosition(yLen, p.yValue);
-                    const hPoint = Math.abs(yAxis.getPosition(yLen, p.lowValue) - yVal) * vr;
-                    let labelView;
-                    let x;
-                    let y;
-                    if (inverted) {
-                        y = xLen - xAxis.getPosition(xLen, p.xValue);
-                        x = org;
-                    }
-                    else {
-                        x = xAxis.getPosition(xLen, p.xValue);
-                        y = org;
-                    }
-                    if (inverted) {
-                        p.yPos = y += series.getPointPos(wUnit) - wPoint / 2;
-                        p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
-                        x -= hPoint;
-                    }
-                    else {
-                        p.xPos = x += series.getPointPos(wUnit) - wPoint / 2;
-                        p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
-                    }
-                    p.hPoint = hPoint;
-                    bar.layout(inverted).translate(x, y);
-                    if (labelViews) {
-                        if (labelView = labelViews.get(p, 1)) {
-                            const r = labelView.getBBounds();
-                            if (inverted) {
-                                labelView.translate(x + hPoint + labelOff + p.radius, y - r.height / 2);
-                            }
-                            else {
-                                labelView.translate(x - r.width / 2, y - r.height - labelOff - p.radius);
-                            }
+                const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
+                const wPoint = series.getPointWidth(wUnit);
+                const yVal = yAxis.getPosition(yLen, p.yValue);
+                const hPoint = Math.abs(yAxis.getPosition(yLen, p.lowValue) - yVal) * vr;
+                let labelView;
+                let x;
+                let y;
+                if (inverted) {
+                    y = xLen - xAxis.getPosition(xLen, p.xValue);
+                    x = org;
+                }
+                else {
+                    x = xAxis.getPosition(xLen, p.xValue);
+                    y = org;
+                }
+                if (inverted) {
+                    p.yPos = y += series.getPointPos(wUnit) - wPoint / 2;
+                    p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
+                    x -= hPoint;
+                }
+                else {
+                    p.xPos = x += series.getPointPos(wUnit) - wPoint / 2;
+                    p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
+                }
+                p.hPoint = hPoint;
+                bar.layout(inverted).translate(x, y);
+                if (labelViews) {
+                    if (labelView = labelViews.get(p, 1)) {
+                        const r = labelView.getBBounds();
+                        if (inverted) {
+                            labelView.translate(x + hPoint + labelOff + p.radius, y - r.height / 2);
                         }
-                        if (labelView = labelViews.get(p, 0)) {
-                            const r = labelView.getBBounds();
-                            if (inverted) {
-                                labelView.translate(x - r.width - labelOff - p.radius, y - r.height / 2);
-                            }
-                            else {
-                                labelView.translate(x - r.width / 2, y + hPoint + labelOff + p.radius);
-                            }
+                        else {
+                            labelView.translate(x - r.width / 2, y - r.height - labelOff - p.radius);
+                        }
+                    }
+                    if (labelView = labelViews.get(p, 0)) {
+                        const r = labelView.getBBounds();
+                        if (inverted) {
+                            labelView.translate(x - r.width - labelOff - p.radius, y - r.height / 2);
+                        }
+                        else {
+                            labelView.translate(x - r.width / 2, y + hPoint + labelOff + p.radius);
                         }
                     }
                 }
@@ -10809,29 +10847,26 @@
             pts[pts.length - 1] = len;
             const total = pts.length / 2;
             this._bars.forEach(bar => {
-                const p = bar.point;
-                if (bar.setVisible(!p.isNull)) {
-                    const v = p.yValue / max;
-                    let n = -1;
-                    let decimal = 0;
-                    for (let i = 0; i < total - 1; i++) {
-                        if (v >= pts[i * 2] / len && v < pts[(i + 1) * 2] / len) {
-                            n = i + 1;
-                            if (!segmented && v < pts[i * 2 + 1] / len) {
-                                decimal = v * len - pts[i * 2];
-                            }
-                            else {
-                                decimal = sz;
-                            }
-                            break;
+                const v = bar.point.yValue / max;
+                let n = -1;
+                let decimal = 0;
+                for (let i = 0; i < total - 1; i++) {
+                    if (v >= pts[i * 2] / len && v < pts[(i + 1) * 2] / len) {
+                        n = i + 1;
+                        if (!segmented && v < pts[i * 2 + 1] / len) {
+                            decimal = v * len - pts[i * 2];
                         }
+                        else {
+                            decimal = sz;
+                        }
+                        break;
                     }
-                    if (n < 0) {
-                        n = total;
-                        decimal = sz;
-                    }
-                    bar.prepareSegments(backs, total, n, decimal, series.backStyle);
                 }
+                if (n < 0) {
+                    n = total;
+                    decimal = sz;
+                }
+                bar.prepareSegments(backs, total, n, decimal, series.backStyle);
             });
         }
     }
@@ -10931,42 +10966,40 @@
             let labelView;
             this._segments.forEach((seg) => {
                 const p = seg.point;
-                if (seg.setVisible(!p.isNull)) {
-                    const start = p.yPos * sz.height;
-                    const end = (p.yPos + p.height) * sz.height;
-                    const y = reversed ? (yEnd - start) : y1 + start;
-                    const y2 = reversed ? (yEnd - end) : y1 + end;
-                    let x;
-                    let x2;
-                    let x3;
-                    let x4;
-                    if (start >= pNeck) {
-                        x = xNeck;
-                        x2 = x + szNeck.width;
-                        builder.move(x, y).lines(x2, y, x2, y2, x, y2);
-                    }
-                    else if (end < pNeck) {
-                        x = getPosAt(y);
-                        x2 = x + (xMid - x) * 2;
-                        x3 = getPosAt(y2);
-                        x4 = x3 + (xMid - x3) * 2;
-                        builder.move(x, y).lines(x2, y, x4, y2, x3, y2);
-                    }
-                    else {
-                        x = getPosAt(y);
-                        x2 = x + (xMid - x) * 2;
-                        x3 = xNeck;
-                        x4 = x3 + szNeck.width;
-                        builder.move(x, y).lines(x2, y, x4, yNeck, x4, y2, x3, y2, x3, yNeck);
-                    }
-                    const path = builder.close(true);
-                    seg.setPath(path);
-                    p.xPos = xMid;
-                    p.yPos = y + (y2 - y) / 2;
-                    if (labelViews && (labelView = labelViews.get(p, 0))) {
-                        const r = labelView.getBBounds();
-                        labelView.translate(xMid - r.width / 2, y + ((y2 - y) - r.height) / 2);
-                    }
+                let start = p.yPos * sz.height;
+                let end = (p.yPos + p.height) * sz.height;
+                let y = reversed ? (yEnd - start) : y1 + start;
+                let y2 = reversed ? (yEnd - end) : y1 + end;
+                let x;
+                let x2;
+                let x3;
+                let x4;
+                if (start >= pNeck) {
+                    x = xNeck;
+                    x2 = x + szNeck.width;
+                    builder.move(x, y).lines(x2, y, x2, y2, x, y2);
+                }
+                else if (end < pNeck) {
+                    x = getPosAt(y);
+                    x2 = x + (xMid - x) * 2;
+                    x3 = getPosAt(y2);
+                    x4 = x3 + (xMid - x3) * 2;
+                    builder.move(x, y).lines(x2, y, x4, y2, x3, y2);
+                }
+                else {
+                    x = getPosAt(y);
+                    x2 = x + (xMid - x) * 2;
+                    x3 = xNeck;
+                    x4 = x3 + szNeck.width;
+                    builder.move(x, y).lines(x2, y, x4, yNeck, x4, y2, x3, y2, x3, yNeck);
+                }
+                const path = builder.close();
+                seg.setPath(path);
+                p.xPos = xMid;
+                p.yPos = y + (y2 - y) / 2;
+                if (labelViews && (labelView = labelViews.get(p, 0))) {
+                    const r = labelView.getBBounds();
+                    labelView.translate(xMid - r.width / 2, y + ((y2 - y) - r.height) / 2);
                 }
             });
         }
@@ -11013,33 +11046,31 @@
             const color = new Color(series.color);
             this._cells.forEach(cell => {
                 const p = cell.point;
-                if (cell.setVisible(!p.isNull)) {
-                    const wUnit = xAxis.getUnitLength(xLen, p.xValue);
-                    const wPoint = wUnit;
-                    const hUnit = yAxis.getUnitLength(yLen, p.yValue);
-                    const hPoint = hUnit;
-                    const org = inverted ? 0 : height;
-                    let x;
-                    let y;
-                    let labelView;
-                    x = (p.xPos = xAxis.getPosition(xLen, p.xValue)) - wUnit / 2;
-                    y = (p.yPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
-                    cell.setBounds(x, y, wPoint, hPoint);
-                    cell.setStyle('fill', color.brighten(1 - p.colorValue / series._colorMax).toString());
-                    if (labelViews && (labelView = labelViews.get(p, 0))) {
-                        const r = labelView.getBBounds();
-                        if (inverted) {
-                            y = xLen - xAxis.getPosition(xLen, p.xValue);
-                            x = org;
-                            y -= r.height / 2;
-                            x += yAxis.getPosition(yLen, p.yValue) - r.width / 2;
-                        }
-                        else {
-                            x += (wPoint - r.width) / 2;
-                            y += (hPoint - r.height) / 2;
-                        }
-                        labelView.translate(x, y);
+                const wUnit = xAxis.getUnitLength(xLen, p.xValue);
+                const wPoint = wUnit;
+                const hUnit = yAxis.getUnitLength(yLen, p.yValue);
+                const hPoint = hUnit;
+                const org = inverted ? 0 : height;
+                let x;
+                let y;
+                let labelView;
+                x = (p.xPos = xAxis.getPosition(xLen, p.xValue)) - wUnit / 2;
+                y = (p.yPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
+                cell.setBounds(x, y, wPoint, hPoint);
+                cell.setStyle('fill', color.brighten(1 - p.colorValue / series._colorMax).toString());
+                if (labelViews && (labelView = labelViews.get(p, 0))) {
+                    const r = labelView.getBBounds();
+                    if (inverted) {
+                        y = xLen - xAxis.getPosition(xLen, p.xValue);
+                        x = org;
+                        y -= r.height / 2;
+                        x += yAxis.getPosition(yLen, p.yValue) - r.width / 2;
                     }
+                    else {
+                        x += (wPoint - r.width) / 2;
+                        y += (hPoint - r.height) / 2;
+                    }
+                    labelView.translate(x, y);
                 }
             });
         }
@@ -11243,20 +11274,18 @@
             const yOrg = this.height;
             this._sticks.forEach((box, i) => {
                 const p = box.point;
-                if (box.setVisible(!p.isNull)) {
-                    const wUnit = xAxis.getUnitLength(width, p.xValue);
-                    const wPoint = series.getPointWidth(wUnit);
-                    const x = (p.xPos = xAxis.getPosition(width, p.xValue)) - wPoint / 2;
-                    const y = p.yPos = yOrg - yAxis.getPosition(height, p.yValue) * vr;
-                    const w = wPoint;
-                    const h = Math.abs(yOrg - yAxis.getPosition(height, p.lowValue) - y) * vr;
-                    let view;
-                    box.setBounds(x, y, w, h);
-                    box.layout();
-                    if (labelViews && (view = labelViews.get(p, 0))) {
-                        const r = view.getBBounds();
-                        view.translate(x + (w - r.width) / 2, y - r.height - labelOff);
-                    }
+                const wUnit = xAxis.getUnitLength(width, p.xValue);
+                const wPoint = series.getPointWidth(wUnit);
+                const x = (p.xPos = xAxis.getPosition(width, p.xValue)) - wPoint / 2;
+                const y = p.yPos = yOrg - yAxis.getPosition(height, p.yValue) * vr;
+                const w = wPoint;
+                const h = Math.abs(yOrg - yAxis.getPosition(height, p.lowValue) - y) * vr;
+                let view;
+                box.setBounds(x, y, w, h);
+                box.layout();
+                if (labelViews && (view = labelViews.get(p, 0))) {
+                    const r = view.getBBounds();
+                    view.translate(x + (w - r.width) / 2, y - r.height - labelOff);
                 }
             });
         }
@@ -11383,6 +11412,7 @@
             const labelViews = this._labelViews();
             const lineViews = this._lineContainer;
             const sliceOff = this._slicedOff = series.getSliceOffset(rd) * vr;
+            const pb = new PathBuilder();
             let labelView;
             if (this._circle.visible = this._sectors.isEmpty) {
                 this._circle.setCircle(this._cx, this._cy, this._rd);
@@ -11390,44 +11420,42 @@
             this.$_calcAngles(points);
             this._sectors.forEach((sector) => {
                 const p = sector.point;
-                if (!p.isNull) {
-                    const start = p.startAngle;
-                    let dx = 0;
-                    let dy = 0;
-                    if (p.sliced) {
-                        const a = start + p.angle / 2;
-                        dx += Math.cos(a) * sliceOff;
-                        dy += Math.sin(a) * sliceOff;
+                const start = p.startAngle;
+                let dx = 0;
+                let dy = 0;
+                if (p.sliced) {
+                    const a = start + p.angle / 2;
+                    dx += Math.cos(a) * sliceOff;
+                    dy += Math.sin(a) * sliceOff;
+                }
+                const a = p.startAngle + p.angle / 2;
+                p.xPos = cx + Math.cos(a) * (sliceOff + rd * 0.7);
+                p.yPos = cy + Math.sin(a) * (sliceOff + rd * 0.7);
+                sector.setSectorEx(labelViews, null, {
+                    cx: cx + dx,
+                    cy: cy + dy,
+                    rx: rd,
+                    ry: rd,
+                    innerRadius: rdInner,
+                    start: start,
+                    angle: p.angle,
+                    clockwise: true
+                }, false);
+                if (labelViews && (labelView = labelViews.get(p, 0))) {
+                    const line = lineViews.get(p);
+                    if (labelInside) {
+                        line.visible = false;
+                        this.$_layoutLabelInner(p, labelView, 0, 0, p.sliced ? sliceOff : 0);
                     }
-                    const a = p.startAngle + p.angle / 2;
-                    p.xPos = cx + Math.cos(a) * (sliceOff + rd * 0.7);
-                    p.yPos = cy + Math.sin(a) * (sliceOff + rd * 0.7);
-                    sector.setSectorEx(labelViews, null, {
-                        cx: cx + dx,
-                        cy: cy + dy,
-                        rx: rd,
-                        ry: rd,
-                        innerRadius: rdInner,
-                        start: start,
-                        angle: p.angle,
-                        clockwise: true
-                    }, false);
-                    if (labelViews && (labelView = labelViews.get(p, 0))) {
-                        const line = lineViews.get(p);
-                        if (labelInside) {
-                            line.visible = false;
-                            this.$_layoutLabelInner(p, labelView, 0, 0, p.sliced ? sliceOff : 0);
-                        }
-                        else {
-                            line.visible = true;
-                            this.$_layoutLabel(p, labelView, line, 0, 0, p.sliced ? sliceOff : 0);
-                        }
-                        labelView.setContrast(labelInside && sector.dom);
+                    else {
+                        line.visible = true;
+                        this.$_layoutLabel(p, labelView, line, 0, 0, p.sliced ? sliceOff : 0, pb);
                     }
+                    labelView.setContrast(labelInside && sector.dom);
                 }
             });
         }
-        $_layoutLabel(p, view, line, off, dist, sliceOff) {
+        $_layoutLabel(p, view, line, off, dist, sliceOff, pb) {
             const r = view.getBBounds();
             const a = p.startAngle + p.angle / 2;
             const isLeft = Utils.isLeft(a);
@@ -11450,7 +11478,7 @@
             if (line) {
                 line.visible = true;
                 line.move(x1, y1);
-                line.setLine(new PathBuilder().move(0, 0).quad(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end());
+                line.setLine(pb.move(0, 0).quad(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end());
                 !view.moving && line.translate(x1 + dx, y1 + dy);
             }
             if (isLeft) {
@@ -11691,12 +11719,10 @@
             const yAxis = series._yAxisObj;
             this._arrows.forEach(v => {
                 const p = v.point;
-                if (v.setVisible(!p.isNull)) {
-                    const x = p.xPos = xAxis.getPosition(this.width, p.xValue);
-                    const y = p.yPos = this.height - yAxis.getPosition(this.height, p.yValue);
-                    v.translate(x, y);
-                    v.layout(head, p.angleValue + start, false);
-                }
+                const x = p.xPos = xAxis.getPosition(this.width, p.xValue);
+                const y = p.yPos = this.height - yAxis.getPosition(this.height, p.yValue);
+                v.translate(x, y);
+                v.layout(head, p.angleValue + start, false);
             });
         }
         _runShowEffect(firstTime) {
@@ -11771,31 +11797,31 @@
         }
     }
 
-    const series_types = {
-        'area': AreaSeriesView,
-        'arearange': AreaRangeSeriesView,
-        'bar': BarSeriesView,
-        'barrange': BarRangeSeriesView,
-        'bellcurve': BellCurveSeriesView,
-        'boxplot': BoxPlotSeriesView,
-        'bubble': BubbleSeriesView,
-        'candlestick': CandlestickSeriesView,
-        'dumbbell': DumbbellSeriesView,
-        'equalizer': EqualizerSeriesView,
-        'errorbar': ErrorBarSeriesView,
-        'funnel': FunnelSeriesView,
-        'heatmap': HeatmapSeriesView,
-        'histogram': HistogramSeriesView,
-        'line': LineSeriesView,
-        'lollipop': LollipopSeriesView,
-        'ohlc': OhlcSeriesView,
-        'pareto': ParetoSeriesView,
-        'pie': PieSeriesView,
-        'scatter': ScatterSeriesView,
-        'treemap': TreemapSeriesView,
-        'vector': VectorSeriesView,
-        'waterfall': WaterfallSeriesView,
-    };
+    const series_types = new Map([
+        [WaterfallSeries, WaterfallSeriesView],
+        [BoxPlotSeries, BoxPlotSeriesView],
+        [BarRangeSeries, BarRangeSeriesView],
+        [LollipopSeries, LollipopSeriesView],
+        [DumbbellSeries, DumbbellSeriesView],
+        [EqualizerSeries, EqualizerSeriesView],
+        [BarSeries, BarSeriesView],
+        [BellCurveSeries, BellCurveSeriesView],
+        [AreaRangeSeries, AreaRangeSeriesView],
+        [AreaSeries, AreaSeriesView],
+        [LineSeries, LineSeriesView],
+        [ParetoSeries, ParetoSeriesView],
+        [BubbleSeries, BubbleSeriesView],
+        [ScatterSeries, ScatterSeriesView],
+        [CandlestickSeries, CandlestickSeriesView],
+        [OhlcSeries, OhlcSeriesView],
+        [ErrorBarSeries, ErrorBarSeriesView],
+        [HistogramSeries, HistogramSeriesView],
+        [VectorSeries, VectorSeriesView],
+        [HeatmapSeries, HeatmapSeriesView],
+        [TreemapSeries, TreemapSeriesView],
+        [PieSeries, PieSeriesView],
+        [FunnelSeries, FunnelSeriesView]
+    ]);
     class AxisGridView extends ChartElement {
         constructor(doc) {
             super(doc, 'rct-axis-grid');
@@ -11887,7 +11913,7 @@
                         anchor = TextAnchor.END;
                         break;
                 }
-                switch (label.verticalAlign) {
+                switch (label.valign) {
                     case VerticalAlign.BOTTOM:
                         y = height;
                         layout = TextLayout.BOTTOM;
@@ -11919,7 +11945,7 @@
                         anchor = TextAnchor.START;
                         break;
                 }
-                switch (label.verticalAlign) {
+                switch (label.valign) {
                     case VerticalAlign.BOTTOM:
                         y = p + 1;
                         layout = TextLayout.TOP;
@@ -11971,7 +11997,7 @@
                         anchor = TextAnchor.START;
                         break;
                 }
-                switch (m.label.verticalAlign) {
+                switch (m.label.valign) {
                     case VerticalAlign.BOTTOM:
                         y = height;
                         layout = TextLayout.BOTTOM;
@@ -12011,7 +12037,7 @@
                         anchor = TextAnchor.START;
                         break;
                 }
-                switch (m.label.verticalAlign) {
+                switch (m.label.valign) {
                     case VerticalAlign.BOTTOM:
                         y = y1;
                         layout = TextLayout.BOTTOM;
@@ -12202,7 +12228,11 @@
             }
         }
         $_createSeriesView(doc, series) {
-            return new series_types[series._type()](doc);
+            for (const cls of series_types.keys()) {
+                if (series instanceof cls) {
+                    return new (series_types.get(cls))(doc);
+                }
+            }
         }
         $_prepareGrids(doc, chart) {
             const needAxes = chart.needAxes();
@@ -12418,9 +12448,8 @@
             const start = axis.chart.startAngle();
             this._gridLines.forEach((view, i) => {
                 const tick = ticks[i];
-                const p = tick.pos * Math.PI * 2;
-                const x = cx + Math.cos(start + p) * rd;
-                const y = cy + Math.sin(start + p) * rd;
+                const x = cx + Math.cos(start + tick.pos) * rd;
+                const y = cy + Math.sin(start + tick.pos) * rd;
                 view.setLine(cx, cy, x, y);
             });
             const rd2 = rd + axis.tick.length;
@@ -12430,9 +12459,8 @@
                 view.layout = TextLayout.MIDDLE;
                 view.text = tick.label;
                 const r = view.getBBounds();
-                const p = tick.pos * Math.PI * 2;
-                const x = cx + Math.cos(start + p) * (rd2 + r.width / 2);
-                const y = cy + Math.sin(start + p) * (rd2 + r.height / 2);
+                const x = cx + Math.cos(start + tick.pos) * (rd2 + r.width / 2);
+                const y = cy + Math.sin(start + tick.pos) * (rd2 + r.height / 2);
                 view.translate(x, y);
             });
             this._lineView.setCircle(cx, cy, rd);
@@ -13187,7 +13215,7 @@
 
     class Globals {
         static getVersion() {
-            return '0.9.2';
+            return '0.0.1';
         }
         static setDebugging(debug) {
             RcElement.DEBUGGING = debug;
@@ -13210,4 +13238,4 @@
     exports.setDebugging = setDebugging;
 
 }));
-//# sourceMappingURL=realchart.js.map
+//# sourceMappingURL=realreport-chart.js.map

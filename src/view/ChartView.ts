@@ -13,14 +13,17 @@ import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { Align, HORZ_SECTIONS, SectionDir, VERT_SECTIONS } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
+import { TextElement } from "../common/impl/TextElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
+import { Credit } from "../model/Chart";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem, LegendPosition } from "../model/Legend";
 import { Series } from "../model/Series";
 import { Subtitle } from "../model/Title";
 import { AxisView } from "./AxisView";
 import { AxisGuideContainer, BodyView } from "./BodyView";
+import { ChartElement } from "./ChartElement";
 import { LegendView } from "./LegendView";
 import { PolarBodyView } from "./PolarBodyView";
 import { SeriesView } from "./SeriesView";
@@ -305,6 +308,33 @@ class AxisSectionView extends SectionView {
 }
 
 class EmptyView extends GroupElement {
+}
+
+class CreditView extends ChartElement<Credit> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _textView: TextElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-credits');
+
+        this.add(this._textView = new TextElement(doc));
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doMeasure(doc: Document, model: Credit, intWidth: number, hintHeight: number, phase: number): ISize {
+        return;
+    }
+
+    protected _doLayout(param: any): void {
+    }
 }
 
 export class ChartView extends RcElement {

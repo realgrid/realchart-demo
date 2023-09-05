@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcEventProvider } from "../common/RcObject";
-import { SVGStyleOrClass, SectionDir, isNull } from "../common/Types";
+import { Align, SVGStyleOrClass, SectionDir, VerticalAlign, isNull } from "../common/Types";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
@@ -123,7 +123,40 @@ export class Credit extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    text = 'realreport-chart.com';
+    /**
+     * 표시할 문자열.
+     */
+    text = 'Realchart v1.0';
+    /**
+     * 이 속성을 지정하면 click시 해당 url로 이동한다.
+     */
+    url = 'http://realgrid.com';
+    /**
+     * true이면 별도의 영역을 차지하지 않고 chart view위에 표시된다.
+     * <br>
+     * @default false
+     */
+    floating = false;
+    align = Align.RIGHT;
+    verticalAlign = VerticalAlign.BOTTOM;
+    /**
+     * {@link align}으로 지정된 수평 위치에서, 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.
+     * <br>
+     * 
+     * @default 10
+     */
+    offsetX = 10
+    /**
+     * {@link verticalAlign}으로 지정된 수직 위치에서, 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.
+     * <br>
+     * 
+     * @default 5
+     */
+    offsetY = 5;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
 }
 
 export class ChartOptions extends ChartItem {
@@ -166,6 +199,7 @@ export class ChartOptions extends ChartItem {
      */
     axisGap = 8;
     style: SVGStyleOrClass;
+    credit = new Credit(null);
 
     //-------------------------------------------------------------------------
     // methods

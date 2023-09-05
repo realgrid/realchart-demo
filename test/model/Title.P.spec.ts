@@ -74,7 +74,7 @@ describe('Title test', function() {
 
 const subtitle_source = {
     text: Utils.srandom(1, 10),
-    valign: Utils.arandom([VerticalAlign.BOTTOM, VerticalAlign.MIDDLE, VerticalAlign.TOP]),
+    verticalAlign: Utils.arandom([VerticalAlign.BOTTOM, VerticalAlign.MIDDLE, VerticalAlign.TOP]),
     position: Utils.arandom([SubtitlePosition.BOTTOM, SubtitlePosition.LEFT, SubtitlePosition.RIGHT, SubtitlePosition.TOP])
 }
 
@@ -102,8 +102,8 @@ describe('Subtitle', function() {
         expect(subtitle.position).eq(subtitle_source.position);
     });
 
-    it('valign', () => {
-        expect(subtitle.valign).eq(subtitle_source.valign);
+    it('verticalAlign', () => {
+        expect(subtitle.verticalAlign).eq(subtitle_source.verticalAlign);
     });
 
     it('text', () => {

@@ -76,8 +76,8 @@
 
 /** legend */
 .rct-legend {
-    stroke: #ddd;
-    fill: transparent;
+    stroke: none;
+    fill: none;
     margin: 8px;
 }
 .rct-legend-background {

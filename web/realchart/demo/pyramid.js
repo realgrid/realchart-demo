@@ -3,8 +3,6 @@ const config = {
     legend: {
         position: 'right',
         layout: 'vertical',
-        align: 'right',
-        valign: 'top',
         style: {
             marginTop: '16px',
             marginRight: '20px'

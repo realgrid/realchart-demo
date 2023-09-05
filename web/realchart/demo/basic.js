@@ -1,6 +1,8 @@
 const config = {
     options: {
-        animatable: false
+        // animatable: false,
+        credit: {
+        }
     },
     title: "Basic Real-Chart",
     legend: true,

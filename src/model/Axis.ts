@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isObject, isString, pickNum } from "../common/Common";
-import { Align, IPercentSize, SVGStyleOrClass, SizeValue, VerticalAlign, fixnum, isNull, parsePercentSize } from "../common/Types";
+import { Align, SVGStyleOrClass, VerticalAlign, fixnum, isNull, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
@@ -175,7 +175,7 @@ export class AxisGuideLabel extends FormattableText {
     /**
      * 수직 정렬.
      */
-    valign = VerticalAlign.TOP;
+    verticalAlign = VerticalAlign.TOP;
 
     //-------------------------------------------------------------------------
     // overriden members
