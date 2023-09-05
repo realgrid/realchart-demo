@@ -3,11 +3,14 @@ const config = {
     xAxis: [{
         title: 'Scatter X',
     }, {
+        name: 'baxis',
+        position: 'opposite',
         title: 'Bell X',
     }],
     yAxis: [{
         title: 'Scatter Y'
     }, {
+        position: 'opposite',
         title: 'Bell Y'
     }],
     series: [{

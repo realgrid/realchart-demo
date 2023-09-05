@@ -701,8 +701,12 @@ export class AxisCollection {
         return this._items.indexOf(axis) >= 0;
     }
 
-    get(name: string): Axis {
-        return this._map.get(name);
+    get(name: string | number): Axis {
+        if (isString(name)) {
+            return this._map.get(name);
+        } else {
+            return this._items[name];
+        }
     }
 
     disconnect(): void {

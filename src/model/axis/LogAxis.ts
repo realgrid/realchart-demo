@@ -24,7 +24,7 @@ export class LogAxisTick extends ContinuousAxisTick {
 }
 
 /**
- * 이 축에 연결된 시리즈들의 point y값을 log10으로 재설정한다.
+ * 이 축에 연결된 시리즈들의 point y값을 log10으로 계산된 위치에 표시한다.
  * <br>
  * y축으로만 사용될 수 있다.
  */

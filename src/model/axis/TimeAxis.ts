@@ -73,10 +73,11 @@ export class TimeAxisTick extends ContinuousAxisTick {
     }
 
     protected _getStepsByPixels(length: number, pixels: number, base: number, min: number, max: number): number[] {
+        const steps: number[] = [];
         const len = max - min;
 
         if (len === 0) {
-            return [];
+            return steps;
         }
 
         const axis = this.axis as TimeAxis;
@@ -85,7 +86,6 @@ export class TimeAxisTick extends ContinuousAxisTick {
         // const scale = Math.pow(10, Math.floor(Math.log10(step)));
         const multiples = this._getStepMultiples(step);
         const scale = time_scales[this.scale];
-        const steps: number[] = [];
         let v: number;
 
         step = step / scale;

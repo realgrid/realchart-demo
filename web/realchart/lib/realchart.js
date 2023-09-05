@@ -3241,7 +3241,12 @@
             return this._items.indexOf(axis) >= 0;
         }
         get(name) {
-            return this._map.get(name);
+            if (isString(name)) {
+                return this._map.get(name);
+            }
+            else {
+                return this._items[name];
+            }
         }
         disconnect() {
             this._items.forEach(axis => axis.disconnect());
@@ -4773,21 +4778,21 @@
             return [1, 2, 2.5, 5, 10];
         }
         _getStepsByPixels(length, pixels, base, min, max) {
+            const steps = [];
+            const len = max - min;
+            if (len === 0) {
+                return steps;
+            }
             if (min >= base) {
                 min = base;
             }
             else if (max <= base) {
                 max = base;
             }
-            const len = max - min;
-            if (len === 0) {
-                return [];
-            }
             let count = Math.floor(length / this.stepPixels) + 1;
             let step = len / (count - 1);
             const scale = Math.pow(10, Math.floor(Math.log10(step)));
             const multiples = this._getStepMultiples(step);
-            const steps = [];
             let v;
             step = step / scale;
             if (multiples) {
@@ -4916,13 +4921,27 @@
             }
             return super._doLoadProp(prop, value);
         }
+        $_findBaseAxis() {
+            if (this.tickBase != null) {
+                const base = (this._isX ? this.chart._getXAxes() : this.chart._getYAxes()).get(this.tickBase);
+                if (base) {
+                    if (base instanceof ContinuousAxis) {
+                        base.tickBase = void 0;
+                        this._baseAxis = base;
+                    }
+                }
+            }
+        }
         _doPrepareRender() {
             this._hardMin = this.min;
             this._hardMax = this.max;
             this._base = parseFloat(this.baseValue);
             this._unitLen = NaN;
+            this.$_findBaseAxis();
         }
         _doBuildTicks(calcedMin, calcedMax, length) {
+            if (this.name === 'baxis')
+                debugger;
             const tick = this.tick;
             let { min, max } = this._adjustMinMax(this._calcedMin = calcedMin, this._calcedMax = calcedMax);
             let base = this._base;
@@ -5240,16 +5259,16 @@
             return steps;
         }
         _getStepsByPixels(length, pixels, base, min, max) {
+            const steps = [];
             const len = max - min;
             if (len === 0) {
-                return [];
+                return steps;
             }
             const axis = this.axis;
             let count = Math.floor(length / this.stepPixels) + 1;
             let step = Math.max(1, Math.floor(len / (count - 1)));
             const multiples = this._getStepMultiples(step);
             const scale = time_scales[this.scale];
-            const steps = [];
             step = step / scale;
             if (multiples) {
                 if (step > multiples[0]) {
