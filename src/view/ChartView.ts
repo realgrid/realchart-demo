@@ -11,12 +11,12 @@ import { IPoint, Point } from "../common/Point";
 import { ClipElement, RcElement } from "../common/RcControl";
 import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
-import { Align, HORZ_SECTIONS, SectionDir, VERT_SECTIONS } from "../common/Types";
+import { Align, HORZ_SECTIONS, SectionDir, VERT_SECTIONS, VerticalAlign } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
-import { TextElement } from "../common/impl/TextElement";
+import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Chart } from "../main";
 import { Axis } from "../model/Axis";
-import { Credit } from "../model/Chart";
+import { Credits } from "../model/Chart";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem, LegendPosition } from "../model/Legend";
 import { Series } from "../model/Series";
@@ -310,7 +310,7 @@ class AxisSectionView extends SectionView {
 class EmptyView extends GroupElement {
 }
 
-class CreditView extends ChartElement<Credit> {
+export class CreditView extends ChartElement<Credits> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -324,13 +324,26 @@ class CreditView extends ChartElement<Credit> {
         super(doc, 'rct-credits');
 
         this.add(this._textView = new TextElement(doc));
+        this._textView.anchor = TextAnchor.START;
+    }
+
+    //-------------------------------------------------------------------------
+    // methdos
+    //-------------------------------------------------------------------------
+    clicked(dom: Element): void {
+        if (this.model.url) {
+            window.open(this.model.url, 'new');
+        }
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: Credit, intWidth: number, hintHeight: number, phase: number): ISize {
-        return;
+    protected _doMeasure(doc: Document, model: Credits, intWidth: number, hintHeight: number, phase: number): ISize {
+        this._textView.text = model.text;
+
+        this.setCursor(model.url ? 'pointer' : '');
+        return this._textView.getBBounds();
     }
 
     protected _doLayout(param: any): void {
@@ -352,10 +365,11 @@ export class ChartView extends RcElement {
     private _polarView: PolarBodyView;
     private _currBody: BodyView;
     private _axisSectionViews = new Map<SectionDir, AxisSectionView>();
+    private _creditView: CreditView;
     private _tooltipView: TooltipView;
     private _seriesClip: ClipElement;
 
-    private _org: IPoint;
+    _org: IPoint;
     private _plotWidth: number;
     private _plotHeight: number;
 
@@ -379,6 +393,7 @@ export class ChartView extends RcElement {
 
         this.add(this._titleSectionView = new TitleSectionView(doc));
         this.add(this._legendSectionView = new LegendSectionView(doc));
+        this.add(this._creditView = new CreditView(doc));
         this.add(this._tooltipView = new TooltipView(doc));
     }
 
@@ -411,12 +426,21 @@ export class ChartView extends RcElement {
 
         const m = this._model = model;
         const polar = m._polar;
+        const credit = m.options.credits;
         const legend = m.legend;
         let w = hintWidth;
         let h = hintHeight;
         let sz: ISize;
 
         this._inverted = model.isInverted();
+
+        // credits
+        if (this._creditView.setVisible(credit.visible)) {
+            sz = this._creditView.measure(doc, credit, w, h, phase);
+            if (!credit.floating) {
+                h -= sz.height;
+            }
+        }
         
         // titles
         sz = this._titleSectionView.measure(doc, m, w, h, phase);
@@ -448,23 +472,43 @@ export class ChartView extends RcElement {
 
     layout(): void {
         const m = this._model;
-        let w = this.width;
-        let h = this.height;
+        const height = this.height;
+        const width = this.width;
+        let w = width;
+        let h = height;
 
         if (this._emptyView?.visible) {
             this._emptyView.resize(w, h);
             return;
         }
 
-        const polar = m.options.polar;
+        const polar = m._polar;
         const legend = m.legend;
+        const credit = m.options.credits;
+        const vCredit = this._creditView;
+        let wCredit = 0;
+        let h1Credit = 0;
+        let h2Credit = 0;
         let x = 0;
         let y = 0;
+
+        // credits
+        if (vCredit.visible) {
+            vCredit.resizeByMeasured();
+
+            if (!credit.floating) {
+                if (credit.verticalAlign === VerticalAlign.TOP) {
+                    h -= h1Credit = vCredit.height;
+                } else {
+                    h -= h2Credit = vCredit.height;
+                }
+            }
+        }
 
         // title
         const vTitle = this._titleSectionView;
         let hTitle = 0;
-        const yTitle = y;
+        const yTitle = y + h1Credit;
 
         if (vTitle.visible) {
             vTitle.resizeByMeasured();
@@ -472,7 +516,7 @@ export class ChartView extends RcElement {
         }
 
         // body
-        y = this.height;
+        y = height - h2Credit;
 
         // legend
         const vLegend = this._legendSectionView;
@@ -488,19 +532,19 @@ export class ChartView extends RcElement {
 
             switch (legend.position) {
                 case LegendPosition.TOP:
-                    yLegend = hTitle;
+                    yLegend = hTitle + h1Credit;
                     h -= hLegend;
                     break;
 
                 case LegendPosition.BOTTOM:
                     h -= hLegend;
-                    yLegend = this.height - hLegend;
+                    yLegend = y - hLegend;
                     y -= hLegend;
                     break;
     
                 case LegendPosition.RIGHT:
                     w -= wLegend;
-                    xLegend = this.width - wLegend;
+                    xLegend = width - wLegend;
                     break;
 
                 case LegendPosition.LEFT:
@@ -583,6 +627,40 @@ export class ChartView extends RcElement {
         this._currBody.resize(wPlot, hPlot);
         this._currBody.layout().translate(x, y);
 
+        // credits
+        if (vCredit.visible) {
+            const xOff = credit.offsetX || 0;
+            const yOff = credit.offsetY || 0;
+            let cx: number;
+            let cy: number;
+
+            vCredit.layout();
+            
+            switch (credit.verticalAlign) {
+                case VerticalAlign.TOP:
+                    cy = yOff;
+                    break;
+                case VerticalAlign.MIDDLE:
+                    cy = (height - vCredit.height) / 2 + yOff;
+                    break;
+                default:
+                    cy = height - h2Credit - yOff
+                    break;
+            }
+            switch (credit.align) {
+                case Align.LEFT:
+                    cx = xOff;
+                    break;
+                case Align.CENTER:
+                    cx = (width - vCredit.width) / 2 + xOff;
+                    break;
+                default:
+                    cx = width - vCredit.width - xOff;
+                    break;
+            }
+            vCredit.translate(cx, cy);
+        }
+
         // title
         if (vTitle.visible) {
             vTitle.layout(this._currBody.getRect()).translate(x, yTitle);
@@ -636,6 +714,10 @@ export class ChartView extends RcElement {
 
     seriesByDom(dom: Element): SeriesView<Series> {
         return this._bodyView.seriesByDom(dom);
+    }
+
+    creditByDom(dom: Element): CreditView {
+        return this._creditView.dom.contains(dom) ? this._creditView : null;
     }
 
     clipSeries(view: RcElement, x: number, y: number, w: number, h: number): void {
@@ -737,7 +819,6 @@ export class ChartView extends RcElement {
             }
         }
 
-        // 조정된 크기로 tick을 다시 생성한다 2.
         w = wSave;
         h = hSave;
         for (const dir of map.keys()) {
@@ -751,6 +832,8 @@ export class ChartView extends RcElement {
                 }
             }
         }
+
+        // 조정된 크기로 tick을 다시 생성한다 2.
         m.layoutAxes(w, h, this._inverted, phase);
 
         for (const dir of map.keys()) {
@@ -761,7 +844,6 @@ export class ChartView extends RcElement {
             }
         }
 
-        // 계산된 axis view에 맞춰 tick 위치를 조정한다.
         w = wSave;
         h = hSave;
         for (const dir of map.keys()) {
@@ -775,6 +857,8 @@ export class ChartView extends RcElement {
                 }
             }
         }
+
+        // 계산된 axis view에 맞춰 tick 위치를 조정한다.
         m.calcAxesPoints(w, h, this._inverted);
 
         // body

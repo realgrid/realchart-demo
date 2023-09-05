@@ -2338,6 +2338,9 @@
             this.setAttr(RcElement.TEMP_KEY, 1);
             return this;
         }
+        setCursor(cursor) {
+            this._dom.style.cursor = cursor;
+        }
         _testing() {
             return RcElement.TESTING;
         }
@@ -7075,10 +7078,10 @@
         'date': TimeAxis,
         'log': LogAxis
     };
-    class Credit extends ChartItem {
+    class Credits extends ChartItem {
         constructor() {
             super(...arguments);
-            this.text = 'Realchart v1.0';
+            this.text = 'RealChart v1.0';
             this.url = 'http://realgrid.com';
             this.floating = false;
             this.align = Align.RIGHT;
@@ -7095,7 +7098,7 @@
             this.xStart = 0;
             this.xStep = 1;
             this.axisGap = 8;
-            this.credit = new Credit(null);
+            this.credits = new Credits(null);
         }
     }
     class Chart extends RcEventProvider {
@@ -7306,15 +7309,17 @@
         handleClick(ev) {
             const chart = this._chart.chartView();
             const elt = ev.target;
-            const legend = chart.legendByDom(elt);
-            if (legend) {
+            let credit;
+            let legend;
+            let series;
+            if (legend = chart.legendByDom(elt)) {
                 legend.source.visible = !legend.source.visible;
             }
-            else {
-                const series = chart.seriesByDom(elt);
-                if (series) {
-                    series.clicked(elt);
-                }
+            else if (series = chart.seriesByDom(elt)) {
+                series.clicked(elt);
+            }
+            else if (credit = chart.creditByDom(elt)) {
+                credit.clicked(elt);
             }
         }
         handleDblClick(ev) {
@@ -8019,23 +8024,25 @@
         }
         checkHeight(doc, width, height) {
             const m = this.model;
-            let h = 0;
+            let h = m.tick.visible ? m.tick.length : 0;
             if (this.$_prepareLabels(doc, m)) {
                 h += this.$_measureLabelsHorz(m, this._labelViews, width);
             }
             if (this._titleView.visible = m.title.isVisible()) {
                 h += this._titleView.measure(doc, m.title, width, height, 1).height;
+                h += m.title.gap;
             }
             return h;
         }
         checkWidth(doc, width, height) {
             const m = this.model;
-            let w = 0;
+            let w = m.tick.visible ? m.tick.length : 0;
             if (this.$_prepareLabels(doc, m)) {
                 w += this.$_measureLabelsVert(this._labelViews);
             }
             if (this._titleView.visible = m.title.isVisible()) {
                 w += this._titleView.measure(doc, m.title, width, height, 1).height;
+                w += m.title.gap;
             }
             return w;
         }
@@ -12789,6 +12796,25 @@
     }
     class EmptyView extends GroupElement {
     }
+    class CreditView extends ChartElement {
+        constructor(doc) {
+            super(doc, 'rct-credits');
+            this.add(this._textView = new TextElement(doc));
+            this._textView.anchor = TextAnchor.START;
+        }
+        clicked(dom) {
+            if (this.model.url) {
+                window.open(this.model.url, 'new');
+            }
+        }
+        _doMeasure(doc, model, intWidth, hintHeight, phase) {
+            this._textView.text = model.text;
+            this.setCursor(model.url ? 'pointer' : '');
+            return this._textView.getBBounds();
+        }
+        _doLayout(param) {
+        }
+    }
     class ChartView extends RcElement {
         constructor(doc) {
             super(doc, 'rct-chart');
@@ -12804,6 +12830,7 @@
             this.add(this._currBody = this._bodyView = new BodyView(doc, this));
             this.add(this._titleSectionView = new TitleSectionView(doc));
             this.add(this._legendSectionView = new LegendSectionView(doc));
+            this.add(this._creditView = new CreditView(doc));
             this.add(this._tooltipView = new TooltipView(doc));
         }
         titleView() {
@@ -12824,11 +12851,18 @@
             }
             const m = this._model = model;
             const polar = m._polar;
+            const credit = m.options.credits;
             const legend = m.legend;
             let w = hintWidth;
             let h = hintHeight;
             let sz;
             this._inverted = model.isInverted();
+            if (this._creditView.setVisible(credit.visible)) {
+                sz = this._creditView.measure(doc, credit, w, h, phase);
+                if (!credit.floating) {
+                    h -= sz.height;
+                }
+            }
             sz = this._titleSectionView.measure(doc, m, w, h, phase);
             h -= sz.height;
             if (this._legendSectionView.visible = (legend.isVisible())) {
@@ -12855,24 +12889,41 @@
         layout() {
             var _a;
             const m = this._model;
-            let w = this.width;
-            let h = this.height;
+            const height = this.height;
+            const width = this.width;
+            let w = width;
+            let h = height;
             if ((_a = this._emptyView) === null || _a === void 0 ? void 0 : _a.visible) {
                 this._emptyView.resize(w, h);
                 return;
             }
-            const polar = m.options.polar;
+            const polar = m._polar;
             const legend = m.legend;
+            const credit = m.options.credits;
+            const vCredit = this._creditView;
+            let h1Credit = 0;
+            let h2Credit = 0;
             let x = 0;
             let y = 0;
+            if (vCredit.visible) {
+                vCredit.resizeByMeasured();
+                if (!credit.floating) {
+                    if (credit.verticalAlign === VerticalAlign.TOP) {
+                        h -= h1Credit = vCredit.height;
+                    }
+                    else {
+                        h -= h2Credit = vCredit.height;
+                    }
+                }
+            }
             const vTitle = this._titleSectionView;
             let hTitle = 0;
-            const yTitle = y;
+            const yTitle = y + h1Credit;
             if (vTitle.visible) {
                 vTitle.resizeByMeasured();
                 h -= hTitle = vTitle.height;
             }
-            y = this.height;
+            y = height - h2Credit;
             const vLegend = this._legendSectionView;
             let hLegend = 0;
             let wLegend = 0;
@@ -12884,17 +12935,17 @@
                 wLegend = vLegend.width;
                 switch (legend.position) {
                     case LegendPosition.TOP:
-                        yLegend = hTitle;
+                        yLegend = hTitle + h1Credit;
                         h -= hLegend;
                         break;
                     case LegendPosition.BOTTOM:
                         h -= hLegend;
-                        yLegend = this.height - hLegend;
+                        yLegend = y - hLegend;
                         y -= hLegend;
                         break;
                     case LegendPosition.RIGHT:
                         w -= wLegend;
-                        xLegend = this.width - wLegend;
+                        xLegend = width - wLegend;
                         break;
                     case LegendPosition.LEFT:
                         w -= wLegend;
@@ -12965,6 +13016,36 @@
             y = org.y - hPlot;
             this._currBody.resize(wPlot, hPlot);
             this._currBody.layout().translate(x, y);
+            if (vCredit.visible) {
+                const xOff = credit.offsetX || 0;
+                const yOff = credit.offsetY || 0;
+                let cx;
+                let cy;
+                vCredit.layout();
+                switch (credit.verticalAlign) {
+                    case VerticalAlign.TOP:
+                        cy = yOff;
+                        break;
+                    case VerticalAlign.MIDDLE:
+                        cy = (height - vCredit.height) / 2 + yOff;
+                        break;
+                    default:
+                        cy = height - h2Credit - yOff;
+                        break;
+                }
+                switch (credit.align) {
+                    case Align.LEFT:
+                        cx = xOff;
+                        break;
+                    case Align.CENTER:
+                        cx = (width - vCredit.width) / 2 + xOff;
+                        break;
+                    default:
+                        cx = width - vCredit.width - xOff;
+                        break;
+                }
+                vCredit.translate(cx, cy);
+            }
             if (vTitle.visible) {
                 vTitle.layout(this._currBody.getRect()).translate(x, yTitle);
             }
@@ -13014,6 +13095,9 @@
         }
         seriesByDom(dom) {
             return this._bodyView.seriesByDom(dom);
+        }
+        creditByDom(dom) {
+            return this._creditView.dom.contains(dom) ? this._creditView : null;
         }
         clipSeries(view, x, y, w, h) {
             if (view) {

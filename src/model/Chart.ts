@@ -118,7 +118,7 @@ const axis_types = {
     'log': LogAxis
 }
 
-export class Credit extends ChartItem {
+export class Credits extends ChartItem {
 
     //-------------------------------------------------------------------------
     // properties
@@ -126,13 +126,14 @@ export class Credit extends ChartItem {
     /**
      * 표시할 문자열.
      */
-    text = 'Realchart v1.0';
+    text = 'RealChart v1.0';
     /**
      * 이 속성을 지정하면 click시 해당 url로 이동한다.
      */
     url = 'http://realgrid.com';
     /**
-     * true이면 별도의 영역을 차지하지 않고 chart view위에 표시된다.
+     * true이면 {@link verticalAlign}이 'top', 'bottom'일 때도,
+     * 별도의 영역을 차지하지 않고 chart view위에 표시된다.
      * <br>
      * @default false
      */
@@ -199,7 +200,7 @@ export class ChartOptions extends ChartItem {
      */
     axisGap = 8;
     style: SVGStyleOrClass;
-    credit = new Credit(null);
+    credits = new Credits(null);
 
     //-------------------------------------------------------------------------
     // methods

@@ -1,7 +1,10 @@
 const config = {
     options: {
-        // animatable: false,
-        credit: {
+        animatable: false,
+        credits: {
+            // visible: false,
+            // verticalAlign: 'top'
+            // align: 'center'
         }
     },
     title: "Basic Real-Chart",

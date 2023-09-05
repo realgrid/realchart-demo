@@ -184,7 +184,7 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     checkHeight(doc: Document, width: number, height: number): number {
         const m = this.model;
-        let h = 0;
+        let h = m.tick.visible ? m.tick.length : 0; 
 
         // labels
         // const t = this.$_prepareChecker(doc, m);
@@ -199,13 +199,14 @@ export class AxisView extends ChartElement<Axis> {
         // title
         if (this._titleView.visible = m.title.isVisible()) {
             h += this._titleView.measure(doc, m.title, width, height, 1).height;
+            h += m.title.gap;
         }
         return h;
     }
 
     checkWidth(doc: Document, width: number, height: number): number {
         const m = this.model;
-        let w = 0;
+        let w = m.tick.visible ? m.tick.length : 0; 
         
         // labels
         // const t = this.$_prepareChecker(doc, m);
@@ -220,6 +221,7 @@ export class AxisView extends ChartElement<Axis> {
         // title
         if (this._titleView.visible = m.title.isVisible()) {
             w += this._titleView.measure(doc, m.title, width, height, 1).height; // [NOTE] width가 아니다.
+            w += m.title.gap;
         }
         return w;
     }

@@ -58,17 +58,23 @@
     fill: none;
 }
 
+/** credits */
+.rct-credits {
+    font-size: 0.7em;
+    fill: #777;
+}
+
 /** title */
 .rct-title {
     font-size: 24px;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
 }
 .rct-title-background {
     fill: transparent;
 }
 .rct-subtitle {
     font-size: 16px;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
 }
 .rct-subtitle-background {
     fill: transparent;
@@ -78,7 +84,7 @@
 .rct-legend {
     stroke: none;
     fill: none;
-    margin: 8px;
+    margin: 6px;
 }
 .rct-legend-background {
     padding: 4px;

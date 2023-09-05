@@ -8,6 +8,10 @@
 
 import { IPointerHandler } from "../common/RcControl";
 import { ChartControl } from "../main";
+import { LegendItem } from "../model/Legend";
+import { Series } from "../model/Series";
+import { CreditView } from "../view/ChartView";
+import { SeriesView } from "../view/SeriesView";
 
 const DRAG_THRESHOLD = 3;
 
@@ -39,16 +43,16 @@ export class ChartPointerHandler implements IPointerHandler {
     handleClick(ev: PointerEvent): void {
         const chart = this._chart.chartView();
         const elt = ev.target as Element;
-        const legend = chart.legendByDom(elt);
+        let credit: CreditView;
+        let legend: LegendItem;
+        let series: SeriesView<Series>;
 
-        if (legend) {
+        if (legend = chart.legendByDom(elt)) {
             legend.source.visible = !legend.source.visible;
-        } else {
-            const series = chart.seriesByDom(elt);
-
-            if (series) {
-                series.clicked(elt)
-            }
+        } else if (series = chart.seriesByDom(elt)) {
+            series.clicked(elt)
+        } else if (credit = chart.creditByDom(elt)) {
+            credit.clicked(elt);
         }
     }
 
