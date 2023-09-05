@@ -23,7 +23,7 @@
     "test:pptr": "npm run dbundle && mocha --exit --timeout 20000 -r ts-node/register -r test/dom-mock.js 'test/puppeteer/**/*.spec.ts'",
     "test:model": "mocha --exit --timeout 10000 -r ts-node/register -r test/dom-mock.js 'test/{,!(puppeteer)/**/}/*.spec.ts' 'test/**/*Test*.ts'",
     "dldoc": "rm -rf web/docs && node dldoc",
-    "tsdoc": "rm -rf api/typedoc && npx typedoc",
+    "tsdoc": "rm -rf docs/.tsdoc && typedoc",
     "jsdoc": "rm -rf api/jsdoc && npx jsdoc -c jsdoc.json",
     "dev:www": "npm run dldoc && npx live-server web/realchart",
     "e2e:test": "playwright test --trace on --headed",

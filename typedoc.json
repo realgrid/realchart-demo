@@ -1,8 +1,8 @@
 {
     "entryPoints": [
-        "./src/DListControl.ts"
+        "./src/main.ts"
     ],
-    "out": "api/typedoc",
+    "json": "docs/.tdout/out.json",
     "exclude": ["./node_modules/**/*"],
     "externalPattern": ["./node_modules/**/*"],
     "excludeExternals": true,

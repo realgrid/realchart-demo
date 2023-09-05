@@ -1,0 +1,193 @@
+## ChartControl extends RcControl implements IChartEventListener
+
+
+```typescript
+new ChartControl(doc, container)
+```
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| doc | Document | ❌ |
+| container | string \| HTMLDivElement | ❌ |
+
+
+## Properties
+### public loaded: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public static CLASS_NAME: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public static SHADOW_FILTER: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public destroying: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public hash: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public model: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+chart model.
+
+## Methods
+### public addElement(elt): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| elt | RcElement | ❌ |
+### public appendDom(elt): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| elt | HTMLElement | ❌ |
+### public chartView(): ChartView
+
+### public clearDefs(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+### public clearTemporaryDefs(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+### public clipBounds(x, y, width, height, rd): ClipElement
+defs에 직사각형 clipPath를 등록한다.
+
+
+
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| x | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+| y | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+| width | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+| height | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+| rd | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+### public clipPath(): ClipPathElement
+
+### public clipRect(r): ClipElement
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| r | IRect | ❌ |
+### public containerToElement(element, x, y): IPoint
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| element | RcElement | ❌ |
+| x | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+| y | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+### public createWrapper(clazz): T
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| clazz | (...args[unknown](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type)\[]) => T | ❌ |
+### public destroy(): null
+객체가 소유한 참조 등을 해제하고 null을 리턴한다.
+
+```
+list = lis.destroy();
+```
+### public doc(): Document
+
+### public dom(): HTMLElement
+
+### public fling(distance, duration): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| distance | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+| duration | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+### public getBounds(): DOMRect
+
+### public getCssVar(name): [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
+### public height(): [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+
+### public invalidate(force): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| force | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ❌ |
+### public invalidateLayout(force): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| force | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ❌ |
+### public isInited(): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+### public isMe(hash): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| hash | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
+### public isTesting(): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+### public isWrapper(w): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| w | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | ❌ |
+### public lock(func): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| func | (control: RcControl) => [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined) | ❌ |
+### public onVisibleChanged(chart, item): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| chart | Chart | ❌ |
+| item | ChartItem | ❌ |
+### public refresh(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+### public releaseLock(validate): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| validate | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ❌ |
+### public removeDef(element): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| element | RcElement | ❌ |
+### public removeElement(elt): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| elt | RcElement | ❌ |
+### public setAnimation(to?): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| to | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ✅ |
+### public setLock(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+### public setPointerHandler(handler): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| handler | IPointerHandler | ❌ |
+### public setWrapper(wrapper): T
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| wrapper | T | ❌ |
+### public silentLock(func): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| func | (control: RcControl) => [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined) | ❌ |
+### public toBool(v): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+template param으로부터 생성되는 값은 문자열일 수 있다.
+
+
+
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| v | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | ❌ |
+### public toNum(v, def): [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| v | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | ❌ |
+| def | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+### public toOffset(event): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| event | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | ❌ |
+### public toString(): [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+### public update(config, loadAnimation): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| config | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | ❌ |
+| loadAnimation | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ❌ |
+### public updateNow(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+### public useImage(src): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| src | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
+### public width(): [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+
+### public wrapper(): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public wrapperOrThis(): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public static destroy(obj): null
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| obj | RcObject | ❌ |

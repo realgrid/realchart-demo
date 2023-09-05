@@ -1,0 +1,176 @@
+## Chart extends RcEventProvider\<IChartEventListener> implements IChart
+
+
+```typescript
+new Chart(source)
+```
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| source | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | ✅ |
+
+
+## Properties
+### public _polar: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public colors: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public inverted: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+true면 x축이 수직, y축이 수평으로 배치된다.
+<br>
+기본값은 undefined로 첫번째 series의 종류에 따라 결정된다.
+즉, bar 시리즈 계통이면 true가 된다.
+### public type: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+기본 시리즈 type.
+<br>
+Series._type의 기본값.
+시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
+### public body: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public destroying: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public first: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public firstSeries: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public hash: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public legend: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public options: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public subtitle: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public title: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public xAxis: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public xStart: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public xStep: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+### public yAxis: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+
+
+## Methods
+### public _connectSeries(series, isX): Axis
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| series | IPlottingItem | ❌ |
+| isX | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ❌ |
+### public _getAxisType(type): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| type | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
+### public _getGroupType(type): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| type | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
+### public _getLegendSources(): [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<ILegendSource>
+
+### public _getSeries(): PlottingItemCollection
+
+### public _getSeriesType(type): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| type | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
+### public _getXAxes(): AxisCollection
+
+### public _getYAxes(): AxisCollection
+
+### public _modelChanged(item): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| item | ChartItem | ❌ |
+### public _visibleChanged(item): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| item | ChartItem | ❌ |
+### public addListener(listener): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| listener | IChartEventListener | ❌ |
+### public animatable(): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+### public axisByName(axis): Axis
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| axis | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
+### public calcAxesPoints(width, height, inverted): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| width | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+| height | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+| inverted | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ❌ |
+### public containsAxis(axis): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| axis | Axis | ❌ |
+### public destroy(): null
+객체가 소유한 참조 등을 해제하고 null을 리턴한다.
+
+```
+list = lis.destroy();
+```
+### public getAxes(dir): [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<Axis>
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| dir | SectionDir | ❌ |
+### public getAxesGap(): [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+
+### public isEmpty(): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+### public isInverted(): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+### public isMe(hash): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| hash | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
+### public layoutAxes(width, height, inverted, phase): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| width | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+| height | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+| inverted | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ❌ |
+| phase | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+### public load(source): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| source | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | ❌ |
+### public needAxes(): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+좌표축이 필요하면true이다.
+<br>
+현재, 모든 시리즈가 pie 이면 false가 된다.
+false이면 직교 좌표가 표시되지 않는다.
+### public prepareRender(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+
+### public removeListener(listener): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| listener | IChartEventListener | ❌ |
+### public seriesByName(series): Series
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| series | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
+### public startAngle(): [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+
+### public toBool(v): [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+template param으로부터 생성되는 값은 문자열일 수 있다.
+
+
+
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| v | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | ❌ |
+### public toNum(v, def): [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| v | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | ❌ |
+| def | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | ❌ |
+### public toString(): [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+### public update(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+데이터 및 속성 변경 후 다시 그리게 한다.
+### public static destroy(obj): null
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| obj | RcObject | ❌ |
