@@ -42,11 +42,8 @@ export class HeatmapSeriesPoint extends DataPoint {
 
         this.y = v[pickNum(series.yField, 0 + d)];
         this.color = v[pickNum(series.colorField, 1 + d)];
-
         if (d > 0) {
             this.x = v[pickNum(series.xField, 0)];
-        } else {
-            this.x = this.index;
         }
     }
 

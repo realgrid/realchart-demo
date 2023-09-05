@@ -58,11 +58,8 @@ export class BoxPlotSeriesPoint extends DataPoint {
         this.mid = v[pickNum(series.midField, 2 + d)];
         this.high = v[pickNum(series.highField, 3 + d)];
         this.y = v[pickNum(series.yField, 4 + d)];
-
         if (d > 0) {
             this.x = v[pickNum(series.xField, 0)];
-        } else {
-            this.x = this.index;
         }
     }
 

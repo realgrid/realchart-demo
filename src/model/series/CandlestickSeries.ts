@@ -53,11 +53,8 @@ export class CandlestickSeriesPoint extends DataPoint {
         this.open = v[pickNum(series.openField, 1 + d)];
         this.close = v[pickNum(series.closeField, 2 + d)];
         this.y = this.high = v[pickNum(series.highField, 3 + d)];
-
         if (d > 0) {
             this.x = v[pickNum(series.xField, 0)];
-        } else {
-            this.x = this.index;
         }
     }
 

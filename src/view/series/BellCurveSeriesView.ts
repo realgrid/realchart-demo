@@ -6,10 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { BellCurveSeries } from "../../model/series/BellCurveSeries";
-import { LineSeriesBaseView } from "./LineSeriesView";
+import { AreaSeriesView } from "./AreaSeriesView";
 
-export class BellCurveSeriesView extends LineSeriesBaseView<BellCurveSeries> {
+export class BellCurveSeriesView extends AreaSeriesView {
 
     //-------------------------------------------------------------------------
     // fields

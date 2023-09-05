@@ -27,8 +27,8 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc, 'rct-area-series');
+    constructor(doc: Document, className?: string) {
+        super(doc, className || 'rct-area-series');
 
         this._lineContainer.insertFirst(this._area = new PathElement(doc, 'rct-area-series-area'));
     }
