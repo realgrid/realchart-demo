@@ -1,11 +1,11 @@
 {
   "name": "realchart",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Wooritech charting library",
   "main": "./dist/index",
   "author": {
     "name": "WooriTech",
-    "url": "http://touch.realgrid.com",
+    "url": "",
     "email": "support@realgrid.com"
   },
   "keywords": [
