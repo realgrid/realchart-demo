@@ -438,7 +438,7 @@ export class ChartView extends RcElement {
         if (this._creditView.setVisible(credit.visible)) {
             sz = this._creditView.measure(doc, credit, w, h, phase);
             if (!credit.floating) {
-                h -= sz.height;
+                h -= sz.height - credit.offsetY;
             }
         }
         
@@ -498,9 +498,9 @@ export class ChartView extends RcElement {
 
             if (!credit.floating) {
                 if (credit.verticalAlign === VerticalAlign.TOP) {
-                    h -= h1Credit = vCredit.height;
+                    h -= h1Credit = vCredit.height + credit.offsetY;
                 } else {
-                    h -= h2Credit = vCredit.height;
+                    h -= h2Credit = vCredit.height + credit.offsetY;
                 }
             }
         }
@@ -638,13 +638,13 @@ export class ChartView extends RcElement {
             
             switch (credit.verticalAlign) {
                 case VerticalAlign.TOP:
-                    cy = yOff;
+                    // cy = yOff;
                     break;
                 case VerticalAlign.MIDDLE:
                     cy = (height - vCredit.height) / 2 + yOff;
                     break;
                 default:
-                    cy = height - h2Credit - yOff
+                    cy = height - h2Credit;
                     break;
             }
             switch (credit.align) {

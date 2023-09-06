@@ -181,6 +181,11 @@ export class Utils {
         return Object.keys(type).map(key => type[key]);
     }
 
+    static checkEnumValue(type: any, value: any, def: any): any {
+        const vals = Object.keys(type);
+        return vals.indexOf(value) >= 0 ? value : def;
+    }
+
     static compareText(s1: string, s2: string, ignoreCase = false): number {
         s1 = s1 || '';
         s2 = s2 || '';

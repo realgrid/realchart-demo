@@ -84,7 +84,7 @@
 .rct-legend {
     stroke: none;
     fill: none;
-    margin: 6px;
+    /* margin-top: 16px; */
 }
 .rct-legend-background {
     padding: 4px;

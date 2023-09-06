@@ -6,7 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RtPercentSize, SVGStyleOrClass } from "../common/Types";
+import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
+import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 
@@ -84,6 +85,9 @@ export class Legend extends ChartItem {
     // fields
     //-------------------------------------------------------------------------
     private _items: LegendItem[];
+    private _maxWidthDim: IPercentSize;
+    private _maxHeightDim: IPercentSize;
+    private _position: LegendPosition;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -142,6 +146,12 @@ export class Legend extends ChartItem {
      */
     bottom: number;
     /**
+     * legend view와 나머지 chart 영역 사이의 gap.
+     * 
+     * @config
+     */
+    gap = 6;
+    /**
      * legend 아이템들 사이의 간격.
      * 
      * @config
@@ -160,6 +170,12 @@ export class Legend extends ChartItem {
      * @config
      */
     backgroundStyles: SVGStyleOrClass;
+    /**
+     * 한 행당 표시할 legend 항목 수.
+     * 
+     * @config
+     */
+    itemsPerRow: number;
     /**
      * 수평 {@link layout 배치}일 때,
      * 최대 너비를 픽셀 단위의 크기 혹은 plot 너비에 대한 상대 길이를 '%'로 지정한다.
@@ -190,9 +206,13 @@ export class Legend extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getPosition(): LegendPosition {
+        return this._position;
+    }
+
     getLayout(): LegendLayout {
-        if (this.layout === LegendLayout.AUTO && this.position !== LegendPosition.PLOT) {
-            switch (this.position) {
+        if (this.layout === LegendLayout.AUTO && this._position !== LegendPosition.PLOT) {
+            switch (this._position) {
                 case LegendPosition.BOTTOM:
                 case LegendPosition.TOP:
                     return LegendLayout.HORIZONTAL;
@@ -208,9 +228,25 @@ export class Legend extends ChartItem {
         this._items = this.$_collectItems();
     }
 
+    getMaxWidth(domain: number): number {
+        return this._maxWidthDim ? calcPercent(this._maxWidthDim, domain) : domain;
+    }
+
+    getMaxHeight(domain: number): number {
+        return this._maxHeightDim ? calcPercent(this._maxHeightDim, domain) : domain;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doLoad(src: any): void {
+        super._doLoad(src);
+
+        this._maxWidthDim = parsePercentSize(this.maxWidth, true);
+        this._maxHeightDim = parsePercentSize(this.maxHeight, true);
+        this._position = Utils.checkEnumValue(LegendPosition, this.position, LegendPosition.BOTTOM);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

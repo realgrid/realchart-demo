@@ -746,6 +746,10 @@
         static getEnumValues(type) {
             return Object.keys(type).map(key => type[key]);
         }
+        static checkEnumValue(type, value, def) {
+            const vals = Object.keys(type);
+            return vals.indexOf(value) >= 0 ? value : def;
+        }
         static compareText(s1, s2, ignoreCase = false) {
             s1 = s1 || '';
             s2 = s2 || '';
@@ -3434,6 +3438,7 @@
             this.position = LegendPosition.BOTTOM;
             this.layout = LegendLayout.AUTO;
             this.alignBase = LegendAlignBase.PLOT;
+            this.gap = 6;
             this.itemGap = 8;
             this.markerGap = 4;
             this.visible = void 0;
@@ -3447,9 +3452,12 @@
         isVisible() {
             return this.visible || (this.visible !== false && this._items.length > 1);
         }
+        getPosition() {
+            return this._position;
+        }
         getLayout() {
-            if (this.layout === LegendLayout.AUTO && this.position !== LegendPosition.PLOT) {
-                switch (this.position) {
+            if (this.layout === LegendLayout.AUTO && this._position !== LegendPosition.PLOT) {
+                switch (this._position) {
                     case LegendPosition.BOTTOM:
                     case LegendPosition.TOP:
                         return LegendLayout.HORIZONTAL;
@@ -3463,6 +3471,18 @@
         }
         prepareRender() {
             this._items = this.$_collectItems();
+        }
+        getMaxWidth(domain) {
+            return this._maxWidthDim ? calcPercent(this._maxWidthDim, domain) : domain;
+        }
+        getMaxHeight(domain) {
+            return this._maxHeightDim ? calcPercent(this._maxHeightDim, domain) : domain;
+        }
+        _doLoad(src) {
+            super._doLoad(src);
+            this._maxWidthDim = parsePercentSize(this.maxWidth, true);
+            this._maxHeightDim = parsePercentSize(this.maxHeight, true);
+            this._position = Utils.checkEnumValue(LegendPosition, this.position, LegendPosition.BOTTOM);
         }
         $_collectItems() {
             return this.chart._getLegendSources().map(src => {
@@ -9757,7 +9777,7 @@
             const color = series.color;
             const p = mv.point;
             const s = p.shape || series.getShape();
-            const sz = pickNum(p.radius, marker.radius);
+            const sz = mv._radius = pickNum(p.radius, marker.radius);
             let path;
             switch (s) {
                 case Shape.SQUARE:
@@ -9818,7 +9838,7 @@
                     if (lv) {
                         const r = lv.getBBounds();
                         lv.visible = true;
-                        lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? p.radius : 0));
+                        lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
                     }
                 }
                 else if (lv) {
@@ -12377,13 +12397,32 @@
         _setBackgroundStyle(back) {
             back.setStyleOrClass(this.model.backgroundStyles);
         }
+        _getDebugRect() {
+            const r = super._getDebugRect();
+            const gap = pickNum(this.model.gap, 0);
+            if (gap !== 0) {
+                switch (this.model.getPosition()) {
+                    case LegendPosition.BOTTOM:
+                        r.y += gap;
+                        r.height -= gap;
+                        break;
+                }
+            }
+            return r;
+        }
         _doMeasure(doc, model, hintWidth, hintHeight, phase) {
             const items = model.items();
             const vertical = this._vertical = model.getLayout() === LegendLayout.VERTICAL;
-            const gap = model.itemGap;
+            const itemGap = model.itemGap;
             const views = this._itemViews;
             let w = 0;
             let h = 0;
+            if (vertical) {
+                hintHeight = model.getMaxHeight(hintHeight);
+            }
+            else {
+                hintWidth = model.getMaxWidth(hintWidth);
+            }
             this.$_prepareItems(doc, items);
             views.forEach((v, i) => {
                 v._marker.setStyle('fill', items[i].source.legendColor());
@@ -12398,22 +12437,32 @@
                 }
             });
             if (vertical) {
-                h += (views.count - 1) * gap;
+                h += (views.count - 1) * itemGap;
+                w += pickNum(model.gap, 0);
             }
             else {
-                w += (views.count - 1) * gap;
+                w += (views.count - 1) * itemGap;
+                h += pickNum(model.gap, 0);
+                if (w > hintWidth) {
+                    debugger;
+                }
             }
             return Size.create(w, h);
         }
         _doLayout() {
             const vertical = this._vertical;
-            const gap = this.model.itemGap;
+            const model = this.model;
+            const gap = model.itemGap;
             const margin = this._margins;
             const pad = this._paddings;
-            let x = margin.left;
-            let y = margin.top;
-            x += pad.left;
-            y += pad.top;
+            let x = margin.left + pad.left;
+            let y = margin.top + pad.top;
+            if (model.position === LegendPosition.BOTTOM) {
+                y += pickNum(model.gap, 0);
+            }
+            else if (model.position === LegendPosition.RIGHT) {
+                x += pickNum(model.gap, 0);
+            }
             this._itemViews.forEach(v => {
                 v.resizeByMeasured().layout();
                 v.translate(x, y);
@@ -12922,7 +12971,7 @@
             if (this._creditView.setVisible(credit.visible)) {
                 sz = this._creditView.measure(doc, credit, w, h, phase);
                 if (!credit.floating) {
-                    h -= sz.height;
+                    h -= sz.height - credit.offsetY;
                 }
             }
             sz = this._titleSectionView.measure(doc, m, w, h, phase);
@@ -12971,10 +13020,10 @@
                 vCredit.resizeByMeasured();
                 if (!credit.floating) {
                     if (credit.verticalAlign === VerticalAlign.TOP) {
-                        h -= h1Credit = vCredit.height;
+                        h -= h1Credit = vCredit.height + credit.offsetY;
                     }
                     else {
-                        h -= h2Credit = vCredit.height;
+                        h -= h2Credit = vCredit.height + credit.offsetY;
                     }
                 }
             }
@@ -13086,13 +13135,12 @@
                 vCredit.layout();
                 switch (credit.verticalAlign) {
                     case VerticalAlign.TOP:
-                        cy = yOff;
                         break;
                     case VerticalAlign.MIDDLE:
                         cy = (height - vCredit.height) / 2 + yOff;
                         break;
                     default:
-                        cy = height - h2Credit - yOff;
+                        cy = height - h2Credit;
                         break;
                 }
                 switch (credit.align) {

@@ -26,6 +26,7 @@ export class LineMarkerView extends PathElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     point: LineSeriesPoint;
+    _radius: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -241,7 +242,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const color = series.color;
         const p = mv.point as LineSeriesPoint;
         const s = p.shape || series.getShape();
-        const sz = pickNum(p.radius, marker.radius);
+        const sz = mv._radius = pickNum(p.radius, marker.radius);
         let path: (string | number)[];
 
         switch (s) {
@@ -315,7 +316,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     const r = lv.getBBounds();
 
                     lv.visible = true;
-                    lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? p.radius : 0));
+                    lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
                 }
             } else if (lv) {
                 lv.visible = false;

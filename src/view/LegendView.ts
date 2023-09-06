@@ -9,11 +9,11 @@
 import { pickNum } from "../common/Common";
 import { Dom } from "../common/Dom";
 import { ElementPool } from "../common/ElementPool";
-import { toSize } from "../common/Rectangle";
+import { IRect, toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Legend, LegendItem, LegendLayout } from "../model/Legend";
+import { Legend, LegendItem, LegendLayout, LegendPosition } from "../model/Legend";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
 export class LegendItemView extends ChartElement<LegendItem> {
@@ -92,13 +92,34 @@ export class LegendView extends BoundableElement<Legend> {
         back.setStyleOrClass(this.model.backgroundStyles);
     }
 
+    protected _getDebugRect(): IRect {
+        const r = super._getDebugRect();
+        const gap = pickNum(this.model.gap, 0);
+        
+        if (gap !== 0) {
+            switch (this.model.getPosition()) {
+                case LegendPosition.BOTTOM:
+                    r.y += gap;
+                    r.height -= gap;
+                    break;
+            }
+        }
+        return r;
+    }
+
     protected _doMeasure(doc: Document, model: Legend, hintWidth: number, hintHeight: number, phase: number): ISize {
         const items = model.items();
         const vertical = this._vertical = model.getLayout() === LegendLayout.VERTICAL;
-        const gap = model.itemGap;
+        const itemGap = model.itemGap;
         const views = this._itemViews;
         let w = 0;
         let h = 0;
+
+        if (vertical) {
+            hintHeight = model.getMaxHeight(hintHeight);
+        } else {
+            hintWidth = model.getMaxWidth(hintWidth);
+        }
 
         this.$_prepareItems(doc, items);
 
@@ -117,23 +138,33 @@ export class LegendView extends BoundableElement<Legend> {
         });
 
         if (vertical) {
-            h += (views.count - 1) * gap;
+            h += (views.count - 1) * itemGap;
+            w += pickNum(model.gap, 0);
         } else {
-            w += (views.count - 1) * gap;
+            w += (views.count - 1) * itemGap;
+            h += pickNum(model.gap, 0);
+
+            if (w > hintWidth) {
+                debugger;
+            }
         }
         return Size.create(w, h);
     }
     
     protected _doLayout(): void {
         const vertical = this._vertical;
-        const gap = this.model.itemGap;
+        const model = this.model;
+        const gap = model.itemGap;
         const margin = this._margins;
         const pad = this._paddings;
-        let x = margin.left;
-        let y = margin.top;
+        let x = margin.left + pad.left;
+        let y = margin.top + pad.top;
 
-        x += pad.left;
-        y += pad.top;
+        if (model.position === LegendPosition.BOTTOM) {
+            y += pickNum(model.gap, 0);
+        } else if (model.position === LegendPosition.RIGHT) {
+            x += pickNum(model.gap, 0);
+        }
 
         this._itemViews.forEach(v => {
             v.resizeByMeasured().layout();
