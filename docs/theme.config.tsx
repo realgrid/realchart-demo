@@ -13,7 +13,7 @@ const config: DocsThemeConfig = {
   // },
   // docsRepositoryBase: 'https://github.com/shuding/nextra-docs-template',
   footer: {
-    text: "Nextra Docs Template",
+    text: "우리테크 RealChart",
   },
 };
 

@@ -1,15 +1,26 @@
 {
-  "index": "Introduction",
-  "another": "Another Page",
-  "advanced": "Advanced (A Folder)",
-  "about": {
-    "title": "About",
-    "type": "page"
+  "index": {
+    "type": "page",
+    "title": "Nextra",
+    "display": "hidden",
+    "theme": {
+      "layout": "raw"
+    }
+  },
+  "docs": {
+    "title": "문서",
+    "type":"page"
+  },
+  "pricing": {
+    "title": "구입문의 ↗",
+    "type": "page",
+    "href": "https://www.realgrid.com",
+    "newWindow": true
   },
   "contact": {
-    "title": "Contact ↗",
+    "title": "기술지원 ↗",
     "type": "page",
-    "href": "https://twitter.com/shuding_",
+    "href": "https://forum.realgrid.com",
     "newWindow": true
   }
 }
