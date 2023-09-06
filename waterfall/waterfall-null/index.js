@@ -1,0 +1,48 @@
+const config = {
+  options: {
+    // animatable: false
+  },
+  title: "Waterfall Null Point",
+  xAxis: {
+    title: "일일 Daily fat",
+    grid: true
+  },
+  yAxis: {
+    title: "Vertical 수직축 Axis"
+  },
+  series: {
+    type: 'waterfall',
+    pointPadding: 0.15,
+    pointLabel: {
+      visible: true,
+      position: 'inside',
+      effect: 'outline'
+    },
+    data: [{
+      name: 'Start',
+      y: 120000
+    }, {
+      name: 'Product Revenue',
+      y: null //569000
+    }, {
+      name: 'Service Revenue',
+      y: 231000
+    }, {
+      name: 'Positive Balance',
+      isSum: true
+    }, {
+      name: 'Fixed Costs',
+      y: -342000
+    }, {
+      name: 'Variable Costs',
+      y: -233000
+      // }, {
+      //     name: 'Positive Balance2',
+      //     isSum: true,
+    }, {
+      name: 'Balance',
+      isSum: true
+    }]
+  }
+};
+const chart = RealChart.createChart(document, 'realchart', config);
