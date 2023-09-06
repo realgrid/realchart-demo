@@ -11,8 +11,8 @@ import { SizeValue } from '../Types';
 import { Utils } from '../Utils';
 
 export enum Shape {
-    LINE = 'line',
-    LINES = 'lines',
+    // LINE = 'line',
+    // LINES = 'lines',
     CIRCLE = 'circle',
     DIAMOND = 'diamond',
     RECTANGLE = 'rectangle',

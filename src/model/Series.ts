@@ -9,7 +9,7 @@
 import { isArray, isObject, isString, pickNum } from "../common/Common";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
-import { Shape } from "../common/impl/SvgShape";
+import { Shape, Shapes } from "../common/impl/SvgShape";
 import { IAxis } from "./Axis";
 import { Chart, IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
@@ -516,6 +516,12 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return true;
     }
 
+    hasMarker(): boolean {
+        return false;
+    }
+
+    setShape(shape: Shape): void {}
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -848,8 +854,15 @@ export class PlottingItemCollection  {
 
     prepareRender(): void {
         const colors = this.chart.colors;
-        
-        this._visibleSeries = this._series.filter(ser => ser.visible);
+        const visibles = this._visibleSeries = [];
+        let iShape = 0;
+
+        this._series.forEach(ser => {
+            ser.visible && visibles.push(ser);
+            if (ser.hasMarker()) {
+                ser.setShape(Shapes[iShape++ % Shapes.length]);
+            }
+        })
 
         const nCluster = this._visibleSeries.filter(ser => ser.clusterable()).length;
 
@@ -900,6 +913,9 @@ export enum MarerVisibility {
     HIDDEN = 'hidden'
 }
 
+/**
+ * @config chart.series.marker
+ */
 export abstract class SeriesMarker extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -907,10 +923,14 @@ export abstract class SeriesMarker extends ChartItem {
     //-------------------------------------------------------------------------
     /**
      * 명시적으로 지정하지 않으면 typeIndex에 따라 Shapes 중 하나로 돌아가면서 설정된다.
+     * 
+     * @config
      */
     shape: Shape;
     /**
-     * shape의 반지름.
+     * {@link shape}의 반지름.
+     * 
+     * @config
      */
     radius = 3;
 

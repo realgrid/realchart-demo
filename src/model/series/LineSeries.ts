@@ -23,30 +23,40 @@ export class LineSeriesPoint extends DataPoint {
     shape: Shape;
 }
 
+/**
+ * @config chart.series[type=line|area|arearange].marker
+ */
 export class LineSeriesMarker extends SeriesMarker {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     radius = 4;
     /**
-     * baseValue 보다 작은 값을 가진 point를 그릴 때 추가로 적용되는 style.
-     */
-    // private _negativeStyles: StyleProps;
-    /**
      * 첫번째 point의 marker 표시 여부.
+     * 
+     * @config
      */
     firstVisible = MarerVisibility.DEFAULT;
     /**
      * 첫번째 point의 marker 표시 여부.
+     * 
+     * @config
      */
     lastVisible = MarerVisibility.DEFAULT;
     /**
      * 최소값 point들의 marker 표시 여부.
+     * 
+     * @config
      */
     minVisible = MarerVisibility.DEFAULT;
     /**
      * 최대값 point들의 marker 표시 여부.
+     * 
+     * @config
      */
     maxVisible = MarerVisibility.DEFAULT;
 }
@@ -60,6 +70,7 @@ export abstract class LineSeriesBase extends Series {
     // fields
     //-------------------------------------------------------------------------
     marker = new LineSeriesMarker(this);
+    private _shape: Shape;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -75,10 +86,25 @@ export abstract class LineSeriesBase extends Series {
     nullAsBase = false;
 
     //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getShape(): Shape {
+        return this.marker.shape || this._shape;
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _createPoint(source: any): DataPoint {
         return new LineSeriesPoint(source);
+    }
+
+    hasMarker(): boolean {
+        return true;
+    }
+
+    setShape(shape: Shape): void {
+        this._shape = shape;
     }
 
     //-------------------------------------------------------------------------

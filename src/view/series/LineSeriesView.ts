@@ -10,13 +10,13 @@ import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
-import { SvgShapes } from "../../common/impl/SvgShape";
+import { Shape, SvgShapes } from "../../common/impl/SvgShape";
 import { Chart } from "../../main";
 import { LineType } from "../../model/ChartTypes";
 import { DataPoint, IPointPos } from "../../model/DataPoint";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
 import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
-import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 export class LineMarkerView extends PathElement implements IPointView {
@@ -206,6 +206,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         if (this._pointContainer.visible = marker.visible) {
             const mpp = this._markersPerPoint();
             const count = points.length;
+            const radius = marker.radius;
+            const shape = series.getShape();
     
             this._markers.prepare(count * mpp, (mv, i) => {
                 const n = i % count;
@@ -217,8 +219,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     } else {
                     }
         
-                    p.radius = marker.radius;
-                    p.shape = marker.shape;
+                    p.radius = radius;
+                    p.shape = shape;
                     mv.point = p;
         
                     // mv.className = vis ? '' : 'dlchart-line-marker-hidden';
@@ -244,10 +246,11 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         let path: (string | number)[];
 
         switch (s) {
-            case 'square':
-            case 'diamond':
-            case 'triangle':
-            case 'itriangle':
+            case Shape.SQUARE:
+            case Shape.RECTANGLE:
+            case Shape.DIAMOND:
+            case Shape.TRIANGLE:
+            case Shape.ITRIANGLE:
                 x -= sz;
                 y -= sz;
                 path = SvgShapes[s](0, 0, sz * 2, sz * 2);

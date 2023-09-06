@@ -1486,8 +1486,6 @@
 
     var Shape;
     (function (Shape) {
-        Shape["LINE"] = "line";
-        Shape["LINES"] = "lines";
         Shape["CIRCLE"] = "circle";
         Shape["DIAMOND"] = "diamond";
         Shape["RECTANGLE"] = "rectangle";
@@ -1495,7 +1493,7 @@
         Shape["TRIANGLE"] = "triangle";
         Shape["ITRIANGLE"] = "itriangle";
     })(Shape || (Shape = {}));
-    Utils.getEnumValues(Shape);
+    const Shapes = Utils.getEnumValues(Shape);
     const SECTOR_ERROR = 0.001;
     class SvgShapes {
         static line(x1, y1, x2, y2) {
@@ -3989,6 +3987,10 @@
         canMaxPadding(axis) {
             return true;
         }
+        hasMarker() {
+            return false;
+        }
+        setShape(shape) { }
         _createPoint(source) {
             return new DataPoint(source);
         }
@@ -4245,7 +4247,14 @@
         }
         prepareRender() {
             const colors = this.chart.colors;
-            this._visibleSeries = this._series.filter(ser => ser.visible);
+            const visibles = this._visibleSeries = [];
+            let iShape = 0;
+            this._series.forEach(ser => {
+                ser.visible && visibles.push(ser);
+                if (ser.hasMarker()) {
+                    ser.setShape(Shapes[iShape++ % Shapes.length]);
+                }
+            });
             const nCluster = this._visibleSeries.filter(ser => ser.clusterable()).length;
             this._visibleSeries.forEach((ser, i) => {
                 ser.color = ser.color || colors[i++ % colors.length];
@@ -5544,8 +5553,17 @@
             this.marker = new LineSeriesMarker(this);
             this.nullAsBase = false;
         }
+        getShape() {
+            return this.marker.shape || this._shape;
+        }
         _createPoint(source) {
             return new LineSeriesPoint(source);
+        }
+        hasMarker() {
+            return true;
+        }
+        setShape(shape) {
+            this._shape = shape;
         }
     }
     var LineStepDirection;
@@ -9703,12 +9721,14 @@
             if (this._pointContainer.visible = marker.visible) {
                 const mpp = this._markersPerPoint();
                 const count = points.length;
+                const radius = marker.radius;
+                const shape = series.getShape();
                 this._markers.prepare(count * mpp, (mv, i) => {
                     const n = i % count;
                     const p = points[n];
                     if (!p.isNull) {
-                        p.radius = marker.radius;
-                        p.shape = marker.shape;
+                        p.radius = radius;
+                        p.shape = shape;
                         mv.point = p;
                     }
                 });
@@ -9721,10 +9741,11 @@
             const sz = p.radius;
             let path;
             switch (s) {
-                case 'square':
-                case 'diamond':
-                case 'triangle':
-                case 'itriangle':
+                case Shape.SQUARE:
+                case Shape.RECTANGLE:
+                case Shape.DIAMOND:
+                case Shape.TRIANGLE:
+                case Shape.ITRIANGLE:
                     x -= sz;
                     y -= sz;
                     path = SvgShapes[s](0, 0, sz * 2, sz * 2);
