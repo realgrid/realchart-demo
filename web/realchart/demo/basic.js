@@ -84,6 +84,48 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.update(config, animate);
     }, false);
+    createButton(container, 'jsfiddle', function (e) {
+                let form = document.getElementById('myForm');
+                if (!form) {
+                    form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = 'http://jsfiddle.net/api/post/library/pure/';
+                    form.target = 'check';
+                    form.id = 'jsfiddle';
+                    document.body.appendChild(form);
+                }
+            
+                let inputHTML = document.createElement('input');
+                inputHTML.type = 'hidden'; 
+                inputHTML.name = 'html';
+                inputHTML.value = '<script src="https://unpkg.com/realchart"></script>\n<div id="realchart"></div>';
+                form.appendChild(inputHTML);
+        
+                let inputCSS = document.createElement('input');
+                inputCSS.type = 'hidden';
+                inputCSS.name = 'css';
+                inputCSS.value = `@import url('https://unpkg.com/realchart/dist/realchart-style.css');
+        #realchart {
+            width: 100%;
+            height: 550px;
+            border: 1px solid lightgray;
+            margin-bottom: 20px;
+        }`;
+                form.appendChild(inputCSS); 
+        
+                let inputJS = document.createElement('input');
+                inputJS.type = 'hidden';
+                inputJS.name = 'js';
+                inputJS.value = 'const config = '+ JSON.stringify(config , null , 2  ) + "; \nconst chart = RealChart.createChart(document, 'realchart', config);";
+                form.appendChild(inputJS);
+            
+                form.submit();
+            
+                form.removeChild(inputHTML);
+                form.removeChild(inputCSS);
+                form.removeChild(inputJS);
+                form.remove();
+    });
 }
 
 function init() {
