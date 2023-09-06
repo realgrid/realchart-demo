@@ -1,6 +1,11 @@
 const config = {
     options: {
-        animatable: false
+        animatable: false,
+        credits: {
+            // visible: false,
+            // verticalAlign: 'top'
+            // align: 'center'
+        }
     },
     title: "Basic Real-Chart",
     legend: true,

@@ -53,7 +53,7 @@ export class DataPointLabel extends FormattableText {
     // /**
     //  * position 위치에서 수직 정렬 상태.
     //  */
-    // valign = VerticalAlign.MIDDLE;
+    // verticalAlign = VerticalAlign.MIDDLE;
 
     offset = 4;
 

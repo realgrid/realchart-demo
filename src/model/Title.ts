@@ -50,6 +50,6 @@ export class Subtitle extends Title {
     // property fields
     //-------------------------------------------------------------------------
     position = SubtitlePosition.BOTTOM;
-    valign = VerticalAlign.BOTTOM;
+    verticalAlign = VerticalAlign.BOTTOM;
     text = '';
 }

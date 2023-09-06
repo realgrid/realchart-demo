@@ -8,7 +8,7 @@
 
 import { isArray, isObject, pickNum, pickNum3 } from "../../common/Common";
 import { IPercentSize, RtPercentSize, assert, calcPercent, ceil, fixnum, parsePercentSize } from "../../common/Types";
-import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick } from "../Axis";
+import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick, IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { SeriesGroup, SeriesGroupLayout } from "../Series";
 
@@ -132,25 +132,23 @@ export class ContinuousAxisTick extends AxisTick {
     }
 
     protected _getStepsByPixels(length: number, pixels: number, base: number, min: number, max: number): number[] {
-        if (min >= base) {
-            min = base;
-            // base = NaN;
-        } else if (max <= base) {
-            max = base;
-            // base = NaN;
-        }
-
+        const steps: number[] = [];
         const len = max - min;
 
         if (len === 0) {
-            return [];
+            return steps;
+        }
+
+        if (min >= base) {
+            min = base;
+        } else if (max <= base) {
+            max = base;
         }
 
         let count = Math.floor(length / this.stepPixels) + 1;
         let step = len / (count - 1);
         const scale = Math.pow(10, Math.floor(Math.log10(step)));
         const multiples = this._getStepMultiples(step);
-        const steps: number[] = [];
         let v: number;
 
         step = step / scale;
@@ -294,6 +292,8 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _baseAxis: Axis;
+
     private _hardMin: number;
     private _hardMax: number;
     private _min: number;
@@ -315,6 +315,14 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * tick 개수를 맞춰야 하는 대상 axis.
+     * <br>
+     * base의 strictMin, strictMax가 설정되지 않아야 한다.
+     * base의 startFit, endFilt의 {@link AxisFit.TICK}으로 설정되어야 한다.
+     */
+    tickBase: number | string;
+
     /**
      * data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.
      */
@@ -417,23 +425,28 @@ export abstract class ContinuousAxis extends Axis {
         return super._doLoadProp(prop, value);
     }
 
-    protected _doPrepareRender(): void {
-        // const base = this.baseValue;
+    private $_findBaseAxis(): void {
+        if (this.tickBase != null) {
+            const base = (this._isX ? this.chart._getXAxes() : this.chart._getYAxes()).get(this.tickBase);
+            if (base) {
+                if (base instanceof ContinuousAxis) {
+                    base.tickBase = void 0;
+                    this._baseAxis = base;
+                }
+            }
+        }
+    }
 
+    protected _doPrepareRender(): void {
         this._hardMin = this.min;
         this._hardMax = this.max;
-
-        // if (this._series.find(s => s.ignoreAxisBase(this))) {
-        //     this._base = NaN;
-        // } else {
-        //     this._base = pickNum(+base, 0);
-        // }
-
         this._base = parseFloat(this.baseValue as any);
         this._unitLen = NaN;
+        this.$_findBaseAxis();
     }
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
+        if (this.name === 'baxis') debugger;
         const tick = this.tick as ContinuousAxisTick;
         let { min, max } = this._adjustMinMax(this._calcedMin = calcedMin, this._calcedMax = calcedMax);
         let base = this._base;
@@ -734,6 +747,11 @@ export abstract class ContinuousAxis extends Axis {
     }
 }
 
+/**
+ * 선형 연속 축.
+ * <br>
+ * 값 사아의 비율과 축 길이 비율이 항상 동일한 축.
+ */
 export class LinearAxis extends ContinuousAxis {
 
     //-------------------------------------------------------------------------
@@ -742,14 +760,6 @@ export class LinearAxis extends ContinuousAxis {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * tick 개수를 맞춰야 하는 대상 axis.
-     * <br>
-     * base의 strictMin, strictMax가 설정되지 않아야 한다.
-     * base의 startFit, endFilt의 {@link AxisFit.TICK}으로 설정되어야 한다.
-     */
-    tickBase: number | string
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

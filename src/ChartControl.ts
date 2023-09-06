@@ -8,8 +8,6 @@
 
 import { RcControl } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
-import { ImageElement } from "./common/impl/ImageElement";
-import { RectElement } from "./common/impl/RectElement";
 import { Chart, IChartEventListener } from "./model/Chart";
 import { ChartItem } from "./model/ChartItem";
 import { Series } from "./model/Series";

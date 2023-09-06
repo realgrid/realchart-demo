@@ -18,12 +18,9 @@ yarn-lock.json
 temp
 etc
 web/realchart/docs/
-web/realchart/lib/realreport-chart*.*
-!web/realchart/lib/realreport-chart-lic.js
+web/realchart/lib/realchart*.*
+!web/realchart/lib/realchart-lic.js
 /test-results/
-/playwright-report/
-/playwright/.cache/
-.playwright
 /e2e/src/js/**
 /e2e/src/styles/**
 

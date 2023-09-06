@@ -1018,6 +1018,10 @@ export class RcElement extends RcObject {
         return this;
     }
 
+    setCursor(cursor: string): void {
+        this._dom.style.cursor = cursor;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

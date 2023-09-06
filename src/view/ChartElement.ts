@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ClipElement, ClipPathElement, RcElement } from "../common/RcControl";
+import { RcElement } from "../common/RcControl";
 import { IRect } from "../common/Rectangle";
 import { Sides } from "../common/Sides";
 import { ISize } from "../common/Size";
