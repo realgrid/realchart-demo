@@ -1,3 +1,8 @@
+/**
+ * @sample
+ * 
+ * Bar Series 기본 예제
+ */
 const config = {
     title: "Bar Series",
     options: {
