@@ -13292,7 +13292,7 @@
 
     class Globals {
         static getVersion() {
-            return '0.9.2';
+            return '0.9.3';
         }
         static setDebugging(debug) {
             RcElement.DEBUGGING = debug;

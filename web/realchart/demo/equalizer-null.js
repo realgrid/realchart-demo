@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     options: {},
     title: "Equalizer Null Point",

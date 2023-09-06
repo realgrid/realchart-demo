@@ -1,3 +1,8 @@
+/**
+ * @demo
+ * 
+ * y값이 null인 포인터를 건너 뛰고 표시한다.
+ */
 const config = {
     title: "AreaRange Null Point",
     options: {

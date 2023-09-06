@@ -1,3 +1,8 @@
+/**
+ * @demo
+ * 
+ * y축 중간을 생략한다.
+ */
 const config = {
     options: {
         animatable: false

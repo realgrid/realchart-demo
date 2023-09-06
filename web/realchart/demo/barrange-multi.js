@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     title: "Multiple Bar Ranges",
     type: 'barrange',

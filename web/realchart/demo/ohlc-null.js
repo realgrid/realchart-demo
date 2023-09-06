@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     options: {},
     title: "Ohlc - Null Point",

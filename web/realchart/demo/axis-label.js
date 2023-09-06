@@ -1,3 +1,8 @@
+/**
+ * @demo
+ * 
+ * 축의 tick 위치증에 표시되는 text 라벨에 관련된 속성들을 알아본다.
+ */
 const config = {
     options: {
         animatable: false

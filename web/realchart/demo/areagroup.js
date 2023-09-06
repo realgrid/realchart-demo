@@ -1,3 +1,8 @@
+/**
+ * @demo
+ * 
+ * Area 그룹 기본 예제.
+ */
 const config = {
     type: "area",
     options: {},

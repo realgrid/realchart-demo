@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     type: 'scatter',
     options: {},

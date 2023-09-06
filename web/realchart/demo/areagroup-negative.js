@@ -1,3 +1,8 @@
+/**
+ * @demo
+ * 
+ * Area group의 음수 영역을 구분해서 표시한다.
+ */
 const config = {
     type: 'area',
     title: "Area Group - Negative",

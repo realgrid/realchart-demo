@@ -1,3 +1,8 @@
+/**
+ * @demo
+ * 
+ * Area 시리즈 기본 예제.
+ */
 const config = {
     title: "Area Series",
     options: {},
