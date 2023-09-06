@@ -67,6 +67,8 @@ export class HeatmapSeriesPoint extends DataPoint {
  * 1. color-axis가 연결되면 거기에서 색을 가져온다.
  * 2. series의 minColor, maxColor 사이의 색으로 가져온다.
  * 3. series의 기본 색상과 흰색 사이의 색으로 가져온다.
+ * 
+ * @config chart.series[type=heatmap]
  */
 export class HeatmapSeries extends Series {
 

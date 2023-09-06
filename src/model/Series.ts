@@ -293,6 +293,9 @@ export interface ISeries extends IPlottingItem {
     isVisible(p: DataPoint): boolean;
 }
 
+/**
+ * @config chart.series
+ */
 export abstract class Series extends ChartItem implements ISeries, ILegendSource {
 
     //-------------------------------------------------------------------------
@@ -356,54 +359,79 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     abstract _type(): string; // for debugging, ...
 
     // group: string;
+    /**
+     * @config
+     */
     zOrder = 0;
+    /**
+     * @config
+     */
     xAxis: string | number;
+    /**
+     * @config
+     */
     yAxis: string | number;
     /**
      * undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'.
+     * 
+     * @config
      */
     xField: string | number;
     /**
      * undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'.
+     * 
+     * @config
      */
     yField: string | number;
     /**
      * undefined이면, data point의 값이 객체일 때 'color'.
+     * 
+     * @config
      */
     colorField: string;
     /**
      * undefined이면 "data".
+     * 
+     * @config
      */
     dataProp: string;
     /**
      * 시리즈 데이타에 x축 값이 설정되지 않은 경우, 첫 포인트의 자동 지정 x값.
-     * <br>
      * 이 속성이 지징되지 않은 경우 {@link Chart.xStart}가 적용된다.
+     * 
+     * @config
      */
     xStart: number;
     /**
      * 시리즈 데이타에 x축 값이 설정되지 않은 경우, 포인트 간의 간격 크기.
      * time 축일 때, 정수 값 대신 시간 단위로 지정할 수 있다.
-     * <br>
      * 이 속성이 지정되지 않으면 {@link Chart.xStep}이 적용된다.
+     * 
+     * @config
      */
     xStep: number | string;
     /**
      * 데이터 포인트 기본 색.
+     * 
+     * @config
      */
     color: string;
     /**
      * 데이터 포인트별 색들을 지정한다.
-     * <br>
      * false로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.
      * true로 지정하면 기본 색들로 표시된다.
      * 색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.
      * undefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.
+     * 
+     * @config
      */
     pointColors: boolean | string[];
 
     /**
      * body 영역을 벗어난 data point view는 잘라낸다.
+     * 
+     * @default false
+     * @config
      */
     clipped = false;
 
@@ -844,7 +872,7 @@ export class PlottingItemCollection  {
     // internal members
     //-------------------------------------------------------------------------
     private $_loadItem(chart: IChart, src: any, index: number): IPlottingItem {
-        let cls = src.series && (chart._getGroupType(src.type) || chart._getGroupType(chart.type));
+        let cls = isArray(src.children || src.series) && (chart._getGroupType(src.type) || chart._getGroupType(chart.type));
 
         if (cls) {
             const g = new cls(chart);
@@ -908,6 +936,8 @@ export abstract class WidgetSeries extends Series {
  * 직교 좌표계가 표시된 경우, plot area 영역을 기준으로 size, centerX, centerY가 적용된다.
  * <br>
  * TODO: 현재 PieSeris만 계승하고 있다. 추후 PieSeries에 합칠 것.
+ * 
+ * @config chart.series
  */
 export abstract class RadialSeries extends WidgetSeries {
 
@@ -919,13 +949,24 @@ export abstract class RadialSeries extends WidgetSeries {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     startAngle = 0;
+    /**
+     * @config
+     */
     centerX = 0;
+    /**
+     * @config
+     */
     centerY = 0;
     /**
      * 원형 플롯 영역의 크기.
      * <br>
      * 픽셀 크기나 차지할 수 있는 전체 크기에 대한 상대적 크기로 지정할 수 있다.
+     * 
+     * @config
      */
     size: RtPercentSize;
 
@@ -946,6 +987,9 @@ export abstract class RadialSeries extends WidgetSeries {
     }
 }
 
+/**
+ * @config chart.series
+ */
 export abstract class ClusterableSeries extends Series implements IClusterable {
 
     //-------------------------------------------------------------------------
@@ -964,8 +1008,9 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
     //-------------------------------------------------------------------------
     /**
      * 시리즈가 group에 포함되지 않은 경우, 축 단위 너비에서 이 시리즈가 차지하는 상대적 너비.
-     * <br>
      * 그룹에 포함되면 이 속성은 무시된다.
+     * 
+     * @config
      */
     groupWidth = 1; // _clusterWidth 계산에 사용된다. TODO: clusterWidth로 변경해야 하나?
     // /**
@@ -981,6 +1026,8 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
      * 포인트 표시 영역 내에서 이 시리즈의 포인트가 차지하는 영역의 상대 크기.
      * <br>
      * 예를 들어 이 시리즈의 속성값이 1이고 다른 시리즈의 값이 2이면 다른 시리즈의 data point가 두 배 두껍게 표시된다.
+     * 
+     * @config
      */
     pointWidth = 1;
     /**
@@ -989,7 +1036,8 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
      * point가 차지할 원래 크기에 대한 상대 값으로서,
      * 0 ~ 1 사이의 비율 값으로 지정한다.
      * 
-     * @default 한 카테고리에 cluster 가능한 시리즈가 하나만 표시되면 0.25, group에 포함된 경우 0.1, 여러 시리즈와 같이 표시되면 0.2.
+     * @default undefined 한 카테고리에 cluster 가능한 시리즈가 하나만 표시되면 0.25, group에 포함된 경우 0.1, 여러 시리즈와 같이 표시되면 0.2.
+     * @config
      */
     pointPadding: number;
 
@@ -1056,6 +1104,9 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
     }
 }
 
+/**
+ * @config chart.series
+ */
 export abstract class BasedSeries extends ClusterableSeries {
 
     //-------------------------------------------------------------------------
@@ -1070,10 +1121,14 @@ export abstract class BasedSeries extends ClusterableSeries {
      * 위/아래 구분의 기준이 되는 값.
      * <br>
      * 숫자가 아닌 값으로 지정하면 0으로 간주한다.
+     * 
+     * @config
      */
     baseValue = 0;
     /**
      * null인 y값을 {@link baseValue}로 간주한다.
+     * 
+     * @config
      */
     nullAsBase = false;
 
@@ -1098,6 +1153,9 @@ export abstract class BasedSeries extends ClusterableSeries {
     }
 }
 
+/**
+ * @config chart.series
+ */
 export abstract class RangedSeries extends ClusterableSeries {
 
     //-------------------------------------------------------------------------
@@ -1156,6 +1214,9 @@ export enum SeriesGroupLayout {
     FILL = 'fill',
 }
 
+/**
+ * @config chart.series
+ */
 export abstract class SeriesGroup<T extends Series> extends ChartItem implements ISeriesGroup {
 
     //-------------------------------------------------------------------------
@@ -1166,6 +1227,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
      * <br>
      * 
      * @default 100
+     * @config
      */
     layoutMax = 100;
 
@@ -1182,8 +1244,17 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     // ISeriesGroup
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     layout = SeriesGroupLayout.DEFAULT;
+    /**
+     * @config
+     */
     xAxis: string | number;
+    /**
+     * @config
+     */
     yAxis: string | number;
 
     get series(): T[] {
@@ -1289,7 +1360,8 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     protected _doLoadProp(prop: string, value: any): boolean {
-        if (prop === 'series') {
+        // TODO: children으로 통일한다.
+        if (prop === 'children' || prop === 'series') {
             this.$_loadSeries(this.chart, value);
             return true;
         }
@@ -1466,6 +1538,9 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 }
 
+/**
+ * @config chart.series
+ */
 export abstract class ConstraintSeriesGroup<T extends Series> extends SeriesGroup<T> {
 
     //-------------------------------------------------------------------------
@@ -1488,6 +1563,9 @@ export abstract class ConstraintSeriesGroup<T extends Series> extends SeriesGrou
     protected abstract _doConstraintYValues(series: Series[]): number[];
 }
 
+/**
+ * @config chart.series
+ */
 export abstract class ClustrableSeriesGroup<T extends Series> extends SeriesGroup<T> {
 
     //-------------------------------------------------------------------------

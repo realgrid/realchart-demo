@@ -15,6 +15,8 @@ import { LineSeries } from "./LineSeries";
  * 포함된 시리즈들의 y값들을 비교해서 순위로 시리즈를 표시한다.
  * <br>
  * 포함된 시리즈들의 x값이 동일한 data point y값들을 비교해서 순위를 yValue로 재설정한다.
+ * 
+ * @config chart.series[type=bump]
  */
 export class BumpSeriesGroup extends ConstraintSeriesGroup<LineSeries> {
 

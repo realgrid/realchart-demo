@@ -51,6 +51,9 @@ export class LineSeriesMarker extends SeriesMarker {
     maxVisible = MarerVisibility.DEFAULT;
 }
 
+/**
+ * @config chart.series
+ */
 export abstract class LineSeriesBase extends Series {
 
     //-------------------------------------------------------------------------
@@ -66,6 +69,8 @@ export abstract class LineSeriesBase extends Series {
     //-------------------------------------------------------------------------
     /**
      * null인 y값을 {@link baseValue}로 간주한다.
+     * 
+     * @config
      */
     nullAsBase = false;
 
@@ -87,6 +92,9 @@ export enum LineStepDirection {
     BACKWARD = 'backward'
 }
 
+/**
+ * @config chart.series[type=line]
+ */
 export class LineSeries extends LineSeriesBase {
 
     //-------------------------------------------------------------------------
@@ -112,7 +120,6 @@ export class LineSeries extends LineSeriesBase {
      */
     belowStyle: SVGStyleOrClass;
 
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -136,6 +143,9 @@ export class AreaSeriesPoint extends LineSeriesPoint {
     yLow: number;
 }
 
+/**
+ * @config chart.series[type=area]
+ */
 export class AreaSeries extends LineSeries {
 
     //-------------------------------------------------------------------------
@@ -219,6 +229,9 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
     }
 }
 
+/**
+ * @config chart.series[type=arearange]
+ */
 export class AreaRangeSeries extends LineSeriesBase {
 
     //-------------------------------------------------------------------------
@@ -259,6 +272,9 @@ export class AreaRangeSeries extends LineSeriesBase {
     }
 }
 
+/**
+ * @config chart.series[type=linegroup]
+ */
 export class LineSeriesGroup extends SeriesGroup<LineSeries> {
 
     //-------------------------------------------------------------------------
@@ -282,6 +298,9 @@ export class LineSeriesGroup extends SeriesGroup<LineSeries> {
     }
 }
 
+/**
+ * @config chart.series[type=areagroup]
+ */
 export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
 
     //-------------------------------------------------------------------------

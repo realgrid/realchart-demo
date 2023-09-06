@@ -34,7 +34,8 @@ export class ParetoSeriesPoint extends DataPoint {
 
 /**
  * 참조하는 원본 시리즈의 누적 비율을 표시한다.
- * <br>
+ * 
+ * @config chart.series[type=pareto]
  */
 export class ParetoSeries extends LineSeriesBase {
 

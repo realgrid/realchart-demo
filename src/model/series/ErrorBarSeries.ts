@@ -68,6 +68,9 @@ export class ErrorBarSeriesPoint extends DataPoint {
     }
 }
 
+/**
+ * @config chart.series[type=errorbar]
+ */
 export class ErrorBarSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------

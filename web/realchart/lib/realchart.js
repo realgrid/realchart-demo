@@ -4260,7 +4260,7 @@
             this._visibles.forEach(item => item.prepareAfter());
         }
         $_loadItem(chart, src, index) {
-            let cls = src.series && (chart._getGroupType(src.type) || chart._getGroupType(chart.type));
+            let cls = isArray(src.children || src.series) && (chart._getGroupType(src.type) || chart._getGroupType(chart.type));
             if (cls) {
                 const g = new cls(chart);
                 g.load(src);
@@ -4483,7 +4483,7 @@
             return pts;
         }
         _doLoadProp(prop, value) {
-            if (prop === 'series') {
+            if (prop === 'children' || prop === 'series') {
                 this.$_loadSeries(this.chart, value);
                 return true;
             }
@@ -4940,8 +4940,6 @@
             this.$_findBaseAxis();
         }
         _doBuildTicks(calcedMin, calcedMax, length) {
-            if (this.name === 'baxis')
-                debugger;
             const tick = this.tick;
             let { min, max } = this._adjustMinMax(this._calcedMin = calcedMin, this._calcedMax = calcedMax);
             let base = this._base;
@@ -7063,6 +7061,10 @@
         'line': LineSeriesGroup,
         'area': AreaSeriesGroup,
         'pie': PieSeriesGroup,
+        'bargroup': BarSeriesGroup,
+        'linegroup': LineSeriesGroup,
+        'areagroup': AreaSeriesGroup,
+        'piegroup': PieSeriesGroup,
         'bump': BumpSeriesGroup
     };
     const series_types$1 = {

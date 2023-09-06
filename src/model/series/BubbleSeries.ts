@@ -73,6 +73,9 @@ export enum BubbleSizeMode {
     AREA = 'area'
 }
 
+/**
+ * @config chart.series[type=bubble]
+ */
 export class BubbleSeries extends Series {
 
     //-------------------------------------------------------------------------

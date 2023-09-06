@@ -30,6 +30,8 @@ export class LollipopSeriesPoint extends DataPoint {
 
 /**
  * Bar 시리즈 변종.
+ * 
+ * @config chart.series[type=lollipop]
  */
 export class LollipopSeries extends BasedSeries {
 

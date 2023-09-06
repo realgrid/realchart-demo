@@ -27,6 +27,7 @@ export class BellCurveSeriesPoint extends AreaSeriesPoint {
 }
 
 /**
+ * @config chart.series[type=bellcurve]
  */
 export class BellCurveSeries extends AreaSeries {
 
@@ -41,17 +42,26 @@ export class BellCurveSeries extends AreaSeries {
     //-------------------------------------------------------------------------
     /**
      * 이 시리즈 data point들을 구성할 수 있는 데이터를 포함한 원본 시리즈.
-     * <br>
      * 시리즈 이름이나 index로 지정한다.
+     * 
+     * @config
      */
     source: string | number;
+    /**
+     * @default 3
+     * @config
+     */
     sigmas = 3;
+    /**
+     * @default 3
+     * @config
+     */
     pointsInSigma = 5;
     /**
      * true면 spline 곡선으로 표시한다.
-     * <br>
      * 
      * @default false
+     * @config
      */
     curved = false;
 

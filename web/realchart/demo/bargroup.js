@@ -13,7 +13,7 @@ const config = {
     },
     series: [{
         // layout: 'default',
-        series: [{
+        children: [{
             name: 'column1',
             pointLabel: {
                 visible: true,

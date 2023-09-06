@@ -19,6 +19,9 @@ export class BarSeriesPoint extends DataPoint {
     // borderRaidus: number;
 }
 
+/**
+ * @config chart.series[type=bar]
+ */
 export class BarSeries extends BasedSeries {
 
     //-------------------------------------------------------------------------
@@ -55,6 +58,9 @@ export class BarSeries extends BasedSeries {
     }
 }
 
+/**
+ * @config chart.series[type=bargroup]
+ */
 export class BarSeriesGroup extends ClustrableSeriesGroup<BarSeries> implements IClusterable {
 
     //-------------------------------------------------------------------------
@@ -63,6 +69,9 @@ export class BarSeriesGroup extends ClustrableSeriesGroup<BarSeries> implements 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     baseValue = 0;
 
     //-------------------------------------------------------------------------

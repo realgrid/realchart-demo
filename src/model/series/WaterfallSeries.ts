@@ -34,6 +34,10 @@ export class WaterfallSeriesPoint extends DataPoint {
     }
 }
 
+/**
+ * 
+ * @config chart.series[type=waterfall]
+ */
 export class WaterfallSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------

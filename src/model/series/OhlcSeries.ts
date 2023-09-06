@@ -31,6 +31,10 @@ export class OhlcSeriesPoint extends CandlestickSeriesPoint {
     //-------------------------------------------------------------------------
 }
 
+/**
+ * 
+ * @config chart.series[type=ohlc]
+ */
 export class OhlcSeries extends CandlestickSeries {
 
     //-------------------------------------------------------------------------

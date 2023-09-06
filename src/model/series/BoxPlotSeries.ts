@@ -94,15 +94,29 @@ export class BoxPlotSeriesPoint extends DataPoint {
 /**
  * https://en.wikipedia.org/wiki/Box_plot
  * https://danbi-ncsoft.github.io/study/2018/07/23/study_eda2.html
+ * 
+ * @config chart.series[type=boxplot]
  */
 export class BoxPlotSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     minField: string;
+    /**
+     * @config
+     */
     lowField: string;
+    /**
+     * @config
+     */
     midField: string;
+    /**
+     * @config
+     */
     highField: string;
 
     //-------------------------------------------------------------------------

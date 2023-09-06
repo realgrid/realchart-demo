@@ -113,6 +113,8 @@ export enum TreemapAlgorithm {
  * 4. 초기 공간을 재귀적으로 나누어 가면서 구성한다.
  * 
  * // TODO: grouping된 data 설정 가능하도록 한다. data[{data:[]}, {data:[]}]
+ * 
+ * @config chart.series[type=treemap]
  */
 export class TreemapSeries extends Series {
 

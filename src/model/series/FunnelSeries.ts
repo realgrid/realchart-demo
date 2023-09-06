@@ -20,6 +20,9 @@ export class FunnelSeriesPoint extends DataPoint {
     height: number;
 }
 
+/**
+ * @config chart.series[type=funnel]
+ */
 export class FunnelSeries extends WidgetSeries {
 
     //-------------------------------------------------------------------------

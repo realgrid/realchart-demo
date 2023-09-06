@@ -83,6 +83,8 @@ export class DumbbellSeriesPoint extends DataPoint {
 
 /**
  * BarRange 시리즈 변종.
+ * 
+ * @config chart.series[type=dumbbell]
  */
 export class DumbbellSeries extends ClusterableSeries {
 

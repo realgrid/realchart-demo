@@ -76,6 +76,9 @@ export class CandlestickSeriesPoint extends DataPoint {
     }
 }
 
+/**
+ * @config chart.series[type=candlestick]
+ */
 export class CandlestickSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------

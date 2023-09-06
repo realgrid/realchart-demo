@@ -82,6 +82,8 @@ export enum ArrowHead {
 }
 
 /**
+ * 
+ * @config chart.series[type=vector]
  */
 export class VectorSeries extends Series {
 

@@ -77,10 +77,15 @@ export interface IChart {
 }
 
 const group_types = {
+    // TODO: '...group'으로 통일한다.
     'bar': BarSeriesGroup,
     'line': LineSeriesGroup,
     'area': AreaSeriesGroup,
     'pie': PieSeriesGroup,
+    'bargroup': BarSeriesGroup,
+    'linegroup': LineSeriesGroup,
+    'areagroup': AreaSeriesGroup,
+    'piegroup': PieSeriesGroup,
     'bump': BumpSeriesGroup
 };
 
@@ -125,33 +130,46 @@ export class Credits extends ChartItem {
     //-------------------------------------------------------------------------
     /**
      * 표시할 문자열.
+     * 
+     * @config options.credits.text
      */
     text = 'RealChart v1.0';
     /**
      * 이 속성을 지정하면 click시 해당 url로 이동한다.
+     * 
+     * @config options.credits.url
      */
     url = 'http://realgrid.com';
     /**
      * true이면 {@link verticalAlign}이 'top', 'bottom'일 때도,
      * 별도의 영역을 차지하지 않고 chart view위에 표시된다.
-     * <br>
+     * 
      * @default false
+     * @config options.credits.floating
      */
     floating = false;
+    /**
+     * @default Align.RIGHT
+     * @config options.credits.align
+     */
     align = Align.RIGHT;
+    /**
+     * @default VerticalAlign.BOTTOM
+     * @config options.credits.verticalAlign
+     */
     verticalAlign = VerticalAlign.BOTTOM;
     /**
      * {@link align}으로 지정된 수평 위치에서, 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.
-     * <br>
      * 
      * @default 10
+     * @config options.credits.offsetX
      */
     offsetX = 10
     /**
      * {@link verticalAlign}으로 지정된 수직 위치에서, 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.
-     * <br>
      * 
      * @default 5
+     * @config options.credits.offsetY
      */
     offsetY = 5;
 
@@ -167,39 +185,52 @@ export class ChartOptions extends ChartItem {
     //-------------------------------------------------------------------------
     /**
      * true면 차트가 {@link https://en.wikipedia.org/wiki/Polar_coordinate_system 극좌표계}로 표시된다.
-     * <br>
      * 기본은 {@link https://en.wikipedia.org/wiki/Cartesian_coordinate_system 직교좌표계}이다.
-     * <br>
      * 극좌표계일 때,
      * x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이 있다.
      * 1. x축은 첫번째 축 하나만 사용된다.
      * 2. axis.position 속성은 무시된다.
      * 3. chart, series의 inverted 속성이 무시된다.
      * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
+     * 
+     * @default false
+     * @config options.polar
      */
     polar = false;
     /**
      * false로 지정하면 차트 전체척으로 animation 효과를 실행하지 않는다.
+     * 
+     * @default false
+     * @config options.animatable
      */
     animatable = true;
     /**
      * x값이 설정되지 않은 포인트들의 시작 x값.
      * {@link Series.xStart}의 기본값.
+     * 
+     * @default 0
+     * @config options.xStart
      */
     xStart = 0;
     /**
      * 시리즈 데이타에 x축 값이 설정되지 않은 경우, 포인트 간의 간격 x 크기.
      * {@link Series.xStep}의 기본값.
      * time 축일 때, 정수 값 대신 시간 단위로 지정할 수 있다.
+     * 
+     * @default 1
+     * @config options.xStep
      */
     xStep = 1;
     /**
      * 복수 axis가 표시되는 경우 axis 사이의 간격
-     * <br>
+     * 
      * @default 8 pixels
+     * @config options.axisGap
      */
     axisGap = 8;
-    style: SVGStyleOrClass;
+    /**
+     * 크레딧 모델.
+     */
     credits = new Credits(null);
 
     //-------------------------------------------------------------------------
@@ -276,11 +307,11 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     /**
      * 기본 시리즈 type.
-     * <br>
      * {@link Series._type}의 기본값.
      * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
      * 
      * @default 'bar'
+     * @config chart.type
      */
     type = 'bar';
 
@@ -289,6 +320,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * <br>
      * 기본값은 undefined로 첫번째 series의 종류에 따라 결정된다.
      * 즉, bar 시리즈 계통이면 true가 된다.
+     *
+     * @config chart.inverted
      */
     inverted: boolean;
 

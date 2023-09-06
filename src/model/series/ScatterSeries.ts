@@ -26,6 +26,10 @@ export class ScatterSeriesMarker extends SeriesMarker {
     radius = 5;
 }
 
+/**
+ * 
+ * @config chart.series[type=scatter]
+ */
 export class ScatterSeries extends Series {
 
     //-------------------------------------------------------------------------
