@@ -123,6 +123,9 @@ const axis_types = {
     'log': LogAxis
 }
 
+/**
+ * @config chart.options
+ */
 export class Credits extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -131,13 +134,13 @@ export class Credits extends ChartItem {
     /**
      * 표시할 문자열.
      * 
-     * @config options.credits.text
+     * @config
      */
     text = 'RealChart v1.0';
     /**
      * 이 속성을 지정하면 click시 해당 url로 이동한다.
      * 
-     * @config options.credits.url
+     * @config
      */
     url = 'http://realgrid.com';
     /**
@@ -145,31 +148,31 @@ export class Credits extends ChartItem {
      * 별도의 영역을 차지하지 않고 chart view위에 표시된다.
      * 
      * @default false
-     * @config options.credits.floating
+     * @config
      */
     floating = false;
     /**
      * @default Align.RIGHT
-     * @config options.credits.align
+     * @config
      */
     align = Align.RIGHT;
     /**
      * @default VerticalAlign.BOTTOM
-     * @config options.credits.verticalAlign
+     * @config
      */
     verticalAlign = VerticalAlign.BOTTOM;
     /**
      * {@link align}으로 지정된 수평 위치에서, 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.
      * 
      * @default 10
-     * @config options.credits.offsetX
+     * @config
      */
     offsetX = 10
     /**
      * {@link verticalAlign}으로 지정된 수직 위치에서, 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.
      * 
      * @default 5
-     * @config options.credits.offsetY
+     * @config
      */
     offsetY = 5;
 
@@ -178,6 +181,9 @@ export class Credits extends ChartItem {
     //-------------------------------------------------------------------------
 }
 
+/**
+ * @config chart.options
+ */
 export class ChartOptions extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -194,14 +200,14 @@ export class ChartOptions extends ChartItem {
      * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
      * 
      * @default false
-     * @config options.polar
+     * @config
      */
     polar = false;
     /**
      * false로 지정하면 차트 전체척으로 animation 효과를 실행하지 않는다.
      * 
      * @default false
-     * @config options.animatable
+     * @config
      */
     animatable = true;
     /**
@@ -209,7 +215,7 @@ export class ChartOptions extends ChartItem {
      * {@link Series.xStart}의 기본값.
      * 
      * @default 0
-     * @config options.xStart
+     * @config
      */
     xStart = 0;
     /**
@@ -218,14 +224,14 @@ export class ChartOptions extends ChartItem {
      * time 축일 때, 정수 값 대신 시간 단위로 지정할 수 있다.
      * 
      * @default 1
-     * @config options.xStep
+     * @config
      */
     xStep = 1;
     /**
      * 복수 axis가 표시되는 경우 axis 사이의 간격
      * 
      * @default 8 pixels
-     * @config options.axisGap
+     * @config
      */
     axisGap = 8;
     /**
@@ -242,6 +248,9 @@ export interface IChartEventListener {
     onVisibleChanged?(chart: Chart, item: ChartItem): void;
 }
 
+/**
+ * @config chart
+ */
 export class Chart extends RcEventProvider<IChartEventListener> implements IChart {
 
     //-------------------------------------------------------------------------
@@ -311,7 +320,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
      * 
      * @default 'bar'
-     * @config chart.type
+     * @config
      */
     type = 'bar';
 
@@ -321,7 +330,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * 기본값은 undefined로 첫번째 series의 종류에 따라 결정된다.
      * 즉, bar 시리즈 계통이면 true가 된다.
      *
-     * @config chart.inverted
+     * @config
      */
     inverted: boolean;
 

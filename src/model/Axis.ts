@@ -78,6 +78,9 @@ export class AxisLine extends AxisItem {
     }
 }
 
+/**
+ * @config axis.title
+ */
 export class AxisTitle extends AxisItem {
 
     //-------------------------------------------------------------------------
@@ -86,7 +89,7 @@ export class AxisTitle extends AxisItem {
     /**
      * 타이틀 텍스트.
      * 
-     * @config axis.title.text
+     * @config
      */
     text: string;
     /**
@@ -94,13 +97,13 @@ export class AxisTitle extends AxisItem {
      * <br>
      * 
      * @default 5 pixels
-     * @config axis.title.gap
+     * @config
      */
     gap = 5;
     /**
      * 타이틀 배경 스타일.
      * 
-     * @config axis.title.backgroundStyle
+     * @config
      */
     backgroundStyle: SVGStyleOrClass;
 
@@ -126,6 +129,8 @@ export class AxisTitle extends AxisItem {
  * visible 기본값이 undefined이다.
  * <br>
  * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
+ * 
+ * @config axis.grid
  */
 export class AxisGrid extends AxisItem {
 
@@ -133,15 +138,15 @@ export class AxisGrid extends AxisItem {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * @config axis.grid.circular
+     * @config
      */
     circular = false;
     /**
-     * @config axis.grid.startVisible
+     * @config
      */
     startVisible = true;
     /**
-     * @config axis.grid.endVisible
+     * @config
      */
     endVisible = true;
 
@@ -169,6 +174,9 @@ export class AxisGrid extends AxisItem {
     //-------------------------------------------------------------------------
 }
 
+/**
+ * @config axis.guide.label
+ */
 export class AxisGuideLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
@@ -187,14 +195,14 @@ export class AxisGuideLabel extends FormattableText {
     /**
      * 수평 정렬.
      * 
-     * @config axis.guide.label.align
+     * @config
      */
     align = Align.LEFT;
 
     /**
      * 수직 정렬.
      * 
-     * @config axis.guide.label.verticalAlign
+     * @config
      */
     verticalAlign = VerticalAlign.TOP;
 
