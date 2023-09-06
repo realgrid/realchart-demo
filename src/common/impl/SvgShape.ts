@@ -19,6 +19,7 @@ export enum Shape {
     SQUARE = 'square',
     TRIANGLE = 'triangle',
     ITRIANGLE = 'itriangle',
+    STAR = 'star',
 }
 
 export const Shapes = Utils.getEnumValues(Shape);
@@ -209,5 +210,27 @@ export class SvgShapes {
             'L', x + w / 2, y + h,
             'Z'
         ];
+    }
+
+    static star(x: number, y: number, w: number, h: number): SizeValue[] {
+        const cx = x + w / 2;
+        const cy = y + h / 2;
+        const rx = w / 2;
+        const ry = h / 2;
+        const rx2 = w / 4;
+        const ry2 = h / 4;
+        const a = Math.PI * 2 / 5;
+        const a2 = a / 2;
+        const path = [];
+        let start = -Math.PI / 2
+
+        path.push('M', cx + rx * Math.cos(start), cy + ry * Math.sin(start));
+        for (let i = 0; i < 5; i++) {
+            path.push('L', cx + rx * Math.cos(start), cy + ry * Math.sin(start));
+            path.push('L', cx + rx2 * Math.cos(start + a2), cy + ry2 * Math.sin(start + a2));
+            start += a;
+        }
+        path.push('Z');
+        return path;
     }
 }

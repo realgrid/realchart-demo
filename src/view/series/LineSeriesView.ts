@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "../../common/Common";
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
@@ -206,8 +207,6 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         if (this._pointContainer.visible = marker.visible) {
             const mpp = this._markersPerPoint();
             const count = points.length;
-            const radius = marker.radius;
-            const shape = series.getShape();
     
             this._markers.prepare(count * mpp, (mv, i) => {
                 const n = i % count;
@@ -219,8 +218,6 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     } else {
                     }
         
-                    p.radius = radius;
-                    p.shape = shape;
                     mv.point = p;
         
                     // mv.className = vis ? '' : 'dlchart-line-marker-hidden';
@@ -239,10 +236,12 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     }
 
     protected _layoutMarker(mv: LineMarkerView, x: number, y: number): void {
-        const color = this.model.color;
+        const series = this.model;
+        const marker = series.marker;
+        const color = series.color;
         const p = mv.point as LineSeriesPoint;
-        const s = p.shape;
-        const sz = p.radius;
+        const s = p.shape || series.getShape();
+        const sz = pickNum(p.radius, marker.radius);
         let path: (string | number)[];
 
         switch (s) {
@@ -251,6 +250,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             case Shape.DIAMOND:
             case Shape.TRIANGLE:
             case Shape.ITRIANGLE:
+            case Shape.STAR:
                 x -= sz;
                 y -= sz;
                 path = SvgShapes[s](0, 0, sz * 2, sz * 2);
@@ -263,7 +263,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         // if (m.visible = this._containsMarker(x, y)) {
             mv.translate(x, y);
             mv.setPath(path);
-            mv.setStyle('stroke', 'gray');
+            // mv.setStyle('stroke', 'white');
+            marker.style && mv.setStyles(marker.style);
             mv.setStyle('fill', color);
         // }
     }

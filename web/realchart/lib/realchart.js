@@ -1492,6 +1492,7 @@
         Shape["SQUARE"] = "square";
         Shape["TRIANGLE"] = "triangle";
         Shape["ITRIANGLE"] = "itriangle";
+        Shape["STAR"] = "star";
     })(Shape || (Shape = {}));
     const Shapes = Utils.getEnumValues(Shape);
     const SECTOR_ERROR = 0.001;
@@ -1610,6 +1611,26 @@
                 'L', x + w / 2, y + h,
                 'Z'
             ];
+        }
+        static star(x, y, w, h) {
+            const cx = x + w / 2;
+            const cy = y + h / 2;
+            const rx = w / 2;
+            const ry = h / 2;
+            const rx2 = w / 4;
+            const ry2 = h / 4;
+            const a = Math.PI * 2 / 5;
+            const a2 = a / 2;
+            const path = [];
+            let start = -Math.PI / 2;
+            path.push('M', cx + rx * Math.cos(start), cy + ry * Math.sin(start));
+            for (let i = 0; i < 5; i++) {
+                path.push('L', cx + rx * Math.cos(start), cy + ry * Math.sin(start));
+                path.push('L', cx + rx2 * Math.cos(start + a2), cy + ry2 * Math.sin(start + a2));
+                start += a;
+            }
+            path.push('Z');
+            return path;
         }
     }
 
@@ -9721,24 +9742,22 @@
             if (this._pointContainer.visible = marker.visible) {
                 const mpp = this._markersPerPoint();
                 const count = points.length;
-                const radius = marker.radius;
-                const shape = series.getShape();
                 this._markers.prepare(count * mpp, (mv, i) => {
                     const n = i % count;
                     const p = points[n];
                     if (!p.isNull) {
-                        p.radius = radius;
-                        p.shape = shape;
                         mv.point = p;
                     }
                 });
             }
         }
         _layoutMarker(mv, x, y) {
-            const color = this.model.color;
+            const series = this.model;
+            const marker = series.marker;
+            const color = series.color;
             const p = mv.point;
-            const s = p.shape;
-            const sz = p.radius;
+            const s = p.shape || series.getShape();
+            const sz = pickNum(p.radius, marker.radius);
             let path;
             switch (s) {
                 case Shape.SQUARE:
@@ -9746,6 +9765,7 @@
                 case Shape.DIAMOND:
                 case Shape.TRIANGLE:
                 case Shape.ITRIANGLE:
+                case Shape.STAR:
                     x -= sz;
                     y -= sz;
                     path = SvgShapes[s](0, 0, sz * 2, sz * 2);
@@ -9756,7 +9776,7 @@
             }
             mv.translate(x, y);
             mv.setPath(path);
-            mv.setStyle('stroke', 'gray');
+            marker.style && mv.setStyles(marker.style);
             mv.setStyle('fill', color);
         }
         _layoutMarkers(pts, width, height) {
