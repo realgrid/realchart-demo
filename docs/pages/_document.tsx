@@ -10,7 +10,6 @@ export default class _Document extends Document {
     return (
       <Html>
         <Head>
-          <title>RealChart</title>
           <link
             rel=" shortcut icon"
             href="/realchart-logo.png"
