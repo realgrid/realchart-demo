@@ -5,9 +5,15 @@ const config: DocsThemeConfig = {
   logo: (
     <Logo />
   ),
-  // project: {
-  //   link: 'https://github.com/shuding/nextra-docs-template',
-  // },
+  editLink: {
+    component: null,
+  },
+  feedback: {
+    content: null,
+  },
+  project: {
+    link: 'https://github.com/realgrid/realchart-examples',
+  },
   // chat: {
   //   link: 'https://discord.com',
   // },
