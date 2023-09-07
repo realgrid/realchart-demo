@@ -1,7 +1,5 @@
 const config = {
-  options: {
-    // animatable: false
-  },
+  options: {},
   title: "BoxPlot",
   xAxis: {
     categories: ['쓰리엠', '아디다스', '디즈니', 'Amazon', '이마트']

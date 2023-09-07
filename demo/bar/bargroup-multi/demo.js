@@ -11,11 +11,8 @@ const config = {
   },
   series: [{
     groupPadding: 0.1,
-    // layout: 'overlap',
-    // layout: 'stack',
     series: [{
       name: 'column1',
-      // pointWidth: '100%',
       data: [11, 22, 15, 9, 13, 27]
     }, {
       name: 'column2',
@@ -26,7 +23,6 @@ const config = {
     }]
   }, {
     groupPadding: 0.1,
-    // layout: 'overlap',
     layout: 'stack',
     series: [{
       group: 1,

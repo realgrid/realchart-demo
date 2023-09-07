@@ -13,8 +13,6 @@ const config = {
   series: {
     type: 'funnel',
     reversed: true,
-    // neckWidth: 0,
-    // neckHeight: 0,
     pointLabel: {
       visible: true,
       style: {

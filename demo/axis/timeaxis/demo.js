@@ -9,24 +9,6 @@ const config = {
     crosshair: true,
     padding: 0
   },
-  // yAxis: {
-  //     title: 'Temparature'
-  // },
-  // series: {
-  //     type: 'area',
-  //     marker: false,
-  //     data: range_data
-  // },
-  // yAxis: {
-  //     title: 'Exchange Rate',
-  //     minValue: 0.6
-  // },
-  // series: {
-  //     type: 'area',
-  //     marker: false,
-  //     data: usdeur_data,
-  //     baseValue: null
-  // },
   yAxis: {
     title: 'Hestavollane'
   },

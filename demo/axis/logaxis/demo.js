@@ -4,8 +4,6 @@ const config = {
   },
   title: "Log Axis",
   xAxis: {
-    // type: 'category',
-    // type: 'linear'
     type: 'log'
   },
   yAxis: {

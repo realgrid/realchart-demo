@@ -14,10 +14,7 @@ const config = {
   },
   yAxis: {
     title: "Vertical 수직축 Axis"
-    // reversed: true,
-    // baseValue: -1
   },
-
   series: [{
     name: 'column1',
     pointLabel: {
@@ -25,7 +22,6 @@ const config = {
       position: 'inside',
       effect: 'outline'
     },
-    // pointWidth: '100%',
     data: [11, 22, 15, 9, 13, 27]
   }, {
     name: 'line1',

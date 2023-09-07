@@ -1,7 +1,5 @@
 const config = {
-  options: {
-    // animatable: false
-  },
+  options: {},
   title: {
     text: "Average Monthly Weather Data for Tokyo",
     align: 'left',

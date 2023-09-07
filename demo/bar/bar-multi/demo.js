@@ -12,7 +12,6 @@ const config = {
   series: [{
     name: 'column1',
     pointLabel: true,
-    // pointWidth: '100%',
     data: [11, 22, 15, 9, 13, 27]
   }, {
     name: 'column2',

@@ -6,9 +6,7 @@ const config = {
   xAxis: {
     name: 'baxis',
     title: 'X Axis'
-    // startFit: 'tick'
   },
-
   yAxis: {
     title: 'Y Axis'
   },

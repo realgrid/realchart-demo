@@ -1,7 +1,5 @@
 const config = {
-  options: {
-    // animatable: false
-  },
+  options: {},
   title: "Waterfall Series",
   xAxis: {
     title: "일일 Daily fat",
@@ -35,9 +33,6 @@ const config = {
     }, {
       name: 'Variable Costs',
       y: -233000
-      // }, {
-      //     name: 'Positive Balance2',
-      //     isSum: true,
     }, {
       name: 'Balance',
       isSum: true

@@ -1,8 +1,6 @@
 const config = {
   title: "Funnel Series",
-  options: {
-    // animatable: false
-  },
+  options: {},
   legend: {
     position: 'right',
     layout: 'vertical',
@@ -15,9 +13,6 @@ const config = {
   yAxis: {},
   series: {
     type: 'funnel',
-    // reversed: true,
-    // neckWidth: 0,
-    // neckHeight: 0,
     pointLabel: {
       visible: true,
       style: {

@@ -1,8 +1,6 @@
 const config = {
   title: "Pareto Series",
-  options: {
-    // animatable: false
-  },
+  options: {},
   xAxis: {
     title: 'X Axis'
   },

@@ -1,7 +1,5 @@
 const config = {
-  options: {
-    // animatable: false
-  },
+  options: {},
   title: "AreaRange & Line",
   xAxis: {
     type: 'time'

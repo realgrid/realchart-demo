@@ -1,7 +1,5 @@
 const config = {
-  options: {
-    // animatable: false
-  },
+  options: {},
   title: "Histogram Series",
   xAxis: {},
   yAxis: {},

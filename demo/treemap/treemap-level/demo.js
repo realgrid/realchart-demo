@@ -4,11 +4,7 @@ const config = {
   yAxis: {},
   series: {
     type: 'treemap',
-    // startDir: 'vertical',
     algorithm: 'squarify',
-    // algorithm: 'strip',
-    // algorithm: 'sliceDice',
-    // algorithm: 'slice',
     pointLabel: {
       visible: true,
       text: '${x}',

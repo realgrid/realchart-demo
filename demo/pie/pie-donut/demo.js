@@ -16,9 +16,7 @@ const config = {
     pointLabel: {
       visible: true,
       effect: 'outline',
-      style: {
-        // fill: '#eee'
-      }
+      style: {}
     },
     data: [{
       name: 'moon',
@@ -43,12 +41,7 @@ const config = {
     }, {
       name: 'asia',
       y: 29
-    }
-    // 23,
-    // 7,
-    // 17,
-    // 13
-    ]
+    }]
   }
 };
 const chart = RealChart.createChart(document, 'realchart', config);

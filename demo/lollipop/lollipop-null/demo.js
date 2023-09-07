@@ -12,22 +12,12 @@ const config = {
     type: 'lollipop',
     pointLabel: {
       visible: true,
-      // offset: 10,
-      // text: '<b style="fill:red">${x}</b>',
-      // effect: 'outline',// 'background',
       style: {
         fill: 'black'
       }
-      // backgroundStyle: {
-      //     fill: '#004',
-      //     padding: '5px'
-      // }
     },
-
     data: [['home', 7], ['sky', null], ['def', 9], ['소홍', 10], ['지리산', 14.3], ['zzz', 13], ['낙동강', 12.5]],
-    style: {
-      // fill: 'yellow'
-    }
+    style: {}
   }
 };
 const chart = RealChart.createChart(document, 'realchart', config);

@@ -1,7 +1,5 @@
 const config = {
-  options: {
-    // animatable: false
-  },
+  options: {},
   title: "Waterfall Null Point",
   xAxis: {
     title: "일일 Daily fat",
@@ -23,7 +21,7 @@ const config = {
       y: 120000
     }, {
       name: 'Product Revenue',
-      y: null //569000
+      y: null
     }, {
       name: 'Service Revenue',
       y: 231000
@@ -36,9 +34,6 @@ const config = {
     }, {
       name: 'Variable Costs',
       y: -233000
-      // }, {
-      //     name: 'Positive Balance2',
-      //     isSum: true,
     }, {
       name: 'Balance',
       isSum: true

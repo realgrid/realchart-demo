@@ -1,8 +1,6 @@
 const config = {
   title: "Candlestick",
-  options: {
-    // animatable: false,
-  },
+  options: {},
   xAxis: {
     type: 'category'
   },
