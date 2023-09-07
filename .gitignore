@@ -22,3 +22,5 @@ web/realchart/lib/realchart*.*
 /test-results/
 /e2e/src/js/**
 /e2e/src/styles/**
+
+www

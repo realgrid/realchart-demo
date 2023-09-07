@@ -122,6 +122,10 @@ const rollup_pub_config = {
         format: 'umd',
         name: namespace,
         file: './web/realchart/lib/realchart.js'
+    },{
+        format: 'umd',
+        name: namespace,
+        file: './www/realchart/lib/realchart.js'
     }],
     plugins: [
         modify({
@@ -138,7 +142,8 @@ const rollup_pub_config = {
         copy({
             hook: 'writeBundle',
             targets: [
-                { src: './web/realchart/lib/realchart.js', dest: `./`, rename: `${filename}.min.js` },
+                { src: './web/realchart/lib/realchart.js', dest: `./web/realchart/lib`, rename: `${filename}.min.js` },
+                { src: './web/realchart/styles/realchart-style.css', dest: `../www/realchart/styles`, rename: `${filename}.css` },
                 // { src: './web/', dest: './', rename: 'www' }
             ],
             flatten: false
