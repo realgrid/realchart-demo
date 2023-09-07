@@ -182,8 +182,12 @@ export class Utils {
     }
 
     static checkEnumValue(type: any, value: any, def: any): any {
-        const vals = Object.keys(type);
-        return vals.indexOf(value) >= 0 ? value : def;
+        const keys = Object.keys(type);
+
+        for (let i = keys.length - 1; i >= 0; i--) {
+            if (type[keys[i]] === value) return value;
+        }
+        return def;
     }
 
     static compareText(s1: string, s2: string, ignoreCase = false): number {

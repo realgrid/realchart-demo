@@ -747,8 +747,12 @@
             return Object.keys(type).map(key => type[key]);
         }
         static checkEnumValue(type, value, def) {
-            const vals = Object.keys(type);
-            return vals.indexOf(value) >= 0 ? value : def;
+            const keys = Object.keys(type);
+            for (let i = keys.length - 1; i >= 0; i--) {
+                if (type[keys[i]] === value)
+                    return value;
+            }
+            return def;
         }
         static compareText(s1, s2, ignoreCase = false) {
             s1 = s1 || '';
@@ -3438,6 +3442,8 @@
             this.position = LegendPosition.BOTTOM;
             this.layout = LegendLayout.AUTO;
             this.alignBase = LegendAlignBase.PLOT;
+            this.left = 10;
+            this.top = 10;
             this.gap = 6;
             this.itemGap = 8;
             this.markerGap = 4;

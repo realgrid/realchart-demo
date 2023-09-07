@@ -124,7 +124,7 @@ export class Legend extends ChartItem {
      * 
      * @config
      */
-    left: number;
+    left = 10;
     /**
      * {@link position}이 {@link LegendPosition.PLOT plot}일 때, plot 영역의 우측 모서리와 legend의 간격.
      * {@link left}가 지정되면 이 속성은 무시된다.
@@ -137,7 +137,7 @@ export class Legend extends ChartItem {
      * 
      * @config
      */
-    top: number;
+    top = 10;
     /**
      * {@link position}이 {@link LegendPosition.PLOT plot}일 때, plot 영역의 하단 모서리와 legend의 간격.
      * {@link top}이 지정되면 이 속성은 무시된다.
