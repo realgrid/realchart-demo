@@ -1,12 +1,6 @@
 ---
- name: Name of the Demo
- description: Some description, please keep it in one line
+ name: test Demo
  authors:
-   - John Doe
-   - Jan Wisniewski
- resources:
-   - ./demo.js
-   - ./demo.css
- normalize_css: no
- load_type: d
- ---
+   - dltlghkd930217
+ js_wrap: b
+...
