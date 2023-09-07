@@ -132,19 +132,37 @@ export class LineSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     lineType = LineType.DEFAULT;
+    /**
+     * @config
+     */
     stepDir = LineStepDirection.FORWARD;
-
-    connectNulls = false;
+    /**
+     * true로 지정하면 y값이 지정되지 않은 null 포인터를 무시하고 다음 포인트에 연결한다.
+     * false면 null 포인트에서 연결이 끊어진다.
+     * 
+     * @config
+     */
+    connectNullPoints = false; // TODO: 더 좋은 이름을 찾을 것! (HI: connectNulls, ignoreNulls, passthrouchNulls,...)
     /**
      * 위/아래 구분의 기준이 되는 값.
-     * <br>
+     * 
+     * @config
      */
     baseValue = 0;
     /**
      * {@link baseValue} 혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.
+     * 
+     * @config
      */
     belowStyle: SVGStyleOrClass;
+    /**
+     * {@link connectNullPoints}이 true일 때 null 포인트의 양끝 포인트를 연결하는 선에 적용되는 스타일.
+     */
+    nullStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -229,6 +247,8 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
         this.y = this.high = pickProp(this.high, this.low);
         this.lowValue = parseFloat(this.low);
         this.highValue = this.yValue = parseFloat(this.high);
+
+        this.isNull ||= isNaN(this.lowValue);
     }
 
     protected _readArray(series: AreaRangeSeries, v: any[]): void {
@@ -293,7 +313,7 @@ export class AreaRangeSeries extends LineSeriesBase {
         super.collectValues(axis, vals);
 
         if (vals && axis === this._yAxisObj) {
-            this._visPoints.forEach((p: AreaRangeSeriesPoint) => vals.push(p.lowValue));
+            this._visPoints.forEach((p: AreaRangeSeriesPoint) => !p.isNull && vals.push(p.lowValue));
         }
     }
 }

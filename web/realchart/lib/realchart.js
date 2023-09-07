@@ -3610,9 +3610,6 @@
         }
         load(source) {
             if (isArray(source)) {
-                source = source.sort((a, b) => {
-                    return ((isArray(a) || isObject(a)) ? 1 : 0) - ((isArray(b) || isObject(b)) ? 1 : 0);
-                });
                 this._points = this._owner.createPoints(source);
             }
             else {
@@ -3712,7 +3709,7 @@
     class CategoryAxis extends Axis {
         constructor() {
             super(...arguments);
-            this._map = new Map();
+            this._map = {};
             this._catPad = 0;
             this.padding = 0;
             this.categoryPadding = 0.1;
@@ -3744,16 +3741,18 @@
         _createLabelModel() {
             return new CategoryAxisLabel(this);
         }
+        collectValues() {
+            this.$_collectCategories(this._series);
+            super.collectValues();
+        }
         _doPrepareRender() {
             this._cats = [];
             this._weights = [];
-            this._collectCategories(this._series);
             this._minPad = pickNum3(this.minPadding, this.padding, 0);
             this._maxPad = pickNum3(this.maxPadding, this.padding, 0);
             this._catPad = pickNum(this.categoryPadding, 0);
         }
         _doBuildTicks(min, max, length) {
-            this.tick;
             const label = this.label;
             let cats = this._cats = this._categories.map(cat => cat.c);
             let weights = this._weights = this._categories.map(cat => cat.w);
@@ -3776,7 +3775,6 @@
             }
             pts.push(p / len);
             pts.push((p + this._maxPad) / len);
-            this._map.clear();
             for (let i = 1; i < pts.length - 2; i++) {
                 const v = min + i - 1;
                 ticks.push({
@@ -3784,7 +3782,6 @@
                     value: v,
                     label: label.getTick(cats[i - 1]),
                 });
-                this._map.set(cats[i - 1], v);
             }
             return ticks;
         }
@@ -3827,10 +3824,10 @@
                 return value;
             }
             else {
-                return this._map.get(value);
+                return this._map[value];
             }
         }
-        _collectCategories(series) {
+        $_collectCategories(series) {
             const categories = this.categories;
             const cats = this._categories = [];
             if (isArray(categories) && categories.length > 0) {
@@ -3860,6 +3857,8 @@
                     }
                 }
             }
+            this._map = {};
+            cats.forEach((cat, i) => this._map[cat.c] = i);
         }
     }
 
@@ -5623,7 +5622,7 @@
             super(...arguments);
             this.lineType = LineType.DEFAULT;
             this.stepDir = LineStepDirection.FORWARD;
-            this.connectNulls = false;
+            this.connectNullPoints = false;
             this.baseValue = 0;
         }
         _type() {
@@ -5656,6 +5655,7 @@
             this.y = this.high = pickProp(this.high, this.low);
             this.lowValue = parseFloat(this.low);
             this.highValue = this.yValue = parseFloat(this.high);
+            this.isNull || (this.isNull = isNaN(this.lowValue));
         }
         _readArray(series, v) {
             const d = v.length > 2 ? 1 : 0;
@@ -5692,7 +5692,7 @@
         collectValues(axis, vals) {
             super.collectValues(axis, vals);
             if (vals && axis === this._yAxisObj) {
-                this._visPoints.forEach((p) => vals.push(p.lowValue));
+                this._visPoints.forEach((p) => !p.isNull && vals.push(p.lowValue));
             }
         }
     }
@@ -7172,8 +7172,8 @@
             this.floating = false;
             this.align = Align.RIGHT;
             this.verticalAlign = VerticalAlign.BOTTOM;
-            this.offsetX = 10;
-            this.offsetY = 5;
+            this.offsetX = 2;
+            this.offsetY = 1;
         }
     }
     class ChartOptions extends ChartItem {

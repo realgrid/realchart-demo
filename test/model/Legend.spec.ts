@@ -8,7 +8,6 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { AxisTick } from '../../src/model/Axis';
 import { Legend } from '../../src/model/Legend';
 
 /**
@@ -20,5 +19,9 @@ import { Legend } from '../../src/model/Legend';
         const legend = new Legend(null);
 
         expect(legend).exist;
+    });
+
+    it('position & layout', () => {
+
     });
 });

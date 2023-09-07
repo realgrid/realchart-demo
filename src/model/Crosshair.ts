@@ -10,6 +10,9 @@ import { SVGStyleOrClass } from "../common/Types";
 import { IAxis } from "./Axis";
 import { ChartItem } from "./ChartItem";
 
+export class CrosshairFlag extends ChartItem {
+}
+
 export class Crosshair extends ChartItem {
 
     //-------------------------------------------------------------------------

@@ -108,7 +108,7 @@ export class CategoryAxis extends Axis {
     _weights: number[];  // 한 카테고리의 상대 너비. 한 카테고리의 기본 크기는 1
     _len: number;
     // private _step = 1;
-    private _map = new Map<string, number>(); // data point의 축 위치를 찾기 위해 사용한다.
+    private _map: {[key: string]: number} = {}; // data point의 축 위치를 찾기 위해 사용한다.
     private _min: number;
     private _max: number;
     private _catPad = 0;
@@ -225,11 +225,15 @@ export class CategoryAxis extends Axis {
         return new CategoryAxisLabel(this);
     }
 
+    collectValues(): void {
+        this.$_collectCategories(this._series);
+
+        super.collectValues();
+    }
+
     protected _doPrepareRender(): void {
         this._cats = [];
         this._weights = [];
-
-        this._collectCategories(this._series);
 
         this._minPad = pickNum3(this.minPadding, this.padding, 0);
         this._maxPad = pickNum3(this.maxPadding, this.padding, 0);
@@ -239,7 +243,6 @@ export class CategoryAxis extends Axis {
     }
 
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
-        const tick = this.tick as CategoryAxisTick;
         const label = this.label as CategoryAxisLabel;
         let cats = this._cats = this._categories.map(cat => cat.c);
         let weights = this._weights = this._categories.map(cat => cat.w);
@@ -270,8 +273,6 @@ export class CategoryAxis extends Axis {
         pts.push(p / len);
         pts.push((p + this._maxPad) / len);
 
-        this._map.clear();
-
         for (let i = 1; i < pts.length - 2; i++) {
             const v = min + i - 1;
 
@@ -280,17 +281,7 @@ export class CategoryAxis extends Axis {
                 value: v,
                 label: label.getTick(cats[i - 1]),
             });
-            this._map.set(cats[i - 1], v);
         }
-
-        // let markPoints: number[];
-
-        // if (tick.getPosition() === CategoryTickPosition.EDGE) {
-        //     markPoints = pts.slice(1, pts.length - 1);
-        // } else {
-        //     markPoints = ticks.map(t => t.pos);
-        // }
- 
         return ticks;
     }
 
@@ -340,14 +331,14 @@ export class CategoryAxis extends Axis {
         if (isNumber(value)) {
             return value;
         } else {
-            return this._map.get(value);
+            return this._map[value];
         }
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private _collectCategories(series: IPlottingItem[]): void {
+    private $_collectCategories(series: IPlottingItem[]): void {
         const categories = this.categories;
         const cats = this._categories = [];
 
@@ -378,6 +369,11 @@ export class CategoryAxis extends Axis {
                 }
             }
         }
+
+        this._map = {};
+        cats.forEach((cat, i) => this._map[cat.c] = i);
+
+        // console.log(cats);
 
         // const start = pickNum(this.startValue, 0);
         // const step = this.valueStep || 1;

@@ -147,34 +147,29 @@ export class Credits extends ChartItem {
      * true이면 {@link verticalAlign}이 'top', 'bottom'일 때도,
      * 별도의 영역을 차지하지 않고 chart view위에 표시된다.
      * 
-     * @default false
      * @config
      */
     floating = false;
     /**
-     * @default Align.RIGHT
      * @config
      */
     align = Align.RIGHT;
     /**
-     * @default VerticalAlign.BOTTOM
      * @config
      */
     verticalAlign = VerticalAlign.BOTTOM;
     /**
      * {@link align}으로 지정된 수평 위치에서, 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.
      * 
-     * @default 10
      * @config
      */
-    offsetX = 10
+    offsetX = 2;
     /**
      * {@link verticalAlign}으로 지정된 수직 위치에서, 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.
      * 
-     * @default 5
      * @config
      */
-    offsetY = 5;
+    offsetY = 1;
 
     //-------------------------------------------------------------------------
     // overriden members
