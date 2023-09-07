@@ -8,6 +8,7 @@
 
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SVGStyleOrClass, SectionDir, VerticalAlign, isNull } from "../common/Types";
+import { AssetCollection } from "./Asset";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
@@ -194,34 +195,34 @@ export class ChartOptions extends ChartItem {
      * 3. chart, series의 inverted 속성이 무시된다.
      * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
      * 
-     * @default false
      * @config
      */
     polar = false;
     /**
      * false로 지정하면 차트 전체척으로 animation 효과를 실행하지 않는다.
      * 
-     * @default false
      * @config
      */
     animatable = true;
     /**
-     * x값이 설정되지 않은 포인트들의 시작 x값.
-     * {@link Series.xStart}의 기본값.
+     * x축 값이 설정되지 않은 시리즈 첫번째 데이터 point에 설정되는 x값.
+     * 이 후에는 {@link xStep}씩 증가시키면서 설정한다.
+     * 'time' 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.
+     * 숫자로 지정하면 1은 1밀리초로 지정된다. 
+     * 시리즈의 {@link Series.xStart}이 설정되면 그 값이 사용된다.
      * 
-     * @default 0
      * @config
      */
-    xStart = 0;
+    xStart: number | string = 0;
     /**
-     * 시리즈 데이타에 x축 값이 설정되지 않은 경우, 포인트 간의 간격 x 크기.
-     * {@link Series.xStep}의 기본값.
-     * time 축일 때, 정수 값 대신 시간 단위로 지정할 수 있다.
+     * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
+     * 첫번째 값은 {@link xStart}로 설정한다.
+     * time 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.
+     * 시리즈의 {@link Series.xStep}이 설정되면 그 값이 사용된다.
      * 
-     * @default 1
      * @config
      */
-    xStep = 1;
+    xStep: number | string = 1;
     /**
      * 복수 axis가 표시되는 경우 axis 사이의 간격
      * 
@@ -254,6 +255,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _assets: AssetCollection;
     private _options: ChartOptions;
     private _title: Title;
     private _subtitle: Subtitle;
@@ -274,6 +276,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     constructor(source?: any) {
         super();
 
+        this._assets = new AssetCollection();
         this._options = new ChartOptions(this);
         this._title = new Title(this);
         this._subtitle = new Subtitle(this);
@@ -295,11 +298,15 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     get xStart(): number {
-        return this._options.xStart;
+        return +this._options.xStart;
     }
 
     get xStep(): number {
-        return this._options.xStep;
+        return +this._options.xStep;
+    }
+
+    get xStepUnit(): string {
+        return;
     }
 
     animatable(): boolean {
@@ -328,6 +335,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * @config
      */
     inverted: boolean;
+
+    get assets(): AssetCollection {
+        return this._assets;
+    }
 
     get options(): ChartOptions {
         return this._options;
@@ -472,6 +483,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
                 this[prop] = source[prop];
             }
         })
+
+        // assets
+        this._assets.load(source.assets);
 
         // options
         this._options.load(source.options);

@@ -396,16 +396,20 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     dataProp: string;
     /**
-     * 시리즈 데이타에 x축 값이 설정되지 않은 경우, 첫 포인트의 자동 지정 x값.
-     * 이 속성이 지징되지 않은 경우 {@link Chart.xStart}가 적용된다.
+     * x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.
+     * 이 후에는 {@link xStep}씩 증가시키면서 설정한다.
+     * 'time' 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.
+     * 숫자로 지정하면 1은 1밀리초로 지정된다. 
+     * 이 속성이 지징되지 않은 경우 {@link ChartOptions.xStart}가 적용된다.
      * 
      * @config
      */
-    xStart: number;
+    xStart: number | string;
     /**
-     * 시리즈 데이타에 x축 값이 설정되지 않은 경우, 포인트 간의 간격 크기.
-     * time 축일 때, 정수 값 대신 시간 단위로 지정할 수 있다.
-     * 이 속성이 지정되지 않으면 {@link Chart.xStep}이 적용된다.
+     * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
+     * 첫번째 값은 {@link xStart}로 설정한다.
+     * time 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.
+     * 이 속성이 지정되지 않으면 {@link ChartOptions.xStep}이 적용된다.
      * 
      * @config
      */

@@ -6,7 +6,7 @@
 const config = {
     title: "Bar Series",
     options: {
-        animatable: false
+        // animatable: false
     },
     xAxis: {
         title: "일일 Daily fat",

@@ -249,8 +249,12 @@ export abstract class RcControl extends RcWrappableObject {
         return clip;
     }
 
-    removeDef(element: RcElement): void {
-        this._defs.removeChild(element.dom);
+    addDef(element: Element): void {
+        this._defs.appendChild(element);
+    }
+
+    removeDef(element: Element): void {
+        this._defs.removeChild(element);
     }
 
     containerToElement(element: RcElement, x: number, y: number): IPoint {

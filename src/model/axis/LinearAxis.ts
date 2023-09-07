@@ -145,7 +145,7 @@ export class ContinuousAxisTick extends AxisTick {
             max = base;
         }
 
-        let count = Math.floor(length / this.stepPixels) + 1;
+        let count = Math.floor(length / pixels) + 1;
         let step = len / (count - 1);
         const scale = Math.pow(10, Math.floor(Math.log10(step)));
         const multiples = this._getStepMultiples(step);
