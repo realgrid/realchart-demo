@@ -12971,7 +12971,7 @@
             if (this._creditView.setVisible(credit.visible)) {
                 sz = this._creditView.measure(doc, credit, w, h, phase);
                 if (!credit.floating) {
-                    h -= sz.height - credit.offsetY;
+                    h -= sz.height + credit.offsetY;
                 }
             }
             sz = this._titleSectionView.measure(doc, m, w, h, phase);
