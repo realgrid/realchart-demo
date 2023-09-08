@@ -878,6 +878,15 @@ export class RcElement extends RcObject {
         }
     }
 
+    internalClearStyles(): void {
+        const css = (this.dom as SVGElement | HTMLElement).style;
+
+        for (let p in this._styles) {
+            css.removeProperty(p);
+        }
+        this._styles = {};
+    }
+
     clearStyles(): boolean {
         const css = (this.dom as SVGElement | HTMLElement).style;
         let changed = false;
@@ -908,6 +917,16 @@ export class RcElement extends RcObject {
             if (changed) this._styleDirty = true;
         }
         return changed;
+    }
+
+    internalSetStyles(styles: any): void {
+        if (styles) {
+            const css = (this.dom as SVGElement | HTMLElement).style;
+
+            for (let p in styles) {
+                css[p] = this._styles[p] = styles[p];
+            }
+        }
     }
 
     setStyles(styles: any): boolean {
@@ -942,12 +961,25 @@ export class RcElement extends RcObject {
         this._resetClass();
     }
 
+    internalClearStyleAndClass(): void {
+        this.internalClearStyles();
+        this._resetClass();
+    }
+
     setStyleOrClass(style: SVGStyleOrClass): void {
         if (isString(style)) {
             this._resetClass();
             style && this._dom.classList.add(style);
         } else {
             this.resetStyles(style);
+        }
+    }
+
+    internalSetStyleOrClass(style: SVGStyleOrClass): void {
+        if (isString(style)) {
+            this._dom.classList.add(style);
+        } else {
+            this.internalSetStyles(style);
         }
     }
 

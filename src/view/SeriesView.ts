@@ -378,9 +378,6 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     protected _getColor(): string {
-        // if (!this.model._calcedColor) {
-        //     this.model._calcedColor = getComputedStyle(this.dom).fill;
-        // }
         return this.model._calcedColor;
     }
 
@@ -397,7 +394,8 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         this._prepareSeries(doc, model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
 
-        this.setStyleOrClass(model.style);
+        this.internalClearStyleAndClass();
+        this.internalSetStyleOrClass(model.style);
         if (model.color) {
             this.internalSetStyle('fill', model.color);
             this.internalSetStyle('stroke', model.color);
