@@ -167,7 +167,7 @@ export class Trendline extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     protected _doPrepareRender(chart: IChart): void {
-        (this['$_' + this.type] || this.$_linear).call(this, this.series._visPoints, this._points = []);
+        (this['$_' + this.type] || this.$_linear).call(this, this.series._runPoints, this._points = []);
     }
 
     //-------------------------------------------------------------------------
@@ -334,7 +334,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
     protected _points: DataPointCollection;
-    _visPoints: DataPoint[];
+    _runPoints: DataPoint[];
     _minValue: number;
     _maxValue: number;
     _referents: Series[];
@@ -449,7 +449,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     getVisiblePoints(): DataPoint[] {
-        return this._points.getVisibles();
+        return this._points.getPoints();
     }
 
     isEmpty(): boolean {
@@ -572,7 +572,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._calcedColor = void 0;
         this._xAxisObj = this.group ? this.group._xAxisObj : this.chart._connectSeries(this, true);
         this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
-        this._visPoints = this._points.getVisibles();
+        this._runPoints = this._points.getPoints();
         this._doPrepareRender();
     }
 
@@ -597,7 +597,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             let x = this.getXStart() || 0;
             const xStep = this.getXStep() || 1;
 
-            this._visPoints.forEach((p, i) => {
+            this._runPoints.forEach((p, i) => {
                 let val = axis.getValue(p.x);
     
                 // 축이 해석하지 못한 값은 자동으로 값을 지정한다.
@@ -613,7 +613,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 }
             });
         } else {
-            this._visPoints.forEach((p, i) => {
+            this._runPoints.forEach((p, i) => {
                 if (p.isNull) {
                     p.y = p.yGroup = NaN;
                 } else {
@@ -726,7 +726,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             color = this.color;
         }
 
-        this._visPoints.forEach((p, i) => {
+        this._runPoints.forEach((p, i) => {
             // if (!p.color) {
             //     p.color = color || colors[i % colors.length];
             // }
@@ -1192,7 +1192,7 @@ export abstract class RangedSeries extends ClusterableSeries {
         super.collectValues(axis, vals);
 
         if (axis === this._yAxisObj) {
-            this._visPoints.forEach((p: DataPoint) => {
+            this._runPoints.forEach((p: DataPoint) => {
                 const v = this._getBottomValue(p);
                 vals && !isNaN(v) && vals.push(v);
             })
@@ -1457,13 +1457,13 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
             ser.collectValues(axis, null);
         });
 
-        series[0]._visPoints.forEach(p => {
+        series[0]._runPoints.forEach(p => {
             // p.yGroup = p.yValue || 0;
             map.set(p.xValue, [p]);
         });
 
         for (let i = 1; i < series.length; i++) {
-            series[i]._visPoints.forEach(p => {
+            series[i]._runPoints.forEach(p => {
                 const pts = map.get(p.xValue);
                 
                 if (pts) {

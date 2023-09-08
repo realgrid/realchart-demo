@@ -208,7 +208,7 @@ export class TreemapSeries extends Series {
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
-        this._roots = this.$_buildTree(this._visPoints as TreemapSeriesPoint[]);
+        this._roots = this.$_buildTree(this._runPoints as TreemapSeriesPoint[]);
     }
 
     //-------------------------------------------------------------------------

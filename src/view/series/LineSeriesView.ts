@@ -98,7 +98,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     }
 
     protected _prepareSeries(doc: Document, model: T): void {
-        this.$_prepareMarkers(model._visPoints as LineSeriesPoint[]);
+        this.$_prepareMarkers(this._visPoints as LineSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -106,8 +106,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
         this._lineContainer.invert(this._inverted, height);
         series instanceof LineSeries && this._prepareBelow(series, width, height);
-        this._layoutMarkers(series._visPoints as LineSeriesPoint[], width, height);
-        this._layoutLines(series._visPoints as LineSeriesPoint[]);
+        this._layoutMarkers(this._visPoints as LineSeriesPoint[], width, height);
+        this._layoutLines(this._visPoints as LineSeriesPoint[]);
     }
 
     protected _runShowEffect(firstTime: boolean): void {
@@ -130,8 +130,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     }
 
     protected _doViewRateChanged(rate: number): void {
-        this._layoutMarkers(this.model._visPoints as LineSeriesPoint[], this.width, this.height);
-        this._layoutLines(this.model._visPoints.slice() as LineSeriesPoint[]);
+        this._layoutMarkers(this._visPoints as LineSeriesPoint[], this.width, this.height);
+        this._layoutLines(this._visPoints.slice() as LineSeriesPoint[]);
     }
 
     //-------------------------------------------------------------------------

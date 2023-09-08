@@ -178,7 +178,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: PieSeries): void {
-        this.$_prepareSectors(model._visPoints as PieSeriesPoint[]);
+        this.$_prepareSectors(this._visPoints as PieSeriesPoint[]);
         this._lineContainer.prepare(model);
     }
 
@@ -189,7 +189,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
             this.$_calcNormal(width, height);
         }
 
-        this.$_layoutSectors(this.model._visPoints as PieSeriesPoint[], width, height);
+        this.$_layoutSectors(this._visPoints as PieSeriesPoint[], width, height);
     }
 
     private $_calcNormal(width: number, height: number): void {
@@ -247,7 +247,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
 
     private $_calcAngles(points: PieSeriesPoint[]): void {
         const vr = this._getViewRate();
-        const sum = points.map(p => p.yValue).reduce((a, c) => a + c, 0);
+        const sum = points.filter(p => p.visible && !p.isNull).map(p => p.yValue).reduce((a, c) => a + c, 0);
         let start = ORG_ANGLE + deg2rad(this.model.startAngle);
 
         points.forEach(p => {
@@ -380,6 +380,6 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     }
 
     protected _doViewRateChanged(rate: number): void {
-        this.$_layoutSectors(this.model._visPoints as PieSeriesPoint[], this.width, this.height)
+        this.$_layoutSectors(this._visPoints as PieSeriesPoint[], this.width, this.height)
     }
 }

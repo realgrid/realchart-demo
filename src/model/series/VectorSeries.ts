@@ -125,7 +125,7 @@ export class VectorSeries extends Series {
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
-        const pts = this._visPoints as VectorSeriesPoint[];
+        const pts = this._runPoints as VectorSeriesPoint[];
 
         if (pts.length > 0) {
             const len = this.maxLength;

@@ -62,7 +62,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: BubbleSeries): void {
-        this.$_prepareMarkser(model._visPoints as BubbleSeriesPoint[]);
+        this.$_prepareMarkser(this._visPoints as BubbleSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {

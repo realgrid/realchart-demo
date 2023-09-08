@@ -52,7 +52,7 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: FunnelSeries): void {
-        this.$_prepareSegments(model._visPoints as FunnelSeriesPoint[]);
+        this.$_prepareSegments(this._visPoints as FunnelSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {

@@ -68,7 +68,7 @@ export class LollipopSeries extends BasedSeries {
         const radius = this.marker.radius;
         const shape = this.marker.shape;
 
-        this._visPoints.forEach((p: LollipopSeriesPoint) => {
+        this._runPoints.forEach((p: LollipopSeriesPoint) => {
             p.radius = radius;
             p.shape = shape;
         })

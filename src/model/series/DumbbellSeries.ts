@@ -119,7 +119,7 @@ export class DumbbellSeries extends ClusterableSeries {
         const radius = this.marker.radius;
         const shape = this.marker.shape;
 
-        this._visPoints.forEach((p: DumbbellSeriesPoint) => {
+        this._runPoints.forEach((p: DumbbellSeriesPoint) => {
             p.radius = radius;
             p.shape = shape;
         })
@@ -129,7 +129,7 @@ export class DumbbellSeries extends ClusterableSeries {
         super.collectValues(axis, vals);
 
         if (vals && axis === this._yAxisObj) {
-            this._visPoints.forEach(p => {
+            this._runPoints.forEach(p => {
                 const v = (p as DumbbellSeriesPoint).lowValue
                 !isNaN(v) && vals.push(v);
             });

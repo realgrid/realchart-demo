@@ -92,7 +92,7 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: DumbbellSeries): void {
-        this.$_parepareBars(doc, model, model._visPoints as DumbbellSeriesPoint[]);
+        this.$_parepareBars(doc, model, this._visPoints as DumbbellSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {

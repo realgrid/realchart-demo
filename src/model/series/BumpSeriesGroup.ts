@@ -51,7 +51,7 @@ export class BumpSeriesGroup extends ConstraintSeriesGroup<LineSeries> {
         const map: {[key: number]: DataPoint[]} = {};
 
         series.forEach(ser => {
-            ser._visPoints.forEach(p => {
+            ser._runPoints.forEach(p => {
                 const x = p.xValue;
                 let pts = map[x];
 

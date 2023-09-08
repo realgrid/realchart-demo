@@ -6,10 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
 import { Dom } from "../../common/Dom";
-import { IPoint2, PathBuilder } from "../../common/PathBuilder";
-import { IPoint } from "../../common/Point";
+import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement } from "../../common/RcControl";
 import { IPointPos } from "../../model/DataPoint";
 import { AreaRangeSeries, AreaRangeSeriesPoint } from "../../model/series/LineSeries";

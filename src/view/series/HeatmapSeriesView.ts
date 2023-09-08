@@ -53,7 +53,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: HeatmapSeries): void {
-        this.$_parepareCells(model._visPoints as HeatmapSeriesPoint[]);
+        this.$_parepareCells(this._visPoints as HeatmapSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {

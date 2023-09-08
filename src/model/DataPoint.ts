@@ -19,6 +19,9 @@ export interface IPointPos {
 
 /**
  * 데이터 포인트를 표시할 수 없는 값을 설정하면 null로 간주한다.
+ * 
+ * isNull과 visible은 다르다.
+ * isNull이어도 자리를 차지한다.
  */
 export class DataPoint {
 
@@ -224,10 +227,5 @@ export class DataPointCollection {
 
     getPoints(): DataPoint[] {
         return this._points;
-    }
-
-    getVisibles(): DataPoint[] {
-        return this._points;
-        // return this._points.filter(p => this._owner.isVisible(p));
     }
 }

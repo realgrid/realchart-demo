@@ -103,9 +103,9 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: VectorSeries): void {
-        const pts = model.getPoints().getVisibles() as VectorSeriesPoint[];
+        // const pts = model.getPoints().getPoints() as VectorSeriesPoint[];
 
-        this.$_prepareArrows(pts);
+        this.$_prepareArrows(this._visPoints as VectorSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {

@@ -110,11 +110,11 @@ export class BellCurveSeries extends AreaSeries {
 
     reference(other: Series, axis: IAxis): void {
         if (!axis._isX) {
-            const vals = other._visPoints.map(p => p.yValue).filter(v => !isNaN(v));
+            const vals = other._runPoints.map(p => p.yValue).filter(v => !isNaN(v));
             const pts = this.$_loadTable(vals);
 
             this._doLoadPoints(pts);
-            this._visPoints = this._points.getVisibles();
+            this._runPoints = this._points.getPoints();
 
             this.collectValues(this._xAxisObj, (this._xAxisObj as Axis)._values);
             this.collectValues(this._yAxisObj, (this._yAxisObj as Axis)._values);

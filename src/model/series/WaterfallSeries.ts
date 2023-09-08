@@ -71,7 +71,7 @@ export class WaterfallSeries extends RangedSeries {
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
-        const pts = this._visPoints as WaterfallSeriesPoint[];
+        const pts = this._runPoints as WaterfallSeriesPoint[];
         if (pts.length < 1) return;
 
         let p = pts[0];

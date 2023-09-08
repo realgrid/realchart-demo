@@ -57,7 +57,7 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: ScatterSeries): void {
-        this.$_prepareMarkers(model._visPoints as ScatterSeriesPoint[]);
+        this.$_prepareMarkers(this._visPoints as ScatterSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {

@@ -55,9 +55,9 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
 
     protected _preparePointViews(doc: Document, model: BarSeries, points: DataPoint[]): void {
         if (model.chart._polar) {
-            this.$_parepareSectors(doc, model, model._visPoints);
+            this.$_parepareSectors(doc, model, this._visPoints);
         } else {
-            this.$_parepareBars(doc, model, model._visPoints);
+            this.$_parepareBars(doc, model, this._visPoints);
         }
     }
 

@@ -313,7 +313,7 @@ export class AreaRangeSeries extends LineSeriesBase {
         super.collectValues(axis, vals);
 
         if (vals && axis === this._yAxisObj) {
-            this._visPoints.forEach((p: AreaRangeSeriesPoint) => !p.isNull && vals.push(p.lowValue));
+            this._runPoints.forEach((p: AreaRangeSeriesPoint) => !p.isNull && vals.push(p.lowValue));
         }
     }
 }

@@ -86,7 +86,7 @@ export class ParetoSeries extends LineSeriesBase {
 
     reference(other: Series, axis: IAxis): void {
         if (!axis._isX) {
-            this.$_loadPoints(other._visPoints);
+            this.$_loadPoints(other._runPoints);
             this.collectValues(this._xAxisObj, (this._xAxisObj as Axis)._values);
             this.collectValues(this._yAxisObj, (this._yAxisObj as Axis)._values);
         }
@@ -110,6 +110,6 @@ export class ParetoSeries extends LineSeriesBase {
         })
 
         this._doLoadPoints(list);
-        this._visPoints = this._points.getVisibles();
+        this._runPoints = this._points.getPoints();
     }
 }

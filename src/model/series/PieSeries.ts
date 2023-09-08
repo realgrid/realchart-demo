@@ -146,7 +146,7 @@ export class PieSeries extends RadialSeries {
     }
 
     getLegendSources(list: ILegendSource[]): void {
-        this._visPoints.forEach(p => {
+        this._runPoints.forEach(p => {
             list.push(p as PieSeriesPoint);
         })        
     }

@@ -3517,7 +3517,7 @@
                 cx: this._cx,
                 cy: this._cy,
                 rd: this._rd,
-                deg: Math.PI * 2 / series._visPoints.length
+                deg: Math.PI * 2 / series._runPoints.length
             } : _undefined;
         }
         _doLoad(source) {
@@ -3761,9 +3761,6 @@
             }
         }
         getPoints() {
-            return this._points;
-        }
-        getVisibles() {
             return this._points;
         }
     }
@@ -4043,7 +4040,7 @@
             this.visible = false;
         }
         _doPrepareRender(chart) {
-            (this['$_' + this.type] || this.$_linear).call(this, this.series._visPoints, this._points = []);
+            (this['$_' + this.type] || this.$_linear).call(this, this.series._runPoints, this._points = []);
         }
         _getDefObjProps(prop) {
             if (prop === 'movingAverage')
@@ -4121,7 +4118,7 @@
             return this._points.getPoints();
         }
         getVisiblePoints() {
-            return this._points.getVisibles();
+            return this._points.getPoints();
         }
         isEmpty() {
             return this._points.isEmpty();
@@ -4204,7 +4201,7 @@
             this._calcedColor = void 0;
             this._xAxisObj = this.group ? this.group._xAxisObj : this.chart._connectSeries(this, true);
             this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
-            this._visPoints = this._points.getVisibles();
+            this._runPoints = this._points.getPoints();
             this._doPrepareRender();
         }
         collectCategories(axis) {
@@ -4222,7 +4219,7 @@
             if (axis === this._xAxisObj) {
                 let x = this.getXStart() || 0;
                 const xStep = this.getXStep() || 1;
-                this._visPoints.forEach((p, i) => {
+                this._runPoints.forEach((p, i) => {
                     let val = axis.getValue(p.x);
                     if (isNaN(val)) {
                         val = x;
@@ -4238,7 +4235,7 @@
                 });
             }
             else {
-                this._visPoints.forEach((p, i) => {
+                this._runPoints.forEach((p, i) => {
                     if (p.isNull) {
                         p.y = p.yGroup = NaN;
                     }
@@ -4327,7 +4324,7 @@
             else {
                 color = this.color;
             }
-            this._visPoints.forEach((p, i) => {
+            this._runPoints.forEach((p, i) => {
                 if (!p.color && colors) {
                     p.color = color || colors[i % colors.length];
                 }
@@ -4572,7 +4569,7 @@
         collectValues(axis, vals) {
             super.collectValues(axis, vals);
             if (axis === this._yAxisObj) {
-                this._visPoints.forEach((p) => {
+                this._runPoints.forEach((p) => {
                     const v = this._getBottomValue(p);
                     vals && !isNaN(v) && vals.push(v);
                 });
@@ -4721,11 +4718,11 @@
             series.forEach(ser => {
                 ser.collectValues(axis, null);
             });
-            series[0]._visPoints.forEach(p => {
+            series[0]._runPoints.forEach(p => {
                 map.set(p.xValue, [p]);
             });
             for (let i = 1; i < series.length; i++) {
-                series[i]._visPoints.forEach(p => {
+                series[i]._runPoints.forEach(p => {
                     const pts = map.get(p.xValue);
                     if (pts) {
                         pts.push(p);
@@ -5823,7 +5820,7 @@
         collectValues(axis, vals) {
             super.collectValues(axis, vals);
             if (vals && axis === this._yAxisObj) {
-                this._visPoints.forEach((p) => !p.isNull && vals.push(p.lowValue));
+                this._runPoints.forEach((p) => !p.isNull && vals.push(p.lowValue));
             }
         }
     }
@@ -5890,10 +5887,10 @@
         }
         reference(other, axis) {
             if (!axis._isX) {
-                const vals = other._visPoints.map(p => p.yValue).filter(v => !isNaN(v));
+                const vals = other._runPoints.map(p => p.yValue).filter(v => !isNaN(v));
                 const pts = this.$_loadTable(vals);
                 this._doLoadPoints(pts);
-                this._visPoints = this._points.getVisibles();
+                this._runPoints = this._points.getPoints();
                 this.collectValues(this._xAxisObj, this._xAxisObj._values);
                 this.collectValues(this._yAxisObj, this._yAxisObj._values);
             }
@@ -6061,7 +6058,7 @@
             super._doPrepareRender();
             this._zMin = Number.MAX_VALUE;
             this._zMax = Number.MIN_VALUE;
-            this._visPoints.forEach((p) => {
+            this._runPoints.forEach((p) => {
                 this._zMin = Math.min(this._zMin, p.zValue);
                 this._zMax = Math.max(this._zMax, p.zValue);
             });
@@ -6081,7 +6078,7 @@
         _doConstraintYValues(series) {
             const map = {};
             series.forEach(ser => {
-                ser._visPoints.forEach(p => {
+                ser._runPoints.forEach(p => {
                     const x = p.xValue;
                     let pts = map[x];
                     if (pts) {
@@ -6206,7 +6203,7 @@
             super._doPrepareRender();
             const radius = this.marker.radius;
             const shape = this.marker.shape;
-            this._visPoints.forEach((p) => {
+            this._runPoints.forEach((p) => {
                 p.radius = radius;
                 p.shape = shape;
             });
@@ -6214,7 +6211,7 @@
         collectValues(axis, vals) {
             super.collectValues(axis, vals);
             if (vals && axis === this._yAxisObj) {
-                this._visPoints.forEach(p => {
+                this._runPoints.forEach(p => {
                     const v = p.lowValue;
                     !isNaN(v) && vals.push(v);
                 });
@@ -6341,7 +6338,7 @@
         }
         prepareAfter() {
             super.prepareAfter();
-            const pts = this._visPoints;
+            const pts = this._runPoints;
             let sum = 0;
             let y = 0;
             pts.forEach(p => {
@@ -6414,7 +6411,7 @@
             super._doPrepareRender();
             this._heatMin = Number.MAX_VALUE;
             this._heatMax = Number.MIN_VALUE;
-            this._visPoints.forEach(p => {
+            this._runPoints.forEach(p => {
                 if (!isNaN(p.heatValue)) {
                     this._heatMin = Math.min(this._heatMin, p.heatValue);
                     this._heatMax = Math.max(this._heatMax, p.heatValue);
@@ -6538,7 +6535,7 @@
             super.collectValues(axis, vals);
             if (vals) {
                 if (axis === this._xAxisObj) {
-                    vals.push(this._visPoints[this._visPoints.length - 1].max);
+                    vals.push(this._runPoints[this._runPoints.length - 1].max);
                 }
                 else if (axis === this._yAxisObj) {
                     vals.push(this._base);
@@ -6584,7 +6581,7 @@
             super._doPrepareRender();
             const radius = this.marker.radius;
             const shape = this.marker.shape;
-            this._visPoints.forEach((p) => {
+            this._runPoints.forEach((p) => {
                 p.radius = radius;
                 p.shape = shape;
             });
@@ -6631,7 +6628,7 @@
         }
         reference(other, axis) {
             if (!axis._isX) {
-                this.$_loadPoints(other._visPoints);
+                this.$_loadPoints(other._runPoints);
                 this.collectValues(this._xAxisObj, this._xAxisObj._values);
                 this.collectValues(this._yAxisObj, this._yAxisObj._values);
             }
@@ -6649,7 +6646,7 @@
                 }
             });
             this._doLoadPoints(list);
-            this._visPoints = this._points.getVisibles();
+            this._runPoints = this._points.getPoints();
         }
     }
 
@@ -6709,7 +6706,7 @@
             return new PieSeriesPoint(source);
         }
         getLegendSources(list) {
-            this._visPoints.forEach(p => {
+            this._runPoints.forEach(p => {
                 list.push(p);
             });
         }
@@ -6881,7 +6878,7 @@
         }
         _doPrepareRender() {
             super._doPrepareRender();
-            this._roots = this.$_buildTree(this._visPoints);
+            this._roots = this.$_buildTree(this._runPoints);
         }
         $_buildTree(pts) {
             const roots = [];
@@ -7129,7 +7126,7 @@
         }
         _doPrepareRender() {
             super._doPrepareRender();
-            const pts = this._visPoints;
+            const pts = this._runPoints;
             if (pts.length > 0) {
                 const len = this.maxLength;
                 const org = this.origin;
@@ -7182,7 +7179,7 @@
         }
         _doPrepareRender() {
             super._doPrepareRender();
-            const pts = this._visPoints;
+            const pts = this._runPoints;
             if (pts.length < 1)
                 return;
             let p = pts[0];
@@ -9286,12 +9283,17 @@
             ], this.$_aniOptions(options));
         }
     }
-    class GrowAnimation extends RcAnimation {
+    class PointAnimation extends RcAnimation {
         constructor(series) {
             super();
             this._series = series;
             this.start();
         }
+        _doStop() {
+            this._series = null;
+        }
+    }
+    class GrowAnimation extends PointAnimation {
         _doUpdate(rate) {
             if (this._series.parent) {
                 this._series.setViewRate(rate);
@@ -9302,7 +9304,7 @@
             if (this._series.parent) {
                 this._series.setViewRate(NaN);
             }
-            this._series = null;
+            super._doStop();
         }
     }
 
@@ -9457,6 +9459,8 @@
                 }
             }
         }
+        setPosRate(rate) {
+        }
         _doViewRateChanged(rate) {
         }
         _setChartOptions(inverted, animatable) {
@@ -9487,6 +9491,7 @@
             this.setClip(void 0);
             this.setData('index', model.index);
             this.setBoolData('pointcolors', model._colorByPoint());
+            this._visPoints = model._runPoints.filter(p => p.visible);
             this._prepareSeries(doc, model);
             !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
             this.setStyleOrClass(model.style);
@@ -9648,7 +9653,7 @@
             this._labelInfo = {};
         }
         _prepareSeries(doc, model) {
-            this._preparePointViews(doc, model, model._visPoints);
+            this._preparePointViews(doc, model, this._visPoints);
         }
         _renderSeries(width, height) {
             this._pointContainer.invert(this._inverted, height);
@@ -9823,14 +9828,14 @@
             return this._markers;
         }
         _prepareSeries(doc, model) {
-            this.$_prepareMarkers(model._visPoints);
+            this.$_prepareMarkers(this._visPoints);
         }
         _renderSeries(width, height) {
             const series = this.model;
             this._lineContainer.invert(this._inverted, height);
             series instanceof LineSeries && this._prepareBelow(series, width, height);
-            this._layoutMarkers(series._visPoints, width, height);
-            this._layoutLines(series._visPoints);
+            this._layoutMarkers(this._visPoints, width, height);
+            this._layoutLines(this._visPoints);
         }
         _runShowEffect(firstTime) {
             function getFrom(self) {
@@ -9850,8 +9855,8 @@
             }
         }
         _doViewRateChanged(rate) {
-            this._layoutMarkers(this.model._visPoints, this.width, this.height);
-            this._layoutLines(this.model._visPoints.slice());
+            this._layoutMarkers(this._visPoints, this.width, this.height);
+            this._layoutLines(this._visPoints.slice());
         }
         _markersPerPoint() {
             return 1;
@@ -10585,10 +10590,10 @@
         }
         _preparePointViews(doc, model, points) {
             if (model.chart._polar) {
-                this.$_parepareSectors(doc, model, model._visPoints);
+                this.$_parepareSectors(doc, model, this._visPoints);
             }
             else {
-                this.$_parepareBars(doc, model, model._visPoints);
+                this.$_parepareBars(doc, model, this._visPoints);
             }
         }
         _layoutPointViews(width, height) {
@@ -10741,7 +10746,7 @@
             return false;
         }
         _prepareSeries(doc, model) {
-            this.$_prepareMarkser(model._visPoints);
+            this.$_prepareMarkser(this._visPoints);
         }
         _renderSeries(width, height) {
             this.$_layoutMarkers(width, height);
@@ -10893,7 +10898,7 @@
             return this._bars;
         }
         _prepareSeries(doc, model) {
-            this.$_parepareBars(doc, model, model._visPoints);
+            this.$_parepareBars(doc, model, this._visPoints);
         }
         _renderSeries(width, height) {
             this.$_layoutBars(width, height);
@@ -11152,7 +11157,7 @@
             return this._segments;
         }
         _prepareSeries(doc, model) {
-            this.$_prepareSegments(model._visPoints);
+            this.$_prepareSegments(this._visPoints);
         }
         _renderSeries(width, height) {
             this.$_layoutSegments(width, height);
@@ -11249,7 +11254,7 @@
             return this._cells;
         }
         _prepareSeries(doc, model) {
-            this.$_parepareCells(model._visPoints);
+            this.$_parepareCells(this._visPoints);
         }
         _renderSeries(width, height) {
             this._pointContainer.invert(this._inverted, height);
@@ -11583,7 +11588,7 @@
             return this._sectors;
         }
         _prepareSeries(doc, model) {
-            this.$_prepareSectors(model._visPoints);
+            this.$_prepareSectors(this._visPoints);
             this._lineContainer.prepare(model);
         }
         _renderSeries(width, height) {
@@ -11593,7 +11598,7 @@
             else {
                 this.$_calcNormal(width, height);
             }
-            this.$_layoutSectors(this.model._visPoints, width, height);
+            this.$_layoutSectors(this._visPoints, width, height);
         }
         $_calcNormal(width, height) {
             const sz = this.model.getSize(width, height);
@@ -11626,7 +11631,7 @@
         }
         $_calcAngles(points) {
             const vr = this._getViewRate();
-            const sum = points.map(p => p.yValue).reduce((a, c) => a + c, 0);
+            const sum = points.filter(p => p.visible && !p.isNull).map(p => p.yValue).reduce((a, c) => a + c, 0);
             let start = ORG_ANGLE + deg2rad(this.model.startAngle);
             points.forEach(p => {
                 p.yRate = p.yValue / sum;
@@ -11738,7 +11743,7 @@
             view.layout().translate(x - r.width / 2, y - r.height / 2);
         }
         _doViewRateChanged(rate) {
-            this.$_layoutSectors(this.model._visPoints, this.width, this.height);
+            this.$_layoutSectors(this._visPoints, this.width, this.height);
         }
     }
 
@@ -11759,7 +11764,7 @@
             return false;
         }
         _prepareSeries(doc, model) {
-            this.$_prepareMarkers(model._visPoints);
+            this.$_prepareMarkers(this._visPoints);
         }
         _renderSeries(width, height) {
             this.$_layoutMarkers(width, height);
@@ -11950,8 +11955,7 @@
             return this._arrows;
         }
         _prepareSeries(doc, model) {
-            const pts = model.getPoints().getVisibles();
-            this.$_prepareArrows(pts);
+            this.$_prepareArrows(this._visPoints);
         }
         _renderSeries(width, height) {
             const series = this.model;

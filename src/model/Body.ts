@@ -65,7 +65,7 @@ export class Body extends ChartItem {
             cx: this._cx,
             cy: this._cy,
             rd: this._rd,
-            deg: Math.PI * 2 / series._visPoints.length
+            deg: Math.PI * 2 / series._runPoints.length
         } : _undefined;
     }
 

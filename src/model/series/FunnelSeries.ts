@@ -132,7 +132,7 @@ export class FunnelSeries extends WidgetSeries {
     prepareAfter(): void {
         super.prepareAfter();
 
-        const pts = this._visPoints as FunnelSeriesPoint[];
+        const pts = this._runPoints as FunnelSeriesPoint[];
         let sum = 0;
         let y = 0;
 

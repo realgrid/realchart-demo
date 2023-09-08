@@ -4,7 +4,7 @@
  */
 const config = {
     options: {
-        animatable: false
+        // animatable: false
     },
     title: "Log Axis",
     xAxis: {

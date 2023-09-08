@@ -119,7 +119,7 @@ export class HeatmapSeries extends Series {
         this._heatMin = Number.MAX_VALUE;
         this._heatMax = Number.MIN_VALUE;
 
-        (this._visPoints as HeatmapSeriesPoint[]).forEach(p => {
+        (this._runPoints as HeatmapSeriesPoint[]).forEach(p => {
             if (!isNaN(p.heatValue)) {
                 this._heatMin = Math.min(this._heatMin, p.heatValue);
                 this._heatMax = Math.max(this._heatMax, p.heatValue);

@@ -303,6 +303,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     private _labelContainer: PointLabelContainer;
     private _trendLineView: PathElement;
 
+    protected _visPoints: DataPoint[];
     protected _inverted = false;
     protected _animatable = true;
     private _viewRate = NaN;
@@ -337,6 +338,9 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
                 this._doViewRateChanged(rate);
             }
         }
+    }
+
+    setPosRate(rate: number): void {
     }
 
     protected _doViewRateChanged(rate: number): void {
@@ -389,6 +393,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         this.setData('index', model.index as any);
         this.setBoolData('pointcolors', model._colorByPoint());
 
+        this._visPoints = model._runPoints.filter(p => p.visible);
         this._prepareSeries(doc, model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
 
@@ -591,7 +596,7 @@ export abstract class ClusterableSeriesView<T extends Series> extends SeriesView
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: T): void {
-        this._preparePointViews(doc, model, model._visPoints);
+        this._preparePointViews(doc, model, this._visPoints);
     }
 
     protected _renderSeries(width: number, height: number): void {

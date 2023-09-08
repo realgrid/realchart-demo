@@ -160,7 +160,7 @@ export class BubbleSeries extends Series {
         this._zMin = Number.MAX_VALUE;
         this._zMax = Number.MIN_VALUE;
 
-        this._visPoints.forEach((p: BubbleSeriesPoint) => {
+        this._runPoints.forEach((p: BubbleSeriesPoint) => {
             this._zMin = Math.min(this._zMin, p.zValue);
             this._zMax = Math.max(this._zMax, p.zValue);
         })
