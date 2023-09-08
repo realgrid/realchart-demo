@@ -2351,7 +2351,7 @@
             return buff;
         }
         setData(data, value) {
-            this.dom.dataset[data] = value || '';
+            this.dom.dataset[data] = pickProp(value, '');
         }
         unsetData(data) {
             delete this.dom.dataset[data];
@@ -9485,6 +9485,8 @@
         }
         _doMeasure(doc, model, hintWidth, hintHeight, phase) {
             this.setClip(void 0);
+            this.setData('index', model.index);
+            this.setBoolData('pointcolors', model._colorByPoint());
             this._prepareSeries(doc, model);
             !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
             this.setStyleOrClass(model.style);
@@ -9493,7 +9495,6 @@
                 this.internalSetStyle('stroke', model.color);
             }
             this.model._calcedColor = getComputedStyle(this.dom).fill;
-            this.setBoolData('pointcolors', model._colorByPoint());
             if (model.trendline.visible) {
                 if (!this._trendLineView) {
                     this.add(this._trendLineView = new PathElement(doc, 'rct-series-trendline'));
@@ -9513,6 +9514,9 @@
             }
             this._afterRender();
             this._animatable && this._runShowEffect(!this.control.loaded);
+        }
+        _setPointIndex(v, p) {
+            v.setData('index', p.index);
         }
         _labelViews() {
             this._labelContainer.setVisible(this.model.pointLabel.visible && !this._animating());
@@ -9688,6 +9692,7 @@
                     const hPoint = (yVal - yBase) * vr;
                     let x;
                     let y;
+                    this._setPointIndex(pv, p);
                     x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
                     y = yOrg;
                     p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
@@ -9750,6 +9755,7 @@
                     let y = org;
                     p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
                     p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
+                    this._setPointIndex(pv, p);
                     this._layoutPointView(pv, i, x, y, wPoint, hPoint);
                     if (labelViews) {
                         if (inverted) {
@@ -10792,6 +10798,7 @@
                     path = SvgShapes.circle(0, 0, sz);
                     mv.setPath(path);
                     mv.translate(x, y);
+                    this._setPointIndex(mv, p);
                     if (labelViews && (labelView = labelViews.get(p, 0))) {
                         labelView.setContrast(mv.dom);
                         labelView.layout();
@@ -11629,6 +11636,7 @@
         }
         $_layoutSectors(points, width, height) {
             const series = this.model;
+            series._colorByPoint();
             const vr = this._getViewRate();
             const cx = this._cx = Math.floor(width / 2);
             const cy = this._cy = Math.floor(height / 2);
@@ -11669,6 +11677,7 @@
                         angle: p.angle,
                         clockwise: true
                     }, false);
+                    this._setPointIndex(sector, p);
                     if (labelViews && (labelView = labelViews.get(p, 0))) {
                         const line = lineViews.get(p);
                         if (labelInside) {
@@ -11810,6 +11819,7 @@
                     }
                     mv.setPath(path);
                     mv.translate(x, y);
+                    this._setPointIndex(mv, p);
                     if (labelViews && (labelView = labelViews.get(p, 0))) {
                         r = labelView.getBBounds();
                         labelView.translate(x - r.width / 2, y - r.height / 2);

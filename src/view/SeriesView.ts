@@ -386,6 +386,8 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         this.setClip(void 0);
         // this._viewRate = NaN; // animating 중 다른 시리즈 등의 요청에 의해 여기로 진입할 수 있다.
+        this.setData('index', model.index as any);
+        this.setBoolData('pointcolors', model._colorByPoint());
 
         this._prepareSeries(doc, model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
@@ -397,7 +399,6 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         }
 
         this.model._calcedColor = getComputedStyle(this.dom).fill;
-        this.setBoolData('pointcolors', model._colorByPoint());
 
         if (model.trendline.visible) {
             if (!this._trendLineView) {
@@ -426,6 +427,10 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
+
+    protected _setPointIndex(v: RcElement, p: DataPoint): void {
+        v.setData('index', p.index as any);
+    }
 
     protected _labelViews(): PointLabelContainer {
         this._labelContainer.setVisible(this.model.pointLabel.visible && !this._animating());
@@ -648,6 +653,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 let x: number;
                 let y: number;
 
+                this._setPointIndex(pv, p);
                 x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
                 y = yOrg;
 
@@ -727,6 +733,7 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
                 p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
                 p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
 
+                this._setPointIndex(pv, p);
                 this._layoutPointView(pv, i, x, y, wPoint, hPoint);
 
                 // labels

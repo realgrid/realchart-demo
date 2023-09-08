@@ -259,6 +259,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
 
     private $_layoutSectors(points: PieSeriesPoint[], width: number, height: number): void {
         const series = this.model;
+        const colorByPoint = series._colorByPoint();
         const vr = this._getViewRate();
         const cx = this._cx = Math.floor(width / 2);
         const cy = this._cy = Math.floor(height / 2);
@@ -306,6 +307,8 @@ export class PieSeriesView extends SeriesView<PieSeries> {
                     angle: p.angle,
                     clockwise: true
                 }, false);
+
+                this._setPointIndex(sector, p);
     
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {

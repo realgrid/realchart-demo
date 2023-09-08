@@ -137,6 +137,8 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
                 mv.setPath(path);
                 mv.translate(x, y);
 
+                this._setPointIndex(mv, p);
+
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
                     labelView.setContrast(mv.dom);

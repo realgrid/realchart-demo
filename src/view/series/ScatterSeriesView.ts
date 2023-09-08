@@ -134,6 +134,8 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
                 mv.setPath(path);
                 mv.translate(x, y);
 
+                this._setPointIndex(mv, p);
+
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
                     r = labelView.getBBounds();

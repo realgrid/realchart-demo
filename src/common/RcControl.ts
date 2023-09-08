@@ -10,7 +10,7 @@ import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
 import { Path, SVGStyleOrClass, _undefined, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
-import { SVGNS, isObject, isString } from "./Common";
+import { SVGNS, isObject, isString, pickProp } from "./Common";
 import { Utils } from "./Utils";
 import { IRect, Rectangle } from "./Rectangle";
 import { SvgShapes } from "./impl/SvgShape";
@@ -996,7 +996,7 @@ export class RcElement extends RcObject {
     }
 
     setData(data: string, value?: string): void {
-        this.dom.dataset[data] = value || '';
+        this.dom.dataset[data] = pickProp(value, '');
     }
 
     unsetData(data: string): void {

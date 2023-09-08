@@ -181,67 +181,67 @@
 }
 
 /** series */
-.rct-series:nth-child(16n + 1) {
+.rct-series[data-index="0"] {
     fill: var(--color-1);
     stroke: var(--color-1);
 }
-.rct-series:nth-child(16n + 2) {
+.rct-series[data-index="1"] {
     fill: var(--color-2);
     stroke: var(--color-2);
 }
-.rct-series:nth-child(16n + 3) {
+.rct-series[data-index="2"] {
     fill: var(--color-3);
     stroke: var(--color-3);
 }
-.rct-series:nth-child(16n + 4) {
+.rct-series[data-index="3"] {
     fill: var(--color-4);
     stroke: var(--color-4);
 }
-.rct-series:nth-child(16n + 5) {
+.rct-series[data-index="4"] {
     fill: var(--color-5);
     stroke: var(--color-5);
 }
-.rct-series:nth-child(16n + 6) {
+.rct-series[data-index="5"] {
     fill: var(--color-6);
     stroke: var(--color-6);
 }
-.rct-series:nth-child(16n + 7) {
+.rct-series[data-index="6"] {
     fill: var(--color-7);
     stroke: var(--color-7);
 }
-.rct-series:nth-child(16n + 8) {
+.rct-series[data-index="7"] {
     fill: var(--color-8);
     stroke: var(--color-8);
 }
-.rct-series:nth-child(16n + 9) {
+.rct-series[data-index="8"] {
     fill: var(--color-9);
     stroke: var(--color-9);
 }
-.rct-series:nth-child(16n + 10) {
+.rct-series[data-index="9"] {
     fill: var(--color-10);
     stroke: var(--color-10);
 }
-.rct-series:nth-child(16n + 11) {
+.rct-series[data-index="10"] {
     fill: var(--color-11);
     stroke: var(--color-11);
 }
-.rct-series:nth-child(16n + 12) {
+.rct-series[data-index="11"] {
     fill: var(--color-12);
     stroke: var(--color-12);
 }
-.rct-series:nth-child(16n + 13) {
+.rct-series[data-index="12"] {
     fill: var(--color-13);
     stroke: var(--color-13);
 }
-.rct-series:nth-child(16n + 14) {
+.rct-series[data-index="13"] {
     fill: var(--color-14);
     stroke: var(--color-14);
 }
-.rct-series:nth-child(16n + 15) {
+.rct-series[data-index="14"] {
     fill: var(--color-15);
     stroke: var(--color-15);
 }
-.rct-series:nth-child(16n + 16) {
+.rct-series[data-index="15"] {
     fill: var(--color-16);
     stroke: var(--color-2);
 }
@@ -261,52 +261,52 @@
 }
 
 /** data point */
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 1) {
+.rct-series[data-pointcolors] .rct-point[data-index="0"] {
     fill: var(--color-1);
 }
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 2) {
+.rct-series[data-pointcolors] .rct-point[data-index="1"] {
     fill: var(--color-2);
 }
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 3) {
+.rct-series[data-pointcolors] .rct-point[data-index="2"] {
     fill: var(--color-3);
 }
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 4) {
+.rct-series[data-pointcolors] .rct-point[data-index="3"] {
     fill: var(--color-3);
 }
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 5) {
+.rct-series[data-pointcolors] .rct-point[data-index="4"] {
     fill: var(--color-5);
 }
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 6) {
+.rct-series[data-pointcolors] .rct-point[data-index="5"] {
     fill: var(--color-6);
 }
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 7) {
+.rct-series[data-pointcolors] .rct-point[data-index="6"] {
     fill: var(--color-7);
 }
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 8) {
+.rct-series[data-pointcolors] .rct-point[data-index="7"] {
     fill: var(--color-8);
 }
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 9) {
+.rct-series[data-pointcolors] .rct-point[data-index="8"] {
     fill: var(--color-9);
 }
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 10) {
+.rct-series[data-pointcolors] .rct-point[data-index="9"] {
     fill: var(--color-10);
 }
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 11) {
+.rct-series[data-pointcolors] .rct-point[data-index="10"] {
     fill: var(--color-11);
 }
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 12) {
+.rct-series[data-pointcolors] .rct-point[data-index="11"] {
     fill: var(--color-12);
 }
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 13) {
+.rct-series[data-pointcolors] .rct-point[data-index="12"] {
     fill: var(--color-13);
 }
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 14) {
+.rct-series[data-pointcolors] .rct-point[data-index="13"] {
     fill: var(--color-14);
 }
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 15) {
+.rct-series[data-pointcolors] .rct-point[data-index="14"] {
     fill: var(--color-15);
 }
-.rct-series[data-pointcolors] .rct-point:nth-child(16n + 16) {
+.rct-series[data-pointcolors] .rct-point[data-index="15"] {
     fill: var(--color-16);
 }
 
