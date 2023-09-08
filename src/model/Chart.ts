@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcEventProvider } from "../common/RcObject";
-import { Align, SVGStyleOrClass, SectionDir, VerticalAlign, isNull } from "../common/Types";
+import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
@@ -267,8 +267,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     private _inverted: boolean;
     _polar: boolean;
-    colors = ["#1bafdc", "#12d365", "#343ec3", "#81d8c1", 
-    "#fe6a35", "#6b8abc", "#d568fb", "#2ee0ca", "#fa4b42", "#feb56a"];
+    colors: string[];
 
     //-------------------------------------------------------------------------
     // constructor

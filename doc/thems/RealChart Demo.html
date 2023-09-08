@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<!-- saved from url=(0032)http://localhost:6010/realchart/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>RealChart Demo</title>
+<style>
+html {
+	height: 100%;
+	margin: 5px 5px 0px 5px;
+	overflow: hidden;
+}
+body {
+	height: 100%;
+	margin: 0px 0px 0px 0px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+#app {
+	display: flex;
+	flex: 1 1 auto;
+	overflow: hidden;
+}
+.sidebar {
+	flex: 0 0 170px;
+	height: 100%;
+	overflow: auto;
+	border-right: 1px solid #ccc;
+}
+.menu {
+	width: 100%;
+	padding-bottom: 30px;
+    font-family: open-sans-semibold, "malgun gothic", Arial;
+}
+.menu li {
+	display: block;
+	padding-left: 7px;
+	padding-right: 5px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	font-size: 13px;
+	cursor: pointer;
+}
+.menu a {
+	padding: 2px 3px;
+	border-radius: 2px;
+	text-decoration: none;
+	color: #555;
+}
+.menu a:hover {
+	color: white;
+	background-color: gray;
+}
+.menu-group {
+	margin-top: 4px;
+	margin-bottom: 4px;
+	font-weight: 500;
+}
+.menu-group:hover {
+	color: red;
+}
+.menu-group[data-state='1'] {
+	color: red;
+}
+.menu-leaf {
+	margin-left: 12px;
+}
+.menu-leaf a {
+	color: #777;
+	font-size: 12px;
+}
+.menu-leaf[data-focus] a {
+	color: #333;
+    font-weight: bold;
+	text-decoration: underline;
+}
+.content {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	height: 100%;
+	overflow: auto;
+}
+.frame {
+	flex: 1 1 auto;
+	border: none;
+	overflow: hidden;
+}
+</style>
+<script type="text/javascript" src="./RealChart Demo_files/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="./RealChart Demo_files/domutils.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+	init();
+});
+</script>
+<script type="text/javascript" src="./RealChart Demo_files/index.js"></script>
+</head>
+<body onclick="clickHandler(event)" style="">
+	<h3 style="margin-left: 20px;">RealChart v1.0 - Demo</h3>
+	<div id="app">
+		<div class="sidebar">
+			<div class="menu" id="menu">
+				<li class="menu-group" data-group="0" data-state="1">Basic</li>
+				<li class="menu-leaf" data-group="0" data-index="0"><a href="http://localhost:6010/realchart/demo/basic.html" target="blank" onclick="return clickRef(event);">Basic</a></li>
+
+                <li class="menu-group" data-group="1" data-state="0">Bar</li>
+				<li class="menu-leaf" data-group="1" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/bar.html" target="blank" onclick="return clickRef(event);">Bar</a></li>
+				<li class="menu-leaf" data-group="1" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/bar-multi.html" target="blank" onclick="return clickRef(event);">Multi Bars</a></li>
+				<li class="menu-leaf" data-group="1" data-index="2" style="display: none;"><a href="http://localhost:6010/realchart/demo/bargroup.html" target="blank" onclick="return clickRef(event);">Bar Group</a></li>
+				<li class="menu-leaf" data-group="1" data-index="3" style="display: none;"><a href="http://localhost:6010/realchart/demo/bargroup-multi.html" target="blank" onclick="return clickRef(event);">Multiple Groups</a></li>
+				<li class="menu-leaf" data-group="1" data-index="4" style="display: none;"><a href="http://localhost:6010/realchart/demo/bar-negative.html" target="blank" onclick="return clickRef(event);">Bar Negative</a></li>
+				<li class="menu-leaf" data-group="1" data-index="5" style="display: none;"><a href="http://localhost:6010/realchart/demo/bar-null.html" target="blank" onclick="return clickRef(event);">Null Point</a></li>
+				<li class="menu-leaf" data-group="1" data-index="6" style="display: none;"><a href="http://localhost:6010/realchart/demo/bargroup-negative.html" target="blank" onclick="return clickRef(event);">Negative Bars</a></li>
+
+                <li class="menu-group" data-group="2" data-state="0">BarRange</li>
+				<li class="menu-leaf" data-group="2" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/barrange.html" target="blank" onclick="return clickRef(event);">Bar Range</a></li>
+				<li class="menu-leaf" data-group="2" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/barrange-multi.html" target="blank" onclick="return clickRef(event);">Multiple Bar Ranges</a></li>
+				<li class="menu-leaf" data-group="2" data-index="2" style="display: none;"><a href="http://localhost:6010/realchart/demo/barrange-null.html" target="blank" onclick="return clickRef(event);">Null Point</a></li>
+
+				<li class="menu-group" data-group="3" data-state="0">Waterfall</li>
+				<li class="menu-leaf" data-group="3" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/waterfall.html" target="blank" onclick="return clickRef(event);">Waterfall</a></li>
+				<li class="menu-leaf" data-group="3" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/waterfall-null.html" target="blank" onclick="return clickRef(event);">Null Point</a></li>
+
+				<li class="menu-group" data-group="4" data-state="0">Line</li>
+				<li class="menu-leaf" data-group="4" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/line.html" target="blank" onclick="return clickRef(event);">Line</a></li>
+				<li class="menu-leaf" data-group="4" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/line-spline.html" target="blank" onclick="return clickRef(event);">Spline</a></li>
+				<li class="menu-leaf" data-group="4" data-index="2" style="display: none;"><a href="http://localhost:6010/realchart/demo/line-step.html" target="blank" onclick="return clickRef(event);">Stepped Line</a></li>
+				<li class="menu-leaf" data-group="4" data-index="3" style="display: none;"><a href="http://localhost:6010/realchart/demo/line-negative.html" target="blank" onclick="return clickRef(event);">Negative Line</a></li>
+				<li class="menu-leaf" data-group="4" data-index="4" style="display: none;"><a href="http://localhost:6010/realchart/demo/line-null.html" target="blank" onclick="return clickRef(event);">Null Point</a></li>
+				<li class="menu-leaf" data-group="4" data-index="5" style="display: none;"><a href="http://localhost:6010/realchart/demo/line-multi.html" target="blank" onclick="return clickRef(event);">Multiple Lines</a></li>
+				<li class="menu-leaf" data-group="4" data-index="6" style="display: none;"><a href="http://localhost:6010/realchart/demo/linegroup.html" target="blank" onclick="return clickRef(event);">Line Group</a></li>
+				<li class="menu-leaf" data-group="4" data-index="7" style="display: none;"><a href="http://localhost:6010/realchart/demo/linegroup-negative.html" target="blank" onclick="return clickRef(event);">Negative Lines</a></li>
+				<li class="menu-leaf" data-group="4" data-index="8" style="display: none;"><a href="http://localhost:6010/realchart/demo/bump.html" target="blank" onclick="return clickRef(event);">Bump Chart</a></li>
+
+				<li class="menu-group" data-group="5" data-state="0">Area</li>
+				<li class="menu-leaf" data-group="5" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/area.html" target="blank" onclick="return clickRef(event);">Area</a></li>
+				<li class="menu-leaf" data-group="5" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/area-multi.html" target="blank" onclick="return clickRef(event);">Multiple Areas</a></li>
+				<li class="menu-leaf" data-group="5" data-index="2" style="display: none;"><a href="http://localhost:6010/realchart/demo/areagroup.html" target="blank" onclick="return clickRef(event);">Area Group</a></li>
+				<li class="menu-leaf" data-group="5" data-index="3" style="display: none;"><a href="http://localhost:6010/realchart/demo/area-negative.html" target="blank" onclick="return clickRef(event);">Area Negative</a></li>
+				<li class="menu-leaf" data-group="5" data-index="4" style="display: none;"><a href="http://localhost:6010/realchart/demo/areagroup-negative.html" target="blank" onclick="return clickRef(event);">Negative Areas</a></li>
+				<li class="menu-leaf" data-group="5" data-index="5" style="display: none;"><a href="http://localhost:6010/realchart/demo/area-null.html" target="blank" onclick="return clickRef(event);">Null Point</a></li>
+
+				<li class="menu-group" data-group="6" data-state="0">AreaRange</li>
+				<li class="menu-leaf" data-group="6" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/arearange.html" target="blank" onclick="return clickRef(event);">Area Range</a></li>
+				<li class="menu-leaf" data-group="6" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/arearange-null.html" target="blank" onclick="return clickRef(event);">Null Point</a></li>
+
+				<li class="menu-group" data-group="7" data-state="0">Pareto</li>
+				<li class="menu-leaf" data-group="7" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/pareto.html" target="blank" onclick="return clickRef(event);">Pareto</a></li>
+				<li class="menu-leaf" data-group="7" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/pareto-null.html" target="blank" onclick="return clickRef(event);">Null Point</a></li>
+
+				<li class="menu-group" data-group="8" data-state="0">Scatter</li>
+				<li class="menu-leaf" data-group="8" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/scatter.html" target="blank" onclick="return clickRef(event);">Scatter</a></li>
+
+				<li class="menu-group" data-group="9" data-state="0">Bubble</li>
+				<li class="menu-leaf" data-group="9" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/bubble.html" target="blank" onclick="return clickRef(event);">Bubble</a></li>
+
+				<li class="menu-group" data-group="10" data-state="0">Boxplot</li>
+				<li class="menu-leaf" data-group="10" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/boxplot.html" target="blank" onclick="return clickRef(event);">BoxPlot</a></li>
+				<li class="menu-leaf" data-group="10" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/boxplot-multi.html" target="blank" onclick="return clickRef(event);">Multiple BoxPlots</a></li>
+				<li class="menu-leaf" data-group="10" data-index="2" style="display: none;"><a href="http://localhost:6010/realchart/demo/boxplot-null.html" target="blank" onclick="return clickRef(event);">Null Point</a></li>
+
+				<li class="menu-group" data-group="11" data-state="0">Error Bar</li>
+				<li class="menu-leaf" data-group="11" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/errorbar.html" target="blank" onclick="return clickRef(event);">ErrorBar</a></li>
+				<li class="menu-leaf" data-group="11" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/errorbar-null.html" target="blank" onclick="return clickRef(event);">Null Point</a></li>
+
+				<li class="menu-group" data-group="12" data-state="0">Candlestick</li>
+				<li class="menu-leaf" data-group="12" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/candlestick.html" target="blank" onclick="return clickRef(event);">Candlestick</a></li>
+				<li class="menu-leaf" data-group="12" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/candlestick-null.html" target="blank" onclick="return clickRef(event);">Null Point</a></li>
+
+				<li class="menu-group" data-group="13" data-state="0">Ohlc</li>
+				<li class="menu-leaf" data-group="13" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/ohlc.html" target="blank" onclick="return clickRef(event);">Ohlc</a></li>
+
+				<li class="menu-group" data-group="14" data-state="0">Lollipop</li>
+				<li class="menu-leaf" data-group="14" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/lollipop.html" target="blank" onclick="return clickRef(event);">Lollipop</a></li>
+				<li class="menu-leaf" data-group="14" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/lollipop-null.html" target="blank" onclick="return clickRef(event);">Null Point</a></li>
+
+				<li class="menu-group" data-group="15" data-state="0">Dumbbell</li>
+                <li class="menu-leaf" data-group="15" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/dumbbell.html" target="blank" onclick="return clickRef(event);">Dumbbell</a></li>
+                <li class="menu-leaf" data-group="15" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/dumbbell-null.html" target="blank" onclick="return clickRef(event);">Null Point</a></li>
+
+				<li class="menu-group" data-group="16" data-state="0">Equalizer</li>
+				<li class="menu-leaf" data-group="16" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/equalizer.html" target="blank" onclick="return clickRef(event);">Equalizer</a></li>
+				<li class="menu-leaf" data-group="16" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/equalizer-multi.html" target="blank" onclick="return clickRef(event);">Multiple Equalizer</a></li>
+				<li class="menu-leaf" data-group="16" data-index="2" style="display: none;"><a href="http://localhost:6010/realchart/demo/equalizer-null.html" target="blank" onclick="return clickRef(event);">Null Point</a></li>
+
+				<li class="menu-group" data-group="17" data-state="0">Histogram</li>
+				<li class="menu-leaf" data-group="17" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/histogram.html" target="blank" onclick="return clickRef(event);">Histogram</a></li>
+
+				<li class="menu-group" data-group="18" data-state="0">Bell Curve</li>
+				<li class="menu-leaf" data-group="18" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/bellcurve.html" target="blank" onclick="return clickRef(event);">Bell Curve</a></li>
+				<li class="menu-leaf" data-group="18" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/bellcurve-source.html" target="blank" onclick="return clickRef(event);">Scatter &amp; Bell Curve</a></li>
+
+				<li class="menu-group" data-group="19" data-state="0">Vector</li>
+				<li class="menu-leaf" data-group="19" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/vector.html" target="blank" onclick="return clickRef(event);">Vector</a></li>
+				<li class="menu-leaf" data-group="19" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/vector-null.html" target="blank" onclick="return clickRef(event);">Null Point</a></li>
+
+				<li class="menu-group" data-group="20" data-state="0">Heatmap</li>
+				<li class="menu-leaf" data-group="20" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/heatmap.html" target="blank" onclick="return clickRef(event);">Heatmap</a></li>
+				<li class="menu-leaf" data-group="20" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/heatmap-category.html" target="blank" onclick="return clickRef(event);">Heatmap Category</a></li>
+				<li class="menu-leaf" data-group="20" data-index="2" style="display: none;"><a href="http://localhost:6010/realchart/demo/heatmap-null.html" target="blank" onclick="return clickRef(event);">Null Point</a></li>
+
+				<li class="menu-group" data-group="21" data-state="0">Treemap</li>
+				<li class="menu-leaf" data-group="21" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/treemap.html" target="blank" onclick="return clickRef(event);">Treemap</a></li>
+				<li class="menu-leaf" data-group="21" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/treemap-level.html" target="blank" onclick="return clickRef(event);">Treemap Leveled</a></li>
+
+				<li class="menu-group" data-group="22" data-state="0">Pie</li>
+				<li class="menu-leaf" data-group="22" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/pie.html" target="blank" onclick="return clickRef(event);">Pie</a></li>
+				<li class="menu-leaf" data-group="22" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/pie-donut.html" target="blank" onclick="return clickRef(event);">Donut</a></li>
+
+				<li class="menu-group" data-group="23" data-state="0">Polar</li>
+				<!-- <li  class="menu-leaf"><a href='./demo/spiderweb.html' target="blank" onclick="return clickRef(event);">SpiderWeb</a></li> -->
+				<li class="menu-leaf" data-group="23" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/polar.html" target="blank" onclick="return clickRef(event);">Polar(Radar)</a></li>
+				<!-- <li  class="menu-leaf"><a href='./demo/windrose.html' target="blank" onclick="return clickRef(event);">WindRose</a></li> -->
+
+				<li class="menu-group" data-group="24" data-state="0">Funnel</li>
+				<li class="menu-leaf" data-group="24" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/funnel.html" target="blank" onclick="return clickRef(event);">Funnel</a></li>
+				<li class="menu-leaf" data-group="24" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/pyramid.html" target="blank" onclick="return clickRef(event);">Pyramid</a></li>
+
+				<!-- <li class="menu-group">Word Cloud</li>
+				<li  class="menu-leaf"><a href='./demo/wordcloud.html' target="blank" onclick="return clickRef(event);">Wordcloud</a></li> -->
+
+				<!-- <li class="menu-group">Sub-Chart</li>
+				<li  class="menu-leaf"><a href='./demo/wing.html' target="blank" onclick="return clickRef(event);">Wing Chart</a></li> -->
+
+				<li class="menu-group" data-group="25" data-state="0">Combination</li>
+				<li class="menu-leaf" data-group="25" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/combo-arearange-line.html" target="blank" onclick="return clickRef(event);">AreaRange &amp; Line</a></li>
+
+				<li class="menu-group" data-group="26" data-state="0">Axis</li>
+				<li class="menu-leaf" data-group="26" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/categoryaxis.html" target="blank" onclick="return clickRef(event);">Category Axis</a></li>
+				<li class="menu-leaf" data-group="26" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/categoryaxis-var.html" target="blank" onclick="return clickRef(event);">Variable Category Axis</a></li>
+				<li class="menu-leaf" data-group="26" data-index="2" style="display: none;"><a href="http://localhost:6010/realchart/demo/linearaxis.html" target="blank" onclick="return clickRef(event);">Linear Axis</a></li>
+				<li class="menu-leaf" data-group="26" data-index="3" style="display: none;"><a href="http://localhost:6010/realchart/demo/logaxis.html" target="blank" onclick="return clickRef(event);">Log Axis</a></li>
+				<li class="menu-leaf" data-group="26" data-index="4" style="display: none;"><a href="http://localhost:6010/realchart/demo/timeaxis.html" target="blank" onclick="return clickRef(event);">Time Axis</a></li>
+				<li class="menu-leaf" data-group="26" data-index="5" style="display: none;"><a href="http://localhost:6010/realchart/demo/axis-break.html" target="blank" onclick="return clickRef(event);">Axis Breaks</a></li>
+				<li class="menu-leaf" data-group="26" data-index="6" style="display: none;"><a href="http://localhost:6010/realchart/demo/axis-label.html" target="blank" onclick="return clickRef(event);">Axis Labels</a></li>
+				<li class="menu-leaf" data-group="26" data-index="7" style="display: none;"><a href="http://localhost:6010/realchart/demo/multiaxis.html" target="blank" onclick="return clickRef(event);">Multiple Axis</a></li>
+				<li class="menu-leaf" data-group="26" data-index="8" style="display: none;"><a href="http://localhost:6010/realchart/demo/axis-scroll.html" target="blank" onclick="return clickRef(event);">Scrolling</a></li>
+				<li class="menu-leaf" data-group="26" data-index="9" style="display: none;"><a href="http://localhost:6010/realchart/demo/axis-zoom.html" target="blank" onclick="return clickRef(event);">Zooming</a></li>
+
+				<li class="menu-group" data-group="27" data-state="0">Titles</li>
+				<li class="menu-leaf" data-group="27" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/titles.html" target="blank" onclick="return clickRef(event);">Titles</a></li>
+
+				<li class="menu-group" data-group="28" data-state="0">Legends</li>
+				<li class="menu-leaf" data-group="28" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/legend.html" target="blank" onclick="return clickRef(event);">Legend</a></li>
+				<li class="menu-leaf" data-group="28" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/legend-rows.html" target="blank" onclick="return clickRef(event);">Legend Rows</a></li>
+
+				<li class="menu-group" data-group="29" data-state="0">Plot Area</li>
+				<li class="menu-leaf" data-group="29" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/trendline.html" target="blank" onclick="return clickRef(event);">Trendlines</a></li>
+				<li class="menu-leaf" data-group="29" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/axis-guide.html" target="blank" onclick="return clickRef(event);">Guides</a></li>
+				<li class="menu-leaf" data-group="29" data-index="2" style="display: none;"><a href="http://localhost:6010/realchart/demo/crosshair.html" target="blank" onclick="return clickRef(event);">Crosshair</a></li>
+				<li class="menu-leaf" data-group="29" data-index="3" style="display: none;"><a href="http://localhost:6010/realchart/demo/plot-background.html" target="blank" onclick="return clickRef(event);">Background</a></li>
+
+				<li class="menu-group" data-group="30" data-state="0">Chart</li>
+				<li class="menu-leaf" data-group="30" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/background.html" target="blank" onclick="return clickRef(event);">Background</a></li>
+				<li class="menu-leaf" data-group="30" data-index="1" style="display: none;"><a href="http://localhost:6010/realchart/demo/navigator.html" target="blank" onclick="return clickRef(event);">Navigator</a></li>
+				<li class="menu-leaf" data-group="30" data-index="2" style="display: none;"><a href="http://localhost:6010/realchart/demo/resize.html" target="blank" onclick="return clickRef(event);">Resize</a></li>
+
+				<li class="menu-group" data-group="31" data-state="1">Style</li>
+				<li class="menu-leaf" data-group="31" data-index="0" data-focus="focus" style=""><a href="http://localhost:6010/realchart/demo/lineargradient.html" target="blank" onclick="return clickRef(event);">Linear Gradient</a></li>
+
+				<li class="menu-group" data-group="32" data-state="0">Data</li>
+				<li class="menu-leaf" data-group="32" data-index="0" style="display: none;"><a href="http://localhost:6010/realchart/demo/data.html" target="blank" onclick="return clickRef(event);">Data</a></li>
+			</div>
+		</div>
+		<div class="content">
+			<iframe id="frame" scrolling="no" frameborder="no" class="frame" onload="resizeFrame(this)" src="./RealChart Demo_files/lineargradient.html" style="min-height: 600px;"></iframe>
+		</div>
+	</div>
+
+		</body></html>

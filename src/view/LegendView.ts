@@ -124,8 +124,6 @@ export class LegendView extends BoundableElement<Legend> {
         this.$_prepareItems(doc, items);
 
         views.forEach((v, i) => {
-            v._marker.setStyle('fill', items[i].source.legendColor());
-
             const sz = v.measure(doc, items[i], hintWidth, hintHeight, phase);
 
             if (vertical) {
@@ -167,6 +165,7 @@ export class LegendView extends BoundableElement<Legend> {
         }
 
         this._itemViews.forEach(v => {
+            v._marker.setStyle('fill', v.model.source.legendColor());
             v.resizeByMeasured().layout();
             v.translate(x, y);
 

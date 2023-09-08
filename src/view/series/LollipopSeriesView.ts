@@ -27,7 +27,7 @@ class BarElement extends GroupElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-lollipop-point');
+        super(doc, SeriesView.POINT_CLASS);
 
         this.add(this._line = new LineElement(doc));
         this.add(this._marker = new PathElement(doc, 'rct-lollipop-point-marker'));
@@ -83,8 +83,8 @@ export class LollipopSeriesView extends BoxedSeriesView<LollipopSeries> {
         }
         this._bars.prepare(points.length, (v, i) => {
             v.point = points[i];
-            v.setStyle('fill', points[i].color);
-            v.setStyleOrClass(style);
+            points[i].color && v.setStyle('fill', points[i].color);
+            style && v.setStyleOrClass(style);
         });
     }
 }

@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isString, pickNum, pickNum3 } from "../../common/Common";
-import { Axis, AxisGrid, AxisTick, AxisLabel, AxisTickMark, IAxisTick } from "../Axis";
+import { Axis, AxisGrid, AxisTick, AxisLabel, IAxisTick } from "../Axis";
 import { IPlottingItem } from "../Series";
 
 export enum CategoryTickPosition {
@@ -372,13 +372,5 @@ export class CategoryAxis extends Axis {
 
         this._map = {};
         cats.forEach((cat, i) => this._map[cat.c] = i);
-
-        // console.log(cats);
-
-        // const start = pickNum(this.startValue, 0);
-        // const step = this.valueStep || 1;
-
-        // this._map.clear();
-        // this._cats.forEach((c, i) => this._map.set(c, i));//start + i * step));
     }
 }

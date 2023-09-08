@@ -220,7 +220,7 @@ export class TreemapSeries extends Series {
         const map = this._map;
 
         pts.forEach(p => {
-            if (!p.isNull) {
+            if (p.id || !p.isNull) {
                 const node = new TreeNode(p);
 
                 if (p.id) {

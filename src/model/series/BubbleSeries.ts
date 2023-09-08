@@ -142,7 +142,7 @@ export class BubbleSeries extends Series {
         return new BubbleSeriesPoint(source);
     }
 
-    protected _colorByPoint(): boolean {
+    _colorByPoint(): boolean {
         return this.colorByPoint;
     }
 

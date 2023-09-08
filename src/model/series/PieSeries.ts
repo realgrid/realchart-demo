@@ -24,6 +24,7 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
     startAngle = 0;
     angle = 0;
     borderRaidus: number;
+    _calcedColor: string;
 
     //-------------------------------------------------------------------------
     // properties
@@ -36,7 +37,7 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
     // methods
     //-------------------------------------------------------------------------
     legendColor(): string {
-        return this.color;
+        return this._calcedColor;
     }
 
     legendLabel(): string {
@@ -136,7 +137,7 @@ export class PieSeries extends RadialSeries {
         return 'pie';
     }
 
-    protected _colorByPoint(): boolean {
+    _colorByPoint(): boolean {
         return true;
     }
 

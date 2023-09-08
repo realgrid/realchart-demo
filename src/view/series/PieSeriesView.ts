@@ -28,7 +28,7 @@ class SectorView extends SectorElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-pie-point');
+        super(doc, SeriesView.POINT_CLASS);
     }
 
     //-------------------------------------------------------------------------
@@ -240,8 +240,8 @@ export class PieSeriesView extends SeriesView<PieSeries> {
             sector.point = p;
 
             sector.setAttr('aria-label', p.ariaHint());
-            sector.setStyle('fill', p.color);
-            // sector.setStyle('stroke', 'white'); <= css에서
+            p.color && sector.setStyle('fill', p.color);
+            p._calcedColor = getComputedStyle(sector.dom).fill;
         })
     }
 

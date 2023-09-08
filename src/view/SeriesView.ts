@@ -293,7 +293,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly POINT_CLASS = 'rct-data-point';
+    static readonly POINT_CLASS = 'rct-point';
     static readonly DATA_FOUCS = 'focus'
 
     //-------------------------------------------------------------------------
@@ -369,14 +369,31 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         // console.log('CLICKED: ' + view.point.yValue);
     }
 
+    protected _getColor(): string {
+        // if (!this.model._calcedColor) {
+        //     this.model._calcedColor = getComputedStyle(this.dom).fill;
+        // }
+        return this.model._calcedColor;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         this.setClip(void 0);
         // this._viewRate = NaN; // animating 중 다른 시리즈 등의 요청에 의해 여기로 진입할 수 있다.
+
         this._prepareSeries(doc, model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
+
+        this.setStyleOrClass(model.style);
+        if (model.color) {
+            this.internalSetStyle('fill', model.color);
+            this.internalSetStyle('stroke', model.color);
+        }
+
+        this.model._calcedColor = getComputedStyle(this.dom).fill;
+        this.setBoolData('pointcolors', model._colorByPoint());
 
         if (model.trendline.visible) {
             if (!this._trendLineView) {
@@ -530,7 +547,7 @@ export abstract class BoxPointElement extends PathElement implements IPointView 
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-box-point');
+        super(doc, SeriesView.POINT_CLASS);
     }
 
     //-------------------------------------------------------------------------

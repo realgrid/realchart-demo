@@ -32,7 +32,7 @@ export class LineMarkerView extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-line-point-marker');
+        super(doc, SeriesView.POINT_CLASS);
     }
 }
 
@@ -239,7 +239,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     protected _layoutMarker(mv: LineMarkerView, x: number, y: number): void {
         const series = this.model;
         const marker = series.marker;
-        const color = series.color;
+        // const color = series.color;
         const p = mv.point as LineSeriesPoint;
         const s = p.shape || series.getShape();
         const sz = mv._radius = pickNum(p.radius, marker.radius);
@@ -264,14 +264,14 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         // if (m.visible = this._containsMarker(x, y)) {
             mv.translate(x, y);
             mv.setPath(path);
-            // mv.setStyle('stroke', 'white');
-            marker.style && mv.setStyles(marker.style);
-            mv.setStyle('fill', color);
         // }
     }
 
     protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
         const series = this.model;
+        const markerStyle = series.marker.style;
+        const needBelow = series instanceof LineSeries && this._needBelow;
+        const base = needBelow ? series.baseValue : NaN;
         const inverted = this._inverted;
         const polar = this._polar = (series.chart as Chart).body.getPolar(series);
         const vr = this._getViewRate();
@@ -318,6 +318,11 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     lv.visible = true;
                     lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
                 }
+                if (needBelow && p.yValue < base) {
+                    mv.setStyleOrClass(series.belowStyle);
+                } else {
+                    markerStyle && mv.setStyleOrClass(markerStyle);
+                }
             } else if (lv) {
                 lv.visible = false;
             }
@@ -326,6 +331,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     protected _layoutLines(pts: DataPoint[]): void {
         const series = this.model;
+        const needBelow = series instanceof LineSeries && this._needBelow;
         const sb = new PathBuilder();
         let i = 0;
         let s: string;
@@ -350,7 +356,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             this._line.addStyleOrClass(series.style);
             Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
     
-            if (series instanceof LineSeries && this._needBelow) {
+            if (needBelow) {
                 const axis = series._yAxisObj as ContinuousAxis;
                 const base = series.baseValue;// series.getBaseValue(axis);
                 

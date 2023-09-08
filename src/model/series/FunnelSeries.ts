@@ -84,7 +84,7 @@ export class FunnelSeries extends WidgetSeries {
         return 'funnel';
     }
 
-    protected _colorByPoint(): boolean {
+    _colorByPoint(): boolean {
         return true;
     }
 

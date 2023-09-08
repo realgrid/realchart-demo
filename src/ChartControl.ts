@@ -57,13 +57,13 @@ export class ChartControl extends RcControl implements IChartEventListener {
     set model(value: Chart) {
         if (value !== this._model) {
             if (this._model) {
-                this._model.assets.unregister(this);
+                this._model.assets.unregister(this.doc(), this);
                 this._model.removeListener(this);
             }
             this._model = value;
             if (this._model) {
                 this._model.addListener(this);
-                this._model.assets.register(this);
+                this._model.assets.register(this.doc(), this);
             }
             this.invalidateLayout();
         }

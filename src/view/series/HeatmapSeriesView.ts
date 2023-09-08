@@ -25,7 +25,7 @@ class CellView extends RectElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-heatmap-point');
+        super(doc, SeriesView.POINT_CLASS);
     }
 }
 
@@ -84,7 +84,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         const yAxis = series._yAxisObj;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
-        const color = new Color(series.color);
+        const color = new Color(this._getColor());
 
         this._cells.forEach(cell => {
             const p = cell.point as HeatmapSeriesPoint;
@@ -103,7 +103,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
                 y = (p.yPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
     
                 cell.setBounds(x, y, wPoint, hPoint);
-                cell.setStyle('fill', color.brighten(1 - p.colorValue / series._colorMax).toString());
+                cell.setStyle('fill', color.brighten(1 - p.heatValue / series._heatMax).toString());
     
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {

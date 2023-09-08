@@ -30,11 +30,11 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
     constructor(doc: Document) {
         super(doc, 'rct-area-range');
 
-        this.insertFirst(this._areaContainer = new LineContainer(doc, 'rct-area-series-areas'));
+        this.insertFirst(this._areaContainer = new LineContainer(doc, 'rct-arearange-series-areas'));
         // TODO: negative 처리 등에 문제가 없으면 lineContainer에 추가한다.
-        this._areaContainer.add(this._area = new PathElement(doc, 'rct-area-series-area'));
+        this._areaContainer.add(this._area = new PathElement(doc, 'rct-arearange-series-area'));
         // this._lineContainer.add(this._area = new PathElement(doc, 'rct-line-series-line'));
-        this._lineContainer.add(this._lowerLine = new PathElement(doc, 'rct-line-series-line'));
+        this._lineContainer.add(this._lowerLine = new PathElement(doc, 'rct-areanrange-series-line'));
         Dom.setImportantStyle(this._lowerLine.dom.style, 'fill', 'none');
     }
 

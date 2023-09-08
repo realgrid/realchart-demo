@@ -32,7 +32,7 @@ class BarElement extends GroupElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-equalizer-point');
+        super(doc, SeriesView.POINT_CLASS);
     }
 
     //-------------------------------------------------------------------------
@@ -126,8 +126,8 @@ export class EqualizerSeriesView extends BoxedSeriesView<EqualizerSeries> {
     //-------------------------------------------------------------------------
     private $_parepareBars(points: DataPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
-            const p = v.point = points[i];
-            p.color && v.setStyle('fill', p.color);
+            v.point = points[i];
+            v.point.color && v.setStyle('fill', v.point.color);
         })
     }
 

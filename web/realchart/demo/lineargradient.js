@@ -1,34 +1,40 @@
 /**
  * @demo
  * 
+ * Linear grandient 예제
  */
 const config = {
+    title: "Linear Gradient",
     options: {},
-    title: "Line - Negative",
+    assets: [{
+        type: 'linearGradient',
+        id: 'gradient-1',
+        color: '#0088ff',
+        opacity: [1, 0]
+    }],
     xAxis: {
         type: 'category'
     },
     yAxis: {
     },
     series: {
-        type: 'line',
-        style: {
-            strokeWidth: '3px'
-        },
-        belowStyle: {
-            stroke: 'red',
-            fill: 'red'
-        },
+        type: 'area',
+        lineType: 'spline',
+        marker: {},
         data: [
             ['home', 7], 
             ['sky', 11], 
-            ['정우성', -7], 
             ['def', 9], 
-            ['곽재식', -3], 
             ['지리산', 15.3], 
             ['zzz', 13],
-            ['낙동강', 12.5]
-        ]
+            ['낙동강', 12.5],
+            ['Youdube', 10.5]
+        ],
+        style: {
+            fill: 'url(#gradient-1)',
+            fillOpacity: 1,
+            strokeWidth: '2px'
+        }
     }
 }
 
@@ -42,10 +48,14 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createCheckBox(container, 'Curved', function (e) {
-        config.series.lineType = _getChecked(e) ? 'spline' : '';
+    createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
+        config.series.lineType = _getValue(e);
         chart.update(config);
-    }, false);
+    }, 'default');
+    createCheckBox(container, 'Point Marker', function (e) {
+        config.series.marker.visible = _getChecked(e);
+        chart.update(config);
+    }, true);
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
         chart.update(config);

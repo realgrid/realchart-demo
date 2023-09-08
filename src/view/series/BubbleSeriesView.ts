@@ -25,7 +25,7 @@ class MarkerView extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-bubble-point-marker');
+        super(doc, SeriesView.POINT_CLASS);
     }
 }
 
@@ -83,6 +83,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         const zAxis = series._xAxisObj._length < series._yAxisObj._length ? series._xAxisObj : series._yAxisObj;
         const len = zAxis._length;
         const marker = series.marker;
+        const style = marker.style;
         const count = points.length;
         const {min, max} = series.getPxMinMax(len);
 
@@ -91,6 +92,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
 
             p.radius = series.getRadius(p.zValue, min, max);
             p.shape = marker.shape;
+            style && m.setStyleOrClass(style);
             p.color && m.setStyle('fill', p.color);
         });
     }

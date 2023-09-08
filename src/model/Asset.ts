@@ -6,6 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { SVGNS, isArray, isObject, pickProp } from "../common/Common";
+import { isNull } from "../common/Types";
+
 export interface IAssetItem {
 
     id: string;
@@ -13,16 +16,15 @@ export interface IAssetItem {
 
 abstract class AssetItem<T extends IAssetItem> {
 
-    source: IAssetItem;
+    constructor(public source: T) {}
 
-    abstract getEelement(): Element;
+    abstract getEelement(doc: Document): Element;
 }
 
 export interface IGradient extends IAssetItem {
 
-    color: string[];
-    opacity?: string[];
-    stop?: (number | string)[];
+    color: string[] | string;
+    opacity?: number[] | number;
 }
 
 /**
@@ -30,13 +32,68 @@ export interface IGradient extends IAssetItem {
  */
 export interface ILinearGradient extends IGradient {
 
-    dir?: 'bottom' | 'top' | 'right' | 'left' | (string | number)[];
+    // dir?: 'down' | 'up' | 'right' | 'left' | (string | number)[];
+    dir?: 'down' | 'up' | 'right' | 'left';
 }
 
-class LinearGradient extends AssetItem<ILinearGradient> {
+abstract class Gradient<T extends IGradient> extends AssetItem<T> {
 
-    getEelement(): Element {
-        return;
+    protected _setStops(doc: Document, elt: Element): void {
+        const stop1 = doc.createElementNS(SVGNS, 'stop');
+        const stop2 = doc.createElementNS(SVGNS, 'stop');
+        const color = this.source.color;
+        const alpha = isNull(this.source.opacity) ? 1 : this.source.opacity;
+        const color1 = isArray(color) ? color[0] : color;
+        const color2 = isArray(color) && color.length > 1 ? color[1] : 'white';
+        const alpha1 = isArray(alpha) ? alpha[0] : alpha;
+        const alpha2 = isArray(alpha) && alpha.length > 1 ? alpha[1] : alpha;
+
+        elt.setAttribute('id', this.source.id);
+
+        stop1.setAttribute('offset', '0');
+        stop1.setAttribute('stop-color', color2);
+        stop1.setAttribute('stop-opacity', alpha1 as any);
+
+        stop2.setAttribute('offset', '1');
+        stop2.setAttribute('stop-color', color1);
+        stop2.setAttribute('stop-opacity', alpha2 as any);
+
+        elt.appendChild(stop1);
+        elt.appendChild(stop2);
+    }
+}
+
+class LinearGradient extends Gradient<ILinearGradient> {
+
+    static readonly TYPE = 'linearGradient';
+
+    getEelement(doc: Document): Element {
+        const elt = doc.createElementNS(SVGNS, LinearGradient.TYPE);
+        let {x1, x2, y1, y2} = {x1: 0, x2: 0, y1: 0, y2: 0};
+
+        this._setStops(doc, elt);
+
+        switch (this.source.dir) {
+            case 'up':
+                y1 = 1;
+                break;
+            case 'right':
+                x2 = 1;
+                break;
+            case 'left':
+                x1 = 1;
+                break;
+            default:
+                y2 = 1;
+                break;
+        }
+
+        elt.setAttribute('x1', x1 as any);
+        elt.setAttribute('y1', y1 as any);
+        elt.setAttribute('x2', x2 as any);
+        elt.setAttribute('y2', y2 as any);
+
+        return elt;
     }
 }
 
@@ -45,36 +102,86 @@ class LinearGradient extends AssetItem<ILinearGradient> {
  */
 export interface IRadialGradient extends IGradient {
 
-    cx: number | string;
-    cy: number | string;
-    rd: number | string;
-    fx?: number | string;
-    fy?: number | string;
+    cx?: number | string;
+    cy?: number | string;
+    rd?: number | string;
 }
 
-class RadialGradient extends AssetItem<IRadialGradient> {
+class RadialGradient extends Gradient<IRadialGradient> {
 
-    getEelement(): Element {
-        return;
+    static readonly TYPE = 'radialGradient';
+
+    getEelement(doc: Document): Element {
+        const src = this.source;
+        const elt = doc.createElementNS(SVGNS, RadialGradient.TYPE);
+
+        if (!isNull(src.cx)) {
+            elt.setAttribute('cx', src.cx as any);
+        }
+        if (!isNull(src.cy)) {
+            elt.setAttribute('cy', src.cy as any);
+        }
+        if (!isNull(src.rd)) {
+            elt.setAttribute('rd', src.rd as any);
+        }
+        this._setStops(doc, elt);
+
+        return elt;
     }
 }
 
 export interface IAssetOwner {
     addDef(element: Element): void;
-    removeDef(element: Element): void;
+    removeDef(element: string): void;
 }
 
 export class AssetCollection {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _items: AssetItem<IAssetItem>[] = [];
+
+    //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    load(src: any): void {
+    load(source: any): void {
+        this._items = [];
+
+        if (isArray(source)) {
+            source.forEach(src => {
+                let item = this.$_loadItem(src);
+                item && this._items.push(item);
+            })
+        } else if (isObject(source)) {
+            let item = this.$_loadItem(source);
+            item && this._items.push(item);
+        }
     }
 
-    register(owner: IAssetOwner): void {
+    register(doc: Document, owner: IAssetOwner): void {
+        this._items.forEach(item => {
+            owner.addDef(item.getEelement(doc));
+        })
     }
 
-    unregister(owner: IAssetOwner): void {
+    unregister(doc: Document, owner: IAssetOwner): void {
+        this._items.forEach(item => {
+            owner.removeDef(item.source.id);
+        })
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_loadItem(src: any): AssetItem<IAssetItem> {
+        if (isObject(src) && src.type && src.id) {
+            switch (src.type) {
+                case LinearGradient.TYPE:
+                    return new LinearGradient(src);
+                case RadialGradient.TYPE:
+                    return new RadialGradient(src);
+            }
+        }
     }
 }

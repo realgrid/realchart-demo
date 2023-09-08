@@ -23,40 +23,31 @@ const config = {
         },
         data: [{
             "name": "A",
-            "value": 6,
-            "colorValue": 1
+            "value": 6
         }, {
             "name": "B",
-            "value": 5,
-            "colorValue": 2
+            "value": 5
         }, {
             "name": "C",
             "value": 4,
-            "colorValue": 3
         }, {
             "name": "D",
             "value": 3,
-            "colorValue": 4
         }, {
             "name": "E",
             "value": 2,
-            "colorValue": 5
         }, {
             "name": "F",
             "value": 2,
-            "colorValue": 6
         }, {
             "name": "G",
             "value": 1,
-            "colorValue": 7
         }, {
             "name": "H",
             "value": 1,
-            "colorValue": 7
         }, {
             "name": "I",
             "value": 1,
-            "colorValue": 7
         }],
         style: {
         }

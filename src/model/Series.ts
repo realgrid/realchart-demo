@@ -338,6 +338,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _minValue: number;
     _maxValue: number;
     _referents: Series[];
+    _calcedColor: string;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -486,7 +487,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     legendColor(): string {
-        return this.color;
+        return this._calcedColor;
     }
 
     legendLabel(): string {
@@ -568,9 +569,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     prepareRender(): void {
+        this._calcedColor = void 0;
         this._xAxisObj = this.group ? this.group._xAxisObj : this.chart._connectSeries(this, true);
         this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
-        this._visPoints = this._points.getVisibles();//.sort((p1, p2) => p1.xValue - p2.xValue);
+        this._visPoints = this._points.getVisibles();
         this._doPrepareRender();
     }
 
@@ -687,7 +689,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return axis === this._xAxisObj ? this.xField : this.yField;
     }
 
-    protected _colorByPoint(): boolean {
+    _colorByPoint(): boolean {
         return false;
     }
 
@@ -725,7 +727,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         }
 
         this._visPoints.forEach((p, i) => {
-            if (!p.color) {
+            // if (!p.color) {
+            //     p.color = color || colors[i % colors.length];
+            // }
+            if (!p.color && colors) {
                 p.color = color || colors[i % colors.length];
             }
         })
@@ -857,7 +862,6 @@ export class PlottingItemCollection  {
     }
 
     prepareRender(): void {
-        const colors = this.chart.colors;
         const visibles = this._visibleSeries = [];
         let iShape = 0;
 
@@ -871,7 +875,6 @@ export class PlottingItemCollection  {
         const nCluster = this._visibleSeries.filter(ser => ser.clusterable()).length;
 
         this._visibleSeries.forEach((ser, i) => {
-            ser.color = ser.color || colors[i++ % colors.length];
             if (ser instanceof ClusterableSeries) {
                 ser._single = nCluster === 1;
             }

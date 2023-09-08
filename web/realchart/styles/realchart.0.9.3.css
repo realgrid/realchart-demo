@@ -22,6 +22,24 @@
     --rct-font-size: 16px;
     --rct-focus-border: black;
 }
+.rct-root {
+    --color-1: #1bafdc;
+    --color-2: #12d365;
+    --color-3: #343ec3;
+    --color-4: #81d8c1;
+    --color-5: #fe6a35;
+    --color-6: #6b8abc;
+    --color-7: #d568fb;
+    --color-8: #2ee0ca;
+    --color-9: #fa4b42;
+    --color-10: #feb56a;
+    --color-11: #feb56a;
+    --color-12: #feb56a;
+    --color-13: #feb56a;
+    --color-14: #feb56a;
+    --color-15: #feb56a;
+    --color-16: #feb56a;
+}
 
 .rct-root text {
     stroke: none;
@@ -58,17 +76,23 @@
     fill: none;
 }
 
+/** credits */
+.rct-credits {
+    font-size: 0.7em;
+    fill: #777;
+}
+
 /** title */
 .rct-title {
     font-size: 24px;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
 }
 .rct-title-background {
     fill: transparent;
 }
 .rct-subtitle {
     font-size: 16px;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
 }
 .rct-subtitle-background {
     fill: transparent;
@@ -76,9 +100,9 @@
 
 /** legend */
 .rct-legend {
-    stroke: #ddd;
-    fill: transparent;
-    margin: 8px;
+    stroke: none;
+    fill: none;
+    /* margin-top: 16px; */
 }
 .rct-legend-background {
     padding: 4px;
@@ -157,10 +181,78 @@
 }
 
 /** series */
+.rct-series:nth-child(16n + 1) {
+    fill: var(--color-1);
+    stroke: var(--color-1);
+}
+.rct-series:nth-child(16n + 2) {
+    fill: var(--color-2);
+    stroke: var(--color-2);
+}
+.rct-series:nth-child(16n + 3) {
+    fill: var(--color-3);
+    stroke: var(--color-3);
+}
+.rct-series:nth-child(16n + 4) {
+    fill: var(--color-4);
+    stroke: var(--color-4);
+}
+.rct-series:nth-child(16n + 5) {
+    fill: var(--color-5);
+    stroke: var(--color-5);
+}
+.rct-series:nth-child(16n + 6) {
+    fill: var(--color-6);
+    stroke: var(--color-6);
+}
+.rct-series:nth-child(16n + 7) {
+    fill: var(--color-7);
+    stroke: var(--color-7);
+}
+.rct-series:nth-child(16n + 8) {
+    fill: var(--color-8);
+    stroke: var(--color-8);
+}
+.rct-series:nth-child(16n + 9) {
+    fill: var(--color-9);
+    stroke: var(--color-9);
+}
+.rct-series:nth-child(16n + 10) {
+    fill: var(--color-10);
+    stroke: var(--color-10);
+}
+.rct-series:nth-child(16n + 11) {
+    fill: var(--color-11);
+    stroke: var(--color-11);
+}
+.rct-series:nth-child(16n + 12) {
+    fill: var(--color-12);
+    stroke: var(--color-12);
+}
+.rct-series:nth-child(16n + 13) {
+    fill: var(--color-13);
+    stroke: var(--color-13);
+}
+.rct-series:nth-child(16n + 14) {
+    fill: var(--color-14);
+    stroke: var(--color-14);
+}
+.rct-series:nth-child(16n + 15) {
+    fill: var(--color-15);
+    stroke: var(--color-15);
+}
+.rct-series:nth-child(16n + 16) {
+    fill: var(--color-16);
+    stroke: var(--color-2);
+}
+
 .rct-series-labels {
     font-size: 0.8em;
     font-weight: bold;
+    stroke: none;
     fill: #558;
+    fill-opacity: 1;
+    opacity: 1;
 }
 .rct-series-trendline {
     stroke: red;
@@ -175,18 +267,26 @@
 }
 
 /** bar series */
-.rct-box-point {
-    fill: #00aaff;
+.rct-bar-series {
     fill-opacity: 0.85;
 }
-.rct-box-point[data-focus] {
+.rct-bar-series .rct-point[data-focus] {
+    stroke: var(--rct-focus-border);
+    stroke-width: 2px;
+}
+
+/** barrange series */
+.rct-barrange-series {
+    fill-opacity: 0.85;
+}
+.rct-barrange-series .rct-point[data-focus] {
     stroke: var(--rct-focus-border);
     stroke-width: 2px;
 }
 
 /** line series */
 .rct-line-series-line {
-    stroke: gray;
+    stroke-width: 1px;
 }
 .rct-line-point-marker[data-focus] {
     /* scale: 2; */
@@ -196,26 +296,30 @@
 
 /** area series */
 .rct-area-series-area {
-    fill: #0088ff;
+    fill-opacity: 0.5;
+}
+
+/** arearange series */
+.rct-arearange-series-area {
     fill-opacity: 0.5;
 }
 
 /** bubble series */
-.rct-bubble-point-marker {
-    fill: #0088ff;
+.rct-bubble-series {
     fill-opacity: 0.75;
-    stroke: #0088ff;
+    stroke-width: 1px;
 }
-.rct-bubble-point-marker[data-focus] {
+
+.rct-bubble-series .rct-point[data-focus] {
     stroke: var(--rct-focus-border);
     stroke-width: 2px;
 }
 
 /** scatter series */
-.rct-scatter-point-marker {
+.rct-scatter-series {
     fill-opacity: 0.7;
 }
-.rct-scatter-point-marker[data-focus] {
+.rct-scatter-series .data-point[data-focus] {
     stroke: var(--rct-focus-border);
     stroke-width: 2px;
 }
@@ -223,12 +327,8 @@
 /** boxplot series */
 .rct-boxplot-series {
     stroke-width: 1;
-    fill: white;
 }
-.rct-boxplot-point-box {
-    fill: #0088ff80;
-} 
-.rct-boxplot-point[data-focus] .rct-boxplot-point-box {
+.rct-boxplot-series .rct-point[data-focus] {
     stroke: var(--rct-focus-border);
     stroke-width: 2px;
 }
@@ -248,7 +348,7 @@
     stroke: #333;
     stroke-dasharray: 2;
 }
-.rct-boxplot-point[data-focus] .rct-boxplot-point-stem {
+.rct-boxplot-series .rct-point[data-focus] .rct-boxplot-point-stem {
     stroke: black;
     stroke-dasharray: none;
     stroke-width: 2px;
@@ -257,6 +357,10 @@
 /** candlestick series */
 .rct-candlestick-series {
     stroke-width: 1;
+    fill-opacity: 0.85;
+}
+.rct-candlestick-series .rct-point[data-focus] {
+    fill-opacity: 0.5;
 }
 .rct-candlestick-point-border {
     stroke: #333;
@@ -264,36 +368,43 @@
 .rct-candlestick-point-wick {
     stroke: #003;
 }
-.rct-candlestick-point[data-focus] {
-    fill-opacity: 0.5;
-}
 .rct-candlestick-point-fall {
     fill: #008;
-}
-.rct-candlestick-point[data-focus] .rct-candlestick-point-body-fall {
-    fill-opacity: 0.5;
+    stroke: #008;
 }
 
 /** ohlc series */
-.rct-ohlc-point {
-    stroke-width: 1;
+.rct-ohlc-series {
+    stroke-width: 2;
+}
+.rct-ohlc-point-back {
+    stroke: none;
 }
 .rct-ohlc-point-tick {
     stroke: #003;
 }
 .rct-ohlc-point-bar {
-    stroke: #800;
+    stroke: #f00;
 }
 .rct-ohlc-point-bar-fall {
-    stroke: #008;
+    stroke: #00f;
 }
 
 /** waterfall series */
+.rct-waterfall-series {
+    fill-opacity: 0.85;
+}
+.rct-waterfall-series .rct-point[data-focus] {
+    stroke: var(--rct-focus-border);
+    stroke-width: 2px;
+}
 .rct-waterfall-point-negative {
     fill: #dd5500;
+    stroke: #dd5500;
 }
 .rct-waterfall-point-sum {
     fill: #0055cc;
+    stroke: #0055cc;
 }
 .rct-waterfall-series-lines {
     stroke: #77f;
@@ -302,64 +413,71 @@
 }
 
 /** errobar series */
-.rct-errorbar-point {
+.rct-errorbar-series .rct-point {
     stroke: #008;
     stroke-width: 2px;
 }
 
 /** lollipop series */
-.rct-lollipop-point {
-    stroke: #008;
+.rct-lollipop-series {
     stroke-width: 3px;
 }
 .rct-lollipop-point-marker {
     stroke: none;
-    fill: #008;
 }
 
 /** dumbbell series */
-.rct-dumbbell-point {
-    stroke: #008;
+.rct-dumbbell-series {
     stroke-width: 2px;
 }
 .rct-dumbbell-point-marker {
     stroke: none;
-    fill: #008;
 }
 
-/** funnel series */
-.rct-funnel-point[data-focus] {
-    stroke: red;
-    stroke-width: 2px;
+/** equalizer series */
+.rct-equalizer-series {
+    fill-opacity: 0.9;
+}
+
+.rct-histogram-series .rct-point {
+    stroke: white;
 }
 
 /** vector series */
 .rct-vector-series {
     stroke-width: 2px;
-    /* stroke-linejoin: round; */
 }
-.rct-vector-point[data-focus] {
-    stroke-width: 3px;
+.rct-vector-series .rct-point[data-focus] {
+    stroke-width: 5px;
 }
 
 /** heatmpa series */
-.rct-heatmap-point[data-focus] {
+.rct-heatmap-series .rct-point {
+    stroke: none;
+}
+.rct-heatmap-series .rct-point[data-focus] {
     stroke: var(--rct-focus-border);
     stroke-width: 2px;
 }
 
 /** treemap series */
-.rct-treemap-point {
+.rct-treemap-series .rct-point {
     stroke: white;
 }
-.rct-treemap-point[data-focus] {
+.rct-treemap-series .rct-point[data-focus] {
     stroke: var(--rct-focus-border);
     stroke-width: 2px;
 }
 
 /** pie series */
-.rct-pie-series .rct-series-points {
+.rct-pie-series .rct-point {
     stroke: white;
+}
+
+/** funnel series */
+.rct-funnel-series .rct-point[data-focus] {
+    stroke: red;
+    stroke-width: 2px;
 }
 
 /** tooltip */

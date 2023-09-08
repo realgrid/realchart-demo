@@ -26,7 +26,7 @@ class NodeView extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-treemap-point');
+        super(doc, SeriesView.POINT_CLASS);
     }
 
     get point(): DataPoint {
@@ -52,7 +52,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-Treemap-series')
+        super(doc, 'rct-treemap-series')
 
         this._nodeViews = new ElementPool(this._pointContainer, NodeView);
     }
@@ -76,7 +76,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
         const nodes = series.buildMap(width, height);
-        const color = new Color(series.color);
+        const color = new Color(series._calcedColor);
         let labelView: PointLabelView;
 
         // buildMap()으로 leafs가 결정돼야 한다.
@@ -90,8 +90,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
             if (g) {
                 if (!g._color && g.point.color) {
                     c = g._color = new Color(g.point.color);
-                }
-                if (g._color) {
+                } else if (g._color) {
                     c = g._color;
                 }
             }

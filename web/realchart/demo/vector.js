@@ -378,7 +378,7 @@ const config = {
             [95, 90, 15, 333],
             [95, 95, 10, 342]        ],
         style: {
-            stroke: 'red'
+            // stroke: 'red'
         }
     }
 }

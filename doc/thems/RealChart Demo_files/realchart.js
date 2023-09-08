@@ -2333,9 +2333,6 @@
             }
             return changed;
         }
-        internalSetStyle(prop, value) {
-            this._styles[prop] = value;
-        }
         putStyles(styles, buff) {
             buff = buff || {};
             if (styles) {
@@ -2355,14 +2352,6 @@
         }
         unsetData(data) {
             delete this.dom.dataset[data];
-        }
-        setBoolData(data, value) {
-            if (value) {
-                this.dom.dataset[data] = '';
-            }
-            else {
-                delete this.dom.dataset[data];
-            }
         }
         removeLater(moveToFirst = true, duration = 0.5) {
             return this;
@@ -2546,8 +2535,9 @@
             this.source = source;
         }
     }
-    class Gradient extends AssetItem {
-        _setStops(doc, elt) {
+    class LinearGradient extends AssetItem {
+        getEelement(doc) {
+            const elt = doc.createElementNS(SVGNS, LinearGradient.TYPE);
             const stop1 = doc.createElementNS(SVGNS, 'stop');
             const stop2 = doc.createElementNS(SVGNS, 'stop');
             const color = this.source.color;
@@ -2556,22 +2546,8 @@
             const color2 = isArray(color) && color.length > 1 ? color[1] : 'white';
             const alpha1 = isArray(alpha) ? alpha[0] : alpha;
             const alpha2 = isArray(alpha) && alpha.length > 1 ? alpha[1] : alpha;
-            elt.setAttribute('id', this.source.id);
-            stop1.setAttribute('offset', '0');
-            stop1.setAttribute('stop-color', color2);
-            stop1.setAttribute('stop-opacity', alpha1);
-            stop2.setAttribute('offset', '1');
-            stop2.setAttribute('stop-color', color1);
-            stop2.setAttribute('stop-opacity', alpha2);
-            elt.appendChild(stop1);
-            elt.appendChild(stop2);
-        }
-    }
-    class LinearGradient extends Gradient {
-        getEelement(doc) {
-            const elt = doc.createElementNS(SVGNS, LinearGradient.TYPE);
             let { x1, x2, y1, y2 } = { x1: 0, x2: 0, y1: 0, y2: 0 };
-            this._setStops(doc, elt);
+            elt.setAttribute('id', this.source.id);
             switch (this.source.dir) {
                 case 'up':
                     y1 = 1;
@@ -2590,24 +2566,22 @@
             elt.setAttribute('y1', y1);
             elt.setAttribute('x2', x2);
             elt.setAttribute('y2', y2);
+            stop1.setAttribute('offset', '0');
+            stop1.setAttribute('stop-color', color1);
+            stop1.setAttribute('stop-opacity', alpha1);
+            stop2.setAttribute('offset', '1');
+            stop2.setAttribute('stop-color', color2);
+            stop1.setAttribute('stop-opacity', alpha2);
+            elt.appendChild(stop1);
+            elt.appendChild(stop2);
             return elt;
         }
     }
     LinearGradient.TYPE = 'linearGradient';
-    class RadialGradient extends Gradient {
+    class RadialGradient extends AssetItem {
         getEelement(doc) {
-            const src = this.source;
             const elt = doc.createElementNS(SVGNS, RadialGradient.TYPE);
-            if (!isNull(src.cx)) {
-                elt.setAttribute('cx', src.cx);
-            }
-            if (!isNull(src.cy)) {
-                elt.setAttribute('cy', src.cy);
-            }
-            if (!isNull(src.rd)) {
-                elt.setAttribute('rd', src.rd);
-            }
-            this._setStops(doc, elt);
+            elt.setAttribute('id', this.source.id);
             return elt;
         }
     }
@@ -4142,7 +4116,7 @@
             return this.label || this.name;
         }
         legendColor() {
-            return this._calcedColor;
+            return this.color;
         }
         legendLabel() {
             return this.label || this.name;
@@ -4201,7 +4175,6 @@
             }
         }
         prepareRender() {
-            this._calcedColor = void 0;
             this._xAxisObj = this.group ? this.group._xAxisObj : this.chart._connectSeries(this, true);
             this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
             this._visPoints = this._points.getVisibles();
@@ -4328,7 +4301,7 @@
                 color = this.color;
             }
             this._visPoints.forEach((p, i) => {
-                if (!p.color && colors) {
+                if (!p.color) {
                     p.color = color || colors[i % colors.length];
                 }
             });
@@ -4425,6 +4398,7 @@
             });
         }
         prepareRender() {
+            const colors = this.chart.colors;
             const visibles = this._visibleSeries = [];
             let iShape = 0;
             this._series.forEach(ser => {
@@ -4435,6 +4409,7 @@
             });
             const nCluster = this._visibleSeries.filter(ser => ser.clusterable()).length;
             this._visibleSeries.forEach((ser, i) => {
+                ser.color = ser.color || colors[i++ % colors.length];
                 if (ser instanceof ClusterableSeries) {
                     ser._single = nCluster === 1;
                 }
@@ -6369,26 +6344,26 @@
     class HeatmapSeriesPoint extends DataPoint {
         parse(series) {
             super.parse(series);
-            this.heatValue = parseFloat(this.heat);
-            this.isNull || (this.isNull = isNaN(this.heatValue));
+            this.colorValue = parseFloat(this.color);
+            this.isNull || (this.isNull = isNaN(this.colorValue));
         }
         _readArray(series, v) {
             const d = v.length > 2 ? 1 : 0;
             this.y = v[pickNum(series.yField, 0 + d)];
-            this.heat = v[pickNum(series.heatField, 1 + d)];
+            this.color = v[pickNum(series.colorField, 1 + d)];
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
             }
         }
         _readObject(series, v) {
             super._readObject(series, v);
-            this.heat = pickProp(v[series.heatField], v.color);
+            this.color = pickProp(v[series.colorField], v.color);
         }
         _readSingle(v) {
             super._readSingle(v);
         }
         getLabel(index) {
-            return this.heat;
+            return this.color;
         }
     }
     class HeatmapSeries extends Series {
@@ -6412,12 +6387,12 @@
         }
         _doPrepareRender() {
             super._doPrepareRender();
-            this._heatMin = Number.MAX_VALUE;
-            this._heatMax = Number.MIN_VALUE;
+            this._colorMin = Number.MAX_VALUE;
+            this._colorMax = Number.MIN_VALUE;
             this._visPoints.forEach(p => {
-                if (!isNaN(p.heatValue)) {
-                    this._heatMin = Math.min(this._heatMin, p.heatValue);
-                    this._heatMax = Math.max(this._heatMax, p.heatValue);
+                if (!isNaN(p.colorValue)) {
+                    this._colorMin = Math.min(this._colorMin, p.colorValue);
+                    this._colorMax = Math.max(this._colorMax, p.colorValue);
                 }
             });
         }
@@ -6664,7 +6639,7 @@
             return this.startAngle + this.angle;
         }
         legendColor() {
-            return this._calcedColor;
+            return this.color;
         }
         legendLabel() {
             return this.x;
@@ -6888,7 +6863,7 @@
             const list = [];
             const map = this._map;
             pts.forEach(p => {
-                if (p.id || !p.isNull) {
+                if (!p.isNull) {
                     const node = new TreeNode(p);
                     if (p.id) {
                         map[p.id] = node;
@@ -7321,6 +7296,8 @@
     class Chart extends RcEventProvider {
         constructor(source) {
             super();
+            this.colors = ["#1bafdc", "#12d365", "#343ec3", "#81d8c1",
+                "#fe6a35", "#6b8abc", "#d568fb", "#2ee0ca", "#fa4b42", "#feb56a"];
             this.type = 'bar';
             this._assets = new AssetCollection();
             this._options = new ChartOptions(this);
@@ -9477,20 +9454,10 @@
         }
         _doPointClicked(view) {
         }
-        _getColor() {
-            return this.model._calcedColor;
-        }
         _doMeasure(doc, model, hintWidth, hintHeight, phase) {
             this.setClip(void 0);
             this._prepareSeries(doc, model);
             !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
-            this.setStyleOrClass(model.style);
-            if (model.color) {
-                this.internalSetStyle('fill', model.color);
-                this.internalSetStyle('stroke', model.color);
-            }
-            this.model._calcedColor = getComputedStyle(this.dom).fill;
-            this.setBoolData('pointcolors', model._colorByPoint());
             if (model.trendline.visible) {
                 if (!this._trendLineView) {
                     this.add(this._trendLineView = new PathElement(doc, 'rct-series-trendline'));
@@ -9617,11 +9584,11 @@
             labelView.layout().translate(x, y);
         }
     }
-    SeriesView.POINT_CLASS = 'rct-point';
+    SeriesView.POINT_CLASS = 'rct-data-point';
     SeriesView.DATA_FOUCS = 'focus';
     class BoxPointElement extends PathElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-box-point');
             this.labelViews = [];
         }
     }
@@ -9779,7 +9746,7 @@
 
     class LineMarkerView extends PathElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-line-point-marker');
         }
     }
     class LineContainer extends RcElement {
@@ -9927,6 +9894,7 @@
         _layoutMarker(mv, x, y) {
             const series = this.model;
             const marker = series.marker;
+            const color = series.color;
             const p = mv.point;
             const s = p.shape || series.getShape();
             const sz = mv._radius = pickNum(p.radius, marker.radius);
@@ -9948,12 +9916,11 @@
             }
             mv.translate(x, y);
             mv.setPath(path);
+            marker.style && mv.setStyles(marker.style);
+            mv.setStyle('fill', color);
         }
         _layoutMarkers(pts, width, height) {
             const series = this.model;
-            const markerStyle = series.marker.style;
-            const needBelow = series instanceof LineSeries && this._needBelow;
-            const base = needBelow ? series.baseValue : NaN;
             const inverted = this._inverted;
             const polar = this._polar = series.chart.body.getPolar(series);
             const vr = this._getViewRate();
@@ -9993,12 +9960,6 @@
                         lv.visible = true;
                         lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
                     }
-                    if (needBelow && p.yValue < base) {
-                        mv.setStyleOrClass(series.belowStyle);
-                    }
-                    else {
-                        markerStyle && mv.setStyleOrClass(markerStyle);
-                    }
                 }
                 else if (lv) {
                     lv.visible = false;
@@ -10007,7 +9968,6 @@
         }
         _layoutLines(pts) {
             const series = this.model;
-            const needBelow = series instanceof LineSeries && this._needBelow;
             const sb = new PathBuilder();
             let i = 0;
             let s;
@@ -10026,7 +9986,7 @@
                 this._line.setStyle('stroke', series.color);
                 this._line.addStyleOrClass(series.style);
                 Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
-                if (needBelow) {
+                if (series instanceof LineSeries && this._needBelow) {
                     const axis = series._yAxisObj;
                     const base = series.baseValue;
                     if (this._inverted) {
@@ -10208,9 +10168,9 @@
     class AreaRangeSeriesView extends LineSeriesBaseView {
         constructor(doc) {
             super(doc, 'rct-area-range');
-            this.insertFirst(this._areaContainer = new LineContainer(doc, 'rct-arearange-series-areas'));
-            this._areaContainer.add(this._area = new PathElement(doc, 'rct-arearange-series-area'));
-            this._lineContainer.add(this._lowerLine = new PathElement(doc, 'rct-areanrange-series-line'));
+            this.insertFirst(this._areaContainer = new LineContainer(doc, 'rct-area-series-areas'));
+            this._areaContainer.add(this._area = new PathElement(doc, 'rct-area-series-area'));
+            this._lineContainer.add(this._lowerLine = new PathElement(doc, 'rct-line-series-line'));
             Dom.setImportantStyle(this._lowerLine.dom.style, 'fill', 'none');
         }
         _markersPerPoint() {
@@ -10468,7 +10428,7 @@
         _preparePointViews(doc, model, points) {
             this._bars.prepare(points.length, (v, i) => {
                 v.point = points[i];
-                points[i].color && v.setStyle('fill', points[i].color);
+                v.setStyle('fill', points[i].color);
             });
         }
         _getLowValue(p) {
@@ -10563,7 +10523,7 @@
 
     class BarSectorView extends SectorElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-bar-point');
         }
     }
     class BarSeriesView extends BoxedSeriesView {
@@ -10676,7 +10636,7 @@
             const yLow = y + h - h * (p.lowValue - p.minValue) / len;
             const yHigh = y + h - h * (p.highValue - p.minValue) / len;
             const hBox = h * (p.highValue - p.lowValue) / len;
-            p.color && this._box.setStyle('fill', p.color);
+            this._box.setStyle('fill', p.color);
             this._stemUp.setVLine(x, y, yHigh);
             this._stemDown.setVLine(x, yLow, h);
             this._min.setHLine(y, w / 4, w * 3 / 4);
@@ -10717,7 +10677,7 @@
 
     let MarkerView$1 = class MarkerView extends PathElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-bubble-point-marker');
         }
     };
     class BubbleSeriesView extends SeriesView {
@@ -10746,14 +10706,12 @@
             const zAxis = series._xAxisObj._length < series._yAxisObj._length ? series._xAxisObj : series._yAxisObj;
             const len = zAxis._length;
             const marker = series.marker;
-            const style = marker.style;
             const count = points.length;
             const { min, max } = series.getPxMinMax(len);
             this._markers.prepare(count, (m, i) => {
                 const p = m.point = points[i];
                 p.radius = series.getRadius(p.zValue, min, max);
                 p.shape = marker.shape;
-                style && m.setStyleOrClass(style);
                 p.color && m.setStyle('fill', p.color);
             });
         }
@@ -10802,7 +10760,7 @@
 
     let StickView$1 = class StickView extends GroupElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-candlestick-point');
         }
         layout() {
             const p = this.point;
@@ -10852,7 +10810,7 @@
 
     let BarElement$5 = class BarElement extends GroupElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-dumbbell-point');
             this.add(this._line = new LineElement(doc));
             this.add(this._hmarker = new PathElement(doc, 'rct-dumbbell-point-marker'));
             this.add(this._lmarker = new PathElement(doc, 'rct-dumbbell-point-marker'));
@@ -10899,8 +10857,8 @@
             }
             this._bars.prepare(points.length, (v, i) => {
                 v.point = points[i];
+                v.setStyle('fill', points[i].color);
                 v.setStyleOrClass(style);
-                v.point.color && v.setStyle('fill', v.point.color);
             });
         }
         $_layoutBars(width, height) {
@@ -10972,7 +10930,7 @@
 
     let BarElement$4 = class BarElement extends GroupElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-equalizer-point');
             this._backs = new ElementPool(this, PathElement);
             this._segments = new ElementPool(this, PathElement);
             this._decimal = 0;
@@ -11033,8 +10991,8 @@
         }
         $_parepareBars(points) {
             this._bars.prepare(points.length, (v, i) => {
-                v.point = points[i];
-                v.point.color && v.setStyle('fill', v.point.color);
+                const p = v.point = points[i];
+                p.color && v.setStyle('fill', p.color);
             });
         }
         $_buildSegments(series, len) {
@@ -11089,7 +11047,7 @@
 
     let BarElement$3 = class BarElement extends GroupElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-errorbar-point');
             this.add(this._stem = new LineElement(doc));
             this.add(this._whiskerUp = new LineElement(doc));
             this.add(this._whiskerDown = new LineElement(doc));
@@ -11117,7 +11075,7 @@
         _preparePointViews(doc, model, points) {
             this._bars.prepare(points.length, (v, i) => {
                 v.point = points[i];
-                points[i].color && v.setStyle('stroke', points[i].color);
+                v.setStyle('stroke', points[i].color);
             });
         }
         _layoutPointView(box, i, x, y, wPoint, hPoint) {
@@ -11128,7 +11086,7 @@
 
     class FunnelSegment extends PathElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-funnel-point');
         }
     }
     class FunnelSeriesView extends SeriesView {
@@ -11153,7 +11111,7 @@
             this._segments.prepare(count, (m, i) => {
                 const p = points[i];
                 m.point = p;
-                p.color && m.setStyle('fill', p.color);
+                m.setStyle('fill', p.color);
             });
         }
         $_layoutSegments(width, height) {
@@ -11225,7 +11183,7 @@
 
     class CellView extends RectElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-heatmap-point');
         }
     }
     class HeatmapSeriesView extends SeriesView {
@@ -11261,7 +11219,7 @@
             const yAxis = series._yAxisObj;
             const yLen = inverted ? width : height;
             const xLen = inverted ? height : width;
-            const color = new Color(this._getColor());
+            const color = new Color(series.color);
             this._cells.forEach(cell => {
                 const p = cell.point;
                 if (cell.setVisible(!p.isNull)) {
@@ -11276,7 +11234,7 @@
                     x = (p.xPos = xAxis.getPosition(xLen, p.xValue)) - wUnit / 2;
                     y = (p.yPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
                     cell.setBounds(x, y, wPoint, hPoint);
-                    cell.setStyle('fill', color.brighten(1 - p.heatValue / series._heatMax).toString());
+                    cell.setStyle('fill', color.brighten(1 - p.colorValue / series._colorMax).toString());
                     if (labelViews && (labelView = labelViews.get(p, 0))) {
                         const r = labelView.getBBounds();
                         if (inverted) {
@@ -11395,7 +11353,7 @@
 
     let BarElement$1 = class BarElement extends GroupElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-lollipop-point');
             this.add(this._line = new LineElement(doc));
             this.add(this._marker = new PathElement(doc, 'rct-lollipop-point-marker'));
         }
@@ -11425,15 +11383,15 @@
             }
             this._bars.prepare(points.length, (v, i) => {
                 v.point = points[i];
-                points[i].color && v.setStyle('fill', points[i].color);
-                style && v.setStyleOrClass(style);
+                v.setStyle('fill', points[i].color);
+                v.setStyleOrClass(style);
             });
         }
     }
 
     class StickView extends GroupElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-ohlc-point');
         }
         layout() {
             const p = this.point;
@@ -11537,7 +11495,7 @@
 
     class SectorView extends SectorElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-pie-point');
         }
         setSectorEx(labels, lines, newSector, animate = false) {
             let animated = false;
@@ -11608,8 +11566,7 @@
                 const p = points[i];
                 sector.point = p;
                 sector.setAttr('aria-label', p.ariaHint());
-                p.color && sector.setStyle('fill', p.color);
-                p._calcedColor = getComputedStyle(sector.dom).fill;
+                sector.setStyle('fill', p.color);
             });
         }
         $_calcAngles(points) {
@@ -11730,7 +11687,7 @@
 
     class MarkerView extends PathElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-scatter-point-marker');
         }
     }
     class ScatterSeriesView extends SeriesView {
@@ -11813,7 +11770,7 @@
 
     class NodeView extends PathElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-treemap-point');
         }
         get point() {
             return this.node.point;
@@ -11824,7 +11781,7 @@
     }
     class TreemapSeriesView extends SeriesView {
         constructor(doc) {
-            super(doc, 'rct-treemap-series');
+            super(doc, 'rct-Treemap-series');
             this._nodeViews = new ElementPool(this._pointContainer, NodeView);
         }
         _lazyPrepareLabels() {
@@ -11840,7 +11797,7 @@
             series.pointLabel;
             const labelViews = this._labelViews();
             const nodes = series.buildMap(width, height);
-            const color = new Color(series._calcedColor);
+            const color = new Color(series.color);
             let labelView;
             labelViews.prepare(this.doc, series);
             this._nodeViews.prepare(nodes.length, (v, i, count) => {
@@ -11851,7 +11808,7 @@
                     if (!g._color && g.point.color) {
                         c = g._color = new Color(g.point.color);
                     }
-                    else if (g._color) {
+                    if (g._color) {
                         c = g._color;
                     }
                 }
@@ -11875,7 +11832,7 @@
 
     class ArrowView extends PathElement {
         constructor(doc) {
-            super(doc, SeriesView.POINT_CLASS);
+            super(doc, SeriesView.POINT_CLASS + ' rct-vector-point');
         }
         layout(headType, rotation, inverted) {
             const len = this.point._len;
@@ -11957,6 +11914,7 @@
         $_prepareArrows(pts) {
             this._arrows.prepare(pts.length, (v, i) => {
                 v.point = pts[i];
+                v.setStyle('stroke', v.point.color);
             });
         }
     }
@@ -11973,7 +11931,7 @@
     }
     class WaterfallSeriesView extends RangedSeriesView {
         constructor(doc) {
-            super(doc, 'rct-waterfall-series');
+            super(doc, 'rct-Waterfall-series');
             this._bars = new ElementPool(this._pointContainer, BarElement);
             this.add(this._lineContainer = new LayerElement(doc, 'rct-waterfall-series-lines'));
             this._lines = new ElementPool(this._lineContainer, LineElement);
@@ -12587,6 +12545,7 @@
             }
             this.$_prepareItems(doc, items);
             views.forEach((v, i) => {
+                v._marker.setStyle('fill', items[i].source.legendColor());
                 const sz = v.measure(doc, items[i], hintWidth, hintHeight, phase);
                 if (vertical) {
                     w = Math.max(w, sz.width);
@@ -12625,7 +12584,6 @@
                 x += pickNum(model.gap, 0);
             }
             this._itemViews.forEach(v => {
-                v._marker.setStyle('fill', v.model.source.legendColor());
                 v.resizeByMeasured().layout();
                 v.translate(x, y);
                 if (vertical) {

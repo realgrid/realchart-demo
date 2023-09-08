@@ -10,7 +10,7 @@ import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
 import { Path, SVGStyleOrClass, _undefined, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
-import { RtLog, SVGNS, isObject, isString } from "./Common";
+import { SVGNS, isObject, isString } from "./Common";
 import { Utils } from "./Utils";
 import { IRect, Rectangle } from "./Rectangle";
 import { SvgShapes } from "./impl/SvgShape";
@@ -253,8 +253,16 @@ export abstract class RcControl extends RcWrappableObject {
         this._defs.appendChild(element);
     }
 
-    removeDef(element: Element): void {
-        this._defs.removeChild(element);
+    removeDef(element: Element | string): void {
+        if (isString(element)) {
+            for (const elt in this._defs.children) {
+                if ((elt as any) instanceof Element && (elt as any).id === element) {
+                    element = elt;
+                    break;
+                }
+            }
+        }
+        element instanceof Element && this._defs.removeChild(element);
     }
 
     containerToElement(element: RcElement, x: number, y: number): IPoint {
@@ -363,7 +371,6 @@ export abstract class RcControl extends RcWrappableObject {
 
         // svg
         const svg = this._svg = doc.createElementNS(SVGNS, 'svg');
-
         svg.classList.add('rct-root');
         svg.style.setProperty('overflow', 'visible', 'important');
         svg.setAttribute('width', '100%');// contentDiv.clientWidth + 'px');
@@ -968,6 +975,10 @@ export class RcElement extends RcObject {
         return changed;
     }
 
+    internalSetStyle(prop: string, value: string): void {
+        this._styles[prop] = value;
+    }
+
     putStyles(styles: any, buff?: any): any {
         buff = buff || {};
         if (styles) {
@@ -990,6 +1001,14 @@ export class RcElement extends RcObject {
 
     unsetData(data: string): void {
         delete this.dom.dataset[data];
+    }
+
+    setBoolData(data: string, value: boolean): void {
+        if (value) {
+            this.dom.dataset[data] = '';
+        } else {
+            delete this.dom.dataset[data];
+        }
     }
 
     // TODO

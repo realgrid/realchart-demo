@@ -31,7 +31,7 @@ class BarElement extends GroupElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-dumbbell-point');
+        super(doc, SeriesView.POINT_CLASS);
 
         this.add(this._line = new LineElement(doc));
         this.add(this._hmarker = new PathElement(doc, 'rct-dumbbell-point-marker'));
@@ -118,8 +118,8 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
         }
         this._bars.prepare(points.length, (v, i) => {
             v.point = points[i];
-            v.setStyle('fill', points[i].color);
             v.setStyleOrClass(style);
+            v.point.color && v.setStyle('fill', v.point.color);
         });
     }
 

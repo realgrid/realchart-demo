@@ -43,7 +43,7 @@ export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-Waterfall-series')
+        super(doc, 'rct-waterfall-series')
 
         this.add(this._lineContainer = new LayerElement(doc, 'rct-waterfall-series-lines'));
         this._lines = new ElementPool(this._lineContainer, LineElement);
