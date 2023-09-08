@@ -9440,6 +9440,9 @@
             this.add(this._pointContainer = new PointContainer(doc, 'rct-series-points'));
             this.add(this._labelContainer = new PointLabelContainer(doc));
         }
+        invertable() {
+            return true;
+        }
         getClipContainer() {
             return this._pointContainer;
         }
@@ -10728,8 +10731,10 @@
         _getPointPool() {
             return this._markers;
         }
+        invertable() {
+            return false;
+        }
         _prepareSeries(doc, model) {
-            model.getPoints().getVisibles();
             this.$_prepareMarkser(model._visPoints);
         }
         _renderSeries(width, height) {
@@ -11741,6 +11746,9 @@
         _getPointPool() {
             return this._markers;
         }
+        invertable() {
+            return false;
+        }
         _prepareSeries(doc, model) {
             this.$_prepareMarkers(model._visPoints);
         }
@@ -12434,7 +12442,7 @@
                 img.setStyleOrClass(this.model.image.style);
             }
             this._seriesViews.forEach(v => {
-                this._owner.clipSeries(v.getClipContainer(), 0, 0, w, h);
+                this._owner.clipSeries(v.getClipContainer(), 0, 0, w, h, v.invertable());
                 v.resize(w, h);
                 v.layout();
             });
@@ -13371,9 +13379,9 @@
         creditByDom(dom) {
             return this._creditView.dom.contains(dom) ? this._creditView : null;
         }
-        clipSeries(view, x, y, w, h) {
+        clipSeries(view, x, y, w, h, invertable) {
             if (view) {
-                if (this._model.inverted) {
+                if (this._model.inverted && invertable) {
                     this._seriesClip.setBounds(0, -w, h, w);
                 }
                 else {

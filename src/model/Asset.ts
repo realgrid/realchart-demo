@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { SVGNS, isArray, isObject, pickProp } from "../common/Common";
+import { SVGNS, isArray, isObject } from "../common/Common";
 import { isNull } from "../common/Types";
 
 export interface IAssetItem {

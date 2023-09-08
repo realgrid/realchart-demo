@@ -4,6 +4,7 @@
  */
 const config = {
     options: {
+        animatable: false
     },
     title: "Bubble Series",
     xAxis: {

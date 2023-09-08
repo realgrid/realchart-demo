@@ -57,13 +57,16 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         return this._markers;
     }
 
-    protected _prepareSeries(doc: Document, model: BubbleSeries): void {
-        const pts = model.getPoints().getVisibles();
+    invertable(): boolean {
+        return false;
+    }
 
+    protected _prepareSeries(doc: Document, model: BubbleSeries): void {
         this.$_prepareMarkser(model._visPoints as BubbleSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
+        // this._pointContainer.invert(this.model.chart.isInverted(), height);
         this.$_layoutMarkers(width, height);
     }
 

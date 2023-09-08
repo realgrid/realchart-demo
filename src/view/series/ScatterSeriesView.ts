@@ -52,6 +52,10 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
         return this._markers;
     }
 
+    invertable(): boolean {
+        return false;
+    }
+
     protected _prepareSeries(doc: Document, model: ScatterSeries): void {
         this.$_prepareMarkers(model._visPoints as ScatterSeriesPoint[]);
     }

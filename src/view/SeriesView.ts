@@ -320,6 +320,10 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    invertable(): boolean {
+        return true;
+    }
+
     getClipContainer(): RcElement {
         return this._pointContainer;
     }

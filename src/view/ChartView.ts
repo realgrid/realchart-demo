@@ -720,9 +720,9 @@ export class ChartView extends RcElement {
         return this._creditView.dom.contains(dom) ? this._creditView : null;
     }
 
-    clipSeries(view: RcElement, x: number, y: number, w: number, h: number): void {
+    clipSeries(view: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void {
         if (view) {
-            if (this._model.inverted) {
+            if (this._model.inverted && invertable) {
                 this._seriesClip.setBounds(0, -w, h, w);
             } else {
                 this._seriesClip.setBounds(0, 0, w, h);
