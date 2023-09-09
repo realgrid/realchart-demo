@@ -6,7 +6,7 @@ const config = {
     type: "line",
     options: {
     },
-    title: "Line Group",
+    title: "RealChart Palette",
     xAxis: {
         title: "일일 Daily fat",
     },
@@ -81,6 +81,10 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.update(config, animate);
     }, false);
+    createListBox(container, "options.palette", ['', 'gray'], function (e) {
+        config.options.palette = _getValue(e);
+        chart.update(config, animate);
+    }, 'default');
 }
 
 function init() {

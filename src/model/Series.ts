@@ -902,6 +902,9 @@ export class PlottingItemCollection  {
         }
 
         cls = chart._getSeriesType(src.type) || chart._getSeriesType(chart.type);
+        if (!cls) {
+            throw new Error('Invalid series type: ' + src.type + ', ' + chart.type);
+        }
 
         const ser = new cls(chart, src.name || `Series ${index + 1}`);
 

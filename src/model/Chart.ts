@@ -14,6 +14,7 @@ import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
 import { ILegendSource, Legend } from "./Legend";
 import { IPlottingItem, PlottingItemCollection, Series } from "./Series";
+import { ThemeCollection } from "./Theme";
 import { Subtitle, Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
@@ -186,6 +187,14 @@ export class ChartOptions extends ChartItem {
     // properties
     //-------------------------------------------------------------------------
     /**
+     * theme 이름.
+     */
+    theme: string;
+    /**
+     * 시리즈 및 데이터포인트에 적용되는 기본 색상 팔레트 이름.
+     */
+    palette: string;
+    /**
      * false로 지정하면 차트 전체척으로 animation 효과를 실행하지 않는다.
      * 
      * @config
@@ -243,6 +252,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     // fields
     //-------------------------------------------------------------------------
     private _assets: AssetCollection;
+    private _themes: ThemeCollection;
     private _options: ChartOptions;
     private _title: Title;
     private _subtitle: Subtitle;
@@ -263,6 +273,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         super();
 
         this._assets = new AssetCollection();
+        this._themes = new ThemeCollection();
         this._options = new ChartOptions(this);
         this._title = new Title(this);
         this._subtitle = new Subtitle(this);
@@ -479,6 +490,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     load(source: any): void {
+        console.time('load chart');
+
         // properites
         ['type', 'polar', 'inverted'].forEach(prop => {
             if (prop in source) {
@@ -488,6 +501,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         // assets
         this._assets.load(source.assets);
+
+        // themes
+        this._themes.load(source.themes);
 
         // options
         this._options.load(source.options);
@@ -515,6 +531,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         // inverted
         this._inverted = this.inverted;
+
+        console.timeEnd('load chart');
     }
 
     _connectSeries(series: IPlottingItem, isX: boolean): Axis {

@@ -17,17 +17,11 @@
     text-align: initial;
 }   
 
-.rct-root {
-    --rct-font-family: AppleSDGothicNeo-Light, 'HelveticaNeue', 'Malgun Gothic', '맑은 고딕', sans-serif;
-    --rct-font-size: 16px;
-    --rct-focus-border: black;
-}
-
 .rct-root text {
     stroke: none;
 }
 
-/** theme */
+/** palette */
 .rct-root {
     --color-1: #1bafdc;
     --color-2: #12d365;
@@ -38,34 +32,81 @@
     --color-7: #d568fb;
     --color-8: #2ee0ca;
     --color-9: #fa4b42;
-    --color-10: #feb56a;
-    --color-11: #feb56a;
-    --color-12: #feb56a;
-    --color-13: #feb56a;
-    --color-14: #feb56a;
-    --color-15: #feb56a;
-    --color-16: #feb56a;
+    --color-10: #fe6ab5;
+    --color-11: #6afeb5;
+    --color-12: #b5fe6a;
 }
-
 .rct-root[data-palette='gray'] {
-    --color-1: #eeeeee;
-    --color-2: #dddddd;
-    --color-3: #d0d0d0;
-    --color-4: #cccccc;
-    --color-5: #c0c0c0;
-    --color-6: #bbbbbb;
-    --color-7: #b0b0b0;
-    --color-8: #aaaaaa;
-    --color-9: #a0a0a0;
-    --color-10: #8f8f8f;
-    --color-11: #888888;
-    --color-12: #7f7f7f;
-    --color-13: #777777;
-    --color-14: #6f6f6f;
-    --color-15: #666666;
-    --color-16: #555555;
+    --color-1: #dddddd;
+    --color-2: #cccccc;
+    --color-3: #bbbbbb;
+    --color-4: #aaaaaa;
+    --color-5: #8f8f8f;
+    --color-6: #888888;
+    --color-7: #7f7f7f;
+    --color-8: #707070;
+    --color-9: #666666;
+    --color-10: #555555;
+    --color-11: #505050;
+    --color-12: #484848;
 }
 
+/** theme */
+.rct-control {
+    --rct-background: none;
+}
+.rct-control[data-theme='dark'] {
+    --rct-background: black;
+}
+
+.rct-root {
+    --rct-font-family: AppleSDGothicNeo-Light, 'HelveticaNeue', 'Malgun Gothic', '맑은 고딕', sans-serif;
+    --rct-font-size: 16px;
+    --rct-text-fill: #333;
+
+    --rct-title-fill: #333;
+    --rct-subtitle-fill: #333;
+
+    --rct-plot-background-stroke: #ddd;
+
+    --rct-axis-title-fill: #333;
+    --rct-axis-line-stroke: #ddd;
+    --rct-axis-tick-stroke: #333;
+    --rct-axis-label-fill: #555;
+    --rct-axis-grid-stroke: #ddd;
+    
+    --rct-legend-item-fill: #333;
+    --rct-legend-item-disabled: #aaa;
+
+    --rct-credits-fill: #777;
+}
+.rct-root[data-theme='dark'] {
+    --rct-focus-border: yellow;
+    --rct-text-fill: #fff;
+
+    --rct-title-fill: #fff;
+    --rct-subtitle-fill: #fff;
+
+    --rct-plot-background-stroke: #ccc;
+    
+    --rct-axis-title-fill: #fff;
+    --rct-axis-line-stroke: #ddd;
+    --rct-axis-tick-stroke: #fff;
+    --rct-axis-label-fill: #fff;
+    --rct-axis-grid-stroke: #ddd;
+    
+    --rct-legend-item-fill: #fff;
+    --rct-legend-item-disabled: #aaa;
+
+    --rct-credits-fill: #999;
+}
+
+/** control */
+.rct-control {
+    background-color: var(--rct-background);
+}
+
+/** root(svg) */
 /** debug border */
 .rct-debug {
     fill: none;
@@ -100,23 +141,25 @@
 /** credits */
 .rct-credits {
     font-size: 0.7em;
-    fill: #777;
+    fill: var(--rct-credits-fill);
 }
 
 /** title */
 .rct-title {
-    font-size: 24px;
     margin-bottom: 5px;
+    font-size: 24px;
+    fill: var(--rct-title-fill);
 }
 .rct-title-background {
-    fill: transparent;
+    fill: none;
 }
 .rct-subtitle {
-    font-size: 16px;
     margin-bottom: 5px;
+    font-size: 16px;
+    fill: var(--rct-subtitle-fill);
 }
 .rct-subtitle-background {
-    fill: transparent;
+    fill: none;
 }
 
 /** legend */
@@ -129,10 +172,10 @@
     padding: 4px;
 }
 .rct-legend-item {
-    fill: #333;
+    fill: var(--rct-legend-item-fill);
 }
 .rct-legend-item-label[data-hidden] {
-    fill: #aaa;
+    fill: var(--rct-legend-item-disabled);
 }
 .rct-legend-item-marker {
     stroke: none;
@@ -143,31 +186,32 @@
 
 /** plot area */
 .rct-plot-background {
-    stroke: #ddd;
+    stroke: var(--rct-plot-background-stroke);
     fill: none;
 }
 
 /** axis */
 .rct-axis-title {
     font-size: 16px;
+    fill: var(--rct-axis-title-fill);
 }
 .rct-axis-title-background {
     fill: none;
 }
 .rct-axis-line {
-    stroke: #ddd;
+    stroke: var(--rct-axis-line-stroke);
     stroke-width: 1px;
 }
-.rct-axis-tick-marks {
-    stroke: #333;
+.rct-axis-tick {
+    stroke: var(--rct-axis-tick-stroke);
     stroke-width: 1px;
 }
-.rct-axis-tick-labels {
+.rct-axis-label {
     font-size: 14px;
-    fill: #111;
+    fill: var(--rct-axis-label-fill);
 }
 .rct-axis-grid {
-    stroke: #ddd;
+    stroke: var(--rct-axis-grid-stroke);
     stroke-width: 1px;
 }
 .rct-axis-break {
@@ -250,22 +294,6 @@
     fill: var(--color-12);
     stroke: var(--color-12);
 }
-.rct-series[data-index="12"] {
-    fill: var(--color-13);
-    stroke: var(--color-13);
-}
-.rct-series[data-index="13"] {
-    fill: var(--color-14);
-    stroke: var(--color-14);
-}
-.rct-series[data-index="14"] {
-    fill: var(--color-15);
-    stroke: var(--color-15);
-}
-.rct-series[data-index="15"] {
-    fill: var(--color-16);
-    stroke: var(--color-2);
-}
 
 .rct-series-labels {
     font-size: 0.8em;
@@ -317,18 +345,6 @@
 }
 .rct-series[data-pointcolors] .rct-point[data-index="11"] {
     fill: var(--color-12);
-}
-.rct-series[data-pointcolors] .rct-point[data-index="12"] {
-    fill: var(--color-13);
-}
-.rct-series[data-pointcolors] .rct-point[data-index="13"] {
-    fill: var(--color-14);
-}
-.rct-series[data-pointcolors] .rct-point[data-index="14"] {
-    fill: var(--color-15);
-}
-.rct-series[data-pointcolors] .rct-point[data-index="15"] {
-    fill: var(--color-16);
 }
 
 .rct-point-label {

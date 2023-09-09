@@ -1711,6 +1711,20 @@
         height() {
             return this._container.offsetHeight;
         }
+        setData(data, value, container) {
+            if (!isNull(value)) {
+                this._svg.dataset[data] = value;
+                if (container) {
+                    this._dom.dataset[data] = value;
+                }
+            }
+            else {
+                delete this._svg.dataset[data];
+                if (container) {
+                    delete this._dom.dataset[data];
+                }
+            }
+        }
         clearDefs() {
             Dom.clearChildren(this._defs);
         }
@@ -1907,7 +1921,7 @@
             svg.setAttribute('width', '100%');
             svg.setAttribute('height', '100%');
             const desc = doc.createElement('desc');
-            desc.textContent = 'Created by RealChart 1.0.0';
+            desc.textContent = 'Created by RealChart v0.9.3';
             svg.appendChild(desc);
             const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
             this._initDefs(doc, defs);
@@ -1935,10 +1949,6 @@
         }
         _render() {
             this.$_render();
-        }
-        $_invalidateElement(elt) {
-            this._invalidElements.push(elt);
-            this.invalidate();
         }
         $_requestRender() {
             if (window.requestAnimationFrame) {
@@ -4477,6 +4487,9 @@
                 return g;
             }
             cls = chart._getSeriesType(src.type) || chart._getSeriesType(chart.type);
+            if (!cls) {
+                throw new Error('Invalid series type: ' + src.type + ', ' + chart.type);
+            }
             const ser = new cls(chart, src.name || `Series ${index + 1}`);
             ser.load(src);
             ser.index = index;
@@ -4859,6 +4872,14 @@
             this._clusterPos = 0;
             this.groupWidth = 1;
             this.groupPadding = 0.1;
+        }
+    }
+
+    class ThemeCollection {
+        constructor() {
+            this._items = [];
+        }
+        load(source) {
         }
     }
 
@@ -7347,6 +7368,7 @@
             this.type = 'bar';
             this.polar = false;
             this._assets = new AssetCollection();
+            this._themes = new ThemeCollection();
             this._options = new ChartOptions(this);
             this._title = new Title(this);
             this._subtitle = new Subtitle(this);
@@ -7475,12 +7497,14 @@
             return this._series.getLegendSources();
         }
         load(source) {
+            console.time('load chart');
             ['type', 'polar', 'inverted'].forEach(prop => {
                 if (prop in source) {
                     this[prop] = source[prop];
                 }
             });
             this._assets.load(source.assets);
+            this._themes.load(source.themes);
             this._options.load(source.options);
             this._title.load(source.title);
             this._subtitle.load(source.subtitle);
@@ -7490,6 +7514,7 @@
             this._yAxes.load(source.yAxes || source.yAxis || {});
             this._body.load(source.plot);
             this._inverted = this.inverted;
+            console.timeEnd('load chart');
         }
         _connectSeries(series, isX) {
             return isX ? this._xAxes.connect(series) : this._yAxes.connect(series);
@@ -8269,8 +8294,8 @@
             this._labelViews = [];
             this.add(this._lineView = new LineElement(doc, AxisView.LINE_CLASS));
             this.add(this._titleView = new AxisTitleView(doc));
-            this.add(this._markContainer = new RcElement(doc, 'rct-axis-tick-marks'));
-            this.add(this._labelContainer = new RcElement(doc, 'rct-axis-tick-labels'));
+            this.add(this._markContainer = new RcElement(doc, 'rct-axis-ticks'));
+            this.add(this._labelContainer = new RcElement(doc, 'rct-axis-labels'));
         }
         checkHeight(doc, width, height) {
             const m = this.model;
@@ -8582,7 +8607,7 @@
     }
     AxisView.AXIS_CLASS = 'rct-axis';
     AxisView.LINE_CLASS = 'rct-axis-line';
-    AxisView.TICK_CLASS = 'rct-axis-tick-mark';
+    AxisView.TICK_CLASS = 'rct-axis-tick';
 
     class ElementPool extends RcObject {
         constructor(owner, creator, styleName, removeDelay = 0) {
@@ -9463,6 +9488,7 @@
             return this.inverted;
         }
     }
+    const PALETTE_LEN = 12;
     class SeriesView extends ChartElement {
         constructor(doc, styleName) {
             super(doc, 'rct-series ' + styleName);
@@ -9519,7 +9545,7 @@
         }
         _doMeasure(doc, model, hintWidth, hintHeight, phase) {
             this.setClip(void 0);
-            this.setData('index', model.index);
+            this.setData('index', (model.index % PALETTE_LEN));
             this.setBoolData('pointcolors', model._colorByPoint());
             this._visPoints = model._runPoints.filter(p => p.visible);
             this._prepareSeries(doc, model);
@@ -9552,7 +9578,7 @@
             this._animatable && this._runShowEffect(!this.control.loaded);
         }
         _setPointIndex(v, p) {
-            v.setData('index', p.index);
+            v.setData('index', (p.index % PALETTE_LEN));
         }
         _labelViews() {
             this._labelContainer.setVisible(this.model.pointLabel.visible && !this._animating());
@@ -13588,10 +13614,16 @@
         useImage(src) {
         }
         _doRender(bounds) {
+            const model = this._model;
+            const view = this._chartView;
             this.clearTemporaryDefs();
-            this._chartView.measure(this.doc(), this._model, bounds.width, bounds.height, 1);
-            this._chartView.resize(bounds.width, bounds.height);
-            this._chartView.layout();
+            if (model) {
+                this.setData('theme', model.options.theme, true);
+                this.setData('palette', model.options.palette);
+            }
+            view.measure(this.doc(), model, bounds.width, bounds.height, 1);
+            view.resize(bounds.width, bounds.height);
+            view.layout();
         }
         _doRenderBackground(elt, width, height) {
             if (this._model) {

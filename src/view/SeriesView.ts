@@ -288,6 +288,8 @@ export type LabelLayoutInfo = {
     labelOff: number
 };
 
+const PALETTE_LEN = 12;
+
 export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 
     //-------------------------------------------------------------------------
@@ -387,7 +389,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         this.setClip(void 0);
         // this._viewRate = NaN; // animating 중 다른 시리즈 등의 요청에 의해 여기로 진입할 수 있다.
-        this.setData('index', model.index as any);
+        this.setData('index', (model.index % PALETTE_LEN) as any);
         this.setBoolData('pointcolors', model._colorByPoint());
 
         this._visPoints = model._runPoints.filter(p => p.visible);
@@ -432,7 +434,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected abstract _renderSeries(width: number, height: number): void;
 
     protected _setPointIndex(v: RcElement, p: DataPoint): void {
-        v.setData('index', p.index as any);
+        v.setData('index', (p.index % PALETTE_LEN) as any);
     }
 
     protected _labelViews(): PointLabelContainer {

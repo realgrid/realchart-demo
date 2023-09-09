@@ -92,11 +92,18 @@ export class ChartControl extends RcControl implements IChartEventListener {
     }
 
     protected _doRender(bounds: IRect): void {
+        const model = this._model;
+        const view = this._chartView;
+        
         this.clearTemporaryDefs();
 
-        this._chartView.measure(this.doc(), this._model, bounds.width, bounds.height, 1);
-        this._chartView.resize(bounds.width, bounds.height);
-        this._chartView.layout();
+        if (model) {
+            this.setData('theme', model.options.theme, true);
+            this.setData('palette', model.options.palette);
+        }
+        view.measure(this.doc(), model, bounds.width, bounds.height, 1);
+        view.resize(bounds.width, bounds.height);
+        view.layout();
     }
 
     protected _doRenderBackground(elt: HTMLDivElement, width: number, height: number): void {

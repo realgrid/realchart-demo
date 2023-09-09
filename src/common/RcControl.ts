@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
-import { Path, SVGStyleOrClass, _undefined, throwFormat } from "./Types";
+import { Path, SVGStyleOrClass, _undefined, isNull, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
 import { SVGNS, isObject, isString, pickProp } from "./Common";
@@ -126,6 +126,20 @@ export abstract class RcControl extends RcWrappableObject {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    setData(data: string, value: any, container?: boolean): void {
+        if (!isNull(value)) {
+            this._svg.dataset[data] = value;
+            if (container) {
+                this._dom.dataset[data] = value;
+            }
+        } else {
+            delete this._svg.dataset[data];
+            if (container) {
+                delete this._dom.dataset[data];
+            }
+        }
+    }
+
     clearDefs(): void {
         Dom.clearChildren(this._defs);
     }
@@ -377,7 +391,7 @@ export abstract class RcControl extends RcWrappableObject {
         svg.setAttribute('height', '100%');//contentDiv.clientHeight + 'px');
 
         const desc = doc.createElement('desc');
-        desc.textContent = 'Created by RealChart 1.0.0';
+        desc.textContent = 'Created by RealChart v$Version';
         svg.appendChild(desc);
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
@@ -415,10 +429,10 @@ export abstract class RcControl extends RcWrappableObject {
         this.$_render();
     }
 
-    private $_invalidateElement(elt: RcElement): void {
-        this._invalidElements.push(elt);
-        this.invalidate();
-    }
+    // private $_invalidateElement(elt: RcElement): void {
+    //     this._invalidElements.push(elt);
+    //     this.invalidate();
+    // }
 
     private $_requestRender(): void {
         if (window.requestAnimationFrame) {

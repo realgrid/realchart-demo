@@ -146,7 +146,7 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     static readonly AXIS_CLASS = 'rct-axis';
     static readonly LINE_CLASS = 'rct-axis-line';
-    static readonly TICK_CLASS = 'rct-axis-tick-mark';
+    static readonly TICK_CLASS = 'rct-axis-tick';
 
     //-------------------------------------------------------------------------
     // fields
@@ -172,8 +172,8 @@ export class AxisView extends ChartElement<Axis> {
 
         this.add(this._lineView = new LineElement(doc, AxisView.LINE_CLASS));
         this.add(this._titleView = new AxisTitleView(doc));
-        this.add(this._markContainer = new RcElement(doc, 'rct-axis-tick-marks'));
-        this.add(this._labelContainer = new RcElement(doc, 'rct-axis-tick-labels'));
+        this.add(this._markContainer = new RcElement(doc, 'rct-axis-ticks'));
+        this.add(this._labelContainer = new RcElement(doc, 'rct-axis-labels'));
     }
 
     //-------------------------------------------------------------------------
