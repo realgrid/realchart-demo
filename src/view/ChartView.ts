@@ -425,7 +425,7 @@ export class ChartView extends RcElement {
         }
 
         const m = this._model = model;
-        const polar = m._polar;
+        const polar = m.isPolar();
         const credit = m.options.credits;
         const legend = m.legend;
         let w = hintWidth;
@@ -482,7 +482,7 @@ export class ChartView extends RcElement {
             return;
         }
 
-        const polar = m._polar;
+        const polar = m.isPolar();
         const legend = m.legend;
         const credit = m.options.credits;
         const vCredit = this._creditView;
@@ -774,7 +774,7 @@ export class ChartView extends RcElement {
     private $_prepareAxes(doc: Document, m: Chart): void {
         const guideContainer = this._currBody._guideContainer;
         const frontGuideContainer = this._currBody._frontGuideContainer;
-        const need = !m.options.polar && m.needAxes();
+        const need = !m.isPolar() && m.needAxes();
         const map = this._axisSectionViews;
 
         for (const dir of map.keys()) {

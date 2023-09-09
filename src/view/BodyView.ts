@@ -679,7 +679,7 @@ export class BodyView extends ChartElement<Body> {
             v.measure(doc, this._series[i], hintWidth, hintHeight, phase);
         })
 
-        this._polar = chart._polar;
+        this._polar = chart.isPolar();
 
         if (!this._polar) {
             // axis grids

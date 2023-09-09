@@ -3,8 +3,8 @@
  * 
  */
 const config = {
+    polar: true,
     options: {
-        polar: true
     },
     title: "Polar Chart",
     xAxis: {

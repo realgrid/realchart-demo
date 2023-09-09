@@ -50,11 +50,11 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _getPointPool(): ElementPool<RcElement> {
-        return this.chart()._polar ? this._sectors : this._bars;
+        return this.chart().isPolar() ? this._sectors : this._bars;
     }
 
     protected _preparePointViews(doc: Document, model: BarSeries, points: DataPoint[]): void {
-        if (model.chart._polar) {
+        if (model.chart.isPolar()) {
             this.$_parepareSectors(doc, model, this._visPoints);
         } else {
             this.$_parepareBars(doc, model, this._visPoints);
@@ -62,7 +62,7 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
     }
 
     protected _layoutPointViews(width: number, height: number): void {
-        if (this.model.chart._polar) {
+        if (this.model.chart.isPolar()) {
             this.$_layoutSectors();
         } else {
             super._layoutPointViews(width, height);

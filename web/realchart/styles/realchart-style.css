@@ -22,6 +22,12 @@
     --rct-font-size: 16px;
     --rct-focus-border: black;
 }
+
+.rct-root text {
+    stroke: none;
+}
+
+/** theme */
 .rct-root {
     --color-1: #1bafdc;
     --color-2: #12d365;
@@ -41,8 +47,23 @@
     --color-16: #feb56a;
 }
 
-.rct-root text {
-    stroke: none;
+.rct-root[data-palette='gray'] {
+    --color-1: #eeeeee;
+    --color-2: #dddddd;
+    --color-3: #d0d0d0;
+    --color-4: #cccccc;
+    --color-5: #c0c0c0;
+    --color-6: #bbbbbb;
+    --color-7: #b0b0b0;
+    --color-8: #aaaaaa;
+    --color-9: #a0a0a0;
+    --color-10: #8f8f8f;
+    --color-11: #888888;
+    --color-12: #7f7f7f;
+    --color-13: #777777;
+    --color-14: #6f6f6f;
+    --color-15: #666666;
+    --color-16: #555555;
 }
 
 /** debug border */

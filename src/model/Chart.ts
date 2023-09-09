@@ -53,7 +53,7 @@ export interface IChart {
     yAxis: IAxis;
     colors: string[];
 
-    _polar: boolean;
+    isPolar(): boolean;
     isInverted(): boolean;
     animatable(): boolean;
     startAngle(): number;
@@ -186,19 +186,6 @@ export class ChartOptions extends ChartItem {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * true면 차트가 {@link https://en.wikipedia.org/wiki/Polar_coordinate_system 극좌표계}로 표시된다.
-     * 기본은 {@link https://en.wikipedia.org/wiki/Cartesian_coordinate_system 직교좌표계}이다.
-     * 극좌표계일 때,
-     * x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이 있다.
-     * 1. x축은 첫번째 축 하나만 사용된다.
-     * 2. axis.position 속성은 무시된다.
-     * 3. chart, series의 inverted 속성이 무시된다.
-     * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
-     * 
-     * @config
-     */
-    polar = false;
-    /**
      * false로 지정하면 차트 전체척으로 animation 효과를 실행하지 않는다.
      * 
      * @config
@@ -266,7 +253,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _body: Body;
 
     private _inverted: boolean;
-    _polar: boolean;
+    private _polar: boolean;
     colors: string[];
 
     //-------------------------------------------------------------------------
@@ -286,7 +273,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._body = new Body(this);
 
         source && this.load(source);
-        this._polar = this.options.polar === true;
+        this._polar = this.polar === true;
     }
 
     //-------------------------------------------------------------------------
@@ -324,7 +311,19 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * @config
      */
     type = 'bar';
-
+    /**
+     * true면 차트가 {@link https://en.wikipedia.org/wiki/Polar_coordinate_system 극좌표계}로 표시된다.
+     * 기본은 {@link https://en.wikipedia.org/wiki/Cartesian_coordinate_system 직교좌표계}이다.
+     * 극좌표계일 때,
+     * x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이 있다.
+     * 1. x축은 첫번째 축 하나만 사용된다.
+     * 2. axis.position 속성은 무시된다.
+     * 3. chart, series의 inverted 속성이 무시된다.
+     * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
+     * 
+     * @config
+     */
+    polar = false;
     /**
      * true면 x축이 수직, y축이 수평으로 배치된다.
      * <br>
@@ -405,6 +404,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._yAxes;
     }
 
+    isPolar(): boolean {
+        return this._polar;
+    }
+
     isInverted(): boolean {
         return !this._polar && this._inverted;
     }
@@ -477,7 +480,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     load(source: any): void {
         // properites
-        ['type', 'inverted'].forEach(prop => {
+        ['type', 'polar', 'inverted'].forEach(prop => {
             if (prop in source) {
                 this[prop] = source[prop];
             }
