@@ -16,10 +16,9 @@ export interface ILegendRenderer {
 
 export interface ILegendSource {
     visible: boolean;
-    
+
     legendColor(): string;
     legendLabel(): string;
-    legendVisible(): boolean;
 }
 
 export class LegendItem extends ChartItem {

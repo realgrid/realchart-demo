@@ -55,7 +55,7 @@ export class DataPoint {
     yValue: number;     // y 좌표상의 value
     yRate: number;      // 전체 point 합 내에서 비율(백분율)
 
-    visible = true;
+    visible = true;     // 시리지에는 표시되지 않지만 legend에는 표시된다.
     color: string;
     xPos: number;
     yPos: number;
@@ -171,7 +171,7 @@ export class DataPointCollection {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _owner: ISeries;
+    protected _owner: ISeries;
     private _points: DataPoint[] = [];
 
     //-------------------------------------------------------------------------
@@ -197,6 +197,10 @@ export class DataPointCollection {
     //-------------------------------------------------------------------------
     get(index: number): DataPoint {
         return this._points[index];
+    }
+
+    contains(p: DataPoint) {
+        return this._points.indexOf(p) >= 0;
     }
 
     load(source: any): void {

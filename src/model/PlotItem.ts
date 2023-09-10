@@ -9,22 +9,7 @@
 import { ChartItem } from "./ChartItem";
 import { ILegendSource } from "./Legend";
 
-export abstract class PlotItem extends ChartItem implements ILegendSource {
-
-    //-------------------------------------------------------------------------
-    // ILegendSource
-    //-------------------------------------------------------------------------
-    legendColor(): string {
-        return;
-    }
-
-    legendLabel(): string {
-        return this.legend;
-    }
-
-    legendVisible(): boolean {
-        return !!this.legend;
-    }
+export abstract class PlotItem extends ChartItem {
 
     //-------------------------------------------------------------------------
     // properties

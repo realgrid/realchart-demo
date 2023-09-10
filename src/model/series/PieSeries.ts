@@ -37,10 +37,6 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
         return this.x;
     }
 
-    legendVisible(): boolean {
-        return this.visible;
-    }
-
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------

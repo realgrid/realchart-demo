@@ -440,6 +440,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     clipped = false;
 
+    contains(p: DataPoint): boolean {
+        return this._points.contains(p);
+    }
+
     getPoints(): DataPointCollection {
         return this._points;
     }
@@ -492,10 +496,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     legendLabel(): string {
         return this.label || this.name;
-    }
-
-    legendVisible(): boolean {
-        return this.visible;
     }
 
     ignoreAxisBase(axis: IAxis): boolean {
@@ -673,6 +673,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             }
         }
     }
+
+    setPointVisible(p: DataPoint, visible: boolean) {
+        if (p && visible !== p.visible) {
+            p.visible = visible;
+            this.chart._pointVisibleChanged(this, p);
+        }
+    }
     
     //-------------------------------------------------------------------------
     // overriden members
@@ -818,6 +825,14 @@ export class PlottingItemCollection  {
     //-------------------------------------------------------------------------
     get(name: string): Series {
         return this._map[name];
+    }
+
+    seriesByPoint(point: DataPoint): Series {
+        for (const ser of this._series) {
+            if (ser.contains(point)) {
+                return ser;
+            }
+        }
     }
 
     getLegendSources(): ILegendSource[] {

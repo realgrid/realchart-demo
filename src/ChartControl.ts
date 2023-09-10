@@ -10,6 +10,7 @@ import { RcControl } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
 import { Chart, IChartEventListener } from "./model/Chart";
 import { ChartItem } from "./model/ChartItem";
+import { DataPoint } from "./model/DataPoint";
 import { Series } from "./model/Series";
 import { ChartPointerHandler } from "./tool/PointerHandler";
 import { ChartView } from "./view/ChartView";
@@ -43,6 +44,10 @@ export class ChartControl extends RcControl implements IChartEventListener {
         if (item instanceof Series) {
             this.invalidateLayout();
         }
+    }
+
+    onPointVisibleChanged(chart: Chart, series: Series, point: DataPoint): void {
+        this.invalidateLayout();
     }
 
     //-------------------------------------------------------------------------

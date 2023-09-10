@@ -12,6 +12,7 @@ import { AssetCollection } from "./Asset";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
+import { DataPoint } from "./DataPoint";
 import { ILegendSource, Legend } from "./Legend";
 import { IPlottingItem, PlottingItemCollection, Series } from "./Series";
 import { ThemeCollection } from "./Theme";
@@ -75,6 +76,7 @@ export interface IChart {
     _connectSeries(series: IPlottingItem, isX: boolean): Axis;
     _getLegendSources(): ILegendSource[];
     _visibleChanged(item: ChartItem): void;
+    _pointVisibleChanged(series: Series, point: DataPoint): void;
     _modelChanged(item: ChartItem): void;
 }
 
@@ -238,6 +240,7 @@ export class ChartOptions extends ChartItem {
 
 export interface IChartEventListener {
     onVisibleChanged?(chart: Chart, item: ChartItem): void;
+    onPointVisibleChange?(chart: Chart, series: Series, point: DataPoint): void;
 }
 
 /**
@@ -438,6 +441,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._series.get(series);
     }
 
+    seriesByPoint(point: DataPoint): Series {
+        return this._series.seriesByPoint(point);
+    }
+
     axisByName(axis: string): Axis {
         return this._xAxes.get(axis) || this._yAxes.get(axis);
     }
@@ -612,6 +619,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     _visibleChanged(item: ChartItem): void {
         this._fireEvent('onVisibleChanged', item);
+    }
+
+    _pointVisibleChanged(series: Series, point: DataPoint): void {
+        this._fireEvent('onPointVisibleChanged', series, point);
     }
 
     _modelChanged(item: ChartItem): void {

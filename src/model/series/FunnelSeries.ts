@@ -31,10 +31,6 @@ export class FunnelSeriesPoint extends DataPoint implements ILegendSource {
     legendLabel(): string {
         return this.x;
     }
-
-    legendVisible(): boolean {
-        return this.visible;
-    }
 }
 
 /**

@@ -3785,6 +3785,9 @@
         get(index) {
             return this._points[index];
         }
+        contains(p) {
+            return this._points.indexOf(p) >= 0;
+        }
         load(source) {
             if (isArray(source)) {
                 this._points = this._owner.createPoints(source);
@@ -4156,6 +4159,9 @@
             this.tooltip = new Tooltip(this);
             this._points = new DataPointCollection(this);
         }
+        contains(p) {
+            return this._points.contains(p);
+        }
         getPoints() {
             return this._points;
         }
@@ -4188,9 +4194,6 @@
         }
         legendLabel() {
             return this.label || this.name;
-        }
-        legendVisible() {
-            return this.visible;
         }
         ignoreAxisBase(axis) {
             return false;
@@ -4331,6 +4334,12 @@
                 }
             }
         }
+        setPointVisible(p, visible) {
+            if (p && visible !== p.visible) {
+                p.visible = visible;
+                this.chart._pointVisibleChanged(this, p);
+            }
+        }
         _referOtherSeries(series) {
             return true;
         }
@@ -4426,6 +4435,13 @@
         }
         get(name) {
             return this._map[name];
+        }
+        seriesByPoint(point) {
+            for (const ser of this._series) {
+                if (ser.contains(point)) {
+                    return ser;
+                }
+            }
         }
         getLegendSources() {
             const legends = [];
@@ -6400,9 +6416,6 @@
         legendLabel() {
             return this.x;
         }
-        legendVisible() {
-            return this.visible;
-        }
     }
     class FunnelSeries extends WidgetSeries {
         constructor(chart, name) {
@@ -6777,9 +6790,6 @@
         }
         legendLabel() {
             return this.x;
-        }
-        legendVisible() {
-            return this.visible;
         }
         get endAngle() {
             return this.startAngle + this.angle;
@@ -7519,6 +7529,9 @@
         seriesByName(series) {
             return this._series.get(series);
         }
+        seriesByPoint(point) {
+            return this._series.seriesByPoint(point);
+        }
         axisByName(axis) {
             return this._xAxes.get(axis) || this._yAxes.get(axis);
         }
@@ -7637,6 +7650,9 @@
         _visibleChanged(item) {
             this._fireEvent('onVisibleChanged', item);
         }
+        _pointVisibleChanged(series, point) {
+            this._fireEvent('onPointVisibleChanged', series, point);
+        }
         _modelChanged(item) {
         }
     }
@@ -7658,7 +7674,13 @@
             let legend;
             let series;
             if (legend = chart.legendByDom(elt)) {
-                legend.source.visible = !legend.source.visible;
+                if (legend.source instanceof DataPoint) {
+                    const ser = this._chart.model.seriesByPoint(legend.source);
+                    ser.setPointVisible(legend.source, !legend.source.visible);
+                }
+                else {
+                    legend.source.visible = !legend.source.visible;
+                }
             }
             else if (series = chart.seriesByDom(elt)) {
                 series.clicked(elt);
@@ -13658,6 +13680,9 @@
             if (item instanceof Series) {
                 this.invalidateLayout();
             }
+        }
+        onPointVisibleChanged(chart, series, point) {
+            this.invalidateLayout();
         }
         get model() {
             return this._model;
