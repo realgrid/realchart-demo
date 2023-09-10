@@ -19,7 +19,8 @@ const config = {
         type: 'pie',
         pointLabel: {
             visible: true,
-            effect: 'outline',
+            text: "${name} (${y})",
+            // effect: 'outline',
             style: {
                 // fill: '#eee'
             }

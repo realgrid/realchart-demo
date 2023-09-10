@@ -6394,6 +6394,15 @@
     }
 
     class FunnelSeriesPoint extends DataPoint {
+        legendColor() {
+            return this._calcedColor;
+        }
+        legendLabel() {
+            return this.x;
+        }
+        legendVisible() {
+            return this.visible;
+        }
     }
     class FunnelSeries extends WidgetSeries {
         constructor(chart, name) {
@@ -6416,11 +6425,20 @@
                 height: calcPercent(this._neckHeightDim, plotHeight)
             };
         }
+        getLabelPosition() {
+            const p = this.pointLabel.position;
+            return p === PointItemPosition.AUTO ? PointItemPosition.INSIDE : p;
+        }
         _type() {
             return 'funnel';
         }
         _colorByPoint() {
             return true;
+        }
+        getLegendSources(list) {
+            this._runPoints.forEach(p => {
+                list.push(p);
+            });
         }
         _createPoint(source) {
             return new FunnelSeriesPoint(source);
@@ -6754,9 +6772,6 @@
             this.startAngle = 0;
             this.angle = 0;
         }
-        get endAngle() {
-            return this.startAngle + this.angle;
-        }
         legendColor() {
             return this._calcedColor;
         }
@@ -6765,6 +6780,9 @@
         }
         legendVisible() {
             return this.visible;
+        }
+        get endAngle() {
+            return this.startAngle + this.angle;
         }
         parse(series) {
             super.parse(series);
@@ -9423,7 +9441,7 @@
     }
     class PointLabelContainer extends GroupElement {
         constructor(doc) {
-            super(doc, 'rct-series-labels');
+            super(doc, 'rct-point-labels');
             this._labels = [new ElementPool(this, PointLabelView), new ElementPool(this, PointLabelView)];
             this._maps = [];
             this.setStyle('pointerEvents', 'none');
@@ -11276,10 +11294,12 @@
         }
         $_prepareSegments(points) {
             const count = points.length;
-            this._segments.prepare(count, (m, i) => {
+            this._segments.prepare(count, (seg, i) => {
                 const p = points[i];
-                m.point = p;
-                p.color && m.setStyle('fill', p.color);
+                seg.point = p;
+                this._setPointIndex(seg, p);
+                p.color && seg.setStyle('fill', p.color);
+                seg.point._calcedColor = getComputedStyle(seg.dom).fill;
             });
         }
         $_layoutSegments(width, height) {
@@ -11294,6 +11314,7 @@
             const series = this.model;
             series.pointLabel;
             const labelViews = this._labelViews();
+            const labelInside = series.getLabelPosition();
             const reversed = series.reversed;
             const sz = series.getSize(width, height);
             const szNeck = series.getNeckSize(width, height);
@@ -11343,6 +11364,7 @@
                     if (labelViews && (labelView = labelViews.get(p, 0))) {
                         const r = labelView.getBBounds();
                         labelView.translate(xMid - r.width / 2, y + ((y2 - y) - r.height) / 2);
+                        labelView.setContrast(labelInside && seg.dom);
                     }
                 }
             });
@@ -11734,6 +11756,7 @@
                 const p = points[i];
                 sector.point = p;
                 sector.setAttr('aria-label', p.ariaHint());
+                this._setPointIndex(sector, p);
                 p.color && sector.setStyle('fill', p.color);
                 p._calcedColor = getComputedStyle(sector.dom).fill;
             });
@@ -11791,7 +11814,6 @@
                         angle: p.angle,
                         clockwise: true
                     }, false);
-                    this._setPointIndex(sector, p);
                     if (labelViews && (labelView = labelViews.get(p, 0))) {
                         const line = lineViews.get(p);
                         if (labelInside) {

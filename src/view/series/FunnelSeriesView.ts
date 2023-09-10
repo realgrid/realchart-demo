@@ -69,11 +69,13 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
     private $_prepareSegments(points: FunnelSeriesPoint[]): void {
         const count = points.length;
 
-        this._segments.prepare(count, (m, i) => {
+        this._segments.prepare(count, (seg, i) => {
             const p = points[i];
 
-            m.point = p;
-            p.color && m.setStyle('fill', p.color);
+            seg.point = p;
+            this._setPointIndex(seg, p);
+            p.color && seg.setStyle('fill', p.color);
+            seg.point._calcedColor = getComputedStyle(seg.dom).fill;
         })
     }
 
@@ -90,6 +92,7 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
         const series = this.model;
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
+        const labelInside = series.getLabelPosition();
         const reversed = series.reversed;
         const sz = series.getSize(width, height);
         const szNeck = series.getNeckSize(width, height);
@@ -136,7 +139,7 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
     
                 const path = builder.close(true);
                 seg.setPath(path);
-    
+
                 p.xPos = xMid;
                 p.yPos = y + (y2 - y) / 2;
     
@@ -145,6 +148,7 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
                     const r = labelView.getBBounds();
     
                     labelView.translate(xMid - r.width / 2, y + ((y2 - y) - r.height) / 2);
+                    labelView.setContrast(labelInside && seg.dom);
                 }
             }
         });

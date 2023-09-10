@@ -77,6 +77,7 @@
     
     --rct-legend-item-fill: #333;
     --rct-legend-item-disabled: #aaa;
+    --rct-legend-item-disabled-decoration: none;
 
     --rct-credits-fill: #777;
 }
@@ -97,6 +98,7 @@
     
     --rct-legend-item-fill: #fff;
     --rct-legend-item-disabled: #aaa;
+    --rct-legend-item-disabled-decoration: line-through;
 
     --rct-credits-fill: #999;
 }
@@ -176,6 +178,7 @@
 }
 .rct-legend-item-label[data-hidden] {
     fill: var(--rct-legend-item-disabled);
+    text-decoration: var(--rct-legend-item-disabled-decoration)
 }
 .rct-legend-item-marker {
     stroke: none;
@@ -298,14 +301,6 @@
     stroke: var(--color-12);
 }
 
-.rct-series-labels {
-    font-size: 0.8em;
-    font-weight: bold;
-    stroke: none;
-    fill: #558;
-    fill-opacity: 1;
-    opacity: 1;
-}
 .rct-series-trendline {
     stroke: red;
     stroke-width: 2px;
@@ -323,7 +318,7 @@
     fill: var(--color-3);
 }
 .rct-series[data-pointcolors] .rct-point[data-index="3"] {
-    fill: var(--color-3);
+    fill: var(--color-4);
 }
 .rct-series[data-pointcolors] .rct-point[data-index="4"] {
     fill: var(--color-5);
@@ -350,6 +345,15 @@
     fill: var(--color-12);
 }
 
+/** rct-point 대신 여기에 지정해야 outline에 반영된다. */
+.rct-point-labels {
+    font-size: 0.8em;
+    font-weight: bold;
+    stroke: none;
+    fill: #558;
+    fill-opacity: 1;
+    opacity: 1;
+}
 .rct-point-label {
     stroke: #333;
 }

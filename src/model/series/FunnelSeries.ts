@@ -10,14 +10,31 @@ import { ISize } from "../../common/Size";
 import { IPercentSize, SizeValue, calcPercent, fixnum, parsePercentSize2 } from "../../common/Types";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { WidgetSeries } from "../Series";
+import { ILegendSource } from "../Legend";
+import { PointItemPosition, WidgetSeries } from "../Series";
 
-export class FunnelSeriesPoint extends DataPoint {
+export class FunnelSeriesPoint extends DataPoint implements ILegendSource {
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     height: number;
+    _calcedColor: string;
+
+    //-------------------------------------------------------------------------
+    // ILegendSource
+    //-------------------------------------------------------------------------
+    legendColor(): string {
+        return this._calcedColor;
+    }
+
+    legendLabel(): string {
+        return this.x;
+    }
+
+    legendVisible(): boolean {
+        return this.visible;
+    }
 }
 
 /**
@@ -77,6 +94,11 @@ export class FunnelSeries extends WidgetSeries {
         };
     }
 
+    getLabelPosition(): PointItemPosition {
+        const p = this.pointLabel.position;
+        return p === PointItemPosition.AUTO ? PointItemPosition.INSIDE : p;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -86,6 +108,12 @@ export class FunnelSeries extends WidgetSeries {
 
     _colorByPoint(): boolean {
         return true;
+    }
+
+    getLegendSources(list: ILegendSource[]): void {
+        this._runPoints.forEach(p => {
+            list.push(p as FunnelSeriesPoint);
+        })        
     }
 
     protected _createPoint(source: any): DataPoint {

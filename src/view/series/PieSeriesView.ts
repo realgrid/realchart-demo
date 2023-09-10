@@ -240,6 +240,7 @@ export class PieSeriesView extends SeriesView<PieSeries> {
             sector.point = p;
 
             sector.setAttr('aria-label', p.ariaHint());
+            this._setPointIndex(sector, p);
             p.color && sector.setStyle('fill', p.color);
             p._calcedColor = getComputedStyle(sector.dom).fill;
         })
@@ -307,8 +308,6 @@ export class PieSeriesView extends SeriesView<PieSeries> {
                     angle: p.angle,
                     clockwise: true
                 }, false);
-
-                this._setPointIndex(sector, p);
     
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
