@@ -1975,8 +1975,10 @@
                 const sr = this._svg.getBoundingClientRect();
                 const w = this._svg.clientWidth;
                 const h = this._svg.clientHeight;
-                this._htmlRoot.style.left = (sr.left - cr.left) + 'px';
-                this._htmlRoot.style.top = (sr.top - cr.top) + 'px';
+                Object.assign(this._htmlRoot.style, {
+                    left: pixel(sr.left - cr.left),
+                    top: pixel(sr.top - cr.top)
+                });
                 this._doRender({ x: 0, y: 0, width: w, height: h });
                 this._doRenderBackground(this._container.firstElementChild, w, h);
             }
@@ -2630,7 +2632,7 @@
             return elt;
         }
     }
-    LinearGradient.TYPE = 'linearGradient';
+    LinearGradient.TYPE = 'lineargradient';
     class RadialGradient extends Gradient {
         getEelement(doc) {
             const src = this.source;
@@ -2648,10 +2650,16 @@
             return elt;
         }
     }
-    RadialGradient.TYPE = 'radialGradient';
+    RadialGradient.TYPE = 'radialgradient';
     class AssetCollection {
         constructor() {
             this._items = [];
+        }
+        get count() {
+            return this._items.length;
+        }
+        get(index) {
+            return this._items[index];
         }
         load(source) {
             this._items = [];
@@ -2678,7 +2686,7 @@
         }
         $_loadItem(src) {
             if (isObject(src) && src.type && src.id) {
-                switch (src.type) {
+                switch (src.type.toLowerCase()) {
                     case LinearGradient.TYPE:
                         return new LinearGradient(src);
                     case RadialGradient.TYPE:
@@ -4392,6 +4400,9 @@
         get firstVisibleSeries() {
             return this._visibleSeries[0];
         }
+        isWidget() {
+            return this._widget;
+        }
         isEmpty() {
             return !this._items.find(item => !item.isEmpty());
         }
@@ -4443,9 +4454,14 @@
                     series.push(item);
                 }
             });
+            this._widget = true;
             series.forEach(ser => {
-                if (ser.name)
+                if (this._widget && !(ser instanceof WidgetSeries)) {
+                    this._widget = false;
+                }
+                if (ser.name) {
                     map[ser.name] = ser;
+                }
                 for (const ser2 of this._series) {
                     if (ser2 !== ser) {
                         if (!ser.canMixWith(ser2)) {
@@ -4875,11 +4891,44 @@
         }
     }
 
+    class Theme extends ChartItem {
+        constructor(source) {
+            super(null);
+            this.assets = new AssetCollection();
+            source && this.load(source);
+        }
+        activate(chart) {
+        }
+        deactivate(chart) {
+        }
+        _doLoadProp(prop, value) {
+            if (prop === 'assets') {
+                this.assets.load(value);
+                return true;
+            }
+        }
+    }
     class ThemeCollection {
         constructor() {
             this._items = [];
         }
         load(source) {
+            this._items = [];
+            if (isArray(source)) {
+                source.forEach(src => {
+                    let item = this.$_loadItem(src);
+                    item && this._items.push(item);
+                });
+            }
+            else if (isObject(source)) {
+                let item = this.$_loadItem(source);
+                item && this._items.push(item);
+            }
+        }
+        $_loadItem(src) {
+            if (isObject(src) && src.name) {
+                return new Theme(src);
+            }
         }
     }
 
@@ -7439,6 +7488,9 @@
         }
         isPolar() {
             return this._polar;
+        }
+        isWidget() {
+            return this._series.isWidget();
         }
         isInverted() {
             return !this._polar && this._inverted;
@@ -12489,6 +12541,7 @@
         _doMeasure(doc, model, hintWidth, hintHeight, phase) {
             const chart = model.chart;
             this._background.setStyleOrClass(model.style);
+            this._background.setBoolData('polar', this._polar || chart.isWidget());
             this.$_prepareSeries(doc, chart._getSeries().visibleSeries());
             this._seriesViews.forEach((v, i) => {
                 v.measure(doc, this._series[i], hintWidth, hintHeight, phase);

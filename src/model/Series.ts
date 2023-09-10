@@ -753,6 +753,7 @@ export class PlottingItemCollection  {
     private _visibles: IPlottingItem[] = [];
     private _series: Series[] = [];
     private _visibleSeries: Series[] = [];
+    private _widget: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -778,6 +779,10 @@ export class PlottingItemCollection  {
 
     get firstVisibleSeries(): Series {
         return this._visibleSeries[0];
+    }
+
+    isWidget(): boolean {
+        return this._widget;
     }
 
     isEmpty(): boolean {
@@ -846,8 +851,15 @@ export class PlottingItemCollection  {
             }
         })
 
+        this._widget = true;
+
         series.forEach(ser => {
-            if (ser.name) map[ser.name] = ser;
+            if (this._widget && !(ser instanceof WidgetSeries)) {
+                this._widget = false;
+            }
+            if (ser.name) {
+                map[ser.name] = ser;
+            }
             for (const ser2 of this._series) {
                 if (ser2 !== ser) {
                     if (!ser.canMixWith(ser2)) {

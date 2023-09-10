@@ -6,10 +6,15 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isArray, isObject } from "../common/Common";
 import { AssetCollection } from "./Asset";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 
+/**
+ * 1. 먼저 css에 {@link name} 속성과 동일한 이름의 theme 속성들을 설정해야 한다.
+ * 2. gradient가 필요하면 {@link assets}에 등록한다.
+ */
 export class Theme extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -26,8 +31,10 @@ export class Theme extends ChartItem {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart) {
-        super(chart);
+    constructor(source: any) {
+        super(null);
+
+        source && this.load(source);
     }
 
     //-------------------------------------------------------------------------
@@ -39,10 +46,10 @@ export class Theme extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    activate(): void {
+    activate(chart: IChart): void {
     }
 
-    deactivate(): void {
+    deactivate(chart: IChart): void {
     }
 
     //-------------------------------------------------------------------------
@@ -51,6 +58,12 @@ export class Theme extends ChartItem {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _doLoadProp(prop: string, value: any): boolean {
+        if (prop === 'assets') {
+            this.assets.load(value);
+            return true;
+        }
+    }
 }
 
 export class ThemeCollection {
@@ -64,5 +77,25 @@ export class ThemeCollection {
     // methods
     //-------------------------------------------------------------------------
     load(source: any): void {
+        this._items = [];
+
+        if (isArray(source)) {
+            source.forEach(src => {
+                let item = this.$_loadItem(src);
+                item && this._items.push(item);
+            })
+        } else if (isObject(source)) {
+            let item = this.$_loadItem(source);
+            item && this._items.push(item);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_loadItem(src: any): Theme {
+        if (isObject(src) && src.name) {
+            return new Theme(src);
+        }
     }
 }

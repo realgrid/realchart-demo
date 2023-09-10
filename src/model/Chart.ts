@@ -419,6 +419,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._polar;
     }
 
+    isWidget(): boolean {
+        return this._series.isWidget();
+    }
+
     isInverted(): boolean {
         return !this._polar && this._inverted;
     }
@@ -517,9 +521,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         // series - 시리즈를 먼저 로드해야 디폴트 axis를 지정할 수 있다.
         this._series.load(source.series);
-        // this._series2.load(source.series);
-        // series group
-        // this._groups2.load(source.groups);
 
         // axes
         // 축은 반드시 존재해야 한다.

@@ -671,6 +671,7 @@ export class BodyView extends ChartElement<Body> {
 
         // background
         this._background.setStyleOrClass(model.style);
+        this._background.setBoolData('polar', this._polar || chart.isWidget());
 
         // series
         this.$_prepareSeries(doc, chart._getSeries().visibleSeries());

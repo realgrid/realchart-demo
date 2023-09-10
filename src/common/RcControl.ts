@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
-import { Path, SVGStyleOrClass, _undefined, isNull, throwFormat } from "./Types";
+import { Path, SVGStyleOrClass, _undefined, isNull, pixel, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
 import { SVGNS, isObject, isString, pickProp } from "./Common";
@@ -464,9 +464,10 @@ export abstract class RcControl extends RcWrappableObject {
             const w = this._svg.clientWidth;
             const h = this._svg.clientHeight;
 
-            this._htmlRoot.style.left = (sr.left - cr.left) + 'px';
-            this._htmlRoot.style.top = (sr.top - cr.top) + 'px';
-
+            Object.assign(this._htmlRoot.style, {
+                left: pixel(sr.left - cr.left),
+                top: pixel(sr.top - cr.top)
+            });
             this._doRender({x: 0, y: 0, width: w, height: h});
             this._doRenderBackground(this._container.firstElementChild as HTMLDivElement, w, h);
 

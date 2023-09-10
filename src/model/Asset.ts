@@ -63,9 +63,9 @@ abstract class Gradient<T extends IGradient> extends AssetItem<T> {
     }
 }
 
-class LinearGradient extends Gradient<ILinearGradient> {
+export class LinearGradient extends Gradient<ILinearGradient> {
 
-    static readonly TYPE = 'linearGradient';
+    static readonly TYPE = 'lineargradient';
 
     getEelement(doc: Document): Element {
         const elt = doc.createElementNS(SVGNS, LinearGradient.TYPE);
@@ -107,9 +107,9 @@ export interface IRadialGradient extends IGradient {
     rd?: number | string;
 }
 
-class RadialGradient extends Gradient<IRadialGradient> {
+export class RadialGradient extends Gradient<IRadialGradient> {
 
-    static readonly TYPE = 'radialGradient';
+    static readonly TYPE = 'radialgradient';
 
     getEelement(doc: Document): Element {
         const src = this.source;
@@ -143,8 +143,19 @@ export class AssetCollection {
     private _items: AssetItem<IAssetItem>[] = [];
 
     //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    get count(): number {
+        return this._items.length;
+    }
+
+    //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    get(index: number): AssetItem<IAssetItem> {
+        return this._items[index];
+    }
+
     load(source: any): void {
         this._items = [];
 
@@ -176,7 +187,7 @@ export class AssetCollection {
     //-------------------------------------------------------------------------
     private $_loadItem(src: any): AssetItem<IAssetItem> {
         if (isObject(src) && src.type && src.id) {
-            switch (src.type) {
+            switch (src.type.toLowerCase()) {
                 case LinearGradient.TYPE:
                     return new LinearGradient(src);
                 case RadialGradient.TYPE:

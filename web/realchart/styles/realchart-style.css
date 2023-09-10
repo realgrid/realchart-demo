@@ -189,6 +189,9 @@
     stroke: var(--rct-plot-background-stroke);
     fill: none;
 }
+.rct-plot-background[data-polar] {
+    stroke: none;
+}
 
 /** axis */
 .rct-axis-title {

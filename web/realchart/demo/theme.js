@@ -7,7 +7,6 @@ const config = {
     type: 'line',
     options: {
     },
-    title: "RealChart Palette",
     xAxis: {
         title: "일일 Daily fat",
     },
