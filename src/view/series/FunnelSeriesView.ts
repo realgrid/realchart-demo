@@ -9,6 +9,7 @@
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
+import { fixnum } from "../../common/Types";
 import { FunnelSeries, FunnelSeriesPoint } from "../../model/series/FunnelSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
@@ -52,6 +53,7 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: FunnelSeries): void {
+        this.$_prepareRates(this._visPoints as FunnelSeriesPoint[]);
         this.$_prepareSegments(this._visPoints as FunnelSeriesPoint[]);
     }
 
@@ -66,14 +68,39 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_prepareSegments(points: FunnelSeriesPoint[]): void {
-        const count = points.length;
+    private $_prepareRates(pts: FunnelSeriesPoint[]): void {
+        let sum = 0;
+        let y = 0;
+
+        pts.forEach(p => {
+            sum += p.yValue;
+        });
+
+        const cnt = pts.length;
+        let i = 0;
+
+        for (; i < cnt - 1; i++) {
+            const p = pts[i];
+            const h = fixnum(p.yValue / sum);
+
+            p.yRate = h * 100;
+            p.yPos = y;
+            p.height = h;
+            y += h;
+        }
+        pts[i].yPos = y;
+        pts[i].height = 1 - y;
+    }
+
+    private $_prepareSegments(pts: FunnelSeriesPoint[]): void {
+        const count = pts.length;
 
         this._segments.prepare(count, (seg, i) => {
-            const p = points[i];
+            const p = pts[i];
 
             seg.point = p;
-            this._setPointIndex(seg, p);
+            seg.internalClearStyleAndClass();
+            this._setColorIndex(seg, p);
             p.color && seg.setStyle('fill', p.color);
             seg.point._calcedColor = getComputedStyle(seg.dom).fill;
         })
@@ -90,7 +117,6 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
         }
 
         const series = this.model;
-        const labels = series.pointLabel;
         const labelViews = this._labelViews();
         const labelInside = series.getLabelPosition();
         const reversed = series.reversed;

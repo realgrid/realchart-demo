@@ -433,7 +433,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
 
-    protected _setPointIndex(v: RcElement, p: DataPoint): void {
+    protected _setColorIndex(v: RcElement, p: DataPoint): void {
         v.setData('index', (p.index % PALETTE_LEN) as any);
     }
 
@@ -658,7 +658,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 let x: number;
                 let y: number;
 
-                this._setPointIndex(pv, p);
+                this._setColorIndex(pv, p);
                 x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
                 y = yOrg;
 
@@ -738,7 +738,7 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
                 p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
                 p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
 
-                this._setPointIndex(pv, p);
+                this._setColorIndex(pv, p);
                 this._layoutPointView(pv, i, x, y, wPoint, hPoint);
 
                 // labels

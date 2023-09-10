@@ -100,7 +100,9 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         }
         this._sectors.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
-            v.setStyleOrClass(style);
+
+            v.internalClearStyleAndClass();
+            v.internalSetStyleOrClass(style);
             p.color && v.setStyle('fill', p.color);
         });
     }

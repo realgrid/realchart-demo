@@ -77,7 +77,7 @@
     
     --rct-legend-item-fill: #333;
     --rct-legend-item-disabled: #aaa;
-    --rct-legend-item-disabled-decoration: none;
+    --rct-legend-item-disabled-decoration: line-through;
 
     --rct-credits-fill: #777;
 }

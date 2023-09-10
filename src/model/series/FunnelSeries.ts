@@ -152,31 +152,4 @@ export class FunnelSeries extends WidgetSeries {
     //     pts[i].yPos = y;
     //     pts[i].height = 1 - y;
     // }
-
-    prepareAfter(): void {
-        super.prepareAfter();
-
-        const pts = this._runPoints as FunnelSeriesPoint[];
-        let sum = 0;
-        let y = 0;
-
-        pts.forEach(p => {
-            sum += p.yValue;
-        });
-
-        const cnt = pts.length;
-        let i = 0;
-
-        for (; i < cnt - 1; i++) {
-            const p = pts[i];
-            const h = fixnum(p.yValue / sum);
-
-            p.yRate = h * 100;
-            p.yPos = y;
-            p.height = h;
-            y += h;
-        }
-        pts[i].yPos = y;
-        pts[i].height = 1 - y;
-    }
 }

@@ -4387,6 +4387,9 @@
         prepareAfter() {
             this.trendline.visible && this.trendline.prepareRender();
         }
+        _getPointArgs(p) {
+            return;
+        }
     }
     class PlottingItemCollection {
         constructor(chart) {
@@ -6463,27 +6466,6 @@
             this._neckWidthDim = parsePercentSize2(this.neckWidth, FunnelSeries.DEF_NECK_WIDTH);
             this._neckHeightDim = parsePercentSize2(this.neckHeight, FunnelSeries.DEF_NECK_HEIGHT);
             return this;
-        }
-        prepareAfter() {
-            super.prepareAfter();
-            const pts = this._runPoints;
-            let sum = 0;
-            let y = 0;
-            pts.forEach(p => {
-                sum += p.yValue;
-            });
-            const cnt = pts.length;
-            let i = 0;
-            for (; i < cnt - 1; i++) {
-                const p = pts[i];
-                const h = fixnum(p.yValue / sum);
-                p.yRate = h * 100;
-                p.yPos = y;
-                p.height = h;
-                y += h;
-            }
-            pts[i].yPos = y;
-            pts[i].height = 1 - y;
         }
     }
     FunnelSeries.DEF_WIDTH = '85%';
@@ -9669,7 +9651,7 @@
             this._afterRender();
             this._animatable && this._runShowEffect(!this.control.loaded);
         }
-        _setPointIndex(v, p) {
+        _setColorIndex(v, p) {
             v.setData('index', (p.index % PALETTE_LEN));
         }
         _labelViews() {
@@ -9846,7 +9828,7 @@
                     const hPoint = (yVal - yBase) * vr;
                     let x;
                     let y;
-                    this._setPointIndex(pv, p);
+                    this._setColorIndex(pv, p);
                     x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
                     y = yOrg;
                     p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
@@ -9909,7 +9891,7 @@
                     let y = org;
                     p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
                     p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
-                    this._setPointIndex(pv, p);
+                    this._setColorIndex(pv, p);
                     this._layoutPointView(pv, i, x, y, wPoint, hPoint);
                     if (labelViews) {
                         if (inverted) {
@@ -10776,7 +10758,8 @@
             }
             this._sectors.prepare(points.length, (v, i) => {
                 const p = v.point = points[i];
-                v.setStyleOrClass(style);
+                v.internalClearStyleAndClass();
+                v.internalSetStyleOrClass(style);
                 p.color && v.setStyle('fill', p.color);
             });
         }
@@ -10918,7 +10901,8 @@
                 const p = m.point = points[i];
                 p.radius = series.getRadius(p.zValue, min, max);
                 p.shape = marker.shape;
-                style && m.setStyleOrClass(style);
+                m.internalClearStyleAndClass();
+                style && m.internalSetStyleOrClass(style);
                 p.color && m.setStyle('fill', p.color);
             });
         }
@@ -10952,7 +10936,7 @@
                     path = SvgShapes.circle(0, 0, sz);
                     mv.setPath(path);
                     mv.translate(x, y);
-                    this._setPointIndex(mv, p);
+                    this._setColorIndex(mv, p);
                     if (labelViews && (labelView = labelViews.get(p, 0))) {
                         labelView.setContrast(mv.dom);
                         labelView.layout();
@@ -11306,6 +11290,7 @@
             return this._segments;
         }
         _prepareSeries(doc, model) {
+            this.$_prepareRates(this._visPoints);
             this.$_prepareSegments(this._visPoints);
         }
         _renderSeries(width, height) {
@@ -11314,12 +11299,32 @@
         _runShowEffect(firstTime) {
             firstTime && SeriesAnimation.slide(this, { from: this.model.reversed ? 'bottom' : 'top' });
         }
-        $_prepareSegments(points) {
-            const count = points.length;
+        $_prepareRates(pts) {
+            let sum = 0;
+            let y = 0;
+            pts.forEach(p => {
+                sum += p.yValue;
+            });
+            const cnt = pts.length;
+            let i = 0;
+            for (; i < cnt - 1; i++) {
+                const p = pts[i];
+                const h = fixnum(p.yValue / sum);
+                p.yRate = h * 100;
+                p.yPos = y;
+                p.height = h;
+                y += h;
+            }
+            pts[i].yPos = y;
+            pts[i].height = 1 - y;
+        }
+        $_prepareSegments(pts) {
+            const count = pts.length;
             this._segments.prepare(count, (seg, i) => {
-                const p = points[i];
+                const p = pts[i];
                 seg.point = p;
-                this._setPointIndex(seg, p);
+                seg.internalClearStyleAndClass();
+                this._setColorIndex(seg, p);
                 p.color && seg.setStyle('fill', p.color);
                 seg.point._calcedColor = getComputedStyle(seg.dom).fill;
             });
@@ -11334,7 +11339,6 @@
                 }
             }
             const series = this.model;
-            series.pointLabel;
             const labelViews = this._labelViews();
             const labelInside = series.getLabelPosition();
             const reversed = series.reversed;
@@ -11778,7 +11782,8 @@
                 const p = points[i];
                 sector.point = p;
                 sector.setAttr('aria-label', p.ariaHint());
-                this._setPointIndex(sector, p);
+                sector.internalClearStyleAndClass();
+                this._setColorIndex(sector, p);
                 p.color && sector.setStyle('fill', p.color);
                 p._calcedColor = getComputedStyle(sector.dom).fill;
             });
@@ -11977,7 +11982,7 @@
                     }
                     mv.setPath(path);
                     mv.translate(x, y);
-                    this._setPointIndex(mv, p);
+                    this._setColorIndex(mv, p);
                     if (labelViews && (labelView = labelViews.get(p, 0))) {
                         r = labelView.getBBounds();
                         labelView.translate(x - r.width / 2, y - r.height / 2);

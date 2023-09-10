@@ -7,11 +7,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, isString, pickNum } from "../common/Common";
-import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../common/Types";
+import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { Shape, Shapes } from "../common/impl/SvgShape";
 import { IAxis } from "./Axis";
-import { Chart, IChart } from "./Chart";
+import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { LineType } from "./ChartTypes";
 import { DataPoint, DataPointCollection } from "./DataPoint";
@@ -292,6 +292,20 @@ export interface ISeries extends IPlottingItem {
     getValue(point: DataPoint, axis: IAxis): number;
     isVisible(p: DataPoint): boolean;
 }
+
+export interface DataPointArgs {
+    series: string | number;
+    count: number;
+    vcount: number;
+    index: number;
+    vindex: number;
+    x: any;
+    y: any;
+    xValue: any;
+    yValue: any;
+}
+
+export type PointStyleCallback = (args: DataPointArgs) => SVGStyleOrClass;
 
 /**
  * @config chart.series
@@ -746,6 +760,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     prepareAfter(): void {
         // DataPoint.xValue가 필요하다.
         this.trendline.visible && this.trendline.prepareRender();
+    }
+
+    _getPointArgs(p: DataPoint): DataPointArgs {
+        return;
     }
 }
 

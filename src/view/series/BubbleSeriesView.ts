@@ -95,7 +95,8 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
 
             p.radius = series.getRadius(p.zValue, min, max);
             p.shape = marker.shape;
-            style && m.setStyleOrClass(style);
+            m.internalClearStyleAndClass();
+            style && m.internalSetStyleOrClass(style);
             p.color && m.setStyle('fill', p.color);
         });
     }
@@ -137,7 +138,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
                 mv.setPath(path);
                 mv.translate(x, y);
 
-                this._setPointIndex(mv, p);
+                this._setColorIndex(mv, p);
 
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
