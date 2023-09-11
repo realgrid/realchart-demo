@@ -11,6 +11,8 @@ import { describe, it } from 'mocha';
 import { Browser } from 'puppeteer';
 import { PPTester } from '../../PPTester';
 import { SeriesView } from '../../../src/view/SeriesView';
+import { TitleView } from '../../../src/view/TitleView';
+import { AxisTitleView, AxisView } from '../../../src/view/AxisView';
 
 /**
  * Puppeteer Tests for arearange.html
@@ -43,5 +45,100 @@ import { SeriesView } from '../../../src/view/SeriesView';
 
         // await page.screenshot({path: 'out/ss/arearange.png'});
         page.close();
+    });
+
+    it('title', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const title = await page.$('.' + TitleView.TITLE_CLASS);
+        expect(title).exist;
+
+        const Text = await title.$('text');
+        const titleText = await page.evaluate((el) => el.textContent, Text);
+        expect(titleText).eq(config.title);
+    });
+
+    it('xTitle', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const xAxis = await PPTester.getAxis(page, 'x');
+        const xAxisText = await xAxis.$('text');
+        expect(xAxis).exist;
+
+
+        const xAxistTitle = await page.evaluate((el) => el.textContent, xAxisText);
+        expect(xAxistTitle).eq(config.xAxis.title);
+    });
+
+    it('yTitle', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const yAxis = await PPTester.getAxis(page,'y');
+        const yAxisText = await yAxis.$('text');
+        expect(yAxis).exist;
+
+        const yAxistTitle = await page.evaluate((el) => el.textContent, yAxisText);
+        expect(yAxistTitle).eq(config.yAxis.title);
+    });
+
+    it('xtick', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const xAxis = await PPTester.getAxis(page,'x');
+        const xAxisTick = await xAxis.$$('.' + AxisView.TICK_CLASS);
+
+        expect(xAxisTick.length).eq(config.series.data.length);
+    });
+
+    it('ytick', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.$('config');
+
+        const yAxis = await PPTester.getAxis(page, 'y');
+        const label = await yAxis.$('.' + AxisView.TICK_CLASS);
+
+        const labelTexts = await label.$$('text')
+        for(let i = 0; i < labelTexts.length; i++){
+            const tickLabel = await page.evaluate((el) => el.textContent, labelTexts[i]);
+            expect(tickLabel).exist;
+        }
+    });
+
+    it('credit', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const credit = await page.$('.rct-credits');
+        expect(credit);
+
+        const creditText = await credit.$('text')
+        expect(creditText).exist;
+
+    });
+    
+    it('grid', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const grid = await page.$('.rct-grids');
+        expect(grid).exist;
+
+        const axisGrid = await page.$('.rct-axis-grid');
+        expect(axisGrid).exist;
+    });
+
+    it('dataPoint', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const dataPoint = await page.$('.rct-series-points');
+        expect(dataPoint).exist;
+        const point = await dataPoint.$$('.' + SeriesView.POINT_CLASS);
+        expect(point.length).eq(config.series.data.length*2);
+
     });
 });

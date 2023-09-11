@@ -44,4 +44,14 @@ import { SeriesView } from '../../../src/view/SeriesView';
         // await page.screenshot({path: 'out/ss/area-negative.png'});
         page.close();
     });
+
+    it('title', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config = await page.evaluate('config')
+
+        
+
+
+
+    })
 });

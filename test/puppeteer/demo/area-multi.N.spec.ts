@@ -62,18 +62,17 @@ import { LegendView } from '../../../src/view/LegendView';
         expect(title).exist;
     });
 
-    it('xAxis', async () => {
+    it('xTitle', async () => {
         const page = await PPTester.newPage(browser, url);
         const config: any = await page.evaluate('config');
-
-        //const title = await page.$('.' + AxisTitleView.TITLE_CLASS)
+        
         const xAxis = await PPTester.getAxis(page, 'x');
         const xAxisText = await xAxis.$('text');
         const xaxisTitle = await page.evaluate((el) => el.textContent, xAxisText);
         expect(xaxisTitle).eq(config.xAxis.title);
     });
 
-    it('yAxis', async () => {
+    it('yTitle', async () => {
         const page = await PPTester.newPage(browser, url);
         const config: any = await page.evaluate('config');
 
@@ -83,12 +82,18 @@ import { LegendView } from '../../../src/view/LegendView';
         expect(yAxisTitle).eq(config.yAxis.title)
     });
 
-    it('tick', async () => {
+    it('xtick', async () => {
         const page = await PPTester.newPage(browser, url);
         const config:any = await page.evaluate('config');
-        const tick = await page.$('.' + AxisView.TICK_CLASS);
+        
+        const xAxis = await PPTester.getAxis(page, 'x');
+        const xAxisTICK = await xAxis.$$('.' + AxisView.TICK_CLASS);
 
-        expect(tick).exist;
+        for(let i = 0; i < config.series.length; i++) {
+            expect(xAxisTICK.length).eq(config.series[i].data.length);
+        }
+        
+        
     });
 
     it('legend', async() => {
@@ -97,11 +102,22 @@ import { LegendView } from '../../../src/view/LegendView';
         const legends = await page.$$('.rct-legend-item-label'); 
 
         expect(legends).exist;
-        
-        for(let i = 0; i < legends.length; i++) {
+
+        expect(legends.length).eq(config.series.length)
+
+        for (let i = 0; i < legends.length; i++) {
            const data = await page.evaluate((el) => el.textContent, legends[i])
            expect(data).eq(config.series[i].name);
         }
+
+    });
+
+    it('container', async() => {
+        const page = await PPTester.newPage(browser, url);
+        const config = await page.evaluate('config');
+
+        const container = await page.$('.rct-series-container');
+        expect(container).exist;
 
         
 
