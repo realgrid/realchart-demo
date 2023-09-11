@@ -111,7 +111,7 @@ const rollup_prod_config = {
                 { src: './web/realchart/styles/realchart-style.css', dest: `./dist/deploy/${filename}` },
                 { src: './web/realchart/styles/realchart-style.css', dest: `./www/realchart/styles`},
                 { src: `./dist/deploy/${filename}/${filename}.min.js`, dest: `./web/realchart/lib` },
-                { src: `./dist/deploy/${filename}/${filename}.min.js`, dest: `./web/realchart/lib`, rename: 'realreport-chart.js' },
+                { src: `./dist/deploy/${filename}/${filename}.min.js`, dest: `./web/realchart/lib`, rename: 'realchart.js' },
                 { src: `./dist/deploy/${filename}/${filename}.min.js`, dest: `./www/realchart/lib`, rename: 'realchart.js' },
             ]
         }),
