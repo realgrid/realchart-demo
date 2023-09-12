@@ -14,6 +14,10 @@ import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { Series, SeriesMarker } from "../Series";
 
+/**
+ * [y, z]
+ * [x, y, z]
+ */
 export class BubbleSeriesPoint extends DataPoint {
 
     //-------------------------------------------------------------------------

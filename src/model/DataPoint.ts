@@ -22,6 +22,9 @@ export interface IPointPos {
  * 
  * isNull과 visible은 다르다.
  * isNull이어도 자리를 차지한다.
+ * 
+ * [y]
+ * [x, y]
  */
 export class DataPoint {
 

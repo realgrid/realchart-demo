@@ -81,7 +81,7 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.update(config, animate);
     }, false);
-    createListBox(container, "options.palette", ['', 'gray'], function (e) {
+    createListBox(container, "options.palette", ['default', 'warm', 'cool', 'forest', 'gray'], function (e) {
         config.options.palette = _getValue(e);
         chart.update(config, animate);
     }, 'default');

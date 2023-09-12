@@ -7,10 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp, pickProp3 } from "../../common/Common";
-import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { ClusterableSeries, RangedSeries } from "../Series";
+import { RangedSeries } from "../Series";
 
+/**
+ * [low, y]
+ * [x, low, y]
+ */
 export class ErrorBarSeriesPoint extends DataPoint {
 
     //-------------------------------------------------------------------------

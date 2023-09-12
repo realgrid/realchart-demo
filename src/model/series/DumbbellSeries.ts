@@ -21,6 +21,10 @@ export class DumbbellSeriesMarker extends SeriesMarker {
     shape = Shape.CIRCLE;
 }
 
+/**
+ * [low, y]
+ * [x, low, y]
+ */
 export class DumbbellSeriesPoint extends DataPoint {
 
     //-------------------------------------------------------------------------

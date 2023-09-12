@@ -10,6 +10,10 @@ import { pickNum, pickProp, pickProp3 } from "../../common/Common";
 import { DataPoint } from "../DataPoint";
 import { RangedSeries } from "../Series";
 
+/**
+ * [min, rlow, mid, high, y]
+ * [x, min, rlow, mid, high, y]
+ */
 export class BoxPlotSeriesPoint extends DataPoint {
 
     //-------------------------------------------------------------------------

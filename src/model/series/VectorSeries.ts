@@ -12,6 +12,7 @@ import { DataPoint } from "../DataPoint";
 import { Series } from "../Series";
 
 /**
+ * [y, length, angle]
  * [x, y, length, angle]
  */
 export class VectorSeriesPoint extends DataPoint {

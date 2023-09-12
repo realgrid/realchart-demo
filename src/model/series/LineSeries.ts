@@ -224,6 +224,10 @@ export class AreaSeries extends LineSeries {
     }
 }
 
+/**
+ * [low, high(y)]
+ * [x, low, high(y)]
+ */
 export class AreaRangeSeriesPoint extends AreaSeriesPoint {
 
     //-------------------------------------------------------------------------

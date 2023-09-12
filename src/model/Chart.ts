@@ -196,6 +196,7 @@ export class ChartOptions extends ChartItem {
      * 시리즈 및 데이터포인트에 적용되는 기본 색상 팔레트 이름.
      */
     palette: string;
+    paletteMode: any;
     /**
      * false로 지정하면 차트 전체척으로 animation 효과를 실행하지 않는다.
      * 

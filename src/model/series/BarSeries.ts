@@ -11,6 +11,10 @@ import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { BasedSeries, ClustrableSeriesGroup, IClusterable, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
 
+/**
+ * [y]
+ * [x, y]
+ */
 export class BarSeriesPoint extends DataPoint {
     
     //-------------------------------------------------------------------------
