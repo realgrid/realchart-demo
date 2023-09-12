@@ -86,7 +86,6 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
     private $_layoutMarkers(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
-        const marker = series.marker;
         const labels = series.pointLabel;
         const labelOff = labels.offset;
         const labelViews = this._labelViews();
@@ -102,8 +101,8 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
             const p = mv.point;
 
             if (mv.setVisible(!p.isNull)) {
-                const s = marker.shape;
-                const sz = marker.radius;
+                const s = series.shape;
+                const sz = series.radius;
                 let path: (string | number)[];
                 let x: number;
                 let y: number;

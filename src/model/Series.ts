@@ -293,7 +293,7 @@ export interface ISeries extends IPlottingItem {
     isVisible(p: DataPoint): boolean;
 }
 
-export interface DataPointArgs {
+export interface IPointStyleArgs {
     series: string | number;
     count: number;
     vcount: number;
@@ -305,7 +305,7 @@ export interface DataPointArgs {
     yValue: any;
 }
 
-export type PointStyleCallback = (args: DataPointArgs) => SVGStyleOrClass;
+export type PointStyleCallback = (args: IPointStyleArgs) => SVGStyleOrClass;
 
 /**
  * @config chart.series
@@ -353,6 +353,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _maxValue: number;
     _referents: Series[];
     _calcedColor: string;
+    protected _pointArgs: IPointStyleArgs;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -366,6 +367,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this.tooltip = new Tooltip(this);
 
         this._points = new DataPointCollection(this);
+        this._pointArgs = this._createPointArgs();
     }
 
     //-------------------------------------------------------------------------
@@ -694,6 +696,25 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             this.chart._pointVisibleChanged(this, p);
         }
     }
+
+    protected _createPointArgs(): IPointStyleArgs {
+        return {} as any;
+    }
+
+    protected _preparePointArgs(args: IPointStyleArgs): void {
+        args.series = this.name || this.index;
+        args.count = this._points.count;
+        // args.vcount = 
+    }
+
+    getPointStyleArgs(args: IPointStyleArgs, p: DataPoint): void {
+        args.index = p.index;
+        args.vindex = p.vindex;
+        args.x = p.x;
+        args.y = p.y;
+        args.xValue = p.xValue;
+        args.yValue = p.yValue;
+    }
     
     //-------------------------------------------------------------------------
     // overriden members
@@ -755,15 +776,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 p.color = color || colors[i % colors.length];
             }
         })
+
+        this._preparePointArgs(this._pointArgs);
     }
 
     prepareAfter(): void {
         // DataPoint.xValue가 필요하다.
         this.trendline.visible && this.trendline.prepareRender();
-    }
-
-    _getPointArgs(p: DataPoint): DataPointArgs {
-        return;
     }
 }
 

@@ -85,7 +85,6 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         const series = this.model;
         const zAxis = series._xAxisObj._length < series._yAxisObj._length ? series._xAxisObj : series._yAxisObj;
         const len = zAxis._length;
-        const marker = series.marker;
         const count = points.length;
         const {min, max} = series.getPxMinMax(len);
 
@@ -93,7 +92,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
             const p = mv.point = points[i];
 
             p.radius = series.getRadius(p.zValue, min, max);
-            p.shape = marker.shape;
+            p.shape = series.shape;
 
             this._setPointStyle(mv, p);
         });

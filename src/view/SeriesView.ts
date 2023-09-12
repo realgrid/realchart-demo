@@ -395,6 +395,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         this.setBoolData('pointcolors', model._colorByPoint());
 
         this._visPoints = model._runPoints.filter(p => p.visible);
+        this._visPoints.forEach((p, i) => p.vindex = i);
         this._prepareSeries(doc, model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
 

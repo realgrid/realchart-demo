@@ -44,6 +44,7 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     source: any;
     index: number;
+    vindex: number;
     x: any;
     y: any;
 
