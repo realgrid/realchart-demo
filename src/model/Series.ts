@@ -1436,7 +1436,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
 
     protected _doLoadProp(prop: string, value: any): boolean {
         // TODO: children으로 통일한다.
-        if (prop === 'children' || prop === 'series') {
+        if (prop === 'children') {
             this.$_loadSeries(this.chart, value);
             return true;
         }
