@@ -68,7 +68,7 @@ export class LinearGradient extends Gradient<ILinearGradient> {
     static readonly TYPE = 'lineargradient';
 
     getEelement(doc: Document): Element {
-        const elt = doc.createElementNS(SVGNS, LinearGradient.TYPE);
+        const elt = doc.createElementNS(SVGNS, 'linearGradient');
         let {x1, x2, y1, y2} = {x1: 0, x2: 0, y1: 0, y2: 0};
 
         this._setStops(doc, elt);
@@ -113,7 +113,7 @@ export class RadialGradient extends Gradient<IRadialGradient> {
 
     getEelement(doc: Document): Element {
         const src = this.source;
-        const elt = doc.createElementNS(SVGNS, RadialGradient.TYPE);
+        const elt = doc.createElementNS(SVGNS, 'radialGradient');
 
         if (!isNull(src.cx)) {
             elt.setAttribute('cx', src.cx as any);

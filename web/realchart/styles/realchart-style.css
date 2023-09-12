@@ -23,18 +23,18 @@
 
 /** palette */
 .rct-root {
-    --color-1: #00A0E8;
-    --color-2: #FDB827;
-    --color-3: #E5007F;
-    --color-4: #009652;
-    --color-5: #9100AF;
-    --color-6: #E40001;
-    --color-7: #00C6C1;
+    --color-1: #6b76f2;
+    --color-2: #00d3e4;
+    --color-3: #fe3ea5;
+    --color-4: #ffd938;
+    --color-5: #8650cc;
+    --color-6: #e30922;
+    --color-7: #00E272;
     --color-8: #FF7300;
-    --color-9: #1564C0;
-    --color-10: #F441F9;
-    --color-11: #69C2FF;
-    --color-12: #00E272;
+    --color-9: #5948ff;
+    --color-10: #e700fe;
+    --color-11: #00b8ac;
+    --color-12: #2da0f9;
 }
 .rct-root[data-palette='gray'] {
     --color-1: #464646;

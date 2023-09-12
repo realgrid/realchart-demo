@@ -61,6 +61,10 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello2');
     });
+    createListBox(container, "options.palette", ['default', 'warm', 'cool', 'forest', 'gray'], function (e) {
+        config.options.palette = _getValue(e);
+        chart.update(config, animate);
+    }, 'default');
     createListBox(container, "layout", ['default', 'stack', 'fill', 'overlap'], function (e) {
         config.series[0].layout = _getValue(e);
         chart.update(config, animate);

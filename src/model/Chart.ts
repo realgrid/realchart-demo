@@ -15,7 +15,7 @@ import { ChartItem } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
 import { ILegendSource, Legend } from "./Legend";
 import { IPlottingItem, PlottingItemCollection, Series } from "./Series";
-import { ThemeCollection } from "./Theme";
+import { PaletteMode, ThemeCollection } from "./Theme";
 import { Subtitle, Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
@@ -196,7 +196,10 @@ export class ChartOptions extends ChartItem {
      * 시리즈 및 데이터포인트에 적용되는 기본 색상 팔레트 이름.
      */
     palette: string;
-    paletteMode: any;
+    /**
+     * {@link palette}로 지정된 팔레트 색상들을 시리즈에 적용하는 방식.
+     */
+    paletteMode = PaletteMode.NORMAL;
     /**
      * false로 지정하면 차트 전체척으로 animation 효과를 실행하지 않는다.
      * 
