@@ -32,7 +32,10 @@ const config = {
             effect: 'outline'
         },
         // pointWidth: '100%',
-        style: args => 'red',
+        pointStyleCallback: args => {
+            if (args.index == 0) return { fill: 'lightgray' }
+            else if (args.yValue === args.yMax) return { fill: 'green' }
+        },
         data: [11, 22, 15, 9, 19, 13, 27, 15]
     }, {
         name: 'line1',

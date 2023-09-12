@@ -394,8 +394,8 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         this.setData('index', (model.index % PALETTE_LEN) as any);
         this.setBoolData('pointcolors', model._colorByPoint());
 
-        this._visPoints = model._runPoints.filter(p => p.visible);
-        this._visPoints.forEach((p, i) => p.vindex = i);
+        this._visPoints = model.collectVisibles();
+        // this._visPoints = this._prepareVisPoints(model, model._runPoints);
         this._prepareSeries(doc, model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
 
@@ -451,6 +451,8 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         }
         // 동적 스타일
         //style && v.internalSetStyleOrClass(style);
+        const st = this.model.getPointStyle(p);
+        st && v.internalSetStyleOrClass(st);
     }
 
     protected _labelViews(): PointLabelContainer {
