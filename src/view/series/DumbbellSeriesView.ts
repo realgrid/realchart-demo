@@ -111,15 +111,13 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
     // internal members
     //-------------------------------------------------------------------------
     private $_parepareBars(doc: Document, model: DumbbellSeries, points: DumbbellSeriesPoint[]): void {
-        const style = model.style;
-
         if (!this._bars) {
             this._bars = new ElementPool(this._pointContainer, BarElement);
         }
         this._bars.prepare(points.length, (v, i) => {
-            v.point = points[i];
-            v.setStyleOrClass(style);
-            v.point.color && v.setStyle('fill', v.point.color);
+            const p = v.point = points[i];
+
+            this._setPointStyle(v, p);
         });
     }
 

@@ -23,6 +23,8 @@ const config = {
         // baseValue: null,
         pointLabel: true,
         // pointWidth: '100%',
+        colorByPoint: true,
+        // color: 'green',
         data: [11, 22, 10, 15, 9, 13, 27]
     }
 }

@@ -76,8 +76,9 @@ export class ErrorBarSeriesView extends RangedSeriesView<ErrorBarSeries> {
 
     protected _preparePointViews(doc: Document, model: ErrorBarSeries, points: ErrorBarSeriesPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
-            v.point = points[i];
-            points[i].color && v.setStyle('stroke', points[i].color);
+            const p = v.point = points[i];
+
+            this._setPointStyle(v, p);
         });
     }
 

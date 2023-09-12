@@ -93,16 +93,11 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
     }
 
     private $_prepareSegments(pts: FunnelSeriesPoint[]): void {
-        const count = pts.length;
+        this._segments.prepare(pts.length, (seg, i) => {
+            const p = seg.point = pts[i];
 
-        this._segments.prepare(count, (seg, i) => {
-            const p = pts[i];
-
-            seg.point = p;
-            seg.internalClearStyleAndClass();
-            this._setColorIndex(seg, p);
-            p.color && seg.setStyle('fill', p.color);
-            seg.point._calcedColor = getComputedStyle(seg.dom).fill;
+            this._setPointStyle(seg, p);
+            p._calcedColor = getComputedStyle(seg.dom).fill;
         })
     }
 

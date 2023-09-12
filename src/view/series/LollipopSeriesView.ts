@@ -76,15 +76,13 @@ export class LollipopSeriesView extends BoxedSeriesView<LollipopSeries> {
     // internal members
     //-------------------------------------------------------------------------
     private $_parepareBars(doc: Document, model: LollipopSeries, points: LollipopSeriesPoint[]): void {
-        const style = model.style;
-
         if (!this._bars) {
             this._bars = new ElementPool(this._pointContainer, BarElement);
         }
         this._bars.prepare(points.length, (v, i) => {
-            v.point = points[i];
-            points[i].color && v.setStyle('fill', points[i].color);
-            style && v.setStyleOrClass(style);
+            const p = v.point = points[i];
+
+            this._setPointStyle(v, p);
         });
     }
 }

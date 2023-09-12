@@ -220,17 +220,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     }
         
                     mv.point = p;
-        
-                    // mv.className = vis ? '' : 'dlchart-line-marker-hidden';
-                    // mv.clearStyles();
-                    // if (color) {
-                    //     m.setStyles({
-                    //         fill: color,
-                    //         stroke: color
-                    //     })
-                    // }
-                    // m.setStyles(styles);
-                    // this._needNegative && m.point.value < base && m.setStyles(negativeStyles);
+                    this._setPointStyle(mv, p);
                 }
             });
         }

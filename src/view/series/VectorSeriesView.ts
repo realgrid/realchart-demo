@@ -137,8 +137,9 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
     //-------------------------------------------------------------------------
     private $_prepareArrows(pts: VectorSeriesPoint[]): void {
         this._arrows.prepare(pts.length, (v, i) => {
-            v.point = pts[i];
-            // v.setStyle('stroke', v.point.color);
+            const p = v.point = pts[i];
+
+            this._setPointStyle(v, p);
         });
     }
 }

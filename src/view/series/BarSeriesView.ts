@@ -79,31 +79,24 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
     // internal members
     //-------------------------------------------------------------------------
     private $_parepareBars(doc: Document, model: BarSeries, points: DataPoint[]): void {
-        const style = model.style;
-
         if (!this._bars) {
             this._bars = new ElementPool(this._pointContainer, BarElement);
         }
         this._bars.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
             
-            v.setStyleOrClass(style);
-            p.color && v.setStyle('fill', p.color);
+            this._setPointStyle(v, p);
         });
     }
 
     private $_parepareSectors(doc: Document, model: BarSeries, points: DataPoint[]): void {
-        const style = model.style;
-
         if (!this._sectors) {
             this._sectors = new ElementPool(this._pointContainer, BarSectorView);
         }
         this._sectors.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
 
-            v.internalClearStyleAndClass();
-            v.internalSetStyleOrClass(style);
-            p.color && v.setStyle('fill', p.color);
+            this._setPointStyle(v, p);
         });
     }
 
