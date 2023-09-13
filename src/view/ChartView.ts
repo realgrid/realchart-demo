@@ -716,6 +716,10 @@ export class ChartView extends RcElement {
         return this._bodyView.seriesByDom(dom);
     }
 
+    findSeriesView(series: Series): SeriesView<Series> {
+        return this._bodyView.findSeries(series);
+    }
+
     creditByDom(dom: Element): CreditView {
         return this._creditView.dom.contains(dom) ? this._creditView : null;
     }

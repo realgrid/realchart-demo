@@ -11,7 +11,7 @@ import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { fixnum } from "../../common/Types";
 import { FunnelSeries, FunnelSeriesPoint } from "../../model/series/FunnelSeries";
-import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class FunnelSegment extends PathElement implements IPointView {
@@ -29,7 +29,7 @@ class FunnelSegment extends PathElement implements IPointView {
     }
 }
 
-export class FunnelSeriesView extends SeriesView<FunnelSeries> {
+export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -53,11 +53,13 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: FunnelSeries): void {
-        this.$_prepareRates(this._visPoints as FunnelSeriesPoint[]);
+        super._prepareSeries(doc, model);
+
         this.$_prepareSegments(this._visPoints as FunnelSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
+        this.$_calcRates(this._visPoints as FunnelSeriesPoint[]);
         this.$_layoutSegments(width, height);
     }
 
@@ -65,15 +67,28 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
         firstTime && SeriesAnimation.slide(this, { from: this.model.reversed ? 'bottom' : 'top'});
     }
 
+    _resizeZombie(): void {
+        this._renderSeries(this.width, this.height);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_prepareRates(pts: FunnelSeriesPoint[]): void {
+    private $_prepareSegments(pts: FunnelSeriesPoint[]): void {
+        this._segments.prepare(pts.length, (seg, i) => {
+            const p = seg.point = pts[i];
+
+            this._setPointStyle(seg, p);
+            p._calcedColor = getComputedStyle(seg.dom).fill;
+        })
+    }
+
+    private $_calcRates(pts: FunnelSeriesPoint[]): void {
         let sum = 0;
         let y = 0;
 
         pts.forEach(p => {
-            sum += p.yValue;
+            sum += p.yValue * (p === this._zombie ? this._zombieRate : 1);
         });
 
         const cnt = pts.length;
@@ -81,7 +96,7 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
 
         for (; i < cnt - 1; i++) {
             const p = pts[i];
-            const h = fixnum(p.yValue / sum);
+            const h = fixnum((p.yValue * (p === this._zombie ? this._zombieRate : 1)) / sum);
 
             p.yRate = h * 100;
             p.yPos = y;
@@ -90,15 +105,6 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
         }
         pts[i].yPos = y;
         pts[i].height = 1 - y;
-    }
-
-    private $_prepareSegments(pts: FunnelSeriesPoint[]): void {
-        this._segments.prepare(pts.length, (seg, i) => {
-            const p = seg.point = pts[i];
-
-            this._setPointStyle(seg, p);
-            p._calcedColor = getComputedStyle(seg.dom).fill;
-        })
     }
 
     private $_layoutSegments(width: number, height: number): void {

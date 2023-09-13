@@ -14,7 +14,7 @@ import { Utils } from "../../common/Utils";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
 import { PieSeries, PieSeriesGroup, PieSeriesPoint } from "../../model/series/PieSeries";
-import { IPointView, PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class SectorView extends SectorElement implements IPointView {
@@ -139,7 +139,7 @@ class SectorView extends SectorElement implements IPointView {
     // }
 }
 
-export class PieSeriesView extends SeriesView<PieSeries> {
+export class PieSeriesView extends WidgetSeriesView<PieSeries> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -178,6 +178,8 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: PieSeries): void {
+        super._prepareSeries(doc, model);
+        
         this.$_prepareSectors(this._visPoints as PieSeriesPoint[]);
         this._lineContainer.prepare(model);
     }
@@ -217,6 +219,10 @@ export class PieSeriesView extends SeriesView<PieSeries> {
     protected _doPointClicked(view: IPointView): void {
     }
 
+    _resizeZombie(): void {
+        this._renderSeries(this.width, this.height);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -245,11 +251,13 @@ export class PieSeriesView extends SeriesView<PieSeries> {
 
     private $_calcAngles(points: PieSeriesPoint[]): void {
         const vr = this._getViewRate();
-        const sum = points.filter(p => p.visible && !p.isNull).map(p => p.yValue).reduce((a, c) => a + c, 0);
         let start = ORG_ANGLE + deg2rad(this.model.startAngle);
+        const sum = points.filter(p => (p.visible || p === this._zombie) && !p.isNull)
+                          .map(p => p === this._zombie ? p.yValue * this._zombieRate : p.yValue)
+                          .reduce((a, c) => a + c, 0);
 
         points.forEach(p => {
-            p.yRate = p.yValue / sum
+            p.yRate = (p === this._zombie ? p.yValue * this._zombieRate : p.yValue) / sum
             p.startAngle = start;
             start += p.angle = p.yRate * Math.PI * 2 * vr;
         });
@@ -257,7 +265,6 @@ export class PieSeriesView extends SeriesView<PieSeries> {
 
     private $_layoutSectors(points: PieSeriesPoint[], width: number, height: number): void {
         const series = this.model;
-        const colorByPoint = series._colorByPoint();
         const vr = this._getViewRate();
         const cx = this._cx = Math.floor(width / 2);
         const cy = this._cy = Math.floor(height / 2);

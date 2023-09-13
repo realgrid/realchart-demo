@@ -229,6 +229,10 @@ export abstract class RcAnimation {
         this._start(this.duration, this.delay, this.easing);
     }
 
+    stop(): void {
+        this._stop();
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -236,7 +240,7 @@ export abstract class RcAnimation {
     // internal members
     //-------------------------------------------------------------------------
     protected _start(duration: number, delay = 0, easing: string = null): void {
-        this._stop();
+        this._started && this._stop();
 
         this.duration = pickNum(duration, RcAnimation.DURATION);
         this.delay = delay || 0;

@@ -12,7 +12,7 @@ import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { Series } from "../model/Series";
 import { CreditView } from "../view/ChartView";
-import { SeriesView } from "../view/SeriesView";
+import { SeriesView, WidgetSeriesView } from "../view/SeriesView";
 
 const DRAG_THRESHOLD = 3;
 
@@ -50,8 +50,15 @@ export class ChartPointerHandler implements IPointerHandler {
 
         if (legend = chart.legendByDom(elt)) {
             if (legend.source instanceof DataPoint) {
-                const ser = this._chart.model.seriesByPoint(legend.source);
-                ser.setPointVisible(legend.source, !legend.source.visible);
+                const p = legend.source;
+                const ser = this._chart.model.seriesByPoint(p);
+
+                if (ser) {
+                    ser.setPointVisible(p, !p.visible);
+
+                    const v = this._chart.chartView().findSeriesView(ser);
+                    v instanceof WidgetSeriesView && v.togglePointVisible(p);
+                }
             } else {
                 legend.source.visible = !legend.source.visible;
             }

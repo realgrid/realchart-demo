@@ -92,6 +92,10 @@ export class ElementPool<T extends RcElement> extends RcObject {
         }
     }
 
+    find(matcher: (v: T) => boolean): T {
+        return this._views.find(matcher);
+    }
+
     private $_create(doc: Document, index = -1, count = 0): T {
         let v = this._pool.pop();
         
@@ -251,13 +255,6 @@ export class ElementPool<T extends RcElement> extends RcObject {
             }
         }
         return i === cnt;
-    }
-
-    find(visitor: (v: T) => boolean): T {
-        const views = this._views;
-        for (let i = 0, cnt = views.length; i < cnt; i++) {
-            if (visitor(views[i])) return views[i];
-        }
     }
 
     sort(compare: (v1: T, v2: T) => number): ElementPool<T> {
