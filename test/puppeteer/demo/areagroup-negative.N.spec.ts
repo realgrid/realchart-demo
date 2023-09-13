@@ -97,7 +97,7 @@ import { LegendView } from '../../../src/view/LegendView';
 
         let maxLength = 0;
         config.series.forEach((fristSeries) => {
-            fristSeries.series.forEach((secondSeries) => {
+            fristSeries.children.forEach((secondSeries) => {
                 if(maxLength < secondSeries.data.length) {
                     maxLength = secondSeries.data.length
                 }

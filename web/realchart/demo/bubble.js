@@ -8,8 +8,10 @@ const config = {
     },
     title: "Bubble Series",
     xAxis: {
+        title: 'xAxis'
     },
     yAxis: {
+        title: 'yAxis'
     },
     series: {
         type: 'bubble',
