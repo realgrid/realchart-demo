@@ -17,6 +17,7 @@ const config = {
         children: [{
             name: 'Installation & Developers',
             marker: {},
+            pointLabel: true,
             data: [43934, 48656, 65165, 81827, 112143, 142383,
                 171533, 165174, 155157, 161454, 154610]
         }, {

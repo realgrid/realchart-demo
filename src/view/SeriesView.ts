@@ -440,17 +440,21 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         v.setData('index', (p.index % PALETTE_LEN) as any);
     }
 
-    protected _setPointStyle(v: RcElement, p: DataPoint): void {
+    protected _setPointStyle(v: RcElement, p: DataPoint, styles?: any[]): void {
         v.setAttr('aria-label', p.ariaHint());
         this.$_setColorIndex(v, p);
         v.internalClearStyleAndClass();
+
+        // 정적 point style (ex, line marker)
+        if (styles) {
+            styles.forEach(st => st && v.internalSetStyleOrClass(st));
+        }
         // config에서 지정한 point color
         if (p.color) {
-            v.setStyle('fill', p.color);
-            v.setStyle('stroke', p.color);
+            v.internalSetStyle('fill', p.color);
+            v.internalSetStyle('stroke', p.color);
         }
         // 동적 스타일
-        //style && v.internalSetStyleOrClass(style);
         const st = this.model.getPointStyle(p);
         st && v.internalSetStyleOrClass(st);
     }
