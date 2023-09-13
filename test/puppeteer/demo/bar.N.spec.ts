@@ -18,7 +18,7 @@ import { CategoryAxis } from '../../../src/model/axis/CategoryAxis';
 /**
  * Puppeteer Tests for bar.html
  */
- describe("bar.html test", async function() {
+ describe("bar.N.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/bar.html";
     let browser: Browser;

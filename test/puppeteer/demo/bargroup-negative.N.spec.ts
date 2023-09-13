@@ -17,7 +17,7 @@ import { LegendView } from '../../../src/view/LegendView';
 /**
  * Puppeteer Tests for bargroup-negative.html
  */
- describe("bargroup-negative.html test", async function() {
+ describe("bargroup-negative.N.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/bargroup-negative.html";
     let browser: Browser;

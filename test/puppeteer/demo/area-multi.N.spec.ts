@@ -18,7 +18,7 @@ import { LegendView } from '../../../src/view/LegendView';
 /**
  * Puppeteer Tests for area-multi.html
  */
- describe("area-multi.html test", async function() {
+ describe("area-multi.N.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/area-multi.html";
     let browser: Browser;
@@ -118,8 +118,19 @@ import { LegendView } from '../../../src/view/LegendView';
 
         const container = await page.$('.rct-series-container');
         expect(container).exist;
+    });
 
-        
+    it('dataPoint', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
 
-    })
+        const dataPoints = await page.$$('.rct-series-points');
+        expect(dataPoints).exist;
+
+        for(let i = 0; i < dataPoints.length; i++) {
+            const rctPoint = dataPoints[i]
+            const point = await rctPoint.$$('.' + SeriesView.POINT_CLASS);
+            expect(point.length).eq(config.series[i].data.length);
+        }
+    });
 });

@@ -17,7 +17,7 @@ import { LegendView } from '../../../src/view/LegendView';
 /**
  * Puppeteer Tests for bargroup-multi.html
  */
- describe("area-multi.html test", async function() {
+ describe("area-multi.N.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/bargroup-multi.html";
     let browser: Browser;
@@ -89,7 +89,7 @@ import { LegendView } from '../../../src/view/LegendView';
         expect(yAxistTitle).eq(config.yAxis.title);
     });
 
-    it('tick', async () => {
+    it('xtick', async () => {
         const page = await PPTester.newPage(browser, url);
         const config: any = await page.evaluate('config');
 
@@ -97,14 +97,14 @@ import { LegendView } from '../../../src/view/LegendView';
         const xAxisTick = await xAxis.$$('.rct-axis-tick');
 
         let maxLength = 0
-        config.series.forEach((firstSeries) => {
-            firstSeries.series.forEach((seriesData) =>{
-                    if(maxLength < seriesData.data.length ){
-                        maxLength = seriesData.data.length
+        config.series.forEach((seriesItem) => {
+            seriesItem.series.forEach((eachSeries) =>{
+                    if(maxLength < eachSeries.data.length ){
+                        maxLength = eachSeries.data.length
                     }
             })
         });
-        expect(xAxisTick.length).eq(maxLength);
+        expect(xAxisTick.length, '시리즈중에 가장 긴 데이터 길이만큼 표시되어야 함').eq(maxLength);
     });
 
     it('legend', async () => {

@@ -17,7 +17,7 @@ import { AxisTitleView, AxisView } from '../../../src/view/AxisView';
 /**
  * Puppeteer Tests for bar-multi.html
  */
- describe("bar-multi.html test", async function() {
+ describe("bar-multi.N.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/bar-multi.html";
     let browser: Browser;
@@ -159,5 +159,19 @@ import { AxisTitleView, AxisView } from '../../../src/view/AxisView';
 
         const axisGrid = await page.$('.rct-axis-grid');
         expect(axisGrid).exist;
+    });
+    it('pointLabel', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const labels = await page.$$('.rct-point-labels');
+        for(let k = 0; k < labels.length; k++) {
+            const pointLables = await labels[k].$$('text[y="12"]');
+            expect(pointLables.length).eq(config.series[k].data.length);
+            for(let j = 0; j < pointLables.length; j++) {
+                const labelText = await page.evaluate((el) => el.textContent, pointLables[j]);
+                expect(Number(labelText)).eq(config.series[k].data[j])
+            }
+        }
     });
 });

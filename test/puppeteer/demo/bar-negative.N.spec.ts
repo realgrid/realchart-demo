@@ -17,7 +17,7 @@ import { AxisTitleView, AxisView } from '../../../src/view/AxisView';
 /**
  * Puppeteer Tests for bar-negative.html
  */
- describe("bar-negative.html test", async function() {
+ describe("bar-negative.N.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/bar-negative.html";
     let browser: Browser;

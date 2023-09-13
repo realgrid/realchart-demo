@@ -17,7 +17,7 @@ import { LegendView } from '../../../src/view/LegendView';
 /**
  * Puppeteer Tests for boxplot-multi.html
  */
- describe("boxplot-multi.html test", async function() {
+ describe("boxplot-multi.N.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/boxplot-multi.html";
     let browser: Browser;

@@ -17,7 +17,7 @@ import { AxisTitleView, AxisView } from '../../../src/view/AxisView';
 /**
  * Puppeteer Tests for axis-guide.html
  */
- describe("area.html test", async function() {
+ describe("area.N.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/axis-guide.html";
     let browser: Browser;
