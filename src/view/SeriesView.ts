@@ -12,11 +12,13 @@ import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
 import { LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
+import { SVGStyleOrClass } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { SvgShapes } from "../common/impl/SvgShape";
 import { DataPoint } from "../model/DataPoint";
 import { ClusterableSeries, DataPointLabel, PointItemPosition, Series } from "../model/Series";
+import { PaletteMode } from "../model/Theme";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { ChartElement } from "./ChartElement";
 import { SeriesAnimation } from "./animation/SeriesAnimation";
@@ -392,7 +394,8 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         this.setData('index', (model.index % PALETTE_LEN) as any);
         this.setBoolData('pointcolors', model._colorByPoint());
 
-        this._visPoints = model._runPoints.filter(p => p.visible);
+        this._visPoints = model.collectVisibles();
+        // this._visPoints = this._prepareVisPoints(model, model._runPoints);
         this._prepareSeries(doc, model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
 
@@ -433,8 +436,23 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
 
-    protected _setColorIndex(v: RcElement, p: DataPoint): void {
+    private $_setColorIndex(v: RcElement, p: DataPoint): void {
         v.setData('index', (p.index % PALETTE_LEN) as any);
+    }
+
+    protected _setPointStyle(v: RcElement, p: DataPoint): void {
+        v.setAttr('aria-label', p.ariaHint());
+        this.$_setColorIndex(v, p);
+        v.internalClearStyleAndClass();
+        // config에서 지정한 point color
+        if (p.color) {
+            v.setStyle('fill', p.color);
+            v.setStyle('stroke', p.color);
+        }
+        // 동적 스타일
+        //style && v.internalSetStyleOrClass(style);
+        const st = this.model.getPointStyle(p);
+        st && v.internalSetStyleOrClass(st);
     }
 
     protected _labelViews(): PointLabelContainer {
@@ -658,7 +676,6 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 let x: number;
                 let y: number;
 
-                this._setColorIndex(pv, p);
                 x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
                 y = yOrg;
 
@@ -738,7 +755,6 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
                 p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
                 p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
 
-                this._setColorIndex(pv, p);
                 this._layoutPointView(pv, i, x, y, wPoint, hPoint);
 
                 // labels

@@ -232,17 +232,13 @@ export class PieSeriesView extends SeriesView<PieSeries> {
         // });
 
         this._sectors.prepare(count, (sector, i) => {
-            const p = points[i];
+            const p = sector.point = points[i];
             // const a = i < count - 1 ? points[i + 1].startAngle : p.endAngle;
 
             // sector.start = a;
             // sector.angle = 0;
-            sector.point = p;
 
-            sector.setAttr('aria-label', p.ariaHint());
-            sector.internalClearStyleAndClass();
-            this._setColorIndex(sector, p);
-            p.color && sector.setStyle('fill', p.color);
+            this._setPointStyle(sector, p);
             p._calcedColor = getComputedStyle(sector.dom).fill;
         })
     }

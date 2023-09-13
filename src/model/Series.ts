@@ -293,10 +293,14 @@ export interface ISeries extends IPlottingItem {
     isVisible(p: DataPoint): boolean;
 }
 
-export interface DataPointArgs {
+export interface IPointStyleArgs {
+    /* series */
     series: string | number;
     count: number;
     vcount: number;
+    yMin: number;
+    yMax: number;
+    /* point */
     index: number;
     vindex: number;
     x: any;
@@ -305,7 +309,7 @@ export interface DataPointArgs {
     yValue: any;
 }
 
-export type PointStyleCallback = (args: DataPointArgs) => SVGStyleOrClass;
+export type PointStyleCallback = (args: IPointStyleArgs) => SVGStyleOrClass;
 
 /**
  * @config chart.series
@@ -353,6 +357,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _maxValue: number;
     _referents: Series[];
     _calcedColor: string;
+    protected _pointArgs: IPointStyleArgs;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -366,6 +371,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this.tooltip = new Tooltip(this);
 
         this._points = new DataPointCollection(this);
+        this._pointArgs = this._createPointArgs();
     }
 
     //-------------------------------------------------------------------------
@@ -453,6 +459,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * @config
      */
     clipped = false;
+
+    pointStyleCallback: PointStyleCallback;
 
     contains(p: DataPoint): boolean {
         return this._points.contains(p);
@@ -646,11 +654,39 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 }
             });
 
-            if (vals) {
-                this._minValue = Math.min(...vals);
-                this._maxValue = Math.max(...vals);
-            }
+            // if (vals) {
+            //     this._minValue = Math.min(...vals);
+            //     this._maxValue = Math.max(...vals);
+            // }
         }
+    }
+
+    collectVisibles(): DataPoint[] {
+        const visPoints = this._runPoints.filter(p => p.visible);
+        const len = visPoints.length;
+
+        if (len > 0) {
+            let min = visPoints[0].yValue;
+            let max = min;
+
+            visPoints[0].vindex = 0;
+            for (let i = 1; i < len; i++) {
+                const p = visPoints[i];
+                
+                p.vindex = i;
+                if (p.yValue > max) max = p.yValue;
+                else if (p.yValue < min) min = p.yValue;
+            }
+
+            visPoints.forEach((p, i) => {
+                p.vindex = i;
+                max = Math.max(p.yValue, max);
+            });
+
+            this._pointArgs.yMin = this._minValue = min;
+            this._pointArgs.yMax = this._maxValue = max;
+        }
+        return visPoints;
     }
 
     pointValuesPrepared(axis: IAxis): void {
@@ -692,6 +728,32 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         if (p && visible !== p.visible) {
             p.visible = visible;
             this.chart._pointVisibleChanged(this, p);
+        }
+    }
+
+    protected _createPointArgs(): IPointStyleArgs {
+        return {} as any;
+    }
+
+    protected _preparePointArgs(args: IPointStyleArgs): void {
+        args.series = this.name || this.index;
+        args.count = this._points.count;
+        // args.vcount = 
+    }
+
+    protected _getPointStyleArgs(args: IPointStyleArgs, p: DataPoint): void {
+        args.index = p.index;
+        args.vindex = p.vindex;
+        args.x = p.x;
+        args.y = p.y;
+        args.xValue = p.xValue;
+        args.yValue = p.yValue;
+    }
+
+    getPointStyle(p: DataPoint): any {
+        if (this.pointStyleCallback) {
+            this._getPointStyleArgs(this._pointArgs, p);
+            return this.pointStyleCallback(this._pointArgs);
         }
     }
     
@@ -755,15 +817,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 p.color = color || colors[i % colors.length];
             }
         })
+
+        this._preparePointArgs(this._pointArgs);
     }
 
     prepareAfter(): void {
         // DataPoint.xValue가 필요하다.
         this.trendline.visible && this.trendline.prepareRender();
-    }
-
-    _getPointArgs(p: DataPoint): DataPointArgs {
-        return;
     }
 }
 

@@ -85,19 +85,16 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         const series = this.model;
         const zAxis = series._xAxisObj._length < series._yAxisObj._length ? series._xAxisObj : series._yAxisObj;
         const len = zAxis._length;
-        const marker = series.marker;
-        const style = marker.style;
         const count = points.length;
         const {min, max} = series.getPxMinMax(len);
 
-        this._markers.prepare(count, (m, i) => {
-            const p = m.point = points[i];
+        this._markers.prepare(count, (mv, i) => {
+            const p = mv.point = points[i];
 
             p.radius = series.getRadius(p.zValue, min, max);
-            p.shape = marker.shape;
-            m.internalClearStyleAndClass();
-            style && m.internalSetStyleOrClass(style);
-            p.color && m.setStyle('fill', p.color);
+            p.shape = series.shape;
+
+            this._setPointStyle(mv, p);
         });
     }
 
@@ -137,8 +134,6 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
                 path = SvgShapes.circle(0, 0, sz);
                 mv.setPath(path);
                 mv.translate(x, y);
-
-                this._setColorIndex(mv, p);
 
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {

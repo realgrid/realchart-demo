@@ -126,8 +126,9 @@ export class EqualizerSeriesView extends BoxedSeriesView<EqualizerSeries> {
     //-------------------------------------------------------------------------
     private $_parepareBars(points: DataPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
-            v.point = points[i];
-            v.point.color && v.setStyle('fill', v.point.color);
+            const p = v.point = points[i];
+
+            this._setPointStyle(v, p);
         })
     }
 

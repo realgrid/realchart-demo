@@ -41,8 +41,8 @@ import { SeriesView } from '../../../src/view/SeriesView';
         const data = [];
         const group = config.series[0] || config.series;
 
-        for (let i = 0; i < group.series.length; i++) {
-            data.push(...group.series[i].data);
+        for (let i = 0; i < group.children.length; i++) {
+            data.push(...group.children[i].data);
         }
         expect(data.length).eq(markers.length);        
 

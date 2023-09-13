@@ -38,6 +38,7 @@ export class BarSeries extends BasedSeries {
     // properties
     //-------------------------------------------------------------------------
     borderRaidus = 0;
+    colorByPoint = false;
 
     //-------------------------------------------------------------------------
     // methods
@@ -51,6 +52,10 @@ export class BarSeries extends BasedSeries {
 
     canCategorized(): boolean {
         return true;
+    }
+
+    _colorByPoint(): boolean {
+        return this.colorByPoint;
     }
 
     protected _createPoint(source: any): DataPoint {

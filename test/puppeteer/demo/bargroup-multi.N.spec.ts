@@ -43,8 +43,8 @@ import { LegendView } from '../../../src/view/LegendView';
         const data = [];
 
         config.series.forEach(group => {
-            for (let i = 0; i < group.series.length; i++) {
-                data.push(...group.series[i].data);
+            for (let i = 0; i < group.children.length; i++) {
+                data.push(...group.children[i].data);
             }
         })
         expect(data.length).eq(markers.length);        
@@ -97,10 +97,10 @@ import { LegendView } from '../../../src/view/LegendView';
         const xAxisTick = await xAxis.$$('.rct-axis-tick');
 
         let maxLength = 0
-        config.series.forEach((seriesItem) => {
-            seriesItem.series.forEach((eachSeries) =>{
-                    if(maxLength < eachSeries.data.length ){
-                        maxLength = eachSeries.data.length
+        config.series.forEach((firstSeries) => {
+            firstSeries.children.forEach((seriesData) =>{
+                    if(maxLength < seriesData.data.length ){
+                        maxLength = seriesData.data.length
                     }
             })
         });

@@ -352,39 +352,51 @@
 /** data point */
 .rct-series[data-pointcolors] .rct-point[data-index="0"] {
     fill: var(--color-1);
+    stroke: var(--color-1);
 }
 .rct-series[data-pointcolors] .rct-point[data-index="1"] {
     fill: var(--color-2);
+    stroke: var(--color-2);
 }
 .rct-series[data-pointcolors] .rct-point[data-index="2"] {
     fill: var(--color-3);
+    stroke: var(--color-3);
 }
 .rct-series[data-pointcolors] .rct-point[data-index="3"] {
     fill: var(--color-4);
+    stroke: var(--color-4);
 }
 .rct-series[data-pointcolors] .rct-point[data-index="4"] {
     fill: var(--color-5);
+    stroke: var(--color-5);
 }
 .rct-series[data-pointcolors] .rct-point[data-index="5"] {
     fill: var(--color-6);
+    stroke: var(--color-6);
 }
 .rct-series[data-pointcolors] .rct-point[data-index="6"] {
     fill: var(--color-7);
+    stroke: var(--color-7);
 }
 .rct-series[data-pointcolors] .rct-point[data-index="7"] {
     fill: var(--color-8);
+    stroke: var(--color-8);
 }
 .rct-series[data-pointcolors] .rct-point[data-index="8"] {
     fill: var(--color-9);
+    stroke: var(--color-9);
 }
 .rct-series[data-pointcolors] .rct-point[data-index="9"] {
     fill: var(--color-10);
+    stroke: var(--color-10);
 }
 .rct-series[data-pointcolors] .rct-point[data-index="10"] {
     fill: var(--color-11);
+    stroke: var(--color-11);
 }
 .rct-series[data-pointcolors] .rct-point[data-index="11"] {
     fill: var(--color-12);
+    stroke: var(--color-12);
 }
 
 /** rct-point 대신 여기에 지정해야 outline에 반영된다. */
@@ -517,12 +529,12 @@
 .rct-ohlc-point-back {
     stroke: none;
 }
-.rct-ohlc-point-tick {
+/* .rct-ohlc-point-tick {
     stroke: #003;
 }
 .rct-ohlc-point-bar {
     stroke: #f00;
-}
+} */
 .rct-ohlc-point-bar-fall {
     stroke: #00f;
 }

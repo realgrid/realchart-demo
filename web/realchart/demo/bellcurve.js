@@ -5,7 +5,7 @@
 const config = {
     title: "Bell Curve",
     options: {
-        animatable: false
+        // animatable: false
     },
     xAxis: {
         name: 'baxis',

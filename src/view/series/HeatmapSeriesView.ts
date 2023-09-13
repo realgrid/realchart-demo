@@ -70,7 +70,9 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     //-------------------------------------------------------------------------
     private $_parepareCells(points: HeatmapSeriesPoint[]): void {
         this._cells.prepare(points.length, (v, i) => {
-            v.point = points[i];
+            const p = v.point = points[i];
+
+            this._setPointStyle(v, p);
         });
     }
 

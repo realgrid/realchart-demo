@@ -1023,7 +1023,10 @@ export class RcElement extends RcObject {
     }
 
     internalSetStyle(prop: string, value: string): void {
-        this._styles[prop] = value;
+        if (value !== this._styles[prop]) {
+            this._styles[prop] = value;
+            (this.dom as SVGElement | HTMLElement).style[prop] = value;
+        }
     }
 
     putStyles(styles: any, buff?: any): any {

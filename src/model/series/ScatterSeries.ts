@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
@@ -16,14 +17,6 @@ export class ScatterSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-}
-
-export class ScatterSeriesMarker extends SeriesMarker {
-
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
-    radius = 5;
 }
 
 /**
@@ -38,20 +31,28 @@ export class ScatterSeries extends Series {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    marker: ScatterSeriesMarker;
-
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart, name?: string) {
         super(chart, name);
-
-        this.marker = new ScatterSeriesMarker(this);
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 명시적으로 지정하지 않으면 typeIndex에 따라 Shapes 중 하나로 돌아가면서 설정된다.
+     * 
+     * @config
+     */
+    shape: Shape;
+    /**
+     * {@link shape}의 반지름.
+     * 
+     * @config
+     */
+    radius = 5;
     /**
      * https://thomasleeper.com/Rcourse/Tutorials/jitter.html
      */

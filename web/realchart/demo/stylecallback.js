@@ -1,32 +1,58 @@
 /**
  * @demo
  * 
- * Bar Series 기본 예제.
  */
 const config = {
-    title: "Bar Series",
+    title: "Point Style Callback",
     options: {
         // animatable: false
     },
     xAxis: {
-        title: "일일 Daily fat",
-        categories: ['쓰리엠', '아디다스', 'Youtube', '디즈니', '이마트', '메리어트', '시세이도'],
-        grid: true,
+        categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도'],
+        title: {
+            text: "일일 Daily fat",
+        },
+        tick: {
+        },
+        label: {
+        },
+        // grid: true,
+        line: true,
     },
     yAxis: {
         title: "Vertical 수직축 Axis",
         // reversed: true,
         // baseValue: -1
     },
-    series: {
-        name: 'bar1',
-        // baseValue: null,
-        pointLabel: true,
+    series: [{
+        name: 'column1',
+        pointLabel: {
+            visible: true,
+            position: 'inside',
+            effect: 'outline'
+        },
         // pointWidth: '100%',
-        // colorByPoint: true,
-        // color: 'green',
-        data: [11, 22, 10, 15, 9, 13, 27]
-    }
+        pointStyleCallback: args => {
+            if (args.index == 0) return { fill: 'lightgray' }
+            else if (args.yValue === args.yMax) return { fill: 'green' }
+        },
+        data: [11, 22, 15, 9, 19, 13, 27, 15]
+    }, {
+        name: 'line1',
+        type: 'line',
+        pointLabel: true,
+        color: 'blue',
+        data: [9, 17, 19, 11, 25, 10, 21, 11],
+        style: {
+            strokeDasharray: '5'
+        },
+        marker: {
+            style: {
+                stroke: 'white',
+                strokeDasharray: 'none'
+            }
+        }
+    }]
 }
 
 let animate = false;
@@ -37,16 +63,12 @@ function setActions(container) {
         RealChart.setDebugging(_getChecked(e));
         chart.refresh();
     }, false);
-    createCheckBox(container, 'Always Animate', function (e) {
-        animate = _getChecked(e);
-    }, false);
+    // createCheckBox(container, 'Always Animate', function (e) {
+    //     animate = _getChecked(e);
+    // }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createCheckBox(container, 'ColorByPoint', function (e) {
-        config.series.colorByPoint = _getChecked(e);
-        chart.update(config, animate);
-    }, false);
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
         chart.update(config, animate);

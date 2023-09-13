@@ -20,7 +20,7 @@ const config = {
     },
     series: [{
         // layout: 'stack',
-        series: [{
+        children: [{
             name: 'column1',
             pointLabel: {
                 visible: true,
