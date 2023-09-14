@@ -21,7 +21,7 @@ class BarSectorView extends SectorElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-bar-point');
+        super(doc, SeriesView.POINT_CLASS);
     }
 
     //-------------------------------------------------------------------------
@@ -50,19 +50,19 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _getPointPool(): ElementPool<RcElement> {
-        return this.chart()._polar ? this._sectors : this._bars;
+        return this.chart().isPolar() ? this._sectors : this._bars;
     }
 
     protected _preparePointViews(doc: Document, model: BarSeries, points: DataPoint[]): void {
-        if (model.chart._polar) {
-            this.$_parepareSectors(doc, model, model._visPoints);
+        if (model.chart.isPolar()) {
+            this.$_parepareSectors(doc, model, this._visPoints);
         } else {
-            this.$_parepareBars(doc, model, model._visPoints);
+            this.$_parepareBars(doc, model, this._visPoints);
         }
     }
 
     protected _layoutPointViews(width: number, height: number): void {
-        if (this.model.chart._polar) {
+        if (this.model.chart.isPolar()) {
             this.$_layoutSectors();
         } else {
             super._layoutPointViews(width, height);
@@ -79,29 +79,24 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
     // internal members
     //-------------------------------------------------------------------------
     private $_parepareBars(doc: Document, model: BarSeries, points: DataPoint[]): void {
-        const style = model.style;
-
         if (!this._bars) {
             this._bars = new ElementPool(this._pointContainer, BarElement);
         }
         this._bars.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
             
-            v.setStyleOrClass(style);
-            p.color && v.setStyle('fill', p.color);
+            this._setPointStyle(v, p);
         });
     }
 
     private $_parepareSectors(doc: Document, model: BarSeries, points: DataPoint[]): void {
-        const style = model.style;
-
         if (!this._sectors) {
             this._sectors = new ElementPool(this._pointContainer, BarSectorView);
         }
         this._sectors.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
-            v.setStyleOrClass(style);
-            p.color && v.setStyle('fill', p.color);
+
+            this._setPointStyle(v, p);
         });
     }
 

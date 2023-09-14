@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     options: {
     },
@@ -14,7 +18,7 @@ const config = {
         groupPadding: 0.1,
         // layout: 'overlap',
         // layout: 'stack',
-        series: [{
+        children: [{
             name: 'column1',
             // pointWidth: '100%',
             data: [11, 22, 15, 9, 13, 27]
@@ -29,7 +33,7 @@ const config = {
         groupPadding: 0.1,
         // layout: 'overlap',
         layout: 'stack',
-        series: [{
+        children: [{
             group: 1,
             name: 'column4',
             data: [13, 17, 15, 11, 23, 17]

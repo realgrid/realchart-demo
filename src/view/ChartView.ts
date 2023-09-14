@@ -425,7 +425,7 @@ export class ChartView extends RcElement {
         }
 
         const m = this._model = model;
-        const polar = m._polar;
+        const polar = m.isPolar();
         const credit = m.options.credits;
         const legend = m.legend;
         let w = hintWidth;
@@ -438,7 +438,7 @@ export class ChartView extends RcElement {
         if (this._creditView.setVisible(credit.visible)) {
             sz = this._creditView.measure(doc, credit, w, h, phase);
             if (!credit.floating) {
-                h -= sz.height;
+                h -= sz.height + credit.offsetY;
             }
         }
         
@@ -482,7 +482,7 @@ export class ChartView extends RcElement {
             return;
         }
 
-        const polar = m._polar;
+        const polar = m.isPolar();
         const legend = m.legend;
         const credit = m.options.credits;
         const vCredit = this._creditView;
@@ -498,9 +498,9 @@ export class ChartView extends RcElement {
 
             if (!credit.floating) {
                 if (credit.verticalAlign === VerticalAlign.TOP) {
-                    h -= h1Credit = vCredit.height;
+                    h -= h1Credit = vCredit.height + credit.offsetY;
                 } else {
-                    h -= h2Credit = vCredit.height;
+                    h -= h2Credit = vCredit.height + credit.offsetY;
                 }
             }
         }
@@ -638,13 +638,13 @@ export class ChartView extends RcElement {
             
             switch (credit.verticalAlign) {
                 case VerticalAlign.TOP:
-                    cy = yOff;
+                    // cy = yOff;
                     break;
                 case VerticalAlign.MIDDLE:
                     cy = (height - vCredit.height) / 2 + yOff;
                     break;
                 default:
-                    cy = height - h2Credit - yOff
+                    cy = height - h2Credit;
                     break;
             }
             switch (credit.align) {
@@ -716,13 +716,17 @@ export class ChartView extends RcElement {
         return this._bodyView.seriesByDom(dom);
     }
 
+    findSeriesView(series: Series): SeriesView<Series> {
+        return this._bodyView.findSeries(series);
+    }
+
     creditByDom(dom: Element): CreditView {
         return this._creditView.dom.contains(dom) ? this._creditView : null;
     }
 
-    clipSeries(view: RcElement, x: number, y: number, w: number, h: number): void {
+    clipSeries(view: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void {
         if (view) {
-            if (this._model.inverted) {
+            if (this._model.inverted && invertable) {
                 this._seriesClip.setBounds(0, -w, h, w);
             } else {
                 this._seriesClip.setBounds(0, 0, w, h);
@@ -774,7 +778,7 @@ export class ChartView extends RcElement {
     private $_prepareAxes(doc: Document, m: Chart): void {
         const guideContainer = this._currBody._guideContainer;
         const frontGuideContainer = this._currBody._frontGuideContainer;
-        const need = !m.options.polar && m.needAxes();
+        const need = !m.isPolar() && m.needAxes();
         const map = this._axisSectionViews;
 
         for (const dir of map.keys()) {

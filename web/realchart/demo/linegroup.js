@@ -1,6 +1,11 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     type: "line",
-    options: {},
+    options: {
+    },
     title: "Line Group",
     xAxis: {
         title: "일일 Daily fat",
@@ -9,7 +14,7 @@ const config = {
         title: "Vertical 수직축 Axis",
     },
     series: {
-        series: [{
+        children: [{
             name: 'Installation & Developers',
             marker: {},
             data: [43934, 48656, 65165, 81827, 112143, 142383,

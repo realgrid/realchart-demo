@@ -10,6 +10,10 @@ import { pickNum, pickProp, pickProp3 } from "../../common/Common";
 import { DataPoint } from "../DataPoint";
 import { RangedSeries } from "../Series";
 
+/**
+ * [min, rlow, mid, high, y]
+ * [x, min, rlow, mid, high, y]
+ */
 export class BoxPlotSeriesPoint extends DataPoint {
 
     //-------------------------------------------------------------------------
@@ -94,15 +98,29 @@ export class BoxPlotSeriesPoint extends DataPoint {
 /**
  * https://en.wikipedia.org/wiki/Box_plot
  * https://danbi-ncsoft.github.io/study/2018/07/23/study_eda2.html
+ * 
+ * @config chart.series[type=boxplot]
  */
 export class BoxPlotSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     minField: string;
+    /**
+     * @config
+     */
     lowField: string;
+    /**
+     * @config
+     */
     midField: string;
+    /**
+     * @config
+     */
     highField: string;
 
     //-------------------------------------------------------------------------

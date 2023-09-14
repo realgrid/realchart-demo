@@ -19,6 +19,12 @@ export interface IPointPos {
 
 /**
  * 데이터 포인트를 표시할 수 없는 값을 설정하면 null로 간주한다.
+ * 
+ * isNull과 visible은 다르다.
+ * isNull이어도 자리를 차지한다.
+ * 
+ * [y]
+ * [x, y]
  */
 export class DataPoint {
 
@@ -38,6 +44,7 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     source: any;
     index: number;
+    vindex: number;
     x: any;
     y: any;
 
@@ -52,7 +59,7 @@ export class DataPoint {
     yValue: number;     // y 좌표상의 value
     yRate: number;      // 전체 point 합 내에서 비율(백분율)
 
-    visible = true;
+    visible = true;     // 시리지에는 표시되지 않지만 legend에는 표시된다.
     color: string;
     xPos: number;
     yPos: number;
@@ -168,7 +175,7 @@ export class DataPointCollection {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _owner: ISeries;
+    protected _owner: ISeries;
     private _points: DataPoint[] = [];
 
     //-------------------------------------------------------------------------
@@ -196,12 +203,16 @@ export class DataPointCollection {
         return this._points[index];
     }
 
+    contains(p: DataPoint) {
+        return this._points.indexOf(p) >= 0;
+    }
+
     load(source: any): void {
         if (isArray(source)) {
             // x 축에 대한 정보가 없으므로 홑 값들은 앞으로 이동시킨다.
-            source = source.sort((a, b) => {
-                return ((isArray(a) || isObject(a)) ? 1 : 0) - ((isArray(b) || isObject(b)) ? 1 : 0);
-            });
+            // source = source.sort((a, b) => {
+            //     return ((isArray(a) || isObject(a)) ? 1 : 0) - ((isArray(b) || isObject(b)) ? 1 : 0);
+            // });
             this._points = this._owner.createPoints(source);
         } else {
             this._points = [];
@@ -224,10 +235,5 @@ export class DataPointCollection {
 
     getPoints(): DataPoint[] {
         return this._points;
-    }
-
-    getVisibles(): DataPoint[] {
-        return this._points;
-        // return this._points.filter(p => this._owner.isVisible(p));
     }
 }

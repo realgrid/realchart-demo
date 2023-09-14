@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     options: {},
     title: "Line - Negative",
@@ -13,6 +17,7 @@ const config = {
         },
         belowStyle: {
             stroke: 'red',
+            fill: 'red'
         },
         data: [
             ['home', 7], 

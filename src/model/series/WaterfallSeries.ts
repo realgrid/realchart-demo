@@ -34,6 +34,10 @@ export class WaterfallSeriesPoint extends DataPoint {
     }
 }
 
+/**
+ * 
+ * @config chart.series[type=waterfall]
+ */
 export class WaterfallSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------
@@ -67,7 +71,7 @@ export class WaterfallSeries extends RangedSeries {
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
-        const pts = this._visPoints as WaterfallSeriesPoint[];
+        const pts = this._runPoints as WaterfallSeriesPoint[];
         if (pts.length < 1) return;
 
         let p = pts[0];

@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     title: "Variable Category Axis",
     options: {

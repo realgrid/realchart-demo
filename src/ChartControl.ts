@@ -10,6 +10,7 @@ import { RcControl } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
 import { Chart, IChartEventListener } from "./model/Chart";
 import { ChartItem } from "./model/ChartItem";
+import { DataPoint } from "./model/DataPoint";
 import { Series } from "./model/Series";
 import { ChartPointerHandler } from "./tool/PointerHandler";
 import { ChartView } from "./view/ChartView";
@@ -45,6 +46,10 @@ export class ChartControl extends RcControl implements IChartEventListener {
         }
     }
 
+    onPointVisibleChanged(chart: Chart, series: Series, point: DataPoint): void {
+        this.invalidateLayout();
+    }
+
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -56,9 +61,15 @@ export class ChartControl extends RcControl implements IChartEventListener {
     }
     set model(value: Chart) {
         if (value !== this._model) {
-            this._model && this._model.removeListener(this);
+            if (this._model) {
+                this._model.assets.unregister(this.doc(), this);
+                this._model.removeListener(this);
+            }
             this._model = value;
-            this._model && this._model.addListener(this);
+            if (this._model) {
+                this._model.addListener(this);
+                this._model.assets.register(this.doc(), this);
+            }
             this.invalidateLayout();
         }
     }
@@ -86,11 +97,18 @@ export class ChartControl extends RcControl implements IChartEventListener {
     }
 
     protected _doRender(bounds: IRect): void {
+        const model = this._model;
+        const view = this._chartView;
+        
         this.clearTemporaryDefs();
 
-        this._chartView.measure(this.doc(), this._model, bounds.width, bounds.height, 1);
-        this._chartView.resize(bounds.width, bounds.height);
-        this._chartView.layout();
+        if (model) {
+            this.setData('theme', model.options.theme, true);
+            this.setData('palette', model.options.palette);
+        }
+        view.measure(this.doc(), model, bounds.width, bounds.height, 1);
+        view.resize(bounds.width, bounds.height);
+        view.layout();
     }
 
     protected _doRenderBackground(elt: HTMLDivElement, width: number, height: number): void {

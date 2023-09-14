@@ -11,6 +11,7 @@ import { describe, it } from 'mocha';
 import { Browser, Page } from 'puppeteer';
 import { PPTester } from '../../PPTester';
 import { SeriesView } from '../../../src/view/SeriesView';
+import { TitleView } from '../../../src/view/TitleView';
 
 /**
  * Puppeteer Tests for bar.html
@@ -124,5 +125,18 @@ import { SeriesView } from '../../../src/view/SeriesView';
         }
 
         await page.evaluate('config.inverted = false; chart.update(config)');
+    });
+    it('title', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const title = await page.$('.' + TitleView.TITLE_CLASS);
+        expect(title).exist;
+
+        const Text = await title.$('text');
+        const titleText = await page.evaluate((el) => el.textContent, Text);
+        console.log(titleText);
+
+
     });
 });

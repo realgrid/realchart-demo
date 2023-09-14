@@ -6,17 +6,18 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "../../common/Common";
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
-import { SvgShapes } from "../../common/impl/SvgShape";
+import { Shape, SvgShapes } from "../../common/impl/SvgShape";
 import { Chart } from "../../main";
 import { LineType } from "../../model/ChartTypes";
 import { DataPoint, IPointPos } from "../../model/DataPoint";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
 import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
-import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 export class LineMarkerView extends PathElement implements IPointView {
@@ -25,12 +26,13 @@ export class LineMarkerView extends PathElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     point: LineSeriesPoint;
+    _radius: number;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-line-point-marker');
+        super(doc, SeriesView.POINT_CLASS);
     }
 }
 
@@ -96,16 +98,16 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     }
 
     protected _prepareSeries(doc: Document, model: T): void {
-        this.$_prepareMarkers(model._visPoints as LineSeriesPoint[]);
+        model instanceof LineSeries && this._prepareBelow(model);
+        this.$_prepareMarkers(this._visPoints as LineSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
         const series = this.model;
 
         this._lineContainer.invert(this._inverted, height);
-        series instanceof LineSeries && this._prepareBelow(series, width, height);
-        this._layoutMarkers(series._visPoints as LineSeriesPoint[], width, height);
-        this._layoutLines(series._visPoints as LineSeriesPoint[]);
+        this._layoutMarkers(this._visPoints as LineSeriesPoint[], width, height);
+        this._layoutLines(this._visPoints as LineSeriesPoint[]);
     }
 
     protected _runShowEffect(firstTime: boolean): void {
@@ -128,8 +130,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     }
 
     protected _doViewRateChanged(rate: number): void {
-        this._layoutMarkers(this.model._visPoints as LineSeriesPoint[], this.width, this.height);
-        this._layoutLines(this.model._visPoints.slice() as LineSeriesPoint[]);
+        this._layoutMarkers(this._visPoints as LineSeriesPoint[], this.width, this.height);
+        this._layoutLines(this._visPoints.slice() as LineSeriesPoint[]);
     }
 
     //-------------------------------------------------------------------------
@@ -139,9 +141,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         return 1;
     }
 
-    protected _prepareBelow(series: LineSeries, w: number, h: number): boolean {
+    protected _prepareBelow(series: LineSeries): boolean {
         const control = this.control;
-        const yAxis = series._yAxisObj;
         let lowLine = this._lowLine;
 
         this._needBelow = series.belowStyle && series._minValue < series.baseValue; // series.getBaseValue(yAxis)
@@ -201,7 +202,10 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     private $_prepareMarkers(points: LineSeriesPoint[]): void {
         const series = this.model;
+        const needBelow = series instanceof LineSeries && this._needBelow;
+        const base = needBelow ? series.baseValue : NaN;
         const marker = series.marker;
+        const sts = [marker.style, null];
 
         if (this._pointContainer.visible = marker.visible) {
             const mpp = this._markersPerPoint();
@@ -212,42 +216,30 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                 const p = points[n];
 
                 if (!p.isNull) {
-                    if (n === count - 1) {
-                    } else if (n === 0) {
-                    } else {
-                    }
-        
-                    p.radius = marker.radius;
-                    p.shape = marker.shape;
                     mv.point = p;
-        
-                    // mv.className = vis ? '' : 'dlchart-line-marker-hidden';
-                    // mv.clearStyles();
-                    // if (color) {
-                    //     m.setStyles({
-                    //         fill: color,
-                    //         stroke: color
-                    //     })
-                    // }
-                    // m.setStyles(styles);
-                    // this._needNegative && m.point.value < base && m.setStyles(negativeStyles);
+                    sts[1] = needBelow && p.yValue < base ? series.belowStyle : null;
+                    this._setPointStyle(mv, p, sts);
                 }
             });
         }
     }
 
     protected _layoutMarker(mv: LineMarkerView, x: number, y: number): void {
-        const color = this.model.color;
+        const series = this.model;
+        const marker = series.marker;
+        // const color = series.color;
         const p = mv.point as LineSeriesPoint;
-        const s = p.shape;
-        const sz = p.radius;
+        const s = p.shape || series.getShape();
+        const sz = mv._radius = pickNum(p.radius, marker.radius);
         let path: (string | number)[];
 
         switch (s) {
-            case 'square':
-            case 'diamond':
-            case 'triangle':
-            case 'itriangle':
+            case Shape.SQUARE:
+            case Shape.RECTANGLE:
+            case Shape.DIAMOND:
+            case Shape.TRIANGLE:
+            case Shape.ITRIANGLE:
+            case Shape.STAR:
                 x -= sz;
                 y -= sz;
                 path = SvgShapes[s](0, 0, sz * 2, sz * 2);
@@ -260,8 +252,6 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         // if (m.visible = this._containsMarker(x, y)) {
             mv.translate(x, y);
             mv.setPath(path);
-            mv.setStyle('stroke', 'gray');
-            mv.setStyle('fill', color);
         // }
     }
 
@@ -311,7 +301,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     const r = lv.getBBounds();
 
                     lv.visible = true;
-                    lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? p.radius : 0));
+                    lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
                 }
             } else if (lv) {
                 lv.visible = false;
@@ -321,6 +311,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     protected _layoutLines(pts: DataPoint[]): void {
         const series = this.model;
+        const needBelow = series instanceof LineSeries && this._needBelow;
         const sb = new PathBuilder();
         let i = 0;
         let s: string;
@@ -345,7 +336,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             this._line.addStyleOrClass(series.style);
             Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
     
-            if (series instanceof LineSeries && this._needBelow) {
+            if (needBelow) {
                 const axis = series._yAxisObj as ContinuousAxis;
                 const base = series.baseValue;// series.getBaseValue(axis);
                 

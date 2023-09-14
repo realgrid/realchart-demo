@@ -24,27 +24,24 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
     startAngle = 0;
     angle = 0;
     borderRaidus: number;
+    _calcedColor: string;
 
     //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    get endAngle(): number {
-        return this.startAngle + this.angle;
-    }
-
-    //-------------------------------------------------------------------------
-    // methods
+    // ILegendSource
     //-------------------------------------------------------------------------
     legendColor(): string {
-        return this.color;
+        return this._calcedColor;
     }
 
     legendLabel(): string {
         return this.x;
     }
 
-    legendVisible(): boolean {
-        return this.visible;
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    get endAngle(): number {
+        return this.startAngle + this.angle;
     }
 
     //-------------------------------------------------------------------------
@@ -57,6 +54,9 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
     }
 }
 
+/**
+ * @config chart.series[type=pie]
+ */
 export class PieSeries extends RadialSeries {
 
     //-------------------------------------------------------------------------
@@ -70,24 +70,42 @@ export class PieSeries extends RadialSeries {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     groupSize = 1;
     /**
      * 0보다 큰 값을 지정해서 도넛 형태로 표시할 수 있다.
+     * 
+     * @config
      */
     innerSize: RtPercentSize = 0;
+    /**
+     * @config
+     */
     sliceOffset: RtPercentSize = '7%';
+    /**
+     * @config
+     */
     labelDistance = 25;
     /**
      * true이면 섹터 하나만 마우스 클릭으로 sliced 상태가 될 수 있다.
      * Point의 sliced 속성을 직접 지정하는 경우에는 이 속성이 무시된다.
+     * 
+     * @config
      */
     exclusive = true;
     /**
      * Slice animation duration.
      * 밀리세컨드 단위로 지정.
+     * 
      * @default 300ms.
+     * @config
      */
     sliceDuration = 300;
+    /**
+     * @config
+     */
     borderRadius = 0;
 
     //-------------------------------------------------------------------------
@@ -115,7 +133,7 @@ export class PieSeries extends RadialSeries {
         return 'pie';
     }
 
-    protected _colorByPoint(): boolean {
+    _colorByPoint(): boolean {
         return true;
     }
 
@@ -124,7 +142,7 @@ export class PieSeries extends RadialSeries {
     }
 
     getLegendSources(list: ILegendSource[]): void {
-        this._visPoints.forEach(p => {
+        this._runPoints.forEach(p => {
             list.push(p as PieSeriesPoint);
         })        
     }
@@ -144,6 +162,9 @@ export class PieSeries extends RadialSeries {
     }
 }
 
+/**
+ * @config chart.series[type=piegroup]
+ */
 export class PieSeriesGroup extends SeriesGroup<PieSeries> {
 
     //-------------------------------------------------------------------------
@@ -164,6 +185,8 @@ export class PieSeriesGroup extends SeriesGroup<PieSeries> {
      * {@link layout}이 {@link SeriesGroupLayout.FILL}이나 {@link SeriesGroupLayout.STACK}인 경우
      * 개별 시리즈의 size 대신 이 속성값으로 표시되고,
      * 각 시리즈의 size는 상대 크기로 적용된다.
+     * 
+     * @config
      */
     polarSize: RtPercentSize = '80%';
     /**
@@ -172,6 +195,8 @@ export class PieSeriesGroup extends SeriesGroup<PieSeries> {
      * 경우 0보다 큰 값을 지정해서 도넛 형태로 표시할 수 있다.
      * <br>
      * 포함된 pie 시리즈들의 innerSize는 무시된다.
+     * 
+     * @config
      */
     innerSize: RtPercentSize = 0;
 

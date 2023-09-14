@@ -113,6 +113,8 @@ export enum TreemapAlgorithm {
  * 4. 초기 공간을 재귀적으로 나누어 가면서 구성한다.
  * 
  * // TODO: grouping된 data 설정 가능하도록 한다. data[{data:[]}, {data:[]}]
+ * 
+ * @config chart.series[type=treemap]
  */
 export class TreemapSeries extends Series {
 
@@ -206,7 +208,7 @@ export class TreemapSeries extends Series {
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
-        this._roots = this.$_buildTree(this._visPoints as TreemapSeriesPoint[]);
+        this._roots = this.$_buildTree(this._runPoints as TreemapSeriesPoint[]);
     }
 
     //-------------------------------------------------------------------------
@@ -218,7 +220,7 @@ export class TreemapSeries extends Series {
         const map = this._map;
 
         pts.forEach(p => {
-            if (!p.isNull) {
+            if (p.id || !p.isNull) {
                 const node = new TreeNode(p);
 
                 if (p.id) {

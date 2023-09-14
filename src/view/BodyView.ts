@@ -554,7 +554,7 @@ class CrosshairLineView extends LineElement {
 
 export interface IPlottingOwner {
 
-    clipSeries(view: RcElement, x: number, y: number, w: number, h: number): void;
+    clipSeries(view: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
     showTooltip(series: Series, point: DataPoint): void;
     hideTooltip(): void;
 }
@@ -663,6 +663,10 @@ export class BodyView extends ChartElement<Body> {
         return this._seriesViews.find(v => v.dom.contains(elt));
     }
 
+    findSeries(ser: Series): SeriesView<Series> {
+        return this._seriesViews.find(v => v.model === ser);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -671,6 +675,7 @@ export class BodyView extends ChartElement<Body> {
 
         // background
         this._background.setStyleOrClass(model.style);
+        this._background.setBoolData('polar', this._polar || chart.isWidget());
 
         // series
         this.$_prepareSeries(doc, chart._getSeries().visibleSeries());
@@ -679,7 +684,7 @@ export class BodyView extends ChartElement<Body> {
             v.measure(doc, this._series[i], hintWidth, hintHeight, phase);
         })
 
-        this._polar = chart._polar;
+        this._polar = chart.isPolar();
 
         if (!this._polar) {
             // axis grids
@@ -710,7 +715,7 @@ export class BodyView extends ChartElement<Body> {
 
         // series
         this._seriesViews.forEach(v => {
-            this._owner.clipSeries(v.getClipContainer(), 0, 0, w, h);
+            this._owner.clipSeries(v.getClipContainer(), 0, 0, w, h, v.invertable());
             v.resize(w, h);
             v.layout();
         })

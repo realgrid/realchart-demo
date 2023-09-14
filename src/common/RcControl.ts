@@ -7,10 +7,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
-import { Path, SVGStyleOrClass, _undefined, throwFormat } from "./Types";
+import { Path, SVGStyleOrClass, _undefined, isNull, pixel, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
-import { RtLog, SVGNS, isObject, isString } from "./Common";
+import { SVGNS, isObject, isString, pickProp } from "./Common";
 import { Utils } from "./Utils";
 import { IRect, Rectangle } from "./Rectangle";
 import { SvgShapes } from "./impl/SvgShape";
@@ -126,6 +126,20 @@ export abstract class RcControl extends RcWrappableObject {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    setData(data: string, value: any, container?: boolean): void {
+        if (!isNull(value)) {
+            this._svg.dataset[data] = value;
+            if (container) {
+                this._dom.dataset[data] = value;
+            }
+        } else {
+            delete this._svg.dataset[data];
+            if (container) {
+                delete this._dom.dataset[data];
+            }
+        }
+    }
+
     clearDefs(): void {
         Dom.clearChildren(this._defs);
     }
@@ -249,8 +263,20 @@ export abstract class RcControl extends RcWrappableObject {
         return clip;
     }
 
-    removeDef(element: RcElement): void {
-        this._defs.removeChild(element.dom);
+    addDef(element: Element): void {
+        this._defs.appendChild(element);
+    }
+
+    removeDef(element: Element | string): void {
+        if (isString(element)) {
+            for (const elt in this._defs.children) {
+                if ((elt as any) instanceof Element && (elt as any).id === element) {
+                    element = elt;
+                    break;
+                }
+            }
+        }
+        element instanceof Element && this._defs.removeChild(element);
     }
 
     containerToElement(element: RcElement, x: number, y: number): IPoint {
@@ -359,14 +385,13 @@ export abstract class RcControl extends RcWrappableObject {
 
         // svg
         const svg = this._svg = doc.createElementNS(SVGNS, 'svg');
-
         svg.classList.add('rct-root');
         svg.style.setProperty('overflow', 'visible', 'important');
         svg.setAttribute('width', '100%');// contentDiv.clientWidth + 'px');
         svg.setAttribute('height', '100%');//contentDiv.clientHeight + 'px');
 
         const desc = doc.createElement('desc');
-        desc.textContent = 'Created by RealChart 1.0.0';
+        desc.textContent = 'Created by RealChart v$Version';
         svg.appendChild(desc);
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
@@ -404,10 +429,10 @@ export abstract class RcControl extends RcWrappableObject {
         this.$_render();
     }
 
-    private $_invalidateElement(elt: RcElement): void {
-        this._invalidElements.push(elt);
-        this.invalidate();
-    }
+    // private $_invalidateElement(elt: RcElement): void {
+    //     this._invalidElements.push(elt);
+    //     this.invalidate();
+    // }
 
     private $_requestRender(): void {
         if (window.requestAnimationFrame) {
@@ -439,9 +464,10 @@ export abstract class RcControl extends RcWrappableObject {
             const w = this._svg.clientWidth;
             const h = this._svg.clientHeight;
 
-            this._htmlRoot.style.left = (sr.left - cr.left) + 'px';
-            this._htmlRoot.style.top = (sr.top - cr.top) + 'px';
-
+            Object.assign(this._htmlRoot.style, {
+                left: pixel(sr.left - cr.left),
+                top: pixel(sr.top - cr.top)
+            });
             this._doRender({x: 0, y: 0, width: w, height: h});
             this._doRenderBackground(this._container.firstElementChild as HTMLDivElement, w, h);
 
@@ -867,6 +893,15 @@ export class RcElement extends RcObject {
         }
     }
 
+    internalClearStyles(): void {
+        const css = (this.dom as SVGElement | HTMLElement).style;
+
+        for (let p in this._styles) {
+            css.removeProperty(p);
+        }
+        this._styles = {};
+    }
+
     clearStyles(): boolean {
         const css = (this.dom as SVGElement | HTMLElement).style;
         let changed = false;
@@ -897,6 +932,16 @@ export class RcElement extends RcObject {
             if (changed) this._styleDirty = true;
         }
         return changed;
+    }
+
+    internalSetStyles(styles: any): void {
+        if (styles) {
+            const css = (this.dom as SVGElement | HTMLElement).style;
+
+            for (let p in styles) {
+                css[p] = this._styles[p] = styles[p];
+            }
+        }
     }
 
     setStyles(styles: any): boolean {
@@ -931,12 +976,25 @@ export class RcElement extends RcObject {
         this._resetClass();
     }
 
+    internalClearStyleAndClass(): void {
+        this.internalClearStyles();
+        this._resetClass();
+    }
+
     setStyleOrClass(style: SVGStyleOrClass): void {
         if (isString(style)) {
             this._resetClass();
             style && this._dom.classList.add(style);
         } else {
             this.resetStyles(style);
+        }
+    }
+
+    internalSetStyleOrClass(style: SVGStyleOrClass): void {
+        if (isString(style)) {
+            this._dom.classList.add(style);
+        } else {
+            this.internalSetStyles(style);
         }
     }
 
@@ -964,6 +1022,13 @@ export class RcElement extends RcObject {
         return changed;
     }
 
+    internalSetStyle(prop: string, value: string): void {
+        if (value !== this._styles[prop]) {
+            this._styles[prop] = value;
+            (this.dom as SVGElement | HTMLElement).style[prop] = value;
+        }
+    }
+
     putStyles(styles: any, buff?: any): any {
         buff = buff || {};
         if (styles) {
@@ -981,11 +1046,19 @@ export class RcElement extends RcObject {
     }
 
     setData(data: string, value?: string): void {
-        this.dom.dataset[data] = value || '';
+        this.dom.dataset[data] = pickProp(value, '');
     }
 
     unsetData(data: string): void {
         delete this.dom.dataset[data];
+    }
+
+    setBoolData(data: string, value: boolean): void {
+        if (value) {
+            this.dom.dataset[data] = '';
+        } else {
+            delete this.dom.dataset[data];
+        }
     }
 
     // TODO

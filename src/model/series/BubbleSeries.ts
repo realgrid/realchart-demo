@@ -14,6 +14,10 @@ import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { Series, SeriesMarker } from "../Series";
 
+/**
+ * [y, z]
+ * [x, y, z]
+ */
 export class BubbleSeriesPoint extends DataPoint {
 
     //-------------------------------------------------------------------------
@@ -64,15 +68,15 @@ export class BubbleSeriesPoint extends DataPoint {
     }
 }
 
-export class BubbleSeriesMarker extends SeriesMarker {
-}
-
 export enum BubbleSizeMode {
 
     WIDTH = 'width',
     AREA = 'area'
 }
 
+/**
+ * @config chart.series[type=bubble]
+ */
 export class BubbleSeries extends Series {
 
     //-------------------------------------------------------------------------
@@ -90,7 +94,6 @@ export class BubbleSeries extends Series {
     private _minDim: IPercentSize;
     private _maxDim: IPercentSize;
 
-    marker: BubbleSeriesMarker;
     _zMin: number;
     _zMax: number;
 
@@ -99,9 +102,23 @@ export class BubbleSeries extends Series {
     //-------------------------------------------------------------------------
     constructor(chart: IChart, name?: string) {
         super(chart, name);
-
-        this.marker = new BubbleSeriesMarker(this);
     }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 명시적으로 지정하지 않으면 typeIndex에 따라 Shapes 중 하나로 돌아가면서 설정된다.
+     * 
+     * @config
+     */
+    shape: Shape;
+    /**
+     * {@link shape}의 반지름.
+     * 
+     * @config
+     */
+    radius = 3;
 
     //-------------------------------------------------------------------------
     // methods
@@ -139,7 +156,7 @@ export class BubbleSeries extends Series {
         return new BubbleSeriesPoint(source);
     }
 
-    protected _colorByPoint(): boolean {
+    _colorByPoint(): boolean {
         return this.colorByPoint;
     }
 
@@ -157,7 +174,7 @@ export class BubbleSeries extends Series {
         this._zMin = Number.MAX_VALUE;
         this._zMax = Number.MIN_VALUE;
 
-        this._visPoints.forEach((p: BubbleSeriesPoint) => {
+        this._runPoints.forEach((p: BubbleSeriesPoint) => {
             this._zMin = Math.min(this._zMin, p.zValue);
             this._zMax = Math.max(this._zMax, p.zValue);
         })

@@ -30,6 +30,8 @@ export class LollipopSeriesPoint extends DataPoint {
 
 /**
  * Bar 시리즈 변종.
+ * 
+ * @config chart.series[type=lollipop]
  */
 export class LollipopSeries extends BasedSeries {
 
@@ -66,7 +68,7 @@ export class LollipopSeries extends BasedSeries {
         const radius = this.marker.radius;
         const shape = this.marker.shape;
 
-        this._visPoints.forEach((p: LollipopSeriesPoint) => {
+        this._runPoints.forEach((p: LollipopSeriesPoint) => {
             p.radius = radius;
             p.shape = shape;
         })

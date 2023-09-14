@@ -39,7 +39,7 @@ import puppeteer, { Browser } from 'puppeteer';
         const container = await page.$('#realchart');
         expect(container).exist;
 
-        const bars = await page.$$('.rct-data-point')
+        const bars = await page.$$('.rct-point')
         expect(bars.length > 0).is.true;
 
         const config: any = await page.evaluate('config');

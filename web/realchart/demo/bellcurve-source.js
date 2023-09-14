@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     title: "Scatter && Bell Curve",
     xAxis: [{

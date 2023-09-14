@@ -1,6 +1,10 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     options: {
-        animatable: false
+        // animatable: false
     },
     title: "Time Axis",
     xAxis: {
@@ -32,7 +36,14 @@ const config = {
     },
     series: {
         type: 'line',
-        marker: false,
+        marker: {
+            visible: true,
+            shape: 'diamond',
+            radius: 5,
+            style: {
+                stroke: 'white'
+            }
+        },
         xStart: "2023-07-12",
         xStep: 1000 * 60 * 60,
         data: [4.5, 5.1, 4.4, 3.7, 4.2, 3.7, 4.3, 4, 5, 4.9,

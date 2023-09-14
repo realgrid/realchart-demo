@@ -21,6 +21,10 @@ export class DumbbellSeriesMarker extends SeriesMarker {
     shape = Shape.CIRCLE;
 }
 
+/**
+ * [low, y]
+ * [x, low, y]
+ */
 export class DumbbellSeriesPoint extends DataPoint {
 
     //-------------------------------------------------------------------------
@@ -83,6 +87,8 @@ export class DumbbellSeriesPoint extends DataPoint {
 
 /**
  * BarRange 시리즈 변종.
+ * 
+ * @config chart.series[type=dumbbell]
  */
 export class DumbbellSeries extends ClusterableSeries {
 
@@ -117,7 +123,7 @@ export class DumbbellSeries extends ClusterableSeries {
         const radius = this.marker.radius;
         const shape = this.marker.shape;
 
-        this._visPoints.forEach((p: DumbbellSeriesPoint) => {
+        this._runPoints.forEach((p: DumbbellSeriesPoint) => {
             p.radius = radius;
             p.shape = shape;
         })
@@ -127,7 +133,7 @@ export class DumbbellSeries extends ClusterableSeries {
         super.collectValues(axis, vals);
 
         if (vals && axis === this._yAxisObj) {
-            this._visPoints.forEach(p => {
+            this._runPoints.forEach(p => {
                 const v = (p as DumbbellSeriesPoint).lowValue
                 !isNaN(v) && vals.push(v);
             });

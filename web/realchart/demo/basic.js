@@ -1,6 +1,10 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     options: {
-        animatable: false,
+        // animatable: false,
         credits: {
             // visible: false,
             // verticalAlign: 'top'
@@ -64,6 +68,51 @@ const config = {
 let animate;
 let chart;
 
+function createCodePenButton() {
+    let elements = document.getElementById("actions");
+
+    let data = {
+        title: "Cool Pen",
+        description: "",
+        html: '<script src="https://unpkg.com/realchart"></script>\n<div id="realchart"></div>',
+        html_pre_processor: "none",
+        css: "@import url(\"https://unpkg.com/realchart/dist/realchart-style.css\");\n#realchart {\n    width: 100%;\n    height: 550px;\n    border: 1px solid lightgray;\n    margin-bottom: 20px;\n}",
+        css_pre_processor: "none",
+        css_starter: "neither",
+        css_prefix_free: false,
+        js: "const config = "+ JSON.stringify(config, null, 2)+ "; \n  chart = RealChart.createChart(document, \"realchart\", config);",
+        js_pre_processor: "none",
+        js_modernizr: false,
+        js_library: "",
+        html_classes: "",
+        css_external: "",
+        js_external: "",
+        template: true,
+    };
+
+    let JSONstring = JSON.stringify(data)
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+
+    let form = document.createElement("form");
+    form.setAttribute("action", "https://codepen.io/pen/define");
+    form.setAttribute("method", "POST");
+    form.setAttribute("target", "_blank");
+
+    let inputData = document.createElement("input");
+    inputData.setAttribute("type", "hidden");
+    inputData.setAttribute("name", "data");
+    inputData.setAttribute("value", JSONstring);
+    form.appendChild(inputData);
+
+    let inputSubmit = document.createElement("input");
+    inputSubmit.setAttribute("type", "submit");
+    inputSubmit.setAttribute("value", "Code Pen");
+    form.appendChild(inputSubmit);
+
+    elements.appendChild(form);
+};
+
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
@@ -84,6 +133,7 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.update(config, animate);
     }, false);
+    createCodePenButton();
 }
 
 function init() {

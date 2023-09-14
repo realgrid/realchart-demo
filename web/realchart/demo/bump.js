@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     type: "line",
     options: {},
@@ -19,7 +23,7 @@ const config = {
     },
     series: {
         type: 'bump',
-        series: [{
+        children: [{
             name: 'Installation & Developers',
             pointLabel: true,
             data: [43, 48, 65, 27, 43, 83,

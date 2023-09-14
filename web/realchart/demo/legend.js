@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     title: "Legends",
     xAxis: {
@@ -46,7 +50,7 @@ function setActions(container) {
     createListBox(container, "left", ['', 10, 15, 20, 25], function (e) {
         config.legend.left = _getValue(e);
         chart.update(config);
-    }, '');
+    }, '10');
     createListBox(container, "right", ['', 10, 15, 20, 25], function (e) {
         config.legend.right = _getValue(e);
         chart.update(config);
@@ -54,7 +58,7 @@ function setActions(container) {
     createListBox(container, "top", ['', 10, 15, 20, 25], function (e) {
         config.legend.top = _getValue(e);
         chart.update(config);
-    }, '');
+    }, '10');
     createListBox(container, "bottom", ['', 10, 15, 20, 25], function (e) {
         config.legend.bottom = _getValue(e);
         chart.update(config);

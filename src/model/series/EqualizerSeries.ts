@@ -19,6 +19,8 @@ export class EqualizerSeriesPoint extends DataPoint {
 
 /**
  * Bar 시리즈 변종.
+ * 
+ * @config chart.series[type=equalizer]
  */
 export class EqualizerSeries extends BasedSeries {
 

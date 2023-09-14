@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     options: {},
     title: "Line Series 01",

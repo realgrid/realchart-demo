@@ -7,12 +7,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcEventProvider } from "../common/RcObject";
-import { Align, SVGStyleOrClass, SectionDir, VerticalAlign, isNull } from "../common/Types";
+import { Align, SectionDir, VerticalAlign } from "../common/Types";
+import { AssetCollection } from "./Asset";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem } from "./ChartItem";
+import { DataPoint } from "./DataPoint";
 import { ILegendSource, Legend } from "./Legend";
 import { IPlottingItem, PlottingItemCollection, Series } from "./Series";
+import { PaletteMode, ThemeCollection } from "./Theme";
 import { Subtitle, Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
@@ -52,7 +55,7 @@ export interface IChart {
     yAxis: IAxis;
     colors: string[];
 
-    _polar: boolean;
+    isPolar(): boolean;
     isInverted(): boolean;
     animatable(): boolean;
     startAngle(): number;
@@ -73,14 +76,20 @@ export interface IChart {
     _connectSeries(series: IPlottingItem, isX: boolean): Axis;
     _getLegendSources(): ILegendSource[];
     _visibleChanged(item: ChartItem): void;
+    _pointVisibleChanged(series: Series, point: DataPoint): void;
     _modelChanged(item: ChartItem): void;
 }
 
 const group_types = {
+    // TODO: '...group'으로 통일한다.
     'bar': BarSeriesGroup,
     'line': LineSeriesGroup,
     'area': AreaSeriesGroup,
     'pie': PieSeriesGroup,
+    'bargroup': BarSeriesGroup,
+    'linegroup': LineSeriesGroup,
+    'areagroup': AreaSeriesGroup,
+    'piegroup': PieSeriesGroup,
     'bump': BumpSeriesGroup
 };
 
@@ -118,6 +127,9 @@ const axis_types = {
     'log': LogAxis
 }
 
+/**
+ * @config chart.options
+ */
 export class Credits extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -125,81 +137,104 @@ export class Credits extends ChartItem {
     //-------------------------------------------------------------------------
     /**
      * 표시할 문자열.
+     * 
+     * @config
      */
     text = 'RealChart v1.0';
     /**
      * 이 속성을 지정하면 click시 해당 url로 이동한다.
+     * 
+     * @config
      */
     url = 'http://realgrid.com';
     /**
      * true이면 {@link verticalAlign}이 'top', 'bottom'일 때도,
      * 별도의 영역을 차지하지 않고 chart view위에 표시된다.
-     * <br>
-     * @default false
+     * 
+     * @config
      */
     floating = false;
+    /**
+     * @config
+     */
     align = Align.RIGHT;
+    /**
+     * @config
+     */
     verticalAlign = VerticalAlign.BOTTOM;
     /**
      * {@link align}으로 지정된 수평 위치에서, 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.
-     * <br>
      * 
-     * @default 10
+     * @config
      */
-    offsetX = 10
+    offsetX = 2;
     /**
      * {@link verticalAlign}으로 지정된 수직 위치에서, 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.
-     * <br>
      * 
-     * @default 5
+     * @config
      */
-    offsetY = 5;
+    offsetY = 1;
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
 }
 
+/**
+ * @config chart.options
+ */
 export class ChartOptions extends ChartItem {
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     /**
-     * true면 차트가 {@link https://en.wikipedia.org/wiki/Polar_coordinate_system 극좌표계}로 표시된다.
-     * <br>
-     * 기본은 {@link https://en.wikipedia.org/wiki/Cartesian_coordinate_system 직교좌표계}이다.
-     * <br>
-     * 극좌표계일 때,
-     * x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이 있다.
-     * 1. x축은 첫번째 축 하나만 사용된다.
-     * 2. axis.position 속성은 무시된다.
-     * 3. chart, series의 inverted 속성이 무시된다.
-     * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
+     * theme 이름.
      */
-    polar = false;
+    theme: string;
+    /**
+     * 시리즈 및 데이터포인트에 적용되는 기본 색상 팔레트 이름.
+     */
+    palette: string;
+    /**
+     * {@link palette}로 지정된 팔레트 색상들을 시리즈에 적용하는 방식.
+     */
+    paletteMode = PaletteMode.NORMAL;
     /**
      * false로 지정하면 차트 전체척으로 animation 효과를 실행하지 않는다.
+     * 
+     * @config
      */
     animatable = true;
     /**
-     * x값이 설정되지 않은 포인트들의 시작 x값.
-     * {@link Series.xStart}의 기본값.
+     * x축 값이 설정되지 않은 시리즈 첫번째 데이터 point에 설정되는 x값.
+     * 이 후에는 {@link xStep}씩 증가시키면서 설정한다.
+     * 'time' 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.
+     * 숫자로 지정하면 1은 1밀리초로 지정된다. 
+     * 시리즈의 {@link Series.xStart}이 설정되면 그 값이 사용된다.
+     * 
+     * @config
      */
-    xStart = 0;
+    xStart: number | string = 0;
     /**
-     * 시리즈 데이타에 x축 값이 설정되지 않은 경우, 포인트 간의 간격 x 크기.
-     * {@link Series.xStep}의 기본값.
-     * time 축일 때, 정수 값 대신 시간 단위로 지정할 수 있다.
+     * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
+     * 첫번째 값은 {@link xStart}로 설정한다.
+     * time 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.
+     * 시리즈의 {@link Series.xStep}이 설정되면 그 값이 사용된다.
+     * 
+     * @config
      */
-    xStep = 1;
+    xStep: number | string = 1;
     /**
      * 복수 axis가 표시되는 경우 axis 사이의 간격
-     * <br>
+     * 
      * @default 8 pixels
+     * @config
      */
     axisGap = 8;
-    style: SVGStyleOrClass;
+    /**
+     * 크레딧 모델.
+     */
     credits = new Credits(null);
 
     //-------------------------------------------------------------------------
@@ -209,8 +244,12 @@ export class ChartOptions extends ChartItem {
 
 export interface IChartEventListener {
     onVisibleChanged?(chart: Chart, item: ChartItem): void;
+    onPointVisibleChange?(chart: Chart, series: Series, point: DataPoint): void;
 }
 
+/**
+ * @config chart
+ */
 export class Chart extends RcEventProvider<IChartEventListener> implements IChart {
 
     //-------------------------------------------------------------------------
@@ -219,6 +258,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _assets: AssetCollection;
+    private _themes: ThemeCollection;
     private _options: ChartOptions;
     private _title: Title;
     private _subtitle: Subtitle;
@@ -229,9 +270,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _body: Body;
 
     private _inverted: boolean;
-    _polar: boolean;
-    colors = ["#1bafdc", "#12d365", "#343ec3", "#81d8c1", 
-    "#fe6a35", "#6b8abc", "#d568fb", "#2ee0ca", "#fa4b42", "#feb56a"];
+    private _polar: boolean;
+    colors: string[];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -239,6 +279,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     constructor(source?: any) {
         super();
 
+        this._assets = new AssetCollection();
+        this._themes = new ThemeCollection();
         this._options = new ChartOptions(this);
         this._title = new Title(this);
         this._subtitle = new Subtitle(this);
@@ -249,7 +291,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._body = new Body(this);
 
         source && this.load(source);
-        this._polar = this.options.polar === true;
+        this._polar = this.polar === true;
     }
 
     //-------------------------------------------------------------------------
@@ -260,11 +302,15 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     get xStart(): number {
-        return this._options.xStart;
+        return +this._options.xStart;
     }
 
     get xStep(): number {
-        return this._options.xStep;
+        return +this._options.xStep;
+    }
+
+    get xStepUnit(): string {
+        return;
     }
 
     animatable(): boolean {
@@ -276,21 +322,39 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     /**
      * 기본 시리즈 type.
-     * <br>
      * {@link Series._type}의 기본값.
      * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
      * 
      * @default 'bar'
+     * @config
      */
     type = 'bar';
-
+    /**
+     * true면 차트가 {@link https://en.wikipedia.org/wiki/Polar_coordinate_system 극좌표계}로 표시된다.
+     * 기본은 {@link https://en.wikipedia.org/wiki/Cartesian_coordinate_system 직교좌표계}이다.
+     * 극좌표계일 때,
+     * x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이 있다.
+     * 1. x축은 첫번째 축 하나만 사용된다.
+     * 2. axis.position 속성은 무시된다.
+     * 3. chart, series의 inverted 속성이 무시된다.
+     * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
+     * 
+     * @config
+     */
+    polar = false;
     /**
      * true면 x축이 수직, y축이 수평으로 배치된다.
      * <br>
      * 기본값은 undefined로 첫번째 series의 종류에 따라 결정된다.
      * 즉, bar 시리즈 계통이면 true가 된다.
+     *
+     * @config
      */
     inverted: boolean;
+
+    get assets(): AssetCollection {
+        return this._assets;
+    }
 
     get options(): ChartOptions {
         return this._options;
@@ -358,6 +422,14 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._yAxes;
     }
 
+    isPolar(): boolean {
+        return this._polar;
+    }
+
+    isWidget(): boolean {
+        return this._series.isWidget();
+    }
+
     isInverted(): boolean {
         return !this._polar && this._inverted;
     }
@@ -371,6 +443,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     seriesByName(series: string): Series {
         return this._series.get(series);
+    }
+
+    seriesByPoint(point: DataPoint): Series {
+        return this._series.seriesByPoint(point);
     }
 
     axisByName(axis: string): Axis {
@@ -429,12 +505,20 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     load(source: any): void {
+        console.time('load chart');
+
         // properites
-        ['type', 'inverted'].forEach(prop => {
+        ['type', 'polar', 'inverted'].forEach(prop => {
             if (prop in source) {
                 this[prop] = source[prop];
             }
         })
+
+        // assets
+        this._assets.load(source.assets);
+
+        // themes
+        this._themes.load(source.themes);
 
         // options
         this._options.load(source.options);
@@ -448,9 +532,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         // series - 시리즈를 먼저 로드해야 디폴트 axis를 지정할 수 있다.
         this._series.load(source.series);
-        // this._series2.load(source.series);
-        // series group
-        // this._groups2.load(source.groups);
 
         // axes
         // 축은 반드시 존재해야 한다.
@@ -462,6 +543,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         // inverted
         this._inverted = this.inverted;
+
+        console.timeEnd('load chart');
     }
 
     _connectSeries(series: IPlottingItem, isX: boolean): Axis {
@@ -540,6 +623,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     _visibleChanged(item: ChartItem): void {
         this._fireEvent('onVisibleChanged', item);
+    }
+
+    _pointVisibleChanged(series: Series, point: DataPoint): void {
+        this._fireEvent('onPointVisibleChanged', series, point);
     }
 
     _modelChanged(item: ChartItem): void {

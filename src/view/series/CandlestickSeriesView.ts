@@ -30,7 +30,7 @@ class StickView extends GroupElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-candlestick-point');
+        super(doc, SeriesView.POINT_CLASS);
     }
 
     //-------------------------------------------------------------------------
@@ -99,7 +99,9 @@ export class CandlestickSeriesView extends RangedSeriesView<CandlestickSeries> {
 
     protected _preparePointViews(doc: Document, model: CandlestickSeries, points: CandlestickSeriesPoint[]): void {
         this._sticks.prepare(points.length, (box, i) => {
-            box.point = points[i];
+            const p = box.point = points[i];
+
+            this._setPointStyle(box, p);
         })
     }
 

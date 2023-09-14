@@ -7,11 +7,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, isString, pickNum } from "../common/Common";
-import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../common/Types";
+import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
-import { Shape } from "../common/impl/SvgShape";
+import { Shape, Shapes } from "../common/impl/SvgShape";
 import { IAxis } from "./Axis";
-import { Chart, IChart } from "./Chart";
+import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { LineType } from "./ChartTypes";
 import { DataPoint, DataPointCollection } from "./DataPoint";
@@ -167,7 +167,7 @@ export class Trendline extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     protected _doPrepareRender(chart: IChart): void {
-        (this['$_' + this.type] || this.$_linear).call(this, this.series._visPoints, this._points = []);
+        (this['$_' + this.type] || this.$_linear).call(this, this.series._runPoints, this._points = []);
     }
 
     //-------------------------------------------------------------------------
@@ -293,6 +293,27 @@ export interface ISeries extends IPlottingItem {
     isVisible(p: DataPoint): boolean;
 }
 
+export interface IPointStyleArgs {
+    /* series */
+    series: string | number;
+    count: number;
+    vcount: number;
+    yMin: number;
+    yMax: number;
+    /* point */
+    index: number;
+    vindex: number;
+    x: any;
+    y: any;
+    xValue: any;
+    yValue: any;
+}
+
+export type PointStyleCallback = (args: IPointStyleArgs) => SVGStyleOrClass;
+
+/**
+ * @config chart.series
+ */
 export abstract class Series extends ChartItem implements ISeries, ILegendSource {
 
     //-------------------------------------------------------------------------
@@ -331,10 +352,12 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
     protected _points: DataPointCollection;
-    _visPoints: DataPoint[];
+    _runPoints: DataPoint[];
     _minValue: number;
     _maxValue: number;
     _referents: Series[];
+    _calcedColor: string;
+    protected _pointArgs: IPointStyleArgs;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -348,6 +371,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this.tooltip = new Tooltip(this);
 
         this._points = new DataPointCollection(this);
+        this._pointArgs = this._createPointArgs();
     }
 
     //-------------------------------------------------------------------------
@@ -356,56 +380,91 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     abstract _type(): string; // for debugging, ...
 
     // group: string;
+    /**
+     * @config
+     */
     zOrder = 0;
+    /**
+     * @config
+     */
     xAxis: string | number;
+    /**
+     * @config
+     */
     yAxis: string | number;
     /**
      * undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'.
+     * 
+     * @config
      */
     xField: string | number;
     /**
      * undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'.
+     * 
+     * @config
      */
     yField: string | number;
     /**
      * undefined이면, data point의 값이 객체일 때 'color'.
+     * 
+     * @config
      */
     colorField: string;
     /**
      * undefined이면 "data".
+     * 
+     * @config
      */
     dataProp: string;
     /**
-     * 시리즈 데이타에 x축 값이 설정되지 않은 경우, 첫 포인트의 자동 지정 x값.
-     * <br>
-     * 이 속성이 지징되지 않은 경우 {@link Chart.xStart}가 적용된다.
+     * x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.
+     * 이 후에는 {@link xStep}씩 증가시키면서 설정한다.
+     * 'time' 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.
+     * 숫자로 지정하면 1은 1밀리초로 지정된다. 
+     * 이 속성이 지징되지 않은 경우 {@link ChartOptions.xStart}가 적용된다.
+     * 
+     * @config
      */
-    xStart: number;
+    xStart: number | string;
     /**
-     * 시리즈 데이타에 x축 값이 설정되지 않은 경우, 포인트 간의 간격 크기.
-     * time 축일 때, 정수 값 대신 시간 단위로 지정할 수 있다.
-     * <br>
-     * 이 속성이 지정되지 않으면 {@link Chart.xStep}이 적용된다.
+     * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
+     * 첫번째 값은 {@link xStart}로 설정한다.
+     * time 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.
+     * 이 속성이 지정되지 않으면 {@link ChartOptions.xStep}이 적용된다.
+     * 
+     * @config
      */
     xStep: number | string;
     /**
      * 데이터 포인트 기본 색.
+     * 
+     * @config
      */
     color: string;
     /**
      * 데이터 포인트별 색들을 지정한다.
-     * <br>
      * false로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.
      * true로 지정하면 기본 색들로 표시된다.
      * 색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.
      * undefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.
+     * 
+     * @config
      */
     pointColors: boolean | string[];
 
     /**
      * body 영역을 벗어난 data point view는 잘라낸다.
+     * 
+     * @default false
+     * @config
      */
     clipped = false;
+
+    pointStyleCallback: PointStyleCallback;
+
+    contains(p: DataPoint): boolean {
+        return this._points.contains(p);
+    }
 
     getPoints(): DataPointCollection {
         return this._points;
@@ -416,7 +475,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     getVisiblePoints(): DataPoint[] {
-        return this._points.getVisibles();
+        return this._points.getPoints();
     }
 
     isEmpty(): boolean {
@@ -454,15 +513,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     legendColor(): string {
-        return this.color;
+        return this._calcedColor;
     }
 
     legendLabel(): string {
         return this.label || this.name;
-    }
-
-    legendVisible(): boolean {
-        return this.visible;
     }
 
     ignoreAxisBase(axis: IAxis): boolean {
@@ -487,6 +542,12 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     canMaxPadding(axis: IAxis): boolean {
         return true;
     }
+
+    hasMarker(): boolean {
+        return false;
+    }
+
+    setShape(shape: Shape): void {}
 
     //-------------------------------------------------------------------------
     // methods
@@ -530,9 +591,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     prepareRender(): void {
+        this._calcedColor = void 0;
         this._xAxisObj = this.group ? this.group._xAxisObj : this.chart._connectSeries(this, true);
         this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
-        this._visPoints = this._points.getVisibles();//.sort((p1, p2) => p1.xValue - p2.xValue);
+        this._runPoints = this._points.getPoints();
         this._doPrepareRender();
     }
 
@@ -557,7 +619,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             let x = this.getXStart() || 0;
             const xStep = this.getXStep() || 1;
 
-            this._visPoints.forEach((p, i) => {
+            this._runPoints.forEach((p, i) => {
                 let val = axis.getValue(p.x);
     
                 // 축이 해석하지 못한 값은 자동으로 값을 지정한다.
@@ -573,7 +635,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 }
             });
         } else {
-            this._visPoints.forEach((p, i) => {
+            this._runPoints.forEach((p, i) => {
                 if (p.isNull) {
                     p.y = p.yGroup = NaN;
                 } else {
@@ -592,11 +654,39 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 }
             });
 
-            if (vals) {
-                this._minValue = Math.min(...vals);
-                this._maxValue = Math.max(...vals);
-            }
+            // if (vals) {
+            //     this._minValue = Math.min(...vals);
+            //     this._maxValue = Math.max(...vals);
+            // }
         }
+    }
+
+    collectVisibles(): DataPoint[] {
+        const visPoints = this._runPoints.filter(p => p.visible);
+        const len = visPoints.length;
+
+        if (len > 0) {
+            let min = visPoints[0].yValue;
+            let max = min;
+
+            visPoints[0].vindex = 0;
+            for (let i = 1; i < len; i++) {
+                const p = visPoints[i];
+                
+                p.vindex = i;
+                if (p.yValue > max) max = p.yValue;
+                else if (p.yValue < min) min = p.yValue;
+            }
+
+            visPoints.forEach((p, i) => {
+                p.vindex = i;
+                max = Math.max(p.yValue, max);
+            });
+
+            this._pointArgs.yMin = this._minValue = min;
+            this._pointArgs.yMax = this._maxValue = max;
+        }
+        return visPoints;
     }
 
     pointValuesPrepared(axis: IAxis): void {
@@ -633,6 +723,39 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             }
         }
     }
+
+    setPointVisible(p: DataPoint, visible: boolean) {
+        if (p && visible !== p.visible) {
+            p.visible = visible;
+            this.chart._pointVisibleChanged(this, p);
+        }
+    }
+
+    protected _createPointArgs(): IPointStyleArgs {
+        return {} as any;
+    }
+
+    protected _preparePointArgs(args: IPointStyleArgs): void {
+        args.series = this.name || this.index;
+        args.count = this._points.count;
+        // args.vcount = 
+    }
+
+    protected _getPointStyleArgs(args: IPointStyleArgs, p: DataPoint): void {
+        args.index = p.index;
+        args.vindex = p.vindex;
+        args.x = p.x;
+        args.y = p.y;
+        args.xValue = p.xValue;
+        args.yValue = p.yValue;
+    }
+
+    getPointStyle(p: DataPoint): any {
+        if (this.pointStyleCallback) {
+            this._getPointStyleArgs(this._pointArgs, p);
+            return this.pointStyleCallback(this._pointArgs);
+        }
+    }
     
     //-------------------------------------------------------------------------
     // overriden members
@@ -649,7 +772,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return axis === this._xAxisObj ? this.xField : this.yField;
     }
 
-    protected _colorByPoint(): boolean {
+    _colorByPoint(): boolean {
         return false;
     }
 
@@ -686,11 +809,16 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             color = this.color;
         }
 
-        this._visPoints.forEach((p, i) => {
-            if (!p.color) {
+        this._runPoints.forEach((p, i) => {
+            // if (!p.color) {
+            //     p.color = color || colors[i % colors.length];
+            // }
+            if (!p.color && colors) {
                 p.color = color || colors[i % colors.length];
             }
         })
+
+        this._preparePointArgs(this._pointArgs);
     }
 
     prepareAfter(): void {
@@ -710,6 +838,7 @@ export class PlottingItemCollection  {
     private _visibles: IPlottingItem[] = [];
     private _series: Series[] = [];
     private _visibleSeries: Series[] = [];
+    private _widget: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -735,6 +864,10 @@ export class PlottingItemCollection  {
 
     get firstVisibleSeries(): Series {
         return this._visibleSeries[0];
+    }
+
+    isWidget(): boolean {
+        return this._widget;
     }
 
     isEmpty(): boolean {
@@ -772,6 +905,14 @@ export class PlottingItemCollection  {
         return this._map[name];
     }
 
+    seriesByPoint(point: DataPoint): Series {
+        for (const ser of this._series) {
+            if (ser.contains(point)) {
+                return ser;
+            }
+        }
+    }
+
     getLegendSources(): ILegendSource[] {
         const legends: ILegendSource[] = [];
 
@@ -803,8 +944,15 @@ export class PlottingItemCollection  {
             }
         })
 
+        this._widget = true;
+
         series.forEach(ser => {
-            if (ser.name) map[ser.name] = ser;
+            if (this._widget && !(ser instanceof WidgetSeries)) {
+                this._widget = false;
+            }
+            if (ser.name) {
+                map[ser.name] = ser;
+            }
             for (const ser2 of this._series) {
                 if (ser2 !== ser) {
                     if (!ser.canMixWith(ser2)) {
@@ -819,14 +967,19 @@ export class PlottingItemCollection  {
     }
 
     prepareRender(): void {
-        const colors = this.chart.colors;
-        
-        this._visibleSeries = this._series.filter(ser => ser.visible);
+        const visibles = this._visibleSeries = [];
+        let iShape = 0;
+
+        this._series.forEach(ser => {
+            ser.visible && visibles.push(ser);
+            if (ser.hasMarker()) {
+                ser.setShape(Shapes[iShape++ % Shapes.length]);
+            }
+        })
 
         const nCluster = this._visibleSeries.filter(ser => ser.clusterable()).length;
 
         this._visibleSeries.forEach((ser, i) => {
-            ser.color = ser.color || colors[i++ % colors.length];
             if (ser instanceof ClusterableSeries) {
                 ser._single = nCluster === 1;
             }
@@ -844,7 +997,7 @@ export class PlottingItemCollection  {
     // internal members
     //-------------------------------------------------------------------------
     private $_loadItem(chart: IChart, src: any, index: number): IPlottingItem {
-        let cls = src.series && (chart._getGroupType(src.type) || chart._getGroupType(chart.type));
+        let cls = isArray(src.children || src.series) && (chart._getGroupType(src.type) || chart._getGroupType(chart.type));
 
         if (cls) {
             const g = new cls(chart);
@@ -854,6 +1007,9 @@ export class PlottingItemCollection  {
         }
 
         cls = chart._getSeriesType(src.type) || chart._getSeriesType(chart.type);
+        if (!cls) {
+            throw new Error('Invalid series type: ' + src.type + ', ' + chart.type);
+        }
 
         const ser = new cls(chart, src.name || `Series ${index + 1}`);
 
@@ -872,6 +1028,9 @@ export enum MarerVisibility {
     HIDDEN = 'hidden'
 }
 
+/**
+ * @config chart.series.marker
+ */
 export abstract class SeriesMarker extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -879,10 +1038,14 @@ export abstract class SeriesMarker extends ChartItem {
     //-------------------------------------------------------------------------
     /**
      * 명시적으로 지정하지 않으면 typeIndex에 따라 Shapes 중 하나로 돌아가면서 설정된다.
+     * 
+     * @config
      */
     shape: Shape;
     /**
-     * shape의 반지름.
+     * {@link shape}의 반지름.
+     * 
+     * @config
      */
     radius = 3;
 
@@ -908,6 +1071,8 @@ export abstract class WidgetSeries extends Series {
  * 직교 좌표계가 표시된 경우, plot area 영역을 기준으로 size, centerX, centerY가 적용된다.
  * <br>
  * TODO: 현재 PieSeris만 계승하고 있다. 추후 PieSeries에 합칠 것.
+ * 
+ * @config chart.series
  */
 export abstract class RadialSeries extends WidgetSeries {
 
@@ -919,13 +1084,24 @@ export abstract class RadialSeries extends WidgetSeries {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     startAngle = 0;
+    /**
+     * @config
+     */
     centerX = 0;
+    /**
+     * @config
+     */
     centerY = 0;
     /**
      * 원형 플롯 영역의 크기.
      * <br>
      * 픽셀 크기나 차지할 수 있는 전체 크기에 대한 상대적 크기로 지정할 수 있다.
+     * 
+     * @config
      */
     size: RtPercentSize;
 
@@ -946,6 +1122,9 @@ export abstract class RadialSeries extends WidgetSeries {
     }
 }
 
+/**
+ * @config chart.series
+ */
 export abstract class ClusterableSeries extends Series implements IClusterable {
 
     //-------------------------------------------------------------------------
@@ -964,8 +1143,9 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
     //-------------------------------------------------------------------------
     /**
      * 시리즈가 group에 포함되지 않은 경우, 축 단위 너비에서 이 시리즈가 차지하는 상대적 너비.
-     * <br>
      * 그룹에 포함되면 이 속성은 무시된다.
+     * 
+     * @config
      */
     groupWidth = 1; // _clusterWidth 계산에 사용된다. TODO: clusterWidth로 변경해야 하나?
     // /**
@@ -981,6 +1161,8 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
      * 포인트 표시 영역 내에서 이 시리즈의 포인트가 차지하는 영역의 상대 크기.
      * <br>
      * 예를 들어 이 시리즈의 속성값이 1이고 다른 시리즈의 값이 2이면 다른 시리즈의 data point가 두 배 두껍게 표시된다.
+     * 
+     * @config
      */
     pointWidth = 1;
     /**
@@ -989,7 +1171,8 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
      * point가 차지할 원래 크기에 대한 상대 값으로서,
      * 0 ~ 1 사이의 비율 값으로 지정한다.
      * 
-     * @default 한 카테고리에 cluster 가능한 시리즈가 하나만 표시되면 0.25, group에 포함된 경우 0.1, 여러 시리즈와 같이 표시되면 0.2.
+     * @default undefined 한 카테고리에 cluster 가능한 시리즈가 하나만 표시되면 0.25, group에 포함된 경우 0.1, 여러 시리즈와 같이 표시되면 0.2.
+     * @config
      */
     pointPadding: number;
 
@@ -1056,6 +1239,9 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
     }
 }
 
+/**
+ * @config chart.series
+ */
 export abstract class BasedSeries extends ClusterableSeries {
 
     //-------------------------------------------------------------------------
@@ -1070,10 +1256,14 @@ export abstract class BasedSeries extends ClusterableSeries {
      * 위/아래 구분의 기준이 되는 값.
      * <br>
      * 숫자가 아닌 값으로 지정하면 0으로 간주한다.
+     * 
+     * @config
      */
     baseValue = 0;
     /**
      * null인 y값을 {@link baseValue}로 간주한다.
+     * 
+     * @config
      */
     nullAsBase = false;
 
@@ -1098,6 +1288,9 @@ export abstract class BasedSeries extends ClusterableSeries {
     }
 }
 
+/**
+ * @config chart.series
+ */
 export abstract class RangedSeries extends ClusterableSeries {
 
     //-------------------------------------------------------------------------
@@ -1107,7 +1300,7 @@ export abstract class RangedSeries extends ClusterableSeries {
         super.collectValues(axis, vals);
 
         if (axis === this._yAxisObj) {
-            this._visPoints.forEach((p: DataPoint) => {
+            this._runPoints.forEach((p: DataPoint) => {
                 const v = this._getBottomValue(p);
                 vals && !isNaN(v) && vals.push(v);
             })
@@ -1156,6 +1349,9 @@ export enum SeriesGroupLayout {
     FILL = 'fill',
 }
 
+/**
+ * @config chart.series
+ */
 export abstract class SeriesGroup<T extends Series> extends ChartItem implements ISeriesGroup {
 
     //-------------------------------------------------------------------------
@@ -1166,6 +1362,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
      * <br>
      * 
      * @default 100
+     * @config
      */
     layoutMax = 100;
 
@@ -1182,8 +1379,17 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     // ISeriesGroup
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     layout = SeriesGroupLayout.DEFAULT;
+    /**
+     * @config
+     */
     xAxis: string | number;
+    /**
+     * @config
+     */
     yAxis: string | number;
 
     get series(): T[] {
@@ -1289,7 +1495,8 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     protected _doLoadProp(prop: string, value: any): boolean {
-        if (prop === 'series') {
+        // TODO: children으로 통일한다.
+        if (prop === 'children') {
             this.$_loadSeries(this.chart, value);
             return true;
         }
@@ -1358,13 +1565,13 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
             ser.collectValues(axis, null);
         });
 
-        series[0]._visPoints.forEach(p => {
+        series[0]._runPoints.forEach(p => {
             // p.yGroup = p.yValue || 0;
             map.set(p.xValue, [p]);
         });
 
         for (let i = 1; i < series.length; i++) {
-            series[i]._visPoints.forEach(p => {
+            series[i]._runPoints.forEach(p => {
                 const pts = map.get(p.xValue);
                 
                 if (pts) {
@@ -1466,6 +1673,9 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 }
 
+/**
+ * @config chart.series
+ */
 export abstract class ConstraintSeriesGroup<T extends Series> extends SeriesGroup<T> {
 
     //-------------------------------------------------------------------------
@@ -1488,6 +1698,9 @@ export abstract class ConstraintSeriesGroup<T extends Series> extends SeriesGrou
     protected abstract _doConstraintYValues(series: Series[]): number[];
 }
 
+/**
+ * @config chart.series
+ */
 export abstract class ClustrableSeriesGroup<T extends Series> extends SeriesGroup<T> {
 
     //-------------------------------------------------------------------------

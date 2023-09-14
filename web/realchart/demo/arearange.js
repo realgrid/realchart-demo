@@ -1,3 +1,8 @@
+/**
+ * @demo
+ * 
+ * AreaRange 시리즈 기본 예제.
+ */
 const config = {
     title: "AreaRange Series",
     options: {

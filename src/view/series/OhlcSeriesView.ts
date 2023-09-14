@@ -31,7 +31,7 @@ class StickView extends GroupElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-ohlc-point');
+        super(doc, SeriesView.POINT_CLASS);
     }
 
     //-------------------------------------------------------------------------
@@ -108,7 +108,9 @@ export class OhlcSeriesView extends RangedSeriesView<OhlcSeries> {
     //-------------------------------------------------------------------------
     private $_prepareSticks(points: OhlcSeriesPoint[]): void {
         this._sticks.prepare(points.length, (box, i) => {
-            box.point = points[i];
+            const p = box.point = points[i];
+
+            this._setPointStyle(box, p);
         })
     }
 

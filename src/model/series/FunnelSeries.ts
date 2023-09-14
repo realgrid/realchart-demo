@@ -10,16 +10,32 @@ import { ISize } from "../../common/Size";
 import { IPercentSize, SizeValue, calcPercent, fixnum, parsePercentSize2 } from "../../common/Types";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { WidgetSeries } from "../Series";
+import { ILegendSource } from "../Legend";
+import { PointItemPosition, WidgetSeries } from "../Series";
 
-export class FunnelSeriesPoint extends DataPoint {
+export class FunnelSeriesPoint extends DataPoint implements ILegendSource {
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     height: number;
+    _calcedColor: string;
+
+    //-------------------------------------------------------------------------
+    // ILegendSource
+    //-------------------------------------------------------------------------
+    legendColor(): string {
+        return this._calcedColor;
+    }
+
+    legendLabel(): string {
+        return this.x;
+    }
 }
 
+/**
+ * @config chart.series[type=funnel]
+ */
 export class FunnelSeries extends WidgetSeries {
 
     //-------------------------------------------------------------------------
@@ -74,6 +90,11 @@ export class FunnelSeries extends WidgetSeries {
         };
     }
 
+    getLabelPosition(): PointItemPosition {
+        const p = this.pointLabel.position;
+        return p === PointItemPosition.AUTO ? PointItemPosition.INSIDE : p;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -81,8 +102,14 @@ export class FunnelSeries extends WidgetSeries {
         return 'funnel';
     }
 
-    protected _colorByPoint(): boolean {
+    _colorByPoint(): boolean {
         return true;
+    }
+
+    getLegendSources(list: ILegendSource[]): void {
+        this._runPoints.forEach(p => {
+            list.push(p as FunnelSeriesPoint);
+        })        
     }
 
     protected _createPoint(source: any): DataPoint {
@@ -125,31 +152,4 @@ export class FunnelSeries extends WidgetSeries {
     //     pts[i].yPos = y;
     //     pts[i].height = 1 - y;
     // }
-
-    prepareAfter(): void {
-        super.prepareAfter();
-
-        const pts = this._visPoints as FunnelSeriesPoint[];
-        let sum = 0;
-        let y = 0;
-
-        pts.forEach(p => {
-            sum += p.yValue;
-        });
-
-        const cnt = pts.length;
-        let i = 0;
-
-        for (; i < cnt - 1; i++) {
-            const p = pts[i];
-            const h = fixnum(p.yValue / sum);
-
-            p.yRate = h * 100;
-            p.yPos = y;
-            p.height = h;
-            y += h;
-        }
-        pts[i].yPos = y;
-        pts[i].height = 1 - y;
-    }
 }

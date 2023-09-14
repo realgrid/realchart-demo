@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     type: 'equalizer',
     title: "Multiple Equalizer",
@@ -31,7 +35,7 @@ const config = {
             // fill: 'yellow'
         }
     }, {
-        color: '#00880080',
+        // color: '#00880080',
         pointLabel: {
             visible: true,
             // position: 'head',

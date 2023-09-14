@@ -171,12 +171,12 @@ export class SlideAnimation extends SeriesAnimation {
     }
 }
 
-export class GrowAnimation extends RcAnimation {
+export abstract class PointAnimation extends RcAnimation {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _series: SeriesView<Series>;
+    protected _series: SeriesView<Series>;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -188,6 +188,28 @@ export class GrowAnimation extends RcAnimation {
         this.start();
     }
 
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doStop(): void {
+        this._series = null;
+    }
+}
+
+/**
+ * bar의 크기를 줄인 상태에서 원복시킨다.
+ */
+export class GrowAnimation extends PointAnimation {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
     protected _doUpdate(rate: number): boolean {
         if (this._series.parent) {
             this._series.setViewRate(rate);
@@ -200,6 +222,30 @@ export class GrowAnimation extends RcAnimation {
         if (this._series.parent) {
             this._series.setViewRate(NaN);
         }
-        this._series = null;
+        super._doStop();
+    }
+}
+
+/**
+ * 원점 등에 포인트들을 모아 놓은 후 위치를 원복시킨다.
+ */
+export class UnfoldAnimation extends PointAnimation {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doUpdate(rate: number): boolean {
+        if (this._series.parent) {
+            this._series.setPosRate(rate);
+            return true;
+        }
+    }
+
+    protected _doStop(): void {
+        // animation 기간 중 제거됐을 수 있다.
+        if (this._series.parent) {
+            this._series.setPosRate(NaN);
+        }
+        super._doStop();
     }
 }

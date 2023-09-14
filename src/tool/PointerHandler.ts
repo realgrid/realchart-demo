@@ -8,10 +8,11 @@
 
 import { IPointerHandler } from "../common/RcControl";
 import { ChartControl } from "../main";
+import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { Series } from "../model/Series";
 import { CreditView } from "../view/ChartView";
-import { SeriesView } from "../view/SeriesView";
+import { SeriesView, WidgetSeriesView } from "../view/SeriesView";
 
 const DRAG_THRESHOLD = 3;
 
@@ -48,7 +49,19 @@ export class ChartPointerHandler implements IPointerHandler {
         let series: SeriesView<Series>;
 
         if (legend = chart.legendByDom(elt)) {
-            legend.source.visible = !legend.source.visible;
+            if (legend.source instanceof DataPoint) {
+                const p = legend.source;
+                const ser = this._chart.model.seriesByPoint(p);
+
+                if (ser) {
+                    ser.setPointVisible(p, !p.visible);
+
+                    const v = this._chart.chartView().findSeriesView(ser);
+                    v instanceof WidgetSeriesView && v.togglePointVisible(p);
+                }
+            } else {
+                legend.source.visible = !legend.source.visible;
+            }
         } else if (series = chart.seriesByDom(elt)) {
             series.clicked(elt)
         } else if (credit = chart.creditByDom(elt)) {

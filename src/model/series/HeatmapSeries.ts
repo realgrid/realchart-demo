@@ -11,20 +11,20 @@ import { DataPoint } from "../DataPoint";
 import { IPlottingItem, Series } from "../Series";
 
 /**
- * [y, color],
- * [x, y, color]
+ * [y, heat],
+ * [x, y, heat]
  */
 export class HeatmapSeriesPoint extends DataPoint {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    color: any;
+    heat: any;
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    colorValue: number;
+    heatValue: number;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -32,16 +32,16 @@ export class HeatmapSeriesPoint extends DataPoint {
     parse(series: HeatmapSeries): void {
         super.parse(series);
 
-        this.colorValue = parseFloat(this.color);
+        this.heatValue = parseFloat(this.heat);
 
-        this.isNull ||= isNaN(this.colorValue);
+        this.isNull ||= isNaN(this.heatValue);
     }
 
     protected _readArray(series: HeatmapSeries, v: any[]): void {
         const d = v.length > 2 ? 1 : 0;
 
         this.y = v[pickNum(series.yField, 0 + d)];
-        this.color = v[pickNum(series.colorField, 1 + d)];
+        this.heat = v[pickNum(series.heatField, 1 + d)];
         if (d > 0) {
             this.x = v[pickNum(series.xField, 0)];
         }
@@ -50,7 +50,7 @@ export class HeatmapSeriesPoint extends DataPoint {
     protected _readObject(series: HeatmapSeries, v: any): void {
         super._readObject(series, v);
 
-        this.color = pickProp(v[series.colorField], v.color);
+        this.heat = pickProp(v[series.heatField], v.color);
     }
 
     protected _readSingle(v: any): void {
@@ -58,7 +58,7 @@ export class HeatmapSeriesPoint extends DataPoint {
     }
 
     getLabel(index: number) {
-        return this.color;
+        return this.heat;
     }
 }
 
@@ -67,19 +67,21 @@ export class HeatmapSeriesPoint extends DataPoint {
  * 1. color-axis가 연결되면 거기에서 색을 가져온다.
  * 2. series의 minColor, maxColor 사이의 색으로 가져온다.
  * 3. series의 기본 색상과 흰색 사이의 색으로 가져온다.
+ * 
+ * @config chart.series[type=heatmap]
  */
 export class HeatmapSeries extends Series {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    colorField: string;
+    heatField: string;
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _colorMin: number;
-    _colorMax: number;
+    _heatMin: number;
+    _heatMax: number;
 
     //-------------------------------------------------------------------------
     // methods
@@ -114,13 +116,13 @@ export class HeatmapSeries extends Series {
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
-        this._colorMin = Number.MAX_VALUE;
-        this._colorMax = Number.MIN_VALUE;
+        this._heatMin = Number.MAX_VALUE;
+        this._heatMax = Number.MIN_VALUE;
 
-        (this._visPoints as HeatmapSeriesPoint[]).forEach(p => {
-            if (!isNaN(p.colorValue)) {
-                this._colorMin = Math.min(this._colorMin, p.colorValue);
-                this._colorMax = Math.max(this._colorMax, p.colorValue);
+        (this._runPoints as HeatmapSeriesPoint[]).forEach(p => {
+            if (!isNaN(p.heatValue)) {
+                this._heatMin = Math.min(this._heatMin, p.heatValue);
+                this._heatMax = Math.max(this._heatMax, p.heatValue);
             }
         })
     }

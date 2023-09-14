@@ -12,11 +12,12 @@ import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
 import { LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
+import { SVGStyleOrClass } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { SvgShapes } from "../common/impl/SvgShape";
 import { DataPoint } from "../model/DataPoint";
-import { ClusterableSeries, DataPointLabel, PointItemPosition, Series } from "../model/Series";
+import { ClusterableSeries, DataPointLabel, PointItemPosition, Series, WidgetSeries } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { ChartElement } from "./ChartElement";
 import { SeriesAnimation } from "./animation/SeriesAnimation";
@@ -81,7 +82,7 @@ export class PointLabelContainer extends GroupElement {
     // constructors
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-series-labels');
+        super(doc, 'rct-point-labels');
 
         this.setStyle('pointerEvents', 'none');
     }
@@ -288,12 +289,14 @@ export type LabelLayoutInfo = {
     labelOff: number
 };
 
+const PALETTE_LEN = 12;
+
 export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly POINT_CLASS = 'rct-data-point';
+    static readonly POINT_CLASS = 'rct-point';
     static readonly DATA_FOUCS = 'focus'
 
     //-------------------------------------------------------------------------
@@ -303,6 +306,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     private _labelContainer: PointLabelContainer;
     private _trendLineView: PathElement;
 
+    protected _visPoints: DataPoint[];
     protected _inverted = false;
     protected _animatable = true;
     private _viewRate = NaN;
@@ -320,6 +324,10 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    invertable(): boolean {
+        return true;
+    }
+
     getClipContainer(): RcElement {
         return this._pointContainer;
     }
@@ -333,6 +341,9 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
                 this._doViewRateChanged(rate);
             }
         }
+    }
+
+    setPosRate(rate: number): void {
     }
 
     protected _doViewRateChanged(rate: number): void {
@@ -359,6 +370,10 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         return this._getPointPool().elementOf(elt) as any;
     }
 
+    findPoint(p: DataPoint): RcElement {
+        return this._getPointPool().find(v => (v as any).point === p);
+    }
+
     clicked(elt: Element): void {
         const view = this.pointByDom(elt);
 
@@ -369,14 +384,31 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         // console.log('CLICKED: ' + view.point.yValue);
     }
 
+    protected _getColor(): string {
+        return this.model._calcedColor;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         this.setClip(void 0);
         // this._viewRate = NaN; // animating 중 다른 시리즈 등의 요청에 의해 여기로 진입할 수 있다.
+        this.setData('index', (model.index % PALETTE_LEN) as any);
+        this.setBoolData('pointcolors', model._colorByPoint());
+
+        this._visPoints = this._prepareVisPoints(model);
         this._prepareSeries(doc, model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
+
+        this.internalClearStyleAndClass();
+        this.internalSetStyleOrClass(model.style);
+        if (model.color) {
+            this.internalSetStyle('fill', model.color);
+            this.internalSetStyle('stroke', model.color);
+        }
+
+        this.model._calcedColor = getComputedStyle(this.dom).fill;
 
         if (model.trendline.visible) {
             if (!this._trendLineView) {
@@ -405,6 +437,33 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
+
+    protected _prepareVisPoints(model: T): DataPoint[] {
+        return model.collectVisibles();
+    }
+
+    private $_setColorIndex(v: RcElement, p: DataPoint): void {
+        v.setData('index', (p.index % PALETTE_LEN) as any);
+    }
+
+    protected _setPointStyle(v: RcElement, p: DataPoint, styles?: any[]): void {
+        v.setAttr('aria-label', p.ariaHint());
+        this.$_setColorIndex(v, p);
+        v.internalClearStyleAndClass();
+
+        // 정적 point style (ex, line marker)
+        if (styles) {
+            styles.forEach(st => st && v.internalSetStyleOrClass(st));
+        }
+        // config에서 지정한 point color
+        if (p.color) {
+            v.internalSetStyle('fill', p.color);
+            v.internalSetStyle('stroke', p.color);
+        }
+        // 동적 스타일
+        const st = this.model.getPointStyle(p);
+        st && v.internalSetStyleOrClass(st);
+    }
 
     protected _labelViews(): PointLabelContainer {
         this._labelContainer.setVisible(this.model.pointLabel.visible && !this._animating());
@@ -530,7 +589,7 @@ export abstract class BoxPointElement extends PathElement implements IPointView 
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-box-point');
+        super(doc, SeriesView.POINT_CLASS);
     }
 
     //-------------------------------------------------------------------------
@@ -565,7 +624,7 @@ export abstract class ClusterableSeriesView<T extends Series> extends SeriesView
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareSeries(doc: Document, model: T): void {
-        this._preparePointViews(doc, model, model._visPoints);
+        this._preparePointViews(doc, model, this._visPoints);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -743,4 +802,81 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+}
+
+class ZombiAnimation extends RcAnimation {
+
+    constructor(public series: WidgetSeriesView<WidgetSeries>) {
+        super();
+
+        this.duration = 300;
+    }
+
+    protected _doUpdate(rate: number): boolean {
+        if (this.series) {
+            this.series._zombieRate = this.series._zombie.visible ? rate : 1 - rate;
+            this.series._resizeZombie();
+            return true;
+        }
+        return false;
+    }
+
+    protected _doStop(): void {
+        if (this.series) {
+            this.series._zombie = null;
+            this.series._zombieAni = null;
+            this.series.control.invalidateLayout();
+            this.series = null;
+        }
+    }
+}
+
+export abstract class WidgetSeriesView<T extends WidgetSeries> extends SeriesView<T> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _willZombie: DataPoint;
+    _zombie: DataPoint;
+    _zombieRate: number;
+    _zombieAni: ZombiAnimation;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    togglePointVisible(p: DataPoint): void {
+        this._willZombie = p;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _prepareVisPoints(model: T): DataPoint[] {
+        let pts = super._prepareVisPoints(model);
+
+        if (this._willZombie && !this._willZombie.visible) {
+            pts.push(this._willZombie);
+            pts = pts.sort((p1, p2) => p1.index - p2.index);
+        }
+        return pts;
+    }
+
+    protected _prepareSeries(doc: Document, model: T): void {
+        if (this._zombie) {
+            this._zombie = null;
+            this._zombieAni?.stop();
+            this._zombieAni = null;
+        }
+        if (this._willZombie) {
+            this._zombie = this._willZombie;
+            this._willZombie = null;
+            this._zombieAni = new ZombiAnimation(this);
+            this._zombieAni.start();
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    abstract _resizeZombie(): void;
 }

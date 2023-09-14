@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     title: "Funnel Series",
     options: {
@@ -5,7 +9,7 @@ const config = {
     },
     legend: {
         position: 'right',
-        layout: 'vertical',
+        // layout: 'vertical',
         style: {
             marginTop: '16px',
             marginRight: '20px'
@@ -22,9 +26,8 @@ const config = {
         // neckHeight: 0,
         pointLabel: {
             visible: true,
-            style: {
-                fill: '#eee'
-            }
+            text: "${name} (${y})",
+            // effect: 'outline'
         },
         data: [ 
             { name: 'moon', y: 53, sliced: true }, 
@@ -37,6 +40,8 @@ const config = {
         ],
     }
 }
+
+let animate = false;
 let chart;
 
 function setActions(container) {
@@ -44,9 +49,20 @@ function setActions(container) {
         RealChart.setDebugging(_getChecked(e));
         chart.refresh();
     }, false);
+    createCheckBox(container, 'Always Animate', function (e) {
+        animate = _getChecked(e);
+    }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'Reversed', function (e) {
+        config.series.reversed = _getChecked(e);
+        chart.update(config, animate);
+    }, false);
+    createListBox(container, "Legend.position", ['bottom', 'top', 'right', 'left'], function (e) {
+        config.legend.position = _getValue(e);
+        chart.update(config, animate);
+    }, 'right');
 }
 
 function init() {

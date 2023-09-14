@@ -25,7 +25,7 @@ class CellView extends RectElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-heatmap-point');
+        super(doc, SeriesView.POINT_CLASS);
     }
 }
 
@@ -53,7 +53,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: HeatmapSeries): void {
-        this.$_parepareCells(model._visPoints as HeatmapSeriesPoint[]);
+        this.$_parepareCells(this._visPoints as HeatmapSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -70,7 +70,9 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     //-------------------------------------------------------------------------
     private $_parepareCells(points: HeatmapSeriesPoint[]): void {
         this._cells.prepare(points.length, (v, i) => {
-            v.point = points[i];
+            const p = v.point = points[i];
+
+            this._setPointStyle(v, p);
         });
     }
 
@@ -84,7 +86,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         const yAxis = series._yAxisObj;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
-        const color = new Color(series.color);
+        const color = new Color(this._getColor());
 
         this._cells.forEach(cell => {
             const p = cell.point as HeatmapSeriesPoint;
@@ -103,7 +105,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
                 y = (p.yPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
     
                 cell.setBounds(x, y, wPoint, hPoint);
-                cell.setStyle('fill', color.brighten(1 - p.colorValue / series._colorMax).toString());
+                cell.setStyle('fill', color.brighten(1 - p.heatValue / series._heatMax).toString());
     
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {

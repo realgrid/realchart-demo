@@ -9,11 +9,8 @@
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
-import { DataPoint } from "../../model/DataPoint";
-import { LinearAxis } from "../../model/axis/LinearAxis";
 import { HistogramSeries, HistogramSeriesPoint } from "../../model/series/HistogramSeries";
-import { BoxPointElement, BoxedSeriesView, ClusterableSeriesView, LabelLayoutInfo, SeriesView } from "../SeriesView";
-import { SeriesAnimation } from "../animation/SeriesAnimation";
+import { BoxPointElement, ClusterableSeriesView, LabelLayoutInfo, SeriesView } from "../SeriesView";
 
 class BarElement extends BoxPointElement {
 
@@ -118,7 +115,9 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
     //-------------------------------------------------------------------------
     private $_parepareBars(doc: Document, points: HistogramSeriesPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
-            v.point = points[i];
+            const p = v.point = points[i];
+
+            this._setPointStyle(v, p);
         });
     }
 

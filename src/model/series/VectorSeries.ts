@@ -12,6 +12,7 @@ import { DataPoint } from "../DataPoint";
 import { Series } from "../Series";
 
 /**
+ * [y, length, angle]
  * [x, y, length, angle]
  */
 export class VectorSeriesPoint extends DataPoint {
@@ -82,6 +83,8 @@ export enum ArrowHead {
 }
 
 /**
+ * 
+ * @config chart.series[type=vector]
  */
 export class VectorSeries extends Series {
 
@@ -123,7 +126,7 @@ export class VectorSeries extends Series {
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
-        const pts = this._visPoints as VectorSeriesPoint[];
+        const pts = this._runPoints as VectorSeriesPoint[];
 
         if (pts.length > 0) {
             const len = this.maxLength;

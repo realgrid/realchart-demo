@@ -11,6 +11,10 @@ import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { BasedSeries, ClustrableSeriesGroup, IClusterable, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
 
+/**
+ * [y]
+ * [x, y]
+ */
 export class BarSeriesPoint extends DataPoint {
     
     //-------------------------------------------------------------------------
@@ -19,6 +23,9 @@ export class BarSeriesPoint extends DataPoint {
     // borderRaidus: number;
 }
 
+/**
+ * @config chart.series[type=bar]
+ */
 export class BarSeries extends BasedSeries {
 
     //-------------------------------------------------------------------------
@@ -31,6 +38,7 @@ export class BarSeries extends BasedSeries {
     // properties
     //-------------------------------------------------------------------------
     borderRaidus = 0;
+    colorByPoint = false;
 
     //-------------------------------------------------------------------------
     // methods
@@ -46,6 +54,10 @@ export class BarSeries extends BasedSeries {
         return true;
     }
 
+    _colorByPoint(): boolean {
+        return this.colorByPoint;
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new BarSeriesPoint(source);
     }
@@ -55,6 +67,9 @@ export class BarSeries extends BasedSeries {
     }
 }
 
+/**
+ * @config chart.series[type=bargroup]
+ */
 export class BarSeriesGroup extends ClustrableSeriesGroup<BarSeries> implements IClusterable {
 
     //-------------------------------------------------------------------------
@@ -63,6 +78,9 @@ export class BarSeriesGroup extends ClustrableSeriesGroup<BarSeries> implements 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     baseValue = 0;
 
     //-------------------------------------------------------------------------

@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     title: "Bar Group - Negative",
     options: {
@@ -15,7 +19,7 @@ const config = {
     },
     series: [{
         // layout: 'stack',
-        series: [{
+        children: [{
             name: 'column1',
             pointLabel: {
                 visible: true,

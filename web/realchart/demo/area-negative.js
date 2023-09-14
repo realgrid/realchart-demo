@@ -1,3 +1,8 @@
+/**
+ * @demo
+ * 
+ * Area 시리즈의 음수 영역을 구분해서 표시한다.
+ */
 const config = {
     options: {},
     title: "Area - Negative",

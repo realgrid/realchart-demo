@@ -49,7 +49,7 @@ class BoxView extends GroupElement implements IPointView {
         const yHigh = y + h - h * (p.highValue - p.minValue) / len;
         const hBox = h * (p.highValue - p.lowValue) / len;
 
-        this._box.setStyle('fill', p.color);
+        p.color && this._box.setStyle('fill', p.color);
 
         this._stemUp.setVLine(x, y, yHigh);
         this._stemDown.setVLine(x, yLow, h);
@@ -104,7 +104,9 @@ export class BoxPlotSeriesView extends RangedSeriesView<BoxPlotSeries> {
 
     protected _preparePointViews(doc: Document, model: BoxPlotSeries, points: BoxPlotSeriesPoint[]): void {
         this._boxes.prepare(points.length, (box, i) => {
-            box.point = points[i];
+            const p = box.point = points[i];
+
+            this._setPointStyle(box, p);
         })
     }
 }

@@ -43,7 +43,7 @@ export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-Waterfall-series')
+        super(doc, 'rct-waterfall-series')
 
         this.add(this._lineContainer = new LayerElement(doc, 'rct-waterfall-series-lines'));
         this._lines = new ElementPool(this._lineContainer, LineElement);
@@ -98,9 +98,9 @@ export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
     //-------------------------------------------------------------------------
     private $_parepareBars(doc: Document, points: WaterfallSeriesPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
-            const p = points[i];
+            const p = v.point = points[i];
 
-            v.point = p;
+            this._setPointStyle(v, p);
             v.setStyleOrClass(p._isSum ? 'rct-waterfall-point-sum' : p.y < 0 ? 'rct-waterfall-point-negative' : '');
         });
 

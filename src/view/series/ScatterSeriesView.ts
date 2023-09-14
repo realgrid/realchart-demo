@@ -25,7 +25,7 @@ class MarkerView extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-scatter-point-marker');
+        super(doc, SeriesView.POINT_CLASS);
     }
 }
 
@@ -52,8 +52,12 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
         return this._markers;
     }
 
+    invertable(): boolean {
+        return false;
+    }
+
     protected _prepareSeries(doc: Document, model: ScatterSeries): void {
-        this.$_prepareMarkers(model._visPoints as ScatterSeriesPoint[]);
+        this.$_prepareMarkers(this._visPoints as ScatterSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -68,23 +72,20 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
     private $_prepareMarkers(points: ScatterSeriesPoint[]): void {
         const series = this.model;
         const color = series.color;
-        const marker = series.marker;
         const count = points.length;
 
         this._pointContainer.setStyle('fill', color);
 
-        this._markers.prepare(count, (m, i) => {
-            const p = points[i];
+        this._markers.prepare(count, (mv, i) => {
+            const p = mv.point = points[i];
 
-            m.point = p;
-            // m.setStyle('fill', color);
+            this._setPointStyle(mv, p);
         })
     }
 
     private $_layoutMarkers(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
-        const marker = series.marker;
         const labels = series.pointLabel;
         const labelOff = labels.offset;
         const labelViews = this._labelViews();
@@ -100,8 +101,8 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
             const p = mv.point;
 
             if (mv.setVisible(!p.isNull)) {
-                const s = marker.shape;
-                const sz = marker.radius;
+                const s = series.shape;
+                const sz = series.radius;
                 let path: (string | number)[];
                 let x: number;
                 let y: number;

@@ -1,5 +1,11 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     title: "Pie Series",
+    options: {
+    },
     legend: {
         position: 'right',
         layout: 'auto',
@@ -15,14 +21,15 @@ const config = {
         type: 'pie',
         pointLabel: {
             visible: true,
-            effect: 'outline',
+            text: "${name} (${y})",
+            // effect: 'outline',
             style: {
                 // fill: '#eee'
             }
         },
         data: [ 
             { name: 'moon', y: 53, sliced: true }, 
-            { name: 'yeon', y: 97, color: '#0088ff' }, 
+            { name: 'yeon', y: 97 },// color: '#0088ff' }, 
             { name: 'lim', y: 17}, 
             { name: 'moon', y: 9}, 
             { name: 'hong', y: 13 }, 
@@ -50,6 +57,10 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createListBox(container, "options.palette", ['default', 'warm', 'cool', 'forest', 'gray'], function (e) {
+        config.options.palette = _getValue(e);
+        chart.update(config, animate);
+    }, 'default');
     createListBox(container, "Legend.position", ['bottom', 'top', 'right', 'left'], function (e) {
         config.legend.position = _getValue(e);
         chart.update(config, animate);

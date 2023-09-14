@@ -1,3 +1,8 @@
+/**
+ * @demo
+ * 
+ * Multiple area series.
+ */
 const config = {
     type: "area",
     options: {},

@@ -49,13 +49,10 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    protected _prepareBelow(series: AreaSeries, w: number, h: number): boolean {
+    protected _prepareBelow(series: AreaSeries): boolean {
         let lowArea = this._lowArea;
 
-        this._area.setStyle('fill', this.model.color);
-        this._lowArea?.setStyle('fill', this.model.color);
-
-        if (super._prepareBelow(series, w, h)) {
+        if (super._prepareBelow(series)) {
             if (!lowArea) {
                 this._lineContainer.insertChild(lowArea = this._lowArea = new PathElement(this.doc, 'rct-area-series-area'), this._area);
             }
@@ -143,18 +140,15 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         }
 
         area.setPath(s = sb.end());
-
-        area.clearStyleAndClass();
-        area.setStyle('fill', series.color);
-        area.addStyleOrClass(series.style);
+        area.internalClearStyleAndClass();
+        series.color && area.setStyle('fill', series.color);
+        series.style && area.internalSetStyleOrClass(series.style);
 
         if (lowArea) {
             lowArea.setPath(s);
-
-            lowArea.clearStyleAndClass();
-            lowArea.setStyle('fill', series.color);
-            lowArea.setStyleOrClass(series.style);
-            lowArea.setStyleOrClass(series.belowStyle);
+            lowArea.internalClearStyleAndClass();
+            series.color && lowArea.setStyle('fill', series.color);
+            series.belowStyle && lowArea.internalSetStyleOrClass(series.belowStyle);
         }
     }
 

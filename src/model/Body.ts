@@ -60,12 +60,12 @@ export class Body extends ChartItem {
     }
 
     getPolar(series: Series): {start: number, cx: number, cy: number, rd: number, deg: number} {
-        return this.chart._polar ? {
+        return this.chart.isPolar() ? {
             start: this.getStartAngle(),
             cx: this._cx,
             cy: this._cy,
             rd: this._rd,
-            deg: Math.PI * 2 / series._visPoints.length
+            deg: Math.PI * 2 / series._runPoints.length
         } : _undefined;
     }
 

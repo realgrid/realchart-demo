@@ -78,6 +78,9 @@ export class AxisLine extends AxisItem {
     }
 }
 
+/**
+ * @config axis.title
+ */
 export class AxisTitle extends AxisItem {
 
     //-------------------------------------------------------------------------
@@ -85,6 +88,8 @@ export class AxisTitle extends AxisItem {
     //-------------------------------------------------------------------------
     /**
      * 타이틀 텍스트.
+     * 
+     * @config
      */
     text: string;
     /**
@@ -92,8 +97,14 @@ export class AxisTitle extends AxisItem {
      * <br>
      * 
      * @default 5 pixels
+     * @config
      */
     gap = 5;
+    /**
+     * 타이틀 배경 스타일.
+     * 
+     * @config
+     */
     backgroundStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
@@ -118,14 +129,25 @@ export class AxisTitle extends AxisItem {
  * visible 기본값이 undefined이다.
  * <br>
  * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
+ * 
+ * @config axis.grid
  */
 export class AxisGrid extends AxisItem {
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     circular = false;
+    /**
+     * @config
+     */
     startVisible = true;
+    /**
+     * @config
+     */
     endVisible = true;
 
     //-------------------------------------------------------------------------
@@ -152,6 +174,9 @@ export class AxisGrid extends AxisItem {
     //-------------------------------------------------------------------------
 }
 
+/**
+ * @config axis.guide.label
+ */
 export class AxisGuideLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
@@ -169,11 +194,15 @@ export class AxisGuideLabel extends FormattableText {
     //-------------------------------------------------------------------------
     /**
      * 수평 정렬.
+     * 
+     * @config
      */
     align = Align.LEFT;
 
     /**
      * 수직 정렬.
+     * 
+     * @config
      */
     verticalAlign = VerticalAlign.TOP;
 
@@ -424,6 +453,8 @@ export enum AxisPosition {
 
 /**
  * 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.
+ * 
+ * @config chart.axis
  */
 export abstract class Axis extends ChartItem implements IAxis {
 
@@ -469,33 +500,42 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     /**
      * 표시 위치.
+     * 
+     * @config
      */
     position = AxisPosition.NORMAL;
     /**
      * true면 반대 방향으로 point 위치들이 지정된다.
+     * 
+     * @config
      */
     reversed = false;
     /**
      * 명시적으로 지정하는 최소값.
-     * <br>
      * 축에 연결된 data point들의 값으로 계산된 최소값 대신 이 값이 축의 최소값이 된다.
      * {@link minPadding}도 무시된다.
+     * 
+     * @config
      */
     min: number;
     /**
      * 명시적으로 지정하는 최대값.
-     * <br>
      * 축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.
      * {@link maxPadding}도 무시된다.
+     * 
+     * @config
      */
     max: number;
     /**
      * Plot 영역이나 앞쪽 축 사이의 여백 크기.
-     * <br>
+     * 
+     * @confg
      */
     marginNear = 0;
     /**
      * 차트 경계나 뒤쪽 축 사이의 여백 크기.
+     * 
+     * @confg
      */
     marginFar = 0;
 

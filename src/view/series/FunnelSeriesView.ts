@@ -9,8 +9,9 @@
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
+import { fixnum } from "../../common/Types";
 import { FunnelSeries, FunnelSeriesPoint } from "../../model/series/FunnelSeries";
-import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class FunnelSegment extends PathElement implements IPointView {
@@ -24,11 +25,11 @@ class FunnelSegment extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-funnel-point');
+        super(doc, SeriesView.POINT_CLASS);
     }
 }
 
-export class FunnelSeriesView extends SeriesView<FunnelSeries> {
+export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -52,10 +53,13 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: FunnelSeries): void {
-        this.$_prepareSegments(model._visPoints as FunnelSeriesPoint[]);
+        super._prepareSeries(doc, model);
+
+        this.$_prepareSegments(this._visPoints as FunnelSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
+        this.$_calcRates(this._visPoints as FunnelSeriesPoint[]);
         this.$_layoutSegments(width, height);
     }
 
@@ -63,18 +67,44 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
         firstTime && SeriesAnimation.slide(this, { from: this.model.reversed ? 'bottom' : 'top'});
     }
 
+    _resizeZombie(): void {
+        this._renderSeries(this.width, this.height);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_prepareSegments(points: FunnelSeriesPoint[]): void {
-        const count = points.length;
+    private $_prepareSegments(pts: FunnelSeriesPoint[]): void {
+        this._segments.prepare(pts.length, (seg, i) => {
+            const p = seg.point = pts[i];
 
-        this._segments.prepare(count, (m, i) => {
-            const p = points[i];
-
-            m.point = p;
-            m.setStyle('fill', p.color);
+            this._setPointStyle(seg, p);
+            p._calcedColor = getComputedStyle(seg.dom).fill;
         })
+    }
+
+    private $_calcRates(pts: FunnelSeriesPoint[]): void {
+        let sum = 0;
+        let y = 0;
+
+        pts.forEach(p => {
+            sum += p.yValue * (p === this._zombie ? this._zombieRate : 1);
+        });
+
+        const cnt = pts.length;
+        let i = 0;
+
+        for (; i < cnt - 1; i++) {
+            const p = pts[i];
+            const h = fixnum((p.yValue * (p === this._zombie ? this._zombieRate : 1)) / sum);
+
+            p.yRate = h * 100;
+            p.yPos = y;
+            p.height = h;
+            y += h;
+        }
+        pts[i].yPos = y;
+        pts[i].height = 1 - y;
     }
 
     private $_layoutSegments(width: number, height: number): void {
@@ -88,8 +118,8 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
         }
 
         const series = this.model;
-        const labels = series.pointLabel;
         const labelViews = this._labelViews();
+        const labelInside = series.getLabelPosition();
         const reversed = series.reversed;
         const sz = series.getSize(width, height);
         const szNeck = series.getNeckSize(width, height);
@@ -136,7 +166,7 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
     
                 const path = builder.close(true);
                 seg.setPath(path);
-    
+
                 p.xPos = xMid;
                 p.yPos = y + (y2 - y) / 2;
     
@@ -145,6 +175,7 @@ export class FunnelSeriesView extends SeriesView<FunnelSeries> {
                     const r = labelView.getBBounds();
     
                     labelView.translate(xMid - r.width / 2, y + ((y2 - y) - r.height) / 2);
+                    labelView.setContrast(labelInside && seg.dom);
                 }
             }
         });

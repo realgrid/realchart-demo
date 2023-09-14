@@ -145,7 +145,7 @@ export class ContinuousAxisTick extends AxisTick {
             max = base;
         }
 
-        let count = Math.floor(length / this.stepPixels) + 1;
+        let count = Math.floor(length / pixels) + 1;
         let step = len / (count - 1);
         const scale = Math.pow(10, Math.floor(Math.log10(step)));
         const multiples = this._getStepMultiples(step);
@@ -287,6 +287,9 @@ export enum AxisFit {
     VALUE = 'value'
 }
 
+/**
+ * 연속 축 기반.
+ */
 export abstract class ContinuousAxis extends Axis {
 
     //-------------------------------------------------------------------------
@@ -317,14 +320,17 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     /**
      * tick 개수를 맞춰야 하는 대상 axis.
-     * <br>
      * base의 strictMin, strictMax가 설정되지 않아야 한다.
      * base의 startFit, endFilt의 {@link AxisFit.TICK}으로 설정되어야 한다.
+     * 
+     * @config
      */
     tickBase: number | string;
 
     /**
      * data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.
+     * 
+     * @config
      */
     nullable = true;
     /**
@@ -337,7 +343,6 @@ export abstract class ContinuousAxis extends Axis {
     padding = 0.05;
     /**
      * 첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
-     * <br>
      * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.
      * {@link startFit}이 {@link AxitFit.TICK}일 때,
      * data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
@@ -346,7 +351,6 @@ export abstract class ContinuousAxis extends Axis {
     minPadding: number;
     /**
      * 마지막 tick 뒤쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
-     * <br>
      * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.
      * {@link endFit}이 {@link AxitFit.TICK}일 때,
      * data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
@@ -359,13 +363,11 @@ export abstract class ContinuousAxis extends Axis {
 
     /**
      * 축 시작 위치에 tick 표시 여부.
-     * <br>
      * {@link strictMin}이 설정되고 {@link AxisFit.VALUE}로 적용된다.
      */
     startFit = AxisFit.DEFAULT;
     /**
      * 축 끝 위치에 tick 표시 여부.
-     * <br>
      * {@link strictMax}가 설정되면 무시되고 {@link AxisFit.VALUE}로 적용된다.
      */
     endFit = AxisFit.DEFAULT;
@@ -446,7 +448,6 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
-        if (this.name === 'baxis') debugger;
         const tick = this.tick as ContinuousAxisTick;
         let { min, max } = this._adjustMinMax(this._calcedMin = calcedMin, this._calcedMax = calcedMax);
         let base = this._base;
@@ -749,8 +750,9 @@ export abstract class ContinuousAxis extends Axis {
 
 /**
  * 선형 연속 축.
- * <br>
  * 값 사아의 비율과 축 길이 비율이 항상 동일한 축.
+ * 
+ * @config chart.axis[type=linear]
  */
 export class LinearAxis extends ContinuousAxis {
 

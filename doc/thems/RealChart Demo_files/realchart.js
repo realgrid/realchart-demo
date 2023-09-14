@@ -746,6 +746,14 @@
         static getEnumValues(type) {
             return Object.keys(type).map(key => type[key]);
         }
+        static checkEnumValue(type, value, def) {
+            const keys = Object.keys(type);
+            for (let i = keys.length - 1; i >= 0; i--) {
+                if (type[keys[i]] === value)
+                    return value;
+            }
+            return def;
+        }
         static compareText(s1, s2, ignoreCase = false) {
             s1 = s1 || '';
             s2 = s2 || '';
@@ -1486,16 +1494,15 @@
 
     var Shape;
     (function (Shape) {
-        Shape["LINE"] = "line";
-        Shape["LINES"] = "lines";
         Shape["CIRCLE"] = "circle";
         Shape["DIAMOND"] = "diamond";
         Shape["RECTANGLE"] = "rectangle";
         Shape["SQUARE"] = "square";
         Shape["TRIANGLE"] = "triangle";
         Shape["ITRIANGLE"] = "itriangle";
+        Shape["STAR"] = "star";
     })(Shape || (Shape = {}));
-    Utils.getEnumValues(Shape);
+    const Shapes = Utils.getEnumValues(Shape);
     const SECTOR_ERROR = 0.001;
     class SvgShapes {
         static line(x1, y1, x2, y2) {
@@ -1612,6 +1619,26 @@
                 'L', x + w / 2, y + h,
                 'Z'
             ];
+        }
+        static star(x, y, w, h) {
+            const cx = x + w / 2;
+            const cy = y + h / 2;
+            const rx = w / 2;
+            const ry = h / 2;
+            const rx2 = w / 4;
+            const ry2 = h / 4;
+            const a = Math.PI * 2 / 5;
+            const a2 = a / 2;
+            const path = [];
+            let start = -Math.PI / 2;
+            path.push('M', cx + rx * Math.cos(start), cy + ry * Math.sin(start));
+            for (let i = 0; i < 5; i++) {
+                path.push('L', cx + rx * Math.cos(start), cy + ry * Math.sin(start));
+                path.push('L', cx + rx2 * Math.cos(start + a2), cy + ry2 * Math.sin(start + a2));
+                start += a;
+            }
+            path.push('Z');
+            return path;
         }
     }
 
@@ -1784,8 +1811,19 @@
             this._defs.appendChild(clip.dom);
             return clip;
         }
+        addDef(element) {
+            this._defs.appendChild(element);
+        }
         removeDef(element) {
-            this._defs.removeChild(element.dom);
+            if (isString(element)) {
+                for (const elt in this._defs.children) {
+                    if (elt instanceof Element && elt.id === element) {
+                        element = elt;
+                        break;
+                    }
+                }
+            }
+            element instanceof Element && this._defs.removeChild(element);
         }
         containerToElement(element, x, y) {
             const cr = this._container.getBoundingClientRect();
@@ -2489,6 +2527,101 @@
         }
         setPath(path) {
             this._path.setPath(path);
+        }
+    }
+
+    class AssetItem {
+        constructor(source) {
+            this.source = source;
+        }
+    }
+    class LinearGradient extends AssetItem {
+        getEelement(doc) {
+            const elt = doc.createElementNS(SVGNS, LinearGradient.TYPE);
+            const stop1 = doc.createElementNS(SVGNS, 'stop');
+            const stop2 = doc.createElementNS(SVGNS, 'stop');
+            const color = this.source.color;
+            const alpha = isNull(this.source.opacity) ? 1 : this.source.opacity;
+            const color1 = isArray(color) ? color[0] : color;
+            const color2 = isArray(color) && color.length > 1 ? color[1] : 'white';
+            const alpha1 = isArray(alpha) ? alpha[0] : alpha;
+            const alpha2 = isArray(alpha) && alpha.length > 1 ? alpha[1] : alpha;
+            let { x1, x2, y1, y2 } = { x1: 0, x2: 0, y1: 0, y2: 0 };
+            elt.setAttribute('id', this.source.id);
+            switch (this.source.dir) {
+                case 'up':
+                    y1 = 1;
+                    break;
+                case 'right':
+                    x2 = 1;
+                    break;
+                case 'left':
+                    x1 = 1;
+                    break;
+                default:
+                    y2 = 1;
+                    break;
+            }
+            elt.setAttribute('x1', x1);
+            elt.setAttribute('y1', y1);
+            elt.setAttribute('x2', x2);
+            elt.setAttribute('y2', y2);
+            stop1.setAttribute('offset', '0');
+            stop1.setAttribute('stop-color', color1);
+            stop1.setAttribute('stop-opacity', alpha1);
+            stop2.setAttribute('offset', '1');
+            stop2.setAttribute('stop-color', color2);
+            stop1.setAttribute('stop-opacity', alpha2);
+            elt.appendChild(stop1);
+            elt.appendChild(stop2);
+            return elt;
+        }
+    }
+    LinearGradient.TYPE = 'linearGradient';
+    class RadialGradient extends AssetItem {
+        getEelement(doc) {
+            const elt = doc.createElementNS(SVGNS, RadialGradient.TYPE);
+            elt.setAttribute('id', this.source.id);
+            return elt;
+        }
+    }
+    RadialGradient.TYPE = 'radialGradient';
+    class AssetCollection {
+        constructor() {
+            this._items = [];
+        }
+        load(source) {
+            this._items = [];
+            if (isArray(source)) {
+                source.forEach(src => {
+                    let item = this.$_loadItem(src);
+                    item && this._items.push(item);
+                });
+            }
+            else if (isObject(source)) {
+                let item = this.$_loadItem(source);
+                item && this._items.push(item);
+            }
+        }
+        register(doc, owner) {
+            this._items.forEach(item => {
+                owner.addDef(item.getEelement(doc));
+            });
+        }
+        unregister(doc, owner) {
+            this._items.forEach(item => {
+                owner.removeDef(item.source.id);
+            });
+        }
+        $_loadItem(src) {
+            if (isObject(src) && src.type && src.id) {
+                switch (src.type) {
+                    case LinearGradient.TYPE:
+                        return new LinearGradient(src);
+                    case RadialGradient.TYPE:
+                        return new RadialGradient(src);
+                }
+            }
         }
     }
 
@@ -3415,6 +3548,9 @@
             this.position = LegendPosition.BOTTOM;
             this.layout = LegendLayout.AUTO;
             this.alignBase = LegendAlignBase.PLOT;
+            this.left = 10;
+            this.top = 10;
+            this.gap = 6;
             this.itemGap = 8;
             this.markerGap = 4;
             this.visible = void 0;
@@ -3428,9 +3564,12 @@
         isVisible() {
             return this.visible || (this.visible !== false && this._items.length > 1);
         }
+        getPosition() {
+            return this._position;
+        }
         getLayout() {
-            if (this.layout === LegendLayout.AUTO && this.position !== LegendPosition.PLOT) {
-                switch (this.position) {
+            if (this.layout === LegendLayout.AUTO && this._position !== LegendPosition.PLOT) {
+                switch (this._position) {
                     case LegendPosition.BOTTOM:
                     case LegendPosition.TOP:
                         return LegendLayout.HORIZONTAL;
@@ -3444,6 +3583,18 @@
         }
         prepareRender() {
             this._items = this.$_collectItems();
+        }
+        getMaxWidth(domain) {
+            return this._maxWidthDim ? calcPercent(this._maxWidthDim, domain) : domain;
+        }
+        getMaxHeight(domain) {
+            return this._maxHeightDim ? calcPercent(this._maxHeightDim, domain) : domain;
+        }
+        _doLoad(src) {
+            super._doLoad(src);
+            this._maxWidthDim = parsePercentSize(this.maxWidth, true);
+            this._maxHeightDim = parsePercentSize(this.maxHeight, true);
+            this._position = Utils.checkEnumValue(LegendPosition, this.position, LegendPosition.BOTTOM);
         }
         $_collectItems() {
             return this.chart._getLegendSources().map(src => {
@@ -3565,9 +3716,6 @@
         }
         load(source) {
             if (isArray(source)) {
-                source = source.sort((a, b) => {
-                    return ((isArray(a) || isObject(a)) ? 1 : 0) - ((isArray(b) || isObject(b)) ? 1 : 0);
-                });
                 this._points = this._owner.createPoints(source);
             }
             else {
@@ -3667,7 +3815,7 @@
     class CategoryAxis extends Axis {
         constructor() {
             super(...arguments);
-            this._map = new Map();
+            this._map = {};
             this._catPad = 0;
             this.padding = 0;
             this.categoryPadding = 0.1;
@@ -3699,16 +3847,18 @@
         _createLabelModel() {
             return new CategoryAxisLabel(this);
         }
+        collectValues() {
+            this.$_collectCategories(this._series);
+            super.collectValues();
+        }
         _doPrepareRender() {
             this._cats = [];
             this._weights = [];
-            this._collectCategories(this._series);
             this._minPad = pickNum3(this.minPadding, this.padding, 0);
             this._maxPad = pickNum3(this.maxPadding, this.padding, 0);
             this._catPad = pickNum(this.categoryPadding, 0);
         }
         _doBuildTicks(min, max, length) {
-            this.tick;
             const label = this.label;
             let cats = this._cats = this._categories.map(cat => cat.c);
             let weights = this._weights = this._categories.map(cat => cat.w);
@@ -3731,7 +3881,6 @@
             }
             pts.push(p / len);
             pts.push((p + this._maxPad) / len);
-            this._map.clear();
             for (let i = 1; i < pts.length - 2; i++) {
                 const v = min + i - 1;
                 ticks.push({
@@ -3739,7 +3888,6 @@
                     value: v,
                     label: label.getTick(cats[i - 1]),
                 });
-                this._map.set(cats[i - 1], v);
             }
             return ticks;
         }
@@ -3782,10 +3930,10 @@
                 return value;
             }
             else {
-                return this._map.get(value);
+                return this._map[value];
             }
         }
-        _collectCategories(series) {
+        $_collectCategories(series) {
             const categories = this.categories;
             const cats = this._categories = [];
             if (isArray(categories) && categories.length > 0) {
@@ -3815,6 +3963,8 @@
                     }
                 }
             }
+            this._map = {};
+            cats.forEach((cat, i) => this._map[cat.c] = i);
         }
     }
 
@@ -3989,6 +4139,10 @@
         canMaxPadding(axis) {
             return true;
         }
+        hasMarker() {
+            return false;
+        }
+        setShape(shape) { }
         _createPoint(source) {
             return new DataPoint(source);
         }
@@ -4245,7 +4399,14 @@
         }
         prepareRender() {
             const colors = this.chart.colors;
-            this._visibleSeries = this._series.filter(ser => ser.visible);
+            const visibles = this._visibleSeries = [];
+            let iShape = 0;
+            this._series.forEach(ser => {
+                ser.visible && visibles.push(ser);
+                if (ser.hasMarker()) {
+                    ser.setShape(Shapes[iShape++ % Shapes.length]);
+                }
+            });
             const nCluster = this._visibleSeries.filter(ser => ser.clusterable()).length;
             this._visibleSeries.forEach((ser, i) => {
                 ser.color = ser.color || colors[i++ % colors.length];
@@ -4260,7 +4421,7 @@
             this._visibles.forEach(item => item.prepareAfter());
         }
         $_loadItem(chart, src, index) {
-            let cls = src.series && (chart._getGroupType(src.type) || chart._getGroupType(chart.type));
+            let cls = isArray(src.children || src.series) && (chart._getGroupType(src.type) || chart._getGroupType(chart.type));
             if (cls) {
                 const g = new cls(chart);
                 g.load(src);
@@ -4483,7 +4644,7 @@
             return pts;
         }
         _doLoadProp(prop, value) {
-            if (prop === 'series') {
+            if (prop === 'children' || prop === 'series') {
                 this.$_loadSeries(this.chart, value);
                 return true;
             }
@@ -4789,7 +4950,7 @@
             else if (max <= base) {
                 max = base;
             }
-            let count = Math.floor(length / this.stepPixels) + 1;
+            let count = Math.floor(length / pixels) + 1;
             let step = len / (count - 1);
             const scale = Math.pow(10, Math.floor(Math.log10(step)));
             const multiples = this._getStepMultiples(step);
@@ -4940,8 +5101,6 @@
             this.$_findBaseAxis();
         }
         _doBuildTicks(calcedMin, calcedMax, length) {
-            if (this.name === 'baxis')
-                debugger;
             const tick = this.tick;
             let { min, max } = this._adjustMinMax(this._calcedMin = calcedMin, this._calcedMax = calcedMax);
             let base = this._base;
@@ -5546,8 +5705,17 @@
             this.marker = new LineSeriesMarker(this);
             this.nullAsBase = false;
         }
+        getShape() {
+            return this.marker.shape || this._shape;
+        }
         _createPoint(source) {
             return new LineSeriesPoint(source);
+        }
+        hasMarker() {
+            return true;
+        }
+        setShape(shape) {
+            this._shape = shape;
         }
     }
     var LineStepDirection;
@@ -5560,7 +5728,7 @@
             super(...arguments);
             this.lineType = LineType.DEFAULT;
             this.stepDir = LineStepDirection.FORWARD;
-            this.connectNulls = false;
+            this.connectNullPoints = false;
             this.baseValue = 0;
         }
         _type() {
@@ -5593,6 +5761,7 @@
             this.y = this.high = pickProp(this.high, this.low);
             this.lowValue = parseFloat(this.low);
             this.highValue = this.yValue = parseFloat(this.high);
+            this.isNull || (this.isNull = isNaN(this.lowValue));
         }
         _readArray(series, v) {
             const d = v.length > 2 ? 1 : 0;
@@ -5629,7 +5798,7 @@
         collectValues(axis, vals) {
             super.collectValues(axis, vals);
             if (vals && axis === this._yAxisObj) {
-                this._visPoints.forEach((p) => vals.push(p.lowValue));
+                this._visPoints.forEach((p) => !p.isNull && vals.push(p.lowValue));
             }
         }
     }
@@ -7063,6 +7232,10 @@
         'line': LineSeriesGroup,
         'area': AreaSeriesGroup,
         'pie': PieSeriesGroup,
+        'bargroup': BarSeriesGroup,
+        'linegroup': LineSeriesGroup,
+        'areagroup': AreaSeriesGroup,
+        'piegroup': PieSeriesGroup,
         'bump': BumpSeriesGroup
     };
     const series_types$1 = {
@@ -7105,8 +7278,8 @@
             this.floating = false;
             this.align = Align.RIGHT;
             this.verticalAlign = VerticalAlign.BOTTOM;
-            this.offsetX = 10;
-            this.offsetY = 5;
+            this.offsetX = 2;
+            this.offsetY = 1;
         }
     }
     class ChartOptions extends ChartItem {
@@ -7126,6 +7299,7 @@
             this.colors = ["#1bafdc", "#12d365", "#343ec3", "#81d8c1",
                 "#fe6a35", "#6b8abc", "#d568fb", "#2ee0ca", "#fa4b42", "#feb56a"];
             this.type = 'bar';
+            this._assets = new AssetCollection();
             this._options = new ChartOptions(this);
             this._title = new Title(this);
             this._subtitle = new Subtitle(this);
@@ -7141,13 +7315,19 @@
             return this.body.getStartAngle();
         }
         get xStart() {
-            return this._options.xStart;
+            return +this._options.xStart;
         }
         get xStep() {
-            return this._options.xStep;
+            return +this._options.xStep;
+        }
+        get xStepUnit() {
+            return;
         }
         animatable() {
             return this._options.animatable !== false;
+        }
+        get assets() {
+            return this._assets;
         }
         get options() {
             return this._options;
@@ -7250,6 +7430,7 @@
                     this[prop] = source[prop];
                 }
             });
+            this._assets.load(source.assets);
             this._options.load(source.options);
             this._title.load(source.title);
             this._subtitle.load(source.subtitle);
@@ -9705,24 +9886,26 @@
                     const n = i % count;
                     const p = points[n];
                     if (!p.isNull) {
-                        p.radius = marker.radius;
-                        p.shape = marker.shape;
                         mv.point = p;
                     }
                 });
             }
         }
         _layoutMarker(mv, x, y) {
-            const color = this.model.color;
+            const series = this.model;
+            const marker = series.marker;
+            const color = series.color;
             const p = mv.point;
-            const s = p.shape;
-            const sz = p.radius;
+            const s = p.shape || series.getShape();
+            const sz = mv._radius = pickNum(p.radius, marker.radius);
             let path;
             switch (s) {
-                case 'square':
-                case 'diamond':
-                case 'triangle':
-                case 'itriangle':
+                case Shape.SQUARE:
+                case Shape.RECTANGLE:
+                case Shape.DIAMOND:
+                case Shape.TRIANGLE:
+                case Shape.ITRIANGLE:
+                case Shape.STAR:
                     x -= sz;
                     y -= sz;
                     path = SvgShapes[s](0, 0, sz * 2, sz * 2);
@@ -9733,7 +9916,7 @@
             }
             mv.translate(x, y);
             mv.setPath(path);
-            mv.setStyle('stroke', 'gray');
+            marker.style && mv.setStyles(marker.style);
             mv.setStyle('fill', color);
         }
         _layoutMarkers(pts, width, height) {
@@ -9775,7 +9958,7 @@
                     if (lv) {
                         const r = lv.getBBounds();
                         lv.visible = true;
-                        lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? p.radius : 0));
+                        lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
                     }
                 }
                 else if (lv) {
@@ -12334,13 +12517,32 @@
         _setBackgroundStyle(back) {
             back.setStyleOrClass(this.model.backgroundStyles);
         }
+        _getDebugRect() {
+            const r = super._getDebugRect();
+            const gap = pickNum(this.model.gap, 0);
+            if (gap !== 0) {
+                switch (this.model.getPosition()) {
+                    case LegendPosition.BOTTOM:
+                        r.y += gap;
+                        r.height -= gap;
+                        break;
+                }
+            }
+            return r;
+        }
         _doMeasure(doc, model, hintWidth, hintHeight, phase) {
             const items = model.items();
             const vertical = this._vertical = model.getLayout() === LegendLayout.VERTICAL;
-            const gap = model.itemGap;
+            const itemGap = model.itemGap;
             const views = this._itemViews;
             let w = 0;
             let h = 0;
+            if (vertical) {
+                hintHeight = model.getMaxHeight(hintHeight);
+            }
+            else {
+                hintWidth = model.getMaxWidth(hintWidth);
+            }
             this.$_prepareItems(doc, items);
             views.forEach((v, i) => {
                 v._marker.setStyle('fill', items[i].source.legendColor());
@@ -12355,22 +12557,32 @@
                 }
             });
             if (vertical) {
-                h += (views.count - 1) * gap;
+                h += (views.count - 1) * itemGap;
+                w += pickNum(model.gap, 0);
             }
             else {
-                w += (views.count - 1) * gap;
+                w += (views.count - 1) * itemGap;
+                h += pickNum(model.gap, 0);
+                if (w > hintWidth) {
+                    debugger;
+                }
             }
             return Size.create(w, h);
         }
         _doLayout() {
             const vertical = this._vertical;
-            const gap = this.model.itemGap;
+            const model = this.model;
+            const gap = model.itemGap;
             const margin = this._margins;
             const pad = this._paddings;
-            let x = margin.left;
-            let y = margin.top;
-            x += pad.left;
-            y += pad.top;
+            let x = margin.left + pad.left;
+            let y = margin.top + pad.top;
+            if (model.position === LegendPosition.BOTTOM) {
+                y += pickNum(model.gap, 0);
+            }
+            else if (model.position === LegendPosition.RIGHT) {
+                x += pickNum(model.gap, 0);
+            }
             this._itemViews.forEach(v => {
                 v.resizeByMeasured().layout();
                 v.translate(x, y);
@@ -12879,7 +13091,7 @@
             if (this._creditView.setVisible(credit.visible)) {
                 sz = this._creditView.measure(doc, credit, w, h, phase);
                 if (!credit.floating) {
-                    h -= sz.height;
+                    h -= sz.height + credit.offsetY;
                 }
             }
             sz = this._titleSectionView.measure(doc, m, w, h, phase);
@@ -12928,10 +13140,10 @@
                 vCredit.resizeByMeasured();
                 if (!credit.floating) {
                     if (credit.verticalAlign === VerticalAlign.TOP) {
-                        h -= h1Credit = vCredit.height;
+                        h -= h1Credit = vCredit.height + credit.offsetY;
                     }
                     else {
-                        h -= h2Credit = vCredit.height;
+                        h -= h2Credit = vCredit.height + credit.offsetY;
                     }
                 }
             }
@@ -13043,13 +13255,12 @@
                 vCredit.layout();
                 switch (credit.verticalAlign) {
                     case VerticalAlign.TOP:
-                        cy = yOff;
                         break;
                     case VerticalAlign.MIDDLE:
                         cy = (height - vCredit.height) / 2 + yOff;
                         break;
                     default:
-                        cy = height - h2Credit - yOff;
+                        cy = height - h2Credit;
                         break;
                 }
                 switch (credit.align) {
@@ -13257,9 +13468,15 @@
         }
         set model(value) {
             if (value !== this._model) {
-                this._model && this._model.removeListener(this);
+                if (this._model) {
+                    this._model.assets.unregister(this.doc(), this);
+                    this._model.removeListener(this);
+                }
                 this._model = value;
-                this._model && this._model.addListener(this);
+                if (this._model) {
+                    this._model.addListener(this);
+                    this._model.assets.register(this.doc(), this);
+                }
                 this.invalidateLayout();
             }
         }
@@ -13290,7 +13507,7 @@
 
     class Globals {
         static getVersion() {
-            return '0.9.2';
+            return '0.9.3';
         }
         static setDebugging(debug) {
             RcElement.DEBUGGING = debug;

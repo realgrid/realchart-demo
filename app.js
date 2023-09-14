@@ -2,6 +2,7 @@ import http from "http";
 import express from "express";
 import path from "path";
 import reload from "reload";
+import cors from 'cors';
 
 const app = express();
 const root = path.resolve();
@@ -9,12 +10,16 @@ const root = path.resolve();
 app.set('port', 6010);
 app.set('reload', 6011);
 
+app.use(cors({
+    origin: '*'
+  }));
 app.use('/', express.static(root + "/web/"));
 app.use('/images/', express.static(root + "/web/realchart/asset/image/"));
 
 app.get('/', function (req, res) {
     res.sendFile(path.join(root, '/index.html'));
 });
+
 
 var server = http.createServer(app);
 

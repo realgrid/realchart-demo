@@ -25,7 +25,7 @@ class MarkerView extends PathElement implements IPointView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-bubble-point-marker');
+        super(doc, SeriesView.POINT_CLASS);
     }
 }
 
@@ -57,13 +57,16 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         return this._markers;
     }
 
-    protected _prepareSeries(doc: Document, model: BubbleSeries): void {
-        const pts = model.getPoints().getVisibles();
+    invertable(): boolean {
+        return false;
+    }
 
-        this.$_prepareMarkser(model._visPoints as BubbleSeriesPoint[]);
+    protected _prepareSeries(doc: Document, model: BubbleSeries): void {
+        this.$_prepareMarkser(this._visPoints as BubbleSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
+        // this._pointContainer.invert(this.model.chart.isInverted(), height);
         this.$_layoutMarkers(width, height);
     }
 
@@ -82,16 +85,16 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         const series = this.model;
         const zAxis = series._xAxisObj._length < series._yAxisObj._length ? series._xAxisObj : series._yAxisObj;
         const len = zAxis._length;
-        const marker = series.marker;
         const count = points.length;
         const {min, max} = series.getPxMinMax(len);
 
-        this._markers.prepare(count, (m, i) => {
-            const p = m.point = points[i];
+        this._markers.prepare(count, (mv, i) => {
+            const p = mv.point = points[i];
 
             p.radius = series.getRadius(p.zValue, min, max);
-            p.shape = marker.shape;
-            p.color && m.setStyle('fill', p.color);
+            p.shape = series.shape;
+
+            this._setPointStyle(mv, p);
         });
     }
 

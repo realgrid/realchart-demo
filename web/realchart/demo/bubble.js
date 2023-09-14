@@ -1,10 +1,17 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     options: {
+        // animatable: false
     },
     title: "Bubble Series",
     xAxis: {
+        title: 'xAxis'
     },
     yAxis: {
+        title: 'yAxis'
     },
     series: {
         type: 'bubble',

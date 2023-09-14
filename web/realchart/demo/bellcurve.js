@@ -1,7 +1,16 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     title: "Bell Curve",
+    options: {
+        // animatable: false
+    },
     xAxis: {
+        name: 'baxis',
         title: 'X Axis',
+        // startFit: 'tick'
     },
     yAxis: {
         title: 'Y Axis'

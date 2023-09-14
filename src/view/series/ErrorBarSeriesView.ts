@@ -28,7 +28,7 @@ class BarElement extends GroupElement implements IPointView {
     // constructors
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS + ' rct-errorbar-point');
+        super(doc, SeriesView.POINT_CLASS);
 
         this.add(this._stem = new LineElement(doc));
         this.add(this._whiskerUp = new LineElement(doc));
@@ -76,8 +76,9 @@ export class ErrorBarSeriesView extends RangedSeriesView<ErrorBarSeries> {
 
     protected _preparePointViews(doc: Document, model: ErrorBarSeries, points: ErrorBarSeriesPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
-            v.point = points[i];
-            v.setStyle('stroke', points[i].color);
+            const p = v.point = points[i];
+
+            this._setPointStyle(v, p);
         });
     }
 

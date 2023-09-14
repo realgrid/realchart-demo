@@ -1,3 +1,8 @@
+/**
+ * @demo
+ * 
+ * Bar Series 기본 예제.
+ */
 const config = {
     title: "Bar Series",
     options: {
@@ -5,7 +10,7 @@ const config = {
     },
     xAxis: {
         title: "일일 Daily fat",
-        categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도'],
+        categories: ['쓰리엠', '아디다스', 'Youtube', '디즈니', '이마트', '메리어트', '시세이도'],
         grid: true,
     },
     yAxis: {
@@ -18,7 +23,9 @@ const config = {
         // baseValue: null,
         pointLabel: true,
         // pointWidth: '100%',
-        data: [11, 22, 15, 9, 13, 27]
+        // colorByPoint: true,
+        // color: 'green',
+        data: [11, 22, 10, 15, 9, 13, 27]
     }
 }
 
@@ -36,6 +43,10 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'ColorByPoint', function (e) {
+        config.series.colorByPoint = _getChecked(e);
+        chart.update(config, animate);
+    }, false);
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
         chart.update(config, animate);

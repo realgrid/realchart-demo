@@ -1,3 +1,8 @@
+/**
+ * @demo
+ * 
+ * Area 그룹 기본 예제.
+ */
 const config = {
     type: "area",
     options: {},
@@ -9,7 +14,7 @@ const config = {
         title: "Vertical 수직축 Axis",
     },
     series: {
-        series: [{
+        children: [{
             name: 'Installation & Developers',
             marker: {},
             data: [43934, 48656, 65165, 81827, 112143, 142383,

@@ -1,6 +1,12 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
     type: 'scatter',
-    options: {},
+    options: {
+        // palette: 'gray'
+    },
     title: "Scatter Series",
     xAxis: {
         title: 'Height',

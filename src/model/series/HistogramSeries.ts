@@ -58,6 +58,8 @@ const binsNumberFunc = {
  * 각 bin은 하한값을 포함하고 상한값은 포함하지 않는다. 마지막 bin은 상한값을 포함한다.
  * https://en.wikipedia.org/wiki/Histogram
  * X축이 'linear'이어야 한다.
+ * 
+ * @config chart.series[type=histogram]
  */
 export class HistogramSeries extends Series {
 
@@ -186,7 +188,7 @@ export class HistogramSeries extends Series {
         if (vals) {
             // point.x가 point.min과 같은 값이므로 축 범위에 마지막 bin의 max가 포함되어야 한다.
             if (axis === this._xAxisObj) {
-                vals.push((this._visPoints[this._visPoints.length - 1] as HistogramSeriesPoint).max);
+                vals.push((this._runPoints[this._runPoints.length - 1] as HistogramSeriesPoint).max);
             } else if (axis === this._yAxisObj) {
                 vals.push(this._base);
             }
