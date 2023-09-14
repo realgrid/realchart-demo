@@ -16,7 +16,7 @@ import {
   rem,
 } from "@mantine/core";
 
-import { ChartControl, Chart } from "realchart";
+import { ChartControl, Chart, getVersion } from "realchart";
 import { useEffect, useRef, useState } from "react";
 import "node_modules/realchart/dist/realchart-style.css";
 import Editor from "@monaco-editor/react";
@@ -55,6 +55,7 @@ export function RealChartReact({
   const [chart, setChart] = useState(null);
   const [code, setCode] = useState(config);
   const {classes} = useStyles();
+  const [version, setVersion] = useState('');
 
   useEffect(() => {
     if (!chartRef.current) return;
@@ -62,6 +63,7 @@ export function RealChartReact({
     const chart = new ChartControl(document, chartRef.current);
     chart.model = new Chart(config);
     setChart(chart);
+    setVersion(getVersion());
 
     if (editorRef) {
     }
@@ -72,7 +74,7 @@ export function RealChartReact({
   };
 
   const handleSave = () => {
-    console.log(chart, code);
+    console.log(chart, code, getVersion());
     chart.model = new Chart(code);
   };
 
@@ -82,7 +84,7 @@ export function RealChartReact({
 
   return (
     <Panel
-      title="RealChart"
+      title={`RealChart ${version}`}
       stackSpacing={0}
       contentPadding="8px"
       headerActions={
