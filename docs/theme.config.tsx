@@ -6,7 +6,7 @@ const config: DocsThemeConfig = {
     <Logo />
   ),
   editLink: {
-    component: null,
+    component: () => null,
   },
   feedback: {
     content: null,

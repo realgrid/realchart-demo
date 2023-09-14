@@ -1,7 +1,26 @@
-import { ChartControl, Chart } from 'realchart';
-import { useEffect, useRef } from 'react';
-import 'node_modules/realchart/dist/realchart-style.css';
-import { Box } from '@mantine/core';
+import {
+  Title,
+  Overlay,
+  Group,
+  Grid,
+  Text,
+  Paper,
+  Button,
+  Divider,
+  ThemeIcon,
+  SimpleGrid,
+  Container,
+  Box,
+  useMantineTheme,
+  createStyles,
+  rem,
+} from "@mantine/core";
+
+import { ChartControl, Chart } from "realchart";
+import { useEffect, useRef, useState } from "react";
+import "node_modules/realchart/dist/realchart-style.css";
+import Editor from "@monaco-editor/react";
+import { Panel } from "../Panels";
 
 /**
  * DOM API 사용 문제
@@ -11,63 +30,87 @@ import { Box } from '@mantine/core';
  * - ts에서는 ComponentType<{}>에 맞춰주기 위해 import(..).then(({Type}) => ({default: Type})) 으로 처리
  */
 
-const config = {
-  options: {
-      animatable: false
-  },
-  title: "Basic Real-Chart",
-  legend: true,
-  xAxis: {
-      title: 'X Axis',
-      grid: true
-  },
-  yAxis: {
-      title: 'Y Axis',
-  },
-  series: {
-      pointLabel: {
-          visible: true,
-          effect: 'outline',// 'background',
-          style: {
-          },
-      },
-      data: [
-          ['home', 7], 
-          ['sky', 11], 
-          ['def', 9], 
-          ['소홍', 10], 
-          ['지리산', 14.3], 
-          ['zzz', 13],
-          ['낙동강', 12.5]
-      ],
-      data2: [
-          [1, 7], 
-          [2, 11], 
-          [3, 9], 
-          [4, 10], 
-          [5, 14.3], 
-          [6, 13],
-          [7, 12.5]
-      ],
-      style: {
-      }
-  }
-}
+type RealChartConfig = unknown;
 
-export function RealChartReact() {
+const useStyles = createStyles((theme) => ({
+  wrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    borderTop: '2px solid',
+    borderTopColor: theme.colors.gray[2],
+  },
+}));
+
+export function RealChartReact({
+  config,
+  showEditor,
+  autoUpdate,
+}: {
+  config: RealChartConfig;
+  showEditor: boolean;
+  autoUpdate: boolean;
+}) {
   const chartRef = useRef(null);
+  const editorRef = useRef(null);
+  const [chart, setChart] = useState(null);
+  const [code, setCode] = useState(config);
+  const {classes} = useStyles();
 
   useEffect(() => {
     if (!chartRef.current) return;
-    document.getElementById('realchart').innerHTML = '';
+    document.getElementById("realchart").innerHTML = "";
     const chart = new ChartControl(document, chartRef.current);
     chart.model = new Chart(config);
+    setChart(chart);
 
-  }, [chartRef])
-  
+    if (editorRef) {
+    }
+  }, [chartRef, editorRef]);
+
+  const handleDidMount = (editor, monaco) => {
+    editorRef.current = editor;
+  };
+
+  const handleSave = () => {
+    console.log(chart, code);
+    chart.model = new Chart(code);
+  };
+
+  const onChangeEditor = (value, evnet) => {
+    setCode(JSON.parse(value));
+  };
+
   return (
-    <div style={{ border: '2px solid black' }}>
-      <div id="realchart" ref={chartRef} style={{ width: '100%', height: '500px' }}/>
-    </div>
+    <Panel
+      title="RealChart"
+      stackSpacing={0}
+      contentPadding="8px"
+      headerActions={
+        <>
+          <Button compact onClick={handleSave} variant="outline">
+            적용
+          </Button>
+        </>
+      }
+    >
+      <Grid>
+        {showEditor ? (
+          <Editor
+            height="300px"
+            language="json"
+            // theme="vs-gray"
+            value={JSON.stringify(config, null, 1)}
+            onChange={onChangeEditor}
+            onMount={handleDidMount}
+          />
+        ) : null}
+        <div
+          id="realchart"
+          ref={chartRef}
+          className={classes.wrapper}
+          style={{ width: "100%", height: "500px" }}
+        />
+      </Grid>
+    </Panel>
   );
 }

@@ -17,6 +17,7 @@
     "@mantine/core": "^6.0.19",
     "@mantine/hooks": "^6.0.19",
     "@mantine/next": "^6.0.19",
+    "@monaco-editor/react": "^4.5.2",
     "next": "^13.4.19",
     "nextra": "^2.12.3",
     "nextra-theme-docs": "^2.12.3",

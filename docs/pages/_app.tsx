@@ -5,6 +5,7 @@ import {
 } from "@mantine/core";
 import type { AppProps } from "next/app";
 import { useState } from "react";
+import { theme } from "../lib/theme";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { session } = pageProps;
@@ -24,7 +25,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <MantineProvider
         withGlobalStyles
         withNormalizeCSS
-        theme={{ colorScheme }}
+        theme={{ ...theme, colorScheme }}
       >
         <Component {...pageProps} />
       </MantineProvider>

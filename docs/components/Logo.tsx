@@ -8,7 +8,7 @@ export const Logo = () => {
       <Group>
         <Image
           alt="리얼차트 로고"
-          src="/realchart-logo.png"
+          src="/realchart-logo-fill.svg"
           width={32}
           height={32}
         ></Image>

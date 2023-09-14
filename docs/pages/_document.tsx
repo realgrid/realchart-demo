@@ -12,7 +12,7 @@ export default class _Document extends Document {
         <Head>
           <link
             rel=" shortcut icon"
-            href="/realchart-logo.png"
+            href="/realchart-logo-fill.svg"
             type="image/x-icon"
             sizes="any"
           />
