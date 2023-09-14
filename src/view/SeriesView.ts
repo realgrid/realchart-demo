@@ -12,7 +12,6 @@ import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
 import { LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
-import { SVGStyleOrClass } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { SvgShapes } from "../common/impl/SvgShape";
@@ -64,7 +63,7 @@ export class PointLabelView extends LabelElement {
     //-------------------------------------------------------------------------
 }
 
-export class PointLabelContainer extends GroupElement {
+export class PointLabelContainer extends LayerElement {
 
     //-------------------------------------------------------------------------
     // consts
@@ -99,61 +98,59 @@ export class PointLabelContainer extends GroupElement {
     }
 
     prepareLabel(doc: Document, view: PointLabelView, index: number, p: DataPoint, model: DataPointLabel): void {
-        if (view.setVisible(p.visible && !p.isNull)) {
-        // if (label.visible = !p.isNull && p.visible) {
-            const richFormat = model.text;
-            const styles = model.style;
+        const richFormat = model.text;
+        const styles = model.style;
 
-            view.point = p;
-            view.setModel(doc, model, null);
+        view.point = p;
+        view.setModel(doc, model, null);
 
-            if (richFormat) {
-                model.buildSvg(view._text, model, p.getValueOf);
-                view.setStyles(styles);
+        if (richFormat) {
+            model.buildSvg(view._text, model, p.getValueOf);
+            view.setStyles(styles);
 
-                if (view ._outline) {
-                    model.buildSvg(view._outline, model, p.getValueOf);
-                }
-
-                // label.setStyles(styles);
-                // label.setSvg(pointLabel.getSvg(p.getValueOf))
-                //      .setStyles(styles);
-            } else {
-                //label.setValueEx(p.value, true, 1)
-                view.setText(model.getText(p.getLabel(index)))
-                    .setStyles(styles);
+            if (view ._outline) {
+                model.buildSvg(view._outline, model, p.getValueOf);
             }
+
+            // label.setStyles(styles);
+            // label.setSvg(pointLabel.getSvg(p.getValueOf))
+            //      .setStyles(styles);
+        } else {
+            //label.setValueEx(p.value, true, 1)
+            view.setText(model.getText(p.getLabel(index)))
+                .setStyles(styles);
         }
     }
 
-    prepare(doc: Document, model: Series): void {
-        const labels = this._labels;
-        const points = model.getLabeledPoints();
+    prepare(doc: Document, owner: SeriesView<Series>): void {
+        const model = owner.model;
         const pointLabel = model.pointLabel;
-        // const svgFormat = pointLabel.svgFormat;
 
         if (pointLabel.visible) {
+            const n = model.pointLabelCount();
+            const labels = this._labels;
+            const points = model.getLabeledPoints();
             const maps = this._maps;
-            // const styles = pointLabel.styles;
+            const style = pointLabel.style;
 
             // TODO: scroll 시에는 reprepare 필요?
             labels[0].prepare(points.length);
-            labels[1].prepare(points.length); // TODO: 필요할 때만!
             maps[0] = {};
+            labels[1].prepare(n > 1 ? points.length : 0);
             maps[1] = {};
 
             points.forEach((p, i) => {
                 for (let j = 0; j < p.labelCount(); j++) {
                     const label = labels[j].get(i);
 
-                    if (label.setVisible(!p.isNull)) {
+                    if (label.setVisible(owner.isPointVisible(p))) {
                         this.prepareLabel(doc, label, j, p, pointLabel);
                         maps[j][p.pid] = label;
                     }
                 }
             })
 
-            this.setStyleOrClass(pointLabel.style);
+            this.setStyleOrClass(style);
 
         } else {
             this.clear();
@@ -165,15 +162,25 @@ export class PointLabelContainer extends GroupElement {
         return map && map[point.pid];
     }
 
-    borrow(index: number): PointLabelView { 
-        return this._labels[index].borrow();
-    }
-
-    free(index: number, view: PointLabelView, removeDelay = 0): void {
-        if (view) {
-            this._labels[index].free(view, removeDelay);
+    removePoint(p: DataPoint, delay: number): void {
+        for (let i = 0; i < 2; i++) {
+            const v = this.get(p, i);
+            if (v) {
+                this._labels[i].removeLater(v, delay);
+                return;
+            }
         }
     }
+
+    // borrow(index: number): PointLabelView { 
+    //     return this._labels[index].borrow();
+    // }
+
+    // free(index: number, view: PointLabelView, removeDelay = 0): void {
+    //     if (view) {
+    //         this._labels[index].free(view, removeDelay);
+    //     }
+    // }
 }
 
 export class PointLabelLine extends GroupElement {
@@ -303,7 +310,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     // fields
     //-------------------------------------------------------------------------
     protected _pointContainer: PointContainer;
-    private _labelContainer: PointLabelContainer;
+    protected _labelContainer: PointLabelContainer;
     private _trendLineView: PathElement;
 
     protected _visPoints: DataPoint[];
@@ -346,6 +353,10 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     setPosRate(rate: number): void {
     }
 
+    isPointVisible(p: DataPoint): boolean {
+        return p.visible && !p.isNull;
+    }
+
     protected _doViewRateChanged(rate: number): void {
     }
 
@@ -370,7 +381,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         return this._getPointPool().elementOf(elt) as any;
     }
 
-    findPoint(p: DataPoint): RcElement {
+    findPointView(p: DataPoint): RcElement {
         return this._getPointPool().find(v => (v as any).point === p);
     }
 
@@ -399,7 +410,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 
         this._visPoints = this._prepareVisPoints(model);
         this._prepareSeries(doc, model);
-        !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
+        !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, this);
 
         this.internalClearStyleAndClass();
         this.internalSetStyleOrClass(model.style);
@@ -844,13 +855,21 @@ export abstract class WidgetSeriesView<T extends WidgetSeries> extends SeriesVie
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    togglePointVisible(p: DataPoint): void {
+    togglePointVisible(p: DataPoint): void {    
         this._willZombie = p;
+        if (!p.visible) {
+            // this._labelContainer.removePoint(p, 300);
+            this._labelContainer.get(p, 0)?.hide(200);
+        }
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    isPointVisible(p: DataPoint): boolean {
+        return p === this._zombie || super.isPointVisible(p);
+    }
+
     protected _prepareVisPoints(model: T): DataPoint[] {
         let pts = super._prepareVisPoints(model);
 

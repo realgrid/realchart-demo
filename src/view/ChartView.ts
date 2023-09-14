@@ -694,7 +694,7 @@ export class ChartView extends RcElement {
             vLegend.translate(x, y);
         }
 
-        this._tooltipView.hide(true, false);
+        this._tooltipView.close(true, false);
     }
 
     showTooltip(series: Series, point: DataPoint): void {
@@ -705,7 +705,7 @@ export class ChartView extends RcElement {
     }
 
     hideTooltip(): void {
-        this._tooltipView.hide(false, true);
+        this._tooltipView.close(false, true);
     }
 
     legendByDom(dom: Element): LegendItem {

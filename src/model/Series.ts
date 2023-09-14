@@ -478,6 +478,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return this._points.getPoints();
     }
 
+    // point에 표시되는 최대 label 개수.
+    pointLabelCount(): number {
+        return 1;
+    }
+
     isEmpty(): boolean {
         return this._points.isEmpty();
     }

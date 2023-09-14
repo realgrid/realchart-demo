@@ -92,19 +92,22 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
         });
 
         const cnt = pts.length;
-        let i = 0;
 
-        for (; i < cnt - 1; i++) {
-            const p = pts[i];
-            const h = fixnum((p.yValue * (p === this._zombie ? this._zombieRate : 1)) / sum);
+        if (cnt > 0) {
+            let i = 0;
 
-            p.yRate = h * 100;
-            p.yPos = y;
-            p.height = h;
-            y += h;
+            for (; i < cnt - 1; i++) {
+                const p = pts[i];
+                const h = fixnum((p.yValue * (p === this._zombie ? this._zombieRate : 1)) / sum) || 0;
+    
+                p.yRate = h * 100;
+                p.yPos = y;
+                p.height = h;
+                y += h;
+            }
+            pts[i].yPos = y;
+            pts[i].height = 1 - y;
         }
-        pts[i].yPos = y;
-        pts[i].height = 1 - y;
     }
 
     private $_layoutSegments(width: number, height: number): void {

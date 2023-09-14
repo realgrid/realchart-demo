@@ -227,22 +227,8 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     // internal members
     //-------------------------------------------------------------------------
     private $_prepareSectors(points: PieSeriesPoint[]): void {
-        const count = points.length;
-        // const sum = points.map(p => p.yValue).reduce((a, c) => a + c, 0);
-        // let start = this._startAngle = ORG_ANGLE + deg2rad(this.model.startAngle);
-
-        // points.forEach(p => {
-        //     p.yRate = p.yValue / sum
-        //     p.startAngle = start;
-        //     start += p.angle = p.yRate * Math.PI * 2;
-        // });
-
-        this._sectors.prepare(count, (sector, i) => {
+        this._sectors.prepare(points.length, (sector, i) => {
             const p = sector.point = points[i];
-            // const a = i < count - 1 ? points[i + 1].startAngle : p.endAngle;
-
-            // sector.start = a;
-            // sector.angle = 0;
 
             this._setPointStyle(sector, p);
             p._calcedColor = getComputedStyle(sector.dom).fill;
@@ -257,7 +243,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                           .reduce((a, c) => a + c, 0);
 
         points.forEach(p => {
-            p.yRate = (p === this._zombie ? p.yValue * this._zombieRate : p.yValue) / sum
+            p.yRate = (p === this._zombie ? p.yValue * this._zombieRate : p.yValue) / sum || 0;
             p.startAngle = start;
             start += p.angle = p.yRate * Math.PI * 2 * vr;
         });

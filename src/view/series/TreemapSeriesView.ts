@@ -80,7 +80,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
         let labelView: PointLabelView;
 
         // buildMap()으로 leafs가 결정돼야 한다.
-        labelViews.prepare(this.doc, series);
+        labelViews.prepare(this.doc, this);
 
         this._nodeViews.prepare(nodes.length, (v, i, count) => {
             const m = nodes[i];

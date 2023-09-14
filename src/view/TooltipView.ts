@@ -48,7 +48,7 @@ export class TooltipView extends RcElement {
         this._richText = new SvgRichText();
         this._richText.lineHeight = 1.2;
 
-        this.hide(true, false);
+        this.close(true, false);
     }
 
     //-------------------------------------------------------------------------
@@ -104,7 +104,7 @@ export class TooltipView extends RcElement {
         }
     }
 
-    hide(force: boolean, animate: boolean): void {
+    close(force: boolean, animate: boolean): void {
         if (force) {
             if (this._hideTimer) {
                 clearTimeout(this._hideTimer);

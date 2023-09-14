@@ -1061,15 +1061,51 @@ export class RcElement extends RcObject {
         }
     }
 
-    // TODO
-    removeLater(moveToFirst = true, duration = 0.5): RcElement {
+    removeLater(delay: number, callback?: (v: RcElement) => void): RcElement {
+        if (this._parent) {
+            if (delay > 0) {
+                const ani = this._dom.animate([
+                    {},
+                    { opacity: 0}
+                ], {
+                    duration: delay,
+                    fill: 'none'
+                });
+                ani && ani.addEventListener('finish', () => {
+                    this.remove();
+                    callback?.(this);
+                });
+            } else {
+                this.remove();
+            }
+        }
+        return this;
+    }
+
+    hide(delay: number): RcElement {
+        if (this._parent) {
+            if (delay > 0) {
+                const ani = this._dom.animate([
+                    {},
+                    { opacity: 0}
+                ], {
+                    duration: delay,
+                    fill: 'none'
+                });
+                ani && ani.addEventListener('finish', () => {
+                    this.setVisible(false);
+                });
+            } else {
+                this.setVisible(false);
+            }
+        }
         return this;
     }
 
     // TODO
-    fadeout(removeDelay: number, startOpacity: number): RcElement {
-        return this;
-    }
+    // fadeout(removeDelay: number, startOpacity: number): RcElement {
+    //     return this;
+    // }
 
     clipRect(x: number, y: number, width: number, height: number, rd = 0): ClipElement {
         const cr = this.control.clipBounds(x, y, width, height, rd);
