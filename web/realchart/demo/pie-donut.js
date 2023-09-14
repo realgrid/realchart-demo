@@ -19,8 +19,8 @@ const config = {
     series: {
         type: 'pie',
         innerSize: '50%',
-        innerText: {
-        },
+        //innerText: 'Inner Title',
+        innerText: '내부 타이틀<br><t style="fill:blue;font-weight:bold;">Inner</t><t style="fill:red;">Title</t>',
         pointLabel: {
             visible: true,
             effect: 'outline',

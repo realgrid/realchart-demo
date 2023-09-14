@@ -12,8 +12,9 @@ import { RcElement } from "../../common/RcControl";
 import { ORG_ANGLE, deg2rad } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { CircleElement } from "../../common/impl/CircleElement";
+import { LabelElement } from "../../common/impl/LabelElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
-import { TextElement } from "../../common/impl/TextElement";
+import { TextElement, TextLayout } from "../../common/impl/TextElement";
 import { PointItemPosition } from "../../model/Series";
 import { PieSeries, PieSeriesGroup, PieSeriesPoint } from "../../model/series/PieSeries";
 import { IPointView, PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
@@ -48,7 +49,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     //-------------------------------------------------------------------------
     private _circle: CircleElement;
     private _sectors = new ElementPool(this._pointContainer, SectorView, null, 0.5);
-    private _textView: TextElement;
+    private _textView: LabelElement;
     private _lineContainer: PointLabelLineContainer;
 
     private _cx = 0;
@@ -70,7 +71,9 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             strokeDasharray: '2'
         });
 
-        this.add(this._textView = new TextElement(doc, 'rct-pie-series-inner'));
+        this.add(this._textView = new LabelElement(doc, 'rct-pie-series-inner'));
+        // this._textView.layout = TextLayout.MIDDLE;
+
         this.add(this._lineContainer = new PointLabelLineContainer(doc));
     }
 
@@ -85,7 +88,15 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         super._prepareSeries(doc, model);
         
         this.$_prepareSectors(this._visPoints as PieSeriesPoint[]);
+        
         this._lineContainer.prepare(model);
+
+        if (this._textView.setVisible(model.hasInner() && model.innerText.isVisible())) {
+            // this._textView.text = model.innerText.text;
+            this._textView.setModel(doc, model.innerText, null);
+            model.innerText.buildSvg(this._textView._text, model, null);
+            // this._textView.setStyle(null);
+        }
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -169,6 +180,11 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         const lineViews = this._lineContainer;
         const sliceOff = this._slicedOff = series.getSliceOffset(rd) * vr; // TODO: sector 후에...
         let labelView: PointLabelView;
+
+        if (this._textView.visible) {
+            const tr = this._textView.getBBounds();
+            this._textView.translate(cx - tr.width / 2, cy - tr.height / 2);
+        }
 
         if (this._circle.visible = this._sectors.isEmpty) {
             this._circle.setCircle(this._cx, this._cy, this._rd);

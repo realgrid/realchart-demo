@@ -56,6 +56,24 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
 }
 
 class PieSeriesText extends FormattableText {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor() {
+        super(null, true);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    setText(value: string): FormattableText {
+        super.setText(value);
+        if (this._richTextImpl) {
+            this._richTextImpl.lineHeight = 1.2;
+        }
+        return this;
+    }
 }
 
 /**
@@ -84,7 +102,7 @@ export class PieSeries extends RadialSeries {
      * 
      * @config
      */
-    innerSize: RtPercentSize = 0;
+    innerSize: RtPercentSize;
     /**
      * @config
      */
@@ -118,11 +136,15 @@ export class PieSeries extends RadialSeries {
      * 
      * @config
      */
-    innerText: PieSeriesText;
+    innerText = new PieSeriesText();
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    hasInner(): boolean {
+        return this._innerDim && this._innerDim.size > 0;
+    }
+
     getInnerRadius(rd: number): number {
         // 반지름에 대한 비율로 전달해야 한다.
         const dim = this._innerDim;

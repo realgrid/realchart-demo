@@ -633,8 +633,8 @@
     stroke: white;
 }
 .rct-pie-series-inner {
-    font-size: 18px;
-    fill: #333;
+    font-size: 20px;
+    fill: #557;
 }
 
 /** funnel series */
