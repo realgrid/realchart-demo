@@ -121,6 +121,11 @@
     --rct-legend-item-disabled: #aaa;
     --rct-legend-item-disabled-decoration: line-through;
 
+    --rct-point-label-font-size: 0.8em;
+    --rct-point-label-font-weight: bold;
+    --rct-point-label-stroke: none;
+    --rct-point-label-fill: #333;
+
     --rct-credits-fill: #777;
 }
 .rct-root[data-theme='dark'] {
@@ -141,6 +146,8 @@
     --rct-legend-item-fill: #fff;
     --rct-legend-item-disabled: #aaa;
     --rct-legend-item-disabled-decoration: line-through;
+
+    --rct-point-label-fill: #ddd;
 
     --rct-credits-fill: #999;
 }
@@ -401,15 +408,14 @@
 
 /** rct-point 대신 여기에 지정해야 outline에 반영된다. */
 .rct-point-labels {
-    font-size: 0.8em;
-    font-weight: bold;
-    stroke: none;
-    fill: #558;
-    fill-opacity: 1;
-    opacity: 1;
+    font-size: var(--rct-point-label-font-size);
+    font-weight: var(--rct-point-label-font-weight);
+    stroke: var(--rct-point-label-stroke);
+    fill: var(--rct-point-label-fill);
 }
 .rct-point-label {
-    stroke: #333;
+    fill-opacity: 1;
+    opacity: 1;
 }
 .rct-point-label-lines {
     stroke: black;
@@ -446,6 +452,9 @@
 /** area series */
 .rct-area-series-area {
     fill-opacity: 0.5;
+}
+.rct-area-series .rct-area-series-area {
+    stroke: none;
 }
 
 /** arearange series */

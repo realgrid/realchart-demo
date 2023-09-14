@@ -17,8 +17,7 @@ import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { SvgShapes } from "../common/impl/SvgShape";
 import { DataPoint } from "../model/DataPoint";
-import { ClusterableSeries, DataPointLabel, PointItemPosition, Series } from "../model/Series";
-import { PaletteMode } from "../model/Theme";
+import { ClusterableSeries, DataPointLabel, PointItemPosition, Series, WidgetSeries } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { ChartElement } from "./ChartElement";
 import { SeriesAnimation } from "./animation/SeriesAnimation";
@@ -371,6 +370,10 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         return this._getPointPool().elementOf(elt) as any;
     }
 
+    findPoint(p: DataPoint): RcElement {
+        return this._getPointPool().find(v => (v as any).point === p);
+    }
+
     clicked(elt: Element): void {
         const view = this.pointByDom(elt);
 
@@ -394,8 +397,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         this.setData('index', (model.index % PALETTE_LEN) as any);
         this.setBoolData('pointcolors', model._colorByPoint());
 
-        this._visPoints = model.collectVisibles();
-        // this._visPoints = this._prepareVisPoints(model, model._runPoints);
+        this._visPoints = this._prepareVisPoints(model);
         this._prepareSeries(doc, model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, model);
 
@@ -436,21 +438,29 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
 
+    protected _prepareVisPoints(model: T): DataPoint[] {
+        return model.collectVisibles();
+    }
+
     private $_setColorIndex(v: RcElement, p: DataPoint): void {
         v.setData('index', (p.index % PALETTE_LEN) as any);
     }
 
-    protected _setPointStyle(v: RcElement, p: DataPoint): void {
+    protected _setPointStyle(v: RcElement, p: DataPoint, styles?: any[]): void {
         v.setAttr('aria-label', p.ariaHint());
         this.$_setColorIndex(v, p);
         v.internalClearStyleAndClass();
+
+        // 정적 point style (ex, line marker)
+        if (styles) {
+            styles.forEach(st => st && v.internalSetStyleOrClass(st));
+        }
         // config에서 지정한 point color
         if (p.color) {
-            v.setStyle('fill', p.color);
-            v.setStyle('stroke', p.color);
+            v.internalSetStyle('fill', p.color);
+            v.internalSetStyle('stroke', p.color);
         }
         // 동적 스타일
-        //style && v.internalSetStyleOrClass(style);
         const st = this.model.getPointStyle(p);
         st && v.internalSetStyleOrClass(st);
     }
@@ -792,4 +802,81 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+}
+
+class ZombiAnimation extends RcAnimation {
+
+    constructor(public series: WidgetSeriesView<WidgetSeries>) {
+        super();
+
+        this.duration = 300;
+    }
+
+    protected _doUpdate(rate: number): boolean {
+        if (this.series) {
+            this.series._zombieRate = this.series._zombie.visible ? rate : 1 - rate;
+            this.series._resizeZombie();
+            return true;
+        }
+        return false;
+    }
+
+    protected _doStop(): void {
+        if (this.series) {
+            this.series._zombie = null;
+            this.series._zombieAni = null;
+            this.series.control.invalidateLayout();
+            this.series = null;
+        }
+    }
+}
+
+export abstract class WidgetSeriesView<T extends WidgetSeries> extends SeriesView<T> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _willZombie: DataPoint;
+    _zombie: DataPoint;
+    _zombieRate: number;
+    _zombieAni: ZombiAnimation;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    togglePointVisible(p: DataPoint): void {
+        this._willZombie = p;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _prepareVisPoints(model: T): DataPoint[] {
+        let pts = super._prepareVisPoints(model);
+
+        if (this._willZombie && !this._willZombie.visible) {
+            pts.push(this._willZombie);
+            pts = pts.sort((p1, p2) => p1.index - p2.index);
+        }
+        return pts;
+    }
+
+    protected _prepareSeries(doc: Document, model: T): void {
+        if (this._zombie) {
+            this._zombie = null;
+            this._zombieAni?.stop();
+            this._zombieAni = null;
+        }
+        if (this._willZombie) {
+            this._zombie = this._willZombie;
+            this._willZombie = null;
+            this._zombieAni = new ZombiAnimation(this);
+            this._zombieAni.start();
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    abstract _resizeZombie(): void;
 }

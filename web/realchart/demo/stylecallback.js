@@ -51,6 +51,10 @@ const config = {
                 stroke: 'white',
                 strokeDasharray: 'none'
             }
+        },
+        pointStyleCallback: args => {
+            if (args.yValue === args.yMax) return { fill: 'red', strokeWidth: '5px', stroke: 'red' }    
+            return { fill: 'green' }
         }
     }]
 }

@@ -98,6 +98,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     }
 
     protected _prepareSeries(doc: Document, model: T): void {
+        model instanceof LineSeries && this._prepareBelow(model);
         this.$_prepareMarkers(this._visPoints as LineSeriesPoint[]);
     }
 
@@ -105,7 +106,6 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const series = this.model;
 
         this._lineContainer.invert(this._inverted, height);
-        series instanceof LineSeries && this._prepareBelow(series, width, height);
         this._layoutMarkers(this._visPoints as LineSeriesPoint[], width, height);
         this._layoutLines(this._visPoints as LineSeriesPoint[]);
     }
@@ -141,9 +141,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         return 1;
     }
 
-    protected _prepareBelow(series: LineSeries, w: number, h: number): boolean {
+    protected _prepareBelow(series: LineSeries): boolean {
         const control = this.control;
-        const yAxis = series._yAxisObj;
         let lowLine = this._lowLine;
 
         this._needBelow = series.belowStyle && series._minValue < series.baseValue; // series.getBaseValue(yAxis)
@@ -203,7 +202,10 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     private $_prepareMarkers(points: LineSeriesPoint[]): void {
         const series = this.model;
+        const needBelow = series instanceof LineSeries && this._needBelow;
+        const base = needBelow ? series.baseValue : NaN;
         const marker = series.marker;
+        const sts = [marker.style, null];
 
         if (this._pointContainer.visible = marker.visible) {
             const mpp = this._markersPerPoint();
@@ -214,13 +216,9 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                 const p = points[n];
 
                 if (!p.isNull) {
-                    if (n === count - 1) {
-                    } else if (n === 0) {
-                    } else {
-                    }
-        
                     mv.point = p;
-                    this._setPointStyle(mv, p);
+                    sts[1] = needBelow && p.yValue < base ? series.belowStyle : null;
+                    this._setPointStyle(mv, p, sts);
                 }
             });
         }
@@ -259,9 +257,6 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
         const series = this.model;
-        const markerStyle = series.marker.style;
-        const needBelow = series instanceof LineSeries && this._needBelow;
-        const base = needBelow ? series.baseValue : NaN;
         const inverted = this._inverted;
         const polar = this._polar = (series.chart as Chart).body.getPolar(series);
         const vr = this._getViewRate();
@@ -307,11 +302,6 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
                     lv.visible = true;
                     lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
-                }
-                if (needBelow && p.yValue < base) {
-                    mv.setStyleOrClass(series.belowStyle);
-                } else {
-                    markerStyle && mv.setStyleOrClass(markerStyle);
                 }
             } else if (lv) {
                 lv.visible = false;

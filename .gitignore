@@ -24,3 +24,8 @@ web/realchart/lib/realchart*.*
 /e2e/src/styles/**
 
 www
+
+# docs
+node_modules
+.next
+.tdout
