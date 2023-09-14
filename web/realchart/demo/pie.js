@@ -21,6 +21,7 @@ const config = {
         type: 'pie',
         pointLabel: {
             visible: true,
+            // position: 'outside',
             text: "${name} (${y})",
             // effect: 'outline',
             style: {
@@ -69,6 +70,10 @@ function setActions(container) {
         config.series.startAngle = _getValue(e);
         chart.update(config, animate);
     }, 0);
+    createListBox(container, "series.pointLabel.position", ['auto', 'outside'], function (e) {
+        config.series.pointLabel.position = _getValue(e);
+        chart.update(config, animate);
+    }, 'auto');
 }
 
 function init() {

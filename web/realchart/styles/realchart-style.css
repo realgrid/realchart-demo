@@ -419,6 +419,7 @@
 }
 .rct-point-label-lines {
     stroke: black;
+    fill: none;
 }
 
 /** bar series */

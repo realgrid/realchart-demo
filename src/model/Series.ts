@@ -55,7 +55,19 @@ export class DataPointLabel extends FormattableText {
     //  */
     // verticalAlign = VerticalAlign.MIDDLE;
 
+    /**
+     * label과 point view 사이의 기본 간격.
+     * 
+     * @config
+     */
     offset = 4;
+
+    /**
+     * 'pie', 'funnel' 시리즈에서 label이 외부에 표시될 때 label과 시리즈 본체와의 기본 간격.
+     * 
+     * @config
+     */
+    distance = 25;
 
     //-------------------------------------------------------------------------
     // fields
