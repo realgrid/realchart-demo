@@ -7,7 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "../../common/Common";
-import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
+import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../../common/Types";
+import { FormattableText } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
 import { ILegendSource } from "../Legend";
 import { ISeries, PointItemPosition, RadialSeries, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
@@ -54,6 +55,9 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
     }
 }
 
+class PieSeriesText extends FormattableText {
+}
+
 /**
  * @config chart.series[type=pie]
  */
@@ -76,6 +80,7 @@ export class PieSeries extends RadialSeries {
     groupSize = 1;
     /**
      * 0보다 큰 값을 지정해서 도넛 형태로 표시할 수 있다.
+     * {@link innerText}로 도넛 내부에 표시될 텍스트를 지정할 수 있다.
      * 
      * @config
      */
@@ -107,6 +112,13 @@ export class PieSeries extends RadialSeries {
      * @config
      */
     borderRadius = 0;
+    /**
+     * {@link innerSize}가 0보다 클 때, 도넛 내부에 표시되는 텍스트.
+     * 기본 클래스 selector는 <b>'rct-pie-series-inner'</b>이다.
+     * 
+     * @config
+     */
+    innerText: PieSeriesText;
 
     //-------------------------------------------------------------------------
     // methods

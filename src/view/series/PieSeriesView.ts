@@ -13,6 +13,7 @@ import { ORG_ANGLE, deg2rad } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
+import { TextElement } from "../../common/impl/TextElement";
 import { PointItemPosition } from "../../model/Series";
 import { PieSeries, PieSeriesGroup, PieSeriesPoint } from "../../model/series/PieSeries";
 import { IPointView, PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
@@ -47,6 +48,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     //-------------------------------------------------------------------------
     private _circle: CircleElement;
     private _sectors = new ElementPool(this._pointContainer, SectorView, null, 0.5);
+    private _textView: TextElement;
     private _lineContainer: PointLabelLineContainer;
 
     private _cx = 0;
@@ -68,6 +70,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             strokeDasharray: '2'
         });
 
+        this.add(this._textView = new TextElement(doc, 'rct-pie-series-inner'));
         this.add(this._lineContainer = new PointLabelLineContainer(doc));
     }
 
@@ -153,8 +156,9 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     private $_layoutSectors(points: PieSeriesPoint[], width: number, height: number): void {
         const series = this.model;
         const vr = this._getViewRate();
-        const cx = this._cx = Math.floor(width / 2);
-        const cy = this._cy = Math.floor(height / 2);
+        const center = series.getCenter(width, height);
+        const cx = this._cx = center.x;
+        const cy = this._cy = center.y;
         const rd = this._rd;
         const rdInner = this._rdInner;
         const labels = series.pointLabel;

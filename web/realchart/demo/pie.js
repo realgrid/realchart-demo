@@ -8,7 +8,7 @@ const config = {
     },
     legend: {
         position: 'right',
-        layout: 'auto',
+        // layout: 'auto',
         style: {
             marginRight: '20px'
         }
@@ -16,6 +16,9 @@ const config = {
     xAxis: {
     },
     yAxis: {
+    },
+    plot: {
+        // style: { fill: 'yellow' }
     },
     series: {
         type: 'pie',
@@ -62,14 +65,32 @@ function setActions(container) {
         config.options.palette = _getValue(e);
         chart.update(config, animate);
     }, 'default');
+    createCheckBox(container, 'Legend', function (e) {
+        config.legend.visible = _getChecked(e);
+        chart.update(config, animate);
+    }, true);
     createListBox(container, "Legend.position", ['bottom', 'top', 'right', 'left'], function (e) {
         config.legend.position = _getValue(e);
         chart.update(config, animate);
     }, 'right');
+    line(container);
     createListBox(container, "startAngle", [0, 90, 180, 270], function (e) {
         config.series.startAngle = _getValue(e);
         chart.update(config, animate);
     }, 0);
+    createListBox(container, "series.size", ['60%', '70%', '80%', '90%', '100%'], function (e) {
+        config.series.size = _getValue(e);
+        chart.update(config, animate);
+    }, '80%');
+    createListBox(container, "series.centerX", ['30%', '40%', '50%', '60%'], function (e) {
+        config.series.centerX = _getValue(e);
+        chart.update(config, animate);
+    }, '50%');
+    createListBox(container, "series.centerY", ['45%', '50%', '55%'], function (e) {
+        config.series.centerY = _getValue(e);
+        chart.update(config, animate);
+    }, '50%');
+    line(container);
     createListBox(container, "series.pointLabel.position", ['auto', 'outside'], function (e) {
         config.series.pointLabel.position = _getValue(e);
         chart.update(config, animate);

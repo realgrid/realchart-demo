@@ -5,7 +5,7 @@
 const config = {
     title: "Funnel Series",
     options: {
-        animatable: false
+        // animatable: false
     },
     legend: {
         position: 'right',
@@ -59,10 +59,18 @@ function setActions(container) {
         config.series.reversed = _getChecked(e);
         chart.update(config, animate);
     }, false);
+    createCheckBox(container, 'Legend', function (e) {
+        config.legend.visible = _getChecked(e);
+        chart.update(config, animate);
+    }, true);
     createListBox(container, "Legend.position", ['bottom', 'top', 'right', 'left'], function (e) {
         config.legend.position = _getValue(e);
         chart.update(config, animate);
     }, 'right');
+    createListBox(container, "series.pointLabel.position", ['auto', 'outside'], function (e) {
+        config.series.pointLabel.position = _getValue(e);
+        chart.update(config, animate);
+    }, 'auto');
 }
 
 function init() {
