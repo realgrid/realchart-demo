@@ -7,7 +7,6 @@ dist/.npmdebug/**
 !dist/.npmdebug/package.json
 
 out/**/**
-node_modules
 node_modules/**/**
 .vscode/**
 !.vscode/launch.json
@@ -24,5 +23,9 @@ web/realchart/lib/realchart*.*
 /e2e/src/js/**
 /e2e/src/styles/**
 
+www
+
+# docs
+node_modules
 .next
 .tdout
