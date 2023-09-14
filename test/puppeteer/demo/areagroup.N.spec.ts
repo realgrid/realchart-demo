@@ -17,7 +17,7 @@ import { LegendView } from '../../../src/view/LegendView';
 /**
  * Puppeteer Tests for areagroup.html
  */
- describe("areagroup.N.html test", async function() {
+ describe("areagroup.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/areagroup.html";
     let browser: Browser;
@@ -96,7 +96,7 @@ import { LegendView } from '../../../src/view/LegendView';
         const xAxisTick = await xAxis.$$('.rct-axis-tick');
 
         let maxLength = 0;
-        config.series.series.forEach((fristSeries) => {
+        config.series.children.forEach((fristSeries) => {
             if(maxLength < fristSeries.data.length) {
                 maxLength = fristSeries.data.length;
             }

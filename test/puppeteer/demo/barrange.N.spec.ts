@@ -17,7 +17,7 @@ import { LegendView } from '../../../src/view/LegendView';
 /**
  * Puppeteer Tests for barrange.html
  */
- describe("barrange.N.html test", async function() {
+ describe("barrange.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/barrange.html";
     let browser: Browser;
