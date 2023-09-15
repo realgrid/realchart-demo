@@ -418,7 +418,7 @@
     opacity: 1;
 }
 .rct-point-label-lines {
-    stroke: black;
+    stroke: #585;
     fill: none;
 }
 

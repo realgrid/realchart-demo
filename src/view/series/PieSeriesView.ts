@@ -72,8 +72,6 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         });
 
         this.add(this._textView = new LabelElement(doc, 'rct-pie-series-inner'));
-        // this._textView.layout = TextLayout.MIDDLE;
-
         this.add(this._lineContainer = new PointLabelLineContainer(doc));
     }
 
@@ -88,14 +86,11 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         super._prepareSeries(doc, model);
         
         this.$_prepareSectors(this._visPoints as PieSeriesPoint[]);
-        
         this._lineContainer.prepare(model);
 
         if (this._textView.setVisible(model.hasInner() && model.innerText.isVisible())) {
-            // this._textView.text = model.innerText.text;
             this._textView.setModel(doc, model.innerText, null);
             model.innerText.buildSvg(this._textView._text, model, null);
-            // this._textView.setStyle(null);
         }
     }
 
@@ -264,7 +259,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         }
 
         if (line && line.setVisible(rd > 0)) {
-            line.move(x1, y1);
+            //line.move(x1, y1);
             //line.setPath(pb.move(x1, y1).lines(x2, y2, x3, y2).end())
             line.setLine(new PathBuilder().move(0, 0).quad(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end())
             !view.moving && line.translate(x1 + dx, y1 + dy);
