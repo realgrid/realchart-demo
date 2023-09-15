@@ -217,10 +217,11 @@
 .rct-legend {
     stroke: none;
     fill: none;
+    padding: 4px;
     /* margin-top: 16px; */
 }
 .rct-legend-background {
-    padding: 4px;
+    stroke: lightgray;
 }
 .rct-legend-item {
     fill: var(--rct-legend-item-fill);

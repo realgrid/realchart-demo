@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { __asyncGenerator } from "tslib";
 import { isNumber } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { ClipElement, RcElement } from "../common/RcControl";
@@ -161,6 +162,7 @@ class LegendSectionView extends SectionView {
     // fields
     //-------------------------------------------------------------------------
     _legendView: LegendView;
+    private _pos: LegendPosition;
 
     //-------------------------------------------------------------------------
     // methods
@@ -173,15 +175,48 @@ class LegendSectionView extends SectionView {
     }
 
     _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
-        const sz = this._legendView.measure(doc, chart.legend, hintWidth, hintHeight, phase);
+        const m = chart.legend;
+        const sz = this._legendView.measure(doc, m, hintWidth, hintHeight, phase);
+        const pos = this._pos = m.getPosition();
+        
+        if (pos === LegendPosition.LEFT || pos === LegendPosition.RIGHT) {
+            sz.width += this._legendView._gap;
+        } else {
+            sz.height += this._legendView._gap;
+        }
         return sz;
     }
 
     protected _doLayout(): void {
-        const gap = this._legendView._gap;
-        
-        this._legendView.resize(this.width, this.height);
-        this._legendView.layout();
+        const view = this._legendView;
+        const gap = view._gap;
+        let w = this.width;
+        let h = this.height;
+        let x = 0;
+        let y = 0;
+     
+        switch (this._pos) {
+            case LegendPosition.LEFT:
+                w -= gap;
+                break;
+
+            case LegendPosition.RIGHT:
+                w -= gap;
+                x += gap;
+                break;
+
+            case LegendPosition.TOP:
+                h -= gap;
+                break;
+
+            default:
+                y += gap;
+                h -= gap;
+                break;
+        }
+
+        view.resize(w, h).translate(x, y);
+        view.layout();
     }
 }
 

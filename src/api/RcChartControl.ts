@@ -9,7 +9,8 @@
 import { ChartControl } from "../ChartControl";
 
 const funcs = {
-    'update': ''
+    'update': '',
+    'refresh': ''
 }
 
 /**
@@ -31,5 +32,9 @@ export class RcChartControl {
 
     update(config: any, animate?: boolean): void {
         this._proxy.update(config, animate);
+    }
+
+    refresh(): void {
+        this._proxy.refresh();
     }
 }
