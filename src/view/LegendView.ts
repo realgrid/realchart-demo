@@ -16,6 +16,9 @@ import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Legend, LegendItem, LegendLayout, LegendPosition } from "../model/Legend";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
+/**
+ * @internal
+ */
 export class LegendItemView extends ChartElement<LegendItem> {
 
     //-------------------------------------------------------------------------
@@ -60,6 +63,9 @@ export class LegendItemView extends ChartElement<LegendItem> {
     }
 }
 
+/**
+ * @internal
+ */
 export class LegendView extends BoundableElement<Legend> {
 
     //-------------------------------------------------------------------------
@@ -72,6 +78,7 @@ export class LegendView extends BoundableElement<Legend> {
     //-------------------------------------------------------------------------
     private _itemViews = new ElementPool(this, LegendItemView);
     private _vertical: boolean;
+    _gap: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -94,13 +101,19 @@ export class LegendView extends BoundableElement<Legend> {
 
     protected _getDebugRect(): IRect {
         const r = super._getDebugRect();
-        const gap = pickNum(this.model.gap, 0);
+        const gap = this._gap;
         
         if (gap !== 0) {
             switch (this.model.getPosition()) {
                 case LegendPosition.BOTTOM:
                     r.y += gap;
                     r.height -= gap;
+                    break;
+                case LegendPosition.TOP:
+                    break;
+                case LegendPosition.LEFT:
+                    break;
+                case LegendPosition.RIGHT:
                     break;
             }
         }
@@ -110,6 +123,7 @@ export class LegendView extends BoundableElement<Legend> {
     protected _doMeasure(doc: Document, model: Legend, hintWidth: number, hintHeight: number, phase: number): ISize {
         const items = model.items();
         const vertical = this._vertical = model.getLayout() === LegendLayout.VERTICAL;
+        const gap = this._gap = pickNum(this.model.gap, 0);
         const itemGap = model.itemGap;
         const views = this._itemViews;
         let w = 0;
@@ -137,13 +151,12 @@ export class LegendView extends BoundableElement<Legend> {
 
         if (vertical) {
             h += (views.count - 1) * itemGap;
-            w += pickNum(model.gap, 0);
+            w += pickNum(gap, 0);
         } else {
             w += (views.count - 1) * itemGap;
-            h += pickNum(model.gap, 0);
+            h += pickNum(gap, 0);
 
             if (w > hintWidth) {
-                debugger;
             }
         }
         return Size.create(w, h);
@@ -160,9 +173,9 @@ export class LegendView extends BoundableElement<Legend> {
         let y = margin.top + pad.top;
 
         if (pos === LegendPosition.BOTTOM) {
-            y += pickNum(model.gap, 0);
+            y += pickNum(this._gap, 0);
         } else if (pos === LegendPosition.RIGHT) {
-            x += pickNum(model.gap, 0);
+            x += pickNum(this._gap, 0);
         }
 
         this._itemViews.forEach(v => {

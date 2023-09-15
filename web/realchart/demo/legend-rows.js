@@ -41,11 +41,20 @@ const config = {
         marker: {},
         data: [21908, 5548, 8105, 11248, 8989, 11816, 18274,
             17300, 15053, 14906, 13073]
+    }, {
+        name: 'Developers & Operations',
+        marker: {},
+        data: [31908, 15548, 18105, 31248, 48989, 51816, 48274,
+            87300, 95053, 114906, 123073]
+    }, {
+        name: 'Distribution & Sales',
+        marker: {},
+        data: [41908, 25548, 28105, 51248, 58989, 31816, 38274,
+            37300, 35053, 34906, 33073]
     }],
 }
 
 let chart;
-
 
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
@@ -59,6 +68,10 @@ function setActions(container) {
         config.legend.position = _getValue(e);
         chart.update(config);
     }, 'bottom');
+    createListBox(container, "alignBase", ['plot', 'chart'], function (e) {
+        config.legend.align = _getValue(e);
+        chart.update(config);
+    }, 'plot');
 }
 
 function init() {

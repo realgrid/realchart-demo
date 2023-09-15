@@ -25,6 +25,11 @@ const config = {
         type: 'line',
         pointLabel: true,
         data: [13, 17, 15, 11, 23, 17]
+    }, {
+        name: 'line2',
+        type: 'line',
+        pointLabel: true,
+        data: [15, 19, 13, 15, 20, 15]
     }],
     legend: {}
 }
@@ -47,6 +52,10 @@ function setActions(container) {
         config.legend.position = _getValue(e);
         chart.update(config);
     }, 'bottom');
+    createListBox(container, "alignBase", ['plot', 'chart'], function (e) {
+        config.legend.align = _getValue(e);
+        chart.update(config);
+    }, 'plot');
     createListBox(container, "left", ['', 10, 15, 20, 25], function (e) {
         config.legend.left = _getValue(e);
         chart.update(config);

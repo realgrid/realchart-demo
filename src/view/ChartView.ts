@@ -179,6 +179,8 @@ class LegendSectionView extends SectionView {
     }
 
     protected _doLayout(): void {
+        const gap = this._legendView._gap;
+        
         this._legendView.resize(this.width, this.height);
         this._legendView.layout();
     }
