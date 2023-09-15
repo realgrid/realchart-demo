@@ -93,10 +93,10 @@ export abstract class ChartItem extends RcObject {
                 let v = source[p];
 
                 if (this._doLoadProp(p, v)) {
-                } else if (isArray(v)) {
-                    this[p] = v.slice(0);
                 } else if (this[p] instanceof ChartItem) {
                     this[p].load(v);
+                } else if (isArray(v)) {
+                    this[p] = v.slice(0);
                 } else if (isObject(v)) {
                     this[p] = Object.assign({}, this._getDefObjProps(p), v);
                 } else {
@@ -161,7 +161,7 @@ export abstract class FormattableText extends ChartText {
     //-------------------------------------------------------------------------
     private _numSymbols: string[];
     private _numberFormatter: NumberFormatter;
-    private _richTextImpl: SvgRichText;
+    protected _richTextImpl: SvgRichText;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -231,6 +231,9 @@ export abstract class FormattableText extends ChartText {
         return this._text;
     }
     set text(value: string) {
+        this.setText(value);
+    }
+    setText(value: string): FormattableText {
         if (value !== this._text) {
             this._text = value;
             if (value) {
@@ -240,11 +243,16 @@ export abstract class FormattableText extends ChartText {
                 this._richTextImpl = null;
             }
         }
+        return this;
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    isVisible(): boolean {
+        return this.visible && !!this._text;
+    }
+
     // getSvg(target: any, callback: RichTextParamCallback): string {
     //     if (this._richText) {
     //         return this._richText.getSvg(target, callback);
@@ -253,6 +261,10 @@ export abstract class FormattableText extends ChartText {
 
     buildSvg(view: TextElement, target: any, callback: RichTextParamCallback): void {
         this._richTextImpl.build(view, target, callback);
+    }
+
+    setLineHeight(v: number): void {
+        this._richTextImpl.lineHeight = v;
     }
 
     //-------------------------------------------------------------------------

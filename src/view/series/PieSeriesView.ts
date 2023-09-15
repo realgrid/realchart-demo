@@ -12,7 +12,10 @@ import { RcElement } from "../../common/RcControl";
 import { ORG_ANGLE, deg2rad } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { CircleElement } from "../../common/impl/CircleElement";
+import { LabelElement } from "../../common/impl/LabelElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
+import { TextElement, TextLayout } from "../../common/impl/TextElement";
+import { PointItemPosition } from "../../model/Series";
 import { PieSeries, PieSeriesGroup, PieSeriesPoint } from "../../model/series/PieSeries";
 import { IPointView, PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
@@ -34,109 +37,9 @@ class SectorView extends SectorElement implements IPointView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    setSectorEx(labels: PointLabelContainer, lines: PointLabelLineContainer, newSector: ISectorShape, animate = false): boolean {//, duration = Animation.SHORT_DURATION): boolean {
-        let animated = false;
-
-        // if (!this.equals(newSector)) {
-            if (animate) {
-                // this.animate({
-                //     duration: duration,
-                //     onStart: (element, anim) => {
-                //         anim.tag = this._getShape();
-                //     },
-                //     onFinish: (element, anim) => {
-                //         (element as SectorElement).setSector(newSector);
-                //         labels.get((element as PieSector).point, 0).moving = false;
-                //     },
-                //     onUpdate: (element, anim, rate): number => {
-                //         const org = anim.tag as ISectorShape;
-                //         const sector = {...org};
-
-                //         sector.start = org.start + (newSector.start - org.start) * rate;
-                //         sector.angle = org.angle + (newSector.angle - org.angle) * rate;
-
-                //         (element as SectorElement).setSector(sector);
-
-                //         // label & line
-                //         const point = (element as PieSector).point;
-                //         const off = point.series.series.pointLabel.offset;
-                //         const distance = point.series.series.labelDistance;;
-                //         const slicedOff = (point.series as PieSeriesViewModel).getSlicedOffset(sector.rx);
-                //         const label = labels.get(point, 0);
-                //         const r = label.getBBounds();
-                //         const line = lines.get(point);
-                //         const a = sector.start + sector.angle / 2;
-
-                //         const isLeft = Utils.isLeft(a);
-                //         let cx = sector.cx;
-                //         let cy = sector.cy;
-                //         let rx = sector.rx + distance * 0.8;
-                //         let dx = 0;
-                //         let dy = 0;
-
-                //         label.moving = true;                        
-
-                //         if (point.sliced) {
-                //             dx = Math.cos(a) * slicedOff;
-                //             dy = Math.sin(a) * slicedOff;
-                //         }
-                        
-                //         let x1 = cx + Math.cos(a) * sector.rx;
-                //         let y1 = cy + Math.sin(a) * sector.ry;
-                //         let x2 = cx + Math.cos(a) * rx;
-                //         let y2 = cy + Math.sin(a) * rx;
-                //         let x3: number;
-        
-                //         if (isLeft) {
-                //             x3 = x2 - distance * 0.2;
-                //         } else {
-                //             x3 = x2 + distance * 0.2;
-                //         }
-        
-                //         line.move(x1, y1);
-                //         line.translate(x1 + dx, y1 + dy);
-        
-                //         if (isLeft) {
-                //             x3 -= r.width + off;
-                //             y2 -= r.height / 2;
-                //         } else {
-                //             x3 += off;
-                //             y2 -= r.height / 2;
-                //         }
-                //         label.move(x3, y2); // 위치 정보만 저장하는 것.
-                //         label.translate(x3 + dx, y2 + dy);
-                //         return;
-                //     }
-                // })
-                animated = true;
-            } else {
-                this._assignShape(newSector);
-            }
-        // }
-        return animated;
+    setSectorEx(labels: PointLabelContainer, lines: PointLabelLineContainer, newSector: ISectorShape): void {
+        this._assignShape(newSector);
     }
-
-    // slice(labels: PointLabelContainer, lines: PointLabelLineContainer, sliced: boolean, cx: number, cy: number, offset: number, duration: number): boolean {
-    //     const point = this.point;
-        
-    //     if (sliced !== this.point.sliced) {
-    //         point.sliced = sliced;
-
-    //         const label = labels.get(point, 0);
-    //         const line = lines.get(point);
-    //         const a = point.startAngle + point.angle / 2;
-    //         const tx2 = sliced ? Math.cos(a) * offset : 0;
-    //         const ty2 = sliced ? Math.sin(a) * offset : 0;
-    
-    //         // this.translateEx(tx2, ty2, true, duration);
-    //         // line.translateEx(line.x + tx2, line.y + ty2, true, duration);
-    //         // label.translateEx(label.x + tx2, label.y + ty2, true, duration);
-    //         this.translate(tx2, ty2);
-    //         line.translate(line.x + tx2, line.y + ty2);
-    //         label.translate(label.x + tx2, label.y + ty2);
-    //         return true;
-    //     }
-    // }
 }
 
 export class PieSeriesView extends WidgetSeriesView<PieSeries> {
@@ -146,6 +49,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     //-------------------------------------------------------------------------
     private _circle: CircleElement;
     private _sectors = new ElementPool(this._pointContainer, SectorView, null, 0.5);
+    private _textView: LabelElement;
     private _lineContainer: PointLabelLineContainer;
 
     private _cx = 0;
@@ -167,6 +71,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             strokeDasharray: '2'
         });
 
+        this.add(this._textView = new LabelElement(doc, 'rct-pie-series-inner'));
         this.add(this._lineContainer = new PointLabelLineContainer(doc));
     }
 
@@ -182,6 +87,11 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         
         this.$_prepareSectors(this._visPoints as PieSeriesPoint[]);
         this._lineContainer.prepare(model);
+
+        if (this._textView.setVisible(model.hasInner() && model.innerText.isVisible())) {
+            this._textView.setModel(doc, model.innerText, null);
+            model.innerText.buildSvg(this._textView._text, model, null);
+        }
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -227,22 +137,8 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     // internal members
     //-------------------------------------------------------------------------
     private $_prepareSectors(points: PieSeriesPoint[]): void {
-        const count = points.length;
-        // const sum = points.map(p => p.yValue).reduce((a, c) => a + c, 0);
-        // let start = this._startAngle = ORG_ANGLE + deg2rad(this.model.startAngle);
-
-        // points.forEach(p => {
-        //     p.yRate = p.yValue / sum
-        //     p.startAngle = start;
-        //     start += p.angle = p.yRate * Math.PI * 2;
-        // });
-
-        this._sectors.prepare(count, (sector, i) => {
+        this._sectors.prepare(points.length, (sector, i) => {
             const p = sector.point = points[i];
-            // const a = i < count - 1 ? points[i + 1].startAngle : p.endAngle;
-
-            // sector.start = a;
-            // sector.angle = 0;
 
             this._setPointStyle(sector, p);
             p._calcedColor = getComputedStyle(sector.dom).fill;
@@ -257,7 +153,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                           .reduce((a, c) => a + c, 0);
 
         points.forEach(p => {
-            p.yRate = (p === this._zombie ? p.yValue * this._zombieRate : p.yValue) / sum
+            p.yRate = (p === this._zombie ? p.yValue * this._zombieRate : p.yValue) / sum || 0;
             p.startAngle = start;
             start += p.angle = p.yRate * Math.PI * 2 * vr;
         });
@@ -266,17 +162,24 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     private $_layoutSectors(points: PieSeriesPoint[], width: number, height: number): void {
         const series = this.model;
         const vr = this._getViewRate();
-        const cx = this._cx = Math.floor(width / 2);
-        const cy = this._cy = Math.floor(height / 2);
+        const center = series.getCenter(width, height);
+        const cx = this._cx = center.x;
+        const cy = this._cy = center.y;
         const rd = this._rd;
         const rdInner = this._rdInner;
         const labels = series.pointLabel;
-        const labelInside = series.getLabelPosition();
-        const labelOff = labels.offset;
         const labelViews = this._labelViews();
+        const labelInside = series.getLabelPosition() === PointItemPosition.INSIDE;
+        const labelOff = labels.offset;
+        const labelDist = labelViews ? (labels.distance || 0) : 0;
         const lineViews = this._lineContainer;
         const sliceOff = this._slicedOff = series.getSliceOffset(rd) * vr; // TODO: sector 후에...
         let labelView: PointLabelView;
+
+        if (this._textView.visible) {
+            const tr = this._textView.getBBounds();
+            this._textView.translate(cx - tr.width / 2, cy - tr.height / 2);
+        }
 
         if (this._circle.visible = this._sectors.isEmpty) {
             this._circle.setCircle(this._cx, this._cy, this._rd);
@@ -311,22 +214,23 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                     start: start,
                     angle: p.angle,
                     clockwise: true
-                }, false);
+                });
     
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
                     const line = lineViews.get(p);
-    
-                    if (labelInside) {
+
+                    if (line.setVisible(!labelInside)) {
+                        // this.$_layoutLabel(p, labelView, line, off, dist, slicedOff, pb);
+                        this.$_layoutLabel(p, labelView, line, labelOff, labelDist, p.sliced ? sliceOff : 0);
+                    } else {
                         line.visible = false;
                         // this.$_layoutLabelInner(p, label, off, dist, slicedOff);
-                        this.$_layoutLabelInner(p, labelView, 0, 0, p.sliced ? sliceOff : 0);
-                    } else {
-                        line.visible = true;
-                        // this.$_layoutLabel(p, labelView, line, off, dist, slicedOff, pb);
-                        this.$_layoutLabel(p, labelView, line, 0, 0, p.sliced ? sliceOff : 0);
+                        this.$_layoutLabelInner(p, labelView, labelOff, 0, p.sliced ? sliceOff : 0);
                     }
                     labelView.setContrast(labelInside && sector.dom);
+                } else {
+                    lineViews.get(p)?.setVisible(false);
                 }
             }
         })
@@ -354,9 +258,8 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             x3 = x2 + dist * 0.2;
         }
 
-        if (line) {
-            line.visible = true;
-            line.move(x1, y1);
+        if (line && line.setVisible(rd > 0)) {
+            //line.move(x1, y1);
             //line.setPath(pb.move(x1, y1).lines(x2, y2, x3, y2).end())
             line.setLine(new PathBuilder().move(0, 0).quad(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end())
             !view.moving && line.translate(x1 + dx, y1 + dy);

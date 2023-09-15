@@ -418,7 +418,8 @@
     opacity: 1;
 }
 .rct-point-label-lines {
-    stroke: black;
+    stroke: #585;
+    fill: none;
 }
 
 /** bar series */
@@ -630,6 +631,10 @@
 /** pie series */
 .rct-pie-series .rct-point {
     stroke: white;
+}
+.rct-pie-series-inner {
+    font-size: 20px;
+    fill: #557;
 }
 
 /** funnel series */

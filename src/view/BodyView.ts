@@ -673,6 +673,8 @@ export class BodyView extends ChartElement<Body> {
     protected _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
         const chart = model.chart as Chart;
 
+        this._polar = chart.isPolar();
+
         // background
         this._background.setStyleOrClass(model.style);
         this._background.setBoolData('polar', this._polar || chart.isWidget());
@@ -683,8 +685,6 @@ export class BodyView extends ChartElement<Body> {
         this._seriesViews.forEach((v, i) => {
             v.measure(doc, this._series[i], hintWidth, hintHeight, phase);
         })
-
-        this._polar = chart.isPolar();
 
         if (!this._polar) {
             // axis grids

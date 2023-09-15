@@ -150,17 +150,18 @@ export class LegendView extends BoundableElement<Legend> {
     }
     
     protected _doLayout(): void {
-        const vertical = this._vertical;
         const model = this.model;
+        const pos = model.getPosition();
         const gap = model.itemGap;
         const margin = this._margins;
         const pad = this._paddings;
+        const vertical = this._vertical;
         let x = margin.left + pad.left;
         let y = margin.top + pad.top;
 
-        if (model.position === LegendPosition.BOTTOM) {
+        if (pos === LegendPosition.BOTTOM) {
             y += pickNum(model.gap, 0);
-        } else if (model.position === LegendPosition.RIGHT) {
+        } else if (pos === LegendPosition.RIGHT) {
             x += pickNum(model.gap, 0);
         }
 

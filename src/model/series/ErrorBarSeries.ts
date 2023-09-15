@@ -94,6 +94,10 @@ export class ErrorBarSeries extends RangedSeries {
         return false;
     }
 
+    pointLabelCount(): number {
+        return 2;
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new ErrorBarSeriesPoint(source);
     }
