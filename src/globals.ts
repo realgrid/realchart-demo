@@ -7,32 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartControl } from "./ChartControl";
+import { RcChartControl } from "./api/RcChartControl";
 import { RcElement } from "./common/RcControl";
 import { Chart } from "./model/Chart";
 
 // [주의]main.ts에서 직접 구현하면 되지만, dldoc에서 global을 별도 구성할 수 있도록 자체 class에서 구현한다.
 /**
- * RealGrid-Touch 모듈 global.
- * <br>
- * "RealTouch" namespace로 접근한다.
- * 
- * ```
- *  // 데이터소스를 생성한다.
- *  const data = RealTouch.createData('dsMain', {
- *      fields: []
- *  });
- *  // 리스트컨트롤을 생성한다.
- *  const list = RealTouch.createList(document, 'dlist');
- *  // 컨트롤 설정 및 옵션
- *  list.setConfig({
- *      props: {},
- *      options: {}
- *  });
- *  // 컨트롤에 데이터를 연결한다.
- *  list.data = data;
- * ```
- * 
- * @see concepts.about RealGrid-Touch 개요
+ * RealChart 모듈 global.
  */
 export class Globals {
 
@@ -68,9 +49,9 @@ export class Globals {
      * @param config 차트 모델 설정 객체
      * @returns 
      */
-    static createChart(doc: Document, container: string | HTMLDivElement, config: any): ChartControl {
+    static createChart(doc: Document, container: string | HTMLDivElement, config: any): RcChartControl {
         const c = new ChartControl(doc, container);
         c.model = new Chart(config);
-        return c;
+        return new RcChartControl(c);
     }
 }

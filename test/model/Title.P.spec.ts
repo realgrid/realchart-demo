@@ -8,7 +8,7 @@
 
 import { expect } from 'chai';
 import { beforeEach, describe, it } from 'mocha';
-import { Chart } from '../../src/main';
+import { Chart } from '../../src/model/Chart';
 import { Utils } from '../../src/common/Utils';
 import { Subtitle, SubtitlePosition, Title } from '../../src/model/Title';
 import { Align, VerticalAlign, isNull } from '../../src/common/Types';

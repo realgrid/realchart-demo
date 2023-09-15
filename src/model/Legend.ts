@@ -170,7 +170,7 @@ export class Legend extends ChartItem {
      */
     backgroundStyles: SVGStyleOrClass;
     /**
-     * 한 행당 표시할 legend 항목 수.
+     * 한 행(수직일 때 열)당 표시할 legend 항목 수.
      * 
      * @config
      */
