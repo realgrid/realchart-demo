@@ -140,7 +140,8 @@ describe("errorbar.html test", async function () {
 
         for (let i = 0; i < texts.length; i++) {
             const textsLabel = await page.evaluate((el) => el.textContent, texts[i]);
-            expect(textsLabel).eq(config.xAxis.categories[i])
+            expect(textsLabel).eq(config.xAxis.categories[i]) 
+
         }
     });
 
@@ -152,6 +153,4 @@ describe("errorbar.html test", async function () {
         const yTick = await yaxis.$$('.rct-axis-label');
         expect(yTick).exist;
     });
-
-
 });

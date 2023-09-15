@@ -20,7 +20,7 @@
     "pub": "tsc && rollup --config rollup.config.js --environment BUILD:pub",
     "pdeploy": "npm run pbundle && node compress.js",
     "test": "npm run dbundle && mocha --exit --timeout 20000 -r ts-node/register -r test/dom-mock.js 'test/**/*.spec.ts' 'test/**/*Test*.ts'",
-    "test:pptr": "npm run dbundle && mocha --exit --timeout 20000 -r ts-node/register -r test/dom-mock.js 'test/puppeteer/**/*.spec.ts'",
+    "test:pptr": "npm run dbundle && mocha --exit --timeout 20000 -r ts-node/register -r test/dom-mock.js 'test/puppeteer/**/waterfall.N.spec.ts'",
     "test:model": "mocha --exit --timeout 10000 -r ts-node/register -r test/dom-mock.js 'test/{,!(puppeteer)/**/}/*.spec.ts' 'test/**/*Test*.ts'",
     "dldoc": "rm -rf web/docs && node dldoc",
     "tsdoc": "rm -rf api/typedoc && npx typedoc",

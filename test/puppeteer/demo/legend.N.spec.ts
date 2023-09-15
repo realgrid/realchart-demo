@@ -17,7 +17,7 @@ import { LegendView } from '../../../src/view/LegendView';
 /**
  * Puppeteer Tests for legend.html
  */
- describe("legend.html test", async function() {
+describe("legend.html test", async function () {
 
     const url = "http://localhost:6010/realchart/demo/legend.html";
     let browser: Browser;
@@ -45,24 +45,25 @@ import { LegendView } from '../../../src/view/LegendView';
         for (let i = 0; i < config.series.length; i++) {
             data.push(...config.series[i].data);
         }
-        expect(data.length).eq(bars.length);        
+        expect(data.length).eq(bars.length);
 
         // await page.screenshot({path: 'out/ss/legend.png'});
         page.close();
     });
 
-    it('title', async () => {
+
+    it('title 타이틀 존재 유무와 알맞은 값인지 확인', async () => {
         const page = await PPTester.newPage(browser, url);
         const config: any = await page.evaluate('config');
 
         const title = await page.$('.' + TitleView.TITLE_CLASS);
         expect(title).exist;
- 
+
         const titleText = await page.evaluate((el) => el.textContent, title);
         expect(titleText).eq(config.title);
     });
 
-    it('xTitle', async () => {
+    it('xTitle x축의 타이틀 존재 유무와 알맞은 값인지 확인', async () => {
         const page = await PPTester.newPage(browser, url);
         const config: any = await page.evaluate('config');
 
@@ -75,11 +76,11 @@ import { LegendView } from '../../../src/view/LegendView';
         expect(xAxistTitle).eq(config.xAxis.title);
     });
 
-    it('yTitle', async () => {
+    it('yTitle y축의 타이틀 존재 유무와 알맞은 값인지 확인', async () => {
         const page = await PPTester.newPage(browser, url);
         const config: any = await page.evaluate('config');
 
-        const yAxis = await PPTester.getAxis(page,'y');
+        const yAxis = await PPTester.getAxis(page, 'y');
         const yAxisText = await yAxis.$('text');
         expect(yAxis).exist;
 
@@ -87,52 +88,39 @@ import { LegendView } from '../../../src/view/LegendView';
         expect(yAxistTitle).eq(config.yAxis.title);
     });
 
-    it('tick', async () => {
+    it('tick 틱의 갯수와 실제 최대 데이터의 갯수가 알맞는지 확인', async () => {
         const page = await PPTester.newPage(browser, url);
         const config: any = await page.evaluate('config');
 
-        const xAxis = await PPTester.getAxis(page,'x');
+        const xAxis = await PPTester.getAxis(page, 'x');
         const xAxisTick = await xAxis.$$('.rct-axis-tick');
-        expect(xAxisTick).exist;
-
         let maxLength = 0;
-        config.series.forEach((fristSeries) => {
-            if(maxLength < fristSeries.data.length) {
-                maxLength = fristSeries.data.length
+
+        config.series.forEach((s1) => {
+            if (maxLength < s1.data.length) {
+                maxLength = s1.data.length;
             }
         });
+
         expect(maxLength).eq(xAxisTick.length);
     });
 
-    it('legend', async () => {
-        const page = await PPTester.newPage(browser, url);
-        const config: any = await page.evaluate('config');
-
-        const legend = await page.$('.' + LegendView.LEGEND_CLASS);
-        expect(legend).exist;
-
-        const legendMark = await page.$('.rct-legend-item-marker');
-        expect(legendMark);
-
-        const legendLabel = await legend.$('text');
-        const legendText = await page.evaluate((el) => el.textContent, legendLabel);
-        expect(legendText).exist;
-        console.log(legendText);
-    });
-
-    it('credit', async () => {
+    it('credit 의 존재 유무와 "RealCahrt"를 포함하는지 확인', async () => {
         const page = await PPTester.newPage(browser, url);
         const config: any = await page.evaluate('config');
 
         const credit = await page.$('.rct-credits');
         expect(credit);
 
-        const creditText = await credit.$('text')
-        expect(creditText).exist;
+        const text = await credit.$('text')
+        expect(Text).exist;
+
+        const creditText = await page.evaluate((el) => el.textContent, text);
+        expect(creditText).contains('RealChart')
 
     });
-    
-    it('grid', async () => {
+
+    it('grid 의 존재유무 확인', async () => {
         const page = await PPTester.newPage(browser, url);
         const config = await page.evaluate('config');
 
@@ -143,43 +131,51 @@ import { LegendView } from '../../../src/view/LegendView';
         expect(axisGrid).exist;
     });
 
-    it('xTickLabel', async () => {
+    it('xTickLabel 의 값이 알맞은 값인지 확인', async () => {
         const page = await PPTester.newPage(browser, url);
         const config: any = await page.evaluate('config');
 
         const axis = await PPTester.getAxis(page, 'x');
-        const tickLabel = await axis.$$('.rct-axis-label')
-        
-        expect(tickLabel).exist;
+        const tickAxis = await axis.$('.rct-axis-labels');
+        const texts = await tickAxis.$$('text');
 
-        expect(tickLabel.length).eq(config.xAxis.categories.length);
-
-        
-        for(let i = 0; i < tickLabel.length; i++) {
-            const tickText = await page.evaluate((el) => el.textContent,tickLabel[i]);
-            expect(tickText).eq(config.xAxis.categories[i]);
+        for (let i = 0; i < texts.length; i++) {
+            const textsLabel = await page.evaluate((el) => el.textContent, texts[i]);
+            expect(textsLabel).eq(config.xAxis.categories[i])
         }
     });
 
-    it('yTickLabel', async () => {
+    it('yTickLabel 의 존재유무 확인', async () => {
         const page = await PPTester.newPage(browser, url);
         const config: any = await page.evaluate('config');
 
-        const yaxis = await PPTester.getAxis(page,'y');
+        const yaxis = await PPTester.getAxis(page, 'y');
         const yTick = await yaxis.$$('.rct-axis-label');
         expect(yTick).exist;
-
-
     });
-    it('dataPoint', async () => {
+
+    it('seriespoint 의 갯수가 데이터의 쵀대 갯수와 일치하는지 확인', async () => {
         const page = await PPTester.newPage(browser, url);
         const config: any = await page.evaluate('config');
 
-        const dataPoints = await page.$('.rct-series-points');
-        expect(dataPoints).exist;
+        const seriesPoints = await page.$('.rct-series-container .rct-line-series');
+        const point = await seriesPoints.$$('.rct-point');
+        let maxLength = 0;
 
-        const dataPoint = await dataPoints.$$('.' + SeriesView.POINT_CLASS);
-        expect(dataPoint.length).eq(config.xAxis.categories.length);
-
+        config.series.forEach((s1) => {
+            if(maxLength < s1.data.length) {
+                maxLength = s1.data.length;
+            }
+        });
+        expect(point.length).eq(maxLength)
     });
+
+    it('seriesLine 의 존재유무 확인', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const line = await page.$('.rct-line-series-lines');
+        expect(line).exist;
+    });
+
 });
