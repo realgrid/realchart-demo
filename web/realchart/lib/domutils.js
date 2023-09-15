@@ -18,7 +18,7 @@ function createButtons(parentId, actions) {
 	}
 }
 
-function linefeed(parentId) {
+function line(parentId) {
 	var parent = document.getElementById(parentId);
 	if (parent) {
 		parent.appendChild(document.createElement('br'));

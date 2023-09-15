@@ -179,6 +179,8 @@ class LegendSectionView extends SectionView {
     }
 
     protected _doLayout(): void {
+        const gap = this._legendView._gap;
+        
         this._legendView.resize(this.width, this.height);
         this._legendView.layout();
     }
@@ -450,7 +452,7 @@ export class ChartView extends RcElement {
         if (this._legendSectionView.visible = (legend.isVisible())) {
             sz = this._legendSectionView.measure(doc, m, w, h, phase);
 
-            switch (legend.position) {
+            switch (legend.getPosition()) {
                 case LegendPosition.TOP:
                 case LegendPosition.BOTTOM:
                     h -= sz.height;
@@ -463,6 +465,7 @@ export class ChartView extends RcElement {
         }
 
         this.$_prepareBody(doc, polar);
+
         if (polar) {
             this.$_measurePolar(doc, m, w, h, 1);
         } else {
@@ -530,7 +533,7 @@ export class ChartView extends RcElement {
             hLegend = vLegend.height;
             wLegend = vLegend.width;
 
-            switch (legend.position) {
+            switch (legend.getPosition()) {
                 case LegendPosition.TOP:
                     yLegend = hTitle + h1Credit;
                     h -= hLegend;
@@ -694,7 +697,7 @@ export class ChartView extends RcElement {
             vLegend.translate(x, y);
         }
 
-        this._tooltipView.hide(true, false);
+        this._tooltipView.close(true, false);
     }
 
     showTooltip(series: Series, point: DataPoint): void {
@@ -705,7 +708,7 @@ export class ChartView extends RcElement {
     }
 
     hideTooltip(): void {
-        this._tooltipView.hide(false, true);
+        this._tooltipView.close(false, true);
     }
 
     legendByDom(dom: Element): LegendItem {

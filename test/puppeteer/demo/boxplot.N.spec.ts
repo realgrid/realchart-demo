@@ -16,7 +16,7 @@ import { TitleView } from '../../../src/view/TitleView';
 /**
  * Puppeteer Tests for boxplot.html
  */
- describe("boxplot.N.html test", async function() {
+ describe("boxplot.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/boxplot.html";
     let browser: Browser;

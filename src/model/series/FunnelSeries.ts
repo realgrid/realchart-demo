@@ -8,6 +8,7 @@
 
 import { ISize } from "../../common/Size";
 import { IPercentSize, SizeValue, calcPercent, fixnum, parsePercentSize2 } from "../../common/Types";
+import { Utils } from "../../common/Utils";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { ILegendSource } from "../Legend";
@@ -44,7 +45,7 @@ export class FunnelSeries extends WidgetSeries {
     static readonly DEF_WIDTH = '85%';
     static readonly DEF_HEIGHT = '90%';
     static readonly DEF_NECK_WIDTH = '30%';
-    static readonly DEF_NECK_HEIGHT = '25%';
+    static readonly DEF_NECK_HEIGHT = '30%';
 
     //-------------------------------------------------------------------------
     // property fields
@@ -70,7 +71,7 @@ export class FunnelSeries extends WidgetSeries {
     width: SizeValue = FunnelSeries.DEF_WIDTH;
     height: SizeValue = FunnelSeries.DEF_HEIGHT;
     neckWidth: SizeValue = FunnelSeries.DEF_NECK_WIDTH;
-    neckHeight: SizeValue = FunnelSeries.DEF_NECK_WIDTH;
+    neckHeight: SizeValue = FunnelSeries.DEF_NECK_HEIGHT;
     reversed = false;
 
     //-------------------------------------------------------------------------
@@ -78,15 +79,15 @@ export class FunnelSeries extends WidgetSeries {
     //-------------------------------------------------------------------------
     getSize(plotWidth: number, plotHeight: number): ISize {
         return {
-            width: calcPercent(this._widthDim, plotWidth),
-            height: calcPercent(this._heightDim, plotHeight)
+            width: Math.max(plotWidth * 0.1, calcPercent(this._widthDim, plotWidth)),
+            height: Math.max(plotHeight * 0.1, calcPercent(this._heightDim, plotHeight))
         };
     }
 
-    getNeckSize(plotWidth: number, plotHeight: number): ISize{
+    getNeckSize(width: number, height: number): ISize{
         return {
-            width: calcPercent(this._neckWidthDim, plotWidth),
-            height: calcPercent(this._neckHeightDim, plotHeight)
+            width: Utils.clamp(calcPercent(this._neckWidthDim, width), width * 0.1, width),
+            height: Utils.clamp(calcPercent(this._neckHeightDim, height), height * 0.1, height)
         };
     }
 

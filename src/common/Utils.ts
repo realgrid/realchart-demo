@@ -649,14 +649,7 @@ export class Utils {
     }
 
     static clamp(v: number, min: number, max: number): number {
-        if (!isNaN(max)) v = Math.min(v, max);
-        if (!isNaN(min)) v = Math.max(v, min);
-        return v;
-    }
-
-    static splice(array: any[], start: number, deleteCount: number, items: any[]): void {
-        const args = [start, deleteCount].concat(items);
-        Array.prototype.splice.apply(array, args);
+        return Math.max(min, Math.min(max, v));
     }
 
     static makeIntArray(from: number, to: number): number[] {

@@ -18,7 +18,7 @@ import { LegendView } from '../../../src/view/LegendView';
 /**
  * Puppeteer Tests for area-multi.html
  */
- describe("area-multi.N.html test", async function() {
+ describe("area-multi.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/area-multi.html";
     let browser: Browser;
