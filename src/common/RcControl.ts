@@ -24,13 +24,6 @@ export interface IPointerHandler {
     handleWheel(ev: WheelEvent): void;
 }
 
-// const BACK_STYLES = {
-//     background: 'fill',
-//     border: 'stroke',
-//     borderWidth: 'strokeWidth',
-//     borderRadius: 'borderRadius'
-// }
-
 /** 
  * @internal
  *

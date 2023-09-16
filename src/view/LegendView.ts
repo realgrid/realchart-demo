@@ -79,6 +79,7 @@ export class LegendView extends BoundableElement<Legend> {
     private _itemViews = new ElementPool(this, LegendItemView);
     private _vertical: boolean;
     _gap: number;
+    _ipr: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -102,12 +103,9 @@ export class LegendView extends BoundableElement<Legend> {
     protected _doMeasure(doc: Document, model: Legend, hintWidth: number, hintHeight: number, phase: number): ISize {
         const items = model.items();
         const vertical = this._vertical = model.getLayout() === LegendLayout.VERTICAL;
-        const itemGap = model.itemGap;
-        const views = this._itemViews;
-        let w = 0;
-        let h = 0;
-
-        this._gap = pickNum(this.model.gap, 0);
+        
+        this._ipr = pickNum(model.itemsPerRow, 0);
+        this._gap = pickNum(model.gap, 0);
 
         if (vertical) {
             hintHeight = model.getMaxHeight(hintHeight);
@@ -117,26 +115,11 @@ export class LegendView extends BoundableElement<Legend> {
 
         this.$_prepareItems(doc, items);
 
-        views.forEach((v, i) => {
-            const sz = v.measure(doc, items[i], hintWidth, hintHeight, phase);
-
-            if (vertical) {
-                w = Math.max(w, sz.width);
-                h += sz.height;
-            } else {
-                h = Math.max(h, sz.height);
-                w += sz.width;
-            }
-        });
-
-        if (vertical) {
-            h += (views.count - 1) * itemGap;
+        if (this._ipr > 0) {
+            return this.$_measureIpr(doc, model, vertical, this._ipr, hintWidth, hintHeight);
         } else {
-            w += (views.count - 1) * itemGap;
-            if (w > hintWidth) {
-            }
+            return this.$_measure(doc, model, vertical, hintWidth, hintHeight);
         }
-        return Size.create(w, h);
     }
     
     protected _doLayout(): void {
@@ -167,5 +150,72 @@ export class LegendView extends BoundableElement<Legend> {
     //-------------------------------------------------------------------------
     private $_prepareItems(doc: Document, items: LegendItem[]): void {
         this._itemViews.prepare(items.length);
+    }
+
+    private $_measure(doc: Document, model: Legend, vertical: boolean, hintWidth: number, hintHeight: number): ISize {
+        const items = model.items();
+        const views = this._itemViews;
+        const itemGap = model.itemGap;
+        let w = 0;
+        let h = 0;
+
+        views.forEach((v, i) => {
+            const sz = v.measure(doc, items[i], hintWidth, hintHeight, 1);
+
+            if (vertical) {
+                w = Math.max(w, sz.width);
+                h += sz.height;
+            } else {
+                h = Math.max(h, sz.height);
+                w += sz.width;
+            }
+        });
+
+        if (vertical) {
+            h += (views.count - 1) * itemGap;
+        } else {
+            w += (views.count - 1) * itemGap;
+            if (w > hintWidth) {
+            }
+        }
+        return Size.create(w, h);
+    }
+
+    private $_measureIpr(doc: Document, model: Legend, vertical: boolean, ipr: number, hintWidth: number, hintHeight: number): ISize {
+        const items = model.items();
+        const views = this._itemViews;
+        const itemGap = model.itemGap;
+        const sizes: ISize[] = [];
+        let w = 0;
+        let h = 0;
+
+        views.forEach((v, i) => {
+            sizes.push(v.measure(doc, items[i], hintWidth, hintHeight, 1));
+        });
+
+        if (vertical) {
+
+        } else {
+
+        }
+
+        // views.forEach((v, i) => {
+        //     if (vertical) {
+        //         w = Math.max(w, sz.width);
+        //         h += sz.height;
+        //     } else {
+        //         h = Math.max(h, sz.height);
+        //         w += sz.width;
+        //     }
+        // });
+
+        // if (vertical) {
+        //     h += (views.count - 1) * itemGap;
+        // } else {
+        //     w += (views.count - 1) * itemGap;
+        //     if (w > hintWidth) {
+        //     }
+        // }
+        return Size.create(w, h);
     }
 }

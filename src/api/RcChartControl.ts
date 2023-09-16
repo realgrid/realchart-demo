@@ -9,7 +9,7 @@
 import { ChartControl } from "../ChartControl";
 
 const funcs = {
-    'update': '',
+    'load': '',
     'refresh': ''
 }
 
@@ -30,10 +30,16 @@ export class RcChartControl {
         });
     }
 
-    update(config: any, animate?: boolean): void {
-        this._proxy.update(config, animate);
+    /**
+     * 기존 설정을 지우고 새로운 config로 차트를 구성한다.
+     */
+    load(config: any, animate?: boolean): void {
+        this._proxy.load(config, animate);
     }
 
+    /**
+     * 차트를 다시 그린다.
+     */
     refresh(): void {
         this._proxy.refresh();
     }

@@ -66,20 +66,20 @@ function setActions(container) {
     line(container);
     createCheckBox(container, 'Title', function (e) {
         config.title.visible = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, true);
     createListBox(container, "align", ['left', 'center', 'right'], function (e) {
         config.title.align = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, 'center');
     line(container);
     createCheckBox(container, 'Subtitle', function (e) {
         config.subtitle.visible = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, true);
     createListBox(container, "align", ['left', 'center', 'right'], function (e) {
         config.subtitle.align = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, 'center');
 }
 

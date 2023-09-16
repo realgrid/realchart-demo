@@ -60,31 +60,31 @@ function setActions(container) {
     });
     createListBox(container, "layout", ['default', 'stack', 'fill', 'overlap'], function (e) {
         config.series.layout = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, 'default');
     createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
         config.series.series.forEach(s => s.lineType = _getValue(e));
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, 'default');
     createCheckBox(container, 'Point Marker', function (e) {
         config.series.series.forEach(s => s.marker.visible = _getChecked(e));
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, true);
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createListBox(container, "options.theme", ['', 'dark'], function (e) {
         config.options.theme = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, 'default');
 }
 

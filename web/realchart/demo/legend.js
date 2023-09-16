@@ -46,31 +46,31 @@ function setActions(container) {
     createCheckBox(container, 'visible', function (e) {
         //chart.model.legend.visible = _getChecked(e);
         config.legend.visible = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, true)
     createListBox(container, "position", ['bottom', 'top', 'right', 'left', 'plot'], function (e) {
         config.legend.position = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, 'bottom');
     createListBox(container, "alignBase", ['plot', 'chart'], function (e) {
         config.legend.align = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, 'plot');
     createListBox(container, "left", ['', 10, 15, 20, 25], function (e) {
         config.legend.left = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, '10');
     createListBox(container, "right", ['', 10, 15, 20, 25], function (e) {
         config.legend.right = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, '');
     createListBox(container, "top", ['', 10, 15, 20, 25], function (e) {
         config.legend.top = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, '10');
     createListBox(container, "bottom", ['', 10, 15, 20, 25], function (e) {
         config.legend.bottom = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, '');
     // createListBox(container, "layout", ['auto', 'horizontal', 'vertical'], function (e) {
     //     chart.model.legend.layout = _getValue(e);
