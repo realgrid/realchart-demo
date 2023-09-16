@@ -69,7 +69,7 @@ function setActions(container) {
         chart.load(config);
     }, 'bottom');
     createListBox(container, "alignBase", ['plot', 'chart'], function (e) {
-        config.legend.align = _getValue(e);
+        config.legend.alignBase = _getValue(e);
         chart.load(config);
     }, 'plot');
     createListBox(container, "itemsPerRow", ['', '5', '4', '3', '2'], function (e) {

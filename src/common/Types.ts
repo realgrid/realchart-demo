@@ -306,3 +306,7 @@ export enum SectionDir {
 export const HORZ_SECTIONS = [SectionDir.LEFT, SectionDir.RIGHT];
 export const VERT_SECTIONS = [SectionDir.TOP, SectionDir.BOTTOM];
 
+export enum AlignBase {
+    CHART = 'chart',
+    PLOT = 'plot'
+}

@@ -7,15 +7,26 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isString } from "../common/Common";
-import { Align, SVGStyleOrClass, VerticalAlign, isNull } from "../common/Types";
+import { Align, AlignBase, SVGStyleOrClass, VerticalAlign, isNull } from "../common/Types";
 import { ChartItem } from "./ChartItem";
 
+/**
+ * 차트 타이틀 설정 모델.
+ * 
+ * @confit chart.title
+ */
 export class Title extends ChartItem {
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     text = 'Title';
+    /**
+     * 정렬 기준.
+     * 
+     * @config
+     */
+    alignBase = AlignBase.PLOT;
     align = Align.CENTER;
     backgroundStyle: SVGStyleOrClass;
 
@@ -44,6 +55,11 @@ export enum SubtitlePosition {
     TOP = 'top'
 }
 
+/**
+ * 차트 sub 타이틀 설정 모델.
+ * 
+ * @conft chart.subtitle
+ */
 export class Subtitle extends Title {
 
     //-------------------------------------------------------------------------

@@ -68,6 +68,10 @@ function setActions(container) {
         config.title.visible = _getChecked(e);
         chart.load(config);
     }, true);
+    createListBox(container, "alignBase", ['plot', 'chart'], function (e) {
+        config.title.alignBase = _getValue(e);
+        chart.load(config);
+    }, 'plot');
     createListBox(container, "align", ['left', 'center', 'right'], function (e) {
         config.title.align = _getValue(e);
         chart.load(config);
@@ -77,6 +81,10 @@ function setActions(container) {
         config.subtitle.visible = _getChecked(e);
         chart.load(config);
     }, true);
+    createListBox(container, "alignBase", ['plot', 'chart'], function (e) {
+        config.subtitle.alignBase = _getValue(e);
+        chart.load(config);
+    }, 'plot');
     createListBox(container, "align", ['left', 'center', 'right'], function (e) {
         config.subtitle.align = _getValue(e);
         chart.load(config);

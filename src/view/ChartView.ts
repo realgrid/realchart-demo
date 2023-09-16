@@ -12,13 +12,13 @@ import { IPoint, Point } from "../common/Point";
 import { ClipElement, RcElement } from "../common/RcControl";
 import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
-import { Align, HORZ_SECTIONS, SectionDir, VERT_SECTIONS, VerticalAlign } from "../common/Types";
+import { Align, AlignBase, HORZ_SECTIONS, SectionDir, VERT_SECTIONS, VerticalAlign } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Axis } from "../model/Axis";
 import { Chart, Credits } from "../model/Chart";
 import { DataPoint } from "../model/DataPoint";
-import { LegendAlignBase, LegendItem, LegendPosition } from "../model/Legend";
+import { LegendItem, LegendPosition } from "../model/Legend";
 import { Series } from "../model/Series";
 import { Subtitle } from "../model/Title";
 import { AxisView } from "./AxisView";
@@ -96,26 +96,31 @@ class TitleSectionView extends SectionView {
             sz = v.measure(doc, chart.title, hintWidth, hintHeight, phase);
             height += sz.height;
             hintHeight -= sz.height;
+            width = Math.max(sz.width);
         }
         if (sv.visible = chart.subtitle.isVisible()) {
             sz = sv.measure(doc, chart.subtitle, hintWidth, hintHeight, phase);
             height += sz.height;
             hintHeight -= sz.height;
+            width = Math.max(sz.width);
         }
         return { width, height };
     }
 
-    protected _doLayout(body: IRect): void {
+    protected _doLayout(domain: {xPlot: number, wPlot: number, wChart: number}): void {
         const v = this.titleView;
         const sv = this.subtitleView;
         const m = v.model;
         const sm = sv.model as Subtitle;
-        const w = body.width;
         let y = 0;
+        let x: number;
+        let w: number;
 
+        // title
         if (v.visible) {
-            let x = 0;;
-
+            x = (v.width > domain.wPlot || m.alignBase === AlignBase.CHART) ? 0 : domain.xPlot;
+            w = (v.width > domain.wPlot || m.alignBase === AlignBase.CHART) ? domain.wChart : domain.wPlot;
+            
             v.resizeByMeasured().layout();
 
             switch (m.align) {
@@ -131,8 +136,11 @@ class TitleSectionView extends SectionView {
             v.translate(x, y);
             y += v.height;
         }
+
+        // subtitle
         if (sv.visible) {
-            let x = 0;
+            x = (sv.width > domain.wPlot || sm.alignBase === AlignBase.CHART) ? 0 : domain.xPlot;
+            w = (sv.width > domain.wPlot || sm.alignBase === AlignBase.CHART) ? domain.wChart : domain.wPlot;
 
             sv.resizeByMeasured().layout();
 
@@ -150,7 +158,6 @@ class TitleSectionView extends SectionView {
                     }
                     break;
             }
-
             sv.translate(x, y);
         }
     }
@@ -699,7 +706,7 @@ export class ChartView extends RcElement {
 
         // title
         if (vTitle.visible) {
-            vTitle.layout(this._currBody.getRect()).translate(x, yTitle);
+            vTitle.layout({xPlot: x, wPlot, wChart: width}).translate(0, yTitle);
         }
 
         // legend
@@ -722,7 +729,7 @@ export class ChartView extends RcElement {
                 }
             } else if (!isNaN(yLegend)) { // 수평
                 y = yLegend;
-                if (legend.alignBase === LegendAlignBase.CHART) {
+                if (legend.alignBase === AlignBase.CHART) {
                     x = (width - wLegend) / 2;
                 } else {
                     x += (w - wLegend) / 2;
@@ -732,7 +739,7 @@ export class ChartView extends RcElement {
                 }
             } else { // 수직
                 x = xLegend;
-                if (legend.alignBase === LegendAlignBase.CHART) {
+                if (legend.alignBase === AlignBase.CHART) {
                     y = (height - hLegend) / 2;
                 } else {
                     y = y + (h - hLegend) / 2;
