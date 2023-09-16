@@ -76,8 +76,8 @@ class CategoryAxisGrid extends AxisGrid {
         const n = (this.axis as CategoryAxis)._ticks.length;
         const pts: number[] = [];
 
-        for (let i = 0; i < n; i++) {
-            pts.push(apts[i + 2]);
+        for (let i = 0; i <= n; i++) {
+            pts.push(apts[i + 1]);
         }
         return pts;
     }

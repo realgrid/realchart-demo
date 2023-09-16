@@ -118,6 +118,7 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     protected _doMeasure(doc: Document, model: AxisGrid, hintWidth: number, hintHeight: number, phase: number): ISize {
         this._pts = model.getPoints(model.axis._isHorz ? hintWidth : hintHeight);
         this._lines.prepare(this._pts.length, (line) => {
+            line.setClass('rct-axis-grid-line');
         });
         return Size.create(hintWidth, hintHeight);
     }
@@ -127,14 +128,22 @@ export class AxisGridView extends ChartElement<AxisGrid> {
         const w = this.width;
         const h = this.height;
         const pts = this._pts;
+        const lines = this._lines;
+
+        if (pts[0] === 0) {
+            lines.first.setClass('rct-axis-grid-line-start');
+        } 
+        if (pts[pts.length - 1] === (axis._isHorz ? w : h)) {
+            lines.last.setClass('rct-axis-grid-line-end');
+        }
 
         if (axis._isHorz) {
-            this._lines.forEach((line, i) => {
+            lines.forEach((line, i) => {
                 // line.setVLine(pts[i], 0, h);
                 line.setVLineC(pts[i], 0, h);
             });
         } else {
-            this._lines.forEach((line, i) => {
+            lines.forEach((line, i) => {
                 // line.setHLine(h - pts[i], 0, w);
                 line.setHLineC(h - pts[i], 0, w);
             });

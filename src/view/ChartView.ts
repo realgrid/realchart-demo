@@ -18,7 +18,7 @@ import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Axis } from "../model/Axis";
 import { Chart, Credits } from "../model/Chart";
 import { DataPoint } from "../model/DataPoint";
-import { LegendItem, LegendPosition } from "../model/Legend";
+import { LegendAlignBase, LegendItem, LegendPosition } from "../model/Legend";
 import { Series } from "../model/Series";
 import { Subtitle } from "../model/Title";
 import { AxisView } from "./AxisView";
@@ -508,9 +508,8 @@ export class ChartView extends RcElement {
     }
 
     layout(): void {
-        const m = this._model;
-        const height = this.height;
         const width = this.width;
+        const height = this.height;
         let w = width;
         let h = height;
 
@@ -519,11 +518,11 @@ export class ChartView extends RcElement {
             return;
         }
 
+        const m = this._model;
         const polar = m.isPolar();
         const legend = m.legend;
         const credit = m.options.credits;
         const vCredit = this._creditView;
-        let wCredit = 0;
         let h1Credit = 0;
         let h2Credit = 0;
         let x = 0;
@@ -721,12 +720,26 @@ export class ChartView extends RcElement {
                 } else {
                     y += (hPlot - hLegend) / 2;
                 }
-            } else if (!isNaN(yLegend)) {
-                x += (w - wLegend) / 2;
+            } else if (!isNaN(yLegend)) { // 수평
                 y = yLegend;
-            } else {
+                if (legend.alignBase === LegendAlignBase.CHART) {
+                    x = (width - wLegend) / 2;
+                } else {
+                    x += (w - wLegend) / 2;
+                    if (x + wLegend > width) { // plot 범위를 벗어나면 chart에 맞춘다.
+                        x = (width - wLegend) / 2;
+                    }
+                }
+            } else { // 수직
                 x = xLegend;
-                y = y + (h - hLegend) / 2;
+                if (legend.alignBase === LegendAlignBase.CHART) {
+                    y = (height - hLegend) / 2;
+                } else {
+                    y = y + (h - hLegend) / 2;
+                    if (y + hLegend > height) {
+                        y = (height - hLegend) / 2;
+                    }
+                }
             }
             vLegend.translate(x, y);
         }

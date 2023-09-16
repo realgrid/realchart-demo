@@ -999,7 +999,7 @@ export class RcElement extends RcObject {
         }
     }
 
-    setStyleName(value: string): void {
+    setClass(value: string): void {
         this.setAttr('class', value);
     }
 
