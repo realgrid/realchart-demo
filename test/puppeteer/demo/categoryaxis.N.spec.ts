@@ -70,12 +70,12 @@ import { LegendView } from '../../../src/view/LegendView';
         expect(PPTester.same(pTick.x, rLine.width / ticks.length / 2)).is.true;
 
         // padding -> -0.5
-        await page.evaluate('config.xAxis.padding = -0.5; chart.update(config)');
+        await page.evaluate('config.xAxis.padding = -0.5; chart.load(config)');
 
         pTick = await PPTester.getTranslate(ticks[0]);
         expect(PPTester.same(pTick.x, 0)).is.true;
 
-        await page.evaluate('config.xAxis.padding = 0; chart.update(config)');
+        await page.evaluate('config.xAxis.padding = 0; chart.load(config)');
     });
 
 
