@@ -6,11 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { __asyncGenerator } from "tslib";
 import { isNumber } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { ClipElement, RcElement } from "../common/RcControl";
-import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { Align, AlignBase, HORZ_SECTIONS, SectionDir, VERT_SECTIONS, VerticalAlign } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
@@ -30,6 +28,9 @@ import { SeriesView } from "./SeriesView";
 import { TitleView } from "./TitleView";
 import { TooltipView } from "./TooltipView";
 
+/**
+ * @internal
+ */
 abstract class SectionView extends GroupElement {
 
     //-------------------------------------------------------------------------
@@ -69,6 +70,9 @@ abstract class SectionView extends GroupElement {
     protected abstract _doLayout(param?: any): void;
 }
 
+/**
+ * @internal
+ */
 class TitleSectionView extends SectionView {
 
     //-------------------------------------------------------------------------
@@ -163,6 +167,9 @@ class TitleSectionView extends SectionView {
     }
 }
 
+/**
+ * @internal
+ */
 class LegendSectionView extends SectionView {
 
     //-------------------------------------------------------------------------
@@ -227,6 +234,9 @@ class LegendSectionView extends SectionView {
     }
 }
 
+/**
+ * @internal
+ */
 class AxisSectionView extends SectionView {
 
     //-------------------------------------------------------------------------
@@ -350,9 +360,15 @@ class AxisSectionView extends SectionView {
     }
 }
 
+/**
+ * @internal
+ */
 class EmptyView extends GroupElement {
 }
 
+/**
+ * @internal
+ */
 export class CreditView extends ChartElement<Credits> {
 
     //-------------------------------------------------------------------------
@@ -393,6 +409,9 @@ export class CreditView extends ChartElement<Credits> {
     }
 }
 
+/**
+ * @internal
+ */
 export class ChartView extends RcElement {
 
     //-------------------------------------------------------------------------

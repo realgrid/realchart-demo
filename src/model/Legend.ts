@@ -165,11 +165,12 @@ export class Legend extends ChartItem {
      */
     backgroundStyles: SVGStyleOrClass;
     /**
-     * 한 행(수직일 때 열)당 표시할 최대 legend 항목 수.
+     * 한 줄 당 표시할 최대 legend 항목 수.
      * 
      * @config
      */
-    itemsPerRow: number;
+    itemsPerLine: number;
+    lineGap = 4;
     /**
      * 수평 {@link layout 배치}일 때,
      * 최대 너비를 픽셀 단위의 크기 혹은 plot 너비에 대한 상대 길이를 '%'로 지정한다.

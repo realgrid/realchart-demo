@@ -72,8 +72,8 @@ function setActions(container) {
         config.legend.alignBase = _getValue(e);
         chart.load(config);
     }, 'plot');
-    createListBox(container, "itemsPerRow", ['', '5', '4', '3', '2'], function (e) {
-        config.legend.itemsPerRow = _getValue(e);
+    createListBox(container, "itemsPerLine", ['', '5', '4', '3', '2', '1'], function (e) {
+        config.legend.itemsPerLine = _getValue(e);
         chart.load(config);
     }, 'bottom');
 }
