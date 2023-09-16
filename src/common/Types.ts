@@ -45,6 +45,9 @@ export function newObject(prop: string, value: any): {} {
     obj[prop] = value;
     return obj;
 }
+export function utc(year: number, monthIndex = 0, day = 1, hour = 0, minute = 0, second = 0, millisecond = 0): Date {
+    return new Date(Date.UTC(year, monthIndex, day, hour, minute, second, millisecond));
+}
 
 export type Path = string | any[];
 

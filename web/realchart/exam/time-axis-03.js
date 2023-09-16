@@ -21,8 +21,7 @@ const config = {
 export function init() {
     // console.log(RealChart.getVersion());
     // RealChart.setLogging(true);
-    RealChart.setDebugging(true);
+    // RealChart.setDebugging(true);
 
-    const chart = RealChart.createChartControl(document, 'realchart');
-    chart.model = RealChart.loadChart(config);
+    RealChart.createChart(document, 'realchart', config);
 }

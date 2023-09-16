@@ -676,9 +676,10 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
         const yOrg = inverted ? 0 : height;;
-        const yMin = yAxis.getPosition(yLen, yAxis.axisMin());
+        const min = yAxis.axisMin();
+        const yMin = yAxis.getPosition(yLen, min);
         const base = series.getBaseValue(yAxis);
-        const yBase = pickNum(yAxis.getPosition(yLen, base), yMin);
+        const yBase = pickNum(yAxis.getPosition(yLen, Math.max(min, base)), yMin);
         const based = !isNaN(base);
         const info: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
             inverted,

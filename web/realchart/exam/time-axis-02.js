@@ -1,12 +1,18 @@
 const config = {
     title: "Time Axis 02",
+    options: {
+        animatable: false
+    },
     xAxis: {
         type: 'time',
-        title: false
+        title: false,
+        // minPadding: 0
     },
     yAxis: {
         title: 'Exchange Rate',
-        minValue: 0.6
+        min: 0.6,
+        // reversed: true,
+        // utc: true
     },
     series: {
         type: 'area',
@@ -18,8 +24,7 @@ const config = {
 export function init() {
     // console.log(RealChart.getVersion());
     // RealChart.setLogging(true);
-    RealChart.setDebugging(true);
+    // RealChart.setDebugging(true);
 
-    const chart = RealChart.createChartControl(document, 'realchart');
-    chart.model = RealChart.loadChart(config);
+    RealChart.createChart(document, 'realchart', config);
 }

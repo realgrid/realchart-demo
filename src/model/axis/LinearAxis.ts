@@ -289,6 +289,8 @@ export enum AxisFit {
 
 /**
  * 연속 축 기반.
+ * 
+ * @config chart.axis[type=linear|time|log]
  */
 export abstract class ContinuousAxis extends Axis {
 
@@ -303,8 +305,8 @@ export abstract class ContinuousAxis extends Axis {
     private _max: number;
     private _base: number;
     private _unitLen: number;
-    private _calcedMin: number;
-    private _calcedMax: number;
+    _calcedMin: number;
+    _calcedMax: number;
     private _minBased: boolean;
     private _maxBased: boolean;
 
@@ -334,11 +336,15 @@ export abstract class ContinuousAxis extends Axis {
      */
     nullable = true;
     /**
+     * 
+     * @config
      */
     baseValue: number;
 
     /**
-     * {@link minPadding}, {@link maxPadding}의 기본값이다.
+     * {@link minPadding}, {@link maxPadding}이 설정되지 않았을 때 적용되는 기본값이다.
+     * 
+     * @config
      */
     padding = 0.05;
     /**
@@ -346,7 +352,9 @@ export abstract class ContinuousAxis extends Axis {
      * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.
      * {@link startFit}이 {@link AxitFit.TICK}일 때,
      * data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
-     * {@link strictMin}이 지정돼도 이 속성은 무시된다.
+     * {@link strictMin}가 지정되거나, {@link min}이 계산된 최소값보다 작은 경우에도 이 속성은 무시된다.
+     * 
+     * @config
      */
     minPadding: number;
     /**
@@ -354,11 +362,26 @@ export abstract class ContinuousAxis extends Axis {
      * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.
      * {@link endFit}이 {@link AxitFit.TICK}일 때,
      * data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
-     * {@link strictMax}가 지정돼도 이 속성은 무시된다.
+     * {@link strictMax}가 지정되거나, {@link max}가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다.
+     * 
+     * @config
      */
     maxPadding: number;
-
+    /**
+     * 무조건 적용되는 최소값.
+     * 즉, 이 값보다 작은 값을 갖는 시리즈 포인트들은 표시되지 않는다.
+     * minPadding도 적용되지 않는다.
+     * 
+     * @config
+     */
     strictMin: number;
+    /**
+     * 무조건 적용되는 최대값.
+     * 즉, 이 값보다 큰 값을 갖는 시리즈 포인트들은 표시되지 않는다.
+     * maxPadding도 적용되지 않는다.
+     * 
+     * @config
+     */
     strictMax: number;
 
     /**
@@ -638,10 +661,10 @@ export abstract class ContinuousAxis extends Axis {
         if (!isNaN(this.strictMin)) {
             min = this.strictMin;
         } else {
+            // _hardMin이 적용되면 minPadding은 무시된다.
             if (this._hardMin < min) {
                 min = this._hardMin;
-            }
-            if (!this._minBased) {
+            } else if (!this._minBased) {
                 minPad = pickNum3(this.minPadding, this.padding, 0);
             }
         }
@@ -649,10 +672,10 @@ export abstract class ContinuousAxis extends Axis {
         if (!isNaN(this.strictMax)) {
             max = this.strictMax;
         } else {
+            // _hardMax가 적용되면 maxPadding은 무시된다.
             if (this._hardMax > max) {
                 max = this._hardMax;
-            }
-            if (!this._maxBased) {
+            } if (!this._maxBased) {
                 maxPad = pickNum3(this.maxPadding, this.padding, 0);
             }
         }

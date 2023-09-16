@@ -6,11 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isString } from "../../common/Common";
+import { isString, pickNum } from "../../common/Common";
 import { pad2 } from "../../common/Types";
 import { AxisTick, IAxisTick } from "../Axis";
 import { IChart } from "../Chart";
-import { ContinuousAxis, LinearAxis, ContinuousAxisTick } from "./LinearAxis";
+import { ContinuousAxis, ContinuousAxisTick } from "./LinearAxis";
 
 const enum TimeScale {
     MS,
@@ -45,6 +45,11 @@ const time_multiples = [
     [1, 2, 3, 4, 6]                                 // mon
 ]
 
+/**
+ * @internal
+ * 
+ * [주의] javascript에서 숫자값을 Date로 변환하거나, Date를 숫자로 변환할 때는 모두 new Date가 기준이 된다.
+ */
 export class TimeAxisTick extends ContinuousAxisTick {
 
     //-------------------------------------------------------------------------
@@ -83,7 +88,6 @@ export class TimeAxisTick extends ContinuousAxisTick {
         const axis = this.axis as TimeAxis;
         let count = Math.floor(length / this.stepPixels) + 1;
         let step = Math.max(1, Math.floor(len / (count - 1)));
-        // const scale = Math.pow(10, Math.floor(Math.log10(step)));
         const multiples = this._getStepMultiples(step);
         const scale = time_scales[this.scale];
         let v: number;
@@ -115,13 +119,12 @@ export class TimeAxisTick extends ContinuousAxisTick {
         if (this.scale === TimeScale.YEAR) {
             let y = dt.getFullYear();
 
-            // step = Math.round(step);
-            step = Math.ceil(step);
+            step = Math.ceil(step); // round(step);
             dt = new Date(y, 0);
 
             if (dt < minDate) {
-                y += step;
-                dt = new Date(y, 0)
+                y += 1;//step
+                dt = new Date(y, 0);
             }
             do {
                 steps.push(+dt);
@@ -137,7 +140,7 @@ export class TimeAxisTick extends ContinuousAxisTick {
             dt = new Date(y, m);
 
             if (dt < minDate) {
-                m += step;
+                m += 1;//step;
                 dt = new Date(y, m);
             }
             do {
@@ -155,7 +158,7 @@ export class TimeAxisTick extends ContinuousAxisTick {
             dt = new Date(y, m, d);
 
             if (dt < minDate) {
-                d += step;
+                d += 1;//step;
                 dt = new Date(y, m, d);
             }
             do {
@@ -178,7 +181,7 @@ export class TimeAxisTick extends ContinuousAxisTick {
 
             t = dt.getTime();
             if (t < min) {
-                t += step;
+                t += 1;//step;
             }
 
             do {
@@ -204,7 +207,8 @@ export class TimeAxis extends ContinuousAxis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _offset = new Date().getTimezoneOffset() * 60 * 1000;
+    private _zone = new Date().getTimezoneOffset();
+    private _offset: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -219,9 +223,12 @@ export class TimeAxis extends ContinuousAxis {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * true면 숫자나 문자열 값을 utc date로 생성한다.
+     * javascript에서 숫자 단위로 전달되는 날짜값은 기본적으로 local이 아니라 new Date 기준이다.
+     * 그러므로 보통 숫자로 지정된 날짜값은 utc 값이다.
+     * local 기준으로 표시하기 위해, 숫자로 지정된 날짜값에 더해야 하는 시간을 시간단위로 지정한다.
+     * 지정하지 않으면 현재 timezone을 기준으로 한다. (ex, 한국: -9)
      */
-    utc: boolean = true;
+    timeOffset: number;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -232,6 +239,11 @@ export class TimeAxis extends ContinuousAxis {
 
     protected _createTickModel(): AxisTick {
         return new TimeAxisTick(this);
+    }
+
+    collectValues(): void {
+        this._offset = pickNum(this.timeOffset * 60, this._zone) * 60 * 1000;
+        super.collectValues();
     }
 
     protected _adjustMinMax(min: number, max: number): { min: number; max: number; } {
@@ -251,18 +263,21 @@ export class TimeAxis extends ContinuousAxis {
 
     parseValue(value: any): number {
         if (!isNaN(value)) {
-            return +value;
+            return +value + this._offset;
         } else if (isString(value)) {
-            return new Date(value).getTime();
+            return new Date(value).getTime() + this._offset;
         }
+    }
+
+    getValue(value: any): number {
+        return +value + this._offset;
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
     date(value: number): Date {
-        return new Date(value);
-        // return this.utc ? new Date(value + this._offset) : new Date(value);
+        return new Date(value);// + this._offset);
     }
 
     private $_getLabel(value: number, index: number): string {
