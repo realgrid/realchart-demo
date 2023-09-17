@@ -5,6 +5,8 @@
  * https://github.com/tomchen/typedoc-plugin-not-exported
  */
 import fs from 'fs';
+import jsdom from 'jsdom';
+const { JSDOM } = jsdom;
 
 const text = fs.readFileSync('./api/model.json', { encoding: 'utf-8'});
 const model = JSON.parse(text);
@@ -56,8 +58,12 @@ const visit = (obj) => {
   const [header, content] = parseComment(comment)
   switch (kindString) {
     case 'Class':
+      const regex = /(\w+)/g;
+      let matches = header?.matchAll(regex);
+      matches = matches && [...matches].map(m => m[0]);
+      const category = header ? (matches[0] == 'chart' ? matches[1] : header) : '';
       classMap[name] = { 
-        header, content,
+        header, content, category,
         extended: extendedTypes.map(t => t.name),
         props: children.filter(c => 
           c.kindString == 'Property'
@@ -76,26 +82,26 @@ const visit = (obj) => {
 
 visit(model);
 
-const derive = (className) => {
-  const clazz = classMap[className];
-  if (clazz) {
-    const { extended, props } = clazz;
-    // const ext = classMap[className].extended;
-    const [lastExt] = extended.slice(-1);
-    if (lastExt) {
-      // extended.splice(extended.length, 0, 
-      //   ...derive(lastExt).filter((e) => !extended.includes(e)));
-      extended.push(...derive(lastExt).filter((e) => !extended.includes(e)));
-      // const { props:_props } = _classMap[className];
-      // props.push(...derive(l));
-      return extended;
+// const derive = (className) => {
+//   const clazz = classMap[className];
+//   if (clazz) {
+//     const { extended, props } = clazz;
+//     // const ext = classMap[className].extended;
+//     const [lastExt] = extended.slice(-1);
+//     if (lastExt) {
+//       // extended.splice(extended.length, 0, 
+//       //   ...derive(lastExt).filter((e) => !extended.includes(e)));
+//       extended.push(...derive(lastExt).filter((e) => !extended.includes(e)));
+//       // const { props:_props } = _classMap[className];
+//       // props.push(...derive(l));
+//       return extended;
 
-    }
+//     }
     
-  }
+//   }
 
-  return [className];
-}
+//   return [className];
+// }
 
 // const _derive = (className, agg) => {
 //   // const clazz = JSON.parse(JSON.stringify(classMap[className]));
@@ -116,88 +122,61 @@ const derive = (className) => {
 
 // const _classMap = JSON.parse(JSON.stringify(classMap));
 // const _classMap = {};
-Object.entries(classMap).map(([key, value]) => {
-  derive(key);
-  // _classMap[key] = derive(key, { derived:[], props:[] });
-  // console.debug(_classMap[key])
-  console.debug('-------------------------')
-})
+// Object.entries(classMap).map(([key, value]) => {
+//   derive(key);
+//   // _classMap[key] = derive(key, { derived:[], props:[] });
+//   // console.debug(_classMap[key])
+//   console.debug('-------------------------')
+// })
 
 const json = JSON.stringify(classMap, null, 2)
-console.log(json);
+// console.log(json);
 // console.log(JSON.stringify(classMap, null, 2));
 fs.writeFileSync('./api/api.json', json, { encoding: 'utf-8'})
 
-/**
- * 
-  "name": "SomeClass",
-  "kind": 128,
-  "kindString": "Class",
-  "flags": {
-    "isAbstract": true
-  },
-  "comment": {
-    "summary": [
-      {
-        "kind": "inline-tag",
-        "tag": "@link",
-        "text": "position",
-        "target": 2117
-      },
-      {
-        "kind": "text",
-        "text": "이 "
-      },
-      {
-        "kind": "inline-tag",
-        "tag": "@link",
-        "text": "plot",
-        "target": 2097
-      },
-      {
-        "kind": "text",
-        "text": "일 때, plot 영역의 하단 모서리와 legend의 간격.\n"
-      },
-      {
-        "kind": "inline-tag",
-        "tag": "@link",
-        "text": "top",
-        "target": 2122
-      },
-      {
-        "kind": "text",
-        "text": "이 지정되면 이 속성은 무시된다."
-      }
-    ],
-    "blockTags": [
-      {
-        "tag": "@config",
-        "content": []
-      }
-    ]
-  },
-  "extendedTypes": [
-      {
-        "type": "reference",
-        "id": 859,
-        "name": "Axis"
-      }
-    ],
-  "extendedBy": [
-    {
-      "type": "reference",
-      "id": 6867,
-      "name": "BarSeries"
-    },
-    {
-      "type": "reference",
-      "id": 8963,
-      "name": "EqualizerSeries"
-    },
-    {
-      "type": "reference",
-      "id": 11760,
-      "name": "LollipopSeries"
-    }
-  ]
- */
+
+const dom = new JSDOM(`<!DOCTYPE html>
+<html>
+<body>
+  <header><h2>RealChart</h2></header>
+  <nav></nav>
+  <section></section>
+  <aside></aside>
+  <footer></footer>
+</body>
+</html>
+`);
+const doc = dom.window.document;
+const body = doc.body;
+const nav = body.querySelector('nav');
+
+const rootList = doc.createElement('ul');
+rootList.innerHTML = '>';
+const seriesList = doc.createElement('ul');
+seriesList.innerHTML = 'series>';
+const axisList = doc.createElement('ul');
+axisList.innerHTML = 'axis>';
+
+nav.appendChild(rootList);
+nav.appendChild(seriesList);
+nav.appendChild(axisList);
+
+Object.entries(classMap).forEach(([key, value]) => {
+  const { category } = value;
+  let li = doc.createElement('li');
+  // %caution% innerText is not implemented in jsdom.
+  li.innerHTML = key;
+  switch (category) {
+    case 'series':
+      seriesList.appendChild(li);
+      break;
+    case 'axis':
+      axisList.appendChild(li);
+      break;
+    default:
+      rootList.appendChild(li);
+      break;
+  }
+});
+
+fs.writeFileSync('./api/index.html', doc.documentElement.outerHTML, { encoding: 'utf-8'});
