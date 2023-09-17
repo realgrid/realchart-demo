@@ -161,11 +161,22 @@ nav.appendChild(rootList);
 nav.appendChild(seriesList);
 nav.appendChild(axisList);
 
+const makePropList = (props) => {
+  const ul = doc.createElement('ul');
+  props.forEach(p => {
+    let li = doc.createElement('li');
+    li.innerHTML = p.name
+    ul.appendChild(li);
+  });
+  return ul;
+}
+
 Object.entries(classMap).forEach(([key, value]) => {
   const { category } = value;
   let li = doc.createElement('li');
   // %caution% innerText is not implemented in jsdom.
   li.innerHTML = key;
+  li.appendChild(makePropList(value.props));
   switch (category) {
     case 'series':
       seriesList.appendChild(li);
