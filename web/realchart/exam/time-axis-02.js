@@ -14,7 +14,7 @@ const config = {
     },
     yAxis: {
         title: 'Exchange Rate',
-        min: 0.6,
+        minValue: 0.6,
         // reversed: true,
         // utc: true
     },

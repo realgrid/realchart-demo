@@ -518,7 +518,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      * 
      * @config
      */
-    min: number;
+    minValue: number;
     /**
      * 명시적으로 지정하는 최대값.
      * 축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.
@@ -526,7 +526,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      * 
      * @config
      */
-    max: number;
+    maxValue: number;
     /**
      * Plot 영역이나 앞쪽 축 사이의 여백 크기.
      * 

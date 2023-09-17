@@ -14,7 +14,7 @@ const config = {
     yAxis: {
         title: "Vertical 수직축 Axis",
         // reversed: true,
-        // min: -20,
+        // minValue: -20,
         // baseValue: -20
     },
     series: [{

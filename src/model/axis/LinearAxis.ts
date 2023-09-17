@@ -360,7 +360,7 @@ export abstract class ContinuousAxis extends Axis {
      * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.
      * {@link startFit}이 {@link AxitFit.TICK}일 때,
      * data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
-     * {@link strictMin}가 지정되거나, {@link min}이 계산된 최소값보다 작은 경우에도 이 속성은 무시된다.
+     * {@link strictMin}가 지정되거나, {@link minValue}이 계산된 최소값보다 작은 경우에도 이 속성은 무시된다.
      * 
      * @config
      */
@@ -370,7 +370,7 @@ export abstract class ContinuousAxis extends Axis {
      * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.
      * {@link endFit}이 {@link AxitFit.TICK}일 때,
      * data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
-     * {@link strictMax}가 지정되거나, {@link max}가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다.
+     * {@link strictMax}가 지정되거나, {@link maxValue}가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다.
      * 
      * @config
      */
@@ -471,8 +471,8 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected _doPrepareRender(): void {
-        this._hardMin = this.min;
-        this._hardMax = this.max;
+        this._hardMin = this.minValue;
+        this._hardMax = this.maxValue;
         this._base = parseFloat(this.baseValue as any);
         this._unitLen = NaN;
         this.$_findBaseAxis();
