@@ -6,7 +6,11 @@ const config = {
     xAxis: {
         type: 'time',
         title: false,
-        // minPadding: 0
+        timeOffset: -9,
+        // startFit: 'tick',
+        // endFit: 'tick',
+        // minPadding: 0,
+        // maxPadding: 0
     },
     yAxis: {
         title: 'Exchange Rate',

@@ -35,6 +35,7 @@ export interface IAxis {
     getValue(value: any): number;
     parseValue(value: any): number;
     contains(value: number): boolean;
+    incStep(value: number, step: any): number;
     /**
      * 값(축 상 위치)에 해당하는 픽셀 위치.
      */
@@ -627,6 +628,10 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     getValue(value: any): number {
         return value == null ? NaN : parseFloat(value);
+    }
+
+    incStep(value: number, step: any): number {
+        return value += step;
     }
 
     parseValue(value: any): number {

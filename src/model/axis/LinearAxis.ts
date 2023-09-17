@@ -37,6 +37,8 @@ export class ContinuousAxisTick extends AxisTick {
     buildSteps(length: number, base: number, min: number, max: number): number[] {
         let pts: number[];
 
+        this._step = NaN;
+
         if (Array.isArray(this.steps)) {
             // 지정한 위치대로 tick들을 생성한다.
             pts = this.steps.slice(0);
@@ -50,6 +52,10 @@ export class ContinuousAxisTick extends AxisTick {
             pts = [min, max];
         }
         return pts;
+    }
+
+    getNextStep(step: number, delta: number): number {
+        return step + delta * this._step;
     }
 
     //-------------------------------------------------------------------------
@@ -483,23 +489,42 @@ export abstract class ContinuousAxis extends Axis {
         const ticks: IAxisTick[] = [];
 
         if (!isNaN(this.strictMin) || this.getStartFit() === AxisFit.VALUE) {
-            if (steps.length > 1 && min > steps[0]) {
-                steps = steps.slice(1);
+            while (steps.length > 1 && min > steps[0]) {
+                steps.shift();
             }
-        } else if (steps.length > 2 && steps[1] <= min) {
-            steps.slice(1);
         } else {
-            min = Math.min(min, steps[0]); 
+            while (steps.length > 2 && steps[1] <= min) {
+                steps.shift();
+            }
+            if (!isNaN(tick._step)) {
+                while (steps[0] > min) {
+                    steps.unshift(tick.getNextStep(steps[0], -1));
+                }
+            }
+            min = steps[0];
         }
         if (!isNaN(this.strictMax) || this.getEndFit() === AxisFit.VALUE) {
-            if (max < steps[steps.length - 1] && steps.length > 1) {
+            while (max < steps[steps.length - 1] && steps.length > 1) {
                 steps.pop();
             }
-        } else if (steps.length > 2 && steps[steps.length - 2] > max) {
-            steps.pop();
         } else {
-            max = Math.max(max, steps[steps.length - 1]);
+            while (steps.length > 2 && steps[steps.length - 2] >= max) {
+                steps.pop();
+            }
+            if (!isNaN(tick._step)) {
+                while (steps[steps.length - 1] < max) {
+                    steps.push(tick.getNextStep(steps[steps.length - 1], 1));
+                }
+            }
+            max = steps[steps.length - 1];
         }
+
+    // } else if (steps.length > 2 && steps[steps.length - 2] > max) {
+    //         steps.pop();
+    //     } else { // this.getEndFit() === AxisFit.TICK
+    //         // 마지막 tickd이 max보다 크면 최대값을 tick에 맞춘다.
+    //         max = Math.max(max, steps[steps.length - 1]);
+    //     }
 
         this._setMinMax(min, max);
 
