@@ -1,28 +1,68 @@
+/**
+ * typedoc으로 가공한 json을 가지고 재가공한다.
+ * 
+ * export 한 클래스만 찾는다. export하지 않은 것을 포함하려면 typedoc plugin 필요.
+ * https://github.com/tomchen/typedoc-plugin-not-exported
+ */
 import fs from 'fs';
-import path from 'path'
 
-const text = fs.readFileSync('./api/api.json', { encoding: 'utf-8'});
+const text = fs.readFileSync('./api/model.json', { encoding: 'utf-8'});
 const model = JSON.parse(text);
 const classMap = {};
 
+
+const findTag = (tags, tag) => {
+  return tags?.find(t => t.tag == tag );
+}
+
+const parseBlockTags = (tags) => {
+  const config = findTag(tags, '@config');
+  const { tag, content } = {...config};
+  // @returns
+  return content?.map(c => c.text).join(' ');
+}
+
+const parseSummary = (summary) => {
+  return summary?.map(line => {
+    switch (line.kind) {
+      case 'inline-tag':
+        return `{${line.tag} ${line.text}}`
+      case 'text':
+        return line.text
+    }
+  }).join(' ');
+}
+const parseComment = (comment) => {
+  const { summary, blockTags } = { ...comment };
+  const lines = parseSummary(summary);
+  // @config content
+  const config = parseBlockTags(blockTags)
+  return [config, lines];
+}
+const setContent = (prop) => {
+  // return prop.name;
+  const [header, content] = parseComment(prop.comment);
+  return {
+      name: prop.name,
+      type: prop.type.name,
+      header, 
+      content,
+      defaultValue: prop.defaultValue
+  };
+}
 // scan all classes
 const visit = (obj) => {
   const { name, children, kindString, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
-  
+  const [header, content] = parseComment(comment)
   switch (kindString) {
     case 'Class':
       classMap[name] = { 
-        commment: destruct(comment),
-        extends: extendedTypes.map(t => t.name),
-        props: children.filter(c => c.kindString == 'Property')
-          .map(c => {
-            return {
-              [c.name]: {
-                comment: c.comment, 
-                defaultValue: c.defaultValue
-              }
-            };
-          })
+        header, content,
+        extended: extendedTypes.map(t => t.name),
+        props: children.filter(c => 
+          c.kindString == 'Property'
+          && findTag(c.comment?.blockTags, '@config')
+        ).map(setContent)
       };
       break;
   }
@@ -34,57 +74,59 @@ const visit = (obj) => {
   return extendedTypes.map(type => type.name);
 }
 
-// 
-const destruct = (comment) => {
-  const { summary=[], blockTags=[] } = { ...comment };
-  return comment;
-}
-
 visit(model);
 
 const derive = (className) => {
-  if (classMap[className]) {
-    let ext = classMap[className].extends;
-    const [lastExt] = ext.slice(-1);
+  const clazz = classMap[className];
+  if (clazz) {
+    const { extended, props } = clazz;
+    // const ext = classMap[className].extended;
+    const [lastExt] = extended.slice(-1);
     if (lastExt) {
-      ext.splice(ext.length, 0, ...derive(lastExt).filter((e) => !ext.includes(e)));
-      return ext;
+      // extended.splice(extended.length, 0, 
+      //   ...derive(lastExt).filter((e) => !extended.includes(e)));
+      extended.push(...derive(lastExt).filter((e) => !extended.includes(e)));
+      // const { props:_props } = _classMap[className];
+      // props.push(...derive(l));
+      return extended;
+
     }
+    
   }
 
   return [className];
 }
 
+// const _derive = (className, agg) => {
+//   // const clazz = JSON.parse(JSON.stringify(classMap[className]));
+//   const clazz = classMap[className] ?? {};
+//   const { extended=[], props=[] } = clazz;
+//   const [lastExt] = extended.slice(-1);
+//   if (lastExt) {
+//     console.debug(lastExt, agg.props.length);
+//     return derive(lastExt, {
+//       ...agg,
+//       derived: [...agg.derived, lastExt],
+//       // props: [...agg.props, ...props]
+//       props: clazz.props,
+//     });
+//   }
+//   return agg;
+// }
+
+// const _classMap = JSON.parse(JSON.stringify(classMap));
+// const _classMap = {};
 Object.entries(classMap).map(([key, value]) => {
   derive(key);
-
+  // _classMap[key] = derive(key, { derived:[], props:[] });
+  // console.debug(_classMap[key])
+  console.debug('-------------------------')
 })
 
-console.log(classMap);
-
-// function extractInheritedClasses(clazz, jsonData, inheritedClasses = []) {
-//   if (clazz.extendedTypes) {
-//     for (const extendedType of clazz.extendedTypes) {
-//       const extendedClass = jsonData.children.find((item) => item.name === extendedType.name);
-//       if (extendedClass && extendedClass.kind === 128 /* Class */) {
-//         inheritedClasses.push(extendedType.name);
-//         extractInheritedClasses(extendedClass, jsonData, inheritedClasses);
-//       }
-//     }
-//   }
-// }
-
-// // 클래스 상속 정보 추출 (깊은 상속 구조 처리)
-// const classes = model.children.filter((item) => item.kind === 128 /* Class */);
-
-// for (const clazz of classes) {
-//   console.log(`Class: ${clazz.name}`);
-//   const inheritedClasses = [];
-//   extractInheritedClasses(clazz, jsonData, inheritedClasses);
-//   if (inheritedClasses.length > 0) {
-//     console.log(`Inherited Classes: ${inheritedClasses.join(', ')}`);
-//   }
-// }
+const json = JSON.stringify(classMap, null, 2)
+console.log(json);
+// console.log(JSON.stringify(classMap, null, 2));
+fs.writeFileSync('./api/api.json', json, { encoding: 'utf-8'})
 
 /**
  * 
