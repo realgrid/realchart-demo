@@ -159,6 +159,7 @@ export class ContinuousAxisTick extends AxisTick {
 
         step = step / scale;
         if (multiples) {
+            // 위쪽 배수에 맞춘다.
             if (step > multiples[0]) {
                 let i = 0;
                 for (; i < multiples.length - 1; i++) {
@@ -181,10 +182,11 @@ export class ContinuousAxisTick extends AxisTick {
             assert(min <= base && max >= base, "base error");
             count = Math.max(3, count);
 
+            // 계산된 개수보다 많아지면 줄인다.
             while (true) {
                 const n = ceil((base - min) / step) + ceil((max - base) / step) + 1; // +1은 base
                 if (n > count) {
-                    step += scale;
+                    step *= 2;//+= scale;
                 } else {
                     break;
                 }
