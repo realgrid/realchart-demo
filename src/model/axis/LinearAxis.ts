@@ -154,26 +154,22 @@ export class ContinuousAxisTick extends AxisTick {
         let count = Math.floor(length / pixels) + 1;
         let step = len / (count - 1);
         const scale = Math.pow(10, Math.floor(Math.log10(step)));
-        const multiples = this._getStepMultiples(step);
+        const multiples = this._getStepMultiples(scale);
+        let i = 0;
         let v: number;
 
         step = step / scale;
         if (multiples) {
             // 위쪽 배수에 맞춘다.
-            if (step > multiples[0]) {
-                let i = 0;
+            if (step > multiples[i]) {
                 for (; i < multiples.length - 1; i++) {
                     if (step > multiples[i] && step < multiples[i + 1]) {
-                        step = multiples[i + 1];
+                        step = multiples[++i];
                         break;
                     }
                 }
-                if (i >= multiples.length) {
-                    debugger;
-                    step = multiples[multiples.length - 1];
-                }
             } else {
-                step = multiples[0];
+                step = multiples[i];
             }
         }
         step *= scale;
@@ -186,7 +182,7 @@ export class ContinuousAxisTick extends AxisTick {
             while (true) {
                 const n = ceil((base - min) / step) + ceil((max - base) / step) + 1; // +1은 base
                 if (n > count) {
-                    step *= 2;//+= scale;
+                    step = (i < multiples.length - 1) ? multiples[i + 1] * scale : step * 2;
                 } else {
                     break;
                 }
