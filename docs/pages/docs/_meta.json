@@ -6,8 +6,8 @@
     "type": "separator",
     "title": "API 문서"
   },
-  "classes": "Classes",
-  "functions": "Functions",
+  "axis": "axis",
+  "series": "series",
 
   "-- More": {
     "type":"separator", 

@@ -25,6 +25,7 @@ export class BarSeriesPoint extends DataPoint {
 
 /**
  * @config chart.series[type=bar]
+ * @fiddle bar/bar-null my bar null examples
  */
 export class BarSeries extends BasedSeries {
 
