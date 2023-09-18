@@ -6,7 +6,7 @@
 const config = {
     title: "Wing Chart",
     options: {
-        // animatable: false
+        animatable: false
     },
     xAxis: [{
         title: "일일 Daily fat",
@@ -17,7 +17,8 @@ const config = {
         grid: true,
     }, {
         title: "일일 Daily fat2",
-        position: 'oppoiste',
+        // position: 'oppoiste',
+        position: 'opposite',
         categories: [
             '0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-40', '40-45',
             '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80+'

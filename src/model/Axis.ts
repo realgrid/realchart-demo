@@ -7,11 +7,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isObject, isString, pickNum } from "../common/Common";
-import { Align, SVGStyleOrClass, VerticalAlign, fixnum, isNull, parsePercentSize } from "../common/Types";
+import { Align, SVGStyleOrClass, VerticalAlign, fixnum, isNull } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
-import { IClusterable, IPlottingItem } from "./Series";
+import { IClusterable, IPlottingItem, ISeries, Series } from "./Series";
 
 export interface IAxis {
 
@@ -75,7 +75,7 @@ export class AxisLine extends AxisItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(axis: Axis) {
-        super(axis, false);
+        super(axis, true);//false);
     }
 }
 
@@ -688,8 +688,8 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     protected _doCalcluateRange(values: number[]): { min: number, max: number } {
-        let min = fixnum(Math.min(...values) || 0);
-        let max = fixnum(Math.max(...values) || 0);
+        let min = values.length > 0 ? fixnum(Math.min(...values) || 0) : NaN;
+        let max = values.length > 0 ?  fixnum(Math.max(...values) || 0) : NaN;
 
         return { min, max };
     }

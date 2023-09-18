@@ -42,17 +42,21 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    source: any;
     index: number;
     vindex: number;
     x: any;
     y: any;
+    /**
+     * drilldown series
+     */
+    series: string | number; 
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     readonly pid = __point_id__++;
 
+    source: any;
     isNull: boolean;
     // Series.collectValues() 등에서 결정된다. x, y와 각각 다른 값으로 설정될 수 있다.
     xValue: number;     // x 좌표상의 value
