@@ -134,10 +134,12 @@ const exportDemos = () => {
             category = line.slice(1, -1).toLowerCase();
         } else if (line !== "") {
             const fileName = path.basename(line);
-            const leafDir = [ROOT, ...line.split("/"), category.toLowerCase()].join("/");
-
+            const tempDir = [ROOT, ...line.split("/").map(l => l.toLowerCase())];
+            tempDir.splice(2, 0, category.toLowerCase());
+            const leafDir = tempDir.join("/");
             createDir(leafDir); // 폴더 생성
 
+            // 파일 생성 로직
             const fileDetails = [
                 { type: 'js', contentProvider: createJs, additional: 'demoDescription' },
                 { type: 'html', contentProvider: createHTML },
