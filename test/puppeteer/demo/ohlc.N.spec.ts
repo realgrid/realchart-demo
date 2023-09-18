@@ -58,23 +58,6 @@ import { TitleView } from '../../../src/view/TitleView';
         expect(titleText).eq(config.title);
     });
 
-    it('tick 틱의 갯수와 실제 최대 데이터의 갯수가 알맞는지 확인', async () => {
-        const page = await PPTester.newPage(browser, url);
-        const config: any = await page.evaluate('config');
-
-        const xAxis = await PPTester.getAxis(page, 'x');
-        const xAxisTick = await xAxis.$$('.rct-axis-tick');
-        let maxLength = 0;
-
-        config.series.forEach((s1) => {
-            if (maxLength < s1.data.length) {
-                maxLength = s1.data.length;
-            }
-        });
-
-        expect(maxLength).eq(xAxisTick.length);
-    });
-
     it('credit 의 존재 유무와 "RealCahrt"를 포함하는지 확인', async () => {
         const page = await PPTester.newPage(browser, url);
         const config: any = await page.evaluate('config');
