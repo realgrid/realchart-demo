@@ -1,0 +1,8 @@
+---
+    name: line-marker Demo
+    description: line 시리즈의 데이터 포인트 마커를 다양한 모양으로 표시할 수 있다.
+
+    authors:
+      - Wooritech
+...
+    
