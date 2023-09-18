@@ -4,7 +4,7 @@
 
   "-- api": {
     "type": "separator",
-    "title": "API"
+    "title": "API 문서"
   },
   "classes": "Classes",
   "functions": "Functions",

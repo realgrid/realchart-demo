@@ -16,7 +16,7 @@ import {
   rem,
 } from "@mantine/core";
 
-import { ChartControl, Chart, getVersion } from "realchart";
+import { createChart, getVersion } from "realchart";
 import { useEffect, useRef, useState } from "react";
 import "node_modules/realchart/dist/realchart-style.css";
 import Editor from "@monaco-editor/react";
@@ -36,8 +36,8 @@ const useStyles = createStyles((theme) => ({
   wrapper: {
     display: 'flex',
     alignItems: 'center',
-    borderTop: '2px solid',
-    borderTopColor: theme.colors.gray[2],
+    borderBottom: '1px solid',
+    borderBottomColor: theme.colors.gray[2],
   },
 }));
 
@@ -60,8 +60,7 @@ export function RealChartReact({
   useEffect(() => {
     if (!chartRef.current) return;
     document.getElementById("realchart").innerHTML = "";
-    const chart = new ChartControl(document, chartRef.current);
-    chart.model = new Chart(config);
+    const chart = createChart(document, chartRef.current, config);
     setChart(chart);
     setVersion(getVersion());
 
@@ -74,8 +73,7 @@ export function RealChartReact({
   };
 
   const handleSave = () => {
-    console.log(chart, code, getVersion());
-    chart.model = new Chart(code);
+    chart.load(code);
   };
 
   const onChangeEditor = (value, evnet) => {
@@ -92,26 +90,26 @@ export function RealChartReact({
           <Button compact onClick={handleSave} variant="outline">
             적용
           </Button>
+          
         </>
       }
     >
       <Grid>
-        {showEditor ? (
-          <Editor
-            height="300px"
-            language="json"
-            // theme="vs-gray"
-            value={JSON.stringify(config, null, 1)}
-            onChange={onChangeEditor}
-            onMount={handleDidMount}
-          />
-        ) : null}
         <div
           id="realchart"
           ref={chartRef}
           className={classes.wrapper}
           style={{ width: "100%", height: "500px" }}
         />
+        {showEditor ? (
+          <Editor
+            height="300px"
+            language="json"
+            value={JSON.stringify(config, null, 1)}
+            onChange={onChangeEditor}
+            onMount={handleDidMount}
+          />
+        ) : null}
       </Grid>
     </Panel>
   );
