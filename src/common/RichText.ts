@@ -321,35 +321,43 @@ export class SvgRichText {
         let hMax = 0;
         const lines = this._lines;
         const cnt = lines.length;
-        const firsts: Node[] = [];
+        const widths = [];
+        let wMax = 0;
+        const firsts: Element[] = [];
 
         view.clearDom();
         target = target || view;
 
         for (let i = 0; i < cnt; i++) {
             const line = lines[i];
+            let w = 0;
             let h = 0;
-            let first: Node = null;
+            let first: Element = null;
 
             for (let word of line.words) {
                 const span = word.prepareSpan(view.appendElement(doc, 'tspan') as SVGTSpanElement, target, domain);
                 const r = span.getBBox();
                 
+                w += r.width;
                 span[WIDTH] = r.width;
                 h = Math.max(h, span[HEIGHT] = r.height);
 
                 if (!first) first = span;
             }
+
             firsts.push(first);
+            widths.push(w);
             line[HEIGHT] = h * hLine;
+            wMax = Math.max(w, wMax);
             hMax = Math.max(h, hMax);
         }
          
+        firsts[0] && firsts[0].setAttribute('x', String((wMax - widths[0]) / 2));
         for (let i = 1; i < firsts.length; i++) {
             const span = view.insertElement(doc, 'tspan', firsts[i]);
             const h: any = Math.ceil(view.getAscent(this._lines[i][HEIGHT]));
 
-            span.setAttribute('x', '0');
+            span.setAttribute('x', String((wMax - widths[i]) / 2));
             span.setAttribute('dy', h);
             span.innerHTML = ZWSP;
         }

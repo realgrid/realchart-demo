@@ -8,7 +8,7 @@ const config = {
     },
     xAxis: {
         title: 'X Axis',
-        categories: ['쓰리엠', '아디다스', '디즈니', 'Amazon', '이마트'],
+        categories: ['쓰리엠', '아디다스', '디즈니', 'Amazon', '이마트', 'Youtube'],
     },
     yAxis: {
         title: 'Y Axis',
@@ -40,15 +40,15 @@ function setActions(container) {
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
 }
 

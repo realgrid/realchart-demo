@@ -6,8 +6,8 @@ const config = {
     yAxis: [{
         title: 'Y Axis',
     }, {
-        min: 0,
-        max: 100,
+        minValue: 0,
+        maxValue: 100,
         position: 'opposite',
         tick: {
             suffix: '%'

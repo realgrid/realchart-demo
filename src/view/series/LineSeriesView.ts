@@ -12,7 +12,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
 import { Shape, SvgShapes } from "../../common/impl/SvgShape";
-import { Chart } from "../../main";
+import { Chart } from "../../model/Chart";
 import { LineType } from "../../model/ChartTypes";
 import { DataPoint, IPointPos } from "../../model/DataPoint";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";

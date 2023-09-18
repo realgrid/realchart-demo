@@ -18,7 +18,7 @@ import { CategoryAxis } from '../../../src/model/axis/CategoryAxis';
 /**
  * Puppeteer Tests for bar.html
  */
- describe("bar.N.html test", async function() {
+ describe("bar.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/bar.html";
     let browser: Browser;
@@ -74,7 +74,7 @@ import { CategoryAxis } from '../../../src/model/axis/CategoryAxis';
     });
  
     it('Y-reversed', async () => {
-        await page.evaluate('config.yAxis.reversed = true; chart.update(config)');
+        await page.evaluate('config.yAxis.reversed = true; chart.load(config)');
 
         const bars = await page.$$('.' + SeriesView.POINT_CLASS);
 
@@ -85,11 +85,11 @@ import { CategoryAxis } from '../../../src/model/axis/CategoryAxis';
             expect(r.y).eq(0);
         })
         
-        await page.evaluate('config.yAxis.reversed = false; chart.update(config)');
+        await page.evaluate('config.yAxis.reversed = false; chart.load(config)');
     });
  
     it('inverted', async () => {
-        await page.evaluate('config.inverted = true; chart.update(config)');
+        await page.evaluate('config.inverted = true; chart.load(config)');
 
         const xAxisLine = await PPTester.getAxisLine(page, 'x');
         const rAxis = await PPTester.getBounds(xAxisLine);
@@ -126,7 +126,7 @@ import { CategoryAxis } from '../../../src/model/axis/CategoryAxis';
             }
         }
 
-        await page.evaluate('config.inverted = false; chart.update(config)');
+        await page.evaluate('config.inverted = false; chart.load(config)');
     });
 
     it('title', async () => {

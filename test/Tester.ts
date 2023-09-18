@@ -7,9 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import * as fs from 'fs';
-import { ChartControl } from '../src/main';
 import { RcElement } from '../src/common/RcControl';
 import { TextElement } from '../src/common/impl/TextElement';
+import { ChartControl } from '../src/ChartControl';
 
 const CHART_CONTROL_ID = 'chart-control';
 

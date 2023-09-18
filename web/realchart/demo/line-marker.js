@@ -56,29 +56,29 @@ function setActions(container) {
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createListBox(container, "Manufacturing.marker.shape", ['', 'circle', 'diamond', 'square', 'triangle', 'itriangle', 'star'], function (e) {
         config.series[1].marker.shape = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, '');
     createListBox(container, "Manufacturing.marker.radius", ['3', '4', '5', '6', '7', '8', '9'], function (e) {
         config.series[1].marker.radius = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, '7');
     createListBox(container, "all.marker.stroke", ['', 'red', 'blue', 'white'], function (e) {
         config.series.forEach(ser => {
             ser.marker.style = { stroke: _getValue(e) };
         })
-        chart.update(config);
+        chart.load(config);
     }, '');
 }
 

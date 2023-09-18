@@ -53,7 +53,7 @@ class StickView extends GroupElement implements IPointView {
         this._tickClose.setHLine(yClose, x, this.width);
         this._bar.setVLine(x, y, y + h);
         //this._bar.setBounds(0, Math.min(yClose, yOpen), w, Math.max(1, Math.abs(yOpen - yClose)));
-        this._bar.setStyleName(p.close < p.open ? 'rct-ohlc-point-bar-fall' : 'rct-ohlc-point-bar')
+        this._bar.setClass(p.close < p.open ? 'rct-ohlc-point-bar-fall' : 'rct-ohlc-point-bar')
     }
 
     //-------------------------------------------------------------------------

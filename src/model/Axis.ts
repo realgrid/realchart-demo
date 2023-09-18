@@ -35,6 +35,7 @@ export interface IAxis {
     getValue(value: any): number;
     parseValue(value: any): number;
     contains(value: number): boolean;
+    incStep(value: number, step: any): number;
     /**
      * 값(축 상 위치)에 해당하는 픽셀 위치.
      */
@@ -517,7 +518,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      * 
      * @config
      */
-    min: number;
+    minValue: number;
     /**
      * 명시적으로 지정하는 최대값.
      * 축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.
@@ -525,7 +526,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      * 
      * @config
      */
-    max: number;
+    maxValue: number;
     /**
      * Plot 영역이나 앞쪽 축 사이의 여백 크기.
      * 
@@ -627,6 +628,10 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     getValue(value: any): number {
         return value == null ? NaN : parseFloat(value);
+    }
+
+    incStep(value: number, step: any): number {
+        return value += step;
     }
 
     parseValue(value: any): number {

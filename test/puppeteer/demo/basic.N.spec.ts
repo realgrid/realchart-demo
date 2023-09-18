@@ -19,7 +19,7 @@ import { BodyView } from '../../../src/view/BodyView';
 /**
  * Puppeteer Tests for basic.html
  */
- describe("basic.N.html test", async function() {
+ describe("basic.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/basic.html";
     let browser: Browser;

@@ -10,7 +10,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextAnchor } from "../../common/impl/TextElement";
-import { Chart } from "../../main";
+import { Chart } from "../../model/Chart";
 import { DataPoint } from "../../model/DataPoint";
 import { BarSeries } from "../../model/series/BarSeries";
 import { BarElement, BoxedSeriesView, IPointView, LabelLayoutInfo, SeriesView } from "../SeriesView";

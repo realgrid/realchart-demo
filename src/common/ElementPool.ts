@@ -96,6 +96,22 @@ export class ElementPool<T extends RcElement> extends RcObject {
         return this._views.find(matcher);
     }
 
+    setRemoveDelay(v: number): ElementPool<T> {
+        this.removeDelay = v;
+        return this;
+    }
+
+    removeLater(v: RcElement, duration: number): void {
+        const i = this._views.indexOf(v as any);
+
+        if (i >= 0) {
+            v.removeLater(duration, v => {
+                this._pool.push(v as any);
+            });
+            this._views.splice(i, 1);
+        }
+    }
+
     private $_create(doc: Document, index = -1, count = 0): T {
         let v = this._pool.pop();
         
@@ -104,7 +120,7 @@ export class ElementPool<T extends RcElement> extends RcObject {
         }
         this._owner.add(v);
         return v;
-}
+    }
 
     prepare(count: number, visitor?: Visitor<T>, initor?: Visitor<T>): ElementPool<T> {
         const doc = this._owner.doc;
@@ -121,6 +137,7 @@ export class ElementPool<T extends RcElement> extends RcObject {
         while (views.length > count) {
             pool.push(views.pop().remove() as T);
         }
+
         while (views.length < count) {
             const v = this.$_create(doc);
             views.push(v);
@@ -182,7 +199,7 @@ export class ElementPool<T extends RcElement> extends RcObject {
             } else {
                 if (this.removeDelay > 0) {
                     //pool.push(v.removeLater(true, this.removeDelay) as T);
-                    this._removes.push(v.removeLater(false, this.removeDelay) as T);
+                    this._removes.push(v.removeLater(this.removeDelay) as T);
                 } else {
                     pool.push(v.remove() as T);
                 }
@@ -206,7 +223,7 @@ export class ElementPool<T extends RcElement> extends RcObject {
     free(element: T, removeDelay = 0): void {
         if (element) {
             if (removeDelay > 0) {
-                element.removeLater(false, removeDelay);
+                element.removeLater(removeDelay);
             } else {
                 element.remove();
             }
@@ -225,17 +242,17 @@ export class ElementPool<T extends RcElement> extends RcObject {
         }
     }
 
-    fadeout(element: T, removeDelay: number, startOpacity?: number): void {
-        if (element) {
-            element.fadeout(removeDelay, startOpacity);
-            this._pool.push(element);
+    // fadeout(element: T, removeDelay: number, startOpacity?: number): void {
+    //     if (element) {
+    //         element.fadeout(removeDelay, startOpacity);
+    //         this._pool.push(element);
 
-            const i = this._views.indexOf(element);
-            if (i >= 0) {
-                this._views.splice(i, 1);
-            }
-        }
-    }
+    //         const i = this._views.indexOf(element);
+    //         if (i >= 0) {
+    //             this._views.splice(i, 1);
+    //         }
+    //     }
+    // }
 
     forEach(visitor: (v: T, i?: number, count?: number) => void): void {
         const views = this._views;

@@ -61,43 +61,43 @@ function setActions(container) {
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'X.Opposite', function (e) {
         config.xAxis.position = _getChecked(e) ? 'opposite': 'normal';
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createListBox(container, "Axis.padding", ['0', '-0.2', '-0.4', '-0.5', '0.5'], function (e) {
         config.xAxis.padding = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, '0');
     createListBox(container, "Axis.categoryPadding", ['0', '0.1', '0.15', '0.2'], function (e) {
         config.xAxis.categoryPadding = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, '0.1');
     createCheckBox(container, 'Axis.title', function (e) {
         config.xAxis.title.visible = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, true);
     createCheckBox(container, 'Axis.tick', function (e) {
         config.xAxis.tick.visible = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, true);
     createListBox(container, "Axis.tick.position", ['point', 'edge'], function (e) {
         config.xAxis.tick.position = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, 'point');
     createCheckBox(container, 'Axis.label', function (e) {
         config.xAxis.label.visible = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, true);
 }
 

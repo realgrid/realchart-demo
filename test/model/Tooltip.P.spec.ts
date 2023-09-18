@@ -8,7 +8,7 @@
 
 import { expect } from 'chai';
 import { beforeEach, describe, it } from 'mocha';
-import { Chart } from '../../src/main';
+import { Chart } from '../../src/model/Chart';
 import { Tester } from '../Tester';
 import { DataPoint } from '../../src/model/DataPoint';
 import { Tooltip } from '../../src/model/Tooltip';

@@ -55,7 +55,7 @@ class StickView extends GroupElement implements IPointView {
         this._wickUpper.setVLine(x, y, yClose);
         this._wickLower.setVLine(x, yOpen, h);
         this._body.setBox(-w / 2, yBox, w, hBox);
-        this._body.setStyleName(fall ? 'rct-candlestick-point-fall' : '')
+        this._body.setClass(fall ? 'rct-candlestick-point-fall' : '')
     }
 
     //-------------------------------------------------------------------------

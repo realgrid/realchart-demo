@@ -84,6 +84,10 @@ export class BarRangeSeries extends RangedSeries {
         return 'barrange';
     }
 
+    pointLabelCount(): number {
+        return 2;
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new BarRangeSeriesPoint(source);
     }

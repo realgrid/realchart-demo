@@ -17,7 +17,7 @@ import { AxisTitleView, AxisView } from '../../../src/view/AxisView';
 /**
  * Puppeteer Tests for bar-multi.html
  */
- describe("bar-multi.N.html test", async function() {
+ describe("bar-multi.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/bar-multi.html";
     let browser: Browser;

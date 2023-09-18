@@ -85,7 +85,7 @@ export class ChartControl extends RcControl implements IChartEventListener {
         this.invalidateLayout();
     }
 
-    update(config: any, loadAnimation = false): void {
+    load(config: any, loadAnimation = false): void {
         this.loaded = !loadAnimation; 
         this.model = new Chart(config);
     }

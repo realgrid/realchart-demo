@@ -18,7 +18,7 @@ import { LegendView } from '../../../src/view/LegendView';
 /**
  * Puppeteer Tests for area-multi.html
  */
- describe("area-multi.N.html test", async function() {
+describe("area-multi.html test", async function () {
 
     const url = "http://localhost:6010/realchart/demo/area-multi.html";
     let browser: Browser;
@@ -51,21 +51,20 @@ import { LegendView } from '../../../src/view/LegendView';
         await page.screenshot({path: 'out/ss/area-multi.png'});
         page.close();
     });
-    it('title', async () => {
+    it('title 의 존재유무와 값이 알맞은지 확인', async () => {
         const page = await PPTester.newPage(browser, url);
         const config: any = await page.evaluate('config');
 
         const title = await page.$('.' + TitleView.TITLE_CLASS);
         const titleText = await page.evaluate((el) => el.textContent, title);
-        expect(titleText).eq(config.title);
-
         expect(title).exist;
+        expect(titleText).eq(config.title);
     });
 
     it('xTitle', async () => {
         const page = await PPTester.newPage(browser, url);
         const config: any = await page.evaluate('config');
-        
+
         const xAxis = await PPTester.getAxis(page, 'x');
         const xAxisText = await xAxis.$('text');
         const xaxisTitle = await page.evaluate((el) => el.textContent, xAxisText);
@@ -85,15 +84,25 @@ import { LegendView } from '../../../src/view/LegendView';
     it('xtick', async () => {
         const page = await PPTester.newPage(browser, url);
         const config:any = await page.evaluate('config');
-        
+
         const xAxis = await PPTester.getAxis(page, 'x');
         const xAxisTICK = await xAxis.$$('.' + AxisView.TICK_CLASS);
 
         for(let i = 0; i < config.series.length; i++) {
             expect(xAxisTICK.length).eq(config.series[i].data.length);
         }
-        
-        
+
+
+    });
+
+    it('ytick 의 존재유무 확인', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config:any = await page.evaluate('config');
+
+        const yAxis = await PPTester.getAxis(page, 'y');
+        const yAxisTICK = await yAxis.$$('.' + AxisView.TICK_CLASS);
+
+        expect(yAxisTICK).exist;
     });
 
     it('legend', async() => {
@@ -108,6 +117,19 @@ import { LegendView } from '../../../src/view/LegendView';
         for (let i = 0; i < legends.length; i++) {
            const data = await page.evaluate((el) => el.textContent, legends[i])
            expect(data).eq(config.series[i].name);
+        }
+
+    });
+
+    it('legendMarker', async() => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const legend = await page.$$('.rct-legend-item');
+
+        for(let i = 0; i < legend.length; i++) {
+        const legendItem = await legend[i].$('.rct-legend-item-marker');
+        expect(legendItem).exist;
         }
 
     });
@@ -132,5 +154,35 @@ import { LegendView } from '../../../src/view/LegendView';
             const point = await rctPoint.$$('.' + SeriesView.POINT_CLASS);
             expect(point.length).eq(config.series[i].data.length);
         }
+    });
+
+    it('labelPoint 의 값이 데이터의 값과 알맞은지 확인', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const labelPoint = await page.$$('.rct-legend-item');
+
+        for (let i = 0; i < labelPoint.length; i++) {
+            const text = await labelPoint[i].$('text');
+            const labelText = await page.evaluate((el) => el.textContent, text);
+            expect(labelText).eq(config.series[i].name)
+        }
+    });
+
+    it('itemMarker 의 실제 갯수와 데이터의 갯수가 알맞은지 확인', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const itemMarker = await page.$$('.rct-legend-item-marker');
+        expect(itemMarker).exist;
+        expect(itemMarker.length).eq(config.series.length)
+    });
+
+    it('grid', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const axisGrid = await page.$('.rct-axis-grid');
+        expect(axisGrid).exist;
     });
 });

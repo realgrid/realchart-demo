@@ -130,6 +130,10 @@ export class BoxPlotSeries extends RangedSeries {
         return 'boxplot';
     }
 
+    pointLabelCount(): number {
+        return 2;
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new BoxPlotSeriesPoint(source);
     }

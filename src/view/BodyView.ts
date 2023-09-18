@@ -16,36 +16,13 @@ import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
-import { Chart } from "../main";
 import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange } from "../model/Axis";
 import { Body } from "../model/Body";
-import { IChart } from "../model/Chart";
+import { Chart, IChart } from "../model/Chart";
 import { Crosshair } from "../model/Crosshair";
 import { DataPoint } from "../model/DataPoint";
-import { PlotItem } from "../model/PlotItem";
 import { Series } from "../model/Series";
 import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
-import { BarRangeSeries } from "../model/series/BarRangeSeries";
-import { BarSeries } from "../model/series/BarSeries";
-import { BellCurveSeries } from "../model/series/BellCurveSeries";
-import { BoxPlotSeries } from "../model/series/BoxPlotSeries";
-import { BubbleSeries } from "../model/series/BubbleSeries";
-import { CandlestickSeries } from "../model/series/CandlestickSeries";
-import { DumbbellSeries } from "../model/series/DumbbellSeries";
-import { EqualizerSeries } from "../model/series/EqualizerSeries";
-import { ErrorBarSeries } from "../model/series/ErrorBarSeries";
-import { FunnelSeries } from "../model/series/FunnelSeries";
-import { HeatmapSeries } from "../model/series/HeatmapSeries";
-import { HistogramSeries } from "../model/series/HistogramSeries";
-import { AreaRangeSeries, AreaSeries, LineSeries } from "../model/series/LineSeries";
-import { LollipopSeries } from "../model/series/LollipopSeries";
-import { OhlcSeries } from "../model/series/OhlcSeries";
-import { ParetoSeries } from "../model/series/ParetoSeries";
-import { PieSeries } from "../model/series/PieSeries";
-import { ScatterSeries } from "../model/series/ScatterSeries";
-import { TreemapSeries } from "../model/series/TreemapSeries";
-import { VectorSeries } from "../model/series/VectorSeries";
-import { WaterfallSeries } from "../model/series/WaterfallSeries";
 import { ChartElement } from "./ChartElement";
 import { IPointView, SeriesView } from "./SeriesView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
@@ -119,6 +96,7 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     protected _doMeasure(doc: Document, model: AxisGrid, hintWidth: number, hintHeight: number, phase: number): ISize {
         this._pts = model.getPoints(model.axis._isHorz ? hintWidth : hintHeight);
         this._lines.prepare(this._pts.length, (line) => {
+            line.setClass('rct-axis-grid-line');
         });
         return Size.create(hintWidth, hintHeight);
     }
@@ -128,14 +106,22 @@ export class AxisGridView extends ChartElement<AxisGrid> {
         const w = this.width;
         const h = this.height;
         const pts = this._pts;
+        const lines = this._lines;
+
+        if (pts[0] === 0) {
+            lines.first.setClass('rct-axis-grid-line-start');
+        } 
+        if (pts[pts.length - 1] === (axis._isHorz ? w : h)) {
+            lines.last.setClass('rct-axis-grid-line-end');
+        }
 
         if (axis._isHorz) {
-            this._lines.forEach((line, i) => {
+            lines.forEach((line, i) => {
                 // line.setVLine(pts[i], 0, h);
                 line.setVLineC(pts[i], 0, h);
             });
         } else {
-            this._lines.forEach((line, i) => {
+            lines.forEach((line, i) => {
                 // line.setHLine(h - pts[i], 0, w);
                 line.setHLineC(h - pts[i], 0, w);
             });
@@ -673,6 +659,8 @@ export class BodyView extends ChartElement<Body> {
     protected _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
         const chart = model.chart as Chart;
 
+        this._polar = chart.isPolar();
+
         // background
         this._background.setStyleOrClass(model.style);
         this._background.setBoolData('polar', this._polar || chart.isWidget());
@@ -683,8 +671,6 @@ export class BodyView extends ChartElement<Body> {
         this._seriesViews.forEach((v, i) => {
             v.measure(doc, this._series[i], hintWidth, hintHeight, phase);
         })
-
-        this._polar = chart.isPolar();
 
         if (!this._polar) {
             // axis grids

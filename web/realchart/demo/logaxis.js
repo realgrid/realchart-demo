@@ -34,27 +34,27 @@ function setActions(container) {
     });
     createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
         config.series.lineType = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, 'default');
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createListBox(container, "XAxis.type", ['linear', 'log', 'category'], function (e) {
         config.xAxis.type = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, 'log');
     createListBox(container, "YAxis.type", ['linear', 'log'], function (e) {
         config.yAxis.type = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, 'log');
 }
 
