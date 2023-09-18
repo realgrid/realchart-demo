@@ -462,8 +462,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * undefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.
      * 
      * @config
-     * @fiddle demo/bar/bar 기본 샘플
-     * @fiddle demo/bar/bar-null 다른 샘플
      */
     pointColors: boolean | string[];
 

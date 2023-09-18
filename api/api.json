@@ -2145,7 +2145,7 @@
   },
   "BoxPlotSeries": {
     "header": "chart.series[type=boxplot]",
-    "content": "https://en.wikipedia.org/wiki/Box_plot\nhttps://danbi-ncsoft.github.io/study/2018/07/23/study_eda2.html",
+    "content": "",
     "prop": "series",
     "type": "boxplot",
     "extended": [
@@ -3111,7 +3111,7 @@
   },
   "HistogramSeries": {
     "header": "chart.series[type=histogram]",
-    "content": "각 bin은 하한값을 포함하고 상한값은 포함하지 않는다. 마지막 bin은 상한값을 포함한다.\nhttps://en.wikipedia.org/wiki/Histogram\nX축이 'linear'이어야 한다.",
+    "content": "",
     "prop": "series",
     "type": "histogram",
     "extended": [
@@ -4496,7 +4496,7 @@
   },
   "TreemapSeries": {
     "header": "chart.series[type=treemap]",
-    "content": "1. 본래 하드 드라이브의 파일 분포 상태를 표시하기 위해 고안됨.\n2. node & link 스타일의 전통적 표시 방식은 공간을 많이 필요로 한다.\n3. 일정 표시 공간을 100% 사용한다.\n4. 초기 공간을 재귀적으로 나누어 가면서 구성한다.\n\n// TODO: grouping된 data 설정 가능하도록 한다. data[{data:[]}, {data:[]}]",
+    "content": "",
     "prop": "series",
     "type": "treemap",
     "extended": [

@@ -71,7 +71,10 @@ const parseType = (obj) => {
 }
 
 const parseSummary = (summary) => {
-  return summary?.map(line => {
+  // 일반 주석 라인은 제거한다.
+  return summary?.filter(line => {
+    return line.text.trim().indexOf('//') < 0;
+  }).map(line => {
     switch (line.kind) {
       case 'inline-tag':
         return parseInlineTag(line);
@@ -80,6 +83,8 @@ const parseSummary = (summary) => {
     }
   }).join(' ');
 }
+
+
 const parseComment = (comment) => {
   const { summary, blockTags } = { ...comment };
   let lines = parseSummary(summary);
@@ -105,7 +110,7 @@ const setContent = (prop) => {
 // scan all classes
 const visit = (obj) => {
   const { name, children, kindString, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
-  const [header, content] = parseComment(comment)
+  const [header, content] = parseComment(comment);
   switch (kindString) {
     case 'Class':
       const regex = /(\w+)/g;
