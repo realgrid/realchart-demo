@@ -55,8 +55,8 @@ const source = {
     crosshair: true,
     reversed: false,
     position: 'normal',
-    min: 0,
-    max: 20,
+    minValue: 0,
+    maxValue: 20,
     minPadding: 10,
     maxPadding: 0,
     padding: 0,
@@ -112,11 +112,11 @@ class AxisImpl extends Axis {
     });
 
     it('min', () => {
-        expect(axis.min).eq(source.min);
+        expect(axis.minValue).eq(source.minValue);
     });
 
     it('max', () => {
-        expect(axis.max).eq(source.max);
+        expect(axis.maxValue).eq(source.maxValue);
     });
 
     it('marginNear', () => {

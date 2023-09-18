@@ -60,19 +60,19 @@ function setActions(container) {
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X.reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Y.reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createListBox(container, "Y.stepCount", ['', '3', '4', '5', '6', '7'], function (e) {
         config.yAxis.tick.stepCount = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, '');
 }
 

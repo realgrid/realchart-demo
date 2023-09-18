@@ -13,9 +13,12 @@ import { IRect, toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Legend, LegendItem, LegendLayout, LegendPosition } from "../model/Legend";
+import { Legend, LegendItem, LegendLayout } from "../model/Legend";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
+/**
+ * @internal
+ */
 export class LegendItemView extends ChartElement<LegendItem> {
 
     //-------------------------------------------------------------------------
@@ -60,6 +63,9 @@ export class LegendItemView extends ChartElement<LegendItem> {
     }
 }
 
+/**
+ * @internal
+ */
 export class LegendView extends BoundableElement<Legend> {
 
     //-------------------------------------------------------------------------
@@ -72,6 +78,10 @@ export class LegendView extends BoundableElement<Legend> {
     //-------------------------------------------------------------------------
     private _itemViews = new ElementPool(this, LegendItemView);
     private _vertical: boolean;
+    private _rowViews: LegendItemView[][];
+    private _sizes: number[];
+    _gap: number;
+    _ipr: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -92,28 +102,12 @@ export class LegendView extends BoundableElement<Legend> {
         back.setStyleOrClass(this.model.backgroundStyles);
     }
 
-    protected _getDebugRect(): IRect {
-        const r = super._getDebugRect();
-        const gap = pickNum(this.model.gap, 0);
-        
-        if (gap !== 0) {
-            switch (this.model.getPosition()) {
-                case LegendPosition.BOTTOM:
-                    r.y += gap;
-                    r.height -= gap;
-                    break;
-            }
-        }
-        return r;
-    }
-
     protected _doMeasure(doc: Document, model: Legend, hintWidth: number, hintHeight: number, phase: number): ISize {
         const items = model.items();
         const vertical = this._vertical = model.getLayout() === LegendLayout.VERTICAL;
-        const itemGap = model.itemGap;
-        const views = this._itemViews;
-        let w = 0;
-        let h = 0;
+        
+        this._ipr = pickNum(model.itemsPerLine, Number.MAX_SAFE_INTEGER);
+        this._gap = pickNum(model.gap, 0);
 
         if (vertical) {
             hintHeight = model.getMaxHeight(hintHeight);
@@ -123,57 +117,44 @@ export class LegendView extends BoundableElement<Legend> {
 
         this.$_prepareItems(doc, items);
 
-        views.forEach((v, i) => {
-            const sz = v.measure(doc, items[i], hintWidth, hintHeight, phase);
-
-            if (vertical) {
-                w = Math.max(w, sz.width);
-                h += sz.height;
-            } else {
-                h = Math.max(h, sz.height);
-                w += sz.width;
-            }
-        });
-
-        if (vertical) {
-            h += (views.count - 1) * itemGap;
-            w += pickNum(model.gap, 0);
-        } else {
-            w += (views.count - 1) * itemGap;
-            h += pickNum(model.gap, 0);
-
-            if (w > hintWidth) {
-                debugger;
-            }
-        }
-        return Size.create(w, h);
+        return this.$_measure(doc, model, vertical, this._ipr, hintWidth, hintHeight);
     }
     
     protected _doLayout(): void {
         const model = this.model;
-        const pos = model.getPosition();
-        const gap = model.itemGap;
+        const rowViews = this._rowViews;
+        const sizes = this._sizes;
+        const lineGap = model.lineGap || 0;
+        const itemGap = model.itemGap || 0;
         const margin = this._margins;
         const pad = this._paddings;
         const vertical = this._vertical;
-        let x = margin.left + pad.left;
-        let y = margin.top + pad.top;
-
-        if (pos === LegendPosition.BOTTOM) {
-            y += pickNum(model.gap, 0);
-        } else if (pos === LegendPosition.RIGHT) {
-            x += pickNum(model.gap, 0);
-        }
+        const x1 = margin.left + pad.left;
+        const y1 = margin.top + pad.top;
+        let x = x1;
+        let y = y1;
 
         this._itemViews.forEach(v => {
+            // [주의] source가 getComputedStyle()로 색상을 가져온다. measure 시점에는 안된다.
             v._marker.setStyle('fill', v.model.source.legendColor());
             v.resizeByMeasured().layout();
-            v.translate(x, y);
+        });
 
+        rowViews.forEach((views, i) => {
             if (vertical) {
-                y += v.height + gap;
+                y = y1;
+                views.forEach(v => {
+                    v.translate(x, y);
+                    y += v.height + itemGap;
+                })
+                x += sizes[i] + lineGap;
             } else {
-                x += v.width + gap;
+                x = x1;
+                views.forEach(v => {
+                    v.translate(x, y);
+                    x += v.width + itemGap;
+                })
+                y += sizes[i] + lineGap;
             }
         });
     }
@@ -183,5 +164,97 @@ export class LegendView extends BoundableElement<Legend> {
     //-------------------------------------------------------------------------
     private $_prepareItems(doc: Document, items: LegendItem[]): void {
         this._itemViews.prepare(items.length);
+    }
+
+    private $_measure(doc: Document, model: Legend, vertical: boolean, ipr: number, hintWidth: number, hintHeight: number): ISize {
+        const items = model.items();
+        const views = this._itemViews;
+        const itemGap = model.itemGap || 0;
+        const lineGap = model.lineGap || 0;
+        const n = views.count;
+        const rowViews: LegendItemView[][] = this._rowViews = [];
+        const sizes: number[] = this._sizes = [];
+        let w: number;
+        let h: number;
+        let vRow: LegendItemView[];
+        let view: LegendItemView;
+
+        views.forEach((v, i) => {
+            v.measure(doc, items[i], hintWidth, hintHeight, 1);
+        });
+
+        let i = 0;
+        let r = 0;
+
+        if (vertical) { // item들 수직 배치
+            while (i < n) {
+                view = views.get(i);
+                if (r % ipr === 0) {
+                    rowViews.push(vRow = [view]);
+                    h = view.mh;
+                    r++;
+                    i++;
+                } else {
+                    h += itemGap + view.mh;
+                    if (h <= hintHeight) {
+                        vRow.push(view);
+                        r++;
+                        i++;
+                    } else {
+                        r = 0;
+                    }
+                }
+            }
+
+            w = h = 0;
+            rowViews.forEach(views => {
+                let wRow = 0;
+                let hRow = 0;
+                views.forEach(v => {
+                    hRow += v.mh;
+                    wRow = Math.max(wRow, v.mw);
+                })
+                hRow += itemGap * (views.length - 1);
+                h = Math.max(h, hRow);
+                w += wRow;
+                sizes.push(wRow);
+            });
+            w += lineGap * (rowViews.length - 1);
+        } else {
+            while (i < n) {
+                view = views.get(i);
+                if (r % ipr === 0) {
+                    rowViews.push(vRow = [view]);
+                    w = view.mw;
+                    r++;
+                    i++;
+                } else {
+                    w += itemGap + view.mw;
+                    if (w <= hintWidth) {
+                        vRow.push(view);
+                        r++;
+                        i++;
+                    } else {
+                        r = 0;
+                    }
+                }
+            }
+
+            w = h = 0;
+            rowViews.forEach(views => {
+                let wRow = 0;
+                let hRow = 0;
+                views.forEach(v => {
+                    wRow += v.mw;
+                    hRow = Math.max(hRow, v.mh);
+                })
+                wRow += itemGap * (views.length - 1);
+                w = Math.max(w, wRow);
+                h += hRow;
+                sizes.push(hRow);
+            });
+            h += lineGap * (rowViews.length - 1);
+        }
+        return Size.create(w, h);
     }
 }

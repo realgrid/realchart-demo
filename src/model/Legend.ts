@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
+import { AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
@@ -45,11 +45,6 @@ export enum LegendPosition {
     LEFT = 'left',
     PLOT = 'plot',
     SUBPLOT = 'subplot'
-}
-
-export enum LegendAlignBase {
-    CHART = 'chart',
-    PLOT = 'plot'
 }
 
 export enum LegendLayout {
@@ -117,7 +112,7 @@ export class Legend extends ChartItem {
      * 
      * @config
      */
-    alignBase = LegendAlignBase.PLOT;
+    alignBase = AlignBase.PLOT;
     /**
      * {@link position}이 {@link LegendPosition.PLOT plot}일 때, plot 영역의 좌측 모서리와 legend의 간격.
      * 
@@ -170,11 +165,12 @@ export class Legend extends ChartItem {
      */
     backgroundStyles: SVGStyleOrClass;
     /**
-     * 한 행당 표시할 legend 항목 수.
+     * 한 줄 당 표시할 최대 legend 항목 수.
      * 
      * @config
      */
-    itemsPerRow: number;
+    itemsPerLine: number;
+    lineGap = 4;
     /**
      * 수평 {@link layout 배치}일 때,
      * 최대 너비를 픽셀 단위의 크기 혹은 plot 너비에 대한 상대 길이를 '%'로 지정한다.

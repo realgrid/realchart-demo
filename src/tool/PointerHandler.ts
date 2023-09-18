@@ -6,8 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { ChartControl } from "../ChartControl";
 import { IPointerHandler } from "../common/RcControl";
-import { ChartControl } from "../main";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { Series } from "../model/Series";

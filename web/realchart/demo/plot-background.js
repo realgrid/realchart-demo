@@ -6,8 +6,8 @@ const config = {
     title: "Plotting Area Background",
     xAxis: {
         title: 'X Axis',
-        // min: 0,
-        // max: 100
+        // minValue: 0,
+        // maxValue: 100
     },
     yAxis: {
         title: 'Y Axis',
@@ -407,11 +407,11 @@ function setActions(container) {
     });
     createListBox(container, "plot.style.fill", ['none', 'black', 'yellow'], function (e) {
         config.plot.style.fill = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, 'none');
     createCheckBox(container, 'plot.image', function (e) {
         config.plot.image.url = _getChecked(e) ? '../assets/mountain.jpeg' : '';
-        chart.update(config);
+        chart.load(config);
     }, false);
 }
 

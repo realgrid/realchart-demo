@@ -43,7 +43,7 @@ class BarElement extends GroupElement implements IPointView {
         this._backs
             .prepare(backs ? total : 0)
             .forEach((v, i) => {
-                v.setStyleName(backStyle);
+                v.setClass(backStyle);
             });
         this._segments
             .prepare(Math.round(count))

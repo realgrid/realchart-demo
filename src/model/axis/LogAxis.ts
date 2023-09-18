@@ -14,13 +14,16 @@ export class LogAxisTick extends ContinuousAxisTick {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    // buildSteps(length: number, base: number, min: number, max: number): number[] {
-    //     min = Math.log10(min);
-    //     max = Math.log10(max);
-
-    //     const steps =  super.buildSteps(length, base, min, max);
-    //     return steps;
-    // }
+    /**
+     * scale은 0, ..., 0.1, 1, 10, 100, ...
+     * 정수화 되는 scale만 적용되도록 한다.
+     */
+    protected _getStepMultiples(scale: number): number[] {
+        if (scale <= 0.1) {
+            return [1 / scale];
+        }
+        return [1, 2, 3, 4, 5, 10];
+    }
 }
 
 /**

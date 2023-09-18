@@ -147,17 +147,14 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
         const padding = this._paddings;
         const margin = this._margins;
 
-        padding.applyPadding(csBack);
+        padding.applyPadding(cs);
         this._borderRadius = parseFloat(csBack.borderRadius) || 0;
         margin.applyMargin(cs);
 
         const sz = this._doMeasure(doc, model, hintWidth, hintHeight, phase);
 
-        sz.height += margin.top + margin.bottom + padding.top + padding.bottom;
-        sz.width += margin.left + margin.right + padding.left + padding.right;
-
-        this.mw = sz.width;
-        this.mh = sz.height;
+        this.mw = sz.width += margin.left + margin.right + padding.left + padding.right;
+        this.mh = sz.height += margin.top + margin.bottom + padding.top + padding.bottom;
         return sz;
     }
 

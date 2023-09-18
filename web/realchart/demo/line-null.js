@@ -38,19 +38,19 @@ function setActions(container) {
     createListBox(container, "Line Type", ['default', 'spline', 'step', 'step-backward'], function (e) {
         config.series.lineType = _getValue(e).split('-')[0];
         config.series.stepDir = _getValue(e).indexOf('backward') >= 0 ? 'backward' : 'forward';
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, 'default');
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
 }
 

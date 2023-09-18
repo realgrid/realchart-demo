@@ -24,13 +24,6 @@ export interface IPointerHandler {
     handleWheel(ev: WheelEvent): void;
 }
 
-// const BACK_STYLES = {
-//     background: 'fill',
-//     border: 'stroke',
-//     borderWidth: 'strokeWidth',
-//     borderRadius: 'borderRadius'
-// }
-
 /** 
  * @internal
  *
@@ -1006,7 +999,7 @@ export class RcElement extends RcObject {
         }
     }
 
-    setStyleName(value: string): void {
+    setClass(value: string): void {
         this.setAttr('class', value);
     }
 
