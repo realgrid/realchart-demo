@@ -27,6 +27,9 @@ const config = {
     }],
     yAxis: {
         title: "Vertical 수직축 Axis",
+        label: {
+            numberFormat: 'a'
+        }
     },
     series: {
         layout: 'overlap',
