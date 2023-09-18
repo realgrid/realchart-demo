@@ -190,9 +190,9 @@ demo/resize
 
 [Style]
 demo/lineargradient
-/demo/radialgradient
-/demo/palette
-/demo/theme
-/demo/stylecallback
+demo/radialgradient
+demo/palette
+demo/theme
+demo/stylecallback
 
 [Data]				
