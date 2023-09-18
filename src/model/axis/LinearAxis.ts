@@ -387,15 +387,18 @@ export abstract class ContinuousAxis extends Axis {
      * @config
      */
     strictMax: number;
-
     /**
      * 축 시작 위치에 tick 표시 여부.
      * {@link strictMin}이 설정되고 {@link AxisFit.VALUE}로 적용된다.
+     * 
+     * @config
      */
     startFit = AxisFit.DEFAULT;
     /**
      * 축 끝 위치에 tick 표시 여부.
      * {@link strictMax}가 설정되면 무시되고 {@link AxisFit.VALUE}로 적용된다.
+     * 
+     * @config
      */
     endFit = AxisFit.DEFAULT;
 
@@ -516,13 +519,6 @@ export abstract class ContinuousAxis extends Axis {
             }
             max = steps[steps.length - 1];
         }
-
-    // } else if (steps.length > 2 && steps[steps.length - 2] > max) {
-    //         steps.pop();
-    //     } else { // this.getEndFit() === AxisFit.TICK
-    //         // 마지막 tickd이 max보다 크면 최대값을 tick에 맞춘다.
-    //         max = Math.max(max, steps[steps.length - 1]);
-    //     }
 
         this._setMinMax(min, max);
 

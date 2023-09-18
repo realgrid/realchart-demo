@@ -132,9 +132,25 @@ export enum ChartTextEffect {
 }
 
 export abstract class ChartText extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     effect = ChartTextEffect.NONE;
+    /**
+     * @config
+     */
     brightStyle: SVGStyleOrClass;
+    /**
+     * @config
+     */
     darkStyle: SVGStyleOrClass;
+    /**
+     * @config
+     */
     backgroundStyle: SVGStyleOrClass;
     /**
      * 텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
@@ -143,6 +159,8 @@ export abstract class ChartText extends ChartItem {
      * 어둡게 표시할 때는 {@link darkStyle}이 적용된다.
      * brightStyle이 지정되지 않으면 'rct-text-bright'이,
      * darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.
+     * 
+     * @config
      */
     autoContrast = true;// true;
 }

@@ -68,11 +68,32 @@ export class FunnelSeries extends WidgetSeries {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     width: SizeValue = FunnelSeries.DEF_WIDTH;
+    /**
+     * @config
+     */
     height: SizeValue = FunnelSeries.DEF_HEIGHT;
+    /**
+     * @config
+     */
     neckWidth: SizeValue = FunnelSeries.DEF_NECK_WIDTH;
+    /**
+     * @config
+     */
     neckHeight: SizeValue = FunnelSeries.DEF_NECK_HEIGHT;
+    /**
+     * @config
+     */
     reversed = false;
+    /**
+     * 데이터 포인트별 legend 항목을 표시한다.
+     * 
+     * @config
+     */
+    legendByPoint = false;
 
     //-------------------------------------------------------------------------
     // methods
@@ -108,9 +129,13 @@ export class FunnelSeries extends WidgetSeries {
     }
 
     getLegendSources(list: ILegendSource[]): void {
-        this._runPoints.forEach(p => {
-            list.push(p as FunnelSeriesPoint);
-        })        
+        if (this.legendByPoint) {
+            !this.hideInLegend && this._runPoints.forEach(p => {
+                list.push(p as FunnelSeriesPoint);
+            })        
+        } else {
+            super.getLegendSources(list);
+        }
     }
 
     protected _createPoint(source: any): DataPoint {

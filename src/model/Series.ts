@@ -97,6 +97,10 @@ export class DataPointLabel extends FormattableText {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doLoad(source: any): void {
+        super._doLoad(source);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -306,14 +310,15 @@ export interface ISeries extends IPlottingItem {
     isVisible(p: DataPoint): boolean;
 }
 
-export interface IPointStyleArgs {
+export interface IPointStyleCallbackArgs {
     /* series */
     series: string | number;
     count: number;
     vcount: number;
     yMin: number;
     yMax: number;
-    /* point */
+
+    /* point proxy */
     index: number;
     vindex: number;
     x: any;
@@ -322,7 +327,7 @@ export interface IPointStyleArgs {
     yValue: any;
 }
 
-export type PointStyleCallback = (args: IPointStyleArgs) => SVGStyleOrClass;
+export type PointStyleCallback = (args: IPointStyleCallbackArgs) => SVGStyleOrClass;
 
 /**
  * @config chart.series
@@ -370,7 +375,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _maxValue: number;
     _referents: Series[];
     _calcedColor: string;
-    protected _pointArgs: IPointStyleArgs;
+    protected _pointArgs: IPointStyleCallbackArgs;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -464,14 +469,18 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * @config
      */
     pointColors: boolean | string[];
-
     /**
      * body 영역을 벗어난 data point view는 잘라낸다.
      * 
-     * @default false
      * @config
      */
     clipped = false;
+    /**
+     * true면 legend에 표시하지 않는다.
+     * 
+     * @config
+     */
+    hideInLegend = false;
 
     pointStyleCallback: PointStyleCallback;
 
@@ -721,7 +730,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     getLegendSources(list: ILegendSource[]): void {
-        list.push(this);
+        !this.hideInLegend && list.push(this);
     }
 
     getLabelPosition(p: PointItemPosition): PointItemPosition {
@@ -749,23 +758,18 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         }
     }
 
-    protected _createPointArgs(): IPointStyleArgs {
+    protected _createPointArgs(): IPointStyleCallbackArgs {
         return {} as any;
     }
 
-    protected _preparePointArgs(args: IPointStyleArgs): void {
+    protected _preparePointArgs(args: IPointStyleCallbackArgs): void {
         args.series = this.name || this.index;
         args.count = this._points.count;
         // args.vcount = 
     }
 
-    protected _getPointStyleArgs(args: IPointStyleArgs, p: DataPoint): void {
-        args.index = p.index;
-        args.vindex = p.vindex;
-        args.x = p.x;
-        args.y = p.y;
-        args.xValue = p.xValue;
-        args.yValue = p.yValue;
+    protected _getPointStyleArgs(args: IPointStyleCallbackArgs, p: DataPoint): void {
+        p.assignTo(args);
     }
 
     getPointStyle(p: DataPoint): any {
@@ -1453,6 +1457,12 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
      * @config
      */
     yAxis: string | number;
+    /**
+     * true면 legend에 표시하지 않는다.
+     * 
+     * @config
+     */
+    hideInLegend = false;
 
     get series(): T[] {
         return this._series.slice(0);
@@ -1534,8 +1544,9 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     getLegendSources(list: ILegendSource[]) {
-        // list.push(...this._visibles);
-        list.push(...this._series);
+        if (!this.hideInLegend) {
+            this._series.forEach(ser => ser.getLegendSources(list));
+        }
     }
 
     canMinPadding(axis: IAxis): boolean {

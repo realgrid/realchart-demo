@@ -53,6 +53,12 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
 
         this.sliced = this.source.sliced;
     }
+
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            sliced: this.sliced
+        });
+    }
 }
 
 class PieSeriesText extends FormattableText {
@@ -137,6 +143,12 @@ export class PieSeries extends RadialSeries {
      * @config
      */
     innerText = new PieSeriesText();
+    /**
+     * 데이터 포인트별 legend 항목을 표시한다.
+     * 
+     * @config
+     */
+    legendByPoint = false;
 
     //-------------------------------------------------------------------------
     // methods
@@ -176,9 +188,13 @@ export class PieSeries extends RadialSeries {
     }
 
     getLegendSources(list: ILegendSource[]): void {
-        this._runPoints.forEach(p => {
-            list.push(p as PieSeriesPoint);
-        })        
+        if (this.legendByPoint) {
+            !this.hideInLegend && this._runPoints.forEach(p => {
+                list.push(p as PieSeriesPoint);
+            })        
+        } else {
+            super.getLegendSources(list);
+        }
     }
 
     protected _doLoad(src: any): void {

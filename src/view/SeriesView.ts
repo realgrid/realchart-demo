@@ -239,10 +239,9 @@ export class PointLabelLineContainer extends GroupElement {
         const lines = this._lines;
         const points = model.getPoints();
         const pointLabel = model.pointLabel;
+        const map = this._map = {};
 
         if (pointLabel.visible) {
-            const map = this._map = {};
-
             lines.prepare(points.count).forEach((line, i) => {
                 const p = points.get(i);
 

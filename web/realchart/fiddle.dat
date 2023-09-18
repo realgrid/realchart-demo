@@ -12,6 +12,7 @@ demo/bargroup
 demo/barrange-multi
 demo/barrange-null
 demo/barrange
+demo/bar-wing
 exam/bar-01
 exam/bar-baseline-01
 exam/bar-fill-01
@@ -153,6 +154,7 @@ exam/polar-01
 
 [Combination]
 demo/combo-arearange-line
+demo/combo-bar-pie
 
 [Axis]
 demo/axis-break

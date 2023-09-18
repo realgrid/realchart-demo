@@ -33,6 +33,12 @@ export class HistogramSeriesPoint extends DataPoint {
         this.min = v.min;
         this.max = v.max;
     }
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            min: this.min,
+            max: this.max
+        });
+    }
 }
 
 export enum BinsNumber {

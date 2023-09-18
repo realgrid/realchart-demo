@@ -37,6 +37,13 @@ export class HeatmapSeriesPoint extends DataPoint {
         this.isNull ||= isNaN(this.heatValue);
     }
 
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            heat: this.heat,
+            heatValue: this.heatValue
+        });
+    }
+
     protected _readArray(series: HeatmapSeries, v: any[]): void {
         const d = v.length > 2 ? 1 : 0;
 

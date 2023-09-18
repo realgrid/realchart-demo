@@ -96,6 +96,10 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    assignTo(proxy: any): void {
+        this._assignTo(proxy);
+    }
+
     getProp(fld: string | number): any {
         if (isNone(this.source)) return this.source;
         else return this.source[fld];
@@ -130,6 +134,17 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _assignTo(proxy: any): any {
+        return Object.assign(proxy, {
+            index: this.index,
+            vindex: this.vindex,
+            x: this.x,
+            y: this.y,
+            xValue: this.xValue,
+            yValue: this.yValue
+        });
+    }
+
     protected _colorIndex(): number {
         return 2;
     }

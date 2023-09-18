@@ -226,11 +226,9 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     protected _layoutMarker(mv: LineMarkerView, x: number, y: number): void {
         const series = this.model;
-        const marker = series.marker;
-        // const color = series.color;
         const p = mv.point as LineSeriesPoint;
-        const s = p.shape || series.getShape();
-        const sz = mv._radius = pickNum(p.radius, marker.radius);
+        const s = series.getShape(p);
+        const rd = mv._radius = series.getRadius(p);
         let path: (string | number)[];
 
         switch (s) {
@@ -240,13 +238,13 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             case Shape.TRIANGLE:
             case Shape.ITRIANGLE:
             case Shape.STAR:
-                x -= sz;
-                y -= sz;
-                path = SvgShapes[s](0, 0, sz * 2, sz * 2);
+                x -= rd;
+                y -= rd;
+                path = SvgShapes[s](0, 0, rd * 2, rd * 2);
                 break;
 
             default:
-                path = SvgShapes.circle(0, 0, sz);
+                path = SvgShapes.circle(0, 0, rd);
                 break;
         }
         // if (m.visible = this._containsMarker(x, y)) {
