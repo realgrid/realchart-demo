@@ -47,7 +47,7 @@ const config = {
             ]
         }, {
             name: 'bar1',
-            yAxis: 1,
+            xAxis: 1,
             pointLabel: {
                 visible: true,
                 // numberFormat: 's##0.0'
