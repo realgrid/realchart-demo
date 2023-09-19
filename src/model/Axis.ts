@@ -588,24 +588,26 @@ export abstract class Axis extends ChartItem implements IAxis {
 
         this._range = this._doCalcluateRange(vals);
 
-        // clustering
-        let sum = 0;
-        let p = 0;
-
-        series.forEach(item => {
-            if (item.clusterable()) {
-                sum += pickNum((item as any as IClusterable).groupWidth, 1);
-            }
-        });
-        series.forEach(item => {
-            if (item.clusterable()) {
-                const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;
-
-                (item as any as IClusterable).setCluster(w, p);
-                p += w;
-            }
-        });
-        // console.log(this._series.map(s => (s as any)._clusterPos));
+        // clustering (은 x축에서만 가능)
+        if (this._isX) {
+            let sum = 0;
+            let p = 0;
+    
+            series.forEach(item => {
+                if (item.clusterable()) {
+                    sum += pickNum((item as any as IClusterable).groupWidth, 1);
+                }
+            });
+            series.forEach(item => {
+                if (item.clusterable()) {
+                    const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;
+    
+                    (item as any as IClusterable).setCluster(w, p);
+                    p += w;
+                }
+            });
+            // console.log(this._series.map(s => (s as any)._clusterPos));
+        }
     }
 
     buildTicks(length: number): void {

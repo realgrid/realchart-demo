@@ -11,34 +11,43 @@ const config = {
         categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도'],
         grid: true
     },
-    yAxis: {
-        title: "Vertical 수직축 Axis",
-    },
+    yAxis: [{
+        title: "Employees",
+    }, {
+        title: "Profit (millions)",
+        position: 'opposite',
+        grid: false,
+        tick: {
+            stepCount: 5,
+        }
+    }],
     series: [{
         groupPadding: 0.1,
-        // layout: 'overlap',
-        // layout: 'stack',
+        layout: 'overlap',
         children: [{
-            name: 'column1',
+            name: 'Employees',
+            color: 'rgba(165,170,217,1)',
             // pointWidth: '100%',
-            data: [11, 22, 15, 9, 13, 27]
+            data: [150, 73, 20]
         }, {
-            name: 'column2',    
-            data: [15, 19, 19, 6, 21, 21]
-        }, {
-            name: 'column3',
-            data: [13, 17, 15, 11, 23, 17]
+            name: 'Employees Optimized',
+            color: 'rgba(126,86,134,.9)',    
+            pointPadding: 0.3,
+            data: [140, 90, 40]
         }]
     }, {
         groupPadding: 0.1,
-        // layout: 'overlap',
-        layout: 'stack',
+        layout: 'overlap',
+        yAxis: 1,
         children: [{
-            name: 'column4',
-            data: [13, 17, 15, 11, 23, 17]
+            name: 'Profit',
+            color: 'rgba(248,161,63,1)',
+            data: [183.6, 178.8, 198.5]
         }, {
-            name: 'column5',
-            data: [15, 19, 19, 6, 21, 21]
+            name: 'Profit Optimized',
+            color: 'rgba(186,60,61,.9)',
+            pointPadding: 0.3,
+            data: [203.6, 198.8, 208.5]
         }]
     }]
 }

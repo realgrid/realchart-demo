@@ -1207,30 +1207,28 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * 시리즈가 group에 포함되지 않은 경우, 축 단위 너비에서 이 시리즈가 차지하는 상대적 너비.
-     * 그룹에 포함되면 이 속성은 무시된다.
-     * 
-     * @config
-     */
-    groupWidth = 1; // _clusterWidth 계산에 사용된다. TODO: clusterWidth로 변경해야 하나?
+    get groupWidth(): number {
+        return this.pointWidth;
+    }
     // /**
-    //  * 시리즈가 group에 포함되지 않은 경우 자동 생성되는 기본 group에 포함되는 데,
-    //  * 그 그룹의 너비에서 포인트들이 표시되기 전후의 상대적 여백 크기.
-    //  * <br>
-    //  * 명시적으로 설정된 그룹에 포함되면 이 속성은 무시된다.
+    //  * 시리즈가 group에 포함되지 않은 경우, 축 단위 너비에서 이 시리즈가 차지하는 상대적 너비.
+    //  * 그룹에 포함되면 이 속성은 무시된다.
+    //  * 
+    //  * @config
     //  */
-    // groupPadding = 0.2;
+    // groupWidth = 1; // _clusterWidth 계산에 사용된다. TODO: clusterWidth로 변경해야 하나?
     /**
-     * 시리즈가 포함된 그룹의 layout이 {@link SeriesGroupLayout.DEFAULT}이거나 특별히 설정되지 않아서,
+     * 시리즈가 그룹에 포함되지 않거나,
+     * 포함된 그룹의 layout이 {@link SeriesGroupLayout.DEFAULT}이거나 특별히 설정되지 않아서,
      * 그룹에 포함된 시리즈들의 data point가 옆으로 나열되어 표시될 때,
      * 포인트 표시 영역 내에서 이 시리즈의 포인트가 차지하는 영역의 상대 크기.
-     * <br>
      * 예를 들어 이 시리즈의 속성값이 1이고 다른 시리즈의 값이 2이면 다른 시리즈의 data point가 두 배 두껍게 표시된다.
+     * 또, 그룹에 포함되고 그룹의 layout이 {@link SeriesGroupLayout.DEFAULT}
      * 
      * @config
      */
     pointWidth = 1;
+    pointPos: number;
     /**
      * 이 시리즈의 point가 차지하는 영역 중에서 point bar 양쪽 끝에 채워지는 빈 영역의 크기.
      * <br>
@@ -1246,7 +1244,7 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
     // methods
     //-------------------------------------------------------------------------
     getPointWidth(length: number): number {
-        const g = this.group as ClustrableSeriesGroup<Series>;
+        const g = this.group as ClusterableSeriesGroup<Series>;
         let w = length;
         
         if (g) {
@@ -1261,7 +1259,7 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
     }
 
     getPointPos(length: number): number {
-        const g = this.group as ClustrableSeriesGroup<Series>;
+        const g = this.group as ClusterableSeriesGroup<Series>;
         let w = length;
         let p = 0;
 
@@ -1774,7 +1772,7 @@ export abstract class ConstraintSeriesGroup<T extends Series> extends SeriesGrou
 /**
  * @config chart.series
  */
-export abstract class ClustrableSeriesGroup<T extends Series> extends SeriesGroup<T> {
+export abstract class ClusterableSeriesGroup<T extends Series> extends SeriesGroup<T> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -1794,4 +1792,15 @@ export abstract class ClustrableSeriesGroup<T extends Series> extends SeriesGrou
      */
     groupPadding = 0.1;
 
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    clusterable(): boolean {
+        return true;
+    }
+
+    setCluster(width: number, pos: number): void {
+        this._clusterWidth = width;
+        this._clusterPos = pos;
+    }
 }

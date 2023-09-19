@@ -478,6 +478,10 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
+        if (isNaN(calcedMin) || isNaN(calcedMax)) {
+            return[];
+        }
+
         const tick = this.tick as ContinuousAxisTick;
         let { min, max } = this._adjustMinMax(this._calcedMin = calcedMin, this._calcedMax = calcedMax);
         let base = this._base;
