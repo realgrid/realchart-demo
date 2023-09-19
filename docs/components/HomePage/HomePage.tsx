@@ -1,7 +1,8 @@
 import { Title } from "@mantine/core";
 import Head from "next/head";
-import { Banner } from "./Banner/Banner";
 import { Container, Text } from "@mantine/core";
+import { theme } from "@/lib/theme";
+import { HeroBullets } from "./Hero";
 
 interface HomePageProps {
   componentsCountByCategory: Record<string, number>;
@@ -9,11 +10,11 @@ interface HomePageProps {
 export const HomePage = () => {
   return (
     <>
-      {/* <Banner /> */}
+      <HeroBullets />
       <div id="main">
-        <Container size='80rem'>
+        <Container size={theme.other.contentMaxWidth}>
           {/* <Text size='lg' weight='bolder'>RealChart is Good Chart!</Text> */}
-          <Title>RealChart Documentation</Title>
+          {/* <Title>RealChart Documentation</Title> */}
         </Container>
       </div>
     </>

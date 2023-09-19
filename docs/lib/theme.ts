@@ -79,7 +79,7 @@ export const theme: MantineThemeOverride = {
     headerHeight: 54,
     sidebarWidth: 272,
     navbarWidth: 320,
-    contentMaxWidth: 1200,
+    contentMaxWidth: '90rem',
     inputShortWidth: 300,
     propInputLabelWidth: 120,
     propInputGap: 10,
