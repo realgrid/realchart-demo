@@ -559,6 +559,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected abstract _doPrepareRender(): void;
     protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[];
 
+    isBased(): boolean {
+        return false;
+    }
+
     disconnect(): void {
         this._series = [];
         this._values = [];
@@ -773,7 +777,9 @@ export class AxisCollection {
     }
 
     buildTicks(length: number): void {
-        this._items.forEach(axis => axis.buildTicks(length));
+        // 다른 축을 참조하는 axis를 나중에 계산한다.
+        this._items.sort((a1, a2) => a1.isBased() ? 1 : a2.isBased() ? -1 : 0)
+                   .forEach(axis => axis.buildTicks(length));
     }
 
     connect(series: IPlottingItem): Axis {

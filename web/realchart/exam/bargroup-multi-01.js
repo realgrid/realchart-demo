@@ -18,7 +18,7 @@ const config = {
         position: 'opposite',
         grid: false,
         tick: {
-            stepCount: 5,
+            baseAxis: 0
         }
     }],
     series: [{

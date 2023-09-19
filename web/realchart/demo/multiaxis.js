@@ -49,6 +49,9 @@ const config = {
             style: {
             }
         },
+        tick: {
+            baseAxis: 0
+        },
         label: {
             suffix: ' mm',
             style: {
@@ -60,6 +63,9 @@ const config = {
             text: 'Sea-Level Pressure',
             style: {
             }
+        },
+        tick: {
+            baseAxis: 0
         },
         label: {
             suffix: ' mb',
