@@ -9,6 +9,8 @@
 import { test } from '@playwright/test';
 import { expect } from 'chai';
 import { PWTester } from '../../pwtester';
+import { SeriesView } from '../../../src/view/SeriesView';
+import { TitleView } from '../../../src/view/TitleView';
 
 /**
  * PlayWright Tests for bar.html
@@ -24,7 +26,7 @@ test.describe('bar.html test', () => {
 		const container = await page.$('#realchart');
 		expect(container).exist;
 
-		const bars = await page.$$('.rct-point');
+		const bars = await page.$$('.' + SeriesView.POINT_CLASS);
 		expect(bars.length > 0).is.true;
 
 		const config: any = await page.evaluate('config');
@@ -63,7 +65,7 @@ test.describe('bar.html test', () => {
 	test('Y-reversed', async ({ page }) => {
 		await page.evaluate('config.yAxis.reversed = true; chart.update(config)');
 
-		const bars = await page.$$('.rct-point');
+		const bars = await page.$$('.' + SeriesView.POINT_CLASS);
 		const rGrids = await PWTester.getGridBounds(page);
 
 		// bar들이 상단의 x축에서 부터 아래쪽으로 커진다.
@@ -81,7 +83,7 @@ test.describe('bar.html test', () => {
 		await page.evaluate('config.inverted = true; chart.update(config)');
 
 		const rGrids = await PWTester.getGridBounds(page);
-		const bars = await page.$$('.rct-point');
+		const bars = await page.$$('.' + SeriesView.POINT_CLASS);
 		const config: any = await page.evaluate('config');
 		const data = config.series.data;
 
@@ -118,7 +120,7 @@ test.describe('bar.html test', () => {
 	test('title', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
-		const title = await page.$('.rct-title');
+		const title = await page.$('.' + TitleView.TITLE_CLASS);
 		expect(title).exist;
 
 		const Text = await title.$('text');

@@ -9,6 +9,9 @@
 import { test } from '@playwright/test';
 import { expect } from 'chai';
 import { PWTester } from '../../pwtester';
+import { SeriesView } from '../../../src/view/SeriesView';
+import { AxisView } from '../../../src/view/AxisView';
+import { TitleView } from '../../../src/view/TitleView';
 
 /**
  * PlayWright Tests for bubble.html
@@ -24,7 +27,7 @@ test.describe('bubble.html test', () => {
 		const container = await page.$('#realchart');
 		expect(container).exist;
 
-		const markers = await page.$$('.rct-point');
+		const markers = await page.$$('.' + SeriesView.POINT_CLASS);
 		expect(markers.length > 0).is.true;
 
 		const config: any = await page.evaluate('config');
@@ -37,7 +40,7 @@ test.describe('bubble.html test', () => {
 	test('title', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
-		const title = await page.$('.rct-title');
+		const title = await page.$('.' + TitleView.TITLE_CLASS);
 		expect(title).exist;
 
 		const titleText = await page.evaluate((el) => el.textContent, title);
@@ -70,7 +73,7 @@ test.describe('bubble.html test', () => {
 		const config: any = await page.evaluate('config');
 
 		const xAxis = await PWTester.getAxis(page, 'x');
-		const xAxisTick = await xAxis.$$('.rct-axis-tick');
+		const xAxisTick = await xAxis.$$('.' + AxisView.TICK_CLASS);
 
 		expect(xAxisTick.length).gt(1);
 	});
@@ -120,7 +123,7 @@ test.describe('bubble.html test', () => {
 		const dataPoints = await page.$('.rct-series-points');
 		expect(dataPoints).exist;
 
-		const dataPoint = await dataPoints.$$('.rct-point');
+		const dataPoint = await dataPoints.$$('.' + SeriesView.POINT_CLASS);
 		expect(dataPoint.length).eq(config.series.data.length);
 	});
 });

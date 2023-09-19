@@ -10,15 +10,31 @@ import { isArray } from "./Common";
 
 const __epoch = new Date().getTime();
 
-if (!Element.prototype.animate) {
+if (typeof window !== 'undefined' && !Element.prototype.animate) {
     Element.prototype.animate = function (_: any): any {};
 }
 
-export const _isOpera = !!window["opera"] || navigator.userAgent.indexOf(' OPR/') >= 0;
-export const _isChrome = !!window["chrome"] && !_isOpera;          // Chrome 1+
-export const _isSafari = Object.prototype.toString.call(HTMLElement).indexOf('Constructor') > 0 || (!_isChrome && !_isOpera && navigator.userAgent.indexOf("Safari") >= 0);
-export const _isSamsung = navigator.userAgent.toLocaleLowerCase().indexOf('samsungbrowser') >= 0;
-export const _isMiui = navigator.userAgent.toLocaleLowerCase().indexOf('miuibrowser') >= 0;
+let _isOpera = false;
+let _isChrome = false;
+let _isSafari = false;
+let _isSamsung = false;
+let _isMiui = false;
+
+if (typeof window !== 'undefined') {
+    _isOpera = !!window["opera"] || navigator.userAgent.indexOf(' OPR/') >= 0;
+    _isChrome = !!window["chrome"] && !_isOpera;          // Chrome 1+
+    _isSafari = Object.prototype.toString.call(HTMLElement).indexOf('Constructor') > 0 || (!_isChrome && !_isOpera && navigator.userAgent.indexOf("Safari") >= 0);
+    _isSamsung = navigator.userAgent.toLocaleLowerCase().indexOf('samsungbrowser') >= 0;
+    _isMiui = navigator.userAgent.toLocaleLowerCase().indexOf('miuibrowser') >= 0;
+}
+
+export {
+    _isOpera,
+    _isChrome,
+    _isSafari,
+    _isSamsung,
+    _isMiui
+};
 
 export const LINE_SEP = /\r\n|\n/g;
 export const CSV_SPLIT = /,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)(?=(?:[^\']*\'[^\']*\')*[^\']*$)/;

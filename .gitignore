@@ -24,9 +24,6 @@ web/realchart/lib/realchart*.*
 /e2e/src/styles/**
 
 www
-/test-results/
-/playwright-report/
-/playwright/.cache/
-
-.playwright
+test-results
 playwright-report
+.playwright

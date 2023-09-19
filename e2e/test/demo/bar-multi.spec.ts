@@ -9,6 +9,7 @@
 import { test } from '@playwright/test';
 import { expect } from 'chai';
 import { PWTester } from '../../pwtester';
+import { SeriesView } from '../../../src/view/SeriesView';
 
 /**
  * PlayWright Tests for bar-multi.html
@@ -24,7 +25,7 @@ test.describe('bar-multi.html test', () => {
         const container = await page.$('#realchart');
         expect(container).exist;
 
-        const bars = await page.$$('.rct-point');
+        const bars = await page.$$('.' + SeriesView.POINT_CLASS);
         expect(bars.length > 0).is.true;
 
         const config: any = await page.evaluate('config');

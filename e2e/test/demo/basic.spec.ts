@@ -9,6 +9,10 @@
 import { test } from '@playwright/test';
 import { expect } from 'chai';
 import { PWTester } from '../../pwtester';
+import { SeriesView } from '../../../src/view/SeriesView';
+import { TitleView } from '../../../src/view/TitleView';
+import { LegendView } from '../../../src/view/LegendView';
+import { BodyView } from '../../../src/view/BodyView';
 
 /**
  * PlayWright Tests for basic.html
@@ -26,19 +30,19 @@ test.describe('basic.html test', () => {
         expect(container).exist;
 
         // body
-        const body = await page.$('.rct-plot');
+        const body = await page.$('.' + BodyView.BODY_CLASS);
         expect(body).exist;
         const rBody = await PWTester.getBounds(body);
 
         // title
-        const title = await page.$('.rct-title');
+        const title = await page.$('.' + TitleView.TITLE_CLASS);
         expect(title).exist;
         const rTitle = await PWTester.getBounds(title);
         // body 위쪽에
         expect(rTitle.y).lt(rBody.y);
 
         // legend
-        const legend = await page.$('.rct-legend');
+        const legend = await page.$('.' + LegendView.LEGEND_CLASS);
         expect(legend).exist;
         const rLegend = await PWTester.getBounds(legend);
         // body 아래쪽에
@@ -59,7 +63,7 @@ test.describe('basic.html test', () => {
         expect(rYAxis.x).lt(rBody.x);
 
         // series
-        const bars = await page.$$('.rct-point');
+        const bars = await page.$$('.' + SeriesView.POINT_CLASS);
         expect(bars.length > 0).is.true;
 
         const config: any = await page.evaluate('config');

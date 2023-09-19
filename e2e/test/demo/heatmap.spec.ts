@@ -9,6 +9,7 @@
 import { test } from '@playwright/test';
 import { expect } from 'chai';
 import { PWTester } from '../../pwtester';
+import { SeriesView } from '../../../src/view/SeriesView';
 
 /**
  * PlayWright Tests for heatmap.html
@@ -24,7 +25,7 @@ test.describe('heatmap.html test', () => {
 		const container = await page.$('#realchart');
 		expect(container).exist;
 
-		const markers = await page.$$('.rct-point');
+		const markers = await page.$$('.' + SeriesView.POINT_CLASS);
 		expect(markers.length > 0).is.true;
 
 		const config: any = await page.evaluate('config');

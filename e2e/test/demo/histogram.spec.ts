@@ -11,6 +11,7 @@ import { expect } from 'chai';
 import { PWTester } from '../../pwtester';
 import { Chart } from '../../../src/model/Chart';
 import { HistogramSeries } from '../../../src/model/series/HistogramSeries';
+import { SeriesView } from '../../../src/view/SeriesView';
 
 /**
  * PlayWright Tests for histogram.html
@@ -26,7 +27,7 @@ test.describe('histogram.html test', () => {
         const container = await page.$('#realchart');
         expect(container).exist;
 
-        const bars = await page.$$('.rct-point');
+        const bars = await page.$$('.' + SeriesView.POINT_CLASS);
         expect(bars.length > 0).is.true;
 
         const config: any = await page.evaluate('config');

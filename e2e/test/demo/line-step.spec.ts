@@ -9,6 +9,7 @@
 import { test } from '@playwright/test';
 import { expect } from 'chai';
 import { PWTester } from '../../pwtester';
+import { SeriesView } from '../../../src/view/SeriesView';
 
 /**
  * PlayWright Tests for line-step.html
