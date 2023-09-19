@@ -20,6 +20,10 @@ export class Title extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 제목 텍스트
+     * @config 
+     */
     text = 'Title';
     /**
      * 정렬 기준.
@@ -58,7 +62,7 @@ export enum SubtitlePosition {
 /**
  * 차트 sub 타이틀 설정 모델.
  * 
- * @conft chart.subtitle
+ * @config chart.subtitle
  */
 export class Subtitle extends Title {
 
@@ -67,5 +71,9 @@ export class Subtitle extends Title {
     //-------------------------------------------------------------------------
     position = SubtitlePosition.BOTTOM;
     verticalAlign = VerticalAlign.BOTTOM;
+    /**
+     * 부제목 텍스트
+     * @config
+     */
     text = '';
 }

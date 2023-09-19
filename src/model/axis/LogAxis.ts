@@ -30,7 +30,8 @@ export class LogAxisTick extends ContinuousAxisTick {
  * 이 축에 연결된 시리즈들의 point y값을 log10으로 계산된 위치에 표시한다.
  * y축으로만 사용될 수 있다.
  * 
- * @config chart.axis[type=log]
+ * @config chart.xAxis[type=log]
+ * @config chart.yAxis[type=log]
  */
 export class LogAxis extends ContinuousAxis {
 

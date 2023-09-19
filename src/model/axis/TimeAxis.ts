@@ -233,7 +233,8 @@ export class TimeAxisTick extends ContinuousAxisTick {
 /**
  *  timeUnit(기본값 1)밀리초가 1에 해당한다.
  * 
- * @config chart.axis[type=time]
+ * @config chart.xAxis[type=time]
+ * @config chart.yAxis[type=time]
  */
 export class TimeAxis extends ContinuousAxis {
 

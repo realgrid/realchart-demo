@@ -24,7 +24,7 @@ export class LineSeriesPoint extends DataPoint {
 }
 
 /**
- * @config chart.series[type=line|area|arearange].marker
+ * chart.series[type=line|area|arearange].marker
  */
 export class LineSeriesMarker extends SeriesMarker {
 
@@ -69,6 +69,9 @@ export abstract class LineSeriesBase extends Series {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     marker = new LineSeriesMarker(this);
     private _shape: Shape;
 

@@ -293,8 +293,6 @@ export enum AxisFit {
 
 /**
  * 연속 축 기반.
- * 
- * @config chart.axis[type=linear|time|log]
  */
 export abstract class ContinuousAxis extends Axis {
 
@@ -798,7 +796,8 @@ export abstract class ContinuousAxis extends Axis {
  * 선형 연속 축.
  * 값 사아의 비율과 축 길이 비율이 항상 동일한 축.
  * 
- * @config chart.axis[type=linear]
+ * @config chart.xAxis[type=linear]
+ * @config chart.yAxis[type=linear]
  */
 export class LinearAxis extends ContinuousAxis {
 

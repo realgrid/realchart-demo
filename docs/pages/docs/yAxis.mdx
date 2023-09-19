@@ -1,0 +1,37 @@
+## yAxis
+차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.
+## Properties
+
+### marginFar: number
+차트 경계나 뒤쪽 축 사이의 여백 크기.  
+`default: 0`  
+
+### marginNear: number
+Plot 영역이나 앞쪽 축 사이의 여백 크기.  
+`default: 0`  
+
+### maxValue: number
+명시적으로 지정하는 최대값.
+축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.
+ maxPadding 도 무시된다.  
+
+### minValue: number
+명시적으로 지정하는 최소값.
+축에 연결된 data point들의 값으로 계산된 최소값 대신 이 값이 축의 최소값이 된다.
+ minPadding 도 무시된다.  
+
+### position: AxisPosition
+표시 위치.  
+`default: AxisPosition.NORMAL`  
+
+### reversed: boolean
+true면 반대 방향으로 point 위치들이 지정된다.  
+`default: false`  
+## yAxis.linear
+선형 연속 축.
+값 사아의 비율과 축 길이 비율이 항상 동일한 축.
+## yAxis.log
+이 축에 연결된 시리즈들의 point y값을 log10으로 계산된 위치에 표시한다.
+y축으로만 사용될 수 있다.
+## yAxis.time
+timeUnit(기본값 1)밀리초가 1에 해당한다.

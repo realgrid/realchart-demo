@@ -455,7 +455,8 @@ export enum AxisPosition {
 /**
  * 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.
  * 
- * @config chart.axis
+ * @config chart.xAxis
+ * @config chart.yAxis
  */
 export abstract class Axis extends ChartItem implements IAxis {
 
@@ -530,13 +531,13 @@ export abstract class Axis extends ChartItem implements IAxis {
     /**
      * Plot 영역이나 앞쪽 축 사이의 여백 크기.
      * 
-     * @confg
+     * @config
      */
     marginNear = 0;
     /**
      * 차트 경계나 뒤쪽 축 사이의 여백 크기.
      * 
-     * @confg
+     * @config
      */
     marginFar = 0;
 

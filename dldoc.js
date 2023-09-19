@@ -5,8 +5,6 @@
  * https://github.com/tomchen/typedoc-plugin-not-exported
  */
 import fs from 'fs';
-import jsdom from 'jsdom';
-const { JSDOM } = jsdom;
 
 const text = fs.readFileSync('./api/model.json', { encoding: 'utf-8'});
 const model = JSON.parse(text);
@@ -18,14 +16,28 @@ const findTag = (tags, tag) => {
   return tags?.find(t => t.tag == tag );
 }
 
-const parseConfigTag = (tags) => {
-  const config = findTag(tags, '@config');
-  const { tag, content } = {...config};
-  return content?.map(c => c.text).join(' ');
+const findTags = (tags, tag) => {
+  return tags?.filter(t => t.tag == tag );
 }
-// jsfiddle inline으로 가정한다. @fiddle url label...
+
+/**
+ * @param tags: Array
+ * @returns string
+ */
+const parseConfigTag = (tags) => {
+  const configs = findTags(tags, '@config');
+  return configs?.map(config => {
+    const { tag, content } = {...config};
+    return content?.map(c => c.text).join(' ');
+  });
+}
+/**
+ * jsfiddle inline으로 가정한다. @fiddle url label...
+ * @param tags: Array
+ * @returns string
+ */
 const parseFiddleTag = (tags) => {
-  const fiddles = tags?.filter(t => t.tag == '@fiddle');
+  const fiddles = findTags(tags, '@fiddle');
   return fiddles?.map(fiddle => {
     const [{text}] = fiddle.content;
     const [src, ...label] = text.split(' ');
@@ -34,19 +46,33 @@ const parseFiddleTag = (tags) => {
   }).join('\n');
 }
 
-// defaultValue를 사용하되, @default tag가 있으면 설명을 추가한다.
+/**
+ * defaultValue를 사용하되, @default tag가 있으면 설명을 추가한다.
+ * @param tags: Array
+ * @returns string
+ */
 const parseDefaultTag = (tags) => {
   return '';
 }
 
+/**
+ * 
+ * @param tags: Array
+ * @returns { config: string[], fiddle: string, defaultBlock: string}
+ */
 const parseBlockTags = (tags) => {
   return {
     config: parseConfigTag(tags),
     fiddle: parseFiddleTag(tags),
-    default: parseDefaultTag(tags),
+    defaultBlock: parseDefaultTag(tags),
   }
 }
 
+/**
+ * 
+ * @param line: string
+ * @returns string
+ */
 const parseInlineTag = (line) => {
   switch(line) {
     case '@link':
@@ -69,10 +95,16 @@ const parseType = (obj) => {
     case 'reference':
       return name;
     default:
+      console.warn('unexpected type', obj);
       return '';
   }
 }
 
+/**
+ * 
+ * @param summary: Array
+ * @returns string
+ */
 const parseSummary = (summary) => {
   // 일반 주석 라인은 제거한다.
   return summary?.filter(line => {
@@ -87,44 +119,51 @@ const parseSummary = (summary) => {
   }).join(' ');
 }
 
-
+/**
+ * 
+ * @param comment: any
+ * @returns { config: Array, defaultBlock: string, lines: string }
+ */
 const parseComment = (comment) => {
   const { summary, blockTags } = { ...comment };
   let lines = parseSummary(summary);
   // @config content
-  const {config, fiddle } = parseBlockTags(blockTags)
+  const { config, fiddle, defaultBlock } = parseBlockTags(blockTags)
   if (fiddle) {
     lines += `\n${fiddle}`
   }
 
-  return [config, lines];
+  return { config, defaultBlock, content: lines };
 }
 const setContent = (prop) => {
   // return prop.name;
-  const [header, content] = parseComment(prop.comment);
+  const { config, defaultBlock, content } = parseComment(prop.comment);
   return {
       name: prop.name,
       type: parseType(prop.type),
-      header, 
+      header: config.join('|'), 
       content,
-      defaultValue: prop.defaultValue
+      defaultValue: prop.defaultValue,
+      defaultBlock,
   };
 }
 // scan all classes
 const visit = (obj) => {
   const { name, children, kindString, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
-  const [header, content] = parseComment(comment);
+  const { config, content } = parseComment(comment);
   switch (kindString) {
     case 'Class':
-      const regex = /(\w+)/g;
-      let matches = header?.matchAll(regex);
-      matches = matches && [...matches].map(m => m[0]);
+      // const regex = /(\w+)/g;
+      // let matches = header.matchAll(regex);
+      // matches = matches && [...matches].map(m => m[0]);
       // const prop = matches ? (matches[0] == 'chart' ? matches[1] : '') : '';
-      const prop = matches && matches[0] == 'chart' ? matches[1] : '';
+      // const prop = matches && matches[0] == 'chart' ? matches[1] : '';
       // chart.series[type=bar] -> matches: ['chart','series','type','bar'];
-      const type = matches?.length == 4 && matches[2] == 'type' ? matches[3] : '';
+      // const type = matches?.length == 4 && matches[2] == 'type' ? matches[3] : '';
       classMap[name] = { 
-        header, content, prop, type,
+        // header, content, prop, type,
+        config,
+        content,
         extended: extendedTypes.map(t => t.name),
         props: children.filter(c => 
           c.kindString == 'Property'
@@ -158,42 +197,97 @@ class MDGenerater {
   // <br> 태그 변환
   _fixContent(content) {
     // replace \n or double space
-    return content.replace(/<br>/g, '\n');
+    return content?.replace(/<br>/g, '\n') || '';
+  }
+
+  _makeProp(prop) {
+    const { name, type, header, content, defaultValue } = prop;
+    let md = `### ${name}${type ? ': ' + type : ''}\n`;
+    if (header) md += `${header}  \n`;
+    if (content) md += `${this._fixContent(content)}  \n`;
+    if (defaultValue) md += `\`default: ${defaultValue}\`  \n`;
+    return md;
   }
 
   _makeProps(props) {
-    const header = '## Properties\n';
-    return [ header, ...props.map(p => {
-      const { name, type, header, content, defaultValue } = p;
-      let md = `### ${name}${type ? ': ' + type : ''}\n`;
-      if (header) md += `${header}  \n`;
-      if (content) md += `${this._fixContent(content)}  \n`;
-      if (defaultValue) md += `\`default: ${defaultValue}\`  \n`;
-      return md;
-    })].join('\n');
+    const h = '## Properties\n';
+    return [ h, ...props.map(this._makeProp.bind(this))].join('\n');
+  }
+
+  /**
+   * 
+   * @param config: any
+   * @returns { name, root, opt, label, ...attr }
+   * @rparam name: head of line
+   * @rparam root: root name of head line
+   * @rparam opt: option name of head line; 2nd value of . connected string
+   * @rparam label: tail of line
+   * @rparam ...attr: key, value pair object bind in []
+   */
+  _destructConfig(config) {
+    const regex = /(\w+(?:\.\w+)?)(?:\[(.*?)\])?(?:\s(.*))?/;
+    const matches = config.match(regex);
+  
+    if (!matches) {
+      return [];
+    }
+  
+    const [, name, optionsStr, rest] = matches;
+    const [root, opt] = name.split('.');
+    const result = { name, root, opt };
+  
+    if (optionsStr) {
+      const options = {};
+      optionsStr.split(',').forEach(option => {
+        const [key, value] = option.split('=');
+        if (key && value) {
+          options[key] = value.replace(/["']/g, '');
+        }
+      });
+      // result.push(options);
+      Object.assign(result, options);
+    }
+  
+    if (rest) {
+      // result.push(rest.trim());
+      result['label'] = rest.trim();
+    }
+  
+    return result;
   }
 
   generate() {
     Object.entries(this.classMap).forEach(([key, value]) => {
       // series, axis type
-      const { prop, type, props, content, header } = value;
-      if (prop) {
-        if (!this.docMap[prop]) this.docMap[prop] = { _content: '' };
-
-        if (type) {
-            // console.debug({ key, prop, type, len: props.length });
-            const _content = `## ${prop}.${type}\n${this._fixContent(content)}\n`;
-            this.docMap[prop] = { ...this.docMap[prop], _content: this.docMap[prop]._content += _content };
+      const { config, props, content } = value;
+      config?.map(conf => {
+        const { name, root, opt, label, type } = this._destructConfig(conf);
+        // console.debug({ name, root, opt, label, type })
+        // chart class
+        // if (name == 'chart') {
+        //   props.forEach(p => {
+        //     this.docMap[p.name] = { _content: this._makeProp(p) };
+        //   })
+        // }
+        
+        // chart.{opt}
+        if (opt && root == 'chart') {
+          if (!this.docMap[opt]) this.docMap[opt] = { _content: '' };
+  
+          if (type) {
+            console.debug({ type, content })
+            const _content = `## ${opt}.${type}\n${this._fixContent(content)}\n`;
+            this.docMap[opt] = { ...this.docMap[opt], _content: this.docMap[opt]._content += _content };
             const propContents = this._makeProps(props);
-            this.docMap[prop][type] = _content + propContents;
+            this.docMap[opt][type] = _content + propContents;
+          }
+          else if (!['series', 'axis'].includes(opt)){
+            const _content = `## ${opt}\n${this._fixContent(content)}\n`
+              + this._makeProps(props);
+            this.docMap[opt] = { ...this.docMap[opt], _content: this.docMap[opt]._content += _content };
+          }
         }
-        else if (!['series', 'axis'].includes(prop)){
-          console.log({ key, prop, type, header });
-          const _content = `## ${prop}\n${this._fixContent(content)}\n`
-            + this._makeProps(props);
-          this.docMap[prop] = { ...this.docMap[prop], _content: this.docMap[prop]._content += _content };
-        }
-      }
+      })
     });
 
 
@@ -204,11 +298,11 @@ class MDGenerater {
     Object.entries(this.docMap).forEach(([key, value]) => {
       // const content = typeof value === 'string' ? value : value.content;
       let dir = `docs/pages/docs/${key}`;
-      !fs.existsSync(dir) && fs.mkdirSync(dir);
+      // !fs.existsSync(dir) && fs.mkdirSync(dir);
       fs.writeFileSync(`${dir}.mdx`, value._content , { encoding: 'utf-8'});
       Object.entries(value).forEach(([type, content]) => {
         if (type == '_content') return;
-        // !fs.existsSync(filepath) && fs.mkdirSync(filepath);
+        !fs.existsSync(dir) && fs.mkdirSync(dir);
         fs.writeFileSync(`${dir}/${type}.mdx`, content , { encoding: 'utf-8'});
       });
     });
