@@ -6,6 +6,7 @@ import {
 import type { AppProps } from "next/app";
 import { useState } from "react";
 import { theme } from "../lib/theme";
+import "./globals.css";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { session } = pageProps;
@@ -21,7 +22,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <ColorSchemeProvider
       colorScheme={colorScheme}
       toggleColorScheme={toggleColorScheme}
-    >  
+    >
       <MantineProvider
         withGlobalStyles
         withNormalizeCSS

@@ -1,4 +1,5 @@
 {
-  "Basic": "Basic",
-  "BarChart": "Bar"
+  "index": "Demo",
+  "basic": "Basic",
+  "bar": "Bar Chart"
 }
