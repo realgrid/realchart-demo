@@ -130,7 +130,7 @@ export class BubbleSeries extends Series {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getPxMinMax(len: number): {min: number, max: number} {
+    getPixelMinMax(len: number): {min: number, max: number} {
         return {
             min: calcPercent(this._minDim, len),
             max: calcPercent(this._maxDim, len)

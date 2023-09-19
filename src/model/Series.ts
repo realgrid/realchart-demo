@@ -8,6 +8,7 @@
 
 import { isArray, isObject, isString, pickNum, pickProp, pickProp3 } from "../common/Common";
 import { IPoint } from "../common/Point";
+import { RcElement } from "../common/RcControl";
 import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { Shape, Shapes } from "../common/impl/SvgShape";
@@ -375,6 +376,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _maxValue: number;
     _referents: Series[];
     _calcedColor: string;
+    private _legendMarker: RcElement;
     protected _pointArgs: IPointStyleCallbackArgs;
 
     //-------------------------------------------------------------------------
@@ -476,11 +478,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     clipped = false;
     /**
-     * true면 legend에 표시하지 않는다.
+     * 명시적 false로 지정하면 legend에 표시하지 않는다.
      * 
      * @config
      */
-    hideInLegend = false;
+    displayInLegend = true;
 
     pointStyleCallback: PointStyleCallback;
 
@@ -537,6 +539,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     displayName(): string {
         return this.label || this.name;
+    }
+
+    legendMarker(): RcElement {
+        return this._legendMarker;
+    }
+    setLegendMarker(elt: RcElement): void {
+        this._legendMarker = elt;
     }
 
     legendColor(): string {
@@ -730,7 +739,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     getLegendSources(list: ILegendSource[]): void {
-        !this.hideInLegend && list.push(this);
+        this.displayInLegend !== false && list.push(this);
     }
 
     getLabelPosition(p: PointItemPosition): PointItemPosition {
@@ -1076,6 +1085,33 @@ export abstract class SeriesMarker extends ChartItem {
     //-------------------------------------------------------------------------
     constructor(public series: Series) {
         super(series.chart);
+    }
+}
+
+export class WidgetSeriesPoint extends DataPoint implements ILegendSource {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _calcedColor: string;
+    _legendMarker: RcElement;
+
+    //-------------------------------------------------------------------------
+    // ILegendSource
+    //-------------------------------------------------------------------------
+    legendMarker(): RcElement {
+        return this._legendMarker;
+    }
+    setLegendMarker(elt: RcElement): void {
+        this._legendMarker = elt;
+    }
+
+    legendColor(): string {
+        return this._calcedColor;
+    }
+
+    legendLabel(): string {
+        return pickProp(this.x, this.y);
     }
 }
 
@@ -1460,11 +1496,11 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
      */
     yAxis: string | number;
     /**
-     * true면 legend에 표시하지 않는다.
+     * 명시적 false로 지정하면 legend에 표시하지 않는다.
      * 
      * @config
      */
-    hideInLegend = false;
+    displayInLegend = true;
 
     get series(): T[] {
         return this._series.slice(0);
@@ -1546,7 +1582,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     getLegendSources(list: ILegendSource[]) {
-        if (!this.hideInLegend) {
+        if (this.displayInLegend !== false) {
             this._series.forEach(ser => ser.getLegendSources(list));
         }
     }

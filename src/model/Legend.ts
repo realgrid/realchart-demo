@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "../common/Common";
+import { RcElement } from "../common/RcControl";
 import { AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
@@ -18,11 +19,17 @@ export interface ILegendRenderer {
 export interface ILegendSource {
     visible: boolean;
 
+    legendMarker(): RcElement;
     legendColor(): string;
     legendLabel(): string;
 }
 
 export class LegendItem extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly MARKER_SIZE = 12;
 
     //-------------------------------------------------------------------------
     // constructor

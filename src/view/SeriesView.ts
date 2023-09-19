@@ -14,9 +14,11 @@ import { LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
+import { RectElement } from "../common/impl/RectElement";
 import { SvgShapes } from "../common/impl/SvgShape";
 import { DataPoint } from "../model/DataPoint";
-import { ClusterableSeries, DataPointLabel, PointItemPosition, Series, WidgetSeries } from "../model/Series";
+import { Legend, LegendItem } from "../model/Legend";
+import { ClusterableSeries, DataPointLabel, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { ChartElement } from "./ChartElement";
 import { SeriesAnimation } from "./animation/SeriesAnimation";
@@ -312,6 +314,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected _labelContainer: PointLabelContainer;
     private _trendLineView: PathElement;
 
+    protected _legendMarker: RcElement;
     protected _visPoints: DataPoint[];
     protected _inverted = false;
     protected _animatable = true;
@@ -398,18 +401,12 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         return this.model._calcedColor;
     }
 
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this.setClip(void 0);
+    prepareSeries(doc: Document, model: T): void {
+        model.setLegendMarker(this._getLegendMarker(doc));
+
         // this._viewRate = NaN; // animating 중 다른 시리즈 등의 요청에 의해 여기로 진입할 수 있다.
         this.setData('index', (model.index % PALETTE_LEN) as any);
         this.setBoolData('pointcolors', model._colorByPoint());
-
-        this._visPoints = this._prepareVisPoints(model);
-        this._prepareSeries(doc, model);
-        !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, this);
 
         this.internalClearStyleAndClass();
         this.internalSetStyleOrClass(model.style);
@@ -417,8 +414,19 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
             this.internalSetStyle('fill', model.color);
             this.internalSetStyle('stroke', model.color);
         }
+        model._calcedColor = getComputedStyle(this.dom).fill;
 
-        this.model._calcedColor = getComputedStyle(this.dom).fill;
+        this._visPoints = this._collectVisPoints(model);
+        this._prepareSeries(doc, model);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this.setClip(void 0);
+
+        !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, this);
 
         if (model.trendline.visible) {
             if (!this._trendLineView) {
@@ -448,7 +456,18 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
 
-    protected _prepareVisPoints(model: T): DataPoint[] {
+    protected _getLegendMarker(doc: Document): RcElement {
+        if (!this._legendMarker) {
+            this._legendMarker = this._createLegendMarker(doc, LegendItem.MARKER_SIZE);
+        }
+        return this._legendMarker;
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return RectElement.create(doc, 'rct-legend-item-marker', 0, 0, size, size, size / 2);
+    }
+
+    protected _collectVisPoints(model: T): DataPoint[] {
         return model.collectVisibles();
     }
 
@@ -456,7 +475,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         v.setData('index', (p.index % PALETTE_LEN) as any);
     }
 
-    protected _setPointStyle(v: RcElement, p: DataPoint, styles?: any[]): void {
+    protected _setPointStyle(v: RcElement, model: T,  p: DataPoint, styles?: any[]): void {
         v.setAttr('aria-label', p.ariaHint());
         this.$_setColorIndex(v, p);
         v.internalClearStyleAndClass();
@@ -471,7 +490,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
             v.internalSetStyle('stroke', p.color);
         }
         // 동적 스타일
-        const st = this.model.getPointStyle(p);
+        const st = model.getPointStyle(p);
         st && v.internalSetStyleOrClass(st);
     }
 
@@ -870,8 +889,8 @@ export abstract class WidgetSeriesView<T extends WidgetSeries> extends SeriesVie
         return p === this._zombie || super.isPointVisible(p);
     }
 
-    protected _prepareVisPoints(model: T): DataPoint[] {
-        let pts = super._prepareVisPoints(model);
+    protected _collectVisPoints(model: T): DataPoint[] {
+        let pts = super._collectVisPoints(model);
 
         if (this._willZombie && !this._willZombie.visible) {
             pts.push(this._willZombie);
@@ -898,4 +917,16 @@ export abstract class WidgetSeriesView<T extends WidgetSeries> extends SeriesVie
     // internal members
     //-------------------------------------------------------------------------
     abstract _resizeZombie(): void;
+
+    protected _createPointLegendMarker(doc: Document, p: DataPoint, size: number): RcElement {
+        return RectElement.create(doc, 'rct-legend-item-marker', 0, 0, size, size, size / 2);
+    }
+
+    protected _preparePoint(doc: Document, model: T, p: WidgetSeriesPoint, pv: RcElement): void {
+        if (!p._legendMarker) {
+            p.setLegendMarker(this._createPointLegendMarker(doc, p, LegendItem.MARKER_SIZE));
+        }
+        this._setPointStyle(pv, model, p);
+        p._calcedColor = getComputedStyle(pv.dom).fill;
+    }
 }

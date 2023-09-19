@@ -7,31 +7,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ISize } from "../../common/Size";
-import { IPercentSize, SizeValue, calcPercent, fixnum, parsePercentSize2 } from "../../common/Types";
+import { IPercentSize, SizeValue, calcPercent, parsePercentSize2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { ILegendSource } from "../Legend";
-import { PointItemPosition, WidgetSeries } from "../Series";
+import { PointItemPosition, WidgetSeries, WidgetSeriesPoint } from "../Series";
 
-export class FunnelSeriesPoint extends DataPoint implements ILegendSource {
+export class FunnelSeriesPoint extends WidgetSeriesPoint {
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     height: number;
-    _calcedColor: string;
-
-    //-------------------------------------------------------------------------
-    // ILegendSource
-    //-------------------------------------------------------------------------
-    legendColor(): string {
-        return this._calcedColor;
-    }
-
-    legendLabel(): string {
-        return this.x;
-    }
 }
 
 /**
@@ -130,8 +118,8 @@ export class FunnelSeries extends WidgetSeries {
 
     getLegendSources(list: ILegendSource[]): void {
         if (this.legendByPoint) {
-            !this.hideInLegend && this._runPoints.forEach(p => {
-                list.push(p as FunnelSeriesPoint);
+            this.displayInLegend !== false && this._runPoints.forEach((p: FunnelSeriesPoint) => {
+                list.push(p);
             })        
         } else {
             super.getLegendSources(list);

@@ -600,6 +600,10 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    prepareSeries(doc: Document, chart: IChart): void {
+        this.$_prepareSeries(doc, chart, chart._getSeries().visibleSeries());
+    }
+
     prepareGuideContainers(): void {
         this._guideContainer.prepare();
         this._frontGuideContainer.prepare();
@@ -666,8 +670,6 @@ export class BodyView extends ChartElement<Body> {
         this._background.setBoolData('polar', this._polar || chart.isWidget());
 
         // series
-        this.$_prepareSeries(doc, chart._getSeries().visibleSeries());
-
         this._seriesViews.forEach((v, i) => {
             v.measure(doc, this._series[i], hintWidth, hintHeight, phase);
         })
@@ -761,10 +763,10 @@ export class BodyView extends ChartElement<Body> {
         }));
     }
 
-    private $_prepareSeries(doc: Document, series: Series[]): void {
+    private $_prepareSeries(doc: Document, chart: IChart, series: Series[]): void {
         const container = this._seriesContainer;
-        const inverted = this.model.chart.isInverted();
-        const animatable = this.model.chart.animatable();
+        const inverted = chart.isInverted();
+        const animatable = chart.animatable();
         const map = this._seriesMap;
         const views = this._seriesViews;
 
@@ -786,6 +788,7 @@ export class BodyView extends ChartElement<Body> {
             container.add(v);
             map.set(ser, v);
             views.push(v);
+            v.prepareSeries(doc, ser);
         });
     }
 

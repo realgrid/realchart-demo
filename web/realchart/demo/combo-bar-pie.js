@@ -25,7 +25,7 @@ const config = {
         // pointWidth: '100%',
         // colorByPoint: true,
         // color: 'green',
-        hideInLegend: true,
+        displayInLegend: false,
         data: [11, 13, 10, 15, 19, 22, 27]
     }, {
         type: 'pie',

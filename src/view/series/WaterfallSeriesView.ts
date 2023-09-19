@@ -61,7 +61,7 @@ export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
     }
 
     protected _preparePointViews(doc: Document, model: WaterfallSeries, points: WaterfallSeriesPoint[]): void {
-        this.$_parepareBars(doc, points);
+        this.$_parepareBars(doc, model, points);
     }
 
     protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
@@ -96,11 +96,11 @@ export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_parepareBars(doc: Document, points: WaterfallSeriesPoint[]): void {
+    private $_parepareBars(doc: Document, model: WaterfallSeries, points: WaterfallSeriesPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
 
-            this._setPointStyle(v, p);
+            this._setPointStyle(v, model, p);
             v.setStyleOrClass(p._isSum ? 'rct-waterfall-point-sum' : p.y < 0 ? 'rct-waterfall-point-negative' : '');
         });
 

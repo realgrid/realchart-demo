@@ -6,14 +6,14 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp } from "../../common/Common";
-import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../../common/Types";
+import { pickNum } from "../../common/Common";
+import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { FormattableText } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
 import { ILegendSource } from "../Legend";
-import { ISeries, PointItemPosition, RadialSeries, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
+import { ISeries, PointItemPosition, RadialSeries, Series, SeriesGroup, SeriesGroupLayout, WidgetSeriesPoint } from "../Series";
 
-export class PieSeriesPoint extends DataPoint implements ILegendSource {
+export class PieSeriesPoint extends WidgetSeriesPoint {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -25,18 +25,6 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
     startAngle = 0;
     angle = 0;
     borderRaidus: number;
-    _calcedColor: string;
-
-    //-------------------------------------------------------------------------
-    // ILegendSource
-    //-------------------------------------------------------------------------
-    legendColor(): string {
-        return this._calcedColor;
-    }
-
-    legendLabel(): string {
-        return pickProp(this.x, this.y);
-    }
 
     //-------------------------------------------------------------------------
     // properties
@@ -188,7 +176,7 @@ export class PieSeries extends RadialSeries {
 
     getLegendSources(list: ILegendSource[]): void {
         if (this.legendByPoint) {
-            !this.hideInLegend && this._runPoints.forEach(p => {
+            this.displayInLegend !== false && this._runPoints.forEach(p => {
                 list.push(p as PieSeriesPoint);
             })        
         } else {

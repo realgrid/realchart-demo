@@ -492,6 +492,9 @@ export class ChartView extends RcElement {
 
         this._inverted = model.isInverted();
 
+        // body
+        this.$_prepareBody(doc, polar);
+
         // credits
         if (this._creditView.setVisible(credit.visible)) {
             sz = this._creditView.measure(doc, credit, w, h, phase);
@@ -519,8 +522,6 @@ export class ChartView extends RcElement {
                     break;
             }
         }
-
-        this.$_prepareBody(doc, polar);
 
         if (polar) {
             this.$_measurePolar(doc, m, w, h, 1);
@@ -840,6 +841,7 @@ export class ChartView extends RcElement {
             this._bodyView.setVisible(true);
             this._currBody = this._bodyView;
         }
+        this._currBody.prepareSeries(doc, this._model);
     }
 
     private $_prepareAxes(doc: Document, m: Chart): void {

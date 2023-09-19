@@ -99,7 +99,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     protected _prepareSeries(doc: Document, model: T): void {
         model instanceof LineSeries && this._prepareBelow(model);
-        this.$_prepareMarkers(this._visPoints as LineSeriesPoint[]);
+        this.$_prepareMarkers(model, this._visPoints as LineSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -200,8 +200,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         }
     }
 
-    private $_prepareMarkers(points: LineSeriesPoint[]): void {
-        const series = this.model;
+    private $_prepareMarkers(series: T, points: LineSeriesPoint[]): void {
         const needBelow = series instanceof LineSeries && this._needBelow;
         const base = needBelow ? series.baseValue : NaN;
         const marker = series.marker;
@@ -218,7 +217,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                 if (!p.isNull) {
                     mv.point = p;
                     sts[1] = needBelow && p.yValue < base ? series.belowStyle : null;
-                    this._setPointStyle(mv, p, sts);
+                    this._setPointStyle(mv, series, p, sts);
                 }
             });
         }
