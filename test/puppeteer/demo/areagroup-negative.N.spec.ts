@@ -17,7 +17,7 @@ import { LegendView } from '../../../src/view/LegendView';
 /**
  * Puppeteer Tests for areagroup-negative.html
  */
- describe("areagroup-negative.N.html test", async function() {
+ describe("areagroup-negative.html test", async function() {
 
     const url = "http://localhost:6010/realchart/demo/areagroup-negative.html";
     let browser: Browser;

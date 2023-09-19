@@ -6,7 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, pickNum } from "../common/Common";
+import { isArray, isObject, isString, pickNum, pickProp, pickProp3 } from "../common/Common";
+import { IPoint } from "../common/Point";
 import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { Shape, Shapes } from "../common/impl/SvgShape";
@@ -55,7 +56,19 @@ export class DataPointLabel extends FormattableText {
     //  */
     // verticalAlign = VerticalAlign.MIDDLE;
 
+    /**
+     * label과 point view 사이의 기본 간격.
+     * 
+     * @config
+     */
     offset = 4;
+
+    /**
+     * 'pie', 'funnel' 시리즈에서 label이 외부에 표시될 때 label과 시리즈 본체와의 기본 간격.
+     * 
+     * @config
+     */
+    distance = 25;
 
     //-------------------------------------------------------------------------
     // fields
@@ -476,6 +489,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     getVisiblePoints(): DataPoint[] {
         return this._points.getPoints();
+    }
+
+    // point에 표시되는 최대 label 개수.
+    pointLabelCount(): number {
+        return 1;
     }
 
     isEmpty(): boolean {
@@ -1060,10 +1078,57 @@ export abstract class SeriesMarker extends ChartItem {
 export abstract class WidgetSeries extends Series {
 
     //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly CENTER = '50%';
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _centerXDim: IPercentSize;
+    private _centerYDim: IPercentSize;
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
+    centerX: RtPercentSize;;
+    /**
+     * @config
+     */
+    centerY: RtPercentSize;
+    /**
+     * @config
+     */
+    center: RtPercentSize;;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getCenter(plotWidth: number, plotHeight: number): IPoint {
+        return {
+            x: calcPercent(this._centerXDim, plotWidth),
+            y: calcPercent(this._centerYDim, plotHeight)
+        };
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     needAxes(): boolean {
         return false;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doLoad(src: any): void {
+        super._doLoad(src);
+
+        this._centerXDim = parsePercentSize(pickProp3(this.centerX, this.center, WidgetSeries.CENTER), true);
+        this._centerYDim = parsePercentSize(pickProp3(this.centerY, this.center, WidgetSeries.CENTER), true);
     }
 }
 
@@ -1077,6 +1142,11 @@ export abstract class WidgetSeries extends Series {
 export abstract class RadialSeries extends WidgetSeries {
 
     //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly SIZE = '80%';
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _sizeDim: IPercentSize;
@@ -1085,31 +1155,23 @@ export abstract class RadialSeries extends WidgetSeries {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * @config
-     */
-    startAngle = 0;
-    /**
-     * @config
-     */
-    centerX = 0;
-    /**
-     * @config
-     */
-    centerY = 0;
-    /**
-     * 원형 플롯 영역의 크기.
+     * 시리즈 본체의 크기.
      * <br>
      * 픽셀 크기나 차지할 수 있는 전체 크기에 대한 상대적 크기로 지정할 수 있다.
      * 
      * @config
      */
-    size: RtPercentSize;
+    size: RtPercentSize = RadialSeries.SIZE;
+    /**
+     * @config
+     */
+    startAngle = 0;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getSize(width: number, height: number): number {
-        return calcPercent(this._sizeDim, Math.min(width, height));
+    getSize(plotWidth: number, plotHeight: number): number {
+        return calcPercent(this._sizeDim, Math.min(plotWidth, plotHeight));
     }
 
     //-------------------------------------------------------------------------
@@ -1118,7 +1180,7 @@ export abstract class RadialSeries extends WidgetSeries {
     protected _doLoad(src: any): void {
         super._doLoad(src);
 
-        this._sizeDim = parsePercentSize(this.size, true) || { size: 80, fixed: false };
+        this._sizeDim = parsePercentSize(pickProp(this.size, RadialSeries.SIZE), true);
     }
 }
 

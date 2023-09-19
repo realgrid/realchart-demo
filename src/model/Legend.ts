@@ -223,10 +223,6 @@ export class Legend extends ChartItem {
         }
     }
 
-    prepareRender(): void {
-        this._items = this.$_collectItems();
-    }
-
     getMaxWidth(domain: number): number {
         return this._maxWidthDim ? calcPercent(this._maxWidthDim, domain) : domain;
     }
@@ -243,7 +239,11 @@ export class Legend extends ChartItem {
 
         this._maxWidthDim = parsePercentSize(this.maxWidth, true);
         this._maxHeightDim = parsePercentSize(this.maxHeight, true);
+    }
+
+    protected _doPrepareRender(chart: IChart): void {
         this._position = Utils.checkEnumValue(LegendPosition, this.position, LegendPosition.BOTTOM);
+        this._items = this.$_collectItems();
     }
 
     //-------------------------------------------------------------------------

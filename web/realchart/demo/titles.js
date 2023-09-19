@@ -63,7 +63,7 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    linefeed(container);
+    line(container);
     createCheckBox(container, 'Title', function (e) {
         config.title.visible = _getChecked(e);
         chart.update(config);
@@ -72,7 +72,7 @@ function setActions(container) {
         config.title.align = _getValue(e);
         chart.update(config);
     }, 'center');
-    linefeed(container);
+    line(container);
     createCheckBox(container, 'Subtitle', function (e) {
         config.subtitle.visible = _getChecked(e);
         chart.update(config);

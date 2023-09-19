@@ -37,15 +37,6 @@ import { Utils } from '../../src/common/Utils';
         expect(i).eq(0);
     });
 
-    it('splice', () => {
-        const arr = [0, 1, 2];
-        const arr2 = [3, 4]
-
-        Utils.splice(arr, 1, 2, arr2);
-        expect(arr[1]).eq(arr2[0]);
-        expect(arr[2]).eq(arr2[1]);
-    });
-
     it('array test', () => {
         const cnt = 1000;
         const texts: string[] = [];

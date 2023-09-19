@@ -27,3 +27,8 @@ www
 test-results
 playwright-report
 .playwright
+
+# docs
+node_modules
+.next
+.tdout

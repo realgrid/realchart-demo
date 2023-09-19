@@ -11,6 +11,7 @@ import { describe, it } from 'mocha';
 import { Browser } from 'puppeteer';
 import { PPTester } from '../../PPTester';
 import { SeriesView } from '../../../src/view/SeriesView';
+import { TitleView } from '../../../src/view/TitleView';
 
 /**
  * Puppeteer Tests for pie-donut.html
@@ -43,5 +44,57 @@ import { SeriesView } from '../../../src/view/SeriesView';
 
         // await page.screenshot({path: 'out/ss/pie-donut.png'});
         page.close();
+    });
+
+    it('title 타이틀 존재 유무와 알맞은 값인지 확인', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const title = await page.$('.' + TitleView.TITLE_CLASS);
+        expect(title).exist;
+
+        const titleText = await page.evaluate((el) => el.textContent, title);
+        expect(titleText).eq(config.title);
+    });
+
+    it('credit 의 존재 유무와 "RealCahrt"를 포함하는지 확인', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const credit = await page.$('.rct-credits');
+        expect(credit);
+
+        const text = await credit.$('text')
+        expect(Text).exist;
+
+        const creditText = await page.evaluate((el) => el.textContent, text);
+        expect(creditText).contains('RealChart')
+    });
+
+    it('poin 의 갯수와 실제 데이터의 갯수가 일치하는지 확인', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const piePoint = await page.$('.rct-pie-series');
+        const seriesPoint = await piePoint.$$('.rct-point');
+
+        expect(config.series.data.length).eq(seriesPoint.length);
+    });
+
+    it('labelPoint', async () => {
+        const page = await PPTester.newPage(browser, url);
+        const config: any = await page.evaluate('config');
+
+        const piePoint = await page.$('.rct-pie-series');
+        const text = await piePoint.$$('.rct-point-label[y="12"]');
+
+        const yValues = config.series.data.map(item => item.y);
+
+        for(let i = 0; i < text.length; i++) {
+            const labelText = await page.evaluate((el) => el.textContent, text[i]);
+            expect(Number(labelText)).eq(yValues[i])
+        }
+        
+        
     });
 });

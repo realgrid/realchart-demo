@@ -113,6 +113,10 @@ export class DumbbellSeries extends ClusterableSeries {
         return true;
     }
 
+    pointLabelCount(): number {
+        return 2;
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new DumbbellSeriesPoint(source);
     }
