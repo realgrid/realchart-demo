@@ -10,7 +10,7 @@ import { isArray, isBoolean, isObject, isString } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { SvgRichText, RichTextParamCallback } from "../common/RichText";
-import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined } from "../common/Types";
+import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
 import { IChart } from "./Chart";
@@ -62,6 +62,13 @@ export abstract class ChartItem extends RcObject {
         return this;
     }
 
+    update(source: any): ChartItem {
+        if (source != null && (this._doUpdateSimple(source) || this._doUpdate(source))) {
+            this.chart?._modelChanged(this);
+            return this;
+        }
+    }
+
     prepareRender(): void {
         this._doPrepareRender(this.chart);
     }
@@ -107,6 +114,14 @@ export abstract class ChartItem extends RcObject {
     }
 
     protected _doLoadProp(prop: string, value: any): boolean {
+        return false;
+    }
+
+    protected _doUpdateSimple(source: any): boolean {
+        return false;
+    }
+
+    protected _doUpdate(source: any): boolean {
         return false;
     }
 

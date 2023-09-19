@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartControl } from "../ChartControl";
-import { RcChartModel } from "./RcChartModel";
+// import { RcChartModel } from "./RcChartModel";
 
 const funcs = {
     'load': '',
@@ -24,9 +24,9 @@ export class RcChartControl {
     constructor(control: ChartControl) {
         this._proxy = new Proxy(control, {
             get(target, key, receiver) {
-                if (key === 'model') {
-                    return target[key];
-                }
+                // if (key === 'model') {
+                //     return target[key];
+                // }
                 if (key in funcs) {
                     return target[key].bind(target);
                 }
@@ -48,7 +48,7 @@ export class RcChartControl {
         this._proxy.refresh();
     }
 
-    get model(): RcChartModel {
-        return new RcChartModel(this._proxy.model);
-    }
+    // get model(): RcChartModel {
+    //     return new RcChartModel(this._proxy.model);
+    // }
 }

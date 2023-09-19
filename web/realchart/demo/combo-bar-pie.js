@@ -25,6 +25,7 @@ const config = {
         // pointWidth: '100%',
         // colorByPoint: true,
         // color: 'green',
+        hideInLegend: true,
         data: [11, 13, 10, 15, 19, 22, 27]
     }, {
         type: 'pie',
@@ -33,7 +34,15 @@ const config = {
         size: '40%',
         pointLabel: true,
         legendByPoint: true,
-        data: [11, 13, 10, 15, 19, 22, 27]
+        data: [
+            ['쓰리엠', 11], 
+            ['아디다스', 13], 
+            ['Youtube', 10], 
+            ['디즈니', 15], 
+            ['이마트', 19], 
+            ['메리어트', 22], 
+            ['시세이도', 27]
+        ]
     }]
 }
 

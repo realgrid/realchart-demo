@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
+import { pickNum, pickProp } from "../../common/Common";
 import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../../common/Types";
 import { FormattableText } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
@@ -35,7 +35,7 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
     }
 
     legendLabel(): string {
-        return this.x;
+        return pickProp(this.x, this.y);
     }
 
     //-------------------------------------------------------------------------
