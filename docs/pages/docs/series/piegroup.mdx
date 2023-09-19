@@ -8,14 +8,17 @@ Pie 시리즈들의 그룹이고,
 경우 0보다 큰 값을 지정해서 도넛 형태로 표시할 수 있다.
 
 
-포함된 pie 시리즈들의 innerSize는 무시된다.
+포함된 pie 시리즈들의 innerSize는 무시된다.  
+`default: 0`  
 
 ### layout: SeriesGroupLayout
+`default: SeriesGroupLayout.DEFAULT`  
 
 ### layoutMax: number
 layout 이  SeriesGroupLayout.FILL 일 때 상대적 최대값.
 
-
+  
+`default: 100`  
 
 ### polarSize: RtPercentSize
 polar 그룹일 때 원형 플롯 영역의 크기.
@@ -27,7 +30,8 @@ polar 그룹일 때 원형 플롯 영역의 크기.
 Pie 시리즈들의 그룹이고, 
  layout 이  SeriesGroupLayout.FILL 이나  SeriesGroupLayout.STACK 인 경우
 개별 시리즈의 size 대신 이 속성값으로 표시되고,
-각 시리즈의 size는 상대 크기로 적용된다.
+각 시리즈의 size는 상대 크기로 적용된다.  
+`default: '80%'`  
 
 ### xAxis: string | number
 

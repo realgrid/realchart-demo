@@ -13,7 +13,7 @@ import { ChartItem } from "./ChartItem";
 /**
  * 차트 타이틀 설정 모델.
  * 
- * @confit chart.title
+ * @config chart.title
  */
 export class Title extends ChartItem {
 

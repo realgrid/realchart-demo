@@ -31,13 +31,13 @@
     ],
     "props": [
       {
-        "name": "max",
+        "name": "maxValue",
         "type": "number",
         "header": "",
         "content": "명시적으로 지정하는 최대값.\n축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.\n maxPadding 도 무시된다."
       },
       {
-        "name": "min",
+        "name": "minValue",
         "type": "number",
         "header": "",
         "content": "명시적으로 지정하는 최소값.\n축에 연결된 data point들의 값으로 계산된 최소값 대신 이 값이 축의 최소값이 된다.\n minPadding 도 무시된다."
@@ -67,7 +67,7 @@
   "AxisGrid": {
     "header": "axis.grid",
     "content": "visible 기본값이 undefined이다.\n<br>\nvisible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.",
-    "prop": "axis.grid",
+    "prop": "",
     "type": "",
     "extended": [
       "AxisItem"
@@ -107,7 +107,7 @@
   "AxisGuideLabel": {
     "header": "axis.guide.label",
     "content": "",
-    "prop": "axis.guide.label",
+    "prop": "",
     "type": "",
     "extended": [
       "FormattableText"
@@ -192,7 +192,7 @@
   "AxisTitle": {
     "header": "axis.title",
     "content": "",
-    "prop": "axis.title",
+    "prop": "",
     "type": "",
     "extended": [
       "AxisItem"
@@ -282,6 +282,13 @@
         "defaultValue": "8"
       },
       {
+        "name": "credits",
+        "type": "Credits",
+        "header": "",
+        "content": "크레딧 모델.",
+        "defaultValue": "..."
+      },
+      {
         "name": "xStart",
         "type": "string | number",
         "header": "",
@@ -298,9 +305,7 @@
     ]
   },
   "Credits": {
-    "header": "chart.options",
-    "content": "",
-    "prop": "options",
+    "prop": "",
     "type": "",
     "extended": [
       "ChartItem"
@@ -429,10 +434,10 @@
     "props": [
       {
         "name": "alignBase",
-        "type": "LegendAlignBase",
+        "type": "AlignBase",
         "header": "",
         "content": "legend 정렬 기준.",
-        "defaultValue": "LegendAlignBase.PLOT"
+        "defaultValue": "AlignBase.PLOT"
       },
       {
         "name": "backgroundStyles",
@@ -461,10 +466,10 @@
         "defaultValue": "8"
       },
       {
-        "name": "itemsPerRow",
+        "name": "itemsPerLine",
         "type": "number",
         "header": "",
-        "content": "한 행당 표시할 legend 항목 수."
+        "content": "한 줄 당 표시할 최대 legend 항목 수."
       },
       {
         "name": "layout",
@@ -637,7 +642,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "pointPadding",
@@ -674,7 +679,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -742,7 +747,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "pointPadding",
@@ -779,7 +784,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -883,7 +888,22 @@
     "extended": [
       "FormattableText"
     ],
-    "props": []
+    "props": [
+      {
+        "name": "distance",
+        "type": "number",
+        "header": "",
+        "content": "'pie', 'funnel' 시리즈에서 label이 외부에 표시될 때 label과 시리즈 본체와의 기본 간격.",
+        "defaultValue": "25"
+      },
+      {
+        "name": "offset",
+        "type": "number",
+        "header": "",
+        "content": "label과 point view 사이의 기본 간격.",
+        "defaultValue": "4"
+      }
+    ]
   },
   "MovingAverage": {
     "prop": "",
@@ -907,18 +927,22 @@
     ],
     "props": [
       {
-        "name": "centerX",
-        "type": "number",
+        "name": "center",
+        "type": "RtPercentSize",
         "header": "",
-        "content": "",
-        "defaultValue": "0"
+        "content": ""
+      },
+      {
+        "name": "centerX",
+        "type": "RtPercentSize",
+        "header": "",
+        "content": ""
       },
       {
         "name": "centerY",
-        "type": "number",
+        "type": "RtPercentSize",
         "header": "",
-        "content": "",
-        "defaultValue": "0"
+        "content": ""
       },
       {
         "name": "clipped",
@@ -949,13 +973,14 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "size",
         "type": "RtPercentSize",
         "header": "",
-        "content": "원형 플롯 영역의 크기.\n<br>\n픽셀 크기나 차지할 수 있는 전체 크기에 대한 상대적 크기로 지정할 수 있다."
+        "content": "시리즈 본체의 크기.\n<br>\n픽셀 크기나 차지할 수 있는 전체 크기에 대한 상대적 크기로 지정할 수 있다.",
+        "defaultValue": "RadialSeries.SIZE"
       },
       {
         "name": "startAngle",
@@ -986,7 +1011,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -1054,7 +1079,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "pointPadding",
@@ -1091,7 +1116,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -1152,7 +1177,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "xAxis",
@@ -1176,7 +1201,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -1279,6 +1304,24 @@
     ],
     "props": [
       {
+        "name": "center",
+        "type": "RtPercentSize",
+        "header": "",
+        "content": ""
+      },
+      {
+        "name": "centerX",
+        "type": "RtPercentSize",
+        "header": "",
+        "content": ""
+      },
+      {
+        "name": "centerY",
+        "type": "RtPercentSize",
+        "header": "",
+        "content": ""
+      },
+      {
         "name": "clipped",
         "type": "boolean",
         "header": "",
@@ -1307,7 +1350,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "xAxis",
@@ -1331,7 +1374,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -1378,20 +1421,39 @@
     "props": []
   },
   "Subtitle": {
+    "content": "차트 sub 타이틀 설정 모델.",
     "prop": "",
     "type": "",
     "extended": [
       "Title"
     ],
-    "props": []
+    "props": [
+      {
+        "name": "alignBase",
+        "type": "AlignBase",
+        "header": "",
+        "content": "정렬 기준.",
+        "defaultValue": "AlignBase.PLOT"
+      }
+    ]
   },
   "Title": {
-    "prop": "",
+    "header": "chart.title",
+    "content": "차트 타이틀 설정 모델.",
+    "prop": "title",
     "type": "",
     "extended": [
       "ChartItem"
     ],
-    "props": []
+    "props": [
+      {
+        "name": "alignBase",
+        "type": "AlignBase",
+        "header": "",
+        "content": "정렬 기준.",
+        "defaultValue": "AlignBase.PLOT"
+      }
+    ]
   },
   "Tooltip": {
     "prop": "",
@@ -1410,13 +1472,13 @@
     ],
     "props": [
       {
-        "name": "max",
+        "name": "maxValue",
         "type": "number",
         "header": "",
         "content": "명시적으로 지정하는 최대값.\n축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.\n maxPadding 도 무시된다."
       },
       {
-        "name": "min",
+        "name": "minValue",
         "type": "number",
         "header": "",
         "content": "명시적으로 지정하는 최소값.\n축에 연결된 data point들의 값으로 계산된 최소값 대신 이 값이 축의 최소값이 된다.\n minPadding 도 무시된다."
@@ -1456,21 +1518,40 @@
     "props": []
   },
   "ContinuousAxis": {
+    "header": "chart.axis[type=linear|time|log]",
     "content": "연속 축 기반.",
-    "prop": "",
+    "prop": "axis",
     "type": "",
     "extended": [
       "Axis"
     ],
     "props": [
       {
-        "name": "max",
+        "name": "baseValue",
+        "type": "number",
+        "header": "",
+        "content": ""
+      },
+      {
+        "name": "maxPadding",
+        "type": "number",
+        "header": "",
+        "content": "마지막 tick 뒤쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.\n이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.\n endFit 이  AxitFit.TICK 일 때,\ndata point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.\n strictMax 가 지정되거나,  maxValue 가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다."
+      },
+      {
+        "name": "maxValue",
         "type": "number",
         "header": "",
         "content": "명시적으로 지정하는 최대값.\n축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.\n maxPadding 도 무시된다."
       },
       {
-        "name": "min",
+        "name": "minPadding",
+        "type": "number",
+        "header": "",
+        "content": "첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.\n이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.\n startFit 이  AxitFit.TICK 일 때,\ndata point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.\n strictMin 가 지정되거나,  minValue 이 계산된 최소값보다 작은 경우에도 이 속성은 무시된다."
+      },
+      {
+        "name": "minValue",
         "type": "number",
         "header": "",
         "content": "명시적으로 지정하는 최소값.\n축에 연결된 data point들의 값으로 계산된 최소값 대신 이 값이 축의 최소값이 된다.\n minPadding 도 무시된다."
@@ -1481,6 +1562,13 @@
         "header": "",
         "content": "data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.",
         "defaultValue": "true"
+      },
+      {
+        "name": "padding",
+        "type": "number",
+        "header": "",
+        "content": "minPadding ,  maxPadding 이 설정되지 않았을 때 적용되는 기본값이다.",
+        "defaultValue": "0.05"
       },
       {
         "name": "position",
@@ -1495,6 +1583,18 @@
         "header": "",
         "content": "true면 반대 방향으로 point 위치들이 지정된다.",
         "defaultValue": "false"
+      },
+      {
+        "name": "strictMax",
+        "type": "number",
+        "header": "",
+        "content": "무조건 적용되는 최대값.\n즉, 이 값보다 큰 값을 갖는 시리즈 포인트들은 표시되지 않는다.\nmaxPadding도 적용되지 않는다."
+      },
+      {
+        "name": "strictMin",
+        "type": "number",
+        "header": "",
+        "content": "무조건 적용되는 최소값.\n즉, 이 값보다 작은 값을 갖는 시리즈 포인트들은 표시되지 않는다.\nminPadding도 적용되지 않는다."
       },
       {
         "name": "tickBase",
@@ -1523,13 +1623,31 @@
     ],
     "props": [
       {
-        "name": "max",
+        "name": "baseValue",
+        "type": "number",
+        "header": "",
+        "content": ""
+      },
+      {
+        "name": "maxPadding",
+        "type": "number",
+        "header": "",
+        "content": "마지막 tick 뒤쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.\n이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.\n endFit 이  AxitFit.TICK 일 때,\ndata point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.\n strictMax 가 지정되거나,  maxValue 가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다."
+      },
+      {
+        "name": "maxValue",
         "type": "number",
         "header": "",
         "content": "명시적으로 지정하는 최대값.\n축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.\n maxPadding 도 무시된다."
       },
       {
-        "name": "min",
+        "name": "minPadding",
+        "type": "number",
+        "header": "",
+        "content": "첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.\n이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.\n startFit 이  AxitFit.TICK 일 때,\ndata point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.\n strictMin 가 지정되거나,  minValue 이 계산된 최소값보다 작은 경우에도 이 속성은 무시된다."
+      },
+      {
+        "name": "minValue",
         "type": "number",
         "header": "",
         "content": "명시적으로 지정하는 최소값.\n축에 연결된 data point들의 값으로 계산된 최소값 대신 이 값이 축의 최소값이 된다.\n minPadding 도 무시된다."
@@ -1540,6 +1658,13 @@
         "header": "",
         "content": "data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.",
         "defaultValue": "true"
+      },
+      {
+        "name": "padding",
+        "type": "number",
+        "header": "",
+        "content": "minPadding ,  maxPadding 이 설정되지 않았을 때 적용되는 기본값이다.",
+        "defaultValue": "0.05"
       },
       {
         "name": "position",
@@ -1554,6 +1679,18 @@
         "header": "",
         "content": "true면 반대 방향으로 point 위치들이 지정된다.",
         "defaultValue": "false"
+      },
+      {
+        "name": "strictMax",
+        "type": "number",
+        "header": "",
+        "content": "무조건 적용되는 최대값.\n즉, 이 값보다 큰 값을 갖는 시리즈 포인트들은 표시되지 않는다.\nmaxPadding도 적용되지 않는다."
+      },
+      {
+        "name": "strictMin",
+        "type": "number",
+        "header": "",
+        "content": "무조건 적용되는 최소값.\n즉, 이 값보다 작은 값을 갖는 시리즈 포인트들은 표시되지 않는다.\nminPadding도 적용되지 않는다."
       },
       {
         "name": "tickBase",
@@ -1573,13 +1710,31 @@
     ],
     "props": [
       {
-        "name": "max",
+        "name": "baseValue",
+        "type": "number",
+        "header": "",
+        "content": ""
+      },
+      {
+        "name": "maxPadding",
+        "type": "number",
+        "header": "",
+        "content": "마지막 tick 뒤쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.\n이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.\n endFit 이  AxitFit.TICK 일 때,\ndata point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.\n strictMax 가 지정되거나,  maxValue 가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다."
+      },
+      {
+        "name": "maxValue",
         "type": "number",
         "header": "",
         "content": "명시적으로 지정하는 최대값.\n축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.\n maxPadding 도 무시된다."
       },
       {
-        "name": "min",
+        "name": "minPadding",
+        "type": "number",
+        "header": "",
+        "content": "첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.\n이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.\n startFit 이  AxitFit.TICK 일 때,\ndata point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.\n strictMin 가 지정되거나,  minValue 이 계산된 최소값보다 작은 경우에도 이 속성은 무시된다."
+      },
+      {
+        "name": "minValue",
         "type": "number",
         "header": "",
         "content": "명시적으로 지정하는 최소값.\n축에 연결된 data point들의 값으로 계산된 최소값 대신 이 값이 축의 최소값이 된다.\n minPadding 도 무시된다."
@@ -1590,6 +1745,13 @@
         "header": "",
         "content": "data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.",
         "defaultValue": "true"
+      },
+      {
+        "name": "padding",
+        "type": "number",
+        "header": "",
+        "content": "minPadding ,  maxPadding 이 설정되지 않았을 때 적용되는 기본값이다.",
+        "defaultValue": "0.05"
       },
       {
         "name": "position",
@@ -1604,6 +1766,18 @@
         "header": "",
         "content": "true면 반대 방향으로 point 위치들이 지정된다.",
         "defaultValue": "false"
+      },
+      {
+        "name": "strictMax",
+        "type": "number",
+        "header": "",
+        "content": "무조건 적용되는 최대값.\n즉, 이 값보다 큰 값을 갖는 시리즈 포인트들은 표시되지 않는다.\nmaxPadding도 적용되지 않는다."
+      },
+      {
+        "name": "strictMin",
+        "type": "number",
+        "header": "",
+        "content": "무조건 적용되는 최소값.\n즉, 이 값보다 작은 값을 갖는 시리즈 포인트들은 표시되지 않는다.\nminPadding도 적용되지 않는다."
       },
       {
         "name": "tickBase",
@@ -1632,13 +1806,31 @@
     ],
     "props": [
       {
-        "name": "max",
+        "name": "baseValue",
+        "type": "number",
+        "header": "",
+        "content": ""
+      },
+      {
+        "name": "maxPadding",
+        "type": "number",
+        "header": "",
+        "content": "마지막 tick 뒤쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.\n이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.\n endFit 이  AxitFit.TICK 일 때,\ndata point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.\n strictMax 가 지정되거나,  maxValue 가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다."
+      },
+      {
+        "name": "maxValue",
         "type": "number",
         "header": "",
         "content": "명시적으로 지정하는 최대값.\n축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.\n maxPadding 도 무시된다."
       },
       {
-        "name": "min",
+        "name": "minPadding",
+        "type": "number",
+        "header": "",
+        "content": "첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.\n이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.\n startFit 이  AxitFit.TICK 일 때,\ndata point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.\n strictMin 가 지정되거나,  minValue 이 계산된 최소값보다 작은 경우에도 이 속성은 무시된다."
+      },
+      {
+        "name": "minValue",
         "type": "number",
         "header": "",
         "content": "명시적으로 지정하는 최소값.\n축에 연결된 data point들의 값으로 계산된 최소값 대신 이 값이 축의 최소값이 된다.\n minPadding 도 무시된다."
@@ -1649,6 +1841,13 @@
         "header": "",
         "content": "data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.",
         "defaultValue": "true"
+      },
+      {
+        "name": "padding",
+        "type": "number",
+        "header": "",
+        "content": "minPadding ,  maxPadding 이 설정되지 않았을 때 적용되는 기본값이다.",
+        "defaultValue": "0.05"
       },
       {
         "name": "position",
@@ -1665,6 +1864,18 @@
         "defaultValue": "false"
       },
       {
+        "name": "strictMax",
+        "type": "number",
+        "header": "",
+        "content": "무조건 적용되는 최대값.\n즉, 이 값보다 큰 값을 갖는 시리즈 포인트들은 표시되지 않는다.\nmaxPadding도 적용되지 않는다."
+      },
+      {
+        "name": "strictMin",
+        "type": "number",
+        "header": "",
+        "content": "무조건 적용되는 최소값.\n즉, 이 값보다 작은 값을 갖는 시리즈 포인트들은 표시되지 않는다.\nminPadding도 적용되지 않는다."
+      },
+      {
         "name": "tickBase",
         "type": "string | number",
         "header": "",
@@ -1673,7 +1884,7 @@
     ]
   },
   "TimeAxisTick": {
-    "content": "축에 표시되는 tick 위치와 표시 마크에 관한 설정 모델.",
+    "content": "[주의] javascript에서 숫자값을 Date로 변환하거나, Date를 숫자로 변환할 때는 모두 new Date가 기준이 된다.",
     "prop": "",
     "type": "",
     "extended": [
@@ -1740,7 +1951,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "pointPadding",
@@ -1777,7 +1988,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -1811,7 +2022,7 @@
   },
   "BarSeries": {
     "header": "chart.series[type=bar]",
-    "content": "\n- [my bar null examples](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/bar/bar-null)",
+    "content": "",
     "prop": "series",
     "type": "bar",
     "extended": [
@@ -1868,7 +2079,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "pointPadding",
@@ -1905,7 +2116,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -2060,7 +2271,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "pointsInSigma",
@@ -2111,7 +2322,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -2212,7 +2423,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "pointPadding",
@@ -2249,7 +2460,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -2319,7 +2530,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "radius",
@@ -2356,7 +2567,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -2470,7 +2681,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "pointPadding",
@@ -2507,7 +2718,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -2584,7 +2795,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "pointPadding",
@@ -2621,7 +2832,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -2737,7 +2948,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "pointPadding",
@@ -2774,7 +2985,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -2851,7 +3062,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "pointPadding",
@@ -2889,7 +3100,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -2931,6 +3142,24 @@
     ],
     "props": [
       {
+        "name": "center",
+        "type": "RtPercentSize",
+        "header": "",
+        "content": ""
+      },
+      {
+        "name": "centerX",
+        "type": "RtPercentSize",
+        "header": "",
+        "content": ""
+      },
+      {
+        "name": "centerY",
+        "type": "RtPercentSize",
+        "header": "",
+        "content": ""
+      },
+      {
         "name": "clipped",
         "type": "boolean",
         "header": "",
@@ -2959,7 +3188,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "xAxis",
@@ -2983,7 +3212,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -3053,7 +3282,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "xAxis",
@@ -3077,7 +3306,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -3147,7 +3376,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "xAxis",
@@ -3171,7 +3400,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -3248,7 +3477,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "xAxis",
@@ -3272,7 +3501,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -3376,7 +3605,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "stepDir",
@@ -3407,7 +3636,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -3548,7 +3777,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "stepDir",
@@ -3579,7 +3808,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -3647,7 +3876,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "xAxis",
@@ -3671,7 +3900,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -3851,7 +4080,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "pointPadding",
@@ -3888,7 +4117,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -3990,7 +4219,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "pointPadding",
@@ -4027,7 +4256,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -4104,7 +4333,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "xAxis",
@@ -4128,7 +4357,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -4177,18 +4406,22 @@
         "defaultValue": "0"
       },
       {
-        "name": "centerX",
-        "type": "number",
+        "name": "center",
+        "type": "RtPercentSize",
         "header": "",
-        "content": "",
-        "defaultValue": "0"
+        "content": ""
+      },
+      {
+        "name": "centerX",
+        "type": "RtPercentSize",
+        "header": "",
+        "content": ""
       },
       {
         "name": "centerY",
-        "type": "number",
+        "type": "RtPercentSize",
         "header": "",
-        "content": "",
-        "defaultValue": "0"
+        "content": ""
       },
       {
         "name": "clipped",
@@ -4233,8 +4466,14 @@
         "name": "innerSize",
         "type": "RtPercentSize",
         "header": "",
-        "content": "0보다 큰 값을 지정해서 도넛 형태로 표시할 수 있다.",
-        "defaultValue": "0"
+        "content": "0보다 큰 값을 지정해서 도넛 형태로 표시할 수 있다.\n innerText 로 도넛 내부에 표시될 텍스트를 지정할 수 있다."
+      },
+      {
+        "name": "innerText",
+        "type": "PieSeriesText",
+        "header": "",
+        "content": "innerSize 가 0보다 클 때, 도넛 내부에 표시되는 텍스트.\n기본 클래스 selector는 <b>'rct-pie-series-inner'</b>이다.",
+        "defaultValue": "..."
       },
       {
         "name": "labelDistance",
@@ -4247,13 +4486,14 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "size",
         "type": "RtPercentSize",
         "header": "",
-        "content": "원형 플롯 영역의 크기.\n<br>\n픽셀 크기나 차지할 수 있는 전체 크기에 대한 상대적 크기로 지정할 수 있다."
+        "content": "시리즈 본체의 크기.\n<br>\n픽셀 크기나 차지할 수 있는 전체 크기에 대한 상대적 크기로 지정할 수 있다.",
+        "defaultValue": "RadialSeries.SIZE"
       },
       {
         "name": "sliceDuration",
@@ -4298,7 +4538,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -4419,7 +4659,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "radius",
@@ -4456,7 +4696,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -4532,7 +4772,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "xAxis",
@@ -4556,7 +4796,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -4626,7 +4866,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "xAxis",
@@ -4650,7 +4890,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",
@@ -4727,7 +4967,7 @@
         "name": "pointColors",
         "type": "boolean | string[]",
         "header": "",
-        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.\n- [기본 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar)\n- [다른 샘플](https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/demo/bar/bar-null)"
+        "content": "데이터 포인트별 색들을 지정한다.\nfalse로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.\ntrue로 지정하면 기본 색들로 표시된다.\n색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.\nundefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다."
       },
       {
         "name": "pointPadding",
@@ -4764,7 +5004,7 @@
         "name": "xStep",
         "type": "string | number",
         "header": "",
-        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
+        "content": "x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\n첫번째 값은  xStart 로 설정한다.\ntime 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.\n이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다."
       },
       {
         "name": "yAxis",

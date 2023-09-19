@@ -33,14 +33,17 @@ const parseFiddleTag = (tags) => {
     return `- [${label.join(' ')}](${JSFIDDLE_URL + src})`;
   }).join('\n');
 }
-const parseReturnTag = (tags) => {
 
+// defaultValue를 사용하되, @default tag가 있으면 설명을 추가한다.
+const parseDefaultTag = (tags) => {
+  return '';
 }
 
 const parseBlockTags = (tags) => {
   return {
     config: parseConfigTag(tags),
     fiddle: parseFiddleTag(tags),
+    default: parseDefaultTag(tags),
   }
 }
 
@@ -116,7 +119,8 @@ const visit = (obj) => {
       const regex = /(\w+)/g;
       let matches = header?.matchAll(regex);
       matches = matches && [...matches].map(m => m[0]);
-      const prop = header ? (matches[0] == 'chart' ? matches[1] : header) : '';
+      // const prop = matches ? (matches[0] == 'chart' ? matches[1] : '') : '';
+      const prop = matches && matches[0] == 'chart' ? matches[1] : '';
       // chart.series[type=bar] -> matches: ['chart','series','type','bar'];
       const type = matches?.length == 4 && matches[2] == 'type' ? matches[3] : '';
       classMap[name] = { 
@@ -148,21 +152,12 @@ fs.writeFileSync('./api/api.json', json, { encoding: 'utf-8'});
 class MDGenerater {
   constructor(map) {
     this.classMap = map;
-    this.docMap = {
-      series: {
-        _content: '',
-      },
-      axis: {
-        _content: '',
-      },
-      // legend: {},
-      // options: {},
-    };
+    this.docMap = {};
   }
 
   // <br> 태그 변환
   _fixContent(content) {
-    // replace \n or double space <space><space>
+    // replace \n or double space
     return content.replace(/<br>/g, '\n');
   }
 
@@ -171,8 +166,9 @@ class MDGenerater {
     return [ header, ...props.map(p => {
       const { name, type, header, content, defaultValue } = p;
       let md = `### ${name}${type ? ': ' + type : ''}\n`;
-      if (header) md += `${header}\n`;
-      if (content) md += `${this._fixContent(content)}\n`;
+      if (header) md += `${header}  \n`;
+      if (content) md += `${this._fixContent(content)}  \n`;
+      if (defaultValue) md += `\`default: ${defaultValue}\`  \n`;
       return md;
     })].join('\n');
   }
@@ -180,15 +176,26 @@ class MDGenerater {
   generate() {
     Object.entries(this.classMap).forEach(([key, value]) => {
       // series, axis type
-      const { prop, type, props, content } = value;
-      if (prop && type) {
-        // console.debug({ key, prop, type, len: props.length });
-        const _content = `## ${prop}.${type}\n${this._fixContent(content)}\n`;
-        this.docMap[prop] = { ...this.docMap[prop], _content: this.docMap[prop]._content += _content };
-        const propContents = this._makeProps(props);
-        this.docMap[prop][type] = _content + propContents;
+      const { prop, type, props, content, header } = value;
+      if (prop) {
+        if (!this.docMap[prop]) this.docMap[prop] = { _content: '' };
+
+        if (type) {
+            // console.debug({ key, prop, type, len: props.length });
+            const _content = `## ${prop}.${type}\n${this._fixContent(content)}\n`;
+            this.docMap[prop] = { ...this.docMap[prop], _content: this.docMap[prop]._content += _content };
+            const propContents = this._makeProps(props);
+            this.docMap[prop][type] = _content + propContents;
+        }
+        else if (!['series', 'axis'].includes(prop)){
+          console.log({ key, prop, type, header });
+          const _content = `## ${prop}\n${this._fixContent(content)}\n`
+            + this._makeProps(props);
+          this.docMap[prop] = { ...this.docMap[prop], _content: this.docMap[prop]._content += _content };
+        }
       }
     });
+
 
     return this.docMap;
   }
@@ -212,72 +219,22 @@ const generator = new MDGenerater(classMap)
 generator.generate();
 generator.saveFile();
 
-class HtmlGenerator {
-  dom = new JSDOM(`<!DOCTYPE html>
-  <html>
-  <body>
-    <header><h2>RealChart</h2></header>
-    <nav></nav>
-    <section></section>
-    <aside></aside>
-    <footer></footer>
-  </body>
-  </html>
-  `);
-
-  constructor(map) {
-    this.classMap = map;
-  }
-
-  generate() {
-    const doc = dom.window.document;
-    const body = doc.body;
-    const nav = body.querySelector('nav');
-
-    const rootList = doc.createElement('ul');
-    rootList.innerHTML = '>';
-    const seriesList = doc.createElement('ul');
-    seriesList.innerHTML = 'series>';
-    const axisList = doc.createElement('ul');
-    axisList.innerHTML = 'axis>';
-
-    nav.appendChild(rootList);
-    nav.appendChild(seriesList);
-    nav.appendChild(axisList);
-
-    const makePropList = (props) => {
-      const ul = doc.createElement('ul');
-      props.forEach(p => {
-        let li = doc.createElement('li');
-        li.innerHTML = p.name
-        ul.appendChild(li);
-      });
-      return ul;
-    }
-
-    Object.entries(this.classMap).forEach(([key, value]) => {
-      const { category } = value;
-      let li = doc.createElement('li');
-      // %caution% innerText is not implemented in jsdom.
-      li.innerHTML = key;
-      li.appendChild(makePropList(value.props));
-      switch (category) {
-        case 'series':
-          seriesList.appendChild(li);
-          break;
-        case 'axis':
-          axisList.appendChild(li);
-          break;
-        default:
-          rootList.appendChild(li);
-          break;
-      }
-    });
-  }
-  
-  saveFile(path='./api/index.html') {
-    const doc = dom.window.document;
-    fs.writeFileSync(path, doc.documentElement.outerHTML, { encoding: 'utf-8'});
-  }
-}
+/**
+ * "kindString": "Property",
+							"flags": {},
+							"comment": {
+								"summary": [
+									{
+										"kind": "text",
+										"text": "false로 지정하면 차트 전체척으로 animation 효과를 실행하지 않는다."
+									}
+								],
+								"blockTags": [
+									{
+										"tag": "@config",
+										"content": []
+									}
+								]
+							},
+ */
 
