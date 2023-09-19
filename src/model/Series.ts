@@ -1106,7 +1106,11 @@ export abstract class WidgetSeries extends Series {
     /**
      * @config
      */
-    center: RtPercentSize;;
+    center: RtPercentSize;
+    /**
+     * widget 본체의 크기나 표시 위치가 변경됐을 때 animation 실행 여부
+     */
+    boundsAnimation = true;
 
     //-------------------------------------------------------------------------
     // methods

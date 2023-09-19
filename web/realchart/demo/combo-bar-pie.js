@@ -32,7 +32,7 @@ const config = {
         centerY: '25%',
         size: '40%',
         pointLabel: true,
-        // legendByPoint: true,
+        legendByPoint: true,
         data: [11, 13, 10, 15, 19, 22, 27]
     }]
 }
@@ -42,6 +42,7 @@ let chart;
 
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
+        console.log(chart.model);
         RealChart.setDebugging(_getChecked(e));
         chart.refresh();
     }, false);

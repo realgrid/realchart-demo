@@ -719,19 +719,21 @@ export class ChartView extends RcElement {
 
         // legend
         if (vLegend.visible) {
+            let v: number;
+
             if (legend.position === LegendPosition.PLOT) {
-                if (!isNaN(+legend.left)) {
-                    x += +legend.left;
-                } else if (!isNaN(+legend.right)) {
-                    x += wPlot - wLegend - +legend.right;
+                if (!isNaN(v = legend.getLeft(wPlot))) {
+                    x += v;
+                } else if (!isNaN(v = legend.getRight(wPlot))) {
+                    x += wPlot - wLegend - v;
                 } else {
                     x += (wPlot - wLegend) / 2;
                 }
 
-                if (!isNaN(+legend.top)) {
-                    y += +legend.top;
-                } else if (!isNaN(+legend.bottom)) {
-                    y += hPlot - hLegend - +legend.bottom;
+                if (!isNaN(v = legend.getTop(hPlot))) {
+                    y += v;
+                } else if (!isNaN(v = legend.getBottom(hPlot))) {
+                    y += hPlot - hLegend - v;
                 } else {
                     y += (hPlot - hLegend) / 2;
                 }
