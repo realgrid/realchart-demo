@@ -8,7 +8,7 @@
 
 import { test } from '@playwright/test';
 import { expect } from 'chai';
-import { PWTester } from '../../pwtester';
+import { PWTester } from '../../PWTester';
 import { SeriesView } from '../../../src/view/SeriesView';
 
 /**
