@@ -1037,7 +1037,7 @@ export class PlottingItemCollection  {
     }
 }
 
-export enum MarerVisibility {
+export enum MarkerVisibility {
     /** visible 속성에 따른다. */
     DEFAULT = 'default',
     /** visible 속성과 상관없이 항상 표시한다. */

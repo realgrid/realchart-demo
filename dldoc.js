@@ -41,7 +41,6 @@ const parseFiddleTag = (tags) => {
   return fiddles?.map(fiddle => {
     const [{text}] = fiddle.content;
     const [src, ...label] = text.split(' ');
-    // console.debug({ src, label: label.join(' ') });
     return `- [${label.join(' ')}](${JSFIDDLE_URL + src})`;
   }).join('\n');
 }
@@ -93,10 +92,29 @@ const parseType = (obj) => {
     case 'array':
       return `${elementType.name}[]`;
     case 'reference':
+      // console.info({ [name]: type, ...obj })
       return name;
     default:
       console.warn('unexpected type', obj);
       return '';
+  }
+}
+
+const _parseType = (obj) => {
+  const { id, type, name, types, elementType } = { ...obj };
+  switch(type) {
+    case 'intrinsic':
+      return { type, name };
+    case 'union':
+      return types.map(t => _parseType(t));
+    case 'array':
+      return { type, name:`${elementType.name}[]`};
+    case 'reference':
+      // console.info(obj)
+      return { type, name, id };
+    default:
+      console.warn('unexpected type', obj);
+      return {};
   }
 }
 
@@ -141,6 +159,7 @@ const setContent = (prop) => {
   return {
       name: prop.name,
       type: parseType(prop.type),
+      dtype: _parseType(prop.type),
       header: config.join('|'), 
       content,
       defaultValue: prop.defaultValue,
@@ -153,15 +172,9 @@ const visit = (obj) => {
   const { config, content } = parseComment(comment);
   switch (kindString) {
     case 'Class':
-      // const regex = /(\w+)/g;
-      // let matches = header.matchAll(regex);
-      // matches = matches && [...matches].map(m => m[0]);
-      // const prop = matches ? (matches[0] == 'chart' ? matches[1] : '') : '';
-      // const prop = matches && matches[0] == 'chart' ? matches[1] : '';
-      // chart.series[type=bar] -> matches: ['chart','series','type','bar'];
-      // const type = matches?.length == 4 && matches[2] == 'type' ? matches[3] : '';
       classMap[name] = { 
         // header, content, prop, type,
+        kindString,
         config,
         content,
         extended: extendedTypes.map(t => t.name),
@@ -170,6 +183,11 @@ const visit = (obj) => {
           && findTag(c.comment?.blockTags, '@config')
         ).map(setContent)
       };
+      break;
+    case 'Enumeration':
+      // console.debug(obj);
+      break;
+    case 'Type alias':
       break;
   }
 
@@ -184,14 +202,13 @@ visit(model);
 
 
 const json = JSON.stringify(classMap, null, 2)
-// console.log(json);
-// console.log(JSON.stringify(classMap, null, 2));
 fs.writeFileSync('./api/api.json', json, { encoding: 'utf-8'});
 
 class MDGenerater {
   constructor(map) {
     this.classMap = map;
     this.docMap = {};
+    this.DEBUG = false;
   }
 
   // <br> 태그 변환
@@ -200,8 +217,54 @@ class MDGenerater {
     return content?.replace(/<br>/g, '\n') || '';
   }
 
-  _makeProp(prop) {
-    const { name, type, header, content, defaultValue } = prop;
+
+  /**
+   * 
+   * @iparam name:string config name
+   * @iparam type:string attr type value
+   * @iparam prop:any
+   * @returns 
+   */
+  _makeProp(param) {
+    const { name: _name, type: _type, prop } = param;
+    const { header, name, type, dtype, content, defaultValue } = prop;
+    if (dtype instanceof Array) {
+      dtype.map(t => {
+        if (t.type == 'reference') {
+          console.warn('Not Implemented union references');
+          // throw Error('Not Implemented union references');
+        }
+      });
+    } else if (dtype?.type == 'reference') {
+      const v = this.classMap[dtype.name];
+      if (v) {
+        if (v.kindString == 'Class') {
+          
+          let accessor = this.docMap;
+          const keys = _type 
+            ? [..._name.split('.').slice(1), _type, name]
+            : [..._name.split('.').slice(1), name];
+          console.debug({ keys });
+          keys.forEach((key, i) => {
+            if (!accessor[key]) {
+              // is the last
+              if (i == keys.length - 1) {
+                console.debug( _name, _type, name, {v})
+                const _content = `## ${name}\n${this._fixContent(content)}\n`
+                  + this._makeProps({ name, type: _type, props: v.props });
+                accessor[key] = { _content };
+                // this._writeJsonFile('./api/' + keys.join('.') + '.json', accessor);
+              } else {
+                accessor[key] = { _content: '' };
+              }
+            }
+            accessor = accessor[key];
+          });
+          // this._writeJsonFile('./api/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
+        }
+      }
+    }
+
     let md = `### ${name}${type ? ': ' + type : ''}\n`;
     if (header) md += `${header}  \n`;
     if (content) md += `${this._fixContent(content)}  \n`;
@@ -209,9 +272,19 @@ class MDGenerater {
     return md;
   }
 
-  _makeProps(props) {
+  /**
+   * 
+   * @iparam name:string config name
+   * @iparam type:string attr value
+   * @iparam props:any[] properties
+   * @returns contents
+   */
+  _makeProps(param) {
+    const { name, type, props } = param;
     const h = '## Properties\n';
-    return [ h, ...props.map(this._makeProp.bind(this))].join('\n');
+    return [ h, ...props.map(prop => {
+      return this._makeProp({ name, type, prop })
+    })].join('\n');
   }
 
   /**
@@ -226,7 +299,7 @@ class MDGenerater {
    */
   _destructConfig(config) {
     const regex = /(\w+(?:\.\w+)?)(?:\[(.*?)\])?(?:\s(.*))?/;
-    const matches = config.match(regex);
+    const matches = config?.match(regex);
   
     if (!matches) {
       return [];
@@ -275,60 +348,50 @@ class MDGenerater {
           if (!this.docMap[opt]) this.docMap[opt] = { _content: '' };
   
           if (type) {
-            console.debug({ type, content })
             const _content = `## ${opt}.${type}\n${this._fixContent(content)}\n`;
             this.docMap[opt] = { ...this.docMap[opt], _content: this.docMap[opt]._content += _content };
-            const propContents = this._makeProps(props);
-            this.docMap[opt][type] = _content + propContents;
+            const propContents = this._makeProps({ name, type, props});
+            this.docMap[opt][type] = { ...this.docMap[opt][type], _content: _content + propContents };
           }
           else if (!['series', 'axis'].includes(opt)){
             const _content = `## ${opt}\n${this._fixContent(content)}\n`
-              + this._makeProps(props);
+              + this._makeProps({name, props});
             this.docMap[opt] = { ...this.docMap[opt], _content: this.docMap[opt]._content += _content };
           }
         }
       })
     });
 
-
     return this.docMap;
   }
 
-  saveFile() {
-    Object.entries(this.docMap).forEach(([key, value]) => {
-      // const content = typeof value === 'string' ? value : value.content;
-      let dir = `docs/pages/docs/${key}`;
-      // !fs.existsSync(dir) && fs.mkdirSync(dir);
-      fs.writeFileSync(`${dir}.mdx`, value._content , { encoding: 'utf-8'});
-      Object.entries(value).forEach(([type, content]) => {
-        if (type == '_content') return;
-        !fs.existsSync(dir) && fs.mkdirSync(dir);
-        fs.writeFileSync(`${dir}/${type}.mdx`, content , { encoding: 'utf-8'});
-      });
+  _writeJsonFile(path, obj) {
+    fs.writeFileSync(path, JSON.stringify(obj, null, 2), { encoding: 'utf-8'});
+  }
+
+  _saveFile(path, docMap) {
+    Object.entries(docMap).forEach(([key, value]) => {
+      if (key == '_content') {
+        console.debug('write', `${path}.mdx`);
+        fs.writeFileSync(`${path}.mdx`, value , { encoding: 'utf-8'});
+      } else {
+        !fs.existsSync(`${path}`) && fs.mkdirSync(path);
+        this._saveFile(`${path}/${key}`, value);
+      }
     });
+  }
+
+  saveFile() {
+    const root = 'docs/pages/docs';
+    this._saveFile(root, this.docMap);
+  }
+
+  exportModel() {
+    this._writeJsonFile('./api/doc.json', this.docMap);
   }
 }
 
 const generator = new MDGenerater(classMap)
 generator.generate();
 generator.saveFile();
-
-/**
- * "kindString": "Property",
-							"flags": {},
-							"comment": {
-								"summary": [
-									{
-										"kind": "text",
-										"text": "false로 지정하면 차트 전체척으로 animation 효과를 실행하지 않는다."
-									}
-								],
-								"blockTags": [
-									{
-										"tag": "@config",
-										"content": []
-									}
-								]
-							},
- */
-
+generator.exportModel();
