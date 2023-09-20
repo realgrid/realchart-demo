@@ -24,13 +24,6 @@ export interface IPointerHandler {
     handleWheel(ev: WheelEvent): void;
 }
 
-// const BACK_STYLES = {
-//     background: 'fill',
-//     border: 'stroke',
-//     borderWidth: 'strokeWidth',
-//     borderRadius: 'borderRadius'
-// }
-
 /** 
  * @internal
  *
@@ -391,7 +384,8 @@ export abstract class RcControl extends RcWrappableObject {
         svg.setAttribute('height', '100%');//contentDiv.clientHeight + 'px');
 
         const desc = doc.createElement('desc');
-        desc.textContent = 'Created by RealChart v$Version';
+        // desc.textContent = 'Created by RealChart v$Version'; // sourcemap, rollup issue
+        desc.textContent = 'Created by RealChart v0.9.4';
         svg.appendChild(desc);
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
@@ -1006,7 +1000,7 @@ export class RcElement extends RcObject {
         }
     }
 
-    setStyleName(value: string): void {
+    setClass(value: string): void {
         this.setAttr('class', value);
     }
 

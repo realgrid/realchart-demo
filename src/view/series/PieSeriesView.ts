@@ -9,12 +9,12 @@
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { RcElement } from "../../common/RcControl";
-import { ORG_ANGLE, deg2rad } from "../../common/Types";
+import { ORG_ANGLE, deg2rad, fixnum } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { LabelElement } from "../../common/impl/LabelElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
-import { TextElement, TextLayout } from "../../common/impl/TextElement";
+import { LegendItem } from "../../model/Legend";
 import { PointItemPosition } from "../../model/Series";
 import { PieSeries, PieSeriesGroup, PieSeriesPoint } from "../../model/series/PieSeries";
 import { IPointView, PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
@@ -85,7 +85,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     protected _prepareSeries(doc: Document, model: PieSeries): void {
         super._prepareSeries(doc, model);
         
-        this.$_prepareSectors(this._visPoints as PieSeriesPoint[]);
+        this.$_prepareSectors(doc, model, this._visPoints as PieSeriesPoint[]);
         this._lineContainer.prepare(model);
 
         if (this._textView.setVisible(model.hasInner() && model.innerText.isVisible())) {
@@ -136,27 +136,34 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_prepareSectors(points: PieSeriesPoint[]): void {
+    private $_prepareSectors(doc: Document, model: PieSeries, points: PieSeriesPoint[]): void {
         this._sectors.prepare(points.length, (sector, i) => {
             const p = sector.point = points[i];
-
-            this._setPointStyle(sector, p);
-            p._calcedColor = getComputedStyle(sector.dom).fill;
+            this._preparePoint(doc, model, p, sector);
         })
     }
 
-    private $_calcAngles(points: PieSeriesPoint[]): void {
+    private $_calcAngles(pts: PieSeriesPoint[]): void {
+        const cnt = pts.length;
         const vr = this._getViewRate();
-        let start = ORG_ANGLE + deg2rad(this.model.startAngle);
-        const sum = points.filter(p => (p.visible || p === this._zombie) && !p.isNull)
+        const sum = pts.filter(p => (p.visible || p === this._zombie) && !p.isNull)
                           .map(p => p === this._zombie ? p.yValue * this._zombieRate : p.yValue)
                           .reduce((a, c) => a + c, 0);
+        let start = ORG_ANGLE + deg2rad(this.model.startAngle);
 
-        points.forEach(p => {
-            p.yRate = (p === this._zombie ? p.yValue * this._zombieRate : p.yValue) / sum || 0;
+        if (cnt > 1 || (cnt > 0 && !this._zombie)) {
+            pts.forEach(p => {
+                p.yRate = fixnum(p === this._zombie ? p.yValue * this._zombieRate : p.yValue) / sum || 0;
+                p.startAngle = start;
+                start += p.angle = p.yRate * Math.PI * 2 * vr;
+            });
+        } else if (cnt == 1) {
+            const p = pts[0];
+
             p.startAngle = start;
-            start += p.angle = p.yRate * Math.PI * 2 * vr;
-        });
+            // p.angle = p.yRate * Math.PI * 2 * vr;
+            p.angle = this._zombieRate * Math.PI * 2 * vr;
+        }
     }
 
     private $_layoutSectors(points: PieSeriesPoint[], width: number, height: number): void {

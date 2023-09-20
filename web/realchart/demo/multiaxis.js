@@ -49,6 +49,9 @@ const config = {
             style: {
             }
         },
+        tick: {
+            baseAxis: 0
+        },
         label: {
             suffix: ' mm',
             style: {
@@ -60,6 +63,9 @@ const config = {
             text: 'Sea-Level Pressure',
             style: {
             }
+        },
+        tick: {
+            baseAxis: 0
         },
         label: {
             suffix: ' mb',
@@ -114,16 +120,16 @@ function setActions(container) {
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X.reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Y.reversed', function (e) {
         config.yAxis.forEach((_, i) => {
             config.yAxis[i].reversed = _getChecked(e);
-            chart.update(config);
+            chart.load(config);
         })
     }, false);
 }

@@ -7,13 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "../../common/Common";
-import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../../common/Types";
+import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { FormattableText } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
 import { ILegendSource } from "../Legend";
-import { ISeries, PointItemPosition, RadialSeries, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
+import { ISeries, PointItemPosition, RadialSeries, Series, SeriesGroup, SeriesGroupLayout, WidgetSeriesPoint } from "../Series";
 
-export class PieSeriesPoint extends DataPoint implements ILegendSource {
+export class PieSeriesPoint extends WidgetSeriesPoint {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -25,18 +25,6 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
     startAngle = 0;
     angle = 0;
     borderRaidus: number;
-    _calcedColor: string;
-
-    //-------------------------------------------------------------------------
-    // ILegendSource
-    //-------------------------------------------------------------------------
-    legendColor(): string {
-        return this._calcedColor;
-    }
-
-    legendLabel(): string {
-        return this.x;
-    }
 
     //-------------------------------------------------------------------------
     // properties
@@ -52,6 +40,12 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
         super.parse(series);
 
         this.sliced = this.source.sliced;
+    }
+
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            sliced: this.sliced
+        });
     }
 }
 
@@ -106,23 +100,22 @@ export class PieSeries extends RadialSeries {
     /**
      * @config
      */
-    sliceOffset: RtPercentSize = '7%';
-    /**
-     * @config
-     */
     labelDistance = 25;
     /**
-     * true이면 섹터 하나만 마우스 클릭으로 sliced 상태가 될 수 있다.
-     * Point의 sliced 속성을 직접 지정하는 경우에는 이 속성이 무시된다.
+     * @config
+     */
+    sliceOffset: RtPercentSize = '7%';
+    /**
+     * 클릭한 데이터 포인트를 slice 시킨다.
+     * 기존 slice 됐던 포인트는 원복된다.
      * 
      * @config
      */
-    exclusive = true;
+    autoSlice = true;
     /**
      * Slice animation duration.
-     * 밀리세컨드 단위로 지정.
+     * 밀리세컨드(ms) 단위로 지정.
      * 
-     * @default 300ms.
      * @config
      */
     sliceDuration = 300;
@@ -137,6 +130,12 @@ export class PieSeries extends RadialSeries {
      * @config
      */
     innerText = new PieSeriesText();
+    /**
+     * 데이터 포인트별 legend 항목을 표시한다.
+     * 
+     * @config
+     */
+    legendByPoint = false;
 
     //-------------------------------------------------------------------------
     // methods
@@ -176,9 +175,13 @@ export class PieSeries extends RadialSeries {
     }
 
     getLegendSources(list: ILegendSource[]): void {
-        this._runPoints.forEach(p => {
-            list.push(p as PieSeriesPoint);
-        })        
+        if (this.legendByPoint) {
+            this.displayInLegend !== false && this._runPoints.forEach(p => {
+                list.push(p as PieSeriesPoint);
+            })        
+        } else {
+            super.getLegendSources(list);
+        }
     }
 
     protected _doLoad(src: any): void {

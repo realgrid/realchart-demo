@@ -117,7 +117,7 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
         this._bars.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
 
-            this._setPointStyle(v, p);
+            this._setPointStyle(v, model, p);
         });
     }
 

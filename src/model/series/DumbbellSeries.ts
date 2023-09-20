@@ -55,6 +55,13 @@ export class DumbbellSeriesPoint extends DataPoint {
         return index === 0 ? this.lowValue : this.yValue;
     }
 
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            low: this.low,
+            lowValue: this.lowValue
+        });
+    }
+
     protected _readArray(series: DumbbellSeries, v: any[]): void {
         const d = v.length > 2 ? 1 : 0;
 

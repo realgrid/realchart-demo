@@ -84,8 +84,9 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         const inverted = series.chart.isInverted();
         const yAxis = series._yAxisObj;
         const len = inverted ? this.width : this.height;
+        const min = yAxis.axisMin();
         const base = series.getBaseValue(yAxis);
-        const yMin = this.height - yAxis.getPosition(len, pickNum(base, yAxis.axisMin()));
+        const yMin = this.height - yAxis.getPosition(len, pickNum(Math.max(min, base), min));
         const sb = new PathBuilder();
         let i = 0;
         let s: string;

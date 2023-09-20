@@ -53,7 +53,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: HeatmapSeries): void {
-        this.$_parepareCells(this._visPoints as HeatmapSeriesPoint[]);
+        this.$_parepareCells(model, this._visPoints as HeatmapSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -68,11 +68,11 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_parepareCells(points: HeatmapSeriesPoint[]): void {
+    private $_parepareCells(model: HeatmapSeries, points: HeatmapSeriesPoint[]): void {
         this._cells.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
 
-            this._setPointStyle(v, p);
+            this._setPointStyle(v, model, p);
         });
     }
 

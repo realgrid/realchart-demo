@@ -6,7 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
+import { pickNum } from "../common/Common";
+import { RcElement } from "../common/RcControl";
+import { AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
@@ -17,11 +19,17 @@ export interface ILegendRenderer {
 export interface ILegendSource {
     visible: boolean;
 
+    legendMarker(): RcElement;
     legendColor(): string;
     legendLabel(): string;
 }
 
 export class LegendItem extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly MARKER_SIZE = 12;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -45,11 +53,6 @@ export enum LegendPosition {
     LEFT = 'left',
     PLOT = 'plot',
     SUBPLOT = 'subplot'
-}
-
-export enum LegendAlignBase {
-    CHART = 'chart',
-    PLOT = 'plot'
 }
 
 export enum LegendLayout {
@@ -117,7 +120,7 @@ export class Legend extends ChartItem {
      * 
      * @config
      */
-    alignBase = LegendAlignBase.PLOT;
+    alignBase = AlignBase.PLOT;
     /**
      * {@link position}이 {@link LegendPosition.PLOT plot}일 때, plot 영역의 좌측 모서리와 legend의 간격.
      * 
@@ -170,11 +173,12 @@ export class Legend extends ChartItem {
      */
     backgroundStyles: SVGStyleOrClass;
     /**
-     * 한 행당 표시할 legend 항목 수.
+     * 한 줄 당 표시할 최대 legend 항목 수.
      * 
      * @config
      */
-    itemsPerRow: number;
+    itemsPerLine: number;
+    lineGap = 4;
     /**
      * 수평 {@link layout 배치}일 때,
      * 최대 너비를 픽셀 단위의 크기 혹은 plot 너비에 대한 상대 길이를 '%'로 지정한다.
@@ -229,6 +233,23 @@ export class Legend extends ChartItem {
 
     getMaxHeight(domain: number): number {
         return this._maxHeightDim ? calcPercent(this._maxHeightDim, domain) : domain;
+    }
+
+    // TODO: to percentSize
+    getLeft(doamin: number): number {
+        return pickNum(this.left, NaN);
+    }
+
+    getRight(doamin: number): number {
+        return pickNum(this.right, NaN);
+    }
+
+    getTop(doamin: number): number {
+        return pickNum(this.top, NaN);
+    }
+
+    getBottom(doamin: number): number {
+        return pickNum(this.bottom, NaN);
     }
 
     //-------------------------------------------------------------------------

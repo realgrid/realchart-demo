@@ -22,6 +22,7 @@ const config = {
     },
     series: {
         type: 'pie',
+        legendByPoint: true,
         pointLabel: {
             visible: true,
             // position: 'outside',
@@ -63,37 +64,37 @@ function setActions(container) {
     });
     createListBox(container, "options.palette", ['default', 'warm', 'cool', 'forest', 'gray'], function (e) {
         config.options.palette = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, 'default');
     createCheckBox(container, 'Legend', function (e) {
         config.legend.visible = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, true);
     createListBox(container, "Legend.position", ['bottom', 'top', 'right', 'left'], function (e) {
         config.legend.position = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, 'right');
     line(container);
     createListBox(container, "startAngle", [0, 90, 180, 270], function (e) {
         config.series.startAngle = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, 0);
     createListBox(container, "series.size", ['60%', '70%', '80%', '90%', '100%'], function (e) {
         config.series.size = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, '80%');
     createListBox(container, "series.centerX", ['30%', '40%', '50%', '60%'], function (e) {
         config.series.centerX = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, '50%');
     createListBox(container, "series.centerY", ['45%', '50%', '55%'], function (e) {
         config.series.centerY = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, '50%');
     line(container);
     createListBox(container, "series.pointLabel.position", ['auto', 'outside'], function (e) {
         config.series.pointLabel.position = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, 'auto');
 }
 

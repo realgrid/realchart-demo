@@ -25,10 +25,19 @@ export class ContinuousAxisTick extends AxisTick {
      * true면 소수점값이 표시되지 않도록 한다.
      */
     integral = false;
+    /**
+     * tick 개수를 맞춰야 하는 대상 axis.
+     * base의 strictMin, strictMax가 설정되지 않아야 한다.
+     * base의 startFit, endFilt의 {@link AxisFit.TICK}으로 설정되어야 한다.
+     * 
+     * @config
+     */
+    baseAxis: number | string;
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _baseAxis: Axis;
     _step: number;
 
     //-------------------------------------------------------------------------
@@ -37,9 +46,13 @@ export class ContinuousAxisTick extends AxisTick {
     buildSteps(length: number, base: number, min: number, max: number): number[] {
         let pts: number[];
 
+        this._step = NaN;
+
         if (Array.isArray(this.steps)) {
             // 지정한 위치대로 tick들을 생성한다.
             pts = this.steps.slice(0);
+        } else if (this._baseAxis instanceof ContinuousAxis) {
+            pts = this._getStepsByCount(this._baseAxis._ticks.length, base, min, max);
         } else if (this.stepCount > 0) {
             pts = this._getStepsByCount(this.stepCount, base, min, max);
         } else if (this.stepSize > 0) {
@@ -52,12 +65,28 @@ export class ContinuousAxisTick extends AxisTick {
         return pts;
     }
 
+    getNextStep(step: number, delta: number): number {
+        return step + delta * this._step;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    _findBaseAxis(): void {
+        if (this.baseAxis != null) {
+            const axis = this.axis;
+            const base = (axis._isX ? this.chart._getXAxes() : this.chart._getYAxes()).get(this.baseAxis);
+
+            if (base !== axis && base instanceof ContinuousAxis) {
+                this._baseAxis = base;
+                (base.tick as ContinuousAxisTick)._baseAxis = null;
+            }
+        }
+    }
+
     protected _getStepsByCount(count: number, base: number, min: number, max: number): number[] {
         if (min > base) {
             min = base;
@@ -148,25 +177,22 @@ export class ContinuousAxisTick extends AxisTick {
         let count = Math.floor(length / pixels) + 1;
         let step = len / (count - 1);
         const scale = Math.pow(10, Math.floor(Math.log10(step)));
-        const multiples = this._getStepMultiples(step);
+        const multiples = this._getStepMultiples(scale);
+        let i = 0;
         let v: number;
 
         step = step / scale;
         if (multiples) {
-            if (step > multiples[0]) {
-                let i = 0;
+            // 위쪽 배수에 맞춘다.
+            if (step > multiples[i]) {
                 for (; i < multiples.length - 1; i++) {
                     if (step > multiples[i] && step < multiples[i + 1]) {
-                        step = multiples[i + 1];
+                        step = multiples[++i];
                         break;
                     }
                 }
-                if (i >= multiples.length) {
-                    debugger;
-                    step = multiples[multiples.length - 1];
-                }
             } else {
-                step = multiples[0];
+                step = multiples[i];
             }
         }
         step *= scale;
@@ -175,10 +201,11 @@ export class ContinuousAxisTick extends AxisTick {
             assert(min <= base && max >= base, "base error");
             count = Math.max(3, count);
 
+            // 계산된 개수보다 많아지면 줄인다.
             while (true) {
                 const n = ceil((base - min) / step) + ceil((max - base) / step) + 1; // +1은 base
                 if (n > count) {
-                    step += scale;
+                    step = (i < multiples.length - 1) ? multiples[i + 1] * scale : step * 2;
                 } else {
                     break;
                 }
@@ -289,22 +316,22 @@ export enum AxisFit {
 
 /**
  * 연속 축 기반.
+ * 
+ * @config chart.axis[type=linear|time|log]
  */
 export abstract class ContinuousAxis extends Axis {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _baseAxis: Axis;
-
     private _hardMin: number;
     private _hardMax: number;
     private _min: number;
     private _max: number;
     private _base: number;
     private _unitLen: number;
-    private _calcedMin: number;
-    private _calcedMax: number;
+    _calcedMin: number;
+    _calcedMax: number;
     private _minBased: boolean;
     private _maxBased: boolean;
 
@@ -319,26 +346,21 @@ export abstract class ContinuousAxis extends Axis {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * tick 개수를 맞춰야 하는 대상 axis.
-     * base의 strictMin, strictMax가 설정되지 않아야 한다.
-     * base의 startFit, endFilt의 {@link AxisFit.TICK}으로 설정되어야 한다.
-     * 
-     * @config
-     */
-    tickBase: number | string;
-
-    /**
      * data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.
      * 
      * @config
      */
     nullable = true;
     /**
+     * 
+     * @config
      */
     baseValue: number;
 
     /**
-     * {@link minPadding}, {@link maxPadding}의 기본값이다.
+     * {@link minPadding}, {@link maxPadding}이 설정되지 않았을 때 적용되는 기본값이다.
+     * 
+     * @config
      */
     padding = 0.05;
     /**
@@ -346,7 +368,9 @@ export abstract class ContinuousAxis extends Axis {
      * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.
      * {@link startFit}이 {@link AxitFit.TICK}일 때,
      * data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
-     * {@link strictMin}이 지정돼도 이 속성은 무시된다.
+     * {@link strictMin}가 지정되거나, {@link minValue}이 계산된 최소값보다 작은 경우에도 이 속성은 무시된다.
+     * 
+     * @config
      */
     minPadding: number;
     /**
@@ -354,21 +378,39 @@ export abstract class ContinuousAxis extends Axis {
      * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.
      * {@link endFit}이 {@link AxitFit.TICK}일 때,
      * data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
-     * {@link strictMax}가 지정돼도 이 속성은 무시된다.
+     * {@link strictMax}가 지정되거나, {@link maxValue}가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다.
+     * 
+     * @config
      */
     maxPadding: number;
-
+    /**
+     * 무조건 적용되는 최소값.
+     * 즉, 이 값보다 작은 값을 갖는 시리즈 포인트들은 표시되지 않는다.
+     * minPadding도 적용되지 않는다.
+     * 
+     * @config
+     */
     strictMin: number;
+    /**
+     * 무조건 적용되는 최대값.
+     * 즉, 이 값보다 큰 값을 갖는 시리즈 포인트들은 표시되지 않는다.
+     * maxPadding도 적용되지 않는다.
+     * 
+     * @config
+     */
     strictMax: number;
-
     /**
      * 축 시작 위치에 tick 표시 여부.
      * {@link strictMin}이 설정되고 {@link AxisFit.VALUE}로 적용된다.
+     * 
+     * @config
      */
     startFit = AxisFit.DEFAULT;
     /**
      * 축 끝 위치에 tick 표시 여부.
      * {@link strictMax}가 설정되면 무시되고 {@link AxisFit.VALUE}로 적용된다.
+     * 
+     * @config
      */
     endFit = AxisFit.DEFAULT;
 
@@ -411,6 +453,10 @@ export abstract class ContinuousAxis extends Axis {
         // return (this.nullable && isNaN(value)) || super.contains(value);
     }
 
+    isBased(): boolean {
+        return !!(this.tick as ContinuousAxisTick)._baseAxis;
+    }
+
     protected _createTickModel(): AxisTick {
         return new ContinuousAxisTick(this);
     }
@@ -427,27 +473,19 @@ export abstract class ContinuousAxis extends Axis {
         return super._doLoadProp(prop, value);
     }
 
-    private $_findBaseAxis(): void {
-        if (this.tickBase != null) {
-            const base = (this._isX ? this.chart._getXAxes() : this.chart._getYAxes()).get(this.tickBase);
-            if (base) {
-                if (base instanceof ContinuousAxis) {
-                    base.tickBase = void 0;
-                    this._baseAxis = base;
-                }
-            }
-        }
-    }
-
     protected _doPrepareRender(): void {
-        this._hardMin = this.min;
-        this._hardMax = this.max;
+        this._hardMin = this.minValue;
+        this._hardMax = this.maxValue;
         this._base = parseFloat(this.baseValue as any);
         this._unitLen = NaN;
-        this.$_findBaseAxis();
+        (this.tick as ContinuousAxisTick)._findBaseAxis();
     }
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
+        if (isNaN(calcedMin) || isNaN(calcedMax)) {
+            return[];
+        }
+
         const tick = this.tick as ContinuousAxisTick;
         let { min, max } = this._adjustMinMax(this._calcedMin = calcedMin, this._calcedMax = calcedMax);
         let base = this._base;
@@ -460,22 +498,34 @@ export abstract class ContinuousAxis extends Axis {
         const ticks: IAxisTick[] = [];
 
         if (!isNaN(this.strictMin) || this.getStartFit() === AxisFit.VALUE) {
-            if (steps.length > 1 && min > steps[0]) {
-                steps = steps.slice(1);
+            while (steps.length > 1 && min > steps[0]) {
+                steps.shift();
             }
-        } else if (steps.length > 2 && steps[1] <= min) {
-            steps.slice(1);
         } else {
-            min = Math.min(min, steps[0]); 
+            while (steps.length > 2 && steps[1] <= min) {
+                steps.shift();
+            }
+            if (!isNaN(tick._step)) {
+                while (steps[0] > min) {
+                    steps.unshift(tick.getNextStep(steps[0], -1));
+                }
+            }
+            min = steps[0];
         }
         if (!isNaN(this.strictMax) || this.getEndFit() === AxisFit.VALUE) {
-            if (max < steps[steps.length - 1] && steps.length > 1) {
+            while (max < steps[steps.length - 1] && steps.length > 1) {
                 steps.pop();
             }
-        } else if (steps.length > 2 && steps[steps.length - 2] > max) {
-            steps.pop();
         } else {
-            max = Math.max(max, steps[steps.length - 1]);
+            while (steps.length > 2 && steps[steps.length - 2] >= max) {
+                steps.pop();
+            }
+            if (!isNaN(tick._step)) {
+                while (steps[steps.length - 1] < max) {
+                    steps.push(tick.getNextStep(steps[steps.length - 1], 1));
+                }
+            }
+            max = steps[steps.length - 1];
         }
 
         this._setMinMax(min, max);
@@ -638,10 +688,10 @@ export abstract class ContinuousAxis extends Axis {
         if (!isNaN(this.strictMin)) {
             min = this.strictMin;
         } else {
+            // _hardMin이 적용되면 minPadding은 무시된다.
             if (this._hardMin < min) {
                 min = this._hardMin;
-            }
-            if (!this._minBased) {
+            } else if (!this._minBased) {
                 minPad = pickNum3(this.minPadding, this.padding, 0);
             }
         }
@@ -649,10 +699,10 @@ export abstract class ContinuousAxis extends Axis {
         if (!isNaN(this.strictMax)) {
             max = this.strictMax;
         } else {
+            // _hardMax가 적용되면 maxPadding은 무시된다.
             if (this._hardMax > max) {
                 max = this._hardMax;
-            }
-            if (!this._maxBased) {
+            } if (!this._maxBased) {
                 maxPad = pickNum3(this.maxPadding, this.padding, 0);
             }
         }

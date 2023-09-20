@@ -10,7 +10,7 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { Tester } from '../Tester';
 import { Chart } from '../../src/model/Chart';
-import { ChartControl } from '../../src/main';
+import { ChartControl } from '../../src/ChartControl';
 
 /**
  * Tests for ChartView class.

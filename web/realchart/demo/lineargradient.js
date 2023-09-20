@@ -50,23 +50,23 @@ function setActions(container) {
     });
     createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
         config.series.lineType = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, 'default');
     createCheckBox(container, 'Point Marker', function (e) {
         config.series.marker.visible = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, true);
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
 }
 

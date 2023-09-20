@@ -45,6 +45,9 @@ export function newObject(prop: string, value: any): {} {
     obj[prop] = value;
     return obj;
 }
+export function utc(year: number, monthIndex = 0, day = 1, hour = 0, minute = 0, second = 0, millisecond = 0): Date {
+    return new Date(Date.UTC(year, monthIndex, day, hour, minute, second, millisecond));
+}
 
 export type Path = string | any[];
 
@@ -297,12 +300,16 @@ export enum VerticalAlign {
 }
 
 export enum SectionDir {
-    LEFT,
-    TOP,
-    BOTTOM,
-    RIGHT
+    LEFT = 'left',
+    TOP = 'top',
+    BOTTOM = 'bottom',
+    RIGHT = 'right'
 }
 
 export const HORZ_SECTIONS = [SectionDir.LEFT, SectionDir.RIGHT];
 export const VERT_SECTIONS = [SectionDir.TOP, SectionDir.BOTTOM];
 
+export enum AlignBase {
+    CHART = 'chart',
+    PLOT = 'plot'
+}

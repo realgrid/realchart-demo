@@ -34,11 +34,9 @@ const config = {
         // layout: 'overlap',
         layout: 'stack',
         children: [{
-            group: 1,
             name: 'column4',
             data: [13, 17, 15, 11, 23, 17]
         }, {
-            group: 1,
             name: 'column5',
             data: [15, 19, 19, 6, 21, 21]
         }]
@@ -61,23 +59,23 @@ function setActions(container) {
     });
     createListBox(container, "layout1", ['default', 'stack', 'fill', 'overlap'], function (e) {
         config.series[0].layout = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, 'default');
     createListBox(container, "layout2", ['default', 'stack', 'fill', 'overlap'], function (e) {
         config.series[1].layout = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, 'stack');
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
 }
 

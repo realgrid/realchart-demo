@@ -4,6 +4,7 @@ import path from "path";
 import * as parser from "@babel/parser";
 import generator from "@babel/generator";
 import _traverse from "@babel/traverse";
+import { group } from "console";
 const traverse = _traverse.default;
 
 let ROOT = "www";
@@ -59,6 +60,7 @@ function createJs(leafName) {
                         break;
                     }
                 }
+                
                 if (path.node.leadingComments && path.node.leadingComments.length > 0) {
                     path.node.leadingComments.forEach((comment) => {
                         if (comment.type === "CommentBlock" && comment.value.trim().startsWith("*")) {
@@ -119,49 +121,56 @@ function createDetail(leafName, demoDescription) {
 function createFilePath(leafDir, type) {
     return leafDir + "/demo." + type;
 }
-
 const exportDemos = () => {
-    const html = readFile("web/realchart/index.html");
-    jsdomGlobal(html, {
-        url: "http://localhost:6010",
-        referrer: "http://localhost:6010",
-    });
-    const menuGroups = document.getElementsByClassName("menu-group");
+    const fiddleDat = readFile("web/realchart/fiddle.dat");
 
-    for (let i = 0; i < menuGroups.length; i++) {
-        const group = menuGroups[i];
-        const groupName = group.textContent.trim().toLowerCase();
-        const groupDir = path.join(ROOT, groupName);
+    let category = "";
+    let groupDir = "";
 
-        let sibling = group.nextElementSibling;
-        while (sibling && sibling.classList.contains("menu-leaf")) {
-            const href = sibling.querySelector("a").getAttribute("href");
-            const leafName = path.basename(href, path.extname(href));
-            const leafDir = path.join(groupDir, leafName).replace(/ /g, "-");
+    const lines = fiddleDat.trim().split('\n');
 
-            // 하위 폴더 생성 (예: bar, bar-multi 등)
-            createDir(leafDir);
+    for (const line of lines) {
+        if (line.startsWith('[')) {
+            category = line.slice(1, -1).toLowerCase();
+        } else if (line !== "") {
+            const fileName = path.basename(line);
+            const tempDir = [ROOT, ...line.split("/").map(l => l.toLowerCase())];
+            tempDir.splice(2, 0, category.toLowerCase());
+            const leafDir = tempDir.join("/");
+            createDir(leafDir); // 폴더 생성
 
-            // js생성
-            const jsPath = createFilePath(leafDir, "js");
-            const {js, demoDescription} = createJs(leafName);
-            writeFile(jsPath, js);
+            // 파일 생성 로직
+            const fileDetails = [
+                { type: 'js', contentProvider: createJs, additional: 'demoDescription' },
+                { type: 'html', contentProvider: createHTML },
+                { type: 'css', content: CSS },
+                { type: 'detail', contentProvider: createDetail, needsDescription: true }
+            ];
 
-            // html생성
-            const htmlPath = createFilePath(leafDir, "html");
-            const html = createHTML(leafName);
-            writeFile(htmlPath, html);
+            fileDetails.forEach(({ type, contentProvider, content, additional, needsDescription }) => {
+                const filePath = createFilePath(leafDir, type);
+                let fileContent, demoDescription;
 
-            // css생성
-            const cssPath = createFilePath(leafDir, "css");
-            writeFile(cssPath, CSS);
+                if (contentProvider) {
+                    const result = contentProvider(fileName);
 
-            // // detail생성
-            const detailPath = createFilePath(leafDir, "detail");
-            const detail = createDetail(leafName, demoDescription);
-            writeFile(detailPath, detail);
+                    // `createJs` 함수가 객체를 반환하는 경우
+                    if (typeof result === 'object' && result !== null) {
+                        fileContent = result.js;
+                        demoDescription = result.demoDescription;
+                    } else {
+                        fileContent = result;
+                    }
+                } else {
+                    fileContent = content;
+                }
 
-            sibling = sibling.nextElementSibling;
+                if (needsDescription) {
+                    fileContent = createDetail(fileName, demoDescription);
+                }
+
+                writeFile(filePath, fileContent);
+            });
         }
     }
 };

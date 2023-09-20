@@ -12,7 +12,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
 import { Shape, SvgShapes } from "../../common/impl/SvgShape";
-import { Chart } from "../../main";
+import { Chart } from "../../model/Chart";
 import { LineType } from "../../model/ChartTypes";
 import { DataPoint, IPointPos } from "../../model/DataPoint";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
@@ -99,7 +99,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     protected _prepareSeries(doc: Document, model: T): void {
         model instanceof LineSeries && this._prepareBelow(model);
-        this.$_prepareMarkers(this._visPoints as LineSeriesPoint[]);
+        this.$_prepareMarkers(model, this._visPoints as LineSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -200,8 +200,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         }
     }
 
-    private $_prepareMarkers(points: LineSeriesPoint[]): void {
-        const series = this.model;
+    private $_prepareMarkers(series: T, points: LineSeriesPoint[]): void {
         const needBelow = series instanceof LineSeries && this._needBelow;
         const base = needBelow ? series.baseValue : NaN;
         const marker = series.marker;
@@ -218,7 +217,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                 if (!p.isNull) {
                     mv.point = p;
                     sts[1] = needBelow && p.yValue < base ? series.belowStyle : null;
-                    this._setPointStyle(mv, p, sts);
+                    this._setPointStyle(mv, series, p, sts);
                 }
             });
         }
@@ -226,11 +225,9 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     protected _layoutMarker(mv: LineMarkerView, x: number, y: number): void {
         const series = this.model;
-        const marker = series.marker;
-        // const color = series.color;
         const p = mv.point as LineSeriesPoint;
-        const s = p.shape || series.getShape();
-        const sz = mv._radius = pickNum(p.radius, marker.radius);
+        const s = series.getShape(p);
+        const rd = mv._radius = series.getRadius(p);
         let path: (string | number)[];
 
         switch (s) {
@@ -240,13 +237,13 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             case Shape.TRIANGLE:
             case Shape.ITRIANGLE:
             case Shape.STAR:
-                x -= sz;
-                y -= sz;
-                path = SvgShapes[s](0, 0, sz * 2, sz * 2);
+                x -= rd;
+                y -= rd;
+                path = SvgShapes[s](0, 0, rd * 2, rd * 2);
                 break;
 
             default:
-                path = SvgShapes.circle(0, 0, sz);
+                path = SvgShapes.circle(0, 0, rd);
                 break;
         }
         // if (m.visible = this._containsMarker(x, y)) {

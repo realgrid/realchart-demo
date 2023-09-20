@@ -7,11 +7,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isObject, isString, pickNum } from "../common/Common";
-import { Align, SVGStyleOrClass, VerticalAlign, fixnum, isNull, parsePercentSize } from "../common/Types";
+import { Align, SVGStyleOrClass, VerticalAlign, fixnum, isNull } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
-import { IClusterable, IPlottingItem } from "./Series";
+import { IClusterable, IPlottingItem, ISeries, Series } from "./Series";
 
 export interface IAxis {
 
@@ -35,6 +35,7 @@ export interface IAxis {
     getValue(value: any): number;
     parseValue(value: any): number;
     contains(value: number): boolean;
+    incStep(value: number, step: any): number;
     /**
      * 값(축 상 위치)에 해당하는 픽셀 위치.
      */
@@ -74,7 +75,7 @@ export class AxisLine extends AxisItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(axis: Axis) {
-        super(axis, false);
+        super(axis, true);//false);
     }
 }
 
@@ -517,7 +518,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      * 
      * @config
      */
-    min: number;
+    minValue: number;
     /**
      * 명시적으로 지정하는 최대값.
      * 축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.
@@ -525,7 +526,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      * 
      * @config
      */
-    max: number;
+    maxValue: number;
     /**
      * Plot 영역이나 앞쪽 축 사이의 여백 크기.
      * 
@@ -558,6 +559,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected abstract _doPrepareRender(): void;
     protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[];
 
+    isBased(): boolean {
+        return false;
+    }
+
     disconnect(): void {
         this._series = [];
         this._values = [];
@@ -587,24 +592,26 @@ export abstract class Axis extends ChartItem implements IAxis {
 
         this._range = this._doCalcluateRange(vals);
 
-        // clustering
-        let sum = 0;
-        let p = 0;
-
-        series.forEach(item => {
-            if (item.clusterable()) {
-                sum += pickNum((item as any as IClusterable).groupWidth, 1);
-            }
-        });
-        series.forEach(item => {
-            if (item.clusterable()) {
-                const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;
-
-                (item as any as IClusterable).setCluster(w, p);
-                p += w;
-            }
-        });
-        // console.log(this._series.map(s => (s as any)._clusterPos));
+        // clustering (은 x축에서만 가능)
+        if (this._isX) {
+            let sum = 0;
+            let p = 0;
+    
+            series.forEach(item => {
+                if (item.clusterable()) {
+                    sum += pickNum((item as any as IClusterable).groupWidth, 1);
+                }
+            });
+            series.forEach(item => {
+                if (item.clusterable()) {
+                    const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;
+    
+                    (item as any as IClusterable).setCluster(w, p);
+                    p += w;
+                }
+            });
+            // console.log(this._series.map(s => (s as any)._clusterPos));
+        }
     }
 
     buildTicks(length: number): void {
@@ -627,6 +634,10 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     getValue(value: any): number {
         return value == null ? NaN : parseFloat(value);
+    }
+
+    incStep(value: number, step: any): number {
+        return value += step;
     }
 
     parseValue(value: any): number {
@@ -683,8 +694,8 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     protected _doCalcluateRange(values: number[]): { min: number, max: number } {
-        let min = fixnum(Math.min(...values) || 0);
-        let max = fixnum(Math.max(...values) || 0);
+        let min = values.length > 0 ? fixnum(Math.min(...values) || 0) : NaN;
+        let max = values.length > 0 ?  fixnum(Math.max(...values) || 0) : NaN;
 
         return { min, max };
     }
@@ -766,7 +777,9 @@ export class AxisCollection {
     }
 
     buildTicks(length: number): void {
-        this._items.forEach(axis => axis.buildTicks(length));
+        // 다른 축을 참조하는 axis를 나중에 계산한다.
+        this._items.sort((a1, a2) => a1.isBased() ? 1 : a2.isBased() ? -1 : 0)
+                   .forEach(axis => axis.buildTicks(length));
     }
 
     connect(series: IPlottingItem): Axis {

@@ -66,12 +66,16 @@ function setActions(container) {
     });
     createListBox(container, "position", ['bottom', 'top', 'right', 'left', 'plot'], function (e) {
         config.legend.position = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, 'bottom');
     createListBox(container, "alignBase", ['plot', 'chart'], function (e) {
-        config.legend.align = _getValue(e);
-        chart.update(config);
+        config.legend.alignBase = _getValue(e);
+        chart.load(config);
     }, 'plot');
+    createListBox(container, "itemsPerLine", ['', '5', '4', '3', '2', '1'], function (e) {
+        config.legend.itemsPerLine = _getValue(e);
+        chart.load(config);
+    }, 'bottom');
 }
 
 function init() {

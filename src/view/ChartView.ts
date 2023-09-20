@@ -9,14 +9,12 @@
 import { isNumber } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { ClipElement, RcElement } from "../common/RcControl";
-import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
-import { Align, HORZ_SECTIONS, SectionDir, VERT_SECTIONS, VerticalAlign } from "../common/Types";
+import { Align, AlignBase, HORZ_SECTIONS, SectionDir, VERT_SECTIONS, VerticalAlign } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Chart } from "../main";
 import { Axis } from "../model/Axis";
-import { Credits } from "../model/Chart";
+import { Chart, Credits } from "../model/Chart";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem, LegendPosition } from "../model/Legend";
 import { Series } from "../model/Series";
@@ -30,6 +28,9 @@ import { SeriesView } from "./SeriesView";
 import { TitleView } from "./TitleView";
 import { TooltipView } from "./TooltipView";
 
+/**
+ * @internal
+ */
 abstract class SectionView extends GroupElement {
 
     //-------------------------------------------------------------------------
@@ -69,6 +70,9 @@ abstract class SectionView extends GroupElement {
     protected abstract _doLayout(param?: any): void;
 }
 
+/**
+ * @internal
+ */
 class TitleSectionView extends SectionView {
 
     //-------------------------------------------------------------------------
@@ -96,26 +100,31 @@ class TitleSectionView extends SectionView {
             sz = v.measure(doc, chart.title, hintWidth, hintHeight, phase);
             height += sz.height;
             hintHeight -= sz.height;
+            width = Math.max(sz.width);
         }
         if (sv.visible = chart.subtitle.isVisible()) {
             sz = sv.measure(doc, chart.subtitle, hintWidth, hintHeight, phase);
             height += sz.height;
             hintHeight -= sz.height;
+            width = Math.max(sz.width);
         }
         return { width, height };
     }
 
-    protected _doLayout(body: IRect): void {
+    protected _doLayout(domain: {xPlot: number, wPlot: number, wChart: number}): void {
         const v = this.titleView;
         const sv = this.subtitleView;
         const m = v.model;
         const sm = sv.model as Subtitle;
-        const w = body.width;
         let y = 0;
+        let x: number;
+        let w: number;
 
+        // title
         if (v.visible) {
-            let x = 0;;
-
+            x = (v.width > domain.wPlot || m.alignBase === AlignBase.CHART) ? 0 : domain.xPlot;
+            w = (v.width > domain.wPlot || m.alignBase === AlignBase.CHART) ? domain.wChart : domain.wPlot;
+            
             v.resizeByMeasured().layout();
 
             switch (m.align) {
@@ -131,8 +140,11 @@ class TitleSectionView extends SectionView {
             v.translate(x, y);
             y += v.height;
         }
+
+        // subtitle
         if (sv.visible) {
-            let x = 0;
+            x = (sv.width > domain.wPlot || sm.alignBase === AlignBase.CHART) ? 0 : domain.xPlot;
+            w = (sv.width > domain.wPlot || sm.alignBase === AlignBase.CHART) ? domain.wChart : domain.wPlot;
 
             sv.resizeByMeasured().layout();
 
@@ -150,18 +162,21 @@ class TitleSectionView extends SectionView {
                     }
                     break;
             }
-
             sv.translate(x, y);
         }
     }
 }
 
+/**
+ * @internal
+ */
 class LegendSectionView extends SectionView {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     _legendView: LegendView;
+    private _pos: LegendPosition;
 
     //-------------------------------------------------------------------------
     // methods
@@ -174,18 +189,54 @@ class LegendSectionView extends SectionView {
     }
 
     _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
-        const sz = this._legendView.measure(doc, chart.legend, hintWidth, hintHeight, phase);
+        const m = chart.legend;
+        const sz = this._legendView.measure(doc, m, hintWidth, hintHeight, phase);
+        const pos = this._pos = m.getPosition();
+        
+        if (pos === LegendPosition.LEFT || pos === LegendPosition.RIGHT) {
+            sz.width += this._legendView._gap;
+        } else {
+            sz.height += this._legendView._gap;
+        }
         return sz;
     }
 
     protected _doLayout(): void {
-        const gap = this._legendView._gap;
-        
-        this._legendView.resize(this.width, this.height);
-        this._legendView.layout();
+        const view = this._legendView;
+        const gap = view._gap;
+        let w = this.width;
+        let h = this.height;
+        let x = 0;
+        let y = 0;
+     
+        switch (this._pos) {
+            case LegendPosition.LEFT:
+                w -= gap;
+                break;
+
+            case LegendPosition.RIGHT:
+                w -= gap;
+                x += gap;
+                break;
+
+            case LegendPosition.TOP:
+                h -= gap;
+                break;
+
+            default:
+                y += gap;
+                h -= gap;
+                break;
+        }
+
+        view.resize(w, h).translate(x, y);
+        view.layout();
     }
 }
 
+/**
+ * @internal
+ */
 class AxisSectionView extends SectionView {
 
     //-------------------------------------------------------------------------
@@ -284,11 +335,10 @@ class AxisSectionView extends SectionView {
         const w = this.width;
         const h = this.height;
         let p = 0;
+        let x: number;
+        let y: number;
 
         this.views.forEach(v => {
-            let x: number;
-            let y: number;
-
             if (this.isHorz) {
                 v.resize(w, v.mh);
             } else {
@@ -309,9 +359,15 @@ class AxisSectionView extends SectionView {
     }
 }
 
+/**
+ * @internal
+ */
 class EmptyView extends GroupElement {
 }
 
+/**
+ * @internal
+ */
 export class CreditView extends ChartElement<Credits> {
 
     //-------------------------------------------------------------------------
@@ -352,6 +408,9 @@ export class CreditView extends ChartElement<Credits> {
     }
 }
 
+/**
+ * @internal
+ */
 export class ChartView extends RcElement {
 
     //-------------------------------------------------------------------------
@@ -366,7 +425,7 @@ export class ChartView extends RcElement {
     private _bodyView: BodyView;
     private _polarView: PolarBodyView;
     private _currBody: BodyView;
-    private _axisSectionViews = new Map<SectionDir, AxisSectionView>();
+    private _axisSectionViews: {[key: string]: AxisSectionView} = {};
     private _creditView: CreditView;
     private _tooltipView: TooltipView;
     private _seriesClip: ClipElement;
@@ -381,17 +440,14 @@ export class ChartView extends RcElement {
     constructor(doc: Document) {
         super(doc, 'rct-chart');
 
-        Object.values(SectionDir).forEach(dir => {
-            if (isNumber(dir)) {
-                const v = new AxisSectionView(doc, dir);
-
-                this.add(v);
-                this._axisSectionViews.set(dir, v);
-            }
-        });
-
         // plot 영역이 마지막이어야 line marker 등이 축 상에 표시될 수 있다.
         this.add(this._currBody = this._bodyView = new BodyView(doc, this));
+
+        for (const dir in SectionDir) {
+            const v = new AxisSectionView(doc, SectionDir[dir]);
+            this.add(v);
+            this._axisSectionViews[SectionDir[dir]] = v;
+        };
 
         this.add(this._titleSectionView = new TitleSectionView(doc));
         this.add(this._legendSectionView = new LegendSectionView(doc));
@@ -436,6 +492,9 @@ export class ChartView extends RcElement {
 
         this._inverted = model.isInverted();
 
+        // body
+        this.$_prepareBody(doc, polar);
+
         // credits
         if (this._creditView.setVisible(credit.visible)) {
             sz = this._creditView.measure(doc, credit, w, h, phase);
@@ -464,8 +523,6 @@ export class ChartView extends RcElement {
             }
         }
 
-        this.$_prepareBody(doc, polar);
-
         if (polar) {
             this.$_measurePolar(doc, m, w, h, 1);
         } else {
@@ -474,9 +531,8 @@ export class ChartView extends RcElement {
     }
 
     layout(): void {
-        const m = this._model;
-        const height = this.height;
         const width = this.width;
+        const height = this.height;
         let w = width;
         let h = height;
 
@@ -485,11 +541,11 @@ export class ChartView extends RcElement {
             return;
         }
 
+        const m = this._model;
         const polar = m.isPolar();
         const legend = m.legend;
         const credit = m.options.credits;
         const vCredit = this._creditView;
-        let wCredit = 0;
         let h1Credit = 0;
         let h2Credit = 0;
         let x = 0;
@@ -559,42 +615,35 @@ export class ChartView extends RcElement {
         }
 
         // axes
+        const axisMap = this._axisSectionViews;
         let asv: AxisSectionView;
-        let axisMap: Map<SectionDir, AxisSectionView>;
-
         if (!polar) {
-            axisMap = new Map(this._axisSectionViews);
-    
             HORZ_SECTIONS.forEach(dir => {
-                if ((asv = axisMap.get(dir)) && asv.visible) {
+                if ((asv = axisMap[dir]) && asv.visible) {
                     w -= asv.mw;
-                } else {
-                    axisMap.delete(dir);
                 }
             });
             VERT_SECTIONS.forEach(dir => {
-                if ((asv = axisMap.get(dir)) && asv.visible) {
+                if ((asv = axisMap[dir]) && asv.visible) {
                     h -= asv.mh;
-                } else {
-                    axisMap.delete(dir);
                 }
             });
     
-            if ((asv = axisMap.get(SectionDir.LEFT)) && asv.visible) {
+            if ((asv = axisMap[SectionDir.LEFT]) && asv.visible) {
                 asv.resize(asv.mw, h);
                 asv.layout();
                 x += asv.mw;
             }
-            if ((asv = axisMap.get(SectionDir.RIGHT)) && asv.visible) {
+            if ((asv = axisMap[SectionDir.RIGHT]) && asv.visible) {
                 asv.resize(asv.mw, h);
                 asv.layout();
             }
-            if ((asv = axisMap.get(SectionDir.BOTTOM)) && asv.visible) {
+            if ((asv = axisMap[SectionDir.BOTTOM]) && asv.visible) {
                 asv.resize(w, asv.mh);
                 asv.layout();
                 y -= asv.mh;
             }
-            if ((asv = axisMap.get(SectionDir.TOP)) && asv.visible) {
+            if ((asv = axisMap[SectionDir.TOP]) && asv.visible) {
                 asv.resize(w, asv.mh);
                 asv.layout();
             }
@@ -606,16 +655,16 @@ export class ChartView extends RcElement {
         this._plotHeight = h;
 
         if (!polar) {
-            if (asv = axisMap.get(SectionDir.LEFT)) {
+            if (asv = axisMap[SectionDir.LEFT]) {
                 asv.translate(org.x - asv.mw, org.y - asv.height);
             }
-            if (asv = axisMap.get(SectionDir.RIGHT)) {
+            if (asv = axisMap[SectionDir.RIGHT]) {
                 asv.translate(org.x + w, org.y - asv.height);
             }
-            if (asv = axisMap.get(SectionDir.BOTTOM)) {
+            if (asv = axisMap[SectionDir.BOTTOM]) {
                 asv.translate(org.x, org.y);
             }
-            if (asv = axisMap.get(SectionDir.TOP)) {
+            if (asv = axisMap[SectionDir.TOP]) {
                 asv.translate(org.x, org.y - h - asv.height);
             }
         }
@@ -666,33 +715,49 @@ export class ChartView extends RcElement {
 
         // title
         if (vTitle.visible) {
-            vTitle.layout(this._currBody.getRect()).translate(x, yTitle);
+            vTitle.layout({xPlot: x, wPlot, wChart: width}).translate(0, yTitle);
         }
 
         // legend
         if (vLegend.visible) {
+            let v: number;
+
             if (legend.position === LegendPosition.PLOT) {
-                if (!isNaN(+legend.left)) {
-                    x += +legend.left;
-                } else if (!isNaN(+legend.right)) {
-                    x += wPlot - wLegend - +legend.right;
+                if (!isNaN(v = legend.getLeft(wPlot))) {
+                    x += v;
+                } else if (!isNaN(v = legend.getRight(wPlot))) {
+                    x += wPlot - wLegend - v;
                 } else {
                     x += (wPlot - wLegend) / 2;
                 }
 
-                if (!isNaN(+legend.top)) {
-                    y += +legend.top;
-                } else if (!isNaN(+legend.bottom)) {
-                    y += hPlot - hLegend - +legend.bottom;
+                if (!isNaN(v = legend.getTop(hPlot))) {
+                    y += v;
+                } else if (!isNaN(v = legend.getBottom(hPlot))) {
+                    y += hPlot - hLegend - v;
                 } else {
                     y += (hPlot - hLegend) / 2;
                 }
-            } else if (!isNaN(yLegend)) {
-                x += (w - wLegend) / 2;
+            } else if (!isNaN(yLegend)) { // 수평
                 y = yLegend;
-            } else {
+                if (legend.alignBase === AlignBase.CHART) {
+                    x = (width - wLegend) / 2;
+                } else {
+                    x += (w - wLegend) / 2;
+                    if (x + wLegend > width) { // plot 범위를 벗어나면 chart에 맞춘다.
+                        x = (width - wLegend) / 2;
+                    }
+                }
+            } else { // 수직
                 x = xLegend;
-                y = y + (h - hLegend) / 2;
+                if (legend.alignBase === AlignBase.CHART) {
+                    y = (height - hLegend) / 2;
+                } else {
+                    y = y + (h - hLegend) / 2;
+                    if (y + hLegend > height) {
+                        y = (height - hLegend) / 2;
+                    }
+                }
             }
             vLegend.translate(x, y);
         }
@@ -776,6 +841,7 @@ export class ChartView extends RcElement {
             this._bodyView.setVisible(true);
             this._currBody = this._bodyView;
         }
+        this._currBody.prepareSeries(doc, this._model);
     }
 
     private $_prepareAxes(doc: Document, m: Chart): void {
@@ -784,11 +850,11 @@ export class ChartView extends RcElement {
         const need = !m.isPolar() && m.needAxes();
         const map = this._axisSectionViews;
 
-        for (const dir of map.keys()) {
-            const v = map.get(dir);
+        for (const dir in map) {
+            const v = map[dir];
 
             if (need) {
-                v.prepare(doc, m.getAxes(dir), guideContainer, frontGuideContainer);
+                v.prepare(doc, m.getAxes(dir as any), guideContainer, frontGuideContainer);
             } else {
                 v.visible = false;
             }
@@ -809,17 +875,17 @@ export class ChartView extends RcElement {
         // 아래 checkWidth를 위해 tick을 생성한다.
         m.layoutAxes(w, h, this._inverted, phase);
 
-        w -= map.get(SectionDir.LEFT).checkWidths(doc, w, h);
-        w -= map.get(SectionDir.RIGHT).checkWidths(doc, w, h);
-        h -= map.get(SectionDir.BOTTOM).checkHeights(doc, w, h);
-        h -= map.get(SectionDir.TOP).checkHeights(doc, w, h);
+        w -= map[SectionDir.LEFT].checkWidths(doc, w, h);
+        w -= map[SectionDir.RIGHT].checkWidths(doc, w, h);
+        h -= map[SectionDir.BOTTOM].checkHeights(doc, w, h);
+        h -= map[SectionDir.TOP].checkHeights(doc, w, h);
 
         // 조정된 크기로 tick을 다시 생성한다.
         m.layoutAxes(w, h, this._inverted, phase);
 
         // axes
-        for (const dir of map.keys()) {
-            const asv = map.get(dir);
+        for (const dir in map) {
+            const asv = map[dir];
             
             if (asv.visible) {
                 asv.measure(doc, m, w, h, phase);
@@ -828,13 +894,14 @@ export class ChartView extends RcElement {
 
         w = wSave;
         h = hSave;
-        for (const dir of map.keys()) {
-            const asv = map.get(dir);
+
+        for (const dir in map) {
+            const asv = map[dir];
             
             if (asv.visible) {
-                if (dir === SectionDir.LEFT || dir === SectionDir.RIGHT) {
+                if ((dir as any) === SectionDir.LEFT || (dir as any) === SectionDir.RIGHT) {
                     w -= asv.mw;
-                } else if (dir === SectionDir.BOTTOM || dir === SectionDir.TOP) {
+                } else if ((dir as any) === SectionDir.BOTTOM || (dir as any) === SectionDir.TOP) {
                     h -= asv.mh;
                 }
             }
@@ -843,8 +910,8 @@ export class ChartView extends RcElement {
         // 조정된 크기로 tick을 다시 생성한다 2.
         m.layoutAxes(w, h, this._inverted, phase);
 
-        for (const dir of map.keys()) {
-            const asv = map.get(dir);
+        for (const dir in map) {
+            const asv = map[dir];
             
             if (asv.visible) {
                 asv.measure(doc, m, w, h, phase);
@@ -853,13 +920,13 @@ export class ChartView extends RcElement {
 
         w = wSave;
         h = hSave;
-        for (const dir of map.keys()) {
-            const asv = map.get(dir);
+        for (const dir in map) {
+            const asv = map[dir];
             
             if (asv.visible) {
-                if (dir === SectionDir.LEFT || dir === SectionDir.RIGHT) {
+                if ((dir as any) === SectionDir.LEFT || (dir as any) === SectionDir.RIGHT) {
                     w -= asv.mw;
-                } else if (dir === SectionDir.BOTTOM || dir === SectionDir.TOP) {
+                } else if ((dir as any) === SectionDir.BOTTOM || (dir as any) === SectionDir.TOP) {
                     h -= asv.mh;
                 }
             }

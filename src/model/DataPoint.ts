@@ -42,17 +42,21 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    source: any;
     index: number;
     vindex: number;
     x: any;
     y: any;
+    /**
+     * drilldown series
+     */
+    series: string | number; 
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     readonly pid = __point_id__++;
 
+    source: any;
     isNull: boolean;
     // Series.collectValues() 등에서 결정된다. x, y와 각각 다른 값으로 설정될 수 있다.
     xValue: number;     // x 좌표상의 value
@@ -96,6 +100,10 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    assignTo(proxy: any): void {
+        this._assignTo(proxy);
+    }
+
     getProp(fld: string | number): any {
         if (isNone(this.source)) return this.source;
         else return this.source[fld];
@@ -130,6 +138,17 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _assignTo(proxy: any): any {
+        return Object.assign(proxy, {
+            index: this.index,
+            vindex: this.vindex,
+            x: this.x,
+            y: this.y,
+            xValue: this.xValue,
+            yValue: this.yValue
+        });
+    }
+
     protected _colorIndex(): number {
         return 2;
     }

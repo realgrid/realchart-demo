@@ -6,8 +6,8 @@ const config = {
     title: "Vector Series",
     xAxis: {
         title: 'X Axis',
-        // min: 0,
-        // max: 100
+        // minValue: 0,
+        // maxValue: 100
     },
     yAxis: {
         title: 'Y Axis',

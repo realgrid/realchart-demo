@@ -40,6 +40,10 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     // IChartEventListener
     //-------------------------------------------------------------------------
+    onModelChanged(chart: Chart, item: ChartItem): void {
+        this.invalidateLayout();
+    }
+
     onVisibleChanged(chart: Chart, item: ChartItem): void {
         if (item instanceof Series) {
             this.invalidateLayout();
@@ -85,7 +89,7 @@ export class ChartControl extends RcControl implements IChartEventListener {
         this.invalidateLayout();
     }
 
-    update(config: any, loadAnimation = false): void {
+    load(config: any, loadAnimation = false): void {
         this.loaded = !loadAnimation; 
         this.model = new Chart(config);
     }

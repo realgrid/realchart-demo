@@ -20,7 +20,8 @@ const config = {
         data: [11, 22, 15, 9, 13, 27]
     }, {
         name: 'column2',    
-        groupWidth: 2,
+        // groupWidth: 2,
+        pointWidth: 2,
         pointLabel: true,
         data: [15, 19, 19, 6, 21, 21]
     }, {
@@ -42,15 +43,15 @@ function setActions(container) {
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
 }
 

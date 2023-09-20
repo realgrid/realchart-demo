@@ -106,7 +106,7 @@ export class BoxPlotSeriesView extends RangedSeriesView<BoxPlotSeries> {
         this._boxes.prepare(points.length, (box, i) => {
             const p = box.point = points[i];
 
-            this._setPointStyle(box, p);
+            this._setPointStyle(box, model, p);
         })
     }
 }

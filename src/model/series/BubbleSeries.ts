@@ -45,6 +45,13 @@ export class BubbleSeriesPoint extends DataPoint {
         this.zValue = parseFloat(this.z);
     }
 
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            z: this.z,
+            zValue: this.zValue
+        });
+    }
+
     protected _readArray(series: BubbleSeries, v: any[]): void {
         const d = v.length > 2 ? 1 : 0;
 
@@ -123,7 +130,7 @@ export class BubbleSeries extends Series {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getPxMinMax(len: number): {min: number, max: number} {
+    getPixelMinMax(len: number): {min: number, max: number} {
         return {
             min: calcPercent(this._minDim, len),
             max: calcPercent(this._maxDim, len)

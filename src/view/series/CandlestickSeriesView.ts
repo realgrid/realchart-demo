@@ -55,7 +55,7 @@ class StickView extends GroupElement implements IPointView {
         this._wickUpper.setVLine(x, y, yClose);
         this._wickLower.setVLine(x, yOpen, h);
         this._body.setBox(-w / 2, yBox, w, hBox);
-        this._body.setStyleName(fall ? 'rct-candlestick-point-fall' : '')
+        this._body.setClass(fall ? 'rct-candlestick-point-fall' : '')
     }
 
     //-------------------------------------------------------------------------
@@ -101,7 +101,7 @@ export class CandlestickSeriesView extends RangedSeriesView<CandlestickSeries> {
         this._sticks.prepare(points.length, (box, i) => {
             const p = box.point = points[i];
 
-            this._setPointStyle(box, p);
+            this._setPointStyle(box, model, p);
         })
     }
 

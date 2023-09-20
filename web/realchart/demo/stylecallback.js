@@ -29,7 +29,7 @@ const config = {
         pointLabel: {
             visible: true,
             position: 'inside',
-            effect: 'outline'
+            effect: 'outline',
         },
         // pointWidth: '100%',
         pointStyleCallback: args => {
@@ -75,15 +75,15 @@ function setActions(container) {
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
 }
 

@@ -10,7 +10,7 @@ import { isArray, isBoolean, isObject, isString } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { SvgRichText, RichTextParamCallback } from "../common/RichText";
-import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined } from "../common/Types";
+import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
 import { IChart } from "./Chart";
@@ -62,6 +62,13 @@ export abstract class ChartItem extends RcObject {
         return this;
     }
 
+    update(source: any): ChartItem {
+        if (source != null && (this._doUpdateSimple(source) || this._doUpdate(source))) {
+            this.chart?._modelChanged(this);
+            return this;
+        }
+    }
+
     prepareRender(): void {
         this._doPrepareRender(this.chart);
     }
@@ -110,6 +117,14 @@ export abstract class ChartItem extends RcObject {
         return false;
     }
 
+    protected _doUpdateSimple(source: any): boolean {
+        return false;
+    }
+
+    protected _doUpdate(source: any): boolean {
+        return false;
+    }
+
     protected _doPrepareRender(chart: IChart): void {}
 }
 
@@ -132,9 +147,25 @@ export enum ChartTextEffect {
 }
 
 export abstract class ChartText extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     effect = ChartTextEffect.NONE;
+    /**
+     * @config
+     */
     brightStyle: SVGStyleOrClass;
+    /**
+     * @config
+     */
     darkStyle: SVGStyleOrClass;
+    /**
+     * @config
+     */
     backgroundStyle: SVGStyleOrClass;
     /**
      * 텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
@@ -143,6 +174,8 @@ export abstract class ChartText extends ChartItem {
      * 어둡게 표시할 때는 {@link darkStyle}이 적용된다.
      * brightStyle이 지정되지 않으면 'rct-text-bright'이,
      * darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.
+     * 
+     * @config
      */
     autoContrast = true;// true;
 }

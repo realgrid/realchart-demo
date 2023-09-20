@@ -57,7 +57,7 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: ScatterSeries): void {
-        this.$_prepareMarkers(this._visPoints as ScatterSeriesPoint[]);
+        this.$_prepareMarkers(model, this._visPoints as ScatterSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -69,9 +69,8 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
         firstTime && SeriesAnimation.slide(this);
     }
 
-    private $_prepareMarkers(points: ScatterSeriesPoint[]): void {
-        const series = this.model;
-        const color = series.color;
+    private $_prepareMarkers(model: ScatterSeries, points: ScatterSeriesPoint[]): void {
+        const color = model.color;
         const count = points.length;
 
         this._pointContainer.setStyle('fill', color);
@@ -79,7 +78,7 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
         this._markers.prepare(count, (mv, i) => {
             const p = mv.point = points[i];
 
-            this._setPointStyle(mv, p);
+            this._setPointStyle(mv, model, p);
         })
     }
 

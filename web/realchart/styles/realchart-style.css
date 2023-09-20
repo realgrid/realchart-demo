@@ -112,11 +112,15 @@
     --rct-plot-background-stroke: #ddd;
 
     --rct-axis-title-fill: #333;
-    --rct-axis-line-stroke: #ddd;
-    --rct-axis-tick-stroke: #333;
+    --rct-axis-line-stroke: #aaa;
+    --rct-axis-tick-stroke: #555;
     --rct-axis-label-fill: #555;
-    --rct-axis-grid-stroke: #ddd;
+    --rct-axis-grid-line-stroke: #ddd;
+    --rct-axis-grid-line-stroke-start: none;
+    --rct-axis-grid-line-stroke-end: none;
+    --rct-axis-grid-line-stroke-width: 1px;
     
+    --rct-legend-background-stroke: lightgray;
     --rct-legend-item-fill: #333;
     --rct-legend-item-disabled: #aaa;
     --rct-legend-item-disabled-decoration: line-through;
@@ -141,7 +145,7 @@
     --rct-axis-line-stroke: #ddd;
     --rct-axis-tick-stroke: #fff;
     --rct-axis-label-fill: #fff;
-    --rct-axis-grid-stroke: #ddd;
+    --rct-axis-grid-line-stroke: #ddd;
     
     --rct-legend-item-fill: #fff;
     --rct-legend-item-disabled: #aaa;
@@ -217,10 +221,10 @@
 .rct-legend {
     stroke: none;
     fill: none;
-    /* margin-top: 16px; */
+    padding: 4px;
 }
 .rct-legend-background {
-    padding: 4px;
+    stroke: var(--rct-legend-background-stroke);
 }
 .rct-legend-item {
     fill: var(--rct-legend-item-fill);
@@ -265,9 +269,13 @@
     font-size: 14px;
     fill: var(--rct-axis-label-fill);
 }
-.rct-axis-grid {
+/* .rct-axis-grid {
     stroke: var(--rct-axis-grid-stroke);
     stroke-width: 1px;
+} */
+.rct-axis-grid-line {
+    stroke: var(--rct-axis-grid-line-stroke);
+    stroke-width: var(--rct-axis-grid-line-stroke-width);
 }
 .rct-axis-break {
     stroke: none;

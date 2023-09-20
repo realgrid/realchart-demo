@@ -43,7 +43,7 @@ class BarElement extends GroupElement implements IPointView {
         this._backs
             .prepare(backs ? total : 0)
             .forEach((v, i) => {
-                v.setStyleName(backStyle);
+                v.setClass(backStyle);
             });
         this._segments
             .prepare(Math.round(count))
@@ -104,7 +104,7 @@ export class EqualizerSeriesView extends BoxedSeriesView<EqualizerSeries> {
     }
 
     protected _preparePointViews(doc: Document, model: EqualizerSeries, points: DataPoint[]): void {
-        this.$_parepareBars(points);
+        this.$_parepareBars(model, points);
     }        
 
     protected _layoutPointViews(width: number, height: number): void {
@@ -124,11 +124,11 @@ export class EqualizerSeriesView extends BoxedSeriesView<EqualizerSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_parepareBars(points: DataPoint[]): void {
+    private $_parepareBars(model: EqualizerSeries, points: DataPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
 
-            this._setPointStyle(v, p);
+            this._setPointStyle(v, model, p);
         })
     }
 

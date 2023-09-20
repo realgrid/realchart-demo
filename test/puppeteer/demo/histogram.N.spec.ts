@@ -11,10 +11,10 @@ import { describe, it } from 'mocha';
 import { Browser } from 'puppeteer';
 import { PPTester } from '../../PPTester';
 import { SeriesView } from '../../../src/view/SeriesView';
-import { Chart } from '../../../src/main';
 import { HistogramSeries } from '../../../src/model/series/HistogramSeries';
 import { TitleView } from '../../../src/view/TitleView';
 import { LegendView } from '../../../src/view/LegendView';
+import { Chart } from '../../../src/model/Chart';
 
 /**
  * Puppeteer Tests for histogram.html
