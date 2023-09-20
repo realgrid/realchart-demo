@@ -4,8 +4,7 @@ BarRange 시리즈 변종.
 
 ### clipped: boolean
 body 영역을 벗어난 data point view는 잘라낸다.  
-`default: false`  
-
+`default: false` 
 ### color: string
 데이터 포인트 기본 색.  
 
@@ -15,11 +14,9 @@ undefined이면, data point의 값이 객체일 때 'color'.
 ### dataProp: string
 undefined이면 "data".  
 
-### groupWidth: number
-시리즈가 group에 포함되지 않은 경우, 축 단위 너비에서 이 시리즈가 차지하는 상대적 너비.
-그룹에 포함되면 이 속성은 무시된다.  
-`default: 1`  
-
+### displayInLegend: boolean
+명시적 false로 지정하면 legend에 표시하지 않는다.  
+`default: true` 
 ### pointColors: boolean | string[]
 데이터 포인트별 색들을 지정한다.
 false로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.
@@ -33,16 +30,15 @@ undefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석�
 
 point가 차지할 원래 크기에 대한 상대 값으로서,
 0 ~ 1 사이의 비율 값으로 지정한다.  
-
+`default: undefined 한 카테고리에 cluster 가능한 시리즈가 하나만 표시되면 0.25, group에 포함된 경우 0.1, 여러 시리즈와 같이 표시되면 0.2.` 
 ### pointWidth: number
-시리즈가 포함된 그룹의 layout이  SeriesGroupLayout.DEFAULT 이거나 특별히 설정되지 않아서,
+시리즈가 그룹에 포함되지 않거나,
+포함된 그룹의 layout이  SeriesGroupLayout.DEFAULT 이거나 특별히 설정되지 않아서,
 그룹에 포함된 시리즈들의 data point가 옆으로 나열되어 표시될 때,
 포인트 표시 영역 내에서 이 시리즈의 포인트가 차지하는 영역의 상대 크기.
-
-
-예를 들어 이 시리즈의 속성값이 1이고 다른 시리즈의 값이 2이면 다른 시리즈의 data point가 두 배 두껍게 표시된다.  
-`default: 1`  
-
+예를 들어 이 시리즈의 속성값이 1이고 다른 시리즈의 값이 2이면 다른 시리즈의 data point가 두 배 두껍게 표시된다.
+또, 그룹에 포함되고 그룹의 layout이  SeriesGroupLayout.DEFAULT  
+`default: 1` 
 ### xAxis: string | number
 
 ### xField: string | number
@@ -67,4 +63,4 @@ time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')�
 undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'.  
 
 ### zOrder: number
-`default: 0`  
+`default: 0` 

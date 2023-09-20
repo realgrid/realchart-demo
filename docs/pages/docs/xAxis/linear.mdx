@@ -5,14 +5,16 @@
 
 ### baseValue: number
 
+### endFit: AxisFit
+축 끝 위치에 tick 표시 여부.
+ strictMax 가 설정되면 무시되고  VALUE 로 적용된다.  
+`default: AxisFit.DEFAULT` 
 ### marginFar: number
 차트 경계나 뒤쪽 축 사이의 여백 크기.  
-`default: 0`  
-
+`default: 0` 
 ### marginNear: number
 Plot 영역이나 앞쪽 축 사이의 여백 크기.  
-`default: 0`  
-
+`default: 0` 
 ### maxPadding: number
 마지막 tick 뒤쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
 이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.
@@ -39,20 +41,20 @@ data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격�
 
 ### nullable: boolean
 data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.  
-`default: true`  
-
+`default: true` 
 ### padding: number
 minPadding ,  maxPadding 이 설정되지 않았을 때 적용되는 기본값이다.  
-`default: 0.05`  
-
+`default: 0.05` 
 ### position: AxisPosition
 표시 위치.  
-`default: AxisPosition.NORMAL`  
-
+`default: AxisPosition.NORMAL` 
 ### reversed: boolean
 true면 반대 방향으로 point 위치들이 지정된다.  
-`default: false`  
-
+`default: false` 
+### startFit: AxisFit
+축 시작 위치에 tick 표시 여부.
+ strictMin 이 설정되고  VALUE 로 적용된다.  
+`default: AxisFit.DEFAULT` 
 ### strictMax: number
 무조건 적용되는 최대값.
 즉, 이 값보다 큰 값을 갖는 시리즈 포인트들은 표시되지 않는다.
@@ -62,8 +64,3 @@ maxPadding도 적용되지 않는다.
 무조건 적용되는 최소값.
 즉, 이 값보다 작은 값을 갖는 시리즈 포인트들은 표시되지 않는다.
 minPadding도 적용되지 않는다.  
-
-### tickBase: string | number
-tick 개수를 맞춰야 하는 대상 axis.
-base의 strictMin, strictMax가 설정되지 않아야 한다.
-base의 startFit, endFilt의  TICK 으로 설정되어야 한다.  

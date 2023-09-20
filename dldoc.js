@@ -64,7 +64,8 @@ class Tunner {
    * @returns string
    */
   _parseDefaultTag(tags) {
-    return '';
+    const dft = this._findTag(tags, '@default');
+    return dft?.content.map(c => c.text).join('\n');
   }
 
   /**
@@ -253,7 +254,7 @@ class MDGenerater {
    */
   _makeProp(param) {
     const { name: _name, type: _type, prop } = param;
-    const { header, name, type, dtype, content, defaultValue } = prop;
+    const { header, name, type, dtype, content, defaultValue, defaultBlock } = prop;
     if (dtype instanceof Array) {
       dtype.map(t => {
         if (t.type == 'reference') {
@@ -294,7 +295,10 @@ class MDGenerater {
     let md = `### ${name}${type ? ': ' + type : ''}\n`;
     if (header) md += `${header}  \n`;
     if (content) md += `${this._fixContent(content)}  \n`;
-    if (defaultValue) md += `\`default: ${defaultValue}\`  \n`;
+    const dft = defaultBlock || defaultValue ;
+    if (dft) {
+      md += `\`default: ${dft}\` `;
+    }
     return md;
   }
 
