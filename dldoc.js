@@ -5,6 +5,7 @@
  * https://github.com/tomchen/typedoc-plugin-not-exported
  */
 import fs from 'fs';
+import path from 'path';
 
 const JSFIDDLE_URL = 'https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/';
 /**
@@ -53,7 +54,7 @@ class Tunner {
     return fiddles?.map(fiddle => {
       const [{text}] = fiddle.content;
       const [src, ...label] = text.split(' ');
-      return `- [${label.join(' ')}](${this.fiddleUrl + src})`;
+      return `- [${label.join(' ')}](${path.join(this.fiddleUrl, src)})`;
     }).join('\n');
   }
 
