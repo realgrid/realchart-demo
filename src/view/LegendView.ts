@@ -9,7 +9,8 @@
 import { pickNum } from "../common/Common";
 import { Dom } from "../common/Dom";
 import { ElementPool } from "../common/ElementPool";
-import { IRect, toSize } from "../common/Rectangle";
+import { RcElement } from "../common/RcControl";
+import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
@@ -27,7 +28,7 @@ export class LegendItemView extends ChartElement<LegendItem> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _marker: RectElement;
+    _marker: RcElement;
     _label: TextElement;
     _gap: number;
 
@@ -37,9 +38,20 @@ export class LegendItemView extends ChartElement<LegendItem> {
     constructor(doc: Document) {
         super(doc, 'rct-legend-item');
 
-        this.add(this._marker = RectElement.create(doc, 'rct-legend-item-marker', 0, 0, 12, 12, 6));
+        // this.add(this._marker = RectElement.create(doc, 'rct-legend-item-marker', 0, 0, 12, 12, 6));
         this.add(this._label = new TextElement(doc, 'rct-legend-item-label'));
         this._label.anchor = TextAnchor.START;
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setMarker(elt: RcElement): RcElement {
+        if (elt !== this._marker) {
+            this._marker && this._marker.remove();
+            this.insertFirst(this._marker = elt);
+        }
+        return;
     }
 
     //-------------------------------------------------------------------------
@@ -180,6 +192,7 @@ export class LegendView extends BoundableElement<Legend> {
         let view: LegendItemView;
 
         views.forEach((v, i) => {
+            v.setMarker(items[i].source.legendMarker());
             v.measure(doc, items[i], hintWidth, hintHeight, 1);
         });
 

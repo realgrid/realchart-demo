@@ -79,7 +79,6 @@ import { TitleView } from '../../../src/view/TitleView';
         // bar들이 상단의 x축에서 부터 아래쪽으로 커진다.
         bars.forEach(async bar => {
             const r = await PPTester.getBounds(bar);
-
             expect(r.y).eq(0);
         })
         

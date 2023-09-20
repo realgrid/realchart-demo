@@ -46,6 +46,15 @@ export class CandlestickSeriesPoint extends DataPoint {
         this.isNull ||= isNaN(this.lowValue) || isNaN(this.openValue) || isNaN(this.closeValue);
     }
 
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            low: this.low,
+            close: this.close,
+            open: this.open,
+            high: this.high
+        });
+    }
+
     protected _readArray(series: CandlestickSeries, v: any[]): void {
         const d = v.length > 4 ? 1 : 0;
 

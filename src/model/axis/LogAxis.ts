@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { AxisTick, IAxisTick } from "../Axis";
-import { ContinuousAxis, LinearAxis, ContinuousAxisTick } from "./LinearAxis";
+import { ContinuousAxis, ContinuousAxisTick } from "./LinearAxis";
 
 export class LogAxisTick extends ContinuousAxisTick {
 
@@ -27,8 +27,7 @@ export class LogAxisTick extends ContinuousAxisTick {
 }
 
 /**
- * 이 축에 연결된 시리즈들의 point y값을 log10으로 계산된 위치에 표시한다.
- * y축으로만 사용될 수 있다.
+ * 이 축에 연결된 시리즈들의 point y값을 {@link Math.log10}으로 계산된 위치에 표시한다.
  * 
  * @config chart.xAxis[type=log]
  * @config chart.yAxis[type=log]

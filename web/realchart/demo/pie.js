@@ -22,6 +22,7 @@ const config = {
     },
     series: {
         type: 'pie',
+        legendByPoint: true,
         pointLabel: {
             visible: true,
             // position: 'outside',

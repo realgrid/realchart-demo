@@ -28,6 +28,13 @@ export class TreemapSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            id: this.id,
+            group: this.group
+        });
+    }
+
     protected _readArray(series: TreemapSeries, v: any[]): void {
         super._readArray(series, v);
 

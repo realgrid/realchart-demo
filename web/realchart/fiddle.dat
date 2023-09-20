@@ -12,19 +12,13 @@ demo/bargroup
 demo/barrange-multi
 demo/barrange-null
 demo/barrange
-exam/bar-01
-exam/bar-baseline-01
-exam/bar-fill-01
-exam/bar-group-01
-exam/bar-group-02
-exam/bar-multi
-exam/bar-stack-01
-exam/barrange
+demo/bar-wing
+
+exam/bargroup-multi-01
 
 [Waterfall]
 demo/waterfall
 demo/waterfall-null
-exam/waterfall-01
 
 [Line]
 demo/line-marker
@@ -36,11 +30,6 @@ demo/line-step
 demo/line
 demo/linegroup-negative
 demo/linegroup
-exam/line-01
-exam/line-curved
-exam/line-group-01
-exam/line-stack-01
-exam/line-step
 
 [Area]
 demo/area-multi
@@ -52,82 +41,62 @@ demo/areagroup
 demo/arearange-null-2
 demo/arearange-null
 demo/arearange
-exam/area-01
-exam/area-fill
-exam/area-group-01
-exam/area-stack-01
-exam/arearange-01
 
 [Pareto]
 demo/pareto-null
 demo/pareto
-exam/pareto
 
 [Scatter]
 demo/scatter
-exam/scatter-01
 
 [Bubble]
 demo/bubble
-exam/bubble-01
 
 [Boxplot]
 demo/boxplot-multi
 demo/boxplot-null
 demo/boxplot
-exam/boxplot
 
 [ErrorBar]
 demo/errorbar-null
 demo/errorbar
-exam/errorbar-01
 
 [Candlestick]
 demo/candlestick-null
 demo/candlestick
-exam/candlestick-01
 
 [Ohlc]
 demo/ohlc-null
 demo/ohlc
-exam/ohlc-01
 
 [Lollipop]
 demo/lollipop-null
 demo/lollipop
-exam/lollipop-01
 
 [Dumbbell]
 demo/dumbbell-null
 demo/dumbbell
-exam/dumbbell
 
 [Equalizer]
 demo/equalizer-multi
 demo/equalizer-null
 demo/equalizer
-exam/equalizer
 
 [Histogram]
 demo/histogram
-exam/histogram-01
 
 [Bellcurve]
 demo/bellcurve-source
 demo/bellcurve
-exam/bellcurve-01
-exam/bellcurve-02
 
 [Vector]
 demo/vector-null
 demo/vector
-exam/vector-01
 
 [Heatmap]
 demo/heatmap-category
 demo/heatmap-null
 demo/heatmap
-exam/heatmap-01
 
 [Treemap]
 demo/treemap-level
@@ -138,21 +107,16 @@ exam/treemap-level
 [Pie]
 demo/pie-donut
 demo/pie
-exam/pie-01
-exam/pie-02
-exam/pie-donut
-exam/pie-stack
 
 [Funnel]
 demo/funnel
-exam/funnel-01
 
 [Polar]
 demo/polar
-exam/polar-01
 
 [Combination]
 demo/combo-arearange-line
+demo/combo-bar-pie
 
 [Axis]
 demo/axis-break
@@ -164,15 +128,9 @@ demo/linearaxis-step
 demo/linearaxis
 demo/multiaxis
 demo/timeaxis
-exam/log-axis-01
-exam/log-axis-02
-exam/time-axis-01
-exam/time-axis-02
-exam/time-axis-03
 
 [Titles]
 demo/titles
-exam/Titles
 
 [Legends]
 demo/legend-rows
@@ -190,9 +148,9 @@ demo/resize
 
 [Style]
 demo/lineargradient
-/demo/radialgradient
-/demo/palette
-/demo/theme
-/demo/stylecallback
+demo/radialgradient
+demo/palette
+demo/theme
+demo/stylecallback
 
 [Data]				

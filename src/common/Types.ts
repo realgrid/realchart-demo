@@ -300,10 +300,10 @@ export enum VerticalAlign {
 }
 
 export enum SectionDir {
-    LEFT,
-    TOP,
-    BOTTOM,
-    RIGHT
+    LEFT = 'left',
+    TOP = 'top',
+    BOTTOM = 'bottom',
+    RIGHT = 'right'
 }
 
 export const HORZ_SECTIONS = [SectionDir.LEFT, SectionDir.RIGHT];

@@ -24,6 +24,9 @@ web/realchart/lib/realchart*.*
 /e2e/src/styles/**
 
 www
+test-results
+playwright-report
+.playwright
 
 # docs
 node_modules

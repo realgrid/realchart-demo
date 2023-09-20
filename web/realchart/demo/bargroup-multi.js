@@ -34,11 +34,9 @@ const config = {
         // layout: 'overlap',
         layout: 'stack',
         children: [{
-            group: 1,
             name: 'column4',
             data: [13, 17, 15, 11, 23, 17]
         }, {
-            group: 1,
             name: 'column5',
             data: [15, 19, 19, 6, 21, 21]
         }]

@@ -153,6 +153,7 @@ export class TimeAxisTick extends ContinuousAxisTick {
             dt = new Date(y, 0);
 
             // 가능한 시리즈 포인트들의 최소 년도가 tick에 표시될 수 있도록 한다.
+            // TODO: 다른 구현 방법이 있지 않을까?
             if (y < yCalced && y + step > yCalced) {
                 y = yCalced;
                 dt = new Date(y, 0);

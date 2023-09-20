@@ -8,6 +8,7 @@
 
 import { isArray, isObject, isString, pickNum, pickProp, pickProp3 } from "../common/Common";
 import { IPoint } from "../common/Point";
+import { RcElement } from "../common/RcControl";
 import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { Shape, Shapes } from "../common/impl/SvgShape";
@@ -97,6 +98,10 @@ export class DataPointLabel extends FormattableText {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doLoad(source: any): void {
+        super._doLoad(source);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -306,14 +311,15 @@ export interface ISeries extends IPlottingItem {
     isVisible(p: DataPoint): boolean;
 }
 
-export interface IPointStyleArgs {
+export interface IPointStyleCallbackArgs {
     /* series */
     series: string | number;
     count: number;
     vcount: number;
     yMin: number;
     yMax: number;
-    /* point */
+
+    /* point proxy */
     index: number;
     vindex: number;
     x: any;
@@ -322,7 +328,7 @@ export interface IPointStyleArgs {
     yValue: any;
 }
 
-export type PointStyleCallback = (args: IPointStyleArgs) => SVGStyleOrClass;
+export type PointStyleCallback = (args: IPointStyleCallbackArgs) => SVGStyleOrClass;
 
 /**
  */
@@ -369,7 +375,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _maxValue: number;
     _referents: Series[];
     _calcedColor: string;
-    protected _pointArgs: IPointStyleArgs;
+    private _legendMarker: RcElement;
+    protected _pointArgs: IPointStyleCallbackArgs;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -463,14 +470,18 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * @config
      */
     pointColors: boolean | string[];
-
     /**
      * body 영역을 벗어난 data point view는 잘라낸다.
      * 
-     * @default false
      * @config
      */
     clipped = false;
+    /**
+     * 명시적 false로 지정하면 legend에 표시하지 않는다.
+     * 
+     * @config
+     */
+    displayInLegend = true;
 
     pointStyleCallback: PointStyleCallback;
 
@@ -527,6 +538,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     displayName(): string {
         return this.label || this.name;
+    }
+
+    legendMarker(): RcElement {
+        return this._legendMarker;
+    }
+    setLegendMarker(elt: RcElement): void {
+        this._legendMarker = elt;
     }
 
     legendColor(): string {
@@ -720,7 +738,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     getLegendSources(list: ILegendSource[]): void {
-        list.push(this);
+        this.displayInLegend !== false && list.push(this);
     }
 
     getLabelPosition(p: PointItemPosition): PointItemPosition {
@@ -748,23 +766,18 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         }
     }
 
-    protected _createPointArgs(): IPointStyleArgs {
+    protected _createPointArgs(): IPointStyleCallbackArgs {
         return {} as any;
     }
 
-    protected _preparePointArgs(args: IPointStyleArgs): void {
+    protected _preparePointArgs(args: IPointStyleCallbackArgs): void {
         args.series = this.name || this.index;
         args.count = this._points.count;
         // args.vcount = 
     }
 
-    protected _getPointStyleArgs(args: IPointStyleArgs, p: DataPoint): void {
-        args.index = p.index;
-        args.vindex = p.vindex;
-        args.x = p.x;
-        args.y = p.y;
-        args.xValue = p.xValue;
-        args.yValue = p.yValue;
+    protected _getPointStyleArgs(args: IPointStyleCallbackArgs, p: DataPoint): void {
+        p.assignTo(args);
     }
 
     getPointStyle(p: DataPoint): any {
@@ -1074,6 +1087,33 @@ export abstract class SeriesMarker extends ChartItem {
     }
 }
 
+export class WidgetSeriesPoint extends DataPoint implements ILegendSource {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _calcedColor: string;
+    _legendMarker: RcElement;
+
+    //-------------------------------------------------------------------------
+    // ILegendSource
+    //-------------------------------------------------------------------------
+    legendMarker(): RcElement {
+        return this._legendMarker;
+    }
+    setLegendMarker(elt: RcElement): void {
+        this._legendMarker = elt;
+    }
+
+    legendColor(): string {
+        return this._calcedColor;
+    }
+
+    legendLabel(): string {
+        return pickProp(this.x, this.y);
+    }
+}
+
 export abstract class WidgetSeries extends Series {
 
     //-------------------------------------------------------------------------
@@ -1101,7 +1141,11 @@ export abstract class WidgetSeries extends Series {
     /**
      * @config
      */
-    center: RtPercentSize;;
+    center: RtPercentSize;
+    /**
+     * widget 본체의 크기나 표시 위치가 변경됐을 때 animation 실행 여부
+     */
+    boundsAnimation = true;
 
     //-------------------------------------------------------------------------
     // methods
@@ -1200,30 +1244,28 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * 시리즈가 group에 포함되지 않은 경우, 축 단위 너비에서 이 시리즈가 차지하는 상대적 너비.
-     * 그룹에 포함되면 이 속성은 무시된다.
-     * 
-     * @config
-     */
-    groupWidth = 1; // _clusterWidth 계산에 사용된다. TODO: clusterWidth로 변경해야 하나?
+    get groupWidth(): number {
+        return this.pointWidth;
+    }
     // /**
-    //  * 시리즈가 group에 포함되지 않은 경우 자동 생성되는 기본 group에 포함되는 데,
-    //  * 그 그룹의 너비에서 포인트들이 표시되기 전후의 상대적 여백 크기.
-    //  * <br>
-    //  * 명시적으로 설정된 그룹에 포함되면 이 속성은 무시된다.
+    //  * 시리즈가 group에 포함되지 않은 경우, 축 단위 너비에서 이 시리즈가 차지하는 상대적 너비.
+    //  * 그룹에 포함되면 이 속성은 무시된다.
+    //  * 
+    //  * @config
     //  */
-    // groupPadding = 0.2;
+    // groupWidth = 1; // _clusterWidth 계산에 사용된다. TODO: clusterWidth로 변경해야 하나?
     /**
-     * 시리즈가 포함된 그룹의 layout이 {@link SeriesGroupLayout.DEFAULT}이거나 특별히 설정되지 않아서,
+     * 시리즈가 그룹에 포함되지 않거나,
+     * 포함된 그룹의 layout이 {@link SeriesGroupLayout.DEFAULT}이거나 특별히 설정되지 않아서,
      * 그룹에 포함된 시리즈들의 data point가 옆으로 나열되어 표시될 때,
      * 포인트 표시 영역 내에서 이 시리즈의 포인트가 차지하는 영역의 상대 크기.
-     * <br>
      * 예를 들어 이 시리즈의 속성값이 1이고 다른 시리즈의 값이 2이면 다른 시리즈의 data point가 두 배 두껍게 표시된다.
+     * 또, 그룹에 포함되고 그룹의 layout이 {@link SeriesGroupLayout.DEFAULT}
      * 
      * @config
      */
     pointWidth = 1;
+    pointPos: number;
     /**
      * 이 시리즈의 point가 차지하는 영역 중에서 point bar 양쪽 끝에 채워지는 빈 영역의 크기.
      * <br>
@@ -1239,7 +1281,7 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
     // methods
     //-------------------------------------------------------------------------
     getPointWidth(length: number): number {
-        const g = this.group as ClustrableSeriesGroup<Series>;
+        const g = this.group as ClusterableSeriesGroup<Series>;
         let w = length;
         
         if (g) {
@@ -1254,7 +1296,7 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
     }
 
     getPointPos(length: number): number {
-        const g = this.group as ClustrableSeriesGroup<Series>;
+        const g = this.group as ClusterableSeriesGroup<Series>;
         let w = length;
         let p = 0;
 
@@ -1447,6 +1489,12 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
      * @config
      */
     yAxis: string | number;
+    /**
+     * 명시적 false로 지정하면 legend에 표시하지 않는다.
+     * 
+     * @config
+     */
+    displayInLegend = true;
 
     get series(): T[] {
         return this._series.slice(0);
@@ -1528,8 +1576,9 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     getLegendSources(list: ILegendSource[]) {
-        // list.push(...this._visibles);
-        list.push(...this._series);
+        if (this.displayInLegend !== false) {
+            this._series.forEach(ser => ser.getLegendSources(list));
+        }
     }
 
     canMinPadding(axis: IAxis): boolean {
@@ -1755,7 +1804,7 @@ export abstract class ConstraintSeriesGroup<T extends Series> extends SeriesGrou
 
 /**
  */
-export abstract class ClustrableSeriesGroup<T extends Series> extends SeriesGroup<T> {
+export abstract class ClusterableSeriesGroup<T extends Series> extends SeriesGroup<T> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -1775,4 +1824,15 @@ export abstract class ClustrableSeriesGroup<T extends Series> extends SeriesGrou
      */
     groupPadding = 0.1;
 
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    clusterable(): boolean {
+        return true;
+    }
+
+    setCluster(width: number, pos: number): void {
+        this._clusterWidth = width;
+        this._clusterPos = pos;
+    }
 }

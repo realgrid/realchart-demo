@@ -6,6 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "../common/Common";
+import { RcElement } from "../common/RcControl";
 import { AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
@@ -17,11 +19,17 @@ export interface ILegendRenderer {
 export interface ILegendSource {
     visible: boolean;
 
+    legendMarker(): RcElement;
     legendColor(): string;
     legendLabel(): string;
 }
 
 export class LegendItem extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly MARKER_SIZE = 12;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -225,6 +233,23 @@ export class Legend extends ChartItem {
 
     getMaxHeight(domain: number): number {
         return this._maxHeightDim ? calcPercent(this._maxHeightDim, domain) : domain;
+    }
+
+    // TODO: to percentSize
+    getLeft(doamin: number): number {
+        return pickNum(this.left, NaN);
+    }
+
+    getRight(doamin: number): number {
+        return pickNum(this.right, NaN);
+    }
+
+    getTop(doamin: number): number {
+        return pickNum(this.top, NaN);
+    }
+
+    getBottom(doamin: number): number {
+        return pickNum(this.bottom, NaN);
     }
 
     //-------------------------------------------------------------------------

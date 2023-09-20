@@ -10,7 +10,7 @@ import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { Series, SeriesMarker } from "../Series";
+import { Series } from "../Series";
 
 export class ScatterSeriesPoint extends DataPoint {
 

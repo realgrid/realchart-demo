@@ -90,8 +90,12 @@ export abstract class LineSeriesBase extends Series {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getShape(): Shape {
-        return this.marker.shape || this._shape;
+    getShape(p: LineSeriesPoint): Shape {
+        return p.shape || this.marker.shape || this._shape;
+    }
+
+    getRadius(p: LineSeriesPoint): number {
+        return pickNum(p.radius, this.marker.radius);
     }
 
     //-------------------------------------------------------------------------
@@ -105,6 +109,9 @@ export abstract class LineSeriesBase extends Series {
         return true;
     }
 
+    /**
+     * rendering 시점에 chart가 series별로 기본 shape를 지정한다.
+     */
     setShape(shape: Shape): void {
         this._shape = shape;
     }
@@ -255,6 +262,15 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
         this.highValue = this.yValue = parseFloat(this.high);
 
         this.isNull ||= isNaN(this.lowValue);
+    }
+
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            low: this.low,
+            high: this.high,
+            lowValue: this.lowValue,
+            highValue: this.highValue
+        });
     }
 
     protected _readArray(series: AreaRangeSeries, v: any[]): void {

@@ -101,7 +101,7 @@ export class CandlestickSeriesView extends RangedSeriesView<CandlestickSeries> {
         this._sticks.prepare(points.length, (box, i) => {
             const p = box.point = points[i];
 
-            this._setPointStyle(box, p);
+            this._setPointStyle(box, model, p);
         })
     }
 

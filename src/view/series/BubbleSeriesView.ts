@@ -62,7 +62,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: BubbleSeries): void {
-        this.$_prepareMarkser(this._visPoints as BubbleSeriesPoint[]);
+        this.$_prepareMarkser(model, this._visPoints as BubbleSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -81,20 +81,17 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_prepareMarkser(points: BubbleSeriesPoint[]): void {
-        const series = this.model;
+    private $_prepareMarkser(series: BubbleSeries, points: BubbleSeriesPoint[]): void {
         const zAxis = series._xAxisObj._length < series._yAxisObj._length ? series._xAxisObj : series._yAxisObj;
         const len = zAxis._length;
         const count = points.length;
-        const {min, max} = series.getPxMinMax(len);
+        const {min, max} = series.getPixelMinMax(len);
 
         this._markers.prepare(count, (mv, i) => {
             const p = mv.point = points[i];
 
-            p.radius = series.getRadius(p.zValue, min, max);
             p.shape = series.shape;
-
-            this._setPointStyle(mv, p);
+            this._setPointStyle(mv, series, p);
         });
     }
 
@@ -109,6 +106,9 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         const yAxis = series._yAxisObj;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
+        const zAxis = series._xAxisObj._length < series._yAxisObj._length ? series._xAxisObj : series._yAxisObj;
+        const len = zAxis._length;
+        const {min, max} = series.getPixelMinMax(len);
         const yOrg = height;
         let labelView: PointLabelView;
         let r: IRect;
@@ -117,7 +117,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
             const p = mv.point;
 
             if (mv.setVisible(!p.isNull && !isNaN(p.zValue))) {
-                const sz = p.radius * vr;
+                const sz = (p.radius = series.getRadius(p.zValue, min, max)) * vr;
                 let path: (string | number)[];
                 let x: number;
                 let y: number;

@@ -11,6 +11,7 @@ import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { fixnum } from "../../common/Types";
+import { LegendItem } from "../../model/Legend";
 import { PointItemPosition } from "../../model/Series";
 import { FunnelSeries, FunnelSeriesPoint } from "../../model/series/FunnelSeries";
 import { IPointView, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
@@ -62,7 +63,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
     protected _prepareSeries(doc: Document, model: FunnelSeries): void {
         super._prepareSeries(doc, model);
 
-        this.$_prepareSegments(this._visPoints as FunnelSeriesPoint[]);
+        this.$_prepareSegments(doc, model, this._visPoints as FunnelSeriesPoint[]);
         this._lineContainer.prepare(model);
     }
 
@@ -82,16 +83,15 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_prepareSegments(pts: FunnelSeriesPoint[]): void {
+    private $_prepareSegments(doc: Document, model: FunnelSeries, pts: FunnelSeriesPoint[]): void {
         this._segments.prepare(pts.length, (seg, i) => {
             const p = seg.point = pts[i];
-
-            this._setPointStyle(seg, p);
-            p._calcedColor = getComputedStyle(seg.dom).fill;
+            this._preparePoint(doc, model, p, seg);
         })
     }
 
     private $_calcRates(pts: FunnelSeriesPoint[]): void {
+        const cnt = pts.length;
         let sum = 0;
         let y = 0;
 
@@ -99,9 +99,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
             sum += p.yValue * (p === this._zombie ? this._zombieRate : 1);
         });
 
-        const cnt = pts.length;
-
-        if (cnt > 0) {
+        if (cnt > 1 || (cnt > 0 && !this._zombie)) {
             let i = 0;
 
             for (; i < cnt - 1; i++) {
@@ -115,6 +113,16 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
             }
             pts[i].yPos = y;
             pts[i].height = 1 - y;
+        } else if (cnt == 1) {
+            const p = pts[0];
+            const h = fixnum(this._zombieRate);
+
+            y = 1 - h;
+            p.yRate = h * 100;
+            p.yPos = y;
+            p.height = h;
+            p.yPos = y;
+            p.height = 1 - y;
         }
     }
 
@@ -187,8 +195,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
                     seg.nx2 = x4 - x;
                 }
     
-                const path = builder.close(true);
-                seg.setPath(path);
+                seg.setPath(builder.close(true));
 
                 p.xPos = xMid;
                 p.yPos = y + (y2 - y) / 2;

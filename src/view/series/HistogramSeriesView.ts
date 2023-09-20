@@ -49,7 +49,7 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
     }
 
     protected _preparePointViews(doc: Document, model: HistogramSeries, points: HistogramSeriesPoint[]): void {
-        this.$_parepareBars(doc, points);
+        this.$_parepareBars(doc, model, points);
     }
 
     protected _layoutPointView(bar: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
@@ -113,11 +113,11 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_parepareBars(doc: Document, points: HistogramSeriesPoint[]): void {
+    private $_parepareBars(doc: Document, model: HistogramSeries, points: HistogramSeriesPoint[]): void {
         this._bars.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
 
-            this._setPointStyle(v, p);
+            this._setPointStyle(v, model, p);
         });
     }
 

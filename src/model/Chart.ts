@@ -241,6 +241,7 @@ export class ChartOptions extends ChartItem {
 }
 
 export interface IChartEventListener {
+    onModelChanged?(chart: Chart, item: ChartItem): void;
     onVisibleChanged?(chart: Chart, item: ChartItem): void;
     onPointVisibleChange?(chart: Chart, series: Series, point: DataPoint): void;
 }
@@ -619,14 +620,15 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._options.axisGap || 0;
     }
 
+    _modelChanged(item: ChartItem): void {
+        this._fireEvent('onModelChanged', item);
+    }
+
     _visibleChanged(item: ChartItem): void {
         this._fireEvent('onVisibleChanged', item);
     }
 
     _pointVisibleChanged(series: Series, point: DataPoint): void {
         this._fireEvent('onPointVisibleChanged', series, point);
-    }
-
-    _modelChanged(item: ChartItem): void {
     }
 }

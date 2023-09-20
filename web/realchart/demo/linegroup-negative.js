@@ -29,6 +29,7 @@ const config = {
             },
             belowStyle: {
                 stroke: 'red',
+                fill: 'red'
             },
                 // pointWidth: '100%',
             data: [11, 22, 15, 9, 13, 27]
@@ -42,10 +43,12 @@ const config = {
             },
             belowStyle: {
                 stroke: 'red',
+                fill: 'red'
             },
             data: [15, -19, 19, -6, 21, 21]
         }, {
             name: 'column3',
+            color: 'blue',
             pointLabel: {
                 visible: true,
                 position: 'inside',
@@ -53,6 +56,7 @@ const config = {
             },
             belowStyle: {
                 stroke: 'red',
+                fill: 'red'
             },
             data: [13, 17, 15, -11, 23, 17]
         }]

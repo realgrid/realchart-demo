@@ -35,6 +35,15 @@ export class VectorSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            length: this.length,
+            angle: this.angle,
+            lengthValue: this.lengthValue,
+            angleValue: this.angleValue
+        });
+    }
+
     protected _readArray(series: VectorSeries, v: any[]): void {
         const d = v.length > 3 ? 1 : 0;
 

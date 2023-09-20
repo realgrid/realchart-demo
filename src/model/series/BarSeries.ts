@@ -9,7 +9,7 @@
 import { pickNum } from "../../common/Common";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { BasedSeries, ClustrableSeriesGroup, IClusterable, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
+import { BasedSeries, ClusterableSeriesGroup, IClusterable, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
 
 /**
  * [y]
@@ -70,7 +70,7 @@ export class BarSeries extends BasedSeries {
 /**
  * @config chart.series[type=bargroup]
  */
-export class BarSeriesGroup extends ClustrableSeriesGroup<BarSeries> implements IClusterable {
+export class BarSeriesGroup extends ClusterableSeriesGroup<BarSeries> implements IClusterable {
 
     //-------------------------------------------------------------------------
     // fields
@@ -92,15 +92,6 @@ export class BarSeriesGroup extends ClustrableSeriesGroup<BarSeries> implements 
 
     protected _canContain(ser: Series): boolean {
         return ser instanceof BarSeries;
-    }
-
-    clusterable(): boolean {
-        return true;
-    }
-
-    setCluster(width: number, pos: number): void {
-        this._clusterWidth = width;
-        this._clusterPos = pos;
     }
 
     getBaseValue(axis: IAxis): number {

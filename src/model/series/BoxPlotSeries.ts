@@ -54,6 +54,19 @@ export class BoxPlotSeriesPoint extends DataPoint {
         return index === 0 ? this.yValue : this.minValue;
     }
 
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            min: this.min,
+            low: this.low,
+            mid: this.mid,
+            high: this.high,
+            minValue: this.minValue,
+            lowValue: this.lowValue,
+            midValue: this.midValue,
+            highValue: this.highValue,
+        });
+    }
+
     protected _readArray(series: BoxPlotSeries, v: any[]): void {
         const d = v.length > 5 ? 1 : 0;
 

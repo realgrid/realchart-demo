@@ -29,7 +29,7 @@ const config = {
         pointLabel: {
             visible: true,
             position: 'inside',
-            effect: 'outline'
+            effect: 'outline',
         },
         // pointWidth: '100%',
         pointStyleCallback: args => {
