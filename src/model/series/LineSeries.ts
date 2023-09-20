@@ -62,7 +62,6 @@ export class LineSeriesMarker extends SeriesMarker {
 }
 
 /**
- * @config chart.series
  */
 export abstract class LineSeriesBase extends Series {
 

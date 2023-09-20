@@ -325,7 +325,6 @@ export interface IPointStyleArgs {
 export type PointStyleCallback = (args: IPointStyleArgs) => SVGStyleOrClass;
 
 /**
- * @config chart.series
  */
 export abstract class Series extends ChartItem implements ISeries, ILegendSource {
 
@@ -1137,7 +1136,6 @@ export abstract class WidgetSeries extends Series {
  * <br>
  * TODO: 현재 PieSeris만 계승하고 있다. 추후 PieSeries에 합칠 것.
  * 
- * @config chart.series
  */
 export abstract class RadialSeries extends WidgetSeries {
 
@@ -1185,7 +1183,6 @@ export abstract class RadialSeries extends WidgetSeries {
 }
 
 /**
- * @config chart.series
  */
 export abstract class ClusterableSeries extends Series implements IClusterable {
 
@@ -1302,7 +1299,6 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
 }
 
 /**
- * @config chart.series
  */
 export abstract class BasedSeries extends ClusterableSeries {
 
@@ -1351,7 +1347,6 @@ export abstract class BasedSeries extends ClusterableSeries {
 }
 
 /**
- * @config chart.series
  */
 export abstract class RangedSeries extends ClusterableSeries {
 
@@ -1412,7 +1407,6 @@ export enum SeriesGroupLayout {
 }
 
 /**
- * @config chart.series
  */
 export abstract class SeriesGroup<T extends Series> extends ChartItem implements ISeriesGroup {
 
@@ -1736,7 +1730,6 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
 }
 
 /**
- * @config chart.series
  */
 export abstract class ConstraintSeriesGroup<T extends Series> extends SeriesGroup<T> {
 
@@ -1761,7 +1754,6 @@ export abstract class ConstraintSeriesGroup<T extends Series> extends SeriesGrou
 }
 
 /**
- * @config chart.series
  */
 export abstract class ClustrableSeriesGroup<T extends Series> extends SeriesGroup<T> {
 

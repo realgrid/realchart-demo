@@ -810,10 +810,6 @@
   },
   "BasedSeries": {
     "kindString": "Class",
-    "config": [
-      "chart.series"
-    ],
-    "content": "",
     "extended": [
       "ClusterableSeries"
     ],
@@ -1057,10 +1053,6 @@
   },
   "ClusterableSeries": {
     "kindString": "Class",
-    "config": [
-      "chart.series"
-    ],
-    "content": "",
     "extended": [
       "Series"
     ],
@@ -1280,10 +1272,6 @@
   },
   "ClustrableSeriesGroup": {
     "kindString": "Class",
-    "config": [
-      "chart.series"
-    ],
-    "content": "",
     "extended": [
       "SeriesGroup"
     ],
@@ -1351,10 +1339,6 @@
   },
   "ConstraintSeriesGroup": {
     "kindString": "Class",
-    "config": [
-      "chart.series"
-    ],
-    "content": "",
     "extended": [
       "SeriesGroup"
     ],
@@ -1465,9 +1449,6 @@
   },
   "RadialSeries": {
     "kindString": "Class",
-    "config": [
-      "chart.series"
-    ],
     "content": "직교 좌표계가 표시된 경우, plot area 영역을 기준으로 size, centerX, centerY가 적용된다.\n<br>\nTODO: 현재 PieSeris만 계승하고 있다. 추후 PieSeries에 합칠 것.",
     "extended": [
       "WidgetSeries"
@@ -1710,10 +1691,6 @@
   },
   "RangedSeries": {
     "kindString": "Class",
-    "config": [
-      "chart.series"
-    ],
-    "content": "",
     "extended": [
       "ClusterableSeries"
     ],
@@ -1933,10 +1910,6 @@
   },
   "Series": {
     "kindString": "Class",
-    "config": [
-      "chart.series"
-    ],
-    "content": "",
     "extended": [
       "ChartItem"
     ],
@@ -2121,10 +2094,6 @@
   },
   "SeriesGroup": {
     "kindString": "Class",
-    "config": [
-      "chart.series"
-    ],
-    "content": "",
     "extended": [
       "ChartItem"
     ],
@@ -2235,10 +2204,6 @@
   },
   "WidgetSeries": {
     "kindString": "Class",
-    "config": [
-      "chart.series"
-    ],
-    "content": "",
     "extended": [
       "Series"
     ],
@@ -3403,10 +3368,6 @@
   },
   "BarRangeSeries": {
     "kindString": "Class",
-    "config": [
-      "chart.series"
-    ],
-    "content": "",
     "extended": [
       "RangedSeries"
     ],
@@ -7326,10 +7287,6 @@
   },
   "LineSeriesBase": {
     "kindString": "Class",
-    "config": [
-      "chart.series"
-    ],
-    "content": "",
     "extended": [
       "Series"
     ],
