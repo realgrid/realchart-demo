@@ -63,7 +63,7 @@ test.describe('bar.html test', () => {
 	});
 
 	test('Y-reversed', async ({ page }) => {
-		await page.evaluate('config.yAxis.reversed = true; chart.update(config)');
+		await page.evaluate('config.yAxis.reversed = true; chart.load(config)');
 
 		const bars = await page.$$('.' + SeriesView.POINT_CLASS);
 		const rGrids = await PWTester.getGridBounds(page);
@@ -76,11 +76,11 @@ test.describe('bar.html test', () => {
 			// expect(r.y).eq(rTop.y);
 		});
 
-		await page.evaluate('config.yAxis.reversed = false; chart.update(config)');
+		await page.evaluate('config.yAxis.reversed = false; chart.load(config)');
 	});
 
 	test('inverted', async ({ page }) => {
-		await page.evaluate('config.inverted = true; chart.update(config)');
+		await page.evaluate('config.inverted = true; chart.load(config)');
 
 		const rGrids = await PWTester.getGridBounds(page);
 		const bars = await page.$$('.' + SeriesView.POINT_CLASS);
@@ -115,7 +115,7 @@ test.describe('bar.html test', () => {
 			}
 		}
 
-		await page.evaluate('config.inverted = false; chart.update(config)');
+		await page.evaluate('config.inverted = false; chart.load(config)');
 	});
 	test('title', async ({ page }) => {
 		const config: any = await page.evaluate('config');

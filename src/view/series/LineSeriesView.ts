@@ -6,7 +6,6 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
@@ -527,6 +526,26 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             }
         }
     }
+}
+
+class MarkerView extends RcElement {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    private _line: RcElement;
+    private _shape: PathElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, SeriesView.LEGEND_MARKER);
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
 }
 
 export class LineSeriesView extends LineSeriesBaseView<LineSeries> {

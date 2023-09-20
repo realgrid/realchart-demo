@@ -104,6 +104,8 @@
 .rct-root {
     --rct-font-family: AppleSDGothicNeo-Light, 'HelveticaNeue', 'Malgun Gothic', '맑은 고딕', sans-serif;
     --rct-font-size: 16px;
+
+    --rct-focus-border: red;
     --rct-text-fill: #333;
 
     --rct-title-fill: #333;
@@ -120,7 +122,7 @@
     --rct-axis-grid-line-stroke-end: none;
     --rct-axis-grid-line-stroke-width: 1px;
     
-    --rct-legend-background-stroke: lightgray;
+    --rct-legend-background-stroke: none;
     --rct-legend-item-fill: #333;
     --rct-legend-item-disabled: #aaa;
     --rct-legend-item-disabled-decoration: line-through;
@@ -452,7 +454,10 @@
 .rct-line-series-line {
     stroke-width: 1px;
 }
-.rct-line-point-marker[data-focus] {
+.rct-line-series .rct-point {
+    stroke-dasharray: none;
+}
+.rct-line-series .rct-point[data-focus] {
     /* scale: 2; */
     stroke: var(--rct-focus-border) !important;
     stroke-width: 2px;

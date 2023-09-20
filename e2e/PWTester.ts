@@ -27,7 +27,7 @@ export class PWTester {
 	static async goto(page: Page, url: string): Promise<void> {
 		await page.setViewportSize(this.VIEWPORT_SIZE);
 		await page.goto('http://localhost:6010/realchart/' + url).catch((err) => '>> ' + console.error(err));
-		await page.evaluate('chart.update(config, false)');
+		await page.evaluate('chart.load(config, false)');
 	}
 
 	static async getBounds(elt: ElementHandle): Promise<IRect> {

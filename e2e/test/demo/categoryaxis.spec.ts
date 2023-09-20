@@ -59,12 +59,12 @@ test.describe('categoryaxis.html test', () => {
 		expect(PWTester.same(pTick.x, rLine.width / ticks.length / 2)).is.true;
 
 		// padding -> -0.5
-		await page.evaluate('config.xAxis.padding = -0.5; chart.update(config)');
+		await page.evaluate('config.xAxis.padding = -0.5; chart.load(config)');
 
 		ticks = await axis.$$('.' + AxisView.TICK_CLASS);
 		pTick = await PWTester.getTranslate(ticks[0]);
 		expect(PWTester.same(pTick.x, 0)).is.true;
 
-		await page.evaluate('config.xAxis.padding = 0; chart.update(config)');
+		await page.evaluate('config.xAxis.padding = 0; chart.load(config)');
 	});
 });
