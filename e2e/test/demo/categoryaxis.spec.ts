@@ -56,7 +56,7 @@ test.describe('categoryaxis.html test', () => {
 		let pTick = await PWTester.getTranslate(ticks[0]);
 
 		expect(markers.length).eq(ticks.length);
-		// expect(PWTester.same(pTick.x, rLine.width / ticks.length / 2)).is.true;
+		expect(PWTester.same(pTick.x, rLine.width / ticks.length / 2)).is.true;
 
 		// padding -> -0.5
 		await page.evaluate('config.xAxis.padding = -0.5; chart.update(config)');

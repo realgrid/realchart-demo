@@ -52,9 +52,19 @@ export class PWTester {
 	}
 
 	static async getTranslate(elt: ElementHandle): Promise<IPoint> {
-		const cs = await elt.evaluate((elt) => getComputedStyle(elt as Element).getPropertyValue('transform'));
-		const vals = cs.substring('matrix('.length, cs.length - 1).split(/\,\s*/);
-
-		return { x: +vals[4], y: +vals[5] };
-	}
+		const bv = await elt.evaluate(elt => {
+		  const svgElement = elt as SVGSVGElement;
+		  const transformList = svgElement.transform.baseVal;
+	  
+		  if (transformList.numberOfItems > 0) {
+			// 첫 번째 변환을 가져오기
+			const firstTransform = transformList.getItem(0);
+			return { x: firstTransform.matrix.e, y: firstTransform.matrix.f };
+		  }
+	  
+		  return { x: 0, y: 0 }; // 변환이 없는 경우 기본값 반환
+		});
+	  
+		return bv;
+	  }
 }
