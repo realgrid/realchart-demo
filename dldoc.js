@@ -107,7 +107,7 @@ class Tunner {
         return `${elementType.name}[]`;
       case 'reference':
         // console.info({ [name]: type, ...obj })
-        return name;
+        return '';
       default:
         console.warn('unexpected type', obj);
         return '';
@@ -195,13 +195,21 @@ class Tunner {
           props: children.filter(c => 
             c.kindString == 'Property'
             && this._findTag(c.comment?.blockTags, '@config')
-          ).map(this._setContent.bind(this))
+          ).map(this._setContent.bind(this)),
         };
         break;
       case 'Enumeration':
-        // console.debug(obj);
+        this.classMap[name] = {
+          kindString,
+          props: children.map(c => {
+            const { content } = this._parseComment(c.comment);
+            return { name: c.name, value: c.type.value, content };
+          }),
+        }
+        console.debug(name, this.classMap[name]);
         break;
       case 'Type alias':
+        // console.debug(obj);
         break;
     }
 
@@ -266,7 +274,6 @@ class MDGenerater {
       const v = this.classMap[dtype.name];
       if (v) {
         if (v.kindString == 'Class') {
-          
           let accessor = this.docMap;
           const keys = _type 
             ? [..._name.split('.').slice(1), _type, name]
@@ -278,7 +285,7 @@ class MDGenerater {
               if (i == keys.length - 1) {
                 // console.debug( _name, _type, name, {v})
                 const _content = `## ${name}\n${this._fixContent(content)}\n`
-                  + this._makeProps({ name, type: _type, props: v.props });
+                      + this._makeProps({ name, type: _type, props: v.props });
                 accessor[key] = { _content };
                 // this._writeJsonFile('./api/' + keys.join('.') + '.json', accessor);
               } else {
@@ -289,17 +296,25 @@ class MDGenerater {
           });
           // this._writeJsonFile('./api/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
         }
-      }
+      } 
     }
 
-    let md = `### ${name}${type ? ': ' + type : ''}\n`;
-    if (header) md += `${header}  \n`;
-    if (content) md += `${this._fixContent(content)}  \n`;
+    let lines = `### ${name}${type ? ': ' + type : ''}\n`;
+    if (header) lines += `${header}  \n`;
+    if (content) lines += `${this._fixContent(content)}  \n`;
     const dft = defaultBlock || defaultValue ;
     if (dft) {
-      md += `\`default: ${dft}\` `;
+      const [value, ...content] = dft.split(' ');
+      lines += `\`default: ${value}\` ${content.join(' ')} \n`;
     }
-    return md;
+
+    if (dtype?.type == 'reference') {
+      const v = this.classMap[dtype.name];
+      if (v?.kindString == 'Enumeration') {
+        lines += this._makeEnums({ name, enums: v.props })
+      }
+    }
+    return lines;
   }
 
   /**
@@ -315,6 +330,19 @@ class MDGenerater {
     return [ h, ...props.map(prop => {
       return this._makeProp({ name, type, prop })
     })].join('\n');
+  }
+
+  /**
+   * 
+   * @iparam name
+   * @iparam enums
+   */
+  _makeEnums(param) {
+    const { name, enums } = param;
+    return enums.map(e => {
+      const content = this._fixContent(e.content).replace(/\n/g, '  ');
+      return `- \`${e.value}\` ${content}`
+    }).join('\n');
   }
 
   /**
