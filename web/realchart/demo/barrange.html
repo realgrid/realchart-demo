@@ -35,7 +35,8 @@ body {
 <script type="text/javascript" src="../lib/realchart.js"></script>
 <script type="text/javascript" src="./barrange.js"></script>
 <script type="text/javascript">
-	window.addEventListener('DOMContentLoaded', function () {
+	window.addEventListener('load', function () {
+		console.log('init')
 		try {
 			init();
 		} catch (err) {
