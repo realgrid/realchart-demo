@@ -8,7 +8,7 @@
   },
   
   "RcChartControl": "RcChartControl",
-  "createChart": "createChart",
+  "createChart": "createChart(..., config)",
   "getVersion": "getVersion",
   "setDebugging": "setDebugging",
 
