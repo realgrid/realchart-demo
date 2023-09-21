@@ -47,8 +47,13 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected _prepareStyleOrClass(model: T): void {
         this.setStyleOrClass(model.style);
+    }
+
+    measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this._prepareStyleOrClass(model);
+
         if (model !== this.model) {
             this.model = model;
             this._doModelChanged();

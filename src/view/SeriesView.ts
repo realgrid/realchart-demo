@@ -305,7 +305,8 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     // consts
     //-------------------------------------------------------------------------
     static readonly POINT_CLASS = 'rct-point';
-    static readonly DATA_FOUCS = 'focus'
+    static readonly DATA_FOUCS = 'focus';
+    static readonly LEGEND_MARKER = 'rct-legend-item-marker';
 
     //-------------------------------------------------------------------------
     // fields
@@ -423,6 +424,10 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _prepareStyleOrClass(model: T): void {
+        // legend marker 색상이 필요하므로 prepareSeries()에서 먼저 처리한다.
+    }
+
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         this.setClip(void 0);
 
@@ -464,7 +469,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     protected _createLegendMarker(doc: Document, size: number): RcElement {
-        return RectElement.create(doc, 'rct-legend-item-marker', 0, 0, size, size, size / 2);
+        return RectElement.create(doc, SeriesView.LEGEND_MARKER, 0, 0, size, size, size / 2);
     }
 
     protected _collectVisPoints(model: T): DataPoint[] {

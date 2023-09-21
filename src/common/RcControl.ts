@@ -43,6 +43,8 @@ export abstract class RcControl extends RcWrappableObject {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    private _animatable = true;
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -114,6 +116,17 @@ export abstract class RcControl extends RcWrappableObject {
 
     height(): number {
         return this._container.offsetHeight;
+    }
+
+    animatable(): boolean {
+        return this._animatable;
+    }
+    setAnimatable(value: boolean): void {
+        debugger;
+        if (value !== this._animatable) {
+            this._animatable = value;
+            this.invalidateLayout(true);
+        }
     }
 
     //-------------------------------------------------------------------------

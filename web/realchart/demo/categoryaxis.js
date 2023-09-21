@@ -5,7 +5,7 @@
 const config = {
     title: "Category Axis",
     options: {
-        // animatable: false
+        animatable: false
     },
     xAxis: {
         categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도'],
@@ -26,6 +26,7 @@ const config = {
     },
     series: [{
         name: 'column1',
+        color: 'green',
         pointLabel: {
             visible: true,
             position: 'inside',
@@ -41,6 +42,10 @@ const config = {
         data: [9, 17, 19, 11, 10, 21],
         style: {
             strokeDasharray: '5'
+        },
+        marker: {
+            style: {
+            }
         }
     }]
 }

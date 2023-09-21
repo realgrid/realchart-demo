@@ -766,7 +766,7 @@ export class BodyView extends ChartElement<Body> {
     private $_prepareSeries(doc: Document, chart: IChart, series: Series[]): void {
         const container = this._seriesContainer;
         const inverted = chart.isInverted();
-        const animatable = chart.animatable();
+        const animatable = this.control.animatable && chart.animatable();
         const map = this._seriesMap;
         const views = this._seriesViews;
 

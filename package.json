@@ -19,16 +19,20 @@
     "pbundle": "tsc && rollup --config rollup.config.js --environment BUILD:prod",
     "pub": "tsc && rollup --config rollup.config.js --environment BUILD:pub",
     "pdeploy": "npm run pbundle && node compress.js",
-    "test": "npm run dbundle && mocha --exit --timeout 20000 -r ts-node/register -r test/dom-mock.js 'test/**/*.spec.ts' 'test/**/*Test*.ts'",
+    "test": "npm run test:model && npm run test:pw",
+    "test-old": "npm run dbundle && mocha --exit --timeout 20000 -r ts-node/register -r test/dom-mock.js 'test/**/*.spec.ts' 'test/**/*Test*.ts'",
     "test:pptr": "npm run dbundle && mocha --exit --timeout 20000 -r ts-node/register -r test/dom-mock.js 'test/puppeteer/**/*.spec.ts'",
     "test:model": "mocha --exit --timeout 10000 -r ts-node/register -r test/dom-mock.js 'test/{,!(puppeteer)/**/}/*.spec.ts' 'test/**/*Test*.ts'",
     "tsdoc": "rm -rf api && npx typedoc --entryPointStrategy expand ./src/model --entryPointStrategy expand ./src/common --json api/model.json",
-    "test:pw": "npx playwright test --trace on e2e/test/**/*.spec.ts",
+    "test:pw": "npx playwright test --trace on",
+    "tsdoc": "rm -rf api/typedoc && npx typedoc",
     "jsdoc": "rm -rf api/jsdoc && npx jsdoc -c jsdoc.json",
     "dldoc": "npm run tsdoc && node dldoc && npx typedoc && node docs/typedoc",
     "dev:www": "npm run dldoc && npx live-server web/realchart",
     "e2e:test": "playwright test --trace on --headed",
-    "dev": "node app"
+    "dev": "node app",
+    "copy:demo": "node copyDemo",
+    "fiddle": "node exportDemo"
   },
   "devDependencies": {
     "@babel/generator": "^7.22.15",

@@ -9,9 +9,13 @@
 import { ChartControl } from "../ChartControl";
 // import { RcChartModel } from "./RcChartModel";
 
+const props = {
+    // 'animatable': ''
+};
 const funcs = {
     'load': '',
-    'refresh': ''
+    'refresh': '',
+    'setAnimatable': ''
 };
 
 /**
@@ -27,10 +31,19 @@ export class RcChartControl {
                 // if (key === 'model') {
                 //     return target[key];
                 // }
+                // if (key in props) {
+                //     return target[key];
+                // } else 
                 if (key in funcs) {
                     return target[key].bind(target);
                 }
-            }
+            },
+            // set(target, p, newValue, receiver): boolean {
+            //     if (p in props) {
+            //         target[p] = newValue;
+            //         return true;
+            //     }
+            // },
         });
     }
 
@@ -51,4 +64,8 @@ export class RcChartControl {
     // get model(): RcChartModel {
     //     return new RcChartModel(this._proxy.model);
     // }
+
+    setAnimatable(value: boolean): void {
+        this._proxy.setAnimatable(value);
+    }
 }
