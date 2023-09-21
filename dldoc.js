@@ -15,7 +15,7 @@ const JSFIDDLE_URL = 'https://jsfiddle.net/gh/get/library/pure/realgrid/realchar
 class Tunner {
   constructor({ path = '', debug = false }) {
     this.debug = debug;
-    const text = fs.readFileSync(path || './api/model.json', { encoding: 'utf-8'});
+    const text = fs.readFileSync(path || './docs/.tdout/model.json', { encoding: 'utf-8'});
     this.model = JSON.parse(text);
     this.classMap = {};
   }
@@ -232,7 +232,7 @@ class Tunner {
 
   exportModel() {
     const json = JSON.stringify(this.classMap, null, 2)
-    fs.writeFileSync('./api/api.json', json, { encoding: 'utf-8'});
+    fs.writeFileSync('./docs/.tdout/api.json', json, { encoding: 'utf-8'});
   }
 }
 
@@ -287,14 +287,14 @@ class MDGenerater {
                 const _content = `## ${name}\n${this._fixContent(content)}\n`
                       + this._makeProps({ name, type: _type, props: v.props });
                 accessor[key] = { _content };
-                // this._writeJsonFile('./api/' + keys.join('.') + '.json', accessor);
+                // this._writeJsonFile('./docs/.tdout/' + keys.join('.') + '.json', accessor);
               } else {
                 accessor[key] = { _content: '' };
               }
             }
             accessor = accessor[key];
           });
-          // this._writeJsonFile('./api/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
+          // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
         }
       } 
     }
@@ -466,7 +466,7 @@ class MDGenerater {
   }
 
   exportModel() {
-    this._writeJsonFile('./api/doc.json', this.docMap);
+    this._writeJsonFile('./docs/.tdout/doc.json', this.docMap);
   }
 }
 

@@ -2,7 +2,7 @@
     "entryPoints": [
         "./src/main.ts"
     ],
-    "json": "docs/.tdout/out.json",
+    "json": "docs/.tdout/main.json",
     "exclude": ["./node_modules/**/*"],
     "externalPattern": ["./node_modules/**/*"],
     "excludeExternals": true,
