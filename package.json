@@ -30,7 +30,8 @@
     "dev:www": "npm run dldoc && npx live-server web/realchart",
     "e2e:test": "playwright test --trace on --headed",
     "dev": "node app",
-    "copy:demo": "node copyDemo"
+    "copy:demo": "node copyDemo",
+    "fiddle": "node exportDemo"
   },
   "devDependencies": {
     "@babel/generator": "^7.22.15",

@@ -125,7 +125,6 @@ const exportDemos = () => {
     const fiddleDat = readFile("web/realchart/fiddle.dat");
 
     let category = "";
-    let groupDir = "";
 
     const lines = fiddleDat.trim().split('\n');
 
@@ -137,6 +136,10 @@ const exportDemos = () => {
             const tempDir = [ROOT, ...line.split("/").map(l => l.toLowerCase())];
             tempDir.splice(2, 0, category.toLowerCase());
             const leafDir = tempDir.join("/");
+            console.log({category})
+            console.log({fileName})
+            console.log({tempDir})
+            console.log({leafDir})
             createDir(leafDir); // 폴더 생성
 
             // 파일 생성 로직
