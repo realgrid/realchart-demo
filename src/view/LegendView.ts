@@ -57,21 +57,24 @@ export class LegendItemView extends ChartElement<LegendItem> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: LegendItem, intWidth: number, hintHeight: number, phase: number): ISize {
+    protected _doMeasure(doc: Document, model: LegendItem, hintWidth: number, hintHeight: number, phase: number): ISize {
         Dom.setData(this._label.dom, 'hidden', model.source.visible ? '' : 1);
         Dom.setData(this._marker.dom, 'hidden', model.source.visible ? '' : 1);
 
         this._label.text = model.text();
 
+        const rMarker = this._marker.getBBounds();
         const sz = toSize(this._label.getBBounds());
         this._gap = pickNum(model.legend.markerGap, 0);
 
-        return Size.create(this._marker.width + this._gap + sz.width, Math.max(this._marker.height, sz.height));
+        return Size.create(rMarker.width + this._gap + sz.width, Math.max(rMarker.height, sz.height));
     }
 
     protected _doLayout(): void {
-        this._marker.translate(0, (this.height - this._marker.height) / 2);
-        this._label.translate(this._marker.width + this._gap, (this.height - this._label.getBBounds().height) / 2);
+        const rMarker = this._marker.getBBounds();
+
+        this._marker.translate(0, (this.height - rMarker.height) / 2);
+        this._label.translate(rMarker.width + this._gap, (this.height - this._label.getBBounds().height) / 2);
     }
 }
 
@@ -149,6 +152,7 @@ export class LegendView extends BoundableElement<Legend> {
         this._itemViews.forEach(v => {
             // [주의] source가 getComputedStyle()로 색상을 가져온다. measure 시점에는 안된다.
             v._marker.setStyle('fill', v.model.source.legendColor());
+            v._marker.setStyle('stroke', v.model.source.legendColor());
             v.resizeByMeasured().layout();
         });
 

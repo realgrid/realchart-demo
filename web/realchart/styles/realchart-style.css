@@ -235,9 +235,9 @@
     fill: var(--rct-legend-item-disabled);
     text-decoration: var(--rct-legend-item-disabled-decoration)
 }
-.rct-legend-item-marker {
+/* .rct-legend-item-marker {
     stroke: none;
-}
+} */
 .rct-legend-item-marker[data-hidden] {
     fill: #aaa !important;
 }

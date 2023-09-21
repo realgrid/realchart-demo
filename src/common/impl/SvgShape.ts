@@ -6,8 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { PathElement } from '../RcControl';
 import { IRect } from '../Rectangle';
-import { SizeValue } from '../Types';
+import { Path, SizeValue } from '../Types';
 import { Utils } from '../Utils';
 
 export enum Shape {
@@ -232,5 +233,25 @@ export class SvgShapes {
         }
         path.push('Z');
         return path;
+    }
+
+    static setShape(target: PathElement, shape: Shape, radius: number): void {
+        let path: (string | number)[];
+
+        switch (shape) {
+            case Shape.SQUARE:
+            case Shape.RECTANGLE:
+            case Shape.DIAMOND:
+            case Shape.TRIANGLE:
+            case Shape.ITRIANGLE:
+            case Shape.STAR:
+                path = SvgShapes[shape](0, 0, radius * 2, radius * 2);
+                break;
+
+            default:
+                path = SvgShapes.circle(radius, radius, radius);
+                break;
+        }
+        target.setPath(path);
     }
 }
