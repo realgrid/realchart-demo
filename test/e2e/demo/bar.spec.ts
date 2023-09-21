@@ -72,7 +72,7 @@ test.describe('bar.html test', () => {
 		bars.forEach(async (bar) => {
 			const r = await PWTester.getBounds(bar);
 
-			expect(PWTester.same(r.y, rGrids.y)).is.true;
+			expect(PWTester.same(r.y, rGrids.y), `${r.y}, ${rGrids.y}`).is.true;
 			// expect(r.y).eq(rTop.y);
 		});
 
