@@ -1,6 +1,8 @@
 const config = {
   type: "line",
-  options: {},
+  options: {
+    palette: 'warm', // 'default', 'cool', 'forest', 'gray'
+  },
   title: "RealChart Palette",
   xAxis: {
     title: "일일 Daily fat"
