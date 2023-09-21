@@ -4,6 +4,7 @@
  */
 const config = {
     options: {
+        // animatable: false
     },
     title: "Bar Group",
     xAxis: {
