@@ -475,6 +475,9 @@
 .rct-arearange-series-area {
     fill-opacity: 0.5;
 }
+.rct-arearange-series .rct-arearange-series-area {
+    stroke: none;
+}
 
 /** bubble series */
 .rct-bubble-series {
