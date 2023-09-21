@@ -122,9 +122,10 @@ export abstract class RcControl extends RcWrappableObject {
         return this._animatable;
     }
     setAnimatable(value: boolean): void {
+        debugger;
         if (value !== this._animatable) {
             this._animatable = value;
-            this.invalidateLayout();
+            this.invalidateLayout(true);
         }
     }
 
