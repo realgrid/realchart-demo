@@ -8,5 +8,6 @@
     "excludeExternals": true,
     "excludePrivate": true,
     "excludeProtected": true,
-    "disableSources": true
+    "disableSources": true,
+    "logLevel": "Error"
 }

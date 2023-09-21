@@ -6,13 +6,11 @@
     "type": "separator",
     "title": "API 문서"
   },
-  "title": "title",
-  "subtitle": "subtitle",
-  "series": "series[]",
-  "xAxis": "xAxis[]",
-  "yAxis": "yAxis[]",
-  "legend": "legend",
-  "options": "options",
+  
+  "RcChartControl": "RcChartControl",
+  "createChart": "createChart",
+  "getVersion": "getVersion",
+  "setDebugging": "setDebugging",
 
   "-- More": {
     "type":"separator", 

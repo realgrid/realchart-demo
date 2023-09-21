@@ -206,7 +206,7 @@ class Tunner {
             return { name: c.name, value: c.type.value, content };
           }),
         }
-        console.debug(name, this.classMap[name]);
+        // console.debug(name, this.classMap[name]);
         break;
       case 'Type alias':
         // console.debug(obj);
@@ -461,7 +461,7 @@ class MDGenerater {
   }
 
   saveFile() {
-    const root = 'docs/pages/docs';
+    const root = 'docs/pages/docs/createChart';
     this._saveFile(root, this.docMap);
   }
 
