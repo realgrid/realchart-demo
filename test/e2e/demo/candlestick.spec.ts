@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for candlestick.html
  */
 test.describe('candlestick.html test', () => {
-	const url = 'demo/candlestick.html';
+	const url = 'demo/candlestick.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

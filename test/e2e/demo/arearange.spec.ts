@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for arearange.html
  */
 test.describe('arearange.html test', () => {
-    const url = 'demo/arearange.html';
+    const url = 'demo/arearange.html?debug';
 
     test.beforeEach(async ({ page }) => {
         await PWTester.goto(page, url);

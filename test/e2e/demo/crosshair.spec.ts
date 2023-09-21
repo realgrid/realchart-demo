@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for crosshair.html
  */
 test.describe('crosshair.html test', () => {
-	const url = 'demo/crosshair.html';
+	const url = 'demo/crosshair.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

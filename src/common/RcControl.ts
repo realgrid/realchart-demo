@@ -43,7 +43,7 @@ export abstract class RcControl extends RcWrappableObject {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private _animatable = true;
+    static _animatable = true;
 
     //-------------------------------------------------------------------------
     // fields
@@ -61,7 +61,7 @@ export abstract class RcControl extends RcWrappableObject {
     private _testing = false;
     private _dirty = true;
     private _requestTimer: any;
-    private _invalidElements: RcElement[] = [];
+    // private _invalidElements: RcElement[] = [];
     private _toAnimation = 0;
     private _invalidateLock = false;
     private _lockDirty = false;
@@ -116,17 +116,6 @@ export abstract class RcControl extends RcWrappableObject {
 
     height(): number {
         return this._container.offsetHeight;
-    }
-
-    animatable(): boolean {
-        return this._animatable;
-    }
-    setAnimatable(value: boolean): void {
-        debugger;
-        if (value !== this._animatable) {
-            this._animatable = value;
-            this.invalidateLayout(true);
-        }
     }
 
     //-------------------------------------------------------------------------
@@ -483,7 +472,7 @@ export abstract class RcControl extends RcWrappableObject {
             this._dirty = false;
             this._requestTimer = null;
             // this._invalidElements.forEach(elt => elt.validate());
-            this._invalidElements = [];
+            // this._invalidElements = [];
             this._doAfterRender();
             console.timeEnd('render chart');
         }

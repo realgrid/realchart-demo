@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for bar-multi.html
  */
 test.describe('bar-multi.html test', () => {
-    const url = 'demo/bar-multi.html';
+    const url = 'demo/bar-multi.html?debug';
 
     test.beforeEach(async ({ page }) => {
         await PWTester.goto(page, url);

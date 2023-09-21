@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for heatmap.html
  */
 test.describe('heatmap.html test', () => {
-	const url = 'demo/heatmap.html';
+	const url = 'demo/heatmap.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

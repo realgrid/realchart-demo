@@ -25,13 +25,15 @@ export class PWTester {
 	}
 
 	static async goto(page: Page, url: string): Promise<void> {
-		await page.setViewportSize(this.VIEWPORT_SIZE);
-		page.on('domcontentloaded', async page => {
-			await page.evaluate('console.log("load");');
-			await page.evaluate('config.options = Object.assign(config.options, {animatable: false});');
+        page.on('console', async msg => {
+            const values = [];
+            for (const arg of msg.args()) values.push(await arg && arg.jsonValue());
+            console.log(...values);
+        });
+        page.on('domcontentloaded', page => {
 		});
+        await page.setViewportSize(this.VIEWPORT_SIZE);
 		await page.goto('http://localhost:6010/realchart/' + url).catch((err) => '>> ' + console.error(err));
-		// await page.evaluate('chart.setAnimatable(false);');
 	}
 
 	static async getBounds(elt: ElementHandle): Promise<IRect> {

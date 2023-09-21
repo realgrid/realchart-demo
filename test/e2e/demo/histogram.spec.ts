@@ -17,7 +17,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for histogram.html
  */
 test.describe('histogram.html test', () => {
-    const url = 'demo/histogram.html';
+    const url = 'demo/histogram.html?debug';
 
     test.beforeEach(async({ page }) => {
         await PWTester.goto(page, url);

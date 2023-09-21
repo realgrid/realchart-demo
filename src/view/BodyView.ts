@@ -9,7 +9,7 @@
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
-import { LayerElement, PathElement, RcElement } from "../common/RcControl";
+import { LayerElement, PathElement, RcControl, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { Align, VerticalAlign, _undefined, assert } from "../common/Types";
 import { ImageElement } from "../common/impl/ImageElement";
@@ -766,7 +766,7 @@ export class BodyView extends ChartElement<Body> {
     private $_prepareSeries(doc: Document, chart: IChart, series: Series[]): void {
         const container = this._seriesContainer;
         const inverted = chart.isInverted();
-        const animatable = this.control.animatable && chart.animatable();
+        const animatable = RcControl._animatable && chart.animatable();
         const map = this._seriesMap;
         const views = this._seriesViews;
 

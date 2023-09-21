@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for barrange-multi.html
  */
 test.describe('barrange-multi.html test', () => {
-    const url = 'demo/barrange-multi.html';
+    const url = 'demo/barrange-multi.html?debug';
 
     test.beforeEach(async ({ page }) => {
         await PWTester.goto(page, url);

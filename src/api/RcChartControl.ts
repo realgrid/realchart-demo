@@ -60,12 +60,4 @@ export class RcChartControl {
     refresh(): void {
         this._proxy.refresh();
     }
-
-    // get model(): RcChartModel {
-    //     return new RcChartModel(this._proxy.model);
-    // }
-
-    setAnimatable(value: boolean): void {
-        this._proxy.setAnimatable(value);
-    }
 }

@@ -17,7 +17,7 @@ import { TitleView } from '../../../src/view/TitleView';
  * PlayWright Tests for bubble.html
  */
 test.describe('bubble.html test', () => {
-	const url = 'demo/bubble.html';
+	const url = 'demo/bubble.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);
