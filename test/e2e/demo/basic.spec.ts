@@ -18,7 +18,7 @@ import { BodyView } from '../../../src/view/BodyView';
  * PlayWright Tests for basic.html
  */
 test.describe('basic.html test', () => {
-    const url = 'demo/basic.html';
+    const url = 'demo/basic.html?debug';
 
     test.beforeEach(async ({ page }) => {
         await PWTester.goto(page, url);

@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for boxplot.html
  */
 test.describe('boxplot.html test', () => {
-	const url = 'demo/boxplot.html';
+	const url = 'demo/boxplot.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

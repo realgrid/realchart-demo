@@ -17,7 +17,7 @@ import { LineSeriesView } from '../../../src/view/series/LineSeriesView';
  * PlayWright Tests for categoryaxis.html
  */
 test.describe('categoryaxis.html test', () => {
-	const url = 'demo/categoryaxis.html';
+	const url = 'demo/categoryaxis.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

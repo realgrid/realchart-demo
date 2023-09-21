@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for errorbar.html
  */
 test.describe('errorbar.html test', () => {
-	const url = 'demo/errorbar.html';
+	const url = 'demo/errorbar.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

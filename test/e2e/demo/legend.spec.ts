@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for legend.html
  */
 test.describe('legend.html test', () => {
-	const url = 'demo/legend.html';
+	const url = 'demo/legend.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests areagroup.html
  */
 test.describe('areagroup.html test', () => {
-    const url = 'demo/areagroup.html';
+    const url = 'demo/areagroup.html?debug';
 
     test.beforeEach(async ({ page }) => {
         await PWTester.goto(page, url);

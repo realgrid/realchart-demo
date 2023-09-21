@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for pie.html
  */
 test.describe('pie.html test', () => {
-	const url = 'demo/pie.html';
+	const url = 'demo/pie.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

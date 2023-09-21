@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for areagroup-negative.html
  */
 test.describe('areagroup-negative.html', () => {
-    const url = 'demo/areagroup-negative.html';
+    const url = 'demo/areagroup-negative.html?debug';
 
     test.beforeEach(async ({ page }) => {
         await PWTester.goto(page, url);

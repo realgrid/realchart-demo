@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for boxplot-multi.html
  */
 test.describe('boxplot-multi.html test', () => {
-	const url = 'demo/boxplot-multi.html';
+	const url = 'demo/boxplot-multi.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);
