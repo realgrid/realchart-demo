@@ -15,11 +15,11 @@ const config = {
     yAxis: {
         title: "Vertical 수직축 Axis",
         // reversed: true,
-        baseValue: -1
+        // baseValue: -1
     },
     series: {
         name: 'bar1',
-        baseValue: -1,
+        // baseValue: -1,
         pointLabel: true,
         // pointWidth: '100%',
         data: [11, 22, 15, null, 0, 9, 13, 27]

@@ -174,6 +174,8 @@ export const createAnimation = function (dom: Element, styleProp: string, toValu
     return ani;
 }
 
+export type RcAnimationEndHandler = (ani: RcAnimation) => void;
+
 export abstract class RcAnimation {
 
     //-------------------------------------------------------------------------
@@ -188,6 +190,7 @@ export abstract class RcAnimation {
     delay = 0;
     duration = RcAnimation.DURATION;
     easing = 'inOutSine';
+    endHandler: RcAnimationEndHandler;
 
     //-------------------------------------------------------------------------
     // fields
@@ -257,6 +260,7 @@ export abstract class RcAnimation {
             this._timer = null;
             this._started = null;
             this._doStop();
+            this.endHandler?.(this);
         }
     }
 

@@ -10,7 +10,7 @@ import { isArray, isBoolean, isObject, isString } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { SvgRichText, RichTextParamCallback } from "../common/RichText";
-import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
+import { Align, NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
 import { IChart } from "./Chart";
@@ -210,18 +210,31 @@ export abstract class FormattableText extends ChartText {
     // properties
     //-------------------------------------------------------------------------
     /**
+     * 수평 정렬.
+     * 
+     * @config
+     */
+    align = Align.CENTER;
+
+    /**
      * label 문자열 앞에 추가되는 문자열.
+     * 
+     * @config
      */
     prefix: string;
 
     /**
      * label 문자열 끝에 추가되는 문자열.
+     * 
+     * @config
      */
     suffix: string;
 
     /**
      * 축의 tick 간격이 1000 이상인 큰 수를 표시할 때 
      * 이 속성에 지정한 symbol을 이용해서 축약형으로 표시한다.
+     * 
+     * @config
      */
     get numberSymbols(): string {
         return this._numberSymbols;
@@ -235,6 +248,8 @@ export abstract class FormattableText extends ChartText {
 
     /**
      * label이 숫자일 때 표시 형식.
+     * 
+     * @config
      */
     get numberFormat(): string {
         return this._numberFormat;
@@ -254,11 +269,15 @@ export abstract class FormattableText extends ChartText {
      * 
      * axis label:
      * 축 line과의 간격.
+     * 
+     * @config
      */
     offset = 2;
 
     /**
      * rich text format을 지정할 수 있다.
+     * 
+     * @config
      */
     get text(): string {
         return this._text;
@@ -270,8 +289,10 @@ export abstract class FormattableText extends ChartText {
         if (value !== this._text) {
             this._text = value;
             if (value) {
-                if (!this._richTextImpl) this._richTextImpl = new SvgRichText()
-                this._richTextImpl.format = value;
+                if (!this._richTextImpl) {
+                    this._richTextImpl = new SvgRichText();
+                }
+                this._richTextImpl.setFormat(value, this.align);
             } else {
                 this._richTextImpl = null;
             }

@@ -1,6 +1,6 @@
 {
   "name": "realchart",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "Wooritech charting library",
   "main": "index.js",
   "author": "",
@@ -28,7 +28,6 @@
     "dldoc": "npm run tsdoc && node dldoc && npx typedoc && node docs/typedoc",
     "dev:www": "npm run dldoc && npx live-server web/realchart",
     "dev": "node app",
-    "copy:demo": "node copyDemo",
     "fiddle": "node exportDemo"
   },
   "devDependencies": {

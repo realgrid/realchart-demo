@@ -235,9 +235,9 @@
     fill: var(--rct-legend-item-disabled);
     text-decoration: var(--rct-legend-item-disabled-decoration)
 }
-.rct-legend-item-marker {
+/* .rct-legend-item-marker {
     stroke: none;
-}
+} */
 .rct-legend-item-marker[data-hidden] {
     fill: #aaa !important;
 }
@@ -475,6 +475,9 @@
 .rct-arearange-series-area {
     fill-opacity: 0.5;
 }
+.rct-arearange-series .rct-arearange-series-area {
+    stroke: none;
+}
 
 /** bubble series */
 .rct-bubble-series {
@@ -661,6 +664,7 @@
 
 /** tooltip */
 .rct-tooltip {
+    pointer-events: none;
     opacity: 0.9;
 }
 .rct-tooltip-back {

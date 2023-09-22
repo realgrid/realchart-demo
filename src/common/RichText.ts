@@ -7,13 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "./Common";
-import { ZWSP } from "./Types";
+import { Align, ZWSP } from "./Types";
 import { TextElement } from "./impl/TextElement";
 
 const HEIGHT = '$_TH';
 const WIDTH = '$_TW';
 
-export type RichTextParamCallback = (target: any, param: string) => string;
+export type RichTextParamCallback = (target: any, param: string, format: string) => string;
 
 class Word {
 
@@ -46,7 +46,7 @@ class Word {
             let s = this.text;
 
             for (let i = 0; i < literals.length; i += 3) {
-                s = s.replace(literals[i], callback(target, literals[i + 1]));//, literals[i + 2]));
+                s = s.replace(literals[i], callback(target, literals[i + 1], literals[i + 2]));
             }
             return s;
         }
@@ -78,10 +78,10 @@ class Word {
             
             const s = str.substring(i, j + 1);
             const s2 = s.substring(2, s.length - 1);
-            const k = s2.indexOf(':');
+            const k = s2.indexOf(';');
 
             if (k > 0) {
-                this._literals.push(s, s2.substring(0, k), s2.substr(k + 1));
+                this._literals.push(s, s2.substring(0, k), s2.substring(k + 1));
             } else {
                 this._literals.push(s, s2, '');
             }
@@ -271,6 +271,7 @@ export class SvgRichText {
     // property fields
     //-------------------------------------------------------------------------
     private _format: string;
+    private _align: Align;
     lineHeight = 1;
 
     //-------------------------------------------------------------------------
@@ -282,24 +283,21 @@ export class SvgRichText {
     // constructors
     //-------------------------------------------------------------------------
 	constructor(format?: string) {
-		this.format = format;
+		this.setFormat(format, Align.CENTER);
 	}
 
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /** format */
-	get format(): string {
-		return this._format;
-    }
-    set format(value: string) {
+    setFormat(value: string, align: Align) {
+        this._align = align;
         if (value !== this._format) {
             this._format = value;
             value && this.$_parse(value);
         }
     }
 
-    get lines(): SvgLine[] {
+    lines(): SvgLine[] {
         return this._lines.slice();
     }
 
@@ -324,6 +322,7 @@ export class SvgRichText {
         const widths = [];
         let wMax = 0;
         const firsts: Element[] = [];
+        let x: number;
 
         view.clearDom();
         target = target || view;
@@ -351,13 +350,38 @@ export class SvgRichText {
             wMax = Math.max(w, wMax);
             hMax = Math.max(h, hMax);
         }
-         
-        firsts[0] && firsts[0].setAttribute('x', String((wMax - widths[0]) / 2));
+        
+        if (firsts[0]) {
+            switch (this._align) {
+                case Align.CENTER:
+                    x = (wMax - widths[0]) / 2;
+                    break;
+                case Align.RIGHT:
+                    x = wMax - widths[0];
+                    break;
+                default:
+                    x = 0;
+                    break;
+            }
+            firsts[0] && firsts[0].setAttribute('x', String(x));
+        }
+
         for (let i = 1; i < firsts.length; i++) {
             const span = view.insertElement(doc, 'tspan', firsts[i]);
             const h: any = Math.ceil(view.getAscent(this._lines[i][HEIGHT]));
 
-            span.setAttribute('x', String((wMax - widths[i]) / 2));
+            switch (this._align) {
+                case Align.CENTER:
+                    x = (wMax - widths[0]) / 2;
+                    break;
+                case Align.RIGHT:
+                    x = wMax - widths[0];
+                    break;
+                default:
+                    x = 0;
+                    break;
+            }
+            span.setAttribute('x', String(x));
             span.setAttribute('dy', h);
             span.innerHTML = ZWSP;
         }

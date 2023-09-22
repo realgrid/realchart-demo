@@ -23,9 +23,6 @@ export class LineSeriesPoint extends DataPoint {
     shape: Shape;
 }
 
-/**
- * chart.series[type=line|area|arearange].marker
- */
 export class LineSeriesMarker extends SeriesMarker {
 
     //-------------------------------------------------------------------------
@@ -69,9 +66,11 @@ export abstract class LineSeriesBase extends Series {
     // fields
     //-------------------------------------------------------------------------
     /**
+     * 데이터 포인트 maker 설정 정보.
+     * 
      * @config
      */
-    marker = new LineSeriesMarker(this);
+    marker: LineSeriesMarker = new LineSeriesMarker(this);
     private _shape: Shape;
 
     //-------------------------------------------------------------------------
@@ -91,7 +90,7 @@ export abstract class LineSeriesBase extends Series {
     // methods
     //-------------------------------------------------------------------------
     getShape(p: LineSeriesPoint): Shape {
-        return p.shape || this.marker.shape || this._shape;
+        return (p && p.shape) || this.marker.shape || this._shape;
     }
 
     getRadius(p: LineSeriesPoint): number {
@@ -209,6 +208,11 @@ export class AreaSeries extends LineSeries {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    /**
+     * area 영역에 적용할 스타일셋이나 class selector.
+     * 
+     * @config
+     */
     areaStyle: StyleProps;
 
     //-------------------------------------------------------------------------
