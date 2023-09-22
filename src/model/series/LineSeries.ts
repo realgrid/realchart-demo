@@ -12,7 +12,7 @@ import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
-import { MarerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
+import { MarkerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
 
 export class LineSeriesPoint extends DataPoint {
 
@@ -37,29 +37,28 @@ export class LineSeriesMarker extends SeriesMarker {
      * 
      * @config
      */
-    firstVisible = MarerVisibility.DEFAULT;
+    firstVisible = MarkerVisibility.DEFAULT;
     /**
      * 첫번째 point의 marker 표시 여부.
      * 
      * @config
      */
-    lastVisible = MarerVisibility.DEFAULT;
+    lastVisible = MarkerVisibility.DEFAULT;
     /**
      * 최소값 point들의 marker 표시 여부.
      * 
      * @config
      */
-    minVisible = MarerVisibility.DEFAULT;
+    minVisible = MarkerVisibility.DEFAULT;
     /**
      * 최대값 point들의 marker 표시 여부.
      * 
      * @config
      */
-    maxVisible = MarerVisibility.DEFAULT;
+    maxVisible = MarkerVisibility.DEFAULT;
 }
 
 /**
- * @config chart.series
  */
 export abstract class LineSeriesBase extends Series {
 

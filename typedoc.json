@@ -1,12 +1,13 @@
 {
     "entryPoints": [
-        "./src/DListControl.ts"
+        "./src/main.ts"
     ],
-    "out": "api/typedoc",
+    "json": "docs/.tdout/main.json",
     "exclude": ["./node_modules/**/*"],
     "externalPattern": ["./node_modules/**/*"],
     "excludeExternals": true,
     "excludePrivate": true,
     "excludeProtected": true,
-    "disableSources": true
+    "disableSources": true,
+    "logLevel": "Error"
 }

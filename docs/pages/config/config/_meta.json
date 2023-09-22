@@ -1,0 +1,9 @@
+{
+  "title": "title",
+  "subtitle": "subtitle",
+  "series": "series[]",
+  "xAxis": "xAxis[]",
+  "yAxis": "yAxis[]",
+  "legend": "legend",
+  "options": "options"
+}

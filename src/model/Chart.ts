@@ -127,9 +127,6 @@ const axis_types = {
     'log': LogAxis
 }
 
-/**
- * @config chart.options
- */
 export class Credits extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -234,6 +231,7 @@ export class ChartOptions extends ChartItem {
     axisGap = 8;
     /**
      * 크레딧 모델.
+     * @config
      */
     credits = new Credits(null);
 

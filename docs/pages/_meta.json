@@ -1,0 +1,31 @@
+{
+  "*": {
+    "type": "page"
+  },
+  "index": {
+    "type": "page",
+    "title": "Nextra",
+    "display": "hidden",
+    "theme": {
+      "layout": "raw"
+    }
+  },
+  "docs": {
+    "title": "API",
+    "type":"page"
+  },
+  "config": {
+    "title": "Config",
+    "type":"page"
+  },
+  "demo": {
+    "title": "데모",
+    "type":"page"
+  },
+  "pricing": {
+    "title": "구입문의",
+    "type": "page",
+    "href": "https://www.realgrid.com",
+    "newWindow": true
+  }
+}
