@@ -341,7 +341,7 @@ class MDGenerater {
     const { name, enums } = param;
     return enums.map(e => {
       const content = this._fixContent(e.content).replace(/\n/g, '  ');
-      return `- \`${e.value}\` ${content}`
+      return `- \`'${e.value}'\` ${content}`
     }).join('\n');
   }
 
@@ -406,7 +406,8 @@ class MDGenerater {
     if (root != 'chart' || !opt) return;
 
     // 개요
-    const _content = `## ${opt}${type ? '.' + type : ''}\n${this._fixContent(content)}\n`;
+    const typeStr = `[type=${type}]`;
+    const _content = `## ${opt}${type ? typeStr : ''}\n${this._fixContent(content)}\n`;
     
     if ((opt == 'series' || opt == 'axis') && !type) return;
 
@@ -461,7 +462,7 @@ class MDGenerater {
   }
 
   saveFile() {
-    const root = 'docs/pages/docs/createChart';
+    const root = 'docs/pages/config/config';
     this._saveFile(root, this.docMap);
   }
 

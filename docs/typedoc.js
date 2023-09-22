@@ -13,7 +13,7 @@ typedocNextra.createDocumentation({
   // for (const t of ['classes', 'functions']) {
   ['classes', 'functions'].forEach(t => {
     const from = path.join(__dirname, `/.tdout/docs/${t}/realchart`)
-    const to = path.join(__dirname, "/pages/docs/")
+    const to = path.join(__dirname, "/pages/docs/api/")
 
     fs.readdir(from, ((err, files) => {
       files.forEach(f => {

@@ -1,0 +1,82 @@
+## xAxis[type=time]
+timeUnit(기본값 1)밀리초가 1에 해당한다.
+## Properties
+
+### baseValue: number
+
+### endFit
+축 끝 위치에 tick 표시 여부.
+ strictMax 가 설정되면 무시되고  AxisFit.VALUE 로 적용된다.  
+`default: AxisFit.DEFAULT`  
+- `'default'` x축이면  VALUE , y축이면  TICK .
+- `'tick'` 축의 min/max가 tick에 해당하지 않는 경우 tick이 표시될 수 있도록 증가 시킨다.
+- `'value'` 축의 min/max에 맞춰 표시한다.
+### grid
+`default: ...`  
+
+### marginFar: number
+차트 경계나 뒤쪽 축 사이의 여백 크기.  
+`default: 0`  
+
+### marginNear: number
+Plot 영역이나 앞쪽 축 사이의 여백 크기.  
+`default: 0`  
+
+### maxPadding: number
+마지막 tick 뒤쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
+이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.
+ endFit 이  AxitFit.TICK 일 때,
+data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
+ strictMax 가 지정되거나,  maxValue 가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다.  
+
+### maxValue: number
+명시적으로 지정하는 최대값.
+축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.
+ maxPadding 도 무시된다.  
+
+### minPadding: number
+첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
+이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.
+ startFit 이  AxitFit.TICK 일 때,
+data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
+ strictMin 가 지정되거나,  minValue 이 계산된 최소값보다 작은 경우에도 이 속성은 무시된다.  
+
+### minValue: number
+명시적으로 지정하는 최소값.
+축에 연결된 data point들의 값으로 계산된 최소값 대신 이 값이 축의 최소값이 된다.
+ minPadding 도 무시된다.  
+
+### nullable: boolean
+data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.  
+`default: true`  
+
+### padding: number
+minPadding ,  maxPadding 이 설정되지 않았을 때 적용되는 기본값이다.  
+`default: 0.05`  
+
+### position
+표시 위치.  
+`default: AxisPosition.NORMAL`  
+- `'base'` Y축의 baseValue 지점에 표시된다.      [주의]   1. 축에 연결된 시리즈들이 BarSeries 계열일 때만 가능하다.  2. 차트의 X축 하나에만 적용할 수 있다. 두번째로 지정된 축의 속성은  NORMAL 로 적용된다.  3. 상대 축이 **linear** 가 아니거나  LinearAxis.baseValue 가 min 보다 작거나 max보다 크면 이 값은 무시되고,      NORMAL 로 적용된다.
+- `'normal'` X축은 아래쪽에 수평으로, Y축은 왼쪽에 수직으로 표시된다.       Chart.inverted 이면 Y축이 아래쪽에 수평으로, X축은 왼쪽에 수직으로 표시된다.
+- `'opposite'` X축은 위쪽에 수평으로, Y축은 오른쪽에 수직으로 표시된다.       Chart.inverted 이면 Y축이 위쪽에 수평으로, X축은 오른쪽에 수직으로 표시된다.
+### reversed: boolean
+true면 반대 방향으로 point 위치들이 지정된다.  
+`default: false`  
+
+### startFit
+축 시작 위치에 tick 표시 여부.
+ strictMin 이 설정되고  AxisFit.VALUE 로 적용된다.  
+`default: AxisFit.DEFAULT`  
+- `'default'` x축이면  VALUE , y축이면  TICK .
+- `'tick'` 축의 min/max가 tick에 해당하지 않는 경우 tick이 표시될 수 있도록 증가 시킨다.
+- `'value'` 축의 min/max에 맞춰 표시한다.
+### strictMax: number
+무조건 적용되는 최대값.
+즉, 이 값보다 큰 값을 갖는 시리즈 포인트들은 표시되지 않는다.
+maxPadding도 적용되지 않는다.  
+
+### strictMin: number
+무조건 적용되는 최소값.
+즉, 이 값보다 작은 값을 갖는 시리즈 포인트들은 표시되지 않는다.
+minPadding도 적용되지 않는다.  

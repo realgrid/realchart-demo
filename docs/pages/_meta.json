@@ -11,7 +11,11 @@
     }
   },
   "docs": {
-    "title": "문서",
+    "title": "API",
+    "type":"page"
+  },
+  "config": {
+    "title": "Config",
     "type":"page"
   },
   "demo": {
