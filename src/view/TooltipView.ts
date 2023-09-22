@@ -10,8 +10,10 @@ import { PathBuilder } from "../common/PathBuilder";
 import { createAnimation } from "../common/RcAnimation";
 import { PathElement, RcControl, RcElement } from "../common/RcControl";
 import { SvgRichText } from "../common/RichText";
+import { Align } from "../common/Types";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { DataPoint } from "../model/DataPoint";
+import { Series } from "../model/Series";
 import { Tooltip } from "../model/Tooltip";
 
 export class TooltipView extends RcElement {
@@ -24,8 +26,9 @@ export class TooltipView extends RcElement {
     private _richText: SvgRichText;
 
     private _model: Tooltip;
-    private _textCallback = (point: DataPoint, param: string): string => {
-        return this._model.getValue(point, param);
+    private _series: Series;
+    private _textCallback = (point: DataPoint, param: string, format: string): string => {
+        return this._model.getValue(this._series, point, param, format);
     }
     private _hideTimer: any;
     private _hideHandler = () => {
@@ -57,17 +60,18 @@ export class TooltipView extends RcElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    show(model: Tooltip, point: DataPoint, x: number, y: number, animate: boolean): void {
-        this._model = model;
+    show(series: Series, point: DataPoint, x: number, y: number, animate: boolean): void {
+        const model = this._model = series.tooltip;
+        const tv = this._textView;
+
+        this._series = series;
 
         // text
-        const tv = this._textView;
-        
-        this._richText.format = model.text;
-        this._richText.build(this._textView, point, this._textCallback);
+        this._richText.setFormat(model.text, Align.LEFT);
+        this._richText.build(tv, point, this._textCallback);
 
         // background
-        const r = this._textView.getBBounds();
+        const r = tv.getBBounds();
         const w = Math.max(model.minWidth || 0, r.width + 8 * 2);
         const h = Math.max(model.minHeight || 0, r.height + 6 * 2);
         const pb = new PathBuilder();
@@ -75,32 +79,23 @@ export class TooltipView extends RcElement {
         pb.rect(0, 0, w , h);
         this._back.setPath(pb.end(true));
 
-        this._textView.translate((w - r.width) / 2, (h - r.height) / 2);
+        tv.translate((w - r.width) / 2, (h - r.height) / 2);
 
         // view
-        const tx = this.tx;
-        const ty = this.ty;
+        const dur = this.getStyle('visibility') === 'visible' ? 300 : 0;
 
         if (model.series.chart.isInverted()) {
-            this.translate(x + model.offset, y - h / 2);
+            this.translateEx(x + model.offset, y - h / 2, dur);
         } else {
-            this.translate(x - w / 2, y - h - model.offset);
+            this.translateEx(x - w / 2, y - h - model.offset, dur);
+        }
+        if (dur === 0) {
+            this.setStyle('visibility', 'visible');
         }
 
         if (this._hideTimer) {
             clearTimeout(this._hideTimer);
             this._hideTimer = void 0;
-        }
-        if (this.getStyle('visibility') === 'visible') {
-            this.dom.animate([
-                { transform: `translate(${tx}px,${ty}px)` },
-                { transform: `translate(${this.tx}px,${this.ty}px)` }
-            ], {
-                duration: 300,
-                fill: 'none'
-            });
-        } else {
-            this.setStyle('visibility', 'visible');
         }
     }
 

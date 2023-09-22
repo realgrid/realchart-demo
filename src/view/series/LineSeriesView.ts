@@ -15,6 +15,7 @@ import { Shape, SvgShapes } from "../../common/impl/SvgShape";
 import { Chart } from "../../model/Chart";
 import { LineType } from "../../model/ChartTypes";
 import { DataPoint, IPointPos } from "../../model/DataPoint";
+import { LegendItem } from "../../model/Legend";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
 import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
 import { IPointView, SeriesView } from "../SeriesView";
@@ -530,16 +531,18 @@ class MarkerView extends RcElement {
         this._line.setHLine(size / 2, 0, size * 2);
         this.add(this._marker = new PathElement(doc));
         this._marker.translate(size / 2, 0);
-        this.setShape(Shape.CIRCLE);
+        this.setShape(Shape.CIRCLE, 12);
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    setShape(value: string): void {
-        if (value !== this._shape) {
+    setShape(value: string, size: number): void {
+        if (value !== this._shape || size !== this._size) {
             this._shape = value;
-            SvgShapes.setShape(this._marker, value as any, this._size / 2);   
+            SvgShapes.setShape(this._marker, value as any, (this._size = size) / 2);   
+            this._marker.translate(size / 2, 0);
+            this._line.setHLine(size / 2, 0, size * 2);
         }
     }
 }
@@ -556,6 +559,7 @@ export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, LineSeriesView.CLASS);
+        //010-6669-7701
     }
 
     //-------------------------------------------------------------------------
@@ -566,9 +570,10 @@ export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
         return new MarkerView(doc, size);
     }
 
-    protected _getLegendMarker(doc: Document): RcElement {
-        const m = super._getLegendMarker(doc);
-
+    protected _getLegendMarker(doc: Document, model: LineSeries): RcElement {
+        const m = super._getLegendMarker(doc, model);
+        
+        (m as MarkerView).setShape(model.getShape(null), Math.min(LegendItem.MARKER_SIZE, model.marker.radius * 2));
         return m;
     }
 }

@@ -29,7 +29,7 @@ export class LegendItem extends ChartItem {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly MARKER_SIZE = 12;
+    static readonly MARKER_SIZE = 10;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -47,10 +47,35 @@ export class LegendItem extends ChartItem {
 }
 
 export enum LegendPosition {
+    /**
+     * 차트 본체 아래 표시한다.
+     * 
+     * @config
+     */
     BOTTOM = 'bottom',
+    /**
+     * 차트 타이틀 아래 표시한다.
+     * 
+     * @config
+     */
     TOP = 'top',
+    /**
+     * 차트 본체 오른쪽에 표시한다.
+     * 
+     * @config
+     */
     RIGHT = 'right',
+    /**
+     * 차트 본체 왼쪽에 표시한다.
+     * 
+     * @config
+     */
     LEFT = 'left',
+    /**
+     * 차트 본체 영역 내부에 표시한다.
+     * 
+     * @config
+     */
     PLOT = 'plot',
     SUBPLOT = 'subplot'
 }

@@ -11,7 +11,7 @@ import { Align, SVGStyleOrClass, VerticalAlign, fixnum, isNull } from "../common
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
-import { IClusterable, IPlottingItem, ISeries, Series } from "./Series";
+import { IClusterable, IPlottingItem } from "./Series";
 
 export interface IAxis {
 
@@ -80,7 +80,7 @@ export class AxisLine extends AxisItem {
 }
 
 /**
- * @config axis.title
+ * @config chart.axis.title
  */
 export class AxisTitle extends AxisItem {
 
@@ -131,7 +131,7 @@ export class AxisTitle extends AxisItem {
  * <br>
  * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
  * 
- * @config axis.grid
+ * @config chart.axis.grid
  */
 export class AxisGrid extends AxisItem {
 
@@ -176,7 +176,7 @@ export class AxisGrid extends AxisItem {
 }
 
 /**
- * @config axis.guide.label
+ * @config chart.axis.guide.label
  */
 export class AxisGuideLabel extends FormattableText {
 

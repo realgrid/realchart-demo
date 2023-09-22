@@ -642,7 +642,7 @@ export class RcElement extends RcObject {
     }
 
     get y(): number {
-        return this._x;
+        return this._y;
     }
     set y(value: number) {
         if (value !== this._y) {
@@ -835,6 +835,10 @@ export class RcElement extends RcObject {
         return this;
     }
 
+    isDomAnimating(): boolean {
+        return this._dom.getAnimations().length > 0;
+    }
+
     translate(x: number, y: number): RcElement {
         if (x !== this._translateX || y !== this._translateY) {
             if (Utils.isValidNumber(x)) this._translateX = x;
@@ -844,18 +848,46 @@ export class RcElement extends RcObject {
         return this;
     }
 
+    translateEx(x: number, y: number, duration = 0, invalidate = true): RcElement {
+        x = Utils.isNumber(x) ? x : this._translateX;
+        y = Utils.isNumber(y) ? y : this._translateY;
+
+        if (x !== this._translateX || y !== this._translateY) {
+            if (duration > 0) {
+                const ani = this._dom.animate([
+                    { transform: `translate(${this._translateX}px,${this._translateY}px)` },
+                    { transform: `translate(${x}px,${y}px)` }
+                ], {
+                    duration: duration,
+                    fill: 'none'
+                });
+                if (invalidate) {
+                    ani.addEventListener('finish', () => this.control?.invalidateLayout());
+                }
+            }
+            this._translateX = x;
+            this._translateY = y;
+            this._updateTransform();
+        }
+        return this;
+    }
+
     translateX(x: number): RcElement {
         if (x !== this._translateX) {
-            if (Utils.isValidNumber(x)) this._translateX = x;
-            this._updateTransform();
+            if (Utils.isValidNumber(x)) {
+                this._translateX = x;
+                this._updateTransform();
+            }
         }
         return this;
     }
 
     translateY(y: number): RcElement {
         if (y !== this._translateY) {
-            if (Utils.isValidNumber(y)) this._translateY = y;
-            this._updateTransform();
+            if (Utils.isValidNumber(y)) {
+                this._translateY = y;
+                this._updateTransform();
+            }
         }
         return this;
     }

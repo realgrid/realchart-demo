@@ -191,6 +191,10 @@ export class CategoryAxis extends Axis {
         return this._cats;
     }
 
+    getCategory(index: number): string {
+        return this._cats[index];
+    }
+
     getWdith(length: number, category: number): number {
         return 0;
     }

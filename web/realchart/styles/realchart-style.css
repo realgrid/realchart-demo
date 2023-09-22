@@ -664,6 +664,7 @@
 
 /** tooltip */
 .rct-tooltip {
+    pointer-events: none;
     opacity: 0.9;
 }
 .rct-tooltip-back {

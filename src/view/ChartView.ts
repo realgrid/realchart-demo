@@ -769,7 +769,7 @@ export class ChartView extends RcElement {
         const x = point.xPos + this._bodyView.tx;
         const y = point.yPos + this._bodyView.ty;
 
-        this._tooltipView.show(series.tooltip, point, x, y, true);
+        this._tooltipView.show(series, point, x, y, true);
     }
 
     hideTooltip(): void {

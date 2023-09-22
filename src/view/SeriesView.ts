@@ -42,7 +42,7 @@ export class PointLabelView extends LabelElement {
     // fields
     //-------------------------------------------------------------------------
     point: DataPoint;
-    moving = false;
+    // moving = false;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -403,7 +403,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     prepareSeries(doc: Document, model: T): void {
-        model.setLegendMarker(this._getLegendMarker(doc));
+        model.setLegendMarker(this._getLegendMarker(doc, model));
 
         // this._viewRate = NaN; // animating 중 다른 시리즈 등의 요청에 의해 여기로 진입할 수 있다.
         this.setData('index', (model.index % PALETTE_LEN) as any);
@@ -461,7 +461,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
 
-    protected _getLegendMarker(doc: Document): RcElement {
+    protected _getLegendMarker(doc: Document, model: T): RcElement {
         if (!this._legendMarker) {
             this._legendMarker = this._createLegendMarker(doc, LegendItem.MARKER_SIZE);
         }
