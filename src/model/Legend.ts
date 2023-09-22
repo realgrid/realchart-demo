@@ -8,7 +8,7 @@
 
 import { pickNum } from "../common/Common";
 import { RcElement } from "../common/RcControl";
-import { AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
+import { Align, AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
@@ -94,6 +94,27 @@ export enum LegendLayout {
      * item들을 수직으로 배치
      */
     VERTICAL = 'vertical'
+}
+
+export enum LegendItemsAlign {
+    /**
+     * 수평일 때 왼쪽, 수직일 때는 위쪽으로 몰아서 배치한다.
+     * 
+     * @config
+     */
+    START = 'start',
+    /**
+     * 수평 혹은 수직의 중앙으로 몰아서 배치한다.
+     * 
+     * @config
+     */
+    CENTER = 'center',
+    /**
+     * 수평일 때 오른쪽, 수직일 때는 아래쪽으로 몰아서 배치한다.
+     * 
+     * @config
+     */
+    END = 'end'
 }
 
 /**
@@ -203,6 +224,11 @@ export class Legend extends ChartItem {
      * @config
      */
     itemsPerLine: number;
+    /**
+     * 라인 사이의 간격.
+     * 
+     * @config
+     */
     lineGap = 4;
     /**
      * 수평 {@link layout 배치}일 때,
@@ -218,6 +244,12 @@ export class Legend extends ChartItem {
      * @config
      */
     maxHeight: RtPercentSize;
+    /**
+     * 한 라인의 item들이 배치되는 위치.
+     * 
+     * @config
+     */
+    itemsAlign = LegendItemsAlign.CENTER;
 
     items(): LegendItem[] {
         return this._items.slice(0);

@@ -320,6 +320,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected _inverted = false;
     protected _animatable = true;
     private _viewRate = NaN;
+    _animations: Animation[] = [];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -369,12 +370,16 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     _animationStarted(ani: Animation): void {
+        this._animations.push(ani);
         if (this._labelContainer && this._labelContainer.visible) {
             this._labelContainer.setVisible(false);
         }
     }
 
     _animationFinished(ani: Animation): void {
+        const i = this._animations.indexOf(ani);
+        i >= 0 && this._animations.splice(i, 1);
+
         this._invalidate();
     }
 
@@ -509,7 +514,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     protected _animating(): boolean {
-        return !isNaN(this._viewRate);
+        return !isNaN(this._viewRate) || this._animations.length > 0;
     }
 
     protected _lazyPrepareLabels(): boolean { return false; }
