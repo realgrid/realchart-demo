@@ -20,13 +20,12 @@ web/realchart/docs/
 web/realchart/lib/realchart*.*
 !web/realchart/lib/realchart-lic.js
 /test-results/
-/e2e/src/js/**
-/e2e/src/styles/**
 
 www
 test-results
 playwright-report
 .playwright
+test/e2e/copyDemo.spec.js
 
 # docs
 node_modules

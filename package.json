@@ -28,7 +28,6 @@
     "jsdoc": "rm -rf api/jsdoc && npx jsdoc -c jsdoc.json",
     "dev:www": "npm run dldoc && npx live-server web/realchart",
     "dev": "node app",
-    "pub:demo": "npx playwright test -g 'copy demo' --project=chromium --trace off",
     "fiddle": "node exportDemo"
   },
   "devDependencies": {
