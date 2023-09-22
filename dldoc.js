@@ -34,6 +34,17 @@ class Tunner {
   }
 
   /**
+   * `@{tag} url label...` 형태의 url링크를 변환한다.
+   * @param tag: any
+   * @returns url item string
+   */
+  _parseLinkTag(tag,baseUrl='') {
+    const [{text}] = tag.content;
+    const [src, ...label] = text.split(' ');
+    return `- [${label.join(' ')}](${path.join(baseUrl, src)})`;
+  }
+
+  /**
    * @param tags: Array
    * @returns string
    */
@@ -44,6 +55,7 @@ class Tunner {
       return content?.map(c => c.text).join(' ');
     });
   }
+
   /**
    * jsfiddle inline으로 가정한다. @fiddle url label...
    * @param tags: Array
@@ -52,20 +64,30 @@ class Tunner {
   _parseFiddleTag(tags) {
     const fiddles = this._findTags(tags, '@fiddle');
     return fiddles?.map(fiddle => {
-      const [{text}] = fiddle.content;
-      const [src, ...label] = text.split(' ');
-      return `- [${label.join(' ')}](${path.join(this.fiddleUrl, src)})`;
+      return this._parseLinkTag(fiddle, this.fiddleUrl);
     }).join('\n');
   }
 
   /**
-   * defaultValue를 사용하되, @default tag가 있으면 설명을 추가한다.
+   * defaultValue를 사용하되, @default tag가 있으면 설명을 대체한다.
    * @param tags: Array
    * @returns string
    */
   _parseDefaultTag(tags) {
     const dft = this._findTag(tags, '@default');
     return dft?.content.map(c => c.text).join('\n');
+  }
+
+  /**
+   * 내부 문서 링크. @see url label...
+   * @param tags: Array
+   * @returns string
+   */
+  _parseSeeTag(tags) {
+    const sees = this._findTag(tags, '@see');
+    return sees?.map(see => {
+      return this._parseLinkTag(see);
+    }).join('\n');
   }
 
   /**
@@ -160,6 +182,7 @@ class Tunner {
     const { summary, blockTags } = { ...comment };
     let lines = this._parseSummary(summary);
     // @config content
+    // todo: except tag 제외하기
     const { config, fiddle, defaultBlock } = this._parseBlockTags(blockTags)
     if (fiddle) {
       lines += `\n${fiddle}`
