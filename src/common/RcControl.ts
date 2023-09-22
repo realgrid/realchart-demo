@@ -18,6 +18,8 @@ import { ISize } from "./Size";
 import { IPoint } from "./Point";
 
 export interface IPointerHandler {
+    handleDown(ev: PointerEvent): void;
+    handleUp(ev: PointerEvent): void;
     handleMove(ev: PointerEvent): void;
     handleClick(ev: PointerEvent): void;
     handleDblClick(ev: PointerEvent): void;
@@ -506,13 +508,15 @@ export abstract class RcControl extends RcWrappableObject {
         this._pointerHandler && this._pointerHandler.handleClick(this.toOffset(ev));
     }
 
-    private _dblClickHandler = (event: PointerEvent) => {
+    private _dblClickHandler = (ev: PointerEvent) => {
+        this._pointerHandler && this._pointerHandler.handleDblClick(this.toOffset(ev));
     }
 
     private _touchMoveHandler = (ev: TouchEvent) => {
     }
 
     private _pointerDownHandler = (ev: PointerEvent) => {
+        this._pointerHandler && this._pointerHandler.handleDown(this.toOffset(ev));
     }
 
     private _pointerMoveHandler = (ev: PointerEvent) => {
@@ -520,6 +524,7 @@ export abstract class RcControl extends RcWrappableObject {
     }
 
     private _pointerUpHandler = (ev: PointerEvent) => {
+        this._pointerHandler && this._pointerHandler.handleUp(this.toOffset(ev));
     }
 
     private _pointerCancelHandler = (ev: PointerEvent) => {

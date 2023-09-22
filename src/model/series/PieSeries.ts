@@ -130,12 +130,6 @@ export class PieSeries extends RadialSeries {
      * @config
      */
     innerText = new PieSeriesText();
-    /**
-     * 데이터 포인트별 legend 항목을 표시한다.
-     * 
-     * @config
-     */
-    legendByPoint = false;
 
     //-------------------------------------------------------------------------
     // methods
@@ -154,11 +148,6 @@ export class PieSeries extends RadialSeries {
         return this._sliceDim ? calcPercent(this._sliceDim, rd) : 0;
     }
 
-    getLabelPosition(): PointItemPosition {
-        const p = this.pointLabel.position;
-        return p === PointItemPosition.AUTO ? PointItemPosition.INSIDE : p;
-    }
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -166,22 +155,8 @@ export class PieSeries extends RadialSeries {
         return 'pie';
     }
 
-    _colorByPoint(): boolean {
-        return true;
-    }
-
     protected _createPoint(source: any): DataPoint {
         return new PieSeriesPoint(source);
-    }
-
-    getLegendSources(list: ILegendSource[]): void {
-        if (this.legendByPoint) {
-            this.displayInLegend !== false && this._runPoints.forEach(p => {
-                list.push(p as PieSeriesPoint);
-            })        
-        } else {
-            super.getLegendSources(list);
-        }
     }
 
     protected _doLoad(src: any): void {

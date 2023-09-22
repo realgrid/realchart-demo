@@ -1165,6 +1165,12 @@ export abstract class WidgetSeries extends Series {
      * widget 본체의 크기나 표시 위치가 변경됐을 때 animation 실행 여부
      */
     boundsAnimation = true;
+    /**
+     * 데이터 포인트별 legend 항목을 표시한다.
+     * 
+     * @config
+     */
+    legendByPoint = false;
 
     //-------------------------------------------------------------------------
     // methods
@@ -1176,11 +1182,30 @@ export abstract class WidgetSeries extends Series {
         };
     }
 
+    getLabelPosition(): PointItemPosition {
+        const p = this.pointLabel.position;
+        return p === PointItemPosition.AUTO ? PointItemPosition.INSIDE : p;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     needAxes(): boolean {
         return false;
+    }
+
+    _colorByPoint(): boolean {
+        return true;
+    }
+
+    getLegendSources(list: ILegendSource[]): void {
+        if (this.legendByPoint) {
+            this.displayInLegend !== false && this._runPoints.forEach(p => {
+                list.push(p as WidgetSeriesPoint);
+            })        
+        } else {
+            super.getLegendSources(list);
+        }
     }
 
     //-------------------------------------------------------------------------

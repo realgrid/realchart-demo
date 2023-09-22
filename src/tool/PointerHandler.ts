@@ -33,6 +33,12 @@ export class ChartPointerHandler implements IPointerHandler {
     //-------------------------------------------------------------------------
     // IPointerHandler
     //-------------------------------------------------------------------------
+    handleDown(ev: PointerEvent): void {
+    }
+
+    handleUp(ev: PointerEvent): void {
+    }
+
     handleMove(ev: PointerEvent): void {
         const x = (ev as any).pointX;
         const y = (ev as any).pointY;
