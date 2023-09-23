@@ -263,13 +263,13 @@ export class AxisBreak extends AxisItem {
     from: number;
     to: number;
     size: RtPercentSize = '30%';
-    space = 12;
+    space = 16;
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _sizeDim: IPercentSize;
-    _sect: AxisBreakSect;
+    _sect: IAxisBreakSect;
 
     //-------------------------------------------------------------------------
     // method
@@ -289,7 +289,7 @@ export class AxisBreak extends AxisItem {
     }
 }
 
-interface AxisBreakSect {
+interface IAxisBreakSect {
     from: number;
     to: number;
     pos: number;
@@ -334,8 +334,8 @@ export abstract class ContinuousAxis extends Axis {
     private _maxBased: boolean;
 
     private _runBreaks: AxisBreak[];
-    private _sects: AxisBreakSect[];
-    private _lastSect: AxisBreakSect;
+    private _sects: IAxisBreakSect[];
+    private _lastSect: IAxisBreakSect;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -428,11 +428,12 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     hasBreak(): boolean {
-        return !!this._runBreaks;
+        return this._runBreaks != null;
     }
 
     runBreaks(): AxisBreak[] {
-        return this._runBreaks && this._runBreaks.slice(0);
+        // TODO: v1.0 - break 하나만 적용한다. (여러 개가 의미가 있는가?)
+        return this._runBreaks && this._runBreaks.slice(0, 1);
     }
 
     getStartFit(): AxisFit {
@@ -559,7 +560,7 @@ export abstract class ContinuousAxis extends Axis {
         this._markPoints = this._ticks.map(t => t.pos);
     }
 
-    private $_buildBrokenSteps(sect: AxisBreakSect): number[] {
+    private $_buildBrokenSteps(sect: IAxisBreakSect): number[] {
         const tick = this.tick as ContinuousAxisTick;
         const steps = tick.buildSteps(sect.len, void 0, sect.from, sect.to);
 
@@ -635,7 +636,11 @@ export abstract class ContinuousAxis extends Axis {
             const sect = this._sects.find(s => value < s.to) || this._lastSect;
             const p = sect.len * (value - sect.from) / (sect.to - sect.from);
 
-            return (this.reversed ? length - p : p) + sect.pos;
+            if (this.reversed) {
+                return length - p - sect.pos;
+            } else {
+                return p + sect.pos;
+            }
         } else {
             const p = length * (value - this._min) / (this._max - this._min);
 

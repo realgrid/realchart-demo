@@ -9,7 +9,7 @@
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
-import { LayerElement, PathElement, RcControl, RcElement } from "../common/RcControl";
+import { ClipElement, LayerElement, PathElement, RcControl, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { Align, VerticalAlign, _undefined, assert } from "../common/Types";
 import { ImageElement } from "../common/impl/ImageElement";
@@ -139,7 +139,10 @@ export class AxisBreakView extends RcElement {
     // fields
     //-------------------------------------------------------------------------
     _model: AxisBreak;
+    private _upLine: PathElement;
+    private _downLine: PathElement;
     private _mask: PathElement;
+    private _clip: ClipElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -148,6 +151,11 @@ export class AxisBreakView extends RcElement {
         super(doc, 'rct-axis-break');
 
         this.add(this._mask = new PathElement(doc));
+        this._mask.setStyle('stroke', 'none');
+        this.add(this._upLine = new PathElement(doc));
+        this._upLine.setStyle('fill', 'none');
+        this.add(this._downLine = new PathElement(doc));
+        this._downLine.setStyle('fill', 'none');
     }
 
     //-------------------------------------------------------------------------
@@ -157,12 +165,101 @@ export class AxisBreakView extends RcElement {
         this._model = model;
     }
 
-    layout(width: number, height: number): void {
+    layout(width: number, height: number, vertical: boolean): void {
+        if (this._clip) {
+            this._clip.resize(width, height);
+        } else {
+            this._clip = this.control.clipBounds(0, 0, width, height);
+        }
+        this.setClip(this._clip);
+
         const m = this._model;
+        const len = m._sect.len;
         const pb = new PathBuilder();
 
-        pb.rect(0, 0, width, m._sect.len);
-        this._mask.setPath(pb.end());
+        if (vertical) {
+            let y = 0;
+            let x1 = 0;
+            let x2 = len / 2;
+            let x3 = len;
+
+            pb.move(x1, y);
+            while (y < height) {
+                y += 20;
+                pb.line(x2, y);
+                y += 20;
+                pb.line(x1, y);
+            }
+            this._downLine.setPath(pb.end(false));
+
+            y = 0;
+            pb.clear().move(x2, y);
+            while (y < height) {
+                y += 20;
+                pb.line(x3, y);
+                y += 20;
+                pb.line(x2, y);
+            }
+            this._upLine.setPath(pb.end(false));
+
+            y = 0;
+            pb.clear().move(x1);
+            while (y < height) {
+                y += 20;
+                pb.line(x2, y);
+                y += 20;
+                pb.line(x1, y);
+            }
+            pb.line(x2, y);
+            while (y >= 0) {
+                y -= 20;
+                pb.line(x3, y);
+                y -= 20;
+                pb.line(x2, y);
+            }
+            this._mask.setPath(pb.end());
+        } else {
+            let x = 0;
+            let y1 = 0;
+            let y2 = len / 2;
+            let y3 = len;
+
+            pb.move(x, y2);
+            while (x < width) {
+                x += 20;
+                pb.line(x, y1);
+                x += 20;
+                pb.line(x, y2);
+            }
+            this._upLine.setPath(pb.end(false));
+
+            x = 0;
+            pb.clear().move(x, y3);
+            while (x < width) {
+                x += 20;
+                pb.line(x, y2);
+                x += 20;
+                pb.line(x, y3);
+            }
+            this._downLine.setPath(pb.end(false));
+
+            x = 0;
+            pb.clear().move(x, y2);
+            while (x < width) {
+                x += 20;
+                pb.line(x, y1);
+                x += 20;
+                pb.line(x, y2);
+            }
+            pb.line(x, y3);
+            while (x >= 0) {
+                x -= 20;
+                pb.line(x, y2);
+                x -= 20;
+                pb.line(x, y3);
+            }
+            this._mask.setPath(pb.end());
+        }
     }
 }
 
@@ -717,8 +814,23 @@ export class BodyView extends ChartElement<Body> {
 
             // axis breaks
             this._breakViews.forEach(v => {
-                v.translate(0, h - v._model._sect.pos - v._model._sect.len);
-                v.layout(w, h);
+                const m = v._model;
+                const axis = m.axis;
+
+                if (axis._isHorz) {
+                    if (axis.reversed) {
+                        v.translate(w - m._sect.pos, 0);
+                    } else {
+                        v.translate(m._sect.pos, 0);
+                    }
+                } else {
+                    if (axis.reversed) {
+                        v.translate(0, m._sect.pos);
+                    } else {
+                        v.translate(0, h - m._sect.pos - m._sect.len);
+                    }
+                }
+                v.layout(w, h, m.axis._isHorz);
             });
 
             // axis guides

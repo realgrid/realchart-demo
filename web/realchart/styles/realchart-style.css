@@ -280,8 +280,9 @@
     stroke-width: var(--rct-axis-grid-line-stroke-width);
 }
 .rct-axis-break {
-    stroke: none;
+    stroke: #777;
     fill: white;
+    fill-opacity: 0.9;
 }
 .rct-axis-guide-label {
     fill: blue;
