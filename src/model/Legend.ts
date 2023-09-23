@@ -8,14 +8,14 @@
 
 import { pickNum } from "../common/Common";
 import { RcElement } from "../common/RcControl";
-import { Align, AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
+import { AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 
-export interface ILegendRenderer {
-}
-
+/**
+ * @internal
+ */
 export interface ILegendSource {
     visible: boolean;
 
@@ -24,6 +24,9 @@ export interface ILegendSource {
     legendLabel(): string;
 }
 
+/**
+ * @internal
+ */
 export class LegendItem extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -84,14 +87,20 @@ export enum LegendLayout {
     /**
      * legend가 차트 좌우에 배치되면 item들을 수직으로 배치.
      * legend가 차트 상하에 배치되면 item들을 수평으로 배치.
+     * 
+     * @config
      */
     AUTO = 'auto',
     /**
      * item들을 수평으로 배치
+     * 
+     * @config
      */
     HORIZONTAL = 'horizontal',
     /**
      * item들을 수직으로 배치
+     * 
+     * @config
      */
     VERTICAL = 'vertical'
 }

@@ -68,6 +68,10 @@ function setActions(container) {
         config.legend.position = _getValue(e);
         chart.load(config);
     }, 'bottom');
+    createListBox(container, "itemsAlign", ['start', 'center', 'end'], function (e) {
+        config.legend.itemsAlign = _getValue(e);
+        chart.load(config);
+    }, 'center');
     createListBox(container, "alignBase", ['plot', 'chart'], function (e) {
         config.legend.alignBase = _getValue(e);
         chart.load(config);

@@ -160,6 +160,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
         const yNeck = reversed ? yEnd - pNeck : y1 + pNeck;
         let labelView: PointLabelView;
 
+        // animation 시작 때 감춰진 걸 표시한다.
         this._lineContainer.setVisible(labelViews && !labelInside);
 
         this._segments.forEach((seg) => {
