@@ -311,7 +311,7 @@ export interface ISeries extends IPlottingItem {
     isVisible(p: DataPoint): boolean;
 }
 
-export interface IPointStyleCallbackArgs {
+export interface IDataPointCallbackArgs {
     /* series */
     series: string | number;
     count: number;
@@ -328,7 +328,8 @@ export interface IPointStyleCallbackArgs {
     yValue: any;
 }
 
-export type PointStyleCallback = (args: IPointStyleCallbackArgs) => SVGStyleOrClass;
+export type PointStyleCallback = (args: IDataPointCallbackArgs) => SVGStyleOrClass;
+export type PointClickCallbck = (args: IDataPointCallbackArgs) => boolean;
 
 /**
  */
@@ -376,7 +377,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _referents: Series[];
     _calcedColor: string;
     private _legendMarker: RcElement;
-    protected _pointArgs: IPointStyleCallbackArgs;
+    protected _pointArgs: IDataPointCallbackArgs;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -482,8 +483,19 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * @config
      */
     displayInLegend = true;
-
+    /**
+     * 데이터 point의 동적 스타일 콜백.
+     * 
+     * @config
+     */
     pointStyleCallback: PointStyleCallback;
+    /**
+     * 데이터 point가 클릭될 때 발생하는 이벤트 콜백.
+     * 명시적 true를 리턴하면 기본 동작이 진행되지 않는다.
+     * 
+     * @config
+     */
+    onPointClick: PointClickCallbck;
 
     contains(p: DataPoint): boolean {
         return this._points.contains(p);
@@ -766,23 +778,23 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         }
     }
 
-    protected _createPointArgs(): IPointStyleCallbackArgs {
+    protected _createPointArgs(): IDataPointCallbackArgs {
         return {} as any;
     }
 
-    protected _preparePointArgs(args: IPointStyleCallbackArgs): void {
+    protected _preparePointArgs(args: IDataPointCallbackArgs): void {
         args.series = this.name || this.index;
         args.count = this._points.count;
         // args.vcount = 
     }
 
-    protected _getPointStyleArgs(args: IPointStyleCallbackArgs, p: DataPoint): void {
+    protected _getPointCallbackArgs(args: IDataPointCallbackArgs, p: DataPoint): void {
         p.assignTo(args);
     }
 
     getPointStyle(p: DataPoint): any {
         if (this.pointStyleCallback) {
-            this._getPointStyleArgs(this._pointArgs, p);
+            this._getPointCallbackArgs(this._pointArgs, p);
             return this.pointStyleCallback(this._pointArgs);
         }
     }
@@ -803,6 +815,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 return point.yValue;
             default:
                 return param;
+        }
+    }
+
+    pointClicked(p: DataPoint): boolean {
+        if (this.onPointClick) {
+            this._getPointCallbackArgs(this._pointArgs, p);
+            return this.onPointClick(this._pointArgs);
         }
     }
     
