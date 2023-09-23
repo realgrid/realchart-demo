@@ -117,12 +117,11 @@ export class DataPoint {
             this._readArray(series, v);
         } else if (isObject(v)) {
             this._readObject(series, v);
+            if ((isArray(v.drillDown) || isObject(v.drillDown))) {
+                this.drillDown = v.drillDown;
+            }
         } else {
             this._readSingle(v);
-        }
-
-        if (isArray(this.source.drillDown) || isObject(this.source.drillDown)) {
-            this.drillDown = this.source.drillDown;
         }
     }
 

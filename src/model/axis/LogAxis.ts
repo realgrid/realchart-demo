@@ -53,8 +53,8 @@ export class LogAxis extends ContinuousAxis {
         return v;
     }
 
-    protected _createTick(length: number, step: number): IAxisTick {
-        return super._createTick(length, Math.pow(10, step));
+    protected _createTick(length: number, index: number, step: number): IAxisTick {
+        return super._createTick(length, index, Math.pow(10, step));
     }
 
     getPosition(length: number, value: number): number {

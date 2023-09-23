@@ -58,7 +58,7 @@ class CategoryAxisLabel extends AxisLabel {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    getTick(v: any): string {
+    getTick(index: number, v: any): string {
         if (v != null) {
             return this._getText(v, v, false);
         } else {
@@ -289,7 +289,7 @@ export class CategoryAxis extends Axis {
             ticks.push({
                 pos: NaN,//this.getPosition(length, v),
                 value: v,
-                label: label.getTick(cats[i - 1]),
+                label: label.getTick(i - 1, cats[i - 1]),
             });
         }
         return ticks;

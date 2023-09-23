@@ -414,7 +414,7 @@ export abstract class AxisLabel extends FormattableText {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    abstract getTick(v: any): string;
+    abstract getTick(index: number, value: any): string;
 
     getRotation(): number {
         return this.rotation || 0;

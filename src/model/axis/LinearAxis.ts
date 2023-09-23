@@ -43,12 +43,14 @@ export class ContinuousAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    buildSteps(length: number, base: number, min: number, max: number): number[] {
+    buildSteps(length: number, base: number, min: number, max: number, broken = false): number[] {
         let pts: number[];
 
         this._step = NaN;
 
-        if (Array.isArray(this.steps)) {
+        if (broken) {
+            pts = this._getStepsByPixels(length, pickNum(this.stepPixels * 0.85, 60), base, min, max);
+        } else if (Array.isArray(this.steps)) {
             // 지정한 위치대로 tick들을 생성한다.
             pts = this.steps.slice(0);
         } else if (this._baseAxis instanceof ContinuousAxis) {
@@ -229,7 +231,7 @@ export class ContinuousAxisTick extends AxisTick {
     }
 }
 
-class ContinuousAxisLabel extends AxisLabel {
+class LinearAxisLabel extends AxisLabel {
 
     //-------------------------------------------------------------------------
     // properties
@@ -239,7 +241,7 @@ class ContinuousAxisLabel extends AxisLabel {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    getTick(v: any): string {
+    getTick(index: number, v: any): string {
         return this._getText(null, v, this.useSymbols && (this.axis.tick as ContinuousAxisTick)._step > 100);
     }
 }
@@ -461,7 +463,7 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected _createLabelModel(): AxisLabel {
-        return new ContinuousAxisLabel(this);
+        return new LinearAxisLabel(this);
     }
 
     protected _doLoadProp(prop: string, value: any): boolean {
@@ -493,7 +495,7 @@ export abstract class ContinuousAxis extends Axis {
             base = 0;
         } 
 
-        let steps = tick.buildSteps(length, base, min, max);
+        let steps = tick.buildSteps(length, base, min, max, false);
         const ticks: IAxisTick[] = [];
 
         if (!isNaN(this.strictMin) || this.getStartFit() === AxisFit.VALUE) {
@@ -535,22 +537,22 @@ export abstract class ContinuousAxis extends Axis {
             }
     
             for (let i = 0; i < steps.length; i++) {
-                const tick = this._createTick(length, steps[i]);
+                const tick = this._createTick(length, i, steps[i]);
                 ticks.push(tick);
             }
         }
         return ticks;
     }
 
-    protected _getTickLabel(value: number): string {
-        return this.label.getTick(value) || String(value);
+    protected _getTickLabel(index: number, value: number): string {
+        return this.label.getTick(index, value) || String(value);
     }
 
-    protected _createTick(length: number, step: number): IAxisTick {
+    protected _createTick(length: number, index: number, step: number): IAxisTick {
         return {
             pos: NaN,//this.getPosition(length, step),
             value: step,
-            label: this._getTickLabel(step)
+            label: this._getTickLabel(index, step)
         }
     }
 
@@ -562,7 +564,7 @@ export abstract class ContinuousAxis extends Axis {
 
     private $_buildBrokenSteps(sect: IAxisBreakSect): number[] {
         const tick = this.tick as ContinuousAxisTick;
-        const steps = tick.buildSteps(sect.len, void 0, sect.from, sect.to);
+        const steps = tick.buildSteps(sect.len, void 0, sect.from, sect.to, true);
 
         return steps;
     }

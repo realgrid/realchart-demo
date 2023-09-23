@@ -439,13 +439,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     /**
      * x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.
      * 이 후에는 {@link xStep}씩 증가시키면서 설정한다.
-     * 'time' 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.
-     * 숫자로 지정하면 1은 1밀리초로 지정된다. 
      * 이 속성이 지징되지 않은 경우 {@link ChartOptions.xStart}가 적용된다.
      * 
      * @config
      */
-    xStart: number | string;
+    xStart: any;
     /**
      * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
      * 첫번째 값은 {@link xStart}로 설정한다.
@@ -664,7 +662,9 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     collectValues(axis: IAxis, vals: number[]): void {
         if (axis === this._xAxisObj) {
             let x = this.getXStart() || 0;
-            const xStep = this.getXStep() || 1;
+            let xStep: any = this.getXStep() || 1;
+
+            if (isString(xStep)) xStep = xStep.trim();
 
             this._runPoints.forEach((p, i) => {
                 let val = axis.getValue(p.x);

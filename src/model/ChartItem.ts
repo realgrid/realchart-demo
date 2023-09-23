@@ -104,6 +104,8 @@ export abstract class ChartItem extends RcObject {
                     this[p].load(v);
                 } else if (isArray(v)) {
                     this[p] = v.slice(0);
+                } else if (v instanceof Date) {
+                    this[p] = new Date(v);
                 } else if (isObject(v)) {
                     this[p] = Object.assign({}, this._getDefObjProps(p), v);
                 } else {

@@ -6,9 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isString, pickNum } from "../../common/Common";
-import { pad2 } from "../../common/Types";
-import { AxisTick, IAxisTick } from "../Axis";
+import { isArray, isNumber, isObject, isString, pickNum } from "../../common/Common";
+import { DatetimeFormatter } from "../../common/DatetimeFormatter";
+import { isNull, pad2 } from "../../common/Types";
+import { AxisLabel, AxisTick, IAxisTick } from "../Axis";
 import { IChart } from "../Chart";
 import { ContinuousAxis, ContinuousAxisTick } from "./LinearAxis";
 
@@ -119,7 +120,6 @@ export class TimeAxisTick extends ContinuousAxisTick {
         let step = Math.max(1, Math.floor(len / (count - 1)));
         const multiples = this._getStepMultiples(step);
         const scale = time_scales[this.scale];
-        let v: number;
 
         step = step / scale;
         if (multiples) {
@@ -130,10 +130,6 @@ export class TimeAxisTick extends ContinuousAxisTick {
                         step = multiples[i + 1];
                         break;
                     }
-                }
-                if (i >= multiples.length) {
-                    debugger;
-                    step = multiples[multiples.length - 1];
                 }
             } else {
                 step = multiples[0];
@@ -231,6 +227,138 @@ export class TimeAxisTick extends ContinuousAxisTick {
     }
 }
 
+const FORMATS = [
+    { format: 'SSS', beginningFormat: 'mm:ss' },            // ms
+    { format: "ss", beginningFormat: 'mm:ss' },             // s
+    { format: "mm:ss", beginningFormat: 'HH:mm:ss'},        // m
+    { format: "HH:mm", beginningFormat: 'MM-dd' },          // H
+    { format: "MM-dd", beginningFormat: 'YYYY-MM' },        // d
+    { format: "W주 w", beginningFormat: 'YYYY-MM' },        // w
+    { format: "YYYY-MM", beginningFormat: 'YYYY-MM' },      // M
+    { format: "YYYY" }                                      // Y
+]   
+
+export class TimeAxisLabel extends AxisLabel {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _formats: { format: string, beginningFormat: string}[];
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 현재 스케일의 시작일시에 상위 스케일의 포맷을 사용해서 표시한다.
+     */
+    useBeginningFormat = true;
+    /**
+     * [밀리초, 초, 분, 시, 일, 주, 월, 년] 순서대로 날찌/시간 형식을 지정한다.
+     * 각 형식은 문자열이거나, { format: string, beginningFormat: string} 형태의 json 객체로 지정한다.
+     * 지정하지 않은 스케일은 기본 형식에 따라 표시된다.
+     */
+    timeFormats: any[]; // string | { format: string, beginningFormat: string}
+    /**
+     * 날짜/시간 표시 형식.
+     * 이 속성이 지정되면 timeFormats는 무시된다.
+     */
+    timeFormat: string;
+    /**
+     * 스케일 시작일시에 표시에 사용되는 형식.
+     */
+    beginningFormat: string;
+    /**
+     * 한 주의 시작 요일.
+     */
+    startOfWeek = 0;    // 0: 일요일, 1: 월요일
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doLoad(source: any): void {
+        super._doLoad(source);
+
+        const f1 = isString(this.timeFormat) ? this.timeFormat : void 0;
+        const b1 = isString(this.beginningFormat) ? this.beginningFormat : void 0;
+        const fmts = this.timeFormats;
+        const use = this.useBeginningFormat;
+
+        this._formats = FORMATS.map(f => Object.assign(f));
+
+        if (isArray(fmts)) {
+            for (let i = 0; i < fmts.length; i++) {
+                const f = this._formats[i];
+
+                if (f1) {
+                    f.format = f1;
+                    f.beginningFormat = b1 || f1;                    
+                } else {
+                    const fmt = fmts[i];
+    
+                    if (isString(fmt)) {
+                        f.format = fmt;
+                        if (!use) f.beginningFormat = fmt;
+                    } else if (isObject(fmt)) {
+                        if (isString(fmt.format)) f.format = fmt.format;
+                        if (isString(fmt.beginningFormat)) f.beginningFormat = fmt.beginningFormat;
+                        else if (!use) f.beginningFormat = f.format;
+                    }
+                }
+            }
+        }
+    }
+
+    getTick(index: number, v: any): string {
+        const axis = this.axis as TimeAxis;
+        const fmts = this._formats;
+        const scale = (axis.tick as TimeAxisTick).scale;
+        const d = axis.date(v);
+        let t: number;
+
+        switch (scale) {
+            case TimeScale.YEAR:
+                return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+            case TimeScale.MONTH:
+                if (index === 0 || d.getMonth() === 0) {
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                } else {
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                }      
+            case TimeScale.WEEK:
+            case TimeScale.DAY:
+                if (index === 0 || d.getDate() === 1) {
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                } else {
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                }      
+            case TimeScale.HOUR:
+                if (index === 0 || d.getHours() === 0) {
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                } else {
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                }
+            case TimeScale.MIN:
+                if (index === 0 || d.getMinutes() === 0) {
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                } else {
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                }
+            case TimeScale.SEC:
+                if (index === 0 || d.getSeconds() === 0) {
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                } else {
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                }
+            case TimeScale.MS:
+                if (index === 0 || d.getMilliseconds() === 0) {
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                } else {
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                }
+        }
+     }
+}
+
 /**
  *  timeUnit(기본값 1)밀리초가 1에 해당한다.
  * 
@@ -261,10 +389,18 @@ export class TimeAxis extends ContinuousAxis {
     // properties
     //-------------------------------------------------------------------------
     /**
+     * @override
+     * @config
+     */
+    readonly label: TimeAxisLabel;
+
+    /**
      * javascript에서 숫자 단위로 전달되는 날짜값은 기본적으로 local이 아니라 new Date 기준이다.
      * 그러므로 보통 숫자로 지정된 날짜값은 utc 값이다.
      * local 기준으로 표시하기 위해, 숫자로 지정된 날짜값에 더해야 하는 시간을 시간단위로 지정한다.
      * ex) 한국은 -9
+     * 
+     * @config
      */
     timeOffset = 0;
 
@@ -279,6 +415,18 @@ export class TimeAxis extends ContinuousAxis {
         return new TimeAxisTick(this);
     }
 
+    protected _createLabelModel(): AxisLabel {
+        return new TimeAxisLabel(this);
+    }
+
+    protected _doLoad(source: any): void {
+        super._doLoad(source);
+
+        if (!source || !source.label) {
+            this.label.load(null);
+        }
+    }
+
     collectValues(): void {
         this._offset = pickNum(this.timeOffset, 0) * 60 * 60 * 1000;
         super.collectValues();
@@ -289,26 +437,19 @@ export class TimeAxis extends ContinuousAxis {
         return v;
     }
 
-    protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
-        const ticks = super._doBuildTicks(min, max, length);
-
-        ticks.forEach((tick, i) => {
-            tick.label = this.$_getLabel(tick.value, i);
-        })
-
-        return ticks;
-    }
-
     parseValue(value: any): number {
-        if (!isNaN(value)) {
-            return +value + this._offset;
+        if (isNumber(value)) {  
+            return value + this._offset;
+        } else if (value instanceof Date) {
+            return value.getTime();
         } else if (isString(value)) {
-            return new Date(value).getTime() + this._offset;
+            return new Date(value).getTime();
         }
+        return 0;
     }
 
     getValue(value: any): number {
-        return +value + this._offset;
+        return +value;//+ this._offset;
     }
 
     incStep(value: number, step: any): number {
@@ -345,47 +486,11 @@ export class TimeAxis extends ContinuousAxis {
         }
     }
 
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
     date(value: number): Date {
         return new Date(value);
     }
 
-    private $_getLabel(value: number, index: number): string {
-        const d = this.date(value);
-        let t: number;
-
-        switch ((this.tick as TimeAxisTick).scale) {
-            case TimeScale.YEAR:
-                return `${d.getFullYear()}`;
-            case TimeScale.MONTH:
-                if (index === 0 || d.getMonth() === 0) {
-                    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}`;
-                } else {
-                    return `${d.getMonth() + 1}`;
-                }      
-            case TimeScale.WEEK:
-            case TimeScale.DAY:
-                if (index === 0 || d.getDate() === 1) {
-                    return `${d.getMonth() + 1}-${pad2(d.getDate())}`;
-                } else {
-                    return `${d.getDate()}`;
-                }      
-            case TimeScale.HOUR:
-                if (index === 0 || d.getHours() === 0) {
-                    return `${d.getDate()} ${pad2(d.getHours())}:00`;
-                } else {
-                    return `${pad2(d.getHours())}:00`;
-                }
-            case TimeScale.MIN:
-                // TODO
-                return `${d.getMinutes()}`;
-            case TimeScale.SEC:
-                // TODO
-                return `${d.getSeconds()}`;
-            case TimeScale.MS:
-                return String(value);         
-        }
-    }
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
 }
