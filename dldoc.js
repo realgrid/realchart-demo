@@ -1,3 +1,11 @@
+////////////////////////////////////////////////////////////////////////////////
+// dldoc.js
+// 2023. 09. 17. created by benny
+// -----------------------------------------------------------------------------
+// Copyright (c) 2023 Wooritech Inc.
+// All rights reserved.
+////////////////////////////////////////////////////////////////////////////////
+
 /**
  * typedoc으로 가공한 ./api/model.json을 가지고 재가공한다. 따라서 typedoc이 먼저 실행되어야 한다.
  * ```yarn dldoc``` script에 해당 명령을 포함한다.
@@ -182,7 +190,6 @@ class Tunner {
     const { summary, blockTags } = { ...comment };
     let lines = this._parseSummary(summary);
     // @config content
-    // todo: except tag 제외하기
     const { config, fiddle, defaultBlock } = this._parseBlockTags(blockTags)
     if (fiddle) {
       lines += `\n${fiddle}`
@@ -224,7 +231,10 @@ class Tunner {
       case 'Enumeration':
         this.classMap[name] = {
           kindString,
-          props: children.map(c => {
+          props: children.filter(c => 
+            c.kindString == "Enumeration Member"
+            && this._findTag(c.comment?.blockTags, '@config')
+          ).map(c => {
             const { content } = this._parseComment(c.comment);
             return { name: c.name, value: c.type.value, content };
           }),
@@ -295,36 +305,35 @@ class MDGenerater {
       });
     } else if (dtype?.type == 'reference') {
       const v = this.classMap[dtype.name];
-      if (v) {
-        if (v.kindString == 'Class') {
-          let accessor = this.docMap;
-          const keys = _type 
-            ? [..._name.split('.').slice(1), _type, name]
-            : [..._name.split('.').slice(1), name];
-          // console.debug({ keys });
-          keys.forEach((key, i) => {
-            if (!accessor[key]) {
-              // is the last
-              if (i == keys.length - 1) {
-                // console.debug( _name, _type, name, {v})
-                const _content = `## ${name}\n${this._fixContent(content)}\n`
-                      + this._makeProps({ name, type: _type, props: v.props });
-                accessor[key] = { _content };
-                // this._writeJsonFile('./docs/.tdout/' + keys.join('.') + '.json', accessor);
-              } else {
-                accessor[key] = { _content: '' };
-              }
+      if (v?.kindString == 'Class') {
+        let accessor = this.docMap;
+        const keys = _type 
+          ? [..._name.split('.').slice(1), _type, name]
+          : [..._name.split('.').slice(1), name];
+        // console.debug({ keys });
+        keys.forEach((key, i) => {
+          if (!accessor[key]) {
+            // is the last
+            if (i == keys.length - 1) {
+              // console.debug( _name, _type, name, {v})
+              const _content = `## ${name}\n${this._fixContent(content)}\n`
+                    + this._makeProps({ name, type: _type, props: v.props });
+              accessor[key] = { _content };
+              // this._writeJsonFile('./docs/.tdout/' + keys.join('.') + '.json', accessor);
+            } else {
+              accessor[key] = { _content: '' };
             }
-            accessor = accessor[key];
-          });
-          // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
-        }
-      } 
+          }
+          accessor = accessor[key];
+        });
+        // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
+      }
     }
 
-    let lines = `### ${name}${type ? ': ' + type : ''}\n`;
+    let lines = `### ${name}${type ? ': \`' + type  + '\`': ''}\n`;
     if (header) lines += `${header}  \n`;
     if (content) lines += `${this._fixContent(content)}  \n`;
+    // @defalut가 없으면 typedoc에서 정의한 defaultValue를 사용한다.
     const dft = defaultBlock || defaultValue ;
     if (dft) {
       const [value, ...content] = dft.split(' ');
@@ -412,6 +421,7 @@ class MDGenerater {
 
   _setPropContents(docMap, { opt, type, _content }) {
     if (type) {
+      // if (opt != 'series') console.debug(opt, type, _content)
       docMap[opt][type] = { ...docMap[opt][type], _content }
     } else {
       docMap[opt] = { ...docMap[opt], _content }

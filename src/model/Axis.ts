@@ -80,7 +80,7 @@ export class AxisLine extends AxisItem {
 }
 
 /**
- * @config chart.axis.title
+ * 
  */
 export class AxisTitle extends AxisItem {
 
@@ -130,8 +130,6 @@ export class AxisTitle extends AxisItem {
  * visible 기본값이 undefined이다.
  * <br>
  * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
- * 
- * @config chart.axis.grid
  */
 export class AxisGrid extends AxisItem {
 
@@ -176,7 +174,7 @@ export class AxisGrid extends AxisItem {
 }
 
 /**
- * @config chart.axis.guide.label
+ *
  */
 export class AxisGuideLabel extends FormattableText {
 
@@ -454,9 +452,6 @@ export enum AxisPosition {
 
 /**
  * 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.
- * 
- * @config chart.xAxis
- * @config chart.yAxis
  */
 export abstract class Axis extends ChartItem implements IAxis {
 
@@ -464,10 +459,18 @@ export abstract class Axis extends ChartItem implements IAxis {
     // fields
     //-------------------------------------------------------------------------
     readonly name: string;
+    /**
+     * @config
+     */
     readonly title = new AxisTitle(this);
     readonly line = new AxisLine(this);
     readonly tick: AxisTick;
     readonly label: AxisLabel;
+    /**
+     * visible 기본값이 undefined이다.
+     * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
+     * @config
+     */
     readonly grid = this._createGrid();
     readonly guides: AxisGuide[] = [];
     readonly crosshair = new Crosshair(this);

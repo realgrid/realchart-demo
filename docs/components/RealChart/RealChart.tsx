@@ -69,6 +69,8 @@ export function RealChartReact({
   }, [chartRef, editorRef]);
 
   const handleDidMount = (editor, monaco) => {
+    // monaco.model.updateOptions({ tabSize: 2})
+    console.log({monaco})
     editorRef.current = editor;
   };
 
@@ -101,11 +103,14 @@ export function RealChartReact({
           className={classes.wrapper}
           style={{ width: "100%", height: "500px" }}
         />
+        
         {showEditor ? (
           <Editor
             height="300px"
             language="json"
-            value={JSON.stringify(config, null, 1)}
+            // options - https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor.IStandaloneEditorConstructionOptions.html
+            options={ { autoIndent: true } }
+            value={JSON.stringify(config, null, 2)}
             onChange={onChangeEditor}
             onMount={handleDidMount}
           />

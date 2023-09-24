@@ -310,6 +310,12 @@ export const HORZ_SECTIONS = [SectionDir.LEFT, SectionDir.RIGHT];
 export const VERT_SECTIONS = [SectionDir.TOP, SectionDir.BOTTOM];
 
 export enum AlignBase {
+    /**
+     * @config
+     */
     CHART = 'chart',
+    /**
+     * @config
+     */
     PLOT = 'plot'
 }

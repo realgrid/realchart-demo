@@ -13,19 +13,25 @@ legend 정렬 기준.
 배경 스타일 셋.
 배경 색상 및 경계선 스타일을 지정할 수 있다.  
 
-### bottom: number
+### bottom: `number`
 position 이  plot 일 때, plot 영역의 하단 모서리와 legend의 간격.
  top 이 지정되면 이 속성은 무시된다.  
 
-### gap: number
+### gap: `number`
 legend view와 나머지 chart 영역 사이의 gap.  
 `default: 6`  
 
-### itemGap: number
+### itemGap: `number`
 legend 아이템들 사이의 간격.  
 `default: 8`  
 
-### itemsPerLine: number
+### itemsAlign
+한 라인의 item들이 배치되는 위치.  
+`default: LegendItemsAlign.CENTER`  
+- `'center'` 수평 혹은 수직의 중앙으로 몰아서 배치한다.
+- `'end'` 수평일 때 오른쪽, 수직일 때는 아래쪽으로 몰아서 배치한다.
+- `'start'` 수평일 때 왼쪽, 수직일 때는 위쪽으로 몰아서 배치한다.
+### itemsPerLine: `number`
 한 줄 당 표시할 최대 legend 항목 수.  
 
 ### layout
@@ -34,11 +40,15 @@ item 배치 방향.
 - `'auto'` legend가 차트 좌우에 배치되면 item들을 수직으로 배치.  legend가 차트 상하에 배치되면 item들을 수평으로 배치.
 - `'horizontal'` item들을 수평으로 배치
 - `'vertical'` item들을 수직으로 배치
-### left: number
+### left: `number`
 position 이  plot 일 때, plot 영역의 좌측 모서리와 legend의 간격.  
 `default: 10`  
 
-### markerGap: number
+### lineGap: `number`
+라인 사이의 간격.  
+`default: 4`  
+
+### markerGap: `number`
 marker와 text사이의 간격.  
 `default: 4`  
 
@@ -53,16 +63,15 @@ marker와 text사이의 간격.
 ### position
 legned 표시 위치.  
 `default: LegendPosition.BOTTOM`  
-- `'bottom'` 
-- `'left'` 
-- `'plot'` 
-- `'right'` 
-- `'subplot'` 
-- `'top'` 
-### right: number
+- `'bottom'` 차트 본체 아래 표시한다.
+- `'left'` 차트 본체 왼쪽에 표시한다.
+- `'plot'` 차트 본체 영역 내부에 표시한다.
+- `'right'` 차트 본체 오른쪽에 표시한다.
+- `'top'` 차트 타이틀 아래 표시한다.
+### right: `number`
 position 이  plot 일 때, plot 영역의 우측 모서리와 legend의 간격.
  left 가 지정되면 이 속성은 무시된다.  
 
-### top: number
+### top: `number`
 position 이  plot 일 때, plot 영역의 상단 모서리와 legend의 간격.  
 `default: 10`  
