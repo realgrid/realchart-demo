@@ -22,6 +22,8 @@ class AxisImpl extends Axis {
     getUnitLength(length: number): number { return 0; }
     axisMin(): number { return; }
     axisMax(): number { return; }
+    isContinuous(): boolean { return false }
+    getValueAt(length: number, pos: number): number { return; }
 }
 
 /**

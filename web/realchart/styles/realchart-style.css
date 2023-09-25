@@ -685,13 +685,13 @@
 }
 .rct-crosshair-bar {
     stroke: none;
-    fill: #88888840;
+    fill: #4488cc18;
 }
-.rct-crosshair-label {
+.rct-crosshair-flag {
+    stroke: none;
+    fill: #555;    
+}
+.rct-crosshair-flag-text {
     stroke: none;
     fill: #fff;    
-}
-.rct-crosshair-label-back {
-    stroke: #555;
-    fill: #777;    
 }

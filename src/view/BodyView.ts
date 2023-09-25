@@ -16,12 +16,13 @@ import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
-import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange } from "../model/Axis";
+import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange, IAxis } from "../model/Axis";
 import { Body } from "../model/Body";
 import { Chart, IChart } from "../model/Chart";
 import { Crosshair } from "../model/Crosshair";
 import { DataPoint } from "../model/DataPoint";
 import { Series } from "../model/Series";
+import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
 import { ChartElement } from "./ChartElement";
 import { IPointView, SeriesView } from "./SeriesView";
@@ -601,18 +602,19 @@ export class AxisGuideContainer extends LayerElement {
     }
 }
 
-class CrosshairLineView extends LineElement {
+class CrosshairView extends PathElement {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _model: Crosshair;
+    private _bar: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-crosshair-line');
+        super(doc);
 
         this.setStyle('pointerEvents', 'none');
     }
@@ -623,15 +625,49 @@ class CrosshairLineView extends LineElement {
     setModel(model: Crosshair): void {
         if (model != this._model) {
             this._model = model;
+            this._bar = model.isBar();
+            this.setClass(this._bar ? 'rct-crosshair-bar' : 'rct-crosshair-line');
         }
     }
 
-    layout(x: number, y: number, width: number, height: number): void {
-        if (this._model.axis._isHorz) {
-            this.setVLine(x, 0, height);
-        } else {
-            this.setHLine(y, 0, width);
+    layout(pv: IPointView, x: number, y: number, width: number, height: number): void {
+        const axis = this._model.axis;
+        const horz = axis._isHorz;
+        const pb = new PathBuilder();
+
+        if (this._bar) {
+            const len = axis._isHorz ? width : height;
+            let index = -1;
+
+            if (pv) {
+                index = pv.point.xValue;
+            } else if (this._model.showAlways) {
+                if (axis.reversed) {
+                    index = (axis as CategoryAxis).categoryAt(horz ? width - x : y);
+                } else {
+                    index = (axis as CategoryAxis).categoryAt(horz ? x : height - y);
+                }
+            }
+
+            // TODO: scrolling
+            if (index >= 0) {
+                const p = axis.getPosition(len, index);
+                const w = axis.getUnitLength(len, index);
+
+                if (horz) {
+                    pb.rect(p - w / 2, 0, w, height);
+                } else {
+                    pb.rect(0, height - p - w / 2, width, w);
+                }
+            }
+        } else if (pv || this._model.showAlways) {
+            if (horz) {
+                pb.vline(x, 0, height);
+            } else {
+                pb.hline(y, 0, width);
+            }
         }
+        this.setPath(pb.end());
     }
 }
 
@@ -672,7 +708,7 @@ export class BodyView extends ChartElement<Body> {
     // private _itemMap = new Map<PlotItem, PlotItemView>();
     // feedbacks
     private _feedbackContainer: LayerElement;
-    private _crosshairLines: ElementPool<CrosshairLineView>;
+    private _crosshairLines: ElementPool<CrosshairView>;
     private _focused: IPointView = null;
 
     //-------------------------------------------------------------------------
@@ -691,7 +727,7 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._frontGuideContainer = new AxisGuideContainer(doc, 'rct-front-guides'));
         this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
         
-        this._crosshairLines = new ElementPool(this._feedbackContainer, CrosshairLineView);
+        this._crosshairLines = new ElementPool(this._feedbackContainer, CrosshairView);
     }
 
     //-------------------------------------------------------------------------
@@ -706,28 +742,36 @@ export class BodyView extends ChartElement<Body> {
         this._frontGuideContainer.prepare();
     }
 
-    pointerMoved(p: IPoint, target: EventTarget): void {
+    pointerMoved(p: IPoint, target: EventTarget): boolean {
         const w = this.width;
         const h = this.height;
-
-        this._crosshairLines.forEach(v => {
-            if (v.setVisible(p.x >= 0 && p.x < w && p.y >= 0 && p.y < h)) {
-                v.layout(p.x, p.y, w, h);
-            }
-        });
+        const inBody = p.x >= 0 && p.x < w && p.y >= 0 && p.y < h;
+        let sv: SeriesView<any>;
+        let pv: IPointView;
 
         if (target instanceof SVGElement && (target.classList.contains(SeriesView.POINT_CLASS) || target.parentElement instanceof SVGElement && target.parentElement.classList.contains(SeriesView.POINT_CLASS))) {
             for (let i = this._seriesViews.length - 1; i >= 0; i--) {
-                const p = this._seriesViews[i].pointByDom(target) as IPointView;
+                pv = this._seriesViews[i].pointByDom(target) as IPointView;
 
-                if (p) {
-                    this.$_setFocused(this._seriesViews[i].model, p);
+                if (pv) {
+                    sv = this._seriesViews[i];
                     break;
                 }
             }
+        }
+
+        this._crosshairLines.forEach(v => {
+            if (v.setVisible(inBody)) {
+                v.layout(pv, p.x, p.y, w, h);
+            }
+        });
+
+        if (pv) {
+            this.$_setFocused(sv.model, pv);
         } else {
             this.$_setFocused(null, null);
         }
+        return inBody;
     }
 
     private $_setFocused(series: Series, p: IPointView): boolean {
@@ -780,7 +824,6 @@ export class BodyView extends ChartElement<Body> {
             }
 
             this.$_prepareAxisBreaks(doc, chart);
-            this.$_preppareCrosshairs(doc, chart);
         }
 
         return Size.create(hintWidth, hintHeight);
@@ -838,6 +881,8 @@ export class BodyView extends ChartElement<Body> {
                 c._views.forEach(v => v.layout(w, h));
             });
         }
+
+        this.$_preppareCrosshairs(this.chart());
     }
 
     //-------------------------------------------------------------------------
@@ -928,7 +973,7 @@ export class BodyView extends ChartElement<Body> {
         views.forEach((v, i) => v.setModel(breaks[i]));
     }
 
-    private $_preppareCrosshairs(doc: Document, chart: IChart): void {
+    private $_preppareCrosshairs(chart: IChart): void {
         const views = this._crosshairLines;
         const hairs: Crosshair[] = [];
 

@@ -25,6 +25,7 @@ export interface IAxis {
 
     reversed: boolean;
 
+    isContinuous(): boolean;
     getBaseValue(): number;
     axisMax(): number;
     axisMin(): number;
@@ -40,6 +41,7 @@ export interface IAxis {
      * 값(축 상 위치)에 해당하는 픽셀 위치.
      */
     getPosition(length: number, value: number, point?: boolean): number;
+    getValueAt(length: number, pos: number): number;
     /**
      * 값(축 상 위치)에 해당하는 축 단위 픽셀 크기. 
      * <br>
@@ -552,8 +554,10 @@ export abstract class Axis extends ChartItem implements IAxis {
         return NaN;
     }
     
+    abstract isContinuous(): boolean;
     abstract axisMin(): number;
     abstract axisMax(): number;
+    abstract getValueAt(length: number, pos: number): number;
 
     //-------------------------------------------------------------------------
     // methods

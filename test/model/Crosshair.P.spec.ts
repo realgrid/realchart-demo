@@ -39,17 +39,4 @@ const source = {
     it('showAlways', () => {
         expect(crosshair.showAlways).eq(source.showAlways);
     });
-
-    it('showLabel', () => {
-        expect(crosshair.showLabel).eq(source.showLabel);
-    });
-
-    it('labelFormat', () => {
-        expect(crosshair.labelFormat).eq(source.labelFormat);
-    });
-
-    it('labelStyles', () => {
-        expect(crosshair.labelStyles).eql(source.labelStyles);
-    });
-
 });

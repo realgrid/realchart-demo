@@ -806,6 +806,26 @@ export class ChartView extends RcElement {
         }
     }
 
+    pointerMoved(x: number, y: number, target: EventTarget): void {
+        const p = this._bodyView.controlToElement(x, y);
+        const inBody = this._bodyView.pointerMoved(p, target);
+
+        for (const dir in this._axisSectionViews) {
+            this._axisSectionViews[dir].views.forEach(av => {
+                const m = av.model.crosshair;
+                const len = av.model._isHorz ? this._bodyView.width : this._bodyView.height;
+                const pos = av.model._isHorz ? p.x : p.y;
+                const flag = inBody && m.visible && m.flag.visible && !m.isBar() && m.getFlag(len, pos);
+
+                if (flag) {
+                    av.showCrosshair(pos, flag);
+                } else {
+                    av.hideCrosshiar();
+                }
+            })
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

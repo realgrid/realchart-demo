@@ -449,6 +449,10 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    isContinuous(): boolean {
+        return true;
+    }
+
     contains(value: number): boolean {
         return !isNaN(value);
         // return (this.nullable && isNaN(value)) || super.contains(value);
@@ -648,6 +652,15 @@ export abstract class ContinuousAxis extends Axis {
 
             return this.reversed ? length - p : p;
         }
+    }
+
+    getValueAt(length: number, pos: number): number {
+        if (this._isHorz) {
+            if (this.reversed) pos = length - pos;
+        } else {
+            if (!this.reversed) pos = length - pos;
+        }
+        return (this._max - this._min) * pos / length + this._min;
     }
 
     getUnitLength(length: number, value: number): number {

@@ -40,11 +40,7 @@ export class ChartPointerHandler implements IPointerHandler {
     }
 
     handleMove(ev: PointerEvent): void {
-        const x = (ev as any).pointX;
-        const y = (ev as any).pointY;
-        const body = this._chart.chartView().bodyView();
-
-        body.pointerMoved(body.controlToElement(x, y), ev.target);
+        this._chart.chartView().pointerMoved((ev as any).pointX, (ev as any).pointY, ev.target);
     }
 
     handleClick(ev: PointerEvent): void {

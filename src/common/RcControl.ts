@@ -596,7 +596,7 @@ export class RcElement extends RcObject {
         super();
 
         this._dom = doc.createElementNS(SVGNS, tag || 'g');
-        (this._styleName = styleName) && this.setAttr('class', styleName);
+        (this._styleName = styleName || '') && this.setAttr('class', this._styleName);
     }
 
     protected _doDestory(): void {
