@@ -6,12 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../common/Common";
 import { RcElement } from "../common/RcControl";
 import { AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
+import { Widget } from "./Widget";
 
 /**
  * @internal
@@ -133,7 +133,7 @@ export enum LegendItemsAlign {
  * 
  * @config chart.legend
  */
-export class Legend extends ChartItem {
+export class Legend extends Widget {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -159,7 +159,7 @@ export class Legend extends ChartItem {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * legned 표시 위치.
+     * 표시 위치.
      * 
      * @config
      */
@@ -176,32 +176,6 @@ export class Legend extends ChartItem {
      * @config
      */
     alignBase = AlignBase.PLOT;
-    /**
-     * {@link position}이 {@link LegendPosition.PLOT plot}일 때, plot 영역의 좌측 모서리와 legend의 간격.
-     * 
-     * @config
-     */
-    left = 10;
-    /**
-     * {@link position}이 {@link LegendPosition.PLOT plot}일 때, plot 영역의 우측 모서리와 legend의 간격.
-     * {@link left}가 지정되면 이 속성은 무시된다.
-     * 
-     * @config
-     */
-    right: number;
-    /**
-     * {@link position}이 {@link LegendPosition.PLOT plot}일 때, plot 영역의 상단 모서리와 legend의 간격.
-     * 
-     * @config
-     */
-    top = 10;
-    /**
-     * {@link position}이 {@link LegendPosition.PLOT plot}일 때, plot 영역의 하단 모서리와 legend의 간격.
-     * {@link top}이 지정되면 이 속성은 무시된다.
-     * 
-     * @config
-     */
-    bottom: number;
     /**
      * legend view와 나머지 chart 영역 사이의 gap.
      * 
@@ -301,23 +275,6 @@ export class Legend extends ChartItem {
         return this._maxHeightDim ? calcPercent(this._maxHeightDim, domain) : domain;
     }
 
-    // TODO: to percentSize
-    getLeft(doamin: number): number {
-        return pickNum(this.left, NaN);
-    }
-
-    getRight(doamin: number): number {
-        return pickNum(this.right, NaN);
-    }
-
-    getTop(doamin: number): number {
-        return pickNum(this.top, NaN);
-    }
-
-    getBottom(doamin: number): number {
-        return pickNum(this.bottom, NaN);
-    }
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -329,6 +286,8 @@ export class Legend extends ChartItem {
     }
 
     protected _doPrepareRender(chart: IChart): void {
+        super._doPrepareRender(chart);
+
         this._position = Utils.checkEnumValue(LegendPosition, this.position, LegendPosition.BOTTOM);
         this._items = this.$_collectItems();
     }

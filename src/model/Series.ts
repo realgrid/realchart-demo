@@ -1249,7 +1249,7 @@ export abstract class RadialSeries extends WidgetSeries {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly SIZE = '80%';
+    static readonly DEF_SIZE = '80%';
 
     //-------------------------------------------------------------------------
     // fields
@@ -1266,7 +1266,7 @@ export abstract class RadialSeries extends WidgetSeries {
      * 
      * @config
      */
-    size: RtPercentSize = RadialSeries.SIZE;
+    size: RtPercentSize = RadialSeries.DEF_SIZE;
     /**
      * @config
      */
@@ -1285,7 +1285,7 @@ export abstract class RadialSeries extends WidgetSeries {
     protected _doLoad(src: any): void {
         super._doLoad(src);
 
-        this._sizeDim = parsePercentSize(pickProp(this.size, RadialSeries.SIZE), true);
+        this._sizeDim = parsePercentSize(pickProp(this.size, RadialSeries.DEF_SIZE), true);
     }
 }
 

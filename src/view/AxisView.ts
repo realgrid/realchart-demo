@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "../common/Common";
 import { PathBuilder } from "../common/PathBuilder";
 import { PathElement, RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
@@ -20,6 +21,9 @@ import { Crosshair } from "../model/Crosshair";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
+/**
+ * @internal
+ */
 export class AxisTitleView extends BoundableElement<AxisTitle> {
 
     //-------------------------------------------------------------------------
@@ -179,6 +183,9 @@ class CrosshairFlagView extends RcElement {
     }
 }
 
+/**
+ * @internal
+ */
 export class AxisView extends ChartElement<Axis> {
 
     //-------------------------------------------------------------------------
@@ -204,6 +211,9 @@ export class AxisView extends ChartElement<Axis> {
     _guideViews: AxisGuideView<AxisGuide>[];
     _frontGuideViews: AxisGuideView<AxisGuide>[];
     _crosshairView: CrosshairFlagView;
+
+    protected _zoom = 1;
+    protected _scrollPos = 0;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -296,6 +306,14 @@ export class AxisView extends ChartElement<Axis> {
     hideCrosshiar(): void {
         if (this._crosshairView && this._crosshairView.visible) {
             this._crosshairView.setVisible(false);
+        }
+    }
+
+    setZoom(value: number): void {
+        value = Math.max(0, pickNum(value, 1));
+        if (value !== this._zoom) {
+            // TODO: _scrollPos를 변경한다. 
+            //       Axis._length를 변경한다.
         }
     }
 

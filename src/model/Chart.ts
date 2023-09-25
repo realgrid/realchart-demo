@@ -21,6 +21,7 @@ import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
 import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
+import { Gauge } from "./gauge/Gauge";
 import { BarRangeSeries } from "./series/BarRangeSeries";
 import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";
@@ -124,7 +125,11 @@ const axis_types = {
     'linear': LinearAxis,
     'time': TimeAxis,
     'date': TimeAxis,
-    'log': LogAxis
+    'log': LogAxis,
+}
+
+const gauge_types = {
+    'gauge': Gauge,
 }
 
 export class Credits extends ChartItem {
@@ -607,11 +612,15 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     _getSeriesType(type: string): any {
-        return series_types[String(type).toLowerCase()];
+        return series_types[type.toLowerCase()];
     }
 
     _getAxisType(type: string): any {
-        return axis_types[String(type).toLowerCase()];
+        return axis_types[type.toLowerCase()];
+    }
+
+    _getGaugetype(type: string): any {
+        return gauge_types[type.toLowerCase()];
     }
 
     getAxesGap(): number {

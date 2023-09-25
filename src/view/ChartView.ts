@@ -6,7 +6,6 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isNumber } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { ClipElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";

@@ -9,7 +9,7 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { Utils } from '../../src/common/Utils';
-import { Legend, LegendItem, LegendLayout, LegendPosition } from '../../src/model/Legend';
+import { Legend, LegendItem } from '../../src/model/Legend';
 import { Tester } from '../Tester';
 import { Chart } from '../../src/model/Chart';
 
@@ -120,10 +120,10 @@ describe('LegendItem test', function() {
 
     // prepare 해야 한다...
     // it('getLayout()', () => {
-    //     if (source.layout === 'auto' && source.position !== LegendPosition.PLOT) {
+    //     if (source.layout === 'auto' && source.position !== WidgetPosition.PLOT) {
     //         switch(source.position) {
-    //             case LegendPosition.BOTTOM:
-    //             case LegendPosition.TOP:
+    //             case WidgetPosition.BOTTOM:
+    //             case WidgetPosition.TOP:
     //                 expect(legend.getLayout()).eq(LegendLayout.HORIZONTAL);
     //                 break;
     //             default:

@@ -318,8 +318,6 @@ export class CategoryAxis extends Axis {
                 pts[i] /= this._length;
             }
         }
-
-        this._length = length;
         
         for (let i = 0; i < pts.length; i++) {
             pts[i] *= length;
