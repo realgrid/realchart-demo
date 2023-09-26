@@ -11,7 +11,7 @@ const config = {
             // align: 'center'
         }
     },
-    title: "Circular Guage",
+    title: "Circle Guage",
     gauge: {
     }
 }

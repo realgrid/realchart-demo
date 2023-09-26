@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// CircularGuageView.ts
+// ClockGuageView.ts
 // 2023. 09. 26. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
@@ -9,13 +9,12 @@
 import { isArray } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { LayerElement, PathElement } from "../../common/RcControl";
-import { Path } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
-import { CircluarGauge } from "../../model/gauge/Gauge";
+import { ClockGauge } from "../../model/gauge/ClockGauge";
 import { GaugeView } from "../GaugeView";
 
-export class CircularGaugeView extends GaugeView<CircluarGauge> {
+export class ClockGaugeView extends GaugeView<ClockGauge> {
 
     //-------------------------------------------------------------------------
     // consts
@@ -50,7 +49,7 @@ export class CircularGaugeView extends GaugeView<CircluarGauge> {
     protected _setBackgroundStyle(back: RectElement): void {
     }
 
-    protected _prepareGauge(doc: Document, model: CircluarGauge): void {
+    protected _prepareGauge(doc: Document, model: ClockGauge): void {
         const ranges = model.ranges;
 
         if (isArray(ranges)) {

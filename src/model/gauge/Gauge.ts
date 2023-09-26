@@ -127,7 +127,7 @@ export class GaugeCollection {
     // internal members
     //-------------------------------------------------------------------------
     private $_loadItem(chart: IChart, src: any, index: number): Gauge {
-        let cls = chart._getGaugeType(src.type || 'gauge');
+        let cls = chart._getGaugeType(src.type || 'circle');
         if (!cls) {
             throw new Error('Invalid gauge type: ' + src.type);
         }
@@ -140,15 +140,13 @@ export class GaugeCollection {
     }
 }
 
-class GaugeLabel extends FormattableText {
+export class GaugeLabel extends FormattableText {
 }
 
 /**
  * 원형 게이지 모델.
- * 
- * @config chart.widget[type=gauge]
  */
-export class CircluarGauge extends Gauge {
+export abstract class CircularGauge extends Gauge {
 
     //-------------------------------------------------------------------------
     // consts
@@ -182,7 +180,7 @@ export class CircluarGauge extends Gauge {
      * 
      * @config
      */
-    size: RtPercentSize = CircluarGauge.DEF_SIZE;
+    size: RtPercentSize = CircularGauge.DEF_SIZE;
     innerSize: RtPercentSize;
     /**
      * @config
@@ -211,7 +209,7 @@ export class CircluarGauge extends Gauge {
     protected _doLoad(src: any): void {
         super._doLoad(src);
 
-        this._radiusDim = parsePercentSize(pickProp(this.size, CircluarGauge.DEF_SIZE), true);
+        this._radiusDim = parsePercentSize(pickProp(this.size, CircularGauge.DEF_SIZE), true);
         this._innerDim = parsePercentSize(this.innerSize, true);
     }
 }

@@ -22,7 +22,9 @@ import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
 import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
-import { CircluarGauge, GaugeCollection } from "./gauge/Gauge";
+import { CircleGauge } from "./gauge/CircleGauge";
+import { ClockGauge } from "./gauge/ClockGauge";
+import { CircularGauge, GaugeCollection } from "./gauge/Gauge";
 import { BarRangeSeries } from "./series/BarRangeSeries";
 import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";
@@ -132,7 +134,8 @@ const axis_types = {
 }
 
 const gauge_types = {
-    'gauge': CircluarGauge,
+    'circle': CircleGauge,
+    'clock': ClockGauge,
 }
 
 export class Credits extends ChartItem {

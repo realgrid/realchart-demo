@@ -28,7 +28,8 @@ import { Gauge } from "../model/gauge/Gauge";
 import { ChartElement } from "./ChartElement";
 import { GaugeView } from "./GaugeView";
 import { IPointView, SeriesView } from "./SeriesView";
-import { CircularGaugeView } from "./gauge/CircularGaugeView";
+import { CircleGaugeView } from "./gauge/CircleGaugeView";
+import { ClockGaugeView } from "./gauge/ClockGaugeView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
 import { AreaSeriesView } from "./series/AreaSeriesView";
 import { BarRangeSeriesView } from "./series/BarRangeSeriesView";
@@ -79,7 +80,8 @@ const series_types = {
     'waterfall': WaterfallSeriesView,
 }
 const gauge_types = {
-    'gauge': CircularGaugeView,
+    'circle': CircleGaugeView,
+    'clock': ClockGaugeView,
 }
 
 export class AxisGridView extends ChartElement<AxisGrid> {
