@@ -1065,7 +1065,7 @@ export class PlottingItemCollection  {
     // internal members
     //-------------------------------------------------------------------------
     private $_loadItem(chart: IChart, src: any, index: number): IPlottingItem {
-        let cls = isArray(src.children || src.series) && (chart._getGroupType(src.type) || chart._getGroupType(chart.type));
+        let cls = isArray(src.children || src.series) && (chart._getGroupType(src.type || chart.type));
 
         if (cls) {
             const g = new cls(chart);
@@ -1074,7 +1074,7 @@ export class PlottingItemCollection  {
             return g;
         }
 
-        cls = chart._getSeriesType(src.type) || chart._getSeriesType(chart.type);
+        cls = chart._getSeriesType(src.type || chart.type);
         if (!cls) {
             throw new Error('Invalid series type: ' + src.type + ', ' + chart.type);
         }

@@ -515,6 +515,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
                 this[prop] = source[prop];
             }
         })
+        this.type = this.type || 'bar';
 
         // assets
         this._assets.load(source.assets);
@@ -608,19 +609,19 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     // internal members
     //-------------------------------------------------------------------------
     _getGroupType(type: string): any {
-        return group_types[type];
+        return type && group_types[type.toLowerCase()];
     }
 
     _getSeriesType(type: string): any {
-        return series_types[type.toLowerCase()];
+        return type && series_types[type.toLowerCase()];
     }
 
     _getAxisType(type: string): any {
-        return axis_types[type.toLowerCase()];
+        return type && axis_types[type.toLowerCase()];
     }
 
     _getGaugetype(type: string): any {
-        return gauge_types[type.toLowerCase()];
+        return type && gauge_types[type.toLowerCase()];
     }
 
     getAxesGap(): number {
