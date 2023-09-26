@@ -918,6 +918,10 @@ export class PlottingItemCollection  {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    get count(): number {
+        return this._items.length;
+    }
+
     get first(): IPlottingItem {
         return this._items[0];
     }

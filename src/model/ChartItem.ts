@@ -319,9 +319,9 @@ export abstract class FormattableText extends ChartText {
         this._richTextImpl.build(view, target, callback);
     }
 
-    setLineHeight(v: number): void {
-        this._richTextImpl.lineHeight = v;
-    }
+    // setLineHeight(v: number): void {
+    //     this._richTextImpl.lineHeight = v;
+    // }
 
     //-------------------------------------------------------------------------
     // overriden members

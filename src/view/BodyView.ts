@@ -24,8 +24,11 @@ import { DataPoint } from "../model/DataPoint";
 import { Series } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
+import { Gauge } from "../model/gauge/Gauge";
 import { ChartElement } from "./ChartElement";
+import { GaugeView } from "./GaugeView";
 import { IPointView, SeriesView } from "./SeriesView";
+import { CircularGaugeView } from "./gauge/CircularGaugeView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
 import { AreaSeriesView } from "./series/AreaSeriesView";
 import { BarRangeSeriesView } from "./series/BarRangeSeriesView";
@@ -74,6 +77,9 @@ const series_types = {
     'treemap': TreemapSeriesView,
     'vector': VectorSeriesView,
     'waterfall': WaterfallSeriesView,
+}
+const gauge_types = {
+    'gauge': CircularGaugeView,
 }
 
 export class AxisGridView extends ChartElement<AxisGrid> {
@@ -699,6 +705,9 @@ export class BodyView extends ChartElement<Body> {
     protected _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
     private _series: Series[];
+    private _gaugeViews: GaugeView<Gauge>[] = [];
+    private _gaugeMap = new Map<Gauge, GaugeView<Gauge>>();
+    private _gauges: Gauge[];
     // guides
     _guideContainer: AxisGuideContainer;
     _frontGuideContainer: AxisGuideContainer;
@@ -710,6 +719,8 @@ export class BodyView extends ChartElement<Body> {
     private _feedbackContainer: LayerElement;
     private _crosshairLines: ElementPool<CrosshairView>;
     private _focused: IPointView = null;
+
+    protected _animatable: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -734,7 +745,10 @@ export class BodyView extends ChartElement<Body> {
     // methods
     //-------------------------------------------------------------------------
     prepareSeries(doc: Document, chart: IChart): void {
+        this._animatable = RcControl._animatable && chart.animatable();
+
         this.$_prepareSeries(doc, chart, chart._getSeries().visibleSeries());
+        this.$_prepareGauges(doc, chart, chart._getGauges().visibles());
     }
 
     prepareGuideContainers(): void {
@@ -826,6 +840,11 @@ export class BodyView extends ChartElement<Body> {
             this.$_prepareAxisBreaks(doc, chart);
         }
 
+        // gauges
+        this._gaugeViews.forEach((v, i) => {
+            v.measure(doc, this._gauges[i], hintWidth, hintHeight, phase);
+        })
+
         return Size.create(hintWidth, hintHeight);
     }
     
@@ -883,6 +902,13 @@ export class BodyView extends ChartElement<Body> {
         }
 
         this.$_preppareCrosshairs(this.chart());
+
+        // gauges
+        this._gaugeViews.forEach(v => {
+            // this._owner.clipSeries(v.getClipContainer(), 0, 0, w, h, v.invertable());
+            v.resize(w, h);
+            v.layout();
+        })
     }
 
     //-------------------------------------------------------------------------
@@ -896,6 +922,10 @@ export class BodyView extends ChartElement<Body> {
         //         return new (series_types.get(cls))(doc);
         //     }
         // }
+    }
+
+    private $_createGaugeView(doc: Document, gauge: Gauge): GaugeView<Gauge> {
+        return new gauge_types[gauge._type()](doc);
     }
 
     private $_prepareGrids(doc: Document, chart: Chart): void {
@@ -923,11 +953,10 @@ export class BodyView extends ChartElement<Body> {
     private $_prepareSeries(doc: Document, chart: IChart, series: Series[]): void {
         const container = this._seriesContainer;
         const inverted = chart.isInverted();
-        const animatable = RcControl._animatable && chart.animatable();
         const map = this._seriesMap;
         const views = this._seriesViews;
 
-        // series들이 다시 생성됐을 수 있다.
+        // series들이 다시 생성됐을 수 있다.(?)
         for (const ser of map.keys()) {
             if (series.indexOf(ser) < 0) {
                 map.delete(ser);
@@ -939,14 +968,40 @@ export class BodyView extends ChartElement<Body> {
         views.length = 0;
 
         series.forEach(ser => {
-            const v = map.get(ser) ||this.$_createSeriesView(doc, ser);
+            const v = map.get(ser) || this.$_createSeriesView(doc, ser);
 
-            v._setChartOptions(inverted, animatable);
+            v._setChartOptions(inverted, this._animatable);
             container.add(v);
             map.set(ser, v);
             views.push(v);
             v.prepareSeries(doc, ser);
         });
+    }
+
+    private $_prepareGauges(doc: Document, chart: IChart, gauges: Gauge[]): void {
+        const container = this._seriesContainer;
+        const map = this._gaugeMap;
+        const views = this._gaugeViews;
+
+        for (const g of map.keys()) {
+            if (gauges.indexOf(g) < 0) {
+                map.delete(g);
+            }
+        }
+
+        this._gauges = gauges;
+        views.forEach(v => v.remove());
+        views.length = 0;
+
+        gauges.forEach(g => {
+            const v = map.get(g) || this.$_createGaugeView(doc, g);
+
+            // v._setChartOptions(inverted, this._animatable);
+            container.add(v);
+            map.set(g, v);
+            views.push(v);
+            v.prepareGauge(doc, g);
+        })
     }
 
     private $_prepareAxisBreaks(doc: Document, chart: IChart): void {

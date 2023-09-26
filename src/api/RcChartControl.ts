@@ -48,7 +48,7 @@ export class RcChartControl {
     }
 
     /**
-     * 기존 설정을 지우고 새로운 config로 차트를 구성한다.
+     * 기존 설정 모델을 제거하고 새로운 config로 차트를 구성한다.
      */
     load(config: any, animate?: boolean): void {
         this._proxy.load(config, animate);

@@ -17,7 +17,7 @@ import { LabelElement } from "../common/impl/LabelElement";
 import { RectElement } from "../common/impl/RectElement";
 import { SvgShapes } from "../common/impl/SvgShape";
 import { DataPoint } from "../model/DataPoint";
-import { Legend, LegendItem } from "../model/Legend";
+import { LegendItem } from "../model/Legend";
 import { ClusterableSeries, DataPointLabel, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { ChartElement } from "./ChartElement";

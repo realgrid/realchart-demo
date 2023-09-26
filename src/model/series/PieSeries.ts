@@ -63,6 +63,7 @@ class PieSeriesText extends FormattableText {
     //-------------------------------------------------------------------------
     setText(value: string): FormattableText {
         super.setText(value);
+        
         if (this._richTextImpl) {
             this._richTextImpl.lineHeight = 1.2;
         }

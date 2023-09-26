@@ -839,11 +839,11 @@ export class AxisCollection {
                         }
                     }   
                 }
-                if (!t && chart.first.canCategorized()) {
+                if (!t && chart.first?.canCategorized()) {
                     t = 'category';
                 }
             } else {
-                t = chart._getSeries().first.defaultYAxisType();
+                t = chart._getSeries().first?.defaultYAxisType();
             }
 
             if (t) {
