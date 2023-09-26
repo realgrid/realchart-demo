@@ -141,6 +141,17 @@ export class GaugeCollection {
 }
 
 export class GaugeLabel extends FormattableText {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 게이지 중심 등, label이 표시될 기준 위치에서 y 방향으로 이동한 픽셀 크기.
+     * 기준 위치는 게이지 종류에 따라 달라진다.
+     * 
+     * @config
+     */
+    offset = 0;
 }
 
 /**
@@ -151,11 +162,15 @@ export abstract class CircularGauge extends Gauge {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
+    static readonly DEF_CENTER = '50%';
     static readonly DEF_SIZE = '80%';
+    static readonly INNER_SIZE = '80%';
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _centerXDim: IPercentSize;
+    private _centerYDim: IPercentSize;
     private _radiusDim: IPercentSize;
     private _innerDim: IPercentSize;
 
@@ -171,17 +186,22 @@ export abstract class CircularGauge extends Gauge {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    centerX: RtPercentSize = '50%';
-    centerY: RtPercentSize = '50%';
+    centerX: RtPercentSize = CircularGauge.DEF_CENTER;
+    centerY: RtPercentSize = CircularGauge.DEF_CENTER;
     /**
-     * 게이지 본체의 크기.
-     * <br>
-     * 픽셀 크기나 차지할 수 있는 전체 크기에 대한 상대적 크기로 지정할 수 있다.
+     * 게이지 원의 크기.
+     * 픽셀 단위의 크기나, plot 영역 전체 크기(너비와 높이 중 작은 값)에 대한 상대적 크기로 지정할 수 있다.
      * 
      * @config
      */
     size: RtPercentSize = CircularGauge.DEF_SIZE;
-    innerSize: RtPercentSize;
+    /**
+     * 내부 원의 크기.
+     * 픽셀 단위의 크기나, 게이지 원 크기(너비와 높이 중 작은 값)에 대한 상대적 크기로 지정할 수 있다.
+     * 
+     * @config
+     */
+    innerSize: RtPercentSize = CircularGauge.INNER_SIZE;
     /**
      * @config
      */
@@ -192,9 +212,16 @@ export abstract class CircularGauge extends Gauge {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getCenter(plotWidth: number, plotHeight: number): { x: number, y: number } {
+        const x = calcPercent(this._centerXDim, plotWidth);
+        const y = calcPercent(this._centerYDim, plotHeight);
+
+        return { x, y };
+    }
+
     getSize(plotWidth: number, plotHeight: number): { size: number, inner: number } {
         const size = calcPercent(this._radiusDim, Math.min(plotWidth, plotHeight));
-        const inner = Math.min(size, this._innerDim ? calcPercent(this._innerDim, Math.min(plotWidth, plotHeight)) : 0);
+        const inner = this._innerDim ? calcPercent(this._innerDim, size) : 0;
 
         return { size: size, inner };
     }
@@ -209,7 +236,9 @@ export abstract class CircularGauge extends Gauge {
     protected _doLoad(src: any): void {
         super._doLoad(src);
 
+        this._centerXDim = parsePercentSize(pickProp(this.centerX, CircularGauge.DEF_CENTER), true);
+        this._centerYDim = parsePercentSize(pickProp(this.centerY, CircularGauge.DEF_CENTER), true);
         this._radiusDim = parsePercentSize(pickProp(this.size, CircularGauge.DEF_SIZE), true);
-        this._innerDim = parsePercentSize(this.innerSize, true);
+        this._innerDim = parsePercentSize(pickProp(this.innerSize, CircularGauge.INNER_SIZE), true);
     }
 }

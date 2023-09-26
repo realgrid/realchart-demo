@@ -93,12 +93,12 @@ export class SectorElement extends PathElement {
     innerRadius = 0;
     /** 
      * 시작 각도. 
-     * 0 이상 360 미만.
+     * 0 이상 2pi 미만.
      */
     start = 0;
     /** 
      * 각도. 
-     * 0 이상 360 미만.
+     * 0 이상 2pi 미만.
      */
     angle = 0;
     /** 
