@@ -50,13 +50,13 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
     }
 
     protected _prepareGauge(doc: Document, model: ClockGauge): void {
-        const ranges = model.ranges;
+        // const ranges = model.ranges;
 
-        if (isArray(ranges)) {
-            this._foregrounds.prepare(ranges.length);
-        } else {
-            this._foregrounds.prepare(1);
-        }
+        // if (isArray(ranges)) {
+        //     this._foregrounds.prepare(ranges.length);
+        // } else {
+        //     this._foregrounds.prepare(1);
+        // }
     }
 
     protected _renderGauge(width: number, height: number): void {

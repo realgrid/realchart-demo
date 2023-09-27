@@ -38,7 +38,7 @@ class SectorView extends SectorElement implements IPointView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    setSectorEx(labels: PointLabelContainer, lines: PointLabelLineContainer, newSector: ISectorShape): void {
+    setPieSector(labels: PointLabelContainer, lines: PointLabelLineContainer, newSector: ISectorShape): void {
         this._assignShape(newSector);
     }
 }
@@ -239,7 +239,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                 p.xPos = cx + Math.cos(a) * (sliceOff + rd * 0.7);
                 p.yPos = cy + Math.sin(a) * (sliceOff + rd * 0.7);
     
-                sector.setSectorEx(labelViews, /*lines*/null, {
+                sector.setPieSector(labelViews, /*lines*/null, {
                     cx: cx,// + dx,
                     cy: cy,// + dy,
                     rx: rd,

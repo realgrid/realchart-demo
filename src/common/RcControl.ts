@@ -1346,7 +1346,7 @@ export class PathElement extends RcElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _path: Path;
+    private _path: string;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1360,7 +1360,7 @@ export class PathElement extends RcElement {
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    path(): Path {
+    path(): string {
         return this._path;
     }
 
@@ -1368,14 +1368,10 @@ export class PathElement extends RcElement {
     // methods
     //-------------------------------------------------------------------------
     setPath(path: Path): void {
-        if (path !== this._path) {
-            this._path = path;
+        const p = isString(path) ? path : path.join(' ');
 
-            if (isString(path)) {
-                this.setAttr('d', path);
-            } else {
-                this.setAttr('d', path.join(' '));
-            }
+        if (p !== this._path) {
+            this.setAttr('d', this._path = p);
         }
     }
 

@@ -18,6 +18,9 @@ export abstract class GaugeView<T extends Gauge> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    protected _inverted = false;
+    protected _animatable = true;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -28,6 +31,11 @@ export abstract class GaugeView<T extends Gauge> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    _setChartOptions(inverted: boolean, animatable: boolean): void {
+        this._inverted = inverted;
+        this._animatable = animatable;
+    }
+
     clicked(elt: Element): void {
     }
 
@@ -52,6 +60,7 @@ export abstract class GaugeView<T extends Gauge> extends ChartElement<T> {
 
     protected _doLayout(): void {
         this._renderGauge(this.width, this.height);
+        this._animatable && this._runShowEffect(!this.control.loaded);
     }
 
     //-------------------------------------------------------------------------
@@ -59,4 +68,5 @@ export abstract class GaugeView<T extends Gauge> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     protected abstract _prepareGauge(doc: Document, model: T): void;
     protected abstract _renderGauge(width: number, height: number): void;
+    protected _runShowEffect(firstTime: boolean): void {}
 }

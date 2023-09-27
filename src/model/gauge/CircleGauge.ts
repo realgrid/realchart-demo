@@ -6,13 +6,14 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isArray } from "../../common/Common";
 import { IChart } from "../Chart";
-import { CircularGauge } from "./Gauge";
+import { CircularGauge, IGaugeValueRange } from "./Gauge";
 
 /**
  * 시계 게이지 모델.
  * 
- * @config chart.widget[type=Circle]
+ * @config chart.widget[type=circle]
  */
 export class CircleGauge extends CircularGauge {
 
@@ -22,7 +23,8 @@ export class CircleGauge extends CircularGauge {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
+    private _ranges: IGaugeValueRange[];
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -32,6 +34,10 @@ export class CircleGauge extends CircularGauge {
 
     //-------------------------------------------------------------------------
     // properties
+    //-------------------------------------------------------------------------
+    stepped = false;
+    ranges: IGaugeValueRange[];
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -44,5 +50,10 @@ export class CircleGauge extends CircularGauge {
 
     protected _doLoad(src: any): void {
         super._doLoad(src);
+
+        this._ranges = [];
+
+        if (isArray(this.ranges)) {
+        }
     }
 }

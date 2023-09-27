@@ -8,12 +8,20 @@
 
 import { isArray, pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
+import { RcAnimation } from "../../common/RcAnimation";
 import { LayerElement } from "../../common/RcControl";
 import { ORG_ANGLE, deg2rad } from "../../common/Types";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextElement } from "../../common/impl/TextElement";
 import { CircleGauge } from "../../model/gauge/CircleGauge";
 import { CircularGaugeView } from "./CirclularGaugeView";
+
+class GaugeAnimation extends RcAnimation {
+
+    protected _doUpdate(rate: number): boolean {
+        return;
+    }
+}
 
 export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
@@ -57,12 +65,19 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
     protected _renderGauge(width: number, height: number): void {
         const m = this.model;
-        const rate = pickNum((m.value - m.minValue) / (m.maxValue - m.minValue), 0);
         const center = m.getCenter(width, height);
         const rds = m.getSize(width, height);
-        let start = ORG_ANGLE + deg2rad(this.model.startAngle);
 
-        // background arc
+        this.$_renderBackground(m, center, rds);
+        this.$_renderValue(m, center, rds);
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_renderBackground(m: CircleGauge, center: {x: number, y: number}, rds: {size: number, inner: number}): void {
+        const start = ORG_ANGLE + deg2rad(m.startAngle);
+
         this._background.setSector({
             cx: center.x,
             cy: center.y,
@@ -73,6 +88,11 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
             angle: Math.PI * 2,
             clockwise: true
         });
+    }
+
+    private $_renderValue(m: CircleGauge, center: {x: number, y: number}, rds: {size: number, inner: number}): void {
+        const rate = pickNum((m.value - m.minValue) / (m.maxValue - m.minValue), 0);
+        const start = ORG_ANGLE + deg2rad(m.startAngle);
 
         // foreground sectors
         if (this._foregrounds.count === 1) {

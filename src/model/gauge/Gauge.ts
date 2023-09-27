@@ -53,7 +53,6 @@ export abstract class Gauge extends Widget {
      * @config
      */
     value = 0;
-    ranges: IGaugeValueRange[];
 
     //-------------------------------------------------------------------------
     // methods
