@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickProp } from "../../common/Common";
+import { isArray, isObject, pickNum, pickProp } from "../../common/Common";
 import { Align, IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { FormattableText } from "../ChartItem";
@@ -188,6 +188,7 @@ export abstract class CircularGauge extends Gauge {
     private _centerYDim: IPercentSize;
     private _radiusDim: IPercentSize;
     private _innerDim: IPercentSize;
+    private _activeValue: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -265,14 +266,15 @@ export abstract class CircularGauge extends Gauge {
         return { size: size, inner };
     }
 
-    getLabel(): string {
-        return this.label.text || (this.label.prefix || '') + this.value + (this.label.suffix || '');
+    getLabel(value: number): string {
+        this._activeValue = value;
+        return this.label.text || (this.label.prefix || '') + value + (this.label.suffix || '');
     }
 
     getParam(param: string): any {
         switch (param) {
             case 'value':
-                return this.value;
+                return this._activeValue;
             case 'min':
                 return this.minValue;
             case 'max':

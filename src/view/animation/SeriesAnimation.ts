@@ -216,6 +216,7 @@ export class GrowAnimation extends PointAnimation {
             this._series.setViewRate(rate);
             return true;
         }
+        return false;
     }
 
     protected _doStop(): void {
@@ -240,6 +241,7 @@ export class UnfoldAnimation extends PointAnimation {
             this._series.setPosRate(rate);
             return true;
         }
+        return false;
     }
 
     protected _doStop(): void {

@@ -18,8 +18,15 @@ import { CircularGaugeView } from "./CirclularGaugeView";
 
 class GaugeAnimation extends RcAnimation {
 
+    constructor(public view: CircleGaugeView, public from: number, public to: number) {
+        super();
+    }
+
     protected _doUpdate(rate: number): boolean {
-        return;
+        this.view._runValue = this.from + (this.to - this.from) * rate;
+        console.log(this.view._runValue);
+        this.view.$_renderValue(this.view.model)
+        return true;
     }
 }
 
@@ -35,6 +42,11 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     private _container: LayerElement;
     private _foregrounds: ElementPool<SectorElement>;
     private _textView: TextElement;
+
+    private _center: {x: number, y: number};
+    private _rds: {size: number, inner: number};
+    private _prevValue = 0;
+    _runValue: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -69,7 +81,12 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         const rds = m.getSize(width, height);
 
         this.$_renderBackground(m, center, rds);
-        this.$_renderValue(m, center, rds);
+        this.$_renderValue(m);
+
+        if (m.value !== this._prevValue) {
+            new GaugeAnimation(this, this._prevValue, m.value).start(() => this._runValue = NaN);
+            this._prevValue = m.value;
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -77,6 +94,9 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     //-------------------------------------------------------------------------
     private $_renderBackground(m: CircleGauge, center: {x: number, y: number}, rds: {size: number, inner: number}): void {
         const start = ORG_ANGLE + deg2rad(m.startAngle);
+
+        this._center = center;
+        this._rds = rds;
 
         this._background.setSector({
             cx: center.x,
@@ -90,9 +110,12 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         });
     }
 
-    private $_renderValue(m: CircleGauge, center: {x: number, y: number}, rds: {size: number, inner: number}): void {
-        const rate = pickNum((m.value - m.minValue) / (m.maxValue - m.minValue), 0);
+    $_renderValue(m: CircleGauge): void {
+        const value = pickNum(this._runValue, m.value);
+        const rate = pickNum((value - m.minValue) / (m.maxValue - m.minValue), 0);
         const start = ORG_ANGLE + deg2rad(m.startAngle);
+        const center = this._center;
+        const rds = this._rds;
 
         // foreground sectors
         if (this._foregrounds.count === 1) {
@@ -109,7 +132,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         }
 
         // label
-        this.model.label.setText(m.getLabel()).buildSvg(this._textView, this.model, this.valueOf);
+        this.model.label.setText(m.getLabel(value)).buildSvg(this._textView, this.model, this.valueOf);
         const r = this._textView.getBBounds();
         this._textView.translate(center.x, center.y - r.height / 2);
     }

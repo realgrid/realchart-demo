@@ -207,7 +207,7 @@ export abstract class RcAnimation {
         }
 
         try {
-            if (!this._doUpdate(rate)) {
+            if (this._doUpdate(rate) === false) {
                 this._stop();
             }
         } finally {
@@ -228,7 +228,8 @@ export abstract class RcAnimation {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    start(): void {
+    start(endHandler?: RcAnimationEndHandler): void {
+		if (endHandler) this.endHandler = endHandler;
         this._start(this.duration, this.delay, this.easing);
     }
 
