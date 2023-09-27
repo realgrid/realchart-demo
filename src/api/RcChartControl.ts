@@ -15,7 +15,8 @@ const props = {
 const funcs = {
     'load': '',
     'refresh': '',
-    'setAnimatable': ''
+    'setAnimatable': '',
+    'updateGauge': ''
 };
 
 /**
@@ -59,5 +60,12 @@ export class RcChartControl {
      */
     refresh(): void {
         this._proxy.refresh();
+    }
+
+    /**
+     * 게이지의 값들을 변경한다.
+     */
+    updateGauge(gauge: string, values: any): void {
+        this._proxy.updateGauge(gauge, values);
     }
 }

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isBoolean, isObject, isString } from "../common/Common";
+import { isArray, isBoolean, isObject, isString, pickNum } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { SvgRichText, RichTextParamCallback } from "../common/RichText";
@@ -196,6 +196,7 @@ export abstract class FormattableText extends ChartText {
     //-------------------------------------------------------------------------
     private _numSymbols: string[];
     private _numberFormatter: NumberFormatter;
+    private _lineHeight = 1;
     protected _richTextImpl: SvgRichText;
 
     //-------------------------------------------------------------------------
@@ -211,13 +212,6 @@ export abstract class FormattableText extends ChartText {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * 수평 정렬.
-     * 
-     * @config
-     */
-    align = Align.CENTER;
-
     /**
      * label 문자열 앞에 추가되는 문자열.
      * 
@@ -294,11 +288,16 @@ export abstract class FormattableText extends ChartText {
                 if (!this._richTextImpl) {
                     this._richTextImpl = new SvgRichText();
                 }
-                this._richTextImpl.setFormat(value, this.align);
+                this._richTextImpl.setFormat(value);
             } else {
                 this._richTextImpl = null;
             }
         }
+        return this;
+    }
+
+    setLineHeight(value: number): FormattableText {
+        this._lineHeight = pickNum(value, 1);
         return this;
     }
 
@@ -316,6 +315,7 @@ export abstract class FormattableText extends ChartText {
     // }
 
     buildSvg(view: TextElement, target: any, callback: RichTextParamCallback): void {
+        this._richTextImpl.lineHeight = this._lineHeight;
         this._richTextImpl.build(view, target, callback);
     }
 

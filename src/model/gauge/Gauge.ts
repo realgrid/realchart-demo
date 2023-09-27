@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, pickProp } from "../../common/Common";
-import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
+import { Align, IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { FormattableText } from "../ChartItem";
 import { Widget } from "../Widget";
@@ -58,6 +58,13 @@ export abstract class Gauge extends Widget {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    updateValues(values: any): void {
+        if (values !== this.value) {
+            this.value = values;
+            this._changed();
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -143,6 +150,15 @@ export class GaugeCollection {
 export class GaugeLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart, true);
+
+        this.setLineHeight(1.2);
+    }
+
+    //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     /**
@@ -180,13 +196,37 @@ export abstract class CircularGauge extends Gauge {
     constructor(chart: IChart) {
         super(chart);
 
-        this.label = new GaugeLabel(chart, true);
+        this.label = new GaugeLabel(chart);
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * {@link value} 변화를 애니메이션으로 표현한다.
+     * 
+     * @config
+     */
+    animatable = true;
+    /**
+     * Animation duration.
+     * 
+     * @config
+     */
+    duration = 500;
+    /**
+     * 게이지 중심 수평 위치.
+     * 픽셀 단위의 크기나, plot 영역 전체 너비에 대한 상대적 크기로 지정할 수 있다.
+     * 
+     * @config
+     */
     centerX: RtPercentSize = CircularGauge.DEF_CENTER;
+    /**
+     * 게이지 중심 수직 위치.
+     * 픽셀 단위의 크기나, plot 영역 전체 높이에 대한 상대적 크기로 지정할 수 있다.
+     * 
+     * @config
+     */
     centerY: RtPercentSize = CircularGauge.DEF_CENTER;
     /**
      * 게이지 원의 크기.
@@ -226,6 +266,21 @@ export abstract class CircularGauge extends Gauge {
         return { size: size, inner };
     }
 
+    getLabel(): string {
+        return this.label.text || (this.label.prefix || '') + this.value + (this.label.suffix || '');
+    }
+
+    getParam(param: string): any {
+        switch (param) {
+            case 'value':
+                return this.value;
+            case 'min':
+                return this.minValue;
+            case 'max':
+                return this.maxValue;
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -241,4 +296,8 @@ export abstract class CircularGauge extends Gauge {
         this._radiusDim = parsePercentSize(pickProp(this.size, CircularGauge.DEF_SIZE), true);
         this._innerDim = parsePercentSize(pickProp(this.innerSize, CircularGauge.INNER_SIZE), true);
     }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
 }

@@ -14,10 +14,12 @@ import { Utils } from "../../common/Utils";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { LabelElement } from "../../common/impl/LabelElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
+import { TextAnchor } from "../../common/impl/TextElement";
 import { PointItemPosition } from "../../model/Series";
 import { PieSeries, PieSeriesGroup, PieSeriesPoint } from "../../model/series/PieSeries";
 import { IPointView, PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
+import { TextItemView } from "../plotitem/TextItemView";
 
 class SectorView extends SectorElement implements IPointView {
 
@@ -71,6 +73,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         });
 
         this.add(this._textView = new LabelElement(doc, 'rct-pie-series-inner'));
+        this._textView.anchor = TextAnchor.MIDDLE;
         this.add(this._lineContainer = new PointLabelLineContainer(doc));
     }
 
@@ -208,7 +211,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
 
         if (this._textView.visible) {
             const tr = this._textView.getBBounds();
-            this._textView.translate(cx - tr.width / 2, cy - tr.height / 2);
+            this._textView.translate(cx, cy - tr.height / 2);
         }
 
         if (this._circle.visible = this._sectors.isEmpty) {

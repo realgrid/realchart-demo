@@ -6,17 +6,16 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray } from "../../common/Common";
+import { isArray, pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { LayerElement } from "../../common/RcControl";
 import { ORG_ANGLE, deg2rad } from "../../common/Types";
-import { RectElement } from "../../common/impl/RectElement";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextElement } from "../../common/impl/TextElement";
 import { CircleGauge } from "../../model/gauge/CircleGauge";
-import { GaugeView } from "../GaugeView";
+import { CircularGaugeView } from "./CirclularGaugeView";
 
-export class CircleGaugeView extends GaugeView<CircleGauge> {
+export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
     //-------------------------------------------------------------------------
     // consts
@@ -28,9 +27,6 @@ export class CircleGaugeView extends GaugeView<CircleGauge> {
     private _container: LayerElement;
     private _foregrounds: ElementPool<SectorElement>;
     private _textView: TextElement;
-    getValueOf = (target: any, param: string): any => {
-        return;
-    }
 
     //-------------------------------------------------------------------------
     // constructor
@@ -42,15 +38,11 @@ export class CircleGaugeView extends GaugeView<CircleGauge> {
         this.add(this._container = new LayerElement(doc, void 0));
         this._foregrounds = new ElementPool(this._container, SectorElement, 'rct-circle-gauge-value');
         this.add(this._textView = new TextElement(doc, 'rct-circle-gauge-label'));
-        // this._textView.anchor = TextAnchor.START;
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _setBackgroundStyle(back: RectElement): void {
-    }
-
     protected _prepareGauge(doc: Document, model: CircleGauge): void {
         const ranges = model.ranges;
 
@@ -59,10 +51,13 @@ export class CircleGaugeView extends GaugeView<CircleGauge> {
         } else {
             this._foregrounds.prepare(1);
         }
+
+        this._textView.internalSetStyleOrClass(model.label.style);
     }
 
     protected _renderGauge(width: number, height: number): void {
         const m = this.model;
+        const rate = pickNum((m.value - m.minValue) / (m.maxValue - m.minValue), 0);
         const center = m.getCenter(width, height);
         const rds = m.getSize(width, height);
         let start = ORG_ANGLE + deg2rad(this.model.startAngle);
@@ -88,13 +83,13 @@ export class CircleGaugeView extends GaugeView<CircleGauge> {
                 ry: rds.size / 2,
                 innerRadius: rds.inner / rds.size,
                 start: start,
-                angle: Math.PI * 2 * 0.8,
+                angle: Math.PI * 2 * rate,
                 clockwise: true
             });
         }
 
         // label
-        this.model.label.setText('Gauge Title').buildSvg(this._textView, this.model, this.getValueOf);
+        this.model.label.setText(m.getLabel()).buildSvg(this._textView, this.model, this.valueOf);
         const r = this._textView.getBBounds();
         this._textView.translate(center.x, center.y - r.height / 2);
     }

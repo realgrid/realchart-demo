@@ -114,7 +114,8 @@ abstract class SpanWord extends Word {
     // internal members
     //-------------------------------------------------------------------------
     protected _doPrepare(span: SVGTSpanElement, s: string, x1: number, x2: number): void {
-        span.textContent = s.substring(x1, x2);
+        // span.textContent = s.substring(x1, x2);
+        span.innerHTML = s.substring(x1, x2);
 
         const i = s.indexOf('style=');
 
@@ -271,7 +272,6 @@ export class SvgRichText {
     // property fields
     //-------------------------------------------------------------------------
     private _format: string;
-    private _align: Align;
     lineHeight = 1;
 
     //-------------------------------------------------------------------------
@@ -283,14 +283,13 @@ export class SvgRichText {
     // constructors
     //-------------------------------------------------------------------------
 	constructor(format?: string) {
-		this.setFormat(format, Align.CENTER);
+		this.setFormat(format);
 	}
 
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    setFormat(value: string, align: Align) {
-        this._align = align;
+    setFormat(value: string) {
         if (value !== this._format) {
             this._format = value;
             value && this.$_parse(value);
@@ -351,39 +350,18 @@ export class SvgRichText {
             hMax = Math.max(h, hMax);
         }
         
-        if (firsts[0]) {
-            switch (this._align) {
-                case Align.CENTER:
-                    x = (wMax - widths[0]) / 2;
-                    break;
-                case Align.RIGHT:
-                    x = wMax - widths[0];
-                    break;
-                default:
-                    x = 0;
-                    break;
-            }
-            firsts[0] && firsts[0].setAttribute('x', String(x));
-        }
-
+        // if (firsts[0]) {
+        //     firsts[0].setAttribute('x', '0');
+        // }
         for (let i = 1; i < firsts.length; i++) {
-            const span = view.insertElement(doc, 'tspan', firsts[i]);
-            const h: any = Math.ceil(view.getAscent(this._lines[i][HEIGHT]));
-
-            switch (this._align) {
-                case Align.CENTER:
-                    x = (wMax - widths[0]) / 2;
-                    break;
-                case Align.RIGHT:
-                    x = wMax - widths[0];
-                    break;
-                default:
-                    x = 0;
-                    break;
+            if (firsts[i]) { // 중복된 <br>은 무시한다.
+                const span = view.insertElement(doc, 'tspan', firsts[i]);
+                const h: any = Math.ceil(view.getAscent(this._lines[i][HEIGHT]));
+    
+                span.setAttribute('x', '0');
+                span.setAttribute('dy', h);
+                span.innerHTML = ZWSP;
             }
-            span.setAttribute('x', String(x));
-            span.setAttribute('dy', h);
-            span.innerHTML = ZWSP;
         }
 
         //parent.layoutText(lines[0][HEIGHT]);

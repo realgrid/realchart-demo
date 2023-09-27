@@ -13,6 +13,16 @@ const config = {
     },
     title: "Circle Guage",
     gauge: {
+        name: 'gauge1',
+        size: '70%',
+        value: 50,
+        label: {
+            // suffix: '%',
+            text: '<t style="fill:blue">${value}</t><t style="font-size:20px;">%</t><br><t style="margin-top:20px;font-size:20px;font-weight:normal">Gauge Test</t>',
+            style: {
+                fontWeight: 'bold'
+            }
+        }
     }
 }
 
@@ -34,5 +44,8 @@ function init() {
     // RealChart.setDebugging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
+    setInterval(() => {
+        chart.updateGauge('gauge1', Math.random() * 100);
+    }, 2000);
     setActions('actions')
 }

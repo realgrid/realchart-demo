@@ -622,6 +622,13 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     update(): void {
     }
 
+    updateGauge(gauge: string, values: any): void {
+        const g = this._gauges.get(gauge);
+        if (g) {
+            g.updateValues(values);
+        }
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

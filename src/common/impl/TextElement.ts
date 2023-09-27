@@ -59,7 +59,7 @@ export class TextElement extends RcElement {
     constructor(doc: Document, styleName: string = _undefined) {
         super(doc, styleName, 'text');
 
-        this.setAttr('text-anchor', 'middle');
+        this.anchor = TextAnchor.MIDDLE;
     }
 
 	//-------------------------------------------------------------------------
