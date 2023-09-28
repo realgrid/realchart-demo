@@ -13,7 +13,7 @@ import { CircularGauge, IGaugeValueRange } from "./Gauge";
 /**
  * 시계 게이지 모델.
  * 
- * @config chart.widget[type=circle]
+ * @config chart.gauge[type=circle]
  */
 export class CircleGauge extends CircularGauge {
 
@@ -35,7 +35,19 @@ export class CircleGauge extends CircularGauge {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * true면 {@link ranges}에 설정된 범위별로 gauge를 다른 색으로 표시한다.
+     * false면 값에 따라 해당하는 range의 설정에 따라 gauge 전체를 표시한다.
+     * 
+     * @config
+     */
     stepped = false;
+    /**
+     * 값 범위 목록.
+     * {@link stepped} 설정에 따라 다르게 사용된다.
+     * 
+     * @config
+     */
     ranges: IGaugeValueRange[];
 
     //-------------------------------------------------------------------------

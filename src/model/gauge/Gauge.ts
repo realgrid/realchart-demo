@@ -6,7 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum, pickProp } from "../../common/Common";
+import { __spreadArray } from "tslib";
+import { isArray, isObject, isString, pickNum, pickProp } from "../../common/Common";
 import { Align, IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { FormattableText } from "../ChartItem";
@@ -26,6 +27,40 @@ export abstract class Gauge extends Widget {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    /**
+     * endValue는 포함되지 않는다. 즉, startValue <= v < endValue.
+     * startValue를 지정하면 이전 range의 endValue를 startValue로 설정한다.
+     * 이전 범위가 없으면 min으로 지정된다.
+     * endValue가 지정되지 않으면 max로 지정된다.
+     * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
+     * startValue를 기준으로 정렬한다.
+     */
+    static buildRanges(source: IGaugeValueRange[], min: number, max: number): IGaugeValueRange[] {
+        let ranges: IGaugeValueRange[];
+        let prev: IGaugeValueRange;
+
+        if (isArray(source)) {
+            source.forEach(src => {
+                if (isObject(src) && isString(src.color)) {
+                    const range: IGaugeValueRange = {
+                        startValue: pickNum(src.startValue, prev ? prev.endValue : min),
+                        endValue: pickNum(src.endValue, max),
+                        color: src.color
+                    };
+                    if (range.startValue < range.endValue) {
+                        ranges.push(range);
+                        prev = range;
+                    }
+                }
+            });
+            ranges = ranges.sort((r1, r2) => r1.startValue - r2.startValue);
+        }
+        return ranges;
+    }
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------

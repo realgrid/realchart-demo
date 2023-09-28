@@ -228,9 +228,10 @@ export abstract class RcAnimation {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    start(endHandler?: RcAnimationEndHandler): void {
+    start(endHandler?: RcAnimationEndHandler): RcAnimation {
 		if (endHandler) this.endHandler = endHandler;
         this._start(this.duration, this.delay, this.easing);
+		return this;
     }
 
     stop(): void {

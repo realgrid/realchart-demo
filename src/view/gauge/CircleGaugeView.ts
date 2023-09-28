@@ -47,6 +47,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     private _rds: {size: number, inner: number};
     private _prevValue = 0;
     _runValue: number;
+    private _ani: RcAnimation;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -80,11 +81,15 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         const center = m.getCenter(width, height);
         const rds = m.getSize(width, height);
 
+        if (this._ani) {
+            this._ani.stop();
+            this._ani = null;
+        }
         this.$_renderBackground(m, center, rds);
         this.$_renderValue(m);
 
-        if (m.value !== this._prevValue) {
-            new GaugeAnimation(this, this._prevValue, m.value).start(() => this._runValue = NaN);
+        if (this._animatable && m.animatable && m.value !== this._prevValue) {
+            this._ani = new GaugeAnimation(this, this._prevValue, m.value).start(() => this._runValue = NaN);
             this._prevValue = m.value;
         }
     }

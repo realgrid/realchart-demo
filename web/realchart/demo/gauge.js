@@ -15,7 +15,7 @@ const config = {
     gauge: {
         name: 'gauge1',
         size: '70%',
-        value: 50,
+        value: Math.random() * 100,
         label: {
             // suffix: '%',
             text: '<t style="fill:blue">${value}</t><t style="font-size:20px;">%</t><br><t style="margin-top:20px;font-size:20px;font-weight:normal">Gauge Test</t>',
@@ -37,6 +37,11 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createButton(container, 'Run', function(e) {
+        setInterval(() => {
+            chart.updateGauge('gauge1', Math.random() * 100);
+        }, 2000);
+    });
 }
 
 function init() {
@@ -44,8 +49,5 @@ function init() {
     // RealChart.setDebugging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
-    setInterval(() => {
-        chart.updateGauge('gauge1', Math.random() * 100);
-    }, 2000);
     setActions('actions')
 }
