@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ISize } from "../common/Size";
-import { Gauge } from "../model/gauge/Gauge";
+import { Gauge } from "../model/Gauge";
 import { ChartElement } from "./ChartElement";
 
 export abstract class GaugeView<T extends Gauge> extends ChartElement<T> {

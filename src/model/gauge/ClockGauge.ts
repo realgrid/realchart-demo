@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { IChart } from "../Chart";
-import { CircularGauge } from "./Gauge";
+import { CircularGauge } from "../Gauge";
 
 /**
  * 시계 게이지 모델.

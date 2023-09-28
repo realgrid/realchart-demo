@@ -20,7 +20,7 @@
     "pub": "tsc && rollup --config rollup.config.js --environment BUILD:pub",
     "pdeploy": "npm run pbundle && node compress.js",
     "test": "npm run test:model && npm run test:pw",
-    "test:model": "mocha --exit --timeout 10000 -r ts-node/register -r test/unit/dom-mock.js 'test/unit/{,!(e2e)/**/}/*.spec.ts' 'test/unit/**/*Test*.ts'",
+    "test:model": "mocha --exit --timeout 10000 -r ts-node/register -r test/unit/dom-mock.js 'test/{,!(e2e)/**/}/*.spec.ts' 'test/unit/**/*Test*.ts'",
     "test:pw": "yarn dbundle && npx playwright test --trace on",
     "tsdoc": "npx typedoc --entryPointStrategy expand ./src/model --entryPointStrategy expand ./src/common --json ./docs/.tdout/model.json",
     "jsdoc": "rm -rf api/jsdoc && npx jsdoc -c jsdoc.json",

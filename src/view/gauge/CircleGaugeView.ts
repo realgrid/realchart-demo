@@ -24,7 +24,6 @@ class GaugeAnimation extends RcAnimation {
 
     protected _doUpdate(rate: number): boolean {
         this.view._runValue = this.from + (this.to - this.from) * rate;
-        console.log(this.view._runValue);
         this.view.$_renderValue(this.view.model)
         return true;
     }
@@ -67,7 +66,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     protected _prepareGauge(doc: Document, model: CircleGauge): void {
         const ranges = model.ranges;
 
-        if (isArray(ranges)) {
+        if (model.stepped && isArray(ranges)) {
             this._foregrounds.prepare(ranges.length);
         } else {
             this._foregrounds.prepare(1);
@@ -121,10 +120,15 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         const start = ORG_ANGLE + deg2rad(m.startAngle);
         const center = this._center;
         const rds = this._rds;
+        const foregrounds = this._foregrounds;
 
         // foreground sectors
-        if (this._foregrounds.count === 1) {
-            this._foregrounds.first.setSector({
+        if (foregrounds.count === 1) {
+            const range = m.getRange(value);
+            if (range) {
+                foregrounds.first.setStyle('fill', range.color);
+            }
+            foregrounds.first.setSector({
                 cx: center.x,
                 cy: center.y,
                 rx: rds.size / 2,
@@ -134,10 +138,12 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
                 angle: Math.PI * 2 * rate,
                 clockwise: true
             });
+        } else {
+            debugger;
         }
 
         // label
-        this.model.label.setText(m.getLabel(value)).buildSvg(this._textView, this.model, this.valueOf);
+        m.label.setText(m.getLabel(m.label.animatable ? value : m.value)).buildSvg(this._textView, m, this.valueOf);
         const r = this._textView.getBBounds();
         this._textView.translate(center.x, center.y - r.height / 2);
     }

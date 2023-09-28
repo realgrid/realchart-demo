@@ -16,18 +16,29 @@ const config = {
         name: 'gauge1',
         size: '70%',
         value: Math.random() * 100,
+        ranges: [{
+            endValue: 30,
+            color: 'green'
+        }, {
+            endValue: 70,
+            color: 'yellow'
+        }, {
+            color: 'red'
+        }],
         label: {
             // suffix: '%',
             text: '<t style="fill:blue">${value}</t><t style="font-size:20px;">%</t><br><t style="margin-top:20px;font-size:20px;font-weight:normal">Gauge Test</t>',
             style: {
                 fontWeight: 'bold'
-            }
+            },
+            animatable: false
         }
     }
 }
 
 let animate;
 let chart;
+let timer;
 
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
@@ -37,10 +48,18 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'label.animatable', function (e) {
+        config.gauge.label.animatable = _getChecked(e);
+        chart.load(config);
+    }, true);
     createButton(container, 'Run', function(e) {
-        setInterval(() => {
+        clearInterval(timer);
+        timer = setInterval(() => {
             chart.updateGauge('gauge1', Math.random() * 100);
         }, 2000);
+    });
+    createButton(container, 'Stop', function(e) {
+        clearInterval(timer);
     });
 }
 

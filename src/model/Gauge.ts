@@ -6,16 +6,15 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { __spreadArray } from "tslib";
-import { isArray, isObject, isString, pickNum, pickProp } from "../../common/Common";
-import { Align, IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
-import { IChart } from "../Chart";
-import { FormattableText } from "../ChartItem";
-import { Widget } from "../Widget";
+import { isArray, isObject, isString, pickNum, pickProp } from "../common/Common";
+import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../common/Types";
+import { IChart } from "./Chart";
+import { FormattableText } from "./ChartItem";
+import { Widget } from "./Widget";
 
 export interface IGaugeValueRange {
-    startValue: number;
-    endValue: number;
+    startValue?: number;
+    endValue?: number;
     color: string;
 }
 
@@ -43,6 +42,7 @@ export abstract class Gauge extends Widget {
         let prev: IGaugeValueRange;
 
         if (isArray(source)) {
+            ranges = [];
             source.forEach(src => {
                 if (isObject(src) && isString(src.color)) {
                     const range: IGaugeValueRange = {
@@ -202,6 +202,12 @@ export class GaugeLabel extends FormattableText {
      * @config
      */
     offset = 0;
+    /**
+     * 게이지 값 변경 애니메이션이 실행될 때, label도 따라서 변경시킨다.
+     * 
+     * @config
+     */
+    animatable = true;
 }
 
 /**
@@ -223,6 +229,7 @@ export abstract class CircularGauge extends Gauge {
     private _centerYDim: IPercentSize;
     private _radiusDim: IPercentSize;
     private _innerDim: IPercentSize;
+    private _valueDim: IPercentSize;
     private _activeValue: number;
 
     //-------------------------------------------------------------------------
@@ -278,10 +285,31 @@ export abstract class CircularGauge extends Gauge {
      */
     innerSize: RtPercentSize = CircularGauge.INNER_SIZE;
     /**
+     * 값을 표시하는 내부 원의 크기.
+     * 픽셀 단위의 크기나, 게이지 원 크기(너비와 높이 중 작은 값)에 대한 상대적 크기로 지정할 수 있다.
+     * 
+     * @config
+     */
+    valueSize: RtPercentSize;
+    /**
+     * 게이지 시작 각도.
+     * 0~360 사이의 값이로 지정한다.
+     * 
      * @config
      */
     startAngle = 0;
+    /**
+     * 게이지 끝 각도.
+     * 0~360 사이의 값이로 지정한다.
+     * 
+     * @config
+     */
     endAngle = 360;
+    /**
+     * 게이지 중앙에 표시되는 label 설정 모델
+     * 
+     * @config
+     */
     label: GaugeLabel;
 
     //-------------------------------------------------------------------------

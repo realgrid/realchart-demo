@@ -24,7 +24,7 @@ import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
 import { CircleGauge } from "./gauge/CircleGauge";
 import { ClockGauge } from "./gauge/ClockGauge";
-import { CircularGauge, GaugeCollection } from "./gauge/Gauge";
+import { CircularGauge, GaugeCollection } from "./Gauge";
 import { BarRangeSeries } from "./series/BarRangeSeries";
 import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";

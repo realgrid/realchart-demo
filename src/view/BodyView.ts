@@ -24,7 +24,7 @@ import { DataPoint } from "../model/DataPoint";
 import { Series } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
-import { Gauge } from "../model/gauge/Gauge";
+import { Gauge } from "../model/Gauge";
 import { ChartElement } from "./ChartElement";
 import { GaugeView } from "./GaugeView";
 import { IPointView, SeriesView } from "./SeriesView";
