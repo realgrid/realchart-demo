@@ -3,7 +3,7 @@
  * 
  */
 const config = {
-    defaults: {
+    vars: {
         gauge: {
             thickness: '7%',
             ranges: [{
@@ -37,45 +37,45 @@ const config = {
     },
     title: "Multiple Gauges",
     gauge: [{
+        var: "gauge",
         name: 'gauge1',
-        defaults: "gauge",
         width: '33%',
         height: '50%',
         left: 0,
         value: Math.random() * 100,
     }, {
+        var: "gauge",
         name: 'gauge2',
-        defaults: "gauge",
         width: '33%',
         height: '50%',
         left: '33%',
         value: Math.random() * 100,
     }, {
+        var: "gauge",
         name: 'gauge3',
-        defaults: "gauge",
         width: '33%',
         height: '50%',
         left: '66%',
         value: Math.random() * 100,
     }, {
+        var: "gauge",
         name: 'gauge4',
-        defaults: "gauge",
         width: '33%',
         height: '50%',
         left: 0,
         top: '50%',
         value: Math.random() * 100,
     }, {
+        var: "gauge",
         name: 'gauge5',
-        defaults: "gauge",
         width: '33%',
         height: '50%',
         left: '33%',
         top: '50%',
         value: Math.random() * 100,
     }, {
+        var: "gauge",
         name: 'gauge6',
-        defaults: "gauge",
         width: '33%',
         height: '50%',
         left: '66%',

@@ -60,7 +60,7 @@ export abstract class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     load(source: any): ChartItem {
         if (!this._doLoadSimple(source)) {
-            this.chart && this.chart.assignDefaults(source);
+            this.chart && this.chart.assignVars(source);
             this._doLoad(source);
         }
         return this;

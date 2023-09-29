@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString } from "../common/Common";
+import { isObject, isString } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
@@ -24,7 +24,7 @@ import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
 import { CircleGauge } from "./gauge/CircleGauge";
 import { ClockGauge } from "./gauge/ClockGauge";
-import { CircularGauge, GaugeCollection } from "./Gauge";
+import { GaugeCollection } from "./Gauge";
 import { BarRangeSeries } from "./series/BarRangeSeries";
 import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";
@@ -59,7 +59,7 @@ export interface IChart {
     yAxis: IAxis;
     colors: string[];
 
-    assignDefaults(target: any): void;
+    assignVars(target: any): void;
 
     isGauge(): boolean;
     isPolar(): boolean;
@@ -268,7 +268,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _defaults: {[key: string]: any};
+    private _vars: {[key: string]: any};
     private _assets: AssetCollection;
     private _themes: ThemeCollection;
     private _options: ChartOptions;
@@ -518,9 +518,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._series.getLegendSources();
     }
 
-    assignDefaults(target: any): void {
-        if (target && isString(target.defaults)) {
-            let v = this._defaults[target.defaults];
+    assignVars(target: any): void {
+        if (target && isString(target.var)) {
+            let v = this._vars[target.var];
             v && Object.assign(target, v);
         }
     }
@@ -529,7 +529,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         console.time('load chart');
 
         // defaults
-        this.$_loadDefaults(source.defaults);
+        this.$_loadVars(source.vars);
 
         // properites
         ['type', 'polar', 'inverted'].forEach(prop => {
@@ -646,14 +646,14 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_loadDefaults(src: any): void {
-        const defs = this._defaults = {};
+    private $_loadVars(src: any): void {
+        const vars = this._vars = {};
 
         if (isObject(src)) {
             for (const p in src) {
                 const v = src[p];
                 if (isObject(v)) {
-                    defs[p] = Object.assign({}, v);
+                    vars[p] = Object.assign({}, v);
                 }
             }
         }
