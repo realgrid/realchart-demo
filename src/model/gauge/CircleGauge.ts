@@ -10,7 +10,7 @@ import { IChart } from "../Chart";
 import { CircularGauge, Gauge, IGaugeValueRange } from "../Gauge";
 
 /**
- * 시계 게이지 모델.
+ * 게이지 모델.
  * 
  * @config chart.gauge[type=circle]
  */

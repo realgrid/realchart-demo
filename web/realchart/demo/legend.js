@@ -48,8 +48,8 @@ function setActions(container) {
         config.legend.visible = _getChecked(e);
         chart.load(config);
     }, true)
-    createListBox(container, "position", ['bottom', 'top', 'right', 'left', 'plot'], function (e) {
-        config.legend.position = _getValue(e);
+    createListBox(container, "location", ['bottom', 'top', 'right', 'left', 'plot'], function (e) {
+        config.legend.location = _getValue(e);
         chart.load(config);
     }, 'bottom');
     createListBox(container, "alignBase", ['plot', 'chart'], function (e) {

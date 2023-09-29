@@ -15,6 +15,7 @@ const config = {
     gauge: {
         name: 'gauge1',
         size: '70%',
+        valueSize: '90%',
         value: Math.random() * 100,
         ranges: [{
             endValue: 30,
@@ -27,11 +28,12 @@ const config = {
         }],
         label: {
             // suffix: '%',
-            text: '<t style="fill:blue">${value}</t><t style="font-size:20px;">%</t><br><t style="margin-top:20px;font-size:20px;font-weight:normal">Gauge Test</t>',
+            numberFormat: '#0.0',
+            text: '<t style="fill:blue">${value}</t><t style="font-size:24px;">%</t><br><t style="margin-top:20px;font-size:20px;font-weight:normal">Gauge Test</t>',
             style: {
+                fontFamily: 'Arial',
                 fontWeight: 'bold'
             },
-            animatable: false
         }
     }
 }

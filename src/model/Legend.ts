@@ -49,7 +49,7 @@ export class LegendItem extends ChartItem {
     }
 }
 
-export enum LegendPosition {
+export enum LegendLocation {
     /**
      * 차트 본체 아래 표시한다.
      * 
@@ -144,7 +144,7 @@ export class Legend extends Widget {
     private _items: LegendItem[];
     private _maxWidthDim: IPercentSize;
     private _maxHeightDim: IPercentSize;
-    private _position: LegendPosition;
+    private _location: LegendLocation;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -163,7 +163,7 @@ export class Legend extends Widget {
      * 
      * @config
      */
-    position = LegendPosition.BOTTOM;
+    location = LegendLocation.BOTTOM;
     /**
      * item 배치 방향.
      * 
@@ -249,15 +249,15 @@ export class Legend extends Widget {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getPosition(): LegendPosition {
-        return this._position;
+    getLocatiion(): LegendLocation {
+        return this._location;
     }
 
     getLayout(): LegendLayout {
-        if (this.layout === LegendLayout.AUTO && this._position !== LegendPosition.PLOT) {
-            switch (this._position) {
-                case LegendPosition.BOTTOM:
-                case LegendPosition.TOP:
+        if (this.layout === LegendLayout.AUTO && this._location !== LegendLocation.PLOT) {
+            switch (this._location) {
+                case LegendLocation.BOTTOM:
+                case LegendLocation.TOP:
                     return LegendLayout.HORIZONTAL;
                 default:
                     return LegendLayout.VERTICAL;
@@ -288,7 +288,7 @@ export class Legend extends Widget {
     protected _doPrepareRender(chart: IChart): void {
         super._doPrepareRender(chart);
 
-        this._position = Utils.checkEnumValue(LegendPosition, this.position, LegendPosition.BOTTOM);
+        this._location = Utils.checkEnumValue(LegendLocation, this.location, LegendLocation.BOTTOM);
         this._items = this.$_collectItems();
     }
 

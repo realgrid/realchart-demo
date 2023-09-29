@@ -55,7 +55,7 @@ export abstract class GaugeView<T extends Gauge> extends ChartElement<T> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
-        return { width: hintWidth, height: hintHeight };
+        return model.getSize(this.width, this.height);
     }
 
     protected _doLayout(): void {

@@ -14,7 +14,7 @@ import { Tester } from '../Tester';
 import { Chart } from '../../../src/model/Chart';
 
 const source = {
-    position: Utils.arandom(['bottom', 'top', 'right', 'left', 'plot', 'subplot']),
+    location: Utils.arandom(['bottom', 'top', 'right', 'left', 'plot', 'subplot']),
     layout: Utils.arandom(['auto', 'horizontal', 'vertical']),
     alignBase: Utils.arandom(['chart', 'plot']),
     left: Utils.irandom(-1000, 1000),
@@ -68,8 +68,8 @@ describe('LegendItem test', function() {
         expect(lg).exist;
     });
 
-    it('position', () => {
-        expect(legend.position).eq(source.position);
+    it('location', () => {
+        expect(legend.location).eq(source.location);
     });
 
     it('layout', () => {

@@ -43,7 +43,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     private _textView: TextElement;
 
     private _center: {x: number, y: number};
-    private _rds: {size: number, inner: number};
+    private _rds: {size: number, inner: number, value: number};
     private _prevValue = 0;
     _runValue: number;
     private _ani: RcAnimation;
@@ -78,7 +78,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     protected _renderGauge(width: number, height: number): void {
         const m = this.model;
         const center = m.getCenter(width, height);
-        const rds = m.getSize(width, height);
+        const rds = m.getRadiuses(width, height);
 
         if (this._ani) {
             this._ani.stop();
@@ -96,7 +96,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_renderBackground(m: CircleGauge, center: {x: number, y: number}, rds: {size: number, inner: number}): void {
+    private $_renderBackground(m: CircleGauge, center: {x: number, y: number}, rds: {size: number, inner: number, value: number}): void {
         const start = ORG_ANGLE + deg2rad(m.startAngle);
 
         this._center = center;
@@ -124,7 +124,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
         // foreground sectors
         if (foregrounds.count === 1) {
-            const range = m.getRange(value);
+            const range = m.getRange(value); // runValue가 아니다.
             if (range) {
                 foregrounds.first.setStyle('fill', range.color);
             }
@@ -133,7 +133,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
                 cy: center.y,
                 rx: rds.size / 2,
                 ry: rds.size / 2,
-                innerRadius: rds.inner / rds.size,
+                innerRadius: rds.value / rds.size,
                 start: start,
                 angle: Math.PI * 2 * rate,
                 clockwise: true

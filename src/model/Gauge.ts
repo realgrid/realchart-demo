@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, isString, pickNum, pickProp } from "../common/Common";
+import { ISize } from "../common/Size";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { FormattableText } from "./ChartItem";
@@ -64,12 +65,35 @@ export abstract class Gauge extends Widget {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _widthDim: IPercentSize;
+    private _heightdim: IPercentSize;
+
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     abstract _type(): string;
 
+    /**
+     * 게이지 이름.
+     * 동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다. 
+     * 
+     * @config
+     */
     name: string;
+    /**
+     * 게이지 너비.
+     * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
+     * 
+     * @config
+     */
+    width: RtPercentSize = '100%';
+    /**
+     * 게이지 높이.
+     * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
+     * 
+     * @config
+     */
+    height: RtPercentSize = '100%';
     /**
      * 최소값.
      * 
@@ -92,6 +116,13 @@ export abstract class Gauge extends Widget {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getSize(width: number, height: number): ISize {
+        return {
+            width: calcPercent(this._widthDim, width) || width,
+            height: calcPercent(this._heightdim, height) || height
+        };
+    }
+
     updateValues(values: any): void {
         if (values !== this.value) {
             this.value = values;
@@ -196,12 +227,19 @@ export class GaugeLabel extends FormattableText {
     // properties
     //-------------------------------------------------------------------------
     /**
+     * 게이지 중심 등, label이 표시될 기준 위치에서 x 방향으로 이동한 픽셀 크기.
+     * 기준 위치는 게이지 종류에 따라 달라진다.
+     * 
+     * @config
+     */
+    offsetX = 0;
+    /**
      * 게이지 중심 등, label이 표시될 기준 위치에서 y 방향으로 이동한 픽셀 크기.
      * 기준 위치는 게이지 종류에 따라 달라진다.
      * 
      * @config
      */
-    offset = 0;
+    offsetY = 0;
     /**
      * 게이지 값 변경 애니메이션이 실행될 때, label도 따라서 변경시킨다.
      * 
@@ -212,6 +250,8 @@ export class GaugeLabel extends FormattableText {
 
 /**
  * 원형 게이지 모델.
+ * label의 기본 위치의 x는 원호의 좌위 최대 각 위치를 연결한 지점,
+ * y는 중심 각도의 위치.
  */
 export abstract class CircularGauge extends Gauge {
 
@@ -322,11 +362,12 @@ export abstract class CircularGauge extends Gauge {
         return { x, y };
     }
 
-    getSize(plotWidth: number, plotHeight: number): { size: number, inner: number } {
+    getRadiuses(plotWidth: number, plotHeight: number): { size: number, inner: number, value: number } {
         const size = calcPercent(this._radiusDim, Math.min(plotWidth, plotHeight));
         const inner = this._innerDim ? calcPercent(this._innerDim, size) : 0;
+        const value = this._valueDim ? calcPercent(this._valueDim, size) : inner;
 
-        return { size: size, inner };
+        return { size: size, inner, value };
     }
 
     getLabel(value: number): string {
@@ -359,6 +400,7 @@ export abstract class CircularGauge extends Gauge {
         this._centerYDim = parsePercentSize(pickProp(this.centerY, CircularGauge.DEF_CENTER), true);
         this._radiusDim = parsePercentSize(pickProp(this.size, CircularGauge.DEF_SIZE), true);
         this._innerDim = parsePercentSize(pickProp(this.innerSize, CircularGauge.INNER_SIZE), true);
+        this._valueDim = parsePercentSize(this.valueSize, true);
     }
 
     //-------------------------------------------------------------------------
