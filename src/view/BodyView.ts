@@ -908,8 +908,8 @@ export class BodyView extends ChartElement<Body> {
         // gauges
         this._gaugeViews.forEach(v => {
             // this._owner.clipSeries(v.getClipContainer(), 0, 0, w, h, v.invertable());
-            v.resize(w, h);
-            v.layout();
+            v.resizeByMeasured();
+            v.layout().translatep(v.getPosition(w, h));
         })
     }
 

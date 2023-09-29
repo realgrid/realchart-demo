@@ -43,7 +43,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     private _textView: TextElement;
 
     private _center: {x: number, y: number};
-    private _rds: {size: number, inner: number, value: number};
+    private _exts: {radius: number, thick: number, value: number};
     private _prevValue = 0;
     _runValue: number;
     private _ani: RcAnimation;
@@ -78,13 +78,13 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     protected _renderGauge(width: number, height: number): void {
         const m = this.model;
         const center = m.getCenter(width, height);
-        const rds = m.getRadiuses(width, height);
+        const exts = m.getExtents(width, height);
 
         if (this._ani) {
             this._ani.stop();
             this._ani = null;
         }
-        this.$_renderBackground(m, center, rds);
+        this.$_renderBackground(m, center, exts);
         this.$_renderValue(m);
 
         if (this._animatable && m.animatable && m.value !== this._prevValue) {
@@ -96,18 +96,18 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_renderBackground(m: CircleGauge, center: {x: number, y: number}, rds: {size: number, inner: number, value: number}): void {
+    private $_renderBackground(m: CircleGauge, center: {x: number, y: number}, exts: {radius: number, thick: number, value: number}): void {
         const start = ORG_ANGLE + deg2rad(m.startAngle);
 
         this._center = center;
-        this._rds = rds;
+        this._exts = exts;
 
         this._background.setSector({
             cx: center.x,
             cy: center.y,
-            rx: rds.size / 2,
-            ry: rds.size / 2,
-            innerRadius: rds.inner / rds.size,
+            rx: exts.radius,
+            ry: exts.radius,
+            innerRadius: (exts.radius - exts.thick) / exts.radius,
             start: start,
             angle: Math.PI * 2,
             clockwise: true
@@ -119,7 +119,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         const rate = pickNum((value - m.minValue) / (m.maxValue - m.minValue), 0);
         const start = ORG_ANGLE + deg2rad(m.startAngle);
         const center = this._center;
-        const rds = this._rds;
+        const exts = this._exts;
         const foregrounds = this._foregrounds;
 
         // foreground sectors
@@ -131,9 +131,9 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
             foregrounds.first.setSector({
                 cx: center.x,
                 cy: center.y,
-                rx: rds.size / 2,
-                ry: rds.size / 2,
-                innerRadius: rds.value / rds.size,
+                rx: exts.radius,
+                ry: exts.radius,
+                innerRadius: (exts.radius - exts.value) / exts.radius,
                 start: start,
                 angle: Math.PI * 2 * rate,
                 clockwise: true

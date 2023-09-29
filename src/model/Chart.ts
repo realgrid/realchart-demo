@@ -6,13 +6,13 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isString } from "../common/Common";
+import { isArray, isObject, isString } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
-import { ChartItem } from "./ChartItem";
+import { ChartItem, n_char_item } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
 import { ILegendSource, Legend } from "./Legend";
 import { IPlottingItem, PlottingItemCollection, Series } from "./Series";
@@ -58,6 +58,8 @@ export interface IChart {
     xAxis: IAxis;
     yAxis: IAxis;
     colors: string[];
+
+    assignDefaults(target: any): void;
 
     isGauge(): boolean;
     isPolar(): boolean;
@@ -266,6 +268,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _defaults: {[key: string]: any};
     private _assets: AssetCollection;
     private _themes: ThemeCollection;
     private _options: ChartOptions;
@@ -515,8 +518,18 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._series.getLegendSources();
     }
 
+    assignDefaults(target: any): void {
+        if (target && isString(target.defaults)) {
+            let v = this._defaults[target.defaults];
+            v && Object.assign(target, v);
+        }
+    }
+
     load(source: any): void {
         console.time('load chart');
+
+        // defaults
+        this.$_loadDefaults(source.defaults);
 
         // properites
         ['type', 'polar', 'inverted'].forEach(prop => {
@@ -561,6 +574,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // inverted
         this._inverted = this.inverted;
 
+        console.log('chart-items:', n_char_item);
         console.timeEnd('load chart');
     }
 
@@ -632,6 +646,19 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    private $_loadDefaults(src: any): void {
+        const defs = this._defaults = {};
+
+        if (isObject(src)) {
+            for (const p in src) {
+                const v = src[p];
+                if (isObject(v)) {
+                    defs[p] = Object.assign({}, v);
+                }
+            }
+        }
+    }
+
     _getGroupType(type: string): any {
         return isString(type) && group_types[type.toLowerCase()];
     }

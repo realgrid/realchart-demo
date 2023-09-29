@@ -1,6 +1,5 @@
 /**
  * @demo
- * 
  */
 const config = {
     options: {
@@ -14,8 +13,6 @@ const config = {
     title: "Circle Guage",
     gauge: {
         name: 'gauge1',
-        size: '70%',
-        valueSize: '90%',
         value: Math.random() * 100,
         ranges: [{
             endValue: 30,

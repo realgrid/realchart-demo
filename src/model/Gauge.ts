@@ -6,7 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, pickNum, pickProp } from "../common/Common";
+import { isArray, isObject, isString, pickNum, pickNum3, pickProp } from "../common/Common";
+import { IPoint } from "../common/Point";
 import { ISize } from "../common/Size";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
@@ -86,14 +87,20 @@ export abstract class Gauge extends Widget {
      * 
      * @config
      */
-    width: RtPercentSize = '100%';
+    width: RtPercentSize;
     /**
      * 게이지 높이.
      * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
      * 
      * @config
      */
-    height: RtPercentSize = '100%';
+    height: RtPercentSize;
+    /**
+     * {@link width}와 {@link height}를 동시에 설정한다.
+     * 
+     * @config
+     */
+    size: RtPercentSize = '100%';
     /**
      * 최소값.
      * 
@@ -133,6 +140,14 @@ export abstract class Gauge extends Widget {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doLoad(source: any): void {
+        super._doLoad(source);
+
+        const sz = parsePercentSize(this.size, true);
+
+        this._widthDim = parsePercentSize(this.width, true) || sz;
+        this._heightdim = parsePercentSize(this.height, true) || sz;
+    }
 }
 
 export class GaugeCollection {
@@ -259,8 +274,8 @@ export abstract class CircularGauge extends Gauge {
     // consts
     //-------------------------------------------------------------------------
     static readonly DEF_CENTER = '50%';
-    static readonly DEF_SIZE = '80%';
-    static readonly INNER_SIZE = '80%';
+    static readonly DEF_RADIUS = '40%';
+    static readonly DEF_THICKNESS = '20%';
 
     //-------------------------------------------------------------------------
     // fields
@@ -268,7 +283,7 @@ export abstract class CircularGauge extends Gauge {
     private _centerXDim: IPercentSize;
     private _centerYDim: IPercentSize;
     private _radiusDim: IPercentSize;
-    private _innerDim: IPercentSize;
+    private _thickDim: IPercentSize;
     private _valueDim: IPercentSize;
     private _activeValue: number;
 
@@ -316,21 +331,22 @@ export abstract class CircularGauge extends Gauge {
      * 
      * @config
      */
-    size: RtPercentSize = CircularGauge.DEF_SIZE;
+    radius: RtPercentSize = CircularGauge.DEF_RADIUS;
     /**
      * 내부 원의 크기.
-     * 픽셀 단위의 크기나, 게이지 원 크기(너비와 높이 중 작은 값)에 대한 상대적 크기로 지정할 수 있다.
+     * 픽셀 단위의 크기나, {@link radius}에 대한 상대적 크기로 지정할 수 있다.
      * 
      * @config
      */
-    innerSize: RtPercentSize = CircularGauge.INNER_SIZE;
+    thickness: RtPercentSize = CircularGauge.DEF_THICKNESS;
     /**
      * 값을 표시하는 내부 원의 크기.
-     * 픽셀 단위의 크기나, 게이지 원 크기(너비와 높이 중 작은 값)에 대한 상대적 크기로 지정할 수 있다.
+     * 픽셀 단위의 크기나, {@link radius}에 대한 상대적 크기로 지정할 수 있다.
+     * 예) '100%'로 지정하면 원을 채운다.
      * 
      * @config
      */
-    valueSize: RtPercentSize;
+    valueThickness: RtPercentSize;
     /**
      * 게이지 시작 각도.
      * 0~360 사이의 값이로 지정한다.
@@ -355,19 +371,19 @@ export abstract class CircularGauge extends Gauge {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getCenter(plotWidth: number, plotHeight: number): { x: number, y: number } {
-        const x = calcPercent(this._centerXDim, plotWidth);
-        const y = calcPercent(this._centerYDim, plotHeight);
+    getCenter(gaugeWidth: number, gaugeHeight: number): { x: number, y: number } {
+        const x = calcPercent(this._centerXDim, gaugeWidth);
+        const y = calcPercent(this._centerYDim, gaugeHeight);
 
         return { x, y };
     }
 
-    getRadiuses(plotWidth: number, plotHeight: number): { size: number, inner: number, value: number } {
-        const size = calcPercent(this._radiusDim, Math.min(plotWidth, plotHeight));
-        const inner = this._innerDim ? calcPercent(this._innerDim, size) : 0;
-        const value = this._valueDim ? calcPercent(this._valueDim, size) : inner;
+    getExtents(gaugeWidth: number, gaugeHeight: number): { radius: number, thick: number, value: number } {
+        const radius = calcPercent(this._radiusDim, Math.min(gaugeWidth, gaugeHeight));
+        const thick = Math.min(radius, this._thickDim ? calcPercent(this._thickDim, radius) : 0);
+        const value = Math.min(radius, this._valueDim ? calcPercent(this._valueDim, radius) : thick);
 
-        return { size: size, inner, value };
+        return { radius, thick, value };
     }
 
     getLabel(value: number): string {
@@ -398,9 +414,9 @@ export abstract class CircularGauge extends Gauge {
 
         this._centerXDim = parsePercentSize(pickProp(this.centerX, CircularGauge.DEF_CENTER), true);
         this._centerYDim = parsePercentSize(pickProp(this.centerY, CircularGauge.DEF_CENTER), true);
-        this._radiusDim = parsePercentSize(pickProp(this.size, CircularGauge.DEF_SIZE), true);
-        this._innerDim = parsePercentSize(pickProp(this.innerSize, CircularGauge.INNER_SIZE), true);
-        this._valueDim = parsePercentSize(this.valueSize, true);
+        this._radiusDim = parsePercentSize(pickProp(this.radius, CircularGauge.DEF_RADIUS), true);
+        this._thickDim = parsePercentSize(pickProp(this.thickness, CircularGauge.DEF_THICKNESS), true);
+        this._valueDim = parsePercentSize(this.valueThickness, true);
     }
 
     //-------------------------------------------------------------------------

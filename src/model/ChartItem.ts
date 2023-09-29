@@ -15,6 +15,8 @@ import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
 import { IChart } from "./Chart";
 
+export let n_char_item = 0;
+
 export abstract class ChartItem extends RcObject {
 
     //-------------------------------------------------------------------------
@@ -34,6 +36,7 @@ export abstract class ChartItem extends RcObject {
 
         this.chart = chart;
         this._visible = visible;
+        n_char_item++;
     }
 
     //-------------------------------------------------------------------------
@@ -57,6 +60,7 @@ export abstract class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     load(source: any): ChartItem {
         if (!this._doLoadSimple(source)) {
+            this.chart && this.chart.assignDefaults(source);
             this._doLoad(source);
         }
         return this;

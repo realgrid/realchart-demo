@@ -18,7 +18,7 @@ const config = {
         align: 'left',
     },
     legend: {
-        layout: 'vertical',
+        // layout: 'vertical',
         position: 'plot',
         left: 0,
         top: 0

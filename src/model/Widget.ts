@@ -6,6 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum3 } from "../common/Common";
+import { IPoint } from "../common/Point";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";

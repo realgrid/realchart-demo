@@ -3,6 +3,30 @@
  * 
  */
 const config = {
+    defaults: {
+        gauge: {
+            thickness: '7%',
+            ranges: [{
+                endValue: 25,
+                color: 'green'
+            }, {
+                endValue: 50,
+                color: '#0000cc'
+            }, {
+                endValue: 75,
+                color: '#ffaa00'
+            }, {
+                color: 'red'
+            }],
+            label: {
+                // suffix: '%',
+                text: '<t style="fill:blue">${value}</t><t style="font-size:20px;">%</t><br><t style="margin-top:20px;font-size:20px;font-weight:normal">Gauge Test</t>',
+                style: {
+                    fontWeight: 'bold'
+                }
+            }
+        }
+    },
     options: {
         // animatable: false,
         credits: {
@@ -14,61 +38,55 @@ const config = {
     title: "Multiple Gauges",
     gauge: [{
         name: 'gauge1',
-        centerX: '25%',
-        centerY: '25%',
-        size: '45%',
-        value: 50,
-        label: {
-            // suffix: '%',
-            text: '<t style="fill:blue">${value}</t><t style="font-size:20px;">%</t><br><t style="margin-top:20px;font-size:20px;font-weight:normal">Gauge Test</t>',
-            style: {
-                fontWeight: 'bold'
-            }
-        }
+        defaults: "gauge",
+        width: '33%',
+        height: '50%',
+        left: 0,
+        value: Math.random() * 100,
     }, {
         name: 'gauge2',
-        centerX: '75%',
-        centerY: '25%',
-        size: '45%',
-        value: 50,
-        label: {
-            // suffix: '%',
-            text: '<t style="fill:blue">${value}</t><t style="font-size:20px;">%</t><br><t style="margin-top:20px;font-size:20px;font-weight:normal">Gauge Test</t>',
-            style: {
-                fontWeight: 'bold'
-            }
-        }
+        defaults: "gauge",
+        width: '33%',
+        height: '50%',
+        left: '33%',
+        value: Math.random() * 100,
     }, {
         name: 'gauge3',
-        centerX: '25%',
-        centerY: '75%',
-        size: '45%',
-        value: 50,
-        label: {
-            // suffix: '%',
-            text: '<t style="fill:blue">${value}</t><t style="font-size:20px;">%</t><br><t style="margin-top:20px;font-size:20px;font-weight:normal">Gauge Test</t>',
-            style: {
-                fontWeight: 'bold'
-            }
-        }
+        defaults: "gauge",
+        width: '33%',
+        height: '50%',
+        left: '66%',
+        value: Math.random() * 100,
     }, {
         name: 'gauge4',
-        centerX: '75%',
-        centerY: '75%',
-        size: '45%',
-        value: 50,
-        label: {
-            // suffix: '%',
-            text: '<t style="fill:blue">${value}</t><t style="font-size:20px;">%</t><br><t style="margin-top:20px;font-size:20px;font-weight:normal">Gauge Test</t>',
-            style: {
-                fontWeight: 'bold'
-            }
-        }
+        defaults: "gauge",
+        width: '33%',
+        height: '50%',
+        left: 0,
+        top: '50%',
+        value: Math.random() * 100,
+    }, {
+        name: 'gauge5',
+        defaults: "gauge",
+        width: '33%',
+        height: '50%',
+        left: '33%',
+        top: '50%',
+        value: Math.random() * 100,
+    }, {
+        name: 'gauge6',
+        defaults: "gauge",
+        width: '33%',
+        height: '50%',
+        left: '66%',
+        top: '50%',
+        value: Math.random() * 100,
     }]
 }
 
 let animate;
 let chart;
+let timer;
 
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
@@ -78,6 +96,21 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(container, 'label.animatable', function (e) {
+        config.gauge.label.animatable = _getChecked(e);
+        chart.load(config);
+    }, true);
+    createButton(container, 'Run', function(e) {
+        clearInterval(timer);
+        timer = setInterval(() => {
+            for (let i = 1; i <= 6; i++) {
+                chart.updateGauge('gauge' + i, Math.random() * 100);
+            }
+        }, 2000);
+    });
+    createButton(container, 'Stop', function(e) {
+        clearInterval(timer);
+    });
 }
 
 function init() {
@@ -85,11 +118,5 @@ function init() {
     // RealChart.setDebugging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
-    setInterval(() => {
-        chart.updateGauge('gauge1', Math.random() * 100);
-        chart.updateGauge('gauge2', Math.random() * 100);
-        chart.updateGauge('gauge3', Math.random() * 100);
-        chart.updateGauge('gauge4', Math.random() * 100);
-    }, 2000);
     setActions('actions')
 }

@@ -840,6 +840,12 @@ export class RcElement extends RcObject {
         return this;
     }
 
+    movep(p: IPoint): RcElement {
+        this.x = p.x;
+        this.y = p.y;
+        return this;
+    }
+
     isDomAnimating(): boolean {
         return this._dom.getAnimations().length > 0;
     }
@@ -851,6 +857,10 @@ export class RcElement extends RcObject {
             this._updateTransform();
         }
         return this;
+    }
+
+    translatep(p: IPoint): RcElement {
+        return this.translate(p.x, p.y);
     }
 
     translateEx(x: number, y: number, duration = 0, invalidate = true): RcElement {

@@ -6,7 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { IPoint } from "../common/Point";
 import { ISize } from "../common/Size";
+import { RectElement } from "../common/impl/RectElement";
 import { Gauge } from "../model/Gauge";
 import { ChartElement } from "./ChartElement";
 
@@ -15,9 +17,13 @@ export abstract class GaugeView<T extends Gauge> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
+    static readonly BACKGROUND_CLASS = 'rct-gauge-background';
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _backElement: RectElement;
+
     protected _inverted = false;
     protected _animatable = true;
 
@@ -26,6 +32,8 @@ export abstract class GaugeView<T extends Gauge> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     constructor(doc: Document, styleName: string) {
         super(doc, styleName);
+
+        this.add(this._backElement = new RectElement(doc, GaugeView.BACKGROUND_CLASS));
     }
 
     //-------------------------------------------------------------------------
@@ -51,11 +59,32 @@ export abstract class GaugeView<T extends Gauge> extends ChartElement<T> {
         this._prepareGauge(doc, model);
     }
 
+    getPosition(width: number, height: number): IPoint {
+        const m = this.model;
+        let x = m.getLeft(width);
+        let y = m.getTop(height);
+
+        if (isNaN(x)) {
+            x = m.getRight(width) - this.width;
+            if (isNaN(x)) {
+                x = (width - this.width) / 2;
+            }
+        }
+        if (isNaN(y)) {
+            y = m.getBottom(height) - this.height;
+            if (isNaN(y)) {
+                y = (height - this.height) / 2;
+            }
+        }
+
+        return { x, y };
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
-        return model.getSize(this.width, this.height);
+        return model.getSize(hintWidth, hintHeight);
     }
 
     protected _doLayout(): void {

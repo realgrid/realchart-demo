@@ -663,9 +663,14 @@
     stroke-width: 2px;
 }
 
+/** gauge */
+.rct-gauge-background {
+    fill: none;
+}
+
 /** circle gauge */
 .rct-circle-gauge-back {
-    fill: lightgray;
+    fill: #ddd;
 }
 .rct-circle-gauge-value {
     fill: #008844;
