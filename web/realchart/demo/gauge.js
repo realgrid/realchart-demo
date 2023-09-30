@@ -26,10 +26,10 @@ const config = {
         label: {
             // suffix: '%',
             numberFormat: '#0.0',
-            text: '<t style="fill:blue">${value}</t><t style="font-size:24px;">%</t><br><t style="margin-top:20px;font-size:20px;font-weight:normal">Gauge Test</t>',
+            text: '<t style="fill:blue">${value}</t><t style="font-size:24px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',
             style: {
                 fontFamily: 'Arial',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
             },
         }
     }

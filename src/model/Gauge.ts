@@ -234,8 +234,6 @@ export class GaugeLabel extends FormattableText {
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
         super(chart, true);
-
-        this.setLineHeight(1.2);
     }
 
     //-------------------------------------------------------------------------

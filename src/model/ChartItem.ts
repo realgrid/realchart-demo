@@ -300,11 +300,6 @@ export abstract class FormattableText extends ChartText {
         return this;
     }
 
-    setLineHeight(value: number): FormattableText {
-        this._lineHeight = pickNum(value, 1);
-        return this;
-    }
-
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -319,7 +314,6 @@ export abstract class FormattableText extends ChartText {
     // }
 
     buildSvg(view: TextElement, target: any, callback: RichTextParamCallback): void {
-        this._richTextImpl.lineHeight = this._lineHeight;
         this._richTextImpl.build(view, target, callback);
     }
 

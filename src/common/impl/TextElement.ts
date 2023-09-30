@@ -131,7 +131,8 @@ export class TextElement extends RcElement {
     //-------------------------------------------------------------------------
     getAscent(height: number): number {
         //return (height >= 20 ? 0.72 : 0.75) * height;
-        return 0.75 * height;
+        // return 0.75 * height;
+        return 0.8 * height;
     }
 
     layoutText(lineHeight?: number): void {

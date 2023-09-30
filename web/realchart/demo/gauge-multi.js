@@ -20,7 +20,7 @@ const config = {
             }],
             label: {
                 // suffix: '%',
-                text: '<t style="fill:blue">${value}</t><t style="font-size:20px;">%</t><br><t style="margin-top:20px;font-size:20px;font-weight:normal">Gauge Test</t>',
+                text: '<t style="fill:blue">${value}</t><t style="font-size:20px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',
                 style: {
                     fontWeight: 'bold'
                 }

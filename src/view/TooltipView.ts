@@ -49,7 +49,6 @@ export class TooltipView extends RcElement {
         this._textView.anchor = TextAnchor.START;
 
         this._richText = new SvgRichText();
-        this._richText.lineHeight = 1.2;
 
         this.close(true, false);
     }
