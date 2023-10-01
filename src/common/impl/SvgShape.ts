@@ -131,13 +131,13 @@ export class SvgShapes {
 
     // TODO: 개선할 것!
     static sector(cx: number, cy: number, rx: number, ry: number, rInner: number, start: number, end: number, clockwise: boolean): SizeValue[] {
-        const circled = Math.abs(end - start - 2 * Math.PI) < SECTOR_ERROR;
-        const long = end - start - Math.PI < SECTOR_ERROR ? 0 : 1;
+        const circled = 2 * Math.PI - Math.abs(end - start) < SECTOR_ERROR;
+        let long = Math.abs(end - start) - Math.PI < SECTOR_ERROR ? 0 : 1;
+        const cw = clockwise ? 1 : 0;
         const x1 = Math.cos(start);
         const y1 = Math.sin(start);
-        const x2 = Math.cos(end -= circled ? SECTOR_ERROR : 0);
+        const x2 = Math.cos(end -= circled ? (cw ? SECTOR_ERROR : -SECTOR_ERROR) : 0);
         const y2 = Math.sin(end);
-        const cw = clockwise ? 1 : 0;
         const innerX = rx * rInner;
         const innerY = ry * rInner;
         const path = [];
@@ -169,17 +169,20 @@ export class SvgShapes {
                 cy + innerY * y2
             )
         }
-        path.push(
-            'A',
-            innerX,
-            innerY,
-            0,
-            long,
-            // 바깥쪽 원호와 반대 방향으로...
-            1 - cw,
-            cx + innerX * x1,
-            cy + innerY * y1
-        );
+
+        if (!isNaN(innerX)) {
+            path.push(
+                'A',
+                innerX,
+                innerY,
+                0,
+                long,
+                // 바깥쪽 원호와 반대 방향으로...
+                1 - cw,
+                cx + innerX * x1,
+                cy + innerY * y1
+            );
+        }
 
         path.push('Z');
         return path;

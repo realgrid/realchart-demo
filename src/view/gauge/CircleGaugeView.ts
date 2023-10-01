@@ -24,7 +24,7 @@ class GaugeAnimation extends RcAnimation {
 
     protected _doUpdate(rate: number): boolean {
         this.view._runValue = this.from + (this.to - this.from) * rate;
-        this.view.$_renderValue(this.view.model)
+        this.view.$_renderValue(this.view.model);
         return true;
     }
 }
@@ -109,8 +109,8 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
             ry: exts.radius,
             innerRadius: (exts.radius - exts.thick) / exts.radius,
             start: start,
-            angle: Math.PI * 2,
-            clockwise: true
+            angle: (m.clockwise ? 1 : -1) * Math.PI * 2,
+            clockwise: m.clockwise
         });
     }
 
@@ -135,8 +135,8 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
                 ry: exts.radius,
                 innerRadius: (exts.radius - exts.value) / exts.radius,
                 start: start,
-                angle: Math.PI * 2 * rate,
-                clockwise: true
+                angle: (m.clockwise ? 1 : -1) * Math.PI * 2 * rate,
+                clockwise: m.clockwise
             });
         } else {
             debugger;

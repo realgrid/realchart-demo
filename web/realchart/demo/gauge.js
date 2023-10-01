@@ -14,6 +14,7 @@ const config = {
     gauge: {
         name: 'gauge1',
         value: Math.random() * 100,
+        // clockwise: false,
         ranges: [{
             endValue: 30,
             color: 'green'
@@ -49,6 +50,10 @@ function setActions(container) {
     });
     createCheckBox(container, 'label.animatable', function (e) {
         config.gauge.label.animatable = _getChecked(e);
+        chart.load(config);
+    }, true);
+    createCheckBox(container, 'clockwise', function (e) {
+        config.gauge.clockwise = _getChecked(e);
         chart.load(config);
     }, true);
     createButton(container, 'Run', function(e) {

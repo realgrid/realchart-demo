@@ -75,10 +75,14 @@ function setActions(container) {
         chart.load(config, animate);
     }, 'right');
     line(container);
-    createListBox(container, "startAngle", [0, 90, 180, 270], function (e) {
+    createListBox(container, "series.startAngle", [0, 90, 180, 270], function (e) {
         config.series.startAngle = _getValue(e);
         chart.load(config, animate);
     }, 0);
+    createCheckBox(container, 'series.clockwise', function (e) {
+        config.series.clockwise = _getChecked(e);
+        chart.load(config, animate);
+    }, true);
     createListBox(container, "series.size", ['60%', '70%', '80%', '90%', '100%'], function (e) {
         config.series.size = _getValue(e);
         chart.load(config, animate);

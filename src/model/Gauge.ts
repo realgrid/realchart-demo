@@ -360,6 +360,12 @@ export abstract class CircularGauge extends Gauge {
      */
     endAngle = 360;
     /**
+     * true면 시계 방향으로 회전한다.
+     * 
+     * @config
+     */
+    clockwise = true;
+    /**
      * 게이지 중앙에 표시되는 label 설정 모델
      * 
      * @config

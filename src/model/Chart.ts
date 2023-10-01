@@ -285,6 +285,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _polar: boolean;
     private _gaugeOnly: boolean;
     colors: string[];
+    assignVars: (target: any) => void;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -518,8 +519,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._series.getLegendSources();
     }
 
-    assignVars(target: any): void {
-        if (target && isString(target.var)) {
+    private $_assignVars(target: any): void {
+        if (this._vars && target.var != null) {
             let v = this._vars[target.var];
             v && Object.assign(target, v);
         }
@@ -647,15 +648,18 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     // internal members
     //-------------------------------------------------------------------------
     private $_loadVars(src: any): void {
-        const vars = this._vars = {};
-
         if (isObject(src)) {
+            const vars = this._vars = {};
+
             for (const p in src) {
                 const v = src[p];
                 if (isObject(v)) {
                     vars[p] = Object.assign({}, v);
                 }
             }
+            this.assignVars = this.$_assignVars.bind(this);
+        } else {
+            this.assignVars = void 0;
         }
     }
 

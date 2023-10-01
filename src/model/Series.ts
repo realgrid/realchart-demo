@@ -1275,6 +1275,7 @@ export abstract class RadialSeries extends WidgetSeries {
      * @config
      */
     startAngle = 0;
+    clockwise = true;
 
     //-------------------------------------------------------------------------
     // methods

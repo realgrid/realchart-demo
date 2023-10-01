@@ -171,6 +171,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
 
     private $_calcAngles(pts: PieSeriesPoint[]): void {
         const cnt = pts.length;
+        const cw = this.model.clockwise ? 1 : -1;
         const vr = this._getViewRate();
         const sum = pts.filter(p => (p.visible || p === this._zombie) && !p.isNull)
                           .map(p => p === this._zombie ? p.yValue * this._zombieRate : p.yValue)
@@ -181,14 +182,14 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             pts.forEach(p => {
                 p.yRate = fixnum(p === this._zombie ? p.yValue * this._zombieRate : p.yValue) / sum || 0;
                 p.startAngle = start;
-                start += p.angle = p.yRate * Math.PI * 2 * vr;
+                start += p.angle = cw * p.yRate * Math.PI * 2 * vr;
             });
         } else if (cnt == 1) {
             const p = pts[0];
 
             p.startAngle = start;
             // p.angle = p.yRate * Math.PI * 2 * vr;
-            p.angle = this._zombieRate * Math.PI * 2 * vr;
+            p.angle = cw * this._zombieRate * Math.PI * 2 * vr;
         }
     }
 
@@ -247,7 +248,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                     innerRadius: rdInner,
                     start: start,
                     angle: p.angle,
-                    clockwise: true
+                    clockwise: series.clockwise
                 });
     
                 // label
