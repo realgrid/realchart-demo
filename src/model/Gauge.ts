@@ -9,7 +9,7 @@
 import { isArray, isObject, isString, pickNum, pickNum3, pickProp } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { ISize } from "../common/Size";
-import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../common/Types";
+import { IPercentSize, ORG_ANGLE, RtPercentSize, calcPercent, deg2rad, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { FormattableText } from "./ChartItem";
 import { Widget } from "./Widget";
@@ -284,6 +284,8 @@ export abstract class CircularGauge extends Gauge {
     private _thickDim: IPercentSize;
     private _valueDim: IPercentSize;
     private _activeValue: number;
+    _startRad: number;
+    _totalRad: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -346,19 +348,22 @@ export abstract class CircularGauge extends Gauge {
      */
     valueThickness: RtPercentSize;
     /**
-     * 게이지 시작 각도.
-     * 0~360 사이의 값이로 지정한다.
+     * 게이지 원호 시작 각도.
+     * 지정하지 않거나 잘못된 값이면 0으로 계산된다.
+     * 0은 시계의 12시 위치다.
      * 
      * @config
      */
     startAngle = 0;
     /**
-     * 게이지 끝 각도.
-     * 0~360 사이의 값이로 지정한다.
+     * 게이지 원호 전체 각도.
+     * 0 ~ 360 사이의 값으로 지정해야 한다.
+     * 범위를 벗어난 값은 범위 안으로 조정된다.
+     * 지정하지 않거나 잘못된 값이면 360으로 계산된다.
      * 
      * @config
      */
-    endAngle = 360;
+    totalAngle = 360;
     /**
      * true면 시계 방향으로 회전한다.
      * 
@@ -421,6 +426,16 @@ export abstract class CircularGauge extends Gauge {
         this._radiusDim = parsePercentSize(pickProp(this.radius, CircularGauge.DEF_RADIUS), true);
         this._thickDim = parsePercentSize(pickProp(this.thickness, CircularGauge.DEF_THICKNESS), true);
         this._valueDim = parsePercentSize(this.valueThickness, true);
+    }
+
+    protected _doPrepareRender(chart: IChart): void {
+        super._doPrepareRender(chart);
+
+        let start = pickNum(this.startAngle % 360, 0);
+        let total = Math.max(0, Math.min(360, pickNum(this.totalAngle, 360)));
+
+        this._startRad = ORG_ANGLE + deg2rad(start);
+        this._totalRad = deg2rad(total);
     }
 
     //-------------------------------------------------------------------------

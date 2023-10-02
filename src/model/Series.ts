@@ -1272,9 +1272,27 @@ export abstract class RadialSeries extends WidgetSeries {
      */
     size: RtPercentSize = RadialSeries.DEF_SIZE;
     /**
+     * 시리즈 원호 시작 각도.
+     * 지정하지 않거나 잘못된 값이면 0으로 계산된다.
+     * 0은 시계의 12시 위치다.
+     * 
      * @config
      */
     startAngle = 0;
+    /**
+     * 시리즈 원호 전체 각도.
+     * 0 ~ 360 사이의 값으로 지정해야 한다.
+     * 범위를 벗어난 값은 범위 안으로 조정된다.
+     * 지정하지 않거나 잘못된 값이면 360으로 계산된다.
+     * 
+     * @config
+     */
+    totalAngle = 360;
+    /**
+     * true면 시계 방향으로 회전한다.
+     * 
+     * @config
+     */
     clockwise = true;
 
     //-------------------------------------------------------------------------

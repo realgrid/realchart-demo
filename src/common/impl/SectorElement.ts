@@ -165,7 +165,7 @@ export class SectorElement extends PathElement {
             this.ry * this.rate, 
             this.innerRadius || 0, 
             this.start, 
-            this.start + this.angle, 
+            this.clockwise ? this.start + this.angle : this.start - this.angle, 
             this.clockwise
         ));
     }

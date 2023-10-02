@@ -97,7 +97,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     // internal members
     //-------------------------------------------------------------------------
     private $_renderBackground(m: CircleGauge, center: {x: number, y: number}, exts: {radius: number, thick: number, value: number}): void {
-        const start = ORG_ANGLE + deg2rad(m.startAngle);
+        const start = m._startRad;
 
         this._center = center;
         this._exts = exts;
@@ -109,7 +109,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
             ry: exts.radius,
             innerRadius: (exts.radius - exts.thick) / exts.radius,
             start: start,
-            angle: (m.clockwise ? 1 : -1) * Math.PI * 2,
+            angle: m._totalRad,
             clockwise: m.clockwise
         });
     }
@@ -117,7 +117,6 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     $_renderValue(m: CircleGauge): void {
         const value = pickNum(this._runValue, m.value);
         const rate = pickNum((value - m.minValue) / (m.maxValue - m.minValue), 0);
-        const start = ORG_ANGLE + deg2rad(m.startAngle);
         const center = this._center;
         const exts = this._exts;
         const foregrounds = this._foregrounds;
@@ -134,8 +133,8 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
                 rx: exts.radius,
                 ry: exts.radius,
                 innerRadius: (exts.radius - exts.value) / exts.radius,
-                start: start,
-                angle: (m.clockwise ? 1 : -1) * Math.PI * 2 * rate,
+                start: m._startRad,
+                angle: m._totalRad * rate,
                 clockwise: m.clockwise
             });
         } else {

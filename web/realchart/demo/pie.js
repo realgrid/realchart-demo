@@ -5,6 +5,7 @@
 const config = {
     title: "Pie Series",
     options: {
+        // animatable: false,
     },
     legend: {
         position: 'right',
@@ -79,6 +80,10 @@ function setActions(container) {
         config.series.startAngle = _getValue(e);
         chart.load(config, animate);
     }, 0);
+    createListBox(container, "series.totalAngle", [360, 270, 225, 180], function (e) {
+        config.series.totalAngle = _getValue(e);
+        chart.load(config, animate);
+    }, 360);
     createCheckBox(container, 'series.clockwise', function (e) {
         config.series.clockwise = _getChecked(e);
         chart.load(config, animate);

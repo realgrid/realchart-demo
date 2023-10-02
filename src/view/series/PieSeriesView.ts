@@ -171,30 +171,30 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
 
     private $_calcAngles(pts: PieSeriesPoint[]): void {
         const cnt = pts.length;
-        const cw = this.model.clockwise ? 1 : -1;
-        const vr = this._getViewRate();
+        const cw = this.model.clockwise ? 1 : -1; // [주의]sector들의 배치를 위해 음수로 사용하고, setPieSector()에는 abs로 전달한다.
         const sum = pts.filter(p => (p.visible || p === this._zombie) && !p.isNull)
                           .map(p => p === this._zombie ? p.yValue * this._zombieRate : p.yValue)
                           .reduce((a, c) => a + c, 0);
-        let start = ORG_ANGLE + deg2rad(this.model.startAngle);
+        const total = this.model._totalRad * this._getViewRate();
+        let start = this.model._startRad;
 
         if (cnt > 1 || (cnt > 0 && !this._zombie)) {
             pts.forEach(p => {
                 p.yRate = fixnum(p === this._zombie ? p.yValue * this._zombieRate : p.yValue) / sum || 0;
                 p.startAngle = start;
-                start += p.angle = cw * p.yRate * Math.PI * 2 * vr;
+                start += p.angle = cw * p.yRate * total;
             });
         } else if (cnt == 1) {
             const p = pts[0];
 
             p.startAngle = start;
-            // p.angle = p.yRate * Math.PI * 2 * vr;
-            p.angle = cw * this._zombieRate * Math.PI * 2 * vr;
+            p.angle = cw * this._zombieRate * total;
         }
     }
 
     private $_layoutSectors(points: PieSeriesPoint[], width: number, height: number): void {
         const series = this.model;
+        const cw = series.clockwise;
         const vr = this._getViewRate();
         const center = series.getCenter(width, height);
         const cx = this._cx = center.x;
@@ -247,7 +247,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                     ry: rd,
                     innerRadius: rdInner,
                     start: start,
-                    angle: p.angle,
+                    angle: Math.abs(p.angle),
                     clockwise: series.clockwise
                 });
     
@@ -257,7 +257,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
 
                     if (line.setVisible(!labelInside)) {
                         // this.$_layoutLabel(p, labelView, line, off, dist, slicedOff, pb);
-                        this.$_layoutLabel(p, labelView, line, labelOff, labelDist, p.sliced ? sliceOff : 0);
+                        this.$_layoutLabel(p, labelView, line, labelOff, labelDist, p.sliced ? sliceOff : 0, cw);
                     } else {
                         line.visible = false;
                         // this.$_layoutLabelInner(p, label, off, dist, slicedOff);
@@ -271,10 +271,9 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         })
     }
     
-    private $_layoutLabel(p: PieSeriesPoint, view: PointLabelView, line: PointLabelLine, off: number, dist: number, sliceOff: number): void {
+    private $_layoutLabel(p: PieSeriesPoint, view: PointLabelView, line: PointLabelLine, off: number, dist: number, sliceOff: number, cw: boolean): void {
         const r = view.getBBounds();
         const a = p.startAngle + p.angle / 2;
-        const isLeft = Utils.isLeft(a);
         let cx = this._cx;
         let cy = this._cy;
         let rd = this._rd + dist * 0.8;
@@ -285,6 +284,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         let y1 = cy + Math.sin(a) * this._rd;
         let x2 = cx + Math.cos(a) * rd;
         let y2 = cy + Math.sin(a) * rd;
+        const isLeft = x2 < cx;
         let x3: number;
 
         if (isLeft) {
@@ -293,6 +293,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             x3 = x2 + dist * 0.2;
         }
 
+        // line
         if (line && line.setVisible(rd > 0)) {
             //line.move(x1, y1);
             //line.setPath(pb.move(x1, y1).lines(x2, y2, x3, y2).end())
@@ -301,6 +302,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             !view.isDomAnimating() && line.translate(x1 + dx, y1 + dy);
         }
 
+        // text
         if (isLeft) {
             x3 -= r.width + off;
             y2 -= r.height / 2;
@@ -326,13 +328,14 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     }
 
     private $_slice(view: SectorView, sliced: boolean, needLayout: boolean): void {
-        const dur = this.model.autoSlice ? this.model.sliceDuration : 0;
+        const m = this.model;
+        const dur = m.autoSlice ? m.sliceDuration : 0;
         const p = view.point;
         const a = p.startAngle + p.angle / 2;
         const labelViews = this._labelViews();
-        const labels = this.model.pointLabel;
+        const labels = m.pointLabel;
         const lineViews = this._lineContainer;
-        const labelInside = this.model.getLabelPosition() === PointItemPosition.INSIDE;
+        const labelInside = m.getLabelPosition() === PointItemPosition.INSIDE;
 
         if (p.sliced = sliced) {
             view.translateEx(Math.cos(a) * this._slicedOff, Math.sin(a) * this._slicedOff, dur);
@@ -349,7 +352,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                 if (labelInside) {
                     this.$_layoutLabelInner(p, labelView, labels.offset, labels.distance, this._slicedOff);
                 } else {
-                    this.$_layoutLabel(p, labelView, lineView, labels.offset, labels.distance, this._slicedOff);
+                    this.$_layoutLabel(p, labelView, lineView, labels.offset, labels.distance, this._slicedOff, m.clockwise);
                 }
             }
 

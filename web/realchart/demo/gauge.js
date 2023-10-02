@@ -15,6 +15,8 @@ const config = {
         name: 'gauge1',
         value: Math.random() * 100,
         // clockwise: false,
+        // startAngle: -90,
+        // totalAngle: 300,
         ranges: [{
             endValue: 30,
             color: 'green'
@@ -52,6 +54,14 @@ function setActions(container) {
         config.gauge.label.animatable = _getChecked(e);
         chart.load(config);
     }, true);
+    createListBox(container, "startAngle", [0, 90, 180, 270], function (e) {
+        config.gauge.startAngle = _getValue(e);
+        chart.load(config, animate);
+    }, 0);
+    createListBox(container, "totalAngle", [360, 270, 225, 180], function (e) {
+        config.gauge.totalAngle = _getValue(e);
+        chart.load(config, animate);
+    }, 360);
     createCheckBox(container, 'clockwise', function (e) {
         config.gauge.clockwise = _getChecked(e);
         chart.load(config);
