@@ -6,7 +6,7 @@ const config = {
     vars: {
         gauge: {
             thickness: '7%',
-            ranges: [{
+            valueRanges: [{
                 endValue: 25,
                 color: 'green'
             }, {
@@ -41,6 +41,7 @@ const config = {
         width: '33%',
         height: '50%',
         left: 0,
+        top: 0,
         value: Math.random() * 100,
     }, {
         var: "gauge",
@@ -48,6 +49,7 @@ const config = {
         width: '33%',
         height: '50%',
         left: '33%',
+        top: 0,
         value: Math.random() * 100,
     }, {
         var: "gauge",
@@ -55,6 +57,7 @@ const config = {
         width: '33%',
         height: '50%',
         left: '66%',
+        top: 0,
         value: Math.random() * 100,
     }, {
         var: "gauge",

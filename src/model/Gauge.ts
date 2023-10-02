@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, isString, pickNum, pickNum3, pickProp } from "../common/Common";
-import { IPoint } from "../common/Point";
 import { ISize } from "../common/Size";
 import { IPercentSize, ORG_ANGLE, RtPercentSize, calcPercent, deg2rad, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
@@ -73,6 +72,17 @@ export abstract class Gauge extends Widget {
     // properties
     //-------------------------------------------------------------------------
     abstract _type(): string;
+
+    /**
+     * @override
+     * @config
+     */
+    left = void 0;
+    /**
+     * @override
+     * @config
+     */
+    top = void 0;
 
     /**
      * 게이지 이름.

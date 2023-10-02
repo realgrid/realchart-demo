@@ -88,7 +88,11 @@ export abstract class GaugeView<T extends Gauge> extends ChartElement<T> {
     }
 
     protected _doLayout(): void {
+        // back
+        this._backElement.resize(this.width, this.height);
+        // gauge
         this._renderGauge(this.width, this.height);
+        
         this._animatable && this._runShowEffect(!this.control.loaded);
     }
 

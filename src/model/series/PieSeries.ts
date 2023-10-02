@@ -87,11 +87,12 @@ export class PieSeries extends RadialSeries {
     groupSize = 1;
     /**
      * 0보다 큰 값을 지정해서 도넛 형태로 표시할 수 있다.
+     * 시리즈 원호의 반지름에 대한 상대적 크기나 픽셀 수로 지정할 수 있다.
      * {@link innerText}로 도넛 내부에 표시될 텍스트를 지정할 수 있다.
      * 
      * @config
      */
-    innerSize: RtPercentSize;
+    innerRadius: RtPercentSize;
     /**
      * @config
      */
@@ -119,7 +120,7 @@ export class PieSeries extends RadialSeries {
      */
     borderRadius = 0;
     /**
-     * {@link innerSize}가 0보다 클 때, 도넛 내부에 표시되는 텍스트.
+     * {@link innerRadius}가 0보다 클 때, 도넛 내부에 표시되는 텍스트.
      * 기본 클래스 selector는 <b>'rct-pie-series-inner'</b>이다.
      * 
      * @config
@@ -157,7 +158,7 @@ export class PieSeries extends RadialSeries {
     protected _doLoad(src: any): void {
         super._doLoad(src);
 
-        this._innerDim = parsePercentSize(this.innerSize, true);
+        this._innerDim = parsePercentSize(this.innerRadius, true);
         this._sliceDim = parsePercentSize(this.sliceOffset, true);
     }
 

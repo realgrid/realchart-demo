@@ -10,7 +10,6 @@ import { isArray, pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { RcAnimation } from "../../common/RcAnimation";
 import { LayerElement } from "../../common/RcControl";
-import { ORG_ANGLE, deg2rad } from "../../common/Types";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextElement } from "../../common/impl/TextElement";
 import { CircleGauge } from "../../model/gauge/CircleGauge";
@@ -66,7 +65,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     protected _prepareGauge(doc: Document, model: CircleGauge): void {
         const ranges = model.ranges;
 
-        if (model.stepped && isArray(ranges)) {
+        if (isArray(ranges)) {
             this._foregrounds.prepare(ranges.length);
         } else {
             this._foregrounds.prepare(1);
@@ -123,7 +122,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
         // foreground sectors
         if (foregrounds.count === 1) {
-            const range = m.getRange(value); // runValue가 아니다.
+            const range = m.getValueRange(value); // runValue가 아니다.
             if (range) {
                 foregrounds.first.setStyle('fill', range.color);
             }

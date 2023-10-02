@@ -9,8 +9,7 @@
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { RcElement } from "../../common/RcControl";
-import { ORG_ANGLE, deg2rad, fixnum } from "../../common/Types";
-import { Utils } from "../../common/Utils";
+import { fixnum } from "../../common/Types";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { LabelElement } from "../../common/impl/LabelElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
@@ -19,7 +18,6 @@ import { PointItemPosition } from "../../model/Series";
 import { PieSeries, PieSeriesGroup, PieSeriesPoint } from "../../model/series/PieSeries";
 import { IPointView, PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
-import { TextItemView } from "../plotitem/TextItemView";
 
 class SectorView extends SectorElement implements IPointView {
 
@@ -107,16 +105,14 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     }
 
     private $_calcNormal(width: number, height: number): void {
-        const sz = this.model.getSize(width, height);
-
-        this._rd = Math.floor(sz / 2);
+        this._rd = this.model.getRadius(width, height);
         this._rdInner = this.model.getInnerRadius(this._rd);
     }
 
     private $_calcGroup(width: number, height: number): void {
         const m = this.model;
         const g = m.group as PieSeriesGroup;
-        const sz = Math.floor(g ? g.getPolarSize(width, height) / 2 : m.getSize(width, height) / 2);
+        const sz = Math.floor(g ? g.getPolarSize(width, height) / 2 : m.getRadius(width, height));
         const szInner = g ? g.getInnerRadius(sz) * sz : m.getInnerRadius(sz);
         const len = sz - szInner;
 
@@ -316,14 +312,16 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
 
     private $_layoutLabelInner(p: PieSeriesPoint, view: PointLabelView, off: number, dist: number, sliceOff: number): void {
         const r = view.getBBounds();
+        const inner = this._rdInner * this._rd;
+        const rd = inner > 0 ? inner + (this._rd - inner) / 2 : this._rd * 0.7;
         const a = p.startAngle + p.angle / 2;
-        let x = this._cx + Math.cos(a) * (this._rd * 0.7);
-        let y = this._cy + Math.sin(a) * (this._rd * 0.7);
+        let x = this._cx + Math.cos(a) * rd;
+        let y = this._cy + Math.sin(a) * rd;
 
         view.move(x - r.width / 2, y - r.height / 2); // 위치 정보 저장.
 
-        x = this._cx + Math.cos(a) * (sliceOff + this._rd * 0.7);
-        y = this._cy + Math.sin(a) * (sliceOff + this._rd * 0.7);
+        x = this._cx + Math.cos(a) * (sliceOff + rd);
+        y = this._cy + Math.sin(a) * (sliceOff + rd);
         view.layout().translate(x - r.width / 2, y - r.height / 2);
     }
 

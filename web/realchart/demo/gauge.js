@@ -17,7 +17,7 @@ const config = {
         // clockwise: false,
         // startAngle: -90,
         // totalAngle: 300,
-        ranges: [{
+        valueRanges: [{
             endValue: 30,
             color: 'green'
         }, {

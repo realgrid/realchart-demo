@@ -18,7 +18,7 @@ const config = {
     },
     series: {
         type: 'pie',
-        innerSize: '50%',
+        innerRadius: '50%',
         //innerText: 'Inner Title',
         innerText: '내부 타이틀<br><t style="fill:blue;font-weight:bold;">Inner</t><t style="fill:red;">Title입니다.</t>',
         legendByPoint: true,
@@ -84,10 +84,14 @@ function setActions(container) {
         config.series.clockwise = _getChecked(e);
         chart.load(config, animate);
     }, true);
-    createListBox(container, "series.size", ['60%', '70%', '80%', '90%', '100%'], function (e) {
-        config.series.size = _getValue(e);
+    createListBox(container, "series.radius", ['30%', '35%', '40%', '45%'], function (e) {
+        config.series.radius = _getValue(e);
         chart.load(config, animate);
-    }, '80%');
+    }, '40%');
+    createListBox(container, "series.innerRadius", ['70%', '60%', '50%', '40%', '30%'], function (e) {
+        config.series.innerRadius = _getValue(e);
+        chart.load(config, animate);
+    }, '50%');
     createListBox(container, "series.centerX", ['30%', '40%', '50%', '60%'], function (e) {
         config.series.centerX = _getValue(e);
         chart.load(config, animate);

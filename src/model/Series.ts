@@ -1253,24 +1253,24 @@ export abstract class RadialSeries extends WidgetSeries {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly DEF_SIZE = '80%';
+    static readonly DEF_RADIUS = '40%';
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _sizeDim: IPercentSize;
+    private _radiusDim: IPercentSize;
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     /**
-     * 시리즈 본체의 크기.
-     * <br>
-     * 픽셀 크기나 차지할 수 있는 전체 크기에 대한 상대적 크기로 지정할 수 있다.
+     * 시리즈 원호의 반지름.
+     * 픽셀 크기나 plot 영역 크기에 대한 상대적 크기로 지정할 수 있다.
+     * '50%'로 지정하면 plot 영역의 width나 height중 작은 크기와 동일한 반지름으로 표시된다.
      * 
      * @config
      */
-    size: RtPercentSize = RadialSeries.DEF_SIZE;
+    radius: RtPercentSize = RadialSeries.DEF_RADIUS;
     /**
      * 시리즈 원호 시작 각도.
      * 지정하지 않거나 잘못된 값이면 0으로 계산된다.
@@ -1298,8 +1298,8 @@ export abstract class RadialSeries extends WidgetSeries {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getSize(plotWidth: number, plotHeight: number): number {
-        return calcPercent(this._sizeDim, Math.min(plotWidth, plotHeight));
+    getRadius(plotWidth: number, plotHeight: number): number {
+        return calcPercent(this._radiusDim, Math.min(plotWidth, plotHeight));
     }
 
     //-------------------------------------------------------------------------
@@ -1308,7 +1308,7 @@ export abstract class RadialSeries extends WidgetSeries {
     protected _doLoad(src: any): void {
         super._doLoad(src);
 
-        this._sizeDim = parsePercentSize(pickProp(this.size, RadialSeries.DEF_SIZE), true);
+        this._radiusDim = parsePercentSize(pickProp(this.radius, RadialSeries.DEF_RADIUS), true);
     }
 }
 

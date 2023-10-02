@@ -88,10 +88,10 @@ function setActions(container) {
         config.series.clockwise = _getChecked(e);
         chart.load(config, animate);
     }, true);
-    createListBox(container, "series.size", ['60%', '70%', '80%', '90%', '100%'], function (e) {
-        config.series.size = _getValue(e);
+    createListBox(container, "series.radius", ['30%', '35%', '40%', '45%'], function (e) {
+        config.series.radius = _getValue(e);
         chart.load(config, animate);
-    }, '80%');
+    }, '40%');
     createListBox(container, "series.centerX", ['30%', '40%', '50%', '60%'], function (e) {
         config.series.centerX = _getValue(e);
         chart.load(config, animate);
