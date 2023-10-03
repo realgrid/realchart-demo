@@ -268,11 +268,11 @@ export class Legend extends Widget {
     }
 
     getMaxWidth(domain: number): number {
-        return this._maxWidthDim ? calcPercent(this._maxWidthDim, domain) : domain;
+        return calcPercent(this._maxWidthDim, domain, domain);
     }
 
     getMaxHeight(domain: number): number {
-        return this._maxHeightDim ? calcPercent(this._maxHeightDim, domain) : domain;
+        return calcPercent(this._maxHeightDim, domain, domain);
     }
 
     //-------------------------------------------------------------------------

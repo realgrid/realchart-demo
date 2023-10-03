@@ -132,6 +132,11 @@ export class PathBuilder {
         return this;
     }
 
+    circle(cx: number, cy: number, rd: number): PathBuilder {
+        this._path.push(`M ${cx - rd}, ${cy} a ${rd},${rd} 0 1,0 ${rd * 2},0 a ${rd},${rd} 0 1,0 ${-rd * 2},0`);
+        return this;
+    }
+
     getMove(p = 0, remove = true): IPoint {
         if (p < this._path.length && this._path[p] === 'M') {
             const pt = {x: this._path[p + 1] as number, y: this._path[p + 2] as number};

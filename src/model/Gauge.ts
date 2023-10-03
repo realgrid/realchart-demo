@@ -135,8 +135,8 @@ export abstract class Gauge extends Widget {
     //-------------------------------------------------------------------------
     getSize(width: number, height: number): ISize {
         return {
-            width: calcPercent(this._widthDim, width) || width,
-            height: calcPercent(this._heightdim, height) || height
+            width: calcPercent(this._widthDim, width, width),
+            height: calcPercent(this._heightdim, height, height)
         };
     }
 

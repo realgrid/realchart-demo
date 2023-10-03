@@ -34,7 +34,7 @@ const config = {
             // align: 'center'
         }
     },
-    title: "Multiple Gauges",
+    title: "Hand Gauges",
     gauge: [{
         template: "gauge",
         name: 'gauge1',
@@ -42,7 +42,10 @@ const config = {
         height: '50%',
         left: 0,
         top: 0,
+        hand: true,
+        pin: true,
         value: Math.random() * 100,
+        label: false,
     }, {
         template: "gauge",
         name: 'gauge2',
@@ -84,19 +87,7 @@ const config = {
         height: '50%',
         left: '66%',
         top: '50%',
-        value: Math.random() * 100,
-        innerStyle: {
-            fill: '#003300',
-            stroke: 'white',
-            strokeWidth: '5px'
-        },
-        label: {
-            text: '<t style="fill:yellow">${value}</t><t style="font-size:12px;">&nbsp;</t><t style="font-size:20px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',
-            style: {
-                fontWeight: 'bold',
-                fill: 'white'
-            }
-        }
+        value: Math.random() * 100
     }]
 }
 

@@ -690,6 +690,15 @@
     fill: var(--rct-circle-gauge-label-fill);
     stroke: none;
 }
+.rct-circle-gauge-pin {
+    fill: white;
+    stroke: #333;
+    stroke-width: 3px;
+}
+.rct-circle-gauge-hand {
+    fill: white;
+    stroke: none;
+}
 
 /** tooltip */
 .rct-tooltip {

@@ -59,7 +59,7 @@ export interface IChart {
     yAxis: IAxis;
     colors: string[];
 
-    assignVars(target: any): any;
+    assignTemplates(target: any): any;
 
     isGauge(): boolean;
     isPolar(): boolean;
@@ -268,7 +268,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _vars: {[key: string]: any};
+    private _templates: {[key: string]: any};
     private _assets: AssetCollection;
     private _themes: ThemeCollection;
     private _options: ChartOptions;
@@ -285,7 +285,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _polar: boolean;
     private _gaugeOnly: boolean;
     colors: string[];
-    assignVars: (target: any) => any;
+    assignTemplates: (target: any) => any;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -519,9 +519,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._series.getLegendSources();
     }
 
-    private $_assignVars(target: any): any {
-        if (this._vars && target.var != null) {
-            let v = this._vars[target.var];
+    private $_assignTemplates(target: any): any {
+        if (this._templates && target.template != null) {
+            let v = this._templates[target.template];
             if (v) {
                 return Object.assign({}, v, target);
             }
@@ -534,7 +534,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         console.time('load chart');
 
         // defaults
-        this.$_loadVars(source.vars);
+        this.$_loadTemplates(source.templates);
 
         // properites
         ['type', 'polar', 'inverted'].forEach(prop => {
@@ -651,19 +651,19 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_loadVars(src: any): void {
+    private $_loadTemplates(src: any): void {
         if (isObject(src)) {
-            const vars = this._vars = {};
+            const templs = this._templates = {};
 
             for (const p in src) {
                 const v = src[p];
                 if (isObject(v)) {
-                    vars[p] = Object.assign({}, v);
+                    templs[p] = Object.assign({}, v);
                 }
             }
-            this.assignVars = this.$_assignVars.bind(this);
+            this.assignTemplates = this.$_assignTemplates.bind(this);
         } else {
-            this.assignVars = void 0;
+            this.assignTemplates = void 0;
         }
     }
 

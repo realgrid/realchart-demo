@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RtPercentSize } from "../../common/Types";
+import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
 import { CircularGauge, Gauge, IGaugeValueRange } from "../Gauge";
@@ -42,6 +42,11 @@ export class CircleGaugeValueMarker extends ChartItem {
 export class CircleGaugeHand extends ChartItem {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _radiusDim: IPercentSize;
+
+    //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(gauge: CircleGauge) {
@@ -51,13 +56,28 @@ export class CircleGaugeHand extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    offset: RtPercentSize = 0;
+    radius: RtPercentSize = 3;
     length: RtPercentSize = '100%';
+    offset: RtPercentSize = 0;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    load(source: any): ChartItem {
+        super.load(source);
+
+        return this;
+    }
 }
 
 export class CircleGaugePin extends ChartItem {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _radiusDim: IPercentSize;
+
+    //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(gauge: CircleGauge) {
@@ -67,7 +87,24 @@ export class CircleGaugePin extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    radius: RtPercentSize = 7;
+    radius: RtPercentSize = 5;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getRadius(domain: number): number {
+        return calcPercent(this._radiusDim, domain, 0);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    load(source: any): ChartItem {
+        super.load(source);
+
+        this._radiusDim = parsePercentSize(this.radius, true);
+        return this;
+    }
 }
 
 /**
@@ -98,9 +135,18 @@ export class CircleGauge extends CircularGauge {
     //-------------------------------------------------------------------------
     line = new CircleGaugeValueLine(this);
     marker = new CircleGaugeValueMarker(this);
+    /**
+     * 게이지 바늘 설정 모델.
+     * 
+     * @config
+     */
     hand = new CircleGaugeHand(this);
+    /**
+     * 게이지 중앙에 표시되는 핀 설정 모델.
+     * 
+     * @config
+     */
     pin = new CircleGaugePin(this);
-
     /**
      * 배경 원호의 범위 목록.
      * 범위별로 다른 스타일을 적용할 수 있다.

@@ -8,8 +8,10 @@
 
 import { isArray, pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
+import { PathBuilder } from "../../common/PathBuilder";
 import { RcAnimation } from "../../common/RcAnimation";
-import { LayerElement } from "../../common/RcControl";
+import { LayerElement, PathElement, RcElement } from "../../common/RcControl";
+import { SVGStyleOrClass } from "../../common/Types";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextElement } from "../../common/impl/TextElement";
 import { ICircularGaugeExtents } from "../../model/Gauge";
@@ -29,6 +31,32 @@ class GaugeAnimation extends RcAnimation {
     }
 }
 
+class PinView extends PathElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _radius: number;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setPin(radius: number, style: SVGStyleOrClass): PinView {
+        if (radius !== this._radius) {
+            this.setPath(new PathBuilder().circle(0, 0, radius).end());
+        }
+        this.internalSetStyleOrClass(style);
+        return this;
+    }
+}
+
+class HandView extends PathElement {
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+}
+
 export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
     //-------------------------------------------------------------------------
@@ -39,6 +67,9 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     //-------------------------------------------------------------------------
     private _background: SectorElement;
     private _innerView: SectorElement;
+    private _handContainer: LayerElement;
+    private _handView: HandView;
+    private _pinView: PinView;
     private _container: LayerElement;
     private _foregrounds: ElementPool<SectorElement>;
     private _textView: TextElement;
@@ -59,6 +90,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         this.add(this._innerView = new SectorElement(doc, 'rct-circle-gauge-inner'));
         this.add(this._container = new LayerElement(doc, void 0));
         this._foregrounds = new ElementPool(this._container, SectorElement, 'rct-circle-gauge-value');
+        this.add(this._handContainer = new LayerElement(doc, void 0));
         this.add(this._textView = new TextElement(doc, 'rct-circle-gauge-label'));
     }
 
@@ -67,13 +99,33 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     //-------------------------------------------------------------------------
     protected _prepareGauge(doc: Document, model: CircleGauge): void {
         const ranges = model.ranges;
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ranges 
+        // circles
         if (isArray(ranges)) {
             this._foregrounds.prepare(ranges.length);
         } else {
             this._foregrounds.prepare(1);
         }
 
+        // pin & hand
+        if (model.pin.visible) {
+            if (!this._pinView) {
+                this._handContainer.add(this._pinView = new PinView(doc, 'rct-circle-gauge-pin'));
+            }
+            this._pinView.visible = true;
+        } else if (this._pinView) {
+            this._pinView.visible = false;
+        }
+        if (model.hand.visible) {
+            if (!this._handView) {
+                this._handContainer.add(this._handView = new HandView(doc, 'rct-circle-gauge-hand'));
+            }
+            this._handView.visible = true;
+        } else if (this._handView) {
+            this._handView.visible = false;
+        }
+
+        // label
         this._textView.internalSetStyleOrClass(model.label.style);
     }
 
@@ -104,6 +156,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         this._center = center;
         this._exts = exts;
 
+        // background sector
         this._background.setSector({
             cx: center.x,
             cy: center.y,
@@ -115,6 +168,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
             clockwise: m.clockwise
         });
 
+        // inner view
         this._innerView.internalSetStyleOrClass(m.innerStyle);
 
         let r = exts.inner;
@@ -124,7 +178,6 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         if (w > 1) {
             r -= w / 2;
         }
-
         this._innerView.setSector({
             cx: center.x,
             cy: center.y,
@@ -135,6 +188,9 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
             angle: Math.PI * 2,
             clockwise: true
         })
+
+        // pin
+        this._pinView?.setPin(m.pin.getRadius(exts.radius), null).translatep(center);
     }
 
     $_renderValue(m: CircleGauge): void {
@@ -165,8 +221,10 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         }
 
         // label
-        m.label.setText(m.getLabel(m.label.animatable ? value : m.value)).buildSvg(this._textView, m, this.valueOf);
-        const r = this._textView.getBBounds();
-        this._textView.translate(center.x, center.y - r.height / 2);
+        if (this._textView.setVisible(m.label.visible)) {
+            m.label.setText(m.getLabel(m.label.animatable ? value : m.value)).buildSvg(this._textView, m, this.valueOf);
+            const r = this._textView.getBBounds();
+            this._textView.translate(center.x, center.y - r.height / 2);
+        }
     }
 }
