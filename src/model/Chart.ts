@@ -59,7 +59,7 @@ export interface IChart {
     yAxis: IAxis;
     colors: string[];
 
-    assignVars(target: any): void;
+    assignVars(target: any): any;
 
     isGauge(): boolean;
     isPolar(): boolean;
@@ -285,7 +285,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _polar: boolean;
     private _gaugeOnly: boolean;
     colors: string[];
-    assignVars: (target: any) => void;
+    assignVars: (target: any) => any;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -519,11 +519,15 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._series.getLegendSources();
     }
 
-    private $_assignVars(target: any): void {
+    private $_assignVars(target: any): any {
         if (this._vars && target.var != null) {
             let v = this._vars[target.var];
-            v && Object.assign(target, v);
+            if (v) {
+                return Object.assign({}, v, target);
+            }
+            // v && Object.assign(target, v);
         }
+        return target;
     }
 
     load(source: any): void {

@@ -5,7 +5,7 @@
 const config = {
     vars: {
         gauge: {
-            thickness: '7%',
+            innerRadius: '93%',
             valueRanges: [{
                 endValue: 25,
                 color: 'green'
@@ -19,7 +19,7 @@ const config = {
                 color: 'red'
             }],
             label: {
-                text: '<t style="fill:blue">${value}</t><t style="font-size:20px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',
+                text: '<t style="fill:blue">${value}</t><t style="font-size:12px;">&nbsp;</t><t style="font-size:20px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',
                 style: {
                     fontWeight: 'bold'
                 }
@@ -50,6 +50,8 @@ const config = {
         height: '50%',
         left: '33%',
         top: 0,
+        valueRadius: '104%',    
+        valueThickness: '200%',
         value: Math.random() * 100,
     }, {
         var: "gauge",
@@ -83,7 +85,19 @@ const config = {
         left: '66%',
         top: '50%',
         value: Math.random() * 100,
-    }]
+        innerStyle: {
+            fill: '#003300',
+            stroke: 'white',
+            strokeWidth: '5px'
+        },
+        label: {
+            text: '<t style="fill:yellow">${value}</t><t style="font-size:12px;">&nbsp;</t><t style="font-size:20px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',
+            style: {
+                fontWeight: 'bold',
+                fill: 'white'
+            }
+        }
+}]
 }
 
 let animate;
@@ -113,6 +127,10 @@ function setActions(container) {
     createButton(container, 'Stop', function(e) {
         clearInterval(timer);
     });
+    createListBox(container, "options.theme", ['', 'dark'], function (e) {
+        config.options.theme = _getValue(e);
+        chart.load(config, animate);
+    }, 'default');
 }
 
 function init() {

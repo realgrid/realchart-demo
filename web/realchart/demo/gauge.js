@@ -17,6 +17,8 @@ const config = {
         // clockwise: false,
         // startAngle: -90,
         // totalAngle: 300,
+        // valueRadius: '110%',
+        // valueThickness: '100%',
         valueRanges: [{
             endValue: 30,
             color: 'green'
@@ -54,7 +56,7 @@ function setActions(container) {
         config.gauge.label.animatable = _getChecked(e);
         chart.load(config);
     }, true);
-    createListBox(container, "startAngle", [0, 90, 180, 270], function (e) {
+    createListBox(container, "startAngle", [0, 90, 180, 225, 270], function (e) {
         config.gauge.startAngle = _getValue(e);
         chart.load(config, animate);
     }, 0);
@@ -66,6 +68,18 @@ function setActions(container) {
         config.gauge.clockwise = _getChecked(e);
         chart.load(config);
     }, true);
+    createListBox(container, "innerRadius", ['', '70%', '80%', '85%', '90%', '95%'], function (e) {
+        config.gauge.innerRadius = _getValue(e);
+        chart.load(config, animate);
+    }, '');
+    createListBox(container, "valueRadius", ['', '80%', '90%', '100%', '110%', '120%'], function (e) {
+        config.gauge.valueRadius = _getValue(e);
+        chart.load(config, animate);
+    }, '');
+    createListBox(container, "valueThickness", ['', '50%', '100%', '150%', '200%'], function (e) {
+        config.gauge.valueThickness = _getValue(e);
+        chart.load(config, animate);
+    }, '');
     createButton(container, 'Run', function(e) {
         clearInterval(timer);
         timer = setInterval(() => {

@@ -12,6 +12,7 @@ import { RcAnimation } from "../../common/RcAnimation";
 import { LayerElement } from "../../common/RcControl";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextElement } from "../../common/impl/TextElement";
+import { ICircularGaugeExtents } from "../../model/Gauge";
 import { CircleGauge } from "../../model/gauge/CircleGauge";
 import { CircularGaugeView } from "./CirclularGaugeView";
 
@@ -37,12 +38,13 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     // fields
     //-------------------------------------------------------------------------
     private _background: SectorElement;
+    private _innerView: SectorElement;
     private _container: LayerElement;
     private _foregrounds: ElementPool<SectorElement>;
     private _textView: TextElement;
 
     private _center: {x: number, y: number};
-    private _exts: {radius: number, thick: number, value: number};
+    private _exts: ICircularGaugeExtents;
     private _prevValue = 0;
     _runValue: number;
     private _ani: RcAnimation;
@@ -54,6 +56,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         super(doc, styleName);
 
         this.add(this._background = new SectorElement(doc, 'rct-circle-gauge-back'));
+        this.add(this._innerView = new SectorElement(doc, 'rct-circle-gauge-inner'));
         this.add(this._container = new LayerElement(doc, void 0));
         this._foregrounds = new ElementPool(this._container, SectorElement, 'rct-circle-gauge-value');
         this.add(this._textView = new TextElement(doc, 'rct-circle-gauge-label'));
@@ -95,7 +98,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_renderBackground(m: CircleGauge, center: {x: number, y: number}, exts: {radius: number, thick: number, value: number}): void {
+    private $_renderBackground(m: CircleGauge, center: {x: number, y: number}, exts: ICircularGaugeExtents): void {
         const start = m._startRad;
 
         this._center = center;
@@ -106,11 +109,32 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
             cy: center.y,
             rx: exts.radius,
             ry: exts.radius,
-            innerRadius: (exts.radius - exts.thick) / exts.radius,
+            innerRadius: exts.inner / exts.radius,
             start: start,
             angle: m._totalRad,
             clockwise: m.clockwise
         });
+
+        this._innerView.internalSetStyleOrClass(m.innerStyle);
+
+        let r = exts.inner;
+        const cs = getComputedStyle(this._innerView.dom);
+        const w = parseFloat(cs.strokeWidth);
+
+        if (w > 1) {
+            r -= w / 2;
+        }
+
+        this._innerView.setSector({
+            cx: center.x,
+            cy: center.y,
+            rx: r,
+            ry: r,
+            innerRadius: 0,
+            start: 0,
+            angle: Math.PI * 2,
+            clockwise: true
+        })
     }
 
     $_renderValue(m: CircleGauge): void {
@@ -129,9 +153,9 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
             foregrounds.first.setSector({
                 cx: center.x,
                 cy: center.y,
-                rx: exts.radius,
-                ry: exts.radius,
-                innerRadius: (exts.radius - exts.value) / exts.radius,
+                rx: exts.value,
+                ry: exts.value,
+                innerRadius: (exts.value - exts.thick) / exts.value,
                 start: m._startRad,
                 angle: m._totalRad * rate,
                 clockwise: m.clockwise

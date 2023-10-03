@@ -133,6 +133,10 @@
     --rct-point-label-fill: #333;
 
     --rct-credits-fill: #777;
+
+    --rct-circle-gauge-back-fill: #ddd;
+    --rct-circle-gauge-inner-fill: none;
+    --rct-circle-gauge-label-fill: #333;
 }
 .rct-root[data-theme='dark'] {
     --rct-focus-border: yellow;
@@ -156,6 +160,9 @@
     --rct-point-label-fill: #ddd;
 
     --rct-credits-fill: #999;
+
+    --rct-circle-gauge-back-fill: #333;
+    --rct-circle-gauge-label-fill: #eee;
 }
 
 /** control */
@@ -670,14 +677,17 @@
 
 /** circle gauge */
 .rct-circle-gauge-back {
-    fill: #ddd;
+    fill: var(--rct-circle-gauge-back-fill);
+}
+.rct-circle-gauge-inner {
+    fill: var(--rct-circle-gauge-inner-fill);
 }
 .rct-circle-gauge-value {
     fill: #008844;
 }
 .rct-circle-gauge-label {
     font-size: 40px;
-    fill: #333;
+    fill: var(--rct-circle-gauge-label-fill);
     stroke: none;
 }
 

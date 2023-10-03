@@ -8,7 +8,7 @@
 
 import { isArray, isObject, isString, pickNum, pickNum3, pickProp } from "../common/Common";
 import { ISize } from "../common/Size";
-import { IPercentSize, ORG_ANGLE, RtPercentSize, calcPercent, deg2rad, parsePercentSize } from "../common/Types";
+import { IPercentSize, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, calcPercent, deg2rad, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { FormattableText } from "./ChartItem";
 import { Widget } from "./Widget";
@@ -271,6 +271,13 @@ export class GaugeLabel extends FormattableText {
     animatable = true;
 }
 
+/** 
+ * @internal 
+ */
+export interface ICircularGaugeExtents {
+    radius: number, inner: number, value: number, thick: number 
+}
+
 /**
  * 원형 게이지 모델.
  * label의 기본 위치의 x는 원호의 좌위 최대 각 위치를 연결한 지점,
@@ -283,7 +290,7 @@ export abstract class CircularGauge extends Gauge {
     //-------------------------------------------------------------------------
     static readonly DEF_CENTER = '50%';
     static readonly DEF_RADIUS = '40%';
-    static readonly DEF_THICKNESS = '20%';
+    static readonly DEF_INNER = '80%';
 
     //-------------------------------------------------------------------------
     // fields
@@ -291,9 +298,10 @@ export abstract class CircularGauge extends Gauge {
     private _centerXDim: IPercentSize;
     private _centerYDim: IPercentSize;
     private _radiusDim: IPercentSize;
-    private _thickDim: IPercentSize;
+    private _innerDim: IPercentSize;
     private _valueDim: IPercentSize;
-    private _activeValue: number;
+    private _thickDim: IPercentSize;
+    private _runValue: number;
     _startRad: number;
     _totalRad: number;
 
@@ -336,23 +344,31 @@ export abstract class CircularGauge extends Gauge {
      */
     centerY: RtPercentSize = CircularGauge.DEF_CENTER;
     /**
-     * 게이지 원의 크기.
+     * 게이지 원호의 반지름.
      * 픽셀 단위의 크기나, plot 영역 전체 크기(너비와 높이 중 작은 값)에 대한 상대적 크기로 지정할 수 있다.
+     * '50%'로 지정하면 plot 영역의 width나 height중 작은 크기와 동일한 반지름으로 표시된다.
      * 
      * @config
      */
     radius: RtPercentSize = CircularGauge.DEF_RADIUS;
     /**
-     * 내부 원의 크기.
+     * 내부 원호의 반지름.
      * 픽셀 단위의 크기나, {@link radius}에 대한 상대적 크기로 지정할 수 있다.
+     * '100%'이면 게이지 원호의 반지름과 동일하다.
      * 
      * @config
      */
-    thickness: RtPercentSize = CircularGauge.DEF_THICKNESS;
+    innerRadius: RtPercentSize = CircularGauge.DEF_INNER;
     /**
-     * 값을 표시하는 내부 원의 크기.
+     * 값을 나타내는 원호의 반지름.
      * 픽셀 단위의 크기나, {@link radius}에 대한 상대적 크기로 지정할 수 있다.
-     * 예) '100%'로 지정하면 원을 채운다.
+     * 지정하지 않거나 '100%'이면 게이지 원호의 반지름과 동일하다.
+     */
+    valueRadius: RtPercentSize;
+    /**
+     * 값을 표시하는 내부 원의 굵기.
+     * 픽셀 단위의 크기나, {@link radius}와 {@link innerRadius}로 결정된 원호 굵기에 대한 상대적 크기로 지정할 수 있다.
+     * 예) 지정하지 않거나 '100%'로 지정하면 게이지 원호 굵기와 동일하게 표시된다.
      * 
      * @config
      */
@@ -386,6 +402,12 @@ export abstract class CircularGauge extends Gauge {
      * @config
      */
     label: GaugeLabel;
+    /**
+     * 내부 원에 적용할 스타일셋 혹은 class selector.
+     * 
+     * @config
+     */
+    innerStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // methods
@@ -397,23 +419,24 @@ export abstract class CircularGauge extends Gauge {
         return { x, y };
     }
 
-    getExtents(gaugeWidth: number, gaugeHeight: number): { radius: number, thick: number, value: number } {
+    getExtents(gaugeWidth: number, gaugeHeight: number): ICircularGaugeExtents {
         const radius = calcPercent(this._radiusDim, Math.min(gaugeWidth, gaugeHeight));
-        const thick = Math.min(radius, this._thickDim ? calcPercent(this._thickDim, radius) : 0);
-        const value = Math.min(radius, this._valueDim ? calcPercent(this._valueDim, radius) : thick);
+        const inner = Math.min(radius, this._innerDim ? calcPercent(this._innerDim, radius) : 0);
+        const value = this._valueDim ? calcPercent(this._valueDim, radius) : radius;
+        const thick = Math.min(value, Math.max(0, calcPercent(this._thickDim, radius - inner) || radius - inner));
 
-        return { radius, thick, value };
+        return { radius, inner, value, thick };
     }
 
     getLabel(value: number): string {
-        this._activeValue = value;
+        this._runValue = value;
         return this.label.text || (this.label.prefix || '') + value + (this.label.suffix || '');
     }
 
     getParam(param: string): any {
         switch (param) {
             case 'value':
-                return this._activeValue;
+                return this._runValue;
             case 'min':
                 return this.minValue;
             case 'max':
@@ -434,8 +457,9 @@ export abstract class CircularGauge extends Gauge {
         this._centerXDim = parsePercentSize(pickProp(this.centerX, CircularGauge.DEF_CENTER), true);
         this._centerYDim = parsePercentSize(pickProp(this.centerY, CircularGauge.DEF_CENTER), true);
         this._radiusDim = parsePercentSize(pickProp(this.radius, CircularGauge.DEF_RADIUS), true);
-        this._thickDim = parsePercentSize(pickProp(this.thickness, CircularGauge.DEF_THICKNESS), true);
-        this._valueDim = parsePercentSize(this.valueThickness, true);
+        this._innerDim = parsePercentSize(pickProp(this.innerRadius, CircularGauge.DEF_INNER), true);
+        this._valueDim = parsePercentSize(this.valueRadius, true);
+        this._thickDim = parsePercentSize(this.valueThickness, true);
     }
 
     protected _doPrepareRender(chart: IChart): void {

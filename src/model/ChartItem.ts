@@ -42,7 +42,12 @@ export abstract class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /** visible */
+    /** 
+     * 표시 여부.
+     * 모델에 따라 기본값이 다르다.
+     * 
+     * @config
+     */
     get visible(): boolean {
         return this._visible;
     }
@@ -52,7 +57,11 @@ export abstract class ChartItem extends RcObject {
             this.chart?._visibleChanged(this);
         }
     }
-
+    /**
+     * 스타일셋 혹은 class selector.
+     * 
+     * @config
+     */
     style: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
@@ -61,7 +70,7 @@ export abstract class ChartItem extends RcObject {
     load(source: any): ChartItem {
         if (source !== void 0 && !this._doLoadSimple(source)) {
             const assign = this.chart && this.chart.assignVars;
-            assign && assign(source);
+            assign && (source = assign(source));
             this._doLoad(source);
         }
         return this;
