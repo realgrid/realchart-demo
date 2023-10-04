@@ -16,7 +16,7 @@ const config = {
         value: Math.random() * 100,
         // clockwise: false,
         // startAngle: -90,
-        // totalAngle: 300,
+        // sweepAngle: 300,
         // valueRadius: '110%',
         // valueThickness: '100%',
         valueRanges: [{
@@ -60,8 +60,8 @@ function setActions(container) {
         config.gauge.startAngle = _getValue(e);
         chart.load(config, animate);
     }, 0);
-    createListBox(container, "totalAngle", [360, 270, 225, 180], function (e) {
-        config.gauge.totalAngle = _getValue(e);
+    createListBox(container, "sweepAngle", [360, 270, 225, 180], function (e) {
+        config.gauge.sweepAngle = _getValue(e);
         chart.load(config, animate);
     }, 360);
     createCheckBox(container, 'clockwise', function (e) {

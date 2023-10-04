@@ -332,7 +332,7 @@ export abstract class CircularGauge extends Gauge {
     private _runValue: number;
     _startRad: number;
     _handRad: number;
-    _totalRad: number;
+    _sweepRad: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -415,10 +415,11 @@ export abstract class CircularGauge extends Gauge {
      * 0 ~ 360 사이의 값으로 지정해야 한다.
      * 범위를 벗어난 값은 범위 안으로 조정된다.
      * 지정하지 않거나 잘못된 값이면 360으로 계산된다.
+     * 예) 180 이면 반 원호가 된다.
      * 
      * @config
      */
-    totalAngle = 360;
+    sweepAngle = 360;
     /**
      * true면 시계 방향으로 회전한다.
      * 
@@ -495,11 +496,11 @@ export abstract class CircularGauge extends Gauge {
         super._doPrepareRender(chart);
 
         let start = pickNum(this.startAngle % 360, 0);
-        let total = Math.max(0, Math.min(360, pickNum(this.totalAngle, 360)));
+        let sweep = Math.max(0, Math.min(360, pickNum(this.sweepAngle, 360)));
 
         this._startRad = ORG_ANGLE + DEG_RAD * start;
         this._handRad = DEG_RAD * start;
-        this._totalRad = DEG_RAD * total;
+        this._sweepRad = DEG_RAD * sweep;
     }
 
     //-------------------------------------------------------------------------

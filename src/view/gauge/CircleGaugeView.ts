@@ -194,7 +194,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
             ry: exts.radius,
             innerRadius: exts.inner / exts.radius,
             start: start,
-            angle: m._totalRad,
+            angle: m._sweepRad,
             clockwise: m.clockwise
         });
 
@@ -245,7 +245,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
                 ry: exts.value,
                 innerRadius: (exts.value - exts.thick) / exts.value,
                 start: m._startRad,
-                angle: m._totalRad * rate,
+                angle: m._sweepRad * rate,
                 clockwise: m.clockwise
             });
         } else {
@@ -254,7 +254,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
         // hand
         if (this._handView) {
-            const a = (m._handRad + m._totalRad * rate) * RAD_DEG;
+            const a = (m._handRad + m._sweepRad * rate) * RAD_DEG;
 
             this._handView.render(m.hand, exts.radius).translatep(center).rotate(m.clockwise ? a : -a);
         }

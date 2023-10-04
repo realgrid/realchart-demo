@@ -11,7 +11,7 @@ import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
 import { CircularGauge, Gauge, IGaugeValueRange } from "../Gauge";
 
-export class CircleGaugeValueLine extends ChartItem {
+export class CircleGaugeLine extends ChartItem {
 
     //-------------------------------------------------------------------------
     // constructor
@@ -149,7 +149,7 @@ export class CircleGauge extends CircularGauge {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    line = new CircleGaugeValueLine(this);
+    line = new CircleGaugeLine(this);
     marker = new CircleGaugeValueMarker(this);
     /**
      * 게이지 바늘 설정 모델.

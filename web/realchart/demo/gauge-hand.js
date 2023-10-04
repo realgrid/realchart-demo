@@ -85,7 +85,7 @@ const config = {
         left: '66%',
         top: 0,
         startAngle: 240,
-        totalAngle: 245,
+        sweepAngle: 245,
         hand: true,
         pin: true,
         label: {
