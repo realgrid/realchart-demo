@@ -1,0 +1,42 @@
+## label
+
+## Properties
+
+### align
+수평 정렬.  
+`default: Align.CENTER`  
+
+### autoContrast: `boolean`
+텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
+
+
+밝게 표시할 때는  brightStyle 을 적용하고,
+어둡게 표시할 때는  darkStyle 이 적용된다.
+brightStyle이 지정되지 않으면 'rct-text-bright'이,
+darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.  
+`default: true`  
+
+### backgroundStyle
+
+### brightStyle
+
+### darkStyle
+
+### effect
+`default: ChartTextEffect.NONE`  
+
+### offset: `number`
+point label:
+position으로 지정된 위치로 부터 떨어진 간격.
+center나 middle일 때는 무시.
+파이 시리즈 처럼 label 연결선이 있을 때는 연결선과의 간격.
+
+axis label:
+축 line과의 간격.  
+`default: 2`  
+
+### prefix: `string`
+label 문자열 앞에 추가되는 문자열.  
+
+### suffix: `string`
+label 문자열 끝에 추가되는 문자열.  

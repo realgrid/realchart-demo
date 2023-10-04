@@ -12,7 +12,7 @@ import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
-import { MarerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
+import { MarkerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
 
 export class LineSeriesPoint extends DataPoint {
 
@@ -23,9 +23,6 @@ export class LineSeriesPoint extends DataPoint {
     shape: Shape;
 }
 
-/**
- * @config chart.series[type=line|area|arearange].marker
- */
 export class LineSeriesMarker extends SeriesMarker {
 
     //-------------------------------------------------------------------------
@@ -40,36 +37,40 @@ export class LineSeriesMarker extends SeriesMarker {
      * 
      * @config
      */
-    firstVisible = MarerVisibility.DEFAULT;
+    firstVisible = MarkerVisibility.DEFAULT;
     /**
      * 첫번째 point의 marker 표시 여부.
      * 
      * @config
      */
-    lastVisible = MarerVisibility.DEFAULT;
+    lastVisible = MarkerVisibility.DEFAULT;
     /**
      * 최소값 point들의 marker 표시 여부.
      * 
      * @config
      */
-    minVisible = MarerVisibility.DEFAULT;
+    minVisible = MarkerVisibility.DEFAULT;
     /**
      * 최대값 point들의 marker 표시 여부.
      * 
      * @config
      */
-    maxVisible = MarerVisibility.DEFAULT;
+    maxVisible = MarkerVisibility.DEFAULT;
 }
 
 /**
- * @config chart.series
  */
 export abstract class LineSeriesBase extends Series {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    marker = new LineSeriesMarker(this);
+    /**
+     * 데이터 포인트 maker 설정 정보.
+     * 
+     * @config
+     */
+    marker: LineSeriesMarker = new LineSeriesMarker(this);
     private _shape: Shape;
 
     //-------------------------------------------------------------------------
@@ -89,7 +90,7 @@ export abstract class LineSeriesBase extends Series {
     // methods
     //-------------------------------------------------------------------------
     getShape(p: LineSeriesPoint): Shape {
-        return p.shape || this.marker.shape || this._shape;
+        return (p && p.shape) || this.marker.shape || this._shape;
     }
 
     getRadius(p: LineSeriesPoint): number {
@@ -207,6 +208,11 @@ export class AreaSeries extends LineSeries {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    /**
+     * area 영역에 적용할 스타일셋이나 class selector.
+     * 
+     * @config
+     */
     areaStyle: StyleProps;
 
     //-------------------------------------------------------------------------

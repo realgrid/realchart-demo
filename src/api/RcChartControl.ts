@@ -15,7 +15,8 @@ const props = {
 const funcs = {
     'load': '',
     'refresh': '',
-    'setAnimatable': ''
+    'setAnimatable': '',
+    'updateGauge': ''
 };
 
 /**
@@ -48,7 +49,7 @@ export class RcChartControl {
     }
 
     /**
-     * 기존 설정을 지우고 새로운 config로 차트를 구성한다.
+     * 기존 설정 모델을 제거하고 새로운 config로 차트를 구성한다.
      */
     load(config: any, animate?: boolean): void {
         this._proxy.load(config, animate);
@@ -61,11 +62,10 @@ export class RcChartControl {
         this._proxy.refresh();
     }
 
-    // get model(): RcChartModel {
-    //     return new RcChartModel(this._proxy.model);
-    // }
-
-    setAnimatable(value: boolean): void {
-        this._proxy.setAnimatable(value);
+    /**
+     * 게이지의 값들을 변경한다.
+     */
+    updateGauge(gauge: string, values: any): void {
+        this._proxy.updateGauge(gauge, values);
     }
 }

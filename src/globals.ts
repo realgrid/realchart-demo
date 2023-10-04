@@ -8,7 +8,7 @@
 
 import { ChartControl } from "./ChartControl";
 import { RcChartControl } from "./api/RcChartControl";
-import { RcElement } from "./common/RcControl";
+import { RcControl, RcElement } from "./common/RcControl";
 import { Chart } from "./model/Chart";
 
 // [주의]main.ts에서 직접 구현하면 되지만, dldoc에서 global을 별도 구성할 수 있도록 자체 class에서 구현한다.
@@ -22,6 +22,9 @@ export class Globals {
     }
     static setDebugging(debug: boolean): void {
         RcElement.DEBUGGING = debug;
+    }
+    static setAnimatable(value: boolean): void {
+        RcControl._animatable = value;
     }
     // /**
     //  * {@link ChartControl Chart 컨트롤}을 생성한다.

@@ -17,7 +17,7 @@ import { LabelElement } from "../common/impl/LabelElement";
 import { RectElement } from "../common/impl/RectElement";
 import { SvgShapes } from "../common/impl/SvgShape";
 import { DataPoint } from "../model/DataPoint";
-import { Legend, LegendItem } from "../model/Legend";
+import { LegendItem } from "../model/Legend";
 import { ClusterableSeries, DataPointLabel, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { ChartElement } from "./ChartElement";
@@ -42,7 +42,7 @@ export class PointLabelView extends LabelElement {
     // fields
     //-------------------------------------------------------------------------
     point: DataPoint;
-    moving = false;
+    // moving = false;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -320,6 +320,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected _inverted = false;
     protected _animatable = true;
     private _viewRate = NaN;
+    _animations: Animation[] = [];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -369,12 +370,16 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     _animationStarted(ani: Animation): void {
+        this._animations.push(ani);
         if (this._labelContainer && this._labelContainer.visible) {
             this._labelContainer.setVisible(false);
         }
     }
 
     _animationFinished(ani: Animation): void {
+        const i = this._animations.indexOf(ani);
+        i >= 0 && this._animations.splice(i, 1);
+
         this._invalidate();
     }
 
@@ -391,7 +396,11 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     clicked(elt: Element): void {
         const view = this.pointByDom(elt);
 
-        view && this._doPointClicked(view);
+        if (view) {
+            if (this.model.pointClicked(view.point) !== true) {
+                this._doPointClicked(view);
+            }
+        }
     }
 
     protected _doPointClicked(view: IPointView): void {
@@ -403,7 +412,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     prepareSeries(doc: Document, model: T): void {
-        model.setLegendMarker(this._getLegendMarker(doc));
+        model.setLegendMarker(this._getLegendMarker(doc, model));
 
         // this._viewRate = NaN; // animating 중 다른 시리즈 등의 요청에 의해 여기로 진입할 수 있다.
         this.setData('index', (model.index % PALETTE_LEN) as any);
@@ -461,7 +470,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
 
-    protected _getLegendMarker(doc: Document): RcElement {
+    protected _getLegendMarker(doc: Document, model: T): RcElement {
         if (!this._legendMarker) {
             this._legendMarker = this._createLegendMarker(doc, LegendItem.MARKER_SIZE);
         }
@@ -509,7 +518,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     protected _animating(): boolean {
-        return !isNaN(this._viewRate);
+        return !isNaN(this._viewRate) || this._animations.length > 0;
     }
 
     protected _lazyPrepareLabels(): boolean { return false; }

@@ -1,0 +1,395 @@
+@charset "UTF-8";
+
+.rct-root {
+    font-family: var(--rct-font-family);
+    font-size: var(--rct-font-size);
+    color: #000;
+    /* background-color: white; */
+    /* word-break: break-all;
+    word-wrap: break-word; */
+    -webkit-touch-callout: default;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    touch-action: auto;
+    -ms-touch-action: auto; 
+    text-align: initial;
+}   
+
+.rct-root {
+    --rct-font-family: AppleSDGothicNeo-Light, 'HelveticaNeue', 'Malgun Gothic', '맑은 고딕', sans-serif;
+    --rct-font-size: 16px;
+    --rct-focus-border: black;
+}
+
+.rct-root text {
+    stroke: none;
+}
+
+/** debug border */
+.rct-debug {
+    fill: none;
+    stroke: #ff000040;
+    pointer-events: none;
+}
+
+/** rich text */
+.rct-text-bold {
+    font-weight: bold;
+}
+.rct-text-italic {
+    font-style: italic;
+}
+
+/** label */
+.rct-label-dark {
+    fill: black;
+}
+.rct-label-bright {
+    fill: white;
+}
+.rct-label-background {
+    fill: lightgray;
+}
+
+/** background */
+.rct-background {
+    fill: none;
+}
+
+/** title */
+.rct-title {
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+.rct-title-background {
+    fill: transparent;
+}
+.rct-subtitle {
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+.rct-subtitle-background {
+    fill: transparent;
+}
+
+/** legend */
+.rct-legend {
+    stroke: #ddd;
+    fill: transparent;
+    margin: 8px;
+}
+.rct-legend-background {
+    padding: 4px;
+}
+.rct-legend-item {
+    fill: #333;
+}
+.rct-legend-item-label[data-hidden] {
+    fill: #aaa;
+}
+.rct-legend-item-marker {
+    stroke: none;
+}
+.rct-legend-item-marker[data-hidden] {
+    fill: #aaa !important;
+}
+
+/** plot area */
+.rct-plot-background {
+    stroke: #ddd;
+    fill: none;
+}
+
+/** axis */
+.rct-axis-title {
+    font-size: 16px;
+}
+.rct-axis-title-background {
+    fill: none;
+}
+.rct-axis-line {
+    stroke: #ddd;
+    stroke-width: 1px;
+}
+.rct-axis-tick-marks {
+    stroke: #333;
+    stroke-width: 1px;
+}
+.rct-axis-tick-labels {
+    font-size: 14px;
+    fill: #111;
+}
+.rct-axis-grid {
+    stroke: #ddd;
+    stroke-width: 1px;
+}
+.rct-axis-break {
+    stroke: none;
+    fill: white;
+}
+.rct-axis-guide-label {
+    fill: blue;
+}
+.rct-axis-guide-line {
+    stroke: blue;
+    stroke-width: 2px;
+    stroke-dasharray: 4;
+}
+.rct-axis-guide-range {
+    stroke: none;
+    fill: #0088ff40;
+}
+
+/** polar axis */
+.rct-polar-xaxis-line {
+    stroke: #333;
+}
+.rct-polar-xaxis-grid-line {
+    stroke: #ccc;
+}
+.rct-polar-yaxis-line {
+    stroke: red;
+}
+.rct-polar-yaxis-grid-line {
+    stroke: #0000ff20;
+}
+
+/** series */
+.rct-series-labels {
+    font-size: 0.8em;
+    font-weight: bold;
+    fill: #558;
+}
+.rct-series-trendline {
+    stroke: red;
+    stroke-width: 2px;
+    fill: none;
+}
+.rct-point-label {
+    stroke: #333;
+}
+.rct-point-label-lines {
+    stroke: black;
+}
+
+/** bar series */
+.rct-box-point {
+    fill: #00aaff;
+    fill-opacity: 0.85;
+}
+.rct-box-point[data-focus] {
+    stroke: var(--rct-focus-border);
+    stroke-width: 2px;
+}
+
+/** line series */
+.rct-line-series-line {
+    stroke: gray;
+}
+.rct-line-point-marker[data-focus] {
+    /* scale: 2; */
+    stroke: var(--rct-focus-border) !important;
+    stroke-width: 2px;
+}
+
+/** area series */
+.rct-area-series-area {
+    fill: #0088ff;
+    fill-opacity: 0.5;
+}
+
+/** bubble series */
+.rct-bubble-point-marker {
+    fill: #0088ff;
+    fill-opacity: 0.75;
+    stroke: #0088ff;
+}
+.rct-bubble-point-marker[data-focus] {
+    stroke: var(--rct-focus-border);
+    stroke-width: 2px;
+}
+
+/** scatter series */
+.rct-scatter-point-marker {
+    fill-opacity: 0.7;
+}
+.rct-scatter-point-marker[data-focus] {
+    stroke: var(--rct-focus-border);
+    stroke-width: 2px;
+}
+
+/** boxplot series */
+.rct-boxplot-series {
+    stroke-width: 1;
+    fill: white;
+}
+.rct-boxplot-point-box {
+    fill: #0088ff80;
+} 
+.rct-boxplot-point[data-focus] .rct-boxplot-point-box {
+    stroke: var(--rct-focus-border);
+    stroke-width: 2px;
+}
+.rct-boxplot-point-min {
+    stroke: #333;
+    stroke-width: 2;
+}
+.rct-boxplot-point-mid {
+    stroke: #333;
+    stroke-width: 2;
+}
+.rct-boxplot-point-max {
+    stroke: #333;
+    stroke-width: 2;
+}
+.rct-boxplot-point-stem {
+    stroke: #333;
+    stroke-dasharray: 2;
+}
+.rct-boxplot-point[data-focus] .rct-boxplot-point-stem {
+    stroke: black;
+    stroke-dasharray: none;
+    stroke-width: 2px;
+}
+
+/** candlestick series */
+.rct-candlestick-series {
+    stroke-width: 1;
+}
+.rct-candlestick-point-border {
+    stroke: #333;
+}
+.rct-candlestick-point-wick {
+    stroke: #003;
+}
+.rct-candlestick-point[data-focus] {
+    fill-opacity: 0.5;
+}
+.rct-candlestick-point-fall {
+    fill: #008;
+}
+.rct-candlestick-point[data-focus] .rct-candlestick-point-body-fall {
+    fill-opacity: 0.5;
+}
+
+/** ohlc series */
+.rct-ohlc-point {
+    stroke-width: 1;
+}
+.rct-ohlc-point-tick {
+    stroke: #003;
+}
+.rct-ohlc-point-bar {
+    stroke: #800;
+}
+.rct-ohlc-point-bar-fall {
+    stroke: #008;
+}
+
+/** waterfall series */
+.rct-waterfall-point-negative {
+    fill: #dd5500;
+}
+.rct-waterfall-point-sum {
+    fill: #0055cc;
+}
+.rct-waterfall-series-lines {
+    stroke: #77f;
+    stroke-width: 2;
+    stroke-dasharray: 2;
+}
+
+/** errobar series */
+.rct-errorbar-point {
+    stroke: #008;
+    stroke-width: 2px;
+}
+
+/** lollipop series */
+.rct-lollipop-point {
+    stroke: #008;
+    stroke-width: 3px;
+}
+.rct-lollipop-point-marker {
+    stroke: none;
+    fill: #008;
+}
+
+/** dumbbell series */
+.rct-dumbbell-point {
+    stroke: #008;
+    stroke-width: 2px;
+}
+.rct-dumbbell-point-marker {
+    stroke: none;
+    fill: #008;
+}
+
+/** funnel series */
+.rct-funnel-point[data-focus] {
+    stroke: red;
+    stroke-width: 2px;
+}
+
+/** vector series */
+.rct-vector-series {
+    stroke-width: 2px;
+    /* stroke-linejoin: round; */
+}
+.rct-vector-point[data-focus] {
+    stroke-width: 3px;
+}
+
+/** heatmpa series */
+.rct-heatmap-point[data-focus] {
+    stroke: var(--rct-focus-border);
+    stroke-width: 2px;
+}
+
+/** treemap series */
+.rct-treemap-point {
+    stroke: white;
+}
+.rct-treemap-point[data-focus] {
+    stroke: var(--rct-focus-border);
+    stroke-width: 2px;
+}
+
+/** pie series */
+.rct-pie-series .rct-series-points {
+    stroke: white;
+}
+
+/** tooltip */
+.rct-tooltip {
+    opacity: 0.9;
+}
+.rct-tooltip-back {
+    fill: white;
+    stroke: #ccc;
+}
+.rct-tooltip-text {
+    fill: #333;
+    stroke: none;
+}
+
+/** crosshair */
+.rct-crosshair-line {
+    fill: none;
+    stroke-width: 1;
+    stroke: #80808080;
+}
+.rct-crosshair-bar {
+    stroke: none;
+    fill: #88888840;
+}
+.rct-crosshair-label {
+    stroke: none;
+    fill: #fff;    
+}
+.rct-crosshair-label-back {
+    stroke: #555;
+    fill: #777;    
+}

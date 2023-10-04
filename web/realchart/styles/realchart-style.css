@@ -133,6 +133,10 @@
     --rct-point-label-fill: #333;
 
     --rct-credits-fill: #777;
+
+    --rct-circle-gauge-back-fill: #ddd;
+    --rct-circle-gauge-inner-fill: none;
+    --rct-circle-gauge-label-fill: #333;
 }
 .rct-root[data-theme='dark'] {
     --rct-focus-border: yellow;
@@ -156,6 +160,9 @@
     --rct-point-label-fill: #ddd;
 
     --rct-credits-fill: #999;
+
+    --rct-circle-gauge-back-fill: #333;
+    --rct-circle-gauge-label-fill: #eee;
 }
 
 /** control */
@@ -235,9 +242,9 @@
     fill: var(--rct-legend-item-disabled);
     text-decoration: var(--rct-legend-item-disabled-decoration)
 }
-.rct-legend-item-marker {
+/* .rct-legend-item-marker {
     stroke: none;
-}
+} */
 .rct-legend-item-marker[data-hidden] {
     fill: #aaa !important;
 }
@@ -280,8 +287,9 @@
     stroke-width: var(--rct-axis-grid-line-stroke-width);
 }
 .rct-axis-break {
-    stroke: none;
+    stroke: #777;
     fill: white;
+    fill-opacity: 0.9;
 }
 .rct-axis-guide-label {
     fill: blue;
@@ -475,6 +483,9 @@
 .rct-arearange-series-area {
     fill-opacity: 0.5;
 }
+.rct-arearange-series .rct-arearange-series-area {
+    stroke: none;
+}
 
 /** bubble series */
 .rct-bubble-series {
@@ -659,8 +670,39 @@
     stroke-width: 2px;
 }
 
+/** gauge */
+.rct-gauge-background {
+    fill: none;
+}
+
+/** circle gauge */
+.rct-circle-gauge-back {
+    fill: var(--rct-circle-gauge-back-fill);
+}
+.rct-circle-gauge-inner {
+    fill: var(--rct-circle-gauge-inner-fill);
+}
+.rct-circle-gauge-value {
+    fill: #008844;
+}
+.rct-circle-gauge-label {
+    font-size: 40px;
+    fill: var(--rct-circle-gauge-label-fill);
+    stroke: none;
+}
+.rct-circle-gauge-pin {
+    fill: white;
+    stroke: #333;
+    stroke-width: 3px;
+}
+.rct-circle-gauge-hand {
+    fill: white;
+    stroke: none;
+}
+
 /** tooltip */
 .rct-tooltip {
+    pointer-events: none;
     opacity: 0.9;
 }
 .rct-tooltip-back {
@@ -680,13 +722,13 @@
 }
 .rct-crosshair-bar {
     stroke: none;
-    fill: #88888840;
+    fill: #4488cc18;
 }
-.rct-crosshair-label {
+.rct-crosshair-flag {
+    stroke: none;
+    fill: #555;    
+}
+.rct-crosshair-flag-text {
     stroke: none;
     fill: #fff;    
-}
-.rct-crosshair-label-back {
-    stroke: #555;
-    fill: #777;    
 }

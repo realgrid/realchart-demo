@@ -5,7 +5,7 @@
  */
 const config = {
     options: {
-        // animatable: false
+        animatable: false
     },
     title: "Axis Breaks",
     xAxis: {
@@ -15,12 +15,10 @@ const config = {
     },
     yAxis: {
         title: "Vertical 수직축 Axis",
-        break: [{
+        break: {
             from: 500,
-            to: 3000,
-            inclusive: false,
-            space: 5
-        }]
+            to: 3000
+        }
     },
     series: [{
         name: 'column1',
@@ -30,7 +28,7 @@ const config = {
     }, {
         name: 'column3',
         pointLabel: true,
-        data: [64, 138, 164, 408, 3120, 3540, 3875, 3420, 720, 320, 160, 20]
+        data: [64, 138, 164, 1408, 3120, 3540, 3875, 3420, 720, 320, 160, 20]
     }]
 }
 
@@ -48,18 +46,18 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    // createCheckBox(container, 'Inverted', function (e) {
-    //     config.inverted = _getChecked(e);
-    //     chart.load(config, animate);
-    // }, false);
-    // createCheckBox(container, 'X Reversed', function (e) {
-    //     config.xAxis.reversed = _getChecked(e);
-    //     chart.load(config, animate);
-    // }, false);
-    // createCheckBox(container, 'Y Reversed', function (e) {
-    //     config.yAxis.reversed = _getChecked(e);
-    //     chart.load(config, animate);
-    // }, false);
+    createCheckBox(container, 'Inverted', function (e) {
+        config.inverted = _getChecked(e);
+        chart.load(config, animate);
+    }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.load(config, animate);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.load(config, animate);
+    }, false);
 }
 
 function init() {

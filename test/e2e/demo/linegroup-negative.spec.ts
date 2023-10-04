@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for linegroup-negative.html
  */
 test.describe('linegroup-negative.html test', () => {
-	const url = 'demo/linegroup-negative.html';
+	const url = 'demo/linegroup-negative.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

@@ -59,7 +59,7 @@ export class TextElement extends RcElement {
     constructor(doc: Document, styleName: string = _undefined) {
         super(doc, styleName, 'text');
 
-        this.setAttr('text-anchor', 'middle');
+        this.anchor = TextAnchor.MIDDLE;
     }
 
 	//-------------------------------------------------------------------------
@@ -131,7 +131,8 @@ export class TextElement extends RcElement {
     //-------------------------------------------------------------------------
     getAscent(height: number): number {
         //return (height >= 20 ? 0.72 : 0.75) * height;
-        return 0.75 * height;
+        // return 0.75 * height;
+        return 0.8 * height;
     }
 
     layoutText(lineHeight?: number): void {

@@ -11,10 +11,9 @@ import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { fixnum } from "../../common/Types";
-import { LegendItem } from "../../model/Legend";
 import { PointItemPosition } from "../../model/Series";
 import { FunnelSeries, FunnelSeriesPoint } from "../../model/series/FunnelSeries";
-import { IPointView, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
+import { IPointView, PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class FunnelSegment extends PathElement implements IPointView {
@@ -80,6 +79,11 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
         this._renderSeries(this.width, this.height);
     }
 
+    _animationStarted(ani: Animation): void {
+        super._animationStarted(ani);
+        this._lineContainer.setVisible(this._labelContainer.visible);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -135,7 +139,6 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
                 return x1 + (xNeck - x1) * (y - y1) / (yNeck - y1);
             }
         }
-
         const series = this.model;
         const labelViews = this._labelViews();
         const labelInside = series.getLabelPosition() === PointItemPosition.INSIDE;
@@ -156,6 +159,9 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
         const xNeck = x1 + (sz.width - szNeck.width) / 2;
         const yNeck = reversed ? yEnd - pNeck : y1 + pNeck;
         let labelView: PointLabelView;
+
+        // animation 시작 때 감춰진 걸 표시한다.
+        this._lineContainer.setVisible(labelViews && !labelInside);
 
         this._segments.forEach((seg) => {
             const p = seg.point;
@@ -222,6 +228,8 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
                         this.$_layoutLabelInner(labelView, p.xPos, p.yPos);
                     }
                     labelView.setContrast(labelInside && seg.dom);
+                } else {
+                    lineViews.get(p)?.setVisible(false);
                 }
             }
         });

@@ -59,28 +59,38 @@ export class PathBuilder {
 
     move(x: number | IPoint, y?: number): PathBuilder {
         if (isNumber(x)) {
-            this._path.push('M', _num(x), _num(y));
+            this._path.push('M', x, y);
         } else {
-            this._path.push('M', _num(x.x), _num(x.y));
+            this._path.push('M', x.x, x.y);
         }
         return this;
     }
 
     moveBy(x: number | IPoint, y?: number): PathBuilder {
         if (isNumber(x)) {
-            this._path.push('m', _num(x), _num(y));
+            this._path.push('m', x, y);
         } else {
-            this._path.push('m', _num(x.x), _num(x.y));
+            this._path.push('m', x.x, x.y);
         }
         return this;
     }
 
     line(x: number | IPoint, y?: number): PathBuilder {
         if (isNumber(x)) {
-            this._path.push('L', _num(x), _num(y));
+            this._path.push('L', x, y);
         } else {
-            this._path.push('L', _num(x.x), _num(x.y));
+            this._path.push('L', x.x, x.y);
         }
+        return this;
+    }
+
+    vline(x: number, y1: number, y2: number): PathBuilder {
+        this._path.push('M', x, y1, 'L', x, y2);
+        return this;
+    }
+
+    hline(y: number, x1: number, x2: number): PathBuilder {
+        this._path.push('M', x1, y, 'L', x2, y);
         return this;
     }
 
@@ -119,6 +129,11 @@ export class PathBuilder {
     polygon(...pts: (number | IPoint)[]): PathBuilder {
         this.lines(...pts);
         this._path.push('Z');
+        return this;
+    }
+
+    circle(cx: number, cy: number, rd: number): PathBuilder {
+        this._path.push(`M ${cx - rd}, ${cy} a ${rd},${rd} 0 1,0 ${rd * 2},0 a ${rd},${rd} 0 1,0 ${-rd * 2},0`);
         return this;
     }
 

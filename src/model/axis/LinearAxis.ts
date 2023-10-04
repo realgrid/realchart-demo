@@ -43,12 +43,14 @@ export class ContinuousAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    buildSteps(length: number, base: number, min: number, max: number): number[] {
+    buildSteps(length: number, base: number, min: number, max: number, broken = false): number[] {
         let pts: number[];
 
         this._step = NaN;
 
-        if (Array.isArray(this.steps)) {
+        if (broken) {
+            pts = this._getStepsByPixels(length, pickNum(this.stepPixels * 0.85, 60), base, min, max);
+        } else if (Array.isArray(this.steps)) {
             // 지정한 위치대로 tick들을 생성한다.
             pts = this.steps.slice(0);
         } else if (this._baseAxis instanceof ContinuousAxis) {
@@ -229,7 +231,7 @@ export class ContinuousAxisTick extends AxisTick {
     }
 }
 
-class ContinuousAxisLabel extends AxisLabel {
+class LinearAxisLabel extends AxisLabel {
 
     //-------------------------------------------------------------------------
     // properties
@@ -239,7 +241,7 @@ class ContinuousAxisLabel extends AxisLabel {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    getTick(v: any): string {
+    getTick(index: number, v: any): string {
         return this._getText(null, v, this.useSymbols && (this.axis.tick as ContinuousAxisTick)._step > 100);
     }
 }
@@ -263,13 +265,13 @@ export class AxisBreak extends AxisItem {
     from: number;
     to: number;
     size: RtPercentSize = '30%';
-    space = 12;
+    space = 16;
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _sizeDim: IPercentSize;
-    _sect: AxisBreakSect;
+    _sect: IAxisBreakSect;
 
     //-------------------------------------------------------------------------
     // method
@@ -289,7 +291,7 @@ export class AxisBreak extends AxisItem {
     }
 }
 
-interface AxisBreakSect {
+interface IAxisBreakSect {
     from: number;
     to: number;
     pos: number;
@@ -316,8 +318,6 @@ export enum AxisFit {
 
 /**
  * 연속 축 기반.
- * 
- * @config chart.axis[type=linear|time|log]
  */
 export abstract class ContinuousAxis extends Axis {
 
@@ -336,8 +336,8 @@ export abstract class ContinuousAxis extends Axis {
     private _maxBased: boolean;
 
     private _runBreaks: AxisBreak[];
-    private _sects: AxisBreakSect[];
-    private _lastSect: AxisBreakSect;
+    private _sects: IAxisBreakSect[];
+    private _lastSect: IAxisBreakSect;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -430,11 +430,12 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     hasBreak(): boolean {
-        return !!this._runBreaks;
+        return this._runBreaks != null;
     }
 
     runBreaks(): AxisBreak[] {
-        return this._runBreaks && this._runBreaks.slice(0);
+        // TODO: v1.0 - break 하나만 적용한다. (여러 개가 의미가 있는가?)
+        return this._runBreaks && this._runBreaks.slice(0, 1);
     }
 
     getStartFit(): AxisFit {
@@ -448,6 +449,10 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    isContinuous(): boolean {
+        return true;
+    }
+
     contains(value: number): boolean {
         return !isNaN(value);
         // return (this.nullable && isNaN(value)) || super.contains(value);
@@ -462,7 +467,7 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected _createLabelModel(): AxisLabel {
-        return new ContinuousAxisLabel(this);
+        return new LinearAxisLabel(this);
     }
 
     protected _doLoadProp(prop: string, value: any): boolean {
@@ -494,7 +499,7 @@ export abstract class ContinuousAxis extends Axis {
             base = 0;
         } 
 
-        let steps = tick.buildSteps(length, base, min, max);
+        let steps = tick.buildSteps(length, base, min, max, false);
         const ticks: IAxisTick[] = [];
 
         if (!isNaN(this.strictMin) || this.getStartFit() === AxisFit.VALUE) {
@@ -536,22 +541,22 @@ export abstract class ContinuousAxis extends Axis {
             }
     
             for (let i = 0; i < steps.length; i++) {
-                const tick = this._createTick(length, steps[i]);
+                const tick = this._createTick(length, i, steps[i]);
                 ticks.push(tick);
             }
         }
         return ticks;
     }
 
-    protected _getTickLabel(value: number): string {
-        return this.label.getTick(value) || String(value);
+    protected _getTickLabel(index: number, value: number): string {
+        return this.label.getTick(index, value) || String(value);
     }
 
-    protected _createTick(length: number, step: number): IAxisTick {
+    protected _createTick(length: number, index: number, step: number): IAxisTick {
         return {
             pos: NaN,//this.getPosition(length, step),
             value: step,
-            label: this._getTickLabel(step)
+            label: this._getTickLabel(index, step)
         }
     }
 
@@ -561,9 +566,9 @@ export abstract class ContinuousAxis extends Axis {
         this._markPoints = this._ticks.map(t => t.pos);
     }
 
-    private $_buildBrokenSteps(sect: AxisBreakSect): number[] {
+    private $_buildBrokenSteps(sect: IAxisBreakSect): number[] {
         const tick = this.tick as ContinuousAxisTick;
-        const steps = tick.buildSteps(sect.len, void 0, sect.from, sect.to);
+        const steps = tick.buildSteps(sect.len, void 0, sect.from, sect.to, true);
 
         return steps;
     }
@@ -637,12 +642,25 @@ export abstract class ContinuousAxis extends Axis {
             const sect = this._sects.find(s => value < s.to) || this._lastSect;
             const p = sect.len * (value - sect.from) / (sect.to - sect.from);
 
-            return (this.reversed ? length - p : p) + sect.pos;
+            if (this.reversed) {
+                return length - p - sect.pos;
+            } else {
+                return p + sect.pos;
+            }
         } else {
             const p = length * (value - this._min) / (this._max - this._min);
 
             return this.reversed ? length - p : p;
         }
+    }
+
+    getValueAt(length: number, pos: number): number {
+        if (this._isHorz) {
+            if (this.reversed) pos = length - pos;
+        } else {
+            if (!this.reversed) pos = length - pos;
+        }
+        return (this._max - this._min) * pos / length + this._min;
     }
 
     getUnitLength(length: number, value: number): number {
@@ -802,7 +820,8 @@ export abstract class ContinuousAxis extends Axis {
  * 선형 연속 축.
  * 값 사아의 비율과 축 길이 비율이 항상 동일한 축.
  * 
- * @config chart.axis[type=linear]
+ * @config chart.xAxis[type=linear]
+ * @config chart.yAxis[type=linear]
  */
 export class LinearAxis extends ContinuousAxis {
 

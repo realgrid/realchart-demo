@@ -6,14 +6,16 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isBoolean, isObject, isString } from "../common/Common";
+import { isArray, isBoolean, isObject, isString, pickNum } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { SvgRichText, RichTextParamCallback } from "../common/RichText";
-import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
+import { Align, NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
 import { IChart } from "./Chart";
+
+export let n_char_item = 0;
 
 export abstract class ChartItem extends RcObject {
 
@@ -34,12 +36,18 @@ export abstract class ChartItem extends RcObject {
 
         this.chart = chart;
         this._visible = visible;
+        n_char_item++;
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /** visible */
+    /** 
+     * 표시 여부.
+     * 모델에 따라 기본값이 다르다.
+     * 
+     * @config
+     */
     get visible(): boolean {
         return this._visible;
     }
@@ -49,14 +57,20 @@ export abstract class ChartItem extends RcObject {
             this.chart?._visibleChanged(this);
         }
     }
-
+    /**
+     * 스타일셋 혹은 class selector.
+     * 
+     * @config
+     */
     style: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     load(source: any): ChartItem {
-        if (!this._doLoadSimple(source)) {
+        if (source !== void 0 && !this._doLoadSimple(source)) {
+            const assign = this.chart && this.chart.assignTemplates;
+            assign && (source = assign(source));
             this._doLoad(source);
         }
         return this;
@@ -104,6 +118,8 @@ export abstract class ChartItem extends RcObject {
                     this[p].load(v);
                 } else if (isArray(v)) {
                     this[p] = v.slice(0);
+                } else if (v instanceof Date) {
+                    this[p] = new Date(v);
                 } else if (isObject(v)) {
                     this[p] = Object.assign({}, this._getDefObjProps(p), v);
                 } else {
@@ -194,6 +210,7 @@ export abstract class FormattableText extends ChartText {
     //-------------------------------------------------------------------------
     private _numSymbols: string[];
     private _numberFormatter: NumberFormatter;
+    private _lineHeight = 1;
     protected _richTextImpl: SvgRichText;
 
     //-------------------------------------------------------------------------
@@ -211,17 +228,23 @@ export abstract class FormattableText extends ChartText {
     //-------------------------------------------------------------------------
     /**
      * label 문자열 앞에 추가되는 문자열.
+     * 
+     * @config
      */
     prefix: string;
 
     /**
      * label 문자열 끝에 추가되는 문자열.
+     * 
+     * @config
      */
     suffix: string;
 
     /**
      * 축의 tick 간격이 1000 이상인 큰 수를 표시할 때 
      * 이 속성에 지정한 symbol을 이용해서 축약형으로 표시한다.
+     * 
+     * @config
      */
     get numberSymbols(): string {
         return this._numberSymbols;
@@ -235,6 +258,8 @@ export abstract class FormattableText extends ChartText {
 
     /**
      * label이 숫자일 때 표시 형식.
+     * 
+     * @config
      */
     get numberFormat(): string {
         return this._numberFormat;
@@ -254,11 +279,15 @@ export abstract class FormattableText extends ChartText {
      * 
      * axis label:
      * 축 line과의 간격.
+     * 
+     * @config
      */
     offset = 2;
 
     /**
      * rich text format을 지정할 수 있다.
+     * 
+     * @config
      */
     get text(): string {
         return this._text;
@@ -270,8 +299,10 @@ export abstract class FormattableText extends ChartText {
         if (value !== this._text) {
             this._text = value;
             if (value) {
-                if (!this._richTextImpl) this._richTextImpl = new SvgRichText()
-                this._richTextImpl.format = value;
+                if (!this._richTextImpl) {
+                    this._richTextImpl = new SvgRichText();
+                }
+                this._richTextImpl.setFormat(value);
             } else {
                 this._richTextImpl = null;
             }
@@ -296,9 +327,9 @@ export abstract class FormattableText extends ChartText {
         this._richTextImpl.build(view, target, callback);
     }
 
-    setLineHeight(v: number): void {
-        this._richTextImpl.lineHeight = v;
-    }
+    // setLineHeight(v: number): void {
+    //     this._richTextImpl.lineHeight = v;
+    // }
 
     //-------------------------------------------------------------------------
     // overriden members

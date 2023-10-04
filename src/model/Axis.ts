@@ -11,7 +11,7 @@ import { Align, SVGStyleOrClass, VerticalAlign, fixnum, isNull } from "../common
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
-import { IClusterable, IPlottingItem, ISeries, Series } from "./Series";
+import { IClusterable, IPlottingItem } from "./Series";
 
 export interface IAxis {
 
@@ -25,6 +25,7 @@ export interface IAxis {
 
     reversed: boolean;
 
+    isContinuous(): boolean;
     getBaseValue(): number;
     axisMax(): number;
     axisMin(): number;
@@ -40,6 +41,7 @@ export interface IAxis {
      * 값(축 상 위치)에 해당하는 픽셀 위치.
      */
     getPosition(length: number, value: number, point?: boolean): number;
+    getValueAt(length: number, pos: number): number;
     /**
      * 값(축 상 위치)에 해당하는 축 단위 픽셀 크기. 
      * <br>
@@ -80,7 +82,7 @@ export class AxisLine extends AxisItem {
 }
 
 /**
- * @config axis.title
+ * 
  */
 export class AxisTitle extends AxisItem {
 
@@ -130,8 +132,6 @@ export class AxisTitle extends AxisItem {
  * visible 기본값이 undefined이다.
  * <br>
  * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
- * 
- * @config axis.grid
  */
 export class AxisGrid extends AxisItem {
 
@@ -176,7 +176,7 @@ export class AxisGrid extends AxisItem {
 }
 
 /**
- * @config axis.guide.label
+ *
  */
 export class AxisGuideLabel extends FormattableText {
 
@@ -414,7 +414,7 @@ export abstract class AxisLabel extends FormattableText {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    abstract getTick(v: any): string;
+    abstract getTick(index: number, value: any): string;
 
     getRotation(): number {
         return this.rotation || 0;
@@ -454,8 +454,6 @@ export enum AxisPosition {
 
 /**
  * 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.
- * 
- * @config chart.axis
  */
 export abstract class Axis extends ChartItem implements IAxis {
 
@@ -463,10 +461,18 @@ export abstract class Axis extends ChartItem implements IAxis {
     // fields
     //-------------------------------------------------------------------------
     readonly name: string;
+    /**
+     * @config
+     */
     readonly title = new AxisTitle(this);
     readonly line = new AxisLine(this);
     readonly tick: AxisTick;
     readonly label: AxisLabel;
+    /**
+     * visible 기본값이 undefined이다.
+     * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
+     * @config
+     */
     readonly grid = this._createGrid();
     readonly guides: AxisGuide[] = [];
     readonly crosshair = new Crosshair(this);
@@ -530,13 +536,13 @@ export abstract class Axis extends ChartItem implements IAxis {
     /**
      * Plot 영역이나 앞쪽 축 사이의 여백 크기.
      * 
-     * @confg
+     * @config
      */
     marginNear = 0;
     /**
      * 차트 경계나 뒤쪽 축 사이의 여백 크기.
      * 
-     * @confg
+     * @config
      */
     marginFar = 0;
 
@@ -548,8 +554,10 @@ export abstract class Axis extends ChartItem implements IAxis {
         return NaN;
     }
     
+    abstract isContinuous(): boolean;
     abstract axisMin(): number;
     abstract axisMax(): number;
+    abstract getValueAt(length: number, pos: number): number;
 
     //-------------------------------------------------------------------------
     // methods
@@ -831,11 +839,11 @@ export class AxisCollection {
                         }
                     }   
                 }
-                if (!t && chart.first.canCategorized()) {
+                if (!t && chart.first?.canCategorized()) {
                     t = 'category';
                 }
             } else {
-                t = chart._getSeries().first.defaultYAxisType();
+                t = chart._getSeries().first?.defaultYAxisType();
             }
 
             if (t) {

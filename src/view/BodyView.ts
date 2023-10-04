@@ -9,22 +9,27 @@
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
-import { LayerElement, PathElement, RcElement } from "../common/RcControl";
+import { ClipElement, LayerElement, PathElement, RcControl, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { Align, VerticalAlign, _undefined, assert } from "../common/Types";
 import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
-import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange } from "../model/Axis";
+import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange, IAxis } from "../model/Axis";
 import { Body } from "../model/Body";
 import { Chart, IChart } from "../model/Chart";
 import { Crosshair } from "../model/Crosshair";
 import { DataPoint } from "../model/DataPoint";
 import { Series } from "../model/Series";
+import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
+import { Gauge } from "../model/Gauge";
 import { ChartElement } from "./ChartElement";
+import { GaugeView } from "./GaugeView";
 import { IPointView, SeriesView } from "./SeriesView";
+import { CircleGaugeView } from "./gauge/CircleGaugeView";
+import { ClockGaugeView } from "./gauge/ClockGaugeView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
 import { AreaSeriesView } from "./series/AreaSeriesView";
 import { BarRangeSeriesView } from "./series/BarRangeSeriesView";
@@ -73,6 +78,10 @@ const series_types = {
     'treemap': TreemapSeriesView,
     'vector': VectorSeriesView,
     'waterfall': WaterfallSeriesView,
+}
+const gauge_types = {
+    'circle': CircleGaugeView,
+    'clock': ClockGaugeView,
 }
 
 export class AxisGridView extends ChartElement<AxisGrid> {
@@ -139,7 +148,10 @@ export class AxisBreakView extends RcElement {
     // fields
     //-------------------------------------------------------------------------
     _model: AxisBreak;
+    private _upLine: PathElement;
+    private _downLine: PathElement;
     private _mask: PathElement;
+    private _clip: ClipElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -148,6 +160,11 @@ export class AxisBreakView extends RcElement {
         super(doc, 'rct-axis-break');
 
         this.add(this._mask = new PathElement(doc));
+        this._mask.setStyle('stroke', 'none');
+        this.add(this._upLine = new PathElement(doc));
+        this._upLine.setStyle('fill', 'none');
+        this.add(this._downLine = new PathElement(doc));
+        this._downLine.setStyle('fill', 'none');
     }
 
     //-------------------------------------------------------------------------
@@ -157,12 +174,101 @@ export class AxisBreakView extends RcElement {
         this._model = model;
     }
 
-    layout(width: number, height: number): void {
+    layout(width: number, height: number, vertical: boolean): void {
+        if (this._clip) {
+            this._clip.resize(width, height);
+        } else {
+            this._clip = this.control.clipBounds(0, 0, width, height);
+        }
+        this.setClip(this._clip);
+
         const m = this._model;
+        const len = m._sect.len;
         const pb = new PathBuilder();
 
-        pb.rect(0, 0, width, m._sect.len);
-        this._mask.setPath(pb.end());
+        if (vertical) {
+            let y = 0;
+            let x1 = 0;
+            let x2 = len / 2;
+            let x3 = len;
+
+            pb.move(x1, y);
+            while (y < height) {
+                y += 20;
+                pb.line(x2, y);
+                y += 20;
+                pb.line(x1, y);
+            }
+            this._downLine.setPath(pb.end(false));
+
+            y = 0;
+            pb.clear().move(x2, y);
+            while (y < height) {
+                y += 20;
+                pb.line(x3, y);
+                y += 20;
+                pb.line(x2, y);
+            }
+            this._upLine.setPath(pb.end(false));
+
+            y = 0;
+            pb.clear().move(x1);
+            while (y < height) {
+                y += 20;
+                pb.line(x2, y);
+                y += 20;
+                pb.line(x1, y);
+            }
+            pb.line(x2, y);
+            while (y >= 0) {
+                y -= 20;
+                pb.line(x3, y);
+                y -= 20;
+                pb.line(x2, y);
+            }
+            this._mask.setPath(pb.end());
+        } else {
+            let x = 0;
+            let y1 = 0;
+            let y2 = len / 2;
+            let y3 = len;
+
+            pb.move(x, y2);
+            while (x < width) {
+                x += 20;
+                pb.line(x, y1);
+                x += 20;
+                pb.line(x, y2);
+            }
+            this._upLine.setPath(pb.end(false));
+
+            x = 0;
+            pb.clear().move(x, y3);
+            while (x < width) {
+                x += 20;
+                pb.line(x, y2);
+                x += 20;
+                pb.line(x, y3);
+            }
+            this._downLine.setPath(pb.end(false));
+
+            x = 0;
+            pb.clear().move(x, y2);
+            while (x < width) {
+                x += 20;
+                pb.line(x, y1);
+                x += 20;
+                pb.line(x, y2);
+            }
+            pb.line(x, y3);
+            while (x >= 0) {
+                x -= 20;
+                pb.line(x, y2);
+                x -= 20;
+                pb.line(x, y3);
+            }
+            this._mask.setPath(pb.end());
+        }
     }
 }
 
@@ -504,18 +610,19 @@ export class AxisGuideContainer extends LayerElement {
     }
 }
 
-class CrosshairLineView extends LineElement {
+class CrosshairView extends PathElement {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _model: Crosshair;
+    private _bar: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-crosshair-line');
+        super(doc);
 
         this.setStyle('pointerEvents', 'none');
     }
@@ -526,15 +633,49 @@ class CrosshairLineView extends LineElement {
     setModel(model: Crosshair): void {
         if (model != this._model) {
             this._model = model;
+            this._bar = model.isBar();
+            this.setClass(this._bar ? 'rct-crosshair-bar' : 'rct-crosshair-line');
         }
     }
 
-    layout(x: number, y: number, width: number, height: number): void {
-        if (this._model.axis._isHorz) {
-            this.setVLine(x, 0, height);
-        } else {
-            this.setHLine(y, 0, width);
+    layout(pv: IPointView, x: number, y: number, width: number, height: number): void {
+        const axis = this._model.axis;
+        const horz = axis._isHorz;
+        const pb = new PathBuilder();
+
+        if (this._bar) {
+            const len = axis._isHorz ? width : height;
+            let index = -1;
+
+            if (pv) {
+                index = pv.point.xValue;
+            } else if (this._model.showAlways) {
+                if (axis.reversed) {
+                    index = (axis as CategoryAxis).categoryAt(horz ? width - x : y);
+                } else {
+                    index = (axis as CategoryAxis).categoryAt(horz ? x : height - y);
+                }
+            }
+
+            // TODO: scrolling
+            if (index >= 0) {
+                const p = axis.getPosition(len, index);
+                const w = axis.getUnitLength(len, index);
+
+                if (horz) {
+                    pb.rect(p - w / 2, 0, w, height);
+                } else {
+                    pb.rect(0, height - p - w / 2, width, w);
+                }
+            }
+        } else if (pv || this._model.showAlways) {
+            if (horz) {
+                pb.vline(x, 0, height);
+            } else {
+                pb.hline(y, 0, width);
+            }
         }
+        this.setPath(pb.end());
     }
 }
 
@@ -566,6 +707,9 @@ export class BodyView extends ChartElement<Body> {
     protected _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
     private _series: Series[];
+    private _gaugeViews: GaugeView<Gauge>[] = [];
+    private _gaugeMap = new Map<Gauge, GaugeView<Gauge>>();
+    private _gauges: Gauge[];
     // guides
     _guideContainer: AxisGuideContainer;
     _frontGuideContainer: AxisGuideContainer;
@@ -575,8 +719,10 @@ export class BodyView extends ChartElement<Body> {
     // private _itemMap = new Map<PlotItem, PlotItemView>();
     // feedbacks
     private _feedbackContainer: LayerElement;
-    private _crosshairLines: ElementPool<CrosshairLineView>;
+    private _crosshairLines: ElementPool<CrosshairView>;
     private _focused: IPointView = null;
+
+    protected _animatable: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -594,14 +740,17 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._frontGuideContainer = new AxisGuideContainer(doc, 'rct-front-guides'));
         this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
         
-        this._crosshairLines = new ElementPool(this._feedbackContainer, CrosshairLineView);
+        this._crosshairLines = new ElementPool(this._feedbackContainer, CrosshairView);
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     prepareSeries(doc: Document, chart: IChart): void {
+        this._animatable = RcControl._animatable && chart.animatable();
+
         this.$_prepareSeries(doc, chart, chart._getSeries().visibleSeries());
+        this.$_prepareGauges(doc, chart, chart._getGauges().visibles());
     }
 
     prepareGuideContainers(): void {
@@ -609,28 +758,36 @@ export class BodyView extends ChartElement<Body> {
         this._frontGuideContainer.prepare();
     }
 
-    pointerMoved(p: IPoint, target: EventTarget): void {
+    pointerMoved(p: IPoint, target: EventTarget): boolean {
         const w = this.width;
         const h = this.height;
-
-        this._crosshairLines.forEach(v => {
-            if (v.setVisible(p.x >= 0 && p.x < w && p.y >= 0 && p.y < h)) {
-                v.layout(p.x, p.y, w, h);
-            }
-        });
+        const inBody = p.x >= 0 && p.x < w && p.y >= 0 && p.y < h;
+        let sv: SeriesView<any>;
+        let pv: IPointView;
 
         if (target instanceof SVGElement && (target.classList.contains(SeriesView.POINT_CLASS) || target.parentElement instanceof SVGElement && target.parentElement.classList.contains(SeriesView.POINT_CLASS))) {
             for (let i = this._seriesViews.length - 1; i >= 0; i--) {
-                const p = this._seriesViews[i].pointByDom(target) as IPointView;
+                pv = this._seriesViews[i].pointByDom(target) as IPointView;
 
-                if (p) {
-                    this.$_setFocused(this._seriesViews[i].model, p);
+                if (pv) {
+                    sv = this._seriesViews[i];
                     break;
                 }
             }
+        }
+
+        this._crosshairLines.forEach(v => {
+            if (v.setVisible(inBody)) {
+                v.layout(pv, p.x, p.y, w, h);
+            }
+        });
+
+        if (pv) {
+            this.$_setFocused(sv.model, pv);
         } else {
             this.$_setFocused(null, null);
         }
+        return inBody;
     }
 
     private $_setFocused(series: Series, p: IPointView): boolean {
@@ -683,8 +840,12 @@ export class BodyView extends ChartElement<Body> {
             }
 
             this.$_prepareAxisBreaks(doc, chart);
-            this.$_preppareCrosshairs(doc, chart);
         }
+
+        // gauges
+        this._gaugeViews.forEach((v, i) => {
+            v.measure(doc, this._gauges[i], hintWidth, hintHeight, phase);
+        })
 
         return Size.create(hintWidth, hintHeight);
     }
@@ -717,8 +878,23 @@ export class BodyView extends ChartElement<Body> {
 
             // axis breaks
             this._breakViews.forEach(v => {
-                v.translate(0, h - v._model._sect.pos - v._model._sect.len);
-                v.layout(w, h);
+                const m = v._model;
+                const axis = m.axis;
+
+                if (axis._isHorz) {
+                    if (axis.reversed) {
+                        v.translate(w - m._sect.pos, 0);
+                    } else {
+                        v.translate(m._sect.pos, 0);
+                    }
+                } else {
+                    if (axis.reversed) {
+                        v.translate(0, m._sect.pos);
+                    } else {
+                        v.translate(0, h - m._sect.pos - m._sect.len);
+                    }
+                }
+                v.layout(w, h, m.axis._isHorz);
             });
 
             // axis guides
@@ -726,6 +902,15 @@ export class BodyView extends ChartElement<Body> {
                 c._views.forEach(v => v.layout(w, h));
             });
         }
+
+        this.$_preppareCrosshairs(this.chart());
+
+        // gauges
+        this._gaugeViews.forEach(v => {
+            // this._owner.clipSeries(v.getClipContainer(), 0, 0, w, h, v.invertable());
+            v.resizeByMeasured();
+            v.layout().translatep(v.getPosition(w, h));
+        })
     }
 
     //-------------------------------------------------------------------------
@@ -739,6 +924,10 @@ export class BodyView extends ChartElement<Body> {
         //         return new (series_types.get(cls))(doc);
         //     }
         // }
+    }
+
+    private $_createGaugeView(doc: Document, gauge: Gauge): GaugeView<Gauge> {
+        return new gauge_types[gauge._type()](doc);
     }
 
     private $_prepareGrids(doc: Document, chart: Chart): void {
@@ -766,11 +955,10 @@ export class BodyView extends ChartElement<Body> {
     private $_prepareSeries(doc: Document, chart: IChart, series: Series[]): void {
         const container = this._seriesContainer;
         const inverted = chart.isInverted();
-        const animatable = this.control.animatable && chart.animatable();
         const map = this._seriesMap;
         const views = this._seriesViews;
 
-        // series들이 다시 생성됐을 수 있다.
+        // series들이 다시 생성됐을 수 있다.(?)
         for (const ser of map.keys()) {
             if (series.indexOf(ser) < 0) {
                 map.delete(ser);
@@ -782,14 +970,41 @@ export class BodyView extends ChartElement<Body> {
         views.length = 0;
 
         series.forEach(ser => {
-            const v = map.get(ser) ||this.$_createSeriesView(doc, ser);
+            const v = map.get(ser) || this.$_createSeriesView(doc, ser);
 
-            v._setChartOptions(inverted, animatable);
+            v._setChartOptions(inverted, this._animatable);
             container.add(v);
             map.set(ser, v);
             views.push(v);
             v.prepareSeries(doc, ser);
         });
+    }
+
+    private $_prepareGauges(doc: Document, chart: IChart, gauges: Gauge[]): void {
+        const container = this._seriesContainer;
+        const inverted = chart.isInverted();
+        const map = this._gaugeMap;
+        const views = this._gaugeViews;
+
+        for (const g of map.keys()) {
+            if (gauges.indexOf(g) < 0) {
+                map.delete(g);
+            }
+        }
+
+        this._gauges = gauges;
+        views.forEach(v => v.remove());
+        views.length = 0;
+
+        gauges.forEach(g => {
+            const v = map.get(g) || this.$_createGaugeView(doc, g);
+
+            v._setChartOptions(inverted, this._animatable);
+            container.add(v);
+            map.set(g, v);
+            views.push(v);
+            v.prepareGauge(doc, g);
+        })
     }
 
     private $_prepareAxisBreaks(doc: Document, chart: IChart): void {
@@ -816,7 +1031,7 @@ export class BodyView extends ChartElement<Body> {
         views.forEach((v, i) => v.setModel(breaks[i]));
     }
 
-    private $_preppareCrosshairs(doc: Document, chart: IChart): void {
+    private $_preppareCrosshairs(chart: IChart): void {
         const views = this._crosshairLines;
         const hairs: Crosshair[] = [];
 

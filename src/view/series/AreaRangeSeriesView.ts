@@ -26,7 +26,7 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-area-range');
+        super(doc, 'rct-arearange-series');
 
         this.insertFirst(this._areaContainer = new LineContainer(doc, 'rct-arearange-series-areas'));
         // TODO: negative 처리 등에 문제가 없으면 lineContainer에 추가한다.

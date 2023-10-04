@@ -6,12 +6,13 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isObject, isString } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
 import { Axis, AxisCollection, IAxis } from "./Axis";
 import { Body } from "./Body";
-import { ChartItem } from "./ChartItem";
+import { ChartItem, n_char_item } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
 import { ILegendSource, Legend } from "./Legend";
 import { IPlottingItem, PlottingItemCollection, Series } from "./Series";
@@ -21,6 +22,9 @@ import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
 import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
+import { CircleGauge } from "./gauge/CircleGauge";
+import { ClockGauge } from "./gauge/ClockGauge";
+import { GaugeCollection } from "./Gauge";
 import { BarRangeSeries } from "./series/BarRangeSeries";
 import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";
@@ -55,6 +59,9 @@ export interface IChart {
     yAxis: IAxis;
     colors: string[];
 
+    assignTemplates(target: any): any;
+
+    isGauge(): boolean;
     isPolar(): boolean;
     isInverted(): boolean;
     animatable(): boolean;
@@ -68,8 +75,9 @@ export interface IChart {
     _getGroupType(type: string): any;
     _getSeriesType(type: string): any;
     _getAxisType(type: string): any;
+    _getGaugeType(type: string): any;
     _getSeries(): PlottingItemCollection;
-    // _getSeries2(): SeriesCollection;
+    _getGauges(): GaugeCollection;
     _getXAxes(): AxisCollection;
     _getYAxes(): AxisCollection;
     getAxesGap(): number;
@@ -124,12 +132,14 @@ const axis_types = {
     'linear': LinearAxis,
     'time': TimeAxis,
     'date': TimeAxis,
-    'log': LogAxis
+    'log': LogAxis,
 }
 
-/**
- * @config chart.options
- */
+const gauge_types = {
+    'circle': CircleGauge,
+    'clock': ClockGauge,
+}
+
 export class Credits extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -209,17 +219,15 @@ export class ChartOptions extends ChartItem {
     /**
      * x축 값이 설정되지 않은 시리즈 첫번째 데이터 point에 설정되는 x값.
      * 이 후에는 {@link xStep}씩 증가시키면서 설정한다.
-     * 'time' 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.
-     * 숫자로 지정하면 1은 1밀리초로 지정된다. 
-     * 시리즈의 {@link Series.xStart}이 설정되면 그 값이 사용된다.
+     * 시리즈의 {@link Series.xStart}가 설정되면 그 값이 사용된다.
      * 
      * @config
      */
-    xStart: number | string = 0;
+    xStart: any = 0;
     /**
      * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
      * 첫번째 값은 {@link xStart}로 설정한다.
-     * time 축일 때, 정수 값 대신 시간 단위('day', 'week', 'month', 'year')로 지정할 수 있다.
+     * time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.
      * 시리즈의 {@link Series.xStep}이 설정되면 그 값이 사용된다.
      * 
      * @config
@@ -234,6 +242,7 @@ export class ChartOptions extends ChartItem {
     axisGap = 8;
     /**
      * 크레딧 모델.
+     * @config
      */
     credits = new Credits(null);
 
@@ -259,6 +268,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _templates: {[key: string]: any};
     private _assets: AssetCollection;
     private _themes: ThemeCollection;
     private _options: ChartOptions;
@@ -268,11 +278,14 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _series: PlottingItemCollection;
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
+    private _gauges: GaugeCollection;
     private _body: Body;
 
     private _inverted: boolean;
     private _polar: boolean;
+    private _gaugeOnly: boolean;
     colors: string[];
+    assignTemplates: (target: any) => any;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -289,6 +302,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._series = new PlottingItemCollection(this);
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new AxisCollection(this, false);
+        this._gauges = new GaugeCollection(this);
         this._body = new Body(this);
 
         source && this.load(source);
@@ -407,13 +421,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._series;
     }
 
-    // _getSeries2(): SeriesCollection {
-    //     return this._series2;
-    // }
-
-    // _getGroups2(): SeriesGroupCollection2 {
-    //     return this._groups2;
-    // }
+    _getGauges(): GaugeCollection {
+        return this._gauges;
+    }
 
     _getXAxes(): AxisCollection {
         return this._xAxes;
@@ -421,6 +431,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     _getYAxes(): AxisCollection {
         return this._yAxes;
+    }
+
+    isGauge(): boolean {
+        return this._gaugeOnly;
     }
 
     isPolar(): boolean {
@@ -436,7 +450,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     isEmpty(): boolean {
-        return this._series.isEmpty();
+        return this._series.isEmpty() && this._gauges.count === 0;
     }
 
     //-------------------------------------------------------------------------
@@ -505,8 +519,22 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._series.getLegendSources();
     }
 
+    private $_assignTemplates(target: any): any {
+        if (this._templates && target.template != null) {
+            let v = this._templates[target.template];
+            if (v) {
+                return Object.assign({}, v, target);
+            }
+            // v && Object.assign(target, v);
+        }
+        return target;
+    }
+
     load(source: any): void {
         console.time('load chart');
+
+        // defaults
+        this.$_loadTemplates(source.templates);
 
         // properites
         ['type', 'polar', 'inverted'].forEach(prop => {
@@ -514,6 +542,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
                 this[prop] = source[prop];
             }
         })
+        this.type = this.type || 'bar';
 
         // assets
         this._assets.load(source.assets);
@@ -534,10 +563,15 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // series - 시리즈를 먼저 로드해야 디폴트 axis를 지정할 수 있다.
         this._series.load(source.series);
 
-        // axes
-        // 축은 반드시 존재해야 한다.
-        this._xAxes.load(source.xAxes || source.xAxis || {});
-        this._yAxes.load(source.yAxes || source.yAxis || {});
+        this._gauges.load(source.gauges || source.gauge);
+        this._gaugeOnly = this._series.count == 0 && this._gauges.count > 0;
+
+        if (!this._gaugeOnly) {
+            // axes
+            // 축은 반드시 존재해야 한다. (TODO: 동적으로 series를 추가하는 경우)
+            this._xAxes.load(source.xAxes || source.xAxis || {});
+            this._yAxes.load(source.yAxes || source.yAxis || {});
+        }
 
         // body
         this._body.load(source.plot);
@@ -545,6 +579,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // inverted
         this._inverted = this.inverted;
 
+        console.log('chart-items:', n_char_item);
         console.timeEnd('load chart');
     }
 
@@ -573,6 +608,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         // legend 위치를 결정한다.
         this._legend.prepareRender();
+
+        // gauges
+        this._gauges.prepareRender();
     }
 
     // 여러번 호출될 수 있다.
@@ -603,19 +641,46 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     update(): void {
     }
 
+    updateGauge(gauge: string, values: any): void {
+        const g = this._gauges.get(gauge);
+        if (g) {
+            g.updateValues(values);
+        }
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    private $_loadTemplates(src: any): void {
+        if (isObject(src)) {
+            const templs = this._templates = {};
+
+            for (const p in src) {
+                const v = src[p];
+                if (isObject(v)) {
+                    templs[p] = Object.assign({}, v);
+                }
+            }
+            this.assignTemplates = this.$_assignTemplates.bind(this);
+        } else {
+            this.assignTemplates = void 0;
+        }
+    }
+
     _getGroupType(type: string): any {
-        return group_types[type];
+        return isString(type) && group_types[type.toLowerCase()];
     }
 
     _getSeriesType(type: string): any {
-        return series_types[String(type).toLowerCase()];
+        return isString(type) && series_types[type.toLowerCase()];
     }
 
     _getAxisType(type: string): any {
-        return axis_types[String(type).toLowerCase()];
+        return isString(type) && axis_types[type.toLowerCase()];
+    }
+
+    _getGaugeType(type: string): any {
+        return isString(type) && gauge_types[type.toLowerCase()];
     }
 
     getAxesGap(): number {

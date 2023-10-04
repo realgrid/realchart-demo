@@ -18,6 +18,8 @@ import { ISize } from "./Size";
 import { IPoint } from "./Point";
 
 export interface IPointerHandler {
+    handleDown(ev: PointerEvent): void;
+    handleUp(ev: PointerEvent): void;
     handleMove(ev: PointerEvent): void;
     handleClick(ev: PointerEvent): void;
     handleDblClick(ev: PointerEvent): void;
@@ -43,7 +45,7 @@ export abstract class RcControl extends RcWrappableObject {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private _animatable = true;
+    static _animatable = true;
 
     //-------------------------------------------------------------------------
     // fields
@@ -61,7 +63,7 @@ export abstract class RcControl extends RcWrappableObject {
     private _testing = false;
     private _dirty = true;
     private _requestTimer: any;
-    private _invalidElements: RcElement[] = [];
+    // private _invalidElements: RcElement[] = [];
     private _toAnimation = 0;
     private _invalidateLock = false;
     private _lockDirty = false;
@@ -116,17 +118,6 @@ export abstract class RcControl extends RcWrappableObject {
 
     height(): number {
         return this._container.offsetHeight;
-    }
-
-    animatable(): boolean {
-        return this._animatable;
-    }
-    setAnimatable(value: boolean): void {
-        debugger;
-        if (value !== this._animatable) {
-            this._animatable = value;
-            this.invalidateLayout(true);
-        }
     }
 
     //-------------------------------------------------------------------------
@@ -398,7 +389,7 @@ export abstract class RcControl extends RcWrappableObject {
 
         const desc = doc.createElement('desc');
         // desc.textContent = 'Created by RealChart v$Version'; // sourcemap, rollup issue
-        desc.textContent = 'Created by RealChart v0.9.4';
+        desc.textContent = 'Created by RealChart v0.9.5';
         svg.appendChild(desc);
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
@@ -483,7 +474,7 @@ export abstract class RcControl extends RcWrappableObject {
             this._dirty = false;
             this._requestTimer = null;
             // this._invalidElements.forEach(elt => elt.validate());
-            this._invalidElements = [];
+            // this._invalidElements = [];
             this._doAfterRender();
             console.timeEnd('render chart');
         }
@@ -517,13 +508,15 @@ export abstract class RcControl extends RcWrappableObject {
         this._pointerHandler && this._pointerHandler.handleClick(this.toOffset(ev));
     }
 
-    private _dblClickHandler = (event: PointerEvent) => {
+    private _dblClickHandler = (ev: PointerEvent) => {
+        this._pointerHandler && this._pointerHandler.handleDblClick(this.toOffset(ev));
     }
 
     private _touchMoveHandler = (ev: TouchEvent) => {
     }
 
     private _pointerDownHandler = (ev: PointerEvent) => {
+        this._pointerHandler && this._pointerHandler.handleDown(this.toOffset(ev));
     }
 
     private _pointerMoveHandler = (ev: PointerEvent) => {
@@ -531,6 +524,7 @@ export abstract class RcControl extends RcWrappableObject {
     }
 
     private _pointerUpHandler = (ev: PointerEvent) => {
+        this._pointerHandler && this._pointerHandler.handleUp(this.toOffset(ev));
     }
 
     private _pointerCancelHandler = (ev: PointerEvent) => {
@@ -602,7 +596,7 @@ export class RcElement extends RcObject {
         super();
 
         this._dom = doc.createElementNS(SVGNS, tag || 'g');
-        (this._styleName = styleName) && this.setAttr('class', styleName);
+        (this._styleName = styleName || '') && this.setAttr('class', this._styleName);
     }
 
     protected _doDestory(): void {
@@ -653,7 +647,7 @@ export class RcElement extends RcObject {
     }
 
     get y(): number {
-        return this._x;
+        return this._y;
     }
     set y(value: number) {
         if (value !== this._y) {
@@ -846,6 +840,16 @@ export class RcElement extends RcObject {
         return this;
     }
 
+    movep(p: IPoint): RcElement {
+        this.x = p.x;
+        this.y = p.y;
+        return this;
+    }
+
+    isDomAnimating(): boolean {
+        return this._dom.getAnimations().length > 0;
+    }
+
     translate(x: number, y: number): RcElement {
         if (x !== this._translateX || y !== this._translateY) {
             if (Utils.isValidNumber(x)) this._translateX = x;
@@ -855,18 +859,50 @@ export class RcElement extends RcObject {
         return this;
     }
 
+    translatep(p: IPoint): RcElement {
+        return this.translate(p.x, p.y);
+    }
+
+    translateEx(x: number, y: number, duration = 0, invalidate = true): RcElement {
+        x = Utils.isNumber(x) ? x : this._translateX;
+        y = Utils.isNumber(y) ? y : this._translateY;
+
+        if (x !== this._translateX || y !== this._translateY) {
+            if (duration > 0) {
+                const ani = this._dom.animate([
+                    { transform: `translate(${this._translateX}px,${this._translateY}px)` },
+                    { transform: `translate(${x}px,${y}px)` }
+                ], {
+                    duration: duration,
+                    fill: 'none'
+                });
+                if (invalidate) {
+                    ani.addEventListener('finish', () => this.control?.invalidateLayout());
+                }
+            }
+            this._translateX = x;
+            this._translateY = y;
+            this._updateTransform();
+        }
+        return this;
+    }
+
     translateX(x: number): RcElement {
         if (x !== this._translateX) {
-            if (Utils.isValidNumber(x)) this._translateX = x;
-            this._updateTransform();
+            if (Utils.isValidNumber(x)) {
+                this._translateX = x;
+                this._updateTransform();
+            }
         }
         return this;
     }
 
     translateY(y: number): RcElement {
         if (y !== this._translateY) {
-            if (Utils.isValidNumber(y)) this._translateY = y;
-            this._updateTransform();
+            if (Utils.isValidNumber(y)) {
+                this._translateY = y;
+                this._updateTransform();
+            }
         }
         return this;
     }
@@ -1320,7 +1356,7 @@ export class PathElement extends RcElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _path: Path;
+    private _path: string;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1334,7 +1370,7 @@ export class PathElement extends RcElement {
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    path(): Path {
+    path(): string {
         return this._path;
     }
 
@@ -1342,14 +1378,10 @@ export class PathElement extends RcElement {
     // methods
     //-------------------------------------------------------------------------
     setPath(path: Path): void {
-        if (path !== this._path) {
-            this._path = path;
+        const p = isString(path) ? path : path.join(' ');
 
-            if (isString(path)) {
-                this.setAttr('d', path);
-            } else {
-                this.setAttr('d', path.join(' '));
-            }
+        if (p !== this._path) {
+            this.setAttr('d', this._path = p);
         }
     }
 

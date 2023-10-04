@@ -58,7 +58,7 @@ class CategoryAxisLabel extends AxisLabel {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    getTick(v: any): string {
+    getTick(index: number, v: any): string {
         if (v != null) {
             return this._getText(v, v, false);
         } else {
@@ -191,6 +191,19 @@ export class CategoryAxis extends Axis {
         return this._cats;
     }
 
+    getCategory(index: number): string {
+        return this._cats[index];
+    }
+
+    categoryAt(pos: number): number {
+        for (let i = 2; i < this._pts.length - 1; i++) {
+            if (pos >= this._pts[i - 1] && pos < this._pts[i]) {
+                return i - 2; 
+            }
+        }
+        return -1;
+    }
+
     getWdith(length: number, category: number): number {
         return 0;
     }
@@ -212,6 +225,10 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     type(): string {
         return 'category';
+    }
+
+    isContinuous(): boolean {
+        return false;
     }
 
     protected _createGrid(): AxisGrid {
@@ -285,7 +302,7 @@ export class CategoryAxis extends Axis {
             ticks.push({
                 pos: NaN,//this.getPosition(length, v),
                 value: v,
-                label: label.getTick(cats[i - 1]),
+                label: label.getTick(i - 1, cats[i - 1]),
             });
         }
         return ticks;
@@ -301,8 +318,6 @@ export class CategoryAxis extends Axis {
                 pts[i] /= this._length;
             }
         }
-
-        this._length = length;
         
         for (let i = 0; i < pts.length; i++) {
             pts[i] *= length;
@@ -326,6 +341,10 @@ export class CategoryAxis extends Axis {
         const v = Math.floor(value);
         const p = this._pts[v + 1] + (this._pts[v + 2] - this._pts[v + 1]) * (value - v);
         return this.reversed ? length - p : p;
+    }
+
+    getValueAt(length: number, pos: number): number {
+        return 1;
     }
 
     getUnitLength(length: number, value: number): number {

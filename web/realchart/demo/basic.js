@@ -61,7 +61,10 @@ const config = {
         ],
         style: {
             // fill: 'yellow'
-        }
+        },
+        // onPointClick: args => {
+        //     alert(JSON.stringify(args));
+        // }
     }
 }
 

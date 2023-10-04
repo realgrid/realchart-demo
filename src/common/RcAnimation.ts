@@ -174,6 +174,8 @@ export const createAnimation = function (dom: Element, styleProp: string, toValu
     return ani;
 }
 
+export type RcAnimationEndHandler = (ani: RcAnimation) => void;
+
 export abstract class RcAnimation {
 
     //-------------------------------------------------------------------------
@@ -188,6 +190,7 @@ export abstract class RcAnimation {
     delay = 0;
     duration = RcAnimation.DURATION;
     easing = 'inOutSine';
+    endHandler: RcAnimationEndHandler;
 
     //-------------------------------------------------------------------------
     // fields
@@ -204,7 +207,7 @@ export abstract class RcAnimation {
         }
 
         try {
-            if (!this._doUpdate(rate)) {
+            if (this._doUpdate(rate) === false) {
                 this._stop();
             }
         } finally {
@@ -225,8 +228,10 @@ export abstract class RcAnimation {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    start(): void {
+    start(endHandler?: RcAnimationEndHandler): RcAnimation {
+		if (endHandler) this.endHandler = endHandler;
         this._start(this.duration, this.delay, this.easing);
+		return this;
     }
 
     stop(): void {
@@ -257,6 +262,7 @@ export abstract class RcAnimation {
             this._timer = null;
             this._started = null;
             this._doStop();
+            this.endHandler?.(this);
         }
     }
 

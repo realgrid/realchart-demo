@@ -85,13 +85,17 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    load(config: any, loadAnimation = false): void {
+        this.loaded = !loadAnimation; 
+        this.model = new Chart(config);
+    }
+
     refresh(): void {
         this.invalidateLayout();
     }
 
-    load(config: any, loadAnimation = false): void {
-        this.loaded = !loadAnimation; 
-        this.model = new Chart(config);
+    updateGauge(gauge: string, values: any): void {
+        this.model?.updateGauge(gauge, values);
     }
 
     //-------------------------------------------------------------------------

@@ -100,30 +100,11 @@ export class FunnelSeries extends WidgetSeries {
         };
     }
 
-    getLabelPosition(): PointItemPosition {
-        const p = this.pointLabel.position;
-        return p === PointItemPosition.AUTO ? PointItemPosition.INSIDE : p;
-    }
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     _type(): string {
         return 'funnel';
-    }
-
-    _colorByPoint(): boolean {
-        return true;
-    }
-
-    getLegendSources(list: ILegendSource[]): void {
-        if (this.legendByPoint) {
-            this.displayInLegend !== false && this._runPoints.forEach((p: FunnelSeriesPoint) => {
-                list.push(p);
-            })        
-        } else {
-            super.getLegendSources(list);
-        }
     }
 
     protected _createPoint(source: any): DataPoint {
@@ -139,31 +120,4 @@ export class FunnelSeries extends WidgetSeries {
         this._neckHeightDim = parsePercentSize2(this.neckHeight, FunnelSeries.DEF_NECK_HEIGHT);
         return this;
     }
-
-    // protected _doPrepareRender(): void {
-    //     super._doPrepareRender();
-
-    //     const pts = this._visPoints as FunnelSeriesPoint[];
-    //     let sum = 0;
-    //     let y = 0;
-
-    //     pts.forEach(p => {
-    //         sum += p.yValue;
-    //     });
-
-    //     const cnt = pts.length;
-    //     let i = 0;
-
-    //     for (; i < cnt - 1; i++) {
-    //         const p = pts[i];
-    //         const h = fixnum(p.yValue / sum);
-
-    //         p.yRate = h * 100;
-    //         p.yPos = y;
-    //         p.height = h;
-    //         y += h;
-    //     }
-    //     pts[i].yPos = y;
-    //     pts[i].height = 1 - y;
-    // }
 }

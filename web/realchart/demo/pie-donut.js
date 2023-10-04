@@ -18,9 +18,9 @@ const config = {
     },
     series: {
         type: 'pie',
-        innerSize: '50%',
+        innerRadius: '50%',
         //innerText: 'Inner Title',
-        innerText: '내부 타이틀<br><t style="fill:blue;font-weight:bold;">Inner</t><t style="fill:red;">Title</t>',
+        innerText: '내부 타이틀<br><t style="fill:blue;font-weight:bold;">Inner</t><t style="fill:red;">Title입니다.</t>',
         legendByPoint: true,
         pointLabel: {
             visible: true,
@@ -72,14 +72,26 @@ function setActions(container) {
         chart.load(config, animate);
     }, 'left');
     line(container);
-    createListBox(container, "startAngle", [0, 90, 180, 270], function (e) {
+    createListBox(container, "series.startAngle", [0, 90, 180, 270], function (e) {
         config.series.startAngle = _getValue(e);
         chart.load(config, animate);
     }, 0);
-    createListBox(container, "series.size", ['60%', '70%', '80%', '90%', '100%'], function (e) {
-        config.series.size = _getValue(e);
+    createListBox(container, "series.totalAngle", [360, 270, 225, 180], function (e) {
+        config.series.totalAngle = _getValue(e);
         chart.load(config, animate);
-    }, '80%');
+    }, 360);
+    createCheckBox(container, 'series.clockwise', function (e) {
+        config.series.clockwise = _getChecked(e);
+        chart.load(config, animate);
+    }, true);
+    createListBox(container, "series.radius", ['30%', '35%', '40%', '45%'], function (e) {
+        config.series.radius = _getValue(e);
+        chart.load(config, animate);
+    }, '40%');
+    createListBox(container, "series.innerRadius", ['70%', '60%', '50%', '40%', '30%'], function (e) {
+        config.series.innerRadius = _getValue(e);
+        chart.load(config, animate);
+    }, '50%');
     createListBox(container, "series.centerX", ['30%', '40%', '50%', '60%'], function (e) {
         config.series.centerX = _getValue(e);
         chart.load(config, animate);

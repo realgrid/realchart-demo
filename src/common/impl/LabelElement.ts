@@ -53,6 +53,9 @@ export class LabelElement extends GroupElement {
     get anchor(): TextAnchor {
         return this._text.anchor;
     }
+    set anchor(value: TextAnchor) {
+        this._text.anchor = value;
+    }
 
     //-------------------------------------------------------------------------
     // methods

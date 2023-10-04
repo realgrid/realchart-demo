@@ -4,15 +4,17 @@ import path from "path";
 import * as parser from "@babel/parser";
 import generator from "@babel/generator";
 import _traverse from "@babel/traverse";
-import { group } from "console";
+
 const traverse = _traverse.default;
+const SOURCE_ROOT = "web/realchart/fiddle"
+const DEST_ROOT = "www";
 
-let ROOT = "www";
-
-function createDir(dir) {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
+function getDepth(depth) {
+    let src = "";
+    for(let i = 0 ; i < depth; i++){
+        src += "../"
     }
+    return src;
 }
 function readFile(file) {
     return fs.readFileSync(file, "utf-8");
@@ -21,13 +23,16 @@ function writeFile(file, s) {
     fs.writeFileSync(file, s);
 }
 
-function createHTML(title) {
+function createHTML(destPath) {
+    const depth = getDepth(destPath.split("/").length);
+
     return `
     <script src="https://unpkg.com/realchart"></script>
 
     <div id="realchart"></div>
     `;
 }
+
 
 const CSS = `
 @import url('https://unpkg.com/realchart/dist/realchart-style.css');
@@ -39,11 +44,69 @@ const CSS = `
     margin-bottom: 20px;
 }`;
 
+
+async function copyFolderStructure(src, dest) {
+    const entries = await fs.promises.readdir(src, { withFileTypes: true });
+
+    for (const entry of entries) {
+        const srcPath = path.join(src, entry.name);
+        let destPath;
+
+        if (entry.isDirectory()) {
+            destPath = path.join(dest, entry.name);
+            await fs.promises.mkdir(destPath, { recursive: true });
+            await copyFolderStructure(srcPath, destPath);
+        } else {
+            const baseNameWithoutExt = path.basename(srcPath, path.extname(srcPath));
+            destPath = path.join(dest, baseNameWithoutExt);
+            await fs.promises.mkdir(destPath, { recursive: true }); // 폴더를 생성합니다.
+            await handleFileCreation(srcPath, destPath);
+        }
+    }
+}
+
+async function handleFileCreation(srcPath, destPath) {
+    const extname = path.extname(srcPath);
+    switch (extname) {
+        case ".js":
+            const { js: jsContent } =  createJs(srcPath);
+            const destJsPath = path.join(destPath, "demo.js");
+            await fs.promises.writeFile(destJsPath, jsContent);
+            const detailContent = createDetail(destPath);
+            const destDetailPath = path.join(destPath, "demo.detail");
+            await fs.promises.writeFile(destDetailPath, detailContent);
+            break;
+        case ".html":
+            const htmlContent = createHTML(destPath);
+            const destHTMLPath = path.join(destPath, "demo.html");
+            await fs.promises.writeFile(destHTMLPath, htmlContent);
+            const cssContent = CSS;
+            const destCSSPath = path.join(destPath, "demo.css");
+            await fs.promises.writeFile(destCSSPath, cssContent);
+            break;        
+        default:
+            break;
+    }
+}
+
+function createDetail(leafName, demoDescription) {
+    const name = leafName.split("/")[leafName.split("/").length-1]
+    const detail = `---
+    name: ${name} Demo
+    description: ${demoDescription ? demoDescription : name + " Demo"}
+    authors:
+      - Wooritech
+...
+    `;
+
+    return detail;
+}
+
 function createJs(leafName) {
     let js = "";
     let demoDescription = "";
     try {
-        const originJs = readFile("web/realchart/demo/" + leafName + ".js");
+        const originJs = readFile(leafName);
         let configContent;
         const ast = parser.parse(originJs, {
             sourceType: "module",
@@ -106,76 +169,9 @@ const chart = RealChart.createChart(document, 'realchart', config);`;
     }
     return {js, demoDescription};
 }
-function createDetail(leafName, demoDescription) {
-    const detail = `---
-    name: ${leafName} Demo
-    description: ${demoDescription ? demoDescription : leafName + " Demo"}
-    authors:
-      - Wooritech
-...
-    `;
 
-    return detail;
-}
 
-function createFilePath(leafDir, type) {
-    return leafDir + "/demo." + type;
-}
-const exportDemos = () => {
-    const fiddleDat = readFile("web/realchart/fiddle.dat");
 
-    let category = "";
-
-    const lines = fiddleDat.trim().split('\n');
-
-    for (const line of lines) {
-        if (line.startsWith('[')) {
-            category = line.slice(1, -1).toLowerCase();
-        } else if (line !== "") {
-            const fileName = path.basename(line);
-            const tempDir = [ROOT, ...line.split("/").map(l => l.toLowerCase())];
-            tempDir.splice(2, 0, category.toLowerCase());
-            const leafDir = tempDir.join("/");
-            console.log({category})
-            console.log({fileName})
-            console.log({tempDir})
-            console.log({leafDir})
-            createDir(leafDir); // 폴더 생성
-
-            // 파일 생성 로직
-            const fileDetails = [
-                { type: 'js', contentProvider: createJs, additional: 'demoDescription' },
-                { type: 'html', contentProvider: createHTML },
-                { type: 'css', content: CSS },
-                { type: 'detail', contentProvider: createDetail, needsDescription: true }
-            ];
-
-            fileDetails.forEach(({ type, contentProvider, content, additional, needsDescription }) => {
-                const filePath = createFilePath(leafDir, type);
-                let fileContent, demoDescription;
-
-                if (contentProvider) {
-                    const result = contentProvider(fileName);
-
-                    // `createJs` 함수가 객체를 반환하는 경우
-                    if (typeof result === 'object' && result !== null) {
-                        fileContent = result.js;
-                        demoDescription = result.demoDescription;
-                    } else {
-                        fileContent = result;
-                    }
-                } else {
-                    fileContent = content;
-                }
-
-                if (needsDescription) {
-                    fileContent = createDetail(fileName, demoDescription);
-                }
-
-                writeFile(filePath, fileContent);
-            });
-        }
-    }
-};
-
-exportDemos();
+copyFolderStructure(SOURCE_ROOT, DEST_ROOT)
+    .then(() => console.log("Structure copied successfully!"))
+    .catch(error => console.error("Error copying structure:", error));

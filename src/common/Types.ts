@@ -106,8 +106,8 @@ export function parsePercentSize2(sv: RtPercentSize, def: RtPercentSize): IPerce
 export function getPercent(size: IPercentSize): number {
     return size && !size.fixed ? size.size : NaN;
 }
-export function calcPercent(size: IPercentSize, domain: number): number {
-    return size ? (size.fixed ? size.size : size.size * domain / 100) : NaN;
+export function calcPercent(size: IPercentSize, domain: number, def = NaN): number {
+    return size ? (size.fixed ? size.size : size.size * domain / 100) : def;
 }
 export function calcPercentF(size: IPercentSize, domain: number): number {
     return size.fixed ? size.size : size.size * domain / 100;
@@ -310,6 +310,12 @@ export const HORZ_SECTIONS = [SectionDir.LEFT, SectionDir.RIGHT];
 export const VERT_SECTIONS = [SectionDir.TOP, SectionDir.BOTTOM];
 
 export enum AlignBase {
+    /**
+     * @config
+     */
     CHART = 'chart',
+    /**
+     * @config
+     */
     PLOT = 'plot'
 }

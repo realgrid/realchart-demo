@@ -6,7 +6,6 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isNumber } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { ClipElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
@@ -16,12 +15,13 @@ import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Axis } from "../model/Axis";
 import { Chart, Credits } from "../model/Chart";
 import { DataPoint } from "../model/DataPoint";
-import { LegendItem, LegendPosition } from "../model/Legend";
+import { LegendItem, LegendLocation } from "../model/Legend";
 import { Series } from "../model/Series";
 import { Subtitle } from "../model/Title";
 import { AxisView } from "./AxisView";
 import { AxisGuideContainer, BodyView } from "./BodyView";
 import { ChartElement } from "./ChartElement";
+import { HistoryView } from "./HistoryView";
 import { LegendView } from "./LegendView";
 import { PolarBodyView } from "./PolarBodyView";
 import { SeriesView } from "./SeriesView";
@@ -176,7 +176,7 @@ class LegendSectionView extends SectionView {
     // fields
     //-------------------------------------------------------------------------
     _legendView: LegendView;
-    private _pos: LegendPosition;
+    private _pos: LegendLocation;
 
     //-------------------------------------------------------------------------
     // methods
@@ -191,9 +191,9 @@ class LegendSectionView extends SectionView {
     _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
         const m = chart.legend;
         const sz = this._legendView.measure(doc, m, hintWidth, hintHeight, phase);
-        const pos = this._pos = m.getPosition();
+        const pos = this._pos = m.getLocatiion();
         
-        if (pos === LegendPosition.LEFT || pos === LegendPosition.RIGHT) {
+        if (pos === LegendLocation.LEFT || pos === LegendLocation.RIGHT) {
             sz.width += this._legendView._gap;
         } else {
             sz.height += this._legendView._gap;
@@ -210,16 +210,16 @@ class LegendSectionView extends SectionView {
         let y = 0;
      
         switch (this._pos) {
-            case LegendPosition.LEFT:
+            case LegendLocation.LEFT:
                 w -= gap;
                 break;
 
-            case LegendPosition.RIGHT:
+            case LegendLocation.RIGHT:
                 w -= gap;
                 x += gap;
                 break;
 
-            case LegendPosition.TOP:
+            case LegendLocation.TOP:
                 h -= gap;
                 break;
 
@@ -427,6 +427,7 @@ export class ChartView extends RcElement {
     private _currBody: BodyView;
     private _axisSectionViews: {[key: string]: AxisSectionView} = {};
     private _creditView: CreditView;
+    private _historyView: HistoryView;
     private _tooltipView: TooltipView;
     private _seriesClip: ClipElement;
 
@@ -452,6 +453,7 @@ export class ChartView extends RcElement {
         this.add(this._titleSectionView = new TitleSectionView(doc));
         this.add(this._legendSectionView = new LegendSectionView(doc));
         this.add(this._creditView = new CreditView(doc));
+        this.add(this._historyView = new HistoryView(doc));
         this.add(this._tooltipView = new TooltipView(doc));
     }
 
@@ -511,13 +513,13 @@ export class ChartView extends RcElement {
         if (this._legendSectionView.visible = (legend.isVisible())) {
             sz = this._legendSectionView.measure(doc, m, w, h, phase);
 
-            switch (legend.getPosition()) {
-                case LegendPosition.TOP:
-                case LegendPosition.BOTTOM:
+            switch (legend.getLocatiion()) {
+                case LegendLocation.TOP:
+                case LegendLocation.BOTTOM:
                     h -= sz.height;
                     break;
-                case LegendPosition.RIGHT:
-                case LegendPosition.LEFT:
+                case LegendLocation.RIGHT:
+                case LegendLocation.LEFT:
                     w -= sz.width;
                     break;
             }
@@ -589,24 +591,24 @@ export class ChartView extends RcElement {
             hLegend = vLegend.height;
             wLegend = vLegend.width;
 
-            switch (legend.getPosition()) {
-                case LegendPosition.TOP:
+            switch (legend.getLocatiion()) {
+                case LegendLocation.TOP:
                     yLegend = hTitle + h1Credit;
                     h -= hLegend;
                     break;
 
-                case LegendPosition.BOTTOM:
+                case LegendLocation.BOTTOM:
                     h -= hLegend;
                     yLegend = y - hLegend;
                     y -= hLegend;
                     break;
     
-                case LegendPosition.RIGHT:
+                case LegendLocation.RIGHT:
                     w -= wLegend;
                     xLegend = width - wLegend;
                     break;
 
-                case LegendPosition.LEFT:
+                case LegendLocation.LEFT:
                     w -= wLegend;
                     x += wLegend;
                     xLegend = 0;
@@ -722,7 +724,7 @@ export class ChartView extends RcElement {
         if (vLegend.visible) {
             let v: number;
 
-            if (legend.position === LegendPosition.PLOT) {
+            if (legend.location === LegendLocation.PLOT) {
                 if (!isNaN(v = legend.getLeft(wPlot))) {
                     x += v;
                 } else if (!isNaN(v = legend.getRight(wPlot))) {
@@ -769,7 +771,7 @@ export class ChartView extends RcElement {
         const x = point.xPos + this._bodyView.tx;
         const y = point.yPos + this._bodyView.ty;
 
-        this._tooltipView.show(series.tooltip, point, x, y, true);
+        this._tooltipView.show(series, point, x, y, true);
     }
 
     hideTooltip(): void {
@@ -800,6 +802,26 @@ export class ChartView extends RcElement {
                 this._seriesClip.setBounds(0, 0, w, h);
             }
             view.setClip(this._seriesClip);
+        }
+    }
+
+    pointerMoved(x: number, y: number, target: EventTarget): void {
+        const p = this._bodyView.controlToElement(x, y);
+        const inBody = this._bodyView.pointerMoved(p, target);
+
+        for (const dir in this._axisSectionViews) {
+            this._axisSectionViews[dir].views.forEach(av => {
+                const m = av.model.crosshair;
+                const len = av.model._isHorz ? this._bodyView.width : this._bodyView.height;
+                const pos = av.model._isHorz ? p.x : p.y;
+                const flag = inBody && m.visible && m.flag.visible && !m.isBar() && m.getFlag(len, pos);
+
+                if (flag) {
+                    av.showCrosshair(pos, flag);
+                } else {
+                    av.hideCrosshiar();
+                }
+            })
         }
     }
 

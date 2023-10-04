@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <g id="realchart-logo-fill" transform="translate(-440 -696)">
+    <g id="realgrid-logo-64" transform="translate(0 479)">
+      <g id="Rectangle_87" data-name="Rectangle 87" transform="translate(440 217)" fill="#439ce8" stroke="#439ce8" stroke-width="1">
+        <rect width="64" height="64" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="63" height="63" rx="3.5" fill="none"/>
+      </g>
+    </g>
+    <g id="Rectangle_108" data-name="Rectangle 108" transform="translate(453 724) rotate(-90)" fill="#fff" stroke="#439ce8" stroke-width="1">
+      <rect width="8" height="38" stroke="none"/>
+      <rect x="0.5" y="0.5" width="7" height="37" fill="none"/>
+    </g>
+    <g id="Rectangle_109" data-name="Rectangle 109" transform="translate(460 709)" fill="#fff" stroke="#439ce8" stroke-width="1">
+      <rect width="8" height="38" stroke="none"/>
+      <rect x="0.5" y="0.5" width="7" height="37" fill="none"/>
+    </g>
+    <g id="Rectangle_110" data-name="Rectangle 110" transform="translate(491 732) rotate(90)" fill="#fff" stroke="#439ce8" stroke-width="1">
+      <rect width="8" height="38" stroke="none"/>
+      <rect x="0.5" y="0.5" width="7" height="37" fill="none"/>
+    </g>
+    <g id="Rectangle_111" data-name="Rectangle 111" transform="translate(476 709)" fill="#fff" stroke="#439ce8" stroke-width="1">
+      <rect width="8" height="38" stroke="none"/>
+      <rect x="0.5" y="0.5" width="7" height="37" fill="none"/>
+    </g>
+    <g id="Rectangle_112" data-name="Rectangle 112" transform="translate(467 724) rotate(-90)" fill="#fff" stroke="#439ce8" stroke-width="1">
+      <rect width="8" height="24" stroke="none"/>
+      <rect x="0.5" y="0.5" width="7" height="23" fill="none"/>
+    </g>
+  </g>
+</svg>

@@ -64,10 +64,14 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createListBox(container, "position", ['bottom', 'top', 'right', 'left', 'plot'], function (e) {
-        config.legend.position = _getValue(e);
+    createListBox(container, "location", ['bottom', 'top', 'right', 'left', 'plot'], function (e) {
+        config.legend.location = _getValue(e);
         chart.load(config);
     }, 'bottom');
+    createListBox(container, "itemsAlign", ['start', 'center', 'end'], function (e) {
+        config.legend.itemsAlign = _getValue(e);
+        chart.load(config);
+    }, 'center');
     createListBox(container, "alignBase", ['plot', 'chart'], function (e) {
         config.legend.alignBase = _getValue(e);
         chart.load(config);

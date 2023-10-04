@@ -14,7 +14,7 @@ import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Legend, LegendItem, LegendLayout } from "../model/Legend";
+import { Legend, LegendItem, LegendItemsAlign, LegendLayout } from "../model/Legend";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
 /**
@@ -57,21 +57,24 @@ export class LegendItemView extends ChartElement<LegendItem> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: LegendItem, intWidth: number, hintHeight: number, phase: number): ISize {
+    protected _doMeasure(doc: Document, model: LegendItem, hintWidth: number, hintHeight: number, phase: number): ISize {
         Dom.setData(this._label.dom, 'hidden', model.source.visible ? '' : 1);
         Dom.setData(this._marker.dom, 'hidden', model.source.visible ? '' : 1);
 
         this._label.text = model.text();
 
+        const rMarker = this._marker.getBBounds();
         const sz = toSize(this._label.getBBounds());
         this._gap = pickNum(model.legend.markerGap, 0);
 
-        return Size.create(this._marker.width + this._gap + sz.width, Math.max(this._marker.height, sz.height));
+        return Size.create(rMarker.width + this._gap + sz.width, Math.max(rMarker.height, sz.height));
     }
 
     protected _doLayout(): void {
-        this._marker.translate(0, (this.height - this._marker.height) / 2);
-        this._label.translate(this._marker.width + this._gap, (this.height - this._label.getBBounds().height) / 2);
+        const rMarker = this._marker.getBBounds();
+
+        this._marker.translate(0, (this.height - rMarker.height) / 2);
+        this._label.translate(rMarker.width + this._gap, (this.height - this._label.getBBounds().height) / 2);
     }
 }
 
@@ -136,6 +139,7 @@ export class LegendView extends BoundableElement<Legend> {
         const model = this.model;
         const rowViews = this._rowViews;
         const sizes = this._sizes;
+        const align = model.itemsAlign;
         const lineGap = model.lineGap || 0;
         const itemGap = model.itemGap || 0;
         const margin = this._margins;
@@ -145,16 +149,23 @@ export class LegendView extends BoundableElement<Legend> {
         const y1 = margin.top + pad.top;
         let x = x1;
         let y = y1;
+        let sum: number;
 
         this._itemViews.forEach(v => {
             // [주의] source가 getComputedStyle()로 색상을 가져온다. measure 시점에는 안된다.
             v._marker.setStyle('fill', v.model.source.legendColor());
+            v._marker.setStyle('stroke', v.model.source.legendColor());
             v.resizeByMeasured().layout();
         });
 
         rowViews.forEach((views, i) => {
             if (vertical) {
                 y = y1;
+                if (align === LegendItemsAlign.CENTER || align === LegendItemsAlign.END) {
+                    sum = views.map(v => v.height).reduce((a, c) => a + c) + itemGap * (views.length - 1) + margin.top + margin.bottom + pad.top + pad.bottom;
+                    if (align === LegendItemsAlign.CENTER) y += (this.height - sum) / 2;
+                    else y += this.height - sum; 
+                }
                 views.forEach(v => {
                     v.translate(x, y);
                     y += v.height + itemGap;
@@ -162,6 +173,11 @@ export class LegendView extends BoundableElement<Legend> {
                 x += sizes[i] + lineGap;
             } else {
                 x = x1;
+                if (align === LegendItemsAlign.CENTER || align === LegendItemsAlign.END) {
+                    sum = views.map(v => v.width).reduce((a, c) => a + c) + itemGap * (views.length - 1) + margin.left + margin.right + pad.left + pad.right;
+                    if (align === LegendItemsAlign.CENTER) x += (this.width - sum) / 2;
+                    else x += this.width - sum; 
+                }
                 views.forEach(v => {
                     v.translate(x, y);
                     x += v.width + itemGap;

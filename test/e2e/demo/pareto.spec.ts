@@ -15,7 +15,7 @@ import { SeriesView } from '../../../src/view/SeriesView';
  * PlayWright Tests for pareto.html
  */
 test.describe('pareto.html test', () => {
-	const url = 'demo/pareto.html';
+	const url = 'demo/pareto.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);

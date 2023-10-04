@@ -16,7 +16,7 @@ import { TitleView } from '../../../src/view/TitleView';
  * PlayWright Tests for bar.html
  */
 test.describe('bar.html test', () => {
-	const url = 'demo/bar.html';
+	const url = 'demo/bar.html?debug';
 
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);
@@ -72,7 +72,7 @@ test.describe('bar.html test', () => {
 		bars.forEach(async (bar) => {
 			const r = await PWTester.getBounds(bar);
 
-			expect(PWTester.same(r.y, rGrids.y)).is.true;
+			expect(PWTester.same(r.y, rGrids.y), `${r.y}, ${rGrids.y}`).is.true;
 			// expect(r.y).eq(rTop.y);
 		});
 

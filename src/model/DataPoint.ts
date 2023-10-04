@@ -70,6 +70,7 @@ export class DataPoint {
 
     yGroup: number;     // for stacking. stacking 가능한 경우 이 값으로 축 상 위치를 계산한다.
                         // [주의] yValue를 강제로 재설정하는 경우 이 값도 재설정할 것!
+    drillDown: any[] | object;  // array이면 현재 시리즈의 data 교체. object면 다른 시리즈로 교체.
 
     //-------------------------------------------------------------------------
     // constructor
@@ -116,6 +117,9 @@ export class DataPoint {
             this._readArray(series, v);
         } else if (isObject(v)) {
             this._readObject(series, v);
+            if ((isArray(v.drillDown) || isObject(v.drillDown))) {
+                this.drillDown = v.drillDown;
+            }
         } else {
             this._readSingle(v);
         }

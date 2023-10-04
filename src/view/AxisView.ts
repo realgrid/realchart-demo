@@ -6,7 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcElement } from "../common/RcControl";
+import { pickNum } from "../common/Common";
+import { PathBuilder } from "../common/PathBuilder";
+import { PathElement, RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { DEG_RAD } from "../common/Types";
@@ -15,9 +17,13 @@ import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Axis, AxisGuide, AxisLabelArrange, AxisPosition, AxisTickMark, AxisTitle, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
+import { Crosshair } from "../model/Crosshair";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
+/**
+ * @internal
+ */
 export class AxisTitleView extends BoundableElement<AxisTitle> {
 
     //-------------------------------------------------------------------------
@@ -139,6 +145,47 @@ class AxisLabelElement extends TextElement {
     }
 }
 
+class CrosshairFlagView extends RcElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _back: PathElement;
+    private _text: TextElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, void 0)
+
+        this.add(this._back = new PathElement(doc, 'rct-crosshair-flag'));
+        this.add(this._text = new TextElement(doc, 'rct-crosshair-flag-text'));
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setText(model: Crosshair, text: string): boolean {
+        if (text !== this._text.text) {
+            this._text.text = text;
+            return true;
+        }
+        if (text) {
+            const r = this._text.getBBounds();
+            const pb = new PathBuilder();
+            const w = Math.max(model.flag.minWidth || 0, r.width + 8);
+
+            pb.rect(0, 0, w, r.height + 4);
+            this._back.setPath(pb.end());
+            this._text.translate(w / 2, 2);
+        }
+    }
+}
+
+/**
+ * @internal
+ */
 export class AxisView extends ChartElement<Axis> {
 
     //-------------------------------------------------------------------------
@@ -163,6 +210,10 @@ export class AxisView extends ChartElement<Axis> {
 
     _guideViews: AxisGuideView<AxisGuide>[];
     _frontGuideViews: AxisGuideView<AxisGuide>[];
+    _crosshairView: CrosshairFlagView;
+
+    protected _zoom = 1;
+    protected _scrollPos = 0;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -232,6 +283,38 @@ export class AxisView extends ChartElement<Axis> {
 
         guides = this.model.guides.filter(g => g.front);
         frontContainer.addAll(doc, guides);
+    }
+
+    showCrosshair(pos: number, text: string): void {
+        let cv = this._crosshairView;
+
+        if (!cv) {
+            this.add(this._crosshairView = cv = new CrosshairFlagView(this.doc));
+        }
+        cv.setVisible(true);
+
+        cv.setText(this.model.crosshair, text);
+        const r = cv.getBBounds();
+
+        if (this.model._isHorz) {
+            cv.translate(pos - r.width / 2, this.model.tick.length);
+        } else {
+            cv.translate(this.width - this.model.tick.length - r.width, pos - r.height / 2);
+        }
+    }
+
+    hideCrosshiar(): void {
+        if (this._crosshairView && this._crosshairView.visible) {
+            this._crosshairView.setVisible(false);
+        }
+    }
+
+    setZoom(value: number): void {
+        value = Math.max(0, pickNum(value, 1));
+        if (value !== this._zoom) {
+            // TODO: _scrollPos를 변경한다. 
+            //       Axis._length를 변경한다.
+        }
     }
 
     //-------------------------------------------------------------------------
