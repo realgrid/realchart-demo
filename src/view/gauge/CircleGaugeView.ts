@@ -10,12 +10,12 @@ import { isArray, pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { RcAnimation } from "../../common/RcAnimation";
-import { LayerElement, PathElement, RcElement } from "../../common/RcControl";
-import { SVGStyleOrClass } from "../../common/Types";
+import { LayerElement, PathElement } from "../../common/RcControl";
+import { RAD_DEG } from "../../common/Types";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextElement } from "../../common/impl/TextElement";
 import { ICircularGaugeExtents } from "../../model/Gauge";
-import { CircleGauge } from "../../model/gauge/CircleGauge";
+import { CircleGauge, CircleGaugeHand, CircleGaugePin } from "../../model/gauge/CircleGauge";
 import { CircularGaugeView } from "./CirclularGaugeView";
 
 class GaugeAnimation extends RcAnimation {
@@ -41,11 +41,14 @@ class PinView extends PathElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    setPin(radius: number, style: SVGStyleOrClass): PinView {
-        if (radius !== this._radius) {
-            this.setPath(new PathBuilder().circle(0, 0, radius).end());
+    render(model: CircleGaugePin, gaugeRadius: number): PinView {
+        const r = model.getRadius(gaugeRadius);
+
+        if (r !== this._radius) {
+            this._radius = r;
+            this.setPath(new PathBuilder().circle(0, 0, r).end());
         }
-        this.internalSetStyleOrClass(style);
+        this.internalSetStyleOrClass(model.style);
         return this;
     }
 }
@@ -53,8 +56,35 @@ class PinView extends PathElement {
 class HandView extends PathElement {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _radius: number;
+    private _length: number;
+    private _offset: number;
+
+    //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    render(model: CircleGaugeHand, gaugeRadius: number): HandView {
+        const exts = model.getExtents(gaugeRadius);
+
+        if (exts.radius !== this._radius || exts.length !== this._length || exts.offset !== this._offset) {
+            const rd = this._radius = exts.radius;
+            const off = this._offset = exts.offset;
+            this._length = exts.length;
+
+            if (this._radius > 0 && this._length > 0) {
+                const pb = new PathBuilder();
+
+                pb.move(-rd, off).line(0, -this._length + off).line(rd, off);
+                this.setPath(pb.end());
+            } else {
+                this.setPath('');
+            }
+        }
+        this.internalSetStyleOrClass(model.style);
+        return this;
+    }
 }
 
 export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
@@ -108,14 +138,6 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         }
 
         // pin & hand
-        if (model.pin.visible) {
-            if (!this._pinView) {
-                this._handContainer.add(this._pinView = new PinView(doc, 'rct-circle-gauge-pin'));
-            }
-            this._pinView.visible = true;
-        } else if (this._pinView) {
-            this._pinView.visible = false;
-        }
         if (model.hand.visible) {
             if (!this._handView) {
                 this._handContainer.add(this._handView = new HandView(doc, 'rct-circle-gauge-hand'));
@@ -123,6 +145,14 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
             this._handView.visible = true;
         } else if (this._handView) {
             this._handView.visible = false;
+        }
+        if (model.pin.visible) {
+            if (!this._pinView) {
+                this._handContainer.add(this._pinView = new PinView(doc, 'rct-circle-gauge-pin'));
+            }
+            this._pinView.visible = true;
+        } else if (this._pinView) {
+            this._pinView.visible = false;
         }
 
         // label
@@ -190,7 +220,9 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         })
 
         // pin
-        this._pinView?.setPin(m.pin.getRadius(exts.radius), null).translatep(center);
+        if (this._pinView) {
+            this._pinView.render(m.pin, r).translate(center.x, center.y);
+        }
     }
 
     $_renderValue(m: CircleGauge): void {
@@ -220,11 +252,21 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
             debugger;
         }
 
+        // hand
+        if (this._handView) {
+            const a = (m._handRad + m._totalRad * rate) * RAD_DEG;
+
+            this._handView.render(m.hand, exts.radius).translatep(center).rotate(m.clockwise ? a : -a);
+        }
+
         // label
         if (this._textView.setVisible(m.label.visible)) {
             m.label.setText(m.getLabel(m.label.animatable ? value : m.value)).buildSvg(this._textView, m, this.valueOf);
+            
             const r = this._textView.getBBounds();
-            this._textView.translate(center.x, center.y - r.height / 2);
+            const off = m.label.getOffset(this.width, this.height);
+
+            this._textView.translate(center.x + off.x, center.y - r.height / 2 + off.y);
         }
     }
 }

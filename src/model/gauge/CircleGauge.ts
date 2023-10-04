@@ -45,6 +45,8 @@ export class CircleGaugeHand extends ChartItem {
     // fields
     //-------------------------------------------------------------------------
     private _radiusDim: IPercentSize;
+    private _lengthDim: IPercentSize;
+    private _offsetDim: IPercentSize;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -61,11 +63,25 @@ export class CircleGaugeHand extends ChartItem {
     offset: RtPercentSize = 0;
 
     //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getExtents(domain: number): {radius: number, length: number, offset: number} {
+        return {
+            radius: calcPercent(this._radiusDim, domain, 0),
+            length: calcPercent(this._lengthDim, domain, 0),
+            offset: calcPercent(this._offsetDim, domain, 0)
+        };
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     load(source: any): ChartItem {
         super.load(source);
 
+        this._radiusDim = parsePercentSize(this.radius, true);
+        this._lengthDim = parsePercentSize(this.length, true);
+        this._offsetDim = parsePercentSize(this.offset, true);
         return this;
     }
 }

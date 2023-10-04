@@ -44,8 +44,15 @@ const config = {
         top: 0,
         hand: true,
         pin: true,
+        label: {
+            text: '<t style="fill:blue">${value}</t><t style="font-size:12px;">&nbsp;</t><t style="font-size:20px;">%</t>',
+            offsetY: 30,
+            style: {
+                fontWeight: 'bold',
+                fontSize: '30px'
+            }
+        },
         value: Math.random() * 100,
-        label: false,
     }, {
         template: "gauge",
         name: 'gauge2',
@@ -55,6 +62,20 @@ const config = {
         top: 0,
         valueRadius: '104%',    
         valueThickness: '200%',
+        hand: {
+            visible: true,
+            length: '80%',
+            style: {
+                fill: 'blue'
+            }
+        },
+        pin: {
+            visible: true,
+            style: {
+                stroke: 'blue'
+            }
+        },
+        label: false,
         value: Math.random() * 100,
     }, {
         template: "gauge",
@@ -63,6 +84,18 @@ const config = {
         height: '50%',
         left: '66%',
         top: 0,
+        startAngle: 240,
+        totalAngle: 245,
+        hand: true,
+        pin: true,
+        label: {
+            text: '<t style="fill:blue">${value}</t><t style="font-size:12px;">&nbsp;</t><t style="font-size:20px;">%</t>',
+            offsetY: 40,
+            style: {
+                fontWeight: 'bold',
+                fontSize: '30px'
+            }
+        },
         value: Math.random() * 100,
     }, {
         template: "gauge",
@@ -71,6 +104,12 @@ const config = {
         height: '50%',
         left: 0,
         top: '50%',
+        hand: {
+            visible: true,
+            offset: '15%',
+        },
+        pin: true,
+        label: false,
         value: Math.random() * 100,
     }, {
         template: "gauge",
@@ -79,6 +118,22 @@ const config = {
         height: '50%',
         left: '33%',
         top: '50%',
+        hand: {
+            visible: true,
+            offset: '-15%',
+            length: '80%',
+            style: {
+                fill: 'green'
+            }
+        },
+        pin: {
+            visible: true,
+            style: {
+                stroke: '#080',
+                fill: '#0f0'
+            }
+        },
+        label: false,
         value: Math.random() * 100,
     }, {
         template: "gauge",
@@ -87,7 +142,11 @@ const config = {
         height: '50%',
         left: '66%',
         top: '50%',
-        value: Math.random() * 100
+        clockwise: false,
+        hand: true,
+        pin: true,
+        label: false,
+        value: Math.random() * 100,
     }]
 }
 

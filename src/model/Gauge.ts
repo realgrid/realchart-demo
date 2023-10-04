@@ -7,10 +7,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, isString, pickNum, pickNum3, pickProp } from "../common/Common";
+import { IPoint } from "../common/Point";
 import { ISize } from "../common/Size";
-import { IPercentSize, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, calcPercent, deg2rad, parsePercentSize } from "../common/Types";
+import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
-import { FormattableText } from "./ChartItem";
+import { ChartItem, FormattableText } from "./ChartItem";
 import { Widget } from "./Widget";
 
 export interface IGaugeValueRange {
@@ -240,6 +241,12 @@ export class GaugeCollection {
 export class GaugeLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _offsetXDim: IPercentSize;
+    private _offsetYDim: IPercentSize;
+
+    //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
@@ -255,20 +262,41 @@ export class GaugeLabel extends FormattableText {
      * 
      * @config
      */
-    offsetX = 0;
+    offsetX: RtPercentSize = 0;
     /**
      * 게이지 중심 등, label이 표시될 기준 위치에서 y 방향으로 이동한 픽셀 크기.
      * 기준 위치는 게이지 종류에 따라 달라진다.
      * 
      * @config
      */
-    offsetY = 0;
+    offsetY: RtPercentSize = 0;
     /**
      * 게이지 값 변경 애니메이션이 실행될 때, label도 따라서 변경시킨다.
      * 
      * @config
      */
     animatable = true;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getOffset(width: number, height: number): IPoint {
+        return {
+            x: calcPercent(this._offsetXDim, width, 0),
+            y: calcPercent(this._offsetYDim, height, 0)
+        };
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    load(source: any): ChartItem {
+        super.load(source);
+
+        this._offsetXDim = parsePercentSize(this.offsetX, true);
+        this._offsetYDim = parsePercentSize(this.offsetY, true);
+        return this;
+    }
 }
 
 /** 
@@ -303,6 +331,7 @@ export abstract class CircularGauge extends Gauge {
     private _thickDim: IPercentSize;
     private _runValue: number;
     _startRad: number;
+    _handRad: number;
     _totalRad: number;
 
     //-------------------------------------------------------------------------
@@ -468,8 +497,9 @@ export abstract class CircularGauge extends Gauge {
         let start = pickNum(this.startAngle % 360, 0);
         let total = Math.max(0, Math.min(360, pickNum(this.totalAngle, 360)));
 
-        this._startRad = ORG_ANGLE + deg2rad(start);
-        this._totalRad = deg2rad(total);
+        this._startRad = ORG_ANGLE + DEG_RAD * start;
+        this._handRad = DEG_RAD * start;
+        this._totalRad = DEG_RAD * total;
     }
 
     //-------------------------------------------------------------------------
