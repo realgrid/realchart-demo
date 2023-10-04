@@ -96,12 +96,13 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     // fields
     //-------------------------------------------------------------------------
     private _background: SectorElement;
+    private _segContainer: LayerElement;
+    private _segments: ElementPool<SectorElement>;
+    private _foreground: SectorElement;
     private _innerView: SectorElement;
     private _handContainer: LayerElement;
     private _handView: HandView;
     private _pinView: PinView;
-    private _container: LayerElement;
-    private _foregrounds: ElementPool<SectorElement>;
     private _textView: TextElement;
 
     private _center: {x: number, y: number};
@@ -117,9 +118,10 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         super(doc, styleName);
 
         this.add(this._background = new SectorElement(doc, 'rct-circle-gauge-back'));
+        this.add(this._segContainer = new LayerElement(doc, void 0));
+        this._segments = new ElementPool(this._segContainer, SectorElement, 'rct-circle-gauge-segment');
+        this.add(this._foreground = new SectorElement(doc, 'rct-circle-gauge-value'));
         this.add(this._innerView = new SectorElement(doc, 'rct-circle-gauge-inner'));
-        this.add(this._container = new LayerElement(doc, void 0));
-        this._foregrounds = new ElementPool(this._container, SectorElement, 'rct-circle-gauge-value');
         this.add(this._handContainer = new LayerElement(doc, void 0));
         this.add(this._textView = new TextElement(doc, 'rct-circle-gauge-label'));
     }
@@ -128,14 +130,16 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareGauge(doc: Document, model: CircleGauge): void {
-        const ranges = model.ranges;
+        const ranges = model.rim.ranges;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ranges 
-        // circles
+        // back segments
         if (isArray(ranges)) {
-            this._foregrounds.prepare(ranges.length);
+            this._segments.prepare(ranges.length);
         } else {
-            this._foregrounds.prepare(1);
+            this._segments.prepare(1);
         }
+
+        this._foreground.setVisible(model.valueRim.visible);
 
         // pin & hand
         if (model.hand.visible) {
@@ -230,26 +234,24 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         const rate = pickNum((value - m.minValue) / (m.maxValue - m.minValue), 0);
         const center = this._center;
         const exts = this._exts;
-        const foregrounds = this._foregrounds;
+        const thick = m.valueRim.getThickness(exts.radius - exts.inner);
 
-        // foreground sectors
-        if (foregrounds.count === 1) {
-            const range = m.getValueRange(value); // runValue가 아니다.
+        // foreground
+        if (this._foreground.visible) {
+            const range = m.valueRim.getRange(value); // runValue가 아니다.
             if (range) {
-                foregrounds.first.setStyle('fill', range.color);
+                this._foreground.setStyle('fill', range.color);
             }
-            foregrounds.first.setSector({
+            this._foreground.setSector({
                 cx: center.x,
                 cy: center.y,
                 rx: exts.value,
                 ry: exts.value,
-                innerRadius: (exts.value - exts.thick) / exts.value,
+                innerRadius: (exts.value - thick) / exts.value,
                 start: m._startRad,
                 angle: m._sweepRad * rate,
                 clockwise: m.clockwise
             });
-        } else {
-            debugger;
         }
 
         // hand

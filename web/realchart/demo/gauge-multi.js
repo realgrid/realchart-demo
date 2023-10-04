@@ -6,18 +6,20 @@ const config = {
     templates: {
         gauge: {
             innerRadius: '93%',
-            valueRanges: [{
-                endValue: 25,
-                color: 'green'
-            }, {
-                endValue: 50,
-                color: '#0000cc'
-            }, {
-                endValue: 75,
-                color: '#ffaa00'
-            }, {
-                color: 'red'
-            }],
+            valueRim: {
+                ranges: [{
+                    endValue: 25,
+                    color: 'green'
+                }, {
+                    endValue: 50,
+                    color: '#0000cc'
+                }, {
+                    endValue: 75,
+                    color: '#ffaa00'
+                }, {
+                    color: 'red'
+                }]
+            },
             label: {
                 text: '<t style="fill:blue">${value}</t><t style="font-size:12px;">&nbsp;</t><t style="font-size:20px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',
                 style: {
@@ -51,7 +53,9 @@ const config = {
         left: '33%',
         top: 0,
         valueRadius: '104%',    
-        valueThickness: '200%',
+        valueRim: {
+            thickness: '200%',
+        },
         value: Math.random() * 100,
     }, {
         template: "gauge",

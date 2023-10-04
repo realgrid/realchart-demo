@@ -303,7 +303,7 @@ export class GaugeLabel extends FormattableText {
  * @internal 
  */
 export interface ICircularGaugeExtents {
-    radius: number, inner: number, value: number, thick: number 
+    radius: number, inner: number, value: number 
 }
 
 /**
@@ -453,9 +453,9 @@ export abstract class CircularGauge extends Gauge {
         const radius = calcPercent(this._radiusDim, Math.min(gaugeWidth, gaugeHeight));
         const inner = Math.min(radius, this._innerDim ? calcPercent(this._innerDim, radius) : 0);
         const value = this._valueDim ? calcPercent(this._valueDim, radius) : radius;
-        const thick = Math.min(value, Math.max(0, calcPercent(this._thickDim, radius - inner) || radius - inner));
+        // const thick = Math.min(value, Math.max(0, calcPercent(_thickDim, radius - inner) || radius - inner));
 
-        return { radius, inner, value, thick };
+        return { radius, inner, value };
     }
 
     getLabel(value: number): string {
