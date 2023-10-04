@@ -7,9 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { expect } from 'chai';
-import { describe, it } from 'mocha';
-import { Browser } from 'puppeteer';
-import { PPTester } from '../../PPTester';
 import { SeriesView } from '../../../src/view/SeriesView';
 import test from '@playwright/test';
 import { PWTester } from '../PWTester';

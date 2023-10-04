@@ -7,8 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { expect } from 'chai';
-import { describe, it } from 'mocha';
-import { Browser } from 'puppeteer';
+import { Browser, Page } from 'puppeteer';
 import { SeriesView } from '../../../src/view/SeriesView';
 import { TitleView } from '../../../src/view/TitleView';
 import test from '@playwright/test';
@@ -18,8 +17,9 @@ import { PWTester } from '../PWTester';
  */
 
 test.describe('pareto.html test', async function () {
-	const url = 'demo/pareto.html/debug';
-
+	const url = 'demo/pareto.html?debug';
+	let browser: Browser;
+	let page: Page;
 	test.beforeEach(async ({ page }) => {
 		await PWTester.goto(page, url);
 	});
@@ -96,7 +96,7 @@ test.describe('pareto.html test', async function () {
 		expect(credit);
 
 		const text = await credit.$('text');
-		expect(Text).exist;
+		expect(text).exist;
 
 		const creditText = await page.evaluate((el) => el.textContent, text);
 		expect(creditText).contains('RealChart');

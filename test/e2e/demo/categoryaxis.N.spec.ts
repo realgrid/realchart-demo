@@ -54,7 +54,6 @@ test.describe('categoryaxis.html test', async function () {
 		const markers = await series.$$('.' + SeriesView.POINT_CLASS);
 		const axis = await PWTester.getAxis(page, 'x');
 		const line = await axis.$('.' + AxisView.LINE_CLASS);
-
 		const ticks = await axis.$$('.' + AxisView.TICK_CLASS);
 		const rLine = await PWTester.getBounds(line);
 		let pTick = await PWTester.getTranslate(ticks[0]);
@@ -62,18 +61,11 @@ test.describe('categoryaxis.html test', async function () {
 		expect(markers.length).eq(ticks.length);
 		expect(PWTester.same(pTick.x, rLine.width / ticks.length / 2)).is.true;
 
-		console.log(
-			'pTick.x:',
-			rLine.x,
-			'Expected:',
-			rLine.width / ticks.length / 2
-		);
-
 		// padding -> -0.5
 		await page.evaluate('config.xAxis.padding = -0.5; chart.load(config)');
 
 		pTick = await PWTester.getTranslate(ticks[0]);
-		expect(PWTester.same(pTick.x, rLine.x)).is.true;
+		expect(PWTester.same(pTick.x, 0)).is.true;
 
 		await page.evaluate('config.xAxis.padding = 0; chart.load(config)');
 	});

@@ -13,7 +13,6 @@ import { AxisTitleView, AxisView } from '../../../src/view/AxisView';
 import { CategoryAxis } from '../../../src/model/axis/CategoryAxis';
 import test from '@playwright/test';
 import { PWTester } from '../PWTester';
-import { PPTester } from '../../PPTester';
 /**
  * Puppeteer Tests for bar.html
  */
