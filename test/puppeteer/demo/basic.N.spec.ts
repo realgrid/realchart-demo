@@ -19,7 +19,7 @@ import { BodyView } from '../../../src/view/BodyView';
 /**
  * Puppeteer Tests for basic.html
  */
- describe("basic.html test", async function() {
+describe("basic.html test", async function () {
 
     const url = "http://localhost:6010/realchart/demo/basic.html";
     let browser: Browser;
@@ -79,7 +79,7 @@ import { BodyView } from '../../../src/view/BodyView';
         const config: any = await page.evaluate('config');
         const data = config.series.data;
         expect(data.length).eq(bars.length);        
-        
+
         // await page.screenshot({path: 'out/ss/basic.png'});
         page.close();
     });
@@ -90,7 +90,7 @@ import { BodyView } from '../../../src/view/BodyView';
 
         const title = await page.$('.' + TitleView.TITLE_CLASS);
         expect(title).exist;
- 
+
         const titleText = await page.evaluate((el) => el.textContent, title);
         expect(titleText).eq(config.title);
     });
@@ -157,7 +157,7 @@ import { BodyView } from '../../../src/view/BodyView';
         expect(creditText).exist;
 
     });
-    
+
     it('grid', async () => {
         const page = await PPTester.newPage(browser, url);
         const config = await page.evaluate('config');
@@ -175,7 +175,7 @@ import { BodyView } from '../../../src/view/BodyView';
 
         const axis = await PPTester.getAxis(page, 'x');
         const tickAxis = await axis.$$('.rct-axis-label')
-        
+
         expect(tickAxis).exist;
 
         expect(tickAxis.length).eq(config.series.data.length);
@@ -184,7 +184,7 @@ import { BodyView } from '../../../src/view/BodyView';
             const tickLabel = await page.evaluate((el) => el.textContent, tickAxis[i]);
             expect(tickLabel).eq(config.series.data[i][0]);
         }
-        
+
     });
     it('yTickLabel', async () => {
         const page = await PPTester.newPage(browser, url);
@@ -196,6 +196,7 @@ import { BodyView } from '../../../src/view/BodyView';
 
 
     });
+
     it('dataPoint', async () => {
         const page = await PPTester.newPage(browser, url);
         const config: any = await page.evaluate('config');
@@ -205,6 +206,6 @@ import { BodyView } from '../../../src/view/BodyView';
 
         const dataPoint = await dataPoints.$$('.' + SeriesView.POINT_CLASS);
         expect(dataPoint.length).eq(config.series.data.length);
-
     });
+    
 });

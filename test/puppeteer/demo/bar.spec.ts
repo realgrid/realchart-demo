@@ -12,7 +12,8 @@ import { Browser, Page } from 'puppeteer';
 import { PPTester } from '../../PPTester';
 import { SeriesView } from '../../../src/view/SeriesView';
 import { TitleView } from '../../../src/view/TitleView';
-
+import { test } from '@playwright/test';
+import { PWTester } from '../../e2e/PWTester';
 /**
  * Puppeteer Tests for bar.html
  */
@@ -22,9 +23,8 @@ import { TitleView } from '../../../src/view/TitleView';
     let browser: Browser;
     let page: Page;
 
-    before(async () => {
-        browser = await PPTester.init();
-        page = await PPTester.newPage(browser, url);
+    test.beforeEach(async ({page}) => {
+        await PWTester.goto(page,url) 
     });
 
     after(async () => {

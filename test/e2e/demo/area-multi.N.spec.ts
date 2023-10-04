@@ -7,33 +7,25 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { expect } from 'chai';
-import { describe, it } from 'mocha';
-import { Browser } from 'puppeteer';
-import { PPTester } from '../../PPTester';
 import { SeriesView } from '../../../src/view/SeriesView';
 import { TitleView } from '../../../src/view/TitleView';
-import { AxisTitleView, AxisView } from '../../../src/view/AxisView';
-import { LegendView } from '../../../src/view/LegendView';
+import { AxisView } from '../../../src/view/AxisView';
 import test from '@playwright/test';
-import { PWTester } from '../../e2e/PWTester';
+import { PWTester } from '../PWTester';
+
 /**
  * Puppeteer Tests for area-multi.html
  */
-describe("area-multi.html test", async function () {
+test.describe("area-multi.html test", () => {
 
-    const url = "http://localhost:6010/realchart/demo/area-multi.html";
-    let browser: Browser;
+    const url = "demo/area-multi.html?debug";
 
-    before(async () => {
-        browser = await PPTester.init();
+    test.beforeEach(async ({ page }) => {
+        await PWTester.goto(page, url);
     });
 
-    after(async () => {
-        browser.close();
-    });
 
-    it('init', async () => {
-        const page = await PPTester.newPage(browser, url);
+    test('init', async ({ page }) => {
 
         const container = await page.$('#realchart');
         expect(container).exist;
@@ -52,8 +44,7 @@ describe("area-multi.html test", async function () {
         await page.screenshot({path: 'out/ss/area-multi.png'});
         page.close();
     });
-    it('title 의 존재유무와 값이 알맞은지 확인', async () => {
-        const page = await PPTester.newPage(browser, url);
+    test('title 의 존재유무와 값이 알맞은지 확인', async ({ page }) => {
         const config: any = await page.evaluate('config');
 
         const title = await page.$('.' + TitleView.TITLE_CLASS);
@@ -62,31 +53,28 @@ describe("area-multi.html test", async function () {
         expect(titleText).eq(config.title);
     });
 
-    it('xTitle', async () => {
-        const page = await PPTester.newPage(browser, url);
+    test('xTitle', async ({ page }) => {
         const config: any = await page.evaluate('config');
 
-        const xAxis = await PPTester.getAxis(page, 'x');
+        const xAxis = await PWTester.getAxis(page, 'x');
         const xAxisText = await xAxis.$('text');
         const xaxisTitle = await page.evaluate((el) => el.textContent, xAxisText);
         expect(xaxisTitle).eq(config.xAxis.title);
     });
 
-    it('yTitle', async () => {
-        const page = await PPTester.newPage(browser, url);
+    test('yTitle', async ({ page }) => {
         const config: any = await page.evaluate('config');
 
-        const yAxis = await PPTester.getAxis(page, 'y');
+        const yAxis = await PWTester.getAxis(page, 'y');
         const yAxisText = await yAxis.$('text');
         const yAxisTitle = await page.evaluate((el) => el.textContent, yAxisText);
         expect(yAxisTitle).eq(config.yAxis.title)
     });
 
-    it('xtick', async () => {
-        const page = await PPTester.newPage(browser, url);
+    test('xtick', async ({ page }) => {
         const config:any = await page.evaluate('config');
 
-        const xAxis = await PPTester.getAxis(page, 'x');
+        const xAxis = await PWTester.getAxis(page, 'x');
         const xAxisTICK = await xAxis.$$('.' + AxisView.TICK_CLASS);
 
         for(let i = 0; i < config.series.length; i++) {
@@ -96,18 +84,16 @@ describe("area-multi.html test", async function () {
 
     });
 
-    it('ytick 의 존재유무 확인', async () => {
-        const page = await PPTester.newPage(browser, url);
+    test('ytick 의 존재유무 확인', async ({ page }) => {
         const config:any = await page.evaluate('config');
 
-        const yAxis = await PPTester.getAxis(page, 'y');
+        const yAxis = await PWTester.getAxis(page, 'y');
         const yAxisTICK = await yAxis.$$('.' + AxisView.TICK_CLASS);
 
         expect(yAxisTICK).exist;
     });
 
-    it('legend', async() => {
-        const page = await PPTester.newPage(browser, url);
+    test('legend', async ({ page }) => {
         const config: any = await page.evaluate('config');
         const legends = await page.$$('.rct-legend-item-label'); 
 
@@ -122,8 +108,7 @@ describe("area-multi.html test", async function () {
 
     });
 
-    it('legendMarker', async() => {
-        const page = await PPTester.newPage(browser, url);
+    test('legendMarker', async ({ page }) => {
         const config: any = await page.evaluate('config');
 
         const legend = await page.$$('.rct-legend-item');
@@ -135,16 +120,14 @@ describe("area-multi.html test", async function () {
 
     });
 
-    it('container', async() => {
-        const page = await PPTester.newPage(browser, url);
+    test('container', async({ page }) => {
         const config = await page.evaluate('config');
 
         const container = await page.$('.rct-series-container');
         expect(container).exist;
     });
 
-    it('dataPoint', async () => {
-        const page = await PPTester.newPage(browser, url);
+    test('dataPoint', async ({ page }) => {
         const config: any = await page.evaluate('config');
 
         const dataPoints = await page.$$('.rct-series-points');
@@ -157,8 +140,7 @@ describe("area-multi.html test", async function () {
         }
     });
 
-    it('labelPoint 의 값이 데이터의 값과 알맞은지 확인', async () => {
-        const page = await PPTester.newPage(browser, url);
+    test('labelPoint 의 값이 데이터의 값과 알맞은지 확인', async ({ page }) => {
         const config: any = await page.evaluate('config');
 
         const labelPoint = await page.$$('.rct-legend-item');
@@ -170,8 +152,7 @@ describe("area-multi.html test", async function () {
         }
     });
 
-    it('itemMarker 의 실제 갯수와 데이터의 갯수가 알맞은지 확인', async () => {
-        const page = await PPTester.newPage(browser, url);
+    test('itemMarker 의 실제 갯수와 데이터의 갯수가 알맞은지 확인', async ({ page }) => {
         const config: any = await page.evaluate('config');
 
         const itemMarker = await page.$$('.rct-legend-item-marker');
@@ -179,8 +160,7 @@ describe("area-multi.html test", async function () {
         expect(itemMarker.length).eq(config.series.length)
     });
 
-    it('grid', async () => {
-        const page = await PPTester.newPage(browser, url);
+    test('grid', async ({ page }) => {
         const config: any = await page.evaluate('config');
 
         const axisGrid = await page.$('.rct-axis-grid');
