@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, pickNum, pickNum3, pickProp } from "../common/Common";
+import { isArray, isObject, isString, pickNum, pickProp } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { ISize } from "../common/Size";
 import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";

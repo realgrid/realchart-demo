@@ -9,6 +9,7 @@
 import { isArray, pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
+import { IPoint } from "../../common/Point";
 import { RcAnimation } from "../../common/RcAnimation";
 import { LayerElement, PathElement } from "../../common/RcControl";
 import { RAD_DEG } from "../../common/Types";
@@ -131,14 +132,18 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     //-------------------------------------------------------------------------
     protected _prepareGauge(doc: Document, model: CircleGauge): void {
         const ranges = model.rim.ranges;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ranges 
+        
+        // backgroun rim
+        this._background.setVisible(model.rim.visible);
+
         // back segments
-        if (isArray(ranges)) {
-            this._segments.prepare(ranges.length);
+        if (model.rim.isRanged()) {
+            this._segments.prepare(model.rim.rangeCount());
         } else {
-            this._segments.prepare(1);
+            this._segments.prepare(0);
         }
 
+        // foreground rim
         this._foreground.setVisible(model.valueRim.visible);
 
         // pin & hand
@@ -184,13 +189,43 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_renderBackground(m: CircleGauge, center: {x: number, y: number}, exts: ICircularGaugeExtents): void {
+    private $_renderSegments(center: IPoint, exts: ICircularGaugeExtents): void {
+        const m = this.model;
+        const cx = center.x;
+        const cy = center.y;
+        const rd = exts.radius;
+        const clockwise = m.clockwise;
+        const innerRadius = exts.inner / exts.radius;
+        const ranges = m.rim.ranges;
+        const sweep = m._sweepRad;
+        const sum = m.maxValue - m.minValue;
+        let start = 0;
+
+        this._segments.forEach((v, i) => {
+            const angle = (ranges[i].endValue - ranges[i].startValue) * sweep / sum;
+
+            v.setSector({
+                cx,
+                cy,
+                rx: rd,
+                ry: rd,
+                innerRadius,
+                start,
+                angle,
+                clockwise
+            });
+            v.setStyle('fill', ranges[i].color);
+            start += angle;
+        });
+    }
+
+    private $_renderBackground(m: CircleGauge, center: IPoint, exts: ICircularGaugeExtents): void {
         const start = m._startRad;
 
         this._center = center;
         this._exts = exts;
 
-        // background sector
+        // background rim
         this._background.setSector({
             cx: center.x,
             cy: center.y,
@@ -201,6 +236,9 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
             angle: m._sweepRad,
             clockwise: m.clockwise
         });
+
+        // backgroun segments
+        !this._segments.isEmpty && this.$_renderSegments(center, exts);
 
         // inner view
         this._innerView.internalSetStyleOrClass(m.innerStyle);
@@ -236,7 +274,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         const exts = this._exts;
         const thick = m.valueRim.getThickness(exts.radius - exts.inner);
 
-        // foreground
+        // foreground rim
         if (this._foreground.visible) {
             const range = m.valueRim.getRange(value); // runValue가 아니다.
             if (range) {

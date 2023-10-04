@@ -44,6 +44,14 @@ export abstract class CircleGaugeRim extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    isRanged(): boolean {
+        return this._ranges && this._ranges.length > 0;
+    }
+
+    rangeCount(): number {
+        return this._ranges ? this._ranges.length : 0;
+    }
+
     getRange(value: number): IGaugeValueRange | undefined {
         if (this._ranges) {
             for (const r of this._ranges) {
@@ -58,8 +66,15 @@ export abstract class CircleGaugeRim extends ChartItem {
 export class CircleGaugeBackRim extends CircleGaugeRim {
 
     //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _segmentThickness: RtPercentSize;
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _thickDim: IPercentSize;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -70,16 +85,37 @@ export class CircleGaugeBackRim extends CircleGaugeRim {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * segment 두께.
+     * 픽셀 단위 크기나, 게이지 원호 두께에 대한 상대 크기로 지정할 수 있다.
+     * 
+     * @config
+     */
+    get segmentThickness(): RtPercentSize {
+        return this._segmentThickness;
+    }
+    set segmentThickness(value: RtPercentSize) {
+        if (value !== this._segmentThickness) {
+            this._segmentThickness = value;
+            this._thickDim = parsePercentSize(this.segmentThickness, true);
+        }
+    }
+
+    /**
+     * segement 사이의 간격.
+     */
+    segmentGap = 0;
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getSegmentThickness(domain: number): number {
+        return calcPercent(this._thickDim, domain, domain);
+    }
+    
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    load(source: any): ChartItem {
-        super.load(source);
-        return this;
-    }
 }
 
 export class CircleGaugeValueRim extends CircleGaugeRim {
@@ -308,8 +344,6 @@ export class CircleGauge extends CircularGauge {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _ranges: IGaugeValueRange[];
-
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -349,26 +383,10 @@ export class CircleGauge extends CircularGauge {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getRange(value: number): IGaugeValueRange | undefined {
-        if (this._ranges) {
-            for (const r of this._ranges) {
-                if (value >= r.startValue && value < r.endValue) {
-                    return r;
-                }
-            }
-        }
-    }
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     _type(): string {
         return 'circle';
-    }
-
-    protected _doLoad(src: any): void {
-        super._doLoad(src);
-
-        this._ranges = Gauge.buildRanges(src?.ranges, this.minValue, this.maxValue);
     }
 }

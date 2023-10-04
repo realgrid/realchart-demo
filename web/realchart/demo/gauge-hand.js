@@ -109,10 +109,28 @@ const config = {
         left: 0,
         top: '50%',
         innerRadius: '80%',
+        rim: {
+            ranges: [{
+                endValue: 20,
+                color: '#a40'
+            }, {
+                endValue: 40,
+                color: '#cc0'
+            }, {
+                endValue: 60,
+                color: '#080'
+            }, {
+                endValue: 80,
+                color: '#500'
+            }, {
+                color: '#300'
+            }]
+        },
         valueRim: false,
         hand: {
             visible: true,
             offset: '15%',
+            length: '95%'
         },
         pin: true,
         label: false,
