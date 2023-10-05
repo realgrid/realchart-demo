@@ -3,7 +3,9 @@
  * 
  */
 const config = {
-    options: {},
+    options: {
+        animatable: false
+    },
     title: "Line Big Data",
     xAxis: {
         tick: {
