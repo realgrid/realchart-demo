@@ -3,3 +3,8 @@
   font-style: normal;
   src: url('/fonts/NotoSansKR-VariableFont_wght.ttf')
 }
+
+.nextra-sidebar-container a {
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+}

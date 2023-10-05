@@ -15,7 +15,7 @@ new RcChartControl(control)
 
 ## Methods
 ### public load(config, animate?): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
-기존 설정을 지우고 새로운 config로 차트를 구성한다.
+기존 설정 모델을 제거하고 새로운 config로 차트를 구성한다.
 
 
 
@@ -25,3 +25,12 @@ new RcChartControl(control)
 | animate | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ✅ |
 ### public refresh(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
 차트를 다시 그린다.
+### public updateGauge(gauge, values): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+게이지의 값들을 변경한다.
+
+
+
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| gauge | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
+| values | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | ❌ |

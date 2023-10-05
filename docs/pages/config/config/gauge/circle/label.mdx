@@ -1,6 +1,10 @@
 ## label
-
+게이지 중앙에 표시되는 label 설정 모델
 ## Properties
+
+### animatable: `boolean`
+게이지 값 변경 애니메이션이 실행될 때, label도 따라서 변경시킨다.  
+`default: true`  
 
 ### autoContrast: `boolean`
 텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
@@ -30,6 +34,16 @@ center나 middle일 때는 무시.
 axis label:
 축 line과의 간격.  
 `default: 2`  
+
+### offsetX
+게이지 중심 등, label이 표시될 기준 위치에서 x 방향으로 이동한 픽셀 크기.
+기준 위치는 게이지 종류에 따라 달라진다.  
+`default: 0`  
+
+### offsetY
+게이지 중심 등, label이 표시될 기준 위치에서 y 방향으로 이동한 픽셀 크기.
+기준 위치는 게이지 종류에 따라 달라진다.  
+`default: 0`  
 
 ### prefix: `string`
 label 문자열 앞에 추가되는 문자열.  
