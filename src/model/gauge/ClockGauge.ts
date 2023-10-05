@@ -12,7 +12,7 @@ import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
 import { CircularGauge, Gauge } from "../Gauge";
 
-export class ClockRim extends ChartItem {
+export class ClockGaugeRim extends ChartItem {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -61,7 +61,7 @@ export class ClockRim extends ChartItem {
     }
 }
 
-export class ClockHand extends ChartItem {
+export class ClockGaugeHand extends ChartItem {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -110,9 +110,16 @@ export class ClockHand extends ChartItem {
             this._lengthDim = parsePercentSize(value, true);
         }
     }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getLength(domain: number): number {
+        return calcPercent(this._lengthDim, domain, domain);
+    }
 }
 
-export class ColckTick extends ChartItem {
+export class ClockGaugeTick extends ChartItem {
 
     //-------------------------------------------------------------------------
     // constructor
@@ -126,6 +133,16 @@ export class ColckTick extends ChartItem {
     //-------------------------------------------------------------------------
 }
 
+export class ClockGaugePin extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(gauge: ClockGauge, public raidus: number) {
+        super(gauge.chart);
+    }
+}
+
 /**
  * 시계 게이지 모델.
  * 
@@ -136,6 +153,11 @@ export class ClockGauge extends Gauge {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _active = true;
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -186,37 +208,58 @@ export class ClockGauge extends Gauge {
      * 
      * @config
      */
-    rim = new ClockRim(this);
+    rim = new ClockGaugeRim(this);
     /**
      * 시침 설정 모델.
      * 
      * @config
      */
-    hourHand = new ClockHand(this, 7, '80%');
+    hourHand = new ClockGaugeHand(this, 7, '60%');
     /**
      * 분침 설정 모델.
      * 
      * @config
      */
-    minuteHand = new ClockHand(this, 5, '50%');
+    minuteHand = new ClockGaugeHand(this, 5, '85%');
     /**
      * 초침 설정 모델.
      * 
      * @config
      */
-    secondHand = new ClockHand(this, 2, '80%');
+    secondHand = new ClockGaugeHand(this, 2, '95%');
     /**
      * main tick.
      * 
      * @config
      */
-    tick = new ColckTick(this, 10);
+    tick = new ClockGaugeTick(this, 10);
     /**
      * minor tick
      * 
      * @config
      */
-    minorTick = new ColckTick(this, 5);
+    minorTick = new ClockGaugeTick(this, 5);
+    /**
+     * pin
+     * 
+     * @config
+     */
+    pin = new ClockGaugePin(this, 5);
+    /**
+     * 시계 동작 여부.
+     * 
+     * @config
+     * @default true
+     */
+    get active(): boolean {
+        return this._active;
+    }
+    set active(value: boolean) {
+        if (value !== this._active) {
+            this._active = value;
+            this._changed();
+        }
+    }
 
     //-------------------------------------------------------------------------
     // methods

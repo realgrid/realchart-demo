@@ -14,6 +14,7 @@ const ASTERISK = '*'.charCodeAt(0);
 const PERCENT = '%'.charCodeAt(0);
 export const ZWSP = '&#8203;';
 export const ELLIPSIS = '\u2026';
+export const PI_2 = Math.PI * 2;
 export const ORG_ANGLE = -Math.PI / 2;
 export const DEG_RAD = Math.PI * 2 / 360;
 export const RAD_DEG = 360 / Math.PI / 2;
