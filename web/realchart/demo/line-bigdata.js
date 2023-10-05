@@ -6,7 +6,6 @@ const config = {
     options: {},
     title: "Line Big Data",
     xAxis: {
-        type: 'category',
         tick: {
             stepInterval: 300,
         },
