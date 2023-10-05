@@ -8,7 +8,7 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { LayerElement, PathElement } from "../../common/RcControl";
-import { RectElement } from "../../common/impl/RectElement";
+import { CircleElement } from "../../common/impl/CircleElement";
 import { TextElement } from "../../common/impl/TextElement";
 import { ClockGauge } from "../../model/gauge/ClockGauge";
 import { GaugeView } from "../GaugeView";
@@ -21,7 +21,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _background: PathElement;
+    private _background: CircleElement;
     private _container: LayerElement;
     private _foregrounds: ElementPool<PathElement>;
     private _textView: TextElement;
@@ -35,7 +35,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
     constructor(doc: Document, styleName: string) {
         super(doc, styleName);
 
-        this.add(this._background = new PathElement(doc));
+        this.add(this._background = new CircleElement(doc));
         this.add(this._container = new LayerElement(doc, void 0));
         this._foregrounds = new ElementPool(this._container, PathElement);
         this.add(this._textView = new TextElement(doc));
