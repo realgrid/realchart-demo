@@ -4,36 +4,28 @@
  * Bar Series 기본 예제.
  */
 const config = {
-	title: 'Bar Series',
+	title: '2022년도 도시의 평균 대기질 지수',
 	options: {
 		// animatable: false
 	},
 	xAxis: {
-		title: '일일 Daily fat',
-		categories: [
-			'쓰리엠',
-			'아디다스',
-			'Youtube',
-			'디즈니',
-			'이마트',
-			'메리어트',
-			'시세이도',
-		],
+		title: '도시',
+		categories: ['서울', '부산', '대구', '인천', '광주', '대전', '울산'],
 		grid: true,
 	},
 	yAxis: {
-		title: 'Vertical 수직축 Axis',
+		title: '대기질 지수(Air Quality Index, AQI)',
 		// reversed: true,
 		// baseValue: -1
 	},
 	series: {
-		name: 'bar1',
+		name: '대기질',
 		// baseValue: null,
 		pointLabel: true,
 		// pointWidth: '100%',
 		// colorByPoint: true,
 		// color: 'green',
-		data: [11, 22, 10, 15, 9, 13, 27],
+		data: [155, 138, 122, 130, 119, 115, 128],
 	},
 	ChartTextEffect: {
 		autoContrast: false,

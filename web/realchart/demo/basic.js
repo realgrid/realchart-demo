@@ -11,7 +11,7 @@ const config = {
 			// align: 'center'
 		},
 	},
-	title: '경기도 성남시 인구및세대 현황',
+	title: '경기도 성남시 인구 현황',
 	legend: true,
 	xAxis: {
 		// type: 'category',
