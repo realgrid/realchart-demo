@@ -7,4 +7,29 @@
 .nextra-sidebar-container a {
   padding-top: 0.1rem;
   padding-bottom: 0.1rem;
+  font-size: 0.8rem;
+}
+
+.nextra-sidebar-container li div.nx-pt-1 {
+  padding-top: 0.1rem;
+}
+
+.nextra-content h2 {
+  color: rgb(0, 90, 163);
+  font-size: 1.4rem;
+  margin-top: 2rem;
+}
+
+.nextra-content h3 {
+  font-size: 1rem;
+  margin-top: 1.5rem;
+}
+
+.nextra-content p {
+  font-size: 0.9rem;
+  margin-top: 1.5rem;
+}
+
+:is(html[class~=dark]) .nextra-content h2 {
+  color: hsl(var(--nextra-primary-hue)100% 45%/var(--tw-text-opacity));
 }
