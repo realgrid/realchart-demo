@@ -850,6 +850,14 @@ export class RcElement extends RcObject {
         return this._dom.getAnimations().length > 0;
     }
 
+    rotate(angle: number): RcElement {
+        if (angle !== this._rotation) {
+            this._rotation = angle;
+            this._updateTransform();
+        }
+        return this;
+    }
+
     translate(x: number, y: number): RcElement {
         if (x !== this._translateX || y !== this._translateY) {
             if (Utils.isValidNumber(x)) this._translateX = x;

@@ -11,17 +11,163 @@ import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
 import { CircularGauge, Gauge, IGaugeValueRange } from "../Gauge";
 
-export class CircleGaugeValueLine extends ChartItem {
+export abstract class CircleGaugeRim extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _ranges: IGaugeValueRange[];
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(gauge: CircleGauge) {
+    constructor(public gauge: CircleGauge) {
         super(gauge.chart, true);
     }
 
     //-------------------------------------------------------------------------
     // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 값 범위 목록.
+     * 범위별로 다른 스타일을 적용할 수 있다.
+     * 
+     * @config
+     */
+    get ranges(): IGaugeValueRange[] {
+        return this._ranges?.slice(0);
+    }
+    set ranges(value: IGaugeValueRange[]) {
+        this._ranges = Gauge.buildRanges(value, this.gauge.minValue, this.gauge.maxValue);
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    isRanged(): boolean {
+        return this._ranges && this._ranges.length > 0;
+    }
+
+    rangeCount(): number {
+        return this._ranges ? this._ranges.length : 0;
+    }
+
+    getRange(value: number): IGaugeValueRange | undefined {
+        if (this._ranges) {
+            for (const r of this._ranges) {
+                if (value >= r.startValue && value < r.endValue) {
+                    return r;
+                }
+            }
+        }
+    }
+}
+
+export class CircleGaugeBackRim extends CircleGaugeRim {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _segmentThickness: RtPercentSize;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _thickDim: IPercentSize;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(gauge: CircleGauge) {
+        super(gauge);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * segment 두께.
+     * 픽셀 단위 크기나, 게이지 원호 두께에 대한 상대 크기로 지정할 수 있다.
+     * 
+     * @config
+     */
+    get segmentThickness(): RtPercentSize {
+        return this._segmentThickness;
+    }
+    set segmentThickness(value: RtPercentSize) {
+        if (value !== this._segmentThickness) {
+            this._segmentThickness = value;
+            this._thickDim = parsePercentSize(this.segmentThickness, true);
+        }
+    }
+
+    /**
+     * segement 사이의 간격.
+     */
+    segmentGap = 0;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getSegmentThickness(domain: number): number {
+        return calcPercent(this._thickDim, domain, domain);
+    }
+    
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+}
+
+export class CircleGaugeValueRim extends CircleGaugeRim {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _thickness: RtPercentSize;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _thickDim: IPercentSize;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(gauge: CircleGauge) {
+        super(gauge);
+
+        this.thickness = '100%';
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 테두리 굵기.
+     * 픽셀 단위의 크기나, {@link CircularGauge.radius}와 {@link CircularGauge.innerRadius}로 결정된 원호 굵기에 대한 상대적 크기로 지정할 수 있다.
+     * 예) 지정하지 않거나 '100%'로 지정하면 게이지 원호 굵기와 동일하게 표시된다.
+     * 
+     * @config
+     */
+    get thickness(): RtPercentSize {
+        return this._thickness;
+    }
+    set thickness(value: RtPercentSize) {
+        if (value !== this._thickness) {
+            this._thickness = value;
+            this._thickDim = parsePercentSize(this.thickness, true);    
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getThickness(domain: number): number {
+        return calcPercent(this._thickDim, domain, domain);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
     //-------------------------------------------------------------------------
 }
 
@@ -42,37 +188,105 @@ export class CircleGaugeValueMarker extends ChartItem {
 export class CircleGaugeHand extends ChartItem {
 
     //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _radius: RtPercentSize;
+    private _length: RtPercentSize;
+    private _offset: RtPercentSize;
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _radiusDim: IPercentSize;
+    private _lengthDim: IPercentSize;
+    private _offsetDim: IPercentSize;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(gauge: CircleGauge) {
         super(gauge.chart, false);
+
+        this.radius = 3;
+        this.length = '100%';
+        this.offset = 0;
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    radius: RtPercentSize = 3;
-    length: RtPercentSize = '100%';
-    offset: RtPercentSize = 0;
+    /**
+     * 게이지 중심쪽의 바늘 반지름.
+     * 픽셀 단위 크기나, 게이지 원호 반지름에 대한 상대 크기로 지정할 수 있다.
+     * 
+     * @config
+     */
+    get radius(): RtPercentSize {
+        return this._radius;
+    }
+    set radius(value: RtPercentSize) {
+        if (value !== this._radius) {
+            this._radius = value;
+            this._radiusDim = parsePercentSize(value, true);
+        }
+    }
+
+    /** 
+     * 바늘 길이.
+     * 픽셀 단위 크기나, 게이지 원호 반지름에 대한 상대 크기로 지정할 수 있다.
+     * 
+     * @config
+     */
+    get length(): RtPercentSize {
+        return this._length;
+    }
+    set length(value: RtPercentSize) {
+        if (value !== this._length) {
+            this._length = value;
+            this._lengthDim = parsePercentSize(value, true);
+        }
+    }
+
+    /**
+     * 바늘 중심과 게이지 중심 사이의 간격.
+     * 픽셀 단위 크기나, 게이지 원호 반지름에 대한 상대 크기로 지정할 수 있다.
+     * 
+     * @config
+     */
+    get offset(): RtPercentSize {
+        return this._offset;
+    }
+    set offset(value: RtPercentSize) {
+        if (value !== this._offset) {
+            this._offset = value;
+            this._offsetDim = parsePercentSize(value, true);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getExtents(domain: number): {radius: number, length: number, offset: number} {
+        return {
+            radius: calcPercent(this._radiusDim, domain, 0),
+            length: calcPercent(this._lengthDim, domain, 0),
+            offset: calcPercent(this._offsetDim, domain, 0)
+        };
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    load(source: any): ChartItem {
-        super.load(source);
-
-        return this;
-    }
 }
 
 export class CircleGaugePin extends ChartItem {
 
     //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _radius: RtPercentSize;
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _radiusDim: IPercentSize;
@@ -82,12 +296,28 @@ export class CircleGaugePin extends ChartItem {
     //-------------------------------------------------------------------------
     constructor(gauge: CircleGauge) {
         super(gauge.chart, false);
+
+        this.radius = 5;
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    radius: RtPercentSize = 5;
+    /**
+     * 핀 반지름.
+     * 픽셀 단위 크기나, 게이지 원호 반지름에 대한 상대 크기로 지정할 수 있다.
+     * 
+     * @config
+     */
+    get radius(): RtPercentSize {
+        return this._radius;
+    }
+    set radius(value: RtPercentSize) {
+        if (value !== this._radius) {
+            this._radius = value;
+            this._radiusDim = parsePercentSize(value, true);
+        }
+    }
 
     //-------------------------------------------------------------------------
     // methods
@@ -99,12 +329,6 @@ export class CircleGaugePin extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    load(source: any): ChartItem {
-        super.load(source);
-
-        this._radiusDim = parsePercentSize(this.radius, true);
-        return this;
-    }
 }
 
 /**
@@ -120,9 +344,6 @@ export class CircleGauge extends CircularGauge {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _ranges: IGaugeValueRange[];
-    private _valRanges: IGaugeValueRange[];
-
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -133,7 +354,18 @@ export class CircleGauge extends CircularGauge {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    line = new CircleGaugeValueLine(this);
+    /**
+     * 게이지 배경 원호 테두리 설정 모델.
+     * 
+     * @config
+     */
+    rim = new CircleGaugeBackRim(this);
+    /**
+     * 게이지 값 원호 테두리 설정 모델.
+     * 
+     * @config
+     */
+    valueRim = new CircleGaugeValueRim(this);
     marker = new CircleGaugeValueMarker(this);
     /**
      * 게이지 바늘 설정 모델.
@@ -147,55 +379,14 @@ export class CircleGauge extends CircularGauge {
      * @config
      */
     pin = new CircleGaugePin(this);
-    /**
-     * 배경 원호의 범위 목록.
-     * 범위별로 다른 스타일을 적용할 수 있다.
-     * 
-     * @config
-     */
-    ranges: IGaugeValueRange[];
-    /**
-     * 값 범위 목록.
-     * 범위별로 다른 스타일을 적용할 수 있다.
-     * 
-     * @config
-     */
-    valueRanges: IGaugeValueRange[];
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getRange(value: number): IGaugeValueRange | undefined {
-        if (this._ranges) {
-            for (const r of this._ranges) {
-                if (value >= r.startValue && value < r.endValue) {
-                    return r;
-                }
-            }
-        }
-    }
-
-    getValueRange(value: number): IGaugeValueRange | undefined {
-        if (this._valRanges) {
-            for (const r of this._valRanges) {
-                if (value >= r.startValue && value < r.endValue) {
-                    return r;
-                }
-            }
-        }
-    }
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     _type(): string {
         return 'circle';
-    }
-
-    protected _doLoad(src: any): void {
-        super._doLoad(src);
-
-        this._ranges = Gauge.buildRanges(src?.ranges, this.minValue, this.maxValue);
-        this._valRanges = Gauge.buildRanges(src?.valueRanges, this.minValue, this.maxValue);
     }
 }

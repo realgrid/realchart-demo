@@ -16,18 +16,20 @@ const config = {
         value: Math.random() * 100,
         // clockwise: false,
         // startAngle: -90,
-        // totalAngle: 300,
+        // sweepAngle: 300,
         // valueRadius: '110%',
         // valueThickness: '100%',
-        valueRanges: [{
-            endValue: 30,
-            color: 'green'
-        }, {
-            endValue: 70,
-            color: 'yellow'
-        }, {
-            color: 'red'
-        }],
+        valueRim: {
+            ranges: [{
+                endValue: 30,
+                color: 'green'
+            }, {
+                endValue: 70,
+                color: 'yellow'
+            }, {
+                color: 'red'
+            }],
+        },
         label: {
             // suffix: '%',
             numberFormat: '#0.0',
@@ -60,8 +62,8 @@ function setActions(container) {
         config.gauge.startAngle = _getValue(e);
         chart.load(config, animate);
     }, 0);
-    createListBox(container, "totalAngle", [360, 270, 225, 180], function (e) {
-        config.gauge.totalAngle = _getValue(e);
+    createListBox(container, "sweepAngle", [360, 270, 225, 180], function (e) {
+        config.gauge.sweepAngle = _getValue(e);
         chart.load(config, animate);
     }, 360);
     createCheckBox(container, 'clockwise', function (e) {
@@ -76,8 +78,8 @@ function setActions(container) {
         config.gauge.valueRadius = _getValue(e);
         chart.load(config, animate);
     }, '');
-    createListBox(container, "valueThickness", ['', '50%', '100%', '150%', '200%'], function (e) {
-        config.gauge.valueThickness = _getValue(e);
+    createListBox(container, "valueRim.thickness", ['', '50%', '100%', '150%', '200%'], function (e) {
+        config.gauge.valueRim.thickness = _getValue(e);
         chart.load(config, animate);
     }, '');
     createButton(container, 'Run', function(e) {

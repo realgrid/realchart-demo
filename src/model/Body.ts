@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { IPercentSize, ORG_ANGLE, SVGStyleOrClass, SizeValue, _undefined, calcPercent, deg2rad, parsePercentSize } from "../common/Types";
+import { DEG_RAD, IPercentSize, ORG_ANGLE, SVGStyleOrClass, SizeValue, _undefined, calcPercent, parsePercentSize } from "../common/Types";
 import { AxisGuide } from "./Axis";
 import { IChart } from "./Chart";
 import { BackgroundImage, ChartItem } from "./ChartItem";
@@ -56,7 +56,7 @@ export class Body extends ChartItem {
     }
 
     getStartAngle(): number {
-        return ORG_ANGLE + deg2rad(this.startAngle);
+        return ORG_ANGLE + DEG_RAD * this.startAngle;
     }
 
     getPolar(series: Series): {start: number, cx: number, cy: number, rd: number, deg: number} {

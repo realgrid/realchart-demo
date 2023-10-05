@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "../../common/Common";
-import { IPercentSize, ORG_ANGLE, RtPercentSize, calcPercent, deg2rad, parsePercentSize } from "../../common/Types";
+import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { FormattableText } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
 import { ILegendSource } from "../Legend";
@@ -168,8 +168,8 @@ export class PieSeries extends RadialSeries {
         let start = pickNum(this.startAngle % 360, 0);
         let total = Math.max(0, Math.min(360, pickNum(this.totalAngle, 360)));
 
-        this._startRad = ORG_ANGLE + deg2rad(start);
-        this._totalRad = deg2rad(total);
+        this._startRad = ORG_ANGLE + DEG_RAD * start;
+        this._totalRad = DEG_RAD * total;
 
         // group에서 필요하면 설정한다. 이 값의 여부로 pieseriesview에서 stacking 상태인 지 확인한다.
         this._groupPos = NaN; 

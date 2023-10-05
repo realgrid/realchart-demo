@@ -696,7 +696,7 @@
     stroke-width: 3px;
 }
 .rct-circle-gauge-hand {
-    fill: white;
+    fill: #333;
     stroke: none;
 }
 

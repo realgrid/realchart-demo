@@ -6,18 +6,20 @@ const config = {
     templates: {
         gauge: {
             innerRadius: '93%',
-            valueRanges: [{
-                endValue: 25,
-                color: 'green'
-            }, {
-                endValue: 50,
-                color: '#0000cc'
-            }, {
-                endValue: 75,
-                color: '#ffaa00'
-            }, {
-                color: 'red'
-            }],
+            valueRim: {
+                ranges: [{
+                    endValue: 25,
+                    color: 'green'
+                }, {
+                    endValue: 50,
+                    color: '#0000cc'
+                }, {
+                    endValue: 75,
+                    color: '#ffaa00'
+                }, {
+                    color: 'red'
+                }],
+            },
             label: {
                 text: '<t style="fill:blue">${value}</t><t style="font-size:12px;">&nbsp;</t><t style="font-size:20px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',
                 style: {
@@ -44,8 +46,15 @@ const config = {
         top: 0,
         hand: true,
         pin: true,
+        label: {
+            text: '<t style="fill:blue">${value}</t><t style="font-size:12px;">&nbsp;</t><t style="font-size:20px;">%</t>',
+            offsetY: 30,
+            style: {
+                fontWeight: 'bold',
+                fontSize: '30px'
+            }
+        },
         value: Math.random() * 100,
-        label: false,
     }, {
         template: "gauge",
         name: 'gauge2',
@@ -54,7 +63,23 @@ const config = {
         left: '33%',
         top: 0,
         valueRadius: '104%',    
-        valueThickness: '200%',
+        valueRim: {
+            thickness: '200%',
+        },
+        hand: {
+            visible: true,
+            length: '80%',
+            style: {
+                fill: 'blue'
+            }
+        },
+        pin: {
+            visible: true,
+            style: {
+                stroke: 'blue'
+            }
+        },
+        label: false,
         value: Math.random() * 100,
     }, {
         template: "gauge",
@@ -63,6 +88,18 @@ const config = {
         height: '50%',
         left: '66%',
         top: 0,
+        startAngle: 240,
+        sweepAngle: 245,
+        hand: true,
+        pin: true,
+        label: {
+            text: '<t style="fill:blue">${value}</t><t style="font-size:12px;">&nbsp;</t><t style="font-size:20px;">%</t>',
+            offsetY: 40,
+            style: {
+                fontWeight: 'bold',
+                fontSize: '30px'
+            }
+        },
         value: Math.random() * 100,
     }, {
         template: "gauge",
@@ -71,6 +108,32 @@ const config = {
         height: '50%',
         left: 0,
         top: '50%',
+        innerRadius: '80%',
+        rim: {
+            ranges: [{
+                endValue: 20,
+                color: '#a40'
+            }, {
+                endValue: 40,
+                color: '#cc0'
+            }, {
+                endValue: 60,
+                color: '#080'
+            }, {
+                endValue: 80,
+                color: '#500'
+            }, {
+                color: '#300'
+            }]
+        },
+        valueRim: false,
+        hand: {
+            visible: true,
+            offset: '15%',
+            length: '95%'
+        },
+        pin: true,
+        label: false,
         value: Math.random() * 100,
     }, {
         template: "gauge",
@@ -79,6 +142,22 @@ const config = {
         height: '50%',
         left: '33%',
         top: '50%',
+        hand: {
+            visible: true,
+            offset: '-15%',
+            length: '80%',
+            style: {
+                fill: 'green'
+            }
+        },
+        pin: {
+            visible: true,
+            style: {
+                stroke: '#080',
+                fill: '#0f0'
+            }
+        },
+        label: false,
         value: Math.random() * 100,
     }, {
         template: "gauge",
@@ -87,7 +166,11 @@ const config = {
         height: '50%',
         left: '66%',
         top: '50%',
-        value: Math.random() * 100
+        clockwise: false,
+        hand: true,
+        pin: true,
+        label: false,
+        value: Math.random() * 100,
     }]
 }
 
