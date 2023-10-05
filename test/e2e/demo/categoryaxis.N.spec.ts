@@ -54,7 +54,7 @@ test.describe('categoryaxis.html test', async function () {
 		const markers = await series.$$('.' + SeriesView.POINT_CLASS);
 		const axis = await PWTester.getAxis(page, 'x');
 		const line = await axis.$('.' + AxisView.LINE_CLASS);
-		const ticks = await axis.$$('.' + AxisView.TICK_CLASS);
+		let ticks = await axis.$$('.' + AxisView.TICK_CLASS);
 		const rLine = await PWTester.getBounds(line);
 		let pTick = await PWTester.getTranslate(ticks[0]);
 
@@ -64,6 +64,7 @@ test.describe('categoryaxis.html test', async function () {
 		// padding -> -0.5
 		await page.evaluate('config.xAxis.padding = -0.5; chart.load(config)');
 
+		ticks = await axis.$$('.' + AxisView.TICK_CLASS);
 		pTick = await PWTester.getTranslate(ticks[0]);
 		expect(PWTester.same(pTick.x, 0)).is.true;
 
@@ -190,11 +191,11 @@ test.describe('categoryaxis.html test', async function () {
 		expect(dataPoints).exist;
 
 		const linePoints = await page.$$(
-			'.rct-line-series .rct-point-label[y="12"]'
+			'.rct-line-series .rct-point-label[y="13"]'
 		);
 		expect(linePoints).exist;
 		const barPoints = await page.$$(
-			'.rct-bar-series .rct-point-label[y="12"]'
+			'.rct-bar-series .rct-point-label[y="13"]'
 		);
 		expect(barPoints).exist;
 		let maxLength = 0;

@@ -158,7 +158,7 @@ test.describe('bar-multi.html test', async function () {
 
 		const labels = await page.$$('.rct-point-labels');
 		for (let k = 0; k < labels.length; k++) {
-			const pointLables = await labels[k].$$('text[y="12"]');
+			const pointLables = await labels[k].$$('text[y="13"]');
 			expect(pointLables.length).eq(config.series[k].data.length);
 			for (let j = 0; j < pointLables.length; j++) {
 				const labelText = await page.evaluate(
