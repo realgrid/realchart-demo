@@ -9,7 +9,7 @@
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { CircularGauge, Gauge, IGaugeValueRange } from "../Gauge";
+import { CircularGauge, Gauge, GaugeGroup, IGaugeValueRange } from "../Gauge";
 
 export abstract class CircleGaugeRim extends ChartItem {
 
@@ -389,4 +389,7 @@ export class CircleGauge extends CircularGauge {
     _type(): string {
         return 'circle';
     }
+}
+
+export class CircleGaugeGroup extends GaugeGroup<CircleGauge> {
 }

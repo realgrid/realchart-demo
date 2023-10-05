@@ -53,6 +53,8 @@ import { ScatterSeriesView } from "./series/ScatterSeriesView";
 import { TreemapSeriesView } from "./series/TreemapSeriesView";
 import { VectorSeriesView } from "./series/VectorSeriesView";
 import { WaterfallSeriesView } from "./series/WaterfallSeriesView";
+import { LinearGaugeView } from "./gauge/LinearGaugeView";
+import { BulletGaugeView } from "./gauge/BulletGaugeView";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -81,6 +83,8 @@ const series_types = {
 }
 const gauge_types = {
     'circle': CircleGaugeView,
+    'linear': LinearGaugeView,
+    'bullet': BulletGaugeView,
     'clock': ClockGaugeView,
 }
 

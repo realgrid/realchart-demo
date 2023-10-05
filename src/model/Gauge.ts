@@ -161,6 +161,22 @@ export abstract class Gauge extends Widget {
     }
 }
 
+export abstract class GaugeGroup<T extends Gauge> extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+}
+
 export class GaugeCollection {
 
     //-------------------------------------------------------------------------
@@ -328,7 +344,6 @@ export abstract class CircularGauge extends Gauge {
     private _radiusDim: IPercentSize;
     private _innerDim: IPercentSize;
     private _valueDim: IPercentSize;
-    private _thickDim: IPercentSize;
     private _runValue: number;
     _startRad: number;
     _handRad: number;
@@ -394,14 +409,6 @@ export abstract class CircularGauge extends Gauge {
      * 지정하지 않거나 '100%'이면 게이지 원호의 반지름과 동일하다.
      */
     valueRadius: RtPercentSize;
-    /**
-     * 값을 표시하는 내부 원의 굵기.
-     * 픽셀 단위의 크기나, {@link radius}와 {@link innerRadius}로 결정된 원호 굵기에 대한 상대적 크기로 지정할 수 있다.
-     * 예) 지정하지 않거나 '100%'로 지정하면 게이지 원호 굵기와 동일하게 표시된다.
-     * 
-     * @config
-     */
-    valueThickness: RtPercentSize;
     /**
      * 게이지 원호 시작 각도.
      * 지정하지 않거나 잘못된 값이면 0으로 계산된다.
@@ -489,7 +496,6 @@ export abstract class CircularGauge extends Gauge {
         this._radiusDim = parsePercentSize(pickProp(this.radius, CircularGauge.DEF_RADIUS), true);
         this._innerDim = parsePercentSize(pickProp(this.innerRadius, CircularGauge.DEF_INNER), true);
         this._valueDim = parsePercentSize(this.valueRadius, true);
-        this._thickDim = parsePercentSize(this.valueThickness, true);
     }
 
     protected _doPrepareRender(chart: IChart): void {

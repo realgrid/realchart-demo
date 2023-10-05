@@ -1,27 +1,36 @@
 ////////////////////////////////////////////////////////////////////////////////
-// ClockGauge.ts
-// 2023. 09. 26. created by woori
+// LinearGauge.ts
+// 2023. 10. 05. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
 import { IChart } from "../Chart";
-import { ChartItem } from "../ChartItem";
+import { FormattableText } from "../ChartItem";
 import { Gauge } from "../Gauge";
 
-export class ClockHand extends ChartItem {
-}
+export class LinearGaugeLabel extends FormattableText {
 
-export class ColckTick extends ChartItem {
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart, true);
+    }
 }
 
 /**
- * 시계 게이지 모델.
+ * Linear 게이지 모델.
+ * 현재 값을 목표 값과 비교해서 표시한다.
+ * 또, 여러 값 범위 중 어디에 속한 상태인 지를 나타낸다.
  * 
- * @config chart.gauge[type=clock]
+ * @config chart.gauge[type=Linear]
  */
-export class ClockGauge extends Gauge {
+export class LinearGauge extends Gauge {
 
     //-------------------------------------------------------------------------
     // consts
@@ -46,7 +55,7 @@ export class ClockGauge extends Gauge {
     // overriden members
     //-------------------------------------------------------------------------
     _type(): string {
-        return 'clock';
+        return 'Linear';
     }
 
     protected _doLoad(src: any): void {

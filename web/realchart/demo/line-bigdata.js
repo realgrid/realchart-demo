@@ -4,26 +4,24 @@
  */
 const config = {
     options: {},
-    title: "Line Series 01",
+    title: "Line Big Data",
     xAxis: {
         type: 'category',
+        tick: {
+            stepInterval: 300,
+        },
+        // label: {
+        //     step: 300
+        // }
     },
     yAxis: {
+        minValue: 0,
+        maxValue: 100,
     },
     series: {
         type: 'line',
-        marker: true,
-        pointLabel: true,
-        data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['카눈', 8], 
-            ['def', 9], 
-            ['머핀', 11], 
-            ['지리산', 15.3], 
-            ['zzz', 13],
-            ['낙동강', 12.5]
-        ]
+        marker: false,
+        data: line_data
     }
 }
 

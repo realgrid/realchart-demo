@@ -32,7 +32,7 @@ export class CategoryAxisTick extends AxisTick {
     // properties
     //-------------------------------------------------------------------------
     position = CategoryTickPosition.POINT;
-    steps = 1;
+    stepInterval = 1;
     /**
      * true이면 steps 상관없이 마지막 tick은 항상 표시된다.
      */
@@ -269,6 +269,7 @@ export class CategoryAxis extends Axis {
         const label = this.label as CategoryAxisLabel;
         let cats = this._cats = this._categories.map(cat => cat.c);
         let weights = this._weights = this._categories.map(cat => cat.w);
+        const steps = (this.tick as CategoryAxisTick).stepInterval || 1;
         const ticks: IAxisTick[] = [];
 
         min = this._min = Math.floor(min);
@@ -296,7 +297,7 @@ export class CategoryAxis extends Axis {
         pts.push(p / len);
         pts.push((p + this._maxPad) / len);
 
-        for (let i = 1; i < pts.length - 2; i++) {
+        for (let i = 1; i < pts.length - 2; i += steps) {
             const v = min + i - 1;
 
             ticks.push({

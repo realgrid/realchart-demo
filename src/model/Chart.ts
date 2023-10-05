@@ -47,6 +47,8 @@ import { ScatterSeries } from "./series/ScatterSeries";
 import { TreemapSeries } from "./series/TreemapSeries";
 import { VectorSeries } from "./series/VectorSeries";
 import { WaterfallSeries } from "./series/WaterfallSeries";
+import { LinearGauge } from "./gauge/LinearGauge";
+import { BulletGauge } from "./gauge/BulletGauge";
 
 export interface IChart {
     type: string;
@@ -137,6 +139,8 @@ const axis_types = {
 
 const gauge_types = {
     'circle': CircleGauge,
+    'linear': LinearGauge,
+    'bullet': BulletGauge,
     'clock': ClockGauge,
 }
 

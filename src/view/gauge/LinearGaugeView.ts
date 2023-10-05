@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
-// ClockGuageView.ts
-// 2023. 09. 26. created by woori
+// LinearGuageView.ts
+// 2023. 10. 05. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
@@ -10,10 +10,10 @@ import { ElementPool } from "../../common/ElementPool";
 import { LayerElement, PathElement } from "../../common/RcControl";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
-import { ClockGauge } from "../../model/gauge/ClockGauge";
+import { LinearGauge } from "../../model/gauge/LinearGauge";
 import { GaugeView } from "../GaugeView";
 
-export class ClockGaugeView extends GaugeView<ClockGauge> {
+export class LinearGaugeView extends GaugeView<LinearGauge> {
 
     //-------------------------------------------------------------------------
     // consts
@@ -45,7 +45,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _prepareGauge(doc: Document, model: ClockGauge): void {
+    protected _prepareGauge(doc: Document, model: LinearGauge): void {
         // const ranges = model.ranges;
 
         // if (isArray(ranges)) {
@@ -57,6 +57,5 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
 
     protected _renderGauge(width: number, height: number): void {
         // this.model.label.setText('good').buildSvg(this._textView, this.model, this.getValueOf);
-        // this._textView.translate(this._margins.left + this._paddings.left, this._margins.top + this._paddings.top);
     }
 }

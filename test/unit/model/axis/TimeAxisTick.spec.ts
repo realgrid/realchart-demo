@@ -60,7 +60,7 @@ import { TimeAxis, TimeAxisTick } from '../../../../src/model/axis/TimeAxis';
         const min = 5;
         const max = 111;
 
-        model.stepSize = 20;
+        model.stepInterval = 20;
 
         const steps = model.buildSteps(1000, 0, min, max);
         console.log(steps);

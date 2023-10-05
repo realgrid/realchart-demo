@@ -17,7 +17,7 @@ export class ContinuousAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    stepSize: number;
+    stepInterval: number;
     stepPixels = 72;
     stepCount: number;
     steps: number[];
@@ -57,8 +57,8 @@ export class ContinuousAxisTick extends AxisTick {
             pts = this._getStepsByCount(this._baseAxis._ticks.length, base, min, max);
         } else if (this.stepCount > 0) {
             pts = this._getStepsByCount(this.stepCount, base, min, max);
-        } else if (this.stepSize > 0) {
-            pts = this._getStepsBySize(this.stepSize, base, min, max);
+        } else if (this.stepInterval > 0) {
+            pts = this._getStepsByInterval(this.stepInterval, base, min, max);
         } else if (this.stepPixels > 0) {
             pts = this._getStepsByPixels(length, this.stepPixels, base, min, max);
         } else {
@@ -135,26 +135,26 @@ export class ContinuousAxisTick extends AxisTick {
         return steps;
     }
 
-    protected _getStepsBySize(size: number, base: number, min: number, max: number): number[] {
+    protected _getStepsByInterval(interval: number, base: number, min: number, max: number): number[] {
         const steps: number[] = [];
         let v: number;
 
         if (!isNaN(base)) {
             steps.push(v = base);
             while (v > min) {
-                steps.unshift(v -= size);
+                steps.unshift(v -= interval);
             }
             v = base;
             while (v < max) {
-                steps.push(v += size);
+                steps.push(v += interval);
             }
         } else {
             steps.push(v = min);
             while (v < max) {
-                steps.push(v += size);
+                steps.push(v += interval);
             }
         }
-        this._step = size;
+        this._step = interval;
         return steps;
     }
 
