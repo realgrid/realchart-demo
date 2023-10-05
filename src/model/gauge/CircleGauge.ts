@@ -334,7 +334,7 @@ export class CircleGaugePin extends ChartItem {
 /**
  * 게이지 모델.
  * 
- * @config chart.gauge[type=circle]
+ * @config chart.gauge[type='circle']
  */
 export class CircleGauge extends CircularGauge {
 
@@ -361,7 +361,7 @@ export class CircleGauge extends CircularGauge {
      */
     rim = new CircleGaugeBackRim(this);
     /**
-     * 게이지 값 원호 테두리 설정 모델.
+     * 게이지의 값 원호 테두리 설정 모델.
      * 
      * @config
      */

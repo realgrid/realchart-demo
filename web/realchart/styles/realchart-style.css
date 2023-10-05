@@ -703,6 +703,10 @@
 /** clock gauge */
 .rct-clock-gauge-face {
     fill: white;
+    stroke: none;
+}
+.rct-clock-gauge-rim {
+    fill: #eee;
     stroke: gray;
 }
 

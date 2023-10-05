@@ -30,7 +30,7 @@ export class ClockRim extends ChartItem {
     constructor(gauge: ClockGauge) {
         super(gauge.chart);
 
-        this.thickness = 10;
+        this.thickness = 7;
     }
 
     //-------------------------------------------------------------------------
@@ -41,7 +41,7 @@ export class ClockRim extends ChartItem {
      * 픽셀 단위 크기나, 게이지 반지름 대한 상대 크기로 지정할 수 있다.
      * 
      * @config
-     * @default 10 pixel
+     * @default 7 pixel
      */
     get thickness(): RtPercentSize {
         return this._thickness;
@@ -113,6 +113,17 @@ export class ClockHand extends ChartItem {
 }
 
 export class ColckTick extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(gauge: ClockGauge, public length: number) {
+        super(gauge.chart);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
 }
 
 /**
@@ -132,7 +143,6 @@ export class ClockGauge extends Gauge {
     private _centerYDim: IPercentSize;
     private _radiusDim: IPercentSize;
 
-    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -195,6 +205,18 @@ export class ClockGauge extends Gauge {
      * @config
      */
     secondHand = new ClockHand(this, 2, '80%');
+    /**
+     * main tick.
+     * 
+     * @config
+     */
+    tick = new ColckTick(this, 10);
+    /**
+     * minor tick
+     * 
+     * @config
+     */
+    minorTick = new ColckTick(this, 5);
 
     //-------------------------------------------------------------------------
     // methods
