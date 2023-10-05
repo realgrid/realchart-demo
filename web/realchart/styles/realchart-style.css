@@ -700,6 +700,12 @@
     stroke: none;
 }
 
+/** clock gauge */
+.rct-clock-gauge-face {
+    fill: white;
+    stroke: gray;
+}
+
 /** tooltip */
 .rct-tooltip {
     pointer-events: none;

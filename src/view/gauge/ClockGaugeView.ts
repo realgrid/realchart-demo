@@ -6,8 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ElementPool } from "../../common/ElementPool";
-import { LayerElement, PathElement } from "../../common/RcControl";
+import { PathElement } from "../../common/RcControl";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { TextElement } from "../../common/impl/TextElement";
 import { ClockGauge } from "../../model/gauge/ClockGauge";
@@ -21,25 +20,23 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _background: CircleElement;
-    private _container: LayerElement;
-    private _foregrounds: ElementPool<PathElement>;
+    private _faceView: CircleElement;
     private _textView: TextElement;
-    getValueOf = (target: any, param: string): any => {
-        return;
-    }
+    private _hourView: PathElement;
+    private _minuteView: PathElement;
+    private _secondView: PathElement;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string) {
-        super(doc, styleName);
+    constructor(doc: Document) {
+        super(doc, 'rct-clock-gauge');
 
-        this.add(this._background = new CircleElement(doc));
-        this.add(this._container = new LayerElement(doc, void 0));
-        this._foregrounds = new ElementPool(this._container, PathElement);
+        this.add(this._faceView = new CircleElement(doc, 'rct-clock-gauge-face'));
         this.add(this._textView = new TextElement(doc));
-        // this._textView.anchor = TextAnchor.START;
+        this.add(this._hourView = new PathElement(doc, 'rct-clock-hour-hand'));
+        this.add(this._minuteView = new PathElement(doc, 'rct-clock-minute-hand'));
+        this.add(this._secondView = new PathElement(doc, 'rct-clock-second-hand'));
     }
 
     //-------------------------------------------------------------------------
@@ -56,7 +53,19 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
     }
 
     protected _renderGauge(width: number, height: number): void {
+        const m = this.model;
+        const exts = m.getExtendts(width, height);
+
+        this.$_renderFace(exts);
+
         // this.model.label.setText('good').buildSvg(this._textView, this.model, this.getValueOf);
         // this._textView.translate(this._margins.left + this._paddings.left, this._margins.top + this._paddings.top);
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_renderFace(exts: {cx: number, cy: number, rd: number}): void {
+        this._faceView.setCircle(exts.cx, exts.cy, exts.rd);
     }
 }
