@@ -450,17 +450,17 @@ export abstract class CircularGauge extends Gauge {
     // methods
     //-------------------------------------------------------------------------
     getCenter(gaugeWidth: number, gaugeHeight: number): { x: number, y: number } {
-        const x = calcPercent(this._centerXDim, gaugeWidth);
-        const y = calcPercent(this._centerYDim, gaugeHeight);
-
-        return { x, y };
+        return {
+            x: calcPercent(this._centerXDim, gaugeWidth, gaugeWidth / 2),
+            y: calcPercent(this._centerYDim, gaugeHeight, gaugeHeight / 2)
+        };
     }
 
     getExtents(gaugeWidth: number, gaugeHeight: number): ICircularGaugeExtents {
-        const radius = calcPercent(this._radiusDim, Math.min(gaugeWidth, gaugeHeight));
+        const r = Math.min(gaugeWidth, gaugeHeight);
+        const radius = calcPercent(this._radiusDim, r, r / 2);
         const inner = Math.min(radius, this._innerDim ? calcPercent(this._innerDim, radius) : 0);
         const value = this._valueDim ? calcPercent(this._valueDim, radius) : radius;
-        // const thick = Math.min(value, Math.max(0, calcPercent(_thickDim, radius - inner) || radius - inner));
 
         return { radius, inner, value };
     }
