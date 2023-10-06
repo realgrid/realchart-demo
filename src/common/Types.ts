@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isArray } from "./Common";
 import { locale } from "./RcLocale";
 
 export const _undefined = void 0; // 불필요
@@ -74,29 +75,47 @@ export const sizeToCssEx = function (size: IPercentSize): string {
 }
 
 export function parsePercentSize(sv: RtPercentSize, enableNull: boolean, def?: number): IPercentSize {
-    let fixed: boolean;
+    let fixed = false;
     let size: number;
 
-    if (sv != null && !Number.isNaN(sv)) {
-        if (!(fixed = !isNaN(size = +sv))) {
-            const s = (sv as string).trim();
-            const c = s.charCodeAt(s.length - 1);
+    if (sv == null) {
+        if (enableNull) {
+            return null;
+        } else {
+            size = def || 0;
+            fixed = true;
+        }
+    } else if (typeof sv === 'string') {
+        const s = sv.trim();
 
-            if (c === PERCENT) {
+        if (s.length === 0) {
+            size = NaN;            
+        } else {
+            if (s.charCodeAt(s.length - 1) === PERCENT) {
                 size = s.length === 1 ? NaN : parseFloat(s);
-            }
-            if (isNaN(size)) {
-                if (enableNull) {
-                    return null;
-                }
-                throwFormat(locale.invalidSizeValue, sv);
+            } else {
+                size = parseFloat(s);
+                fixed = true;
             }
         }
-    } else if (enableNull) {
-        return null;
+        if (isNaN(size)) {
+            if (enableNull) {
+                return null;
+            }
+            throwFormat(locale.invalidSizeValue, sv);
+        }
     } else {
-        size = def || 0;
-        fixed = true;
+        size = +sv;
+        if (isNaN(size)) {
+            if (enableNull) {
+                return null;
+            } else {
+                size = def || 0;
+                fixed = true;
+            } 
+        } else {
+            fixed = true;
+        }
     }
     return { size, fixed }; 
 }
@@ -198,7 +217,6 @@ export const assert = function (predict: boolean, message: string): void {
         throw new AssertionError(message);
     }
 }
-
 export const checkNull = function (obj: any, message: string): void {
     if (!obj) {
         throw new Error(message || (obj + ' is null.'));

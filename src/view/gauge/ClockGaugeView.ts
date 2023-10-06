@@ -87,7 +87,9 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
     protected _prepareGauge(doc: Document, model: ClockGauge): void {
         this._tickViews.prepare(model.tick.visible ? 12 : 0);
         this._minorTickViews.prepare(model.minorTick.visible ? 12 * 4 : 0);
-        this._tickLabelViews.prepare(model.tickLabel.visible ? 12 : 0, v => {
+
+        const cnt = Math.round(12 / Math.max(1, (Math.floor(model.tickLabel.step) || 1)));
+        this._tickLabelViews.prepare(model.tickLabel.visible ? cnt : 0, v => {
             v.layout = TextLayout.MIDDLE;
         });
     }
@@ -122,22 +124,27 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
     // internal members
     //-------------------------------------------------------------------------
     private $_renderFace(model: ClockGauge, exts: {cx: number, cy: number, rd: number}): void {
+        const labelView = this._labelView;
         const {cx, cy, rd} = exts;
         const thick = this._rimThick = this._rimView.visible ? this.model.rim.getThickness(rd) : 0;
 
         // face
         this._faceView.setCircle(cx, cy, rd);
+
         // rim
-        this._rimView.visible && this._rimView.setSector({
-            cx: cx,
-            cy: cy,
-            rx: rd,
-            ry: rd,
-            innerRadius: 1 - thick / rd,
-            start: 0,
-            angle: Math.PI * 2,
-            clockwise: true
-        });
+        if (this._rimView.visible) {
+            this._rimView.internalSetStyleOrClass(model.rim.style);
+            this._rimView.setSector({
+                cx: cx,
+                cy: cy,
+                rx: rd,
+                ry: rd,
+                innerRadius: 1 - thick / rd,
+                start: 0,
+                angle: Math.PI * 2,
+                clockwise: true
+            });
+        }
         
         // ticks
         const rd1 = rd - thick;
@@ -181,16 +188,19 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
 
         // tick labels
         if (!this._tickLabelViews.isEmpty) {
+            const step = 12 / this._tickLabelViews.count;
+            const astep = PI_2 / 12 * step;
+
             a = ORG_ANGLE;
-            let step = PI_2 / 12;
 
             this._tickLabelViews.get(0).text = '12';
-            rd2 -= this._tickLabelViews.get(0).getBBounds().height * 0.8;
+            rd2 = rd1 - ((this.model.tick.length + this.model.tickLabel.offset) || 0);
+            rd2 -= this._tickLabelViews.get(0).getBBounds().height * 0.5;
 
-            this._tickLabelViews.forEach((v, i) => {
-                v.text = String(i === 0 ? 12 : i);
+            this._tickLabelViews.forEach((v, i, cnt) => {
+                v.text = String(i === 0 ? 12 : i * step);
                 v.translate(cx + Math.cos(a) * rd2, cy + Math.sin(a) * rd2);
-                a += step;
+                a += astep;
             })
         }
 
@@ -198,12 +208,14 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
         this._pinView.setCircle(cx, cy, model.pin.raidus);
 
         // label
-        if (this._labelView.setVisible(model.label.visible)) {
-            model.label.buildSvg(this._labelView, null, null);
+        if (labelView.setVisible(model.label.visible)) {
+            labelView.internalSetStyleOrClass(model.label.style);
+            model.label.buildSvg(labelView, null, null);
+
             if (model.label.position === 'bottom') {
-                this._labelView.translate(cx, cy + rd2 / 2);
+                labelView.translate(cx, cy + rd2 / 2);
             } else {
-                this._labelView.translate(cx, cy - rd2 / 2);
+                labelView.translate(cx, cy - rd2 / 2);
             }
         }
     }
@@ -216,30 +228,36 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
         const {cx, cy, rd} = exts;
         const pb = new PathBuilder();
         let hand: ClockGaugeHand;
+        let handView: PathElement;
         let len: number;
         let a: number;
 
         // hour hand
         hand = model.hourHand;
-        if (this._hourView.setVisible(hand.visible)) {
+        handView = this._hourView;
+        if (handView.setVisible(hand.visible)) {
             a = PI_2 * (h / 12 + m / 60 / 12 + s / 60 / 60 / 12);
             len = hand.getLength(rd - this._rimThick);
             pb.rect(-hand.thickness / 2, -len, hand.thickness, len);
-            this._hourView.setPath(pb.close(true)).translate(cx, cy).rotate(a * RAD_DEG);
+            handView.internalSetStyleOrClass(hand.style);
+            handView.setPath(pb.close(true)).translate(cx, cy).rotate(a * RAD_DEG);
         }
 
         // minute hand
         hand = model.minuteHand;
-        if (this._minuteView.setVisible(hand.visible)) {
+        handView = this._minuteView;
+        if (handView.setVisible(hand.visible)) {
             a = PI_2 * (m / 60 + s / 60 / 60);
             len = hand.getLength(rd - this._rimThick);
             pb.rect(-hand.thickness / 2, -len, hand.thickness, len);
-            this._minuteView.setPath(pb.close(true)).translate(cx, cy).rotate(a * RAD_DEG);
+            handView.internalSetStyleOrClass(hand.style);
+            handView.setPath(pb.close(true)).translate(cx, cy).rotate(a * RAD_DEG);
         }
 
         // second hand
         hand = model.secondHand;
-        if (this._secondView.setVisible(hand.visible)) {
+        handView = this._secondView;
+        if (handView.setVisible(hand.visible)) {
             if (this._secRate < 1) {
                 a = PI_2 * (this._aniSec + this._secRate) / 60;
             } else {
@@ -247,7 +265,8 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
             }
             len = hand.getLength(rd - this._rimThick);
             pb.rect(-hand.thickness / 2, -len, hand.thickness, len);
-            this._secondView.setPath(pb.close(true)).translate(cx, cy).rotate(a * RAD_DEG);
+            handView.internalSetStyleOrClass(hand.style);
+            handView.setPath(pb.close(true)).translate(cx, cy).rotate(a * RAD_DEG);
             this._prevSec = s;
         }
     }

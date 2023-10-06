@@ -153,6 +153,22 @@ export class ClockGaugeTick extends ChartItem {
     //-------------------------------------------------------------------------
 }
 
+export class ClockGaugeTickLabel extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(gauge: ClockGauge) {
+        super(gauge.chart);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    step = 1;
+    offset = 1;
+}
+
 export class ClockGaugePin extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -289,7 +305,7 @@ export class ClockGauge extends Gauge {
      * 
      * @config
      */
-    tickLabel = new ChartItem(this.chart);
+    tickLabel = new ClockGaugeTickLabel(this);
     /**
      * pin
      * 

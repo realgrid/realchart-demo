@@ -15,12 +15,11 @@ const config = {
         type: 'clock',
         name: 'clock1',
         secondHand: {},
+        tickLabel: {
+            // step: 2
+        },
         label: {
             // position: 'bottom',
-            style: {
-                fontFamily: 'Arial',
-                fontWeight: 'bold',
-            },
         }
     }
 }
@@ -48,6 +47,10 @@ function setActions(container) {
         config.gauge.secondHand.animatable = _getChecked(e);
         chart.load(config);
     }, false);
+    createListBox(container, "tickLabel.step", ['1', '2', '3'], function (e) {
+        config.gauge.tickLabel.step = _getValue(e);
+        chart.load(config);
+    }, 1);
     createListBox(container, "label.position", ['top', 'bottom'], function (e) {
         config.gauge.label.position = _getValue(e);
         chart.load(config);

@@ -241,7 +241,7 @@ export class GaugeCollection {
     // internal members
     //-------------------------------------------------------------------------
     private $_loadItem(chart: IChart, src: any, index: number): Gauge {
-        let cls = chart._getGaugeType(src.type || 'circle');
+        let cls = chart._getGaugeType(src.type || chart.gaugeType);
         if (!cls) {
             throw new Error('Invalid gauge type: ' + src.type);
         }
