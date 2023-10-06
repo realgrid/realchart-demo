@@ -102,8 +102,6 @@ test.describe('area-multi.html test', async function () {
 	});
 
 	test('legend', async ({ page }) => {
-		const config: any = await page.evaluate('config');
-
 		const legend = await page.$('.' + LegendView.LEGEND_CLASS);
 		expect(legend).exist;
 

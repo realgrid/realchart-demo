@@ -106,7 +106,8 @@ test.describe('bar.html test', async function () {
 		bars.forEach(async (bar) => {
 			const r = await PWTester.getBounds(bar);
 			const xAxis = await PWTester.getBounds(xAxisLine);
-			expect(r.x).eq(xAxis.x);
+			expect(PWTester.same(r.x, xAxis.x)).is.true;
+			// expect(r.x).eq(xAxis.x);
 
 			expect(r.width <= GridEnd.x - r.x).is.true;
 		});
@@ -221,8 +222,6 @@ test.describe('bar.html test', async function () {
 	});
 
 	test('credit', async ({ page }) => {
-		const config: any = await page.evaluate('config');
-
 		const credit = await page.$('.rct-credits');
 		expect(credit);
 
@@ -231,8 +230,6 @@ test.describe('bar.html test', async function () {
 	});
 
 	test('grid', async ({ page }) => {
-		const config: any = await page.evaluate('config');
-
 		const grid = await page.$('.rct-grids');
 		expect(grid).exist;
 

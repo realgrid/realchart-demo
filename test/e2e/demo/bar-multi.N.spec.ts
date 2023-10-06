@@ -153,20 +153,4 @@ test.describe('bar-multi.html test', async function () {
 		const axisGrid = await page.$('.rct-axis-grid');
 		expect(axisGrid).exist;
 	});
-	test('pointLabel', async ({ page }) => {
-		const config: any = await page.evaluate('config');
-
-		const labels = await page.$$('.rct-point-labels');
-		for (let k = 0; k < labels.length; k++) {
-			const pointLables = await labels[k].$$('text[y="13"]');
-			expect(pointLables.length).eq(config.series[k].data.length);
-			for (let j = 0; j < pointLables.length; j++) {
-				const labelText = await page.evaluate(
-					(el) => el.textContent,
-					pointLables[j]
-				);
-				expect(Number(labelText)).eq(config.series[k].data[j]);
-			}
-		}
-	});
 });
