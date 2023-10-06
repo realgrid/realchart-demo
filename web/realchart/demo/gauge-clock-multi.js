@@ -36,6 +36,15 @@ const config = {
         height: '50%',
         left: '33%',
         top: 0,
+        timezone: 2 * 60,
+        label: {
+            text: 'Paris',
+            style: {
+                fontSize: '15px',
+                fontWeight: 'bold',
+                fill: 'blue'
+            }
+        },
     }, {
         template: "gauge",
         name: 'gauge3',
@@ -43,6 +52,15 @@ const config = {
         height: '50%',
         left: '66%',
         top: 0,
+        timezone: -4 * 60,
+        label: {
+            text: 'NewYork',
+            style: {
+                fontSize: '15px',
+                fontWeight: 'bold',
+                fill: 'blue'
+            }
+        },
         tick: {
             length: 5
         },

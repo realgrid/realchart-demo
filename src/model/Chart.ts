@@ -539,7 +539,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         if (target.template != null) {
             let v = this._templates[target.template];
             if (v) {
-                return mergeObj(target, v);
+                return mergeObj(v, target);
             }
         }
         return target;

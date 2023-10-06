@@ -220,8 +220,19 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
         }
     }
 
+    private $_getNow(): Date {
+        const off = this.model.timezone;
+        let d = new Date();
+
+        if (!isNaN(off)) {
+            const m = d.getMinutes() + (d.getTimezoneOffset() + off);
+            d.setMinutes(m);
+        }
+        return d;
+    }
+
     $_renderHands(model: ClockGauge, exts: {cx: number, cy: number, rd: number}): void {
-        const now = new Date();
+        const now = this.$_getNow();
         const h = now.getHours();
         const m = now.getMinutes();
         const s = now.getSeconds();
