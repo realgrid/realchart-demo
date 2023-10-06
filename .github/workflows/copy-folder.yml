@@ -3,7 +3,7 @@ name: Copy Folder to realchart-demo
 on:
   push:
     paths:
-      - 'www/**'
+      - 'fiddle/**'
 
 jobs:
   copy-folder:
@@ -21,7 +21,7 @@ jobs:
         git config --global user.name "dltlghkd930217"
         
         git clone https://x-access-token:$TOKEN@github.com/realgrid/realchart-demo.git
-        cp -r www realchart-demo/
+        cp -r fiddle/* realchart-demo/
         cd realchart-demo
         git add .
         git commit -m "Copied folder for fiddle demo"
