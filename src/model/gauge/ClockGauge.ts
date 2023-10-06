@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickProp } from "../../common/Common";
+import { isString, pickProp } from "../../common/Common";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem, FormattableText } from "../ChartItem";
@@ -241,9 +241,15 @@ export class ClockGauge extends Gauge {
      * 분단위로 시계에 표시할 지역의 timezone을 지정한다.
      * 예) 뉴욕: -4 * 60, 파리: 2 * 60
      * 
-     * @confi
+     * @config
      */
     timezone: number;
+    /**
+     * 이 속성에 명시적으로 시간을 지정하면 현재 시간 대신 이 시각을 표시한다.
+     * 
+     * @config
+     */
+    time: Date | number | string;
     /**
      * 게이지 중심 수평 위치.
      * 픽셀 단위의 크기나, plot 영역 전체 너비에 대한 상대적 크기로 지정할 수 있다.
@@ -344,6 +350,12 @@ export class ClockGauge extends Gauge {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getTime(): Date {
+        if (this.time instanceof Date) return this.time;
+        if (isString(this.time)) return new Date(this.time);
+        if (!isNaN(this.time)) return new Date(this.time);
+    }
+
     getExtendts(gaugeWidth: number, gaugeHeight: number): {cx: number, cy: number, rd: number} {
         const r = Math.min(gaugeWidth, gaugeHeight);
 

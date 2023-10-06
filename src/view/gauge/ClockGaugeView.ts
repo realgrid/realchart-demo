@@ -102,7 +102,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
         this.$_renderFace(m, exts);
         this.$_renderHands(m, exts);
 
-        if (m.active) {
+        if (m.active && !m.getTime()) {
             if (!this._runner) {
                 this._runner = setInterval(() => {
                     const prev = this._prevSec;
@@ -222,7 +222,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
 
     private $_getNow(): Date {
         const off = this.model.timezone;
-        let d = new Date();
+        let d = this.model.getTime() || new Date();
 
         if (!isNaN(off)) {
             const m = d.getMinutes() + (d.getTimezoneOffset() + off);
