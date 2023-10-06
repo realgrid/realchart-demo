@@ -9,14 +9,19 @@
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { CircularGauge, Gauge, GaugeGroup, IGaugeValueRange } from "../Gauge";
+import { CircularGauge, Gauge, GaugeGroup, IGaugeValueRange, ValueGauge } from "../Gauge";
 
 export abstract class CircleGaugeRim extends ChartItem {
 
     //-------------------------------------------------------------------------
-    // fields
+    // property fields
     //-------------------------------------------------------------------------
     private _ranges: IGaugeValueRange[];
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _runRanges: IGaugeValueRange[];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -35,31 +40,48 @@ export abstract class CircleGaugeRim extends ChartItem {
      * @config
      */
     get ranges(): IGaugeValueRange[] {
-        return this._ranges?.slice(0);
+        return this.$_internalRanges()?.slice(0);
     }
     set ranges(value: IGaugeValueRange[]) {
-        this._ranges = Gauge.buildRanges(value, this.gauge.minValue, this.gauge.maxValue);
+        if (value !== this._ranges) {
+            this._ranges = value;
+            this._runRanges = null;
+        }
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     isRanged(): boolean {
-        return this._ranges && this._ranges.length > 0;
+        const ranges = this.$_internalRanges();
+        return ranges && ranges.length > 0;
     }
 
     rangeCount(): number {
-        return this._ranges ? this._ranges.length : 0;
+        const ranges = this.$_internalRanges();
+        return ranges ? ranges.length : 0;
     }
 
     getRange(value: number): IGaugeValueRange | undefined {
-        if (this._ranges) {
-            for (const r of this._ranges) {
+        const ranges = this.$_internalRanges();
+
+        if (ranges) {
+            for (const r of ranges) {
                 if (value >= r.startValue && value < r.endValue) {
                     return r;
                 }
             }
         }
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_internalRanges(): IGaugeValueRange[] {
+        if (!this._runRanges) {
+            this._runRanges = ValueGauge.buildRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue);
+        }
+        return this._runRanges;
     }
 }
 

@@ -750,6 +750,12 @@
     fill: var(--rct-clock-gauge-label-fill);
 }
 
+/** bullet gauge */
+.rct-bullet-gaute-label {
+    font-size: 1em;
+    fill: #333;
+}
+
 /** tooltip */
 .rct-tooltip {
     pointer-events: none;

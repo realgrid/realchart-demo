@@ -24,7 +24,7 @@ import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
 import { CircleGauge } from "./gauge/CircleGauge";
 import { ClockGauge } from "./gauge/ClockGauge";
-import { GaugeCollection } from "./Gauge";
+import { GaugeCollection, ValueGauge } from "./Gauge";
 import { BarRangeSeries } from "./series/BarRangeSeries";
 import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";
@@ -659,7 +659,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     updateGauge(gauge: string, values: any): void {
         const g = this._gauges.get(gauge);
-        if (g) {
+
+        if (g instanceof ValueGauge) {
             g.updateValues(values);
         }
     }

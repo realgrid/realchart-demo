@@ -8,7 +8,6 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { LayerElement, PathElement } from "../../common/RcControl";
-import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
 import { BulletGauge } from "../../model/gauge/BulletGauge";
 import { GaugeView } from "../GaugeView";
@@ -22,9 +21,9 @@ export class BulletGaugeView extends GaugeView<BulletGauge> {
     // fields
     //-------------------------------------------------------------------------
     private _background: PathElement;
-    private _container: LayerElement;
-    private _foregrounds: ElementPool<PathElement>;
-    private _textView: TextElement;
+    private _barContainer: LayerElement;
+    private _barViews: ElementPool<PathElement>;
+    private _labelView: TextElement;
     getValueOf = (target: any, param: string): any => {
         return;
     }
@@ -32,14 +31,13 @@ export class BulletGaugeView extends GaugeView<BulletGauge> {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string) {
-        super(doc, styleName);
+    constructor(doc: Document) {
+        super(doc, 'rct-bullet-gage');
 
         this.add(this._background = new PathElement(doc));
-        this.add(this._container = new LayerElement(doc, void 0));
-        this._foregrounds = new ElementPool(this._container, PathElement);
-        this.add(this._textView = new TextElement(doc));
-        // this._textView.anchor = TextAnchor.START;
+        this.add(this._barContainer = new LayerElement(doc, void 0));
+        this._barViews = new ElementPool(this._barContainer, PathElement);
+        this.add(this._labelView = new TextElement(doc));
     }
 
     //-------------------------------------------------------------------------

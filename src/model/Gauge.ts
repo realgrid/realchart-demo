@@ -31,38 +31,6 @@ export abstract class Gauge extends Widget {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
-    /**
-     * endValue는 포함되지 않는다. 즉, startValue <= v < endValue.
-     * startValue를 지정하면 이전 range의 endValue를 startValue로 설정한다.
-     * 이전 범위가 없으면 min으로 지정된다.
-     * endValue가 지정되지 않으면 max로 지정된다.
-     * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
-     * startValue를 기준으로 정렬한다.
-     */
-    static buildRanges(source: IGaugeValueRange[], min: number, max: number): IGaugeValueRange[] {
-        let ranges: IGaugeValueRange[];
-        let prev: IGaugeValueRange;
-
-        if (isArray(source)) {
-            ranges = [];
-            source.forEach(src => {
-                if (isObject(src) && isString(src.color)) {
-                    const range: IGaugeValueRange = {
-                        startValue: pickNum(src.startValue, prev ? prev.endValue : min),
-                        endValue: pickNum(src.endValue, max),
-                        color: src.color
-                    };
-                    if (range.startValue < range.endValue) {
-                        ranges.push(range);
-                        prev = range;
-                    }
-                }
-            });
-            ranges = ranges.sort((r1, r2) => r1.startValue - r2.startValue);
-        }
-        return ranges;
-    }
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -112,24 +80,6 @@ export abstract class Gauge extends Widget {
      * @config
      */
     size: RtPercentSize = '100%';
-    /**
-     * 최소값.
-     * 
-     * @config
-     */
-    minValue = 0;
-    /**
-     * 최대값.
-     * 
-     * @config
-     */
-    maxValue = 100;
-    /**
-     * 현재값.
-     * 
-     * @config
-     */
-    value = 0;
 
     //-------------------------------------------------------------------------
     // methods
@@ -139,13 +89,6 @@ export abstract class Gauge extends Widget {
             width: calcPercent(this._widthDim, width, width),
             height: calcPercent(this._heightdim, height, height)
         };
-    }
-
-    updateValues(values: any): void {
-        if (values !== this.value) {
-            this.value = values;
-            this._changed();
-        }
     }
 
     //-------------------------------------------------------------------------
@@ -254,20 +197,147 @@ export class GaugeCollection {
     }
 }
 
-export class GaugeLabel extends FormattableText {
+
+/**
+ * 게이지 모델.
+ */
+export abstract class ValueGauge extends Gauge {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    /**
+     * endValue는 포함되지 않는다. 즉, startValue <= v < endValue.
+     * startValue를 지정하면 이전 range의 endValue를 startValue로 설정한다.
+     * 이전 범위가 없으면 min으로 지정된다.
+     * endValue가 지정되지 않으면 max로 지정된다.
+     * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
+     * startValue를 기준으로 정렬한다.
+     */
+    static buildRanges(source: IGaugeValueRange[], min: number, max: number): IGaugeValueRange[] {
+        let ranges: IGaugeValueRange[];
+        let prev: IGaugeValueRange;
+
+        if (isArray(source)) {
+            ranges = [];
+            source.forEach(src => {
+                if (isObject(src) && isString(src.color)) {
+                    const range: IGaugeValueRange = {
+                        startValue: pickNum(src.startValue, prev ? prev.endValue : min),
+                        endValue: pickNum(src.endValue, max),
+                        color: src.color
+                    };
+                    if (range.startValue < range.endValue) {
+                        ranges.push(range);
+                        prev = range;
+                    }
+                }
+            });
+            ranges = ranges.sort((r1, r2) => r1.startValue - r2.startValue);
+        }
+        return ranges;
+    }
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _offsetXDim: IPercentSize;
-    private _offsetYDim: IPercentSize;
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 최소값.
+     * 
+     * @config
+     */
+    minValue: number;
+    /**
+     * 최대값.
+     * 
+     * @config
+     */
+    maxValue: number;
+    /**
+     * 현재값.
+     * 
+     * @config
+     */
+    value = 0;
 
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    updateValues(values: any): void {
+        if (values !== this.value) {
+            this.value = values;
+            this._changed();
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+}
+
+/**
+ * Gauge scale.
+ */
+export class GuageScale extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public gauge: Gauge) {
+        super(gauge.chart);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+}
+
+export abstract class GaugeLabel extends FormattableText {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
         super(chart, true);
     }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 게이지 값 변경 애니메이션이 실행될 때, label도 따라서 변경시킨다.
+     * 
+     * @config
+     */
+    animatable = true;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+}
+
+export class CircularGaugeLabel extends GaugeLabel {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _offsetXDim: IPercentSize;
+    private _offsetYDim: IPercentSize;
 
     //-------------------------------------------------------------------------
     // properties
@@ -286,12 +356,6 @@ export class GaugeLabel extends FormattableText {
      * @config
      */
     offsetY: RtPercentSize = 0;
-    /**
-     * 게이지 값 변경 애니메이션이 실행될 때, label도 따라서 변경시킨다.
-     * 
-     * @config
-     */
-    animatable = true;
 
     //-------------------------------------------------------------------------
     // methods
@@ -327,7 +391,7 @@ export interface ICircularGaugeExtents {
  * label의 기본 위치의 x는 원호의 좌위 최대 각 위치를 연결한 지점,
  * y는 중심 각도의 위치.
  */
-export abstract class CircularGauge extends Gauge {
+export abstract class CircularGauge extends ValueGauge {
 
     //-------------------------------------------------------------------------
     // consts
@@ -355,12 +419,15 @@ export abstract class CircularGauge extends Gauge {
     constructor(chart: IChart) {
         super(chart);
 
-        this.label = new GaugeLabel(chart);
+        this.label = new CircularGaugeLabel(chart);
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    minValue = 0;
+    maxValue = 100;
+
     /**
      * {@link value} 변화를 애니메이션으로 표현한다.
      * 
@@ -438,7 +505,7 @@ export abstract class CircularGauge extends Gauge {
      * 
      * @config
      */
-    label: GaugeLabel;
+    label: CircularGaugeLabel;
     /**
      * 내부 원에 적용할 스타일셋 혹은 class selector.
      * 
