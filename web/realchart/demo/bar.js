@@ -10,8 +10,11 @@ const config = {
 	},
 	xAxis: {
 		title: '도시',
-		categories: ['서울', '부산', '대구', '인천', '광주', '대전', '울산'],
+		categories: ['2014', '2015', '2016', '2017', '2018', '2019', '2020'],
 		grid: true,
+		label:{
+			step: 3
+		}
 	},
 	yAxis: {
 		title: '대기질 지수(Air Quality Index, AQI)',
