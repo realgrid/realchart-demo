@@ -117,7 +117,7 @@ export class TooltipView extends RcElement {
     // internal methods
     //-------------------------------------------------------------------------
     private $_hide(): void {
-        createAnimation(this.dom, 'opacity', 0, 200, () => {
+        createAnimation(this.dom, 'opacity', void 0, 0, 200, () => {
             this.setStyle('visibility', 'hidden');
         })
     }

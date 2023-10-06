@@ -10,14 +10,14 @@ import { isArray, isBoolean, isObject, isString, pickNum } from "../common/Commo
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { SvgRichText, RichTextParamCallback } from "../common/RichText";
-import { Align, NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
+import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
 import { IChart } from "./Chart";
 
 export let n_char_item = 0;
 
-export abstract class ChartItem extends RcObject {
+export class ChartItem extends RcObject {
 
     //-------------------------------------------------------------------------
     // property fields

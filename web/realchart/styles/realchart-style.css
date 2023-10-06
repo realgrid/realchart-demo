@@ -134,9 +134,18 @@
 
     --rct-credits-fill: #777;
 
+    /* circle gauge */
     --rct-circle-gauge-back-fill: #ddd;
     --rct-circle-gauge-inner-fill: none;
     --rct-circle-gauge-label-fill: #333;
+    /* clock gauge */
+    --rct-clock-gauge-face-fill: white;
+    --rct-clock-gauge-rim-fill: #eee;
+    --rct-clock-gauge-rim-stroke: gray;
+    --rct-clock-gauge-tick-stroke: #333;
+    --rct-clock-gauge-minor-tick-stroke: #555;
+    --rct-clock-gauge-tick-label-fill: #333;
+    --rct-clock-gauge-label-fill: #aaa;
 }
 .rct-root[data-theme='dark'] {
     --rct-focus-border: yellow;
@@ -161,6 +170,7 @@
 
     --rct-credits-fill: #999;
 
+    /* circle gauge */
     --rct-circle-gauge-back-fill: #333;
     --rct-circle-gauge-label-fill: #eee;
 }
@@ -702,20 +712,25 @@
 
 /** clock gauge */
 .rct-clock-gauge-face {
-    fill: white;
+    fill: var(--rct-clock-gauge-face-fill);
     stroke: none;
 }
 .rct-clock-gauge-rim {
-    fill: #eee;
-    stroke: gray;
+    fill: var(--rct-clock-gauge-rim-fill);
+    stroke: var(--rct-clock-gauge-rim-stroke);
 }
-.rct-clock-tick {
-    stroke: #333;
+.rct-clock-gauge-tick {
+    stroke: var(--rct-clock-gauge-tick-stroke);
     stroke-width: 2px;
 }
-.rct-clock-minor-tick {
-    stroke: #555;
+.rct-clock-gauge-minor-tick {
+    stroke: var(--rct-clock-gauge-minor-tick-stroke);
     stroke-width: 1px;
+}
+.rct-clock-gauge-tick-label {
+    stroke: none;
+    fill: var(--rct-clock-gauge-tick-label-fill);
+    font-size: 1em;
 }
 .rct-clock-gauge-pin {
     fill: white;
@@ -730,6 +745,9 @@
 }
 .rct-clock-gauge-second {
     fill: #c00;
+}
+.rct-clock-gauge-label {
+    fill: var(--rct-clock-gauge-label-fill);
 }
 
 /** tooltip */

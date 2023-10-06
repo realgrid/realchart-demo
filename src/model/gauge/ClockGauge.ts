@@ -9,7 +9,7 @@
 import { pickProp } from "../../common/Common";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
-import { ChartItem } from "../ChartItem";
+import { ChartItem, FormattableText } from "../ChartItem";
 import { CircularGauge, Gauge } from "../Gauge";
 
 export class ClockGaugeRim extends ChartItem {
@@ -119,6 +119,26 @@ export class ClockGaugeHand extends ChartItem {
     }
 }
 
+export class ClockGaugeSecondHand extends ClockGaugeHand {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * true면 초 이동 시 애니메이션 효과로 표시한다.
+     * 
+     * @config
+     */
+    animatable = false;
+    /**
+     * {@link animatable}이 true일 때 애니메이션 기간.
+     * 밀리초 단위로 지정한다.
+     * 
+     * @config
+     */
+    duration = 200;
+}
+
 export class ClockGaugeTick extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -141,6 +161,32 @@ export class ClockGaugePin extends ChartItem {
     constructor(gauge: ClockGauge, public raidus: number) {
         super(gauge.chart);
     }
+}
+
+export class ClockGaugeLabel extends FormattableText {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(gauge: ClockGauge) {
+        super(gauge.chart, true);
+
+        this.text = 'RealChart Clock<br>ver1.0';
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 라벨 표시 위치.
+     * 
+     * @config
+     */
+    position: 'top' | 'bottom' = 'top';
 }
 
 /**
@@ -198,12 +244,6 @@ export class ClockGauge extends Gauge {
      */
     radius: RtPercentSize = CircularGauge.DEF_RADIUS;
     /**
-     * 명시적으로 false로 설정하면 반대 방향으로 회전한다.
-     * 
-     * @config
-     */
-    clockwise = true;
-    /**
      * rim 설정 모델.
      * 
      * @config
@@ -226,7 +266,7 @@ export class ClockGauge extends Gauge {
      * 
      * @config
      */
-    secondHand = new ClockGaugeHand(this, 2, '95%');
+    secondHand = new ClockGaugeSecondHand(this, 2, '95%');
     /**
      * main tick.
      * 
@@ -244,7 +284,24 @@ export class ClockGauge extends Gauge {
      * 
      * @config
      */
+    /**
+     * tick label
+     * 
+     * @config
+     */
+    tickLabel = new ChartItem(this.chart);
+    /**
+     * pin
+     * 
+     * @config
+     */
     pin = new ClockGaugePin(this, 5);
+    /**
+     * label
+     * 
+     * @config
+     */
+    label = new ClockGaugeLabel(this);
     /**
      * 시계 동작 여부.
      * 
