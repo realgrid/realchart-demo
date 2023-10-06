@@ -3,20 +3,20 @@
  * 
  */
 const config = {
-    options: {},
+    options: {
+        animatable: false
+    },
     title: "Line Big Data",
     xAxis: {
-        type: 'category',
         tick: {
             stepInterval: 300,
         },
-        // label: {
-        //     step: 300
-        // }
+        minPadding: 0,
+        maxPadding: 0
     },
     yAxis: {
         minValue: 0,
-        maxValue: 100,
+        strictMax: 100
     },
     series: {
         type: 'line',

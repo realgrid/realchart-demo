@@ -1385,12 +1385,13 @@ export class PathElement extends RcElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    setPath(path: Path): void {
+    setPath(path: Path): PathElement {
         const p = isString(path) ? path : path.join(' ');
 
         if (p !== this._path) {
             this.setAttr('d', this._path = p);
         }
+        return this;
     }
 
     renderShape(shape: string, x: number, y: number, rd: number): void {

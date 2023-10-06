@@ -700,6 +700,38 @@
     stroke: none;
 }
 
+/** clock gauge */
+.rct-clock-gauge-face {
+    fill: white;
+    stroke: none;
+}
+.rct-clock-gauge-rim {
+    fill: #eee;
+    stroke: gray;
+}
+.rct-clock-tick {
+    stroke: #333;
+    stroke-width: 2px;
+}
+.rct-clock-minor-tick {
+    stroke: #555;
+    stroke-width: 1px;
+}
+.rct-clock-gauge-pin {
+    fill: white;
+    stroke: #333;
+    stroke-width: 3px;
+}
+.rct-clock-gauge-hour {
+    fill: #333;
+}
+.rct-clock-gauge-minute {
+    fill: #333;
+}
+.rct-clock-gauge-second {
+    fill: #c00;
+}
+
 /** tooltip */
 .rct-tooltip {
     pointer-events: none;
