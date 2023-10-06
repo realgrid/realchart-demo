@@ -21,7 +21,6 @@ web/realchart/lib/realchart*.*
 !web/realchart/lib/realchart-lic.js
 /test-results/
 
-www
 test-results
 playwright-report
 .playwright
