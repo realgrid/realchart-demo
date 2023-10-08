@@ -280,6 +280,8 @@ export abstract class ValueGauge extends Gauge {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    protected _runValue: number;
+
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -316,6 +318,11 @@ export abstract class ValueGauge extends Gauge {
             this.value = values;
             this._changed();
         }
+    }
+
+    getLabel(label: GaugeLabel, value: number): string {
+        this._runValue = value;
+        return label.text || (label.prefix || '') + value + (label.suffix || '');
     }
 
     //-------------------------------------------------------------------------
@@ -450,7 +457,6 @@ export abstract class CircularGauge extends ValueGauge {
     private _radiusDim: IPercentSize;
     private _innerDim: IPercentSize;
     private _valueDim: IPercentSize;
-    private _runValue: number;
     _startRad: number;
     _handRad: number;
     _sweepRad: number;
@@ -566,11 +572,6 @@ export abstract class CircularGauge extends ValueGauge {
         const value = this._valueDim ? calcPercent(this._valueDim, radius) : radius;
 
         return { radius, inner, value };
-    }
-
-    getLabel(value: number): string {
-        this._runValue = value;
-        return this.label.text || (this.label.prefix || '') + value + (this.label.suffix || '');
     }
 
     getParam(param: string): any {

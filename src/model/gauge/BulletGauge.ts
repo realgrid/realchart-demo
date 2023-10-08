@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { IPercentSize, RtPercentSize, parsePercentSize } from "../../common/Types";
+import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
 import { GaugeLabel, GuageScale, IGaugeValueRange, ValueGauge } from "../Gauge";
@@ -125,8 +125,17 @@ export class BulletActualBar extends ChartItem {
 export class BulletGaugeLabel extends GaugeLabel {
 
     //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _width: RtPercentSize;
+    private _height: RtPercentSize;
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _widthDim: IPercentSize;
+    private _heightDim: IPercentSize;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -138,6 +147,57 @@ export class BulletGaugeLabel extends GaugeLabel {
     // properties
     //-------------------------------------------------------------------------
     position: 'left' | 'right' | 'top' | 'bottom' = 'left';
+    /**
+     * 값을 지정하지 않으면,
+     * position이 'left', 'right'일 때 기본값은 '30%'이다.
+     */
+    get width(): RtPercentSize {
+        return this._width;
+    }
+    set width(value: RtPercentSize) {
+        if (value !== this._width) {
+            this._width = value;
+            this._widthDim = parsePercentSize(value, true);
+        }
+    }
+    /**
+     * 값을 지정하지 않으면,
+     * position이 'top', 'bottom'일 때 기본값은 '30%'이다.
+     */
+    get height(): RtPercentSize {
+        return this._height;
+    }
+    set height(value: RtPercentSize) {
+        if (value !== this._height) {
+            this._height = value;
+            this._heightDim = parsePercentSize(value, true);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getWidth(domain: number): number {
+        let w = calcPercent(this._widthDim, domain);
+
+        if (isNaN(w)) {
+            if (this.position === 'left' || this.position === 'right') {
+                w = domain * 0.3;
+            }
+        }
+        return w;
+    }
+
+    getHeight(domain: number): number {
+        let h = calcPercent(this._heightDim, domain);
+
+        if (isNaN(h)) {
+            if (this.position === 'top' || this.position === 'bottom') {
+                h = domain * 0.3;
+            }
+        }
+        return h;
+    }
 }
 
 /**
@@ -167,6 +227,10 @@ export class BulletGauge extends ValueGauge {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * true면 반대 방향으로 표시한다.
+     */
+    reversed = false;
     /**
      * 밴드.
      * 

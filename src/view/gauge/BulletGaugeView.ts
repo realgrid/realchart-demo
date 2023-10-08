@@ -6,7 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isNumber, pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
+import { NumberFormatter } from "../../common/NumberFormatter";
 import { LayerElement, PathElement } from "../../common/RcControl";
 import { TextElement } from "../../common/impl/TextElement";
 import { BulletGauge } from "../../model/gauge/BulletGauge";
@@ -24,8 +26,13 @@ export class BulletGaugeView extends ValueGaugeView<BulletGauge> {
     private _barContainer: LayerElement;
     private _barViews: ElementPool<PathElement>;
     private _labelView: TextElement;
-    getValueOf = (target: any, param: string): any => {
-        return;
+    valueOf = (target: any, param: string, format: string): any => {
+        const v = target.getParam(param);
+
+        if (isNumber(v)) {
+            return NumberFormatter.getFormatter(format || target.label.numberFormat).toStr(v);
+        }
+        return v;
     }
 
     //-------------------------------------------------------------------------
@@ -56,18 +63,33 @@ export class BulletGaugeView extends ValueGaugeView<BulletGauge> {
     protected _renderGauge(width: number, height: number): void {
         const m = this.model;
 
-        // label
-        if (this._labelView.setVisible(m.label.visible)) {
-            // m.label.setText(m.getLabel(m.label.animatable ? value : m.value)).buildSvg(this._textView, m, this.valueOf);
-            
-            const r = this._labelView.getBBounds();
-            // const off = m.label.getOffset(this.width, this.height);
-
-            // this._labelView.translate(center.x + off.x, center.y - r.height / 2 + off.y);
-        }
+        this._renderValue();
     }
 
     _renderValue(): void {
         const m = this.model;
+        const value = pickNum(this._runValue, m.value);
+
+        // label
+        if (this._labelView.setVisible(m.label.visible)) {
+            m.label.setText(m.getLabel(m.label, m.label.animatable ? value : m.value)).buildSvg(this._labelView, m, this.valueOf);
+            
+            const r = this._labelView.getBBounds();
+            let x = 0;
+            let y = 0;
+
+            switch (m.label.position) {
+                case 'top':
+                    break;
+                case 'bottom':
+                    break;
+                case 'right':
+                    break;
+                default:
+                    break;
+            }
+
+            this._labelView.translate(x, y);
+        }
     }
 }
