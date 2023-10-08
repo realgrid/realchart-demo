@@ -36,23 +36,15 @@ export abstract class Gauge extends Widget {
     //-------------------------------------------------------------------------
     private _widthDim: IPercentSize;
     private _heightdim: IPercentSize;
+    private _leftDim: IPercentSize;
+    private _rightDim: IPercentSize;
+    private _topDim: IPercentSize;
+    private _bottomDim: IPercentSize;
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     abstract _type(): string;
-
-    /**
-     * @override
-     * @config
-     */
-    left = void 0;
-    /**
-     * @override
-     * @config
-     */
-    top = void 0;
-
     /**
      * 게이지 이름.
      * 동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다. 
@@ -60,6 +52,30 @@ export abstract class Gauge extends Widget {
      * @config
      */
     name: string;
+    /**
+     * plot 영역의 왼쪽 모서리와 widget 사이의 간격.
+     * 
+     * @config
+     */
+    left: RtPercentSize;
+    /**
+     * plot 영역의 오른쪽 모서리와 widget 사이의 간격.
+     * 
+     * @config
+     */
+    right: RtPercentSize;
+    /**
+     * plot 영역의 위쪽 모서리와 widget 사이의 간격.
+     * 
+     * @config
+     */
+    top: RtPercentSize;
+    /**
+     * plot 영역의 아래쪽 모서리와 widget 사이의 간격.
+     * 
+     * @config
+     */
+    bottom: RtPercentSize;
     /**
      * 게이지 너비.
      * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
@@ -91,6 +107,22 @@ export abstract class Gauge extends Widget {
         };
     }
 
+    getLeft(doamin: number): number {
+        return calcPercent(this._leftDim, doamin);
+    }
+
+    getRight(doamin: number): number {
+        return calcPercent(this._rightDim, doamin);
+    }
+
+    getTop(doamin: number): number {
+        return calcPercent(this._topDim, doamin);
+    }
+
+    getBottom(doamin: number): number {
+        return calcPercent(this._bottomDim, doamin);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -101,6 +133,10 @@ export abstract class Gauge extends Widget {
 
         this._widthDim = parsePercentSize(this.width, true) || sz;
         this._heightdim = parsePercentSize(this.height, true) || sz;
+        this._leftDim = parsePercentSize(this.left, true);
+        this._rightDim = parsePercentSize(this.right, true);
+        this._topDim = parsePercentSize(this.top, true);
+        this._bottomDim = parsePercentSize(this.bottom, true);
     }
 }
 
@@ -265,6 +301,12 @@ export abstract class ValueGauge extends Gauge {
      * @config
      */
     value = 0;
+    /**
+     * {@link value} 변화를 애니메이션으로 표현한다.
+     * 
+     * @config
+     */
+    animatable = true;
 
     //-------------------------------------------------------------------------
     // methods
@@ -428,12 +470,6 @@ export abstract class CircularGauge extends ValueGauge {
     minValue = 0;
     maxValue = 100;
 
-    /**
-     * {@link value} 변화를 애니메이션으로 표현한다.
-     * 
-     * @config
-     */
-    animatable = true;
     /**
      * Animation duration.
      * 

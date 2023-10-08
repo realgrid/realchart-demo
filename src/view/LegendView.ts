@@ -14,7 +14,7 @@ import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Legend, LegendItem, LegendItemsAlign, LegendLayout } from "../model/Legend";
+import { Legend, LegendItem, LegendItemsAlign, LegendLayout, LegendLocation } from "../model/Legend";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
 /**
@@ -122,7 +122,7 @@ export class LegendView extends BoundableElement<Legend> {
         const vertical = this._vertical = model.getLayout() === LegendLayout.VERTICAL;
         
         this._ipr = pickNum(model.itemsPerLine, Number.MAX_SAFE_INTEGER);
-        this._gap = pickNum(model.gap, 0);
+        this._gap = model.location !== LegendLocation.PLOT ? pickNum(model.gap, 0) : 0;
 
         if (vertical) {
             hintHeight = model.getMaxHeight(hintHeight);

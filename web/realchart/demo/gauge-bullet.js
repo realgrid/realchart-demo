@@ -17,6 +17,7 @@ const config = {
         width: '50%',
         height: 80,
         label: {
+            text: "RealChart Bullet<br>ver 1.0"
             // position: 'bottom',
         }
     }

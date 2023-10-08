@@ -12,7 +12,7 @@ const config = {
     },
     title: "Clock Guage",
     gauge: {
-        time: "2000-01-01T11:11:11",
+        // time: "2000-01-01T11:11:11",
         type: 'clock',
         name: 'clock1',
         secondHand: {},
