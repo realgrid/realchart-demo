@@ -750,6 +750,26 @@
     fill: var(--rct-clock-gauge-label-fill);
 }
 
+/** linear scale */
+.rct-linear-scale-line {
+    stroke: #333;
+}
+.rct-linear-scale-ticks {
+    stroke: #333;
+}
+.rct-linear-scale-tick-labels {
+    font-size: 0.9em;
+    fill: #333;
+}
+
+/** linear gauge */
+.rct-linear-gauge-background {
+    fill: #eee;
+}
+.rct-linear-gauge-value {
+    fill: #333;
+}
+
 /** bullet gauge */
 .rct-bullet-gauge-background {
     fill: #eee;

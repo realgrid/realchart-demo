@@ -96,6 +96,12 @@ export abstract class Gauge extends Widget {
      * @config
      */
     size: RtPercentSize = '100%';
+    /**
+     * Animation duration.
+     * 
+     * @config
+     */
+    duration = 500;
 
     //-------------------------------------------------------------------------
     // methods
@@ -535,6 +541,131 @@ export abstract class GaugeLabel extends FormattableText {
     //-------------------------------------------------------------------------
 }
 
+export class LinearGaugeScale extends GaugeScale {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _vertical: boolean;
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * true면 반대쪽에 표시한다.
+     * 
+     * @config
+     */
+    opposite = false;
+    /**
+     * 게이지 본체와의 간격.
+     */
+    gap = 8;
+}
+
+export class LinearGaugeLabel extends GaugeLabel {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _width: RtPercentSize;
+    private _height: RtPercentSize;
+    private _gap: RtPercentSize;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _widthDim: IPercentSize;
+    private _heightDim: IPercentSize;
+    private _gapDim: IPercentSize;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart);
+
+        this.gap = '5%';
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 값을 지정하지 않으면 게이지 표시 방향에 따라 자동으로 위치를 결정한다.
+     */
+    position: undefined | 'left' | 'right' | 'top' | 'bottom';
+    /**
+     * 값을 지정하지 않으면,
+     * position이 'left', 'right'일 때 기본값은 '25%'이다.
+     */
+    get width(): RtPercentSize {
+        return this._width;
+    }
+    set width(value: RtPercentSize) {
+        if (value !== this._width) {
+            this._width = value;
+            this._widthDim = parsePercentSize(value, true);
+        }
+    }
+    /**
+     * 값을 지정하지 않으면,
+     * position이 'top', 'bottom'일 때 기본값은 '25%'이다.
+     */
+    get height(): RtPercentSize {
+        return this._height;
+    }
+    set height(value: RtPercentSize) {
+        if (value !== this._height) {
+            this._height = value;
+            this._heightDim = parsePercentSize(value, true);
+        }
+    }
+    /**
+     * label과 본체 사이의 간격.
+     * 
+     * @config
+     */
+    get gap(): RtPercentSize {
+        return this._gap;
+    }
+    set gap(value: RtPercentSize) {
+        if (value !== this._gap) {
+            this._gap = value;
+            this._gapDim = parsePercentSize(value, true);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getWidth(vertical: boolean,  domain: number): number {
+        let w = calcPercent(this._widthDim, domain);
+
+        if (isNaN(w)) {
+            if (!vertical) {
+                w = domain * 0.25;
+            }
+        }
+        return w;
+    }
+
+    getHeight(vertical: boolean, domain: number): number {
+        let h = calcPercent(this._heightDim, domain);
+
+        if (isNaN(h)) {
+            if (vertical) {
+                h = domain * 0.25;
+            }
+        }
+        return h;
+    }
+
+    getGap(domain: number): number {
+        return calcPercent(this._gapDim, domain, 0);
+    }
+}
+
 export class CircularGaugeLabel extends GaugeLabel {
 
     //-------------------------------------------------------------------------
@@ -630,12 +761,6 @@ export abstract class CircularGauge extends ValueGauge {
     //-------------------------------------------------------------------------
     maxValue = 100;
 
-    /**
-     * Animation duration.
-     * 
-     * @config
-     */
-    duration = 500;
     /**
      * 게이지 중심 수평 위치.
      * 픽셀 단위의 크기나, plot 영역 전체 너비에 대한 상대적 크기로 지정할 수 있다.

@@ -10,7 +10,6 @@ import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { IPoint } from "../../common/Point";
-import { RcAnimation } from "../../common/RcAnimation";
 import { LayerElement, PathElement } from "../../common/RcControl";
 import { RAD_DEG } from "../../common/Types";
 import { SectorElement } from "../../common/impl/SectorElement";
