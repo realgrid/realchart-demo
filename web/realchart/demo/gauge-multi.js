@@ -8,13 +8,13 @@ const config = {
             innerRadius: '93%',
             valueRim: {
                 ranges: [{
-                    endValue: 25,
+                    toValue: 25,
                     color: 'green'
                 }, {
-                    endValue: 50,
+                    toValue: 50,
                     color: '#0000cc'
                 }, {
-                    endValue: 75,
+                    toValue: 75,
                     color: '#ffaa00'
                 }, {
                     color: 'red'

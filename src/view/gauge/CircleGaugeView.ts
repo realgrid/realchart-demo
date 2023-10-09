@@ -194,7 +194,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
         // label
         if (this._textView.setVisible(m.label.visible)) {
-            m.label.setText(m.getLabel(m.label, m.label.animatable ? value : m.value)).buildSvg(this._textView, m, this.valueOf);
+            m.label.setText(m.getLabel(m.label, m.label.animatable ? value : m.value)).buildSvg(this._textView, NaN, m, this.valueOf);
             
             const r = this._textView.getBBounds();
             const off = m.label.getOffset(this.width, this.height);
@@ -219,7 +219,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         let start = 0;
 
         this._segments.forEach((v, i) => {
-            const angle = (ranges[i].endValue - ranges[i].startValue) * sweep / sum;
+            const angle = (ranges[i].toValue - ranges[i].fromValue) * sweep / sum;
 
             v.setSector({
                 cx,

@@ -210,7 +210,6 @@ export abstract class FormattableText extends ChartText {
     //-------------------------------------------------------------------------
     private _numSymbols: string[];
     private _numberFormatter: NumberFormatter;
-    private _lineHeight = 1;
     protected _richTextImpl: SvgRichText;
 
     //-------------------------------------------------------------------------
@@ -271,18 +270,20 @@ export abstract class FormattableText extends ChartText {
         }
     }
 
-    /**
-     * point label:
-     * position으로 지정된 위치로 부터 떨어진 간격.
-     * center나 middle일 때는 무시.
-     * 파이 시리즈 처럼 label 연결선이 있을 때는 연결선과의 간격.
-     * 
-     * axis label:
-     * 축 line과의 간격.
-     * 
-     * @config
-     */
-    offset = 2;
+    // /**
+    //  * point label:
+    //  * position으로 지정된 위치로 부터 떨어진 간격.
+    //  * center나 middle일 때는 무시.
+    //  * 파이 시리즈 처럼 label 연결선이 있을 때는 연결선과의 간격.
+    //  * 
+    //  * axis label:
+    //  * 축 line과의 간격.
+    //  * 
+    //  * @config
+    //  */
+    // offset = 2;
+
+    lineHeight: number;
 
     /**
      * rich text format을 지정할 수 있다.
@@ -307,6 +308,7 @@ export abstract class FormattableText extends ChartText {
                 this._richTextImpl = null;
             }
         }
+        !isNaN(this.lineHeight) && this._richTextImpl && (this._richTextImpl.lineHeight = this.lineHeight);
         return this;
     }
 
@@ -323,8 +325,8 @@ export abstract class FormattableText extends ChartText {
     //     }
     // }
 
-    buildSvg(view: TextElement, target: any, callback: RichTextParamCallback): void {
-        this._richTextImpl.build(view, target, callback);
+    buildSvg(view: TextElement, maxWidth: number, target: any, callback: RichTextParamCallback): void {
+        this._richTextImpl.build(view, maxWidth, target, callback);
     }
 
     // setLineHeight(v: number): void {

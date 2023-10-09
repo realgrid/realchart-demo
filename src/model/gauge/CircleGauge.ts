@@ -67,7 +67,7 @@ export abstract class CircleGaugeRim extends ChartItem {
 
         if (ranges) {
             for (const r of ranges) {
-                if (value >= r.startValue && value < r.endValue) {
+                if (value >= r.fromValue && value < r.toValue) {
                     return r;
                 }
             }

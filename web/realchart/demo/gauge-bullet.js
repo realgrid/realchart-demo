@@ -14,8 +14,21 @@ const config = {
     gauge: {
         type: 'bullet',
         name: 'bullet1',
-        width: '50%',
-        height: 80,
+        width: '60%',
+        height: 65,
+        maxValue: 100,
+        value: 81,
+        targetValue: 90,
+        scale: {
+            line: true
+        },
+        ranges: [{
+            toValue: 50,
+            color: '#777'
+        }, {
+            toValue: 70,
+            color: '#aaa'
+        }],
         label: {
             text: "RealChart Bullet<br>ver 1.0"
             // position: 'bottom',

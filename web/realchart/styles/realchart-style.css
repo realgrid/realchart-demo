@@ -751,8 +751,27 @@
 }
 
 /** bullet gauge */
-.rct-bullet-gaute-label {
+.rct-bullet-gauge-background {
+    fill: #eee;
+}
+.rct-bullet-gauge-value {
+    fill: #333;
+}
+.rct-bullet-gauge-target {
+    fill: #338;
+}
+.rct-bullet-gauge-label {
     font-size: 1em;
+    fill: #333;
+}
+.rct-bullet-gauge-scale-line {
+    stroke: #333;
+}
+.rct-bullet-gauge-scale-ticks {
+    stroke: #333;
+}
+.rct-bullet-gauge-scale-tick-labels {
+    font-size: 0.9em;
     fill: #333;
 }
 

@@ -67,7 +67,7 @@ export class TooltipView extends RcElement {
 
         // text
         this._richText.setFormat(model.text);
-        this._richText.build(tv, point, this._textCallback);
+        this._richText.build(tv, NaN, point, this._textCallback);
 
         // background
         const r = tv.getBBounds();

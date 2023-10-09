@@ -9,14 +9,14 @@
 import { isArray, isObject, isString, pickNum, pickProp } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { ISize } from "../common/Size";
-import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
+import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, calcPercent, fixnum, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Widget } from "./Widget";
 
 export interface IGaugeValueRange {
-    startValue?: number;
-    endValue?: number;
+    fromValue?: number;
+    toValue?: number;
     color: string;
 }
 
@@ -262,17 +262,17 @@ export abstract class ValueGauge extends Gauge {
             source.forEach(src => {
                 if (isObject(src) && isString(src.color)) {
                     const range: IGaugeValueRange = {
-                        startValue: pickNum(src.startValue, prev ? prev.endValue : min),
-                        endValue: pickNum(src.endValue, max),
+                        fromValue: pickNum(src.fromValue, prev ? prev.toValue : min),
+                        toValue: pickNum(src.toValue, max),
                         color: src.color
                     };
-                    if (range.startValue < range.endValue) {
+                    if (range.fromValue < range.toValue) {
                         ranges.push(range);
                         prev = range;
                     }
                 }
             });
-            ranges = ranges.sort((r1, r2) => r1.startValue - r2.startValue);
+            ranges = ranges.sort((r1, r2) => r1.fromValue - r2.fromValue);
         }
         return ranges;
     }
@@ -290,7 +290,7 @@ export abstract class ValueGauge extends Gauge {
      * 
      * @config
      */
-    minValue: number;
+    minValue = 0;
     /**
      * 최대값.
      * 
@@ -330,24 +330,179 @@ export abstract class ValueGauge extends Gauge {
     //-------------------------------------------------------------------------
 }
 
-/**
- * Gauge scale.
- */
-export class GuageScale extends ChartItem {
+export class GuageScaleTick extends ChartItem {
 
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(public gauge: Gauge) {
-        super(gauge.chart);
+    constructor(public scale: GaugeScale) {
+        super(scale.chart);
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    length = 7;
+}
+
+/**
+ * Gauge scale.
+ */
+export class GaugeScale extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _step: number;
+    _steps: number[];
+    _min: number;
+    _max: number;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public gauge: ValueGauge) {
+        super(gauge.chart);
+
+        this.line = new ChartItem(gauge.chart, false);
+        this.tick = new GuageScaleTick(this);
+        this.tickLabel = new ChartItem(gauge.chart);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    line: ChartItem;
+    tick: GuageScaleTick;
+    tickLabel: ChartItem;
+
+    steps: number[];
+    stepCount: number;
+    stepInterval: number;
+    stepPixels = 48;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    buildSteps(length: number, value: number, target: number): number[] {
+        const {min, max} = this._adjustMinMax(Math.min(value, target), Math.max(value, target));
+        let pts: number[];
+
+        if (Array.isArray(this.steps)) {
+            pts = this.steps.slice(0);
+        } else if (this.stepCount > 0) {
+            pts = this._getStepsByCount(this.stepCount, min, max);
+        } else if (this.stepInterval > 0) {
+            pts = this._getStepsByInterval(this.stepInterval, min, max);
+        } else if (this.stepPixels > 0) {
+            pts = this._getStepsByPixels(length, this.stepPixels, min, max);
+        } else {
+            pts = [min, max];
+        }
+
+        return this._steps = pts;
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected _adjustMinMax(min: number, max: number): { min: number, max: number } {
+        const g = this.gauge;
+
+        if (!isNaN(g.minValue)) {
+            min = g.minValue;
+        }
+        if (!isNaN(g.maxValue)) {
+            max = g.maxValue;
+        }
+
+        this._min = min;
+        this._max = max;
+
+        return { min, max };
+    }
+
+    protected _getStepsByCount(count: number, min: number, max: number): number[] {
+        const len = max - min;
+        let step = len / (count - 1);
+        const scale = Math.pow(10, Math.floor(Math.log10(step)));
+        const steps: number[] = [];
+
+        step = this._step = Math.ceil(step / scale) * scale;
+
+        if (min > Math.floor(min / scale) * scale) {
+            min = Math.floor(min / scale) * scale;
+        } else if (min < Math.ceil(min / scale) * scale) {
+            min = Math.ceil(min / scale) * scale;
+        }
+
+        steps.push(min);
+        for (let i = 1; i < count; i++) {
+            steps.push(fixnum(steps[i - 1] + step));
+        }
+        return steps;
+    }
+
+    protected _getStepsByInterval(interval: number, min: number, max: number): number[] {
+        const steps: number[] = [];
+        let v: number;
+
+        steps.push(v = min);
+        while (v < max) {
+            steps.push(v += interval);
+        }
+        this._step = interval;
+        return steps;
+    }
+
+    protected _getStepMultiples(step: number): number[] {
+        return [1, 2, 2.5, 5, 10];
+    }
+
+    protected _getStepsByPixels(length: number, pixels: number, min: number, max: number): number[] {
+        const steps: number[] = [];
+        const len = max - min;
+
+        if (len === 0) {
+            return steps;
+        }
+
+        let count = Math.floor(length / pixels) + 1;
+        let step = len / (count - 1);
+        const scale = Math.pow(10, Math.floor(Math.log10(step)));
+        const multiples = this._getStepMultiples(scale);
+        let i = 0;
+        let v: number;
+
+        step = step / scale;
+        if (multiples) {
+            // 위쪽 배수에 맞춘다.
+            if (step > multiples[i]) {
+                for (; i < multiples.length - 1; i++) {
+                    if (step > multiples[i] && step < multiples[i + 1]) {
+                        step = multiples[++i];
+                        break;
+                    }
+                }
+            } else {
+                step = multiples[i];
+            }
+        }
+        step *= scale;
+
+        if (min > Math.floor(min / step) * step) {
+            min = Math.floor(min / step) * step;
+        } else if (min < Math.ceil(min / step) * step) {
+            min = Math.ceil(min / step) * step;
+        }
+
+        this._step = step;
+        steps.push(fixnum(v = min));
+        while (v < max) {
+            steps.push(fixnum(v += step));
+        }
+        return steps;
+    }
 }
 
 export abstract class GaugeLabel extends FormattableText {
@@ -473,7 +628,6 @@ export abstract class CircularGauge extends ValueGauge {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    minValue = 0;
     maxValue = 100;
 
     /**

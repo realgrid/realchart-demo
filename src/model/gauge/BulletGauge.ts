@@ -9,7 +9,7 @@
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { GaugeLabel, GuageScale, IGaugeValueRange, ValueGauge } from "../Gauge";
+import { GaugeLabel, GaugeScale, IGaugeValueRange, ValueGauge } from "../Gauge";
 
 export class BulletGaugeBand extends ChartItem {
 
@@ -146,10 +146,13 @@ export class BulletGaugeLabel extends GaugeLabel {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    position: 'left' | 'right' | 'top' | 'bottom' = 'left';
+    /**
+     * 값을 지정하지 않으면 게이지 표시 방향에 따라 자동으로 위치를 결정한다.
+     */
+    position: undefined | 'left' | 'right' | 'top' | 'bottom';
     /**
      * 값을 지정하지 않으면,
-     * position이 'left', 'right'일 때 기본값은 '30%'이다.
+     * position이 'left', 'right'일 때 기본값은 '25%'이다.
      */
     get width(): RtPercentSize {
         return this._width;
@@ -162,7 +165,7 @@ export class BulletGaugeLabel extends GaugeLabel {
     }
     /**
      * 값을 지정하지 않으면,
-     * position이 'top', 'bottom'일 때 기본값은 '30%'이다.
+     * position이 'top', 'bottom'일 때 기본값은 '25%'이다.
      */
     get height(): RtPercentSize {
         return this._height;
@@ -177,27 +180,49 @@ export class BulletGaugeLabel extends GaugeLabel {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getWidth(domain: number): number {
+    getWidth(vertical: boolean,  domain: number): number {
         let w = calcPercent(this._widthDim, domain);
 
         if (isNaN(w)) {
-            if (this.position === 'left' || this.position === 'right') {
-                w = domain * 0.3;
+            if (!vertical) {
+                w = domain * 0.25;
             }
         }
         return w;
     }
 
-    getHeight(domain: number): number {
+    getHeight(vertical: boolean, domain: number): number {
         let h = calcPercent(this._heightDim, domain);
 
         if (isNaN(h)) {
-            if (this.position === 'top' || this.position === 'bottom') {
-                h = domain * 0.3;
+            if (vertical) {
+                h = domain * 0.25;
             }
         }
         return h;
     }
+}
+
+export class BulletGaugeScale extends GaugeScale {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _vertical: boolean;
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * true면 반대쪽에 표시한다.
+     * 
+     * @config
+     */
+    opposite = false;
+    /**
+     * 게이지 본체와의 간격.
+     */
+    gap = 8;
 }
 
 /**
@@ -213,22 +238,38 @@ export class BulletGauge extends ValueGauge {
     // consts
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
-    // fields
+    // property fields
     //-------------------------------------------------------------------------
+    private _gap: RtPercentSize;
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _gapDim: IPercentSize;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
         super(chart);
+
+        this.gap = '5%';
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     /**
+     * true면 수직 방향으로 표시한다.
+     * 값을 지정하지 않으면 게이지 전체 크기의 수평 수직을 비교해서 표시 방향을 자동으로 설정한다.
+     * 
+     * @config
+     */
+    vertical: boolean;
+    /**
      * true면 반대 방향으로 표시한다.
+     * 
+     * @config
      */
     reversed = false;
     /**
@@ -254,7 +295,7 @@ export class BulletGauge extends ValueGauge {
      * 
      * @config
      */
-    scale = new GuageScale(this);
+    scale = new BulletGaugeScale(this);
     /**
      * label.
      * 
@@ -262,15 +303,44 @@ export class BulletGauge extends ValueGauge {
      */
     label = new BulletGaugeLabel(this);
     /**
+     * label과 본체 사이의 간격.
+     * 
+     * @config
+     */
+    get gap(): RtPercentSize {
+        return this._gap;
+    }
+    set gap(value: RtPercentSize) {
+        if (value !== this._gap) {
+            this._gap = value;
+            this._gapDim = parsePercentSize(value, true);
+        }
+    }
+    /**
      * 목표 값.
      * 
      * @config
      */
     targetValue: number;
+    /**
+     * 값 범위 목록.
+     * 범위별로 다른 스타일을 적용할 수 있다.
+     * 
+     * @config
+     */
+    ranges: IGaugeValueRange[];
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getRanges(min: number, max: number): IGaugeValueRange[] {
+        return ValueGauge.buildRanges(this.ranges, min, max);
+    }
+
+    getGap(domain: number): number {
+        return calcPercent(this._gapDim, domain, 0);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
