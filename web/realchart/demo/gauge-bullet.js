@@ -55,10 +55,18 @@ function setActions(container) {
     //     config.gauge.active = false;
     //     chart.load(config);
     // });
+    createCheckBox(container, 'reversed', function (e) {
+        config.gauge.reversed = _getChecked(e);
+        chart.load(config);
+    }, false);
     createListBox(container, "label.position", ['left', 'right', 'top', 'bottom'], function (e) {
         config.gauge.label.position = _getValue(e);
         chart.load(config);
     }, 'left');
+    createCheckBox(container, 'scale.opposite', function (e) {
+        config.gauge.scale.opposite = _getChecked(e);
+        chart.load(config);
+    }, false);
 }
 
 function init() {

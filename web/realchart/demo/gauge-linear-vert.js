@@ -10,13 +10,15 @@ const config = {
             // align: 'center'
         }
     },
-    title: "Linear Guages",
+    title: "Linear Guages Vertical",
     gauge: [{
         type: 'linear',
         name: 'linear1',
-        width: '60%',
-        height: 65,
+        width: 65,
+        height: '70%',
         top: 100,
+        left: 50,
+        vertical: true,
         maxValue: 100,
         value: 81,
         scale: {
@@ -30,15 +32,16 @@ const config = {
             color: '#aaa'
         }],
         label: {
-            text: "RealChart Linear<br>ver 1.0"
-            // position: 'bottom',
+            text: "RealChart<br>Linear<br>ver 1.0"
         }
     }, {
         type: 'linear',
         name: 'linear2',
-        width: '50%',
-        height: 100,
-        top: 250,
+        width: 200,
+        height: '70%',
+        top: 100,
+        left: 200,
+        vertical: true,
         maxValue: 100,
         value: 81,
         scale: {
@@ -52,8 +55,8 @@ const config = {
             color: '#aaa'
         }],
         label: {
-            position: 'top',
-            text: "RealChart Linear ver 1.0"
+            position: 'left',
+            text: "RealChart Linear<br> ver 1.0"
         }
     }]
 }
@@ -77,10 +80,6 @@ function setActions(container) {
     //     config.gauge.active = false;
     //     chart.load(config);
     // });
-    createCheckBox(container, 'reversed', function (e) {
-        config.gauge[0].reversed = _getChecked(e);
-        chart.load(config);
-    }, false);
     createListBox(container, "label.position", ['', 'left', 'right', 'top', 'bottom'], function (e) {
         config.gauge[0].label.position = _getValue(e);
         chart.load(config);
@@ -96,7 +95,7 @@ function setActions(container) {
     createListBox(container, "label2.position", ['left', 'right', 'top', 'bottom'], function (e) {
         config.gauge[1].label.position = _getValue(e);
         chart.load(config);
-    }, 'top');
+    }, 'left');
     createCheckBox(container, 'scale2.opposite', function (e) {
         config.gauge[1].scale.opposite = _getChecked(e);
         chart.load(config);

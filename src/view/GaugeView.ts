@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isNumber, pickProp } from "../common/Common";
+import { isNumber, pickNum, pickProp } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { IPoint } from "../common/Point";
@@ -16,8 +16,9 @@ import { IRect, Rectangle } from "../common/Rectangle";
 import { ISize } from "../common/Size";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
-import { TextAnchor, TextElement } from "../common/impl/TextElement";
+import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { Gauge, LinearGaugeLabel, LinearGaugeScale, ValueGauge } from "../model/Gauge";
+import { LinearGauge } from "../model/gauge/LinearGauge";
 import { ChartElement } from "./ChartElement";
 
 export abstract class GaugeView<T extends Gauge> extends ChartElement<T> {
@@ -201,29 +202,44 @@ export class LinearScaleView extends ChartElement<LinearGaugeScale> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: LinearGaugeScale, hintWidth: number, hintHeight: number, phase: number): ISize {
+        const reversed = model._reversed;
         const vertical = model._vertical;
         const steps = model._steps;
+        const nStep = steps.length;
         let width = vertical ? model.gap : hintWidth;
         let height = vertical ? hintHeight : model.gap;
 
         if (this._tickContainer.setVisible(model.tick.visible)) {
             this._tickContainer.internalSetStyleOrClass(model.tick.style);
-            this._ticks.prepare(steps.length);
+            this._ticks.prepare(nStep);
         }
-        height += model.tick.length;
+        
+        if (vertical) {
+            width += model.tick.length;
+        } else {
+            height += model.tick.length;
+        }
 
         if (this._labelContainer.setVisible(model.tickLabel.visible)) {
             this._labelContainer.internalSetStyleOrClass(model.tickLabel.style);
             this._labels.prepare(steps.length);
 
-            if (steps.length > 0) {
-                let h = 0;
-
-                this._labels.forEach((v, i) => {
-                    v.text = String(steps[i]);
-                    h = Math.max(v.getBBounds().height);
-                })
-                height += h;
+            if (nStep > 0) {
+                if (vertical) {
+                    let w = 0;
+                    this._labels.forEach((v, i) => {
+                        v.text = String(steps[reversed ? nStep - 1 - i : i]);
+                        w = Math.max(v.getBBounds().width);
+                    })
+                    width += w;
+                } else {
+                    let h = 0;
+                    this._labels.forEach((v, i) => {
+                        v.text = String(steps[reversed ? nStep - 1 - i : i]);
+                        h = Math.max(v.getBBounds().height);
+                    })
+                    height += h;
+                }
             }
         }
 
@@ -232,27 +248,36 @@ export class LinearScaleView extends ChartElement<LinearGaugeScale> {
 
     protected _doLayout(): void {
         const m = this.model;
+        m._vertical ? this.$_layoutVert(m, this.width, this.height) : this.$_layoutHorz(m, this.width, this.height);
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_layoutHorz(m: LinearGaugeScale, width: number, height: number): void {
+        const tick = m.tick;
         const steps = m._steps;
-        const w = this.width / (steps.length - 1);
-        let y = m.gap;
+        const w = width / (steps.length - 1);
+        const len = m.opposite ? -tick.length : tick.length;
+        let y = m.opposite ? height - m.gap : m.gap;
         let x = 0;
 
         // line
         if (this._line.setVisible(m.line.visible)) {
             this._line.internalSetStyleOrClass(m.line.style);
-            this._line.setHLineC(y, x, x + this.width);
+            this._line.setHLineC(y, x, x + width);
         }
 
         // ticks
-        if (this._tickContainer.setVisible(m.tick.visible)) {
+        if (this._tickContainer.setVisible(tick.visible)) {
             this._ticks.forEach((v, i) => {
-                v.setVLineC(x, y, y + m.tick.length);
+                v.setVLineC(x, y, y + len);
                 x += w;
             })
         }
-        y += m.tick.length;
 
         // labels
+        y = m.opposite ? 0 : y + len;
         x = 0;
         this._labels.forEach((v, i) => {
             v.anchor = i < steps.length - 1 ? TextAnchor.MIDDLE : TextAnchor.END;
@@ -260,9 +285,43 @@ export class LinearScaleView extends ChartElement<LinearGaugeScale> {
             x += w;
         });
     }
+
+    private $_layoutVert(m: LinearGaugeScale, width: number, height: number): void {
+        const tick = m.tick;
+        const steps = m._steps;
+        const h = this.height / (steps.length - 1);
+        const len = m.opposite ? tick.length : -tick.length;
+        let y = 0;
+        let x = m.opposite ? m.gap : width - m.gap;
+
+        // line
+        if (this._line.setVisible(m.line.visible)) {
+            this._line.internalSetStyleOrClass(m.line.style);
+            this._line.setVLineC(x, y, y + height);
+        }
+
+        // ticks
+        if (this._tickContainer.setVisible(tick.visible)) {
+            this._ticks.forEach((v, i) => {
+                v.setHLineC(y, x, x + len);
+                y += h;
+            })
+        }
+
+        // labels
+        const anchor = m.opposite ? TextAnchor.START : TextAnchor.END;
+        x = m.opposite ? x + len : width - m.gap + len;
+        y = 0;
+        this._labels.forEach((v, i) => {
+            v.anchor = anchor;
+            v.layout = i < steps.length - 1 ? TextLayout.MIDDLE : TextLayout.BOTTOM;
+            v.translate(x, y);
+            y += h;
+        });
+    }
 }
 
-export abstract class LineGaugeView<T extends ValueGauge> extends ValueGaugeView<T> {
+export abstract class LineGaugeView<T extends LinearGauge> extends ValueGaugeView<T> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -281,45 +340,142 @@ export abstract class LineGaugeView<T extends ValueGauge> extends ValueGaugeView
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _renderGauge(width: number, height: number): void {
+        const m = this.model;
+        const value = pickNum(this._runValue, m.value);
+
+        this._measureGauge(m, m.label, this.labelView(), value, m.vertical, width, height);
+        this._renderValue();
+    }
+
+    _renderValue(): void {
+        const m = this.model;
+        const label = m.label;
+        const scale = m.scale;
+        const scaleView = this.scaleView();
+        const labelView = this.labelView();
+        const value = pickNum(this._runValue, m.value);
+        const rBand = Object.assign({}, this._rBand);
+        const len = this._vertical ? rBand.height : rBand.width;
+        let x: number;
+        let y: number;
+
+        // scale
+        scale._vertical = this._vertical;
+        scale._reversed = m.reversed;
+        scale.buildSteps(len, value);
+
+        if (scaleView.setVisible(scale.visible)) {
+            const sz = scaleView.measure(this.doc, scale, rBand.width, rBand.height, 1);
+
+            if (this._vertical) {
+                x = 0;
+                y = rBand.y;
+                rBand.width = Math.max(0, rBand.width - sz.width);
+
+                if (scale.opposite) {
+                    x = rBand.x + rBand.width;
+                } else {
+                    if (label._runVert) {
+                        rBand.x += sz.width;
+                    } else {
+                        x = rBand.x;
+                        rBand.x += sz.width;
+                    }
+                }
+            } else {
+                x = rBand.x;
+                rBand.height = Math.max(0, rBand.height - sz.height);
+
+                if (scale.opposite) {
+                    if (label._runVert) {
+                        y = rBand.y;
+                        rBand.y += sz.height;
+                    } else {
+                        this._rLabel.y = rBand.y += sz.height;
+                        y = rBand.y - sz.height;
+                    }
+                } else {
+                    y = rBand.y + rBand.height;
+                }
+            }
+            scaleView.resizeByMeasured().layout().translate(x, y);
+        }
+
+        // band background
+        this.background().setRect(rBand);
+
+        // band
+        this.itemContainer().setRect(rBand);
+        this._renderBand(m, rBand, value);
+
+        // label
+        this._rLabel.height = this.itemContainer().height;
+        this._renderLabel(m, label, labelView, value);
+
+        // 아래쪽으로 넘치지 않게 한다.
+        if (!this._vertical && (label._runPos === 'left' || label._runPos === 'right') && scale.visible && scale.opposite) {
+            const r = labelView.getBBounds();
+            if (labelView.ty + r.height > this.height) {
+                labelView.translateY(Math.max(0, this.height - r.height));
+            }
+        }
+    }
+
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    protected _measureGauge(m: ValueGauge, label: LinearGaugeLabel, vertical: boolean, width: number, height: number): void {
-        const r = this._rBand = Rectangle.create(0, 0, width, height);
+    protected abstract labelView(): TextElement;
+    protected abstract scaleView(): LinearScaleView;
+    protected abstract background(): RectElement;
+    protected abstract itemContainer(): LayerElement;
+    protected abstract _renderBand(m: ValueGauge, r: IRect, value: number): void;
+
+    protected _measureGauge(m: ValueGauge, label: LinearGaugeLabel, labelView: TextElement, value: number, vertical: boolean, width: number, height: number): void {
+        const rBand = this._rBand = Rectangle.create(0, 0, width, height);
 
         this._vertical = pickProp(vertical, height > width);
 
         if (label.visible) {
-            const pos = pickProp(label.position, this._vertical ? 'top' : 'left');
-            const vert = pos === 'top' || pos === 'bottom';
-            const w = vert ? width : label.getWidth(vert, width);
-            const h = vert ? label.getHeight(vert, height) : height;
-            const gap = label.getGap(vert ? height : width);
-            
-            this._rLabel = Rectangle.create(0, 0, w, h);
+            const pos = label._runPos = pickProp(label.position, this._vertical ? 'top' : 'left');
+            const vert = label._runVert = pos === 'top' || pos === 'bottom';
+            const gap = label._runGap = label.getGap(vert ? height : width);
+            let w = vert ? width : label.getWidth(width);
+            let h = vert ? label.getHeight(height) : height;
+            const wMax = vert ? width : label.getMaxWidth(width);
+            const hMax = vert ? label.getMaxHeight(height) : height;
+            const rLabel = this._rLabel = Rectangle.create(0, 0, width, height);
+
+            label.setText(m.getLabel(label, label.animatable ? value : m.value))
+                 .buildSvg(labelView, pickNum(w, wMax), pickNum(h, hMax), m, this.valueOf);
+            const rText = labelView.getBBounds();
+
+            if (vert) {
+                rLabel.height = pickNum(h, rText.height);
+                rBand.height = Math.max(0, rBand.height - (rLabel.height + gap));
+            } else {
+                rLabel.width = pickNum(w, rText.width);
+                rBand.width = Math.max(0, rBand.width - (rLabel.width + gap));
+            }
 
             switch (pos) {
                 case 'top':
+                    rBand.y = rLabel.height + gap;
                     break;
+
                 case 'bottom':
+                    rLabel.y = rBand.height + gap;
                     break;
+
                 case 'right':
+                    rLabel.x = rBand.width + gap;
                     break;
+
                 default:
-                    r.width -= w;
-                    r.x = w;
+                    rBand.x = rLabel.width + gap;
                     break;
             }
-
-            if (vert) {
-                r.height -= gap;
-                r.y += gap;
-            } else {
-                r.width -= gap;
-                r.x += gap;
-            }
-
         } else {
             this._rLabel = null;
         }
@@ -328,10 +484,29 @@ export abstract class LineGaugeView<T extends ValueGauge> extends ValueGaugeView
     protected _renderLabel(m: ValueGauge, label: LinearGaugeLabel, view: TextElement, value: number): void {
         if (view.visible) {
             const r = this._rLabel;
+            const rText = view.getBBounds();
+            let x = r.x;
+            let y = r.y;
 
-            view.anchor = TextAnchor.END;
-            label.setText(m.getLabel(label, label.animatable ? value : m.value)).buildSvg(view, r.width, m, this.valueOf);
-            view.translate(r.x + r.width, r.y + Math.max(0, (r.height - view.getBBounds().height) / 2));
+            switch (label._runPos) {
+                case 'top':
+                    x += r.width / 2;
+                    break;
+                case 'bottom':
+                    x += r.width / 2;
+                    break;
+                case 'right':
+                    x = this.width - r.width;
+                    view.anchor = TextAnchor.START;
+                    y += Math.max(0, (r.height - rText.height) / 2);
+                    break;
+                default:
+                    view.anchor = TextAnchor.END;
+                    x += r.width;
+                    y += Math.max(0, (r.height - rText.height) / 2);
+                    break;
+            }
+            view.translate(x, y);
         }
    }
 }

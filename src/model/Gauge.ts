@@ -336,6 +336,9 @@ export abstract class ValueGauge extends Gauge {
     //-------------------------------------------------------------------------
 }
 
+export abstract class LineGauge extends ValueGauge {
+}
+
 export class GuageScaleTick extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -367,8 +370,8 @@ export class GaugeScale extends ChartItem {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(public gauge: ValueGauge) {
-        super(gauge.chart);
+    constructor(public gauge: ValueGauge, visible = true) {
+        super(gauge.chart, visible);
 
         this.line = new ChartItem(gauge.chart, false);
         this.tick = new GuageScaleTick(this);
@@ -390,7 +393,9 @@ export class GaugeScale extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    buildSteps(length: number, value: number, target: number): number[] {
+    buildSteps(length: number, value: number, target = NaN): number[] {
+        target = pickNum(target, value);
+
         const {min, max} = this._adjustMinMax(Math.min(value, target), Math.max(value, target));
         let pts: number[];
 
@@ -547,6 +552,7 @@ export class LinearGaugeScale extends GaugeScale {
     // fields
     //-------------------------------------------------------------------------
     _vertical: boolean;
+    _reversed: boolean;
 
     //-------------------------------------------------------------------------
     // properties
@@ -570,6 +576,8 @@ export class LinearGaugeLabel extends GaugeLabel {
     //-------------------------------------------------------------------------
     private _width: RtPercentSize;
     private _height: RtPercentSize;
+    private _maxWidth: RtPercentSize;
+    private _maxHeight: RtPercentSize;
     private _gap: RtPercentSize;
 
     //-------------------------------------------------------------------------
@@ -577,7 +585,12 @@ export class LinearGaugeLabel extends GaugeLabel {
     //-------------------------------------------------------------------------
     private _widthDim: IPercentSize;
     private _heightDim: IPercentSize;
+    private _maxWidthDim: IPercentSize;
+    private _maxHeightDim: IPercentSize;
     private _gapDim: IPercentSize;
+    _runPos: 'left' | 'right' | 'top' | 'bottom';
+    _runGap: number;
+    _runVert: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -585,6 +598,8 @@ export class LinearGaugeLabel extends GaugeLabel {
     constructor(chart: IChart) {
         super(chart);
 
+        this.maxWidth = '30%';
+        this.maxHeight = '30%';
         this.gap = '5%';
     }
 
@@ -593,11 +608,15 @@ export class LinearGaugeLabel extends GaugeLabel {
     //-------------------------------------------------------------------------
     /**
      * 값을 지정하지 않으면 게이지 표시 방향에 따라 자동으로 위치를 결정한다.
+     * 
+     * @config
      */
     position: undefined | 'left' | 'right' | 'top' | 'bottom';
     /**
-     * 값을 지정하지 않으면,
-     * position이 'left', 'right'일 때 기본값은 '25%'이다.
+     * position이 'left', 'right'일 때, label 표시 영역 너비.
+     * 픽셀값이나 게이지 전체 너비에 대한 상대값으로 지정할 수 있다.
+     * 
+     * @config
      */
     get width(): RtPercentSize {
         return this._width;
@@ -609,8 +628,10 @@ export class LinearGaugeLabel extends GaugeLabel {
         }
     }
     /**
-     * 값을 지정하지 않으면,
-     * position이 'top', 'bottom'일 때 기본값은 '25%'이다.
+     * position이 'top', 'bottom'일 때, label 표시 영역 높이.
+     * 픽셀값이나 게이지 전체 높이에 대한 상대값으로 지정할 수 있다.
+     * 
+     * @config
      */
     get height(): RtPercentSize {
         return this._height;
@@ -622,7 +643,40 @@ export class LinearGaugeLabel extends GaugeLabel {
         }
     }
     /**
+     * position이 'left', 'right'일 때, label 표시 영역 최대 너비.
+     * 픽셀값이나 게이지 전체 너비에 대한 상대값으로 지정할 수 있다.
+     * {@link width}가 지정되면 이 속성은 무시된다.
+     * 
+     * @config
+     */
+    get maxWidth(): RtPercentSize {
+        return this._maxWidth;
+    }
+    set maxWidth(value: RtPercentSize) {
+        if (value !== this._maxWidth) {
+            this._maxWidth = value;
+            this._maxWidthDim = parsePercentSize(value, true);
+        }
+    }
+    /**
+     * position이 'top', 'bottom'일 때, label 표시 영역 최대 높이.
+     * 픽셀값이나 게이지 전체 높이에 대한 상대값으로 지정할 수 있다.
+     * {@link height}가 지정되면 이 속성은 무시된다.
+     * 
+     * @config
+     */
+    get maxHeight(): RtPercentSize {
+        return this._maxHeight;
+    }
+    set maxHeight(value: RtPercentSize) {
+        if (value !== this._maxHeight) {
+            this._maxHeight = value;
+            this._maxHeightDim = parsePercentSize(value, true);
+        }
+    }
+    /**
      * label과 본체 사이의 간격.
+     * 픽셀값이나 게이지 전체 크기(position에 따라 높이나 너비)에 대한 상대값으로 지정할 수 있다.
      * 
      * @config
      */
@@ -639,26 +693,20 @@ export class LinearGaugeLabel extends GaugeLabel {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getWidth(vertical: boolean,  domain: number): number {
-        let w = calcPercent(this._widthDim, domain);
-
-        if (isNaN(w)) {
-            if (!vertical) {
-                w = domain * 0.25;
-            }
-        }
-        return w;
+    getWidth(domain: number): number {
+        return calcPercent(this._widthDim, domain);
     }
 
-    getHeight(vertical: boolean, domain: number): number {
-        let h = calcPercent(this._heightDim, domain);
+    getHeight(domain: number): number {
+        return calcPercent(this._heightDim, domain);
+    }
 
-        if (isNaN(h)) {
-            if (vertical) {
-                h = domain * 0.25;
-            }
-        }
-        return h;
+    getMaxWidth(domain: number): number {
+        return calcPercent(this._maxWidthDim, domain);
+    }
+
+    getMaxHeight(domain: number): number {
+        return calcPercent(this._maxHeightDim, domain);
     }
 
     getGap(domain: number): number {

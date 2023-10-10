@@ -90,7 +90,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
 
         if (this._textView.setVisible(model.hasInner() && model.innerText.isVisible())) {
             this._textView.setModel(doc, model.innerText, null);
-            model.innerText.buildSvg(this._textView._text, NaN, model, null);
+            model.innerText.buildSvg(this._textView._text, NaN, NaN, model, null);
         }
     }
 

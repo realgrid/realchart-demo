@@ -193,7 +193,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
         // label
         if (this._textView.setVisible(m.label.visible)) {
-            m.label.setText(m.getLabel(m.label, m.label.animatable ? value : m.value)).buildSvg(this._textView, NaN, m, this.valueOf);
+            m.label.setText(m.getLabel(m.label, m.label.animatable ? value : m.value)).buildSvg(this._textView, NaN, NaN, m, this.valueOf);
             
             const r = this._textView.getBBounds();
             const off = m.label.getOffset(this.width, this.height);

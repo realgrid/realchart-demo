@@ -146,7 +146,7 @@ export class TextElement extends RcElement {
                 break;
             
             case TextLayout.BOTTOM:
-                y = ascent - r.height;
+                y = 0;//ascent - r.height;
                 break;
 
             default:
