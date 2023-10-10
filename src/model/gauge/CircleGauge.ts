@@ -9,7 +9,7 @@
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { CircularGauge, Gauge, GaugeGroup, IGaugeValueRange, ValueGauge } from "../Gauge";
+import { CircularGauge, Gauge, GaugeGroup, GaugeScale, IGaugeValueRange, ValueGauge } from "../Gauge";
 
 export abstract class CircleGaugeRim extends ChartItem {
 
@@ -376,6 +376,12 @@ export class CircleGauge extends CircularGauge {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 스케일 모델.
+     * 
+     * @config
+     */
+    scale = new GaugeScale(this, false);
     /**
      * 게이지 배경 원호 테두리 설정 모델.
      * 

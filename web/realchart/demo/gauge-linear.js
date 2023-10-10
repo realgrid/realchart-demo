@@ -10,16 +10,17 @@ const config = {
             // align: 'center'
         }
     },
-    title: "Linear Guage",
-    gauge: {
+    title: "Linear Guages",
+    gauge: [{
         type: 'linear',
         name: 'linear1',
         width: '60%',
         height: 65,
+        top: 100,
         maxValue: 100,
         value: 81,
         scale: {
-            line: true
+            line: true,
         },
         ranges: [{
             toValue: 50,
@@ -29,10 +30,32 @@ const config = {
             color: '#aaa'
         }],
         label: {
-            text: "RealChart Line<br>ver 1.0"
+            text: "RealChart Linear<br>ver 1.0"
             // position: 'bottom',
         }
-    }
+    }, {
+        type: 'linear',
+        name: 'linear2',
+        width: '50%',
+        height: 100,
+        top: 250,
+        maxValue: 100,
+        value: 81,
+        scale: {
+            line: true,
+        },
+        ranges: [{
+            toValue: 50,
+            color: '#777'
+        }, {
+            toValue: 70,
+            color: '#aaa'
+        }],
+        label: {
+            position: 'top',
+            text: "RealChart Linear ver 1.0"
+        }
+    }]
 }
 
 let chart;
@@ -54,10 +77,34 @@ function setActions(container) {
     //     config.gauge.active = false;
     //     chart.load(config);
     // });
-    createListBox(container, "label.position", ['left', 'right', 'top', 'bottom'], function (e) {
-        config.gauge.label.position = _getValue(e);
+    createCheckBox(container, 'reversed', function (e) {
+        config.gauge[0].reversed = _getChecked(e);
         chart.load(config);
-    }, 'left');
+    }, false);
+    createListBox(container, "label.position", ['', 'left', 'right', 'top', 'bottom'], function (e) {
+        config.gauge[0].label.position = _getValue(e);
+        chart.load(config);
+    }, '');
+    createListBox(container, "label.gap", ['0', '5', '10', '3%', '5%', '7%'], function (e) {
+        config.gauge[0].label.gap = _getValue(e);
+        chart.load(config);
+    }, '5%');
+    createCheckBox(container, 'scale', function (e) {
+        config.gauge[0].scale.visible = _getChecked(e);
+        chart.load(config);
+    }, true);
+    createCheckBox(container, 'scale.opposite', function (e) {
+        config.gauge[0].scale.opposite = _getChecked(e);
+        chart.load(config);
+    }, false);
+    createListBox(container, "label2.position", ['left', 'right', 'top', 'bottom'], function (e) {
+        config.gauge[1].label.position = _getValue(e);
+        chart.load(config);
+    }, 'top');
+    createCheckBox(container, 'scale2.opposite', function (e) {
+        config.gauge[1].scale.opposite = _getChecked(e);
+        chart.load(config);
+    }, false);
 }
 
 function init() {

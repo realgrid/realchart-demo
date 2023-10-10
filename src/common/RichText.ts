@@ -315,7 +315,7 @@ export class SvgRichText {
     /**
      * TODO: max width
      */
-    build(view: TextElement, maxWidth: number, target: any, domain: RichTextParamCallback): void {
+    build(view: TextElement, maxWidth: number, maxHeight: number, target: any, domain: RichTextParamCallback): void {
         const doc = view.doc;
         const hLine = pickNum(this.lineHeight, 1);
         const dy = 0; //isNaN(this.lineHeight) ? 1 : 0;

@@ -6,12 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
-import { LayerElement, PathElement } from "../../common/RcControl";
+import { LayerElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { RectElement } from "../../common/impl/RectElement";
-import { TextAnchor, TextElement } from "../../common/impl/TextElement";
+import { TextElement } from "../../common/impl/TextElement";
 import { LinearGauge } from "../../model/gauge/LinearGauge";
 import { LineGaugeView, LinearScaleView } from "../GaugeView";
 
@@ -47,54 +46,56 @@ export class LinearGaugeView extends LineGaugeView<LinearGauge> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected labelView(): TextElement {
+        return this._labelView;
+    }
+
+    protected scaleView(): LinearScaleView {
+        return this._scaleView;
+    }
+
+    protected background(): RectElement {
+        return this._background;
+    }
+
+    protected itemContainer(): LayerElement {
+        return this._stepContainer;
+    }
+
     protected _prepareGauge(doc: Document, model: LinearGauge): void {
     }
 
-    protected _renderGauge(width: number, height: number): void {
-        const m = this.model;
+    protected _renderBand(m: LinearGauge, r: IRect, value: number): void {
+        const reversed = m.reversed;
+        const sum = m.scale._max - m.scale._min;
+        // const ranges = m.getRanges(m.scale._min, m.scale._max);
 
-        this._measureGauge(m, m.label, m.vertical, width, height);
-        this._renderValue();
-    }
+        // if (ranges) {
+        //     let x = 0;
 
-    _renderValue(): void {
-        const m = this.model;
-        // const scale = m.scale;
-        const value = pickNum(this._runValue, m.value);
-        const rBand = Object.assign({}, this._rBand);
+        //     this._barViews.prepare(ranges.length).forEach((v, i) => {
+        //         const range = ranges[i];
+        //         const w = r.width * (range.toValue - range.fromValue) / sum;
 
-        // band background
-        this._background.setRect(rBand);
+        //         v.setBounds(x, 0, w, r.height);
+        //         v.setStyle('fill', range.color);
+        //         x += w;
+        //     });
+        // }
 
-        // label
-        // this._rLabel.height = this._stepContainer.height;
-        // this._renderLabel(m, m.label, this._labelView, value);
-    }
+        // value bar
+        if (this._valueView.setVisible(!isNaN(m.value))) {
+            if (this._vertical) {
+                const h = r.height * (value - m.scale._min) / sum;
+                const y = reversed ? r.y : r.y + r.height - h;
 
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
-//     private $_renderBand(m: LinearGauge, r: IRect, value: number): void {
-//         const sum = m.scale._max - m.scale._min;
-//         const ranges = m.getRanges(m.scale._min, m.scale._max);
+                this._valueView.setBounds(r.x, r.y + r.height - h, r.width, h);
+            } else {
+                const w = r.width * (value - m.scale._min) / sum;
+                const x = reversed ? r.x + r.width - w : r.x;
 
-//         if (ranges) {
-//             let x = 0;
-
-//             this._barViews.prepare(ranges.length).forEach((v, i) => {
-//                 const range = ranges[i];
-//                 const w = r.width * (range.toValue - range.fromValue) / sum;
-
-//                 v.setBounds(x, 0, w, r.height);
-//                 v.setStyle('fill', range.color);
-//                 x += w;
-//             });
-//         }
-
-//         // value bar
-//         if (this._valueView.setVisible(!isNaN(m.value))) {
-//             const w = r.width * (value - m.scale._min) / sum;
-//             this._valueView.setBounds(r.x, r.y + r.height / 3, w, r.height / 3);
-//         }
-//    }
+                this._valueView.setBounds(x, r.y, w, r.height);
+            }
+        }
+   }
 }

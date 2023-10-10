@@ -752,13 +752,13 @@
 
 /** linear scale */
 .rct-linear-scale-line {
-    stroke: #333;
+    stroke: #555;
 }
 .rct-linear-scale-ticks {
-    stroke: #333;
+    stroke: #555;
 }
 .rct-linear-scale-tick-labels {
-    font-size: 0.9em;
+    font-size: 0.85em;
     fill: #333;
 }
 
@@ -767,7 +767,7 @@
     fill: #eee;
 }
 .rct-linear-gauge-value {
-    fill: #333;
+    fill: green;
 }
 
 /** bullet gauge */

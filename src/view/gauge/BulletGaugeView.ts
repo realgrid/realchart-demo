@@ -6,10 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { LayerElement } from "../../common/RcControl";
-import { IRect, Rectangle } from "../../common/Rectangle";
+import { IRect } from "../../common/Rectangle";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
 import { BulletGauge } from "../../model/gauge/BulletGauge";
@@ -49,87 +48,84 @@ export class BulletGaugeView extends LineGaugeView<BulletGauge> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected labelView(): TextElement {
+        return this._labelView;
+    }
+
+    protected scaleView(): LinearScaleView {
+        return this._scaleView;
+    }
+
+    protected background(): RectElement {
+        return this._background;
+    }
+
+    protected itemContainer(): LayerElement {
+        return this._barContainer;
+    }
+
     protected _prepareGauge(doc: Document, model: BulletGauge): void {
     }
 
-    protected _renderGauge(width: number, height: number): void {
-        const m = this.model;
-
-        this._measureGauge(m, m.label, m.vertical, width, height);
-        this._renderValue();
-    }
-
-    _renderValue(): void {
-        const m = this.model;
-        const scale = m.scale;
-        const value = pickNum(this._runValue, m.value);
-        const rBand = Object.assign({}, this._rBand);
-        let x = 0;
-        let y = 0;
-
-        // scale
-        if (this._scaleView.setVisible(scale.visible)) {
-            scale._vertical = this._vertical;
-            const len = this._vertical ? rBand.height : rBand.width;
-            
-            scale.buildSteps(len, value, m.targetValue);
-            const sz = this._scaleView.measure(this.doc, scale, rBand.width, rBand.height, 1);
-
-            if (this._vertical) {
-                if (scale.opposite) {
-                } else {
-                }
-            } else {
-                if (scale.opposite) {
-                } else {
-                    rBand.height -= sz.height;
-                }
-            }
-            this._scaleView.resizeByMeasured().layout().translate(rBand.x, rBand.height);
-        }
-
-        // band background
-        this._background.setRect(rBand);
-
-        // band
-        this._barContainer.setRect(rBand);
-        this.$_renderBand(m, rBand, value);
-
-        // label
-        this._rLabel.height = this._barContainer.height;
-        this._renderLabel(m, m.label, this._labelView, value);
-    }
-
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
-    private $_renderBand(m: BulletGauge, r: IRect, value: number): void {
+    protected _renderBand(m: BulletGauge, r: IRect, value: number): void {
+        const reversed = m.reversed;
         const sum = m.scale._max - m.scale._min;
         const ranges = m.getRanges(m.scale._min, m.scale._max);
 
         if (ranges) {
-            let x = 0;
+            if (this._vertical) {
+                let y = reversed ? 0 : r.height;
 
-            this._barViews.prepare(ranges.length).forEach((v, i) => {
-                const range = ranges[i];
-                const w = r.width * (range.toValue - range.fromValue) / sum;
+                this._barViews.prepare(ranges.length).forEach((v, i) => {
+                    const range = ranges[i];
+                    const h = r.height * (range.toValue - range.fromValue) / sum;
+    
+                    v.setBounds(0, reversed ? y : y - h, r.width, h);
+                    v.setStyle('fill', range.color);
+                    y += reversed ? h : -h;
+                });
+            } else {
+                let x = reversed ? r.width : 0;
 
-                v.setBounds(x, 0, w, r.height);
-                v.setStyle('fill', range.color);
-                x += w;
-            });
+                this._barViews.prepare(ranges.length).forEach((v, i) => {
+                    const range = ranges[i];
+                    const w = r.width * (range.toValue - range.fromValue) / sum;
+    
+                    v.setBounds(reversed ? x - w : x, 0, w, r.height);
+                    v.setStyle('fill', range.color);
+                    x += reversed ? -w : w;
+                });
+            }
         }
 
         // value bar
         if (this._valueView.setVisible(!isNaN(m.value))) {
-            const w = r.width * (value - m.scale._min) / sum;
-            this._valueView.setBounds(r.x, r.y + r.height / 3, w, r.height / 3);
+            if (this._vertical) {
+                const h = r.height * (value - m.scale._min) / sum;
+                const y = reversed ? r.y : r.y + r.height - h;
+
+                this._valueView.setBounds(r.x + r.width / 3, y, r.width / 3, h);
+            } else {
+                const w = r.width * (value - m.scale._min) / sum;
+                const x = reversed ? r.x + r.width - w : r.x;
+    
+                this._valueView.setBounds(x, r.y + r.height / 3, w, r.height / 3);
+            }
         }
 
         // target bar
         if (this._targetView.setVisible(!isNaN(m.targetValue))) {
-            const x = r.x + r.width * (m.targetValue - m.scale._min) / sum;
-            this._targetView.setBounds(x - 1, r.y + 5, 3, r.height - 10);
+            if (this._vertical) {
+                let y = r.height * (m.targetValue - m.scale._min) / sum;
+
+                y = reversed ? r.y + y : r.y + r.height - y;
+                this._targetView.setBounds(r.x + 5, y - 1, r.width - 10, 3);
+            } else {
+                let x = r.width * (m.targetValue - m.scale._min) / sum;;
+            
+                x = reversed ? (r.x + r.width - x) : (r.x + x);
+                this._targetView.setBounds(x - 1, r.y + 5, 3, r.height - 10);
+            }
         }
    }
 }

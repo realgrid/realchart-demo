@@ -210,7 +210,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
         // label
         if (labelView.setVisible(model.label.visible)) {
             labelView.internalSetStyleOrClass(model.label.style);
-            model.label.buildSvg(labelView, NaN, null, null);
+            model.label.buildSvg(labelView, NaN, NaN, null, null);
 
             if (model.label.position === 'bottom') {
                 labelView.translate(cx, cy + rd2 / 2);

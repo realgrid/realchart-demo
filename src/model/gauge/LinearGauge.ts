@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { IChart } from "../Chart";
-import { Gauge, LinearGaugeLabel, ValueGauge } from "../Gauge";
+import { LinearGaugeLabel, LinearGaugeScale, ValueGauge } from "../Gauge";
 
 /**
  * 선형 게이지 모델.
@@ -56,6 +56,12 @@ export class LinearGauge extends ValueGauge {
      * @config
      */
     label: LinearGaugeLabel;
+    /**
+     * scale.
+     * 
+     * @config
+     */
+    scale = new LinearGaugeScale(this);
 
     //-------------------------------------------------------------------------
     // methods

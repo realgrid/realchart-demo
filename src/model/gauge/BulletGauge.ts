@@ -10,6 +10,7 @@ import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../.
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
 import { GaugeLabel, GaugeScale, IGaugeValueRange, LinearGaugeLabel, LinearGaugeScale, ValueGauge } from "../Gauge";
+import { LinearGauge } from "./LinearGauge";
 
 export class BulletGaugeBand extends ChartItem {
 
@@ -129,7 +130,7 @@ export class BulletActualBar extends ChartItem {
  * 
  * @config chart.gauge[type=bullet]
  */
-export class BulletGauge extends ValueGauge {
+export class BulletGauge extends LinearGauge {
 
     //-------------------------------------------------------------------------
     // consts
@@ -151,19 +152,6 @@ export class BulletGauge extends ValueGauge {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * true면 수직 방향으로 표시한다.
-     * 값을 지정하지 않으면 게이지 전체 크기의 수평 수직을 비교해서 표시 방향을 자동으로 설정한다.
-     * 
-     * @config
-     */
-    vertical: boolean;
-    /**
-     * true면 반대 방향으로 표시한다.
-     * 
-     * @config
-     */
-    reversed = false;
-    /**
      * 밴드.
      * 
      * @config
@@ -181,18 +169,6 @@ export class BulletGauge extends ValueGauge {
      * @config
      */
     actualBar = new BulletActualBar(this);
-    /**
-     * scale.
-     * 
-     * @config
-     */
-    scale = new LinearGaugeScale(this);
-    /**
-     * label.
-     * 
-     * @config
-     */
-    label = new LinearGaugeLabel(this.chart);
     /**
      * 목표 값.
      * 
