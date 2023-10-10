@@ -228,7 +228,8 @@ export class LinearScaleView extends ChartElement<LinearGaugeScale> {
                 if (vertical) {
                     let w = 0;
                     this._labels.forEach((v, i) => {
-                        v.text = String(steps[reversed ? nStep - 1 - i : i]);
+                        // v.text = String(steps[reversed ? nStep - 1 - i : i]);
+                        v.text = String(steps[reversed ? i : nStep - 1 - i]);
                         w = Math.max(v.getBBounds().width);
                     })
                     width += w;
@@ -270,7 +271,7 @@ export class LinearScaleView extends ChartElement<LinearGaugeScale> {
 
         // ticks
         if (this._tickContainer.setVisible(tick.visible)) {
-            this._ticks.forEach((v, i) => {
+            this._ticks.forEach(v => {
                 v.setVLineC(x, y, y + len);
                 x += w;
             })

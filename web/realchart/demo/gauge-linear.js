@@ -89,6 +89,10 @@ function setActions(container) {
         config.gauge[0].label.gap = _getValue(e);
         chart.load(config);
     }, '5%');
+    createCheckBox(container, 'scale', function (e) {
+        config.gauge[0].scale.visible = _getChecked(e);
+        chart.load(config);
+    }, true);
     createCheckBox(container, 'scale.opposite', function (e) {
         config.gauge[0].scale.opposite = _getChecked(e);
         chart.load(config);

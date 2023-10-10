@@ -549,6 +549,11 @@ export abstract class GaugeLabel extends FormattableText {
 export class LinearGaugeScale extends GaugeScale {
 
     //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _gap = 8;
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     _vertical: boolean;
@@ -565,8 +570,16 @@ export class LinearGaugeScale extends GaugeScale {
     opposite = false;
     /**
      * 게이지 본체와의 간격.
+     * 
+     * @config
+     * @default 8 픽셀.
      */
-    gap = 8;
+    get gap(): number {
+        return this._gap;
+    }
+    set gap(value: number) {
+        this._gap = pickNum(value, 0);
+    }
 }
 
 export class LinearGaugeLabel extends GaugeLabel {
