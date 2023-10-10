@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { ClipElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
@@ -725,40 +726,107 @@ export class ChartView extends RcElement {
             let v: number;
 
             if (legend.location === LegendLocation.PLOT) {
-                if (!isNaN(v = legend.getLeft(wPlot))) {
-                    x += v;
-                } else if (!isNaN(v = legend.getRight(wPlot))) {
-                    x += wPlot - wLegend - v;
-                } else {
-                    x += (wPlot - wLegend) / 2;
+                let off = pickNum(legend.offsetX, 0);
+
+                // x = y = 0;
+
+                switch (legend.align) {
+                    case Align.RIGHT:
+                        x += wPlot - wLegend - off;
+                        break;
+                    case Align.CENTER:
+                        x += (wPlot - wLegend) / 2 + off;
+                        break;
+                    default: // plot일 때 기본은 LEFT
+                        x += off;
+                        break;
                 }
 
-                if (!isNaN(v = legend.getTop(hPlot))) {
-                    y += v;
-                } else if (!isNaN(v = legend.getBottom(hPlot))) {
-                    y += hPlot - hLegend - v;
-                } else {
-                    y += (hPlot - hLegend) / 2;
+                off = pickNum(legend.offsetY, 0);
+
+                switch (legend.verticalAlign) {
+                    case VerticalAlign.BOTTOM:
+                        y += hPlot - hLegend - off;
+                        break;
+                    case VerticalAlign.MIDDLE:
+                        y += (hPlot - hLegend) / 2 + off;
+                        break;
+                    default: // plot일 때 기본은 TOP
+                        y += off;
+                        break;
                 }
             } else if (!isNaN(yLegend)) { // 수평
+                const off = pickNum(legend.offsetX, 0);
                 y = yLegend;
+
                 if (legend.alignBase === AlignBase.CHART) {
-                    x = (width - wLegend) / 2;
+                    switch (legend.align) {
+                        case Align.LEFT:
+                            x = off;
+                            break;
+                        case Align.RIGHT:
+                            x = width - wLegend - off;
+                            break;
+                        default: // left/right일 때 기본은 CENTER
+                            x = (width - wLegend) / 2 + off;
+                        break;
+                    }
                 } else {
-                    x += (w - wLegend) / 2;
-                    if (x + wLegend > width) { // plot 범위를 벗어나면 chart에 맞춘다.
-                        x = (width - wLegend) / 2;
+                    switch (legend.align) {
+                        case Align.LEFT:
+                            x += off;
+                            break;
+                        case Align.RIGHT:
+                            x = x + w - wLegend - off;
+                            break;
+                        default:
+                            x += (w - wLegend) / 2 + off;
+                            break;
                     }
                 }
+                if (x + wLegend > width) { // plot 범위를 벗어나면 chart에 맞춘다.
+                    x = (width - wLegend) / 2;
+                }
+                if (x < 0) {
+                    x = 0;
+                }
             } else { // 수직
+                const off = pickNum(legend.offsetY, 0);
                 x = xLegend;
+
                 if (legend.alignBase === AlignBase.CHART) {
-                    y = (height - hLegend) / 2;
-                } else {
-                    y = y + (h - hLegend) / 2;
+                    switch (legend.verticalAlign) {
+                        case VerticalAlign.TOP:
+                            y = off;
+                            break;
+                        case VerticalAlign.BOTTOM:
+                            y = height - hLegend - off;
+                            break;
+                        default: // left/right일 때 기본은 MIDDLE
+                            y = (height - hLegend) / 2 + off;
+                            break;
+                    }
                     if (y + hLegend > height) {
                         y = (height - hLegend) / 2;
                     }
+                } else {
+                    switch (legend.verticalAlign) {
+                        case VerticalAlign.TOP:
+                            y += off;
+                            break;
+                        case VerticalAlign.BOTTOM:
+                            y = y + h - hLegend - off;
+                            break;
+                        default: // left/right일 때 기본은 MIDDLE
+                            y = y + (h - hLegend) / 2 + off;
+                            break;
+                    }
+                }
+                if (y + hLegend > height) {
+                    y = (height - hLegend) / 2;
+                }
+                if (y < 0) {
+                    y = 0;
                 }
             }
             vLegend.translate(x, y);

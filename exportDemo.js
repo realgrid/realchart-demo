@@ -7,7 +7,7 @@ import _traverse from "@babel/traverse";
 
 const traverse = _traverse.default;
 const SOURCE_ROOT = "web/realchart/fiddle"
-const DEST_ROOT = "www";
+const DEST_ROOT = "fiddle";
 
 function getDepth(depth) {
     let src = "";

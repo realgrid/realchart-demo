@@ -111,16 +111,16 @@ const config = {
         innerRadius: '80%',
         rim: {
             ranges: [{
-                endValue: 20,
+                toValue: 20,
                 color: '#a40'
             }, {
-                endValue: 40,
+                toValue: 40,
                 color: '#cc0'
             }, {
-                endValue: 60,
+                toValue: 60,
                 color: '#080'
             }, {
-                endValue: 80,
+                toValue: 80,
                 color: '#500'
             }, {
                 color: '#300'

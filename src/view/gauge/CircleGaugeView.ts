@@ -10,7 +10,6 @@ import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { IPoint } from "../../common/Point";
-import { RcAnimation } from "../../common/RcAnimation";
 import { LayerElement, PathElement } from "../../common/RcControl";
 import { RAD_DEG } from "../../common/Types";
 import { SectorElement } from "../../common/impl/SectorElement";
@@ -18,19 +17,6 @@ import { TextElement } from "../../common/impl/TextElement";
 import { ICircularGaugeExtents } from "../../model/Gauge";
 import { CircleGauge, CircleGaugeHand, CircleGaugePin } from "../../model/gauge/CircleGauge";
 import { CircularGaugeView } from "./CirclularGaugeView";
-
-class GaugeAnimation extends RcAnimation {
-
-    constructor(public view: CircleGaugeView, public from: number, public to: number) {
-        super();
-    }
-
-    protected _doUpdate(rate: number): boolean {
-        this.view._runValue = this.from + (this.to - this.from) * rate;
-        this.view.$_renderValue(this.view.model);
-        return true;
-    }
-}
 
 class PinView extends PathElement {
 
@@ -108,9 +94,6 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
     private _center: {x: number, y: number};
     private _exts: ICircularGaugeExtents;
-    private _prevValue = 0;
-    _runValue: number;
-    private _ani: RcAnimation;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -131,8 +114,6 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareGauge(doc: Document, model: CircleGauge): void {
-        const ranges = model.rim.ranges;
-        
         // backgroun rim
         this._background.setVisible(model.rim.visible);
 
@@ -173,16 +154,51 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         const center = m.getCenter(width, height);
         const exts = m.getExtents(width, height);
 
-        if (this._ani) {
-            this._ani.stop();
-            this._ani = null;
-        }
         this.$_renderBackground(m, center, exts);
-        this.$_renderValue(m);
+        this._renderValue();
+    }
 
-        if (this._animatable && m.animatable && m.value !== this._prevValue) {
-            this._ani = new GaugeAnimation(this, this._prevValue, m.value).start(() => this._runValue = NaN);
-            this._prevValue = m.value;
+    _renderValue(): void {
+        const m = this.model;
+        const value = pickNum(this._runValue, m.value);
+        const rate = pickNum((value - m.minValue) / (m.maxValue - m.minValue), 0);
+        const center = this._center;
+        const exts = this._exts;
+        const thick = m.valueRim.getThickness(exts.radius - exts.inner);
+
+        // foreground rim
+        if (this._foreground.visible) {
+            const range = m.valueRim.getRange(value); // runValue가 아니다.
+            if (range) {
+                this._foreground.setStyle('fill', range.color);
+            }
+            this._foreground.setSector({
+                cx: center.x,
+                cy: center.y,
+                rx: exts.value,
+                ry: exts.value,
+                innerRadius: (exts.value - thick) / exts.value,
+                start: m._startRad,
+                angle: m._sweepRad * rate,
+                clockwise: m.clockwise
+            });
+        }
+
+        // hand
+        if (this._handView) {
+            const a = (m._handRad + m._sweepRad * rate) * RAD_DEG;
+
+            this._handView.render(m.hand, exts.radius).translatep(center).rotate(m.clockwise ? a : -a);
+        }
+
+        // label
+        if (this._textView.setVisible(m.label.visible)) {
+            m.label.setText(m.getLabel(m.label, m.label.animatable ? value : m.value)).buildSvg(this._textView, NaN, m, this.valueOf);
+            
+            const r = this._textView.getBBounds();
+            const off = m.label.getOffset(this.width, this.height);
+
+            this._textView.translate(center.x + off.x, center.y - r.height / 2 + off.y);
         }
     }
 
@@ -202,7 +218,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         let start = 0;
 
         this._segments.forEach((v, i) => {
-            const angle = (ranges[i].endValue - ranges[i].startValue) * sweep / sum;
+            const angle = (ranges[i].toValue - ranges[i].fromValue) * sweep / sum;
 
             v.setSector({
                 cx,
@@ -264,49 +280,6 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         // pin
         if (this._pinView) {
             this._pinView.render(m.pin, r).translate(center.x, center.y);
-        }
-    }
-
-    $_renderValue(m: CircleGauge): void {
-        const value = pickNum(this._runValue, m.value);
-        const rate = pickNum((value - m.minValue) / (m.maxValue - m.minValue), 0);
-        const center = this._center;
-        const exts = this._exts;
-        const thick = m.valueRim.getThickness(exts.radius - exts.inner);
-
-        // foreground rim
-        if (this._foreground.visible) {
-            const range = m.valueRim.getRange(value); // runValue가 아니다.
-            if (range) {
-                this._foreground.setStyle('fill', range.color);
-            }
-            this._foreground.setSector({
-                cx: center.x,
-                cy: center.y,
-                rx: exts.value,
-                ry: exts.value,
-                innerRadius: (exts.value - thick) / exts.value,
-                start: m._startRad,
-                angle: m._sweepRad * rate,
-                clockwise: m.clockwise
-            });
-        }
-
-        // hand
-        if (this._handView) {
-            const a = (m._handRad + m._sweepRad * rate) * RAD_DEG;
-
-            this._handView.render(m.hand, exts.radius).translatep(center).rotate(m.clockwise ? a : -a);
-        }
-
-        // label
-        if (this._textView.setVisible(m.label.visible)) {
-            m.label.setText(m.getLabel(m.label.animatable ? value : m.value)).buildSvg(this._textView, m, this.valueOf);
-            
-            const r = this._textView.getBBounds();
-            const off = m.label.getOffset(this.width, this.height);
-
-            this._textView.translate(center.x + off.x, center.y - r.height / 2 + off.y);
         }
     }
 }

@@ -21,10 +21,10 @@ const config = {
         // valueThickness: '100%',
         valueRim: {
             ranges: [{
-                endValue: 30,
+                toValue: 30,
                 color: 'green'
             }, {
-                endValue: 70,
+                toValue: 70,
                 color: 'yellow'
             }, {
                 color: 'red'

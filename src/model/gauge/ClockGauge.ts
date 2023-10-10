@@ -6,10 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickProp } from "../../common/Common";
+import { isString, pickProp } from "../../common/Common";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
-import { ChartItem } from "../ChartItem";
+import { ChartItem, FormattableText } from "../ChartItem";
 import { CircularGauge, Gauge } from "../Gauge";
 
 export class ClockGaugeRim extends ChartItem {
@@ -119,6 +119,26 @@ export class ClockGaugeHand extends ChartItem {
     }
 }
 
+export class ClockGaugeSecondHand extends ClockGaugeHand {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * true면 초 이동 시 애니메이션 효과로 표시한다.
+     * 
+     * @config
+     */
+    animatable = false;
+    /**
+     * {@link animatable}이 true일 때 애니메이션 기간.
+     * 밀리초 단위로 지정한다.
+     * 
+     * @config
+     */
+    duration = 200;
+}
+
 export class ClockGaugeTick extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -133,6 +153,22 @@ export class ClockGaugeTick extends ChartItem {
     //-------------------------------------------------------------------------
 }
 
+export class ClockGaugeTickLabel extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(gauge: ClockGauge) {
+        super(gauge.chart);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    step = 1;
+    offset = 1;
+}
+
 export class ClockGaugePin extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -141,6 +177,32 @@ export class ClockGaugePin extends ChartItem {
     constructor(gauge: ClockGauge, public raidus: number) {
         super(gauge.chart);
     }
+}
+
+export class ClockGaugeLabel extends FormattableText {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(gauge: ClockGauge) {
+        super(gauge.chart, true);
+
+        this.text = 'RealChart Clock<br>ver1.0';
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 라벨 표시 위치.
+     * 
+     * @config
+     */
+    position: 'top' | 'bottom' = 'top';
 }
 
 /**
@@ -176,6 +238,19 @@ export class ClockGauge extends Gauge {
     // properties
     //-------------------------------------------------------------------------
     /**
+     * 분단위로 시계에 표시할 지역의 timezone을 지정한다.
+     * 예) 뉴욕: -4 * 60, 파리: 2 * 60
+     * 
+     * @config
+     */
+    timezone: number;
+    /**
+     * 이 속성에 명시적으로 시간을 지정하면 현재 시간 대신 이 시각을 표시한다.
+     * 
+     * @config
+     */
+    time: Date | number | string;
+    /**
      * 게이지 중심 수평 위치.
      * 픽셀 단위의 크기나, plot 영역 전체 너비에 대한 상대적 크기로 지정할 수 있다.
      * 
@@ -197,12 +272,6 @@ export class ClockGauge extends Gauge {
      * @config
      */
     radius: RtPercentSize = CircularGauge.DEF_RADIUS;
-    /**
-     * 명시적으로 false로 설정하면 반대 방향으로 회전한다.
-     * 
-     * @config
-     */
-    clockwise = true;
     /**
      * rim 설정 모델.
      * 
@@ -226,7 +295,7 @@ export class ClockGauge extends Gauge {
      * 
      * @config
      */
-    secondHand = new ClockGaugeHand(this, 2, '95%');
+    secondHand = new ClockGaugeSecondHand(this, 2, '95%');
     /**
      * main tick.
      * 
@@ -244,7 +313,24 @@ export class ClockGauge extends Gauge {
      * 
      * @config
      */
+    /**
+     * tick label
+     * 
+     * @config
+     */
+    tickLabel = new ClockGaugeTickLabel(this);
+    /**
+     * pin
+     * 
+     * @config
+     */
     pin = new ClockGaugePin(this, 5);
+    /**
+     * label
+     * 
+     * @config
+     */
+    label = new ClockGaugeLabel(this);
     /**
      * 시계 동작 여부.
      * 
@@ -264,6 +350,12 @@ export class ClockGauge extends Gauge {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getTime(): Date {
+        if (this.time instanceof Date) return this.time;
+        if (isString(this.time)) return new Date(this.time);
+        if (!isNaN(this.time)) return new Date(this.time);
+    }
+
     getExtendts(gaugeWidth: number, gaugeHeight: number): {cx: number, cy: number, rd: number} {
         const r = Math.min(gaugeWidth, gaugeHeight);
 

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isObject, isString } from "../common/Common";
+import { isObject, isString, mergeObj } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
@@ -24,7 +24,7 @@ import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
 import { CircleGauge } from "./gauge/CircleGauge";
 import { ClockGauge } from "./gauge/ClockGauge";
-import { GaugeCollection } from "./Gauge";
+import { GaugeCollection, ValueGauge } from "./Gauge";
 import { BarRangeSeries } from "./series/BarRangeSeries";
 import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";
@@ -52,6 +52,7 @@ import { BulletGauge } from "./gauge/BulletGauge";
 
 export interface IChart {
     type: string;
+    gaugeType: string;
     xStart: number;
     xStep: number;
     // series2: ISeries;
@@ -344,10 +345,16 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * {@link Series._type}의 기본값.
      * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
      * 
-     * @default 'bar'
      * @config
      */
     type = 'bar';
+    /**
+     * 기본 게이지 type.
+     * 게이지에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
+     * 
+     * @config
+     */
+    gaugeType = 'circle';
     /**
      * true면 차트가 {@link https://en.wikipedia.org/wiki/Polar_coordinate_system 극좌표계}로 표시된다.
      * 기본은 {@link https://en.wikipedia.org/wiki/Cartesian_coordinate_system 직교좌표계}이다.
@@ -523,13 +530,17 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._series.getLegendSources();
     }
 
+    /**
+     * @internal
+     * 
+     * [주의] 원본 array를 그대로 사용한다.
+     */
     private $_assignTemplates(target: any): any {
-        if (this._templates && target.template != null) {
+        if (target.template != null) {
             let v = this._templates[target.template];
             if (v) {
-                return Object.assign({}, v, target);
+                return mergeObj(v, target);
             }
-            // v && Object.assign(target, v);
         }
         return target;
     }
@@ -541,12 +552,13 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this.$_loadTemplates(source.templates);
 
         // properites
-        ['type', 'polar', 'inverted'].forEach(prop => {
+        ['type', 'gaugeType', 'polar', 'inverted'].forEach(prop => {
             if (prop in source) {
                 this[prop] = source[prop];
             }
         })
         this.type = this.type || 'bar';
+        this.gaugeType = this.gaugeType || 'circle';
 
         // assets
         this._assets.load(source.assets);
@@ -647,7 +659,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     updateGauge(gauge: string, values: any): void {
         const g = this._gauges.get(gauge);
-        if (g) {
+
+        if (g instanceof ValueGauge) {
             g.updateValues(values);
         }
     }

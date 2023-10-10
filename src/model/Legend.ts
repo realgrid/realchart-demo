@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcElement } from "../common/RcControl";
-import { AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
+import { Align, AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, VerticalAlign, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
@@ -177,6 +177,7 @@ export class Legend extends Widget {
      */
     alignBase = AlignBase.PLOT;
     /**
+     * {@link location}이 'plot'이 아닐 때,
      * legend view와 나머지 chart 영역 사이의 gap.
      * 
      * @config
@@ -227,6 +228,20 @@ export class Legend extends Widget {
      * @config
      */
     maxHeight: RtPercentSize;
+    /**
+     * 수평 배치.
+     * 값을 지정하지 않으면, 기본값이 {@link location}이 'plot'일 때는 'left',
+     * 'left', 'right'일 때는 'center'이다.
+     */
+    align: Align;
+    /**
+     * 수직 배치.
+     * 값을 지정하지 않으면, 기본값이 {@link location}이 'plot'일 때는 'top',
+     * 'top', 'bottom'일 때는 'middle'이다.
+     */
+    verticalAlign: VerticalAlign;
+    offsetX = 0;
+    offsetY = 0;
     /**
      * 한 라인의 item들이 배치되는 위치.
      * 

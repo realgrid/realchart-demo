@@ -312,10 +312,13 @@ export class SvgRichText {
     //     return s;
     // }
 
-    build(view: TextElement, target: any, domain: RichTextParamCallback): void {
+    /**
+     * TODO: max width
+     */
+    build(view: TextElement, maxWidth: number, target: any, domain: RichTextParamCallback): void {
         const doc = view.doc;
         const hLine = pickNum(this.lineHeight, 1);
-        const dy = isNaN(this.lineHeight) ? 1 : 0;
+        const dy = 0; //isNaN(this.lineHeight) ? 1 : 0;
         let hMax = 0;
         const lines = this._lines;
         const cnt = lines.length;

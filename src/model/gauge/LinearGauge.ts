@@ -7,30 +7,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { IChart } from "../Chart";
-import { FormattableText } from "../ChartItem";
-import { Gauge } from "../Gauge";
-
-export class LinearGaugeLabel extends FormattableText {
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(chart: IChart) {
-        super(chart, true);
-    }
-}
+import { Gauge, LinearGaugeLabel, ValueGauge } from "../Gauge";
 
 /**
- * Linear 게이지 모델.
+ * 선형 게이지 모델.
  * 현재 값을 목표 값과 비교해서 표시한다.
  * 또, 여러 값 범위 중 어디에 속한 상태인 지를 나타낸다.
  * 
- * @config chart.gauge[type=Linear]
+ * @config chart.gauge[type=linear]
  */
-export class LinearGauge extends Gauge {
+export class LinearGauge extends ValueGauge {
 
     //-------------------------------------------------------------------------
     // consts
@@ -44,10 +30,33 @@ export class LinearGauge extends Gauge {
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
         super(chart);
+
+        this.label = new LinearGaugeLabel(this.chart);
     }
 
     //-------------------------------------------------------------------------
     // properties
+    //-------------------------------------------------------------------------
+    /**
+     * true면 수직 방향으로 표시한다.
+     * 값을 지정하지 않으면 게이지 전체 크기의 수평 수직을 비교해서 표시 방향을 자동으로 설정한다.
+     * 
+     * @config
+     */
+    vertical: boolean;
+    /**
+     * true면 반대 방향으로 표시한다.
+     * 
+     * @config
+     */
+    reversed = false;
+    /**
+     * label 설정 모델.
+     * 
+     * @config
+     */
+    label: LinearGaugeLabel;
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -55,7 +64,7 @@ export class LinearGauge extends Gauge {
     // overriden members
     //-------------------------------------------------------------------------
     _type(): string {
-        return 'Linear';
+        return 'linear';
     }
 
     protected _doLoad(src: any): void {

@@ -67,7 +67,7 @@ export class TooltipView extends RcElement {
 
         // text
         this._richText.setFormat(model.text);
-        this._richText.build(tv, point, this._textCallback);
+        this._richText.build(tv, NaN, point, this._textCallback);
 
         // background
         const r = tv.getBBounds();
@@ -117,7 +117,7 @@ export class TooltipView extends RcElement {
     // internal methods
     //-------------------------------------------------------------------------
     private $_hide(): void {
-        createAnimation(this.dom, 'opacity', 0, 200, () => {
+        createAnimation(this.dom, 'opacity', void 0, 0, 200, () => {
             this.setStyle('visibility', 'hidden');
         })
     }

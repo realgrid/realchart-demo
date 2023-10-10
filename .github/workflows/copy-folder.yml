@@ -1,0 +1,28 @@
+name: Copy Folder to realchart-demo
+
+on:
+  push:
+    paths:
+      - 'fiddle/**'
+
+jobs:
+  copy-folder:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source repository
+      uses: actions/checkout@v2
+
+    - name: Copy folder to destination repository
+      env:
+        TOKEN: ${{ secrets.REAL_CHART_FIDDLE_TOKEN }}
+      run: |
+        git config --global user.email "dltlghkd930217@gmail.com"
+        git config --global user.name "dltlghkd930217"
+        
+        git clone https://x-access-token:$TOKEN@github.com/realgrid/realchart-demo.git
+        cp -r fiddle/* realchart-demo/
+        cd realchart-demo
+        git add .
+        git commit -m "Copied folder for fiddle demo"
+        git push

@@ -12,18 +12,19 @@ const config = {
     },
     title: "Clock Guage",
     gauge: {
+        // time: "2000-01-01T11:11:11",
         type: 'clock',
         name: 'clock1',
+        secondHand: {},
+        tickLabel: {
+            // step: 2
+        },
         label: {
-            style: {
-                fontFamily: 'Arial',
-                fontWeight: 'bold',
-            },
+            // position: 'bottom',
         }
     }
 }
 
-let animate;
 let chart;
 let timer;
 
@@ -35,43 +36,26 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createCheckBox(container, 'label.animatable', function (e) {
-        config.gauge.label.animatable = _getChecked(e);
-        chart.load(config);
-    }, true);
-    createListBox(container, "startAngle", [0, 90, 180, 225, 270], function (e) {
-        config.gauge.startAngle = _getValue(e);
-        chart.load(config, animate);
-    }, 0);
-    createListBox(container, "sweepAngle", [360, 270, 225, 180], function (e) {
-        config.gauge.sweepAngle = _getValue(e);
-        chart.load(config, animate);
-    }, 360);
-    createCheckBox(container, 'clockwise', function (e) {
-        config.gauge.clockwise = _getChecked(e);
-        chart.load(config);
-    }, true);
-    createListBox(container, "innerRadius", ['', '70%', '80%', '85%', '90%', '95%'], function (e) {
-        config.gauge.innerRadius = _getValue(e);
-        chart.load(config, animate);
-    }, '');
-    createListBox(container, "valueRadius", ['', '80%', '90%', '100%', '110%', '120%'], function (e) {
-        config.gauge.valueRadius = _getValue(e);
-        chart.load(config, animate);
-    }, '');
-    createListBox(container, "valueRim.thickness", ['', '50%', '100%', '150%', '200%'], function (e) {
-        config.gauge.valueRim.thickness = _getValue(e);
-        chart.load(config, animate);
-    }, '');
     createButton(container, 'Run', function(e) {
-        clearInterval(timer);
-        timer = setInterval(() => {
-            chart.updateGauge('gauge1', Math.random() * 100);
-        }, 2000);
+        config.gauge.active = true;
+        chart.load(config);
     });
     createButton(container, 'Stop', function(e) {
-        clearInterval(timer);
+        config.gauge.active = false;
+        chart.load(config);
     });
+    createCheckBox(container, 'secondHand.animatable', function (e) {
+        config.gauge.secondHand.animatable = _getChecked(e);
+        chart.load(config);
+    }, false);
+    createListBox(container, "tickLabel.step", ['1', '2', '3'], function (e) {
+        config.gauge.tickLabel.step = _getValue(e);
+        chart.load(config);
+    }, 1);
+    createListBox(container, "label.position", ['top', 'bottom'], function (e) {
+        config.gauge.label.position = _getValue(e);
+        chart.load(config);
+    }, 0);
 }
 
 function init() {

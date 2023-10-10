@@ -8,7 +8,7 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { CircularGauge, Gauge } from '../../../src/model/Gauge';
+import { CircularGauge, Gauge, ValueGauge } from '../../../src/model/Gauge';
 
 /**
  * Tests for Gauge class.
@@ -19,22 +19,22 @@ import { CircularGauge, Gauge } from '../../../src/model/Gauge';
         const min = 10;
         const max = 100;
         const src = [{
-            endValue: 30,
+            toValue: 30,
             color: 'gray'
         }, {
-            endValue: 70,
+            toValue: 70,
             color: 'black'
         }, {
             color: 'red'
         }];
-        const ranges = Gauge.buildRanges(src, min, max);
+        const ranges = ValueGauge.buildRanges(src, min, max);
 
         expect(ranges).instanceOf(Array);
         expect(ranges.length).eq(src.length);
 
-        expect(ranges[0].startValue).eq(min);
-        expect(ranges[2].startValue).eq(src[1].endValue);
-        expect(ranges[2].endValue).eq(max);
+        expect(ranges[0].fromValue).eq(min);
+        expect(ranges[2].fromValue).eq(src[1].toValue);
+        expect(ranges[2].toValue).eq(max);
     });
 });
 

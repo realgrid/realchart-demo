@@ -9,14 +9,14 @@
 import { isArray, isObject, isString, pickNum, pickProp } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { ISize } from "../common/Size";
-import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
+import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, calcPercent, fixnum, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Widget } from "./Widget";
 
 export interface IGaugeValueRange {
-    startValue?: number;
-    endValue?: number;
+    fromValue?: number;
+    toValue?: number;
     color: string;
 }
 
@@ -31,60 +31,20 @@ export abstract class Gauge extends Widget {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
-    /**
-     * endValue는 포함되지 않는다. 즉, startValue <= v < endValue.
-     * startValue를 지정하면 이전 range의 endValue를 startValue로 설정한다.
-     * 이전 범위가 없으면 min으로 지정된다.
-     * endValue가 지정되지 않으면 max로 지정된다.
-     * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
-     * startValue를 기준으로 정렬한다.
-     */
-    static buildRanges(source: IGaugeValueRange[], min: number, max: number): IGaugeValueRange[] {
-        let ranges: IGaugeValueRange[];
-        let prev: IGaugeValueRange;
-
-        if (isArray(source)) {
-            ranges = [];
-            source.forEach(src => {
-                if (isObject(src) && isString(src.color)) {
-                    const range: IGaugeValueRange = {
-                        startValue: pickNum(src.startValue, prev ? prev.endValue : min),
-                        endValue: pickNum(src.endValue, max),
-                        color: src.color
-                    };
-                    if (range.startValue < range.endValue) {
-                        ranges.push(range);
-                        prev = range;
-                    }
-                }
-            });
-            ranges = ranges.sort((r1, r2) => r1.startValue - r2.startValue);
-        }
-        return ranges;
-    }
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _widthDim: IPercentSize;
     private _heightdim: IPercentSize;
+    private _leftDim: IPercentSize;
+    private _rightDim: IPercentSize;
+    private _topDim: IPercentSize;
+    private _bottomDim: IPercentSize;
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     abstract _type(): string;
-
-    /**
-     * @override
-     * @config
-     */
-    left = void 0;
-    /**
-     * @override
-     * @config
-     */
-    top = void 0;
-
     /**
      * 게이지 이름.
      * 동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다. 
@@ -92,6 +52,30 @@ export abstract class Gauge extends Widget {
      * @config
      */
     name: string;
+    /**
+     * plot 영역의 왼쪽 모서리와 widget 사이의 간격.
+     * 
+     * @config
+     */
+    left: RtPercentSize;
+    /**
+     * plot 영역의 오른쪽 모서리와 widget 사이의 간격.
+     * 
+     * @config
+     */
+    right: RtPercentSize;
+    /**
+     * plot 영역의 위쪽 모서리와 widget 사이의 간격.
+     * 
+     * @config
+     */
+    top: RtPercentSize;
+    /**
+     * plot 영역의 아래쪽 모서리와 widget 사이의 간격.
+     * 
+     * @config
+     */
+    bottom: RtPercentSize;
     /**
      * 게이지 너비.
      * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
@@ -113,23 +97,11 @@ export abstract class Gauge extends Widget {
      */
     size: RtPercentSize = '100%';
     /**
-     * 최소값.
+     * Animation duration.
      * 
      * @config
      */
-    minValue = 0;
-    /**
-     * 최대값.
-     * 
-     * @config
-     */
-    maxValue = 100;
-    /**
-     * 현재값.
-     * 
-     * @config
-     */
-    value = 0;
+    duration = 500;
 
     //-------------------------------------------------------------------------
     // methods
@@ -141,11 +113,20 @@ export abstract class Gauge extends Widget {
         };
     }
 
-    updateValues(values: any): void {
-        if (values !== this.value) {
-            this.value = values;
-            this._changed();
-        }
+    getLeft(doamin: number): number {
+        return calcPercent(this._leftDim, doamin);
+    }
+
+    getRight(doamin: number): number {
+        return calcPercent(this._rightDim, doamin);
+    }
+
+    getTop(doamin: number): number {
+        return calcPercent(this._topDim, doamin);
+    }
+
+    getBottom(doamin: number): number {
+        return calcPercent(this._bottomDim, doamin);
     }
 
     //-------------------------------------------------------------------------
@@ -158,6 +139,10 @@ export abstract class Gauge extends Widget {
 
         this._widthDim = parsePercentSize(this.width, true) || sz;
         this._heightdim = parsePercentSize(this.height, true) || sz;
+        this._leftDim = parsePercentSize(this.left, true);
+        this._rightDim = parsePercentSize(this.right, true);
+        this._topDim = parsePercentSize(this.top, true);
+        this._bottomDim = parsePercentSize(this.bottom, true);
     }
 }
 
@@ -241,7 +226,7 @@ export class GaugeCollection {
     // internal members
     //-------------------------------------------------------------------------
     private $_loadItem(chart: IChart, src: any, index: number): Gauge {
-        let cls = chart._getGaugeType(src.type || 'circle');
+        let cls = chart._getGaugeType(src.type || chart.gaugeType);
         if (!cls) {
             throw new Error('Invalid gauge type: ' + src.type);
         }
@@ -254,20 +239,440 @@ export class GaugeCollection {
     }
 }
 
-export class GaugeLabel extends FormattableText {
+
+/**
+ * 게이지 모델.
+ */
+export abstract class ValueGauge extends Gauge {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    /**
+     * endValue는 포함되지 않는다. 즉, startValue <= v < endValue.
+     * startValue를 지정하면 이전 range의 endValue를 startValue로 설정한다.
+     * 이전 범위가 없으면 min으로 지정된다.
+     * endValue가 지정되지 않으면 max로 지정된다.
+     * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
+     * startValue를 기준으로 정렬한다.
+     */
+    static buildRanges(source: IGaugeValueRange[], min: number, max: number): IGaugeValueRange[] {
+        let ranges: IGaugeValueRange[];
+        let prev: IGaugeValueRange;
+
+        if (isArray(source)) {
+            ranges = [];
+            source.forEach(src => {
+                if (isObject(src) && isString(src.color)) {
+                    const range: IGaugeValueRange = {
+                        fromValue: pickNum(src.fromValue, prev ? prev.toValue : min),
+                        toValue: pickNum(src.toValue, max),
+                        color: src.color
+                    };
+                    if (range.fromValue < range.toValue) {
+                        ranges.push(range);
+                        prev = range;
+                    }
+                }
+            });
+            ranges = ranges.sort((r1, r2) => r1.fromValue - r2.fromValue);
+        }
+        return ranges;
+    }
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _offsetXDim: IPercentSize;
-    private _offsetYDim: IPercentSize;
+    protected _runValue: number;
 
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 최소값.
+     * 
+     * @config
+     */
+    minValue = 0;
+    /**
+     * 최대값.
+     * 
+     * @config
+     */
+    maxValue: number;
+    /**
+     * 현재값.
+     * 
+     * @config
+     */
+    value = 0;
+    /**
+     * {@link value} 변화를 애니메이션으로 표현한다.
+     * 
+     * @config
+     */
+    animatable = true;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    updateValues(values: any): void {
+        if (values !== this.value) {
+            this.value = values;
+            this._changed();
+        }
+    }
+
+    getLabel(label: GaugeLabel, value: number): string {
+        this._runValue = value;
+        return label.text || (label.prefix || '') + value + (label.suffix || '');
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+}
+
+export class GuageScaleTick extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public scale: GaugeScale) {
+        super(scale.chart);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    length = 7;
+}
+
+/**
+ * Gauge scale.
+ */
+export class GaugeScale extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _step: number;
+    _steps: number[];
+    _min: number;
+    _max: number;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public gauge: ValueGauge) {
+        super(gauge.chart);
+
+        this.line = new ChartItem(gauge.chart, false);
+        this.tick = new GuageScaleTick(this);
+        this.tickLabel = new ChartItem(gauge.chart);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    line: ChartItem;
+    tick: GuageScaleTick;
+    tickLabel: ChartItem;
+
+    steps: number[];
+    stepCount: number;
+    stepInterval: number;
+    stepPixels = 48;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    buildSteps(length: number, value: number, target: number): number[] {
+        const {min, max} = this._adjustMinMax(Math.min(value, target), Math.max(value, target));
+        let pts: number[];
+
+        if (Array.isArray(this.steps)) {
+            pts = this.steps.slice(0);
+        } else if (this.stepCount > 0) {
+            pts = this._getStepsByCount(this.stepCount, min, max);
+        } else if (this.stepInterval > 0) {
+            pts = this._getStepsByInterval(this.stepInterval, min, max);
+        } else if (this.stepPixels > 0) {
+            pts = this._getStepsByPixels(length, this.stepPixels, min, max);
+        } else {
+            pts = [min, max];
+        }
+
+        return this._steps = pts;
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected _adjustMinMax(min: number, max: number): { min: number, max: number } {
+        const g = this.gauge;
+
+        if (!isNaN(g.minValue)) {
+            min = g.minValue;
+        }
+        if (!isNaN(g.maxValue)) {
+            max = g.maxValue;
+        }
+
+        this._min = min;
+        this._max = max;
+
+        return { min, max };
+    }
+
+    protected _getStepsByCount(count: number, min: number, max: number): number[] {
+        const len = max - min;
+        let step = len / (count - 1);
+        const scale = Math.pow(10, Math.floor(Math.log10(step)));
+        const steps: number[] = [];
+
+        step = this._step = Math.ceil(step / scale) * scale;
+
+        if (min > Math.floor(min / scale) * scale) {
+            min = Math.floor(min / scale) * scale;
+        } else if (min < Math.ceil(min / scale) * scale) {
+            min = Math.ceil(min / scale) * scale;
+        }
+
+        steps.push(min);
+        for (let i = 1; i < count; i++) {
+            steps.push(fixnum(steps[i - 1] + step));
+        }
+        return steps;
+    }
+
+    protected _getStepsByInterval(interval: number, min: number, max: number): number[] {
+        const steps: number[] = [];
+        let v: number;
+
+        steps.push(v = min);
+        while (v < max) {
+            steps.push(v += interval);
+        }
+        this._step = interval;
+        return steps;
+    }
+
+    protected _getStepMultiples(step: number): number[] {
+        return [1, 2, 2.5, 5, 10];
+    }
+
+    protected _getStepsByPixels(length: number, pixels: number, min: number, max: number): number[] {
+        const steps: number[] = [];
+        const len = max - min;
+
+        if (len === 0) {
+            return steps;
+        }
+
+        let count = Math.floor(length / pixels) + 1;
+        let step = len / (count - 1);
+        const scale = Math.pow(10, Math.floor(Math.log10(step)));
+        const multiples = this._getStepMultiples(scale);
+        let i = 0;
+        let v: number;
+
+        step = step / scale;
+        if (multiples) {
+            // 위쪽 배수에 맞춘다.
+            if (step > multiples[i]) {
+                for (; i < multiples.length - 1; i++) {
+                    if (step > multiples[i] && step < multiples[i + 1]) {
+                        step = multiples[++i];
+                        break;
+                    }
+                }
+            } else {
+                step = multiples[i];
+            }
+        }
+        step *= scale;
+
+        if (min > Math.floor(min / step) * step) {
+            min = Math.floor(min / step) * step;
+        } else if (min < Math.ceil(min / step) * step) {
+            min = Math.ceil(min / step) * step;
+        }
+
+        this._step = step;
+        steps.push(fixnum(v = min));
+        while (v < max) {
+            steps.push(fixnum(v += step));
+        }
+        return steps;
+    }
+}
+
+export abstract class GaugeLabel extends FormattableText {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
         super(chart, true);
     }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 게이지 값 변경 애니메이션이 실행될 때, label도 따라서 변경시킨다.
+     * 
+     * @config
+     */
+    animatable = true;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+}
+
+export class LinearGaugeScale extends GaugeScale {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _vertical: boolean;
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * true면 반대쪽에 표시한다.
+     * 
+     * @config
+     */
+    opposite = false;
+    /**
+     * 게이지 본체와의 간격.
+     */
+    gap = 8;
+}
+
+export class LinearGaugeLabel extends GaugeLabel {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _width: RtPercentSize;
+    private _height: RtPercentSize;
+    private _gap: RtPercentSize;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _widthDim: IPercentSize;
+    private _heightDim: IPercentSize;
+    private _gapDim: IPercentSize;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart);
+
+        this.gap = '5%';
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 값을 지정하지 않으면 게이지 표시 방향에 따라 자동으로 위치를 결정한다.
+     */
+    position: undefined | 'left' | 'right' | 'top' | 'bottom';
+    /**
+     * 값을 지정하지 않으면,
+     * position이 'left', 'right'일 때 기본값은 '25%'이다.
+     */
+    get width(): RtPercentSize {
+        return this._width;
+    }
+    set width(value: RtPercentSize) {
+        if (value !== this._width) {
+            this._width = value;
+            this._widthDim = parsePercentSize(value, true);
+        }
+    }
+    /**
+     * 값을 지정하지 않으면,
+     * position이 'top', 'bottom'일 때 기본값은 '25%'이다.
+     */
+    get height(): RtPercentSize {
+        return this._height;
+    }
+    set height(value: RtPercentSize) {
+        if (value !== this._height) {
+            this._height = value;
+            this._heightDim = parsePercentSize(value, true);
+        }
+    }
+    /**
+     * label과 본체 사이의 간격.
+     * 
+     * @config
+     */
+    get gap(): RtPercentSize {
+        return this._gap;
+    }
+    set gap(value: RtPercentSize) {
+        if (value !== this._gap) {
+            this._gap = value;
+            this._gapDim = parsePercentSize(value, true);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getWidth(vertical: boolean,  domain: number): number {
+        let w = calcPercent(this._widthDim, domain);
+
+        if (isNaN(w)) {
+            if (!vertical) {
+                w = domain * 0.25;
+            }
+        }
+        return w;
+    }
+
+    getHeight(vertical: boolean, domain: number): number {
+        let h = calcPercent(this._heightDim, domain);
+
+        if (isNaN(h)) {
+            if (vertical) {
+                h = domain * 0.25;
+            }
+        }
+        return h;
+    }
+
+    getGap(domain: number): number {
+        return calcPercent(this._gapDim, domain, 0);
+    }
+}
+
+export class CircularGaugeLabel extends GaugeLabel {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _offsetXDim: IPercentSize;
+    private _offsetYDim: IPercentSize;
 
     //-------------------------------------------------------------------------
     // properties
@@ -286,12 +691,6 @@ export class GaugeLabel extends FormattableText {
      * @config
      */
     offsetY: RtPercentSize = 0;
-    /**
-     * 게이지 값 변경 애니메이션이 실행될 때, label도 따라서 변경시킨다.
-     * 
-     * @config
-     */
-    animatable = true;
 
     //-------------------------------------------------------------------------
     // methods
@@ -327,7 +726,7 @@ export interface ICircularGaugeExtents {
  * label의 기본 위치의 x는 원호의 좌위 최대 각 위치를 연결한 지점,
  * y는 중심 각도의 위치.
  */
-export abstract class CircularGauge extends Gauge {
+export abstract class CircularGauge extends ValueGauge {
 
     //-------------------------------------------------------------------------
     // consts
@@ -344,7 +743,6 @@ export abstract class CircularGauge extends Gauge {
     private _radiusDim: IPercentSize;
     private _innerDim: IPercentSize;
     private _valueDim: IPercentSize;
-    private _runValue: number;
     _startRad: number;
     _handRad: number;
     _sweepRad: number;
@@ -355,24 +753,14 @@ export abstract class CircularGauge extends Gauge {
     constructor(chart: IChart) {
         super(chart);
 
-        this.label = new GaugeLabel(chart);
+        this.label = new CircularGaugeLabel(chart);
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * {@link value} 변화를 애니메이션으로 표현한다.
-     * 
-     * @config
-     */
-    animatable = true;
-    /**
-     * Animation duration.
-     * 
-     * @config
-     */
-    duration = 500;
+    maxValue = 100;
+
     /**
      * 게이지 중심 수평 위치.
      * 픽셀 단위의 크기나, plot 영역 전체 너비에 대한 상대적 크기로 지정할 수 있다.
@@ -438,7 +826,7 @@ export abstract class CircularGauge extends Gauge {
      * 
      * @config
      */
-    label: GaugeLabel;
+    label: CircularGaugeLabel;
     /**
      * 내부 원에 적용할 스타일셋 혹은 class selector.
      * 
@@ -463,11 +851,6 @@ export abstract class CircularGauge extends Gauge {
         const value = this._valueDim ? calcPercent(this._valueDim, radius) : radius;
 
         return { radius, inner, value };
-    }
-
-    getLabel(value: number): string {
-        this._runValue = value;
-        return this.label.text || (this.label.prefix || '') + value + (this.label.suffix || '');
     }
 
     getParam(param: string): any {

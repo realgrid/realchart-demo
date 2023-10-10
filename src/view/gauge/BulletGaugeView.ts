@@ -6,14 +6,16 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum, pickProp } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
-import { LayerElement, PathElement } from "../../common/RcControl";
+import { LayerElement } from "../../common/RcControl";
+import { IRect, Rectangle } from "../../common/Rectangle";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
 import { BulletGauge } from "../../model/gauge/BulletGauge";
-import { GaugeView } from "../GaugeView";
+import { LineGaugeView, LinearScaleView } from "../GaugeView";
 
-export class BulletGaugeView extends GaugeView<BulletGauge> {
+export class BulletGaugeView extends LineGaugeView<BulletGauge> {
 
     //-------------------------------------------------------------------------
     // consts
@@ -21,41 +23,113 @@ export class BulletGaugeView extends GaugeView<BulletGauge> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _background: PathElement;
-    private _container: LayerElement;
-    private _foregrounds: ElementPool<PathElement>;
-    private _textView: TextElement;
-    getValueOf = (target: any, param: string): any => {
-        return;
-    }
+    private _background: RectElement;
+    private _barContainer: LayerElement;
+    private _barViews: ElementPool<RectElement>;
+    private _valueView: RectElement;
+    private _targetView: RectElement;
+    private _scaleView: LinearScaleView;
+    private _labelView: TextElement;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string) {
-        super(doc, styleName);
+    constructor(doc: Document) {
+        super(doc, 'rct-bullet-gage');
 
-        this.add(this._background = new PathElement(doc));
-        this.add(this._container = new LayerElement(doc, void 0));
-        this._foregrounds = new ElementPool(this._container, PathElement);
-        this.add(this._textView = new TextElement(doc));
-        // this._textView.anchor = TextAnchor.START;
+        this.add(this._background = new RectElement(doc, 'rct-bullet-gauge-background'));
+        this.add(this._barContainer = new LayerElement(doc, void 0));
+        this._barViews = new ElementPool(this._barContainer, RectElement);
+        this.add(this._valueView = new RectElement(doc, 'rct-bullet-gauge-value'));
+        this.add(this._targetView = new RectElement(doc, 'rct-bullet-gauge-target'));
+        this.add(this._scaleView = new LinearScaleView(doc));
+        this.add(this._labelView = new TextElement(doc));
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _prepareGauge(doc: Document, model: BulletGauge): void {
-        // const ranges = model.ranges;
-
-        // if (isArray(ranges)) {
-        //     this._foregrounds.prepare(ranges.length);
-        // } else {
-        //     this._foregrounds.prepare(1);
-        // }
     }
 
     protected _renderGauge(width: number, height: number): void {
-        // this.model.label.setText('good').buildSvg(this._textView, this.model, this.getValueOf);
+        const m = this.model;
+
+        this._measureGauge(m, m.label, m.vertical, width, height);
+        this._renderValue();
     }
+
+    _renderValue(): void {
+        const m = this.model;
+        const scale = m.scale;
+        const value = pickNum(this._runValue, m.value);
+        const rBand = Object.assign({}, this._rBand);
+        let x = 0;
+        let y = 0;
+
+        // scale
+        if (this._scaleView.setVisible(scale.visible)) {
+            scale._vertical = this._vertical;
+            const len = this._vertical ? rBand.height : rBand.width;
+            
+            scale.buildSteps(len, value, m.targetValue);
+            const sz = this._scaleView.measure(this.doc, scale, rBand.width, rBand.height, 1);
+
+            if (this._vertical) {
+                if (scale.opposite) {
+                } else {
+                }
+            } else {
+                if (scale.opposite) {
+                } else {
+                    rBand.height -= sz.height;
+                }
+            }
+            this._scaleView.resizeByMeasured().layout().translate(rBand.x, rBand.height);
+        }
+
+        // band background
+        this._background.setRect(rBand);
+
+        // band
+        this._barContainer.setRect(rBand);
+        this.$_renderBand(m, rBand, value);
+
+        // label
+        this._rLabel.height = this._barContainer.height;
+        this._renderLabel(m, m.label, this._labelView, value);
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_renderBand(m: BulletGauge, r: IRect, value: number): void {
+        const sum = m.scale._max - m.scale._min;
+        const ranges = m.getRanges(m.scale._min, m.scale._max);
+
+        if (ranges) {
+            let x = 0;
+
+            this._barViews.prepare(ranges.length).forEach((v, i) => {
+                const range = ranges[i];
+                const w = r.width * (range.toValue - range.fromValue) / sum;
+
+                v.setBounds(x, 0, w, r.height);
+                v.setStyle('fill', range.color);
+                x += w;
+            });
+        }
+
+        // value bar
+        if (this._valueView.setVisible(!isNaN(m.value))) {
+            const w = r.width * (value - m.scale._min) / sum;
+            this._valueView.setBounds(r.x, r.y + r.height / 3, w, r.height / 3);
+        }
+
+        // target bar
+        if (this._targetView.setVisible(!isNaN(m.targetValue))) {
+            const x = r.x + r.width * (m.targetValue - m.scale._min) / sum;
+            this._targetView.setBounds(x - 1, r.y + 5, 3, r.height - 10);
+        }
+   }
 }

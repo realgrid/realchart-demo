@@ -858,6 +858,10 @@ export class RcElement extends RcObject {
         return this;
     }
 
+    internalRotate(angle: number): void {
+        this._rotation = angle;
+    }
+
     translate(x: number, y: number): RcElement {
         if (x !== this._translateX || y !== this._translateY) {
             if (Utils.isValidNumber(x)) this._translateX = x;
@@ -1199,6 +1203,10 @@ export class RcElement extends RcObject {
     }
 
     protected _updateTransform(): void {
+        this._dom.setAttribute('transform', this.getTransform());
+    }
+
+    getTransform(): string {
         const dom = this._dom;
         let tx = this._translateX;
         let ty = this._translateY;
@@ -1233,8 +1241,9 @@ export class RcElement extends RcObject {
         }
 
         if (tf.length) {
-            this._dom.setAttribute('transform', tf.join(' '));
+            return tf.join(' ');
         }
+        return '';
     }
 }
 

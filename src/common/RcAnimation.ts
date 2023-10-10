@@ -164,9 +164,10 @@ const Easings: any = {
     // }
 }
 
-export const createAnimation = function (dom: Element, styleProp: string, toValue: any, duration: number, finishHandler: () => void): Animation {
-    const frame = newObject(styleProp, toValue);
-    const ani = dom.animate([{}, frame], {
+export const createAnimation = function (dom: Element, styleProp: string, fromValue: any, toValue: any, duration: number, finishHandler: () => void): Animation {
+    const frame1 = fromValue != null ? newObject(styleProp, fromValue) : {};
+    const frame2 = newObject(styleProp, toValue);
+    const ani = dom.animate([frame1, frame2], {
         duration: duration,
         fill: 'none'
     });

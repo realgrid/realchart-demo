@@ -11,9 +11,9 @@ import { NumberFormatter } from "../../common/NumberFormatter";
 import { RectElement } from "../../common/impl/RectElement";
 import { CircleGauge } from "../../model/gauge/CircleGauge";
 import { CircularGauge } from "../../model/Gauge";
-import { GaugeView } from "../GaugeView";
+import { GaugeView, ValueGaugeView } from "../GaugeView";
 
-export abstract class CircularGaugeView<T extends CircularGauge> extends GaugeView<T> {
+export abstract class CircularGaugeView<T extends CircularGauge> extends ValueGaugeView<T> {
 
     //-------------------------------------------------------------------------
     // consts

@@ -80,22 +80,6 @@ describe('LegendItem test', function() {
         expect(legend.alignBase).eq(source.alignBase);
     });
 
-    it('left', () => {
-        expect(legend.left).eq(source.left);
-    });
-
-    it('right', () => {
-        expect(legend.right).eq(source.right);
-    });
-
-    it('top', () => {
-        expect(legend.top).eq(source.top);
-    });
-
-    it('bottom', () => {
-        expect(legend.bottom).eq(source.bottom);
-    });
-
     it('itemGap', () => {
         expect(legend.itemGap).eq(source.itemGap);
     });
