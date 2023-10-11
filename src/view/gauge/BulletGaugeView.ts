@@ -69,11 +69,12 @@ export class BulletGaugeView extends LineGaugeView<BulletGauge> {
 
     protected _renderBand(m: BulletGauge, r: IRect, value: number): void {
         const reversed = m.reversed;
+        const vertical = this._vertical;
         const sum = m.scale._max - m.scale._min;
         const ranges = m.getRanges(m.scale._min, m.scale._max);
 
         if (ranges) {
-            if (this._vertical) {
+            if (vertical) {
                 let y = reversed ? 0 : r.height;
 
                 this._barViews.prepare(ranges.length).forEach((v, i) => {
@@ -100,7 +101,7 @@ export class BulletGaugeView extends LineGaugeView<BulletGauge> {
 
         // value bar
         if (this._valueView.setVisible(!isNaN(m.value))) {
-            if (this._vertical) {
+            if (vertical) {
                 const h = r.height * (value - m.scale._min) / sum;
                 const y = reversed ? r.y : r.y + r.height - h;
 
@@ -115,12 +116,12 @@ export class BulletGaugeView extends LineGaugeView<BulletGauge> {
 
         // target bar
         if (this._targetView.setVisible(!isNaN(m.targetValue))) {
-            if (this._vertical) {
+            if (vertical && r.width > 10) {
                 let y = r.height * (m.targetValue - m.scale._min) / sum;
 
                 y = reversed ? r.y + y : r.y + r.height - y;
                 this._targetView.setBounds(r.x + 5, y - 1, r.width - 10, 3);
-            } else {
+            } else if (!vertical && r.height > 10) {
                 let x = r.width * (m.targetValue - m.scale._min) / sum;;
             
                 x = reversed ? (r.x + r.width - x) : (r.x + x);

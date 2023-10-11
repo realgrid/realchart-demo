@@ -86,10 +86,10 @@ function setActions(container) {
         config.gauge[0].reversed = _getChecked(e);
         chart.load(config);
     }, false);
-    createListBox(container, "label.position", ['left', 'right', 'top', 'bottom'], function (e) {
+    createListBox(container, "label.position", ['', 'left', 'right', 'top', 'bottom'], function (e) {
         config.gauge[0].label.position = _getValue(e);
         chart.load(config);
-    }, 'left');
+    }, '');
     createCheckBox(container, 'scale', function (e) {
         config.gauge[0].scale.visible = _getChecked(e);
         chart.load(config);
@@ -113,6 +113,30 @@ function setActions(container) {
     line(container);
     createCheckBox(container, 'reversed2', function (e) {
         config.gauge[1].reversed = _getChecked(e);
+        chart.load(config);
+    }, false);
+    createListBox(container, "label2.position", ['', 'left', 'right', 'top', 'bottom'], function (e) {
+        config.gauge[1].label.position = _getValue(e);
+        chart.load(config);
+    }, '');
+    createCheckBox(container, 'scale2', function (e) {
+        config.gauge[1].scale.visible = _getChecked(e);
+        chart.load(config);
+    }, true);
+    createCheckBox(container, 'scale2.line', function (e) {
+        config.gauge[1].scale.line = _getChecked(e);
+        chart.load(config);
+    }, true);
+    createCheckBox(container, 'scale2.tick', function (e) {
+        config.gauge[1].scale.tick = _getChecked(e);
+        chart.load(config);
+    }, true);
+    createListBox(container, "scale2.gap", ['0', '4', '8', '12'], function (e) {
+        config.gauge[1].scale.gap = _getValue(e);
+        chart.load(config);
+    }, '8');
+    createCheckBox(container, 'scale2.opposite', function (e) {
+        config.gauge[1].scale.opposite = _getChecked(e);
         chart.load(config);
     }, false);
 }
