@@ -7,12 +7,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp } from "../../common/Common";
+import { RcElement } from "../../common/RcControl";
 import { SVGStyleOrClass, StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
+import { LegendItem } from "../Legend";
 import { MarkerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
+import { LineSeriesMarkerView } from "./legend/LineSeriesMarkerView";
 
 export class LineSeriesPoint extends DataPoint {
 
@@ -181,6 +184,17 @@ export class LineSeries extends LineSeriesBase {
     }
     getLineType(): LineType {
         return this.lineType;
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return new LineSeriesMarkerView(doc, size);
+    }
+
+    legendMarker(doc: Document): RcElement {
+        const m = super.legendMarker(doc);
+
+        (m as LineSeriesMarkerView).setShape(this.getShape(null), Math.min(LegendItem.MARKER_SIZE, this.marker.radius * 2));
+        return m;
     }
 }
 

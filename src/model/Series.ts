@@ -11,13 +11,14 @@ import { IPoint } from "../common/Point";
 import { RcElement } from "../common/RcControl";
 import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
+import { RectElement } from "../common/impl/RectElement";
 import { Shape, Shapes } from "../common/impl/SvgShape";
 import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { LineType } from "./ChartTypes";
 import { DataPoint, DataPointCollection } from "./DataPoint";
-import { ILegendSource } from "./Legend";
+import { ILegendSource, LegendItem } from "./Legend";
 import { Tooltip } from "./Tooltip";
 import { CategoryAxis } from "./axis/CategoryAxis";
 
@@ -338,6 +339,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
+    static readonly LEGEND_MARKER = 'rct-legend-item-marker';
+
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
@@ -550,7 +553,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return this.label || this.name;
     }
 
-    legendMarker(): RcElement {
+    legendMarker(doc: Document): RcElement {
+        if (!this._legendMarker) {
+            this._legendMarker = this._createLegendMarker(doc, LegendItem.MARKER_SIZE);
+        }
         return this._legendMarker;
     }
     setLegendMarker(elt: RcElement): void {
@@ -597,10 +603,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    protected _createPoint(source: any): DataPoint {
-        return new DataPoint(source);
-    }
-
     createPoints(source: any[]): DataPoint[] {
         return source.map((s, i) => {
             const p = this._createPoint(s);
@@ -831,6 +833,14 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _createPoint(source: any): DataPoint {
+        return new DataPoint(source);
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, size / 2);
+    }
+
     _referOtherSeries(series: Series): boolean {
         // true 리턴하면 더 이상 참조하지 않는 다는 뜻.
         return true;

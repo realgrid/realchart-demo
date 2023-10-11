@@ -27,6 +27,7 @@ const config = {
 		// strictMin: 1
 	},
 	series: {
+        // visible: false,
 		// baseValue: null,
 		pointLabel: {
 			visible: true,
