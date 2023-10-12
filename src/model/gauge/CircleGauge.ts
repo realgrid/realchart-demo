@@ -353,6 +353,9 @@ export class CircleGaugePin extends ChartItem {
     //-------------------------------------------------------------------------
 }
 
+export class CircleGaugeScale extends GaugeScale {
+}
+
 /**
  * 게이지 모델.
  * 
@@ -381,7 +384,7 @@ export class CircleGauge extends CircularGauge {
      * 
      * @config
      */
-    scale = new GaugeScale(this, false);
+    scale = new CircleGaugeScale(this, false);
     /**
      * 게이지 배경 원호 테두리 설정 모델.
      * 

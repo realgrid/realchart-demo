@@ -17,8 +17,8 @@ import { ISize } from "../common/Size";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
-import { Gauge, LinearGaugeLabel, LinearGaugeScale, ValueGauge } from "../model/Gauge";
-import { LinearGauge } from "../model/gauge/LinearGauge";
+import { Gauge, LinearGaugeScale, ValueGauge } from "../model/Gauge";
+import { LinearGauge, LinearGaugeBase, LinearGaugeLabel } from "../model/gauge/LinearGauge";
 import { ChartElement } from "./ChartElement";
 
 export abstract class GaugeView<T extends Gauge> extends ChartElement<T> {
@@ -322,7 +322,7 @@ export class LinearScaleView extends ChartElement<LinearGaugeScale> {
     }
 }
 
-export abstract class LineGaugeView<T extends LinearGauge> extends ValueGaugeView<T> {
+export abstract class LineGaugeView<T extends LinearGaugeBase> extends ValueGaugeView<T> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -353,65 +353,20 @@ export abstract class LineGaugeView<T extends LinearGauge> extends ValueGaugeVie
         const m = this.model;
         const label = m.label;
         const scale = m.scale;
-        const scaleView = this.scaleView();
         const labelView = this.labelView();
         const value = pickNum(this._runValue, m.value);
         const rBand = Object.assign({}, this._rBand);
-        const len = this._vertical ? rBand.height : rBand.width;
-        let x: number;
-        let y: number;
 
-        // scale
-        scale._vertical = this._vertical;
-        scale._reversed = m.reversed;
-        scale.buildSteps(len, value);
-
-        if (scaleView.setVisible(scale.visible)) {
-            const sz = scaleView.measure(this.doc, scale, rBand.width, rBand.height, 1);
-
-            if (this._vertical) {
-                x = 0;
-                y = rBand.y;
-                rBand.width = Math.max(0, rBand.width - sz.width);
-
-                if (scale.opposite) {
-                    x = rBand.x + rBand.width;
-                } else {
-                    if (label._runVert) {
-                        rBand.x += sz.width;
-                    } else {
-                        x = rBand.x;
-                        rBand.x += sz.width;
-                    }
-                }
-            } else {
-                x = rBand.x;
-                rBand.height = Math.max(0, rBand.height - sz.height);
-
-                if (scale.opposite) {
-                    if (label._runVert) {
-                        y = rBand.y;
-                        rBand.y += sz.height;
-                    } else {
-                        this._rLabel.y = rBand.y += sz.height;
-                        y = rBand.y - sz.height;
-                    }
-                } else {
-                    y = rBand.y + rBand.height;
-                }
-            }
-            scaleView.resizeByMeasured().layout().translate(x, y);
-        }
+        this._renderScale(rBand);
 
         // band background
         this.background().setRect(rBand);
 
         // band
-        this.itemContainer().setRect(rBand);
         this._renderBand(m, rBand, value);
 
         // label
-        this._rLabel.height = this.itemContainer().height;
+        this._rLabel.height = rBand.height;
         this._renderLabel(m, label, labelView, value);
 
         // 아래쪽으로 넘치지 않게 한다.
@@ -423,14 +378,12 @@ export abstract class LineGaugeView<T extends LinearGauge> extends ValueGaugeVie
         }
     }
 
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
     protected abstract labelView(): TextElement;
     protected abstract scaleView(): LinearScaleView;
     protected abstract background(): RectElement;
-    protected abstract itemContainer(): LayerElement;
     protected abstract _renderBand(m: ValueGauge, r: IRect, value: number): void;
 
     protected _measureGauge(m: ValueGauge, label: LinearGaugeLabel, labelView: TextElement, value: number, vertical: boolean, width: number, height: number): void {
@@ -510,4 +463,56 @@ export abstract class LineGaugeView<T extends LinearGauge> extends ValueGaugeVie
             view.translate(x, y);
         }
    }
+
+   _renderScale(rBand: IRect): void {
+        const m = this.model;
+        const label = m.label;
+        const scale = m.scale;
+        const scaleView = this.scaleView();
+        const value = pickNum(this._runValue, m.value);
+        const len = this._vertical ? rBand.height : rBand.width;
+        let x: number;
+        let y: number;
+
+        scale._vertical = this._vertical;
+        scale._reversed = m.reversed;
+        scale.buildSteps(len, value);
+
+        if (scaleView.setVisible(scale.visible)) {
+            const sz = scaleView.measure(this.doc, scale, rBand.width, rBand.height, 1);
+
+            if (this._vertical) {
+                x = 0;
+                y = rBand.y;
+                rBand.width = Math.max(0, rBand.width - sz.width);
+
+                if (scale.opposite) {
+                    x = rBand.x + rBand.width;
+                } else {
+                    if (label._runVert) {
+                        rBand.x += sz.width;
+                    } else {
+                        x = rBand.x;
+                        rBand.x += sz.width;
+                    }
+                }
+            } else {
+                x = rBand.x;
+                rBand.height = Math.max(0, rBand.height - sz.height);
+
+                if (scale.opposite) {
+                    if (label._runVert) {
+                        y = rBand.y;
+                        rBand.y += sz.height;
+                    } else {
+                        this._rLabel.y = rBand.y += sz.height;
+                        y = rBand.y - sz.height;
+                    }
+                } else {
+                    y = rBand.y + rBand.height;
+                }
+            }
+            scaleView.resizeByMeasured().layout().translate(x, y);
+        }
+    }
 }

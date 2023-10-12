@@ -6,17 +6,159 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
-import { LinearGaugeLabel, LinearGaugeScale, ValueGauge } from "../Gauge";
+import { ChartItem } from "../ChartItem";
+import { GaugeLabel, GuageRangeBand, LinearGaugeScale, ValueGauge } from "../Gauge";
+
+export class LinearGaugeLabel extends GaugeLabel {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _width: RtPercentSize;
+    private _height: RtPercentSize;
+    private _maxWidth: RtPercentSize;
+    private _maxHeight: RtPercentSize;
+    private _gap: RtPercentSize;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _widthDim: IPercentSize;
+    private _heightDim: IPercentSize;
+    private _maxWidthDim: IPercentSize;
+    private _maxHeightDim: IPercentSize;
+    private _gapDim: IPercentSize;
+    _runPos: 'left' | 'right' | 'top' | 'bottom';
+    _runGap: number;
+    _runVert: boolean;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart);
+
+        this.maxWidth = '30%';
+        this.maxHeight = '30%';
+        this.gap = '5%';
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 값을 지정하지 않으면 게이지 표시 방향에 따라 자동으로 위치를 결정한다.
+     * 
+     * @config
+     */
+    position: undefined | 'left' | 'right' | 'top' | 'bottom';
+    /**
+     * position이 'left', 'right'일 때, label 표시 영역 너비.
+     * 픽셀값이나 게이지 전체 너비에 대한 상대값으로 지정할 수 있다.
+     * 
+     * @config
+     */
+    get width(): RtPercentSize {
+        return this._width;
+    }
+    set width(value: RtPercentSize) {
+        if (value !== this._width) {
+            this._width = value;
+            this._widthDim = parsePercentSize(value, true);
+        }
+    }
+    /**
+     * position이 'top', 'bottom'일 때, label 표시 영역 높이.
+     * 픽셀값이나 게이지 전체 높이에 대한 상대값으로 지정할 수 있다.
+     * 
+     * @config
+     */
+    get height(): RtPercentSize {
+        return this._height;
+    }
+    set height(value: RtPercentSize) {
+        if (value !== this._height) {
+            this._height = value;
+            this._heightDim = parsePercentSize(value, true);
+        }
+    }
+    /**
+     * position이 'left', 'right'일 때, label 표시 영역 최대 너비.
+     * 픽셀값이나 게이지 전체 너비에 대한 상대값으로 지정할 수 있다.
+     * {@link width}가 지정되면 이 속성은 무시된다.
+     * 
+     * @config
+     */
+    get maxWidth(): RtPercentSize {
+        return this._maxWidth;
+    }
+    set maxWidth(value: RtPercentSize) {
+        if (value !== this._maxWidth) {
+            this._maxWidth = value;
+            this._maxWidthDim = parsePercentSize(value, true);
+        }
+    }
+    /**
+     * position이 'top', 'bottom'일 때, label 표시 영역 최대 높이.
+     * 픽셀값이나 게이지 전체 높이에 대한 상대값으로 지정할 수 있다.
+     * {@link height}가 지정되면 이 속성은 무시된다.
+     * 
+     * @config
+     */
+    get maxHeight(): RtPercentSize {
+        return this._maxHeight;
+    }
+    set maxHeight(value: RtPercentSize) {
+        if (value !== this._maxHeight) {
+            this._maxHeight = value;
+            this._maxHeightDim = parsePercentSize(value, true);
+        }
+    }
+    /**
+     * label과 본체 사이의 간격.
+     * 픽셀값이나 게이지 전체 크기(position에 따라 높이나 너비)에 대한 상대값으로 지정할 수 있다.
+     * 
+     * @config
+     */
+    get gap(): RtPercentSize {
+        return this._gap;
+    }
+    set gap(value: RtPercentSize) {
+        if (value !== this._gap) {
+            this._gap = value;
+            this._gapDim = parsePercentSize(value, true);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getWidth(domain: number): number {
+        return calcPercent(this._widthDim, domain);
+    }
+
+    getHeight(domain: number): number {
+        return calcPercent(this._heightDim, domain);
+    }
+
+    getMaxWidth(domain: number): number {
+        return calcPercent(this._maxWidthDim, domain);
+    }
+
+    getMaxHeight(domain: number): number {
+        return calcPercent(this._maxHeightDim, domain);
+    }
+
+    getGap(domain: number): number {
+        return calcPercent(this._gapDim, domain, 0);
+    }
+}
 
 /**
- * 선형 게이지 모델.
- * 현재 값을 목표 값과 비교해서 표시한다.
- * 또, 여러 값 범위 중 어디에 속한 상태인 지를 나타낸다.
- * 
- * @config chart.gauge[type=linear]
  */
-export class LinearGauge extends ValueGauge {
+export abstract class LinearGaugeBase extends ValueGauge {
 
     //-------------------------------------------------------------------------
     // consts
@@ -37,12 +179,6 @@ export class LinearGauge extends ValueGauge {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * true면 수직 방향으로 표시한다.
-     * 값을 지정하지 않으면 게이지 전체 크기의 수평 수직을 비교해서 표시 방향을 자동으로 설정한다.
-     * 
-     * @config
-     */
     vertical: boolean;
     /**
      * true면 반대 방향으로 표시한다.
@@ -69,11 +205,82 @@ export class LinearGauge extends ValueGauge {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    _type(): string {
-        return 'linear';
+}
+
+export enum LinearGaugeMarkerType {
+    BAR = 'bar',
+    needle = 'needle'
+}
+
+export class LinearGaugeBarMarker extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public gauge: ValueGauge) {
+        super(gauge.chart, true);
+    }
+}
+
+export class LinearGaugeNeedleMarker extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public gauge: ValueGauge) {
+        super(gauge.chart, true);
+    }
+}
+
+/**
+ * 선형 게이지 모델.
+ * 현재 값을 목표 값과 비교해서 표시한다.
+ * 또, 여러 값 범위 중 어디에 속한 상태인 지를 나타낸다.
+ * 
+ * @config chart.gauge[type=linear]
+ */
+export class LinearGauge extends LinearGaugeBase {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart);
     }
 
-    protected _doLoad(src: any): void {
-        super._doLoad(src);
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    markerType = LinearGaugeMarkerType.BAR;
+    /**
+     * {@link markerType}이 'bar'일 때, bar 설정 모델.
+     */
+    bar = new LinearGaugeBarMarker(this);
+    /**
+     * {@link markerType}이 'needle'일 때, needle 설정 모델.
+     */
+    needle = new LinearGaugeNeedleMarker(this);
+    /**
+     * 게이지 본체 주변이나 내부에 값 영역들을 구분해서 표시하는 band의 모델.
+     * 
+     * @config
+     */
+    band = new GuageRangeBand(this);
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    _type(): string {
+        return 'linear';
     }
 }

@@ -60,10 +60,6 @@ export class BulletGaugeView extends LineGaugeView<BulletGauge> {
         return this._background;
     }
 
-    protected itemContainer(): LayerElement {
-        return this._barContainer;
-    }
-
     protected _prepareGauge(doc: Document, model: BulletGauge): void {
     }
 
@@ -74,6 +70,8 @@ export class BulletGaugeView extends LineGaugeView<BulletGauge> {
         const ranges = m.getRanges(m.scale._min, m.scale._max);
 
         if (ranges) {
+            this._barContainer.setRect(r);
+
             if (vertical) {
                 let y = reversed ? 0 : r.height;
 

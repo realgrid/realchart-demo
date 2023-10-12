@@ -6,11 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
+import { IPercentSize, RtPercentSize, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { GaugeLabel, GaugeScale, IGaugeValueRange, LinearGaugeLabel, LinearGaugeScale, ValueGauge } from "../Gauge";
-import { LinearGauge } from "./LinearGauge";
+import { IGaugeValueRange, ValueGauge } from "../Gauge";
+import { LinearGaugeBase } from "./LinearGauge";
 
 export class BulletGaugeBand extends ChartItem {
 
@@ -130,7 +130,7 @@ export class BulletActualBar extends ChartItem {
  * 
  * @config chart.gauge[type=bullet]
  */
-export class BulletGauge extends LinearGauge {
+export class BulletGauge extends LinearGaugeBase {
 
     //-------------------------------------------------------------------------
     // consts

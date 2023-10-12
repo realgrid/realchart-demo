@@ -18,6 +18,7 @@ export interface IGaugeValueRange {
     fromValue?: number;
     toValue?: number;
     color: string;
+    label?: string;
 }
 
 /**
@@ -351,13 +352,14 @@ export class GuageScaleTick extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    reversed = false;
     length = 7;
 }
 
 /**
  * Gauge scale.
  */
-export class GaugeScale extends ChartItem {
+export abstract class GaugeScale extends ChartItem {
 
     //-------------------------------------------------------------------------
     // fields
@@ -381,6 +383,11 @@ export class GaugeScale extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * true이면 게이지 본체 내부에 표시한다.
+     */
+    inner = false;
+
     line: ChartItem;
     tick: GuageScaleTick;
     tickLabel: ChartItem;
@@ -516,6 +523,113 @@ export class GaugeScale extends ChartItem {
     }
 }
 
+export enum GaugeRangeBandPosition {
+    /**
+     * 게이지 본체와 scale 사이에 표시된다.
+     */
+    DEFAULT = 'default',
+    /**
+     * 원 표시 위치의 반대 쪽 게이지 옆에 표시된다.
+     */
+    OPPOSITE = 'opposite',
+    /**
+     * 게이지 본체 내부에 본체와 같은 두께로 표시된다.
+     */
+    INSIDE = 'inside'
+}
+
+export class GuageRangeBand extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _ranges: IGaugeValueRange[];
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _runRanges: IGaugeValueRange[];
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public gauge: ValueGauge) {
+        super(gauge.chart, false);
+
+        this.rangeLabel = new ChartItem(gauge.chart, false);
+        this.tickLabel = new ChartItem(gauge.chart, true);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 표시 위치.
+     * 
+     * @config
+     */
+    position = GaugeRangeBandPosition.DEFAULT;
+    /**
+     * 밴드의 두께를 픽셀 단위로 지정한다.
+     * {@link position}이 'inside'이면 이 속성은 무시되고, 게이지 본체의 두께와 동일하게 표시된다.
+     * 
+     * @config
+     */
+    thickness = 7;
+    /**
+     * {@link position}이 'inside'가 아닐 때, 이 밴드와 게이지 본체 사이의 간격
+     */
+    gap = 5;
+    /**
+     * 0보다 큰 값으로 지정하면, 크기 만큼 영역 아이템 사이에 간격을 둔다.
+     */
+    itemGap = 0;
+    /**
+     * 값 범위 목록.
+     * 범위별로 다른 스타일을 적용할 수 있다.
+     * 
+     * @config
+     */
+    get ranges(): IGaugeValueRange[] {
+        return this.$_internalRanges().slice(0);
+    }
+    set ranges(value: IGaugeValueRange[]) {
+        if (value !== this._ranges) {
+            this._ranges = value;
+            this._runRanges = null;
+        }
+    }
+    /**
+     * {@link position}이 'inside'일 때만 표시될 수 있다.
+     * 
+     * @config
+     */
+    rangeLabel: ChartItem;
+    /**
+     * 각 range의 양 끝에 해당하는 값을 표시한다.
+     * 
+     * @config
+     */
+    tickLabel: ChartItem;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getRanges(min: number, max: number): IGaugeValueRange[] {
+        return ValueGauge.buildRanges(this.ranges, min, max);
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_internalRanges(): IGaugeValueRange[] {
+        if (!this._runRanges) {
+            this._runRanges = ValueGauge.buildRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue) || [];
+        }
+        return this._runRanges;
+    }
+}
+
 export abstract class GaugeLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
@@ -579,151 +693,6 @@ export class LinearGaugeScale extends GaugeScale {
     }
     set gap(value: number) {
         this._gap = pickNum(value, 0);
-    }
-}
-
-export class LinearGaugeLabel extends GaugeLabel {
-
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
-    private _width: RtPercentSize;
-    private _height: RtPercentSize;
-    private _maxWidth: RtPercentSize;
-    private _maxHeight: RtPercentSize;
-    private _gap: RtPercentSize;
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    private _widthDim: IPercentSize;
-    private _heightDim: IPercentSize;
-    private _maxWidthDim: IPercentSize;
-    private _maxHeightDim: IPercentSize;
-    private _gapDim: IPercentSize;
-    _runPos: 'left' | 'right' | 'top' | 'bottom';
-    _runGap: number;
-    _runVert: boolean;
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(chart: IChart) {
-        super(chart);
-
-        this.maxWidth = '30%';
-        this.maxHeight = '30%';
-        this.gap = '5%';
-    }
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    /**
-     * 값을 지정하지 않으면 게이지 표시 방향에 따라 자동으로 위치를 결정한다.
-     * 
-     * @config
-     */
-    position: undefined | 'left' | 'right' | 'top' | 'bottom';
-    /**
-     * position이 'left', 'right'일 때, label 표시 영역 너비.
-     * 픽셀값이나 게이지 전체 너비에 대한 상대값으로 지정할 수 있다.
-     * 
-     * @config
-     */
-    get width(): RtPercentSize {
-        return this._width;
-    }
-    set width(value: RtPercentSize) {
-        if (value !== this._width) {
-            this._width = value;
-            this._widthDim = parsePercentSize(value, true);
-        }
-    }
-    /**
-     * position이 'top', 'bottom'일 때, label 표시 영역 높이.
-     * 픽셀값이나 게이지 전체 높이에 대한 상대값으로 지정할 수 있다.
-     * 
-     * @config
-     */
-    get height(): RtPercentSize {
-        return this._height;
-    }
-    set height(value: RtPercentSize) {
-        if (value !== this._height) {
-            this._height = value;
-            this._heightDim = parsePercentSize(value, true);
-        }
-    }
-    /**
-     * position이 'left', 'right'일 때, label 표시 영역 최대 너비.
-     * 픽셀값이나 게이지 전체 너비에 대한 상대값으로 지정할 수 있다.
-     * {@link width}가 지정되면 이 속성은 무시된다.
-     * 
-     * @config
-     */
-    get maxWidth(): RtPercentSize {
-        return this._maxWidth;
-    }
-    set maxWidth(value: RtPercentSize) {
-        if (value !== this._maxWidth) {
-            this._maxWidth = value;
-            this._maxWidthDim = parsePercentSize(value, true);
-        }
-    }
-    /**
-     * position이 'top', 'bottom'일 때, label 표시 영역 최대 높이.
-     * 픽셀값이나 게이지 전체 높이에 대한 상대값으로 지정할 수 있다.
-     * {@link height}가 지정되면 이 속성은 무시된다.
-     * 
-     * @config
-     */
-    get maxHeight(): RtPercentSize {
-        return this._maxHeight;
-    }
-    set maxHeight(value: RtPercentSize) {
-        if (value !== this._maxHeight) {
-            this._maxHeight = value;
-            this._maxHeightDim = parsePercentSize(value, true);
-        }
-    }
-    /**
-     * label과 본체 사이의 간격.
-     * 픽셀값이나 게이지 전체 크기(position에 따라 높이나 너비)에 대한 상대값으로 지정할 수 있다.
-     * 
-     * @config
-     */
-    get gap(): RtPercentSize {
-        return this._gap;
-    }
-    set gap(value: RtPercentSize) {
-        if (value !== this._gap) {
-            this._gap = value;
-            this._gapDim = parsePercentSize(value, true);
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    getWidth(domain: number): number {
-        return calcPercent(this._widthDim, domain);
-    }
-
-    getHeight(domain: number): number {
-        return calcPercent(this._heightDim, domain);
-    }
-
-    getMaxWidth(domain: number): number {
-        return calcPercent(this._maxWidthDim, domain);
-    }
-
-    getMaxHeight(domain: number): number {
-        return calcPercent(this._maxHeightDim, domain);
-    }
-
-    getGap(domain: number): number {
-        return calcPercent(this._gapDim, domain, 0);
     }
 }
 
@@ -894,6 +863,12 @@ export abstract class CircularGauge extends ValueGauge {
      * @config
      */
     innerStyle: SVGStyleOrClass;
+    /**
+     * 게이지 본체 주변이나 내부에 값 영역들을 구분해서 표시하는 band의 모델.
+     * 
+     * @config
+     */
+    band = new GuageRangeBand(this);
 
     //-------------------------------------------------------------------------
     // methods

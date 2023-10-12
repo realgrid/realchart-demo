@@ -22,6 +22,18 @@ const config = {
         scale: {
             line: true,
         },
+        band: {
+            gap: 3,
+            ranges: [{
+                toValue: 30,
+                color: '#ff0',
+            }, {
+                toValue: 60,
+                color: '#fa0'
+            }, {
+                color: '#f40'
+            }]
+        },
         ranges: [{
             toValue: 50,
             color: '#777'
@@ -97,6 +109,15 @@ function setActions(container) {
         config.gauge[0].scale.opposite = _getChecked(e);
         chart.load(config);
     }, false);
+    createCheckBox(container, 'band', function (e) {
+        config.gauge[0].band.visible = _getChecked(e);
+        chart.load(config);
+    }, false);
+    createListBox(container, "band.position", ['default', 'opposite', 'inside'], function (e) {
+        config.gauge[0].band.position = _getValue(e);
+        chart.load(config);
+    }, 'default');
+    line(container);
     createListBox(container, "label2.position", ['left', 'right', 'top', 'bottom'], function (e) {
         config.gauge[1].label.position = _getValue(e);
         chart.load(config);
