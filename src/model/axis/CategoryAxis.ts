@@ -77,8 +77,10 @@ class CategoryAxisGrid extends AxisGrid {
         const n = (this.axis as CategoryAxis)._ticks.length;
         const pts: number[] = [];
 
-        for (let i = 0; i <= n; i++) {
-            pts.push(apts[i + 1]);
+        if (n > 0) {
+            for (let i = 0; i <= n; i++) {
+                pts.push(apts[i + 1]);
+            }
         }
         return pts;
     }
@@ -284,27 +286,32 @@ export class CategoryAxis extends Axis {
         weights = weights.slice(min, max + 1);
 
         const len = this._len = this._minPad + this._maxPad + weights.reduce((a, c) => a + c, 0);
-        // const step = this._step = this.categoryStep || 1;
-        const pts = this._pts = [0];
-        let p = this._minPad;
 
-        for (let i = min; i <= max; i++) {// += step) {
-            const w = weights[i - min];
+        if (len > 0) {
+            // const step = this._step = this.categoryStep || 1;
+            const pts = this._pts = [0];
+            let p = this._minPad;
 
+            for (let i = min; i <= max; i++) {// += step) {
+                const w = weights[i - min];
+
+                pts.push(p / len);
+                p += weights[i - min];// step
+            }
             pts.push(p / len);
-            p += weights[i - min];// step
-        }
-        pts.push(p / len);
-        pts.push((p + this._maxPad) / len);
+            pts.push((p + this._maxPad) / len);
 
-        for (let i = 1; i < pts.length - 2; i += steps) {
-            const v = min + i - 1;
+            for (let i = 1; i < pts.length - 2; i += steps) {
+                const v = min + i - 1;
 
-            ticks.push({
-                pos: NaN,//this.getPosition(length, v),
-                value: v,
-                label: label.getTick(i - 1, cats[i - 1]),
-            });
+                ticks.push({
+                    pos: NaN,//this.getPosition(length, v),
+                    value: v,
+                    label: label.getTick(i - 1, cats[i - 1]),
+                });
+            }
+        } else {
+            this._pts = [];
         }
         return ticks;
     }

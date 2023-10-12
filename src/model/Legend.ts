@@ -19,7 +19,7 @@ import { Widget } from "./Widget";
 export interface ILegendSource {
     visible: boolean;
 
-    legendMarker(): RcElement;
+    legendMarker(doc: Document): RcElement;
     legendColor(): string;
     legendLabel(): string;
 }

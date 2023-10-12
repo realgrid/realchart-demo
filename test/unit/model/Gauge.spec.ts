@@ -10,10 +10,37 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { CircularGauge, Gauge, ValueGauge } from '../../../src/model/Gauge';
 
+class GaugeImpl extends Gauge {
+
+    _type(): string { return }
+}
+
 /**
  * Tests for Gauge class.
  */
- describe("Gauge test", function() {
+describe("Gauge test", function() {
+
+    it('init', () => {
+        const gauge = new GaugeImpl(null);
+
+        expect(gauge).is.exist;
+    });
+});
+
+class ValueGaugeImpl extends ValueGauge {
+    _type(): string { return }
+}
+
+/**
+ * Tests for ValueGauge class.
+ */
+describe("ValueGauge test", function() {
+
+    it('init', () => {
+        const gauge = new ValueGaugeImpl(null);
+
+        expect(gauge).is.exist;
+    });
 
     it('buildRanges', () => {
         const min = 10;

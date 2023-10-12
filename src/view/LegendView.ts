@@ -208,7 +208,7 @@ export class LegendView extends BoundableElement<Legend> {
         let view: LegendItemView;
 
         views.forEach((v, i) => {
-            v.setMarker(items[i].source.legendMarker());
+            v.setMarker(items[i].source.legendMarker(doc));
             v.measure(doc, items[i], hintWidth, hintHeight, 1);
         });
 

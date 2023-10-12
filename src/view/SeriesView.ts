@@ -412,8 +412,6 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     prepareSeries(doc: Document, model: T): void {
-        model.setLegendMarker(this._getLegendMarker(doc, model));
-
         // this._viewRate = NaN; // animating 중 다른 시리즈 등의 요청에 의해 여기로 진입할 수 있다.
         this.setData('index', (model.index % PALETTE_LEN) as any);
         this.setBoolData('pointcolors', model._colorByPoint());
@@ -469,17 +467,6 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
-
-    protected _getLegendMarker(doc: Document, model: T): RcElement {
-        if (!this._legendMarker) {
-            this._legendMarker = this._createLegendMarker(doc, LegendItem.MARKER_SIZE);
-        }
-        return this._legendMarker;
-    }
-
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
-        return RectElement.create(doc, SeriesView.LEGEND_MARKER, 0, 0, size, size, size / 2);
-    }
 
     protected _collectVisPoints(model: T): DataPoint[] {
         return model.collectVisibles();
