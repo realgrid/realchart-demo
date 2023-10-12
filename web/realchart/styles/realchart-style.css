@@ -769,6 +769,10 @@
 .rct-linear-gauge-value {
     fill: green;
 }
+.rct-linear-gauge-band-tick-labels {
+    font-size: 0.85em;
+    fill: #333;
+}
 
 /** bullet gauge */
 .rct-bullet-gauge-background {

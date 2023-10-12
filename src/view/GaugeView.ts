@@ -17,8 +17,9 @@ import { ISize } from "../common/Size";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
-import { Gauge, LinearGaugeScale, ValueGauge } from "../model/Gauge";
-import { LinearGauge, LinearGaugeBase, LinearGaugeLabel } from "../model/gauge/LinearGauge";
+import { CircularGauge, Gauge, LinearGaugeScale, ValueGauge } from "../model/Gauge";
+import { CircleGaugeScale } from "../model/gauge/CircleGauge";
+import { LinearGaugeBase, LinearGaugeLabel } from "../model/gauge/LinearGauge";
 import { ChartElement } from "./ChartElement";
 
 export abstract class GaugeView<T extends Gauge> extends ChartElement<T> {
@@ -514,5 +515,54 @@ export abstract class LineGaugeView<T extends LinearGaugeBase> extends ValueGaug
             }
             scaleView.resizeByMeasured().layout().translate(x, y);
         }
+    }
+}
+
+export class CircularScaleView extends ChartElement<CircleGaugeScale> {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doMeasure(doc: Document, model: CircleGaugeScale, hintWidth: number, hintHeight: number, phase: number): ISize {
+        return;
+    }
+
+    protected _doLayout(param: any): void {
+    }
+}
+
+/**
+ * @internal
+ * 
+ * View base for CircularGauge.
+ */
+export abstract class CircularGaugeView<T extends CircularGauge> extends ValueGaugeView<T> {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    valueOf = (target: CircularGauge, param: string, format: string): any => {
+        const v = target.getParam(param);
+
+        if (isNumber(v)) {
+            return NumberFormatter.getFormatter(format || target.label.numberFormat).toStr(v);
+        }
+        return v;
+    }
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, styleName: string) {
+        super(doc, styleName);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _setBackgroundStyle(back: RectElement): void {
     }
 }

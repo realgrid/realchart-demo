@@ -748,7 +748,13 @@ export class CircularGaugeLabel extends GaugeLabel {
  * @internal 
  */
 export interface ICircularGaugeExtents {
-    radius: number, inner: number, value: number 
+    scale?: number;
+    scaleTick?: number;
+    band?: number;
+    bandTick?: number;
+    radius: number, 
+    inner: number, 
+    value: number 
 }
 
 /**

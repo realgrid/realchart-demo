@@ -8,11 +8,12 @@
 
 import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
+import { LayerElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { ISize } from "../../common/Size";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
-import { GaugeRangeBandPosition, GuageRangeBand } from "../../model/Gauge";
+import { GaugeRangeBandPosition, GuageRangeBand, IGaugeValueRange } from "../../model/Gauge";
 import { LinearGauge } from "../../model/gauge/LinearGauge";
 import { ChartElement } from "../ChartElement";
 import { LineGaugeView, LinearScaleView } from "../GaugeView";
@@ -23,6 +24,11 @@ class BandView extends ChartElement<GuageRangeBand> {
     // fields
     //-------------------------------------------------------------------------
     private _barViews: ElementPool<RectElement>;
+    private _labelContainer: LayerElement;
+    private _labels: ElementPool<TextElement>;
+
+    private _ranges: IGaugeValueRange[];
+    _thick = 0;
     _gap = 0;
 
     //-------------------------------------------------------------------------
@@ -32,6 +38,8 @@ class BandView extends ChartElement<GuageRangeBand> {
         super(doc, 'rct-linear-gauge-band');
 
         this._barViews = new ElementPool(this, RectElement);
+        this.add(this._labelContainer = new LayerElement(doc, 'rct-linear-gauge-band-tick-labels'));
+        this._labels = new ElementPool(this._labelContainer, TextElement);
     }
 
     //-------------------------------------------------------------------------
@@ -39,10 +47,34 @@ class BandView extends ChartElement<GuageRangeBand> {
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: GuageRangeBand, hintWidth: number, hintHeight: number, phase: number): ISize {
         const g = model.gauge as LinearGauge;
-        const sz = model.position === GaugeRangeBandPosition.INSIDE ? (g.vertical ? hintWidth : hintHeight) : pickNum(model.thickness, 0) + (this._gap = pickNum(model.gap, 0));
-        const width = g.vertical ? sz : hintWidth;
-        const height = g.vertical ? hintHeight : sz;
+        const scale = g.scale;
+        const thick = this._thick = model.position === GaugeRangeBandPosition.INSIDE ? (g.vertical ? hintWidth : hintHeight) : pickNum(model.thickness, 0) + (this._gap = pickNum(model.gap, 0));
+        let width = g.vertical ? thick : hintWidth;
+        let height = g.vertical ? hintHeight : thick;
+        const ranges = this._ranges = model.getRanges(scale._min, scale._max);
 
+        if (this._labelContainer.setVisible(model.tickLabel.visible && ranges.length > 0)) {
+            const vals = [ranges[0].fromValue].concat(ranges.map(r => r.toValue));
+
+            this._labelContainer.internalSetStyleOrClass(model.tickLabel.style);
+            this._labels.prepare(ranges.length + 1);
+
+            if (g.vertical) {
+                let w = 0;
+                this._labels.forEach((v, i) => {
+                    v.text = String(vals[i]);
+                    w = Math.max(v.getBBounds().width);
+                })
+                width += w;
+            } else {
+                let h = 0;
+                this._labels.forEach((v, i) => {
+                    v.text = String(vals[i]);
+                    h = Math.max(v.getBBounds().height);
+                })
+                height += h;
+            }
+        }
         return { width, height };
     }
     
@@ -51,16 +83,20 @@ class BandView extends ChartElement<GuageRangeBand> {
         const g = (m.gauge) as LinearGauge;
         const scale = g.scale;
         const sum = scale._max - scale._min;
-        const ranges = m.getRanges(scale._min, scale._max);
 
+        if (this.$_layoutBars(g, sum, this._ranges) && this._labelContainer.visible) {
+            this.$_layoutLabels(g, sum, this._ranges);
+        }
+    }
+
+    private $_layoutBars(gauge: LinearGauge, sum: number, ranges: IGaugeValueRange[]): boolean {
         this._barViews.prepare(ranges.length);
 
         if (!this._barViews.isEmpty) {
-            const vert = g.vertical;
+            const vert = gauge.vertical;
             const width = this.width;
             const height = this.height;
             const len = vert ? height : width;
-            const thick = vert ? width : height;
             let p = 0;
 
             this._barViews.prepare(ranges.length).forEach((v, i) => {
@@ -68,14 +104,33 @@ class BandView extends ChartElement<GuageRangeBand> {
                 const w = len * (range.toValue - range.fromValue) / sum;
 
                 if (vert) {
-                    v.setBounds(0, height - p - w, thick, w);
+                    v.setBounds(0, height - p - w, this._thick, w);
                 } else {
-                    v.setBounds(p, 0, w, thick);
+                    v.setBounds(p, 0, w, this._thick);
                 }
                 
                 v.setStyle('fill', range.color);
                 p += w;
             });
+            return true;
+        }
+    }
+
+    private $_layoutLabels(gauge: LinearGauge, sum: number, ranges: IGaugeValueRange[]): void {
+        const vert = gauge.vertical;
+        const width = this.width;
+        const height = this.height;
+        const len = vert ? height : width;
+        const y = this._thick;
+        let v: TextElement = this._labels.get(0);
+
+        v.translate(0, y);
+
+        for (let i = 1; i <= ranges.length; i++) {
+            const x = len * ranges[i - 1].toValue / sum;
+            const v = this._labels.get(i);
+
+            v.translate(x, y);
         }
     }
 }

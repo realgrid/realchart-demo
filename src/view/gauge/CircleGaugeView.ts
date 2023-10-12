@@ -11,13 +11,62 @@ import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { IPoint } from "../../common/Point";
 import { LayerElement, PathElement } from "../../common/RcControl";
+import { ISize } from "../../common/Size";
 import { RAD_DEG } from "../../common/Types";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextElement } from "../../common/impl/TextElement";
-import { ICircularGaugeExtents } from "../../model/Gauge";
+import { GuageRangeBand, ICircularGaugeExtents } from "../../model/Gauge";
 import { CircleGauge, CircleGaugeHand, CircleGaugePin } from "../../model/gauge/CircleGauge";
-import { CircularGaugeView } from "./CirclularGaugeView";
+import { ChartElement } from "../ChartElement";
+import { CircularGaugeView } from "../GaugeView";
 
+class BandView extends ChartElement<GuageRangeBand> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _sectorViews: ElementPool<SectorElement>;
+    private _labelContainer: LayerElement;
+    private _labels: ElementPool<TextElement>;
+
+    private _center: IPoint;
+    private _exts: ICircularGaugeExtents;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-circle-gauge-band');
+
+        this._sectorViews = new ElementPool(this, SectorElement);
+        this.add(this._labelContainer = new LayerElement(doc, 'rct-circle-gauge-band-tick-labels'));
+        this._labels = new ElementPool(this._labelContainer, TextElement);
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setExtends(center: IPoint, exts: ICircularGaugeExtents): void {
+        this._center = center;
+        this._exts = exts;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doMeasure(doc: Document, model: GuageRangeBand, hintWidth: number, hintHeight: number, phase: number): ISize {
+        return;
+    }
+    
+    protected _doLayout(param: any): void {
+    }
+}
+
+/**
+ * @internal
+ * 
+ * 게이지 중심 핀 view.
+ */
 class PinView extends PathElement {
 
     //-------------------------------------------------------------------------
@@ -40,6 +89,9 @@ class PinView extends PathElement {
     }
 }
 
+/**
+ * 게이지 침 view.
+ */
 class HandView extends PathElement {
 
     //-------------------------------------------------------------------------
@@ -74,6 +126,11 @@ class HandView extends PathElement {
     }
 }
 
+/**
+ * @internal
+ * 
+ * View for CircleGauge.
+ */
 export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
     //-------------------------------------------------------------------------
@@ -92,7 +149,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     private _pinView: PinView;
     private _textView: TextElement;
 
-    private _center: {x: number, y: number};
+    private _center: IPoint;
     private _exts: ICircularGaugeExtents;
 
     //-------------------------------------------------------------------------
