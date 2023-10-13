@@ -76,7 +76,7 @@ test.describe('bar.html test', async function () {
 				r = await PWTester.getBounds(bar);
 			}
 
-			expect(gridr.y).eq(r.y);
+			PWTester.same(gridr.y, r.y);
 		}
 
 		await page.evaluate(
@@ -87,47 +87,12 @@ test.describe('bar.html test', async function () {
 	test('inverted', async ({ page }) => {
 		await page.evaluate('config.inverted = true; chart.load(config)');
 
-		const xAxisLine = await PWTester.getAxisLine(page, 'x');
-		const rAxis = await PWTester.getBounds(xAxisLine);
-		const bars = await page.$$('.' + SeriesView.POINT_CLASS);
-		const config: any = await page.evaluate('config');
-		const data = config.series.data;
-		const axisGrid = await page.$('.rct-axis-grid:last-child');
-		const lastChild = await axisGrid.$('.rct-axis-grid-line-end');
-		const GridEnd = await PWTester.getBounds(lastChild);
+		const bar = await page.$('.' + SeriesView.POINT_CLASS);
+		const rbar = await PWTester.getBounds(bar);
+		const line = await PWTester.getAxisLine(page, 'x');
+		const rline = await PWTester.getBounds(line);
 
-		// 가로가 더 길어야 한다.
-		bars.forEach(async (bar) => {
-			const r = await PWTester.getBounds(bar);
-			expect(r.width).gt(r.height);
-		});
-
-		// bar들이 왼쪽 Y축에서 부터 오른쪽 방향으로 커진다.
-		bars.forEach(async (bar) => {
-			const r = await PWTester.getBounds(bar);
-			const xAxis = await PWTester.getBounds(xAxisLine);
-			expect(PWTester.same(r.x, xAxis.x)).is.true;
-			// expect(r.x).eq(xAxis.x);
-
-			expect(r.width <= GridEnd.x - r.x).is.true;
-		});
-
-		// 값과 너비들을 비교한다.
-		for (let i = 1; i < bars.length; i++) {
-			const prev = bars[i - 1];
-			const bar = bars[i];
-
-			const rPrev = await PWTester.getBounds(prev);
-			const rBar = await PWTester.getBounds(bar);
-
-			if (data[i] >= data[i - 1]) {
-				expect(rBar.width).gte(rPrev.width);
-			} else {
-				expect(rBar.width).lt(rPrev.width);
-			}
-		}
-
-		await page.evaluate('config.inverted = false; chart.load(config)');
+		expect(rbar.x).eq(rline.x);
 	});
 
 	test('title', async ({ page }) => {

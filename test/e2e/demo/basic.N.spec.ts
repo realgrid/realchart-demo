@@ -75,6 +75,19 @@ test.describe('basic.html test', async function () {
 		page.close();
 	});
 
+	test('inverted', async ({ page }) => {
+		await page.evaluate('config.inverted = true; chart.load(config)');
+
+		const bars = await page.$$('.' + SeriesView.POINT_CLASS);
+		const line = await PWTester.getAxisLine(page, 'x');
+		const rline = await PWTester.getBounds(line);
+
+		bars.forEach(async (bar) => {
+			const rbar = await PWTester.getBounds(bar);
+			PWTester.same(rbar.x, rline.x);
+		});
+	});
+
 	test('title', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 

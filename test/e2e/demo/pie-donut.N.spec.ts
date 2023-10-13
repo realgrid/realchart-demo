@@ -49,6 +49,16 @@ test.describe('pie-donut.html test', async function () {
 		expect(titleText).eq(config.title);
 	});
 
+	test('Chart 표시여부', async ({ page }) => {
+		const config: any = await page.evaluate('config');
+
+		const chart = await page.$$('.rct-point');
+		for (let i = 0; i < chart.length; i++) {
+			const transformChart = await PWTester.getPathDValue(chart[i]);
+			expect(transformChart).exist;
+		}
+	});
+
 	test('credit 의 존재 유무와 "RealCahrt"를 포함하는지 확인', async ({
 		page,
 	}) => {
