@@ -53,19 +53,25 @@ export class BubbleSeriesPoint extends DataPoint {
     }
 
     protected _readArray(series: BubbleSeries, v: any[]): void {
-        const d = v.length > 2 ? 1 : 0;
+        if (v === null) {
+            this.isNull = true;
+        } else {
+            const d = v.length > 2 ? 1 : 0;
 
-        this.y = v[pickNum(series.yField, 0 + d)];
-        this.z = v[pickNum(series.zProp, 1 + d)];
-        if (d > 0) {
-            this.x = v[pickNum(series.xField, 0)];
+            this.y = v[pickNum(series.yField, 0 + d)];
+            this.z = v[pickNum(series.zProp, 1 + d)];
+            if (d > 0) {
+                this.x = v[pickNum(series.xField, 0)];
+            }
         }
     }
 
     protected _readObject(series: BubbleSeries, v: any): void {
         super._readObject(series, v);
 
-        this.z = pickProp(v[series.zProp], v.z);
+        if (!this.isNull) {
+            this.z = pickProp(v[series.zProp], v.z);
+        }
     }
 
     protected _readSingle(v: any): void {
@@ -103,6 +109,7 @@ export class BubbleSeries extends Series {
 
     _zMin: number;
     _zMax: number;
+    _noSize: boolean;
 
     //-------------------------------------------------------------------------
     // constructors
@@ -138,7 +145,7 @@ export class BubbleSeries extends Series {
     }
 
     getRadius(value: number, pxMin: number, pxMax: number): number {
-        let r = (value - this._zMin) / (this._zMax - this._zMin);
+        let r = this._noSize ? 1 : (value - this._zMin) / (this._zMax - this._zMin);
 
         if (this.sizeMode == BubbleSizeMode.AREA) {
             r = Math.sqrt(r);
@@ -182,8 +189,11 @@ export class BubbleSeries extends Series {
         this._zMax = Number.MIN_VALUE;
 
         this._runPoints.forEach((p: BubbleSeriesPoint) => {
-            this._zMin = Math.min(this._zMin, p.zValue);
-            this._zMax = Math.max(this._zMax, p.zValue);
+            if (!p.isNull && !isNaN(p.zValue)) {
+                this._zMin = Math.min(this._zMin, p.zValue);
+                this._zMax = Math.max(this._zMax, p.zValue);
+            }
         })
+        this._noSize = this._zMin === this._zMax;
     }
 }

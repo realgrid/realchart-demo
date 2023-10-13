@@ -62,7 +62,7 @@ export class ContinuousAxisTick extends AxisTick {
         } else if (this.stepPixels > 0) {
             pts = this._getStepsByPixels(length, this.stepPixels, base, min, max);
         } else {
-            pts = [min, max];
+            pts = min !== max ? [min, max] : [min];
         }
         return pts;
     }
@@ -163,17 +163,17 @@ export class ContinuousAxisTick extends AxisTick {
     }
 
     protected _getStepsByPixels(length: number, pixels: number, base: number, min: number, max: number): number[] {
-        const steps: number[] = [];
-        const len = max - min;
-
-        if (len === 0) {
-            return steps;
-        }
-
         if (min >= base) {
             min = base;
         } else if (max <= base) {
             max = base;
+        }
+
+        const len = max - min;
+        const steps: number[] = [];
+
+        if (len === 0) {
+            return isNaN(min) ? [] : [min];
         }
 
         let count = Math.floor(length / pixels) + 1;
@@ -328,6 +328,7 @@ export abstract class ContinuousAxis extends Axis {
     private _hardMax: number;
     private _min: number;
     private _max: number;
+    private _single: boolean;
     private _base: number;
     private _unitLen: number;
     _calcedMin: number;
@@ -535,7 +536,7 @@ export abstract class ContinuousAxis extends Axis {
 
         this._setMinMax(min, max);
 
-        if (min !== max) {
+        // if (min !== max) {
             if (this._runBreaks) {
                 steps = this.$_getBrokenSteps(this._runBreaks, length, min, max);
             }
@@ -544,7 +545,7 @@ export abstract class ContinuousAxis extends Axis {
                 const tick = this._createTick(length, i, steps[i]);
                 ticks.push(tick);
             }
-        }
+        // }
         return ticks;
     }
 
@@ -648,7 +649,7 @@ export abstract class ContinuousAxis extends Axis {
                 return p + sect.pos;
             }
         } else {
-            const p = length * (value - this._min) / (this._max - this._min);
+            const p = this._single ? length * 0.5 : length * (value - this._min) / (this._max - this._min);
 
             return this.reversed ? length - p : p;
         }
@@ -736,6 +737,7 @@ export abstract class ContinuousAxis extends Axis {
     protected _setMinMax(min: number, max: number): void {
         this._min = min;
         this._max = max;
+        this._single = min === max;
     }
 
     protected $_calcUnitLength(length: number): number {

@@ -167,7 +167,7 @@ export class AxisGrid extends AxisItem {
 
     getPoints(length: number): number[] {
         const axis = this.axis;
-        return this.axis._ticks.map(tick => axis.getPosition(length, tick.value, false));
+        return axis._ticks.map(tick => axis.getPosition(length, tick.value, false));
     }
             
     //-------------------------------------------------------------------------

@@ -686,7 +686,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         } else {
             this._runPoints.forEach((p, i) => {
                 if (p.isNull) {
-                    p.y = p.yGroup = NaN;
+                    p.y = p.yGroup = p.yValue = NaN;
                 } else {
                     // p.y가 point 생성 시 null이었지만 series.prepareRender() 중 정상 값으로 설정될 수 있다. (waterfall)
                     // isNull은 유지하면서 p.y 값이 재설정될 수 있도록 한다.
