@@ -750,14 +750,15 @@
     fill: var(--rct-clock-gauge-label-fill);
 }
 
-/** linear scale */
-.rct-linear-scale-line {
+/** gauge scale */
+.rct-gauge-scale-line {
+    stroke: #555;
+    fill: none;
+}
+.rct-gauge-scale-ticks {
     stroke: #555;
 }
-.rct-linear-scale-ticks {
-    stroke: #555;
-}
-.rct-linear-scale-tick-labels {
+.rct-gauge-scale-tick-labels {
     font-size: 0.85em;
     fill: #333;
 }

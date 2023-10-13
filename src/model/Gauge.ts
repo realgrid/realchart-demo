@@ -362,6 +362,11 @@ export class GuageScaleTick extends ChartItem {
 export abstract class GaugeScale extends ChartItem {
 
     //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _gap = 8;
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _step: number;
@@ -383,10 +388,7 @@ export abstract class GaugeScale extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * true이면 게이지 본체 내부에 표시한다.
-     */
-    inner = false;
+    position = GaugeItemPosition.DEFAULT;
 
     line: ChartItem;
     tick: GuageScaleTick;
@@ -396,6 +398,19 @@ export abstract class GaugeScale extends ChartItem {
     stepCount: number;
     stepInterval: number;
     stepPixels = 48;
+
+    /**
+     * 게이지 본체와의 간격.
+     * 
+     * @config
+     * @default 8 픽셀.
+     */
+    get gap(): number {
+        return this._gap;
+    }
+    set gap(value: number) {
+        this._gap = pickNum(value, 0);
+    }
 
     //-------------------------------------------------------------------------
     // methods
@@ -523,7 +538,7 @@ export abstract class GaugeScale extends ChartItem {
     }
 }
 
-export enum GaugeRangeBandPosition {
+export enum GaugeItemPosition {
     /**
      * 게이지 본체와 scale 사이에 표시된다.
      */
@@ -568,7 +583,7 @@ export class GuageRangeBand extends ChartItem {
      * 
      * @config
      */
-    position = GaugeRangeBandPosition.DEFAULT;
+    position = GaugeItemPosition.DEFAULT;
     /**
      * 밴드의 두께를 픽셀 단위로 지정한다.
      * {@link position}이 'inside'이면 이 속성은 무시되고, 게이지 본체의 두께와 동일하게 표시된다.
@@ -615,10 +630,6 @@ export class GuageRangeBand extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getRanges(min: number, max: number): IGaugeValueRange[] {
-        return ValueGauge.buildRanges(this.ranges, min, max);
-    }
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -663,11 +674,6 @@ export abstract class GaugeLabel extends FormattableText {
 export class LinearGaugeScale extends GaugeScale {
 
     //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
-    private _gap = 8;
-
-    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     _vertical: boolean;
@@ -676,24 +682,6 @@ export class LinearGaugeScale extends GaugeScale {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * true면 반대쪽에 표시한다.
-     * 
-     * @config
-     */
-    opposite = false;
-    /**
-     * 게이지 본체와의 간격.
-     * 
-     * @config
-     * @default 8 픽셀.
-     */
-    get gap(): number {
-        return this._gap;
-    }
-    set gap(value: number) {
-        this._gap = pickNum(value, 0);
-    }
 }
 
 export class CircularGaugeLabel extends GaugeLabel {
@@ -869,12 +857,6 @@ export abstract class CircularGauge extends ValueGauge {
      * @config
      */
     innerStyle: SVGStyleOrClass;
-    /**
-     * 게이지 본체 주변이나 내부에 값 영역들을 구분해서 표시하는 band의 모델.
-     * 
-     * @config
-     */
-    band = new GuageRangeBand(this);
 
     //-------------------------------------------------------------------------
     // methods
@@ -886,9 +868,8 @@ export abstract class CircularGauge extends ValueGauge {
         };
     }
 
-    getExtents(gaugeWidth: number, gaugeHeight: number): ICircularGaugeExtents {
-        const r = Math.min(gaugeWidth, gaugeHeight);
-        const radius = calcPercent(this._radiusDim, r, r / 2);
+    getExtents(gaugeSize: number): ICircularGaugeExtents {
+        const radius = calcPercent(this._radiusDim, gaugeSize, gaugeSize / 2);
         const inner = Math.min(radius, this._innerDim ? calcPercent(this._innerDim, radius) : 0);
         const value = this._valueDim ? calcPercent(this._valueDim, radius) : radius;
 

@@ -14,11 +14,33 @@ const config = {
     gauge: {
         name: 'gauge1',
         value: Math.random() * 100,
+        // radius: '30%',
         // clockwise: false,
         // startAngle: -90,
         // sweepAngle: 300,
         // valueRadius: '110%',
         // valueThickness: '100%',
+        scaleRim: {
+            visible: true,
+        },
+        bandRim: {
+            visible: true,
+            ranges: [{
+                toValue: 20,
+                color: '#ff0',
+            }, {
+                toValue: 40,
+                color: '#dd0',
+            }, {
+                toValue: 60,
+                color: '#fc0'
+            }, {
+                toValue: 80,
+                color: '#f80'
+            }, {
+                color: '#f40'
+            }]
+        },
         valueRim: {
             ranges: [{
                 toValue: 30,
@@ -82,6 +104,14 @@ function setActions(container) {
         config.gauge.valueRim.thickness = _getValue(e);
         chart.load(config, animate);
     }, '');
+    createCheckBox(container, 'scaleRim', function (e) {
+        config.gauge.scaleRim.visible = _getChecked(e);
+        chart.load(config);
+    }, true);
+    createCheckBox(container, 'bandRim', function (e) {
+        config.gauge.bandRim.visible = _getChecked(e);
+        chart.load(config);
+    }, true);
     createButton(container, 'Run', function(e) {
         clearInterval(timer);
         timer = setInterval(() => {

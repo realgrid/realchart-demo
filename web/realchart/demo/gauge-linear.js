@@ -32,7 +32,8 @@ const config = {
                 color: '#fa0'
             }, {
                 color: '#f40'
-            }]
+            }],
+            // tickLabel: true
         },
         ranges: [{
             toValue: 50,
@@ -105,10 +106,10 @@ function setActions(container) {
         config.gauge[0].scale.visible = _getChecked(e);
         chart.load(config);
     }, true);
-    createCheckBox(container, 'scale.opposite', function (e) {
-        config.gauge[0].scale.opposite = _getChecked(e);
+    createListBox(container, "scale.position", ['default', 'opposite', 'inside'], function (e) {
+        config.gauge[0].scale.position = _getValue(e);
         chart.load(config);
-    }, false);
+    }, 'default');
     createCheckBox(container, 'band', function (e) {
         config.gauge[0].band.visible = _getChecked(e);
         chart.load(config);
@@ -122,10 +123,10 @@ function setActions(container) {
         config.gauge[1].label.position = _getValue(e);
         chart.load(config);
     }, 'top');
-    createCheckBox(container, 'scale2.opposite', function (e) {
-        config.gauge[1].scale.opposite = _getChecked(e);
+    createListBox(container, "scale2.position", ['default', 'opposite', 'inside'], function (e) {
+        config.gauge[1].scale.position = _getValue(e);
         chart.load(config);
-    }, false);
+    }, 'default');
 }
 
 function init() {

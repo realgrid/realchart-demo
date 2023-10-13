@@ -9,7 +9,7 @@
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { CircularGauge, Gauge, GaugeGroup, GaugeScale, IGaugeValueRange, ValueGauge } from "../Gauge";
+import { CircularGauge, Gauge, GaugeGroup, GaugeItemPosition, GaugeScale, GuageRangeBand, ICircularGaugeExtents, IGaugeValueRange, ValueGauge } from "../Gauge";
 
 export abstract class CircleGaugeRim extends ChartItem {
 
@@ -347,13 +347,19 @@ export class CircleGaugePin extends ChartItem {
     getRadius(domain: number): number {
         return calcPercent(this._radiusDim, domain, 0);
     }
+}
+
+export class CircleGaugeScale extends GaugeScale {
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-}
+    stepPixels = 92;
 
-export class CircleGaugeScale extends GaugeScale {
+    protected _getStepMultiples(step: number): number[] {
+        //return [1, 2, 2.5, 5, 10];
+        return [1, 3, 6, 12];
+    }
 }
 
 /**
@@ -380,11 +386,17 @@ export class CircleGauge extends CircularGauge {
     // properties
     //-------------------------------------------------------------------------
     /**
+     * 게이지 본체 주변이나 내부에 값 영역들을 구분해서 표시하는 band의 모델.
+     * 
+     * @config
+     */
+    bandRim = new GuageRangeBand(this);
+    /**
      * 스케일 모델.
      * 
      * @config
      */
-    scale = new CircleGaugeScale(this, false);
+    scaleRim = new CircleGaugeScale(this, false);
     /**
      * 게이지 배경 원호 테두리 설정 모델.
      * 
@@ -419,6 +431,32 @@ export class CircleGauge extends CircularGauge {
     //-------------------------------------------------------------------------
     _type(): string {
         return 'circle';
+    }
+
+    getExtents(gaugeSize: number): ICircularGaugeExtents {
+        const exts = super.getExtents(gaugeSize);
+        const scaleRim = this.scaleRim;
+        const bandRim = this.bandRim;
+        let outer = exts.radius;
+
+        if (bandRim.visible) {
+            if (bandRim.position === GaugeItemPosition.DEFAULT) {
+                const thick = bandRim.thickness + bandRim.gap;
+
+                outer += thick;
+                exts.band = outer;
+            }
+        }
+
+        if (scaleRim.visible) {
+            if (scaleRim.position === GaugeItemPosition.DEFAULT) {
+                const thick = Math.max(1, scaleRim.tick.length || 0) + scaleRim.gap;
+            
+                outer += thick;
+                exts.scale = outer;
+            }
+        }
+        return exts;
     }
 }
 

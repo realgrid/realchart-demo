@@ -10,15 +10,103 @@ import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { IPoint } from "../../common/Point";
-import { LayerElement, PathElement } from "../../common/RcControl";
+import { LayerElement, PathElement, RcElement } from "../../common/RcControl";
 import { ISize } from "../../common/Size";
 import { RAD_DEG } from "../../common/Types";
+import { CircleElement } from "../../common/impl/CircleElement";
 import { SectorElement } from "../../common/impl/SectorElement";
-import { TextElement } from "../../common/impl/TextElement";
+import { TextElement, TextLayout } from "../../common/impl/TextElement";
 import { GuageRangeBand, ICircularGaugeExtents } from "../../model/Gauge";
-import { CircleGauge, CircleGaugeHand, CircleGaugePin } from "../../model/gauge/CircleGauge";
+import { CircleGauge, CircleGaugeHand, CircleGaugePin, CircleGaugeScale } from "../../model/gauge/CircleGauge";
 import { ChartElement } from "../ChartElement";
-import { CircularGaugeView } from "../GaugeView";
+import { CircularGaugeView, ScaleView } from "../GaugeView";
+
+class CircularScaleView extends ScaleView<CircleGaugeScale> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _center: IPoint;
+    private _exts: ICircularGaugeExtents;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setExtends(center: IPoint, exts: ICircularGaugeExtents): void {
+        this._center = center;
+        this._exts = exts;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _createLine(doc: Document, styleName: string): RcElement {
+        return new CircleElement(doc, styleName);
+    }
+
+    protected _doMeasure(doc: Document, model: CircleGaugeScale, hintWidth: number, hintHeight: number, phase: number): ISize {
+        const steps = model._steps;
+        const nStep = steps.length;
+
+        if (this._tickContainer.setVisible(model.tick.visible)) {
+            this._tickContainer.internalSetStyleOrClass(model.tick.style);
+            this._ticks.prepare(nStep);
+        }
+
+        if (this._labelContainer.setVisible(model.tickLabel.visible)) {
+            this._labelContainer.internalSetStyleOrClass(model.tickLabel.style);
+            this._labels.prepare(nStep, v => {
+                v.layout = TextLayout.MIDDLE;
+            });
+        }
+
+        return { width: hintWidth, height: hintHeight}
+    }
+
+    protected _doLayout(param: any): void {
+        const m = this.model;
+        const g = m.gauge as CircleGauge;
+        const cx = this._center.x;
+        const cy = this._center.y;
+        const exts = this._exts;
+        const rd2 = exts.scale;
+        const rd = rd2 - this.model.tick.length;
+        const sweep = g._sweepRad;
+        const sum = g.maxValue - g.minValue;
+        let x1: number, y1: number, x2: number, y2: number, a: number;
+
+        // line
+        (this._line as CircleElement).setCircle(cx, cy, rd);
+
+        // ticks
+        if (this._tickContainer.visible) {
+            this._ticks.forEach((v, i, count) => {
+                const a = i / count * sweep + g._startRad;
+
+                x1 = cx + Math.cos(a) * rd;
+                y1 = cy + Math.sin(a) * rd;
+                x2 = cx + Math.cos(a) * rd2;
+                y2 = cy + Math.sin(a) * rd2;
+                v.setLine(x1, y1, x2, y2);
+            });
+        }
+
+        // tick labels
+        if (this._labelContainer.visible) {
+            this._labels.get(0).text = String(g.maxValue);
+            const rd = rd2 + this._labels.get(0).getBBounds().height * 0.5;
+
+            this._labels.forEach((v, i, count) => {
+                const a = i / count * sweep + g._startRad;
+
+                x2 = cx + Math.cos(a) * rd;
+                y2 = cy + Math.sin(a) * rd;
+                v.text = String(i * sum / count);
+                v.translate(x2, y2);
+            });
+        }
+    }
+}
 
 class BandView extends ChartElement<GuageRangeBand> {
 
@@ -54,11 +142,35 @@ class BandView extends ChartElement<GuageRangeBand> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: GuageRangeBand, hintWidth: number, hintHeight: number, phase: number): ISize {
-        return;
-    }
-    
     protected _doLayout(param: any): void {
+        const m = this.model;
+        const g = m.gauge as CircleGauge;
+        const cx = this._center.x;
+        const cy = this._center.y;
+        const rd = this._exts.band;
+        const clockwise = g.clockwise;
+        const innerRadius = 1 - m.thickness / rd;
+        const ranges = m.ranges;
+        const sweep = g._sweepRad;
+        const sum = g.maxValue - g.minValue;
+        let start = g._startRad;
+
+        this._sectorViews.prepare(ranges.length).forEach((v, i) => {
+            const angle = (ranges[i].toValue - ranges[i].fromValue) * sweep / sum;
+
+            v.setSector({
+                cx,
+                cy,
+                rx: rd,
+                ry: rd,
+                innerRadius,
+                start,
+                angle,
+                clockwise
+            });
+            v.setStyle('fill', ranges[i].color);
+            start += angle;
+        });
     }
 }
 
@@ -140,6 +252,8 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     // fields
     //-------------------------------------------------------------------------
     private _background: SectorElement;
+    private _scaleView: CircularScaleView;
+    private _bandView: BandView;
     private _segContainer: LayerElement;
     private _segments: ElementPool<SectorElement>;
     private _foreground: SectorElement;
@@ -159,6 +273,8 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         super(doc, styleName);
 
         this.add(this._background = new SectorElement(doc, 'rct-circle-gauge-back'));
+        this.add(this._scaleView = new CircularScaleView(doc));
+        this.add(this._bandView = new BandView(doc));
         this.add(this._segContainer = new LayerElement(doc, void 0));
         this._segments = new ElementPool(this._segContainer, SectorElement, 'rct-circle-gauge-segment');
         this.add(this._foreground = new SectorElement(doc, 'rct-circle-gauge-value'));
@@ -180,6 +296,12 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         } else {
             this._segments.prepare(0);
         }
+
+        // scale
+        this._scaleView.setVisible(model.scaleRim.visible);
+
+        // band
+        this._bandView.setVisible(model.bandRim.visible);
 
         // foreground rim
         this._foreground.setVisible(model.valueRim.visible);
@@ -209,7 +331,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     protected _renderGauge(width: number, height: number): void {
         const m = this.model;
         const center = m.getCenter(width, height);
-        const exts = m.getExtents(width, height);
+        const exts = m.getExtents(Math.min(width, height));
 
         this.$_renderBackground(m, center, exts);
         this._renderValue();
@@ -312,6 +434,21 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
         // backgroun segments
         !this._segments.isEmpty && this.$_renderSegments(center, exts);
+
+        // scale rim
+        if (this._scaleView.visible) {
+            m.scaleRim.buildSteps(exts.scale * m._sweepRad, NaN);
+            this._scaleView.measure(this.doc, m.scaleRim, this.width, this.height, 0);
+            this._scaleView.setExtends(center, exts);
+            this._scaleView.layout();
+        }
+
+        // band rim
+        if (this._bandView.visible) {
+            this._bandView.measure(this.doc, m.bandRim, this.width, this.height, 0);
+            this._bandView.setExtends(center, exts);
+            this._bandView.layout();
+        }
 
         // inner view
         this._innerView.internalSetStyleOrClass(m.innerStyle);

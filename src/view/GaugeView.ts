@@ -11,13 +11,13 @@ import { ElementPool } from "../common/ElementPool";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { IPoint } from "../common/Point";
 import { RcAnimation } from "../common/RcAnimation";
-import { LayerElement } from "../common/RcControl";
+import { LayerElement, RcElement } from "../common/RcControl";
 import { IRect, Rectangle } from "../common/Rectangle";
 import { ISize } from "../common/Size";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
-import { CircularGauge, Gauge, LinearGaugeScale, ValueGauge } from "../model/Gauge";
+import { CircularGauge, Gauge, GaugeItemPosition, GaugeScale, LinearGaugeScale, ValueGauge } from "../model/Gauge";
 import { CircleGaugeScale } from "../model/gauge/CircleGauge";
 import { LinearGaugeBase, LinearGaugeLabel } from "../model/gauge/LinearGauge";
 import { ChartElement } from "./ChartElement";
@@ -172,36 +172,54 @@ export abstract class ValueGaugeView<T extends ValueGauge> extends GaugeView<T> 
     }
 }
 
-export class LinearScaleView extends ChartElement<LinearGaugeScale> {
+export abstract class ScaleView<T extends GaugeScale> extends ChartElement<T> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _line: LineElement;
-    private _tickContainer: LayerElement;
-    private _ticks: ElementPool<LineElement>;
-    private _labelContainer: LayerElement;
-    private _labels: ElementPool<TextElement>;
+    protected _line: RcElement;
+    protected _tickContainer: LayerElement;
+    protected _ticks: ElementPool<LineElement>;
+    protected _labelContainer: LayerElement;
+    protected _labels: ElementPool<TextElement>;
     
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-linear-scale');
+        super(doc, 'rct-gauge-scale');
 
-        this.add(this._line = new LineElement(doc, 'rct-linear-scale-line'));
-        this.add(this._tickContainer = new LayerElement(doc, 'rct-linear-scale-ticks'));
+        this.add(this._line = this._createLine(doc, 'rct-gauge-scale-line'));
+        this.add(this._tickContainer = new LayerElement(doc, 'rct-gauge-scale-ticks'));
         this._ticks = new ElementPool(this._tickContainer, LineElement);
-        this.add(this._labelContainer = new LayerElement(doc, 'rct-linear-scale-tick-labels'));
+        this.add(this._labelContainer = new LayerElement(doc, 'rct-gauge-scale-tick-labels'));
         this._labels = new ElementPool(this._labelContainer, TextElement);
     }
 
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected abstract _createLine(doc: Document, styleName: string): RcElement;
+}
+
+export class LinearScaleView extends ScaleView<LinearGaugeScale> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _createLine(doc: Document, styleName: string): RcElement {
+        return new LineElement(doc, styleName);
+    }    
+
     protected _doMeasure(doc: Document, model: LinearGaugeScale, hintWidth: number, hintHeight: number, phase: number): ISize {
         const reversed = model._reversed;
         const vertical = model._vertical;
@@ -223,7 +241,7 @@ export class LinearScaleView extends ChartElement<LinearGaugeScale> {
 
         if (this._labelContainer.setVisible(model.tickLabel.visible)) {
             this._labelContainer.internalSetStyleOrClass(model.tickLabel.style);
-            this._labels.prepare(steps.length);
+            this._labels.prepare(nStep);
 
             if (nStep > 0) {
                 if (vertical) {
@@ -257,17 +275,19 @@ export class LinearScaleView extends ChartElement<LinearGaugeScale> {
     // internal members
     //-------------------------------------------------------------------------
     private $_layoutHorz(m: LinearGaugeScale, width: number, height: number): void {
+        const line = this._line as LineElement;
         const tick = m.tick;
         const steps = m._steps;
         const w = width / (steps.length - 1);
-        const len = m.opposite ? -tick.length : tick.length;
-        let y = m.opposite ? height - m.gap : m.gap;
+        const opposite = m.position === GaugeItemPosition.OPPOSITE;
+        const len = opposite ? -tick.length : tick.length;
+        let y = opposite ? height - m.gap : m.gap;
         let x = 0;
 
         // line
-        if (this._line.setVisible(m.line.visible)) {
-            this._line.internalSetStyleOrClass(m.line.style);
-            this._line.setHLineC(y, x, x + width);
+        if (line.setVisible(m.line.visible)) {
+            line.internalSetStyleOrClass(m.line.style);
+            line.setHLineC(y, x, x + width);
         }
 
         // ticks
@@ -279,27 +299,31 @@ export class LinearScaleView extends ChartElement<LinearGaugeScale> {
         }
 
         // labels
-        y = m.opposite ? 0 : y + len;
-        x = 0;
-        this._labels.forEach((v, i) => {
-            v.anchor = i < steps.length - 1 ? TextAnchor.MIDDLE : TextAnchor.END;
-            v.translate(x, y);
-            x += w;
-        });
+        if (this._labelContainer.visible) {
+            y = opposite ? 0 : y + len;
+            x = 0;
+            this._labels.forEach((v, i) => {
+                v.anchor = i < steps.length - 1 ? TextAnchor.MIDDLE : TextAnchor.END;
+                v.translate(x, y);
+                x += w;
+            });
+        }
     }
 
     private $_layoutVert(m: LinearGaugeScale, width: number, height: number): void {
+        const line = this._line as LineElement;
         const tick = m.tick;
         const steps = m._steps;
         const h = this.height / (steps.length - 1);
-        const len = m.opposite ? tick.length : -tick.length;
+        const opposite = m.position === GaugeItemPosition.OPPOSITE;
+        const len = opposite ? tick.length : -tick.length;
         let y = 0;
-        let x = m.opposite ? m.gap : width - m.gap;
+        let x = opposite ? m.gap : width - m.gap;
 
         // line
-        if (this._line.setVisible(m.line.visible)) {
-            this._line.internalSetStyleOrClass(m.line.style);
-            this._line.setVLineC(x, y, y + height);
+        if (line.setVisible(m.line.visible)) {
+            line.internalSetStyleOrClass(m.line.style);
+            line.setVLineC(x, y, y + height);
         }
 
         // ticks
@@ -311,15 +335,17 @@ export class LinearScaleView extends ChartElement<LinearGaugeScale> {
         }
 
         // labels
-        const anchor = m.opposite ? TextAnchor.START : TextAnchor.END;
-        x = m.opposite ? x + len : width - m.gap + len;
-        y = 0;
-        this._labels.forEach((v, i) => {
-            v.anchor = anchor;
-            v.layout = i < steps.length - 1 ? TextLayout.MIDDLE : TextLayout.BOTTOM;
-            v.translate(x, y);
-            y += h;
-        });
+        if (this._labelContainer.visible) {
+            const anchor = opposite ? TextAnchor.START : TextAnchor.END;
+            x = opposite ? x + len : width - m.gap + len;
+            y = 0;
+            this._labels.forEach((v, i) => {
+                v.anchor = anchor;
+                v.layout = i < steps.length - 1 ? TextLayout.MIDDLE : TextLayout.BOTTOM;
+                v.translate(x, y);
+                y += h;
+            });
+        }
     }
 }
 
@@ -371,7 +397,7 @@ export abstract class LineGaugeView<T extends LinearGaugeBase> extends ValueGaug
         this._renderLabel(m, label, labelView, value);
 
         // 아래쪽으로 넘치지 않게 한다.
-        if (!this._vertical && (label._runPos === 'left' || label._runPos === 'right') && scale.visible && scale.opposite) {
+        if (!this._vertical && (label._runPos === 'left' || label._runPos === 'right') && scale.visible && scale.position === GaugeItemPosition.OPPOSITE) {
             const r = labelView.getBBounds();
             if (labelView.ty + r.height > this.height) {
                 labelView.translateY(Math.max(0, this.height - r.height));
@@ -487,7 +513,7 @@ export abstract class LineGaugeView<T extends LinearGaugeBase> extends ValueGaug
                 y = rBand.y;
                 rBand.width = Math.max(0, rBand.width - sz.width);
 
-                if (scale.opposite) {
+                if (scale.position === GaugeItemPosition.OPPOSITE) {
                     x = rBand.x + rBand.width;
                 } else {
                     if (label._runVert) {
@@ -501,7 +527,7 @@ export abstract class LineGaugeView<T extends LinearGaugeBase> extends ValueGaug
                 x = rBand.x;
                 rBand.height = Math.max(0, rBand.height - sz.height);
 
-                if (scale.opposite) {
+                if (scale.position === GaugeItemPosition.OPPOSITE) {
                     if (label._runVert) {
                         y = rBand.y;
                         rBand.y += sz.height;
@@ -515,19 +541,6 @@ export abstract class LineGaugeView<T extends LinearGaugeBase> extends ValueGaug
             }
             scaleView.resizeByMeasured().layout().translate(x, y);
         }
-    }
-}
-
-export class CircularScaleView extends ChartElement<CircleGaugeScale> {
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: CircleGaugeScale, hintWidth: number, hintHeight: number, phase: number): ISize {
-        return;
-    }
-
-    protected _doLayout(param: any): void {
     }
 }
 

@@ -5,6 +5,8 @@
 const config = {
     templates: {
         gauge: {
+            width: '33%',
+            height: '50%',
             innerRadius: '93%',
             valueRim: {
                 ranges: [{
@@ -40,16 +42,12 @@ const config = {
     gauge: [{
         template: "gauge",
         name: 'gauge1',
-        width: '33%',
-        height: '50%',
         left: 0,
         top: 0,
         value: Math.random() * 100,
     }, {
         template: "gauge",
         name: 'gauge2',
-        width: '33%',
-        height: '50%',
         left: '33%',
         top: 0,
         valueRadius: '104%',    
@@ -60,32 +58,24 @@ const config = {
     }, {
         template: "gauge",
         name: 'gauge3',
-        width: '33%',
-        height: '50%',
         left: '66%',
         top: 0,
         value: Math.random() * 100,
     }, {
         template: "gauge",
         name: 'gauge4',
-        width: '33%',
-        height: '50%',
         left: 0,
         top: '50%',
         value: Math.random() * 100,
     }, {
         template: "gauge",
         name: 'gauge5',
-        width: '33%',
-        height: '50%',
         left: '33%',
         top: '50%',
         value: Math.random() * 100,
     }, {
         template: "gauge",
         name: 'gauge6',
-        width: '33%',
-        height: '50%',
         left: '66%',
         top: '50%',
         value: Math.random() * 100,

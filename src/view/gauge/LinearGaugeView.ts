@@ -13,7 +13,7 @@ import { IRect } from "../../common/Rectangle";
 import { ISize } from "../../common/Size";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
-import { GaugeRangeBandPosition, GuageRangeBand, IGaugeValueRange } from "../../model/Gauge";
+import { GaugeItemPosition, GuageRangeBand, IGaugeValueRange } from "../../model/Gauge";
 import { LinearGauge } from "../../model/gauge/LinearGauge";
 import { ChartElement } from "../ChartElement";
 import { LineGaugeView, LinearScaleView } from "../GaugeView";
@@ -48,10 +48,10 @@ class BandView extends ChartElement<GuageRangeBand> {
     protected _doMeasure(doc: Document, model: GuageRangeBand, hintWidth: number, hintHeight: number, phase: number): ISize {
         const g = model.gauge as LinearGauge;
         const scale = g.scale;
-        const thick = this._thick = model.position === GaugeRangeBandPosition.INSIDE ? (g.vertical ? hintWidth : hintHeight) : pickNum(model.thickness, 0) + (this._gap = pickNum(model.gap, 0));
+        const thick = this._thick = model.position === GaugeItemPosition.INSIDE ? (g.vertical ? hintWidth : hintHeight) : pickNum(model.thickness, 0) + (this._gap = pickNum(model.gap, 0));
         let width = g.vertical ? thick : hintWidth;
         let height = g.vertical ? hintHeight : thick;
-        const ranges = this._ranges = model.getRanges(scale._min, scale._max);
+        const ranges = this._ranges = model.ranges;
 
         if (this._labelContainer.setVisible(model.tickLabel.visible && ranges.length > 0)) {
             const vals = [ranges[0].fromValue].concat(ranges.map(r => r.toValue));
@@ -194,9 +194,9 @@ export class LinearGaugeView extends LineGaugeView<LinearGauge> {
             bandView.resizeByMeasured().layout();
 
             if (this._vertical) {
-                if (band.position === GaugeRangeBandPosition.INSIDE) {
+                if (band.position === GaugeItemPosition.INSIDE) {
                     bandView.translate(r.x, r.y);
-                } else if (band.position === GaugeRangeBandPosition.OPPOSITE) {
+                } else if (band.position === GaugeItemPosition.OPPOSITE) {
                     bandView.translate(r.x + r.width - sz.width, r.y);
                     r.width -= sz.width + gap;
                 } else {
@@ -205,9 +205,9 @@ export class LinearGaugeView extends LineGaugeView<LinearGauge> {
                     r.x += sz.width + gap;
                 }
             } else {
-                if (band.position === GaugeRangeBandPosition.INSIDE) {
+                if (band.position === GaugeItemPosition.INSIDE) {
                     bandView.translate(r.x, r.y);
-                } else if (band.position === GaugeRangeBandPosition.OPPOSITE) {
+                } else if (band.position === GaugeItemPosition.OPPOSITE) {
                     bandView.translate(r.x, r.y);
                     r.height -= sz.height + gap;
                     r.y += sz.height + gap;

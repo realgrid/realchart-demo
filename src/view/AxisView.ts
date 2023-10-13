@@ -106,10 +106,6 @@ class AxisTickMarkView extends ChartElement<AxisTickMark> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: AxisTickMark, hintWidth: number, hintHeight: number, phase: number): ISize {
-        return Size.create(hintWidth, hintHeight);
-    }
-
     protected _doLayout(param: any): void {
         if (this.model.axis._isHorz) {
             // this._lineView.setVLine(0, 0, this.height);

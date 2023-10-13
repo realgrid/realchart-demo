@@ -101,8 +101,12 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
         }
     }
 
-    protected abstract _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize;
-    protected abstract _doLayout(param: any): void;
+    protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+        return { width: hintWidth, height: hintHeight };
+    }
+
+    protected _doLayout(param: any): void {
+    }
 
     protected _invalidate(): void {
         this.control?.invalidateLayout();
