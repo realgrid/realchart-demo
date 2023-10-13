@@ -18,7 +18,6 @@ import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { CircularGauge, Gauge, GaugeItemPosition, GaugeScale, LinearGaugeScale, ValueGauge } from "../model/Gauge";
-import { CircleGaugeScale } from "../model/gauge/CircleGauge";
 import { LinearGaugeBase, LinearGaugeLabel } from "../model/gauge/LinearGauge";
 import { ChartElement } from "./ChartElement";
 
@@ -93,13 +92,19 @@ export abstract class GaugeView<T extends Gauge> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _prepareStyleOrClass(model: T): void {
+        // this.dom에 설정되지 않고 back에 설정되도록 한다.
+        this._backElement.setStyleOrClass(model.style);
+    }
+
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         return model.getSize(hintWidth, hintHeight);
     }
 
     protected _doLayout(): void {
         // back
-        this._backElement.resize(this.width, this.height);
+        this._backElement.resizeRect(this.width, this.height);
+
         // gauge
         this._renderGauge(this.width, this.height);
     }

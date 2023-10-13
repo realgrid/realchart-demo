@@ -78,6 +78,17 @@ export class RectElement extends RcElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    resizeRect(width: number, height: number): RcElement {
+        const cs = this.getStyle('border-radius');
+        
+        this.resize(width, height);
+        if (cs) {
+            this.dom.setAttribute('rx', cs);
+        }
+
+        return this;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

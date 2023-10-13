@@ -48,6 +48,10 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
         const steps = model._steps;
         const nStep = steps.length;
 
+        if (this._line.setVisible(model.line.visible)) {
+            this._line.internalSetStyleOrClass(model.line.style);
+        }
+
         if (this._tickContainer.setVisible(model.tick.visible)) {
             this._tickContainer.internalSetStyleOrClass(model.tick.style);
             this._ticks.prepare(nStep);
@@ -76,7 +80,9 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
         let x1: number, y1: number, x2: number, y2: number, a: number;
 
         // line
-        (this._line as CircleElement).setCircle(cx, cy, rd);
+        if (this._line.visible) {
+            (this._line as CircleElement).setCircle(cx, cy, rd);
+        }
 
         // ticks
         if (this._tickContainer.visible) {

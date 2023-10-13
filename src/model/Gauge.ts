@@ -380,7 +380,7 @@ export abstract class GaugeScale extends ChartItem {
     constructor(public gauge: ValueGauge, visible = true) {
         super(gauge.chart, visible);
 
-        this.line = new ChartItem(gauge.chart, false);
+        this.line = new ChartItem(gauge.chart, true);
         this.tick = new GuageScaleTick(this);
         this.tickLabel = new ChartItem(gauge.chart);
     }
