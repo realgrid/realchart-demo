@@ -1748,6 +1748,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
             throw new Error('이 그룹에 포함될 수 없는 시리즈입니다: ' + series);
         }
     }
+
     private $_collectValues(axis: IAxis, vals: number[]): void {
         this._visibles.forEach(ser => {
             ser.collectValues(axis, vals);

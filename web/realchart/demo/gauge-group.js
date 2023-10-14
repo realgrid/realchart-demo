@@ -4,25 +4,9 @@
  */
 const config = {
     templates: {
-        gauge: {
-            valueRim: {
-                ranges: [{
-                    toValue: 25,
-                    color: 'green'
-                }, {
-                    toValue: 50,
-                    color: '#0000cc'
-                }, {
-                    toValue: 75,
-                    color: '#ffaa00'
-                }, {
-                    color: 'red'
-                }]
-            }
-        }
     },
     options: {
-        // animatable: false,
+        animatable: false,
         credits: {
             // visible: false,
             // verticalAlign: 'top'
@@ -31,38 +15,41 @@ const config = {
     },
     title: "Circle Gauge Group",
     gauge: [{
-        width: '49%',
-        height: '49%',
-        innerRadius: '93%',
         children: [{
-            template: "gauge",
-            name: 'gauge1',
-            left: 0,
-            top: 0,
             value: Math.random() * 100,
         }, {
-            template: "gauge",
-            name: 'gauge2',
-            left: '50%',
-            top: 0,
             valueRadius: '104%',    
             valueRim: {
                 thickness: '200%',
             },
             value: Math.random() * 100,
         }, {
-            template: "gauge",
-            name: 'gauge3',
             left: 0,
             top: '50%',
             value: Math.random() * 100,
         }, {
-            template: "gauge",
-            name: 'gauge4',
             left: '50%',
             top: '50%',
             value: Math.random() * 100,
-        }]
+        }],
+        valueRim: {
+            ranges: [{
+                toValue: 25,
+                color: 'green'
+            }, {
+                toValue: 50,
+                color: '#0000cc'
+            }, {
+                toValue: 75,
+                color: '#ffaa00'
+            }, {
+                color: 'red'
+            }]
+        },
+        style: {
+            stroke: 'lightblue',
+            borderRadius: '10px'
+        }
     }]
 }
 

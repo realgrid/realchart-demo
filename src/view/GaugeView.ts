@@ -17,7 +17,7 @@ import { ISize } from "../common/Size";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
-import { CircularGauge, GaugeBase, GaugeItemPosition, GaugeScale, LinearGaugeScale, ValueGauge } from "../model/Gauge";
+import { CircularGauge, Gauge, GaugeBase, GaugeGroup, GaugeItemPosition, GaugeScale, LinearGaugeScale, ValueGauge } from "../model/Gauge";
 import { LinearGaugeBase, LinearGaugeLabel } from "../model/gauge/LinearGauge";
 import { ChartElement } from "./ChartElement";
 
@@ -583,4 +583,42 @@ export abstract class CircularGaugeView<T extends CircularGauge> extends ValueGa
     //-------------------------------------------------------------------------
     protected _setBackgroundStyle(back: RectElement): void {
     }
+}
+
+export abstract class GaugeGroupView<G extends Gauge, T extends GaugeGroup<G>, GV extends GaugeView<G>> extends GaugeView<T> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _gaugeContainer: LayerElement;
+    private _gaugeViews: ElementPool<GV>;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, styleName: string) {
+        super(doc, styleName);
+
+        this.add(this._gaugeContainer = new LayerElement(doc, 'rct-gauge-group-container'));
+        this._gaugeViews = this._createPool(this._gaugeContainer);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _prepareGauge(doc: Document, model: T): void {
+        this._gaugeViews.prepare(model.count())
+        this._doPrepareGauges(doc, model, this._gaugeViews);
+    }
+
+    protected _renderGauge(width: number, height: number): void {
+        this._doRenderGauges(this._gaugeViews, width, height);
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected abstract _createPool(container: LayerElement): ElementPool<GV>;
+    protected abstract _doPrepareGauges(doc: Document, model: T, views: ElementPool<GV>): void;
+    protected abstract _doRenderGauges(views: ElementPool<GV>, width: number, height: number): void;
 }

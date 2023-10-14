@@ -28,7 +28,7 @@ import { Gauge, GaugeBase } from "../model/Gauge";
 import { ChartElement } from "./ChartElement";
 import { GaugeView } from "./GaugeView";
 import { IPointView, SeriesView } from "./SeriesView";
-import { CircleGaugeView } from "./gauge/CircleGaugeView";
+import { CircleGaugeGroupView, CircleGaugeView } from "./gauge/CircleGaugeView";
 import { ClockGaugeView } from "./gauge/ClockGaugeView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
 import { AreaSeriesView } from "./series/AreaSeriesView";
@@ -53,8 +53,8 @@ import { ScatterSeriesView } from "./series/ScatterSeriesView";
 import { TreemapSeriesView } from "./series/TreemapSeriesView";
 import { VectorSeriesView } from "./series/VectorSeriesView";
 import { WaterfallSeriesView } from "./series/WaterfallSeriesView";
-import { LinearGaugeView } from "./gauge/LinearGaugeView";
-import { BulletGaugeView } from "./gauge/BulletGaugeView";
+import { LinearGaugeGroupView, LinearGaugeView } from "./gauge/LinearGaugeView";
+import { BulletGaugeGroupView, BulletGaugeView } from "./gauge/BulletGaugeView";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -86,6 +86,9 @@ const gauge_types = {
     'linear': LinearGaugeView,
     'bullet': BulletGaugeView,
     'clock': ClockGaugeView,
+    'circlegroup': CircleGaugeGroupView,
+    'lineargroup': LinearGaugeGroupView,
+    'bulletgroup': BulletGaugeGroupView,
 }
 
 export class AxisGridView extends ChartElement<AxisGrid> {

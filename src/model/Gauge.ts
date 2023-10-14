@@ -33,15 +33,36 @@ export abstract class GaugeBase extends Widget {
     // static members
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _size: RtPercentSize;
+    private _width: RtPercentSize;
+    private _height: RtPercentSize;
+    private _left: RtPercentSize;
+    private _right: RtPercentSize;
+    private _top: RtPercentSize;
+    private _bottom: RtPercentSize;
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     index = -1;
+    private _sizeDim: IPercentSize;
     private _widthDim: IPercentSize;
-    private _heightdim: IPercentSize;
+    private _heightDim: IPercentSize;
     private _leftDim: IPercentSize;
     private _rightDim: IPercentSize;
     private _topDim: IPercentSize;
     private _bottomDim: IPercentSize;
+    
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart);
+
+        this.size = '100%';
+    }
 
     //-------------------------------------------------------------------------
     // properties
@@ -59,53 +80,102 @@ export abstract class GaugeBase extends Widget {
      * 
      * @config
      */
-    left: RtPercentSize;
+    get left(): RtPercentSize {
+        return this._left;
+    }
+    set left(value: RtPercentSize) {
+        if (value !== this._left) {
+            this._leftDim = parsePercentSize(this._left = value, true);
+        }
+    }
     /**
      * plot 영역의 오른쪽 모서리와 widget 사이의 간격.
      * 
      * @config
      */
-    right: RtPercentSize;
+    get right(): RtPercentSize {
+        return this._right;
+    }
+    set right(value: RtPercentSize) {
+        if (value !== this._right) {
+            this._rightDim = parsePercentSize(this._right = value, true);
+        }
+    }
     /**
      * plot 영역의 위쪽 모서리와 widget 사이의 간격.
      * 
      * @config
      */
-    top: RtPercentSize;
+    get top(): RtPercentSize {
+        return this._top;
+    }
+    set top(value: RtPercentSize) {
+        if (value !== this._top) {
+            this._topDim = parsePercentSize(this._top = value, true);
+        }
+    }
     /**
      * plot 영역의 아래쪽 모서리와 widget 사이의 간격.
      * 
      * @config
      */
-    bottom: RtPercentSize;
+    get bottom(): RtPercentSize {
+        return this._bottom;
+    }
+    set bottom(value: RtPercentSize) {
+        if (value !== this._bottom) {
+            this._bottomDim = parsePercentSize(this._bottom = value, true);
+        }
+    }
     /**
      * 게이지 너비.
      * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
      * 
      * @config
      */
-    width: RtPercentSize;
+    get width(): RtPercentSize {
+        return this._width;
+    }
+    set width(value: RtPercentSize) {
+        if (value !== this._width) {
+            this._widthDim = parsePercentSize(this._width = value, true);
+        }
+    }
     /**
      * 게이지 높이.
      * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
      * 
      * @config
      */
-    height: RtPercentSize;
+    get height(): RtPercentSize {
+        return this._height;
+    }
+    set height(value: RtPercentSize) {
+        if (value !== this._height) {
+            this._heightDim = parsePercentSize(this._height = value, true);
+        }
+    }
     /**
      * {@link width}와 {@link height}를 동시에 설정한다.
      * 
      * @config
      */
-    size: RtPercentSize = '100%';
+    get size(): RtPercentSize {
+        return this._size;
+    }
+    set size(value: RtPercentSize) {
+        if (value !== this._size) {
+            this._sizeDim = parsePercentSize(this._size = value, true);
+        }
+    }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     getSize(width: number, height: number): ISize {
         return {
-            width: calcPercent(this._widthDim, width, width),
-            height: calcPercent(this._heightdim, height, height)
+            width: calcPercent(this._widthDim || this._sizeDim, width, width),
+            height: calcPercent(this._heightDim || this._sizeDim, height, height)
         };
     }
 
@@ -128,18 +198,6 @@ export abstract class GaugeBase extends Widget {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoad(source: any): void {
-        super._doLoad(source);
-
-        const sz = parsePercentSize(this.size, true);
-
-        this._widthDim = parsePercentSize(this.width, true) || sz;
-        this._heightdim = parsePercentSize(this.height, true) || sz;
-        this._leftDim = parsePercentSize(this.left, true);
-        this._rightDim = parsePercentSize(this.right, true);
-        this._topDim = parsePercentSize(this.top, true);
-        this._bottomDim = parsePercentSize(this.bottom, true);
-    }
 }
 
 /**
@@ -153,9 +211,24 @@ export abstract class Gauge extends GaugeBase {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
+    static _loadGauge(chart: IChart, src: any, defType?: string): Gauge {
+        let cls = chart._getGaugeType(src.type);
+
+        if (!cls) {
+            cls = chart._getGaugeType(defType || chart.gaugeType);
+        }
+
+        const gauge = new cls(chart, src.name);
+
+        gauge.load(src);
+        return gauge;
+    }
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    group: GaugeGroup<Gauge>;
+
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -188,14 +261,30 @@ export abstract class GaugeGroup<T extends Gauge> extends GaugeBase {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    count(): number {
+        return this._gauges.length;
+    }
+
     isEmpty(): boolean {
         return this._gauges.length < 1;
+    }
+
+    visibles(): T[] {
+        return this._visibles.slice(0);
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     abstract _gaugesType(): string;
+
+    get(index: number): T {
+        return this._gauges[index];
+    }
+
+    getVisible(index: number): T {
+        return this._visibles[index];
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -207,10 +296,33 @@ export abstract class GaugeGroup<T extends Gauge> extends GaugeBase {
         }
     }
 
+    prepareRender(): void {
+        this._visibles = this._gauges.filter(g => g.visible);
+
+        super.prepareRender();
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
     private $_loadGauges(chart: IChart, src: any): void {
+        const type = this._gaugesType();
+
+        if (isArray(src)) {
+            src.forEach((s, i) => this.$_add(Gauge._loadGauge(chart, s, type) as T));
+        } else if (isObject(src)) {
+            this.$_add(Gauge._loadGauge(chart, src, type) as T);
+        }
+    }
+
+    private $_add(gauge: T): void {
+        if (gauge._type() === this._gaugesType()) {
+            this._gauges.push(gauge);
+            gauge.group = this;
+            gauge.index = this._gauges.length - 1;
+        } else {
+            throw new Error('이 그룹에 포함될 수 없는 게이지입니다: ' + gauge);
+        }
     }
 }
 

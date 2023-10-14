@@ -8,7 +8,7 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { CircleGaugeGroup } from '../../../../src/model/gauge/CircleGauge';
+import { CircleGauge, CircleGaugeGroup } from '../../../../src/model/gauge/CircleGauge';
 import { Chart } from '../../../../src/model/Chart';
 
 /**
@@ -34,21 +34,13 @@ import { Chart } from '../../../../src/model/Chart';
         };
         const chart = new Chart(config);
         const gauges = chart._getGauges();
-        const gauge = gauges.get(0);
+        const group = gauges.get(0) as CircleGaugeGroup;
 
-        expect(gauge).instanceof(CircleGaugeGroup);
-    });
+        expect(group).instanceof(CircleGaugeGroup);
+        expect(group.count()).eq(config.gauge.children.length);
 
-    it('load children', () => {
-        const gauge = new CircleGaugeGroup(null);
-        const config = {
-            children: [{
-                value: 10
-            }, {
-                value: 20
-            }]
-        };
-
-        gauge.load(config);
+        for (let i = 0; i < group.count(); i++) {
+            expect(group.get(i)).instanceof(CircleGauge);
+        }
     });
 });

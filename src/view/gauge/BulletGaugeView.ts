@@ -11,8 +11,8 @@ import { LayerElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
-import { BulletGauge } from "../../model/gauge/BulletGauge";
-import { LineGaugeView, LinearScaleView } from "../GaugeView";
+import { BulletGauge, BulletGaugeGroup } from "../../model/gauge/BulletGauge";
+import { GaugeGroupView, LineGaugeView, LinearScaleView } from "../GaugeView";
 
 export class BulletGaugeView extends LineGaugeView<BulletGauge> {
 
@@ -127,4 +127,25 @@ export class BulletGaugeView extends LineGaugeView<BulletGauge> {
             }
         }
    }
+}
+
+/**
+ * @internal
+ * 
+ * View for BulletGaugeGroup.
+ */
+export class BulletGaugeGroupView extends GaugeGroupView<BulletGauge, BulletGaugeGroup, BulletGaugeView> {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _createPool(container: LayerElement): ElementPool<BulletGaugeView> {
+        return new ElementPool(container, BulletGaugeView);
+    }
+
+    protected _doPrepareGauges(doc: Document, model: BulletGaugeGroup, views: ElementPool<BulletGaugeView>): void {
+    }
+
+    protected _doRenderGauges(views: ElementPool<BulletGaugeView>, width: number, height: number): void {
+    }
 }

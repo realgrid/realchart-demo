@@ -14,9 +14,10 @@ import { ISize } from "../../common/Size";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
 import { GaugeItemPosition, GuageRangeBand, IGaugeValueRange } from "../../model/Gauge";
-import { LinearGauge } from "../../model/gauge/LinearGauge";
+import { BulletGaugeGroup } from "../../model/gauge/BulletGauge";
+import { LinearGauge, LinearGaugeGroup } from "../../model/gauge/LinearGauge";
 import { ChartElement } from "../ChartElement";
-import { LineGaugeView, LinearScaleView } from "../GaugeView";
+import { GaugeGroupView, LineGaugeView, LinearScaleView } from "../GaugeView";
 
 class BandView extends ChartElement<GuageRangeBand> {
 
@@ -238,4 +239,25 @@ export class LinearGaugeView extends LineGaugeView<LinearGauge> {
             }
         }
    }
+}
+
+/**
+ * @internal
+ * 
+ * View for LinearGaugeGroup.
+ */
+export class LinearGaugeGroupView extends GaugeGroupView<LinearGauge, LinearGaugeGroup, LinearGaugeView> {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _createPool(container: LayerElement): ElementPool<any> {
+        return new ElementPool(container, LinearGaugeView);
+    }
+
+    protected _doPrepareGauges(doc: Document, model: LinearGaugeGroup, views: ElementPool<LinearGaugeView>): void {
+    }
+
+    protected _doRenderGauges(views: ElementPool<LinearGaugeView>, width: number, height: number): void {
+    }
 }

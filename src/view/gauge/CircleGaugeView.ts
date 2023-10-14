@@ -17,9 +17,9 @@ import { CircleElement } from "../../common/impl/CircleElement";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextElement, TextLayout } from "../../common/impl/TextElement";
 import { GuageRangeBand, ICircularGaugeExtents } from "../../model/Gauge";
-import { CircleGauge, CircleGaugeHand, CircleGaugePin, CircleGaugeScale } from "../../model/gauge/CircleGauge";
+import { CircleGauge, CircleGaugeGroup, CircleGaugeHand, CircleGaugePin, CircleGaugeScale } from "../../model/gauge/CircleGauge";
 import { ChartElement } from "../ChartElement";
-import { CircularGaugeView, ScaleView } from "../GaugeView";
+import { CircularGaugeView, GaugeGroupView, GaugeView, ScaleView } from "../GaugeView";
 
 class CircularScaleView extends ScaleView<CircleGaugeScale> {
 
@@ -484,5 +484,41 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         if (this._pinView) {
             this._pinView.render(m.pin, r).translate(center.x, center.y);
         }
+    }
+}
+
+/**
+ * @internal
+ * 
+ * View for CircleGaugeGroup.
+ */
+export class CircleGaugeGroupView extends GaugeGroupView<CircleGauge, CircleGaugeGroup, CircleGaugeView> {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _createPool(container: LayerElement): ElementPool<CircleGaugeView> {
+        return new ElementPool(container, CircleGaugeView);
+    }
+
+    protected _doPrepareGauges(doc: Document, model: CircleGaugeGroup, views: ElementPool<CircleGaugeView>): void {
+        views.forEach((v, i) => {
+            v.prepareGauge(doc, model.getVisible(i));
+        })
+    }
+
+    protected _doRenderGauges(views: ElementPool<CircleGaugeView>, width: number, height: number): void {
+        const doc = this.doc;
+        const m = this.model;
+        const center = m.getCenter(width, height);
+        const exts = m.getExtents(Math.min(width, height));
+
+        width = height = exts.radius * 2;
+
+        views.forEach((v, i) => {
+            v.measure(doc, m.getVisible(i), width, height, 0);
+            v.resize(width, height);
+            v.layout();
+        })
     }
 }
