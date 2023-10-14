@@ -52,6 +52,7 @@ export function utc(year: number, monthIndex = 0, day = 1, hour = 0, minute = 0,
     return new Date(Date.UTC(year, monthIndex, day, hour, minute, second, millisecond));
 }
 
+export type PathValue = string | number;
 export type Path = string | any[];
 
 /**
@@ -132,62 +133,6 @@ export function calcPercent(size: IPercentSize, domain: number, def = NaN): numb
 }
 export function calcPercentF(size: IPercentSize, domain: number): number {
     return size.fixed ? size.size : size.size * domain / 100;
-}
-
-export type SizeValue = string | number; // 123, '10*', '50%'
-export function isValidSizeValue(v: any): boolean {
-    if (!isNaN(v)) return true;
-    if (typeof v === 'string' && v.trimEnd().endsWith('*') && !isNaN(parseFloat(v))) return true;
-    return false;
-}
-export interface ISizeValue {
-    size: number;
-    fixed: boolean;
-    rated?: boolean; // '*'
-}
-
-/**
- * @internal
- * 
- * '*'은 '1*'와 동일하다.
- */
-export function parseSize(sv: SizeValue, enableNull: boolean): ISizeValue {
-    let fixed: boolean;
-    let rated: boolean; // '*'
-    let size: number;
-
-    if (sv != null && !Number.isNaN(sv)) {
-        if (!(fixed = !isNaN(size = +sv))) {
-            const s = (sv as string).trim();
-            const c = s.charCodeAt(s.length - 1);
-
-            if (c === PERCENT) {
-                size = s.length === 1 ? NaN : parseFloat(s);
-            } else if (c === ASTERISK) {
-                size = s.length === 1 ? 1 : parseFloat(s);
-                rated = true;
-            }
-            if (isNaN(size)) {
-                if (enableNull) {
-                    return null;
-                }
-                throwFormat(locale.invalidSizeValue, sv);
-            }
-        }
-    } else if (enableNull) {
-        return null;
-    } else {
-        size = 0;
-        fixed = true;
-    }
-    return { size, rated, fixed }; 
-}
-
-export function getFixedSize(dim: IPercentSize): number {
-    return dim && dim.fixed ? dim.size : NaN;
-}
-export function getRelativeSize(dim: IPercentSize): number {
-    return dim && !dim.fixed ? dim.size : NaN;
 }
 
 export interface SVGStyles {

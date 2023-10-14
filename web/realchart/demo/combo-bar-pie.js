@@ -31,7 +31,7 @@ const config = {
         type: 'pie',
         centerX: '15%',
         centerY: '25%',
-        size: '40%',
+        radius: '20%',
         pointLabel: true,
         legendByPoint: true,
         data: [

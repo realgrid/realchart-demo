@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ISize } from "../../common/Size";
-import { IPercentSize, SizeValue, calcPercent, parsePercentSize2 } from "../../common/Types";
+import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
@@ -59,19 +59,19 @@ export class FunnelSeries extends WidgetSeries {
     /**
      * @config
      */
-    width: SizeValue = FunnelSeries.DEF_WIDTH;
+    width: RtPercentSize = FunnelSeries.DEF_WIDTH;
     /**
      * @config
      */
-    height: SizeValue = FunnelSeries.DEF_HEIGHT;
+    height: RtPercentSize = FunnelSeries.DEF_HEIGHT;
     /**
      * @config
      */
-    neckWidth: SizeValue = FunnelSeries.DEF_NECK_WIDTH;
+    neckWidth: RtPercentSize = FunnelSeries.DEF_NECK_WIDTH;
     /**
      * @config
      */
-    neckHeight: SizeValue = FunnelSeries.DEF_NECK_HEIGHT;
+    neckHeight: RtPercentSize = FunnelSeries.DEF_NECK_HEIGHT;
     /**
      * @config
      */

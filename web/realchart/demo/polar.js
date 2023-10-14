@@ -5,6 +5,7 @@
 const config = {
     polar: true,
     options: {
+        animatable: false
     },
     title: "Polar Chart",
     xAxis: {

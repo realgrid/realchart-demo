@@ -266,17 +266,12 @@ export class PolarBodyView extends BodyView {
     }
 
     protected _doLayout(): void {
-        const m = this.model;
-        const sz = m.getSize(this.width, this.height);
-        const rd = m._rd = m.getSize(this.width, this.height) / 2;
-        const {cx, cy} = m.getCenter(this.width, this.height);
-
-        m._cx = cx;
-        m._cy = cy;
+        const m = this.model.setPolar(this.width, this.height);
+        const {cx, cy, rd} = m.getPolar(null);
 
         // series
         this._seriesViews.forEach(v => {
-            v.resize(sz, sz);
+            v.resize(rd * 2, rd * 2);
             v.layout();//.translate(x, y);
         })
 

@@ -1028,7 +1028,7 @@ export class ChartView extends RcElement {
 
     private $_measurePolar(doc: Document, m: Chart, w: number, h: number, phase: number): void {
         const body = m.body;
-        const rd = body.getSize(w, h) / 2;
+        const rd = body.calcRadius(w, h);
 
         // axes
         this.$_prepareAxes(doc, m);
