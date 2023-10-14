@@ -163,11 +163,11 @@ test.describe('categoryaxis-var.html test', async function () {
 		expect(dataPoints).exist;
 
 		const linePoints = await page.$$(
-			'.rct-line-series .rct-point-label[y="13"]'
+			'.rct-line-series .rct-point-label[y="12"]'
 		);
 		expect(linePoints).exist;
 		const barPoints = await page.$$(
-			'.rct-bar-series .rct-point-label[y="13"]'
+			'.rct-bar-series .rct-point-label[y="12"]'
 		);
 		expect(barPoints).exist;
 		let maxLength = 0;

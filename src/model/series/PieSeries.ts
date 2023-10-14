@@ -230,6 +230,10 @@ export class PieSeriesGroup extends SeriesGroup<PieSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    _type(): string {
+        return 'piegroup';
+    }
+
     _seriesType(): string {
         return 'pie';
     }

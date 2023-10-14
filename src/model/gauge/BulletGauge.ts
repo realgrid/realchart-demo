@@ -9,7 +9,7 @@
 import { IPercentSize, RtPercentSize, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { IGaugeValueRange, ValueGauge } from "../Gauge";
+import { GaugeGroup, IGaugeValueRange, ValueGauge } from "../Gauge";
 import { LinearGaugeBase } from "./LinearGauge";
 
 export class BulletGaugeBand extends ChartItem {
@@ -199,5 +199,19 @@ export class BulletGauge extends LinearGaugeBase {
 
     protected _doLoad(src: any): void {
         super._doLoad(src);
+    }
+}
+
+export class BulletGaugeGroup extends GaugeGroup<BulletGauge> {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    _type(): string {
+        return 'bulletgroup';
+    }
+
+    _gaugesType(): string {
+        return 'bullet';
     }
 }

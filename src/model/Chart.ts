@@ -22,7 +22,7 @@ import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
 import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
-import { CircleGauge } from "./gauge/CircleGauge";
+import { CircleGauge, CircleGaugeGroup } from "./gauge/CircleGauge";
 import { ClockGauge } from "./gauge/ClockGauge";
 import { GaugeCollection, ValueGauge } from "./Gauge";
 import { BarRangeSeries } from "./series/BarRangeSeries";
@@ -47,8 +47,8 @@ import { ScatterSeries } from "./series/ScatterSeries";
 import { TreemapSeries } from "./series/TreemapSeries";
 import { VectorSeries } from "./series/VectorSeries";
 import { WaterfallSeries } from "./series/WaterfallSeries";
-import { LinearGauge } from "./gauge/LinearGauge";
-import { BulletGauge } from "./gauge/BulletGauge";
+import { LinearGauge, LinearGaugeGroup } from "./gauge/LinearGauge";
+import { BulletGauge, BulletGaugeGroup } from "./gauge/BulletGauge";
 
 export interface IChart {
     type: string;
@@ -79,6 +79,7 @@ export interface IChart {
     _getSeriesType(type: string): any;
     _getAxisType(type: string): any;
     _getGaugeType(type: string): any;
+    _getGaugeGroupType(type: string): any;
     _getSeries(): PlottingItemCollection;
     _getGauges(): GaugeCollection;
     _getXAxes(): AxisCollection;
@@ -103,7 +104,6 @@ const group_types = {
     'piegroup': PieSeriesGroup,
     'bump': BumpSeriesGroup
 };
-
 const series_types = {
     'area': AreaSeries,
     'arearange': AreaRangeSeries,
@@ -129,7 +129,6 @@ const series_types = {
     'vector': VectorSeries,
     'waterfall': WaterfallSeries,
 };
-
 const axis_types = {
     'category': CategoryAxis,
     'linear': LinearAxis,
@@ -143,6 +142,14 @@ const gauge_types = {
     'linear': LinearGauge,
     'bullet': BulletGauge,
     'clock': ClockGauge,
+}
+const gauge_group_types = {
+    'circle': CircleGaugeGroup,
+    'linear': LinearGaugeGroup,
+    'bullet': BulletGaugeGroup,
+    'circlegroup': CircleGaugeGroup,
+    'lineargroup': LinearGaugeGroup,
+    'bulletgroup': BulletGaugeGroup,
 }
 
 export class Credits extends ChartItem {
@@ -698,6 +705,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     _getGaugeType(type: string): any {
         return isString(type) && gauge_types[type.toLowerCase()];
+    }
+
+    _getGaugeGroupType(type: string): any {
+        return isString(type) && gauge_group_types[type.toLowerCase()];
     }
 
     getAxesGap(): number {

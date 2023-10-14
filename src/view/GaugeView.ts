@@ -17,11 +17,11 @@ import { ISize } from "../common/Size";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
-import { CircularGauge, Gauge, GaugeItemPosition, GaugeScale, LinearGaugeScale, ValueGauge } from "../model/Gauge";
+import { CircularGauge, GaugeBase, GaugeItemPosition, GaugeScale, LinearGaugeScale, ValueGauge } from "../model/Gauge";
 import { LinearGaugeBase, LinearGaugeLabel } from "../model/gauge/LinearGauge";
 import { ChartElement } from "./ChartElement";
 
-export abstract class GaugeView<T extends Gauge> extends ChartElement<T> {
+export abstract class GaugeView<T extends GaugeBase> extends ChartElement<T> {
 
     //-------------------------------------------------------------------------
     // consts

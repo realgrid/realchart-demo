@@ -112,8 +112,8 @@ export interface IPlottingItem {
     index: number;
     xAxis: string | number;
     yAxis: string | number;
-
     visible: boolean;
+
     getVisiblePoints(): DataPoint[];
     getLegendSources(list: ILegendSource[]): void;
     needAxes(): boolean;
@@ -1085,6 +1085,7 @@ export class PlottingItemCollection  {
             const g = new cls(chart);
 
             g.load(src);
+            g.index = index;
             return g;
         }
 
@@ -1624,10 +1625,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    _type(): string {
-        return this._seriesType();
-    }
-
+    abstract _type(): string;
     abstract _seriesType(): string;
 
     // Axis에서 요청한다.
@@ -1696,7 +1694,6 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     protected _doLoadProp(prop: string, value: any): boolean {
-        // TODO: children으로 통일한다.
         if (prop === 'children') {
             this.$_loadSeries(this.chart, value);
             return true;

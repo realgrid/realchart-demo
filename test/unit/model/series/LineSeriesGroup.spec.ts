@@ -19,7 +19,7 @@ import { LineSeriesGroup } from '../../../../src/model/series/LineSeries';
         let group = new LineSeriesGroup(null);
 
         expect(group).exist;
-        expect(group._type()).eq('line');
+        expect(group._type()).eq('linegroup');
         expect(group._seriesType()).eq('line');
     });
 

@@ -24,7 +24,7 @@ export interface IGaugeValueRange {
 /**
  * 게이지 모델.
  */
-export abstract class Gauge extends Widget {
+export abstract class GaugeBase extends Widget {
 
     //-------------------------------------------------------------------------
     // consts
@@ -35,6 +35,7 @@ export abstract class Gauge extends Widget {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    index = -1;
     private _widthDim: IPercentSize;
     private _heightdim: IPercentSize;
     private _leftDim: IPercentSize;
@@ -97,12 +98,6 @@ export abstract class Gauge extends Widget {
      * @config
      */
     size: RtPercentSize = '100%';
-    /**
-     * Animation duration.
-     * 
-     * @config
-     */
-    duration = 500;
 
     //-------------------------------------------------------------------------
     // methods
@@ -147,10 +142,16 @@ export abstract class Gauge extends Widget {
     }
 }
 
-export abstract class GaugeGroup<T extends Gauge> extends ChartItem {
+/**
+ * 게이지 모델.
+ */
+export abstract class Gauge extends GaugeBase {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // consts
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // static members
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // fields
@@ -158,9 +159,59 @@ export abstract class GaugeGroup<T extends Gauge> extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * Animation duration.
+     * 
+     * @config
+     */
+    duration = 500;
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+}
+
+export abstract class GaugeGroup<T extends Gauge> extends GaugeBase {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _gauges: T[] = [];
+    protected _visibles: T[] = [];
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    isEmpty(): boolean {
+        return this._gauges.length < 1;
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    abstract _gaugesType(): string;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doLoadProp(prop: string, value: any): boolean {
+        if (prop === 'children') {
+            this.$_loadGauges(this.chart, value);
+            return true;
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_loadGauges(chart: IChart, src: any): void {
+    }
 }
 
 export class GaugeCollection {
@@ -169,9 +220,9 @@ export class GaugeCollection {
     // fields
     //-------------------------------------------------------------------------
     readonly chart: IChart;
-    private _map: {[name: string]: Gauge} = {};
-    private _items: Gauge[] = [];
-    private _visibles: Gauge[] = [];
+    private _map: {[name: string]: GaugeBase} = {};
+    private _items: GaugeBase[] = [];
+    private _visibles: GaugeBase[] = [];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -187,15 +238,15 @@ export class GaugeCollection {
         return this._items.length;
     }
 
-    visibles(): Gauge[] {
+    visibles(): GaugeBase[] {
         return this._visibles;
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    get(name: string): Gauge {
-        return this._map[name];
+    get(name: string | number): GaugeBase {
+        return isString(name) ? this._map[name] : this._items[name];
     }
 
     load(src: any): void {
@@ -227,7 +278,18 @@ export class GaugeCollection {
     // internal members
     //-------------------------------------------------------------------------
     private $_loadItem(chart: IChart, src: any, index: number): Gauge {
-        let cls = chart._getGaugeType(src.type || chart.gaugeType);
+        let cls = isArray(src.children) && chart._getGaugeGroupType(src.gaugeType || chart.gaugeType);
+
+        if (cls) {
+            const g = new cls(chart);
+
+            g.load(src);
+            g.index = index;
+            return g;
+        }
+
+        cls = chart._getGaugeType(src.type || chart.gaugeType);
+
         if (!cls) {
             throw new Error('Invalid gauge type: ' + src.type);
         }
@@ -745,6 +807,120 @@ export interface ICircularGaugeExtents {
     value: number 
 }
 
+class CircularProps {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _centerX: RtPercentSize;
+    private _centerY: RtPercentSize;
+    private _radius: RtPercentSize;
+    private _innerRadius: RtPercentSize;
+    private _valueRadius: RtPercentSize;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _centerXDim: IPercentSize;
+    private _centerYDim: IPercentSize;
+    private _radiusDim: IPercentSize;
+    private _innerDim: IPercentSize;
+    private _valueDim: IPercentSize;
+
+    _startRad: number;
+    _handRad: number;
+    _sweepRad: number;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor() {
+        this.setCenterX(CircularGauge.DEF_CENTER);
+        this.setCenterY(CircularGauge.DEF_CENTER);
+        this.setRadius(CircularGauge.DEF_RADIUS);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    centerX(): RtPercentSize {
+        return this._centerX;
+    }
+    setCenterX(value: RtPercentSize) {
+        if (value !== this._centerX) {
+            this._centerX = value;
+            this._centerXDim = parsePercentSize(pickProp(value, CircularGauge.DEF_CENTER), true);
+        }
+    }
+
+    centerY(): RtPercentSize {
+        return this._centerY;
+    }
+    setCenterY(value: RtPercentSize) {
+        if (value !== this._centerY) {
+            this._centerY = value;
+            this._centerYDim = parsePercentSize(pickProp(value, CircularGauge.DEF_CENTER), true);
+        }
+    }
+
+    radius(): RtPercentSize {
+        return this._radius;
+    }
+    setRadius(value: RtPercentSize) {
+        if (value !== this._radius) {
+            this._radius = value;
+            this._radiusDim = parsePercentSize(pickProp(value, CircularGauge.DEF_RADIUS), true);
+        }
+    }
+
+    innerRadius(): RtPercentSize {
+        return this._innerRadius;
+    }
+    setInnerRadius(value: RtPercentSize) {
+        if (value !== this._innerRadius) {
+            this._innerRadius = value;
+            this._innerDim = parsePercentSize(pickProp(value, CircularGauge.DEF_INNER), true);
+        }
+    }
+
+    valueRadius(): RtPercentSize {
+        return this._valueRadius;
+    }
+    setValueRadius(value: RtPercentSize) {
+        if (value !== this._valueRadius) {
+            this._valueRadius = value;
+            this._valueDim = parsePercentSize(value, true);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getCenter(gaugeWidth: number, gaugeHeight: number): { x: number, y: number } {
+        return {
+            x: calcPercent(this._centerXDim, gaugeWidth, gaugeWidth / 2),
+            y: calcPercent(this._centerYDim, gaugeHeight, gaugeHeight / 2)
+        };
+    }
+
+    getExtents(gaugeSize: number): ICircularGaugeExtents {
+        const radius = calcPercent(this._radiusDim, gaugeSize, gaugeSize / 2);
+        const inner = Math.min(radius, this._innerDim ? calcPercent(this._innerDim, radius) : 0);
+        const value = this._valueDim ? calcPercent(this._valueDim, radius) : radius;
+
+        return { radius, inner, value };
+    }
+
+    prepareAngles(startAngle: number, sweepAngle: number): void {
+        const start = pickNum(startAngle % 360, 0);
+        const sweep = Math.max(0, Math.min(360, pickNum(sweepAngle, 360)));
+
+        this._startRad = ORG_ANGLE + DEG_RAD * start;
+        this._handRad = DEG_RAD * start;
+        this._sweepRad = DEG_RAD * sweep;
+    }
+}
+
 /**
  * 원형 게이지 모델.
  * label의 기본 위치의 x는 원호의 좌위 최대 각 위치를 연결한 지점,
@@ -760,16 +936,12 @@ export abstract class CircularGauge extends ValueGauge {
     static readonly DEF_INNER = '80%';
 
     //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _centerXDim: IPercentSize;
-    private _centerYDim: IPercentSize;
-    private _radiusDim: IPercentSize;
-    private _innerDim: IPercentSize;
-    private _valueDim: IPercentSize;
-    _startRad: number;
-    _handRad: number;
-    _sweepRad: number;
+    props = new CircularProps();
 
     //-------------------------------------------------------------------------
     // constructor
@@ -791,14 +963,24 @@ export abstract class CircularGauge extends ValueGauge {
      * 
      * @config
      */
-    centerX: RtPercentSize = CircularGauge.DEF_CENTER;
+    get centerX(): RtPercentSize {
+        return this.props.centerX();
+    }
+    set centerX(value: RtPercentSize) {
+        this.props.setCenterX(value);
+    }
     /**
      * 게이지 중심 수직 위치.
      * 픽셀 단위의 크기나, plot 영역 전체 높이에 대한 상대적 크기로 지정할 수 있다.
      * 
      * @config
      */
-    centerY: RtPercentSize = CircularGauge.DEF_CENTER;
+    get centerY(): RtPercentSize {
+        return this.props.centerY();
+    }
+    set centerY(value: RtPercentSize) {
+        this.props.setCenterY(value);
+    }
     /**
      * 게이지 원호의 반지름.
      * 픽셀 단위의 크기나, plot 영역 전체 크기(너비와 높이 중 작은 값)에 대한 상대적 크기로 지정할 수 있다.
@@ -806,7 +988,12 @@ export abstract class CircularGauge extends ValueGauge {
      * 
      * @config
      */
-    radius: RtPercentSize = CircularGauge.DEF_RADIUS;
+    get radius(): RtPercentSize {
+        return this.props.radius();
+    }
+    set radius(value: RtPercentSize) {
+        this.props.setRadius(value);
+    }
     /**
      * 내부 원호의 반지름.
      * 픽셀 단위의 크기나, {@link radius}에 대한 상대적 크기로 지정할 수 있다.
@@ -814,13 +1001,23 @@ export abstract class CircularGauge extends ValueGauge {
      * 
      * @config
      */
-    innerRadius: RtPercentSize = CircularGauge.DEF_INNER;
+    get innerRadius(): RtPercentSize {
+        return this.props.innerRadius();
+    }
+    set innerRadius(value: RtPercentSize) {
+        this.props.setInnerRadius(value);
+    }
     /**
      * 값을 나타내는 원호의 반지름.
      * 픽셀 단위의 크기나, {@link radius}에 대한 상대적 크기로 지정할 수 있다.
      * 지정하지 않거나 '100%'이면 게이지 원호의 반지름과 동일하다.
      */
-    valueRadius: RtPercentSize;
+    get valueRadius(): RtPercentSize {
+        return this.props.valueRadius();
+    }
+    set valueRadius(value: RtPercentSize) {
+        this.props.setValueRadius(value);
+    }
     /**
      * 게이지 원호 시작 각도.
      * 지정하지 않거나 잘못된 값이면 0으로 계산된다.
@@ -862,18 +1059,11 @@ export abstract class CircularGauge extends ValueGauge {
     // methods
     //-------------------------------------------------------------------------
     getCenter(gaugeWidth: number, gaugeHeight: number): { x: number, y: number } {
-        return {
-            x: calcPercent(this._centerXDim, gaugeWidth, gaugeWidth / 2),
-            y: calcPercent(this._centerYDim, gaugeHeight, gaugeHeight / 2)
-        };
+        return this.props.getCenter(gaugeWidth, gaugeHeight);
     }
 
     getExtents(gaugeSize: number): ICircularGaugeExtents {
-        const radius = calcPercent(this._radiusDim, gaugeSize, gaugeSize / 2);
-        const inner = Math.min(radius, this._innerDim ? calcPercent(this._innerDim, radius) : 0);
-        const value = this._valueDim ? calcPercent(this._valueDim, radius) : radius;
-
-        return { radius, inner, value };
+        return this.props.getExtents(gaugeSize);
     }
 
     getParam(param: string): any {
@@ -894,28 +1084,140 @@ export abstract class CircularGauge extends ValueGauge {
         return 'gauge';
     }
 
-    protected _doLoad(src: any): void {
-        super._doLoad(src);
-
-        this._centerXDim = parsePercentSize(pickProp(this.centerX, CircularGauge.DEF_CENTER), true);
-        this._centerYDim = parsePercentSize(pickProp(this.centerY, CircularGauge.DEF_CENTER), true);
-        this._radiusDim = parsePercentSize(pickProp(this.radius, CircularGauge.DEF_RADIUS), true);
-        this._innerDim = parsePercentSize(pickProp(this.innerRadius, CircularGauge.DEF_INNER), true);
-        this._valueDim = parsePercentSize(this.valueRadius, true);
-    }
-
     protected _doPrepareRender(chart: IChart): void {
         super._doPrepareRender(chart);
 
-        let start = pickNum(this.startAngle % 360, 0);
-        let sweep = Math.max(0, Math.min(360, pickNum(this.sweepAngle, 360)));
-
-        this._startRad = ORG_ANGLE + DEG_RAD * start;
-        this._handRad = DEG_RAD * start;
-        this._sweepRad = DEG_RAD * sweep;
+        this.props.prepareAngles(this.startAngle, this.sweepAngle);
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+}
+
+export abstract class CircularGaugeGroup<T extends CircularGauge> extends GaugeGroup<T> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    props = new CircularProps();
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 게이지 중심 수평 위치.
+     * 픽셀 단위의 크기나, plot 영역 전체 너비에 대한 상대적 크기로 지정할 수 있다.
+     * 
+     * @config
+     */
+    get centerX(): RtPercentSize {
+        return this.props.centerX();
+    }
+    set centerX(value: RtPercentSize) {
+        this.props.setCenterX(value);
+    }
+    /**
+     * 게이지 중심 수직 위치.
+     * 픽셀 단위의 크기나, plot 영역 전체 높이에 대한 상대적 크기로 지정할 수 있다.
+     * 
+     * @config
+     */
+    get centerY(): RtPercentSize {
+        return this.props.centerY();
+    }
+    set centerY(value: RtPercentSize) {
+        this.props.setCenterY(value);
+    }
+    /**
+     * 게이지 원호의 반지름.
+     * 픽셀 단위의 크기나, plot 영역 전체 크기(너비와 높이 중 작은 값)에 대한 상대적 크기로 지정할 수 있다.
+     * '50%'로 지정하면 plot 영역의 width나 height중 작은 크기와 동일한 반지름으로 표시된다.
+     * 
+     * @config
+     */
+    get radius(): RtPercentSize {
+        return this.props.radius();
+    }
+    set radius(value: RtPercentSize) {
+        this.props.setRadius(value);
+    }
+    /**
+     * 내부 원호의 반지름.
+     * 픽셀 단위의 크기나, {@link radius}에 대한 상대적 크기로 지정할 수 있다.
+     * '100%'이면 게이지 원호의 반지름과 동일하다.
+     * 
+     * @config
+     */
+    get innerRadius(): RtPercentSize {
+        return this.props.innerRadius();
+    }
+    set innerRadius(value: RtPercentSize) {
+        this.props.setInnerRadius(value);
+    }
+    /**
+     * 값을 나타내는 원호의 반지름.
+     * 픽셀 단위의 크기나, {@link radius}에 대한 상대적 크기로 지정할 수 있다.
+     * 지정하지 않거나 '100%'이면 게이지 원호의 반지름과 동일하다.
+     */
+    get valueRadius(): RtPercentSize {
+        return this.props.valueRadius();
+    }
+    set valueRadius(value: RtPercentSize) {
+        this.props.setValueRadius(value);
+    }
+    /**
+     * 게이지 원호 시작 각도.
+     * 지정하지 않거나 잘못된 값이면 0으로 계산된다.
+     * 0은 시계의 12시 위치다.
+     * 
+     * @config
+     */
+    startAngle = 0;
+    /**
+     * 게이지 원호 전체 각도.
+     * 0 ~ 360 사이의 값으로 지정해야 한다.
+     * 범위를 벗어난 값은 범위 안으로 조정된다.
+     * 지정하지 않거나 잘못된 값이면 360으로 계산된다.
+     * 예) 180 이면 반 원호가 된다.
+     * 
+     * @config
+     */
+    sweepAngle = 360;
+    /**
+     * true면 시계 방향으로 회전한다.
+     * 
+     * @config
+     */
+    clockwise = true;
+    /**
+     * 게이지 중앙에 표시되는 label 설정 모델
+     * 
+     * @config
+     */
+    label: CircularGaugeLabel;
+    /**
+     * 내부 원에 적용할 스타일셋 혹은 class selector.
+     * 
+     * @config
+     */
+    innerStyle: SVGStyleOrClass;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getCenter(gaugeWidth: number, gaugeHeight: number): { x: number, y: number } {
+        return this.props.getCenter(gaugeWidth, gaugeHeight);
+    }
+
+    getExtents(gaugeSize: number): ICircularGaugeExtents {
+        return this.props.getExtents(gaugeSize);
+    }
 }

@@ -9,7 +9,7 @@
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { GaugeLabel, GuageRangeBand, LinearGaugeScale, ValueGauge } from "../Gauge";
+import { GaugeGroup, GaugeLabel, GuageRangeBand, LinearGaugeScale, ValueGauge } from "../Gauge";
 
 export class LinearGaugeLabel extends GaugeLabel {
 
@@ -281,6 +281,20 @@ export class LinearGauge extends LinearGaugeBase {
     // overriden members
     //-------------------------------------------------------------------------
     _type(): string {
+        return 'linear';
+    }
+}
+
+export class LinearGaugeGroup extends GaugeGroup<LinearGauge> {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    _type(): string {
+        return 'lineargroup';
+    }
+
+    _gaugesType(): string {
         return 'linear';
     }
 }

@@ -19,7 +19,7 @@ import { PieSeriesGroup } from '../../../../src/model/series/PieSeries';
         let group = new PieSeriesGroup(null);
 
         expect(group).exist;
-        expect(group._type()).eq('pie');
+        expect(group._type()).eq('piegroup');
         expect(group._seriesType()).eq('pie');
     });
 

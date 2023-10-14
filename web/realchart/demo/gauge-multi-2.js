@@ -117,7 +117,7 @@ const config = {
         }
     }, {
         template: "gauge",
-        name: 'gauge4',
+        name: 'gauge7',
         left: 0,
         top: '67%',
         centerY: '60%',
@@ -126,7 +126,7 @@ const config = {
         value: Math.random() * 100,
     }, {
         template: "gauge",
-        name: 'gauge5',
+        name: 'gauge8',
         left: '33.5%',
         top: '67%',
         radius: '45%',
@@ -136,7 +136,7 @@ const config = {
         value: Math.random() * 100,
     }, {
         template: "gauge",
-        name: 'gauge6',
+        name: 'gauge9',
         left: '67%',
         top: '67%',
         value: Math.random() * 100,

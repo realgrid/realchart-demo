@@ -371,6 +371,10 @@ export class LineSeriesGroup extends SeriesGroup<LineSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    _type(): string {
+        return 'linegroup';
+    }
+
     _seriesType(): string {
         return 'line';
     }
@@ -397,6 +401,10 @@ export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    _type(): string {
+        return 'areagroup';
+    }
+
     _seriesType(): string {
         return 'area';
     }
