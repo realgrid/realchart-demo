@@ -507,7 +507,7 @@ export class CircleGaugeGroupView extends GaugeGroupView<CircleGauge, CircleGaug
         })
     }
 
-    protected _doRenderGauges(views: ElementPool<CircleGaugeView>, width: number, height: number): void {
+    protected _doRenderGauges(container: RcElement, views: ElementPool<CircleGaugeView>, width: number, height: number): void {
         const doc = this.doc;
         const m = this.model;
         const center = m.getCenter(width, height);
@@ -520,5 +520,7 @@ export class CircleGaugeGroupView extends GaugeGroupView<CircleGauge, CircleGaug
             v.resize(width, height);
             v.layout();
         })
+
+        container.translate(center.x - exts.radius, center.y - exts.radius);
     }
 }

@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
-import { LayerElement } from "../../common/RcControl";
+import { LayerElement, RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
@@ -146,6 +146,6 @@ export class BulletGaugeGroupView extends GaugeGroupView<BulletGauge, BulletGaug
     protected _doPrepareGauges(doc: Document, model: BulletGaugeGroup, views: ElementPool<BulletGaugeView>): void {
     }
 
-    protected _doRenderGauges(views: ElementPool<BulletGaugeView>, width: number, height: number): void {
+    protected _doRenderGauges(container: RcElement, views: ElementPool<BulletGaugeView>, width: number, height: number): void {
     }
 }

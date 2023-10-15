@@ -102,11 +102,14 @@ export abstract class GaugeView<T extends GaugeBase> extends ChartElement<T> {
     }
 
     protected _doLayout(): void {
+        const w = this.width;
+        const h = this.height;
+
         // back
-        this._backElement.resizeRect(this.width, this.height);
+        this._backElement.resizeRect(w, h);
 
         // gauge
-        this._renderGauge(this.width, this.height);
+        this._renderGauge(w, h);
     }
 
     //-------------------------------------------------------------------------
@@ -612,7 +615,7 @@ export abstract class GaugeGroupView<G extends Gauge, T extends GaugeGroup<G>, G
     }
 
     protected _renderGauge(width: number, height: number): void {
-        this._doRenderGauges(this._gaugeViews, width, height);
+        this._doRenderGauges(this._gaugeContainer, this._gaugeViews, width, height);
     }
 
     //-------------------------------------------------------------------------
@@ -620,5 +623,5 @@ export abstract class GaugeGroupView<G extends Gauge, T extends GaugeGroup<G>, G
     //-------------------------------------------------------------------------
     protected abstract _createPool(container: LayerElement): ElementPool<GV>;
     protected abstract _doPrepareGauges(doc: Document, model: T, views: ElementPool<GV>): void;
-    protected abstract _doRenderGauges(views: ElementPool<GV>, width: number, height: number): void;
+    protected abstract _doRenderGauges(container: RcElement, views: ElementPool<GV>, width: number, height: number): void;
 }

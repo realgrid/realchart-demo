@@ -17,20 +17,12 @@ const config = {
     gauge: [{
         children: [{
             value: Math.random() * 100,
-        }, {
-            valueRadius: '104%',    
-            valueRim: {
-                thickness: '200%',
-            },
-            value: Math.random() * 100,
-        }, {
-            left: 0,
-            top: '50%',
-            value: Math.random() * 100,
-        }, {
-            left: '50%',
-            top: '50%',
-            value: Math.random() * 100,
+        // }, {
+        //     value: Math.random() * 100,
+        // }, {
+        //     value: Math.random() * 100,
+        // }, {
+        //     value: Math.random() * 100,
         }],
         valueRim: {
             ranges: [{

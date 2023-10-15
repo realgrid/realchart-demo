@@ -66,6 +66,7 @@ describe("ValueGauge test", function() {
 });
 
 class CircularGaugeImpl extends CircularGauge {
+    _type(): string { return }
 }
 
 /**

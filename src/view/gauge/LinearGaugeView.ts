@@ -8,7 +8,7 @@
 
 import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
-import { LayerElement } from "../../common/RcControl";
+import { LayerElement, RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { ISize } from "../../common/Size";
 import { RectElement } from "../../common/impl/RectElement";
@@ -258,6 +258,6 @@ export class LinearGaugeGroupView extends GaugeGroupView<LinearGauge, LinearGaug
     protected _doPrepareGauges(doc: Document, model: LinearGaugeGroup, views: ElementPool<LinearGaugeView>): void {
     }
 
-    protected _doRenderGauges(views: ElementPool<LinearGaugeView>, width: number, height: number): void {
+    protected _doRenderGauges(container: RcElement, views: ElementPool<LinearGaugeView>, width: number, height: number): void {
     }
 }

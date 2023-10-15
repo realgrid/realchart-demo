@@ -18,10 +18,10 @@ const funcs = {
  */
 export class RcChartModel {
 
-    private _proxy: Chart;
+    private $_p: Chart;
 
     constructor(model: Chart) {
-        this._proxy = new Proxy(model, {
+        this.$_p = new Proxy(model, {
             get(target, key, receiver) {
                 if (key in props) {
                     return target[key]

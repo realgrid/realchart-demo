@@ -76,6 +76,15 @@ export class ChartItem extends RcObject {
         return this;
     }
 
+    save(): any {
+        const obj = {
+            visible: this.visible
+        };
+
+        this._doSave(obj);
+        return obj;
+    }
+
     update(source: any): ChartItem {
         if (source != null && (this._doUpdateSimple(source) || this._doUpdate(source))) {
             this.chart?._modelChanged(this);
@@ -131,6 +140,9 @@ export class ChartItem extends RcObject {
 
     protected _doLoadProp(prop: string, value: any): boolean {
         return false;
+    }
+
+    protected _doSave(target: object): void {
     }
 
     protected _doUpdateSimple(source: any): boolean {

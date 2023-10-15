@@ -16,7 +16,8 @@ const funcs = {
     'load': '',
     'refresh': '',
     'setAnimatable': '',
-    'updateGauge': ''
+    'updateGauge': '',
+    // 'chartView': ''
 };
 
 /**
@@ -24,10 +25,11 @@ const funcs = {
  */
 export class RcChartControl {
 
-    private _proxy: ChartControl;
+    private $_p: ChartControl;
 
     constructor(control: ChartControl) {
-        this._proxy = new Proxy(control, {
+        // this.$_p = control;
+        this.$_p = new Proxy(control, {
             get(target, key, receiver) {
                 // if (key === 'model') {
                 //     return target[key];
@@ -45,6 +47,9 @@ export class RcChartControl {
             //         return true;
             //     }
             // },
+            has(target, key): boolean {
+                return key in funcs;
+            }
         });
     }
 
@@ -52,20 +57,20 @@ export class RcChartControl {
      * 기존 설정 모델을 제거하고 새로운 config로 차트를 구성한다.
      */
     load(config: any, animate?: boolean): void {
-        this._proxy.load(config, animate);
+        this.$_p.load(config, animate);
     }
 
     /**
      * 차트를 다시 그린다.
      */
     refresh(): void {
-        this._proxy.refresh();
+        this.$_p.refresh();
     }
 
     /**
      * 게이지의 값들을 변경한다.
      */
     updateGauge(gauge: string, values: any): void {
-        this._proxy.updateGauge(gauge, values);
+        this.$_p.updateGauge(gauge, values);
     }
 }

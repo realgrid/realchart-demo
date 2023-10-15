@@ -9,7 +9,7 @@
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { CircularGaugeGroup, CircularGauge, GaugeItemPosition, GaugeScale, GuageRangeBand, ICircularGaugeExtents, IGaugeValueRange, ValueGauge } from "../Gauge";
+import { CircularGaugeGroup, CircularGauge, GaugeItemPosition, GaugeScale, GuageRangeBand, ICircularGaugeExtents, IGaugeValueRange, ValueGauge, Gauge } from "../Gauge";
 
 export abstract class CircleGaugeRim extends ChartItem {
 
@@ -380,6 +380,8 @@ export class CircleGauge extends CircularGauge {
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
         super(chart);
+
+        this.innerRadius = '50%';
     }
 
     //-------------------------------------------------------------------------
@@ -474,5 +476,21 @@ export class CircleGaugeGroup extends CircularGaugeGroup<CircleGauge> {
 
     _gaugesType(): string {
         return 'circle';
+    }
+
+    protected _prepareChildren(visibles: CircleGauge[]): void {
+        super._prepareChildren(visibles);
+
+        // const thick = 
+
+        visibles.forEach((child, i) => {
+            const props = child.childProps;
+
+            props.setCenterX('50%');
+            props.setCenterY('50%');
+            props.setRadius('50%');
+            props.setInnerRadius('80%');
+            props.setValueRadius('100%');
+        });
     }
 }

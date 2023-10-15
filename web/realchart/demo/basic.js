@@ -130,7 +130,8 @@ function setActions(container) {
 		false
 	);
 	createButton(container, 'Test', function (e) {
-		alert('hello');
+		// alert('hello');
+        console.log(chart.chartView())
 	});
 	createCheckBox(
 		container,

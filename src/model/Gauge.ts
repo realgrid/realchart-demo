@@ -228,6 +228,7 @@ export abstract class Gauge extends GaugeBase {
     // fields
     //-------------------------------------------------------------------------
     group: GaugeGroup<Gauge>;
+    gindex = -1;
 
     //-------------------------------------------------------------------------
     // properties
@@ -242,6 +243,11 @@ export abstract class Gauge extends GaugeBase {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    setGroup(group: GaugeGroup<Gauge>, index: number): void {
+        this.group = group;
+        this.gindex = index;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -298,8 +304,15 @@ export abstract class GaugeGroup<T extends Gauge> extends GaugeBase {
 
     prepareRender(): void {
         this._visibles = this._gauges.filter(g => g.visible);
-
         super.prepareRender();
+        this._prepareChildren(this._visibles);
+    }
+
+    protected _prepareChildren(visibles: T[]): void {
+        visibles.forEach((g, i) => {
+            this._setGroup(g, i);
+            g.prepareRender();
+        });
     }
 
     //-------------------------------------------------------------------------
@@ -318,11 +331,14 @@ export abstract class GaugeGroup<T extends Gauge> extends GaugeBase {
     private $_add(gauge: T): void {
         if (gauge._type() === this._gaugesType()) {
             this._gauges.push(gauge);
-            gauge.group = this;
             gauge.index = this._gauges.length - 1;
         } else {
             throw new Error('이 그룹에 포함될 수 없는 게이지입니다: ' + gauge);
         }
+    }
+
+    protected _setGroup(child: T, index: number): void {
+        child.setGroup(this, index);
     }
 }
 
@@ -1054,6 +1070,7 @@ export abstract class CircularGauge extends ValueGauge {
     // fields
     //-------------------------------------------------------------------------
     props = new CircularProps();
+    childProps: CircularProps;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1171,11 +1188,19 @@ export abstract class CircularGauge extends ValueGauge {
     // methods
     //-------------------------------------------------------------------------
     getCenter(gaugeWidth: number, gaugeHeight: number): { x: number, y: number } {
-        return this.props.getCenter(gaugeWidth, gaugeHeight);
+        if (this.group) {
+            return this.childProps.getCenter(gaugeWidth, gaugeHeight);
+        } else {
+            return this.props.getCenter(gaugeWidth, gaugeHeight);
+        }
     }
 
     getExtents(gaugeSize: number): ICircularGaugeExtents {
-        return this.props.getExtents(gaugeSize);
+        if (this.group) {
+            return this.childProps.getExtents(gaugeSize);
+        } else {
+            return this.props.getExtents(gaugeSize);
+        }
     }
 
     getParam(param: string): any {
@@ -1192,8 +1217,12 @@ export abstract class CircularGauge extends ValueGauge {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    _type(): string {
-        return 'gauge';
+    setGroup(group: GaugeGroup<Gauge>, index: number): void {
+        super.setGroup(group, index);
+
+        if (group && !this.childProps) {
+            this.childProps = new CircularProps();
+        }
     }
 
     protected _doPrepareRender(chart: IChart): void {
@@ -1332,4 +1361,8 @@ export abstract class CircularGaugeGroup<T extends CircularGauge> extends GaugeG
     getExtents(gaugeSize: number): ICircularGaugeExtents {
         return this.props.getExtents(gaugeSize);
     }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
 }
