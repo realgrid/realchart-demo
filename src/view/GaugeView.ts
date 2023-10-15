@@ -117,6 +117,16 @@ export abstract class GaugeView<T extends GaugeBase> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     protected abstract _prepareGauge(doc: Document, model: T): void;
     protected abstract _renderGauge(width: number, height: number): void;
+
+    _getGroupView(): GaugeGroupView<any, any, any> {
+        let p = this.parent;
+        while (p) {
+            if (p instanceof GaugeGroupView) {
+                return p;
+            }
+            p = p.parent;
+        }
+    }
 }
 
 class GaugeValueAnimation extends RcAnimation {

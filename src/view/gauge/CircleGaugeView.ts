@@ -15,7 +15,7 @@ import { ISize } from "../../common/Size";
 import { RAD_DEG } from "../../common/Types";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { SectorElement } from "../../common/impl/SectorElement";
-import { TextElement, TextLayout } from "../../common/impl/TextElement";
+import { TextAnchor, TextElement, TextLayout } from "../../common/impl/TextElement";
 import { GuageRangeBand, ICircularGaugeExtents } from "../../model/Gauge";
 import { CircleGauge, CircleGaugeGroup, CircleGaugeHand, CircleGaugePin, CircleGaugeScale } from "../../model/gauge/CircleGauge";
 import { ChartElement } from "../ChartElement";
@@ -347,15 +347,18 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
     _renderValue(): void {
         const m = this.model;
-        const gprops = m.props;
+        const props = m.getProps();
         const value = pickNum(this._runValue, m.value);
         const rate = pickNum((value - m.minValue) / (m.maxValue - m.minValue), 0);
         const center = this._center;
         const exts = this._exts;
         const thick = m.valueRim.getThickness(exts.radius - exts.inner);
+        const tv = this._textView;
 
         // foreground rim
         if (this._foreground.visible) {
+            this._foreground.setStyleOrClass(m.valueRim.style);
+
             const range = m.valueRim.getRange(value); // runValue가 아니다.
             if (range) {
                 this._foreground.setStyle('fill', range.color);
@@ -366,27 +369,36 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
                 rx: exts.value,
                 ry: exts.value,
                 innerRadius: (exts.value - thick) / exts.value,
-                start: gprops._startRad,
-                angle: gprops._sweepRad * rate,
+                start: props._startRad,
+                angle: props._sweepRad * rate,
                 clockwise: m.clockwise
             });
         }
 
         // hand
         if (this._handView) {
-            const a = (gprops._handRad + gprops._sweepRad * rate) * RAD_DEG;
+            const a = (props._handRad + props._sweepRad * rate) * RAD_DEG;
 
             this._handView.render(m.hand, exts.radius).translatep(center).rotate(m.clockwise ? a : -a);
         }
 
         // label
-        if (this._textView.setVisible(m.label.visible)) {
-            m.label.setText(m.getLabel(m.label, m.label.animatable ? value : m.value)).buildSvg(this._textView, NaN, NaN, m, this.valueOf);
+        if (tv.setVisible(m.labelVisible())) {
+            m.label.setText(m.getLabel(m.label, m.label.animatable ? value : m.value));
+            tv.text = m.label.text;
+            m.label.buildSvg(tv, NaN, NaN, m, this.valueOf);
             
-            const r = this._textView.getBBounds();
-            const off = m.label.getOffset(this.width, this.height);
+            tv.setBoolData('grouped', !!m.group);
 
-            this._textView.translate(center.x + off.x, center.y - r.height / 2 + off.y);
+            if (m.group) {
+                // (this._getGroupView() as CircleGaugeGroupView).layoutChildLabel(this);
+                this.$_layoutGroupedLabel(m, tv, exts);
+            } else {
+                const r = tv.getBBounds();
+                const off = m.label.getOffset(this.width, this.height);
+    
+                tv.translate(center.x + off.x, center.y - r.height / 2 + off.y);
+            }
         }
     }
 
@@ -395,15 +407,16 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     //-------------------------------------------------------------------------
     private $_renderSegments(center: IPoint, exts: ICircularGaugeExtents): void {
         const m = this.model;
+        const props = m.getProps();
         const cx = center.x;
         const cy = center.y;
         const rd = exts.radius;
         const clockwise = m.clockwise;
         const innerRadius = exts.inner / exts.radius;
         const ranges = m.rim.ranges;
-        const sweep = m.props._sweepRad;
+        const sweep = props._sweepRad;
         const sum = m.maxValue - m.minValue;
-        let start = 0;
+        let start = props._startRad;
 
         this._segments.forEach((v, i) => {
             const angle = (ranges[i].toValue - ranges[i].fromValue) * sweep / sum;
@@ -424,7 +437,8 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     }
 
     private $_renderBackground(m: CircleGauge, center: IPoint, exts: ICircularGaugeExtents): void {
-        const start = m.props._startRad;
+        const props = m.getProps();
+        const start = props._startRad;
 
         this._center = center;
         this._exts = exts;
@@ -437,7 +451,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
             ry: exts.radius,
             innerRadius: exts.inner / exts.radius,
             start: start,
-            angle: m.props._sweepRad,
+            angle: props._sweepRad,
             clockwise: m.clockwise
         });
 
@@ -446,7 +460,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
         // scale rim
         if (this._scaleView.visible) {
-            m.scaleRim.buildSteps(exts.scale * m.props._sweepRad, NaN);
+            m.scaleRim.buildSteps(exts.scale * props._sweepRad, NaN);
             this._scaleView.measure(this.doc, m.scaleRim, this.width, this.height, 0);
             this._scaleView.setExtends(center, exts);
             this._scaleView.layout();
@@ -485,6 +499,16 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
             this._pinView.render(m.pin, r).translate(center.x, center.y);
         }
     }
+
+    private $_layoutGroupedLabel(m: CircleGauge, tv: TextElement, exts: ICircularGaugeExtents): void {
+        const rText = tv.getBBounds();
+        const rBack = this._background.getBBounds();
+        // const off = m.label.getOffset(this.width, this.height);
+        const gap = +(m.group as CircleGaugeGroup).labelGap || 0;
+
+        tv.anchor = TextAnchor.END;
+        tv.translate(rBack.x + rBack.width / 2 - gap, rBack.y + (exts.radius - exts.inner - rText.height) / 2);
+    }
 }
 
 /**
@@ -513,6 +537,7 @@ export class CircleGaugeGroupView extends GaugeGroupView<CircleGauge, CircleGaug
         const center = m.getCenter(width, height);
         const exts = m.getExtents(Math.min(width, height));
 
+        m.setChildExtents(exts);
         width = height = exts.radius * 2;
 
         views.forEach((v, i) => {

@@ -468,6 +468,9 @@ export class CircleGaugeGroup extends CircularGaugeGroup<CircleGauge> {
     // fields
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     _type(): string {
@@ -476,21 +479,5 @@ export class CircleGaugeGroup extends CircularGaugeGroup<CircleGauge> {
 
     _gaugesType(): string {
         return 'circle';
-    }
-
-    protected _prepareChildren(visibles: CircleGauge[]): void {
-        super._prepareChildren(visibles);
-
-        // const thick = 
-
-        visibles.forEach((child, i) => {
-            const props = child.childProps;
-
-            props.setCenterX('50%');
-            props.setCenterY('50%');
-            props.setRadius('50%');
-            props.setInnerRadius('80%');
-            props.setValueRadius('100%');
-        });
     }
 }

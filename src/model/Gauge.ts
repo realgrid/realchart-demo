@@ -394,6 +394,14 @@ export class GaugeCollection {
             if (g.name) {
                 map[g.name] = g;
             }
+            if (g instanceof GaugeGroup) {
+                for (let i = 0; i < g.count(); i++) {
+                    const child = g.get(i);
+                    if (child.name) {
+                        map[child.name] = child;
+                    }
+                }
+            }
         });
     }
 
@@ -519,7 +527,7 @@ export abstract class ValueGauge extends Gauge {
 
     getLabel(label: GaugeLabel, value: number): string {
         this._runValue = value;
-        return label.text || (label.prefix || '') + value + (label.suffix || '');
+        return label.text || (label.prefix || '') + '${value}' + (label.suffix || '');
     }
 
     //-------------------------------------------------------------------------
@@ -962,10 +970,16 @@ class CircularProps {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor() {
-        this.setCenterX(CircularGauge.DEF_CENTER);
-        this.setCenterY(CircularGauge.DEF_CENTER);
-        this.setRadius(CircularGauge.DEF_RADIUS);
+    constructor(grouped = false) {
+        if (grouped) {
+            this.setCenterX('50%');
+            this.setCenterY('50%');
+            this.setValueRadius('100%');
+        } else {
+            this.setCenterX(CircularGauge.DEF_CENTER);
+            this.setCenterY(CircularGauge.DEF_CENTER);
+            this.setRadius(CircularGauge.DEF_RADIUS);
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -1187,6 +1201,10 @@ export abstract class CircularGauge extends ValueGauge {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getProps(): CircularProps {
+        return this.childProps || this.props;
+    }
+
     getCenter(gaugeWidth: number, gaugeHeight: number): { x: number, y: number } {
         if (this.group) {
             return this.childProps.getCenter(gaugeWidth, gaugeHeight);
@@ -1214,6 +1232,11 @@ export abstract class CircularGauge extends ValueGauge {
         }
     }
 
+    labelVisible(): boolean {
+        // return !this.group && this.label.visible;
+        return true;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -1228,7 +1251,13 @@ export abstract class CircularGauge extends ValueGauge {
     protected _doPrepareRender(chart: IChart): void {
         super._doPrepareRender(chart);
 
-        this.props.prepareAngles(this.startAngle, this.sweepAngle);
+        const g = this.group as CircularGaugeGroup<CircularGauge>;
+
+        if (g) {
+            this.childProps.prepareAngles(g.startAngle, g.sweepAngle);
+        } else {
+            this.props.prepareAngles(this.startAngle, this.sweepAngle);
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -1350,6 +1379,12 @@ export abstract class CircularGaugeGroup<T extends CircularGauge> extends GaugeG
      * @config
      */
     innerStyle: SVGStyleOrClass;
+    /**
+     * 자식 게이지 원호들의 간격을 픽셀 단위로 지정한다.
+     */
+    itemGap = 4;
+
+    labelGap = 10;
 
     //-------------------------------------------------------------------------
     // methods
@@ -1360,6 +1395,25 @@ export abstract class CircularGaugeGroup<T extends CircularGauge> extends GaugeG
 
     getExtents(gaugeSize: number): ICircularGaugeExtents {
         return this.props.getExtents(gaugeSize);
+    }
+
+    setChildExtents(exts: ICircularGaugeExtents): void {
+        const count = this._visibles.length;
+
+        if (count > 0) {
+            const gap = +this.itemGap || 0;
+            let rd = exts.radius;
+            const thick = (rd - exts.inner - gap * (count - 1)) / count;
+    
+            this._visibles.forEach((child, i) => {
+                const props = child.childProps;
+    
+                props.setRadius(rd);
+                props.setInnerRadius(rd - thick);
+    
+                rd -= thick + gap;
+            });    
+        }
     }
 
     //-------------------------------------------------------------------------

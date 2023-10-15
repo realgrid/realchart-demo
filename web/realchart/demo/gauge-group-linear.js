@@ -18,8 +18,9 @@ const config = {
             // align: 'center'
         }
     },
-    title: "Circle Gauge Group",
+    title: "Linear Gauge Group",
     gauge: [{
+        type: 'lineargroup',
         children: [{
             name: 'gauge1',
             template: 'gauge',
@@ -81,22 +82,6 @@ const config = {
                 text: "<t style='fill:gray'>게이지 404 -</t> ${value}"
             }
         }],
-        innerRadius: '30%',
-        sweepAngle: 270,
-        valueRim: {
-            ranges: [{
-                toValue: 25,
-                color: 'green'
-            }, {
-                toValue: 50,
-                color: '#0000cc'
-            }, {
-                toValue: 75,
-                color: '#ffaa00'
-            }, {
-                color: 'red'
-            }]
-        },
         style: {
             stroke: 'lightblue',
             borderRadius: '10px'

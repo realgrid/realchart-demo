@@ -135,7 +135,7 @@
     --rct-credits-fill: #777;
 
     /* circle gauge */
-    --rct-circle-gauge-back-fill: #ddd;
+    --rct-circle-gauge-back-fill: #e4e4e4;
     --rct-circle-gauge-inner-fill: none;
     --rct-circle-gauge-label-fill: #333;
     /* clock gauge */
@@ -699,6 +699,9 @@
     font-size: 40px;
     fill: var(--rct-circle-gauge-label-fill);
     stroke: none;
+}
+.rct-circle-gauge-label[data-grouped] {
+    font-size: 20px;
 }
 .rct-circle-gauge-pin {
     fill: white;
