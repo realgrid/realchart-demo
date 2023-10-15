@@ -390,7 +390,7 @@ export abstract class LineGaugeView<T extends LinearGaugeBase> extends ValueGaug
         const m = this.model;
         const value = pickNum(this._runValue, m.value);
 
-        this._measureGauge(m, m.label, this.labelView(), value, m.vertical, width, height);
+        this._measureGauge(m, m.label, this.labelView(), value, m.isVertical(), width, height);
         this._renderValue();
     }
 
@@ -632,6 +632,11 @@ export abstract class GaugeGroupView<G extends Gauge, T extends GaugeGroup<G>, G
     // internal members
     //-------------------------------------------------------------------------
     protected abstract _createPool(container: LayerElement): ElementPool<GV>;
-    protected abstract _doPrepareGauges(doc: Document, model: T, views: ElementPool<GV>): void;
     protected abstract _doRenderGauges(container: RcElement, views: ElementPool<GV>, width: number, height: number): void;
+
+    protected _doPrepareGauges(doc: Document, model: T, views: ElementPool<GV>): void {
+        views.forEach((v, i) => {
+            v.prepareGauge(doc, model.getVisible(i));
+        })
+    }
 }

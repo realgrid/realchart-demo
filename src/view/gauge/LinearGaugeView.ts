@@ -9,13 +9,12 @@
 import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { LayerElement, RcElement } from "../../common/RcControl";
-import { IRect } from "../../common/Rectangle";
+import { IRect, Rectangle } from "../../common/Rectangle";
 import { ISize } from "../../common/Size";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
-import { GaugeItemPosition, GuageRangeBand, IGaugeValueRange } from "../../model/Gauge";
-import { BulletGaugeGroup } from "../../model/gauge/BulletGauge";
-import { LinearGauge, LinearGaugeGroup } from "../../model/gauge/LinearGauge";
+import { GaugeItemPosition, GuageRangeBand, IGaugeValueRange, LineGauge } from "../../model/Gauge";
+import { LinearGauge, LinearGaugeBase, LinearGaugeGroup, LinearGaugeGroupBase } from "../../model/gauge/LinearGauge";
 import { ChartElement } from "../ChartElement";
 import { GaugeGroupView, LineGaugeView, LinearScaleView } from "../GaugeView";
 
@@ -48,10 +47,11 @@ class BandView extends ChartElement<GuageRangeBand> {
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: GuageRangeBand, hintWidth: number, hintHeight: number, phase: number): ISize {
         const g = model.gauge as LinearGauge;
+        const vertical = g.isVertical();
         const scale = g.scale;
-        const thick = this._thick = model.position === GaugeItemPosition.INSIDE ? (g.vertical ? hintWidth : hintHeight) : pickNum(model.thickness, 0) + (this._gap = pickNum(model.gap, 0));
-        let width = g.vertical ? thick : hintWidth;
-        let height = g.vertical ? hintHeight : thick;
+        const thick = this._thick = model.position === GaugeItemPosition.INSIDE ? (vertical ? hintWidth : hintHeight) : pickNum(model.thickness, 0) + (this._gap = pickNum(model.gap, 0));
+        let width = vertical ? thick : hintWidth;
+        let height = vertical ? hintHeight : thick;
         const ranges = this._ranges = model.ranges;
 
         if (this._labelContainer.setVisible(model.tickLabel.visible && ranges.length > 0)) {
@@ -60,7 +60,7 @@ class BandView extends ChartElement<GuageRangeBand> {
             this._labelContainer.internalSetStyleOrClass(model.tickLabel.style);
             this._labels.prepare(ranges.length + 1);
 
-            if (g.vertical) {
+            if (vertical) {
                 let w = 0;
                 this._labels.forEach((v, i) => {
                     v.text = String(vals[i]);
@@ -94,7 +94,7 @@ class BandView extends ChartElement<GuageRangeBand> {
         this._barViews.prepare(ranges.length);
 
         if (!this._barViews.isEmpty) {
-            const vert = gauge.vertical;
+            const vert = gauge.isVertical();
             const width = this.width;
             const height = this.height;
             const len = vert ? height : width;
@@ -118,7 +118,7 @@ class BandView extends ChartElement<GuageRangeBand> {
     }
 
     private $_layoutLabels(gauge: LinearGauge, sum: number, ranges: IGaugeValueRange[]): void {
-        const vert = gauge.vertical;
+        const vert = gauge.isVertical();
         const width = this.width;
         const height = this.height;
         const len = vert ? height : width;
@@ -244,9 +244,40 @@ export class LinearGaugeView extends LineGaugeView<LinearGauge> {
 /**
  * @internal
  * 
- * View for LinearGaugeGroup.
+ * View for LinearGaugeGroupBase.
  */
-export class LinearGaugeGroupView extends GaugeGroupView<LinearGauge, LinearGaugeGroup, LinearGaugeView> {
+export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T extends LinearGaugeGroupBase<G>, GV extends LineGaugeView<G>> extends GaugeGroupView<G, T, GV> {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doRenderGauges(container: RcElement, views: ElementPool<LineGaugeView<G>>, width: number, height: number): void {
+        const m = this.model;
+        const r = Rectangle.create(0, 0, width, height);
+
+        if (m.vertical) {
+            this.$_layoutVert(this.doc, views, r);
+        } else {
+            this.$_layoutHorz(this.doc, views, r);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_layoutHorz(doc: Document, views: ElementPool<LineGaugeView<G>>, bounds: IRect): void {
+    }
+
+    private $_layoutVert(doc: Document, views: ElementPool<LineGaugeView<G>>, bounds: IRect): void {
+    }
+}
+
+/**
+ * @internal
+ * 
+ * View for LinearGaugeGroupBase.
+ */
+export class LinearGaugeGroupView extends LinearGaugeGroupBaseView<LinearGauge, LinearGaugeGroup, LinearGaugeView> {
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -255,9 +286,7 @@ export class LinearGaugeGroupView extends GaugeGroupView<LinearGauge, LinearGaug
         return new ElementPool(container, LinearGaugeView);
     }
 
-    protected _doPrepareGauges(doc: Document, model: LinearGaugeGroup, views: ElementPool<LinearGaugeView>): void {
-    }
-
-    protected _doRenderGauges(container: RcElement, views: ElementPool<LinearGaugeView>, width: number, height: number): void {
-    }
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
 }

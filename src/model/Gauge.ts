@@ -253,6 +253,11 @@ export abstract class Gauge extends GaugeBase {
     //-------------------------------------------------------------------------
 }
 
+/**
+ * @inernal
+ * 
+ * TODO: 모든 자식들의 최소 최대가 포함되는 range로 구성한다.
+ */
 export abstract class GaugeGroup<T extends Gauge> extends GaugeBase {
 
     //-------------------------------------------------------------------------
@@ -414,7 +419,7 @@ export class GaugeCollection {
     // internal members
     //-------------------------------------------------------------------------
     private $_loadItem(chart: IChart, src: any, index: number): Gauge {
-        let cls = isArray(src.children) && chart._getGaugeGroupType(src.gaugeType || chart.gaugeType);
+        let cls = isArray(src.children) && chart._getGaugeGroupType(src.type || chart.gaugeType);
 
         if (cls) {
             const g = new cls(chart);

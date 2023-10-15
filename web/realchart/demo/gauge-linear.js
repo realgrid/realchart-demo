@@ -45,6 +45,9 @@ const config = {
         label: {
             text: "RealChart Linear<br>ver 1.0"
             // position: 'bottom',
+        },
+        style: {
+            stroke: 'lightblue'
         }
     }, {
         type: 'linear',
@@ -67,6 +70,9 @@ const config = {
         label: {
             position: 'top',
             text: "RealChart Linear ver 1.0"
+        },
+        style: {
+            stroke: 'lightblue'
         }
     }]
 }

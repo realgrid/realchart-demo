@@ -10,7 +10,7 @@ import { IPercentSize, RtPercentSize, parsePercentSize } from "../../common/Type
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
 import { GaugeGroup, IGaugeValueRange, ValueGauge } from "../Gauge";
-import { LinearGaugeBase } from "./LinearGauge";
+import { LinearGaugeBase, LinearGaugeGroupBase } from "./LinearGauge";
 
 export class BulletGaugeBand extends ChartItem {
 
@@ -202,7 +202,7 @@ export class BulletGauge extends LinearGaugeBase {
     }
 }
 
-export class BulletGaugeGroup extends GaugeGroup<BulletGauge> {
+export class BulletGaugeGroup extends LinearGaugeGroupBase<BulletGauge> {
 
     //-------------------------------------------------------------------------
     // overriden members

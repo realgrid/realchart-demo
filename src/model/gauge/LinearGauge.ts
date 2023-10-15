@@ -179,6 +179,11 @@ export abstract class LinearGaugeBase extends ValueGauge {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * true면 수직으로 표시한다.
+     * 
+     * @config
+     */
     vertical: boolean;
     /**
      * true면 반대 방향으로 표시한다.
@@ -202,6 +207,10 @@ export abstract class LinearGaugeBase extends ValueGauge {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    isVertical(): boolean {
+        return this.group ? (this.group as LinearGaugeGroupBase<any>).vertical : this.vertical;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -285,7 +294,49 @@ export class LinearGauge extends LinearGaugeBase {
     }
 }
 
-export class LinearGaugeGroup extends GaugeGroup<LinearGauge> {
+export class LinearGaugeChildLabel {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * true면 자식 게이지의 label을 기본 위치의 반대쪽에 표시한다.
+     * 
+     * @config
+     */
+    opposite = false;
+    /**
+     * 자식 계이지의 label과 본체 사이의 간격을 픽셀 단위로 지정한다.
+     * 
+     * @config
+     */
+    gap = 10;
+}
+
+export abstract class LinearGaugeGroupBase<T extends LinearGaugeBase> extends GaugeGroup<T> {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * true면 수직으로 표시한다.
+     * 
+     * @config
+     */
+    vertical: boolean;
+    /**
+     * 자식 게이지들의 label 표시 관련 속성 모델.
+     * 
+     * @config
+     */
+    itemLabel = new LinearGaugeChildLabel();
+    /**
+     * 자식 게이지들 사이의 표시 간격을 픽셀 단위로 지정한다.
+     */
+    itemGap = 10;
+}
+
+export class LinearGaugeGroup extends LinearGaugeGroupBase<LinearGauge> {
 
     //-------------------------------------------------------------------------
     // overriden members

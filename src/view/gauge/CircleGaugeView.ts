@@ -525,12 +525,6 @@ export class CircleGaugeGroupView extends GaugeGroupView<CircleGauge, CircleGaug
         return new ElementPool(container, CircleGaugeView);
     }
 
-    protected _doPrepareGauges(doc: Document, model: CircleGaugeGroup, views: ElementPool<CircleGaugeView>): void {
-        views.forEach((v, i) => {
-            v.prepareGauge(doc, model.getVisible(i));
-        })
-    }
-
     protected _doRenderGauges(container: RcElement, views: ElementPool<CircleGaugeView>, width: number, height: number): void {
         const doc = this.doc;
         const m = this.model;
