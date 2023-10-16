@@ -3,8 +3,9 @@
  * 
  */
 const config = {
+    // inverted: true,
     options: {
-        // inverted: true
+        // animatable: false,
     },
     title: "Dumbbell Series",
     xAxis: {
@@ -37,20 +38,58 @@ const config = {
         ]
     }
 }
+
+let animate;
 let chart;
 
 function setActions(container) {
-    createCheckBox(container, 'Debug', function (e) {
-        RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
-    }, false);
+	createCheckBox(
+		container,
+		'Debug',
+		function (e) {
+			RealChart.setDebugging(_getChecked(e));
+			chart.refresh();
+		},
+		false
+	);
+	createCheckBox(
+		container,
+		'Always Animate',
+		function (e) {
+			animate = _getChecked(e);
+		},
+		false
+	);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createCheckBox(container, 'Inverted', function (e) {
-        config.inverted = _getChecked(e);
-        chart.load(config);
-    }, false);
+	createCheckBox(
+		container,
+		'Inverted',
+		function (e) {
+			config.inverted = _getChecked(e);
+			chart.load(config, animate);
+		},
+		false
+	);
+	createCheckBox(
+		container,
+		'X Reversed',
+		function (e) {
+			config.xAxis.reversed = _getChecked(e);
+			chart.load(config, animate);
+		},
+		false
+	);
+	createCheckBox(
+		container,
+		'Y Reversed',
+		function (e) {
+			config.yAxis.reversed = _getChecked(e);
+			chart.load(config, animate);
+		},
+		false
+	);
 }
 
 function init() {
