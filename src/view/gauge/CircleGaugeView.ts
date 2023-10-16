@@ -333,7 +333,9 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         }
 
         // label
-        this._textView.internalSetStyleOrClass(model.label.style);
+        if (this._textView.setVisible(model.labelVisible())) {
+            this._textView.setStyleOrClass(model.label.style);
+        }
     }
 
     protected _renderGauge(width: number, height: number): void {
@@ -391,7 +393,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         }
 
         // label
-        if (tv.setVisible(m.labelVisible())) {
+        if (tv.visible) {
             m.label.setText(m.getLabel(m.label, m.label.animatable ? value : m.value));
             tv.text = m.label.text;
             m.label.buildSvg(tv, NaN, NaN, m, this.valueOf);

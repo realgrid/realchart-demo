@@ -11,9 +11,10 @@ import { ElementPool } from "../../common/ElementPool";
 import { LayerElement, RcElement } from "../../common/RcControl";
 import { IRect, Rectangle } from "../../common/Rectangle";
 import { ISize } from "../../common/Size";
+import { IValueRange } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
-import { GaugeItemPosition, GuageRangeBand, IGaugeValueRange, LineGauge } from "../../model/Gauge";
+import { GaugeItemPosition, GuageRangeBand } from "../../model/Gauge";
 import { LinearGauge, LinearGaugeBase, LinearGaugeGroup, LinearGaugeGroupBase } from "../../model/gauge/LinearGauge";
 import { ChartElement } from "../ChartElement";
 import { GaugeGroupView, LineGaugeView, LinearScaleView } from "../GaugeView";
@@ -27,7 +28,7 @@ class BandView extends ChartElement<GuageRangeBand> {
     private _labelContainer: LayerElement;
     private _labels: ElementPool<TextElement>;
 
-    private _ranges: IGaugeValueRange[];
+    private _ranges: IValueRange[];
     _thick = 0;
     _gap = 0;
 
@@ -90,7 +91,7 @@ class BandView extends ChartElement<GuageRangeBand> {
         }
     }
 
-    private $_layoutBars(gauge: LinearGauge, sum: number, ranges: IGaugeValueRange[]): boolean {
+    private $_layoutBars(gauge: LinearGauge, sum: number, ranges: IValueRange[]): boolean {
         this._barViews.prepare(ranges.length);
 
         if (!this._barViews.isEmpty) {
@@ -117,7 +118,7 @@ class BandView extends ChartElement<GuageRangeBand> {
         }
     }
 
-    private $_layoutLabels(gauge: LinearGauge, sum: number, ranges: IGaugeValueRange[]): void {
+    private $_layoutLabels(gauge: LinearGauge, sum: number, ranges: IValueRange[]): void {
         const vert = gauge.isVertical();
         const width = this.width;
         const height = this.height;
@@ -249,26 +250,81 @@ export class LinearGaugeView extends LineGaugeView<LinearGauge> {
 export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T extends LinearGaugeGroupBase<G>, GV extends LineGaugeView<G>> extends GaugeGroupView<G, T, GV> {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _textView: TextElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, styleName: string) {
+        super(doc, styleName);
+
+        this.insertFirst(this._textView = new TextElement(doc, 'rct-linear-gauge-group-label'));
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _prepareGauge(doc: Document, model: T): void {
+        // label
+        if (this._textView.setVisible(model.label.visible)) {
+            this._textView.setStyleOrClass(model.label.style);
+
+        }
+
+        super._prepareGauge(doc, model);
+    }
+
     protected _doRenderGauges(container: RcElement, views: ElementPool<LineGaugeView<G>>, width: number, height: number): void {
         const m = this.model;
+        const tv = this._textView;
         const r = Rectangle.create(0, 0, width, height);
 
+        if (tv.visible) {
+            tv.text = m.label.text;
+            m.label.buildSvg(tv, NaN, NaN, m, null);
+
+            const rText = this._textView.getBBounds();
+            const h = rText.height + m.label.getGap(height);
+            r.y += h;
+            r.height -= h;
+
+            tv.translate(this.width / 2, 0);
+        }
+
         if (m.vertical) {
-            this.$_layoutVert(this.doc, views, r);
+            this.$_layoutVert(this.doc, m, views, r);
         } else {
-            this.$_layoutHorz(this.doc, views, r);
+            this.$_layoutHorz(this.doc, m, views, r);
         }
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_layoutHorz(doc: Document, views: ElementPool<LineGaugeView<G>>, bounds: IRect): void {
+    private $_layoutHorz(doc: Document, model: LinearGaugeGroupBase<G>, views: ElementPool<LineGaugeView<G>>, bounds: IRect): void {
+        const h = bounds.height;
+        const w = bounds.width / views.count;
+        const y = bounds.y;
     }
 
-    private $_layoutVert(doc: Document, views: ElementPool<LineGaugeView<G>>, bounds: IRect): void {
+    private $_layoutVert(doc: Document, model: LinearGaugeGroupBase<G>, views: ElementPool<LineGaugeView<G>>, bounds: IRect): void {
+        const w = bounds.width;
+        const h = (bounds.height - model.itemGap * (views.count - 1)) / views.count;
+        const x = bounds.x;
+        let y = bounds.y;
+
+        views.forEach((v, i) => {
+            // model.get(i).vertical = true;// model.itemVertical;
+
+            v.measure(doc, model.get(i), w, h, 0);
+            v.resize(w, h);
+            v.layout();
+            v.translate(x, y);
+
+            y += h + model.itemGap;
+        });
     }
 }
 

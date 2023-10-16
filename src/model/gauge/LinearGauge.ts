@@ -316,14 +316,34 @@ export class LinearGaugeChildLabel {
 export abstract class LinearGaugeGroupBase<T extends LinearGaugeBase> extends GaugeGroup<T> {
 
     //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart);
+
+        this.label = new LinearGaugeLabel(chart);
+        this.label.gap = 10;
+    }
+
+    //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     /**
-     * true면 수직으로 표시한다.
+     * true면 자식 게이지들을 수직으로 배치한다.
      * 
      * @config
      */
-    vertical: boolean;
+    vertical = true;
+    /**
+     * 자식 게이지들의 {@link LinearGaugeBase.vertical}을 지정한다.
+     */
+    itemVertical: boolean;
+    /**
+     * label 설정 모델.
+     * 
+     * @config
+     */
+    label: LinearGaugeLabel;
     /**
      * 자식 게이지들의 label 표시 관련 속성 모델.
      * 

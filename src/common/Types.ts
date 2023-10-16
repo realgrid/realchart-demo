@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray } from "./Common";
+import { isArray, isObject, isString, pickNum } from "./Common";
 import { locale } from "./RcLocale";
 
 export const _undefined = void 0; // 불필요
@@ -283,4 +283,43 @@ export enum AlignBase {
      * @config
      */
     PLOT = 'plot'
+}
+
+export interface IValueRange {
+    fromValue?: number;
+    toValue?: number;
+    color: string;
+    label?: string;
+}
+
+/**
+ * endValue는 포함되지 않는다. 즉, startValue <= v < endValue.
+ * startValue를 지정하면 이전 range의 endValue를 startValue로 설정한다.
+ * 이전 범위가 없으면 min으로 지정된다.
+ * endValue가 지정되지 않으면 max로 지정된다.
+ * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
+ * startValue를 기준으로 정렬한다.
+ */
+export const buildValueRanges = function (source: IValueRange[], min: number, max: number): IValueRange[] {
+    let ranges: IValueRange[];
+    let prev: IValueRange;
+
+    if (isArray(source)) {
+        ranges = [];
+        source.forEach(src => {
+            if (isObject(src) && isString(src.color)) {
+                const range: IValueRange = {
+                    fromValue: pickNum(src.fromValue, prev ? prev.toValue : min),
+                    toValue: pickNum(src.toValue, max),
+                    color: src.color
+                };
+                if (range.fromValue < range.toValue) {
+                    ranges.push(range);
+                    prev = range;
+                }
+            }
+        });
+        ranges = ranges.sort((r1, r2) => r1.fromValue - r2.fromValue);
+    }
+    return ranges;
 }

@@ -6,10 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { IPercentSize, RtPercentSize, parsePercentSize } from "../../common/Types";
+import { IPercentSize, IValueRange, RtPercentSize, buildValueRanges, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { GaugeGroup, IGaugeValueRange, ValueGauge } from "../Gauge";
+import { ValueGauge } from "../Gauge";
 import { LinearGaugeBase, LinearGaugeGroupBase } from "./LinearGauge";
 
 export class BulletGaugeBand extends ChartItem {
@@ -19,12 +19,12 @@ export class BulletGaugeBand extends ChartItem {
     //-------------------------------------------------------------------------
     private _width: RtPercentSize;
     private _height: RtPercentSize;
-    private _ranges: IGaugeValueRange[];
+    private _ranges: IValueRange[];
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _runRanges: IGaugeValueRange[];
+    private _runRanges: IValueRange[];
     private _widthDim: IPercentSize;
     private _heightDim: IPercentSize;
 
@@ -78,10 +78,10 @@ export class BulletGaugeBand extends ChartItem {
      * 
      * @config
      */
-    get ranges(): IGaugeValueRange[] {
+    get ranges(): IValueRange[] {
         return this.$_internalRanges()?.slice(0);
     }
-    set ranges(value: IGaugeValueRange[]) {
+    set ranges(value: IValueRange[]) {
         if (value !== this._ranges) {
             this._ranges = value;
             this._runRanges = null;
@@ -91,9 +91,9 @@ export class BulletGaugeBand extends ChartItem {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_internalRanges(): IGaugeValueRange[] {
+    private $_internalRanges(): IValueRange[] {
         if (!this._runRanges) {
-            this._runRanges = ValueGauge.buildRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue);
+            this._runRanges = buildValueRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue);
         }
         return this._runRanges;
     }
@@ -181,13 +181,13 @@ export class BulletGauge extends LinearGaugeBase {
      * 
      * @config
      */
-    ranges: IGaugeValueRange[];
+    ranges: IValueRange[];
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getRanges(min: number, max: number): IGaugeValueRange[] {
-        return ValueGauge.buildRanges(this.ranges, min, max);
+    getRanges(min: number, max: number): IValueRange[] {
+        return buildValueRanges(this.ranges, min, max);
     }
 
     //-------------------------------------------------------------------------

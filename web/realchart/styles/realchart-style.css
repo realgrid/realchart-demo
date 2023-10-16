@@ -781,6 +781,11 @@
     fill: #333;
 }
 
+/** linear gauge group */
+.rct-linear-gauge-group-label {
+    font-size: 1.5em;
+}
+
 /** bullet gauge */
 .rct-bullet-gauge-background {
     fill: #eee;

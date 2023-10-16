@@ -9,6 +9,7 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { CircularGauge, Gauge, ValueGauge } from '../../../src/model/Gauge';
+import { buildValueRanges } from '../../../src/common/Types';
 
 class GaugeImpl extends Gauge {
 
@@ -54,7 +55,7 @@ describe("ValueGauge test", function() {
         }, {
             color: 'red'
         }];
-        const ranges = ValueGauge.buildRanges(src, min, max);
+        const ranges = buildValueRanges(src, min, max);
 
         expect(ranges).instanceOf(Array);
         expect(ranges.length).eq(src.length);

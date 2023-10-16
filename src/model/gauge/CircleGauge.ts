@@ -6,22 +6,22 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
+import { IPercentSize, IValueRange, RtPercentSize, buildValueRanges, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { CircularGaugeGroup, CircularGauge, GaugeItemPosition, GaugeScale, GuageRangeBand, ICircularGaugeExtents, IGaugeValueRange, ValueGauge, Gauge } from "../Gauge";
+import { CircularGaugeGroup, CircularGauge, GaugeItemPosition, GaugeScale, GuageRangeBand, ICircularGaugeExtents, ValueGauge } from "../Gauge";
 
 export abstract class CircleGaugeRim extends ChartItem {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private _ranges: IGaugeValueRange[];
+    private _ranges: IValueRange[];
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _runRanges: IGaugeValueRange[];
+    private _runRanges: IValueRange[];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -39,10 +39,10 @@ export abstract class CircleGaugeRim extends ChartItem {
      * 
      * @config
      */
-    get ranges(): IGaugeValueRange[] {
+    get ranges(): IValueRange[] {
         return this.$_internalRanges()?.slice(0);
     }
-    set ranges(value: IGaugeValueRange[]) {
+    set ranges(value: IValueRange[]) {
         if (value !== this._ranges) {
             this._ranges = value;
             this._runRanges = null;
@@ -62,7 +62,7 @@ export abstract class CircleGaugeRim extends ChartItem {
         return ranges ? ranges.length : 0;
     }
 
-    getRange(value: number): IGaugeValueRange | undefined {
+    getRange(value: number): IValueRange | undefined {
         const ranges = this.$_internalRanges();
 
         if (ranges) {
@@ -77,9 +77,9 @@ export abstract class CircleGaugeRim extends ChartItem {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_internalRanges(): IGaugeValueRange[] {
+    private $_internalRanges(): IValueRange[] {
         if (!this._runRanges) {
-            this._runRanges = ValueGauge.buildRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue);
+            this._runRanges = buildValueRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue);
         }
         return this._runRanges;
     }

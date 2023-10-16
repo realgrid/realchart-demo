@@ -446,8 +446,10 @@ export abstract class LineGaugeView<T extends LinearGaugeBase> extends ValueGaug
             const hMax = vert ? label.getMaxHeight(height) : height;
             const rLabel = this._rLabel = Rectangle.create(0, 0, width, height);
 
-            label.setText(m.getLabel(label, label.animatable ? value : m.value))
-                 .buildSvg(labelView, pickNum(w, wMax), pickNum(h, hMax), m, this.valueOf);
+            label.setText(m.getLabel(label, label.animatable ? value : m.value));
+            labelView.text = label.text;
+            label.buildSvg(labelView, pickNum(w, wMax), pickNum(h, hMax), m, this.valueOf);
+            
             const rText = labelView.getBBounds();
 
             if (vert) {

@@ -9,17 +9,10 @@
 import { isArray, isObject, isString, pickNum, pickProp } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { ISize } from "../common/Size";
-import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, calcPercent, fixnum, parsePercentSize } from "../common/Types";
+import { DEG_RAD, IPercentSize, IValueRange, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, buildValueRanges, calcPercent, fixnum, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Widget } from "./Widget";
-
-export interface IGaugeValueRange {
-    fromValue?: number;
-    toValue?: number;
-    color: string;
-    label?: string;
-}
 
 /**
  * 게이지 모델.
@@ -455,38 +448,6 @@ export abstract class ValueGauge extends Gauge {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
-    /**
-     * endValue는 포함되지 않는다. 즉, startValue <= v < endValue.
-     * startValue를 지정하면 이전 range의 endValue를 startValue로 설정한다.
-     * 이전 범위가 없으면 min으로 지정된다.
-     * endValue가 지정되지 않으면 max로 지정된다.
-     * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
-     * startValue를 기준으로 정렬한다.
-     */
-    static buildRanges(source: IGaugeValueRange[], min: number, max: number): IGaugeValueRange[] {
-        let ranges: IGaugeValueRange[];
-        let prev: IGaugeValueRange;
-
-        if (isArray(source)) {
-            ranges = [];
-            source.forEach(src => {
-                if (isObject(src) && isString(src.color)) {
-                    const range: IGaugeValueRange = {
-                        fromValue: pickNum(src.fromValue, prev ? prev.toValue : min),
-                        toValue: pickNum(src.toValue, max),
-                        color: src.color
-                    };
-                    if (range.fromValue < range.toValue) {
-                        ranges.push(range);
-                        prev = range;
-                    }
-                }
-            });
-            ranges = ranges.sort((r1, r2) => r1.fromValue - r2.fromValue);
-        }
-        return ranges;
-    }
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -533,6 +494,17 @@ export abstract class ValueGauge extends Gauge {
     getLabel(label: GaugeLabel, value: number): string {
         this._runValue = value;
         return label.text || (label.prefix || '') + '${value}' + (label.suffix || '');
+    }
+
+    getParam(param: string): any {
+        switch (param) {
+            case 'value':
+                return this._runValue;
+            case 'min':
+                return this.minValue;
+            case 'max':
+                return this.maxValue;
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -761,12 +733,12 @@ export class GuageRangeBand extends ChartItem {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private _ranges: IGaugeValueRange[];
+    private _ranges: IValueRange[];
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _runRanges: IGaugeValueRange[];
+    private _runRanges: IValueRange[];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -808,10 +780,10 @@ export class GuageRangeBand extends ChartItem {
      * 
      * @config
      */
-    get ranges(): IGaugeValueRange[] {
+    get ranges(): IValueRange[] {
         return this.$_internalRanges().slice(0);
     }
-    set ranges(value: IGaugeValueRange[]) {
+    set ranges(value: IValueRange[]) {
         if (value !== this._ranges) {
             this._ranges = value;
             this._runRanges = null;
@@ -836,9 +808,9 @@ export class GuageRangeBand extends ChartItem {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_internalRanges(): IGaugeValueRange[] {
+    private $_internalRanges(): IValueRange[] {
         if (!this._runRanges) {
-            this._runRanges = ValueGauge.buildRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue) || [];
+            this._runRanges = buildValueRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue) || [];
         }
         return this._runRanges;
     }
@@ -1224,17 +1196,6 @@ export abstract class CircularGauge extends ValueGauge {
             return this.childProps.getExtents(gaugeSize);
         } else {
             return this.props.getExtents(gaugeSize);
-        }
-    }
-
-    getParam(param: string): any {
-        switch (param) {
-            case 'value':
-                return this._runValue;
-            case 'min':
-                return this.minValue;
-            case 'max':
-                return this.maxValue;
         }
     }
 

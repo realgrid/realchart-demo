@@ -21,6 +21,7 @@ const config = {
     title: "Linear Gauge Group",
     gauge: [{
         type: 'lineargroup',
+        width: '80%',
         children: [{
             name: 'gauge1',
             template: 'gauge',
@@ -82,6 +83,9 @@ const config = {
                 text: "<t style='fill:gray'>게이지 404 -</t> ${value}"
             }
         }],
+        label: {
+            text: 'Linear Gauges'
+        },
         style: {
             stroke: 'lightblue',
             borderRadius: '10px'
