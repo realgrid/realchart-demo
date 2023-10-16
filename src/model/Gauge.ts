@@ -984,6 +984,7 @@ class CircularProps {
             this.setCenterX(CircularGauge.DEF_CENTER);
             this.setCenterY(CircularGauge.DEF_CENTER);
             this.setRadius(CircularGauge.DEF_RADIUS);
+            this.setInnerRadius(CircularGauge.DEF_INNER);
         }
     }
 
@@ -1239,7 +1240,7 @@ export abstract class CircularGauge extends ValueGauge {
 
     labelVisible(): boolean {
         // return !this.group && this.label.visible;
-        return true;
+        return this.label.visible;
     }
 
     //-------------------------------------------------------------------------
@@ -1276,13 +1277,6 @@ export abstract class CircularGaugeGroup<T extends CircularGauge> extends GaugeG
     // fields
     //-------------------------------------------------------------------------
     props = new CircularProps();
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(chart: IChart) {
-        super(chart);
-    }
 
     //-------------------------------------------------------------------------
     // properties
