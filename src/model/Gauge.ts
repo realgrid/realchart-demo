@@ -220,7 +220,7 @@ export abstract class Gauge extends GaugeBase {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    group: GaugeGroup<Gauge>;
+    group: GaugeGroup<ValueGauge>;
     gindex = -1;
 
     //-------------------------------------------------------------------------
@@ -236,7 +236,7 @@ export abstract class Gauge extends GaugeBase {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    setGroup(group: GaugeGroup<Gauge>, index: number): void {
+    setGroup(group: GaugeGroup<ValueGauge>, index: number): void {
         this.group = group;
         this.gindex = index;
     }
@@ -251,7 +251,7 @@ export abstract class Gauge extends GaugeBase {
  * 
  * TODO: 모든 자식들의 최소 최대가 포함되는 range로 구성한다.
  */
-export abstract class GaugeGroup<T extends Gauge> extends GaugeBase {
+export abstract class GaugeGroup<T extends ValueGauge> extends GaugeBase {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -265,6 +265,19 @@ export abstract class GaugeGroup<T extends Gauge> extends GaugeBase {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 최소값.
+     * 
+     * @config
+     */
+    minValue = 0;
+    /**
+     * 최대값.
+     * 
+     * @config
+     */
+    maxValue: number;
+
     count(): number {
         return this._gauges.length;
     }
@@ -458,12 +471,14 @@ export abstract class ValueGauge extends Gauge {
     //-------------------------------------------------------------------------
     /**
      * 최소값.
+     * group에 포함되면 이 값 대신 group의 최소값이 사용된다.
      * 
      * @config
      */
     minValue = 0;
     /**
      * 최대값.
+     * group에 포함되면 이 값 대신 group의 최대값이 사용된다.
      * 
      * @config
      */
@@ -552,7 +567,7 @@ export abstract class GaugeScale extends ChartItem {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(public gauge: ValueGauge, visible = true) {
+    constructor(public gauge: ValueGauge | GaugeGroup<ValueGauge>, visible = true) {
         super(gauge.chart, visible);
 
         this.line = new ChartItem(gauge.chart, true);
@@ -592,23 +607,13 @@ export abstract class GaugeScale extends ChartItem {
     //-------------------------------------------------------------------------
     buildSteps(length: number, value: number, target = NaN): number[] {
         target = pickNum(target, value);
-
         const {min, max} = this._adjustMinMax(Math.min(value, target), Math.max(value, target));
-        let pts: number[];
+        return this._steps = this._buildSteps(length, min, max);
+    }
 
-        if (Array.isArray(this.steps)) {
-            pts = this.steps.slice(0);
-        } else if (this.stepCount > 0) {
-            pts = this._getStepsByCount(this.stepCount, min, max);
-        } else if (this.stepInterval > 0) {
-            pts = this._getStepsByInterval(this.stepInterval, min, max);
-        } else if (this.stepPixels > 0) {
-            pts = this._getStepsByPixels(length, this.stepPixels, min, max);
-        } else {
-            pts = [min, max];
-        }
-
-        return this._steps = pts;
+    buildGroupSteps(length: number, values: number[]): number[] {
+        const {min, max} = this._adjustGroupMinMax(values);
+        return this._steps = this._buildSteps(length, min, max);
     }
 
     //-------------------------------------------------------------------------
@@ -624,10 +629,44 @@ export abstract class GaugeScale extends ChartItem {
             max = g.maxValue;
         }
 
-        this._min = min;
-        this._max = max;
+        this._min = Math.min(min, max);
+        this._max = Math.max(max, min);
+        return { min: this._min, max: this._max };
+    }
 
-        return { min, max };
+    protected _adjustGroupMinMax(values: number[]): { min: number, max: number } {
+        const g = this.gauge as GaugeGroup<ValueGauge>;
+        let min = g.minValue;
+        let max = g.maxValue;
+
+        if (isNaN(min)) {
+            min = Math.min(...values);
+        }
+        if (isNaN(max)) {
+            max = Math.max(...values);
+        }
+
+        this._min = Math.min(min, max);
+        this._max = Math.max(max, min);
+        return { min: this._min, max: this._max };
+    }
+
+    protected _buildSteps(length: number, min: number, max: number): number[] {
+        let pts: number[];
+
+        if (Array.isArray(this.steps)) {
+            pts = this.steps.slice(0);
+        } else if (this.stepCount > 0) {
+            pts = this._getStepsByCount(this.stepCount, min, max);
+        } else if (this.stepInterval > 0) {
+            pts = this._getStepsByInterval(this.stepInterval, min, max);
+        } else if (this.stepPixels > 0) {
+            pts = this._getStepsByPixels(length, this.stepPixels, min, max);
+        } else {
+            pts = [min, max];
+        }
+
+        return pts;
     }
 
     protected _getStepsByCount(count: number, min: number, max: number): number[] {
@@ -1207,7 +1246,7 @@ export abstract class CircularGauge extends ValueGauge {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    setGroup(group: GaugeGroup<Gauge>, index: number): void {
+    setGroup(group: GaugeGroup<ValueGauge>, index: number): void {
         super.setGroup(group, index);
 
         if (group && !this.childProps) {

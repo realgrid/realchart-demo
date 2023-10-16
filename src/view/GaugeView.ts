@@ -247,7 +247,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         let height = vertical ? hintHeight : model.gap;
 
         if (this._tickContainer.setVisible(model.tick.visible)) {
-            this._tickContainer.internalSetStyleOrClass(model.tick.style);
+            this._tickContainer.setStyleOrClass(model.tick.style);
             this._ticks.prepare(nStep);
         }
         
@@ -258,7 +258,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         }
 
         if (this._labelContainer.setVisible(model.tickLabel.visible)) {
-            this._labelContainer.internalSetStyleOrClass(model.tickLabel.style);
+            this._labelContainer.setStyleOrClass(model.tickLabel.style);
             this._labels.prepare(nStep);
 
             if (nStep > 0) {
@@ -304,7 +304,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
 
         // line
         if (line.setVisible(m.line.visible)) {
-            line.internalSetStyleOrClass(m.line.style);
+            line.setStyleOrClass(m.line.style);
             line.setHLineC(y, x, x + width);
         }
 
@@ -340,7 +340,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
 
         // line
         if (line.setVisible(m.line.visible)) {
-            line.internalSetStyleOrClass(m.line.style);
+            line.setStyleOrClass(m.line.style);
             line.setVLineC(x, y, y + height);
         }
 
@@ -367,7 +367,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
     }
 }
 
-export abstract class LineGaugeView<T extends LinearGaugeBase> extends ValueGaugeView<T> {
+export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends ValueGaugeView<T> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -434,7 +434,7 @@ export abstract class LineGaugeView<T extends LinearGaugeBase> extends ValueGaug
     protected _measureGauge(m: ValueGauge, label: LinearGaugeLabel, labelView: TextElement, value: number, vertical: boolean, width: number, height: number): void {
         const rBand = this._rBand = Rectangle.create(0, 0, width, height);
 
-        this._vertical = pickProp(vertical, height > width);
+        this._vertical = m.group ? false : pickProp(vertical, height > width);
 
         if (label.visible) {
             const pos = label._runPos = pickProp(label.position, this._vertical ? 'top' : 'left');
@@ -525,7 +525,7 @@ export abstract class LineGaugeView<T extends LinearGaugeBase> extends ValueGaug
         scale._reversed = m.reversed;
         scale.buildSteps(len, value);
 
-        if (scaleView.setVisible(scale.visible)) {
+        if (scaleView.setVisible(m.scaleVisible())) {
             const sz = scaleView.measure(this.doc, scale, rBand.width, rBand.height, 1);
 
             if (this._vertical) {
@@ -600,13 +600,13 @@ export abstract class CircularGaugeView<T extends CircularGauge> extends ValueGa
     }
 }
 
-export abstract class GaugeGroupView<G extends Gauge, T extends GaugeGroup<G>, GV extends GaugeView<G>> extends GaugeView<T> {
+export abstract class GaugeGroupView<G extends ValueGauge, T extends GaugeGroup<G>, GV extends GaugeView<G>> extends GaugeView<T> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _gaugeContainer: LayerElement;
-    private _gaugeViews: ElementPool<GV>;
+    protected _gaugeViews: ElementPool<GV>;
 
     //-------------------------------------------------------------------------
     // constructor

@@ -18,9 +18,9 @@ const config = {
             // align: 'center'
         }
     },
-    title: "Linear Gauge Group",
+    title: "Bullet Gauge Group",
     gauge: [{
-        type: 'lineargroup',
+        type: 'bulletgroup',
         width: '80%',
         height: 200,
         children: [{

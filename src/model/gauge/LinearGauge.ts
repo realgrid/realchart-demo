@@ -211,6 +211,10 @@ export abstract class LinearGaugeBase extends ValueGauge {
         return this.group ? (this.group as LinearGaugeGroupBase<any>).vertical : this.vertical;
     }
 
+    scaleVisible(): boolean {
+        return !this.group && this.scale.visible;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -350,6 +354,12 @@ export abstract class LinearGaugeGroupBase<T extends LinearGaugeBase> extends Ga
      * @config
      */
     itemLabel = new LinearGaugeChildLabel();
+    /**
+     * scale.
+     * 
+     * @config
+     */
+    scale = new LinearGaugeScale(this);
     /**
      * 자식 게이지들 사이의 표시 간격을 픽셀 단위로 지정한다.
      */

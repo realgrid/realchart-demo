@@ -17,7 +17,7 @@ import { TextElement } from "../../common/impl/TextElement";
 import { GaugeItemPosition, GuageRangeBand } from "../../model/Gauge";
 import { LinearGauge, LinearGaugeBase, LinearGaugeGroup, LinearGaugeGroupBase } from "../../model/gauge/LinearGauge";
 import { ChartElement } from "../ChartElement";
-import { GaugeGroupView, LineGaugeView, LinearScaleView } from "../GaugeView";
+import { GaugeGroupView, LinearGaugeBaseView, LinearScaleView } from "../GaugeView";
 
 class BandView extends ChartElement<GuageRangeBand> {
 
@@ -137,7 +137,7 @@ class BandView extends ChartElement<GuageRangeBand> {
     }
 }
 
-export class LinearGaugeView extends LineGaugeView<LinearGauge> {
+export class LinearGaugeView extends LinearGaugeBaseView<LinearGauge> {
 
     //-------------------------------------------------------------------------
     // consts
@@ -223,17 +223,18 @@ export class LinearGaugeView extends LineGaugeView<LinearGauge> {
 
     protected _renderBand(m: LinearGauge, r: IRect, value: number): void {
         const reversed = m.reversed;
-        const sum = m.scale._max - m.scale._min;
+        const scale = m.group ? (m.group as LinearGaugeGroup).scale : m.scale;
+        const sum = scale._max - scale._min;
 
         // value bar
-        if (this._valueView.setVisible(!isNaN(m.value))) {
+        if (this._valueView.setVisible(sum > 0 && !isNaN(m.value))) {
             if (this._vertical) {
-                const h = r.height * (value - m.scale._min) / sum;
+                const h = r.height * (value - scale._min) / sum;
                 const y = reversed ? r.y : r.y + r.height - h;
 
                 this._valueView.setBounds(r.x, r.y + r.height - h, r.width, h);
             } else {
-                const w = r.width * (value - m.scale._min) / sum;
+                const w = r.width * (value - scale._min) / sum;
                 const x = reversed ? r.x + r.width - w : r.x;
 
                 this._valueView.setBounds(x, r.y, w, r.height);
@@ -247,12 +248,13 @@ export class LinearGaugeView extends LineGaugeView<LinearGauge> {
  * 
  * View for LinearGaugeGroupBase.
  */
-export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T extends LinearGaugeGroupBase<G>, GV extends LineGaugeView<G>> extends GaugeGroupView<G, T, GV> {
+export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T extends LinearGaugeGroupBase<G>, GV extends LinearGaugeBaseView<G>> extends GaugeGroupView<G, T, GV> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _textView: TextElement;
+    private _scaleView: LinearScaleView;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -260,6 +262,7 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
     constructor(doc: Document, styleName: string) {
         super(doc, styleName);
 
+        this.insertFirst(this._scaleView = new LinearScaleView(doc));
         this.insertFirst(this._textView = new TextElement(doc, 'rct-linear-gauge-group-label'));
     }
 
@@ -270,13 +273,16 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
         // label
         if (this._textView.setVisible(model.label.visible)) {
             this._textView.setStyleOrClass(model.label.style);
-
+        }
+        // scale
+        if (this._scaleView.setVisible(model.scale.visible)) {
+            this._scaleView.setStyleOrClass(model.scale.style);
         }
 
         super._prepareGauge(doc, model);
     }
 
-    protected _doRenderGauges(container: RcElement, views: ElementPool<LineGaugeView<G>>, width: number, height: number): void {
+    protected _doRenderGauges(container: RcElement, views: ElementPool<LinearGaugeBaseView<G>>, width: number, height: number): void {
         const m = this.model;
         const tv = this._textView;
         const r = Rectangle.create(0, 0, width, height);
@@ -293,6 +299,8 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
             tv.translate(this.width / 2, 0);
         }
 
+        this.$_renderScale(m, r);
+
         if (m.vertical) {
             this.$_layoutVert(this.doc, m, views, r);
         } else {
@@ -303,21 +311,31 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_layoutHorz(doc: Document, model: LinearGaugeGroupBase<G>, views: ElementPool<LineGaugeView<G>>, bounds: IRect): void {
+    private $_renderScale(model: LinearGaugeGroupBase<G>, rGauge: IRect): void {
+        const scale = model.scale;
+        const len = this.width; // TODO: ?
+        const values: number[] = [];
+
+        this._gaugeViews.forEach((v, i) => {
+            values.push(pickNum(v._runValue, model.get(i).value));
+        })
+
+        scale.buildGroupSteps(len, values);
+    }
+
+    private $_layoutHorz(doc: Document, model: LinearGaugeGroupBase<G>, views: ElementPool<LinearGaugeBaseView<G>>, bounds: IRect): void {
         const h = bounds.height;
         const w = bounds.width / views.count;
         const y = bounds.y;
     }
 
-    private $_layoutVert(doc: Document, model: LinearGaugeGroupBase<G>, views: ElementPool<LineGaugeView<G>>, bounds: IRect): void {
+    private $_layoutVert(doc: Document, model: LinearGaugeGroupBase<G>, views: ElementPool<LinearGaugeBaseView<G>>, bounds: IRect): void {
         const w = bounds.width;
         const h = (bounds.height - model.itemGap * (views.count - 1)) / views.count;
         const x = bounds.x;
         let y = bounds.y;
 
         views.forEach((v, i) => {
-            // model.get(i).vertical = true;// model.itemVertical;
-
             v.measure(doc, model.get(i), w, h, 0);
             v.resize(w, h);
             v.layout();

@@ -12,10 +12,12 @@ import { IRect } from "../../common/Rectangle";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
 import { BulletGauge, BulletGaugeGroup } from "../../model/gauge/BulletGauge";
-import { GaugeGroupView, LineGaugeView, LinearScaleView } from "../GaugeView";
+import { CircleGaugeGroup } from "../../model/gauge/CircleGauge";
+import { LinearGaugeGroupBase } from "../../model/gauge/LinearGauge";
+import { GaugeGroupView, LinearGaugeBaseView, LinearScaleView } from "../GaugeView";
 import { LinearGaugeGroupBaseView } from "./LinearGaugeView";
 
-export class BulletGaugeView extends LineGaugeView<BulletGauge> {
+export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
 
     //-------------------------------------------------------------------------
     // consts
@@ -67,8 +69,9 @@ export class BulletGaugeView extends LineGaugeView<BulletGauge> {
     protected _renderBand(m: BulletGauge, r: IRect, value: number): void {
         const reversed = m.reversed;
         const vertical = this._vertical;
-        const sum = m.scale._max - m.scale._min;
-        const ranges = m.getRanges(m.scale._min, m.scale._max);
+        const scale = m.group ? (m.group as BulletGaugeGroup).scale : m.scale;
+        const sum = scale._max - scale._min;
+        const ranges = m.getRanges(scale._min, scale._max); // TODO: group.ranges...
 
         if (ranges) {
             this._barContainer.setRect(r);
@@ -99,7 +102,7 @@ export class BulletGaugeView extends LineGaugeView<BulletGauge> {
         }
 
         // value bar
-        if (this._valueView.setVisible(!isNaN(m.value))) {
+        if (this._valueView.setVisible(sum > 0 && !isNaN(m.value))) {
             if (vertical) {
                 const h = r.height * (value - m.scale._min) / sum;
                 const y = reversed ? r.y : r.y + r.height - h;
