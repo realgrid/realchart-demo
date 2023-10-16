@@ -195,14 +195,3 @@ export class LineElementEx extends PathElement {
         }
     }
 }
-
-
-export class ArcElement extends PathElement {
-
-    //-------------------------------------------------------------------------
-    // constructors
-    //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string, cx: number, cy: number, r: number, start: number, end: number) {
-        super(doc, styleName, SvgShapes.arc(cx, cy, r, r, start, end));
-    }
-}

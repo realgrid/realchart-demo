@@ -67,12 +67,31 @@ const config = {
         left: 0,
         top: '50%',
         value: Math.random() * 100,
+        innerRadius: '85%',
+        valueRim: {
+            stroked: true,
+            style: {
+                strokeLinecap: 'round'
+            }
+        }
     }, {
         template: "gauge",
         name: 'gauge5',
         left: '33%',
         top: '50%',
         value: Math.random() * 100,
+        innerRadius: '75%',
+        valueRim: {
+            stroked: true,
+            style: {
+                strokeDasharray: '3'
+            }
+        },
+        label: {
+            style: {
+                fontSize: '30px'
+            }
+        }
     }, {
         template: "gauge",
         name: 'gauge6',

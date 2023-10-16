@@ -37,7 +37,7 @@ class SectorView extends SectorElement implements IPointView {
     // methods
     //-------------------------------------------------------------------------
     setPieSector(labels: PointLabelContainer, lines: PointLabelLineContainer, newSector: ISectorShape): void {
-        this._assignShape(newSector);
+        this._assignShape(newSector, false);
     }
 }
 

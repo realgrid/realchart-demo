@@ -12,7 +12,7 @@ import { PathBuilder } from "../../common/PathBuilder";
 import { IPoint } from "../../common/Point";
 import { LayerElement, PathElement, RcElement } from "../../common/RcControl";
 import { ISize } from "../../common/Size";
-import { RAD_DEG } from "../../common/Types";
+import { RAD_DEG, pixel } from "../../common/Types";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextAnchor, TextElement, TextLayout } from "../../common/impl/TextElement";
@@ -264,7 +264,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     private _bandView: BandView;
     private _segContainer: LayerElement;
     private _segments: ElementPool<SectorElement>;
-    private _foreground: SectorElement;
+    private _valueView: SectorElement;
     private _innerView: SectorElement;
     private _handContainer: LayerElement;
     private _handView: HandView;
@@ -285,7 +285,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         this.add(this._bandView = new BandView(doc));
         this.add(this._segContainer = new LayerElement(doc, void 0));
         this._segments = new ElementPool(this._segContainer, SectorElement, 'rct-circle-gauge-segment');
-        this.add(this._foreground = new SectorElement(doc, 'rct-circle-gauge-value'));
+        this.add(this._valueView = new SectorElement(doc, 'rct-circle-gauge-value'));
         this.add(this._innerView = new SectorElement(doc, 'rct-circle-gauge-inner'));
         this.add(this._handContainer = new LayerElement(doc, void 0));
         this.add(this._textView = new TextElement(doc, 'rct-circle-gauge-label'));
@@ -312,7 +312,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         this._bandView.setVisible(model.bandRim.visible);
 
         // foreground rim
-        this._foreground.setVisible(model.valueRim.visible);
+        this._valueView.setVisible(model.valueRim.visible);
 
         // pin & hand
         if (model.hand.visible) {
@@ -355,24 +355,32 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         const thick = m.valueRim.getThickness(exts.radius - exts.inner);
         const tv = this._textView;
 
-        // foreground rim
-        if (this._foreground.visible) {
-            this._foreground.setStyleOrClass(m.valueRim.style);
+        // value rim
+        if (this._valueView.visible) {
+            const rim = m.valueRim;
+            const range = rim.getRange(value);
+            const rd = exts.value - (rim.stroked ? thick / 2 : 0);
 
-            const range = m.valueRim.getRange(value); // runValue가 아니다.
+            this._valueView.setStyleOrClass(rim.style);
             if (range) {
-                this._foreground.setStyle('fill', range.color);
+                this._valueView.setStyle(rim.stroked ? 'stroke' : 'fill', range.color);
             }
-            this._foreground.setSector({
+            if (m.valueRim.stroked) {
+                this._valueView.setStyle('fill', 'none');
+                this._valueView.setStyle('strokeWidth', pixel(thick));
+            }
+
+            this._valueView.setBoolData('stroked', rim.stroked);
+            this._valueView.setSectorEx({
                 cx: center.x,
                 cy: center.y,
-                rx: exts.value,
-                ry: exts.value,
+                rx: rd,
+                ry: rd,
                 innerRadius: (exts.value - thick) / exts.value,
                 start: props._startRad,
                 angle: props._sweepRad * rate,
                 clockwise: m.clockwise
-            });
+            }, m.valueRim.stroked);
         }
 
         // hand

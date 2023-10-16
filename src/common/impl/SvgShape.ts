@@ -102,30 +102,29 @@ export class SvgShapes {
     }
 
     // TODO: 개선할 것!
-    static arc(x: number, y: number, rx: number, ry: number, start: number, end: number): PathValue[] {
+    static arc(cx: number, cy: number, rx: number, ry: number, start: number, end: number, clockwise: boolean, close = false): PathValue[] {
         const cosStart = Math.cos(start);
         const sinStart = Math.sin(start);
         const cosEnd = Math.cos(end -= SECTOR_ERROR);
         const sinEnd = Math.sin(end);
         const longArc = end - start - Math.PI < SECTOR_ERROR ? 0 : 1;
-        const clockwise = 1;
+        const cw = clockwise ? 1 : 0;
         const path = [];
 
         path.push(
             'M',
-            x + rx * cosStart,
-            y + ry * sinStart,
-
+            cx + rx * cosStart,
+            cy + ry * sinStart,
             'A',
             rx,
             ry,
             0,
             longArc,
-            clockwise,
-            x + rx * cosEnd,
-            y + ry * sinEnd,
-            'Z'
+            cw,
+            cx + rx * cosEnd,
+            cy + ry * sinEnd,
         );
+        close && path.push('Z');
         return path;
     }
 

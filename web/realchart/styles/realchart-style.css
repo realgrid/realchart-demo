@@ -695,6 +695,9 @@
 .rct-circle-gauge-value {
     fill: #008844;
 }
+.rct-circle-gauge-value[data-stroked] {
+    fill: none;
+}
 .rct-circle-gauge-label {
     font-size: 40px;
     fill: var(--rct-circle-gauge-label-fill);

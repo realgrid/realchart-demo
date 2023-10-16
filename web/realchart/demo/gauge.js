@@ -42,6 +42,7 @@ const config = {
             }]
         },
         valueRim: {
+            // stroked: true,
             ranges: [{
                 toValue: 30,
                 color: 'green'

@@ -180,6 +180,13 @@ export class CircleGaugeValueRim extends CircleGaugeRim {
             this._thickDim = parsePercentSize(this.thickness, true);    
         }
     }
+    /**
+     * true면 원호 대신 선으로 표시한다.
+     * 대시 표현이 가능해진다.
+     * 
+     * @config
+     */
+    stroked = false;
 
     //-------------------------------------------------------------------------
     // methods
