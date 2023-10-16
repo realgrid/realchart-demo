@@ -284,17 +284,18 @@ export class PointContainer extends LayerElement {
 }
 
 export type LabelLayoutInfo = {
-    inverted: boolean
+    inverted: boolean;
+    reversed: boolean;
     // point 위치, 크기
-    pointView: RcElement,
-    x: number,  
-    y: number,
-    hPoint: number,
-    wPoint: number,
+    pointView: RcElement;
+    x: number;
+    y: number;
+    hPoint: number;
+    wPoint: number;
     // label 설정
-    labelView: PointLabelView,
-    labelPos: PointItemPosition,
-    labelOff: number
+    labelView: PointLabelView;
+    labelPos: PointItemPosition;
+    labelOff: number;
 };
 
 const PALETTE_LEN = 12;
@@ -530,7 +531,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected _layoutLabel(info: LabelLayoutInfo): void {
         // below이면 hPoint가 음수이다.
         let {inverted, x, y, hPoint, labelView, labelOff} = info;
-        const below = hPoint < 0;
+        const below = info.reversed ? hPoint <= 0 : hPoint < 0;
         const r = labelView.getBBounds();
         let inner = true;
 
@@ -702,6 +703,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const based = !isNaN(base);
         const info: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
             inverted,
+            reversed: yAxis.reversed,
             labelPos: series.getLabelPosition(labels.position),
             labelOff: series.getLabelOff(labels.offset)
         });
