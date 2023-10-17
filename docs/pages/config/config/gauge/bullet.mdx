@@ -4,63 +4,67 @@ bullet 게이지 모델.
 또, 여러 값 범위 중 어디에 속한 상태인 지를 나타낸다.
 ## Properties
 
-### actualBar
-actual bar.  
-`default: ...`  
+### [actualBar](./bullet/actualBar)
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 
-### animatable: `boolean`
+  
+
+### animatable: `boolean{:typescript}`
 value  변화를 애니메이션으로 표현한다.  
 `default: true`  
 
-### band
-밴드.  
-`default: ...`  
+### [band](./bullet/band)
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 
-### duration: `number`
+  
+
+### duration: `number{:typescript}`
 Animation duration.  
 `default: 500`  
 
-### label
-label 설정 모델.  
+### [label](./bullet/label)
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 
-### maxValue: `number`
+  
+
+### maxValue: `number{:typescript}`
 최대값.
 group에 포함되면 이 값 대신 group의 최대값이 사용된다.  
 
-### minValue: `number`
+### minValue: `number{:typescript}`
 최소값.
 group에 포함되면 이 값 대신 group의 최소값이 사용된다.  
 `default: 0`  
 
-### name: `string`
+### name: `string{:typescript}`
 게이지 이름.
 동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다.  
 
-### ranges: `IValueRange[]`
+### ranges: `IValueRange[]{:typescript}`
 값 범위 목록.
 범위별로 다른 스타일을 적용할 수 있다.  
 
-### reversed: `boolean`
+### reversed: `boolean{:typescript}`
 true면 반대 방향으로 표시한다.  
 `default: false`  
 
-### scale
-scale.  
-`default: ...`  
+### [scale](./bullet/scale)
+Gauge scale.  
 
 ### style
 스타일셋 혹은 class selector.  
 
-### targetBar
-target bar.  
-`default: ...`  
+### [targetBar](./bullet/targetBar)
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 
-### targetValue: `number`
+  
+
+### targetValue: `number{:typescript}`
 목표 값.  
 
-### value: `number`
+### value: `number{:typescript}`
 현재값.  
 `default: 0`  
 
-### vertical: `boolean`
+### vertical: `boolean{:typescript}`
 true면 수직으로 표시한다.  

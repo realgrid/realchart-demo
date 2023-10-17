@@ -139,7 +139,7 @@ class Tunner {
         // console.info({ [name]: type, ...obj })
         return '';
       default:
-        console.warn('unexpected type', obj);
+        console.warn('[WARN] unexpected type', obj);
         return '';
     }
   }
@@ -157,7 +157,6 @@ class Tunner {
         // console.info(obj)
         return { type, name, id };
       default:
-        console.warn('unexpected type', obj);
         return {};
     }
   }
@@ -296,6 +295,9 @@ class MDGenerater {
   _makeProp(param) {
     const { name: _name, type: _type, prop } = param;
     const { header, name, type, dtype, content, defaultValue, defaultBlock } = prop;
+    let enumLines = ''
+    let lines = `### ${name}${type ? ': \`' + type  + '{:typescript}\`': ''}\n`;
+
     if (dtype instanceof Array) {
       dtype.map(t => {
         if (t.type == 'reference') {
@@ -310,7 +312,6 @@ class MDGenerater {
         const keys = _type 
           ? [..._name.split('.').slice(1), _type, name]
           : [..._name.split('.').slice(1), name];
-        // console.debug({ keys });
         keys.forEach((key, i) => {
           if (!accessor[key]) {
             // is the last
@@ -327,12 +328,20 @@ class MDGenerater {
           accessor = accessor[key];
         });
         // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
+
+        console.debug({param})
+        lines = `### [${name}](./${_type}/${name})\n`;
+        lines += `${this._fixContent(v.content)}  \n`;
+        return lines;
+      } else if (v?.kindString == 'Enumeration') {
+        enumLines = this._makeEnums({ name, enums: v.props })
       }
     }
-
-    let lines = `### ${name}${type ? ': \`' + type  + '\`': ''}\n`;
+    
     if (header) lines += `${header}  \n`;
     if (content) lines += `${this._fixContent(content)}  \n`;
+    
+    lines += enumLines;
     // @defalut가 없으면 typedoc에서 정의한 defaultValue를 사용한다.
     const dft = defaultBlock || defaultValue ;
     if (dft) {
@@ -340,12 +349,6 @@ class MDGenerater {
       lines += `\`default: ${value}\` ${content.join(' ')} \n`;
     }
 
-    if (dtype?.type == 'reference') {
-      const v = this.classMap[dtype.name];
-      if (v?.kindString == 'Enumeration') {
-        lines += this._makeEnums({ name, enums: v.props })
-      }
-    }
     return lines;
   }
 
@@ -388,6 +391,7 @@ class MDGenerater {
    * @rparam ...attr: key, value pair object bind in []
    */
   _destructConfig(config) {
+    // ex) chart.series[type=vector]
     const regex = /(\w+(?:\.\w+)?)(?:\[(.*?)\])?(?:\s(.*))?/;
     const matches = config?.match(regex);
   
@@ -438,20 +442,25 @@ class MDGenerater {
     const { name, root, opt, label, type, props, content } = dconf;
     if (root != 'chart' || !opt) return;
 
-    // 개요
-    const typeStr = `[type=${type}]`;
-    const _content = `## ${opt}${type ? typeStr : ''}\n${this._fixContent(content)}\n`;
+    let subtitle = '';
+    let subtitleText = opt;
+    // 개요 문서에만 링크 추가
+    if (type) {
+      subtitleText += `[type=${type}]`;  
+      subtitle = `## [${subtitleText}](./${opt}/${type})`
+    }
+    const _content = `${this._fixContent(content)}\n`;
     
     if ((opt == 'series' || opt == 'axis') && !type) return;
 
     if (!docMap[opt]) docMap[opt] = { _content: ''};
     // docMap 참조 주의...
-    docMap[opt] = { ...docMap[opt], _content: docMap[opt]._content += _content };
+    docMap[opt] = { ...docMap[opt], _content: docMap[opt]._content += `${subtitle}\n${_content}` };
     
     // 속성 추가
     if (props) {
       const propContents = this._makeProps({ name, type, props });
-      this._setPropContents(docMap, { opt, type, _content: _content + propContents} )
+      this._setPropContents(docMap, { opt, type, _content: `## ${subtitleText}\n${_content}` + propContents} )
     }
   }
 
