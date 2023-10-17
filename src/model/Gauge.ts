@@ -467,7 +467,7 @@ export class GaugeCollection {
 /**
  * 게이지 모델.
  */
-export abstract class ValueGauge extends Gauge {
+export abstract class   ValueGauge extends Gauge {
 
     //-------------------------------------------------------------------------
     // consts
@@ -680,6 +680,8 @@ export abstract class GaugeScale extends ChartItem {
             pts = [min, max];
         }
 
+        this._min = pts[0];
+        this._max = pts[pts.length - 1];
         return pts;
     }
 

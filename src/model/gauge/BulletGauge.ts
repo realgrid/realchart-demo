@@ -30,7 +30,7 @@ export class BulletGaugeBand extends ChartItem {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(public gauge: BulletGauge) {
+    constructor(public gauge: BulletGauge | BulletGaugeGroup) {
         super(gauge.chart);
     }
 
@@ -43,6 +43,7 @@ export class BulletGaugeBand extends ChartItem {
      * @config
      */
     vertical = false;
+
     /**
      * 너비
      * 
@@ -202,6 +203,24 @@ export class BulletGauge extends LinearGaugeBase {
 }
 
 export class BulletGaugeGroup extends LinearGaugeGroupBase<BulletGauge> {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 값 범위 목록.
+     * 범위별로 다른 스타일을 적용할 수 있다.
+     * 
+     * @config
+     */
+    ranges: IValueRange[];
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getRanges(min: number, max: number): IValueRange[] {
+        return buildValueRanges(this.ranges, min, max);
+    }
 
     //-------------------------------------------------------------------------
     // overriden members

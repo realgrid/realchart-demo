@@ -91,16 +91,6 @@ export class ChartItem extends RcObject {
     setProp(prop: string, value: any): void {
     }
 
-    setProps(props: object): void {
-    }
-
-    // update(source: any): ChartItem {
-    //     if (source != null && (this._doUpdateSimple(source) || this._doUpdate(source))) {
-    //         this.chart?._modelChanged(this);
-    //         return this;
-    //     }
-    // }
-
     prepareRender(): void {
         this._doPrepareRender(this.chart);
     }
@@ -153,14 +143,6 @@ export class ChartItem extends RcObject {
 
     protected _doSave(target: object): void {
     }
-
-    // protected _doUpdateSimple(source: any): boolean {
-    //     return false;
-    // }
-
-    // protected _doUpdate(source: any): boolean {
-    //     return false;
-    // }
 
     protected _doPrepareRender(chart: IChart): void {}
 }

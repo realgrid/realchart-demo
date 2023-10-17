@@ -23,6 +23,7 @@ const config = {
         type: 'bulletgroup',
         width: '80%',
         height: 200,
+        maxValue: 100,
         children: [{
             name: 'gauge1',
             template: 'gauge',
@@ -83,6 +84,13 @@ const config = {
                 },
                 text: "<t style='fill:gray'>게이지 404 -</t> ${value}"
             }
+        }],
+        ranges: [{
+            toValue: 50,
+            color: '#777'
+        }, {
+            toValue: 70,
+            color: '#aaa'
         }],
         label: {
             text: 'Linear Gauges'

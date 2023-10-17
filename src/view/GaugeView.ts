@@ -516,14 +516,15 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
         const label = m.label;
         const scale = m.scale;
         const scaleView = this.scaleView();
-        const value = pickNum(this._runValue, m.value);
         const len = this._vertical ? rBand.height : rBand.width;
         let x: number;
         let y: number;
 
         scale._vertical = this._vertical;
         scale._reversed = m.reversed;
-        scale.buildSteps(len, value);
+        if (isNaN(this._runValue)) { // animation 중에 다시 할 필요 없다.
+            scale.buildSteps(len, m.value);
+        }
 
         if (scaleView.setVisible(m.scaleVisible())) {
             const sz = scaleView.measure(this.doc, scale, rBand.width, rBand.height, 1);

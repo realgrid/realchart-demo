@@ -319,7 +319,12 @@ export const buildValueRanges = function (source: IValueRange[], min: number, ma
                 }
             }
         });
-        ranges = ranges.sort((r1, r2) => r1.fromValue - r2.fromValue);
+        ranges = ranges.sort((r1, r2) => r1.fromValue - r2.fromValue)
+                       .filter(r => r.toValue >= min && r.fromValue < max);
+        ranges.forEach(r => {
+            r.fromValue = Math.max(r.fromValue, min);
+            r.toValue = Math.min(r.toValue, max);
+        })
     }
     return ranges;
 }

@@ -16,32 +16,42 @@ import { ClockGauge } from "../model/gauge/ClockGauge";
  */
 export abstract class RcChartObject {
 
-    /** @private */
+    /** @internal */
     $_p: ChartItem;
 
+    /** @internal */
     constructor(proxy: ChartItem) {
         this.$_p = proxy;
     }
 
     /**
-     * 표시 여부.
+     * 표시 여부.\
      * 모델 종류에 따라 기본값이 다르다.
      */
     get visible(): boolean { return this.$_p.visible; }
     set visible(value: boolean) { this.$_p.visible = value; }
-
+    /**
+     * 지정한 속성의 값(들)을 가져온다.
+     * 
+     * @param prop 속성 경로.
+     * @param deep true면 하위 속성 객체들의 값들도 포함한다.
+     * @returns 속성 값 혹은 객체.
+     */
     getProp(prop: string, deep = false): any {
         return this.$_p.getProp(prop, deep);
     }
-
+    /**
+     * 지정한 속성의 값(들)을 설정한다.
+     * 
+     * @param prop 속성 경로.
+     * @param value 지정할 값(들).
+     */
     setProp(prop: string, value: any): void {
         this.$_p.setProp(prop, value);
     }
-
-    setProps(props: object): void {
-        this.$_p.setProps(props);
-    }
-
+    /** 
+     * @internal 
+     */
     protected _changed(): void {
         this.$_p.chart._modelChanged(this.$_p);
     }
@@ -52,11 +62,17 @@ export abstract class RcChartObject {
  */
 export abstract class RcChartSeries extends RcChartObject {
 
+    /** @internal */
     constructor(proxy: Series) {
         super(proxy);
     }
-
+    /**
+     * 시리즈 종류.
+     */
     get type(): string { return (this.$_p as Series)._type();}
+    /**
+     * 시리즈 이름.
+     */
     get name(): string { return (this.$_p as Series).name; }
 }
 
@@ -182,6 +198,9 @@ export class RcLinearGauge extends RcValueGauge {
 
 /**
  * 목표 값과 현재 값을 선형으로 표시하는 게이지.
+ * 
+ * @see {@link RcCircleGauge}
+ * @see {@link RcLinearGauge}
  */
 export class RcBulletGauge extends RcValueGauge {
 }

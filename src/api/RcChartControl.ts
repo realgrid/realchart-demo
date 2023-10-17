@@ -10,19 +10,7 @@ import { ChartControl } from "../ChartControl";
 import { ChartItem } from "../model/ChartItem";
 import { Gauge } from "../model/Gauge";
 import { Series } from "../model/Series";
-import { RcAreaRangeSeries, RcAreaSeries, RcBarRangeSeries, RcBarSeries, RcBellCurveSeries, RcBoxPlotSeries, RcBubbleSeries, RcBulletGauge, RcCandlestickSeries, RcChartGauge, RcChartObject, RcChartSeries, RcCircleGauge, RcClockGauge, RcDumbbellSeries, RcEqualizerSeries, RcErrorBarSeries, RcFunnelSeries, RcGaugeGroup, RcHeatmapSeries, RcHistogramSeries, RcLineSeries, RcLinearGauge, RcLollipopSeries, RcOhlcSeries, RcParetoSeries, RcPieSeries, RcScatterSeries, RcSeriesGroup, RcTreemapSeries, RcVectorSeries, RcWaterfallSeries } from "./RcChartModels";
-// import { RcChartModel } from "./RcChartModel";
-
-// const props = {
-//     // 'animatable': ''
-// };
-// const funcs = {
-//     'load': '',
-//     'refresh': '',
-//     'setAnimatable': '',
-//     'updateGauge': '',
-//     // 'chartView': ''
-// };
+import { RcAreaRangeSeries, RcAreaSeries, RcBarRangeSeries, RcBarSeries, RcBellCurveSeries, RcBoxPlotSeries, RcBubbleSeries, RcBulletGauge, RcCandlestickSeries, RcChartGauge, RcChartObject, RcChartSeries, RcCircleGauge, RcClockGauge, RcDumbbellSeries, RcEqualizerSeries, RcErrorBarSeries, RcFunnelSeries, RcGaugeGroup, RcHeatmapSeries, RcHistogramSeries, RcLineSeries, RcLinearGauge, RcLollipopSeries, RcOhlcSeries, RcParetoSeries, RcPieSeries, RcScatterSeries, RcTreemapSeries, RcVectorSeries, RcWaterfallSeries } from "./RcChartModels";
 
 const series_types = {
     'area': RcAreaSeries,
@@ -80,34 +68,13 @@ export class RcChartControl {
     private $_p: ChartControl;
     private _objects = new Map<ChartItem, RcChartObject>();
 
+    /** @internal */
     constructor(control: ChartControl) {
         this.$_p = control;
-        // this.$_p = new Proxy(control, {
-        //     get(target, key, receiver) {
-        //         // if (key === 'model') {
-        //         //     return target[key];
-        //         // }
-        //         // if (key in props) {
-        //         //     return target[key];
-        //         // } else 
-        //         if (key in funcs) {
-        //             return target[key].bind(target);
-        //         }
-        //     },
-        //     // set(target, p, newValue, receiver): boolean {
-        //     //     if (p in props) {
-        //     //         target[p] = newValue;
-        //     //         return true;
-        //     //     }
-        //     // },
-        //     has(target, key): boolean {
-        //         return key in funcs;
-        //     }
-        // });
     }
 
     /**
-     * 기존 설정 모델을 제거하고 새로운 config로 차트를 구성한다.
+     * 기존 설정 모델을 제거하고 새로운 설정으로 차트를 재구성한다.
      */
     load(config: any, animate?: boolean): void {
         this.$_p.load(config, animate);
@@ -128,8 +95,8 @@ export class RcChartControl {
     /**
      * 시리즈 이름에 해당하는 시리즈 객체를 리턴한다.
      * 
-     * @param name 
-     * @returns 
+     * @param name 시리즈 이름
+     * @returns 시리즈 객체
      */
     getSeries(name: string): RcChartSeries {
         return getObject(this._objects, this.$_p.model.seriesByName(name)) as RcChartSeries;
@@ -143,8 +110,8 @@ export class RcChartControl {
     /**
      * 게이지 이름에 해당하는 게이지 객체를 리턴한다.
      * 
-     * @param name 
-     * @returns 
+     * @param name 게이지 이름
+     * @returns 게이지 객체
      */
     getGauge(name: string): RcChartGauge {
         return getObject(this._objects, this.$_p.model.gaugeByName(name)) as RcChartGauge;

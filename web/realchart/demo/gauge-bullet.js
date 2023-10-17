@@ -59,7 +59,6 @@ const config = {
             text: "RealChart<br>Bullet<br>ver 1.0"
             // position: 'bottom',
         }
-
     }]
 }
 

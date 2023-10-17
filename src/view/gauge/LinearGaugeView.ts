@@ -86,7 +86,7 @@ class BandView extends ChartElement<GuageRangeBand> {
         const scale = g.scale;
         const sum = scale._max - scale._min;
 
-        if (this.$_layoutBars(g, sum, this._ranges) && this._labelContainer.visible) {
+        if (this._labelContainer.setVisible(this.$_layoutBars(g, sum, this._ranges) && this._labelContainer.visible)) {
             this.$_layoutLabels(g, sum, this._ranges);
         }
     }
@@ -94,7 +94,7 @@ class BandView extends ChartElement<GuageRangeBand> {
     private $_layoutBars(gauge: LinearGauge, sum: number, ranges: IValueRange[]): boolean {
         this._barViews.prepare(ranges.length);
 
-        if (!this._barViews.isEmpty) {
+        if (!this._barViews.isEmpty && sum > 0) {
             const vert = gauge.isVertical();
             const width = this.width;
             const height = this.height;
@@ -240,7 +240,7 @@ export class LinearGaugeView extends LinearGaugeBaseView<LinearGauge> {
                 this._valueView.setBounds(x, r.y, w, r.height);
             }
         }
-   }
+    }
 }
 
 /**

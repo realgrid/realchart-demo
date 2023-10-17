@@ -7,14 +7,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../../common/ElementPool";
-import { LayerElement, RcElement } from "../../common/RcControl";
+import { LayerElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
 import { BulletGauge, BulletGaugeGroup } from "../../model/gauge/BulletGauge";
-import { CircleGaugeGroup } from "../../model/gauge/CircleGauge";
-import { LinearGaugeGroupBase } from "../../model/gauge/LinearGauge";
-import { GaugeGroupView, LinearGaugeBaseView, LinearScaleView } from "../GaugeView";
+import { LinearGaugeBaseView, LinearScaleView } from "../GaugeView";
 import { LinearGaugeGroupBaseView } from "./LinearGaugeView";
 
 export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
@@ -67,37 +65,41 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
     }
 
     protected _renderBand(m: BulletGauge, r: IRect, value: number): void {
+        const group = m.group as BulletGaugeGroup;
         const reversed = m.reversed;
         const vertical = this._vertical;
-        const scale = m.group ? (m.group as BulletGaugeGroup).scale : m.scale;
+        const scale = group ? group.scale : m.scale;
         const sum = scale._max - scale._min;
-        const ranges = m.getRanges(scale._min, scale._max); // TODO: group.ranges...
 
-        if (ranges) {
-            this._barContainer.setRect(r);
+        if (this._barContainer.setVisible(sum > 0)) {
+            const ranges = m.getRanges(scale._min, scale._max) || group?.getRanges(scale._min, scale._max);
 
-            if (vertical) {
-                let y = reversed ? 0 : r.height;
+            if (ranges) {
+                this._barContainer.setRect(r);
 
-                this._barViews.prepare(ranges.length).forEach((v, i) => {
-                    const range = ranges[i];
-                    const h = r.height * (range.toValue - range.fromValue) / sum;
-    
-                    v.setBounds(0, reversed ? y : y - h, r.width, h);
-                    v.setStyle('fill', range.color);
-                    y += reversed ? h : -h;
-                });
-            } else {
-                let x = reversed ? r.width : 0;
+                if (vertical) {
+                    let y = reversed ? 0 : r.height;
 
-                this._barViews.prepare(ranges.length).forEach((v, i) => {
-                    const range = ranges[i];
-                    const w = r.width * (range.toValue - range.fromValue) / sum;
-    
-                    v.setBounds(reversed ? x - w : x, 0, w, r.height);
-                    v.setStyle('fill', range.color);
-                    x += reversed ? -w : w;
-                });
+                    this._barViews.prepare(ranges.length).forEach((v, i) => {
+                        const range = ranges[i];
+                        const h = r.height * (range.toValue - range.fromValue) / sum;
+        
+                        v.setBounds(0, reversed ? y : y - h, r.width, h);
+                        v.setStyle('fill', range.color);
+                        y += reversed ? h : -h;
+                    });
+                } else {
+                    let x = reversed ? r.width : 0;
+
+                    this._barViews.prepare(ranges.length).forEach((v, i) => {
+                        const range = ranges[i];
+                        const w = r.width * (range.toValue - range.fromValue) / sum;
+        
+                        v.setBounds(reversed ? x - w : x, 0, w, r.height);
+                        v.setStyle('fill', range.color);
+                        x += reversed ? -w : w;
+                    });
+                }
             }
         }
 
@@ -117,7 +119,7 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
         }
 
         // target bar
-        if (this._targetView.setVisible(!isNaN(m.targetValue))) {
+        if (this._targetView.setVisible(sum > 0 && !isNaN(m.targetValue))) {
             if (vertical && r.width > 10) {
                 let y = r.height * (m.targetValue - m.scale._min) / sum;
 
