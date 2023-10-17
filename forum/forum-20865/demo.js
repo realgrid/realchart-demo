@@ -30,3 +30,7 @@ const config = {
   }]
 };
 const chart = RealChart.createChart(document, 'realchart', config);
+
+const seriesVisible = () => {
+	chart.getSeries("2020년도").visible = !chart.getSeries("2020년도").visible;
+}
