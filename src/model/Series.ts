@@ -983,7 +983,7 @@ export class PlottingItemCollection  {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    get(name: string): Series {
+    getSeries(name: string): Series {
         return this._map[name];
     }
 

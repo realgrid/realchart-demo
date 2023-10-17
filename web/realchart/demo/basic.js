@@ -132,6 +132,7 @@ function setActions(container) {
 	createButton(container, 'Test', function (e) {
 		// alert('hello');
         console.log(chart.chartView())
+        // chart.series.visible = !chart.series.visible;
 	});
 	createCheckBox(
 		container,

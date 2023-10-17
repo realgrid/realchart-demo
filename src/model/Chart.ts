@@ -24,7 +24,7 @@ import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
 import { CircleGauge, CircleGaugeGroup } from "./gauge/CircleGauge";
 import { ClockGauge } from "./gauge/ClockGauge";
-import { GaugeCollection, ValueGauge } from "./Gauge";
+import { Gauge, GaugeCollection, ValueGauge } from "./Gauge";
 import { BarRangeSeries } from "./series/BarRangeSeries";
 import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";
@@ -409,6 +409,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._series.firstSeries;
     }
 
+    get firstGauge(): Gauge {
+        return this._gauges.firstGauge;
+    }
+
     get legend(): Legend {
         return this._legend;
     }
@@ -475,11 +479,15 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     // methods
     //-------------------------------------------------------------------------
     seriesByName(series: string): Series {
-        return this._series.get(series);
+        return this._series.getSeries(series);
     }
 
     seriesByPoint(point: DataPoint): Series {
         return this._series.seriesByPoint(point);
+    }
+
+    gaugeByName(gauge: string): Gauge {
+        return this._gauges.getGauge(gauge);
     }
 
     axisByName(axis: string): Axis {
@@ -662,14 +670,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * 데이터 및 속성 변경 후 다시 그리게 한다.
      */
     update(): void {
-    }
-
-    updateGauge(gauge: string, values: any): void {
-        const g = this._gauges.get(gauge);
-
-        if (g instanceof ValueGauge) {
-            g.updateValues(values);
-        }
     }
 
     //-------------------------------------------------------------------------

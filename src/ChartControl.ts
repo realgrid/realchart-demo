@@ -94,10 +94,6 @@ export class ChartControl extends RcControl implements IChartEventListener {
         this.invalidateLayout();
     }
 
-    updateGauge(gauge: string, values: any): void {
-        this.model?.updateGauge(gauge, values);
-    }
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

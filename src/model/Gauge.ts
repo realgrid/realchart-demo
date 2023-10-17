@@ -362,6 +362,7 @@ export class GaugeCollection {
     private _map: {[name: string]: GaugeBase} = {};
     private _items: GaugeBase[] = [];
     private _visibles: GaugeBase[] = [];
+    private _gauges: Gauge[] = [];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -377,6 +378,10 @@ export class GaugeCollection {
         return this._items.length;
     }
 
+    get firstGauge(): Gauge {
+        return this._gauges[0];
+    }
+
     visibles(): GaugeBase[] {
         return this._visibles;
     }
@@ -384,6 +389,11 @@ export class GaugeCollection {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getGauge(name: string): Gauge {
+        const g = this._map[name];
+        if (g instanceof Gauge) return g;
+    }
+
     get(name: string | number): GaugeBase {
         return isString(name) ? this._map[name] : this._items[name];
     }
@@ -405,13 +415,17 @@ export class GaugeCollection {
             if (g.name) {
                 map[g.name] = g;
             }
+
             if (g instanceof GaugeGroup) {
                 for (let i = 0; i < g.count(); i++) {
                     const child = g.get(i);
                     if (child.name) {
                         map[child.name] = child;
                     }
+                    this._gauges.push(child);
                 }
+            } else {
+                this._gauges.push(g);
             }
         });
     }
@@ -499,9 +513,9 @@ export abstract class ValueGauge extends Gauge {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    updateValues(values: any): void {
-        if (values !== this.value) {
-            this.value = values;
+    updateValue(value: any): void {
+        if (value !== this.value) {
+            this.value = value;
             this._changed();
         }
     }

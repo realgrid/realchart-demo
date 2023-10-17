@@ -9,7 +9,6 @@
 import { IPercentSize, IValueRange, RtPercentSize, buildValueRanges, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { ValueGauge } from "../Gauge";
 import { LinearGaugeBase, LinearGaugeGroupBase } from "./LinearGauge";
 
 export class BulletGaugeBand extends ChartItem {

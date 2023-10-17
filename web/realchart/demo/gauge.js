@@ -117,7 +117,7 @@ function setActions(container) {
     createButton(container, 'Run', function(e) {
         clearInterval(timer);
         timer = setInterval(() => {
-            chart.updateGauge('gauge1', Math.random() * 100);
+            chart.gauge.updateValue(Math.random() * 100);
         }, 2000);
     });
     createButton(container, 'Stop', function(e) {

@@ -37,12 +37,10 @@ function setActions(container) {
         alert('hello');
     });
     createButton(container, 'Run', function(e) {
-        config.gauge.active = true;
-        chart.load(config);
+        chart.gauge.active = true;
     });
     createButton(container, 'Stop', function(e) {
-        config.gauge.active = false;
-        chart.load(config);
+        chart.gauge.active = false;
     });
     createCheckBox(container, 'secondHand.animatable', function (e) {
         config.gauge.secondHand.animatable = _getChecked(e);
