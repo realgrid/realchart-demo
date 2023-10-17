@@ -4,48 +4,50 @@
 또, 여러 값 범위 중 어디에 속한 상태인 지를 나타낸다.
 ## Properties
 
-### animatable: `boolean`
+### animatable: `boolean{:typescript}`
 value  변화를 애니메이션으로 표현한다.  
 `default: true`  
 
-### band
-게이지 본체 주변이나 내부에 값 영역들을 구분해서 표시하는 band의 모델.  
-`default: ...`  
+### [band](./linear/band)
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 
-### duration: `number`
+  
+
+### duration: `number{:typescript}`
 Animation duration.  
 `default: 500`  
 
-### label
-label 설정 모델.  
+### [label](./linear/label)
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 
-### maxValue: `number`
+  
+
+### maxValue: `number{:typescript}`
 최대값.
 group에 포함되면 이 값 대신 group의 최대값이 사용된다.  
 
-### minValue: `number`
+### minValue: `number{:typescript}`
 최소값.
 group에 포함되면 이 값 대신 group의 최소값이 사용된다.  
 `default: 0`  
 
-### name: `string`
+### name: `string{:typescript}`
 게이지 이름.
 동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다.  
 
-### reversed: `boolean`
+### reversed: `boolean{:typescript}`
 true면 반대 방향으로 표시한다.  
 `default: false`  
 
-### scale
-scale.  
-`default: ...`  
+### [scale](./linear/scale)
+Gauge scale.  
 
 ### style
 스타일셋 혹은 class selector.  
 
-### value: `number`
+### value: `number{:typescript}`
 현재값.  
 `default: 0`  
 
-### vertical: `boolean`
+### vertical: `boolean{:typescript}`
 true면 수직으로 표시한다.  

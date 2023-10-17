@@ -1,0 +1,6 @@
+{
+  "createChart": "createChart",
+  "getVersion": "getVersion",
+  "setAnimatable": "setAnimatable",
+  "setDebugging": "setDebugging"
+}

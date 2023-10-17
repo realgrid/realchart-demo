@@ -26,6 +26,9 @@ export class LineSeriesPoint extends DataPoint {
     shape: Shape;
 }
 
+/**
+ * 데이터 포인트 maker 설정 정보.
+ */
 export class LineSeriesMarker extends SeriesMarker {
 
     //-------------------------------------------------------------------------
@@ -69,8 +72,6 @@ export abstract class LineSeriesBase extends Series {
     // fields
     //-------------------------------------------------------------------------
     /**
-     * 데이터 포인트 maker 설정 정보.
-     * 
      * @config
      */
     marker: LineSeriesMarker = new LineSeriesMarker(this);

@@ -3,55 +3,56 @@
 값 사아의 비율과 축 길이 비율이 항상 동일한 축.
 ## Properties
 
-### baseValue: `number`
+### baseValue: `number{:typescript}`
 
 ### endFit
 축 끝 위치에 tick 표시 여부.
  strictMax 가 설정되면 무시되고  VALUE 로 적용된다.  
 `default: AxisFit.DEFAULT`  
 
-### grid
+### [grid](./linear/grid)
 visible 기본값이 undefined이다.
-visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.  
-`default: ...`  
 
-### marginFar: `number`
+
+visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.  
+
+### marginFar: `number{:typescript}`
 차트 경계나 뒤쪽 축 사이의 여백 크기.  
 `default: 0`  
 
-### marginNear: `number`
+### marginNear: `number{:typescript}`
 Plot 영역이나 앞쪽 축 사이의 여백 크기.  
 `default: 0`  
 
-### maxPadding: `number`
+### maxPadding: `number{:typescript}`
 마지막 tick 뒤쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
 이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.
  endFit 이  AxitFit.TICK 일 때,
 data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
  strictMax 가 지정되거나,  maxValue 가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다.  
 
-### maxValue: `number`
+### maxValue: `number{:typescript}`
 명시적으로 지정하는 최대값.
 축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.
  maxPadding 도 무시된다.  
 
-### minPadding: `number`
+### minPadding: `number{:typescript}`
 첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
 이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.
  startFit 이  AxitFit.TICK 일 때,
 data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
  strictMin 가 지정되거나,  minValue 이 계산된 최소값보다 작은 경우에도 이 속성은 무시된다.  
 
-### minValue: `number`
+### minValue: `number{:typescript}`
 명시적으로 지정하는 최소값.
 축에 연결된 data point들의 값으로 계산된 최소값 대신 이 값이 축의 최소값이 된다.
  minPadding 도 무시된다.  
 
-### nullable: `boolean`
+### nullable: `boolean{:typescript}`
 data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.  
 `default: true`  
 
-### padding: `number`
+### padding: `number{:typescript}`
 minPadding ,  maxPadding 이 설정되지 않았을 때 적용되는 기본값이다.  
 `default: 0.05`  
 
@@ -59,7 +60,7 @@ minPadding ,  maxPadding 이 설정되지 않았을 때 적용되는 기본값�
 표시 위치.  
 `default: AxisPosition.NORMAL`  
 
-### reversed: `boolean`
+### reversed: `boolean{:typescript}`
 true면 반대 방향으로 point 위치들이 지정된다.  
 `default: false`  
 
@@ -68,12 +69,12 @@ true면 반대 방향으로 point 위치들이 지정된다.
  strictMin 이 설정되고  VALUE 로 적용된다.  
 `default: AxisFit.DEFAULT`  
 
-### strictMax: `number`
+### strictMax: `number{:typescript}`
 무조건 적용되는 최대값.
 즉, 이 값보다 큰 값을 갖는 시리즈 포인트들은 표시되지 않는다.
 maxPadding도 적용되지 않는다.  
 
-### strictMin: `number`
+### strictMin: `number{:typescript}`
 무조건 적용되는 최소값.
 즉, 이 값보다 작은 값을 갖는 시리즈 포인트들은 표시되지 않는다.
 minPadding도 적용되지 않는다.  
@@ -81,5 +82,5 @@ minPadding도 적용되지 않는다.
 ### style
 스타일셋 혹은 class selector.  
 
-### title
-`default: ...`  
+### [title](./linear/title)
+  

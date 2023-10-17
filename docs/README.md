@@ -68,6 +68,11 @@ config로 노출하고자 하는 구성에 @config를 사용한다.
  }
 ```
 
+- api는 typedoc 기본 기능을 사용한다.
+```
+@internal - 문서에 노출하지 않는다.
+```
+
 ### 데모
 
 - web에서 데모에 보여줄 목록을 demo.config.json파일로 정의

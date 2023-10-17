@@ -8,7 +8,13 @@ import { theme } from "./lib/theme";
 const config: DocsThemeConfig = {
   primaryHue: 207,
   sidebar: {
-    defaultMenuCollapseLevel: 10000,
+    // defaultMenuCollapseLevel: 10000,
+    titleComponent({ title: _title, type,  route }) {
+      if (route == '/config') return <>{_title}</>
+      const [title] = route.split('/').slice(-1);
+      let prefix = (title.includes('Axis') || title.includes('series')) ? '[]' : '';
+      return <>{title}{prefix}</>
+    }
   },
   logo: <Logo brand={brand} showBrandName iconSize={32} textSize={28} />,
   banner: {
