@@ -29,10 +29,14 @@ export class Globals {
     /**
      * {@link ChartControl Chart 컨트롤}을 생성한다.
      * 
+     * ```
+     * const chart = RealChart.createChart(document, 'realchart', config);
+     * ```
+     * 
      * @param doc
      * @param container 컨트롤이 생성되는 div 엘리먼트나 id
-     * @param config 차트 모델 설정 객체
-     * @returns 
+     * @param config 차트 모델 설정 JSON
+     * @returns 생성된 차트 컨트롤 객체
      */
     static createChart(doc: Document, container: string | HTMLDivElement, config: any): RcChartControl {
         const c = new ChartControl(doc, container);

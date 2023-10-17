@@ -606,6 +606,7 @@ export abstract class GaugeGroupView<G extends ValueGauge, T extends GaugeGroup<
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    protected _groupContainer: LayerElement;
     private _gaugeContainer: LayerElement;
     protected _gaugeViews: ElementPool<GV>;
 
@@ -615,7 +616,8 @@ export abstract class GaugeGroupView<G extends ValueGauge, T extends GaugeGroup<
     constructor(doc: Document, styleName: string) {
         super(doc, styleName);
 
-        this.add(this._gaugeContainer = new LayerElement(doc, 'rct-gauge-group-container'));
+        this.add(this._groupContainer = new LayerElement(doc, null));
+        this._groupContainer.add(this._gaugeContainer = new LayerElement(doc, 'rct-gauge-group-container'));
         this._gaugeViews = this._createPool(this._gaugeContainer);
     }
 
@@ -628,6 +630,8 @@ export abstract class GaugeGroupView<G extends ValueGauge, T extends GaugeGroup<
     }
 
     protected _renderGauge(width: number, height: number): void {
+        const cs = getComputedStyle(this.dom);
+
         this._doRenderGauges(this._gaugeContainer, this._gaugeViews, width, height);
     }
 

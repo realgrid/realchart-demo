@@ -298,11 +298,29 @@ export class LinearGauge extends LinearGaugeBase {
     }
 }
 
-export class LinearGaugeChildLabel {
+export class LinearGaugeChildLabel extends ChartItem {
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 고정 너비.
+     * 
+     * @config
+     */
+    width: RtPercentSize;
+    /**
+     * 최소 너비
+     * 
+     * @config
+     */
+    minWidth: RtPercentSize;
+    /**
+     * 최대 너비
+     * 
+     * @config
+     */
+    maxWidth: RtPercentSize;
     /**
      * true면 자식 게이지의 label을 기본 위치의 반대쪽에 표시한다.
      * 
@@ -353,7 +371,7 @@ export abstract class LinearGaugeGroupBase<T extends LinearGaugeBase> extends Ga
      * 
      * @config
      */
-    itemLabel = new LinearGaugeChildLabel();
+    itemLabel = new LinearGaugeChildLabel(this.chart);
     /**
      * scale.
      * 

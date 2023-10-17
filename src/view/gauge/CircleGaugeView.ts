@@ -529,6 +529,13 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 export class CircleGaugeGroupView extends GaugeGroupView<CircleGauge, CircleGaugeGroup, CircleGaugeView> {
 
     //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-circle-gauge-group');
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _createPool(container: LayerElement): ElementPool<CircleGaugeView> {

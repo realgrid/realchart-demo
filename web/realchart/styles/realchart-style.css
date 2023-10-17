@@ -782,6 +782,9 @@
 }
 
 /** linear gauge group */
+.rct-linear-gauge-group {
+    padding: 10px;
+}
 .rct-linear-gauge-group-label {
     font-size: 1.5em;
 }
@@ -809,6 +812,14 @@
 .rct-bullet-gauge-scale-tick-labels {
     font-size: 0.9em;
     fill: #333;
+}
+
+/** bullet gauge group */
+.rct-bullet-gauge-group {
+    padding: 10px;
+}
+.rct-bullet-gauge-group-label {
+    font-size: 1.5em;
 }
 
 /** tooltip */

@@ -6,7 +6,7 @@ const config = {
     templates: {
         gauge: {
             label: {
-                numberFormat: '#00.#',
+                numberFormat: '#0.#',
             }
         }
     },
@@ -93,7 +93,7 @@ const config = {
             color: '#aaa'
         }],
         label: {
-            text: 'Linear Gauges'
+            text: 'Bullet Gauges'
         },
         style: {
             stroke: 'lightblue',

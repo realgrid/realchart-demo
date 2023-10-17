@@ -262,8 +262,8 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
     constructor(doc: Document, styleName: string) {
         super(doc, styleName);
 
-        this.insertFirst(this._scaleView = new LinearScaleView(doc));
-        this.insertFirst(this._textView = new TextElement(doc, 'rct-linear-gauge-group-label'));
+        this._groupContainer.insertFirst(this._scaleView = new LinearScaleView(doc));
+        this._groupContainer.insertFirst(this._textView = new TextElement(doc, 'rct-linear-gauge-group-label'));
     }
 
     //-------------------------------------------------------------------------
@@ -352,6 +352,13 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
  * View for LinearGaugeGroupBase.
  */
 export class LinearGaugeGroupView extends LinearGaugeGroupBaseView<LinearGauge, LinearGaugeGroup, LinearGaugeView> {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-linear-gauge-group');
+    }
 
     //-------------------------------------------------------------------------
     // overriden members

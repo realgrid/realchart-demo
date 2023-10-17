@@ -271,6 +271,15 @@ export enum SectionDir {
     RIGHT = 'right'
 }
 
+export interface ISides {
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
+    horz?: number;
+    vert?: number;
+}
+
 export const HORZ_SECTIONS = [SectionDir.LEFT, SectionDir.RIGHT];
 export const VERT_SECTIONS = [SectionDir.TOP, SectionDir.BOTTOM];
 

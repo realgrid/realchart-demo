@@ -143,6 +143,13 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
 export class BulletGaugeGroupView extends LinearGaugeGroupBaseView<BulletGauge, BulletGaugeGroup, BulletGaugeView> {
 
     //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-bullet-gauge-group');
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _createPool(container: LayerElement): ElementPool<BulletGaugeView> {
