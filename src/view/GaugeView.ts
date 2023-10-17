@@ -624,7 +624,7 @@ export abstract class GaugeGroupView<G extends ValueGauge, T extends GaugeGroup<
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _prepareGauge(doc: Document, model: T): void {
+    protected _prepareGauge(doc: Document, model: T): void {    
         this._gaugeViews.prepare(model.count())
         this._doPrepareGauges(doc, model, this._gaugeViews);
     }

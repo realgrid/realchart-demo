@@ -68,7 +68,9 @@ export class RcChartControl {
     private $_p: ChartControl;
     private _objects = new Map<ChartItem, RcChartObject>();
 
-    /** @internal */
+    /** 
+     * @internal 
+     */
     constructor(control: ChartControl) {
         this.$_p = control;
     }
