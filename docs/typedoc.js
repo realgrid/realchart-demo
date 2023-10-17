@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const typedocNextra = require("typedoc-nextra");
+const typedocNextra = require('./lib/typedoc-nextra');
 
 typedocNextra.createDocumentation({
     // use existing typedoc json output (leave it blank to auto generate)
