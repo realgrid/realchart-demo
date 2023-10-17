@@ -3,13 +3,6 @@ RealChart 컨트롤.
 
 
 
-```typescript
-new RcChartControl(control)
-```
-| Parameter | Type | Optional |
-| ----------- | ----------- | ----------- |
-| control | ChartControl | ❌ |
-
 
 ## Properties
 ### public gauge: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
@@ -23,25 +16,25 @@ new RcChartControl(control)
 
 
 
-| Parameter | Type | Optional |
+| Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
-| name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
+| name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 게이지 이름 |
 ### public getSeries(name): RcChartSeries
 시리즈 이름에 해당하는 시리즈 객체를 리턴한다.
 
 
 
-| Parameter | Type | Optional |
+| Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
-| name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
+| name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 시리즈 이름 |
 ### public load(config, animate?): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
-기존 설정 모델을 제거하고 새로운 config로 차트를 구성한다.
+기존 설정 모델을 제거하고 새로운 설정으로 차트를 재구성한다.
 
 
 
-| Parameter | Type | Optional |
-| ----------- | ----------- | ----------- |
-| config | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | ❌ |
-| animate | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ✅ |
+| Parameter | Type |
+| ----------- | ----------- |
+| config | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
+| animate | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) |
 ### public refresh(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
 차트를 다시 그린다.

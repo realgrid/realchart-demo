@@ -51,7 +51,7 @@ export class Globals {
     /**
      * {@link ChartControl Chart 컨트롤}을 생성한다.
      * 
-     * ```
+     * ```js
      * const chart = RealChart.createChart(document, 'realchart', config);
      * ```
      * 

@@ -10,11 +10,19 @@ const config: DocsThemeConfig = {
   sidebar: {
     // defaultMenuCollapseLevel: 10000,
     titleComponent({ title: _title, type,  route }) {
-      if (route == '/config') return <>{_title}</>
+      if (route == '/config') return <>{_title}</>;
+      if (route.indexOf('/docs') == 0) return <>{_title}</>;
+
       const [title] = route.split('/').slice(-1);
       let prefix = (title.includes('Axis') || title.includes('series')) ? '[]' : '';
-      return <>{title}{prefix}</>
+      return <>{title}{prefix}</>;
     }
+  },
+  toc: {
+    headingComponent(args) {
+      console.debug({args})
+      return <></>
+    },
   },
   logo: <Logo brand={brand} showBrandName iconSize={32} textSize={28} />,
   banner: {
