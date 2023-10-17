@@ -16,6 +16,7 @@ import { ClockGauge } from "../model/gauge/ClockGauge";
  */
 export abstract class RcChartObject {
 
+    /** @private */
     $_p: ChartItem;
 
     constructor(proxy: ChartItem) {

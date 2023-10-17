@@ -204,10 +204,11 @@ export class ContinuousAxisTick extends AxisTick {
             count = Math.max(3, count);
 
             // 계산된 개수보다 많아지면 줄인다.
-            while (true) {
+            while (i < multiples.length) {
                 const n = ceil((base - min) / step) + ceil((max - base) / step) + 1; // +1은 base
                 if (n > count) {
                     step = (i < multiples.length - 1) ? multiples[i + 1] * scale : step * 2;
+                    i++;
                 } else {
                     break;
                 }

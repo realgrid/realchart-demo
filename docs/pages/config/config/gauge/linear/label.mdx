@@ -1,0 +1,38 @@
+## label
+label 설정 모델.
+## Properties
+
+### animatable: `boolean`
+게이지 값 변경 애니메이션이 실행될 때, label도 따라서 변경시킨다.  
+`default: true`  
+
+### autoContrast: `boolean`
+텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
+
+
+밝게 표시할 때는  brightStyle 을 적용하고,
+어둡게 표시할 때는  darkStyle 이 적용된다.
+brightStyle이 지정되지 않으면 'rct-text-bright'이,
+darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.  
+`default: true`  
+
+### backgroundStyle
+
+### brightStyle
+
+### darkStyle
+
+### effect
+`default: ChartTextEffect.NONE`  
+
+### position: ` |  |  | `
+값을 지정하지 않으면 게이지 표시 방향에 따라 자동으로 위치를 결정한다.  
+
+### prefix: `string`
+label 문자열 앞에 추가되는 문자열.  
+
+### style
+스타일셋 혹은 class selector.  
+
+### suffix: `string`
+label 문자열 끝에 추가되는 문자열.  

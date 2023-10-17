@@ -1048,6 +1048,9 @@ export class PlottingItemCollection  {
         });
     }
 
+    updateData(values: any[]): void {
+    }
+
     prepareRender(): void {
         const visibles = this._visibleSeries = [];
         let iShape = 0;

@@ -11,9 +11,29 @@ new RcChartControl(control)
 | control | ChartControl | ❌ |
 
 
-
+## Properties
+### public gauge: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+첫번째 게이지.
+### public series: [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+첫번째 시리즈.
 
 ## Methods
+### public getGauge(name): RcChartGauge
+게이지 이름에 해당하는 게이지 객체를 리턴한다.
+
+
+
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
+### public getSeries(name): RcChartSeries
+시리즈 이름에 해당하는 시리즈 객체를 리턴한다.
+
+
+
+| Parameter | Type | Optional |
+| ----------- | ----------- | ----------- |
+| name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
 ### public load(config, animate?): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
 기존 설정 모델을 제거하고 새로운 config로 차트를 구성한다.
 
@@ -25,12 +45,3 @@ new RcChartControl(control)
 | animate | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | ✅ |
 ### public refresh(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
 차트를 다시 그린다.
-### public updateGauge(gauge, values): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
-게이지의 값들을 변경한다.
-
-
-
-| Parameter | Type | Optional |
-| ----------- | ----------- | ----------- |
-| gauge | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | ❌ |
-| values | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | ❌ |
