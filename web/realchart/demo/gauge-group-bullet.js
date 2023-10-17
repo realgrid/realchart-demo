@@ -22,12 +22,13 @@ const config = {
     gauge: [{
         type: 'bulletgroup',
         width: '80%',
-        height: 200,
+        height: 250,
         maxValue: 100,
         children: [{
             name: 'gauge1',
             template: 'gauge',
             value: Math.random() * 100,
+            targetValue: 90,
             valueRim: {
                 style: {
                     fill: '#00aaff'
@@ -43,6 +44,7 @@ const config = {
             name: 'gauge2',
             template: 'gauge',
             value: Math.random() * 100,
+            targetValue: 70,
             valueRim: {
                 style: {
                     fill: '#ffaa00'
@@ -58,6 +60,7 @@ const config = {
             name: 'gauge3',
             template: 'gauge',
             value: Math.random() * 100,
+            targetValue: 75,
             valueRim: {
                 style: {
                     fill: '#88cc00'
@@ -73,6 +76,7 @@ const config = {
             name: 'gauge4',
             template: 'gauge',
             value: Math.random() * 100,
+            targetValue: 88,
             valueRim: {
                 style: {
                     fill: '#aa0000'

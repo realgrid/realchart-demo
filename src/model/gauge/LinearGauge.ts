@@ -338,6 +338,11 @@ export class LinearGaugeChildLabel extends ChartItem {
 export abstract class LinearGaugeGroupBase<T extends LinearGaugeBase> extends GaugeGroup<T> {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _labelWidth: number;
+
+    //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {

@@ -118,28 +118,32 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     }
 
     protected _doLayout(): void {
-        const axis = this.model.axis;
+        const m = this.model;
+        const axis = m.axis;
         const w = this.width;
         const h = this.height;
         const pts = this._pts;
         const lines = this._lines;
+        const end = lines.count - 1;
 
         if (pts[0] === 0) {
             lines.first.setClass('rct-axis-grid-line-start');
         } 
-        if (pts[pts.length - 1] === (axis._isHorz ? w : h)) {
+        if (pts[end] === (axis._isHorz ? w : h)) {
             lines.last.setClass('rct-axis-grid-line-end');
         }
 
         if (axis._isHorz) {
             lines.forEach((line, i) => {
-                // line.setVLine(pts[i], 0, h);
-                line.setVLineC(pts[i], 0, h);
+                if (line.setVisible(i !== 0 || m.startVisible && i !== end || m.endVisible)) {
+                    line.setVLineC(pts[i], 0, h);
+                }
             });
         } else {
             lines.forEach((line, i) => {
-                // line.setHLine(h - pts[i], 0, w);
-                line.setHLineC(h - pts[i], 0, w);
+                if (line.setVisible(i !== 0 || m.startVisible && i !== end || m.endVisible)) {
+                    line.setHLineC(h - pts[i], 0, w);
+                }
             });
         }
     }

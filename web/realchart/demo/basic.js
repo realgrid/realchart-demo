@@ -13,6 +13,11 @@ const config = {
 	},
 	title: '경기도 성남시 인구 현황',
 	legend: true,
+    plot: {
+        style: {
+            stroke: 'none'
+        }
+    },
 	xAxis: {
 		// type: 'category',
 		// position: 'apposite'

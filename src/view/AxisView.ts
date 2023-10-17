@@ -209,6 +209,8 @@ export class AxisView extends ChartElement<Axis> {
     _crosshairView: CrosshairFlagView;
 
     protected _zoom = 1;
+    protected _zoomPos = 0;
+    protected _zoomLen = NaN;
     protected _scrollPos = 0;
 
     //-------------------------------------------------------------------------

@@ -19,7 +19,7 @@ import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { CircularGauge, Gauge, GaugeBase, GaugeGroup, GaugeItemPosition, GaugeScale, LinearGaugeScale, ValueGauge } from "../model/Gauge";
-import { LinearGaugeBase, LinearGaugeLabel } from "../model/gauge/LinearGauge";
+import { LinearGaugeBase, LinearGaugeGroupBase, LinearGaugeLabel } from "../model/gauge/LinearGauge";
 import { ChartElement } from "./ChartElement";
 
 export abstract class GaugeView<T extends GaugeBase> extends ChartElement<T> {
@@ -375,6 +375,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
     //-------------------------------------------------------------------------
     protected _vertical: boolean;
     protected _rLabel: IRect;
+    private _wLabel: number;
     protected _rBand: IRect;
 
     //-------------------------------------------------------------------------
@@ -382,6 +383,17 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
     //-------------------------------------------------------------------------
     constructor(doc: Document, styleName: string) {
         super(doc, styleName);
+    }
+
+    measureLabelWidth(m: T, width: number, height: number): number {
+        const label = m.label;
+        const v = this.labelView();
+
+        label.setText(m.getLabel(label, m.value));
+        v.text = label.text;
+        label.buildSvg(v, width, height, m, this.valueOf);
+    
+        return v.getBBounds().width;
     }
 
     //-------------------------------------------------------------------------
@@ -440,7 +452,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
         if (label.visible) {
             const pos = label._runPos = pickProp(label.position, this._vertical ? 'top' : 'left');
             const vert = label._runVert = pos === 'top' || pos === 'bottom';
-            const gap = label._runGap = label.getGap(vert ? height : width);
+            const gap = m.group ? (m.group as LinearGaugeGroupBase<any>).itemLabel.gap : label._runGap = label.getGap(vert ? height : width);
             let w = vert ? width : label.getWidth(width);
             let h = vert ? label.getHeight(height) : height;
             const wMax = vert ? width : label.getMaxWidth(width);
@@ -450,7 +462,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
             label.setText(m.getLabel(label, label.animatable ? value : m.value));
             labelView.text = label.text;
             label.buildSvg(labelView, pickNum(w, wMax), pickNum(h, hMax), m, this.valueOf);
-            
+
             const rText = labelView.getBBounds();
 
             if (vert) {
@@ -458,7 +470,8 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
                 rBand.height = Math.max(0, rBand.height - (rLabel.height + gap));
             } else {
                 rLabel.width = pickNum(w, rText.width);
-                rBand.width = Math.max(0, rBand.width - (rLabel.width + gap));
+                this._wLabel = m.group ? (m.group as LinearGaugeGroupBase<any>)._labelWidth : rLabel.width;
+                rBand.width = Math.max(0, rBand.width - (this._wLabel + gap));
             }
 
             switch (pos) {
@@ -475,7 +488,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
                     break;
 
                 default:
-                    rBand.x = rLabel.width + gap;
+                    rBand.x = this._wLabel + gap;
                     break;
             }
         } else {
@@ -489,22 +502,26 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
             const rText = view.getBBounds();
             let x = r.x;
             let y = r.y;
+            let w: number;
 
             switch (label._runPos) {
                 case 'top':
                     x += r.width / 2;
                     break;
+
                 case 'bottom':
                     x += r.width / 2;
                     break;
+
                 case 'right':
                     x = this.width - r.width;
                     view.anchor = TextAnchor.START;
                     y += Math.max(0, (r.height - rText.height) / 2);
                     break;
+
                 default:
                     view.anchor = TextAnchor.END;
-                    x += r.width;
+                    x += this._wLabel;
                     y += Math.max(0, (r.height - rText.height) / 2);
                     break;
             }
@@ -635,6 +652,7 @@ export abstract class GaugeGroupView<G extends ValueGauge, T extends GaugeGroup<
 
         width -= pads.left + pads.right;
         height -= pads.top + pads.bottom;
+
         this._doRenderGauges(this._gaugeContainer, this._gaugeViews, width, height);
         this._groupContainer.translate(pads.left, pads.top);
     }

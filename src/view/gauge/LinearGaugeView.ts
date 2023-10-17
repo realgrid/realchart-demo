@@ -301,6 +301,11 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
 
         this.$_renderScale(m, r);
 
+        m._labelWidth = 0;
+        this._gaugeViews.forEach((v, i) => {
+            m._labelWidth = Math.max(m._labelWidth, (v as LinearGaugeBaseView<G>).measureLabelWidth(m.get(i), width, height));
+        })
+
         if (m.vertical) {
             this.$_layoutVert(this.doc, m, views, r);
         } else {

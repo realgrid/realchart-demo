@@ -76,11 +76,12 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
 
             if (ranges) {
                 this._barContainer.setRect(r);
+                this._barViews.prepare(ranges.length);
 
                 if (vertical) {
                     let y = reversed ? 0 : r.height;
 
-                    this._barViews.prepare(ranges.length).forEach((v, i) => {
+                    this._barViews.forEach((v, i) => {
                         const range = ranges[i];
                         const h = r.height * (range.toValue - range.fromValue) / sum;
         
@@ -91,7 +92,7 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
                 } else {
                     let x = reversed ? r.width : 0;
 
-                    this._barViews.prepare(ranges.length).forEach((v, i) => {
+                    this._barViews.forEach((v, i) => {
                         const range = ranges[i];
                         const w = r.width * (range.toValue - range.fromValue) / sum;
         

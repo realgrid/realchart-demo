@@ -51,7 +51,7 @@ export class RectElement extends RcElement {
         super(doc, styleName, 'rect');
 
         this.rect = rect;
-        this.setAttr('shapeRendering', 'cripsEdges');
+        // this.setAttr('shapeRendering', 'cripsEdges');
     }
 
 	//-------------------------------------------------------------------------

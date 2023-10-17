@@ -145,11 +145,11 @@ export class AxisGrid extends AxisItem {
     /**
      * @config
      */
-    startVisible = true;
+    startVisible = false;
     /**
      * @config
      */
-    endVisible = true;
+    endVisible = false;
 
     //-------------------------------------------------------------------------
     // constructor
