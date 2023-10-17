@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isNumber, pickNum, pickProp } from "../common/Common";
+import { Dom } from "../common/Dom";
 import { ElementPool } from "../common/ElementPool";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { IPoint } from "../common/Point";
@@ -630,9 +631,12 @@ export abstract class GaugeGroupView<G extends ValueGauge, T extends GaugeGroup<
     }
 
     protected _renderGauge(width: number, height: number): void {
-        const cs = getComputedStyle(this.dom);
+        const pads = Dom.getPadding(this.dom);
 
+        width -= pads.left + pads.right;
+        height -= pads.top + pads.bottom;
         this._doRenderGauges(this._gaugeContainer, this._gaugeViews, width, height);
+        this._groupContainer.translate(pads.left, pads.top);
     }
 
     //-------------------------------------------------------------------------

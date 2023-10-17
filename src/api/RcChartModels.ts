@@ -24,7 +24,7 @@ export abstract class RcChartObject {
     /** 
      * @internal 
      */
-    constructor(proxy: ChartItem) {
+    protected constructor(proxy: ChartItem) {
         this.$_p = proxy;
     }
 
@@ -69,7 +69,7 @@ export abstract class RcChartSeries extends RcChartObject {
     /** 
      * @internal 
      */
-    constructor(proxy: Series) {
+    protected constructor(proxy: Series) {
         super(proxy);
     }
     /**

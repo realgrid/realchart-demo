@@ -11,18 +11,40 @@ import { RcChartControl } from "./api/RcChartControl";
 import { RcControl, RcElement } from "./common/RcControl";
 import { Chart } from "./model/Chart";
 
+const clazz: any = RcChartControl;
+
 // [주의]main.ts에서 직접 구현하면 되지만, dldoc에서 global을 별도 구성할 수 있도록 자체 class에서 구현한다.
 /**
  * RealChart 모듈 global.
  */
 export class Globals {
 
+    /**
+     * RealChart 라이브러리 버전 정보를 리턴한다.
+     * 
+     * ```
+     * alert(RealChart.getVersion());
+     * ```ㅇㅇㅇ
+     * 
+     * @returns 버전 문자열
+     */
     static getVersion(): string {
         return '$Version';
     }
+    /**
+     * true로 지정하면 차트 요소별 디버그 경계를 표시한다.
+     * 
+     * @param debug 디버깅 상태 표시 여부
+     */
     static setDebugging(debug: boolean): void {
         RcElement.DEBUGGING = debug;
     }
+    /**
+     * false로 지정하면 시리즈 시작 애니메이션 등을 포함,
+     * 모든 애니메이션을 실행하지 않는다.
+     * 
+     * @param value 애니메이션 실행 여부
+     */
     static setAnimatable(value: boolean): void {
         RcControl._animatable = value;
     }
@@ -41,6 +63,6 @@ export class Globals {
     static createChart(doc: Document, container: string | HTMLDivElement, config: any): RcChartControl {
         const c = new ChartControl(doc, container);
         c.model = new Chart(config);
-        return new RcChartControl(c);
+        return new (RcChartControl as any)(c);
     }
 }

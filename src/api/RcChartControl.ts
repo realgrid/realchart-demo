@@ -71,7 +71,7 @@ export class RcChartControl {
     /** 
      * @internal 
      */
-    constructor(control: ChartControl) {
+    private constructor(control: ChartControl) {
         this.$_p = control;
     }
 

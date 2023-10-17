@@ -379,7 +379,7 @@ export class Dom {
         css.setProperty(property, value, 'important');
     }
 
-    static getPadding(dom: HTMLElement | SVGSVGElement): ISides {
+    static getPadding(dom: HTMLElement | SVGElement): ISides {
         // css selector에서 설정할 수도 있으므로 dom.style 만으로는 부족하다.
         // padding % 는 자신 크기에 대한 비율이 아니라 상위 block에 대한 상대값이다.
         // touch 컨트롤에서는 (거의) 사용할 수 없다.
