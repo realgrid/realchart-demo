@@ -14,7 +14,7 @@ const config: DocsThemeConfig = {
       if (route.indexOf('/docs') == 0) return <>{_title}</>;
 
       const [title] = route.split('/').slice(-1);
-      let prefix = (title.includes('Axis') || title.includes('series')) ? '[]' : '';
+      let prefix = (title.includes('Axis') || title.includes('series') || title.includes('gauge')) ? '[]' : '';
       return <>{title}{prefix}</>;
     }
   },

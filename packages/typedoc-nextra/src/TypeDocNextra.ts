@@ -30,7 +30,7 @@ export class TypeDocNextra {
     // ]
     public getSee(see: string[]) {
         return see?.length 
-            ? `\nSee\n
+            ? `\n${heading('See Also', 3)}\n
             ${see.join('')}`
             : '';
     }

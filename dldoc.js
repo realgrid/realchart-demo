@@ -145,7 +145,10 @@ class Tunner {
   }
 
   _parseTypeD(obj) {
-    const { id, type, name, types, elementType } = { ...obj };
+    const { id, type, name, types, elementType, kindString } = { ...obj };
+
+    // if kindString == 
+
     switch(type) {
       case 'intrinsic':
         return { type, name };
@@ -213,6 +216,10 @@ class Tunner {
   _visit(obj) {
     const { name, children, kindString, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
     const { config, content } = this._parseComment(comment);
+    const propFilter = (child) => {
+      return (child.kindString == 'Property' && this._findTag(child.comment?.blockTags, '@config'))
+        || (child.kindString == 'Accessor' && this._findTag(child.getSignature?.comment?.blockTags, '@config'))
+    }
     switch (kindString) {
       case 'Class':
         this.classMap[name] = { 
@@ -221,10 +228,11 @@ class Tunner {
           config,
           content,
           extended: extendedTypes.map(t => t.name),
-          props: children.filter(c => 
-            c.kindString == 'Property'
-            && this._findTag(c.comment?.blockTags, '@config')
-          ).map(this._setContent.bind(this)),
+          props: children.filter(propFilter).map(c => {
+            return c.kindString == 'Property' 
+              ? this._setContent(c)
+              : this._setContent(c.getSignature)
+          }),
         };
         break;
       case 'Enumeration':
@@ -293,7 +301,7 @@ class MDGenerater {
    * @returns 
    */
   _makeProp(param) {
-    const { name: _name, type: _type, prop } = param;
+    const { name: _name, opt, type: _type, prop } = param;
     const { header, name, type, dtype, content, defaultValue, defaultBlock } = prop;
     let enumLines = ''
     let lines = `### ${name}${type ? ': \`' + type  + '{:typescript}\`': ''}\n`;
@@ -310,15 +318,15 @@ class MDGenerater {
       if (v?.kindString == 'Class') {
         let accessor = this.docMap;
         const keys = _type 
-          ? [..._name.split('.').slice(1), _type, name]
-          : [..._name.split('.').slice(1), name];
+          ? [opt, _type, name]
+          : [opt, name];
         keys.forEach((key, i) => {
           if (!accessor[key]) {
             // is the last
             if (i == keys.length - 1) {
-              // console.debug( _name, _type, name, {v})
+
               const _content = `## ${name}\n${this._fixContent(content)}\n`
-                    + this._makeProps({ name, type: _type, props: v.props });
+                    + this._makeProps({ name, opt, type: _type, props: v.props });
               accessor[key] = { _content };
               // this._writeJsonFile('./docs/.tdout/' + keys.join('.') + '.json', accessor);
             } else {
@@ -359,10 +367,10 @@ class MDGenerater {
    * @returns contents
    */
   _makeProps(param) {
-    const { name, type, props } = param;
+    const { name, opt, type, props } = param;
     const h = '## Properties\n';
     return [ h, ...props.map(prop => {
-      return this._makeProp({ name, type, prop })
+      return this._makeProp({ name, opt, type, prop })
     })].join('\n');
   }
 
@@ -376,7 +384,7 @@ class MDGenerater {
     return enums.map(e => {
       const content = this._fixContent(e.content).replace(/\n/g, '  ');
       return `- \`'${e.value}'\` ${content}`
-    }).join('\n');
+    }).join('\n') + '\n\n';
   }
 
   /**
@@ -450,15 +458,17 @@ class MDGenerater {
     }
     const _content = `${this._fixContent(content)}\n`;
     
-    if ((opt == 'series' || opt == 'axis') && !type) return;
+    if (['series', 'xAxis', 'yAxis', 'gauge'].indexOf(opt) >= 0 && !type) 
+      return console.warn(`[WARN] ${name} type missed.`);
 
     if (!docMap[opt]) docMap[opt] = { _content: ''};
+
     // docMap 참조 주의...
     docMap[opt] = { ...docMap[opt], _content: docMap[opt]._content += `${subtitle}\n${_content}` };
     
     // 속성 추가
     if (props) {
-      const propContents = this._makeProps({ name, type, props });
+      const propContents = this._makeProps({ name, opt, type, props });
       this._setPropContents(docMap, { opt, type, _content: `## ${subtitleText}\n${_content}` + propContents} )
     }
   }

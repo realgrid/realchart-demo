@@ -372,7 +372,7 @@ export class CircleGaugeScale extends GaugeScale {
 /**
  * 게이지 모델.
  * 
- * @config chart.gauge[type='circle']
+ * @config chart.gauge[type=circle]
  */
 export class CircleGauge extends CircularGauge {
 

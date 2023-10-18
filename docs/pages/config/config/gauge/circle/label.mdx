@@ -23,6 +23,8 @@ darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.
 ### darkStyle
 
 ### effect
+
+
 `default: ChartTextEffect.NONE`  
 
 ### offsetX
@@ -43,3 +45,17 @@ label 문자열 앞에 추가되는 문자열.
 
 ### suffix: `string{:typescript}`
 label 문자열 끝에 추가되는 문자열.  
+
+### numberFormat: `string{:typescript}`
+label이 숫자일 때 표시 형식.  
+
+### numberSymbols: `string{:typescript}`
+축의 tick 간격이 1000 이상인 큰 수를 표시할 때 
+이 속성에 지정한 symbol을 이용해서 축약형으로 표시한다.  
+
+### text: `string{:typescript}`
+rich text format을 지정할 수 있다.  
+
+### visible: `boolean{:typescript}`
+표시 여부.
+모델에 따라 기본값이 다르다.  

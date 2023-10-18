@@ -5,7 +5,7 @@ import path from 'path';
 import { ClassSerializer, DocumentedClass, DocumentedFunction, DocumentedTypes, FunctionSerializer, TypesSerializer } from './serializers';
 import { TypeDocNextra, TypeDocNextraMarkdownBuild } from './TypeDocNextra';
 import { escape } from './utils';
-import { hyperlink, seelink } from './utils/md';
+import { hyperlink } from './utils/md';
 import { existsSync } from 'fs';
 import { DefaultLinksFactory } from './utils/links';
 

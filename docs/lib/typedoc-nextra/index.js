@@ -75,6 +75,7 @@ __export(src_exports, {
   codeBlock: () => codeBlock,
   createDocumentation: () => createDocumentation,
   default: () => src_default,
+  doclink: () => doclink,
   escape: () => escape,
   getFileMetadata: () => getFileMetadata,
   getName: () => getName,
@@ -341,14 +342,28 @@ function hyperlink(text, link) {
   return `[${text}](${link})`;
 }
 __name(hyperlink, "hyperlink");
+function doclink(text) {
+  const sep = text.split(".");
+  const [g] = sep;
+  let [title] = sep.slice(-1);
+  let page = "";
+  switch (g) {
+    case "g":
+      page = `../globals/${title}`;
+      break;
+    case "config":
+      page = "/config/" + sep.join("/");
+      break;
+    default:
+      page = `../classes/${title}`;
+  }
+  return hyperlink(title, page);
+}
+__name(doclink, "doclink");
 function seelink(comment) {
   if (!(comment.kind == "inline-tag") || !(comment.tag == "@link"))
     return comment.text;
-  const sep = comment.text.split(".");
-  const [g] = sep;
-  const sub = g == "g" ? "globals" : "classes";
-  const [page] = sep.slice(-1);
-  return hyperlink(page, `../${sub}/${page}`);
+  return doclink(comment.text);
 }
 __name(seelink, "seelink");
 function image(alt, link) {
@@ -364,6 +379,10 @@ __name(table, "table");
 
 // src/serializers/ClassSerializer.ts
 var ClassSerializer = class extends AbstractSerializer {
+  _parseCommentLink(comment) {
+    const hasLink = comment.kind == "inline-tag" && comment.tag == "@link";
+    return hasLink ? doclink(comment.text) : comment.text;
+  }
   serialize() {
     var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v;
     const ctor = (_a = this.declaration.children) == null ? void 0 : _a.find((c) => {
@@ -385,7 +404,7 @@ var ClassSerializer = class extends AbstractSerializer {
       }) : null,
       metadata: getFileMetadata(this.declaration),
       deprecated: !!((_j = (_i = this.declaration.comment) == null ? void 0 : _i.blockTags) == null ? void 0 : _j.some((r) => r.tag === "@deprecated")),
-      description: ((_l = (_k = this.declaration.comment) == null ? void 0 : _k.summary) == null ? void 0 : _l.map((t) => t.text).join("")) || null,
+      description: ((_l = (_k = this.declaration.comment) == null ? void 0 : _k.summary) == null ? void 0 : _l.map(this._parseCommentLink).join("")) || null,
       extends: ((_m = this.declaration.extendedTypes) == null ? void 0 : _m.length) ? parseType(this.declaration.extendedTypes[0]) : null,
       implements: ((_n = this.declaration.implementedTypes) == null ? void 0 : _n.length) ? parseType(this.declaration.implementedTypes[0]) : null,
       rawExtends: ((_o = this.declaration.extendedTypes) == null ? void 0 : _o.length) ? parseTypes(this.declaration.extendedTypes[0]) : null,
@@ -402,7 +421,7 @@ var ClassSerializer = class extends AbstractSerializer {
       abstract: decl.flags.isAbstract || !!((_b = (_a = decl.comment) == null ? void 0 : _a.blockTags) == null ? void 0 : _b.some((r) => r.tag === "@abstract")),
       default: decl.defaultValue || ((_f = (_e = (_d = (_c = decl.comment) == null ? void 0 : _c.blockTags) == null ? void 0 : _d.find((r) => r.tag === "@default")) == null ? void 0 : _e.content) == null ? void 0 : _f[0].text) || null,
       deprecated: !!((_h = (_g = decl.comment) == null ? void 0 : _g.blockTags) == null ? void 0 : _h.some((r) => r.tag === "@deprecated")),
-      description: ((_j = (_i = decl.comment) == null ? void 0 : _i.summary) == null ? void 0 : _j.map((t) => t.text).join("")) || null,
+      description: ((_j = (_i = decl.comment) == null ? void 0 : _i.summary) == null ? void 0 : _j.map(this._parseCommentLink).join("")) || null,
       metadata: getFileMetadata(decl),
       name: decl.name,
       private: decl.flags.isPrivate || !!((_l = (_k = decl.comment) == null ? void 0 : _k.blockTags) == null ? void 0 : _l.some((r) => r.tag === "@private")),
@@ -421,7 +440,7 @@ var ClassSerializer = class extends AbstractSerializer {
       return Object.assign(base, {
         abstract: getter.flags.isAbstract || ((_v = (_u = getter.comment) == null ? void 0 : _u.blockTags) == null ? void 0 : _v.some((r) => r.tag === "@abstract")),
         deprecated: (_x = (_w = getter.comment) == null ? void 0 : _w.blockTags) == null ? void 0 : _x.some((r) => r.tag === "@deprecated"),
-        description: (_z = (_y = getter.comment) == null ? void 0 : _y.summary) == null ? void 0 : _z.map((t) => t.text).join(""),
+        description: (_z = (_y = getter.comment) == null ? void 0 : _y.summary) == null ? void 0 : _z.map(this._parseCommentLink).join(""),
         metadata: getFileMetadata(getter),
         name: getter.name,
         private: getter.flags.isPrivate || ((_B = (_A = getter.comment) == null ? void 0 : _A.blockTags) == null ? void 0 : _B.some((r) => r.tag === "@private")),
@@ -438,7 +457,7 @@ var ClassSerializer = class extends AbstractSerializer {
     const signature = ((_a = decl.signatures) == null ? void 0 : _a[0]) || decl;
     return {
       name: decl.name,
-      description: ((_c = (_b = signature.comment) == null ? void 0 : _b.summary) == null ? void 0 : _c.map((t) => t.text).join("")) || null,
+      description: ((_c = (_b = signature.comment) == null ? void 0 : _b.summary) == null ? void 0 : _c.map(this._parseCommentLink).join("")) || null,
       see: ((_e = (_d = signature.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.filter((r) => r.tag === "@see").map((t) => t.content.map((t2) => seelink(t2)).join(""))) || [],
       static: !!signature.flags.isStatic || !!decl.flags.isStatic,
       private: decl.flags.isPrivate || !!((_g = (_f = signature.comment) == null ? void 0 : _f.blockTags) == null ? void 0 : _g.filter((r) => r.tag === "@private").length),
@@ -449,7 +468,7 @@ var ClassSerializer = class extends AbstractSerializer {
       returns: {
         type: signature.type ? parseType(signature.type) : "any",
         rawType: signature.type ? parseTypes(signature.type) : ["any"],
-        description: ((_s = (_r = (_q = (_p = signature.comment) == null ? void 0 : _p.blockTags) == null ? void 0 : _q.find((r) => r.tag === "@returns")) == null ? void 0 : _r.content) == null ? void 0 : _s.map((t) => t.text).join("")) || null
+        description: ((_s = (_r = (_q = (_p = signature.comment) == null ? void 0 : _p.blockTags) == null ? void 0 : _q.find((r) => r.tag === "@returns")) == null ? void 0 : _r.content) == null ? void 0 : _s.map(this._parseCommentLink).join("")) || null
       },
       metadata: getFileMetadata(decl)
     };
@@ -458,7 +477,7 @@ var ClassSerializer = class extends AbstractSerializer {
     var _a, _b, _c, _d, _e, _f;
     return {
       name: decl.name,
-      description: ((_b = (_a = decl.comment) == null ? void 0 : _a.summary) == null ? void 0 : _b.map((t) => t.text).join("").trim()) || null,
+      description: ((_b = (_a = decl.comment) == null ? void 0 : _a.summary) == null ? void 0 : _b.map(this._parseCommentLink).join("").trim()) || null,
       optional: !!decl.flags.isOptional,
       default: ((_c = decl.default) == null ? void 0 : _c.name) || ((_f = (_e = (_d = decl.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.find((r) => r.tag === "@default")) == null ? void 0 : _f.content[0].text) || null,
       type: decl.type ? parseType(decl.type) : "any",
@@ -574,7 +593,7 @@ var TypeDocNextra = class {
   }
   getSee(see) {
     return (see == null ? void 0 : see.length) ? `
-See
+${heading("See Also", 3)}
 
             ${see.join("")}` : "";
   }
@@ -1037,6 +1056,7 @@ var src_default = createDocumentation;
   code,
   codeBlock,
   createDocumentation,
+  doclink,
   escape,
   getFileMetadata,
   getName,

@@ -77,15 +77,30 @@ export function hyperlink<T extends string, U extends string>(text: T, link: U) 
     return `[${text}](${link})` as const;
 }
 
+export function doclink(text: string): string {
+    const sep = text.split('.');
+    const [g] = sep;
+    let [title] = sep.slice(-1);
+    let page = '';
+    switch (g) {
+        case 'g':
+            page = `../globals/${title}`;
+            break;
+        case 'config':
+            page = '/config/' + sep.join('/');
+            break;
+        default:
+            page = `../classes/${title}`;
+
+    }
+
+    return hyperlink(title, page);
+}
+
 export function seelink(comment:any): string {
     if (!(comment.kind == 'inline-tag') || !(comment.tag  == '@link')) return comment.text;
     
-    const sep = comment.text.split('.')
-    const [g] = sep;
-    const sub = g == 'g' ? 'globals' : 'classes';
-    const [page] = sep.slice(-1);
-
-    return hyperlink(page, `../${sub}/${page}`);
+    return doclink(comment.text);
 }
 
 export function image<T extends string, U extends string>(alt: T, link: U) {

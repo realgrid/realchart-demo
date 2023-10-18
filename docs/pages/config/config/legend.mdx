@@ -7,7 +7,9 @@ visible 기본값이 undefined이고,
 ### alignBase
 legend 정렬 기준.  
 - `'chart'` 
-- `'plot'` `default: AlignBase.PLOT`  
+- `'plot'` 
+
+`default: AlignBase.PLOT`  
 
 ### backgroundStyles
 배경 스타일 셋.
@@ -26,7 +28,9 @@ legend 아이템들 사이의 간격.
 한 라인의 item들이 배치되는 위치.  
 - `'center'` 수평 혹은 수직의 중앙으로 몰아서 배치한다.
 - `'end'` 수평일 때 오른쪽, 수직일 때는 아래쪽으로 몰아서 배치한다.
-- `'start'` 수평일 때 왼쪽, 수직일 때는 위쪽으로 몰아서 배치한다.`default: LegendItemsAlign.CENTER`  
+- `'start'` 수평일 때 왼쪽, 수직일 때는 위쪽으로 몰아서 배치한다.
+
+`default: LegendItemsAlign.CENTER`  
 
 ### itemsPerLine: `number{:typescript}`
 한 줄 당 표시할 최대 legend 항목 수.  
@@ -35,7 +39,9 @@ legend 아이템들 사이의 간격.
 item 배치 방향.  
 - `'auto'` legend가 차트 좌우에 배치되면 item들을 수직으로 배치.  legend가 차트 상하에 배치되면 item들을 수평으로 배치.
 - `'horizontal'` item들을 수평으로 배치
-- `'vertical'` item들을 수직으로 배치`default: LegendLayout.AUTO`  
+- `'vertical'` item들을 수직으로 배치
+
+`default: LegendLayout.AUTO`  
 
 ### lineGap: `number{:typescript}`
 라인 사이의 간격.  
@@ -47,7 +53,9 @@ item 배치 방향.
 - `'left'` 차트 본체 왼쪽에 표시한다.
 - `'plot'` 차트 본체 영역 내부에 표시한다.
 - `'right'` 차트 본체 오른쪽에 표시한다.
-- `'top'` 차트 타이틀 아래 표시한다.`default: LegendLocation.BOTTOM`  
+- `'top'` 차트 타이틀 아래 표시한다.
+
+`default: LegendLocation.BOTTOM`  
 
 ### markerGap: `number{:typescript}`
 marker와 text사이의 간격.  
@@ -63,3 +71,7 @@ marker와 text사이의 간격.
 
 ### style
 스타일셋 혹은 class selector.  
+
+### visible: `boolean{:typescript}`
+표시 여부.
+모델에 따라 기본값이 다르다.  
