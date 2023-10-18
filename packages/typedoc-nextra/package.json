@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build": "tsup",
+    "dbundle": "tsup && cpx 'dist/*' '../../docs/lib/typedoc-nextra'",
     "check": "tsc --noEmit",
     "test": "node ./test/index.js",
     "format": "prettier --write \"./src/**/*.{js,ts,jsx,tsx}\""
@@ -37,6 +38,7 @@
     "@types/common-tags": "^1.8.1",
     "@types/node": "^18.11.18",
     "@types/tmp": "^0.2.3",
+    "cpx": "^1.5.0",
     "prettier": "^2.8.3",
     "tsup": "^6.5.0",
     "typedoc": "^0.25.1",

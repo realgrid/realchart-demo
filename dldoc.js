@@ -329,7 +329,6 @@ class MDGenerater {
         });
         // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
 
-        console.debug({param})
         lines = `### [${name}](./${_type}/${name})\n`;
         lines += `${this._fixContent(v.content)}  \n`;
         return lines;

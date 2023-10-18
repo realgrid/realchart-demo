@@ -89,6 +89,7 @@ __export(src_exports, {
   ol: () => ol,
   parseType: () => parseType,
   parseTypes: () => parseTypes,
+  seelink: () => seelink,
   strikethrough: () => strikethrough,
   subscript: () => subscript,
   superscript: () => superscript,
@@ -340,6 +341,16 @@ function hyperlink(text, link) {
   return `[${text}](${link})`;
 }
 __name(hyperlink, "hyperlink");
+function seelink(comment) {
+  if (!(comment.kind == "inline-tag") || !(comment.tag == "@link"))
+    return comment.text;
+  const sep = comment.text.split(".");
+  const [g] = sep;
+  const sub = g == "g" ? "globals" : "classes";
+  const [page] = sep.slice(-1);
+  return hyperlink(page, `../${sub}/${page}`);
+}
+__name(seelink, "seelink");
 function image(alt, link) {
   return `![${alt}](${link})`;
 }
@@ -354,7 +365,7 @@ __name(table, "table");
 // src/serializers/ClassSerializer.ts
 var ClassSerializer = class extends AbstractSerializer {
   serialize() {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v;
     const ctor = (_a = this.declaration.children) == null ? void 0 : _a.find((c) => {
       return c.kind === import_typedoc.ReflectionKind.Constructor;
     });
@@ -382,14 +393,11 @@ var ClassSerializer = class extends AbstractSerializer {
       methods: (methods == null ? void 0 : methods.map((m) => this.parseMethod(m))) || [],
       private: this.declaration.flags.isPrivate || !!((_r = (_q = this.declaration.comment) == null ? void 0 : _q.blockTags) == null ? void 0 : _r.some((r) => r.tag === "@private")),
       properties: (properties == null ? void 0 : properties.map((m) => this.parseProperties(m))) || [],
-      see: ((_t = (_s = this.declaration.comment) == null ? void 0 : _s.blockTags) == null ? void 0 : _t.filter((r) => r.tag === "@see").map((m) => {
-        var _a2;
-        return (_a2 = m.content) == null ? void 0 : _a2[0].text;
-      })) || []
+      see: ((_v = (_u = (_t = (_s = this.declaration.comment) == null ? void 0 : _s.blockTags) == null ? void 0 : _t.find((r) => r.tag === "@see")) == null ? void 0 : _u.content) == null ? void 0 : _v.map((m) => seelink(m))) || []
     };
   }
   parseProperties(decl) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H;
     const base = {
       abstract: decl.flags.isAbstract || !!((_b = (_a = decl.comment) == null ? void 0 : _a.blockTags) == null ? void 0 : _b.some((r) => r.tag === "@abstract")),
       default: decl.defaultValue || ((_f = (_e = (_d = (_c = decl.comment) == null ? void 0 : _c.blockTags) == null ? void 0 : _d.find((r) => r.tag === "@default")) == null ? void 0 : _e.content) == null ? void 0 : _f[0].text) || null,
@@ -399,8 +407,8 @@ var ClassSerializer = class extends AbstractSerializer {
       name: decl.name,
       private: decl.flags.isPrivate || !!((_l = (_k = decl.comment) == null ? void 0 : _k.blockTags) == null ? void 0 : _l.some((r) => r.tag === "@private")),
       readonly: decl.flags.isReadonly || !!((_n = (_m = decl.comment) == null ? void 0 : _m.blockTags) == null ? void 0 : _n.some((r) => r.tag === "@readonly")),
-      see: ((_p = (_o = decl.comment) == null ? void 0 : _o.blockTags) == null ? void 0 : _p.filter((r) => r.tag === "@see").map((m) => m.content[0].text)) || [],
-      static: decl.flags.isStatic || !!((_r = (_q = decl.comment) == null ? void 0 : _q.blockTags) == null ? void 0 : _r.some((r) => r.tag === "@static")),
+      see: ((_r = (_q = (_p = (_o = decl.comment) == null ? void 0 : _o.blockTags) == null ? void 0 : _p.find((r) => r.tag === "@see")) == null ? void 0 : _q.content) == null ? void 0 : _r.map((m) => seelink(m))) || [],
+      static: decl.flags.isStatic || !!((_t = (_s = decl.comment) == null ? void 0 : _s.blockTags) == null ? void 0 : _t.some((r) => r.tag === "@static")),
       type: decl.type ? parseType(decl.type) : "any"
     };
     if (decl.kind === import_typedoc.ReflectionKind.Accessor) {
@@ -411,15 +419,15 @@ var ClassSerializer = class extends AbstractSerializer {
       if (!setter)
         base.readonly = true;
       return Object.assign(base, {
-        abstract: getter.flags.isAbstract || ((_t = (_s = getter.comment) == null ? void 0 : _s.blockTags) == null ? void 0 : _t.some((r) => r.tag === "@abstract")),
-        deprecated: (_v = (_u = getter.comment) == null ? void 0 : _u.blockTags) == null ? void 0 : _v.some((r) => r.tag === "@deprecated"),
-        description: (_x = (_w = getter.comment) == null ? void 0 : _w.summary) == null ? void 0 : _x.map((t) => t.text).join(""),
+        abstract: getter.flags.isAbstract || ((_v = (_u = getter.comment) == null ? void 0 : _u.blockTags) == null ? void 0 : _v.some((r) => r.tag === "@abstract")),
+        deprecated: (_x = (_w = getter.comment) == null ? void 0 : _w.blockTags) == null ? void 0 : _x.some((r) => r.tag === "@deprecated"),
+        description: (_z = (_y = getter.comment) == null ? void 0 : _y.summary) == null ? void 0 : _z.map((t) => t.text).join(""),
         metadata: getFileMetadata(getter),
         name: getter.name,
-        private: getter.flags.isPrivate || ((_z = (_y = getter.comment) == null ? void 0 : _y.blockTags) == null ? void 0 : _z.some((r) => r.tag === "@private")),
-        readonly: getter.flags.isReadonly || ((_B = (_A = getter.comment) == null ? void 0 : _A.blockTags) == null ? void 0 : _B.some((r) => r.tag === "@readonly")),
-        see: (_D = (_C = getter.comment) == null ? void 0 : _C.blockTags) == null ? void 0 : _D.filter((r) => r.tag === "@see").map((m) => m.content.map((t) => t.text).join("")),
-        static: getter.flags.isStatic || ((_F = (_E = getter.comment) == null ? void 0 : _E.blockTags) == null ? void 0 : _F.some((r) => r.tag === "@static")),
+        private: getter.flags.isPrivate || ((_B = (_A = getter.comment) == null ? void 0 : _A.blockTags) == null ? void 0 : _B.some((r) => r.tag === "@private")),
+        readonly: getter.flags.isReadonly || ((_D = (_C = getter.comment) == null ? void 0 : _C.blockTags) == null ? void 0 : _D.some((r) => r.tag === "@readonly")),
+        see: (_F = (_E = getter.comment) == null ? void 0 : _E.blockTags) == null ? void 0 : _F.filter((r) => r.tag === "@see").map((m) => m.content.map((t) => seelink(t)).join("")),
+        static: getter.flags.isStatic || ((_H = (_G = getter.comment) == null ? void 0 : _G.blockTags) == null ? void 0 : _H.some((r) => r.tag === "@static")),
         type: getter.type ? parseType(getter.type) : "any"
       });
     }
@@ -431,7 +439,7 @@ var ClassSerializer = class extends AbstractSerializer {
     return {
       name: decl.name,
       description: ((_c = (_b = signature.comment) == null ? void 0 : _b.summary) == null ? void 0 : _c.map((t) => t.text).join("")) || null,
-      see: ((_e = (_d = signature.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.filter((r) => r.tag === "@see").map((t) => t.content.map((t2) => t2.text).join(""))) || [],
+      see: ((_e = (_d = signature.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.filter((r) => r.tag === "@see").map((t) => t.content.map((t2) => seelink(t2)).join(""))) || [],
       static: !!signature.flags.isStatic || !!decl.flags.isStatic,
       private: decl.flags.isPrivate || !!((_g = (_f = signature.comment) == null ? void 0 : _f.blockTags) == null ? void 0 : _g.filter((r) => r.tag === "@private").length),
       examples: ((_i = (_h = signature.comment) == null ? void 0 : _h.blockTags) == null ? void 0 : _i.filter((r) => r.tag === "@example").map((t) => t.content.map((t2) => t2.text).join(""))) || [],
@@ -464,7 +472,7 @@ __name(ClassSerializer, "ClassSerializer");
 var import_typedoc2 = require("typedoc");
 var TypesSerializer = class extends AbstractSerializer {
   serialize() {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
     const base = {
       deprecated: !!((_b = (_a = this.declaration.comment) == null ? void 0 : _a.blockTags) == null ? void 0 : _b.some((r) => r.tag === "@deprecated")),
       description: ((_d = (_c = this.declaration.comment) == null ? void 0 : _c.summary) == null ? void 0 : _d.map((t) => t.text).join("")) || null,
@@ -474,13 +482,13 @@ var TypesSerializer = class extends AbstractSerializer {
       private: !!this.declaration.flags.isPrivate,
       properties: [],
       returns: null,
-      see: [],
+      see: ((_h = (_g = (_f = (_e = this.declaration.comment) == null ? void 0 : _e.blockTags) == null ? void 0 : _f.find((r) => r.tag === "@see")) == null ? void 0 : _g.content) == null ? void 0 : _h.map((m) => m.text)) || [],
       type: this.declaration.type ? parseType(this.declaration.type) : "any"
     };
     if (this.declaration.kind === import_typedoc2.ReflectionKind.Enum || this.declaration.kind === import_typedoc2.ReflectionKind.Interface) {
       if (this.declaration.children) {
         base.properties = this.declaration.children.map((m) => {
-          var _a2, _b2, _c2, _d2, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w;
+          var _a2, _b2, _c2, _d2, _e2, _f2, _g2, _h2, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w;
           if (((_a2 = m.type) == null ? void 0 : _a2.type) !== "reflection")
             return {
               name: m.name,
@@ -488,11 +496,11 @@ var TypesSerializer = class extends AbstractSerializer {
               value: m.defaultValue || null,
               abstract: !!m.flags.isAbstract,
               default: m.defaultValue || null,
-              deprecated: !!((_e = (_d2 = m.comment) == null ? void 0 : _d2.blockTags) == null ? void 0 : _e.some((r) => r.tag === "@deprecated")),
+              deprecated: !!((_e2 = (_d2 = m.comment) == null ? void 0 : _d2.blockTags) == null ? void 0 : _e2.some((r) => r.tag === "@deprecated")),
               metadata: getFileMetadata(m),
               private: !!m.flags.isPrivate,
               readonly: !!m.flags.isReadonly,
-              see: ((_i = (_h = (_g = (_f = this.declaration.comment) == null ? void 0 : _f.blockTags) == null ? void 0 : _g.find((r) => r.tag === "@see")) == null ? void 0 : _h.content) == null ? void 0 : _i.map((m2) => m2.text)) || [],
+              see: ((_i = (_h2 = (_g2 = (_f2 = m.comment) == null ? void 0 : _f2.blockTags) == null ? void 0 : _g2.find((r) => r.tag === "@see")) == null ? void 0 : _h2.content) == null ? void 0 : _i.map((m2) => m2.text)) || [],
               static: !!m.flags.isStatic,
               type: m.type ? parseType(m.type) : "any",
               rawType: m.type ? parseTypes(m.type) : ["any"]
@@ -507,7 +515,7 @@ var TypesSerializer = class extends AbstractSerializer {
             metadata: getFileMetadata(((_s = m.type) == null ? void 0 : _s.declaration) || m),
             private: !!m.flags.isPrivate,
             readonly: !!m.flags.isReadonly,
-            see: ((_w = (_v = (_u = (_t = this.declaration.comment) == null ? void 0 : _t.blockTags) == null ? void 0 : _u.find((r) => r.tag === "@see")) == null ? void 0 : _v.content) == null ? void 0 : _w.map((m2) => m2.text)) || [],
+            see: ((_w = (_v = (_u = (_t = m.comment) == null ? void 0 : _t.blockTags) == null ? void 0 : _u.find((r) => r.tag === "@see")) == null ? void 0 : _v.content) == null ? void 0 : _w.map((m2) => m2.text)) || [],
             static: !!m.flags.isStatic,
             type: m.type ? parseType(m.type) : "any",
             rawType: m.type ? parseTypes(m.type) : ["any"]
@@ -564,10 +572,24 @@ var TypeDocNextra = class {
     this.options = options;
     this.linker = this.options.linker;
   }
+  getSee(see) {
+    return (see == null ? void 0 : see.length) ? `
+See
+
+            ${see.join("")}` : "";
+  }
   getClassHeading(c) {
-    return `${heading(escape(c.name), 2)}${c.extends ? ` extends ${this.linker(c.extends, [c.extends])}` : ""}${c.implements ? ` implements ${this.linker(c.implements, [c.implements])}` : ""}${c.description ? `
+    const exts = c.extends ? `${heading("Extends", 3)}
+${"- " + hyperlink(c.extends, "../classes/" + c.extends)}` : "";
+    const imps = c.implements ? `${heading("Implements", 3)}
+${"- " + hyperlink(c.implements, "../classes/" + c.implements)}` : "";
+    return `${heading(escape(c.name), 2)}
+            ${exts}
+            ${imps}
+            ${c.description ? `
 ${c.description}
-` : ""}`;
+` : ""}
+            ${this.getSee(c.see)}`;
   }
   getCtor(c) {
     if (!c)
@@ -586,7 +608,10 @@ ${c.description}
       const tableBody = c.parameters.map((m) => {
         const params = [
           escape(m.name),
-          this.linker(m.type || "any", [m.type || "any"])
+          this.linker(
+            m.type || "any",
+            [m.type || "any"]
+          )
         ];
         if (tableHead.includes("Description"))
           params.push(m.description || "N/A");
@@ -663,13 +688,14 @@ ${table(tableHead, tableBody)}
     const head = heading("Properties", 2);
     const body = properties.map((m) => {
       var _a;
-      const name = `${m.private ? "private" : "public"} ${m.static ? "static " : ""}${escape(m.name)}`.trim();
-      const title = heading(`${name}: ${this.linker(m.type || "any", m.rawType || ["any"])}`, 3);
+      const name = `${m.static ? "static " : ""}${escape(m.name)}`.trim();
+      const title = heading(`${name}: ${this.linker(m.type || "any", m.rawType || [m.type || "any"])}`, 3);
       const desc = [m.description || "", m.deprecated ? `
 - ${bold("\u26A0\uFE0F Deprecated")}` : "", ((_a = m.metadata) == null ? void 0 : _a.url) ? `
 - ${hyperlink("Source", m.metadata.url)}` : ""].filter((r) => r.length > 0).join("\n").trim();
       return `${title}
-${desc}`;
+${desc}
+${this.getSee(m.see)}`;
     });
     return `${head}
 ${body.join("\n")}`;
@@ -680,7 +706,7 @@ ${body.join("\n")}`;
     const head = heading("Methods", 2);
     const body = methods.map((m) => {
       var _a, _b;
-      const name = `${m.private ? `private` : `public`} ${m.static ? "static " : ""}${escape(m.name)}(${m.parameters.filter((r) => !r.name.includes(".")).map((m2) => {
+      const name = `${m.static ? "static " : ""}${escape(m.name)}(${m.parameters.filter((r) => !r.name.includes(".")).map((m2) => {
         return `${m2.name}${m2.optional ? "?" : ""}`;
       }).join(", ")})`.trim();
       const title = heading(`${name}: ${((_a = m.returns) == null ? void 0 : _a.type) ? `${this.linker(m.returns.type || "any", m.returns.rawType || ["any"])}` : "any"}`, 3);
@@ -713,7 +739,7 @@ ${table(tableHead, tableBody)}
 - ${hyperlink("Source", m.metadata.url)}` : ""
       ].filter((r) => r.length > 0).join("\n").trim();
       return `${title}
-${desc}`;
+${desc}${this.getSee(m.see)}`;
     });
     return `${head}
 ${body.join("\n")}`;
@@ -1025,6 +1051,7 @@ var src_default = createDocumentation;
   ol,
   parseType,
   parseTypes,
+  seelink,
   strikethrough,
   subscript,
   superscript,

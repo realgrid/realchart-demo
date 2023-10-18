@@ -20,10 +20,30 @@ export class TypeDocNextra {
         this.linker = this.options.linker;
     }
 
+    // [
+    //     ' - ',
+    //     '[Factorial - Wikipedia](https://en.wikipedia.org/wiki/Factorial)',
+    //     '\n',
+    //     ' - ',
+    //     'semifactorial',
+    //     '\n',
+    // ]
+    public getSee(see: string[]) {
+        return see?.length 
+            ? `\nSee\n
+            ${see.join('')}`
+            : '';
+    }
+
     public getClassHeading(c: DocumentedClass) {
-        return `${heading(escape(c.name), 2)}${c.extends ? ` extends ${this.linker(c.extends, [c.extends])}` : ''}${c.implements ? ` implements ${this.linker(c.implements, [c.implements])}` : ''}${
-            c.description ? `\n${c.description}\n` : ''
-        }`;
+        // const derived = `${c.extends ? ` extends ${this.linker(c.extends, [c.extends])}` : ''}${c.implements ? ` implements ${this.linker(c.implements, [c.implements])}` : ''}`;
+        const exts = c.extends ? `${heading('Extends', 3)}\n${'- ' + hyperlink(c.extends, '../classes/' + c.extends)}` : '';
+        const imps = c.implements ? `${heading('Implements', 3)}\n${'- ' + hyperlink(c.implements, '../classes/' + c.implements)}` : '';
+        return `${heading(escape(c.name), 2)}
+            ${exts}
+            ${imps}
+            ${c.description ? `\n${c.description}\n` : ''}
+            ${this.getSee(c.see)}`;
     }
 
     public getCtor(c: DocumentedClassConstructor) {
@@ -45,7 +65,10 @@ export class TypeDocNextra {
             ];
             if (c.parameters.some((p) => p.description && p.description.trim().length > 0)) tableHead.push('Description');
             const tableBody = c.parameters.map((m) => {
-                const params = [escape(m.name), this.linker(m.type || 'any', [m.type || 'any']),
+                const params = [
+                    escape(m.name), 
+                    this.linker(m.type || 'any', 
+                    [m.type || 'any']),
                     // m.optional ? '✅' : '❌',
                 ];
 
@@ -120,6 +143,7 @@ export class TypeDocNextra {
     }
 
     public getMarkdown(c: DocumentedClass) {
+        // c.properties.forEach(p => { p.metadata = { name: c.name, directory: '', line: 0 }; } );
         return [this.getClassHeading(c), this.getCtor(c.constructor!), this.getProperties(c.properties), this.getMethods(c.methods)].join('\n\n');
     }
 
@@ -128,14 +152,15 @@ export class TypeDocNextra {
 
         const head = heading('Properties', 2);
         const body = properties.map((m) => {
-            const name = `${m.private ? 'private' : 'public'} ${m.static ? 'static ' : ''}${escape(m.name)}`.trim();
-            const title = heading(`${name}: ${this.linker(m.type || 'any', m.rawType || ['any'])}`, 3);
+            // const name = `${m.private ? 'private' : 'public'} ${m.static ? 'static ' : ''}${escape(m.name)}`.trim();
+            const name = `${m.static ? 'static ' : ''}${escape(m.name)}`.trim();
+            const title = heading(`${name}: ${this.linker(m.type || 'any', m.rawType || [m.type || 'any'])}`, 3);
             const desc = [m.description || '', m.deprecated ? `\n- ${bold('⚠️ Deprecated')}` : '', m.metadata?.url ? `\n- ${hyperlink('Source', m.metadata.url)}` : '']
                 .filter((r) => r.length > 0)
                 .join('\n')
                 .trim();
 
-            return `${title}\n${desc}`;
+            return `${title}\n${desc}\n${this.getSee(m.see)}`;
         });
 
         return `${head}\n${body.join('\n')}`;
@@ -146,7 +171,8 @@ export class TypeDocNextra {
 
         const head = heading('Methods', 2);
         const body = methods.map((m) => {
-            const name = `${m.private ? `private` : `public`} ${m.static ? 'static ' : ''}${escape(m.name)}(${m.parameters
+            // ${m.private ? 'private' : 'public'}
+            const name = `${m.static ? 'static ' : ''}${escape(m.name)}(${m.parameters
                 .filter((r) => !r.name.includes('.'))
                 .map((m) => {
                     return `${m.name}${m.optional ? '?' : ''}`;
@@ -185,7 +211,7 @@ export class TypeDocNextra {
                 .join('\n')
                 .trim();
 
-            return `${title}\n${desc}`;
+            return `${title}\n${desc}${this.getSee(m.see)}`;
         });
 
         return `${head}\n${body.join('\n')}`;

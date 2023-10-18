@@ -34,7 +34,7 @@ export class TypesSerializer extends AbstractSerializer {
             private: !!this.declaration.flags.isPrivate,
             properties: [],
             returns: null,
-            see: [],
+            see: this.declaration.comment?.blockTags?.find((r) => r.tag === '@see')?.content?.map((m) => m.text) || [],
             type: this.declaration.type ? parseType(this.declaration.type) : 'any'
         } as DocumentedTypes;
 

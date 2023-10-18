@@ -1,5 +1,5 @@
 import { JSONOutput, ReflectionKind } from 'typedoc';
-import { FileMetadata, getFileMetadata, getName, parseType, parseTypes } from '../utils';
+import { FileMetadata, getFileMetadata, getName, hyperlink, seelink, parseType, parseTypes } from '../utils';
 import { AbstractSerializer } from './AbstractSerializer';
 
 export interface DocumentedClass {
@@ -99,7 +99,7 @@ export class ClassSerializer extends AbstractSerializer {
             methods: methods?.map((m) => this.parseMethod(m)) || [],
             private: this.declaration.flags.isPrivate || !!this.declaration.comment?.blockTags?.some((r) => r.tag === '@private'),
             properties: properties?.map((m) => this.parseProperties(m)) || [],
-            see: this.declaration.comment?.blockTags?.filter((r) => r.tag === '@see').map((m) => m.content?.[0].text) || []
+            see: this.declaration.comment?.blockTags?.find((r) => r.tag === '@see')?.content?.map((m) => seelink(m)) || []
         };
     }
 
@@ -113,7 +113,8 @@ export class ClassSerializer extends AbstractSerializer {
             name: decl.name,
             private: decl.flags.isPrivate || !!decl.comment?.blockTags?.some((r) => r.tag === '@private'),
             readonly: decl.flags.isReadonly || !!decl.comment?.blockTags?.some((r) => r.tag === '@readonly'),
-            see: decl.comment?.blockTags?.filter((r) => r.tag === '@see').map((m) => m.content[0].text) || [],
+            // see: decl.comment?.blockTags?.filter((r) => r.tag === '@see').map((m) => m.content[0].text) || [],
+            see: decl.comment?.blockTags?.find((r) => r.tag === '@see')?.content?.map((m) => seelink(m)) || [],
             static: decl.flags.isStatic || !!decl.comment?.blockTags?.some((r) => r.tag === '@static'),
             type: decl.type ? parseType(decl.type) : 'any'
         } as DocumentedClassProperty;
@@ -133,7 +134,7 @@ export class ClassSerializer extends AbstractSerializer {
                 name: getter.name,
                 private: getter.flags.isPrivate || getter.comment?.blockTags?.some((r) => r.tag === '@private'),
                 readonly: getter.flags.isReadonly || getter.comment?.blockTags?.some((r) => r.tag === '@readonly'),
-                see: getter.comment?.blockTags?.filter((r) => r.tag === '@see').map((m) => m.content.map((t) => t.text).join('')),
+                see: getter.comment?.blockTags?.filter((r) => r.tag === '@see').map((m) => m.content.map((t) => seelink(t)).join('')),
                 static: getter.flags.isStatic || getter.comment?.blockTags?.some((r) => r.tag === '@static'),
                 type: getter.type ? parseType(getter.type) : 'any'
             } as Partial<DocumentedClassProperty>);
@@ -148,7 +149,7 @@ export class ClassSerializer extends AbstractSerializer {
         return {
             name: decl.name,
             description: signature.comment?.summary?.map((t) => t.text).join('') || null,
-            see: signature.comment?.blockTags?.filter((r) => r.tag === '@see').map((t) => t.content.map((t) => t.text).join('')) || [],
+            see: signature.comment?.blockTags?.filter((r) => r.tag === '@see').map((t) => t.content.map((t) => seelink(t)).join('')) || [],
             static: !!signature.flags.isStatic || !!decl.flags.isStatic,
             private: decl.flags.isPrivate || !!signature.comment?.blockTags?.filter((r) => r.tag === '@private').length,
             examples: signature.comment?.blockTags?.filter((r) => r.tag === '@example').map((t) => t.content.map((t) => t.text).join('')) || [],

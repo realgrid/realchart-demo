@@ -22,9 +22,9 @@ export class Globals {
     /**
      * RealChart 라이브러리 버전 정보를 리턴한다.
      * 
-     * ```
+     * ```js
      * alert(RealChart.getVersion());
-     * ```ㅇㅇㅇ
+     * ```
      * 
      * @returns 버전 문자열
      */

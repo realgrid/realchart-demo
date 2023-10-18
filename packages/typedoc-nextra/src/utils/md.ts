@@ -77,6 +77,17 @@ export function hyperlink<T extends string, U extends string>(text: T, link: U) 
     return `[${text}](${link})` as const;
 }
 
+export function seelink(comment:any): string {
+    if (!(comment.kind == 'inline-tag') || !(comment.tag  == '@link')) return comment.text;
+    
+    const sep = comment.text.split('.')
+    const [g] = sep;
+    const sub = g == 'g' ? 'globals' : 'classes';
+    const [page] = sep.slice(-1);
+
+    return hyperlink(page, `../${sub}/${page}`);
+}
+
 export function image<T extends string, U extends string>(alt: T, link: U) {
     return `![${alt}](${link})` as const;
 }

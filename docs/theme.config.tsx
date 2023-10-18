@@ -18,12 +18,6 @@ const config: DocsThemeConfig = {
       return <>{title}{prefix}</>;
     }
   },
-  toc: {
-    headingComponent(args) {
-      console.debug({args})
-      return <></>
-    },
-  },
   logo: <Logo brand={brand} showBrandName iconSize={32} textSize={28} />,
   banner: {
     key: "1.0-release",

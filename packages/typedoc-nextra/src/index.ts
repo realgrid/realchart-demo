@@ -122,10 +122,10 @@ export async function createDocumentation(options: TypeDocNextraInit): Promise<D
     const mdTransformer = new TypeDocNextra({
         links: options.links,
         linker: (t, r) => {
+            // console.debug({t, r})
             const { noLinkTypes = false, links = {} } = options;
             if (noLinkTypes) return escape(t);
             const linkKeys = Object.entries(links);
-
             const linkTypes = (type: string) => {
                 for (const [li, val] of linkKeys) {
                     if (li.toLowerCase() === type.toLowerCase()) {

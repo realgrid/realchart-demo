@@ -45,6 +45,7 @@ declare function ul<T extends string>(src: T): `- ${T}`;
 declare function ol<T extends string>(src: T): `${number}. ${T}`;
 declare function hr(): "---";
 declare function hyperlink<T extends string, U extends string>(text: T, link: U): `[${T}](${U})`;
+declare function seelink(comment: any): string;
 declare function image<T extends string, U extends string>(alt: T, link: U): `![${T}](${U})`;
 declare function table(heading: string[], body: string[][]): string;
 
@@ -154,6 +155,7 @@ declare class TypeDocNextra {
     options: TypeDocNextraMdBuilderOptions;
     linker: typeof this$1.options.linker;
     constructor(options: TypeDocNextraMdBuilderOptions);
+    getSee(see: string[]): string;
     getClassHeading(c: DocumentedClass): string;
     getCtor(c: DocumentedClassConstructor): string;
     transformClass(classes: DocumentedClass[]): TypeDocNextraMarkdownBuild[];
@@ -215,4 +217,4 @@ interface Documentation {
 }
 declare function createDocumentation(options: TypeDocNextraInit): Promise<Documentation>;
 
-export { AbstractSerializer, ClassSerializer, Documentation, DocumentationMetadata, DocumentedClass, DocumentedClassConstructor, DocumentedClassMethod, DocumentedClassProperty, DocumentedFunction, DocumentedParameter, DocumentedTypeProperty, DocumentedTypes, FileMetadata, FunctionSerializer, HeadingTypes, MdHeading, TypeDocNextra, TypeDocNextraCustomFile, TypeDocNextraInit, TypeDocNextraLink, TypeDocNextraMarkdownBuild, TypeDocNextraMdBuilderOptions, TypesSerializer, blockquote, bold, code, codeBlock, createDocumentation, createDocumentation as default, escape, getFileMetadata, getName, heading, headingId, highlight, hr, hyperlink, image, italic, makeId, ol, parseType, parseTypes, strikethrough, subscript, superscript, table, taskList, ul };
+export { AbstractSerializer, ClassSerializer, Documentation, DocumentationMetadata, DocumentedClass, DocumentedClassConstructor, DocumentedClassMethod, DocumentedClassProperty, DocumentedFunction, DocumentedParameter, DocumentedTypeProperty, DocumentedTypes, FileMetadata, FunctionSerializer, HeadingTypes, MdHeading, TypeDocNextra, TypeDocNextraCustomFile, TypeDocNextraInit, TypeDocNextraLink, TypeDocNextraMarkdownBuild, TypeDocNextraMdBuilderOptions, TypesSerializer, blockquote, bold, code, codeBlock, createDocumentation, createDocumentation as default, escape, getFileMetadata, getName, heading, headingId, highlight, hr, hyperlink, image, italic, makeId, ol, parseType, parseTypes, seelink, strikethrough, subscript, superscript, table, taskList, ul };
