@@ -67,8 +67,7 @@ export class TypeDocNextra {
             const tableBody = c.parameters.map((m) => {
                 const params = [
                     escape(m.name), 
-                    this.linker(m.type || 'any', 
-                    [m.type || 'any']),
+                    this.linker(m.type || 'any', [m.type || 'any']),
                     // m.optional ? '✅' : '❌',
                 ];
 
@@ -185,16 +184,18 @@ export class TypeDocNextra {
                 m.examples ? '\n' + m.examples.map((m) => (m.includes('```') ? m : codeBlock(m, 'typescript'))).join('\n\n') : '',
                 m.parameters.length
                     ? (() => {
-                          const tableHead = ['Parameter', 
+                          const tableHead = [
+                            'Parameter', 
                             'Type', 
                             // 'Optional',
                         ];
                           if (m.parameters.some((p) => p.description && p.description.trim().length > 0)) tableHead.push('Description');
+                          
                           const tableBody = m.parameters.map((n) => {
                               const params = [
-                                  n.default ? `${escape(n.name)}=${code(escape(n.default))}` : escape(n.name),
-                                  this.linker(n.type || 'any', n.rawType || ['any']),
-                                //   n.optional ? '✅' : '❌'
+                                    n.default ? `${escape(n.name)}=${code(escape(n.default))}` : escape(n.name), 
+                                    this.linker(n.type || 'any', n.rawType || [ n.type || 'any']),
+                                    //   n.optional ? '✅' : '❌'
                               ];
 
                               if (tableHead.includes('Description')) params.push(n.description || 'N/A');
@@ -237,8 +238,9 @@ export class TypeDocNextra {
                     ];
                       if (m.parameters.some((p) => p.description && p.description.trim().length > 0)) tableHead.push('Description');
                       const tableBody = m.parameters.map((n) => {
-                        const params = [n.default ? `${escape(n.name)}=${code(escape(n.default))}` : escape(n.name), 
-                            this.linker(n.type || 'any', n.rawType || ['any']), 
+                        const params = [
+                            n.default ? `${escape(n.name)}=${code(escape(n.default))}` : escape(n.name), 
+                            this.linker(n.type || 'any', n.rawType || [ n.type || 'any']), 
                             // n.optional ? '✅' : '❌',
                         ];
 

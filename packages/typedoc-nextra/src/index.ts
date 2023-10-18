@@ -5,7 +5,7 @@ import path from 'path';
 import { ClassSerializer, DocumentedClass, DocumentedFunction, DocumentedTypes, FunctionSerializer, TypesSerializer } from './serializers';
 import { TypeDocNextra, TypeDocNextraMarkdownBuild } from './TypeDocNextra';
 import { escape } from './utils';
-import { hyperlink } from './utils/md';
+import { hyperlink, seelink } from './utils/md';
 import { existsSync } from 'fs';
 import { DefaultLinksFactory } from './utils/links';
 
@@ -127,17 +127,19 @@ export async function createDocumentation(options: TypeDocNextraInit): Promise<D
             if (noLinkTypes) return escape(t);
             const linkKeys = Object.entries(links);
             const linkTypes = (type: string) => {
+                type = escape(type);
                 for (const [li, val] of linkKeys) {
                     if (li.toLowerCase() === type.toLowerCase()) {
-                        const hyl = hyperlink(escape(type), val);
+                        const hyl = hyperlink(type, val);
                         return hyl;
                     }
                 }
-
-                return escape(type);
+                const isClass = data?.children?.some(c => c.name.toLowerCase() === type.toLowerCase());
+                return isClass ? hyperlink(type, `../classes/${type}`) : type;
             };
 
-            const linked = r.map((p) => linkTypes(p)).join('');
+            // 특수문자 '|'는 md 파일에서 테이블 구분자이다. 대체 문자 사용.
+            const linked = r.map((p) => linkTypes(p)).join(' &#124; ');
             return linked;
 
             // TODO: auto link

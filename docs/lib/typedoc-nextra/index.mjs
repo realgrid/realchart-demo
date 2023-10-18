@@ -442,7 +442,7 @@ var TypesSerializer = class extends AbstractSerializer {
               metadata: getFileMetadata(m),
               private: !!m.flags.isPrivate,
               readonly: !!m.flags.isReadonly,
-              see: ((_i = (_h2 = (_g2 = (_f2 = m.comment) == null ? void 0 : _f2.blockTags) == null ? void 0 : _g2.find((r) => r.tag === "@see")) == null ? void 0 : _h2.content) == null ? void 0 : _i.map((m2) => m2.text)) || [],
+              see: ((_i = (_h2 = (_g2 = (_f2 = this.declaration.comment) == null ? void 0 : _f2.blockTags) == null ? void 0 : _g2.find((r) => r.tag === "@see")) == null ? void 0 : _h2.content) == null ? void 0 : _i.map((m2) => m2.text)) || [],
               static: !!m.flags.isStatic,
               type: m.type ? parseType(m.type) : "any",
               rawType: m.type ? parseTypes(m.type) : ["any"]
@@ -457,7 +457,7 @@ var TypesSerializer = class extends AbstractSerializer {
             metadata: getFileMetadata(((_s = m.type) == null ? void 0 : _s.declaration) || m),
             private: !!m.flags.isPrivate,
             readonly: !!m.flags.isReadonly,
-            see: ((_w = (_v = (_u = (_t = m.comment) == null ? void 0 : _t.blockTags) == null ? void 0 : _u.find((r) => r.tag === "@see")) == null ? void 0 : _v.content) == null ? void 0 : _w.map((m2) => m2.text)) || [],
+            see: ((_w = (_v = (_u = (_t = this.declaration.comment) == null ? void 0 : _t.blockTags) == null ? void 0 : _u.find((r) => r.tag === "@see")) == null ? void 0 : _v.content) == null ? void 0 : _w.map((m2) => m2.text)) || [],
             static: !!m.flags.isStatic,
             type: m.type ? parseType(m.type) : "any",
             rawType: m.type ? parseTypes(m.type) : ["any"]
@@ -550,10 +550,7 @@ ${c.description}
       const tableBody = c.parameters.map((m) => {
         const params = [
           escape(m.name),
-          this.linker(
-            m.type || "any",
-            [m.type || "any"]
-          )
+          this.linker(m.type || "any", [m.type || "any"])
         ];
         if (tableHead.includes("Description"))
           params.push(m.description || "N/A");
@@ -667,7 +664,7 @@ ${body.join("\n")}`;
           const tableBody = m.parameters.map((n) => {
             const params = [
               n.default ? `${escape(n.name)}=${code(escape(n.default))}` : escape(n.name),
-              this.linker(n.type || "any", n.rawType || ["any"])
+              this.linker(n.type || "any", n.rawType || [n.type || "any"])
             ];
             if (tableHead.includes("Description"))
               params.push(n.description || "N/A");
@@ -707,7 +704,7 @@ ${body.join("\n")}`;
         const tableBody = m.parameters.map((n) => {
           const params = [
             n.default ? `${escape(n.name)}=${code(escape(n.default))}` : escape(n.name),
-            this.linker(n.type || "any", n.rawType || ["any"])
+            this.linker(n.type || "any", n.rawType || [n.type || "any"])
           ];
           if (tableHead.includes("Description"))
             params.push(n.description || "N/A");
@@ -818,15 +815,18 @@ function createDocumentation(options) {
           return escape(t);
         const linkKeys = Object.entries(links);
         const linkTypes = /* @__PURE__ */ __name((type) => {
+          var _a2;
+          type = escape(type);
           for (const [li, val] of linkKeys) {
             if (li.toLowerCase() === type.toLowerCase()) {
-              const hyl = hyperlink(escape(type), val);
+              const hyl = hyperlink(type, val);
               return hyl;
             }
           }
-          return escape(type);
+          const isClass = (_a2 = data == null ? void 0 : data.children) == null ? void 0 : _a2.some((c) => c.name.toLowerCase() === type.toLowerCase());
+          return isClass ? hyperlink(type, `../classes/${type}`) : type;
         }, "linkTypes");
-        const linked = r.map((p) => linkTypes(p)).join("");
+        const linked = r.map((p) => linkTypes(p)).join(" &#124; ");
         return linked;
       }
     });
