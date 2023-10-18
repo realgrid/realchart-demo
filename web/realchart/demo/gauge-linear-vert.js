@@ -17,7 +17,7 @@ const config = {
         width: 65,
         height: '70%',
         top: 100,
-        left: 50,
+        left: 200,
         vertical: true,
         maxValue: 100,
         value: 81,
@@ -45,6 +45,13 @@ const config = {
         }],
         label: {
             text: "RealChart<br>Linear<br>ver 1.0"
+        },
+        style: {
+            padding: '10px'
+        },
+        paneStyle: {
+            stroke: 'lightblue',
+            borderRadius: '10px'
         }
     }, {
         type: 'linear',
@@ -52,7 +59,7 @@ const config = {
         width: 200,
         height: '70%',
         top: 100,
-        left: 200,
+        left: 350,
         vertical: true,
         maxValue: 100,
         value: 81,

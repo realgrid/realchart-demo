@@ -31,6 +31,8 @@ export enum TextOverflow {
 
 /**
  * Background, padding 등을 이용하려면 HtmlTextElement를 사용한다.
+ * 
+ * // TODO: wrap
  */
 export class TextElement extends RcElement {
 

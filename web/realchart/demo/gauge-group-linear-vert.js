@@ -6,7 +6,7 @@ const config = {
     templates: {
         gauge: {
             label: {
-                numberFormat: '#0.#',
+                numberFormat: '#00.#',
             }
         }
     },
@@ -18,9 +18,9 @@ const config = {
             // align: 'center'
         }
     },
-    title: "Bullet Gauge Group",
+    title: "Linear Gauge Group Vertical",
     gauge: [{
-        type: 'bulletgroup',
+        type: 'lineargroup',
         width: '80%',
         height: 250,
         maxValue: 100,
@@ -28,7 +28,6 @@ const config = {
             name: 'gauge1',
             template: 'gauge',
             value: Math.random() * 100,
-            targetValue: 90,
             valueRim: {
                 style: {
                     fill: '#00aaff'
@@ -44,7 +43,6 @@ const config = {
             name: 'gauge2',
             template: 'gauge',
             value: Math.random() * 100,
-            targetValue: 70,
             valueRim: {
                 style: {
                     fill: '#ffaa00'
@@ -60,7 +58,6 @@ const config = {
             name: 'gauge3',
             template: 'gauge',
             value: Math.random() * 100,
-            targetValue: 75,
             valueRim: {
                 style: {
                     fill: '#88cc00'
@@ -76,7 +73,6 @@ const config = {
             name: 'gauge4',
             template: 'gauge',
             value: Math.random() * 100,
-            targetValue: 88,
             valueRim: {
                 style: {
                     fill: '#aa0000'
@@ -89,17 +85,23 @@ const config = {
                 text: "<t style='fill:gray'>게이지 404 -</t> ${value}"
             }
         }],
-        ranges: [{
-            toValue: 50,
-            color: '#777'
-        }, {
-            toValue: 70,
-            color: '#aaa'
-        }],
         scale: {
         },
+        band: {
+            gap: 3,
+            ranges: [{
+                toValue: 30,
+                color: '#ff0',
+            }, {
+                toValue: 60,
+                color: '#fa0'
+            }, {
+                color: '#f40'
+            }],
+            // tickLabel: true
+        },
         label: {
-            text: 'Bullet Gauges'
+            text: 'Linear Gauges'
         },
         paneStyle: {
             stroke: 'lightblue',
@@ -145,6 +147,14 @@ function setActions(container) {
     }, true);
     createListBox(container, "scale.position", ['default', 'opposite'], function (e) {
         config.gauge[0].scale.position = _getValue(e);
+        chart.load(config);
+    }, 'default');
+    createCheckBox(container, 'band', function (e) {
+        config.gauge[0].band.visible = _getChecked(e);
+        chart.load(config);
+    }, false);
+    createListBox(container, "band.position", ['default', 'opposite'], function (e) {
+        config.gauge[0].band.position = _getValue(e);
         chart.load(config);
     }, 'default');
 }

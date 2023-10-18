@@ -9,7 +9,7 @@
 import { isArray, isObject, isString, pickNum, pickProp } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { ISize } from "../common/Size";
-import { DEG_RAD, IPercentSize, IValueRange, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, buildValueRanges, calcPercent, fixnum, parsePercentSize } from "../common/Types";
+import { DEG_RAD, IMinMax, IPercentSize, IValueRange, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, buildValueRanges, calcPercent, fixnum, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Widget } from "./Widget";
@@ -162,6 +162,11 @@ export abstract class GaugeBase extends Widget {
         }
     }
 
+    /**
+     * 게이지나 게이지그룹의 배경 pane에 대한 스타일.
+     */
+    paneStyle: SVGStyleOrClass;
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -301,6 +306,10 @@ export abstract class GaugeGroup<T extends ValueGauge> extends GaugeBase {
 
     getVisible(index: number): T {
         return this._visibles[index];
+    }
+
+    calcedMinMax(): IMinMax {
+        return { min: this.minValue, max: this.maxValue };
     }
 
     //-------------------------------------------------------------------------
@@ -467,7 +476,7 @@ export class GaugeCollection {
 /**
  * 게이지 모델.
  */
-export abstract class   ValueGauge extends Gauge {
+export abstract class ValueGauge extends Gauge {
 
     //-------------------------------------------------------------------------
     // consts
@@ -535,6 +544,11 @@ export abstract class   ValueGauge extends Gauge {
                 return this.maxValue;
         }
     }
+
+    calcedMinMax(): IMinMax {
+        return { min: this.minValue, max: this.maxValue };
+    }
+
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -614,6 +628,10 @@ export abstract class GaugeScale extends ChartItem {
     }
     set gap(value: number) {
         this._gap = pickNum(value, 0);
+    }
+
+    range(): IMinMax {
+        return { min: this._min, max: this._max };
     }
 
     //-------------------------------------------------------------------------
@@ -783,7 +801,7 @@ export enum GaugeItemPosition {
     INSIDE = 'inside'
 }
 
-export class GuageRangeBand extends ChartItem {
+export class GaugeRangeBand extends ChartItem {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -798,8 +816,8 @@ export class GuageRangeBand extends ChartItem {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(public gauge: ValueGauge) {
-        super(gauge.chart, false);
+    constructor(public gauge: ValueGauge | GaugeGroup<ValueGauge>, visible = false) {
+        super(gauge.chart, visible);
 
         this.rangeLabel = new ChartItem(gauge.chart, false);
         this.tickLabel = new ChartItem(gauge.chart, true);
@@ -865,7 +883,8 @@ export class GuageRangeBand extends ChartItem {
     //-------------------------------------------------------------------------
     private $_internalRanges(): IValueRange[] {
         if (!this._runRanges) {
-            this._runRanges = buildValueRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue) || [];
+            const v = this.gauge.calcedMinMax();
+            this._runRanges = buildValueRanges(this._ranges, v.min, v.max) || [];
         }
         return this._runRanges;
     }

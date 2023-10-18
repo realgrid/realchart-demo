@@ -681,8 +681,13 @@
 }
 
 /** gauge */
-.rct-gauge-background {
+.rct-gauge-pane {
     fill: none;
+}
+
+/** gauge group */
+.rct-gauge-group {
+    padding: 10px;
 }
 
 /** circle gauge */
@@ -782,9 +787,6 @@
 }
 
 /** linear gauge group */
-.rct-linear-gauge-group {
-    padding: 10px;
-}
 .rct-linear-gauge-group-label {
     font-size: 1.5em;
 }

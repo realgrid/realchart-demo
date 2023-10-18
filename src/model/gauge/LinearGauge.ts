@@ -6,10 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
+import { IMinMax, IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { GaugeGroup, GaugeLabel, GuageRangeBand, LinearGaugeScale, ValueGauge } from "../Gauge";
+import { GaugeGroup, GaugeLabel, GaugeRangeBand, LinearGaugeScale, ValueGauge } from "../Gauge";
 
 export class LinearGaugeLabel extends GaugeLabel {
 
@@ -208,7 +208,7 @@ export abstract class LinearGaugeBase extends ValueGauge {
     // methods
     //-------------------------------------------------------------------------
     isVertical(): boolean {
-        return this.group ? (this.group as LinearGaugeGroupBase<any>).vertical : this.vertical;
+        return this.group ? !(this.group as LinearGaugeGroupBase<any>).vertical : this.vertical;
     }
 
     scaleVisible(): boolean {
@@ -218,6 +218,9 @@ export abstract class LinearGaugeBase extends ValueGauge {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    calcedMinMax(): IMinMax {
+        return this.scale.range();
+    }
 }
 
 export enum LinearGaugeMarkerType {
@@ -285,7 +288,7 @@ export class LinearGauge extends LinearGaugeBase {
      * 
      * @config
      */
-    band = new GuageRangeBand(this);
+    band = new GaugeRangeBand(this);
 
     //-------------------------------------------------------------------------
     // methods
@@ -341,6 +344,7 @@ export abstract class LinearGaugeGroupBase<T extends LinearGaugeBase> extends Ga
     // fields
     //-------------------------------------------------------------------------
     _labelWidth: number;
+    _labelHeight: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -356,7 +360,9 @@ export abstract class LinearGaugeGroupBase<T extends LinearGaugeBase> extends Ga
     // properties
     //-------------------------------------------------------------------------
     /**
-     * true면 자식 게이지들을 수직으로 배치한다.
+     * true면 자식 게이지들을 수평으로 지정하고(자식 게이지의 vertical 속성과 관계없이), 수직으로 차례대로 배치한다.
+     * false면 자식 게이지들을 수직으로 지정하고, 수평으로 배치한다.\
+     * 이런 배치가 의도와 맞지 않다면 그룹없이 개별적으로 배치해야 한다.
      * 
      * @config
      */
@@ -387,9 +393,29 @@ export abstract class LinearGaugeGroupBase<T extends LinearGaugeBase> extends Ga
      * 자식 게이지들 사이의 표시 간격을 픽셀 단위로 지정한다.
      */
     itemGap = 10;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    calcedMinMax(): IMinMax {
+        return this.scale.range();
+    }
 }
 
 export class LinearGaugeGroup extends LinearGaugeGroupBase<LinearGauge> {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 게이지 본체 주변이나 내부에 값 영역들을 구분해서 표시하는 band의 모델.
+     * 
+     * @config
+     */
+    band = new GaugeRangeBand(this, false);
 
     //-------------------------------------------------------------------------
     // overriden members

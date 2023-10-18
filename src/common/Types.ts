@@ -177,6 +177,11 @@ export const checkNull = function (obj: any, message: string): void {
 export class AlertError extends Error {
 }
 
+export interface IMinMax {
+    min: number;
+    max: number;
+}
+
 export interface ISides {
     left: number;
     right: number;

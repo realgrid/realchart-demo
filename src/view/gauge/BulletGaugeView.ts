@@ -36,14 +36,16 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-bullet-gage');
+    }
 
-        this.add(this._background = new RectElement(doc, 'rct-bullet-gauge-background'));
-        this.add(this._barContainer = new LayerElement(doc, void 0));
+    protected _doInitContents(doc: Document, container: LayerElement): void {
+        container.add(this._background = new RectElement(doc, 'rct-bullet-gauge-background'));
+        container.add(this._barContainer = new LayerElement(doc, void 0));
         this._barViews = new ElementPool(this._barContainer, RectElement);
-        this.add(this._valueView = new RectElement(doc, 'rct-bullet-gauge-value'));
-        this.add(this._targetView = new RectElement(doc, 'rct-bullet-gauge-target'));
-        this.add(this._scaleView = new LinearScaleView(doc));
-        this.add(this._labelView = new TextElement(doc));
+        container.add(this._valueView = new RectElement(doc, 'rct-bullet-gauge-value'));
+        container.add(this._targetView = new RectElement(doc, 'rct-bullet-gauge-target'));
+        container.add(this._scaleView = new LinearScaleView(doc));
+        container.add(this._labelView = new TextElement(doc));
     }
 
     //-------------------------------------------------------------------------

@@ -22,7 +22,8 @@ const config = {
     gauge: [{
         type: 'lineargroup',
         width: '80%',
-        height: 200,
+        height: 250,
+        maxValue: 100,
         children: [{
             name: 'gauge1',
             template: 'gauge',
@@ -84,10 +85,25 @@ const config = {
                 text: "<t style='fill:gray'>게이지 404 -</t> ${value}"
             }
         }],
+        scale: {
+        },
+        band: {
+            gap: 3,
+            ranges: [{
+                toValue: 30,
+                color: '#ff0',
+            }, {
+                toValue: 60,
+                color: '#fa0'
+            }, {
+                color: '#f40'
+            }],
+            // tickLabel: true
+        },
         label: {
             text: 'Linear Gauges'
         },
-        style: {
+        paneStyle: {
             stroke: 'lightblue',
             borderRadius: '10px'
         }
@@ -107,7 +123,7 @@ function setActions(container) {
         alert('hello');
     });
     createCheckBox(container, 'label.animatable', function (e) {
-        config.gauge.label.animatable = _getChecked(e);
+        config.gauge[0].label.animatable = _getChecked(e);
         chart.load(config);
     }, true);
     createButton(container, 'Run', function(e) {
@@ -124,6 +140,22 @@ function setActions(container) {
     createListBox(container, "options.theme", ['', 'dark'], function (e) {
         config.options.theme = _getValue(e);
         chart.load(config, animate);
+    }, 'default');
+    createCheckBox(container, 'scale', function (e) {
+        config.gauge[0].scale.visible = _getChecked(e);
+        chart.load(config);
+    }, true);
+    createListBox(container, "scale.position", ['default', 'opposite'], function (e) {
+        config.gauge[0].scale.position = _getValue(e);
+        chart.load(config);
+    }, 'default');
+    createCheckBox(container, 'band', function (e) {
+        config.gauge[0].band.visible = _getChecked(e);
+        chart.load(config);
+    }, false);
+    createListBox(container, "band.position", ['default', 'opposite'], function (e) {
+        config.gauge[0].band.position = _getValue(e);
+        chart.load(config);
     }, 'default');
 }
 

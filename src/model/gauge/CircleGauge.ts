@@ -9,7 +9,7 @@
 import { IPercentSize, IValueRange, RtPercentSize, buildValueRanges, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { CircularGaugeGroup, CircularGauge, GaugeItemPosition, GaugeScale, GuageRangeBand, ICircularGaugeExtents, ValueGauge } from "../Gauge";
+import { CircularGaugeGroup, CircularGauge, GaugeItemPosition, GaugeScale, GaugeRangeBand, ICircularGaugeExtents, ValueGauge } from "../Gauge";
 
 export abstract class CircleGaugeRim extends ChartItem {
 
@@ -397,7 +397,7 @@ export class CircleGauge extends CircularGauge {
      * 
      * @config
      */
-    bandRim = new GuageRangeBand(this);
+    bandRim = new GaugeRangeBand(this);
     /**
      * 스케일 모델.
      * 

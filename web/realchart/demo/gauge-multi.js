@@ -73,6 +73,11 @@ const config = {
             style: {
                 strokeLinecap: 'round'
             }
+        },
+        paneStyle: {
+            stroke: 'lightblue',
+            strokeWidth: '2px',
+            borderRadius: '10px'
         }
     }, {
         template: "gauge",

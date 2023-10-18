@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
+import { copyObj, pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { LayerElement, RcElement } from "../../common/RcControl";
 import { IRect, Rectangle } from "../../common/Rectangle";
@@ -14,12 +14,12 @@ import { ISize } from "../../common/Size";
 import { IValueRange } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
-import { GaugeItemPosition, GuageRangeBand } from "../../model/Gauge";
+import { GaugeItemPosition, GaugeRangeBand } from "../../model/Gauge";
 import { LinearGauge, LinearGaugeBase, LinearGaugeGroup, LinearGaugeGroupBase } from "../../model/gauge/LinearGauge";
 import { ChartElement } from "../ChartElement";
 import { GaugeGroupView, LinearGaugeBaseView, LinearScaleView } from "../GaugeView";
 
-class BandView extends ChartElement<GuageRangeBand> {
+class BandView extends ChartElement<GaugeRangeBand> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -29,6 +29,7 @@ class BandView extends ChartElement<GuageRangeBand> {
     private _labels: ElementPool<TextElement>;
 
     private _ranges: IValueRange[];
+    private _vertical: boolean;
     _thick = 0;
     _gap = 0;
 
@@ -46,10 +47,9 @@ class BandView extends ChartElement<GuageRangeBand> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: GuageRangeBand, hintWidth: number, hintHeight: number, phase: number): ISize {
-        const g = model.gauge as LinearGauge;
-        const vertical = g.isVertical();
-        const scale = g.scale;
+    protected _doMeasure(doc: Document, model: GaugeRangeBand, hintWidth: number, hintHeight: number, phase: number): ISize {
+        const g = model.gauge as LinearGauge | LinearGaugeGroup;
+        const vertical = this._vertical = g instanceof LinearGauge ? g.isVertical() : !g.vertical;
         const thick = this._thick = model.position === GaugeItemPosition.INSIDE ? (vertical ? hintWidth : hintHeight) : pickNum(model.thickness, 0) + (this._gap = pickNum(model.gap, 0));
         let width = vertical ? thick : hintWidth;
         let height = vertical ? hintHeight : thick;
@@ -58,7 +58,7 @@ class BandView extends ChartElement<GuageRangeBand> {
         if (this._labelContainer.setVisible(model.tickLabel.visible && ranges.length > 0)) {
             const vals = [ranges[0].fromValue].concat(ranges.map(r => r.toValue));
 
-            this._labelContainer.internalSetStyleOrClass(model.tickLabel.style);
+            this._labelContainer.setStyleOrClass(model.tickLabel.style);
             this._labels.prepare(ranges.length + 1);
 
             if (vertical) {
@@ -95,10 +95,12 @@ class BandView extends ChartElement<GuageRangeBand> {
         this._barViews.prepare(ranges.length);
 
         if (!this._barViews.isEmpty && sum > 0) {
-            const vert = gauge.isVertical();
+            const vert = this._vertical;
+            const opposite = this.model.position === GaugeItemPosition.OPPOSITE;
             const width = this.width;
             const height = this.height;
             const len = vert ? height : width;
+            const thick = this._thick;
             let p = 0;
 
             this._barViews.prepare(ranges.length).forEach((v, i) => {
@@ -106,9 +108,10 @@ class BandView extends ChartElement<GuageRangeBand> {
                 const w = len * (range.toValue - range.fromValue) / sum;
 
                 if (vert) {
-                    v.setBounds(0, height - p - w, this._thick, w);
+                    v.setBounds(0, height - p - w, thick, w);
                 } else {
-                    v.setBounds(p, 0, w, this._thick);
+                    const y = opposite ? height - thick : 0;
+                    v.setBounds(p, y, w, this._thick);
                 }
                 
                 v.setStyle('fill', range.color);
@@ -119,20 +122,29 @@ class BandView extends ChartElement<GuageRangeBand> {
     }
 
     private $_layoutLabels(gauge: LinearGauge, sum: number, ranges: IValueRange[]): void {
-        const vert = gauge.isVertical();
+        const vert = this._vertical;
+        const opposite = this.model.position === GaugeItemPosition.OPPOSITE;
         const width = this.width;
         const height = this.height;
         const len = vert ? height : width;
-        const y = this._thick;
-        let v: TextElement = this._labels.get(0);
+        const p = opposite ? 0 : this._thick;
+        let v = this._labels.get(0);
 
-        v.translate(0, y);
+        if (vert) {
+            v.translate(p, 0);
+        } else {
+            v.translate(0, p);
+        }
 
         for (let i = 1; i <= ranges.length; i++) {
-            const x = len * ranges[i - 1].toValue / sum;
+            const xy = len * ranges[i - 1].toValue / sum;
             const v = this._labels.get(i);
 
-            v.translate(x, y);
+            if (vert) {
+                v.translate(p, xy);
+            } else {
+                v.translate(xy, p);
+            }
         }
     }
 }
@@ -154,14 +166,16 @@ export class LinearGaugeView extends LinearGaugeBaseView<LinearGauge> {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string) {
-        super(doc, styleName);
+    constructor(doc: Document) {
+        super(doc, 'rct-linear-gauge');
+    }
 
-        this.add(this._background = new RectElement(doc, 'rct-linear-gauge-background'));
-        this.add(this._bandView = new BandView(doc));
-        this.add(this._scaleView = new LinearScaleView(doc));
-        this.add(this._valueView = new RectElement(doc, 'rct-linear-gauge-value'));
-        this.add(this._labelView = new TextElement(doc));
+    protected _doInitContents(doc: Document, container: LayerElement): void {
+        container.add(this._background = new RectElement(doc, 'rct-linear-gauge-background'));
+        container.add(this._bandView = new BandView(doc));
+        container.add(this._scaleView = new LinearScaleView(doc));
+        container.add(this._valueView = new RectElement(doc, 'rct-linear-gauge-value'));
+        container.add(this._labelView = new TextElement(doc));
     }
 
     //-------------------------------------------------------------------------
@@ -254,16 +268,20 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
     // fields
     //-------------------------------------------------------------------------
     private _textView: TextElement;
-    private _scaleView: LinearScaleView;
+    protected _scaleView: LinearScaleView;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, styleName: string) {
         super(doc, styleName);
+    }
 
-        this._groupContainer.insertFirst(this._scaleView = new LinearScaleView(doc));
-        this._groupContainer.insertFirst(this._textView = new TextElement(doc, 'rct-linear-gauge-group-label'));
+    protected _doInitContents(doc: Document, container: LayerElement): void {
+        super._doInitContents(doc, container);
+
+        container.insertFirst(this._scaleView = new LinearScaleView(doc));
+        container.insertFirst(this._textView = new TextElement(doc, 'rct-linear-gauge-group-label'));
     }
 
     //-------------------------------------------------------------------------
@@ -299,12 +317,30 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
             tv.translate(this.width / 2, 0);
         }
 
-        this.$_renderScale(m, r);
-
-        m._labelWidth = 0;
+        m._labelWidth = m._labelHeight = 0;
         this._gaugeViews.forEach((v, i) => {
-            m._labelWidth = Math.max(m._labelWidth, (v as LinearGaugeBaseView<G>).measureLabelWidth(m.get(i), width, height));
+            const sz = (v as LinearGaugeBaseView<G>).measureLabelSize(m.get(i), width, height);
+            m._labelWidth = Math.max(m._labelWidth, sz.width);
+            m._labelHeight = Math.max(m._labelHeight, sz.height);
         })
+
+        const rBody = copyObj(r) as IRect;
+        const gap = m.itemLabel.gap;
+
+        if (m.vertical) {
+            // 자식 label이 left or right
+            rBody.width -= m._labelWidth + gap;
+            if (!m.itemLabel.opposite) {
+                rBody.x += m._labelWidth + gap;
+            }
+        } else {
+            rBody.height -= m._labelHeight + gap;
+            if (!m.itemLabel.opposite) {
+                rBody.x += m._labelHeight + gap;
+            }
+        }
+
+        this._renderScale(m, r, rBody);
 
         if (m.vertical) {
             this.$_layoutVert(this.doc, m, views, r);
@@ -316,22 +352,48 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_renderScale(model: LinearGaugeGroupBase<G>, rGauge: IRect): void {
+    protected _renderScale(model: LinearGaugeGroupBase<G>, rGauge: IRect, rBody: IRect): void {
+        const scaleView = this._scaleView;
         const scale = model.scale;
-        const len = this.width; // TODO: ?
+        const len = model.vertical ? rGauge.width : rGauge.height;
         const values: number[] = [];
+        let x: number, y: number;
 
         this._gaugeViews.forEach((v, i) => {
             values.push(pickNum(v._runValue, model.get(i).value));
         })
 
         scale.buildGroupSteps(len, values);
+
+        if (scaleView.setVisible(scale.visible)) {
+            if (model.vertical) { // 자식들이 수평 모드
+                const sz = scaleView.measure(this.doc, scale, rBody.width, rBody.height, 1);
+
+                rBody.height -= sz.height;
+                rGauge.height -= sz.height;
+                x = rBody.x;
+
+                if (scale.position === GaugeItemPosition.OPPOSITE) {
+                    y = rBody.y;
+                    rBody.y += sz.height;
+                    rGauge.y += sz.height;
+                } else {
+                    y = rBody.y + rBody.height;
+                }
+            } else { // 자식들이 수직 모드
+                // TODO
+            }
+
+            scaleView.resizeByMeasured().layout().translate(x, y);
+        }
     }
 
     private $_layoutHorz(doc: Document, model: LinearGaugeGroupBase<G>, views: ElementPool<LinearGaugeBaseView<G>>, bounds: IRect): void {
         const h = bounds.height;
         const w = bounds.width / views.count;
         const y = bounds.y;
+
+        // TODO
     }
 
     private $_layoutVert(doc: Document, model: LinearGaugeGroupBase<G>, views: ElementPool<LinearGaugeBaseView<G>>, bounds: IRect): void {
@@ -359,6 +421,11 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
 export class LinearGaugeGroupView extends LinearGaugeGroupBaseView<LinearGauge, LinearGaugeGroup, LinearGaugeView> {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _bandView: BandView;
+
+    //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
@@ -368,8 +435,47 @@ export class LinearGaugeGroupView extends LinearGaugeGroupBaseView<LinearGauge, 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doInitContents(doc: Document, container: LayerElement): void {
+        super._doInitContents(doc, container);
+
+        container.insertChild(this._bandView = new BandView(doc), this._scaleView);
+    }
+
     protected _createPool(container: LayerElement): ElementPool<any> {
         return new ElementPool(container, LinearGaugeView);
+    }
+
+    protected _renderScale(model: LinearGaugeGroup, rGauge: IRect, rBody: IRect): void {
+        super._renderScale(model, rGauge, rBody);
+
+        const bandView = this._bandView;
+        const band = model.band;
+        let x: number, y: number;
+
+        if (bandView.setVisible(band.visible)) {
+            const gap = +band.gap || 0;
+
+            if (model.vertical) { // 자식들이 수평 모드
+                const sz = bandView.measure(this.doc, band, rBody.width, rBody.height, 1);
+                const h = sz.height + gap;
+
+                rBody.height -= h;
+                rGauge.height -= h;
+                x = rBody.x;
+
+                if (band.position === GaugeItemPosition.OPPOSITE) {
+                    y = rBody.y;
+                    rBody.y += h;
+                    rGauge.y += h;
+                } else {
+                    y = rBody.y + rBody.height + gap;
+                }
+            } else { // 자식들이 수직 모드
+                // TODO
+            }
+
+            bandView.resizeByMeasured().layout().translate(x, y);
+        }
     }
 
     //-------------------------------------------------------------------------

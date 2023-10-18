@@ -16,7 +16,7 @@ import { RAD_DEG, pixel } from "../../common/Types";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextAnchor, TextElement, TextLayout } from "../../common/impl/TextElement";
-import { GuageRangeBand, ICircularGaugeExtents } from "../../model/Gauge";
+import { GaugeRangeBand, ICircularGaugeExtents } from "../../model/Gauge";
 import { CircleGauge, CircleGaugeGroup, CircleGaugeHand, CircleGaugePin, CircleGaugeScale } from "../../model/gauge/CircleGauge";
 import { ChartElement } from "../ChartElement";
 import { CircularGaugeView, GaugeGroupView, GaugeView, ScaleView } from "../GaugeView";
@@ -115,14 +115,14 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
     }
 }
 
-class BandView extends ChartElement<GuageRangeBand> {
+class BandView extends ChartElement<GaugeRangeBand> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _sectorViews: ElementPool<SectorElement>;
     private _labelContainer: LayerElement;
-    private _labels: ElementPool<TextElement>;
+    private _labels: ElementPool<TextElement>; // TODO
 
     private _center: IPoint;
     private _exts: ICircularGaugeExtents;
@@ -277,18 +277,20 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string) {
-        super(doc, styleName);
+    constructor(doc: Document) {
+        super(doc, 'rct-circle-gauge');
+    }
 
-        this.add(this._background = new SectorElement(doc, 'rct-circle-gauge-back'));
-        this.add(this._scaleView = new CircularScaleView(doc));
-        this.add(this._bandView = new BandView(doc));
-        this.add(this._segContainer = new LayerElement(doc, void 0));
+    protected _doInitContents(doc: Document, container: LayerElement): void {
+        container.add(this._background = new SectorElement(doc, 'rct-circle-gauge-back'));
+        container.add(this._scaleView = new CircularScaleView(doc));
+        container.add(this._bandView = new BandView(doc));
+        container.add(this._segContainer = new LayerElement(doc, void 0));
         this._segments = new ElementPool(this._segContainer, SectorElement, 'rct-circle-gauge-segment');
-        this.add(this._valueView = new SectorElement(doc, 'rct-circle-gauge-value'));
-        this.add(this._innerView = new SectorElement(doc, 'rct-circle-gauge-inner'));
-        this.add(this._handContainer = new LayerElement(doc, void 0));
-        this.add(this._textView = new TextElement(doc, 'rct-circle-gauge-label'));
+        container.add(this._valueView = new SectorElement(doc, 'rct-circle-gauge-value'));
+        container.add(this._innerView = new SectorElement(doc, 'rct-circle-gauge-inner'));
+        container.add(this._handContainer = new LayerElement(doc, void 0));
+        container.add(this._textView = new TextElement(doc, 'rct-circle-gauge-label'));
     }
 
     //-------------------------------------------------------------------------
