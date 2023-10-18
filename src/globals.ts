@@ -22,7 +22,7 @@ export class Globals {
     /**
      * RealChart 라이브러리 버전 정보를 리턴한다.
      * 
-     * ```js
+     * ```
      * alert(RealChart.getVersion());
      * ```
      * 
@@ -52,7 +52,7 @@ export class Globals {
      * 차트 설정 모델을 기빈으로
      * {@link RcChartControl Chart 컨트롤} svg를 생성한 후,
      * 지정된 div 엘리먼트의 유일한 자식으로 포함시킨다.\
-     * div 스타일에 지정된 padding 제외한 전체 영역의 크기대로 표시된다.
+     * div 스타일에 지정된 padding을 제외한 전체 영역의 크기대로 표시된다.
      * 
      * ```js
      * const chart = RealChart.createChart(document, 'realchart', config);

@@ -137,6 +137,7 @@ function setActions(container) {
 	createButton(container, 'Test', function (e) {
 		// alert('hello');
         // chart.series.visible = !chart.series.visible;
+        chart.series.setProp('visible', !chart.series.getProp('visible'));
 	});
 	createCheckBox(
 		container,

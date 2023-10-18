@@ -24,7 +24,7 @@ import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
 import { CircleGauge, CircleGaugeGroup } from "./gauge/CircleGauge";
 import { ClockGauge } from "./gauge/ClockGauge";
-import { Gauge, GaugeCollection, ValueGauge } from "./Gauge";
+import { Gauge, GaugeCollection } from "./Gauge";
 import { BarRangeSeries } from "./series/BarRangeSeries";
 import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";
@@ -49,6 +49,7 @@ import { VectorSeries } from "./series/VectorSeries";
 import { WaterfallSeries } from "./series/WaterfallSeries";
 import { LinearGauge, LinearGaugeGroup } from "./gauge/LinearGauge";
 import { BulletGauge, BulletGaugeGroup } from "./gauge/BulletGauge";
+import { SeriesNavigator } from "./SeriesNavigator";
 
 export interface IChart {
     type: string;
@@ -292,6 +293,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _yAxes: AxisCollection;
     private _gauges: GaugeCollection;
     private _body: Body;
+    private _navigator: SeriesNavigator;
 
     private _inverted: boolean;
     private _polar: boolean;
@@ -316,6 +318,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._yAxes = new AxisCollection(this, false);
         this._gauges = new GaugeCollection(this);
         this._body = new Body(this);
+        this._navigator = new SeriesNavigator(this);
 
         source && this.load(source);
         this._polar = this.polar === true;
@@ -427,6 +430,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     get body(): Body {
         return this._body;
+    }
+
+    get navigator(): SeriesNavigator {
+        return this._navigator;
     }
 
     /**

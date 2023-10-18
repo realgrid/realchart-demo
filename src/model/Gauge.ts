@@ -807,11 +807,13 @@ export class GaugeRangeBand extends ChartItem {
     // property fields
     //-------------------------------------------------------------------------
     private _ranges: IValueRange[];
+    private _thickness: RtPercentSize;
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _runRanges: IValueRange[];
+    private _thickDim: IPercentSize;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -821,6 +823,7 @@ export class GaugeRangeBand extends ChartItem {
 
         this.rangeLabel = new ChartItem(gauge.chart, false);
         this.tickLabel = new ChartItem(gauge.chart, true);
+        this.thickness = 7;
     }
 
     //-------------------------------------------------------------------------
@@ -833,12 +836,19 @@ export class GaugeRangeBand extends ChartItem {
      */
     position = GaugeItemPosition.DEFAULT;
     /**
-     * 밴드의 두께를 픽셀 단위로 지정한다.
-     * {@link position}이 'inside'이면 이 속성은 무시되고, 게이지 본체의 두께와 동일하게 표시된다.
+     * 밴드의 두께를 픽셀 단위나, 
+     * 게이지 rim의 두께에 대한 상대적 크기로 지정할 수 있다.
      * 
      * @config
      */
-    thickness = 7;
+    get thickness(): RtPercentSize {
+        return this._thickness;
+    }
+    set thickness(value: RtPercentSize) {
+        if (value !== this._thickness) {
+            this._thickDim = parsePercentSize(this._thickness = value, true);
+        }
+    }
     /**
      * {@link position}이 'inside'가 아닐 때, 이 밴드와 게이지 본체 사이의 간격
      */
@@ -878,6 +888,10 @@ export class GaugeRangeBand extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getThickness(domain: number): number {
+        return calcPercent(this._thickDim, domain, 0);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -988,6 +1002,7 @@ export interface ICircularGaugeExtents {
     scale?: number;
     scaleTick?: number;
     band?: number;
+    bandThick?: number;
     bandTick?: number;
     radius: number, 
     inner: number, 
@@ -1100,7 +1115,8 @@ class CircularProps {
     getExtents(gaugeSize: number): ICircularGaugeExtents {
         const radius = calcPercent(this._radiusDim, gaugeSize, gaugeSize / 2);
         const inner = Math.min(radius, this._innerDim ? calcPercent(this._innerDim, radius) : 0);
-        const value = this._valueDim ? calcPercent(this._valueDim, radius) : radius;
+        const middle = inner + (radius - inner) / 2;
+        const value = this._valueDim ? calcPercent(this._valueDim, middle) : middle;
 
         return { radius, inner, value };
     }
@@ -1204,8 +1220,10 @@ export abstract class CircularGauge extends ValueGauge {
     }
     /**
      * 값을 나타내는 원호의 반지름.
-     * 픽셀 단위의 크기나, {@link radius}에 대한 상대적 크기로 지정할 수 있다.
-     * 지정하지 않거나 '100%'이면 게이지 원호의 반지름과 동일하다.
+     * 픽셀 단위의 크기나, 
+     * {@link radius}와 {@link innerRadius}로 결정된 기본 rim의 중점에 대한 상대적 크기로 지정할 수 있다.
+     * 지정하지 않거나 '100%'이고 {@link valueRim}의 {@link valueRim.thickness 두께}가 
+     * 기본 rim의 두께와 동일하면 게이지 원호의 반지름과 동일하게 표시된다.
      */
     get valueRadius(): RtPercentSize {
         return this.props.valueRadius();
@@ -1273,7 +1291,7 @@ export abstract class CircularGauge extends ValueGauge {
         }
     }
 
-    labelVisible(): boolean {
+    labelVisible(): boolean {     
         // return !this.group && this.label.visible;
         return this.label.visible;
     }

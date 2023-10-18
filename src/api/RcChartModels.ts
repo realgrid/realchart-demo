@@ -6,8 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { Axis } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
-import { GaugeBase, ValueGauge } from "../model/Gauge";
+import { ValueGauge } from "../model/Gauge";
 import { Series } from "../model/Series";
 import { ClockGauge } from "../model/gauge/ClockGauge";
 
@@ -25,7 +26,13 @@ export abstract class RcChartObject {
      * @internal 
      */
     protected constructor(proxy: ChartItem) {
-        this.$_p = proxy;
+        this._doInit(this.$_p = proxy);
+    }
+
+    /** 
+     * @internal 
+     */
+    protected _doInit(proxy: ChartItem): void {
     }
 
     /**
@@ -35,17 +42,25 @@ export abstract class RcChartObject {
     get visible(): boolean { return this.$_p.visible; }
     set visible(value: boolean) { this.$_p.visible = value; }
     /**
-     * 지정한 속성의 값(들)을 가져온다.
+     * 지정한 설정 속성의 값(들)을 가져온다.\
+     * 지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다. 
      * 
      * @param prop 속성 경로.
-     * @param deep true면 하위 속성 객체들의 값들도 포함한다.
      * @returns 속성 값 혹은 객체.
      */
-    getProp(prop: string, deep = false): any {
-        return this.$_p.getProp(prop, deep);
+    getProp(prop: string): any {
+        const v = this.$_p.getProp(prop);
+        
+        if (v instanceof ChartItem) {
+            const obj = this[prop];
+            return obj instanceof RcChartObject ? obj : void 0;
+        } else {
+            return v;
+        }
     }
     /**
-     * 지정한 속성의 값(들)을 설정한다.
+     * 지정한 속성의 값(들)을 설정한다.\
+     * 지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다.
      * 
      * @param prop 속성 경로.
      * @param value 지정할 값(들).
@@ -53,6 +68,16 @@ export abstract class RcChartObject {
     setProp(prop: string, value: any): void {
         this.$_p.setProp(prop, value);
     }
+    /**
+     * 지정한 속성들의 값(들)을 설정한다.
+     * 지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다.
+     * 
+     * @param props 속성 모음 객체.
+     */
+    setProps(props: object): void {
+        this.$_p.setProps(props);
+    }
+
     /** 
      * @internal 
      */
@@ -428,4 +453,27 @@ export class RcLinearGaugeGroup extends RcGaugeGroup {
  * {@link RcBulletGauge} 그룹 모델.
  */
 export class RcBulletGaugeGroup extends RcGaugeGroup {
+}
+
+/**
+ * 축 타이틀 모델.
+ */
+export class RcAxisTitle extends RcChartObject {
+}
+
+/**
+ * Axis 모델들의 기반 클래스.
+ */
+export abstract class RcChartAxis extends RcChartObject {
+
+    private _title: RcAxisTitle
+
+    /** 
+     * @internal 
+     */
+    protected _doInit(proxy: Axis): void {
+        this._title = new RcAxisTitle(proxy.title);
+    }
+
+    get title(): RcAxisTitle { return this._title; }
 }

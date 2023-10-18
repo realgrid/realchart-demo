@@ -228,22 +228,12 @@ export enum LinearGaugeMarkerType {
     needle = 'needle'
 }
 
-export class LinearGaugeBarMarker extends ChartItem {
+export class LinearGaugeMarker extends ChartItem {
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(public gauge: ValueGauge) {
-        super(gauge.chart, true);
-    }
-}
-
-export class LinearGaugeNeedleMarker extends ChartItem {
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(public gauge: ValueGauge) {
+    constructor(public gauge: LinearGaugeBase) {
         super(gauge.chart, true);
     }
 }
@@ -274,15 +264,7 @@ export class LinearGauge extends LinearGaugeBase {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    markerType = LinearGaugeMarkerType.BAR;
-    /**
-     * {@link markerType}이 'bar'일 때, bar 설정 모델.
-     */
-    bar = new LinearGaugeBarMarker(this);
-    /**
-     * {@link markerType}이 'needle'일 때, needle 설정 모델.
-     */
-    needle = new LinearGaugeNeedleMarker(this);
+    marker = new LinearGaugeMarker(this);
     /**
      * 게이지 본체 주변이나 내부에 값 영역들을 구분해서 표시하는 band의 모델.
      * 

@@ -11,7 +11,7 @@ import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
 import { CircularGaugeGroup, CircularGauge, GaugeItemPosition, GaugeScale, GaugeRangeBand, ICircularGaugeExtents, ValueGauge } from "../Gauge";
 
-export abstract class CircleGaugeRim extends ChartItem {
+export abstract class CircleGaugeRimBase extends ChartItem {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -85,7 +85,10 @@ export abstract class CircleGaugeRim extends ChartItem {
     }
 }
 
-export class CircleGaugeBackRim extends CircleGaugeRim {
+/**
+ * 바탕 rim.
+ */
+export class CircleGaugeRim extends CircleGaugeRimBase {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -140,7 +143,10 @@ export class CircleGaugeBackRim extends CircleGaugeRim {
     //-------------------------------------------------------------------------
 }
 
-export class CircleGaugeValueRim extends CircleGaugeRim {
+/**
+ * 값을 표시하는 rim.
+ */
+export class CircleGaugeValueRim extends CircleGaugeRimBase {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -397,19 +403,19 @@ export class CircleGauge extends CircularGauge {
      * 
      * @config
      */
-    bandRim = new GaugeRangeBand(this);
+    band = new GaugeRangeBand(this);
     /**
      * 스케일 모델.
      * 
      * @config
      */
-    scaleRim = new CircleGaugeScale(this, false);
+    scale = new CircleGaugeScale(this, false);
     /**
      * 게이지 배경 원호 테두리 설정 모델.
      * 
      * @config
      */
-    rim = new CircleGaugeBackRim(this);
+    rim = new CircleGaugeRim(this);
     /**
      * 게이지의 값 원호 테두리 설정 모델.
      * 
@@ -442,25 +448,43 @@ export class CircleGauge extends CircularGauge {
 
     getExtents(gaugeSize: number): ICircularGaugeExtents {
         const exts = super.getExtents(gaugeSize);
-        const scaleRim = this.scaleRim;
-        const bandRim = this.bandRim;
-        let outer = exts.radius;
+        const scale = this.scale;
+        const band = this.band;
+        let rd = exts.radius;
+        const thick = rd - exts.inner;
 
-        if (bandRim.visible) {
-            if (bandRim.position === GaugeItemPosition.DEFAULT) {
-                const thick = bandRim.thickness + bandRim.gap;
+        if (band.visible) {
+            exts.bandThick = band.getThickness(thick);
 
-                outer += thick;
-                exts.band = outer;
+            switch (band.position) {
+                case GaugeItemPosition.INSIDE:
+                    exts.band = rd - (thick - exts.bandThick) / 2;
+                    // TODO
+                    break;
+
+                case GaugeItemPosition.OPPOSITE:
+                    // TODO
+                    break;
+
+                default:
+                    exts.band = rd += exts.bandThick + band.gap;
+                    break;
             }
         }
 
-        if (scaleRim.visible) {
-            if (scaleRim.position === GaugeItemPosition.DEFAULT) {
-                const thick = Math.max(1, scaleRim.tick.length || 0) + scaleRim.gap;
-            
-                outer += thick;
-                exts.scale = outer;
+        if (scale.visible) {
+            switch (scale.position) {
+                case GaugeItemPosition.INSIDE:
+                    // TODO
+                    break;
+
+                case GaugeItemPosition.OPPOSITE:
+                    // TODO
+                    break;
+                    
+                default:
+                    exts.scale = rd += Math.max(1, scale.tick.length || 0) + scale.gap;
+                    break;
             }
         }
         return exts;

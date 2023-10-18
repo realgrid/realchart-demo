@@ -15,7 +15,7 @@ import { DEG_RAD } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis, AxisGuide, AxisLabelArrange, AxisPosition, AxisTickMark, AxisTitle, IAxisTick } from "../model/Axis";
+import { Axis, AxisGuide, AxisLabelArrange, AxisPosition, AxisScrollBar, AxisTickMark, AxisTitle, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { Crosshair } from "../model/Crosshair";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
@@ -679,5 +679,28 @@ export class AxisView extends ChartElement<Axis> {
                 v.translate(x2, h - ticks[i].pos - r.height / 2);
             }
         });
+    }
 }
+
+export class AxisScrollBarView extends ChartElement<AxisScrollBar> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _trackView: RectElement;
+    private _thumbView: RectElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-axis-scrollbar');
+
+        this.add(this._trackView = new RectElement(doc, 'rct-axis-scrollbar-track'));
+        this.add(this._thumbView = new RectElement(doc, 'rct-axis-scrollbar-thumb'));
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
 }

@@ -60,7 +60,7 @@ const config = {
         name: 'gauge2',
         left: '33.5%',
         top: 0,
-        valueRadius: '104%',    
+        valueRadius: '100%',    
         valueRim: {
             thickness: '200%',
         },
@@ -104,6 +104,11 @@ const config = {
         top: '33.5%',
         innerRadius: '80%',
         rim: {
+        },
+        band: {
+            visible: true,
+            position: 'inside',
+            thickness: '100%',
             ranges: [{
                 toValue: 20,
                 color: '#a40'
@@ -168,6 +173,11 @@ const config = {
         top: '67%',
         innerRadius: '80%',
         rim: {
+        },
+        band: {
+            visible: true,
+            position: 'inside',
+            thickness: '100%',
             ranges: [{
                 toValue: 20,
                 color: '#a40'

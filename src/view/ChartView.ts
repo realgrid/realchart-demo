@@ -24,6 +24,7 @@ import { AxisGuideContainer, BodyView } from "./BodyView";
 import { ChartElement } from "./ChartElement";
 import { HistoryView } from "./HistoryView";
 import { LegendView } from "./LegendView";
+import { NavigatorView } from "./NavigatorView";
 import { PolarBodyView } from "./PolarBodyView";
 import { SeriesView } from "./SeriesView";
 import { TitleView } from "./TitleView";
@@ -424,6 +425,7 @@ export class ChartView extends RcElement {
     private _polarView: PolarBodyView;
     private _currBody: BodyView;
     private _axisSectionViews: {[key: string]: AxisSectionView} = {};
+    private _navigatorView: NavigatorView;
     private _creditView: CreditView;
     private _historyView: HistoryView;
     private _tooltipView: TooltipView;
@@ -450,6 +452,7 @@ export class ChartView extends RcElement {
 
         this.add(this._titleSectionView = new TitleSectionView(doc));
         this.add(this._legendSectionView = new LegendSectionView(doc));
+        this.add(this._navigatorView = new NavigatorView(doc));
         this.add(this._creditView = new CreditView(doc));
         this.add(this._historyView = new HistoryView(doc));
         this.add(this._tooltipView = new TooltipView(doc));

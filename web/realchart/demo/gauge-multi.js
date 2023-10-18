@@ -50,7 +50,6 @@ const config = {
         name: 'gauge2',
         left: '33%',
         top: 0,
-        valueRadius: '104%',    
         valueRim: {
             thickness: '200%',
         },

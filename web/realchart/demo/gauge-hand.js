@@ -62,7 +62,7 @@ const config = {
         height: '50%',
         left: '33%',
         top: 0,
-        valueRadius: '104%',    
+        valueRadius: '100%',    
         valueRim: {
             thickness: '200%',
         },
@@ -110,6 +110,11 @@ const config = {
         top: '50%',
         innerRadius: '80%',
         rim: {
+        },
+        band: {
+            visible: true,
+            position: 'inside',
+            thickness: '100%',
             ranges: [{
                 toValue: 20,
                 color: '#a40'

@@ -49,7 +49,7 @@ const config = {
         left: 0,
         top: 0,
         radius: '35%',
-        scaleRim: {
+        scale: {
             visible: true,
             line: {
                 style: {

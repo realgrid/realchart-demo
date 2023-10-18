@@ -20,26 +20,7 @@ const config = {
         // sweepAngle: 300,
         // valueRadius: '110%',
         // valueThickness: '100%',
-        scaleRim: {
-            visible: true,
-        },
-        bandRim: {
-            visible: true,
-            ranges: [{
-                toValue: 20,
-                color: '#ff0',
-            }, {
-                toValue: 40,
-                color: '#dd0',
-            }, {
-                toValue: 60,
-                color: '#fc0'
-            }, {
-                toValue: 80,
-                color: '#f80'
-            }, {
-                color: '#f40'
-            }]
+        rim: {
         },
         valueRim: {
             // stroked: true,
@@ -52,6 +33,28 @@ const config = {
             }, {
                 color: 'red'
             }],
+        },
+        scale: {
+            visible: true,
+        },
+        band: {
+            thickness: '100%',
+            visible: true,
+            ranges: [{
+                toValue: 20,
+                color: '#8f0',
+            }, {
+                toValue: 40,
+                color: '#8d0',
+            }, {
+                toValue: 60,
+                color: '#5a0'
+            }, {
+                toValue: 80,
+                color: '#480'
+            }, {
+                color: '#350'
+            }]
         },
         label: {
             // suffix: '%',
@@ -106,14 +109,22 @@ function setActions(container) {
         config.gauge.valueRim.thickness = _getValue(e);
         chart.load(config, animate);
     }, '');
-    createCheckBox(container, 'scaleRim', function (e) {
-        config.gauge.scaleRim.visible = _getChecked(e);
+    createCheckBox(container, 'rim', function (e) {
+        config.gauge.rim.visible = _getChecked(e);
         chart.load(config);
     }, true);
-    createCheckBox(container, 'bandRim', function (e) {
-        config.gauge.bandRim.visible = _getChecked(e);
+    createCheckBox(container, 'scale', function (e) {
+        config.gauge.scale.visible = _getChecked(e);
         chart.load(config);
     }, true);
+    createCheckBox(container, 'band', function (e) {
+        config.gauge.band.visible = _getChecked(e);
+        chart.load(config);
+    }, true);
+    createListBox(container, "band.position", ['default', 'opposite', 'inside'], function (e) {
+        config.gauge.band.position = _getValue(e);
+        chart.load(config);
+    }, 'default');
     createButton(container, 'Run', function(e) {
         clearInterval(timer);
         timer = setInterval(() => {

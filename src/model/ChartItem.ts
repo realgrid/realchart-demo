@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isBoolean, isObject, isString, pickNum } from "../common/Common";
+import { isArray, isBoolean, isObject, isString } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { SvgRichText, RichTextParamCallback } from "../common/RichText";
@@ -85,10 +85,24 @@ export class ChartItem extends RcObject {
         return obj;
     }
 
-    getProp(prop: string, deep: boolean): any {
+    getProp(prop: string): any {
+        return this[prop];
     }
 
     setProp(prop: string, value: any): void {
+        if (prop in this) {
+            const v = this[prop];
+
+            if (v instanceof ChartItem) {
+                v.setProps(value);
+            } else if (value !== v) {
+                this[prop] = value;
+                this._changed();
+            }
+        }
+    }
+
+    setProps(props: object): void {
     }
 
     prepareRender(): void {
