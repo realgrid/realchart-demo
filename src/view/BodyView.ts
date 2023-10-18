@@ -126,8 +126,10 @@ export class AxisGridView extends ChartElement<AxisGrid> {
         const lines = this._lines;
         const end = lines.count - 1;
 
-        lines.first.setBoolData('first', pts[0] === 0);
-        lines.first.setBoolData('last', pts[end] === (axis._isHorz ? w : h));
+        lines.forEach((line, i) => {
+            line.setBoolData('first', i === 0);
+            line.setBoolData('last', pts[i] === (axis._isHorz ? w : h));
+        })
 
         if (axis._isHorz) {
             lines.forEach((line, i) => {
