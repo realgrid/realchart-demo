@@ -97,6 +97,9 @@ class CategoryAxisGrid extends AxisGrid {
  *    {@link categories} 속성으로 카테고리를 지정할 때, 상대적 크기를 width로 지정해서 각 카테고리의 값을 다르게 표시할 수 있다.
  * 4. tick mark나 label은 기본적으로 카테고리 값 위치에 표시된다.
  *    tick mark는 카테고리 양끝에 표시될 수 있다.
+ * 
+ * @config chart.xAxis[type=category]
+ * @config chart.yAxis[type=category]
  */
 export class CategoryAxis extends Axis {
 

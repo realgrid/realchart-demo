@@ -157,6 +157,7 @@ export class LinearGaugeLabel extends GaugeLabel {
 }
 
 /**
+ * 선형 게이지 base 모델.
  */
 export abstract class LinearGaugeBase extends ValueGauge {
 

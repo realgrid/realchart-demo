@@ -48,6 +48,7 @@ export {
     RcChartGauge,
     RcValueGauge,
     RcCircleGauge,
+    RcLinerGaugeBase,
     RcLinearGauge,
     RcBulletGauge,
     RcClockGauge,

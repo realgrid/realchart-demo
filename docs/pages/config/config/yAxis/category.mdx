@@ -1,0 +1,57 @@
+## yAxis[type=category]
+지정된 카테고리 수로 축을 분할해서 각 카테고리에 연결된 데이터포인트들이 표시되게 한다.
+
+
+1. categories 속성으로 카테고리 목록을 구성한다.
+2. 이 축에 연결된 시리즈들에 포함된 data point들의 문자열인 값들, 혹은 categoryField에 해당하는 값들을 수집한다.
+   수집된 category들 중 숫자가 아닌 것들은  startValue 부터 시작해서  valueStep  속성에 지정된 값씩 차례대로 증가한 값을 갖게된다.
+3. 각 카테고리 영역의 크기는  categoryStep  설정값에 따라 기본적으로 동일하게 배분되고, 
+   카테고리 영역 중간점이 카테고리 값의 위치가 된다.
+    categories  속성으로 카테고리를 지정할 때, 상대적 크기를 width로 지정해서 각 카테고리의 값을 다르게 표시할 수 있다.
+4. tick mark나 label은 기본적으로 카테고리 값 위치에 표시된다.
+   tick mark는 카테고리 양끝에 표시될 수 있다.
+## Properties
+
+### [grid](./category/grid)
+visible 기본값이 undefined이다.
+
+
+visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.  
+
+### marginFar: `number{:typescript}`
+차트 경계나 뒤쪽 축 사이의 여백 크기.  
+`default: 0`  
+
+### marginNear: `number{:typescript}`
+Plot 영역이나 앞쪽 축 사이의 여백 크기.  
+`default: 0`  
+
+### maxValue: `number{:typescript}`
+명시적으로 지정하는 최대값.
+축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.
+ maxPadding 도 무시된다.  
+
+### minValue: `number{:typescript}`
+명시적으로 지정하는 최소값.
+축에 연결된 data point들의 값으로 계산된 최소값 대신 이 값이 축의 최소값이 된다.
+ minPadding 도 무시된다.  
+
+### position
+표시 위치.  
+
+
+`default: AxisPosition.NORMAL`  
+
+### reversed: `boolean{:typescript}`
+true면 반대 방향으로 point 위치들이 지정된다.  
+`default: false`  
+
+### style: `SVGStyles | string{:typescript}`
+스타일셋 혹은 class selector.  
+
+### [title](./category/title)
+  
+
+### visible: `boolean{:typescript}`
+표시 여부.
+모델에 따라 기본값이 다르다.  

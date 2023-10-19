@@ -72,7 +72,7 @@ export class RcChartObject {
      * 지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다.
      * 이 객체 자신을 리턴하므로 javascript에서 builder 패턴으로 설정 값들을 연속해서 지정할 수 있다.
      * 
-     * ```
+     * ```js
      *  chart.series.set('xAxis', 1).set('yAxis', 1);
      * ```
      * 
@@ -90,7 +90,7 @@ export class RcChartObject {
      * JSON 객체로 지정한 속성들의 값을 설정한다.\
      * 지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다.
      * 
-     * ```
+     * ```js
      *  chart.series.set({
      *      xAxis: 1,
      *      yAxis: 1,
@@ -110,7 +110,7 @@ export class RcChartObject {
     /**
      * Boolean 타입의 설정값을 변경한다.
      * 
-     * ```
+     * ```js
      * chart.getSeries('ser02').toggle('visible');
      * ```
      * 
@@ -407,6 +407,8 @@ export abstract class RcCircularGauge extends RcValueGauge {
 /**
  * **'circle'** 게이지.
  * 원이나 원호로 값을 표시하는 게이지.
+ *
+ * {@link config.gauge.circle Configuration 속성들} 참조.
  */
 export class RcCircleGauge extends RcCircularGauge {
 
@@ -419,18 +421,90 @@ export class RcCircleGauge extends RcCircularGauge {
     private _pin: RcChartObject;
 
     protected _doInit(proxy: ChartItem): void {
+        this._createObjects('band', 'scale', 'rim', 'valueRim', 'marker', 'hand', 'pin');
     }
+
+    /**
+     * band 모델.
+     * 
+     * {@link config.gauge.circle.band Configuration 속성들} 참조.
+     */
+    get band(): RcChartObject { return this._band; }
+    /**
+     * scale 모델.
+     * 
+     * {@link config.gauge.circle.scale Configuration 속성들} 참조.
+     */
+    get scale(): RcChartObject { return this._scale; }
+    /**
+     * rim 모델.
+     * 
+     * {@link config.gauge.circle.rim Configuration 속성들} 참조.
+     */
+    get rim(): RcChartObject { return this._rim; }
+    /**
+     * valueRim 모델.
+     * 
+     * {@link config.gauge.circle.valueRim Configuration 속성들} 참조.
+     */
+    get valueRim(): RcChartObject { return this._valueRim; }
+    /**
+     * marker 모델.
+     * 
+     * {@link config.gauge.circle.marker Configuration 속성들} 참조.
+     */
+    get marker(): RcChartObject { return this._marker; }
+    /**
+     * hand 모델.
+     * 
+     * {@link config.gauge.circle.hand Configuration 속성들} 참조.
+     */
+    get hand(): RcChartObject { return this._hand; }
+    /**
+     * pin 모델.
+     * 
+     * {@link config.gauge.circle.pin Configuration 속성들} 참조.
+     */
+    get pin(): RcChartObject { return this._pin; }
+}
+
+export abstract class RcLinerGaugeBase extends RcValueGauge {
+
+    private _label: RcChartObject;
+    private _scale: RcGaugeScale;
+
+    protected _doInit(proxy: ChartItem): void {
+        this._createObjects('label');
+
+        this._scale = new RcGaugeScale(proxy['scale']);
+    }
+
+    get label(): RcChartObject { return this._label; }
+    get scale(): RcChartObject { return this._scale; }
 }
 
 /**
- * **'linear'** 게이지.
+ * **'linear'** 게이지.\
  * 선분에 값을 표시하는 게이지.
  */
-export class RcLinearGauge extends RcValueGauge {
+export class RcLinearGauge extends RcLinerGaugeBase {
+
+    /**
+     * label 모델.
+     * 
+     * {@link config.gauge.linear.label Configuration 속성들} 참조.
+     */
+    get label(): RcChartObject { return super.label; }
+    /**
+     * scale 모델.
+     * 
+     * {@link config.gauge.linear.scale Configuration 속성들} 참조.
+     */
+    get scale(): RcChartObject { return super.scale; }
 }
 
 /**
- * **'bullet'** 게이지.
+ * **'bullet'** 게이지.\
  * 목표 값과 현재 값을 선형으로 표시하는 게이지.
  * 
  * @see {@link RcCircleGauge}
@@ -440,7 +514,7 @@ export class RcBulletGauge extends RcValueGauge {
 }
 
 /**
- * **'clock'** 게이지.
+ * **'clock'** 게이지.\
  * 시간을 표시하는 시간 게이지.
  */
 export class RcClockGauge extends RcChartGauge {

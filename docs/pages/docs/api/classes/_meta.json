@@ -30,6 +30,7 @@
   "RcLineSeriesGroup": "RcLineSeriesGroup",
   "RcLinearGauge": "RcLinearGauge",
   "RcLinearGaugeGroup": "RcLinearGaugeGroup",
+  "RcLinerGaugeBase": "RcLinerGaugeBase",
   "RcLollipopSeries": "RcLollipopSeries",
   "RcParetoSeries": "RcParetoSeries",
   "RcPieSeries": "RcPieSeries",

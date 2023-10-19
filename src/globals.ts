@@ -22,7 +22,7 @@ export class Globals {
     /**
      * RealChart 라이브러리 버전 정보를 리턴한다.
      * 
-     * ```javascript
+     * ```js
      * console.log(RealChart.getVersion()); // 1.1.2 형식
      * ```
      * 
@@ -35,7 +35,7 @@ export class Globals {
      * true로 지정하면 차트 요소별 디버그 경계를 표시한다.\
      * 기본은 false 상태다.
      * 
-     * ```
+     * ```js
      * RealChart.setDebugging(true);
      * ```
      * 
@@ -49,7 +49,7 @@ export class Globals {
      * 모든 애니메이션을 실행하지 않는다.\
      * 기본은 animation이 가능한 상태다.
      * 
-     * ```
+     * ```js
      * RealChart.setAnimatable(false);
      * ```
      * 
@@ -64,7 +64,7 @@ export class Globals {
      * 지정된 div 엘리먼트의 유일한 자식으로 포함시킨다.\
      * div 스타일에 지정된 padding을 제외한 전체 영역의 크기대로 표시된다.
      * 
-     * ```
+     * ```js
      * const chart = RealChart.createChart(document, 'realchart', config);
      * ```
      * 
