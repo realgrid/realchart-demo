@@ -7,11 +7,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartControl } from "../ChartControl";
+import { Axis } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { Gauge } from "../model/Gauge";
 import { Series } from "../model/Series";
-import { RcAreaRangeSeries, RcAreaSeries, RcBarRangeSeries, RcBarSeries, RcBellCurveSeries, RcBoxPlotSeries, RcBubbleSeries, RcBulletGauge, RcCandlestickSeries, RcChartGauge, RcChartObject, RcChartSeries, RcCircleGauge, RcClockGauge, RcDumbbellSeries, RcEqualizerSeries, RcErrorBarSeries, RcFunnelSeries, RcGaugeGroup, RcHeatmapSeries, RcHistogramSeries, RcLineSeries, RcLinearGauge, RcLollipopSeries, RcOhlcSeries, RcParetoSeries, RcPieSeries, RcScatterSeries, RcTreemapSeries, RcVectorSeries, RcWaterfallSeries } from "./RcChartModels";
+import { RcAreaRangeSeries, RcAreaSeries, RcBarRangeSeries, RcBarSeries, RcBellCurveSeries, RcBody, RcBoxPlotSeries, RcBubbleSeries, RcBulletGauge, RcCandlestickSeries, RcCategoryAxis, RcChartAxis, RcChartGauge, RcChartObject, RcChartSeries, RcCircleGauge, RcClockGauge, RcDumbbellSeries, RcEqualizerSeries, RcErrorBarSeries, RcFunnelSeries, RcGaugeGroup, RcHeatmapSeries, RcHistogramSeries, RcLegend, RcLineSeries, RcLinearGauge, RcLogAxis, RcLollipopSeries, RcOhlcSeries, RcParetoSeries, RcPieSeries, RcScatterSeries, RcSubtitle, RcTimeAxis, RcTitle, RcTreemapSeries, RcVectorSeries, RcWaterfallSeries } from "./RcChartModels";
 
+const axis_types = {
+    'category': RcCategoryAxis,
+    'linear': RcLineSeries,
+    'time': RcTimeAxis,
+    'log': RcLogAxis,
+}
 const series_types = {
     'area': RcAreaSeries,
     'arearange': RcAreaRangeSeries,
@@ -91,6 +98,38 @@ export class RcChartControl {
         this.$_p.refresh(now);
     }
     /**
+     * 첫번째 x 축.
+     */
+    get xAxis(): RcChartAxis {
+        return getObject(this._objects, this.$_p.model.xAxis as Axis) as RcChartAxis;
+    }
+    /**
+     * name 매개변수가 문자열이면 지정한 이름의 x 축을,
+     * 숫자이면 해당 index에 위치하는 x 축을 리턴한다.
+     * 
+     * @param name 이름이나 index
+     * @returns 축 객체
+     */
+    getXAxis(name: string | number): RcChartAxis {
+        return getObject(this._objects, this.$_p.model.getXAxis(name)) as RcChartAxis;
+    }
+    /**
+     * 첫번째 y 축.
+     */
+    get yAxis(): RcChartAxis {
+        return getObject(this._objects, this.$_p.model.yAxis as Axis) as RcChartAxis;
+    }
+    /**
+     * name 매개변수가 문자열이면 지정한 이름의 y 축을,
+     * 숫자이면 해당 index에 위치하는 y 축을 리턴한다.
+     * 
+     * @param name 이름이나 index
+     * @returns 축 객체
+     */
+    getYAxis(name: string | number): RcChartAxis {
+        return getObject(this._objects, this.$_p.model.getYAxis(name)) as RcChartAxis;
+    }
+    /**
      * 첫번째 시리즈.
      */
     get series(): RcChartSeries {
@@ -119,5 +158,29 @@ export class RcChartControl {
      */
     getGauge(name: string): RcChartGauge {
         return getObject(this._objects, this.$_p.model.gaugeByName(name)) as RcChartGauge;
+    }
+    /**
+     * 차트 타이틀 모델.
+     */
+    get title(): RcTitle {
+        return getObject(this._objects, this.$_p.model.title) as RcTitle;
+    }
+    /**
+     * 차트 sub 타이틀 모델.
+     */
+    get subtitle(): RcSubtitle {
+        return getObject(this._objects, this.$_p.model.subtitle) as RcSubtitle;
+    }
+    /**
+     * 차트 범례 모델.
+     */
+    get legend(): RcLegend {
+        return getObject(this._objects, this.$_p.model.legend) as RcLegend;
+    }
+    /**
+     * 차트 시리즈들이 그려지는 plotting 영역 모델.
+     */
+    get body(): RcBody {
+        return getObject(this._objects, this.$_p.model.legend) as RcBody;
     }
 }

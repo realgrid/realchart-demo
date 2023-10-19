@@ -13,9 +13,22 @@ export const setDebugging = Globals.setDebugging;
 export const setAnimatable = Globals.setAnimatable;
 export const createChart = Globals.createChart;
 
-export { RcChartControl } from "./api/RcChartControl";
+export { 
+    RcChartControl 
+} from "./api/RcChartControl";
 export { 
     RcChartObject, 
+
+    // axis
+    RcChartAxis,
+    RcCategoryAxis,
+    RcContinuousAxis,
+    RcLinearAxis,
+    RcTimeAxis,
+    RcLogAxis,
+
+    // series
+    RcPointLabel,
     RcChartSeries,
     RcLineSeries,
     RcAreaSeries,
@@ -44,9 +57,14 @@ export {
     RcAreaSeriesGroup,
     RcPieSeriesGroup,
     RcBumpSeriesGroup,
+
+    // gauge
+    RcGaugeRangeBand,
+    RcGaugeScale,
     RcChartGaugeBase,
     RcChartGauge,
     RcValueGauge,
+    RcCircularGauge,
     RcCircleGauge,
     RcLinerGaugeBase,
     RcLinearGauge,
@@ -56,4 +74,10 @@ export {
     RcCircleGaugeGroup,
     RcLinearGaugeGroup,
     RcBulletGaugeGroup,
+    
+    // chart
+    RcTitle,
+    RcSubtitle,
+    RcLegend,
+    RcBody
 } from "./api/RcChartModels";

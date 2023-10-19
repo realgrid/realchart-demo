@@ -498,6 +498,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     readonly grid = this._createGrid();
     readonly guides: AxisGuide[] = [];
     readonly crosshair = new Crosshair(this);
+    readonly scrollBar = new AxisScrollBar(this);
 
     _isX: boolean;
     _isHorz: boolean;

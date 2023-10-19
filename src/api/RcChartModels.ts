@@ -157,6 +157,7 @@ export abstract class RcChartAxis extends RcChartObject {
     private _tick: RcChartObject;
     private _label: RcChartObject;
     private _crosshair: RcChartObject;
+    private _scrollBar: RcChartObject;
 
     /** 
      * @internal 
@@ -169,9 +170,31 @@ export abstract class RcChartAxis extends RcChartObject {
     get line(): RcChartObject { return this._line; }
     get grid(): RcChartObject { return this._grid; }
     get tick(): RcChartObject { return this._tick; }
+    get label(): RcChartObject { return this._label; }
+    get crosshair(): RcChartObject { return this._crosshair; }
+    get scrollBar(): RcChartObject { return this._scrollBar; }
+
+    // getGuide(index: number): RcChartObject {
+    //     return;
+    // }
 }
 
-export class RcPointLabel extends RcChartObject {
+export class RcCategoryAxis extends RcChartAxis {
+}
+
+export abstract class RcContinuousAxis extends RcChartAxis {
+}
+
+export class RcLinearAxis extends RcContinuousAxis {
+}
+
+export class RcTimeAxis extends RcContinuousAxis {
+}
+
+export class RcLogAxis extends RcContinuousAxis {
+}
+
+export class RcPointLabel extends RcChartAxis {
 }
 
 /**
@@ -619,4 +642,16 @@ export class RcLinearGaugeGroup extends RcGaugeGroup {
  * {@link RcBulletGauge} 그룹 모델.
  */
 export class RcBulletGaugeGroup extends RcGaugeGroup {
+}
+
+export class RcTitle extends RcChartObject {
+}
+
+export class RcSubtitle extends RcChartObject {
+}
+
+export class RcLegend extends RcChartObject {
+}
+
+export class RcBody extends RcChartObject {
 }

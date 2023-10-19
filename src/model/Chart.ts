@@ -509,6 +509,14 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._xAxes.contains(axis) || this._yAxes.contains(axis);
     }
 
+    getXAxis(name: string | number): Axis {
+        return this._xAxes.get(name);
+    }
+
+    getYAxis(name: string | number): Axis {
+        return this._yAxes.get(name);
+    }
+
     getAxes(dir: SectionDir): Axis[] {
         const xAxes = this._xAxes.items;
         const yAxes = this._yAxes.items;
