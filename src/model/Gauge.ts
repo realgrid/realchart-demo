@@ -362,6 +362,9 @@ export abstract class GaugeGroup<T extends ValueGauge> extends GaugeBase {
     }
 }
 
+/**
+ * @internal
+ */
 export class GaugeCollection {
 
     //-------------------------------------------------------------------------
@@ -522,7 +525,7 @@ export abstract class ValueGauge extends Gauge {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    updateValue(value: any): void {
+    updateValue(value: any, animate: boolean): void {
         if (value !== this.value) {
             this.value = value;
             this._changed();

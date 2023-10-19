@@ -14,6 +14,7 @@
   "RcCandlestickSeries": "RcCandlestickSeries",
   "RcChartControl": "RcChartControl",
   "RcChartGauge": "RcChartGauge",
+  "RcChartGaugeBase": "RcChartGaugeBase",
   "RcChartObject": "RcChartObject",
   "RcChartSeries": "RcChartSeries",
   "RcCircleGauge": "RcCircleGauge",

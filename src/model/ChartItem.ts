@@ -85,24 +85,77 @@ export class ChartItem extends RcObject {
         return obj;
     }
 
-    getProp(prop: string): any {
-        return this[prop];
+    private INVALID = {};
+
+    private $_parseProp(path: string): { obj: ChartItem, prop: string } | any {
+        if (path.indexOf('.') >= 0) {
+            const arr = path.split('.');
+            const len = arr.length - 1;
+            let obj: any = this;
+
+            for (let i = 0; i < len; i++) {
+                obj = obj[arr[i]];
+                if (!(obj instanceof RcObject)) {
+                    return this.INVALID;
+                }
+            }
+            return { obj, prop: arr[len] };
+        }
     }
 
-    setProp(prop: string, value: any): void {
-        if (prop in this) {
-            const v = this[prop];
+    getProp(prop: string): any {
+        if (isString(prop)) {
+            const path = this.$_parseProp(prop);
 
-            if (v instanceof ChartItem) {
-                v.setProps(value);
-            } else if (value !== v) {
-                this[prop] = value;
-                this._changed();
+            if (path) {
+                return path === this.INVALID ? _undefined : path.obj[path.prop];
+            } else {
+                return this[prop];
             }
         }
     }
 
-    setProps(props: object): void {
+    setProp(prop: string, value: any, redraw: boolean): boolean {
+        if (isString(prop)) {
+            const path = this.$_parseProp(prop);
+
+            if (path) {
+                if (path.obj instanceof ChartItem) {
+                    path.obj.setProp(path.prop, value, redraw);
+                } else if (path.obj instanceof RcObject) {
+                    if (value !== path.obj[path.prop]) {
+                        path.obj[path.prop] = value;
+                        redraw && this._changed();
+                    }
+                }
+            } else if (prop in this) {
+                const v = this[prop];
+
+                if (v instanceof ChartItem) {
+                    return v.setProps(value, redraw);
+                } else if (value !== v) {
+                    this[prop] = value;
+                    redraw && this._changed();
+                    return true;
+                }
+            }
+        }
+    }
+
+    setProps(props: object, redraw: boolean): boolean {
+        let changed = false;
+
+        if (isObject(props)) {
+            for (const p in props) {
+                if (this.setProp(p, props[p], false)) {
+                    changed = true;
+                }
+            }
+        } else if (this._doLoadSimple(props)) {
+            changed = true;
+        }
+        changed && redraw && this._changed();
+        return changed;
     }
 
     prepareRender(): void {
@@ -126,10 +179,6 @@ export class ChartItem extends RcObject {
         }
     }
 
-    protected _getDefObjProps(prop: string): any {
-        return;
-    }
-
     protected _doLoad(source: any): void {
         for (const p in source) {
             //if (this.hasOwnProperty(p)) {
@@ -143,7 +192,7 @@ export class ChartItem extends RcObject {
                 } else if (v instanceof Date) {
                     this[p] = new Date(v);
                 } else if (isObject(v)) {
-                    this[p] = Object.assign({}, this._getDefObjProps(p), v);
+                    this[p] = Object.assign({}, v);
                 } else {
                     this[p] = v;
                 }

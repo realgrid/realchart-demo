@@ -10,12 +10,11 @@ import { Axis } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { ValueGauge } from "../model/Gauge";
 import { Series } from "../model/Series";
-import { ClockGauge } from "../model/gauge/ClockGauge";
 
 /**
  * 차트 구성 요소 모델들의 기반 클래스.
  */
-export abstract class RcChartObject {
+export class RcChartObject {
 
     /**
      * @internal
@@ -32,25 +31,35 @@ export abstract class RcChartObject {
     /** 
      * @internal 
      */
+    protected _createObjects(...objs: string[]): void {
+        for (const obj of objs) {
+            this['_' + obj] = new RcChartObject(this.$_p[obj]);
+
+            // ! 각 객체 속성에 주석을 작성할 필요가 있다.
+            // Object.defineProperty(this, obj, {
+            //     value: this['_' + obj] = new RcChartObject(this.$_p[obj]),
+            //     writable: false,
+            //     enumerable: true
+            // });
+        }
+    }
+
+    /** 
+     * @internal 
+     */
     protected _doInit(proxy: ChartItem): void {
     }
 
     /**
-     * 표시 여부.\
-     * 모델 종류에 따라 기본값이 다르다.
-     */
-    get visible(): boolean { return this.$_p.visible; }
-    set visible(value: boolean) { this.$_p.visible = value; }
-    /**
-     * 지정한 설정 속성의 값(들)을 가져온다.\
+     * 지정한 설정 값(들)을 가져온다.\
      * 지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다. 
      * 
      * @param prop 속성 경로.
      * @returns 속성 값 혹은 객체.
      */
-    getProp(prop: string): any {
+    get(prop: string): any {
         const v = this.$_p.getProp(prop);
-        
+    
         if (v instanceof ChartItem) {
             const obj = this[prop];
             return obj instanceof RcChartObject ? obj : void 0;
@@ -61,21 +70,58 @@ export abstract class RcChartObject {
     /**
      * 지정한 속성의 값(들)을 설정한다.\
      * 지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다.
+     * 이 객체 자신을 리턴하므로 javascript에서 builder 패턴으로 설정 값들을 연속해서 지정할 수 있다.
      * 
-     * @param prop 속성 경로.
-     * @param value 지정할 값(들).
+     * ```
+     *  chart.series.set('xAxis', 1).set('yAxis', 1);
+     * ```
+     * 
+     * @param prop 설정 속성 경로 문자열
+     * @param value 지정할 값(들)
+     * @param redraw true로 지정하면 chart를 다시 그린다. 
+     *               false로 지정하고 여러 설정 후에 {@link RcChartControl.render}를 호출해서 다시 그리게 할 수도 있다.
+     * @returns 이 객체 자신
      */
-    setProp(prop: string, value: any): void {
-        this.$_p.setProp(prop, value);
+    set(prop: string, value: any, redraw = true): RcChartObject {
+        this.$_p.setProp(prop, value, redraw);
+        return this;
     }
     /**
-     * 지정한 속성들의 값(들)을 설정한다.
+     * JSON 객체로 지정한 속성들의 값을 설정한다.\
      * 지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다.
      * 
-     * @param props 속성 모음 객체.
+     * ```
+     *  chart.series.set({
+     *      xAxis: 1,
+     *      yAxis: 1,
+     *      yField: 'salary'
+     *  });
+     * ```
+     * 
+     * @param props 여러 설정 값들이 지정된 JSON 객체
+     * @param redraw true로 지정하면 chart를 다시 그린다. 
+     *               false로 지정하고 여러 설정 후에 {@link RcChartControl.render}를 호출해서 다시 그리게 할 수도 있다.
+     * @returns 이 객체 자신
      */
-    setProps(props: object): void {
-        this.$_p.setProps(props);
+    setAll(props: object, redraw = true): RcChartObject {
+        this.$_p.setProps(props, redraw);
+        return this;
+    }
+    /**
+     * Boolean 타입의 설정값을 변경한다.
+     * 
+     * ```
+     * chart.getSeries('ser02').toggle('visible');
+     * ```
+     * 
+     * @param prop 설정 속성 이름
+     * @param redraw true로 지정하면 chart를 다시 그린다. 
+     *               false로 지정하고 여러 설정 후에 {@link RcChartControl.render}를 호출해서 다시 그리게 할 수도 있다.
+     * @returns 이 객체 자신
+     */
+    toggle(prop: string, redraw = true): RcChartObject {
+        this.$_p.setProp(prop, !this.$_p.getProp(prop), redraw);
+        return this;
     }
 
     /** 
@@ -86,25 +132,37 @@ export abstract class RcChartObject {
     }
 }
 
+export class RcPointLabel extends RcChartObject {
+}
+
 /**
  * 차트 시리즈 모델들의 기반 클래스.
  */
 export abstract class RcChartSeries extends RcChartObject {
 
+    private _pointLabel: RcChartObject;
+    private _trendLine: RcChartObject;
+    private _tooltip: RcChartObject;
+
     /** 
      * @internal 
      */
-    protected constructor(proxy: Series) {
-        super(proxy);
+    protected _doInit(proxy: ChartItem): void {
+        this._createObjects('pointLabel', 'trendline', 'tooltip');
     }
+
     /**
-     * 시리즈 종류.
+     * point label 모델.
      */
-    get type(): string { return (this.$_p as Series)._type();}
+    get pointLabel(): RcChartObject { return this._pointLabel; }
     /**
-     * 시리즈 이름.
+     * point label 모델.
      */
-    get name(): string { return (this.$_p as Series).name; }
+    get trendLine(): RcChartObject { return this._trendLine; }
+    /**
+     * point label 모델.
+     */
+    get tooltip(): RcChartObject { return this._tooltip; }
 }
 
 /**
@@ -282,94 +340,9 @@ export class RcBumpSeriesGroup extends RcSeriesGroup {
 }
 
 /**
- * 차트 게이지와 게이지그룹 모델들의 기반 클래스.
+ * {@link RcChartGauge 차트 게이지}와 {@link RcGaugeGroup 게이지그룹} 모델들의 기반 클래스.
  */
 export abstract class RcChartGaugeBase extends RcChartObject {
-
-    // /**
-    //  * left
-    //  * 
-    //  * @config
-    //  */
-    // get left(): number | string {
-    //     return (this.$_p as GaugeBase).left;
-    // }
-    // set left(value: number | string) {
-    //     if (value !== (this.$_p as GaugeBase).left) {
-    //         (this.$_p as GaugeBase).left = value;
-    //         this._changed();
-    //     }
-    // }
-    // /**
-    //  * right
-    //  * 
-    //  * @config
-    //  */
-    // get right(): number | string {
-    //     return (this.$_p as GaugeBase).right;
-    // }
-    // set right(value: number | string) {
-    //     if (value !== (this.$_p as GaugeBase).right) {
-    //         (this.$_p as GaugeBase).right = value;
-    //         this._changed();
-    //     }
-    // }
-    // /**
-    //  * top
-    //  * 
-    //  * @config
-    //  */
-    // get top(): number | string {
-    //     return (this.$_p as GaugeBase).top;
-    // }
-    // set top(value: number | string) {
-    //     if (value !== (this.$_p as GaugeBase).top) {
-    //         (this.$_p as GaugeBase).top = value;
-    //         this._changed();
-    //     }
-    // }
-    // /**
-    //  * bottom
-    //  * 
-    //  * @config
-    //  */
-    // get bottom(): number | string {
-    //     return (this.$_p as GaugeBase).bottom;
-    // }
-    // set bottom(value: number | string) {
-    //     if (value !== (this.$_p as GaugeBase).bottom) {
-    //         (this.$_p as GaugeBase).bottom = value;
-    //         this._changed();
-    //     }
-    // }
-    // /**
-    //  * width
-    //  * 
-    //  * @config
-    //  */
-    // get width(): number | string {
-    //     return (this.$_p as GaugeBase).width;
-    // }
-    // set width(value: number | string) {
-    //     if (value !== (this.$_p as GaugeBase).width) {
-    //         (this.$_p as GaugeBase).width = value;
-    //         this._changed();
-    //     }
-    // }
-    // /**
-    //  * height
-    //  * 
-    //  * @config
-    //  */
-    // get height(): number | string {
-    //     return (this.$_p as GaugeBase).height;
-    // }
-    // set height(value: number | string) {
-    //     if (value !== (this.$_p as GaugeBase).height) {
-    //         (this.$_p as GaugeBase).height = value;
-    //         this._changed();
-    //     }
-    // }
 }
 
 /**
@@ -385,16 +358,68 @@ export abstract class RcValueGauge extends RcChartGauge {
     /**
      * 게이지의 값을 변경한다.
      */
-    updateValue(value: any): void {
-        (this.$_p as ValueGauge).updateValue(value);
+    updateValue(value: any, animate = true): void {
+        (this.$_p as ValueGauge).updateValue(value, animate);
     }
 }
+
+export class RcGaugeScale extends RcChartObject {
+
+    private _line: RcChartObject;
+    private _tick: RcChartObject;
+    private _tickLabel: RcChartObject;
+
+    /**
+     * @internal
+     */
+    protected _doInit(proxy: ChartItem): void {
+        this._createObjects('line', 'tick', 'tickLabel');
+    }
+
+    /**
+     * line 모델.
+     */
+    get line(): RcChartObject { return this._line};
+    /**
+     * tick 모델.
+     */
+    get tick(): RcChartObject { return this._line};
+    /**
+     * tickLabel 모델.
+     */
+    get tickLabel(): RcChartObject { return this._line};
+}
+
+export abstract class RcCircularGauge extends RcValueGauge {
+
+    private _label: RcChartObject
+
+    protected _doInit(proxy: ChartItem): void {
+        this._createObjects('label');
+    }
+
+    /**
+     * label 모델.
+     */
+    get label(): RcChartObject { return this._label; }
+} 
 
 /**
  * **'circle'** 게이지.
  * 원이나 원호로 값을 표시하는 게이지.
  */
-export class RcCircleGauge extends RcValueGauge {
+export class RcCircleGauge extends RcCircularGauge {
+
+    private _band: RcChartObject;
+    private _scale: RcChartObject;
+    private _rim: RcChartObject;
+    private _valueRim: RcChartObject;
+    private _marker: RcChartObject;
+    private _hand: RcChartObject;
+    private _pin: RcChartObject;
+
+    protected _doInit(proxy: ChartItem): void {
+    }
 }
 
 /**
@@ -419,13 +444,6 @@ export class RcBulletGauge extends RcValueGauge {
  * 시간을 표시하는 시간 게이지.
  */
 export class RcClockGauge extends RcChartGauge {
-    /**
-     * 시게 동작 여부.
-     * 
-     * @default true
-     */
-    get active() { return (this.$_p as ClockGauge).active; }
-    set active(value: boolean) { (this.$_p as ClockGauge).active = value; }
 }
 
 /**

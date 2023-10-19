@@ -9,6 +9,7 @@
 import { isArray, isObject, isString, pickNum, pickProp, pickProp3 } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { RcElement } from "../common/RcControl";
+import { RcObject } from "../common/RcObject";
 import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { RectElement } from "../common/impl/RectElement";
@@ -142,19 +143,14 @@ export enum TrendType {
     MOVING_AVERAGE = 'movingAverage'
 }
 
-export class MovingAverage {
+export class MovingAverage extends RcObject {
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    interval: number;
-    type: 'simple' | 'weighted' | 'exponential' | 'triangualr';
+    interval: number = 5;
+    type: 'simple' | 'weighted' | 'exponential' | 'triangualr' = 'simple';
 }
-
-const _movingAverage = {
-    interval: 5,
-    type: 'simple'
-};
 
 /**
  * 시리즈 추세선.
@@ -192,10 +188,6 @@ export class Trendline extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _getDefObjProps(prop: string) {
-        if (prop === 'movingAverage') return _movingAverage;
-    }
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -360,12 +352,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    readonly name: string;
-    readonly label: string;
-    readonly pointLabel: DataPointLabel;
-    readonly trendline: Trendline;
-    readonly tooltip: Tooltip;
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -401,6 +387,12 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     // properties
     //-------------------------------------------------------------------------
     abstract _type(): string; // for debugging, ...
+
+    readonly name: string;
+    readonly label: string;
+    readonly pointLabel: DataPointLabel;
+    readonly trendline: Trendline;
+    readonly tooltip: Tooltip;
 
     // group: string;
     /**

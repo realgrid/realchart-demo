@@ -44,6 +44,7 @@ export {
     RcAreaSeriesGroup,
     RcPieSeriesGroup,
     RcBumpSeriesGroup,
+    RcChartGaugeBase,
     RcChartGauge,
     RcValueGauge,
     RcCircleGauge,

@@ -90,8 +90,12 @@ export class ChartControl extends RcControl implements IChartEventListener {
         this.model = new Chart(config);
     }
 
-    refresh(): void {
-        this.invalidateLayout();
+    refresh(now: boolean): void {
+        if (now) {
+            this._render();
+        } else {
+            this.invalidateLayout();
+        }
     }
 
     //-------------------------------------------------------------------------

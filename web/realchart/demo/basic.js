@@ -136,8 +136,13 @@ function setActions(container) {
 	);
 	createButton(container, 'Test', function (e) {
 		// alert('hello');
+        // alert(RealChart.getVersion());
         // chart.series.visible = !chart.series.visible;
-        chart.series.setProp('visible', !chart.series.getProp('visible'));
+        // chart.series.set('visible', !chart.series.get('visible'));
+        // chart.series.toggle('visible');
+        // chart.series.set('pointLabel', false);
+        // chart.series.toggle('pointLabel.visible');
+        // chart.series.pointLabel.toggle('visible');
 	});
 	createCheckBox(
 		container,

@@ -84,9 +84,11 @@ export class RcChartControl {
     }
     /**
      * 차트를 다시 그린다.
+     * 
+     * @param now true로 지정하면 즉시 차트 SVG를 디시 구축한다.
      */
-    refresh(): void {
-        this.$_p.refresh();
+    render(now = false): void {
+        this.$_p.refresh(now);
     }
     /**
      * 첫번째 시리즈.
