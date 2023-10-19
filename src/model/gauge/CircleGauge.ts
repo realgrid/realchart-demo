@@ -459,11 +459,11 @@ export class CircleGauge extends CircularGauge {
             switch (band.position) {
                 case GaugeItemPosition.INSIDE:
                     exts.band = rd - (thick - exts.bandThick) / 2;
-                    // TODO
                     break;
 
                 case GaugeItemPosition.OPPOSITE:
-                    // TODO
+                    exts.band = exts.inner - band.gap;
+                    exts.inner = exts.band - exts.bandThick;
                     break;
 
                 default:
@@ -473,17 +473,18 @@ export class CircleGauge extends CircularGauge {
         }
 
         if (scale.visible) {
-            switch (scale.position) {
-                case GaugeItemPosition.INSIDE:
-                    // TODO
-                    break;
+            exts.scaleTick = Math.max(1, scale.tick.length || 0);
+            exts.scaleLabel = 16;
 
+            switch (scale.position) {
                 case GaugeItemPosition.OPPOSITE:
-                    // TODO
+                    exts.scale = exts.inner - scale.gap;
+                    exts.inner = exts.scale - exts.scaleTick - exts.scaleLabel
                     break;
                     
+                case GaugeItemPosition.INSIDE:
                 default:
-                    exts.scale = rd += Math.max(1, scale.tick.length || 0) + scale.gap;
+                    exts.scale = rd + scale.gap;
                     break;
             }
         }

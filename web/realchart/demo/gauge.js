@@ -38,7 +38,7 @@ const config = {
             visible: true,
         },
         band: {
-            thickness: '100%',
+            // thickness: '100%',
             visible: true,
             ranges: [{
                 toValue: 20,
@@ -117,6 +117,10 @@ function setActions(container) {
         config.gauge.scale.visible = _getChecked(e);
         chart.load(config);
     }, true);
+    createListBox(container, "scale.position", ['default', 'opposite', 'inside'], function (e) {
+        config.gauge.scale.position = _getValue(e);
+        chart.load(config);
+    }, 'default');
     createCheckBox(container, 'band', function (e) {
         config.gauge.band.visible = _getChecked(e);
         chart.load(config);

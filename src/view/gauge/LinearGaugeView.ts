@@ -50,7 +50,8 @@ class BandView extends ChartElement<GaugeRangeBand> {
     protected _doMeasure(doc: Document, model: GaugeRangeBand, hintWidth: number, hintHeight: number, phase: number): ISize {
         const g = model.gauge as LinearGauge | LinearGaugeGroup;
         const vertical = this._vertical = g instanceof LinearGauge ? g.isVertical() : !g.vertical;
-        const thick = this._thick = model.position === GaugeItemPosition.INSIDE ? (vertical ? hintWidth : hintHeight) : pickNum(model.thickness, 0) + (this._gap = pickNum(model.gap, 0));
+        const pos = model.position;
+        const thick = this._thick = model.getThickness(vertical ? hintWidth : hintHeight) + (pos === GaugeItemPosition.INSIDE ? 0 : (this._gap = pickNum(model.gap, 0)));
         let width = vertical ? thick : hintWidth;
         let height = vertical ? hintHeight : thick;
         const ranges = this._ranges = model.ranges;
@@ -86,7 +87,7 @@ class BandView extends ChartElement<GaugeRangeBand> {
         const scale = g.scale;
         const sum = scale._max - scale._min;
 
-        if (this._labelContainer.setVisible(this.$_layoutBars(g, sum, this._ranges) && this._labelContainer.visible)) {
+        if (this._labelContainer.setVisible(this.$_layoutBars(g, sum, this._ranges) && this._labelContainer.visible && m.position !== GaugeItemPosition.INSIDE)) {
             this.$_layoutLabels(g, sum, this._ranges);
         }
     }

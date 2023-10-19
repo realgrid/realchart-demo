@@ -9,7 +9,7 @@
 import { isArray, isObject, isString, pickNum, pickProp } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { ISize } from "../common/Size";
-import { DEG_RAD, IMinMax, IPercentSize, IValueRange, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, buildValueRanges, calcPercent, fixnum, parsePercentSize } from "../common/Types";
+import { DEG_RAD, IMinMax, IPercentSize, IValueRange, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, buildValueRanges, calcPercent, fixnum, isNull, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Widget } from "./Widget";
@@ -839,6 +839,11 @@ export class RangeLabel extends ChartItem {
 export class GaugeRangeBand extends ChartItem {
 
     //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly DEF_THICKNESS = 7;
+
+    //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     private _ranges: IValueRange[];
@@ -858,7 +863,6 @@ export class GaugeRangeBand extends ChartItem {
 
         this.rangeLabel = new RangeLabel(gauge.chart, false);
         this.tickLabel = new ChartItem(gauge.chart, true);
-        this.thickness = 7;
     }
 
     //-------------------------------------------------------------------------
@@ -872,7 +876,9 @@ export class GaugeRangeBand extends ChartItem {
     position = GaugeItemPosition.DEFAULT;
     /**
      * 밴드의 두께를 픽셀 단위나, 
-     * 게이지 rim의 두께에 대한 상대적 크기로 지정할 수 있다.
+     * 게이지 rim의 두께에 대한 상대적 크기로 지정할 수 있다.\
+     * 값을 지정하지 않으면 게이지 본체 내부에 표시될 때 '100%'(본체 두께와 동일)로 표시되고,
+     * 외부에 있을 때는 7 픽셀로 두께로 표시된다.
      * 
      * @config
      */
@@ -924,7 +930,13 @@ export class GaugeRangeBand extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     getThickness(domain: number): number {
-        return calcPercent(this._thickDim, domain, 0);
+        if (this._thickDim) {
+            return calcPercent(this._thickDim, domain, 0);
+        } else if (this.position === GaugeItemPosition.INSIDE) {
+            return domain;
+        } else {
+            return GaugeRangeBand.DEF_THICKNESS;
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -1036,10 +1048,12 @@ export class CircularGaugeLabel extends GaugeLabel {
 export interface ICircularGaugeExtents {
     scale?: number;
     scaleTick?: number;
+    scaleLabel?: number;
     band?: number;
     bandThick?: number;
     bandTick?: number;
-    radius: number, 
+    radius: number,
+    radiusThick: number,
     inner: number, 
     value: number 
 }
@@ -1153,7 +1167,7 @@ class CircularProps {
         const middle = inner + (radius - inner) / 2;
         const value = this._valueDim ? calcPercent(this._valueDim, middle) : middle;
 
-        return { radius, inner, value };
+        return { radius, inner, value, radiusThick: radius - inner };
     }
 
     prepareAngles(startAngle: number, sweepAngle: number): void {

@@ -16,7 +16,7 @@ import { RAD_DEG, pixel } from "../../common/Types";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextAnchor, TextElement, TextLayout } from "../../common/impl/TextElement";
-import { GaugeRangeBand, ICircularGaugeExtents } from "../../model/Gauge";
+import { GaugeItemPosition, GaugeRangeBand, ICircularGaugeExtents } from "../../model/Gauge";
 import { CircleGauge, CircleGaugeGroup, CircleGaugeHand, CircleGaugePin, CircleGaugeScale } from "../../model/gauge/CircleGauge";
 import { ChartElement } from "../ChartElement";
 import { CircularGaugeView, GaugeGroupView, ScaleView } from "../GaugeView";
@@ -73,12 +73,13 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
     protected _doLayout(param: any): void {
         const m = this.model;
         const g = m.gauge as CircleGauge;
+        const opposite = m.position === GaugeItemPosition.OPPOSITE ? -1 : 1;
         const gprops = g.props;
         const cx = this._center.x;
         const cy = this._center.y;
         const exts = this._exts;
-        const rd2 = exts.scale;
-        const rd = rd2 - this.model.tick.length;
+        const rd = exts.scale;
+        const rd2 = rd + this.model.tick.length * opposite;
         const sweep = gprops._sweepRad;
         const sum = g.maxValue - g.minValue;
         let x1: number, y1: number, x2: number, y2: number, a: number;
@@ -104,7 +105,7 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
         // tick labels
         if (this._labelContainer.visible) {
             this._labels.get(0).text = String(g.maxValue);
-            const rd = rd2 + this._labels.get(0).getBBounds().height * 0.5;
+            const rd = rd2 + this._labels.get(0).getBBounds().height * 0.5 * opposite;
 
             this._labels.forEach((v, i, count) => {
                 const a = i / count * sweep + gprops._startRad;
@@ -287,12 +288,12 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
     protected _doInitContents(doc: Document, container: LayerElement): void {
         container.add(this._rimView = new SectorElement(doc, 'rct-circle-gauge-back'));
-        container.add(this._scaleView = new CircularScaleView(doc));
-        container.add(this._bandView = new BandView(doc));
         container.add(this._valueView = new SectorElement(doc, 'rct-circle-gauge-value'));
         container.add(this._innerView = new SectorElement(doc, 'rct-circle-gauge-inner'));
-        container.add(this._handContainer = new LayerElement(doc, void 0));
         container.add(this._textView = new TextElement(doc, 'rct-circle-gauge-label'));
+        container.add(this._handContainer = new LayerElement(doc, void 0));
+        container.add(this._scaleView = new CircularScaleView(doc));
+        container.add(this._bandView = new BandView(doc));
     }
 
     //-------------------------------------------------------------------------
@@ -351,7 +352,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         const rate = pickNum((value - m.minValue) / (m.maxValue - m.minValue), 0);
         const center = this._center;
         const exts = this._exts;
-        const thick = m.valueRim.getThickness(exts.radius - exts.inner);
+        const thick = m.valueRim.getThickness(exts.radiusThick);// exts.radius - exts.inner);
         const tv = this._textView;
 
         // value rim
@@ -427,7 +428,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
                 cy: center.y,
                 rx: exts.radius,
                 ry: exts.radius,
-                innerRadius: exts.inner / exts.radius,
+                innerRadius: 1 - exts.radiusThick / exts.radius,
                 start: start,
                 angle: props._sweepRad,
                 clockwise: m.clockwise
@@ -450,7 +451,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         }
 
         // inner view
-        this._innerView.internalSetStyleOrClass(m.innerStyle);
+        this._innerView.setStyleOrClass(m.innerStyle);
 
         let r = exts.inner;
         const cs = getComputedStyle(this._innerView.dom);
