@@ -78,23 +78,27 @@ export function hyperlink<T extends string, U extends string>(text: T, link: U) 
 }
 
 export function doclink(text: string): string {
-    const sep = text.split('.');
-    const [g] = sep;
-    let [title] = sep.slice(-1);
+    // rc.RcChartControl some text ...
+    const [keyword, ...display] = text.split(' ');
+    const [sep, ...keys] = keyword.split('.');
+
     let page = '';
-    switch (g) {
+    switch (sep) {
         case 'g':
-            page = `../globals/${title}`;
+        case 'global':
+            page = `../globals/${[keys]}`;
             break;
         case 'config':
-            page = '/config/' + sep.join('/');
+            page = '/config/' + keys.join('/');
             break;
+        case 'rc':
+        case 'realchart':
         default:
-            page = `../classes/${title}`;
-
+            page = `../classes/${[keys]}`;
     }
 
-    return hyperlink(title, page);
+    const t = display.length ? display.join('') : keys.slice(-1)[0];
+    return hyperlink(t , page);
 }
 
 export function seelink(comment:any): string {

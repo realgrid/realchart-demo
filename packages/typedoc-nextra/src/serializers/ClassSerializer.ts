@@ -66,12 +66,6 @@ export interface DocumentedClassMethod {
 }
 
 export class ClassSerializer extends AbstractSerializer {
-
-    private _parseCommentLink(comment: JSONOutput.CommentDisplayPart) {
-        const hasLink = comment.kind == 'inline-tag' && comment.tag == '@link'
-        return hasLink ? doclink(comment.text) : comment.text;
-    }
-
     public serialize(): DocumentedClass {
         const ctor = this.declaration.children?.find((c) => {
             return c.kind === ReflectionKind.Constructor;

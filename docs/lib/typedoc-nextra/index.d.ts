@@ -4,6 +4,7 @@ declare abstract class AbstractSerializer {
     declaration: JSONOutput.DeclarationReflection;
     constructor(declaration: JSONOutput.DeclarationReflection);
     serialize(): void;
+    protected _parseCommentLink(comment: JSONOutput.CommentDisplayPart): string;
 }
 
 declare function getName(decl: JSONOutput.DeclarationReflection): string;
@@ -109,7 +110,6 @@ interface DocumentedClassMethod {
     metadata: FileMetadata | null;
 }
 declare class ClassSerializer extends AbstractSerializer {
-    private _parseCommentLink;
     serialize(): DocumentedClass;
     parseProperties(decl: JSONOutput.DeclarationReflection): DocumentedClassProperty;
     parseMethod(decl: JSONOutput.DeclarationReflection): DocumentedClassMethod;
