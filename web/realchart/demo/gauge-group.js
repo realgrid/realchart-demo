@@ -12,6 +12,7 @@ const config = {
     },
     options: {
         animatable: false,
+        theme: 'dark',
         credits: {
             // visible: false,
             // verticalAlign: 'top'
@@ -97,7 +98,7 @@ const config = {
                 color: 'red'
             }]
         },
-        style: {
+        panelStyle: {
             stroke: 'lightblue',
             borderRadius: '10px'
         }
@@ -134,7 +135,7 @@ function setActions(container) {
     createListBox(container, "options.theme", ['', 'dark'], function (e) {
         config.options.theme = _getValue(e);
         chart.load(config, animate);
-    }, 'default');
+    }, 'dark');
 }
 
 function init() {
