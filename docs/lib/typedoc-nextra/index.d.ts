@@ -4,10 +4,12 @@ declare abstract class AbstractSerializer {
     declaration: JSONOutput.DeclarationReflection;
     constructor(declaration: JSONOutput.DeclarationReflection);
     serialize(): void;
-    protected _parseCommentLink(comment: JSONOutput.CommentDisplayPart): string;
 }
 
 declare function getName(decl: JSONOutput.DeclarationReflection): string;
+declare function getVars(decl: JSONOutput.DeclarationReflection): any;
+declare function getDescription(decl: JSONOutput.DeclarationReflection | JSONOutput.SignatureReflection, vars?: any): string | null;
+declare function getDocLinkedDesc(display: JSONOutput.CommentDisplayPart, vars?: any): string;
 declare function getFileMetadata(decl: JSONOutput.DeclarationReflection): FileMetadata | null;
 interface FileMetadata {
     name: string;
@@ -31,7 +33,7 @@ declare function heading<T extends string>(src: T, type: 5): `##### ${T}`;
 declare function heading<T extends string>(src: T, type: 6): `###### ${T}`;
 declare function headingId<T extends string, U extends string>(src: T, id: U, type?: HeadingTypes): `<h${HeadingTypes} id="${U}">${T}</h${HeadingTypes}>`;
 declare function code<T extends string>(src: T): `\`${T}\``;
-declare function codeBlock<T extends string, U extends string>(src: T, lang?: U): `\`\`\`\n${T}\n\`\`\`` | `\`\`\`${U}\n${T}\n\`\`\``;
+declare function codeBlock<T extends string, U extends string>(src: T, lang?: U): `\`\`\`${U}\n${T}\n\`\`\`` | `\`\`\`\n${T}\n\`\`\``;
 declare function bold<T extends string>(src: T): `**${T}**`;
 declare function italic<T extends string>(src: T): `*${T}*`;
 declare function strikethrough<T extends string>(src: T): `~~${T}~~`;
@@ -46,7 +48,7 @@ declare function ul<T extends string>(src: T): `- ${T}`;
 declare function ol<T extends string>(src: T): `${number}. ${T}`;
 declare function hr(): "---";
 declare function hyperlink<T extends string, U extends string>(text: T, link: U): `[${T}](${U})`;
-declare function doclink(text: string): string;
+declare function doclink(text: string, vars?: any): string;
 declare function seelink(comment: any): string;
 declare function image<T extends string, U extends string>(alt: T, link: U): `![${T}](${U})`;
 declare function table(heading: string[], body: string[][]): string;
@@ -66,6 +68,7 @@ interface DocumentedClass {
     methods: DocumentedClassMethod[];
     properties: DocumentedClassProperty[];
     metadata: FileMetadata | null;
+    vars: any[] | undefined;
 }
 interface DocumentedClassConstructor extends DocumentedClassMethod {
     constructor: string;
@@ -74,6 +77,7 @@ interface DocumentedClassProperty {
     name: string;
     description: string | null;
     see: string[];
+    vars?: any;
     static: boolean;
     private: boolean;
     readonly: boolean;
@@ -219,4 +223,4 @@ interface Documentation {
 }
 declare function createDocumentation(options: TypeDocNextraInit): Promise<Documentation>;
 
-export { AbstractSerializer, ClassSerializer, Documentation, DocumentationMetadata, DocumentedClass, DocumentedClassConstructor, DocumentedClassMethod, DocumentedClassProperty, DocumentedFunction, DocumentedParameter, DocumentedTypeProperty, DocumentedTypes, FileMetadata, FunctionSerializer, HeadingTypes, MdHeading, TypeDocNextra, TypeDocNextraCustomFile, TypeDocNextraInit, TypeDocNextraLink, TypeDocNextraMarkdownBuild, TypeDocNextraMdBuilderOptions, TypesSerializer, blockquote, bold, code, codeBlock, createDocumentation, createDocumentation as default, doclink, escape, getFileMetadata, getName, heading, headingId, highlight, hr, hyperlink, image, italic, makeId, ol, parseType, parseTypes, seelink, strikethrough, subscript, superscript, table, taskList, ul };
+export { AbstractSerializer, ClassSerializer, Documentation, DocumentationMetadata, DocumentedClass, DocumentedClassConstructor, DocumentedClassMethod, DocumentedClassProperty, DocumentedFunction, DocumentedParameter, DocumentedTypeProperty, DocumentedTypes, FileMetadata, FunctionSerializer, HeadingTypes, MdHeading, TypeDocNextra, TypeDocNextraCustomFile, TypeDocNextraInit, TypeDocNextraLink, TypeDocNextraMarkdownBuild, TypeDocNextraMdBuilderOptions, TypesSerializer, blockquote, bold, code, codeBlock, createDocumentation, createDocumentation as default, doclink, escape, getDescription, getDocLinkedDesc, getFileMetadata, getName, getVars, heading, headingId, highlight, hr, hyperlink, image, italic, makeId, ol, parseType, parseTypes, seelink, strikethrough, subscript, superscript, table, taskList, ul };

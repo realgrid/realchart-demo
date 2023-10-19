@@ -10,5 +10,5 @@
     "excludePrivate": true,
     "excludeProtected": true,
     "disableSources": true,
-    "logLevel": "Error"
+    "logLevel": "Error",
 }

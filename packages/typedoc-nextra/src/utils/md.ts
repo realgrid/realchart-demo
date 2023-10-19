@@ -77,10 +77,20 @@ export function hyperlink<T extends string, U extends string>(text: T, link: U) 
     return `[${text}](${link})` as const;
 }
 
-export function doclink(text: string): string {
-    // rc.RcChartControl some text ...
+export function doclink(text: string, vars: any = {}): string {
+    /**
+     * 'rc.RcChartControl some text ...'
+     * =>
+     * keyword: rc.RcChartControl
+     * sep: rc
+     * keys: [RcChartControl]
+     * t: some text ...
+     */
     const [keyword, ...display] = text.split(' ');
     const [sep, ...keys] = keyword.split('.');
+    const t = display.length ? display.join('') : keys.length ? keys.slice(-1)[0] : keyword;
+    
+    if (!keys.length) return t;
 
     let page = '';
     switch (sep) {
@@ -89,15 +99,21 @@ export function doclink(text: string): string {
             page = `../globals/${[keys]}`;
             break;
         case 'config':
-            page = '/config/' + keys.join('/');
+            keys.forEach((k, i) => {
+                keys[i] = k[0] === '$' ? vars[k.substring(1)] || '$' : k;
+            })
+            if (keys.some(k => k === '$')) {
+                console.warn('[WARN] not found var', text);
+                return t;
+            }
+            page = '/config/config/' + keys.join('/');
             break;
         case 'rc':
         case 'realchart':
         default:
             page = `../classes/${[keys]}`;
     }
-
-    const t = display.length ? display.join('') : keys.slice(-1)[0];
+    
     return hyperlink(t , page);
 }
 

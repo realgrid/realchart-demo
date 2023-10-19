@@ -1,8 +1,27 @@
 import path from 'path';
 import { DeclarationReflection, JSONOutput } from 'typedoc';
+import { doclink } from './md';
 
 export function getName(decl: JSONOutput.DeclarationReflection) {
     return decl.name === 'default' ? path.parse(getFileMetadata(decl)?.name || 'default').name : decl.name;
+}
+
+export function getVars(decl: JSONOutput.DeclarationReflection): any {
+    return decl.comment?.blockTags?.find((r) => r.tag === '@configvar')?.content?.reduce((acc, m) => {
+        const [key, value] = m.text?.split('=');
+        return key ? Object.assign(acc, { [key]: value.replace(/\'/g, '') }): acc;
+    }, {});
+}
+
+export function getDescription(decl: JSONOutput.DeclarationReflection | JSONOutput.SignatureReflection, vars: any = {}): string | null {
+    return decl.comment?.summary?.map((m) => {
+        return getDocLinkedDesc(m, vars);
+    }).join('') || null;
+}
+
+export function getDocLinkedDesc(display: JSONOutput.CommentDisplayPart, vars: any = {}) {
+    const hasLink = display.kind == 'inline-tag' && display.tag == '@link';
+    return hasLink ? doclink(display.text, vars) : display.text;
 }
 
 export function getFileMetadata(decl: JSONOutput.DeclarationReflection): FileMetadata | null {

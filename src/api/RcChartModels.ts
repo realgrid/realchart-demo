@@ -590,7 +590,7 @@ export abstract class RcLinerGaugeBase extends RcValueGauge {
  * @see {@link RcCircleGauge}
  * @see {@link RcBulletGauge}
  * 
- * @configvar gauge=linaer
+ * @configvar gauge=linear
  */
 export class RcLinearGauge extends RcLinerGaugeBase {
 

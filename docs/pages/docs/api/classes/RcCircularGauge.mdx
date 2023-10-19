@@ -1,15 +1,19 @@
-## RcClockGauge
+## RcCircularGauge
             ### Extends
-- [RcChartGauge](../classes/RcChartGauge)
+- [RcValueGauge](../classes/RcValueGauge)
             
             
-**'clock'** 게이지.\
-시간을 표시하는 시간 게이지.
+값을 표시하는 차트 게이지 모델들의 기반 클래스.
 
             
 
 
 
+## Properties
+### label: [RcChartObject](../classes/RcChartObject)
+label 모델.
+
+Configuration속성들 참조.
 
 
 ## Methods
@@ -33,3 +37,8 @@
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 이름 |
 | redraw | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 render를 호출해서 다시 그리게 할 수도 있다. |
+### updateValue(value, animate): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+| Parameter | Type |
+| ----------- | ----------- |
+| value | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
+| animate | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) |

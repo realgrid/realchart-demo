@@ -61,12 +61,16 @@ export class Globals {
     /**
      * 차트 설정 모델을 기빈으로
      * {@link RcChartControl Chart 컨트롤} svg를 생성한 후,
+     * {@link rc.RcChartControl Chart 컨트롤} svg를 생성한 후,
+     * {@link g.getVersion},
+     * {@link config.gauge.bullet}
      * 지정된 div 엘리먼트의 유일한 자식으로 포함시킨다.\
      * div 스타일에 지정된 padding을 제외한 전체 영역의 크기대로 표시된다.
      * 
      * ```js
      * const chart = RealChart.createChart(document, 'realchart', config);
      * ```
+     * 
      * 
      * @param doc
      * @param container 컨트롤이 생성되는 div 엘리먼트나 id

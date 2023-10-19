@@ -1,5 +1,5 @@
 import { JSONOutput, ReflectionKind } from 'typedoc';
-import { FileMetadata, getFileMetadata, getName, hyperlink, doclink, seelink, parseType, parseTypes } from '../utils';
+import { FileMetadata, getFileMetadata, getName, hyperlink, seelink, parseType, parseTypes, getVars, getDescription, getDocLinkedDesc } from '../utils';
 import { AbstractSerializer } from './AbstractSerializer';
 
 export interface DocumentedClass {
@@ -17,6 +17,7 @@ export interface DocumentedClass {
     methods: DocumentedClassMethod[];
     properties: DocumentedClassProperty[];
     metadata: FileMetadata | null;
+    vars: any[] | undefined;
 }
 
 export interface DocumentedClassConstructor extends DocumentedClassMethod {
@@ -27,6 +28,7 @@ export interface DocumentedClassProperty {
     name: string;
     description: string | null;
     see: string[];
+    vars?: any;
     static: boolean;
     private: boolean;
     readonly: boolean;
@@ -66,6 +68,8 @@ export interface DocumentedClassMethod {
 }
 
 export class ClassSerializer extends AbstractSerializer {
+
+
     public serialize(): DocumentedClass {
         const ctor = this.declaration.children?.find((c) => {
             return c.kind === ReflectionKind.Constructor;
@@ -79,6 +83,9 @@ export class ClassSerializer extends AbstractSerializer {
 
         const ctorSig = ctor?.signatures?.find((r) => r.kind === ReflectionKind.ConstructorSignature);
 
+        const vars = getVars(this.declaration);
+        const description = getDescription(this.declaration, vars);
+
         return {
             name: getName(this.declaration),
             abstract: this.declaration.flags.isAbstract || !!this.declaration.comment?.blockTags?.some((r) => r.tag === '@abstract'),
@@ -91,7 +98,8 @@ export class ClassSerializer extends AbstractSerializer {
                 : null,
             metadata: getFileMetadata(this.declaration),
             deprecated: !!this.declaration.comment?.blockTags?.some((r) => r.tag === '@deprecated'),
-            description: this.declaration.comment?.summary?.map(this._parseCommentLink).join('') || null,
+            description,
+            vars,
             extends: this.declaration.extendedTypes?.length ? parseType(this.declaration.extendedTypes[0]) : null,
             implements: this.declaration.implementedTypes?.length ? parseType(this.declaration.implementedTypes[0]) : null,
             rawExtends: this.declaration.extendedTypes?.length ? parseTypes(this.declaration.extendedTypes[0]) : null,
@@ -104,17 +112,19 @@ export class ClassSerializer extends AbstractSerializer {
     }
 
     public parseProperties(decl: JSONOutput.DeclarationReflection): DocumentedClassProperty {
+        const vars = getVars(this.declaration);
+        const description = getDescription(decl, vars);
         const base = {
             abstract: decl.flags.isAbstract || !!decl.comment?.blockTags?.some((r) => r.tag === '@abstract'),
             default: decl.defaultValue || decl.comment?.blockTags?.find((r) => r.tag === '@default')?.content?.[0].text || null,
             deprecated: !!decl.comment?.blockTags?.some((r) => r.tag === '@deprecated'),
-            description: decl.comment?.summary?.map(this._parseCommentLink).join('') || null,
+            description,
             metadata: getFileMetadata(decl),
             name: decl.name,
             private: decl.flags.isPrivate || !!decl.comment?.blockTags?.some((r) => r.tag === '@private'),
             readonly: decl.flags.isReadonly || !!decl.comment?.blockTags?.some((r) => r.tag === '@readonly'),
-            // see: decl.comment?.blockTags?.filter((r) => r.tag === '@see').map((m) => m.content[0].text) || [],
             see: decl.comment?.blockTags?.find((r) => r.tag === '@see')?.content?.map((m) => seelink(m)) || [],
+            vars,
             static: decl.flags.isStatic || !!decl.comment?.blockTags?.some((r) => r.tag === '@static'),
             type: decl.type ? parseType(decl.type) : 'any'
         } as DocumentedClassProperty;
@@ -129,7 +139,7 @@ export class ClassSerializer extends AbstractSerializer {
             return Object.assign(base, {
                 abstract: getter.flags.isAbstract || getter.comment?.blockTags?.some((r) => r.tag === '@abstract'),
                 deprecated: getter.comment?.blockTags?.some((r) => r.tag === '@deprecated'),
-                description: getter.comment?.summary?.map(this._parseCommentLink).join(''),
+                description: getDescription(getter, vars),
                 metadata: getFileMetadata(getter as unknown as JSONOutput.DeclarationReflection),
                 name: getter.name,
                 private: getter.flags.isPrivate || getter.comment?.blockTags?.some((r) => r.tag === '@private'),
@@ -145,10 +155,10 @@ export class ClassSerializer extends AbstractSerializer {
 
     public parseMethod(decl: JSONOutput.DeclarationReflection): DocumentedClassMethod {
         const signature = decl.signatures?.[0] || decl;
-
+        const description = getDescription(decl);
         return {
             name: decl.name,
-            description: signature.comment?.summary?.map(this._parseCommentLink).join('') || null,
+            description,
             see: signature.comment?.blockTags?.filter((r) => r.tag === '@see').map((t) => t.content.map((t) => seelink(t)).join('')) || [],
             static: !!signature.flags.isStatic || !!decl.flags.isStatic,
             private: decl.flags.isPrivate || !!signature.comment?.blockTags?.filter((r) => r.tag === '@private').length,
@@ -162,7 +172,7 @@ export class ClassSerializer extends AbstractSerializer {
                 description:
                     signature.comment?.blockTags
                         ?.find((r) => r.tag === '@returns')
-                        ?.content?.map(this._parseCommentLink)
+                        ?.content?.map(getDocLinkedDesc)
                         .join('') || null
             },
             metadata: getFileMetadata(decl)
@@ -174,7 +184,7 @@ export class ClassSerializer extends AbstractSerializer {
             name: decl.name,
             description:
                 decl.comment?.summary
-                    ?.map(this._parseCommentLink)
+                    ?.map(getDocLinkedDesc)
                     .join('')
                     .trim() || null,
             optional: !!decl.flags.isOptional,

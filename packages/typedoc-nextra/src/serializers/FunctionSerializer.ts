@@ -1,6 +1,6 @@
 import { JSONOutput, ReflectionKind } from 'typedoc';
 import { FunctionDeclaration } from 'typescript';
-import { getFileMetadata, getName, parseType, parseTypes } from '../utils';
+import { getDescription, getDocLinkedDesc, getFileMetadata, getName, getVars, parseType, parseTypes } from '../utils';
 import { AbstractSerializer } from './AbstractSerializer';
 import { DocumentedClassMethod, DocumentedParameter } from './ClassSerializer';
 
@@ -11,9 +11,12 @@ export class FunctionSerializer extends AbstractSerializer {
         const decl = this.declaration;
         const signature = decl.signatures?.[0] || decl;
 
+        const vars = getVars(this.declaration);
+        const description = getDescription(this.declaration, vars);
+
         return {
             name: decl.name,
-            description: signature.comment?.summary?.map(this._parseCommentLink).join('') || null,
+            description,
             see: signature.comment?.blockTags?.filter((r) => r.tag === '@see').map((t) => t.content.map((t) => t.text).join('')) || [],
             static: !!signature.flags.isStatic || !!decl.flags.isStatic,
             private: decl.flags.isPrivate || !!signature.comment?.blockTags?.filter((r) => r.tag === '@private').length,
@@ -39,7 +42,7 @@ export class FunctionSerializer extends AbstractSerializer {
             name: decl.name,
             description:
                 decl.comment?.summary
-                    ?.map(this._parseCommentLink)
+                    ?.map(getDocLinkedDesc)
                     .join('')
                     .trim() || null,
             optional: !!decl.flags.isOptional,

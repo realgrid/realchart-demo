@@ -77,8 +77,11 @@ __export(src_exports, {
   default: () => src_default,
   doclink: () => doclink,
   escape: () => escape,
+  getDescription: () => getDescription,
+  getDocLinkedDesc: () => getDocLinkedDesc,
   getFileMetadata: () => getFileMetadata,
   getName: () => getName,
+  getVars: () => getVars,
   heading: () => heading,
   headingId: () => headingId,
   highlight: () => highlight,
@@ -104,13 +107,164 @@ var import_promises = require("fs/promises");
 var import_tmp = __toESM(require("tmp"));
 var import_path2 = __toESM(require("path"));
 
+// src/serializers/AbstractSerializer.ts
+var AbstractSerializer = class {
+  constructor(declaration) {
+    this.declaration = declaration;
+  }
+  serialize() {
+  }
+};
+__name(AbstractSerializer, "AbstractSerializer");
+
+// src/serializers/ClassSerializer.ts
+var import_typedoc = require("typedoc");
+
 // src/utils/helpers.ts
 var import_path = __toESM(require("path"));
+
+// src/utils/md.ts
+var import_common_tags = require("common-tags");
+function heading(src, type = 1) {
+  return `${"#".repeat(type)} ${src}`;
+}
+__name(heading, "heading");
+function headingId(src, id, type = 1) {
+  return `<h${type} id="${id}">${src}</h${type}>`;
+}
+__name(headingId, "headingId");
+function code(src) {
+  return `\`${src}\``;
+}
+__name(code, "code");
+function codeBlock(src, lang) {
+  return `\`\`\`${lang || ""}
+${src}
+\`\`\``;
+}
+__name(codeBlock, "codeBlock");
+function bold(src) {
+  return `**${src}**`;
+}
+__name(bold, "bold");
+function italic(src) {
+  return `*${src}*`;
+}
+__name(italic, "italic");
+function strikethrough(src) {
+  return `~~${src}~~`;
+}
+__name(strikethrough, "strikethrough");
+function subscript(src) {
+  return `~${src}~`;
+}
+__name(subscript, "subscript");
+function superscript(src) {
+  return `^${src}^`;
+}
+__name(superscript, "superscript");
+function highlight(src) {
+  return `==${src}==`;
+}
+__name(highlight, "highlight");
+function taskList(src, checked = false) {
+  return `[${checked ? "x" : ""}] ${src}`;
+}
+__name(taskList, "taskList");
+function blockquote(src) {
+  return `> ${src}`;
+}
+__name(blockquote, "blockquote");
+function ul(src) {
+  return `- ${src}`;
+}
+__name(ul, "ul");
+function ol(src) {
+  return `1. ${src}`;
+}
+__name(ol, "ol");
+function hr() {
+  return `---`;
+}
+__name(hr, "hr");
+function hyperlink(text, link) {
+  return `[${text}](${link})`;
+}
+__name(hyperlink, "hyperlink");
+function doclink(text, vars = {}) {
+  const [keyword, ...display] = text.split(" ");
+  const [sep, ...keys] = keyword.split(".");
+  const t = display.length ? display.join("") : keys.length ? keys.slice(-1)[0] : keyword;
+  if (!keys.length)
+    return t;
+  let page = "";
+  switch (sep) {
+    case "g":
+    case "global":
+      page = `../globals/${[keys]}`;
+      break;
+    case "config":
+      keys.forEach((k, i) => {
+        keys[i] = k[0] === "$" ? vars[k.substring(1)] || "$" : k;
+      });
+      if (keys.some((k) => k === "$")) {
+        console.warn("[WARN] not found var", text);
+        return t;
+      }
+      page = "/config/config/" + keys.join("/");
+      break;
+    case "rc":
+    case "realchart":
+    default:
+      page = `../classes/${[keys]}`;
+  }
+  return hyperlink(t, page);
+}
+__name(doclink, "doclink");
+function seelink(comment) {
+  if (!(comment.kind == "inline-tag") || !(comment.tag == "@link"))
+    return comment.text;
+  return doclink(comment.text);
+}
+__name(seelink, "seelink");
+function image(alt, link) {
+  return `![${alt}](${link})`;
+}
+__name(image, "image");
+function table(heading2, body) {
+  return import_common_tags.stripIndents`| ${heading2.join(" | ")} |
+    | ${heading2.map(() => "-".repeat(11)).join(" | ")} |
+    ${body.map((m) => `| ${m.join(" | ").replace(/\n/g, " ")} |`).join("\n")}`;
+}
+__name(table, "table");
+
+// src/utils/helpers.ts
 function getName(decl) {
   var _a;
   return decl.name === "default" ? import_path.default.parse(((_a = getFileMetadata(decl)) == null ? void 0 : _a.name) || "default").name : decl.name;
 }
 __name(getName, "getName");
+function getVars(decl) {
+  var _a, _b, _c, _d;
+  return (_d = (_c = (_b = (_a = decl.comment) == null ? void 0 : _a.blockTags) == null ? void 0 : _b.find((r) => r.tag === "@configvar")) == null ? void 0 : _c.content) == null ? void 0 : _d.reduce((acc, m) => {
+    var _a2;
+    const [key, value] = (_a2 = m.text) == null ? void 0 : _a2.split("=");
+    return key ? Object.assign(acc, { [key]: value.replace(/\'/g, "") }) : acc;
+  }, {});
+}
+__name(getVars, "getVars");
+function getDescription(decl, vars = {}) {
+  var _a, _b;
+  return ((_b = (_a = decl.comment) == null ? void 0 : _a.summary) == null ? void 0 : _b.map((m) => {
+    return getDocLinkedDesc(m, vars);
+  }).join("")) || null;
+}
+__name(getDescription, "getDescription");
+function getDocLinkedDesc(display, vars = {}) {
+  const hasLink = display.kind == "inline-tag" && display.tag == "@link";
+  return hasLink ? doclink(display.text, vars) : display.text;
+}
+__name(getDocLinkedDesc, "getDocLinkedDesc");
 function getFileMetadata(decl) {
   var _a;
   const src = (_a = decl.sources) == null ? void 0 : _a[0];
@@ -261,131 +415,10 @@ function makeId(src, prefix) {
 }
 __name(makeId, "makeId");
 
-// src/utils/md.ts
-var import_common_tags = require("common-tags");
-function heading(src, type = 1) {
-  return `${"#".repeat(type)} ${src}`;
-}
-__name(heading, "heading");
-function headingId(src, id, type = 1) {
-  return `<h${type} id="${id}">${src}</h${type}>`;
-}
-__name(headingId, "headingId");
-function code(src) {
-  return `\`${src}\``;
-}
-__name(code, "code");
-function codeBlock(src, lang) {
-  return `\`\`\`${lang || ""}
-${src}
-\`\`\``;
-}
-__name(codeBlock, "codeBlock");
-function bold(src) {
-  return `**${src}**`;
-}
-__name(bold, "bold");
-function italic(src) {
-  return `*${src}*`;
-}
-__name(italic, "italic");
-function strikethrough(src) {
-  return `~~${src}~~`;
-}
-__name(strikethrough, "strikethrough");
-function subscript(src) {
-  return `~${src}~`;
-}
-__name(subscript, "subscript");
-function superscript(src) {
-  return `^${src}^`;
-}
-__name(superscript, "superscript");
-function highlight(src) {
-  return `==${src}==`;
-}
-__name(highlight, "highlight");
-function taskList(src, checked = false) {
-  return `[${checked ? "x" : ""}] ${src}`;
-}
-__name(taskList, "taskList");
-function blockquote(src) {
-  return `> ${src}`;
-}
-__name(blockquote, "blockquote");
-function ul(src) {
-  return `- ${src}`;
-}
-__name(ul, "ul");
-function ol(src) {
-  return `1. ${src}`;
-}
-__name(ol, "ol");
-function hr() {
-  return `---`;
-}
-__name(hr, "hr");
-function hyperlink(text, link) {
-  return `[${text}](${link})`;
-}
-__name(hyperlink, "hyperlink");
-function doclink(text) {
-  const [keyword, ...display] = text.split(" ");
-  const [sep, ...keys] = keyword.split(".");
-  let page = "";
-  switch (sep) {
-    case "g":
-    case "global":
-      page = `../globals/${[keys]}`;
-      break;
-    case "config":
-      page = "/config/" + keys.join("/");
-      break;
-    case "rc":
-    case "realchart":
-    default:
-      page = `../classes/${[keys]}`;
-  }
-  const t = display.length ? display.join("") : keys.slice(-1)[0];
-  return hyperlink(t, page);
-}
-__name(doclink, "doclink");
-function seelink(comment) {
-  if (!(comment.kind == "inline-tag") || !(comment.tag == "@link"))
-    return comment.text;
-  return doclink(comment.text);
-}
-__name(seelink, "seelink");
-function image(alt, link) {
-  return `![${alt}](${link})`;
-}
-__name(image, "image");
-function table(heading2, body) {
-  return import_common_tags.stripIndents`| ${heading2.join(" | ")} |
-    | ${heading2.map(() => "-".repeat(11)).join(" | ")} |
-    ${body.map((m) => `| ${m.join(" | ").replace(/\n/g, " ")} |`).join("\n")}`;
-}
-__name(table, "table");
-
-// src/serializers/AbstractSerializer.ts
-var AbstractSerializer = class {
-  constructor(declaration) {
-    this.declaration = declaration;
-  }
-  serialize() {
-  }
-  _parseCommentLink(comment) {
-    const hasLink = comment.kind == "inline-tag" && comment.tag == "@link";
-    return hasLink ? doclink(comment.text) : comment.text;
-  }
-};
-__name(AbstractSerializer, "AbstractSerializer");
-
 // src/serializers/ClassSerializer.ts
-var import_typedoc = require("typedoc");
 var ClassSerializer = class extends AbstractSerializer {
   serialize() {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t;
     const ctor = (_a = this.declaration.children) == null ? void 0 : _a.find((c) => {
       return c.kind === import_typedoc.ReflectionKind.Constructor;
     });
@@ -396,6 +429,8 @@ var ClassSerializer = class extends AbstractSerializer {
       return c.kind === import_typedoc.ReflectionKind.Method;
     });
     const ctorSig = (_d = ctor == null ? void 0 : ctor.signatures) == null ? void 0 : _d.find((r) => r.kind === import_typedoc.ReflectionKind.ConstructorSignature);
+    const vars = getVars(this.declaration);
+    const description = getDescription(this.declaration, vars);
     return {
       name: getName(this.declaration),
       abstract: this.declaration.flags.isAbstract || !!((_f = (_e = this.declaration.comment) == null ? void 0 : _e.blockTags) == null ? void 0 : _f.some((r) => r.tag === "@abstract")),
@@ -405,30 +440,34 @@ var ClassSerializer = class extends AbstractSerializer {
       }) : null,
       metadata: getFileMetadata(this.declaration),
       deprecated: !!((_j = (_i = this.declaration.comment) == null ? void 0 : _i.blockTags) == null ? void 0 : _j.some((r) => r.tag === "@deprecated")),
-      description: ((_l = (_k = this.declaration.comment) == null ? void 0 : _k.summary) == null ? void 0 : _l.map(this._parseCommentLink).join("")) || null,
-      extends: ((_m = this.declaration.extendedTypes) == null ? void 0 : _m.length) ? parseType(this.declaration.extendedTypes[0]) : null,
-      implements: ((_n = this.declaration.implementedTypes) == null ? void 0 : _n.length) ? parseType(this.declaration.implementedTypes[0]) : null,
-      rawExtends: ((_o = this.declaration.extendedTypes) == null ? void 0 : _o.length) ? parseTypes(this.declaration.extendedTypes[0]) : null,
-      rawImplements: ((_p = this.declaration.implementedTypes) == null ? void 0 : _p.length) ? parseTypes(this.declaration.implementedTypes[0]) : null,
+      description,
+      vars,
+      extends: ((_k = this.declaration.extendedTypes) == null ? void 0 : _k.length) ? parseType(this.declaration.extendedTypes[0]) : null,
+      implements: ((_l = this.declaration.implementedTypes) == null ? void 0 : _l.length) ? parseType(this.declaration.implementedTypes[0]) : null,
+      rawExtends: ((_m = this.declaration.extendedTypes) == null ? void 0 : _m.length) ? parseTypes(this.declaration.extendedTypes[0]) : null,
+      rawImplements: ((_n = this.declaration.implementedTypes) == null ? void 0 : _n.length) ? parseTypes(this.declaration.implementedTypes[0]) : null,
       methods: (methods == null ? void 0 : methods.map((m) => this.parseMethod(m))) || [],
-      private: this.declaration.flags.isPrivate || !!((_r = (_q = this.declaration.comment) == null ? void 0 : _q.blockTags) == null ? void 0 : _r.some((r) => r.tag === "@private")),
+      private: this.declaration.flags.isPrivate || !!((_p = (_o = this.declaration.comment) == null ? void 0 : _o.blockTags) == null ? void 0 : _p.some((r) => r.tag === "@private")),
       properties: (properties == null ? void 0 : properties.map((m) => this.parseProperties(m))) || [],
-      see: ((_v = (_u = (_t = (_s = this.declaration.comment) == null ? void 0 : _s.blockTags) == null ? void 0 : _t.find((r) => r.tag === "@see")) == null ? void 0 : _u.content) == null ? void 0 : _v.map((m) => seelink(m))) || []
+      see: ((_t = (_s = (_r = (_q = this.declaration.comment) == null ? void 0 : _q.blockTags) == null ? void 0 : _r.find((r) => r.tag === "@see")) == null ? void 0 : _s.content) == null ? void 0 : _t.map((m) => seelink(m))) || []
     };
   }
   parseProperties(decl) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D;
+    const vars = getVars(this.declaration);
+    const description = getDescription(decl, vars);
     const base = {
       abstract: decl.flags.isAbstract || !!((_b = (_a = decl.comment) == null ? void 0 : _a.blockTags) == null ? void 0 : _b.some((r) => r.tag === "@abstract")),
       default: decl.defaultValue || ((_f = (_e = (_d = (_c = decl.comment) == null ? void 0 : _c.blockTags) == null ? void 0 : _d.find((r) => r.tag === "@default")) == null ? void 0 : _e.content) == null ? void 0 : _f[0].text) || null,
       deprecated: !!((_h = (_g = decl.comment) == null ? void 0 : _g.blockTags) == null ? void 0 : _h.some((r) => r.tag === "@deprecated")),
-      description: ((_j = (_i = decl.comment) == null ? void 0 : _i.summary) == null ? void 0 : _j.map(this._parseCommentLink).join("")) || null,
+      description,
       metadata: getFileMetadata(decl),
       name: decl.name,
-      private: decl.flags.isPrivate || !!((_l = (_k = decl.comment) == null ? void 0 : _k.blockTags) == null ? void 0 : _l.some((r) => r.tag === "@private")),
-      readonly: decl.flags.isReadonly || !!((_n = (_m = decl.comment) == null ? void 0 : _m.blockTags) == null ? void 0 : _n.some((r) => r.tag === "@readonly")),
-      see: ((_r = (_q = (_p = (_o = decl.comment) == null ? void 0 : _o.blockTags) == null ? void 0 : _p.find((r) => r.tag === "@see")) == null ? void 0 : _q.content) == null ? void 0 : _r.map((m) => seelink(m))) || [],
-      static: decl.flags.isStatic || !!((_t = (_s = decl.comment) == null ? void 0 : _s.blockTags) == null ? void 0 : _t.some((r) => r.tag === "@static")),
+      private: decl.flags.isPrivate || !!((_j = (_i = decl.comment) == null ? void 0 : _i.blockTags) == null ? void 0 : _j.some((r) => r.tag === "@private")),
+      readonly: decl.flags.isReadonly || !!((_l = (_k = decl.comment) == null ? void 0 : _k.blockTags) == null ? void 0 : _l.some((r) => r.tag === "@readonly")),
+      see: ((_p = (_o = (_n = (_m = decl.comment) == null ? void 0 : _m.blockTags) == null ? void 0 : _n.find((r) => r.tag === "@see")) == null ? void 0 : _o.content) == null ? void 0 : _p.map((m) => seelink(m))) || [],
+      vars,
+      static: decl.flags.isStatic || !!((_r = (_q = decl.comment) == null ? void 0 : _q.blockTags) == null ? void 0 : _r.some((r) => r.tag === "@static")),
       type: decl.type ? parseType(decl.type) : "any"
     };
     if (decl.kind === import_typedoc.ReflectionKind.Accessor) {
@@ -439,37 +478,38 @@ var ClassSerializer = class extends AbstractSerializer {
       if (!setter)
         base.readonly = true;
       return Object.assign(base, {
-        abstract: getter.flags.isAbstract || ((_v = (_u = getter.comment) == null ? void 0 : _u.blockTags) == null ? void 0 : _v.some((r) => r.tag === "@abstract")),
-        deprecated: (_x = (_w = getter.comment) == null ? void 0 : _w.blockTags) == null ? void 0 : _x.some((r) => r.tag === "@deprecated"),
-        description: (_z = (_y = getter.comment) == null ? void 0 : _y.summary) == null ? void 0 : _z.map(this._parseCommentLink).join(""),
+        abstract: getter.flags.isAbstract || ((_t = (_s = getter.comment) == null ? void 0 : _s.blockTags) == null ? void 0 : _t.some((r) => r.tag === "@abstract")),
+        deprecated: (_v = (_u = getter.comment) == null ? void 0 : _u.blockTags) == null ? void 0 : _v.some((r) => r.tag === "@deprecated"),
+        description: getDescription(getter, vars),
         metadata: getFileMetadata(getter),
         name: getter.name,
-        private: getter.flags.isPrivate || ((_B = (_A = getter.comment) == null ? void 0 : _A.blockTags) == null ? void 0 : _B.some((r) => r.tag === "@private")),
-        readonly: getter.flags.isReadonly || ((_D = (_C = getter.comment) == null ? void 0 : _C.blockTags) == null ? void 0 : _D.some((r) => r.tag === "@readonly")),
-        see: (_F = (_E = getter.comment) == null ? void 0 : _E.blockTags) == null ? void 0 : _F.filter((r) => r.tag === "@see").map((m) => m.content.map((t) => seelink(t)).join("")),
-        static: getter.flags.isStatic || ((_H = (_G = getter.comment) == null ? void 0 : _G.blockTags) == null ? void 0 : _H.some((r) => r.tag === "@static")),
+        private: getter.flags.isPrivate || ((_x = (_w = getter.comment) == null ? void 0 : _w.blockTags) == null ? void 0 : _x.some((r) => r.tag === "@private")),
+        readonly: getter.flags.isReadonly || ((_z = (_y = getter.comment) == null ? void 0 : _y.blockTags) == null ? void 0 : _z.some((r) => r.tag === "@readonly")),
+        see: (_B = (_A = getter.comment) == null ? void 0 : _A.blockTags) == null ? void 0 : _B.filter((r) => r.tag === "@see").map((m) => m.content.map((t) => seelink(t)).join("")),
+        static: getter.flags.isStatic || ((_D = (_C = getter.comment) == null ? void 0 : _C.blockTags) == null ? void 0 : _D.some((r) => r.tag === "@static")),
         type: getter.type ? parseType(getter.type) : "any"
       });
     }
     return base;
   }
   parseMethod(decl) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q;
     const signature = ((_a = decl.signatures) == null ? void 0 : _a[0]) || decl;
+    const description = getDescription(decl);
     return {
       name: decl.name,
-      description: ((_c = (_b = signature.comment) == null ? void 0 : _b.summary) == null ? void 0 : _c.map(this._parseCommentLink).join("")) || null,
-      see: ((_e = (_d = signature.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.filter((r) => r.tag === "@see").map((t) => t.content.map((t2) => seelink(t2)).join(""))) || [],
+      description,
+      see: ((_c = (_b = signature.comment) == null ? void 0 : _b.blockTags) == null ? void 0 : _c.filter((r) => r.tag === "@see").map((t) => t.content.map((t2) => seelink(t2)).join(""))) || [],
       static: !!signature.flags.isStatic || !!decl.flags.isStatic,
-      private: decl.flags.isPrivate || !!((_g = (_f = signature.comment) == null ? void 0 : _f.blockTags) == null ? void 0 : _g.filter((r) => r.tag === "@private").length),
-      examples: ((_i = (_h = signature.comment) == null ? void 0 : _h.blockTags) == null ? void 0 : _i.filter((r) => r.tag === "@example").map((t) => t.content.map((t2) => t2.text).join(""))) || [],
-      abstract: decl.flags.isAbstract || !!((_k = (_j = signature.comment) == null ? void 0 : _j.blockTags) == null ? void 0 : _k.some((r) => r.tag === "@abstract")),
-      deprecated: !!((_m = (_l = signature.comment) == null ? void 0 : _l.blockTags) == null ? void 0 : _m.some((r) => r.tag === "@deprecated")),
-      parameters: ((_n = signature.parameters) == null ? void 0 : _n.map((m) => this.parseParameter(m))) || ((_o = decl.parameters || decl.typeParameters) == null ? void 0 : _o.map((m) => this.parseParameter(m))) || [],
+      private: decl.flags.isPrivate || !!((_e = (_d = signature.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.filter((r) => r.tag === "@private").length),
+      examples: ((_g = (_f = signature.comment) == null ? void 0 : _f.blockTags) == null ? void 0 : _g.filter((r) => r.tag === "@example").map((t) => t.content.map((t2) => t2.text).join(""))) || [],
+      abstract: decl.flags.isAbstract || !!((_i = (_h = signature.comment) == null ? void 0 : _h.blockTags) == null ? void 0 : _i.some((r) => r.tag === "@abstract")),
+      deprecated: !!((_k = (_j = signature.comment) == null ? void 0 : _j.blockTags) == null ? void 0 : _k.some((r) => r.tag === "@deprecated")),
+      parameters: ((_l = signature.parameters) == null ? void 0 : _l.map((m) => this.parseParameter(m))) || ((_m = decl.parameters || decl.typeParameters) == null ? void 0 : _m.map((m) => this.parseParameter(m))) || [],
       returns: {
         type: signature.type ? parseType(signature.type) : "any",
         rawType: signature.type ? parseTypes(signature.type) : ["any"],
-        description: ((_s = (_r = (_q = (_p = signature.comment) == null ? void 0 : _p.blockTags) == null ? void 0 : _q.find((r) => r.tag === "@returns")) == null ? void 0 : _r.content) == null ? void 0 : _s.map(this._parseCommentLink).join("")) || null
+        description: ((_q = (_p = (_o = (_n = signature.comment) == null ? void 0 : _n.blockTags) == null ? void 0 : _o.find((r) => r.tag === "@returns")) == null ? void 0 : _p.content) == null ? void 0 : _q.map(getDocLinkedDesc).join("")) || null
       },
       metadata: getFileMetadata(decl)
     };
@@ -478,7 +518,7 @@ var ClassSerializer = class extends AbstractSerializer {
     var _a, _b, _c, _d, _e, _f;
     return {
       name: decl.name,
-      description: ((_b = (_a = decl.comment) == null ? void 0 : _a.summary) == null ? void 0 : _b.map(this._parseCommentLink).join("").trim()) || null,
+      description: ((_b = (_a = decl.comment) == null ? void 0 : _a.summary) == null ? void 0 : _b.map(getDocLinkedDesc).join("").trim()) || null,
       optional: !!decl.flags.isOptional,
       default: ((_c = decl.default) == null ? void 0 : _c.name) || ((_f = (_e = (_d = decl.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.find((r) => r.tag === "@default")) == null ? void 0 : _f.content[0].text) || null,
       type: decl.type ? parseType(decl.type) : "any",
@@ -551,23 +591,25 @@ __name(TypesSerializer, "TypesSerializer");
 // src/serializers/FunctionSerializer.ts
 var FunctionSerializer = class extends AbstractSerializer {
   serialize() {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q;
     const decl = this.declaration;
     const signature = ((_a = decl.signatures) == null ? void 0 : _a[0]) || decl;
+    const vars = getVars(this.declaration);
+    const description = getDescription(this.declaration, vars);
     return {
       name: decl.name,
-      description: ((_c = (_b = signature.comment) == null ? void 0 : _b.summary) == null ? void 0 : _c.map(this._parseCommentLink).join("")) || null,
-      see: ((_e = (_d = signature.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.filter((r) => r.tag === "@see").map((t) => t.content.map((t2) => t2.text).join(""))) || [],
+      description,
+      see: ((_c = (_b = signature.comment) == null ? void 0 : _b.blockTags) == null ? void 0 : _c.filter((r) => r.tag === "@see").map((t) => t.content.map((t2) => t2.text).join(""))) || [],
       static: !!signature.flags.isStatic || !!decl.flags.isStatic,
-      private: decl.flags.isPrivate || !!((_g = (_f = signature.comment) == null ? void 0 : _f.blockTags) == null ? void 0 : _g.filter((r) => r.tag === "@private").length),
-      examples: ((_i = (_h = signature.comment) == null ? void 0 : _h.blockTags) == null ? void 0 : _i.filter((r) => r.tag === "@example").map((t) => t.content.map((t2) => t2.text).join(""))) || [],
-      abstract: decl.flags.isAbstract || !!((_k = (_j = signature.comment) == null ? void 0 : _j.blockTags) == null ? void 0 : _k.some((r) => r.tag === "@abstract")),
-      deprecated: !!((_m = (_l = signature.comment) == null ? void 0 : _l.blockTags) == null ? void 0 : _m.some((r) => r.tag === "@deprecated")),
-      parameters: ((_n = signature.parameters) == null ? void 0 : _n.map((m) => this.parseParameter(m))) || ((_o = decl.parameters || decl.typeParameters) == null ? void 0 : _o.map((m) => this.parseParameter(m))) || [],
+      private: decl.flags.isPrivate || !!((_e = (_d = signature.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.filter((r) => r.tag === "@private").length),
+      examples: ((_g = (_f = signature.comment) == null ? void 0 : _f.blockTags) == null ? void 0 : _g.filter((r) => r.tag === "@example").map((t) => t.content.map((t2) => t2.text).join(""))) || [],
+      abstract: decl.flags.isAbstract || !!((_i = (_h = signature.comment) == null ? void 0 : _h.blockTags) == null ? void 0 : _i.some((r) => r.tag === "@abstract")),
+      deprecated: !!((_k = (_j = signature.comment) == null ? void 0 : _j.blockTags) == null ? void 0 : _k.some((r) => r.tag === "@deprecated")),
+      parameters: ((_l = signature.parameters) == null ? void 0 : _l.map((m) => this.parseParameter(m))) || ((_m = decl.parameters || decl.typeParameters) == null ? void 0 : _m.map((m) => this.parseParameter(m))) || [],
       returns: {
         type: signature.type ? parseType(signature.type) : "any",
         rawType: signature.type ? parseTypes(signature.type) : ["any"],
-        description: ((_s = (_r = (_q = (_p = signature.comment) == null ? void 0 : _p.blockTags) == null ? void 0 : _q.find((r) => r.tag === "@returns")) == null ? void 0 : _r.content) == null ? void 0 : _s.map((t) => t.text).join("")) || null
+        description: ((_q = (_p = (_o = (_n = signature.comment) == null ? void 0 : _n.blockTags) == null ? void 0 : _o.find((r) => r.tag === "@returns")) == null ? void 0 : _p.content) == null ? void 0 : _q.map((t) => t.text).join("")) || null
       },
       metadata: getFileMetadata(decl)
     };
@@ -576,7 +618,7 @@ var FunctionSerializer = class extends AbstractSerializer {
     var _a, _b, _c, _d, _e, _f;
     return {
       name: decl.name,
-      description: ((_b = (_a = decl.comment) == null ? void 0 : _a.summary) == null ? void 0 : _b.map(this._parseCommentLink).join("").trim()) || null,
+      description: ((_b = (_a = decl.comment) == null ? void 0 : _a.summary) == null ? void 0 : _b.map(getDocLinkedDesc).join("").trim()) || null,
       optional: !!decl.flags.isOptional,
       default: ((_c = decl.default) == null ? void 0 : _c.name) || ((_f = (_e = (_d = decl.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.find((r) => r.tag === "@default")) == null ? void 0 : _f.content[0].text) || null,
       type: decl.type ? parseType(decl.type) : "any",
@@ -1059,8 +1101,11 @@ var src_default = createDocumentation;
   createDocumentation,
   doclink,
   escape,
+  getDescription,
+  getDocLinkedDesc,
   getFileMetadata,
   getName,
+  getVars,
   heading,
   headingId,
   highlight,
