@@ -11,8 +11,13 @@
 
 
 ## Methods
+<<<<<<< HEAD
 ### get(prop): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
 지정한 설정 값(들)을 가져온다.\
+=======
+### getProp(prop): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+지정한 설정 속성의 값(들)을 가져온다.\
+>>>>>>> be267f39b5a49b6fd3dd97d2941ecdde8c11c000
 지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다.
 
 
@@ -20,6 +25,7 @@
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 속성 경로. |
+<<<<<<< HEAD
 ### set(prop, value, redraw): [RcChartObject](../classes/RcChartObject)
 지정한 속성의 값(들)을 설정한다.\
 지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다.
@@ -28,11 +34,17 @@
 ```
  chart.series.set('xAxis', 1).set('yAxis', 1);
 ```
+=======
+### setProp(prop, value): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+지정한 속성의 값(들)을 설정한다.\
+지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다.
+>>>>>>> be267f39b5a49b6fd3dd97d2941ecdde8c11c000
 
 
 
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
+<<<<<<< HEAD
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 경로 문자열 |
 | value | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 지정할 값(들) |
 | redraw | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/render)를 호출해서 다시 그리게 할 수도 있다. |
@@ -48,10 +60,19 @@ JSON 객체로 지정한 속성들의 값을 설정한다.\
  });
 ```
 
+=======
+| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 속성 경로. |
+| value | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 지정할 값(들). |
+### setProps(props): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+지정한 속성들의 값(들)을 설정한다.
+지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다.
+
+>>>>>>> be267f39b5a49b6fd3dd97d2941ecdde8c11c000
 
 
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
+<<<<<<< HEAD
 | props | [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | 여러 설정 값들이 지정된 JSON 객체 |
 | redraw | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/render)를 호출해서 다시 그리게 할 수도 있다. |
 ### toggle(prop, redraw): [RcChartObject](../classes/RcChartObject)
@@ -67,3 +88,6 @@ chart.getSeries('ser02').toggle('visible');
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 이름 |
 | redraw | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/render)를 호출해서 다시 그리게 할 수도 있다. |
+=======
+| props | [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | 속성 모음 객체. |
+>>>>>>> be267f39b5a49b6fd3dd97d2941ecdde8c11c000

@@ -16,11 +16,11 @@ brightStyle이 지정되지 않으면 'rct-text-bright'이,
 darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.  
 `default: true`  
 
-### backgroundStyle
+### backgroundStyle: `SVGStyles | string{:typescript}`
 
-### brightStyle
+### brightStyle: `SVGStyles | string{:typescript}`
 
-### darkStyle
+### darkStyle: `SVGStyles | string{:typescript}`
 
 ### effect
 
@@ -33,26 +33,26 @@ darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.
 ### prefix: `string{:typescript}`
 label 문자열 앞에 추가되는 문자열.  
 
-### style
+### style: `SVGStyles | string{:typescript}`
 스타일셋 혹은 class selector.  
 
 ### suffix: `string{:typescript}`
 label 문자열 끝에 추가되는 문자열.  
 
-### gap
+### gap: `string | number{:typescript}`
 label과 본체 사이의 간격.
 픽셀값이나 게이지 전체 크기(position에 따라 높이나 너비)에 대한 상대값으로 지정할 수 있다.  
 
-### height
+### height: `string | number{:typescript}`
 position이 'top', 'bottom'일 때, label 표시 영역 높이.
 픽셀값이나 게이지 전체 높이에 대한 상대값으로 지정할 수 있다.  
 
-### maxHeight
+### maxHeight: `string | number{:typescript}`
 position이 'top', 'bottom'일 때, label 표시 영역 최대 높이.
 픽셀값이나 게이지 전체 높이에 대한 상대값으로 지정할 수 있다.
  height 가 지정되면 이 속성은 무시된다.  
 
-### maxWidth
+### maxWidth: `string | number{:typescript}`
 position이 'left', 'right'일 때, label 표시 영역 최대 너비.
 픽셀값이나 게이지 전체 너비에 대한 상대값으로 지정할 수 있다.
  width 가 지정되면 이 속성은 무시된다.  
@@ -71,6 +71,6 @@ rich text format을 지정할 수 있다.
 표시 여부.
 모델에 따라 기본값이 다르다.  
 
-### width
+### width: `string | number{:typescript}`
 position이 'left', 'right'일 때, label 표시 영역 너비.
 픽셀값이나 게이지 전체 너비에 대한 상대값으로 지정할 수 있다.  

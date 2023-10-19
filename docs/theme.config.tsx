@@ -19,6 +19,12 @@ const config: DocsThemeConfig = {
     }
   },
   logo: <Logo brand={brand} showBrandName iconSize={32} textSize={28} />,
+  toc: {
+    headingComponent({id, children }) {
+      const esc = children.replace(/{:.*}/g, '');
+      return <>{esc}</>;
+    }
+  },
   banner: {
     key: "1.0-release",
     text: (

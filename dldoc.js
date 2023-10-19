@@ -33,12 +33,26 @@ class Tunner {
   }
 
 
-  _findTag (tags, tag) {
+  _findTag(tags, tag) {
     return tags?.find(t => t.tag == tag );
   }
 
-  _findTags (tags, tag) {
+  _findTags(tags, tag) {
     return tags?.filter(t => t.tag == tag );
+  }
+
+  _findModel(model, name) {
+    // return model.children?.find(c => {
+    //   if (c.name == name) {
+    //     return true;
+    //   } else {
+    //     return c.children && this._findModel(c, name);
+    //   }
+    // })
+    for (const child of model.children) {
+      if (child.name == name) return child;
+      if (child.children) return this._findModel(child, name);
+    }
   }
 
   /**
@@ -127,7 +141,7 @@ class Tunner {
 
   // parse property type
   _parseType(obj) {
-    const { type, name, types, elementType } = { ...obj };
+    const { type, name, types, elementType, qualifiedName } = { ...obj };
     switch(type) {
       case 'intrinsic':
         return name;
@@ -136,11 +150,31 @@ class Tunner {
       case 'array':
         return `${elementType.name}[]`;
       case 'reference':
-        // console.info({ [name]: type, ...obj })
-        return '';
+        if (qualifiedName) { // Date
+          return qualifiedName;
+        } else if (name == 'SVGStyles') { //special interface
+          return name;
+        }
+
+        // pre-scan
+        if (!this.classMap[name]) {
+          // console.debug(name, obj)
+          const model = this._findModel(this.model, name);
+          model && this._visit(model);
+        }
+
+        return this._parseType(this.classMap[name]?.type);
+      case 'literal':
+        console.warn(`[WARN] ignored ${type}`, obj);
+        return;
+      case 'reflection':
+        console.warn(`[WARN] ignored ${type}`);
+        // console.debug(obj.declaration?.signatures);
+        return;
       default:
-        console.warn('[WARN] unexpected type', obj);
-        return '';
+        // class 인 경우, type 없음.
+        // console.warn('[WARN] unexpected type');
+        return;
     }
   }
 
@@ -214,7 +248,7 @@ class Tunner {
   }
   // scan all classes
   _visit(obj) {
-    const { name, children, kindString, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
+    const { name, children, kindString, type, typeParameters, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
     const { config, content } = this._parseComment(comment);
     const propFilter = (child) => {
       return (child.kindString == 'Property' && this._findTag(child.comment?.blockTags, '@config'))
@@ -249,7 +283,11 @@ class Tunner {
         // console.debug(name, this.classMap[name]);
         break;
       case 'Type alias':
-        // console.debug(obj);
+        this.classMap[name] = {
+          kindString,
+          type,
+          typeParameters
+        }
         break;
     }
 
@@ -341,7 +379,9 @@ class MDGenerater {
         lines += `${this._fixContent(v.content)}  \n`;
         return lines;
       } else if (v?.kindString == 'Enumeration') {
-        enumLines = this._makeEnums({ name, enums: v.props })
+        enumLines = this._makeEnums({ name, enums: v.props });
+      } else if (v?.kindString == 'Type Alias') {
+
       }
     }
     
