@@ -2,18 +2,18 @@
 원형 게이지 모델.
 ## Properties
 
-### animatable: `boolean{:typescript}`
+### animatable: `boolean{:javascript}`[#animatable]
 value  변화를 애니메이션으로 표현한다.  
 `default: true`  
 
 ### [band](./circle/band)
 게이지 밴드 모델.  
 
-### clockwise: `boolean{:typescript}`
+### clockwise: `boolean{:javascript}`[#clockwise]
 true면 시계 방향으로 회전한다.  
 `default: true`  
 
-### duration: `number{:typescript}`
+### duration: `number{:javascript}`[#duration]
 Animation duration.  
 `default: 500`  
 
@@ -22,7 +22,7 @@ RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 
   
 
-### innerStyle: `SVGStyles | string{:typescript}`
+### innerStyle: `SVGStyles | string{:javascript}`[#innerStyle]
 내부 원에 적용할 스타일셋 혹은 class selector.  
 
 ### [label](./circle/label)
@@ -30,17 +30,17 @@ RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 
   
 
-### maxValue: `number{:typescript}`
+### maxValue: `number{:javascript}`[#maxValue]
 최대값.
 group에 포함되면 이 값 대신 group의 최대값이 사용된다.  
 `default: 100`  
 
-### minValue: `number{:typescript}`
+### minValue: `number{:javascript}`[#minValue]
 최소값.
 group에 포함되면 이 값 대신 group의 최소값이 사용된다.  
 `default: 0`  
 
-### name: `string{:typescript}`
+### name: `string{:javascript}`[#name]
 게이지 이름.
 동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다.  
 
@@ -55,16 +55,16 @@ RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 ### [scale](./circle/scale)
 Gauge scale.  
 
-### startAngle: `number{:typescript}`
+### startAngle: `number{:javascript}`[#startAngle]
 게이지 원호 시작 각도.
 지정하지 않거나 잘못된 값이면 0으로 계산된다.
 0은 시계의 12시 위치다.  
 `default: 0`  
 
-### style: `SVGStyles | string{:typescript}`
+### style: `SVGStyles | string{:javascript}`[#style]
 스타일셋 혹은 class selector.  
 
-### sweepAngle: `number{:typescript}`
+### sweepAngle: `number{:javascript}`[#sweepAngle]
 게이지 원호 전체 각도.
 0 ~ 360 사이의 값으로 지정해야 한다.
 범위를 벗어난 값은 범위 안으로 조정된다.
@@ -72,54 +72,54 @@ Gauge scale.
 예) 180 이면 반 원호가 된다.  
 `default: 360`  
 
-### value: `number{:typescript}`
+### value: `number{:javascript}`[#value]
 현재값.  
 `default: 0`  
 
 ### [valueRim](./circle/valueRim)
 값을 표시하는 rim.  
 
-### bottom: `string | number{:typescript}`
+### bottom: `string | number{:javascript}`[#bottom]
 plot 영역의 아래쪽 모서리와 widget 사이의 간격.  
 
-### centerX: `string | number{:typescript}`
+### centerX: `string | number{:javascript}`[#centerX]
 게이지 중심 수평 위치.
 픽셀 단위의 크기나, plot 영역 전체 너비에 대한 상대적 크기로 지정할 수 있다.  
 
-### centerY: `string | number{:typescript}`
+### centerY: `string | number{:javascript}`[#centerY]
 게이지 중심 수직 위치.
 픽셀 단위의 크기나, plot 영역 전체 높이에 대한 상대적 크기로 지정할 수 있다.  
 
-### height: `string | number{:typescript}`
+### height: `string | number{:javascript}`[#height]
 게이지 높이.
 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.  
 
-### innerRadius: `string | number{:typescript}`
+### innerRadius: `string | number{:javascript}`[#innerRadius]
 내부 원호의 반지름.
 픽셀 단위의 크기나,  radius 에 대한 상대적 크기로 지정할 수 있다.
 '100%'이면 게이지 원호의 반지름과 동일하다.  
 
-### left: `string | number{:typescript}`
+### left: `string | number{:javascript}`[#left]
 plot 영역의 왼쪽 모서리와 widget 사이의 간격.  
 
-### radius: `string | number{:typescript}`
+### radius: `string | number{:javascript}`[#radius]
 게이지 원호의 반지름.
 픽셀 단위의 크기나, plot 영역 전체 크기(너비와 높이 중 작은 값)에 대한 상대적 크기로 지정할 수 있다.
 '50%'로 지정하면 plot 영역의 width나 height중 작은 크기와 동일한 반지름으로 표시된다.  
 
-### right: `string | number{:typescript}`
+### right: `string | number{:javascript}`[#right]
 plot 영역의 오른쪽 모서리와 widget 사이의 간격.  
 
-### size: `string | number{:typescript}`
+### size: `string | number{:javascript}`[#size]
 width 와  height 를 동시에 설정한다.  
 
-### top: `string | number{:typescript}`
+### top: `string | number{:javascript}`[#top]
 plot 영역의 위쪽 모서리와 widget 사이의 간격.  
 
-### visible: `boolean{:typescript}`
+### visible: `boolean{:javascript}`[#visible]
 표시 여부.
 모델에 따라 기본값이 다르다.  
 
-### width: `string | number{:typescript}`
+### width: `string | number{:javascript}`[#width]
 게이지 너비.
 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.  

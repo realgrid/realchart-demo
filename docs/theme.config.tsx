@@ -32,7 +32,7 @@ const config: DocsThemeConfig = {
     ),
   },
   editLink: {
-    component: () => null,
+    component() { return null; }
   },
   feedback: {
     content: null,

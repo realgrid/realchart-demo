@@ -2,43 +2,43 @@
 
 ## Properties
 
-### areaStyle
+### areaStyle[#areaStyle]
 area 영역에 적용할 스타일셋이나 class selector.  
 
-### baseValue: `number{:typescript}`
+### baseValue: `number{:javascript}`[#baseValue]
 위/아래 구분의 기준이 되는 값.  
 `default: 0`  
 
-### belowStyle: `SVGStyles | string{:typescript}`
+### belowStyle: `SVGStyles | string{:javascript}`[#belowStyle]
 baseValue  혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.  
 
-### clipped: `boolean{:typescript}`
+### clipped: `boolean{:javascript}`[#clipped]
 body 영역을 벗어난 data point view는 잘라낸다.  
 `default: false`  
 
-### color: `string{:typescript}`
+### color: `string{:javascript}`[#color]
 데이터 포인트 기본 색.  
 
-### colorField: `string{:typescript}`
+### colorField: `string{:javascript}`[#colorField]
 undefined이면, data point의 값이 객체일 때 'color'.  
 
-### connectNullPoints: `boolean{:typescript}`
+### connectNullPoints: `boolean{:javascript}`[#connectNullPoints]
 true로 지정하면 y값이 지정되지 않은 null 포인터를 무시하고 다음 포인트에 연결한다.
 false면 null 포인트에서 연결이 끊어진다.  
 `default: false`  
 
-### curved: `boolean{:typescript}`
+### curved: `boolean{:javascript}`[#curved]
 true면 spline 곡선으로 표시한다.  
 `default: false`  
 
-### dataProp: `string{:typescript}`
+### dataProp: `string{:javascript}`[#dataProp]
 undefined이면 "data".  
 
-### displayInLegend: `boolean{:typescript}`
+### displayInLegend: `boolean{:javascript}`[#displayInLegend]
 명시적 false로 지정하면 legend에 표시하지 않는다.  
 `default: true`  
 
-### lineType
+### lineType[#lineType]
 
 
 `default: LineType.DEFAULT`  
@@ -46,66 +46,66 @@ undefined이면 "data".
 ### [marker](./bellcurve/marker)
 데이터 포인트 maker 설정 정보.  
 
-### nullAsBase: `boolean{:typescript}`
+### nullAsBase: `boolean{:javascript}`[#nullAsBase]
 null인 y값을  baseValue 로 간주한다.  
 `default: false`  
 
-### onPointClick
+### onPointClick[#onPointClick]
 데이터 point가 클릭될 때 발생하는 이벤트 콜백.
 명시적 true를 리턴하면 기본 동작이 진행되지 않는다.  
 
-### pointColors: `boolean | string[]{:typescript}`
+### pointColors: `boolean | string[]{:javascript}`[#pointColors]
 데이터 포인트별 색들을 지정한다.
 false로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.
 true로 지정하면 기본 색들로 표시된다.
 색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.
 undefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.  
 
-### pointStyleCallback
+### pointStyleCallback[#pointStyleCallback]
 데이터 point의 동적 스타일 콜백.  
 
-### pointsInSigma: `number{:typescript}`
+### pointsInSigma: `number{:javascript}`[#pointsInSigma]
 `default: 3`  
 
-### sigmas: `number{:typescript}`
+### sigmas: `number{:javascript}`[#sigmas]
 `default: 3`  
 
-### source: `string | number{:typescript}`
+### source: `string | number{:javascript}`[#source]
 이 시리즈 data point들을 구성할 수 있는 데이터를 포함한 원본 시리즈.
 시리즈 이름이나 index로 지정한다.  
 
-### stepDir
+### stepDir[#stepDir]
 
 
 `default: LineStepDirection.FORWARD`  
 
-### style: `SVGStyles | string{:typescript}`
+### style: `SVGStyles | string{:javascript}`[#style]
 스타일셋 혹은 class selector.  
 
-### xAxis: `string | number{:typescript}`
+### xAxis: `string | number{:javascript}`[#xAxis]
 
-### xField: `string | number{:typescript}`
+### xField: `string | number{:javascript}`[#xField]
 undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'.  
 
-### xStart: `any{:typescript}`
+### xStart: `any{:javascript}`[#xStart]
 x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.
 이 후에는  xStep 씩 증가시키면서 설정한다.
 이 속성이 지징되지 않은 경우  ChartOptions.xStart 가 적용된다.  
 
-### xStep: `string | number{:typescript}`
+### xStep: `string | number{:javascript}`[#xStep]
 x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
 첫번째 값은  xStart 로 설정한다.
 time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.
 이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다.  
 
-### yAxis: `string | number{:typescript}`
+### yAxis: `string | number{:javascript}`[#yAxis]
 
-### yField: `string | number{:typescript}`
+### yField: `string | number{:javascript}`[#yField]
 undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'.  
 
-### zOrder: `number{:typescript}`
+### zOrder: `number{:javascript}`[#zOrder]
 `default: 0`  
 
-### visible: `boolean{:typescript}`
+### visible: `boolean{:javascript}`[#visible]
 표시 여부.
 모델에 따라 기본값이 다르다.  

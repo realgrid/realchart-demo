@@ -4,27 +4,27 @@ visible 기본값이 undefined이고,
 따로 지정하지 않으면 시리즈가 둘 이상 포함돼야 legend를 표시한다.
 ## Properties
 
-### alignBase
+### alignBase[#alignBase]
 legend 정렬 기준.  
 - `'chart'` 
 - `'plot'` 
 
 `default: AlignBase.PLOT`  
 
-### backgroundStyles: `SVGStyles | string{:typescript}`
+### backgroundStyles: `SVGStyles | string{:javascript}`[#backgroundStyles]
 배경 스타일 셋.
 배경 색상 및 경계선 스타일을 지정할 수 있다.  
 
-### gap: `number{:typescript}`
+### gap: `number{:javascript}`[#gap]
 location 이 'plot'이 아닐 때,
 legend view와 나머지 chart 영역 사이의 gap.  
 `default: 6`  
 
-### itemGap: `number{:typescript}`
+### itemGap: `number{:javascript}`[#itemGap]
 legend 아이템들 사이의 간격.  
 `default: 8`  
 
-### itemsAlign
+### itemsAlign[#itemsAlign]
 한 라인의 item들이 배치되는 위치.  
 - `'center'` 수평 혹은 수직의 중앙으로 몰아서 배치한다.
 - `'end'` 수평일 때 오른쪽, 수직일 때는 아래쪽으로 몰아서 배치한다.
@@ -32,10 +32,10 @@ legend 아이템들 사이의 간격.
 
 `default: LegendItemsAlign.CENTER`  
 
-### itemsPerLine: `number{:typescript}`
+### itemsPerLine: `number{:javascript}`[#itemsPerLine]
 한 줄 당 표시할 최대 legend 항목 수.  
 
-### layout
+### layout[#layout]
 item 배치 방향.  
 - `'auto'` legend가 차트 좌우에 배치되면 item들을 수직으로 배치.  legend가 차트 상하에 배치되면 item들을 수평으로 배치.
 - `'horizontal'` item들을 수평으로 배치
@@ -43,11 +43,11 @@ item 배치 방향.
 
 `default: LegendLayout.AUTO`  
 
-### lineGap: `number{:typescript}`
+### lineGap: `number{:javascript}`[#lineGap]
 라인 사이의 간격.  
 `default: 4`  
 
-### location
+### location[#location]
 표시 위치.  
 - `'bottom'` 차트 본체 아래 표시한다.
 - `'left'` 차트 본체 왼쪽에 표시한다.
@@ -57,21 +57,21 @@ item 배치 방향.
 
 `default: LegendLocation.BOTTOM`  
 
-### markerGap: `number{:typescript}`
+### markerGap: `number{:javascript}`[#markerGap]
 marker와 text사이의 간격.  
 `default: 4`  
 
-### maxHeight: `string | number{:typescript}`
+### maxHeight: `string | number{:javascript}`[#maxHeight]
 수직  배치 일 때,
 최대 높이를 픽셀 단위의 크기 혹은 plot 높이에 대한 상대 길이를 '%'로 지정한다.  
 
-### maxWidth: `string | number{:typescript}`
+### maxWidth: `string | number{:javascript}`[#maxWidth]
 수평  배치 일 때,
 최대 너비를 픽셀 단위의 크기 혹은 plot 너비에 대한 상대 길이를 '%'로 지정한다.  
 
-### style: `SVGStyles | string{:typescript}`
+### style: `SVGStyles | string{:javascript}`[#style]
 스타일셋 혹은 class selector.  
 
-### visible: `boolean{:typescript}`
+### visible: `boolean{:javascript}`[#visible]
 표시 여부.
 모델에 따라 기본값이 다르다.  

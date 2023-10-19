@@ -2,11 +2,11 @@
 label 설정 모델.
 ## Properties
 
-### animatable: `boolean{:typescript}`
+### animatable: `boolean{:javascript}`[#animatable]
 게이지 값 변경 애니메이션이 실행될 때, label도 따라서 변경시킨다.  
 `default: true`  
 
-### autoContrast: `boolean{:typescript}`
+### autoContrast: `boolean{:javascript}`[#autoContrast]
 텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
 
 
@@ -16,61 +16,61 @@ brightStyle이 지정되지 않으면 'rct-text-bright'이,
 darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.  
 `default: true`  
 
-### backgroundStyle: `SVGStyles | string{:typescript}`
+### backgroundStyle: `SVGStyles | string{:javascript}`[#backgroundStyle]
 
-### brightStyle: `SVGStyles | string{:typescript}`
+### brightStyle: `SVGStyles | string{:javascript}`[#brightStyle]
 
-### darkStyle: `SVGStyles | string{:typescript}`
+### darkStyle: `SVGStyles | string{:javascript}`[#darkStyle]
 
-### effect
+### effect[#effect]
 
 
 `default: ChartTextEffect.NONE`  
 
-### position: ` |  |  | {:typescript}`
+### position: ` |  |  | {:javascript}`[#position]
 값을 지정하지 않으면 게이지 표시 방향에 따라 자동으로 위치를 결정한다.  
 
-### prefix: `string{:typescript}`
+### prefix: `string{:javascript}`[#prefix]
 label 문자열 앞에 추가되는 문자열.  
 
-### style: `SVGStyles | string{:typescript}`
+### style: `SVGStyles | string{:javascript}`[#style]
 스타일셋 혹은 class selector.  
 
-### suffix: `string{:typescript}`
+### suffix: `string{:javascript}`[#suffix]
 label 문자열 끝에 추가되는 문자열.  
 
-### gap: `string | number{:typescript}`
+### gap: `string | number{:javascript}`[#gap]
 label과 본체 사이의 간격.
 픽셀값이나 게이지 전체 크기(position에 따라 높이나 너비)에 대한 상대값으로 지정할 수 있다.  
 
-### height: `string | number{:typescript}`
+### height: `string | number{:javascript}`[#height]
 position이 'top', 'bottom'일 때, label 표시 영역 높이.
 픽셀값이나 게이지 전체 높이에 대한 상대값으로 지정할 수 있다.  
 
-### maxHeight: `string | number{:typescript}`
+### maxHeight: `string | number{:javascript}`[#maxHeight]
 position이 'top', 'bottom'일 때, label 표시 영역 최대 높이.
 픽셀값이나 게이지 전체 높이에 대한 상대값으로 지정할 수 있다.
  height 가 지정되면 이 속성은 무시된다.  
 
-### maxWidth: `string | number{:typescript}`
+### maxWidth: `string | number{:javascript}`[#maxWidth]
 position이 'left', 'right'일 때, label 표시 영역 최대 너비.
 픽셀값이나 게이지 전체 너비에 대한 상대값으로 지정할 수 있다.
  width 가 지정되면 이 속성은 무시된다.  
 
-### numberFormat: `string{:typescript}`
+### numberFormat: `string{:javascript}`[#numberFormat]
 label이 숫자일 때 표시 형식.  
 
-### numberSymbols: `string{:typescript}`
+### numberSymbols: `string{:javascript}`[#numberSymbols]
 축의 tick 간격이 1000 이상인 큰 수를 표시할 때 
 이 속성에 지정한 symbol을 이용해서 축약형으로 표시한다.  
 
-### text: `string{:typescript}`
+### text: `string{:javascript}`[#text]
 rich text format을 지정할 수 있다.  
 
-### visible: `boolean{:typescript}`
+### visible: `boolean{:javascript}`[#visible]
 표시 여부.
 모델에 따라 기본값이 다르다.  
 
-### width: `string | number{:typescript}`
+### width: `string | number{:javascript}`[#width]
 position이 'left', 'right'일 때, label 표시 영역 너비.
 픽셀값이나 게이지 전체 너비에 대한 상대값으로 지정할 수 있다.  

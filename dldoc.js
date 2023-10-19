@@ -342,7 +342,7 @@ class MDGenerater {
     const { name: _name, opt, type: _type, prop } = param;
     const { header, name, type, dtype, content, defaultValue, defaultBlock } = prop;
     let enumLines = ''
-    let lines = `### ${name}${type ? ': \`' + type  + '{:typescript}\`': ''}\n`;
+    let lines = `### ${name}${type ? ': \`' + type  + '\{:javascript}`': ''}[#${name}]\n`;
 
     if (dtype instanceof Array) {
       dtype.map(t => {

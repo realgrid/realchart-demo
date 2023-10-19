@@ -111,7 +111,8 @@ export function doclink(text: string, vars: any = {}): string {
         case 'rc':
         case 'realchart':
         default:
-            page = `../classes/${[keys]}`;
+            const [cls, prop] = keys;
+            page = `../classes/${cls}${prop ? '#' + prop : ''}`;
     }
     
     return hyperlink(t , page);
