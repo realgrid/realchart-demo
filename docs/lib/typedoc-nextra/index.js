@@ -104,19 +104,6 @@ var import_promises = require("fs/promises");
 var import_tmp = __toESM(require("tmp"));
 var import_path2 = __toESM(require("path"));
 
-// src/serializers/AbstractSerializer.ts
-var AbstractSerializer = class {
-  constructor(declaration) {
-    this.declaration = declaration;
-  }
-  serialize() {
-  }
-};
-__name(AbstractSerializer, "AbstractSerializer");
-
-// src/serializers/ClassSerializer.ts
-var import_typedoc = require("typedoc");
-
 // src/utils/helpers.ts
 var import_path = __toESM(require("path"));
 function getName(decl) {
@@ -343,21 +330,24 @@ function hyperlink(text, link) {
 }
 __name(hyperlink, "hyperlink");
 function doclink(text) {
-  const sep = text.split(".");
-  const [g] = sep;
-  let [title] = sep.slice(-1);
+  const [keyword, ...display] = text.split(" ");
+  const [sep, ...keys] = keyword.split(".");
   let page = "";
-  switch (g) {
+  switch (sep) {
     case "g":
-      page = `../globals/${title}`;
+    case "global":
+      page = `../globals/${[keys]}`;
       break;
     case "config":
-      page = "/config/" + sep.join("/");
+      page = "/config/" + keys.join("/");
       break;
+    case "rc":
+    case "realchart":
     default:
-      page = `../classes/${title}`;
+      page = `../classes/${[keys]}`;
   }
-  return hyperlink(title, page);
+  const t = display.length ? display.join("") : keys.slice(-1)[0];
+  return hyperlink(t, page);
 }
 __name(doclink, "doclink");
 function seelink(comment) {
@@ -377,12 +367,23 @@ function table(heading2, body) {
 }
 __name(table, "table");
 
-// src/serializers/ClassSerializer.ts
-var ClassSerializer = class extends AbstractSerializer {
+// src/serializers/AbstractSerializer.ts
+var AbstractSerializer = class {
+  constructor(declaration) {
+    this.declaration = declaration;
+  }
+  serialize() {
+  }
   _parseCommentLink(comment) {
     const hasLink = comment.kind == "inline-tag" && comment.tag == "@link";
     return hasLink ? doclink(comment.text) : comment.text;
   }
+};
+__name(AbstractSerializer, "AbstractSerializer");
+
+// src/serializers/ClassSerializer.ts
+var import_typedoc = require("typedoc");
+var ClassSerializer = class extends AbstractSerializer {
   serialize() {
     var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v;
     const ctor = (_a = this.declaration.children) == null ? void 0 : _a.find((c) => {
@@ -555,7 +556,7 @@ var FunctionSerializer = class extends AbstractSerializer {
     const signature = ((_a = decl.signatures) == null ? void 0 : _a[0]) || decl;
     return {
       name: decl.name,
-      description: ((_c = (_b = signature.comment) == null ? void 0 : _b.summary) == null ? void 0 : _c.map((t) => t.text).join("")) || null,
+      description: ((_c = (_b = signature.comment) == null ? void 0 : _b.summary) == null ? void 0 : _c.map(this._parseCommentLink).join("")) || null,
       see: ((_e = (_d = signature.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.filter((r) => r.tag === "@see").map((t) => t.content.map((t2) => t2.text).join(""))) || [],
       static: !!signature.flags.isStatic || !!decl.flags.isStatic,
       private: decl.flags.isPrivate || !!((_g = (_f = signature.comment) == null ? void 0 : _f.blockTags) == null ? void 0 : _g.filter((r) => r.tag === "@private").length),
@@ -575,7 +576,7 @@ var FunctionSerializer = class extends AbstractSerializer {
     var _a, _b, _c, _d, _e, _f;
     return {
       name: decl.name,
-      description: ((_b = (_a = decl.comment) == null ? void 0 : _a.summary) == null ? void 0 : _b.map((t) => t.text).join("").trim()) || null,
+      description: ((_b = (_a = decl.comment) == null ? void 0 : _a.summary) == null ? void 0 : _b.map(this._parseCommentLink).join("").trim()) || null,
       optional: !!decl.flags.isOptional,
       default: ((_c = decl.default) == null ? void 0 : _c.name) || ((_f = (_e = (_d = decl.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.find((r) => r.tag === "@default")) == null ? void 0 : _f.content[0].text) || null,
       type: decl.type ? parseType(decl.type) : "any",

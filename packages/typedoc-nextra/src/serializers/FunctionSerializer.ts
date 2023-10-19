@@ -13,7 +13,7 @@ export class FunctionSerializer extends AbstractSerializer {
 
         return {
             name: decl.name,
-            description: signature.comment?.summary?.map((t) => t.text).join('') || null,
+            description: signature.comment?.summary?.map(this._parseCommentLink).join('') || null,
             see: signature.comment?.blockTags?.filter((r) => r.tag === '@see').map((t) => t.content.map((t) => t.text).join('')) || [],
             static: !!signature.flags.isStatic || !!decl.flags.isStatic,
             private: decl.flags.isPrivate || !!signature.comment?.blockTags?.filter((r) => r.tag === '@private').length,
@@ -39,7 +39,7 @@ export class FunctionSerializer extends AbstractSerializer {
             name: decl.name,
             description:
                 decl.comment?.summary
-                    ?.map((t) => t.text)
+                    ?.map(this._parseCommentLink)
                     .join('')
                     .trim() || null,
             optional: !!decl.flags.isOptional,
