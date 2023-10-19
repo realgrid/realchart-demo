@@ -20,17 +20,18 @@
 
 
 ## Methods
-### getProp(prop, deep): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
-지정한 속성의 값(들)을 가져온다.
+### getProp(prop): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)
+지정한 설정 속성의 값(들)을 가져온다.\
+지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다.
 
 
 
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 속성 경로. |
-| deep | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true면 하위 속성 객체들의 값들도 포함한다. |
 ### setProp(prop, value): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
-지정한 속성의 값(들)을 설정한다.
+지정한 속성의 값(들)을 설정한다.\
+지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다.
 
 
 
@@ -38,3 +39,12 @@
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 속성 경로. |
 | value | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 지정할 값(들). |
+### setProps(props): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+지정한 속성들의 값(들)을 설정한다.
+지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다.
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| props | [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | 속성 모음 객체. |
