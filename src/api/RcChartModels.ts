@@ -479,28 +479,27 @@ export abstract class RcLinerGaugeBase extends RcValueGauge {
         this._scale = new RcGaugeScale(proxy['scale']);
     }
 
+    /**
+     * label 모델.
+     * 
+     * {@link config.gauge.$gauge.label Configuration 속성들} 참조.
+     */
     get label(): RcChartObject { return this._label; }
+    /**
+     * scale 모델.
+     * 
+     * {@link config.gauge.$gauge.scale Configuration 속성들} 참조.
+     */
     get scale(): RcChartObject { return this._scale; }
 }
 
 /**
  * **'linear'** 게이지.\
  * 선분에 값을 표시하는 게이지.
+ * 
+ * @configvar gauge='linaer'
  */
 export class RcLinearGauge extends RcLinerGaugeBase {
-
-    /**
-     * label 모델.
-     * 
-     * {@link config.gauge.linear.label Configuration 속성들} 참조.
-     */
-    get label(): RcChartObject { return super.label; }
-    /**
-     * scale 모델.
-     * 
-     * {@link config.gauge.linear.scale Configuration 속성들} 참조.
-     */
-    get scale(): RcChartObject { return super.scale; }
 }
 
 /**
@@ -509,6 +508,8 @@ export class RcLinearGauge extends RcLinerGaugeBase {
  * 
  * @see {@link RcCircleGauge}
  * @see {@link RcLinearGauge}
+ * 
+ * @configvar gauge='bullet'
  */
 export class RcBulletGauge extends RcValueGauge {
 }
