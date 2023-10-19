@@ -154,7 +154,8 @@ function doclink(text, vars = {}) {
     case "rc":
     case "realchart":
     default:
-      page = `../classes/${[keys]}`;
+      const [cls, prop] = keys;
+      page = `../classes/${cls}${prop ? "#" + prop : ""}`;
   }
   return hyperlink(t, page);
 }
@@ -572,6 +573,14 @@ var TypeDocNextra = class {
     this.options = options;
     this.linker = this.options.linker;
   }
+  // [
+  //     ' - ',
+  //     '[Factorial - Wikipedia](https://en.wikipedia.org/wiki/Factorial)',
+  //     '\n',
+  //     ' - ',
+  //     'semifactorial',
+  //     '\n',
+  // ]
   getSee(see) {
     return (see == null ? void 0 : see.length) ? `
 ${heading("See Also", 3)}
@@ -602,6 +611,7 @@ ${c.description}
       const tableHead = [
         "Parameter",
         "Type"
+        // 'Optional',
       ];
       if (c.parameters.some((p) => p.description && p.description.trim().length > 0))
         tableHead.push("Description");
@@ -609,6 +619,7 @@ ${c.description}
         const params = [
           escape(m.name),
           this.linker(m.type || "any", [m.type || "any"])
+          // m.optional ? '✅' : '❌',
         ];
         if (tableHead.includes("Description"))
           params.push(m.description || "N/A");
@@ -716,6 +727,7 @@ ${body.join("\n")}`;
           const tableHead = [
             "Parameter",
             "Type"
+            // 'Optional',
           ];
           if (m.parameters.some((p) => p.description && p.description.trim().length > 0))
             tableHead.push("Description");
@@ -723,6 +735,7 @@ ${body.join("\n")}`;
             const params = [
               n.default ? `${escape(n.name)}=${code(escape(n.default))}` : escape(n.name),
               this.linker(n.type || "any", n.rawType || [n.type || "any"])
+              //   n.optional ? '✅' : '❌'
             ];
             if (tableHead.includes("Description"))
               params.push(n.description || "N/A");
@@ -756,6 +769,7 @@ ${body.join("\n")}`;
         const tableHead = [
           "Parameter",
           "Type"
+          // 'Optional',
         ];
         if (m.parameters.some((p) => p.description && p.description.trim().length > 0))
           tableHead.push("Description");
@@ -763,6 +777,7 @@ ${body.join("\n")}`;
           const params = [
             n.default ? `${escape(n.name)}=${code(escape(n.default))}` : escape(n.name),
             this.linker(n.type || "any", n.rawType || [n.type || "any"])
+            // n.optional ? '✅' : '❌',
           ];
           if (tableHead.includes("Description"))
             params.push(n.description || "N/A");
