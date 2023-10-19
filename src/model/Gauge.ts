@@ -609,17 +609,38 @@ export abstract class GaugeScale extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     position = GaugeItemPosition.DEFAULT;
-
+    /**
+     * @config
+     */
     line: ChartItem;
+    /**
+     * @config
+     */
     tick: GuageScaleTick;
+    /**
+     * @config
+     */
     tickLabel: ChartItem;
-
+    /**
+     * @config
+     */
     steps: number[];
+    /**
+     * @config
+     */
     stepCount: number;
+    /**
+     * @config
+     */
     stepInterval: number;
+    /**
+     * @config
+     */
     stepPixels = 48;
-
     /**
      * 게이지 본체와의 간격.
      * 
@@ -804,6 +825,17 @@ export enum GaugeItemPosition {
     INSIDE = 'inside'
 }
 
+/**
+ * @config
+ */
+export class RangeLabel extends ChartItem {
+}
+
+/**
+ * 게이지 밴드 모델.
+ * 
+ * @config
+ */
 export class GaugeRangeBand extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -824,7 +856,7 @@ export class GaugeRangeBand extends ChartItem {
     constructor(public gauge: ValueGauge | GaugeGroup<ValueGauge>, visible = false) {
         super(gauge.chart, visible);
 
-        this.rangeLabel = new ChartItem(gauge.chart, false);
+        this.rangeLabel = new RangeLabel(gauge.chart, false);
         this.tickLabel = new ChartItem(gauge.chart, true);
         this.thickness = 7;
     }
@@ -880,7 +912,7 @@ export class GaugeRangeBand extends ChartItem {
      * 
      * @config
      */
-    rangeLabel: ChartItem;
+    rangeLabel: RangeLabel;
     /**
      * 각 range의 양 끝에 해당하는 값을 표시한다.
      * 

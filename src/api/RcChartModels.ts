@@ -10,6 +10,7 @@ import { Axis } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { ValueGauge } from "../model/Gauge";
 import { Series } from "../model/Series";
+import { CircleGauge } from "../model/gauge/CircleGauge";
 
 /**
  * 차트 구성 요소 모델들의 기반 클래스.
@@ -132,11 +133,49 @@ export class RcChartObject {
     }
 }
 
+export abstract class RcAxisGuide extends RcChartObject {
+
+    private _label: RcChartObject;
+
+    protected _doInit(proxy: ChartItem): void {
+        this._createObjects('label');
+    }
+
+    get label(): RcChartObject {
+        return this._label;
+    }
+}
+
+/**
+ * Axis 모델들의 기반 클래스.\
+ */
+export abstract class RcChartAxis extends RcChartObject {
+
+    private _title: RcChartObject;
+    private _line: RcChartObject;
+    private _grid: RcChartObject;
+    private _tick: RcChartObject;
+    private _label: RcChartObject;
+    private _crosshair: RcChartObject;
+
+    /** 
+     * @internal 
+     */
+    protected _doInit(proxy: Axis): void {
+        this._createObjects('title', 'line', 'grid', 'tick', 'label', 'crosshair');
+    }
+
+    get title(): RcChartObject { return this._title; }
+    get line(): RcChartObject { return this._line; }
+    get grid(): RcChartObject { return this._grid; }
+    get tick(): RcChartObject { return this._tick; }
+}
+
 export class RcPointLabel extends RcChartObject {
 }
 
 /**
- * 차트 시리즈 모델들의 기반 클래스.
+ * 차트 시리즈 모델들의 기반 클래스.\
  */
 export abstract class RcChartSeries extends RcChartObject {
 
@@ -383,11 +422,11 @@ export class RcGaugeScale extends RcChartObject {
     /**
      * tick 모델.
      */
-    get tick(): RcChartObject { return this._line};
+    get tick(): RcChartObject { return this._tick};
     /**
      * tickLabel 모델.
      */
-    get tickLabel(): RcChartObject { return this._line};
+    get tickLabel(): RcChartObject { return this._tickLabel};
 }
 
 export abstract class RcCircularGauge extends RcValueGauge {
@@ -400,19 +439,46 @@ export abstract class RcCircularGauge extends RcValueGauge {
 
     /**
      * label 모델.
+     * 
+     * {@link config.gauge.$gauge.band Configuration 속성들} 참조.
      */
     get label(): RcChartObject { return this._label; }
 } 
+
+export class RcGaugeRangeBand extends RcChartObject {
+
+    private _rangeLabel: RcChartObject;
+    private _tickLabel: RcChartObject;
+
+    protected _doInit(proxy: ChartItem): void {
+        this._createObjects('rangeLabel', 'thickLabel');
+    }
+
+    /**
+     * rangeLabel 모델.
+     * 
+     * {@link config.gauge.$gauge.band.rangeLabel Configuration 속성들} 참조.
+     */
+    get rangeLabel(): RcChartObject { return this._rangeLabel; }
+    /**
+     * tickLabel 모델.
+     * 
+     * {@link config.gauge.$gauge.band.tickLabel Configuration 속성들} 참조.
+     */
+    get tickLabel(): RcChartObject { return this._tickLabel; }
+}
 
 /**
  * **'circle'** 게이지.
  * 원이나 원호로 값을 표시하는 게이지.
  *
  * {@link config.gauge.circle Configuration 속성들} 참조.
+ * 
+ * @configvar gauge=circle
  */
 export class RcCircleGauge extends RcCircularGauge {
 
-    private _band: RcChartObject;
+    private _band: RcGaugeRangeBand;
     private _scale: RcChartObject;
     private _rim: RcChartObject;
     private _valueRim: RcChartObject;
@@ -420,8 +486,9 @@ export class RcCircleGauge extends RcCircularGauge {
     private _hand: RcChartObject;
     private _pin: RcChartObject;
 
-    protected _doInit(proxy: ChartItem): void {
-        this._createObjects('band', 'scale', 'rim', 'valueRim', 'marker', 'hand', 'pin');
+    protected _doInit(proxy: CircleGauge): void {
+        this._createObjects('scale', 'rim', 'valueRim', 'marker', 'hand', 'pin');
+        this._band = new RcGaugeRangeBand(proxy.band)
     }
 
     /**
@@ -429,7 +496,7 @@ export class RcCircleGauge extends RcCircularGauge {
      * 
      * {@link config.gauge.circle.band Configuration 속성들} 참조.
      */
-    get band(): RcChartObject { return this._band; }
+    get band(): RcGaugeRangeBand { return this._band; }
     /**
      * scale 모델.
      * 
@@ -497,9 +564,15 @@ export abstract class RcLinerGaugeBase extends RcValueGauge {
  * **'linear'** 게이지.\
  * 선분에 값을 표시하는 게이지.
  * 
- * @configvar gauge='linaer'
+ * @see {@link RcCircleGauge}
+ * @see {@link RcBulletGauge}
+ * 
+ * @configvar gauge=linaer
  */
 export class RcLinearGauge extends RcLinerGaugeBase {
+
+    private _marker: RcChartObject;
+    private _band: RcChartObject;
 }
 
 /**
@@ -509,7 +582,7 @@ export class RcLinearGauge extends RcLinerGaugeBase {
  * @see {@link RcCircleGauge}
  * @see {@link RcLinearGauge}
  * 
- * @configvar gauge='bullet'
+ * @configvar gauge=bullet
  */
 export class RcBulletGauge extends RcValueGauge {
 }
@@ -546,27 +619,4 @@ export class RcLinearGaugeGroup extends RcGaugeGroup {
  * {@link RcBulletGauge} 그룹 모델.
  */
 export class RcBulletGaugeGroup extends RcGaugeGroup {
-}
-
-/**
- * 축 타이틀 모델.
- */
-export class RcAxisTitle extends RcChartObject {
-}
-
-/**
- * Axis 모델들의 기반 클래스.
- */
-export abstract class RcChartAxis extends RcChartObject {
-
-    private _title: RcAxisTitle
-
-    /** 
-     * @internal 
-     */
-    protected _doInit(proxy: Axis): void {
-        this._title = new RcAxisTitle(proxy.title);
-    }
-
-    get title(): RcAxisTitle { return this._title; }
 }
