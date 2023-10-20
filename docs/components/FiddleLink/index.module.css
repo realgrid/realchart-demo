@@ -1,0 +1,11 @@
+.link {
+  text-decoration-line: none !important;
+  color: #4679A4 !important;
+  font-size: 0.9rem !important;
+  padding-top: 4px;
+  padding-left: 4px;
+}
+
+.img {
+  display: inline-block;
+}

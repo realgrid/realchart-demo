@@ -55,15 +55,25 @@ class Tunner {
     }
   }
 
+  _parseLink(tag, baseUrl='') {
+    const [{text}] = tag.content;
+    const [src, ...label] = text.split(' ');
+    return { label: label.join(' '), href: path.join(baseUrl, src)}
+  }
+
   /**
    * `@{tag} url label...` 형태의 url링크를 변환한다.
    * @param tag: any
    * @returns url item string
    */
   _parseLinkTag(tag, baseUrl='') {
-    const [{text}] = tag.content;
-    const [src, ...label] = text.split(' ');
-    return `- [${label.join(' ')}](${path.join(baseUrl, src)})`;
+    const { label, href } = this._parseLink(tag, baseUrl);
+    return `- [${label}](${href})`;
+  }
+
+  _parseFiddle(tag) {
+    const { label, href } = this._parseLink(tag, Tunner.fiddleUrl);
+    return `<FiddleLink label="${label}" href="${href}"/>`;
   }
 
   /**
@@ -86,7 +96,7 @@ class Tunner {
   _parseFiddleTag(tags) {
     const fiddles = this._findTags(tags, '@fiddle');
     return fiddles?.map(fiddle => {
-      return this._parseLinkTag(fiddle, Tunner.fiddleUrl);
+      return this._parseFiddle(fiddle);
     }).join('\n');
   }
 
@@ -118,9 +128,12 @@ class Tunner {
    * @returns { config: string[], fiddle: string, defaultBlock: string}
    */
   _parseBlockTags(tags) {
+    const fiddle = this._parseFiddleTag(tags);
+    // const fiddle = _fiddle ? '- jsfiddle\n' + _fiddle : null;
+    
     return {
       config: this._parseConfigTag(tags),
-      fiddle: this._parseFiddleTag(tags),
+      fiddle,
       defaultBlock: this._parseDefaultTag(tags),
     }
   }
