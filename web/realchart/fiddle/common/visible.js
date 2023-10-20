@@ -8,7 +8,7 @@ const config = {
 		title: '대기질 지수(Air Quality Index, AQI)',
 	},
     legend: {
-        visible: true // <-- 여기 변경...
+        visible: true // <-- 여기 변경
     },
 	series: {
 		pointLabel: {
