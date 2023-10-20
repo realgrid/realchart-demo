@@ -21,7 +21,7 @@ export interface IAxis {
     type(): string;
     chart: IChart;
     
-    _length: number;
+    _vlen: number;
     _isX: boolean;
     _isHorz: boolean;
     _isOpposite: boolean;
@@ -92,6 +92,12 @@ export class AxisLine extends AxisItem {
     }
 }
 
+export enum AxisTitleAlign {
+    START = 'start',
+    MIDDLE = 'middle',
+    END = 'end'
+}
+
 /**
  * 축 타이틀 설정 모델.
  * 
@@ -108,6 +114,12 @@ export class AxisTitle extends AxisItem {
      * @config
      */
     text: string;
+    /**
+     * 축 내에서 타이틀의 위치.
+
+    * @config
+     */
+    align = AxisTitleAlign.MIDDLE;
     /**
      * 타이틀과 label 혹은 축 선 사이의 간격.
      * <br>
@@ -527,10 +539,12 @@ export abstract class Axis extends ChartItem implements IAxis {
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
     _markPoints: number[];
-    _length: number;
+    _vlen: number;
     _minPad = 0;
     _maxPad = 0;
     _values: number[] = [];
+    protected _min: number;
+    protected _max: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -595,6 +609,10 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     getBaseValue(): number {
         return NaN;
+    }
+
+    length(): number {
+        return this._max - this._min;
     }
     
     abstract isContinuous(): boolean;
@@ -666,7 +684,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     buildTicks(length: number): void {
-        this._ticks = this._doBuildTicks(this._range.min, this._range.max, this._length = length);
+        this._ticks = this._doBuildTicks(this._range.min, this._range.max, this._vlen = length);
     }
 
     calcPoints(length: number, phase: number): void {

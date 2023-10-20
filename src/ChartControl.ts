@@ -8,6 +8,7 @@
 
 import { RcControl } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
+import { Axis } from "./model/Axis";
 import { Chart, IChartEventListener } from "./model/Chart";
 import { ChartItem } from "./model/ChartItem";
 import { DataPoint } from "./model/DataPoint";
@@ -96,6 +97,18 @@ export class ChartControl extends RcControl implements IChartEventListener {
         } else {
             this.invalidateLayout();
         }
+    }
+
+    setZoom(axis: Axis, length: number | string): void {
+        this._chartView.getAxis(axis)?.setZoom(length);
+    }
+
+    clearZoom(axis: Axis): void {
+        this._chartView.getAxis(axis)?.clearZoom();
+    }
+
+    scroll(axis: Axis, pos: number): void {
+        this._chartView.getAxis(axis)?.scroll(pos);
     }
 
     //-------------------------------------------------------------------------

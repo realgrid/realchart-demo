@@ -429,6 +429,7 @@ export class ChartView extends RcElement {
     private _creditView: CreditView;
     private _historyView: HistoryView;
     private _tooltipView: TooltipView;
+    // private _zoomButton: 
     private _seriesClip: ClipElement;
 
     _org: IPoint;
@@ -890,6 +891,13 @@ export class ChartView extends RcElement {
                     av.hideCrosshiar();
                 }
             })
+        }
+    }
+
+    getAxis(axis: Axis): AxisView {
+        for (const dir in this._axisSectionViews) {
+            const v = this._axisSectionViews[dir].views.find(v => v.model === axis);
+            if (v) return v;
         }
     }
 

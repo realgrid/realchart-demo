@@ -82,8 +82,8 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
     // internal members
     //-------------------------------------------------------------------------
     private $_prepareMarkser(series: BubbleSeries, points: BubbleSeriesPoint[]): void {
-        const zAxis = series._xAxisObj._length < series._yAxisObj._length ? series._xAxisObj : series._yAxisObj;
-        const len = zAxis._length;
+        const zAxis = series._xAxisObj._vlen < series._yAxisObj._vlen ? series._xAxisObj : series._yAxisObj;
+        const len = zAxis._vlen;
         const count = points.length;
         const {min, max} = series.getPixelMinMax(len);
 
@@ -106,8 +106,8 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         const yAxis = series._yAxisObj;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
-        const zAxis = series._xAxisObj._length < series._yAxisObj._length ? series._xAxisObj : series._yAxisObj;
-        const len = zAxis._length;
+        const zAxis = series._xAxisObj._vlen < series._yAxisObj._vlen ? series._xAxisObj : series._yAxisObj;
+        const len = zAxis._vlen;
         const {min, max} = series.getPixelMinMax(len);
         const yOrg = height;
         let labelView: PointLabelView;

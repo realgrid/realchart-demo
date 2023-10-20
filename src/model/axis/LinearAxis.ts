@@ -327,8 +327,6 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     private _hardMin: number;
     private _hardMax: number;
-    private _min: number;
-    private _max: number;
     private _single: boolean;
     private _base: number;
     private _unitLen: number;
@@ -622,7 +620,7 @@ export abstract class ContinuousAxis extends Axis {
                 from: last.to,
                 to: max,
                 pos: p,
-                len: this._length - p
+                len: this._vlen - p
             };
 
             sects.push(sect);

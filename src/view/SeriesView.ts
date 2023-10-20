@@ -520,7 +520,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         const m = this.model;
         const xAxis = m._xAxisObj;
         const yAxis = m._yAxisObj;
-        const pts = m.trendline._points.map(pt => ({x: xAxis.getPosition(xAxis._length, pt.x), y: yAxis._length - yAxis.getPosition(yAxis._length, pt.y)}));
+        const pts = m.trendline._points.map(pt => ({x: xAxis.getPosition(xAxis._vlen, pt.x), y: yAxis._vlen - yAxis.getPosition(yAxis._vlen, pt.y)}));
         const sb = new PathBuilder();
 
         sb.move(pts[0].x, pts[0].y);
