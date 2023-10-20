@@ -53,7 +53,15 @@ export class RcChartObject {
 
     /**
      * 지정한 설정 값(들)을 가져온다.\
-     * 지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다. 
+     * 지정 가능한 설정 값 목록은 [Configuration API 페이지](http://realchart.co.kr/config)에서 확인할 수 있다. 
+     * 
+     * ```js
+     * console.log(chart.series.get('name'))
+     * ```
+     * 
+     * ```js
+     * console.log(chart.axis.get('title.text'));
+     * ```
      * 
      * @param prop 속성 경로.
      * @returns 속성 값 혹은 객체.
@@ -70,7 +78,7 @@ export class RcChartObject {
     }
     /**
      * 지정한 속성의 값(들)을 설정한다.\
-     * 지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다.
+     * 지정 가능한 설정 값 목록은 [Configuration API 페이지](http://realchart.co.kr/config)에서 확인할 수 있다. 
      * 이 객체 자신을 리턴하므로 javascript에서 builder 패턴으로 설정 값들을 연속해서 지정할 수 있다.
      * 
      * ```js
@@ -89,7 +97,7 @@ export class RcChartObject {
     }
     /**
      * JSON 객체로 지정한 속성들의 값을 설정한다.\
-     * 지정 가능한 설정 값 목록은 Configuration API 페이지에 확인할 수 있다.
+     * 지정 가능한 설정 값 목록은 [Configuration API 페이지](http://realchart.co.kr/config)에서 확인할 수 있다. 
      * 
      * ```js
      *  chart.series.set({
@@ -109,7 +117,8 @@ export class RcChartObject {
         return this;
     }
     /**
-     * Boolean 타입의 설정값을 변경한다.
+     * Boolean 타입의 설정값을 변경한다.\
+     * 지정 가능한 설정 값 목록은 [Configuration API 페이지](http://realchart.co.kr/config)에서 확인할 수 있다. 
      * 
      * ```js
      * chart.getSeries('ser02').toggle('visible');
