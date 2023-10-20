@@ -1,14 +1,4 @@
 {
-  "index": "RealChart 소개",
-  "guide": {
-    "title": "가이드"
-  },
-
-  "api": "API",
-
-  "-- More": {
-    "type":"separator", 
-    "title": "More"
-  },
-  "chart": "NPM 차트 테스트"
+  "index": "RealChart API",
+  "api": "API"
 }

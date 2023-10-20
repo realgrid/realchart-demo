@@ -1,0 +1,11 @@
+{
+    "index": "RealChart 개요",
+    "install": "RealChart 설치",
+    "dev-guide": "개발 가이드",
+    "---": {
+        "type": "separator",
+        "title": "More"
+    },
+    "chart": "NPM 차트 테스트",
+    "release": "릴리즈"
+}
