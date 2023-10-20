@@ -18,6 +18,10 @@
     "title": "Config",
     "type":"page"
   },
+  "guide": {
+    "title": "가이드",
+    "type":"page"
+  },
   "docs": {
     "title": "API",
     "type":"page"
