@@ -681,8 +681,13 @@
 }
 
 /** gauge */
-.rct-gauge-background {
+.rct-gauge-pane {
     fill: none;
+}
+
+/** gauge group */
+.rct-gauge-group {
+    padding: 10px;
 }
 
 /** circle gauge */
@@ -809,6 +814,14 @@
 .rct-bullet-gauge-scale-tick-labels {
     font-size: 0.9em;
     fill: #333;
+}
+
+/** bullet gauge group */
+.rct-bullet-gauge-group {
+    padding: 10px;
+}
+.rct-bullet-gauge-group-label {
+    font-size: 1.5em;
 }
 
 /** tooltip */
