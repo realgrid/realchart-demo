@@ -88,7 +88,7 @@ export function doclink(text: string, vars: any = {}): string {
      */
     const [keyword, ...display] = text.split(' ');
     const [sep, ...keys] = keyword.split('.');
-    const t = display.length ? display.join('') : keys.length ? keys.slice(-1)[0] : keyword;
+    const t = display.length ? display.join(' ') : keys.length ? keys.slice(-1)[0] : keyword;
     
     if (!keys.length) return t;
 

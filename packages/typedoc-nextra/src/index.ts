@@ -11,6 +11,11 @@ import { DefaultLinksFactory } from './utils/links';
 
 export type TypeDocNextraLink = Record<string, string>;
 
+// TypeParameterReflection 누락 속성 반영
+export interface TypeDocParameterReflection extends TypeDoc.JSONOutput.TypeParameterReflection {
+    defaultValue: any | null;
+}
+
 export interface TypeDocNextraInit {
     jsonInputPath?: string | null;
     input?: string[] | null;

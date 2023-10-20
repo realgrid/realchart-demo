@@ -152,8 +152,10 @@ export class TypeDocNextra {
         const head = heading('Properties', 2);
         const body = properties.map((m) => {
             // const name = `${m.private ? 'private' : 'public'} ${m.static ? 'static ' : ''}${escape(m.name)}`.trim();
-            const name = `${m.static ? 'static ' : ''}${escape(m.name)}`.trim();
-            const title = heading(`${name}: ${this.linker(m.type || 'any', m.rawType || [m.type || 'any'])}`, 3);
+            const ename = escape(m.name);
+            const name = `${m.static ? 'static ' : ''}${ename}`.trim();
+            const title = heading(`${name}: ${this.linker(m.type || 'any', m.rawType || [m.type || 'any'])}`, 3)
+                + `[#${ename}]`;
             const desc = [m.description || '', m.deprecated ? `\n- ${bold('⚠️ Deprecated')}` : '', m.metadata?.url ? `\n- ${hyperlink('Source', m.metadata.url)}` : '']
                 .filter((r) => r.length > 0)
                 .join('\n')
@@ -170,14 +172,16 @@ export class TypeDocNextra {
 
         const head = heading('Methods', 2);
         const body = methods.map((m) => {
+            const ename = escape(m.name);
             // ${m.private ? 'private' : 'public'}
-            const name = `${m.static ? 'static ' : ''}${escape(m.name)}(${m.parameters
+            const name = `${m.static ? 'static ' : ''}${ename}(${m.parameters
                 .filter((r) => !r.name.includes('.'))
                 .map((m) => {
                     return `${m.name}${m.optional ? '?' : ''}`;
                 })
                 .join(', ')})`.trim();
-            const title = heading(`${name}: ${m.returns?.type ? `${this.linker(m.returns.type || 'any', m.returns.rawType || ['any'])}` : 'any'}`, 3);
+            const title = heading(`${name}: ${m.returns?.type ? `${this.linker(m.returns.type || 'any', m.returns.rawType || ['any'])}` : 'any'}`, 3)
+                + `[#${ename}]`;
             const desc = [
                 m.description || '',
                 m.deprecated ? `\n- ${bold('⚠️ Deprecated')}` : '',
@@ -219,13 +223,15 @@ export class TypeDocNextra {
     }
 
     public getFunctions(m: DocumentedFunction) {
-        const name = `${escape(m.name)}(${m.parameters
+        const ename = escape(m.name);
+        const name = `${ename}(${m.parameters
             .filter((r) => !r.name.includes('.'))
             .map((m) => {
                 return `${m.name}${m.optional ? '?' : ''}`;
             })
             .join(', ')})`.trim();
-        const title = heading(`${name}: ${m.returns?.type ? `${this.linker(m.returns.type || 'any', m.returns.rawType || ['any'])}` : 'any'}`, 3);
+        const title = heading(`${name}: ${m.returns?.type ? `${this.linker(m.returns.type || 'any', m.returns.rawType || ['any'])}` : 'any'}`, 3)
+            + `[#${ename}]`;
         const desc = [
             m.description || '',
             m.deprecated ? `\n- ${bold('⚠️ Deprecated')}` : '',

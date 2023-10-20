@@ -132,7 +132,7 @@ __name(hyperlink, "hyperlink");
 function doclink(text, vars = {}) {
   const [keyword, ...display] = text.split(" ");
   const [sep, ...keys] = keyword.split(".");
-  const t = display.length ? display.join("") : keys.length ? keys.slice(-1)[0] : keyword;
+  const t = display.length ? display.join(" ") : keys.length ? keys.slice(-1)[0] : keyword;
   if (!keys.length)
     return t;
   let page = "";
@@ -434,7 +434,7 @@ var ClassSerializer = class extends AbstractSerializer {
   parseMethod(decl) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q;
     const signature = ((_a = decl.signatures) == null ? void 0 : _a[0]) || decl;
-    const description = getDescription(decl);
+    const description = getDescription(signature);
     return {
       name: decl.name,
       description,
@@ -459,7 +459,7 @@ var ClassSerializer = class extends AbstractSerializer {
       name: decl.name,
       description: ((_b = (_a = decl.comment) == null ? void 0 : _a.summary) == null ? void 0 : _b.map(getDocLinkedDesc).join("").trim()) || null,
       optional: !!decl.flags.isOptional,
-      default: ((_c = decl.default) == null ? void 0 : _c.name) || ((_f = (_e = (_d = decl.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.find((r) => r.tag === "@default")) == null ? void 0 : _f.content[0].text) || null,
+      default: ((_c = decl.default) == null ? void 0 : _c.name) || ((_f = (_e = (_d = decl.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.find((r) => r.tag === "@default")) == null ? void 0 : _f.content[0].text) || decl.defaultValue || null,
       type: decl.type ? parseType(decl.type) : "any",
       rawType: decl.type ? parseTypes(decl.type) : ["any"]
     };
@@ -534,7 +534,7 @@ var FunctionSerializer = class extends AbstractSerializer {
     const decl = this.declaration;
     const signature = ((_a = decl.signatures) == null ? void 0 : _a[0]) || decl;
     const vars = getVars(this.declaration);
-    const description = getDescription(this.declaration, vars);
+    const description = getDescription(signature, vars);
     return {
       name: decl.name,
       description,
@@ -696,8 +696,9 @@ ${table(tableHead, tableBody)}
     const head = heading("Properties", 2);
     const body = properties.map((m) => {
       var _a;
-      const name = `${m.static ? "static " : ""}${escape(m.name)}`.trim();
-      const title = heading(`${name}: ${this.linker(m.type || "any", m.rawType || [m.type || "any"])}`, 3);
+      const ename = escape(m.name);
+      const name = `${m.static ? "static " : ""}${ename}`.trim();
+      const title = heading(`${name}: ${this.linker(m.type || "any", m.rawType || [m.type || "any"])}`, 3) + `[#${ename}]`;
       const desc = [m.description || "", m.deprecated ? `
 - ${bold("\u26A0\uFE0F Deprecated")}` : "", ((_a = m.metadata) == null ? void 0 : _a.url) ? `
 - ${hyperlink("Source", m.metadata.url)}` : ""].filter((r) => r.length > 0).join("\n").trim();
@@ -714,10 +715,11 @@ ${body.join("\n")}`;
     const head = heading("Methods", 2);
     const body = methods.map((m) => {
       var _a, _b;
-      const name = `${m.static ? "static " : ""}${escape(m.name)}(${m.parameters.filter((r) => !r.name.includes(".")).map((m2) => {
+      const ename = escape(m.name);
+      const name = `${m.static ? "static " : ""}${ename}(${m.parameters.filter((r) => !r.name.includes(".")).map((m2) => {
         return `${m2.name}${m2.optional ? "?" : ""}`;
       }).join(", ")})`.trim();
-      const title = heading(`${name}: ${((_a = m.returns) == null ? void 0 : _a.type) ? `${this.linker(m.returns.type || "any", m.returns.rawType || ["any"])}` : "any"}`, 3);
+      const title = heading(`${name}: ${((_a = m.returns) == null ? void 0 : _a.type) ? `${this.linker(m.returns.type || "any", m.returns.rawType || ["any"])}` : "any"}`, 3) + `[#${ename}]`;
       const desc = [
         m.description || "",
         m.deprecated ? `
@@ -756,10 +758,11 @@ ${body.join("\n")}`;
   }
   getFunctions(m) {
     var _a, _b;
-    const name = `${escape(m.name)}(${m.parameters.filter((r) => !r.name.includes(".")).map((m2) => {
+    const ename = escape(m.name);
+    const name = `${ename}(${m.parameters.filter((r) => !r.name.includes(".")).map((m2) => {
       return `${m2.name}${m2.optional ? "?" : ""}`;
     }).join(", ")})`.trim();
-    const title = heading(`${name}: ${((_a = m.returns) == null ? void 0 : _a.type) ? `${this.linker(m.returns.type || "any", m.returns.rawType || ["any"])}` : "any"}`, 3);
+    const title = heading(`${name}: ${((_a = m.returns) == null ? void 0 : _a.type) ? `${this.linker(m.returns.type || "any", m.returns.rawType || ["any"])}` : "any"}`, 3) + `[#${ename}]`;
     const desc = [
       m.description || "",
       m.deprecated ? `

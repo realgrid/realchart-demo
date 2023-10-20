@@ -12,7 +12,7 @@ export class FunctionSerializer extends AbstractSerializer {
         const signature = decl.signatures?.[0] || decl;
 
         const vars = getVars(this.declaration);
-        const description = getDescription(this.declaration, vars);
+        const description = getDescription(signature, vars);
 
         return {
             name: decl.name,

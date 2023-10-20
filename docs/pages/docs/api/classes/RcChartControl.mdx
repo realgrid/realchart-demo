@@ -9,54 +9,80 @@ RealChart 컨트롤.
 
 
 ## Properties
-### body: [RcBody](../classes/RcBody)
+### body: [RcBody](../classes/RcBody)[#body]
 차트 시리즈들이 그려지는 plotting 영역 모델.
 
-### gauge: [RcChartGauge](../classes/RcChartGauge)
+### gauge: [RcChartGauge](../classes/RcChartGauge)[#gauge]
 첫번째 게이지.
 
-### legend: [RcLegend](../classes/RcLegend)
+### legend: [RcLegend](../classes/RcLegend)[#legend]
 차트 범례 모델.
 
-### series: [RcChartSeries](../classes/RcChartSeries)
+### series: [RcChartSeries](../classes/RcChartSeries)[#series]
 첫번째 시리즈.
 
-### subtitle: [RcSubtitle](../classes/RcSubtitle)
+### subtitle: [RcSubtitle](../classes/RcSubtitle)[#subtitle]
 차트 sub 타이틀 모델.
 
-### title: [RcTitle](../classes/RcTitle)
+### title: [RcTitle](../classes/RcTitle)[#title]
 차트 타이틀 모델.
 
-### xAxis: [RcChartAxis](../classes/RcChartAxis)
+### xAxis: [RcChartAxis](../classes/RcChartAxis)[#xAxis]
 첫번째 x 축.
 
-### yAxis: [RcChartAxis](../classes/RcChartAxis)
+### yAxis: [RcChartAxis](../classes/RcChartAxis)[#yAxis]
 첫번째 y 축.
 
 
 ## Methods
-### getGauge(name): [RcChartGauge](../classes/RcChartGauge)
+### getGauge(name): [RcChartGauge](../classes/RcChartGauge)[#getGauge]
+게이지 이름에 해당하는 게이지 객체를 리턴한다.
+
+
+
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 게이지 이름 |
-### getSeries(name): [RcChartSeries](../classes/RcChartSeries)
+### getSeries(name): [RcChartSeries](../classes/RcChartSeries)[#getSeries]
+시리즈 이름에 해당하는 시리즈 객체를 리턴한다.
+
+
+
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 시리즈 이름 |
-### getXAxis(name): [RcChartAxis](../classes/RcChartAxis)
+### getXAxis(name): [RcChartAxis](../classes/RcChartAxis)[#getXAxis]
+name 매개변수가 문자열이면 지정한 이름의 x 축을,
+숫자이면 해당 index에 위치하는 x 축을 리턴한다.
+
+
+
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | 이름이나 index |
-### getYAxis(name): [RcChartAxis](../classes/RcChartAxis)
+### getYAxis(name): [RcChartAxis](../classes/RcChartAxis)[#getYAxis]
+name 매개변수가 문자열이면 지정한 이름의 y 축을,
+숫자이면 해당 index에 위치하는 y 축을 리턴한다.
+
+
+
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | 이름이나 index |
-### load(config, animate?): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+### load(config, animate?): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#load]
+기존 설정 모델을 제거하고 새로운 설정으로 차트를 재구성한다.
+
+
+
 | Parameter | Type |
 | ----------- | ----------- |
 | config | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
 | animate | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) |
-### render(now): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)
+### render(now): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#render]
+차트를 다시 그린다.
+
+
+
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
-| now | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 즉시 차트 SVG를 디시 구축한다. |
+| now=`false` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 즉시 차트 SVG를 디시 구축한다. |

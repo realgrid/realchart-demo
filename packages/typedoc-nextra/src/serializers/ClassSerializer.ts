@@ -1,6 +1,7 @@
 import { JSONOutput, ReflectionKind } from 'typedoc';
 import { FileMetadata, getFileMetadata, getName, hyperlink, seelink, parseType, parseTypes, getVars, getDescription, getDocLinkedDesc } from '../utils';
 import { AbstractSerializer } from './AbstractSerializer';
+import { TypeDocParameterReflection } from '..';
 
 export interface DocumentedClass {
     name: string;
@@ -155,7 +156,7 @@ export class ClassSerializer extends AbstractSerializer {
 
     public parseMethod(decl: JSONOutput.DeclarationReflection): DocumentedClassMethod {
         const signature = decl.signatures?.[0] || decl;
-        const description = getDescription(decl);
+        const description = getDescription(signature);
         return {
             name: decl.name,
             description,
@@ -179,7 +180,7 @@ export class ClassSerializer extends AbstractSerializer {
         };
     }
 
-    public parseParameter(decl: JSONOutput.TypeParameterReflection): DocumentedParameter {
+    public parseParameter(decl: TypeDocParameterReflection): DocumentedParameter {
         return {
             name: decl.name,
             description:
@@ -188,7 +189,10 @@ export class ClassSerializer extends AbstractSerializer {
                     .join('')
                     .trim() || null,
             optional: !!decl.flags.isOptional,
-            default: (decl.default as any)?.name || decl.comment?.blockTags?.find((r) => r.tag === '@default')?.content[0].text || null,
+            default: (decl.default as any)?.name 
+                || decl.comment?.blockTags?.find((r) => r.tag === '@default')?.content[0].text 
+                || decl.defaultValue as string
+                || null,
             type: decl.type ? parseType(decl.type) : 'any',
             rawType: decl.type ? parseTypes(decl.type) : ['any']
         };
