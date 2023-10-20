@@ -13,6 +13,9 @@ import { ChartItem, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
 import { IClusterable, IPlottingItem } from "./Series";
 
+/**
+ * @internal
+ */
 export interface IAxis {
 
     type(): string;
@@ -50,6 +53,9 @@ export interface IAxis {
     getUnitLength(length: number, value: number): number;
 }
 
+/**
+ * @internal
+ */
 export abstract class AxisItem extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -71,6 +77,11 @@ export abstract class AxisItem extends ChartItem {
     //-------------------------------------------------------------------------
 }
 
+/**
+ * 축 선(line) 설정 모델.
+ * 
+ * @config
+ */
 export class AxisLine extends AxisItem {
 
     //-------------------------------------------------------------------------
@@ -82,7 +93,9 @@ export class AxisLine extends AxisItem {
 }
 
 /**
+ * 축 타이틀 설정 모델.
  * 
+ * @config
  */
 export class AxisTitle extends AxisItem {
 
@@ -130,8 +143,9 @@ export class AxisTitle extends AxisItem {
 
 /**
  * visible 기본값이 undefined이다.
- * <br>
  * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
+ * 
+ * @config
  */
 export class AxisGrid extends AxisItem {
 
@@ -139,17 +153,23 @@ export class AxisGrid extends AxisItem {
     // properties
     //-------------------------------------------------------------------------
     /**
+     * polar 차트일 때 그리드 선을 원형으로 그릴 지 여부.
+     * 
      * @config
      */
-    circular = false;
+    circular = true;
     /**
+     * 시작 값에 표시되는 그리드 선을 표시할 지 여부.
+     * 
      * @config
      */
     startVisible = false;
     /**
+     * 끝 값에 표시되는 그리드 선을 표시할 지 여부.
+     * 
      * @config
      */
-    endVisible = false;
+    endVisible = true;
 
     //-------------------------------------------------------------------------
     // constructor
