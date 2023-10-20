@@ -389,6 +389,9 @@ export enum AxisLabelArrange {
 export abstract class AxisLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(public axis: Axis) {
@@ -402,25 +405,18 @@ export abstract class AxisLabel extends FormattableText {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * label 표시 간격.
-     * <br>
-     * 0보다 큰 값으로 지정하지 않으면
-     * {@link autoStep}이 true일 때, label들이 겹치지 않도록 자동 계산된다.
-     * <br>
+     * label 표시 간격.\
      * 1이면 모든 tick 표시. 2이면 하나씩 건너 띄어서 표시.
      * 2 이상일 때 {@link startStep}으로 지정된 step부터 배치된다.
      */
     step = 0;
     /**
-     * step이 2 이상일 때, 표시가 시작되는 label 위치.
+     * step이 2 이상이 될 때, 표시가 시작되는 label 위치.
      */
     startStep = 0;
     /**
-     * 수평 축일 때 tick label 배치 행 수.
-     * <br>
-     * 0보다 큰 값으로 지정하지 않으면
-     * {@link autoRows}가 true일 때, label들이 겹치지 않도록 자동 계산된다.
-     * <br>
+     * 수평 축일 때 tick label 배치 행 수.\
+     * 1은 한 줄, 2면 두 줄 등으로 여러 줄로 나눠서 표시한다.
      */
     rows = 0;
     /**
