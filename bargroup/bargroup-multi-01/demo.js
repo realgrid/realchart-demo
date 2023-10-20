@@ -17,7 +17,7 @@ const config = {
     tick: {
       baseAxis: 0
     }
-  }], 
+  }],
   series: [{
     groupPadding: 0.1,
     layout: 'overlap',
