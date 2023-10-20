@@ -46,7 +46,7 @@ export class ChartItem extends RcObject {
      * 표시 여부.\
      * 모델에 따라 기본값이 다르다.
      * 
-     * @fiddle common/visible Legend Visible
+     * @fiddle common/legend-visible Legend Visible
      * 
      * @config
      */
