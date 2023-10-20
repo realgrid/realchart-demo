@@ -84,9 +84,9 @@ export class TooltipView extends RcElement {
         const dur = this.getStyle('visibility') === 'visible' ? 300 : 0;
 
         if (model.series.chart.isInverted()) {
-            this.translateEx(x + model.offset, y - h / 2, dur);
+            this.translateEx(x + model.offset, y - h / 2, dur, false);
         } else {
-            this.translateEx(x - w / 2, y - h - model.offset, dur);
+            this.translateEx(x - w / 2, y - h - model.offset, dur, false);
         }
         if (dur === 0) {
             this.setStyle('visibility', 'visible');
