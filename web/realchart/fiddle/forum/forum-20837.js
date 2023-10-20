@@ -2,7 +2,7 @@
 const config = {
 	title: '2022년도 도시의 평균 대기질 지수',
 	options: {
-		// animatable: false
+		animatable: false
 	},
 	xAxis: {
 		title: '수정구',

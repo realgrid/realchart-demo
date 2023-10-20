@@ -53,4 +53,3 @@ const config = {
 };
 
 RealChart.createChart(document, 'realchart', config);
-

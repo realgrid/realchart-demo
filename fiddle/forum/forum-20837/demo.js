@@ -1,6 +1,8 @@
 const config = {
   title: '2022년도 도시의 평균 대기질 지수',
-  options: {},
+  options: {
+    animatable: false
+  },
   xAxis: {
     title: '수정구',
     categories: ['2014', '2015', '2016', '2017', '2018', '2019', '2020'],
@@ -24,4 +26,4 @@ const config = {
     autoContrast: false
   }
 };
-const chart = RealChart.createChart(document, 'realchart', config); 
+const chart = RealChart.createChart(document, 'realchart', config);
