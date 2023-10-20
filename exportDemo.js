@@ -138,41 +138,41 @@ function createJs(leafName) {
           }
         }
 
-        if (path.node.leadingComments && path.node.leadingComments.length > 0) {
-          path.node.leadingComments.forEach((comment) => {
-            if (
-              comment.type === "CommentBlock" &&
-              comment.value.trim().startsWith("*")
-            ) {
-              const content = comment.value.trim().split("\n");
-              let isDemoContent = false;
-              let emptyLinePassed = false;
-              content.forEach((line) => {
-                line = line.trim();
-                if (line.includes("@demo")) {
-                  isDemoContent = true;
-                  return;
-                }
-                if (isDemoContent && line.startsWith("*")) {
-                  if (!emptyLinePassed && line === "*") {
-                    emptyLinePassed = true;
-                    return;
-                  }
-                  demoDescription += line.replace("*", "").trim() + "\n";
-                }
-              });
-            }
-          });
-        }
+        // if (path.node.leadingComments && path.node.leadingComments.length > 0) {
+        //   path.node.leadingComments.forEach((comment) => {
+        //     if (
+        //       comment.type === "CommentBlock" &&
+        //       comment.value.trim().startsWith("*")
+        //     ) {
+        //       const content = comment.value.trim().split("\n");
+        //       let isDemoContent = false;
+        //       let emptyLinePassed = false;
+        //       content.forEach((line) => {
+        //         line = line.trim();
+        //         if (line.includes("@demo")) {
+        //           isDemoContent = true;
+        //           return;
+        //         }
+        //         if (isDemoContent && line.startsWith("*")) {
+        //           if (!emptyLinePassed && line === "*") {
+        //             emptyLinePassed = true;
+        //             return;
+        //           }
+        //           demoDescription += line.replace("*", "").trim() + "\n";
+        //         }
+        //       });
+        //     }
+        //   });
+        // }
       },
-      enter(path) {
-        // 모든 노드에 대해 trailingComments 제거
-        delete path.node.trailingComments;
-        // innerComments (사이 주석)도 확인하여 제거
-        if (path.node.innerComments) {
-          delete path.node.innerComments;
-        }
-      },
+    //   enter(path) {
+    //     // 모든 노드에 대해 trailingComments 제거
+    //     delete path.node.trailingComments;
+    //     // innerComments (사이 주석)도 확인하여 제거
+    //     if (path.node.innerComments) {
+    //       delete path.node.innerComments;
+    //     }
+    //   },
     });
     if (configContent) {
       const { code } = generator.default(configContent);
