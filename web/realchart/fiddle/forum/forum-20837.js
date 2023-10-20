@@ -43,3 +43,4 @@ let chart;
 function init() {
 	chart = RealChart.createChart(document, 'realchart', config);
 }
+ 

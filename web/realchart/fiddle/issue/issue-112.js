@@ -44,7 +44,7 @@ const config = {
             color: 'rgba(248,161,63,1)',
             data: [183.6, 178.8, 198.5]
         }, {
-            name: 'Profit Optimized',
+            name: 'Profit Optimized', 
             color: 'rgba(186,60,61,.9)',
             pointPadding: 0.3,
             data: [203.6, 198.8, 208.5]
