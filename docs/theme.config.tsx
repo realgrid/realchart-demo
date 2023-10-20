@@ -1,4 +1,4 @@
-import { DocsThemeConfig } from "nextra-theme-docs";
+import { DocsThemeConfig, Link } from "nextra-theme-docs";
 import { Logo } from "./components/Logo";
 import { IconHelp } from "@tabler/icons-react";
 import { MainFooter } from "@/components/MainFooter";
@@ -15,12 +15,15 @@ const config: DocsThemeConfig = {
   sidebar: {
     // defaultMenuCollapseLevel: 10000,
     titleComponent({ title: _title, type,  route }) {
-      if (route == '/config') return <>{_title}</>;
-      if (route.indexOf('/docs') == 0) return <>{_title}</>;
-
-      const [title] = route.split('/').slice(-1);
-      let prefix = (title.includes('Axis') || title.includes('series') || title.includes('gauge')) ? '[]' : '';
-      return <>{title}{prefix}</>;
+      if (route.indexOf('/config/config') >= 0) {
+        const [title] = route.split('/').slice(-1);
+        let prefix = (title.includes('Axis') || title.includes('series') || title.includes('gauge')) ? '[]' : '';
+        return <>{title}{prefix}</>;
+      } else if (type == 'separator') {
+        return <>{_title}</>;
+       } else {
+        return <>{_title}</>;
+      }
     }
   },
   logo: <Logo brand={brand} showBrandName iconSize={32} textSize={28} />,
@@ -33,7 +36,7 @@ const config: DocsThemeConfig = {
   banner: {
     key: "1.0-release",
     text: (
-      <a href="/docs/release/v1.0">🎉 RealChart 1.0 is released. Read more →</a>
+      <a href="/guide/release/v1.0">🎉 RealChart 1.0 is released. Read more →</a>
     ),
   },
   editLink: {
