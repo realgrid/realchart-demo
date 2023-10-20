@@ -60,7 +60,7 @@ class Tunner {
    * @param tag: any
    * @returns url item string
    */
-  _parseLinkTag(tag,baseUrl='') {
+  _parseLinkTag(tag, baseUrl='') {
     const [{text}] = tag.content;
     const [src, ...label] = text.split(' ');
     return `- [${label.join(' ')}](${path.join(baseUrl, src)})`;
@@ -86,7 +86,7 @@ class Tunner {
   _parseFiddleTag(tags) {
     const fiddles = this._findTags(tags, '@fiddle');
     return fiddles?.map(fiddle => {
-      return this._parseLinkTag(fiddle, this.fiddleUrl);
+      return this._parseLinkTag(fiddle, Tunner.fiddleUrl);
     }).join('\n');
   }
 
