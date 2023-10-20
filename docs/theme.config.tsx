@@ -6,6 +6,11 @@ import { brand, company, footerData } from "@/lib/const";
 import { theme } from "./lib/theme";
 
 const config: DocsThemeConfig = {
+  useNextSeoProps() {
+    return {
+      titleTemplate: '%s - RealChart'
+    }
+  },
   primaryHue: 207,
   sidebar: {
     // defaultMenuCollapseLevel: 10000,
