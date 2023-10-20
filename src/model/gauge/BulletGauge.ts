@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { IPercentSize, IValueRange, RtPercentSize, buildValueRanges, parsePercentSize } from "../../common/Types";
+import { IPercentSize, IValueRange, RtPercentSize, SVGStyleOrClass, buildValueRanges, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
 import { LinearGaugeBase, LinearGaugeGroupBase } from "./LinearGauge";
@@ -111,6 +111,12 @@ export class BulletTargetBar extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 목표 bar 표시 여부.
+     * 
+     * @configprop visible
+     * @default true
+     */
 }
 
 export class BulletActualBar extends ChartItem {
