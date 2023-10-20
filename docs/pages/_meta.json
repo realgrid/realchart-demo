@@ -10,16 +10,16 @@
       "layout": "raw"
     }
   },
-  "docs": {
-    "title": "API",
+  "demo": {
+    "title": "데모",
     "type":"page"
   },
   "config": {
     "title": "Config",
     "type":"page"
   },
-  "demo": {
-    "title": "데모",
+  "docs": {
+    "title": "API",
     "type":"page"
   },
   "pricing": {
