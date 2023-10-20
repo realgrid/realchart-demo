@@ -66,7 +66,7 @@ export {
     RcValueGauge,
     RcCircularGauge,
     RcCircleGauge,
-    RcLinerGaugeBase,
+    RcLinearGaugeBase as RcLinerGaugeBase,
     RcLinearGauge,
     RcBulletGauge,
     RcClockGauge,
@@ -74,7 +74,7 @@ export {
     RcCircleGaugeGroup,
     RcLinearGaugeGroup,
     RcBulletGaugeGroup,
-    
+
     // chart
     RcTitle,
     RcSubtitle,

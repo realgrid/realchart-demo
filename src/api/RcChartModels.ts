@@ -471,8 +471,6 @@ export abstract class RcCircularGauge extends RcValueGauge {
 
     /**
      * label 모델.
-     * 
-     * {@link config.gauge.$gauge.band Configuration 속성들} 참조.
      */
     get label(): RcChartObject { return this._label; }
 } 
@@ -567,7 +565,7 @@ export class RcCircleGauge extends RcCircularGauge {
     get pin(): RcChartObject { return this._pin; }
 }
 
-export abstract class RcLinerGaugeBase extends RcValueGauge {
+export abstract class RcLinearGaugeBase extends RcValueGauge {
 
     private _label: RcChartObject;
     private _scale: RcGaugeScale;
@@ -580,14 +578,10 @@ export abstract class RcLinerGaugeBase extends RcValueGauge {
 
     /**
      * label 모델.
-     * 
-     * {@link config.gauge.$gauge.label Configuration 속성들} 참조.
      */
     get label(): RcChartObject { return this._label; }
     /**
      * scale 모델.
-     * 
-     * {@link config.gauge.$gauge.scale Configuration 속성들} 참조.
      */
     get scale(): RcChartObject { return this._scale; }
 }
@@ -601,7 +595,7 @@ export abstract class RcLinerGaugeBase extends RcValueGauge {
  * 
  * @configvar gauge=linear
  */
-export class RcLinearGauge extends RcLinerGaugeBase {
+export class RcLinearGauge extends RcLinearGaugeBase {
 
     private _marker: RcChartObject;
     private _band: RcChartObject;
@@ -616,7 +610,7 @@ export class RcLinearGauge extends RcLinerGaugeBase {
  * 
  * @configvar gauge=bullet
  */
-export class RcBulletGauge extends RcValueGauge {
+export class RcBulletGauge extends RcLinearGaugeBase {
 }
 
 /**
