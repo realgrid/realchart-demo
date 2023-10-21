@@ -6,17 +6,22 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject } from "../common/Common";
+import { isArray, isObject, isString } from "../common/Common";
+import { Align, SVGStyleOrClass, isNull } from "../common/Types";
+import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 
 /**
- * 다중 분할 평면.
+ * 다중 분할 평면.\
+ * 각 pane에 해당하는 xAxis, yAxis가 반드시 존재해야 한다.
  */
 export class Plane extends ChartItem {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _cols = 1;
+    private _rows = 1;
     private _panes: Pane[][] = [];
 
     //-------------------------------------------------------------------------
@@ -25,30 +30,40 @@ export class Plane extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    xPanes = 1;
-    yPanes = 1;
+    get rows(): number {
+        return this._rows;
+    }
+
+    get cols(): number {
+        return this._cols;
+    }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getPane(x: number, y: number): Pane {
-        return this._panes[x + '*' + y];
+    getPane(row: number, col: number): Pane {
+        return this._panes[row][col];
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _doLoadProp(prop: string, value: any): boolean {
-        if (prop === 'panes') {
+        if (['panes', 'cols', 'rows'].indexOf(prop) >= 0) {
             return true;
         }
     }
 
     load(source: any): ChartItem {
         if (isObject(source)) {
+            const rows = source.rows;
+            const cols = source.cols;
             const panes = source.panes;
+
             super.load(source);
-            this.$_loadPanes(panes);
+            
+            this._panes = this.$_buildPanes(rows, cols);
+            this.$_loadPanes(this._panes, panes);
         }
         return this;
     }
@@ -56,36 +71,98 @@ export class Plane extends ChartItem {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_loadPanes(src: any): void {
-        const x = Math.max(1, this.xPanes || 1);
-        const y = Math.max(1, this.yPanes || 1);
-        const panes: Pane[][] = new Array<Pane[]>(y);
+    private $_parseSizes(sizes: any): number[] {
+        if (isArray(sizes) && sizes.length > 1) {
+            const list: number[] = [];
+            let sum = 0;
 
-        for (let i = 0; i < panes.length; i++) {
-            panes[i] = [];
+            for (let i = 0; i < sizes.length; i++) {
+                const sz = +sizes[i] || 1;
+                list.push(sz);
+                sum += sz;
+            }
+            for (let i = 0; i < sizes.length; i++) {
+                list[i] = list[i] / sum;
+            }
+            return list;
+        } else if (sizes > 0) {
+            const list: number[] = [];
+            for (let i = 0; i < sizes; i++) {
+                list.push(1 / sizes);
+            }            
+            return list;
+        } else  {
+            return [1];
         }
+    }
+
+    private $_buildPanes(rows: any, cols: any): Pane[][] {
+        const szRows = this.$_parseSizes(rows);
+        const szCols = this.$_parseSizes(cols);
+        const panes = [];
+
+        for (let r = 0; r < szRows.length; r++) {
+            panes.push([]);
+            for (let c = 0; c < szCols.length; c++) {
+                panes[r].push(new Pane(this.chart, r, c, szCols[c], szRows[r]));
+            }
+        }
+        this._cols = szCols.length;
+        this._rows = szRows.length;
+        return panes;
+    }
+
+    private $_loadPanes(panes: Pane[][], src: any): void {
+        src = isArray(src) ? src : isObject(src) ? [src] : null;
 
         if (isArray(src)) {
             src.forEach(s => {
-                const pane = this.$_loadPane(src);
-                if (pane.x >= 0 && pane.x < x && pane.y >= 0 && pane.y < y) {
-                    panes[pane.y][pane.x] = pane;
+                const row = +s.row || 0;
+                const col = +s.col || 0;
+                if (col >= 0 && col < this._cols && row >= 0 && row < this._rows) {
+                    panes[row][col].load(s);
                 }
-            })
-        } else if (isObject(src)) {
-            const pane = this.$_loadPane(src);
-            panes[pane.y][pane.x] = pane;
+            });
         }
+    }
+}
 
-        this._panes = panes;
+export class PaneTitle extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public pane: Pane) {
+        super(pane.chart);
     }
 
-    private $_loadPane(src: any): Pane {
-        if (isObject(src)) {
-            const pane = new Pane(this.chart);
-            pane.load(src);
-            return pane;
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 제목 텍스트
+     * @config 
+     */
+    text: string;
+    align = Align.CENTER;
+    backgroundStyle: SVGStyleOrClass;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    isVisible(): boolean {
+        return this.visible && !isNull(this.text);
+    }
+    
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doLoadSimple(source: any): boolean {
+        if (isString(source)) {
+            this.text = source;
+            return true;
         }
+        return super._doLoadSimple(source);
     }
 }
 
@@ -97,11 +174,14 @@ export class Pane extends ChartItem {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
+    constructor(chart: IChart, public row: number, public col: number, public width: number, public height: number) {
+        super(chart);
+    }
+
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    x = 0;
-    y = 0;
+    title = new PaneTitle(this);
 
     //-------------------------------------------------------------------------
     // overriden members

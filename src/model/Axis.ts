@@ -64,7 +64,7 @@ export abstract class AxisItem extends ChartItem {
     readonly axis: Axis;
 
     //-------------------------------------------------------------------------
-    // constructors
+    // constructor
     //-------------------------------------------------------------------------
     constructor(axis: Axis, visible = true) {
         super(axis?.chart, visible);

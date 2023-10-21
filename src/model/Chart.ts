@@ -50,6 +50,7 @@ import { WaterfallSeries } from "./series/WaterfallSeries";
 import { LinearGauge, LinearGaugeGroup } from "./gauge/LinearGauge";
 import { BulletGauge, BulletGaugeGroup } from "./gauge/BulletGauge";
 import { SeriesNavigator } from "./SeriesNavigator";
+import { Plane } from "./Plane";
 
 export interface IChart {
     type: string;
@@ -288,6 +289,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _title: Title;
     private _subtitle: Subtitle;
     private _legend: Legend;
+    private _plane: Plane;
     private _series: PlottingItemCollection;
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
@@ -313,6 +315,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._title = new Title(this);
         this._subtitle = new Subtitle(this);
         this._legend = new Legend(this);
+        this._plane = new Plane(this);
         this._series = new PlottingItemCollection(this);
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new AxisCollection(this, false);

@@ -49,6 +49,7 @@ export class Title extends ChartItem {
             this.text = source;
             return true;
         }
+        return super._doLoadSimple(source);
     }
 }
 
