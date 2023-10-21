@@ -37,7 +37,7 @@ const config = {
             data: [140, 90, 40]
         }]
     }, {
-        groupPadding: 0.1,
+        groupPadding: 0.1, 
         layout: 'overlap',
         yAxis: 1,
         children: [{

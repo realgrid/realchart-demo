@@ -6,15 +6,13 @@ label
 텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
 
 
-밝게 표시할 때는  brightStyle 을 적용하고,
+밝게 표시할 때는  lightStyle 을 적용하고,
 어둡게 표시할 때는  darkStyle 이 적용된다.
-brightStyle이 지정되지 않으면 'rct-text-bright'이,
+brightStyle이 지정되지 않으면 'rct-text-light'이,
 darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.  
 `default: true`  
 
 ### backgroundStyle: `SVGStyles | string{:javascript}`[#backgroundStyle]
-
-### brightStyle: `SVGStyles | string{:javascript}`[#brightStyle]
 
 ### darkStyle: `SVGStyles | string{:javascript}`[#darkStyle]
 
@@ -22,6 +20,8 @@ darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.
 
 
 `default: ChartTextEffect.NONE`  
+
+### lightStyle: `SVGStyles | string{:javascript}`[#lightStyle]
 
 ### position: ` | {:javascript}`[#position]
 라벨 표시 위치.  
@@ -47,5 +47,6 @@ label이 숫자일 때 표시 형식.
 rich text format을 지정할 수 있다.  
 
 ### visible: `boolean{:javascript}`[#visible]
-표시 여부.
-모델에 따라 기본값이 다르다.  
+표시 여부.\
+모델에 따라 기본값이 다르다.
+<FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  

@@ -4,8 +4,12 @@ import { IconHelp } from "@tabler/icons-react";
 import { MainFooter } from "@/components/MainFooter";
 import { brand, company, footerData } from "@/lib/const";
 import { theme } from "./lib/theme";
+import { FiddleLink } from "./components/FiddleLink";
 
 const config: DocsThemeConfig = {
+  components: {
+    FiddleLink,
+  },
   useNextSeoProps() {
     return {
       titleTemplate: '%s - RealChart'
@@ -29,6 +33,7 @@ const config: DocsThemeConfig = {
   logo: <Logo brand={brand} showBrandName iconSize={32} textSize={28} />,
   toc: {
     headingComponent({id, children }) {
+      // remove codeblock format
       const esc = children.replace(/{:.*}/g, '');
       return <>{esc}</>;
     }
@@ -40,10 +45,10 @@ const config: DocsThemeConfig = {
     ),
   },
   editLink: {
-    component() { return null; }
+    component: () => null
   },
   feedback: {
-    content: null,
+    content: null
   },
   search: {
     placeholder: "문서 및 데모 검색",

@@ -477,6 +477,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     displayInLegend = true;
     /**
+     * true로 지정하면 시리즈 내비게이터에 표시한다.
+     */
+    displayInNavigator = false;
+    /**
      * 데이터 point의 동적 스타일 콜백.
      * 
      * @config

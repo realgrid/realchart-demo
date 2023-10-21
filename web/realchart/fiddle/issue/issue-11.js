@@ -36,10 +36,10 @@ const config = {
             data: [140, 90, 40]
         }]
     }, {
-        groupPadding: 0.1,
+        groupPadding: 0.1, 
         layout: 'overlap',
         yAxis: 1,
-        children: [{
+        children: [{ 
             name: 'Profit',
             color: 'rgba(248,161,63,1)',
             data: [183.6, 178.8, 198.5]

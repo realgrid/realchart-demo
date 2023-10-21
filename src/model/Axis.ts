@@ -21,7 +21,7 @@ export interface IAxis {
     type(): string;
     chart: IChart;
     
-    _length: number;
+    _vlen: number;
     _isX: boolean;
     _isHorz: boolean;
     _isOpposite: boolean;
@@ -92,6 +92,12 @@ export class AxisLine extends AxisItem {
     }
 }
 
+export enum AxisTitleAlign {
+    START = 'start',
+    MIDDLE = 'middle',
+    END = 'end'
+}
+
 /**
  * 축 타이틀 설정 모델.
  * 
@@ -108,6 +114,12 @@ export class AxisTitle extends AxisItem {
      * @config
      */
     text: string;
+    /**
+     * 축 내에서 타이틀의 위치.
+
+    * @config
+     */
+    align = AxisTitleAlign.MIDDLE;
     /**
      * 타이틀과 label 혹은 축 선 사이의 간격.
      * <br>
@@ -377,6 +389,9 @@ export enum AxisLabelArrange {
 export abstract class AxisLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(public axis: Axis) {
@@ -390,25 +405,18 @@ export abstract class AxisLabel extends FormattableText {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * label 표시 간격.
-     * <br>
-     * 0보다 큰 값으로 지정하지 않으면
-     * {@link autoStep}이 true일 때, label들이 겹치지 않도록 자동 계산된다.
-     * <br>
+     * label 표시 간격.\
      * 1이면 모든 tick 표시. 2이면 하나씩 건너 띄어서 표시.
      * 2 이상일 때 {@link startStep}으로 지정된 step부터 배치된다.
      */
     step = 0;
     /**
-     * step이 2 이상일 때, 표시가 시작되는 label 위치.
+     * step이 2 이상이 될 때, 표시가 시작되는 label 위치.
      */
     startStep = 0;
     /**
-     * 수평 축일 때 tick label 배치 행 수.
-     * <br>
-     * 0보다 큰 값으로 지정하지 않으면
-     * {@link autoRows}가 true일 때, label들이 겹치지 않도록 자동 계산된다.
-     * <br>
+     * 수평 축일 때 tick label 배치 행 수.\
+     * 1은 한 줄, 2면 두 줄 등으로 여러 줄로 나눠서 표시한다.
      */
     rows = 0;
     /**
@@ -527,10 +535,12 @@ export abstract class Axis extends ChartItem implements IAxis {
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
     _markPoints: number[];
-    _length: number;
+    _vlen: number;
     _minPad = 0;
     _maxPad = 0;
     _values: number[] = [];
+    protected _min: number;
+    protected _max: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -595,6 +605,10 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     getBaseValue(): number {
         return NaN;
+    }
+
+    length(): number {
+        return this._max - this._min;
     }
     
     abstract isContinuous(): boolean;
@@ -666,7 +680,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     buildTicks(length: number): void {
-        this._ticks = this._doBuildTicks(this._range.min, this._range.max, this._length = length);
+        this._ticks = this._doBuildTicks(this._range.min, this._range.max, this._vlen = length);
     }
 
     calcPoints(length: number, phase: number): void {

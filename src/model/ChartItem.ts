@@ -43,8 +43,10 @@ export class ChartItem extends RcObject {
     // properties
     //-------------------------------------------------------------------------
     /** 
-     * 표시 여부.
+     * 표시 여부.\
      * 모델에 따라 기본값이 다르다.
+     * 
+     * @fiddle common/legend-visible Legend Visible
      * 
      * @config
      */
@@ -240,7 +242,7 @@ export abstract class ChartText extends ChartItem {
     /**
      * @config
      */
-    brightStyle: SVGStyleOrClass;
+    lightStyle: SVGStyleOrClass;
     /**
      * @config
      */
@@ -252,9 +254,9 @@ export abstract class ChartText extends ChartItem {
     /**
      * 텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
      * <br>
-     * 밝게 표시할 때는 {@link brightStyle}을 적용하고,
+     * 밝게 표시할 때는 {@link lightStyle}을 적용하고,
      * 어둡게 표시할 때는 {@link darkStyle}이 적용된다.
-     * brightStyle이 지정되지 않으면 'rct-text-bright'이,
+     * brightStyle이 지정되지 않으면 'rct-text-light'이,
      * darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.
      * 
      * @config

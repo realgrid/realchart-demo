@@ -8,9 +8,12 @@
 
 import { ChartControl } from "../ChartControl";
 import { Axis } from "../model/Axis";
+import { Body } from "../model/Body";
 import { ChartItem } from "../model/ChartItem";
 import { Gauge } from "../model/Gauge";
+import { Legend } from "../model/Legend";
 import { Series } from "../model/Series";
+import { Subtitle, Title } from "../model/Title";
 import { RcAreaRangeSeries, RcAreaSeries, RcBarRangeSeries, RcBarSeries, RcBellCurveSeries, RcBody, RcBoxPlotSeries, RcBubbleSeries, RcBulletGauge, RcCandlestickSeries, RcCategoryAxis, RcChartAxis, RcChartGauge, RcChartObject, RcChartSeries, RcCircleGauge, RcClockGauge, RcDumbbellSeries, RcEqualizerSeries, RcErrorBarSeries, RcFunnelSeries, RcGaugeGroup, RcHeatmapSeries, RcHistogramSeries, RcLegend, RcLineSeries, RcLinearGauge, RcLogAxis, RcLollipopSeries, RcOhlcSeries, RcParetoSeries, RcPieSeries, RcScatterSeries, RcSubtitle, RcTimeAxis, RcTitle, RcTreemapSeries, RcVectorSeries, RcWaterfallSeries } from "./RcChartModels";
 
 const axis_types = {
@@ -60,6 +63,16 @@ function getObject(map: Map<any, any>, obj: ChartItem): RcChartObject {
                 p = new series_types[obj._type()](obj);
             } else if (obj instanceof Gauge) {
                 p = new gauge_types[obj._type()](obj);
+            } else if (obj instanceof Axis) {
+                p = new axis_types[obj.type()](obj);
+            } else if (obj instanceof Title) {
+                p = new (RcTitle as any)(obj);
+            } else if (obj instanceof Subtitle) {
+                p = new (RcSubtitle as any)(obj);
+            } else if (obj instanceof Legend) {
+                p = new (RcLegend as any)(obj);
+            } else if (obj instanceof Body) {
+                p = new (RcBody as any)(obj);
             }
             map.set(obj, p);
         }
@@ -182,5 +195,17 @@ export class RcChartControl {
      */
     get body(): RcBody {
         return getObject(this._objects, this.$_p.model.legend) as RcBody;
+    }
+
+    setZoom(axis: RcChartAxis, length: number | string): void {
+        this.$_p.setZoom(axis.$_p as any, length);
+    }
+
+    clearZoom(axis: RcChartAxis): void {
+        this.$_p.clearZoom(axis.$_p as any);
+    }
+
+    scroll(axis: RcChartAxis, pos: number): void {
+        this.$_p.scroll(axis.$_p as any, pos);
     }
 }

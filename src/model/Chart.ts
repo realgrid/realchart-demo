@@ -657,6 +657,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         // gauges
         this._gauges.prepareRender();
+
+        // navigator
+        this._navigator.prepareRender();
     }
 
     // 여러번 호출될 수 있다.

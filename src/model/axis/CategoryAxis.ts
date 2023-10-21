@@ -115,11 +115,9 @@ export class CategoryAxis extends Axis {
     _len: number;
     // private _step = 1;
     private _map: {[key: string]: number} = {}; // data point의 축 위치를 찾기 위해 사용한다.
-    private _min: number;
-    private _max: number;
     private _catPad = 0;
     _pts: number[];
-    _length: number;
+    _vlen: number;
 
     //-------------------------------------------------------------------------
     // properties
@@ -326,7 +324,7 @@ export class CategoryAxis extends Axis {
 
         if (phase > 0) {
             for (let i = 0; i < pts.length; i++) {
-                pts[i] /= this._length;
+                pts[i] /= this._vlen;
             }
         }
         

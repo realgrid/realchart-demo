@@ -35,7 +35,7 @@ const config = {
 };
 
 let animate = false;
-let chart;
+let chart; 
 
 
 function init() {
