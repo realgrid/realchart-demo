@@ -9,7 +9,6 @@
 import { Axis } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { ValueGauge } from "../model/Gauge";
-import { Series } from "../model/Series";
 import { CircleGauge } from "../model/gauge/CircleGauge";
 
 /**
@@ -78,8 +77,8 @@ export class RcChartObject {
     }
     /**
      * 지정한 속성의 값(들)을 설정한다.\
-     * 지정 가능한 설정 값 목록은 [Configuration API 페이지](http://realchart.co.kr/config)에서 확인할 수 있다.\ 
-     * 이 객체 자신을 리턴하므로 javascript에서 builder 패턴으로 설정 값들을 연속해서 지정할 수 있다.
+     * 지정 가능한 설정 값 목록은 [Configuration API 페이지](http://realchart.co.kr/config)에서 확인할 수 있다.\
+     * 또, 이 객체 자신을 리턴하므로 javascript에서 builder 패턴으로 설정 값들을 연속해서 지정할 수 있다.
      * 
      * ```js
      *  chart.series.set('xAxis', 1).set('yAxis', 1);
@@ -88,7 +87,7 @@ export class RcChartObject {
      * @param prop 설정 속성 경로 문자열
      * @param value 지정할 값(들)
      * @param redraw true로 지정하면 chart를 다시 그린다. 
-     *               false로 지정하고 여러 설정 후에 {@link RcChartControl.render}를 호출해서 다시 그리게 할 수도 있다.
+     *               false로 지정하고 여러 설정 후에 {@link rc.RcChartControl.render render}를 호출해서 다시 그리게 할 수도 있다.
      * @returns 이 객체 자신
      */
     set(prop: string, value: any, redraw = true): RcChartObject {
@@ -109,7 +108,7 @@ export class RcChartObject {
      * 
      * @param props 여러 설정 값들이 지정된 JSON 객체
      * @param redraw true로 지정하면 chart를 다시 그린다. 
-     *               false로 지정하고 여러 설정 후에 {@link RcChartControl.render}를 호출해서 다시 그리게 할 수도 있다.
+     *               false로 지정하고 여러 설정 후에 {@link rc.RcChartControl.render render}를 호출해서 다시 그리게 할 수도 있다.
      * @returns 이 객체 자신
      */
     setAll(props: object, redraw = true): RcChartObject {
@@ -126,7 +125,7 @@ export class RcChartObject {
      * 
      * @param prop 설정 속성 이름
      * @param redraw true로 지정하면 chart를 다시 그린다. 
-     *               false로 지정하고 여러 설정 후에 {@link RcChartControl.render}를 호출해서 다시 그리게 할 수도 있다.
+     *               false로 지정하고 여러 설정 후에 {@link rc.RcChartControl.render render}를 호출해서 다시 그리게 할 수도 있다.
      * @returns 이 객체 자신
      */
     toggle(prop: string, redraw = true): RcChartObject {
@@ -242,10 +241,25 @@ export abstract class RcChartSeries extends RcChartObject {
 export abstract class RcSeriesGroup extends RcChartObject {
 }
 
+export abstract class RcLineSeriesBase extends RcChartSeries {
+}
+
 /**
  * **'line'** 시리즈.
+ * 
+ * ```
+ *  const config = {
+ *      series: {
+ *          type: 'line',
+ *          lineType: 'step',
+ *      }
+ *  }
+ * ```
+ * 
+ * @see {@link rc.RcAreaSeries}
+ * @see {@link rc.RcBarSeries}
  */
-export class RcLineSeries extends RcChartSeries {
+export class RcLineSeries extends RcLineSeriesBase {
 }
 
 /**
@@ -262,6 +276,8 @@ export class RcAreaRangeSeries extends RcChartSeries {
 
 /**
  * **'bar'** 시리즈.
+ * 
+ * @see {@link rc.RcLineSeries}
  */
 export class RcBarSeries extends RcChartSeries {
 }
