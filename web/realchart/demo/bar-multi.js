@@ -17,12 +17,10 @@ const config = {
 		{
 			name: '2019년도',
 			pointLabel: true,
-			// pointWidth: '100%',
 			data: [413340, 4295799, 4582903, 1504513, 1428640, 1495929],
 		},
 		{
 			name: '2020년도',
-			// groupWidth: 2,
 			pointWidth: 2,
 			pointLabel: true,
 			data: [416570, 4180225, 5236434, 1393145, 1408886, 1479257],

@@ -20,7 +20,6 @@ export const config = {
         data: [11, 22, 15, 9, 13, 27]
     }, {
         name: 'column2',    
-        groupWidth: 2,
         pointLabel: true,
         data: [15, 19, 19, 6, 21, 21]
     }, {
