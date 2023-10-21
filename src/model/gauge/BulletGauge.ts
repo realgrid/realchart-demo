@@ -114,9 +114,12 @@ export class BulletTargetBar extends ChartItem {
     /**
      * 목표 bar 표시 여부.
      * 
-     * @configprop visible
      * @default true
+     * @config
      */
+    get visible(): boolean {
+        return super.visible;
+    }
 }
 
 export class BulletActualBar extends ChartItem {
