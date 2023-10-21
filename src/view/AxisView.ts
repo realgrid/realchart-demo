@@ -319,11 +319,11 @@ export class AxisView extends ChartElement<Axis> {
             if (isNaN(len)) {
                 this.clearZoom();
             } else {
-                debugger;
                 this._zoomLen = len;
                 this._zoomWidth = m._vlen * total / len;
                 this._zoomPos = 0;
                 this._invalidate();
+                console.log('ZOOM', this._zoomLen, this._zoomWidth, this._zoomPos);
             }
         }
     }
@@ -332,6 +332,7 @@ export class AxisView extends ChartElement<Axis> {
         if (this.isZoomed()) {
             this._zoomLen = this._zoomWidth = NaN;
             this._invalidate();
+            console.log('ZOOM CLEARED.');
         }
     }
 

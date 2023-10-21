@@ -16,6 +16,7 @@ import { IRect, Rectangle } from "./Rectangle";
 import { SvgShapes } from "./impl/SvgShape";
 import { ISize } from "./Size";
 import { IPoint } from "./Point";
+import { TextElement } from "./impl/TextElement";
 
 export interface IPointerHandler {
     handleDown(ev: PointerEvent): void;
@@ -1476,25 +1477,4 @@ export class ClipPathElement extends RcElement {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-}
-
-export class ButtonElement extends RcElement {
- 
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    private _label: string;
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(doc: Document, label: string, style: string) {
-        super(doc, style);
-    }
-
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
-    protected _render(): void {
-    }
 }

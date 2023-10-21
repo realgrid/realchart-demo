@@ -35,6 +35,10 @@ RealChart 컨트롤.
 
 
 ## Methods
+### clearZoom(axis): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#clearZoom]
+| Parameter | Type |
+| ----------- | ----------- |
+| axis | [RcChartAxis](../classes/RcChartAxis) |
 ### getGauge(name): [RcChartGauge](../classes/RcChartGauge)[#getGauge]
 게이지 이름에 해당하는 게이지 객체를 리턴한다.
 
@@ -86,3 +90,13 @@ name 매개변수가 문자열이면 지정한 이름의 y 축을,
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | now=`false` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 즉시 차트 SVG를 디시 구축한다. |
+### scroll(axis, pos): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#scroll]
+| Parameter | Type |
+| ----------- | ----------- |
+| axis | [RcChartAxis](../classes/RcChartAxis) |
+| pos | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
+### setZoom(axis, length): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#setZoom]
+| Parameter | Type |
+| ----------- | ----------- |
+| axis | [RcChartAxis](../classes/RcChartAxis) |
+| length | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
