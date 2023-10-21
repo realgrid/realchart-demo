@@ -16,7 +16,6 @@ import { IRect, Rectangle } from "./Rectangle";
 import { SvgShapes } from "./impl/SvgShape";
 import { ISize } from "./Size";
 import { IPoint } from "./Point";
-import { TextElement } from "./impl/TextElement";
 
 export interface IPointerHandler {
     handleDown(ev: PointerEvent): void;
@@ -787,23 +786,36 @@ export class RcElement extends RcObject {
     }   
 
     getAttr(attr: string): any {
-        return this.dom.getAttribute(attr);
+        return this._dom.getAttribute(attr);
     }
 
     setAttr(attr: string, value: any): RcElement {
-        this.dom.setAttribute(attr, value);
+        this._dom.setAttribute(attr, value);
+        return this;
+    }
+
+    setAttrEx(attr: string, value: any): RcElement {
+        isNull(value) ? this._dom.removeAttribute(attr) : this._dom.setAttribute(attr, value);
         return this;
     }
 
     setAttrs(attrs: any): RcElement {
         for (let attr in attrs) {
-            this.dom.setAttribute(attr, attrs[attr]);
+            this._dom.setAttribute(attr, attrs[attr]);
+        }
+        return this;
+    }
+
+    setAttrsEx(attrs: any): RcElement {
+        for (let attr in attrs) {
+            const v = attrs[attr];
+            isNull(v) ? this._dom.removeAttribute(attr) : this._dom.setAttribute(attr, v);
         }
         return this;
     }
 
     unsetAttr(attr: string): RcElement {
-        this.dom.removeAttribute(attr);
+        this._dom.removeAttribute(attr);
         return this;
     }
 

@@ -207,6 +207,16 @@
     fill: lightgray;
 }
 
+/** button */
+.rct-button-background {
+    padding: 3px 5px;
+    border-radius: 5px;
+    fill: #efefef;
+}
+.rct-button {
+    fill: #333;
+}
+
 /** background */
 .rct-background {
     fill: none;

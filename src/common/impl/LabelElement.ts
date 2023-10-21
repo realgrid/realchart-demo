@@ -147,13 +147,3 @@ export class LabelElement extends GroupElement {
     // internal members
     //-------------------------------------------------------------------------
 }
-
-export class ButtonElement extends LabelElement {
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string) {
-        super(doc, styleName);
-    }
-}

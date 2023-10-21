@@ -66,7 +66,6 @@ export class RectElement extends RcElement {
             this._rect = value && {...value}
             if (value) {
                 this.setRect(value);
-                
                 let rx = value.rx || value.r;
                 let ry = value.ry || value.r;
                 rx > 0 && this.dom.setAttribute('rx', String(rx));

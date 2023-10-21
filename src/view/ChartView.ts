@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { ButtonElement } from "../common/ButtonElement";
 import { pickNum } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { ClipElement, RcElement } from "../common/RcControl";
@@ -407,6 +408,15 @@ export class CreditView extends ChartElement<Credits> {
     }
 }
 
+class ZoomButton extends ButtonElement {
+
+    constructor(doc: Document) {
+        super(doc, 'Reset Zoom', 'rc-reset-zoom');
+
+        this.visible = false;
+    }
+}
+
 /**
  * @internal
  */
@@ -429,7 +439,7 @@ export class ChartView extends RcElement {
     private _creditView: CreditView;
     private _historyView: HistoryView;
     private _tooltipView: TooltipView;
-    // private _zoomButton: 
+    private _zoomButton: ZoomButton;
     private _seriesClip: ClipElement;
 
     _org: IPoint;
@@ -457,6 +467,7 @@ export class ChartView extends RcElement {
         this.add(this._creditView = new CreditView(doc));
         this.add(this._historyView = new HistoryView(doc));
         this.add(this._tooltipView = new TooltipView(doc));
+        this.add(this._zoomButton = new ZoomButton(doc));
     }
 
     //-------------------------------------------------------------------------
