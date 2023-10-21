@@ -50,12 +50,16 @@ import { executablePath } from 'puppeteer';
             cols: [1, 1],
             panes: [{
                 col: 0,
+                title: 'Pane 0'
             }, {
                 col: 1,
+                title: 'Pane 1'
             }]
         };
         const plane = new Plane(null);
 
         plane.load(config);
+        expect(plane.getPane(0, 0).title.text).eq(config.panes[0].title);
+        expect(plane.getPane(0, 1).title.text).eq(config.panes[1].title);
     });
 });
