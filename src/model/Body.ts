@@ -12,6 +12,12 @@ import { IChart } from "./Chart";
 import { BackgroundImage, ChartItem } from "./ChartItem";
 import { Series } from "./Series";
 
+export enum ZoomType {
+    X = 'x',
+    Y = 'y',
+    XY = 'xy'
+}
+
 /**
  * 시리즈들이 그려지는 plot 영역 모델.
  */
@@ -84,6 +90,7 @@ export class Body extends ChartItem {
     startAngle = 0;
     circular = true;
     image = new BackgroundImage(null);
+    zoomType = ZoomType.X;
 
     //-------------------------------------------------------------------------
     // methods

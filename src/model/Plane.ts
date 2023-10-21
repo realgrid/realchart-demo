@@ -14,6 +14,7 @@ import { ChartItem } from "./ChartItem";
 /**
  * 다중 분할 평면.\
  * 각 pane에 해당하는 xAxis, yAxis가 반드시 존재해야 한다.
+ * 시리즈는 axis 위치에 따라 자동으로 pane이 결정된다.
  */
 export class Plane extends ChartItem {
 
@@ -36,6 +37,10 @@ export class Plane extends ChartItem {
 
     get cols(): number {
         return this._cols;
+    }
+
+    count(): number {
+        return this._rows * this._cols;
     }
 
     //-------------------------------------------------------------------------
@@ -66,6 +71,9 @@ export class Plane extends ChartItem {
             this.$_loadPanes(this._panes, panes);
         }
         return this;
+    }
+
+    protected _doPrepareRender(chart: IChart): void {
     }
 
     //-------------------------------------------------------------------------

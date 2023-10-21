@@ -638,7 +638,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._xAxisObj = this.group ? this.group._xAxisObj : this.chart._connectSeries(this, true);
         this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
         this._runPoints = this._points.getPoints();
-        this._doPrepareRender();
+
+        super.prepareRender();
     }
 
     collectCategories(axis: IAxis): string[] {

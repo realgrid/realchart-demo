@@ -112,6 +112,10 @@ export abstract class RcControl extends RcWrappableObject {
         return this._dom;
     }
 
+    svg(): SVGSVGElement {
+        return this._svg;
+    }
+
     width(): number {
         return this._container.offsetWidth;
     }
@@ -1489,4 +1493,89 @@ export class ClipPathElement extends RcElement {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+}
+
+const DRAG_THRESHOLD = 3;
+
+export abstract class DragTracker {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    dragging = false;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    drag(eventTarget: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
+        if (this.dragging) {
+            if (this._doDrag(eventTarget, xPrev, yPrev, x, y)) {
+                this._moveFeedback(x, y);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    cancel(): void {
+        if (this.dragging) {
+            try {
+                this.dragging = false;
+                this._doCanceled();
+            } finally {
+                this.end(-1, -1);
+            }
+        }
+    }
+
+    drop(target: Element, x: number, y: number): void {
+        if (this.dragging) {
+            try {
+                this.dragging = false;
+                if (this._canAccept(target, x, y)) {
+                    this._doCompleted(target, x, y);
+                } else {
+                    this._doCanceled();
+                }
+            } finally {
+                this.end(x, y);
+            }
+        }
+    }
+
+    end(x: number, y: number): void {
+        try {
+            this.dragging = false;
+            this._hideFeedback();
+        } finally {
+            this._doEnded(x, y);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected _canAccept(target: Element, x: number, y: number): boolean {
+        return true;
+    }
+
+    protected _showFeedback(x: number, y: number): void {
+    }
+
+    protected _moveFeedback(x: number, y: number): void {
+    }
+
+    protected _hideFeedback(): void {
+    }
+
+    protected abstract _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean;
+
+    protected _doCanceled(): void {
+    }
+
+    protected _doCompleted(target: Element, x: number, y: number): void {
+    }
+
+    protected _doEnded(x: number, y: number): void {
+    }
 }
