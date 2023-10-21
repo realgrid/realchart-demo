@@ -4,7 +4,7 @@
  */
 export const config = {
     title: {
-        text: "Chart Title",
+        text: "Chart Titles",
         style: {
             textDecoration: 'underline'
         }
