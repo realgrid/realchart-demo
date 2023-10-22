@@ -61,6 +61,8 @@ valueRim 모델.
 console.log(chart.series.get('name'))
 ```
 
+하위 객체의 설정 속성은 속성 경로를 지정해서 직접 가져올 수도 있다.
+
 ```js
 console.log(chart.axis.get('title.text'));
 ```
@@ -77,6 +79,12 @@ console.log(chart.axis.get('title.text'));
 
 ```js
  chart.series.set('xAxis', 1).set('yAxis', 1);
+```
+
+[get](#get)에서와 마찬가지로 하위 객체의 설정 속성을 속성 경로를 통해 직접 설정할 수도 있다.
+
+```js
+chart.axis.set('title.text', 'New Title'));
 ```
 
 
