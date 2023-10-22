@@ -197,7 +197,42 @@ export class RcChartControl {
         return getObject(this._objects, this.$_p.model.legend) as RcBody;
     }
     /**
-     * true면 x축과 y축을 뒤바꿔 표시한다.
+     * @readonly
+     * 
+     * 기본 시리즈 종류.\
+     * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
+     * 
+     * @default 'bar'
+     */
+    get type(): string {
+        return this.$_p.model.type;
+    }
+    // set type(value: string) {
+    //     if (value !== this.$_p.model.type) {
+    //         this.$_p.model.type = value;
+    //         this.$_p.invalidateLayout();
+    //     }
+    // }
+    /**
+     * @readonly
+     * 
+     * 기본 게이지 종류.\
+     * 게이지에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
+     * 
+     * @default 'circle'
+     */
+    get gaugeType(): string {
+        return this.$_p.model.gaugeType;
+    }
+    // set gaugeType(value: string) {
+    //     if (value !== this.$_p.model.gaugeType) {
+    //         this.$_p.model.gaugeType = value;
+    //         this.$_p.invalidateLayout();
+    //     }
+    // }
+    /**
+     * true면 x축과 y축을 뒤바꿔 표시한다.\
+     * 즉, true면 x축이 수직, y축이 수평으로 배치된다.
      */
     get inverted(): boolean {
         return this.$_p.model.inverted;
@@ -208,6 +243,27 @@ export class RcChartControl {
             this.$_p.invalidateLayout();
         }
     }
+    /**
+     * @readonly
+     * 
+     * true면 차트가 {@link https://en.wikipedia.org/wiki/Polar_coordinate_system 극좌표계}로 표시된다.
+     * 기본은 {@link https://en.wikipedia.org/wiki/Cartesian_coordinate_system 직교좌표계}이다.
+     * 극좌표계일 때,
+     * x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이 있다.
+     * 1. x축은 첫번째 축 하나만 사용된다.
+     * 2. axis.position 속성은 무시된다.
+     * 3. chart, series의 inverted 속성이 무시된다.
+     * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
+     */
+    get polar(): boolean {
+        return this.$_p.model.polar;
+    }
+    // set polar(value: boolean) {
+    //     if (value !== this.$_p.model.polar) {
+    //         this.$_p.model.polar = value;
+    //         this.$_p.invalidateLayout();
+    //     }
+    // }
 
     scroll(axis: RcChartAxis, pos: number): void {
         this.$_p.scroll(axis.$_p as any, pos);

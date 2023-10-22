@@ -157,7 +157,7 @@ export const CAMEL2KEBAB = {
     fontStyle: 'font-style',
     padding: 'padding',
     margin: 'margin',
-    borderRadius: 'borderRadius'
+    borderRadius: 'border-radius'
 }
 export const getCssProp = function (prop: string): string {
     const s = CAMEL2KEBAB[prop];

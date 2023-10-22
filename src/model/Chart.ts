@@ -383,9 +383,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     polar = false;
     /**
      * true면 x축이 수직, y축이 수평으로 배치된다.
-     * <br>
-     * 기본값은 undefined로 첫번째 series의 종류에 따라 결정된다.
-     * 즉, bar 시리즈 계통이면 true가 된다.
      *
      * @config
      */
