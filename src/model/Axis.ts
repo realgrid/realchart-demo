@@ -247,33 +247,25 @@ export class AxisGuideLabel extends FormattableText {
 export enum AxisGuideType {
     /**
      * 축 위의 특정한 값에 선분을 표시한다.
+     * 
+     * @config
      */
     LINE = 'line',
     /**
      * 축 위 특정한 두 값 사이의 영역을 구분 표시한다.
+     * 
+     * @config
      */
     RANGE = 'range',
     /**
      * Plot 영역에 (x, y)로 지정하는 값 좌표의 배열로 설정되는 다각형을 표시한다.
+     * 
+     * @config
      */
     AREA = 'area'
 }
 
 export abstract class AxisGuide extends AxisItem {
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    readonly label: AxisGuideLabel;
-
-    /**
-     * true면 시리즈들보다 위에 표시된다.
-     */
-    front = true;
-    /**
-     * 모든 guide들 중에서 값이 클수록 나중에 그려진다.
-     */
-    zindex = 0;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -283,6 +275,28 @@ export abstract class AxisGuide extends AxisItem {
 
         this.label = new AxisGuideLabel(axis.chart);
     }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * label 모델.
+     * 
+     * @config
+     */
+    readonly label: AxisGuideLabel;
+    /**
+     * true면 시리즈들보다 위에 표시된다.
+     * 
+     * @config
+     */
+    front = true;
+    /**
+     * 모든 guide들 중에서 값이 클수록 나중에 그려진다.
+     * 
+     * @config
+     */
+    zindex = 0;
 }
 
 export class AxisGuideLine extends AxisGuide {
@@ -290,6 +304,11 @@ export class AxisGuideLine extends AxisGuide {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 가이드 선이 표시될 축 상의 위치에 해당하는 값.
+     * 
+     * @config
+     */
     value: number; // TODO: RtPercentSize
 }
 
@@ -301,7 +320,17 @@ export class AxisGuideRange extends AxisGuide {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 가이드 영역의 시작 값.
+     * 
+     * @config
+     */
     start: number;  // TODO: RtPercentSize
+    /**
+     * 가이드 영역의 끝 값.
+     * 
+     * @config
+     */
     end: number;
 }
 
@@ -314,7 +343,9 @@ export class AxisTickMark extends AxisItem {
     // property fields
     //-------------------------------------------------------------------------
     /**
-     * axis tick line length.
+     * 선의 길이.
+     * 
+     * @link
      */
     length = 7;
 
@@ -359,20 +390,31 @@ export abstract class AxisTick extends AxisItem {
 }
 
 export enum AxisLabelArrange {
+    /**
+     * 아무것도 하지 않는다.
+     * 
+     * @config
+     */
     NONE = 'none',
     /**
      * -45도 회전시킨다.
+     * 
+     * @config
      */
     ROTATE = 'rotate',
     /**
      * label들이 겹치지 않도록 건너 뛰면서 배치한다.
      * <br>
      * {@link startStep}으로 지정된 step부터 배치된다.
+     * 
+     * @config
      */
     STEP = 'step',
     /**
      * label들이 겹치지 않도록 여러 줄로 나누어 배치한다.
      * <br>
+     * 
+     * @config
      */
     ROWS = 'rows'
 }
@@ -460,12 +502,16 @@ export enum AxisPosition {
      * X축은 아래쪽에 수평으로, Y축은 왼쪽에 수직으로 표시된다.
      * <br>
      * {@link Chart.inverted}이면 Y축이 아래쪽에 수평으로, X축은 왼쪽에 수직으로 표시된다.
+     * 
+     * @config
      */
     NORMAL = 'normal',
     /**
      * X축은 위쪽에 수평으로, Y축은 오른쪽에 수직으로 표시된다.
      * <br>
      * {@link Chart.inverted}이면 Y축이 위쪽에 수평으로, X축은 오른쪽에 수직으로 표시된다.
+     * 
+     * @config
      */
     OPPOSITE = 'opposite',
     /**
@@ -476,6 +522,8 @@ export enum AxisPosition {
      * 2. 차트의 X축 하나에만 적용할 수 있다. 두번째로 지정된 축의 속성은 {@link NORMAL}로 적용된다.
      * 3. 상대 축이 **linear** 가 아니거나 {@link LinearAxis.baseValue}가 min 보다 작거나 max보다 크면 이 값은 무시되고,
      *    {@link NORMAL}로 적용된다.
+     * 
+     * @config
      */
     BASE = 'base'
 }
@@ -499,6 +547,9 @@ export class AxisScrollBar extends AxisItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 스크롤바 두께.
+     */
     width = 12;
 }
 
@@ -510,13 +561,25 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     readonly name: string;
     /**
      * @config
      */
     readonly title = new AxisTitle(this);
+    /**
+     * @config
+     */
     readonly line = new AxisLine(this);
+    /**
+     * @config
+     */
     readonly tick: AxisTick;
+    /**
+     * @config
+     */
     readonly label: AxisLabel;
     /**
      * visible 기본값이 undefined이다.
@@ -524,8 +587,17 @@ export abstract class Axis extends ChartItem implements IAxis {
      * @config
      */
     readonly grid = this._createGrid();
+    /**
+     * @config
+     */
     readonly guides: AxisGuide[] = [];
+    /**
+     * @config
+     */
     readonly crosshair = new Crosshair(this);
+    /**
+     * @config
+     */
     readonly scrollBar = new AxisScrollBar(this);
 
     _isX: boolean;
@@ -560,6 +632,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     /**
      * 표시 위치.
+     * 기본적으로 상대 축의 원점 쪽에 표시된다.
      * 
      * @config
      */
@@ -587,7 +660,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     maxValue: number;
     /**
-     * Plot 영역이나 앞쪽 축 사이의 여백 크기.
+     * plot 영역이나 먼저 표시되는 축 사이의 여백 크기.
      * 
      * @config
      */

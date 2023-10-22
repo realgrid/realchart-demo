@@ -163,7 +163,7 @@ export abstract class RcAxisGuide extends RcChartObject {
 }
 
 /**
- * Axis 모델들의 기반 클래스.\
+ * 차트 축 모델들의 기반 클래스.\
  */
 export abstract class RcChartAxis extends RcChartObject {
 
@@ -182,17 +182,48 @@ export abstract class RcChartAxis extends RcChartObject {
         this._createObjects('title', 'line', 'grid', 'tick', 'label', 'crosshair');
     }
 
+    /**
+     * 축 타이틀 설정 모델.
+     */
     get title(): RcChartObject { return this._title; }
+    /**
+     * 축 선 설정 모델.
+     */
     get line(): RcChartObject { return this._line; }
+    /**
+     * 축 그리드 설정 모델.
+     */
     get grid(): RcChartObject { return this._grid; }
+    /**
+     * tick 선 설정 모델.
+     */
     get tick(): RcChartObject { return this._tick; }
+    /**
+     * tick label 설정 모델.
+     */
     get label(): RcChartObject { return this._label; }
+    /**
+     * 크로스헤어 설정 모델.
+     */
     get crosshair(): RcChartObject { return this._crosshair; }
+    /**
+     * @internal 
+     * 
+     * 스크롤바 설정 모델.
+     */
     get scrollBar(): RcChartObject { return this._scrollBar; }
 
     // getGuide(index: number): RcChartObject {
     //     return;
     // }
+
+    /**
+     * 시리즈 연결 여부.\
+     * 연결된 시리즈가 하나도 없으면 true.
+     */
+    get isEmpty(): boolean {
+        return (this.$_p as Axis).isEmpty();
+    }
 }
 
 export class RcCategoryAxis extends RcChartAxis {
