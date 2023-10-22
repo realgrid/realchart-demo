@@ -148,8 +148,7 @@ function setActions(container) {
 		container,
 		'Inverted',
 		function (e) {
-			config.inverted = _getChecked(e);
-			chart.load(config, animate);
+            chart.inverted = _getChecked(e);
 		},
 		false
 	);

@@ -224,6 +224,14 @@ export abstract class RcChartAxis extends RcChartObject {
     get isEmpty(): boolean {
         return (this.$_p as Axis).isEmpty();
     }
+
+    resetZoom(): void {
+        (this.$_p as Axis).resetZoom();
+    }
+
+    zoom(start: number, end: number): void {
+        (this.$_p as Axis).zoom(start, end);
+    }
 }
 
 export class RcCategoryAxis extends RcChartAxis {

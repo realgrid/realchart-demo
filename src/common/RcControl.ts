@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
-import { Path, SVGStyleOrClass, _undefined, isNull, pixel, throwFormat } from "./Types";
+import { Path, SVGStyleOrClass, _undefined, getCssProp, isNull, pixel, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
 import { SVGNS, isObject, isString, pickProp } from "./Common";
@@ -969,7 +969,7 @@ export class RcElement extends RcObject {
         const css = (this.dom as SVGElement | HTMLElement).style;
 
         for (let p in this._styles) {
-            css.removeProperty(p);
+            css.removeProperty(getCssProp(p));
         }
         this._styles = {};
     }
@@ -979,7 +979,7 @@ export class RcElement extends RcObject {
         let changed = false;
 
         for (let p in this._styles) {
-            css.removeProperty(p);
+            css.removeProperty(getCssProp(p));
             changed = true;
         }
         
@@ -996,7 +996,7 @@ export class RcElement extends RcObject {
 
             for (let p of props) {
                 if (p in this._styles) {
-                    css.removeProperty(p);
+                    css.removeProperty(getCssProp(p));
                     delete this._styles[p];
                     changed = true;
                 }                

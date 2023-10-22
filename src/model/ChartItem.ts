@@ -167,8 +167,8 @@ export class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _changed(): void {
-        this.chart?._modelChanged(this);
+    protected _changed(tag?: any): void {
+        this.chart?._modelChanged(this, tag);
     }
 
     //-------------------------------------------------------------------------

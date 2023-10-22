@@ -201,7 +201,7 @@ export class CategoryAxis extends Axis {
     categoryAt(pos: number): number {
         for (let i = 2; i < this._pts.length - 1; i++) {
             if (pos >= this._pts[i - 1] && pos < this._pts[i]) {
-                return i - 2; 
+                return i - 2 + (this._zoom ? Math.floor(this._zoom.start) : 0); 
             }
         }
         return -1;

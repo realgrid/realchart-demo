@@ -15,6 +15,9 @@ RealChart 컨트롤.
 ### gauge: [RcChartGauge](../classes/RcChartGauge)[#gauge]
 첫번째 게이지.
 
+### inverted: [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)[#inverted]
+true면 x축과 y축을 뒤바꿔 표시한다.
+
 ### legend: [RcLegend](../classes/RcLegend)[#legend]
 차트 범례 모델.
 
@@ -35,10 +38,6 @@ RealChart 컨트롤.
 
 
 ## Methods
-### clearZoom(axis): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#clearZoom]
-| Parameter | Type |
-| ----------- | ----------- |
-| axis | [RcChartAxis](../classes/RcChartAxis) |
 ### getGauge(name): [RcChartGauge](../classes/RcChartGauge)[#getGauge]
 게이지 이름에 해당하는 게이지 객체를 리턴한다.
 
@@ -95,8 +94,3 @@ name 매개변수가 문자열이면 지정한 이름의 y 축을,
 | ----------- | ----------- |
 | axis | [RcChartAxis](../classes/RcChartAxis) |
 | pos | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
-### setZoom(axis, length): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#setZoom]
-| Parameter | Type |
-| ----------- | ----------- |
-| axis | [RcChartAxis](../classes/RcChartAxis) |
-| length | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |

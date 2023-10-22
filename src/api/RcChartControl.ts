@@ -196,13 +196,17 @@ export class RcChartControl {
     get body(): RcBody {
         return getObject(this._objects, this.$_p.model.legend) as RcBody;
     }
-
-    setZoom(axis: RcChartAxis, length: number | string): void {
-        this.$_p.setZoom(axis.$_p as any, length);
+    /**
+     * true면 x축과 y축을 뒤바꿔 표시한다.
+     */
+    get inverted(): boolean {
+        return this.$_p.model.inverted;
     }
-
-    clearZoom(axis: RcChartAxis): void {
-        this.$_p.clearZoom(axis.$_p as any);
+    set inverted(value: boolean) {
+        if (value !== this.$_p.model.inverted) {
+            this.$_p.model.inverted = value;
+            this.$_p.invalidateLayout();
+        }
     }
 
     scroll(axis: RcChartAxis, pos: number): void {

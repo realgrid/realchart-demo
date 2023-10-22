@@ -91,7 +91,7 @@ export interface IChart {
     _getLegendSources(): ILegendSource[];
     _visibleChanged(item: ChartItem): void;
     _pointVisibleChanged(series: Series, point: DataPoint): void;
-    _modelChanged(item: ChartItem): void;
+    _modelChanged(item: ChartItem, tag?: any): void;
 }
 
 const group_types = {
@@ -625,9 +625,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // body
         this._body.load(source.plot);
 
-        // inverted
-        this._inverted = this.inverted;
-
         console.log('chart-items:', n_char_item);
         console.timeEnd('load chart');
     }
@@ -637,6 +634,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     prepareRender(): void {
+        this._inverted = this.inverted;
+
         this._xAxes.disconnect();
         this._yAxes.disconnect();
 

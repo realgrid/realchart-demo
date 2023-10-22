@@ -147,6 +147,28 @@ export interface SVGStyles {
 
 export type SVGStyleOrClass = SVGStyles | string;
 
+export const CAMEL2KEBAB = {
+    fill: 'fill',
+    stroke: 'stroke',
+    strokeWidth: 'stroke-width',
+    fontFamily: 'font-family',
+    fontSize: 'font-size',
+    fontWeight: 'font-weight',
+    fontStyle: 'font-style',
+    padding: 'padding',
+    margin: 'margin',
+    borderRadius: 'borderRadius'
+}
+export const getCssProp = function (prop: string): string {
+    const s = CAMEL2KEBAB[prop];
+    if (!s) {
+        let s2 = prop.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+        CAMEL2KEBAB[prop] = s2;
+        return s2;
+    }
+    return s;
+}
+
 export class RtAbortError extends Error {
     static check(err: any): boolean {
         if (err instanceof RtAbortError) return true;

@@ -17,7 +17,7 @@ const config = {
         crosshair: true,
         padding: 0,
         label: {
-            // autoArrange: 'rows', //'step',
+            autoArrange: 'step', //'step',
             // step: 2,
         },
         line: {
@@ -65,8 +65,7 @@ function setActions(container) {
         // alert('hello');
     });
     createCheckBox(container, 'Inverted', function (e) {
-        config.inverted = _getChecked(e);
-        chart.load(config);
+        chart.inverted = _getChecked(e);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
@@ -77,7 +76,7 @@ function setActions(container) {
         chart.load(config);
     }, false);
     createCheckBox(container, 'Zooming', function (e) {
-        _getChecked(e) ? chart.setZoom(chart.xAxis, '30%') : chart.clearZoom(chart.xAxis);
+        _getChecked(e) ? chart.xAxis.zoom(10.2, 20.4) : chart.xAxis.resetZoom();
     }, false);
 }
 

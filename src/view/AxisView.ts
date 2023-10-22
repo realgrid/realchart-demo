@@ -207,10 +207,6 @@ export class AxisView extends ChartElement<Axis> {
     _frontGuideViews: AxisGuideView<AxisGuide>[];
     _crosshairView: CrosshairFlagView;
 
-    protected _zoomPos = 0;
-    protected _zoomLen = NaN;
-    protected _zoomWidth = NaN;
-
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -305,42 +301,7 @@ export class AxisView extends ChartElement<Axis> {
         }
     }
 
-    /**
-     * @internal
-     * 
-     * @param length 표시되는 값 길이 
-     */
-    setZoom(length: number | string): void {
-        const m = this.model;
-        const total = m.length();
-        const len = calcPercent(parsePercentSize(length, false, total / 2), total);
-
-        if (len !== this._zoomLen) {
-            if (isNaN(len)) {
-                this.clearZoom();
-            } else {
-                this._zoomLen = len;
-                this._zoomWidth = m._vlen * total / len;
-                this._zoomPos = 0;
-                this._invalidate();
-                console.log('ZOOM', this._zoomLen, this._zoomWidth, this._zoomPos);
-            }
-        }
-    }
-
-    clearZoom(): void {
-        if (this.isZoomed()) {
-            this._zoomLen = this._zoomWidth = NaN;
-            this._invalidate();
-            console.log('ZOOM CLEARED.');
-        }
-    }
-
     scroll(pos: number): void {
-    }
-
-    isZoomed(): boolean {
-        return !isNaN(this._zoomLen);
     }
 
     //-------------------------------------------------------------------------

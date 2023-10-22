@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4 } from "../common/Common";
+import { IAxis } from "./Axis";
 import { ISeries } from "./Series";
 
 let __point_id__ = 0;
@@ -256,7 +257,13 @@ export class DataPointCollection {
         }
     }
 
-    getPoints(): DataPoint[] {
-        return this._points;
+    getPoints(xAxis: IAxis, yAxis: IAxis): DataPoint[] {
+        const zoom = xAxis._zoom;
+
+        if (zoom) {
+            return this._points.slice(Math.floor(zoom.start), Math.ceil(zoom.end) + 1);
+        } else {
+            return this._points;
+        }
     }
 }

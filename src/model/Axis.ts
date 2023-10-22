@@ -27,6 +27,7 @@ export interface IAxis {
     _isOpposite: boolean;
 
     reversed: boolean;
+    _zoom: IAxisZoom
 
     isContinuous(): boolean;
     getBaseValue(): number;
@@ -553,6 +554,32 @@ export class AxisScrollBar extends AxisItem {
     width = 12;
 }
 
+export interface IAxisZoom {
+    start: number;
+    end: number;
+}
+
+export class AxisZoom {
+
+    start: number;
+    end: number;
+
+    constructor(public axis: Axis, start: number, end: number) {
+        this.resize(start, end);
+    }
+    
+    resize(start: number, end: number): boolean {
+        start = Math.max(this.axis.axisMin(), Math.min(this.axis.axisMax(), start));
+        end = Math.max(start, Math.min(this.axis.axisMax(), end));
+
+        if (start !== this.start || end !== this.end) {
+            this.start = start;
+            this.end = end;
+            return true;
+        }
+    }
+}
+
 /**
  * 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.
  */
@@ -613,6 +640,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     _values: number[] = [];
     protected _min: number;
     protected _max: number;
+    _zoom: AxisZoom;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -728,7 +756,11 @@ export abstract class Axis extends ChartItem implements IAxis {
         const series = this._series;
         const vals: number[] = this._values;
 
-        this._range = this._doCalcluateRange(vals);
+        if (this._zoom) {
+            this._range = { min: this._zoom.start, max: this._zoom.end };
+        } else {
+            this._range = this._doCalcluateRange(vals);
+        }
 
         // clustering (은 x축에서만 가능)
         if (this._isX) {
@@ -761,7 +793,13 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     /**
+     * @internal
+     * 
      * value에 해당하는 축상의 위치.
+     * 
+     * @param length axis view length
+     * @param value 값
+     * @param point 포인트가 너비를 갖는 경우 포인트 중심 위치를 기준으로 한다. (category axis)
      */
     abstract getPosition(length: number, value: number, point?: boolean): number;
     abstract getUnitLength(length: number, value: number): number;
@@ -784,6 +822,26 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     contains(value: number): boolean {
         return value >= this._range.min && value <= this._range.max;
+    }
+
+    resetZoom(): void {
+        if (this._zoom) {
+            this._zoom = null;
+            this._changed();
+        }
+    }
+    
+    zoom(start: number, end: number): void {
+        if (end === start) {
+            this.resetZoom();
+        } else if (!isNaN(start) && !isNaN(end)) {
+            if (!this._zoom) {
+                this._zoom = new AxisZoom(this, start, end);
+                this._changed();
+            } else if (this._zoom.resize(start, end)) {
+                this._changed();
+            }
+        }
     }
 
     //-------------------------------------------------------------------------

@@ -15,7 +15,7 @@ import { Series } from "./Series";
 export enum ZoomType {
     X = 'x',
     Y = 'y',
-    XY = 'xy'
+    BOTH = 'both'
 }
 
 /**

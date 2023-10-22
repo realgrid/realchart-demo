@@ -99,14 +99,6 @@ export class ChartControl extends RcControl implements IChartEventListener {
         }
     }
 
-    setZoom(axis: Axis, length: number | string): void {
-        this._chartView.getAxis(axis)?.setZoom(length);
-    }
-
-    clearZoom(axis: Axis): void {
-        this._chartView.getAxis(axis)?.clearZoom();
-    }
-
     scroll(axis: Axis, pos: number): void {
         this._chartView.getAxis(axis)?.scroll(pos);
     }

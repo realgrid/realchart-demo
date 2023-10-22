@@ -503,11 +503,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     getLabeledPoints(): DataPoint[] {
-        return this._points.getPoints();
+        return this._points.getPoints(this._xAxisObj, this._yAxisObj);
     }
 
     getVisiblePoints(): DataPoint[] {
-        return this._points.getPoints();
+        return this._points.getPoints(this._xAxisObj, this._yAxisObj);
     }
 
     // point에 표시되는 최대 label 개수.
@@ -612,9 +612,9 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     getXStart(): number {
         let s = this._xAxisObj.parseValue(this.xStart);
+        const v = !isNaN(s) ? s : this._xAxisObj.parseValue(this.chart.xStart);
 
-        if (!isNaN(s)) return s;
-        return this._xAxisObj.parseValue(this.chart.xStart);
+        return this._xAxisObj._zoom ? v + Math.floor(this._xAxisObj._zoom.start) : v;
     }
 
     getXStep(): number {
@@ -637,7 +637,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._calcedColor = void 0;
         this._xAxisObj = this.group ? this.group._xAxisObj : this.chart._connectSeries(this, true);
         this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
-        this._runPoints = this._points.getPoints();
+        this._runPoints = this._points.getPoints(this._xAxisObj, this._yAxisObj);
 
         super.prepareRender();
     }
