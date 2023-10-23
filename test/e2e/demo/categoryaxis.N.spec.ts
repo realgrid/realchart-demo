@@ -187,25 +187,26 @@ test.describe('categoryaxis.html test', async function () {
 	test('point', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
-		const dataPoints = await page.$('.rct-series-points');
+		const dataPoints = await page.$$('.rct-series-points');
 		expect(dataPoints).exist;
 
-		const linePoints = await page.$$(
-			'.rct-line-series .rct-point-label[y="13"]'
-		);
+		const seriesPoint = await dataPoints[1].$$('.rct-point');
+
+		const barPoint = await dataPoints[0].$$('.rct-point')
+		const linePoints = await page.$$('.rct-line-series');
 		expect(linePoints).exist;
-		const barPoints = await page.$$(
-			'.rct-bar-series .rct-point-label[y="13"]'
-		);
+
+		const barPoints = await page.$$('.rct-bar-series');
 		expect(barPoints).exist;
+
 		let maxLength = 0;
 		config.series.forEach((eachSeries) => {
 			if (maxLength < eachSeries.data.length) {
 				maxLength = eachSeries.data.length;
 			}
 		});
-		expect(maxLength).eq(linePoints.length);
-		expect(maxLength).eq(barPoints.length);
+		expect(maxLength).eq(seriesPoint.length);
+		expect(maxLength).eq(barPoint.length);
 
 		const pointLabels = await page.$('.rct-point-labels');
 		expect(pointLabels).exist;
