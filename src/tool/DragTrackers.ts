@@ -47,11 +47,13 @@ export class ZoomTracker extends ChartDragTracker {
     protected _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
         this._xStart = xStart - this._body.tx;
         this._yStart = yStart - this._body.ty;
-        this._body.addFeedback(this._feedback = new RectElement(this.chart.doc(), 'rct-move-tracker'));
+        this._body.addFeedback(this._feedback = new RectElement(this.chart.doc(), 'rct-zoom-tracker'));
         return true;
     }
 
     protected _doEnded(x: number, y: number): void {
+        x -= this._body.tx;
+        this._body.setZoom(Math.min(this._xStart, x), 0, Math.max(this._xStart, x), this._body.height);
         this._feedback.remove();
     }
 

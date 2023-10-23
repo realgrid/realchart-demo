@@ -27,12 +27,14 @@ export interface IAxis {
     _isOpposite: boolean;
 
     reversed: boolean;
-    _zoom: IAxisZoom
+    _zoom: IAxisZoom;
 
     isContinuous(): boolean;
     getBaseValue(): number;
     axisMax(): number;
     axisMin(): number;
+
+    zoom(start: number, end: number): boolean;
 
     /**
      * data point의 값을 축 상의 값으로 리턴한다.
@@ -728,9 +730,15 @@ export abstract class Axis extends ChartItem implements IAxis {
         return this._max - this._min;
     }
     
+    axisMin(): number {
+        return this._min;
+    }
+
+    axisMax(): number {
+        return this._max;
+    }
+
     abstract isContinuous(): boolean;
-    abstract axisMin(): number;
-    abstract axisMax(): number;
     abstract getValueAt(length: number, pos: number): number;
 
     //-------------------------------------------------------------------------
@@ -847,15 +855,17 @@ export abstract class Axis extends ChartItem implements IAxis {
         }
     }
     
-    zoom(start: number, end: number): void {
-        if (end === start) {
+    zoom(start: number, end: number): boolean {
+        /*if (end === start) {
             this.resetZoom();
-        } else if (!isNaN(start) && !isNaN(end)) {
+        } else*/ if (!isNaN(start) && !isNaN(end)) {
             if (!this._zoom) {
                 this._zoom = new AxisZoom(this, start, end);
                 this._changed();
+                return true;
             } else if (this._zoom.resize(start, end)) {
                 this._changed();
+                return true;
             }
         }
     }

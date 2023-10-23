@@ -870,6 +870,7 @@
     fill: #fff;    
 }
 
-.rct-move-tracker {
-    fill: #0088ff30;
+/** zoom tracker */
+.rct-zoom-tracker {
+    fill: #0044ff30;
 }

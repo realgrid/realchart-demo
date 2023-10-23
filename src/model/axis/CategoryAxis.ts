@@ -211,14 +211,6 @@ export class CategoryAxis extends Axis {
         return 0;
     }
 
-    axisMin(): number {
-        return this._min;
-    }
-
-    axisMax(): number {
-        return this._max;
-    }
-
     categoryPad(): number {
         return this._catPad;
     }
@@ -353,7 +345,11 @@ export class CategoryAxis extends Axis {
     }
 
     getValueAt(length: number, pos: number): number {
-        return 1;
+        for (let i = 1; i < this._pts.length - 1; i++) {
+            if (pos >= this._pts[i] && pos < this._pts[i + 1]) {
+                return this._min + i - 1;
+            }
+        }
     }
 
     getUnitLength(length: number, value: number): number {

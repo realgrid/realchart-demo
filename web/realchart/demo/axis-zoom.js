@@ -12,10 +12,10 @@ const config = {
             padding: '1px 5px',
             marginBottom: '8px',
             fill: 'white',
-            fontSize: '2em'
+            fontSize: '1.2em'
         },
         backgroundStyle: {
-            fill: '#333',
+            fill: '#338',
             rx: '5px'
         }
     },

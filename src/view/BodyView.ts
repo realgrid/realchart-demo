@@ -743,6 +743,7 @@ export class BodyView extends ChartElement<Body> {
     private _crosshairLines: ElementPool<CrosshairView>;
     private _focused: IPointView = null;
 
+    private _zoomRequested: boolean;
     protected _animatable: boolean;
 
     //-------------------------------------------------------------------------
@@ -800,11 +801,16 @@ export class BodyView extends ChartElement<Body> {
             }
         }
 
-        this._crosshairLines.forEach(v => {
-            if (v.setVisible(inBody)) {
-                v.layout(pv, p.x, p.y, w, h);
-            }
-        });
+        // 새로운 zoom이 요청된 상태이고 아직 화면에 반영되지 않았다.
+        // crosshair가 zoom이 반영된 것으로 계산하므로 다음 render까지 기다리게 해야한다.
+        // TODO: _zoomRequested 필요 없는 깔끔한 방식 필요. 
+        if (!this._zoomRequested) {
+            this._crosshairLines.forEach(v => {
+                if (v.setVisible(inBody)) {
+                    v.layout(pv, p.x, p.y, w, h);
+                }
+            });
+        }
 
         if (pv) {
             this.$_setFocused(sv.model, pv);
@@ -855,6 +861,16 @@ export class BodyView extends ChartElement<Body> {
         view && this._feedbackContainer.add(view);
     }
 
+    setZoom(x1: number, y1: number, x2: number, y2: number): void {
+        const xAxis = this.chart().xAxis;
+        const v1 = xAxis.getValueAt(this.width, x1);
+        const v2 = xAxis.getValueAt(this.width, x2);
+
+        if (xAxis.zoom(v1, v2)) {
+            this._zoomRequested = true;
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -862,6 +878,7 @@ export class BodyView extends ChartElement<Body> {
         const chart = model.chart as Chart;
 
         this._polar = chart.isPolar();
+        this._zoomRequested = false;
 
         // background
         this._background.setStyleOrClass(model.style);

@@ -421,14 +421,6 @@ export abstract class ContinuousAxis extends Axis {
         return this.baseValue;
     }
 
-    axisMin(): number {
-        return this._min;
-    }
-
-    axisMax(): number {
-        return this._max;
-    }
-
     hasBreak(): boolean {
         return this._runBreaks != null;
     }

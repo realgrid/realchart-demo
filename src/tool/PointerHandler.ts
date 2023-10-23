@@ -67,9 +67,9 @@ export class ChartPointerHandler implements IPointerHandler {
 
     handleMove(ev: PointerEvent): void {
         const chart = this._chart.chartView();
+        const {x, y} = this.$_pointerToPoint(ev);
 
         if (ev.buttons >= 1 || (ev.buttons === 0 && ev.button === 0)) {// && ev.pointerId === this._primaryId)) {
-            const {x, y} = this.$_pointerToPoint(ev);
             const dragging = this.isDragging();
             // 왜 ev.target 대신 elementFromPoint를 사용했지? testing(jsdom)에서는 elementFromPoint가 미지원.
             // ev.target에 toucheStart의 target과 동일해서 그랬던가?
@@ -88,6 +88,9 @@ export class ChartPointerHandler implements IPointerHandler {
 
             // this._doPointerMove(dom);
         }
+
+        this._prevX = x;
+        this._prevY = y;
 
         if (this.isDragging()) {
             chart.pointerMoved(-1, -1, null);
