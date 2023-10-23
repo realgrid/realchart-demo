@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartControl } from "../ChartControl";
+import { ButtonElement } from "../common/ButtonElement";
 import { IPoint } from "../common/Point";
 import { DragTracker, IPointerHandler } from "../common/RcControl";
 import { DataPoint } from "../model/DataPoint";
@@ -47,14 +48,16 @@ export class ChartPointerHandler implements IPointerHandler {
     handleDown(ev: PointerEvent): void {
         if (!ev.isPrimary) return;
 
-        const dom = this._clickElement = ev.target as Element;
-        if (!dom) return;
+        const chart = this._chart.chartView();
+        const elt = this._clickElement = ev.target as Element;
+
+        if (!elt) return;
         
         const p = this.$_pointerToPoint(ev);
         console.log('POINT DOWN', p.x, p.y);
 
         if (this._dragTracker) {
-            this.$_stopDragTracker(dom, p.x, p.y);
+            this.$_stopDragTracker(elt, p.x, p.y);
         }
     }
 
@@ -62,17 +65,26 @@ export class ChartPointerHandler implements IPointerHandler {
     }
 
     handleMove(ev: PointerEvent): void {
-        this._chart.chartView().pointerMoved((ev as any).pointX, (ev as any).pointY, ev.target);
+        const chart = this._chart.chartView();
+
+        if (!chart.getButton(ev.target as Element)) {
+            this._chart.chartView().pointerMoved((ev as any).pointX, (ev as any).pointY, ev.target);
+        }
     }
 
     handleClick(ev: PointerEvent): void {
         const chart = this._chart.chartView();
         const elt = ev.target as Element;
+        const button = chart.getButton(elt);
         let credit: CreditView;
         let legend: LegendItem;
         let series: SeriesView<Series>;
 
-        if (legend = chart.legendByDom(elt)) {
+        if (button) {
+            if (button.click() !== true) {
+                chart.buttonClicked(button);
+            }
+        } else if (legend = chart.legendByDom(elt)) {
             if (legend.source instanceof DataPoint) {
                 const p = legend.source;
                 const ser = this._chart.model.seriesByPoint(p);

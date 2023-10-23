@@ -1203,6 +1203,14 @@ export class RcElement extends RcObject {
         this._dom.style.cursor = cursor;
     }
 
+    ignorePointer(): void {
+        this._dom.style.pointerEvents = 'none';
+    }
+
+    contains(dom: Element): boolean {
+        return this._dom.contains(dom);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

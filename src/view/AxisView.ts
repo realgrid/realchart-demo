@@ -498,6 +498,7 @@ export class AxisView extends ChartElement<Axis> {
             }
 
             views.forEach((v, i) => {
+                v.setVisible(true); // visible false이면 getBBox()가 계산되지 않는다.
                 v.value = ticks[i].value;
                 v.text = ticks[i].label;
             });

@@ -561,16 +561,20 @@ export interface IAxisZoom {
 
 export class AxisZoom {
 
+    private _axixMin: number;
+    private _axixMax: number;
     start: number;
     end: number;
 
     constructor(public axis: Axis, start: number, end: number) {
+        this._axixMin = axis.axisMin();
+        this._axixMax = axis.axisMax();
         this.resize(start, end);
     }
     
     resize(start: number, end: number): boolean {
-        start = Math.max(this.axis.axisMin(), Math.min(this.axis.axisMax(), start));
-        end = Math.max(start, Math.min(this.axis.axisMax(), end));
+        start = Math.max(this._axixMin, Math.min(this._axixMax, start));
+        end = Math.max(start, Math.min(this._axixMax, end));
 
         if (start !== this.start || end !== this.end) {
             this.start = start;
@@ -844,6 +848,10 @@ export abstract class Axis extends ChartItem implements IAxis {
         }
     }
 
+    isZoomed(): boolean {
+        return !!this._zoom
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -1002,6 +1010,16 @@ export class AxisCollection {
         for (let i = 0, n = this._items.length; i < n; i++) {
             if (callback(this._items[i], i) === true) break;
         }
+    }
+
+    isZoomed(): boolean {
+        for (const axis of this._items) {
+            if (axis.isZoomed()) return true;
+        }
+    }
+
+    resetZoom(): void {
+        this._items.forEach(axis => axis.resetZoom());
     }
 
     //-------------------------------------------------------------------------

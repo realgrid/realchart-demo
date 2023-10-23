@@ -120,6 +120,10 @@ export class Body extends ChartItem {
         } : _undefined;
     }
 
+    isZoomed(): boolean {
+        return this.chart._getXAxes().isZoomed() || this.chart._getYAxes().isZoomed();
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

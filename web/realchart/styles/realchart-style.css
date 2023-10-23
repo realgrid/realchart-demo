@@ -209,12 +209,14 @@
 
 /** button */
 .rct-button-background {
-    padding: 3px 5px;
+    padding: 2px 4px;
     border-radius: 5px;
-    fill: #efefef;
+    fill: #e0e0e0;
+    stroke: #c0c0c0;
 }
 .rct-button {
     fill: #333;
+    font-size: 0.9em;
 }
 
 /** background */

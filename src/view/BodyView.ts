@@ -55,6 +55,7 @@ import { VectorSeriesView } from "./series/VectorSeriesView";
 import { WaterfallSeriesView } from "./series/WaterfallSeriesView";
 import { LinearGaugeGroupView, LinearGaugeView } from "./gauge/LinearGaugeView";
 import { BulletGaugeGroupView, BulletGaugeView } from "./gauge/BulletGaugeView";
+import { ButtonElement } from "../common/ButtonElement";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -688,6 +689,15 @@ class CrosshairView extends PathElement {
     }
 }
 
+class ZoomButton extends ButtonElement {
+
+    constructor(doc: Document) {
+        super(doc, 'Reset Zoom', 'rc-reset-zoom');
+
+        this.visible = false;
+    }
+}
+
 export interface IPlottingOwner {
 
     clipSeries(view: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
@@ -726,6 +736,7 @@ export class BodyView extends ChartElement<Body> {
     _axisBreakContainer: LayerElement;
     // items
     // private _itemMap = new Map<PlotItem, PlotItemView>();
+    private _zoomButton: ZoomButton;
     // feedbacks
     private _feedbackContainer: LayerElement;
     private _crosshairLines: ElementPool<CrosshairView>;
@@ -747,6 +758,7 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._seriesContainer = new LayerElement(doc, 'rct-series-container'));
         this.add(this._axisBreakContainer = new LayerElement(doc, 'rct-axis-breaks'));
         this.add(this._frontGuideContainer = new AxisGuideContainer(doc, 'rct-front-guides'));
+        this.add(this._zoomButton = new ZoomButton(doc));
         this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
         
         this._crosshairLines = new ElementPool(this._feedbackContainer, CrosshairView);
@@ -823,6 +835,19 @@ export class BodyView extends ChartElement<Body> {
         return this._seriesViews.find(v => v.model === ser);
     }
 
+    getButton(dom: Element): ButtonElement {
+        if (this._zoomButton.contains(dom)) {
+            return this._zoomButton;
+        }
+    }
+
+    buttonClicked(button: ButtonElement): void {
+        if (button === this._zoomButton) {
+            this.model.chart._getXAxes().resetZoom();
+            this.model.chart._getYAxes().resetZoom();
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -854,7 +879,12 @@ export class BodyView extends ChartElement<Body> {
         // gauges
         this._gaugeViews.forEach((v, i) => {
             v.measure(doc, this._gauges[i], hintWidth, hintHeight, phase);
-        })
+        });
+
+        // zoom button
+        if (this._zoomButton.setVisible(model.isZoomed())) {
+            this._zoomButton.layout();
+        }
 
         return Size.create(hintWidth, hintHeight);
     }
@@ -920,6 +950,11 @@ export class BodyView extends ChartElement<Body> {
             v.resizeByMeasured();
             v.layout().translatep(v.getPosition(w, h));
         })
+
+        // zoom button
+        if (this._zoomButton.visible) {
+            this._zoomButton.translate(w - this._zoomButton.getBBounds().width - 10, 10);
+        }
     }
 
     //-------------------------------------------------------------------------

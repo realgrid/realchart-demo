@@ -161,6 +161,7 @@ export class TextElement extends RcElement {
                 y = Math.ceil(ascent);
                 break;
         }
+
         this.setAttr('y', y);
     }
 
@@ -259,6 +260,10 @@ export class TextElement extends RcElement {
             this._dirty = this._styleDirty = false;
         }
         return this._bounds;
+    }
+
+    stain(): void {
+        this._dirty = true;
     }
 
     //-------------------------------------------------------------------------
