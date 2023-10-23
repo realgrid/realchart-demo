@@ -7,26 +7,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartControl } from "../ChartControl";
-import { ButtonElement } from "../common/ButtonElement";
 import { IPoint } from "../common/Point";
 import { DragTracker, IPointerHandler } from "../common/RcControl";
+import { ZoomType } from "../model/Body";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { Series } from "../model/Series";
 import { CreditView } from "../view/ChartView";
 import { SeriesView, WidgetSeriesView } from "../view/SeriesView";
+import { ZoomTracker } from "./DragTrackers";
 
 const DRAG_THRESHOLD = 3;
-
-export abstract class ChartDragTracker extends DragTracker {
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(public chart: ChartControl) {
-        super();
-    }
-}
 
 export class ChartPointerHandler implements IPointerHandler {
 
@@ -63,9 +54,15 @@ export class ChartPointerHandler implements IPointerHandler {
         if (this._dragTracker) {
             this.$_stopDragTracker(elt, p.x, p.y);
         }
+
+        this._prevX = p.x;
+        this._prevY = p.y;
     }
 
     handleUp(ev: PointerEvent): void {
+        if (this.isDragging()) {
+            this.$_stopDragTracker(ev.target as Element, this._prevX, this._prevY);
+        }
     }
 
     handleMove(ev: PointerEvent): void {
@@ -87,20 +84,16 @@ export class ChartPointerHandler implements IPointerHandler {
             } else if (this._dragTracker && !dragging) {
                 this.$_startMove(ev, dom, x, y);
             }
-
-            this._prevX = x;
-            this._prevY = y;
             // this._touches.push({x, y, t: ev.timeStamp});
 
             // this._doPointerMove(dom);
         }
 
         if (this.isDragging()) {
+            chart.pointerMoved(-1, -1, null);
             this._stopEvent(ev);
-        }
-
-        if (!chart.getButton(ev.target as Element)) {
-            this._chart.chartView().pointerMoved((ev as any).pointX, (ev as any).pointY, ev.target);
+        } else if (!chart.getButton(ev.target as Element)) {
+            chart.pointerMoved((ev as any).pointX, (ev as any).pointY, ev.target);
         }
     }
 
@@ -179,9 +172,10 @@ export class ChartPointerHandler implements IPointerHandler {
 
     protected _getDragTracker(elt: Element, dx: number, dy: number): any {
         const chart = this._chart.chartView();
+        const body = chart.bodyView();
 
-        if (chart.bodyView().contains(elt)) {
-            debugger;
+        if (body.model.canZoom() && body.contains(elt)) {
+            return new ZoomTracker(this._chart, body);
         }
     }
 

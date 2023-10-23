@@ -3,7 +3,7 @@
  * 
  */
 const config = {
-    title: "Plotting Area Background",
+    title: "Body(Plotting Area) Background",
     xAxis: {
         title: 'X Axis',
         // minValue: 0,
@@ -12,7 +12,7 @@ const config = {
     yAxis: {
         title: 'Y Axis',
     },
-    plot: {
+    body: {
         image: {
             // url: '../assets/mountain.jpeg',
             style: {
@@ -405,12 +405,12 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createListBox(container, "plot.style.fill", ['none', 'black', 'yellow'], function (e) {
-        config.plot.style.fill = _getValue(e);
+    createListBox(container, "body.style.fill", ['none', 'black', 'yellow'], function (e) {
+        config.body.style.fill = _getValue(e);
         chart.load(config);
     }, 'none');
-    createCheckBox(container, 'plot.image', function (e) {
-        config.plot.image.url = _getChecked(e) ? '../assets/mountain.jpeg' : '';
+    createCheckBox(container, 'body.image', function (e) {
+        config.body.image.url = _getChecked(e) ? '../assets/mountain.jpeg' : '';
         chart.load(config);
     }, false);
 }

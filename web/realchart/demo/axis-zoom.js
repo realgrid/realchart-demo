@@ -11,7 +11,8 @@ const config = {
         style: {
             padding: '1px 5px',
             marginBottom: '8px',
-            fill: 'white'
+            fill: 'white',
+            fontSize: '2em'
         },
         backgroundStyle: {
             fill: '#333',
@@ -19,6 +20,7 @@ const config = {
         }
     },
     body: {
+        zoomType: 'x',
         style: {
             // stroke: 'none'
         }

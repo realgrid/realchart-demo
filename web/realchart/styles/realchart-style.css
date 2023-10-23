@@ -111,7 +111,7 @@
     --rct-title-fill: #333;
     --rct-subtitle-fill: #333;
 
-    --rct-plot-background-stroke: none;
+    --rct-body-background-stroke: none;
 
     --rct-axis-title-fill: #333;
     --rct-axis-line-stroke: #aaa;
@@ -154,7 +154,7 @@
     --rct-title-fill: #fff;
     --rct-subtitle-fill: #fff;
 
-    --rct-plot-background-stroke: none;
+    --rct-body-background-stroke: none;
     
     --rct-axis-title-fill: #fff;
     --rct-axis-line-stroke: #1e1e1e;
@@ -273,11 +273,11 @@
 }
 
 /** plot area */
-.rct-plot-background {
-    stroke: var(--rct-plot-background-stroke);
+.rct-body-background {
+    stroke: var(--rct-body-background-stroke);
     fill: none;
 }
-.rct-plot-background[data-polar] {
+.rct-body-background[data-polar] {
     stroke: none;
 }
 
@@ -868,4 +868,8 @@
 .rct-crosshair-flag-text {
     stroke: none;
     fill: #fff;    
+}
+
+.rct-move-tracker {
+    fill: #0088ff30;
 }

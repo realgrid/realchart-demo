@@ -107,6 +107,10 @@ export class Body extends ChartItem {
      */
     zoomType = ZoomType.NONE;
 
+    canZoom(): boolean {
+        return this.zoomType === ZoomType.X || this.zoomType === ZoomType.Y || this.zoomType === ZoomType.BOTH;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------

@@ -634,7 +634,7 @@ class CrosshairView extends PathElement {
     constructor(doc: Document) {
         super(doc);
 
-        this.setStyle('pointerEvents', 'none');
+        this.ignorePointer();
     }
 
     //-------------------------------------------------------------------------
@@ -710,13 +710,14 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly BODY_CLASS = 'rct-plot';
+    static readonly BODY_CLASS = 'rct-body';
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _owner: IPlottingOwner;
     private _polar: boolean;
+    private _hitTester: RectElement;
     private _background: RectElement;
     private _image: ImageElement;
     private _gridContainer: LayerElement;
@@ -751,15 +752,17 @@ export class BodyView extends ChartElement<Body> {
         super(doc, BodyView.BODY_CLASS);
 
         this._owner = owner;
-        this.add(this._background = new RectElement(doc, 'rct-plot-background'));
-        this.add(this._image = new ImageElement(doc, 'rct-plot-image'));
+        this.add(this._hitTester = new RectElement(doc));
+        this._hitTester.setStyle('fill', 'transparent');
+        this.add(this._background = new RectElement(doc, 'rct-body-background'));
+        this.add(this._image = new ImageElement(doc, 'rct-body-image'));
         this.add(this._gridContainer = new LayerElement(doc, 'rct-grids'));
         this.add(this._guideContainer = new AxisGuideContainer(doc, 'rct-guides'));
         this.add(this._seriesContainer = new LayerElement(doc, 'rct-series-container'));
         this.add(this._axisBreakContainer = new LayerElement(doc, 'rct-axis-breaks'));
         this.add(this._frontGuideContainer = new AxisGuideContainer(doc, 'rct-front-guides'));
-        this.add(this._zoomButton = new ZoomButton(doc));
         this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
+        this.add(this._zoomButton = new ZoomButton(doc));
         
         this._crosshairLines = new ElementPool(this._feedbackContainer, CrosshairView);
     }
@@ -848,6 +851,10 @@ export class BodyView extends ChartElement<Body> {
         }
     }
 
+    addFeedback(view: RcElement): void {
+        view && this._feedbackContainer.add(view);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -895,6 +902,7 @@ export class BodyView extends ChartElement<Body> {
         const img = this._image;
 
         // background
+        this._hitTester.resize(w, h);
         this._background.resize(w, h);
 
         if (img.setVisible(img.setImage(this.model.image.url, w, h))) {
