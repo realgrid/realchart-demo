@@ -105,7 +105,7 @@
     --rct-font-family: AppleSDGothicNeo-Light, "HelveticaNeue", "Malgun Gothic", "맑은 고딕", sans-serif;
     --rct-font-size: 16px;
 
-    --rct-focus-border: #afafaf30;
+    --rct-focus-border: red;
     --rct-text-fill: #333;
 
     --rct-title-fill: #333;
@@ -470,7 +470,7 @@
 }
 .rct-bar-series .rct-point[data-focus] {
     stroke: var(--rct-focus-border);
-    stroke-width: 30px;
+    stroke-width: 2px;
 }
 
 /** barrange series */
