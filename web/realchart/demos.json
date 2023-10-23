@@ -1,0 +1,45 @@
+{
+    "Basic": {
+        "Basic": "basic"
+    },
+    "Bar": {
+        "Bar": "bar",
+        "Multi Bars": "bar-multi",
+        "Bar Group": "bargroup",
+        "Multi Groups": "bargroup-multi",
+        "Bar Negative": "bar-negative",
+        "Null Point": "bar-null",
+        "Negative Bars": "bargroup-negative"
+    },
+    "BarRange": {
+        "Bar Range": "barrange",
+        "Multiple Bar Ranges": "barrange-multi",
+        "Null Point": "barrange-null"
+    },
+    "Waterfall": {
+        "Waterfall": "barrange",
+        "Null Point": "waterfall-null"
+    },
+    "Line": {
+        "Line": "line",
+        "Spline": "line-spline",
+        "Stepped Line": "line-step",
+        "Negative Line": "line-negative",
+        "Null Point": "line-null",
+        "Multiple Lines": "line-multi",
+        "Line Group": "linegroup",
+        "Negative Lines": "linegroup-negative",
+        "Bump Chart": "bump",
+        "대량 데이터(3000)": "line-bigdata"
+    },
+    "Area": {
+        "Area": "area",
+        "Multi Areas": "area-multi",
+        "Area Group": "areagroup",
+        "Area Negative": "area-negative",
+        "Negative Areas": "areagroup-negative",
+        "Null Point": "area-null"
+    },
+    "AreaRange": {
+    }
+}

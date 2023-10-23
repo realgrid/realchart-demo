@@ -1,4 +1,0 @@
-[Basic]
-Basic=basic
-[Bar]
-Bar=bar

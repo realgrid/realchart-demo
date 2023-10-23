@@ -14,6 +14,7 @@ export class ZoomTracker extends ChartDragTracker {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
+        console.log(xPrev, yPrev, x, y);
         return true;
     }
 }

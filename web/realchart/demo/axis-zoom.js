@@ -15,7 +15,7 @@ const config = {
         },
         backgroundStyle: {
             fill: '#333',
-            rx: '3px'
+            rx: '5px'
         }
     },
     body: {
