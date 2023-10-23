@@ -113,9 +113,10 @@ test.describe('bar.html test', async function () {
 			const rPrev = await PWTester.getBounds(prev);
 			const rBar = await PWTester.getBounds(bar);
 
-		expect(rbar.x).eq(rline.x);
+		PWTester.same(rPrev.x, rBar.x);
+		};
 	});
-
+		
 	test('title', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
