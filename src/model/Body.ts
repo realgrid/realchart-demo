@@ -13,6 +13,7 @@ import { BackgroundImage, ChartItem } from "./ChartItem";
 import { Series } from "./Series";
 
 export enum ZoomType {
+    NONE = 'none',
     X = 'x',
     Y = 'y',
     BOTH = 'both'
@@ -86,11 +87,25 @@ export class Body extends ChartItem {
             this._cyDim = parsePercentSize(value, true);
         }
     }
-
+    /**
+     * 시작 각도.
+     * 
+     * @CONFIG
+     */
     startAngle = 0;
     circular = true;
+    /**
+     * 배경 이미지 설정 모델
+     * 
+     * @config
+     */
     image = new BackgroundImage(null);
-    zoomType = ZoomType.X;
+    /**
+     * plot 영역 마우스 드래깅을 통한 zooming 방식.
+     * 
+     * @config
+     */
+    zoomType = ZoomType.NONE;
 
     //-------------------------------------------------------------------------
     // methods

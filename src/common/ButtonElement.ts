@@ -58,9 +58,7 @@ export class ButtonElement extends RcElement {
             x: 0,
             y: 0,
             width: r.width + paddings.left + paddings.right,
-            height: r.height + paddings.top + paddings.bottom,
-            rx: 3,
-            ry: 3
+            height: r.height + paddings.top + paddings.bottom
         };
         this._textView.translate(r.width / 2 + paddings.left, paddings.top);
     }
