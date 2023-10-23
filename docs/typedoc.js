@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const typedocNextra = require("typedoc-nextra");
+const typedocNextra = require('./lib/typedoc-nextra');
 
 typedocNextra.createDocumentation({
     // use existing typedoc json output (leave it blank to auto generate)
@@ -9,16 +9,27 @@ typedocNextra.createDocumentation({
     output: "".concat(__dirname, "/.tdout/docs"),
     // output markdown
     markdown: true,
-}).then(() => {
-  // for (const t of ['classes', 'functions']) {
-  ['classes', 'functions'].forEach(t => {
-    const from = path.join(__dirname, `/.tdout/docs/${t}/realchart`)
-    const to = path.join(__dirname, "/pages/docs/api/")
+}).then(_ => {
 
+  const pages = [
+    { type: 'classes', dir: 'classes', title: 'Classes' },
+    { type: 'functions', dir: 'globals', title: 'Globals' }
+  ];
+
+  pages.forEach(({ type, dir, title }) => {
+    const from = path.join(__dirname, `/.tdout/docs/${type}/realchart`)
+    const to = path.join(__dirname, `/pages/docs/api/${dir}`)
+    !fs.existsSync(to) && fs.mkdirSync(to);
+
+    const meta  = {};
     fs.readdir(from, ((err, files) => {
       files.forEach(f => {
+        const [clsName] = f.split('.');
+        meta[clsName] = clsName
         fs.rename(path.join(from, f), path.join(to, f), (err)=> { err && console.error(err)});
       });
+
+      fs.writeFileSync(path.join(to, '_meta.json'), JSON.stringify(meta, null, 2));
     }));
   })
 });

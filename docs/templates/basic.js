@@ -68,6 +68,30 @@ export const config = {
 let animate;
 let chart;
 
+const actions = {
+    vars: {
+        animate: true
+    },
+    boxes: [
+        {
+            type: 'check',
+            label: 'Inverted',
+            action: ({ chart, config, value, vars }) => {
+                config.inverted = value;
+                chart.update(config, vars.animate);
+                // vars.animate = false;
+            }
+        }, 
+        {
+            type: 'button',
+            label: 'Test',
+            action: ({chart, config}) => {
+                alert('Hello');
+            }
+        }
+    ]
+}
+
 function createCodePenButton() {
     let elements = document.getElementById("actions");
 

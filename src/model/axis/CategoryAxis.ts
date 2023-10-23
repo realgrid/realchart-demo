@@ -77,8 +77,10 @@ class CategoryAxisGrid extends AxisGrid {
         const n = (this.axis as CategoryAxis)._ticks.length;
         const pts: number[] = [];
 
-        for (let i = 0; i <= n; i++) {
-            pts.push(apts[i + 1]);
+        if (n > 0) {
+            for (let i = 0; i <= n; i++) {
+                pts.push(apts[i + 1]);
+            }
         }
         return pts;
     }
@@ -95,6 +97,9 @@ class CategoryAxisGrid extends AxisGrid {
  *    {@link categories} 속성으로 카테고리를 지정할 때, 상대적 크기를 width로 지정해서 각 카테고리의 값을 다르게 표시할 수 있다.
  * 4. tick mark나 label은 기본적으로 카테고리 값 위치에 표시된다.
  *    tick mark는 카테고리 양끝에 표시될 수 있다.
+ * 
+ * @config chart.xAxis[type=category]
+ * @config chart.yAxis[type=category]
  */
 export class CategoryAxis extends Axis {
 
@@ -110,11 +115,9 @@ export class CategoryAxis extends Axis {
     _len: number;
     // private _step = 1;
     private _map: {[key: string]: number} = {}; // data point의 축 위치를 찾기 위해 사용한다.
-    private _min: number;
-    private _max: number;
     private _catPad = 0;
     _pts: number[];
-    _length: number;
+    _vlen: number;
 
     //-------------------------------------------------------------------------
     // properties
@@ -198,7 +201,7 @@ export class CategoryAxis extends Axis {
     categoryAt(pos: number): number {
         for (let i = 2; i < this._pts.length - 1; i++) {
             if (pos >= this._pts[i - 1] && pos < this._pts[i]) {
-                return i - 2; 
+                return i - 2 + (this._zoom ? Math.floor(this._zoom.start) : 0); 
             }
         }
         return -1;
@@ -284,27 +287,32 @@ export class CategoryAxis extends Axis {
         weights = weights.slice(min, max + 1);
 
         const len = this._len = this._minPad + this._maxPad + weights.reduce((a, c) => a + c, 0);
-        // const step = this._step = this.categoryStep || 1;
-        const pts = this._pts = [0];
-        let p = this._minPad;
 
-        for (let i = min; i <= max; i++) {// += step) {
-            const w = weights[i - min];
+        if (len > 0) {
+            // const step = this._step = this.categoryStep || 1;
+            const pts = this._pts = [0];
+            let p = this._minPad;
 
+            for (let i = min; i <= max; i++) {// += step) {
+                const w = weights[i - min];
+
+                pts.push(p / len);
+                p += weights[i - min];// step
+            }
             pts.push(p / len);
-            p += weights[i - min];// step
-        }
-        pts.push(p / len);
-        pts.push((p + this._maxPad) / len);
+            pts.push((p + this._maxPad) / len);
 
-        for (let i = 1; i < pts.length - 2; i += steps) {
-            const v = min + i - 1;
+            for (let i = 1; i < pts.length - 2; i += steps) {
+                const v = min + i - 1;
 
-            ticks.push({
-                pos: NaN,//this.getPosition(length, v),
-                value: v,
-                label: label.getTick(i - 1, cats[i - 1]),
-            });
+                ticks.push({
+                    pos: NaN,//this.getPosition(length, v),
+                    value: v,
+                    label: label.getTick(i - 1, cats[i - 1]),
+                });
+            }
+        } else {
+            this._pts = [];
         }
         return ticks;
     }
@@ -316,7 +324,7 @@ export class CategoryAxis extends Axis {
 
         if (phase > 0) {
             for (let i = 0; i < pts.length; i++) {
-                pts[i] /= this._length;
+                pts[i] /= this._vlen;
             }
         }
         

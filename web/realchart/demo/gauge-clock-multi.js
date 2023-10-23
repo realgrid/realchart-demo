@@ -123,7 +123,6 @@ const config = {
 
 let animate;
 let chart;
-let timer;
 
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
@@ -132,21 +131,6 @@ function setActions(container) {
     }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
-    });
-    createCheckBox(container, 'label.animatable', function (e) {
-        config.gauge.label.animatable = _getChecked(e);
-        chart.load(config);
-    }, true);
-    createButton(container, 'Run', function(e) {
-        clearInterval(timer);
-        timer = setInterval(() => {
-            for (let i = 1; i <= 6; i++) {
-                chart.updateGauge('gauge' + i, Math.random() * 100);
-            }
-        }, 2000);
-    });
-    createButton(container, 'Stop', function(e) {
-        clearInterval(timer);
     });
     createListBox(container, "options.theme", ['', 'dark'], function (e) {
         config.options.theme = _getValue(e);

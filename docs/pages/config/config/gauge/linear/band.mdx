@@ -1,0 +1,35 @@
+## band
+게이지 본체 주변이나 내부에 값 영역들을 구분해서 표시하는 band의 모델.
+## Properties
+
+### position[#position]
+표시 위치.  
+
+
+`default: GaugeItemPosition.DEFAULT`  
+
+### [rangeLabel](./linear/rangeLabel)
+  
+
+### style: `SVGStyles | string{:javascript}`[#style]
+스타일셋 혹은 class selector.  
+
+### [tickLabel](./linear/tickLabel)
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
+
+  
+
+### ranges: `IValueRange[]{:javascript}`[#ranges]
+값 범위 목록.
+범위별로 다른 스타일을 적용할 수 있다.  
+
+### thickness: `string | number{:javascript}`[#thickness]
+밴드의 두께를 픽셀 단위나, 
+게이지 rim의 두께에 대한 상대적 크기로 지정할 수 있다.\
+값을 지정하지 않으면 게이지 본체 내부에 표시될 때 '100%'(본체 두께와 동일)로 표시되고,
+외부에 있을 때는 7 픽셀로 두께로 표시된다.  
+
+### visible: `boolean{:javascript}`[#visible]
+표시 여부.\
+모델에 따라 기본값이 다르다.
+<FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  

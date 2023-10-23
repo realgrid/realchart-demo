@@ -1,7 +1,4 @@
 {
-  "RcChartControl": "RcChartControl",
-  "createChart": "createChart",
-  "getVersion": "getVersion",
-  "setAnimatable": "setAnimatable",
-  "setDebugging": "setDebugging"
+  "globals": "Globals",
+  "classes": "Classes"
 }

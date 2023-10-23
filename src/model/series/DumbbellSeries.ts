@@ -52,7 +52,7 @@ export class DumbbellSeriesPoint extends DataPoint {
     }
 
     getLabel(index: number) {
-        return index === 0 ? this.lowValue : this.yValue;
+        return index === 0 ? this.yValue : this.lowValue;
     }
 
     protected _assignTo(proxy: any): any {
@@ -122,6 +122,10 @@ export class DumbbellSeries extends ClusterableSeries {
 
     pointLabelCount(): number {
         return 2;
+    }
+
+    getLabelOff(off: number): number {
+        return super.getLabelOff(off) + Math.max(0, this.marker.radius);
     }
 
     protected _createPoint(source: any): DataPoint {

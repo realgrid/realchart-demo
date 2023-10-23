@@ -6,11 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
+import { IPercentSize, IValueRange, RtPercentSize, SVGStyleOrClass, buildValueRanges, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { GaugeLabel, GaugeScale, IGaugeValueRange, LinearGaugeLabel, LinearGaugeScale, ValueGauge } from "../Gauge";
-import { LinearGauge } from "./LinearGauge";
+import { LinearGaugeBase, LinearGaugeGroupBase } from "./LinearGauge";
 
 export class BulletGaugeBand extends ChartItem {
 
@@ -19,19 +18,19 @@ export class BulletGaugeBand extends ChartItem {
     //-------------------------------------------------------------------------
     private _width: RtPercentSize;
     private _height: RtPercentSize;
-    private _ranges: IGaugeValueRange[];
+    private _ranges: IValueRange[];
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _runRanges: IGaugeValueRange[];
+    private _runRanges: IValueRange[];
     private _widthDim: IPercentSize;
     private _heightDim: IPercentSize;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(public gauge: BulletGauge) {
+    constructor(public gauge: BulletGauge | BulletGaugeGroup) {
         super(gauge.chart);
     }
 
@@ -44,6 +43,7 @@ export class BulletGaugeBand extends ChartItem {
      * @config
      */
     vertical = false;
+
     /**
      * 너비
      * 
@@ -78,10 +78,10 @@ export class BulletGaugeBand extends ChartItem {
      * 
      * @config
      */
-    get ranges(): IGaugeValueRange[] {
+    get ranges(): IValueRange[] {
         return this.$_internalRanges()?.slice(0);
     }
-    set ranges(value: IGaugeValueRange[]) {
+    set ranges(value: IValueRange[]) {
         if (value !== this._ranges) {
             this._ranges = value;
             this._runRanges = null;
@@ -91,9 +91,9 @@ export class BulletGaugeBand extends ChartItem {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_internalRanges(): IGaugeValueRange[] {
+    private $_internalRanges(): IValueRange[] {
         if (!this._runRanges) {
-            this._runRanges = ValueGauge.buildRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue);
+            this._runRanges = buildValueRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue);
         }
         return this._runRanges;
     }
@@ -111,6 +111,12 @@ export class BulletTargetBar extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 목표 bar 표시 여부.
+     * 
+     * @default true
+     * @configprop
+     */
 }
 
 export class BulletActualBar extends ChartItem {
@@ -130,7 +136,7 @@ export class BulletActualBar extends ChartItem {
  * 
  * @config chart.gauge[type=bullet]
  */
-export class BulletGauge extends LinearGauge {
+export class BulletGauge extends LinearGaugeBase {
 
     //-------------------------------------------------------------------------
     // consts
@@ -181,13 +187,13 @@ export class BulletGauge extends LinearGauge {
      * 
      * @config
      */
-    ranges: IGaugeValueRange[];
+    ranges: IValueRange[];
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getRanges(min: number, max: number): IGaugeValueRange[] {
-        return ValueGauge.buildRanges(this.ranges, min, max);
+    getRanges(min: number, max: number): IValueRange[] {
+        return buildValueRanges(this.ranges, min, max);
     }
 
     //-------------------------------------------------------------------------
@@ -199,5 +205,37 @@ export class BulletGauge extends LinearGauge {
 
     protected _doLoad(src: any): void {
         super._doLoad(src);
+    }
+}
+
+export class BulletGaugeGroup extends LinearGaugeGroupBase<BulletGauge> {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 값 범위 목록.
+     * 범위별로 다른 스타일을 적용할 수 있다.
+     * 
+     * @config
+     */
+    ranges: IValueRange[];
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getRanges(min: number, max: number): IValueRange[] {
+        return buildValueRanges(this.ranges, min, max);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    _type(): string {
+        return 'bulletgroup';
+    }
+
+    _gaugesType(): string {
+        return 'bullet';
     }
 }

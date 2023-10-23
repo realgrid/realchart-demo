@@ -5,9 +5,10 @@
     "json": "docs/.tdout/main.json",
     "exclude": ["./node_modules/**/*"],
     "externalPattern": ["./node_modules/**/*"],
+    "excludeInternal": true,
     "excludeExternals": true,
     "excludePrivate": true,
     "excludeProtected": true,
     "disableSources": true,
-    "logLevel": "Error"
+    "logLevel": "Error",
 }

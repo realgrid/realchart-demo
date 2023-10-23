@@ -6,16 +6,15 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../common/Common";
 import { PathBuilder } from "../common/PathBuilder";
 import { PathElement, RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
-import { DEG_RAD } from "../common/Types";
+import { DEG_RAD, calcPercent, parsePercentSize } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis, AxisGuide, AxisLabelArrange, AxisPosition, AxisTickMark, AxisTitle, IAxisTick } from "../model/Axis";
+import { Axis, AxisGuide, AxisLabelArrange, AxisPosition, AxisScrollBar, AxisTickMark, AxisTitle, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { Crosshair } from "../model/Crosshair";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
@@ -106,10 +105,6 @@ class AxisTickMarkView extends ChartElement<AxisTickMark> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: AxisTickMark, hintWidth: number, hintHeight: number, phase: number): ISize {
-        return Size.create(hintWidth, hintHeight);
-    }
-
     protected _doLayout(param: any): void {
         if (this.model.axis._isHorz) {
             // this._lineView.setVLine(0, 0, this.height);
@@ -212,9 +207,6 @@ export class AxisView extends ChartElement<Axis> {
     _frontGuideViews: AxisGuideView<AxisGuide>[];
     _crosshairView: CrosshairFlagView;
 
-    protected _zoom = 1;
-    protected _scrollPos = 0;
-
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -266,7 +258,7 @@ export class AxisView extends ChartElement<Axis> {
         // w += t ? t.getBBounds().width : 0;
 
         if (this.$_prepareLabels(doc, m)) {
-            w += this.$_measureLabelsVert(this._labelViews);
+            w += this.$_measureLabelsVert(m, this._labelViews, width);
         }
 
         // title
@@ -309,12 +301,7 @@ export class AxisView extends ChartElement<Axis> {
         }
     }
 
-    setZoom(value: number): void {
-        value = Math.max(0, pickNum(value, 1));
-        if (value !== this._zoom) {
-            // TODO: _scrollPos를 변경한다. 
-            //       Axis._length를 변경한다.
-        }
+    scroll(pos: number): void {
     }
 
     //-------------------------------------------------------------------------
@@ -327,7 +314,9 @@ export class AxisView extends ChartElement<Axis> {
         let sz = 0;
 
         // line
-        this._lineView.visible = model.line.visible;
+        if (this._lineView.visible = model.line.visible) {
+            this._lineView.setStyleOrClass(model.line.style);
+        }
 
         // tick marks 
         this._markLen = model.tick.length || 0; // tick.mark.visible이 false이어도 자리는 차지한다.
@@ -344,7 +333,7 @@ export class AxisView extends ChartElement<Axis> {
             if (horz) {
                 sz += this._labelSize = this.$_measureLabelsHorz(model, labelViews, hintWidth);
             } else {
-                sz += this._labelSize = this.$_measureLabelsVert(labelViews);
+                sz += this._labelSize = this.$_measureLabelsVert(model, labelViews, hintHeight);
             }
         } else {
             this._labelSize = 0;
@@ -525,91 +514,129 @@ export class AxisView extends ChartElement<Axis> {
         return 2;
     }
 
+    private $_checkOverlappedHorz(axis: Axis, views: AxisLabelElement[], width: number, step: number, rows: number, rotation: number): boolean {
+        const nView = views.length;
+        const inc = Math.max(1, step) * Math.max(1, rows);
+        const a = rotation || 0;
+        const arad = Math.abs(a) * Math.PI / 180;
+        let overalpped = false;
+
+        views.forEach(v => v.rotation = a);
+
+        for (let i = 0; i < nView - 1; i += inc) {
+            let w = 0;
+            for (let j = i; j < i + inc && j < nView - 1; j++) {
+                w += axis.getLabelLength(width, views[i].value);
+            }
+
+            if (a === 0 && views[i].getBBounds().width >= w) {
+                overalpped = true;
+                break;
+            } else if  (a !== 0 && (views[i].getBBounds().width + views[i].getBBounds().height) * Math.cos(arad) >= w) {
+                overalpped = true;
+                break;
+            }
+        }
+        return overalpped;
+    }
+
+    private $_applyStep(axis: Axis, views: AxisLabelElement[], step: number): AxisLabelElement[] {
+        const m = axis.label;
+        const start = Math.max(0, m.startStep || 0);
+            
+        views.forEach(v => v.index = -1);
+        for (let i = start; i < views.length; i += step) {
+            views[i].index = i;
+        }
+        views.forEach(v => v.setVisible(v.index >= 0));
+        return views.filter(v => v.visible);
+    }
+
     private $_measureLabelsHorz(axis: Axis, views: AxisLabelElement[], width: number): number {
         const m = axis.label;
-        let step = m.step >> 0;
-        let rows = m.rows >> 0;
-        let rotation = m.rotation % 360;
-        let overlapped = false;
+        let step = +m.step >> 0;
+        let rows = +m.rows >> 0;
+        let rotation = +m.rotation % 360;
+        let overlapped = this.$_checkOverlappedHorz(axis, views, width, step, rows, rotation);
         let sz: number;
 
-        if (step > 0 || rows > 0 || rotation > 0 || rotation < 0 ) {
-        } else {
-            // check overalpped
-            for (let i = 0; i < views.length - 1; i++) {
-                const w = axis.getLabelLength(width, views[i].value);
+        views.forEach(v => v.row = 0);
+        this._labelRowPts = [0];
 
-                if (views[i].getBBounds().width >= w) {
-                    overlapped = true;
+        if (!overlapped) {
+            views = this.$_applyStep(axis, views, step || 1);
+        } else {
+            step = rows = rotation = 0;
+
+            switch (m.autoArrange) {
+                case AxisLabelArrange.ROTATE:
+                    rotation = -45;
                     break;
-                }
+                case AxisLabelArrange.ROWS:
+                    rows = this.$_getRows(views);
+                    break;
+                case AxisLabelArrange.STEP:
+                    step = this.$_getStep(views);
+                    break;
             }
-            if (overlapped) {
-                switch (m.autoArrange) {
-                    case AxisLabelArrange.ROTATE:
-                        rotation = -45;
-                        break;
-                    case AxisLabelArrange.ROWS:
-                        rows = this.$_getRows(views);
-                        break;
-                    case AxisLabelArrange.STEP:
-                        step = this.$_getStep(views);
-                        break;
-                }
-                overlapped = false;
-            }
-        }
 
-        if (step > 1) {
-            const start = Math.max(0, m.startStep || 0);
-            
-            views.forEach(v => v.index = -1);
-            for (let i = start; i < views.length; i += step) {
-                views[i].index = i;
+            if (step > 1) {
+                const save = views.slice(0);
+                while (save.length > 1) {
+                    views = this.$_applyStep(axis, save, step);
+                    if (!this.$_checkOverlappedHorz(axis, save, width, step, 1, 0)) {
+                        break;
+                    }
+                    step++;
+                }
+            } else if (rows > 1) {
+                while (views.length > rows) {
+                    views.forEach((v, i) => {
+                        v.row = i % rows;
+                        v.index = i;
+                    });
+                    if (!this.$_checkOverlappedHorz(axis, views, width, 1, rows, 0)) {
+                        break;
+                    }
+                    rows++;
+                }
+                this._labelRowPts = [];
+
+            } else {
+                rotation = -45;
+                views.forEach((v, i) => {
+                    v.rotation = rotation;
+                    v.index = i;
+                });
+                // TODO: rotation이 적용됐는데도 overlapped이면 stepping을 한다.
+                if (this.$_checkOverlappedHorz(axis, views, width, step, rows, rotation)) {
+                    step = Math.max(2, step++);
+                    views = this.$_applyStep(axis, views, step);
+                    // rotation을 제거해도 문제없으면 제거한다.
+                    if (this.$_checkOverlappedHorz(axis, views, width, step, rows, 0)) {
+                        views.forEach((v, i) => {
+                            v.rotation = rotation;
+                        });
+                    }
+                }   
             }
-            views.forEach(v => v.setVisible(v.index >= 0));
-            views = views.filter(v => v.visible);
-        } else {
-            views.forEach((v, i) => {
-                v.index = i;
-                v.setVisible(true);
-            });
         }
 
         if (rows > 1) {
-            views.forEach((v, i) => v.row = i % rows);
-            // this._labelRowPts = new Array<number>(rows).fill(0);
-            this._labelRowPts = [];
-        } else {
-            views.forEach(v => v.row = 0);
-            this._labelRowPts = [0];
-        }
-
-        if (overlapped) {
-            rotation = -45;
-        } else {
-            rotation = rotation || 0;
-        }
-        views.forEach(v => {
-            v.rotation = rotation;
-        });
-
-        if (rows > 1) {
+            const rotated = !isNaN(rotation) && rotation != 0;
             const pts = this._labelRowPts;
+
+            if (rows > 1) {
+                views.forEach((v, i) => v.row = i % rows);
+            }
 
             for (let i = 0; i < rows; i++) {
                 pts.push(0);
             }
 
-            if (!isNaN(rotation) && rotation != 0) {
-                views.forEach(v => {
-                    pts[v.row] = Math.max(pts[v.row], v.rotatedHeight);
-                })
-            } else {
-                views.forEach(v => {
-                    pts[v.row] = Math.max(pts[v.row], v.getBBounds().height);
-                })
-            }
+            views.forEach(v => {
+                pts[v.row] = Math.max(pts[v.row], rotated ? v.rotatedHeight : v.getBBounds().height);
+            })
 
             pts.unshift(0);
             for (let i = 2; i < pts.length; i++) {
@@ -633,7 +660,40 @@ export class AxisView extends ChartElement<Axis> {
         return sz;
     }
 
-    private $_measureLabelsVert(views: AxisLabelElement[]): number {
+    private $_checkOverlappedVert(axis: Axis, views: AxisLabelElement[], height: number, step: number): boolean {
+        const nView = views.length;
+        const inc = Math.max(1, step);
+
+        for (let i = 0; i < nView - 1; i += inc) {
+            let h = 0;
+            for (let j = i; j < i + inc && j < nView - 1; j++) {
+                h += axis.getLabelLength(height, views[i].value);
+            }
+
+            if (views[i].getBBounds().height >= h) {
+                return true;
+            }
+        }
+    }
+
+    private $_measureLabelsVert(axis: Axis, views: AxisLabelElement[], height: number): number {
+        const m = axis.label;
+        let step = Math.max(1, +m.step >> 0);
+        const overalpped = this.$_checkOverlappedVert(axis, views, height, step);
+
+        if (!overalpped) {
+            views = this.$_applyStep(axis, views, step);
+        } else {
+            const save = views.slice(0);
+
+            while (save.length > 1) {
+                views = this.$_applyStep(axis, save, ++step);
+                if (!this.$_checkOverlappedHorz(axis, save, height, step, 1, 0)) {
+                    break;
+                }
+            }
+        }
+
         let sz = views[0].getBBounds().width;
 
         for (let i = 1; i < views.length; i++) {
@@ -681,5 +741,28 @@ export class AxisView extends ChartElement<Axis> {
                 v.translate(x2, h - ticks[i].pos - r.height / 2);
             }
         });
+    }
 }
+
+export class AxisScrollBarView extends ChartElement<AxisScrollBar> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _trackView: RectElement;
+    private _thumbView: RectElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-axis-scrollbar');
+
+        this.add(this._trackView = new RectElement(doc, 'rct-axis-scrollbar-track'));
+        this.add(this._thumbView = new RectElement(doc, 'rct-axis-scrollbar-thumb'));
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
 }

@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartItem } from "./ChartItem";
-import { ILegendSource } from "./Legend";
 
 export abstract class PlotItem extends ChartItem {
 

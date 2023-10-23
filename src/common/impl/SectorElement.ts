@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { PathElement } from '../RcControl';
-import { _undefined } from '../Types';
+import { PathValue, _undefined } from '../Types';
 import { SvgShapes } from './SvgShape';
 
 export interface ISectorShape {
@@ -62,7 +62,7 @@ export class SectorElement extends PathElement {
     constructor(doc: Document, styleName: string = _undefined, shape: ISectorShape = _undefined) {
         super(doc, styleName);
 
-        shape && this._assignShape(shape);
+        shape && this._assignShape(shape, false);
 
         this.setAttr('role', 'img');
     }
@@ -126,7 +126,11 @@ export class SectorElement extends PathElement {
     }
 
     setSector(shape: ISectorShape): void {
-        this._assignShape(shape);
+        this._assignShape(shape, false);
+    }
+
+    setSectorEx(shape: ISectorShape, stroked: boolean): void {
+        this._assignShape(shape, stroked);
     }
 
     //-------------------------------------------------------------------------
@@ -145,7 +149,7 @@ export class SectorElement extends PathElement {
         }
     }
 
-    protected _assignShape(shape: ISectorShape): void {
+    protected _assignShape(shape: ISectorShape, stroked: boolean): void {
         this.cx = shape.cx;
         this.cy = shape.cy;
         this.rx = shape.rx;
@@ -154,11 +158,11 @@ export class SectorElement extends PathElement {
         this.start = shape.start;
         this.angle = shape.angle;
         this.clockwise = shape.clockwise;
-        this._updateShape();
+        this.setPath(stroked ? this.$_renderArc() : this.$_renderSector());
     }
 
-    protected _updateShape(): void {
-        this.setPath(SvgShapes.sector(
+    private $_renderSector(): PathValue[] {
+        return SvgShapes.sector(
             this.cx, 
             this.cy, 
             this.rx * this.rate, 
@@ -167,6 +171,18 @@ export class SectorElement extends PathElement {
             this.start, 
             this.clockwise ? this.start + this.angle : this.start - this.angle, 
             this.clockwise
-        ));
+        );
+    }
+
+    private $_renderArc(): PathValue[] {
+        return SvgShapes.arc(
+            this.cx, 
+            this.cy, 
+            this.rx * this.rate, 
+            this.ry * this.rate, 
+            this.start, 
+            this.clockwise ? this.start + this.angle : this.start - this.angle, 
+            this.clockwise
+        );
     }
 }

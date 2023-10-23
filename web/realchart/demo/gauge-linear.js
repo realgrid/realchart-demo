@@ -22,6 +22,19 @@ const config = {
         scale: {
             line: true,
         },
+        band: {
+            gap: 3,
+            ranges: [{
+                toValue: 30,
+                color: '#ff0',
+            }, {
+                toValue: 60,
+                color: '#fa0'
+            }, {
+                color: '#f40'
+            }],
+            // tickLabel: true
+        },
         ranges: [{
             toValue: 50,
             color: '#777'
@@ -32,6 +45,9 @@ const config = {
         label: {
             text: "RealChart Linear<br>ver 1.0"
             // position: 'bottom',
+        },
+        style: {
+            stroke: 'lightblue'
         }
     }, {
         type: 'linear',
@@ -54,6 +70,9 @@ const config = {
         label: {
             position: 'top',
             text: "RealChart Linear ver 1.0"
+        },
+        style: {
+            stroke: 'lightblue'
         }
     }]
 }
@@ -93,18 +112,27 @@ function setActions(container) {
         config.gauge[0].scale.visible = _getChecked(e);
         chart.load(config);
     }, true);
-    createCheckBox(container, 'scale.opposite', function (e) {
-        config.gauge[0].scale.opposite = _getChecked(e);
+    createListBox(container, "scale.position", ['default', 'opposite', 'inside'], function (e) {
+        config.gauge[0].scale.position = _getValue(e);
+        chart.load(config);
+    }, 'default');
+    createCheckBox(container, 'band', function (e) {
+        config.gauge[0].band.visible = _getChecked(e);
         chart.load(config);
     }, false);
+    createListBox(container, "band.position", ['default', 'opposite', 'inside'], function (e) {
+        config.gauge[0].band.position = _getValue(e);
+        chart.load(config);
+    }, 'default');
+    line(container);
     createListBox(container, "label2.position", ['left', 'right', 'top', 'bottom'], function (e) {
         config.gauge[1].label.position = _getValue(e);
         chart.load(config);
     }, 'top');
-    createCheckBox(container, 'scale2.opposite', function (e) {
-        config.gauge[1].scale.opposite = _getChecked(e);
+    createListBox(container, "scale2.position", ['default', 'opposite', 'inside'], function (e) {
+        config.gauge[1].scale.position = _getValue(e);
         chart.load(config);
-    }, false);
+    }, 'default');
 }
 
 function init() {

@@ -106,7 +106,7 @@ export class LabelElement extends GroupElement {
     setContrast(target: Element): LabelElement {
         // contrast
         if (target && this._model.autoContrast) {
-            this._text.setContrast(target, this._model.darkStyle || 'rct-label-dark', this._model.brightStyle || 'rct-label-bright');
+            this._text.setContrast(target, this._model.darkStyle || 'rct-label-dark', this._model.lightStyle || 'rct-label-bright');
         }
         // outline
         if (this._outline && this._outline.parent) {

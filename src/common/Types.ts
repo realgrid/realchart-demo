@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray } from "./Common";
+import { isArray, isObject, isString, pickNum } from "./Common";
 import { locale } from "./RcLocale";
 
 export const _undefined = void 0; // 불필요
@@ -52,6 +52,7 @@ export function utc(year: number, monthIndex = 0, day = 1, hour = 0, minute = 0,
     return new Date(Date.UTC(year, monthIndex, day, hour, minute, second, millisecond));
 }
 
+export type PathValue = string | number;
 export type Path = string | any[];
 
 /**
@@ -134,62 +135,6 @@ export function calcPercentF(size: IPercentSize, domain: number): number {
     return size.fixed ? size.size : size.size * domain / 100;
 }
 
-export type SizeValue = string | number; // 123, '10*', '50%'
-export function isValidSizeValue(v: any): boolean {
-    if (!isNaN(v)) return true;
-    if (typeof v === 'string' && v.trimEnd().endsWith('*') && !isNaN(parseFloat(v))) return true;
-    return false;
-}
-export interface ISizeValue {
-    size: number;
-    fixed: boolean;
-    rated?: boolean; // '*'
-}
-
-/**
- * @internal
- * 
- * '*'은 '1*'와 동일하다.
- */
-export function parseSize(sv: SizeValue, enableNull: boolean): ISizeValue {
-    let fixed: boolean;
-    let rated: boolean; // '*'
-    let size: number;
-
-    if (sv != null && !Number.isNaN(sv)) {
-        if (!(fixed = !isNaN(size = +sv))) {
-            const s = (sv as string).trim();
-            const c = s.charCodeAt(s.length - 1);
-
-            if (c === PERCENT) {
-                size = s.length === 1 ? NaN : parseFloat(s);
-            } else if (c === ASTERISK) {
-                size = s.length === 1 ? 1 : parseFloat(s);
-                rated = true;
-            }
-            if (isNaN(size)) {
-                if (enableNull) {
-                    return null;
-                }
-                throwFormat(locale.invalidSizeValue, sv);
-            }
-        }
-    } else if (enableNull) {
-        return null;
-    } else {
-        size = 0;
-        fixed = true;
-    }
-    return { size, rated, fixed }; 
-}
-
-export function getFixedSize(dim: IPercentSize): number {
-    return dim && dim.fixed ? dim.size : NaN;
-}
-export function getRelativeSize(dim: IPercentSize): number {
-    return dim && !dim.fixed ? dim.size : NaN;
-}
-
 export interface SVGStyles {
     fill?: string;
     stroke?: string;
@@ -201,6 +146,28 @@ export interface SVGStyles {
 }
 
 export type SVGStyleOrClass = SVGStyles | string;
+
+export const CAMEL2KEBAB = {
+    fill: 'fill',
+    stroke: 'stroke',
+    strokeWidth: 'stroke-width',
+    fontFamily: 'font-family',
+    fontSize: 'font-size',
+    fontWeight: 'font-weight',
+    fontStyle: 'font-style',
+    padding: 'padding',
+    margin: 'margin',
+    borderRadius: 'border-radius'
+}
+export const getCssProp = function (prop: string): string {
+    const s = CAMEL2KEBAB[prop];
+    if (!s) {
+        let s2 = prop.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+        CAMEL2KEBAB[prop] = s2;
+        return s2;
+    }
+    return s;
+}
 
 export class RtAbortError extends Error {
     static check(err: any): boolean {
@@ -230,6 +197,11 @@ export const checkNull = function (obj: any, message: string): void {
  * 발생 시 프로그램을 중지하지 않고 경고를 표시한다.
  */
 export class AlertError extends Error {
+}
+
+export interface IMinMax {
+    min: number;
+    max: number;
 }
 
 export interface ISides {
@@ -326,6 +298,15 @@ export enum SectionDir {
     RIGHT = 'right'
 }
 
+export interface ISides {
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
+    horz?: number;
+    vert?: number;
+}
+
 export const HORZ_SECTIONS = [SectionDir.LEFT, SectionDir.RIGHT];
 export const VERT_SECTIONS = [SectionDir.TOP, SectionDir.BOTTOM];
 
@@ -338,4 +319,48 @@ export enum AlignBase {
      * @config
      */
     PLOT = 'plot'
+}
+
+export interface IValueRange {
+    fromValue?: number;
+    toValue?: number;
+    color: string;
+    label?: string;
+}
+
+/**
+ * endValue는 포함되지 않는다. 즉, startValue <= v < endValue.
+ * startValue를 지정하면 이전 range의 endValue를 startValue로 설정한다.
+ * 이전 범위가 없으면 min으로 지정된다.
+ * endValue가 지정되지 않으면 max로 지정된다.
+ * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
+ * startValue를 기준으로 정렬한다.
+ */
+export const buildValueRanges = function (source: IValueRange[], min: number, max: number): IValueRange[] {
+    let ranges: IValueRange[];
+    let prev: IValueRange;
+
+    if (isArray(source)) {
+        ranges = [];
+        source.forEach(src => {
+            if (isObject(src) && isString(src.color)) {
+                const range: IValueRange = {
+                    fromValue: pickNum(src.fromValue, prev ? prev.toValue : min),
+                    toValue: pickNum(src.toValue, max),
+                    color: src.color
+                };
+                if (range.fromValue < range.toValue) {
+                    ranges.push(range);
+                    prev = range;
+                }
+            }
+        });
+        ranges = ranges.sort((r1, r2) => r1.fromValue - r2.fromValue)
+                       .filter(r => r.toValue >= min && r.fromValue < max);
+        ranges.forEach(r => {
+            r.fromValue = Math.max(r.fromValue, min);
+            r.toValue = Math.min(r.toValue, max);
+        })
+    }
+    return ranges;
 }

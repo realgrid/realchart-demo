@@ -135,7 +135,7 @@
     --rct-credits-fill: #777;
 
     /* circle gauge */
-    --rct-circle-gauge-back-fill: #ddd;
+    --rct-circle-gauge-back-fill: #e4e4e4;
     --rct-circle-gauge-inner-fill: none;
     --rct-circle-gauge-label-fill: #333;
     /* clock gauge */
@@ -200,11 +200,21 @@
 .rct-label-dark {
     fill: black;
 }
-.rct-label-bright {
+.rct-label-light {
     fill: white;
 }
 .rct-label-background {
     fill: lightgray;
+}
+
+/** button */
+.rct-button-background {
+    padding: 3px 5px;
+    border-radius: 5px;
+    fill: #efefef;
+}
+.rct-button {
+    fill: #333;
 }
 
 /** background */
@@ -681,8 +691,13 @@
 }
 
 /** gauge */
-.rct-gauge-background {
+.rct-gauge-pane {
     fill: none;
+}
+
+/** gauge group */
+.rct-gauge-group {
+    padding: 10px;
 }
 
 /** circle gauge */
@@ -695,10 +710,16 @@
 .rct-circle-gauge-value {
     fill: #008844;
 }
+.rct-circle-gauge-value[data-stroked] {
+    fill: none;
+}
 .rct-circle-gauge-label {
     font-size: 40px;
     fill: var(--rct-circle-gauge-label-fill);
     stroke: none;
+}
+.rct-circle-gauge-label[data-grouped] {
+    font-size: 20px;
 }
 .rct-circle-gauge-pin {
     fill: white;
@@ -750,14 +771,15 @@
     fill: var(--rct-clock-gauge-label-fill);
 }
 
-/** linear scale */
-.rct-linear-scale-line {
+/** gauge scale */
+.rct-gauge-scale-line {
+    stroke: #555;
+    fill: none;
+}
+.rct-gauge-scale-ticks {
     stroke: #555;
 }
-.rct-linear-scale-ticks {
-    stroke: #555;
-}
-.rct-linear-scale-tick-labels {
+.rct-gauge-scale-tick-labels {
     font-size: 0.85em;
     fill: #333;
 }
@@ -768,6 +790,15 @@
 }
 .rct-linear-gauge-value {
     fill: green;
+}
+.rct-linear-gauge-band-tick-labels {
+    font-size: 0.85em;
+    fill: #333;
+}
+
+/** linear gauge group */
+.rct-linear-gauge-group-label {
+    font-size: 1.5em;
 }
 
 /** bullet gauge */
@@ -793,6 +824,14 @@
 .rct-bullet-gauge-scale-tick-labels {
     font-size: 0.9em;
     fill: #333;
+}
+
+/** bullet gauge group */
+.rct-bullet-gauge-group {
+    padding: 10px;
+}
+.rct-bullet-gauge-group-label {
+    font-size: 1.5em;
 }
 
 /** tooltip */

@@ -126,10 +126,10 @@ test.describe('dumbbell.html test', async function () {
 		const rearranged = [];
 
 		config.series.data.forEach((pair) => {
-			rearranged.push(pair[0]);
+			rearranged.push(pair[1]);
 		});
 		config.series.data.forEach((pair) => {
-			rearranged.push(pair[1]);
+			rearranged.push(pair[0]);
 		});
 		for (let i = 0; i < text.length; i++) {
 			const labelText = await page.evaluate(

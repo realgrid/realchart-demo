@@ -11,10 +11,11 @@ import { LayerElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextElement } from "../../common/impl/TextElement";
-import { BulletGauge } from "../../model/gauge/BulletGauge";
-import { LineGaugeView, LinearScaleView } from "../GaugeView";
+import { BulletGauge, BulletGaugeGroup } from "../../model/gauge/BulletGauge";
+import { LinearGaugeBaseView, LinearScaleView } from "../GaugeView";
+import { LinearGaugeGroupBaseView } from "./LinearGaugeView";
 
-export class BulletGaugeView extends LineGaugeView<BulletGauge> {
+export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
 
     //-------------------------------------------------------------------------
     // consts
@@ -35,14 +36,16 @@ export class BulletGaugeView extends LineGaugeView<BulletGauge> {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-bullet-gage');
+    }
 
-        this.add(this._background = new RectElement(doc, 'rct-bullet-gauge-background'));
-        this.add(this._barContainer = new LayerElement(doc, void 0));
+    protected _doInitContents(doc: Document, container: LayerElement): void {
+        container.add(this._background = new RectElement(doc, 'rct-bullet-gauge-background'));
+        container.add(this._barContainer = new LayerElement(doc, void 0));
         this._barViews = new ElementPool(this._barContainer, RectElement);
-        this.add(this._valueView = new RectElement(doc, 'rct-bullet-gauge-value'));
-        this.add(this._targetView = new RectElement(doc, 'rct-bullet-gauge-target'));
-        this.add(this._scaleView = new LinearScaleView(doc));
-        this.add(this._labelView = new TextElement(doc));
+        container.add(this._valueView = new RectElement(doc, 'rct-bullet-gauge-value'));
+        container.add(this._targetView = new RectElement(doc, 'rct-bullet-gauge-target'));
+        container.add(this._scaleView = new LinearScaleView(doc));
+        container.add(this._labelView = new TextElement(doc));
     }
 
     //-------------------------------------------------------------------------
@@ -60,47 +63,52 @@ export class BulletGaugeView extends LineGaugeView<BulletGauge> {
         return this._background;
     }
 
-    protected itemContainer(): LayerElement {
-        return this._barContainer;
-    }
-
     protected _prepareGauge(doc: Document, model: BulletGauge): void {
     }
 
     protected _renderBand(m: BulletGauge, r: IRect, value: number): void {
+        const group = m.group as BulletGaugeGroup;
         const reversed = m.reversed;
-        const sum = m.scale._max - m.scale._min;
-        const ranges = m.getRanges(m.scale._min, m.scale._max);
+        const vertical = this._vertical;
+        const scale = group ? group.scale : m.scale;
+        const sum = scale._max - scale._min;
 
-        if (ranges) {
-            if (this._vertical) {
-                let y = reversed ? 0 : r.height;
+        if (this._barContainer.setVisible(sum > 0)) {
+            const ranges = m.getRanges(scale._min, scale._max) || group?.getRanges(scale._min, scale._max);
 
-                this._barViews.prepare(ranges.length).forEach((v, i) => {
-                    const range = ranges[i];
-                    const h = r.height * (range.toValue - range.fromValue) / sum;
-    
-                    v.setBounds(0, reversed ? y : y - h, r.width, h);
-                    v.setStyle('fill', range.color);
-                    y += reversed ? h : -h;
-                });
-            } else {
-                let x = reversed ? r.width : 0;
+            if (ranges) {
+                this._barContainer.setRect(r);
+                this._barViews.prepare(ranges.length);
 
-                this._barViews.prepare(ranges.length).forEach((v, i) => {
-                    const range = ranges[i];
-                    const w = r.width * (range.toValue - range.fromValue) / sum;
-    
-                    v.setBounds(reversed ? x - w : x, 0, w, r.height);
-                    v.setStyle('fill', range.color);
-                    x += reversed ? -w : w;
-                });
+                if (vertical) {
+                    let y = reversed ? 0 : r.height;
+
+                    this._barViews.forEach((v, i) => {
+                        const range = ranges[i];
+                        const h = r.height * (range.toValue - range.fromValue) / sum;
+        
+                        v.setBounds(0, reversed ? y : y - h, r.width, h);
+                        v.setStyle('fill', range.color);
+                        y += reversed ? h : -h;
+                    });
+                } else {
+                    let x = reversed ? r.width : 0;
+
+                    this._barViews.forEach((v, i) => {
+                        const range = ranges[i];
+                        const w = r.width * (range.toValue - range.fromValue) / sum;
+        
+                        v.setBounds(reversed ? x - w : x, 0, w, r.height);
+                        v.setStyle('fill', range.color);
+                        x += reversed ? -w : w;
+                    });
+                }
             }
         }
 
         // value bar
-        if (this._valueView.setVisible(!isNaN(m.value))) {
-            if (this._vertical) {
+        if (this._valueView.setVisible(sum > 0 && !isNaN(m.value))) {
+            if (vertical) {
                 const h = r.height * (value - m.scale._min) / sum;
                 const y = reversed ? r.y : r.y + r.height - h;
 
@@ -114,13 +122,13 @@ export class BulletGaugeView extends LineGaugeView<BulletGauge> {
         }
 
         // target bar
-        if (this._targetView.setVisible(!isNaN(m.targetValue))) {
-            if (this._vertical) {
+        if (this._targetView.setVisible(sum > 0 && !isNaN(m.targetValue))) {
+            if (vertical && r.width > 10) {
                 let y = r.height * (m.targetValue - m.scale._min) / sum;
 
                 y = reversed ? r.y + y : r.y + r.height - y;
                 this._targetView.setBounds(r.x + 5, y - 1, r.width - 10, 3);
-            } else {
+            } else if (!vertical && r.height > 10) {
                 let x = r.width * (m.targetValue - m.scale._min) / sum;;
             
                 x = reversed ? (r.x + r.width - x) : (r.x + x);
@@ -128,4 +136,26 @@ export class BulletGaugeView extends LineGaugeView<BulletGauge> {
             }
         }
    }
+}
+
+/**
+ * @internal
+ * 
+ * View for BulletGaugeGroup.
+ */
+export class BulletGaugeGroupView extends LinearGaugeGroupBaseView<BulletGauge, BulletGaugeGroup, BulletGaugeView> {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-bullet-gauge-group');
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _createPool(container: LayerElement): ElementPool<BulletGaugeView> {
+        return new ElementPool(container, BulletGaugeView);
+    }
 }

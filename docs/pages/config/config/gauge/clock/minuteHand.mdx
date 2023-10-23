@@ -2,9 +2,19 @@
 분침 설정 모델.
 ## Properties
 
-### style
+### style: `SVGStyles | string{:javascript}`[#style]
 스타일셋 혹은 class selector.  
 
-### thickness: `number`
+### thickness: `number{:javascript}`[#thickness]
 픽셀 단위 바늘 두께.
 침 종류에 따라 기본값이 다르다.  
+
+### length: `string | number{:javascript}`[#length]
+바늘 길이.
+픽셀 단위로 직접 지정하거나 시계 반지름에 대한 상대 크기로 지정할 수 있다.
+침 종류에 따라 기본값이 다르다.  
+
+### visible: `boolean{:javascript}`[#visible]
+표시 여부.\
+모델에 따라 기본값이 다르다.
+<FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  

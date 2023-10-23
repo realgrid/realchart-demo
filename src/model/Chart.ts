@@ -22,9 +22,9 @@ import { CategoryAxis } from "./axis/CategoryAxis";
 import { LinearAxis } from "./axis/LinearAxis";
 import { LogAxis } from "./axis/LogAxis";
 import { TimeAxis } from "./axis/TimeAxis";
-import { CircleGauge } from "./gauge/CircleGauge";
+import { CircleGauge, CircleGaugeGroup } from "./gauge/CircleGauge";
 import { ClockGauge } from "./gauge/ClockGauge";
-import { GaugeCollection, ValueGauge } from "./Gauge";
+import { Gauge, GaugeCollection } from "./Gauge";
 import { BarRangeSeries } from "./series/BarRangeSeries";
 import { BarSeries, BarSeriesGroup } from "./series/BarSeries";
 import { BellCurveSeries } from "./series/BellCurveSeries";
@@ -47,8 +47,10 @@ import { ScatterSeries } from "./series/ScatterSeries";
 import { TreemapSeries } from "./series/TreemapSeries";
 import { VectorSeries } from "./series/VectorSeries";
 import { WaterfallSeries } from "./series/WaterfallSeries";
-import { LinearGauge } from "./gauge/LinearGauge";
-import { BulletGauge } from "./gauge/BulletGauge";
+import { LinearGauge, LinearGaugeGroup } from "./gauge/LinearGauge";
+import { BulletGauge, BulletGaugeGroup } from "./gauge/BulletGauge";
+import { SeriesNavigator } from "./SeriesNavigator";
+import { Plane } from "./Plane";
 
 export interface IChart {
     type: string;
@@ -79,6 +81,7 @@ export interface IChart {
     _getSeriesType(type: string): any;
     _getAxisType(type: string): any;
     _getGaugeType(type: string): any;
+    _getGaugeGroupType(type: string): any;
     _getSeries(): PlottingItemCollection;
     _getGauges(): GaugeCollection;
     _getXAxes(): AxisCollection;
@@ -88,7 +91,7 @@ export interface IChart {
     _getLegendSources(): ILegendSource[];
     _visibleChanged(item: ChartItem): void;
     _pointVisibleChanged(series: Series, point: DataPoint): void;
-    _modelChanged(item: ChartItem): void;
+    _modelChanged(item: ChartItem, tag?: any): void;
 }
 
 const group_types = {
@@ -103,7 +106,6 @@ const group_types = {
     'piegroup': PieSeriesGroup,
     'bump': BumpSeriesGroup
 };
-
 const series_types = {
     'area': AreaSeries,
     'arearange': AreaRangeSeries,
@@ -129,7 +131,6 @@ const series_types = {
     'vector': VectorSeries,
     'waterfall': WaterfallSeries,
 };
-
 const axis_types = {
     'category': CategoryAxis,
     'linear': LinearAxis,
@@ -143,6 +144,14 @@ const gauge_types = {
     'linear': LinearGauge,
     'bullet': BulletGauge,
     'clock': ClockGauge,
+}
+const gauge_group_types = {
+    'circle': CircleGaugeGroup,
+    'linear': LinearGaugeGroup,
+    'bullet': BulletGaugeGroup,
+    'circlegroup': CircleGaugeGroup,
+    'lineargroup': LinearGaugeGroup,
+    'bulletgroup': BulletGaugeGroup,
 }
 
 export class Credits extends ChartItem {
@@ -280,11 +289,13 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _title: Title;
     private _subtitle: Subtitle;
     private _legend: Legend;
+    private _plane: Plane;
     private _series: PlottingItemCollection;
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
     private _gauges: GaugeCollection;
     private _body: Body;
+    private _navigator: SeriesNavigator;
 
     private _inverted: boolean;
     private _polar: boolean;
@@ -304,11 +315,13 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._title = new Title(this);
         this._subtitle = new Subtitle(this);
         this._legend = new Legend(this);
+        this._plane = new Plane(this);
         this._series = new PlottingItemCollection(this);
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new AxisCollection(this, false);
         this._gauges = new GaugeCollection(this);
         this._body = new Body(this);
+        this._navigator = new SeriesNavigator(this);
 
         source && this.load(source);
         this._polar = this.polar === true;
@@ -370,9 +383,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     polar = false;
     /**
      * true면 x축이 수직, y축이 수평으로 배치된다.
-     * <br>
-     * 기본값은 undefined로 첫번째 series의 종류에 따라 결정된다.
-     * 즉, bar 시리즈 계통이면 true가 된다.
      *
      * @config
      */
@@ -402,6 +412,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._series.firstSeries;
     }
 
+    get firstGauge(): Gauge {
+        return this._gauges.firstGauge;
+    }
+
     get legend(): Legend {
         return this._legend;
     }
@@ -416,6 +430,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     get body(): Body {
         return this._body;
+    }
+
+    get navigator(): SeriesNavigator {
+        return this._navigator;
     }
 
     /**
@@ -468,11 +486,15 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     // methods
     //-------------------------------------------------------------------------
     seriesByName(series: string): Series {
-        return this._series.get(series);
+        return this._series.getSeries(series);
     }
 
     seriesByPoint(point: DataPoint): Series {
         return this._series.seriesByPoint(point);
+    }
+
+    gaugeByName(gauge: string): Gauge {
+        return this._gauges.getGauge(gauge);
     }
 
     axisByName(axis: string): Axis {
@@ -485,6 +507,14 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     containsAxis(axis: Axis): boolean {
         return this._xAxes.contains(axis) || this._yAxes.contains(axis);
+    }
+
+    getXAxis(name: string | number): Axis {
+        return this._xAxes.get(name);
+    }
+
+    getYAxis(name: string | number): Axis {
+        return this._yAxes.get(name);
     }
 
     getAxes(dir: SectionDir): Axis[] {
@@ -592,9 +622,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // body
         this._body.load(source.plot);
 
-        // inverted
-        this._inverted = this.inverted;
-
         console.log('chart-items:', n_char_item);
         console.timeEnd('load chart');
     }
@@ -604,11 +631,18 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     prepareRender(): void {
+        this._inverted = this.inverted;
+
         this._xAxes.disconnect();
         this._yAxes.disconnect();
 
         // 축에 연결한다.
         this._series.prepareRender();
+
+        // plane
+        if (this._plane.count() > 1) {
+            this._plane.prepareRender();
+        }
 
         // 축의 값 범위를 계산한다. 
         // [주의] 반드시 x축을 먼저 준비해야 한다. seriesGroup.$_collectPoints에서 point.xValue를 사용한다.
@@ -627,6 +661,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         // gauges
         this._gauges.prepareRender();
+
+        // navigator
+        this._navigator.prepareRender();
     }
 
     // 여러번 호출될 수 있다.
@@ -655,14 +692,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * 데이터 및 속성 변경 후 다시 그리게 한다.
      */
     update(): void {
-    }
-
-    updateGauge(gauge: string, values: any): void {
-        const g = this._gauges.get(gauge);
-
-        if (g instanceof ValueGauge) {
-            g.updateValues(values);
-        }
     }
 
     //-------------------------------------------------------------------------
@@ -698,6 +727,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     _getGaugeType(type: string): any {
         return isString(type) && gauge_types[type.toLowerCase()];
+    }
+
+    _getGaugeGroupType(type: string): any {
+        return isString(type) && gauge_group_types[type.toLowerCase()];
     }
 
     getAxesGap(): number {

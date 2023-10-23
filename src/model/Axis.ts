@@ -13,17 +13,21 @@ import { ChartItem, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
 import { IClusterable, IPlottingItem } from "./Series";
 
+/**
+ * @internal
+ */
 export interface IAxis {
 
     type(): string;
     chart: IChart;
     
-    _length: number;
+    _vlen: number;
     _isX: boolean;
     _isHorz: boolean;
     _isOpposite: boolean;
 
     reversed: boolean;
+    _zoom: IAxisZoom
 
     isContinuous(): boolean;
     getBaseValue(): number;
@@ -50,6 +54,9 @@ export interface IAxis {
     getUnitLength(length: number, value: number): number;
 }
 
+/**
+ * @internal
+ */
 export abstract class AxisItem extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -58,7 +65,7 @@ export abstract class AxisItem extends ChartItem {
     readonly axis: Axis;
 
     //-------------------------------------------------------------------------
-    // constructors
+    // constructor
     //-------------------------------------------------------------------------
     constructor(axis: Axis, visible = true) {
         super(axis?.chart, visible);
@@ -71,6 +78,11 @@ export abstract class AxisItem extends ChartItem {
     //-------------------------------------------------------------------------
 }
 
+/**
+ * 축 선(line) 설정 모델.
+ * 
+ * @config
+ */
 export class AxisLine extends AxisItem {
 
     //-------------------------------------------------------------------------
@@ -81,8 +93,16 @@ export class AxisLine extends AxisItem {
     }
 }
 
+export enum AxisTitleAlign {
+    START = 'start',
+    MIDDLE = 'middle',
+    END = 'end'
+}
+
 /**
+ * 축 타이틀 설정 모델.
  * 
+ * @config
  */
 export class AxisTitle extends AxisItem {
 
@@ -95,6 +115,12 @@ export class AxisTitle extends AxisItem {
      * @config
      */
     text: string;
+    /**
+     * 축 내에서 타이틀의 위치.
+
+    * @config
+     */
+    align = AxisTitleAlign.MIDDLE;
     /**
      * 타이틀과 label 혹은 축 선 사이의 간격.
      * <br>
@@ -130,8 +156,9 @@ export class AxisTitle extends AxisItem {
 
 /**
  * visible 기본값이 undefined이다.
- * <br>
  * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
+ * 
+ * @config
  */
 export class AxisGrid extends AxisItem {
 
@@ -139,14 +166,20 @@ export class AxisGrid extends AxisItem {
     // properties
     //-------------------------------------------------------------------------
     /**
+     * polar 차트일 때 그리드 선을 원형으로 그릴 지 여부.
+     * 
      * @config
      */
-    circular = false;
+    circular = true;
     /**
+     * 시작 값에 표시되는 그리드 선을 표시할 지 여부.
+     * 
      * @config
      */
-    startVisible = true;
+    startVisible = false;
     /**
+     * 끝 값에 표시되는 그리드 선을 표시할 지 여부.
+     * 
      * @config
      */
     endVisible = true;
@@ -167,7 +200,7 @@ export class AxisGrid extends AxisItem {
 
     getPoints(length: number): number[] {
         const axis = this.axis;
-        return this.axis._ticks.map(tick => axis.getPosition(length, tick.value, false));
+        return axis._ticks.map(tick => axis.getPosition(length, tick.value, false));
     }
             
     //-------------------------------------------------------------------------
@@ -215,33 +248,25 @@ export class AxisGuideLabel extends FormattableText {
 export enum AxisGuideType {
     /**
      * 축 위의 특정한 값에 선분을 표시한다.
+     * 
+     * @config
      */
     LINE = 'line',
     /**
      * 축 위 특정한 두 값 사이의 영역을 구분 표시한다.
+     * 
+     * @config
      */
     RANGE = 'range',
     /**
      * Plot 영역에 (x, y)로 지정하는 값 좌표의 배열로 설정되는 다각형을 표시한다.
+     * 
+     * @config
      */
     AREA = 'area'
 }
 
 export abstract class AxisGuide extends AxisItem {
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    readonly label: AxisGuideLabel;
-
-    /**
-     * true면 시리즈들보다 위에 표시된다.
-     */
-    front = true;
-    /**
-     * 모든 guide들 중에서 값이 클수록 나중에 그려진다.
-     */
-    zindex = 0;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -251,6 +276,28 @@ export abstract class AxisGuide extends AxisItem {
 
         this.label = new AxisGuideLabel(axis.chart);
     }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * label 모델.
+     * 
+     * @config
+     */
+    readonly label: AxisGuideLabel;
+    /**
+     * true면 시리즈들보다 위에 표시된다.
+     * 
+     * @config
+     */
+    front = true;
+    /**
+     * 모든 guide들 중에서 값이 클수록 나중에 그려진다.
+     * 
+     * @config
+     */
+    zindex = 0;
 }
 
 export class AxisGuideLine extends AxisGuide {
@@ -258,6 +305,11 @@ export class AxisGuideLine extends AxisGuide {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 가이드 선이 표시될 축 상의 위치에 해당하는 값.
+     * 
+     * @config
+     */
     value: number; // TODO: RtPercentSize
 }
 
@@ -269,7 +321,17 @@ export class AxisGuideRange extends AxisGuide {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 가이드 영역의 시작 값.
+     * 
+     * @config
+     */
     start: number;  // TODO: RtPercentSize
+    /**
+     * 가이드 영역의 끝 값.
+     * 
+     * @config
+     */
     end: number;
 }
 
@@ -282,7 +344,9 @@ export class AxisTickMark extends AxisItem {
     // property fields
     //-------------------------------------------------------------------------
     /**
-     * axis tick line length.
+     * 선의 길이.
+     * 
+     * @link
      */
     length = 7;
 
@@ -327,20 +391,31 @@ export abstract class AxisTick extends AxisItem {
 }
 
 export enum AxisLabelArrange {
+    /**
+     * 아무것도 하지 않는다.
+     * 
+     * @config
+     */
     NONE = 'none',
     /**
      * -45도 회전시킨다.
+     * 
+     * @config
      */
     ROTATE = 'rotate',
     /**
      * label들이 겹치지 않도록 건너 뛰면서 배치한다.
      * <br>
      * {@link startStep}으로 지정된 step부터 배치된다.
+     * 
+     * @config
      */
     STEP = 'step',
     /**
      * label들이 겹치지 않도록 여러 줄로 나누어 배치한다.
      * <br>
+     * 
+     * @config
      */
     ROWS = 'rows'
 }
@@ -357,6 +432,9 @@ export enum AxisLabelArrange {
 export abstract class AxisLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(public axis: Axis) {
@@ -370,25 +448,18 @@ export abstract class AxisLabel extends FormattableText {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * label 표시 간격.
-     * <br>
-     * 0보다 큰 값으로 지정하지 않으면
-     * {@link autoStep}이 true일 때, label들이 겹치지 않도록 자동 계산된다.
-     * <br>
+     * label 표시 간격.\
      * 1이면 모든 tick 표시. 2이면 하나씩 건너 띄어서 표시.
      * 2 이상일 때 {@link startStep}으로 지정된 step부터 배치된다.
      */
     step = 0;
     /**
-     * step이 2 이상일 때, 표시가 시작되는 label 위치.
+     * step이 2 이상이 될 때, 표시가 시작되는 label 위치.
      */
     startStep = 0;
     /**
-     * 수평 축일 때 tick label 배치 행 수.
-     * <br>
-     * 0보다 큰 값으로 지정하지 않으면
-     * {@link autoRows}가 true일 때, label들이 겹치지 않도록 자동 계산된다.
-     * <br>
+     * 수평 축일 때 tick label 배치 행 수.\
+     * 1은 한 줄, 2면 두 줄 등으로 여러 줄로 나눠서 표시한다.
      */
     rows = 0;
     /**
@@ -432,12 +503,16 @@ export enum AxisPosition {
      * X축은 아래쪽에 수평으로, Y축은 왼쪽에 수직으로 표시된다.
      * <br>
      * {@link Chart.inverted}이면 Y축이 아래쪽에 수평으로, X축은 왼쪽에 수직으로 표시된다.
+     * 
+     * @config
      */
     NORMAL = 'normal',
     /**
      * X축은 위쪽에 수평으로, Y축은 오른쪽에 수직으로 표시된다.
      * <br>
      * {@link Chart.inverted}이면 Y축이 위쪽에 수평으로, X축은 오른쪽에 수직으로 표시된다.
+     * 
+     * @config
      */
     OPPOSITE = 'opposite',
     /**
@@ -448,8 +523,61 @@ export enum AxisPosition {
      * 2. 차트의 X축 하나에만 적용할 수 있다. 두번째로 지정된 축의 속성은 {@link NORMAL}로 적용된다.
      * 3. 상대 축이 **linear** 가 아니거나 {@link LinearAxis.baseValue}가 min 보다 작거나 max보다 크면 이 값은 무시되고,
      *    {@link NORMAL}로 적용된다.
+     * 
+     * @config
      */
     BASE = 'base'
+}
+
+/**
+ * 축 스크롤바 모델.\
+ * 축 스크롤 상태를 표시하고, 사용자가 스크롤 범위나 위치를 변경할 수 있다.
+ */
+export class AxisScrollBar extends AxisItem {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(axis: Axis) {
+        super(axis, false);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 스크롤바 두께.
+     */
+    width = 12;
+}
+
+export interface IAxisZoom {
+    start: number;
+    end: number;
+}
+
+export class AxisZoom {
+
+    start: number;
+    end: number;
+
+    constructor(public axis: Axis, start: number, end: number) {
+        this.resize(start, end);
+    }
+    
+    resize(start: number, end: number): boolean {
+        start = Math.max(this.axis.axisMin(), Math.min(this.axis.axisMax(), start));
+        end = Math.max(start, Math.min(this.axis.axisMax(), end));
+
+        if (start !== this.start || end !== this.end) {
+            this.start = start;
+            this.end = end;
+            return true;
+        }
+    }
 }
 
 /**
@@ -460,13 +588,25 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     readonly name: string;
     /**
      * @config
      */
     readonly title = new AxisTitle(this);
+    /**
+     * @config
+     */
     readonly line = new AxisLine(this);
+    /**
+     * @config
+     */
     readonly tick: AxisTick;
+    /**
+     * @config
+     */
     readonly label: AxisLabel;
     /**
      * visible 기본값이 undefined이다.
@@ -474,8 +614,18 @@ export abstract class Axis extends ChartItem implements IAxis {
      * @config
      */
     readonly grid = this._createGrid();
+    /**
+     * @config
+     */
     readonly guides: AxisGuide[] = [];
+    /**
+     * @config
+     */
     readonly crosshair = new Crosshair(this);
+    /**
+     * @config
+     */
+    readonly scrollBar = new AxisScrollBar(this);
 
     _isX: boolean;
     _isHorz: boolean;
@@ -484,10 +634,13 @@ export abstract class Axis extends ChartItem implements IAxis {
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
     _markPoints: number[];
-    _length: number;
+    _vlen: number;
     _minPad = 0;
     _maxPad = 0;
     _values: number[] = [];
+    protected _min: number;
+    protected _max: number;
+    _zoom: AxisZoom;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -507,6 +660,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     /**
      * 표시 위치.
+     * 기본적으로 상대 축의 원점 쪽에 표시된다.
      * 
      * @config
      */
@@ -534,7 +688,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     maxValue: number;
     /**
-     * Plot 영역이나 앞쪽 축 사이의 여백 크기.
+     * plot 영역이나 먼저 표시되는 축 사이의 여백 크기.
      * 
      * @config
      */
@@ -552,6 +706,10 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     getBaseValue(): number {
         return NaN;
+    }
+
+    length(): number {
+        return this._max - this._min;
     }
     
     abstract isContinuous(): boolean;
@@ -598,7 +756,11 @@ export abstract class Axis extends ChartItem implements IAxis {
         const series = this._series;
         const vals: number[] = this._values;
 
-        this._range = this._doCalcluateRange(vals);
+        if (this._zoom) {
+            this._range = { min: this._zoom.start, max: this._zoom.end };
+        } else {
+            this._range = this._doCalcluateRange(vals);
+        }
 
         // clustering (은 x축에서만 가능)
         if (this._isX) {
@@ -623,7 +785,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     buildTicks(length: number): void {
-        this._ticks = this._doBuildTicks(this._range.min, this._range.max, this._length = length);
+        this._ticks = this._doBuildTicks(this._range.min, this._range.max, this._vlen = length);
     }
 
     calcPoints(length: number, phase: number): void {
@@ -631,7 +793,13 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     /**
+     * @internal
+     * 
      * value에 해당하는 축상의 위치.
+     * 
+     * @param length axis view length
+     * @param value 값
+     * @param point 포인트가 너비를 갖는 경우 포인트 중심 위치를 기준으로 한다. (category axis)
      */
     abstract getPosition(length: number, value: number, point?: boolean): number;
     abstract getUnitLength(length: number, value: number): number;
@@ -654,6 +822,26 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     contains(value: number): boolean {
         return value >= this._range.min && value <= this._range.max;
+    }
+
+    resetZoom(): void {
+        if (this._zoom) {
+            this._zoom = null;
+            this._changed();
+        }
+    }
+    
+    zoom(start: number, end: number): void {
+        if (end === start) {
+            this.resetZoom();
+        } else if (!isNaN(start) && !isNaN(end)) {
+            if (!this._zoom) {
+                this._zoom = new AxisZoom(this, start, end);
+                this._changed();
+            } else if (this._zoom.resize(start, end)) {
+                this._changed();
+            }
+        }
     }
 
     //-------------------------------------------------------------------------

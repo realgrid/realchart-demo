@@ -17,12 +17,24 @@ const config = {
         width: 65,
         height: '70%',
         top: 100,
-        left: 50,
+        left: 200,
         vertical: true,
         maxValue: 100,
         value: 81,
         scale: {
             line: true,
+        },
+        band: {
+            gap: 3,
+            ranges: [{
+                toValue: 30,
+                color: '#ff0',
+            }, {
+                toValue: 60,
+                color: '#fa0'
+            }, {
+                color: '#f40'
+            }]
         },
         ranges: [{
             toValue: 50,
@@ -33,6 +45,13 @@ const config = {
         }],
         label: {
             text: "RealChart<br>Linear<br>ver 1.0"
+        },
+        style: {
+            padding: '10px'
+        },
+        paneStyle: {
+            stroke: 'lightblue',
+            borderRadius: '10px'
         }
     }, {
         type: 'linear',
@@ -40,7 +59,7 @@ const config = {
         width: 200,
         height: '70%',
         top: 100,
-        left: 200,
+        left: 350,
         vertical: true,
         maxValue: 100,
         value: 81,
@@ -88,10 +107,23 @@ function setActions(container) {
         config.gauge[0].label.gap = _getValue(e);
         chart.load(config);
     }, '5%');
+    createCheckBox(container, 'scale', function (e) {
+        config.gauge[0].scale.visible = _getChecked(e);
+        chart.load(config);
+    }, true);
     createCheckBox(container, 'scale.opposite', function (e) {
         config.gauge[0].scale.opposite = _getChecked(e);
         chart.load(config);
     }, false);
+    createCheckBox(container, 'band', function (e) {
+        config.gauge[0].band.visible = _getChecked(e);
+        chart.load(config);
+    }, false);
+    createListBox(container, "band.position", ['default', 'opposite', 'inside'], function (e) {
+        config.gauge[0].band.position = _getValue(e);
+        chart.load(config);
+    }, 'default');
+    line(container);
     createListBox(container, "label2.position", ['left', 'right', 'top', 'bottom'], function (e) {
         config.gauge[1].label.position = _getValue(e);
         chart.load(config);

@@ -19,7 +19,7 @@ import { BarSeriesGroup } from '../../../../src/model/series/BarSeries';
         let group = new BarSeriesGroup(null);
 
         expect(group).exist;
-        expect(group._type()).eq('bar');
+        expect(group._type()).eq('bargroup');
         expect(group._seriesType()).eq('bar');
     });
 

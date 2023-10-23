@@ -9,15 +9,17 @@
 import { isArray, isObject, isString, pickNum, pickProp, pickProp3 } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { RcElement } from "../common/RcControl";
+import { RcObject } from "../common/RcObject";
 import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
+import { RectElement } from "../common/impl/RectElement";
 import { Shape, Shapes } from "../common/impl/SvgShape";
 import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { LineType } from "./ChartTypes";
 import { DataPoint, DataPointCollection } from "./DataPoint";
-import { ILegendSource } from "./Legend";
+import { ILegendSource, LegendItem } from "./Legend";
 import { Tooltip } from "./Tooltip";
 import { CategoryAxis } from "./axis/CategoryAxis";
 
@@ -111,8 +113,8 @@ export interface IPlottingItem {
     index: number;
     xAxis: string | number;
     yAxis: string | number;
-
     visible: boolean;
+
     getVisiblePoints(): DataPoint[];
     getLegendSources(list: ILegendSource[]): void;
     needAxes(): boolean;
@@ -141,19 +143,14 @@ export enum TrendType {
     MOVING_AVERAGE = 'movingAverage'
 }
 
-export class MovingAverage {
+export class MovingAverage extends RcObject {
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    interval: number;
-    type: 'simple' | 'weighted' | 'exponential' | 'triangualr';
+    interval: number = 5;
+    type: 'simple' | 'weighted' | 'exponential' | 'triangualr' = 'simple';
 }
-
-const _movingAverage = {
-    interval: 5,
-    type: 'simple'
-};
 
 /**
  * 시리즈 추세선.
@@ -191,10 +188,6 @@ export class Trendline extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _getDefObjProps(prop: string) {
-        if (prop === 'movingAverage') return _movingAverage;
-    }
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -338,6 +331,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
+    static readonly LEGEND_MARKER = 'rct-legend-item-marker';
+
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
@@ -357,12 +352,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    readonly name: string;
-    readonly label: string;
-    readonly pointLabel: DataPointLabel;
-    readonly trendline: Trendline;
-    readonly tooltip: Tooltip;
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -398,6 +387,12 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     // properties
     //-------------------------------------------------------------------------
     abstract _type(): string; // for debugging, ...
+
+    readonly name: string;
+    readonly label: string;
+    readonly pointLabel: DataPointLabel;
+    readonly trendline: Trendline;
+    readonly tooltip: Tooltip;
 
     // group: string;
     /**
@@ -482,6 +477,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     displayInLegend = true;
     /**
+     * true로 지정하면 시리즈 내비게이터에 표시한다.
+     */
+    displayInNavigator = false;
+    /**
      * 데이터 point의 동적 스타일 콜백.
      * 
      * @config
@@ -504,11 +503,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     getLabeledPoints(): DataPoint[] {
-        return this._points.getPoints();
+        return this._points.getPoints(this._xAxisObj, this._yAxisObj);
     }
 
     getVisiblePoints(): DataPoint[] {
-        return this._points.getPoints();
+        return this._points.getPoints(this._xAxisObj, this._yAxisObj);
     }
 
     // point에 표시되는 최대 label 개수.
@@ -550,7 +549,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return this.label || this.name;
     }
 
-    legendMarker(): RcElement {
+    legendMarker(doc: Document): RcElement {
+        if (!this._legendMarker) {
+            this._legendMarker = this._createLegendMarker(doc, LegendItem.MARKER_SIZE);
+        }
         return this._legendMarker;
     }
     setLegendMarker(elt: RcElement): void {
@@ -597,10 +599,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    protected _createPoint(source: any): DataPoint {
-        return new DataPoint(source);
-    }
-
     createPoints(source: any[]): DataPoint[] {
         return source.map((s, i) => {
             const p = this._createPoint(s);
@@ -614,9 +612,9 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     getXStart(): number {
         let s = this._xAxisObj.parseValue(this.xStart);
+        const v = !isNaN(s) ? s : this._xAxisObj.parseValue(this.chart.xStart);
 
-        if (!isNaN(s)) return s;
-        return this._xAxisObj.parseValue(this.chart.xStart);
+        return this._xAxisObj._zoom ? v + Math.floor(this._xAxisObj._zoom.start) : v;
     }
 
     getXStep(): number {
@@ -639,8 +637,9 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._calcedColor = void 0;
         this._xAxisObj = this.group ? this.group._xAxisObj : this.chart._connectSeries(this, true);
         this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
-        this._runPoints = this._points.getPoints();
-        this._doPrepareRender();
+        this._runPoints = this._points.getPoints(this._xAxisObj, this._yAxisObj);
+
+        super.prepareRender();
     }
 
     collectCategories(axis: IAxis): string[] {
@@ -684,7 +683,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         } else {
             this._runPoints.forEach((p, i) => {
                 if (p.isNull) {
-                    p.y = p.yGroup = NaN;
+                    p.y = p.yGroup = p.yValue = NaN;
                 } else {
                     // p.y가 point 생성 시 null이었지만 series.prepareRender() 중 정상 값으로 설정될 수 있다. (waterfall)
                     // isNull은 유지하면서 p.y 값이 재설정될 수 있도록 한다.
@@ -831,6 +830,14 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _createPoint(source: any): DataPoint {
+        return new DataPoint(source);
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, size / 2);
+    }
+
     _referOtherSeries(series: Series): boolean {
         // true 리턴하면 더 이상 참조하지 않는 다는 뜻.
         return true;
@@ -973,7 +980,7 @@ export class PlottingItemCollection  {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    get(name: string): Series {
+    getSeries(name: string): Series {
         return this._map[name];
     }
 
@@ -1038,6 +1045,9 @@ export class PlottingItemCollection  {
         });
     }
 
+    updateData(values: any[]): void {
+    }
+
     prepareRender(): void {
         const visibles = this._visibleSeries = [];
         let iShape = 0;
@@ -1075,6 +1085,7 @@ export class PlottingItemCollection  {
             const g = new cls(chart);
 
             g.load(src);
+            g.index = index;
             return g;
         }
 
@@ -1614,10 +1625,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    _type(): string {
-        return this._seriesType();
-    }
-
+    abstract _type(): string;
     abstract _seriesType(): string;
 
     // Axis에서 요청한다.
@@ -1686,7 +1694,6 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     protected _doLoadProp(prop: string, value: any): boolean {
-        // TODO: children으로 통일한다.
         if (prop === 'children') {
             this.$_loadSeries(this.chart, value);
             return true;
@@ -1741,6 +1748,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
             throw new Error('이 그룹에 포함될 수 없는 시리즈입니다: ' + series);
         }
     }
+
     private $_collectValues(axis: IAxis, vals: number[]): void {
         this._visibles.forEach(ser => {
             ser.collectValues(axis, vals);

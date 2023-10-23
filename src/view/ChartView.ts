@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { ButtonElement } from "../common/ButtonElement";
 import { pickNum } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { ClipElement, RcElement } from "../common/RcControl";
@@ -24,6 +25,7 @@ import { AxisGuideContainer, BodyView } from "./BodyView";
 import { ChartElement } from "./ChartElement";
 import { HistoryView } from "./HistoryView";
 import { LegendView } from "./LegendView";
+import { NavigatorView } from "./NavigatorView";
 import { PolarBodyView } from "./PolarBodyView";
 import { SeriesView } from "./SeriesView";
 import { TitleView } from "./TitleView";
@@ -404,8 +406,14 @@ export class CreditView extends ChartElement<Credits> {
         this.setCursor(model.url ? 'pointer' : '');
         return this._textView.getBBounds();
     }
+}
 
-    protected _doLayout(param: any): void {
+class ZoomButton extends ButtonElement {
+
+    constructor(doc: Document) {
+        super(doc, 'Reset Zoom', 'rc-reset-zoom');
+
+        this.visible = false;
     }
 }
 
@@ -427,9 +435,11 @@ export class ChartView extends RcElement {
     private _polarView: PolarBodyView;
     private _currBody: BodyView;
     private _axisSectionViews: {[key: string]: AxisSectionView} = {};
+    private _navigatorView: NavigatorView;
     private _creditView: CreditView;
     private _historyView: HistoryView;
     private _tooltipView: TooltipView;
+    private _zoomButton: ZoomButton;
     private _seriesClip: ClipElement;
 
     _org: IPoint;
@@ -453,9 +463,11 @@ export class ChartView extends RcElement {
 
         this.add(this._titleSectionView = new TitleSectionView(doc));
         this.add(this._legendSectionView = new LegendSectionView(doc));
+        this.add(this._navigatorView = new NavigatorView(doc));
         this.add(this._creditView = new CreditView(doc));
         this.add(this._historyView = new HistoryView(doc));
         this.add(this._tooltipView = new TooltipView(doc));
+        this.add(this._zoomButton = new ZoomButton(doc));
     }
 
     //-------------------------------------------------------------------------
@@ -893,6 +905,13 @@ export class ChartView extends RcElement {
         }
     }
 
+    getAxis(axis: Axis): AxisView {
+        for (const dir in this._axisSectionViews) {
+            const v = this._axisSectionViews[dir].views.find(v => v.model === axis);
+            if (v) return v;
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -1031,7 +1050,7 @@ export class ChartView extends RcElement {
 
     private $_measurePolar(doc: Document, m: Chart, w: number, h: number, phase: number): void {
         const body = m.body;
-        const rd = body.getSize(w, h) / 2;
+        const rd = body.calcRadius(w, h);
 
         // axes
         this.$_prepareAxes(doc, m);

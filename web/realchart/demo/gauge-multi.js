@@ -5,6 +5,8 @@
 const config = {
     templates: {
         gauge: {
+            width: '33%',
+            height: '50%',
             innerRadius: '93%',
             valueRim: {
                 ranges: [{
@@ -40,19 +42,14 @@ const config = {
     gauge: [{
         template: "gauge",
         name: 'gauge1',
-        width: '33%',
-        height: '50%',
         left: 0,
         top: 0,
         value: Math.random() * 100,
     }, {
         template: "gauge",
         name: 'gauge2',
-        width: '33%',
-        height: '50%',
         left: '33%',
         top: 0,
-        valueRadius: '104%',    
         valueRim: {
             thickness: '200%',
         },
@@ -60,32 +57,48 @@ const config = {
     }, {
         template: "gauge",
         name: 'gauge3',
-        width: '33%',
-        height: '50%',
         left: '66%',
         top: 0,
         value: Math.random() * 100,
     }, {
         template: "gauge",
         name: 'gauge4',
-        width: '33%',
-        height: '50%',
         left: 0,
         top: '50%',
         value: Math.random() * 100,
+        innerRadius: '85%',
+        valueRim: {
+            stroked: true,
+            style: {
+                strokeLinecap: 'round'
+            }
+        },
+        paneStyle: {
+            stroke: 'lightblue',
+            strokeWidth: '2px',
+            borderRadius: '10px'
+        }
     }, {
         template: "gauge",
         name: 'gauge5',
-        width: '33%',
-        height: '50%',
         left: '33%',
         top: '50%',
         value: Math.random() * 100,
+        innerRadius: '75%',
+        valueRim: {
+            stroked: true,
+            style: {
+                strokeDasharray: '3'
+            }
+        },
+        label: {
+            style: {
+                fontSize: '30px'
+            }
+        }
     }, {
         template: "gauge",
         name: 'gauge6',
-        width: '33%',
-        height: '50%',
         left: '66%',
         top: '50%',
         value: Math.random() * 100,
@@ -124,7 +137,7 @@ function setActions(container) {
         clearInterval(timer);
         timer = setInterval(() => {
             for (let i = 1; i <= 6; i++) {
-                chart.updateGauge('gauge' + i, Math.random() * 100);
+                chart.getGauge('gauge' + i).updateValue(Math.random() * 100);
             }
         }, 2000);
     });

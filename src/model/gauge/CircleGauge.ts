@@ -6,22 +6,22 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
+import { IPercentSize, IValueRange, RtPercentSize, buildValueRanges, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
-import { CircularGauge, Gauge, GaugeGroup, GaugeScale, IGaugeValueRange, ValueGauge } from "../Gauge";
+import { CircularGaugeGroup, CircularGauge, GaugeItemPosition, GaugeScale, GaugeRangeBand, ICircularGaugeExtents, ValueGauge } from "../Gauge";
 
-export abstract class CircleGaugeRim extends ChartItem {
+export abstract class CircleGaugeRimBase extends ChartItem {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private _ranges: IGaugeValueRange[];
+    private _ranges: IValueRange[];
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _runRanges: IGaugeValueRange[];
+    private _runRanges: IValueRange[];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -39,10 +39,10 @@ export abstract class CircleGaugeRim extends ChartItem {
      * 
      * @config
      */
-    get ranges(): IGaugeValueRange[] {
+    get ranges(): IValueRange[] {
         return this.$_internalRanges()?.slice(0);
     }
-    set ranges(value: IGaugeValueRange[]) {
+    set ranges(value: IValueRange[]) {
         if (value !== this._ranges) {
             this._ranges = value;
             this._runRanges = null;
@@ -62,7 +62,7 @@ export abstract class CircleGaugeRim extends ChartItem {
         return ranges ? ranges.length : 0;
     }
 
-    getRange(value: number): IGaugeValueRange | undefined {
+    getRange(value: number): IValueRange | undefined {
         const ranges = this.$_internalRanges();
 
         if (ranges) {
@@ -77,15 +77,18 @@ export abstract class CircleGaugeRim extends ChartItem {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_internalRanges(): IGaugeValueRange[] {
+    private $_internalRanges(): IValueRange[] {
         if (!this._runRanges) {
-            this._runRanges = ValueGauge.buildRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue);
+            this._runRanges = buildValueRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue);
         }
         return this._runRanges;
     }
 }
 
-export class CircleGaugeBackRim extends CircleGaugeRim {
+/**
+ * 바탕 rim.
+ */
+export class CircleGaugeRim extends CircleGaugeRimBase {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -140,7 +143,10 @@ export class CircleGaugeBackRim extends CircleGaugeRim {
     //-------------------------------------------------------------------------
 }
 
-export class CircleGaugeValueRim extends CircleGaugeRim {
+/**
+ * 값을 표시하는 rim.
+ */
+export class CircleGaugeValueRim extends CircleGaugeRimBase {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -180,6 +186,13 @@ export class CircleGaugeValueRim extends CircleGaugeRim {
             this._thickDim = parsePercentSize(this.thickness, true);    
         }
     }
+    /**
+     * true면 원호 대신 선으로 표시한다.
+     * 대시 표현이 가능해진다.
+     * 
+     * @config
+     */
+    stroked = false;
 
     //-------------------------------------------------------------------------
     // methods
@@ -347,16 +360,25 @@ export class CircleGaugePin extends ChartItem {
     getRadius(domain: number): number {
         return calcPercent(this._radiusDim, domain, 0);
     }
+}
+
+export class CircleGaugeScale extends GaugeScale {
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    stepPixels = 92;
+
+    protected _getStepMultiples(step: number): number[] {
+        //return [1, 2, 2.5, 5, 10];
+        return [1, 3, 6, 12];
+    }
 }
 
 /**
- * 게이지 모델.
+ * 원형 게이지 모델.
  * 
- * @config chart.gauge[type='circle']
+ * @config chart.gauge[type=circle]
  */
 export class CircleGauge extends CircularGauge {
 
@@ -377,17 +399,23 @@ export class CircleGauge extends CircularGauge {
     // properties
     //-------------------------------------------------------------------------
     /**
+     * 게이지 본체 주변이나 내부에 값 영역들을 구분해서 표시하는 band의 모델.
+     * 
+     * @config
+     */
+    band = new GaugeRangeBand(this);
+    /**
      * 스케일 모델.
      * 
      * @config
      */
-    scale = new GaugeScale(this, false);
+    scale = new CircleGaugeScale(this, false);
     /**
      * 게이지 배경 원호 테두리 설정 모델.
      * 
      * @config
      */
-    rim = new CircleGaugeBackRim(this);
+    rim = new CircleGaugeRim(this);
     /**
      * 게이지의 값 원호 테두리 설정 모델.
      * 
@@ -417,7 +445,81 @@ export class CircleGauge extends CircularGauge {
     _type(): string {
         return 'circle';
     }
+
+    getExtents(gaugeSize: number): ICircularGaugeExtents {
+        const exts = super.getExtents(gaugeSize);
+        const scale = this.scale;
+        const band = this.band;
+        let rd = exts.radius;
+        const thick = rd - exts.inner;
+
+        if (band.visible) {
+            exts.bandThick = band.getThickness(thick);
+
+            switch (band.position) {
+                case GaugeItemPosition.INSIDE:
+                    exts.band = rd - (thick - exts.bandThick) / 2;
+                    break;
+
+                case GaugeItemPosition.OPPOSITE:
+                    exts.band = exts.inner - band.gap;
+                    exts.inner = exts.band - exts.bandThick;
+                    break;
+
+                default:
+                    exts.band = rd += exts.bandThick + band.gap;
+                    break;
+            }
+        }
+
+        if (scale.visible) {
+            exts.scaleTick = Math.max(1, scale.tick.length || 0);
+            exts.scaleLabel = 16;
+
+            switch (scale.position) {
+                case GaugeItemPosition.OPPOSITE:
+                    exts.scale = exts.inner - scale.gap;
+                    exts.inner = exts.scale - exts.scaleTick - exts.scaleLabel
+                    break;
+                    
+                case GaugeItemPosition.INSIDE:
+                default:
+                    exts.scale = rd + scale.gap;
+                    break;
+            }
+        }
+        return exts;
+    }
 }
 
-export class CircleGaugeGroup extends GaugeGroup<CircleGauge> {
+export class CircleGaugeGroup extends CircularGaugeGroup<CircleGauge> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart);
+
+        this.innerRadius = '50%';
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    _type(): string {
+        return 'circlegroup';
+    }
+
+    _gaugesType(): string {
+        return 'circle';
+    }
 }

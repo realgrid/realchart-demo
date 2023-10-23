@@ -62,7 +62,7 @@ const config = {
         height: '50%',
         left: '33%',
         top: 0,
-        valueRadius: '104%',    
+        valueRadius: '100%',    
         valueRim: {
             thickness: '200%',
         },
@@ -110,6 +110,11 @@ const config = {
         top: '50%',
         innerRadius: '80%',
         rim: {
+        },
+        band: {
+            visible: true,
+            position: 'inside',
+            thickness: '100%',
             ranges: [{
                 toValue: 20,
                 color: '#a40'
@@ -194,7 +199,7 @@ function setActions(container) {
         clearInterval(timer);
         timer = setInterval(() => {
             for (let i = 1; i <= 6; i++) {
-                chart.updateGauge('gauge' + i, Math.random() * 100);
+                chart.getGauge('gauge' + i).updateValue(Math.random() * 100);
             }
         }, 2000);
     });

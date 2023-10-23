@@ -1,27 +1,54 @@
-import { DocsThemeConfig } from "nextra-theme-docs";
+import { DocsThemeConfig, Link } from "nextra-theme-docs";
 import { Logo } from "./components/Logo";
 import { IconHelp } from "@tabler/icons-react";
 import { MainFooter } from "@/components/MainFooter";
 import { brand, company, footerData } from "@/lib/const";
 import { theme } from "./lib/theme";
+import { FiddleLink } from "./components/FiddleLink";
 
 const config: DocsThemeConfig = {
+  components: {
+    FiddleLink,
+  },
+  useNextSeoProps() {
+    return {
+      titleTemplate: '%s - RealChart'
+    }
+  },
   primaryHue: 207,
   sidebar: {
-    defaultMenuCollapseLevel: 10000,
+    // defaultMenuCollapseLevel: 10000,
+    titleComponent({ title: _title, type,  route }) {
+      if (route.indexOf('/config/config') >= 0) {
+        const [title] = route.split('/').slice(-1);
+        let prefix = (title.includes('Axis') || title.includes('series') || title.includes('gauge')) ? '[]' : '';
+        return <>{title}{prefix}</>;
+      } else if (type == 'separator') {
+        return <>{_title}</>;
+       } else {
+        return <>{_title}</>;
+      }
+    }
   },
   logo: <Logo brand={brand} showBrandName iconSize={32} textSize={28} />,
+  toc: {
+    headingComponent({id, children }) {
+      // remove codeblock format
+      const esc = children.replace(/{:.*}/g, '');
+      return <>{esc}</>;
+    }
+  },
   banner: {
     key: "1.0-release",
     text: (
-      <a href="/docs/release/v1.0">🎉 RealChart 1.0 is released. Read more →</a>
+      <a href="/guide/release/v1.0">🎉 RealChart 1.0 is released. Read more →</a>
     ),
   },
   editLink: {
-    component: () => null,
+    component: () => null
   },
   feedback: {
-    content: null,
+    content: null
   },
   search: {
     placeholder: "문서 및 데모 검색",

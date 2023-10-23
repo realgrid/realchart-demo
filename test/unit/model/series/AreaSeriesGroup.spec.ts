@@ -19,7 +19,7 @@ import { AreaSeriesGroup } from '../../../../src/model/series/LineSeries';
         let group = new AreaSeriesGroup(null);
 
         expect(group).exist;
-        expect(group._type()).eq('area');
+        expect(group._type()).eq('areagroup');
         expect(group._seriesType()).eq('area');
     });
 

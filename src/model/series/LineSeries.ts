@@ -7,12 +7,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp } from "../../common/Common";
+import { RcElement } from "../../common/RcControl";
 import { SVGStyleOrClass, StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
+import { LegendItem } from "../Legend";
 import { MarkerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
+import { LineSeriesMarkerView } from "./legend/LineSeriesMarkerView";
 
 export class LineSeriesPoint extends DataPoint {
 
@@ -23,6 +26,9 @@ export class LineSeriesPoint extends DataPoint {
     shape: Shape;
 }
 
+/**
+ * 데이터 포인트 maker 설정 정보.
+ */
 export class LineSeriesMarker extends SeriesMarker {
 
     //-------------------------------------------------------------------------
@@ -66,8 +72,6 @@ export abstract class LineSeriesBase extends Series {
     // fields
     //-------------------------------------------------------------------------
     /**
-     * 데이터 포인트 maker 설정 정보.
-     * 
      * @config
      */
     marker: LineSeriesMarker = new LineSeriesMarker(this);
@@ -181,6 +185,17 @@ export class LineSeries extends LineSeriesBase {
     }
     getLineType(): LineType {
         return this.lineType;
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return new LineSeriesMarkerView(doc, size);
+    }
+
+    legendMarker(doc: Document): RcElement {
+        const m = super.legendMarker(doc);
+
+        (m as LineSeriesMarkerView).setShape(this.getShape(null), Math.min(LegendItem.MARKER_SIZE, this.marker.radius * 2));
+        return m;
     }
 }
 
@@ -357,6 +372,10 @@ export class LineSeriesGroup extends SeriesGroup<LineSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    _type(): string {
+        return 'linegroup';
+    }
+
     _seriesType(): string {
         return 'line';
     }
@@ -383,6 +402,10 @@ export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    _type(): string {
+        return 'areagroup';
+    }
+
     _seriesType(): string {
         return 'area';
     }

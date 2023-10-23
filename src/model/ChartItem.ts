@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isBoolean, isObject, isString, pickNum } from "../common/Common";
+import { isArray, isBoolean, isObject, isString } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { SvgRichText, RichTextParamCallback } from "../common/RichText";
@@ -43,8 +43,10 @@ export class ChartItem extends RcObject {
     // properties
     //-------------------------------------------------------------------------
     /** 
-     * 표시 여부.
+     * 표시 여부.\
      * 모델에 따라 기본값이 다르다.
+     * 
+     * @fiddle common/legend-visible Legend Visible
      * 
      * @config
      */
@@ -76,11 +78,86 @@ export class ChartItem extends RcObject {
         return this;
     }
 
-    update(source: any): ChartItem {
-        if (source != null && (this._doUpdateSimple(source) || this._doUpdate(source))) {
-            this.chart?._modelChanged(this);
-            return this;
+    save(): any {
+        const obj = {
+            visible: this.visible
+        };
+
+        this._doSave(obj);
+        return obj;
+    }
+
+    private INVALID = {};
+
+    private $_parseProp(path: string): { obj: ChartItem, prop: string } | any {
+        if (path.indexOf('.') >= 0) {
+            const arr = path.split('.');
+            const len = arr.length - 1;
+            let obj: any = this;
+
+            for (let i = 0; i < len; i++) {
+                obj = obj[arr[i]];
+                if (!(obj instanceof RcObject)) {
+                    return this.INVALID;
+                }
+            }
+            return { obj, prop: arr[len] };
         }
+    }
+
+    getProp(prop: string): any {
+        if (isString(prop)) {
+            const path = this.$_parseProp(prop);
+
+            if (path) {
+                return path === this.INVALID ? _undefined : path.obj[path.prop];
+            } else {
+                return this[prop];
+            }
+        }
+    }
+
+    setProp(prop: string, value: any, redraw: boolean): boolean {
+        if (isString(prop)) {
+            const path = this.$_parseProp(prop);
+
+            if (path) {
+                if (path.obj instanceof ChartItem) {
+                    path.obj.setProp(path.prop, value, redraw);
+                } else if (path.obj instanceof RcObject) {
+                    if (value !== path.obj[path.prop]) {
+                        path.obj[path.prop] = value;
+                        redraw && this._changed();
+                    }
+                }
+            } else if (prop in this) {
+                const v = this[prop];
+
+                if (v instanceof ChartItem) {
+                    return v.setProps(value, redraw);
+                } else if (value !== v) {
+                    this[prop] = value;
+                    redraw && this._changed();
+                    return true;
+                }
+            }
+        }
+    }
+
+    setProps(props: object, redraw: boolean): boolean {
+        let changed = false;
+
+        if (isObject(props)) {
+            for (const p in props) {
+                if (this.setProp(p, props[p], false)) {
+                    changed = true;
+                }
+            }
+        } else if (this._doLoadSimple(props)) {
+            changed = true;
+        }
+        changed && redraw && this._changed();
+        return changed;
     }
 
     prepareRender(): void {
@@ -90,8 +167,8 @@ export class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _changed(): void {
-        this.chart?._modelChanged(this);
+    protected _changed(tag?: any): void {
+        this.chart?._modelChanged(this, tag);
     }
 
     //-------------------------------------------------------------------------
@@ -102,10 +179,6 @@ export class ChartItem extends RcObject {
             this.visible = source;
             return true;
         }
-    }
-
-    protected _getDefObjProps(prop: string): any {
-        return;
     }
 
     protected _doLoad(source: any): void {
@@ -121,7 +194,7 @@ export class ChartItem extends RcObject {
                 } else if (v instanceof Date) {
                     this[p] = new Date(v);
                 } else if (isObject(v)) {
-                    this[p] = Object.assign({}, this._getDefObjProps(p), v);
+                    this[p] = Object.assign({}, v);
                 } else {
                     this[p] = v;
                 }
@@ -133,12 +206,7 @@ export class ChartItem extends RcObject {
         return false;
     }
 
-    protected _doUpdateSimple(source: any): boolean {
-        return false;
-    }
-
-    protected _doUpdate(source: any): boolean {
-        return false;
+    protected _doSave(target: object): void {
     }
 
     protected _doPrepareRender(chart: IChart): void {}
@@ -174,7 +242,7 @@ export abstract class ChartText extends ChartItem {
     /**
      * @config
      */
-    brightStyle: SVGStyleOrClass;
+    lightStyle: SVGStyleOrClass;
     /**
      * @config
      */
@@ -186,9 +254,9 @@ export abstract class ChartText extends ChartItem {
     /**
      * 텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
      * <br>
-     * 밝게 표시할 때는 {@link brightStyle}을 적용하고,
+     * 밝게 표시할 때는 {@link lightStyle}을 적용하고,
      * 어둡게 표시할 때는 {@link darkStyle}이 적용된다.
-     * brightStyle이 지정되지 않으면 'rct-text-bright'이,
+     * brightStyle이 지정되지 않으면 'rct-text-light'이,
      * darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.
      * 
      * @config

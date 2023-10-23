@@ -6,11 +6,17 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { DEG_RAD, IPercentSize, ORG_ANGLE, SVGStyleOrClass, SizeValue, _undefined, calcPercent, parsePercentSize } from "../common/Types";
+import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, _undefined, calcPercent, parsePercentSize } from "../common/Types";
 import { AxisGuide } from "./Axis";
 import { IChart } from "./Chart";
 import { BackgroundImage, ChartItem } from "./ChartItem";
 import { Series } from "./Series";
+
+export enum ZoomType {
+    X = 'x',
+    Y = 'y',
+    BOTH = 'both'
+}
 
 /**
  * 시리즈들이 그려지는 plot 영역 모델.
@@ -18,41 +24,86 @@ import { Series } from "./Series";
 export class Body extends ChartItem {
 
     //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _radius: RtPercentSize;
+    private _centerX: RtPercentSize;
+    private _centerY: RtPercentSize;
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _sizeDim: IPercentSize;
+    private _radiusDim: IPercentSize;
     private _cxDim: IPercentSize;
     private _cyDim: IPercentSize;
-    _cx: number;
-    _cy: number;
-    _rd: number; 
 
     _guides: AxisGuide[] = [];
     _frontGuides: AxisGuide[] = [];
+    private _rd: number;
+    private _cx: number;
+    private _cy: number;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart);
+
+        this.radius = '45%';
+        this.centerX = '50%';
+        this.centerY = '50%';
+    }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    // name: string;
-    size: SizeValue = '90%';
-    centerX: SizeValue = '50%';
-    centerY: SizeValue = '50%';
+    get radius(): RtPercentSize {
+        return this._radius;
+    }
+    set radius(value: RtPercentSize) {
+        if (value !== this._radius) {
+            this._radius = value;
+            this._radiusDim = parsePercentSize(value, true);
+        }
+    }
+
+    get centerX(): RtPercentSize {
+        return this._centerX;
+    }
+    set centerX(value: RtPercentSize) {
+        if (value !== this._centerX) {
+            this._centerX = value;
+            this._cxDim = parsePercentSize(value, true);
+        }
+    }
+
+    get centerY(): RtPercentSize {
+        return this._centerY;
+    }
+    set centerY(value: RtPercentSize) {
+        if (value !== this._centerY) {
+            this._centerY = value;
+            this._cyDim = parsePercentSize(value, true);
+        }
+    }
+
     startAngle = 0;
     circular = true;
     image = new BackgroundImage(null);
+    zoomType = ZoomType.X;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getSize(width: number, height: number): number {
-        return calcPercent(this._sizeDim, Math.min(width, height));
+    calcRadius(width: number, height: number): number {
+        return calcPercent(this._radiusDim, Math.min(width, height));
     }
 
-    getCenter(width: number, height: number): {cx: number, cy: number} {
-        return {
-            cx: calcPercent(this._cxDim, width),
-            cy: calcPercent(this._cyDim, height)
-        };
+    setPolar(width: number, height: number): Body {
+        this._cx = calcPercent(this._cxDim, width);
+        this._cy = calcPercent(this._cyDim, height);
+        this._rd = calcPercent(this._radiusDim, Math.min(width, height));
+        return this;
     }
 
     getStartAngle(): number {
@@ -65,21 +116,13 @@ export class Body extends ChartItem {
             cx: this._cx,
             cy: this._cy,
             rd: this._rd,
-            deg: Math.PI * 2 / series._runPoints.length
+            deg: series ? Math.PI * 2 / series._runPoints.length : 0
         } : _undefined;
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoad(source: any): void {
-        super._doLoad(source);
-
-        this._sizeDim = parsePercentSize(this.size, true) || { size: 90, fixed: false };
-        this._cxDim = parsePercentSize(this.centerX, true) || { size: 50, fixed: false };
-        this._cyDim = parsePercentSize(this.centerY, true) || { size: 50, fixed: false };
-    }
-
     protected _doPrepareRender(chart: IChart): void {
         super._doPrepareRender(chart);
 

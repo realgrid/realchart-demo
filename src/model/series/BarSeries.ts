@@ -86,6 +86,10 @@ export class BarSeriesGroup extends ClusterableSeriesGroup<BarSeries> implements
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    _type(): string {
+        return 'bargroup';
+    }
+
     _seriesType(): string {
         return 'bar';
     }

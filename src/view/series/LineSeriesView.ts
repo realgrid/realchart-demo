@@ -565,15 +565,4 @@ export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
-        // return super._createLegendMarker(doc, size);
-        return new MarkerView(doc, size);
-    }
-
-    protected _getLegendMarker(doc: Document, model: LineSeries): RcElement {
-        const m = super._getLegendMarker(doc, model);
-        
-        (m as MarkerView).setShape(model.getShape(null), Math.min(LegendItem.MARKER_SIZE, model.marker.radius * 2));
-        return m;
-    }
 }

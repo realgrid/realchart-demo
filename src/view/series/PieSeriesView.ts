@@ -37,7 +37,7 @@ class SectorView extends SectorElement implements IPointView {
     // methods
     //-------------------------------------------------------------------------
     setPieSector(labels: PointLabelContainer, lines: PointLabelLineContainer, newSector: ISectorShape): void {
-        this._assignShape(newSector);
+        this._assignShape(newSector, false);
     }
 }
 
@@ -176,9 +176,11 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
 
         if (cnt > 1 || (cnt > 0 && !this._zombie)) {
             pts.forEach(p => {
-                p.yRate = fixnum(p === this._zombie ? p.yValue * this._zombieRate : p.yValue) / sum || 0;
-                p.startAngle = start;
-                start += p.angle = cw * p.yRate * total;
+                if (!p.isNull) {
+                    p.yRate = fixnum(p === this._zombie ? p.yValue * this._zombieRate : p.yValue) / sum || 0;
+                    p.startAngle = start;
+                    start += p.angle = cw * p.yRate * total;
+                }
             });
         } else if (cnt == 1) {
             const p = pts[0];
@@ -230,7 +232,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                     dx += Math.cos(a) * sliceOff;
                     dy += Math.sin(a) * sliceOff;
                 }
-                sector.translate(dx, dy);
+                sector.translate(dx, dy).setVisible(true);
     
                 const a = p.startAngle + p.angle / 2;
                 p.xPos = cx + Math.cos(a) * (sliceOff + rd * 0.7);
@@ -259,10 +261,16 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                         // this.$_layoutLabelInner(p, label, off, dist, slicedOff);
                         this.$_layoutLabelInner(p, labelView, labelOff, 0, p.sliced ? sliceOff : 0);
                     }
-                    labelView.setContrast(labelInside && sector.dom);
+                    labelView.setContrast(labelInside && sector.dom).setVisible(true);
                 } else {
                     lineViews.get(p)?.setVisible(false);
                 }
+            } else {
+                sector.setVisible(false);
+                if (labelViews && (labelView = labelViews.get(p, 0))) {
+                    labelView.setVisible(false);
+                }
+                lineViews.get(p)?.setVisible(false);
             }
         })
     }

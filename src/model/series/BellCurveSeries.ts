@@ -114,7 +114,7 @@ export class BellCurveSeries extends AreaSeries {
             const pts = this.$_loadTable(vals);
 
             this._doLoadPoints(pts);
-            this._runPoints = this._points.getPoints();
+            this._runPoints = this._points.getPoints(this._xAxisObj, this._yAxisObj);
 
             this.collectValues(this._xAxisObj, (this._xAxisObj as Axis)._values);
             this.collectValues(this._yAxisObj, (this._yAxisObj as Axis)._values);

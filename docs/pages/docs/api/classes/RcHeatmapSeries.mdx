@@ -1,0 +1,96 @@
+## RcHeatmapSeries
+            ### Extends
+- [RcChartSeries](../classes/RcChartSeries)
+            
+            
+**'heatmap'** 시리즈.
+
+            
+
+
+
+## Properties
+### pointLabel: [RcChartObject](../classes/RcChartObject)[#pointLabel]
+point label 모델.
+
+### tooltip: [RcChartObject](../classes/RcChartObject)[#tooltip]
+point label 모델.
+
+### trendLine: [RcChartObject](../classes/RcChartObject)[#trendLine]
+point label 모델.
+
+
+## Methods
+### get(prop): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#get]
+지정한 설정 값(들)을 가져온다.\
+지정 가능한 설정 값 목록은 [Configuration API 페이지](http://realchart.co.kr/config)에서 확인할 수 있다. 
+
+```js
+console.log(chart.series.get('name'))
+```
+
+하위 객체의 설정 속성은 속성 경로를 지정해서 직접 가져올 수도 있다.
+
+```js
+console.log(chart.axis.get('title.text'));
+```
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 속성 경로. |
+### set(prop, value, redraw): [RcChartObject](../classes/RcChartObject)[#set]
+지정한 속성의 값(들)을 설정한다.\
+지정 가능한 설정 값 목록은 [Configuration API 페이지](http://realchart.co.kr/config)에서 확인할 수 있다.\
+또, 이 객체 자신을 리턴하므로 javascript에서 builder 패턴으로 설정 값들을 연속해서 지정할 수 있다.
+
+```js
+ chart.series.set('xAxis', 1).set('yAxis', 1);
+```
+
+[get](#get)에서와 마찬가지로 하위 객체의 설정 속성을 속성 경로를 통해 직접 설정할 수도 있다.
+
+```js
+chart.axis.set('title.text', 'New Title'));
+```
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 경로 문자열 |
+| value | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 지정할 값(들) |
+| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+### setAll(props, redraw): [RcChartObject](../classes/RcChartObject)[#setAll]
+JSON 객체로 지정한 속성들의 값을 설정한다.\
+지정 가능한 설정 값 목록은 [Configuration API 페이지](http://realchart.co.kr/config)에서 확인할 수 있다. 
+
+```js
+ chart.series.set({
+     xAxis: 1,
+     yAxis: 1,
+     yField: 'salary'
+ });
+```
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| props | [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | 여러 설정 값들이 지정된 JSON 객체 |
+| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+### toggle(prop, redraw): [RcChartObject](../classes/RcChartObject)[#toggle]
+Boolean 타입의 설정값을 변경한다.\
+지정 가능한 설정 값 목록은 [Configuration API 페이지](http://realchart.co.kr/config)에서 확인할 수 있다. 
+
+```js
+chart.getSeries('ser02').toggle('visible');
+```
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 이름 |
+| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |

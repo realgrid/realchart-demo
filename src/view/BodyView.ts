@@ -24,11 +24,11 @@ import { DataPoint } from "../model/DataPoint";
 import { Series } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
-import { Gauge } from "../model/Gauge";
+import { Gauge, GaugeBase } from "../model/Gauge";
 import { ChartElement } from "./ChartElement";
 import { GaugeView } from "./GaugeView";
 import { IPointView, SeriesView } from "./SeriesView";
-import { CircleGaugeView } from "./gauge/CircleGaugeView";
+import { CircleGaugeGroupView, CircleGaugeView } from "./gauge/CircleGaugeView";
 import { ClockGaugeView } from "./gauge/ClockGaugeView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
 import { AreaSeriesView } from "./series/AreaSeriesView";
@@ -53,8 +53,8 @@ import { ScatterSeriesView } from "./series/ScatterSeriesView";
 import { TreemapSeriesView } from "./series/TreemapSeriesView";
 import { VectorSeriesView } from "./series/VectorSeriesView";
 import { WaterfallSeriesView } from "./series/WaterfallSeriesView";
-import { LinearGaugeView } from "./gauge/LinearGaugeView";
-import { BulletGaugeView } from "./gauge/BulletGaugeView";
+import { LinearGaugeGroupView, LinearGaugeView } from "./gauge/LinearGaugeView";
+import { BulletGaugeGroupView, BulletGaugeView } from "./gauge/BulletGaugeView";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -86,6 +86,9 @@ const gauge_types = {
     'linear': LinearGaugeView,
     'bullet': BulletGaugeView,
     'clock': ClockGaugeView,
+    'circlegroup': CircleGaugeGroupView,
+    'lineargroup': LinearGaugeGroupView,
+    'bulletgroup': BulletGaugeGroupView,
 }
 
 export class AxisGridView extends ChartElement<AxisGrid> {
@@ -115,28 +118,30 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     }
 
     protected _doLayout(): void {
-        const axis = this.model.axis;
+        const m = this.model;
+        const axis = m.axis;
         const w = this.width;
         const h = this.height;
         const pts = this._pts;
         const lines = this._lines;
+        const end = lines.count - 1;
 
-        if (pts[0] === 0) {
-            lines.first.setClass('rct-axis-grid-line-start');
-        } 
-        if (pts[pts.length - 1] === (axis._isHorz ? w : h)) {
-            lines.last.setClass('rct-axis-grid-line-end');
-        }
+        lines.forEach((line, i) => {
+            line.setBoolData('first', i === 0);
+            line.setBoolData('last', pts[i] === (axis._isHorz ? w : h));
+        })
 
         if (axis._isHorz) {
             lines.forEach((line, i) => {
-                // line.setVLine(pts[i], 0, h);
-                line.setVLineC(pts[i], 0, h);
+                if (line.setVisible((i !== 0 || m.startVisible) && (i !== end || m.endVisible))) {
+                    line.setVLineC(pts[i], 0, h);
+                }
             });
         } else {
             lines.forEach((line, i) => {
-                // line.setHLine(h - pts[i], 0, w);
-                line.setHLineC(h - pts[i], 0, w);
+                if (line.setVisible((i !== 0 || m.startVisible) && (i !== end || m.endVisible))) {
+                    line.setHLineC(h - pts[i], 0, w);
+                }
             });
         }
     }
@@ -711,9 +716,9 @@ export class BodyView extends ChartElement<Body> {
     protected _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
     private _series: Series[];
-    private _gaugeViews: GaugeView<Gauge>[] = [];
-    private _gaugeMap = new Map<Gauge, GaugeView<Gauge>>();
-    private _gauges: Gauge[];
+    private _gaugeViews: GaugeView<GaugeBase>[] = [];
+    private _gaugeMap = new Map<GaugeBase, GaugeView<GaugeBase>>();
+    private _gauges: GaugeBase[];
     // guides
     _guideContainer: AxisGuideContainer;
     _frontGuideContainer: AxisGuideContainer;
@@ -930,7 +935,7 @@ export class BodyView extends ChartElement<Body> {
         // }
     }
 
-    private $_createGaugeView(doc: Document, gauge: Gauge): GaugeView<Gauge> {
+    private $_createGaugeView(doc: Document, gauge: GaugeBase): GaugeView<Gauge> {
         return new gauge_types[gauge._type()](doc);
     }
 
@@ -984,7 +989,7 @@ export class BodyView extends ChartElement<Body> {
         });
     }
 
-    private $_prepareGauges(doc: Document, chart: IChart, gauges: Gauge[]): void {
+    private $_prepareGauges(doc: Document, chart: IChart, gauges: GaugeBase[]): void {
         const container = this._seriesContainer;
         const inverted = chart.isInverted();
         const map = this._gaugeMap;

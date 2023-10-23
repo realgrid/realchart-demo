@@ -33,12 +33,32 @@ class Tunner {
   }
 
 
-  _findTag (tags, tag) {
+  _findTag(tags, tag) {
     return tags?.find(t => t.tag == tag );
   }
 
-  _findTags (tags, tag) {
+  _findTags(tags, tag) {
     return tags?.filter(t => t.tag == tag );
+  }
+
+  _findModel(model, name) {
+    // return model.children?.find(c => {
+    //   if (c.name == name) {
+    //     return true;
+    //   } else {
+    //     return c.children && this._findModel(c, name);
+    //   }
+    // })
+    for (const child of model.children) {
+      if (child.name == name) return child;
+      if (child.children) return this._findModel(child, name);
+    }
+  }
+
+  _parseLink(tag, baseUrl='') {
+    const [{text}] = tag.content;
+    const [src, ...label] = text.split(' ');
+    return { label: label.join(' '), href: path.join(baseUrl, src)}
   }
 
   /**
@@ -46,10 +66,14 @@ class Tunner {
    * @param tag: any
    * @returns url item string
    */
-  _parseLinkTag(tag,baseUrl='') {
-    const [{text}] = tag.content;
-    const [src, ...label] = text.split(' ');
-    return `- [${label.join(' ')}](${path.join(baseUrl, src)})`;
+  _parseLinkTag(tag, baseUrl='') {
+    const { label, href } = this._parseLink(tag, baseUrl);
+    return `- [${label}](${href})`;
+  }
+
+  _parseFiddle(tag) {
+    const { label, href } = this._parseLink(tag, Tunner.fiddleUrl);
+    return `<FiddleLink label="${label}" href="${href}"/>`;
   }
 
   /**
@@ -72,7 +96,7 @@ class Tunner {
   _parseFiddleTag(tags) {
     const fiddles = this._findTags(tags, '@fiddle');
     return fiddles?.map(fiddle => {
-      return this._parseLinkTag(fiddle, this.fiddleUrl);
+      return this._parseFiddle(fiddle);
     }).join('\n');
   }
 
@@ -104,9 +128,12 @@ class Tunner {
    * @returns { config: string[], fiddle: string, defaultBlock: string}
    */
   _parseBlockTags(tags) {
+    const fiddle = this._parseFiddleTag(tags);
+    // const fiddle = _fiddle ? '- jsfiddle\n' + _fiddle : null;
+    
     return {
       config: this._parseConfigTag(tags),
-      fiddle: this._parseFiddleTag(tags),
+      fiddle,
       defaultBlock: this._parseDefaultTag(tags),
     }
   }
@@ -127,7 +154,7 @@ class Tunner {
 
   // parse property type
   _parseType(obj) {
-    const { type, name, types, elementType } = { ...obj };
+    const { type, name, types, elementType, qualifiedName } = { ...obj };
     switch(type) {
       case 'intrinsic':
         return name;
@@ -136,16 +163,39 @@ class Tunner {
       case 'array':
         return `${elementType.name}[]`;
       case 'reference':
-        // console.info({ [name]: type, ...obj })
-        return '';
+        if (qualifiedName) { // Date
+          return qualifiedName;
+        } else if (name == 'SVGStyles') { //special interface
+          return name;
+        }
+
+        // pre-scan
+        if (!this.classMap[name]) {
+          // console.debug(name, obj)
+          const model = this._findModel(this.model, name);
+          model && this._visit(model);
+        }
+
+        return this._parseType(this.classMap[name]?.type);
+      case 'literal':
+        console.warn(`[WARN] ignored ${type}`, obj);
+        return;
+      case 'reflection':
+        console.warn(`[WARN] ignored ${type}`);
+        // console.debug(obj.declaration?.signatures);
+        return;
       default:
-        console.warn('unexpected type', obj);
-        return '';
+        // class 인 경우, type 없음.
+        // console.warn('[WARN] unexpected type');
+        return;
     }
   }
 
   _parseTypeD(obj) {
-    const { id, type, name, types, elementType } = { ...obj };
+    const { id, type, name, types, elementType, kindString } = { ...obj };
+
+    // if kindString == 
+
     switch(type) {
       case 'intrinsic':
         return { type, name };
@@ -157,7 +207,6 @@ class Tunner {
         // console.info(obj)
         return { type, name, id };
       default:
-        console.warn('unexpected type', obj);
         return {};
     }
   }
@@ -212,8 +261,12 @@ class Tunner {
   }
   // scan all classes
   _visit(obj) {
-    const { name, children, kindString, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
+    const { name, children, kindString, type, typeParameters, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
     const { config, content } = this._parseComment(comment);
+    const propFilter = (child) => {
+      return (child.kindString == 'Property' && this._findTag(child.comment?.blockTags, '@config'))
+        || (child.kindString == 'Accessor' && this._findTag(child.getSignature?.comment?.blockTags, '@config'))
+    }
     switch (kindString) {
       case 'Class':
         this.classMap[name] = { 
@@ -222,10 +275,11 @@ class Tunner {
           config,
           content,
           extended: extendedTypes.map(t => t.name),
-          props: children.filter(c => 
-            c.kindString == 'Property'
-            && this._findTag(c.comment?.blockTags, '@config')
-          ).map(this._setContent.bind(this)),
+          props: children.filter(propFilter).map(c => {
+            return c.kindString == 'Property' 
+              ? this._setContent(c)
+              : this._setContent(c.getSignature)
+          }),
         };
         break;
       case 'Enumeration':
@@ -242,7 +296,11 @@ class Tunner {
         // console.debug(name, this.classMap[name]);
         break;
       case 'Type alias':
-        // console.debug(obj);
+        this.classMap[name] = {
+          kindString,
+          type,
+          typeParameters
+        }
         break;
     }
 
@@ -294,8 +352,11 @@ class MDGenerater {
    * @returns 
    */
   _makeProp(param) {
-    const { name: _name, type: _type, prop } = param;
+    const { name: _name, opt, type: _type, prop } = param;
     const { header, name, type, dtype, content, defaultValue, defaultBlock } = prop;
+    let enumLines = ''
+    let lines = `### ${name}${type ? ': \`' + type  + '\{:javascript}`': ''}[#${name}]\n`;
+
     if (dtype instanceof Array) {
       dtype.map(t => {
         if (t.type == 'reference') {
@@ -308,16 +369,15 @@ class MDGenerater {
       if (v?.kindString == 'Class') {
         let accessor = this.docMap;
         const keys = _type 
-          ? [..._name.split('.').slice(1), _type, name]
-          : [..._name.split('.').slice(1), name];
-        // console.debug({ keys });
+          ? [opt, _type, name]
+          : [opt, name];
         keys.forEach((key, i) => {
           if (!accessor[key]) {
             // is the last
             if (i == keys.length - 1) {
-              // console.debug( _name, _type, name, {v})
+
               const _content = `## ${name}\n${this._fixContent(content)}\n`
-                    + this._makeProps({ name, type: _type, props: v.props });
+                    + this._makeProps({ name, opt, type: _type, props: v.props });
               accessor[key] = { _content };
               // this._writeJsonFile('./docs/.tdout/' + keys.join('.') + '.json', accessor);
             } else {
@@ -327,12 +387,21 @@ class MDGenerater {
           accessor = accessor[key];
         });
         // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
+
+        lines = `### [${name}](./${_type}/${name})\n`;
+        lines += `${this._fixContent(v.content)}  \n`;
+        return lines;
+      } else if (v?.kindString == 'Enumeration') {
+        enumLines = this._makeEnums({ name, enums: v.props });
+      } else if (v?.kindString == 'Type Alias') {
+
       }
     }
-
-    let lines = `### ${name}${type ? ': \`' + type  + '\`': ''}\n`;
+    
     if (header) lines += `${header}  \n`;
     if (content) lines += `${this._fixContent(content)}  \n`;
+    
+    lines += enumLines;
     // @defalut가 없으면 typedoc에서 정의한 defaultValue를 사용한다.
     const dft = defaultBlock || defaultValue ;
     if (dft) {
@@ -340,12 +409,6 @@ class MDGenerater {
       lines += `\`default: ${value}\` ${content.join(' ')} \n`;
     }
 
-    if (dtype?.type == 'reference') {
-      const v = this.classMap[dtype.name];
-      if (v?.kindString == 'Enumeration') {
-        lines += this._makeEnums({ name, enums: v.props })
-      }
-    }
     return lines;
   }
 
@@ -357,10 +420,10 @@ class MDGenerater {
    * @returns contents
    */
   _makeProps(param) {
-    const { name, type, props } = param;
+    const { name, opt, type, props } = param;
     const h = '## Properties\n';
     return [ h, ...props.map(prop => {
-      return this._makeProp({ name, type, prop })
+      return this._makeProp({ name, opt, type, prop })
     })].join('\n');
   }
 
@@ -374,7 +437,7 @@ class MDGenerater {
     return enums.map(e => {
       const content = this._fixContent(e.content).replace(/\n/g, '  ');
       return `- \`'${e.value}'\` ${content}`
-    }).join('\n');
+    }).join('\n') + '\n\n';
   }
 
   /**
@@ -388,6 +451,7 @@ class MDGenerater {
    * @rparam ...attr: key, value pair object bind in []
    */
   _destructConfig(config) {
+    // ex) chart.series[type=vector]
     const regex = /(\w+(?:\.\w+)?)(?:\[(.*?)\])?(?:\s(.*))?/;
     const matches = config?.match(regex);
   
@@ -438,20 +502,27 @@ class MDGenerater {
     const { name, root, opt, label, type, props, content } = dconf;
     if (root != 'chart' || !opt) return;
 
-    // 개요
-    const typeStr = `[type=${type}]`;
-    const _content = `## ${opt}${type ? typeStr : ''}\n${this._fixContent(content)}\n`;
+    let subtitle = '';
+    let subtitleText = opt;
+    // 개요 문서에만 링크 추가
+    if (type) {
+      subtitleText += `[type=${type}]`;  
+      subtitle = `## [${subtitleText}](./${opt}/${type})`
+    }
+    const _content = `${this._fixContent(content)}\n`;
     
-    if ((opt == 'series' || opt == 'axis') && !type) return;
+    if (['series', 'xAxis', 'yAxis', 'gauge'].indexOf(opt) >= 0 && !type) 
+      return console.warn(`[WARN] ${name} type missed.`);
 
     if (!docMap[opt]) docMap[opt] = { _content: ''};
+
     // docMap 참조 주의...
-    docMap[opt] = { ...docMap[opt], _content: docMap[opt]._content += _content };
+    docMap[opt] = { ...docMap[opt], _content: docMap[opt]._content += `${subtitle}\n${_content}` };
     
     // 속성 추가
     if (props) {
-      const propContents = this._makeProps({ name, type, props });
-      this._setPropContents(docMap, { opt, type, _content: _content + propContents} )
+      const propContents = this._makeProps({ name, opt, type, props });
+      this._setPropContents(docMap, { opt, type, _content: `## ${subtitleText}\n${_content}` + propContents} )
     }
   }
 

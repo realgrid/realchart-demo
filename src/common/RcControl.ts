@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
-import { Path, SVGStyleOrClass, _undefined, isNull, pixel, throwFormat } from "./Types";
+import { Path, SVGStyleOrClass, _undefined, getCssProp, isNull, pixel, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
 import { SVGNS, isObject, isString, pickProp } from "./Common";
@@ -110,6 +110,10 @@ export abstract class RcControl extends RcWrappableObject {
 
     dom(): HTMLElement {
         return this._dom;
+    }
+
+    svg(): SVGSVGElement {
+        return this._svg;
     }
 
     width(): number {
@@ -389,7 +393,7 @@ export abstract class RcControl extends RcWrappableObject {
 
         const desc = doc.createElement('desc');
         // desc.textContent = 'Created by RealChart v$Version'; // sourcemap, rollup issue
-        desc.textContent = 'Created by RealChart v0.9.5';
+        desc.textContent = 'Created by RealChart v0.9.8';
         svg.appendChild(desc);
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
@@ -786,23 +790,36 @@ export class RcElement extends RcObject {
     }   
 
     getAttr(attr: string): any {
-        return this.dom.getAttribute(attr);
+        return this._dom.getAttribute(attr);
     }
 
     setAttr(attr: string, value: any): RcElement {
-        this.dom.setAttribute(attr, value);
+        this._dom.setAttribute(attr, value);
+        return this;
+    }
+
+    setAttrEx(attr: string, value: any): RcElement {
+        isNull(value) ? this._dom.removeAttribute(attr) : this._dom.setAttribute(attr, value);
         return this;
     }
 
     setAttrs(attrs: any): RcElement {
         for (let attr in attrs) {
-            this.dom.setAttribute(attr, attrs[attr]);
+            this._dom.setAttribute(attr, attrs[attr]);
+        }
+        return this;
+    }
+
+    setAttrsEx(attrs: any): RcElement {
+        for (let attr in attrs) {
+            const v = attrs[attr];
+            isNull(v) ? this._dom.removeAttribute(attr) : this._dom.setAttribute(attr, v);
         }
         return this;
     }
 
     unsetAttr(attr: string): RcElement {
-        this.dom.removeAttribute(attr);
+        this._dom.removeAttribute(attr);
         return this;
     }
 
@@ -952,7 +969,7 @@ export class RcElement extends RcObject {
         const css = (this.dom as SVGElement | HTMLElement).style;
 
         for (let p in this._styles) {
-            css.removeProperty(p);
+            css.removeProperty(getCssProp(p));
         }
         this._styles = {};
     }
@@ -962,7 +979,7 @@ export class RcElement extends RcObject {
         let changed = false;
 
         for (let p in this._styles) {
-            css.removeProperty(p);
+            css.removeProperty(getCssProp(p));
             changed = true;
         }
         
@@ -979,7 +996,7 @@ export class RcElement extends RcObject {
 
             for (let p of props) {
                 if (p in this._styles) {
-                    css.removeProperty(p);
+                    css.removeProperty(getCssProp(p));
                     delete this._styles[p];
                     changed = true;
                 }                
@@ -1429,7 +1446,6 @@ export class PathElement extends RcElement {
     //-------------------------------------------------------------------------
 }
 
-
 export class ClipPathElement extends RcElement {
 
     //-------------------------------------------------------------------------
@@ -1477,4 +1493,89 @@ export class ClipPathElement extends RcElement {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+}
+
+const DRAG_THRESHOLD = 3;
+
+export abstract class DragTracker {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    dragging = false;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    drag(eventTarget: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
+        if (this.dragging) {
+            if (this._doDrag(eventTarget, xPrev, yPrev, x, y)) {
+                this._moveFeedback(x, y);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    cancel(): void {
+        if (this.dragging) {
+            try {
+                this.dragging = false;
+                this._doCanceled();
+            } finally {
+                this.end(-1, -1);
+            }
+        }
+    }
+
+    drop(target: Element, x: number, y: number): void {
+        if (this.dragging) {
+            try {
+                this.dragging = false;
+                if (this._canAccept(target, x, y)) {
+                    this._doCompleted(target, x, y);
+                } else {
+                    this._doCanceled();
+                }
+            } finally {
+                this.end(x, y);
+            }
+        }
+    }
+
+    end(x: number, y: number): void {
+        try {
+            this.dragging = false;
+            this._hideFeedback();
+        } finally {
+            this._doEnded(x, y);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected _canAccept(target: Element, x: number, y: number): boolean {
+        return true;
+    }
+
+    protected _showFeedback(x: number, y: number): void {
+    }
+
+    protected _moveFeedback(x: number, y: number): void {
+    }
+
+    protected _hideFeedback(): void {
+    }
+
+    protected abstract _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean;
+
+    protected _doCanceled(): void {
+    }
+
+    protected _doCompleted(target: Element, x: number, y: number): void {
+    }
+
+    protected _doEnded(x: number, y: number): void {
+    }
 }

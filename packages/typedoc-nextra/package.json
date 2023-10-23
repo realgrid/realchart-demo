@@ -1,0 +1,51 @@
+{
+  "name": "typedoc-nextra",
+  "description": "Generate markdown/simple json from typedoc",
+  "version": "0.1.6",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dbundle": "tsup && cpx 'dist/*' '../../docs/lib/typedoc-nextra'",
+    "check": "tsc --noEmit",
+    "test": "node ./test/index.js",
+    "format": "prettier --write \"./src/**/*.{js,ts,jsx,tsx}\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neplextech/typedoc-nextra.git"
+  },
+  "keywords": [
+    "typedoc",
+    "nextra",
+    "mdx",
+    "typedoc-plugin",
+    "typedoc-plugin-nextra",
+    "nextra-typedoc"
+  ],
+  "author": "skdhg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/neplextech/typedoc-nextra/issues"
+  },
+  "homepage": "https://github.com/neplextech/typedoc-nextra#readme",
+  "packageManager": "yarn@3.3.1",
+  "devDependencies": {
+    "@types/common-tags": "^1.8.1",
+    "@types/node": "^18.11.18",
+    "@types/tmp": "^0.2.3",
+    "cpx": "^1.5.0",
+    "prettier": "^2.8.3",
+    "tsup": "^6.5.0",
+    "typedoc": "^0.25.1",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "common-tags": "^1.8.2",
+    "tmp": "^0.2.1"
+  }
+}

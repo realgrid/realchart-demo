@@ -8,6 +8,7 @@
 
 import { RcControl } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
+import { Axis } from "./model/Axis";
 import { Chart, IChartEventListener } from "./model/Chart";
 import { ChartItem } from "./model/ChartItem";
 import { DataPoint } from "./model/DataPoint";
@@ -90,12 +91,16 @@ export class ChartControl extends RcControl implements IChartEventListener {
         this.model = new Chart(config);
     }
 
-    refresh(): void {
-        this.invalidateLayout();
+    refresh(now: boolean): void {
+        if (now) {
+            this._render();
+        } else {
+            this.invalidateLayout();
+        }
     }
 
-    updateGauge(gauge: string, values: any): void {
-        this.model?.updateGauge(gauge, values);
+    scroll(axis: Axis, pos: number): void {
+        this._chartView.getAxis(axis)?.scroll(pos);
     }
 
     //-------------------------------------------------------------------------

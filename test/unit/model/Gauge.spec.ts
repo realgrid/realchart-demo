@@ -9,11 +9,39 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { CircularGauge, Gauge, ValueGauge } from '../../../src/model/Gauge';
+import { buildValueRanges } from '../../../src/common/Types';
+
+class GaugeImpl extends Gauge {
+
+    _type(): string { return }
+}
 
 /**
  * Tests for Gauge class.
  */
- describe("Gauge test", function() {
+describe("Gauge test", function() {
+
+    it('init', () => {
+        const gauge = new GaugeImpl(null);
+
+        expect(gauge).is.exist;
+    });
+});
+
+class ValueGaugeImpl extends ValueGauge {
+    _type(): string { return }
+}
+
+/**
+ * Tests for ValueGauge class.
+ */
+describe("ValueGauge test", function() {
+
+    it('init', () => {
+        const gauge = new ValueGaugeImpl(null);
+
+        expect(gauge).is.exist;
+    });
 
     it('buildRanges', () => {
         const min = 10;
@@ -27,7 +55,7 @@ import { CircularGauge, Gauge, ValueGauge } from '../../../src/model/Gauge';
         }, {
             color: 'red'
         }];
-        const ranges = ValueGauge.buildRanges(src, min, max);
+        const ranges = buildValueRanges(src, min, max);
 
         expect(ranges).instanceOf(Array);
         expect(ranges.length).eq(src.length);
@@ -39,6 +67,7 @@ import { CircularGauge, Gauge, ValueGauge } from '../../../src/model/Gauge';
 });
 
 class CircularGaugeImpl extends CircularGauge {
+    _type(): string { return }
 }
 
 /**

@@ -13,4 +13,71 @@ export const setDebugging = Globals.setDebugging;
 export const setAnimatable = Globals.setAnimatable;
 export const createChart = Globals.createChart;
 
-export { RcChartControl } from "./api/RcChartControl";
+export { 
+    RcChartControl 
+} from "./api/RcChartControl";
+export { 
+    RcChartObject, 
+
+    // axis
+    RcChartAxis,
+    RcCategoryAxis,
+    RcContinuousAxis,
+    RcLinearAxis,
+    RcTimeAxis,
+    RcLogAxis,
+
+    // series
+    RcPointLabel,
+    RcChartSeries,
+    RcLineSeries,
+    RcAreaSeries,
+    RcAreaRangeSeries,
+    RcBarSeries,
+    RcBarRangeSeries,
+    RcBellCurveSeries,
+    RcBoxPlotSeries,
+    RcBubbleSeries,
+    RcScatterSeries,
+    RcCandlestickSeries,
+    RcDumbbellSeries,
+    RcEqualizerSeries,
+    RcFunnelSeries,
+    RcHeatmapSeries,
+    RcTreemapSeries,
+    RcHistogramSeries,
+    RcLollipopSeries,
+    RcParetoSeries,
+    RcPieSeries,
+    RcVectorSeries,
+    RcWaterfallSeries,
+    RcSeriesGroup,
+    RcBarSeriesGroup,
+    RcLineSeriesGroup,
+    RcAreaSeriesGroup,
+    RcPieSeriesGroup,
+    RcBumpSeriesGroup,
+
+    // gauge
+    RcGaugeRangeBand,
+    RcGaugeScale,
+    RcChartGaugeBase,
+    RcChartGauge,
+    RcValueGauge,
+    RcCircularGauge,
+    RcCircleGauge,
+    RcLinearGaugeBase as RcLinerGaugeBase,
+    RcLinearGauge,
+    RcBulletGauge,
+    RcClockGauge,
+    RcGaugeGroup,
+    RcCircleGaugeGroup,
+    RcLinearGaugeGroup,
+    RcBulletGaugeGroup,
+
+    // chart
+    RcTitle,
+    RcSubtitle,
+    RcLegend,
+    RcBody
+} from "./api/RcChartModels";

@@ -64,17 +64,19 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-clock-gauge');
+    }
 
-        this.add(this._faceView = new CircleElement(doc, 'rct-clock-gauge-face'));
-        this.add(this._rimView = new SectorElement(doc, 'rct-clock-gauge-rim'));
-        this.add(this._labelView = new TextElement(doc, 'rct-clock-gauge-label'));
+    protected _doInitContents(doc: Document, container: LayerElement): void {
+        container.add(this._faceView = new CircleElement(doc, 'rct-clock-gauge-face'));
+        container.add(this._rimView = new SectorElement(doc, 'rct-clock-gauge-rim'));
+        container.add(this._labelView = new TextElement(doc, 'rct-clock-gauge-label'));
         this._labelView.layout = TextLayout.MIDDLE;
-        this.add(this._tickContainer = new LayerElement(doc, 'rct-clock-gauge-ticks'));
-        this.add(this._tickLabelContainer = new LayerElement(doc, 'rct-clock-gauge-tick-labels'));
-        this.add(this._hourView = new PathElement(doc, 'rct-clock-gauge-hour'));
-        this.add(this._minuteView = new PathElement(doc, 'rct-clock-gauge-minute'));
-        this.add(this._secondView = new PathElement(doc, 'rct-clock-gauge-second'));
-        this.add(this._pinView = new CircleElement(doc, 'rct-clock-gauge-pin'));
+        container.add(this._tickContainer = new LayerElement(doc, 'rct-clock-gauge-ticks'));
+        container.add(this._tickLabelContainer = new LayerElement(doc, 'rct-clock-gauge-tick-labels'));
+        container.add(this._hourView = new PathElement(doc, 'rct-clock-gauge-hour'));
+        container.add(this._minuteView = new PathElement(doc, 'rct-clock-gauge-minute'));
+        container.add(this._secondView = new PathElement(doc, 'rct-clock-gauge-second'));
+        container.add(this._pinView = new CircleElement(doc, 'rct-clock-gauge-pin'));
 
         this._tickViews = new ElementPool(this._tickContainer, LineElement, 'rct-clock-gauge-tick');
         this._minorTickViews = new ElementPool(this._tickContainer, LineElement, 'rct-clock-gauge-minor-tick');

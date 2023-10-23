@@ -284,17 +284,18 @@ export class PointContainer extends LayerElement {
 }
 
 export type LabelLayoutInfo = {
-    inverted: boolean
+    inverted: boolean;
+    reversed: boolean;
     // point 위치, 크기
-    pointView: RcElement,
-    x: number,  
-    y: number,
-    hPoint: number,
-    wPoint: number,
+    pointView: RcElement;
+    x: number;
+    y: number;
+    hPoint: number;
+    wPoint: number;
     // label 설정
-    labelView: PointLabelView,
-    labelPos: PointItemPosition,
-    labelOff: number
+    labelView: PointLabelView;
+    labelPos: PointItemPosition;
+    labelOff: number;
 };
 
 const PALETTE_LEN = 12;
@@ -412,8 +413,6 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     prepareSeries(doc: Document, model: T): void {
-        model.setLegendMarker(this._getLegendMarker(doc, model));
-
         // this._viewRate = NaN; // animating 중 다른 시리즈 등의 요청에 의해 여기로 진입할 수 있다.
         this.setData('index', (model.index % PALETTE_LEN) as any);
         this.setBoolData('pointcolors', model._colorByPoint());
@@ -470,17 +469,6 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
 
-    protected _getLegendMarker(doc: Document, model: T): RcElement {
-        if (!this._legendMarker) {
-            this._legendMarker = this._createLegendMarker(doc, LegendItem.MARKER_SIZE);
-        }
-        return this._legendMarker;
-    }
-
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
-        return RectElement.create(doc, SeriesView.LEGEND_MARKER, 0, 0, size, size, size / 2);
-    }
-
     protected _collectVisPoints(model: T): DataPoint[] {
         return model.collectVisibles();
     }
@@ -532,7 +520,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         const m = this.model;
         const xAxis = m._xAxisObj;
         const yAxis = m._yAxisObj;
-        const pts = m.trendline._points.map(pt => ({x: xAxis.getPosition(xAxis._length, pt.x), y: yAxis._length - yAxis.getPosition(yAxis._length, pt.y)}));
+        const pts = m.trendline._points.map(pt => ({x: xAxis.getPosition(xAxis._vlen, pt.x), y: yAxis._vlen - yAxis.getPosition(yAxis._vlen, pt.y)}));
         const sb = new PathBuilder();
 
         sb.move(pts[0].x, pts[0].y);
@@ -543,7 +531,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected _layoutLabel(info: LabelLayoutInfo): void {
         // below이면 hPoint가 음수이다.
         let {inverted, x, y, hPoint, labelView, labelOff} = info;
-        const below = hPoint < 0;
+        const below = info.reversed ? hPoint <= 0 : hPoint < 0;
         const r = labelView.getBBounds();
         let inner = true;
 
@@ -715,6 +703,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const based = !isNaN(base);
         const info: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
             inverted,
+            reversed: yAxis.reversed,
             labelPos: series.getLabelPosition(labels.position),
             labelOff: series.getLabelOff(labels.offset)
         });

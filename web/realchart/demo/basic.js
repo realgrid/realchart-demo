@@ -13,6 +13,11 @@ const config = {
 	},
 	title: '경기도 성남시 인구 현황',
 	legend: true,
+    plot: {
+        style: {
+            stroke: 'none'
+        }
+    },
 	xAxis: {
 		// type: 'category',
 		// position: 'apposite'
@@ -27,6 +32,7 @@ const config = {
 		// strictMin: 1
 	},
 	series: {
+        // visible: false,
 		// baseValue: null,
 		pointLabel: {
 			visible: true,
@@ -129,14 +135,20 @@ function setActions(container) {
 		false
 	);
 	createButton(container, 'Test', function (e) {
-		alert('hello');
+		// alert('hello');
+        // alert(RealChart.getVersion());
+        // chart.series.visible = !chart.series.visible;
+        // chart.series.set('visible', !chart.series.get('visible'));
+        // chart.series.toggle('visible');
+        // chart.series.set('pointLabel', false);
+        // chart.series.toggle('pointLabel.visible');
+        // chart.series.pointLabel.toggle('visible');
 	});
 	createCheckBox(
 		container,
 		'Inverted',
 		function (e) {
-			config.inverted = _getChecked(e);
-			chart.load(config, animate);
+            chart.inverted = _getChecked(e);
 		},
 		false
 	);
