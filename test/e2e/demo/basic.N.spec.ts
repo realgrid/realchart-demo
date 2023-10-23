@@ -82,10 +82,10 @@ test.describe('basic.html test', async function () {
 		const line = await PWTester.getAxisLine(page, 'x');
 		const rline = await PWTester.getBounds(line);
 
-		bars.forEach(async (bar) => {
+		for (const bar of bars) {
 			const rbar = await PWTester.getBounds(bar);
 			PWTester.same(rbar.x, rline.x);
-		});
+		}
 	});
 
 	test('title', async ({ page }) => {
