@@ -18,14 +18,14 @@ import { Tester } from '../../Tester';
  describe("LinearAxis test", function() {
 
     it('init', () => {
-        let axis = new LinearAxis(null);
+        let axis = new LinearAxis(null, false);
 
         expect(axis).exist;
     });
 
     it('props', () => {
         let name = 'main';
-        let axis = new LinearAxis(null, name);
+        let axis = new LinearAxis(null, false, name);
 
         expect(axis.name).eq(name);
         expect(axis.nullable).is.true;

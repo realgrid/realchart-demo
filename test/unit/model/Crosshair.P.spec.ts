@@ -26,12 +26,12 @@ const source = {
 
     let crosshair: Crosshair;
     beforeEach(() => {
-        crosshair = new Crosshair(new LinearAxis(null));
+        crosshair = new Crosshair(new LinearAxis(null, false));
         crosshair.load(source);
     });
 
     it('init', () => {
-        let ch = new Crosshair(new LinearAxis(null));
+        let ch = new Crosshair(new LinearAxis(null, false));
 
         expect(ch).exist;
     });

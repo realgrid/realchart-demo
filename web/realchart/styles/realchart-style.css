@@ -23,95 +23,95 @@
 
 /** palette */
 .rct-root {
-    --color-1: #6b76f2;
-    --color-2: #00d3e4;
-    --color-3: #fe3ea5;
-    --color-4: #ffd938;
-    --color-5: #8650cc;
-    --color-6: #e30922;
-    --color-7: #00E272;
-    --color-8: #FF7300;
-    --color-9: #5948ff;
-    --color-10: #e700fe;
-    --color-11: #00b8ac;
-    --color-12: #2da0f9;
+    --color-1: #0097e2;
+    --color-2: #5eb3e4;
+    --color-3: #ff5c35;
+    --color-4: #ff9f00;
+    --color-5: #ffd938;
+    --color-6: #00ac69;
+    --color-7: #91cc39;
+    --color-8: #8fc6a9;
+    --color-9: #c45db9;
+    --color-10: #ef5e99;
+    --color-11: #afa4c6;
+    --color-12: #5b63aa;
 }
-.rct-root[data-palette='gray'] {
+.rct-root[data-palette="gray"] {
     --color-1: #464646;
-    --color-2: #61666A;
-    --color-3: #6F6F6D;
-    --color-4: #82898F;
-    --color-5: #8D8D8B;
-    --color-6: #9EA7A6;
-    --color-7: #ACABA7;
-    --color-8: #BCBCBC;
-    --color-9: #C5C9CA;
-    --color-10: #D9D4CE;
-    --color-11: #DEDEDE;
+    --color-2: #61666a;
+    --color-3: #6f6f6d;
+    --color-4: #82898f;
+    --color-5: #8d8d8b;
+    --color-6: #9ea7a6;
+    --color-7: #acaba7;
+    --color-8: #bcbcbc;
+    --color-9: #c5c9ca;
+    --color-10: #d9d4ce;
+    --color-11: #dedede;
     --color-12: #e8ecef;
 }
-.rct-root[data-palette='warm'] {
-    --color-1: #CCAACB;
-    --color-2: #8FC9CA;
-    --color-3: #97C1A9;
-    --color-4: #F3B0C2;
-    --color-5: #FFC7A2;
-    --color-6: #D97872;
-    --color-7: #8BA3C5;
-    --color-8: #DC97AA;
-    --color-9: #9C9CC2;
-    --color-10: #B7CADB;
-    --color-11: #C7C19D;
-    --color-12: #FBE693;
+.rct-root[data-palette="warm"] {
+    --color-1: #ccaacb;
+    --color-2: #8fc9ca;
+    --color-3: #97c1a9;
+    --color-4: #f3b0c2;
+    --color-5: #ffc7a2;
+    --color-6: #d97872;
+    --color-7: #8ba3c5;
+    --color-8: #dc97aa;
+    --color-9: #9c9cc2;
+    --color-10: #b7cadb;
+    --color-11: #c7c19d;
+    --color-12: #fbe693;
 }
-.rct-root[data-palette='cool'] {
-    --color-1: #EB455F;
-    --color-2: #FFD49C;
-    --color-3: #A4CADD;
-    --color-4: #3E4977;
-    --color-5: #FAAB78;
-    --color-6: #BFACE2;
-    --color-7: #A0BCC2;
-    --color-8: #FF7396;
-    --color-9: #6DC7C9;
-    --color-10: #7895CB;
-    --color-11: #FEA1A1;
-    --color-12: #90C8AC;
+.rct-root[data-palette="cool"] {
+    --color-1: #eb455f;
+    --color-2: #ffd49c;
+    --color-3: #a4cadd;
+    --color-4: #3e4977;
+    --color-5: #faab78;
+    --color-6: #bface2;
+    --color-7: #a0bcc2;
+    --color-8: #ff7396;
+    --color-9: #6dc7c9;
+    --color-10: #7895cb;
+    --color-11: #fea1a1;
+    --color-12: #90c8ac;
 }
-.rct-root[data-palette='forest'] {
-    --color-1: #FFB94A;
-    --color-2: #94CFD3;
-    --color-3: #1B9C85;
-    --color-4: #7FB47E;
-    --color-5: #9AA77B;
-    --color-6: #FBD872;
-    --color-7: #A4C1AD;
-    --color-8: #EAD9A7;
-    --color-9: #7A9083;
-    --color-10: #7FBCAA;
-    --color-11: #B6BA99;
-    --color-12: #4D6166;
+.rct-root[data-palette="forest"] {
+    --color-1: #666d4d;
+    --color-2: #7f736c;
+    --color-3: #a9a389;
+    --color-4: #d0b081;
+    --color-5: #8da34e;
+    --color-6: #4f5d3a;
+    --color-7: #9d7448;
+    --color-8: #a7afa2;
+    --color-9: #9fa871;
+    --color-10: #656146;
+    --color-11: #8d877b;
+    --color-12: #422c1e;
 }
 
 /** theme */
 .rct-control {
     --rct-background: none;
 }
-.rct-control[data-theme='dark'] {
+.rct-control[data-theme="dark"] {
     --rct-background: black;
 }
 
 .rct-root {
-    --rct-font-family: AppleSDGothicNeo-Light, 'HelveticaNeue', 'Malgun Gothic', '맑은 고딕', sans-serif;
+    --rct-font-family: AppleSDGothicNeo-Light, "HelveticaNeue", "Malgun Gothic", "맑은 고딕", sans-serif;
     --rct-font-size: 16px;
 
-    --rct-focus-border: red;
+    --rct-focus-border: #afafaf30;
     --rct-text-fill: #333;
 
     --rct-title-fill: #333;
     --rct-subtitle-fill: #333;
 
-    --rct-plot-background-stroke: #ddd;
+    --rct-plot-background-stroke: none;
 
     --rct-axis-title-fill: #333;
     --rct-axis-line-stroke: #aaa;
@@ -130,7 +130,7 @@
     --rct-point-label-font-size: 0.8em;
     --rct-point-label-font-weight: bold;
     --rct-point-label-stroke: none;
-    --rct-point-label-fill: #333;
+    --rct-point-label-fill: #777;
 
     --rct-credits-fill: #777;
 
@@ -154,10 +154,10 @@
     --rct-title-fill: #fff;
     --rct-subtitle-fill: #fff;
 
-    --rct-plot-background-stroke: #ccc;
+    --rct-plot-background-stroke: none;
     
     --rct-axis-title-fill: #fff;
-    --rct-axis-line-stroke: #ddd;
+    --rct-axis-line-stroke: #1e1e1e;
     --rct-axis-tick-stroke: #fff;
     --rct-axis-label-fill: #fff;
     --rct-axis-grid-line-stroke: #ddd;
@@ -251,10 +251,12 @@
 /** legend */
 .rct-legend {
     stroke: none;
-    fill: none;
     padding: 4px;
 }
 .rct-legend-background {
+    fill: #c4c4c430;
+    rx: 7;
+    ry: 7;
     stroke: var(--rct-legend-background-stroke);
 }
 .rct-legend-item {
@@ -309,7 +311,7 @@
     stroke-width: var(--rct-axis-grid-line-stroke-width);
 }
 .rct-axis-break {
-    stroke: #777;
+    stroke: #aaa;
     fill: white;
     fill-opacity: 0.9;
 }
@@ -334,7 +336,7 @@
     stroke: #ccc;
 }
 .rct-polar-yaxis-line {
-    stroke: red;
+    stroke: #afafaf;
 }
 .rct-polar-yaxis-grid-line {
     stroke: #0000ff20;
@@ -464,11 +466,11 @@
 
 /** bar series */
 .rct-bar-series {
-    fill-opacity: 0.85;
+    fill-opacity: 1;
 }
 .rct-bar-series .rct-point[data-focus] {
     stroke: var(--rct-focus-border);
-    stroke-width: 2px;
+    stroke-width: 30px;
 }
 
 /** barrange series */

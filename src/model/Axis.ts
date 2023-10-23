@@ -90,6 +90,8 @@ export class AxisLine extends AxisItem {
     //-------------------------------------------------------------------------
     constructor(axis: Axis) {
         super(axis, true);//false);
+
+        this.visible = axis._isX; 
     }
 }
 
@@ -106,6 +108,11 @@ export enum AxisTitleAlign {
  */
 export class AxisTitle extends AxisItem {
 
+    constructor(axis: Axis) {
+        super(axis);
+        
+        this.visible = !axis._isX;
+    }
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -377,6 +384,8 @@ export abstract class AxisTick extends AxisItem {
     //-------------------------------------------------------------------------
     constructor(axis: Axis) {
         super(axis);
+
+        this.visible = false;
     }
 
     //-------------------------------------------------------------------------
@@ -599,11 +608,11 @@ export abstract class Axis extends ChartItem implements IAxis {
     /**
      * @config
      */
-    readonly title = new AxisTitle(this);
+    readonly title: AxisTitle;
     /**
      * @config
      */
-    readonly line = new AxisLine(this);
+    readonly line: AxisLine;
     /**
      * @config
      */
@@ -649,10 +658,13 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, name?: string) {
+    constructor(chart: IChart, isX: boolean, name?: string) {
         super(chart);
 
+        this._isX = isX;
         this.name = name;
+        this.title = new AxisTitle(this);
+        this.line = new AxisLine(this);
         this.tick = this._createTickModel();
         this.label = this._createLabelModel();
     }
@@ -1060,9 +1072,8 @@ export class AxisCollection {
             cls = chart._getAxisType('linear');
         }
 
-        const axis = new cls(chart, src.name);
+        const axis = new cls(chart, this.isX, src.name);
 
-        axis._isX = this.isX;
         axis.load(src);
         return axis;
     }

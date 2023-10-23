@@ -23,11 +23,15 @@ const config = {
 		// position: 'apposite'
 		// position: 'base',
 		// baseAxis: 1,
-		title: '수정구',
-		grid: true,
+		title: {
+			text: '수정구'
+		},
+		// grid: true,
 	},
 	yAxis: {
-		title: '전체 인구수',
+		title: {
+			text: '전체 인구수'
+		},
 		// maxPadding: 0
 		// strictMin: 1
 	},

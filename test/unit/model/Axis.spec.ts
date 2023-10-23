@@ -32,7 +32,7 @@ class AxisImpl extends Axis {
  describe("Axis test", function() {
 
     it('init', () => {
-        let axis = new AxisImpl(null);
+        let axis = new AxisImpl(null, false);
 
         expect(axis).exist;
     });
