@@ -129,7 +129,8 @@
         "Axis Breaks": "axis-break",
         "Axis Labels": "axis-label",
         "Multiple Axis": "multiaxis",
-        "Zooming": "axis-zoom"
+        "Zooming": "axis-zoom",
+        "Navigator": "series-navigator"
     },
     "Gauge": {
         "Circle Gauge": "gauge",

@@ -17,6 +17,13 @@ export class NavigiatorHandle extends ChartItem {
     //-------------------------------------------------------------------------
 }
 
+export class NavigatorMask extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+}
+
 /**
  * 시리즈 내비게이터 모델.
  */
@@ -37,7 +44,14 @@ export class SeriesNavigator extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * Navigator 시리즈의 data나 축 범위를 제공하는 본 시리즈의 이름이나 index.
+     */
+    source: string | number;
     handle = new NavigiatorHandle(this.chart);
+    mask = new NavigatorMask(this.chart);
+    height = 45;
+    gap = 16;
 
     //-------------------------------------------------------------------------
     // methods

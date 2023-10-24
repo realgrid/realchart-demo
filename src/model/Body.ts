@@ -19,6 +19,23 @@ export enum ZoomType {
     BOTH = 'both'
 }
 
+export class ZoomButton extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public body: Body) {
+        super(body.chart, _undefined);
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    isVisible(): boolean {
+        return this.visible !== false && this.body.isZoomed()
+    }
+}
+
 /**
  * 시리즈들이 그려지는 plot 영역 모델.
  */
@@ -106,6 +123,8 @@ export class Body extends ChartItem {
      * @config
      */
     zoomType = ZoomType.NONE;
+
+    zoomButton = new ZoomButton(this);
 
     canZoom(): boolean {
         return this.zoomType === ZoomType.X || this.zoomType === ZoomType.Y || this.zoomType === ZoomType.BOTH;

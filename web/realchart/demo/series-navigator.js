@@ -7,26 +7,26 @@ const config = {
         // animatable: false
     },
     title: {
-        text: 'Axis Zooming',
+        text: 'Series Navigator (Working...)',
         style: {
-            padding: '1px 5px',
-            marginBottom: '8px',
-            fill: 'white',
-            fontSize: '1.1em'
+            fontSize: '1.2em'
         },
         backgroundStyle: {
-            fill: '#338',
             rx: '5px'
         }
     },
     body: {
+        zoomButton: false,
         zoomType: 'x',
         style: {
             // stroke: 'none'
         }
     },
     xAxis: {
-        title: 'Period',
+        title: {
+            visible: true,   
+            text: 'Period',
+        },
         crosshair: true,
         padding: 0,
         label: {
@@ -41,9 +41,6 @@ const config = {
         },
         grid: {
             endVisible: true
-        },
-        scrollBar: {
-            visible: true
         }
     },
     yAxis: {
@@ -98,9 +95,6 @@ function setActions(container) {
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
         chart.load(config);
-    }, false);
-    createCheckBox(container, 'Zooming', function (e) {
-        _getChecked(e) ? chart.xAxis.zoom(10.2, 20.4) : chart.xAxis.resetZoom();
     }, false);
 }
 
