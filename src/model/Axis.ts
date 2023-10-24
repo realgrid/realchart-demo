@@ -580,6 +580,10 @@ export class AxisZoom {
         this.max = axis.axisMax();
         this.resize(start, end);
     }
+
+    get length(): number {
+        return this.end - this.start;
+    }
     
     resize(start: number, end: number): boolean {
         start = Math.max(this.min, Math.min(this.max, start));

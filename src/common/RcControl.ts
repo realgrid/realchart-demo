@@ -287,6 +287,20 @@ export abstract class RcControl extends RcWrappableObject {
         return { x: x + cr.x - br.x, y: y + cr.y - br.y };
     }
 
+    svgToElement(element: RcElement, x: number, y: number): IPoint {
+        const cr = this._svg.getBoundingClientRect();
+        const br = element.dom.getBoundingClientRect();
+
+        return { x: x + cr.x - br.x, y: y + cr.y - br.y };
+    }
+
+    elementToSvg(element: RcElement, x: number, y: number): IPoint {
+        const cr = this._svg.getBoundingClientRect();
+        const br = element.dom.getBoundingClientRect();
+
+        return { x: x + br.x - cr.x, y: y + br.y - cr.y };
+    }
+
     abstract useImage(src: string): void; // 실제 이미지가 로드됐을 때 다시 그려지도록 한다.
 
     //-------------------------------------------------------------------------
@@ -849,6 +863,14 @@ export class RcElement extends RcObject {
 
     controlToElement(x: number, y: number): IPoint {
         return this.control.containerToElement(this, x, y);
+    }
+
+    svgToElement(x: number, y: number): IPoint {
+        return this.control.svgToElement(this, x, y);
+    }
+
+    elementToSvg(x: number, y: number): IPoint {
+        return this.control.elementToSvg(this, x, y);
     }
 
     move(x: number, y: number): RcElement {

@@ -20,7 +20,7 @@ import { DataPoint } from "../model/DataPoint";
 import { LegendItem, LegendLocation } from "../model/Legend";
 import { Series } from "../model/Series";
 import { Subtitle } from "../model/Title";
-import { AxisView } from "./AxisView";
+import { AxisScrollView, AxisView } from "./AxisView";
 import { AxisGuideContainer, BodyView } from "./BodyView";
 import { ChartElement } from "./ChartElement";
 import { HistoryView } from "./HistoryView";
@@ -309,6 +309,14 @@ class AxisSectionView extends SectionView {
             w += view.checkWidth(doc, width, height);
         });
         return w + (this.views.length - 1) * this._gap;
+    }
+
+    getScrollView(dom: Element): AxisScrollView {
+        for (const v of this.views) {
+            if (v._scrollView?.contains(dom)) {
+                return v._scrollView;
+            }
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -907,6 +915,13 @@ export class ChartView extends RcElement {
 
     buttonClicked(button: ButtonElement): void {
         this._bodyView.buttonClicked(button);
+    }
+
+    getScrollView(dom: Element): AxisScrollView {
+        for (const dir in SectionDir) {
+            const v = this._axisSectionViews[SectionDir[dir]].getScrollView(dom)
+            if (v) return v;
+        };
     }
 
     //-------------------------------------------------------------------------

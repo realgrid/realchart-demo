@@ -9,13 +9,13 @@
 import { ChartControl } from "../ChartControl";
 import { IPoint } from "../common/Point";
 import { DragTracker, IPointerHandler } from "../common/RcControl";
-import { ZoomType } from "../model/Body";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { Series } from "../model/Series";
+import { AxisScrollView } from "../view/AxisView";
 import { CreditView } from "../view/ChartView";
 import { SeriesView, WidgetSeriesView } from "../view/SeriesView";
-import { ZoomTracker } from "./DragTrackers";
+import { ScrollTracker, ZoomTracker } from "./DragTrackers";
 
 const DRAG_THRESHOLD = 3;
 
@@ -28,6 +28,8 @@ export class ChartPointerHandler implements IPointerHandler {
     private _clickElement: Element;
     private _dragTracker: DragTracker;
 
+    private _clickX: number;
+    private _clickY: number;
     private _prevX: number;
     private _prevY: number;
     
@@ -55,8 +57,8 @@ export class ChartPointerHandler implements IPointerHandler {
             this.$_stopDragTracker(elt, p.x, p.y);
         }
 
-        this._prevX = p.x;
-        this._prevY = p.y;
+        this._prevX = this._clickX = p.x;
+        this._prevY = this._clickY = p.y;
     }
 
     handleUp(ev: PointerEvent): void {
@@ -71,22 +73,17 @@ export class ChartPointerHandler implements IPointerHandler {
 
         if (ev.buttons >= 1 || (ev.buttons === 0 && ev.button === 0)) {// && ev.pointerId === this._primaryId)) {
             const dragging = this.isDragging();
-            // 왜 ev.target 대신 elementFromPoint를 사용했지? testing(jsdom)에서는 elementFromPoint가 미지원.
-            // ev.target에 toucheStart의 target과 동일해서 그랬던가?
-            const dom = ev.target as Element;//this.$_elementFromTouch(ev, null);
+            const dom = this._clickElement;
 
             if (x < 0 || x >= chart.control.dom().offsetWidth || y < 0 || y >= chart.control.dom().offsetHeight) {
                 dragging && this.$_stopDragTracker(dom, x, y, true);
             } else if (dragging) {
                 this.$_doDrag(ev, dom, x, y);
-            } else if (!this._dragTracker && Math.abs(this._prevX - x) > DRAG_THRESHOLD || Math.abs(this._prevY - y) > DRAG_THRESHOLD) {
+            } else if (!this._dragTracker && (Math.abs(this._clickX - x) > DRAG_THRESHOLD || Math.abs(this._clickY - y) > DRAG_THRESHOLD)) {
                 this.$_startMove(ev, dom, x, y);
             } else if (this._dragTracker && !dragging) {
                 this.$_startMove(ev, dom, x, y);
             }
-            // this._touches.push({x, y, t: ev.timeStamp});
-
-            // this._doPointerMove(dom);
         }
 
         this._prevX = x;
@@ -177,7 +174,9 @@ export class ChartPointerHandler implements IPointerHandler {
         const chart = this._chart.chartView();
         const body = chart.bodyView();
 
-        if (body.model.canZoom() && body.contains(elt)) {
+        if (AxisScrollView.isThumb(elt)) {
+            return new ScrollTracker(this._chart, chart.getScrollView(elt));
+        } else if (body.model.canZoom() && body.contains(elt)) {
             return new ZoomTracker(this._chart, body);
         }
     }

@@ -183,12 +183,26 @@ class CrosshairFlagView extends RcElement {
 export class AxisScrollView extends ChartElement<AxisScrollBar> {
 
     //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly TRACK_CLASS = 'rct-axis-scrollbar-track';
+    static readonly THUMB_CLASS = 'rct-axis-scrollbar-thumb';
+
+    //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    static isThumb(dom: Element): boolean {
+        return dom.classList.contains(AxisScrollView.THUMB_CLASS);
+    }
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _trackView: RectElement;
-    private _thumbView: RectElement;
+    _thumbView: RectElement;
 
-    private _vertical: boolean;
+    _vertical: boolean;
+    _szThumb: number;
     private _margins = new Sides();
 
     private _max = 0;
@@ -201,26 +215,13 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
     constructor(doc: Document) {
         super(doc, 'rct-axis-scrollbar');
 
-        this.add(this._trackView = new RectElement(doc, 'rct-axis-scrollbar-track'));
-        this.add(this._thumbView = new RectElement(doc, 'rct-axis-scrollbar-thumb'));
+        this.add(this._trackView = new RectElement(doc, AxisScrollView.TRACK_CLASS));
+        this.add(this._thumbView = new RectElement(doc, AxisScrollView.THUMB_CLASS));
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    // setScroll(max: number, page: number, pos: number): void {
-    //     this._max = Math.max(0, max);
-    //     this._page = Math.min(page, max);
-    //     this._pos = Math.min(max - page, Math.max(0, pos));
-
-    //     // if (max !== this._max || page !== this._page || pos !== this._pos) {
-    //     //     this._max = max;
-    //     //     this._page = page;
-    //     //     this._pos = pos;
-    //     //     this.control.invalidateLayout();
-    //     // }
-    // }
-
     setScroll(zoom: AxisZoom): void {
         if (zoom) {
             const max = zoom.max - zoom.min;
@@ -232,6 +233,14 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
         } else {
             this._max = 0;
         }
+    }
+
+    getZoomPos(pt: number): number {
+        const zoom = this.model.axis._zoom;
+        const len = (this._vertical ? this.height : this.width) - this._thumbView.width;
+
+        pt = Math.max(0, Math.min(pt, len));
+        return pt * (zoom.max - zoom.min - (zoom.end - zoom.start)) / len;
     }
 
     //-------------------------------------------------------------------------
@@ -250,7 +259,7 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
 
     protected _doLayout(param: any): void {
         const margins = this._margins;
-        const minThumb = pickNum(this.model.minThumbSize, 32);
+        const szThumb = this._szThumb = pickNum(this.model.minThumbSize, 32);
         const max = this._max;
         const page = this._page;
         const pos = this._pos;
@@ -262,15 +271,15 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
             w -= margins.left + margins.right;
             this._trackView.setBounds(margins.left, 0, w, h);
             
-            h -= minThumb;
-            const hPage = (fill || page === max ? h : h * page / max) + minThumb;
+            h -= szThumb;
+            const hPage = (fill || page === max ? h : h * page / max) + szThumb;
             this._thumbView.setBounds(margins.left + 1, fill ? 0 : h * pos / max, margins.top + 1, w - 2, hPage); 
         } else {
             h -= margins.top + margins.bottom;
             this._trackView.setBounds(0, margins.top, w, h);
             
-            w -= minThumb;
-            const wPage = (fill || page === max ? w : w * page / max) + minThumb;
+            w -= szThumb;
+            const wPage = (fill || page === max ? w : w * page / max) + szThumb;
             this._thumbView.setBounds(fill ? 0 : w * pos / max, margins.top + 1, wPage, h - 2); 
         }
     }
@@ -297,7 +306,7 @@ export class AxisView extends ChartElement<Axis> {
     private _markViews: AxisTickMarkView[] = [];
     private _labelContainer: RcElement;
     private _labelViews: AxisLabelElement[] = []; 
-    private _scrollView: AxisScrollView;
+    _scrollView: AxisScrollView;
 
     private _markLen: number;
     private _labelSize: number;
