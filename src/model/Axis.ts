@@ -110,11 +110,6 @@ export enum AxisTitleAlign {
  */
 export class AxisTitle extends AxisItem {
 
-    constructor(axis: Axis) {
-        super(axis);
-        
-        this.visible = !axis._isX;
-    }
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -562,7 +557,7 @@ export class AxisScrollBar extends AxisItem {
     /**
      * 스크롤바 두께.
      */
-    width = 12;
+    thickness = 12;
 }
 
 export interface IAxisZoom {
