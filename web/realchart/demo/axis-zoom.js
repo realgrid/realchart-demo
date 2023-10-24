@@ -98,9 +98,6 @@ function setActions(container) {
     createCheckBox(container, 'Zooming', function (e) {
         _getChecked(e) ? chart.xAxis.zoom(10.2, 20.4) : chart.xAxis.resetZoom();
     }, false);
-    createCheckBox(container, 'Zooming2', function (e) {
-        _getChecked(e) ? chart.xAxis.zoom(14.2, 16.4) : chart.xAxis.resetZoom();
-    }, false);
 }
 
 function init() {
