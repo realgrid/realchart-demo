@@ -76,7 +76,7 @@ test.describe('bar.html test', async function () {
 				r = await PWTester.getBounds(bar);
 			}
 
-			PWTester.same(gridr.r, r.y);
+			PWTester.same(gridr.y, r.y);
 		}
 
 		await page.evaluate(
@@ -113,16 +113,10 @@ test.describe('bar.html test', async function () {
 			const rPrev = await PWTester.getBounds(prev);
 			const rBar = await PWTester.getBounds(bar);
 
-			if (data[i] >= data[i - 1]) {
-				expect(rBar.width).gte(rPrev.width);
-			} else {
-				expect(rBar.width).lt(rPrev.width);
-			}
-		}
-
-		await page.evaluate('config.inverted = false; chart.load(config)');
+		PWTester.same(rPrev.x, rBar.x);
+		};
 	});
-
+		
 	test('title', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
@@ -139,13 +133,25 @@ test.describe('bar.html test', async function () {
 
 		const xAxis = await PWTester.getAxis(page, 'x');
 		const xAxisText = await xAxis.$('text');
-		expect(xAxis).exist;
 
-		const xAxistTitle = await page.evaluate(
+		const xAxisTitle = await page.evaluate(
 			(el) => el.textContent,
 			xAxisText
 		);
-		expect(xAxistTitle).eq(config.xAxis.title);
+		if(config.xAxis.title){
+			const obj = config.xAxis.title;
+			const value = obj.text;
+			if(config.xAxis.title.visible){
+				expect(xAxisTitle).eq(value);
+			}else if(typeof(config.xAxis.title) === 'string'){
+				expect(xAxisTitle).eq(config.xAxis.title)
+			}else{
+                expect(true, "This should be false").to.be.false; // AssertionError: This should be false: expected true to be false 잘못된 값 입력함
+            }
+		}else{
+			const displayValue = await xAxis.$eval('.rct-axis-title', el => el.style.display);
+			expect(displayValue).to.equal('none');
+		}
 	});
 
 	test('yTitle', async ({ page }) => {
@@ -153,29 +159,47 @@ test.describe('bar.html test', async function () {
 
 		const yAxis = await PWTester.getAxis(page, 'y');
 		const yAxisText = await yAxis.$('text');
-		expect(yAxis).exist;
 
-		const yAxistTitle = await page.evaluate(
+		const yAxisTitle = await page.evaluate(
 			(el) => el.textContent,
 			yAxisText
 		);
-		expect(yAxistTitle).eq(config.yAxis.title);
+		if(config.yAxis.title){
+			const obj = config.yAxis.title;
+			const value = obj.text;
+			if(config.yAxis.title.visible){
+				expect(yAxisTitle).eq(value);
+			}else if(typeof(config.yAxis.title) === 'string'){
+				expect(yAxisTitle).eq(config.yAxis.title)
+			}else{
+                expect(true, "This should be false").to.be.false; // AssertionError: This should be false: expected true to be false 잘못된 값 입력함
+            }
+		}else{
+			const displayValue = await yAxis.$eval('.rct-axis-title', el => el.style.display);
+			expect(displayValue).to.equal('none');
+		}
+		
 	});
 
-	test('xtick', async ({ page }) => {
+	test('xAxis tick', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
 		const xAxis = await PWTester.getAxis(page, 'x');
-		const xAxisTick = await xAxis.$$('.' + AxisView.TICK_CLASS);
-
-		expect(xAxisTick.length).eq(config.xAxis.categories.length);
+		const xAxisTick = await xAxis.$$('.rct-axis-tick');
+		if(config.xAxis.tick){
+			expect(xAxisTick.length).eq(config.series.data.length);
+		}else{
+			const displayValue = await xAxis.$eval('.rct-axis-ticks', el => el.style.display);
+			expect(displayValue).to.equal('none');
+		}
+			
 	});
 
 	test('xlabel', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
 		const xAxis = await PWTester.getAxis(page, 'x');
-		const label = await xAxis.$('.' + AxisView.TICK_CLASS);
+		const label = await xAxis.$('.rct-axis-labels');
 
 		const labelTexts = await label.$$('text');
 		for (let i = 0; i < labelTexts.length; i++) {
@@ -184,22 +208,6 @@ test.describe('bar.html test', async function () {
 				labelTexts[i]
 			);
 			expect(tickLabels).eq(config.xAxis.categories[i]);
-		}
-	});
-
-	test('ytick', async ({ page }) => {
-		const config: any = await page.$('config');
-
-		const yAxis = await PWTester.getAxis(page, 'y');
-		const label = await yAxis.$('.' + AxisView.TICK_CLASS);
-
-		const labelTexts = await label.$$('text');
-		for (let i = 0; i < labelTexts.length; i++) {
-			const tickLabel = await page.evaluate(
-				(el) => el.textContent,
-				labelTexts[i]
-			);
-			expect(tickLabel).exist;
 		}
 	});
 

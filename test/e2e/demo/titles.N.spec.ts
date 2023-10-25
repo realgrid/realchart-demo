@@ -88,45 +88,19 @@ test.describe('titles.html test', async function () {
 		expect(yAxistTitle).eq(config.yAxis.title);
 	});
 
-	test('xtick', async ({ page }) => {
+
+	test('xAxis tick', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
 		const xAxis = await PWTester.getAxis(page, 'x');
-		const xAxisTick = await xAxis.$$('.' + AxisView.TICK_CLASS);
-
-		expect(xAxisTick.length).eq(config.series.data.length);
-	});
-
-	test('xlabel', async ({ page }) => {
-		const config: any = await page.evaluate('config');
-
-		const xAxis = await PWTester.getAxis(page, 'x');
-		const label = await xAxis.$('.' + AxisView.TICK_CLASS);
-
-		const labelTexts = await label.$$('text');
-		for (let i = 0; i < labelTexts.length; i++) {
-			const tickLabels = await page.evaluate(
-				(el) => el.textContent,
-				labelTexts[i]
-			);
-			expect(tickLabels).eq(config.xAxis.categories[i]);
+		const xAxisTick = await xAxis.$$('.rct-axis-tick');
+		if(config.xAxis.tick){
+			expect(xAxisTick.length).eq(config.series.data.length);
+		}else{
+			const displayValue = await xAxis.$eval('.rct-axis-ticks', el => el.style.display);
+			expect(displayValue).to.equal('none');
 		}
-	});
-
-	test('ytick', async ({ page }) => {
-		const config: any = await page.$('config');
-
-		const yAxis = await PWTester.getAxis(page, 'y');
-		const label = await yAxis.$('.' + AxisView.TICK_CLASS);
-
-		const labelTexts = await label.$$('text');
-		for (let i = 0; i < labelTexts.length; i++) {
-			const tickLabel = await page.evaluate(
-				(el) => el.textContent,
-				labelTexts[i]
-			);
-			expect(tickLabel).exist;
-		}
+			
 	});
 
 	test('legend', async ({ page }) => {

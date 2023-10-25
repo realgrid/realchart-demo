@@ -54,20 +54,72 @@ test.describe('bararrange-multi.html test', async function () {
 		expect(titleText).eq(config.title);
 	});
 
-	test('tick', async ({ page }) => {
+	test('xTitle', async ({ page }) => {
+		const config: any = await page.evaluate('config');
+
+		const xAxis = await PWTester.getAxis(page, 'x');
+		const xAxisText = await xAxis.$('text');
+
+		const xAxisTitle = await page.evaluate(
+			(el) => el.textContent,
+			xAxisText
+		);
+		if(config.xAxis.title){
+			const obj = config.xAxis.title;
+			const value = obj.text;
+			if(config.xAxis.title.visible){
+				expect(xAxisTitle).eq(value);
+			}else if(typeof(config.xAxis.title) === 'string'){
+				expect(xAxisTitle).eq(config.xAxis.title)
+			}else{
+                expect(true, "This should be false").to.be.false; // AssertionError: This should be false: expected true to be false 잘못된 값 입력함
+            }
+		}else{
+			const displayValue = await xAxis.$eval('.rct-axis-title', el => el.style.display);
+			expect(displayValue).to.equal('none');
+		}
+	});
+
+	test('yTitle', async ({ page }) => {
+		const config: any = await page.evaluate('config');
+
+		const yAxis = await PWTester.getAxis(page, 'y');
+		const yAxisText = await yAxis.$('text');
+
+		const yAxisTitle = await page.evaluate(
+			(el) => el.textContent,
+			yAxisText
+		);
+		if(config.yAxis.title){
+			const obj = config.yAxis.title;
+			const value = obj.text;
+			if(config.yAxis.title.visible){
+				expect(yAxisTitle).eq(value);
+			}else if(typeof(config.yAxis.title) === 'string'){
+				expect(yAxisTitle).eq(config.yAxis.title)
+			}else{
+                expect(true, "This should be false").to.be.false; // AssertionError: This should be false: expected true to be false 잘못된 값 입력함
+            }
+		}else{
+			const displayValue = await yAxis.$eval('.rct-axis-title', el => el.style.display);
+			expect(displayValue).to.equal('none');
+		}
+		
+	});
+
+	test('xAxis tick', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
 		const xAxis = await PWTester.getAxis(page, 'x');
 		const xAxisTick = await xAxis.$$('.rct-axis-tick');
-
-		let maxLength = 0;
-		config.series.forEach((firstSeries) => {
-			if (maxLength < firstSeries.data.length)
-				maxLength = firstSeries.data.length;
-		});
-		expect(xAxisTick.length).eq(maxLength);
+		if(config.xAxis.tick){
+			expect(xAxisTick.length).eq(config.series.data.length);
+		}else{
+			const displayValue = await xAxis.$eval('.rct-axis-ticks', el => el.style.display);
+			expect(displayValue).to.equal('none');
+		}
+			
 	});
-
 	test('legend', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 

@@ -13,7 +13,8 @@ const config = {
         title: 'Time'
     },
     yAxis: {
-        title: 'Temparature'
+        title: 'Temparature',
+        tick: true,
     },
     series: {
         type: 'arearange',
