@@ -112,7 +112,7 @@ export class ScrollTracker extends ChartDragTracker {
     }
 }
 
-export class NavigatorTracker extends ChartDragTracker {
+export class NavigatorHandleTracker extends ChartDragTracker {
 
     //-------------------------------------------------------------------------
     // fields
@@ -155,6 +155,33 @@ export class NavigatorTracker extends ChartDragTracker {
     protected _doEnded(x: number, y: number): void {
     }
 
+    protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
+        const view = this._view;
+        const axis = view.model.axis();
+        const len = axis.length();
+        let p = view.svgToElement(x, y).x - this._startOff;
+
+        if (this._handleView._vertical) {
+            if (this._isStart) {
+            } else {
+            }
+        } else {
+            if (this._isStart) {
+                if (p > 0) {
+                    axis.zoom(p * len / view.width, NaN);
+                }
+            } else {
+            }
+        }
+        return true;
+    }
+}
+
+export class NavigatorMoveTracker extends ChartDragTracker {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
     protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
         return;
     }

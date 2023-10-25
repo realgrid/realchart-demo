@@ -897,7 +897,12 @@
 
 /** series navigator */
 .rct-navigator-back {
+    fill: white;
+    stroke: #f0f0f0;
+}
+.rct-navigator-mask {
     fill: #4488cc14;
+    stroke: #ccc;
 }
 .rct-navigator-handle {
     fill: var(--rct-navigator-handle-fill);

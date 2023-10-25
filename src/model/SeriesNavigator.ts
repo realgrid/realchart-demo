@@ -127,7 +127,7 @@ export class SeriesNavigator extends ChartItem {
     }
 
     protected _doPrepareRender(chart: IChart): void {
-        this._series = chart._getSeries().getSeries(this.source) || chart.firstSeries;
+        this._source = chart._getSeries().getSeries(this.source) || chart.firstSeries;
 
         this._vertical = false;
     }

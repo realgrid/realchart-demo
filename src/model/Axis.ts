@@ -626,8 +626,8 @@ export class AxisZoom {
     }
     
     resize(start: number, end: number): boolean {
-        start = Math.max(this.min, Math.min(this.max, start));
-        end = Math.max(start, Math.min(this.max, end));
+        start = isNaN(start) ? this.start : Math.max(this.min, Math.min(this.max, start));
+        end = isNaN(end) ? this.end : Math.max(start, Math.min(this.max, end));
 
         if (start !== this.start || end !== this.end) {
             this.start = start;
@@ -899,17 +899,15 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
     
     zoom(start: number, end: number): boolean {
-        /*if (end === start) {
-            this.resetZoom();
-        } else*/ if (!isNaN(start) && !isNaN(end)) {
-            if (!this._zoom) {
-                this._zoom = new AxisZoom(this, start, end);
-                this._changed();
-                return true;
-            } else if (this._zoom.resize(start, end)) {
-                this._changed();
-                return true;
-            }
+        if (!this._zoom) {
+            if (isNaN(start)) start = this._min;
+            if (isNaN(end)) end = this._max;
+            this._zoom = new AxisZoom(this, start, end);
+            this._changed();
+            return true;
+        } else if (this._zoom.resize(start, end)) {
+            this._changed();
+            return true;
         }
     }
 

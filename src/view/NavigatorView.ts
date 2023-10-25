@@ -10,7 +10,6 @@ import { PathBuilder } from "../common/PathBuilder";
 import { PathElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
-import { Axis } from "../model/Axis";
 import { SeriesNavigator } from "../model/SeriesNavigator";
 import { ChartElement } from "./ChartElement";
 
@@ -75,6 +74,7 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
     //-------------------------------------------------------------------------
     static readonly CLASS_NAME = 'rct-navigator';
     static readonly BACK_STYLE = 'rct-navigator-back';
+    static readonly MASK_STYLE = 'rct-navigator-mask';
     static readonly HANDLE_STYLE = 'rct-navigator-handle';
     static readonly HANDLE_BACK_STYLE = 'rct-navigator-handle-back';
 
@@ -89,6 +89,7 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
     // fields
     //-------------------------------------------------------------------------
     private _back: RectElement;
+    private _mask: RectElement;
     _startHandle: NavigatorHandleView;
     _endHandle: NavigatorHandleView;
 
@@ -99,6 +100,7 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
         super(doc, NavigatorView.CLASS_NAME);
 
         this.add(this._back = new RectElement(doc, NavigatorView.BACK_STYLE))
+        this.add(this._mask = new RectElement(doc, NavigatorView.MASK_STYLE))
         this.add(this._startHandle = new NavigatorHandleView(doc));
         this.add(this._endHandle = new NavigatorHandleView(doc));
     }
@@ -123,6 +125,8 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
     }
 
     protected _doLayout(param: any): void {
+        const axis = this.model.axis();
+        const zoom = axis._zoom;
         const w = this.width;
         const h = this.height;
 
@@ -130,10 +134,16 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
 
         if (this.model._vertical) {
         } else {
+            const x1 = zoom ? zoom.start * w / axis.length() : 0;
+            const x2 = zoom ? zoom.end * w / axis.length() : w;
+            console.log('end', zoom ? zoom.end : w, x2);
+
+            this._mask.setBounds(x1, 0, x2 - x1, h);
+
             this._startHandle.layout(h / 3, h / 3, false)
-            this._startHandle.translate(0, h / 2);
+            this._startHandle.translate(x1, h / 2);
             this._endHandle.layout(h / 3, h / 3, false);
-            this._endHandle.translate(this.width, h / 2);
+            this._endHandle.translate(x2, h / 2);
         }
     }
 
