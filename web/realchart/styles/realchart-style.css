@@ -121,6 +121,10 @@
     --rct-axis-grid-line-stroke-start: none;
     --rct-axis-grid-line-stroke-end: none;
     --rct-axis-grid-line-stroke-width: 1px;
+    --rct-axis-scrollbar-track-fill: #fdfdfd;
+    --rct-axis-scrollbar-track-stroke: #aaa;
+    --rct-axis-scrollbar-thumb-fill: lightgray;
+    --rct-axis-scrollbar-rx: 4px;
     
     --rct-legend-background-stroke: none;
     --rct-legend-item-fill: #333;
@@ -146,6 +150,9 @@
     --rct-clock-gauge-minor-tick-stroke: #555;
     --rct-clock-gauge-tick-label-fill: #333;
     --rct-clock-gauge-label-fill: #aaa;
+
+    /** zoom tracker */
+    --rct-zoom-tracker-fill: #0044ff30;
 }
 .rct-root[data-theme='dark'] {
     --rct-focus-border: yellow;
@@ -173,6 +180,9 @@
     /* circle gauge */
     --rct-circle-gauge-back-fill: #333;
     --rct-circle-gauge-label-fill: #eee;
+
+    /** zoom tracker */
+    --rct-zoom-tracker-fill: #efefef40;
 }
 
 /** control */
@@ -325,6 +335,18 @@
 .rct-axis-guide-range {
     stroke: none;
     fill: #0088ff40;
+}
+.rct-axis-scrollbar {
+    margin: 3px;
+}
+.rct-axis-scrollbar-track {
+    fill: var(--rct-axis-scrollbar-track-fill);
+    stroke: var(--rct-axis-scrollbar-track-stroke);
+    rx: var(--rct-axis-scrollbar-rx);
+}
+.rct-axis-scrollbar-thumb {
+    fill: var(--rct-axis-scrollbar-thumb-fill);
+    rx: var(--rct-axis-scrollbar-rx);
 }
 
 /** polar axis */
@@ -872,5 +894,5 @@
 
 /** zoom tracker */
 .rct-zoom-tracker {
-    fill: #0044ff30;
+    fill: var(--rct-zoom-tracker-fill);
 }

@@ -186,13 +186,15 @@ export class AxisGrid extends AxisItem {
      * 
      * @config
      */
-    endVisible = true;
+    endVisible: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(axis: Axis) {
         super(axis, null);
+
+        this.endVisible = !axis._isX;
     }
 
     //-------------------------------------------------------------------------
@@ -557,7 +559,8 @@ export class AxisScrollBar extends AxisItem {
     /**
      * 스크롤바 두께.
      */
-    thickness = 12;
+    thickness = 10;
+    minThumbSize = 32;
 }
 
 export interface IAxisZoom {
@@ -567,20 +570,24 @@ export interface IAxisZoom {
 
 export class AxisZoom {
 
-    private _axixMin: number;
-    private _axixMax: number;
+    min: number;
+    max: number;
     start: number;
     end: number;
 
     constructor(public axis: Axis, start: number, end: number) {
-        this._axixMin = axis.axisMin();
-        this._axixMax = axis.axisMax();
+        this.min = axis.axisMin();
+        this.max = axis.axisMax();
         this.resize(start, end);
+    }
+
+    get length(): number {
+        return this.end - this.start;
     }
     
     resize(start: number, end: number): boolean {
-        start = Math.max(this._axixMin, Math.min(this._axixMax, start));
-        end = Math.max(start, Math.min(this._axixMax, end));
+        start = Math.max(this.min, Math.min(this.max, start));
+        end = Math.max(start, Math.min(this.max, end));
 
         if (start !== this.start || end !== this.end) {
             this.start = start;
@@ -623,7 +630,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
      * @config
      */
-    readonly grid = this._createGrid();
+    readonly grid: AxisGrid;
     /**
      * @config
      */
@@ -664,6 +671,7 @@ export abstract class Axis extends ChartItem implements IAxis {
         this.line = new AxisLine(this);
         this.tick = this._createTickModel();
         this.label = this._createLabelModel();
+        this.grid = this._createGrid();
     }
 
     //-------------------------------------------------------------------------

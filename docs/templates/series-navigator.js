@@ -1,24 +1,18 @@
 export const config = {
   options: {},
   title: {
-    text: 'Axis Zooming',
-    style: {
-      padding: '1px 5px',
-      marginBottom: '8px',
-      fill: 'white',
-      fontSize: '1.2em'
-    },
-    backgroundStyle: { fill: '#338', rx: '5px' }
+    text: 'Series Navigator (Working...)',
+    style: { fontSize: '1.2em' },
+    backgroundStyle: { rx: '5px' }
   },
-  body: { zoomType: 'x', style: {} },
+  body: { zoomButton: false, zoomType: 'x', style: {} },
   xAxis: {
-    title: 'Period',
+    title: { visible: true, text: 'Period' },
     crosshair: true,
     padding: 0,
     label: { autoArrange: 'step' },
     line: { style: { stroke: 'black', strokeWidth: 2 } },
-    grid: { endVisible: true },
-    scrollBar: { visible: true }
+    grid: { endVisible: true }
   },
   yAxis: { title: 'Hestavollane', line: true },
   series: {

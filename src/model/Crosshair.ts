@@ -37,7 +37,7 @@ export class CrosshairFlag extends ChartItem {
     prefix: string;
     suffix: string;
     /**
-     * {flag에 표시될 텍스트 형식.
+     * flag에 표시될 텍스트 형식.
      * <br>
      * 별도로 지정하지 않으면 현재 위치에 해당하는 축 값을 표시한다.
      * Category 축인 경위 위치에 해당하는 category 이름을 표시한다.

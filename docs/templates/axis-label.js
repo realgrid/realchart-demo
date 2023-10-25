@@ -29,7 +29,6 @@ export const config = {
       'Tim-Long',
       'Laura-Long'
     ],
-    grid: true,
     label: {}
   },
   yAxis: { title: 'Y Axis', grid: true },
