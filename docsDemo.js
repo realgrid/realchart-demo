@@ -1,5 +1,5 @@
 import { chromium } from '@playwright/test';
-import { existsSync, mkdirSync, readFileSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, rmdirSync, copyFileSync } from 'fs';
 import fs from 'fs/promises';
 import util from 'util';
 
@@ -7,7 +7,27 @@ function readFile(file) {
     return readFileSync(file, "utf-8");
 }
 
+
 (async () => {
+    // if (existsSync('./docs/public/realchart')) {
+    //     rmdirSync('./docs/public/realchart', { recursive: true });
+    // }
+
+    // mkdirSync('./docs/public/realchart', { recursive: true });
+
+    // copyFileSync('./web/realchart/lib/realchart.js', './docs/public/realchart/realchart.js');
+    // copyFileSync('./web/realchart/styles/realchart-style.css', './docs/public/realchart/realchart-style.css');
+
+    if (existsSync('./docs/templates')) {
+        rmdirSync('./docs/templates', { recursive: true });
+    }
+
+    if (existsSync('./docs/pages/demo')) {
+        rmdirSync('./docs/pages/demo', { recursive: true });
+    }
+
+    mkdirSync('./docs/templates', { recursive: true });
+
     const browser = await chromium.launch();
     const page = await browser.newPage();
 
@@ -31,8 +51,9 @@ function readFile(file) {
             const config = await page.evaluate('config');
 			await fs.writeFile('./docs/templates/' + value2 + '.js', `export const config = ${util.inspect(config, { depth: null, maxArrayLength: null })}
 `);
-            console.log(`./docs/templates/${value2}.js 파일을 생성했습니다.`);
-            count++;
+            ++count;
+            console.log(count, `./docs/templates/${value2}.js`);
+            
 			await fs.writeFile(target + '/' + value2 + '.mdx', `---
 title: "${key2}"
 ---
@@ -43,8 +64,8 @@ import { config } from "@/templates/${value2}";
 			
 <RealChartReact config={config} showEditor={true} autoUpdate={false} />
 `)
-            console.log(`${target}/${value2}.mdx 파일을 생성했습니다.`);
-            count++;
+            ++count
+            console.log(count, `${target}/${value2}.mdx`);
         };
     };
 

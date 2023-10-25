@@ -9,7 +9,6 @@ export const config = {
       '2018', '2019',
       '2020'
     ],
-    grid: true,
     label: { step: 3 }
   },
   yAxis: { title: '대기질 지수(Air Quality Index, AQI)' },

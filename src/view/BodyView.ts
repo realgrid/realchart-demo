@@ -906,7 +906,7 @@ export class BodyView extends ChartElement<Body> {
         });
 
         // zoom button
-        if (this._zoomButton.setVisible(model.isZoomed())) {
+        if (this._zoomButton.setVisible(model.zoomButton.isVisible())) {
             this._zoomButton.layout();
         }
 

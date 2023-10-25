@@ -68,3 +68,6 @@ export abstract class PolygonItem extends PlotItem {
  */
 export class RegionItem extends PlotItem {
 }
+
+export class ButtonItem extends PlotItem {
+}
