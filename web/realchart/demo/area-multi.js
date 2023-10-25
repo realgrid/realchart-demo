@@ -6,15 +6,18 @@
 const config = {
     type: "area",
     options: {},
-    title: "Multiple Areas",
+    title: "Multiple",
     xAxis: {
         type: 'category',
-        title: "일일 Daily fat",
+        title: {
+            text: 'dsdsd',
+        }
     },
     yAxis: {
         title: "Vertical 수직축 Axis",
     },
     series: [{
+        //테스트123
         name: 'Installation & Developers',
         marker: true,
         data: [43934, 48656, 65165, 81827, 112143, 142383,

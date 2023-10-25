@@ -4,16 +4,18 @@
  * Bar Series 기본 예제.
  */
 const config = {
-	title: '2022년도 도시의 평균 대기질 지수',
+	title: '년도별 서울시 평균 대기질 지수',
 	options: {
 		// animatable: false
 	},
 	xAxis: {
-		title: '도시',
+		title: '서울시',
 		categories: ['2014', '2015', '2016', '2017', '2018', '2019', '2020'],
-		label:{
-			step: 3
-		}
+		grid: true,
+		label: {
+			// startStep: 0,
+			step: 3,
+		},
 	},
 	yAxis: {
 		title: '대기질 지수(Air Quality Index, AQI)',
@@ -26,8 +28,9 @@ const config = {
 		pointLabel: true,
 		// pointWidth: '100%',
 		// colorByPoint: true,
-		// color: 'green',
-		data: [155, 138, 122, 130, 119, 115, 128],
+		color: 'green',
+		colorField: 'green',
+		data: [155, 138, 122, 133, 114, 113, 123],
 	},
 	ChartTextEffect: {
 		autoContrast: false,

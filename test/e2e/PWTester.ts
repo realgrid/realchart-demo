@@ -71,4 +71,11 @@ export class PWTester {
 		});
 		return bv;
 	}
+	static async getPathDValue(elt: ElementHandle): Promise<string | null> {
+		const dValue = await elt.evaluate((elt) => {
+			const pathElement = elt as SVGPathElement;
+			return pathElement.getAttribute('d');
+		});
+		return dValue;
+	}
 }

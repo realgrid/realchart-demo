@@ -81,19 +81,18 @@ test.describe('bump.html test', async function () {
 		expect(yAxistTitle).eq(config.yAxis.title);
 	});
 
-	test('tick', async ({ page }) => {
+	test('xAxis tick', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
 		const xAxis = await PWTester.getAxis(page, 'x');
 		const xAxisTick = await xAxis.$$('.rct-axis-tick');
-
-		let maxLength = 0;
-		for (let i = 0; i < config.series.children.length; i++) {
-			if (maxLength < config.series.children[i].data.length) {
-				maxLength = config.series.children[i].data.length;
-			}
+		if(config.xAxis.tick){
+			expect(xAxisTick.length).eq(config.series.data.length);
+		}else{
+			const displayValue = await xAxis.$eval('.rct-axis-ticks', el => el.style.display);
+			expect(displayValue).to.equal('none');
 		}
-		expect(maxLength).eq(xAxisTick.length);
+			
 	});
 
 	test('legend', async ({ page }) => {

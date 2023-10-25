@@ -80,19 +80,20 @@ test.describe('categoryaxis-var.html test', async function () {
 		);
 		expect(yAxistTitle).eq(config.yAxis.title);
 	});
+	
 
-	test('xtick', async ({ page }) => {
+	test('xAxis tick', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
 		const xAxis = await PWTester.getAxis(page, 'x');
 		const xAxisTick = await xAxis.$$('.rct-axis-tick');
-		let maxLength = 0;
-		config.series.forEach((eachSeries) => {
-			if (maxLength < eachSeries.data.length) {
-				maxLength = eachSeries.data.length;
-			}
-		});
-		expect(maxLength).eq(xAxisTick.length);
+		if(config.xAxis.tick){
+			expect(xAxisTick.length).eq(config.series.data.length);
+		}else{
+			const displayValue = await xAxis.$eval('.rct-axis-ticks', el => el.style.display);
+			expect(displayValue).to.equal('none');
+		}
+			
 	});
 
 	test('legend', async ({ page }) => {
@@ -159,25 +160,26 @@ test.describe('categoryaxis-var.html test', async function () {
 	test('point', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
-		const dataPoints = await page.$('.rct-series-points');
+		const dataPoints = await page.$$('.rct-series-points');
 		expect(dataPoints).exist;
 
-		const linePoints = await page.$$(
-			'.rct-line-series .rct-point-label[y="12"]'
-		);
+		const seriesPoint = await dataPoints[1].$$('.rct-point');
+
+		const barPoint = await dataPoints[0].$$('.rct-point')
+		const linePoints = await page.$$('.rct-line-series');
 		expect(linePoints).exist;
-		const barPoints = await page.$$(
-			'.rct-bar-series .rct-point-label[y="12"]'
-		);
+
+		const barPoints = await page.$$('.rct-bar-series');
 		expect(barPoints).exist;
+
 		let maxLength = 0;
 		config.series.forEach((eachSeries) => {
 			if (maxLength < eachSeries.data.length) {
 				maxLength = eachSeries.data.length;
 			}
 		});
-		expect(maxLength).eq(linePoints.length);
-		expect(maxLength).eq(barPoints.length);
+		expect(maxLength).eq(seriesPoint.length);
+		expect(maxLength).eq(barPoint.length);
 
 		const pointLabels = await page.$('.rct-point-labels');
 		expect(pointLabels).exist;

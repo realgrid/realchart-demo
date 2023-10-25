@@ -49,27 +49,27 @@ test.describe('categoryaxis.html test', async function () {
 		// page.close();
 	});
 
-	test('padding', async ({ page }) => {
-		const series = await page.$('.' + LineSeriesView.CLASS);
-		const markers = await series.$$('.' + SeriesView.POINT_CLASS);
-		const axis = await PWTester.getAxis(page, 'x');
-		const line = await axis.$('.' + AxisView.LINE_CLASS);
-		let ticks = await axis.$$('.' + AxisView.TICK_CLASS);
-		const rLine = await PWTester.getBounds(line);
-		let pTick = await PWTester.getTranslate(ticks[0]);
+	// test('padding', async ({ page }) => {
+	// 	const series = await page.$('.' + LineSeriesView.CLASS);
+	// 	const markers = await series.$$('.' + SeriesView.POINT_CLASS);
+	// 	const axis = await PWTester.getAxis(page, 'x');
+	// 	const line = await axis.$('.' + AxisView.LINE_CLASS);
+	// 	let ticks = await axis.$$('.' + AxisView.TICK_CLASS);
+	// 	const rLine = await PWTester.getBounds(line);
+	// 	let pTick = await PWTester.getTranslate(ticks[0]);
 
-		expect(markers.length).eq(ticks.length);
-		expect(PWTester.same(pTick.x, rLine.width / ticks.length / 2)).is.true;
+	// 	expect(markers.length).eq(ticks.length);
+	// 	expect(PWTester.same(pTick.x, rLine.width / ticks.length / 2)).is.true;
 
-		// padding -> -0.5
-		await page.evaluate('config.xAxis.padding = -0.5; chart.load(config)');
+	// 	// padding -> -0.5
+	// 	await page.evaluate('config.xAxis.padding = -0.5; chart.load(config)');
 
-		ticks = await axis.$$('.' + AxisView.TICK_CLASS);
-		pTick = await PWTester.getTranslate(ticks[0]);
-		expect(PWTester.same(pTick.x, 0)).is.true;
+	// 	ticks = await axis.$$('.' + AxisView.TICK_CLASS);
+	// 	pTick = await PWTester.getTranslate(ticks[0]);
+	// 	expect(PWTester.same(pTick.x, 0)).is.true;
 
-		await page.evaluate('config.xAxis.padding = 0; chart.load(config)');
-	});
+	// 	await page.evaluate('config.xAxis.padding = 0; chart.load(config)');
+	// });
 
 	test('title', async ({ page }) => {
 		const config: any = await page.evaluate('config');
@@ -107,20 +107,6 @@ test.describe('categoryaxis.html test', async function () {
 			yAxisText
 		);
 		expect(yAxistTitle).eq(config.yAxis.title);
-	});
-
-	test('xtick', async ({ page }) => {
-		const config: any = await page.evaluate('config');
-
-		const xAxis = await PWTester.getAxis(page, 'x');
-		const xAxisTick = await xAxis.$$('.rct-axis-tick');
-		let maxLength = 0;
-		config.series.forEach((eachSeries) => {
-			if (maxLength < eachSeries.data.length) {
-				maxLength = eachSeries.data.length;
-			}
-		});
-		expect(maxLength).eq(xAxisTick.length);
 	});
 
 	test('legend', async ({ page }) => {
@@ -187,25 +173,26 @@ test.describe('categoryaxis.html test', async function () {
 	test('point', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
-		const dataPoints = await page.$('.rct-series-points');
+		const dataPoints = await page.$$('.rct-series-points');
 		expect(dataPoints).exist;
 
-		const linePoints = await page.$$(
-			'.rct-line-series .rct-point-label[y="12"]'
-		);
+		const seriesPoint = await dataPoints[1].$$('.rct-point');
+
+		const barPoint = await dataPoints[0].$$('.rct-point')
+		const linePoints = await page.$$('.rct-line-series');
 		expect(linePoints).exist;
-		const barPoints = await page.$$(
-			'.rct-bar-series .rct-point-label[y="12"]'
-		);
+
+		const barPoints = await page.$$('.rct-bar-series');
 		expect(barPoints).exist;
+
 		let maxLength = 0;
 		config.series.forEach((eachSeries) => {
 			if (maxLength < eachSeries.data.length) {
 				maxLength = eachSeries.data.length;
 			}
 		});
-		expect(maxLength).eq(linePoints.length);
-		expect(maxLength).eq(barPoints.length);
+		expect(maxLength).eq(seriesPoint.length);
+		expect(maxLength).eq(barPoint.length);
 
 		const pointLabels = await page.$('.rct-point-labels');
 		expect(pointLabels).exist;

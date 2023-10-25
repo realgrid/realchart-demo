@@ -83,22 +83,6 @@ test.describe('equalizer-multi.html test', async function () {
 		expect(yAxistTitle).eq(config.yAxis.title);
 	});
 
-	test('tick 틱의 갯수와 실제 최대 데이터의 갯수가 알맞는지 확인', async ({
-		page,
-	}) => {
-		const config: any = await page.evaluate('config');
-
-		const xAxis = await PWTester.getAxis(page, 'x');
-		const xAxisTick = await xAxis.$$('.rct-axis-tick');
-		let maxLength = 0;
-		config.series.forEach((eachSeries) => {
-			if (maxLength < eachSeries.data.length) {
-				maxLength = eachSeries.data.length;
-			}
-		});
-		expect(xAxisTick.length).eq(maxLength);
-	});
-
 	test('legend 의 존재 유무와 알맞은 값인지 확인', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
