@@ -1,0 +1,171 @@
+{
+    "Basic": {
+        "Basic": "basic"
+    },
+    "Bar": {
+        "Bar": "bar",
+        "Multi Bars": "bar-multi",
+        "Bar Group": "bargroup",
+        "Multi Groups": "bargroup-multi",
+        "Bar Negative": "bar-negative",
+        "Null Point": "bar-null",
+        "Negative Bars": "bargroup-negative"
+    },
+    "BarRange": {
+        "Bar Range": "barrange",
+        "Multiple Bar Ranges": "barrange-multi",
+        "Null Point": "barrange-null"
+    },
+    "Waterfall": {
+        "Waterfall": "barrange",
+        "Null Point": "waterfall-null"
+    },
+    "Line": {
+        "Line": "line",
+        "Spline": "line-spline",
+        "Stepped Line": "line-step",
+        "Negative Line": "line-negative",
+        "Null Point": "line-null",
+        "Multiple Lines": "line-multi",
+        "Line Group": "linegroup",
+        "Negative Lines": "linegroup-negative",
+        "Bump Chart": "bump",
+        "대량 데이터(3000)": "line-bigdata"
+    },
+    "Area": {
+        "Area": "area",
+        "Multi Areas": "area-multi",
+        "Area Group": "areagroup",
+        "Area Negative": "area-negative",
+        "Negative Areas": "areagroup-negative",
+        "Null Point": "area-null"
+    },
+    "AreaRange": {
+        "Area Range": "arearange",
+        "Null Point": "arearange-null"
+    },
+    "Pareto": {
+        "Pareto": "pareto",
+        "Null Point": "pareto-null"
+    },
+    "Scatter": {
+        "Scatter": "scatter"
+    },
+    "Bubble": {
+        "Bubble": "bubble",
+        "Null Point": "bubble-null"
+    },
+    "BoxPlot": {
+        "BoxPlot": "boxplot",
+        "Multiple BoxPlots": "boxplot-multi",
+        "Null Point": "boxplot-null"
+    },
+    "Error Bar": {
+        "ErrorBar": "errorbar",
+        "Null Point": "errorbar-null"
+    },
+    "Candlestick": {
+        "Candlestick": "candlestick",
+        "Null Point": "candlestick-null"
+    },
+    "Ohlc": {
+        "Ohlc": "ohlc",
+        "Null Point": "ohlc-null" 
+    },
+    "Lollipop": {
+        "Lollipop": "lollipop",
+        "Null Point": "lollipop-null"
+    },
+    "Dumbbell": {
+        "Dumbbell": "dumbbell",
+        "Null Point": "dumbbell-null"
+    },
+    "Equalizer": {
+        "Equalizer": "equalizer",
+        "Multiple Equalizer": "equalizer-multi",
+        "Null Point": "equalizer-null"
+    },
+    "Histogram": {
+        "Histogram": "histogram"
+    },
+    "Bell Curve": {
+        "Bell Curve": "bellcurve",
+        "Scatter & Bell Curve": "bellcurve-source"
+    },
+    "Vector": {
+        "Vector": "vector",
+        "Null Point": "vector-null"
+    },
+    "Heatmap": {
+        "Heatmap": "heatmap",
+        "Heatmap Category": "heatmap-category",
+        "Null Point": "heatmap-null"
+    },
+    "Treemap": {
+        "Treemap": "treemap",
+        "Treemap Leveled": "treemap-level"
+    },
+    "Pie": {
+        "Pie": "pie",
+        "Null Point": "pie-null",
+        "Donut": "pie-donut"
+    },
+    "Funnel": {
+        "Funnel": "funnel"
+    },
+    "Polar": {
+        "Polar": "polar"
+    },
+    "Combination": {
+        "AreaRange & Line": "combo-arearange-line",
+        "Bar & Pie": "combo-bar-pie"
+    },
+    "Axis": {
+        "Category Axis": "categoryaxis",
+        "Variable Category Axis": "categoryaxis-var",
+        "Linear Axis": "linearaxis",
+        "Log Axis": "logaxis",
+        "Time Axis": "timeaxis",
+        "Axis Breaks": "axis-break",
+        "Axis Labels": "axis-label",
+        "Multiple Axis": "multiaxis",
+        "Zooming": "axis-zoom"
+    },
+    "Gauge": {
+        "Circle Gauge": "gauge",
+        "Multiple Gauges": "gauge-multi",
+        "Hand Gauges": "gauge-hand",
+        "Clock Gauge": "gauge-clock",
+        "Multiple Clocks": "gauge-clock-multi",
+        "Bullet Gauge": "gauge-bullet",
+        "Linear Gauge": "gauge-linear",
+        "Linear Gauge - Vertical": "gauge-linear-vert",
+        "Circle Gauge Group": "gauge-group",
+        "Linear Gauge Group": "gauge-group-linear",
+        "Bullet Gauge Group": "gauge-group-bullet"
+    },
+    "Titles": {
+        "Titles": "titles"
+    },
+    "Legends": {
+        "Legend": "legend",
+        "Legend Rows": "legend-rows"
+    },
+    "Body": {
+        "Trendlines": "trendline",
+        "Guides": "axis-guide",
+        "Crosshair": "crosshair",
+        "Background": "body-background"
+    },
+    "Chart": {
+        "Background": "background",
+        "Resize": "resize"
+    },
+    "Style": {
+        "Linear Gradient": "lineargradient",
+        "Radial Gradient": "radialgradient",
+        "Palette": "palette",
+        "Theme": "theme",
+        "Style Callback": "stylecallback"
+    }
+}

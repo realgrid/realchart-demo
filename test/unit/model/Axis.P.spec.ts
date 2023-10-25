@@ -91,12 +91,12 @@ class AxisImpl extends Axis {
         json = Tester.loadChartJson('axis');
         chart = new Chart();
         chart.prepareRender();
-        axis = new AxisImpl(chart, 'test');
+        axis = new AxisImpl(chart, false, 'test');
         axis.load(source);
     })
 
     it('init', () => {
-        const axis = new AxisImpl(null);
+        const axis = new AxisImpl(null, false);
 
         expect(axis).exist;
     });

@@ -6,14 +6,30 @@ const config = {
     options: {
         // animatable: false
     },
-    title: 'Axis Zooming',
+    title: {
+        text: 'Axis Zooming',
+        style: {
+            padding: '1px 5px',
+            marginBottom: '8px',
+            fill: 'white',
+            fontSize: '1.2em'
+        },
+        backgroundStyle: {
+            fill: '#338',
+            rx: '5px'
+        }
+    },
     body: {
+        zoomType: 'x',
         style: {
             // stroke: 'none'
         }
     },
     xAxis: {
-        title: 'Period',
+        title: {
+            visible: true,   
+            text: 'Period',
+        },
         crosshair: true,
         padding: 0,
         label: {
@@ -25,10 +41,14 @@ const config = {
                 stroke: 'black',
                 strokeWidth: 2
             }
+        },
+        grid: {
+            endVisible: true
         }
     },
     yAxis: {
-        title: 'Hestavollane'
+        title: 'Hestavollane',
+        line: true
     },
     series: {
         // type: 'line',

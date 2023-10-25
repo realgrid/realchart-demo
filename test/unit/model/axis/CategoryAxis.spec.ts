@@ -18,14 +18,14 @@ import { Tester } from '../../Tester';
  describe("CategoryAxis test", function() {
 
     it('init', () => {
-        let axis = new CategoryAxis(null);
+        let axis = new CategoryAxis(null, false);
 
         expect(axis).exist;
     });
 
     it('props', () => {
         let name = 'main';
-        let axis = new CategoryAxis(null, name);
+        let axis = new CategoryAxis(null, false, name);
 
         expect(axis.name).eq(name);
         expect(axis.padding).eq(0);

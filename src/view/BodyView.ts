@@ -55,6 +55,7 @@ import { VectorSeriesView } from "./series/VectorSeriesView";
 import { WaterfallSeriesView } from "./series/WaterfallSeriesView";
 import { LinearGaugeGroupView, LinearGaugeView } from "./gauge/LinearGaugeView";
 import { BulletGaugeGroupView, BulletGaugeView } from "./gauge/BulletGaugeView";
+import { ButtonElement } from "../common/ButtonElement";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -633,7 +634,7 @@ class CrosshairView extends PathElement {
     constructor(doc: Document) {
         super(doc);
 
-        this.setStyle('pointerEvents', 'none');
+        this.ignorePointer();
     }
 
     //-------------------------------------------------------------------------
@@ -688,6 +689,15 @@ class CrosshairView extends PathElement {
     }
 }
 
+class ZoomButton extends ButtonElement {
+
+    constructor(doc: Document) {
+        super(doc, 'Reset Zoom', 'rc-reset-zoom');
+
+        this.visible = false;
+    }
+}
+
 export interface IPlottingOwner {
 
     clipSeries(view: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
@@ -700,13 +710,14 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly BODY_CLASS = 'rct-plot';
+    static readonly BODY_CLASS = 'rct-body';
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _owner: IPlottingOwner;
     private _polar: boolean;
+    private _hitTester: RectElement;
     private _background: RectElement;
     private _image: ImageElement;
     private _gridContainer: LayerElement;
@@ -726,11 +737,13 @@ export class BodyView extends ChartElement<Body> {
     _axisBreakContainer: LayerElement;
     // items
     // private _itemMap = new Map<PlotItem, PlotItemView>();
+    private _zoomButton: ZoomButton;
     // feedbacks
     private _feedbackContainer: LayerElement;
     private _crosshairLines: ElementPool<CrosshairView>;
     private _focused: IPointView = null;
 
+    private _zoomRequested: boolean;
     protected _animatable: boolean;
 
     //-------------------------------------------------------------------------
@@ -740,14 +753,17 @@ export class BodyView extends ChartElement<Body> {
         super(doc, BodyView.BODY_CLASS);
 
         this._owner = owner;
-        this.add(this._background = new RectElement(doc, 'rct-plot-background'));
-        this.add(this._image = new ImageElement(doc, 'rct-plot-image'));
+        this.add(this._hitTester = new RectElement(doc));
+        this._hitTester.setStyle('fill', 'transparent');
+        this.add(this._background = new RectElement(doc, 'rct-body-background'));
+        this.add(this._image = new ImageElement(doc, 'rct-body-image'));
         this.add(this._gridContainer = new LayerElement(doc, 'rct-grids'));
         this.add(this._guideContainer = new AxisGuideContainer(doc, 'rct-guides'));
         this.add(this._seriesContainer = new LayerElement(doc, 'rct-series-container'));
         this.add(this._axisBreakContainer = new LayerElement(doc, 'rct-axis-breaks'));
         this.add(this._frontGuideContainer = new AxisGuideContainer(doc, 'rct-front-guides'));
         this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
+        this.add(this._zoomButton = new ZoomButton(doc));
         
         this._crosshairLines = new ElementPool(this._feedbackContainer, CrosshairView);
     }
@@ -785,11 +801,16 @@ export class BodyView extends ChartElement<Body> {
             }
         }
 
-        this._crosshairLines.forEach(v => {
-            if (v.setVisible(inBody)) {
-                v.layout(pv, p.x, p.y, w, h);
-            }
-        });
+        // 새로운 zoom이 요청된 상태이고 아직 화면에 반영되지 않았다.
+        // crosshair가 zoom이 반영된 것으로 계산하므로 다음 render까지 기다리게 해야한다.
+        // TODO: _zoomRequested 필요 없는 깔끔한 방식 필요. 
+        if (!this._zoomRequested) {
+            this._crosshairLines.forEach(v => {
+                if (v.setVisible(inBody)) {
+                    v.layout(pv, p.x, p.y, w, h);
+                }
+            });
+        }
 
         if (pv) {
             this.$_setFocused(sv.model, pv);
@@ -823,6 +844,33 @@ export class BodyView extends ChartElement<Body> {
         return this._seriesViews.find(v => v.model === ser);
     }
 
+    getButton(dom: Element): ButtonElement {
+        if (this._zoomButton.contains(dom)) {
+            return this._zoomButton;
+        }
+    }
+
+    buttonClicked(button: ButtonElement): void {
+        if (button === this._zoomButton) {
+            this.model.chart._getXAxes().resetZoom();
+            this.model.chart._getYAxes().resetZoom();
+        }
+    }
+
+    addFeedback(view: RcElement): void {
+        view && this._feedbackContainer.add(view);
+    }
+
+    setZoom(x1: number, y1: number, x2: number, y2: number): void {
+        const xAxis = this.chart().xAxis;
+        const v1 = xAxis.getValueAt(this.width, x1);
+        const v2 = xAxis.getValueAt(this.width, x2);
+
+        if (xAxis.zoom(v1, v2)) {
+            this._zoomRequested = true;
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -830,6 +878,7 @@ export class BodyView extends ChartElement<Body> {
         const chart = model.chart as Chart;
 
         this._polar = chart.isPolar();
+        this._zoomRequested = false;
 
         // background
         this._background.setStyleOrClass(model.style);
@@ -854,7 +903,12 @@ export class BodyView extends ChartElement<Body> {
         // gauges
         this._gaugeViews.forEach((v, i) => {
             v.measure(doc, this._gauges[i], hintWidth, hintHeight, phase);
-        })
+        });
+
+        // zoom button
+        if (this._zoomButton.setVisible(model.isZoomed())) {
+            this._zoomButton.layout();
+        }
 
         return Size.create(hintWidth, hintHeight);
     }
@@ -865,6 +919,7 @@ export class BodyView extends ChartElement<Body> {
         const img = this._image;
 
         // background
+        this._hitTester.resize(w, h);
         this._background.resize(w, h);
 
         if (img.setVisible(img.setImage(this.model.image.url, w, h))) {
@@ -920,6 +975,11 @@ export class BodyView extends ChartElement<Body> {
             v.resizeByMeasured();
             v.layout().translatep(v.getPosition(w, h));
         })
+
+        // zoom button
+        if (this._zoomButton.visible) {
+            this._zoomButton.translate(w - this._zoomButton.getBBounds().width - 10, 10);
+        }
     }
 
     //-------------------------------------------------------------------------

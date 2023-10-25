@@ -1203,6 +1203,14 @@ export class RcElement extends RcObject {
         this._dom.style.cursor = cursor;
     }
 
+    ignorePointer(): void {
+        this._dom.style.pointerEvents = 'none';
+    }
+
+    contains(dom: Element): boolean {
+        return this._dom.contains(dom);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -1495,8 +1503,6 @@ export class ClipPathElement extends RcElement {
     //-------------------------------------------------------------------------
 }
 
-const DRAG_THRESHOLD = 3;
-
 export abstract class DragTracker {
 
     //-------------------------------------------------------------------------
@@ -1507,6 +1513,16 @@ export abstract class DragTracker {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    start(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
+        this.cancel();
+        if (this._doStart(eventTarget, xStart, yStart, x, y)) {
+            this.dragging = true;
+            this._showFeedback(x, y);
+            return true;
+        }
+        return false;
+    }
+
     drag(eventTarget: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
         if (this.dragging) {
             if (this._doDrag(eventTarget, xPrev, yPrev, x, y)) {
@@ -1566,6 +1582,10 @@ export abstract class DragTracker {
     }
 
     protected _hideFeedback(): void {
+    }
+
+    protected _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
+        return true;
     }
 
     protected abstract _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean;

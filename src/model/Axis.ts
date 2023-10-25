@@ -27,12 +27,14 @@ export interface IAxis {
     _isOpposite: boolean;
 
     reversed: boolean;
-    _zoom: IAxisZoom
+    _zoom: IAxisZoom;
 
     isContinuous(): boolean;
     getBaseValue(): number;
     axisMax(): number;
     axisMin(): number;
+
+    zoom(start: number, end: number): boolean;
 
     /**
      * data point의 값을 축 상의 값으로 리턴한다.
@@ -90,6 +92,8 @@ export class AxisLine extends AxisItem {
     //-------------------------------------------------------------------------
     constructor(axis: Axis) {
         super(axis, true);//false);
+
+        this.visible = axis._isX; 
     }
 }
 
@@ -377,6 +381,8 @@ export abstract class AxisTick extends AxisItem {
     //-------------------------------------------------------------------------
     constructor(axis: Axis) {
         super(axis);
+
+        this.visible = false;
     }
 
     //-------------------------------------------------------------------------
@@ -551,7 +557,7 @@ export class AxisScrollBar extends AxisItem {
     /**
      * 스크롤바 두께.
      */
-    width = 12;
+    thickness = 12;
 }
 
 export interface IAxisZoom {
@@ -561,16 +567,20 @@ export interface IAxisZoom {
 
 export class AxisZoom {
 
+    private _axixMin: number;
+    private _axixMax: number;
     start: number;
     end: number;
 
     constructor(public axis: Axis, start: number, end: number) {
+        this._axixMin = axis.axisMin();
+        this._axixMax = axis.axisMax();
         this.resize(start, end);
     }
     
     resize(start: number, end: number): boolean {
-        start = Math.max(this.axis.axisMin(), Math.min(this.axis.axisMax(), start));
-        end = Math.max(start, Math.min(this.axis.axisMax(), end));
+        start = Math.max(this._axixMin, Math.min(this._axixMax, start));
+        end = Math.max(start, Math.min(this._axixMax, end));
 
         if (start !== this.start || end !== this.end) {
             this.start = start;
@@ -595,11 +605,11 @@ export abstract class Axis extends ChartItem implements IAxis {
     /**
      * @config
      */
-    readonly title = new AxisTitle(this);
+    readonly title: AxisTitle;
     /**
      * @config
      */
-    readonly line = new AxisLine(this);
+    readonly line: AxisLine;
     /**
      * @config
      */
@@ -645,10 +655,13 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, name?: string) {
+    constructor(chart: IChart, isX: boolean, name?: string) {
         super(chart);
 
+        this._isX = isX;
         this.name = name;
+        this.title = new AxisTitle(this);
+        this.line = new AxisLine(this);
         this.tick = this._createTickModel();
         this.label = this._createLabelModel();
     }
@@ -712,9 +725,15 @@ export abstract class Axis extends ChartItem implements IAxis {
         return this._max - this._min;
     }
     
+    axisMin(): number {
+        return this._min;
+    }
+
+    axisMax(): number {
+        return this._max;
+    }
+
     abstract isContinuous(): boolean;
-    abstract axisMin(): number;
-    abstract axisMax(): number;
     abstract getValueAt(length: number, pos: number): number;
 
     //-------------------------------------------------------------------------
@@ -831,17 +850,23 @@ export abstract class Axis extends ChartItem implements IAxis {
         }
     }
     
-    zoom(start: number, end: number): void {
-        if (end === start) {
+    zoom(start: number, end: number): boolean {
+        /*if (end === start) {
             this.resetZoom();
-        } else if (!isNaN(start) && !isNaN(end)) {
+        } else*/ if (!isNaN(start) && !isNaN(end)) {
             if (!this._zoom) {
                 this._zoom = new AxisZoom(this, start, end);
                 this._changed();
+                return true;
             } else if (this._zoom.resize(start, end)) {
                 this._changed();
+                return true;
             }
         }
+    }
+
+    isZoomed(): boolean {
+        return !!this._zoom
     }
 
     //-------------------------------------------------------------------------
@@ -1004,6 +1029,16 @@ export class AxisCollection {
         }
     }
 
+    isZoomed(): boolean {
+        for (const axis of this._items) {
+            if (axis.isZoomed()) return true;
+        }
+    }
+
+    resetZoom(): void {
+        this._items.forEach(axis => axis.resetZoom());
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -1042,9 +1077,8 @@ export class AxisCollection {
             cls = chart._getAxisType('linear');
         }
 
-        const axis = new cls(chart, src.name);
+        const axis = new cls(chart, this.isX, src.name);
 
-        axis._isX = this.isX;
         axis.load(src);
         return axis;
     }

@@ -498,6 +498,7 @@ export class AxisView extends ChartElement<Axis> {
             }
 
             views.forEach((v, i) => {
+                v.setVisible(true); // visible false이면 getBBox()가 계산되지 않는다.
                 v.value = ticks[i].value;
                 v.text = ticks[i].label;
             });
@@ -686,7 +687,7 @@ export class AxisView extends ChartElement<Axis> {
         } else {
             const save = views.slice(0);
 
-            while (save.length > 1) {
+            while (save.length > 1 && step < save.length / 2) {
                 views = this.$_applyStep(axis, save, ++step);
                 if (!this.$_checkOverlappedHorz(axis, save, height, step, 1, 0)) {
                     break;

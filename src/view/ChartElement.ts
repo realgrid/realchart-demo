@@ -124,7 +124,6 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     private _background: RectElement;
     protected _margins = new Sides();
     protected _paddings = new Sides();
-    private _borderRadius: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -152,12 +151,10 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
 
         // TODO: 캐쉬!
         const cs = getComputedStyle(this.dom);
-        const csBack = getComputedStyle(this._background.dom);
         const padding = this._paddings;
         const margin = this._margins;
 
         padding.applyPadding(cs);
-        this._borderRadius = parseFloat(csBack.borderRadius) || 0;
         margin.applyMargin(cs);
 
         const sz = this._doMeasure(doc, model, hintWidth, hintHeight, phase);
@@ -177,8 +174,7 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
             margin.left + this._getBackOffset(), 
             margin.top, 
             this.width - margin.left - margin.right,
-            this.height - margin.top - margin.bottom,
-            this._borderRadius
+            this.height - margin.top - margin.bottom
         );
 
         return this;

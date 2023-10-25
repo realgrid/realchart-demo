@@ -67,7 +67,7 @@ import { TimeAxis, TimeAxisTick } from '../../../../src/model/axis/TimeAxis';
     });
 
     it('build steps - stepPixels', () => {
-        const model = new TimeAxisTick(new TimeAxis(null));
+        const model = new TimeAxisTick(new TimeAxis(null, false));
         const min = 15;
         const max = 111;
 

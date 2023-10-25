@@ -620,7 +620,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         }
 
         // body
-        this._body.load(source.plot);
+        this._body.load(source.body || source.plot); // TODO: plot 제거
 
         console.log('chart-items:', n_char_item);
         console.timeEnd('load chart');

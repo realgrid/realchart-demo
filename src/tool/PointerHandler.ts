@@ -9,21 +9,15 @@
 import { ChartControl } from "../ChartControl";
 import { IPoint } from "../common/Point";
 import { DragTracker, IPointerHandler } from "../common/RcControl";
+import { ZoomType } from "../model/Body";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { Series } from "../model/Series";
 import { CreditView } from "../view/ChartView";
 import { SeriesView, WidgetSeriesView } from "../view/SeriesView";
+import { ZoomTracker } from "./DragTrackers";
 
-export abstract class ChartDragTracker extends DragTracker {
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(public chart: ChartControl) {
-        super();
-    }
-}
+const DRAG_THRESHOLD = 3;
 
 export class ChartPointerHandler implements IPointerHandler {
 
@@ -34,6 +28,9 @@ export class ChartPointerHandler implements IPointerHandler {
     private _clickElement: Element;
     private _dragTracker: DragTracker;
 
+    private _prevX: number;
+    private _prevY: number;
+    
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -47,32 +44,75 @@ export class ChartPointerHandler implements IPointerHandler {
     handleDown(ev: PointerEvent): void {
         if (!ev.isPrimary) return;
 
-        const dom = this._clickElement = ev.target as Element;
-        if (!dom) return;
+        const elt = this._clickElement = ev.target as Element;
+
+        if (!elt) return;
         
         const p = this.$_pointerToPoint(ev);
         console.log('POINT DOWN', p.x, p.y);
 
         if (this._dragTracker) {
-            this.$_stopDragTracker(dom, p.x, p.y);
+            this.$_stopDragTracker(elt, p.x, p.y);
         }
+
+        this._prevX = p.x;
+        this._prevY = p.y;
     }
 
     handleUp(ev: PointerEvent): void {
+        if (this.isDragging()) {
+            this.$_stopDragTracker(ev.target as Element, this._prevX, this._prevY);
+        }
     }
 
     handleMove(ev: PointerEvent): void {
-        this._chart.chartView().pointerMoved((ev as any).pointX, (ev as any).pointY, ev.target);
+        const chart = this._chart.chartView();
+        const {x, y} = this.$_pointerToPoint(ev);
+
+        if (ev.buttons >= 1 || (ev.buttons === 0 && ev.button === 0)) {// && ev.pointerId === this._primaryId)) {
+            const dragging = this.isDragging();
+            // 왜 ev.target 대신 elementFromPoint를 사용했지? testing(jsdom)에서는 elementFromPoint가 미지원.
+            // ev.target에 toucheStart의 target과 동일해서 그랬던가?
+            const dom = ev.target as Element;//this.$_elementFromTouch(ev, null);
+
+            if (x < 0 || x >= chart.control.dom().offsetWidth || y < 0 || y >= chart.control.dom().offsetHeight) {
+                dragging && this.$_stopDragTracker(dom, x, y, true);
+            } else if (dragging) {
+                this.$_doDrag(ev, dom, x, y);
+            } else if (!this._dragTracker && Math.abs(this._prevX - x) > DRAG_THRESHOLD || Math.abs(this._prevY - y) > DRAG_THRESHOLD) {
+                this.$_startMove(ev, dom, x, y);
+            } else if (this._dragTracker && !dragging) {
+                this.$_startMove(ev, dom, x, y);
+            }
+            // this._touches.push({x, y, t: ev.timeStamp});
+
+            // this._doPointerMove(dom);
+        }
+
+        this._prevX = x;
+        this._prevY = y;
+
+        if (this.isDragging()) {
+            chart.pointerMoved(-1, -1, null);
+            this._stopEvent(ev);
+        } else if (!chart.getButton(ev.target as Element)) {
+            chart.pointerMoved((ev as any).pointX, (ev as any).pointY, ev.target);
+        }
     }
 
     handleClick(ev: PointerEvent): void {
         const chart = this._chart.chartView();
         const elt = ev.target as Element;
+        const button = chart.getButton(elt);
         let credit: CreditView;
         let legend: LegendItem;
         let series: SeriesView<Series>;
 
-        if (legend = chart.legendByDom(elt)) {
+        if (button) {
+            if (button.click() !== true) {
+                chart.buttonClicked(button);
+            }
+        } else if (legend = chart.legendByDom(elt)) {
             if (legend.source instanceof DataPoint) {
                 const p = legend.source;
                 const ser = this._chart.model.seriesByPoint(p);
@@ -100,15 +140,32 @@ export class ChartPointerHandler implements IPointerHandler {
     }
 
     //-------------------------------------------------------------------------
-    // internal members
+    // properties
     //-------------------------------------------------------------------------
-    dragging(): boolean {
+    get dragTracker(): DragTracker {
+        return this._dragTracker;
+    }
+    setDragTracker(value: DragTracker) {
+        if (value != this._dragTracker) {
+            if (this._dragTracker) {
+                this._dragTracker.cancel();
+            }
+            this._dragTracker = value;
+        }
+    }
+
+    isDragging(): boolean {
         return this._dragTracker && this._dragTracker.dragging;
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _stopEvent(ev: Event): void {
+        ev.cancelable && ev.preventDefault();
+        ev.stopImmediatePropagation();
+    }
+
     private $_pointerToPoint(event: PointerEvent): IPoint {
         const r = this._chart.svg().getBoundingClientRect();
         const x = event.pageX - r.left;
@@ -116,11 +173,52 @@ export class ChartPointerHandler implements IPointerHandler {
         return {x, y};
     }
 
-    protected _getDragTracker(ev: PointerEvent): any {
+    protected _getDragTracker(elt: Element, dx: number, dy: number): any {
+        const chart = this._chart.chartView();
+        const body = chart.bodyView();
+
+        if (body.model.canZoom() && body.contains(elt)) {
+            return new ZoomTracker(this._chart, body);
+        }
+    }
+
+    private $_doDrag(ev: PointerEvent, dom: Element, x: number, y: number): boolean {
+        if (!this.$_drag(dom, this._prevX, this._prevY, x, y)) {
+            this.$_stopDragTracker(dom, x, y, true);
+            this._stopEvent(ev);
+            return true;
+        }
+    }
+
+    private $_startMove(ev: PointerEvent, dom: Element, x: number, y: number): void {
+        // clearTimeout(this._longTimer);
+        // this._tapped = 0;
+
+        if (this.$_startDrag(dom, this._prevX, this._prevY, x, y)) {
+            if (x !== this._prevX || y !== this._prevY) {
+                this.$_doDrag(ev, dom, x, y);
+            } else {
+                this._stopEvent(ev);
+            }
+        }
+    }
+
+    private $_startDrag(dom: Element, xStart: number, yStart: number, x: number, y: number): boolean {
+        if (!this._dragTracker) {
+            this.setDragTracker(this._getDragTracker(dom, x - xStart, y - yStart));
+        }
+        if (this._dragTracker) {
+            return this._dragTracker.start(dom, xStart, yStart, x, y);
+        }
+        return false;
+    }
+
+    private $_drag(dom: Element, xPrev: number, yPrev: number,  x: number, y: number): boolean {
+        return this._dragTracker.drag(dom, xPrev, yPrev, x, y);
     }
 
     private $_stopDragTracker(dom: Element, x: number, y: number, canceled = false): void {
-        if (this.dragging) {
+        if (this.isDragging()) {
             if (canceled) {
                 this._dragTracker.cancel();
             } else {
