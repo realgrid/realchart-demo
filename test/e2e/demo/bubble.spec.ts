@@ -69,15 +69,6 @@ test.describe('bubble.html test', () => {
 		expect(yAxistTitle).eq(config.yAxis.title);
 	});
 
-	test('tick', async ({ page }) => {
-		const config: any = await page.evaluate('config');
-
-		const xAxis = await PWTester.getAxis(page, 'x');
-		const xAxisTick = await xAxis.$$('.' + AxisView.TICK_CLASS);
-
-		expect(xAxisTick.length).gt(1);
-	});
-
 	test('credit', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 

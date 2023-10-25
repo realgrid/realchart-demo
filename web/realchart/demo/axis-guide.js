@@ -9,6 +9,7 @@ const config = {
     title: "Axis Guides",
     xAxis: {
         // type: 'category',
+        tick: true,
         // position: 'apposite'
         // position: 'base',
         // baseAxis: 1,
@@ -16,6 +17,7 @@ const config = {
         grid: true
     },
     yAxis: {
+        tick: true,
         title: 'Y Axis',
         guide: [{
             type: 'line',

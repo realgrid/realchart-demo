@@ -6,10 +6,12 @@
 const config = {
     type: "area",
     options: {},
-    title: "Multiple Areas",
+    title: "Multiple",
     xAxis: {
         type: 'category',
-        title: "일일 Daily fat",
+        title: {
+            text: 'dsdsd',
+        }
     },
     yAxis: {
         title: "Vertical 수직축 Axis",

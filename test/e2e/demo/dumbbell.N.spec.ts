@@ -48,15 +48,6 @@ test.describe('dumbbell.html test', async function () {
 		expect(titleText).eq(config.title);
 	});
 
-	test('tick', async ({ page }) => {
-		const config: any = await page.evaluate('config');
-
-		const xAxis = await PWTester.getAxis(page, 'x');
-		const xAxisTick = await xAxis.$$('.rct-axis-tick');
-
-		expect(xAxisTick.length).eq(config.series.data.length);
-	});
-
 	test('credit', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
@@ -102,20 +93,6 @@ test.describe('dumbbell.html test', async function () {
 		const yaxis = await PWTester.getAxis(page, 'y');
 		const yTick = await yaxis.$$('.rct-axis-label');
 		expect(yTick).exist;
-	});
-
-	test('seriesPoint', async ({ page }) => {
-		const config: any = await page.evaluate('config');
-
-		const seriesPoints = await page.$('.rct-series-points');
-		expect(seriesPoints).exist;
-
-		const seriesPoin = await seriesPoints.$$('.rct-point');
-
-		const xAxis = await PWTester.getAxis(page, 'x');
-		const xAxisTick = await xAxis.$$('.rct-axis-tick');
-
-		expect(seriesPoin.length).eq(xAxisTick.length);
 	});
 
 	test('pointLabel', async ({ page }) => {

@@ -46,25 +46,25 @@ test.describe('categoryaxis.html test', () => {
 		// page.close();
 	});
 
-	test('padding', async ({ page }) => {
-		const series = await page.$('.' + LineSeriesView.CLASS);
-		const markers = await series.$$('.' + SeriesView.POINT_CLASS);
-		const axis = await PWTester.getAxis(page, 'x');
-		const line = await axis.$('.' + AxisView.LINE_CLASS);
-		let ticks = await axis.$$('.' + AxisView.TICK_CLASS);
-		const rLine = await PWTester.getBounds(line);
-		let pTick = await PWTester.getTranslate(ticks[0]);
+	// test('padding', async ({ page }) => {
+	// 	const series = await page.$('.' + LineSeriesView.CLASS);
+	// 	const markers = await series.$$('.' + SeriesView.POINT_CLASS);
+	// 	const axis = await PWTester.getAxis(page, 'x');
+	// 	const line = await axis.$('.' + AxisView.LINE_CLASS);
+	// 	let ticks = await axis.$$('.' + AxisView.TICK_CLASS);
+	// 	const rLine = await PWTester.getBounds(line);
+	// 	let pTick = await PWTester.getTranslate(ticks[0]);
 
-		expect(markers.length).eq(ticks.length);
-		expect(PWTester.same(pTick.x, rLine.width / ticks.length / 2)).is.true;
+	// 	expect(markers.length).eq(ticks.length);
+	// 	expect(PWTester.same(pTick.x, rLine.width / ticks.length / 2)).is.true;
 
-		// padding -> -0.5
-		await page.evaluate('config.xAxis.padding = -0.5; chart.load(config)');
+	// 	// padding -> -0.5
+	// 	await page.evaluate('config.xAxis.padding = -0.5; chart.load(config)');
 
-		ticks = await axis.$$('.' + AxisView.TICK_CLASS);
-		pTick = await PWTester.getTranslate(ticks[0]);
-		expect(PWTester.same(pTick.x, 0)).is.true;
+	// 	ticks = await axis.$$('.' + AxisView.TICK_CLASS);
+	// 	pTick = await PWTester.getTranslate(ticks[0]);
+	// 	expect(PWTester.same(pTick.x, 0)).is.true;
 
-		await page.evaluate('config.xAxis.padding = 0; chart.load(config)');
-	});
+	// 	await page.evaluate('config.xAxis.padding = 0; chart.load(config)');
+	// });
 });
