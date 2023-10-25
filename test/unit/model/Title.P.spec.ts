@@ -12,7 +12,7 @@ import { Chart } from '../../../src/model/Chart';
 import { Utils } from '../../../src/common/Utils';
 import { Subtitle, SubtitlePosition, Title } from '../../../src/model/Title';
 import { Align, VerticalAlign, isNull } from '../../../src/common/Types';
-import { isString } from '../../../src/common/Common';
+import { isBoolean, isString } from '../../../src/common/Common';
 
 const title_source = {
     text: Utils.srandom(1, 10),
@@ -62,12 +62,15 @@ describe('Title test', function() {
     });
 
     it('_doLoadSimple()', () => {
-        const text = Utils.arandom([Utils.srandom(1, 10), Utils.irandom(0, 1000), Utils.brandom()]) ;
-        if (isString(text) || text === true) {
-            expect(title['_doLoadSimple'](text)).true;
-            expect(title.text).eq(text);
+        const value = Utils.arandom([Utils.srandom(1, 10), Utils.irandom(0, 1000), Utils.brandom()]) ;
+        if (isString(value)) {
+            expect(title['_doLoadSimple'](value)).true;
+            expect(title.text).eq(value);
+        } else if (isBoolean(value)) {
+            expect(title['_doLoadSimple'](value)).true;
+            expect(title.visible).eq(value);
         } else {
-            expect(title['_doLoadSimple'](text)).undefined;
+            expect(title['_doLoadSimple'](value)).undefined;
         } 
     });
 });
