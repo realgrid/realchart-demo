@@ -20,7 +20,7 @@ import { DataPoint } from "../model/DataPoint";
 import { LegendItem, LegendLocation } from "../model/Legend";
 import { Series } from "../model/Series";
 import { Subtitle } from "../model/Title";
-import { AxisView } from "./AxisView";
+import { AxisScrollView, AxisView } from "./AxisView";
 import { AxisGuideContainer, BodyView } from "./BodyView";
 import { ChartElement } from "./ChartElement";
 import { HistoryView } from "./HistoryView";
@@ -311,6 +311,14 @@ class AxisSectionView extends SectionView {
         return w + (this.views.length - 1) * this._gap;
     }
 
+    getScrollView(dom: Element): AxisScrollView {
+        for (const v of this.views) {
+            if (v._scrollView?.contains(dom)) {
+                return v._scrollView;
+            }
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -408,15 +416,6 @@ export class CreditView extends ChartElement<Credits> {
     }
 }
 
-class ZoomButton extends ButtonElement {
-
-    constructor(doc: Document) {
-        super(doc, 'Reset Zoom', 'rc-reset-zoom');
-
-        this.visible = false;
-    }
-}
-
 /**
  * @internal
  */
@@ -439,7 +438,6 @@ export class ChartView extends RcElement {
     private _creditView: CreditView;
     private _historyView: HistoryView;
     private _tooltipView: TooltipView;
-    private _zoomButton: ZoomButton;
     private _seriesClip: ClipElement;
 
     _org: IPoint;
@@ -467,7 +465,6 @@ export class ChartView extends RcElement {
         this.add(this._creditView = new CreditView(doc));
         this.add(this._historyView = new HistoryView(doc));
         this.add(this._tooltipView = new TooltipView(doc));
-        this.add(this._zoomButton = new ZoomButton(doc));
     }
 
     //-------------------------------------------------------------------------
@@ -910,6 +907,21 @@ export class ChartView extends RcElement {
             const v = this._axisSectionViews[dir].views.find(v => v.model === axis);
             if (v) return v;
         }
+    }
+
+    getButton(dom: Element): ButtonElement {
+        return this._bodyView.getButton(dom);
+    }
+
+    buttonClicked(button: ButtonElement): void {
+        this._bodyView.buttonClicked(button);
+    }
+
+    getScrollView(dom: Element): AxisScrollView {
+        for (const dir in SectionDir) {
+            const v = this._axisSectionViews[SectionDir[dir]].getScrollView(dom)
+            if (v) return v;
+        };
     }
 
     //-------------------------------------------------------------------------

@@ -63,7 +63,7 @@ describe('Title test', function() {
 
     it('_doLoadSimple()', () => {
         const text = Utils.arandom([Utils.srandom(1, 10), Utils.irandom(0, 1000), Utils.brandom()]) ;
-        if (isString(text)) {
+        if (isString(text) || text === true) {
             expect(title['_doLoadSimple'](text)).true;
             expect(title.text).eq(text);
         } else {

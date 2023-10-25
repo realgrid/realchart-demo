@@ -15,7 +15,6 @@ import { Shape, SvgShapes } from "../../common/impl/SvgShape";
 import { Chart } from "../../model/Chart";
 import { LineType } from "../../model/ChartTypes";
 import { DataPoint, IPointPos } from "../../model/DataPoint";
-import { LegendItem } from "../../model/Legend";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
 import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
 import { IPointView, SeriesView } from "../SeriesView";
@@ -207,7 +206,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const marker = series.marker;
         const sts = [marker.style, null];
 
-        if (this._pointContainer.visible = marker.visible) {
+        if (this._pointContainer.visible = (marker.visible && !series._simpleMode)) {
             const mpp = this._markersPerPoint();
             const count = points.length;
     
@@ -221,6 +220,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     this._setPointStyle(mv, series, p, sts);
                 }
             });
+        } else {
+            this._markers.prepare(0);
         }
     }
 

@@ -6,8 +6,21 @@ const config = {
     options: {
         // animatable: false
     },
-    title: 'Axis Zooming',
+    title: {
+        text: 'Axis Zooming',
+        style: {
+            padding: '1px 5px',
+            marginBottom: '8px',
+            fill: 'white',
+            fontSize: '1.1em'
+        },
+        backgroundStyle: {
+            fill: '#338',
+            rx: '5px'
+        }
+    },
     body: {
+        zoomType: 'x',
         style: {
             // stroke: 'none'
         }
@@ -25,10 +38,17 @@ const config = {
                 stroke: 'black',
                 strokeWidth: 2
             }
+        },
+        grid: {
+            endVisible: true
+        },
+        scrollBar: {
+            visible: true
         }
     },
     yAxis: {
-        title: 'Hestavollane'
+        title: 'Hestavollane',
+        line: true
     },
     series: {
         // type: 'line',
@@ -64,6 +84,10 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         // alert('hello');
     });
+    createListBox(container, "options.theme", ['', 'dark'], function (e) {
+        config.options.theme = _getValue(e);
+        chart.load(config);
+    }, 'default');
     createCheckBox(container, 'Inverted', function (e) {
         chart.inverted = _getChecked(e);
     }, false);

@@ -287,6 +287,20 @@ export abstract class RcControl extends RcWrappableObject {
         return { x: x + cr.x - br.x, y: y + cr.y - br.y };
     }
 
+    svgToElement(element: RcElement, x: number, y: number): IPoint {
+        const cr = this._svg.getBoundingClientRect();
+        const br = element.dom.getBoundingClientRect();
+
+        return { x: x + cr.x - br.x, y: y + cr.y - br.y };
+    }
+
+    elementToSvg(element: RcElement, x: number, y: number): IPoint {
+        const cr = this._svg.getBoundingClientRect();
+        const br = element.dom.getBoundingClientRect();
+
+        return { x: x + br.x - cr.x, y: y + br.y - cr.y };
+    }
+
     abstract useImage(src: string): void; // 실제 이미지가 로드됐을 때 다시 그려지도록 한다.
 
     //-------------------------------------------------------------------------
@@ -393,7 +407,7 @@ export abstract class RcControl extends RcWrappableObject {
 
         const desc = doc.createElement('desc');
         // desc.textContent = 'Created by RealChart v$Version'; // sourcemap, rollup issue
-        desc.textContent = 'Created by RealChart v0.9.8';
+        desc.textContent = 'Created by RealChart v0.9.9';
         svg.appendChild(desc);
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
@@ -851,6 +865,14 @@ export class RcElement extends RcObject {
         return this.control.containerToElement(this, x, y);
     }
 
+    svgToElement(x: number, y: number): IPoint {
+        return this.control.svgToElement(this, x, y);
+    }
+
+    elementToSvg(x: number, y: number): IPoint {
+        return this.control.elementToSvg(this, x, y);
+    }
+
     move(x: number, y: number): RcElement {
         this.x = x;
         this.y = y;
@@ -1203,6 +1225,14 @@ export class RcElement extends RcObject {
         this._dom.style.cursor = cursor;
     }
 
+    ignorePointer(): void {
+        this._dom.style.pointerEvents = 'none';
+    }
+
+    contains(dom: Element): boolean {
+        return this._dom.contains(dom);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -1495,8 +1525,6 @@ export class ClipPathElement extends RcElement {
     //-------------------------------------------------------------------------
 }
 
-const DRAG_THRESHOLD = 3;
-
 export abstract class DragTracker {
 
     //-------------------------------------------------------------------------
@@ -1507,6 +1535,16 @@ export abstract class DragTracker {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    start(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
+        this.cancel();
+        if (this._doStart(eventTarget, xStart, yStart, x, y)) {
+            this.dragging = true;
+            this._showFeedback(x, y);
+            return true;
+        }
+        return false;
+    }
+
     drag(eventTarget: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
         if (this.dragging) {
             if (this._doDrag(eventTarget, xPrev, yPrev, x, y)) {
@@ -1566,6 +1604,10 @@ export abstract class DragTracker {
     }
 
     protected _hideFeedback(): void {
+    }
+
+    protected _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
+        return true;
     }
 
     protected abstract _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean;

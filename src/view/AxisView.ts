@@ -6,15 +6,17 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "../common/Common";
 import { PathBuilder } from "../common/PathBuilder";
 import { PathElement, RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
+import { Sides } from "../common/Sides";
 import { ISize, Size } from "../common/Size";
 import { DEG_RAD, calcPercent, parsePercentSize } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis, AxisGuide, AxisLabelArrange, AxisPosition, AxisScrollBar, AxisTickMark, AxisTitle, IAxisTick } from "../model/Axis";
+import { Axis, AxisGuide, AxisLabelArrange, AxisPosition, AxisScrollBar, AxisTickMark, AxisTitle, AxisZoom, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { Crosshair } from "../model/Crosshair";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
@@ -178,6 +180,111 @@ class CrosshairFlagView extends RcElement {
     }
 }
 
+export class AxisScrollView extends ChartElement<AxisScrollBar> {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly TRACK_CLASS = 'rct-axis-scrollbar-track';
+    static readonly THUMB_CLASS = 'rct-axis-scrollbar-thumb';
+
+    //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    static isThumb(dom: Element): boolean {
+        return dom.classList.contains(AxisScrollView.THUMB_CLASS);
+    }
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _trackView: RectElement;
+    _thumbView: RectElement;
+
+    _vertical: boolean;
+    _szThumb: number;
+    private _margins = new Sides();
+
+    private _max = 0;
+    private _page = 0;
+    private _pos = 0;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-axis-scrollbar');
+
+        this.add(this._trackView = new RectElement(doc, AxisScrollView.TRACK_CLASS));
+        this.add(this._thumbView = new RectElement(doc, AxisScrollView.THUMB_CLASS));
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setScroll(zoom: AxisZoom): void {
+        if (zoom) {
+            const max = zoom.max - zoom.min;
+            const page = zoom.end - zoom.start;
+    
+            this._max = Math.max(0, max);
+            this._page = Math.min(page, max);
+            this._pos = Math.min(max - page, Math.max(0, zoom.start));
+        } else {
+            this._max = 0;
+        }
+    }
+
+    getZoomPos(pt: number): number {
+        const zoom = this.model.axis._zoom;
+        const len = (this._vertical ? this.height : this.width) - this._thumbView.width;
+
+        pt = Math.max(0, Math.min(pt, len));
+        return pt * (zoom.max - zoom.min - (zoom.end - zoom.start)) / len;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doMeasure(doc: Document, model: AxisScrollBar, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this.setStyleOrClass(model.style);
+        this._margins.applyMargin(getComputedStyle(this.dom));
+
+        return (this._vertical = !model.axis._isHorz) ? {
+            width: model.thickness + this._margins.left + this._margins.right, height: hintHeight
+        } : {
+            width: hintWidth, height: model.thickness + this._margins.top + this._margins.bottom
+        };
+    }
+
+    protected _doLayout(param: any): void {
+        const margins = this._margins;
+        const szThumb = this._szThumb = pickNum(this.model.minThumbSize, 32);
+        const max = this._max;
+        const page = this._page;
+        const pos = this._pos;
+        const fill = this._max === 0;
+        let w = this.width;
+        let h = this.height;
+
+        if (this._vertical) {
+            w -= margins.left + margins.right;
+            this._trackView.setBounds(margins.left, 0, w, h);
+            
+            h -= szThumb;
+            const hPage = (fill || page === max ? h : h * page / max) + szThumb;
+            this._thumbView.setBounds(margins.left + 1, fill ? 0 : h * pos / max, margins.top + 1, w - 2, hPage); 
+        } else {
+            h -= margins.top + margins.bottom;
+            this._trackView.setBounds(0, margins.top, w, h);
+            
+            w -= szThumb;
+            const wPage = (fill || page === max ? w : w * page / max) + szThumb;
+            this._thumbView.setBounds(fill ? 0 : w * pos / max, margins.top + 1, wPage, h - 2); 
+        }
+    }
+}
+
 /**
  * @internal
  */
@@ -199,6 +306,8 @@ export class AxisView extends ChartElement<Axis> {
     private _markViews: AxisTickMarkView[] = [];
     private _labelContainer: RcElement;
     private _labelViews: AxisLabelElement[] = []; 
+    _scrollView: AxisScrollView;
+
     private _markLen: number;
     private _labelSize: number;
     private _labelRowPts: number[];
@@ -225,6 +334,18 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    private $_checkScrollView(doc: Document, m: AxisScrollBar, prop: string, width: number, height: number): number {
+        if (m.visible) {
+            if (!this._scrollView) {
+                this.add(this._scrollView = new AxisScrollView(doc));
+            }
+            return this._scrollView.measure(doc, m, width, height, 1)[prop];
+        } else if (this._scrollView) {
+            this._scrollView.setVisible(false);
+        }
+        return 0;
+    }
+    
     checkHeight(doc: Document, width: number, height: number): number {
         const m = this.model;
         let h = m.tick.visible ? m.tick.length : 0; 
@@ -244,6 +365,10 @@ export class AxisView extends ChartElement<Axis> {
             h += this._titleView.measure(doc, m.title, width, height, 1).height;
             h += m.title.gap;
         }
+        
+        // scrollbar
+        h += this.$_checkScrollView(doc, m.scrollBar, 'height', width, height);
+        
         return h;
     }
 
@@ -266,6 +391,10 @@ export class AxisView extends ChartElement<Axis> {
             w += this._titleView.measure(doc, m.title, width, height, 1).height; // [NOTE] width가 아니다.
             w += m.title.gap;
         }
+        
+        // scrollbar
+        w += this.$_checkScrollView(doc, m.scrollBar, 'width', width, height);
+
         return w;
     }
 
@@ -345,6 +474,11 @@ export class AxisView extends ChartElement<Axis> {
             sz += model.title.gap || 0;
         }
 
+        // scrollbar
+        if (this._scrollView?.visible) {
+            sz += this._scrollView.mh;
+        }
+
         return Size.create(horz ? hintWidth : sz, horz ? sz : hintHeight);
     }
     
@@ -356,6 +490,7 @@ export class AxisView extends ChartElement<Axis> {
         const markPts = model._markPoints;
         const titleView = this._titleView;
         const labelViews = this._labelViews;
+        const scrollView = this._scrollView;
         const markLen = this._markLen;
         const w = this.width;
         const h = this.height;
@@ -397,6 +532,8 @@ export class AxisView extends ChartElement<Axis> {
             }
         }
 
+        let y = 0;
+
         // title
         if (titleView.visible) {
             const labelSize = this._labelSize;
@@ -405,15 +542,25 @@ export class AxisView extends ChartElement<Axis> {
             titleView.resizeByMeasured().layout(horz);
 
             if (horz) {
-                const y = opp ? 0 : len + labelSize + gap;
-
+                y += opp ? 0 : len + labelSize + gap;
                 // titleView.translate((w - titleView.width) / 2, this._markLen + labelSize);
                 titleView.translate(w / 2, y);
+                y += titleView.height;
             } else {
                 const x = opp ? len + labelSize + gap + titleView.height / 2 : w - len - labelSize - gap - titleView.height / 2;
 
                 titleView.translate(x, (h - titleView.height) / 2);
             }
+        }
+
+        // scrollbar
+        if (scrollView?.visible) {
+            if (horz) {
+                scrollView.translate(0, y).resize(this.width, scrollView.mh);
+                scrollView.setScroll(model._zoom);
+            } else {
+            }
+            scrollView.layout();
         }
     }
 
@@ -498,6 +645,7 @@ export class AxisView extends ChartElement<Axis> {
             }
 
             views.forEach((v, i) => {
+                v.setVisible(true); // visible false이면 getBBox()가 계산되지 않는다.
                 v.value = ticks[i].value;
                 v.text = ticks[i].label;
             });
@@ -686,7 +834,7 @@ export class AxisView extends ChartElement<Axis> {
         } else {
             const save = views.slice(0);
 
-            while (save.length > 1) {
+            while (save.length > 1 && step < save.length / 2) {
                 views = this.$_applyStep(axis, save, ++step);
                 if (!this.$_checkOverlappedHorz(axis, save, height, step, 1, 0)) {
                     break;
@@ -742,27 +890,4 @@ export class AxisView extends ChartElement<Axis> {
             }
         });
     }
-}
-
-export class AxisScrollBarView extends ChartElement<AxisScrollBar> {
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    private _trackView: RectElement;
-    private _thumbView: RectElement;
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc, 'rct-axis-scrollbar');
-
-        this.add(this._trackView = new RectElement(doc, 'rct-axis-scrollbar-track'));
-        this.add(this._thumbView = new RectElement(doc, 'rct-axis-scrollbar-thumb'));
-    }
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
 }

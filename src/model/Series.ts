@@ -365,6 +365,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _maxValue: number;
     _referents: Series[];
     _calcedColor: string;
+    _simpleMode = false;
     private _legendMarker: RcElement;
     protected _pointArgs: IDataPointCallbackArgs;
 

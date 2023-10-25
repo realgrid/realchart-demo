@@ -17,7 +17,7 @@ import { LinearAxis } from '../../../src/model/axis/LinearAxis';
  describe("Crosshair test", function() {
 
     it('init', () => {
-        let ch = new Crosshair(new LinearAxis(null));
+        let ch = new Crosshair(new LinearAxis(null, false));
 
         expect(ch).exist;
     });
