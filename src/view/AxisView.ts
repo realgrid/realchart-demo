@@ -203,7 +203,6 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
 
     _vertical: boolean;
     _szThumb: number;
-    private _margins = new Sides();
 
     private _max = 0;
     private _page = 0;
@@ -248,18 +247,17 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: AxisScrollBar, hintWidth: number, hintHeight: number, phase: number): ISize {
         this.setStyleOrClass(model.style);
-        this._margins.applyMargin(getComputedStyle(this.dom));
 
         return (this._vertical = !model.axis._isHorz) ? {
-            width: model.thickness + this._margins.left + this._margins.right, height: hintHeight
+            width: model.thickness + model.gap + model.gapFar, height: hintHeight
         } : {
-            width: hintWidth, height: model.thickness + this._margins.top + this._margins.bottom
+            width: hintWidth, height: model.thickness + model.gap + model.gapFar
         };
     }
 
     protected _doLayout(param: any): void {
-        const margins = this._margins;
-        const szThumb = this._szThumb = pickNum(this.model.minThumbSize, 32);
+        const model = this.model;
+        const szThumb = this._szThumb = pickNum(model.minThumbSize, 32);
         const max = this._max;
         const page = this._page;
         const pos = this._pos;
@@ -268,19 +266,19 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
         let h = this.height;
 
         if (this._vertical) {
-            w -= margins.left + margins.right;
-            this._trackView.setBounds(margins.left, 0, w, h);
+            w -= model.gap + model.gapFar;
+            this._trackView.setBounds(model.gap, 0, w, h);
             
             h -= szThumb;
             const hPage = (fill || page === max ? h : h * page / max) + szThumb;
-            this._thumbView.setBounds(margins.left + 1, fill ? 0 : h * pos / max, margins.top + 1, w - 2, hPage); 
+            this._thumbView.setBounds(model.gap + 1, fill ? 0 : h * pos / max, model.gap + 1, w - 2, hPage); 
         } else {
-            h -= margins.top + margins.bottom;
-            this._trackView.setBounds(0, margins.top, w, h);
+            h -= model.gap + model.gapFar;
+            this._trackView.setBounds(0, model.gap, w, h);
             
             w -= szThumb;
             const wPage = (fill || page === max ? w : w * page / max) + szThumb;
-            this._thumbView.setBounds(fill ? 0 : w * pos / max, margins.top + 1, wPage, h - 2); 
+            this._thumbView.setBounds(fill ? 0 : w * pos / max, model.gap + 1, wPage, h - 2); 
         }
     }
 }

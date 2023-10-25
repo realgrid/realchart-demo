@@ -127,7 +127,11 @@ export class PathBuilder {
     }
 
     polygon(...pts: (number | IPoint)[]): PathBuilder {
-        this.lines(...pts);
+        if (isNumber(pts[0])) {
+            this.move(pts[0], pts[1] as number).lines(...pts.slice(2));
+        } else {
+            this.move(pts[0]).lines(...pts.slice(1));
+        }
         this._path.push('Z');
         return this;
     }

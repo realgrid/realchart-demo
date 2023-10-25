@@ -25,10 +25,6 @@ const config = {
             effect: 'outline',// 'background',
             style: {
             },
-            // backgroundStyle: {
-            //     fill: '#004',
-            //     padding: '5px'
-            // }
         },
         data: [11, 22, 15, 9, 13, 27],
         style: {
@@ -44,10 +40,6 @@ const config = {
             effect: 'outline',// 'background',
             style: {
             },
-            // backgroundStyle: {
-            //     fill: '#004',
-            //     padding: '5px'
-            // }
         },
         data: [15, 19, 19, 6, 21, 21],
         style: {

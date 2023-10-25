@@ -395,7 +395,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     readonly trendline: Trendline;
     readonly tooltip: Tooltip;
 
-    // group: string;
+    /**
+     * 포인터가 차지하는 너비가 이 값 미만이면 표시하지 않는다.
+     * // TODO: 구현할 것!
+     */
+    visibleThreshold: number;
     /**
      * @config
      */

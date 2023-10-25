@@ -30,10 +30,6 @@ const config = {
             effect: 'outline',// 'background',
             style: {
             },
-            // backgroundStyle: {
-            //     fill: '#004',
-            //     padding: '5px'
-            // }
         },
         data: [
             31231, 12311, 53453, 43242, 19953, 12000, 39021, 41001, 37800, 25123 

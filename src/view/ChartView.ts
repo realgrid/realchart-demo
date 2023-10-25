@@ -434,7 +434,7 @@ export class ChartView extends RcElement {
     private _polarView: PolarBodyView;
     private _currBody: BodyView;
     private _axisSectionViews: {[key: string]: AxisSectionView} = {};
-    private _navigatorView: NavigatorView;
+    _navigatorView: NavigatorView;
     private _creditView: CreditView;
     private _historyView: HistoryView;
     private _tooltipView: TooltipView;
@@ -498,6 +498,7 @@ export class ChartView extends RcElement {
         const polar = m.isPolar();
         const credit = m.options.credits;
         const legend = m.legend;
+        const navigator = m.navigator;
         let w = hintWidth;
         let h = hintHeight;
         let sz: ISize;
@@ -520,7 +521,7 @@ export class ChartView extends RcElement {
         h -= sz.height;
 
         // legend
-        if (this._legendSectionView.visible = (legend.isVisible())) {
+        if (this._legendSectionView.setVisible((legend.isVisible()))) {
             sz = this._legendSectionView.measure(doc, m, w, h, phase);
 
             switch (legend.getLocatiion()) {
@@ -535,10 +536,24 @@ export class ChartView extends RcElement {
             }
         }
 
+        // navigator
+        this._navigatorView.setVisible(navigator.isVisible());
+
+        // body
         if (polar) {
             this.$_measurePolar(doc, m, w, h, 1);
         } else {
             this.$_measurePlot(doc, m, w, h, 1);
+        }
+
+        // navigator
+        if (this._navigatorView.visible) {
+            if (m.navigator._vertical) {
+                h = this._bodyView.mh;
+            } else {
+                w = this._bodyView.mw;
+            }
+            this._navigatorView.measure(doc, navigator, w, h, phase);
         }
     }
 
@@ -589,6 +604,18 @@ export class ChartView extends RcElement {
         // body
         y = height - h2Credit;
 
+        // navigator
+        const vNavi = this._navigatorView;
+        let hNavi = 0;
+        let wNavi = 0;
+        if (vNavi.visible) {
+            if (vNavi.model._vertical) {
+            } else {
+                vNavi.resize(vNavi.mw, vNavi.mh - vNavi.model.gap - vNavi.model.gapFar)
+                h -= hNavi = vNavi.mh;
+            }
+        }
+
         // legend
         const vLegend = this._legendSectionView;
         let hLegend = 0;
@@ -626,6 +653,12 @@ export class ChartView extends RcElement {
             }
         }
 
+        // navi
+        if (vNavi.visible) {
+            y -= hNavi;
+            vNavi.layout().translateY(yLegend - hNavi + vNavi.model.gap);
+        }
+
         // axes
         const axisMap = this._axisSectionViews;
         let asv: AxisSectionView;
@@ -659,6 +692,10 @@ export class ChartView extends RcElement {
                 asv.resize(w, asv.mh);
                 asv.layout();
             }
+        }
+
+        if (vNavi.visible) {
+            vNavi.layout().translateX(x);
         }
 
         const org = this._org = Point.create(x, y);
@@ -986,6 +1023,15 @@ export class ChartView extends RcElement {
         const map = this._axisSectionViews;
         const wSave = w;
         const hSave = h;
+
+        // navigator
+        if (this._navigatorView.visible) {
+            if (m.navigator._vertical) {
+                w -= m.navigator.thickness + m.navigator.gap + m.navigator.gapFar;
+            } else {
+                h -= m.navigator.thickness + m.navigator.gap + m.navigator.gapFar;
+            }
+        }
 
         // guides - axis view에서 guide view들을 추가할 수 있도록 초기화한다.
         this._bodyView.prepareGuideContainers();

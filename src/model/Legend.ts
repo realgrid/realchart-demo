@@ -201,7 +201,7 @@ export class Legend extends Widget {
      * 
      * @config
      */
-    backgroundStyles: SVGStyleOrClass;
+    backgroundStyle: SVGStyleOrClass;
     /**
      * 한 줄 당 표시할 최대 legend 항목 수.
      * 

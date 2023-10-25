@@ -35,10 +35,6 @@ const config = {
             effect: 'outline',// 'background',
             style: {
             },
-            // backgroundStyle: {
-            //     fill: '#004',
-            //     padding: '5px'
-            // }
         },
         data: [
             [0, 0, null], [0, 1, 19], [0, 2, 8], [0, 3, 24], [0, 4, 67],

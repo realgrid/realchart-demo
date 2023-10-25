@@ -114,7 +114,7 @@ export class LegendView extends BoundableElement<Legend> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _setBackgroundStyle(back: RectElement): void {
-        back.setStyleOrClass(this.model.backgroundStyles);
+        back.setStyleOrClass(this.model.backgroundStyle);
     }
 
     protected _doMeasure(doc: Document, model: Legend, hintWidth: number, hintHeight: number, phase: number): ISize {

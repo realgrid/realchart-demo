@@ -22,10 +22,6 @@ const config = {
             style: {
                 fill: 'black'
             },
-            // backgroundStyle: {
-            //     fill: '#004',
-            //     padding: '5px'
-            // }
         },
         data: [
             ['home', 7], 

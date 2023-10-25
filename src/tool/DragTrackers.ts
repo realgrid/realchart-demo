@@ -11,6 +11,7 @@ import { DragTracker } from "../common/RcControl";
 import { RectElement } from "../common/impl/RectElement";
 import { AxisScrollView } from "../view/AxisView";
 import { BodyView } from "../view/BodyView";
+import { NavigatorHandleView, NavigatorView } from "../view/NavigatorView";
 
 export abstract class ChartDragTracker extends DragTracker {
 
@@ -108,5 +109,53 @@ export class ScrollTracker extends ChartDragTracker {
             this._view.model.axis.zoom(p, p + this._zoomLen);
         }
         return true;
+    }
+}
+
+export class NavigatorTracker extends ChartDragTracker {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _view: NavigatorView;
+    private _handleView: NavigatorHandleView;
+    private _isStart: boolean;
+    private _startOff: number;
+    private _zoomLen: number;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(control: ChartControl, view: NavigatorView, elt: Element) {
+        super(control);
+
+        this._view = view;
+        if (this._isStart = view._startHandle.contains(elt)) {
+            this._handleView = view._startHandle;
+        } else {
+            this._handleView = view._endHandle;
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
+        const axis = this._view.model.axis();
+        const v = this._handleView;
+
+        const p = v.elementToSvg(0, 0);
+
+        this._startOff = v._vertical ? (yStart - p.y) : (xStart - p.x);
+        this._zoomLen = axis._zoom ? axis._zoom.length : NaN;
+
+        return true;
+    }
+
+    protected _doEnded(x: number, y: number): void {
+    }
+
+    protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
+        return;
     }
 }

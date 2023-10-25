@@ -209,7 +209,8 @@ export class ChartItem extends RcObject {
     protected _doSave(target: object): void {
     }
 
-    protected _doPrepareRender(chart: IChart): void {}
+    protected _doPrepareRender(chart: IChart): void {
+    }
 }
 
 export const BRIGHT_COLOR = 'white';

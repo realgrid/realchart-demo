@@ -622,6 +622,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // body
         this._body.load(source.body || source.plot); // TODO: plot 제거
 
+        // series navigator
+        this._navigator.load(source.navigator);
+
         console.log('chart-items:', n_char_item);
         console.timeEnd('load chart');
     }
@@ -640,9 +643,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._series.prepareRender();
 
         // plane
-        if (this._plane.count() > 1) {
-            this._plane.prepareRender();
-        }
+        this._plane.count() > 1 && this._plane.prepareRender();
 
         // 축의 값 범위를 계산한다. 
         // [주의] 반드시 x축을 먼저 준비해야 한다. seriesGroup.$_collectPoints에서 point.xValue를 사용한다.
@@ -663,7 +664,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._gauges.prepareRender();
 
         // navigator
-        this._navigator.prepareRender();
+        this._navigator.visible && this._navigator.prepareRender();
     }
 
     // 여러번 호출될 수 있다.

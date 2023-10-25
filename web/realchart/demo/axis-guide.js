@@ -43,10 +43,6 @@ const config = {
             effect: 'outline',// 'background',
             style: {
             },
-            // backgroundStyle: {
-            //     fill: '#004',
-            //     padding: '5px'
-            // }
         },
         data: [
             ['home', 7], 

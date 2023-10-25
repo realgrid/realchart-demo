@@ -4,9 +4,16 @@
  * Bar Series 기본 예제.
  */
 const config = {
+    inverted: true,
     title: "Wing Chart",
     options: {
-        animatable: false
+        // animatable: false
+    },
+    legend: {
+        itemGap: 20,
+        backgroundStyle: {
+            fill: 'none'
+        }
     },
     xAxis: [{
         title: "일일 Daily fat",
@@ -17,13 +24,11 @@ const config = {
         grid: true,
     }, {
         title: "일일 Daily fat2",
-        // position: 'oppoiste',
         position: 'opposite',
         categories: [
             '0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-40', '40-45',
             '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80+'
         ],
-        // grid: true
     }],
     yAxis: {
         title: "Vertical 수직축 Axis",
@@ -34,10 +39,10 @@ const config = {
     series: {
         layout: 'overlap',
         children: [{
-            name: 'bar1',
+            name: '남자',
             pointLabel: {
                 visible: true,
-                numberFormat: 'a##0.0'
+                numberFormat: 'a##0.00'
             },
             data: [
                 -8.98, -7.52, -6.65, -5.72, -4.85,
@@ -46,11 +51,12 @@ const config = {
                 -0.23, -0.15
             ]
         }, {
-            name: 'bar1',
+            name: '여자',
             xAxis: 1,
+            color: '#ffaa00',
             pointLabel: {
                 visible: true,
-                // numberFormat: 's##0.0'
+                numberFormat: '##0.00'
             },
             data: [
                 8.84, 7.42, 6.57, 5.68, 4.83,

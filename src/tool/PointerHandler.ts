@@ -14,8 +14,9 @@ import { LegendItem } from "../model/Legend";
 import { Series } from "../model/Series";
 import { AxisScrollView } from "../view/AxisView";
 import { CreditView } from "../view/ChartView";
+import { NavigatorView } from "../view/NavigatorView";
 import { SeriesView, WidgetSeriesView } from "../view/SeriesView";
-import { ScrollTracker, ZoomTracker } from "./DragTrackers";
+import { NavigatorTracker, ScrollTracker, ZoomTracker } from "./DragTrackers";
 
 const DRAG_THRESHOLD = 3;
 
@@ -178,6 +179,8 @@ export class ChartPointerHandler implements IPointerHandler {
             return new ScrollTracker(this._chart, chart.getScrollView(elt));
         } else if (body.model.canZoom() && body.contains(elt)) {
             return new ZoomTracker(this._chart, body);
+        } else if (NavigatorView.isHandle(elt)) {
+            return new NavigatorTracker(this._chart, chart._navigatorView, elt);
         }
     }
 

@@ -16,13 +16,13 @@ const config = {
         }
     },
     body: {
-        zoomButton: false,
         zoomType: 'x',
         style: {
             // stroke: 'none'
         }
     },
     xAxis: {
+        // type: 'linear',
         title: {
             visible: true,   
             text: 'Period',
@@ -68,6 +68,10 @@ const config = {
             5, 4.1, 3.9, 3.5, 2.7, 3.1, 2.6, 3.3, 3.8,
             4.8, 4.6, 3.9, 3.8, 2.7, 3.1, 2.6, 3.3, 3.8,
         ]
+    },
+    legend: true,
+    navigator: {
+        visible: true
     }
 }
 

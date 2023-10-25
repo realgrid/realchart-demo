@@ -19,6 +19,7 @@ const config = {
             rx: '5px'
         }
     },
+    legend: true,
     body: {
         zoomType: 'x',
         style: {

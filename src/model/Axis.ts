@@ -544,8 +544,13 @@ export enum AxisPosition {
 export class AxisScrollBar extends AxisItem {
 
     //-------------------------------------------------------------------------
-    // fields
+    // property fields
     //-------------------------------------------------------------------------
+    private _thickness = 10;
+    private _minThumbSize = 32;
+    private _gap = 3;
+    private _gapFar = 3;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -559,8 +564,43 @@ export class AxisScrollBar extends AxisItem {
     /**
      * 스크롤바 두께.
      */
-    thickness = 10;
-    minThumbSize = 32;
+    get thickness(): number {
+        return this._thickness;
+    }
+    set thickness(value: number) {
+        this._thickness = +value || this._thickness;
+    }
+    /**
+     * 최소 thumb 길이.
+     */
+    get minThumbSize(): number {
+        return this._minThumbSize;
+    }
+    set minThumbSize(value: number) {
+        this._minThumbSize = +value || this._minThumbSize;
+    }
+    /**
+     * 스크롤바와 차트 본체 방향 사이의 간격.
+     */
+    get gap(): number {
+        return this._gap;
+    }
+    set gap(value: number) {
+        this._gap = +value || this._gap;
+    }
+    /**
+     * 스크롤바와 차트 본체 반대 방향 사이의 간격.
+     */
+    get gapFar(): number {
+        return this._gapFar;
+    }
+    set gapFar(value: number) {
+        this._gapFar = +value || this._gapFar;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
 }
 
 export interface IAxisZoom {

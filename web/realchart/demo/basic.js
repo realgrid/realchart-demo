@@ -45,10 +45,6 @@ const config = {
 			// text: '<b style="fill:red">${x}</b>',
 			effect: 'outline', // 'background',
 			style: {},
-			// backgroundStyle: {
-			//     fill: '#004',
-			//     padding: '5px'
-			// }
 		},
 		data: [
 			['신흥1동', 12904],

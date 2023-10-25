@@ -23,7 +23,7 @@ const source = {
     bottom: Utils.irandom(-1000, 1000),
     itemGap: Utils.irandom(-1000, 1000),
     markerGap: Utils.irandom(-1000, 1000),
-    backgroundStyles: {}
+    backgroundStyle: {}
 }
 
 /**
@@ -88,8 +88,8 @@ describe('LegendItem test', function() {
         expect(legend.markerGap).eq(source.markerGap);
     });
 
-    it('backgroundStyles', () => {
-        expect(legend.backgroundStyles).eql(source.backgroundStyles);
+    it('backgroundStyle', () => {
+        expect(legend.backgroundStyle).eql(source.backgroundStyle);
     });
 
     it('items()', () => {
