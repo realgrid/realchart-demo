@@ -17,6 +17,7 @@ const config = {
         title: "Vertical 수직축 Axis",
     },
     series: [{
+        //테스트
         name: 'Installation & Developers',
         marker: true,
         data: [43934, 48656, 65165, 81827, 112143, 142383,
