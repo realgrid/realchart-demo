@@ -64,6 +64,7 @@ export interface IChart {
     yAxis: IAxis;
     colors: string[];
 
+    _createChart(config: any): IChart;
     assignTemplates(target: any): any;
 
     isGauge(): boolean;
@@ -92,6 +93,10 @@ export interface IChart {
     _visibleChanged(item: ChartItem): void;
     _pointVisibleChanged(series: Series, point: DataPoint): void;
     _modelChanged(item: ChartItem, tag?: any): void;
+
+    // for series navigator
+    prepareRender(): void;
+    layoutAxes(width: number, height: number, inverted: boolean, phase: number): void;
 }
 
 const group_types = {
@@ -330,6 +335,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     // IChart
     //-------------------------------------------------------------------------
+    _createChart(config: any): IChart {
+        return new Chart(config);
+    }
+
     startAngle(): number {
         return this.body.getStartAngle();
     }
@@ -576,7 +585,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     load(source: any): void {
-        console.time('load chart');
+        const sTime = 'load chart ' + Math.random() * 1000000;
+        console.time(sTime);
 
         // defaults
         this.$_loadTemplates(source.templates);
@@ -626,7 +636,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._navigator.load(source.navigator);
 
         console.log('chart-items:', n_char_item);
-        console.timeEnd('load chart');
+        console.timeEnd(sTime);
     }
 
     _connectSeries(series: IPlottingItem, isX: boolean): Axis {

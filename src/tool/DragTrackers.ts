@@ -7,8 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartControl } from "../ChartControl";
-import { DragTracker } from "../common/RcControl";
+import { DragTracker, RcElement } from "../common/RcControl";
 import { RectElement } from "../common/impl/RectElement";
+import { Axis } from "../model/Axis";
 import { AxisScrollView } from "../view/AxisView";
 import { BodyView } from "../view/BodyView";
 import { NavigatorHandleView, NavigatorView } from "../view/NavigatorView";
@@ -121,7 +122,6 @@ export class NavigatorHandleTracker extends ChartDragTracker {
     private _handleView: NavigatorHandleView;
     private _isStart: boolean;
     private _startOff: number;
-    private _zoomLen: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -147,7 +147,6 @@ export class NavigatorHandleTracker extends ChartDragTracker {
         const p = v.elementToSvg(0, 0);
 
         this._startOff = v._vertical ? (yStart - p.y) : (xStart - p.x);
-        this._zoomLen = axis._zoom ? axis._zoom.length : NaN;
 
         return true;
     }
@@ -158,7 +157,7 @@ export class NavigatorHandleTracker extends ChartDragTracker {
     protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
         const view = this._view;
         const axis = view.model.axis();
-        const len = axis.length();
+        const len = view.model.axisLen();
         let p = view.svgToElement(x, y).x - this._startOff;
 
         if (this._handleView._vertical) {
@@ -171,18 +170,71 @@ export class NavigatorHandleTracker extends ChartDragTracker {
                     axis.zoom(p * len / view.width, NaN);
                 }
             } else {
+                if (p > 0 && p < view.width) {
+                    axis.zoom(NaN, p * len / view.width);
+                }
             }
         }
         return true;
     }
 }
 
-export class NavigatorMoveTracker extends ChartDragTracker {
+export class NavigatorMaskTracker extends ChartDragTracker {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _view: NavigatorView;
+    private _maskView: RcElement;
+    private _startOff: number;
+    private _zoomLen: number;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(control: ChartControl, view: NavigatorView, elt: Element) {
+        super(control);
+
+        this._view = view;
+        this._maskView = view._mask;
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
+        const axis = this._view.model.axis();
+        const v = this._maskView;
+
+        const p = v.elementToSvg(0, 0);
+
+        this._startOff = this._view.model._vertical ? (yStart - p.y) : (xStart - p.x);
+        this._zoomLen = axis._zoom.length;
+
+        return true;
+    }
+
+    protected _doEnded(x: number, y: number): void {
+    }
+
     protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
-        return;
+        const view = this._view;
+        const len = view.model.axisLen();
+        const p = view.svgToElement(x, y).x - this._startOff;
+
+        if (view.model._vertical) {
+            this.$_moveZoom(p * len / view.height);
+        } else {
+            this.$_moveZoom(p * len / view.width);
+        }
+        return true;
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_moveZoom(p: number): void {
+        p = Math.max(0, Math.min(p, this._view.model._naviChart.xAxis.length() - this._zoomLen));
+        this._view.model.axis().zoom(p, p + this._zoomLen);
     }
 }

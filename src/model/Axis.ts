@@ -33,6 +33,7 @@ export interface IAxis {
     getBaseValue(): number;
     axisMax(): number;
     axisMin(): number;
+    length(): number;
 
     zoom(start: number, end: number): boolean;
 
@@ -507,6 +508,12 @@ export interface IAxisTick {
 }
 
 export enum AxisPosition {
+    /**
+     * 상대 축에 따라 위치를 조정한다.
+     * x축이 reversed이면 y축이 반대 쪽에 표시되고,
+     * y축이 reversed이면 x축이 반대 쪽에 표시된다.
+     */
+    AUTO = 'auto',
     /**
      * X축은 아래쪽에 수평으로, Y축은 왼쪽에 수직으로 표시된다.
      * <br>

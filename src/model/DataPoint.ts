@@ -102,8 +102,10 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    assignTo(proxy: any): void {
+    assignTo(proxy?: any): any {
+        if (!proxy) proxy = {};
         this._assignTo(proxy);
+        return proxy;
     }
 
     getProp(fld: string | number): any {
@@ -249,6 +251,10 @@ export class DataPointCollection {
 
     getValues(axis: string): any[] {
         return this._points.map(p => p[axis]);
+    }
+
+    getProxies(): any[] {
+        return this._points.map(p => p.assignTo());
     }
 
     forEach(callback: (p: DataPoint, i?: number) => any): void {

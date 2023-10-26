@@ -153,7 +153,7 @@
     /** zoom tracker */
     --rct-zoom-tracker-fill: #0044ff30;
     /** series navigator */
-    --rct-navigator-handle-fill: #aaa; 
+    --rct-navigator-handle-color: #aac; 
 }
 .rct-root[data-theme='dark'] {
     --rct-focus-border: yellow;
@@ -905,6 +905,6 @@
     stroke: #ccc;
 }
 .rct-navigator-handle {
-    fill: var(--rct-navigator-handle-fill);
-    stroke: var(--rct-navigator-handle-fill);
+    fill: var(--rct-navigator-handle-color);
+    stroke: var(--rct-navigator-handle-color);
 }

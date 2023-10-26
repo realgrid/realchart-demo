@@ -93,7 +93,7 @@ export class BellCurveSeries extends AreaSeries {
     //     return []; 
     // }
 
-    protected _loadData(src: any) {
+    protected _loadData(src: any): any {
         const data = super._loadData(src);
 
         if (isArray(data)) {

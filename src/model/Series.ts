@@ -875,6 +875,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._points.load(src);
     }
 
+    loadPoints(src: any[]): void {
+        this._points.load(src);
+    }
+
     protected _doPrepareRender(): void {
         let color: string;
         let colors: string[];

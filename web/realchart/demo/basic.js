@@ -171,6 +171,15 @@ function setActions(container) {
 		},
 		false
 	);
+	createCheckBox(
+		container,
+		'X Opposite',
+		function (e) {
+			config.xAxis.position = _getChecked(e) ? 'opposite' : '';
+			chart.load(config, animate);
+		},
+		false
+	);
 	createCodePenButton();
 }
 

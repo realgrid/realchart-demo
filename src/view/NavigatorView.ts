@@ -7,11 +7,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { PathBuilder } from "../common/PathBuilder";
-import { PathElement, RcElement } from "../common/RcControl";
+import { LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
+import { Axis } from "../model/Axis";
+import { Series } from "../model/Series";
 import { SeriesNavigator } from "../model/SeriesNavigator";
+import { AxisView } from "./AxisView";
 import { ChartElement } from "./ChartElement";
+import { SeriesView } from "./SeriesView";
 
 export class NavigatorHandleView extends RcElement {
 
@@ -41,7 +45,7 @@ export class NavigatorHandleView extends RcElement {
     //-------------------------------------------------------------------------
     layout(width: number, height: number, vertical: boolean): void {
         if (width !== this._w || height !== this._h || vertical !== this._vertical) {
-            let sz = Math.min(width, height);
+            let sz = Math.min(width, height) * 1.2;
             const pb = new PathBuilder();
     
             this._back.rect = {
@@ -85,11 +89,19 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
         return dom.parentElement.classList.contains(NavigatorView.HANDLE_STYLE);
     }
 
+    static isMask(dom: Element): boolean {
+        return dom.classList.contains(NavigatorView.MASK_STYLE);
+    }
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _back: RectElement;
-    private _mask: RectElement;
+    private _container: LayerElement;
+    private _seriesView: SeriesView<Series>;
+    private _xAxisView: AxisView;
+    private _yAxisView: AxisView;
+    _mask: RectElement;
     _startHandle: NavigatorHandleView;
     _endHandle: NavigatorHandleView;
 
@@ -100,6 +112,7 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
         super(doc, NavigatorView.CLASS_NAME);
 
         this.add(this._back = new RectElement(doc, NavigatorView.BACK_STYLE))
+        this.add(this._container = new LayerElement(doc, null));
         this.add(this._mask = new RectElement(doc, NavigatorView.MASK_STYLE))
         this.add(this._startHandle = new NavigatorHandleView(doc));
         this.add(this._endHandle = new NavigatorHandleView(doc));
@@ -121,12 +134,13 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
             height = model.thickness + model.gap + model.gapFar;
         }
 
+        model._naviChart.layoutAxes(this.width, this.height, false, 1);
+
         return { width, height };
     }
 
     protected _doLayout(param: any): void {
-        const axis = this.model.axis();
-        const zoom = axis._zoom;
+        const zoom = this.model.axis()._zoom;
         const w = this.width;
         const h = this.height;
 
@@ -134,9 +148,9 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
 
         if (this.model._vertical) {
         } else {
-            const x1 = zoom ? zoom.start * w / axis.length() : 0;
-            const x2 = zoom ? zoom.end * w / axis.length() : w;
-            console.log('end', zoom ? zoom.end : w, x2);
+            const x1 = zoom ? zoom.start * w / this.model.axisLen() : 0;
+            const x2 = zoom ? zoom.end * w / this.model.axisLen() : w;
+            // console.log('end', zoom ? zoom.end : w, x2);
 
             this._mask.setBounds(x1, 0, x2 - x1, h);
 

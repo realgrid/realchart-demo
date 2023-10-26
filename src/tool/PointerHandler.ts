@@ -16,7 +16,7 @@ import { AxisScrollView } from "../view/AxisView";
 import { CreditView } from "../view/ChartView";
 import { NavigatorView } from "../view/NavigatorView";
 import { SeriesView, WidgetSeriesView } from "../view/SeriesView";
-import { NavigatorHandleTracker, ScrollTracker, ZoomTracker } from "./DragTrackers";
+import { NavigatorHandleTracker, NavigatorMaskTracker, ScrollTracker, ZoomTracker } from "./DragTrackers";
 
 const DRAG_THRESHOLD = 3;
 
@@ -172,15 +172,17 @@ export class ChartPointerHandler implements IPointerHandler {
     }
 
     protected _getDragTracker(elt: Element, dx: number, dy: number): any {
-        const chart = this._chart.chartView();
-        const body = chart.bodyView();
+        const chartView = this._chart.chartView();
+        const body = chartView.bodyView();
 
         if (AxisScrollView.isThumb(elt)) {
-            return new ScrollTracker(this._chart, chart.getScrollView(elt));
+            return new ScrollTracker(this._chart, chartView.getScrollView(elt));
         } else if (body.model.canZoom() && body.contains(elt)) {
             return new ZoomTracker(this._chart, body);
         } else if (NavigatorView.isHandle(elt)) {
-            return new NavigatorHandleTracker(this._chart, chart._navigatorView, elt);
+            return new NavigatorHandleTracker(this._chart, chartView._navigatorView, elt);
+        } else if (NavigatorView.isMask(elt) && this._chart.model.body.isZoomed()) {
+            return new NavigatorMaskTracker(this._chart, chartView._navigatorView, elt);            
         }
     }
 

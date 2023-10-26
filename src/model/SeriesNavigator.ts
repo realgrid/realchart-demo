@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isObject } from "../common/Common";
 import { Axis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
@@ -26,12 +27,49 @@ export class NavigatorMask extends ChartItem {
 }
 
 const SERIES = {
+    'area': () => {
+        return {
+            type: 'area',
+        };
+    },
+    'line': () => {
+        return {
+            type: 'line',
+        };
+    },
+    'bar': () => {
+        return {
+            type: 'bar',
+        };
+    },
 };
 
-const X_AXIS = {
+const AXES = {
+    'category': () => {
+        return {
+            type: 'category',
+        };
+    },
+    'linear': () => {
+        return {
+            type: 'linear',
+        };
+    },
+    'time': () => {
+        return {
+            type: 'time',
+        };
+    },
+    'log': () => {
+        return {
+            type: 'log',
+        };
+    }
 }
 
-const Y_AXIS = {
+const AXIS = {
+    minPadding: 0,
+    maxPadding: 0
 }
 
 /**
@@ -53,10 +91,9 @@ export class SeriesNavigator extends ChartItem {
     // fields
     //-------------------------------------------------------------------------
     private _source: Series;
-    private _series: Series;
-    private _xAxis: Axis;
-    private _yAxis: Axis;
+    _naviChart: IChart;
 
+    _dataChanged = true;
     _vertical: boolean;
 
     //-------------------------------------------------------------------------
@@ -80,6 +117,9 @@ export class SeriesNavigator extends ChartItem {
     handle: NavigiatorHandle;
     mask: NavigatorMask;
     borderLine: ChartItem;
+    series: any;
+    xAxis: any;
+    yAxis: any;
     /**
      * 네비게이터 두께.
      */
@@ -115,6 +155,10 @@ export class SeriesNavigator extends ChartItem {
         return this.visible;
     }
 
+    axisLen(): number {
+        return (this._naviChart.xAxis as Axis).length();
+    }
+
     axis(): Axis {
         return this._source._xAxisObj as Axis;
     }
@@ -122,13 +166,42 @@ export class SeriesNavigator extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoadProp(prop: string, value: any): boolean {
-        return false;
+    protected _doLoad(src: any): void {
+        super._doLoad(src);
+
+        const chart = this.chart;
+        const config: any = {
+        }
+
+        // series
+        if (isObject(src.series)) {
+            config.series = Object.assign((SERIES[src.series.type] || SERIES['area'])(), src.series);
+        } else {
+            config.series = SERIES['area']();
+        }
+        // x-axis
+        if (isObject(src.xAxis)) {
+            config.xAxis = Object.assign((AXES[src.xAxis.type] || AXES['linear'])(), src.xAxis, AXIS);
+        } else {
+            config.xAxis = Object.assign(AXES['linear'](), AXIS);
+        }
+
+        // y-axis
+        if (isObject(src.yAxis)) {
+            config.yAxis = Object.assign((AXES[src.yAxis.type] || AXES['linear'])(), src.yAxis, AXIS);
+        } else {
+            config.yAxis = Object.assign(AXES['linear'](), AXIS);
+        }
+
+        this._naviChart = this.chart._createChart(config);
+
+        if (this._source = chart._getSeries().getSeries(this.source) || chart.firstSeries) {
+            this._naviChart.firstSeries.loadPoints(this._source.getPoints().getProxies());
+        }
     }
 
     protected _doPrepareRender(chart: IChart): void {
-        this._source = chart._getSeries().getSeries(this.source) || chart.firstSeries;
-
         this._vertical = false;
+        this._naviChart.prepareRender();
     }
 }
