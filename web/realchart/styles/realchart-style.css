@@ -154,6 +154,7 @@
     --rct-zoom-tracker-fill: #0044ff30;
     /** series navigator */
     --rct-navigator-handle-color: #aac; 
+    --rct-navigator-handle-hover-color: #55c; 
 }
 .rct-root[data-theme='dark'] {
     --rct-focus-border: yellow;
@@ -907,4 +908,8 @@
 .rct-navigator-handle {
     fill: var(--rct-navigator-handle-color);
     stroke: var(--rct-navigator-handle-color);
+}
+.rct-navigator-handle[data-select], .rct-navigator-handle:hover {
+    fill: var(--rct-navigator-handle-hover-color);
+    stroke: var(--rct-navigator-handle-hover-color);;   
 }

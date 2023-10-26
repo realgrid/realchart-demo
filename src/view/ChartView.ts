@@ -1021,8 +1021,6 @@ export class ChartView extends RcElement {
 
     private $_measurePlot(doc: Document, m: Chart, w: number, h: number, phase: number): void {
         const map = this._axisSectionViews;
-        const wSave = w;
-        const hSave = h;
 
         // navigator
         if (this._navigatorView.visible) {
@@ -1032,6 +1030,9 @@ export class ChartView extends RcElement {
                 h -= m.navigator.thickness + m.navigator.gap + m.navigator.gapFar;
             }
         }
+
+        const wSave = w;
+        const hSave = h;
 
         // guides - axis view에서 guide view들을 추가할 수 있도록 초기화한다.
         this._bodyView.prepareGuideContainers();

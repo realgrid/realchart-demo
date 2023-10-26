@@ -141,17 +141,16 @@ export class NavigatorHandleTracker extends ChartDragTracker {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
-        const axis = this._view.model.axis();
         const v = this._handleView;
-
         const p = v.elementToSvg(0, 0);
 
         this._startOff = v._vertical ? (yStart - p.y) : (xStart - p.x);
-
+        this._handleView.setBoolData('select', true);
         return true;
     }
 
     protected _doEnded(x: number, y: number): void {
+        this._handleView.setBoolData('select', false);
     }
 
     protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {

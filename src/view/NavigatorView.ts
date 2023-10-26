@@ -10,7 +10,7 @@ import { PathBuilder } from "../common/PathBuilder";
 import { LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
-import { Axis } from "../model/Axis";
+import { Chart } from "../model/Chart";
 import { Series } from "../model/Series";
 import { SeriesNavigator } from "../model/SeriesNavigator";
 import { AxisView } from "./AxisView";
@@ -45,7 +45,7 @@ export class NavigatorHandleView extends RcElement {
     //-------------------------------------------------------------------------
     layout(width: number, height: number, vertical: boolean): void {
         if (width !== this._w || height !== this._h || vertical !== this._vertical) {
-            let sz = Math.min(width, height) * 1.2;
+            let sz = Math.min(width, height) * 1.3;
             const pb = new PathBuilder();
     
             this._back.rect = {
@@ -116,6 +116,15 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
         this.add(this._mask = new RectElement(doc, NavigatorView.MASK_STYLE))
         this.add(this._startHandle = new NavigatorHandleView(doc));
         this.add(this._endHandle = new NavigatorHandleView(doc));
+
+        this._startHandle.setStyle('cursor', 'ew-resize');
+        this._endHandle.setStyle('cursor', 'ew-resize');
+        this._mask.setStyle('cursor', 'ew-resize');
+        this._mask.dom.addEventListener('dblclick', () => {
+            if (this.model.axis()._zoom) {
+                this.model.axis().resetZoom();
+            }
+        });
     }
 
     //-------------------------------------------------------------------------
@@ -125,6 +134,8 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: SeriesNavigator, hintWidth: number, hintHeight: number, phase: number): ISize {
+        const chart = model._naviChart as Chart;
+        const series = chart.firstSeries;
         let width = hintWidth;
         let height = hintHeight;
 
@@ -135,6 +146,10 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
         }
 
         model._naviChart.layoutAxes(this.width, this.height, false, 1);
+
+        this.$_prepareSeriesView(doc, chart);
+        this.$_prepareXAxisView(doc, chart);
+        this.$_prepareYAxisView(doc, chart);
 
         return { width, height };
     }
@@ -164,4 +179,18 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    private $_prepareSeriesView(doc: Document, chart: Chart): void {
+        const series = chart.firstSeries;
+
+        if (this._seriesView && this._seriesView.model !== series) {
+            this._seriesView.remove();
+            this._seriesView = null;
+        }
+    }
+
+    private $_prepareXAxisView(doc: Document, chart: Chart): void {
+    }
+
+    private $_prepareYAxisView(doc: Document, chart: Chart): void {
+    }
 }

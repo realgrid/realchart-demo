@@ -32,7 +32,7 @@ export class ZoomButton extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     isVisible(): boolean {
-        return this.visible !== false && this.body.isZoomed()
+        return this.visible !== false && this.body.isZoomed() && this.body.canZoom();
     }
 }
 

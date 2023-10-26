@@ -120,6 +120,7 @@ export class SeriesNavigator extends ChartItem {
     series: any;
     xAxis: any;
     yAxis: any;
+    liveScroll = true;
     /**
      * 네비게이터 두께.
      */

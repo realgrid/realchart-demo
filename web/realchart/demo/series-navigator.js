@@ -16,7 +16,6 @@ const config = {
         }
     },
     body: {
-        zoomType: 'x',
         style: {
             // stroke: 'none'
         }
