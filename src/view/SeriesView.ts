@@ -312,6 +312,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _simpleMode = false;
     protected _pointContainer: PointContainer;
     protected _labelContainer: PointLabelContainer;
     private _trendLineView: PathElement;
@@ -460,7 +461,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
             this.$_renderTrendline();       
         }
         this._afterRender();
-        this._animatable && this._runShowEffect(!this.control.loaded);
+        this._animatable && !this._simpleMode && this._runShowEffect(!this.control.loaded);
     }
 
     //-------------------------------------------------------------------------

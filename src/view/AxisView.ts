@@ -298,6 +298,7 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _simpleMode = false;
     private _lineView: LineElement;
     private _titleView: AxisTitleView;
     private _markContainer: RcElement;
@@ -359,7 +360,7 @@ export class AxisView extends ChartElement<Axis> {
         }
 
         // title
-        if (this._titleView.visible = m.title.isVisible()) {
+        if (this._titleView.setVisible(m.title.isVisible())) {
             h += this._titleView.measure(doc, m.title, width, height, 1).height;
             h += m.title.gap;
         }
@@ -466,15 +467,18 @@ export class AxisView extends ChartElement<Axis> {
             this._labelSize = 0;
         }
 
-        // title
-        if (titleView.visible) { // checkHeight/checkWidth 에서 visible 설정.
-            sz += titleView.mh;
-            sz += model.title.gap || 0;
-        }
+        if (!this._simpleMode) {
+            // title
+            if (titleView.visible) { // checkHeight/checkWidth 에서 visible 설정.
+                sz += titleView.mh;
+                sz += model.title.gap || 0;
+            }
 
-        // scrollbar
-        if (this._scrollView?.visible) {
-            sz += this._scrollView.mh;
+            // scrollbar
+            if (this._scrollView?.visible) {
+                sz += this._scrollView.mh;
+            }
+            titleView.setVisible(false);
         }
 
         return Size.create(horz ? hintWidth : sz, horz ? sz : hintHeight);
@@ -530,35 +534,37 @@ export class AxisView extends ChartElement<Axis> {
             }
         }
 
-        let y = 0;
+        if (!this._simpleMode) {
+            let y = 0;
 
-        // title
-        if (titleView.visible) {
-            const labelSize = this._labelSize;
-            const gap = model.title.gap || 0;
-
-            titleView.resizeByMeasured().layout(horz);
-
-            if (horz) {
-                y += opp ? 0 : len + labelSize + gap;
-                // titleView.translate((w - titleView.width) / 2, this._markLen + labelSize);
-                titleView.translate(w / 2, y);
-                y += titleView.height;
-            } else {
-                const x = opp ? len + labelSize + gap + titleView.height / 2 : w - len - labelSize - gap - titleView.height / 2;
-
-                titleView.translate(x, (h - titleView.height) / 2);
+            // title
+            if (titleView.visible) {
+                const labelSize = this._labelSize;
+                const gap = model.title.gap || 0;
+    
+                titleView.resizeByMeasured().layout(horz);
+    
+                if (horz) {
+                    y += opp ? 0 : len + labelSize + gap;
+                    // titleView.translate((w - titleView.width) / 2, this._markLen + labelSize);
+                    titleView.translate(w / 2, y);
+                    y += titleView.height;
+                } else {
+                    const x = opp ? len + labelSize + gap + titleView.height / 2 : w - len - labelSize - gap - titleView.height / 2;
+    
+                    titleView.translate(x, (h - titleView.height) / 2);
+                }
             }
-        }
-
-        // scrollbar
-        if (scrollView?.visible) {
-            if (horz) {
-                scrollView.translate(0, y).resize(this.width, scrollView.mh);
-                scrollView.setScroll(model._zoom);
-            } else {
+    
+            // scrollbar
+            if (scrollView?.visible) {
+                if (horz) {
+                    scrollView.translate(0, y).resize(this.width, scrollView.mh);
+                    scrollView.setScroll(model._zoom);
+                } else {
+                }
+                scrollView.layout();
             }
-            scrollView.layout();
         }
     }
 

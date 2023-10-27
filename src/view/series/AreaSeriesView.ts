@@ -140,12 +140,14 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             sb.line(path[path.length - 2] as number, yMin);
         }
 
+        area.setBoolData('simple', this._simpleMode);
         area.setPath(s = sb.end());
         area.internalClearStyleAndClass();
         series.color && area.setStyle('fill', series.color);
         series.style && area.internalSetStyleOrClass(series.style);
 
         if (lowArea) {
+            lowArea.setBoolData('simple', this._simpleMode);
             lowArea.setPath(s);
             lowArea.internalClearStyleAndClass();
             series.color && lowArea.setStyle('fill', series.color);

@@ -92,6 +92,10 @@ const gauge_types = {
     'bulletgroup': BulletGaugeGroupView,
 }
 
+export function createSeriesView(doc: Document, series: Series): SeriesView<Series> {
+    return new series_types[series._type()](doc);
+}
+
 export class AxisGridView extends ChartElement<AxisGrid> {
 
     //-------------------------------------------------------------------------
@@ -985,16 +989,6 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_createSeriesView(doc: Document, series: Series): SeriesView<Series> {
-        return new series_types[series._type()](doc);
-
-        // for (const cls of series_types.keys()) {
-        //     if (series instanceof (cls as any)) {
-        //         return new (series_types.get(cls))(doc);
-        //     }
-        // }
-    }
-
     private $_createGaugeView(doc: Document, gauge: GaugeBase): GaugeView<Gauge> {
         return new gauge_types[gauge._type()](doc);
     }
@@ -1039,7 +1033,7 @@ export class BodyView extends ChartElement<Body> {
         views.length = 0;
 
         series.forEach(ser => {
-            const v = map.get(ser) || this.$_createSeriesView(doc, ser);
+            const v = map.get(ser) || createSeriesView(doc, ser);
 
             v._setChartOptions(inverted, this._animatable);
             container.add(v);

@@ -10,10 +10,12 @@ import { PathBuilder } from "../common/PathBuilder";
 import { LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
+import { Axis } from "../model/Axis";
 import { Chart } from "../model/Chart";
 import { Series } from "../model/Series";
 import { SeriesNavigator } from "../model/SeriesNavigator";
 import { AxisView } from "./AxisView";
+import { createSeriesView } from "./BodyView";
 import { ChartElement } from "./ChartElement";
 import { SeriesView } from "./SeriesView";
 
@@ -145,26 +147,32 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
             height = model.thickness + model.gap + model.gapFar;
         }
 
-        model._naviChart.layoutAxes(this.width, this.height, false, 1);
+        model._naviChart.layoutAxes(width, height, false, 1);
 
         this.$_prepareSeriesView(doc, chart);
         this.$_prepareXAxisView(doc, chart);
         this.$_prepareYAxisView(doc, chart);
 
+        (model._naviChart.xAxis as Axis).calcPoints(width, 1);
+        (model._naviChart.yAxis as Axis).calcPoints(height, 1);
+
         return { width, height };
     }
 
     protected _doLayout(param: any): void {
-        const zoom = this.model.axis()._zoom;
+        const model = this.model;
+        const zoom = model.axis()._zoom;
         const w = this.width;
         const h = this.height;
 
-        this._back.resize(this.width, this.height);
+        // background
+        this._back.resize(w, h);
 
-        if (this.model._vertical) {
+        // handle
+        if (model._vertical) {
         } else {
-            const x1 = zoom ? zoom.start * w / this.model.axisLen() : 0;
-            const x2 = zoom ? zoom.end * w / this.model.axisLen() : w;
+            const x1 = zoom ? zoom.start * w / model.axisLen() : 0;
+            const x2 = zoom ? zoom.end * w / model.axisLen() : w;
             // console.log('end', zoom ? zoom.end : w, x2);
 
             this._mask.setBounds(x1, 0, x2 - x1, h);
@@ -174,6 +182,27 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
             this._endHandle.layout(h / 3, h / 3, false);
             this._endHandle.translate(x2, h / 2);
         }
+
+        // seires
+        if (this._seriesView) {
+            this._seriesView.measure(this.doc, model._naviChart.firstSeries, w, h, 1);
+            this._seriesView.resize(w, h);
+            this._seriesView.layout();
+        }
+
+        // x axis
+        if (this._xAxisView) {
+            this._xAxisView.measure(this.doc, model._naviChart.xAxis as Axis, w, h, 1);
+            this._xAxisView.resize(w, h);
+            this._xAxisView.layout();
+        }
+
+        // y axis
+        if (this._yAxisView) {
+            this._yAxisView.measure(this.doc, model._naviChart.yAxis as Axis, w, h, 1);
+            this._yAxisView.resize(w, h);
+            this._yAxisView.layout();
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -181,16 +210,50 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
     //-------------------------------------------------------------------------
     private $_prepareSeriesView(doc: Document, chart: Chart): void {
         const series = chart.firstSeries;
+        let view = this._seriesView;
 
-        if (this._seriesView && this._seriesView.model !== series) {
-            this._seriesView.remove();
-            this._seriesView = null;
+        if (view && view.model !== series) {
+            view.remove();
+            view = this._seriesView = null;
+        }
+        if (!view) {
+            this._container.add(view = this._seriesView = createSeriesView(doc, series));
+            view._simpleMode = true;
+        }
+        if (view) {
+            view.prepareSeries(doc, series);
         }
     }
 
     private $_prepareXAxisView(doc: Document, chart: Chart): void {
+        const axis = chart.xAxis as Axis;
+        let view = this._xAxisView;
+
+        if (view && view.model !== axis) {
+            view.remove();
+            view = this._xAxisView = null;
+        }
+        if (!view) {
+            this._container.add(view = this._xAxisView = new AxisView(doc));
+            view._simpleMode = true;
+        }
+        if (view) {
+        }
     }
 
     private $_prepareYAxisView(doc: Document, chart: Chart): void {
+        const axis = chart.yAxis as Axis;
+        let view = this._yAxisView;
+
+        if (view && view.model !== axis) {
+            view.remove();
+            view = this._yAxisView = null;
+        }
+        if (!view) {
+            this._container.add(view = this._yAxisView = new AxisView(doc));
+            view._simpleMode = true;
+        }
+        if (view) {
+        }
     }
 }

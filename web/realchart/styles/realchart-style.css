@@ -519,6 +519,9 @@
 .rct-area-series-area {
     fill-opacity: 0.5;
 }
+.rct-area-series-area[data-simple] {
+    fill-opacity: 0.1;
+}
 .rct-area-series .rct-area-series-area {
     stroke: none;
 }

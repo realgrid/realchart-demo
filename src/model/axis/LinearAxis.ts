@@ -176,7 +176,7 @@ export class ContinuousAxisTick extends AxisTick {
             return isNaN(min) ? [] : [min];
         }
 
-        let count = Math.floor(length / pixels) + 1;
+        let count = Math.max(1, Math.floor(length / pixels)) + 1;
         let step = len / (count - 1);
         const scale = Math.pow(10, Math.floor(Math.log10(step)));
         const multiples = this._getStepMultiples(scale);

@@ -99,7 +99,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     protected _prepareSeries(doc: Document, model: T): void {
         model instanceof LineSeries && this._prepareBelow(model);
-        this.$_prepareMarkers(model, this._visPoints as LineSeriesPoint[]);
+        !this._simpleMode && this.$_prepareMarkers(model, this._visPoints as LineSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
