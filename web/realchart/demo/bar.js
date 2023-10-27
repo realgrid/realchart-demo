@@ -46,7 +46,7 @@ function setActions(container) {
 		'Debug',
 		function (e) {
 			RealChart.setDebugging(_getChecked(e));
-			chart.refresh();
+			chart.render();
 		},
 		false
 	);

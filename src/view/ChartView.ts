@@ -431,6 +431,7 @@ export class ChartView extends RcElement {
     private _titleSectionView: TitleSectionView;
     private _legendSectionView: LegendSectionView;
     private _bodyView: BodyView;
+    private _splitBodyView: BodyView;
     private _polarView: PolarBodyView;
     private _currBody: BodyView;
     private _axisSectionViews: {[key: string]: AxisSectionView} = {};
@@ -994,11 +995,18 @@ export class ChartView extends RcElement {
             }
             this._currBody = this._polarView;
             this._bodyView?.setVisible(false);
+            this._splitBodyView?.setVisible(false);
             this._polarView.setVisible(true);
         } else {
             this._polarView?.setVisible(false);
             this._bodyView.setVisible(true);
             this._currBody = this._bodyView;
+            if (this._model._splitted) {
+                if (!this._splitBodyView) {
+                    this._splitBodyView = new BodyView(doc, this);
+                    this.insertChild(this._splitBodyView, this._bodyView);
+                }
+            }
         }
         this._currBody.prepareSeries(doc, this._model);
     }

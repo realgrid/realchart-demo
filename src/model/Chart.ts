@@ -264,6 +264,15 @@ export class ChartOptions extends ChartItem {
      * @config
      */
     credits = new Credits(null);
+    /**
+     * 분할 기준 축.
+     */
+    splitMode: 'x' | 'y' | undefined;
+    /**
+     * 분할 비율.
+     * 지정하지 않으면 동일한 크기로 나눈다.
+     */
+    splitRatio:  number[];
 
     //-------------------------------------------------------------------------
     // methods
@@ -302,6 +311,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _body: Body;
     private _navigator: SeriesNavigator;
 
+    _splitted: boolean;
     private _inverted: boolean;
     private _polar: boolean;
     private _gaugeOnly: boolean;
@@ -644,6 +654,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     prepareRender(): void {
+        this._splitted = !this._polar && (this._options.splitMode === 'x' || this._options.splitMode === 'y');
         this._inverted = this.inverted;
 
         this._xAxes.disconnect();

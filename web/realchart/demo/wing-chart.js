@@ -5,9 +5,10 @@
  */
 const config = {
     inverted: true,
-    title: "Bar Wing Chart",
+    title: "Wing Chart",
     options: {
         // animatable: false
+        splitMode: 'x'
     },
     legend: {
         itemGap: 20,
