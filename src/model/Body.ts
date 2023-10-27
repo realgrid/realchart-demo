@@ -110,7 +110,7 @@ export class Body extends ChartItem {
      * @CONFIG
      */
     startAngle = 0;
-    circular = true;
+    circular = true; // TODO: 뭐지?
     /**
      * 배경 이미지 설정 모델
      * 
@@ -123,8 +123,21 @@ export class Body extends ChartItem {
      * @config
      */
     zoomType = ZoomType.NONE;
-
+    /**
+     * Zoom 리셋 버튼 설정 모델.
+     * 
+     * @config
+     */
     zoomButton = new ZoomButton(this);
+    /**
+     * 분할 기준 축.
+     */
+    splitMode: 'x' | 'y' | undefined;
+    /**
+     * 분할 비율.
+     * 지정하지 않으면 동일한 크기로 나눈다.
+     */
+    splitRatio:  number[];
 
     canZoom(): boolean {
         return this.zoomType === ZoomType.X || this.zoomType === ZoomType.Y || this.zoomType === ZoomType.BOTH;

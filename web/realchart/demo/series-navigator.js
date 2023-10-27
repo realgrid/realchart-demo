@@ -68,8 +68,8 @@ const config = {
             4.8, 4.6, 3.9, 3.8, 2.7, 3.1, 2.6, 3.3, 3.8,
         ]
     },
-    legend: true,
-    navigator: {
+    // legend: true,
+    seriesNavigator: {
         visible: true
     }
 }

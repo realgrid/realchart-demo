@@ -727,6 +727,11 @@ export abstract class Axis extends ChartItem implements IAxis {
     abstract type(): string;
 
     /**
+     * body가 분할된 경우 이 축이 표시될 분할 index.
+     * 0혹은 1을 지정할 수 있다.
+     */
+    split = 0;
+    /**
      * 표시 위치.
      * 기본적으로 상대 축의 원점 쪽에 표시된다.
      * 

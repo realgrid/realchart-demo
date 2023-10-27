@@ -498,7 +498,7 @@ export class ChartView extends RcElement {
         const polar = m.isPolar();
         const credit = m.options.credits;
         const legend = m.legend;
-        const navigator = m.navigator;
+        const navigator = m.seriesNavigator;
         let w = hintWidth;
         let h = hintHeight;
         let sz: ISize;
@@ -548,7 +548,7 @@ export class ChartView extends RcElement {
 
         // navigator
         if (this._navigatorView.visible) {
-            if (m.navigator._vertical) {
+            if (m.seriesNavigator._vertical) {
                 h = this._bodyView.mh;
             } else {
                 w = this._bodyView.mw;
@@ -656,7 +656,8 @@ export class ChartView extends RcElement {
         // navi
         if (vNavi.visible) {
             y -= hNavi;
-            vNavi.layout().translateY(yLegend - hNavi + vNavi.model.gap);
+            // vNavi.layout().translateY(yLegend - hNavi + vNavi.model.gap);
+            vNavi.layout().translateY(y + vNavi.model.gap);
         }
 
         // axes
@@ -1024,10 +1025,11 @@ export class ChartView extends RcElement {
 
         // navigator
         if (this._navigatorView.visible) {
-            if (m.navigator._vertical) {
-                w -= m.navigator.thickness + m.navigator.gap + m.navigator.gapFar;
+            const navi = m.seriesNavigator;
+            if (navi._vertical) {
+                w -= navi.thickness + navi.gap + navi.gapFar;
             } else {
-                h -= m.navigator.thickness + m.navigator.gap + m.navigator.gapFar;
+                h -= navi.thickness + navi.gap + navi.gapFar;
             }
         }
 

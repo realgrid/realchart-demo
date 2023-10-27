@@ -441,7 +441,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._body;
     }
 
-    get navigator(): SeriesNavigator {
+    get seriesNavigator(): SeriesNavigator {
         return this._navigator;
     }
 
@@ -633,7 +633,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._body.load(source.body || source.plot); // TODO: plot 제거
 
         // series navigator
-        this._navigator.load(source.navigator);
+        this._navigator.load(source.seriesNavigator);
 
         console.log('chart-items:', n_char_item);
         console.timeEnd(sTime);
