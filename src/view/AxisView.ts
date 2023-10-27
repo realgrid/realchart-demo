@@ -478,6 +478,7 @@ export class AxisView extends ChartElement<Axis> {
             if (this._scrollView?.visible) {
                 sz += this._scrollView.mh;
             }
+        } else {
             titleView.setVisible(false);
         }
 
