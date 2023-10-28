@@ -11,7 +11,7 @@ export const config = {
     {
       name: 'bar1',
       pointLabel: true,
-      displayInLegend: false,
+      visibleInLegend: false,
       data: [
         11, 13, 10, 15,
         19, 22, 27

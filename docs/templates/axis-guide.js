@@ -1,8 +1,9 @@
 export const config = {
   options: {},
   title: 'Axis Guides',
-  xAxis: { title: 'X Axis', grid: true },
+  xAxis: { tick: true, title: 'X Axis', grid: true },
   yAxis: {
+    tick: true,
     title: 'Y Axis',
     guide: [
       { type: 'line', value: 12, label: 'line guide' },

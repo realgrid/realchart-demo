@@ -1,8 +1,8 @@
 export const config = {
   type: 'area',
   options: {},
-  title: 'Multiple Areas',
-  xAxis: { type: 'category', title: '일일 Daily fat' },
+  title: 'Multiple',
+  xAxis: { type: 'category', title: { text: 'dsdsd' } },
   yAxis: { title: 'Vertical 수직축 Axis' },
   series: [
     {

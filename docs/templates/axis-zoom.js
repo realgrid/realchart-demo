@@ -6,10 +6,11 @@ export const config = {
       padding: '1px 5px',
       marginBottom: '8px',
       fill: 'white',
-      fontSize: '1.2em'
+      fontSize: '1.1em'
     },
     backgroundStyle: { fill: '#338', rx: '5px' }
   },
+  legend: true,
   body: { zoomType: 'x', style: {} },
   xAxis: {
     title: 'Period',

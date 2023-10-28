@@ -2,7 +2,7 @@ export const config = {
   title: 'AreaRange Series',
   options: {},
   xAxis: { type: 'time', title: 'Time' },
-  yAxis: { title: 'Temparature' },
+  yAxis: { title: 'Temparature', tick: true },
   series: {
     type: 'arearange',
     data: [

@@ -1,11 +1,11 @@
 export const config = {
-  options: {},
+  options: { animatable: false },
   title: {
     text: 'Series Navigator (Working...)',
     style: { fontSize: '1.2em' },
     backgroundStyle: { rx: '5px' }
   },
-  body: { zoomButton: false, zoomType: 'x', style: {} },
+  body: { style: {} },
   xAxis: {
     title: { visible: true, text: 'Period' },
     crosshair: true,
@@ -31,5 +31,6 @@ export const config = {
       4.1, 3.9,   5, 4.1, 3.9, 3.5, 2.7, 3.1, 2.6, 3.3, 3.8,
       4.8, 4.6, 3.9, 3.8, 2.7, 3.1, 2.6, 3.3, 3.8
     ]
-  }
+  },
+  seriesNavigator: { visible: true }
 }

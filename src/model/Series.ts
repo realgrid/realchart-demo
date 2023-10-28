@@ -480,11 +480,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * 
      * @config
      */
-    displayInLegend = true;
+    visibleInLegend = true;
     /**
      * true로 지정하면 시리즈 내비게이터에 표시한다.
      */
-    displayInNavigator = false;
+    visibleInNavigator = false;
     /**
      * 데이터 point의 동적 스타일 콜백.
      * 
@@ -754,7 +754,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     getLegendSources(list: ILegendSource[]): void {
-        this.displayInLegend !== false && list.push(this);
+        this.visibleInLegend !== false && list.push(this);
     }
 
     getLabelPosition(p: PointItemPosition): PointItemPosition {
@@ -1243,7 +1243,7 @@ export abstract class WidgetSeries extends Series {
 
     getLegendSources(list: ILegendSource[]): void {
         if (this.legendByPoint) {
-            this.displayInLegend !== false && this._runPoints.forEach(p => {
+            this.visibleInLegend !== false && this._runPoints.forEach(p => {
                 list.push(p as WidgetSeriesPoint);
             })        
         } else {
@@ -1600,7 +1600,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
      * 
      * @config
      */
-    displayInLegend = true;
+    visibleInLegend = true;
 
     get series(): T[] {
         return this._series.slice(0);
@@ -1679,7 +1679,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     getLegendSources(list: ILegendSource[]) {
-        if (this.displayInLegend !== false) {
+        if (this.visibleInLegend !== false) {
             this._series.forEach(ser => ser.getLegendSources(list));
         }
     }
