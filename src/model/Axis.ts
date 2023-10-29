@@ -865,7 +865,6 @@ export abstract class Axis extends ChartItem implements IAxis {
                     p += w;
                 }
             });
-            // console.log(this._series.map(s => (s as any)._clusterPos));
         }
     }
 

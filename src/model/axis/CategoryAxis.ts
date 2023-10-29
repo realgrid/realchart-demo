@@ -286,8 +286,6 @@ export class CategoryAxis extends Axis {
             let p = this._minPad;
 
             for (let i = min; i <= max; i++) {// += step) {
-                const w = weights[i - min];
-
                 pts.push(p / len);
                 p += weights[i - min];// step
             }

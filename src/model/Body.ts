@@ -38,6 +38,9 @@ export class ZoomButton extends ChartItem {
 
 /**
  * 시리즈 및 게이지들이 plotting되는 body 영역의 분할 방식 및 분할 영역에 대한 설정 모델.
+ * 
+ * 1. x축은 양쪽에서 공유될 수 있다.
+ * 2. y축은 공유될 수 없다.
  */
 export class BodySplit extends ChartItem {
 
@@ -55,7 +58,7 @@ export class BodySplit extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public body: Body) {
-        super(body.chart);
+        super(body.chart, false);
     }
 
     //-------------------------------------------------------------------------

@@ -743,8 +743,19 @@ export class ChartView extends RcElement {
         x = org.x;
         y = org.y - hPlot;
 
-        this._currBody.resize(wPlot, hPlot);
-        this._currBody.layout().translate(x, y);
+        if (m._splitted) {
+            const splitView = this._splitBodyView;
+
+            this._currBody.resize(wPlot / 2, hPlot);
+            this._currBody.layout().translate(x, y);
+
+            splitView.resize(wPlot / 2, hPlot);
+            splitView.layout().translate(x + wPlot / 2, y);
+
+        } else {
+            this._currBody.resize(wPlot, hPlot);
+            this._currBody.layout().translate(x, y);
+        }
 
         // credits
         if (vCredit.visible) {
@@ -1131,7 +1142,12 @@ export class ChartView extends RcElement {
         m.calcAxesPoints(w, h, this._inverted);
 
         // body
-        this._bodyView.measure(doc, m.body, w, h, phase);
+        if (this._splitBodyView?.setVisible(m._splitted)) {
+            this._bodyView.measure(doc, m.body, w / 2, h, phase);
+            this._splitBodyView.measure(doc, m.body, w / 2, h, phase);
+        } else {
+            this._bodyView.measure(doc, m.body, w, h, phase);
+        }
     }
 
     private $_measurePolar(doc: Document, m: Chart, w: number, h: number, phase: number): void {
