@@ -489,6 +489,7 @@ export class AxisView extends ChartElement<Axis> {
         const model = this.model;
         const horz = model._isHorz;
         const opp = model._isOpposite;
+        const inside = model._isInside;
         const ticks = model._ticks;
         const markPts = model._markPoints;
         const titleView = this._titleView;

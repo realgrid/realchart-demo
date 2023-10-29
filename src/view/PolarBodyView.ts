@@ -14,7 +14,7 @@ import { LineElement } from "../common/impl/PathElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { Axis, AxisTick, IAxisTick } from "../model/Axis";
 import { Body } from "../model/Body";
-import { BodyView } from "./BodyView";
+import { BodyView, IPlottingOwner } from "./BodyView";
 
 class PolarAxisTickMarkView extends RcElement {
 
@@ -252,6 +252,13 @@ export class PolarBodyView extends BodyView {
     private _axisContainer: RcElement;
     private _xAxisView: PolarXAxisView;
     private _yAxisViews: PolarYAxisView[] = [];
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, owner: IPlottingOwner) {
+        super(doc, owner, false);
+    }
 
     //-------------------------------------------------------------------------
     // overriden members

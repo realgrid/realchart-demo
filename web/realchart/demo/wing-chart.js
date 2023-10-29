@@ -4,6 +4,8 @@
  * Bar Series 기본 예제.
  */
 const config = {
+    templates: {
+    },
     inverted: true,
     title: "Wing Chart",
     options: {
@@ -17,56 +19,50 @@ const config = {
         }
     },
     xAxis: [{
+        position: 'inside',
+        categories: [
+            '0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-40', '40-45',
+            '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80+'
+        ],
         title: "일일 Daily fat",
-        categories: [
-            '0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-40', '40-45',
-            '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80+'
-        ],
         grid: true,
-    }, {
-        title: "일일 Daily fat2",
-        position: 'opposite',
-        categories: [
-            '0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-40', '40-45',
-            '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80+'
-        ],
     }],
-    yAxis: {
-        title: "Vertical 수직축 Axis",
-        label: {
-            numberFormat: 'a'
-        }
+    yAxis: [{
+        title: "남자",
+    }, {
+        side: true,
+        title: "여자",
+    }],
+    body: {
+        split: true,
     },
-    series: {
-        layout: 'overlap',
-        children: [{
-            name: '남자',
-            pointLabel: {
-                visible: true,
-                numberFormat: 'a##0.00'
-            },
-            data: [
-                -8.98, -7.52, -6.65, -5.72, -4.85,
-                -3.71, -2.76, -2.07, -1.70, -1.47,
-                -1.22, -0.99, -0.81, -0.62, -0.41,
-                -0.23, -0.15
-            ]
-        }, {
-            name: '여자',
-            xAxis: 1,
-            color: '#ffaa00',
-            pointLabel: {
-                visible: true,
-                numberFormat: '##0.00'
-            },
-            data: [
-                8.84, 7.42, 6.57, 5.68, 4.83,
-                3.74, 2.80, 2.14, 1.79, 1.59,
-                1.34, 1.06, 0.83, 0.63, 0.43,
-                0.25, 0.19
-            ]
-        }]
-    }
+    series: [{
+        name: '남자',
+        pointLabel: {
+            visible: true,
+            numberFormat: 'a##0.00'
+        },
+        data: [
+            8.98, 7.52, 6.65, 5.72, 4.85,
+            3.71, 2.76, 2.07, 1.70, 1.47,
+            1.22, 0.99, 0.81, 0.62, 0.41,
+            0.23, 0.15
+        ]
+    }, {
+        name: '여자',
+        color: '#ffaa00',
+        yAxis: 1,
+        pointLabel: {
+            visible: true,
+            numberFormat: '##0.00'
+        },
+        data: [
+            8.84, 7.42, 6.57, 5.68, 4.83,
+            3.74, 2.80, 2.14, 1.79, 1.59,
+            1.34, 1.06, 0.83, 0.63, 0.43,
+            0.25, 0.19
+        ]
+    }]
 }
 
 let animate = false;
@@ -86,7 +82,7 @@ function setActions(container) {
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
         chart.load(config, animate);
-    }, false);
+    }, true);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
         chart.load(config, animate);

@@ -37,7 +37,55 @@ export class ZoomButton extends ChartItem {
 }
 
 /**
- * 시리즈들이 그려지는 plot 영역 모델.
+ * 시리즈 및 게이지들이 plotting되는 body 영역의 분할 방식 및 분할 영역에 대한 설정 모델.
+ */
+export class BodySplit extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _size: RtPercentSize;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _sizeDim: IPercentSize;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public body: Body) {
+        super(body.chart);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 분할 영역이 차지할 크기를 전체 body 영역에 대한 상대적 크기나 픽셀 단위의 크기로 지정한다.\
+     * 지정하지 않으면 '50%'로 표시한다.
+     */
+    get size(): RtPercentSize {
+        return this._size;
+    }
+    set size(value: RtPercentSize) {
+        if (value !== this._size) {
+            this._size = value;
+            this._sizeDim = parsePercentSize(value, true);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getSize(domain: number): number {
+        return calcPercent(this._sizeDim, domain, domain / 2);
+    }
+}
+
+/**
+ * 시리즈 및 게이지들이 plotting되는 영역 모델.\
+ * 설정 모델 등에서 'body'로 접근한다.
  */
 export class Body extends ChartItem {
 
@@ -75,6 +123,13 @@ export class Body extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    split = new BodySplit(this);
+
+    /**
+     * 차트가 극좌표(polar)일 때 반지름.
+     * 
+     * @config
+     */
     get radius(): RtPercentSize {
         return this._radius;
     }
@@ -85,6 +140,11 @@ export class Body extends ChartItem {
         }
     }
 
+    /**
+     * 차트가 극좌표(polar)일 때 중심 x 좌표.
+     * 
+     * @config
+     */
     get centerX(): RtPercentSize {
         return this._centerX;
     }
@@ -95,6 +155,11 @@ export class Body extends ChartItem {
         }
     }
 
+    /**
+     * 차트가 극좌표(polar)일 때 중심 y 좌표.
+     * 
+     * @config
+     */
     get centerY(): RtPercentSize {
         return this._centerY;
     }

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isObject, isString, mergeObj } from "../common/Common";
+import { isArray, isObject, isString, mergeObj } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
@@ -57,6 +57,7 @@ export interface IChart {
     gaugeType: string;
     xStart: number;
     xStep: number;
+    _splitted: boolean;
     // series2: ISeries;
     first: IPlottingItem;
     firstSeries: Series;
@@ -264,15 +265,6 @@ export class ChartOptions extends ChartItem {
      * @config
      */
     credits = new Credits(null);
-    /**
-     * 분할 기준 축.
-     */
-    splitMode: 'x' | 'y' | undefined;
-    /**
-     * 분할 비율.
-     * 지정하지 않으면 동일한 크기로 나눈다.
-     */
-    splitRatio:  number[];
 
     //-------------------------------------------------------------------------
     // methods
@@ -373,39 +365,51 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     // properties
     //-------------------------------------------------------------------------
     /**
-     * 기본 시리즈 type.
+     * 기본 시리즈 type.\
      * {@link Series._type}의 기본값.
-     * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
+     * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.\
+     * [주의] 차트 로딩 후 변경할 수 없다.
      * 
      * @config
      */
     type = 'bar';
     /**
-     * 기본 게이지 type.
-     * 게이지에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
+     * 기본 게이지 type.\
+     * 게이지에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.\
+     * [주의] 차트 로딩 후 변경할 수 없다.
      * 
      * @config
      */
     gaugeType = 'circle';
     /**
-     * true면 차트가 {@link https://en.wikipedia.org/wiki/Polar_coordinate_system 극좌표계}로 표시된다.
+     * true면 차트가 {@link https://en.wikipedia.org/wiki/Polar_coordinate_system 극좌표계}로 표시된다.\
      * 기본은 {@link https://en.wikipedia.org/wiki/Cartesian_coordinate_system 직교좌표계}이다.
      * 극좌표계일 때,
      * x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이 있다.
      * 1. x축은 첫번째 축 하나만 사용된다.
      * 2. axis.position 속성은 무시된다.
      * 3. chart, series의 inverted 속성이 무시된다.
-     * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
+     * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.\
+     * 
+     * [주의] 차트 로딩 후 변경할 수 없다.
      * 
      * @config
      */
     polar = false;
     /**
-     * true면 x축이 수직, y축이 수평으로 배치된다.
+     * true면 x축이 수직, y축이 수평으로 배치된다.\
+     * [주의] 차트 로딩 후 변경할 수 없다.
      *
      * @config
      */
     inverted: boolean;
+    /**
+     * true면 x축 방향을 기준으로 body 영역을 분할한다.\
+     * [주의] 차트 로딩 후 변경할 수 없다.
+     *
+     * @config
+     */
+    splitted: boolean;
 
     get assets(): AssetCollection {
         return this._assets;
@@ -494,7 +498,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     isInverted(): boolean {
-        return !this._polar && this._inverted;
+        return this._inverted;
     }
 
     isEmpty(): boolean {
@@ -555,6 +559,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
                 case SectionDir.TOP:
                     axes = yAxes.filter(a => a._isOpposite);
                     break;
+                case SectionDir.MIDDLE:
+                    axes = xAxes.filter(a => a._isInside);
+                    break;
             } 
         } else {
             switch (dir) {
@@ -569,6 +576,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
                     break;
                 case SectionDir.TOP:
                     axes = xAxes.filter(a => a._isOpposite);
+                    break;
+                case SectionDir.CENTER:
+                    axes = xAxes.filter(a => a._isInside);
                     break;
             } 
         }
@@ -585,11 +595,21 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * [주의] 원본 array를 그대로 사용한다.
      */
     private $_assignTemplates(target: any): any {
-        if (target.template != null) {
-            let v = this._templates[target.template];
+        const templ = target.template;
+
+        if (isString(templ)) {
+            let v = this._templates[templ];
             if (v) {
                 return mergeObj(v, target);
             }
+        } else if (isArray(templ)) {
+            templ.forEach(t => {
+                let v = this._templates[t];
+                if (v) {
+                    v = mergeObj(v, target);
+                }
+                return v;
+            });
         }
         return target;
     }
@@ -654,8 +674,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     prepareRender(): void {
-        this._splitted = !this._polar && (this._options.splitMode === 'x' || this._options.splitMode === 'y');
-        this._inverted = this.inverted;
+        this._splitted = !this._polar && this._body.split.visible;
+        this._inverted = !this._polar && this.inverted;
 
         this._xAxes.disconnect();
         this._yAxes.disconnect();

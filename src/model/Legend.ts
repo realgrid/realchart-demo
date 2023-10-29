@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcElement } from "../common/RcControl";
-import { Align, AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, VerticalAlign, calcPercent, parsePercentSize } from "../common/Types";
+import { Align, AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, VerticalAlign, _undefined, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
@@ -159,6 +159,12 @@ export class Legend extends Widget {
     // properties
     //-------------------------------------------------------------------------
     /**
+     * 명시적으로 true로 설정되거나, 명시적 false가 아니면서 표시 항목 수가 1보다 클 때 표시된다.
+     * 
+     * @configprop visible
+     * @default undefined
+     */
+    /**
      * 표시 위치.
      * 
      * @config
@@ -258,7 +264,7 @@ export class Legend extends Widget {
     }
 
     isVisible(): boolean {
-        return this.visible || (this.visible !== false && this._items.length > 1);
+        return (this.visible === true && this._items.length > 0) || (this.visible !== false && this._items.length > 1);
     }
 
     //-------------------------------------------------------------------------

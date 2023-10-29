@@ -71,8 +71,10 @@ export class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     load(source: any): ChartItem {
         if (source !== void 0 && !this._doLoadSimple(source)) {
-            const assign = this.chart && this.chart.assignTemplates;
-            assign && (source = assign(source));
+            if (source !== null && source.template != null) {
+                const assign = this.chart && this.chart.assignTemplates;
+                assign && (source = assign(source));
+            }
             this._doLoad(source);
         }
         return this;

@@ -720,6 +720,7 @@ export class BodyView extends ChartElement<Body> {
     // fields
     //-------------------------------------------------------------------------
     private _owner: IPlottingOwner;
+    private _side: boolean;
     private _polar: boolean;
     private _hitTester: RectElement;
     private _background: RectElement;
@@ -753,10 +754,11 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, owner: IPlottingOwner) {
+    constructor(doc: Document, owner: IPlottingOwner, side: boolean) {
         super(doc, BodyView.BODY_CLASS);
 
         this._owner = owner;
+        this._side = side;
         this.add(this._hitTester = new RectElement(doc));
         this._hitTester.setStyle('fill', 'transparent');
         this.add(this._background = new RectElement(doc, 'rct-body-background'));
@@ -778,8 +780,8 @@ export class BodyView extends ChartElement<Body> {
     prepareSeries(doc: Document, chart: IChart): void {
         this._animatable = RcControl._animatable && chart.animatable();
 
-        this.$_prepareSeries(doc, chart, chart._getSeries().visibleSeries());
-        this.$_prepareGauges(doc, chart, chart._getGauges().visibles());
+        this.$_prepareSeries(doc, chart, chart._getSeries().getVisibleSeries(this._side));
+        this.$_prepareGauges(doc, chart, chart._getGauges().getVisibles(this._side));
     }
 
     prepareGuideContainers(): void {

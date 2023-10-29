@@ -62,6 +62,10 @@ export abstract class GaugeBase extends Widget {
     //-------------------------------------------------------------------------
     abstract _type(): string;
     /**
+     * body가 분할된 경우 분할된 쪽에 표시된다.
+     */
+    side: boolean;
+    /**
      * 게이지 이름.
      * 동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다. 
      * 
@@ -394,13 +398,13 @@ export class GaugeCollection {
         return this._gauges[0];
     }
 
-    visibles(): GaugeBase[] {
-        return this._visibles;
-    }
-
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getVisibles(side: boolean): GaugeBase[] {
+        return this._visibles.filter(g => g.side == side);
+    }
+
     getGauge(name: string): Gauge {
         const g = this._map[name];
         if (g instanceof Gauge) return g;

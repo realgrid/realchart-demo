@@ -14,7 +14,7 @@ import { ISize, Size } from "../common/Size";
 import { Align, AlignBase, HORZ_SECTIONS, SectionDir, VERT_SECTIONS, VerticalAlign } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis } from "../model/Axis";
+import { Axis, AxisPosition } from "../model/Axis";
 import { Chart, Credits } from "../model/Chart";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem, LegendLocation } from "../model/Legend";
@@ -452,10 +452,11 @@ export class ChartView extends RcElement {
         super(doc, 'rct-chart');
 
         // plot 영역이 마지막이어야 line marker 등이 축 상에 표시될 수 있다.
-        this.add(this._currBody = this._bodyView = new BodyView(doc, this));
+        this.add(this._currBody = this._bodyView = new BodyView(doc, this, true));
 
         for (const dir in SectionDir) {
             const v = new AxisSectionView(doc, SectionDir[dir]);
+
             this.add(v);
             this._axisSectionViews[SectionDir[dir]] = v;
         };
@@ -504,7 +505,7 @@ export class ChartView extends RcElement {
         let h = hintHeight;
         let sz: ISize;
 
-        this._inverted = model.isInverted();
+        this._inverted = m.isInverted();
 
         // body
         this.$_prepareBody(doc, polar);
@@ -540,7 +541,7 @@ export class ChartView extends RcElement {
         // navigator
         this._navigatorView.setVisible(navigator.isVisible());
 
-        // body
+        // body & axes
         if (polar) {
             this.$_measurePolar(doc, m, w, h, 1);
         } else {
@@ -664,13 +665,14 @@ export class ChartView extends RcElement {
         // axes
         const axisMap = this._axisSectionViews;
         let asv: AxisSectionView;
+
         if (!polar) {
-            HORZ_SECTIONS.forEach(dir => {
+            VERT_SECTIONS.forEach(dir => {
                 if ((asv = axisMap[dir]) && asv.visible) {
                     w -= asv.mw;
                 }
             });
-            VERT_SECTIONS.forEach(dir => {
+            HORZ_SECTIONS.forEach(dir => {
                 if ((asv = axisMap[dir]) && asv.visible) {
                     h -= asv.mh;
                 }
@@ -685,12 +687,20 @@ export class ChartView extends RcElement {
                 asv.resize(asv.mw, h);
                 asv.layout();
             }
+            if ((asv = axisMap[SectionDir.CENTER]) && asv.visible) {
+                asv.resize(asv.mw, h);
+                asv.layout();
+            }
             if ((asv = axisMap[SectionDir.BOTTOM]) && asv.visible) {
                 asv.resize(w, asv.mh);
                 asv.layout();
                 y -= asv.mh;
             }
             if ((asv = axisMap[SectionDir.TOP]) && asv.visible) {
+                asv.resize(w, asv.mh);
+                asv.layout();
+            }
+            if ((asv = axisMap[SectionDir.MIDDLE]) && asv.visible) {
                 asv.resize(w, asv.mh);
                 asv.layout();
             }
@@ -712,11 +722,17 @@ export class ChartView extends RcElement {
             if (asv = axisMap[SectionDir.RIGHT]) {
                 asv.translate(org.x + w, org.y - asv.height);
             }
+            if (asv = axisMap[SectionDir.CENTER]) {
+                // asv.translate(org.x + w, org.y - asv.height);
+            }
             if (asv = axisMap[SectionDir.BOTTOM]) {
                 asv.translate(org.x, org.y);
             }
             if (asv = axisMap[SectionDir.TOP]) {
                 asv.translate(org.x, org.y - h - asv.height);
+            }
+            if (asv = axisMap[SectionDir.MIDDLE]) {
+                // asv.translate(org.x, org.y - h - asv.height);
             }
         }
 
@@ -1001,9 +1017,10 @@ export class ChartView extends RcElement {
             this._polarView?.setVisible(false);
             this._bodyView.setVisible(true);
             this._currBody = this._bodyView;
+
             if (this._model._splitted) {
                 if (!this._splitBodyView) {
-                    this._splitBodyView = new BodyView(doc, this);
+                    this._splitBodyView = new BodyView(doc, this, true);
                     this.insertChild(this._splitBodyView, this._bodyView);
                 }
             }
@@ -1013,7 +1030,7 @@ export class ChartView extends RcElement {
 
     private $_prepareAxes(doc: Document, m: Chart): void {
         const guideContainer = this._currBody._guideContainer;
-        const frontGuideContainer = this._currBody._frontGuideContainer;
+        const frontContainer = this._currBody._frontGuideContainer;
         const need = !m.isPolar() && m.needAxes();
         const map = this._axisSectionViews;
 
@@ -1021,7 +1038,7 @@ export class ChartView extends RcElement {
             const v = map[dir];
 
             if (need) {
-                v.prepare(doc, m.getAxes(dir as any), guideContainer, frontGuideContainer);
+                v.prepare(doc, m.getAxes(dir as any), guideContainer, frontContainer);
             } else {
                 v.visible = false;
             }

@@ -17,14 +17,15 @@ import { IClusterable, IPlottingItem } from "./Series";
  * @internal
  */
 export interface IAxis {
-
     type(): string;
     chart: IChart;
+    side: boolean;
     
     _vlen: number;
     _isX: boolean;
     _isHorz: boolean;
     _isOpposite: boolean;
+    _isInside: boolean;
 
     reversed: boolean;
     _zoom: IAxisZoom;
@@ -531,7 +532,7 @@ export enum AxisPosition {
      */
     OPPOSITE = 'opposite',
     /**
-     * Y축의 baseValue 지점에 표시된다.
+     * 상대 축의 baseValue 지점에 표시된다.
      * <br>
      * [주의] 
      * 1. 축에 연결된 시리즈들이 BarSeries 계열일 때만 가능하다.
@@ -541,7 +542,11 @@ export enum AxisPosition {
      * 
      * @config
      */
-    BASE = 'base'
+    BASE = 'base',
+    /**
+     * Y축이고, 축이 연결되는 body가 분할 상태일 때, 중간 분할 위치에 표시한다.
+     */
+    INSIDE = 'inside'
 }
 
 /**
@@ -694,6 +699,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     _isX: boolean;
     _isHorz: boolean;
     _isOpposite: boolean;
+    _isInside: boolean;
     protected _series: IPlottingItem[] = [];
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
@@ -727,10 +733,9 @@ export abstract class Axis extends ChartItem implements IAxis {
     abstract type(): string;
 
     /**
-     * body가 분할된 경우 이 축이 표시될 분할 index.
-     * 0혹은 1을 지정할 수 있다.
+     * true이면, X축이고 축이 연결된 body가 분할된 경우 분할된 쪽에 연결된다.
      */
-    split = 0;
+    side: boolean;
     /**
      * 표시 위치.
      * 기본적으로 상대 축의 원점 쪽에 표시된다.
@@ -828,6 +833,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     prepareRender(): void {
         this._isHorz = this.chart.isInverted() ? !this._isX : this._isX;
         this._isOpposite = this.position === AxisPosition.OPPOSITE;
+        this._isInside = this.position === AxisPosition.INSIDE && !this._isX;
 
         this._doPrepareRender();
 

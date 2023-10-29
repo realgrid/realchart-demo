@@ -4,6 +4,11 @@
  * Bar Series 기본 예제.
  */
 const config = {
+    templates: {
+        series: {
+            data: [11, 13, 10, 15, 19, 22, 27]
+        }
+    },
     title: "Line & Lollipop Series",
     options: {
         // animatable: false
@@ -17,14 +22,17 @@ const config = {
         // reversed: true,
         // baseValue: -1
     },
+    legend: true,
     series: [{
+        template: 'series',
         type: 'line',
         pointLabel: true,
         // marker: false,
-        data: [11, 13, 10, 15, 19, 22, 27]
+        // data: [11, 13, 10, 15, 19, 22, 27]
     }, {
+        template: 'series',
         type: 'lollipop',
-        data: [11, 13, 10, 15, 19, 22, 27],
+        // data: [11, 13, 10, 15, 19, 22, 27],
         visibleInLegend: false,
         style: {
             fill: 'none',

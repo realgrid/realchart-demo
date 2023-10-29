@@ -528,6 +528,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return true;
     }
 
+    isSide(): boolean {
+        return this._yAxisObj._isInside;
+    }
+
     /**
      * @internal
      * 
@@ -975,10 +979,6 @@ export class PlottingItemCollection  {
         return this._series.slice(0);
     }
 
-    visibleSeries(): Series[] {
-        return this._visibleSeries.slice(0);
-    }
-
     needAxes(): boolean {
         if (this._visibles.find(item => item.needAxes())) {
             return true;
@@ -991,6 +991,14 @@ export class PlottingItemCollection  {
     //-------------------------------------------------------------------------
     getSeries(name: string): Series {
         return this._map[name];
+    }
+
+    getVisibleSeries(side: boolean): Series[] {
+        if (this.chart._splitted) {
+            return this._visibleSeries.slice(0);
+        } else {
+            return this._visibleSeries.filter(ser => ser._yAxisObj.side == side);
+        }
     }
 
     seriesByPoint(point: DataPoint): Series {

@@ -294,7 +294,9 @@ export enum SectionDir {
     LEFT = 'left',
     TOP = 'top',
     BOTTOM = 'bottom',
-    RIGHT = 'right'
+    RIGHT = 'right',
+    CENTER = 'center',
+    MIDDLE = 'middle'
 }
 
 export interface ISides {
@@ -306,8 +308,8 @@ export interface ISides {
     vert?: number;
 }
 
-export const HORZ_SECTIONS = [SectionDir.LEFT, SectionDir.RIGHT];
-export const VERT_SECTIONS = [SectionDir.TOP, SectionDir.BOTTOM];
+export const VERT_SECTIONS = [SectionDir.LEFT, SectionDir.RIGHT, SectionDir.CENTER];
+export const HORZ_SECTIONS = [SectionDir.TOP, SectionDir.BOTTOM, SectionDir.MIDDLE];
 
 export enum AlignBase {
     /**
