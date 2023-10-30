@@ -12,7 +12,8 @@ const config = {
         animatable: false
     },
     legend: {
-        itemGap: 20,
+        visible: false,
+        itemGap: 100,
         backgroundStyle: {
             fill: 'none'
         }
@@ -29,11 +30,19 @@ const config = {
     yAxis: [{
         title: "남자",
         reversed: true,
-        line: true
+        // line: true,
+        tick: {
+            length: 5,
+            margin: 0
+        }
     }, {
         side: true,
         title: "여자",
-        line: true
+        // line: true,
+        tick: {
+            length: 5,
+            margin: 0
+        }
     }],
     body: {
         split: true,

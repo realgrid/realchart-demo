@@ -246,6 +246,7 @@ class AxisSectionView extends SectionView {
     // fields
     //-------------------------------------------------------------------------
     axes: Axis[]; 
+    axes2: Axis[];
     views: AxisView[] = [];
     views2: AxisView[];
     isX: boolean;
@@ -293,7 +294,13 @@ class AxisSectionView extends SectionView {
 
             if (m.chart._splitted) {
                 this.views2 = views.filter(v => v.model.side);
-                this.views = views.filter(v => !v.model.side);
+                this.axes2 = this.views2.map(v => v.model);
+                if (this.views2.length === 0) {
+                    this.views2 = _undefined;
+                } else {
+                    this.views = views.filter(v => !v.model.side);
+                    this.axes = this.views.map(v => v.model);
+                }
             }
         } else {
             this.views2 = _undefined;
@@ -312,7 +319,7 @@ class AxisSectionView extends SectionView {
         let h = 0;
 
         if (views) {
-            this.views.forEach(view => {
+            views.forEach(view => {
                 h += view.checkHeight(doc, width, height);
             });
             h += (this.views.length - 1) * this._gap;
@@ -332,7 +339,7 @@ class AxisSectionView extends SectionView {
         let w = 0;
 
         if (views) {
-            this.views.forEach(view => {
+            views.forEach(view => {
                 w += view.checkWidth(doc, width, height);
             });
             w += (this.views.length - 1) * this._gap;
@@ -351,14 +358,17 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    /**
+     * split일 때 hintWidth/hintHeight는 반쪽 크기이다.
+     */
     protected _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
-        const axes = this.axes;
         let w = 0;
         let h = 0;
 
-        [this.views].forEach(views => {
-        // [this.views, this.views2].forEach(views => {
+        // [this.views].forEach(views => {
+        [this.views, this.views2].forEach((views, j) => {
             if (views) {
+                const axes = j === 1 ? this.axes2 : this.axes;
                 let w2 = 0;
                 let h2 = 0;
 
@@ -383,14 +393,27 @@ class AxisSectionView extends SectionView {
         return Size.create(w, h);
     }
 
-    protected _doLayout(): void {
-        const w = this.width;
-        const h = this.height;
+    /**
+     * split일 때에도 width, heigh는 양쪽을 포함한 크기이다.
+     */
+    protected _doLayout(wCenter: number): void {
+        let w = this.width;
+        let h = this.height;
         let x = 0;
         let y = 0;
 
-        [this.views].forEach(views => {
-        // [this.views, this.views2].forEach(views => {
+        wCenter = wCenter || 0;
+
+        if (this.views2) { // splitted
+            if (this.isHorz) {
+                w = (w - wCenter) / 2;
+            } else {
+                h = (h - wCenter) / 2;
+            }
+        }
+
+        // [this.views].forEach(views => {
+        [this.views, this.views2].forEach(views => {
             if (views) {
                 let p = 0;
 
@@ -412,9 +435,9 @@ class AxisSectionView extends SectionView {
                 });
     
                 if (this.isHorz) {
-                    x += w;
+                    x += w + wCenter;
                 } else {
-                    y += h;
+                    y += h + wCenter;
                 }
             }
         })
@@ -765,12 +788,8 @@ export class ChartView extends RcElement {
                 asvCenter.layout();
             }
             if ((asv = axisMap[SectionDir.BOTTOM]) && asv.visible) {
-                if (splitted && !asv.isX) {
-                    asv.resize((w - wCenter) / 2, asv.mh);
-                } else {
-                    asv.resize(w, asv.mh);
-                }
-                asv.layout();
+                asv.resize(w, asv.mh);
+                asv.layout(wCenter);
                 y -= asv.mh;
             }
             if ((asv = axisMap[SectionDir.TOP]) && asv.visible) {
