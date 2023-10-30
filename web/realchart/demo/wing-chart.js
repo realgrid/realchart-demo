@@ -6,10 +6,11 @@
 const config = {
     templates: {
     },
+    // type: 'line',
     inverted: true,
     title: "Wing Chart",
     options: {
-        animatable: false
+        // animatable: false
     },
     legend: {
         visible: false,

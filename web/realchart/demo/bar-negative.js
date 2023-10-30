@@ -16,6 +16,10 @@ const config = {
 			// position: 'foot',
 			effect: 'outline',
 		},
+        belowStyle: {
+            fill: '#c00',
+            stroke: '#c00'
+        },
 		data: [
 			['1월', -2], // 1월은 -2°C
 			['2월', -1], // 2월은 -1°C

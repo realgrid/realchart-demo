@@ -44,6 +44,7 @@ export class TitleView extends BoundableElement<Title> {
     }
 
     protected _doMeasure(doc: Document, model: Title, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this.setBoolData('hassub', model.chart.subtitle.isVisible());
         this._textView.text = this.model.text;
 
         return toSize(this._textView.getBBounds());

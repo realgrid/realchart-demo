@@ -149,6 +149,8 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
         }
         this._setBackgroundStyle(this._background);
 
+        const sz = this._doMeasure(doc, model, hintWidth, hintHeight, phase);
+
         // TODO: 캐쉬!
         const cs = getComputedStyle(this.dom);
         const padding = this._paddings;
@@ -156,8 +158,6 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
 
         padding.applyPadding(cs);
         margin.applyMargin(cs);
-
-        const sz = this._doMeasure(doc, model, hintWidth, hintHeight, phase);
 
         this.mw = sz.width += margin.left + margin.right + padding.left + padding.right;
         this.mh = sz.height += margin.top + margin.bottom + padding.top + padding.bottom;

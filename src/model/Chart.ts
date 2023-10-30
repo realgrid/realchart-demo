@@ -63,6 +63,7 @@ export interface IChart {
     firstSeries: Series;
     xAxis: IAxis;
     yAxis: IAxis;
+    subtitle: Title;
     colors: string[];
 
     _createChart(config: any): IChart;

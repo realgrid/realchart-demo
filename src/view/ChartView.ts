@@ -19,7 +19,6 @@ import { Chart, Credits } from "../model/Chart";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem, LegendLocation } from "../model/Legend";
 import { Series } from "../model/Series";
-import { Subtitle } from "../model/Title";
 import { AxisScrollView, AxisView } from "./AxisView";
 import { AxisGuideContainer, BodyView } from "./BodyView";
 import { ChartElement } from "./ChartElement";
@@ -93,80 +92,47 @@ class TitleSectionView extends SectionView {
     }
 
     protected _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
-        const v = this.titleView;
-        const sv = this.subtitleView;
+        const models = [chart.title, chart.subtitle];
         let width = hintWidth;
         let height = 0;
-        let sz: ISize;
 
-        if (v.visible = chart.title.isVisible()) {
-            sz = v.measure(doc, chart.title, hintWidth, hintHeight, phase);
-            height += sz.height;
-            hintHeight -= sz.height;
-            width = Math.max(sz.width);
-        }
-        if (sv.visible = chart.subtitle.isVisible()) {
-            sz = sv.measure(doc, chart.subtitle, hintWidth, hintHeight, phase);
-            height += sz.height;
-            hintHeight -= sz.height;
-            width = Math.max(sz.width);
-        }
+        [this.titleView, this.subtitleView].forEach((v, i) => {
+            if (v.visible = models[i].isVisible()) {
+                const sz = v.measure(doc, models[i], hintWidth, hintHeight, phase);
+
+                height += sz.height;
+                hintHeight -= sz.height;
+                width = Math.max(sz.width);
+            }
+        })
         return { width, height };
     }
 
     protected _doLayout(domain: {xPlot: number, wPlot: number, wChart: number}): void {
-        const v = this.titleView;
-        const sv = this.subtitleView;
-        const m = v.model;
-        const sm = sv.model as Subtitle;
         let y = 0;
-        let x: number;
-        let w: number;
 
-        // title
-        if (v.visible) {
-            x = (v.width > domain.wPlot || m.alignBase === AlignBase.CHART) ? 0 : domain.xPlot;
-            w = (v.width > domain.wPlot || m.alignBase === AlignBase.CHART) ? domain.wChart : domain.wPlot;
-            
-            v.resizeByMeasured().layout();
-
-            switch (m.align) {
-                case Align.LEFT:
-                    break;
-                case Align.RIGHT:
-                    x += w - v.width;
-                    break;
-                default:
-                    x += (w - v.width) / 2;
-                    break;
+        [this.titleView, this.subtitleView].forEach(v => {
+            if (v.visible) {
+                const m = v.model;
+                const w = (v.width > domain.wPlot || m.alignBase === AlignBase.CHART) ? domain.wChart : domain.wPlot;
+                let x = (v.width > domain.wPlot || m.alignBase === AlignBase.CHART) ? 0 : domain.xPlot;
+                
+                v.resizeByMeasured().layout();
+    
+                switch (m.align) {
+                    case Align.LEFT:
+                        break;
+                    case Align.RIGHT:
+                        x += w - v.width;
+                        break;
+                    default:
+                        x += (w - v.width) / 2;
+                        break;
+                }
+                v.translate(x, y);
+                y += v.height;
             }
-            v.translate(x, y);
-            y += v.height;
-        }
-
-        // subtitle
-        if (sv.visible) {
-            x = (sv.width > domain.wPlot || sm.alignBase === AlignBase.CHART) ? 0 : domain.xPlot;
-            w = (sv.width > domain.wPlot || sm.alignBase === AlignBase.CHART) ? domain.wChart : domain.wPlot;
-
-            sv.resizeByMeasured().layout();
-
-            switch (sm.position) {
-                default:
-                    switch (sm.align) {
-                        case Align.LEFT:
-                            break;
-                        case Align.RIGHT:
-                            x += w - sv.width;
-                            break;
-                        default:
-                            x += (w - sv.width) / 2;
-                            break;
-                    }
-                    break;
-            }
-            sv.translate(x, y);
-        }
+        })
     }
 }
 

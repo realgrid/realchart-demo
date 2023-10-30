@@ -1481,6 +1481,12 @@ export abstract class BasedSeries extends ClusterableSeries {
      * @config
      */
     nullAsBase = false;
+    /**
+     * {@link baseValue} 혹은 y축의 baseValue보다 작은 쪽의 point들에 적용되는 스타일.
+     * 
+     * @config
+     */
+    belowStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // overriden members

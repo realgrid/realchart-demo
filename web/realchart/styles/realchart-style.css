@@ -244,15 +244,18 @@
 
 /** title */
 .rct-title {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     font-size: 24px;
     fill: var(--rct-title-fill);
+}
+.rct-title[data-hassub] {
+    margin-bottom: 2px;
 }
 .rct-title-background {
     fill: none;
 }
 .rct-subtitle {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     font-size: 16px;
     fill: var(--rct-subtitle-fill);
 }

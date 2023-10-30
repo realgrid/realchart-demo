@@ -61,6 +61,14 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         }
     }
 
+    protected _setPointStyle(v: RcElement, model: BarSeries, p: DataPoint, style?: any[]): void {
+        super._setPointStyle(v, model, p, style);
+
+        if (p.yValue < model.baseValue && model.belowStyle) {
+            v.addStyleOrClass(model.belowStyle);
+        }
+    }
+
     protected _layoutPointViews(width: number, height: number): void {
         if (this.model.chart.isPolar()) {
             this.$_layoutSectors();
