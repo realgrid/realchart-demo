@@ -300,6 +300,7 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     _simpleMode = false;
     private _lineView: LineElement;
+    private _lineView2: LineElement; // inside일 때
     private _titleView: AxisTitleView;
     private _markContainer: RcElement;
     private _markViews: AxisTickMarkView[] = [];
@@ -334,7 +335,7 @@ export class AxisView extends ChartElement<Axis> {
     // methods
     //-------------------------------------------------------------------------
     private $_checkScrollView(doc: Document, m: AxisScrollBar, prop: string, width: number, height: number): number {
-        if (m.visible) {
+        if (m.visible && this.model._isInside) {
             if (!this._scrollView) {
                 this.add(this._scrollView = new AxisScrollView(doc));
             }
@@ -437,6 +438,7 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: Axis, hintWidth: number, hintHeight: number, phase: number): ISize {
         const horz = model._isHorz;
+        const inside = model._isInside;
         const titleView = this._titleView;
         const labelViews = this._labelViews;
         let sz = 0;
@@ -444,6 +446,16 @@ export class AxisView extends ChartElement<Axis> {
         // line
         if (this._lineView.visible = model.line.visible) {
             this._lineView.setStyleOrClass(model.line.style);
+            if (inside) {
+                if (!this._lineView2) {
+                    this.insertChild(this._lineView2 = new LineElement(doc, AxisView.LINE_CLASS), this._lineView);
+                } else {
+                    this._lineView2.setVisible(true);
+                }
+                this._lineView.setStyleOrClass(model.line.style);
+            }
+        } else if (this._lineView2) {
+            this._lineView2.setVisible(false);
         }
 
         // tick marks 
@@ -455,6 +467,7 @@ export class AxisView extends ChartElement<Axis> {
         if (this.$_prepareTickMarks(doc, model)) {
             this._markViews.forEach(v => v.measure(doc, model.tick, hintWidth, hintHeight, phase));
         }
+        if (inside) sz *= 2; // 양쪽에 간격은 둔다.
 
         // labels
         if (this.$_prepareLabels(doc, model)) {
@@ -467,7 +480,9 @@ export class AxisView extends ChartElement<Axis> {
             this._labelSize = 0;
         }
 
-        if (!this._simpleMode) {
+        if (this._simpleMode) {
+            titleView.setVisible(false);
+        } else {
             // title
             if (titleView.visible) { // checkHeight/checkWidth 에서 visible 설정.
                 sz += titleView.mh;
@@ -478,8 +493,6 @@ export class AxisView extends ChartElement<Axis> {
             if (this._scrollView?.visible) {
                 sz += this._scrollView.mh;
             }
-        } else {
-            titleView.setVisible(false);
         }
 
         return Size.create(horz ? hintWidth : sz, horz ? sz : hintHeight);
@@ -502,11 +515,19 @@ export class AxisView extends ChartElement<Axis> {
         // line
         if (this._lineView.visible) {
             if (horz) {
-                this._lineView.setHLine(opp ? h : 0, 0, w);
-                // this._lineView.setHLineC(opp ? h : 0, 0, w);
+                // this._lineView.setHLine(opp ? h : 0, 0, w);
+                this._lineView.setHLineC(opp ? h : 0, 0, w);
             } else {
-                this._lineView.setVLine(opp ? 0 : w, 0, h);
-                // this._lineView.setVLineC(opp ? 0 : w, 0, h);
+                // this._lineView.setVLine(opp ? 0 : w, 0, h);
+                this._lineView.setVLineC(opp ? 0 : w, 0, h);
+            }
+
+            if (this._lineView2) { // when inside
+                if (horz) {
+                    this._lineView2.setHLineC(h, 0, w);
+                } else {
+                    this._lineView2.setVLineC(0, 0, h);
+                }
             }
         }
 
@@ -530,9 +551,9 @@ export class AxisView extends ChartElement<Axis> {
 
         if (this._labelContainer.visible) {
             if (horz) {
-                this.$_layoutLabelsHorz(labelViews, ticks, opp, w, h, len);
+                this.$_layoutLabelsHorz(labelViews, ticks, inside, opp, w, h, len);
             } else {
-                this.$_layoutLabelsVert(labelViews, ticks, opp, w, h, len);
+                this.$_layoutLabelsVert(labelViews, ticks, inside, opp, w, h, len);
             }
         }
 
@@ -856,7 +877,7 @@ export class AxisView extends ChartElement<Axis> {
         return sz;
     }
 
-    private $_layoutLabelsHorz(views: AxisLabelElement[], ticks: IAxisTick[], opp: boolean, w: number, h: number, len: number): void {
+    private $_layoutLabelsHorz(views: AxisLabelElement[], ticks: IAxisTick[], inside: boolean, opp: boolean, w: number, h: number, len: number): void {
         const pts = this._labelRowPts;
 
         views.forEach(v => {
@@ -884,13 +905,13 @@ export class AxisView extends ChartElement<Axis> {
         });
     }
 
-    private $_layoutLabelsVert(views: AxisLabelElement[], ticks: IAxisTick[], opp: boolean, w: number, h: number, len: number): void {
+    private $_layoutLabelsVert(views: AxisLabelElement[], ticks: IAxisTick[], inside: boolean, opp: boolean, w: number, h: number, len: number): void {
         const x = opp ? len : w - len;
     
         views.forEach((v, i) => {
             if (v.visible) {
                 const r = v.getBBounds();
-                const x2 = opp ? x : x - r.width;
+                const x2 = opp ? x : inside ? (w - r.width) / 2 : x - r.width;
     
                 v.translate(x2, h - ticks[i].pos - r.height / 2);
             }

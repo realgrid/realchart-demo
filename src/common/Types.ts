@@ -308,9 +308,6 @@ export interface ISides {
     vert?: number;
 }
 
-export const VERT_SECTIONS = [SectionDir.LEFT, SectionDir.RIGHT, SectionDir.CENTER];
-export const HORZ_SECTIONS = [SectionDir.TOP, SectionDir.BOTTOM, SectionDir.MIDDLE];
-
 export enum AlignBase {
     /**
      * @config

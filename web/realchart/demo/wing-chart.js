@@ -18,7 +18,7 @@ const config = {
         }
     },
     xAxis: [{
-        title: "일일 Daily fat",
+        // title: "일일 Daily fat",
         position: 'inside',
         categories: [
             '0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-40', '40-45',
@@ -28,9 +28,12 @@ const config = {
     }],
     yAxis: [{
         title: "남자",
+        reversed: true,
+        line: true
     }, {
         side: true,
         title: "여자",
+        line: true
     }],
     body: {
         split: true,

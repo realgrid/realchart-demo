@@ -115,6 +115,7 @@ export interface IPlottingItem {
     yAxis: string | number;
     visible: boolean;
 
+    isSide(): boolean;
     getVisiblePoints(): DataPoint[];
     getLegendSources(list: ILegendSource[]): void;
     needAxes(): boolean;
@@ -529,7 +530,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     isSide(): boolean {
-        return this._yAxisObj._isInside;
+        return this._yAxisObj.side;
     }
 
     /**
@@ -1612,6 +1613,10 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
 
     get series(): T[] {
         return this._series.slice(0);
+    }
+
+    isSide(): boolean {
+        return this._yAxisObj.side;
     }
 
     needAxes(): boolean {

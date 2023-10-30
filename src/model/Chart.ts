@@ -548,36 +548,36 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         if (this.isInverted()) {
             switch (dir) {
                 case SectionDir.LEFT:
-                    axes = xAxes.filter(a => !a._isOpposite);
+                    axes = xAxes.filter(a => !a._isOpposite && !a._isInside);
                     break;
                 case SectionDir.RIGHT:
                     axes = xAxes.filter(a => a._isOpposite);
                     break;
                 case SectionDir.BOTTOM:
-                    axes = yAxes.filter(a => !a._isOpposite);
+                    axes = yAxes.filter(a => !a._isOpposite && !a._isInside);
                     break;
                 case SectionDir.TOP:
                     axes = yAxes.filter(a => a._isOpposite);
                     break;
-                case SectionDir.MIDDLE:
+                case SectionDir.CENTER:
                     axes = xAxes.filter(a => a._isInside);
                     break;
             } 
         } else {
             switch (dir) {
                 case SectionDir.LEFT:
-                    axes = yAxes.filter(a => !a._isOpposite);
+                    axes = yAxes.filter(a => !a._isOpposite && !a._isInside);
                     break;
                 case SectionDir.RIGHT:
                     axes = yAxes.filter(a => a._isOpposite);
                     break;
                 case SectionDir.BOTTOM:
-                    axes = xAxes.filter(a => !a._isOpposite);
+                    axes = xAxes.filter(a => !a._isOpposite && !a._isInside);
                     break;
                 case SectionDir.TOP:
                     axes = xAxes.filter(a => a._isOpposite);
                     break;
-                case SectionDir.CENTER:
+                case SectionDir.MIDDLE:
                     axes = xAxes.filter(a => a._isInside);
                     break;
             } 

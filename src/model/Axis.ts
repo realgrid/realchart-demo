@@ -657,6 +657,42 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _isX: boolean;
+    _isHorz: boolean;
+    _isOpposite: boolean;
+    _isInside: boolean;
+    protected _series: IPlottingItem[] = [];
+    _range: { min: number, max: number };
+    _ticks: IAxisTick[];
+    _markPoints: number[];
+    _vlen: number;
+    _minPad = 0;
+    _maxPad = 0;
+    _values: number[] = [];
+    protected _min: number;
+    protected _max: number;
+    _zoom: AxisZoom;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart, isX: boolean, name?: string) {
+        super(chart);
+
+        this._isX = isX;
+        this.name = name;
+        this.title = new AxisTitle(this);
+        this.line = new AxisLine(this);
+        this.tick = this._createTickModel();
+        this.label = this._createLabelModel();
+        this.grid = this._createGrid();
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    abstract type(): string;
+
     /**
      * @config
      */
@@ -696,46 +732,10 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     readonly scrollBar = new AxisScrollBar(this);
 
-    _isX: boolean;
-    _isHorz: boolean;
-    _isOpposite: boolean;
-    _isInside: boolean;
-    protected _series: IPlottingItem[] = [];
-    _range: { min: number, max: number };
-    _ticks: IAxisTick[];
-    _markPoints: number[];
-    _vlen: number;
-    _minPad = 0;
-    _maxPad = 0;
-    _values: number[] = [];
-    protected _min: number;
-    protected _max: number;
-    _zoom: AxisZoom;
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(chart: IChart, isX: boolean, name?: string) {
-        super(chart);
-
-        this._isX = isX;
-        this.name = name;
-        this.title = new AxisTitle(this);
-        this.line = new AxisLine(this);
-        this.tick = this._createTickModel();
-        this.label = this._createLabelModel();
-        this.grid = this._createGrid();
-    }
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    abstract type(): string;
-
     /**
      * true이면, X축이고 축이 연결된 body가 분할된 경우 분할된 쪽에 연결된다.
      */
-    side: boolean;
+    side = false;
     /**
      * 표시 위치.
      * 기본적으로 상대 축의 원점 쪽에 표시된다.
@@ -832,8 +832,8 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     prepareRender(): void {
         this._isHorz = this.chart.isInverted() ? !this._isX : this._isX;
+        this._isInside = this.position === AxisPosition.INSIDE && this._isX;
         this._isOpposite = this.position === AxisPosition.OPPOSITE;
-        this._isInside = this.position === AxisPosition.INSIDE && !this._isX;
 
         this._doPrepareRender();
 
@@ -847,23 +847,25 @@ export abstract class Axis extends ChartItem implements IAxis {
             this._range = this._doCalcluateRange(vals);
         }
 
-        // clustering (은 x축에서만 가능)
+        // clustering (x축에서만 가능)
         if (this._isX) {
-            let sum = 0;
-            let p = 0;
-    
-            series.forEach(item => {
-                if (item.clusterable()) {
-                    sum += pickNum((item as any as IClusterable).groupWidth, 1);
-                }
-            });
-            series.forEach(item => {
-                if (item.clusterable()) {
-                    const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;
-    
-                    (item as any as IClusterable).setCluster(w, p);
-                    p += w;
-                }
+            (this.chart._splitted ? [false, true] : [false]).forEach(side => {
+                let sum = 0;
+                let p = 0;
+        
+                series.forEach(item => {
+                    if (item.isSide() == side && item.clusterable()) {
+                        sum += pickNum((item as any as IClusterable).groupWidth, 1);
+                    }
+                });
+                series.forEach(item => {
+                    if (item.isSide() == side && item.clusterable()) {
+                        const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;
+        
+                        (item as any as IClusterable).setCluster(w, p);
+                        p += w;
+                    }
+                });
             });
         }
     }
