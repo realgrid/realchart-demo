@@ -33,6 +33,13 @@ export class ContinuousAxisTick extends AxisTick {
      * @config
      */
     baseAxis: number | string;
+    /**
+     * {@link baseAxis}가 지정된 경우, true로 지정하면 base 축의 범위와 동일하게
+     * 축의 최소/최대가 결정된다.
+     * 
+     * @config
+     */
+    baseRange = false;
 
     //-------------------------------------------------------------------------
     // fields

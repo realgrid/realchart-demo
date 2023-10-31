@@ -994,7 +994,7 @@ export class AxisCollection {
     //-------------------------------------------------------------------------
     readonly chart: IChart;
     readonly isX: boolean;
-    private _items: Axis[] = [];
+    protected _items: Axis[] = [];
     private _map = new Map<string, Axis>();
 
     //-------------------------------------------------------------------------
@@ -1062,10 +1062,14 @@ export class AxisCollection {
         this._items.forEach(axis => axis.prepareRender());
     }
 
-    buildTicks(length: number): void {
+    // Chart.layoutAxes 에서만 호출
+    $_buildTicks(length: number): void {
         // 다른 축을 참조하는 axis를 나중에 계산한다.
         this._items.sort((a1, a2) => a1.isBased() ? 1 : a2.isBased() ? -1 : 0)
-                   .forEach(axis => axis.buildTicks(length));
+                   .forEach(axis => axis.buildTicks(this._getLength(axis, length)));
+    }
+    protected _getLength(axis: Axis, length: number): number {
+        return length;
     }
 
     connect(series: IPlottingItem): Axis {
@@ -1146,5 +1150,31 @@ export class AxisCollection {
 
         axis.load(src);
         return axis;
+    }
+}
+
+export class YAxisCollection extends AxisCollection {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _splits: number[];
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    split(ratios: number[]): void {
+        this._splits = ratios;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _getLength(axis: Axis, length: number): number {
+        if (this._splits) {
+            return length * this._splits[axis.side ? 1 : 0];
+        } else {
+            return length;
+        }
     }
 }

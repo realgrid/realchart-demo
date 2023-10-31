@@ -10,7 +10,7 @@ import { isArray, isObject, isString, mergeObj } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
-import { Axis, AxisCollection, IAxis } from "./Axis";
+import { Axis, AxisCollection, IAxis, YAxisCollection } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem, n_char_item } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
@@ -300,7 +300,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _plane: Plane;
     private _series: PlottingItemCollection;
     private _xAxes: AxisCollection;
-    private _yAxes: AxisCollection;
+    private _yAxes: YAxisCollection;
     private _gauges: GaugeCollection;
     private _body: Body;
     private _navigator: SeriesNavigator;
@@ -328,7 +328,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._plane = new Plane(this);
         this._series = new PlottingItemCollection(this);
         this._xAxes = new AxisCollection(this, true);
-        this._yAxes = new AxisCollection(this, false);
+        this._yAxes = new YAxisCollection(this, false);
         this._gauges = new GaugeCollection(this);
         this._body = new Body(this);
         this._navigator = new SeriesNavigator(this);
@@ -678,8 +678,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     prepareRender(): void {
         this._inverted = !this._polar && this.inverted;
+        
         if (this._splitted = !this._polar && this._body.split.visible) {
             this._splits = this._body.getSplits();
+            this._yAxes.split(this._splits);
         }
 
         this._xAxes.disconnect();
@@ -715,8 +717,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     // 여러번 호출될 수 있다.
     layoutAxes(width: number, height: number, inverted: boolean, phase: number): void {
-        this._xAxes.buildTicks(inverted ? height : width);
-        this._yAxes.buildTicks(inverted ? width : height);
+        this._xAxes.$_buildTicks(inverted ? height : width);
+        this._yAxes.$_buildTicks(inverted ? width : height);
         this.$_calcAxesPoints(width, height, inverted, 0);
     }
 
@@ -731,7 +733,11 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         });
         len = inverted ? width : height;
         this._yAxes.forEach(axis => {
-            axis.calcPoints(len, phase);
+            let len2 = len;
+            if (this._splitted) {
+                len2 *= this._splits[axis.side ? 1 : 0];
+            }
+            axis.calcPoints(len2, phase);
         });
     }
 

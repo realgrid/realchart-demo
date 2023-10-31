@@ -8,7 +8,7 @@ const config = {
     },
     // type: 'line',
     inverted: true,
-    title: "Wing Chart",
+    title: "Wing Chart by Split",
     options: {
         // animatable: false
     },
@@ -31,7 +31,6 @@ const config = {
     yAxis: [{
         title: "남자",
         reversed: true,
-        // line: true,
         tick: {
             length: 5,
             margin: 0
@@ -39,7 +38,7 @@ const config = {
     }, {
         side: true,
         title: "여자",
-        // line: true,
+        baseAxis: 0,
         tick: {
             length: 5,
             margin: 0

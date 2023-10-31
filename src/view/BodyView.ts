@@ -101,7 +101,6 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _pts: number[];
     private _lines = new ElementPool(this, LineElement);
 
     //-------------------------------------------------------------------------
@@ -115,10 +114,6 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: AxisGrid, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this._pts = model.getPoints(model.axis._isHorz ? hintWidth : hintHeight);
-        this._lines.prepare(this._pts.length, (line) => {
-            line.setClass('rct-axis-grid-line');
-        });
         return Size.create(hintWidth, hintHeight);
     }
 
@@ -127,9 +122,13 @@ export class AxisGridView extends ChartElement<AxisGrid> {
         const axis = m.axis;
         const w = this.width;
         const h = this.height;
-        const pts = this._pts;
+        const pts = m.getPoints(axis._isHorz ? w : h);
         const lines = this._lines;
         const end = lines.count - 1;
+
+        this._lines.prepare(pts.length, (line) => {
+            line.setClass('rct-axis-grid-line');
+        });
 
         lines.forEach((line, i) => {
             line.setBoolData('first', i === 0);
