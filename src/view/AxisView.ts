@@ -335,7 +335,7 @@ export class AxisView extends ChartElement<Axis> {
     // methods
     //-------------------------------------------------------------------------
     private $_checkScrollView(doc: Document, m: AxisScrollBar, prop: string, width: number, height: number): number {
-        if (m.visible && this.model._isInside) {
+        if (m.visible && !this.model._isInside) {
             if (!this._scrollView) {
                 this.add(this._scrollView = new AxisScrollView(doc));
             }
