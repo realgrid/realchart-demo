@@ -551,37 +551,37 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         if (this.isInverted()) {
             switch (dir) {
                 case SectionDir.LEFT:
-                    axes = xAxes.filter(a => !a._isOpposite && !a._isInside);
+                    axes = xAxes.filter(a => !a._isOpposite && !a._isBetween);
                     break;
                 case SectionDir.RIGHT:
                     axes = xAxes.filter(a => a._isOpposite);
                     break;
                 case SectionDir.BOTTOM:
-                    axes = yAxes.filter(a => !a._isOpposite && !a._isInside);
+                    axes = yAxes.filter(a => !a._isOpposite && !a._isBetween);
                     break;
                 case SectionDir.TOP:
                     axes = yAxes.filter(a => a._isOpposite);
                     break;
                 case SectionDir.CENTER:
-                    axes = xAxes.filter(a => a._isInside);
+                    axes = xAxes.filter(a => a._isBetween);
                     break;
             } 
         } else {
             switch (dir) {
                 case SectionDir.LEFT:
-                    axes = yAxes.filter(a => !a._isOpposite && !a._isInside);
+                    axes = yAxes.filter(a => !a._isOpposite && !a._isBetween);
                     break;
                 case SectionDir.RIGHT:
                     axes = yAxes.filter(a => a._isOpposite);
                     break;
                 case SectionDir.BOTTOM:
-                    axes = xAxes.filter(a => !a._isOpposite && !a._isInside);
+                    axes = xAxes.filter(a => !a._isOpposite && !a._isBetween);
                     break;
                 case SectionDir.TOP:
                     axes = xAxes.filter(a => a._isOpposite);
                     break;
                 case SectionDir.MIDDLE:
-                    axes = xAxes.filter(a => a._isInside);
+                    axes = xAxes.filter(a => a._isBetween);
                     break;
             } 
         }

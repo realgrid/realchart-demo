@@ -33,10 +33,6 @@ export class CategoryAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     position = CategoryTickPosition.POINT;
     step = 1;
-    /**
-     * true이면 steps 상관없이 마지막 tick은 항상 표시된다.
-     */
-    showLast = false;
 
     //-------------------------------------------------------------------------
     // methods
@@ -51,7 +47,7 @@ export class CategoryAxisTick extends AxisTick {
 }
 
 /**
- * TODO: y축으로 사용되면 edge 위치에 표시한다.
+ * //TODO: y축으로 사용되면 edge 위치에 표시한다.
  */
 class CategoryAxisLabel extends AxisLabel {
 

@@ -28,10 +28,6 @@ export class ContinuousAxisTick extends AxisTick {
     stepCount: number;
     steps: number[];
     /**
-     * true면 소수점값이 표시되지 않도록 한다.
-     */
-    integral = false;
-    /**
      * tick 개수를 맞춰야 하는 대상 axis.
      * base의 strictMin, strictMax가 설정되지 않아야 한다.
      * base의 startFit, endFilt의 {@link AxisFit.TICK}으로 설정되어야 한다.

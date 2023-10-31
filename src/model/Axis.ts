@@ -25,7 +25,7 @@ export interface IAxis {
     _isX: boolean;
     _isHorz: boolean;
     _isOpposite: boolean;
-    _isInside: boolean;
+    _isBetween: boolean;
 
     reversed: boolean;
     _zoom: IAxisZoom;
@@ -386,6 +386,18 @@ export abstract class AxisTick extends AxisItem {
      * @config
      */
     margin = 3;
+    /**
+     * true면 소수점값애 해당하는 tick은 표시되지 않도록 한다.
+     */
+    integral = false;
+    /**
+     * true면 다른 설정과 상관없이 첫번째 tick은 항상 표시된다.
+     */
+    showFirst = false;
+    /**
+     * true면 다른 설정과 상관없이 마지막 tick은 항상 표시된다.
+     */
+    showLast = false;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -551,7 +563,7 @@ export enum AxisPosition {
     /**
      * Y축이고, 축이 연결되는 body가 분할 상태일 때, 중간 분할 위치에 표시한다.
      */
-    INSIDE = 'inside'
+    BETWEEN = 'between'
 }
 
 /**
@@ -665,7 +677,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     _isX: boolean;
     _isHorz: boolean;
     _isOpposite: boolean;
-    _isInside: boolean;
+    _isBetween: boolean;
     protected _series: IPlottingItem[] = [];
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
@@ -837,7 +849,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     prepareRender(): void {
         this._isHorz = this.chart.isInverted() ? !this._isX : this._isX;
-        this._isInside = this.position === AxisPosition.INSIDE && this._isX;
+        this._isBetween = this.position === AxisPosition.BETWEEN && this._isX;
         this._isOpposite = this.position === AxisPosition.OPPOSITE;
 
         this._doPrepareRender();

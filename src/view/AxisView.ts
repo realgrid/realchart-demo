@@ -300,7 +300,7 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     _simpleMode = false;
     private _lineView: LineElement;
-    private _lineView2: LineElement; // inside일 때
+    private _lineView2: LineElement; // between일 때
     private _titleView: AxisTitleView;
     private _markContainer: RcElement;
     private _markViews: AxisTickMarkView[] = [];
@@ -335,7 +335,7 @@ export class AxisView extends ChartElement<Axis> {
     // methods
     //-------------------------------------------------------------------------
     private $_checkScrollView(doc: Document, m: AxisScrollBar, prop: string, width: number, height: number): number {
-        if (m.visible && !this.model._isInside) {
+        if (m.visible && !this.model._isBetween) {
             if (!this._scrollView) {
                 this.add(this._scrollView = new AxisScrollView(doc));
             }
@@ -438,7 +438,7 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: Axis, hintWidth: number, hintHeight: number, phase: number): ISize {
         const horz = model._isHorz;
-        const inside = model._isInside;
+        const between = model._isBetween;
         const titleView = this._titleView;
         const labelViews = this._labelViews;
         let sz = 0;
@@ -446,7 +446,7 @@ export class AxisView extends ChartElement<Axis> {
         // line
         if (this._lineView.visible = model.line.visible) {
             this._lineView.setStyleOrClass(model.line.style);
-            if (inside) {
+            if (between) {
                 if (!this._lineView2) {
                     this.insertChild(this._lineView2 = new LineElement(doc, AxisView.LINE_CLASS), this._lineView);
                 } else {
@@ -467,7 +467,7 @@ export class AxisView extends ChartElement<Axis> {
         if (this.$_prepareTickMarks(doc, model)) {
             this._markViews.forEach(v => v.measure(doc, model.tick, hintWidth, hintHeight, phase));
         }
-        if (inside) sz *= 2; // 양쪽에 간격은 둔다.
+        if (between) sz *= 2; // 양쪽에 간격은 둔다.
 
         // labels
         if (this.$_prepareLabels(doc, model)) {
@@ -502,7 +502,7 @@ export class AxisView extends ChartElement<Axis> {
         const model = this.model;
         const horz = model._isHorz;
         const opp = model._isOpposite;
-        const inside = model._isInside;
+        const between = model._isBetween;
         const ticks = model._ticks;
         const markPts = model._markPoints;
         const titleView = this._titleView;
@@ -522,7 +522,7 @@ export class AxisView extends ChartElement<Axis> {
                 this._lineView.setVLineC(opp ? 0 : w, 0, h);
             }
 
-            if (this._lineView2) { // when inside
+            if (this._lineView2) { // when between
                 if (horz) {
                     this._lineView2.setHLineC(h, 0, w);
                 } else {
@@ -551,9 +551,9 @@ export class AxisView extends ChartElement<Axis> {
 
         if (this._labelContainer.visible) {
             if (horz) {
-                this.$_layoutLabelsHorz(labelViews, ticks, inside, opp, w, h, len);
+                this.$_layoutLabelsHorz(labelViews, ticks, between, opp, w, h, len);
             } else {
-                this.$_layoutLabelsVert(labelViews, ticks, inside, opp, w, h, len);
+                this.$_layoutLabelsVert(labelViews, ticks, between, opp, w, h, len);
             }
         }
 
@@ -877,7 +877,7 @@ export class AxisView extends ChartElement<Axis> {
         return sz;
     }
 
-    private $_layoutLabelsHorz(views: AxisLabelElement[], ticks: IAxisTick[], inside: boolean, opp: boolean, w: number, h: number, len: number): void {
+    private $_layoutLabelsHorz(views: AxisLabelElement[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, len: number): void {
         const pts = this._labelRowPts;
 
         views.forEach(v => {
@@ -905,13 +905,13 @@ export class AxisView extends ChartElement<Axis> {
         });
     }
 
-    private $_layoutLabelsVert(views: AxisLabelElement[], ticks: IAxisTick[], inside: boolean, opp: boolean, w: number, h: number, len: number): void {
+    private $_layoutLabelsVert(views: AxisLabelElement[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, len: number): void {
         const x = opp ? len : w - len;
     
         views.forEach((v, i) => {
             if (v.visible) {
                 const r = v.getBBounds();
-                const x2 = opp ? x : inside ? (w - r.width) / 2 : x - r.width;
+                const x2 = opp ? x : between ? (w - r.width) / 2 : x - r.width;
     
                 v.translate(x2, h - ticks[i].pos - r.height / 2);
             }

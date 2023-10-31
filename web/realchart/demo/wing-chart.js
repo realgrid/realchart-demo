@@ -10,7 +10,7 @@ const config = {
     inverted: true,
     title: "Wing Chart by Split",
     options: {
-        animatable: false
+        // animatable: false
     },
     legend: {
         visible: false,
@@ -21,7 +21,7 @@ const config = {
     },
     xAxis: [{
         // title: "일일 Daily fat",
-        position: 'inside',
+        position: 'between',
         categories: [
             '0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-40', '40-45',
             '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80+'
