@@ -16,7 +16,7 @@ import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
-import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange, IAxis } from "../model/Axis";
+import { Axis, AxisGrid, AxisGuide, AxisLineGuide, AxisRangeGuide, IAxis } from "../model/Axis";
 import { Body } from "../model/Body";
 import { Chart, IChart } from "../model/Chart";
 import { Crosshair } from "../model/Crosshair";
@@ -321,7 +321,7 @@ export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
     abstract layout(width: number, height: number): void;
 }
 
-export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
+export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -340,7 +340,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepare(model: AxisGuideLine): void {
+    prepare(model: AxisLineGuide): void {
         super.prepare(model);
 
         this._line.setStyles(model.style);
@@ -440,7 +440,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
     }
 }
 
-export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
+export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -459,7 +459,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepare(model: AxisGuideRange): void {
+    prepare(model: AxisRangeGuide): void {
         super.prepare(model);
     }
 
@@ -598,13 +598,13 @@ export class AxisGuideContainer extends LayerElement {
 
     addAll(doc: Document, guides: AxisGuide[]): void {
         guides.forEach(g => {
-            if (g instanceof AxisGuideRange) {
+            if (g instanceof AxisRangeGuide) {
                 let v = this._rangePool.pop() || new AxisGuideRangeView(doc);
 
                 this.add(v);
                 v.prepare(g)
                 this._views.push(v);
-            } else if (g instanceof AxisGuideLine) {
+            } else if (g instanceof AxisLineGuide) {
                 let v = this._linePool.pop() || new AxisGuideLineView(doc);
 
                 this.add(v);

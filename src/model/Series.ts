@@ -10,7 +10,7 @@ import { isArray, isObject, isString, pickNum, pickProp, pickProp3 } from "../co
 import { IPoint } from "../common/Point";
 import { RcElement } from "../common/RcControl";
 import { RcObject } from "../common/RcObject";
-import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../common/Types";
+import { IPercentSize, IValueRange, RtPercentSize, SVGStyleOrClass, buildValueRanges, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { RectElement } from "../common/impl/RectElement";
 import { Shape, Shapes } from "../common/impl/SvgShape";
@@ -353,6 +353,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    private _ranges: IValueRange[];
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -362,6 +364,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _yAxisObj: IAxis;
     protected _points: DataPointCollection;
     _runPoints: DataPoint[];
+    _runRanges: IValueRange[];
     _minValue: number;
     _maxValue: number;
     _referents: Series[];
@@ -470,6 +473,14 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * @config
      */
     pointColors: boolean | string[];
+    /**
+     * 값 범위 목록.
+     * 범위별로 다른 스타일을 적용할 수 있다.
+     * 
+     * @config
+     */
+    ranges: IValueRange[];
+    rangeAxis: 'x' | 'y' | 'z';
     /**
      * body 영역을 벗어난 data point view는 잘라낸다.
      * 
@@ -648,6 +659,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._xAxisObj = this.group ? this.group._xAxisObj : this.chart._connectSeries(this, true);
         this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
         this._runPoints = this._points.getPoints(this._xAxisObj, this._yAxisObj);
+        this._runRanges = buildValueRanges(this.ranges, this._xAxisObj.axisMin(), this._xAxisObj.axisMax());
 
         super.prepareRender();
     }

@@ -15,7 +15,7 @@ import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
 import { LegendItem } from "../Legend";
 import { MarkerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
-import { LineSeriesMarkerView } from "./legend/LineSeriesMarkerView";
+import { LineLegendMarkerView } from "./legend/LineLegendMarkerView";
 
 export class LineSeriesPoint extends DataPoint {
 
@@ -188,13 +188,13 @@ export class LineSeries extends LineSeriesBase {
     }
 
     protected _createLegendMarker(doc: Document, size: number): RcElement {
-        return new LineSeriesMarkerView(doc, size);
+        return new LineLegendMarkerView(doc, size);
     }
 
     legendMarker(doc: Document): RcElement {
         const m = super.legendMarker(doc);
 
-        (m as LineSeriesMarkerView).setShape(this.getShape(null), Math.min(LegendItem.MARKER_SIZE, this.marker.radius * 2));
+        (m as LineLegendMarkerView).setShape(this.getShape(null), Math.min(LegendItem.MARKER_SIZE, this.marker.radius * 2));
         return m;
     }
 }

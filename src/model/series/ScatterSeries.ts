@@ -6,11 +6,14 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { RcElement } from "../../common/RcControl";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
+import { LegendItem } from "../Legend";
 import { Series } from "../Series";
+import { ShapeLegendMarkerView } from "./legend/ShapeLegendMarkerView";
 
 export class ScatterSeriesPoint extends DataPoint {
 
@@ -72,5 +75,16 @@ export class ScatterSeries extends Series {
 
     protected _createPoint(source: any): DataPoint {
         return new ScatterSeriesPoint(source);
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return new ShapeLegendMarkerView(doc, size);
+    }
+
+    legendMarker(doc: Document): RcElement {
+        const m = super.legendMarker(doc);
+
+        (m as ShapeLegendMarkerView).setShape(this.shape, Math.min(LegendItem.MARKER_SIZE, this.radius * 2));
+        return m;
     }
 }

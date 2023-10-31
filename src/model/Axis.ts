@@ -308,7 +308,7 @@ export abstract class AxisGuide extends AxisItem {
     zindex = 0;
 }
 
-export class AxisGuideLine extends AxisGuide {
+export class AxisLineGuide extends AxisGuide {
 
     //-------------------------------------------------------------------------
     // properties
@@ -324,7 +324,7 @@ export class AxisGuideLine extends AxisGuide {
 /**
  * range -> zone ?
  */
-export class AxisGuideRange extends AxisGuide {
+export class AxisRangeGuide extends AxisGuide {
 
     //-------------------------------------------------------------------------
     // properties
@@ -376,17 +376,22 @@ export abstract class AxisTick extends AxisItem {
     //-------------------------------------------------------------------------
     /**
      * axis tick line length.
+     * 
+     * @config
      */
     length = 7;
+    /**
+     * tick 라인과 다른 요소(label이나 title) 사이의 간격.
+     * 
+     * @config
+     */
     margin = 3;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(axis: Axis) {
-        super(axis);
-
-        this.visible = false;
+        super(axis, false);
     }
 
     //-------------------------------------------------------------------------
@@ -959,12 +964,12 @@ export abstract class Axis extends ChartItem implements IAxis {
 
             switch (g.type) {
                 case 'range':
-                    guide = new AxisGuideRange(this);
+                    guide = new AxisRangeGuide(this);
                     break;
 
                 case 'line':
                 default:    
-                    guide = new AxisGuideLine(this);
+                    guide = new AxisLineGuide(this);
                     break;
             }
 
