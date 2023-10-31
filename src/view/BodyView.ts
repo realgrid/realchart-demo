@@ -728,6 +728,7 @@ export class BodyView extends ChartElement<Body> {
     protected _gridViews = new Map<Axis, AxisGridView>();
     private _breakViews: AxisBreakView[] = [];
     private _seriesContainer: LayerElement;
+    private _labelContainer: LayerElement;
     protected _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
     private _series: Series[];
@@ -766,6 +767,7 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._guideContainer = new AxisGuideContainer(doc, 'rct-guides'));
         this.add(this._seriesContainer = new LayerElement(doc, 'rct-series-container'));
         this.add(this._axisBreakContainer = new LayerElement(doc, 'rct-axis-breaks'));
+        this.add(this._labelContainer = new LayerElement(doc, 'rct-label-container'));
         this.add(this._frontGuideContainer = new AxisGuideContainer(doc, 'rct-front-guides'));
         this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
         this.add(this._zoomButton = new ZoomButton(doc));
@@ -1017,7 +1019,6 @@ export class BodyView extends ChartElement<Body> {
     }
 
     private $_prepareSeries(doc: Document, chart: IChart, series: Series[]): void {
-        const container = this._seriesContainer;
         const inverted = chart.isInverted();
         const map = this._seriesMap;
         const views = this._seriesViews;
@@ -1030,14 +1031,19 @@ export class BodyView extends ChartElement<Body> {
         }
 
         this._series = series;
-        views.forEach(v => v.remove());
+        views.forEach(v => {
+            v.remove();
+            v._labelContainer.remove();
+        });
         views.length = 0;
 
         series.forEach(ser => {
             const v = map.get(ser) || createSeriesView(doc, ser);
 
             v._setChartOptions(inverted, this._animatable);
-            container.add(v);
+            this._seriesContainer.add(v);
+            this._labelContainer.add(v._labelContainer);
+
             map.set(ser, v);
             views.push(v);
             v.prepareSeries(doc, ser);

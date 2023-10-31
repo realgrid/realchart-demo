@@ -314,7 +314,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     _simpleMode = false;
     protected _pointContainer: PointContainer;
-    protected _labelContainer: PointLabelContainer;
+    _labelContainer: PointLabelContainer;
     private _trendLineView: PathElement;
 
     protected _legendMarker: RcElement;
@@ -331,7 +331,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         super(doc, 'rct-series ' + styleName);
 
         this.add(this._pointContainer = new PointContainer(doc, 'rct-series-points'));
-        this.add(this._labelContainer = new PointLabelContainer(doc));
+        this._labelContainer = new PointLabelContainer(doc);
     }
 
     //-------------------------------------------------------------------------
