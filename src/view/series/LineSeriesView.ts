@@ -511,42 +511,42 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     }
 }
 
-class MarkerView extends RcElement {
+// class MarkerView extends RcElement {
 
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    private _size: number;
-    private _shape: string;
-    private _line: LineElement;
-    private _marker: PathElement;
+//     //-------------------------------------------------------------------------
+//     // constructor
+//     //-------------------------------------------------------------------------
+//     private _size: number;
+//     private _shape: string;
+//     private _line: LineElement;
+//     private _marker: PathElement;
 
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(doc: Document, size: number) {
-        super(doc, SeriesView.LEGEND_MARKER);
+//     //-------------------------------------------------------------------------
+//     // constructor
+//     //-------------------------------------------------------------------------
+//     constructor(doc: Document, size: number) {
+//         super(doc, SeriesView.LEGEND_MARKER);
 
-        this._size = size;
-        this.add(this._line = new LineElement(doc));
-        this._line.setHLine(size / 2, 0, size * 2);
-        this.add(this._marker = new PathElement(doc));
-        this._marker.translate(size / 2, 0);
-        this.setShape(Shape.CIRCLE, 12);
-    }
+//         this._size = size;
+//         this.add(this._line = new LineElement(doc));
+//         this._line.setHLine(size / 2, 0, size * 2);
+//         this.add(this._marker = new PathElement(doc));
+//         this._marker.translate(size / 2, 0);
+//         this.setShape(Shape.CIRCLE, 12);
+//     }
 
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    setShape(value: string, size: number): void {
-        if (value !== this._shape || size !== this._size) {
-            this._shape = value;
-            SvgShapes.setShape(this._marker, value as any, (this._size = size) / 2);   
-            this._marker.translate(size / 2, 0);
-            this._line.setHLine(size / 2, 0, size * 2);
-        }
-    }
-}
+//     //-------------------------------------------------------------------------
+//     // methods
+//     //-------------------------------------------------------------------------
+//     setShape(value: string, size: number): void {
+//         if (value !== this._shape || size !== this._size) {
+//             this._shape = value;
+//             SvgShapes.setShape(this._marker, value as any, (this._size = size) / 2);   
+//             this._marker.translate(size / 2, 0);
+//             this._line.setHLine(size / 2, 0, size * 2);
+//         }
+//     }
+// }
 
 export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
 

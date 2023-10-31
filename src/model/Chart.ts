@@ -58,6 +58,7 @@ export interface IChart {
     xStart: number;
     xStep: number;
     _splitted: boolean;
+    _splits: number[];
     // series2: ISeries;
     first: IPlottingItem;
     firstSeries: Series;
@@ -305,6 +306,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _navigator: SeriesNavigator;
 
     _splitted: boolean;
+    _splits: number[];
     private _inverted: boolean;
     private _polar: boolean;
     private _gaugeOnly: boolean;
@@ -675,8 +677,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     prepareRender(): void {
-        this._splitted = !this._polar && this._body.split.visible;
         this._inverted = !this._polar && this.inverted;
+        if (this._splitted = !this._polar && this._body.split.visible) {
+            this._splits = this._body.getSplits();
+        }
 
         this._xAxes.disconnect();
         this._yAxes.disconnect();

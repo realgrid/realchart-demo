@@ -724,11 +724,12 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 y = yOrg;
 
                 p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-                if (based && yBase !== yMin) { // 양쪽으로 'grow'할 때 (#48)
-                    p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr);
-                } else {
-                    p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr; 
-                }
+                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr);
+                // if (based && yBase !== yMin) { // 양쪽으로 'grow'할 때 (#48)
+                //     p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr);
+                // } else {
+                //     p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr; 
+                // }
 
                 // 아래에서 위로 올라가는 animation을 위해 바닥 지점을 전달한다.
                 this._layoutPointView(pv, i, x, y + hPoint, wPoint, hPoint);

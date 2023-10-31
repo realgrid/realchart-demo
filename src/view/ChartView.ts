@@ -215,6 +215,7 @@ class AxisSectionView extends SectionView {
     axes2: Axis[];
     views: AxisView[] = [];
     views2: AxisView[];
+    private _splits: number[];
     isX: boolean;
     isHorz: boolean;
     isOpposite: boolean;
@@ -259,6 +260,7 @@ class AxisSectionView extends SectionView {
             this._gap = m.chart.getAxesGap();  
 
             if (m.chart._splitted) {
+                this._splits = m.chart._splits;
                 this.views2 = views.filter(v => v.model.side);
                 this.axes2 = this.views2.map(v => v.model);
                 if (this.views2.length === 0) {
@@ -277,9 +279,13 @@ class AxisSectionView extends SectionView {
      * 수평 축들의 높이를 기본 설정에 따라 추측한다.
      */
     checkHeights(doc: Document, width: number, height: number): number {
-        let h = this.$_checkHeights(this.views, doc, width, height);
-        if (this.views2) h = Math.max(h, this.$_checkHeights(this.views2, doc, width, height));
-        return h;
+        if (this.views2) {
+            let h = this.$_checkHeights(this.views, doc, width, height * this._splits[0]);
+            h = Math.max(h, this.$_checkHeights(this.views2, doc, width, height * this._splits[1]));
+            return h;
+        } else {
+            return this.$_checkHeights(this.views, doc, width, height);
+        }
     }
     private $_checkHeights(views: AxisView[], doc: Document, width: number, height: number): number {
         let h = 0;
@@ -297,9 +303,13 @@ class AxisSectionView extends SectionView {
      * 수직 축들의 너비를 기본 설정에 따라 추측한다.
      */
     checkWidths(doc: Document, width: number, height: number): number {
-        let w = this.$_checkWidths(this.views, doc, width, height);
-        if (this.views2) w = Math.max(w, this.$_checkWidths(this.views2, doc, width, height));
-        return w;
+        if (this.views2) {
+            let w = this.$_checkWidths(this.views, doc, width * this._splits[0], height);
+            w = Math.max(w, this.$_checkWidths(this.views2, doc, width * this._splits[1], height));
+            return w;
+        } else {
+            return this.$_checkWidths(this.views, doc, width, height);
+        }
     }
     private $_checkWidths(views: AxisView[], doc: Document, width: number, height: number): number {
         let w = 0;
@@ -805,7 +815,7 @@ export class ChartView extends RcElement {
 
         // body
         const hPlot = this._plotHeight - hMiddle;
-        const wPlot = this._plotWidth - wCenter;
+        let wPlot = this._plotWidth - wCenter;
 
         x = org.x;
         y = org.y - this._plotHeight;
@@ -864,6 +874,8 @@ export class ChartView extends RcElement {
             }
             vCredit.translate(cx, cy);
         }
+
+        wPlot += wCenter;
 
         // title
         if (vTitle.visible) {

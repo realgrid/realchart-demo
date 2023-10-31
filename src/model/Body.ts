@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { pickNum } from "../common/Common";
 import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, _undefined, calcPercent, parsePercentSize } from "../common/Types";
 import { AxisGuide } from "./Axis";
 import { IChart } from "./Chart";
@@ -47,13 +48,9 @@ export class BodySplit extends ChartItem {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private _size: RtPercentSize;
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _sizeDim: IPercentSize;
-
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -65,25 +62,15 @@ export class BodySplit extends ChartItem {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * 분할 영역이 차지할 크기를 전체 body 영역에 대한 상대적 크기나 픽셀 단위의 크기로 지정한다.\
-     * 지정하지 않으면 '50%'로 표시한다.
+     * 분할 영역이 차지할 크기를 전체 body 영역에 대한 비율로 지정한다.
+     * 
+     * @config
      */
-    get size(): RtPercentSize {
-        return this._size;
-    }
-    set size(value: RtPercentSize) {
-        if (value !== this._size) {
-            this._size = value;
-            this._sizeDim = parsePercentSize(value, true);
-        }
-    }
+    size = 0.5;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getSize(domain: number): number {
-        return calcPercent(this._sizeDim, domain, domain / 2);
-    }
 }
 
 /**
@@ -205,6 +192,11 @@ export class Body extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getSplits(): number[] {
+        const sz = Math.max(0, Math.min(1, pickNum(this.split.size, 0.5)));
+        return [1 - sz, sz];
+    }
+
     calcRadius(width: number, height: number): number {
         return calcPercent(this._radiusDim, Math.min(width, height));
     }
