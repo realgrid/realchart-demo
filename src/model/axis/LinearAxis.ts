@@ -15,7 +15,13 @@ import { SeriesGroup, SeriesGroupLayout } from "../Series";
 export class ContinuousAxisTick extends AxisTick {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // fields
+    //-------------------------------------------------------------------------
+    _baseAxis: Axis;
+    _step: number;
+
+    //-------------------------------------------------------------------------
+    // properties
     //-------------------------------------------------------------------------
     stepInterval: number;
     stepPixels = 72;
@@ -40,12 +46,6 @@ export class ContinuousAxisTick extends AxisTick {
      * @config
      */
     baseRange = false;
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    _baseAxis: Axis;
-    _step: number;
 
     //-------------------------------------------------------------------------
     // methods
@@ -497,6 +497,11 @@ export abstract class ContinuousAxis extends Axis {
         if (isNaN(base) && min < 0 && max > 0) {
             base = 0;
         } 
+
+        if (tick._baseAxis instanceof ContinuousAxis && tick.baseRange) {
+            min = tick._baseAxis.axisMin();
+            max = tick._baseAxis.axisMax();
+        }
 
         let steps = tick.buildSteps(length, base, min, max, false);
         const ticks: IAxisTick[] = [];

@@ -126,7 +126,7 @@ export class AxisGridView extends ChartElement<AxisGrid> {
         const lines = this._lines;
         const end = lines.count - 1;
 
-        this._lines.prepare(pts.length, (line) => {
+        lines.prepare(pts.length, (line) => {
             line.setClass('rct-axis-grid-line');
         });
 
@@ -1007,7 +1007,7 @@ export class BodyView extends ChartElement<Body> {
         }
 
         [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
-            if (needAxes && axis.grid.isVisible() && !views.has(axis)) {
+            if ((axis._isX || axis.side == this._side) && needAxes && axis.grid.isVisible() && !views.has(axis)) {
                 const v = new AxisGridView(doc);
 
                 views.set(axis, v);

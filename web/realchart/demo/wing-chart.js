@@ -10,7 +10,7 @@ const config = {
     inverted: true,
     title: "Wing Chart by Split",
     options: {
-        // animatable: false
+        animatable: false
     },
     legend: {
         visible: false,
@@ -38,8 +38,10 @@ const config = {
     }, {
         side: true,
         title: "여자",
-        baseAxis: 0,
+        // grid: false,
         tick: {
+            baseAxis: 0,
+            baseRange: true,
             length: 5,
             margin: 0
         }
