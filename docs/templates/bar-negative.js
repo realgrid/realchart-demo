@@ -5,6 +5,7 @@ export const config = {
   yAxis: { title: '온도 차이 (°C)' },
   series: {
     pointLabel: { visible: true, effect: 'outline' },
+    belowStyle: { fill: '#c00', stroke: '#c00' },
     data: [
       [ '1월', -2 ], [ '2월', -1 ],
       [ '3월', 1 ],  [ '4월', 5 ],

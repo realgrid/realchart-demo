@@ -1,5 +1,5 @@
 export const config = {
-  options: { animatable: false },
+  options: {},
   title: {
     text: 'Series Navigator (Working...)',
     style: { fontSize: '1.2em' },
