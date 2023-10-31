@@ -156,7 +156,9 @@
         "Trendlines": "trendline",
         "Guides": "axis-guide",
         "Crosshair": "crosshair",
-        "Background": "body-background"
+        "Background": "body-background",
+        "Wing Chrt by Split": "wing-chart"
+
     },
     "Chart": {
         "Background": "background",
