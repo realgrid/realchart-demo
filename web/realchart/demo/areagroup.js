@@ -62,11 +62,11 @@ function setActions(container) {
         chart.load(config, animate);
     }, 'default');
     createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
-        config.series.series.forEach(s => s.lineType = _getValue(e));
+        config.series.children.forEach(s => s.lineType = _getValue(e));
         chart.load(config, animate);
     }, 'default');
     createCheckBox(container, 'Point Marker', function (e) {
-        config.series.series.forEach(s => s.marker.visible = _getChecked(e));
+        config.series.children.forEach(s => s.marker.visible = _getChecked(e));
         chart.load(config, animate);
     }, true);
     createCheckBox(container, 'Inverted', function (e) {

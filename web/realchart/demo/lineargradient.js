@@ -51,7 +51,7 @@ function setActions(container) {
     createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
         config.series.lineType = _getValue(e);
         chart.load(config);
-    }, 'default');
+    }, 'spline');
     createCheckBox(container, 'Point Marker', function (e) {
         config.series.marker.visible = _getChecked(e);
         chart.load(config);

@@ -83,14 +83,6 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.load(config);
     }, false);
-    createCheckBox(container, 'ColorByPoint', function (e) {
-        config.series.colorByPoint = _getChecked(e);
-        chart.load(config);
-    }, false);
-    createCheckBox(container, 'Outlined Label', function (e) {
-        config.series.pointLabel.effect = _getChecked(e) ? 'outline' : 'none';
-        chart.load(config);
-    }, false);
 }
 
 function init() {

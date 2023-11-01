@@ -97,11 +97,15 @@ function setActions(container) {
         chart.load(config, animate);
     }, true);
     createCheckBox(container, 'X Reversed', function (e) {
-        config.xAxis.reversed = _getChecked(e);
+        config.xAxis[0].reversed = _getChecked(e);
         chart.load(config, animate);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
-        config.yAxis.reversed = _getChecked(e);
+        config.yAxis[0].reversed = _getChecked(e);
+        chart.load(config, animate);
+    }, true);
+    createCheckBox(container, 'Y Reversed2', function (e) {
+        config.yAxis[1].reversed = _getChecked(e);
         chart.load(config, animate);
     }, false);
 }

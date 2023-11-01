@@ -62,7 +62,7 @@ function setActions(container) {
         alert('hello');
     });
     createCheckBox(container, 'ColorByPoint', function (e) {
-        config.series.colorByPoint = _getChecked(e);
+        config.series[0].colorByPoint = _getChecked(e);
         chart.load(config, animate);
     }, false);
     createCheckBox(container, 'Inverted', function (e) {

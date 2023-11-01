@@ -78,14 +78,14 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.load(config);
     }, false);
-    createListBox(container, "XAxis.type", ['linear', 'log', 'category'], function (e) {
+    createListBox(container, "XAxis.type", ['time', 'linear', 'log',], function (e) {
         config.xAxis.type = _getValue(e);
         chart.load(config);
-    }, 'log');
+    }, 'time');
     createListBox(container, "YAxis.type", ['linear', 'log'], function (e) {
         config.yAxis.type = _getValue(e);
         chart.load(config);
-    }, 'log');
+    }, 'linear');
 }
 
 function init() {

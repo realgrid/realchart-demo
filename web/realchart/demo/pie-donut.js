@@ -67,10 +67,10 @@ function setActions(container) {
         config.legend.visible = _getChecked(e);
         chart.load(config, animate);
     }, true);
-    createListBox(container, "Legend.position", ['bottom', 'top', 'right', 'left'], function (e) {
-        config.legend.position = _getValue(e);
+    createListBox(container, "Legend.location", ['bottom', 'top', 'right', 'left'], function (e) {
+        config.legend.location = _getValue(e);
         chart.load(config, animate);
-    }, 'left');
+    }, 'bottom');
     line(container);
     createListBox(container, "series.startAngle", [0, 90, 180, 270], function (e) {
         config.series.startAngle = _getValue(e);

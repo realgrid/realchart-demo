@@ -60,10 +60,10 @@ function setActions(container) {
         config.legend.visible = _getChecked(e);
         chart.load(config, animate);
     }, true);
-    createListBox(container, "Legend.position", ['bottom', 'top', 'right', 'left'], function (e) {
-        config.legend.position = _getValue(e);
+    createListBox(container, "Legend.location", ['bottom', 'top', 'right', 'left'], function (e) {
+        config.legend.location = _getValue(e);
         chart.load(config, animate);
-    }, 'right');
+    }, 'bottom');
     line(container);
     createCheckBox(container, 'series.reversed', function (e) {
         config.series.reversed = _getChecked(e);

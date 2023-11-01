@@ -57,10 +57,6 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createCheckBox(container, 'ColorByPoint', function (e) {
-        config.series.colorByPoint = _getChecked(e);
-        chart.load(config, animate);
-    }, false);
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
         chart.load(config, animate);

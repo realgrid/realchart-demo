@@ -45,7 +45,7 @@ function setActions(container) {
         alert('hello');
     });
     createCheckBox(container, 'Curved', function (e) {
-        config.series.curved = _getChecked(e);
+        config.series[0].curved = _getChecked(e);
         chart.load(config);
     }, true);
     createCheckBox(container, 'Inverted', function (e) {
