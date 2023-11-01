@@ -78,7 +78,8 @@ export abstract class RcControl extends RcWrappableObject {
     constructor(doc: Document, container: string | HTMLDivElement, className?: string) {
         super();
 
-        $_lc();
+        let lc = "$$LicenseCheck";
+        lc == "1" && !$_lc()
 
         if (!doc && container instanceof HTMLDivElement) {
             doc = container.ownerDocument;
