@@ -4005,7 +4005,9 @@ export const config = {
         }
       ],
       xField: 'height',
-      yField: 'weight'
+      yField: 'weight',
+      shape: 'diamond',
+      color: '#cc4400ee'
     }
   ]
 }

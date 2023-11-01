@@ -2,11 +2,11 @@ export const config = {
   templates: {},
   inverted: true,
   title: 'Wing Chart by Split',
-  options: { animatable: false },
+  options: {},
   legend: { visible: false, itemGap: 100, backgroundStyle: { fill: 'none' } },
   xAxis: [
     {
-      position: 'inside',
+      position: 'between',
       categories: [
         '0-4',   '5-9',   '10-14',
         '15-19', '20-24', '25-29',
