@@ -53,6 +53,7 @@
     },
     "Bubble": {
         "Bubble": "bubble",
+        "Multiple Bubble": "bubble-multi",
         "Null Point": "bubble-null"
     },
     "BoxPlot": {
