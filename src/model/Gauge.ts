@@ -402,7 +402,7 @@ export class GaugeCollection {
     // methods
     //-------------------------------------------------------------------------
     getVisibles(side: boolean): GaugeBase[] {
-        return this._visibles.filter(g => g.side == side);
+        return this._visibles.filter(g => !g.side == !side);
     }
 
     getGauge(name: string): Gauge {

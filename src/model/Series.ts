@@ -1008,7 +1008,7 @@ export class PlottingItemCollection  {
 
     getVisibleSeries(side: boolean): Series[] {
         if (this.chart._splitted) {
-            return this._visibleSeries.filter(ser => ser._yAxisObj.side == side);
+            return this._visibleSeries.filter(ser => !ser._yAxisObj.side == !side);
         } else {
             return this._visibleSeries.slice(0);
         }
