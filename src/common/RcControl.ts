@@ -16,6 +16,7 @@ import { IRect, Rectangle } from "./Rectangle";
 import { SvgShapes } from "./impl/SvgShape";
 import { ISize } from "./Size";
 import { IPoint } from "./Point";
+import { $_lc } from "./LicChecker";
 
 export interface IPointerHandler {
     handleDown(ev: PointerEvent): void;
@@ -76,6 +77,8 @@ export abstract class RcControl extends RcWrappableObject {
     //-------------------------------------------------------------------------
     constructor(doc: Document, container: string | HTMLDivElement, className?: string) {
         super();
+
+        $_lc();
 
         if (!doc && container instanceof HTMLDivElement) {
             doc = container.ownerDocument;
