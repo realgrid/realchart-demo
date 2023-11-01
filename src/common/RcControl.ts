@@ -16,9 +16,7 @@ import { IRect, Rectangle } from "./Rectangle";
 import { SvgShapes } from "./impl/SvgShape";
 import { ISize } from "./Size";
 import { IPoint } from "./Point";
-import { h } from '@wooritech/rockhammer';
-import getL from '../utils/LicenseGetter';
-import dm from '../utils/matcher';
+import { $_lc } from "./LicChecker";
 
 export interface IPointerHandler {
     handleDown(ev: PointerEvent): void;
@@ -74,15 +72,13 @@ export abstract class RcControl extends RcWrappableObject {
 
     loaded = false;
 
-    private _cm = false;
-
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, container: string | HTMLDivElement, className?: string) {
         super();
 
-        this.$_checkL();
+        $_lc();
 
         if (!doc && container instanceof HTMLDivElement) {
             doc = container.ownerDocument;
@@ -503,33 +499,6 @@ export abstract class RcControl extends RcWrappableObject {
             this._doAfterRender();
             console.timeEnd('render chart');
         }
-    }
-
-    private $_checkL() {
-        let hm = null;
-        let l = '';
-        
-        try {
-            l = getL();
-            hm = new h(l);
-
-        } catch (e) {
-            throw new Error(`RealChart를 사용하려면 도움말을 참조하세요.\nhttps://www.realchart.co.kr/ (${e?.message || e})`);
-        }
-
-        // enterpise 이거나 subscription, limited, evaluation 이면서 expired 되지 않아야 can make
-        // todo: host check
-        this._cm = (hm !== null) 
-            && (hm.validate([{ name: 'RealChart', lic: ['Enterprise'] }]))
-            || (hm.validate([{ name: 'RealChart', lic: ['Subscription', 'Limited', 'Evaluation'] }]) 
-                && !hm.expired('expire', 1)
-                && dm(hm.lic.server));
-
-        if (!this._cm) {
-            throw new Error(`RealChart를 사용하려면 도움말을 참조하세요.\nhttps://www.realchart.co.kr/`);
-        }
-
-        return true;
     }
 
     protected abstract _doRender(bounds: IRect): void;
