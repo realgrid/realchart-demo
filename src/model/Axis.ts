@@ -113,6 +113,11 @@ export enum AxisTitleAlign {
 export class AxisTitle extends AxisItem {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _rotation: number;
+
+    //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     /**
@@ -122,6 +127,25 @@ export class AxisTitle extends AxisItem {
      * @config
      */
     text: string;
+    /**
+     * 텍스트 회전 각도.\
+     * 수직 축일 때는 0, 90, 270, -90, -270 중 하나로 지정할 수 있다.
+     * 수평 축일 때는 무조건 0이다.
+     * 
+     * @default undefined 수직 축일 때 왼쪽에 표시되면 90, 오른쪽에 표시되면 270, 수평 축일 때는 0
+     * @config
+     */
+    get rotatin(): 0 | 90 | 270 | -90 | -270 {
+        return this._rotation as any;
+    }
+    set rotation(value: 0 | 90 | 270 | -90 | -270) {
+        let v = +value;
+
+        if (!Number.isNaN(v) && !(v === 90 || v === 270 || v === -90 || v === -270)) {
+            v = 0;
+        }
+        this._rotation = v;
+    }
     /**
      * 축 내에서 타이틀의 위치.\
      * {@link offset}으로 경계 지점과의 간격을 지정할 수 있다.
@@ -156,6 +180,16 @@ export class AxisTitle extends AxisItem {
     //-------------------------------------------------------------------------
     isVisible(): boolean {
         return this.visible && !isNull(this.text);
+    }
+
+    getRotation(axis: Axis): number {
+        if (axis._isHorz) {
+            return 0;
+        } else if (isNaN(this._rotation)) {
+            return axis.position === AxisPosition.OPPOSITE ? 90 : 270;
+        } else {
+            return this._rotation;
+        }
     }
 
     //-------------------------------------------------------------------------

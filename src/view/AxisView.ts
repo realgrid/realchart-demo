@@ -36,6 +36,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
     // fields
     //-------------------------------------------------------------------------
     private _textView: TextElement;
+    _angle: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -58,23 +59,36 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
     }
 
     protected _doMeasure(doc: Document, model: AxisTitle, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this.rotation = 0;
+        this._angle = model.getRotation(model.axis);
         this._textView.text = model.text;
 
-        return toSize(this._textView.getBBounds());
+        const sz = toSize(this._textView.getBBounds());
+
+        if (!model.axis._isHorz && this._angle !== 0) {
+            const w = sz.width;
+            sz.width = sz.height;
+            sz.height = w;
+        }
+        return sz;
     }
 
     protected _doLayout(isHorz: boolean): void {
-        const padding = this._paddings;
-        const margin = this._margins;
+        // text
+        this._textView.translateY(this._margins.top + this._paddings.top);
 
         // rotation
         if (!isHorz) {
-            this.setRotaion(0, this.height / 2, this.model.axis.position === AxisPosition.OPPOSITE ? 90 : 270);
+            this.setRotaion(0, this.height / 2, this._angle);
         }
+    }
 
-        // text
-        this._textView.translateY(margin.top + padding.top);
+    resizeByMeasured(): ChartElement<ChartItem> {
+        if (this._angle === 0) {
+            this.resize(this.mw, this.mh);
+        } else {
+            this.resize(this.mh, this.mw);
+        }
+        return this;
     }
 
     layout(param?: any): ChartElement<ChartItem> {
@@ -387,7 +401,7 @@ export class AxisView extends ChartElement<Axis> {
 
         // title
         if (this._titleView.visible = m.title.isVisible()) {
-            w += this._titleView.measure(doc, m.title, width, height, 1).height; // [NOTE] width가 아니다.
+            w += this._titleView.measure(doc, m.title, width, height, 1).width; // [NOTE] width가 아니다.
             w += m.title.gap;
         }
         
@@ -484,8 +498,8 @@ export class AxisView extends ChartElement<Axis> {
         } else {
             // title
             if (titleView.visible) { // checkHeight/checkWidth 에서 visible 설정.
-                sz += titleView.mh;
-                sz += model.title.gap || 0;
+                sz += horz ? titleView.mh : titleView.mw;
+                sz += +model.title.gap || 0;
             }
 
             // scrollbar
@@ -557,39 +571,113 @@ export class AxisView extends ChartElement<Axis> {
         if (!this._simpleMode) {
             const titleView = this._titleView;
             const scrollView = this._scrollView;
+            let x = 0;
             let y = 0;
 
             // title
             if (titleView.visible) {
                 const labelSize = this._labelSize;
-                const gap = model.title.gap || 0;
-                let x: number;
+                const off = +model.title.offset || 0;
+                const gap = +model.title.gap || 0;
     
                 titleView.resizeByMeasured().layout(horz);
     
                 if (horz) {
                     y += opp ? 0 : len + labelSize + gap;
 
-                    switch (titleView.model.align) {
-                        case AxisTitleAlign.START:
-                            x = titleView.width / 2;
-                            break;
-                        case AxisTitleAlign.END:
-                            x = w - titleView.width / 2;
-                            break;
-                        case AxisTitleAlign.MIDDLE:
-                        default:
-                            x = w / 2;
-                            break;
+                    if (model.reversed) {
+                        switch (model.title.align) {
+                            case AxisTitleAlign.START:
+                                x = w - titleView.width / 2 - off;
+                                break;
+                            case AxisTitleAlign.END:
+                                x = titleView.width / 2 + off;
+                                break;
+                            case AxisTitleAlign.MIDDLE:
+                            default:
+                                x = w / 2 - off;
+                                break;
+                        }
+                    } else {
+                        switch (model.title.align) {
+                            case AxisTitleAlign.START:
+                                x = titleView.width / 2 + off;
+                                break;
+                            case AxisTitleAlign.END:
+                                x = w - titleView.width / 2 - off;
+                                break;
+                            case AxisTitleAlign.MIDDLE:
+                            default:
+                                x = w / 2 + off;
+                                break;
+                        }
                     }
                     
                     titleView.translate(x, y);
                     y += titleView.height;
 
                 } else {
-                    x = opp ? len + labelSize + gap + titleView.height / 2 : w - len - labelSize - gap - titleView.height / 2;
+                    const sz = titleView._angle === 0 ? titleView.width : titleView.height;
+                    x = opp ? len + labelSize + gap + sz / 2 : w - len - labelSize - gap - sz / 2;
     
-                    titleView.translate(x, (h - titleView.height) / 2);
+                    if (model.reversed) {
+                        if (titleView._angle === 0) {
+                            switch (model.title.align) {
+                                case AxisTitleAlign.START:
+                                    y = 0 + off;
+                                    break;
+                                case AxisTitleAlign.END:
+                                    y = h - titleView.height - off;
+                                    break;
+                                case AxisTitleAlign.MIDDLE:
+                                default:
+                                    y = (h - titleView.height) / 2 + off;
+                                    break;
+                            }
+                        } else {
+                            switch (model.title.align) {
+                                case AxisTitleAlign.START:
+                                    y = titleView.width / 2 - titleView.height / 2 + off;
+                                    break;
+                                case AxisTitleAlign.END:
+                                    y = h - titleView.width / 2 - titleView.height / 2 - off;
+                                    break;
+                                case AxisTitleAlign.MIDDLE:
+                                default:
+                                    y = (h - titleView.height) / 2 + off;
+                                    break;
+                            }
+                        }
+                    } else {
+                        if (titleView._angle === 0) {
+                            switch (model.title.align) {
+                                case AxisTitleAlign.START:
+                                    y = h - titleView.height - off;
+                                    break;
+                                case AxisTitleAlign.END:
+                                    y = 0 + off;
+                                    break;
+                                case AxisTitleAlign.MIDDLE:
+                                default:
+                                    y = (h - titleView.height) / 2 - off;
+                                    break;
+                            }
+                        } else {
+                            switch (model.title.align) {
+                                case AxisTitleAlign.START:
+                                    y = h - titleView.width / 2 - titleView.height / 2 - off;
+                                    break;
+                                case AxisTitleAlign.END:
+                                    y = titleView.width / 2 - titleView.height / 2 + off;
+                                    break;
+                                case AxisTitleAlign.MIDDLE:
+                                default:
+                                    y = (h - titleView.height) / 2 - off;
+                                    break;
+                            }
+                        }
+                    }
+                    titleView.translate(x, y);
                 }
             }
     
@@ -608,43 +696,6 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    // private $_prepareChecker(doc: Document, m: Axis): AxisLabelElement {
-    //     if (this._labelContainer.visible = m.label.visible) {
-    //         const ticks = m._ticks;
-    //         let tick = ticks[0];
-    //         let t: AxisLabelElement;
-
-    //         if (tick) {
-    //             if (m.label.getRotation() !== 0) {
-    //                 let len = tick.label.length;
-    //                 let j = 0;
-
-    //                 for (let i = 1; i < ticks.length; i++) {
-    //                     if (ticks[i].label.length > len) {
-    //                         len = ticks[i].label.length;
-    //                         tick = ticks[i];
-    //                         j = i;
-    //                     }
-    //                 }
-    //                 t = this._labelViews[j];
-
-    //             } else {
-    //                 t = this._labelViews[0];
-    //             }
-    
-    //             if (!t) {
-    //                 t = new AxisLabelElement(doc, 'rct-axis-label');
-    //                 t.anchor = TextAnchor.START;
-    //                 this._labelContainer.add(t);
-    //                 this._labelViews.push(t);
-    //             }
-        
-    //             t.text = tick.label
-    //             return t;
-    //         }
-    //     }
-    // }
-
     private $_prepareTickMarks(doc: Document, m: Axis): boolean {
         const container = this._markContainer;
 

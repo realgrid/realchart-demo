@@ -91,14 +91,6 @@ function setActions(container) {
         config.xAxis.categoryPadding = _getValue(e);
         chart.load(config);
     }, '0.1');
-    createCheckBox(container, 'X.title', function (e) {
-        config.xAxis.title.visible = _getChecked(e);
-        chart.load(config, animate);
-    }, true);
-    createListBox(container, "X.title.align", ['start', 'middle', 'end'], function (e) {
-        config.xAxis.title.align = _getValue(e);
-        chart.load(config);
-    }, 'middle');
     createCheckBox(container, 'X.tick', function (e) {
         config.xAxis.tick.visible = _getChecked(e);
         chart.load(config, animate);
