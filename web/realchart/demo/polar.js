@@ -15,7 +15,7 @@ const config = {
     },
     yAxis: {
         // line: true,
-        label: false,
+        label: true,
         guide: [{
             type: 'line',
             value: 5.5,

@@ -62,7 +62,7 @@ test.describe('polar.html test', async function () {
 				(el) => el.textContent,
 				text[i]
 			);
-			expect(labelText).eq(config.series[0].data[i][0]);
+			expect(labelText).eq(config.xAxis.categories[i]);
 		}
 	});
 

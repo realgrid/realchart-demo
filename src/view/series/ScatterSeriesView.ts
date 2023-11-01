@@ -9,6 +9,7 @@
 import { ElementPool } from "../../common/ElementPool";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
+import { Utils } from "../../common/Utils";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { ScatterSeries, ScatterSeriesPoint } from "../../model/series/ScatterSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
@@ -85,6 +86,8 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
     private $_layoutMarkers(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
+        const jitterX = series.jitterX;
+        const jitterY = series.jitterY;
         const labels = series.pointLabel;
         const labelOff = labels.offset;
         const labelViews = this._labelViews();
@@ -102,17 +105,19 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
             if (mv.setVisible(!p.isNull)) {
                 const s = series.shape;
                 const sz = series.radius;
+                const xJitter = Utils.jitter(p.xValue, jitterX);
+                const yJitter = Utils.jitter(p.yGroup, jitterY);
                 let path: (string | number)[];
                 let x: number;
                 let y: number;
 
                 // m.className = model.getPointStyle(i);
 
-                x = p.xPos = xAxis.getPosition(xLen, p.xValue);
-                y = p.yPos = yOrg - yAxis.getPosition(yLen, p.yValue);
+                x = p.xPos = xAxis.getPosition(xLen, xJitter);
+                y = p.yPos = yOrg - yAxis.getPosition(yLen, yJitter);
                 if (inverted) {
-                    x = yAxis.getPosition(yLen, p.yGroup);
-                    y = yOrg - xAxis.getPosition(xLen, p.xValue);
+                    x = yAxis.getPosition(yLen, yJitter);
+                    y = yOrg - xAxis.getPosition(xLen, xJitter);
                 }
 
                 switch (s) {

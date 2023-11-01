@@ -764,9 +764,9 @@ export class Utils {
         }
     }
 
-    static watch(): Stopwatch {
-        return new Stopwatch();
-    }
+    // static watch(): Stopwatch {
+    //     return new Stopwatch();
+    // }
 
     static uniqueKey = (function () {
         let hash = Math.random().toString(36).substring(2, 9) + '-';
@@ -802,32 +802,36 @@ export class Utils {
             }
         }
     }
-}
 
-export class Stopwatch {
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    private _started: number;
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor() {
-        this._started = +new Date();
-    }
-
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    elapsed(reset = false): number {
-        const e =  +new Date() - this._started;
-        reset && (this._started = +new Date());
-        return e;
-    }
-
-    elapsedText(reset = false, suffix = 'ms.'): string {
-        return this.elapsed(reset) + suffix;
+    static jitter(v: number, amount: number): number {
+        return v + (Math.random() * 2 - 1 ) * amount; 
     }
 }
+
+// export class Stopwatch {
+
+//     //-------------------------------------------------------------------------
+//     // fields
+//     //-------------------------------------------------------------------------
+//     private _started: number;
+
+//     //-------------------------------------------------------------------------
+//     // constructor
+//     //-------------------------------------------------------------------------
+//     constructor() {
+//         this._started = +new Date();
+//     }
+
+//     //-------------------------------------------------------------------------
+//     // methods
+//     //-------------------------------------------------------------------------
+//     elapsed(reset = false): number {
+//         const e =  +new Date() - this._started;
+//         reset && (this._started = +new Date());
+//         return e;
+//     }
+
+//     elapsedText(reset = false, suffix = 'ms.'): string {
+//         return this.elapsed(reset) + suffix;
+//     }
+// }
