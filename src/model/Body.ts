@@ -165,7 +165,12 @@ export class Body extends ChartItem {
      * @CONFIG
      */
     startAngle = 0;
-    circular = true; // TODO: 뭐지?
+    /**
+     * false이면 polar 차트일 때, x 축선과 y축 그리드 선들을 다각형으로 표시한다.
+     * 
+     * @config
+     */
+    circular = true;
     /**
      * 배경 이미지 설정 모델
      * 

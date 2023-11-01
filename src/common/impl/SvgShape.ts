@@ -36,12 +36,12 @@ export class SvgShapes {
         return ['M', x1, y1, 'L', x2, y2];
     }
 
-    static lines(pts: number[]): PathValue[] {
+    static lines(...pts: number[]): PathValue[] {
         let i = 0;
         const vals = ['M', pts[i], pts[i + 1]];
 
-        for (; i < pts.length; i++) {
-            vals.push('L', pts[i++], pts[i]);
+        for (; i < pts.length; i += 2) {
+            vals.push('L', pts[i], pts[i + 1]);
         } 
         vals.push('Z');
         return vals;

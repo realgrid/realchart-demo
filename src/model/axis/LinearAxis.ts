@@ -63,7 +63,7 @@ export class ContinuousAxisTick extends AxisTick {
         } else if (this.stepInterval > 0) {
             pts = this._getStepsByInterval(this.stepInterval, base, min, max);
         } else if (this.stepPixels > 0) {
-            pts = this._getStepsByPixels(length, this.stepPixels, base, min, max);
+            pts = this._getStepsByPixels(length, (this.axis?._isPolar ? 0.5 : 1) * this.stepPixels, base, min, max);
         } else {
             pts = min !== max ? [min, max] : [min];
         }
@@ -487,6 +487,7 @@ export abstract class ContinuousAxis extends Axis {
         }
 
         const tick = this.tick as ContinuousAxisTick;
+        const based = tick._baseAxis instanceof ContinuousAxis;
         let { min, max } = this._adjustMinMax(this._calcedMin = calcedMin, this._calcedMax = calcedMax);
         let base = this._base;
 
@@ -494,7 +495,7 @@ export abstract class ContinuousAxis extends Axis {
             base = 0;
         } 
 
-        if (tick._baseAxis instanceof ContinuousAxis && tick.baseRange) {
+        if (based && tick.baseRange) {
             min = tick._baseAxis.axisMin();
             max = tick._baseAxis.axisMax();
         }
@@ -507,12 +508,14 @@ export abstract class ContinuousAxis extends Axis {
                 steps.shift();
             }
         } else {
-            while (steps.length > 2 && steps[1] <= min) {
-                steps.shift();
-            }
-            if (!isNaN(tick._step)) {
-                while (steps[0] > min) {
-                    steps.unshift(tick.getNextStep(steps[0], -1));
+            if (!based) {
+                while (steps.length > 2 && steps[1] <= min) {
+                    steps.shift();
+                }
+                if (!isNaN(tick._step)) {
+                    while (steps[0] > min) {
+                        steps.unshift(tick.getNextStep(steps[0], -1));
+                    }
                 }
             }
             min = steps[0];
@@ -522,12 +525,14 @@ export abstract class ContinuousAxis extends Axis {
                 steps.pop();
             }
         } else {
-            while (steps.length > 2 && steps[steps.length - 2] >= max) {
-                steps.pop();
-            }
-            if (!isNaN(tick._step)) {
-                while (steps[steps.length - 1] < max) {
-                    steps.push(tick.getNextStep(steps[steps.length - 1], 1));
+            if (!based) {
+                while (steps.length > 2 && steps[steps.length - 2] >= max) {
+                    steps.pop();
+                }
+                if (!isNaN(tick._step)) {
+                    while (steps[steps.length - 1] < max) {
+                        steps.push(tick.getNextStep(steps[steps.length - 1], 1));
+                    }
                 }
             }
             max = steps[steps.length - 1];

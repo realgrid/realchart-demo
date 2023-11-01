@@ -213,6 +213,14 @@ export class ChartItem extends RcObject {
 
     protected _doPrepareRender(chart: IChart): void {
     }
+
+    protected _loadStroke(source: any): boolean {
+        if (isString(source)) {
+            this.visible = true;
+            this.style = { stroke: source };
+            return true;
+        }
+    }
 }
 
 export const BRIGHT_COLOR = 'white';

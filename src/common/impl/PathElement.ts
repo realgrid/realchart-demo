@@ -195,3 +195,42 @@ export class LineElementEx extends PathElement {
         }
     }
 }
+
+export class PolygonElement extends PathElement {
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setPoints(...pts: number[]): void {
+        this.setPath(SvgShapes.lines(...pts))
+    }
+}
+
+export class PolylineElement extends PathElement {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, styleName?: string) {
+        super(doc, styleName);
+
+        this.setStyle('fill', 'none');
+    }
+    
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setPoints(...pts: number[]): void {
+        this.setPath(SvgShapes.lines(...pts))
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    resetStyles(styles: any): boolean {
+        const r = super.resetStyles(styles);
+
+        this.setStyle('fill', 'none');
+        return r;
+    }
+}

@@ -50,6 +50,7 @@ export class ElementPool<T extends RcElement> extends RcObject {
     }
 
     protected _doDestory(): void {
+        this.freeAll();
         this._owner = null;
         this._creator = null;
 
@@ -236,9 +237,10 @@ export class ElementPool<T extends RcElement> extends RcObject {
         }
     }
 
-    freeAll(elements: T[], removeDelay = 0): void {
-        for (let elt of elements) {
-            this.free(elt, removeDelay);
+    freeAll(elements?: T[], removeDelay = 0): void {
+        elements = elements || this._views;
+        for (let i = elements.length - 1; i >= 0; i--) {
+            this.free(elements[i], removeDelay);
         }
     }
 

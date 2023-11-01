@@ -5,7 +5,7 @@
 const config = {
     title: "Category Axis",
     options: {
-        animatable: false
+        // animatable: false
     },
     xAxis: {
         categories: ['쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도'],

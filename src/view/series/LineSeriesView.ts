@@ -560,7 +560,6 @@ export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, LineSeriesView.CLASS);
-        //010-6669-7701
     }
 
     //-------------------------------------------------------------------------

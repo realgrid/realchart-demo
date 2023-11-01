@@ -334,7 +334,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._navigator = new SeriesNavigator(this);
 
         source && this.load(source);
-        this._polar = this.polar === true;
     }
 
     //-------------------------------------------------------------------------
@@ -630,6 +629,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
                 this[prop] = source[prop];
             }
         })
+        this._polar = this.polar === true;
         this.type = this.type || 'bar';
         this.gaugeType = this.gaugeType || 'circle';
 

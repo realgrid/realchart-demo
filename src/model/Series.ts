@@ -1647,7 +1647,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     canCategorized(): boolean {
-        return true;
+        return false;
     }
 
     defaultYAxisType(): string {

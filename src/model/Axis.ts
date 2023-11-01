@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isObject, isString, pickNum } from "../common/Common";
-import { Align, SVGStyleOrClass, VerticalAlign, fixnum, isNull } from "../common/Types";
+import { Align, SVGStyleOrClass, VerticalAlign, _undefined, fixnum, isNull } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
@@ -93,9 +93,14 @@ export class AxisLine extends AxisItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(axis: Axis) {
-        super(axis, true);//false);
+        super(axis, axis._isX);
+    }
 
-        this.visible = axis._isX; 
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doLoadSimple(source: any): boolean {
+        return this._loadStroke(source) || super._doLoadSimple(source);
     }
 }
 
@@ -215,12 +220,6 @@ export class AxisGrid extends AxisItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * polar 차트일 때 그리드 선을 원형으로 그릴 지 여부.
-     * 
-     * @config
-     */
-    circular = true;
     /**
      * 시작 값에 표시되는 그리드 선을 표시할 지 여부.
      * 
@@ -718,6 +717,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _isPolar: boolean;
     _isX: boolean;
     _isHorz: boolean;
     _isOpposite: boolean;
@@ -1138,7 +1138,7 @@ export class AxisCollection {
         const a = this.isX ? series.xAxis : series.yAxis;
         let axis: Axis;
 
-        if (isNumber(a) && a >= 0 && items.length) {
+        if (isNumber(a) && a >= 0 && a < items.length) {
             axis = items[a];
         } else if (isString(a)) {
             axis = items.find(item => item.name === a);
@@ -1181,20 +1181,24 @@ export class AxisCollection {
             if (isArray(src.categories)) {
                 t = 'category';
             } else if (this.isX) {
+                t = 'category';
                 for (const ser of chart._getSeries().items()) {
-                    if (ser.canCategorized()) {
+                    if (!ser.canCategorized()) {
                         if (src.name && ser.xAxis === src.name) {
-                            t = 'category';
+                            t = _undefined;
                             break;
-                        } else if (isNumber(ser.xAxis) && ser.xAxis === index) {
-                            t = 'category';
+                        } else if (ser.xAxis === index) {
+                            t = _undefined;
+                            break;
+                        } else if (isNull(ser.xAxis) && index === 0) {
+                            t = _undefined;
                             break;
                         }
                     }   
                 }
-                if (!t && chart.first?.canCategorized()) {
-                    t = 'category';
-                }
+                // if (!t && chart.first?.canCategorized()) {
+                //     t = 'category';
+                // }
             } else {
                 t = chart._getSeries().first?.defaultYAxisType();
             }
@@ -1210,6 +1214,7 @@ export class AxisCollection {
         const axis = new cls(chart, this.isX, src.name);
 
         axis.load(src);
+        axis._isPolar = chart.isPolar();
         return axis;
     }
 }

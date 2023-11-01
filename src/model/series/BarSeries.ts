@@ -98,6 +98,10 @@ export class BarSeriesGroup extends ClusterableSeriesGroup<BarSeries> implements
         return ser instanceof BarSeries;
     }
 
+    canCategorized(): boolean {
+        return true;
+    }
+
     getBaseValue(axis: IAxis): number {
         return axis._isX ? NaN : pickNum(this.baseValue, axis.getBaseValue());
     }
