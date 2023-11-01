@@ -99,6 +99,7 @@ export class LabelElement extends GroupElement {
             this._back?.remove();
             this._outline?.remove();
         }
+        this._text.setBoolData('outlined', !!this._outline);
 
         return this;
     }
@@ -106,7 +107,7 @@ export class LabelElement extends GroupElement {
     setContrast(target: Element): LabelElement {
         // contrast
         if (target && this._model.autoContrast) {
-            this._text.setContrast(target, this._model.darkStyle || 'rct-label-dark', this._model.lightStyle || 'rct-label-bright');
+            this._text.setContrast(target, this._model.darkStyle || 'rct-label-dark', this._model.lightStyle || 'rct-label-light');
         }
         // outline
         if (this._outline && this._outline.parent) {

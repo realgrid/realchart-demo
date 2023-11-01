@@ -116,18 +116,27 @@ export class AxisTitle extends AxisItem {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * 타이틀 텍스트.
+     * 타이틀 텍스트.\
      * 지정하지 않으면 타이틀 영역 자체가 없어진다.
      * 
      * @config
      */
     text: string;
     /**
-     * 축 내에서 타이틀의 위치.
+     * 축 내에서 타이틀의 위치.\
+     * {@link offset}으로 경계 지점과의 간격을 지정할 수 있다.
      * 
      * @config
      */
     align = AxisTitleAlign.MIDDLE;
+    /**
+     * {@link align} 기준으로 배치할 때 경계 지점과의 간격.\
+     * plus 값을 지정하면 차트 안쪽으로 들어온다.
+     * align이 'middle'일 때는 음수일 때 축 시작값 쪽으로 밀린다.
+     * 
+     * @config
+     */
+    offset = 0;
     /**
      * 타이틀과 틱 label들, 혹은 축 선 사이의 간격을 픽셀 단위로 지정한다.
      * 

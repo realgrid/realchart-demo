@@ -16,7 +16,7 @@ import { DEG_RAD, calcPercent, parsePercentSize } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis, AxisGuide, AxisLabelArrange, AxisPosition, AxisScrollBar, AxisTickMark, AxisTitle, AxisZoom, IAxisTick } from "../model/Axis";
+import { Axis, AxisGuide, AxisLabelArrange, AxisPosition, AxisScrollBar, AxisTickMark, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { Crosshair } from "../model/Crosshair";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
@@ -44,7 +44,6 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
         super(doc, AxisTitleView.TITLE_CLASS, 'rct-axis-title-background');
 
         this.add(this._textView = new TextElement(doc));
-        // this._textView.anchor = TextAnchor.START;
     }
 
     //-------------------------------------------------------------------------
@@ -505,9 +504,7 @@ export class AxisView extends ChartElement<Axis> {
         const between = model._isBetween;
         const ticks = model._ticks;
         const markPts = model._markPoints;
-        const titleView = this._titleView;
         const labelViews = this._labelViews;
-        const scrollView = this._scrollView;
         const markLen = this._markLen;
         const w = this.width;
         const h = this.height;
@@ -558,22 +555,39 @@ export class AxisView extends ChartElement<Axis> {
         }
 
         if (!this._simpleMode) {
+            const titleView = this._titleView;
+            const scrollView = this._scrollView;
             let y = 0;
 
             // title
             if (titleView.visible) {
                 const labelSize = this._labelSize;
                 const gap = model.title.gap || 0;
+                let x: number;
     
                 titleView.resizeByMeasured().layout(horz);
     
                 if (horz) {
                     y += opp ? 0 : len + labelSize + gap;
-                    // titleView.translate((w - titleView.width) / 2, this._markLen + labelSize);
-                    titleView.translate(w / 2, y);
+
+                    switch (titleView.model.align) {
+                        case AxisTitleAlign.START:
+                            x = titleView.width / 2;
+                            break;
+                        case AxisTitleAlign.END:
+                            x = w - titleView.width / 2;
+                            break;
+                        case AxisTitleAlign.MIDDLE:
+                        default:
+                            x = w / 2;
+                            break;
+                    }
+                    
+                    titleView.translate(x, y);
                     y += titleView.height;
+
                 } else {
-                    const x = opp ? len + labelSize + gap + titleView.height / 2 : w - len - labelSize - gap - titleView.height / 2;
+                    x = opp ? len + labelSize + gap + titleView.height / 2 : w - len - labelSize - gap - titleView.height / 2;
     
                     titleView.translate(x, (h - titleView.height) / 2);
                 }

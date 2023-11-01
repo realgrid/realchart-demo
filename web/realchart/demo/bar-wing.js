@@ -4,6 +4,14 @@
  * Bar Series 기본 예제.
  */
 const config = {
+    templates: {
+        xAxis: {
+            categories: [
+                '0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-40', '40-45',
+                '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80+'
+            ]
+        }
+    },
     inverted: true,
     title: "Bar Wing Chart",
     options: {
@@ -16,19 +24,13 @@ const config = {
         }
     },
     xAxis: [{
+        template: 'xAxis',
         title: "일일 Daily fat",
-        categories: [
-            '0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-40', '40-45',
-            '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80+'
-        ],
         grid: true,
     }, {
+        template: 'xAxis',
         title: "일일 Daily fat2",
         position: 'opposite',
-        categories: [
-            '0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-40', '40-45',
-            '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80+'
-        ],
     }],
     yAxis: {
         title: "Vertical 수직축 Axis",
@@ -87,7 +89,8 @@ function setActions(container) {
         chart.load(config, animate);
     }, true);
     createCheckBox(container, 'X Reversed', function (e) {
-        config.xAxis.reversed = _getChecked(e);
+        config.xAxis[0].reversed = _getChecked(e);
+        config.xAxis[1].reversed = _getChecked(e);
         chart.load(config, animate);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {

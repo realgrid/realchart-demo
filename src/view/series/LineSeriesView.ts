@@ -10,8 +10,7 @@ import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
-import { LineElement } from "../../common/impl/PathElement";
-import { Shape, SvgShapes } from "../../common/impl/SvgShape";
+import { SvgShapes } from "../../common/impl/SvgShape";
 import { Chart } from "../../model/Chart";
 import { LineType } from "../../model/ChartTypes";
 import { DataPoint, IPointPos } from "../../model/DataPoint";
@@ -280,6 +279,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     const r = lv.getBBounds();
 
                     lv.visible = true;
+                    lv.setContrast(null);
                     lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
                 }
             } else if (lv) {
