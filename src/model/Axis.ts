@@ -117,19 +117,19 @@ export class AxisTitle extends AxisItem {
     //-------------------------------------------------------------------------
     /**
      * 타이틀 텍스트.
+     * 지정하지 않으면 타이틀 영역 자체가 없어진다.
      * 
      * @config
      */
     text: string;
     /**
      * 축 내에서 타이틀의 위치.
-
-    * @config
+     * 
+     * @config
      */
     align = AxisTitleAlign.MIDDLE;
     /**
-     * 타이틀과 label 혹은 축 선 사이의 간격.
-     * <br>
+     * 타이틀과 틱 label들, 혹은 축 선 사이의 간격을 픽셀 단위로 지정한다.
      * 
      * @default 5 pixels
      * @config
@@ -157,6 +157,7 @@ export class AxisTitle extends AxisItem {
             this.text = source;
             return true;
         }
+        return super._doLoadSimple(source);
     }
 }
 
