@@ -50,7 +50,7 @@ import { WaterfallSeries } from "./series/WaterfallSeries";
 import { LinearGauge, LinearGaugeGroup } from "./gauge/LinearGauge";
 import { BulletGauge, BulletGaugeGroup } from "./gauge/BulletGauge";
 import { SeriesNavigator } from "./SeriesNavigator";
-import { Plane } from "./Plane";
+import { Split } from "./Split";
 
 export interface IChart {
     type: string;
@@ -297,7 +297,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _title: Title;
     private _subtitle: Subtitle;
     private _legend: Legend;
-    private _plane: Plane;
+    private _split: Split;
     private _series: PlottingItemCollection;
     private _xAxes: AxisCollection;
     private _yAxes: YAxisCollection;
@@ -325,7 +325,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._title = new Title(this);
         this._subtitle = new Subtitle(this);
         this._legend = new Legend(this);
-        this._plane = new Plane(this);
+        this._split = new Split(this);
         this._series = new PlottingItemCollection(this);
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new YAxisCollection(this, false);
@@ -455,6 +455,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     get body(): Body {
         return this._body;
+    }
+
+    get split(): Split {
+        return this._split;
     }
 
     get seriesNavigator(): SeriesNavigator {
@@ -690,9 +694,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // 축에 연결한다.
         this._series.prepareRender();
 
-        // plane
-        this._plane.count() > 1 && this._plane.prepareRender();
-
         // 축의 값 범위를 계산한다. 
         // [주의] 반드시 x축을 먼저 준비해야 한다. seriesGroup.$_collectPoints에서 point.xValue를 사용한다.
         this._xAxes.collectValues();
@@ -701,6 +702,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._yAxes.collectReferentsValues();
         this._xAxes.prepareRender();
         this._yAxes.prepareRender();
+
+        // split
+        this._split.prepareRender();
 
         // 축이 설정된 후
         this._series.prepareAfter();
