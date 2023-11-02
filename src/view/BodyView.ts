@@ -137,13 +137,15 @@ export class AxisGridView extends ChartElement<AxisGrid> {
 
         if (axis._isHorz) {
             lines.forEach((line, i) => {
-                if (line.setVisible((i !== 0 || m.startVisible) && (i !== end || m.endVisible))) {
+                // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
+                if (line.setVisible((pts[i] > 0 || i !== 0 || m.startVisible) && (pts[i] < w || i !== end || m.endVisible))) {
                     line.setVLineC(pts[i], 0, h);
                 }
             });
         } else {
             lines.forEach((line, i) => {
-                if (line.setVisible((i !== 0 || m.startVisible) && (i !== end || m.endVisible))) {
+                // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
+                if (line.setVisible((pts[i] < h || i !== 0 || m.startVisible) && (pts[i] > 0 || i !== end || m.endVisible))) {
                     line.setHLineC(h - pts[i], 0, w);
                 }
             });

@@ -20,6 +20,8 @@ const config = {
         // sweepAngle: 300,
         // valueRadius: '110%',
         // valueThickness: '100%',
+        // minValue: 30,
+        // maxValue: 170,
         rim: {
         },
         valueRim: {

@@ -3,7 +3,7 @@
  */
 const config = {
     options: {
-        // animatable: false,
+        animatable: false,
         credits: {
             // visible: false,
             // verticalAlign: 'top'
@@ -17,7 +17,7 @@ const config = {
         width: '60%',
         height: 65,
         top: 100,
-        maxValue: 100,
+        // maxValue: 100,
         value: 81,
         scale: {
             line: true,
@@ -55,7 +55,8 @@ const config = {
         width: '50%',
         height: 100,
         top: 250,
-        maxValue: 100,
+        // minValue: 30,
+        // maxValue: 175,
         value: 81,
         scale: {
             line: true,
@@ -133,6 +134,16 @@ function setActions(container) {
         config.gauge[1].scale.position = _getValue(e);
         chart.load(config);
     }, 'default');
+    createButton(container, 'Run', function(e) {
+        clearInterval(timer);
+        timer = setInterval(() => {
+            chart.gauge.updateValue(Math.random() * 100);
+            chart.getGauge('linear2').updateValue(Math.random() * 100);
+        }, 2000);
+    });
+    createButton(container, 'Stop', function(e) {
+        clearInterval(timer);
+    });
 }
 
 function init() {

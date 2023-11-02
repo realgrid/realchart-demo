@@ -38,6 +38,11 @@ export class BarSeries extends BasedSeries {
     // properties
     //-------------------------------------------------------------------------
     borderRaidus = 0;
+    /**
+     * true로 지정하면 포인트 bar 별로 색을 다르게 표시한다.
+     * 
+     * @config
+     */
     colorByPoint = false;
 
     //-------------------------------------------------------------------------

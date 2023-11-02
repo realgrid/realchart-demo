@@ -512,7 +512,7 @@ export abstract class ValueGauge extends Gauge {
      * 
      * @config
      */
-    maxValue: number;
+    maxValue = 100;
     /**
      * 현재값.
      * 
@@ -662,6 +662,10 @@ export abstract class GaugeScale extends ChartItem {
         return { min: this._min, max: this._max };
     }
 
+    isEmpty(): boolean {
+        return this._max <= this._min;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -674,6 +678,10 @@ export abstract class GaugeScale extends ChartItem {
     buildGroupSteps(length: number, values: number[]): number[] {
         const {min, max} = this._adjustGroupMinMax(values);
         return this._steps = this._buildSteps(length, min, max);
+    }
+
+    getRate(value: number): number {
+        return (Math.max(this._min, value) - this._min) / (this._max - this._min);
     }
 
     //-------------------------------------------------------------------------
@@ -739,13 +747,13 @@ export abstract class GaugeScale extends ChartItem {
 
         step = this._step = Math.ceil(step / scale) * scale;
 
-        if (min > Math.floor(min / scale) * scale) {
-            min = Math.floor(min / scale) * scale;
-        } else if (min < Math.ceil(min / scale) * scale) {
-            min = Math.ceil(min / scale) * scale;
-        }
+        // if (min > Math.floor(min / scale) * scale) {
+        //     min = Math.floor(min / scale) * scale;
+        // } else if (min < Math.ceil(min / scale) * scale) {
+        //     min = Math.ceil(min / scale) * scale;
+        // }
 
-        steps.push(min);
+        steps.push(fixnum(min));
         for (let i = 1; i < count; i++) {
             steps.push(fixnum(steps[i - 1] + step));
         }
@@ -799,16 +807,21 @@ export abstract class GaugeScale extends ChartItem {
         }
         step *= scale;
 
-        if (min > Math.floor(min / step) * step) {
-            min = Math.floor(min / step) * step;
-        } else if (min < Math.ceil(min / step) * step) {
-            min = Math.ceil(min / step) * step;
-        }
+        // if (min > Math.floor(min / step) * step) {
+        //     min = Math.floor(min / step) * step;
+        // } else if (min < Math.ceil(min / step) * step) {
+        //     min = Math.ceil(min / step) * step;
+        // }
 
         this._step = step;
         steps.push(fixnum(v = min));
-        while (v < max) {
-            steps.push(fixnum(v += step));
+        while (true) {
+            v += step;
+            if (v >= max) {
+                steps.push(fixnum(max));
+                break;
+            }
+            steps.push(fixnum(v));
         }
         return steps;
     }
@@ -1219,8 +1232,6 @@ export abstract class CircularGauge extends ValueGauge {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    maxValue = 100;
-
     /**
      * 게이지 중심 수평 위치.
      * 픽셀 단위의 크기나, plot 영역 전체 너비에 대한 상대적 크기로 지정할 수 있다.

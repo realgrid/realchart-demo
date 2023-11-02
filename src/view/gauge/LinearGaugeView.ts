@@ -239,17 +239,16 @@ export class LinearGaugeView extends LinearGaugeBaseView<LinearGauge> {
     protected _renderBand(m: LinearGauge, r: IRect, value: number): void {
         const reversed = m.reversed;
         const scale = m.group ? (m.group as LinearGaugeGroup).scale : m.scale;
-        const sum = scale._max - scale._min;
 
         // value bar
-        if (this._valueView.setVisible(sum > 0 && !isNaN(m.value))) {
+        if (this._valueView.setVisible(!scale.isEmpty() && !isNaN(m.value))) {
             if (this._vertical) {
-                const h = r.height * (value - scale._min) / sum;
+                const h = r.height * scale.getRate(value);
                 const y = reversed ? r.y : r.y + r.height - h;
 
-                this._valueView.setBounds(r.x, r.y + r.height - h, r.width, h);
+                this._valueView.setBounds(r.x, y, r.width, h);
             } else {
-                const w = r.width * (value - scale._min) / sum;
+                const w = r.width * scale.getRate(value);
                 const x = reversed ? r.x + r.width - w : r.x;
 
                 this._valueView.setBounds(x, r.y, w, r.height);

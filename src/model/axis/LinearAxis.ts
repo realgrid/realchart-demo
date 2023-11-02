@@ -404,7 +404,7 @@ export abstract class ContinuousAxis extends Axis {
     strictMax: number;
     /**
      * 축 시작 위치에 tick 표시 여부.
-     * {@link strictMin}이 설정되고 {@link AxisFit.VALUE}로 적용된다.
+     * {@link strictMin}이 설정되면 {@link AxisFit.VALUE}로 적용된다.
      * 
      * @config
      */

@@ -20,7 +20,9 @@ const config = {
 	yAxis: {
 		title: '대기질 지수(Air Quality Index, AQI)',
 		// reversed: true,
-		// baseValue: -1
+		// baseValue: -1,
+        // strictMin: 11,
+        // strictMax: 161
 	},
 	series: {
 		name: '대기질',

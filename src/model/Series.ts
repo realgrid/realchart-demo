@@ -1480,8 +1480,7 @@ export abstract class BasedSeries extends ClusterableSeries {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * 위/아래 구분의 기준이 되는 값.
-     * <br>
+     * 상/하 값 구분의 기준이 되는 값.\
      * 숫자가 아닌 값으로 지정하면 0으로 간주한다.
      * 
      * @config

@@ -198,6 +198,10 @@ export abstract class ValueGaugeView<T extends ValueGauge> extends GaugeView<T> 
     // value가 변경될 때 animation 등에서 호출된다.
     abstract _renderValue(): void;
 
+    protected _getValue(m: ValueGauge): number {
+        return Math.max(m.minValue, Math.min(m.maxValue, pickNum(this._runValue, m.value)));
+    }
+
     protected _checkValueAnimation(): void {
         const m = this.model;
 
@@ -318,31 +322,37 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         const opposite = m.position === GaugeItemPosition.OPPOSITE;
         const len = opposite ? -tick.length : tick.length;
         let y = opposite ? height - m.gap : m.gap;
-        let x = 0;
+        let x: number;
 
         // line
         if (line.setVisible(m.line.visible)) {
             line.setStyleOrClass(m.line.style);
-            line.setHLineC(y, x, x + width);
+            line.setHLineC(y, 0, width);
         }
 
         // ticks
         if (this._tickContainer.setVisible(tick.visible)) {
-            this._ticks.forEach(v => {
+            this._ticks.forEach((v, i) => {
+                x = m.getRate(steps[i]) * width;
                 // v.setVLineC(x, y, y + len);
                 v.setVLine(x, y, y + len);
-                x += w;
             })
         }
 
         // labels
         if (this._labelContainer.visible) {
+            let prev = Number.MIN_SAFE_INTEGER;
             y = opposite ? 0 : y + len;
-            x = 0;
+            
             this._labels.forEach((v, i) => {
-                v.anchor = i < steps.length - 1 ? TextAnchor.MIDDLE : TextAnchor.END;
-                v.translate(x, y);
-                x += w;
+                const r = v.getBBounds();
+                x = m.getRate(steps[i]) * width;
+
+                if (v.setVisible(x - r.width / 2 > prev)) {
+                    // v.anchor = i < steps.length - 1 ? TextAnchor.MIDDLE : TextAnchor.END;
+                    v.translate(x, y);
+                    prev = x + r.width / 2;
+                }
             });
         }
     }
@@ -354,21 +364,21 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         const h = this.height / (steps.length - 1);
         const opposite = m.position === GaugeItemPosition.OPPOSITE;
         const len = opposite ? tick.length : -tick.length;
-        let y = 0;
         let x = opposite ? m.gap : width - m.gap;
+        let y: number;
 
         // line
         if (line.setVisible(m.line.visible)) {
             line.setStyleOrClass(m.line.style);
-            line.setVLineC(x, y, y + height);
+            line.setVLineC(x, 0, height);
         }
 
         // ticks
         if (this._tickContainer.setVisible(tick.visible)) {
             this._ticks.forEach((v, i) => {
+                y = m.getRate(steps[i]) * height;
                 // v.setHLineC(y, x, x + len);
                 v.setHLine(y, x, x + len);
-                y += h;
             })
         }
 
@@ -376,12 +386,12 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         if (this._labelContainer.visible) {
             const anchor = opposite ? TextAnchor.START : TextAnchor.END;
             x = opposite ? x + len : width - m.gap + len;
-            y = 0;
+
             this._labels.forEach((v, i) => {
+                y = m.getRate(steps[i]) * height;
                 v.anchor = anchor;
                 v.layout = i < steps.length - 1 ? TextLayout.MIDDLE : TextLayout.BOTTOM;
                 v.translate(x, y);
-                y += h;
             });
         }
     }

@@ -3,9 +3,7 @@ Bar 시리즈 변종.
 ## Properties
 
 ### baseValue: `number{:javascript}`[#baseValue]
-위/아래 구분의 기준이 되는 값.
-
-
+상/하 값 구분의 기준이 되는 값.\
 숫자가 아닌 값으로 지정하면 0으로 간주한다.  
 `default: 0`  
 
@@ -59,6 +57,10 @@ point가 차지할 원래 크기에 대한 상대 값으로서,
 예를 들어 이 시리즈의 속성값이 1이고 다른 시리즈의 값이 2이면 다른 시리즈의 data point가 두 배 두껍게 표시된다.
 또, 그룹에 포함되고 그룹의 layout이  SeriesGroupLayout.DEFAULT  
 `default: 1`  
+
+### ranges: `IValueRange[]{:javascript}`[#ranges]
+값 범위 목록.
+범위별로 다른 스타일을 적용할 수 있다.  
 
 ### style: `SVGStyles | string{:javascript}`[#style]
 스타일셋 혹은 class selector.  
