@@ -28,10 +28,13 @@ function createHTML(destPath) {
   const depth = getDepth(destPath.split("/").length);
 
   return `
-    <script src="https://unpkg.com/realchart"></script>
+  <script>
+    var realChartLic = 'upVcPE+wPOkOR/egW8JuxkM/nBOseBrflwxYpzGZyYkhw7qfHRQ+GiF0lY62mJi5KBwoSJHOA48O5+/xJSE3Lms4sjcl83Pgkn/JIEkiRbk=';
+  </script>
+  <script src="https://unpkg.com/realchart"></script>
 
-    <div id="realchart"></div>
-    `;
+  <div id="realchart"></div>
+  `;
 }
 
 const CSS = `

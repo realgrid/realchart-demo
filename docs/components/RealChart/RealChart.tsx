@@ -16,7 +16,7 @@ import {
   rem,
 } from "@mantine/core";
 
-import { createChart, getVersion } from "realchart";
+import { createChart, getVersion } from "../../../dist/.npm/dist/index";
 import { useEffect, useRef, useState } from "react";
 import "node_modules/realchart/dist/realchart-style.css";
 import Editor from "@monaco-editor/react";
