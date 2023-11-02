@@ -246,6 +246,17 @@ class Tunner {
 
     return { config, defaultBlock, content: lines };
   }
+
+  /**
+   * 주석이 아닌 '@config visible' 포맷을로 선언된 doclet 여부
+   */
+  _isDoclet(name) {
+      return name.indexOf('@config') == 0;
+  }
+  _doclet(name) {
+    const isDoclet = this._isDoclet(name);
+    return { isDoclet, name: isDoclet ? name.split(' ').slice(-1) : name };
+  }
   _setContent (prop) {
     // return prop.name;
     const { config, defaultBlock, content } = this._parseComment(prop.comment);
@@ -264,9 +275,12 @@ class Tunner {
     const { name, children, kindString, type, typeParameters, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
     const { config, content } = this._parseComment(comment);
     const propFilter = (child) => {
-      return (child.kindString == 'Property' && this._findTag(child.comment?.blockTags, '@config'))
+      return (
+        child.kindString == 'Property' 
+          && (this._isDoclet(child.name) || this._findTag(child.comment?.blockTags, '@config')))
         || (child.kindString == 'Accessor' && this._findTag(child.getSignature?.comment?.blockTags, '@config'))
     }
+
     switch (kindString) {
       case 'Class':
         this.classMap[name] = { 
@@ -275,11 +289,27 @@ class Tunner {
           config,
           content,
           extended: extendedTypes.map(t => t.name),
-          props: children.filter(propFilter).map(c => {
-            return c.kindString == 'Property' 
+          props: children.filter(propFilter)
+            .map(c => {
+              return c.kindString == 'Property' 
               ? this._setContent(c)
               : this._setContent(c.getSignature)
-          }),
+            })
+            .reduce((acc, curr) => {
+              //  중복 제거, doclet이 우선한다.
+              const { isDoclet, name } = this._doclet(curr.name);
+              const found = acc.findIndex((el) => el.name == name);
+              if (found === -1 || isDoclet) {
+                curr.name = name;
+                acc.push(curr);
+              } else {
+                // found && !isDoclet
+                // 기존 prop으로 순서 변경.
+                const [el] = acc.splice(found, 1);
+                acc.push(el);
+              }
+              return acc;
+            }, [])
         };
         break;
       case 'Enumeration':
