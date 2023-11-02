@@ -13,7 +13,7 @@ import { IPoint } from "../../common/Point";
 import { LayerElement, PathElement, RcElement } from "../../common/RcControl";
 import { ISize } from "../../common/Size";
 import { RAD_DEG, fixnum, pixel } from "../../common/Types";
-import { CircleElement } from "../../common/impl/CircleElement";
+import { ArcElement } from "../../common/impl/CircleElement";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextAnchor, TextElement, TextLayout } from "../../common/impl/TextElement";
 import { GaugeItemPosition, GaugeRangeBand, ICircularGaugeExtents } from "../../model/Gauge";
@@ -44,12 +44,12 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _createLine(doc: Document, styleName: string): RcElement {
-        return new CircleElement(doc, styleName);
+        return new ArcElement(doc, styleName);
     }
 
     protected _doMeasure(doc: Document, model: CircleGaugeScale, hintWidth: number, hintHeight: number, phase: number): ISize {
         const steps = model._steps;
-        const nStep = steps.length - 1;
+        const nStep = steps.length - ((model.gauge as CircleGauge).sweepAngle === 360 ? 1 : 0);
 
         if (this._line.setVisible(model.line.visible)) {
             this._line.internalSetStyleOrClass(model.line.style);
@@ -82,18 +82,19 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
         const rd = exts.scale;
         const rd2 = rd + this.model.tick.length * opposite;
         const sweep = gprops._sweepRad;
+        const start = gprops._startRad;
         const sum = g.maxValue - g.minValue;
         let x1: number, y1: number, x2: number, y2: number, a: number;
 
         // line
         if (this._line.visible) {
-            (this._line as CircleElement).setCircle(cx, cy, rd);
+            (this._line as ArcElement).setArc(cx, cy, rd, start, sweep, true);
         }
 
         // ticks
         if (this._tickContainer.visible) {
             this._ticks.forEach((v, i, count) => {
-                const a = m.getRate(steps[i]) * sweep + gprops._startRad;
+                const a = m.getRate(steps[i]) * sweep + start;
 
                 x1 = cx + Math.cos(a) * rd;
                 y1 = cy + Math.sin(a) * rd;
@@ -109,7 +110,7 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
             const rd = rd2 + this._labels.get(0).getBBounds().height * 0.5 * opposite;
 
             this._labels.forEach((v, i, count) => {
-                const a = m.getRate(steps[i]) * sweep + gprops._startRad;
+                const a = m.getRate(steps[i]) * sweep + start;
 
                 x2 = cx + Math.cos(a) * rd;
                 y2 = cy + Math.sin(a) * rd;

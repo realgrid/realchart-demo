@@ -6,8 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcElement } from "../RcControl";
-import { SVGStyleOrClass } from "../Types";
+import { PathElement, RcElement } from "../RcControl";
+import { SvgShapes } from "./SvgShape";
 
 export class CircleElement extends RcElement {
 
@@ -68,5 +68,17 @@ export class CircumElement extends CircleElement {
 
         this.setStyle('fill', 'none');
         return r;
+    }
+}
+
+export class ArcElement extends PathElement {
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setArc(cx: number, cy: number, rd: number, start: number, angle: number, clockwise: boolean): void {
+        this.setPath(SvgShapes.arc(
+            cx, cy, rd, rd, start, close ? start + angle : start - angle, clockwise
+        ));
     }
 }
