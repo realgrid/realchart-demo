@@ -125,6 +125,7 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
                     case 'diamond':
                     case 'triangle':
                     case 'itriangle':
+                    case 'star':
                         path = SvgShapes[s](0 - sz, 0 - sz, sz * 2, sz * 2);
                         break;
 

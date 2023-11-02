@@ -7,33 +7,35 @@ const config = {
 	options: {
         animatable: false
     },
-	title: 'Scatter - 6,000 Points',
+	title: 'Scatter - Jittering',
 	xAxis: {
-        minPadding: 0,
-        maxPadding: 0,
-		strictMax: 10000
     },
     yAxis: {
-        minValue: 0,
-        strictMax: 10000
     },
-	series: [
-		{
-			data: scatter_data,
-			xField: 'x',
-			yField: 'y',
-			// pointLabel: true
-			radius: 3
-		},
-		{
-			data: scatter_data2,
-			xField: 'x',
-			yField: 'y',
-			radius: 2,
-            shape: 'diamond',
-            color: '#c80'
-		},
-	],
+	series: [{
+        data: getJitterData(0, 200),
+        radius: 2
+    },
+    {
+        data: getJitterData(1, 200),
+        radius: 2
+    },
+    {
+        data: getJitterData(2, 200),
+        radius: 2
+    },
+    {
+        data: getJitterData(3, 200),
+        radius: 2
+    },
+    {
+        data: getJitterData(4, 200),
+        radius: 2
+    },
+    {
+        data: getJitterData(5, 200),
+        radius: 2
+    }],
 };
 
 let chart;
@@ -78,10 +80,14 @@ function setActions(container) {
 		},
 		false
 	);
-    createListBox(container, "series[0].shape", ['circle', 'diamond', 'sqaure', 'triangle', 'itriangle', 'star'], function (e) {
-        config.series[0].shape = _getValue(e);
+    createListBox(container, "jitterX", ['0', '0.1', '0.15', '0.2', '0.3', '0.4', '0.5'], function (e) {
+        config.series.forEach(ser => ser.jitterX = +_getValue(e));
         chart.load(config);
-    }, 'circle');
+    }, '0');
+    createListBox(container, "jitterY", ['0', '0.1', '0.15', '0.2', '0.3', '0.4', '0.5'], function (e) {
+        config.series.forEach(ser => ser.jitterY = +_getValue(e));
+        chart.load(config);
+    }, '0');
 }
 
 function init() {
