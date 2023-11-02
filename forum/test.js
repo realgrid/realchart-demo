@@ -1,1 +1,0 @@
-var realChartLic = 'upVcPE+wPOkOR/egW8JuxkM/nBOseBrflwxYpzGZyYkhw7qfHRQ+GiF0lY62mJi5KBwoSJHOA48O5+/xJSE3Lms4sjcl83Pgkn/JIEkiRbk=';
