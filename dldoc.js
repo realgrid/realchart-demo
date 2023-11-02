@@ -248,7 +248,7 @@ class Tunner {
   }
 
   /**
-   * 주석이 아닌 '@config visible' 포맷을로 선언된 doclet 여부
+   * 주석이 아닌 '@config visible' 같은 포맷으로 선언된 doclet 여부
    */
   _isDoclet(name) {
       return name.indexOf('@config') == 0;
@@ -295,18 +295,23 @@ class Tunner {
               ? this._setContent(c)
               : this._setContent(c.getSignature)
             })
+            .sort((prev, next) => {
+              // doclet은 끝으로 보낸다.
+              const { isDoclet, name } = this._doclet(next.name);
+              if (isDoclet) return -1;
+              else return 0;
+            })
             .reduce((acc, curr) => {
-              //  중복 제거, doclet이 우선한다.
+              // 상위 클래스 속성 설명에 doclet 설명을 추가하고, defaultValue는 덮어쓴다.
               const { isDoclet, name } = this._doclet(curr.name);
               const found = acc.findIndex((el) => el.name == name);
-              if (found === -1 || isDoclet) {
-                curr.name = name;
-                acc.push(curr);
+              if (found >= 0 && isDoclet) {
+                acc[found].content += `\n${curr.content}`
+                acc[found].defaultValue = curr.defaultValue;
+                acc[found].defaultBlock = curr.defaultBlock;
+                console.debug(curr)
               } else {
-                // found && !isDoclet
-                // 기존 prop으로 순서 변경.
-                const [el] = acc.splice(found, 1);
-                acc.push(el);
+                acc.push(curr);
               }
               return acc;
             }, [])
