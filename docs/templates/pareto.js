@@ -9,7 +9,7 @@ export const config = {
       maxValue: 100,
       padding: 0,
       position: 'opposite',
-      tick: {},
+      tick: { baseAxis: 0 },
       label: { suffix: '%' }
     }
   ],

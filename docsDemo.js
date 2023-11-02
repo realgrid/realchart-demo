@@ -9,14 +9,11 @@ function readFile(file) {
 
 
 (async () => {
-    // if (existsSync('./docs/public/realchart')) {
-    //     rmdirSync('./docs/public/realchart', { recursive: true });
-    // }
-
-    // mkdirSync('./docs/public/realchart', { recursive: true });
-
-    // copyFileSync('./web/realchart/lib/realchart.js', './docs/public/realchart/realchart.js');
-    // copyFileSync('./web/realchart/styles/realchart-style.css', './docs/public/realchart/realchart-style.css');
+    if (existsSync('./docs/public/realchart')) {
+        rmdirSync('./docs/public/realchart', { recursive: true });
+    }
+    mkdirSync('./docs/public/realchart', { recursive: true });
+    copyFileSync('./web/realchart/lib/realchart-lic.js', './docs/public/realchart/realchart-lic.js');
 
     if (existsSync('./docs/templates')) {
         rmdirSync('./docs/templates', { recursive: true });
