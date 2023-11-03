@@ -153,7 +153,7 @@ export class TypeDocNextra {
         const body = properties.map((m) => {
             // const name = `${m.private ? 'private' : 'public'} ${m.static ? 'static ' : ''}${escape(m.name)}`.trim();
             const ename = escape(m.name);
-            const name = `${m.static ? 'static ' : ''}${ename}`.trim();
+            const name = `${m.static ? 'static ' : ''}${m.readonly ? '*`<readonly>`* ' : ''}${ename}`.trim();
             const title = heading(`${name}: ${this.linker(m.type || 'any', m.rawType || [m.type || 'any'])}`, 3)
                 + `[#${ename}]`;
             const desc = [m.description || '', m.deprecated ? `\n- ${bold('⚠️ Deprecated')}` : '', m.metadata?.url ? `\n- ${hyperlink('Source', m.metadata.url)}` : '']

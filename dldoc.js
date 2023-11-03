@@ -265,7 +265,7 @@ class Tunner {
         type: this._parseType(prop.type),
         dtype: this._parseTypeD(prop.type),
         header: config.join('|'), 
-        readonly: prop.flags?.isReadonly,
+        // readonly: prop.flags?.isReadonly, // config에서 readonly 표기가 유효한지 확인.
         content,
         defaultValue: prop.defaultValue,
         defaultBlock,
@@ -390,8 +390,10 @@ class MDGenerater {
     const { name: _name, opt, type: _type, prop } = param;
     const { header, name, type, dtype, content, defaultValue, defaultBlock } = prop;
     let enumLines = ''
-
-    let lines = `### ${prop.readonly ? '`readonly\{:sh}` ' : ''}${name}${type ? ': \`' + type  + '\{:js}`': ''}[#${name}]\n`;
+    let lines = `### ${prop.readonly ? '*`<readonly>`* ' : ''}`
+      + `${name}`
+      + `${type ? ': \`' + type  + '\{:js}`': ''}`
+      + `[#${name}]\n`;
 
     if (dtype instanceof Array) {
       dtype.map(t => {

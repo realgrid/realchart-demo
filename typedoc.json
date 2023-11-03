@@ -11,4 +11,31 @@
     "excludeProtected": true,
     "disableSources": true,
     "logLevel": "Error",
+    "modifierTags": [
+        "@public",
+        "@private",
+        "@protected",
+        "@internal",
+        // @readonly는 accessor 모델에 getter만 생성한다. modifierTags에서 제외하면 blockTags에 포함시킬수 있다.
+        // "@readonly", 
+        "@packageDocumentation",
+        "@eventProperty",
+        "@alpha",
+        "@beta",
+        "@experimental",
+        "@sealed",
+        "@override",
+        "@virtual",
+        "@hidden",
+        "@ignore",
+        "@enum",
+        "@event",
+        "@overload",
+        "@namespace",
+        "@interface",
+        "@showCategories",
+        "@hideCategories",
+        "@showGroups",
+        "@hideGroups"
+    ]
 }

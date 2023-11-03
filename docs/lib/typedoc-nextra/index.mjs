@@ -703,7 +703,7 @@ ${table(tableHead, tableBody)}
     const body = properties.map((m) => {
       var _a;
       const ename = escape(m.name);
-      const name = `${m.static ? "static " : ""}${ename}`.trim();
+      const name = `${m.static ? "static " : ""}${m.readonly ? "*`<readonly>`* " : ""}${ename}`.trim();
       const title = heading(`${name}: ${this.linker(m.type || "any", m.rawType || [m.type || "any"])}`, 3) + `[#${ename}]`;
       const desc = [m.description || "", m.deprecated ? `
 - ${bold("\u26A0\uFE0F Deprecated")}` : "", ((_a = m.metadata) == null ? void 0 : _a.url) ? `
