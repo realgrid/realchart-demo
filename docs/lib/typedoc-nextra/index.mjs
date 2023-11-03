@@ -133,8 +133,10 @@ function doclink(text, vars = {}) {
   const [keyword, ...display] = text.split(" ");
   const [sep, ...keys] = keyword.split(".");
   const t = display.length ? display.join(" ") : keys.length ? keys.slice(-1)[0] : keyword;
-  if (!keys.length)
-    return t;
+  if (!keys.length) {
+    const subpaths = ["config", "docs", "demo", "guide"];
+    return subpaths.indexOf(keyword) >= 0 ? hyperlink(t, `/${keyword}`) : t;
+  }
   let page = "";
   switch (sep) {
     case "g":
@@ -150,6 +152,10 @@ function doclink(text, vars = {}) {
         return t;
       }
       page = "/config/config/" + keys.join("/");
+      break;
+    case "demo":
+    case "guide":
+      page = `/${sep}/` + keys.join("/");
       break;
     case "rc":
     case "realchart":

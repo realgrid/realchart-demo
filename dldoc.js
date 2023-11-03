@@ -309,7 +309,6 @@ class Tunner {
                 acc[found].content += `\n${curr.content}`
                 acc[found].defaultValue = curr.defaultValue;
                 acc[found].defaultBlock = curr.defaultBlock;
-                console.debug(curr)
               } else {
                 acc.push(curr);
               }
@@ -390,13 +389,12 @@ class MDGenerater {
     const { name: _name, opt, type: _type, prop } = param;
     const { header, name, type, dtype, content, defaultValue, defaultBlock } = prop;
     let enumLines = ''
-    let lines = `### ${name}${type ? ': \`' + type  + '\{:javascript}`': ''}[#${name}]\n`;
+    let lines = `### ${name}${type ? ': \`' + type  + '\{:js}`': ''}[#${name}]\n`;
 
     if (dtype instanceof Array) {
       dtype.map(t => {
         if (t.type == 'reference') {
           console.warn('Not Implemented union references');
-          // throw Error('Not Implemented union references');
         }
       });
     } else if (dtype?.type == 'reference') {
@@ -476,7 +474,7 @@ class MDGenerater {
   }
 
   /**
-   * 
+   * root.opt[type] label
    * @param config: any
    * @returns { name, root, opt, label, ...attr }
    * @rparam name: head of line
@@ -518,8 +516,10 @@ class MDGenerater {
     return result;
   }
 
-  _setPropContents(docMap, { opt, type, _content }) {
-    if (type) {
+  _setPropContents(docMap, { name, opt, type, _content }) {
+    if (name == 'chart') {
+      docMap[name] = { ...docMap[name], _content };
+    } else if (type) {
       // if (opt != 'series') console.debug(opt, type, _content)
       docMap[opt][type] = { ...docMap[opt][type], _content }
     } else {
@@ -535,7 +535,7 @@ class MDGenerater {
    */
   _setContent(docMap, dconf) {
     const { name, root, opt, label, type, props, content } = dconf;
-    if (root != 'chart' || !opt) return;
+    if (root != 'chart') return;
 
     let subtitle = '';
     let subtitleText = opt;
@@ -549,15 +549,20 @@ class MDGenerater {
     if (['series', 'xAxis', 'yAxis', 'gauge'].indexOf(opt) >= 0 && !type) 
       return console.warn(`[WARN] ${name} type missed.`);
 
-    if (!docMap[opt]) docMap[opt] = { _content: ''};
-
-    // docMap 참조 주의...
-    docMap[opt] = { ...docMap[opt], _content: docMap[opt]._content += `${subtitle}\n${_content}` };
+    if (opt) {
+      if (!docMap[opt]) docMap[opt] = { _content: ''};
+      // docMap 참조 주의...
+      docMap[opt] = { ...docMap[opt], _content: docMap[opt]._content += `${subtitle}\n${_content}` };
+    }
     
     // 속성 추가
     if (props) {
       const propContents = this._makeProps({ name, opt, type, props });
-      this._setPropContents(docMap, { opt, type, _content: `## ${subtitleText}\n${_content}` + propContents} )
+      this._setPropContents(docMap, { 
+        name, opt, type, 
+        _content: (subtitleText ? `## ${subtitleText}\n${_content}` : '') 
+          + propContents 
+      });
     }
   }
 
@@ -582,6 +587,12 @@ class MDGenerater {
   _saveFile(path, docMap) {
     Object.entries(docMap).forEach(([key, value]) => {
       if (key == '_content') {
+        // config root
+        const paths = path.split('/');
+        const last = paths.pop();
+        if (last == 'chart') {
+          path = paths.join('/');
+        }
         console.debug('write', `${path}.mdx`);
         fs.writeFileSync(`${path}.mdx`, value , { encoding: 'utf-8'});
       } else {

@@ -1,0 +1,35 @@
+## Properties
+
+### gaugeType: `string{:js}`[#gaugeType]
+기본 게이지 type.\
+게이지에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.\
+[주의] 차트 로딩 후 변경할 수 없다.  
+`default: 'circle'`  
+
+### inverted: `boolean{:js}`[#inverted]
+true면 x축이 수직, y축이 수평으로 배치된다.\
+[주의] 차트 로딩 후 변경할 수 없다.  
+
+### polar: `boolean{:js}`[#polar]
+true면 차트가  극좌표계 로 표시된다.\
+기본은  직교좌표계 이다.
+극좌표계일 때,
+x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이 있다.
+1. x축은 첫번째 축 하나만 사용된다.
+2. axis.position 속성은 무시된다.
+3. chart, series의 inverted 속성이 무시된다.
+4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.\
+
+[주의] 차트 로딩 후 변경할 수 없다.  
+`default: false`  
+
+### splitted: `boolean{:js}`[#splitted]
+true면 x축 방향을 기준으로 body 영역을 분할한다.\
+[주의] 차트 로딩 후 변경할 수 없다.  
+
+### type: `string{:js}`[#type]
+기본 시리즈 type.\
+ Series._type 의 기본값.
+시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.\
+[주의] 차트 로딩 후 변경할 수 없다.  
+`default: 'bar'`  
