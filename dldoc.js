@@ -265,6 +265,7 @@ class Tunner {
         type: this._parseType(prop.type),
         dtype: this._parseTypeD(prop.type),
         header: config.join('|'), 
+        readonly: prop.flags?.isReadonly,
         content,
         defaultValue: prop.defaultValue,
         defaultBlock,
@@ -389,7 +390,8 @@ class MDGenerater {
     const { name: _name, opt, type: _type, prop } = param;
     const { header, name, type, dtype, content, defaultValue, defaultBlock } = prop;
     let enumLines = ''
-    let lines = `### ${name}${type ? ': \`' + type  + '\{:js}`': ''}[#${name}]\n`;
+
+    let lines = `### ${prop.readonly ? '`readonly\{:sh}` ' : ''}${name}${type ? ': \`' + type  + '\{:js}`': ''}[#${name}]\n`;
 
     if (dtype instanceof Array) {
       dtype.map(t => {
