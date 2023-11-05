@@ -178,7 +178,7 @@ export class ChartPointerHandler implements IPointerHandler {
         if (AxisScrollView.isThumb(elt)) {
             return new ScrollTracker(this._chart, chartView.getScrollView(elt));
         } else if (body.model.canZoom() && body.contains(elt)) {
-            return new ZoomTracker(this._chart, body);
+            return new ZoomTracker(this._chart, body, chartView._inverted);
         } else if (NavigatorView.isHandle(elt)) {
             return new NavigatorHandleTracker(this._chart, chartView._navigatorView, elt);
         } else if (NavigatorView.isMask(elt) && this._chart.model.body.isZoomed()) {

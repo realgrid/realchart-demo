@@ -237,12 +237,12 @@ export class RcChartControl {
     get inverted(): boolean {
         return this.$_p.model.inverted;
     }
-    set inverted(value: boolean) {
-        if (value !== this.$_p.model.inverted) {
-            this.$_p.model.inverted = value;
-            this.$_p.invalidateLayout();
-        }
-    }
+    // set inverted(value: boolean) {
+    //     if (value !== this.$_p.model.inverted) {
+    //         this.$_p.model.inverted = value;
+    //         this.$_p.invalidateLayout();
+    //     }
+    // }
     /**
      * true면 차트가 {@link https://en.wikipedia.org/wiki/Polar_coordinate_system 극좌표계}로 표시된다.
      * 기본은 {@link https://en.wikipedia.org/wiki/Cartesian_coordinate_system 직교좌표계}이다.
