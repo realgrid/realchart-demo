@@ -235,7 +235,7 @@ const FORMATS = [
     { format: "MM-dd", beginningFormat: 'yyyy-MM' },        // d
     { format: "W주 w", beginningFormat: 'yyyy-MM' },        // w
     { format: "yyyy-MM", beginningFormat: 'yyyy-MM' },      // M
-    { format: "yyyy" }                                      // Y
+    { format: "yyyy" }                                      // y
 ]   
 
 export class TimeAxisLabel extends AxisLabel {

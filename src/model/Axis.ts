@@ -979,6 +979,11 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
     
     zoom(start: number, end: number): boolean {
+        if (start > end) {
+            const t = start;
+            start = end;
+            end = t;
+        }
         if (!this._zoom) {
             if (isNaN(start)) start = this._min;
             if (isNaN(end)) end = this._max;

@@ -214,6 +214,7 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
     _thumbView: RectElement;
 
     _vertical: boolean;
+    _reversed: boolean;
     _szThumb: number;
 
     private _max = 0;
@@ -233,7 +234,9 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    setScroll(zoom: AxisZoom): void {
+    setScroll(zoom: AxisZoom, reversed: boolean): void {
+        this._reversed = reversed;
+
         if (zoom) {
             const max = zoom.max - zoom.min;
             const page = zoom.end - zoom.start;
@@ -250,8 +253,14 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
         const zoom = this.model.axis._zoom;
         const len = (this._vertical ? this.height : this.width) - (this._vertical ? this._thumbView.height : this._thumbView.width);
 
-        pt = Math.max(0, Math.min(pt, len));
-        return pt * (zoom.max - zoom.min - (zoom.end - zoom.start)) / len;
+        if (this.model.axis.reversed) {
+            // TODO
+            pt = Math.max(0, Math.min(pt, len));
+            return pt * (zoom.max - zoom.min - (zoom.end - zoom.start)) / len;
+        } else {
+            pt = Math.max(0, Math.min(pt, len));
+            return pt * (zoom.max - zoom.min - (zoom.end - zoom.start)) / len;
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -283,14 +292,26 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
             
             h -= szThumb;
             const hPage = (fill || page === max ? h : h * page / max) + szThumb;
-            this._thumbView.setBounds(model.gap + 1, fill ? 0 : (this.height - h * pos / max) - hPage, w - 2, hPage); 
+
+            if (this._reversed) {
+                // TODO
+                this._thumbView.setBounds(model.gap + 1, fill ? 0 : (this.height - h * pos / max) - hPage, w - 2, hPage); 
+            } else {
+                this._thumbView.setBounds(model.gap + 1, fill ? 0 : (this.height - h * pos / max) - hPage, w - 2, hPage); 
+            }
         } else {
             h -= model.gap + model.gapFar;
             this._trackView.setBounds(0, model.gap, w, h);
             
             w -= szThumb;
             const wPage = (fill || page === max ? w : w * page / max) + szThumb;
-            this._thumbView.setBounds(fill ? 0 : w * pos / max, model.gap + 1, wPage, h - 2); 
+
+            if (this._reversed) {
+                // TODO
+                this._thumbView.setBounds(fill ? 0 : w * pos / max, model.gap + 1, wPage, h - 2); 
+            } else {
+                this._thumbView.setBounds(fill ? 0 : w * pos / max, model.gap + 1, wPage, h - 2); 
+            }
         }
     }
 }
@@ -685,10 +706,10 @@ export class AxisView extends ChartElement<Axis> {
             if (scrollView?.visible) {
                 if (horz) {
                     scrollView.translate(0, y).resize(this.width, scrollView.mh);
-                    scrollView.setScroll(model._zoom);
+                    scrollView.setScroll(model._zoom, model.reversed);
                 } else {
                     scrollView.translate(0, 0).resize(scrollView.mw, this.height);
-                    scrollView.setScroll(model._zoom);
+                    scrollView.setScroll(model._zoom, model.reversed);
                 }
                 scrollView.layout();
             }

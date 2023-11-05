@@ -875,8 +875,8 @@ export class BodyView extends ChartElement<Body> {
         const inverted = chart.isInverted();
         const xAxis = chart.xAxis;
         const len = inverted ? this.height : this.width;
-        const v1 = xAxis.getValueAt(len, inverted ? len - y2 : x1);
-        const v2 = xAxis.getValueAt(len, inverted ? len - y1 : x2);
+        let v1 = xAxis.getValueAt(len, inverted ? len - y2 : x1);
+        let v2 = xAxis.getValueAt(len, inverted ? len - y1 : x2);
 
         if (xAxis.zoom(v1, v2)) {
             this._zoomRequested = true;

@@ -77,7 +77,7 @@ export class ChartPointerHandler implements IPointerHandler {
             const dom = this._clickElement;
 
             if (x < 0 || x >= chart.control.dom().offsetWidth || y < 0 || y >= chart.control.dom().offsetHeight) {
-                dragging && this.$_stopDragTracker(dom, x, y, true);
+                // dragging && this.$_stopDragTracker(dom, x, y, true);
             } else if (dragging) {
                 this.$_doDrag(ev, dom, x, y);
             } else if (!this._dragTracker && (Math.abs(this._clickX - x) > DRAG_THRESHOLD || Math.abs(this._clickY - y) > DRAG_THRESHOLD)) {

@@ -339,6 +339,9 @@ export class CategoryAxis extends Axis {
     }
 
     getValueAt(length: number, pos: number): number {
+        if (this.reversed) {
+            pos = length - pos;
+        }
         for (let i = 1; i < this._pts.length - 1; i++) {
             if (pos >= this._pts[i] && pos < this._pts[i + 1]) {
                 return this._min + i - 1;
