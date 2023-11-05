@@ -18,7 +18,6 @@ import path from 'path';
 const JSFIDDLE_URL = 'https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/';
 /**
  * typedoc에서 가공한 클래스 구조 모델을 api문서에서 사용할 config 구조로 재가공한다.
- * debug가 true면 ./api/api.json으로 모델을 내보낸다.
  */
 class Tunner {
   constructor({ path = '', debug = false }) {
@@ -349,9 +348,8 @@ class Tunner {
   scan() {
     this._visit(this.model);
 
-    if (this.debug) {
-      this.exportModel();
-    }
+    // class api 문서를 생성하는 docs/typedoc에서 사용.
+    this.exportModel();
 
     return this.classMap;
   }

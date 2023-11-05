@@ -68,6 +68,7 @@ interface DocumentedClass {
     constructor: DocumentedClassConstructor | null;
     methods: DocumentedClassMethod[];
     properties: DocumentedClassProperty[];
+    configProperties: any[];
     metadata: FileMetadata | null;
     vars: any[] | undefined;
 }
@@ -115,7 +116,11 @@ interface DocumentedClassMethod {
     metadata: FileMetadata | null;
 }
 declare class ClassSerializer extends AbstractSerializer {
+    declaration: JSONOutput.DeclarationReflection;
+    private config;
+    constructor(declaration: JSONOutput.DeclarationReflection, config?: any);
     serialize(): DocumentedClass;
+    parseConfigProperties(name: string): any[];
     parseProperties(decl: JSONOutput.DeclarationReflection): DocumentedClassProperty;
     parseMethod(decl: JSONOutput.DeclarationReflection): DocumentedClassMethod;
     parseParameter(decl: TypeDocParameterReflection): DocumentedParameter;
@@ -170,6 +175,7 @@ declare class TypeDocNextra {
     transformTypes(types: DocumentedTypes[]): TypeDocNextraMarkdownBuild[];
     getTypeMarkdown(t: DocumentedTypes): string;
     getMarkdown(c: DocumentedClass): string;
+    getConfigProperties(properties: any[]): string;
     getProperties(properties: DocumentedClassProperty[]): string;
     getMethods(methods: DocumentedClassMethod[]): string;
     getFunctions(m: DocumentedFunction): string;
@@ -181,6 +187,7 @@ interface TypeDocParameterReflection extends TypeDoc.JSONOutput.TypeParameterRef
 }
 interface TypeDocNextraInit {
     jsonInputPath?: string | null;
+    configInputPath?: string | null;
     input?: string[] | null;
     jsonName?: string;
     output?: string;
