@@ -32,19 +32,16 @@ Animation duration.
 내부 원에 적용할 스타일셋 혹은 class selector.
 
 ### label: `CircularGaugeLabel{:js}`[#label]
-게이지 중앙에 표시되는 label 설정 모델
+게이지 중앙에 표시되는 label 설정 모델.
 
 ### maxValue: `number{:js}`[#maxValue]
 최대값.
-group에 포함되면 이 값 대신 group의 최대값이 사용된다.
 
 ### minValue: `number{:js}`[#minValue]
 최소값.
-group에 포함되면 이 값 대신 group의 최소값이 사용된다.
 
 ### name: `string{:js}`[#name]
 게이지 이름.
-동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다.
 
 ### pin: `CircleGaugePin{:js}`[#pin]
 게이지 중앙에 표시되는 핀 설정 모델.
@@ -57,18 +54,12 @@ group에 포함되면 이 값 대신 group의 최소값이 사용된다.
 
 ### startAngle: `number{:js}`[#startAngle]
 게이지 원호 시작 각도.
-지정하지 않거나 잘못된 값이면 0으로 계산된다.
-0은 시계의 12시 위치다.
 
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.
 
 ### sweepAngle: `number{:js}`[#sweepAngle]
 게이지 원호 전체 각도.
-0 ~ 360 사이의 값으로 지정해야 한다.
-범위를 벗어난 값은 범위 안으로 조정된다.
-지정하지 않거나 잘못된 값이면 360으로 계산된다.
-예) 180 이면 반 원호가 된다.
 
 ### value: `number{:js}`[#value]
 현재값.
@@ -81,28 +72,21 @@ plot 영역의 아래쪽 모서리와 widget 사이의 간격.
 
 ### centerX: `string | number{:js}`[#centerX]
 게이지 중심 수평 위치.
-픽셀 단위의 크기나, plot 영역 전체 너비에 대한 상대적 크기로 지정할 수 있다.
 
 ### centerY: `string | number{:js}`[#centerY]
 게이지 중심 수직 위치.
-픽셀 단위의 크기나, plot 영역 전체 높이에 대한 상대적 크기로 지정할 수 있다.
 
 ### height: `string | number{:js}`[#height]
 게이지 높이.
-픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
 
 ### innerRadius: `string | number{:js}`[#innerRadius]
 내부 원호의 반지름.
-픽셀 단위의 크기나,  radius 에 대한 상대적 크기로 지정할 수 있다.
-'100%'이면 게이지 원호의 반지름과 동일하다.
 
 ### left: `string | number{:js}`[#left]
 plot 영역의 왼쪽 모서리와 widget 사이의 간격.
 
 ### radius: `string | number{:js}`[#radius]
 게이지 원호의 반지름.
-픽셀 단위의 크기나, plot 영역 전체 크기(너비와 높이 중 작은 값)에 대한 상대적 크기로 지정할 수 있다.
-'50%'로 지정하면 plot 영역의 width나 height중 작은 크기와 동일한 반지름으로 표시된다.
 
 ### right: `string | number{:js}`[#right]
 plot 영역의 오른쪽 모서리와 widget 사이의 간격.
@@ -118,7 +102,6 @@ plot 영역의 위쪽 모서리와 widget 사이의 간격.
 
 ### width: `string | number{:js}`[#width]
 게이지 너비.
-픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
 
 
 ## Properties

@@ -479,9 +479,9 @@ var ClassSerializer = class extends AbstractSerializer {
     if (series || gauge) {
       const { props } = this.config[key] || {};
       return (props == null ? void 0 : props.map((p) => {
-        var _a, _b;
+        var _a, _b, _c;
         return __spreadProps(__spreadValues({}, p), {
-          content: (_b = (_a = p.content) == null ? void 0 : _a.split("\\").shift()) != null ? _b : ""
+          content: (_c = (_b = (_a = p.content) == null ? void 0 : _a.split(".").filter((c) => c).shift()) == null ? void 0 : _b.concat(".")) != null ? _c : ""
         });
       })) || [];
     }
