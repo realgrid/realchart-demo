@@ -110,8 +110,8 @@ export class Crosshair extends ChartItem {
     }
 
     getFlag(length: number, pos: number): string {
-        let s = NumberFormatter.getFormatter(this.numberFormat).toStr(this.axis.getValueAt(length, pos));
-        return s;
+        const v = this.axis.getValueAt(length, pos);
+        return NumberFormatter.getFormatter(this.numberFormat).toStr(v);
     }
 
     //-------------------------------------------------------------------------

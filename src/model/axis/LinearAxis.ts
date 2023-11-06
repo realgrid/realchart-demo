@@ -687,7 +687,20 @@ export abstract class ContinuousAxis extends Axis {
         } else {
             if (!this.reversed) pos = length - pos;
         }
-        return (this._max - this._min) * pos / length + this._min;
+
+        if (this._runBreaks) {
+            let p = 0;
+            
+            for (const sect of this._sects) {
+                if (pos >= p && pos < p + sect.len) {
+                    return (sect.to - sect.from) * (pos - p) / sect.len + sect.from;
+                }
+                p += sect.len;
+            }
+            return this._max;
+        } else {
+            return (this._max - this._min) * pos / length + this._min;
+        }
     }
 
     getUnitLength(length: number, value: number): number {
