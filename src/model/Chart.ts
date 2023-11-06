@@ -10,7 +10,7 @@ import { isArray, isObject, isString, mergeObj } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
-import { Axis, AxisCollection, IAxis, YAxisCollection } from "./Axis";
+import { Axis, AxisCollection, IAxis, PaneAxes, PaneAxisMatrix, YAxisCollection } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem, n_char_item } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
@@ -55,11 +55,10 @@ import { Split } from "./Split";
 export interface IChart {
     type: string;
     gaugeType: string;
-    xStart: number;
-    xStep: number;
     _splitted: boolean;
     _splits: number[];
     // series2: ISeries;
+    options: ChartOptions;
     first: IPlottingItem;
     firstSeries: Series;
     xAxis: IAxis;
@@ -301,6 +300,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _series: PlottingItemCollection;
     private _xAxes: AxisCollection;
     private _yAxes: YAxisCollection;
+    private _paneAxes: PaneAxisMatrix;
     private _gauges: GaugeCollection;
     private _body: Body;
     private _navigator: SeriesNavigator;
@@ -327,8 +327,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._legend = new Legend(this);
         this._split = new Split(this);
         this._series = new PlottingItemCollection(this);
-        this._xAxes = new AxisCollection(this, true);
-        this._yAxes = new YAxisCollection(this, false);
+        this._xAxes = new AxisCollection(this, true, 0, 0);
+        this._yAxes = new YAxisCollection(this, false, 0, 0);
+        this._paneAxes = new PaneAxisMatrix(this);
         this._gauges = new GaugeCollection(this);
         this._body = new Body(this);
         this._navigator = new SeriesNavigator(this);
@@ -345,18 +346,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     startAngle(): number {
         return this.body.getStartAngle();
-    }
-
-    get xStart(): number {
-        return +this._options.xStart;
-    }
-
-    get xStep(): number {
-        return +this._options.xStep;
-    }
-
-    get xStepUnit(): string {
-        return;
     }
 
     animatable(): boolean {
@@ -681,30 +670,46 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     prepareRender(): void {
+        const xAxes = this._xAxes;
+        const yAxes = this._yAxes;
+        const split = this._split;
+
+        [xAxes, yAxes].forEach(axes => {
+            if (axes.count < 1 && !this._gaugeOnly) {
+                // 축은 반드시 존재해야 한다. (TODO: 동적으로 series를 추가하는 경우)
+                axes.load({});
+            }
+        })
+
         this._inverted = !this._polar && this.inverted;
         
         if (this._splitted = !this._polar && this._body.split.visible) {
             this._splits = this._body.getSplits();
-            this._yAxes.split(this._splits);
+            yAxes.split(this._splits);
         }
 
-        this._xAxes.disconnect();
-        this._yAxes.disconnect();
+        xAxes.disconnect();
+        yAxes.disconnect();
 
         // 축에 연결한다.
         this._series.prepareRender();
 
         // 축의 값 범위를 계산한다. 
         // [주의] 반드시 x축을 먼저 준비해야 한다. seriesGroup.$_collectPoints에서 point.xValue를 사용한다.
-        this._xAxes.collectValues();
-        this._yAxes.collectValues();
-        this._xAxes.collectReferentsValues();
-        this._yAxes.collectReferentsValues();
-        this._xAxes.prepareRender();
-        this._yAxes.prepareRender();
+        xAxes.collectValues();
+        yAxes.collectValues();
+        xAxes.collectReferentsValues();
+        yAxes.collectReferentsValues();
+        xAxes.prepareRender();
+        yAxes.prepareRender();
 
-        // split
-        this._split.prepareRender();
+        if (split.visible && !this._gaugeOnly) {
+            // split
+            split.prepareRender();
+
+            // axis matrix
+            this._paneAxes.prepare(xAxes, yAxes, split._vrows, split._vcols);            
+        }
 
         // 축이 설정된 후
         this._series.prepareAfter();

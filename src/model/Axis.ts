@@ -717,11 +717,14 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _isPolar: boolean;
+    _index: number;
+    _row: number;
+    _col: number;
     _isX: boolean;
     _isHorz: boolean;
     _isOpposite: boolean;
     _isBetween: boolean;
+    _isPolar: boolean;
     protected _series: IPlottingItem[] = [];
     _range: { min: number, max: number };
     _ticks: IAxisTick[];
@@ -793,6 +796,8 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     readonly scrollBar = new AxisScrollBar(this);
 
+    row = 0;
+    col = 0;
     /**
      * true이면, X축이고 축이 연결된 body가 분할된 경우 분할된 쪽에 연결된다.
      */
@@ -812,16 +817,12 @@ export abstract class Axis extends ChartItem implements IAxis {
     reversed = false;
     /**
      * 명시적으로 지정하는 최소값.
-     * 축에 연결된 data point들의 값으로 계산된 최소값 대신 이 값이 축의 최소값이 된다.
-     * {@link minPadding}도 무시된다.
      * 
      * @config
      */
     minValue: number;
     /**
      * 명시적으로 지정하는 최대값.
-     * 축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.
-     * {@link maxPadding}도 무시된다.
      * 
      * @config
      */
@@ -1055,15 +1056,19 @@ export class AxisCollection {
     //-------------------------------------------------------------------------
     readonly chart: IChart;
     readonly isX: boolean;
+    readonly row: number;
+    readonly col: number;
     protected _items: Axis[] = [];
     private _map = new Map<string, Axis>();
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, isX: boolean) {
+    constructor(chart: IChart, isX: boolean, row: number, col: number) {
         this.chart = chart;
         this.isX = isX;
+        this.row = row;
+        this.col = col;
     }
 
     //-------------------------------------------------------------------------
@@ -1079,6 +1084,10 @@ export class AxisCollection {
 
     get items(): Axis[] {
         return this._items.slice(0);
+    }
+
+    internalItems(): Axis[] {
+        return this._items;
     }
 
     //-------------------------------------------------------------------------
@@ -1181,24 +1190,26 @@ export class AxisCollection {
             if (isArray(src.categories)) {
                 t = 'category';
             } else if (this.isX) {
-                t = 'category';
-                for (const ser of chart._getSeries().items()) {
-                    if (!ser.canCategorized()) {
-                        if (src.name && ser.xAxis === src.name) {
-                            t = _undefined;
-                            break;
-                        } else if (ser.xAxis === index) {
-                            t = _undefined;
-                            break;
-                        } else if (isNull(ser.xAxis) && index === 0) {
-                            t = _undefined;
-                            break;
-                        }
-                    }   
+                const series = chart._getSeries().internalItems();
+
+                if (series.length > 0) {
+                    t = 'category';
+
+                    for (const ser of series) {
+                        if (!ser.canCategorized()) {
+                            if (src.name && ser.xAxis === src.name) {
+                                t = _undefined;
+                                break;
+                            } else if (ser.xAxis === index) {
+                                t = _undefined;
+                                break;
+                            } else if (isNull(ser.xAxis) && index === 0) {
+                                t = _undefined;
+                                break;
+                            }
+                        }   
+                    }
                 }
-                // if (!t && chart.first?.canCategorized()) {
-                //     t = 'category';
-                // }
             } else {
                 t = chart._getSeries().first?.defaultYAxisType();
             }
@@ -1214,6 +1225,7 @@ export class AxisCollection {
         const axis = new cls(chart, this.isX, src.name);
 
         axis.load(src);
+        axis._index = index;
         axis._isPolar = chart.isPolar();
         return axis;
     }
@@ -1242,5 +1254,66 @@ export class YAxisCollection extends AxisCollection {
         } else {
             return length;
         }
+    }
+}
+
+export class PaneAxes {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _xAxes: Axis[] = [];
+    _yAxes: Axis[] = [];
+}
+
+export class PaneAxisMatrix {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _items: PaneAxes[][];
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public chart: IChart) {
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    prepare(xAxes: AxisCollection, yAxes: AxisCollection, rows: number, cols: number): void {
+        const items = this._items = new Array<PaneAxes[]>(rows + 1);
+
+        for (let r = 0; r < items.length; r++) {
+            items[r] = [];
+            for (let c = 0; c <= cols; c++) {
+                items[r].push(new PaneAxes());
+            }
+        }
+
+        xAxes.forEach(axis => {
+            let col = axis._col;
+
+            if (axis.position === AxisPosition.OPPOSITE || (axis._col < cols - 1) && axis.position === AxisPosition.BETWEEN) {
+                col++;
+            }
+            items[axis._row][col]._xAxes.push(axis);
+        });
+        yAxes.forEach(axis => {
+            let row = axis._row;
+
+            if (axis.position === AxisPosition.OPPOSITE || (axis._row < rows - 1) && axis.position === AxisPosition.BETWEEN) {
+                row++;
+            }
+            items[row][axis._col]._yAxes.push(axis);
+        });
+
+        // TODO: sort - prev's opposite, prev's between, normal + index
+    }
+
+    get(xy: 'x' | 'y', row: number, col: number): Axis[] {
+        const axes = this._items[row][col];
+        return xy === 'y' ? axes._yAxes : axes._xAxes;
     }
 }

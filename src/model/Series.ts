@@ -633,13 +633,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     getXStart(): number {
         let s = this._xAxisObj.parseValue(this.xStart);
-        const v = !isNaN(s) ? s : this._xAxisObj.parseValue(this.chart.xStart);
+        const v = !isNaN(s) ? s : this._xAxisObj.parseValue(this.chart.options.xStart);
 
         return this._xAxisObj._zoom ? v + Math.floor(this._xAxisObj._zoom.start) : v;
     }
 
     getXStep(): number {
-        return pickProp(this.xStep, this.chart.xStep);
+        return pickProp(this.xStep, this.chart.options.xStep);
     }
 
     getValue(point: DataPoint, axis: IAxis): number {
@@ -982,6 +982,9 @@ export class PlottingItemCollection  {
 
     items(): IPlottingItem[] {
         return this._items.slice(0);
+    }
+    internalItems(): IPlottingItem[] {
+        return this._items;
     }
 
     visibles(): IPlottingItem[] {

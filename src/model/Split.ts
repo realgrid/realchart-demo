@@ -55,6 +55,9 @@ export class Pane extends ChartItem {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    width: number;
+    height: number;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -72,9 +75,14 @@ export class Pane extends ChartItem {
     //-------------------------------------------------------------------------
 }
 
+interface IRelativeSize {
+    size: number;
+}
+
 /**
  * 다중 분할 panes.\
  * 각 pane에 해당하는 xAxis, yAxis가 반드시 존재해야 한다.
+ * axis는 pane 속성으로 위치를 지정한다.
  * 시리즈는 axis 위치에 따라 자동으로 pane이 결정된다.
  */
 export class Split extends ChartItem {
@@ -84,14 +92,14 @@ export class Split extends ChartItem {
     //-------------------------------------------------------------------------
     private _cols = 1;
     private _rows = 1;
-    private _colWidths: (string | number)[];
-    private _rowHeights: (string | number)[];
+    private _widths: (IRelativeSize | number)[];
+    private _heights: (IRelativeSize | number)[];
     private _panes: {[pos: string]: Pane} = {};
 
-    private _vcols = 1;
-    private _vrows = 1;
-    private _vcolWidths: number[];
-    private _vrowHeights: number[];
+    _vcols = 1;
+    _vrows = 1;
+    private _vwidths: number[];
+    private _vheights: number[];
     private _vpanes: Pane[][] = [];
 
     //-------------------------------------------------------------------------
@@ -100,14 +108,16 @@ export class Split extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    get rows(): number {
-        return this._rows;
-    }
+    /**
+     * 수평 분할을 지정한다.\
+     */
+    rows: number | (`${number}*` | '*')[];
+    /**
+     * 수직 분할을 지정한다.\
+     */
+    cols: number | (`${number}*` | '*')[];
 
-    get cols(): number {
-        return this._cols;
-    }
-
+    // 실제 표시되는 pane 수.
     count(): number {
         return this._vrows * this._vcols;
     }
@@ -132,13 +142,9 @@ export class Split extends ChartItem {
     }
 
     load(source: any): ChartItem {
+        super.load(source);
+
         if (isObject(source)) {
-            const rows = source.rows;
-            const cols = source.cols;
-            const panes = source.panes;
-
-            super.load(source);
-
             this.$_parsePanes(source.rows, source.cols);
             this._panes = this.$_loadPanes(source.panes);
         }
@@ -146,16 +152,16 @@ export class Split extends ChartItem {
     }
 
     protected _doPrepareRender(chart: IChart): void {
-        this._vpanes = this.$_buildPanes();
+        this._vpanes = this.$_buildPanes(chart);
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
     /**
-     * (number | `${number}*` | '*')[] // '*'은 '1*'과 동일.
+     * number | (`${number}*` | '*')[] // '*'은 '1*'과 동일.
      */
-    private $_parseSizes(sizes: any): (number | string)[] {
+    private $_parseSizes(sizes: any): (IRelativeSize | number)[] {
         let list: (string | number)[];
 
         if (isArray(sizes) && sizes.length > 0) {
@@ -165,14 +171,20 @@ export class Split extends ChartItem {
         } else  {
             list = ['1'];
         }
-        return list;
+        return list.map(v => {
+            if (isString(v)) {
+                const s = v.trim();
+                return { size: s === '*' ? 1 : parseFloat(s) };
+            }
+            return v;
+        })
     }
 
     private $_parsePanes(rows: any, cols: any): void {
-        this._colWidths = this.$_parseSizes(rows);
-        this._rowHeights = this.$_parseSizes(cols);
-        this._cols = this._colWidths.length;
-        this._rows = this._rowHeights.length;
+        this._widths = this.$_parseSizes(rows);
+        this._heights = this.$_parseSizes(cols);
+        this._cols = this._widths.length;
+        this._rows = this._heights.length;
     }
 
     private $_loadPanes(src: any): {[pos: string]: Pane} {
@@ -196,7 +208,56 @@ export class Split extends ChartItem {
         return panes;
     }
 
-    private $_buildPanes(): Pane[][] {
-        return;
+    /**
+     * 축이 연결되지 않은 pane들은 skip한다.
+     */
+    private $_collectPanes(chart: IChart): Pane[][] {
+        const xAxes = chart._getXAxes().internalItems();
+        const yAxes = chart._getYAxes().internalItems();
+        const xPanes: number[] = [];
+        const yPanes: number[] = [];
+        const panes = [];
+
+        xAxes.concat(yAxes).forEach(axis => {
+            const r = axis.row || 0;
+            const c = axis.col || 0;
+
+            axis._row = r;
+            axis._col = c;
+
+            if (c >= 0 && c < this._cols) {
+                if (xPanes.indexOf(c) < 0) {
+                    xPanes.push(c);
+                }
+            }
+            if (r >= 0 && r < this._rows) {
+                if (yPanes.indexOf(r) < 0) {
+                    yPanes.push(r);
+                }
+            }
+        })
+        xPanes.sort();
+        yPanes.sort();
+
+        for (let r = 0; r < yPanes.length; r++) {
+            const list: Pane[] = [];
+
+            for (let c = 0; c < xPanes.length; c++) {
+                const pane = this._panes[r + ',' + c] || new Pane(chart, r, c);
+                list.push(pane);
+            }
+            panes.push(list);
+        }
+
+        this._vrows = panes.length;
+        this._vcols = panes[0].length;
+
+        return panes;
+    }
+
+    private $_buildPanes(chart: IChart): Pane[][] {
+        const panes = this.$_collectPanes(chart);
+
+        return panes;
     }
 }

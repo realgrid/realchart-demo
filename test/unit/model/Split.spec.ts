@@ -8,8 +8,10 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { Split } from '../../../src/model/Split';
-import { executablePath } from 'puppeteer';
+import { Pane, Split } from '../../../src/model/Split';
+import { Chart } from '../../../src/model/Chart';
+import { Utils } from '../../../src/common/Utils';
+import { PaneAxisMatrix } from '../../../src/model/Axis';
 
 /**
  * Tests for Split class.
@@ -30,19 +32,12 @@ import { executablePath } from 'puppeteer';
         const split = new Split(null);
 
         split.load(config);
-        expect(split.rows).eq(config.rows);
-        expect(split.cols).eq(config.cols);
-
-        // for (let r = 0; r < split.rows; r++) {
-        //     for (let c = 0; c < split.cols; c++) {
-        //         const pane = split.getPane(r, c);
-
-        //         expect(pane.row).eq(r);
-        //         expect(pane.col).eq(c);
-        //         expect(pane.width).eq(0.5);
-        //         expect(pane.height).eq(0.5);
-        //     }
-        // }
+        
+        expect(split['_rows']).eq(config.rows);
+        expect(split['_cols']).eq(config.cols);
+        split['_widths'].forEach(w => expect((w as any).size).eq(1))
+        split['_heights'].forEach(h => expect((h as any).size).eq(1))
+        expect(Utils.isEmpty(split['_panes'])).is.true;
     });
 
     it('load', () => {
@@ -55,12 +50,108 @@ import { executablePath } from 'puppeteer';
             }, {
                 col: 1,
                 title: 'Pane 1'
+            }, {
+                col: 2,
+                title: 'Pane 2'
             }]
         };
         const split = new Split(null);
 
         split.load(config);
-        // expect(split.getPane(0, 0).title.text).eq(config.panes[0].title);
-        // expect(split.getPane(0, 1).title.text).eq(config.panes[1].title);
+
+        const panes = split['_panes'];
+        let pane = panes['0,0'];
+
+        expect(pane).instanceOf(Pane);
+        expect(pane.row).eq(0);
+        expect(pane.col).eq(0);
+
+        pane = panes['0,1'];
+
+        expect(pane).instanceOf(Pane);
+        expect(pane.row).eq(0);
+        expect(pane.col).eq(1);
+
+        pane = panes['1,0'];
+        expect(pane).not.exist;
+
+        // 범위를 벗어나면 생성되지 않는다.
+        pane = panes['0,2'];
+
+        expect(pane).not.exist;
     });
+
+    it('prepare', () => {
+        const chart = new Chart({
+            xAxis: [{
+            }, {
+                col: 1
+            }],
+            yAxis: [{
+            }, {
+                col: 1
+            }] 
+        });
+        const config = {
+            rows: 5,
+            cols: 5,
+            panes: [{
+                col: 0,
+                title: 'Pane 0'
+            }]
+        };
+        const split = new Split(chart);
+
+        // split
+        split.load(config);
+        split.prepareRender();
+
+        const widths = split['_vwidths'];
+        const heights = split['_vheights'];
+        const panes = split['_vpanes'];
+
+        expect(panes.length).eq(1);
+        expect(panes[0].length).eq(2);
+
+        expect(split._vrows).eq(1);
+        expect(split._vcols).eq(2);
+
+        // axes matrix
+        const matrix = new PaneAxisMatrix(chart);
+
+        matrix.prepare(chart._getXAxes(), chart._getYAxes(), split._vrows, split._vcols);
+    })
+
+    it('prepare 2', () => {
+        const chart = new Chart({
+            xAxis: [{
+            }, {
+                col: 1
+            }],
+            yAxis: [{
+            }, {
+                row: 1
+            }] 
+        });
+        const config = {
+            rows: 5,
+            cols: 5,
+            panes: [{
+                col: 0,
+                title: 'Pane 0'
+            }]
+        };
+        const split = new Split(chart);
+
+        split.load(config);
+        split.prepareRender();
+
+        const widths = split['_vwidths'];
+        const heights = split['_vheights'];
+        const panes = split['_vpanes'];
+
+        expect(panes.length).eq(2);
+        expect(panes[0].length).eq(2);
+        expect(panes[0].length).eq(2);
+    })
 });

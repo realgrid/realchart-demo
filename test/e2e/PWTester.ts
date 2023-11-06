@@ -1,12 +1,10 @@
-import { Page, Locator, ElementHandle } from '@playwright/test';
+import { Page, ElementHandle } from '@playwright/test';
 import { IPoint } from '../../src/common/Point';
-interface IRect {
-	x: number;
-	y: number;
-	width: number;
-	height: number;
-}
+import { IRect } from '../../src/common/Rectangle';
+import { Chart } from '../../src/model/Chart';
+
 export class PWTester {
+
 	//-------------------------------------------------------------------------
 	// consts
 	//-------------------------------------------------------------------------
@@ -14,12 +12,14 @@ export class PWTester {
 		width: 1920,
 		height: 1080,
 	};
+
 	//-------------------------------------------------------------------------
 	// static members
 	//-------------------------------------------------------------------------
 	static same(v1: number, v2: number, round = true): boolean {
 		return round ? Math.round(v1) === Math.round(v2) : v1 === v2;
 	}
+
 	static async goto(page: Page, url: string): Promise<void> {
 		page.on('console', async (msg) => {
 			const values = [];
@@ -33,6 +33,7 @@ export class PWTester {
 			.goto('http://localhost:6010/realchart/' + url)
 			.catch((err) => '>> ' + console.error(err));
 	}
+
 	static async getBounds(elt: ElementHandle): Promise<IRect> {
 		return await elt.evaluate((elt) => {
 			const { x, y, width, height } = (
@@ -41,9 +42,11 @@ export class PWTester {
 			return { x, y, width, height };
 		});
 	}
+
 	static async getAxis(page: Page, xy: 'x' | 'y'): Promise<ElementHandle> {
 		return await page.$('.rct-axis' + `[xy=${xy}]`);
 	}
+
 	static async getAxisLine(
 		page: Page,
 		xy: 'x' | 'y'
@@ -51,10 +54,12 @@ export class PWTester {
 		const axis = await this.getAxis(page, xy);
 		return await axis.$('.rct-axis-line');
 	}
+
 	static async getGridBounds(page: Page): Promise<IRect> {
 		const grids = await page.$('.rct-grids');
 		return await this.getBounds(grids);
 	}
+
 	static async getTranslate(elt: ElementHandle): Promise<IPoint> {
 		const bv = await elt.evaluate((elt) => {
 			const svgElement = elt as SVGSVGElement;
@@ -71,6 +76,7 @@ export class PWTester {
 		});
 		return bv;
 	}
+
 	static async getPathDValue(elt: ElementHandle): Promise<string | null> {
 		const dValue = await elt.evaluate((elt) => {
 			const pathElement = elt as SVGPathElement;
@@ -78,4 +84,16 @@ export class PWTester {
 		});
 		return dValue;
 	}
+
+    static async getConfig(page: any): Promise<Chart> {
+        const config = await page.evaluate('config');
+        const chart = new Chart(config);
+        
+        chart.prepareRender();
+        return chart;
+    }
+
+    static async getModel(page: any): Promise<any> {
+        return await page.evaluate('chart.$_p.model');
+    }
 }
