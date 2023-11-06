@@ -18,6 +18,7 @@ export interface TypeDocParameterReflection extends TypeDoc.JSONOutput.TypeParam
 
 export interface TypeDocNextraInit {
     jsonInputPath?: string | null;
+    configInputPath?: string | null;
     input?: string[] | null;
     jsonName?: string;
     output?: string;
@@ -74,6 +75,7 @@ export interface Documentation {
 
 export async function createDocumentation(options: TypeDocNextraInit): Promise<Documentation> {
     let data: TypeDoc.JSONOutput.ProjectReflection | undefined = undefined;
+    let config: any = {};
 
     options.noLinkTypes ??= false;
     options.links ??= DefaultLinksFactory;
@@ -103,6 +105,10 @@ export async function createDocumentation(options: TypeDocNextraInit): Promise<D
 
     if (!data && !options.custom?.length) {
         throw new Error('No input files to process');
+    }
+
+    if (options.configInputPath) {
+        config = JSON.parse(await readFile(options.configInputPath, 'utf-8'));
     }
 
     const doc: Documentation = {
@@ -207,7 +213,7 @@ export async function createDocumentation(options: TypeDocNextraInit): Promise<D
                 switch (child.kind) {
                     case TypeDoc.ReflectionKind.Class:
                         {
-                            const classSerializer = new ClassSerializer(child);
+                            const classSerializer = new ClassSerializer(child, config);
                             const serialized = classSerializer.serialize();
                             currentModule.classes.push({
                                 data: serialized,

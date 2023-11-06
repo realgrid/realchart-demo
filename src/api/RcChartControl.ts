@@ -197,12 +197,12 @@ export class RcChartControl {
         return getObject(this._objects, this.$_p.model.legend) as RcBody;
     }
     /**
-     * @readonly
      * 
      * 기본 시리즈 종류.\
      * 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
      * 
      * @default 'bar'
+     * @readonly
      */
     get type(): string {
         return this.$_p.model.type;
@@ -214,12 +214,12 @@ export class RcChartControl {
     //     }
     // }
     /**
-     * @readonly
      * 
      * 기본 게이지 종류.\
      * 게이지에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
      * 
      * @default 'circle'
+     * @readonly
      */
     get gaugeType(): string {
         return this.$_p.model.gaugeType;
@@ -237,15 +237,13 @@ export class RcChartControl {
     get inverted(): boolean {
         return this.$_p.model.inverted;
     }
-    set inverted(value: boolean) {
-        if (value !== this.$_p.model.inverted) {
-            this.$_p.model.inverted = value;
-            this.$_p.invalidateLayout();
-        }
-    }
+    // set inverted(value: boolean) {
+    //     if (value !== this.$_p.model.inverted) {
+    //         this.$_p.model.inverted = value;
+    //         this.$_p.invalidateLayout();
+    //     }
+    // }
     /**
-     * @readonly
-     * 
      * true면 차트가 {@link https://en.wikipedia.org/wiki/Polar_coordinate_system 극좌표계}로 표시된다.
      * 기본은 {@link https://en.wikipedia.org/wiki/Cartesian_coordinate_system 직교좌표계}이다.
      * 극좌표계일 때,
@@ -254,6 +252,8 @@ export class RcChartControl {
      * 2. axis.position 속성은 무시된다.
      * 3. chart, series의 inverted 속성이 무시된다.
      * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
+     * 
+     * @readonly
      */
     get polar(): boolean {
         return this.$_p.model.polar;

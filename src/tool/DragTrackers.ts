@@ -30,6 +30,7 @@ export class ZoomTracker extends ChartDragTracker {
     // fields
     //-------------------------------------------------------------------------
     private _body: BodyView;
+    private _vertical: boolean;
     private _feedback: RectElement;
     private _xStart: number;
     private _yStart: number;
@@ -37,10 +38,11 @@ export class ZoomTracker extends ChartDragTracker {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(control: ChartControl, body: BodyView) {
+    constructor(control: ChartControl, body: BodyView, vertical: boolean) {
         super(control);
 
         this._body = body;
+        this._vertical = vertical;
     }
 
     //-------------------------------------------------------------------------
@@ -54,14 +56,24 @@ export class ZoomTracker extends ChartDragTracker {
     }
 
     protected _doEnded(x: number, y: number): void {
-        x -= this._body.tx;
-        this._body.setZoom(Math.min(this._xStart, x), 0, Math.max(this._xStart, x), this._body.height);
+        if (this._vertical) {
+            y -= this._body.ty;
+            this._body.setZoom(0, Math.min(this._yStart, y), this._body.width, Math.max(this._yStart, y));
+        } else {
+            x -= this._body.tx;
+            this._body.setZoom(Math.min(this._xStart, x), 0, Math.max(this._xStart, x), this._body.height);
+        }
         this._feedback.remove();
     }
 
     protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
-        x -= this._body.tx;
-        this._feedback.setBounds(Math.min(this._xStart, x), 0, Math.abs(this._xStart - x), this._body.height);
+        if (this._vertical) {
+            y -= this._body.ty;
+            this._feedback.setBounds(0, Math.min(this._yStart, y), this._body.width, Math.abs(this._yStart - y));
+        } else {
+            x -= this._body.tx;
+            this._feedback.setBounds(Math.min(this._xStart, x), 0, Math.abs(this._xStart - x), this._body.height);
+        }
         return true;
     }
 }
@@ -89,25 +101,25 @@ export class ScrollTracker extends ChartDragTracker {
     //-------------------------------------------------------------------------
     protected _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
         const v = this._view;
-
         const p = v._thumbView.elementToSvg(0, 0);
 
         this._startOff = v._vertical ? (yStart - p.y) : (xStart - p.x);
         this._zoomLen = v.model.axis._zoom.length;
-
         return true;
     }
 
-    protected _doEnded(x: number, y: number): void {
-    }
-
     protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
-        if (this._view._vertical) {
+        const v = this._view;
+        let p: number;
+
+        if (v._vertical) {
+            p = v.svgToElement(x, y).y - this._startOff;
+            p = v.getZoomPos(v.height - p - v._thumbView.height);
+            v.model.axis.zoom(p, p + this._zoomLen);
         } else {
-            let p = this._view.svgToElement(x, y).x - this._startOff;
-            
-            p = this._view.getZoomPos(p);
-            this._view.model.axis.zoom(p, p + this._zoomLen);
+            p = v.svgToElement(x, y).x - this._startOff;
+            p = v.getZoomPos(p);
+            v.model.axis.zoom(p, p + this._zoomLen);
         }
         return true;
     }

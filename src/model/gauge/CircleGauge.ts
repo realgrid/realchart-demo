@@ -251,9 +251,10 @@ export class CircleGaugeHand extends ChartItem {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * 게이지 중심쪽의 바늘 반지름.
+     * 게이지 중심쪽의 바늘 반지름.\
      * 픽셀 단위 크기나, 게이지 원호 반지름에 대한 상대 크기로 지정할 수 있다.
      * 
+     * @default 3
      * @config
      */
     get radius(): RtPercentSize {
@@ -267,9 +268,10 @@ export class CircleGaugeHand extends ChartItem {
     }
 
     /** 
-     * 바늘 길이.
+     * 바늘 길이.\
      * 픽셀 단위 크기나, 게이지 원호 반지름에 대한 상대 크기로 지정할 수 있다.
      * 
+     * @default '100%'
      * @config
      */
     get length(): RtPercentSize {
@@ -283,9 +285,10 @@ export class CircleGaugeHand extends ChartItem {
     }
 
     /**
-     * 바늘 중심과 게이지 중심 사이의 간격.
+     * 바늘 중심과 게이지 중심 사이의 간격.\
      * 픽셀 단위 크기나, 게이지 원호 반지름에 대한 상대 크기로 지정할 수 있다.
      * 
+     * @default 0
      * @config
      */
     get offset(): RtPercentSize {
@@ -367,11 +370,14 @@ export class CircleGaugeScale extends GaugeScale {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    stepPixels = 92;
+    /**
+     * @config
+     */
+    stepPixels = 72;
 
     protected _getStepMultiples(step: number): number[] {
-        //return [1, 2, 2.5, 5, 10];
-        return [1, 3, 6, 12];
+        return [1, 2, 2.5, 5, 10];
+        // return [1, 4, 6, 10, 12];
     }
 }
 
@@ -391,10 +397,6 @@ export class CircleGauge extends CircularGauge {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart) {
-        super(chart);
-    }
-
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -472,7 +474,8 @@ export class CircleGauge extends CircularGauge {
             }
         }
 
-        if (scale.visible) {
+        // scale 기준으로 위치를 잡으므로 항상 필요하다.
+        // if (scale.visible) {
             exts.scaleTick = Math.max(1, scale.tick.length || 0);
             exts.scaleLabel = 16;
 
@@ -487,7 +490,7 @@ export class CircleGauge extends CircularGauge {
                     exts.scale = rd + scale.gap;
                     break;
             }
-        }
+        // }
         return exts;
     }
 }
@@ -509,6 +512,11 @@ export class CircleGaugeGroup extends CircularGaugeGroup<CircleGauge> {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * @default '50%'
+     */
+    '@config innerRadius': any;
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------

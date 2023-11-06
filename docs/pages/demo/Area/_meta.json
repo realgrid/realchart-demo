@@ -1,0 +1,20 @@
+{
+	"area": {
+		"title": "Area"
+	},
+	"area-multi": {
+		"title": "Multi Areas"
+	},
+	"areagroup": {
+		"title": "Area Group"
+	},
+	"area-negative": {
+		"title": "Area Negative"
+	},
+	"areagroup-negative": {
+		"title": "Negative Areas"
+	},
+	"area-null": {
+		"title": "Null Point"
+	}
+}

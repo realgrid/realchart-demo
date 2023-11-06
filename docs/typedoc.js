@@ -5,6 +5,7 @@ const typedocNextra = require('./lib/typedoc-nextra');
 typedocNextra.createDocumentation({
     // use existing typedoc json output (leave it blank to auto generate)
     jsonInputPath: "".concat(__dirname, "/.tdout/main.json"),
+    configInputPath: "".concat(__dirname, "/.tdout/api.json"),
     // output location
     output: "".concat(__dirname, "/.tdout/docs"),
     // output markdown

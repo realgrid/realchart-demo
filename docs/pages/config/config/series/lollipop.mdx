@@ -2,30 +2,28 @@
 Bar 시리즈 변종.
 ## Properties
 
-### baseValue: `number{:javascript}`[#baseValue]
-위/아래 구분의 기준이 되는 값.
-
-
+### baseValue: `number{:js}`[#baseValue]
+상/하 값 구분의 기준이 되는 값.\
 숫자가 아닌 값으로 지정하면 0으로 간주한다.  
 `default: 0`  
 
-### belowStyle: `SVGStyles | string{:javascript}`[#belowStyle]
+### belowStyle: `SVGStyles | string{:js}`[#belowStyle]
 baseValue  혹은 y축의 baseValue보다 작은 쪽의 point들에 적용되는 스타일.  
 
-### clipped: `boolean{:javascript}`[#clipped]
+### clipped: `boolean{:js}`[#clipped]
 body 영역을 벗어난 data point view는 잘라낸다.  
 `default: false`  
 
-### color: `string{:javascript}`[#color]
+### color: `string{:js}`[#color]
 데이터 포인트 기본 색.  
 
-### colorField: `string{:javascript}`[#colorField]
+### colorField: `string{:js}`[#colorField]
 undefined이면, data point의 값이 객체일 때 'color'.  
 
-### dataProp: `string{:javascript}`[#dataProp]
+### dataProp: `string{:js}`[#dataProp]
 undefined이면 "data".  
 
-### nullAsBase: `boolean{:javascript}`[#nullAsBase]
+### nullAsBase: `boolean{:js}`[#nullAsBase]
 null인 y값을  baseValue 로 간주한다.  
 `default: false`  
 
@@ -33,14 +31,14 @@ null인 y값을  baseValue 로 간주한다.
 데이터 point가 클릭될 때 발생하는 이벤트 콜백.
 명시적 true를 리턴하면 기본 동작이 진행되지 않는다.  
 
-### pointColors: `boolean | string[]{:javascript}`[#pointColors]
+### pointColors: `boolean | string[]{:js}`[#pointColors]
 데이터 포인트별 색들을 지정한다.
 false로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.
 true로 지정하면 기본 색들로 표시된다.
 색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.
 undefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.  
 
-### pointPadding: `number{:javascript}`[#pointPadding]
+### pointPadding: `number{:js}`[#pointPadding]
 이 시리즈의 point가 차지하는 영역 중에서 point bar 양쪽 끝에 채워지는 빈 영역의 크기.
 
 
@@ -51,7 +49,7 @@ point가 차지할 원래 크기에 대한 상대 값으로서,
 ### pointStyleCallback[#pointStyleCallback]
 데이터 point의 동적 스타일 콜백.  
 
-### pointWidth: `number{:javascript}`[#pointWidth]
+### pointWidth: `number{:js}`[#pointWidth]
 시리즈가 그룹에 포함되지 않거나,
 포함된 그룹의 layout이  SeriesGroupLayout.DEFAULT 이거나 특별히 설정되지 않아서,
 그룹에 포함된 시리즈들의 data point가 옆으로 나열되어 표시될 때,
@@ -60,38 +58,42 @@ point가 차지할 원래 크기에 대한 상대 값으로서,
 또, 그룹에 포함되고 그룹의 layout이  SeriesGroupLayout.DEFAULT  
 `default: 1`  
 
-### style: `SVGStyles | string{:javascript}`[#style]
+### ranges: `IValueRange[]{:js}`[#ranges]
+값 범위 목록.
+범위별로 다른 스타일을 적용할 수 있다.  
+
+### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 
-### visibleInLegend: `boolean{:javascript}`[#visibleInLegend]
+### visibleInLegend: `boolean{:js}`[#visibleInLegend]
 명시적 false로 지정하면 legend에 표시하지 않는다.  
 `default: true`  
 
-### xAxis: `string | number{:javascript}`[#xAxis]
+### xAxis: `string | number{:js}`[#xAxis]
 
-### xField: `string | number{:javascript}`[#xField]
+### xField: `string | number{:js}`[#xField]
 undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'.  
 
-### xStart: `any{:javascript}`[#xStart]
+### xStart: `any{:js}`[#xStart]
 x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.
 이 후에는  xStep 씩 증가시키면서 설정한다.
 이 속성이 지징되지 않은 경우  ChartOptions.xStart 가 적용된다.  
 
-### xStep: `string | number{:javascript}`[#xStep]
+### xStep: `string | number{:js}`[#xStep]
 x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
 첫번째 값은  xStart 로 설정한다.
 time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.
 이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다.  
 
-### yAxis: `string | number{:javascript}`[#yAxis]
+### yAxis: `string | number{:js}`[#yAxis]
 
-### yField: `string | number{:javascript}`[#yField]
+### yField: `string | number{:js}`[#yField]
 undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'.  
 
-### zOrder: `number{:javascript}`[#zOrder]
+### zOrder: `number{:js}`[#zOrder]
 `default: 0`  
 
-### visible: `boolean{:javascript}`[#visible]
+### visible: `boolean{:js}`[#visible]
 표시 여부.\
 모델에 따라 기본값이 다르다.
 <FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  

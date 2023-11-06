@@ -1,5 +1,5 @@
 export const config = {
-  options: { credits: {} },
+  options: { animatable: false, credits: {} },
   title: 'Linear Guages',
   gauge: [
     {
@@ -8,7 +8,6 @@ export const config = {
       width: '60%',
       height: 65,
       top: 100,
-      maxValue: 100,
       value: 81,
       scale: { line: true },
       band: {
@@ -32,7 +31,6 @@ export const config = {
       width: '50%',
       height: 100,
       top: 250,
-      maxValue: 100,
       value: 81,
       scale: { line: true },
       ranges: [

@@ -12,8 +12,8 @@ import { PathBuilder } from "../../common/PathBuilder";
 import { IPoint } from "../../common/Point";
 import { LayerElement, PathElement, RcElement } from "../../common/RcControl";
 import { ISize } from "../../common/Size";
-import { RAD_DEG, pixel } from "../../common/Types";
-import { CircleElement } from "../../common/impl/CircleElement";
+import { RAD_DEG, fixnum, pixel } from "../../common/Types";
+import { ArcElement } from "../../common/impl/CircleElement";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextAnchor, TextElement, TextLayout } from "../../common/impl/TextElement";
 import { GaugeItemPosition, GaugeRangeBand, ICircularGaugeExtents } from "../../model/Gauge";
@@ -44,12 +44,12 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _createLine(doc: Document, styleName: string): RcElement {
-        return new CircleElement(doc, styleName);
+        return new ArcElement(doc, styleName);
     }
 
     protected _doMeasure(doc: Document, model: CircleGaugeScale, hintWidth: number, hintHeight: number, phase: number): ISize {
         const steps = model._steps;
-        const nStep = steps.length;
+        const nStep = steps.length - ((model.gauge as CircleGauge).sweepAngle === 360 ? 1 : 0);
 
         if (this._line.setVisible(model.line.visible)) {
             this._line.internalSetStyleOrClass(model.line.style);
@@ -72,6 +72,7 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
 
     protected _doLayout(param: any): void {
         const m = this.model;
+        const steps = m._steps;
         const g = m.gauge as CircleGauge;
         const opposite = m.position === GaugeItemPosition.OPPOSITE ? -1 : 1;
         const gprops = g.props;
@@ -81,18 +82,19 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
         const rd = exts.scale;
         const rd2 = rd + this.model.tick.length * opposite;
         const sweep = gprops._sweepRad;
+        const start = gprops._startRad;
         const sum = g.maxValue - g.minValue;
         let x1: number, y1: number, x2: number, y2: number, a: number;
 
         // line
         if (this._line.visible) {
-            (this._line as CircleElement).setCircle(cx, cy, rd);
+            (this._line as ArcElement).setArc(cx, cy, rd, start, sweep, true);
         }
 
         // ticks
         if (this._tickContainer.visible) {
             this._ticks.forEach((v, i, count) => {
-                const a = i / count * sweep + gprops._startRad;
+                const a = m.getRate(steps[i]) * sweep + start;
 
                 x1 = cx + Math.cos(a) * rd;
                 y1 = cy + Math.sin(a) * rd;
@@ -108,11 +110,11 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
             const rd = rd2 + this._labels.get(0).getBBounds().height * 0.5 * opposite;
 
             this._labels.forEach((v, i, count) => {
-                const a = i / count * sweep + gprops._startRad;
+                const a = m.getRate(steps[i]) * sweep + start;
 
                 x2 = cx + Math.cos(a) * rd;
                 y2 = cy + Math.sin(a) * rd;
-                v.text = String(i * sum / count);
+                v.text = String(fixnum(g.minValue + m.getRate(steps[i]) * sum));
                 v.translate(x2, y2);
             });
         }
@@ -159,6 +161,7 @@ class BandView extends ChartElement<GaugeRangeBand> {
     protected _doLayout(param: any): void {
         const m = this.model;
         const g = m.gauge as CircleGauge;
+        const scale = g.scale;
         const gprops = g.props;
         const cx = this._center.x;
         const cy = this._center.y;
@@ -171,7 +174,7 @@ class BandView extends ChartElement<GaugeRangeBand> {
         let start = gprops._startRad;
 
         this._sectorViews.prepare(ranges.length).forEach((v, i) => {
-            const angle = (ranges[i].toValue - ranges[i].fromValue) * sweep / sum;
+            const angle = scale.getRate(ranges[i].toValue - ranges[i].fromValue) * sweep;
 
             v.setSector({
                 cx,
@@ -347,9 +350,10 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
     _renderValue(): void {
         const m = this.model;
+        const scale = m.scale;
         const props = m.getProps();
-        const value = pickNum(this._runValue, m.value);
-        const rate = pickNum((value - m.minValue) / (m.maxValue - m.minValue), 0);
+        const value = this._getValue(m);
+        const rate = scale.getRate(pickNum(value, 0));
         const center = this._center;
         const exts = this._exts;
         const thick = m.valueRim.getThickness(exts.radiusThick);// exts.radius - exts.inner);
@@ -420,6 +424,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
         this._center = center;
         this._exts = exts;
+        m.scale.buildSteps(exts.scale * props._sweepRad, NaN);
 
         // rim
         if (this._rimView.setVisible(m.rim.visible)) {
@@ -437,7 +442,6 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
         // scale rim
         if (this._scaleView.visible) {
-            m.scale.buildSteps(exts.scale * props._sweepRad, NaN);
             this._scaleView.measure(this.doc, m.scale, this.width, this.height, 0);
             this._scaleView.setExtents(center, exts);
             this._scaleView.layout();

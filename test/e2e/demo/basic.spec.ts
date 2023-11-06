@@ -13,15 +13,28 @@ import { SeriesView } from '../../../src/view/SeriesView';
 import { TitleView } from '../../../src/view/TitleView';
 import { LegendView } from '../../../src/view/LegendView';
 import { BodyView } from '../../../src/view/BodyView';
+import { BarSeries } from '../../../src/model/series/BarSeries';
+import { CategoryAxis } from '../../../src/model/axis/CategoryAxis';
+import { LinearAxis } from '../../../src/model/axis/LinearAxis';
 
 /**
  * PlayWright Tests for basic.html
  */
 test.describe('basic.html test', () => {
+    
     const url = 'demo/basic.html?debug';
 
     test.beforeEach(async ({ page }) => {
         await PWTester.goto(page, url);
+    });
+
+    test('model', async ({ page }) => {
+        const chart = await PWTester.getConfig(page);
+        const series = chart.firstSeries;
+
+        expect(series).instanceOf(BarSeries);
+        expect(series._xAxisObj).instanceOf(CategoryAxis);
+        expect(series._yAxisObj).instanceOf(LinearAxis);
     });
 
     test('init', async ({ page }) => {

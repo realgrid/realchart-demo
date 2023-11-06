@@ -1,0 +1,17 @@
+{
+	"trendline": {
+		"title": "Trendlines"
+	},
+	"axis-guide": {
+		"title": "Guides"
+	},
+	"crosshair": {
+		"title": "Crosshair"
+	},
+	"body-background": {
+		"title": "Background"
+	},
+	"wing-chart": {
+		"title": "Wing Chart by Split"
+	}
+}

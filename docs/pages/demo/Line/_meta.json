@@ -1,0 +1,32 @@
+{
+	"line": {
+		"title": "Line"
+	},
+	"line-spline": {
+		"title": "Spline"
+	},
+	"line-step": {
+		"title": "Stepped Line"
+	},
+	"line-negative": {
+		"title": "Negative Line"
+	},
+	"line-null": {
+		"title": "Null Point"
+	},
+	"line-multi": {
+		"title": "Multiple Lines"
+	},
+	"linegroup": {
+		"title": "Line Group"
+	},
+	"linegroup-negative": {
+		"title": "Negative Lines"
+	},
+	"bump": {
+		"title": "Bump Chart"
+	},
+	"line-bigdata": {
+		"title": "대량 데이터(3000)"
+	}
+}

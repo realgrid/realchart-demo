@@ -143,7 +143,26 @@ export class TypeDocNextra {
 
     public getMarkdown(c: DocumentedClass) {
         // c.properties.forEach(p => { p.metadata = { name: c.name, directory: '', line: 0 }; } );
-        return [this.getClassHeading(c), this.getCtor(c.constructor!), this.getProperties(c.properties), this.getMethods(c.methods)].join('\n\n');
+        return [this.getClassHeading(c), this.getCtor(c.constructor!), this.getConfigProperties(c.configProperties), this.getProperties(c.properties), this.getMethods(c.methods)].join('\n\n');
+    }
+
+    public getConfigProperties(properties: any[]) {
+        if (!properties.length) return '';
+
+        const head = heading('Config Properties', 2);
+        const body = properties.map((m) => {
+            // const name = `${m.private ? 'private' : 'public'} ${m.static ? 'static ' : ''}${escape(m.name)}`.trim();
+            const ename = escape(m.name);
+            const name = `${m.static ? 'static ' : ''}${m.readonly ? '*`<readonly>`* ' : ''}${ename}`.trim();
+            /** @TODO: properties와 중복될 수 있음. #이름 다르게 처리. */
+            const title = heading(`${name}: \`${m.type || m.dtype.name}{:js}\``, 3)
+                + `[#${ename}]`;
+            const desc = m.content?.trim() || '';
+
+            return `${title}\n${desc}\n${this.getSee(m.see)}`;
+        });
+
+        return `${head}\n${body.join('\n')}`;
     }
 
     public getProperties(properties: DocumentedClassProperty[]) {
@@ -153,7 +172,7 @@ export class TypeDocNextra {
         const body = properties.map((m) => {
             // const name = `${m.private ? 'private' : 'public'} ${m.static ? 'static ' : ''}${escape(m.name)}`.trim();
             const ename = escape(m.name);
-            const name = `${m.static ? 'static ' : ''}${ename}`.trim();
+            const name = `${m.static ? 'static ' : ''}${m.readonly ? '*`<readonly>`* ' : ''}${ename}`.trim();
             const title = heading(`${name}: ${this.linker(m.type || 'any', m.rawType || [m.type || 'any'])}`, 3)
                 + `[#${ename}]`;
             const desc = [m.description || '', m.deprecated ? `\n- ${bold('⚠️ Deprecated')}` : '', m.metadata?.url ? `\n- ${hyperlink('Source', m.metadata.url)}` : '']

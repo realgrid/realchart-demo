@@ -6,6 +6,9 @@ export const config = {
   series: {
     type: 'bubble',
     pointLabel: { visible: true, suffix: 'm' },
+    sizeMode: 'width',
+    shape: 'rectangle',
+    radius: 0.1,
     data: [
       [ 9, 81, 63 ],  [ 98, 5, 89 ],
       [ 51, 50, 73 ], [ 41, 22, 14 ],

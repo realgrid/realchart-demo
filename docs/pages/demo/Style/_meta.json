@@ -1,0 +1,17 @@
+{
+	"lineargradient": {
+		"title": "Linear Gradient"
+	},
+	"radialgradient": {
+		"title": "Radial Gradient"
+	},
+	"palette": {
+		"title": "Palette"
+	},
+	"theme": {
+		"title": "Theme"
+	},
+	"stylecallback": {
+		"title": "Style Callback"
+	}
+}

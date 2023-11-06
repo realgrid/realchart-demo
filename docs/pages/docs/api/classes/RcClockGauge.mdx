@@ -10,12 +10,100 @@
 
 
 
+## Config Properties
+### centerX: `string | number{:js}`[#centerX]
+게이지 중심 수평 위치.
+픽셀 단위의 크기나, plot 영역 전체 너비에 대한 상대적 크기로 지정할 수 있다.
+
+### centerY: `string | number{:js}`[#centerY]
+게이지 중심 수직 위치.
+픽셀 단위의 크기나, plot 영역 전체 높이에 대한 상대적 크기로 지정할 수 있다.
+
+### duration: `number{:js}`[#duration]
+Animation duration.
+
+### hourHand: `ClockGaugeHand{:js}`[#hourHand]
+시침 설정 모델.
+
+### label: `ClockGaugeLabel{:js}`[#label]
+label
+
+### minorTick: `ClockGaugeTick{:js}`[#minorTick]
+minor tick
+
+### minuteHand: `ClockGaugeHand{:js}`[#minuteHand]
+분침 설정 모델.
+
+### name: `string{:js}`[#name]
+게이지 이름.
+동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다.
+
+### pin: `ClockGaugePin{:js}`[#pin]
+pin
+
+### radius: `string | number{:js}`[#radius]
+게이지 원호의 반지름.
+픽셀 단위의 크기나, plot 영역 전체 크기(너비와 높이 중 작은 값)에 대한 상대적 크기로 지정할 수 있다.
+'50%'로 지정하면 plot 영역의 width나 height중 작은 크기와 동일한 반지름으로 표시된다.
+
+### rim: `ClockGaugeRim{:js}`[#rim]
+rim 설정 모델.
+
+### secondHand: `ClockGaugeSecondHand{:js}`[#secondHand]
+초침 설정 모델.
+
+### style: `SVGStyles | string{:js}`[#style]
+스타일셋 혹은 class selector.
+
+### tick: `ClockGaugeTick{:js}`[#tick]
+main tick.
+
+### tickLabel: `ClockGaugeTickLabel{:js}`[#tickLabel]
+tick label
+
+### time: `string | number | Date{:js}`[#time]
+이 속성에 명시적으로 시간을 지정하면 현재 시간 대신 이 시각을 표시한다.
+
+### timezone: `number{:js}`[#timezone]
+분단위로 시계에 표시할 지역의 timezone을 지정한다.
+예) 뉴욕: -4 * 60, 파리: 2 * 60
+
+### active: `boolean{:js}`[#active]
+시계 동작 여부.
+
+### bottom: `string | number{:js}`[#bottom]
+plot 영역의 아래쪽 모서리와 widget 사이의 간격.
+
+### height: `string | number{:js}`[#height]
+게이지 높이.
+픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
+
+### left: `string | number{:js}`[#left]
+plot 영역의 왼쪽 모서리와 widget 사이의 간격.
+
+### right: `string | number{:js}`[#right]
+plot 영역의 오른쪽 모서리와 widget 사이의 간격.
+
+### size: `string | number{:js}`[#size]
+width 와  height 를 동시에 설정한다.
+
+### top: `string | number{:js}`[#top]
+plot 영역의 위쪽 모서리와 widget 사이의 간격.
+
+### visible: `boolean{:js}`[#visible]
+표시 여부.
+
+### width: `string | number{:js}`[#width]
+게이지 너비.
+픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
+
+
 
 
 ## Methods
 ### get(prop): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#get]
 지정한 설정 값(들)을 가져온다.\
-지정 가능한 설정 값 목록은 [Configuration API 페이지](http://realchart.co.kr/config)에서 확인할 수 있다. 
+지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
 
 ```js
 console.log(chart.series.get('name'))
@@ -34,7 +122,7 @@ console.log(chart.axis.get('title.text'));
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 속성 경로. |
 ### set(prop, value, redraw): [RcChartObject](../classes/RcChartObject)[#set]
 지정한 속성의 값(들)을 설정한다.\
-지정 가능한 설정 값 목록은 [Configuration API 페이지](http://realchart.co.kr/config)에서 확인할 수 있다.\
+지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다.\
 또, 이 객체 자신을 리턴하므로 javascript에서 builder 패턴으로 설정 값들을 연속해서 지정할 수 있다.
 
 ```js
@@ -56,7 +144,7 @@ chart.axis.set('title.text', 'New Title'));
 | redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
 ### setAll(props, redraw): [RcChartObject](../classes/RcChartObject)[#setAll]
 JSON 객체로 지정한 속성들의 값을 설정한다.\
-지정 가능한 설정 값 목록은 [Configuration API 페이지](http://realchart.co.kr/config)에서 확인할 수 있다. 
+지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
 
 ```js
  chart.series.set({
@@ -74,7 +162,7 @@ JSON 객체로 지정한 속성들의 값을 설정한다.\
 | redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
 ### toggle(prop, redraw): [RcChartObject](../classes/RcChartObject)[#toggle]
 Boolean 타입의 설정값을 변경한다.\
-지정 가능한 설정 값 목록은 [Configuration API 페이지](http://realchart.co.kr/config)에서 확인할 수 있다. 
+지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
 
 ```js
 chart.getSeries('ser02').toggle('visible');

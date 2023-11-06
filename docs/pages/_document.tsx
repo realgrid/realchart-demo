@@ -16,6 +16,7 @@ export default class _Document extends Document {
             type="image/x-icon"
             sizes="any"
           />
+          <script src="/realchart/realchart-lic.js"></script>
         </Head>
         <body>
           <Main />

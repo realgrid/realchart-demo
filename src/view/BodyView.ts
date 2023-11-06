@@ -137,13 +137,15 @@ export class AxisGridView extends ChartElement<AxisGrid> {
 
         if (axis._isHorz) {
             lines.forEach((line, i) => {
-                if (line.setVisible((i !== 0 || m.startVisible) && (i !== end || m.endVisible))) {
+                // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
+                if (line.setVisible((pts[i] > 0 || i !== 0 || m.startVisible) && (pts[i] < w || i !== end || m.endVisible))) {
                     line.setVLineC(pts[i], 0, h);
                 }
             });
         } else {
             lines.forEach((line, i) => {
-                if (line.setVisible((i !== 0 || m.startVisible) && (i !== end || m.endVisible))) {
+                // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
+                if (line.setVisible((pts[i] < h || i !== 0 || m.startVisible) && (pts[i] > 0 || i !== end || m.endVisible))) {
                     line.setHLineC(h - pts[i], 0, w);
                 }
             });
@@ -869,9 +871,12 @@ export class BodyView extends ChartElement<Body> {
     }
 
     setZoom(x1: number, y1: number, x2: number, y2: number): void {
-        const xAxis = this.chart().xAxis;
-        const v1 = xAxis.getValueAt(this.width, x1);
-        const v2 = xAxis.getValueAt(this.width, x2);
+        const chart = this.chart();
+        const inverted = chart.isInverted();
+        const xAxis = chart.xAxis;
+        const len = inverted ? this.height : this.width;
+        let v1 = xAxis.getValueAt(len, inverted ? len - y2 : x1);
+        let v2 = xAxis.getValueAt(len, inverted ? len - y1 : x2);
 
         if (xAxis.zoom(v1, v2)) {
             this._zoomRequested = true;

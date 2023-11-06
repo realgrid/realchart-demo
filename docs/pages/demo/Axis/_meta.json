@@ -1,0 +1,32 @@
+{
+	"categoryaxis": {
+		"title": "Category Axis"
+	},
+	"categoryaxis-var": {
+		"title": "Variable Category Axis"
+	},
+	"linearaxis": {
+		"title": "Linear Axis"
+	},
+	"logaxis": {
+		"title": "Log Axis"
+	},
+	"timeaxis": {
+		"title": "Time Axis"
+	},
+	"axis-break": {
+		"title": "Axis Breaks"
+	},
+	"axis-label": {
+		"title": "Axis Labels"
+	},
+	"multiaxis": {
+		"title": "Multiple Axis"
+	},
+	"axis-zoom": {
+		"title": "Zooming"
+	},
+	"series-navigator": {
+		"title": "Navigator"
+	}
+}

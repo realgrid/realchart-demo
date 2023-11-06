@@ -4,14 +4,14 @@
 또, 여러 값 범위 중 어디에 속한 상태인 지를 나타낸다.
 ## Properties
 
-### animatable: `boolean{:javascript}`[#animatable]
+### animatable: `boolean{:js}`[#animatable]
 value  변화를 애니메이션으로 표현한다.  
 `default: true`  
 
 ### [band](./linear/band)
 게이지 밴드 모델.  
 
-### duration: `number{:javascript}`[#duration]
+### duration: `number{:js}`[#duration]
 Animation duration.  
 `default: 500`  
 
@@ -20,60 +20,61 @@ RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 
   
 
-### maxValue: `number{:javascript}`[#maxValue]
+### maxValue: `number{:js}`[#maxValue]
 최대값.
 group에 포함되면 이 값 대신 group의 최대값이 사용된다.  
+`default: 100`  
 
-### minValue: `number{:javascript}`[#minValue]
+### minValue: `number{:js}`[#minValue]
 최소값.
 group에 포함되면 이 값 대신 group의 최소값이 사용된다.  
 `default: 0`  
 
-### name: `string{:javascript}`[#name]
+### name: `string{:js}`[#name]
 게이지 이름.
 동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다.  
 
-### reversed: `boolean{:javascript}`[#reversed]
+### reversed: `boolean{:js}`[#reversed]
 true면 반대 방향으로 표시한다.  
 `default: false`  
 
 ### [scale](./linear/scale)
 Gauge scale.  
 
-### style: `SVGStyles | string{:javascript}`[#style]
+### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 
-### value: `number{:javascript}`[#value]
+### value: `number{:js}`[#value]
 현재값.  
 `default: 0`  
 
-### vertical: `boolean{:javascript}`[#vertical]
+### vertical: `boolean{:js}`[#vertical]
 true면 수직으로 표시한다.  
 
-### bottom: `string | number{:javascript}`[#bottom]
+### bottom: `string | number{:js}`[#bottom]
 plot 영역의 아래쪽 모서리와 widget 사이의 간격.  
 
-### height: `string | number{:javascript}`[#height]
+### height: `string | number{:js}`[#height]
 게이지 높이.
 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.  
 
-### left: `string | number{:javascript}`[#left]
+### left: `string | number{:js}`[#left]
 plot 영역의 왼쪽 모서리와 widget 사이의 간격.  
 
-### right: `string | number{:javascript}`[#right]
+### right: `string | number{:js}`[#right]
 plot 영역의 오른쪽 모서리와 widget 사이의 간격.  
 
-### size: `string | number{:javascript}`[#size]
+### size: `string | number{:js}`[#size]
 width 와  height 를 동시에 설정한다.  
 
-### top: `string | number{:javascript}`[#top]
+### top: `string | number{:js}`[#top]
 plot 영역의 위쪽 모서리와 widget 사이의 간격.  
 
-### visible: `boolean{:javascript}`[#visible]
+### visible: `boolean{:js}`[#visible]
 표시 여부.\
 모델에 따라 기본값이 다르다.
 <FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  
 
-### width: `string | number{:javascript}`[#width]
+### width: `string | number{:js}`[#width]
 게이지 너비.
 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.  

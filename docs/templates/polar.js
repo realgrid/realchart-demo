@@ -1,36 +1,23 @@
 export const config = {
   polar: true,
-  options: { animatable: false },
+  options: {},
   title: 'Polar Chart',
-  xAxis: {},
+  xAxis: { categories: [ '성남시', '용인시', '수원시', '일산시', '화성시', '평택시' ] },
   yAxis: {
-    line: true,
+    label: true,
     guide: [ { type: 'line', value: 5.5, style: { stroke: 'red' } } ]
   },
+  body: {},
   series: [
     {
       type: 'bar',
-      pointLabel: true,
-      data: [
-        [ 'home', 7 ],
-        [ 'sky', 11 ],
-        [ 'def', 9 ],
-        [ '지리산', 14.3 ],
-        [ 'zzz', 13 ],
-        [ '낙동강', 12.5 ]
-      ]
+      pointLabel: { visible: true, position: 'outside' },
+      data: [ 7, 11, 9, 14.3, 13, 12.5 ]
     },
     {
       type: 'area',
       pointLabel: true,
-      data: [
-        [ 'home', 13 ],
-        [ 'sky', 9 ],
-        [ 'def', 11 ],
-        [ '지리산', 12.3 ],
-        [ 'zzz', 11 ],
-        [ '낙동강', 15.5 ]
-      ]
+      data: [ 13, 9, 11, 12.3, 11, 15.5 ]
     }
   ]
 }

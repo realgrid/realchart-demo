@@ -411,7 +411,7 @@ export abstract class RcControl extends RcWrappableObject {
 
         const desc = doc.createElement('desc');
         // desc.textContent = 'Created by RealChart v$Version'; // sourcemap, rollup issue
-        desc.textContent = 'Created by RealChart v0.9.10';
+        desc.textContent = 'Created by RealChart v0.9.12';
         svg.appendChild(desc);
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
@@ -538,6 +538,7 @@ export abstract class RcControl extends RcWrappableObject {
     }
 
     private _pointerDownHandler = (ev: PointerEvent) => {
+        this._dom.setPointerCapture(ev.pointerId);
         this._pointerHandler && this._pointerHandler.handleDown(this.toOffset(ev));
     }
 
@@ -546,6 +547,7 @@ export abstract class RcControl extends RcWrappableObject {
     }
 
     private _pointerUpHandler = (ev: PointerEvent) => {
+        this._dom.releasePointerCapture(ev.pointerId);
         this._pointerHandler && this._pointerHandler.handleUp(this.toOffset(ev));
     }
 

@@ -633,13 +633,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     getXStart(): number {
         let s = this._xAxisObj.parseValue(this.xStart);
-        const v = !isNaN(s) ? s : this._xAxisObj.parseValue(this.chart.xStart);
+        const v = !isNaN(s) ? s : this._xAxisObj.parseValue(this.chart.options.xStart);
 
         return this._xAxisObj._zoom ? v + Math.floor(this._xAxisObj._zoom.start) : v;
     }
 
     getXStep(): number {
-        return pickProp(this.xStep, this.chart.xStep);
+        return pickProp(this.xStep, this.chart.options.xStep);
     }
 
     getValue(point: DataPoint, axis: IAxis): number {
@@ -982,6 +982,9 @@ export class PlottingItemCollection  {
 
     items(): IPlottingItem[] {
         return this._items.slice(0);
+    }
+    internalItems(): IPlottingItem[] {
+        return this._items;
     }
 
     visibles(): IPlottingItem[] {
@@ -1480,8 +1483,7 @@ export abstract class BasedSeries extends ClusterableSeries {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * 위/아래 구분의 기준이 되는 값.
-     * <br>
+     * 상/하 값 구분의 기준이 되는 값.\
      * 숫자가 아닌 값으로 지정하면 0으로 간주한다.
      * 
      * @config

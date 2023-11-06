@@ -1,6 +1,6 @@
 export const config = {
   title: 'Category Axis',
-  options: { animatable: false },
+  options: {},
   xAxis: {
     categories: [ '쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도' ],
     title: { text: '일일 Daily fat' },
@@ -20,7 +20,7 @@ export const config = {
     {
       name: 'line1',
       type: 'line',
-      pointLabel: true,
+      pointLabel: { visible: true, effect: 'outline' },
       color: 'black',
       data: [ 9, 17, 19, 11, 10, 21 ],
       style: { strokeDasharray: '5' },

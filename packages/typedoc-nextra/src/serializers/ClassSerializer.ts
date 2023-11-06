@@ -17,6 +17,7 @@ export interface DocumentedClass {
     constructor: DocumentedClassConstructor | null;
     methods: DocumentedClassMethod[];
     properties: DocumentedClassProperty[];
+    configProperties: any[];
     metadata: FileMetadata | null;
     vars: any[] | undefined;
 }
@@ -70,6 +71,9 @@ export interface DocumentedClassMethod {
 
 export class ClassSerializer extends AbstractSerializer {
 
+    constructor(public declaration: JSONOutput.DeclarationReflection, private config: any = {}) {
+        super(declaration);
+    }
 
     public serialize(): DocumentedClass {
         const ctor = this.declaration.children?.find((c) => {
@@ -86,9 +90,9 @@ export class ClassSerializer extends AbstractSerializer {
 
         const vars = getVars(this.declaration);
         const description = getDescription(this.declaration, vars);
-
+        const name = getName(this.declaration);
         return {
-            name: getName(this.declaration),
+            name,
             abstract: this.declaration.flags.isAbstract || !!this.declaration.comment?.blockTags?.some((r) => r.tag === '@abstract'),
             constructor: ctor
                 ? {
@@ -108,8 +112,30 @@ export class ClassSerializer extends AbstractSerializer {
             methods: methods?.map((m) => this.parseMethod(m)) || [],
             private: this.declaration.flags.isPrivate || !!this.declaration.comment?.blockTags?.some((r) => r.tag === '@private'),
             properties: properties?.map((m) => this.parseProperties(m)) || [],
+            configProperties: this.parseConfigProperties(name) || [],
             see: this.declaration.comment?.blockTags?.find((r) => r.tag === '@see')?.content?.map((m) => seelink(m)) || []
         };
+    }
+
+    public parseConfigProperties(name: string): any[] {
+        const seriesRegex = /Rc(?!Chart).*Series(Group)?/;
+        const gaugeRegex = /Rc(?!Chart).*Gauge(Group)?(?!Base)/;
+        const [series] = seriesRegex.exec(name) || [];
+        const [gauge] = gaugeRegex.exec(name) || [];
+        const key = name.slice(2)
+
+        if (series || gauge) {
+            // DocumentReflection?
+            const { props } = this.config[key] || {};
+            return props?.map((p: any) => {
+                return {
+                    ...p,
+                    content: p.content?.split('\\').shift() ?? ''
+                };
+            }) || [];
+        }
+
+        return [];
     }
 
     public parseProperties(decl: JSONOutput.DeclarationReflection): DocumentedClassProperty {

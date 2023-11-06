@@ -1,5 +1,6 @@
 const scatter_data = generateRandomData(3000);
 const scatter_data2 = generateRandomData(3000);
+const scatter_jitter = [];
 
 function generateRandomData(count) {
   const data = [];
@@ -10,3 +11,13 @@ function generateRandomData(count) {
   }
   return data;
 }
+
+// from hichart
+function getJitterData(x, count) {
+    const off = 0.2 + 0.2 * Math.random();
+
+    return new Array(count).fill(1).map(() => [
+        x,
+        off + (Math.random() - 0.5) * (Math.random() - 0.5)
+    ]);
+};

@@ -7,7 +7,7 @@ const config = {
 	options: {
         animatable: false
     },
-	title: 'Scatter Series',
+	title: 'Scatter - 6,000 Points',
 	xAxis: {
         minPadding: 0,
         maxPadding: 0,
@@ -23,13 +23,15 @@ const config = {
 			xField: 'x',
 			yField: 'y',
 			// pointLabel: true
-			radius: 2
+			radius: 3
 		},
 		{
 			data: scatter_data2,
 			xField: 'x',
 			yField: 'y',
-			radius: 2
+			radius: 2,
+            shape: 'diamond',
+            color: '#c80'
 		},
 	],
 };
@@ -76,6 +78,10 @@ function setActions(container) {
 		},
 		false
 	);
+    createListBox(container, "series[0].shape", ['circle', 'diamond', 'sqaure', 'triangle', 'itriangle', 'star'], function (e) {
+        config.series[0].shape = _getValue(e);
+        chart.load(config);
+    }, 'circle');
 }
 
 function init() {

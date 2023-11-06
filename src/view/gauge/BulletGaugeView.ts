@@ -71,9 +71,8 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
         const reversed = m.reversed;
         const vertical = this._vertical;
         const scale = group ? group.scale : m.scale;
-        const sum = scale._max - scale._min;
 
-        if (this._barContainer.setVisible(sum > 0)) {
+        if (this._barContainer.setVisible(!scale.isEmpty())) {
             const ranges = m.getRanges(scale._min, scale._max) || group?.getRanges(scale._min, scale._max);
 
             if (ranges) {
@@ -85,36 +84,36 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
 
                     this._barViews.forEach((v, i) => {
                         const range = ranges[i];
-                        const h = r.height * (range.toValue - range.fromValue) / sum;
+                        const h = r.height * scale.getRate(range.toValue);
         
                         v.setBounds(0, reversed ? y : y - h, r.width, h);
                         v.setStyle('fill', range.color);
-                        y += reversed ? h : -h;
+                        // y += reversed ? h : -h;
                     });
                 } else {
                     let x = reversed ? r.width : 0;
 
                     this._barViews.forEach((v, i) => {
                         const range = ranges[i];
-                        const w = r.width * (range.toValue - range.fromValue) / sum;
+                        const w = r.width * scale.getRate(range.toValue);
         
                         v.setBounds(reversed ? x - w : x, 0, w, r.height);
                         v.setStyle('fill', range.color);
-                        x += reversed ? -w : w;
+                        // x += reversed ? -w : w;
                     });
                 }
             }
         }
 
         // value bar
-        if (this._valueView.setVisible(sum > 0 && !isNaN(m.value))) {
+        if (this._valueView.setVisible(!scale.isEmpty() && !isNaN(value))) {
             if (vertical) {
-                const h = r.height * (value - m.scale._min) / sum;
+                const h = r.height * scale.getRate(value);
                 const y = reversed ? r.y : r.y + r.height - h;
 
                 this._valueView.setBounds(r.x + r.width / 3, y, r.width / 3, h);
             } else {
-                const w = r.width * (value - m.scale._min) / sum;
+                const w = r.width * scale.getRate(value);
                 const x = reversed ? r.x + r.width - w : r.x;
     
                 this._valueView.setBounds(x, r.y + r.height / 3, w, r.height / 3);
@@ -122,14 +121,14 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
         }
 
         // target bar
-        if (this._targetView.setVisible(sum > 0 && !isNaN(m.targetValue))) {
+        if (this._targetView.setVisible(!scale.isEmpty() && !isNaN(m.targetValue))) {
             if (vertical && r.width > 10) {
-                let y = r.height * (m.targetValue - m.scale._min) / sum;
+                let y = r.height * scale.getRate(m.targetValue);
 
                 y = reversed ? r.y + y : r.y + r.height - y;
                 this._targetView.setBounds(r.x + 5, y - 1, r.width - 10, 3);
             } else if (!vertical && r.height > 10) {
-                let x = r.width * (m.targetValue - m.scale._min) / sum;;
+                let x = r.width * scale.getRate(m.targetValue);
             
                 x = reversed ? (r.x + r.width - x) : (r.x + x);
                 this._targetView.setBounds(x - 1, r.y + 5, 3, r.height - 10);

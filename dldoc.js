@@ -18,7 +18,6 @@ import path from 'path';
 const JSFIDDLE_URL = 'https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/';
 /**
  * typedoc에서 가공한 클래스 구조 모델을 api문서에서 사용할 config 구조로 재가공한다.
- * debug가 true면 ./api/api.json으로 모델을 내보낸다.
  */
 class Tunner {
   constructor({ path = '', debug = false }) {
@@ -246,6 +245,17 @@ class Tunner {
 
     return { config, defaultBlock, content: lines };
   }
+
+  /**
+   * 주석이 아닌 '@config visible' 같은 포맷으로 선언된 doclet 여부
+   */
+  _isDoclet(name) {
+      return name.indexOf('@config') == 0;
+  }
+  _doclet(name) {
+    const isDoclet = this._isDoclet(name);
+    return { isDoclet, name: isDoclet ? name.split(' ').slice(-1) : name };
+  }
   _setContent (prop) {
     // return prop.name;
     const { config, defaultBlock, content } = this._parseComment(prop.comment);
@@ -254,6 +264,7 @@ class Tunner {
         type: this._parseType(prop.type),
         dtype: this._parseTypeD(prop.type),
         header: config.join('|'), 
+        // readonly: prop.flags?.isReadonly, // config에서 readonly 표기가 유효한지 확인.
         content,
         defaultValue: prop.defaultValue,
         defaultBlock,
@@ -264,9 +275,12 @@ class Tunner {
     const { name, children, kindString, type, typeParameters, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
     const { config, content } = this._parseComment(comment);
     const propFilter = (child) => {
-      return (child.kindString == 'Property' && this._findTag(child.comment?.blockTags, '@config'))
+      return (
+        child.kindString == 'Property' 
+          && (this._isDoclet(child.name) || this._findTag(child.comment?.blockTags, '@config')))
         || (child.kindString == 'Accessor' && this._findTag(child.getSignature?.comment?.blockTags, '@config'))
     }
+
     switch (kindString) {
       case 'Class':
         this.classMap[name] = { 
@@ -275,11 +289,31 @@ class Tunner {
           config,
           content,
           extended: extendedTypes.map(t => t.name),
-          props: children.filter(propFilter).map(c => {
-            return c.kindString == 'Property' 
+          props: children.filter(propFilter)
+            .map(c => {
+              return c.kindString == 'Property' 
               ? this._setContent(c)
               : this._setContent(c.getSignature)
-          }),
+            })
+            .sort((prev, next) => {
+              // doclet은 끝으로 보낸다.
+              const { isDoclet, name } = this._doclet(next.name);
+              if (isDoclet) return -1;
+              else return 0;
+            })
+            .reduce((acc, curr) => {
+              // 상위 클래스 속성 설명에 doclet 설명을 추가하고, defaultValue는 덮어쓴다.
+              const { isDoclet, name } = this._doclet(curr.name);
+              const found = acc.findIndex((el) => el.name == name);
+              if (found >= 0 && isDoclet) {
+                acc[found].content += `\n${curr.content}`
+                acc[found].defaultValue = curr.defaultValue;
+                acc[found].defaultBlock = curr.defaultBlock;
+              } else {
+                acc.push(curr);
+              }
+              return acc;
+            }, [])
         };
         break;
       case 'Enumeration':
@@ -314,9 +348,8 @@ class Tunner {
   scan() {
     this._visit(this.model);
 
-    if (this.debug) {
-      this.exportModel();
-    }
+    // class api 문서를 생성하는 docs/typedoc에서 사용.
+    this.exportModel();
 
     return this.classMap;
   }
@@ -355,13 +388,15 @@ class MDGenerater {
     const { name: _name, opt, type: _type, prop } = param;
     const { header, name, type, dtype, content, defaultValue, defaultBlock } = prop;
     let enumLines = ''
-    let lines = `### ${name}${type ? ': \`' + type  + '\{:javascript}`': ''}[#${name}]\n`;
+    let lines = `### ${prop.readonly ? '*`<readonly>`* ' : ''}`
+      + `${name}`
+      + `${type ? ': \`' + type  + '\{:js}`': ''}`
+      + `[#${name}]\n`;
 
     if (dtype instanceof Array) {
       dtype.map(t => {
         if (t.type == 'reference') {
           console.warn('Not Implemented union references');
-          // throw Error('Not Implemented union references');
         }
       });
     } else if (dtype?.type == 'reference') {
@@ -441,7 +476,7 @@ class MDGenerater {
   }
 
   /**
-   * 
+   * root.opt[type] label
    * @param config: any
    * @returns { name, root, opt, label, ...attr }
    * @rparam name: head of line
@@ -483,8 +518,10 @@ class MDGenerater {
     return result;
   }
 
-  _setPropContents(docMap, { opt, type, _content }) {
-    if (type) {
+  _setPropContents(docMap, { name, opt, type, _content }) {
+    if (name == 'chart') {
+      docMap[name] = { ...docMap[name], _content };
+    } else if (type) {
       // if (opt != 'series') console.debug(opt, type, _content)
       docMap[opt][type] = { ...docMap[opt][type], _content }
     } else {
@@ -500,7 +537,7 @@ class MDGenerater {
    */
   _setContent(docMap, dconf) {
     const { name, root, opt, label, type, props, content } = dconf;
-    if (root != 'chart' || !opt) return;
+    if (root != 'chart') return;
 
     let subtitle = '';
     let subtitleText = opt;
@@ -514,15 +551,20 @@ class MDGenerater {
     if (['series', 'xAxis', 'yAxis', 'gauge'].indexOf(opt) >= 0 && !type) 
       return console.warn(`[WARN] ${name} type missed.`);
 
-    if (!docMap[opt]) docMap[opt] = { _content: ''};
-
-    // docMap 참조 주의...
-    docMap[opt] = { ...docMap[opt], _content: docMap[opt]._content += `${subtitle}\n${_content}` };
+    if (opt) {
+      if (!docMap[opt]) docMap[opt] = { _content: ''};
+      // docMap 참조 주의...
+      docMap[opt] = { ...docMap[opt], _content: docMap[opt]._content += `${subtitle}\n${_content}` };
+    }
     
     // 속성 추가
     if (props) {
       const propContents = this._makeProps({ name, opt, type, props });
-      this._setPropContents(docMap, { opt, type, _content: `## ${subtitleText}\n${_content}` + propContents} )
+      this._setPropContents(docMap, { 
+        name, opt, type, 
+        _content: (subtitleText ? `## ${subtitleText}\n${_content}` : '') 
+          + propContents 
+      });
     }
   }
 
@@ -547,6 +589,12 @@ class MDGenerater {
   _saveFile(path, docMap) {
     Object.entries(docMap).forEach(([key, value]) => {
       if (key == '_content') {
+        // config root
+        const paths = path.split('/');
+        const last = paths.pop();
+        if (last == 'chart') {
+          path = paths.join('/');
+        }
         console.debug('write', `${path}.mdx`);
         fs.writeFileSync(`${path}.mdx`, value , { encoding: 'utf-8'});
       } else {

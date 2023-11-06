@@ -1,0 +1,11 @@
+{
+	"heatmap": {
+		"title": "Heatmap"
+	},
+	"heatmap-category": {
+		"title": "Heatmap Category"
+	},
+	"heatmap-null": {
+		"title": "Null Point"
+	}
+}

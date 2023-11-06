@@ -1,0 +1,101 @@
+{
+	"Basic": {
+		"title": "Basic"
+	},
+	"Bar": {
+		"title": "Bar"
+	},
+	"BarRange": {
+		"title": "BarRange"
+	},
+	"Waterfall": {
+		"title": "Waterfall"
+	},
+	"Line": {
+		"title": "Line"
+	},
+	"Area": {
+		"title": "Area"
+	},
+	"AreaRange": {
+		"title": "AreaRange"
+	},
+	"Pareto": {
+		"title": "Pareto"
+	},
+	"Scatter": {
+		"title": "Scatter"
+	},
+	"Bubble": {
+		"title": "Bubble"
+	},
+	"BoxPlot": {
+		"title": "BoxPlot"
+	},
+	"ErrorBar": {
+		"title": "Error Bar"
+	},
+	"Candlestick": {
+		"title": "Candlestick"
+	},
+	"Ohlc": {
+		"title": "Ohlc"
+	},
+	"Lollipop": {
+		"title": "Lollipop"
+	},
+	"Dumbbell": {
+		"title": "Dumbbell"
+	},
+	"Equalizer": {
+		"title": "Equalizer"
+	},
+	"Histogram": {
+		"title": "Histogram"
+	},
+	"BellCurve": {
+		"title": "Bell Curve"
+	},
+	"Vector": {
+		"title": "Vector"
+	},
+	"Heatmap": {
+		"title": "Heatmap"
+	},
+	"Treemap": {
+		"title": "Treemap"
+	},
+	"Pie": {
+		"title": "Pie"
+	},
+	"Funnel": {
+		"title": "Funnel"
+	},
+	"Polar": {
+		"title": "Polar"
+	},
+	"Combination": {
+		"title": "Combination"
+	},
+	"Axis": {
+		"title": "Axis"
+	},
+	"Gauge": {
+		"title": "Gauge"
+	},
+	"Titles": {
+		"title": "Titles"
+	},
+	"Legends": {
+		"title": "Legends"
+	},
+	"Body": {
+		"title": "Body"
+	},
+	"Chart": {
+		"title": "Chart"
+	},
+	"Style": {
+		"title": "Style"
+	}
+}

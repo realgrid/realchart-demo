@@ -62,7 +62,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
     }
 
     protected _prepareSeries(doc: Document, model: BubbleSeries): void {
-        this.$_prepareMarkser(model, this._visPoints as BubbleSeriesPoint[]);
+        this.$_prepareMarkers(model, this._visPoints as BubbleSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -81,7 +81,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_prepareMarkser(series: BubbleSeries, points: BubbleSeriesPoint[]): void {
+    private $_prepareMarkers(series: BubbleSeries, points: BubbleSeriesPoint[]): void {
         const zAxis = series._xAxisObj._vlen < series._yAxisObj._vlen ? series._xAxisObj : series._yAxisObj;
         const len = zAxis._vlen;
         const count = points.length;
