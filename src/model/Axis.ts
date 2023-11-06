@@ -1283,16 +1283,15 @@ export class PaneAxes {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _xAxes: Axis[] = [];
-    _yAxes: Axis[] = [];
+    _axes: Axis[] = [];
 }
 
-export class PaneAxisMatrix {
+export abstract class PaneAxisMatrix {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _items: PaneAxes[][];
+    protected _matrix: PaneAxes[][];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1301,40 +1300,78 @@ export class PaneAxisMatrix {
     }
 
     //-------------------------------------------------------------------------
-    // methods
+    // properties
     //-------------------------------------------------------------------------
-    prepare(xAxes: AxisCollection, yAxes: AxisCollection, rows: number, cols: number): void {
-        const items = this._items = new Array<PaneAxes[]>(rows + 1);
-
-        for (let r = 0; r < items.length; r++) {
-            items[r] = [];
-            for (let c = 0; c <= cols; c++) {
-                items[r].push(new PaneAxes());
-            }
-        }
-
-        xAxes.forEach(axis => {
-            let col = axis._col;
-
-            if (axis.position === AxisPosition.OPPOSITE || (axis._col < cols - 1) && axis.position === AxisPosition.BETWEEN) {
-                col++;
-            }
-            items[axis._row][col]._xAxes.push(axis);
-        });
-        yAxes.forEach(axis => {
-            let row = axis._row;
-
-            if (axis.position === AxisPosition.OPPOSITE || (axis._row < rows - 1) && axis.position === AxisPosition.BETWEEN) {
-                row++;
-            }
-            items[row][axis._col]._yAxes.push(axis);
-        });
-
-        // TODO: sort - prev's opposite, prev's between, normal + index
+    row(): number {
+        return this._matrix.length;
     }
 
-    get(xy: 'x' | 'y', row: number, col: number): Axis[] {
-        const axes = this._items[row][col];
-        return xy === 'y' ? axes._yAxes : axes._xAxes;
+    col(): number {
+        return this._matrix[0].length;
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    abstract prepare(axes: AxisCollection, rows: number, cols: number): void;
+
+    get(row: number, col: number): PaneAxes {
+        return this._matrix[row][col];
+    }
+}
+
+/**
+ * (r + 1) * c
+ */
+export class XPaneAxisMatrix extends PaneAxisMatrix {
+
+    //-------------------------------------------------------------------------
+    // overriden
+    //-------------------------------------------------------------------------
+    prepare(axes: AxisCollection, rows: number, cols: number): void {
+        const mat = this._matrix = new Array<PaneAxes[]>(rows + 1);
+
+        for (let r = 0; r < mat.length; r++) {
+            mat[r] = [];
+            for (let c = 0; c < cols; c++) {
+                mat[r].push(new PaneAxes());
+            }
+        }
+        axes.forEach(axis => {
+            let row = axis._row;
+
+            if (axis.position === AxisPosition.OPPOSITE || (axis._col < cols - 1) && axis.position === AxisPosition.BETWEEN) {
+                row++;
+            }
+            mat[axis.row][axis._col]._axes.push(axis);
+        });
+    }
+}
+
+/**
+ * r * (c + 1)
+ */
+export class YPaneAxisMatrix extends PaneAxisMatrix {
+
+    //-------------------------------------------------------------------------
+    // overriden
+    //-------------------------------------------------------------------------
+    prepare(axes: AxisCollection, rows: number, cols: number): void {
+        const mat = this._matrix = new Array<PaneAxes[]>(rows);
+
+        for (let r = 0; r < mat.length; r++) {
+            mat[r] = [];
+            for (let c = 0; c <= cols; c++) {
+                mat[r].push(new PaneAxes());
+            }
+        }
+        axes.forEach(axis => {
+            let col = axis._col;
+
+            if (axis.position === AxisPosition.OPPOSITE || (axis._row < rows - 1) && axis.position === AxisPosition.BETWEEN) {
+                col++;
+            }
+            mat[axis._row][col]._axes.push(axis);
+        });
     }
 }

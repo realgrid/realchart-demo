@@ -81,8 +81,8 @@ interface IRelativeSize {
 
 /**
  * 다중 분할 panes.\
- * 각 pane에 해당하는 xAxis, yAxis가 반드시 존재해야 한다.
- * axis는 pane 속성으로 위치를 지정한다.
+ * 각 pane에 해당하는 x, y축이 반드시 존재해야 한다.
+ * axis는 {@link Axis.pane pane} 속성으로 위치를 지정한다.
  * 시리즈는 axis 위치에 따라 자동으로 pane이 결정된다.
  */
 export class Split extends ChartItem {
@@ -109,13 +109,17 @@ export class Split extends ChartItem {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * 수평 분할을 지정한다.\
-     */
-    rows: number | (`${number}*` | '*')[];
-    /**
      * 수직 분할을 지정한다.\
+     * 숫자로 지정하면 동일한 높이를 갖는 pane들로 표시된다.
+     * 배열로 지정하면 각 항목은 고정 크기 수자, 혹은 '*'로 끝나는 상대 크기.
      */
-    cols: number | (`${number}*` | '*')[];
+    rows: number | (number | `${number}*` | '*')[];
+    /**
+     * 수평 분할을 지정한다.\
+     * 숫자로 지정하면 동일한 너비를 갖는 pane들로 표시된다.
+     * 배열로 지정하면 각 항목은 고정 크기 수자, 혹은 '*'로 끝나는 상대 크기.
+     */
+    cols: number | (number | `${number}*` | '*')[];
 
     // 실제 표시되는 pane 수.
     count(): number {
@@ -152,7 +156,12 @@ export class Split extends ChartItem {
     }
 
     protected _doPrepareRender(chart: IChart): void {
-        this._vpanes = this.$_buildPanes(chart);
+        this._vpanes = this.$_collectPanes(chart);
+    }
+
+    calcSizes(width: number, height: number): void {
+        this._widths = this.$_calcSizes(width, this._widths);
+        this._heights = this.$_calcSizes(height, this._heights);
     }
 
     //-------------------------------------------------------------------------
@@ -167,16 +176,16 @@ export class Split extends ChartItem {
         if (isArray(sizes) && sizes.length > 0) {
             list = sizes.slice(0);
         } else if (sizes > 0) {
-            list = new Array(sizes).fill('1');
+            list = new Array(sizes).fill('*');
         } else  {
-            list = ['1'];
+            list = ['*'];
         }
         return list.map(v => {
             if (isString(v)) {
                 const s = v.trim();
                 return { size: s === '*' ? 1 : parseFloat(s) };
             }
-            return v;
+            return +v || { size: 1 };
         })
     }
 
@@ -255,9 +264,9 @@ export class Split extends ChartItem {
         return panes;
     }
 
-    private $_buildPanes(chart: IChart): Pane[][] {
-        const panes = this.$_collectPanes(chart);
-
-        return panes;
+    private $_calcSizes(domain: number, sizes: (IRelativeSize | number)[]): number[] {
+        let sum = 0;
+        let sumRel = 0;
+        return
     }
 }

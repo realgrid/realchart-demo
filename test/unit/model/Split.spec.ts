@@ -11,7 +11,7 @@ import { describe, it } from 'mocha';
 import { Pane, Split } from '../../../src/model/Split';
 import { Chart } from '../../../src/model/Chart';
 import { Utils } from '../../../src/common/Utils';
-import { PaneAxisMatrix } from '../../../src/model/Axis';
+import { PaneAxisMatrix, XPaneAxisMatrix, YPaneAxisMatrix } from '../../../src/model/Axis';
 
 /**
  * Tests for Split class.
@@ -42,8 +42,8 @@ import { PaneAxisMatrix } from '../../../src/model/Axis';
 
     it('load', () => {
         const config = {
-            rows: [1, 1],
-            cols: [1, 1],
+            rows: ['*', '*'],
+            cols: ['*', '*'],
             panes: [{
                 col: 0,
                 title: 'Pane 0'
@@ -79,16 +79,26 @@ import { PaneAxisMatrix } from '../../../src/model/Axis';
         pane = panes['0,2'];
 
         expect(pane).not.exist;
+
+        const widths = split['_widths'];
+        const heights = split['_heights'];
+        
+        widths.forEach((w: any) => expect(w.size).eq(1));
+        heights.forEach((h: any) => expect(h.size).eq(1));
     });
 
     it('prepare', () => {
         const chart = new Chart({
             xAxis: [{
+                name: 'xAxis-1'
             }, {
+                name: 'xAxis-2',
                 col: 1
             }],
             yAxis: [{
+                name: 'yAxis-1'
             }, {
+                name: 'yAxis-2',
                 col: 1
             }] 
         });
@@ -106,8 +116,6 @@ import { PaneAxisMatrix } from '../../../src/model/Axis';
         split.load(config);
         split.prepareRender();
 
-        const widths = split['_vwidths'];
-        const heights = split['_vheights'];
         const panes = split['_vpanes'];
 
         expect(panes.length).eq(1);
@@ -116,10 +124,21 @@ import { PaneAxisMatrix } from '../../../src/model/Axis';
         expect(split._vrows).eq(1);
         expect(split._vcols).eq(2);
 
-        // axes matrix
-        const matrix = new PaneAxisMatrix(chart);
+        const widths = split['_vwidths'];
+        const heights = split['_vheights'];
 
-        matrix.prepare(chart._getXAxes(), chart._getYAxes(), split._vrows, split._vcols);
+        // axes matrix
+        const xmatrix = new XPaneAxisMatrix(chart);
+        const ymatrix = new YPaneAxisMatrix(chart);
+
+        xmatrix.prepare(chart._getXAxes(), split._vrows, split._vcols);
+        ymatrix.prepare(chart._getYAxes(), split._vrows, split._vcols);
+        
+        expect(xmatrix.row()).eq(2);
+        expect(xmatrix.col()).eq(2);
+
+        expect(ymatrix.row()).eq(1);
+        expect(ymatrix.col()).eq(3);
     })
 
     it('prepare 2', () => {
@@ -146,12 +165,26 @@ import { PaneAxisMatrix } from '../../../src/model/Axis';
         split.load(config);
         split.prepareRender();
 
-        const widths = split['_vwidths'];
-        const heights = split['_vheights'];
         const panes = split['_vpanes'];
 
         expect(panes.length).eq(2);
         expect(panes[0].length).eq(2);
         expect(panes[0].length).eq(2);
+
+        const widths = split['_vwidths'];
+        const heights = split['_vheights'];
+
+        // axes matrix
+        const xmatrix = new XPaneAxisMatrix(chart);
+        const ymatrix = new YPaneAxisMatrix(chart);
+
+        xmatrix.prepare(chart._getXAxes(), split._vrows, split._vcols);
+        ymatrix.prepare(chart._getYAxes(), split._vrows, split._vcols);
+        
+        expect(xmatrix.row()).eq(3);
+        expect(xmatrix.col()).eq(2);
+
+        expect(ymatrix.row()).eq(2);
+        expect(ymatrix.col()).eq(3);
     })
 });

@@ -10,7 +10,7 @@ import { isArray, isObject, isString, mergeObj } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
-import { Axis, AxisCollection, IAxis, PaneAxes, PaneAxisMatrix, YAxisCollection } from "./Axis";
+import { Axis, AxisCollection, IAxis, PaneAxes, PaneAxisMatrix, XPaneAxisMatrix, YAxisCollection, YPaneAxisMatrix } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem, n_char_item } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
@@ -300,7 +300,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _series: PlottingItemCollection;
     private _xAxes: AxisCollection;
     private _yAxes: YAxisCollection;
-    private _paneAxes: PaneAxisMatrix;
+    private _xPaneAxes: XPaneAxisMatrix;
+    private _yPaneAxes: YPaneAxisMatrix;
     private _gauges: GaugeCollection;
     private _body: Body;
     private _navigator: SeriesNavigator;
@@ -329,7 +330,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._series = new PlottingItemCollection(this);
         this._xAxes = new AxisCollection(this, true, 0, 0);
         this._yAxes = new YAxisCollection(this, false, 0, 0);
-        this._paneAxes = new PaneAxisMatrix(this);
+        this._xPaneAxes = new XPaneAxisMatrix(this);
+        this._yPaneAxes = new YPaneAxisMatrix(this);
         this._gauges = new GaugeCollection(this);
         this._body = new Body(this);
         this._navigator = new SeriesNavigator(this);
@@ -708,7 +710,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
             split.prepareRender();
 
             // axis matrix
-            this._paneAxes.prepare(xAxes, yAxes, split._vrows, split._vcols);            
+            this._xPaneAxes.prepare(xAxes, split._vrows, split._vcols);            
+            this._yPaneAxes.prepare(yAxes, split._vrows, split._vcols);            
         }
 
         // 축이 설정된 후
