@@ -232,10 +232,10 @@ const FORMATS = [
     { format: "ss", beginningFormat: 'mm:ss' },             // s
     { format: "mm:ss", beginningFormat: 'HH:mm:ss'},        // m
     { format: "HH:mm", beginningFormat: 'MM-dd' },          // H
-    { format: "MM-dd", beginningFormat: 'YYYY-MM' },        // d
-    { format: "W주 w", beginningFormat: 'YYYY-MM' },        // w
-    { format: "YYYY-MM", beginningFormat: 'YYYY-MM' },      // M
-    { format: "YYYY" }                                      // Y
+    { format: "MM-dd", beginningFormat: 'yyyy-MM' },        // d
+    { format: "W주 w", beginningFormat: 'yyyy-MM' },        // w
+    { format: "yyyy-MM", beginningFormat: 'yyyy-MM' },      // M
+    { format: "yyyy" }                                      // y
 ]   
 
 export class TimeAxisLabel extends AxisLabel {

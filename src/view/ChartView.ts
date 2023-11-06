@@ -633,7 +633,7 @@ export class ChartView extends RcElement {
 
         const m = this._model;
         const polar = m.isPolar();
-        const splitted = this._splitted;
+        // const splitted = this._splitted;
         const legend = m.legend;
         const credit = m.options.credits;
         const vCredit = this._creditView;

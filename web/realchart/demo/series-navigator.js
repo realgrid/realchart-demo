@@ -89,7 +89,8 @@ function setActions(container) {
         chart.load(config);
     }, 'default');
     createCheckBox(container, 'Inverted', function (e) {
-        chart.inverted = _getChecked(e);
+        config.inverted = _getChecked(e);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);

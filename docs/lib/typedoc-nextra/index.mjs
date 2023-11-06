@@ -362,6 +362,11 @@ __name(makeId, "makeId");
 
 // src/serializers/ClassSerializer.ts
 var ClassSerializer = class extends AbstractSerializer {
+  constructor(declaration, config = {}) {
+    super(declaration);
+    this.declaration = declaration;
+    this.config = config;
+  }
   serialize() {
     var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t;
     const ctor = (_a = this.declaration.children) == null ? void 0 : _a.find((c) => {
@@ -376,8 +381,9 @@ var ClassSerializer = class extends AbstractSerializer {
     const ctorSig = (_d = ctor == null ? void 0 : ctor.signatures) == null ? void 0 : _d.find((r) => r.kind === ReflectionKind.ConstructorSignature);
     const vars = getVars(this.declaration);
     const description = getDescription(this.declaration, vars);
+    const name = getName(this.declaration);
     return {
-      name: getName(this.declaration),
+      name,
       abstract: this.declaration.flags.isAbstract || !!((_f = (_e = this.declaration.comment) == null ? void 0 : _e.blockTags) == null ? void 0 : _f.some((r) => r.tag === "@abstract")),
       constructor: ctor ? __spreadProps(__spreadValues({}, this.parseMethod(ctor)), {
         name: ((_g = ctorSig == null ? void 0 : ctorSig.type) == null ? void 0 : _g.name) || this.declaration.name || ctor.name,
@@ -394,8 +400,26 @@ var ClassSerializer = class extends AbstractSerializer {
       methods: (methods == null ? void 0 : methods.map((m) => this.parseMethod(m))) || [],
       private: this.declaration.flags.isPrivate || !!((_p = (_o = this.declaration.comment) == null ? void 0 : _o.blockTags) == null ? void 0 : _p.some((r) => r.tag === "@private")),
       properties: (properties == null ? void 0 : properties.map((m) => this.parseProperties(m))) || [],
+      configProperties: this.parseConfigProperties(name) || [],
       see: ((_t = (_s = (_r = (_q = this.declaration.comment) == null ? void 0 : _q.blockTags) == null ? void 0 : _r.find((r) => r.tag === "@see")) == null ? void 0 : _s.content) == null ? void 0 : _t.map((m) => seelink(m))) || []
     };
+  }
+  parseConfigProperties(name) {
+    const seriesRegex = /Rc(?!Chart).*Series(Group)?/;
+    const gaugeRegex = /Rc(?!Chart).*Gauge(Group)?(?!Base)/;
+    const [series] = seriesRegex.exec(name) || [];
+    const [gauge] = gaugeRegex.exec(name) || [];
+    const key = name.slice(2);
+    if (series || gauge) {
+      const { props } = this.config[key] || {};
+      return (props == null ? void 0 : props.map((p) => {
+        var _a, _b;
+        return __spreadProps(__spreadValues({}, p), {
+          content: (_b = (_a = p.content) == null ? void 0 : _a.split("\\").shift()) != null ? _b : ""
+        });
+      })) || [];
+    }
+    return [];
   }
   parseProperties(decl) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D;
@@ -694,7 +718,24 @@ ${table(tableHead, tableBody)}
     ].filter((r) => r.length > 0).join("\n").trim();
   }
   getMarkdown(c) {
-    return [this.getClassHeading(c), this.getCtor(c.constructor), this.getProperties(c.properties), this.getMethods(c.methods)].join("\n\n");
+    return [this.getClassHeading(c), this.getCtor(c.constructor), this.getConfigProperties(c.configProperties), this.getProperties(c.properties), this.getMethods(c.methods)].join("\n\n");
+  }
+  getConfigProperties(properties) {
+    if (!properties.length)
+      return "";
+    const head = heading("Config Properties", 2);
+    const body = properties.map((m) => {
+      var _a;
+      const ename = escape(m.name);
+      const name = `${m.static ? "static " : ""}${m.readonly ? "*`<readonly>`* " : ""}${ename}`.trim();
+      const title = heading(`${name}: \`${m.type || m.dtype.name}{:js}\``, 3) + `[#${ename}]`;
+      const desc = ((_a = m.content) == null ? void 0 : _a.trim()) || "";
+      return `${title}
+${desc}
+${this.getSee(m.see)}`;
+    });
+    return `${head}
+${body.join("\n")}`;
   }
   getProperties(properties) {
     if (!properties.length)
@@ -848,6 +889,7 @@ function createDocumentation(options) {
   return __async(this, null, function* () {
     var _a, _b, _c;
     let data = void 0;
+    let config = {};
     (_a = options.noLinkTypes) != null ? _a : options.noLinkTypes = false;
     (_b = options.links) != null ? _b : options.links = DefaultLinksFactory;
     const start = performance.now();
@@ -870,6 +912,9 @@ function createDocumentation(options) {
     }
     if (!data && !((_c = options.custom) == null ? void 0 : _c.length)) {
       throw new Error("No input files to process");
+    }
+    if (options.configInputPath) {
+      config = JSON.parse(yield readFile(options.configInputPath, "utf-8"));
     }
     const doc = {
       custom: {},
@@ -928,7 +973,7 @@ function createDocumentation(options) {
           switch (child.kind) {
             case TypeDoc.ReflectionKind.Class:
               {
-                const classSerializer = new ClassSerializer(child);
+                const classSerializer = new ClassSerializer(child, config);
                 const serialized = classSerializer.serialize();
                 currentModule.classes.push({
                   data: serialized,

@@ -871,9 +871,12 @@ export class BodyView extends ChartElement<Body> {
     }
 
     setZoom(x1: number, y1: number, x2: number, y2: number): void {
-        const xAxis = this.chart().xAxis;
-        const v1 = xAxis.getValueAt(this.width, x1);
-        const v2 = xAxis.getValueAt(this.width, x2);
+        const chart = this.chart();
+        const inverted = chart.isInverted();
+        const xAxis = chart.xAxis;
+        const len = inverted ? this.height : this.width;
+        let v1 = xAxis.getValueAt(len, inverted ? len - y2 : x1);
+        let v2 = xAxis.getValueAt(len, inverted ? len - y1 : x2);
 
         if (xAxis.zoom(v1, v2)) {
             this._zoomRequested = true;
