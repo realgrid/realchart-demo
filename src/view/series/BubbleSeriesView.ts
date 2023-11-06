@@ -10,6 +10,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { SvgShapes } from "../../common/impl/SvgShape";
+import { PointItemPosition } from "../../model/Series";
 import { BubbleSeries, BubbleSeriesPoint } from "../../model/series/BubbleSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
@@ -100,6 +101,8 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         const inverted = this._inverted;
         const vr = this._getViewRate();
         const labels = series.pointLabel;
+        const labelOutside = labels.position === PointItemPosition.OUTSIDE;
+        const labelAuto = labels.position === PointItemPosition.AUTO;
         const labelOff = labels.offset;
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
@@ -140,7 +143,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
                     labelView.setContrast(mv.dom);
                     labelView.layout();
                     r = labelView.getBBounds();
-                    if (labelView.setVisible(r.width <= p.radius)) {
+                    if (labelView.setVisible(r.width <= p.radius * 2)) {
                         labelView.translate(x - r.width / 2, y - r.height / 2);
                     }
                 }

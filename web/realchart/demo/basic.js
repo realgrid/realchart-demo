@@ -12,6 +12,14 @@ const config = {
 		},
 	},
 	title: '경기도 성남시 인구 현황',
+    assets: [{
+        type: 'pattern',
+        id: 'pattern-1',
+        index: 12,
+        style: {
+            stroke: 'red'
+        }
+    }],
 	legend: true,
     body: {
         style: {
@@ -68,6 +76,7 @@ const config = {
 		],
 		style: {
 			// fill: 'yellow'
+            // fill: 'url(#pattern-1)'
 		},
 		// onPointClick: args => {
 		//     alert(JSON.stringify(args));

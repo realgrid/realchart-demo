@@ -37,7 +37,7 @@ const config = {
         }
 	},
 	yAxis: {
-		// crosshair: true,
+		crosshair: true,
 		grid: true,
 		line: true,
 		tick: true,
