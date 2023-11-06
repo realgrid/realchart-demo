@@ -130,7 +130,9 @@ export class ClassSerializer extends AbstractSerializer {
             return props?.map((p: any) => {
                 return {
                     ...p,
-                    content: p.content?.split('\\').shift() ?? ''
+                    content: p.content?.split('.')
+                        .filter((c: any) => c)
+                        .shift()?.concat('.') ?? ''
                 };
             }) || [];
         }

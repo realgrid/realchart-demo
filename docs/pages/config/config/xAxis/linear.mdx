@@ -52,21 +52,25 @@ data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격�
  strictMax 가 지정되거나,  maxValue 가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다.  
 
 ### maxValue: `number{:js}`[#maxValue]
-명시적으로 지정하는 최대값.
-축에 연결된 data point들의 값으로 계산된 최대값 대신 이 값이 축의 최소값이 된다.
- maxPadding 도 무시된다.  
+명시적으로 지정하는 최대값.\
+축에 연결된 data point들의 값으로 계산된 최대값보다 이 속성 값이 크면 대신 이 값이 축의 최대값이 되고,
+ maxPadding 도 무시된다.
+계산값이 더 크면 이 속성은 무시된다.\
+계산값과 무관하게 최대값을 지정하려면  strictMax 을 사용한다.  
 
 ### minPadding: `number{:js}`[#minPadding]
 첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
 이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.
  startFit 이  AxitFit.TICK 일 때,
 data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
- strictMin 가 지정되거나,  minValue 이 계산된 최소값보다 작은 경우에도 이 속성은 무시된다.  
+ strictMin 가 지정되거나,  minValue 가 계산된 최소값보다 작은 경우에도 이 속성은 무시된다.  
 
 ### minValue: `number{:js}`[#minValue]
-명시적으로 지정하는 최소값.
-축에 연결된 data point들의 값으로 계산된 최소값 대신 이 값이 축의 최소값이 된다.
- minPadding 도 무시된다.  
+명시적으로 지정하는 최소값.\
+축에 연결된 data point들의 값으로 계산된 최소값보다 이 속성 값이 작으면 대신 이 값이 축의 최소값이 되고,
+ minPadding 도 무시된다.
+계산값이 더 작으면 이 속성은 무시된다.\
+계산값과 무관하게 최소값을 지정하려면  strictMin 을 사용한다.  
 
 ### name: `string{:js}`[#name]
 

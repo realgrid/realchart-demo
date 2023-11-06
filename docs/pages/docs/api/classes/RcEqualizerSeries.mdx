@@ -33,35 +33,22 @@ null인 y값을  baseValue 로 간주한다.
 
 ### onPointClick: `PointClickCallbck{:js}`[#onPointClick]
 데이터 point가 클릭될 때 발생하는 이벤트 콜백.
-명시적 true를 리턴하면 기본 동작이 진행되지 않는다.
 
 ### pointColors: `boolean | string[]{:js}`[#pointColors]
 데이터 포인트별 색들을 지정한다.
-false로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.
-true로 지정하면 기본 색들로 표시된다.
-색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.
-undefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.
 
 ### pointPadding: `number{:js}`[#pointPadding]
 이 시리즈의 point가 차지하는 영역 중에서 point bar 양쪽 끝에 채워지는 빈 영역의 크기.
-<br>
-point가 차지할 원래 크기에 대한 상대 값으로서,
-0 ~ 1 사이의 비율 값으로 지정한다.
 
 ### pointStyleCallback: `PointStyleCallback{:js}`[#pointStyleCallback]
 데이터 point의 동적 스타일 콜백.
 
 ### pointWidth: `number{:js}`[#pointWidth]
 시리즈가 그룹에 포함되지 않거나,
-포함된 그룹의 layout이  SeriesGroupLayout.DEFAULT 이거나 특별히 설정되지 않아서,
-그룹에 포함된 시리즈들의 data point가 옆으로 나열되어 표시될 때,
-포인트 표시 영역 내에서 이 시리즈의 포인트가 차지하는 영역의 상대 크기.
-예를 들어 이 시리즈의 속성값이 1이고 다른 시리즈의 값이 2이면 다른 시리즈의 data point가 두 배 두껍게 표시된다.
-또, 그룹에 포함되고 그룹의 layout이  SeriesGroupLayout.DEFAULT
+포함된 그룹의 layout이  SeriesGroupLayout.
 
 ### ranges: `IValueRange[]{:js}`[#ranges]
 값 범위 목록.
-범위별로 다른 스타일을 적용할 수 있다.
 
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.
@@ -77,14 +64,9 @@ undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'.
 
 ### xStart: `any{:js}`[#xStart]
 x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.
-이 후에는  xStep 씩 증가시키면서 설정한다.
-이 속성이 지징되지 않은 경우  ChartOptions.xStart 가 적용된다.
 
 ### xStep: `string | number{:js}`[#xStep]
 x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
-첫번째 값은  xStart 로 설정한다.
-time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.
-이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다.
 
 ### yAxis: `string | number{:js}`[#yAxis]
 
