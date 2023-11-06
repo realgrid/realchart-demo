@@ -1,0 +1,11 @@
+{
+	"barrange": {
+		"title": "Bar Range"
+	},
+	"barrange-multi": {
+		"title": "Multiple Bar Ranges"
+	},
+	"barrange-null": {
+		"title": "Null Point"
+	}
+}

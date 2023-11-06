@@ -1,0 +1,11 @@
+{
+	"equalizer": {
+		"title": "Equalizer"
+	},
+	"equalizer-multi": {
+		"title": "Multiple Equalizer"
+	},
+	"equalizer-null": {
+		"title": "Null Point"
+	}
+}
