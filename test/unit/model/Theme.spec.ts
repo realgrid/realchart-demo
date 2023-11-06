@@ -35,7 +35,7 @@ import { LinearGradient } from '../../../src/model/Asset';
 
         expect(theme.name).eq(src.name);
         expect(theme.palette).eq(src.palette);
-        expect(theme.assets.count).eq(src.assets.length);
+        expect(theme.assets.count()).eq(src.assets.length);
         expect(theme.assets.get(0)).instanceof(LinearGradient);
     });
 });

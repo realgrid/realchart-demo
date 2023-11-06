@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { SVGNS, isArray, isObject } from "../common/Common";
-import { isNull } from "../common/Types";
+import { SVGStyles, isNull } from "../common/Types";
 
 export interface IAssetItem {
 
@@ -130,6 +130,61 @@ export class RadialGradient extends Gradient<IRadialGradient> {
     }
 }
 
+export interface IPattern extends IAssetItem {
+    /**
+     * {@link path} 지정하지 않은 경우, stock pattern index.
+     */
+    index?: number; 
+    path?: string;
+    /**
+     * 지정하지 않으면 {@link height}나 20 pixels.
+     */
+    width?: number;
+    /**
+     * 지정하지 않으면 {@link widths}나 20 pixels.
+     */
+    height?: number;
+    style?: SVGStyles;
+}
+
+
+export class Pattern extends AssetItem<IPattern> {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly TYPE = 'pattern';
+    static readonly STOCK = [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+    ]
+
+    //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    getEelement(doc: Document): Element {
+        const elt = doc.createElementNS(SVGNS, 'pattern');
+        const path = doc.createElementNS(SVGNS, 'path');
+
+        elt.append(path);
+
+        return elt;
+    }
+}
+
 export interface IAssetOwner {
     addDef(element: Element): void;
     removeDef(element: string): void;
@@ -145,7 +200,7 @@ export class AssetCollection {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    get count(): number {
+    count(): number {
         return this._items.length;
     }
 
@@ -192,6 +247,8 @@ export class AssetCollection {
                     return new LinearGradient(src);
                 case RadialGradient.TYPE:
                     return new RadialGradient(src);
+                case Pattern.TYPE:
+                    return new Pattern(src);
             }
         }
     }

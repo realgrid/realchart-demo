@@ -13,7 +13,7 @@ const config = {
 	},
 	title: '경기도 성남시 인구 현황',
 	legend: true,
-    plot: {
+    body: {
         style: {
             stroke: 'none'
         }
@@ -28,6 +28,7 @@ const config = {
 			text: '수정구'
 		},
 		// grid: true,
+        crosshair: true,
 	},
 	yAxis: {
 		title: {

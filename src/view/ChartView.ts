@@ -1053,6 +1053,11 @@ export class ChartView extends RcElement {
     pointerMoved(x: number, y: number, target: EventTarget): void {
         const p = this._bodyView.controlToElement(x, y);
         const inBody = this._bodyView.pointerMoved(p, target);
+        
+        if (inBody) {
+            console.log(p);
+            console.log(this._bodyView.controlToElement(x, y));
+        }
 
         for (const dir in this._axisSectionMap) {
             this._axisSectionMap[dir].views.forEach(av => {

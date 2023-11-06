@@ -270,6 +270,7 @@ export class AxisBreak extends AxisItem {
     to: number;
     size: RtPercentSize = '30%';
     space = 16;
+    gridVisible = true;
 
     //-------------------------------------------------------------------------
     // fields
@@ -447,6 +448,13 @@ export abstract class ContinuousAxis extends Axis {
     runBreaks(): AxisBreak[] {
         // TODO: v1.0 - break 하나만 적용한다. (여러 개가 의미가 있는가?)
         return this._runBreaks && this._runBreaks.slice(0, 1);
+    }
+
+    isBreak(pos: number): boolean {
+        if (this._runBreaks) {
+            const br = this._runBreaks[0];
+            return !br.gridVisible && (pos === br.from || pos === br.to);
+        }
     }
 
     getStartFit(): AxisFit {

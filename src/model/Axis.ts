@@ -56,6 +56,9 @@ export interface IAxis {
      * 값에 따라 크기가 다를 수도 있다.
      */
     getUnitLength(length: number, value: number): number;
+
+    hasBreak(): boolean;
+    isBreak(pos: number): boolean;
 }
 
 /**
@@ -251,7 +254,12 @@ export class AxisGrid extends AxisItem {
 
     getPoints(length: number): number[] {
         const axis = this.axis;
-        return axis._ticks.map(tick => axis.getPosition(length, tick.value, false));
+
+        if (axis.hasBreak()) {
+            return axis._ticks.filter(tick => !axis.isBreak(tick.value)).map(tick => axis.getPosition(length, tick.value, false));
+        } else {
+            return axis._ticks.map(tick => axis.getPosition(length, tick.value, false));
+        }
     }
             
     //-------------------------------------------------------------------------
@@ -999,6 +1007,14 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     isZoomed(): boolean {
         return !!this._zoom
+    }
+
+    hasBreak(): boolean {
+        return false;
+    }
+
+    isBreak(pos: number): boolean {
+        return false;
     }
 
     //-------------------------------------------------------------------------

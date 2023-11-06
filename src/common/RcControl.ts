@@ -286,21 +286,23 @@ export abstract class RcControl extends RcWrappableObject {
 
     containerToElement(element: RcElement, x: number, y: number): IPoint {
         const cr = this._container.getBoundingClientRect();
-        const br = element.dom.getBoundingClientRect();
+        // getBoundingClientRect()는 element에 overflow된 내용이 있는 경우 그것까지 포함된다.
+        // 각 element별 정확한 bounds를 리턴하는 것을 참조하도록 한다. (ex. BodyView)
+        const br = element.getBounds();
 
-        return { x: x + cr.x - br.x, y: y + cr.y - br.y };
+        return { x: x - br.x + cr.x, y: y - br.y + cr.y };
     }
 
     svgToElement(element: RcElement, x: number, y: number): IPoint {
         const cr = this._svg.getBoundingClientRect();
-        const br = element.dom.getBoundingClientRect();
+        const br = element.getBBounds();
 
-        return { x: x + cr.x - br.x, y: y + cr.y - br.y };
+        return { x: x - br.x + cr.x, y: y - br.y + cr.y };
     }
 
     elementToSvg(element: RcElement, x: number, y: number): IPoint {
         const cr = this._svg.getBoundingClientRect();
-        const br = element.dom.getBoundingClientRect();
+        const br = element.getBounds();
 
         return { x: x + br.x - cr.x, y: y + br.y - cr.y };
     }
@@ -841,6 +843,10 @@ export class RcElement extends RcObject {
     unsetAttr(attr: string): RcElement {
         this._dom.removeAttribute(attr);
         return this;
+    }
+
+    getBounds(): DOMRect {
+        return this._dom.getBoundingClientRect();
     }
 
     setBounds(x: number, y: number, width: number, height: number): RcElement {

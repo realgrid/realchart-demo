@@ -672,6 +672,8 @@ class CrosshairView extends PathElement {
                 }
             }
 
+            console.log(index);
+
             // TODO: scrolling
             if (index >= 0) {
                 const p = axis.getPosition(len, index);
@@ -798,6 +800,7 @@ export class BodyView extends ChartElement<Body> {
         const inBody = p.x >= 0 && p.x < w && p.y >= 0 && p.y < h;
         let sv: SeriesView<any>;
         let pv: IPointView;
+        console.log(p.x);
 
         if (target instanceof SVGElement && (target.classList.contains(SeriesView.POINT_CLASS) || target.parentElement instanceof SVGElement && target.parentElement.classList.contains(SeriesView.POINT_CLASS))) {
             for (let i = this._seriesViews.length - 1; i >= 0; i--) {
@@ -886,6 +889,10 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    getBounds(): DOMRect {
+        return this._hitTester.getBounds();
+    }
+
     protected _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
         const chart = model.chart as Chart;
 

@@ -100,7 +100,7 @@ export class ChartPointerHandler implements IPointerHandler {
 
     handleClick(ev: PointerEvent): void {
         const chart = this._chart.chartView();
-        const elt = ev.target as Element;
+        const elt = this._clickElement;// ev.target as Element; TODO: ev.target이 control을 지시한다?
         const button = chart.getButton(elt);
         let credit: CreditView;
         let legend: LegendItem;
