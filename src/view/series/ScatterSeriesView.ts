@@ -11,52 +11,29 @@ import { PathElement, RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { Utils } from "../../common/Utils";
 import { SvgShapes } from "../../common/impl/SvgShape";
+import { PointItemPosition } from "../../model/Series";
 import { ScatterSeries, ScatterSeriesPoint } from "../../model/series/ScatterSeries";
-import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, MarkerSeriesPointView, MarkerSeriesView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class MarkerView extends PathElement implements IPointView {
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    point: ScatterSeriesPoint;
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS);
-    }
+class MarkerView extends MarkerSeriesPointView<ScatterSeriesPoint> {
 }
 
-export class ScatterSeriesView extends SeriesView<ScatterSeries> {
+export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _markers: ElementPool<MarkerView>;
-
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-scatter-series')
-
-        this._markers = new ElementPool(this._pointContainer, MarkerView);
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _getPointPool(): ElementPool<RcElement> {
-        return this._markers;
-    }
-
-    invertable(): boolean {
-        return false;
-    }
-
     protected _prepareSeries(doc: Document, model: ScatterSeries): void {
         this.$_prepareMarkers(model, this._visPoints as ScatterSeriesPoint[]);
     }
@@ -83,12 +60,17 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
         })
     }
 
+    protected _getAutoPos(overflowed: boolean): PointItemPosition {
+        return PointItemPosition.OUTSIDE;
+    }
+
     private $_layoutMarkers(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
         const jitterX = series.jitterX;
         const jitterY = series.jitterY;
         const labels = series.pointLabel;
+        const labelPos = labels.position;
         const labelOff = labels.offset;
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
@@ -138,8 +120,7 @@ export class ScatterSeriesView extends SeriesView<ScatterSeries> {
 
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
-                    r = labelView.getBBounds();
-                    labelView.translate(x - r.width / 2, y - r.height / 2);
+                    this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
                 }
             }
         });

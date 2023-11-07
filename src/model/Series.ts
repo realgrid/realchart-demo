@@ -1972,3 +1972,16 @@ export abstract class ClusterableSeriesGroup<T extends Series> extends SeriesGro
         this._clusterPos = pos;
     }
 }
+
+export abstract class MarkerSeries extends Series {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 명시적으로 지정하지 않으면 typeIndex에 따라 Shapes 중 하나로 돌아가면서 설정된다.
+     * 
+     * @config
+     */
+    shape: Shape;
+}

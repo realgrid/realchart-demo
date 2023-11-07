@@ -12,7 +12,7 @@ import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { Series, SeriesMarker } from "../Series";
+import { MarkerSeries, Series, SeriesMarker } from "../Series";
 
 /**
  * [y, z]
@@ -90,7 +90,7 @@ export enum BubbleSizeMode {
 /**
  * @config chart.series[type=bubble]
  */
-export class BubbleSeries extends Series {
+export class BubbleSeries extends MarkerSeries {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -114,26 +114,9 @@ export class BubbleSeries extends Series {
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, name?: string) {
-        super(chart, name);
-    }
-
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * 명시적으로 지정하지 않으면 typeIndex에 따라 Shapes 중 하나로 돌아가면서 설정된다.
-     * 
-     * @config
-     */
-    shape: Shape;
-    /**
-     * {@link shape}의 반지름.
-     * 
-     * @config
-     */
-    radius = 3;
-
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------

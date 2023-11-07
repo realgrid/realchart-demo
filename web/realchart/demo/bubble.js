@@ -17,7 +17,9 @@ const config = {
         type: 'bubble',
         pointLabel: {
             visible: true,
-            suffix: 'm'
+            suffix: 'm',
+            effect: 'outline',
+            // position: 'outside'
         },
         sizeMode: 'width',
         shape: 'rectangle',

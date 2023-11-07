@@ -12,22 +12,10 @@ import { IRect } from "../../common/Rectangle";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { PointItemPosition } from "../../model/Series";
 import { BubbleSeries, BubbleSeriesPoint } from "../../model/series/BubbleSeries";
-import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
+import { IPointView, MarkerSeriesPointView, MarkerSeriesView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class MarkerView extends PathElement implements IPointView {
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    point: BubbleSeriesPoint;
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS);
-    }
+class MarkerView extends MarkerSeriesPointView<BubbleSeriesPoint> {
 }
 
 /**
@@ -35,33 +23,21 @@ class MarkerView extends PathElement implements IPointView {
  * 
  * View for BubbleSeries.
  */
-export class BubbleSeriesView extends SeriesView<BubbleSeries> {
+export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _markers: ElementPool<MarkerView>;
-
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-bubble-series')
-
-        this._markers = new ElementPool(this._pointContainer, MarkerView);
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _getPointPool(): ElementPool<RcElement> {
-        return this._markers;
-    }
-
-    invertable(): boolean {
-        return false;
-    }
-
     protected _prepareSeries(doc: Document, model: BubbleSeries): void {
         this.$_prepareMarkers(model, this._visPoints as BubbleSeriesPoint[]);
     }
@@ -96,13 +72,16 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         });
     }
 
+    protected _getAutoPos(overflowed: boolean): PointItemPosition {
+        return overflowed ? PointItemPosition.OUTSIDE : PointItemPosition.INSIDE;
+    }
+
     private $_layoutMarkers(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
         const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelOutside = labels.position === PointItemPosition.OUTSIDE;
-        const labelAuto = labels.position === PointItemPosition.AUTO;
+        const labelPos = labels.position;
         const labelOff = labels.offset;
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
@@ -117,7 +96,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
         let r: IRect;
 
         this._markers.forEach((mv, i) => {
-            const p = mv.point;
+            const p = mv.point as BubbleSeriesPoint;
 
             if (mv.setVisible(!p.isNull && !isNaN(p.zValue))) {
                 const sz = (p.radius = series.getRadius(p.zValue, min, max)) * vr;
@@ -142,10 +121,7 @@ export class BubbleSeriesView extends SeriesView<BubbleSeries> {
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
                     labelView.setContrast(mv.dom);
                     labelView.layout();
-                    r = labelView.getBBounds();
-                    if (labelView.setVisible(r.width <= p.radius * 2)) {
-                        labelView.translate(x - r.width / 2, y - r.height / 2);
-                    }
+                    this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
                 }
             }
         });

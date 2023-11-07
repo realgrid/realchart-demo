@@ -11,6 +11,7 @@ import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
 import { LayerElement, PathElement, RcElement } from "../common/RcControl";
+import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
@@ -18,7 +19,7 @@ import { RectElement } from "../common/impl/RectElement";
 import { SvgShapes } from "../common/impl/SvgShape";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
-import { ClusterableSeries, DataPointLabel, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
+import { ClusterableSeries, DataPointLabel, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { ChartElement } from "./ChartElement";
 import { SeriesAnimation } from "./animation/SeriesAnimation";
@@ -837,6 +838,69 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+}
+
+export class MarkerSeriesPointView<T extends DataPoint> extends PathElement implements IPointView {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    point: T;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, SeriesView.POINT_CLASS);
+    }
+}
+
+export abstract class MarkerSeriesView<T extends MarkerSeries> extends SeriesView<T> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    protected _markers: ElementPool<MarkerSeriesPointView<DataPoint>>;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, styleName: string) {
+        super(doc, styleName)
+
+        this._markers = new ElementPool(this._pointContainer, MarkerSeriesPointView);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._markers;
+    }
+
+    invertable(): boolean {
+        return false;
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected abstract _getAutoPos(overflowed: boolean): PointItemPosition;
+
+    protected _layoutLabelView(labelView: PointLabelView, pos: PointItemPosition, off: number, radius: number, x: number, y: number): void {
+        let r = labelView.getBBounds();
+
+        if (pos === PointItemPosition.AUTO) {
+            pos = this._getAutoPos(r.width >= radius * 2 * 0.9);
+        }
+        if (labelView.setVisible(pos != null)) {
+            if (pos === PointItemPosition.INSIDE) {
+                labelView.translate(x - r.width / 2, y - r.height / 2);
+            } else if (pos) {
+                labelView.translate(x - r.width / 2, y - radius - r.height - off);
+            }
+        }
+    }
 }
 
 class ZombiAnimation extends RcAnimation {
