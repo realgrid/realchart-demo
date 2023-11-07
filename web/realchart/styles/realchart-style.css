@@ -191,8 +191,10 @@
     /** zoom tracker */
     --rct-zoom-tracker-fill: #0044ff30;
     /** series navigator */
-    --rct-navigator-handle-color: #aac; 
-    --rct-navigator-handle-hover-color: #55c; 
+    --rct-navigator-handle-color: #0098ff; 
+    --rct-navigator-handle-hover-color: #55c;
+    --rct-navigator-track-fill: lightgray;
+    --rct-navigator-thumb-fill:#0098ff;
 }
 .rct-root[data-theme='dark'] {
     --rct-focus-border: yellow;
@@ -989,13 +991,16 @@
 }
 
 /** series navigator */
+.rct-navigator .rct-axis-line {
+    display: none;
+}
 .rct-navigator-back {
     fill: white;
     stroke: #f0f0f0;
 }
 .rct-navigator-mask {
     fill: #4488cc20;
-    stroke: #ccc;
+    /* stroke: #ccc; */
 }
 .rct-navigator-handle {
     fill: var(--rct-navigator-handle-color);
@@ -1003,5 +1008,14 @@
 }
 .rct-navigator-handle[data-select], .rct-navigator-handle:hover {
     fill: var(--rct-navigator-handle-hover-color);
-    stroke: var(--rct-navigator-handle-hover-color);;   
+    stroke: var(--rct-navigator-handle-hover-color);
+}
+
+.rct-navigator-track {
+    fill: var(--rct-navigator-track-fill);
+    stroke: var(--rct-navigator-track-fill);
+}
+.rct-navigator-thumb {
+    fill: var(--rct-navigator-thumb-fill);
+    stroke: var(--rct-navigator-thumb-fill);
 }
