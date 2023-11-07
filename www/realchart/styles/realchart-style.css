@@ -23,8 +23,8 @@
 
 /** palette */
 .rct-root {
-    --color-1: #0097e2;
-    --color-2: #5eb3e4;
+    --color-1: #0098ff;
+    --color-2: #66d0ff;
     --color-3: #ff5c35;
     --color-4: #ff9f00;
     --color-5: #ffd938;
@@ -93,12 +93,44 @@
     --color-12: #422c1e;
 }
 
+.rct-root[data-palette='vintage'] {
+	--color-1: #2a9d8f;
+	--color-2: #ff9a00;
+	--color-3: #e76f51;
+	--color-4: #ffd68d;
+	--color-5: #69b85f;
+	--color-6: #6397c1;
+	--color-7: #c068a8;
+	--color-8: #8dd8a3;
+	--color-9: #f0d9be;
+	--color-10: #c2b1e3;
+	--color-11: #fc9390;
+	--color-12: #f4d470;
+}
+.rct-root[data-palette='unicorn'] {
+	--color-1: #00d6a3;
+	--color-2: #2196f3;
+	--color-3: #fe3ea5;
+	--color-4: #ffd938;
+	--color-5: #45dcff;
+	--color-6: #ff773b;
+	--color-7: #80f9c5;
+	--color-8: #f21170;
+	--color-9: #c355f5;
+	--color-10: #b2fcff;
+	--color-11: #fffde1;
+	--color-12: #98a8f8;
+}
+
 /** theme */
 .rct-control {
     --rct-background: none;
 }
 .rct-control[data-theme="dark"] {
-    --rct-background: black;
+    --rct-background: #262626;
+}
+.rct-control[data-theme='real'] {
+	--rct-background: #264653;
 }
 
 .rct-root {
@@ -126,6 +158,8 @@
     --rct-axis-scrollbar-thumb-fill: lightgray;
     --rct-axis-scrollbar-rx: 4px;
     
+    --rct-legend-background: none;
+	--rct-legend-background-stroke: none;
     --rct-legend-background-stroke: none;
     --rct-legend-item-fill: #333;
     --rct-legend-item-disabled: #aaa;
@@ -140,9 +174,12 @@
     --rct-credits-fill: #777;
 
     /* circle gauge */
-    --rct-circle-gauge-back-fill: #e4e4e4;
+    --rct-circle-gauge-back-fill: #ededed;
     --rct-circle-gauge-inner-fill: none;
-    --rct-circle-gauge-label-fill: #333;
+    --rct-circle-gauge-label-fill: #000;
+    --rct-gauge-scale-line: #555;
+    --rct-gauge-scale-tick: #555;
+    --rct-gauge-scale-tick-labels: #333;
     /* clock gauge */
     --rct-clock-gauge-face-fill: white;
     --rct-clock-gauge-rim-fill: #eee;
@@ -167,13 +204,15 @@
     --rct-body-background-stroke: none;
     
     --rct-axis-title-fill: #fff;
-    --rct-axis-line-stroke: #1e1e1e;
+    --rct-axis-line-stroke: #fff;
     --rct-axis-tick-stroke: #fff;
     --rct-axis-label-fill: #fff;
-    --rct-axis-grid-line-stroke: #ddd;
+    --rct-axis-grid-line-stroke: #fff;
     
+    --rct-legend-background: none;
+	--rct-legend-background-stroke: none;
     --rct-legend-item-fill: #fff;
-    --rct-legend-item-disabled: #aaa;
+    --rct-legend-item-disabled: #707070;
     --rct-legend-item-disabled-decoration: line-through;
 
     --rct-point-label-fill: #ddd;
@@ -181,12 +220,51 @@
     --rct-credits-fill: #999;
 
     /* circle gauge */
-    --rct-circle-gauge-back-fill: #333;
-    --rct-circle-gauge-label-fill: #eee;
+    --rct-circle-gauge-back-fill: #515151;
+    --rct-circle-gauge-label-fill: #fff;
+    --rct-gauge-scale-line: #fff;
+    --rct-gauge-scale-tick: #fff;
+    --rct-gauge-scale-tick-labels: #fff;
 
     /** zoom tracker */
     --rct-zoom-tracker-fill: #efefef40;
 }
+.rct-root[data-theme='real'] {
+    --rct-focus-border: yellow;
+    --rct-text-fill: #f0d9be;
+
+    --rct-title-fill: #f0d9be;
+    --rct-subtitle-fill: #f0d9be;
+
+    --rct-body-background-stroke: none;
+    
+    --rct-axis-title-fill: #f0d9be;
+    --rct-axis-line-stroke: #f0d9be;
+    --rct-axis-tick-stroke: #f0d9be;
+    --rct-axis-label-fill: #f0d9be;
+    --rct-axis-grid-line-stroke: #f0d9be;
+    
+    --rct-legend-background: none;
+	--rct-legend-background-stroke: none;
+    --rct-legend-item-fill: #f0d9be;
+    --rct-legend-item-disabled: #4e7b82;
+    --rct-legend-item-disabled-decoration: line-through;
+
+    --rct-point-label-fill: #ddd;
+
+    --rct-credits-fill: #999;
+
+    /* circle gauge */
+    --rct-circle-gauge-back-fill: #515151;
+    --rct-circle-gauge-label-fill: #fff;
+    --rct-gauge-scale-line: #fff;
+    --rct-gauge-scale-tick: #fff;
+    --rct-gauge-scale-tick-labels: #fff;
+
+    /** zoom tracker */
+    --rct-zoom-tracker-fill: #efefef40;
+}
+
 
 /** control */
 .rct-control {
@@ -270,7 +348,7 @@
     padding: 3px 6px;
 }
 .rct-legend-background {
-    fill: #c4c4c430;
+    fill: var(--rct-legend-background);
     rx: 7px;
     stroke: var(--rct-legend-background-stroke);
 }
@@ -745,7 +823,7 @@
     fill: var(--rct-circle-gauge-inner-fill);
 }
 .rct-circle-gauge-value {
-    fill: #008844;
+    fill: #0098ff;
 }
 .rct-circle-gauge-value[data-stroked] {
     fill: none;
@@ -810,15 +888,16 @@
 
 /** gauge scale */
 .rct-gauge-scale-line {
-    stroke: #555;
+    stroke: var(--rct-gauge-scale-line);
     fill: none;
 }
 .rct-gauge-scale-ticks {
     stroke: #555;
+    stroke: var(--rct-gauge-scale-tick);
 }
 .rct-gauge-scale-tick-labels {
     font-size: 0.85em;
-    fill: #333;
+    fill: var(--rct-gauge-scale-tick-labels);
 }
 
 /** linear gauge */
