@@ -158,6 +158,10 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    getClipContainer(): RcElement {
+        return null;
+    }
+
     private $_prepareSectors(doc: Document, model: PieSeries, points: PieSeriesPoint[]): void {
         this._sectors.prepare(points.length, (sector, i) => {
             const p = sector.point = points[i];
