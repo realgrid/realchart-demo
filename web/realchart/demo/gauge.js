@@ -3,6 +3,7 @@
  */
 const config = {
     options: {
+        // theme: 'dark',
         // animatable: false,
         credits: {
             // visible: false,
@@ -28,12 +29,12 @@ const config = {
             // stroked: true,
             ranges: [{
                 toValue: 30,
-                color: 'green'
+                color: '#0098ff'
             }, {
                 toValue: 70,
-                color: 'yellow'
+                color: '#66d0ff'
             }, {
-                color: 'red'
+                color: '#ff5c35'
             }],
         },
         scale: {
@@ -44,24 +45,24 @@ const config = {
             visible: true,
             ranges: [{
                 toValue: 20,
-                color: '#8f0',
+                color: '#0098ff',
             }, {
                 toValue: 40,
-                color: '#8d0',
+                color: '#66d0ff',
             }, {
                 toValue: 60,
-                color: '#5a0'
+                color: '#ff5c35'
             }, {
                 toValue: 80,
-                color: '#480'
+                color: '#ff9f00'
             }, {
-                color: '#350'
+                color: '#ffd938'
             }]
         },
         label: {
             // suffix: '%',
             numberFormat: '#0.0',
-            text: '<t style="fill:blue">${value}</t><t style="font-size:24px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',
+            text: '<t style="fill:#262626">${value}</t><t style="font-size:24px;">%</t><br><t style="font-size:20px;font-weight:normal">Gauge Test</t>',
             text2: '<t style="font-size:20px;font-weight:normal">Gauge Test</t><br><t style="fill:blue">${value}</t><t style="font-size:24px;">%</t>',
             style: {
                 fontFamily: 'Arial',

@@ -2,8 +2,8 @@ export const config = {
   options: { credits: {} },
   title: '경기도 성남시 인구 현황',
   legend: true,
-  plot: { style: { stroke: 'none' } },
-  xAxis: { title: { text: '수정구' } },
+  body: { style: { stroke: 'none' } },
+  xAxis: { title: { text: '수정구' }, crosshair: true },
   yAxis: { title: { text: '전체 인구수' } },
   series: {
     pointLabel: { visible: true, effect: 'outline', style: {} },

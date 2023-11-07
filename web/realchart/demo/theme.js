@@ -82,7 +82,7 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.load(config, animate);
     }, false);
-    createListBox(container, "options.theme", ['', 'dark'], function (e) {
+    createListBox(container, "options.theme", ['', 'dark', 'real'], function (e) {
         config.options.theme = _getValue(e);
         chart.load(config, animate);
     }, 'default');
