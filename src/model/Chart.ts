@@ -644,6 +644,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // legend
         this._legend.load(source.legend);
 
+        // panes
+        this._split.load(source.panes);
+
         // series - 시리즈를 먼저 로드해야 디폴트 axis를 지정할 수 있다.
         this._series.load(source.series);
 

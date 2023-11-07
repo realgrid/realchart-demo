@@ -42,6 +42,12 @@ export class TextElement extends RcElement {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
+    static createCenter(doc: Document): TextElement {
+        const elt = new TextElement(doc);
+        elt._layout = TextLayout.MIDDLE;
+        return elt;
+    }
+
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------

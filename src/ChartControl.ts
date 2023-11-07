@@ -46,9 +46,9 @@ export class ChartControl extends RcControl implements IChartEventListener {
     }
 
     onVisibleChanged(chart: Chart, item: ChartItem): void {
-        if (item instanceof Series) {
+        // if (item instanceof Series) {
             this.invalidateLayout();
-        }
+        // }
     }
 
     onPointVisibleChanged(chart: Chart, series: Series, point: DataPoint): void {

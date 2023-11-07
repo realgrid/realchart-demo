@@ -9,7 +9,7 @@
 import { ButtonElement } from "../common/ButtonElement";
 import { pickNum } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
-import { ClipElement, RcElement } from "../common/RcControl";
+import { ClipElement, LayerElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { Align, AlignBase, SectionDir, VerticalAlign, _undefined } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
@@ -25,6 +25,7 @@ import { ChartElement } from "./ChartElement";
 import { HistoryView } from "./HistoryView";
 import { LegendView } from "./LegendView";
 import { NavigatorView } from "./NavigatorView";
+import { PaneContainer } from "./PaneContainer";
 import { PolarBodyView } from "./PolarBodyView";
 import { SeriesView } from "./SeriesView";
 import { TitleView } from "./TitleView";
@@ -478,7 +479,7 @@ export class CreditView extends ChartElement<Credits> {
 /**
  * @internal
  */
-export class ChartView extends RcElement {
+export class ChartView extends LayerElement {
 
     //-------------------------------------------------------------------------
     // fields
@@ -490,11 +491,13 @@ export class ChartView extends RcElement {
     _emptyView: EmptyView;
     private _titleSectionView: TitleSectionView;
     private _legendSectionView: LegendSectionView;
+    private _plotContainer: LayerElement;
     private _bodyView: BodyView;
     private _splitBodyView: BodyView;
     private _polarView: PolarBodyView;
     private _currBody: BodyView;
     private _axisSectionMap: {[key: string]: AxisSectionView} = {};
+    private _paneContainer: PaneContainer;
     _navigatorView: NavigatorView;
     private _creditView: CreditView;
     private _historyView: HistoryView;
@@ -512,14 +515,17 @@ export class ChartView extends RcElement {
         super(doc, 'rct-chart');
 
         // plot 영역이 마지막이어야 line marker 등이 축 상에 표시될 수 있다.
-        this.add(this._currBody = this._bodyView = new BodyView(doc, this, false));
+        this.add(this._plotContainer = new LayerElement(doc, 'rct-plot-container'));
+        this._plotContainer.add(this._currBody = this._bodyView = new BodyView(doc, this, false));
 
         for (const dir in SectionDir) {
             const v = new AxisSectionView(doc, SectionDir[dir]);
 
-            this.add(v);
+            this._plotContainer.add(v);
             this._axisSectionMap[SectionDir[dir]] = v;
         };
+
+        this.add(this._paneContainer = new PaneContainer(doc, this))
 
         this.add(this._titleSectionView = new TitleSectionView(doc));
         this.add(this._legendSectionView = new LegendSectionView(doc));
@@ -548,7 +554,7 @@ export class ChartView extends RcElement {
     // methods
     //-------------------------------------------------------------------------
     measure(doc: Document, model: Chart, hintWidth: number, hintHeight: number, phase: number): void {
-        if (model && phase == 1) {
+        if (model) {
             model.prepareRender();
         }
         
@@ -569,7 +575,15 @@ export class ChartView extends RcElement {
         this._splitted = m._splitted;
 
         // body
-        this.$_prepareBody(doc, polar);
+        if (m.split.visible) {
+            this._plotContainer.setVisible(false);
+            this._paneContainer.setVisible(true);
+            this.$_preparePanes(doc);
+        } else {
+            this._plotContainer.setVisible(true);
+            this._paneContainer.setVisible(false);
+            this.$_prepareBody(doc, polar);
+        }
 
         // credits
         if (this._creditView.setVisible(credit.visible)) {
@@ -603,10 +617,14 @@ export class ChartView extends RcElement {
         this._navigatorView.setVisible(navigator.isVisible());
 
         // body & axes
-        if (polar) {
-            this.$_measurePolar(doc, m, w, h, 1);
+        if (this._paneContainer.visible) {
+            this._paneContainer.measure(doc, m.split, w, h, 1);
         } else {
-            this.$_measurePlot(doc, m, w, h, 1);
+            if (polar) {
+                this.$_measurePolar(doc, m, w, h, 1);
+            } else {
+                this.$_measurePlot(doc, m, w, h, 1);
+            }
         }
 
         // navigator
@@ -724,137 +742,147 @@ export class ChartView extends RcElement {
             vNavi.layout().translateY(y + vNavi.model.gap);
         }
 
-        // axes
-        const axisMap = this._axisSectionMap;
-        const asvCenter = axisMap[SectionDir.CENTER];
-        const asvMiddle = axisMap[SectionDir.MIDDLE]
         let wCenter = 0;
         let hMiddle = 0;
-        let asv: AxisSectionView;
+        let hPlot = 0;
+        let wPlot = 0;
 
-        if (!polar) {
-            if (asvCenter && asvCenter.visible) {
-                wCenter = asvCenter.mw;
-            }
-            if (asvMiddle && asvMiddle.visible) {
-                hMiddle = asvMiddle.mh;
-            }
-
-            [SectionDir.LEFT, SectionDir.RIGHT].forEach(dir => {
-                if ((asv = axisMap[dir]) && asv.visible) {
-                    w -= asv.mw;
-                }
-            });
-            [SectionDir.TOP, SectionDir.BOTTOM].forEach(dir => {
-                if ((asv = axisMap[dir]) && asv.visible) {
-                    h -= asv.mh;
-                }
-            });
-    
-            if ((asv = axisMap[SectionDir.LEFT]) && asv.visible) {
-                // if (splitted && !asv.isX) {
-                //     asv.resize(asv.mw, (h - hMiddle) / 2);
-                // } else {
-                //     asv.resize(asv.mw, h);
-                // }
-                asv.resize(asv.mw, h);
-                asv.layout(hMiddle);
-                x += asv.mw;
-            }
-            if ((asv = axisMap[SectionDir.RIGHT]) && asv.visible) {
-                // if (splitted && !asv.isX) {
-                //     asv.resize(asv.mw, (h - hMiddle) / 2);
-                // } else {
-                //     asv.resize(asv.mw, h);
-                // }
-                asv.resize(asv.mw, h);
-                asv.layout(hMiddle);
-            }
-            if (wCenter > 0) {
-                asvCenter.resize(asv.mw, h);
-                asvCenter.layout();
-            }
-            if ((asv = axisMap[SectionDir.BOTTOM]) && asv.visible) {
-                // if (splitted && !asv.isX) {
-                //     asv.resize((w - wCenter) / 2, asv.mh);
-                // } else {
-                //     asv.resize(w, asv.mh);
-                // }
-                asv.resize(w, asv.mh);
-                asv.layout(wCenter);
-                y -= asv.mh;
-            }
-            if ((asv = axisMap[SectionDir.TOP]) && asv.visible) {
-                // if (splitted && !asv.isX) {
-                //     asv.resize((w - wCenter) / 2, asv.mh);
-                // } else {
-                //     asv.resize(w, asv.mh);
-                // }
-                asv.resize(w, asv.mh);
-                asv.layout(wCenter);
-            }
-            if (hMiddle > 0) {
-                asvMiddle.resize(w, asv.mh);
-                asvMiddle.layout();
-            }
-        }
-
-        if (vNavi.visible) {
-            vNavi.layout().translateX(x);
-        }
-
-        const org = this._org = Point.create(x, y);
-
-        this._plotWidth = w;
-        this._plotHeight = h;
-
-        if (!polar) {
-            if ((asv = axisMap[SectionDir.LEFT]) && asv.visible) {
-                asv.translate(org.x - asv.mw, org.y - asv.height);
-            }
-            if ((asv = axisMap[SectionDir.RIGHT]) && asv.visible) {
-                asv.translate(org.x + w, org.y - asv.height);
-            }
-            if (wCenter > 0) {
-                asvCenter.translate(org.x + (w - wCenter) / 2, org.y - asvCenter.height);
-            }
-            if ((asv = axisMap[SectionDir.BOTTOM]) && asv.visible) {
-                asv.translate(org.x, org.y);
-            }
-            if ((asv = axisMap[SectionDir.TOP]) && asv.visible) {
-                asv.translate(org.x, org.y - h - asv.height);
-            }
-            if (hMiddle > 0) {
-                asvMiddle.translate(org.x, org.y - (h - hMiddle) / 2 - hMiddle);
-            }
-        }
-
-        // body
-        const hPlot = this._plotHeight - hMiddle;
-        let wPlot = this._plotWidth - wCenter;
-
-        x = org.x;
-        y = org.y - this._plotHeight;
-
-        if (m._splitted) {
-            const splitView = this._splitBodyView;
-
-            if (m.isInverted()) {
-                this._currBody.resize(wPlot / 2, hPlot);
-                this._currBody.layout().translate(x, y);
-    
-                splitView.resize(wPlot / 2, hPlot);
-                splitView.layout().translate(x + wPlot / 2 + wCenter, y);
-            } else {
-                this._currBody.resize(wPlot, hPlot / 2);
-                this._currBody.layout().translate(x, y + hPlot / 2 + hMiddle);
-    
-                splitView.resize(wPlot, hPlot / 2);
-                splitView.layout().translate(x, y);
-            }
+        if (this._paneContainer.visible) {
+            this._paneContainer.resize(w, h);
+            this._paneContainer.layout();
+            hPlot = h;
+            wPlot = w;
         } else {
-            this._currBody.resize(wPlot, hPlot);
-            this._currBody.layout().translate(x, y);
+            // axes
+            const axisMap = this._axisSectionMap;
+            const asvCenter = axisMap[SectionDir.CENTER];
+            const asvMiddle = axisMap[SectionDir.MIDDLE]
+            let asv: AxisSectionView;
+
+            if (!polar) {
+                if (asvCenter && asvCenter.visible) {
+                    wCenter = asvCenter.mw;
+                }
+                if (asvMiddle && asvMiddle.visible) {
+                    hMiddle = asvMiddle.mh;
+                }
+
+                [SectionDir.LEFT, SectionDir.RIGHT].forEach(dir => {
+                    if ((asv = axisMap[dir]) && asv.visible) {
+                        w -= asv.mw;
+                    }
+                });
+                [SectionDir.TOP, SectionDir.BOTTOM].forEach(dir => {
+                    if ((asv = axisMap[dir]) && asv.visible) {
+                        h -= asv.mh;
+                    }
+                });
+        
+                if ((asv = axisMap[SectionDir.LEFT]) && asv.visible) {
+                    // if (splitted && !asv.isX) {
+                    //     asv.resize(asv.mw, (h - hMiddle) / 2);
+                    // } else {
+                    //     asv.resize(asv.mw, h);
+                    // }
+                    asv.resize(asv.mw, h);
+                    asv.layout(hMiddle);
+                    x += asv.mw;
+                }
+                if ((asv = axisMap[SectionDir.RIGHT]) && asv.visible) {
+                    // if (splitted && !asv.isX) {
+                    //     asv.resize(asv.mw, (h - hMiddle) / 2);
+                    // } else {
+                    //     asv.resize(asv.mw, h);
+                    // }
+                    asv.resize(asv.mw, h);
+                    asv.layout(hMiddle);
+                }
+                if (wCenter > 0) {
+                    asvCenter.resize(asv.mw, h);
+                    asvCenter.layout();
+                }
+                if ((asv = axisMap[SectionDir.BOTTOM]) && asv.visible) {
+                    // if (splitted && !asv.isX) {
+                    //     asv.resize((w - wCenter) / 2, asv.mh);
+                    // } else {
+                    //     asv.resize(w, asv.mh);
+                    // }
+                    asv.resize(w, asv.mh);
+                    asv.layout(wCenter);
+                    y -= asv.mh;
+                }
+                if ((asv = axisMap[SectionDir.TOP]) && asv.visible) {
+                    // if (splitted && !asv.isX) {
+                    //     asv.resize((w - wCenter) / 2, asv.mh);
+                    // } else {
+                    //     asv.resize(w, asv.mh);
+                    // }
+                    asv.resize(w, asv.mh);
+                    asv.layout(wCenter);
+                }
+                if (hMiddle > 0) {
+                    asvMiddle.resize(w, asv.mh);
+                    asvMiddle.layout();
+                }
+            }
+
+            if (vNavi.visible) {
+                vNavi.layout().translateX(x);
+            }
+
+            const org = this._org = Point.create(x, y);
+
+            this._plotWidth = w;
+            this._plotHeight = h;
+
+            if (!polar) {
+                if ((asv = axisMap[SectionDir.LEFT]) && asv.visible) {
+                    asv.translate(org.x - asv.mw, org.y - asv.height);
+                }
+                if ((asv = axisMap[SectionDir.RIGHT]) && asv.visible) {
+                    asv.translate(org.x + w, org.y - asv.height);
+                }
+                if (wCenter > 0) {
+                    asvCenter.translate(org.x + (w - wCenter) / 2, org.y - asvCenter.height);
+                }
+                if ((asv = axisMap[SectionDir.BOTTOM]) && asv.visible) {
+                    asv.translate(org.x, org.y);
+                }
+                if ((asv = axisMap[SectionDir.TOP]) && asv.visible) {
+                    asv.translate(org.x, org.y - h - asv.height);
+                }
+                if (hMiddle > 0) {
+                    asvMiddle.translate(org.x, org.y - (h - hMiddle) / 2 - hMiddle);
+                }
+            }
+
+            // body
+            hPlot = this._plotHeight - hMiddle;
+            wPlot = this._plotWidth - wCenter;
+
+            x = org.x;
+            y = org.y - this._plotHeight;
+
+            if (m._splitted) {
+                const splitView = this._splitBodyView;
+
+                if (m.isInverted()) {
+                    this._currBody.resize(wPlot / 2, hPlot);
+                    this._currBody.layout().translate(x, y);
+        
+                    splitView.resize(wPlot / 2, hPlot);
+                    splitView.layout().translate(x + wPlot / 2 + wCenter, y);
+                } else {
+                    this._currBody.resize(wPlot, hPlot / 2);
+                    this._currBody.layout().translate(x, y + hPlot / 2 + hMiddle);
+        
+                    splitView.resize(wPlot, hPlot / 2);
+                    splitView.layout().translate(x, y);
+                }
+            } else {
+                this._currBody.resize(wPlot, hPlot);
+                this._currBody.layout().translate(x, y);
+            }
         }
 
         // credits
@@ -1116,11 +1144,14 @@ export class ChartView extends RcElement {
         }
     }
 
+    private $_preparePanes(doc: Document): void {
+    }
+
     private $_prepareBody(doc: Document, polar: boolean): void {
         if (polar) {
             if (!this._polarView) {
                 this._polarView = new PolarBodyView(doc, this);
-                this.insertChild(this._polarView, this._bodyView);
+                this._plotContainer.insertChild(this._polarView, this._bodyView);
             }
             this._currBody = this._polarView;
             this._bodyView?.setVisible(false);
@@ -1134,7 +1165,7 @@ export class ChartView extends RcElement {
             if (this._model._splitted) {
                 if (!this._splitBodyView) {
                     this._splitBodyView = new BodyView(doc, this, true);
-                    this.insertChild(this._splitBodyView, this._bodyView);
+                    this._plotContainer.insertChild(this._splitBodyView, this._bodyView);
                 } else {
                     this._splitBodyView.setVisible(true);
                 }
