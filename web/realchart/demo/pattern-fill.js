@@ -5,13 +5,17 @@
 const config = {
 	options: {
 		// animatable: false,
-		credits: {
-			// visible: false,
-			// verticalAlign: 'top'
-			// align: 'center'
-		},
 	},
-	title: '경기도 성남시 인구 현황',
+	title: 'Pattern Fill',
+    assets: [{
+        type: 'pattern',
+        id: 'pattern-1',
+        pattern: 0,
+        style: {
+            stroke: 'red',
+            fill: 'red'
+        }
+    }],
 	legend: true,
     body: {
         style: {
@@ -19,32 +23,19 @@ const config = {
         }
     },
 	xAxis: {
-		// tick:true,
-		// type: 'category',
-		// position: 'apposite'
-		// position: 'base',
-		// baseAxis: 1,
 		title: {
 			text: '수정구'
 		},
-		// grid: true,
         crosshair: true,
 	},
 	yAxis: {
 		title: {
 			text: '전체 인구수'
 		},
-		// maxPadding: 0
-		// strictMin: 1
 	},
 	series: {
-        // visible: false,
-		// baseValue: null,
 		pointLabel: {
 			visible: true,
-			//position: 'head',
-			// offset: 10,
-			// text: '<b style="fill:red">${x}</b>',
 			effect: 'outline', // 'background',
 			style: {},
 		},
@@ -57,21 +48,9 @@ const config = {
 			['태평3동', 12649],
 			['태평4동', 12279],
 		],
-		data2: [
-			[1, 7],
-			[2, 11],
-			[3, 9],
-			[4, 10],
-			[5, 14.3],
-			[6, 13],
-			[7, 12.5],
-		],
 		style: {
-			// fill: 'yellow'
+            fill: 'url(#pattern-1)'
 		},
-		// onPointClick: args => {
-		//     alert(JSON.stringify(args));
-		// }
 	},
 };
 
@@ -137,14 +116,6 @@ function setActions(container) {
 		false
 	);
 	createButton(container, 'Test', function (e) {
-		// alert('hello');
-        // alert(RealChart.getVersion());
-        // chart.series.visible = !chart.series.visible;
-        // chart.series.set('visible', !chart.series.get('visible'));
-        // chart.series.toggle('visible');
-        // chart.series.set('pointLabel', false);
-        // chart.series.toggle('pointLabel.visible');
-        // chart.series.pointLabel.toggle('visible');
 	});
 	createCheckBox(
 		container,
@@ -181,6 +152,26 @@ function setActions(container) {
 			chart.load(config, animate);
 		},
 		false
+	);
+	createListBox(
+		container,
+		'pattern',
+		['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'],
+		function (e) {
+			config.assets[0].pattern = +_getValue(e);
+			chart.load(config, animate);
+		},
+		'0'
+	);
+	createListBox(
+		container,
+		'color',
+		['red', 'blue', 'green', 'gray'],
+		function (e) {
+			config.assets[0].style = { fill: _getValue(e), stroke: _getValue(e) };
+			chart.load(config, animate);
+		},
+		'red'
 	);
 	createCodePenButton();
 }

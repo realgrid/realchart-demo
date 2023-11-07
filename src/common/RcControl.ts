@@ -149,15 +149,23 @@ export abstract class RcControl extends RcWrappableObject {
         Dom.clearChildren(this._defs);
     }
 
-    clearTemporaryDefs(): void {
+    private $_clearDefs(key: string): void {
         const defs = this._defs;
         const childs = defs.children;
 
         for (let i = 0; i < childs.length; i++) {
-            if (childs[i].hasAttribute(RcElement.TEMP_KEY)) {
+            if (childs[i].hasAttribute(key)) {
                 defs.removeChild(childs[i]);
             }
         }
+    }
+
+    clearAssetDefs(): void {
+        this.$_clearDefs(RcElement.ASSET_KEY);
+    }
+
+    clearTemporaryDefs(): void {
+        this.$_clearDefs(RcElement.TEMP_KEY);
     }
 
     appendDom(elt: HTMLElement): void {
@@ -581,6 +589,7 @@ export class RcElement extends RcObject {
     //-------------------------------------------------------------------------
     static TESTING = false;
     static DEBUGGING = false;
+    static ASSET_KEY = '_asset_';
     static TEMP_KEY = '_temp_';
 
     //-------------------------------------------------------------------------

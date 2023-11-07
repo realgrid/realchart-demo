@@ -156,9 +156,9 @@ export class DataPoint {
         });
     }
 
-    protected _colorIndex(): number {
-        return 2;
-    }
+    // protected _colorIndex(): number {
+    //     return 2;
+    // }
 
     protected _readArray(series: ISeries, v: any[]): void {
         if (v == null) {

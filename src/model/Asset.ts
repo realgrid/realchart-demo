@@ -6,7 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { SVGNS, isArray, isObject } from "../common/Common";
+import { SVGNS, isArray, isObject, isString } from "../common/Common";
+import { RcElement } from "../common/RcControl";
 import { SVGStyles, isNull } from "../common/Types";
 
 export interface IAssetItem {
@@ -131,10 +132,9 @@ export class RadialGradient extends Gradient<IRadialGradient> {
 
 export interface IPattern extends IAssetItem {
     /**
-     * {@link path} 지정하지 않은 경우, stock pattern index.
+     * 문자열로 지정하면 path 'd', 숫자로 지정하면 stock pattern index.
      */
-    index?: number; 
-    path?: string;
+    pattern: string | number; 
     /**
      * 지정하지 않으면 {@link height}나 20 pixels.
      */
@@ -153,30 +153,33 @@ export class Pattern extends AssetItem<IPattern> {
     // consts
     //-------------------------------------------------------------------------
     static readonly TYPE = 'pattern';
-    static readonly STOCK: {path: string, style?: SVGStyles}[] = [{ 
+    static readonly STOCK: {path: string, fill?: boolean, style?: SVGStyles}[] = [{ 
         path: 'M20.03.03-.5 20.45',
     }, { 
-        path: 'm-.15 8.67 10.16 2.71 10.16-2.71' 
+        path: 'm-.15 8.67 10.16 2.71 10.16-2.71',
+        style: { strokeWidth: '1.24px' }
     }, { 
-        path: 'M0 20c1.67-1.67 3.49.15 5.15-1.51C6.82 16.82 5 15 6.66 13.34c1.67-1.67 3.49.15 5.15-1.51 1.67-1.67-.15-3.49 1.51-5.16 1.67-1.67 3.49.15 5.16-1.51 1.67-1.67-.15-3.49 1.51-5.16' 
+        path: 'M0 20c1.67-1.67 3.49.15 5.15-1.51C6.82 16.82 5 15 6.66 13.34c1.67-1.67 3.49.15 5.15-1.51 1.67-1.67-.15-3.49 1.51-5.16 1.67-1.67 3.49.15 5.16-1.51 1.67-1.67-.15-3.49 1.51-5.16',
     }, { 
-        path: 'circle cx="10" cy="10" r="4.88"' 
+        path: 'M 10 10 m 5 0 a 5 5 0 1 1 -10 0 a 5 5 0 1 1 10 0',
+        fill: true
     }, { 
-        path: 'M.61 7.19h4.95v4.95H.61z m12.38 9.669 3.5-3.5 3.5 3.5-3.5 3.5z' 
+        path: 'M.61 7.19h4.95v4.95H.61z m12.38 9.669 3.5-3.5 3.5 3.5-3.5 3.5z',
+        fill: true
     }, { 
-        path: 'm18.3 5.18.02.02L10 10 1.68 5.2 10 .39l8.3 4.79M10 19.61 1.68 14.8V5.2 M1.68 5.2 10 10v9.61M10 19.15V10l8.32-4.8M18.32 5.2v9.6L10 19.61' 
+        path: 'm18.3 5.18.02.02L10 10 1.68 5.2 10 .39l8.3 4.79M10 19.61 1.68 14.8V5.2 M1.68 5.2 10 10v9.61M10 19.15V10l8.32-4.8M18.32 5.2v9.6L10 19.61',
     }, { 
-        path: 'M19.64 9.99h-6.46M14.81 1.64l-3.23 5.6M5.17 1.65 8.4 7.26M.36 10.01h6.46M5.19 18.36l3.23-5.6M14.83 18.35l-3.23-5.61' 
+        path: 'M19.64 9.99h-6.46M14.81 1.64l-3.23 5.6M5.17 1.65 8.4 7.26M.36 10.01h6.46M5.19 18.36l3.23-5.6M14.83 18.35l-3.23-5.61',
     }, { 
-        path: 'M20 5.04H0M0 14.96h20M14.96 20V0M5.04 0v20' 
+        path: 'M20 5.04H0M0 14.96h20M14.96 20V0M5.04 0v20',
     }, { 
-        path: 'M.59 18.15 10 1.85l9.41 16.3H.59z' 
+        path: 'M.59 18.15 10 1.85l9.41 16.3H.59z',
     }, { 
-        path: 'm.005 8.165 1.83-3.17 3.17 1.83-1.83 3.17z" class="cls-2"/><path d="m5.005 6.825 3.17-1.83 1.83 3.17-3.17 1.83zM.005 1.835l3.17-1.83 1.83 3.17-3.17 1.83z m5.005 3.175 1.83-3.17 3.17 1.83-1.83 3.17z m15.006 6.825 3.17-1.83 1.83 3.17-3.17 1.83z m10.005 8.165 1.83-3.17 3.17 1.83-1.83 3.17zM14.995 3.174l1.83-3.17 3.17 1.83-1.83 3.17z m9.995 1.835 3.17-1.83 1.83 3.17-3.17 1.83z M5 3.2v3.63M15 3.2v3.63M8.17 5h3.66' 
+        path: 'm.005 8.165 1.83-3.17 3.17 1.83-1.83 3.17z m5.005 6.825 3.17-1.83 1.83 3.17-3.17 1.83z M.005 1.835l3.17-1.83 1.83 3.17-3.17 1.83z m5.005 3.175 1.83-3.17 3.17 1.83-1.83 3.17z m15.006 6.825 3.17-1.83 1.83 3.17-3.17 1.83z m10.005 8.165 1.83-3.17 3.17 1.83-1.83 3.17zM14.995 3.174l1.83-3.17 3.17 1.83-1.83 3.17z m9.995 1.835 3.17-1.83 1.83 3.17-3.17 1.83z M5 3.2v3.63M15 3.2v3.63M8.17 5h3.66',
     }, { 
-        path: 'M-.529 13.948 13.203.216l6.562 6.562L6.033 20.51zM9.625 16.928l6.562-6.562L29.92 24.098l-6.562 6.562z' 
+        path: 'M-.529 13.948 13.203.216l6.562 6.562L6.033 20.51zM9.625 16.928l6.562-6.562L29.92 24.098l-6.562 6.562z',
     }, { 
-        path: 'm7.98 6.42 7.85-13.59 7.84 13.59H7.98zM27.84 6.42 20 20 12.16 6.42h15.68z' 
+        path: 'm7.98 6.42 7.85-13.59 7.84 13.59H7.98zM27.84 6.42 20 20 12.16 6.42h15.68z',
     }]
 
     //-------------------------------------------------------------------------
@@ -188,21 +191,27 @@ export class Pattern extends AssetItem<IPattern> {
     getEelement(doc: Document, src: IPattern): Element {
         const elt = doc.createElementNS(SVGNS, 'pattern');
         const path = doc.createElementNS(SVGNS, 'path');
+        let noFill = false;
 
         elt.setAttribute('id', src.id);
         elt.setAttribute('width', String(src.width || src.height || 20));
         elt.setAttribute('height', String(src.height || src.width || 20));
         elt.setAttribute('patternUnits', "userSpaceOnUse");
 
-        if (src.path) {
-            path.setAttribute('d', src.path);
-        } else if (src.index >= 0) {
-            const stock = Pattern.STOCK[src.index] || Pattern.STOCK[0];
+        if (+src.pattern >= 0) {
+            const stock = Pattern.STOCK[(+src.pattern) % Pattern.STOCK.length];
             path.setAttribute('d', stock.path);
             if (stock.style) Object.assign(path.style, stock.style);
+            noFill = !stock.fill;
+        } else if (isString(src.pattern)) {
+            path.setAttribute('d', src.pattern);
         }
+
         if (isObject(src.style)) {
             Object.assign(path.style, src.style);
+        }
+        if (noFill) {
+            path.style.fill = 'none';
         }
 
         elt.append(path);
@@ -252,7 +261,9 @@ export class AssetCollection {
 
     register(doc: Document, owner: IAssetOwner): void {
         this._items.forEach(item => {
-            owner.addDef(item.getEelement(doc, item.source));
+            const elt = item.getEelement(doc, item.source);
+            elt.setAttribute(RcElement.ASSET_KEY, '1');
+            owner.addDef(elt);
         })
     }
 
@@ -267,13 +278,17 @@ export class AssetCollection {
     //-------------------------------------------------------------------------
     private $_loadItem(src: any): AssetItem<IAssetItem> {
         if (isObject(src) && src.type && src.id) {
-            switch (src.type.toLowerCase()) {
-                case LinearGradient.TYPE:
-                    return new LinearGradient(src);
-                case RadialGradient.TYPE:
-                    return new RadialGradient(src);
-                case Pattern.TYPE:
-                    return new Pattern(src);
+            if (src.pattern != null) {
+                return new Pattern(src);
+            } else if (src.type) {
+                switch (src.type.toLowerCase()) {
+                    case LinearGradient.TYPE:
+                        return new LinearGradient(src);
+                    case RadialGradient.TYPE:
+                        return new RadialGradient(src);
+                    case Pattern.TYPE:
+                        return new Pattern(src);
+                }
             }
         }
     }
