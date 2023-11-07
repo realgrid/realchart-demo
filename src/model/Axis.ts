@@ -1302,11 +1302,11 @@ export abstract class PaneAxisMatrix {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    row(): number {
+    rows(): number {
         return this._matrix.length;
     }
 
-    col(): number {
+    cols(): number {
         return this._matrix[0].length;
     }
 
@@ -1317,6 +1317,14 @@ export abstract class PaneAxisMatrix {
 
     get(row: number, col: number): PaneAxes {
         return this._matrix[row][col];
+    }
+
+    getRow(row: number): PaneAxes[] {
+        return this._matrix[row];
+    }
+
+    getColumn(col: number): PaneAxes[] {
+        return this._matrix.map(m => m[col]);
     }
 }
 

@@ -21,7 +21,7 @@ import { LegendItem, LegendLocation } from "../model/Legend";
 import { Series } from "../model/Series";
 import { AxisScrollView, AxisView } from "./AxisView";
 import { AxisGuideContainer, BodyView } from "./BodyView";
-import { ChartElement } from "./ChartElement";
+import { ChartElement, SectionView } from "./ChartElement";
 import { HistoryView } from "./HistoryView";
 import { LegendView } from "./LegendView";
 import { NavigatorView } from "./NavigatorView";
@@ -30,48 +30,6 @@ import { PolarBodyView } from "./PolarBodyView";
 import { SeriesView } from "./SeriesView";
 import { TitleView } from "./TitleView";
 import { TooltipView } from "./TooltipView";
-
-/**
- * @internal
- */
-abstract class SectionView extends GroupElement {
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    mw: number;
-    mh: number;
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    measure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
-        const sz = this._doMeasure(doc, chart, hintWidth, hintHeight, phase);
-
-        this.mw = sz.width;
-        this.mh = sz.height;
-        return sz;
-    }
-
-    resizeByMeasured(): SectionView {
-        this.resize(this.mw, this.mh);
-        return this;
-    }
-
-    layout(param?: any): SectionView {
-        this._doLayout(param);
-        return this;
-    }
-
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
-    protected abstract _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize;
-    protected abstract _doLayout(param?: any): void;
-}
 
 /**
  * @internal
@@ -253,7 +211,7 @@ class AxisSectionView extends SectionView {
 
         this.axes = axes;
 
-        if (this.visible = views.length > 0) {
+        if (this.setVisible(views.length > 0)) {
             const m = views[0].model;
 
             this.isX = m._isX;
@@ -618,7 +576,7 @@ export class ChartView extends LayerElement {
 
         // body & axes
         if (this._paneContainer.visible) {
-            this._paneContainer.measure(doc, m.split, w, h, 1);
+            this._paneContainer.measure(doc, m.split, m.xPaneAxes, m.yPaneAxes, w, h, 1);
         } else {
             if (polar) {
                 this.$_measurePolar(doc, m, w, h, 1);
@@ -748,7 +706,7 @@ export class ChartView extends LayerElement {
         let wPlot = 0;
 
         if (this._paneContainer.visible) {
-            this._paneContainer.resize(w, h);
+            this._paneContainer.resize(w, h).translate(x, yTitle + hTitle);
             this._paneContainer.layout();
             hPlot = h;
             wPlot = w;

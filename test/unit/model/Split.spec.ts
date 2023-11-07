@@ -134,11 +134,11 @@ import { PaneAxisMatrix, XPaneAxisMatrix, YPaneAxisMatrix } from '../../../src/m
         xmatrix.prepare(chart._getXAxes(), split._vrows, split._vcols);
         ymatrix.prepare(chart._getYAxes(), split._vrows, split._vcols);
         
-        expect(xmatrix.row()).eq(2);
-        expect(xmatrix.col()).eq(2);
+        expect(xmatrix.rows()).eq(2);
+        expect(xmatrix.cols()).eq(2);
 
-        expect(ymatrix.row()).eq(1);
-        expect(ymatrix.col()).eq(3);
+        expect(ymatrix.rows()).eq(1);
+        expect(ymatrix.cols()).eq(3);
     })
 
     it('prepare 2', () => {
@@ -181,10 +181,10 @@ import { PaneAxisMatrix, XPaneAxisMatrix, YPaneAxisMatrix } from '../../../src/m
         xmatrix.prepare(chart._getXAxes(), split._vrows, split._vcols);
         ymatrix.prepare(chart._getYAxes(), split._vrows, split._vcols);
         
-        expect(xmatrix.row()).eq(3);
-        expect(xmatrix.col()).eq(2);
+        expect(xmatrix.rows()).eq(3);
+        expect(xmatrix.cols()).eq(2);
 
-        expect(ymatrix.row()).eq(2);
-        expect(ymatrix.col()).eq(3);
+        expect(ymatrix.rows()).eq(2);
+        expect(ymatrix.cols()).eq(3);
     })
 });

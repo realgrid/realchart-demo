@@ -296,12 +296,12 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _title: Title;
     private _subtitle: Subtitle;
     private _legend: Legend;
-    private _split: Split;
     private _series: PlottingItemCollection;
     private _xAxes: AxisCollection;
     private _yAxes: YAxisCollection;
-    private _xPaneAxes: XPaneAxisMatrix;
-    private _yPaneAxes: YPaneAxisMatrix;
+    private _split: Split;
+    _xPaneAxes: XPaneAxisMatrix;
+    _yPaneAxes: YPaneAxisMatrix;
     private _gauges: GaugeCollection;
     private _body: Body;
     private _navigator: SeriesNavigator;
@@ -450,6 +450,14 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     get split(): Split {
         return this._split;
+    }
+
+    get xPaneAxes(): XPaneAxisMatrix {
+        return this._xPaneAxes;
+    }
+
+    get yPaneAxes(): YPaneAxisMatrix {
+        return this._yPaneAxes;
     }
 
     get seriesNavigator(): SeriesNavigator {

@@ -11,8 +11,9 @@ import { IRect } from "../common/Rectangle";
 import { Sides } from "../common/Sides";
 import { ISize } from "../common/Size";
 import { _undefined } from "../common/Types";
+import { GroupElement } from "../common/impl/GroupElement";
 import { RectElement } from "../common/impl/RectElement";
-import { IChart } from "../model/Chart";
+import { Chart, IChart } from "../model/Chart";
 import { ChartItem } from "../model/ChartItem";
 
 export abstract class ChartElement<T extends ChartItem> extends RcElement {
@@ -188,4 +189,46 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     protected _getBackOffset(): number {
         return 0;
     }
+}
+
+/**
+ * @internal
+ */
+export abstract class SectionView extends GroupElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    mw: number;
+    mh: number;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    measure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
+        const sz = this._doMeasure(doc, chart, hintWidth, hintHeight, phase);
+
+        this.mw = sz.width;
+        this.mh = sz.height;
+        return sz;
+    }
+
+    resizeByMeasured(): SectionView {
+        this.resize(this.mw, this.mh);
+        return this;
+    }
+
+    layout(param?: any): SectionView {
+        this._doLayout(param);
+        return this;
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected abstract _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize;
+    protected abstract _doLayout(param?: any): void;
 }

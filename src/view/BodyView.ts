@@ -756,7 +756,7 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, owner: IPlottingOwner, side: boolean) {
+    constructor(doc: Document, owner: IPlottingOwner, side = false) {
         super(doc, BodyView.BODY_CLASS);
 
         this._owner = owner;

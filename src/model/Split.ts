@@ -144,6 +144,11 @@ export class Split extends ChartItem {
         return this._vcols;
     }
 
+    paneCount(): number {
+        // TODO: pane들이 병합될 수 있다.
+        return this._vrows * this._vcols;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
