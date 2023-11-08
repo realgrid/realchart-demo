@@ -158,9 +158,20 @@ class Tunner {
       case 'intrinsic':
         return name;
       case 'union':
-        return types.map(t => this._parseType(t)).join(' | ');
+        return types.map(t => {return this._parseType(t)}).join(' | ');
       case 'array':
-        return `${elementType.name}[]`;
+        // IValueRange
+        switch (elementType.type) {
+          case 'reference':
+            // @TODO: Link Required...
+            return `${elementType.name}[]`;
+            break;
+          case 'intrinsic':
+            return `${elementType.name}[]`;
+          default:
+            console.warn(`[WARN] unexpected type ${elementType.type}, ${elementType.name}`, obj);
+        }
+        return;
       case 'reference':
         if (qualifiedName) { // Date
           return qualifiedName;
@@ -173,16 +184,23 @@ class Tunner {
           // console.debug(name, obj)
           const model = this._findModel(this.model, name);
           model && this._visit(model);
+
+          // if (name == 'SVGStyles' && !model)
+          //   throw new Error(`not found ${name} model.`)
         }
 
         return this._parseType(this.classMap[name]?.type);
       case 'literal':
-        console.warn(`[WARN] ignored ${type}`, obj);
-        return;
+        // console.warn(`[WARN] ignored ${type}`, obj);
+        return typeof obj.value === 'string' ? `'${obj.value}'` : obj.value;
       case 'reflection':
-        console.warn(`[WARN] ignored ${type}`);
-        // console.debug(obj.declaration?.signatures);
-        return;
+        // console.warn(`[WARN] ignored ${type}`);
+        if (obj.declaration?.signatures.length > 1) {
+          console.debug(JSON.stringify(obj));
+        }
+        return obj.declaration?.signatures.map(s => {return this._parseType(s)}).join(' | ');
+        // const [{ kind, kindString, parameters, type: _type }] = obj.declaration?.signatures || {};
+        // console.debug({ kindString, parameters, type: _type });
       default:
         // class 인 경우, type 없음.
         // console.warn('[WARN] unexpected type');
@@ -429,7 +447,8 @@ class MDGenerater {
       } else if (v?.kindString == 'Enumeration') {
         enumLines = this._makeEnums({ name, enums: v.props });
       } else if (v?.kindString == 'Type Alias') {
-
+        // Interface?
+        console.debug({v});
       }
     }
     
