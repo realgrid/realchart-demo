@@ -28,6 +28,8 @@ export abstract class GaugeBase extends Widget {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    _row: number;
+    _col: number;
     private _size: RtPercentSize;
     private _width: RtPercentSize;
     private _height: RtPercentSize;
@@ -39,6 +41,8 @@ export abstract class GaugeBase extends Widget {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    row = 0;
+    col = 0;
     index = -1;
     private _sizeDim: IPercentSize;
     private _widthDim: IPercentSize;
@@ -403,6 +407,14 @@ export class GaugeCollection {
     //-------------------------------------------------------------------------
     getVisibles(side: boolean): GaugeBase[] {
         return this._visibles.filter(g => !g.side == !side);
+    }
+
+    getPaneVisibles(row: number, col: number): GaugeBase[] {
+        return this._visibles.filter(g => {
+            const r = g.row || 0;
+            const c = g.col || 0;
+            return row === r && col === c;
+        })
     }
 
     getGauge(name: string): Gauge {

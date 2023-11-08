@@ -7,7 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, isString } from "../common/Common";
-import { Align, SVGStyleOrClass, isNull } from "../common/Types";
+import { Align, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
+import { PaneAxisMatrix } from "./Axis";
+import { Body } from "./Body";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 
@@ -50,6 +52,28 @@ export class PaneTitle extends ChartItem {
     }
 }
 
+export class PaneBody extends Body {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public pane: Pane) {
+        super(pane.chart);
+
+        this.radius = _undefined;
+        this.centerX = _undefined;
+        this.centerY = _undefined;
+        this.startAngle = _undefined;
+    }
+
+    //-------------------------------------------------------------------------
+    // overiden members
+    //-------------------------------------------------------------------------
+}
+
 export class Pane extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -69,6 +93,7 @@ export class Pane extends ChartItem {
     // properties
     //-------------------------------------------------------------------------
     title = new PaneTitle(this);
+    body = new PaneBody(this);
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -82,8 +107,9 @@ interface IRelativeSize {
 /**
  * 다중 분할 panes.\
  * 각 pane에 해당하는 x, y축이 반드시 존재해야 한다.
- * axis는 {@link Axis.pane pane} 속성으로 위치를 지정한다.
- * 시리즈는 axis 위치에 따라 자동으로 pane이 결정된다.
+ * axis는 {@link Axis.row row}, {@link Axis.col col} 속성으로 위치를 지정한다.
+ * 시리즈는 {@link Series.row row}, {@link Series.col col} 속성으로 지정하거나, 아니면 axis 위치에 따라 자동으로 결정된다.
+ * 시리즈그룹은 {@link SeriesGroup.row row}, {@link SeriesGroup.col col} 속성으로 지정하거나, 아니면 axis 위치에 따라 자동으로 결정된다.
  */
 export class Split extends ChartItem {
 
@@ -96,6 +122,8 @@ export class Split extends ChartItem {
     private _heights: (IRelativeSize | number)[];
     private _panes: {[pos: string]: Pane} = {};
 
+    private _xAxes: PaneAxisMatrix;
+    private _yAxes: PaneAxisMatrix;
     _vcols = 1;
     _vrows = 1;
     private _vwidths: number[];
@@ -156,6 +184,14 @@ export class Split extends ChartItem {
         return this._vpanes[row][col];
     }
 
+    getRow(row: number): Pane[] {
+        return this._vpanes[row];
+    }
+
+    getColumn(col: number): Pane[] {
+        return this._vpanes.map(v => v[col]);
+    }
+
     layoutPanes(width: number, height: number, inverted: boolean, phase: number): void {
     }
 
@@ -179,9 +215,34 @@ export class Split extends ChartItem {
     }
 
     protected _doPrepareRender(chart: IChart): void {
+        this._xAxes = chart._xPaneAxes;
+        this._yAxes = chart._yPaneAxes;
         this._vpanes = this.$_collectPanes(chart);
     }
 
+    // 여러번 호출될 수 있다.
+    layoutAxes(width: number, height: number, inverted: boolean, phase: number): void {
+        const xLens = new Array<number>(this._vcols).fill(width / this._vcols);
+        this._xAxes.buildTicks(xLens);
+
+        const yLens = new Array<number>(this._vcols).fill(width / this._vrows);
+        this._yAxes.buildTicks(yLens);
+
+        this.$_calcAxesPoints(xLens, yLens);
+    }
+
+    private $_calcAxesPoints(xLens: number[], yLens: number[]): void {
+        this._xAxes.calcPoints(xLens);
+        this._yAxes.calcPoints(yLens);
+    }
+
+    calcAxesPoints(xLens: number[], yLens: number[]): void {
+        this.$_calcAxesPoints(xLens, yLens);
+    }
+
+    /**
+     * body들의 표시 크기를 계산한다.
+     */
     calcSizes(width: number, height: number): void {
         this._widths = this.$_calcSizes(width, this._widths);
         this._heights = this.$_calcSizes(height, this._heights);
@@ -213,8 +274,8 @@ export class Split extends ChartItem {
     }
 
     private $_parsePanes(rows: any, cols: any): void {
-        this._widths = this.$_parseSizes(rows);
-        this._heights = this.$_parseSizes(cols);
+        this._widths = this.$_parseSizes(cols);
+        this._heights = this.$_parseSizes(rows);
         this._cols = this._widths.length;
         this._rows = this._heights.length;
     }

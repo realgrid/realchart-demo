@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isObject, isString, pickNum } from "../common/Common";
+import { isArray, isNumber, isObject, isString, pickNum, pickNum3 } from "../common/Common";
 import { Align, SVGStyleOrClass, VerticalAlign, _undefined, fixnum, isNull } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
@@ -21,6 +21,8 @@ export interface IAxis {
     chart: IChart;
     side: boolean;
     
+    row: number;
+    col: number;
     _vlen: number;
     _isX: boolean;
     _isHorz: boolean;
@@ -918,25 +920,54 @@ export abstract class Axis extends ChartItem implements IAxis {
         }
 
         // clustering (x축에서만 가능)
-        if (this._isX) {
-            (this.chart._splitted ? [false, true] : [false]).forEach(side => {
-                let sum = 0;
-                let p = 0;
-        
-                series.forEach(item => {
-                    if (item.isSide() == side && item.clusterable()) {
-                        sum += pickNum((item as any as IClusterable).groupWidth, 1);
+        if (this._isX && series.length > 0) {
+            if (this.chart.split.visible) {
+                const rows: number[] = [series[0]._row];
+
+                for (let i = 1; i < series.length; i++) {
+                    if (rows.indexOf(series[i]._row) < 0) {
+                        rows.push(series[i]._row);
                     }
+                }
+                rows.forEach(row => {
+                    let sum = 0;
+                    let p = 0;
+            
+                    series.forEach(item => {
+                        if (item._row == row && item.clusterable()) {
+                            sum += pickNum((item as any as IClusterable).groupWidth, 1);
+                        }
+                    });
+                    series.forEach(item => {
+                        if (item._row == row && item.clusterable()) {
+                            const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;
+            
+                            (item as any as IClusterable).setCluster(w, p);
+                            p += w;
+                        }
+                    });
                 });
-                series.forEach(item => {
-                    if (item.isSide() == side && item.clusterable()) {
-                        const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;
-        
-                        (item as any as IClusterable).setCluster(w, p);
-                        p += w;
-                    }
+
+            } else {
+                (this.chart._splitted ? [false, true] : [false]).forEach(side => {
+                    let sum = 0;
+                    let p = 0;
+            
+                    series.forEach(item => {
+                        if (item.isSide() == side && item.clusterable()) {
+                            sum += pickNum((item as any as IClusterable).groupWidth, 1);
+                        }
+                    });
+                    series.forEach(item => {
+                        if (item.isSide() == side && item.clusterable()) {
+                            const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;
+            
+                            (item as any as IClusterable).setCluster(w, p);
+                            p += w;
+                        }
+                    });
                 });
-            });
+            }
         }
     }
 
@@ -1077,19 +1108,15 @@ export class AxisCollection {
     //-------------------------------------------------------------------------
     readonly chart: IChart;
     readonly isX: boolean;
-    readonly row: number;
-    readonly col: number;
     protected _items: Axis[] = [];
     private _map = new Map<string, Axis>();
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, isX: boolean, row: number, col: number) {
+    constructor(chart: IChart, isX: boolean) {
         this.chart = chart;
         this.isX = isX;
-        this.row = row;
-        this.col = col;
     }
 
     //-------------------------------------------------------------------------
@@ -1179,6 +1206,11 @@ export class AxisCollection {
 
         if (axis) {
             axis._connect(series);
+            if (this.isX) {
+                series._col = pickNum(series.col, axis.col);
+            } else {
+                series._row = pickNum(series.row, axis.row);
+            }
         }
         return axis;
     }
@@ -1296,7 +1328,7 @@ export abstract class PaneAxisMatrix {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(public chart: IChart) {
+    constructor(public chart: IChart, public isX: boolean) {
     }
 
     //-------------------------------------------------------------------------
@@ -1326,12 +1358,51 @@ export abstract class PaneAxisMatrix {
     getColumn(col: number): PaneAxes[] {
         return this._matrix.map(m => m[col]);
     }
+
+    buildTicks(lens: number[]): void {
+        // 다른 축을 참조하는 axis를 나중에 계산한다.
+        this._matrix.forEach(mat => {
+            mat.forEach((m, i) => {
+                m._axes.forEach(axis => {
+                    if (!axis.isBased()) {
+                        axis.buildTicks(lens[i]);
+                    }
+                });
+            });
+        })
+        this._matrix.forEach(mat => {
+            mat.forEach((m, i) => {
+                m._axes.forEach(axis => {
+                    if (axis.isBased()) {
+                        axis.buildTicks(lens[i]);
+                    }
+                });
+            });
+        })
+    }
+
+    calcPoints(lens: number[]): void {
+        this._matrix.forEach(mat => {
+            mat.forEach((m, i) => {
+                m._axes.forEach(axis => {
+                    axis.calcPoints(lens[i], 0);
+                });
+            });
+        })
+    }
 }
 
 /**
  * (r + 1) * c
  */
 export class XPaneAxisMatrix extends PaneAxisMatrix {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart, true);
+    }
 
     //-------------------------------------------------------------------------
     // overriden
@@ -1360,6 +1431,13 @@ export class XPaneAxisMatrix extends PaneAxisMatrix {
  * r * (c + 1)
  */
 export class YPaneAxisMatrix extends PaneAxisMatrix {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart, false);
+    }
 
     //-------------------------------------------------------------------------
     // overriden

@@ -58,12 +58,16 @@ export interface IChart {
     _splitted: boolean;
     _splits: number[];
     // series2: ISeries;
+    _xPaneAxes: XPaneAxisMatrix;
+    _yPaneAxes: YPaneAxisMatrix;
     options: ChartOptions;
     first: IPlottingItem;
     firstSeries: Series;
     xAxis: IAxis;
     yAxis: IAxis;
     subtitle: Title;
+    body: Body;
+    split: Split;
     colors: string[];
 
     _createChart(config: any): IChart;
@@ -328,8 +332,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._legend = new Legend(this);
         this._split = new Split(this);
         this._series = new PlottingItemCollection(this);
-        this._xAxes = new AxisCollection(this, true, 0, 0);
-        this._yAxes = new YAxisCollection(this, false, 0, 0);
+        this._xAxes = new AxisCollection(this, true);
+        this._yAxes = new YAxisCollection(this, false);
         this._xPaneAxes = new XPaneAxisMatrix(this);
         this._yPaneAxes = new YPaneAxisMatrix(this);
         this._gauges = new GaugeCollection(this);
@@ -652,8 +656,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // legend
         this._legend.load(source.legend);
 
-        // panes
-        this._split.load(source.panes);
+        // split
+        this._split.load(source.split);
 
         // series - 시리즈를 먼저 로드해야 디폴트 axis를 지정할 수 있다.
         this._series.load(source.series);

@@ -110,6 +110,11 @@ export class DataPointLabel extends FormattableText {
 }
 
 export interface IPlottingItem {
+    _row: number;
+    _col: number;
+
+    row: number;
+    col: number;
     index: number;
     xAxis: string | number;
     yAxis: string | number;
@@ -358,6 +363,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _row = 0;
+    _col = 0;
     index = -1;
     group: SeriesGroup<Series>;
     _xAxisObj: IAxis;
@@ -398,6 +405,9 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     readonly pointLabel: DataPointLabel;
     readonly trendline: Trendline;
     readonly tooltip: Tooltip;
+
+    row: number;
+    col: number;
 
     /**
      * 포인터가 차지하는 너비가 이 값 미만이면 표시하지 않는다.
@@ -1017,6 +1027,10 @@ export class PlottingItemCollection  {
         }
     }
 
+    getPaneSeries(row: number, col: number): Series[] {
+        return this._visibleSeries.filter(ser => row === ser._row && col === ser._col);
+    }
+
     seriesByPoint(point: DataPoint): Series {
         for (const ser of this._series) {
             if (ser.contains(point)) {
@@ -1602,6 +1616,8 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _row: number;
+    _col: number;
     index = -1;
     private _series: T[] = [];
     protected _visibles: T[] = [];
@@ -1612,6 +1628,9 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     // ISeriesGroup
     //-------------------------------------------------------------------------
+    row: number;
+    col: number;
+
     /**
      * @config
      */
