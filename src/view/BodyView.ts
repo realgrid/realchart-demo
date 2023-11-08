@@ -783,8 +783,8 @@ export class BodyView extends ChartElement<Body> {
     prepareSeries(doc: Document, chart: IChart): void {
         this._animatable = RcControl._animatable && chart.animatable();
 
-        this.$_prepareSeries(doc, chart, chart._getSeries().getVisibleSeries(this._side));
-        this.$_prepareGauges(doc, chart, chart._getGauges().getVisibles(this._side));
+        this._prepareSeries(doc, chart, chart._getSeries().getVisibleSeries(this._side));
+        this._prepareGauges(doc, chart, chart._getGauges().getVisibles(this._side));
     }
 
     prepareGuideContainers(): void {
@@ -1027,7 +1027,7 @@ export class BodyView extends ChartElement<Body> {
         }));
     }
 
-    private $_prepareSeries(doc: Document, chart: IChart, series: Series[]): void {
+    protected _prepareSeries(doc: Document, chart: IChart, series: Series[]): void {
         const inverted = chart.isInverted();
         const map = this._seriesMap;
         const views = this._seriesViews;
@@ -1059,7 +1059,7 @@ export class BodyView extends ChartElement<Body> {
         });
     }
 
-    private $_prepareGauges(doc: Document, chart: IChart, gauges: GaugeBase[]): void {
+    protected _prepareGauges(doc: Document, chart: IChart, gauges: GaugeBase[]): void {
         const container = this._seriesContainer;
         const inverted = chart.isInverted();
         const map = this._gaugeMap;

@@ -5,10 +5,10 @@
 const config = {
     templates: {
     },
-    inverted: true,
+    // inverted: true,
     title: "Wing Chart by Pane",
     options: {
-        animatable: false
+        // animatable: false
     },
     legend: {
         visible: false,
@@ -34,7 +34,7 @@ const config = {
             margin: 0
         }
     }, {
-        col: 1,
+        row: 1,
         title: "여자",
         // grid: false,
         tick: {
@@ -44,7 +44,7 @@ const config = {
             margin: 0
         }
     }],
-    panes: {
+    split: {
         visible: true,
         rows: 2
     },

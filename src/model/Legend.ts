@@ -159,11 +159,13 @@ export class Legend extends Widget {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * 명시적으로 true로 설정되거나, 명시적 false가 아니면서 표시 항목 수가 1보다 클 때 표시된다.
+     * 명시적으로 true로 설정되거나, 명시적 false가 아니면서 표시 항목 수가 1보다 클 때 표시된다..\
+     * 
+     * @fiddle common/legend-visible Legend Visible
      * 
      * @default undefined
      */
-    '@config visible':any;
+    '@config visible': boolean;
     /**
      * 표시 위치.
      * 

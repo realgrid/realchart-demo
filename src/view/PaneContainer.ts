@@ -6,16 +6,15 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { LayerElement } from "../common/RcControl";
+import { LayerElement, RcControl } from "../common/RcControl";
 import { ISize } from "../common/Size";
 import { _undefined } from "../common/Types";
 import { RectElement } from "../common/impl/RectElement";
-import { TextElement } from "../common/impl/TextElement";
-import { Axis, PaneAxisMatrix } from "../model/Axis";
-import { Chart } from "../model/Chart";
+import { Axis, AxisPosition, PaneAxes, PaneAxisMatrix } from "../model/Axis";
+import { Chart, IChart } from "../model/Chart";
 import { Split } from "../model/Split";
 import { AxisScrollView, AxisView } from "./AxisView";
-import { AxisGuideContainer, BodyView, IPlottingOwner } from "./BodyView";
+import { BodyView, IPlottingOwner } from "./BodyView";
 import { SectionView } from "./ChartElement";
 
 class AxisSectionView extends SectionView {
@@ -23,18 +22,30 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    row: number;
+    col: number;
     axes: Axis[]; 
     views: AxisView[] = [];
     isX: boolean;
     isHorz: boolean;
-    isOpposite: boolean;
+    // isOpposite: boolean;
     private _gap = 0;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepare(doc: Document, axes: Axis[], guideContainer: AxisGuideContainer, frontGuideContainer: AxisGuideContainer): void {
+    prepare(doc: Document, isX: boolean, paxes: PaneAxes, bodies: BodyView[][], mats: PaneAxisMatrix): void {
         const views = this.views;
+        const axes: Axis[] = [];
+
+        this.isX = isX;
+        this.isHorz = (this._inverted && !isX) || (!this._inverted && isX);
+
+        if (paxes) {
+            paxes._axes.forEach(a => {
+                axes.push(a);
+            });
+        }
 
         while (views.length < axes.length) {
             const v = new AxisView(doc);
@@ -48,8 +59,23 @@ class AxisSectionView extends SectionView {
 
         // 추측 계산을 위해 모델을 미리 설정할 필요가 있다.
         views.forEach((v, i) => {
+            const axis = axes[i];
+            const pos = axis._runPos;
+
             v.model = axes[i];
-            v.prepareGuides(doc, guideContainer, frontGuideContainer);
+
+            if (pos === AxisPosition.BETWEEN) {
+                let row = !this.isX ? this.row - 1 : this.row;
+                let col = this.isX ? this.col - 1 : this.col;
+                v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
+                row = this.row;
+                col = this.col;
+                v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
+            } else {
+                const row = this.isX ? this.row : pos === AxisPosition.OPPOSITE ? this.row - 1 : this.row;
+                const col = this.isX ? pos === AxisPosition.OPPOSITE ? this.col - 1 : this.col : this.col;
+                v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
+            }
         });
 
         this.axes = axes;
@@ -57,8 +83,7 @@ class AxisSectionView extends SectionView {
         if (this.setVisible(views.length > 0)) {
             const m = views[0].model;
 
-            this.isX = m._isX;
-            this.isHorz = m._isHorz;
+            // this.isHorz = m._isHorz;
             this._gap = m.chart.getAxesGap();  
         }
     }
@@ -117,10 +142,35 @@ class AxisSectionView extends SectionView {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
-        return;
+        const axes = this.axes;
+
+        if (this.isHorz) {
+            let h = 0;
+            this.views.forEach((v, i) => {
+                h += v.measure(doc, axes[i], hintWidth, hintHeight, phase).height;
+            });
+            return { width: hintWidth, height: h };
+        } else {
+            let w = 0;
+            this.views.forEach((v, i) => {
+                w += v.measure(doc, axes[i], hintWidth, hintHeight, phase).width;
+            });
+            return { width: w, height: hintHeight };
+        }
     }
 
     protected _doLayout(param?: any): void {
+        if (this.isHorz) {
+            this.views.forEach(v => {
+                v.resize(this.width, v.mh);
+                v.layout();
+            })
+        } else {
+            this.views.forEach(v => {
+                v.resize(v.mw, this.height);
+                v.layout();
+            })
+        }
     }
 }
 
@@ -141,17 +191,107 @@ class AxisContainer extends SectionView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepare(doc: Document, mats: PaneAxisMatrix, index: number): void {
+    prepare(doc: Document, bodies: BodyView[][], mats: PaneAxisMatrix, index: number): void {
+        // const paxes = (this.isX ? mats.getColumn(index) : mats.getRow(index));
+        const paxes = (this.isX ? mats.getRow(index) : mats.getColumn(index));
+
+        while (this.sections.length < paxes.length) {
+            const s = new AxisSectionView(doc);
+            this.add(s);
+            this.sections.push(s);
+        }
+        while (this.sections.length > paxes.length) {
+            this.sections.pop().remove();
+        }
+
+        this.sections.forEach((s, i) => {
+            if (this.isX) {
+                s.row = index;
+                s.col = i;
+            } else {
+                s.col = index;
+                s.row = i;
+            }
+            s.prepare(doc, this.isX, paxes[i], bodies, mats);
+        });
+    }
+
+    checkWidths(doc: Document, w: number, h: number): number {
+        if (this.sections.length > 0) {
+            return this.sections.reduce((a, s) => a + s.checkWidths(doc, w, h), 0);
+        }
+        return 0;
+    }
+
+    checkHeights(doc: Document, w: number, h: number): number {
+        if (this.sections.length > 0) {
+            return this.sections.reduce((a, s) => a + s.checkHeights(doc, w, h), 0);
+        }
+        return 0;
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
-        return;
+        let width = 0;
+        let height = 0;
+
+        if (this._inverted) {
+
+        } else {
+            if (this.isX) {
+                this.sections.forEach(sec => {
+                    height = Math.max(height, sec.measure(doc, chart, hintWidth, hintHeight, phase).height);
+                });
+            } else {
+                this.sections.forEach(sec => {
+                    width = Math.max(width, sec.measure(doc, chart, hintWidth, hintHeight, phase).width);
+                });
+            }
+        }
+        return { width, height };
     }
 
-    protected _doLayout(param?: any): void {
+    protected _doLayout(pts: number[]): void {
+        if (this._inverted) {
+        } else {
+            if (this.isX) {
+                this.sections.forEach((sec, i) => {
+                    sec.resize(this.width, this.height);
+                    sec.layout();
+                });
+            } else {
+                this.sections.forEach((sec, i) => {
+                    sec.resize(this.width, pts[(i + 1) * 2] - pts[i * 2 + 1]).translate(0, this.height - pts[(i + 1) * 2]);
+                    sec.layout();
+                });
+            }
+        }
+    }
+}
+
+export class PaneBodyView extends BodyView {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    row = 0;
+    col = 0;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    prepareSeries(doc: Document, chart: IChart): void {
+        const r = this.row;
+        const c = this.col;
+        const series = chart._getSeries().getPaneSeries(r, c);
+        const gauges = chart._getGauges().getPaneVisibles(r, c);
+
+        this._animatable = RcControl._animatable && chart.animatable();
+
+        this._prepareSeries(doc, chart, series);
+        this._prepareGauges(doc, chart, gauges);
     }
 }
 
@@ -165,17 +305,20 @@ export class PaneContainer extends LayerElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _debugger: TextElement;
     private _back: RectElement;
     private _bodyContainer: LayerElement;
     private _axisContainer: LayerElement;
 
-    private _bodies: BodyView[] = [];
+    private _bodies: PaneBodyView[] = [];
+    _bodyMap: PaneBodyView[][];
     private _xContainers: AxisContainer[] = [];
     private _yContainers: AxisContainer[] = [];
 
     private _owner: IPlottingOwner;
     private _model: Split;
+    private _inverted: boolean;
+    private _rowPoints: number[];
+    private _colPoints: number[];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -189,13 +332,55 @@ export class PaneContainer extends LayerElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    measure(doc: Document, model: Split, xAxes: PaneAxisMatrix, yAxes: PaneAxisMatrix, width: number, height: number, phase: number): void {
+    measure(doc: Document, model: Split, xAxes: PaneAxisMatrix, yAxes: PaneAxisMatrix, w: number, h: number, phase: number): void {
+        const chart = model.chart as Chart;
+        const inverted = this._inverted = model.chart.isInverted();
+        const wSave = w;
+        const hSave = h;
+
         this.$_init(doc);
         this._model = model;
 
         this.$_prepareBodies(doc, model);
         this.$_prepareAxes(doc, xAxes, true);
         this.$_prepareAxes(doc, yAxes, false);
+
+        // 아래 checkWidth를 위해 tick을 생성한다.
+        model.layoutAxes(w, h, inverted, phase);
+
+        if (inverted) {
+            w -= this._xContainers.reduce((a, c) => a + c.checkWidths(doc, w, h), 0);
+            h -= this._yContainers.reduce((a, c) => a + c.checkHeights(doc, w, h), 0);
+        } else {
+            h -= this._xContainers.reduce((a, c) => a + c.checkHeights(doc, w, h), 0);
+            w -= this._yContainers.reduce((a, c) => a + c.checkWidths(doc, w, h), 0);
+        }
+
+        // 조정된 크기로 tick을 다시 생성한다.
+        model.layoutAxes(w, h, inverted, phase);
+
+        this._xContainers.forEach(c => c.measure(doc, chart, w, h, phase));
+        this._yContainers.forEach(c => c.measure(doc, chart, w, h, phase));
+
+        w = wSave;
+        h = hSave;
+
+        if (inverted) {
+
+        } else {
+            h -= this._xContainers.reduce((a, c) => a + c.mh, 0);
+            w -= this._yContainers.reduce((a, c) => a + c.mw, 0);
+        }
+
+        // 조정된 크기로 tick을 다시 생성한다 2.
+        model.layoutAxes(w, h, inverted, phase);
+
+        this._xContainers.forEach(c => c.measure(doc, chart, w, h, phase));
+        this._yContainers.forEach(c => c.measure(doc, chart, w, h, phase));
+
+        const xLens = model.getXLens(w);
+        const yLens = model.getYLens(h);
+        model.calcAxesPoints(xLens, yLens);
     }
 
     layout(): void {
@@ -206,11 +391,14 @@ export class PaneContainer extends LayerElement {
         // back
         this._back.resize(w, h);
 
-        // bodies
+        this.$_calcExtents(model, w, h);
 
-        // for testing
-        this._debugger.text = model.colCount() + ', ' + model.rowCount();
-        this._debugger.translate(w / 2, h / 2);
+        // axes
+        this.$_layoutAxes(model, true, w, h);
+        this.$_layoutAxes(model, false, w, h);
+
+        // bodies
+        this.$_layoutBodies(model, w, h);
     }
 
     //-------------------------------------------------------------------------
@@ -221,28 +409,48 @@ export class PaneContainer extends LayerElement {
 
         this.add(this._back = new RectElement(doc));
         this._back.setStyles({
-            fill: '#f0f0f0',
-            stroke: 'lightgray',
-            strokeDasharray: '3'
+            fill: 'none',
+            //fill: '#f0f0f0',
+            // stroke: 'lightgray',
+            // strokeDasharray: '3'
         });
 
         this.add(this._bodyContainer = new LayerElement(doc, _undefined));
         this.add(this._axisContainer = new LayerElement(doc, _undefined));
-
-        this.add(this._debugger = TextElement.createCenter(doc));
     }
 
     private $_prepareBodies(doc: Document, model: Split): void {
+        const chart = model.chart;
         const count = model.paneCount();
         const views = this._bodies;
+        const map = this._bodyMap = [];
 
         while (views.length < count) {
-            const body = new BodyView(doc, this._owner);
+            const body = new PaneBodyView(doc, this._owner);
 
             this._bodyContainer.add(body);
             views.push(body);
         }
+        while (views.length > count) {
+            views.pop().remove();
+        }
 
+        for (let r = 0; r < model.rowCount(); r++) {
+            const list: PaneBodyView[] = [];
+
+            for (let c = 0; c < model.colCount(); c++) {
+                const v = views[r * model.colCount() + c];
+                list.push(v);
+                v.row = r;
+                v.col = c;
+            }
+            map.push(list);
+        }
+        views.forEach(v => {
+            v.prepareSeries(doc, chart);
+            // guides - axis view에서 guide view들을 추가할 수 있도록 초기화한다.
+            v.prepareGuideContainers();
+        });
     }
 
     private $_prepareAxes(doc: Document, mats: PaneAxisMatrix, isX: boolean): void {
@@ -256,11 +464,114 @@ export class PaneContainer extends LayerElement {
             this._axisContainer.add(c);
             containers.push(c);
         }
+        while (containers.length > count) {
+            containers.pop().remove();
+        }
+
+        containers.forEach((c, i) => {
+            c.prepare(doc, this._bodyMap, mats, i);
+        });
     }
 
-    private $_layoutBodies(): void {
+    private $_calcExtents(model: Split, width: number, height: number): void {
+        if (this._inverted) {
+        } else {
+            // row points
+            let count = model.rowCount();
+            let axes = this._xContainers;
+            let pts = this._rowPoints = new Array<number>((count + 1) * 2);
+            let sum = height - axes.reduce((a, c) => a + c.mh, 0);
+            let szPanes = new Array<number>(count);
+            let p = 0;
+            let i = 0;
+
+            for (i = 0; i < count; i++) {
+                szPanes[i] = sum / count;
+            }
+
+            for (i = 0; i < count; i++) {
+                pts[i * 2] = p;
+                pts[i * 2 + 1] = p += axes[i].mh;
+                p += szPanes[i];
+            }
+            pts[i * 2] = p;
+            pts[i * 2 + 1] = p + axes[i].mh;
+
+            // col points
+            count = model.colCount();
+            axes = this._yContainers;
+            pts = this._colPoints = new Array<number>((count + 1) * 2);
+            sum = width - axes.reduce((a, c) => a + c.mw, 0);
+            szPanes = new Array<number>(count);
+            p = 0;
+            i = 0;
+
+            for (i = 0; i < count; i++) {
+                szPanes[i] = sum / count;
+            }
+
+            for (i = 0; i < count; i++) {
+                pts[i * 2] = p;
+                pts[i * 2 + 1] = p += axes[i].mw;
+                p += szPanes[i];
+            }
+            pts[i * 2] = p;
+            pts[i * 2 + 1] = p + axes[i].mw;
+        }
     }
 
-    private $_layoutAxes(): void {
+    private $_layoutAxes(model: Split, isX: boolean, w: number, h: number): void {
+        const rowPts = this._rowPoints;
+        const colPts = this._colPoints;
+        const containers = isX ? this._xContainers : this._yContainers;
+
+        if (this._inverted) {
+        } else {
+            if (isX) {
+                const x = colPts[1];
+                w = colPts[colPts.length - 2] - x;
+
+                containers.forEach((c, i) => {
+                    c.resize(w, c.mh).translate(x, h - rowPts[i * 2 + 1]);
+                    c.layout(colPts);
+                });
+            } else {
+                const y = rowPts[rowPts.length - 2];
+                const h2 = y - rowPts[1];
+
+                containers.forEach((c, i) => {
+                    c.resize(c.mw, h2).translate(colPts[i * 2], h - y);
+                    c.layout(rowPts);
+                });
+            }
+        }
+    }
+
+    private $_layoutBodies(model: Split, w: number, h: number): void {
+        const chart = model.chart as Chart;
+        const body = chart.body;
+        const rows = model.rowCount();
+        const cols = model.colCount();
+        const rowPts = this._rowPoints;
+        const colPts = this._colPoints;
+        const views = this._bodies;
+
+        if (this._inverted) {
+        } else {
+            for (let r = 0; r < rows; r++) {
+                const y1 = rowPts[(r + 1) * 2 - 1];
+                const y2 = rowPts[(r + 1) * 2];
+
+                for (let c = 0; c < cols; c++) {
+                    const view = views[r * cols + c];
+                    const x1 = colPts[(c + 1) * 2 - 1];
+                    const x2 = colPts[(c + 1) * 2];
+
+                    view.measure(this.doc, body, x2 - x1, y2 - y1, 1);
+                    view.resize(x2 - x1, y2 - y1).translate(x1, h - y2);
+                    view.layout();
+                }
+            }
+        }
     }
 }
