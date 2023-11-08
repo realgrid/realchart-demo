@@ -196,6 +196,17 @@ export class TreemapSeries extends Series {
         return 'treemap';
     }
 
+    getPointTooltip(point: TreemapSeriesPoint, param: string): any {
+        switch (param) {
+            case 'id':
+                return point.id;
+            case 'group':
+                return point.group;
+            default:
+                return super.getPointTooltip(point, param);
+        }
+    }
+
     needAxes(): boolean {
         return false;
     }

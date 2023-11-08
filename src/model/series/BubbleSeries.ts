@@ -149,6 +149,17 @@ export class BubbleSeries extends MarkerSeries {
         return true;
     }
 
+    getPointTooltip(point: BubbleSeriesPoint, param: string): any {
+        switch (param) {
+            case 'z':
+                return point.z;
+            case 'zValue':
+                return point.zValue;
+            default:
+                return super.getPointTooltip(point, param);
+        }
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new BubbleSeriesPoint(source);
     }

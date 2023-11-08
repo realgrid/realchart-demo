@@ -104,6 +104,17 @@ export class HeatmapSeries extends Series {
         return 'heatmap';
     }
 
+    getPointTooltip(point: HeatmapSeriesPoint, param: string): any {
+        switch (param) {
+            case 'heat':
+                return point.heat;
+            case 'heatValue':
+                return point.heatValue;
+            default:
+                return super.getPointTooltip(point, param);
+        }
+    }
+
     canMixWith(other: IPlottingItem): boolean {
         return false;
     }

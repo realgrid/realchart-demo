@@ -107,6 +107,15 @@ export class FunnelSeries extends WidgetSeries {
         return 'funnel';
     }
 
+    getPointTooltip(point: FunnelSeriesPoint, param: string): any {
+        switch (param) {
+            case 'height':
+                return point.height;
+            default:
+                return super.getPointTooltip(point, param);
+        }
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new FunnelSeriesPoint(source);
     }

@@ -124,6 +124,17 @@ export class DumbbellSeries extends ClusterableSeries {
         return 2;
     }
 
+    getPointTooltip(point: DumbbellSeriesPoint, param: string): any {
+        switch (param) {
+            case 'low':
+                return point.low;
+            case 'lowValue':
+                return point.lowValue;
+            default:
+                return super.getPointTooltip(point, param);
+        }
+    }
+
     getLabelOff(off: number): number {
         return super.getLabelOff(off) + Math.max(0, this.marker.radius);
     }

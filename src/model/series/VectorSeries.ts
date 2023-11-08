@@ -120,6 +120,21 @@ export class VectorSeries extends Series {
         return 'vector';
     }
 
+    getPointTooltip(point: VectorSeriesPoint, param: string): any {
+        switch (param) {
+            case 'length':
+                return point.length;
+            case 'lengthValue':
+                return point.lengthValue;
+            case 'angle':
+                return point.angle;
+            case 'angleValue':
+                return point.angleValue;
+            default:
+                return super.getPointTooltip(point, param);
+        }
+    }
+
     ignoreAxisBase(axis: IAxis): boolean {
         return true;
     }

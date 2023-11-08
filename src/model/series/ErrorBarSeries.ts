@@ -97,6 +97,17 @@ export class ErrorBarSeries extends RangedSeries {
         return 'errorbar';
     }
 
+    getPointTooltip(point: ErrorBarSeriesPoint, param: string): any {
+        switch (param) {
+            case 'low':
+                return point.low;
+            case 'lowValue':
+                return point.lowValue;
+            default:
+                return super.getPointTooltip(point, param);
+        }
+    }
+
     clusterable(): boolean {
         return false;
     }

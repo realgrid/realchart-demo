@@ -24,6 +24,9 @@ const config = {
         // reversed: true,
         // neckWidth: 0,
         // neckHeight: 0,
+        tooltip: {
+            text: 'height: ${height}'
+        },
         pointLabel: {
             visible: true,
             text: "${name} (${y})",

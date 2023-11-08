@@ -15,6 +15,9 @@ const config = {
     series: {
         type: 'boxplot',
         pointLabel: true,
+        tooltip: {
+            text: 'min: ${min}<br>low: ${low}<br>mid: ${mid}<br>high: ${high}<br>y: ${y}'
+        },
         data: [
             [560, 651, 748, 895, 965],
             [533, 753, 939, 980, 1080],

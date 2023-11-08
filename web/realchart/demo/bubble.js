@@ -21,6 +21,9 @@ const config = {
             effect: 'outline',
             // position: 'outside'
         },
+        tooltip: {
+            text: 'x: ${x}<br>y: ${y}<br>z: ${z}'
+        },
         sizeMode: 'width',
         shape: 'rectangle',
         radius: 0.1,

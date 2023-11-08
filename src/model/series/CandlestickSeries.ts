@@ -118,6 +118,29 @@ export class CandlestickSeries extends RangedSeries {
         return true;
     }
 
+    getPointTooltip(point: CandlestickSeriesPoint, param: string): any {
+        switch (param) {
+            case 'low':
+                return point.low;
+            case 'lowValue':
+                return point.lowValue;
+            case 'close':
+                return point.close;
+            case 'closeValue':
+                return point.closeValue;
+            case 'open':
+                return point.open;
+            case 'openValue':
+                return point.openValue;
+            case 'high':
+                return point.high;
+            case 'highValue':
+                return point.highValue;
+            default:
+                return super.getPointTooltip(point, param);
+        }
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new CandlestickSeriesPoint(source);
     }

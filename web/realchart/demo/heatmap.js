@@ -17,6 +17,9 @@ const config = {
     },
     series: {
         type: 'heatmap',
+        tooltip: {
+            text: 'heat: ${heat}'
+        },
         pointLabel: {
             visible: true,
             position: 'head',
