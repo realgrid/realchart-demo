@@ -376,8 +376,8 @@ export class AxisView extends ChartElement<Axis> {
             return this._scrollView.measure(doc, bar, width, height, 1)[prop];
         } else if (this._scrollView) {
             this._scrollView.setVisible(false);
-            return 0;
         }
+        return 0;
     }
     
     checkHeight(doc: Document, width: number, height: number): number {

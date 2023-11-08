@@ -11,9 +11,10 @@ import { ISize } from "../common/Size";
 import { _undefined } from "../common/Types";
 import { RectElement } from "../common/impl/RectElement";
 import { TextElement } from "../common/impl/TextElement";
-import { Axis, PaneAxisMatrix } from "../model/Axis";
+import { Axis, AxisPosition, PaneAxes, PaneAxisMatrix } from "../model/Axis";
 import { Chart, IChart } from "../model/Chart";
 import { Split } from "../model/Split";
+import { ParetoSeries } from "../model/series/ParetoSeries";
 import { AxisScrollView, AxisView } from "./AxisView";
 import { AxisGuideContainer, BodyView, IPlottingOwner } from "./BodyView";
 import { SectionView } from "./ChartElement";
@@ -23,6 +24,8 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    row: number;
+    col: number;
     axes: Axis[]; 
     views: AxisView[] = [];
     isX: boolean;
@@ -33,8 +36,15 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepare(doc: Document, axes: Axis[], guideContainer: AxisGuideContainer, frontGuideContainer: AxisGuideContainer): void {
+    prepare(doc: Document, paxes: PaneAxes, bodies: BodyView[][], mats: PaneAxisMatrix): void {
         const views = this.views;
+        const axes: Axis[] = [];
+
+        if (paxes) {
+            paxes._axes.forEach(a => {
+                axes.push(a);
+            });
+        }
 
         while (views.length < axes.length) {
             const v = new AxisView(doc);
@@ -48,8 +58,24 @@ class AxisSectionView extends SectionView {
 
         // 추측 계산을 위해 모델을 미리 설정할 필요가 있다.
         views.forEach((v, i) => {
+            const axis = axes[i];
+            const pos = axis._runPos;
+
             v.model = axes[i];
-            v.prepareGuides(doc, guideContainer, frontGuideContainer);
+
+            if (pos === AxisPosition.BETWEEN) {
+                // TODO: 양쪽에 모두
+                let row = !this.isX ? this.row - 1 : this.row;
+                let col = this.isX ? this.col - 1 : this.col;
+                v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
+                row = this.row;
+                col = this.col;
+                v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
+            } else {
+                const row = this.isX ? this.row : pos === AxisPosition.OPPOSITE ? this.row - 1 : this.row;
+                const col = this.isX ? pos === AxisPosition.OPPOSITE ? this.col - 1 : this.col : this.col;
+                v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
+            }
         });
 
         this.axes = axes;
@@ -141,10 +167,43 @@ class AxisContainer extends SectionView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepare(doc: Document, bodies: BodyView[], mats: PaneAxisMatrix, index: number): void {
-        const axes = this.isX ? mats.getColumn(index) : mats.getRow(index);
+    prepare(doc: Document, bodies: BodyView[][], mats: PaneAxisMatrix, index: number): void {
+        // const paxes = (this.isX ? mats.getColumn(index) : mats.getRow(index));
+        const paxes = (this.isX ? mats.getRow(index) : mats.getColumn(index));
 
-        this.sections.forEach((s, i) => s.prepare(doc, axes[i]._axes, bodies[i]._guideContainer, bodies[i]._frontGuideContainer));
+        while (this.sections.length < paxes.length) {
+            const s = new AxisSectionView(doc);
+            this.add(s);
+            this.sections.push(s);
+        }
+        while (this.sections.length > paxes.length) {
+            this.sections.pop().remove();
+        }
+
+        this.sections.forEach((s, i) => {
+            if (this.isX) {
+                s.row = index;
+                s.col = i;
+            } else {
+                s.col = index;
+                s.row = i;
+            }
+            s.prepare(doc, paxes[i], bodies, mats);
+        });
+    }
+
+    checkWidths(doc: Document, w: number, h: number): number {
+        if (this.sections.length > 0) {
+            return this.sections.reduce((a, s) => a + s.checkWidths(doc, w, h), 0);
+        }
+        return 0;
+    }
+
+    checkHeights(doc: Document, w: number, h: number): number {
+        if (this.sections.length > 0) {
+            return this.sections.reduce((a, s) => a + s.checkHeights(doc, w, h), 0);
+        }
+        return 0;
     }
 
     //-------------------------------------------------------------------------
@@ -209,7 +268,6 @@ export class PaneContainer extends LayerElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _debugger: TextElement;
     private _back: RectElement;
     private _bodyContainer: LayerElement;
     private _axisContainer: LayerElement;
@@ -237,22 +295,30 @@ export class PaneContainer extends LayerElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    measure(doc: Document, model: Split, xAxes: PaneAxisMatrix, yAxes: PaneAxisMatrix, width: number, height: number, phase: number): void {
+    measure(doc: Document, model: Split, xAxes: PaneAxisMatrix, yAxes: PaneAxisMatrix, w: number, h: number, phase: number): void {
         const chart = model.chart as Chart;
+        const inverted = this._inverted = model.chart.isInverted();
 
         this.$_init(doc);
         this._model = model;
-        this._inverted = model.chart.isInverted();
 
         this.$_prepareBodies(doc, model);
         this.$_prepareAxes(doc, xAxes, true);
         this.$_prepareAxes(doc, yAxes, false);
 
         // 아래 checkWidth를 위해 tick을 생성한다.
-        model.layoutAxes(width, height, this._inverted, phase);
+        model.layoutAxes(w, h, inverted, phase);
 
-        this._xContainers.forEach(c => c.measure(doc, chart, width, height, phase));
-        this._yContainers.forEach(c => c.measure(doc, chart, width, height, phase));
+        if (inverted) {
+            w -= this._xContainers.reduce((a, c) => a + c.checkWidths(doc, w, h), 0);
+            h -= this._yContainers.reduce((a, c) => a + c.checkHeights(doc, w, h), 0);
+        } else {
+            h -= this._xContainers.reduce((a, c) => a + c.checkHeights(doc, w, h), 0);
+            w -= this._yContainers.reduce((a, c) => a + c.checkWidths(doc, w, h), 0);
+        }
+
+        this._xContainers.forEach(c => c.measure(doc, chart, w, h, phase));
+        this._yContainers.forEach(c => c.measure(doc, chart, w, h, phase));
     }
 
     layout(): void {
@@ -271,10 +337,6 @@ export class PaneContainer extends LayerElement {
 
         // bodies
         this.$_layoutBodies(model);
-
-        // for testing
-        this._debugger.text = model.colCount() + ', ' + model.rowCount();
-        this._debugger.translate(w / 2, h / 2);
     }
 
     //-------------------------------------------------------------------------
@@ -292,8 +354,6 @@ export class PaneContainer extends LayerElement {
 
         this.add(this._bodyContainer = new LayerElement(doc, _undefined));
         this.add(this._axisContainer = new LayerElement(doc, _undefined));
-
-        this.add(this._debugger = TextElement.createCenter(doc));
     }
 
     private $_prepareBodies(doc: Document, model: Split): void {
@@ -346,8 +406,7 @@ export class PaneContainer extends LayerElement {
         }
 
         containers.forEach((c, i) => {
-            const bodies = isX ? this._bodyMap[i] : this._bodyMap.map(a => a[i]);
-            c.prepare(doc, bodies, mats, i);
+            c.prepare(doc, this._bodyMap, mats, i);
         });
     }
 
@@ -375,7 +434,6 @@ export class PaneContainer extends LayerElement {
             }
             pts[i * 2] = p;
             pts[i * 2 + 1] = p + axes[i].mh;
-            console.log('rows', pts);
 
             // col points
             count = model.colCount();
@@ -397,7 +455,6 @@ export class PaneContainer extends LayerElement {
             }
             pts[i * 2] = p;
             pts[i * 2 + 1] = p + axes[i].mw;
-            console.log('cols', pts);
         }
     }
 

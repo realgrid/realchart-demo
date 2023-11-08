@@ -327,6 +327,10 @@ export enum AxisGuideType {
     AREA = 'area'
 }
 
+/**
+ * 'between'인 경우 양쪽 body에 모두 표시된다.
+ * TODO: body 단위로도 지정할 수 있게 한다.
+ */
 export abstract class AxisGuide extends AxisItem {
 
     //-------------------------------------------------------------------------
@@ -746,6 +750,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected _min: number;
     protected _max: number;
     _zoom: AxisZoom;
+    _runPos: AxisPosition;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1316,6 +1321,13 @@ export class PaneAxes {
     // fields
     //-------------------------------------------------------------------------
     _axes: Axis[] = [];
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    isEmpty(): boolean {
+        return this._axes.length < 1;
+    }
 }
 
 export abstract class PaneAxisMatrix {
@@ -1419,10 +1431,13 @@ export class XPaneAxisMatrix extends PaneAxisMatrix {
         axes.forEach(axis => {
             let row = axis._row;
 
-            if (axis.position === AxisPosition.OPPOSITE || (axis._col < cols - 1) && axis.position === AxisPosition.BETWEEN) {
+            if (axis.position === AxisPosition.OPPOSITE || (axis._row < rows - 1) && axis.position === AxisPosition.BETWEEN) {
                 row++;
+                axis._runPos = AxisPosition.NORMAL;
+            } else {
+                axis._runPos = axis.position;
             }
-            mat[axis.row][axis._col]._axes.push(axis);
+            mat[row][axis._col]._axes.push(axis);
         });
     }
 }
@@ -1454,8 +1469,11 @@ export class YPaneAxisMatrix extends PaneAxisMatrix {
         axes.forEach(axis => {
             let col = axis._col;
 
-            if (axis.position === AxisPosition.OPPOSITE || (axis._row < rows - 1) && axis.position === AxisPosition.BETWEEN) {
+            if (axis.position === AxisPosition.OPPOSITE || (axis._col < cols - 1) && axis.position === AxisPosition.BETWEEN) {
                 col++;
+                axis._runPos = AxisPosition.NORMAL;
+            } else {
+                axis._runPos = axis.position;
             }
             mat[axis._row][col]._axes.push(axis);
         });
