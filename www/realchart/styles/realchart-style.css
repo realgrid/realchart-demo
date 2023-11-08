@@ -173,6 +173,11 @@
 
     --rct-credits-fill: #777;
 
+    /* polar */
+    --rct-polar-xaxis-grid-line-stroke: #ccc;
+    --rct-polar-yaxis-grid-line-stroke: #555;
+    --rct-polar-axis-label-fill: #555;
+
     /* circle gauge */
     --rct-circle-gauge-back-fill: #ededed;
     --rct-circle-gauge-inner-fill: none;
@@ -219,6 +224,11 @@
 
     --rct-credits-fill: #999;
 
+    /* polar */
+    --rct-polar-xaxis-grid-line-stroke: #ccc;
+    --rct-polar-yaxis-grid-line-stroke: #fff;
+    --rct-polar-axis-label-fill: #fff;
+
     /* circle gauge */
     --rct-circle-gauge-back-fill: #515151;
     --rct-circle-gauge-label-fill: #fff;
@@ -253,6 +263,11 @@
     --rct-point-label-fill: #ddd;
 
     --rct-credits-fill: #999;
+
+    /* polar */
+    --rct-polar-xaxis-grid-line-stroke: #ccc;
+    --rct-polar-yaxis-grid-line-stroke: #f0d9be;
+    --rct-polar-axis-label-fill: #f0d9be;
 
     /* circle gauge */
     --rct-circle-gauge-back-fill: #515151;
@@ -435,13 +450,16 @@
     stroke: #333;
 }
 .rct-polar-xaxis-grid-line {
-    stroke: #ccc;
+    stroke: var(--rct-polar-xaxis-grid-line-stroke)
 }
 .rct-polar-yaxis-line {
     stroke: #afafaf;
 }
 .rct-polar-yaxis-grid-line {
-    stroke: #0000ff20;
+    stroke: var(--rct-polar-yaxis-grid-line-stroke)
+}
+.rct-polar-axis-label {
+    fill: var(--rct-polar-axis-label-fill)
 }
 
 /** series */
