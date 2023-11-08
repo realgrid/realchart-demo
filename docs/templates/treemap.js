@@ -4,6 +4,7 @@ export const config = {
   yAxis: {},
   series: {
     type: 'treemap',
+    tooltip: { text: 'id: ${id}<br>group: ${group}' },
     algorithm: 'squarify',
     pointLabel: { visible: true, text: '${x}', effect: 'outline', style: {} },
     data: [

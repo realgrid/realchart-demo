@@ -1,5 +1,5 @@
 export const config = {
-  options: { animatable: false },
+  options: {},
   title: 'Axis Breaks',
   xAxis: {
     title: '일일 Daily fat',

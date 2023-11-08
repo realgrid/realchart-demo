@@ -4,6 +4,7 @@ export const config = {
   yAxis: { title: 'Y Axis' },
   series: {
     type: 'vector',
+    tooltip: { text: 'length: ${length}<br>angle: ${angle}' },
     data: [
       [ 5, 5, 190, 18 ],    [ 5, 10, 185, 27 ],   [ 5, 15, 180, 36 ],
       [ 5, 20, 175, 45 ],   [ 5, 25, 170, 54 ],   [ 5, 30, 165, 63 ],

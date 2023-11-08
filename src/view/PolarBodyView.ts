@@ -63,7 +63,7 @@ abstract class PolarAxisView extends RcElement {
         this._markViews = new ElementPool(this._markContainer, PolarAxisTickMarkView);
         this.add(this._gridContainer = new RcElement(doc, 'rct-polar-axis-grids'));
         this.add(this._labelContainer = new LayerElement(doc, 'rct-polar-axis-labels'));
-        this._labelViews = new ElementPool(this._labelContainer, TextElement)
+        this._labelViews = new ElementPool(this._labelContainer, TextElement, 'rct-polar-axis-label')
     }
 
     //-------------------------------------------------------------------------

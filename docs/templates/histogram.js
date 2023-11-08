@@ -5,6 +5,7 @@ export const config = {
   yAxis: {},
   series: {
     type: 'histogram',
+    tooltip: { text: 'min: ${min}<br>max: ${max}' },
     pointLabel: true,
     data: [
       3.5,   3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4,

@@ -4,6 +4,7 @@ export const config = {
   yAxis: { title: 'Y Axis', grid: true },
   series: {
     type: 'heatmap',
+    tooltip: { text: 'heat: ${heat}' },
     pointLabel: { visible: true, position: 'head', effect: 'outline', style: {} },
     data: [
       [ 0, 0, 10 ],  [ 0, 1, 19 ],  [ 0, 2, 8 ],

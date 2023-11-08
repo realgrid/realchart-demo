@@ -12,6 +12,7 @@ export const config = {
       data: [ 11, 22, 15, 9, 13, 27 ]
     },
     {
+      tooltip: { text: 'low: ${low}<br>y: ${y}<br>' },
       type: 'errorbar',
       pointLabel: true,
       data: [

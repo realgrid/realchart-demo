@@ -5,7 +5,8 @@ export const config = {
   yAxis: { title: 'yAxis' },
   series: {
     type: 'bubble',
-    pointLabel: { visible: true, suffix: 'm' },
+    pointLabel: { visible: true, suffix: 'm', effect: 'outline' },
+    tooltip: { text: 'x: ${x}<br>y: ${y}<br>z: ${z}' },
     sizeMode: 'width',
     shape: 'rectangle',
     radius: 0.1,
