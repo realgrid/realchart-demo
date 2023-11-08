@@ -145,7 +145,7 @@ export class AxisTitle extends AxisItem {
      * @default undefined 수직 축일 때 왼쪽에 표시되면 90, 오른쪽에 표시되면 270, 수평 축일 때는 0
      * @config
      */
-    get rotatin(): 0 | 90 | 270 | -90 | -270 {
+    get rotation(): 0 | 90 | 270 | -90 | -270 {
         return this._rotation as any;
     }
     set rotation(value: 0 | 90 | 270 | -90 | -270) {
