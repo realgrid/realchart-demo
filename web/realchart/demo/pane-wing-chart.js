@@ -8,7 +8,7 @@ const config = {
     // inverted: true,
     title: "Wing Chart by Pane",
     options: {
-        animatable: false
+        // animatable: false
     },
     legend: {
         visible: false,

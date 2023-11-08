@@ -909,7 +909,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     prepareRender(): void {
         this._isHorz = this.chart.isInverted() ? !this._isX : this._isX;
-        this._isBetween = this.chart._splitted && this.position === AxisPosition.BETWEEN && this._isX;
+        this._isBetween = (this.chart.split.visible || this.chart._splitted) && this.position === AxisPosition.BETWEEN && this._isX;
         this._isOpposite = this.position === AxisPosition.OPPOSITE;
 
         this._doPrepareRender();
@@ -1393,11 +1393,11 @@ export abstract class PaneAxisMatrix {
         })
     }
 
-    calcPoints(lens: number[]): void {
+    calcPoints(lens: number[], phase: number): void {
         this._matrix.forEach(mat => {
             mat.forEach((m, i) => {
                 m._axes.forEach(axis => {
-                    axis.calcPoints(lens[i], 0);
+                    axis.calcPoints(lens[i], phase);
                 });
             });
         })

@@ -10,13 +10,11 @@ import { LayerElement, RcControl } from "../common/RcControl";
 import { ISize } from "../common/Size";
 import { _undefined } from "../common/Types";
 import { RectElement } from "../common/impl/RectElement";
-import { TextElement } from "../common/impl/TextElement";
 import { Axis, AxisPosition, PaneAxes, PaneAxisMatrix } from "../model/Axis";
 import { Chart, IChart } from "../model/Chart";
 import { Split } from "../model/Split";
-import { ParetoSeries } from "../model/series/ParetoSeries";
 import { AxisScrollView, AxisView } from "./AxisView";
-import { AxisGuideContainer, BodyView, IPlottingOwner } from "./BodyView";
+import { BodyView, IPlottingOwner } from "./BodyView";
 import { SectionView } from "./ChartElement";
 
 class AxisSectionView extends SectionView {
@@ -30,15 +28,18 @@ class AxisSectionView extends SectionView {
     views: AxisView[] = [];
     isX: boolean;
     isHorz: boolean;
-    isOpposite: boolean;
+    // isOpposite: boolean;
     private _gap = 0;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepare(doc: Document, paxes: PaneAxes, bodies: BodyView[][], mats: PaneAxisMatrix): void {
+    prepare(doc: Document, isX: boolean, paxes: PaneAxes, bodies: BodyView[][], mats: PaneAxisMatrix): void {
         const views = this.views;
         const axes: Axis[] = [];
+
+        this.isX = isX;
+        this.isHorz = (this._inverted && !isX) || (!this._inverted && isX);
 
         if (paxes) {
             paxes._axes.forEach(a => {
@@ -64,7 +65,6 @@ class AxisSectionView extends SectionView {
             v.model = axes[i];
 
             if (pos === AxisPosition.BETWEEN) {
-                // TODO: 양쪽에 모두
                 let row = !this.isX ? this.row - 1 : this.row;
                 let col = this.isX ? this.col - 1 : this.col;
                 v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
@@ -83,8 +83,7 @@ class AxisSectionView extends SectionView {
         if (this.setVisible(views.length > 0)) {
             const m = views[0].model;
 
-            this.isX = m._isX;
-            this.isHorz = m._isHorz;
+            // this.isHorz = m._isHorz;
             this._gap = m.chart.getAxesGap();  
         }
     }
@@ -143,10 +142,35 @@ class AxisSectionView extends SectionView {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
-        return;
+        const axes = this.axes;
+
+        if (this.isHorz) {
+            let h = 0;
+            this.views.forEach((v, i) => {
+                h += v.measure(doc, axes[i], hintWidth, hintHeight, phase).height;
+            });
+            return { width: hintWidth, height: h };
+        } else {
+            let w = 0;
+            this.views.forEach((v, i) => {
+                w += v.measure(doc, axes[i], hintWidth, hintHeight, phase).width;
+            });
+            return { width: w, height: hintHeight };
+        }
     }
 
     protected _doLayout(param?: any): void {
+        if (this.isHorz) {
+            this.views.forEach(v => {
+                v.resize(this.width, v.mh);
+                v.layout();
+            })
+        } else {
+            this.views.forEach(v => {
+                v.resize(v.mw, this.height);
+                v.layout();
+            })
+        }
     }
 }
 
@@ -188,7 +212,7 @@ class AxisContainer extends SectionView {
                 s.col = index;
                 s.row = i;
             }
-            s.prepare(doc, paxes[i], bodies, mats);
+            s.prepare(doc, this.isX, paxes[i], bodies, mats);
         });
     }
 
@@ -213,24 +237,37 @@ class AxisContainer extends SectionView {
         let width = 0;
         let height = 0;
 
-        if (this.isX) {
-            if (chart.isInverted()) {
-                width = 50;
-            } else {
-                height = 50;
-            }
+        if (this._inverted) {
+
         } else {
-            if (chart.isInverted()) {
-                height = 50;
+            if (this.isX) {
+                this.sections.forEach(sec => {
+                    height = Math.max(height, sec.measure(doc, chart, hintWidth, hintHeight, phase).height);
+                });
             } else {
-                width = 50;
+                this.sections.forEach(sec => {
+                    width = Math.max(width, sec.measure(doc, chart, hintWidth, hintHeight, phase).width);
+                });
             }
         }
-
         return { width, height };
     }
 
-    protected _doLayout(param?: any): void {
+    protected _doLayout(pts: number[]): void {
+        if (this._inverted) {
+        } else {
+            if (this.isX) {
+                this.sections.forEach((sec, i) => {
+                    sec.resize(this.width, this.height);
+                    sec.layout();
+                });
+            } else {
+                this.sections.forEach((sec, i) => {
+                    sec.resize(this.width, pts[(i + 1) * 2] - pts[i * 2 + 1]).translate(0, this.height - pts[(i + 1) * 2]);
+                    sec.layout();
+                });
+            }
+        }
     }
 }
 
@@ -298,6 +335,8 @@ export class PaneContainer extends LayerElement {
     measure(doc: Document, model: Split, xAxes: PaneAxisMatrix, yAxes: PaneAxisMatrix, w: number, h: number, phase: number): void {
         const chart = model.chart as Chart;
         const inverted = this._inverted = model.chart.isInverted();
+        const wSave = w;
+        const hSave = h;
 
         this.$_init(doc);
         this._model = model;
@@ -317,8 +356,31 @@ export class PaneContainer extends LayerElement {
             w -= this._yContainers.reduce((a, c) => a + c.checkWidths(doc, w, h), 0);
         }
 
+        // 조정된 크기로 tick을 다시 생성한다.
+        model.layoutAxes(w, h, inverted, phase);
+
         this._xContainers.forEach(c => c.measure(doc, chart, w, h, phase));
         this._yContainers.forEach(c => c.measure(doc, chart, w, h, phase));
+
+        w = wSave;
+        h = hSave;
+
+        if (inverted) {
+
+        } else {
+            h -= this._xContainers.reduce((a, c) => a + c.mh, 0);
+            w -= this._yContainers.reduce((a, c) => a + c.mw, 0);
+        }
+
+        // 조정된 크기로 tick을 다시 생성한다 2.
+        model.layoutAxes(w, h, inverted, phase);
+
+        this._xContainers.forEach(c => c.measure(doc, chart, w, h, phase));
+        this._yContainers.forEach(c => c.measure(doc, chart, w, h, phase));
+
+        const xLens = model.getXLens(w);
+        const yLens = model.getYLens(h);
+        model.calcAxesPoints(xLens, yLens);
     }
 
     layout(): void {
@@ -326,17 +388,17 @@ export class PaneContainer extends LayerElement {
         const w = this.width;
         const h = this.height;
 
-        this.$_calcExtents(model, w, h);
-
         // back
         this._back.resize(w, h);
 
+        this.$_calcExtents(model, w, h);
+
         // axes
-        this.$_layoutAxes(model, true);
-        this.$_layoutAxes(model, false);
+        this.$_layoutAxes(model, true, w, h);
+        this.$_layoutAxes(model, false, w, h);
 
         // bodies
-        this.$_layoutBodies(model);
+        this.$_layoutBodies(model, w, h);
     }
 
     //-------------------------------------------------------------------------
@@ -347,9 +409,10 @@ export class PaneContainer extends LayerElement {
 
         this.add(this._back = new RectElement(doc));
         this._back.setStyles({
-            fill: '#f0f0f0',
-            stroke: 'lightgray',
-            strokeDasharray: '3'
+            fill: 'none',
+            //fill: '#f0f0f0',
+            // stroke: 'lightgray',
+            // strokeDasharray: '3'
         });
 
         this.add(this._bodyContainer = new LayerElement(doc, _undefined));
@@ -412,7 +475,6 @@ export class PaneContainer extends LayerElement {
 
     private $_calcExtents(model: Split, width: number, height: number): void {
         if (this._inverted) {
-
         } else {
             // row points
             let count = model.rowCount();
@@ -458,20 +520,34 @@ export class PaneContainer extends LayerElement {
         }
     }
 
-    private $_layoutAxes(model: Split, isX: boolean): void {
+    private $_layoutAxes(model: Split, isX: boolean, w: number, h: number): void {
+        const rowPts = this._rowPoints;
+        const colPts = this._colPoints;
         const containers = isX ? this._xContainers : this._yContainers;
 
         if (this._inverted) {
         } else {
             if (isX) {
+                const x = colPts[1];
+                w = colPts[colPts.length - 2] - x;
+
+                containers.forEach((c, i) => {
+                    c.resize(w, c.mh).translate(x, h - rowPts[i * 2 + 1]);
+                    c.layout(colPts);
+                });
             } else {
+                const y = rowPts[rowPts.length - 2];
+                const h2 = y - rowPts[1];
+
+                containers.forEach((c, i) => {
+                    c.resize(c.mw, h2).translate(colPts[i * 2], h - y);
+                    c.layout(rowPts);
+                });
             }
         }
     }
 
-    private $_layoutBodies(model: Split): void {
-        const w = this.width;
-        const h = this.height;
+    private $_layoutBodies(model: Split, w: number, h: number): void {
         const chart = model.chart as Chart;
         const body = chart.body;
         const rows = model.rowCount();

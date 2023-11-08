@@ -220,24 +220,32 @@ export class Split extends ChartItem {
         this._vpanes = this.$_collectPanes(chart);
     }
 
-    // 여러번 호출될 수 있다.
-    layoutAxes(width: number, height: number, inverted: boolean, phase: number): void {
-        const xLens = new Array<number>(this._vcols).fill(width / this._vcols);
-        this._xAxes.buildTicks(xLens);
-
-        const yLens = new Array<number>(this._vcols).fill(width / this._vrows);
-        this._yAxes.buildTicks(yLens);
-
-        this.$_calcAxesPoints(xLens, yLens);
+    getXLens(length: number): number[] {
+        return new Array<number>(this._vcols).fill(length / this._vcols);
     }
 
-    private $_calcAxesPoints(xLens: number[], yLens: number[]): void {
-        this._xAxes.calcPoints(xLens);
-        this._yAxes.calcPoints(yLens);
+    getYLens(length: number): number[] {
+        return new Array<number>(this._vrows).fill(length / this._vrows);
+    }
+
+    // 여러번 호출될 수 있다.
+    layoutAxes(width: number, height: number, inverted: boolean, phase: number): void {
+        const xLens = this.getXLens(width);
+        this._xAxes.buildTicks(xLens);
+
+        const yLens = this.getYLens(height);
+        this._yAxes.buildTicks(yLens);
+
+        this.$_calcAxesPoints(xLens, yLens, 0);
+    }
+
+    private $_calcAxesPoints(xLens: number[], yLens: number[], phase: number): void {
+        this._xAxes.calcPoints(xLens, phase);
+        this._yAxes.calcPoints(yLens, phase);
     }
 
     calcAxesPoints(xLens: number[], yLens: number[]): void {
-        this.$_calcAxesPoints(xLens, yLens);
+        this.$_calcAxesPoints(xLens, yLens, 1);
     }
 
     /**

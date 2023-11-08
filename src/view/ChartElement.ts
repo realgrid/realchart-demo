@@ -199,6 +199,7 @@ export abstract class SectionView extends GroupElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    protected _inverted: boolean;
     mw: number;
     mh: number;
 
@@ -209,6 +210,8 @@ export abstract class SectionView extends GroupElement {
     // methods
     //-------------------------------------------------------------------------
     measure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this._inverted = chart.isInverted();
+        
         const sz = this._doMeasure(doc, chart, hintWidth, hintHeight, phase);
 
         this.mw = sz.width;
