@@ -664,11 +664,11 @@ class CrosshairView extends PathElement {
 
             if (pv) {
                 index = pv.point.xValue;
-            } else if (this._model.showAlways) {
+            } else if (this._model.showAlways && axis instanceof CategoryAxis) {
                 if (axis.reversed) {
-                    index = (axis as CategoryAxis).categoryAt(horz ? width - x : y);
+                    index = axis.categoryAt(horz ? width - x : y);
                 } else {
-                    index = (axis as CategoryAxis).categoryAt(horz ? x : height - y);
+                    index = axis.categoryAt(horz ? x : height - y);
                 }
             }
 

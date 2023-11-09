@@ -175,12 +175,10 @@ class CrosshairFlagView extends RcElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    setText(model: Crosshair, text: string): boolean {
+    setText(model: Crosshair, text: string): void {
         if (text !== this._text.text) {
             this._text.text = text;
-            return true;
-        }
-        if (text) {
+
             const r = this._text.getBBounds();
             const pb = new PathBuilder();
             const w = Math.max(model.flag.minWidth || 0, r.width + 8);
