@@ -1028,12 +1028,12 @@ export class ChartView extends LayerElement {
     clipSeries(view: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void {
         // TODO: pane 단위로
         if (view) {
-            // if (this._model.inverted && invertable) {
-            //     this._seriesClip.setBounds(0, -w, h, w);
-            // } else {
-            //     this._seriesClip.setBounds(0, 0, w, h);
-            // }
-            // view.setClip(this._seriesClip);
+            if (this._model.inverted && invertable) {
+                this._seriesClip.setBounds(0, -w, h, w);
+            } else {
+                this._seriesClip.setBounds(0, 0, w, h);
+            }
+            view.setClip(this._seriesClip);
         }
     }
 

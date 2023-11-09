@@ -15,7 +15,12 @@ const config = {
   title: "Stock Market",
   xAxis: {
     type: "time",
-    crosshair: true,
+    crosshair: {
+        visible: true,
+        flag: {
+            minWidth: 140
+        }
+    },
     tick: {
       step: 30,
     },

@@ -1,12 +1,13 @@
 /**
  * @demo
  * 
+ * Bar Series 기본 예제.
  */
 const config = {
     templates: {
     },
     inverted: true,
-    title: "Wing Chart by Pane",
+    title: "Wing Chart - Split Panes",
     options: {
         // animatable: false
     },

@@ -264,13 +264,17 @@ class AxisContainer extends SectionView {
     protected _doLayout(pts: number[]): void {
         if (this._isHorz) {
             this.sections.forEach((sec, i) => {
-                sec.resize(this.width, this.height);
-                sec.layout();
+                if (this.height > 0) {
+                    sec.resize(pts[(i + 1) * 2] - pts[(i + 1) * 2 - 1], this.height).translate(pts[i * 2 + 1], 0);
+                    sec.layout();
+                }
             });
         } else {
             this.sections.forEach((sec, i) => {
-                sec.resize(this.width, pts[(i + 1) * 2] - pts[i * 2 + 1]).translate(0, this.height - pts[(i + 1) * 2]);
-                sec.layout();
+                if (this.width > 0) {
+                    sec.resize(this.width, pts[(i + 1) * 2] - pts[(i + 1) * 2 - 1]).translate(0, this.height - (pts[(i + 1) * 2] - pts[1]));
+                    sec.layout();
+                }
             });
         }
     }
@@ -520,10 +524,10 @@ export class PaneContainer extends LayerElement {
         if (this._inverted) {
             if (isX) {
                 const y = colPts[1];
-                h = colPts[colPts.length - 2] - y;
+                const h2 = colPts[colPts.length - 2] - y;
 
                 containers.forEach((c, i) => {
-                    c.resize(c.mw, h).translate(rowPts[i * 2 + 1], y);
+                    c.resize(c.mw, h2).translate(rowPts[i * 2], h - colPts[colPts.length - 2]); //y);
                     c.layout(colPts);
                 });
             } else {
@@ -531,7 +535,7 @@ export class PaneContainer extends LayerElement {
                 const w2 = rowPts[2] - x;
 
                 containers.forEach((c, i) => {
-                    c.resize(w2, h).translate(x, colPts[i * 2]);
+                    c.resize(w2, c.mh).translate(rowPts[i * 2 + 1], h - colPts[i * 2 + 1]);
                     c.layout(rowPts);
                 });
             }
@@ -542,14 +546,14 @@ export class PaneContainer extends LayerElement {
 
                 containers.forEach((c, i) => {
                     c.resize(w, c.mh).translate(x, h - rowPts[i * 2 + 1]);
-                    c.layout(colPts);
+                    c.layout(rowPts);
                 });
             } else {
                 const y = rowPts[rowPts.length - 2];
                 const h2 = y - rowPts[1];
 
                 containers.forEach((c, i) => {
-                    c.resize(c.mw, h2).translate(colPts[i * 2], h - y);
+                    c.resize(c.mw, h2).translate(rowPts[i * 2], h - y);
                     c.layout(rowPts);
                 });
             }
@@ -572,11 +576,11 @@ export class PaneContainer extends LayerElement {
 
                 for (let c = 0; c < cols; c++) {
                     const view = views[r * cols + c];
-                    const y1 = colPts[(c + 1) * 2 - 1];
+                    const y1 = colPts[c * 2 + 1];
                     const y2 = colPts[(c + 1) * 2];
 
                     view.measure(this.doc, body, x2 - x1, y2 - y1, 1);
-                    view.resize(x2 - x1, y2 - y1).translate(x1, y1);
+                    view.resize(x2 - x1, y2 - y1).translate(x1, this.height - y2);
                     view.layout();
                 }
             }

@@ -78,6 +78,8 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
         // rotation
         if (!isHorz) {
             this.setRotaion(0, this.height / 2, this._angle);
+        } else {
+            this.rotation = 0;
         }
     }
 
@@ -999,6 +1001,7 @@ export class AxisView extends ChartElement<Axis> {
                 const r = v.getBBounds();
                 const x2 = opp ? x : between ? (w - r.width) / 2 : x - r.width;
     
+                v.anchor = TextAnchor.START;
                 v.translate(x2, h - ticks[i].pos - r.height / 2);
             }
         });
