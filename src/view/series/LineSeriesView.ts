@@ -254,6 +254,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             let py: number;
 
             if (polar) {
+                // TODO: xAxis가 위치를 계산해야 한다.
                 const a = polar.start + (i + 0.5) * polar.deg;
                 const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
 

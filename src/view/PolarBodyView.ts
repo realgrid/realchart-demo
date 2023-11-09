@@ -135,12 +135,12 @@ class PolarXAxisView extends PolarAxisView {
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
+    constructor(doc: Document, lineContainer: LayerElement) {
         super(doc, 'rct-polar-xaxis');
 
         this._gridLines = new ElementPool(this._gridContainer, LineElement, PolarXAxisView.GRID_CLASS);
 
-        this.add(this._lineView = new CircumElement(doc, PolarXAxisView.LINE_CLASS));
+        lineContainer.add(this._lineView = new CircumElement(doc, PolarXAxisView.LINE_CLASS));
     }
 
     //-------------------------------------------------------------------------
@@ -229,13 +229,13 @@ class PolarYAxisView extends PolarAxisView {
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
+    constructor(doc: Document, lineContainer: LayerElement) {
         super(doc, 'rct-polar-yaxis');
 
         this._gridLines = new ElementPool(this._gridContainer, CircumElement, 'rct-polar-yaxis-grid-line');
         (this._gridLines as any).circular = false;
 
-        this.add(this._lineView = new LineElement(doc, 'rct-polar-yaxis-line'));
+        lineContainer.add(this._lineView = new LineElement(doc, 'rct-polar-yaxis-line'));
     }
 
     //-------------------------------------------------------------------------
@@ -312,7 +312,8 @@ export class PolarBodyView extends BodyView {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _axisContainer: RcElement;
+    private _axisContainer: LayerElement;
+    private _lineContainer: LayerElement;
     private _xAxisView: PolarXAxisView;
     private _yAxisViews: PolarYAxisView[] = [];
 
@@ -358,8 +359,10 @@ export class PolarBodyView extends BodyView {
     private $_prepareAxes(doc: Document, xAxis: Axis, yAxes: Axis[], circular: boolean): void {
         // x axis
         if (!this._axisContainer) {
-            this.add(this._axisContainer = new RcElement(doc, 'rct-polar-axes'));
-            this._axisContainer.add(this._xAxisView = new PolarXAxisView(doc));
+            this.add(this._axisContainer = new LayerElement(doc, 'rct-polar-axes'));
+            this.add(this._lineContainer = new LayerElement(doc, 'rct_axis-lines'));
+
+            this._axisContainer.add(this._xAxisView = new PolarXAxisView(doc, this._lineContainer));
         }
         this._xAxisView.prepare(doc, xAxis, circular);
 
@@ -367,7 +370,7 @@ export class PolarBodyView extends BodyView {
         const views = this._yAxisViews;
 
         while (views.length < yAxes.length) {
-            const view = new PolarYAxisView(doc);
+            const view = new PolarYAxisView(doc, this._lineContainer);
 
             this._axisContainer.add(view);
             views.push(view);

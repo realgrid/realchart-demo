@@ -133,7 +133,7 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
                 cy: polar.cy, 
                 rx: y, 
                 ry: y,
-                start: polar.start + (i + 0.25) * polar.deg,
+                start: polar.start + (i + 0.5) * polar.deg - wPoint / 2,
                 angle: wPoint,
                 clockwise: true
             })
