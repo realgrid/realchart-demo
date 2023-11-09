@@ -359,8 +359,8 @@ export class PolarBodyView extends BodyView {
     private $_prepareAxes(doc: Document, xAxis: Axis, yAxes: Axis[], circular: boolean): void {
         // x axis
         if (!this._axisContainer) {
-            this.add(this._axisContainer = new LayerElement(doc, 'rct-polar-axes'));
-            this.add(this._lineContainer = new LayerElement(doc, 'rct_axis-lines'));
+            this.insertFirst(this._lineContainer = new LayerElement(doc, 'rct_axis-lines'));
+            this.insertFirst(this._axisContainer = new LayerElement(doc, 'rct-polar-axes'));
 
             this._axisContainer.add(this._xAxisView = new PolarXAxisView(doc, this._lineContainer));
         }

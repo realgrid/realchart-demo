@@ -192,9 +192,6 @@ export class Split extends ChartItem {
         return this._vpanes.map(v => v[col]);
     }
 
-    layoutPanes(width: number, height: number, inverted: boolean, phase: number): void {
-    }
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -230,10 +227,10 @@ export class Split extends ChartItem {
 
     // 여러번 호출될 수 있다.
     layoutAxes(width: number, height: number, inverted: boolean, phase: number): void {
-        const xLens = this.getXLens(width);
+        const xLens = this.getXLens(inverted ? height : width);
         this._xAxes.buildTicks(xLens);
 
-        const yLens = this.getYLens(height);
+        const yLens = this.getYLens(inverted ? width : height);
         this._yAxes.buildTicks(yLens);
 
         this.$_calcAxesPoints(xLens, yLens, 0);

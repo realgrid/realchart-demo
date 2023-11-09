@@ -5,7 +5,6 @@
 const config = {
     templates: {
     },
-    // inverted: true,
     title: "Wing Chart by Pane",
     options: {
         // animatable: false
@@ -94,7 +93,7 @@ function setActions(container) {
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
         chart.load(config, animate);
-    }, true);
+    }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis[0].reversed = _getChecked(e);
         chart.load(config, animate);
