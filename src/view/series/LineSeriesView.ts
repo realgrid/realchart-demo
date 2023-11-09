@@ -254,7 +254,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             let py: number;
 
             if (polar) {
-                const a = polar.start + i * polar.deg;
+                const a = polar.start + (i + 0.5) * polar.deg;
                 const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
 
                 px = p.xPos = polar.cx + y * Math.cos(a);
