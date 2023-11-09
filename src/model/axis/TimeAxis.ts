@@ -445,7 +445,6 @@ export class TimeAxis extends ContinuousAxis {
         } else if (isString(value)) {
             return new Date(value).getTime();
         }
-        return 0;
     }
 
     incStep(value: number, step: any): number {
