@@ -25,7 +25,7 @@ const config = {
 		// position: 'base',
 		// baseAxis: 1,
 		title: {
-			text: '수정구'
+			text: '수정구' + (Math.random() * 10000 >> 0)
 		},
 		// grid: true,
         crosshair: true,

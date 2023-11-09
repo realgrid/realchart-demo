@@ -8,6 +8,7 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
+import { PI_2 } from "../../common/Types";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextAnchor } from "../../common/impl/TextElement";
 import { Chart } from "../../model/Chart";
@@ -127,13 +128,14 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
             const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
             const wUnit = xAxis.getUnitLength(Math.PI * 2, p.xValue);
             const wPoint = series.getPointWidth(wUnit);
+            const a = polar.start + xAxis.getPosition(PI_2, p.xValue);
     
             view.setSector({
                 cx: polar.cx, 
                 cy: polar.cy, 
                 rx: y, 
                 ry: y,
-                start: polar.start + (i + 0.5) * polar.deg - wPoint / 2,
+                start: a - wPoint / 2,
                 angle: wPoint,
                 clockwise: true
             })

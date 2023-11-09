@@ -10,6 +10,7 @@ import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
+import { PI_2 } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Chart } from "../../model/Chart";
 import { LineType } from "../../model/ChartTypes";
@@ -254,8 +255,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             let py: number;
 
             if (polar) {
-                // TODO: xAxis가 위치를 계산해야 한다.
-                const a = polar.start + (i + 0.5) * polar.deg;
+                const a = polar.start + xAxis.getPosition(PI_2, p.xValue);
                 const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
 
                 px = p.xPos = polar.cx + y * Math.cos(a);

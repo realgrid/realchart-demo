@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "../common/Common";
-import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, _undefined, calcPercent, parsePercentSize } from "../common/Types";
+import { DEG_RAD, IPercentSize, ORG_ANGLE, PI_2, RtPercentSize, _undefined, calcPercent, parsePercentSize } from "../common/Types";
 import { AxisGuide } from "./Axis";
 import { IChart } from "./Chart";
 import { BackgroundImage, ChartItem } from "./ChartItem";
@@ -217,13 +217,12 @@ export class Body extends ChartItem {
         return ORG_ANGLE + DEG_RAD * this.startAngle;
     }
 
-    getPolar(series: Series): {start: number, cx: number, cy: number, rd: number, deg: number} {
+    getPolar(series: Series): {start: number, cx: number, cy: number, rd: number } {
         return this.chart.isPolar() ? {
             start: this.getStartAngle(),
             cx: this._cx,
             cy: this._cy,
-            rd: this._rd,
-            deg: series ? Math.PI * 2 / series._runPoints.length : 0
+            rd: this._rd
         } : _undefined;
     }
 
