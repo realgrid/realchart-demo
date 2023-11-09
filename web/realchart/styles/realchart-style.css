@@ -175,7 +175,7 @@
 
     /* polar */
     --rct-polar-xaxis-grid-line-stroke: #ccc;
-    --rct-polar-yaxis-grid-line-stroke: #555;
+    --rct-polar-yaxis-grid-line-stroke: #ccc;
     --rct-polar-axis-label-fill: #555;
 
     /* circle gauge */
