@@ -642,8 +642,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     getXStart(): number {
-        let s = this._xAxisObj.parseValue(this.xStart);
-        const v = !isNaN(s) ? s : this._xAxisObj.parseValue(this.chart.options.xStart);
+        let s = this._xAxisObj.getValue(this.xStart);
+        const v = !isNaN(s) ? s : this._xAxisObj.getValue(this.chart.options.xStart);
 
         return this._xAxisObj._zoom ? v + Math.floor(this._xAxisObj._zoom.start) : v;
     }

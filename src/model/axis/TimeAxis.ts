@@ -437,7 +437,7 @@ export class TimeAxis extends ContinuousAxis {
         return v;
     }
 
-    parseValue(value: any): number {
+    getValue(value: any): number {
         if (isNumber(value)) {  
             return value + this._offset;
         } else if (value instanceof Date) {
@@ -446,10 +446,6 @@ export class TimeAxis extends ContinuousAxis {
             return new Date(value).getTime();
         }
         return 0;
-    }
-
-    getValue(value: any): number {
-        return +value;//+ this._offset;
     }
 
     incStep(value: number, step: any): number {
@@ -488,6 +484,10 @@ export class TimeAxis extends ContinuousAxis {
 
     date(value: number): Date {
         return new Date(value);
+    }
+
+    getAxisValueAt(length: number, pos: number): any {
+        return new Date(this.getValueAt(length, pos));
     }
 
     //-------------------------------------------------------------------------

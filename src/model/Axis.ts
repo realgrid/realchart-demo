@@ -44,7 +44,6 @@ export interface IAxis {
      * data point의 값을 축 상의 값으로 리턴한다.
      */
     getValue(value: any): number;
-    parseValue(value: any): number;
     contains(value: number): boolean;
     incStep(value: number, step: any): number;
     /**
@@ -52,6 +51,7 @@ export interface IAxis {
      */
     getPosition(length: number, value: number, point?: boolean): number;
     getValueAt(length: number, pos: number): number;
+    getAxisValueAt(length: number, pos: number): any;
     /**
      * 값(축 상 위치)에 해당하는 축 단위 픽셀 크기. 
      * <br>
@@ -878,6 +878,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     abstract isContinuous(): boolean;
     abstract getValueAt(length: number, pos: number): number;
 
+    getAxisValueAt(length: number, pos: number): any {
+        return this.getValueAt(length, pos);
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -1006,10 +1010,6 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     incStep(value: number, step: any): number {
         return value += step;
-    }
-
-    parseValue(value: any): number {
-        return parseFloat(value);
     }
 
     contains(value: number): boolean {

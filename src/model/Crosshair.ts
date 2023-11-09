@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { DatetimeFormatter } from "../common/DatetimeFormatter";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { SVGStyleOrClass } from "../common/Types";
 import { IAxis } from "./Axis";
@@ -101,6 +102,7 @@ export class Crosshair extends ChartItem {
      */
     followPointer = true;
     numberFormat = '#,##0.#';
+    timeFormat = 'yyyy-MM-dd HH:mm'
 
     //-------------------------------------------------------------------------
     // methods
@@ -110,8 +112,13 @@ export class Crosshair extends ChartItem {
     }
 
     getFlag(length: number, pos: number): string {
-        const v = this.axis.getValueAt(length, pos);
-        return NumberFormatter.getFormatter(this.numberFormat).toStr(v);
+        const v = this.axis.getAxisValueAt(length, pos);
+
+        if (v instanceof Date) {
+            return DatetimeFormatter.getFormatter(this.timeFormat).toStr(new Date(v), 0);
+        } else {
+            return NumberFormatter.getFormatter(this.numberFormat).toStr(v);
+        }
     }
 
     //-------------------------------------------------------------------------
