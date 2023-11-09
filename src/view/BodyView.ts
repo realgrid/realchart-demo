@@ -611,7 +611,6 @@ export class AxisGuideContainer extends LayerElement {
 
                 this.add(v);
                 v.prepare(g)
-                this._views.push(v);
             }
         });
     }

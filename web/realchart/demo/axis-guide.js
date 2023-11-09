@@ -7,6 +7,7 @@ const config = {
     options: {
     },
     title: "Axis Guides",
+    legend: true,
     xAxis: {
         // type: 'category',
         tick: true,
