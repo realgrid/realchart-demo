@@ -39,7 +39,6 @@ class AxisSectionView extends SectionView {
         const axes: Axis[] = [];
 
         this.isX = isX;
-        this.isHorz = (this._inverted && !isX) || (!this._inverted && isX);
 
         if (paxes) {
             paxes._axes.forEach(a => {
@@ -141,6 +140,12 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _setInverted(inverted: boolean): void {
+        super._setInverted(inverted);
+
+        this.isHorz = (inverted && !this.isX) || (!inverted && this.isX);
+    }
+
     protected _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
         const axes = this.axes;
 
@@ -180,6 +185,7 @@ class AxisContainer extends SectionView {
     // fields
     //-------------------------------------------------------------------------
     sections: AxisSectionView[] = [];
+    private _isHorz: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -233,40 +239,39 @@ class AxisContainer extends SectionView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _setInverted(inverted: boolean): void {
+        super._setInverted(inverted);
+
+        this._isHorz = (inverted && !this.isX) || (!inverted && this.isX);
+    }
+
     protected _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
         let width = 0;
         let height = 0;
 
-        if (this._inverted) {
-
+        if (this._isHorz) {
+            this.sections.forEach(sec => {
+                height = Math.max(height, sec.measure(doc, chart, hintWidth, hintHeight, phase).height);
+            });
         } else {
-            if (this.isX) {
-                this.sections.forEach(sec => {
-                    height = Math.max(height, sec.measure(doc, chart, hintWidth, hintHeight, phase).height);
-                });
-            } else {
-                this.sections.forEach(sec => {
-                    width = Math.max(width, sec.measure(doc, chart, hintWidth, hintHeight, phase).width);
-                });
-            }
+            this.sections.forEach(sec => {
+                width = Math.max(width, sec.measure(doc, chart, hintWidth, hintHeight, phase).width);
+            });
         }
         return { width, height };
     }
 
     protected _doLayout(pts: number[]): void {
-        if (this._inverted) {
+        if (this._isHorz) {
+            this.sections.forEach((sec, i) => {
+                sec.resize(this.width, this.height);
+                sec.layout();
+            });
         } else {
-            if (this.isX) {
-                this.sections.forEach((sec, i) => {
-                    sec.resize(this.width, this.height);
-                    sec.layout();
-                });
-            } else {
-                this.sections.forEach((sec, i) => {
-                    sec.resize(this.width, pts[(i + 1) * 2] - pts[i * 2 + 1]).translate(0, this.height - pts[(i + 1) * 2]);
-                    sec.layout();
-                });
-            }
+            this.sections.forEach((sec, i) => {
+                sec.resize(this.width, pts[(i + 1) * 2] - pts[i * 2 + 1]).translate(0, this.height - pts[(i + 1) * 2]);
+                sec.layout();
+            });
         }
     }
 }
@@ -366,7 +371,8 @@ export class PaneContainer extends LayerElement {
         h = hSave;
 
         if (inverted) {
-
+            w -= this._xContainers.reduce((a, c) => a + c.mw, 0);
+            h -= this._yContainers.reduce((a, c) => a + c.mh, 0);
         } else {
             h -= this._xContainers.reduce((a, c) => a + c.mh, 0);
             w -= this._yContainers.reduce((a, c) => a + c.mw, 0);
@@ -378,8 +384,9 @@ export class PaneContainer extends LayerElement {
         this._xContainers.forEach(c => c.measure(doc, chart, w, h, phase));
         this._yContainers.forEach(c => c.measure(doc, chart, w, h, phase));
 
-        const xLens = model.getXLens(w);
-        const yLens = model.getYLens(h);
+        const xLens = model.getXLens(inverted ? h : w);
+        const yLens = model.getYLens(inverted ? w : h);
+
         model.calcAxesPoints(xLens, yLens);
     }
 
@@ -473,50 +480,35 @@ export class PaneContainer extends LayerElement {
         });
     }
 
+    private $_calc(axes: AxisContainer[], count: number, len: number, size: string): number[] {
+        const pts = new Array<number>((count + 1) * 2);
+        const sum = len - axes.reduce((a, c) => a + c[size], 0);
+        const szPanes = new Array<number>(count);
+        let p = 0;
+        let i = 0;
+
+        for (i = 0; i < count; i++) {
+            szPanes[i] = sum / count;
+        }
+
+        for (i = 0; i < count; i++) {
+            pts[i * 2] = p;
+            pts[i * 2 + 1] = p += axes[i][size];
+            p += szPanes[i];
+        }
+        pts[i * 2] = p;
+        pts[i * 2 + 1] = p + axes[i][size];
+        return pts;
+    }
+
     private $_calcExtents(model: Split, width: number, height: number): void {
         if (this._inverted) {
-        } else {
             // row points
-            let count = model.rowCount();
-            let axes = this._xContainers;
-            let pts = this._rowPoints = new Array<number>((count + 1) * 2);
-            let sum = height - axes.reduce((a, c) => a + c.mh, 0);
-            let szPanes = new Array<number>(count);
-            let p = 0;
-            let i = 0;
-
-            for (i = 0; i < count; i++) {
-                szPanes[i] = sum / count;
-            }
-
-            for (i = 0; i < count; i++) {
-                pts[i * 2] = p;
-                pts[i * 2 + 1] = p += axes[i].mh;
-                p += szPanes[i];
-            }
-            pts[i * 2] = p;
-            pts[i * 2 + 1] = p + axes[i].mh;
-
-            // col points
-            count = model.colCount();
-            axes = this._yContainers;
-            pts = this._colPoints = new Array<number>((count + 1) * 2);
-            sum = width - axes.reduce((a, c) => a + c.mw, 0);
-            szPanes = new Array<number>(count);
-            p = 0;
-            i = 0;
-
-            for (i = 0; i < count; i++) {
-                szPanes[i] = sum / count;
-            }
-
-            for (i = 0; i < count; i++) {
-                pts[i * 2] = p;
-                pts[i * 2 + 1] = p += axes[i].mw;
-                p += szPanes[i];
-            }
-            pts[i * 2] = p;
-            pts[i * 2 + 1] = p + axes[i].mw;
+            this._rowPoints = this.$_calc(this._xContainers, model.rowCount(), width, 'mw');
+            this._colPoints = this.$_calc(this._yContainers, model.colCount(), height, 'mh');
+        } else {
+            this._rowPoints = this.$_calc(this._xContainers, model.rowCount(), height, 'mh');
+            this._colPoints = this.$_calc(this._yContainers, model.colCount(), width, 'mw');
         }
     }
 
@@ -526,6 +518,23 @@ export class PaneContainer extends LayerElement {
         const containers = isX ? this._xContainers : this._yContainers;
 
         if (this._inverted) {
+            if (isX) {
+                const y = colPts[1];
+                h = colPts[colPts.length - 2] - y;
+
+                containers.forEach((c, i) => {
+                    c.resize(c.mw, h).translate(rowPts[i * 2 + 1], y);
+                    c.layout(colPts);
+                });
+            } else {
+                const x = rowPts[1];
+                const w2 = rowPts[2] - x;
+
+                containers.forEach((c, i) => {
+                    c.resize(w2, h).translate(x, colPts[i * 2]);
+                    c.layout(rowPts);
+                });
+            }
         } else {
             if (isX) {
                 const x = colPts[1];
@@ -557,6 +566,20 @@ export class PaneContainer extends LayerElement {
         const views = this._bodies;
 
         if (this._inverted) {
+            for (let r = 0; r < rows; r++) {
+                const x1 = rowPts[(r + 1) * 2 - 1];
+                const x2 = rowPts[(r + 1) * 2];
+
+                for (let c = 0; c < cols; c++) {
+                    const view = views[r * cols + c];
+                    const y1 = colPts[(c + 1) * 2 - 1];
+                    const y2 = colPts[(c + 1) * 2];
+
+                    view.measure(this.doc, body, x2 - x1, y2 - y1, 1);
+                    view.resize(x2 - x1, y2 - y1).translate(x1, y1);
+                    view.layout();
+                }
+            }
         } else {
             for (let r = 0; r < rows; r++) {
                 const y1 = rowPts[(r + 1) * 2 - 1];

@@ -303,7 +303,7 @@ class AxisSectionView extends SectionView {
      * split일 때 hintWidth/hintHeight는 반쪽 크기이다.
      */
     protected _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
-        const inverted = chart.isInverted();
+        const inverted = this._inverted;
         let w = 0;
         let h = 0;
 

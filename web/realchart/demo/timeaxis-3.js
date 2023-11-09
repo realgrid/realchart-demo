@@ -14,7 +14,7 @@ const config = {
   },
   title: "Stock Market",
   xAxis: {
-    type: "category",
+    type: "time",
     crosshair: true,
     tick: {
       step: 30,
