@@ -71,8 +71,8 @@ class AxisSectionView extends SectionView {
                 col = this.col;
                 v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
             } else {
-                const row = this.isX ? this.row : pos === AxisPosition.OPPOSITE ? this.row - 1 : this.row;
-                const col = this.isX ? pos === AxisPosition.OPPOSITE ? this.col - 1 : this.col : this.col;
+                const row = pos === AxisPosition.OPPOSITE ? this.row - 1 : this.row;
+                const col = pos === AxisPosition.OPPOSITE ? this.col - 1 : this.col;
                 v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
             }
         });
@@ -265,7 +265,7 @@ class AxisContainer extends SectionView {
         if (this._isHorz) {
             this.sections.forEach((sec, i) => {
                 if (this.height > 0) {
-                    sec.resize(pts[(i + 1) * 2] - pts[(i + 1) * 2 - 1], this.height).translate(pts[i * 2 + 1], 0);
+                    sec.resize(pts[(i + 1) * 2] - pts[(i + 1) * 2 - 1], this.height).translate(pts[i * 2 + 1] - pts[1], 0);
                     sec.layout();
                 }
             });
@@ -546,14 +546,14 @@ export class PaneContainer extends LayerElement {
 
                 containers.forEach((c, i) => {
                     c.resize(w, c.mh).translate(x, h - rowPts[i * 2 + 1]);
-                    c.layout(rowPts);
+                    c.layout(colPts);
                 });
             } else {
                 const y = rowPts[rowPts.length - 2];
                 const h2 = y - rowPts[1];
 
                 containers.forEach((c, i) => {
-                    c.resize(c.mw, h2).translate(rowPts[i * 2], h - y);
+                    c.resize(c.mw, h2).translate(colPts[i * 2], h - y);
                     c.layout(rowPts);
                 });
             }

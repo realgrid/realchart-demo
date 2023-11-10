@@ -6,7 +6,7 @@
 const config = {
     templates: {
     },
-    inverted: true,
+    // inverted: true,
     title: "Wing Chart - Split Panes",
     options: {
         // animatable: false

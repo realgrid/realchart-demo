@@ -1431,7 +1431,10 @@ export class XPaneAxisMatrix extends PaneAxisMatrix {
         axes.forEach(axis => {
             let row = axis._row;
 
-            if (axis.position === AxisPosition.OPPOSITE || (axis._row < rows - 1) && axis.position === AxisPosition.BETWEEN) {
+            if (axis.position === AxisPosition.OPPOSITE) {
+                row++;
+                axis._runPos = axis.position;
+            } else if ((axis._row < rows - 1) && axis.position === AxisPosition.BETWEEN) {
                 row++;
                 axis._runPos = AxisPosition.NORMAL;
             } else {
@@ -1469,7 +1472,10 @@ export class YPaneAxisMatrix extends PaneAxisMatrix {
         axes.forEach(axis => {
             let col = axis._col;
 
-            if (axis.position === AxisPosition.OPPOSITE || (axis._col < cols - 1) && axis.position === AxisPosition.BETWEEN) {
+            if (axis.position === AxisPosition.OPPOSITE) {
+                col++;
+                axis._runPos = axis.position;
+            } else if ((axis._col < cols - 1) && axis.position === AxisPosition.BETWEEN) {
                 col++;
                 axis._runPos = AxisPosition.NORMAL;
             } else {

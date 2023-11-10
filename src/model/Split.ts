@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString } from "../common/Common";
+import { isArray, isObject, isString, pickNum } from "../common/Common";
 import { Align, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
 import { PaneAxisMatrix } from "./Axis";
 import { Body } from "./Body";
@@ -195,6 +195,19 @@ export class Split extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doLoadSimple(source: any): boolean {
+        if (isArray(source) && source.length > 0) {
+            this.rows = Math.max(1, +source[0]);
+            this.cols = Math.max(1, pickNum(+source[1], this.rows));
+            if (this.rows > 0 && this.cols > 0) {
+                this.$_parsePanes(this.rows, this.cols);
+                this.visible = true;
+            }
+            return true;
+        }
+        return super._doLoadSimple(source);
+    }
+
     protected _doLoadProp(prop: string, value: any): boolean {
         if (['panes', 'cols', 'rows'].indexOf(prop) >= 0) {
             return true;
@@ -205,7 +218,7 @@ export class Split extends ChartItem {
         super.load(source);
 
         if (isObject(source)) {
-            this.$_parsePanes(source.rows, source.cols);
+            this.$_parsePanes(this.rows = source.rows, this.cols = source.cols);
             this._panes = this.$_loadPanes(source.panes);
         }
         return this;
