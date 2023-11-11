@@ -10,7 +10,7 @@ import { isArray, isObject, isString, mergeObj } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
-import { Axis, AxisCollection, IAxis, PaneAxes, PaneAxisMatrix, XPaneAxisMatrix, YAxisCollection, YPaneAxisMatrix } from "./Axis";
+import { Axis, AxisCollection, IAxis, PaneAxes, PaneAxisMatrix, XPaneAxisMatrix, YPaneAxisMatrix } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem, n_char_item } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
@@ -302,7 +302,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _legend: Legend;
     private _series: PlottingItemCollection;
     private _xAxes: AxisCollection;
-    private _yAxes: YAxisCollection;
+    private _yAxes: AxisCollection;
     private _split: Split;
     _xPaneAxes: XPaneAxisMatrix;
     _yPaneAxes: YPaneAxisMatrix;
@@ -333,7 +333,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._split = new Split(this);
         this._series = new PlottingItemCollection(this);
         this._xAxes = new AxisCollection(this, true);
-        this._yAxes = new YAxisCollection(this, false);
+        this._yAxes = new AxisCollection(this, false);
         this._xPaneAxes = new XPaneAxisMatrix(this);
         this._yPaneAxes = new YPaneAxisMatrix(this);
         this._gauges = new GaugeCollection(this);
@@ -700,11 +700,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         this._inverted = !this._polar && this.inverted;
         
-        if (this._splitted = !this._polar && this._body.split.visible) {
-            this._splits = this._body.getSplits();
-            yAxes.split(this._splits);
-        }
-
         xAxes.disconnect();
         yAxes.disconnect();
 
@@ -760,11 +755,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         });
         len = inverted ? width : height;
         this._yAxes.forEach(axis => {
-            let len2 = len;
-            if (this._splitted) {
-                len2 *= this._splits[axis.side ? 1 : 0];
-            }
-            axis.calcPoints(len2, phase);
+            axis.calcPoints(len, phase);
         });
     }
 

@@ -720,7 +720,6 @@ export class BodyView extends ChartElement<Body> {
     // fields
     //-------------------------------------------------------------------------
     private _owner: IPlottingOwner;
-    private _side: boolean;
     private _polar: boolean;
     private _hitTester: RectElement;
     private _background: RectElement;
@@ -755,11 +754,10 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, owner: IPlottingOwner, side = false) {
+    constructor(doc: Document, owner: IPlottingOwner) {
         super(doc, BodyView.BODY_CLASS);
 
         this._owner = owner;
-        this._side = side;
         this.add(this._hitTester = new RectElement(doc));
         this._hitTester.setStyle('fill', 'transparent');
         this.add(this._background = new RectElement(doc, 'rct-body-background'));
@@ -782,8 +780,8 @@ export class BodyView extends ChartElement<Body> {
     prepareSeries(doc: Document, chart: IChart): void {
         this._animatable = RcControl._animatable && chart.animatable();
 
-        this._prepareSeries(doc, chart, chart._getSeries().getVisibleSeries(this._side));
-        this._prepareGauges(doc, chart, chart._getGauges().getVisibles(this._side));
+        this._prepareSeries(doc, chart, chart._getSeries().getVisibleSeries());
+        this._prepareGauges(doc, chart, chart._getGauges().getVisibles());
     }
 
     prepareGuideContainers(): void {
@@ -1017,7 +1015,7 @@ export class BodyView extends ChartElement<Body> {
         }
 
         [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
-            if ((axis._isX || axis.side == this._side) && needAxes && axis.grid.isVisible() && !views.has(axis)) {
+            if (needAxes && axis.grid.isVisible() && !views.has(axis)) {
                 const v = new AxisGridView(doc);
 
                 views.set(axis, v);

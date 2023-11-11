@@ -321,7 +321,7 @@ export class PolarBodyView extends BodyView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, owner: IPlottingOwner) {
-        super(doc, owner, false);
+        super(doc, owner);
     }
 
     //-------------------------------------------------------------------------

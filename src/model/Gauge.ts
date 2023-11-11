@@ -405,8 +405,8 @@ export class GaugeCollection {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getVisibles(side: boolean): GaugeBase[] {
-        return this._visibles.filter(g => !g.side == !side);
+    getVisibles(): GaugeBase[] {
+        return this._visibles.slice(0);
     }
 
     getPaneVisibles(row: number, col: number): GaugeBase[] {

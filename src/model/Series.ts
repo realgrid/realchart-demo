@@ -120,7 +120,6 @@ export interface IPlottingItem {
     yAxis: string | number;
     visible: boolean;
 
-    isSide(): boolean;
     getVisiblePoints(): DataPoint[];
     getLegendSources(list: ILegendSource[]): void;
     needAxes(): boolean;
@@ -548,10 +547,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     needAxes(): boolean {
         return true;
-    }
-
-    isSide(): boolean {
-        return this._yAxisObj.side;
     }
 
     /**
@@ -1019,12 +1014,8 @@ export class PlottingItemCollection  {
         return this._map[name];
     }
 
-    getVisibleSeries(side: boolean): Series[] {
-        if (this.chart._splitted) {
-            return this._visibleSeries.filter(ser => !ser._yAxisObj.side == !side);
-        } else {
-            return this._visibleSeries.slice(0);
-        }
+    getVisibleSeries(): Series[] {
+        return this._visibleSeries.slice(0);
     }
 
     getPaneSeries(row: number, col: number): Series[] {
@@ -1652,10 +1643,6 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
 
     get series(): T[] {
         return this._series.slice(0);
-    }
-
-    isSide(): boolean {
-        return this._yAxisObj.side;
     }
 
     needAxes(): boolean {

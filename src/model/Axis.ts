@@ -19,7 +19,6 @@ import { IClusterable, IPlottingItem } from "./Series";
 export interface IAxis {
     type(): string;
     chart: IChart;
-    side: boolean;
     
     row: number;
     col: number;
@@ -814,10 +813,6 @@ export abstract class Axis extends ChartItem implements IAxis {
     row = 0;
     col = 0;
     /**
-     * true이면, X축이고 축이 연결된 body가 분할된 경우 분할된 쪽에 연결된다.
-     */
-    side = false;
-    /**
      * 표시 위치.
      * 기본적으로 상대 축의 원점 쪽에 표시된다.
      * 
@@ -958,23 +953,21 @@ export abstract class Axis extends ChartItem implements IAxis {
                 });
 
             } else {
-                (this.chart._splitted ? [false, true] : [false]).forEach(side => {
-                    let sum = 0;
-                    let p = 0;
-            
-                    series.forEach(item => {
-                        if (item.isSide() == side && item.clusterable()) {
-                            sum += pickNum((item as any as IClusterable).groupWidth, 1);
-                        }
-                    });
-                    series.forEach(item => {
-                        if (item.isSide() == side && item.clusterable()) {
-                            const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;
-            
-                            (item as any as IClusterable).setCluster(w, p);
-                            p += w;
-                        }
-                    });
+                let sum = 0;
+                let p = 0;
+        
+                series.forEach(item => {
+                    if (item.clusterable()) {
+                        sum += pickNum((item as any as IClusterable).groupWidth, 1);
+                    }
+                });
+                series.forEach(item => {
+                    if (item.clusterable()) {
+                        const w = pickNum((item as any as IClusterable).groupWidth, 1) / sum;
+        
+                        (item as any as IClusterable).setCluster(w, p);
+                        p += w;
+                    }
                 });
             }
         }
@@ -1286,32 +1279,6 @@ export class AxisCollection {
         axis._index = index;
         axis._isPolar = chart.isPolar();
         return axis;
-    }
-}
-
-export class YAxisCollection extends AxisCollection {
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    private _splits: number[];
-
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    split(ratios: number[]): void {
-        this._splits = ratios;
-    }
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    protected _getLength(axis: Axis, length: number): number {
-        if (this._splits) {
-            return length * this._splits[axis.side ? 1 : 0];
-        } else {
-            return length;
-        }
     }
 }
 

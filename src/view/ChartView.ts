@@ -171,10 +171,7 @@ class AxisSectionView extends SectionView {
     // fields
     //-------------------------------------------------------------------------
     axes: Axis[]; 
-    axes2: Axis[];
     views: AxisView[] = [];
-    views2: AxisView[];
-    private _splits: number[];
     isX: boolean;
     isHorz: boolean;
     isOpposite: boolean;
@@ -217,22 +214,6 @@ class AxisSectionView extends SectionView {
             this.isX = m._isX;
             this.isHorz = m._isHorz;
             this._gap = m.chart.getAxesGap();  
-
-            if (m.chart._splitted && !this.isX) {
-                this._splits = m.chart._splits;
-                this.views2 = views.filter(v => v.model.side);
-                this.axes2 = this.views2.map(v => v.model);
-                if (this.views2.length === 0) {
-                    this.views2 = _undefined;
-                } else {
-                    this.views = views.filter(v => !v.model.side);
-                    this.axes = this.views.map(v => v.model);
-                }
-            } else {
-                this._splits = [1, 1];
-            }
-        } else {
-            this.views2 = _undefined;
         }
     }
 
@@ -241,12 +222,7 @@ class AxisSectionView extends SectionView {
      */
     checkHeights(doc: Document, width: number, height: number): number {
         if (this.views.length > 0) {
-            let h = this.$_checkHeights(this.views, doc, width, height * this._splits[0]);
-
-            if (this.views2) {
-                h = Math.max(h, this.$_checkHeights(this.views2, doc, width, height * this._splits[1]));
-            }
-            return h;
+            return this.$_checkHeights(this.views, doc, width, height);
         }
         return 0;
     }
@@ -267,12 +243,7 @@ class AxisSectionView extends SectionView {
      */
     checkWidths(doc: Document, width: number, height: number): number {
         if (this.views.length > 0) {
-            let w = this.$_checkWidths(this.views, doc, width * this._splits[0], height);
-
-            if (this.views2) {
-                w = Math.max(w, this.$_checkWidths(this.views2, doc, width * this._splits[1], height));
-            }
-            return w;
+            return this.$_checkWidths(this.views, doc, width, height);
         }
         return 0;
     }
@@ -307,12 +278,11 @@ class AxisSectionView extends SectionView {
         let w = 0;
         let h = 0;
 
-        // [this.views].forEach(views => {
-        [this.views, this.views2].forEach((views, j) => {
+        [this.views].forEach(views => {
             if (views) {
-                const axes = j === 1 ? this.axes2 : this.axes;
-                const width = !this.isX && inverted ? hintWidth * this._splits[j] : hintWidth;
-                const height = !this.isX ? hintHeight * this._splits[j] : hintHeight;
+                const axes = this.axes;
+                const width = !this.isX && inverted ? hintWidth : hintWidth;
+                const height = !this.isX ? hintHeight : hintHeight;
                 let w2 = 0;
                 let h2 = 0;
 
@@ -348,16 +318,7 @@ class AxisSectionView extends SectionView {
 
         wCenter = wCenter || 0;
 
-        if (this.views2) { // splitted
-            if (this.isHorz) {
-                w = (w - wCenter) / 2;
-            } else {
-                h = (h - wCenter) / 2;
-            }
-        }
-
-        // [this.views].forEach(views => {
-        [this.views, this.views2].forEach(views => {
+        [this.views].forEach(views => {
             if (views) {
                 let p = 0;
 
@@ -451,7 +412,6 @@ export class ChartView extends LayerElement {
     private _legendSectionView: LegendSectionView;
     private _plotContainer: LayerElement;
     private _bodyView: BodyView;
-    private _splitBodyView: BodyView;
     private _polarView: PolarBodyView;
     private _currBody: BodyView;
     private _axisSectionMap: {[key: string]: AxisSectionView} = {};
@@ -474,7 +434,7 @@ export class ChartView extends LayerElement {
 
         // plot 영역이 마지막이어야 line marker 등이 축 상에 표시될 수 있다.
         this.add(this._plotContainer = new LayerElement(doc, 'rct-plot-container'));
-        this._plotContainer.add(this._currBody = this._bodyView = new BodyView(doc, this, false));
+        this._plotContainer.add(this._currBody = this._bodyView = new BodyView(doc, this));
 
         for (const dir in SectionDir) {
             const v = new AxisSectionView(doc, SectionDir[dir]);
@@ -821,26 +781,8 @@ export class ChartView extends LayerElement {
             x = org.x;
             y = org.y - this._plotHeight;
 
-            if (m._splitted) {
-                const splitView = this._splitBodyView;
-
-                if (m.isInverted()) {
-                    this._currBody.resize(wPlot / 2, hPlot);
-                    this._currBody.layout().translate(x, y);
-        
-                    splitView.resize(wPlot / 2, hPlot);
-                    splitView.layout().translate(x + wPlot / 2 + wCenter, y);
-                } else {
-                    this._currBody.resize(wPlot, hPlot / 2);
-                    this._currBody.layout().translate(x, y + hPlot / 2 + hMiddle);
-        
-                    splitView.resize(wPlot, hPlot / 2);
-                    splitView.layout().translate(x, y);
-                }
-            } else {
-                this._currBody.resize(wPlot, hPlot);
-                this._currBody.layout().translate(x, y);
-            }
+            this._currBody.resize(wPlot, hPlot);
+            this._currBody.layout().translate(x, y);
         }
 
         // credits
@@ -1114,22 +1056,11 @@ export class ChartView extends LayerElement {
             }
             this._currBody = this._polarView;
             this._bodyView?.setVisible(false);
-            this._splitBodyView?.setVisible(false);
             this._polarView.setVisible(true);
         } else {
             this._polarView?.setVisible(false);
             this._bodyView.setVisible(true);
             this._currBody = this._bodyView;
-
-            if (this._model._splitted) {
-                if (!this._splitBodyView) {
-                    this._splitBodyView = new BodyView(doc, this, true);
-                    this._plotContainer.insertChild(this._splitBodyView, this._bodyView);
-                } else {
-                    this._splitBodyView.setVisible(true);
-                }
-                this._splitBodyView.prepareSeries(doc, this._model);
-            }
         }
         this._currBody.prepareSeries(doc, this._model);
     }
@@ -1271,17 +1202,7 @@ export class ChartView extends LayerElement {
         m.calcAxesPoints(w, h, this._inverted);
 
         // body
-        if (this._splitBodyView?.setVisible(splitted)) {
-            if (m.isInverted()) {
-                this._bodyView.measure(doc, m.body, w, h, phase);
-                this._splitBodyView.measure(doc, m.body, w, h, phase);
-            } else {
-                this._bodyView.measure(doc, m.body, w, h, phase);
-                this._splitBodyView.measure(doc, m.body, w, h, phase);
-            }
-        } else {
-            this._bodyView.measure(doc, m.body, w, h, phase);
-        }
+        this._bodyView.measure(doc, m.body, w, h, phase);
     }
 
     private $_measurePolar(doc: Document, m: Chart, w: number, h: number, phase: number): void {
