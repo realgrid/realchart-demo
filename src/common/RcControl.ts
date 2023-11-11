@@ -980,10 +980,12 @@ export class RcElement extends RcObject {
 
     resize(width: number, height: number, attr = true): RcElement {
         if (width !== this._width) {
-            attr && this.setAttr('width', this._width = width);
+            this._width = width;
+            attr &&  this.setAttrEx('width', width);
         }
         if (height !== this._height) {
-            attr && this.setAttr('height', this._height = height);
+            this._height = height;
+            attr && this.setAttrEx('height', height);
         }
         return this;
     }

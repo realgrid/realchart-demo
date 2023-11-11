@@ -52,6 +52,7 @@ import { BulletGauge, BulletGaugeGroup } from "./gauge/BulletGauge";
 import { SeriesNavigator } from "./SeriesNavigator";
 import { Split } from "./Split";
 import { TextAnnotation } from "./annotation/TextAnnotation";
+import { ImageAnnotation } from "./annotation/ImageAnnotation";
 
 export interface IChart {
     type: string;
@@ -167,6 +168,7 @@ const gauge_group_types = {
 
 const annotation_type = {
     'text': TextAnnotation,
+    'image': ImageAnnotation,
 };
 
 export class Credits extends ChartItem {

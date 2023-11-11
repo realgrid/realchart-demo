@@ -58,6 +58,13 @@ const config = {
                 rx: 5,
                 fillOpacity: 0.7
             }
+        }, {
+            type: 'image',
+            align: 'right',
+            offsetX: 50,
+            offsetY: 0,
+            width: 150,
+            imageUrl: '../assets/images/daum.png'
         }]
     }
 }

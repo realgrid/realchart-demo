@@ -19,25 +19,6 @@ import { ChartItem } from "./ChartItem";
 export abstract class Annotation extends ChartItem {
 
     //-------------------------------------------------------------------------
-    // consts
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // static members
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
-    private _width: RtPercentSize;
-    private _height: RtPercentSize;
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    private _sizeDim: IPercentSize;
-    private _widthDim: IPercentSize;
-    private _heightDim: IPercentSize;
-    
-    //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
@@ -74,45 +55,10 @@ export abstract class Annotation extends ChartItem {
     offsetX = 10;
     offsetY = 10;
     rotation: number;
-    /**
-     * Annotation 너비.
-     * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
-     * 
-     * @config
-     */
-    get width(): RtPercentSize {
-        return this._width;
-    }
-    set width(value: RtPercentSize) {
-        if (value !== this._width) {
-            this._widthDim = parsePercentSize(this._width = value, true);
-        }
-    }
-    /**
-     * Annotation 높이.
-     * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
-     * 
-     * @config
-     */
-    get height(): RtPercentSize {
-        return this._height;
-    }
-    set height(value: RtPercentSize) {
-        if (value !== this._height) {
-            this._heightDim = parsePercentSize(this._height = value, true);
-        }
-    }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getSize(width: number, height: number): ISize {
-        return {
-            width: calcPercent(this._widthDim || this._sizeDim, width, width),
-            height: calcPercent(this._heightDim || this._sizeDim, height, height)
-        };
-    }
-
     getPostion(wDomain: number, hDomain: number, width: number, height: number): IPoint {
         let x: number;
         let y: number
@@ -241,4 +187,77 @@ export class AnnotationCollection {
         g.index = index;
         return g;
     }
+}
+
+/**
+ * Annotation 모델.
+ */
+export abstract class SizableAnnotation extends Annotation {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _width: RtPercentSize;
+    private _height: RtPercentSize;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _widthDim: IPercentSize;
+    private _heightDim: IPercentSize;
+    
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * Annotation 너비.
+     * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
+     * 
+     * @config
+     */
+    get width(): RtPercentSize {
+        return this._width;
+    }
+    set width(value: RtPercentSize) {
+        if (value !== this._width) {
+            this._widthDim = parsePercentSize(this._width = value, true);
+        }
+    }
+    /**
+     * Annotation 높이.
+     * 픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.
+     * 
+     * @config
+     */
+    get height(): RtPercentSize {
+        return this._height;
+    }
+    set height(value: RtPercentSize) {
+        if (value !== this._height) {
+            this._heightDim = parsePercentSize(this._height = value, true);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getSize(width: number, height: number): ISize {
+        return {
+            width: calcPercent(this._widthDim, width),
+            height: calcPercent(this._heightDim, height)
+        };
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
 }

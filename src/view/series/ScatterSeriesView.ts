@@ -11,6 +11,7 @@ import { PathElement, RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { Utils } from "../../common/Utils";
 import { SvgShapes } from "../../common/impl/SvgShape";
+import { Chart } from "../../model/Chart";
 import { PointItemPosition } from "../../model/Series";
 import { ScatterSeries, ScatterSeriesPoint } from "../../model/series/ScatterSeries";
 import { IPointView, MarkerSeriesPointView, MarkerSeriesView, PointLabelView, SeriesView } from "../SeriesView";
@@ -67,6 +68,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
     private $_layoutMarkers(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
+        const polar = (series.chart as Chart).body.getPolar(series);
         const jitterX = series.jitterX;
         const jitterY = series.jitterY;
         const labels = series.pointLabel;
@@ -95,11 +97,15 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
 
                 // m.className = model.getPointStyle(i);
 
-                x = p.xPos = xAxis.getPosition(xLen, xJitter);
-                y = p.yPos = yOrg - yAxis.getPosition(yLen, yJitter);
-                if (inverted) {
-                    x = yAxis.getPosition(yLen, yJitter);
-                    y = yOrg - xAxis.getPosition(xLen, xJitter);
+                if (polar) {
+
+                } else {
+                    x = p.xPos = xAxis.getPosition(xLen, xJitter);
+                    y = p.yPos = yOrg - yAxis.getPosition(yLen, yJitter);
+                    if (inverted) {
+                        x = yAxis.getPosition(yLen, yJitter);
+                        y = yOrg - xAxis.getPosition(xLen, xJitter);
+                    }
                 }
 
                 switch (s) {

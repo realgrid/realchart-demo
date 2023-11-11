@@ -59,6 +59,7 @@ import { ButtonElement } from "../common/ButtonElement";
 import { TextAnnotationView } from "./annotation/TextAnnotationView";
 import { Annotation } from "../model/Annotation";
 import { AnnotationView } from "./annotation/AnnotationView";
+import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -96,6 +97,7 @@ const gauge_types = {
 };
 const annotation_types = {
     'text': TextAnnotationView,
+    'image': ImageAnnotationView,
 }
 
 export function createSeriesView(doc: Document, series: Series): SeriesView<Series> {
