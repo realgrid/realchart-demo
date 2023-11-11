@@ -21,7 +21,8 @@ export class Title extends ChartItem {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * 제목 텍스트
+     * 제목 텍스트.
+     * 
      * @config 
      */
     text = 'Title';

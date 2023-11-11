@@ -77,7 +77,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
 
         // rotation
         if (!isHorz) {
-            this.setRotaion(0, this.height / 2, this._angle);
+            this.setRotation(0, this.height / 2, this._angle);
         } else {
             this.rotation = 0;
         }

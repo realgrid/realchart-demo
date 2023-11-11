@@ -8,7 +8,7 @@
 
 import { isArray, isObject, pickNum, pickNum3 } from "../../common/Common";
 import { IPercentSize, RtPercentSize, assert, calcPercent, ceil, fixnum, parsePercentSize } from "../../common/Types";
-import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick, IAxis } from "../Axis";
+import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick, IAxis, AxisPosition } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { SeriesGroup, SeriesGroupLayout } from "../Series";
 
@@ -504,6 +504,7 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
+        // if (this._runPos === AxisPosition.OPPOSITE) debugger;
         if (isNaN(calcedMin) || isNaN(calcedMax)) {
             return[];
         }

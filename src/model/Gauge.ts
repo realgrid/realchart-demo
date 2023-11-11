@@ -66,10 +66,6 @@ export abstract class GaugeBase extends Widget {
     //-------------------------------------------------------------------------
     abstract _type(): string;
     /**
-     * body가 분할된 경우 분할된 쪽에 표시된다.
-     */
-    side: boolean;
-    /**
      * 게이지 이름.
      * 동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다. 
      * 
@@ -490,7 +486,6 @@ export class GaugeCollection {
         return g;
     }
 }
-
 
 /**
  * 게이지 모델.

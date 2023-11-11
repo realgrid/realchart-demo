@@ -982,6 +982,11 @@
     stroke: none;
 }
 
+/** annotation */
+.rct-text-annotation {
+    font-size: 20px;
+}
+
 /** crosshair */
 .rct-crosshair-line {
     fill: none;

@@ -4,7 +4,9 @@
  */
 const config = {
     type: 'line',
-    options: {},
+    options: {
+        // animatable: false
+    },
     title: "Grid Split Lines",
     split: {
         visible: true,
@@ -27,18 +29,60 @@ const config = {
         ]
     }],
     yAxis: [{
+    }, {
+        row: 1,
+        col: 2,
+        position: 'opposite'
+    }, {
+        row: 2
     }],
     series: [{
         lineType: 'spline',
         pointLabel: true,
+        // visibleInLegend: false,
         data: [7, 11, 9, 7.5, 15.3, 13, 7, 9, 11, 2.5]
     }, {
         xAxis: 1,
+        type: 'bar',
+        lineType: 'spline',
+        pointLabel: true,
+        data: [7, 10, 8, 6.5, 15.3, 13, 10, 9.5, 11.5, 5.5]
+    }, {
+        xAxis: 2,
+        lineType: 'spline',
+        pointLabel: true,
+        data: [7, 10, 8, 6.5, 15.3, 13, 10, 9.5, 11.5, 3.5]
+    }, {
+        lineType: 'spline',
+        yAxis: 1,
+        pointLabel: true,
+        data: [7, 11, 9, 7.5, 15.3, 13, 7, 9, 11, 2.5]
+    }, {
+        xAxis: 1,
+        yAxis: 1,
         lineType: 'spline',
         pointLabel: true,
         data: [7, 10, 8, 6.5, 15.3, 13, 10, 9.5, 11.5, 3.5]
     }, {
         xAxis: 2,
+        yAxis: 1,
+        type: 'area',
+        pointLabel: true,
+        data: [7, 10, 8, 6.5, 15.3, 13, 10, 9.5, 11.5, 3.5]
+    }, {
+        lineType: 'spline',
+        yAxis: 2,
+        pointLabel: true,
+        data: [7, 11, 9, 7.5, 15.3, 13, 7, 9, 11, 2.5]
+    }, {
+        xAxis: 1,
+        yAxis: 2,
+        lineType: 'spline',
+        // pointLabel: true,
+        data: [7, 10, 8, 6.5, 15.3, 13, 10, 9.5, 11.5, 3.5]
+    }, {
+        xAxis: 2,
+        yAxis: 2,
         lineType: 'spline',
         pointLabel: true,
         data: [7, 10, 8, 6.5, 15.3, 13, 10, 9.5, 11.5, 3.5]

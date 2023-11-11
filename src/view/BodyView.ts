@@ -56,6 +56,9 @@ import { WaterfallSeriesView } from "./series/WaterfallSeriesView";
 import { LinearGaugeGroupView, LinearGaugeView } from "./gauge/LinearGaugeView";
 import { BulletGaugeGroupView, BulletGaugeView } from "./gauge/BulletGaugeView";
 import { ButtonElement } from "../common/ButtonElement";
+import { TextAnnotationView } from "./annotation/TextAnnotationView";
+import { Annotation } from "../model/Annotation";
+import { AnnotationView } from "./annotation/AnnotationView";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -81,7 +84,7 @@ const series_types = {
     'treemap': TreemapSeriesView,
     'vector': VectorSeriesView,
     'waterfall': WaterfallSeriesView,
-}
+};
 const gauge_types = {
     'circle': CircleGaugeView,
     'linear': LinearGaugeView,
@@ -90,6 +93,9 @@ const gauge_types = {
     'circlegroup': CircleGaugeGroupView,
     'lineargroup': LinearGaugeGroupView,
     'bulletgroup': BulletGaugeGroupView,
+};
+const annotation_types = {
+    'text': TextAnnotationView,
 }
 
 export function createSeriesView(doc: Document, series: Series): SeriesView<Series> {
@@ -732,10 +738,16 @@ export class BodyView extends ChartElement<Body> {
     protected _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
     private _series: Series[];
+    // annotations
+    private _annotationContainer: LayerElement;
+    private _frontAnnotationContainer: LayerElement;
+    private _annotationViews: AnnotationView<Annotation>[] = [];
+    private _annotationMap = new Map<Annotation, AnnotationView<Annotation>>();
+    private _annotations: Annotation[];
+    // guides
     private _gaugeViews: GaugeView<GaugeBase>[] = [];
     private _gaugeMap = new Map<GaugeBase, GaugeView<GaugeBase>>();
     private _gauges: GaugeBase[];
-    // guides
     _guideContainer: AxisGuideContainer;
     _frontGuideContainer: AxisGuideContainer;
     // axis breaks
@@ -764,10 +776,12 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._image = new ImageElement(doc, 'rct-body-image'));
         this.add(this._gridContainer = new LayerElement(doc, 'rct-grids'));
         this.add(this._guideContainer = new AxisGuideContainer(doc, 'rct-guides'));
+        this.add(this._annotationContainer = new LayerElement(doc, 'rct-annotations'));
         this.add(this._seriesContainer = new LayerElement(doc, 'rct-series-container'));
         this.add(this._axisBreakContainer = new LayerElement(doc, 'rct-axis-breaks'));
         this.add(this._labelContainer = new LayerElement(doc, 'rct-label-container'));
         this.add(this._frontGuideContainer = new AxisGuideContainer(doc, 'rct-front-guides'));
+        this.add(this._frontAnnotationContainer = new LayerElement(doc, 'rct-front-annotations'));
         this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
         this.add(this._zoomButton = new ZoomButton(doc));
         
@@ -777,11 +791,12 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepareSeries(doc: Document, chart: IChart): void {
+    prepareRender(doc: Document, chart: IChart): void {
         this._animatable = RcControl._animatable && chart.animatable();
 
         this._prepareSeries(doc, chart, chart._getSeries().getVisibleSeries());
         this._prepareGauges(doc, chart, chart._getGauges().getVisibles());
+        this.$_prepareAnnotations(doc, chart, chart.body.getAnnotations());
     }
 
     prepareGuideContainers(): void {
@@ -918,6 +933,11 @@ export class BodyView extends ChartElement<Body> {
             v.measure(doc, this._gauges[i], hintWidth, hintHeight, phase);
         });
 
+        // annotations
+        this._annotationViews.forEach((v, i) => {
+            v.measure(doc, this._annotations[i], hintWidth, hintHeight, phase);
+        });
+
         // zoom button
         if (this._zoomButton.setVisible(model.zoomButton.isVisible())) {
             this._zoomButton.layout();
@@ -987,7 +1007,13 @@ export class BodyView extends ChartElement<Body> {
             // this._owner.clipSeries(v.getClipContainer(), 0, 0, w, h, v.invertable());
             v.resizeByMeasured();
             v.layout().translatep(v.getPosition(w, h));
-        })
+        });
+
+        // annotations
+        this._annotationViews.forEach(v => {
+            v.resizeByMeasured();
+            v.layout().translatep(v.model.getPostion(w, h, v.width, v.height));
+        });
 
         // zoom button
         if (this._zoomButton.visible) {
@@ -1000,6 +1026,10 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     private $_createGaugeView(doc: Document, gauge: GaugeBase): GaugeView<Gauge> {
         return new gauge_types[gauge._type()](doc);
+    }
+
+    private $_createAnnotationView(doc: Document, annotation: Annotation): AnnotationView<Annotation> {
+        return new annotation_types[annotation._type()](doc);
     }
 
     private $_prepareGrids(doc: Document, chart: Chart): void {
@@ -1080,7 +1110,31 @@ export class BodyView extends ChartElement<Body> {
             map.set(g, v);
             views.push(v);
             v.prepareGauge(doc, g);
-        })
+        });
+    }
+
+    private $_prepareAnnotations(doc: Document, chart: IChart, annotations: Annotation[]): void {
+        const container = this._annotationContainer;
+        const map = this._annotationMap;
+        const views = this._annotationViews;
+
+        for (const a of map.keys()) {
+            if (annotations.indexOf(a) < 0) {
+                map.delete(a);
+            }
+        }
+
+        views.forEach(v => v.remove());
+        views.length = 0;
+
+        (this._annotations = annotations).forEach(a => {
+            const v = map.get(a) || this.$_createAnnotationView(doc, a);
+
+            container.add(v);
+            map.set(a, v);
+            views.push(v);
+            // v.prepare(doc, a);
+        });
     }
 
     private $_prepareAxisBreaks(doc: Document, chart: IChart): void {

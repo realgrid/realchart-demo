@@ -6,7 +6,7 @@
 const config = {
     options: {
     },
-    title: "Axis Guides",
+    title: "Annotations",
     legend: true,
     xAxis: {
         // type: 'category',
@@ -19,23 +19,7 @@ const config = {
     },
     yAxis: {
         tick: true,
-        title: 'Y Axis',
-        guides: [{
-            type: 'line',
-            value: 12,
-            label: 'line guide'
-        }, {
-            type: 'range',
-            start: 3,
-            end: 6,
-            label: {
-                text: 'range guide',
-                align: 'right',
-                style: {
-                    fill: 'red'
-                }
-            }
-        }]
+        title: 'Y Axis'
     },
     series: {
         pointLabel: {
@@ -58,8 +42,26 @@ const config = {
         style: {
             // fill: 'yellow'
         }
+    },
+    body: {
+        annotations: [{
+            offsetX: 30,
+            offsetY: 40,
+            rotation: -20,
+            text: 'Annotation Sample',
+            style: {
+                padding: '3px 5px',
+                fill: 'white'
+            },
+            backgroundStyle: {
+                fill: '#33f',
+                rx: 5,
+                fillOpacity: 0.7
+            }
+        }]
     }
 }
+
 let chart;
 
 function setActions(container) {

@@ -405,7 +405,6 @@ export class ChartView extends LayerElement {
     //-------------------------------------------------------------------------
     private _model: Chart;
     _inverted = false;   // bar 시리즈 계열이 포함되면 true, x축이 수직, y축이 수평으로 그려진다.
-    _splitted = false;
 
     _emptyView: EmptyView;
     private _titleSectionView: TitleSectionView;
@@ -490,10 +489,9 @@ export class ChartView extends LayerElement {
         let sz: ISize;
 
         this._inverted = m.isInverted();
-        this._splitted = m._splitted;
 
         // body
-        if (m.split.visible) {
+        if (m.isSplitted()) {
             this._plotContainer.setVisible(false);
             this._paneContainer.setVisible(true);
             this.$_preparePanes(doc);
@@ -1062,7 +1060,7 @@ export class ChartView extends LayerElement {
             this._bodyView.setVisible(true);
             this._currBody = this._bodyView;
         }
-        this._currBody.prepareSeries(doc, this._model);
+        this._currBody.prepareRender(doc, this._model);
     }
 
     private $_prepareAxes(doc: Document, m: Chart): void {
@@ -1095,7 +1093,6 @@ export class ChartView extends LayerElement {
             }
         }
 
-        const splitted = m._splitted;
         const wSave = w;
         const hSave = h;
         let wCenter = 0;

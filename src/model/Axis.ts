@@ -908,7 +908,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     prepareRender(): void {
         this._isHorz = this.chart.isInverted() ? !this._isX : this._isX;
-        this._isBetween = (this.chart.split.visible || this.chart._splitted) && this.position === AxisPosition.BETWEEN && this._isX;
+        this._isBetween = this.chart.isSplitted() && this.position === AxisPosition.BETWEEN && this._isX;
         this._isOpposite = this.position === AxisPosition.OPPOSITE;
 
         this._doPrepareRender();
@@ -925,7 +925,7 @@ export abstract class Axis extends ChartItem implements IAxis {
 
         // clustering (x축에서만 가능)
         if (this._isX && series.length > 0) {
-            if (this.chart.split.visible) {
+            if (this.chart.isSplitted()) {
                 const rows: number[] = [series[0]._row];
 
                 for (let i = 1; i < series.length; i++) {
@@ -1050,7 +1050,8 @@ export abstract class Axis extends ChartItem implements IAxis {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doLoadProp(prop: string, value: any): boolean {
-        if (prop === 'guide') {
+        if (prop === 'guide' || prop === 'guides') {
+            this.guides.length = 0;
             if (isArray(value)) this.$_loadGuides(value);
             else if (isObject(value)) this.$_loadGuides([value]);
             return true;
@@ -1344,7 +1345,7 @@ export abstract class PaneAxisMatrix {
             mat.forEach((m, i) => {
                 m._axes.forEach(axis => {
                     if (!axis.isBased()) {
-                        axis.buildTicks(lens[i]);
+                        axis.buildTicks(lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i]);
                     }
                 });
             });
@@ -1353,7 +1354,7 @@ export abstract class PaneAxisMatrix {
             mat.forEach((m, i) => {
                 m._axes.forEach(axis => {
                     if (axis.isBased()) {
-                        axis.buildTicks(lens[i]);
+                        axis.buildTicks(lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i]);
                     }
                 });
             });
@@ -1364,7 +1365,7 @@ export abstract class PaneAxisMatrix {
         this._matrix.forEach(mat => {
             mat.forEach((m, i) => {
                 m._axes.forEach(axis => {
-                    axis.calcPoints(lens[i], phase);
+                    axis.calcPoints(lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i], phase);
                 });
             });
         })

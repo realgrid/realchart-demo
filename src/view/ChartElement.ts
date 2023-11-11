@@ -155,13 +155,22 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
         // TODO: 캐쉬!
         const cs = getComputedStyle(this.dom);
         const padding = this._paddings;
-        const margin = this._margins;
 
         padding.applyPadding(cs);
-        margin.applyMargin(cs);
 
-        this.mw = sz.width += margin.left + margin.right + padding.left + padding.right;
-        this.mh = sz.height += margin.top + margin.bottom + padding.top + padding.bottom;
+        sz.width += padding.left + padding.right;
+        sz.height += padding.top + padding.bottom;
+
+        if (this._marginable()) {
+            const margin = this._margins;
+
+            margin.applyMargin(cs);
+            this.mw = sz.width += margin.left + margin.right;
+            this.mh = sz.height += margin.top + margin.bottom;
+        
+        }
+        this.mw = sz.width;
+        this.mh = sz.height;
         return sz;
     }
 
@@ -169,15 +178,18 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
         super.layout(param);
 
         // background
-        const margin = this._margins;
+        if (this._marginable()) {
+            const margin = this._margins;
 
-        this._background.setBounds(
-            margin.left + this._getBackOffset(), 
-            margin.top, 
-            this.width - margin.left - margin.right,
-            this.height - margin.top - margin.bottom
-        );
-
+            this._background.setBounds(
+                margin.left + this._getBackOffset(), 
+                margin.top, 
+                this.width - margin.left - margin.right,
+                this.height - margin.top - margin.bottom
+            );
+        } else {
+            this._background.setBounds(0, 0, this.width, this.height);
+        }
         return this;
     }
 
@@ -186,6 +198,10 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     //-------------------------------------------------------------------------
     protected abstract _setBackgroundStyle(back: RectElement): void;
     
+    protected _marginable(): boolean {
+        return true;
+    }
+
     protected _getBackOffset(): number {
         return 0;
     }

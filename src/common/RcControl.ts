@@ -746,8 +746,7 @@ export class RcElement extends RcObject {
             this._updateTransform();
         }
     }
-
-    setRotaion(originX: number, originY: number, rotation: number): RcElement {
+    setRotation(originX: number, originY: number, rotation: number): RcElement {
         if (originX !== this._originX || originY !== this._originY || rotation !== this._rotation) {
             this._originX = originX;
             this._originY = originY;;

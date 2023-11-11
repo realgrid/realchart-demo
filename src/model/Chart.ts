@@ -51,13 +51,11 @@ import { LinearGauge, LinearGaugeGroup } from "./gauge/LinearGauge";
 import { BulletGauge, BulletGaugeGroup } from "./gauge/BulletGauge";
 import { SeriesNavigator } from "./SeriesNavigator";
 import { Split } from "./Split";
+import { TextAnnotation } from "./annotation/TextAnnotation";
 
 export interface IChart {
     type: string;
     gaugeType: string;
-    _splitted: boolean;
-    _splits: number[];
-    // series2: ISeries;
     _xPaneAxes: XPaneAxisMatrix;
     _yPaneAxes: YPaneAxisMatrix;
     options: ChartOptions;
@@ -76,6 +74,7 @@ export interface IChart {
     isGauge(): boolean;
     isPolar(): boolean;
     isInverted(): boolean;
+    isSplitted(): boolean;
     animatable(): boolean;
     startAngle(): number;
 
@@ -89,6 +88,7 @@ export interface IChart {
     _getAxisType(type: string): any;
     _getGaugeType(type: string): any;
     _getGaugeGroupType(type: string): any;
+    _getAnnotationType(type: string): any;
     _getSeries(): PlottingItemCollection;
     _getGauges(): GaugeCollection;
     _getXAxes(): AxisCollection;
@@ -148,14 +148,14 @@ const axis_types = {
     'time': TimeAxis,
     'date': TimeAxis,
     'log': LogAxis,
-}
+};
 
 const gauge_types = {
     'circle': CircleGauge,
     'linear': LinearGauge,
     'bullet': BulletGauge,
     'clock': ClockGauge,
-}
+};
 const gauge_group_types = {
     'circle': CircleGaugeGroup,
     'linear': LinearGaugeGroup,
@@ -163,7 +163,11 @@ const gauge_group_types = {
     'circlegroup': CircleGaugeGroup,
     'lineargroup': LinearGaugeGroup,
     'bulletgroup': BulletGaugeGroup,
-}
+};
+
+const annotation_type = {
+    'text': TextAnnotation,
+};
 
 export class Credits extends ChartItem {
 
@@ -310,9 +314,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _body: Body;
     private _navigator: SeriesNavigator;
 
-    _splitted: boolean;
-    _splits: number[];
     private _inverted: boolean;
+    private _splitted: boolean;
     private _polar: boolean;
     private _gaugeOnly: boolean;
     colors: string[];
@@ -510,6 +513,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._inverted;
     }
 
+    isSplitted(): boolean {
+        return this._splitted;
+    }
+
     isEmpty(): boolean {
         return this._series.isEmpty() && this._gauges.count === 0;
     }
@@ -699,6 +706,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         })
 
         this._inverted = !this._polar && this.inverted;
+        this._splitted = split.visible;
         
         xAxes.disconnect();
         yAxes.disconnect();
@@ -715,7 +723,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         xAxes.prepareRender();
         yAxes.prepareRender();
 
-        if (split.visible && !this._gaugeOnly) {
+        if (this._splitted && !this._gaugeOnly) {
             // split
             split.prepareRender();
 
@@ -732,6 +740,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         // gauges
         this._gauges.prepareRender();
+
+        // body
+        this._body.prepareRender();
 
         // navigator
         this._navigator.visible && this._navigator.prepareRender();
@@ -802,6 +813,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     _getGaugeGroupType(type: string): any {
         return isString(type) && gauge_group_types[type.toLowerCase()];
+    }
+    
+    _getAnnotationType(type: string): any {
+        return isString(type) && annotation_type[type.toLowerCase()];
     }
 
     getAxesGap(): number {

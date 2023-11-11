@@ -6,8 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../common/Common";
+import { isArray, isObject, pickNum } from "../common/Common";
 import { DEG_RAD, IPercentSize, ORG_ANGLE, PI_2, RtPercentSize, _undefined, calcPercent, parsePercentSize } from "../common/Types";
+import { Annotation, AnnotationCollection } from "./Annotation";
 import { AxisGuide } from "./Axis";
 import { IChart } from "./Chart";
 import { BackgroundImage, ChartItem } from "./ChartItem";
@@ -89,12 +90,15 @@ export class Body extends ChartItem {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _annotations: AnnotationCollection;
+
     private _radiusDim: IPercentSize;
     private _cxDim: IPercentSize;
     private _cyDim: IPercentSize;
 
-    _guides: AxisGuide[] = [];
-    _frontGuides: AxisGuide[] = [];
+    // _guides: AxisGuide[] = [];
+    // _frontGuides: AxisGuide[] = [];
+
     private _rd: number;
     private _cx: number;
     private _cy: number;
@@ -104,6 +108,8 @@ export class Body extends ChartItem {
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
         super(chart);
+
+        this._annotations = new AnnotationCollection(this);
 
         this.radius = '45%';
         this.centerX = '50%';
@@ -230,19 +236,29 @@ export class Body extends ChartItem {
         return this.chart._getXAxes().isZoomed() || this.chart._getYAxes().isZoomed();
     }
 
+    getAnnotations(): Annotation[] {
+        return this._annotations.getVisibles();
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doLoadProp(prop: string, value: any): boolean {
+        if (prop === 'annotations' || prop === 'annotation') {
+            if (isArray(value)) this.$_loadAnnotations(value);
+            else if (isObject(value)) this.$_loadAnnotations([value]);
+            return true;
+        }
+    }
+
     protected _doPrepareRender(chart: IChart): void {
-        super._doPrepareRender(chart);
+        this._annotations.prepareRender();
+    }
 
-        const guides = this._guides = [];
-        const frontGuides = this._frontGuides = [];
-
-        chart._getXAxes().forEach(axis => {
-            axis.guides.forEach(g => {
-                g.front ? frontGuides.push(g) : guides.push(g);
-            })
-        });
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_loadAnnotations(source: any[]): void {
+        this._annotations.load(source);
     }
 }
