@@ -128,7 +128,7 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
             const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
             const wUnit = xAxis.getUnitLength(Math.PI * 2, p.xValue);
             const wPoint = series.getPointWidth(wUnit);
-            const a = polar.start + xAxis.getPosition(PI_2, p.xValue);
+            const a = polar.start + xAxis.getPosition(PI_2 * polar.rd, p.xValue);
     
             view.setSector({
                 cx: polar.cx, 

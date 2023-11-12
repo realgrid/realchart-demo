@@ -246,7 +246,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const yLen = inverted ? width : height;
-        const xLen = inverted ? height : width;
+        const xLen = polar ? polar.rd * PI_2 : inverted ? height : width;
         const yOrg = height;
 
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
@@ -255,7 +255,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             let py: number;
 
             if (polar) {
-                const a = polar.start + xAxis.getPosition(PI_2, p.xValue);
+                const a = polar.start + xAxis.getPosition(xLen, p.xValue);
                 const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
 
                 px = p.xPos = polar.cx + y * Math.cos(a);

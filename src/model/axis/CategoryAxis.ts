@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isString, pickNum, pickNum3 } from "../../common/Common";
+import { PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { Axis, AxisGrid, AxisTick, AxisLabel, IAxisTick } from "../Axis";
 import { IPlottingItem } from "../Series";
@@ -318,15 +319,22 @@ export class CategoryAxis extends Axis {
             pts[i] *= length;
         }
 
-        const tick = this.tick as CategoryAxisTick;
-        let markPoints: number[];
-
-        if (tick.getPosition() === CategoryTickPosition.EDGE) {
-            markPoints = pts.slice(1, pts.length - 1);
+        if (this._isPolar) {
+            if (phase > 0) {
+                // getPosition()에서 바로 각도를 리턴할 수 있도록...
+                this._pts = pts.map(t => t / length * PI_2);
+            }
         } else {
-            markPoints = this._ticks.map(t => t.pos);
+            const tick = this.tick as CategoryAxisTick;
+            let markPoints: number[];
+
+            if (tick.getPosition() === CategoryTickPosition.EDGE) {
+                markPoints = pts.slice(1, pts.length - 1);
+            } else {
+                markPoints = this._ticks.map(t => t.pos);
+            }
+            this._markPoints = markPoints;
         }
-        this._markPoints = markPoints;
     }
 
     getPosition(length: number, value: number, point = true): number {
@@ -335,7 +343,13 @@ export class CategoryAxis extends Axis {
         if (point) value += 0.5;//this._step / 2;
         const v = Math.floor(value);
         const p = this._pts[v + 1] + (this._pts[v + 2] - this._pts[v + 1]) * (value - v);
-        return this.reversed ? length - p : p;
+
+        // if (this._isPolar) {
+        //     // length는 원주, 각도를 리턴한다.
+        //     return p / length * PI_2;
+        // } else {
+            return this.reversed ? length - p : p;
+        // }
     }
 
     getValueAt(length: number, pos: number): number {
@@ -351,6 +365,7 @@ export class CategoryAxis extends Axis {
 
     getUnitLength(length: number, value: number): number {
         const v = Math.floor(value - this._min);
+
         return (this._pts[v + 2] - this._pts[v + 1]);
     }
 

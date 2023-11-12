@@ -63,7 +63,8 @@ export class ContinuousAxisTick extends AxisTick {
         } else if (this.stepInterval > 0) {
             pts = this._getStepsByInterval(this.stepInterval, base, min, max);
         } else if (this.stepPixels > 0) {
-            pts = this._getStepsByPixels(length, (this.axis?._isPolar ? 0.5 : 1) * this.stepPixels, base, min, max);
+            pts = this._getStepsByPixels(length, (this.axis?._isPolar && !this.axis?._isX ? 0.5 : 1) * this.stepPixels, base, min, max);
+            // pts = this._getStepsByPixels(length, this.stepPixels, base, min, max);
         } else {
             pts = min !== max ? [min, max] : [min];
         }

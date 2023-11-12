@@ -9,11 +9,13 @@
 import { ElementPool } from "../common/ElementPool";
 import { LayerElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
+import { PI_2 } from "../common/Types";
 import { CircleElement, CircumElement } from "../common/impl/CircleElement";
 import { LineElement, PolygonElement, PolylineElement } from "../common/impl/PathElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { Axis, AxisTick, IAxisTick } from "../model/Axis";
 import { Body } from "../model/Body";
+import { ContinuousAxis } from "../model/axis/LinearAxis";
 import { BodyView, IPlottingOwner } from "./BodyView";
 
 class PolarAxisTickMarkView extends RcElement {
@@ -168,11 +170,13 @@ class PolarXAxisView extends PolarAxisView {
     protected _doLayout(axis: Axis, cx: number, cy: number, rd: number, ticks: IAxisTick[], other: Axis): void {
         const start = axis.chart.startAngle();
 
+        ticks.forEach(tick => tick.pos = tick.pos / rd);
+
         // grid lines
         if (this._gridContainer.visible) {
             this._gridLines.forEach((view, i) => {
                 const tick = ticks[i];
-                const p = tick.pos * Math.PI * 2;
+                const p = tick.pos;
                 const x = cx + Math.cos(start + p) * rd;
                 const y = cy + Math.sin(start + p) * rd;
     
@@ -192,7 +196,7 @@ class PolarXAxisView extends PolarAxisView {
                 view.text = tick.label;
     
                 const r = view.getBBounds();
-                const p = tick.pos * Math.PI * 2;
+                const p = tick.pos;
                 const x = cx + Math.cos(start + p) * (rd2 + r.width / 2);
                 const y = cy + Math.sin(start + p) * (rd2 + r.height / 2);
     
@@ -208,7 +212,7 @@ class PolarXAxisView extends PolarAxisView {
                 const pts: number[] = [];
 
                 ticks.forEach(tick => {
-                    const p = tick.pos * Math.PI * 2;
+                    const p = tick.pos;
                     pts.push(cx + Math.cos(start + p) * rd, cy + Math.sin(start + p) * rd);
                 });
                 (this._lineView as PolylineElement).setPoints(...pts);

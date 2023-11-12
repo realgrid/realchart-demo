@@ -1205,10 +1205,16 @@ export class ChartView extends LayerElement {
     private $_measurePolar(doc: Document, m: Chart, w: number, h: number, phase: number): void {
         const body = m.body;
         const rd = body.calcRadius(w, h);
+        const wPolar = Math.PI * 2 * rd;
+        const hPolar = rd;
 
         // axes
         this.$_prepareAxes(doc, m);
-        m.layoutAxes(Math.PI * 2, rd, false, phase);
+        // m.layoutAxes(Math.PI * 2, rd, false, phase);
+        m.layoutAxes(wPolar, hPolar, false, phase);
+        // m.layoutAxes(rd, rd, false, phase);
+
+        m.calcAxesPoints(wPolar, hPolar, false);
 
         // body
         this._polarView.measure(doc, m.body, w, h, phase);

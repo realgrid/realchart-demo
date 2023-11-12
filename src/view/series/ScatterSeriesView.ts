@@ -9,6 +9,7 @@
 import { ElementPool } from "../../common/ElementPool";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
+import { PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Chart } from "../../model/Chart";
@@ -17,14 +18,13 @@ import { ScatterSeries, ScatterSeriesPoint } from "../../model/series/ScatterSer
 import { IPointView, MarkerSeriesPointView, MarkerSeriesView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class MarkerView extends MarkerSeriesPointView<ScatterSeriesPoint> {
-}
-
 export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _polar: any;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -45,7 +45,13 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
     }
 
     protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.slide(this);
+        if (firstTime) {
+            if (this._polar) {
+                SeriesAnimation.grow(this);
+            } else {
+                SeriesAnimation.slide(this);
+            }
+        }
     }
 
     private $_prepareMarkers(model: ScatterSeries, points: ScatterSeriesPoint[]): void {
@@ -65,10 +71,15 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
         return PointItemPosition.OUTSIDE;
     }
 
+    protected _doViewRateChanged(rate: number): void {
+        this.$_layoutMarkers(this.width, this.height);
+    }
+
     private $_layoutMarkers(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
-        const polar = (series.chart as Chart).body.getPolar(series);
+        const polar = this._polar = (series.chart as Chart).body.getPolar(series);
+        const vr = polar ? this._getViewRate() : 1;
         const jitterX = series.jitterX;
         const jitterY = series.jitterY;
         const labels = series.pointLabel;
@@ -88,7 +99,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
 
             if (mv.setVisible(!p.isNull)) {
                 const s = series.shape;
-                const sz = series.radius;
+                const sz = series.radius * vr;
                 const xJitter = Utils.jitter(p.xValue, jitterX);
                 const yJitter = Utils.jitter(p.yGroup, jitterY);
                 let path: (string | number)[];
@@ -98,7 +109,11 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                 // m.className = model.getPointStyle(i);
 
                 if (polar) {
-
+                    const a = polar.start + xAxis.getPosition(PI_2, xJitter);
+                    const py = yAxis.getPosition(polar.rd, yJitter) * vr;
+    
+                    x = p.xPos = polar.cx + py * Math.cos(a);
+                    y = p.yPos = polar.cy + py * Math.sin(a);
                 } else {
                     x = p.xPos = xAxis.getPosition(xLen, xJitter);
                     y = p.yPos = yOrg - yAxis.getPosition(yLen, yJitter);
