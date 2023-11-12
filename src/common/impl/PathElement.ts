@@ -37,7 +37,7 @@ export class LineElement extends PathElement {
     constructor(doc: Document, styleName: string = _undefined, line: ILine = _undefined) {
         super(doc, styleName);
 
-        this.setAttr('shapeRendering', 'cripsEdges');
+        // this.setAttr('shapeRendering', 'cripsEdges');
         line && this.setLine(line);
     }
 
@@ -60,11 +60,11 @@ export class LineElement extends PathElement {
     }
 
     setVLineC(x: number, y1: number, y2: number): void {
-        // const w = parseFloat(this.getStyle('stroke-width'));
+        const w = parseFloat(this.getStyle('stroke-width'));
 
-        // if (!isNaN(w)) {
-        //     x = Math.round(x) - (w % 2 / 2);
-        // }
+        if (!isNaN(w)) {
+            x = Math.round(x) - (w % 2 / 2);
+        }
         this.setPath(SvgShapes.line(x, y1, x, y2));
     }
 
@@ -73,11 +73,11 @@ export class LineElement extends PathElement {
     }
 
     setHLineC(y: number, x1: number, x2: number): void {
-        // const w = parseFloat(this.getStyle('stroke-width'));
+        const w = parseFloat(this.getStyle('stroke-width'));
         
-        // if (!isNaN(w)) {
-        //     y = Math.round(y) - (w % 2 / 2);
-        // }
+        if (!isNaN(w)) {
+            y = Math.round(y) - (w % 2 / 2);
+        }
         this.setPath(SvgShapes.line(x1, y, x2, y));
     }
 }
@@ -196,13 +196,41 @@ export class LineElementEx extends PathElement {
     }
 }
 
-
-export class ArcElement extends PathElement {
+export class PolygonElement extends PathElement {
 
     //-------------------------------------------------------------------------
-    // constructors
+    // methods
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string, cx: number, cy: number, r: number, start: number, end: number) {
-        super(doc, styleName, SvgShapes.arc(cx, cy, r, r, start, end));
+    setPoints(...pts: number[]): void {
+        this.setPath(SvgShapes.lines(...pts))
+    }
+}
+
+export class PolylineElement extends PathElement {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, styleName?: string) {
+        super(doc, styleName);
+
+        this.setStyle('fill', 'none');
+    }
+    
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setPoints(...pts: number[]): void {
+        this.setPath(SvgShapes.lines(...pts))
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    resetStyles(styles: any): boolean {
+        const r = super.resetStyles(styles);
+
+        this.setStyle('fill', 'none');
+        return r;
     }
 }

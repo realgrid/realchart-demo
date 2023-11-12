@@ -1,0 +1,98 @@
+## gauge[type=bullet]
+bullet 게이지 모델.
+현재 값을 목표 값과 비교해서 표시한다.
+또, 여러 값 범위 중 어디에 속한 상태인 지를 나타낸다.
+## Properties
+
+### [actualBar](./bullet/actualBar)
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
+
+  
+
+### animatable: `boolean{:js}`[#animatable]
+value  변화를 애니메이션으로 표현한다.  
+`default: true`  
+
+### [band](./bullet/band)
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
+
+  
+
+### duration: `number{:js}`[#duration]
+Animation duration.  
+`default: 500`  
+
+### [label](./bullet/label)
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
+
+  
+
+### maxValue: `number{:js}`[#maxValue]
+최대값.
+group에 포함되면 이 값 대신 group의 최대값이 사용된다.  
+`default: 100`  
+
+### minValue: `number{:js}`[#minValue]
+최소값.
+group에 포함되면 이 값 대신 group의 최소값이 사용된다.  
+`default: 0`  
+
+### name: `string{:js}`[#name]
+게이지 이름.
+동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다.  
+
+### ranges: `IValueRange[]{:js}`[#ranges]
+값 범위 목록.
+범위별로 다른 스타일을 적용할 수 있다.  
+
+### reversed: `boolean{:js}`[#reversed]
+true면 반대 방향으로 표시한다.  
+`default: false`  
+
+### [scale](./bullet/scale)
+Gauge scale.  
+
+### style: `SVGStyles | string{:js}`[#style]
+스타일셋 혹은 class selector.  
+
+### [targetBar](./bullet/targetBar)
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
+
+  
+
+### targetValue: `number{:js}`[#targetValue]
+목표 값.  
+
+### value: `number{:js}`[#value]
+현재값.  
+`default: 0`  
+
+### vertical: `boolean{:js}`[#vertical]
+true면 수직으로 표시한다.  
+
+### bottom: `string | number{:js}`[#bottom]
+plot 영역의 아래쪽 모서리와 widget 사이의 간격.  
+
+### height: `string | number{:js}`[#height]
+게이지 높이.
+픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.  
+
+### left: `string | number{:js}`[#left]
+plot 영역의 왼쪽 모서리와 widget 사이의 간격.  
+
+### right: `string | number{:js}`[#right]
+plot 영역의 오른쪽 모서리와 widget 사이의 간격.  
+
+### size: `string | number{:js}`[#size]
+width 와  height 를 동시에 설정한다.  
+
+### top: `string | number{:js}`[#top]
+plot 영역의 위쪽 모서리와 widget 사이의 간격.  
+
+### visible: `boolean{:js}`[#visible]
+표시 여부.\  
+`default: true`  
+
+### width: `string | number{:js}`[#width]
+게이지 너비.
+픽셀 단위의 고정 값이나, plot 영역에 대한 상태 크기롤 지정할 수 있다.  

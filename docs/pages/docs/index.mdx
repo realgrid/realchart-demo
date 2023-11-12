@@ -1,0 +1,54 @@
+# RealChart API 개요
+
+RealChart 웹 컴포넌트 라이브러리는 기본적으로 차트 구성 설정을 준비해서 차트 컴포넌트를 생성하고 표시한다.
+
+```js
+const config = {
+    series: {},
+    xAxis: {},
+    yAxis: {},
+    // ...
+}
+const chart = RealChart.createChart(document, 'realchart', config);
+```
+
+많은 경우 차트를 화면에 표시하는 것으로 완료될 수 있지만,
+차트에 연결한 데이터가 변경되는 등, 실행 시간 중 차트의 상태를 동적으로 변경할 필요가 있다.
+RealChart는 실행 시간 차트의 상태를 변경하거나 확인할 수 있는 API를 제공한다.
+
+차트를 구성하는 각 요소는 최상위 객체인 [차트컨트롤](docs/api/classes/RcChartControl)로 부터 요소에 해당하는 클래스의 객체로 가져올 수 있다.
+
+```js
+const axis = chart.xAxis;   // 첫번째 x축 모델.
+```
+
+또, 차트컨트롤에서 가져온 상위 모델 객체 등은 하위 요소 객체를 가지고 있을 수 있다.
+
+```js
+const title = axis.title;   // 축 타이틀 모델.
+```
+
+각 모델 객체들은 모델을 구성하는 [설정 속성](/config)들을 가지고 있는데,
+속성(들)의 값을 가져오거나 설정하는 공통 메소드를 제공한다.
+
+```js
+console.log(axis.title.get('text'));    // 축 타이틀 텍스트를 가져온다.
+
+axis.title.set('text', 'Chart Title');  // 축 타이틀 텍스트를 재설정한다.
+
+// 또는 여러 속성을 한꺼번에 설정할 수도 있다.
+axis.title.setAll({
+    text: 'Chart Title',
+    style: {
+        fill: 'blue'
+    }
+});
+```
+
+차트컨트롤을 제외한 API의 모는 객체가 계승하는 [RcChartObject](/docs/api/classes/RcChartObject)의 공통 메소드로서,
+자세한 내용은\
+[get](/docs/api/classes/RcChartObject#get),
+[set](/docs/api/classes/RcChartObject#set),
+[setAll](/docs/api/classes/RcChartObject#setall),
+[toggle](/docs/api/classes/RcChartObject#toggle)\
+페이지를 참조한다.

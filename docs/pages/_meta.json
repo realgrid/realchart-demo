@@ -1,0 +1,35 @@
+{
+  "*": {
+    "type": "page"
+  },
+  "index": {
+    "type": "page",
+    "title": "RealChart",
+    "display": "hidden",
+    "theme": {
+      "layout": "raw"
+    }
+  },
+  "demo": {
+    "title": "데모",
+    "type":"page"
+  },
+  "config": {
+    "title": "Config",
+    "type":"page"
+  },
+  "guide": {
+    "title": "가이드",
+    "type":"page"
+  },
+  "docs": {
+    "title": "API",
+    "type":"page"
+  },
+  "pricing": {
+    "title": "구입문의",
+    "type": "page",
+    "href": "https://www.realgrid.com",
+    "newWindow": true
+  }
+}

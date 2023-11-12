@@ -53,7 +53,7 @@ class StickView extends GroupElement implements IPointView {
         this._tickClose.setHLine(yClose, x, this.width);
         this._bar.setVLine(x, y, y + h);
         //this._bar.setBounds(0, Math.min(yClose, yOpen), w, Math.max(1, Math.abs(yOpen - yClose)));
-        this._bar.setStyleName(p.close < p.open ? 'rct-ohlc-point-bar-fall' : 'rct-ohlc-point-bar')
+        this._bar.setClass(p.close < p.open ? 'rct-ohlc-point-bar-fall' : 'rct-ohlc-point-bar')
     }
 
     //-------------------------------------------------------------------------
@@ -95,7 +95,7 @@ export class OhlcSeriesView extends RangedSeriesView<OhlcSeries> {
     }
 
     protected _preparePointViews(doc: Document, model: OhlcSeries, points: OhlcSeriesPoint[]): void {
-        this.$_prepareSticks(points);
+        this.$_prepareSticks(model, points);
     }
 
     protected _layoutPointView(view: StickView, index: number, x: number, y: number, wPoint: number, hPoint: number): void {
@@ -106,11 +106,11 @@ export class OhlcSeriesView extends RangedSeriesView<OhlcSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_prepareSticks(points: OhlcSeriesPoint[]): void {
+    private $_prepareSticks(model: OhlcSeries, points: OhlcSeriesPoint[]): void {
         this._sticks.prepare(points.length, (box, i) => {
             const p = box.point = points[i];
 
-            this._setPointStyle(box, p);
+            this._setPointStyle(box, model, p);
         })
     }
 

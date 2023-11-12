@@ -7,12 +7,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp } from "../../common/Common";
+import { RcElement } from "../../common/RcControl";
 import { SVGStyleOrClass, StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
-import { MarerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
+import { LegendItem } from "../Legend";
+import { MarkerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
+import { LineLegendMarkerView } from "./legend/LineLegendMarkerView";
 
 export class LineSeriesPoint extends DataPoint {
 
@@ -24,7 +27,7 @@ export class LineSeriesPoint extends DataPoint {
 }
 
 /**
- * @config chart.series[type=line|area|arearange].marker
+ * 데이터 포인트 maker 설정 정보.
  */
 export class LineSeriesMarker extends SeriesMarker {
 
@@ -40,36 +43,38 @@ export class LineSeriesMarker extends SeriesMarker {
      * 
      * @config
      */
-    firstVisible = MarerVisibility.DEFAULT;
+    firstVisible = MarkerVisibility.DEFAULT;
     /**
      * 첫번째 point의 marker 표시 여부.
      * 
      * @config
      */
-    lastVisible = MarerVisibility.DEFAULT;
+    lastVisible = MarkerVisibility.DEFAULT;
     /**
      * 최소값 point들의 marker 표시 여부.
      * 
      * @config
      */
-    minVisible = MarerVisibility.DEFAULT;
+    minVisible = MarkerVisibility.DEFAULT;
     /**
      * 최대값 point들의 marker 표시 여부.
      * 
      * @config
      */
-    maxVisible = MarerVisibility.DEFAULT;
+    maxVisible = MarkerVisibility.DEFAULT;
 }
 
 /**
- * @config chart.series
  */
 export abstract class LineSeriesBase extends Series {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    marker = new LineSeriesMarker(this);
+    /**
+     * @config
+     */
+    marker: LineSeriesMarker = new LineSeriesMarker(this);
     private _shape: Shape;
 
     //-------------------------------------------------------------------------
@@ -88,8 +93,12 @@ export abstract class LineSeriesBase extends Series {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getShape(): Shape {
-        return this.marker.shape || this._shape;
+    getShape(p: LineSeriesPoint): Shape {
+        return (p && p.shape) || this.marker.shape || this._shape;
+    }
+
+    getRadius(p: LineSeriesPoint): number {
+        return pickNum(p.radius, this.marker.radius);
     }
 
     //-------------------------------------------------------------------------
@@ -103,6 +112,9 @@ export abstract class LineSeriesBase extends Series {
         return true;
     }
 
+    /**
+     * rendering 시점에 chart가 series별로 기본 shape를 지정한다.
+     */
     setShape(shape: Shape): void {
         this._shape = shape;
     }
@@ -174,6 +186,17 @@ export class LineSeries extends LineSeriesBase {
     getLineType(): LineType {
         return this.lineType;
     }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return new LineLegendMarkerView(doc, size);
+    }
+
+    legendMarker(doc: Document): RcElement {
+        const m = super.legendMarker(doc);
+
+        (m as LineLegendMarkerView).setShape(this.getShape(null), Math.min(LegendItem.MARKER_SIZE, this.marker.radius * 2));
+        return m;
+    }
 }
 
 export class AreaSeriesPoint extends LineSeriesPoint {
@@ -200,6 +223,11 @@ export class AreaSeries extends LineSeries {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    /**
+     * area 영역에 적용할 스타일셋이나 class selector.
+     * 
+     * @config
+     */
     areaStyle: StyleProps;
 
     //-------------------------------------------------------------------------
@@ -253,6 +281,15 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
         this.highValue = this.yValue = parseFloat(this.high);
 
         this.isNull ||= isNaN(this.lowValue);
+    }
+
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            low: this.low,
+            high: this.high,
+            lowValue: this.lowValue,
+            highValue: this.highValue
+        });
     }
 
     protected _readArray(series: AreaRangeSeries, v: any[]): void {
@@ -335,6 +372,10 @@ export class LineSeriesGroup extends SeriesGroup<LineSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    _type(): string {
+        return 'linegroup';
+    }
+
     _seriesType(): string {
         return 'line';
     }
@@ -361,6 +402,10 @@ export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    _type(): string {
+        return 'areagroup';
+    }
+
     _seriesType(): string {
         return 'area';
     }

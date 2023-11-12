@@ -22,10 +22,6 @@ const config = {
             style: {
                 fill: 'black'
             },
-            // backgroundStyle: {
-            //     fill: '#004',
-            //     padding: '5px'
-            // }
         },
         data: [
             ['home', 7], 
@@ -47,22 +43,22 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
 }
 

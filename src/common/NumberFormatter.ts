@@ -151,6 +151,7 @@ export class NumberFormatter {
 			}
 
 			options.minimumIntegerDigits = Math.max(1, options.minimumIntegerDigits);
+            if (!options.maximumFractionDigits) delete options.maximumFractionDigits;
 			return options;
 		}
 	}

@@ -8,6 +8,7 @@
 
 import { RcControl } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
+import { Axis } from "./model/Axis";
 import { Chart, IChartEventListener } from "./model/Chart";
 import { ChartItem } from "./model/ChartItem";
 import { DataPoint } from "./model/DataPoint";
@@ -40,10 +41,14 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     // IChartEventListener
     //-------------------------------------------------------------------------
+    onModelChanged(chart: Chart, item: ChartItem): void {
+        this.invalidateLayout();
+    }
+
     onVisibleChanged(chart: Chart, item: ChartItem): void {
-        if (item instanceof Series) {
+        // if (item instanceof Series) {
             this.invalidateLayout();
-        }
+        // }
     }
 
     onPointVisibleChanged(chart: Chart, series: Series, point: DataPoint): void {
@@ -81,13 +86,22 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    refresh(): void {
-        this.invalidateLayout();
+    load(config: any, loadAnimation = false): void {
+        this.loaded = !loadAnimation; 
+        this.clearAssetDefs();
+        this.model = new Chart(config);
     }
 
-    update(config: any, loadAnimation = false): void {
-        this.loaded = !loadAnimation; 
-        this.model = new Chart(config);
+    refresh(now: boolean): void {
+        if (now) {
+            this._render();
+        } else {
+            this.invalidateLayout();
+        }
+    }
+
+    scroll(axis: Axis, pos: number): void {
+        this._chartView.getAxis(axis)?.scroll(pos);
     }
 
     //-------------------------------------------------------------------------

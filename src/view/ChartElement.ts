@@ -11,8 +11,9 @@ import { IRect } from "../common/Rectangle";
 import { Sides } from "../common/Sides";
 import { ISize } from "../common/Size";
 import { _undefined } from "../common/Types";
+import { GroupElement } from "../common/impl/GroupElement";
 import { RectElement } from "../common/impl/RectElement";
-import { IChart } from "../model/Chart";
+import { Chart, IChart } from "../model/Chart";
 import { ChartItem } from "../model/ChartItem";
 
 export abstract class ChartElement<T extends ChartItem> extends RcElement {
@@ -47,8 +48,13 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+    protected _prepareStyleOrClass(model: T): void {
         this.setStyleOrClass(model.style);
+    }
+
+    measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this._prepareStyleOrClass(model);
+
         if (model !== this.model) {
             this.model = model;
             this._doModelChanged();
@@ -96,8 +102,12 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
         }
     }
 
-    protected abstract _doMeasure(doc: Document, model: T, intWidth: number, hintHeight: number, phase: number): ISize;
-    protected abstract _doLayout(param: any): void;
+    protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+        return { width: hintWidth, height: hintHeight };
+    }
+
+    protected _doLayout(param: any): void {
+    }
 
     protected _invalidate(): void {
         this.control?.invalidateLayout();
@@ -115,7 +125,6 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     private _background: RectElement;
     protected _margins = new Sides();
     protected _paddings = new Sides();
-    private _borderRadius: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -141,21 +150,25 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
         }
         this._setBackgroundStyle(this._background);
 
-        // TODO: 캐쉬!
-        const cs = getComputedStyle(this.dom);
-        const csBack = getComputedStyle(this._background.dom);
-        const padding = this._paddings;
-        const margin = this._margins;
-
-        padding.applyPadding(csBack);
-        this._borderRadius = parseFloat(csBack.borderRadius) || 0;
-        margin.applyMargin(cs);
-
         const sz = this._doMeasure(doc, model, hintWidth, hintHeight, phase);
 
-        sz.height += margin.top + margin.bottom + padding.top + padding.bottom;
-        sz.width += margin.left + margin.right + padding.left + padding.right;
+        // TODO: 캐쉬!
+        const cs = getComputedStyle(this.dom);
+        const padding = this._paddings;
 
+        padding.applyPadding(cs);
+
+        sz.width += padding.left + padding.right;
+        sz.height += padding.top + padding.bottom;
+
+        if (this._marginable()) {
+            const margin = this._margins;
+
+            margin.applyMargin(cs);
+            this.mw = sz.width += margin.left + margin.right;
+            this.mh = sz.height += margin.top + margin.bottom;
+        
+        }
         this.mw = sz.width;
         this.mh = sz.height;
         return sz;
@@ -165,16 +178,18 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
         super.layout(param);
 
         // background
-        const margin = this._margins;
+        if (this._marginable()) {
+            const margin = this._margins;
 
-        this._background.setBounds(
-            margin.left + this._getBackOffset(), 
-            margin.top, 
-            this.width - margin.left - margin.right,
-            this.height - margin.top - margin.bottom,
-            this._borderRadius
-        );
-
+            this._background.setBounds(
+                margin.left + this._getBackOffset(), 
+                margin.top, 
+                this.width - margin.left - margin.right,
+                this.height - margin.top - margin.bottom
+            );
+        } else {
+            this._background.setBounds(0, 0, this.width, this.height);
+        }
         return this;
     }
 
@@ -183,7 +198,60 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     //-------------------------------------------------------------------------
     protected abstract _setBackgroundStyle(back: RectElement): void;
     
+    protected _marginable(): boolean {
+        return true;
+    }
+
     protected _getBackOffset(): number {
         return 0;
+    }
+}
+
+/**
+ * @internal
+ */
+export abstract class SectionView extends GroupElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    protected _inverted: boolean;
+    mw: number;
+    mh: number;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    measure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this._setInverted(chart.isInverted());
+        
+        const sz = this._doMeasure(doc, chart, hintWidth, hintHeight, phase);
+
+        this.mw = sz.width;
+        this.mh = sz.height;
+        return sz;
+    }
+
+    resizeByMeasured(): SectionView {
+        this.resize(this.mw, this.mh);
+        return this;
+    }
+
+    layout(param?: any): SectionView {
+        this._doLayout(param);
+        return this;
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected abstract _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize;
+    protected abstract _doLayout(param?: any): void;
+
+    protected _setInverted(inverted: boolean): void {
+        this._inverted = inverted;
     }
 }

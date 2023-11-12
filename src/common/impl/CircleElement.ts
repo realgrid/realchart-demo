@@ -6,7 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcElement } from "../RcControl";
+import { PathElement, RcElement } from "../RcControl";
+import { SvgShapes } from "./SvgShape";
 
 export class CircleElement extends RcElement {
 
@@ -22,12 +23,8 @@ export class CircleElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName?: string, cx?: number, cy?: number, radius?: number) {
+    constructor(doc: Document, styleName?: string) {
         super(doc, styleName, 'circle');
-
-        if (typeof cx === 'number') {
-            this.setCircle(cx, cy, radius);
-        }
     }
 
 	//-------------------------------------------------------------------------
@@ -50,4 +47,38 @@ export class CircleElement extends RcElement {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+}
+
+export class CircumElement extends CircleElement {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, styleName?: string) {
+        super(doc, styleName);
+
+        this.setStyle('fill', 'none');
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    resetStyles(styles: any): boolean {
+        const r = super.resetStyles(styles);
+
+        this.setStyle('fill', 'none');
+        return r;
+    }
+}
+
+export class ArcElement extends PathElement {
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setArc(cx: number, cy: number, rd: number, start: number, angle: number, clockwise: boolean): void {
+        this.setPath(SvgShapes.arc(
+            cx, cy, rd, rd, start, close ? start + angle : start - angle, clockwise
+        ));
+    }
 }

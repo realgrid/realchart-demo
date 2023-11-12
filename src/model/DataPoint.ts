@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4 } from "../common/Common";
+import { IAxis } from "./Axis";
 import { ISeries } from "./Series";
 
 let __point_id__ = 0;
@@ -42,17 +43,21 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    source: any;
     index: number;
     vindex: number;
     x: any;
     y: any;
+    /**
+     * drilldown series
+     */
+    series: string | number; 
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     readonly pid = __point_id__++;
 
+    source: any;
     isNull: boolean;
     // Series.collectValues() 등에서 결정된다. x, y와 각각 다른 값으로 설정될 수 있다.
     xValue: number;     // x 좌표상의 value
@@ -66,6 +71,7 @@ export class DataPoint {
 
     yGroup: number;     // for stacking. stacking 가능한 경우 이 값으로 축 상 위치를 계산한다.
                         // [주의] yValue를 강제로 재설정하는 경우 이 값도 재설정할 것!
+    drillDown: any[] | object;  // array이면 현재 시리즈의 data 교체. object면 다른 시리즈로 교체.
 
     //-------------------------------------------------------------------------
     // constructor
@@ -96,6 +102,12 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    assignTo(proxy?: any): any {
+        if (!proxy) proxy = {};
+        this._assignTo(proxy);
+        return proxy;
+    }
+
     getProp(fld: string | number): any {
         if (isNone(this.source)) return this.source;
         else return this.source[fld];
@@ -108,6 +120,9 @@ export class DataPoint {
             this._readArray(series, v);
         } else if (isObject(v)) {
             this._readObject(series, v);
+            if ((isArray(v.drillDown) || isObject(v.drillDown))) {
+                this.drillDown = v.drillDown;
+            }
         } else {
             this._readSingle(v);
         }
@@ -130,9 +145,20 @@ export class DataPoint {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    protected _colorIndex(): number {
-        return 2;
+    protected _assignTo(proxy: any): any {
+        return Object.assign(proxy, {
+            index: this.index,
+            vindex: this.vindex,
+            x: this.x,
+            y: this.y,
+            xValue: this.xValue,
+            yValue: this.yValue
+        });
     }
+
+    // protected _colorIndex(): number {
+    //     return 2;
+    // }
 
     protected _readArray(series: ISeries, v: any[]): void {
         if (v == null) {
@@ -227,13 +253,23 @@ export class DataPointCollection {
         return this._points.map(p => p[axis]);
     }
 
+    getProxies(): any[] {
+        return this._points.map(p => p.assignTo());
+    }
+
     forEach(callback: (p: DataPoint, i?: number) => any): void {
         for (let i = 0, n = this._points.length; i < n; i++) {
             if (callback(this._points[i], i) === true) break;
         }
     }
 
-    getPoints(): DataPoint[] {
-        return this._points;
+    getPoints(xAxis: IAxis, yAxis: IAxis): DataPoint[] {
+        const zoom = xAxis._zoom;
+
+        if (zoom) {
+            return this._points.slice(Math.floor(zoom.start), Math.ceil(zoom.end) + 1);
+        } else {
+            return this._points;
+        }
     }
 }

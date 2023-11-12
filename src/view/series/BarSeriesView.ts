@@ -8,9 +8,10 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
+import { PI_2 } from "../../common/Types";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { TextAnchor } from "../../common/impl/TextElement";
-import { Chart } from "../../main";
+import { Chart } from "../../model/Chart";
 import { DataPoint } from "../../model/DataPoint";
 import { BarSeries } from "../../model/series/BarSeries";
 import { BarElement, BoxedSeriesView, IPointView, LabelLayoutInfo, SeriesView } from "../SeriesView";
@@ -61,6 +62,14 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         }
     }
 
+    protected _setPointStyle(v: RcElement, model: BarSeries, p: DataPoint, style?: any[]): void {
+        super._setPointStyle(v, model, p, style);
+
+        if (p.yValue < model.baseValue && model.belowStyle) {
+            v.addStyleOrClass(model.belowStyle);
+        }
+    }
+
     protected _layoutPointViews(width: number, height: number): void {
         if (this.model.chart.isPolar()) {
             this.$_layoutSectors();
@@ -85,7 +94,7 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         this._bars.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
             
-            this._setPointStyle(v, p);
+            this._setPointStyle(v, model, p);
         });
     }
 
@@ -96,7 +105,7 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         this._sectors.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
 
-            this._setPointStyle(v, p);
+            this._setPointStyle(v, model, p);
         });
     }
 
@@ -119,13 +128,14 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
             const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
             const wUnit = xAxis.getUnitLength(Math.PI * 2, p.xValue);
             const wPoint = series.getPointWidth(wUnit);
+            const a = polar.start + xAxis.getPosition(PI_2 * polar.rd, p.xValue);
     
             view.setSector({
                 cx: polar.cx, 
                 cy: polar.cy, 
                 rx: y, 
                 ry: y,
-                start: polar.start + i * polar.deg,
+                start: a - wPoint / 2,
                 angle: wPoint,
                 clockwise: true
             })

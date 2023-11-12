@@ -31,6 +31,8 @@ export enum TextOverflow {
 
 /**
  * Background, padding 등을 이용하려면 HtmlTextElement를 사용한다.
+ * 
+ * // TODO: wrap
  */
 export class TextElement extends RcElement {
 
@@ -40,6 +42,12 @@ export class TextElement extends RcElement {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
+    static createCenter(doc: Document): TextElement {
+        const elt = new TextElement(doc);
+        elt._layout = TextLayout.MIDDLE;
+        return elt;
+    }
+
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
@@ -59,7 +67,7 @@ export class TextElement extends RcElement {
     constructor(doc: Document, styleName: string = _undefined) {
         super(doc, styleName, 'text');
 
-        this.setAttr('text-anchor', 'middle');
+        this.anchor = TextAnchor.MIDDLE;
     }
 
 	//-------------------------------------------------------------------------
@@ -130,8 +138,15 @@ export class TextElement extends RcElement {
     // methods
     //-------------------------------------------------------------------------
     getAscent(height: number): number {
+        /**
+         * 0.75일 때, 가장 근접한다.
+         * 다른 폰트 size의 두 라인 텍스트를 위아래 바꾼 두 text로 비교해 본다.
+         * http://localhost:6010/realchart/demo/gauge-multi-2.html
+         */
+
         //return (height >= 20 ? 0.72 : 0.75) * height;
         return 0.75 * height;
+        // return 0.8 * height;
     }
 
     layoutText(lineHeight?: number): void {
@@ -145,13 +160,14 @@ export class TextElement extends RcElement {
                 break;
             
             case TextLayout.BOTTOM:
-                y = ascent - r.height;
+                y = 0;//ascent - r.height;
                 break;
 
             default:
                 y = Math.ceil(ascent);
                 break;
         }
+
         this.setAttr('y', y);
     }
 
@@ -250,6 +266,10 @@ export class TextElement extends RcElement {
             this._dirty = this._styleDirty = false;
         }
         return this._bounds;
+    }
+
+    stain(): void {
+        this._dirty = true;
     }
 
     //-------------------------------------------------------------------------

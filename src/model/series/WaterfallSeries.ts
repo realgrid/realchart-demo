@@ -60,6 +60,17 @@ export class WaterfallSeries extends RangedSeries {
         return 'waterfall';
     }
 
+    getPointTooltip(point: WaterfallSeriesPoint, param: string): any {
+        switch (param) {
+            case 'low':
+                return point.low;
+            case 'save':
+                return point.save;
+            default:
+                return super.getPointTooltip(point, param);
+        }
+    }
+
     canCategorized(): boolean {
         return true;
     }

@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isArray, isObject, isString, pickNum } from "./Common";
 import { locale } from "./RcLocale";
 
 export const _undefined = void 0; // 불필요
@@ -14,8 +15,10 @@ const ASTERISK = '*'.charCodeAt(0);
 const PERCENT = '%'.charCodeAt(0);
 export const ZWSP = '&#8203;';
 export const ELLIPSIS = '\u2026';
+export const PI_2 = Math.PI * 2;
 export const ORG_ANGLE = -Math.PI / 2;
 export const DEG_RAD = Math.PI * 2 / 360;
+export const RAD_DEG = 360 / Math.PI / 2;
 
 export const NUMBER_SYMBOLS = 'k,M,G,T,P,E';
 export const NUMBER_FORMAT = '#,##0.#';
@@ -28,9 +31,9 @@ export function fixnum(value: number): number {
 export function toStr(value: any): string {
     return value == null ? null : String(value);
 }
-export function deg2rad(degree: number): number {
-    return degree * Math.PI * 2 / 360;
-}
+// export function deg2rad(degree: number): number {
+//     return degree * Math.PI * 2 / 360;
+// }
 export function pixel(v: number): string {
     return v + 'px';
 }
@@ -45,7 +48,11 @@ export function newObject(prop: string, value: any): {} {
     obj[prop] = value;
     return obj;
 }
+export function utc(year: number, monthIndex = 0, day = 1, hour = 0, minute = 0, second = 0, millisecond = 0): Date {
+    return new Date(Date.UTC(year, monthIndex, day, hour, minute, second, millisecond));
+}
 
+export type PathValue = string | number;
 export type Path = string | any[];
 
 /**
@@ -69,29 +76,47 @@ export const sizeToCssEx = function (size: IPercentSize): string {
 }
 
 export function parsePercentSize(sv: RtPercentSize, enableNull: boolean, def?: number): IPercentSize {
-    let fixed: boolean;
+    let fixed = false;
     let size: number;
 
-    if (sv != null && !Number.isNaN(sv)) {
-        if (!(fixed = !isNaN(size = +sv))) {
-            const s = (sv as string).trim();
-            const c = s.charCodeAt(s.length - 1);
+    if (sv == null) {
+        if (enableNull) {
+            return null;
+        } else {
+            size = def || 0;
+            fixed = true;
+        }
+    } else if (typeof sv === 'string') {
+        const s = sv.trim();
 
-            if (c === PERCENT) {
+        if (s.length === 0) {
+            size = NaN;            
+        } else {
+            if (s.charCodeAt(s.length - 1) === PERCENT) {
                 size = s.length === 1 ? NaN : parseFloat(s);
-            }
-            if (isNaN(size)) {
-                if (enableNull) {
-                    return null;
-                }
-                throwFormat(locale.invalidSizeValue, sv);
+            } else {
+                size = parseFloat(s);
+                fixed = true;
             }
         }
-    } else if (enableNull) {
-        return null;
+        if (isNaN(size)) {
+            if (enableNull) {
+                return null;
+            }
+            throwFormat(locale.invalidSizeValue, sv);
+        }
     } else {
-        size = def || 0;
-        fixed = true;
+        size = +sv;
+        if (isNaN(size)) {
+            if (enableNull) {
+                return null;
+            } else {
+                size = def || 0;
+                fixed = true;
+            } 
+        } else {
+            fixed = true;
+        }
     }
     return { size, fixed }; 
 }
@@ -103,67 +128,11 @@ export function parsePercentSize2(sv: RtPercentSize, def: RtPercentSize): IPerce
 export function getPercent(size: IPercentSize): number {
     return size && !size.fixed ? size.size : NaN;
 }
-export function calcPercent(size: IPercentSize, domain: number): number {
-    return size ? (size.fixed ? size.size : size.size * domain / 100) : NaN;
+export function calcPercent(size: IPercentSize, domain: number, def = NaN): number {
+    return size ? (size.fixed ? size.size : size.size * domain / 100) : def;
 }
 export function calcPercentF(size: IPercentSize, domain: number): number {
     return size.fixed ? size.size : size.size * domain / 100;
-}
-
-export type SizeValue = string | number; // 123, '10*', '50%'
-export function isValidSizeValue(v: any): boolean {
-    if (!isNaN(v)) return true;
-    if (typeof v === 'string' && v.trimEnd().endsWith('*') && !isNaN(parseFloat(v))) return true;
-    return false;
-}
-export interface ISizeValue {
-    size: number;
-    fixed: boolean;
-    rated?: boolean; // '*'
-}
-
-/**
- * @internal
- * 
- * '*'은 '1*'와 동일하다.
- */
-export function parseSize(sv: SizeValue, enableNull: boolean): ISizeValue {
-    let fixed: boolean;
-    let rated: boolean; // '*'
-    let size: number;
-
-    if (sv != null && !Number.isNaN(sv)) {
-        if (!(fixed = !isNaN(size = +sv))) {
-            const s = (sv as string).trim();
-            const c = s.charCodeAt(s.length - 1);
-
-            if (c === PERCENT) {
-                size = s.length === 1 ? NaN : parseFloat(s);
-            } else if (c === ASTERISK) {
-                size = s.length === 1 ? 1 : parseFloat(s);
-                rated = true;
-            }
-            if (isNaN(size)) {
-                if (enableNull) {
-                    return null;
-                }
-                throwFormat(locale.invalidSizeValue, sv);
-            }
-        }
-    } else if (enableNull) {
-        return null;
-    } else {
-        size = 0;
-        fixed = true;
-    }
-    return { size, rated, fixed }; 
-}
-
-export function getFixedSize(dim: IPercentSize): number {
-    return dim && dim.fixed ? dim.size : NaN;
-}
-export function getRelativeSize(dim: IPercentSize): number {
-    return dim && !dim.fixed ? dim.size : NaN;
 }
 
 export interface SVGStyles {
@@ -177,6 +146,27 @@ export interface SVGStyles {
 }
 
 export type SVGStyleOrClass = SVGStyles | string;
+
+export const CAMEL2KEBAB = {
+    fill: 'fill',
+    stroke: 'stroke',
+    strokeWidth: 'stroke-width',
+    fontFamily: 'font-family',
+    fontSize: 'font-size',
+    fontWeight: 'font-weight',
+    fontStyle: 'font-style',
+    padding: 'padding',
+    margin: 'margin',
+}
+export const getCssProp = function (prop: string): string {
+    const s = CAMEL2KEBAB[prop];
+    if (!s) {
+        let s2 = prop.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+        CAMEL2KEBAB[prop] = s2;
+        return s2;
+    }
+    return s;
+}
 
 export class RtAbortError extends Error {
     static check(err: any): boolean {
@@ -193,7 +183,6 @@ export const assert = function (predict: boolean, message: string): void {
         throw new AssertionError(message);
     }
 }
-
 export const checkNull = function (obj: any, message: string): void {
     if (!obj) {
         throw new Error(message || (obj + ' is null.'));
@@ -207,6 +196,11 @@ export const checkNull = function (obj: any, message: string): void {
  * 발생 시 프로그램을 중지하지 않고 경고를 표시한다.
  */
 export class AlertError extends Error {
+}
+
+export interface IMinMax {
+    min: number;
+    max: number;
 }
 
 export interface ISides {
@@ -297,12 +291,74 @@ export enum VerticalAlign {
 }
 
 export enum SectionDir {
-    LEFT,
-    TOP,
-    BOTTOM,
-    RIGHT
+    LEFT = 'left',
+    TOP = 'top',
+    BOTTOM = 'bottom',
+    RIGHT = 'right',
+    CENTER = 'center',
+    MIDDLE = 'middle'
 }
 
-export const HORZ_SECTIONS = [SectionDir.LEFT, SectionDir.RIGHT];
-export const VERT_SECTIONS = [SectionDir.TOP, SectionDir.BOTTOM];
+export interface ISides {
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
+    horz?: number;
+    vert?: number;
+}
 
+export enum AlignBase {
+    /**
+     * @config
+     */
+    CHART = 'chart',
+    /**
+     * @config
+     */
+    PLOT = 'plot'
+}
+
+export interface IValueRange {
+    fromValue?: number;
+    toValue?: number;
+    color: string;
+    label?: string;
+}
+
+/**
+ * endValue는 포함되지 않는다. 즉, startValue <= v < endValue.
+ * startValue를 지정하면 이전 range의 endValue를 startValue로 설정한다.
+ * 이전 범위가 없으면 min으로 지정된다.
+ * endValue가 지정되지 않으면 max로 지정된다.
+ * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
+ * startValue를 기준으로 정렬한다.
+ */
+export const buildValueRanges = function (source: IValueRange[], min: number, max: number): IValueRange[] {
+    let ranges: IValueRange[];
+    let prev: IValueRange;
+
+    if (isArray(source)) {
+        ranges = [];
+        source.forEach(src => {
+            if (isObject(src) && isString(src.color)) {
+                const range: IValueRange = {
+                    fromValue: pickNum(src.fromValue, prev ? prev.toValue : min),
+                    toValue: pickNum(src.toValue, max),
+                    color: src.color
+                };
+                if (range.fromValue < range.toValue) {
+                    ranges.push(range);
+                    prev = range;
+                }
+            }
+        });
+        ranges = ranges.sort((r1, r2) => r1.fromValue - r2.fromValue)
+                       .filter(r => r.toValue >= min && r.fromValue < max);
+        ranges.forEach(r => {
+            r.fromValue = Math.max(r.fromValue, min);
+            r.toValue = Math.min(r.toValue, max);
+        })
+    }
+    return ranges;
+}

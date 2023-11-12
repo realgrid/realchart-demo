@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcAnimation } from "../../common/RcAnimation";
+import { RcAnimation, RcAnimationEndHandler } from "../../common/RcAnimation";
 import { RcElement } from "../../common/RcControl";
 import { pixel } from "../../common/Types";
 import { Series } from "../../model/Series";
@@ -25,8 +25,8 @@ export abstract class SeriesAnimation {
         new StyleAnimation(series, {prop: 'opacity', start: '0', end: '1'});
     }
 
-    static grow(series: SeriesView<Series>): void {
-        new GrowAnimation(series);
+    static grow(series: SeriesView<Series>, endHandler?: RcAnimationEndHandler): void {
+        new GrowAnimation(series, endHandler);
     }
 
     //-------------------------------------------------------------------------
@@ -181,10 +181,11 @@ export abstract class PointAnimation extends RcAnimation {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(series: SeriesView<Series>) {
+    constructor(series: SeriesView<Series>, endHandler: RcAnimationEndHandler) {
         super();
 
         this._series = series;
+        this.endHandler = endHandler;
         this.start();
     }
 
@@ -215,6 +216,7 @@ export class GrowAnimation extends PointAnimation {
             this._series.setViewRate(rate);
             return true;
         }
+        return false;
     }
 
     protected _doStop(): void {
@@ -239,6 +241,7 @@ export class UnfoldAnimation extends PointAnimation {
             this._series.setPosRate(rate);
             return true;
         }
+        return false;
     }
 
     protected _doStop(): void {

@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartItem } from "./ChartItem";
-import { ILegendSource } from "./Legend";
 
 export abstract class PlotItem extends ChartItem {
 
@@ -68,4 +67,7 @@ export abstract class PolygonItem extends PlotItem {
  * ex) yBase 아래 쪽 영역을 다른 색으로 표시한다.
  */
 export class RegionItem extends PlotItem {
+}
+
+export class ButtonItem extends PlotItem {
 }

@@ -105,7 +105,7 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
     protected _prepareSeries(doc: Document, model: VectorSeries): void {
         // const pts = model.getPoints().getPoints() as VectorSeriesPoint[];
 
-        this.$_prepareArrows(this._visPoints as VectorSeriesPoint[]);
+        this.$_prepareArrows(model, this._visPoints as VectorSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -135,11 +135,11 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_prepareArrows(pts: VectorSeriesPoint[]): void {
+    private $_prepareArrows(model: VectorSeries, pts: VectorSeriesPoint[]): void {
         this._arrows.prepare(pts.length, (v, i) => {
             const p = v.point = pts[i];
 
-            this._setPointStyle(v, p);
+            this._setPointStyle(v, model, p);
         });
     }
 }

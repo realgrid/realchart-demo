@@ -6,15 +6,18 @@
 const config = {
     type: "area",
     options: {},
-    title: "Multiple Areas",
+    title: "Multiple",
     xAxis: {
         type: 'category',
-        title: "일일 Daily fat",
+        title: {
+            text: 'dsdsd',
+        }
     },
     yAxis: {
         title: "Vertical 수직축 Axis",
     },
     series: [{
+        //테스트123
         name: 'Installation & Developers',
         marker: true,
         data: [43934, 48656, 65165, 81827, 112143, 142383,
@@ -47,26 +50,26 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
     createCheckBox(container, 'Point Marker', function (e) {
         config.series.forEach(s => s.marker = _getChecked(e));
-        chart.update(config);
+        chart.load(config);
     }, true);
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
 }
 

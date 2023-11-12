@@ -15,7 +15,7 @@ const config = {
     yAxis: {
         title: "Vertical 수직축 Axis",
         // reversed: true,
-        // min: -20,
+        // minValue: -20,
         // baseValue: -20
     },
     series: [{
@@ -29,6 +29,7 @@ const config = {
             },
             belowStyle: {
                 stroke: 'red',
+                fill: 'red'
             },
                 // pointWidth: '100%',
             data: [11, 22, 15, 9, 13, 27]
@@ -42,10 +43,12 @@ const config = {
             },
             belowStyle: {
                 stroke: 'red',
+                fill: 'red'
             },
             data: [15, -19, 19, -6, 21, 21]
         }, {
             name: 'column3',
+            color: 'blue',
             pointLabel: {
                 visible: true,
                 position: 'inside',
@@ -53,6 +56,7 @@ const config = {
             },
             belowStyle: {
                 stroke: 'red',
+                fill: 'red'
             },
             data: [13, 17, 15, -11, 23, 17]
         }]
@@ -65,7 +69,7 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createCheckBox(container, 'Always Animate', function (e) {
         animate = _getChecked(e);
@@ -75,19 +79,19 @@ function setActions(container) {
     });
     createListBox(container, "layout", ['default', 'stack', 'fill', 'overlap'], function (e) {
         config.series[0].layout = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, 'default');
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
 }
 

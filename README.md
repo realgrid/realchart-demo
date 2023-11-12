@@ -23,45 +23,33 @@ const chart = RealChart.createChart(document, 'realchart', config);
 ```ts
 // config
 const config = {
-    options: {
-        animatable: false
-    },
-    title: "Basic Real-Chart",
-    legend: true,
-    xAxis: {
-        title: 'X Axis',
-        grid: true
-    },
-    yAxis: {
-        title: 'Y Axis',
-    },
-    series: {
-        pointLabel: {
-            visible: true,
-            effect: 'outline',
-            style: {
-            },
-        },
-        data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['def', 9], 
-            ['소홍', 10], 
-            ['지리산', 14.3], 
-            ['zzz', 13],
-            ['낙동강', 12.5]
-        ],
-        data2: [
-            [1, 7], 
-            [2, 11], 
-            [3, 9], 
-            [4, 10], 
-            [5, 14.3], 
-            [6, 13],
-            [7, 12.5]
-        ],
-    }
-}
+  options: {},
+  title: "Axis Breaks",
+  xAxis: {
+    title: "일일 Daily fat",
+    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    grid: true
+  },
+  yAxis: {
+    title: "Vertical 수직축 Axis",
+    break: [{
+      from: 500,
+      to: 3000,
+      inclusive: false,
+      space: 5
+    }]
+  },
+  series: [{
+    name: 'column1',
+    pointLabel: true,
+    data: [499, 128, 180, 345, 3050, 3590, 3840, 3630, 3120, 520, 240, 80]
+  }, {
+    name: 'column3',
+    pointLabel: true,
+    data: [64, 138, 164, 408, 3120, 3540, 3875, 3420, 720, 320, 160, 20]
+  }]
+};
+const chart = RealChart.createChart(document, 'realchart', config);
 ```
 ### styles
 

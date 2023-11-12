@@ -6,8 +6,8 @@ const config = {
     title: "Vector - Null Point",
     xAxis: {
         title: 'X Axis',
-        // min: 0,
-        // max: 100
+        // minValue: 0,
+        // maxValue: 100
     },
     yAxis: {
         title: 'Y Axis',
@@ -387,7 +387,7 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');

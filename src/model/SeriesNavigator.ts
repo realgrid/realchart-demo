@@ -1,0 +1,208 @@
+////////////////////////////////////////////////////////////////////////////////
+// SeriesNavigator.ts
+// 2023. 10. 18. created by woori
+// -----------------------------------------------------------------------------
+// Copyright (c) 2023 Wooritech Inc.
+// All rights reserved.
+////////////////////////////////////////////////////////////////////////////////
+
+import { isObject } from "../common/Common";
+import { Axis } from "./Axis";
+import { IChart } from "./Chart";
+import { ChartItem } from "./ChartItem";
+import { Series } from "./Series";
+
+export class NavigiatorHandle extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+}
+
+export class NavigatorMask extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+}
+
+const SERIES = {
+    'area': () => {
+        return {
+            type: 'area',
+        };
+    },
+    'line': () => {
+        return {
+            type: 'line',
+        };
+    },
+    'bar': () => {
+        return {
+            type: 'bar',
+        };
+    },
+};
+
+const AXES = {
+    'category': () => {
+        return {
+            type: 'category',
+        };
+    },
+    'linear': () => {
+        return {
+            type: 'linear',
+        };
+    },
+    'time': () => {
+        return {
+            type: 'time',
+        };
+    },
+    'log': () => {
+        return {
+            type: 'log',
+        };
+    }
+}
+
+const AXIS = {
+    minPadding: 0,
+    maxPadding: 0
+}
+
+/**
+ * 시리즈 내비게이터 모델.\
+ * 
+ * 1. 기본적으로 'area' 시리즈로 표시한다.
+ * 2. 'line', 'area', 'bar' 시리즈나 원본 시리즈 타입으로 표시할 수 있다.
+ */
+export class SeriesNavigator extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _thickness = 45;
+    private _gap = 8;
+    private _gapFar = 3;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _source: Series;
+    _naviChart: IChart;
+
+    _dataChanged = true;
+    _vertical: boolean;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart, false);
+
+        this.handle = new NavigiatorHandle(chart);
+        this.mask = new NavigatorMask(chart);
+        this.borderLine = new ChartItem(chart);
+    }
+    
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * Navigator 시리즈의 data나 축 범위를 제공하는 본 시리즈의 이름이나 index.
+     */
+    source: string;
+    handle: NavigiatorHandle;
+    mask: NavigatorMask;
+    borderLine: ChartItem;
+    series: any;
+    xAxis: any;
+    yAxis: any;
+    liveScroll = true;
+    /**
+     * 네비게이터 두께.
+     */
+    get thickness(): number {
+        return this._thickness;
+    }
+    set thickness(value: number) {
+        this._thickness = +value || this._thickness;
+    }
+    /**
+     * 네비게이터와 차트 본체 방향 사이의 간격.
+     */
+    get gap(): number {
+        return this._gap;
+    }
+    set gap(value: number) {
+        this._gap = +value || this._gap;
+    }
+    /**
+     * 네비게이터와 차트 본체 반대 방향 사이의 간격.
+     */
+    get gapFar(): number {
+        return this._gapFar;
+    }
+    set gapFar(value: number) {
+        this._gapFar = +value || this._gapFar;
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    isVisible(): boolean {
+        return this.visible;
+    }
+
+    axisLen(): number {
+        return (this._naviChart.xAxis as Axis).length();
+    }
+
+    axis(): Axis {
+        return this._source._xAxisObj as Axis;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doLoad(src: any): void {
+        super._doLoad(src);
+
+        const chart = this.chart;
+        const config: any = {
+        }
+
+        // series
+        if (isObject(src.series)) {
+            config.series = Object.assign((SERIES[src.series.type] || SERIES['area'])(), src.series);
+        } else {
+            config.series = SERIES['area']();
+        }
+        // x-axis
+        if (isObject(src.xAxis)) {
+            config.xAxis = Object.assign((AXES[src.xAxis.type] || AXES['linear'])(), src.xAxis, AXIS);
+        } else {
+            config.xAxis = Object.assign(AXES['linear'](), AXIS);
+        }
+
+        // y-axis
+        if (isObject(src.yAxis)) {
+            config.yAxis = Object.assign((AXES[src.yAxis.type] || AXES['linear'])(), src.yAxis, AXIS);
+        } else {
+            config.yAxis = Object.assign(AXES['linear'](), AXIS);
+        }
+
+        this._naviChart = this.chart._createChart(config);
+
+        if (this._source = chart._getSeries().getSeries(this.source) || chart.firstSeries) {
+            this._naviChart.firstSeries.loadPoints(this._source.getPoints().getProxies());
+        }
+    }
+
+    protected _doPrepareRender(chart: IChart): void {
+        this._vertical = false;
+        this._naviChart.prepareRender();
+    }
+}

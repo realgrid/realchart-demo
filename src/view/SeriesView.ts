@@ -11,12 +11,15 @@ import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
 import { LayerElement, PathElement, RcElement } from "../common/RcControl";
+import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
+import { RectElement } from "../common/impl/RectElement";
 import { SvgShapes } from "../common/impl/SvgShape";
 import { DataPoint } from "../model/DataPoint";
-import { ClusterableSeries, DataPointLabel, PointItemPosition, Series, WidgetSeries } from "../model/Series";
+import { LegendItem } from "../model/Legend";
+import { ClusterableSeries, DataPointLabel, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { ChartElement } from "./ChartElement";
 import { SeriesAnimation } from "./animation/SeriesAnimation";
@@ -40,7 +43,7 @@ export class PointLabelView extends LabelElement {
     // fields
     //-------------------------------------------------------------------------
     point: DataPoint;
-    moving = false;
+    // moving = false;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -105,11 +108,11 @@ export class PointLabelContainer extends LayerElement {
         view.setModel(doc, model, null);
 
         if (richFormat) {
-            model.buildSvg(view._text, model, p.getValueOf);
+            model.buildSvg(view._text, NaN, NaN, model, p.getValueOf);
             view.setStyles(styles);
 
             if (view._outline) {
-                model.buildSvg(view._outline, model, p.getValueOf);
+                model.buildSvg(view._outline, NaN, NaN, model, p.getValueOf);
             }
 
             // label.setStyles(styles);
@@ -239,10 +242,9 @@ export class PointLabelLineContainer extends GroupElement {
         const lines = this._lines;
         const points = model.getPoints();
         const pointLabel = model.pointLabel;
+        const map = this._map = {};
 
         if (pointLabel.visible) {
-            const map = this._map = {};
-
             lines.prepare(points.count).forEach((line, i) => {
                 const p = points.get(i);
 
@@ -283,17 +285,18 @@ export class PointContainer extends LayerElement {
 }
 
 export type LabelLayoutInfo = {
-    inverted: boolean
+    inverted: boolean;
+    reversed: boolean;
     // point 위치, 크기
-    pointView: RcElement,
-    x: number,  
-    y: number,
-    hPoint: number,
-    wPoint: number,
+    pointView: RcElement;
+    x: number;
+    y: number;
+    hPoint: number;
+    wPoint: number;
     // label 설정
-    labelView: PointLabelView,
-    labelPos: PointItemPosition,
-    labelOff: number
+    labelView: PointLabelView;
+    labelPos: PointItemPosition;
+    labelOff: number;
 };
 
 const PALETTE_LEN = 12;
@@ -304,19 +307,23 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     // consts
     //-------------------------------------------------------------------------
     static readonly POINT_CLASS = 'rct-point';
-    static readonly DATA_FOUCS = 'focus'
+    static readonly DATA_FOUCS = 'focus';
+    static readonly LEGEND_MARKER = 'rct-legend-item-marker';
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _simpleMode = false;
     protected _pointContainer: PointContainer;
-    protected _labelContainer: PointLabelContainer;
+    _labelContainer: PointLabelContainer;
     private _trendLineView: PathElement;
 
+    protected _legendMarker: RcElement;
     protected _visPoints: DataPoint[];
     protected _inverted = false;
     protected _animatable = true;
     private _viewRate = NaN;
+    _animations: Animation[] = [];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -325,7 +332,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         super(doc, 'rct-series ' + styleName);
 
         this.add(this._pointContainer = new PointContainer(doc, 'rct-series-points'));
-        this.add(this._labelContainer = new PointLabelContainer(doc));
+        this._labelContainer = new PointLabelContainer(doc);
     }
 
     //-------------------------------------------------------------------------
@@ -366,12 +373,16 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     _animationStarted(ani: Animation): void {
+        this._animations.push(ani);
         if (this._labelContainer && this._labelContainer.visible) {
             this._labelContainer.setVisible(false);
         }
     }
 
     _animationFinished(ani: Animation): void {
+        const i = this._animations.indexOf(ani);
+        i >= 0 && this._animations.splice(i, 1);
+
         this._invalidate();
     }
 
@@ -388,7 +399,11 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     clicked(elt: Element): void {
         const view = this.pointByDom(elt);
 
-        view && this._doPointClicked(view);
+        if (view) {
+            if (this.model.pointClicked(view.point) !== true) {
+                this._doPointClicked(view);
+            }
+        }
     }
 
     protected _doPointClicked(view: IPointView): void {
@@ -399,18 +414,10 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         return this.model._calcedColor;
     }
 
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this.setClip(void 0);
+    prepareSeries(doc: Document, model: T): void {
         // this._viewRate = NaN; // animating 중 다른 시리즈 등의 요청에 의해 여기로 진입할 수 있다.
         this.setData('index', (model.index % PALETTE_LEN) as any);
         this.setBoolData('pointcolors', model._colorByPoint());
-
-        this._visPoints = this._prepareVisPoints(model);
-        this._prepareSeries(doc, model);
-        !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, this);
 
         this.internalClearStyleAndClass();
         this.internalSetStyleOrClass(model.style);
@@ -418,8 +425,23 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
             this.internalSetStyle('fill', model.color);
             this.internalSetStyle('stroke', model.color);
         }
+        model._calcedColor = getComputedStyle(this.dom).fill;
 
-        this.model._calcedColor = getComputedStyle(this.dom).fill;
+        this._visPoints = this._collectVisPoints(model);
+        this._prepareSeries(doc, model);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _prepareStyleOrClass(model: T): void {
+        // legend marker 색상이 필요하므로 prepareSeries()에서 먼저 처리한다.
+    }
+
+    protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this.setClip(void 0);
+
+        !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, this);
 
         if (model.trendline.visible) {
             if (!this._trendLineView) {
@@ -440,7 +462,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
             this.$_renderTrendline();       
         }
         this._afterRender();
-        this._animatable && this._runShowEffect(!this.control.loaded);
+        this._animatable && !this._simpleMode && this._runShowEffect(!this.control.loaded);
     }
 
     //-------------------------------------------------------------------------
@@ -449,7 +471,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected abstract _prepareSeries(doc: Document, model: T): void;
     protected abstract _renderSeries(width: number, height: number): void;
 
-    protected _prepareVisPoints(model: T): DataPoint[] {
+    protected _collectVisPoints(model: T): DataPoint[] {
         return model.collectVisibles();
     }
 
@@ -457,7 +479,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         v.setData('index', (p.index % PALETTE_LEN) as any);
     }
 
-    protected _setPointStyle(v: RcElement, p: DataPoint, styles?: any[]): void {
+    protected _setPointStyle(v: RcElement, model: T,  p: DataPoint, styles?: any[]): void {
         v.setAttr('aria-label', p.ariaHint());
         this.$_setColorIndex(v, p);
         v.internalClearStyleAndClass();
@@ -472,7 +494,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
             v.internalSetStyle('stroke', p.color);
         }
         // 동적 스타일
-        const st = this.model.getPointStyle(p);
+        const st = model.getPointStyle(p);
         st && v.internalSetStyleOrClass(st);
     }
 
@@ -486,7 +508,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     protected _animating(): boolean {
-        return !isNaN(this._viewRate);
+        return !isNaN(this._viewRate) || this._animations.length > 0;
     }
 
     protected _lazyPrepareLabels(): boolean { return false; }
@@ -500,7 +522,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         const m = this.model;
         const xAxis = m._xAxisObj;
         const yAxis = m._yAxisObj;
-        const pts = m.trendline._points.map(pt => ({x: xAxis.getPosition(xAxis._length, pt.x), y: yAxis._length - yAxis.getPosition(yAxis._length, pt.y)}));
+        const pts = m.trendline._points.map(pt => ({x: xAxis.getPosition(xAxis._vlen, pt.x), y: yAxis._vlen - yAxis.getPosition(yAxis._vlen, pt.y)}));
         const sb = new PathBuilder();
 
         sb.move(pts[0].x, pts[0].y);
@@ -511,7 +533,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     protected _layoutLabel(info: LabelLayoutInfo): void {
         // below이면 hPoint가 음수이다.
         let {inverted, x, y, hPoint, labelView, labelOff} = info;
-        const below = hPoint < 0;
+        const below = info.reversed ? hPoint <= 0 : hPoint < 0;
         const r = labelView.getBBounds();
         let inner = true;
 
@@ -676,12 +698,14 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
         const yOrg = inverted ? 0 : height;;
-        const yMin = yAxis.getPosition(yLen, yAxis.axisMin());
+        const min = yAxis.axisMin();
+        const yMin = yAxis.getPosition(yLen, min);
         const base = series.getBaseValue(yAxis);
-        const yBase = pickNum(yAxis.getPosition(yLen, base), yMin);
+        const yBase = pickNum(yAxis.getPosition(yLen, Math.max(min, base)), yMin);
         const based = !isNaN(base);
         const info: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
             inverted,
+            reversed: yAxis.reversed,
             labelPos: series.getLabelPosition(labels.position),
             labelOff: series.getLabelOff(labels.offset)
         });
@@ -701,11 +725,12 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 y = yOrg;
 
                 p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-                if (based && yBase !== yMin) { // 양쪽으로 'grow'할 때 (#48)
-                    p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr);
-                } else {
-                    p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr; 
-                }
+                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr);
+                // if (based && yBase !== yMin) { // 양쪽으로 'grow'할 때 (#48)
+                //     p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr);
+                // } else {
+                //     p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr; 
+                // }
 
                 // 아래에서 위로 올라가는 animation을 위해 바닥 지점을 전달한다.
                 this._layoutPointView(pv, i, x, y + hPoint, wPoint, hPoint);
@@ -815,6 +840,69 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
     //-------------------------------------------------------------------------
 }
 
+export class MarkerSeriesPointView<T extends DataPoint> extends PathElement implements IPointView {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    point: T;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, SeriesView.POINT_CLASS);
+    }
+}
+
+export abstract class MarkerSeriesView<T extends MarkerSeries> extends SeriesView<T> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    protected _markers: ElementPool<MarkerSeriesPointView<DataPoint>>;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document, styleName: string) {
+        super(doc, styleName)
+
+        this._markers = new ElementPool(this._pointContainer, MarkerSeriesPointView);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _getPointPool(): ElementPool<RcElement> {
+        return this._markers;
+    }
+
+    invertable(): boolean {
+        return false;
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected abstract _getAutoPos(overflowed: boolean): PointItemPosition;
+
+    protected _layoutLabelView(labelView: PointLabelView, pos: PointItemPosition, off: number, radius: number, x: number, y: number): void {
+        let r = labelView.getBBounds();
+
+        if (pos === PointItemPosition.AUTO) {
+            pos = this._getAutoPos(r.width >= radius * 2 * 0.9);
+        }
+        if (labelView.setVisible(pos != null)) {
+            if (pos === PointItemPosition.INSIDE) {
+                labelView.translate(x - r.width / 2, y - r.height / 2);
+            } else if (pos) {
+                labelView.translate(x - r.width / 2, y - radius - r.height - off);
+            }
+        }
+    }
+}
+
 class ZombiAnimation extends RcAnimation {
 
     constructor(public series: WidgetSeriesView<WidgetSeries>) {
@@ -870,8 +958,8 @@ export abstract class WidgetSeriesView<T extends WidgetSeries> extends SeriesVie
         return p === this._zombie || super.isPointVisible(p);
     }
 
-    protected _prepareVisPoints(model: T): DataPoint[] {
-        let pts = super._prepareVisPoints(model);
+    protected _collectVisPoints(model: T): DataPoint[] {
+        let pts = super._collectVisPoints(model);
 
         if (this._willZombie && !this._willZombie.visible) {
             pts.push(this._willZombie);
@@ -898,4 +986,16 @@ export abstract class WidgetSeriesView<T extends WidgetSeries> extends SeriesVie
     // internal members
     //-------------------------------------------------------------------------
     abstract _resizeZombie(): void;
+
+    protected _createPointLegendMarker(doc: Document, p: DataPoint, size: number): RcElement {
+        return RectElement.create(doc, 'rct-legend-item-marker', 0, 0, size, size, size / 2);
+    }
+
+    protected _preparePoint(doc: Document, model: T, p: WidgetSeriesPoint, pv: RcElement): void {
+        if (!p._legendMarker) {
+            p.setLegendMarker(this._createPointLegendMarker(doc, p, LegendItem.MARKER_SIZE));
+        }
+        this._setPointStyle(pv, model, p);
+        p._calcedColor = getComputedStyle(pv.dom).fill;
+    }
 }

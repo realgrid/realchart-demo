@@ -37,6 +37,13 @@ export class HeatmapSeriesPoint extends DataPoint {
         this.isNull ||= isNaN(this.heatValue);
     }
 
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            heat: this.heat,
+            heatValue: this.heatValue
+        });
+    }
+
     protected _readArray(series: HeatmapSeries, v: any[]): void {
         const d = v.length > 2 ? 1 : 0;
 
@@ -95,6 +102,17 @@ export class HeatmapSeries extends Series {
     //-------------------------------------------------------------------------
     _type(): string {
         return 'heatmap';
+    }
+
+    getPointTooltip(point: HeatmapSeriesPoint, param: string): any {
+        switch (param) {
+            case 'heat':
+                return point.heat;
+            case 'heatValue':
+                return point.heatValue;
+            default:
+                return super.getPointTooltip(point, param);
+        }
     }
 
     canMixWith(other: IPlottingItem): boolean {

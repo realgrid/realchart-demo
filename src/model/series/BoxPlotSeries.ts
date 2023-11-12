@@ -54,6 +54,19 @@ export class BoxPlotSeriesPoint extends DataPoint {
         return index === 0 ? this.yValue : this.minValue;
     }
 
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            min: this.min,
+            low: this.low,
+            mid: this.mid,
+            high: this.high,
+            minValue: this.minValue,
+            lowValue: this.lowValue,
+            midValue: this.midValue,
+            highValue: this.highValue,
+        });
+    }
+
     protected _readArray(series: BoxPlotSeries, v: any[]): void {
         const d = v.length > 5 ? 1 : 0;
 
@@ -128,6 +141,29 @@ export class BoxPlotSeries extends RangedSeries {
     //-------------------------------------------------------------------------
     _type(): string {
         return 'boxplot';
+    }
+
+    getPointTooltip(point: BoxPlotSeriesPoint, param: string): any {
+        switch (param) {
+            case 'min':
+                return point.min;
+            case 'minValue':
+                return point.minValue;
+            case 'low':
+                return point.low;
+            case 'lowValue':
+                return point.lowValue;
+            case 'mid':
+                return point.mid;
+            case 'midValue':
+                return point.midValue;
+            case 'high':
+                return point.high;
+            case 'highValue':
+                return point.highValue;
+            default:
+                return super.getPointTooltip(point, param);
+        }
     }
 
     pointLabelCount(): number {

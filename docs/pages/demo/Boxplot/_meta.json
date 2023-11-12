@@ -1,0 +1,11 @@
+{
+	"boxplot": {
+		"title": "BoxPlot"
+	},
+	"boxplot-multi": {
+		"title": "Multiple BoxPlots"
+	},
+	"boxplot-null": {
+		"title": "Null Point"
+	}
+}

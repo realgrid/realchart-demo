@@ -46,6 +46,15 @@ export class CandlestickSeriesPoint extends DataPoint {
         this.isNull ||= isNaN(this.lowValue) || isNaN(this.openValue) || isNaN(this.closeValue);
     }
 
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            low: this.low,
+            close: this.close,
+            open: this.open,
+            high: this.high
+        });
+    }
+
     protected _readArray(series: CandlestickSeries, v: any[]): void {
         const d = v.length > 4 ? 1 : 0;
 
@@ -107,6 +116,29 @@ export class CandlestickSeries extends RangedSeries {
 
     canCategorized(): boolean {
         return true;
+    }
+
+    getPointTooltip(point: CandlestickSeriesPoint, param: string): any {
+        switch (param) {
+            case 'low':
+                return point.low;
+            case 'lowValue':
+                return point.lowValue;
+            case 'close':
+                return point.close;
+            case 'closeValue':
+                return point.closeValue;
+            case 'open':
+                return point.open;
+            case 'openValue':
+                return point.openValue;
+            case 'high':
+                return point.high;
+            case 'highValue':
+                return point.highValue;
+            default:
+                return super.getPointTooltip(point, param);
+        }
     }
 
     protected _createPoint(source: any): DataPoint {

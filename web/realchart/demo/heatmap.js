@@ -17,6 +17,9 @@ const config = {
     },
     series: {
         type: 'heatmap',
+        tooltip: {
+            text: 'heat: ${heat}'
+        },
         pointLabel: {
             visible: true,
             position: 'head',
@@ -25,10 +28,6 @@ const config = {
             effect: 'outline',// 'background',
             style: {
             },
-            // backgroundStyle: {
-            //     fill: '#004',
-            //     padding: '5px'
-            // }
         },
         data: [
             [0, 0, 10], [0, 1, 19], [0, 2, 8], [0, 3, 24], [0, 4, 67],
@@ -54,7 +53,7 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createCheckBox(container, 'Always Animate', function (e) {
         animate = _getChecked(e);
@@ -64,15 +63,15 @@ function setActions(container) {
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
 }
 

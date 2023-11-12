@@ -43,30 +43,30 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
     createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
         config.series.lineType = _getValue(e);
-        chart.update(config);
-    }, 'default');
+        chart.load(config);
+    }, 'spline');
     createCheckBox(container, 'Point Marker', function (e) {
         config.series.marker.visible = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, true);
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
 }
 

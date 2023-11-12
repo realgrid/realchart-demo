@@ -36,7 +36,7 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createCheckBox(container, 'Always Animate', function (e) {
         animate = _getChecked(e);
@@ -45,20 +45,20 @@ function setActions(container) {
         alert('hello');
     });
     createCheckBox(container, 'Curved', function (e) {
-        config.series.curved = _getChecked(e);
-        chart.update(config);
+        config.series[0].curved = _getChecked(e);
+        chart.load(config);
     }, true);
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
 }
 

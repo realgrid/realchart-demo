@@ -6,18 +6,24 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcElement } from "../common/RcControl";
+import { pickNum } from "../common/Common";
+import { PathBuilder } from "../common/PathBuilder";
+import { PathElement, RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { DEG_RAD } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis, AxisGuide, AxisLabelArrange, AxisPosition, AxisTickMark, AxisTitle, IAxisTick } from "../model/Axis";
+import { Axis, AxisGuide, AxisLabelArrange, AxisScrollBar, AxisTickMark, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
+import { Crosshair } from "../model/Crosshair";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
+/**
+ * @internal
+ */
 export class AxisTitleView extends BoundableElement<AxisTitle> {
 
     //-------------------------------------------------------------------------
@@ -29,6 +35,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
     // fields
     //-------------------------------------------------------------------------
     private _textView: TextElement;
+    _angle: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -37,7 +44,6 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
         super(doc, AxisTitleView.TITLE_CLASS, 'rct-axis-title-background');
 
         this.add(this._textView = new TextElement(doc));
-        // this._textView.anchor = TextAnchor.START;
     }
 
     //-------------------------------------------------------------------------
@@ -52,23 +58,38 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
     }
 
     protected _doMeasure(doc: Document, model: AxisTitle, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this.rotation = 0;
+        this._angle = model.getRotation(model.axis);
         this._textView.text = model.text;
 
-        return toSize(this._textView.getBBounds());
+        const sz = toSize(this._textView.getBBounds());
+
+        if (!model.axis._isHorz && this._angle !== 0) {
+            const w = sz.width;
+            sz.width = sz.height;
+            sz.height = w;
+        }
+        return sz;
     }
 
     protected _doLayout(isHorz: boolean): void {
-        const padding = this._paddings;
-        const margin = this._margins;
+        // text
+        this._textView.translateY(this._margins.top + this._paddings.top);
 
         // rotation
         if (!isHorz) {
-            this.setRotaion(0, this.height / 2, this.model.axis.position === AxisPosition.OPPOSITE ? 90 : 270);
+            this.setRotation(0, this.height / 2, this._angle);
+        } else {
+            this.rotation = 0;
         }
+    }
 
-        // text
-        this._textView.translateY(margin.top + padding.top);
+    resizeByMeasured(): ChartElement<ChartItem> {
+        if (this._angle === 0) {
+            this.resize(this.mw, this.mh);
+        } else {
+            this.resize(this.mh, this.mw);
+        }
+        return this;
     }
 
     layout(param?: any): ChartElement<ChartItem> {
@@ -100,10 +121,6 @@ class AxisTickMarkView extends ChartElement<AxisTickMark> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doMeasure(doc: Document, model: AxisTickMark, hintWidth: number, hintHeight: number, phase: number): ISize {
-        return Size.create(hintWidth, hintHeight);
-    }
-
     protected _doLayout(param: any): void {
         if (this.model.axis._isHorz) {
             // this._lineView.setVLine(0, 0, this.height);
@@ -139,6 +156,169 @@ class AxisLabelElement extends TextElement {
     }
 }
 
+class CrosshairFlagView extends RcElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _back: PathElement;
+    private _text: TextElement;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, void 0)
+
+        this.add(this._back = new PathElement(doc, 'rct-crosshair-flag'));
+        this.add(this._text = new TextElement(doc, 'rct-crosshair-flag-text'));
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setText(model: Crosshair, text: string): void {
+        if (text !== this._text.text) {
+            this._text.text = text;
+
+            const r = this._text.getBBounds();
+            const pb = new PathBuilder();
+            const w = Math.max(model.flag.minWidth || 0, r.width + 8);
+
+            pb.rect(0, 0, w, r.height + 4);
+            this._back.setPath(pb.end());
+            this._text.translate(w / 2, 2);
+        }
+    }
+}
+
+export class AxisScrollView extends ChartElement<AxisScrollBar> {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly TRACK_CLASS = 'rct-axis-scrollbar-track';
+    static readonly THUMB_CLASS = 'rct-axis-scrollbar-thumb';
+
+    //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    static isThumb(dom: Element): boolean {
+        return dom.classList.contains(AxisScrollView.THUMB_CLASS);
+    }
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _trackView: RectElement;
+    _thumbView: RectElement;
+
+    _vertical: boolean;
+    _reversed: boolean;
+    _szThumb: number;
+
+    private _max = 0;
+    private _page = 0;
+    private _pos = 0;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-axis-scrollbar');
+
+        this.add(this._trackView = new RectElement(doc, AxisScrollView.TRACK_CLASS));
+        this.add(this._thumbView = new RectElement(doc, AxisScrollView.THUMB_CLASS));
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setScroll(zoom: AxisZoom, reversed: boolean): void {
+        this._reversed = reversed;
+
+        if (zoom) {
+            const max = zoom.max - zoom.min;
+            const page = zoom.end - zoom.start;
+    
+            this._max = Math.max(0, max);
+            this._page = Math.min(page, max);
+            this._pos = Math.min(max - page, Math.max(0, zoom.start));
+        } else {
+            this._max = 0;
+        }
+    }
+
+    getZoomPos(pt: number): number {
+        const zoom = this.model.axis._zoom;
+        const len = (this._vertical ? this.height : this.width) - (this._vertical ? this._thumbView.height : this._thumbView.width);
+
+        if (this.model.axis.reversed) {
+            // TODO
+            pt = Math.max(0, Math.min(pt, len));
+            return pt * (zoom.max - zoom.min - (zoom.end - zoom.start)) / len;
+        } else {
+            pt = Math.max(0, Math.min(pt, len));
+            return pt * (zoom.max - zoom.min - (zoom.end - zoom.start)) / len;
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doMeasure(doc: Document, model: AxisScrollBar, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this.setStyleOrClass(model.style);
+
+        return (this._vertical = !model.axis._isHorz) ? {
+            width: model.thickness + model.gap + model.gapFar, height: hintHeight
+        } : {
+            width: hintWidth, height: model.thickness + model.gap + model.gapFar
+        };
+    }
+
+    protected _doLayout(param: any): void {
+        const model = this.model;
+        const szThumb = this._szThumb = pickNum(model.minThumbSize, 32);
+        const max = this._max;
+        const page = this._page;
+        const pos = this._pos;
+        const fill = this._max === 0;
+        let w = this.width;
+        let h = this.height;
+
+        if (this._vertical) {
+            w -= model.gap + model.gapFar;
+            this._trackView.setBounds(model.gap, 0, w, h);
+            
+            h -= szThumb;
+            const hPage = (fill || page === max ? h : h * page / max) + szThumb;
+
+            if (this._reversed) {
+                // TODO
+                this._thumbView.setBounds(model.gap + 1, fill ? 0 : (this.height - h * pos / max) - hPage, w - 2, hPage); 
+            } else {
+                this._thumbView.setBounds(model.gap + 1, fill ? 0 : (this.height - h * pos / max) - hPage, w - 2, hPage); 
+            }
+        } else {
+            h -= model.gap + model.gapFar;
+            this._trackView.setBounds(0, model.gap, w, h);
+            
+            w -= szThumb;
+            const wPage = (fill || page === max ? w : w * page / max) + szThumb;
+
+            if (this._reversed) {
+                // TODO
+                this._thumbView.setBounds(fill ? 0 : w * pos / max, model.gap + 1, wPage, h - 2); 
+            } else {
+                this._thumbView.setBounds(fill ? 0 : w * pos / max, model.gap + 1, wPage, h - 2); 
+            }
+        }
+    }
+}
+
+/**
+ * @internal
+ */
 export class AxisView extends ChartElement<Axis> {
 
     //-------------------------------------------------------------------------
@@ -151,18 +331,23 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _simpleMode = false;
     private _lineView: LineElement;
+    private _lineView2: LineElement; // between일 때
     private _titleView: AxisTitleView;
     private _markContainer: RcElement;
     private _markViews: AxisTickMarkView[] = [];
     private _labelContainer: RcElement;
     private _labelViews: AxisLabelElement[] = []; 
+    _scrollView: AxisScrollView;
+
     private _markLen: number;
     private _labelSize: number;
     private _labelRowPts: number[];
 
     _guideViews: AxisGuideView<AxisGuide>[];
     _frontGuideViews: AxisGuideView<AxisGuide>[];
+    _crosshairView: CrosshairFlagView;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -182,6 +367,19 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    private $_checkScrollView(doc: Document, bar: AxisScrollBar, prop: string, width: number, height: number): number {
+        if (bar.visible && !this.model._isBetween) {
+            if (!this._scrollView) {
+                this.add(this._scrollView = new AxisScrollView(doc));
+            }
+            this._scrollView.setVisible(true);
+            return this._scrollView.measure(doc, bar, width, height, 1)[prop];
+        } else if (this._scrollView) {
+            this._scrollView.setVisible(false);
+        }
+        return 0;
+    }
+    
     checkHeight(doc: Document, width: number, height: number): number {
         const m = this.model;
         let h = m.tick.visible ? m.tick.length : 0; 
@@ -197,10 +395,14 @@ export class AxisView extends ChartElement<Axis> {
         }
 
         // title
-        if (this._titleView.visible = m.title.isVisible()) {
+        if (this._titleView.setVisible(m.title.isVisible())) {
             h += this._titleView.measure(doc, m.title, width, height, 1).height;
             h += m.title.gap;
         }
+        
+        // scrollbar
+        h += this.$_checkScrollView(doc, m.scrollBar, 'height', width, height);
+        
         return h;
     }
 
@@ -215,14 +417,18 @@ export class AxisView extends ChartElement<Axis> {
         // w += t ? t.getBBounds().width : 0;
 
         if (this.$_prepareLabels(doc, m)) {
-            w += this.$_measureLabelsVert(this._labelViews);
+            w += this.$_measureLabelsVert(m, this._labelViews, width);
         }
 
         // title
         if (this._titleView.visible = m.title.isVisible()) {
-            w += this._titleView.measure(doc, m.title, width, height, 1).height; // [NOTE] width가 아니다.
+            w += this._titleView.measure(doc, m.title, width, height, 1).width; // [NOTE] width가 아니다.
             w += m.title.gap;
         }
+        
+        // scrollbar
+        w += this.$_checkScrollView(doc, m.scrollBar, 'width', width, height);
+
         return w;
     }
 
@@ -234,17 +440,57 @@ export class AxisView extends ChartElement<Axis> {
         frontContainer.addAll(doc, guides);
     }
 
+    showCrosshair(pos: number, text: string): void {
+        let cv = this._crosshairView;
+
+        if (!cv) {
+            this.add(this._crosshairView = cv = new CrosshairFlagView(this.doc));
+        }
+        cv.setVisible(true);
+
+        cv.setText(this.model.crosshair, text);
+        const r = cv.getBBounds();
+
+        if (this.model._isHorz) {
+            cv.translate(pos - r.width / 2, this.model.tick.length);
+        } else {
+            cv.translate(this.width - this.model.tick.length - r.width, pos - r.height / 2);
+        }
+    }
+
+    hideCrosshiar(): void {
+        if (this._crosshairView && this._crosshairView.visible) {
+            this._crosshairView.setVisible(false);
+        }
+    }
+
+    scroll(pos: number): void {
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: Axis, hintWidth: number, hintHeight: number, phase: number): ISize {
         const horz = model._isHorz;
+        const between = model._isBetween;
         const titleView = this._titleView;
         const labelViews = this._labelViews;
         let sz = 0;
 
         // line
-        this._lineView.visible = model.line.visible;
+        if (this._lineView.visible = model.line.visible) {
+            this._lineView.setStyleOrClass(model.line.style);
+            if (between) {
+                if (!this._lineView2) {
+                    this.insertChild(this._lineView2 = new LineElement(doc, AxisView.LINE_CLASS), this._lineView);
+                } else {
+                    this._lineView2.setVisible(true);
+                }
+                this._lineView.setStyleOrClass(model.line.style);
+            }
+        } else if (this._lineView2) {
+            this._lineView2.setVisible(false);
+        }
 
         // tick marks 
         this._markLen = model.tick.length || 0; // tick.mark.visible이 false이어도 자리는 차지한다.
@@ -255,22 +501,32 @@ export class AxisView extends ChartElement<Axis> {
         if (this.$_prepareTickMarks(doc, model)) {
             this._markViews.forEach(v => v.measure(doc, model.tick, hintWidth, hintHeight, phase));
         }
+        if (between) sz *= 2; // 양쪽에 간격은 둔다.
 
         // labels
         if (this.$_prepareLabels(doc, model)) {
             if (horz) {
                 sz += this._labelSize = this.$_measureLabelsHorz(model, labelViews, hintWidth);
             } else {
-                sz += this._labelSize = this.$_measureLabelsVert(labelViews);
+                sz += this._labelSize = this.$_measureLabelsVert(model, labelViews, hintHeight);
             }
         } else {
             this._labelSize = 0;
         }
 
-        // title
-        if (titleView.visible) { // checkHeight/checkWidth 에서 visible 설정.
-            sz += titleView.mh;
-            sz += model.title.gap || 0;
+        if (this._simpleMode) {
+            titleView.setVisible(false);
+        } else {
+            // title
+            if (titleView.visible) { // checkHeight/checkWidth 에서 visible 설정.
+                sz += horz ? titleView.mh : titleView.mw;
+                sz += +model.title.gap || 0;
+            }
+
+            // scrollbar
+            if (this._scrollView?.visible) {
+                sz += horz ? this._scrollView.mh : this._scrollView.mw;
+            }
         }
 
         return Size.create(horz ? hintWidth : sz, horz ? sz : hintHeight);
@@ -280,9 +536,9 @@ export class AxisView extends ChartElement<Axis> {
         const model = this.model;
         const horz = model._isHorz;
         const opp = model._isOpposite;
+        const between = model._isBetween;
         const ticks = model._ticks;
         const markPts = model._markPoints;
-        const titleView = this._titleView;
         const labelViews = this._labelViews;
         const markLen = this._markLen;
         const w = this.width;
@@ -291,11 +547,19 @@ export class AxisView extends ChartElement<Axis> {
         // line
         if (this._lineView.visible) {
             if (horz) {
-                this._lineView.setHLine(opp ? h : 0, 0, w);
-                // this._lineView.setHLineC(opp ? h : 0, 0, w);
+                // this._lineView.setHLine(opp ? h : 0, 0, w);
+                this._lineView.setHLineC(opp ? h : 0, 0, w);
             } else {
-                this._lineView.setVLine(opp ? 0 : w, 0, h);
-                // this._lineView.setVLineC(opp ? 0 : w, 0, h);
+                // this._lineView.setVLine(opp ? 0 : w, 0, h);
+                this._lineView.setVLineC(opp ? 0 : w, 0, h);
+            }
+
+            if (this._lineView2) { // when between
+                if (horz) {
+                    this._lineView2.setHLineC(h, 0, w);
+                } else {
+                    this._lineView2.setVLineC(0, 0, h);
+                }
             }
         }
 
@@ -319,28 +583,135 @@ export class AxisView extends ChartElement<Axis> {
 
         if (this._labelContainer.visible) {
             if (horz) {
-                this.$_layoutLabelsHorz(labelViews, ticks, opp, w, h, len);
+                this.$_layoutLabelsHorz(labelViews, ticks, between, opp, w, h, len);
             } else {
-                this.$_layoutLabelsVert(labelViews, ticks, opp, w, h, len);
+                this.$_layoutLabelsVert(labelViews, ticks, between, opp, w, h, len);
             }
         }
 
-        // title
-        if (titleView.visible) {
-            const labelSize = this._labelSize;
-            const gap = model.title.gap || 0;
+        if (!this._simpleMode) {
+            const titleView = this._titleView;
+            const scrollView = this._scrollView;
+            let x = 0;
+            let y = 0;
 
-            titleView.resizeByMeasured().layout(horz);
+            // title
+            if (titleView.visible) {
+                const labelSize = this._labelSize;
+                const off = +model.title.offset || 0;
+                const gap = +model.title.gap || 0;
+    
+                titleView.resizeByMeasured().layout(horz);
+    
+                if (horz) {
+                    y += opp ? 0 : len + labelSize + gap;
 
-            if (horz) {
-                const y = opp ? 0 : len + labelSize + gap;
+                    if (model.reversed) {
+                        switch (model.title.align) {
+                            case AxisTitleAlign.START:
+                                x = w - titleView.width / 2 - off;
+                                break;
+                            case AxisTitleAlign.END:
+                                x = titleView.width / 2 + off;
+                                break;
+                            case AxisTitleAlign.MIDDLE:
+                            default:
+                                x = w / 2 - off;
+                                break;
+                        }
+                    } else {
+                        switch (model.title.align) {
+                            case AxisTitleAlign.START:
+                                x = titleView.width / 2 + off;
+                                break;
+                            case AxisTitleAlign.END:
+                                x = w - titleView.width / 2 - off;
+                                break;
+                            case AxisTitleAlign.MIDDLE:
+                            default:
+                                x = w / 2 + off;
+                                break;
+                        }
+                    }
+                    
+                    titleView.translate(x, y);
+                    y += titleView.height;
 
-                // titleView.translate((w - titleView.width) / 2, this._markLen + labelSize);
-                titleView.translate(w / 2, y);
-            } else {
-                const x = opp ? len + labelSize + gap + titleView.height / 2 : w - len - labelSize - gap - titleView.height / 2;
-
-                titleView.translate(x, (h - titleView.height) / 2);
+                } else {
+                    const sz = titleView._angle === 0 ? titleView.width : titleView.height;
+                    x = opp ? len + labelSize + gap + sz / 2 : w - len - labelSize - gap - sz / 2;
+    
+                    if (model.reversed) {
+                        if (titleView._angle === 0) {
+                            switch (model.title.align) {
+                                case AxisTitleAlign.START:
+                                    y = 0 + off;
+                                    break;
+                                case AxisTitleAlign.END:
+                                    y = h - titleView.height - off;
+                                    break;
+                                case AxisTitleAlign.MIDDLE:
+                                default:
+                                    y = (h - titleView.height) / 2 + off;
+                                    break;
+                            }
+                        } else {
+                            switch (model.title.align) {
+                                case AxisTitleAlign.START:
+                                    y = titleView.width / 2 - titleView.height / 2 + off;
+                                    break;
+                                case AxisTitleAlign.END:
+                                    y = h - titleView.width / 2 - titleView.height / 2 - off;
+                                    break;
+                                case AxisTitleAlign.MIDDLE:
+                                default:
+                                    y = (h - titleView.height) / 2 + off;
+                                    break;
+                            }
+                        }
+                    } else {
+                        if (titleView._angle === 0) {
+                            switch (model.title.align) {
+                                case AxisTitleAlign.START:
+                                    y = h - titleView.height - off;
+                                    break;
+                                case AxisTitleAlign.END:
+                                    y = 0 + off;
+                                    break;
+                                case AxisTitleAlign.MIDDLE:
+                                default:
+                                    y = (h - titleView.height) / 2 - off;
+                                    break;
+                            }
+                        } else {
+                            switch (model.title.align) {
+                                case AxisTitleAlign.START:
+                                    y = h - titleView.width / 2 - titleView.height / 2 - off;
+                                    break;
+                                case AxisTitleAlign.END:
+                                    y = titleView.width / 2 - titleView.height / 2 + off;
+                                    break;
+                                case AxisTitleAlign.MIDDLE:
+                                default:
+                                    y = (h - titleView.height) / 2 - off;
+                                    break;
+                            }
+                        }
+                    }
+                    titleView.translate(x, y);
+                }
+            }
+    
+            // scrollbar
+            if (scrollView?.visible) {
+                if (horz) {
+                    scrollView.translate(0, y).resize(this.width, scrollView.mh);
+                    scrollView.setScroll(model._zoom, model.reversed);
+                } else {
+                    scrollView.translate(0, 0).resize(scrollView.mw, this.height);
+                    scrollView.setScroll(model._zoom, model.reversed);
+                }
+                scrollView.layout();
             }
         }
     }
@@ -348,43 +719,6 @@ export class AxisView extends ChartElement<Axis> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    // private $_prepareChecker(doc: Document, m: Axis): AxisLabelElement {
-    //     if (this._labelContainer.visible = m.label.visible) {
-    //         const ticks = m._ticks;
-    //         let tick = ticks[0];
-    //         let t: AxisLabelElement;
-
-    //         if (tick) {
-    //             if (m.label.getRotation() !== 0) {
-    //                 let len = tick.label.length;
-    //                 let j = 0;
-
-    //                 for (let i = 1; i < ticks.length; i++) {
-    //                     if (ticks[i].label.length > len) {
-    //                         len = ticks[i].label.length;
-    //                         tick = ticks[i];
-    //                         j = i;
-    //                     }
-    //                 }
-    //                 t = this._labelViews[j];
-
-    //             } else {
-    //                 t = this._labelViews[0];
-    //             }
-    
-    //             if (!t) {
-    //                 t = new AxisLabelElement(doc, 'rct-axis-label');
-    //                 t.anchor = TextAnchor.START;
-    //                 this._labelContainer.add(t);
-    //                 this._labelViews.push(t);
-    //             }
-        
-    //             t.text = tick.label
-    //             return t;
-    //         }
-    //     }
-    // }
-
     private $_prepareTickMarks(doc: Document, m: Axis): boolean {
         const container = this._markContainer;
 
@@ -426,6 +760,7 @@ export class AxisView extends ChartElement<Axis> {
             }
 
             views.forEach((v, i) => {
+                v.setVisible(true); // visible false이면 getBBox()가 계산되지 않는다.
                 v.value = ticks[i].value;
                 v.text = ticks[i].label;
             });
@@ -442,91 +777,129 @@ export class AxisView extends ChartElement<Axis> {
         return 2;
     }
 
+    private $_checkOverlappedHorz(axis: Axis, views: AxisLabelElement[], width: number, step: number, rows: number, rotation: number): boolean {
+        const nView = views.length;
+        const inc = Math.max(1, step) * Math.max(1, rows);
+        const a = rotation || 0;
+        const arad = Math.abs(a) * Math.PI / 180;
+        let overalpped = false;
+
+        views.forEach(v => v.rotation = a);
+
+        for (let i = 0; i < nView - 1; i += inc) {
+            let w = 0;
+            for (let j = i; j < i + inc && j < nView - 1; j++) {
+                w += axis.getLabelLength(width, views[i].value);
+            }
+
+            if (a === 0 && views[i].getBBounds().width >= w) {
+                overalpped = true;
+                break;
+            } else if  (a !== 0 && (views[i].getBBounds().width + views[i].getBBounds().height) * Math.cos(arad) >= w) {
+                overalpped = true;
+                break;
+            }
+        }
+        return overalpped;
+    }
+
+    private $_applyStep(axis: Axis, views: AxisLabelElement[], step: number): AxisLabelElement[] {
+        const m = axis.label;
+        const start = Math.max(0, m.startStep || 0);
+            
+        views.forEach(v => v.index = -1);
+        for (let i = start; i < views.length; i += step) {
+            views[i].index = i;
+        }
+        views.forEach(v => v.setVisible(v.index >= 0));
+        return views.filter(v => v.visible);
+    }
+
     private $_measureLabelsHorz(axis: Axis, views: AxisLabelElement[], width: number): number {
         const m = axis.label;
-        let step = m.step >> 0;
-        let rows = m.rows >> 0;
-        let rotation = m.rotation % 360;
-        let overlapped = false;
+        let step = +m.step >> 0;
+        let rows = +m.rows >> 0;
+        let rotation = +m.rotation % 360;
+        let overlapped = this.$_checkOverlappedHorz(axis, views, width, step, rows, rotation);
         let sz: number;
 
-        if (step > 0 || rows > 0 || rotation > 0 || rotation < 0 ) {
-        } else {
-            // check overalpped
-            for (let i = 0; i < views.length - 1; i++) {
-                const w = axis.getLabelLength(width, views[i].value);
+        views.forEach(v => v.row = 0);
+        this._labelRowPts = [0];
 
-                if (views[i].getBBounds().width >= w) {
-                    overlapped = true;
+        if (!overlapped) {
+            views = this.$_applyStep(axis, views, step || 1);
+        } else {
+            step = rows = rotation = 0;
+
+            switch (m.autoArrange) {
+                case AxisLabelArrange.ROTATE:
+                    rotation = -45;
                     break;
-                }
+                case AxisLabelArrange.ROWS:
+                    rows = this.$_getRows(views);
+                    break;
+                case AxisLabelArrange.STEP:
+                    step = this.$_getStep(views);
+                    break;
             }
-            if (overlapped) {
-                switch (m.autoArrange) {
-                    case AxisLabelArrange.ROTATE:
-                        rotation = -45;
-                        break;
-                    case AxisLabelArrange.ROWS:
-                        rows = this.$_getRows(views);
-                        break;
-                    case AxisLabelArrange.STEP:
-                        step = this.$_getStep(views);
-                        break;
-                }
-                overlapped = false;
-            }
-        }
 
-        if (step > 1) {
-            const start = Math.max(0, m.startStep || 0);
-            
-            views.forEach(v => v.index = -1);
-            for (let i = start; i < views.length; i += step) {
-                views[i].index = i;
+            if (step > 1) {
+                const save = views.slice(0);
+                while (save.length > 1) {
+                    views = this.$_applyStep(axis, save, step);
+                    if (!this.$_checkOverlappedHorz(axis, save, width, step, 1, 0)) {
+                        break;
+                    }
+                    step++;
+                }
+            } else if (rows > 1) {
+                while (views.length > rows) {
+                    views.forEach((v, i) => {
+                        v.row = i % rows;
+                        v.index = i;
+                    });
+                    if (!this.$_checkOverlappedHorz(axis, views, width, 1, rows, 0)) {
+                        break;
+                    }
+                    rows++;
+                }
+                this._labelRowPts = [];
+
+            } else {
+                rotation = -45;
+                views.forEach((v, i) => {
+                    v.rotation = rotation;
+                    v.index = i;
+                });
+                // TODO: rotation이 적용됐는데도 overlapped이면 stepping을 한다.
+                if (this.$_checkOverlappedHorz(axis, views, width, step, rows, rotation)) {
+                    step = Math.max(2, step++);
+                    views = this.$_applyStep(axis, views, step);
+                    // rotation을 제거해도 문제없으면 제거한다.
+                    if (this.$_checkOverlappedHorz(axis, views, width, step, rows, 0)) {
+                        views.forEach((v, i) => {
+                            v.rotation = rotation;
+                        });
+                    }
+                }   
             }
-            views.forEach(v => v.setVisible(v.index >= 0));
-            views = views.filter(v => v.visible);
-        } else {
-            views.forEach((v, i) => {
-                v.index = i;
-                v.setVisible(true);
-            });
         }
 
         if (rows > 1) {
-            views.forEach((v, i) => v.row = i % rows);
-            // this._labelRowPts = new Array<number>(rows).fill(0);
-            this._labelRowPts = [];
-        } else {
-            views.forEach(v => v.row = 0);
-            this._labelRowPts = [0];
-        }
-
-        if (overlapped) {
-            rotation = -45;
-        } else {
-            rotation = rotation || 0;
-        }
-        views.forEach(v => {
-            v.rotation = rotation;
-        });
-
-        if (rows > 1) {
+            const rotated = !isNaN(rotation) && rotation != 0;
             const pts = this._labelRowPts;
+
+            if (rows > 1) {
+                views.forEach((v, i) => v.row = i % rows);
+            }
 
             for (let i = 0; i < rows; i++) {
                 pts.push(0);
             }
 
-            if (!isNaN(rotation) && rotation != 0) {
-                views.forEach(v => {
-                    pts[v.row] = Math.max(pts[v.row], v.rotatedHeight);
-                })
-            } else {
-                views.forEach(v => {
-                    pts[v.row] = Math.max(pts[v.row], v.getBBounds().height);
-                })
-            }
+            views.forEach(v => {
+                pts[v.row] = Math.max(pts[v.row], rotated ? v.rotatedHeight : v.getBBounds().height);
+            })
 
             pts.unshift(0);
             for (let i = 2; i < pts.length; i++) {
@@ -550,7 +923,40 @@ export class AxisView extends ChartElement<Axis> {
         return sz;
     }
 
-    private $_measureLabelsVert(views: AxisLabelElement[]): number {
+    private $_checkOverlappedVert(axis: Axis, views: AxisLabelElement[], height: number, step: number): boolean {
+        const nView = views.length;
+        const inc = Math.max(1, step);
+
+        for (let i = 0; i < nView - 1; i += inc) {
+            let h = 0;
+            for (let j = i; j < i + inc && j < nView - 1; j++) {
+                h += axis.getLabelLength(height, views[i].value);
+            }
+
+            if (views[i].getBBounds().height >= h) {
+                return true;
+            }
+        }
+    }
+
+    private $_measureLabelsVert(axis: Axis, views: AxisLabelElement[], height: number): number {
+        const m = axis.label;
+        let step = Math.max(1, +m.step >> 0);
+        const overalpped = this.$_checkOverlappedVert(axis, views, height, step);
+
+        if (!overalpped) {
+            views = this.$_applyStep(axis, views, step);
+        } else {
+            const save = views.slice(0);
+
+            while (save.length > 1 && step < save.length / 2) {
+                views = this.$_applyStep(axis, save, ++step);
+                if (!this.$_checkOverlappedHorz(axis, save, height, step, 1, 0)) {
+                    break;
+                }
+            }
+        }
+
         let sz = views[0].getBBounds().width;
 
         for (let i = 1; i < views.length; i++) {
@@ -559,7 +965,7 @@ export class AxisView extends ChartElement<Axis> {
         return sz;
     }
 
-    private $_layoutLabelsHorz(views: AxisLabelElement[], ticks: IAxisTick[], opp: boolean, w: number, h: number, len: number): void {
+    private $_layoutLabelsHorz(views: AxisLabelElement[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, len: number): void {
         const pts = this._labelRowPts;
 
         views.forEach(v => {
@@ -587,16 +993,17 @@ export class AxisView extends ChartElement<Axis> {
         });
     }
 
-    private $_layoutLabelsVert(views: AxisLabelElement[], ticks: IAxisTick[], opp: boolean, w: number, h: number, len: number): void {
+    private $_layoutLabelsVert(views: AxisLabelElement[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, len: number): void {
         const x = opp ? len : w - len;
     
         views.forEach((v, i) => {
             if (v.visible) {
                 const r = v.getBBounds();
-                const x2 = opp ? x : x - r.width;
+                const x2 = opp ? x : between ? (w - r.width) / 2 : x - r.width;
     
+                v.anchor = TextAnchor.START;
                 v.translate(x2, h - ticks[i].pos - r.height / 2);
             }
         });
-}
+    }
 }

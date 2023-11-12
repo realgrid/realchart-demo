@@ -6,9 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isNumber } from "../common/Common";
+import { NumberFormatter } from "../common/NumberFormatter";
 import { ChartItem } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
-import { ISeries } from "./Series";
+import { ISeries, Series } from "./Series";
 
 export class Tooltip extends ChartItem {
 
@@ -34,8 +36,27 @@ export class Tooltip extends ChartItem {
     // properties
     //-------------------------------------------------------------------------
     html: string;
-    text = '<b>${point.x}</b><br>${series}:<b> ${point.y}</b>';
+    /**
+     * 툴팁에 표시할 텍스트 형식.
+     * '${...}' 형식으로 아래과 같은 변수로 데이터 포인트 및 시리즈 값을 지정할 수 있다.
+     * |변수|설명|
+     * |---|---|
+     * |series|시리즈 이름|
+     * |name|포인트 이름. 포인트가 속한 카테고리 이름이거나, 'x' 속성으로 지정한 값|
+     * |x|'x' 속성으로 지정한 값이거 카테고리 이름|
+     * |y|'y' 속성으로 지정한 값|
+     * |xValue|계산된 x값|
+     * |yValue|계산된 y값|
+     * 
+     * @config
+     */
+    text = '<b>${name}</b><br>${series}:<b> ${yValue}</b>';
     offset = 8;
+    /**
+     * 툴팁이 점진적으로 닫히는 시간을 밀리초 단위로 지정한다.
+     * 
+     * @config
+     */
     hideDelay = Tooltip.HIDE_DELAY;
     minWidth = 100;
     minHeight = 40;
@@ -45,26 +66,25 @@ export class Tooltip extends ChartItem {
      * false, true를 명시적으로 지정하지 않으면 시리즈 종류에 따라 자동 설정된다.
      * ex) pie 시리즈는 true, bar 시리즈는 false가 된다.
      * 
-     * @default undefined
+     * @config
      */
     followPointer: boolean;
+    /**
+     * 툴팁에 표시될 숫자값의 기본 형식.
+     */
+    numberFormat: '#.##';
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getValue(point: DataPoint, param: string): string {
-        switch (param) {
-            case 'series':
-            case 'series.name':
-                return this.series.displayName();
-            case 'point.x':
-                return point.x;
-            case 'point':
-            case 'point.y':
-                return point.y;
-            default:
-                return param;
-        }
+    getValue(series: Series, point: DataPoint, param: string, format: string): string {
+        const v = series.getPointTooltip(point, param);
+
+        if (isNumber(v)) {
+            const f = format || this.numberFormat;
+            return f ? NumberFormatter.getFormatter(f).toStr(v) : v as any;
+        } 
+        return v;
     }
 
     //-------------------------------------------------------------------------

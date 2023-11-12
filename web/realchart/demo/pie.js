@@ -5,6 +5,7 @@
 const config = {
     title: "Pie Series",
     options: {
+        // animatable: false,
     },
     legend: {
         position: 'right',
@@ -22,6 +23,7 @@ const config = {
     },
     series: {
         type: 'pie',
+        legendByPoint: true,
         pointLabel: {
             visible: true,
             // position: 'outside',
@@ -53,7 +55,7 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createCheckBox(container, 'Always Animate', function (e) {
         animate = _getChecked(e);
@@ -63,37 +65,45 @@ function setActions(container) {
     });
     createListBox(container, "options.palette", ['default', 'warm', 'cool', 'forest', 'gray'], function (e) {
         config.options.palette = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, 'default');
     createCheckBox(container, 'Legend', function (e) {
         config.legend.visible = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, true);
-    createListBox(container, "Legend.position", ['bottom', 'top', 'right', 'left'], function (e) {
-        config.legend.position = _getValue(e);
-        chart.update(config, animate);
-    }, 'right');
+    createListBox(container, "Legend.location", ['bottom', 'top', 'right', 'left'], function (e) {
+        config.legend.location = _getValue(e);
+        chart.load(config, animate);
+    }, 'bottom');
     line(container);
-    createListBox(container, "startAngle", [0, 90, 180, 270], function (e) {
+    createListBox(container, "series.startAngle", [0, 90, 180, 270], function (e) {
         config.series.startAngle = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, 0);
-    createListBox(container, "series.size", ['60%', '70%', '80%', '90%', '100%'], function (e) {
-        config.series.size = _getValue(e);
-        chart.update(config, animate);
-    }, '80%');
+    createListBox(container, "series.totalAngle", [360, 270, 225, 180], function (e) {
+        config.series.totalAngle = _getValue(e);
+        chart.load(config, animate);
+    }, 360);
+    createCheckBox(container, 'series.clockwise', function (e) {
+        config.series.clockwise = _getChecked(e);
+        chart.load(config, animate);
+    }, true);
+    createListBox(container, "series.radius", ['30%', '35%', '40%', '45%'], function (e) {
+        config.series.radius = _getValue(e);
+        chart.load(config, animate);
+    }, '40%');
     createListBox(container, "series.centerX", ['30%', '40%', '50%', '60%'], function (e) {
         config.series.centerX = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, '50%');
     createListBox(container, "series.centerY", ['45%', '50%', '55%'], function (e) {
         config.series.centerY = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, '50%');
     line(container);
     createListBox(container, "series.pointLabel.position", ['auto', 'outside'], function (e) {
         config.series.pointLabel.position = _getValue(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, 'auto');
 }
 

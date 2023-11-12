@@ -13,6 +13,9 @@ const config = {
     },
     series: {
         type: 'histogram',
+        tooltip: {
+            text: 'min: ${min}<br>max: ${max}'
+        },
         pointLabel: true,
         data: [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3,
             4, 4.4, 3.9, 3.5, 3.8, 3.8, 3.4, 3.7, 3.6, 3.3, 3.4, 3, 3.4, 3.5, 3.4,
@@ -32,22 +35,22 @@ let chart = {};
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
 }
 

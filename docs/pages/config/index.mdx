@@ -1,0 +1,27 @@
+---
+title: '개요'
+---
+
+# 차트 설정(Configuration)
+
+RealChart는 차트 구성 요소들의 배치 정보와 스타일들이 지정된 JSON 설정 객체를 이용하여 생성된다.
+
+```js
+const config = {
+    polar: false,
+    inverted: false,
+    type: 'bar',
+    gaugeType: 'circle',
+    templates: {},
+    options: {},
+    title: {},
+    subtitle: {},
+    body: {},
+    legend: {},
+    xAxis: [],
+    yAxis: [],
+    series: [],
+    gauge: [],
+};
+const chart = RealChart.createChart(document, 'div', config);
+```

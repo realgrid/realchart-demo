@@ -1,0 +1,35 @@
+{
+	"gauge": {
+		"title": "Circle Gauge"
+	},
+	"gauge-multi": {
+		"title": "Multiple Gauges"
+	},
+	"gauge-hand": {
+		"title": "Hand Gauges"
+	},
+	"gauge-clock": {
+		"title": "Clock Gauge"
+	},
+	"gauge-clock-multi": {
+		"title": "Multiple Clocks"
+	},
+	"gauge-bullet": {
+		"title": "Bullet Gauge"
+	},
+	"gauge-linear": {
+		"title": "Linear Gauge"
+	},
+	"gauge-linear-vert": {
+		"title": "Linear Gauge - Vertical"
+	},
+	"gauge-group": {
+		"title": "Circle Gauge Group"
+	},
+	"gauge-group-linear": {
+		"title": "Linear Gauge Group"
+	},
+	"gauge-group-bullet": {
+		"title": "Bullet Gauge Group"
+	}
+}

@@ -7,13 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "./Common";
-import { ZWSP } from "./Types";
+import { Align, ZWSP } from "./Types";
 import { TextElement } from "./impl/TextElement";
 
 const HEIGHT = '$_TH';
 const WIDTH = '$_TW';
 
-export type RichTextParamCallback = (target: any, param: string) => string;
+export type RichTextParamCallback = (target: any, param: string, format: string) => string;
 
 class Word {
 
@@ -46,7 +46,7 @@ class Word {
             let s = this.text;
 
             for (let i = 0; i < literals.length; i += 3) {
-                s = s.replace(literals[i], callback(target, literals[i + 1]));//, literals[i + 2]));
+                s = s.replace(literals[i], callback(target, literals[i + 1], literals[i + 2]));
             }
             return s;
         }
@@ -78,10 +78,10 @@ class Word {
             
             const s = str.substring(i, j + 1);
             const s2 = s.substring(2, s.length - 1);
-            const k = s2.indexOf(':');
+            const k = s2.indexOf(';');
 
             if (k > 0) {
-                this._literals.push(s, s2.substring(0, k), s2.substr(k + 1));
+                this._literals.push(s, s2.substring(0, k), s2.substring(k + 1));
             } else {
                 this._literals.push(s, s2, '');
             }
@@ -114,7 +114,8 @@ abstract class SpanWord extends Word {
     // internal members
     //-------------------------------------------------------------------------
     protected _doPrepare(span: SVGTSpanElement, s: string, x1: number, x2: number): void {
-        span.textContent = s.substring(x1, x2);
+        // span.textContent = s.substring(x1, x2);
+        span.innerHTML = s.substring(x1, x2);
 
         const i = s.indexOf('style=');
 
@@ -271,7 +272,7 @@ export class SvgRichText {
     // property fields
     //-------------------------------------------------------------------------
     private _format: string;
-    lineHeight = 1;
+    lineHeight: number;
 
     //-------------------------------------------------------------------------
     // fields
@@ -282,24 +283,20 @@ export class SvgRichText {
     // constructors
     //-------------------------------------------------------------------------
 	constructor(format?: string) {
-		this.format = format;
+		this.setFormat(format);
 	}
 
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /** format */
-	get format(): string {
-		return this._format;
-    }
-    set format(value: string) {
+    setFormat(value: string) {
         if (value !== this._format) {
             this._format = value;
             value && this.$_parse(value);
         }
     }
 
-    get lines(): SvgLine[] {
+    lines(): SvgLine[] {
         return this._lines.slice();
     }
 
@@ -315,7 +312,10 @@ export class SvgRichText {
     //     return s;
     // }
 
-    build(view: TextElement, target: any, domain: RichTextParamCallback): void {
+    /**
+     * TODO: max width
+     */
+    build(view: TextElement, maxWidth: number, maxHeight: number, target: any, domain: RichTextParamCallback): void {
         const doc = view.doc;
         const hLine = pickNum(this.lineHeight, 1);
         let hMax = 0;
@@ -324,6 +324,7 @@ export class SvgRichText {
         const widths = [];
         let wMax = 0;
         const firsts: Element[] = [];
+        let prev: number;
 
         view.clearDom();
         target = target || view;
@@ -351,19 +352,33 @@ export class SvgRichText {
             wMax = Math.max(w, wMax);
             hMax = Math.max(h, hMax);
         }
-         
-        firsts[0] && firsts[0].setAttribute('x', String((wMax - widths[0]) / 2));
+        
+        // if (firsts[0]) {
+        //     firsts[0].setAttribute('x', '0');
+        // }
+        prev = lines[0][HEIGHT];
         for (let i = 1; i < firsts.length; i++) {
-            const span = view.insertElement(doc, 'tspan', firsts[i]);
-            const h: any = Math.ceil(view.getAscent(this._lines[i][HEIGHT]));
+            if (firsts[i]) { // 중복된 <br>은 무시한다.
+                const span = view.insertElement(doc, 'tspan', firsts[i]);
+                let h = Math.floor(prev - view.getAscent(prev)) + view.getAscent(lines[i][HEIGHT]);
+                // let h = lines[i][HEIGHT];
 
-            span.setAttribute('x', String((wMax - widths[i]) / 2));
-            span.setAttribute('dy', h);
-            span.innerHTML = ZWSP;
+                // [CHECK] 이전 line 높이가 지금행보다 많이 큰 경우, 두 line이 겹치는 경우가 많다.
+                //         아래행을 조금 더 민다.
+                // if (dy > 0 && lines[i - 1][HEIGHT] >= h * 1.8) {
+                //     h = Math.floor(h * 1.1);
+                // } else {
+                //     h = Math.ceil(h);
+                // }
+                span.setAttribute('x', '0');
+                span.setAttribute('dy', String(h));
+                span.innerHTML = ZWSP;
+                prev = lines[i][HEIGHT];
+            }
         }
 
-        //parent.layoutText(lines[0][HEIGHT]);
-        view.layoutText(hMax); // 가장 큰 높이의 행 높이를 전달한다. 맞나?
+        view.layoutText(lines[0][HEIGHT]); // 첫 행의 높이를 전달한다.
+        // view.layoutText(hMax); // 가장 큰 높이의 행 높이를 전달한다. 맞나?
     }
 
 	//-------------------------------------------------------------------------

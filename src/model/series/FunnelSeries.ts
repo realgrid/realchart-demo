@@ -7,31 +7,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ISize } from "../../common/Size";
-import { IPercentSize, SizeValue, calcPercent, fixnum, parsePercentSize2 } from "../../common/Types";
+import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { ILegendSource } from "../Legend";
-import { PointItemPosition, WidgetSeries } from "../Series";
+import { PointItemPosition, WidgetSeries, WidgetSeriesPoint } from "../Series";
 
-export class FunnelSeriesPoint extends DataPoint implements ILegendSource {
+export class FunnelSeriesPoint extends WidgetSeriesPoint {
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     height: number;
-    _calcedColor: string;
-
-    //-------------------------------------------------------------------------
-    // ILegendSource
-    //-------------------------------------------------------------------------
-    legendColor(): string {
-        return this._calcedColor;
-    }
-
-    legendLabel(): string {
-        return this.x;
-    }
 }
 
 /**
@@ -68,11 +56,32 @@ export class FunnelSeries extends WidgetSeries {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    width: SizeValue = FunnelSeries.DEF_WIDTH;
-    height: SizeValue = FunnelSeries.DEF_HEIGHT;
-    neckWidth: SizeValue = FunnelSeries.DEF_NECK_WIDTH;
-    neckHeight: SizeValue = FunnelSeries.DEF_NECK_HEIGHT;
+    /**
+     * @config
+     */
+    width: RtPercentSize = FunnelSeries.DEF_WIDTH;
+    /**
+     * @config
+     */
+    height: RtPercentSize = FunnelSeries.DEF_HEIGHT;
+    /**
+     * @config
+     */
+    neckWidth: RtPercentSize = FunnelSeries.DEF_NECK_WIDTH;
+    /**
+     * @config
+     */
+    neckHeight: RtPercentSize = FunnelSeries.DEF_NECK_HEIGHT;
+    /**
+     * @config
+     */
     reversed = false;
+    /**
+     * 데이터 포인트별 legend 항목을 표시한다.
+     * 
+     * @config
+     */
+    legendByPoint = false;
 
     //-------------------------------------------------------------------------
     // methods
@@ -91,11 +100,6 @@ export class FunnelSeries extends WidgetSeries {
         };
     }
 
-    getLabelPosition(): PointItemPosition {
-        const p = this.pointLabel.position;
-        return p === PointItemPosition.AUTO ? PointItemPosition.INSIDE : p;
-    }
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -103,14 +107,13 @@ export class FunnelSeries extends WidgetSeries {
         return 'funnel';
     }
 
-    _colorByPoint(): boolean {
-        return true;
-    }
-
-    getLegendSources(list: ILegendSource[]): void {
-        this._runPoints.forEach(p => {
-            list.push(p as FunnelSeriesPoint);
-        })        
+    getPointTooltip(point: FunnelSeriesPoint, param: string): any {
+        switch (param) {
+            case 'height':
+                return point.height;
+            default:
+                return super.getPointTooltip(point, param);
+        }
     }
 
     protected _createPoint(source: any): DataPoint {
@@ -126,31 +129,4 @@ export class FunnelSeries extends WidgetSeries {
         this._neckHeightDim = parsePercentSize2(this.neckHeight, FunnelSeries.DEF_NECK_HEIGHT);
         return this;
     }
-
-    // protected _doPrepareRender(): void {
-    //     super._doPrepareRender();
-
-    //     const pts = this._visPoints as FunnelSeriesPoint[];
-    //     let sum = 0;
-    //     let y = 0;
-
-    //     pts.forEach(p => {
-    //         sum += p.yValue;
-    //     });
-
-    //     const cnt = pts.length;
-    //     let i = 0;
-
-    //     for (; i < cnt - 1; i++) {
-    //         const p = pts[i];
-    //         const h = fixnum(p.yValue / sum);
-
-    //         p.yRate = h * 100;
-    //         p.yPos = y;
-    //         p.height = h;
-    //         y += h;
-    //     }
-    //     pts[i].yPos = y;
-    //     pts[i].height = 1 - y;
-    // }
 }

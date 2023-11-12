@@ -9,7 +9,7 @@
 import { pickNum } from "../../common/Common";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { BasedSeries, ClustrableSeriesGroup, IClusterable, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
+import { BasedSeries, ClusterableSeriesGroup, IClusterable, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
 
 /**
  * [y]
@@ -38,6 +38,11 @@ export class BarSeries extends BasedSeries {
     // properties
     //-------------------------------------------------------------------------
     borderRaidus = 0;
+    /**
+     * true로 지정하면 포인트 bar 별로 색을 다르게 표시한다.
+     * 
+     * @config
+     */
     colorByPoint = false;
 
     //-------------------------------------------------------------------------
@@ -70,7 +75,7 @@ export class BarSeries extends BasedSeries {
 /**
  * @config chart.series[type=bargroup]
  */
-export class BarSeriesGroup extends ClustrableSeriesGroup<BarSeries> implements IClusterable {
+export class BarSeriesGroup extends ClusterableSeriesGroup<BarSeries> implements IClusterable {
 
     //-------------------------------------------------------------------------
     // fields
@@ -86,6 +91,10 @@ export class BarSeriesGroup extends ClustrableSeriesGroup<BarSeries> implements 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    _type(): string {
+        return 'bargroup';
+    }
+
     _seriesType(): string {
         return 'bar';
     }
@@ -94,13 +103,8 @@ export class BarSeriesGroup extends ClustrableSeriesGroup<BarSeries> implements 
         return ser instanceof BarSeries;
     }
 
-    clusterable(): boolean {
+    canCategorized(): boolean {
         return true;
-    }
-
-    setCluster(width: number, pos: number): void {
-        this._clusterWidth = width;
-        this._clusterPos = pos;
     }
 
     getBaseValue(axis: IAxis): number {

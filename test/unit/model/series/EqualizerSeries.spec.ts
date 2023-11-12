@@ -1,0 +1,30 @@
+////////////////////////////////////////////////////////////////////////////////
+// EqualizerSeries.spec.ts
+// 2023. 08. 03. created by woori
+// -----------------------------------------------------------------------------
+// Copyright (c) 2023 Wooritech Inc.
+// All rights reserved.
+////////////////////////////////////////////////////////////////////////////////
+
+import { expect } from 'chai';
+import { describe, it } from 'mocha';
+import { EqualizerSeries } from '../../../../src/model/series/EqualizerSeries';
+
+/**
+ * Tests for EqualizerSeries class.
+ */
+ describe("EqualizerSeries test", function() {
+
+    it('init', () => {
+        let series = new EqualizerSeries(null);
+
+        expect(series).exist;
+        expect(series._type()).eq('equalizer');
+    });
+
+    it('props', () => {
+        let series = new EqualizerSeries(null);
+
+        expect(series.pointPadding).undefined;
+    });
+});

@@ -6,13 +6,13 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
-import { Shape, SvgShapes } from "../../common/impl/SvgShape";
-import { Chart } from "../../main";
+import { PI_2 } from "../../common/Types";
+import { SvgShapes } from "../../common/impl/SvgShape";
+import { Chart } from "../../model/Chart";
 import { LineType } from "../../model/ChartTypes";
 import { DataPoint, IPointPos } from "../../model/DataPoint";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
@@ -99,7 +99,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     protected _prepareSeries(doc: Document, model: T): void {
         model instanceof LineSeries && this._prepareBelow(model);
-        this.$_prepareMarkers(this._visPoints as LineSeriesPoint[]);
+        !this._simpleMode && this.$_prepareMarkers(model, this._visPoints as LineSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -200,14 +200,13 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         }
     }
 
-    private $_prepareMarkers(points: LineSeriesPoint[]): void {
-        const series = this.model;
+    private $_prepareMarkers(series: T, points: LineSeriesPoint[]): void {
         const needBelow = series instanceof LineSeries && this._needBelow;
         const base = needBelow ? series.baseValue : NaN;
         const marker = series.marker;
         const sts = [marker.style, null];
 
-        if (this._pointContainer.visible = marker.visible) {
+        if (this._pointContainer.visible = (marker.visible && !series._simpleMode)) {
             const mpp = this._markersPerPoint();
             const count = points.length;
     
@@ -218,41 +217,21 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                 if (!p.isNull) {
                     mv.point = p;
                     sts[1] = needBelow && p.yValue < base ? series.belowStyle : null;
-                    this._setPointStyle(mv, p, sts);
+                    this._setPointStyle(mv, series, p, sts);
                 }
             });
+        } else {
+            this._markers.prepare(0);
         }
     }
 
     protected _layoutMarker(mv: LineMarkerView, x: number, y: number): void {
         const series = this.model;
-        const marker = series.marker;
-        // const color = series.color;
         const p = mv.point as LineSeriesPoint;
-        const s = p.shape || series.getShape();
-        const sz = mv._radius = pickNum(p.radius, marker.radius);
-        let path: (string | number)[];
+        const rd = mv._radius = series.getRadius(p);
 
-        switch (s) {
-            case Shape.SQUARE:
-            case Shape.RECTANGLE:
-            case Shape.DIAMOND:
-            case Shape.TRIANGLE:
-            case Shape.ITRIANGLE:
-            case Shape.STAR:
-                x -= sz;
-                y -= sz;
-                path = SvgShapes[s](0, 0, sz * 2, sz * 2);
-                break;
-
-            default:
-                path = SvgShapes.circle(0, 0, sz);
-                break;
-        }
-        // if (m.visible = this._containsMarker(x, y)) {
-            mv.translate(x, y);
-            mv.setPath(path);
-        // }
+        SvgShapes.setShape(mv, series.getShape(p), rd);
+        mv.translate(x -= rd, y -= rd);
     }
 
     protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
@@ -267,7 +246,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const yLen = inverted ? width : height;
-        const xLen = inverted ? height : width;
+        const xLen = polar ? polar.rd * PI_2 : inverted ? height : width;
         const yOrg = height;
 
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
@@ -276,7 +255,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             let py: number;
 
             if (polar) {
-                const a = polar.start + i * polar.deg;
+                const a = polar.start + xAxis.getPosition(xLen, p.xValue);
                 const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
 
                 px = p.xPos = polar.cx + y * Math.cos(a);
@@ -301,6 +280,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     const r = lv.getBBounds();
 
                     lv.visible = true;
+                    lv.setContrast(null);
                     lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
                 }
             } else if (lv) {
@@ -532,6 +512,43 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     }
 }
 
+// class MarkerView extends RcElement {
+
+//     //-------------------------------------------------------------------------
+//     // constructor
+//     //-------------------------------------------------------------------------
+//     private _size: number;
+//     private _shape: string;
+//     private _line: LineElement;
+//     private _marker: PathElement;
+
+//     //-------------------------------------------------------------------------
+//     // constructor
+//     //-------------------------------------------------------------------------
+//     constructor(doc: Document, size: number) {
+//         super(doc, SeriesView.LEGEND_MARKER);
+
+//         this._size = size;
+//         this.add(this._line = new LineElement(doc));
+//         this._line.setHLine(size / 2, 0, size * 2);
+//         this.add(this._marker = new PathElement(doc));
+//         this._marker.translate(size / 2, 0);
+//         this.setShape(Shape.CIRCLE, 12);
+//     }
+
+//     //-------------------------------------------------------------------------
+//     // methods
+//     //-------------------------------------------------------------------------
+//     setShape(value: string, size: number): void {
+//         if (value !== this._shape || size !== this._size) {
+//             this._shape = value;
+//             SvgShapes.setShape(this._marker, value as any, (this._size = size) / 2);   
+//             this._marker.translate(size / 2, 0);
+//             this._line.setHLine(size / 2, 0, size * 2);
+//         }
+//     }
+// }
+
 export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
 
     //-------------------------------------------------------------------------
@@ -545,4 +562,8 @@ export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
     constructor(doc: Document) {
         super(doc, LineSeriesView.CLASS);
     }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
 }

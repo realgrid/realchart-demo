@@ -6,14 +6,17 @@ const config = {
     title: "Vector Series",
     xAxis: {
         title: 'X Axis',
-        // min: 0,
-        // max: 100
+        // minValue: 0,
+        // maxValue: 100
     },
     yAxis: {
         title: 'Y Axis',
     },
     series: {
         type: 'vector',
+        tooltip: {
+            text: 'length: ${length}<br>angle: ${angle}'
+        },
         // arrowHead: 'open',
         data: [
             [5, 5, 190, 18],
@@ -387,7 +390,7 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');

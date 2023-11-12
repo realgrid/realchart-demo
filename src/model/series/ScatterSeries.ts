@@ -6,11 +6,14 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { RcElement } from "../../common/RcControl";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { Series, SeriesMarker } from "../Series";
+import { LegendItem } from "../Legend";
+import { MarkerSeries, Series } from "../Series";
+import { ShapeLegendMarkerView } from "./legend/ShapeLegendMarkerView";
 
 export class ScatterSeriesPoint extends DataPoint {
 
@@ -23,7 +26,7 @@ export class ScatterSeriesPoint extends DataPoint {
  * 
  * @config chart.series[type=scatter]
  */
-export class ScatterSeries extends Series {
+export class ScatterSeries extends MarkerSeries {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -34,30 +37,20 @@ export class ScatterSeries extends Series {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, name?: string) {
-        super(chart, name);
-    }
-
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
     /**
-     * 명시적으로 지정하지 않으면 typeIndex에 따라 Shapes 중 하나로 돌아가면서 설정된다.
-     * 
-     * @config
+     * https://thomasleeper.com/Rcourse/Tutorials/jitter.html
      */
-    shape: Shape;
+    jitterX = 0;
+    jitterY = 0;
     /**
      * {@link shape}의 반지름.
      * 
      * @config
      */
     radius = 5;
-    /**
-     * https://thomasleeper.com/Rcourse/Tutorials/jitter.html
-     */
-    jitterX = 0;
-    jitterY = 0;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -72,5 +65,16 @@ export class ScatterSeries extends Series {
 
     protected _createPoint(source: any): DataPoint {
         return new ScatterSeriesPoint(source);
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return new ShapeLegendMarkerView(doc, size);
+    }
+
+    legendMarker(doc: Document): RcElement {
+        const m = super.legendMarker(doc);
+
+        (m as ShapeLegendMarkerView).setShape(this.shape, Math.min(LegendItem.MARKER_SIZE, this.radius * 2));
+        return m;
     }
 }

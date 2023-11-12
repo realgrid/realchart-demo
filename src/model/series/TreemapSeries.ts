@@ -28,6 +28,13 @@ export class TreemapSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            id: this.id,
+            group: this.group
+        });
+    }
+
     protected _readArray(series: TreemapSeries, v: any[]): void {
         super._readArray(series, v);
 
@@ -187,6 +194,17 @@ export class TreemapSeries extends Series {
     //-------------------------------------------------------------------------
     _type(): string {
         return 'treemap';
+    }
+
+    getPointTooltip(point: TreemapSeriesPoint, param: string): any {
+        switch (param) {
+            case 'id':
+                return point.id;
+            case 'group':
+                return point.group;
+            default:
+                return super.getPointTooltip(point, param);
+        }
     }
 
     needAxes(): boolean {

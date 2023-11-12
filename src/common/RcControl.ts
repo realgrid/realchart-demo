@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
-import { Path, SVGStyleOrClass, _undefined, isNull, pixel, throwFormat } from "./Types";
+import { Path, SVGStyleOrClass, _undefined, getCssProp, isNull, pixel, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
 import { SVGNS, isObject, isString, pickProp } from "./Common";
@@ -16,20 +16,16 @@ import { IRect, Rectangle } from "./Rectangle";
 import { SvgShapes } from "./impl/SvgShape";
 import { ISize } from "./Size";
 import { IPoint } from "./Point";
+import { $_lc } from "./LicChecker";
 
 export interface IPointerHandler {
+    handleDown(ev: PointerEvent): void;
+    handleUp(ev: PointerEvent): void;
     handleMove(ev: PointerEvent): void;
     handleClick(ev: PointerEvent): void;
     handleDblClick(ev: PointerEvent): void;
     handleWheel(ev: WheelEvent): void;
 }
-
-// const BACK_STYLES = {
-//     background: 'fill',
-//     border: 'stroke',
-//     borderWidth: 'strokeWidth',
-//     borderRadius: 'borderRadius'
-// }
 
 /** 
  * @internal
@@ -50,6 +46,8 @@ export abstract class RcControl extends RcWrappableObject {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    static _animatable = true;
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -66,7 +64,7 @@ export abstract class RcControl extends RcWrappableObject {
     private _testing = false;
     private _dirty = true;
     private _requestTimer: any;
-    private _invalidElements: RcElement[] = [];
+    // private _invalidElements: RcElement[] = [];
     private _toAnimation = 0;
     private _invalidateLock = false;
     private _lockDirty = false;
@@ -79,6 +77,9 @@ export abstract class RcControl extends RcWrappableObject {
     //-------------------------------------------------------------------------
     constructor(doc: Document, container: string | HTMLDivElement, className?: string) {
         super();
+
+        let lc = "$$LicenseCheck";
+        lc == "1" && $_lc();
 
         if (!doc && container instanceof HTMLDivElement) {
             doc = container.ownerDocument;
@@ -115,6 +116,10 @@ export abstract class RcControl extends RcWrappableObject {
         return this._dom;
     }
 
+    svg(): SVGSVGElement {
+        return this._svg;
+    }
+
     width(): number {
         return this._container.offsetWidth;
     }
@@ -144,15 +149,23 @@ export abstract class RcControl extends RcWrappableObject {
         Dom.clearChildren(this._defs);
     }
 
-    clearTemporaryDefs(): void {
+    private $_clearDefs(key: string): void {
         const defs = this._defs;
         const childs = defs.children;
 
         for (let i = 0; i < childs.length; i++) {
-            if (childs[i].hasAttribute(RcElement.TEMP_KEY)) {
+            if (childs[i].hasAttribute(key)) {
                 defs.removeChild(childs[i]);
             }
         }
+    }
+
+    clearAssetDefs(): void {
+        this.$_clearDefs(RcElement.ASSET_KEY);
+    }
+
+    clearTemporaryDefs(): void {
+        this.$_clearDefs(RcElement.TEMP_KEY);
     }
 
     appendDom(elt: HTMLElement): void {
@@ -281,9 +294,25 @@ export abstract class RcControl extends RcWrappableObject {
 
     containerToElement(element: RcElement, x: number, y: number): IPoint {
         const cr = this._container.getBoundingClientRect();
-        const br = element.dom.getBoundingClientRect();
+        // getBoundingClientRect()는 element에 overflow된 내용이 있는 경우 그것까지 포함된다.
+        // 각 element별 정확한 bounds를 리턴하는 것을 참조하도록 한다. (ex. BodyView)
+        const br = element.getBounds();
 
-        return { x: x + cr.x - br.x, y: y + cr.y - br.y };
+        return { x: x - br.x + cr.x, y: y - br.y + cr.y };
+    }
+
+    svgToElement(element: RcElement, x: number, y: number): IPoint {
+        const cr = this._svg.getBoundingClientRect();
+        const br = element.getBBounds();
+
+        return { x: x - br.x + cr.x, y: y - br.y + cr.y };
+    }
+
+    elementToSvg(element: RcElement, x: number, y: number): IPoint {
+        const cr = this._svg.getBoundingClientRect();
+        const br = element.getBounds();
+
+        return { x: x + br.x - cr.x, y: y + br.y - cr.y };
     }
 
     abstract useImage(src: string): void; // 실제 이미지가 로드됐을 때 다시 그려지도록 한다.
@@ -391,7 +420,8 @@ export abstract class RcControl extends RcWrappableObject {
         svg.setAttribute('height', '100%');//contentDiv.clientHeight + 'px');
 
         const desc = doc.createElement('desc');
-        desc.textContent = 'Created by RealChart v$Version';
+        // desc.textContent = 'Created by RealChart v$Version'; // sourcemap, rollup issue
+        desc.textContent = 'Created by RealChart v0.9.14';
         svg.appendChild(desc);
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
@@ -476,7 +506,7 @@ export abstract class RcControl extends RcWrappableObject {
             this._dirty = false;
             this._requestTimer = null;
             // this._invalidElements.forEach(elt => elt.validate());
-            this._invalidElements = [];
+            // this._invalidElements = [];
             this._doAfterRender();
             console.timeEnd('render chart');
         }
@@ -510,13 +540,16 @@ export abstract class RcControl extends RcWrappableObject {
         this._pointerHandler && this._pointerHandler.handleClick(this.toOffset(ev));
     }
 
-    private _dblClickHandler = (event: PointerEvent) => {
+    private _dblClickHandler = (ev: PointerEvent) => {
+        this._pointerHandler && this._pointerHandler.handleDblClick(this.toOffset(ev));
     }
 
     private _touchMoveHandler = (ev: TouchEvent) => {
     }
 
     private _pointerDownHandler = (ev: PointerEvent) => {
+        this._dom.setPointerCapture(ev.pointerId);
+        this._pointerHandler && this._pointerHandler.handleDown(this.toOffset(ev));
     }
 
     private _pointerMoveHandler = (ev: PointerEvent) => {
@@ -524,6 +557,8 @@ export abstract class RcControl extends RcWrappableObject {
     }
 
     private _pointerUpHandler = (ev: PointerEvent) => {
+        this._dom.releasePointerCapture(ev.pointerId);
+        this._pointerHandler && this._pointerHandler.handleUp(this.toOffset(ev));
     }
 
     private _pointerCancelHandler = (ev: PointerEvent) => {
@@ -554,6 +589,7 @@ export class RcElement extends RcObject {
     //-------------------------------------------------------------------------
     static TESTING = false;
     static DEBUGGING = false;
+    static ASSET_KEY = '_asset_';
     static TEMP_KEY = '_temp_';
 
     //-------------------------------------------------------------------------
@@ -595,7 +631,7 @@ export class RcElement extends RcObject {
         super();
 
         this._dom = doc.createElementNS(SVGNS, tag || 'g');
-        (this._styleName = styleName) && this.setAttr('class', styleName);
+        (this._styleName = styleName || '') && this.setAttr('class', this._styleName);
     }
 
     protected _doDestory(): void {
@@ -646,7 +682,7 @@ export class RcElement extends RcObject {
     }
 
     get y(): number {
-        return this._x;
+        return this._y;
     }
     set y(value: number) {
         if (value !== this._y) {
@@ -710,8 +746,7 @@ export class RcElement extends RcObject {
             this._updateTransform();
         }
     }
-
-    setRotaion(originX: number, originY: number, rotation: number): RcElement {
+    setRotation(originX: number, originY: number, rotation: number): RcElement {
         if (originX !== this._originX || originY !== this._originY || rotation !== this._rotation) {
             this._originX = originX;
             this._originY = originY;;
@@ -785,24 +820,41 @@ export class RcElement extends RcObject {
     }   
 
     getAttr(attr: string): any {
-        return this.dom.getAttribute(attr);
+        return this._dom.getAttribute(attr);
     }
 
     setAttr(attr: string, value: any): RcElement {
-        this.dom.setAttribute(attr, value);
+        this._dom.setAttribute(attr, value);
+        return this;
+    }
+
+    setAttrEx(attr: string, value: any): RcElement {
+        isNull(value) ? this._dom.removeAttribute(attr) : this._dom.setAttribute(attr, value);
         return this;
     }
 
     setAttrs(attrs: any): RcElement {
         for (let attr in attrs) {
-            this.dom.setAttribute(attr, attrs[attr]);
+            this._dom.setAttribute(attr, attrs[attr]);
+        }
+        return this;
+    }
+
+    setAttrsEx(attrs: any): RcElement {
+        for (let attr in attrs) {
+            const v = attrs[attr];
+            isNull(v) ? this._dom.removeAttribute(attr) : this._dom.setAttribute(attr, v);
         }
         return this;
     }
 
     unsetAttr(attr: string): RcElement {
-        this.dom.removeAttribute(attr);
+        this._dom.removeAttribute(attr);
         return this;
+    }
+
+    getBounds(): DOMRect {
+        return this._dom.getBoundingClientRect();
     }
 
     setBounds(x: number, y: number, width: number, height: number): RcElement {
@@ -833,10 +885,40 @@ export class RcElement extends RcObject {
         return this.control.containerToElement(this, x, y);
     }
 
+    svgToElement(x: number, y: number): IPoint {
+        return this.control.svgToElement(this, x, y);
+    }
+
+    elementToSvg(x: number, y: number): IPoint {
+        return this.control.elementToSvg(this, x, y);
+    }
+
     move(x: number, y: number): RcElement {
         this.x = x;
         this.y = y;
         return this;
+    }
+
+    movep(p: IPoint): RcElement {
+        this.x = p.x;
+        this.y = p.y;
+        return this;
+    }
+
+    isDomAnimating(): boolean {
+        return this._dom.getAnimations().length > 0;
+    }
+
+    rotate(angle: number): RcElement {
+        if (angle !== this._rotation) {
+            this._rotation = angle;
+            this._updateTransform();
+        }
+        return this;
+    }
+
+    internalRotate(angle: number): void {
+        this._rotation = angle;
     }
 
     translate(x: number, y: number): RcElement {
@@ -848,28 +930,62 @@ export class RcElement extends RcObject {
         return this;
     }
 
+    translatep(p: IPoint): RcElement {
+        return this.translate(p.x, p.y);
+    }
+
+    translateEx(x: number, y: number, duration = 0, invalidate = true): RcElement {
+        x = Utils.isNumber(x) ? x : this._translateX;
+        y = Utils.isNumber(y) ? y : this._translateY;
+
+        if (x !== this._translateX || y !== this._translateY) {
+            if (duration > 0) {
+                const ani = this._dom.animate([
+                    { transform: `translate(${this._translateX}px,${this._translateY}px)` },
+                    { transform: `translate(${x}px,${y}px)` }
+                ], {
+                    duration: duration,
+                    fill: 'none'
+                });
+                if (invalidate) {
+                    ani.addEventListener('finish', () => this.control?.invalidateLayout());
+                }
+            }
+            this._translateX = x;
+            this._translateY = y;
+            this._updateTransform();
+        }
+        return this;
+    }
+
     translateX(x: number): RcElement {
         if (x !== this._translateX) {
-            if (Utils.isValidNumber(x)) this._translateX = x;
-            this._updateTransform();
+            if (Utils.isValidNumber(x)) {
+                this._translateX = x;
+                this._updateTransform();
+            }
         }
         return this;
     }
 
     translateY(y: number): RcElement {
         if (y !== this._translateY) {
-            if (Utils.isValidNumber(y)) this._translateY = y;
-            this._updateTransform();
+            if (Utils.isValidNumber(y)) {
+                this._translateY = y;
+                this._updateTransform();
+            }
         }
         return this;
     }
 
     resize(width: number, height: number, attr = true): RcElement {
         if (width !== this._width) {
-            attr && this.setAttr('width', this._width = width);
+            this._width = width;
+            attr &&  this.setAttrEx('width', width);
         }
         if (height !== this._height) {
-            attr && this.setAttr('height', this._height = height);
+            this._height = height;
+            attr && this.setAttrEx('height', height);
         }
         return this;
     }
@@ -897,7 +1013,7 @@ export class RcElement extends RcObject {
         const css = (this.dom as SVGElement | HTMLElement).style;
 
         for (let p in this._styles) {
-            css.removeProperty(p);
+            css.removeProperty(getCssProp(p));
         }
         this._styles = {};
     }
@@ -907,7 +1023,7 @@ export class RcElement extends RcObject {
         let changed = false;
 
         for (let p in this._styles) {
-            css.removeProperty(p);
+            css.removeProperty(getCssProp(p));
             changed = true;
         }
         
@@ -924,7 +1040,7 @@ export class RcElement extends RcObject {
 
             for (let p of props) {
                 if (p in this._styles) {
-                    css.removeProperty(p);
+                    css.removeProperty(getCssProp(p));
                     delete this._styles[p];
                     changed = true;
                 }                
@@ -1006,7 +1122,7 @@ export class RcElement extends RcObject {
         }
     }
 
-    setStyleName(value: string): void {
+    setClass(value: string): void {
         this.setAttr('class', value);
     }
 
@@ -1131,6 +1247,14 @@ export class RcElement extends RcObject {
         this._dom.style.cursor = cursor;
     }
 
+    ignorePointer(): void {
+        this._dom.style.pointerEvents = 'none';
+    }
+
+    contains(dom: Element): boolean {
+        return this._dom.contains(dom);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -1148,6 +1272,10 @@ export class RcElement extends RcObject {
     }
 
     protected _updateTransform(): void {
+        this._dom.setAttribute('transform', this.getTransform());
+    }
+
+    getTransform(): string {
         const dom = this._dom;
         let tx = this._translateX;
         let ty = this._translateY;
@@ -1182,8 +1310,9 @@ export class RcElement extends RcObject {
         }
 
         if (tf.length) {
-            this._dom.setAttribute('transform', tf.join(' '));
+            return tf.join(' ');
         }
+        return '';
     }
 }
 
@@ -1313,7 +1442,7 @@ export class PathElement extends RcElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _path: Path;
+    private _path: string;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1327,23 +1456,20 @@ export class PathElement extends RcElement {
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    path(): Path {
+    path(): string {
         return this._path;
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    setPath(path: Path): void {
-        if (path !== this._path) {
-            this._path = path;
+    setPath(path: Path): PathElement {
+        const p = isString(path) ? path : path.join(' ');
 
-            if (isString(path)) {
-                this.setAttr('d', path);
-            } else {
-                this.setAttr('d', path.join(' '));
-            }
+        if (p !== this._path) {
+            this.setAttr('d', this._path = p);
         }
+        return this;
     }
 
     renderShape(shape: string, x: number, y: number, rd: number): void {
@@ -1371,7 +1497,6 @@ export class PathElement extends RcElement {
     // internal members
     //-------------------------------------------------------------------------
 }
-
 
 export class ClipPathElement extends RcElement {
 
@@ -1420,4 +1545,101 @@ export class ClipPathElement extends RcElement {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+}
+
+export abstract class DragTracker {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    dragging = false;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    start(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
+        this.cancel();
+        if (this._doStart(eventTarget, xStart, yStart, x, y)) {
+            this.dragging = true;
+            this._showFeedback(x, y);
+            return true;
+        }
+        return false;
+    }
+
+    drag(eventTarget: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
+        if (this.dragging) {
+            if (this._doDrag(eventTarget, xPrev, yPrev, x, y)) {
+                this._moveFeedback(x, y);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    cancel(): void {
+        if (this.dragging) {
+            try {
+                this.dragging = false;
+                this._doCanceled();
+            } finally {
+                this.end(-1, -1);
+            }
+        }
+    }
+
+    drop(target: Element, x: number, y: number): void {
+        if (this.dragging) {
+            try {
+                this.dragging = false;
+                if (this._canAccept(target, x, y)) {
+                    this._doCompleted(target, x, y);
+                } else {
+                    this._doCanceled();
+                }
+            } finally {
+                this.end(x, y);
+            }
+        }
+    }
+
+    end(x: number, y: number): void {
+        try {
+            this.dragging = false;
+            this._hideFeedback();
+        } finally {
+            this._doEnded(x, y);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    protected _canAccept(target: Element, x: number, y: number): boolean {
+        return true;
+    }
+
+    protected _showFeedback(x: number, y: number): void {
+    }
+
+    protected _moveFeedback(x: number, y: number): void {
+    }
+
+    protected _hideFeedback(): void {
+    }
+
+    protected _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
+        return true;
+    }
+
+    protected abstract _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean;
+
+    protected _doCanceled(): void {
+    }
+
+    protected _doCompleted(target: Element, x: number, y: number): void {
+    }
+
+    protected _doEnded(x: number, y: number): void {
+    }
 }

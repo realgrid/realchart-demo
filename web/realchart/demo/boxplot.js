@@ -15,6 +15,9 @@ const config = {
     series: {
         type: 'boxplot',
         pointLabel: true,
+        tooltip: {
+            text: 'min: ${min}<br>low: ${low}<br>mid: ${mid}<br>high: ${high}<br>y: ${y}'
+        },
         data: [
             [560, 651, 748, 895, 965],
             [533, 753, 939, 980, 1080],
@@ -29,22 +32,22 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
 }
 

@@ -10,13 +10,10 @@ import { ElementPool } from "../../common/ElementPool";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
-import { PointItemPosition } from "../../model/Series";
-import { CategoryAxis } from "../../model/axis/CategoryAxis";
 import { DumbbellSeries, DumbbellSeriesPoint } from "../../model/series/DumbbellSeries";
-import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
-import { SeriesAnimation } from "../animation/SeriesAnimation";
+import { IPointView, RangedSeriesView, SeriesView } from "../SeriesView";
 
-class BarElement extends GroupElement implements IPointView {
+class BarView extends GroupElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -41,41 +38,31 @@ class BarElement extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    layout(inverted: boolean): BarElement {
-        const h = this.point.hPoint;
+    layout(): void {
+        const p = this.point;
+        const w = this.width;
+        const h = this.height;
+        const x = w / 2;
+        let y = 0;
 
-        if (inverted) {
-            this._line.setHLineC(0, 0, h);
-            this._hmarker.renderShape(this.point.shape, 0, 0, this.point.radius);
-            this._lmarker.renderShape(this.point.shape, h, 0, this.point.radius);
-        } else {
-            this._line.setVLineC(0, 0, h);
-            this._hmarker.renderShape(this.point.shape, 0, 0, this.point.radius);
-            this._lmarker.renderShape(this.point.shape, 0, h, this.point.radius);
+        if (p.color) {
+            this._line.setStyle('stroke', p.color);
+            this._hmarker.setStyle('fill', p.color);
+            this._lmarker.setStyle('fill', p.color);
         }
-        return this;
+
+        this._line.setVLineC(x, y, h);
+        this._hmarker.renderShape(p.shape, x, y, p.radius);
+        this._lmarker.renderShape(p.shape, x, h, p.radius);
     }
 }
 
-type LabelInfo = {
-    inverted: boolean,
-    labelPos: PointItemPosition,
-    labelOff: number,
-    width: number,
-    height: number,
-    labelView: PointLabelView,
-    bar: BarElement,
-    x: number,
-    y: number
-};
-
-export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
+export class DumbbellSeriesView extends RangedSeriesView<DumbbellSeries> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _bars: ElementPool<BarElement>;
-    private _labelInfo: LabelInfo = {} as any;
+    private _bars = new ElementPool(this._pointContainer, BarView);
 
     //-------------------------------------------------------------------------
     // constructor
@@ -91,106 +78,20 @@ export class DumbbellSeriesView extends SeriesView<DumbbellSeries> {
         return this._bars;
     }
 
-    protected _prepareSeries(doc: Document, model: DumbbellSeries): void {
-        this.$_parepareBars(doc, model, this._visPoints as DumbbellSeriesPoint[]);
+    protected _getLowValue(p: DumbbellSeriesPoint): number {
+        return p.lowValue;
     }
 
-    protected _renderSeries(width: number, height: number): void {
-        this.$_layoutBars(width, height);
-    }
+    protected _preparePointViews(doc: Document, model: DumbbellSeries, points: DumbbellSeriesPoint[]): void {
+        this._bars.prepare(points.length, (bar, i) => {
+            const p = bar.point = points[i];
 
-    protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.grow(this);
-    }
-
-    protected _doViewRateChanged(rate: number): void {
-        this.$_layoutBars(this.width, this.height);
-    }
-
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
-    private $_parepareBars(doc: Document, model: DumbbellSeries, points: DumbbellSeriesPoint[]): void {
-        if (!this._bars) {
-            this._bars = new ElementPool(this._pointContainer, BarElement);
-        }
-        this._bars.prepare(points.length, (v, i) => {
-            const p = v.point = points[i];
-
-            this._setPointStyle(v, p);
-        });
-    }
-
-    protected $_layoutBars(width: number, height: number): void {
-        const series = this.model;
-        const inverted = series.chart.isInverted();
-        const vr = this._getViewRate();
-        const labels = series.pointLabel;
-        const labelOff = labels.offset;
-        const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
-        const yAxis = series._yAxisObj;
-        const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
-        const yLen = inverted ? width : height;
-        const xLen = inverted ? height : width;
-        const org = inverted ? 0 : height;;
-
-        this._bars.forEach((bar, i) => {
-            const p = bar.point;
-
-            if (bar.setVisible(!p.isNull)) {
-                const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
-                const wPoint = series.getPointWidth(wUnit);
-                const yVal = yAxis.getPosition(yLen, p.yValue);
-                const hPoint = Math.abs(yAxis.getPosition(yLen, p.lowValue) - yVal) * vr;
-                let labelView: PointLabelView;
-                let x: number;
-                let y: number;
-    
-                if (inverted) {
-                    y = xLen - xAxis.getPosition(xLen, p.xValue);
-                    x = org;
-                } else {
-                    x = xAxis.getPosition(xLen, p.xValue);
-                    y = org;
-                }
-    
-                if (inverted) {
-                    p.yPos = y += series.getPointPos(wUnit) - wPoint / 2;
-                    p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
-                    x -= hPoint;
-                } else {
-                    p.xPos = x += series.getPointPos(wUnit) - wPoint / 2;
-                    p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
-                }
-    
-                p.hPoint = hPoint;
-                bar.layout(inverted).translate(x, y);
-    
-                // labels
-                if (labelViews) {
-                    // high
-                    if (labelView = labelViews.get(p, 1)) {
-                        const r = labelView.getBBounds();
-    
-                        if (inverted) {
-                            labelView.translate(x + hPoint + labelOff + p.radius, y - r.height / 2);
-                        } else {
-                            labelView.translate(x - r.width / 2, y - r.height - labelOff - p.radius);
-                        }
-                    }
-                    // low
-                    if (labelView = labelViews.get(p, 0)) {
-                        const r = labelView.getBBounds();
-    
-                        if (inverted) {
-                            labelView.translate(x - r.width - labelOff - p.radius, y - r.height / 2);
-                        } else {
-                            labelView.translate(x - r.width / 2, y + hPoint + labelOff + p.radius);
-                        }
-                    }
-                }
-            }
+            this._setPointStyle(bar, model, p);
         })
+    }
+
+    protected _layoutPointView(bar: BarView, index: number, x: number, y: number, wPoint: number, hPoint: number): void {
+        bar.setBounds(x - wPoint / 2, y, wPoint, hPoint);
+        bar.layout();
     }
 }

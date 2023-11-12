@@ -59,19 +59,27 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createListBox(container, "position", ['bottom', 'top', 'right', 'left', 'plot'], function (e) {
-        config.legend.position = _getValue(e);
-        chart.update(config);
+    createListBox(container, "location", ['bottom', 'top', 'right', 'left', 'plot'], function (e) {
+        config.legend.location = _getValue(e);
+        chart.load(config);
     }, 'bottom');
+    createListBox(container, "itemsAlign", ['start', 'center', 'end'], function (e) {
+        config.legend.itemsAlign = _getValue(e);
+        chart.load(config);
+    }, 'center');
     createListBox(container, "alignBase", ['plot', 'chart'], function (e) {
-        config.legend.align = _getValue(e);
-        chart.update(config);
+        config.legend.alignBase = _getValue(e);
+        chart.load(config);
     }, 'plot');
+    createListBox(container, "itemsPerLine", ['', '5', '4', '3', '2', '1'], function (e) {
+        config.legend.itemsPerLine = _getValue(e);
+        chart.load(config);
+    }, 'bottom');
 }
 
 function init() {

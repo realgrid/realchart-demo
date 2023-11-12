@@ -84,8 +84,9 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         const inverted = series.chart.isInverted();
         const yAxis = series._yAxisObj;
         const len = inverted ? this.width : this.height;
+        const min = yAxis.axisMin();
         const base = series.getBaseValue(yAxis);
-        const yMin = this.height - yAxis.getPosition(len, pickNum(base, yAxis.axisMin()));
+        const yMin = this.height - yAxis.getPosition(len, pickNum(Math.max(min, base), min));
         const sb = new PathBuilder();
         let i = 0;
         let s: string;
@@ -139,12 +140,15 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             sb.line(path[path.length - 2] as number, yMin);
         }
 
+        area.unsetData('polar');
+        area.setBoolData('simple', this._simpleMode);
         area.setPath(s = sb.end());
         area.internalClearStyleAndClass();
         series.color && area.setStyle('fill', series.color);
         series.style && area.internalSetStyleOrClass(series.style);
 
         if (lowArea) {
+            lowArea.setBoolData('simple', this._simpleMode);
             lowArea.setPath(s);
             lowArea.internalClearStyleAndClass();
             series.color && lowArea.setStyle('fill', series.color);
@@ -181,6 +185,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             area.setPath(sb.end());
         }
 
+        area.setBoolData('polar', true);
         area.clearStyleAndClass();
         area.setStyle('fill', series.color);
         area.addStyleOrClass(series.style);

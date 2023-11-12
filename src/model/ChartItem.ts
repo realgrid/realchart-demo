@@ -10,12 +10,14 @@ import { isArray, isBoolean, isObject, isString } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { SvgRichText, RichTextParamCallback } from "../common/RichText";
-import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined } from "../common/Types";
+import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
 import { IChart } from "./Chart";
 
-export abstract class ChartItem extends RcObject {
+export let n_char_item = 0;
+
+export class ChartItem extends RcObject {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -34,12 +36,18 @@ export abstract class ChartItem extends RcObject {
 
         this.chart = chart;
         this._visible = visible;
+        n_char_item++;
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /** visible */
+    /** 
+     * 표시 여부.\
+     * 
+     * @default true
+     * @config
+     */
     get visible(): boolean {
         return this._visible;
     }
@@ -49,17 +57,107 @@ export abstract class ChartItem extends RcObject {
             this.chart?._visibleChanged(this);
         }
     }
-
+    /**
+     * 스타일셋 혹은 class selector.
+     * 
+     * @config
+     */
     style: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     load(source: any): ChartItem {
-        if (!this._doLoadSimple(source)) {
+        if (source !== void 0 && !this._doLoadSimple(source)) {
+            if (source !== null && source.template != null) {
+                const assign = this.chart && this.chart.assignTemplates;
+                assign && (source = assign(source));
+            }
             this._doLoad(source);
         }
         return this;
+    }
+
+    save(): any {
+        const obj = {
+            visible: this.visible
+        };
+
+        this._doSave(obj);
+        return obj;
+    }
+
+    private INVALID = {};
+
+    private $_parseProp(path: string): { obj: ChartItem, prop: string } | any {
+        if (path.indexOf('.') >= 0) {
+            const arr = path.split('.');
+            const len = arr.length - 1;
+            let obj: any = this;
+
+            for (let i = 0; i < len; i++) {
+                obj = obj[arr[i]];
+                if (!(obj instanceof RcObject)) {
+                    return this.INVALID;
+                }
+            }
+            return { obj, prop: arr[len] };
+        }
+    }
+
+    getProp(prop: string): any {
+        if (isString(prop)) {
+            const path = this.$_parseProp(prop);
+
+            if (path) {
+                return path === this.INVALID ? _undefined : path.obj[path.prop];
+            } else {
+                return this[prop];
+            }
+        }
+    }
+
+    setProp(prop: string, value: any, redraw: boolean): boolean {
+        if (isString(prop)) {
+            const path = this.$_parseProp(prop);
+
+            if (path) {
+                if (path.obj instanceof ChartItem) {
+                    path.obj.setProp(path.prop, value, redraw);
+                } else if (path.obj instanceof RcObject) {
+                    if (value !== path.obj[path.prop]) {
+                        path.obj[path.prop] = value;
+                        redraw && this._changed();
+                    }
+                }
+            } else if (prop in this) {
+                const v = this[prop];
+
+                if (v instanceof ChartItem) {
+                    return v.setProps(value, redraw);
+                } else if (value !== v) {
+                    this[prop] = value;
+                    redraw && this._changed();
+                    return true;
+                }
+            }
+        }
+    }
+
+    setProps(props: object, redraw: boolean): boolean {
+        let changed = false;
+
+        if (isObject(props)) {
+            for (const p in props) {
+                if (this.setProp(p, props[p], false)) {
+                    changed = true;
+                }
+            }
+        } else if (this._doLoadSimple(props)) {
+            changed = true;
+        }
+        changed && redraw && this._changed();
+        return changed;
     }
 
     prepareRender(): void {
@@ -69,8 +167,8 @@ export abstract class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _changed(): void {
-        this.chart?._modelChanged(this);
+    protected _changed(tag?: any): void {
+        this.chart?._modelChanged(this, tag);
     }
 
     //-------------------------------------------------------------------------
@@ -83,10 +181,6 @@ export abstract class ChartItem extends RcObject {
         }
     }
 
-    protected _getDefObjProps(prop: string): any {
-        return;
-    }
-
     protected _doLoad(source: any): void {
         for (const p in source) {
             //if (this.hasOwnProperty(p)) {
@@ -97,8 +191,10 @@ export abstract class ChartItem extends RcObject {
                     this[p].load(v);
                 } else if (isArray(v)) {
                     this[p] = v.slice(0);
+                } else if (v instanceof Date) {
+                    this[p] = new Date(v);
                 } else if (isObject(v)) {
-                    this[p] = Object.assign({}, this._getDefObjProps(p), v);
+                    this[p] = Object.assign({}, v);
                 } else {
                     this[p] = v;
                 }
@@ -110,7 +206,19 @@ export abstract class ChartItem extends RcObject {
         return false;
     }
 
-    protected _doPrepareRender(chart: IChart): void {}
+    protected _doSave(target: object): void {
+    }
+
+    protected _doPrepareRender(chart: IChart): void {
+    }
+
+    protected _loadStroke(source: any): boolean {
+        if (isString(source)) {
+            this.visible = true;
+            this.style = { stroke: source };
+            return true;
+        }
+    }
 }
 
 export const BRIGHT_COLOR = 'white';
@@ -132,17 +240,35 @@ export enum ChartTextEffect {
 }
 
 export abstract class ChartText extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
     effect = ChartTextEffect.NONE;
-    brightStyle: SVGStyleOrClass;
+    /**
+     * @config
+     */
+    lightStyle: SVGStyleOrClass;
+    /**
+     * @config
+     */
     darkStyle: SVGStyleOrClass;
+    /**
+     * @config
+     */
     backgroundStyle: SVGStyleOrClass;
     /**
      * 텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
      * <br>
-     * 밝게 표시할 때는 {@link brightStyle}을 적용하고,
+     * 밝게 표시할 때는 {@link lightStyle}을 적용하고,
      * 어둡게 표시할 때는 {@link darkStyle}이 적용된다.
-     * brightStyle이 지정되지 않으면 'rct-text-bright'이,
+     * brightStyle이 지정되지 않으면 'rct-text-light'이,
      * darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.
+     * 
+     * @config
      */
     autoContrast = true;// true;
 }
@@ -178,17 +304,23 @@ export abstract class FormattableText extends ChartText {
     //-------------------------------------------------------------------------
     /**
      * label 문자열 앞에 추가되는 문자열.
+     * 
+     * @config
      */
     prefix: string;
 
     /**
      * label 문자열 끝에 추가되는 문자열.
+     * 
+     * @config
      */
     suffix: string;
 
     /**
      * 축의 tick 간격이 1000 이상인 큰 수를 표시할 때 
      * 이 속성에 지정한 symbol을 이용해서 축약형으로 표시한다.
+     * 
+     * @config
      */
     get numberSymbols(): string {
         return this._numberSymbols;
@@ -202,6 +334,8 @@ export abstract class FormattableText extends ChartText {
 
     /**
      * label이 숫자일 때 표시 형식.
+     * 
+     * @config
      */
     get numberFormat(): string {
         return this._numberFormat;
@@ -213,19 +347,25 @@ export abstract class FormattableText extends ChartText {
         }
     }
 
-    /**
-     * point label:
-     * position으로 지정된 위치로 부터 떨어진 간격.
-     * center나 middle일 때는 무시.
-     * 파이 시리즈 처럼 label 연결선이 있을 때는 연결선과의 간격.
-     * 
-     * axis label:
-     * 축 line과의 간격.
-     */
-    offset = 2;
+    // /**
+    //  * point label:
+    //  * position으로 지정된 위치로 부터 떨어진 간격.
+    //  * center나 middle일 때는 무시.
+    //  * 파이 시리즈 처럼 label 연결선이 있을 때는 연결선과의 간격.
+    //  * 
+    //  * axis label:
+    //  * 축 line과의 간격.
+    //  * 
+    //  * @config
+    //  */
+    // offset = 2;
+
+    lineHeight: number;
 
     /**
      * rich text format을 지정할 수 있다.
+     * 
+     * @config
      */
     get text(): string {
         return this._text;
@@ -237,12 +377,15 @@ export abstract class FormattableText extends ChartText {
         if (value !== this._text) {
             this._text = value;
             if (value) {
-                if (!this._richTextImpl) this._richTextImpl = new SvgRichText()
-                this._richTextImpl.format = value;
+                if (!this._richTextImpl) {
+                    this._richTextImpl = new SvgRichText();
+                }
+                this._richTextImpl.setFormat(value);
             } else {
                 this._richTextImpl = null;
             }
         }
+        !isNaN(this.lineHeight) && this._richTextImpl && (this._richTextImpl.lineHeight = this.lineHeight);
         return this;
     }
 
@@ -259,13 +402,13 @@ export abstract class FormattableText extends ChartText {
     //     }
     // }
 
-    buildSvg(view: TextElement, target: any, callback: RichTextParamCallback): void {
-        this._richTextImpl.build(view, target, callback);
+    buildSvg(view: TextElement, maxWidth: number, maxHeight: number, target: any, callback: RichTextParamCallback): void {
+        this._richTextImpl.build(view, maxWidth, maxHeight, target, callback);
     }
 
-    setLineHeight(v: number): void {
-        this._richTextImpl.lineHeight = v;
-    }
+    // setLineHeight(v: number): void {
+    //     this._richTextImpl.lineHeight = v;
+    // }
 
     //-------------------------------------------------------------------------
     // overriden members

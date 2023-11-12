@@ -14,6 +14,7 @@ const $$_DT_DATE_TOKENS = [
 	"yy", "yyyy",
 	"M", "MM",
 	"d", "dd",
+    'WW', 'W', 'w', 'ww',
 	"a",
 	"H", "HH", "h", "hh",
 	"m", "mm",
@@ -33,6 +34,8 @@ const U_Y = "Y".charCodeAt(0);
 const L_Y = "y".charCodeAt(0);
 const U_M = "M".charCodeAt(0);
 const L_M = "m".charCodeAt(0);
+const U_W = 'W'.charCodeAt(0);
+const L_W = 'w'.charCodeAt(0);
 const U_D = "D".charCodeAt(0);
 const L_D = "d".charCodeAt(0);
 const U_H = "H".charCodeAt(0);
@@ -119,7 +122,7 @@ export class DatetimeFormatter {
 	//-------------------------------------------------------------------------
     // methods
 	//-------------------------------------------------------------------------
-	toStr(date: Date) {
+	toStr(date: Date, startOfWeek: number) {
 		if (!this._tokens) {
 			return "";
 		}
@@ -140,6 +143,12 @@ export class DatetimeFormatter {
 				case L_D:
 					s += len > 1 ? pad(date.getDate()) : date.getDate();
 					break;
+                case U_W:
+                    s += len > 1 ? pad(Utils.weekOfYear(date, startOfWeek)) : Utils.weekOfMonth(date, startOfWeek, true);
+                    break;
+                case L_W:
+                    s += len > 1 ? Utils.long_week_days[date.getDay()] : Utils.week_days[date.getDay()];
+                    break;
 				case U_H:
 					s += len > 1 ? pad(date.getHours()) : date.getHours();
 					break;

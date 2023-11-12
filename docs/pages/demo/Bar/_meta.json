@@ -1,0 +1,23 @@
+{
+	"bar": {
+		"title": "Bar"
+	},
+	"bar-multi": {
+		"title": "Multi Bars"
+	},
+	"bargroup": {
+		"title": "Bar Group"
+	},
+	"bargroup-multi": {
+		"title": "Multi Groups"
+	},
+	"bar-negative": {
+		"title": "Bar Negative"
+	},
+	"bar-null": {
+		"title": "Null Point"
+	},
+	"bargroup-negative": {
+		"title": "Negative Bars"
+	}
+}

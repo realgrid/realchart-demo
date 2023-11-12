@@ -33,6 +33,22 @@ export const pickProp3 = function(v1: any, v2: any, v3: any): any {
 export const pickProp4 = function(v1: any, v2: any, v3: any, v4: any): any {
     return v1 !== void 0 ? v1 : v2 !== void 0 ? v2 : v3 != void 0 ? v3 : v4;
 }
+export const copyObj = (obj: any): any => {
+    return obj && Object.assign({}, obj);
+}
+export const mergeObj = (v1: any, v2: any): any => {
+    const obj = Object.assign({}, v1);
+
+    for (const p in v2) {
+        const v = v2[p];
+        if (isObject(v) && isObject(v1[p])) {
+            obj[p] = mergeObj(v1[p], v);
+        } else {
+            obj[p] = v;
+        }
+    }
+    return obj;
+}
 
 export class RtLog {
 
@@ -63,3 +79,4 @@ export class RtDebug {
     }
 }
 export const NOT_IMPLEMENT = new Error("Not Implemented.");
+

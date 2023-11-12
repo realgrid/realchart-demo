@@ -9,45 +9,27 @@
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
-import { LayerElement, PathElement, RcElement } from "../common/RcControl";
+import { ClipElement, LayerElement, PathElement, RcControl, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { Align, VerticalAlign, _undefined, assert } from "../common/Types";
 import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
-import { Chart } from "../main";
-import { Axis, AxisGrid, AxisGuide, AxisGuideLine, AxisGuideRange } from "../model/Axis";
+import { Axis, AxisGrid, AxisGuide, AxisLineGuide, AxisRangeGuide } from "../model/Axis";
 import { Body } from "../model/Body";
-import { IChart } from "../model/Chart";
+import { Chart, IChart } from "../model/Chart";
 import { Crosshair } from "../model/Crosshair";
 import { DataPoint } from "../model/DataPoint";
-import { PlotItem } from "../model/PlotItem";
 import { Series } from "../model/Series";
+import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
-import { BarRangeSeries } from "../model/series/BarRangeSeries";
-import { BarSeries } from "../model/series/BarSeries";
-import { BellCurveSeries } from "../model/series/BellCurveSeries";
-import { BoxPlotSeries } from "../model/series/BoxPlotSeries";
-import { BubbleSeries } from "../model/series/BubbleSeries";
-import { CandlestickSeries } from "../model/series/CandlestickSeries";
-import { DumbbellSeries } from "../model/series/DumbbellSeries";
-import { EqualizerSeries } from "../model/series/EqualizerSeries";
-import { ErrorBarSeries } from "../model/series/ErrorBarSeries";
-import { FunnelSeries } from "../model/series/FunnelSeries";
-import { HeatmapSeries } from "../model/series/HeatmapSeries";
-import { HistogramSeries } from "../model/series/HistogramSeries";
-import { AreaRangeSeries, AreaSeries, LineSeries } from "../model/series/LineSeries";
-import { LollipopSeries } from "../model/series/LollipopSeries";
-import { OhlcSeries } from "../model/series/OhlcSeries";
-import { ParetoSeries } from "../model/series/ParetoSeries";
-import { PieSeries } from "../model/series/PieSeries";
-import { ScatterSeries } from "../model/series/ScatterSeries";
-import { TreemapSeries } from "../model/series/TreemapSeries";
-import { VectorSeries } from "../model/series/VectorSeries";
-import { WaterfallSeries } from "../model/series/WaterfallSeries";
+import { Gauge, GaugeBase } from "../model/Gauge";
 import { ChartElement } from "./ChartElement";
+import { GaugeView } from "./GaugeView";
 import { IPointView, SeriesView } from "./SeriesView";
+import { CircleGaugeGroupView, CircleGaugeView } from "./gauge/CircleGaugeView";
+import { ClockGaugeView } from "./gauge/ClockGaugeView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
 import { AreaSeriesView } from "./series/AreaSeriesView";
 import { BarRangeSeriesView } from "./series/BarRangeSeriesView";
@@ -71,6 +53,13 @@ import { ScatterSeriesView } from "./series/ScatterSeriesView";
 import { TreemapSeriesView } from "./series/TreemapSeriesView";
 import { VectorSeriesView } from "./series/VectorSeriesView";
 import { WaterfallSeriesView } from "./series/WaterfallSeriesView";
+import { LinearGaugeGroupView, LinearGaugeView } from "./gauge/LinearGaugeView";
+import { BulletGaugeGroupView, BulletGaugeView } from "./gauge/BulletGaugeView";
+import { ButtonElement } from "../common/ButtonElement";
+import { TextAnnotationView } from "./annotation/TextAnnotationView";
+import { Annotation } from "../model/Annotation";
+import { AnnotationView } from "./annotation/AnnotationView";
+import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -96,6 +85,23 @@ const series_types = {
     'treemap': TreemapSeriesView,
     'vector': VectorSeriesView,
     'waterfall': WaterfallSeriesView,
+};
+const gauge_types = {
+    'circle': CircleGaugeView,
+    'linear': LinearGaugeView,
+    'bullet': BulletGaugeView,
+    'clock': ClockGaugeView,
+    'circlegroup': CircleGaugeGroupView,
+    'lineargroup': LinearGaugeGroupView,
+    'bulletgroup': BulletGaugeGroupView,
+};
+const annotation_types = {
+    'text': TextAnnotationView,
+    'image': ImageAnnotationView,
+}
+
+export function createSeriesView(doc: Document, series: Series): SeriesView<Series> {
+    return new series_types[series._type()](doc);
 }
 
 export class AxisGridView extends ChartElement<AxisGrid> {
@@ -103,7 +109,6 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _pts: number[];
     private _lines = new ElementPool(this, LineElement);
 
     //-------------------------------------------------------------------------
@@ -117,27 +122,40 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: AxisGrid, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this._pts = model.getPoints(model.axis._isHorz ? hintWidth : hintHeight);
-        this._lines.prepare(this._pts.length, (line) => {
-        });
         return Size.create(hintWidth, hintHeight);
     }
 
     protected _doLayout(): void {
-        const axis = this.model.axis;
+        const m = this.model;
+        const axis = m.axis;
         const w = this.width;
         const h = this.height;
-        const pts = this._pts;
+        const pts = m.getPoints(axis._isHorz ? w : h);
+        const lines = this._lines;
+        const end = lines.count - 1;
+
+        lines.prepare(pts.length, (line) => {
+            line.setClass('rct-axis-grid-line');
+        });
+
+        lines.forEach((line, i) => {
+            line.setBoolData('first', i === 0);
+            line.setBoolData('last', pts[i] === (axis._isHorz ? w : h));
+        })
 
         if (axis._isHorz) {
-            this._lines.forEach((line, i) => {
-                // line.setVLine(pts[i], 0, h);
-                line.setVLineC(pts[i], 0, h);
+            lines.forEach((line, i) => {
+                // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
+                if (line.setVisible((pts[i] > 0 || i !== 0 || m.startVisible) && (pts[i] < w || i !== end || m.endVisible))) {
+                    line.setVLineC(pts[i], 0, h);
+                }
             });
         } else {
-            this._lines.forEach((line, i) => {
-                // line.setHLine(h - pts[i], 0, w);
-                line.setHLineC(h - pts[i], 0, w);
+            lines.forEach((line, i) => {
+                // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
+                if (line.setVisible((pts[i] < h || i !== 0 || m.startVisible) && (pts[i] > 0 || i !== end || m.endVisible))) {
+                    line.setHLineC(h - pts[i], 0, w);
+                }
             });
         }
     }
@@ -153,7 +171,10 @@ export class AxisBreakView extends RcElement {
     // fields
     //-------------------------------------------------------------------------
     _model: AxisBreak;
+    private _upLine: PathElement;
+    private _downLine: PathElement;
     private _mask: PathElement;
+    private _clip: ClipElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -162,6 +183,11 @@ export class AxisBreakView extends RcElement {
         super(doc, 'rct-axis-break');
 
         this.add(this._mask = new PathElement(doc));
+        this._mask.setStyle('stroke', 'none');
+        this.add(this._upLine = new PathElement(doc));
+        this._upLine.setStyle('fill', 'none');
+        this.add(this._downLine = new PathElement(doc));
+        this._downLine.setStyle('fill', 'none');
     }
 
     //-------------------------------------------------------------------------
@@ -171,12 +197,101 @@ export class AxisBreakView extends RcElement {
         this._model = model;
     }
 
-    layout(width: number, height: number): void {
+    layout(width: number, height: number, vertical: boolean): void {
+        if (this._clip) {
+            this._clip.resize(width, height);
+        } else {
+            this._clip = this.control.clipBounds(0, 0, width, height);
+        }
+        this.setClip(this._clip);
+
         const m = this._model;
+        const len = m._sect.len;
         const pb = new PathBuilder();
 
-        pb.rect(0, 0, width, m._sect.len);
-        this._mask.setPath(pb.end());
+        if (vertical) {
+            let y = 0;
+            let x1 = 0;
+            let x2 = len / 2;
+            let x3 = len;
+
+            pb.move(x1, y);
+            while (y < height) {
+                y += 20;
+                pb.line(x2, y);
+                y += 20;
+                pb.line(x1, y);
+            }
+            this._downLine.setPath(pb.end(false));
+
+            y = 0;
+            pb.clear().move(x2, y);
+            while (y < height) {
+                y += 20;
+                pb.line(x3, y);
+                y += 20;
+                pb.line(x2, y);
+            }
+            this._upLine.setPath(pb.end(false));
+
+            y = 0;
+            pb.clear().move(x1);
+            while (y < height) {
+                y += 20;
+                pb.line(x2, y);
+                y += 20;
+                pb.line(x1, y);
+            }
+            pb.line(x2, y);
+            while (y >= 0) {
+                y -= 20;
+                pb.line(x3, y);
+                y -= 20;
+                pb.line(x2, y);
+            }
+            this._mask.setPath(pb.end());
+        } else {
+            let x = 0;
+            let y1 = 0;
+            let y2 = len / 2;
+            let y3 = len;
+
+            pb.move(x, y2);
+            while (x < width) {
+                x += 20;
+                pb.line(x, y1);
+                x += 20;
+                pb.line(x, y2);
+            }
+            this._upLine.setPath(pb.end(false));
+
+            x = 0;
+            pb.clear().move(x, y3);
+            while (x < width) {
+                x += 20;
+                pb.line(x, y2);
+                x += 20;
+                pb.line(x, y3);
+            }
+            this._downLine.setPath(pb.end(false));
+
+            x = 0;
+            pb.clear().move(x, y2);
+            while (x < width) {
+                x += 20;
+                pb.line(x, y1);
+                x += 20;
+                pb.line(x, y2);
+            }
+            pb.line(x, y3);
+            while (x >= 0) {
+                x -= 20;
+                pb.line(x, y2);
+                x -= 20;
+                pb.line(x, y3);
+            }
+            this._mask.setPath(pb.end());
+        }
     }
 }
 
@@ -216,7 +331,7 @@ export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
     abstract layout(width: number, height: number): void;
 }
 
-export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
+export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -235,7 +350,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepare(model: AxisGuideLine): void {
+    prepare(model: AxisLineGuide): void {
         super.prepare(model);
 
         this._line.setStyles(model.style);
@@ -335,7 +450,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisGuideLine> {
     }
 }
 
-export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
+export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -354,7 +469,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisGuideRange> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepare(model: AxisGuideRange): void {
+    prepare(model: AxisRangeGuide): void {
         super.prepare(model);
     }
 
@@ -493,18 +608,17 @@ export class AxisGuideContainer extends LayerElement {
 
     addAll(doc: Document, guides: AxisGuide[]): void {
         guides.forEach(g => {
-            if (g instanceof AxisGuideRange) {
+            if (g instanceof AxisRangeGuide) {
                 let v = this._rangePool.pop() || new AxisGuideRangeView(doc);
 
                 this.add(v);
                 v.prepare(g)
                 this._views.push(v);
-            } else if (g instanceof AxisGuideLine) {
+            } else if (g instanceof AxisLineGuide) {
                 let v = this._linePool.pop() || new AxisGuideLineView(doc);
 
                 this.add(v);
                 v.prepare(g)
-                this._views.push(v);
             }
         });
     }
@@ -518,20 +632,21 @@ export class AxisGuideContainer extends LayerElement {
     }
 }
 
-class CrosshairLineView extends LineElement {
+class CrosshairView extends PathElement {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _model: Crosshair;
+    private _bar: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-crosshair-line');
+        super(doc);
 
-        this.setStyle('pointerEvents', 'none');
+        this.ignorePointer();
     }
 
     //-------------------------------------------------------------------------
@@ -540,15 +655,58 @@ class CrosshairLineView extends LineElement {
     setModel(model: Crosshair): void {
         if (model != this._model) {
             this._model = model;
+            this._bar = model.isBar();
+            this.setClass(this._bar ? 'rct-crosshair-bar' : 'rct-crosshair-line');
         }
     }
 
-    layout(x: number, y: number, width: number, height: number): void {
-        if (this._model.axis._isHorz) {
-            this.setVLine(x, 0, height);
-        } else {
-            this.setHLine(y, 0, width);
+    layout(pv: IPointView, x: number, y: number, width: number, height: number): void {
+        const axis = this._model.axis;
+        const horz = axis._isHorz;
+        const pb = new PathBuilder();
+
+        if (this._bar) {
+            const len = axis._isHorz ? width : height;
+            let index = -1;
+
+            if (pv) {
+                index = pv.point.xValue;
+            } else if (this._model.showAlways && axis instanceof CategoryAxis) {
+                if (axis.reversed) {
+                    index = axis.categoryAt(horz ? width - x : y);
+                } else {
+                    index = axis.categoryAt(horz ? x : height - y);
+                }
+            }
+
+            // TODO: scrolling
+            if (index >= 0) {
+                const p = axis.getPosition(len, index);
+                const w = axis.getUnitLength(len, index);
+
+                if (horz) {
+                    pb.rect(p - w / 2, 0, w, height);
+                } else {
+                    pb.rect(0, height - p - w / 2, width, w);
+                }
+            }
+        } else if (pv || this._model.showAlways) {
+            if (horz) {
+                pb.vline(x, 0, height);
+            } else {
+                pb.hline(y, 0, width);
+            }
         }
+        this.setPath(pb.end());
+    }
+}
+
+class ZoomButton extends ButtonElement {
+
+    constructor(doc: Document) {
+        super(doc, 'Reset Zoom', 'rc-reset-zoom');
+
+        this.visible = false;
     }
 }
 
@@ -564,33 +722,48 @@ export class BodyView extends ChartElement<Body> {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly BODY_CLASS = 'rct-plot';
+    static readonly BODY_CLASS = 'rct-body';
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _owner: IPlottingOwner;
     private _polar: boolean;
+    private _hitTester: RectElement;
     private _background: RectElement;
     private _image: ImageElement;
     private _gridContainer: LayerElement;
     protected _gridViews = new Map<Axis, AxisGridView>();
     private _breakViews: AxisBreakView[] = [];
     private _seriesContainer: LayerElement;
+    private _labelContainer: LayerElement;
     protected _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
     private _series: Series[];
+    // annotations
+    private _annotationContainer: LayerElement;
+    private _frontAnnotationContainer: LayerElement;
+    private _annotationViews: AnnotationView<Annotation>[] = [];
+    private _annotationMap = new Map<Annotation, AnnotationView<Annotation>>();
+    private _annotations: Annotation[];
     // guides
+    private _gaugeViews: GaugeView<GaugeBase>[] = [];
+    private _gaugeMap = new Map<GaugeBase, GaugeView<GaugeBase>>();
+    private _gauges: GaugeBase[];
     _guideContainer: AxisGuideContainer;
     _frontGuideContainer: AxisGuideContainer;
     // axis breaks
     _axisBreakContainer: LayerElement;
     // items
     // private _itemMap = new Map<PlotItem, PlotItemView>();
+    private _zoomButton: ZoomButton;
     // feedbacks
     private _feedbackContainer: LayerElement;
-    private _crosshairLines: ElementPool<CrosshairLineView>;
+    private _crosshairLines: ElementPool<CrosshairView>;
     private _focused: IPointView = null;
+
+    private _zoomRequested: boolean;
+    protected _animatable: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -599,48 +772,75 @@ export class BodyView extends ChartElement<Body> {
         super(doc, BodyView.BODY_CLASS);
 
         this._owner = owner;
-        this.add(this._background = new RectElement(doc, 'rct-plot-background'));
-        this.add(this._image = new ImageElement(doc, 'rct-plot-image'));
+        this.add(this._hitTester = new RectElement(doc));
+        this._hitTester.setStyle('fill', 'transparent');
+        this.add(this._background = new RectElement(doc, 'rct-body-background'));
+        this.add(this._image = new ImageElement(doc, 'rct-body-image'));
         this.add(this._gridContainer = new LayerElement(doc, 'rct-grids'));
         this.add(this._guideContainer = new AxisGuideContainer(doc, 'rct-guides'));
+        this.add(this._annotationContainer = new LayerElement(doc, 'rct-annotations'));
         this.add(this._seriesContainer = new LayerElement(doc, 'rct-series-container'));
         this.add(this._axisBreakContainer = new LayerElement(doc, 'rct-axis-breaks'));
+        this.add(this._labelContainer = new LayerElement(doc, 'rct-label-container'));
         this.add(this._frontGuideContainer = new AxisGuideContainer(doc, 'rct-front-guides'));
+        this.add(this._frontAnnotationContainer = new LayerElement(doc, 'rct-front-annotations'));
         this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
+        this.add(this._zoomButton = new ZoomButton(doc));
         
-        this._crosshairLines = new ElementPool(this._feedbackContainer, CrosshairLineView);
+        this._crosshairLines = new ElementPool(this._feedbackContainer, CrosshairView);
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    prepareRender(doc: Document, chart: IChart): void {
+        this._animatable = RcControl._animatable && chart.animatable();
+
+        this._prepareSeries(doc, chart, chart._getSeries().getVisibleSeries());
+        this._prepareGauges(doc, chart, chart._getGauges().getVisibles());
+        this.$_prepareAnnotations(doc, chart, chart.body.getAnnotations());
+    }
+
     prepareGuideContainers(): void {
         this._guideContainer.prepare();
         this._frontGuideContainer.prepare();
     }
 
-    pointerMoved(p: IPoint, target: EventTarget): void {
+    pointerMoved(p: IPoint, target: EventTarget): boolean {
         const w = this.width;
         const h = this.height;
-
-        this._crosshairLines.forEach(v => {
-            if (v.setVisible(p.x >= 0 && p.x < w && p.y >= 0 && p.y < h)) {
-                v.layout(p.x, p.y, w, h);
-            }
-        });
+        const inBody = p.x >= 0 && p.x < w && p.y >= 0 && p.y < h;
+        let sv: SeriesView<any>;
+        let pv: IPointView;
 
         if (target instanceof SVGElement && (target.classList.contains(SeriesView.POINT_CLASS) || target.parentElement instanceof SVGElement && target.parentElement.classList.contains(SeriesView.POINT_CLASS))) {
             for (let i = this._seriesViews.length - 1; i >= 0; i--) {
-                const p = this._seriesViews[i].pointByDom(target) as IPointView;
+                pv = this._seriesViews[i].pointByDom(target) as IPointView;
 
-                if (p) {
-                    this.$_setFocused(this._seriesViews[i].model, p);
+                if (pv) {
+                    sv = this._seriesViews[i];
                     break;
                 }
             }
+        }
+
+        // 새로운 zoom이 요청된 상태이고 아직 화면에 반영되지 않았다.
+        // crosshair가 zoom이 반영된 것으로 계산하므로 다음 render까지 기다리게 해야한다.
+        // TODO: _zoomRequested 필요 없는 깔끔한 방식 필요. 
+        if (!this._zoomRequested) {
+            this._crosshairLines.forEach(v => {
+                if (v.setVisible(inBody)) {
+                    v.layout(pv, p.x, p.y, w, h);
+                }
+            });
+        }
+
+        if (pv) {
+            this.$_setFocused(sv.model, pv);
         } else {
             this.$_setFocused(null, null);
         }
+        return inBody;
     }
 
     private $_setFocused(series: Series, p: IPointView): boolean {
@@ -667,21 +867,54 @@ export class BodyView extends ChartElement<Body> {
         return this._seriesViews.find(v => v.model === ser);
     }
 
+    getButton(dom: Element): ButtonElement {
+        if (this._zoomButton.contains(dom)) {
+            return this._zoomButton;
+        }
+    }
+
+    buttonClicked(button: ButtonElement): void {
+        if (button === this._zoomButton) {
+            this.model.chart._getXAxes().resetZoom();
+            this.model.chart._getYAxes().resetZoom();
+        }
+    }
+
+    addFeedback(view: RcElement): void {
+        view && this._feedbackContainer.add(view);
+    }
+
+    setZoom(x1: number, y1: number, x2: number, y2: number): void {
+        const chart = this.chart();
+        const inverted = chart.isInverted();
+        const xAxis = chart.xAxis;
+        const len = inverted ? this.height : this.width;
+        let v1 = xAxis.getValueAt(len, inverted ? len - y2 : x1);
+        let v2 = xAxis.getValueAt(len, inverted ? len - y1 : x2);
+
+        if (xAxis.zoom(v1, v2)) {
+            this._zoomRequested = true;
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    getBounds(): DOMRect {
+        return this._hitTester.getBounds();
+    }
+
     protected _doMeasure(doc: Document, model: Body, hintWidth: number, hintHeight: number, phase: number): ISize {
         const chart = model.chart as Chart;
 
         this._polar = chart.isPolar();
+        this._zoomRequested = false;
 
         // background
         this._background.setStyleOrClass(model.style);
         this._background.setBoolData('polar', this._polar || chart.isWidget());
 
         // series
-        this.$_prepareSeries(doc, chart._getSeries().visibleSeries());
-
         this._seriesViews.forEach((v, i) => {
             v.measure(doc, this._series[i], hintWidth, hintHeight, phase);
         })
@@ -695,7 +928,21 @@ export class BodyView extends ChartElement<Body> {
             }
 
             this.$_prepareAxisBreaks(doc, chart);
-            this.$_preppareCrosshairs(doc, chart);
+        }
+
+        // gauges
+        this._gaugeViews.forEach((v, i) => {
+            v.measure(doc, this._gauges[i], hintWidth, hintHeight, phase);
+        });
+
+        // annotations
+        this._annotationViews.forEach((v, i) => {
+            v.measure(doc, this._annotations[i], hintWidth, hintHeight, phase);
+        });
+
+        // zoom button
+        if (this._zoomButton.setVisible(model.zoomButton.isVisible())) {
+            this._zoomButton.layout();
         }
 
         return Size.create(hintWidth, hintHeight);
@@ -707,6 +954,7 @@ export class BodyView extends ChartElement<Body> {
         const img = this._image;
 
         // background
+        this._hitTester.resize(w, h);
         this._background.resize(w, h);
 
         if (img.setVisible(img.setImage(this.model.image.url, w, h))) {
@@ -729,8 +977,23 @@ export class BodyView extends ChartElement<Body> {
 
             // axis breaks
             this._breakViews.forEach(v => {
-                v.translate(0, h - v._model._sect.pos - v._model._sect.len);
-                v.layout(w, h);
+                const m = v._model;
+                const axis = m.axis;
+
+                if (axis._isHorz) {
+                    if (axis.reversed) {
+                        v.translate(w - m._sect.pos, 0);
+                    } else {
+                        v.translate(m._sect.pos, 0);
+                    }
+                } else {
+                    if (axis.reversed) {
+                        v.translate(0, m._sect.pos);
+                    } else {
+                        v.translate(0, h - m._sect.pos - m._sect.len);
+                    }
+                }
+                v.layout(w, h, m.axis._isHorz);
             });
 
             // axis guides
@@ -738,19 +1001,37 @@ export class BodyView extends ChartElement<Body> {
                 c._views.forEach(v => v.layout(w, h));
             });
         }
+
+        this.$_preppareCrosshairs(this.chart());
+
+        // gauges
+        this._gaugeViews.forEach(v => {
+            // this._owner.clipSeries(v.getClipContainer(), 0, 0, w, h, v.invertable());
+            v.resizeByMeasured();
+            v.layout().translatep(v.getPosition(w, h));
+        });
+
+        // annotations
+        this._annotationViews.forEach(v => {
+            v.resizeByMeasured();
+            v.layout().translatep(v.model.getPostion(w, h, v.width, v.height));
+        });
+
+        // zoom button
+        if (this._zoomButton.visible) {
+            this._zoomButton.translate(w - this._zoomButton.getBBounds().width - 10, 10);
+        }
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_createSeriesView(doc: Document, series: Series): SeriesView<Series> {
-        return new series_types[series._type()](doc);
+    private $_createGaugeView(doc: Document, gauge: GaugeBase): GaugeView<Gauge> {
+        return new gauge_types[gauge._type()](doc);
+    }
 
-        // for (const cls of series_types.keys()) {
-        //     if (series instanceof (cls as any)) {
-        //         return new (series_types.get(cls))(doc);
-        //     }
-        // }
+    private $_createAnnotationView(doc: Document, annotation: Annotation): AnnotationView<Annotation> {
+        return new annotation_types[annotation._type()](doc);
     }
 
     private $_prepareGrids(doc: Document, chart: Chart): void {
@@ -775,14 +1056,12 @@ export class BodyView extends ChartElement<Body> {
         }));
     }
 
-    private $_prepareSeries(doc: Document, series: Series[]): void {
-        const container = this._seriesContainer;
-        const inverted = this.model.chart.isInverted();
-        const animatable = this.model.chart.animatable();
+    protected _prepareSeries(doc: Document, chart: IChart, series: Series[]): void {
+        const inverted = chart.isInverted();
         const map = this._seriesMap;
         const views = this._seriesViews;
 
-        // series들이 다시 생성됐을 수 있다.
+        // series들이 다시 생성됐을 수 있다.(?)
         for (const ser of map.keys()) {
             if (series.indexOf(ser) < 0) {
                 map.delete(ser);
@@ -790,16 +1069,73 @@ export class BodyView extends ChartElement<Body> {
         }
 
         this._series = series;
-        views.forEach(v => v.remove());
+        views.forEach(v => {
+            v.remove();
+            v._labelContainer.remove();
+        });
         views.length = 0;
 
         series.forEach(ser => {
-            const v = map.get(ser) ||this.$_createSeriesView(doc, ser);
+            const v = map.get(ser) || createSeriesView(doc, ser);
 
-            v._setChartOptions(inverted, animatable);
-            container.add(v);
+            v._setChartOptions(inverted, this._animatable);
+            this._seriesContainer.add(v);
+            this._labelContainer.add(v._labelContainer);
+
             map.set(ser, v);
             views.push(v);
+            v.prepareSeries(doc, ser);
+        });
+    }
+
+    protected _prepareGauges(doc: Document, chart: IChart, gauges: GaugeBase[]): void {
+        const container = this._seriesContainer;
+        const inverted = chart.isInverted();
+        const map = this._gaugeMap;
+        const views = this._gaugeViews;
+
+        for (const g of map.keys()) {
+            if (gauges.indexOf(g) < 0) {
+                map.delete(g);
+            }
+        }
+
+        this._gauges = gauges;
+        views.forEach(v => v.remove());
+        views.length = 0;
+
+        gauges.forEach(g => {
+            const v = map.get(g) || this.$_createGaugeView(doc, g);
+
+            v._setChartOptions(inverted, this._animatable);
+            container.add(v);
+            map.set(g, v);
+            views.push(v);
+            v.prepareGauge(doc, g);
+        });
+    }
+
+    private $_prepareAnnotations(doc: Document, chart: IChart, annotations: Annotation[]): void {
+        const container = this._annotationContainer;
+        const map = this._annotationMap;
+        const views = this._annotationViews;
+
+        for (const a of map.keys()) {
+            if (annotations.indexOf(a) < 0) {
+                map.delete(a);
+            }
+        }
+
+        views.forEach(v => v.remove());
+        views.length = 0;
+
+        (this._annotations = annotations).forEach(a => {
+            const v = map.get(a) || this.$_createAnnotationView(doc, a);
+
+            container.add(v);
+            map.set(a, v);
+            views.push(v);
+            // v.prepare(doc, a);
         });
     }
 
@@ -827,7 +1163,7 @@ export class BodyView extends ChartElement<Body> {
         views.forEach((v, i) => v.setModel(breaks[i]));
     }
 
-    private $_preppareCrosshairs(doc: Document, chart: IChart): void {
+    private $_preppareCrosshairs(chart: IChart): void {
         const views = this._crosshairLines;
         const hairs: Crosshair[] = [];
 

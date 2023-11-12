@@ -7,6 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isString, pickNum, pickNum3 } from "../../common/Common";
+import { PI_2 } from "../../common/Types";
+import { Utils } from "../../common/Utils";
 import { Axis, AxisGrid, AxisTick, AxisLabel, IAxisTick } from "../Axis";
 import { IPlottingItem } from "../Series";
 
@@ -31,11 +33,7 @@ export class CategoryAxisTick extends AxisTick {
     // properties
     //-------------------------------------------------------------------------
     position = CategoryTickPosition.POINT;
-    steps = 1;
-    /**
-     * true이면 steps 상관없이 마지막 tick은 항상 표시된다.
-     */
-    showLast = false;
+    step = 1;
 
     //-------------------------------------------------------------------------
     // methods
@@ -50,14 +48,14 @@ export class CategoryAxisTick extends AxisTick {
 }
 
 /**
- * TODO: y축으로 사용되면 edge 위치에 표시한다.
+ * //TODO: y축으로 사용되면 edge 위치에 표시한다.
  */
 class CategoryAxisLabel extends AxisLabel {
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    getTick(v: any): string {
+    getTick(index: number, v: any): string {
         if (v != null) {
             return this._getText(v, v, false);
         } else {
@@ -76,8 +74,10 @@ class CategoryAxisGrid extends AxisGrid {
         const n = (this.axis as CategoryAxis)._ticks.length;
         const pts: number[] = [];
 
-        for (let i = 0; i < n; i++) {
-            pts.push(apts[i + 2]);
+        if (n > 0) {
+            for (let i = 0; i <= n; i++) {
+                pts.push(apts[i + 1]);
+            }
         }
         return pts;
     }
@@ -94,6 +94,9 @@ class CategoryAxisGrid extends AxisGrid {
  *    {@link categories} 속성으로 카테고리를 지정할 때, 상대적 크기를 width로 지정해서 각 카테고리의 값을 다르게 표시할 수 있다.
  * 4. tick mark나 label은 기본적으로 카테고리 값 위치에 표시된다.
  *    tick mark는 카테고리 양끝에 표시될 수 있다.
+ * 
+ * @config chart.xAxis[type=category]
+ * @config chart.yAxis[type=category]
  */
 export class CategoryAxis extends Axis {
 
@@ -109,11 +112,9 @@ export class CategoryAxis extends Axis {
     _len: number;
     // private _step = 1;
     private _map: {[key: string]: number} = {}; // data point의 축 위치를 찾기 위해 사용한다.
-    private _min: number;
-    private _max: number;
     private _catPad = 0;
     _pts: number[];
-    _length: number;
+    _vlen: number;
 
     //-------------------------------------------------------------------------
     // properties
@@ -190,16 +191,21 @@ export class CategoryAxis extends Axis {
         return this._cats;
     }
 
+    getCategory(index: number): string {
+        return this._cats[index];
+    }
+
+    categoryAt(pos: number): number {
+        for (let i = 2; i < this._pts.length - 1; i++) {
+            if (pos >= this._pts[i - 1] && pos < this._pts[i]) {
+                return i - 2 + (this._zoom ? Math.floor(this._zoom.start) : 0); 
+            }
+        }
+        return -1;
+    }
+
     getWdith(length: number, category: number): number {
         return 0;
-    }
-
-    axisMin(): number {
-        return this._min;
-    }
-
-    axisMax(): number {
-        return this._max;
     }
 
     categoryPad(): number {
@@ -211,6 +217,10 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     type(): string {
         return 'category';
+    }
+
+    isContinuous(): boolean {
+        return false;
     }
 
     protected _createGrid(): AxisGrid {
@@ -228,7 +238,12 @@ export class CategoryAxis extends Axis {
     collectValues(): void {
         this.$_collectCategories(this._series);
 
-        super.collectValues();
+        if (this._series.length > 0) {
+            super.collectValues();
+        } else {
+            // 시리즈가 연결되지 않은 category 축을 categories 설정만으로 표시할 수 있다.
+            this._values = Utils.makeIntArray(0, this._categories.length);
+        }
     }
 
     protected _doPrepareRender(): void {
@@ -246,6 +261,7 @@ export class CategoryAxis extends Axis {
         const label = this.label as CategoryAxisLabel;
         let cats = this._cats = this._categories.map(cat => cat.c);
         let weights = this._weights = this._categories.map(cat => cat.w);
+        const steps = (this.tick as CategoryAxisTick).step || 1;
         const ticks: IAxisTick[] = [];
 
         min = this._min = Math.floor(min);
@@ -260,27 +276,30 @@ export class CategoryAxis extends Axis {
         weights = weights.slice(min, max + 1);
 
         const len = this._len = this._minPad + this._maxPad + weights.reduce((a, c) => a + c, 0);
-        // const step = this._step = this.categoryStep || 1;
-        const pts = this._pts = [0];
-        let p = this._minPad;
 
-        for (let i = min; i <= max; i++) {// += step) {
-            const w = weights[i - min];
+        if (len > 0) {
+            // const step = this._step = this.categoryStep || 1;
+            const pts = this._pts = [0];
+            let p = this._minPad;
 
+            for (let i = min; i <= max; i++) {// += step) {
+                pts.push(p / len);
+                p += weights[i - min];// step
+            }
             pts.push(p / len);
-            p += weights[i - min];// step
-        }
-        pts.push(p / len);
-        pts.push((p + this._maxPad) / len);
+            pts.push((p + this._maxPad) / len);
 
-        for (let i = 1; i < pts.length - 2; i++) {
-            const v = min + i - 1;
+            for (let i = 1; i < pts.length - 2; i += steps) {
+                const v = min + i - 1;
 
-            ticks.push({
-                pos: NaN,//this.getPosition(length, v),
-                value: v,
-                label: label.getTick(cats[i - 1]),
-            });
+                ticks.push({
+                    pos: NaN,//this.getPosition(length, v),
+                    value: v,
+                    label: label.getTick(i - 1, cats[i - 1]),
+                });
+            }
+        } else {
+            this._pts = [];
         }
         return ticks;
     }
@@ -292,25 +311,30 @@ export class CategoryAxis extends Axis {
 
         if (phase > 0) {
             for (let i = 0; i < pts.length; i++) {
-                pts[i] /= this._length;
+                pts[i] /= this._vlen;
             }
         }
-
-        this._length = length;
         
         for (let i = 0; i < pts.length; i++) {
             pts[i] *= length;
         }
 
-        const tick = this.tick as CategoryAxisTick;
-        let markPoints: number[];
-
-        if (tick.getPosition() === CategoryTickPosition.EDGE) {
-            markPoints = pts.slice(1, pts.length - 1);
+        if (this._isPolar) {
+            if (phase > 0) {
+                // getPosition()에서 바로 각도를 리턴할 수 있도록...
+                this._pts = pts.map(t => t / length * PI_2);
+            }
         } else {
-            markPoints = this._ticks.map(t => t.pos);
+            const tick = this.tick as CategoryAxisTick;
+            let markPoints: number[];
+
+            if (tick.getPosition() === CategoryTickPosition.EDGE) {
+                markPoints = pts.slice(1, pts.length - 1);
+            } else {
+                markPoints = this._ticks.map(t => t.pos);
+            }
+            this._markPoints = markPoints;
         }
-        this._markPoints = markPoints;
     }
 
     getPosition(length: number, value: number, point = true): number {
@@ -319,11 +343,29 @@ export class CategoryAxis extends Axis {
         if (point) value += 0.5;//this._step / 2;
         const v = Math.floor(value);
         const p = this._pts[v + 1] + (this._pts[v + 2] - this._pts[v + 1]) * (value - v);
-        return this.reversed ? length - p : p;
+
+        // if (this._isPolar) {
+        //     // length는 원주, 각도를 리턴한다.
+        //     return p / length * PI_2;
+        // } else {
+            return this.reversed ? length - p : p;
+        // }
+    }
+
+    getValueAt(length: number, pos: number): number {
+        if (this.reversed) {
+            pos = length - pos;
+        }
+        for (let i = 1; i < this._pts.length - 1; i++) {
+            if (pos >= this._pts[i] && pos < this._pts[i + 1]) {
+                return this._min + i - 1;
+            }
+        }
     }
 
     getUnitLength(length: number, value: number): number {
         const v = Math.floor(value - this._min);
+
         return (this._pts[v + 2] - this._pts[v + 1]);
     }
 

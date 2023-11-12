@@ -10,15 +10,31 @@ import { isArray } from "./Common";
 
 const __epoch = new Date().getTime();
 
-if (!Element.prototype.animate) {
+if (typeof window !== 'undefined' && !Element.prototype.animate) {
     Element.prototype.animate = function (_: any): any {};
 }
 
-export const _isOpera = !!window["opera"] || navigator.userAgent.indexOf(' OPR/') >= 0;
-export const _isChrome = !!window["chrome"] && !_isOpera;          // Chrome 1+
-export const _isSafari = Object.prototype.toString.call(HTMLElement).indexOf('Constructor') > 0 || (!_isChrome && !_isOpera && navigator.userAgent.indexOf("Safari") >= 0);
-export const _isSamsung = navigator.userAgent.toLocaleLowerCase().indexOf('samsungbrowser') >= 0;
-export const _isMiui = navigator.userAgent.toLocaleLowerCase().indexOf('miuibrowser') >= 0;
+let _isOpera = false;
+let _isChrome = false;
+let _isSafari = false;
+let _isSamsung = false;
+let _isMiui = false;
+
+if (typeof window !== 'undefined') {
+    _isOpera = !!window["opera"] || navigator.userAgent.indexOf(' OPR/') >= 0;
+    _isChrome = !!window["chrome"] && !_isOpera;          // Chrome 1+
+    _isSafari = Object.prototype.toString.call(HTMLElement).indexOf('Constructor') > 0 || (!_isChrome && !_isOpera && navigator.userAgent.indexOf("Safari") >= 0);
+    _isSamsung = navigator.userAgent.toLocaleLowerCase().indexOf('samsungbrowser') >= 0;
+    _isMiui = navigator.userAgent.toLocaleLowerCase().indexOf('miuibrowser') >= 0;
+}
+
+export {
+    _isOpera,
+    _isChrome,
+    _isSafari,
+    _isSamsung,
+    _isMiui
+};
 
 export const LINE_SEP = /\r\n|\n/g;
 export const CSV_SPLIT = /,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)(?=(?:[^\']*\'[^\']*\')*[^\']*$)/;
@@ -35,8 +51,12 @@ const QUOTE = "'".charCodeAt(0);
  */
 export class Utils {
 
+    // TODO: => locale
     static week_days = [
         '일', '월', '화', '수', '목', '금', '토'
+    ];
+    static long_week_days = [
+        '일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'
     ];
     static month_days = [
         [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
@@ -45,6 +65,28 @@ export class Utils {
 
     static now(): number {
         return +new Date();
+    }
+    
+    static weekOfMonth(d: Date, startOfWeek: number, exact: boolean): number {
+        const month = d.getMonth();
+        const year = d.getFullYear();
+        const firstWeekday = new Date(year, month, 1).getDay();
+        const lastDateOfMonth = new Date(year, month + 1, 0).getDate();
+        const offsetDate = d.getDate() + firstWeekday - 1;
+        const weeksInMonth = startOfWeek + Math.ceil((lastDateOfMonth + firstWeekday - 7) / 7);
+        const week = startOfWeek + Math.floor(offsetDate / 7);
+        
+        if (exact || week < 2 + startOfWeek) return week;
+        return week === weeksInMonth ? startOfWeek + 5 : week;
+    }
+    
+    static weekOfYear(d: Date, startOfWeek: number): number {
+        const year = d.getFullYear();
+        const firstWeekday = new Date(year, 0, 1).getDay();
+        const offsetDate = d.getDate() + firstWeekday - 1;
+        const week = startOfWeek + Math.floor(offsetDate / 7);
+        
+        return week;
     }
 
     static stopEvent(e: Event, immediate: boolean = false): void {
@@ -722,9 +764,9 @@ export class Utils {
         }
     }
 
-    static watch(): Stopwatch {
-        return new Stopwatch();
-    }
+    // static watch(): Stopwatch {
+    //     return new Stopwatch();
+    // }
 
     static uniqueKey = (function () {
         let hash = Math.random().toString(36).substring(2, 9) + '-';
@@ -761,46 +803,35 @@ export class Utils {
         }
     }
 
-    static isNorth(angle: number, off = 0.1): boolean {
-        const a = Math.PI * 1.5;
-        if (angle < 0) angle += Math.PI * 2;
-        return angle >= a - off && angle <= a + off;
-    }
-
-    static isSouth(angle: number, off = 0.1): boolean {
-        const a = Math.PI * .5;
-        return angle >= a - off && angle <= a + off;
-    }
-
-    static isLeft(angle: number): boolean {
-        return angle > Math.PI * .5 && angle < Math.PI * 1.5
+    static jitter(v: number, amount: number): number {
+        return v + (Math.random() * 2 - 1 ) * amount; 
     }
 }
 
-export class Stopwatch {
+// export class Stopwatch {
 
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    private _started: number;
+//     //-------------------------------------------------------------------------
+//     // fields
+//     //-------------------------------------------------------------------------
+//     private _started: number;
 
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor() {
-        this._started = +new Date();
-    }
+//     //-------------------------------------------------------------------------
+//     // constructor
+//     //-------------------------------------------------------------------------
+//     constructor() {
+//         this._started = +new Date();
+//     }
 
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    elapsed(reset = false): number {
-        const e =  +new Date() - this._started;
-        reset && (this._started = +new Date());
-        return e;
-    }
+//     //-------------------------------------------------------------------------
+//     // methods
+//     //-------------------------------------------------------------------------
+//     elapsed(reset = false): number {
+//         const e =  +new Date() - this._started;
+//         reset && (this._started = +new Date());
+//         return e;
+//     }
 
-    elapsedText(reset = false, suffix = 'ms.'): string {
-        return this.elapsed(reset) + suffix;
-    }
-}
+//     elapsedText(reset = false, suffix = 'ms.'): string {
+//         return this.elapsed(reset) + suffix;
+//     }
+// }

@@ -14,6 +14,9 @@ const config = {
     series: {
         type: 'ohlc',
         pointLabel: true,
+        tooltip: {
+            text: 'open: ${open}<br>High: ${high}<br>Low: ${low}<br>Close: ${close}'
+        },
         data: [
             [301, 348, 395, 465],
             [353, 439, 480, 580],
@@ -30,22 +33,22 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
 }
 

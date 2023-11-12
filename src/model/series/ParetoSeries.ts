@@ -24,12 +24,6 @@ export class ParetoSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    parse(series: ISeries): void {
-        super.parse(series);
-
-        this.xValue = this.x;
-        this.yValue = this.y;
-    }
 }
 
 /**
@@ -110,6 +104,6 @@ export class ParetoSeries extends LineSeriesBase {
         })
 
         this._doLoadPoints(list);
-        this._runPoints = this._points.getPoints();
+        this._runPoints = this._points.getPoints(this._xAxisObj, this._yAxisObj);
     }
 }

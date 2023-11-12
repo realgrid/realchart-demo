@@ -18,7 +18,7 @@ const config = {
         align: 'left',
     },
     legend: {
-        layout: 'vertical',
+        // layout: 'vertical',
         position: 'plot',
         left: 0,
         top: 0
@@ -49,6 +49,9 @@ const config = {
             style: {
             }
         },
+        tick: {
+            baseAxis: 0
+        },
         label: {
             suffix: ' mm',
             style: {
@@ -60,6 +63,9 @@ const config = {
             text: 'Sea-Level Pressure',
             style: {
             }
+        },
+        tick: {
+            baseAxis: 0
         },
         label: {
             suffix: ' mb',
@@ -107,23 +113,23 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X.reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Y.reversed', function (e) {
         config.yAxis.forEach((_, i) => {
             config.yAxis[i].reversed = _getChecked(e);
-            chart.update(config);
+            chart.load(config);
         })
     }, false);
 }

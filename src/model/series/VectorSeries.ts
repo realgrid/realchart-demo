@@ -35,6 +35,15 @@ export class VectorSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            length: this.length,
+            angle: this.angle,
+            lengthValue: this.lengthValue,
+            angleValue: this.angleValue
+        });
+    }
+
     protected _readArray(series: VectorSeries, v: any[]): void {
         const d = v.length > 3 ? 1 : 0;
 
@@ -109,6 +118,21 @@ export class VectorSeries extends Series {
     //-------------------------------------------------------------------------
     _type(): string {
         return 'vector';
+    }
+
+    getPointTooltip(point: VectorSeriesPoint, param: string): any {
+        switch (param) {
+            case 'length':
+                return point.length;
+            case 'lengthValue':
+                return point.lengthValue;
+            case 'angle':
+                return point.angle;
+            case 'angleValue':
+                return point.angleValue;
+            default:
+                return super.getPointTooltip(point, param);
+        }
     }
 
     ignoreAxisBase(axis: IAxis): boolean {

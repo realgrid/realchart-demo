@@ -40,6 +40,13 @@ export class ErrorBarSeriesPoint extends DataPoint {
         return index === 1 ? this.lowValue : this.yValue;
     }
 
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            low: this.low,
+            lowValue: this.lowValue
+        });
+    }
+
     protected _readArray(series: ErrorBarSeries, v: any[]): void {
         const d = v.length > 2 ? 1 : 0;
 
@@ -88,6 +95,17 @@ export class ErrorBarSeries extends RangedSeries {
     //-------------------------------------------------------------------------
     _type(): string {
         return 'errorbar';
+    }
+
+    getPointTooltip(point: ErrorBarSeriesPoint, param: string): any {
+        switch (param) {
+            case 'low':
+                return point.low;
+            case 'lowValue':
+                return point.lowValue;
+            default:
+                return super.getPointTooltip(point, param);
+        }
     }
 
     clusterable(): boolean {

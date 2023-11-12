@@ -12,7 +12,7 @@ import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { Series, SeriesMarker } from "../Series";
+import { MarkerSeries, Series, SeriesMarker } from "../Series";
 
 /**
  * [y, z]
@@ -45,20 +45,33 @@ export class BubbleSeriesPoint extends DataPoint {
         this.zValue = parseFloat(this.z);
     }
 
-    protected _readArray(series: BubbleSeries, v: any[]): void {
-        const d = v.length > 2 ? 1 : 0;
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            z: this.z,
+            zValue: this.zValue
+        });
+    }
 
-        this.y = v[pickNum(series.yField, 0 + d)];
-        this.z = v[pickNum(series.zProp, 1 + d)];
-        if (d > 0) {
-            this.x = v[pickNum(series.xField, 0)];
+    protected _readArray(series: BubbleSeries, v: any[]): void {
+        if (v === null) {
+            this.isNull = true;
+        } else {
+            const d = v.length > 2 ? 1 : 0;
+
+            this.y = v[pickNum(series.yField, 0 + d)];
+            this.z = v[pickNum(series.zProp, 1 + d)];
+            if (d > 0) {
+                this.x = v[pickNum(series.xField, 0)];
+            }
         }
     }
 
     protected _readObject(series: BubbleSeries, v: any): void {
         super._readObject(series, v);
 
-        this.z = pickProp(v[series.zProp], v.z);
+        if (!this.isNull) {
+            this.z = pickProp(v[series.zProp], v.z);
+        }
     }
 
     protected _readSingle(v: any): void {
@@ -77,7 +90,7 @@ export enum BubbleSizeMode {
 /**
  * @config chart.series[type=bubble]
  */
-export class BubbleSeries extends Series {
+export class BubbleSeries extends MarkerSeries {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -96,34 +109,18 @@ export class BubbleSeries extends Series {
 
     _zMin: number;
     _zMax: number;
+    _noSize: boolean;
 
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, name?: string) {
-        super(chart, name);
-    }
-
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    /**
-     * 명시적으로 지정하지 않으면 typeIndex에 따라 Shapes 중 하나로 돌아가면서 설정된다.
-     * 
-     * @config
-     */
-    shape: Shape;
-    /**
-     * {@link shape}의 반지름.
-     * 
-     * @config
-     */
-    radius = 3;
-
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getPxMinMax(len: number): {min: number, max: number} {
+    getPixelMinMax(len: number): {min: number, max: number} {
         return {
             min: calcPercent(this._minDim, len),
             max: calcPercent(this._maxDim, len)
@@ -131,7 +128,7 @@ export class BubbleSeries extends Series {
     }
 
     getRadius(value: number, pxMin: number, pxMax: number): number {
-        let r = (value - this._zMin) / (this._zMax - this._zMin);
+        let r = this._noSize ? 1 : (value - this._zMin) / (this._zMax - this._zMin);
 
         if (this.sizeMode == BubbleSizeMode.AREA) {
             r = Math.sqrt(r);
@@ -150,6 +147,17 @@ export class BubbleSeries extends Series {
 
     ignoreAxisBase(axis: IAxis): boolean {
         return true;
+    }
+
+    getPointTooltip(point: BubbleSeriesPoint, param: string): any {
+        switch (param) {
+            case 'z':
+                return point.z;
+            case 'zValue':
+                return point.zValue;
+            default:
+                return super.getPointTooltip(point, param);
+        }
     }
 
     protected _createPoint(source: any): DataPoint {
@@ -175,8 +183,11 @@ export class BubbleSeries extends Series {
         this._zMax = Number.MIN_VALUE;
 
         this._runPoints.forEach((p: BubbleSeriesPoint) => {
-            this._zMin = Math.min(this._zMin, p.zValue);
-            this._zMax = Math.max(this._zMax, p.zValue);
+            if (!p.isNull && !isNaN(p.zValue)) {
+                this._zMin = Math.min(this._zMin, p.zValue);
+                this._zMax = Math.max(this._zMax, p.zValue);
+            }
         })
+        this._noSize = this._zMin === this._zMax;
     }
 }

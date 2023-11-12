@@ -33,6 +33,12 @@ export class HistogramSeriesPoint extends DataPoint {
         this.min = v.min;
         this.max = v.max;
     }
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            min: this.min,
+            max: this.max
+        });
+    }
 }
 
 export enum BinsNumber {
@@ -102,6 +108,17 @@ export class HistogramSeries extends Series {
     //-------------------------------------------------------------------------
     _type(): string {
         return 'histogram';
+    }
+
+    getPointTooltip(point: HistogramSeriesPoint, param: string): any {
+        switch (param) {
+            case 'min':
+                return point.min;
+            case 'max':
+                return point.max;
+            default:
+                return super.getPointTooltip(point, param);
+        }
     }
 
     ignoreAxisBase(axis: IAxis): boolean {

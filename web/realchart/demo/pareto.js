@@ -13,11 +13,12 @@ const config = {
     yAxis: [{
         title: 'Y Axis',
     }, {
-        min: 0,
-        max: 100,
+        minValue: 0,
+        maxValue: 100,
         padding: 0,
         position: 'opposite',
         tick: {
+            baseAxis: 0,
         },
         label: {
             suffix: '%'
@@ -42,27 +43,27 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
     createCheckBox(container, 'Curved', function (e) {
         config.series[1].curved = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'X Reversed', function (e) {
         config.xAxis.reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
     createCheckBox(container, 'Y Reversed', function (e) {
         config.yAxis[0].reversed = _getChecked(e);
         config.yAxis[1].reversed = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, false);
 }
 

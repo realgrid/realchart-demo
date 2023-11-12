@@ -51,7 +51,7 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createCheckBox(container, 'Always Animate', function (e) {
         animate = _getChecked(e);
@@ -61,15 +61,15 @@ function setActions(container) {
     });
     createCheckBox(container, 'Inverted', function (e) {
         config.inverted = _getChecked(e);
-        chart.update(config, animate);
+        chart.load(config, animate);
     }, false);
     createListBox(container, "backgroundStyle.fill", ['', 'black', 'yellow'], function (e) {
         config.options.style.backgroundColor = _getValue(e);
-        chart.update(config);
+        chart.load(config);
     }, '');
     createCheckBox(container, 'backgroundImage', function (e) {
         config.options.style.backgroundImage = _getChecked(e) ? 'url(../assets/mountain.jpeg)' : '';
-        chart.update(config);
+        chart.load(config);
     }, false);
 }
 

@@ -6,8 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { PathElement } from '../RcControl';
 import { IRect } from '../Rectangle';
-import { SizeValue } from '../Types';
+import { PathValue } from '../Types';
 import { Utils } from '../Utils';
 
 export enum Shape {
@@ -31,22 +32,22 @@ export class SvgShapes {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
-    static line(x1: number, y1: number, x2: number, y2: number): SizeValue[] {
+    static line(x1: number, y1: number, x2: number, y2: number): PathValue[] {
         return ['M', x1, y1, 'L', x2, y2];
     }
 
-    static lines(pts: number[]): SizeValue[] {
+    static lines(...pts: number[]): PathValue[] {
         let i = 0;
         const vals = ['M', pts[i], pts[i + 1]];
 
-        for (; i < pts.length; i++) {
-            vals.push('L', pts[i++], pts[i]);
+        for (; i < pts.length; i += 2) {
+            vals.push('L', pts[i], pts[i + 1]);
         } 
         vals.push('Z');
         return vals;
     }
 
-    static box(x1: number, y1: number, x2: number, y2: number): SizeValue[] {
+    static box(x1: number, y1: number, x2: number, y2: number): PathValue[] {
         return [
             'M', x1, y1,
             'L', x2, y1,
@@ -56,12 +57,12 @@ export class SvgShapes {
         ];
     }
 
-    static rect(r: IRect): SizeValue[] {
+    static rect(r: IRect): PathValue[] {
         return this.rectangle(r.x, r.y ,r.width, r.height);
     }
 
     // 직사각형
-    static rectangle(x: number, y: number, width: number, height: number): SizeValue[] {
+    static rectangle(x: number, y: number, width: number, height: number): PathValue[] {
         return [
             'M', x, y,
             'L', x + width, y,
@@ -72,7 +73,7 @@ export class SvgShapes {
     }
 
     // 정사각형
-    static square(x: number, y: number, width: number, height: number): SizeValue[] {
+    static square(x: number, y: number, width: number, height: number): PathValue[] {
         const sz = Math.min(width, height);
 
         x += (width - sz) / 2;
@@ -87,7 +88,7 @@ export class SvgShapes {
         ];
     }
 
-    static circle(cx: number, cy: number, rd: number): SizeValue[] {
+    static circle(cx: number, cy: number, rd: number): PathValue[] {
         return [
             'M',
             cx, cy,
@@ -101,42 +102,41 @@ export class SvgShapes {
     }
 
     // TODO: 개선할 것!
-    static arc(x: number, y: number, rx: number, ry: number, start: number, end: number): SizeValue[] {
+    static arc(cx: number, cy: number, rx: number, ry: number, start: number, end: number, clockwise: boolean, close = false): PathValue[] {
         const cosStart = Math.cos(start);
         const sinStart = Math.sin(start);
         const cosEnd = Math.cos(end -= SECTOR_ERROR);
         const sinEnd = Math.sin(end);
         const longArc = end - start - Math.PI < SECTOR_ERROR ? 0 : 1;
-        const clockwise = 1;
+        const cw = clockwise ? 1 : 0;
         const path = [];
 
         path.push(
             'M',
-            x + rx * cosStart,
-            y + ry * sinStart,
-
+            cx + rx * cosStart,
+            cy + ry * sinStart,
             'A',
             rx,
             ry,
             0,
             longArc,
-            clockwise,
-            x + rx * cosEnd,
-            y + ry * sinEnd,
-            'Z'
+            cw,
+            cx + rx * cosEnd,
+            cy + ry * sinEnd,
         );
+        close && path.push('Z');
         return path;
     }
 
     // TODO: 개선할 것!
-    static sector(cx: number, cy: number, rx: number, ry: number, rInner: number, start: number, end: number, clockwise: boolean): SizeValue[] {
-        const circled = Math.abs(end - start - 2 * Math.PI) < SECTOR_ERROR;
-        const long = end - start - Math.PI < SECTOR_ERROR ? 0 : 1;
+    static sector(cx: number, cy: number, rx: number, ry: number, rInner: number, start: number, end: number, clockwise: boolean): PathValue[] {
+        const circled = 2 * Math.PI - Math.abs(end - start) < SECTOR_ERROR;
+        let long = Math.abs(end - start) - Math.PI < SECTOR_ERROR ? 0 : 1;
+        const cw = clockwise ? 1 : 0;
         const x1 = Math.cos(start);
         const y1 = Math.sin(start);
-        const x2 = Math.cos(end -= circled ? SECTOR_ERROR : 0);
+        const x2 = Math.cos(end -= circled ? (cw ? SECTOR_ERROR : -SECTOR_ERROR) : 0);
         const y2 = Math.sin(end);
-        const cw = clockwise ? 1 : 0;
         const innerX = rx * rInner;
         const innerY = ry * rInner;
         const path = [];
@@ -168,23 +168,26 @@ export class SvgShapes {
                 cy + innerY * y2
             )
         }
-        path.push(
-            'A',
-            innerX,
-            innerY,
-            0,
-            long,
-            // 바깥쪽 원호와 반대 방향으로...
-            1 - cw,
-            cx + innerX * x1,
-            cy + innerY * y1
-        );
+
+        if (!isNaN(innerX)) {
+            path.push(
+                'A',
+                innerX,
+                innerY,
+                0,
+                long,
+                // 바깥쪽 원호와 반대 방향으로...
+                1 - cw,
+                cx + innerX * x1,
+                cy + innerY * y1
+            );
+        }
 
         path.push('Z');
         return path;
     }
 
-    static diamond(x: number, y: number, w: number, h: number): SizeValue[] {
+    static diamond(x: number, y: number, w: number, h: number): PathValue[] {
         return [
             'M', x + w / 2, y,
             'L', x + w, y + h / 2,
@@ -194,7 +197,7 @@ export class SvgShapes {
         ];
     }
 
-    static triangle(x: number, y: number, w: number, h: number): SizeValue[] {
+    static triangle(x: number, y: number, w: number, h: number): PathValue[] {
         return [
             'M', x + w / 2, y,
             'L', x + w, y + h,
@@ -203,7 +206,7 @@ export class SvgShapes {
         ];
     }
 
-    static itriangle(x: number, y: number, w: number, h: number): SizeValue[] {
+    static itriangle(x: number, y: number, w: number, h: number): PathValue[] {
         return [
             'M', x, y,
             'L', x + w, y,
@@ -212,7 +215,7 @@ export class SvgShapes {
         ];
     }
 
-    static star(x: number, y: number, w: number, h: number): SizeValue[] {
+    static star(x: number, y: number, w: number, h: number): PathValue[] {
         const cx = x + w / 2;
         const cy = y + h / 2;
         const rx = w / 2;
@@ -232,5 +235,25 @@ export class SvgShapes {
         }
         path.push('Z');
         return path;
+    }
+
+    static setShape(target: PathElement, shape: Shape, radius: number): void {
+        let path: (string | number)[];
+
+        switch (shape) {
+            case Shape.SQUARE:
+            case Shape.RECTANGLE:
+            case Shape.DIAMOND:
+            case Shape.TRIANGLE:
+            case Shape.ITRIANGLE:
+            case Shape.STAR:
+                path = SvgShapes[shape](0, 0, radius * 2, radius * 2);
+                break;
+
+            default:
+                path = SvgShapes.circle(radius, radius, radius);
+                break;
+        }
+        target.setPath(path);
     }
 }

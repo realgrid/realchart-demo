@@ -7,27 +7,30 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { AxisTick, IAxisTick } from "../Axis";
-import { ContinuousAxis, LinearAxis, ContinuousAxisTick } from "./LinearAxis";
+import { ContinuousAxis, ContinuousAxisTick } from "./LinearAxis";
 
 export class LogAxisTick extends ContinuousAxisTick {
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    // buildSteps(length: number, base: number, min: number, max: number): number[] {
-    //     min = Math.log10(min);
-    //     max = Math.log10(max);
-
-    //     const steps =  super.buildSteps(length, base, min, max);
-    //     return steps;
-    // }
+    /**
+     * scale은 0, ..., 0.1, 1, 10, 100, ...
+     * 정수화 되는 scale만 적용되도록 한다.
+     */
+    protected _getStepMultiples(scale: number): number[] {
+        if (scale <= 0.1) {
+            return [1 / scale];
+        }
+        return [1, 2, 3, 4, 5, 10];
+    }
 }
 
 /**
- * 이 축에 연결된 시리즈들의 point y값을 log10으로 계산된 위치에 표시한다.
- * y축으로만 사용될 수 있다.
+ * 이 축에 연결된 시리즈들의 point y값을 {@link Math.log10}으로 계산된 위치에 표시한다.
  * 
- * @config chart.axis[type=log]
+ * @config chart.xAxis[type=log]
+ * @config chart.yAxis[type=log]
  */
 export class LogAxis extends ContinuousAxis {
 
@@ -50,8 +53,8 @@ export class LogAxis extends ContinuousAxis {
         return v;
     }
 
-    protected _createTick(length: number, step: number): IAxisTick {
-        return super._createTick(length, Math.pow(10, step));
+    protected _createTick(length: number, index: number, step: number): IAxisTick {
+        return super._createTick(length, index, Math.pow(10, step));
     }
 
     getPosition(length: number, value: number): number {

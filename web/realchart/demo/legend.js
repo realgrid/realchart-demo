@@ -38,7 +38,7 @@ let chart;
 function setActions(container) {
     createCheckBox(container, 'Debug', function (e) {
         RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
+        chart.render();
     }, false);
     createButton(container, 'Test', function(e) {
         alert('hello');
@@ -46,55 +46,32 @@ function setActions(container) {
     createCheckBox(container, 'visible', function (e) {
         //chart.model.legend.visible = _getChecked(e);
         config.legend.visible = _getChecked(e);
-        chart.update(config);
+        chart.load(config);
     }, true)
-    createListBox(container, "position", ['bottom', 'top', 'right', 'left', 'plot'], function (e) {
-        config.legend.position = _getValue(e);
-        chart.update(config);
+    createListBox(container, "location", ['bottom', 'top', 'right', 'left', 'plot'], function (e) {
+        config.legend.location = _getValue(e);
+        chart.load(config);
     }, 'bottom');
     createListBox(container, "alignBase", ['plot', 'chart'], function (e) {
-        config.legend.align = _getValue(e);
-        chart.update(config);
+        config.legend.alignBase = _getValue(e);
+        chart.load(config);
     }, 'plot');
-    createListBox(container, "left", ['', 10, 15, 20, 25], function (e) {
-        config.legend.left = _getValue(e);
-        chart.update(config);
-    }, '10');
-    createListBox(container, "right", ['', 10, 15, 20, 25], function (e) {
-        config.legend.right = _getValue(e);
-        chart.update(config);
+    createListBox(container, "align", ['', 'left', 'center', 'right'], function (e) {
+        config.legend.align = _getValue(e);
+        chart.load(config);
     }, '');
-    createListBox(container, "top", ['', 10, 15, 20, 25], function (e) {
-        config.legend.top = _getValue(e);
-        chart.update(config);
-    }, '10');
-    createListBox(container, "bottom", ['', 10, 15, 20, 25], function (e) {
-        config.legend.bottom = _getValue(e);
-        chart.update(config);
+    createListBox(container, "verticalAlign", ['', 'top', 'middle', 'bottom'], function (e) {
+        config.legend.verticalAlign = _getValue(e);
+        chart.load(config);
     }, '');
-    // createListBox(container, "layout", ['auto', 'horizontal', 'vertical'], function (e) {
-    //     chart.model.legend.layout = _getValue(e);
-    // }, 'auto');
-    // createListBox(container, "alignBase", ['plot', 'chart'], function (e) {
-    //     chart.model.legend.alignBase = _getValue(e);
-    // }, 'plot');
-    // createListBox(container, "align", ['left', 'center', 'right'], function (e) {
-    //     chart.model.legend.align = _getValue(e);
-    // }, 'center');
-    // createListBox(container, "verticalAlign", ['top', 'middle', 'bottom'], function (e) {
-    //     chart.model.legend.verticalAlign = _getValue(e);
-    // }, 'middle');
-    // createListBox(container, "offsetX", [0, 10, 20, 30], function (e) {
-    //     chart.model.legend.offsetX = _getValue(e);
-    // }, 0);
-    // createListBox(container, "offsetY", [0, 10, 20, 30], function (e) {
-    //     chart.model.legend.offsetY = _getValue(e);
-    // }, 0);
-    // createListBox(container, "background", ['none', 'yellow'], function (e) {
-    //     chart.model.legend.styles = {
-    //         fill: _getValue(e)
-    //     }
-    // }, 'none');
+    createListBox(container, "offsetX", [0, 10, 15, 20, 25], function (e) {
+        config.legend.offsetX = _getValue(e);
+        chart.load(config);
+    }, '0');
+    createListBox(container, "offsetY", [0, 10, 15, 20, 25], function (e) {
+        config.legend.offsetY = _getValue(e);
+        chart.load(config);
+    }, '0');
     // createCheckBox(container, 'clickable', function (e) {
     //     chart.model.legend.clickable = _getChecked(e);
     // }, true)

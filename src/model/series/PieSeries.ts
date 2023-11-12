@@ -7,13 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "../../common/Common";
-import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../../common/Types";
+import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { FormattableText } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
 import { ILegendSource } from "../Legend";
-import { ISeries, PointItemPosition, RadialSeries, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
+import { ISeries, PointItemPosition, RadialSeries, Series, SeriesGroup, SeriesGroupLayout, WidgetSeriesPoint } from "../Series";
 
-export class PieSeriesPoint extends DataPoint implements ILegendSource {
+export class PieSeriesPoint extends WidgetSeriesPoint {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -25,18 +25,6 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
     startAngle = 0;
     angle = 0;
     borderRaidus: number;
-    _calcedColor: string;
-
-    //-------------------------------------------------------------------------
-    // ILegendSource
-    //-------------------------------------------------------------------------
-    legendColor(): string {
-        return this._calcedColor;
-    }
-
-    legendLabel(): string {
-        return this.x;
-    }
 
     //-------------------------------------------------------------------------
     // properties
@@ -53,6 +41,12 @@ export class PieSeriesPoint extends DataPoint implements ILegendSource {
 
         this.sliced = this.source.sliced;
     }
+
+    protected _assignTo(proxy: any): any {
+        return Object.assign(super._assignTo(proxy), {
+            sliced: this.sliced
+        });
+    }
 }
 
 class PieSeriesText extends FormattableText {
@@ -67,13 +61,6 @@ class PieSeriesText extends FormattableText {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    setText(value: string): FormattableText {
-        super.setText(value);
-        if (this._richTextImpl) {
-            this._richTextImpl.lineHeight = 1.2;
-        }
-        return this;
-    }
 }
 
 /**
@@ -88,6 +75,8 @@ export class PieSeries extends RadialSeries {
     private _sliceDim: IPercentSize;
     _groupPos: number;
     _groupSize: number;
+    _startRad: number;
+    _totalRad: number;
 
     //-------------------------------------------------------------------------
     // properties
@@ -98,31 +87,31 @@ export class PieSeries extends RadialSeries {
     groupSize = 1;
     /**
      * 0보다 큰 값을 지정해서 도넛 형태로 표시할 수 있다.
+     * 시리즈 원호의 반지름에 대한 상대적 크기나 픽셀 수로 지정할 수 있다.
      * {@link innerText}로 도넛 내부에 표시될 텍스트를 지정할 수 있다.
      * 
      * @config
      */
-    innerSize: RtPercentSize;
-    /**
-     * @config
-     */
-    sliceOffset: RtPercentSize = '7%';
+    innerRadius: RtPercentSize;
     /**
      * @config
      */
     labelDistance = 25;
     /**
-     * true이면 섹터 하나만 마우스 클릭으로 sliced 상태가 될 수 있다.
-     * Point의 sliced 속성을 직접 지정하는 경우에는 이 속성이 무시된다.
+     * @config
+     */
+    sliceOffset: RtPercentSize = '7%';
+    /**
+     * 클릭한 데이터 포인트를 slice 시킨다.
+     * 기존 slice 됐던 포인트는 원복된다.
      * 
      * @config
      */
-    exclusive = true;
+    autoSlice = true;
     /**
      * Slice animation duration.
-     * 밀리세컨드 단위로 지정.
+     * 밀리세컨드(ms) 단위로 지정.
      * 
-     * @default 300ms.
      * @config
      */
     sliceDuration = 300;
@@ -131,7 +120,7 @@ export class PieSeries extends RadialSeries {
      */
     borderRadius = 0;
     /**
-     * {@link innerSize}가 0보다 클 때, 도넛 내부에 표시되는 텍스트.
+     * {@link innerRadius}가 0보다 클 때, 도넛 내부에 표시되는 텍스트.
      * 기본 클래스 selector는 <b>'rct-pie-series-inner'</b>이다.
      * 
      * @config
@@ -155,11 +144,6 @@ export class PieSeries extends RadialSeries {
         return this._sliceDim ? calcPercent(this._sliceDim, rd) : 0;
     }
 
-    getLabelPosition(): PointItemPosition {
-        const p = this.pointLabel.position;
-        return p === PointItemPosition.AUTO ? PointItemPosition.INSIDE : p;
-    }
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -167,29 +151,25 @@ export class PieSeries extends RadialSeries {
         return 'pie';
     }
 
-    _colorByPoint(): boolean {
-        return true;
-    }
-
     protected _createPoint(source: any): DataPoint {
         return new PieSeriesPoint(source);
-    }
-
-    getLegendSources(list: ILegendSource[]): void {
-        this._runPoints.forEach(p => {
-            list.push(p as PieSeriesPoint);
-        })        
     }
 
     protected _doLoad(src: any): void {
         super._doLoad(src);
 
-        this._innerDim = parsePercentSize(this.innerSize, true);
+        this._innerDim = parsePercentSize(this.innerRadius, true);
         this._sliceDim = parsePercentSize(this.sliceOffset, true);
     }
 
     protected _doPrepareRender(): void {
         super._doPrepareRender();
+
+        let start = pickNum(this.startAngle % 360, 0);
+        let total = Math.max(0, Math.min(360, pickNum(this.totalAngle, 360)));
+
+        this._startRad = ORG_ANGLE + DEG_RAD * start;
+        this._totalRad = DEG_RAD * total;
 
         // group에서 필요하면 설정한다. 이 값의 여부로 pieseriesview에서 stacking 상태인 지 확인한다.
         this._groupPos = NaN; 
@@ -250,6 +230,10 @@ export class PieSeriesGroup extends SeriesGroup<PieSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    _type(): string {
+        return 'piegroup';
+    }
+
     _seriesType(): string {
         return 'pie';
     }

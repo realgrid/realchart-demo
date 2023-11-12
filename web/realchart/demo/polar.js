@@ -5,12 +5,17 @@
 const config = {
     polar: true,
     options: {
+        // animatable: false
     },
     title: "Polar Chart",
     xAxis: {
+        categories: [
+            '성남시', '용인시', '수원시', '일산시', '화성시', '평택시'
+        ]
     },
     yAxis: {
-        line: true,
+        // line: true,
+        label: true,
         guide: [{
             type: 'line',
             value: 5.5,
@@ -19,40 +24,55 @@ const config = {
             }
         }]
     },
+    body: {
+    },
     series: [{
         type: 'bar',
-        pointLabel: true,
-        data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['def', 9], 
-            ['지리산', 14.3], 
-            ['zzz', 13],
-            ['낙동강', 12.5]
-        ]
+        pointLabel: {
+            visible: true,
+            position: 'outside'
+        },
+        data: [ 7, 11, 9, 14.3, 13, 12.5 ]
     }, {
         type: 'area',
         pointLabel: true,
-        data: [
-            ['home', 13], 
-            ['sky', 9], 
-            ['def', 11], 
-            ['지리산', 12.3], 
-            ['zzz', 11],
-            ['낙동강', 15.5]
-        ]
+        data: [ 13, 9, 11, 12.3, 11, 15.5 ]
     }]
 }
+
+let animate;
 let chart;
 
 function setActions(container) {
-    createCheckBox(container, 'Debug', function (e) {
-        RealChart.setDebugging(_getChecked(e));
-        chart.refresh();
-    }, false);
-    createButton(container, 'Test', function(e) {
+	createCheckBox(
+		container,
+		'Debug',
+		function (e) {
+			RealChart.setDebugging(_getChecked(e));
+			chart.render();
+		},
+		false
+	);
+	createCheckBox(
+		container,
+		'Always Animate',
+		function (e) {
+			animate = _getChecked(e);
+		},
+		false
+	);
+	createButton(container, 'Test', function (e) {
         alert('hello');
     });
+	createCheckBox(
+		container,
+		'body.circular',
+		function (e) {
+            config.body.circular = _getChecked(e);
+			chart.load(config, animate);
+		},
+		true
+	);
 }
 
 function init() {

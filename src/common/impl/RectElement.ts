@@ -51,7 +51,7 @@ export class RectElement extends RcElement {
         super(doc, styleName, 'rect');
 
         this.rect = rect;
-        this.setAttr('shapeRendering', 'cripsEdges');
+        // this.setAttr('shapeRendering', 'cripsEdges');
     }
 
 	//-------------------------------------------------------------------------
@@ -66,7 +66,6 @@ export class RectElement extends RcElement {
             this._rect = value && {...value}
             if (value) {
                 this.setRect(value);
-                
                 let rx = value.rx || value.r;
                 let ry = value.ry || value.r;
                 rx > 0 && this.dom.setAttribute('rx', String(rx));
@@ -78,6 +77,17 @@ export class RectElement extends RcElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    resizeRect(width: number, height: number): RcElement {
+        const cs = this.getStyle('border-radius');
+        
+        this.resize(width, height);
+        if (cs) {
+            this.dom.setAttribute('rx', cs);
+        }
+
+        return this;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

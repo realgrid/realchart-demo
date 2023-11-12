@@ -94,19 +94,19 @@ export class BoxPlotSeriesView extends RangedSeriesView<BoxPlotSeries> {
     }
 
     protected _getLowValue(p: BoxPlotSeriesPoint): number {
-        return p.minValue
-    }
-
-    protected _layoutPointView(box: BoxView, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
-        box.setBounds(x - wPoint / 2, y, wPoint, hPoint);
-        box.layout();
+        return p.minValue;
     }
 
     protected _preparePointViews(doc: Document, model: BoxPlotSeries, points: BoxPlotSeriesPoint[]): void {
         this._boxes.prepare(points.length, (box, i) => {
             const p = box.point = points[i];
 
-            this._setPointStyle(box, p);
+            this._setPointStyle(box, model, p);
         })
+    }
+
+    protected _layoutPointView(box: BoxView, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
+        box.setBounds(x - wPoint / 2, y, wPoint, hPoint);
+        box.layout();
     }
 }
