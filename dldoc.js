@@ -15,6 +15,40 @@
 import fs from 'fs';
 import path from 'path';
 
+const ReflectionKind = {
+  Project: 1,
+  Module: 2,
+  Namespace: 4,
+  Enum: 8,
+  EnumMember: 16,
+  Variable: 32,
+  Function: 64,
+  Class: 128,
+  Interface: 256,
+  Constructor: 512,
+  Property: 1024,
+  Method: 2048,
+  CallSignature: 4096,
+  IndexSignature: 8192,
+  ConstructorSignature: 16384,
+  Parameter: 32768,
+  TypeLiteral: 65536,
+  TypeParameter: 131072,
+  Accessor: 262144,
+  GetSignature: 524288,
+  SetSignature: 1048576,
+  TypeAlias: 2097152,
+  Reference: 4194304
+}
+Object.freeze(ReflectionKind);
+
+const ReflectionKindString = Object.fromEntries(
+  Object.entries(ReflectionKind).map(([key, value]) => {
+    return [value, key]
+  })
+);
+Object.freeze(ReflectionKindString);
+
 const JSFIDDLE_URL = 'https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/';
 /**
  * typedoc에서 가공한 클래스 구조 모델을 api문서에서 사용할 config 구조로 재가공한다.
@@ -25,6 +59,8 @@ class Tunner {
     const text = fs.readFileSync(path || './docs/.tdout/model.json', { encoding: 'utf-8'});
     this.model = JSON.parse(text);
     this.classMap = {};
+    // temporary props map
+    this.props = {};
   }
 
   static get fiddleUrl() {
@@ -147,9 +183,45 @@ class Tunner {
    * @returns string
    */
   _parseInlineTag(line) {
-    switch(line) {
+    switch(line.tag) {
       case '@link':
-        return `**[${line.text}](./${line.text})**`
+
+        if (/^(http:|https:)/.test(line.target)) {
+          return `**[${line.text}](${line.target})**`;
+        } else if (line.target) {
+          const prop = this.props.find(p => p.id == line.target);
+          if (prop) return `**[${line.text}](#${prop.name})**`;
+          // @TODO: 상속받은 속성인 경우 링크...
+        }
+
+        // 구분자와 라벨
+        const [sep, ...label] = line.text.split(' ');
+
+        const [accessor, ...props] = sep.split('.');
+        let path = '';
+        switch (accessor) {
+          case 'g':
+          case 'global':
+            path = '/docs/api/globals/' + props.join('/');
+            break;
+          case 'rc':
+          case 'realchart':
+          default:
+            if (props.length)
+              path = '/docs/api/classes/' + props.join('/');
+            break;
+        }
+
+        if (path && !label.length) {
+          label.push(props.shift());
+        } else if (!path && !label.length) {
+          label.push(sep);
+          path = '#' + sep;
+        } else {
+          console.warn('Unexpeced pattern in inline-tag.', line)
+        }
+        // console.debug('parse inline', label.join(' '), path)
+        return `**[${label.join(' ')}](${path})**`
       default:
         return line.text;
     }
@@ -157,7 +229,7 @@ class Tunner {
 
   // parse property type
   _parseType(obj) {
-    const { type, name, types, elementType, qualifiedName } = { ...obj };
+    const { type, name, types, elementType, qualifiedName, target} = { ...obj };
     switch(type) {
       case 'intrinsic':
         return name;
@@ -173,17 +245,19 @@ class Tunner {
           case 'intrinsic':
             return `${elementType.name}[]`;
           default:
-            console.warn(`[WARN] unexpected array type ${elementType.type}, ${elementType.name}`, obj);
+            console.warn(`[WARN] Unexpected array type ${elementType.type}, ${elementType.name}`, obj);
         }
         return;
       case 'reference':
-        if (qualifiedName) { 
-          // Date
-          return qualifiedName;
+        const qlfName = qualifiedName || target.qualifiedName
+        if (qlfName) { 
+          
+          if (target.sourceFileName.indexOf('node_modules/typescript') == -1) {
+            console.warn(`not found ${qlfName} model. Check it's @internal or not exported, if you need.`)
+          }
+          // else Date
+          return qlfName;
         } 
-        // else if (name == 'SVGStyles') { //special interface
-        //   // return name;
-        // }
 
         // pre-scan
         if (!this.classMap[name]) {
@@ -191,7 +265,6 @@ class Tunner {
           const model = this._findModel(this.model, name)
           if (!model){
             return console.warn(`not found ${name} model. Check it's @internal or not exported, if you need.`)
-            // throw new Error(`not found ${name} model.`)
           } else {
             this._visit(model);
             // console.debug('visit', name, this.classMap[name].kindString, this.classMap[name].type);
@@ -200,8 +273,8 @@ class Tunner {
         }
 
         const cls = this.classMap[name];
-
-        return this._parseType(cls.type ?? { name, kindString: cls.kindString });
+        if (!cls) throw new Error(name);
+        return this._parseType(cls.type ?? { name, ...cls });
       case 'literal':
         // console.warn(`[WARN] ignored ${type}`, obj);
         return typeof obj.value === 'string' ? `'${obj.value}'` : obj.value;
@@ -213,18 +286,30 @@ class Tunner {
         // const [{ kind, kindString, parameters, type: _type }] = obj.declaration?.signatures || {};
         // console.debug({ kindString, parameters, type: _type });
       default:
-        // class, Interface 인 경우, type 없음.
-        name && console.warn(`[WARN] Unexpected type ${name}:${obj.kindString}`);
-        return obj.kindString === 'Interface' ? name : '';
+        // type 없음. class, Interface, Enumeration...
+        // name && console.warn(`[WARN] Unexpected type ${name}:${obj.kindString}`);
+        return this._parseNonType(obj);
     }
   }
 
-  _parseTypeD(obj) {
-    const { id, type, name, types, elementType, kindString } = { ...obj };
-
-    if (kindString == 'Class') {
-      throw new Error();
+  _parseNonType(obj) {
+    switch(obj.kind) {
+      case ReflectionKind.Interface:
+        return obj.name;
+      case ReflectionKind.Enum:
+        if (!obj.props) throw new Error(obj.name);
+        return obj.props?.map(p => `'${p.value}'`).join('|');
+      case ReflectionKind.Class:
+      default:
+        console.warn(`[WARN] Unexpected type ${obj.name}:${ReflectionKindString[obj.kind]}`);
+        break;
     }
+
+    return null;
+  }
+
+  _parseTypeD(obj) {
+    const { id, type, name, types, elementType } = { ...obj };
 
     switch(type) {
       case 'intrinsic':
@@ -303,28 +388,29 @@ class Tunner {
   }
   // scan all classes
   _visit(obj, level=0) {
-    const { name, children, kindString, type, typeParameters, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
+    const { name, children, kind, type, typeParameters, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
     const { config, content } = this._parseComment(comment);
     const propFilter = (child) => {
       return (
-        child.kindString == 'Property' 
+        child.kind === ReflectionKind.Property 
           && (this._isDoclet(child.name) || this._findTag(child.comment?.blockTags, '@config')))
-        || (child.kindString == 'Accessor' && this._findTag(child.getSignature?.comment?.blockTags, '@config'))
+        || (child.kind === ReflectionKind.Accessor && this._findTag(child.getSignature?.comment?.blockTags, '@config'))
     }
 
     // console.debug('visiting', obj);
 
-    switch (kindString) {
-      case 'Class':
+    switch (kind) {
+      case ReflectionKind.Class:
+        this.props = children.filter(propFilter);
         this.classMap[name] = { 
           // header, content, prop, type,
-          kindString,
+          kind,
           config,
           content,
           extended: extendedTypes.map(t => t.name),
-          props: children.filter(propFilter)
+          props: this.props
             .map(c => {
-              return c.kindString == 'Property' 
+              return c.kind === ReflectionKind.Property
               ? this._setContent(c)
               : this._setContent(c.getSignature)
             })
@@ -349,11 +435,11 @@ class Tunner {
             }, [])
         };
         break;
-      case 'Enumeration':
+      case ReflectionKind.Enum:
         this.classMap[name] = {
-          kindString,
+          kind,
           props: children.filter(c => 
-            c.kindString == "Enumeration Member"
+            c.kind == ReflectionKind.EnumMember
             && this._findTag(c.comment?.blockTags, '@config')
           ).map(c => {
             const { content } = this._parseComment(c.comment);
@@ -362,19 +448,19 @@ class Tunner {
         }
         // console.debug(name, this.classMap[name]);
         break;
-      case 'Type alias':
+      case ReflectionKind.TypeAlias:
         this.classMap[name] = {
-          kindString,
+          kind,
           type,
           typeParameters
         }
         break;
-      case 'Interface':
+      case ReflectionKind.Interface:
         // !children && console.debug(name, children);
         this.classMap[name] = {
-          kindString,
+          kind,
           type,
-          props: children?.filter(c => c.kindString == 'Property')?.map(c => {
+          props: children?.filter(c => c.kind === ReflectionKind.Property)?.map(c => {
             return this._setContent(c);
           })
         }
@@ -451,7 +537,7 @@ class MDGenerater {
       });
     } else if (dtype?.type == 'reference') {
       const v = this.classMap[dtype.name];
-      if (v?.kindString == 'Class') {
+      if (v?.kind === ReflectionKind.Class) {
         let accessor = this.docMap;
         const keys = _type 
           ? [opt, _type, name]
@@ -476,11 +562,11 @@ class MDGenerater {
         lines = `### [${name}](./${_type}/${name})\n`;
         lines += `${this._fixContent(v.content)}  \n`;
         return lines;
-      } else if (v?.kindString == 'Enumeration') {
+      } else if (v?.kind === ReflectionKind.Enum) {
         enumLines = this._makeEnums({ name, enums: v.props });
-      } else if (v?.kindString == 'Type Alias') {
+      } else if (v?.kind === ReflectionKind.TypeAlias) {
         // Interface?
-        console.debug({v});
+        // console.debug({v});
       }
     }
     
@@ -491,7 +577,9 @@ class MDGenerater {
     // @defalut가 없으면 typedoc에서 정의한 defaultValue를 사용한다.
     const dft = defaultBlock || defaultValue ;
     if (dft) {
-      const [value, ...content] = dft.split(' ');
+      // strip ```ts ... ```
+      const dftValue = dft.match(/```ts([\s\S]*?)```/)?.[1].trim() || dft.match(/`([\s\S]*?)`/)?.[1].trim() || dft;
+      const [value, ...content] = dftValue.split(' ');
       lines += `\`default: ${value}\` ${content.join(' ')} \n`;
     }
 
