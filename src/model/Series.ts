@@ -119,6 +119,7 @@ export interface IPlottingItem {
     xAxis: string | number;
     yAxis: string | number;
     visible: boolean;
+    zOrder: number;
 
     getVisiblePoints(): DataPoint[];
     getLegendSources(list: ILegendSource[]): void;
@@ -305,7 +306,6 @@ export interface ISeries extends IPlottingItem {
     displayName(): string;
     createPoints(source: any[]): DataPoint[];
     getPoints(): DataPointCollection;
-    getValue(point: DataPoint, axis: IAxis): number;
     isVisible(p: DataPoint): boolean;
 }
 
@@ -342,23 +342,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     // static members
     //-------------------------------------------------------------------------
     static _loadSeries(chart: IChart, src: any, defType?: string): Series {
-        let cls = chart._getSeriesType(src.type);
-
-        if (!cls) {
-            cls = chart._getSeriesType(defType || chart.type);
-        }
-
-        const ser = new cls(chart, src.name);
-
-        ser.load(src);
-        return ser;
+        const cls = chart._getSeriesType(src.type) || chart._getSeriesType(defType || chart.type);
+        return new cls(chart, src.name).load(src);
     }
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private _ranges: IValueRange[];
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -399,8 +389,21 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     abstract _type(): string; // for debugging, ...
 
+    /**
+     * 시리즈 이름.\
+     * 시리즈 생성시 지정되고 변경할 수 없다.
+     * 
+     * @config
+     */
     readonly name: string;
-    readonly label: string;
+    /**
+     * 이 시리즈를 나타내는 텍스트.\
+     * 레전드나 툴팁에서 시리즈를 대표한다.
+     * 이 속성이 지정되지 않으면 {@link name}이 사용된다.
+     * 
+     * @config
+     */
+    label: string;
     readonly pointLabel: DataPointLabel;
     readonly trendline: Trendline;
     readonly tooltip: Tooltip;
@@ -489,6 +492,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * @config
      */
     ranges: IValueRange[];
+    /**
+     * ranges가 적용되는 값의 방향. 
+     * 
+     * @config
+     */
     rangeAxis: 'x' | 'y' | 'z';
     /**
      * body 영역을 벗어난 data point view는 잘라낸다.
@@ -645,18 +653,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     getXStep(): number {
         return pickProp(this.xStep, this.chart.options.xStep);
-    }
-
-    getValue(point: DataPoint, axis: IAxis): number {
-        const pv = point.source;
-
-        if (pv != null) {
-            const fld = this._getField(axis);
-            const v = pv[fld];
-
-        } else {
-            return NaN;
-        }
     }
 
     prepareRender(): void {
@@ -1087,14 +1083,26 @@ export class PlottingItemCollection  {
     }
 
     prepareRender(): void {
-        const visibles = this._visibleSeries = [];
+        const visibles = [];
         let iShape = 0;
+
+        this._visibles = this._items.filter(item => item.visible).sort((i1, i2) => (+i1.zOrder || 0) - (+i2.zOrder || 0));
 
         this._series.forEach(ser => {
             ser.visible && visibles.push(ser);
             if (ser.hasMarker()) {
                 ser.setShape(Shapes[iShape++ % Shapes.length]);
             }
+        });
+
+        this._visibleSeries = visibles.sort((s1, s2) => {
+            let order1 = +(s1.group ? s1.group.zOrder : s1.zOrder) || 0;
+            let order2 = +(s2.group ? s2.group.zOrder : s2.zOrder) || 0;
+
+            if (order1 === order2 && s1.group && s1.group === s2.group) {
+                return (+s1.zOrder || 0) - (+s2.zOrder || 0);
+            }
+            return order1 - order2;
         })
 
         const nCluster = this._visibleSeries.filter(ser => ser.clusterable()).length;
@@ -1105,7 +1113,6 @@ export class PlottingItemCollection  {
             }
         });
 
-        this._visibles = this._items.filter(item => item.visible);
         this._visibles.forEach(item => item.prepareRender());
     }
 
@@ -1640,6 +1647,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
      * @config
      */
     visibleInLegend = true;
+    zOrder = 0;
 
     get series(): T[] {
         return this._series.slice(0);
@@ -1749,20 +1757,18 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     prepareRender(): void {
-        this._visibles = this._series.filter(ser => ser.visible);
+        this._visibles = this._series.filter(ser => ser.visible).sort((s1, s2) => (+s1.zOrder || 0) - (+s2.zOrder || 0));
 
         super.prepareRender();
     }
 
     protected _doPrepareRender(chart: IChart): void {
-        const series = this._visibles.sort((s1, s2) => (s1.zOrder || 0) - (s2.zOrder || 0));
-        
         this._xAxisObj = this.chart._connectSeries(this, true);
         this._yAxisObj = this.chart._connectSeries(this, false);
 
-        if (series.length > 0) {
-            series.forEach(ser => ser.prepareRender());
-            this._doPrepareSeries(series);
+        if (this._visibles.length > 0) {
+            this._visibles.forEach(ser => ser.prepareRender());
+            this._doPrepareSeries(this._visibles);
         }
     }
 
