@@ -11,7 +11,6 @@ import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
 import { LayerElement, PathElement, RcElement } from "../common/RcControl";
-import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
@@ -299,7 +298,7 @@ export type LabelLayoutInfo = {
     labelOff: number;
 };
 
-const PALETTE_LEN = 12;
+export const PALETTE_LEN = 12;
 
 export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 

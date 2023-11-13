@@ -10,17 +10,28 @@ import { PathBuilder } from "../common/PathBuilder";
 import { createAnimation } from "../common/RcAnimation";
 import { PathElement, RcControl, RcElement } from "../common/RcControl";
 import { SvgRichText } from "../common/RichText";
-import { Align } from "../common/Types";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { DataPoint } from "../model/DataPoint";
 import { Series } from "../model/Series";
 import { Tooltip } from "../model/Tooltip";
+import { PALETTE_LEN } from "./SeriesView";
+
+export enum TooltipPosition {
+    TOP = 'top',
+    BOTTOM = 'bottom',
+    LEFT = 'left',
+    RIGHT = 'right',
+}
 
 export class TooltipView extends RcElement {
  
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _top: PathElement;
+    private _topHeight = 10;
+    private _tail: PathElement;
+    private _tailSize = 10;
     private _back: PathElement;
     private _textView: TextElement;
     private _richText: SvgRichText;
@@ -43,6 +54,8 @@ export class TooltipView extends RcElement {
         super(doc, 'rct-tooltip');
 
         this.add(this._back = new PathElement(doc, 'rct-tooltip-back'));
+        this.add(this._top = new PathElement(doc, 'rct-tooltip-top'));
+        this.add(this._tail = new PathElement(doc, 'rct-tooltip-tail'));
         this.add(this._textView = new TextElement(doc, 'rct-tooltip-text'));
 
         this._back.setAttr('filter', 'url(#' + RcControl.SHADOW_FILTER + ')');
@@ -62,6 +75,7 @@ export class TooltipView extends RcElement {
     show(series: Series, point: DataPoint, x: number, y: number, animate: boolean): void {
         const model = this._model = series.tooltip;
         const tv = this._textView;
+        const isInverted = model.series.chart.isInverted();
 
         this._series = series;
 
@@ -69,23 +83,19 @@ export class TooltipView extends RcElement {
         this._richText.setFormat(model.text);
         this._richText.build(tv, NaN, NaN, point, this._textCallback);
 
-        // background
         const r = tv.getBBounds();
         const w = Math.max(model.minWidth || 0, r.width + 8 * 2);
         const h = Math.max(model.minHeight || 0, r.height + 6 * 2);
-        const pb = new PathBuilder();
 
-        pb.rect(0, 0, w , h);
-        this._back.setPath(pb.end(true));
+        this._top.setData('index', (series.index % PALETTE_LEN) as any);
 
-        tv.translate((w - r.width) / 2, (h - r.height) / 2);
-
-        // view
         const dur = this.getStyle('visibility') === 'visible' ? 300 : 0;
 
-        if (model.series.chart.isInverted()) {
+        if (isInverted) {
+            this.draw(0, -this._topHeight / 2, w, h + this._topHeight, TooltipPosition.RIGHT);
             this.translateEx(x + model.offset, y - h / 2, dur, false);
         } else {
+            this.draw(0, -this._topHeight, w, h + this._topHeight, TooltipPosition.TOP);
             this.translateEx(x - w / 2, y - h - model.offset, dur, false);
         }
         if (dur === 0) {
@@ -120,6 +130,76 @@ export class TooltipView extends RcElement {
         createAnimation(this.dom, 'opacity', void 0, 0, 200, () => {
             this.setStyle('visibility', 'hidden');
         })
+    }
+
+    private draw(x, y, w, h, position: string): void {
+        const tail = this._tailSize;
+        const border = 1;
+        let pb, path;
+        switch (position) {
+            case TooltipPosition.LEFT:
+                x -= tail
+                path = [
+                    'M', x, y,
+                    'L', x + w, y,
+                    'L', x + w, y + (h / 2) - (tail / 2),
+                    'L', x + w + tail, y + h / 2,
+                    'L', x + w, y + (h / 2) + (tail / 2),
+                    'L', x + w, y + h,
+                    'L', x, y + h,
+                    'Z'
+                ];
+                break;
+            case TooltipPosition.RIGHT:
+                x += tail
+                path = [
+                    'M', x, y,
+                    'L', x + w, y,
+                    'L', x + w, y + h,
+                    'L', x, y + h,
+                    'L', x, y + (h / 2) + (tail / 2),
+                    'L', x - tail, y + (h / 2),
+                    'L', x, y + (h / 2) - (tail / 2),
+                    'Z'
+                ];
+                break;
+            case TooltipPosition.BOTTOM:
+                y += tail;
+                path = [
+                    'M', x, y,
+                    'L', x + (w / 2) - (tail / 2), y,
+                    'L', x + (w / 2), y - tail,
+                    'L', x + (w / 2) + (tail / 2), y,
+                    'L', x + w, y,
+                    'L', x + w, y + h,
+                    'L', x, y + h,
+                    'Z'
+                ];
+                break;
+            case TooltipPosition.TOP:
+            default:
+            y -= tail;
+            path = [
+                'M', x, y,
+                'L', x + w, y,
+                'L', x + w, y + h,
+                'L', x + (w / 2) + (tail / 2), y + h,
+                'L', x + (w / 2), y + h + tail,
+                'L', x + (w / 2) - (tail / 2), y + h,
+                'L', x, y + h,
+                'Z'
+            ];  
+        }
+        // text
+        const tv = this._textView;
+        const r = tv.getBBounds();
+        tv.translate(x + (w - r.width) / 2, y + (h - r.height + this._topHeight) / 2);
+        // top
+        pb = new PathBuilder();
+        pb.rect(x + border / 2, y + border / 2, w - border, this._topHeight);
+        this._top.setPath(pb.end(true));
+        
+        this._back.setPath(path);
     }
 
     // M402.5,134.5
