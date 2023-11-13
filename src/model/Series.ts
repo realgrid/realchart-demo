@@ -486,14 +486,18 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     pointColors: boolean | string[];
     /**
-     * 값 범위 목록.
+     * 값 범위 목록.\
      * 범위별로 다른 스타일을 적용할 수 있다.
+     * 범위들은 중첩될 수 없다.
      * 
      * @config
      */
     ranges: IValueRange[];
     /**
-     * ranges가 적용되는 값의 방향. 
+     * ranges가 적용되는 값의 기준 축.\
+     * 지정하지 않으면 시리즈 종류에 띠라 자동 적용된다.
+     * 'line' 시리즈 계열은 'x', 나머지는 'y'가 된다.
+     * 현재 'z'은 range는 bubble 시리즈에만 적용할 수 있다.
      * 
      * @config
      */
@@ -846,6 +850,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             return this.onPointClick(this._pointArgs);
         }
     }
+
+    getRangeAxis(): 'x' | 'y' | 'z' {
+        return this.rangeAxis || this._defRangeAxis();
+    }
     
     //-------------------------------------------------------------------------
     // overriden members
@@ -926,6 +934,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     prepareAfter(): void {
         // DataPoint.xValue가 필요하다.
         this.trendline.visible && this.trendline.prepareRender();
+    }
+
+    _defRangeAxis(): 'x' | 'y' | 'z' {
+        return 'y';
     }
 }
 

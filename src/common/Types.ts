@@ -324,6 +324,7 @@ export interface IValueRange {
     toValue?: number;
     color: string;
     label?: string;
+    style?: SVGStyleOrClass;
 }
 
 /**

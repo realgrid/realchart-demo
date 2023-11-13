@@ -479,6 +479,11 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         v.setData('index', (p.index % PALETTE_LEN) as any);
     }
 
+    protected _setPointColor(v: RcElement, color: string): void {
+        v.internalSetStyle('fill', color);
+        v.internalSetStyle('stroke', color);
+    }
+
     protected _setPointStyle(v: RcElement, model: T,  p: DataPoint, styles?: any[]): void {
         v.setAttr('aria-label', p.ariaHint());
         this.$_setColorIndex(v, p);
@@ -488,11 +493,14 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         if (styles) {
             styles.forEach(st => st && v.internalSetStyleOrClass(st));
         }
+       
         // config에서 지정한 point color
-        if (p.color) {
-            v.internalSetStyle('fill', p.color);
-            v.internalSetStyle('stroke', p.color);
+        p.color && this._setPointColor(v, p.color);
+        if (p.range) {
+            p.range.color && this._setPointColor(v, p.range.color);
+            p.range.style && v.internalSetStyleOrClass(p.range.style);
         }
+       
         // 동적 스타일
         const st = model.getPointStyle(p);
         st && v.internalSetStyleOrClass(st);
