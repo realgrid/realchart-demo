@@ -346,7 +346,8 @@ export const buildValueRanges = function (source: IValueRange[], min: number, ma
                 const range: IValueRange = {
                     fromValue: pickNum(src.fromValue, prev ? prev.toValue : min),
                     toValue: pickNum(src.toValue, max),
-                    color: src.color
+                    color: src.color,
+                    style: src.style ? Object.assign({}, src.style) : _undefined
                 };
                 if (range.fromValue < range.toValue) {
                     ranges.push(range);

@@ -369,7 +369,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     protected _points: DataPointCollection;
     _runPoints: DataPoint[];
     _visPoints: DataPoint[];
-    _runRangeAxis: 'x' | 'y' | 'z';
+    _runRangeValue: 'x' | 'y' | 'z';
     _runRanges: IValueRange[];
     _minX: number;
     _maxX: number;
@@ -796,11 +796,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     prepareViewRanges(): void {
-        const rangeMinMax =  this._getRangeMinMax(this._runRangeAxis = this.getViewRangeAxis());
+        const rangeMinMax =  this._getRangeMinMax(this._runRangeValue = this.getViewRangeAxis());
 
         if (this._runRanges = buildValueRanges(this.viewRanges, rangeMinMax.min, rangeMinMax.max, false)) {
             this._visPoints.forEach((p, i) => {
-                this._setviewRange(p, this._runRangeAxis);
+                this._setViewRange(p, this._runRangeValue);
             });
         } else {
             this._visPoints.forEach((p, i) => {
@@ -969,7 +969,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._preparePointArgs(this._pointArgs);
     }
 
-    protected _setviewRange(p: DataPoint, axis: 'x' | 'y' | 'z'): void {
+    protected _setViewRange(p: DataPoint, axis: 'x' | 'y' | 'z'): void {
         const v = p[AXIS_VALUE[axis]];
 
         for (const r of this._runRanges) {

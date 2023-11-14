@@ -616,15 +616,30 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     protected _clipRange(w: number, h: number, rangeAxis: 'x' | 'y' | 'z', range: IValueRange, clip: ClipElement, inverted: boolean): void {
+        if (inverted) {
+            const t = w;
+            w = h;
+            h = t;
+        }
+
         const isX = rangeAxis === 'x';
         const axis = isX ? this.model._xAxisObj : this.model._yAxisObj;
+        const reversed = axis.reversed;
         const p1 = axis.getPosition(isX ? w : h, range.fromValue);
         const p2 = axis.getPosition(isX ? w : h, range.toValue);
 
-        if (isX) {
-            clip.setBounds(p1, 0, p2 - p1, h);
+        if (inverted) {
+            if (isX) {
+                clip.setBounds(p1, w - h, Math.abs(p2 - p1), h);
+            } else {
+                clip.setBounds(0, w - Math.max(p1, p2), w, Math.abs(p2 - p1));
+            }
         } else {
-            clip.setBounds(0, h - Math.max(p1, p2), w, Math.abs(p2 - p1));
+            if (isX) {
+                clip.setBounds(p1, 0, Math.abs(p2 - p1), h);
+            } else {
+                clip.setBounds(0, h - Math.max(p1, p2), w, Math.abs(p2 - p1));
+            }
         }
     }
 }

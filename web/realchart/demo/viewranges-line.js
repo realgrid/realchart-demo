@@ -9,7 +9,10 @@ const x_ranges = [{
 }];
 const y_ranges = [{
     toValue: 120,
-    color: 'blue'
+    color: 'blue',
+    style: {
+        strokeWidth: '4px'
+    }
 }, {
     toValue: 140,
     color: '#dddd00'

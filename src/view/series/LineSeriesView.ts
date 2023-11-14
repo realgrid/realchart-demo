@@ -183,6 +183,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
             while (clips.length < ranges.length) {
                 const c = new ClipElement(this.doc);
+
+                c.setAttr(RcElement.ASSET_KEY, '1');
                 this.control.clipContainer().append(c.dom);
                 clips.push(c);
             }
@@ -360,7 +362,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     line.addStyleOrClass(range.style);
                     Dom.setImportantStyle(line.dom.style, 'fill', 'none');
                     line.setClip(this._rangeClips[i]);
-                    this._clipRange(w, h, series._runRangeAxis, range, this._rangeClips[i], inverted);
+                    this._clipRange(w, h, series._runRangeValue, range, this._rangeClips[i], inverted);
                 })
             }
 
