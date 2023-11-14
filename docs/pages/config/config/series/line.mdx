@@ -7,7 +7,7 @@
 `default: 0`  
 
 ### belowStyle: `SVGStyles | string{:js}`[#belowStyle]
-baseValue  혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.  
+**[baseValue](#baseValue)**  혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.  
 
 ### clipped: `boolean{:js}`[#clipped]
 body 영역을 벗어난 data point view는 잘라낸다.  
@@ -36,7 +36,7 @@ undefined이면 "data".
 데이터 포인트 maker 설정 정보.  
 
 ### nullAsBase: `boolean{:js}`[#nullAsBase]
-null인 y값을  baseValue 로 간주한다.  
+null인 y값을  **[baseValue](#baseValue)** 로 간주한다.  
 `default: false`  
 
 ### onPointClick[#onPointClick]
@@ -76,14 +76,14 @@ undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'.
 
 ### xStart: `any{:js}`[#xStart]
 x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.
-이 후에는  xStep 씩 증가시키면서 설정한다.
-이 속성이 지징되지 않은 경우  ChartOptions.xStart 가 적용된다.  
+이 후에는  **[xStep](#xStep)** 씩 증가시키면서 설정한다.
+이 속성이 지징되지 않은 경우  **[xStart](/docs/api/classes/xStart)** 가 적용된다.  
 
 ### xStep: `string | number{:js}`[#xStep]
 x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
-첫번째 값은  xStart 로 설정한다.
+첫번째 값은  **[xStart](#xStart)** 로 설정한다.
 time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.
-이 속성이 지정되지 않으면  ChartOptions.xStep 이 적용된다.  
+이 속성이 지정되지 않으면  **[xStep](/docs/api/classes/xStep)** 이 적용된다.  
 
 ### yAxis: `string | number{:js}`[#yAxis]
 

@@ -1,5 +1,5 @@
 ## xAxis[type=log]
-이 축에 연결된 시리즈들의 point y값을  Math.log10 으로 계산된 위치에 표시한다.
+이 축에 연결된 시리즈들의 point y값을  **[log10](/docs/api/classes/log10)** 으로 계산된 위치에 표시한다.
 ## Properties
 
 ### baseValue: `number{:js}`[#baseValue]
@@ -11,7 +11,7 @@ RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 
 ### endFit[#endFit]
 축 끝 위치에 tick 표시 여부.
- strictMax 가 설정되면 무시되고  AxisFit.VALUE 로 적용된다.  
+ **[strictMax](#strictMax)** 가 설정되면 무시되고  **[VALUE](/docs/api/classes/VALUE)** 로 적용된다.  
 
 
 `default: AxisFit.DEFAULT`  
@@ -45,31 +45,31 @@ plot 영역이나 먼저 표시되는 축 사이의 여백 크기.
 
 ### maxPadding: `number{:js}`[#maxPadding]
 마지막 tick 뒤쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
-이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.
- endFit 이  AxitFit.TICK 일 때,
+이 값을 지정하지 않으면  **[padding](#padding)** 에 지정된 값을 따른다.
+ **[endFit](#endFit)** 이  **[TICK](/docs/api/classes/TICK)** 일 때,
 data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
- strictMax 가 지정되거나,  maxValue 가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다.  
+ **[strictMax](#strictMax)** 가 지정되거나,  **[maxValue](#maxValue)** 가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다.  
 
 ### maxValue: `number{:js}`[#maxValue]
 명시적으로 지정하는 최대값.\
 축에 연결된 data point들의 값으로 계산된 최대값보다 이 속성 값이 크면 대신 이 값이 축의 최대값이 되고,
- maxPadding 도 무시된다.
+ **[maxPadding](#maxPadding)** 도 무시된다.
 계산값이 더 크면 이 속성은 무시된다.\
-계산값과 무관하게 최대값을 지정하려면  strictMax 을 사용한다.  
+계산값과 무관하게 최대값을 지정하려면  **[strictMax](#strictMax)** 을 사용한다.  
 
 ### minPadding: `number{:js}`[#minPadding]
 첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
-이 값을 지정하지 않으면  padding 에 지정된 값을 따른다.
- startFit 이  AxitFit.TICK 일 때,
+이 값을 지정하지 않으면  **[padding](#padding)** 에 지정된 값을 따른다.
+ **[startFit](#startFit)** 이  **[TICK](/docs/api/classes/TICK)** 일 때,
 data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
- strictMin 가 지정되거나,  minValue 가 계산된 최소값보다 작은 경우에도 이 속성은 무시된다.  
+ **[strictMin](#strictMin)** 가 지정되거나,  **[minValue](#minValue)** 가 계산된 최소값보다 작은 경우에도 이 속성은 무시된다.  
 
 ### minValue: `number{:js}`[#minValue]
 명시적으로 지정하는 최소값.\
 축에 연결된 data point들의 값으로 계산된 최소값보다 이 속성 값이 작으면 대신 이 값이 축의 최소값이 되고,
- minPadding 도 무시된다.
+ **[minPadding](#minPadding)** 도 무시된다.
 계산값이 더 작으면 이 속성은 무시된다.\
-계산값과 무관하게 최소값을 지정하려면  strictMin 을 사용한다.  
+계산값과 무관하게 최소값을 지정하려면  **[strictMin](#strictMin)** 을 사용한다.  
 
 ### name: `string{:js}`[#name]
 
@@ -78,15 +78,15 @@ data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.
 `default: true`  
 
 ### padding: `number{:js}`[#padding]
-minPadding ,  maxPadding 이 설정되지 않았을 때 적용되는 기본값이다.  
+**[minPadding](#minPadding)** ,  **[maxPadding](#maxPadding)** 이 설정되지 않았을 때 적용되는 기본값이다.  
 `default: 0.05`  
 
-### position[#position]
+### position: `'base'|'normal'|'opposite'{:js}`[#position]
 표시 위치.
 기본적으로 상대 축의 원점 쪽에 표시된다.  
-- `'base'` 상대 축의 baseValue 지점에 표시된다.      [주의]   1. 축에 연결된 시리즈들이 BarSeries 계열일 때만 가능하다.  2. 차트의 X축 하나에만 적용할 수 있다. 두번째로 지정된 축의 속성은  NORMAL 로 적용된다.  3. 상대 축이 **linear** 가 아니거나  LinearAxis.baseValue 가 min 보다 작거나 max보다 크면 이 값은 무시되고,      NORMAL 로 적용된다.
-- `'normal'` X축은 아래쪽에 수평으로, Y축은 왼쪽에 수직으로 표시된다.       Chart.inverted 이면 Y축이 아래쪽에 수평으로, X축은 왼쪽에 수직으로 표시된다.
-- `'opposite'` X축은 위쪽에 수평으로, Y축은 오른쪽에 수직으로 표시된다.       Chart.inverted 이면 Y축이 위쪽에 수평으로, X축은 오른쪽에 수직으로 표시된다.
+- `'base'` 상대 축의 baseValue 지점에 표시된다.      [주의]   1. 축에 연결된 시리즈들이 BarSeries 계열일 때만 가능하다.  2. 차트의 X축 하나에만 적용할 수 있다. 두번째로 지정된 축의 속성은  **[NORMAL](#NORMAL)** 로 적용된다.  3. 상대 축이 **linear** 가 아니거나  **[baseValue](/docs/api/classes/baseValue)** 가 min 보다 작거나 max보다 크면 이 값은 무시되고,      **[NORMAL](#NORMAL)** 로 적용된다.
+- `'normal'` X축은 아래쪽에 수평으로, Y축은 왼쪽에 수직으로 표시된다.       **[inverted](/docs/api/classes/inverted)** 이면 Y축이 아래쪽에 수평으로, X축은 왼쪽에 수직으로 표시된다.
+- `'opposite'` X축은 위쪽에 수평으로, Y축은 오른쪽에 수직으로 표시된다.       **[inverted](/docs/api/classes/inverted)** 이면 Y축이 위쪽에 수평으로, X축은 오른쪽에 수직으로 표시된다.
 
 `default: AxisPosition.NORMAL`  
 
@@ -100,7 +100,7 @@ true면 반대 방향으로 point 위치들이 지정된다.
 
 ### startFit[#startFit]
 축 시작 위치에 tick 표시 여부.
- strictMin 이 설정되면  AxisFit.VALUE 로 적용된다.  
+ **[strictMin](#strictMin)** 이 설정되면  **[VALUE](/docs/api/classes/VALUE)** 로 적용된다.  
 
 
 `default: AxisFit.DEFAULT`  
