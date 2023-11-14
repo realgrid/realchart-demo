@@ -4,20 +4,20 @@
 
 ### innerSize: `string | number{:js}`[#innerSize]
 Pie 시리즈들의 그룹이고, 
- **[layout](#layout)** 이  **[FILL](/docs/api/classes/FILL)** 이나  **[STACK](/docs/api/classes/STACK)** 인 경우,
+ layout 이  SeriesGroupLayout.FILL 이나  SeriesGroupLayout.STACK 인 경우,
 경우 0보다 큰 값을 지정해서 도넛 형태로 표시할 수 있다.
 
 
 포함된 pie 시리즈들의 innerSize는 무시된다.  
 `default: 0`  
 
-### layout[#layout]
-
+### layout: `'default'{:js}`[#layout]
+- `'default'` 시리즈 종류에 따른 기본 표시 방식.      bar 종류의 시리즈인 경우 포인트들을 순서대로 옆으로 배치하고,  line 종류인 경우  OVERLAP 과 동일하게 순서대로 표시된다.  pie 종류인 경우  FILL 과 동일하다.      기본 값이다.
 
 `default: SeriesGroupLayout.DEFAULT`  
 
 ### layoutMax: `number{:js}`[#layoutMax]
-**[layout](#layout)** 이  **[FILL](/docs/api/classes/FILL)** 일 때 상대적 최대값.
+layout 이  **[FILL](/docs/api/classes/SeriesGroupLayout#FILL)** 일 때 상대적 최대값.
 
   
 `default: 100`  
@@ -30,7 +30,7 @@ polar 그룹일 때 원형 플롯 영역의 크기.
 
 
 Pie 시리즈들의 그룹이고, 
- **[layout](#layout)** 이  **[FILL](/docs/api/classes/FILL)** 이나  **[STACK](/docs/api/classes/STACK)** 인 경우
+ layout 이  SeriesGroupLayout.FILL 이나  SeriesGroupLayout.STACK 인 경우
 개별 시리즈의 size 대신 이 속성값으로 표시되고,
 각 시리즈의 size는 상대 크기로 적용된다.  
 `default: '80%'`  

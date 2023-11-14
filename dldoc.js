@@ -189,9 +189,18 @@ class Tunner {
         if (/^(http:|https:)/.test(line.target)) {
           return `**[${line.text}](${line.target})**`;
         } else if (line.target) {
+          const { sourceFileName, qualifiedName } = line.target;
+          if (sourceFileName?.indexOf('node_modules/typescript') == 0) {
+            return `**${qualifiedName}**`;
+          }
+          
           const prop = this.props.find(p => p.id == line.target);
           if (prop) return `**[${line.text}](#${prop.name})**`;
           // @TODO: 상속받은 속성인 경우 링크...
+          else {
+            console.debug(`[DEBUG] ${line}`);
+            return line.text;
+          }
         }
 
         // 구분자와 라벨
@@ -199,28 +208,33 @@ class Tunner {
 
         const [accessor, ...props] = sep.split('.');
         let path = '';
+        const [prop] = props.splice(-1, 1);
         switch (accessor) {
           case 'g':
           case 'global':
-            path = '/docs/api/globals/' + props.join('/');
+            path = '/docs/api/globals';
             break;
           case 'rc':
           case 'realchart':
+            path = '/docs/api/classes';
+            break;
           default:
-            if (props.length)
-              path = '/docs/api/classes/' + props.join('/');
+            props.unshift(accessor);
+            path = `/config/config`;
             break;
         }
 
-        if (path && !label.length) {
-          label.push(props.shift());
-        } else if (!path && !label.length) {
-          label.push(sep);
-          path = '#' + sep;
+        // single word. 현재 페이지의 속성
+        if (sep == accessor) {
+          path = `#${sep}`;
+          !label.length && label.push(sep);
+        } else if (props.length) {
+          path = `${path}/${props.join('/')}#${prop}`;
         } else {
-          console.warn('[WARN] Unexpeced pattern in inline-tag.', line)
+          path = `${path}/${prop}`;
         }
-        // console.debug('parse inline', label.join(' '), path)
+        !label.length && label.push(prop);
+
         return `**[${label.join(' ')}](${path})**`
       default:
         return line.text;
