@@ -10,9 +10,9 @@ import { pickNum } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
-import { LayerElement, PathElement, RcElement } from "../common/RcControl";
-import { IRect } from "../common/Rectangle";
+import { ClipElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
+import { IValueRange } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { RectElement } from "../common/impl/RectElement";
@@ -496,7 +496,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
        
         // config에서 지정한 point color
         p.color && this._setPointColor(v, p.color);
-        if (p.range) {
+        if (p.range) { 
             p.range.color && this._setPointColor(v, p.range.color);
             p.range.style && v.internalSetStyleOrClass(p.range.style);
         }
@@ -613,6 +613,19 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 
         labelView.setContrast(inner && info.pointView.dom);
         labelView.layout().translate(x, y);
+    }
+
+    protected _clipRange(w: number, h: number, rangeAxis: 'x' | 'y' | 'z', range: IValueRange, clip: ClipElement, inverted: boolean): void {
+        const isX = rangeAxis === 'x';
+        const axis = isX ? this.model._xAxisObj : this.model._yAxisObj;
+        const p1 = axis.getPosition(isX ? w : h, range.fromValue);
+        const p2 = axis.getPosition(isX ? w : h, range.toValue);
+
+        if (isX) {
+            clip.setBounds(p1, 0, p2 - p1, h);
+        } else {
+            clip.setBounds(0, h - Math.max(p1, p2), w, Math.abs(p2 - p1));
+        }
     }
 }
 

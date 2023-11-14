@@ -10,7 +10,7 @@ import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
-import { PI_2 } from "../../common/Types";
+import { IValueRange, PI_2 } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Chart } from "../../model/Chart";
 import { LineType } from "../../model/ChartTypes";
@@ -72,6 +72,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     protected _upperClip: ClipElement;
     protected _lowerClip: ClipElement;
     protected _markers: ElementPool<LineMarkerView>;
+    private _rangeLines: ElementPool<PathElement>;
+    private _rangeClips: ClipElement[] = [];
     protected _polar: any;
     protected _linePts: IPointPos[];
 
@@ -99,6 +101,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     protected _prepareSeries(doc: Document, model: T): void {
         model instanceof LineSeries && this._prepareBelow(model);
+        this._prepareRanges(model, model._runRanges);
         !this._simpleMode && this.$_prepareMarkers(model, this._visPoints as LineSeriesPoint[]);
     }
 
@@ -145,7 +148,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const control = this.control;
         let lowLine = this._lowLine;
 
-        this._needBelow = series.belowStyle && series._minValue < series.baseValue; // series.getBaseValue(yAxis)
+        this._needBelow = series.belowStyle && series._minY < series.baseValue; // series.getBaseValue(yAxis)
 
         if (this._needBelow) {
             if (!lowLine) {
@@ -159,6 +162,33 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         } else {
             lowLine?.setClip();
             this._line.setClip();
+        }
+    }
+
+    protected _prepareRanges(model: T, ranges: IValueRange[]    ): void {
+        let lines = this._rangeLines;
+        let clips = this._rangeClips;
+
+        if (!ranges) {
+            if (lines) {
+                lines.freeAll();
+                clips.forEach(c => c.remove());
+                clips.length = 0; 
+            }
+        } else {
+            if (!lines) {
+                lines = this._rangeLines = new ElementPool(this._lineContainer, PathElement);
+            }
+            lines.prepare(ranges.length);
+
+            while (clips.length < ranges.length) {
+                const c = new ClipElement(this.doc);
+                this.control.clipContainer().append(c.dom);
+                clips.push(c);
+            }
+            while (clips.length > ranges.length) {
+                clips.pop().remove();
+            }
         }
     }
 
@@ -308,27 +338,44 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         this._linePts = pts;
 
         if (i < pts.length - 1) {
+            const inverted = this._inverted;
+            const w = this.width;
+            const h = this.height;
+
             this._buildLines(pts, i, sb);
+
             this._line.setPath(s = sb.end(this._polar));
-    
-            this._line.clearStyleAndClass();
+            this._line.internalClearStyleAndClass();
             this._line.setStyle('stroke', series.color);
             this._line.addStyleOrClass(series.style);
             Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
-    
+
+            if (series._runRanges) {
+                this._rangeLines.forEach((line, i) => {
+                    const range = series._runRanges[i];
+
+                    line.setPath(s);
+                    line.internalClearStyleAndClass();
+                    line.setStyle('stroke', range.color);
+                    line.addStyleOrClass(range.style);
+                    Dom.setImportantStyle(line.dom.style, 'fill', 'none');
+                    line.setClip(this._rangeClips[i]);
+                    this._clipRange(w, h, series._runRangeAxis, range, this._rangeClips[i], inverted);
+                })
+            }
+
             if (needBelow) {
                 const axis = series._yAxisObj as ContinuousAxis;
                 const base = series.baseValue;// series.getBaseValue(axis);
                 
-                if (this._inverted) {
-                    this.$_resetClips(this.width, this.height, axis.getPosition(this.width, base), true);
+                if (inverted) {
+                    this.$_resetClips(w, h, axis.getPosition(w, base), true);
                 } else {
-                    this.$_resetClips(this.width, this.height, this.height - axis.getPosition(this.height, base), false);
+                    this.$_resetClips(w, h, h - axis.getPosition(h, base), false);
                 }
     
                 this._lowLine.setPath(s);//this._line.path());
-    
-                this._lowLine.clearStyleAndClass();
+                this._lowLine.internalClearStyleAndClass();
                 this._lowLine.setStyle('stroke', series.color);
                 this._lowLine.addStyleOrClass(series.style);
                 this._lowLine.addStyleOrClass(series.belowStyle);

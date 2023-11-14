@@ -149,17 +149,6 @@ export class BubbleSeries extends MarkerSeries {
         return true;
     }
 
-    getPointTooltip(point: BubbleSeriesPoint, param: string): any {
-        switch (param) {
-            case 'z':
-                return point.z;
-            case 'zValue':
-                return point.zValue;
-            default:
-                return super.getPointTooltip(point, param);
-        }
-    }
-
     protected _createPoint(source: any): DataPoint {
         return new BubbleSeriesPoint(source);
     }
@@ -189,5 +178,12 @@ export class BubbleSeries extends MarkerSeries {
             }
         })
         this._noSize = this._zMin === this._zMax;
+    }
+
+    protected _getRangeMinMax(axis: "x" | "y" | "z"): { min: number; max: number; } {
+        if (axis === 'z') {
+            return { min: this._zMin, max: this._zMax };
+        }
+        return super._getRangeMinMax(axis);
     }
 }

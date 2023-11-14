@@ -10,11 +10,11 @@ import { isArray, isObject, isString, pickNum, pickProp, pickProp3 } from "../co
 import { IPoint } from "../common/Point";
 import { RcElement } from "../common/RcControl";
 import { RcObject } from "../common/RcObject";
-import { IPercentSize, IValueRange, RtPercentSize, SVGStyleOrClass, buildValueRanges, calcPercent, parsePercentSize } from "../common/Types";
+import { IPercentSize, IValueRange, RtPercentSize, SVGStyleOrClass, _undefined, buildValueRanges, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { RectElement } from "../common/impl/RectElement";
 import { Shape, Shapes } from "../common/impl/SvgShape";
-import { IAxis } from "./Axis";
+import { AxisScrollBar, IAxis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { LineType } from "./ChartTypes";
@@ -316,6 +316,8 @@ export interface IDataPointCallbackArgs {
     vcount: number;
     yMin: number;
     yMax: number;
+    xMin: number;
+    xMax: number;
 
     /* point proxy */
     index: number;
@@ -328,6 +330,12 @@ export interface IDataPointCallbackArgs {
 
 export type PointStyleCallback = (args: IDataPointCallbackArgs) => SVGStyleOrClass;
 export type PointClickCallbck = (args: IDataPointCallbackArgs) => boolean;
+
+const AXIS_VALUE = {
+    'x': 'xValue',
+    'y': 'yValue',
+    'z': 'zValue'
+}
 
 /**
  */
@@ -360,9 +368,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _yAxisObj: IAxis;
     protected _points: DataPointCollection;
     _runPoints: DataPoint[];
+    _visPoints: DataPoint[];
+    _runRangeAxis: 'x' | 'y' | 'z';
     _runRanges: IValueRange[];
-    _minValue: number;
-    _maxValue: number;
+    _minX: number;
+    _maxX: number;
+    _minY: number;
+    _maxY: number;
     _referents: Series[];
     _calcedColor: string;
     _simpleMode = false;
@@ -492,7 +504,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * 
      * @config
      */
-    ranges: IValueRange[];
+    colorRanges: IValueRange[];
     /**
      * ranges가 적용되는 값의 기준 축.\
      * 지정하지 않으면 시리즈 종류에 띠라 자동 적용된다.
@@ -501,7 +513,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * 
      * @config
      */
-    rangeAxis: 'x' | 'y' | 'z';
+    colorRangeAxis: 'x' | 'y' | 'z';
+    colorRangeBase: 'series' | 'axis';
     /**
      * body 영역을 벗어난 data point view는 잘라낸다.
      * 
@@ -660,13 +673,17 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     prepareRender(): void {
-        this._calcedColor = void 0;
         this._xAxisObj = this.group ? this.group._xAxisObj : this.chart._connectSeries(this, true);
         this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
+        this._calcedColor = void 0;
         this._runPoints = this._points.getPoints(this._xAxisObj, this._yAxisObj);
-        this._runRanges = buildValueRanges(this.ranges, this._xAxisObj.axisMin(), this._xAxisObj.axisMax());
 
         super.prepareRender();
+    }
+
+    prepareAfter(): void {
+        // DataPoint.xValue가 필요하다.
+        this.trendline.visible && this.trendline.prepareRender();
     }
 
     collectCategories(axis: IAxis): string[] {
@@ -726,40 +743,77 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                     p.isNull = isNaN(p.yValue);
                 }
             });
-
-            // if (vals) {
-            //     this._minValue = Math.min(...vals);
-            //     this._maxValue = Math.max(...vals);
-            // }
         }
     }
 
     collectVisibles(): DataPoint[] {
-        const visPoints = this._runPoints.filter(p => p.visible);
+        const visPoints = this._visPoints = this._runPoints.filter(p => p.visible);
         const len = visPoints.length;
 
         if (len > 0) {
-            let min = visPoints[0].yValue;
-            let max = min;
+            let p = visPoints[0];
+            let minX = p.xValue;
+            let maxX = minX;
+            let minY = p.yValue;
+            let maxY = minY;
 
-            visPoints[0].vindex = 0;
+            p.vindex = 0;
+
             for (let i = 1; i < len; i++) {
-                const p = visPoints[i];
+                p = visPoints[i];
                 
                 p.vindex = i;
-                if (p.yValue > max) max = p.yValue;
-                else if (p.yValue < min) min = p.yValue;
+
+                if (p.yValue > maxY) maxY = p.yValue;
+                else if (p.yValue < minY) minY = p.yValue;
+
+                if (p.xValue > maxX) maxX = p.xValue;
+                else if (p.xValue < minX) minX = p.xValue;
             }
 
-            visPoints.forEach((p, i) => {
-                p.vindex = i;
-                max = Math.max(p.yValue, max);
-            });
-
-            this._pointArgs.yMin = this._minValue = min;
-            this._pointArgs.yMax = this._maxValue = max;
+            this._pointArgs.yMin = this._minY = minY;
+            this._pointArgs.yMax = this._maxY = maxY;
+            this._pointArgs.xMin = this._minX = minX;
+            this._pointArgs.xMax = this._maxX = maxX;
         }
+
+        this.prepareColorRanges();
+
         return visPoints;
+    }
+
+    protected _getRangeMinMax(axis: 'x' | 'y' | 'z'): { min: number, max: number } {
+        let min: number;
+        let max: number;
+
+        if (axis === 'x') {
+            min = this._minX;
+            max = this._maxX;
+        } else {
+            min = this._minY;
+            max = this._maxY;
+        }
+
+        if (this.colorRangeBase === 'axis') {
+            const axisObj = axis === 'x' ? this._xAxisObj : this._yAxisObj;
+            min = Math.min(min, axisObj.axisMin());
+            max = Math.max(max, axisObj.axisMax());
+        }
+        return { min, max }; 
+    }
+
+    prepareColorRanges(): void {
+        const rangeMinMax =  this._getRangeMinMax(this._runRangeAxis = this.getColorRangeAxis());
+
+        if (this._runRanges = buildValueRanges(this.colorRanges, rangeMinMax.min, rangeMinMax.max)) {
+            this._visPoints.forEach((p, i) => {
+                this._setColorRange(p, this._runRangeAxis);
+            });
+        } else {
+            this._visPoints.forEach((p, i) => {
+                p.range = _undefined;
+            });
+        }
     }
 
     pointValuesPrepared(axis: IAxis): void {
@@ -833,14 +887,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 return this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : point.x;
             case 'x':
                 return point.x || (this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : '');
-            case 'y':
-                return point.y;
-            case 'xValue':
-                return point.xValue;
-            case 'yValue':
-                return point.yValue;
             default:
-                return param;
+                return param in point ? point[param] : param;
         }
     }
 
@@ -851,8 +899,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         }
     }
 
-    getRangeAxis(): 'x' | 'y' | 'z' {
-        return this.rangeAxis || this._defRangeAxis();
+    getColorRangeAxis(): 'x' | 'y' | 'z' {
+        return this.colorRangeAxis || this._defColorRangeAxis();
     }
     
     //-------------------------------------------------------------------------
@@ -920,9 +968,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         }
 
         this._runPoints.forEach((p, i) => {
-            // if (!p.color) {
-            //     p.color = color || colors[i % colors.length];
-            // }
             if (!p.color && colors) {
                 p.color = color || colors[i % colors.length];
             }
@@ -931,12 +976,19 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._preparePointArgs(this._pointArgs);
     }
 
-    prepareAfter(): void {
-        // DataPoint.xValue가 필요하다.
-        this.trendline.visible && this.trendline.prepareRender();
+    protected _setColorRange(p: DataPoint, axis: 'x' | 'y' | 'z'): void {
+        const v = p[AXIS_VALUE[axis]];
+
+        for (const r of this._runRanges) {
+            if (v >= r.fromValue && v <= r.toValue) {
+                p.range = r;
+                return;
+            }
+        }
+        p.range = _undefined;
     }
 
-    _defRangeAxis(): 'x' | 'y' | 'z' {
+    _defColorRangeAxis(): 'x' | 'y' | 'z' {
         return 'y';
     }
 }
@@ -1495,6 +1547,8 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
 }
 
 /**
+ * 'bar'와 같이 바닥이 필요한 시리즈.\
+ * 바닥 값은 {@link baseValue}로 지정한다.
  */
 export abstract class BasedSeries extends ClusterableSeries {
 

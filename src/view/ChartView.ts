@@ -1196,7 +1196,7 @@ export class ChartView extends LayerElement {
         }
 
         // 계산된 axis view에 맞춰 tick 위치를 조정한다.
-        m.calcAxesPoints(w, h, this._inverted);
+        m.axesLayouted(w, h, this._inverted);
 
         // body
         this._bodyView.measure(doc, m.body, w, h, phase);
@@ -1214,7 +1214,7 @@ export class ChartView extends LayerElement {
         m.layoutAxes(wPolar, hPolar, false, phase);
         // m.layoutAxes(rd, rd, false, phase);
 
-        m.calcAxesPoints(wPolar, hPolar, false);
+        m.axesLayouted(wPolar, hPolar, false);
 
         // body
         this._polarView.measure(doc, m.body, w, h, phase);

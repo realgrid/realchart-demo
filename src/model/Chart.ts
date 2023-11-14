@@ -757,10 +757,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this.$_calcAxesPoints(width, height, inverted, 0);
     }
 
-    calcAxesPoints(width: number, height: number, inverted: boolean): void {
-        this.$_calcAxesPoints(width, height, inverted, 1);
-    }
-
     private $_calcAxesPoints(width: number, height: number, inverted: boolean, phase: number): void {
         let len = inverted ? height : width;
         this._xAxes.forEach(axis => {
@@ -770,6 +766,11 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._yAxes.forEach(axis => {
             axis.calcPoints(len, phase);
         });
+    }
+
+    axesLayouted(width: number, height: number, inverted: boolean): void {
+        this.$_calcAxesPoints(width, height, inverted, 1);
+        // this._series.getVisibleSeries().forEach(ser => ser.prepareColorRanges());
     }
 
     /**

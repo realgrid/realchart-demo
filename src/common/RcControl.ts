@@ -128,6 +128,10 @@ export abstract class RcControl extends RcWrappableObject {
         return this._container.offsetHeight;
     }
 
+    clipContainer(): SVGElement {
+        return this._defs;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -1361,7 +1365,7 @@ export class ClipElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, x: number, y: number, width: number, height: number, rx = 0, ry = 0) {
+    constructor(doc: Document, x = NaN, y = NaN, width = NaN, height = NaN, rx = 0, ry = 0) {
         super(doc, _undefined, 'clipPath');
 
         const id = this._id = Utils.uniqueKey() + '-';
