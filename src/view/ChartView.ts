@@ -316,7 +316,7 @@ class AxisSectionView extends SectionView {
         let x = 0;
         let y = 0;
 
-        wCenter = wCenter || 0;
+        wCenter = +wCenter || 0;
 
         [this.views].forEach(views => {
             if (views) {
@@ -505,7 +505,7 @@ export class ChartView extends LayerElement {
         if (this._creditView.setVisible(credit.visible)) {
             sz = this._creditView.measure(doc, credit, w, h, phase);
             if (!credit.floating) {
-                h -= sz.height + credit.offsetY;
+                h -= sz.height + (+credit.offsetY || 0);
             }
         }
         
@@ -571,6 +571,7 @@ export class ChartView extends LayerElement {
         const legend = m.legend;
         const credit = m.options.credits;
         const vCredit = this._creditView;
+        const offCredit = +credit.offsetY || 0;
         let h1Credit = 0;
         let h2Credit = 0;
         let x = 0;
@@ -582,9 +583,9 @@ export class ChartView extends LayerElement {
 
             if (!credit.floating) {
                 if (credit.verticalAlign === VerticalAlign.TOP) {
-                    h -= h1Credit = vCredit.height + credit.offsetY;
+                    h -= h1Credit = vCredit.height + offCredit
                 } else {
-                    h -= h2Credit = vCredit.height + credit.offsetY;
+                    h -= h2Credit = vCredit.height + offCredit
                 }
             }
         }
@@ -785,8 +786,8 @@ export class ChartView extends LayerElement {
 
         // credits
         if (vCredit.visible) {
-            const xOff = credit.offsetX || 0;
-            const yOff = credit.offsetY || 0;
+            const xOff = +credit.offsetX || 0;
+            const yOff = offCredit;
             let cx: number;
             let cy: number;
 
@@ -829,7 +830,7 @@ export class ChartView extends LayerElement {
             let v: number;
 
             if (legend.location === LegendLocation.PLOT) {
-                let off = pickNum(legend.offsetX, 0);
+                let off = +legend.offsetX || 0;
 
                 // x = y = 0;
 
@@ -845,7 +846,7 @@ export class ChartView extends LayerElement {
                         break;
                 }
 
-                off = pickNum(legend.offsetY, 0);
+                off = +legend.offsetY || 0;
 
                 switch (legend.verticalAlign) {
                     case VerticalAlign.BOTTOM:
@@ -859,7 +860,7 @@ export class ChartView extends LayerElement {
                         break;
                 }
             } else if (!isNaN(yLegend)) { // 수평
-                const off = pickNum(legend.offsetX, 0);
+                const off = +legend.offsetX || 0;
                 y = yLegend;
 
                 if (legend.alignBase === AlignBase.CHART) {
@@ -894,7 +895,7 @@ export class ChartView extends LayerElement {
                     x = 0;
                 }
             } else { // 수직
-                const off = pickNum(legend.offsetY, 0);
+                const off = +legend.offsetY || 0;
                 x = xLegend;
 
                 if (legend.alignBase === AlignBase.CHART) {

@@ -7,8 +7,8 @@ const config = {
 		animatable: false,
 		credits: {
 			// visible: false,
-			// verticalAlign: 'top'
-			// align: 'center'
+			// verticalAlign: 'top',
+			// align: 'center',
 		},
 	},
 	title: '경기도 성남시 인구 현황',
