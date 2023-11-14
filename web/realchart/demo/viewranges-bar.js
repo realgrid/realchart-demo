@@ -3,7 +3,7 @@ const x_ranges = [{
     color: 'blue'
 }, {
     toValue: 6,
-    color: 'yellow'
+    color: '#dddd00'
 }, {
     color: 'red'
 }];
@@ -12,7 +12,7 @@ const y_ranges = [{
     color: 'blue'
 }, {
     toValue: 140,
-    color: 'yellow'
+    color: '#dddd00'
 }, {
     color: 'red'
 }];
@@ -43,8 +43,8 @@ const config = {
 		pointLabel: true,
         baseValue: 0,
 		data: [155, 138, 122, 133, 114, 113, 123, 119, 125, 131],
-        colorRangeAxis: 'x',
-        colorRanges: x_ranges,//y_ranges,
+        viewRangeAxis: 'x',
+        viewRanges: x_ranges,//y_ranges,
         style: {
             fillOpacity: 0.5
         }
@@ -120,8 +120,8 @@ function setActions(container) {
 		['x', 'y'],
 		function (e) {
             const axis = _getValue(e);
-			config.series.colorRangeAxis = axis;
-            config.series.colorRanges = axis === 'x' ? x_ranges : y_ranges;
+			config.series.viewRangeValue = axis;
+            config.series.viewRanges = axis === 'x' ? x_ranges : y_ranges;
 			chart.load(config, animate);
 		},
 		'x'

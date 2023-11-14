@@ -3,7 +3,7 @@ const x_ranges = [{
     color: 'blue'
 }, {
     toValue: 6,
-    color: 'yellow'
+    color: '#dddd00'
 }, {
     color: 'red'
 }];
@@ -13,7 +13,7 @@ const y_ranges = [{
     color: 'blue'
 }, {
     toValue: 120,
-    color: 'yellow'
+    color: '#dddd00'
 }, {
     color: 'red'
 }];
@@ -121,8 +121,8 @@ function setActions(container) {
 		['x', 'y'],
 		function (e) {
             const axis = _getValue(e);
-			config.series.colorRangeAxis = axis;
-            config.series.colorRanges = axis === 'x' ? x_ranges : y_ranges;
+			config.series.viewRangeValue = axis;
+            config.series.viewRanges = axis === 'x' ? x_ranges : y_ranges;
 			chart.load(config, animate);
 		},
 		'x'

@@ -893,7 +893,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     getViewRangeAxis(): 'x' | 'y' | 'z' {
-        return this.viewRangeValue || this._defViewRangeAxis();
+        return this.viewRangeValue || this._defViewRangeValue();
     }
     
     //-------------------------------------------------------------------------
@@ -981,7 +981,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         p.range = _undefined;
     }
 
-    _defViewRangeAxis(): 'x' | 'y' | 'z' {
+    _defViewRangeValue(): 'x' | 'y' | 'z' {
         return 'y';
     }
 }
