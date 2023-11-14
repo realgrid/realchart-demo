@@ -218,7 +218,7 @@ class Tunner {
           label.push(sep);
           path = '#' + sep;
         } else {
-          console.warn('Unexpeced pattern in inline-tag.', line)
+          console.warn('[WARN] Unexpeced pattern in inline-tag.', line)
         }
         // console.debug('parse inline', label.join(' '), path)
         return `**[${label.join(' ')}](${path})**`
@@ -240,8 +240,8 @@ class Tunner {
         switch (elementType.type) {
           case 'reference':
             // @TODO: Link Required...
+
             return `${elementType.name}[]`;
-            break;
           case 'intrinsic':
             return `${elementType.name}[]`;
           default:
@@ -253,23 +253,20 @@ class Tunner {
         if (qlfName) { 
           
           if (target.sourceFileName.indexOf('node_modules/typescript') == -1) {
-            console.warn(`not found ${qlfName} model. Check it's @internal or not exported, if you need.`)
+            console.warn(`[WARN] Not found ${qlfName} model. Check it's @internal or not exported, if you need.`)
           }
           // else Date
           return qlfName;
         } 
 
-        // pre-scan
+        // pre-scan. 아직 정보가 없으면 모델을 찾아서 업데이트 한다.
         if (!this.classMap[name]) {
-          // console.debug('prescan', name, obj);
           const model = this._findModel(this.model, name)
           if (!model){
-            return console.warn(`not found ${name} model. Check it's @internal or not exported, if you need.`)
+            return console.warn(`[WARN] Not found ${name} model. Check it's @internal or not exported, if you need.`)
           } else {
             this._visit(model);
-            // console.debug('visit', name, this.classMap[name].kindString, this.classMap[name].type);
           }
-          // console.debug('found', name)
         }
 
         const cls = this.classMap[name];
@@ -537,36 +534,45 @@ class MDGenerater {
       });
     } else if (dtype?.type == 'reference') {
       const v = this.classMap[dtype.name];
-      if (v?.kind === ReflectionKind.Class) {
-        let accessor = this.docMap;
-        const keys = _type 
-          ? [opt, _type, name]
-          : [opt, name];
-        keys.forEach((key, i) => {
-          if (!accessor[key]) {
-            // is the last
-            if (i == keys.length - 1) {
+      if (!v) return;
+      switch(v.kind) {
+        case ReflectionKind.Class:
+          let accessor = this.docMap;
+          const keys = _type 
+            ? [opt, _type, name]
+            : [opt, name];
+          keys.forEach((key, i) => {
+            if (!accessor[key]) {
+              // is the last
+              if (i == keys.length - 1) {
 
-              const _content = `## ${name}\n${this._fixContent(content)}\n`
-                    + this._makeProps({ name, opt, type: _type, props: v.props });
-              accessor[key] = { _content };
-              // this._writeJsonFile('./docs/.tdout/' + keys.join('.') + '.json', accessor);
-            } else {
-              accessor[key] = { _content: '' };
+                const _content = `## ${name}\n${this._fixContent(content)}\n`
+                      + this._makeProps({ name, opt, type: _type, props: v.props });
+                accessor[key] = { _content };
+                // this._writeJsonFile('./docs/.tdout/' + keys.join('.') + '.json', accessor);
+              } else {
+                accessor[key] = { _content: '' };
+              }
             }
-          }
-          accessor = accessor[key];
-        });
-        // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
+            accessor = accessor[key];
+          });
+          // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
 
-        lines = `### [${name}](./${_type}/${name})\n`;
-        lines += `${this._fixContent(v.content)}  \n`;
-        return lines;
-      } else if (v?.kind === ReflectionKind.Enum) {
-        enumLines = this._makeEnums({ name, enums: v.props });
-      } else if (v?.kind === ReflectionKind.TypeAlias) {
-        // Interface?
-        // console.debug({v});
+          lines = `### [${name}](./${_type}/${name})\n`;
+          lines += `${this._fixContent(v.content)}  \n`;
+          return lines;
+        case ReflectionKind.Enum:
+          enumLines = this._makeEnums({ name, enums: v.props });
+          break;
+        case ReflectionKind.Interface:
+          break;
+        case ReflectionKind.TypeAlias:
+          const { declaration } = v;
+          if (declaration) console.debug({ declaration });
+          console.debug('[DEBUG]', { name, kindString: ReflectionKindString[v.kind], type: v.type });
+          break;
+        default:
+          console.warn('[WARN] Unexpected prop type', v);
       }
     }
     
