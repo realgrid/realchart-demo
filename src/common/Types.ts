@@ -335,7 +335,7 @@ export interface IValueRange {
  * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
  * startValue를 기준으로 정렬한다.
  */
-export const buildValueRanges = function (source: IValueRange[], min: number, max: number): IValueRange[] {
+export const buildValueRanges = function (source: IValueRange[], min: number, max: number, strict = true): IValueRange[] {
     let ranges: IValueRange[];
     let prev: IValueRange;
 
@@ -356,10 +356,12 @@ export const buildValueRanges = function (source: IValueRange[], min: number, ma
         });
         ranges = ranges.sort((r1, r2) => r1.fromValue - r2.fromValue)
                        .filter(r => r.toValue >= min && r.fromValue < max);
-        ranges.forEach(r => {
-            r.fromValue = Math.max(r.fromValue, min);
-            r.toValue = Math.min(r.toValue, max);
-        })
+        if (strict) {
+            ranges.forEach(r => {
+                r.fromValue = Math.max(r.fromValue, min);
+                r.toValue = Math.min(r.toValue, max);
+            })
+        }
     }
     return ranges;
 }

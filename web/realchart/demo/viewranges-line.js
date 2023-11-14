@@ -25,7 +25,7 @@ const y_ranges = [{
 const config = {
     vars: {
     },
-	title: 'Color Ranges - Line',
+	title: 'View Ranges - Line',
 	options: {
 		// animatable: false
 	},

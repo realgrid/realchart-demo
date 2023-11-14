@@ -8,10 +8,11 @@ const x_ranges = [{
     color: 'red'
 }];
 const y_ranges = [{
-    toValue: 120,
+    fromValue: 0,
+    toValue: 100,
     color: 'blue'
 }, {
-    toValue: 140,
+    toValue: 120,
     color: 'yellow'
 }, {
     color: 'red'
@@ -25,9 +26,9 @@ const y_ranges = [{
 const config = {
     vars: {
     },
-	title: 'Color Ranges - Bar',
+	title: 'View Ranges - Area',
 	options: {
-		// animatable: false
+		animatable: false
 	},
 	xAxis: {
 		title: '서울시',
@@ -39,14 +40,14 @@ const config = {
         // minValue: 0,
 	},
 	series: {
-        type: 'bar',
+        type: 'area',
 		pointLabel: true,
         baseValue: 0,
-		data: [155, 138, 122, 133, 114, 113, 123, 119, 125, 131],
-        colorRangeAxis: 'x',
-        colorRanges: x_ranges,//y_ranges,
+		data: [155, 138, 122, 91, 104, 113, 123, 119, 125, 131],
+        viewRangeValue: 'x',
+        viewRanges: x_ranges,//y_ranges,
         style: {
-            fillOpacity: 0.5
+            fillOpacity: 0.4
         }
 	},
 	ChartTextEffect: {

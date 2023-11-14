@@ -504,17 +504,16 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * 
      * @config
      */
-    colorRanges: IValueRange[];
+    viewRanges: IValueRange[];
     /**
-     * ranges가 적용되는 값의 기준 축.\
+     * ranges가 적용되는 값.\
      * 지정하지 않으면 시리즈 종류에 띠라 자동 적용된다.
      * 'line' 시리즈 계열은 'x', 나머지는 'y'가 된다.
      * 현재 'z'은 range는 bubble 시리즈에만 적용할 수 있다.
      * 
      * @config
      */
-    colorRangeAxis: 'x' | 'y' | 'z';
-    colorRangeBase: 'series' | 'axis';
+    viewRangeValue: 'x' | 'y' | 'z';
     /**
      * body 영역을 벗어난 data point view는 잘라낸다.
      * 
@@ -777,7 +776,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             this._pointArgs.xMax = this._maxX = maxX;
         }
 
-        this.prepareColorRanges();
+        this.prepareViewRanges();
 
         return visPoints;
     }
@@ -793,21 +792,15 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             min = this._minY;
             max = this._maxY;
         }
-
-        if (this.colorRangeBase === 'axis') {
-            const axisObj = axis === 'x' ? this._xAxisObj : this._yAxisObj;
-            min = Math.min(min, axisObj.axisMin());
-            max = Math.max(max, axisObj.axisMax());
-        }
         return { min, max }; 
     }
 
-    prepareColorRanges(): void {
-        const rangeMinMax =  this._getRangeMinMax(this._runRangeAxis = this.getColorRangeAxis());
+    prepareViewRanges(): void {
+        const rangeMinMax =  this._getRangeMinMax(this._runRangeAxis = this.getViewRangeAxis());
 
-        if (this._runRanges = buildValueRanges(this.colorRanges, rangeMinMax.min, rangeMinMax.max)) {
+        if (this._runRanges = buildValueRanges(this.viewRanges, rangeMinMax.min, rangeMinMax.max, false)) {
             this._visPoints.forEach((p, i) => {
-                this._setColorRange(p, this._runRangeAxis);
+                this._setviewRange(p, this._runRangeAxis);
             });
         } else {
             this._visPoints.forEach((p, i) => {
@@ -899,8 +892,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         }
     }
 
-    getColorRangeAxis(): 'x' | 'y' | 'z' {
-        return this.colorRangeAxis || this._defColorRangeAxis();
+    getViewRangeAxis(): 'x' | 'y' | 'z' {
+        return this.viewRangeValue || this._defViewRangeAxis();
     }
     
     //-------------------------------------------------------------------------
@@ -976,7 +969,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._preparePointArgs(this._pointArgs);
     }
 
-    protected _setColorRange(p: DataPoint, axis: 'x' | 'y' | 'z'): void {
+    protected _setviewRange(p: DataPoint, axis: 'x' | 'y' | 'z'): void {
         const v = p[AXIS_VALUE[axis]];
 
         for (const r of this._runRanges) {
@@ -988,7 +981,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         p.range = _undefined;
     }
 
-    _defColorRangeAxis(): 'x' | 'y' | 'z' {
+    _defViewRangeAxis(): 'x' | 'y' | 'z' {
         return 'y';
     }
 }

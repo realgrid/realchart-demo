@@ -119,10 +119,6 @@ export abstract class LineSeriesBase extends Series {
         this._shape = shape;
     }
 
-    _defColorRangeAxis(): "x" | "y" | "z" {
-        return 'x';
-    }
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
