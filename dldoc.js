@@ -265,7 +265,7 @@ class Tunner {
         if (qlfName) { 
           
           if (target.sourceFileName.indexOf('node_modules/typescript') == -1) {
-            console.warn(`[WARN] Not found ${qlfName} model. Check it's @internal or not exported, if you need.`)
+            console.warn(`[WARN] Not found ${qlfName} qualified model. Check it's @internal or not exported.`)
           }
           // else Date
           return qlfName;
@@ -275,7 +275,7 @@ class Tunner {
         if (!this.classMap[name]) {
           const model = this._findModel(this.model, name)
           if (!model){
-            return console.warn(`[WARN] Not found ${name} model. Check it's @internal or not exported, if you need.`)
+            return console.warn(`[WARN] Not found ${name} model. Check it's @internal or not exported.`)
           } else {
             this._visit(model);
           }
@@ -309,6 +309,10 @@ class Tunner {
         if (!obj.props) throw new Error(obj.name);
         return obj.props?.map(p => `'${p.value}'`).join('|');
       case ReflectionKind.Class:
+        break;
+      case ReflectionKind.CallSignature:
+        console.warn(`[WARN] TODO - ${obj.name}:${ReflectionKindString[obj.kind]}`);
+        break;
       default:
         console.warn(`[WARN] Unexpected type ${obj.name}:${ReflectionKindString[obj.kind]}`);
         break;
@@ -326,7 +330,7 @@ class Tunner {
       case 'union':
         return types.map(this._parseTypeD.bind(this));
       case 'array':
-        return { type, name:`${elementType.name}[]`};
+        return { type, name:`${elementType.name}[]`, elementType };
       case 'reference':
         // console.info(obj)
         return { type, name, id };
@@ -543,6 +547,12 @@ class MDGenerater {
           t.name != 'Date' && console.warn('Not Implemented union references', t);
           // Date
           return t.name;
+        } else if (t.type == 'array') {
+          
+        } else if (t.type == 'intrinsic') {
+
+        } else if (Object.keys(t.type || {}).length) {
+          console.warn(`[WARN] Unexpected type in array`, t)
         }
       });
     } else if (dtype?.type == 'reference') {
@@ -595,6 +605,8 @@ class MDGenerater {
                 // class??
                 console.warn(`[WARN] Unexpected union alias ${name}`, type);
               }
+            } else if (type != 'intrinsic'){
+              console.warn(`[DEBUG] TODO: ${name}`, type);
             }
           });
           // callback function
@@ -603,6 +615,16 @@ class MDGenerater {
           break;
         default:
           console.warn('[WARN] Unexpected prop type', v);
+      }
+    } else if (dtype?.type == 'array') {
+      const { elementType: { name: ename, type: etype } } = dtype;
+      if (etype == 'reference') {
+        const ref = this.classMap[ename];
+        if (ref?.kind == ReflectionKind.Interface) {
+          const { props, content: itfContent } = this.classMap[ename];
+          extraLines = this._makeInterfaceProps({ name: ename, content: itfContent, props });
+          // console.debug(`[DEBUG] array`, param.prop.dtype.elementType)
+        }
       }
     }
     
@@ -657,7 +679,7 @@ class MDGenerater {
     lines += `| Name | Type | Optional |  \n`;
     lines += '| ----- | ----- | ----- |  \n';
     lines += props?.map(({name, type, optional}) => {
-      return `| ${name} | \`${type}{:js}\` | ${optional} |`;
+      return `| ${name} | \`${type}{:js}\` | ${optional ?? 'false'} |`;
     }).join('  \n');
     return lines.trim();
   }
