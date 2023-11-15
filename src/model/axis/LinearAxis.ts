@@ -352,20 +352,16 @@ export abstract class ContinuousAxis extends Axis {
      * {@link minPadding}도 무시된다.
      * 계산값이 더 작으면 이 속성은 무시된다.\
      * 계산값과 무관하게 최소값을 지정하려면 {@link strictMin}을 사용한다.
-     * 
-     * @config
      */
-    'minValue': number;
+    '@config minValue': number;
     /**
      * 명시적으로 지정하는 최대값.\
      * 축에 연결된 data point들의 값으로 계산된 최대값보다 이 속성 값이 크면 대신 이 값이 축의 최대값이 되고,
      * {@link maxPadding}도 무시된다.
      * 계산값이 더 크면 이 속성은 무시된다.\
      * 계산값과 무관하게 최대값을 지정하려면 {@link strictMax}을 사용한다.
-     * 
-     * @config
      */
-    'maxValue': number;
+    '@config maxValue': number;
     /**
      * data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.
      * 

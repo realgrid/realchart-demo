@@ -738,10 +738,11 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
+        const reversed = yAxis.reversed;
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
-        const yOrg = inverted ? 0 : height;;
+        const yOrg = inverted ? 0 : height;
         const min = yAxis.axisMin();
         const yMin = yAxis.getPosition(yLen, min);
         const base = series.getBaseValue(yAxis);
@@ -760,24 +761,18 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
             if (pv.setVisible(!p.isNull)) {
                 const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
                 const wPoint = series.getPointWidth(wUnit);
-                const yVal = yAxis.getPosition(yLen, p.yValue);
-                const hPoint = (yVal - yBase) * vr;
+                const yVal = yAxis.getPosition(yLen, p.yValue) - yBase;
+                const yGroup = (yAxis.getPosition(yLen, p.yGroup) - yBase - yVal) * vr;
+                const hPoint = yVal * vr;
                 let x: number;
                 let y: number;
 
                 x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
-                y = yOrg;
-
                 p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr);
-                // if (based && yBase !== yMin) { // 양쪽으로 'grow'할 때 (#48)
-                //     p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr);
-                // } else {
-                //     p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr; 
-                // }
+                p.yPos = y = yOrg - yAxis.getPosition(yLen, p.yGroup) * vr;
 
-                // 아래에서 위로 올라가는 animation을 위해 바닥 지점을 전달한다.
-                this._layoutPointView(pv, i, x, y + hPoint, wPoint, hPoint);
+                // 아래에서 위로 올라가는 animation을 위해 기준 지점을 전달한다.
+                this._layoutPointView(pv, i, x, yOrg - yBase - yGroup, wPoint, hPoint);
 
                 // label
                 if (info && (info.labelView = labelViews.get(p, 0))) {

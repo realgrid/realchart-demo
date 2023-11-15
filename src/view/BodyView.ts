@@ -135,6 +135,8 @@ export class AxisGridView extends ChartElement<AxisGrid> {
         const end = lines.count - 1;
 
         lines.prepare(pts.length, (line) => {
+            line.internalClearStyleAndClass();
+            line.internalSetStyleOrClass(axis.grid.style);
             line.setClass('rct-axis-grid-line');
         });
 
@@ -235,7 +237,7 @@ export class AxisBreakView extends RcElement {
             this._upLine.setPath(pb.end(false));
 
             y = 0;
-            pb.clear().move(x1);
+            pb.clear().move(x1, y);
             while (y < height) {
                 y += 20;
                 pb.line(x2, y);

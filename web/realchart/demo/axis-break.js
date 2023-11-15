@@ -40,9 +40,14 @@ function setActions(container) {
         RealChart.setDebugging(_getChecked(e));
         chart.render();
     }, false);
-    // createCheckBox(container, 'Always Animate', function (e) {
-    //     animate = _getChecked(e);
-    // }, false);
+	createCheckBox(
+		container,
+		'Always Animate',
+		function (e) {
+			animate = _getChecked(e);
+		},
+		false
+	);
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
