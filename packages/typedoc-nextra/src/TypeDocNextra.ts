@@ -150,19 +150,30 @@ export class TypeDocNextra {
         if (!properties.length) return '';
 
         const head = heading('Config Properties', 2);
-        const body = properties.map((m) => {
-            // const name = `${m.private ? 'private' : 'public'} ${m.static ? 'static ' : ''}${escape(m.name)}`.trim();
-            const ename = escape(m.name);
-            const name = `${m.static ? 'static ' : ''}${m.readonly ? '*`<readonly>`* ' : ''}${ename}`.trim();
-            /** @TODO: properties와 중복될 수 있음. #이름 다르게 처리. */
-            const title = heading(`${name}: \`${m.type || m.dtype.name}{:js}\``, 3)
-                + `[#${ename}]`;
-            const desc = m.content?.trim() || '';
-
-            return `${title}\n${desc}\n${this.getSee(m.see)}`;
+        const cols = ['Name', 'Type', 'Description'];
+        const tableCols = ['', ...cols, ''].join(' | ');
+        const seperator = ['', ...Array(cols.length).fill('---'), ''].join(' | ');
+        const tableHead = [tableCols, seperator].join('  \n');
+        const tableBody = properties.map((p) => {
+            const pname = escape(p.name).trim();
+            const ptype = (p.type || p.dtype.name).replace(/\|/g, '\\|');
+            const desc = p.content?.trim() || '';
+            return ['', pname, `\`${ptype}{:js}\``, desc, ''].join(' | ');
         });
+        
+        // const body = properties.map((m) => {
+        //     // const name = `${m.private ? 'private' : 'public'} ${m.static ? 'static ' : ''}${escape(m.name)}`.trim();
+        //     const ename = escape(m.name);
+        //     const name = `${m.static ? 'static ' : ''}${m.readonly ? '*`<readonly>`* ' : ''}${ename}`.trim();
+        //     /** @TODO: properties와 중복될 수 있음. #이름 다르게 처리. */
+        //     const title = heading(`${name}: \`${m.type || m.dtype.name}{:js}\``, 3)
+        //         + `[#${ename}]`;
+        //     const desc = m.content?.trim() || '';
 
-        return `${head}\n${body.join('\n')}`;
+        //     return `${title}\n${desc}\n${this.getSee(m.see)}`;
+        // });
+
+        return `${head}\n${tableHead}\n${tableBody.join('  \n')}`;
     }
 
     public getProperties(properties: DocumentedClassProperty[]) {
