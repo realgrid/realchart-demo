@@ -97,10 +97,10 @@ class Tunner {
   _findModelById(model, id) {
     for (const child of model.children) {
       if (child.id == id) {
-        return { ...child, parent: { ...model } };
+        return { ...child };
       } else if (child.children) {
         const found = this._findModelById(child, id)
-        if (found) return { ...found, parent: {...child} };
+        if (found) return found;
       };
     }
   }
@@ -191,22 +191,25 @@ class Tunner {
   _getConfigLinkById(id) {
     const model = this._findModelById(this.model, id);
     if (!model) return null;
-    if (model.kind == ReflectionKind.EnumMember) {
-      return `\`${model.type.value}\``;
-    } else if (model.kind == ReflectionKind.Property) {
-      const [config] = this._parseConfigTag(model.comment?.blockTags) || [];
-      if (config) {
-        // chart.series[type=abc]
-        const { opt } = MDGenerater.destructConfig(config);
-        // const paths = config.split('.');
-        // const prop = paths.shift();
-        // console.debug('[DEBUG]', {model});
-        // console.debug({paths, prop});
-        return `[${prop}](/config/config/${opt}#${prop.toLowerCase()})`;
-      }
-      // console.warn(`[WARN] Not found config from`, model);
+    // @TODO: BulletGauge size 설명 중 width, height 무시되는 문제.
+    switch (model.kind) {
+      case ReflectionKind.EnumMember:
+        return `\`${model.type.value}\``;
+      case ReflectionKind.Property:
+      case ReflectionKind.Accessor:
+        // this.current.name == 'BulletGauge' && console.debug(`[DEBUG] ${model.name}`, model)
+        const [config] = this._parseConfigTag(this.current.comment?.blockTags) || [];
+        if (config) {
+          const { opt, type } = MDGenerater.destructConfig(config);
+          return `[${model.name}](/config/config/${[opt, type].filter(v => v).join('/')}/#${model.name.toLowerCase()})`;
+        }
+        break;
+      default:
+        // console.warn(`[WARN] ${model.name}`, model)
+        break;
     }
-    return '';
+
+    return;
   }
 
   _getConfigLink(name, prop) {
@@ -250,6 +253,7 @@ class Tunner {
         // 레퍼런스
         // line.target 이 number 타입으로 reference가 있는 경우...
         if (typeof line.target === 'number') {
+
           const link = this._getConfigLinkById(line.target);
           return link;
         } else {
@@ -481,7 +485,7 @@ class Tunner {
 
     switch (kind) {
       case ReflectionKind.Class:
-        this.current = { name, kind, props: null };
+        this.current = { name, kind, comment, props: null };
         const props = this.current.props = children.filter(propFilter);
         this.classMap[name] = { 
           // header, content, prop, type,
@@ -762,7 +766,7 @@ class MDGenerater {
    * @rparam ...attr: key, value pair object bind in []
    */
   static destructConfig(config) {
-    // ex) chart.series[type=vector]
+    // ex) chart.series[type=vector,type2=bar] foo bar...
     const regex = /(\w+(?:\.\w+)?)(?:\[(.*?)\])?(?:\s(.*))?/;
     const matches = config?.match(regex);
   
