@@ -286,7 +286,11 @@
     background-color: var(--rct-background);
 }
 
-/** root(svg) */
+/** root */
+.rct-root {
+    padding: 20px;
+}
+
 /** debug border */
 .rct-debug {
     fill: none;

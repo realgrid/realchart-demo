@@ -53,6 +53,7 @@ import { SeriesNavigator } from "./SeriesNavigator";
 import { Split } from "./Split";
 import { TextAnnotation } from "./annotation/TextAnnotation";
 import { ImageAnnotation } from "./annotation/ImageAnnotation";
+import { AnnotationCollection } from "./Annotation";
 
 export interface IChart {
     type: string;
@@ -314,6 +315,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     _yPaneAxes: YPaneAxisMatrix;
     private _gauges: GaugeCollection;
     private _body: Body;
+    private _annotations: AnnotationCollection;
     private _navigator: SeriesNavigator;
 
     private _inverted: boolean;
@@ -343,6 +345,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._yPaneAxes = new YPaneAxisMatrix(this);
         this._gauges = new GaugeCollection(this);
         this._body = new Body(this);
+        this._annotations = new AnnotationCollection(this);
         this._navigator = new SeriesNavigator(this);
 
         source && this.load(source);
@@ -362,6 +365,11 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     animatable(): boolean {
         return this._options.animatable !== false;
     }
+
+    //-------------------------------------------------------------------------
+    // IAnnotationOwner
+    //-------------------------------------------------------------------------
+    get chart(): IChart { return this }
 
     //-------------------------------------------------------------------------
     // properties
@@ -497,6 +505,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     _getYAxes(): AxisCollection {
         return this._yAxes;
+    }
+
+    _getAnnotations(): AnnotationCollection {
+        return this._annotations;
     }
 
     isGauge(): boolean {
@@ -683,6 +695,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         // body
         this._body.load(source.body || source.plot); // TODO: plot 제거
+
+        // annotations
+        this._annotations.load(source.annotations);
 
         // series navigator
         this._navigator.load(source.seriesNavigator);

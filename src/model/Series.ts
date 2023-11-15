@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, pickNum, pickProp, pickProp3 } from "../common/Common";
+import { isArray, isFunc, isObject, isString, pickNum, pickProp, pickProp3 } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { RcElement } from "../common/RcControl";
 import { RcObject } from "../common/RcObject";
@@ -72,6 +72,12 @@ export class DataPointLabel extends FormattableText {
      * @config
      */
     distance = 25;
+    /**
+     * 데이터 포인트별 label 표시 여부를 리턴하는 콜백.
+     * 
+     * @config
+     */
+    visibleCallback: (point: any) => boolean;
 
     //-------------------------------------------------------------------------
     // fields
@@ -100,13 +106,16 @@ export class DataPointLabel extends FormattableText {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoad(source: any): void {
-        super._doLoad(source);
-    }
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _doLoadSimple(source: any): boolean {
+        if (isFunc(source)) {
+            this.visibleCallback = source;
+            return true;
+        }
+        return super._doLoadSimple(source);
+    }
 }
 
 export interface IPlottingItem {

@@ -6,7 +6,10 @@
 const config = {
 	options: {
 		// animatable: false,
-        theme: 'dark'
+        theme: 'dark',
+        style: {
+            // paddingBottom: '60px'
+        }
 	},
 	title: {
         text: 'GLOBAL SURFACE AIR TEMPERATURE · 1-23 JULY',
@@ -29,7 +32,7 @@ const config = {
 	xAxis: {
         type: 'linear',
         stepInterval: 10,
-		title: '서울시',
+		// title: '서울시',
 		grid: {
             visible: true,
             style: {
