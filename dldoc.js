@@ -197,10 +197,9 @@ class Tunner {
           const prop = this.props.find(p => p.id == line.target);
           if (prop) return `**[${line.text}](#${prop.name})**`;
           // @TODO: 상속받은 속성인 경우 링크...
-          else {
-            console.debug(`[DEBUG] ${line}`);
-            return line.text;
-          }
+          // line.target 이 있는 경우...
+          // console.debug(`[DEBUG] return ${line.text}, ${line.target}`);
+          return line.text;
         }
 
         // 구분자와 라벨
@@ -244,6 +243,7 @@ class Tunner {
   // parse property type
   _parseType(obj) {
     const { type, name, types, elementType, qualifiedName, target} = { ...obj };
+    const { name: ename, type: etype, target: etarget } = { ...elementType };
     switch(type) {
       case 'intrinsic':
         return name;
@@ -251,15 +251,13 @@ class Tunner {
         return types.map(t => {return this._parseType(t)}).join(' | ');
       case 'array':
         // IValueRange
-        switch (elementType.type) {
+        switch (etype) {
           case 'reference':
-            // @TODO: Link Required...
-
-            return `${elementType.name}[]`;
+            return `${ename}[]`;
           case 'intrinsic':
-            return `${elementType.name}[]`;
+            return `${ename}[]`;
           default:
-            console.warn(`[WARN] Unexpected array type ${elementType.type}, ${elementType.name}`, obj);
+            console.warn(`[WARN] Unexpected array type ${etype}, ${ename}`, obj);
         }
         return;
       case 'reference':
@@ -392,6 +390,7 @@ class Tunner {
         dtype: this._parseTypeD(prop.type),
         header: config?.join('|'), 
         // readonly: prop.flags?.isReadonly, // config에서 readonly 표기가 유효한지 확인.
+        optional: prop.flags?.isOptional,
         content,
         defaultValue: prop.defaultValue,
         defaultBlock,
@@ -518,7 +517,7 @@ class MDGenerater {
   // <br> 태그 변환
   _fixContent(content) {
     // replace \n or double space
-    return content?.replace(/<br>/g, '\n') || '';
+    return content?.replace(/<br>/g, '\n').trim() || '';
   }
 
 
@@ -530,9 +529,9 @@ class MDGenerater {
    * @returns 
    */
   _makeProp(param) {
-    const { name: _name, opt, type: _type, prop } = param;
+    const { opt, type: chartType, prop } = param;
     const { header, name, type, dtype, content, defaultValue, defaultBlock } = prop;
-    let enumLines = ''
+    let extraLines = ''
     let lines = `### ${prop.readonly ? '*`<readonly>`* ' : ''}`
       + `${name}`
       + `${type ? ': \`' + type  + '\{:js}`': ''}`
@@ -541,27 +540,26 @@ class MDGenerater {
     if (dtype instanceof Array) {
       dtype.map(t => {
         if (t.type == 'reference') {
-          // console.warn('Not Implemented union references', t);
+          t.name != 'Date' && console.warn('Not Implemented union references', t);
           // Date
           return t.name;
         }
       });
     } else if (dtype?.type == 'reference') {
       const v = this.classMap[dtype.name];
-      if (!v) return;
+      if (!v) return console.warn(`[WARN] Not found classMap of ${dtype.name}`);
       switch(v.kind) {
         case ReflectionKind.Class:
           let accessor = this.docMap;
-          const keys = _type 
-            ? [opt, _type, name]
+          const keys = chartType 
+            ? [opt, chartType, name]
             : [opt, name];
           keys.forEach((key, i) => {
             if (!accessor[key]) {
               // is the last
               if (i == keys.length - 1) {
-
                 const _content = `## ${name}\n${this._fixContent(content)}\n`
-                      + this._makeProps({ name, opt, type: _type, props: v.props });
+                      + this._makeProps({ name, opt, type: chartType, props: v.props });
                 accessor[key] = { _content };
                 // this._writeJsonFile('./docs/.tdout/' + keys.join('.') + '.json', accessor);
               } else {
@@ -572,18 +570,36 @@ class MDGenerater {
           });
           // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
 
-          lines = `### [${name}](./${_type}/${name})\n`;
+          lines = `### [${name}](./${chartType}/${name})\n`;
           lines += `${this._fixContent(v.content)}  \n`;
           return lines;
         case ReflectionKind.Enum:
-          enumLines = this._makeEnums({ name, enums: v.props });
+          extraLines = this._makeEnums({ name, enums: v.props });
           break;
         case ReflectionKind.Interface:
+          const { props, content: itfContent } = this.classMap[type];
+          const itfContents = this._makeInterfaceProps({ name: type, content: itfContent, props });
+          // console.debug({itfContents});
+          // return itfContents;
+          extraLines = itfContents;
           break;
         case ReflectionKind.TypeAlias:
+          // union에 reference가 있고, Interface 이면,
+          v.type.types?.map(({ name, type }) => {
+            // if (type.target)
+            if (type == 'reference') {
+              const { kind, props, content: itfContent } = this.classMap[name];
+              if (kind == ReflectionKind.Interface) {
+                extraLines += this._makeInterfaceProps({ name, content: itfContent, props });
+              } else {
+                // class??
+                console.warn(`[WARN] Unexpected union alias ${name}`, type);
+              }
+            }
+          });
+          // callback function
           const { declaration } = v;
           if (declaration) console.debug({ declaration });
-          console.debug('[DEBUG]', { name, kindString: ReflectionKindString[v.kind], type: v.type });
           break;
         default:
           console.warn('[WARN] Unexpected prop type', v);
@@ -593,12 +609,12 @@ class MDGenerater {
     if (header) lines += `${header}  \n`;
     if (content) lines += `${this._fixContent(content)}  \n`;
     
-    lines += enumLines;
+    lines += extraLines;
     // @defalut가 없으면 typedoc에서 정의한 defaultValue를 사용한다.
     const dft = defaultBlock || defaultValue ;
     if (dft) {
       // strip ```ts ... ```
-      const dftValue = dft.match(/```ts([\s\S]*?)```/)?.[1].trim() || dft.match(/`([\s\S]*?)`/)?.[1].trim() || dft;
+      const dftValue = dft.match(/```ts([\s\S]*?)```/)?.[1].trim() || dft.trim();
       const [value, ...content] = dftValue.split(' ');
       lines += `\`default: ${value}\` ${content.join(' ')} \n`;
     }
@@ -613,8 +629,7 @@ class MDGenerater {
    * @iparam props:any[] properties
    * @returns contents
    */
-  _makeProps(param) {
-    const { name, opt, type, props } = param;
+  _makeProps({ name, opt, type, props }) {
     const h = '## Properties\n';
     return [ h, ...props.map(prop => {
       return this._makeProp({ name, opt, type, prop })
@@ -632,6 +647,19 @@ class MDGenerater {
       const content = this._fixContent(e.content).replace(/\n/g, '  ');
       return `- \`'${e.value}'\` ${content}`
     }).join('\n') + '\n\n';
+  }
+
+  _makeInterfaceProps({name, content, props }) {
+    // section head 
+    let lines = `- \`${name}{:js}\` \n\n`;
+    if (content) lines += content + ' \n';
+    // table head
+    lines += `| Name | Type | Optional |  \n`;
+    lines += '| ----- | ----- | ----- |  \n';
+    lines += props?.map(({name, type, optional}) => {
+      return `| ${name} | \`${type}{:js}\` | ${optional} |`;
+    }).join('  \n');
+    return lines.trim();
   }
 
   /**
