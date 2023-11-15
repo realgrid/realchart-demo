@@ -59,8 +59,8 @@ class Tunner {
     const text = fs.readFileSync(path || './docs/.tdout/model.json', { encoding: 'utf-8'});
     this.model = JSON.parse(text);
     this.classMap = {};
-    // temporary props map
-    this.props = {};
+    // temporary map
+    this.current = { name: '', kind: 0, props: {} };
   }
 
   static get fiddleUrl() {
@@ -92,6 +92,17 @@ class Tunner {
       };
     }
     // throw new Error(`${name}, ${model.name}`);
+  }
+
+  _findModelById(model, id) {
+    for (const child of model.children) {
+      if (child.id == id) {
+        return { ...child, parent: { ...model } };
+      } else if (child.children) {
+        const found = this._findModelById(child, id)
+        if (found) return { ...found, parent: {...child} };
+      };
+    }
   }
 
   _parseLink(tag, baseUrl='') {
@@ -177,67 +188,122 @@ class Tunner {
     }
   }
 
+  _getConfigLinkById(id) {
+    const model = this._findModelById(this.model, id);
+    if (!model) return null;
+    if (model.kind == ReflectionKind.EnumMember) {
+      return `\`${model.type.value}\``;
+    } else if (model.kind == ReflectionKind.Property) {
+      const [config] = this._parseConfigTag(model.comment?.blockTags) || [];
+      if (config) {
+        // chart.series[type=abc]
+        const { opt } = MDGenerater.destructConfig(config);
+        // const paths = config.split('.');
+        // const prop = paths.shift();
+        // console.debug('[DEBUG]', {model});
+        // console.debug({paths, prop});
+        return `[${prop}](/config/config/${opt}#${prop.toLowerCase()})`;
+      }
+      // console.warn(`[WARN] Not found config from`, model);
+    }
+    return '';
+  }
+
+  _getConfigLink(name, prop) {
+    const model = this._findModel(this.model, name);
+    if (!model) return null;
+    if (model.kind == ReflectionKind.Class) {
+      const [config] = this._parseConfigTag(model.comment?.blockTags) || [];
+      if (config) {
+        const { opt } = MDGenerater.destructConfig(config);
+        return `[${prop}](/config/config/${opt}#${prop.toLowerCase()})`;
+      }
+    } else {
+      return '';
+    }
+  }
+
   /**
    * 
    * @param line: string
    * @returns string
    */
   _parseInlineTag(line) {
-    switch(line.tag) {
-      case '@link':
-
-        if (/^(http:|https:)/.test(line.target)) {
-          return `**[${line.text}](${line.target})**`;
-        } else if (line.target) {
-          const { sourceFileName, qualifiedName } = line.target;
-          if (sourceFileName?.indexOf('node_modules/typescript') == 0) {
-            return `**${qualifiedName}**`;
-          }
-          
-          const prop = this.props.find(p => p.id == line.target);
-          if (prop) return `**[${line.text}](#${prop.name})**`;
-          // @TODO: 상속받은 속성인 경우 링크...
-          // line.target 이 있는 경우...
-          // console.debug(`[DEBUG] return ${line.text}, ${line.target}`);
-          return line.text;
+    if(line.tag == '@link') {
+      /** line.target 정보로 찾기 */
+      if (/^(http:|https:)/.test(line.target)) {
+        return `**[${line.text}](${line.target})**`;
+      } else if (line.target) {
+        // ts 제공 구조체인 경우
+        const { sourceFileName, qualifiedName } = line.target;
+        if (sourceFileName?.indexOf('node_modules/typescript') == 0) {
+          return `**${qualifiedName}**`;
         }
-
-        // 구분자와 라벨
-        const [sep, ...label] = line.text.split(' ');
-
-        const [accessor, ...props] = sep.split('.');
-        let path = '';
-        const [prop] = props.splice(-1, 1);
-        switch (accessor) {
-          case 'g':
-          case 'global':
-            path = '/docs/api/globals';
-            break;
-          case 'rc':
-          case 'realchart':
-            path = '/docs/api/classes';
-            break;
-          default:
-            props.unshift(accessor);
-            path = `/config/config`;
-            break;
-        }
-
-        // single word. 현재 페이지의 속성
-        if (sep == accessor) {
-          path = `#${sep}`;
-          !label.length && label.push(sep);
-        } else if (props.length) {
-          path = `${path}/${props.join('/')}#${prop}`;
+        
+        // 현재 구조체의 속성인 경우
+        // % 상속받은 prop이면 현재 prop id와 다르다.
+        const prop = this.current.props.find(p => p.id == line.target);
+        // 다른 구조체에서 이름이 같을 수 있음. Series.xStart, ChartOptions.xStart
+        // || p.name == line.text
+        if (prop) return `**[${line.text}](#${prop.name.toLowerCase()})**`;
+        
+        // 레퍼런스
+        // line.target 이 number 타입으로 reference가 있는 경우...
+        if (typeof line.target === 'number') {
+          const link = this._getConfigLinkById(line.target);
+          return link;
         } else {
-          path = `${path}/${prop}`;
+          console.warn(`[WARN] Unexpected inline link`, line);
         }
-        !label.length && label.push(prop);
-
-        return `**[${label.join(' ')}](${path})**`
-      default:
         return line.text;
+      } else {
+        // target정보가 없어서, line.text에서 클래스 이름과 속성으로 가정하고 config 찾기
+        const [name, prop] = line.text.split('.');
+        const link = this._getConfigLink(name, prop);
+        if (link) return link;
+      }
+
+      /** 
+       * 클래스 API 링크 
+       * 여기까지 리턴하지 못했으면 API 클래스 링크 로직 시작
+       */
+      // 구분자와 라벨
+      const [sep, ...label] = line.text.split(' ');
+      // 접근자와 속성 구분
+      const [accessor, ...props] = sep.split('.');
+      let path = '';
+      const [prop] = props.splice(-1, 1);
+      switch (accessor) {
+        case 'g':
+        case 'global':
+          path = '/docs/api/globals';
+          break;
+        case 'rc':
+        case 'realchart':
+        default:
+          path = '/docs/api/classes';
+          break;
+        
+          // props.unshift(accessor);
+          // path = `/config/config`;
+          // break;
+      }
+
+      // single word. 현재 페이지의 속성
+      if (sep == accessor) {
+        path = `#${sep}`;
+        !label.length && label.push(sep);
+      } else if (props.length) {
+        path = `${path}/${props.join('/')}#${prop}`;
+      } else {
+        path = `${path}/${prop}`;
+      }
+      !label.length && label.push(prop);
+
+      return `**[${label.join(' ')}](${path})**`
     }
+
+    return line.text;
   }
 
   // parse property type
@@ -415,14 +481,15 @@ class Tunner {
 
     switch (kind) {
       case ReflectionKind.Class:
-        this.props = children.filter(propFilter);
+        this.current = { name, kind, props: null };
+        const props = this.current.props = children.filter(propFilter);
         this.classMap[name] = { 
           // header, content, prop, type,
           kind,
           config,
           content,
           extended: extendedTypes.map(t => t.name),
-          props: this.props
+          props: props
             .map(c => {
               return c.kind === ReflectionKind.Property
               ? this._setContent(c)
@@ -694,7 +761,7 @@ class MDGenerater {
    * @rparam label: tail of line
    * @rparam ...attr: key, value pair object bind in []
    */
-  _destructConfig(config) {
+  static destructConfig(config) {
     // ex) chart.series[type=vector]
     const regex = /(\w+(?:\.\w+)?)(?:\[(.*?)\])?(?:\s(.*))?/;
     const matches = config?.match(regex);
@@ -782,7 +849,7 @@ class MDGenerater {
       const { config, props, content } = value;
       // 동일한 내용이지만 xAxis, yAxis처럼 속성만 다른 경우를 처리하기 위해 @config가 2개 이상일 수 있다.
       config?.map(conf => {
-        const dconf = this._destructConfig(conf);
+        const dconf = MDGenerater.destructConfig(conf);
         // const { name, root, opt, label, type } = dconf;
         this._setContent(this.docMap, { ...dconf, props, content })
       });
