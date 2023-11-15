@@ -22,7 +22,7 @@ export abstract class Annotation extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
-        super(chart);
+        super(chart, true);
     }
 
     //-------------------------------------------------------------------------

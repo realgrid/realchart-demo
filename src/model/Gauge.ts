@@ -56,7 +56,7 @@ export abstract class GaugeBase extends Widget {
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
-        super(chart);
+        super(chart, true);
 
         this.size = '100%';
     }
@@ -578,7 +578,7 @@ export class GuageScaleTick extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public scale: GaugeScale) {
-        super(scale.chart);
+        super(scale.chart, true);
     }
 
     //-------------------------------------------------------------------------
@@ -614,7 +614,7 @@ export abstract class GaugeScale extends ChartItem {
 
         this.line = new ChartItem(gauge.chart, true);
         this.tick = new GuageScaleTick(this);
-        this.tickLabel = new ChartItem(gauge.chart);
+        this.tickLabel = new ChartItem(gauge.chart, true);
     }
 
     //-------------------------------------------------------------------------

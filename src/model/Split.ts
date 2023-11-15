@@ -19,7 +19,7 @@ export class PaneTitle extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public pane: Pane) {
-        super(pane.chart);
+        super(pane.chart, true);
     }
 
     //-------------------------------------------------------------------------
@@ -86,7 +86,7 @@ export class Pane extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart, public row: number, public col: number) {
-        super(chart);
+        super(chart, true);
     }
 
     //-------------------------------------------------------------------------

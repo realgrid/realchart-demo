@@ -31,12 +31,12 @@ const config = {
     },
 	xAxis: {
         type: 'linear',
-        stepInterval: 10,
+        padding: 0.02,
 		// title: '서울시',
 		grid: {
             visible: true,
             style: {
-                stroke: '#777'
+                stroke: '#333'
             }
         },
 		label: {
@@ -50,9 +50,15 @@ const config = {
                 fill: '#aaa'
             }
         },
+        tick: {
+            stepInterval: 0.2,
+        },
+        label: {
+            numberFormat: ',#.0'
+        },
         grid: {
             style: {
-                stroke: '#777'
+                stroke: '#333'
             }
         }
 	},
@@ -67,11 +73,18 @@ const config = {
             15.48, 15.46, 15.45, 15.64, 15.61, 15.55, 15.47, 15.51, 15.68, 15.78, 15.70, 15.81,
             15.78, 15.75, 15.80, 15.81, 15.82, 15.89, 15.91, 15.93, 15.94, 15.95, 
             16.2, 16.0, 16.1, 16.0, 15.98, 16.1, 16.2, 16.0, 16.1, 16.2,
-            16.21, 16.19, 16.25, 16.29, 16.3, 16.36, 16.38, 16.58, 16.39, 16.43, 16.62, 16.58,
+            16.21, 16.19, 16.25, 16.29, 16.3, 16.36, 16.38, 16.58, 16.39, 16.43, 16.62, 16.39,
             16.43, 16.62, 16.58, 16.58, 16.58, 16.86,
         ],
+        pointLabel: {
+            visibleCallback: args => args.yValue === args.yMax,
+            text: '${xValue}',
+            style: {
+                fill: '#f00'
+            }
+        },
         viewRangeValue: 'y',
-        viewRanges: [{
+        viewRanges_2: [{
             toValue: 15.5,
             color: '#08529d'
         }, {
@@ -96,11 +109,22 @@ const config = {
             toValue: 16.2,
             color: '#fa684b'
         }, {
+            toValue: 16.3,
+            color: '#f23a29'
+        }, {
             toValue: 16.4,
+            color: '#ef392f'
+        }, {
+            toValue: 16.5,
             color: '#ce161e'
         }, {
             color: '#a40f15'
-        }]
+        }],
+        viewRanges: {
+            fromValue: 15.4,
+            step: 0.1,
+            colors: ['#08529d', '#4392ca', '#69aed4', '#9fcadf', '#ffe0d1', '#fdb89e', '#fa9275', '#fa684b', '#f23a29', '#ef392f', '#ce161e', '#a40f15']
+        }
 	},
 	ChartTextEffect: {
 		autoContrast: false,

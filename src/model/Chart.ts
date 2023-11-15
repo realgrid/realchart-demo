@@ -276,7 +276,7 @@ export class ChartOptions extends ChartItem {
      * 크레딧 모델.
      * @config
      */
-    credits = new Credits(null);
+    credits = new Credits(null, true);
 
     //-------------------------------------------------------------------------
     // methods
@@ -333,7 +333,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         this._assets = new AssetCollection();
         this._themes = new ThemeCollection();
-        this._options = new ChartOptions(this);
+        this._options = new ChartOptions(this, true);
         this._title = new Title(this);
         this._subtitle = new Subtitle(this);
         this._legend = new Legend(this);

@@ -143,19 +143,26 @@ export class ContinuousAxisTick extends AxisTick {
         const steps: number[] = [];
         let v: number;
 
+        if (min > Math.floor(min / interval) * interval) {
+            min = Math.floor(min / interval) * interval;
+        } else if (min < Math.ceil(min / interval) * interval) {
+            min = Math.ceil(min / interval) * interval;
+        }
+        min = fixnum(min);
+
         if (!isNaN(base)) {
             steps.push(v = base);
             while (v > min) {
-                steps.unshift(v -= interval);
+                steps.unshift(v = fixnum(v -interval));
             }
             v = base;
             while (v < max) {
-                steps.push(v += interval);
+                steps.push(v = fixnum(v + interval));
             }
         } else {
             steps.push(v = min);
             while (v < max) {
-                steps.push(v += interval);
+                steps.push(v = fixnum(v + interval));
             }
         }
         this._step = interval;
@@ -379,7 +386,7 @@ export abstract class ContinuousAxis extends Axis {
      * 
      * @config
      */
-    padding = 0.05;
+    padding = 0.04;
     /**
      * 첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
      * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.

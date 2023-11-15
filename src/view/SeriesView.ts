@@ -100,16 +100,20 @@ export class PointLabelContainer extends LayerElement {
         this._labels[1].prepare(0);
     }
 
-    prepareLabel(doc: Document, view: PointLabelView, index: number, p: DataPoint, model: DataPointLabel): void {
+    prepareLabel(doc: Document, view: PointLabelView, index: number, p: DataPoint, series: Series, model: DataPointLabel): void {
         const richFormat = model.text;
         const styles = model.style;
 
         view.point = p;
         view.setModel(doc, model, null);
 
+        view.internalClearStyleAndClass();
+        view.internalSetStyleOrClass(styles);
+        view.internalSetStyleOrClass(series.getPointLabelStyle(p));
+
         if (richFormat) {
             model.buildSvg(view._text, NaN, NaN, model, p.getValueOf);
-            view.setStyles(styles);
+            // view.setStyles(styles);
 
             if (view._outline) {
                 model.buildSvg(view._outline, NaN, NaN, model, p.getValueOf);
@@ -120,8 +124,8 @@ export class PointLabelContainer extends LayerElement {
             //      .setStyles(styles);
         } else {
             //label.setValueEx(p.value, true, 1)
-            view.setText(model.getText(p.getLabel(index)))
-                .setStyles(styles);
+            view.setText(model.getText(p.getLabel(index)));
+                // .setStyles(styles);
         }
     }
 
@@ -129,7 +133,7 @@ export class PointLabelContainer extends LayerElement {
         const model = owner.model;
         const pointLabel = model.pointLabel;
 
-        if (pointLabel.visible) {
+        if (model.isPointLabelsVisible()) {
             const n = model.pointLabelCount();
             const labels = this._labels;
             const points = model.getLabeledPoints();
@@ -147,7 +151,7 @@ export class PointLabelContainer extends LayerElement {
                     const label = labels[j].get(i);
 
                     if (label.setVisible(owner.isPointVisible(p))) {
-                        this.prepareLabel(doc, label, j, p, pointLabel);
+                        this.prepareLabel(doc, label, j, p, model, pointLabel);
                         maps[j][p.pid] = label;
                     }
                 }
@@ -357,11 +361,11 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         }
     }
 
-    setPosRate(rate: number): void {
+    setPositionRate(rate: number): void {
     }
 
     isPointVisible(p: DataPoint): boolean {
-        return p.visible && !p.isNull;
+        return p.visible && !p.isNull && this.model.isPointLabelVisible(p);
     }
 
     protected _doViewRateChanged(rate: number): void {
@@ -507,7 +511,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     protected _labelViews(): PointLabelContainer {
-        this._labelContainer.setVisible(this.model.pointLabel.visible && !this._animating());
+        this._labelContainer.setVisible(this.model.isPointLabelsVisible() && !this._animating());
         return this._labelContainer.visible && this._labelContainer;
     }
 

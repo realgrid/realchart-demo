@@ -51,7 +51,7 @@ export class Theme extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(source: any) {
-        super(null);
+        super(null, true);
 
         source && this.load(source);
     }

@@ -47,6 +47,7 @@ const config = {
 			// text: '<b style="fill:red">${x}</b>',
 			effect: 'outline', // 'background',
 			style: {},
+            styleCallback: args => args.yValue === args.yMax ? { fill: 'red', fontSize: '20px', background: {} } : null
 		},
 		data: [
 			['신흥1동', 12904],

@@ -10,7 +10,7 @@ import { isArray, isFunc, isObject, isString, pickNum, pickProp, pickProp3 } fro
 import { IPoint } from "../common/Point";
 import { RcElement } from "../common/RcControl";
 import { RcObject } from "../common/RcObject";
-import { IPercentSize, IValueRange, RtPercentSize, SVGStyleOrClass, _undefined, buildValueRanges, calcPercent, parsePercentSize } from "../common/Types";
+import { IPercentSize, IValueRange, IValueRanges, RtPercentSize, SVGStyleOrClass, _undefined, buildValueRanges, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { RectElement } from "../common/impl/RectElement";
 import { Shape, Shapes } from "../common/impl/SvgShape";
@@ -78,6 +78,7 @@ export class DataPointLabel extends FormattableText {
      * @config
      */
     visibleCallback: (point: any) => boolean;
+    styleCallback: (point: any) => SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // fields
@@ -86,12 +87,21 @@ export class DataPointLabel extends FormattableText {
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
-        super(chart, false);
+        super(chart, _undefined);
+
+        this.visible = _undefined;
     }
 
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 데이터 포인트 label 표시 여부.
+     * 값을 설정하지 않고 {@link visibleCallback}이 설정되면 콜백 리턴값을 따른다.
+     * 명시적으로 값을 설정하면 그 값에 따른다.
+     */
+    "@config visible" = undefined;
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -112,7 +122,7 @@ export class DataPointLabel extends FormattableText {
     protected _doLoadSimple(source: any): boolean {
         if (isFunc(source)) {
             this.visibleCallback = source;
-            return true;
+            return this.visible = true;
         }
         return super._doLoadSimple(source);
     }
@@ -181,9 +191,7 @@ export class Trendline extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public series: Series) {
-        super(series.chart);
-
-        this.visible = false;
+        super(series.chart, false);
     }
 
     //-------------------------------------------------------------------------
@@ -394,7 +402,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart, name?: string) {
-        super(chart);
+        super(chart, true);
 
         this.name = name;
         this.pointLabel = new DataPointLabel(chart);
@@ -513,7 +521,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * 
      * @config
      */
-    viewRanges: IValueRange[];
+    viewRanges: IValueRange[] | IValueRanges;
     /**
      * ranges가 적용되는 값.\
      * 지정하지 않으면 시리즈 종류에 띠라 자동 적용된다.
@@ -881,6 +889,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         }
     }
 
+    getPointLabelStyle(p: DataPoint): any {
+        if (this.pointLabel.styleCallback) {
+            this._getPointCallbackArgs(this._pointArgs, p);
+            return this.pointLabel.styleCallback(this._pointArgs);
+        }
+    }
+
     getPointTooltip(point: DataPoint, param: string): any {
         switch (param) {
             case 'series':
@@ -903,6 +918,23 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     getViewRangeAxis(): 'x' | 'y' | 'z' {
         return this.viewRangeValue || this._defViewRangeValue();
+    }
+
+    isPointLabelsVisible(): boolean {
+        return this.pointLabel.visible || isFunc(this.pointLabel.visibleCallback);
+    }
+
+    isPointLabelVisible(p: DataPoint): boolean {
+        const m = this.pointLabel;
+
+        if (m.visible === false) {
+            return false;
+        }
+        if (m.visibleCallback) {
+            this._getPointCallbackArgs(this._pointArgs, p);
+            return m.visibleCallback(this._pointArgs);
+        }
+        return m.visible === true;
     }
     
     //-------------------------------------------------------------------------
@@ -1247,7 +1279,7 @@ export abstract class SeriesMarker extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public series: Series) {
-        super(series.chart);
+        super(series.chart, true);
     }
 }
 
@@ -1690,6 +1722,13 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
     _stackPoints: Map<number, DataPoint[]>;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart, true);
+    }
 
     //-------------------------------------------------------------------------
     // ISeriesGroup
