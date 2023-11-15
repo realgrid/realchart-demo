@@ -32,7 +32,17 @@ export class Title extends ChartItem {
      * @config
      */
     alignBase = AlignBase.PLOT;
+    /**
+     * 정렬.
+     * 
+     * @config
+     */
     align = Align.CENTER;
+    /**
+     * 배경 스타일 셋.
+     * 
+     * @config
+     */
     backgroundStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------

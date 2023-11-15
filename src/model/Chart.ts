@@ -64,7 +64,7 @@ export interface IChart {
     firstSeries: Series;
     xAxis: IAxis;
     yAxis: IAxis;
-    subtitle: Title;
+    subtitle: Subtitle;
     body: Body;
     split: Split;
     colors: string[];
