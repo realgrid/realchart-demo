@@ -9,7 +9,7 @@
 import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
-import { ClipElement, LayerElement, PathElement, RcElement } from "../../common/RcControl";
+import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
 import { IValueRange } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { SeriesGroupLayout } from "../../model/Series";

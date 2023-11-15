@@ -630,13 +630,21 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 
         if (inverted) {
             if (isX) {
-                clip.setBounds(p1, w - h, Math.abs(p2 - p1), h);
+                if (reversed) {
+                    clip.setBounds(p2, w - h, Math.abs(p2 - p1), h);
+                } else {
+                    clip.setBounds(p1, w - h, Math.abs(p2 - p1), h);
+                }
             } else {
                 clip.setBounds(0, w - Math.max(p1, p2), w, Math.abs(p2 - p1));
             }
         } else {
             if (isX) {
-                clip.setBounds(p1, 0, Math.abs(p2 - p1), h);
+                if (reversed) {
+                    clip.setBounds(p2, 0, Math.abs(p2 - p1), h);
+                } else {
+                    clip.setBounds(p1, 0, Math.abs(p2 - p1), h);
+                }
             } else {
                 clip.setBounds(0, h - Math.max(p1, p2), w, Math.abs(p2 - p1));
             }

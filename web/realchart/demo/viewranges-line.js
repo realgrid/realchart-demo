@@ -46,7 +46,7 @@ const config = {
 		pointLabel: true,
         baseValue: 0,
 		data: [155, 138, 122, 133, 114, 113, 123, 117, 125, 131],
-        viewRangeAxis: 'x',
+        viewRangeValue: 'x',
         viewRanges: x_ranges,//y_ranges,
         style: {
             strokeWidth: '2px'
