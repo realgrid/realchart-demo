@@ -779,7 +779,8 @@ class MDGenerater {
     lines += `| Name | Type | Optional |  \n`;
     lines += '| ----- | ----- | ----- |  \n';
     lines += props?.map(({name, type, optional}) => {
-      return `| ${name} | \`${type}{:js}\` | ${optional ?? 'false'} |`;
+      // code 블록안에 pipe character 있으면 acorn 오류
+      return `| ${name} | \`${type.replace(/\|/g, '\\|')}{:js}\` | ${optional ?? 'false'} |`;
     }).join('  \n');
     return lines.trim();
   }
