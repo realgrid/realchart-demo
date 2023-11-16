@@ -29,7 +29,7 @@ export class Tooltip extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public series: ISeries) {
-        super(series.chart);
+        super(series.chart, true);
     }
 
     //-------------------------------------------------------------------------

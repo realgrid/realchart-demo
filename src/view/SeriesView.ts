@@ -10,9 +10,9 @@ import { pickNum } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
-import { LayerElement, PathElement, RcElement } from "../common/RcControl";
-import { IRect } from "../common/Rectangle";
+import { ClipElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
+import { IValueRange } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { RectElement } from "../common/impl/RectElement";
@@ -100,16 +100,20 @@ export class PointLabelContainer extends LayerElement {
         this._labels[1].prepare(0);
     }
 
-    prepareLabel(doc: Document, view: PointLabelView, index: number, p: DataPoint, model: DataPointLabel): void {
+    prepareLabel(doc: Document, view: PointLabelView, index: number, p: DataPoint, series: Series, model: DataPointLabel): void {
         const richFormat = model.text;
         const styles = model.style;
 
         view.point = p;
         view.setModel(doc, model, null);
 
+        view.internalClearStyleAndClass();
+        view.internalSetStyleOrClass(styles);
+        view.internalSetStyleOrClass(series.getPointLabelStyle(p));
+
         if (richFormat) {
             model.buildSvg(view._text, NaN, NaN, model, p.getValueOf);
-            view.setStyles(styles);
+            // view.setStyles(styles);
 
             if (view._outline) {
                 model.buildSvg(view._outline, NaN, NaN, model, p.getValueOf);
@@ -120,8 +124,8 @@ export class PointLabelContainer extends LayerElement {
             //      .setStyles(styles);
         } else {
             //label.setValueEx(p.value, true, 1)
-            view.setText(model.getText(p.getLabel(index)))
-                .setStyles(styles);
+            view.setText(model.getText(p.getLabel(index)));
+                // .setStyles(styles);
         }
     }
 
@@ -129,7 +133,7 @@ export class PointLabelContainer extends LayerElement {
         const model = owner.model;
         const pointLabel = model.pointLabel;
 
-        if (pointLabel.visible) {
+        if (model.isPointLabelsVisible()) {
             const n = model.pointLabelCount();
             const labels = this._labels;
             const points = model.getLabeledPoints();
@@ -147,7 +151,7 @@ export class PointLabelContainer extends LayerElement {
                     const label = labels[j].get(i);
 
                     if (label.setVisible(owner.isPointVisible(p))) {
-                        this.prepareLabel(doc, label, j, p, pointLabel);
+                        this.prepareLabel(doc, label, j, p, model, pointLabel);
                         maps[j][p.pid] = label;
                     }
                 }
@@ -357,11 +361,11 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         }
     }
 
-    setPosRate(rate: number): void {
+    setPositionRate(rate: number): void {
     }
 
     isPointVisible(p: DataPoint): boolean {
-        return p.visible && !p.isNull;
+        return p.visible && !p.isNull && this.model.isPointLabelVisible(p);
     }
 
     protected _doViewRateChanged(rate: number): void {
@@ -479,6 +483,11 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         v.setData('index', (p.index % PALETTE_LEN) as any);
     }
 
+    protected _setPointColor(v: RcElement, color: string): void {
+        v.internalSetStyle('fill', color);
+        v.internalSetStyle('stroke', color);
+    }
+
     protected _setPointStyle(v: RcElement, model: T,  p: DataPoint, styles?: any[]): void {
         v.setAttr('aria-label', p.ariaHint());
         this.$_setColorIndex(v, p);
@@ -488,18 +497,21 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         if (styles) {
             styles.forEach(st => st && v.internalSetStyleOrClass(st));
         }
+       
         // config에서 지정한 point color
-        if (p.color) {
-            v.internalSetStyle('fill', p.color);
-            v.internalSetStyle('stroke', p.color);
+        p.color && this._setPointColor(v, p.color);
+        if (p.range) { 
+            p.range.color && this._setPointColor(v, p.range.color);
+            p.range.style && v.internalSetStyleOrClass(p.range.style);
         }
+       
         // 동적 스타일
         const st = model.getPointStyle(p);
         st && v.internalSetStyleOrClass(st);
     }
 
     protected _labelViews(): PointLabelContainer {
-        this._labelContainer.setVisible(this.model.pointLabel.visible && !this._animating());
+        this._labelContainer.setVisible(this.model.isPointLabelsVisible() && !this._animating());
         return this._labelContainer.visible && this._labelContainer;
     }
 
@@ -606,6 +618,42 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         labelView.setContrast(inner && info.pointView.dom);
         labelView.layout().translate(x, y);
     }
+
+    protected _clipRange(w: number, h: number, rangeAxis: 'x' | 'y' | 'z', range: IValueRange, clip: ClipElement, inverted: boolean): void {
+        if (inverted) {
+            const t = w;
+            w = h;
+            h = t;
+        }
+
+        const isX = rangeAxis === 'x';
+        const axis = isX ? this.model._xAxisObj : this.model._yAxisObj;
+        const reversed = axis.reversed;
+        const p1 = axis.getPosition(isX ? w : h, range.fromValue);
+        const p2 = axis.getPosition(isX ? w : h, range.toValue);
+
+        if (inverted) {
+            if (isX) {
+                if (reversed) {
+                    clip.setBounds(p2, w - h, Math.abs(p2 - p1), h);
+                } else {
+                    clip.setBounds(p1, w - h, Math.abs(p2 - p1), h);
+                }
+            } else {
+                clip.setBounds(0, w - Math.max(p1, p2), w, Math.abs(p2 - p1));
+            }
+        } else {
+            if (isX) {
+                if (reversed) {
+                    clip.setBounds(p2, 0, Math.abs(p2 - p1), h);
+                } else {
+                    clip.setBounds(p1, 0, Math.abs(p2 - p1), h);
+                }
+            } else {
+                clip.setBounds(0, h - Math.max(p1, p2), w, Math.abs(p2 - p1));
+            }
+        }
+    }
 }
 
 export abstract class BoxPointElement extends PathElement implements IPointView {
@@ -694,10 +742,11 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
+        const reversed = yAxis.reversed;
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
-        const yOrg = inverted ? 0 : height;;
+        const yOrg = inverted ? 0 : height;
         const min = yAxis.axisMin();
         const yMin = yAxis.getPosition(yLen, min);
         const base = series.getBaseValue(yAxis);
@@ -716,24 +765,18 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
             if (pv.setVisible(!p.isNull)) {
                 const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
                 const wPoint = series.getPointWidth(wUnit);
-                const yVal = yAxis.getPosition(yLen, p.yValue);
-                const hPoint = (yVal - yBase) * vr;
+                const yVal = yAxis.getPosition(yLen, p.yValue) - yBase;
+                const yGroup = (yAxis.getPosition(yLen, p.yGroup) - yBase - yVal) * vr;
+                const hPoint = yVal * vr;
                 let x: number;
                 let y: number;
 
                 x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
-                y = yOrg;
-
                 p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr);
-                // if (based && yBase !== yMin) { // 양쪽으로 'grow'할 때 (#48)
-                //     p.yPos = y -= yAxis.getPosition(yLen, p.yGroup * vr);
-                // } else {
-                //     p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr; 
-                // }
+                p.yPos = y = yOrg - yAxis.getPosition(yLen, p.yGroup) * vr;
 
-                // 아래에서 위로 올라가는 animation을 위해 바닥 지점을 전달한다.
-                this._layoutPointView(pv, i, x, y + hPoint, wPoint, hPoint);
+                // 아래에서 위로 올라가는 animation을 위해 기준 지점을 전달한다.
+                this._layoutPointView(pv, i, x, yOrg - yBase - yGroup, wPoint, hPoint);
 
                 // label
                 if (info && (info.labelView = labelViews.get(p, 0))) {

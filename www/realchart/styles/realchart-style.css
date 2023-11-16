@@ -168,14 +168,14 @@
     --rct-point-label-font-size: 0.8em;
     --rct-point-label-font-weight: bold;
     --rct-point-label-stroke: none;
-    --rct-point-label-fill: #777;
+    --rct-point-label-fill: #555;
     --rct-point-label-fill-outlined: #333;
 
     --rct-credits-fill: #777;
 
     /* polar */
     --rct-polar-xaxis-grid-line-stroke: #ccc;
-    --rct-polar-yaxis-grid-line-stroke: #555;
+    --rct-polar-yaxis-grid-line-stroke: #ccc;
     --rct-polar-axis-label-fill: #555;
 
     /* circle gauge */
@@ -980,6 +980,11 @@
 .rct-tooltip-text {
     fill: #333;
     stroke: none;
+}
+
+/** annotation */
+.rct-text-annotation {
+    font-size: 20px;
 }
 
 /** crosshair */

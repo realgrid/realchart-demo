@@ -238,7 +238,7 @@ export class UnfoldAnimation extends PointAnimation {
     //-------------------------------------------------------------------------
     protected _doUpdate(rate: number): boolean {
         if (this._series.parent) {
-            this._series.setPosRate(rate);
+            this._series.setPositionRate(rate);
             return true;
         }
         return false;
@@ -247,7 +247,7 @@ export class UnfoldAnimation extends PointAnimation {
     protected _doStop(): void {
         // animation 기간 중 제거됐을 수 있다.
         if (this._series.parent) {
-            this._series.setPosRate(NaN);
+            this._series.setPositionRate(NaN);
         }
         super._doStop();
     }

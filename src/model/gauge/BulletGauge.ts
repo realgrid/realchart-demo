@@ -31,7 +31,7 @@ export class BulletGaugeBand extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public gauge: BulletGauge | BulletGaugeGroup) {
-        super(gauge.chart);
+        super(gauge.chart, true);
     }
 
     //-------------------------------------------------------------------------
@@ -105,7 +105,7 @@ export class BulletTargetBar extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(gauge: BulletGauge) {
-        super(gauge.chart);
+        super(gauge.chart, true);
     }
 
     //-------------------------------------------------------------------------
@@ -126,7 +126,7 @@ export class BulletActualBar extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(gauge: BulletGauge) {
-        super(gauge.chart);
+        super(gauge.chart, true);
     }
 }
 

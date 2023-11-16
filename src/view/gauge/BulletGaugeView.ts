@@ -87,7 +87,9 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
                         const h = r.height * scale.getRate(range.toValue);
         
                         v.setBounds(0, reversed ? y : y - h, r.width, h);
+                        v.internalClearStyleAndClass();
                         v.setStyle('fill', range.color);
+                        range.style && v.addStyleOrClass(range.style);
                         // y += reversed ? h : -h;
                     });
                 } else {
@@ -98,7 +100,9 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
                         const w = r.width * scale.getRate(range.toValue);
         
                         v.setBounds(reversed ? x - w : x, 0, w, r.height);
+                        v.internalClearStyleAndClass();
                         v.setStyle('fill', range.color);
+                        range.style && v.addStyleOrClass(range.style);
                         // x += reversed ? -w : w;
                     });
                 }

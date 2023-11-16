@@ -324,6 +324,16 @@ export interface IValueRange {
     toValue?: number;
     color: string;
     label?: string;
+    style?: SVGStyleOrClass;
+}
+
+export interface IValueRanges {
+    fromValue?: number;
+    toValue?: number;
+    step: number;
+    colors: string[];
+    labels?: string[];
+    styles?: SVGStyleOrClass[];
 }
 
 /**
@@ -334,7 +344,7 @@ export interface IValueRange {
  * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
  * startValue를 기준으로 정렬한다.
  */
-export const buildValueRanges = function (source: IValueRange[], min: number, max: number): IValueRange[] {
+export const buildValueRanges = function (source: IValueRange[] | IValueRanges, min: number, max: number, strict = true): IValueRange[] {
     let ranges: IValueRange[];
     let prev: IValueRange;
 
@@ -345,7 +355,8 @@ export const buildValueRanges = function (source: IValueRange[], min: number, ma
                 const range: IValueRange = {
                     fromValue: pickNum(src.fromValue, prev ? prev.toValue : min),
                     toValue: pickNum(src.toValue, max),
-                    color: src.color
+                    color: src.color,
+                    style: src.style ? Object.assign({}, src.style) : _undefined
                 };
                 if (range.fromValue < range.toValue) {
                     ranges.push(range);
@@ -355,10 +366,31 @@ export const buildValueRanges = function (source: IValueRange[], min: number, ma
         });
         ranges = ranges.sort((r1, r2) => r1.fromValue - r2.fromValue)
                        .filter(r => r.toValue >= min && r.fromValue < max);
-        ranges.forEach(r => {
-            r.fromValue = Math.max(r.fromValue, min);
-            r.toValue = Math.min(r.toValue, max);
-        })
+        if (strict) {
+            ranges.forEach(r => {
+                r.fromValue = Math.max(r.fromValue, min);
+                r.toValue = Math.min(r.toValue, max);
+            })
+        }
+    } else if (isObject(source) && source.step > 0 && isArray(source.colors) && source.colors.length > 0) {
+        let from = pickNum(source.fromValue, min);
+        const to = pickNum(source.toValue, max);
+        const step = source.step;
+        const colors = source.colors;
+        const styles = isArray(source.styles) ? source.styles : null;
+        let i = 0;
+
+        ranges = [];
+
+        while (from < to) {
+            ranges.push({
+                fromValue: from,
+                toValue: from += step,
+                color: colors[Math.min(i, colors.length - 1)],
+                style: styles ? styles[Math.min(i, styles.length - 1)] : _undefined
+            });
+            i++;
+        }
     }
     return ranges;
 }

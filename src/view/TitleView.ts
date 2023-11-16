@@ -10,7 +10,7 @@ import { toSize } from "../common/Rectangle";
 import { ISize } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Title } from "../model/Title";
+import { SubtitlePosition, Title } from "../model/Title";
 import { BoundableElement } from "./ChartElement";
 
 export class TitleView extends BoundableElement<Title> {
@@ -29,7 +29,7 @@ export class TitleView extends BoundableElement<Title> {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, isSub: boolean) {
+    constructor(doc: Document, public isSub: boolean) {
         super(doc, isSub ? TitleView.SUBTITLE_CLASS : TitleView.TITLE_CLASS, isSub ? 'rct-subtitle-background' : 'rct-title-background');
 
         this.add(this._textView = new TextElement(doc));
@@ -44,8 +44,13 @@ export class TitleView extends BoundableElement<Title> {
     }
 
     protected _doMeasure(doc: Document, model: Title, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this.setBoolData('hassub', model.chart.subtitle.isVisible());
-        this._textView.text = this.model.text;
+        if (this.isSub) {
+            this.setBoolData('hassub', false);
+        } else {
+            const sub = model.chart.subtitle;
+            this.setBoolData('hassub', sub.isVisible() && sub.position === SubtitlePosition.BOTTOM);
+        }
+        this._textView.text = model.text;
 
         return toSize(this._textView.getBBounds());
     }

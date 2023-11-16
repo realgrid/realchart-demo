@@ -128,17 +128,21 @@ export abstract class RcControl extends RcWrappableObject {
         return this._container.offsetHeight;
     }
 
+    clipContainer(): SVGElement {
+        return this._defs;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     setData(data: string, value: any, container?: boolean): void {
         if (!isNull(value)) {
-            this._svg.dataset[data] = value;
+            this._root.dom.dataset[data] = value;
             if (container) {
                 this._dom.dataset[data] = value;
             }
         } else {
-            delete this._svg.dataset[data];
+            delete this._root.dom.dataset[data];
             if (container) {
                 delete this._dom.dataset[data];
             }
@@ -150,12 +154,11 @@ export abstract class RcControl extends RcWrappableObject {
     }
 
     private $_clearDefs(key: string): void {
-        const defs = this._defs;
-        const childs = defs.children;
+        const childs = this._defs.children;
 
-        for (let i = 0; i < childs.length; i++) {
+        for (let i = childs.length - 1; i >= 0; i--) {
             if (childs[i].hasAttribute(key)) {
-                defs.removeChild(childs[i]);
+                childs[i].remove();
             }
         }
     }
@@ -403,7 +406,7 @@ export abstract class RcControl extends RcWrappableObject {
             height: '100%',  
             boxSizing: 'border-box',
             overflow: 'hidden',
-            padding: '20px',
+            // padding: '20px',
             "-webkit-touch-callout": "none",
             "-webkit-user-select": "none",
             "user-select": "none",
@@ -414,14 +417,14 @@ export abstract class RcControl extends RcWrappableObject {
 
         // svg
         const svg = this._svg = doc.createElementNS(SVGNS, 'svg');
-        svg.classList.add('rct-root');
+        svg.classList.add('rct-svg');
         svg.style.setProperty('overflow', 'visible', 'important');
         svg.setAttribute('width', '100%');// contentDiv.clientWidth + 'px');
         svg.setAttribute('height', '100%');//contentDiv.clientHeight + 'px');
 
         const desc = doc.createElement('desc');
         // desc.textContent = 'Created by RealChart v$Version'; // sourcemap, rollup issue
-        desc.textContent = 'Created by RealChart v0.9.14';
+        desc.textContent = 'Created by RealChart v0.9.16';
         svg.appendChild(desc);
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
@@ -498,8 +501,11 @@ export abstract class RcControl extends RcWrappableObject {
                 left: pixel(sr.left - cr.left),
                 top: pixel(sr.top - cr.top)
             });
-            this._doRender({x: 0, y: 0, width: w, height: h});
-            this._doRenderBackground(this._container.firstElementChild as HTMLDivElement, w, h);
+            this._doRenderBackground(this._container.firstElementChild as HTMLDivElement, this._root, w, h);
+
+            const p = Dom.getPadding(this._root.dom);
+
+            this._doRender({x: p.left, y: p.top, width: w - p.left - p.right, height: h - p.top - p.bottom});
 
         } finally {
             this.loaded = true;
@@ -515,7 +521,7 @@ export abstract class RcControl extends RcWrappableObject {
     protected abstract _doRender(bounds: IRect): void;
     protected _doBeforeRender(): void {}
     protected _doAfterRender(): void {}
-    protected _doRenderBackground(elt: HTMLDivElement, width: number, height: number): void {}
+    protected _doRenderBackground(elt: HTMLDivElement, root: RcElement, width: number, height: number): void {}
 
     //-------------------------------------------------------------------------
     // event handlers
@@ -1337,7 +1343,7 @@ class RootElement extends RcElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(control: RcControl) {
-        super(control.doc(), null);
+        super(control.doc(), 'rct-root');
 
         this._control = control;
     }
@@ -1361,7 +1367,7 @@ export class ClipElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, x: number, y: number, width: number, height: number, rx = 0, ry = 0) {
+    constructor(doc: Document, x = NaN, y = NaN, width = NaN, height = NaN, rx = 0, ry = 0) {
         super(doc, _undefined, 'clipPath');
 
         const id = this._id = Utils.uniqueKey() + '-';

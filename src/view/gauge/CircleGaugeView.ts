@@ -186,7 +186,9 @@ class BandView extends ChartElement<GaugeRangeBand> {
                 angle,
                 clockwise
             });
+            v.internalClearStyleAndClass();
             v.setStyle('fill', ranges[i].color);
+            ranges[i].style && v.addStyleOrClass(ranges[i].style);
             start += angle;
         });
     }
@@ -365,18 +367,20 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
             const range = rim.getRange(value);
             // const rd = exts.value - (rim.stroked ? thick / 2 : 0);
             const rd = exts.value + (rim.stroked ? 0 : thick / 2);
+            const valueView = this._valueView;
 
-            this._valueView.setStyleOrClass(rim.style);
+            valueView.setStyleOrClass(rim.style);
             if (range) {
-                this._valueView.setStyle(rim.stroked ? 'stroke' : 'fill', range.color);
+                valueView.setStyle(rim.stroked ? 'stroke' : 'fill', range.color);
+                range.style && valueView.addStyleOrClass(range.style);
             }
             if (m.valueRim.stroked) {
-                this._valueView.setStyle('fill', 'none');
-                this._valueView.setStyle('strokeWidth', pixel(thick));
+                valueView.setStyle('fill', 'none');
+                valueView.setStyle('strokeWidth', pixel(thick));
             }
 
-            this._valueView.setBoolData('stroked', rim.stroked);
-            this._valueView.setSectorEx({
+            valueView.setBoolData('stroked', rim.stroked);
+            valueView.setSectorEx({
                 cx: center.x,
                 cy: center.y,
                 rx: rd,

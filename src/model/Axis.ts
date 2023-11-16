@@ -755,7 +755,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart, isX: boolean, name?: string) {
-        super(chart);
+        super(chart, true);
 
         this._isX = isX;
         this.name = name;

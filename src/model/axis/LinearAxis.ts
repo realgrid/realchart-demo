@@ -143,19 +143,26 @@ export class ContinuousAxisTick extends AxisTick {
         const steps: number[] = [];
         let v: number;
 
+        if (min > Math.floor(min / interval) * interval) {
+            min = Math.floor(min / interval) * interval;
+        } else if (min < Math.ceil(min / interval) * interval) {
+            min = Math.ceil(min / interval) * interval;
+        }
+        min = fixnum(min);
+
         if (!isNaN(base)) {
             steps.push(v = base);
             while (v > min) {
-                steps.unshift(v -= interval);
+                steps.unshift(v = fixnum(v -interval));
             }
             v = base;
             while (v < max) {
-                steps.push(v += interval);
+                steps.push(v = fixnum(v + interval));
             }
         } else {
             steps.push(v = min);
             while (v < max) {
-                steps.push(v += interval);
+                steps.push(v = fixnum(v + interval));
             }
         }
         this._step = interval;
@@ -352,20 +359,16 @@ export abstract class ContinuousAxis extends Axis {
      * {@link minPadding}도 무시된다.
      * 계산값이 더 작으면 이 속성은 무시된다.\
      * 계산값과 무관하게 최소값을 지정하려면 {@link strictMin}을 사용한다.
-     * 
-     * @config
      */
-    'minValue': number;
+    '@config minValue': number;
     /**
      * 명시적으로 지정하는 최대값.\
      * 축에 연결된 data point들의 값으로 계산된 최대값보다 이 속성 값이 크면 대신 이 값이 축의 최대값이 되고,
      * {@link maxPadding}도 무시된다.
      * 계산값이 더 크면 이 속성은 무시된다.\
      * 계산값과 무관하게 최대값을 지정하려면 {@link strictMax}을 사용한다.
-     * 
-     * @config
      */
-    'maxValue': number;
+    '@config maxValue': number;
     /**
      * data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.
      * 
@@ -383,7 +386,7 @@ export abstract class ContinuousAxis extends Axis {
      * 
      * @config
      */
-    padding = 0.05;
+    padding = 0.04;
     /**
      * 첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
      * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.

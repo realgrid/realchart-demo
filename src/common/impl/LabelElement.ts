@@ -99,8 +99,6 @@ export class LabelElement extends GroupElement {
             this._back?.remove();
             this._outline?.remove();
         }
-        this._text.setBoolData('outlined', !!this._outline);
-
         return this;
     }
 

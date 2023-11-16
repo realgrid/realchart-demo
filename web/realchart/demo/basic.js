@@ -4,11 +4,11 @@
  */
 const config = {
 	options: {
-		animatable: false,
+		// animatable: false,
 		credits: {
 			// visible: false,
-			// verticalAlign: 'top'
-			// align: 'center'
+			// verticalAlign: 'top',
+			// align: 'center',
 		},
 	},
 	title: '경기도 성남시 인구 현황',
@@ -47,6 +47,7 @@ const config = {
 			// text: '<b style="fill:red">${x}</b>',
 			effect: 'outline', // 'background',
 			style: {},
+            styleCallback: args => args.yValue === args.yMax ? { fill: 'red', fontSize: '20px', background: {} } : null
 		},
 		data: [
 			['신흥1동', 12904],

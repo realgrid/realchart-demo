@@ -53,6 +53,7 @@ import { SeriesNavigator } from "./SeriesNavigator";
 import { Split } from "./Split";
 import { TextAnnotation } from "./annotation/TextAnnotation";
 import { ImageAnnotation } from "./annotation/ImageAnnotation";
+import { AnnotationCollection } from "./Annotation";
 
 export interface IChart {
     type: string;
@@ -64,7 +65,7 @@ export interface IChart {
     firstSeries: Series;
     xAxis: IAxis;
     yAxis: IAxis;
-    subtitle: Title;
+    subtitle: Subtitle;
     body: Body;
     split: Split;
     colors: string[];
@@ -275,7 +276,7 @@ export class ChartOptions extends ChartItem {
      * 크레딧 모델.
      * @config
      */
-    credits = new Credits(null);
+    credits = new Credits(null, true);
 
     //-------------------------------------------------------------------------
     // methods
@@ -314,6 +315,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     _yPaneAxes: YPaneAxisMatrix;
     private _gauges: GaugeCollection;
     private _body: Body;
+    private _annotations: AnnotationCollection;
     private _navigator: SeriesNavigator;
 
     private _inverted: boolean;
@@ -331,7 +333,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         this._assets = new AssetCollection();
         this._themes = new ThemeCollection();
-        this._options = new ChartOptions(this);
+        this._options = new ChartOptions(this, true);
         this._title = new Title(this);
         this._subtitle = new Subtitle(this);
         this._legend = new Legend(this);
@@ -343,6 +345,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._yPaneAxes = new YPaneAxisMatrix(this);
         this._gauges = new GaugeCollection(this);
         this._body = new Body(this);
+        this._annotations = new AnnotationCollection(this);
         this._navigator = new SeriesNavigator(this);
 
         source && this.load(source);
@@ -362,6 +365,11 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     animatable(): boolean {
         return this._options.animatable !== false;
     }
+
+    //-------------------------------------------------------------------------
+    // IAnnotationOwner
+    //-------------------------------------------------------------------------
+    get chart(): IChart { return this }
 
     //-------------------------------------------------------------------------
     // properties
@@ -497,6 +505,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     _getYAxes(): AxisCollection {
         return this._yAxes;
+    }
+
+    _getAnnotations(): AnnotationCollection {
+        return this._annotations;
     }
 
     isGauge(): boolean {
@@ -684,6 +696,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // body
         this._body.load(source.body || source.plot); // TODO: plot 제거
 
+        // annotations
+        this._annotations.load(source.annotations);
+
         // series navigator
         this._navigator.load(source.seriesNavigator);
 
@@ -757,10 +772,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this.$_calcAxesPoints(width, height, inverted, 0);
     }
 
-    calcAxesPoints(width: number, height: number, inverted: boolean): void {
-        this.$_calcAxesPoints(width, height, inverted, 1);
-    }
-
     private $_calcAxesPoints(width: number, height: number, inverted: boolean, phase: number): void {
         let len = inverted ? height : width;
         this._xAxes.forEach(axis => {
@@ -770,6 +781,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._yAxes.forEach(axis => {
             axis.calcPoints(len, phase);
         });
+    }
+
+    axesLayouted(width: number, height: number, inverted: boolean): void {
+        this.$_calcAxesPoints(width, height, inverted, 1);
     }
 
     /**

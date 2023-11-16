@@ -62,8 +62,8 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         }
     }
 
-    protected _setPointStyle(v: RcElement, model: BarSeries, p: DataPoint, style?: any[]): void {
-        super._setPointStyle(v, model, p, style);
+    protected _setPointStyle(v: RcElement, model: BarSeries, p: DataPoint): void {
+        super._setPointStyle(v, model, p);
 
         if (p.yValue < model.baseValue && model.belowStyle) {
             v.addStyleOrClass(model.belowStyle);

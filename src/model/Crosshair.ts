@@ -74,9 +74,9 @@ export class Crosshair extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public axis: IAxis) {
-        super(axis.chart);
+        super(axis.chart, true);
 
-        this.flag = new CrosshairFlag(axis.chart);
+        this.flag = new CrosshairFlag(axis.chart, true);
         this.visible = false;
     }
 

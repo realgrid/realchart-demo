@@ -38,7 +38,7 @@ export class LegendItem extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public legend: Legend, public source: ILegendSource) {
-        super(legend.chart)
+        super(legend.chart, true)
     }
 
     //-------------------------------------------------------------------------

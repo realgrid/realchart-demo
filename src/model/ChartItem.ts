@@ -31,7 +31,7 @@ export class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, visible = true) {
+    constructor(chart: IChart, visible: boolean) {
         super();
 
         this.chart = chart;

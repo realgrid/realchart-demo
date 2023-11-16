@@ -115,7 +115,9 @@ class BandView extends ChartElement<GaugeRangeBand> {
                     v.setBounds(p, y, w, this._thick);
                 }
                 
+                v.internalClearStyleAndClass();
                 v.setStyle('fill', range.color);
+                range.style && v.addStyleOrClass(range.style);
                 p += w;
             });
             return true;

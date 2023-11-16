@@ -8,6 +8,7 @@
 
 import { isString } from "../common/Common";
 import { Align, AlignBase, SVGStyleOrClass, VerticalAlign, isNull } from "../common/Types";
+import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 
 /**
@@ -16,6 +17,13 @@ import { ChartItem } from "./ChartItem";
  * @config chart.title
  */
 export class Title extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart, true);
+    }
 
     //-------------------------------------------------------------------------
     // properties
@@ -32,7 +40,17 @@ export class Title extends ChartItem {
      * @config
      */
     alignBase = AlignBase.PLOT;
+    /**
+     * 정렬.
+     * 
+     * @config
+     */
     align = Align.CENTER;
+    /**
+     * 배경 스타일 셋.
+     * 
+     * @config
+     */
     backgroundStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------

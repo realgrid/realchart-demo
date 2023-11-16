@@ -107,7 +107,7 @@ export class Body extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
-        super(chart);
+        super(chart, true);
 
         this._annotations = new AnnotationCollection(this);
 
@@ -182,7 +182,7 @@ export class Body extends ChartItem {
      * 
      * @config
      */
-    image = new BackgroundImage(null);
+    image = new BackgroundImage(null, true);
     /**
      * plot 영역 마우스 드래깅을 통한 zooming 방식.
      * 
