@@ -32,7 +32,7 @@ export const config = {
         offsetX: 50,
         offsetY: 0,
         width: 150,
-        imageUrl: '../assets/images/daum.png'
+        imageUrl: '/assets/images/daum.png'
       }
     ]
   }
