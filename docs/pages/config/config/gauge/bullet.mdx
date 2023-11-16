@@ -5,27 +5,21 @@ bullet 게이지 모델.
 ## Properties
 
 ### [actualBar](./bullet/actualBar)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
-
-  
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
 
 ### animatable: `boolean{:js}`[#animatable]
-value  변화를 애니메이션으로 표현한다.  
+**[value](#value)**  변화를 애니메이션으로 표현한다.  
 `default: true`  
 
 ### [band](./bullet/band)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
-
-  
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
 
 ### duration: `number{:js}`[#duration]
 Animation duration.  
 `default: 500`  
 
 ### [label](./bullet/label)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
-
-  
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
 
 ### maxValue: `number{:js}`[#maxValue]
 최대값.
@@ -44,7 +38,15 @@ group에 포함되면 이 값 대신 group의 최소값이 사용된다.
 ### ranges: `IValueRange[]{:js}`[#ranges]
 값 범위 목록.
 범위별로 다른 스타일을 적용할 수 있다.  
+- `IValueRange{:js}` 
 
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| color | `string{:js}` | false |  
+| fromValue | `number{:js}` | true |  
+| label | `string{:js}` | true |  
+| style | `SVGStyles | string{:js}` | true |  
+| toValue | `number{:js}` | true |
 ### reversed: `boolean{:js}`[#reversed]
 true면 반대 방향으로 표시한다.  
 `default: false`  
@@ -54,11 +56,19 @@ Gauge scale.
 
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
 
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |
 ### [targetBar](./bullet/targetBar)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
-
-  
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
 
 ### targetValue: `number{:js}`[#targetValue]
 목표 값.  
@@ -84,7 +94,7 @@ plot 영역의 왼쪽 모서리와 widget 사이의 간격.
 plot 영역의 오른쪽 모서리와 widget 사이의 간격.  
 
 ### size: `string | number{:js}`[#size]
-width 와  height 를 동시에 설정한다.  
+**[width](#width)** 와  **[height](#height)** 를 동시에 설정한다.  
 
 ### top: `string | number{:js}`[#top]
 plot 영역의 위쪽 모서리와 widget 사이의 간격.  

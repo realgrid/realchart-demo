@@ -60,6 +60,7 @@ class Tunner {
     this.model = JSON.parse(text);
     this.classMap = {};
     // temporary map
+    this.currents = [];
     this.current = { name: '', kind: 0, props: {} };
   }
 
@@ -192,16 +193,19 @@ class Tunner {
     const model = this._findModelById(this.model, id);
     if (!model) return null;
     // @TODO: BulletGauge size 설명 중 width, height 무시되는 문제.
+
     switch (model.kind) {
       case ReflectionKind.EnumMember:
         return `\`${model.type.value}\``;
       case ReflectionKind.Property:
       case ReflectionKind.Accessor:
         // this.current.name == 'BulletGauge' && console.debug(`[DEBUG] ${model.name}`, model)
-        const [config] = this._parseConfigTag(this.current.comment?.blockTags) || [];
+        const [current] = this.currents.slice(-1);
+        const [config] = this._parseConfigTag(current.comment?.blockTags) || [];
         if (config) {
           const { opt, type } = MDGenerater.destructConfig(config);
-          return `[${model.name}](/config/config/${[opt, type].filter(v => v).join('/')}/#${model.name.toLowerCase()})`;
+          const link = ['/config', 'config', opt, type].filter(v => v).join('/');
+          return `[${model.name}](${link}#${model.name.toLowerCase()})`;
         }
         break;
       default:
@@ -219,7 +223,8 @@ class Tunner {
       const [config] = this._parseConfigTag(model.comment?.blockTags) || [];
       if (config) {
         const { opt } = MDGenerater.destructConfig(config);
-        return `[${prop}](/config/config/${opt}#${prop.toLowerCase()})`;
+        const link = ['/config', 'config', opt].filter(v => v).join('/');
+        return `[${prop}](${link}#${prop.toLowerCase()})`;
       }
     } else {
       return '';
@@ -245,9 +250,19 @@ class Tunner {
         
         // 현재 구조체의 속성인 경우
         // % 상속받은 prop이면 현재 prop id와 다르다.
-        const prop = this.current.props.find(p => p.id == line.target);
+        const [current] = this.currents.slice(-1);
+        // 현재 속성 중에 있거나, 상속 받은 속성. 조상까지 찾을 필요는 없다.
+        const prop = current.props?.find(
+          p => (line.target == p.id)
+          || (line.text == p.inheritedFrom?.name.split('.').pop())
+        );
         // 다른 구조체에서 이름이 같을 수 있음. Series.xStart, ChartOptions.xStart
         // || p.name == line.text
+        if (current.name == 'CircleGauge' && line.text == 'radius') {
+          console.debug(current);
+        }
+        
+
         if (prop) return `**[${line.text}](#${prop.name.toLowerCase()})**`;
         
         // 레퍼런스
@@ -473,27 +488,31 @@ class Tunner {
   // scan all classes
   _visit(obj, level=0) {
     const { name, children, kind, type, typeParameters, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
-    const { config, content } = this._parseComment(comment);
     const propFilter = (child) => {
       return (
         child.kind === ReflectionKind.Property 
-          && (this._isDoclet(child.name) || this._findTag(child.comment?.blockTags, '@config')))
-        || (child.kind === ReflectionKind.Accessor && this._findTag(child.getSignature?.comment?.blockTags, '@config'))
+          && (this._isDoclet(child.name) || this._findTag(child.comment?.blockTags, '@config'))
+        ) || (
+        child.kind === ReflectionKind.Accessor 
+          && this._findTag(child.getSignature?.comment?.blockTags, '@config')
+      );
     }
+    this.currents.push({ name, kind, comment });
 
-    // console.debug('visiting', obj);
-
+    const { config, content } = this._parseComment(comment);
     switch (kind) {
       case ReflectionKind.Class:
-        this.current = { name, kind, comment, props: null };
-        const props = this.current.props = children.filter(propFilter);
+
+        // this.current = { name, kind, comment, props: children.filter(propFilter)}
+        const clsProps = children.filter(propFilter);
+        this.currents[this.currents.length -1].props = clsProps;
         this.classMap[name] = { 
           // header, content, prop, type,
           kind,
           config,
           content,
           extended: extendedTypes.map(t => t.name),
-          props: props
+          props: clsProps
             .map(c => {
               return c.kind === ReflectionKind.Property
               ? this._setContent(c)
@@ -521,15 +540,18 @@ class Tunner {
         };
         break;
       case ReflectionKind.Enum:
+        const enumProps = children.filter(c => 
+          c.kind == ReflectionKind.EnumMember
+          && this._findTag(c.comment?.blockTags, '@config')
+        ).map(c => {
+          const { content } = this._parseComment(c.comment);
+          return { name: c.name, value: c.type.value, content };
+        });
+
+        this.currents[this.currents.length - 1].props = enumProps;
         this.classMap[name] = {
           kind,
-          props: children.filter(c => 
-            c.kind == ReflectionKind.EnumMember
-            && this._findTag(c.comment?.blockTags, '@config')
-          ).map(c => {
-            const { content } = this._parseComment(c.comment);
-            return { name: c.name, value: c.type.value, content };
-          }),
+          props: enumProps,
         }
         // console.debug(name, this.classMap[name]);
         break;
@@ -542,18 +564,25 @@ class Tunner {
         break;
       case ReflectionKind.Interface:
         // !children && console.debug(name, children);
+        const itfProps = children?.filter(c => c.kind === ReflectionKind.Property)?.map(c => {
+          return this._setContent(c);
+        });
+        this.currents[this.currents.length -1].props = itfProps;
         this.classMap[name] = {
           kind,
           type,
-          props: children?.filter(c => c.kind === ReflectionKind.Property)?.map(c => {
-            return this._setContent(c);
-          })
+          props: itfProps
         }
         break;
       default:
         // console.debug('Ignored.', name, kindString, obj)
         break;
     }
+
+    if (!this.currents.length)
+      throw Error();
+    this.currents.pop();
+
 
     // project or module
     // kind == 1 || kind == 2 
@@ -605,36 +634,34 @@ class MDGenerater {
    */
   _makeProp(param) {
     const { opt, type: chartType, prop } = param;
-    const { header, name, type, dtype, content, defaultValue, defaultBlock } = prop;
+    const { header, name, type, dtype, content, defaultValue, defaultBlock, readonly } = prop;
     let extraLines = ''
-    let lines = `### ${prop.readonly ? '*`<readonly>`* ' : ''}`
+    let lines = `### ${readonly ? '*`<readonly>`* ' : ''}`
       + `${name}`
       + `${type ? ': \`' + type  + '\{:js}`': ''}`
       + `[#${name}]\n`;
 
     if (dtype instanceof Array) {
-      dtype.map(t => {
-        if (t.type == 'reference') {
-          t.name != 'Date' && console.warn('Not Implemented union references', t);
-          // Date
-          return t.name;
-        } else if (t.type == 'array') {
-          
-        } else if (t.type == 'intrinsic') {
-
-        } else if (Object.keys(t.type || {}).length) {
-          console.warn(`[WARN] Unexpected type in array`, t)
-        }
-      });
+      // dtype.map(t => {
+      //   if (t.type == 'reference') {
+      //     t.name != 'Date' && console.warn('Not Implemented union references', t);
+      //     // Date
+      //     return t.name;
+      //   } else if (t.type == 'array') {
+      //     // console.warn(`[WARN] Unexpected type in array`, t)
+      //   } else if (t.type == 'intrinsic') {
+      //     // console.warn(`[WARN] Unexpected type in array`, t)
+      //   } else if (Object.keys(t.type || {}).length) {
+      //     // console.warn(`[WARN] Unexpected type in array`, t)
+      //   }
+      // });
     } else if (dtype?.type == 'reference') {
       const v = this.classMap[dtype.name];
       if (!v) return console.warn(`[WARN] Not found classMap of ${dtype.name}`);
       switch(v.kind) {
         case ReflectionKind.Class:
           let accessor = this.docMap;
-          const keys = chartType 
-            ? [opt, chartType, name]
-            : [opt, name];
+          const keys = [opt, chartType, name].filter(v => v);
           keys.forEach((key, i) => {
             if (!accessor[key]) {
               // is the last
@@ -651,7 +678,9 @@ class MDGenerater {
           });
           // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
 
-          lines = `### [${name}](./${chartType}/${name})\n`;
+          // 상대경로.
+          // series, axis 등은 type으로 시작. 그 외에는 opt로 시작.
+          lines = `### [${name}](./${chartType || opt}/${name})\n`;
           lines += `${this._fixContent(v.content)}  \n`;
           return lines;
         case ReflectionKind.Enum:

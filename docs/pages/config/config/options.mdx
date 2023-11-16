@@ -10,25 +10,33 @@ false로 지정하면 차트 전체척으로 animation 효과를 실행하지 �
 복수 axis가 표시되는 경우 axis 사이의 간격  
 `default: 8` pixels 
 
-### [credits](./undefined/credits)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
-
-  
+### [credits](./options/credits)
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
 
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
 
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |
 ### xStart: `any{:js}`[#xStart]
 x축 값이 설정되지 않은 시리즈 첫번째 데이터 point에 설정되는 x값.
-이 후에는  **[xStep](#xStep)** 씩 증가시키면서 설정한다.
-시리즈의  Series.xStart 가 설정되면 그 값이 사용된다.  
+이 후에는  **[xStep](#xstep)** 씩 증가시키면서 설정한다.
+시리즈의  [xStart](/config/config/options#xstart) 가 설정되면 그 값이 사용된다.  
 `default: 0`  
 
 ### xStep: `string | number{:js}`[#xStep]
 x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
-첫번째 값은  **[xStart](#xStart)** 로 설정한다.
+첫번째 값은  **[xStart](#xstart)** 로 설정한다.
 time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.
-시리즈의  Series.xStep 이 설정되면 그 값이 사용된다.  
+시리즈의  [xStep](/config/config/options#xstep) 이 설정되면 그 값이 사용된다.  
 `default: 1`  
 
 ### visible: `boolean{:js}`[#visible]

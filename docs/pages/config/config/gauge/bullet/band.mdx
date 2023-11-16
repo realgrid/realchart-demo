@@ -4,7 +4,17 @@
 
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
 
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |
 ### vertical: `boolean{:js}`[#vertical]
 true면 수직 bar로 표시한다.  
 `default: false`  
@@ -15,7 +25,15 @@ true면 수직 bar로 표시한다.
 ### ranges: `IValueRange[]{:js}`[#ranges]
 값 범위 목록.
 범위별로 다른 스타일을 적용할 수 있다.  
+- `IValueRange{:js}` 
 
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| color | `string{:js}` | false |  
+| fromValue | `number{:js}` | true |  
+| label | `string{:js}` | true |  
+| style | `SVGStyles | string{:js}` | true |  
+| toValue | `number{:js}` | true |
 ### visible: `boolean{:js}`[#visible]
 표시 여부.\  
 `default: true`  

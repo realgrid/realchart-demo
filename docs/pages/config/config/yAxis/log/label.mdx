@@ -6,29 +6,69 @@
 텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
 
 
-밝게 표시할 때는  lightStyle 을 적용하고,
-어둡게 표시할 때는  darkStyle 이 적용된다.
+밝게 표시할 때는  **[lightStyle](#lightstyle)** 을 적용하고,
+어둡게 표시할 때는  **[darkStyle](#darkstyle)** 이 적용된다.
 brightStyle이 지정되지 않으면 'rct-text-light'이,
 darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.  
 `default: true`  
 
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
+- `SVGStyles{:js}` 
 
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |
 ### darkStyle: `SVGStyles | string{:js}`[#darkStyle]
+- `SVGStyles{:js}` 
 
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |
 ### effect[#effect]
 
 
 `default: ChartTextEffect.NONE`  
 
 ### lightStyle: `SVGStyles | string{:js}`[#lightStyle]
+- `SVGStyles{:js}` 
 
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |
 ### prefix: `string{:js}`[#prefix]
 label 문자열 앞에 추가되는 문자열.  
 
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
 
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |
 ### suffix: `string{:js}`[#suffix]
 label 문자열 끝에 추가되는 문자열.  
 
