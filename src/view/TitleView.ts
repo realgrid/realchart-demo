@@ -39,6 +39,10 @@ export class TitleView extends BoundableElement<Title> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _marginable(): boolean {
+        return false;
+    }
+
     protected _setBackgroundStyle(back: RectElement): void {
         back.setStyleOrClass(this.model.backgroundStyle);
     }

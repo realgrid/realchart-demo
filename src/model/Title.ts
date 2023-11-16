@@ -28,6 +28,7 @@ export class Title extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    verticalAlign = VerticalAlign.MIDDLE;
     /**
      * 제목 텍스트.
      * 
@@ -52,6 +53,10 @@ export class Title extends ChartItem {
      * @config
      */
     backgroundStyle: SVGStyleOrClass;
+    /**
+     * 타이틀과 부제목이 표시되는 영역과 차트 본체 등 과의 간격.
+     */
+    sectionGap = 10;
 
     //-------------------------------------------------------------------------
     // methods
@@ -93,7 +98,14 @@ export class Subtitle extends Title {
     verticalAlign = VerticalAlign.BOTTOM;
     /**
      * 부제목 텍스트
+     * 
      * @config
      */
     text = '';
+    /**
+     * 제목과 사이의 간격.
+     * 
+     * @config
+     */
+    gap = 2;
 }

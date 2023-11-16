@@ -19,6 +19,7 @@ import { Chart, Credits } from "../model/Chart";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem, LegendLocation } from "../model/Legend";
 import { Series } from "../model/Series";
+import { Subtitle, SubtitlePosition, Title } from "../model/Title";
 import { AnnotationView } from "./AnnotationView";
 import { AxisScrollView, AxisView } from "./AxisView";
 import { AxisGuideContainer, BodyView, createAnnotationView } from "./BodyView";
@@ -43,6 +44,12 @@ class TitleSectionView extends SectionView {
     titleView: TitleView;
     subtitleView: TitleView;
 
+    private _hTitle = 0;
+    private _wTitle = 0;
+    private _hSub = 0;
+    private _wSub = 0;
+    private _gap = 0;
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -52,47 +59,173 @@ class TitleSectionView extends SectionView {
     }
 
     protected _doMeasure(doc: Document, chart: Chart, hintWidth: number, hintHeight: number, phase: number): ISize {
-        const models = [chart.title, chart.subtitle];
+        const title = chart.title;
+        const sub = chart.subtitle;
+        let wTitle = 0;
+        let hTitle = 0;
+        let wSub = 0;
+        let hSub = 0;
+        let v = this.titleView;
         let width = hintWidth;
         let height = 0;
+        let gap = 0;
+        let sz: ISize;
 
-        [this.titleView, this.subtitleView].forEach((v, i) => {
-            if (v.visible = models[i].isVisible()) {
-                const sz = v.measure(doc, models[i], hintWidth, hintHeight, phase);
+        if (v.visible = title.isVisible()) {
+            sz = v.measure(doc, title, hintWidth, hintHeight, phase);
+            hTitle = this._hTitle = sz.height;
+            wTitle = this._wTitle = sz.width;
+        }
 
-                height += sz.height;
-                hintHeight -= sz.height;
-                width = Math.max(sz.width);
-            }
-        })
-        return { width, height };
+        if ((v = this.subtitleView).visible = sub.isVisible()) {
+            sz = v.measure(doc, sub, hintWidth, hintHeight, phase);
+            hSub = this._hSub = sz.height;
+            wSub = this._wSub = sz.width;
+            gap = this._gap = +chart.subtitle.gap || 0;
+        }
+
+        switch (sub.position) {
+            case SubtitlePosition.LEFT:
+            case SubtitlePosition.RIGHT:
+                height = Math.max(hTitle, hSub);
+                width = wTitle + gap + wSub;
+                break;
+            default:
+                height = hTitle + gap + hSub;
+                width = Math.max(width, wTitle + wSub);
+                break;
+        }
+        return { width, height: height + Math.max(+title.sectionGap, +sub.sectionGap) };
     }
 
-    protected _doLayout(domain: {xPlot: number, wPlot: number, wChart: number}): void {
-        let y = 0;
 
-        [this.titleView, this.subtitleView].forEach(v => {
-            if (v.visible) {
-                const m = v.model;
-                const w = (v.width > domain.wPlot || m.alignBase === AlignBase.CHART) ? domain.wChart : domain.wPlot;
-                let x = (v.width > domain.wPlot || m.alignBase === AlignBase.CHART) ? 0 : domain.xPlot;
-                
-                v.resizeByMeasured().layout();
-    
-                switch (m.align) {
-                    case Align.LEFT:
-                        break;
-                    case Align.RIGHT:
-                        x += w - v.width;
-                        break;
+    protected _doLayout(domain: {xPlot: number, wPlot: number, wChart: number}): void {
+        const vTitle = this.titleView;
+        const vSub = this.subtitleView;
+        const title = vTitle.model;
+        const sub = vSub.model as Subtitle;
+        const dTitle = (title && title.visible) ? (this._wTitle > domain.wPlot || title.alignBase === AlignBase.CHART) ? domain.wChart : domain.wPlot : 0; 
+        const dSub = (sub && sub.visible) ? (this._wSub > domain.wPlot || title.alignBase === AlignBase.CHART) ? domain.wChart : domain.wPlot : 0; 
+        let pTitle = (this._wTitle > domain.wPlot || (title && title.alignBase === AlignBase.CHART)) ? 0 : domain.xPlot;
+        let pSub = (this._wSub > domain.wPlot || (sub && sub.alignBase === AlignBase.CHART)) ? 0 : domain.xPlot;
+
+        if (dTitle > 0 && dSub > 0) {
+            const getY = (model: Title, h: number, hTitle: number): number => {
+                switch (model.verticalAlign) {
+                    case VerticalAlign.MIDDLE:
+                        return (h - hTitle) / 2;
+                    case VerticalAlign.BOTTOM:
+                        return h - hTitle;
                     default:
-                        x += (w - v.width) / 2;
-                        break;
+                        0;
                 }
-                v.translate(x, y);
-                y += v.height;
+            };
+            const calcYs = () => {
+                const h = Math.max(this._hTitle, this._hSub);
+                yTitle = Math.max(yTitle, yTitle + getY(title, h, this._hTitle));
+                ySub = Math.max(ySub, ySub + getY(sub, h, this._hSub));
+            };
+            const getX = (model: Title, w: number, wTitle: number): number => {
+                switch (model.align) {
+                    case Align.CENTER:
+                        return (w - wTitle) / 2;
+                    case Align.RIGHT:
+                        return w - wTitle;
+                    default:
+                        return 0;
+                }
+            };
+            const calcXs = () => {
+                xTitle = Math.max(xTitle, xTitle + getX(title, dTitle, this._wTitle));
+                xSub = Math.max(xSub, xSub + getX(sub, dSub, this._wSub));
+            };
+            const gap = sub.gap;
+            let yTitle = 0;
+            let xTitle = pTitle;
+            let ySub = 0;
+            let xSub = pSub;
+            let h = 0;
+
+            switch (title.align) {
+                case Align.LEFT:
+                    switch (sub.position) {
+                        case SubtitlePosition.LEFT:
+                            xTitle = xSub + this._wSub + gap;
+                            calcYs();
+                            break;
+                        case SubtitlePosition.RIGHT:
+                            xSub = xTitle + this._wTitle + gap;
+                            switch (sub.align) {
+                                case Align.CENTER:
+                                    xSub = Math.max(xSub, xSub + (dSub - this._wTitle - this._wSub) / 2);
+                                    break;
+                                case Align.RIGHT:
+                                    xSub = Math.max(xSub, pSub + dSub - this._wSub);
+                                    break;
+                            }
+                            calcYs();
+                            break;
+                        case SubtitlePosition.TOP:
+                            yTitle = ySub + this._hSub + gap;
+                            calcXs();
+                            break;
+                        default:
+                            ySub = yTitle + this._hTitle + gap;
+                            calcXs();
+                            break;
+                    }
+                    break;
+
+                case Align.RIGHT:
+                    switch (sub.position) {
+                        case SubtitlePosition.LEFT:
+                            break;
+                        case SubtitlePosition.RIGHT:
+                            break;
+                        case SubtitlePosition.TOP:
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+
+                default:
+                    switch (sub.position) {
+                        case SubtitlePosition.LEFT:
+                            break;
+                        case SubtitlePosition.RIGHT:
+                            break;
+                        case SubtitlePosition.TOP:
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
             }
-        })
+            vTitle.translate(xTitle, yTitle);
+            vSub.translate(xSub, ySub);
+
+        } else if (dTitle > 0 || dSub > 0) {
+            const m = dTitle ? title : sub;
+            const v = dTitle ? vTitle : vSub;
+            const d = dTitle || dSub;
+            const w = dTitle ? this._wTitle : this._wSub;
+            let x = dTitle ? pTitle : pSub;
+
+            v.resizeByMeasured().layout();
+
+            switch (m.align) {
+                case Align.LEFT:
+                    break;
+                case Align.RIGHT:
+                    x += d - w;
+                    break;
+                default:
+                    x += (d - w) / 2;
+                    break;
+            }
+            v.translate(x, 0);
+        }
     }
 }
 

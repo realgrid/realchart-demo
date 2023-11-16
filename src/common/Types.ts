@@ -317,7 +317,15 @@ export enum AlignBase {
     /**
      * @config
      */
-    PLOT = 'plot'
+    PLOT = 'plot',
+    /**
+     * 상위 모델이 존재하는 경우 상위 모델 영역 기준.\
+     * 상위가 없으면 기본값(대부분 'plot')과 동일.
+     * ex) subtitle인 경우 title 기준.
+     * 
+     * @config
+     */
+    PARENT = 'parent'
 }
 
 export interface IValueRange {

@@ -30,7 +30,8 @@ const config = {
     },
     subtitle: {
         text: '(단위: %)',
-        positiion: 'right',
+        position: 'right',
+        align: 'left',
         verticalAlign: 'bottom',
         style: {
             fontSize: '20px'
@@ -45,7 +46,8 @@ const config = {
                 fontWeight: 'bold',
                 fill: '#555'
             }
-        }
+        },
+        crosshair: true
     },
     yAxis: {
         visible: false,

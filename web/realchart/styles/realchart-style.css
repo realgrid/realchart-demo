@@ -345,9 +345,6 @@
     font-size: 24px;
     fill: var(--rct-title-fill);
 }
-.rct-title[data-hassub] {
-    margin-bottom: 2px;
-}
 .rct-title-background {
     fill: none;
 }

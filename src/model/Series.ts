@@ -901,9 +901,9 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             case 'series':
                 return this.displayName();
             case 'name':
-                return this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : point.x;
+                return this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : pickProp(point.x, point.xValue);
             case 'x':
-                return point.x || (this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : '');
+                return point.x || (this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : point.xValue);
             default:
                 return param in point ? point[param] : param;
         }
