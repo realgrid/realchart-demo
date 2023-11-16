@@ -20,8 +20,9 @@ const config = {
         }
     },
     inverted: true,
-    body: {
-        split: true, 
+    split: {
+        visible: true,
+        cols: 2
     },
     legend: {
         align: 'left',
@@ -37,6 +38,7 @@ const config = {
         label: false,
         reversed: true
     },{
+        col: 1,
         line: false,
         position: 'between',
         label: {
@@ -59,6 +61,7 @@ const config = {
         label: false,
         grid: false
     }, {
+        col: 1,
         title: {
             text: '안드로이드(Android) 버전별',
             backgroundStyle: {
