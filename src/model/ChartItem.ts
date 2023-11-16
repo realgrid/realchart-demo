@@ -43,8 +43,8 @@ export class ChartItem extends RcObject {
     // properties
     //-------------------------------------------------------------------------
     /** 
-     * 표시 여부.\
-     * 
+     * 표시 여부.
+     *  
      * @default true
      * @config
      */
