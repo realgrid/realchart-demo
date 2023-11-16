@@ -1,5 +1,11 @@
 {
 	"scatter": {
 		"title": "Scatter"
+	},
+	"scatter-bigdata": {
+		"title": "Scatter - Many Points"
+	},
+	"scatter-jitter": {
+		"title": "Scatter - Jittering"
 	}
 }

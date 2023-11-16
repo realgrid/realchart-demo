@@ -1,5 +1,11 @@
 {
 	"polar": {
 		"title": "Polar"
+	},
+	"polar-categoryvar": {
+		"title": "Polar - Variable Category"
+	},
+	"polar-scatter": {
+		"title": "Polar - Scatter"
 	}
 }

@@ -1,11 +1,12 @@
 export const config = {
   options: {},
   title: 'Axis Guides',
+  legend: true,
   xAxis: { tick: true, title: 'X Axis', grid: true },
   yAxis: {
     tick: true,
     title: 'Y Axis',
-    guide: [
+    guides: [
       { type: 'line', value: 12, label: 'line guide' },
       {
         type: 'range',

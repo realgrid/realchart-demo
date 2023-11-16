@@ -3,10 +3,15 @@ export const config = {
   title: '경기도 성남시 인구 현황',
   legend: true,
   body: { style: { stroke: 'none' } },
-  xAxis: { title: { text: '수정구' }, crosshair: true },
+  xAxis: { title: { text: '수정구1303' }, crosshair: true },
   yAxis: { title: { text: '전체 인구수' } },
   series: {
-    pointLabel: { visible: true, effect: 'outline', style: {} },
+    pointLabel: {
+      visible: true,
+      effect: 'outline',
+      style: {},
+      styleCallback: undefined
+    },
     data: [
       [ '신흥1동', 12904 ],
       [ '신흥2동', 19796 ],

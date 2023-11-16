@@ -1,9 +1,9 @@
 export const config = {
   templates: {},
-  inverted: true,
-  title: 'Wing Chart by Split',
+  title: 'Wing Chart - Split Panes',
   options: {},
   legend: { visible: false, itemGap: 100, backgroundStyle: { fill: 'none' } },
+  split: { visible: true, rows: 2 },
   xAxis: [
     {
       position: 'between',
@@ -21,12 +21,11 @@ export const config = {
   yAxis: [
     { title: '남자', reversed: true, tick: { length: 5, margin: 0 } },
     {
-      side: true,
+      row: 1,
       title: '여자',
       tick: { baseAxis: 0, baseRange: true, length: 5, margin: 0 }
     }
   ],
-  body: { split: true },
   series: [
     {
       name: '남자',
