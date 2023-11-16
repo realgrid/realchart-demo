@@ -59,7 +59,7 @@ export abstract class Annotation extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getPostion(wDomain: number, hDomain: number, width: number, height: number): IPoint {
+    getPostion(inverted: boolean, wDomain: number, hDomain: number, width: number, height: number): IPoint {
         let x: number;
         let y: number
 

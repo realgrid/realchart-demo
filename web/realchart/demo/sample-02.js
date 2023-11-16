@@ -4,26 +4,53 @@
  */
 const config = {
     options: {},
-    title: "Line Series 01",
+    title: {
+        text: "전국아파트 실거래 지수",
+        style: {
+            fontSize: '40px'
+        }
+    },
     xAxis: {
-        type: 'category',
+        type: 'time',
+        label: {
+            rotation: -90,
+            timeFormat: 'yyyy년 MM월'
+        }
     },
     yAxis: {
+        minValue: 0,
+        tick: {
+            stepInterval: 20,
+        }
     },
     series: {
+        name: 'main',
         type: 'line',
-        marker: true,
-        pointLabel: true,
+        lineType: 'spline',
+        marker: false,
+        xStart: '2020-01',
+        xStep: '2m',
         data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['카눈', 8], 
-            ['def', 9], 
-            ['머핀', 11], 
-            ['지리산', 15.3], 
-            ['zzz', 13],
-            ['낙동강', 12.5]
-        ]
+            101, 103, 105, 109, 113, 115, 120, 125, 131, 136, 139, 143, 141, 140, 139, 138, 130, 125, 120, 119, 119, 120, 122, 123    
+        ],
+        style: {
+            strokeWidth: '5px'
+        }
+    },
+    body: {
+        annotations: {
+            type: 'shape',
+            shape: 'rectangle',
+            front: true,
+            series: 'main',
+            xRange: [new Date(2022, 8), new Date(2023, 3)],
+            yRange: [95, 145],
+            style: {
+                fill: 'none',
+                stroke: 'red',
+                strokeWidth: '5px'
+            }
+        }
     }
 }
 

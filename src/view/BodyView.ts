@@ -771,6 +771,7 @@ export class BodyView extends ChartElement<Body> {
     private _crosshairLines: ElementPool<CrosshairView>;
     private _focused: IPointView = null;
 
+    private _inverted: boolean;
     private _zoomRequested: boolean;
     protected _animatable: boolean;
 
@@ -807,7 +808,7 @@ export class BodyView extends ChartElement<Body> {
 
         this._prepareSeries(doc, chart, chart._getSeries().getVisibleSeries());
         this._prepareGauges(doc, chart, chart._getGauges().getVisibles());
-        this.$_prepareAnnotations(doc, chart, chart.body.getAnnotations());
+        this.$_prepareAnnotations(doc, chart.body.getAnnotations());
     }
 
     prepareGuideContainers(): void {
@@ -1021,10 +1022,7 @@ export class BodyView extends ChartElement<Body> {
         });
 
         // annotations
-        this._annotationViews.forEach(v => {
-            v.resizeByMeasured();
-            v.layout().translatep(v.model.getPostion(w, h, v.width, v.height));
-        });
+        this.$_layoutAnnotations(w, h);
 
         // zoom button
         if (this._zoomButton.visible) {
@@ -1062,7 +1060,7 @@ export class BodyView extends ChartElement<Body> {
     }
 
     protected _prepareSeries(doc: Document, chart: IChart, series: Series[]): void {
-        const inverted = chart.isInverted();
+        const inverted = this._inverted = chart.isInverted();
         const map = this._seriesMap;
         const views = this._seriesViews;
 
@@ -1120,8 +1118,9 @@ export class BodyView extends ChartElement<Body> {
         });
     }
 
-    private $_prepareAnnotations(doc: Document, chart: IChart, annotations: Annotation[]): void {
+    private $_prepareAnnotations(doc: Document, annotations: Annotation[]): void {
         const container = this._annotationContainer;
+        const frontContainer = this._frontAnnotationContainer;
         const map = this._annotationMap;
         const views = this._annotationViews;
 
@@ -1137,7 +1136,7 @@ export class BodyView extends ChartElement<Body> {
         (this._annotations = annotations).forEach(a => {
             const v = map.get(a) || createAnnotationView(doc, a);
 
-            container.add(v);
+            (a.front ? frontContainer : container).add(v);
             map.set(a, v);
             views.push(v);
             // v.prepare(doc, a);
@@ -1178,6 +1177,13 @@ export class BodyView extends ChartElement<Body> {
 
         views.prepare(hairs.length, (v, i) => {
             v.setModel(hairs[i])
+        });
+    }
+
+    private $_layoutAnnotations(w: number, h: number): void {
+        this._annotationViews.forEach(v => {
+            v.resizeByMeasured();
+            v.layout().translatep(v.model.getPostion(this._inverted, w, h, v.width, v.height));
         });
     }
 }

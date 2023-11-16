@@ -7,6 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "../../common/Common";
+import { RcElement } from "../../common/RcControl";
+import { RectElement } from "../../common/impl/RectElement";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { BasedSeries, ClusterableSeriesGroup, IClusterable, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
@@ -69,6 +71,10 @@ export class BarSeries extends BasedSeries {
 
     protected _getGroupBase(): number {
         return this.group ? (this.group as BarSeriesGroup).baseValue: this.baseValue;
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, 2);
     }
 }
 

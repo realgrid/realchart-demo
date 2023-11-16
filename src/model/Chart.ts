@@ -15,7 +15,7 @@ import { Body } from "./Body";
 import { ChartItem, n_char_item } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
 import { ILegendSource, Legend } from "./Legend";
-import { IPlottingItem, PlottingItemCollection, Series } from "./Series";
+import { IPlottingItem, ISeries, PlottingItemCollection, Series } from "./Series";
 import { PaletteMode, ThemeCollection } from "./Theme";
 import { Subtitle, Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
@@ -53,7 +53,7 @@ import { SeriesNavigator } from "./SeriesNavigator";
 import { Split } from "./Split";
 import { TextAnnotation } from "./annotation/TextAnnotation";
 import { ImageAnnotation } from "./annotation/ImageAnnotation";
-import { AnnotationCollection } from "./Annotation";
+import { Annotation, AnnotationCollection } from "./Annotation";
 import { ShapeAnnotation } from "./annotation/ShapeAnnotation";
 
 export interface IChart {
@@ -84,7 +84,7 @@ export interface IChart {
     seriesByName(series: string): Series;
     axisByName(axis: string): Axis;
     // getGroup(group: String): SeriesGroup2;
-    getAxes(dir: SectionDir): Axis[];
+    getAxes(dir: SectionDir, visibleOnly: boolean): Axis[];
 
     _getGroupType(type: string): any;
     _getSeriesType(type: string): any;
@@ -509,8 +509,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._yAxes;
     }
 
-    _getAnnotations(): AnnotationCollection {
-        return this._annotations;
+    getAnnotations(): Annotation[] {
+        return this._annotations.getVisibles();
     }
 
     isGauge(): boolean {
@@ -572,7 +572,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._yAxes.get(name);
     }
 
-    getAxes(dir: SectionDir): Axis[] {
+    getAxes(dir: SectionDir, visibleOnly: boolean): Axis[] {
         const xAxes = this._xAxes.items;
         const yAxes = this._yAxes.items;
         let axes: Axis[];
@@ -614,7 +614,11 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
                     break;
             } 
         }
-        return axes || [];
+
+        if (axes) {
+            return visibleOnly ? axes.filter(a => a.visible) : axes;
+        }
+        return [];
     }
 
     _getLegendSources(): ILegendSource[] {
@@ -699,7 +703,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._body.load(source.body || source.plot); // TODO: plot 제거
 
         // annotations
-        this._annotations.load(source.annotations);
+        this._annotations.load(source.annotations || source.annotation);
 
         // series navigator
         this._navigator.load(source.seriesNavigator);

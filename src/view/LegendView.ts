@@ -122,7 +122,7 @@ export class LegendView extends BoundableElement<Legend> {
         const vertical = this._vertical = model.getLayout() === LegendLayout.VERTICAL;
         
         this._ipr = pickNum(model.itemsPerLine, Number.MAX_SAFE_INTEGER);
-        this._gap = model.location !== LegendLocation.PLOT ? pickNum(model.gap, 0) : 0;
+        this._gap = model.location !== LegendLocation.BODY && model.location !== LegendLocation.PLOT ? pickNum(model.gap, 0) : 0;
 
         if (vertical) {
             hintHeight = model.getMaxHeight(hintHeight);
@@ -208,7 +208,7 @@ export class LegendView extends BoundableElement<Legend> {
         let view: LegendItemView;
 
         views.forEach((v, i) => {
-            v.setMarker(items[i].source.legendMarker(doc));
+            v.setMarker(items[i].source.legendMarker(doc, model.markerSize));
             v.measure(doc, items[i], hintWidth, hintHeight, 1);
         });
 

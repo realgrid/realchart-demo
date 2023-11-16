@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { PathElement } from "../../common/RcControl";
-import { toSize } from "../../common/Rectangle";
 import { ISize } from "../../common/Size";
 import { RectElement } from "../../common/impl/RectElement";
 import { SvgShapes } from "../../common/impl/SvgShape";
@@ -39,7 +38,7 @@ export class ShapeAnnotationView extends AnnotationView<ShapeAnnotation> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _setBackgroundStyle(back: RectElement): void {
-        back.setStyle('fill', 'none');
+        back.setStyle('display', 'none');
     }
 
     protected _doMeasure(doc: Document, model: ShapeAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {

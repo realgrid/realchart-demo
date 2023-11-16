@@ -113,7 +113,7 @@ export class LabelElement extends GroupElement {
             this._outline.setStyles({
                 fill: color,
                 stroke: color,
-                strokeWidth: '2px'
+                strokeWidth: this._model._outlineWidth
             });
         }
         return this;

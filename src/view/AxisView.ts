@@ -748,6 +748,8 @@ export class AxisView extends ChartElement<Axis> {
             const nTick = ticks.length;
             const views = this._labelViews;
 
+            container.setStyleOrClass(m.label.style);
+
             while (views.length < nTick) {
                 const t = new AxisLabelElement(doc, 'rct-axis-label');
     

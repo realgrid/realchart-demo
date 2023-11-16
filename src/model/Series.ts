@@ -616,15 +616,15 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return this.label || this.name;
     }
 
-    legendMarker(doc: Document): RcElement {
+    legendMarker(doc: Document, size: number): RcElement {
         if (!this._legendMarker) {
-            this._legendMarker = this._createLegendMarker(doc, LegendItem.MARKER_SIZE);
+            this._legendMarker = this._createLegendMarker(doc, +size || LegendItem.MARKER_SIZE);
         }
         return this._legendMarker;
     }
-    setLegendMarker(elt: RcElement): void {
-        this._legendMarker = elt;
-    }
+    // setLegendMarker(elt: RcElement): void {
+    //     this._legendMarker = elt;
+    // }
 
     legendColor(): string {
         return this._calcedColor;

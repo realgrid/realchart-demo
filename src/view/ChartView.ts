@@ -13,13 +13,15 @@ import { ISize, Size } from "../common/Size";
 import { Align, AlignBase, SectionDir, VerticalAlign, _undefined } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
+import { Annotation } from "../model/Annotation";
 import { Axis } from "../model/Axis";
 import { Chart, Credits } from "../model/Chart";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem, LegendLocation } from "../model/Legend";
 import { Series } from "../model/Series";
+import { AnnotationView } from "./AnnotationView";
 import { AxisScrollView, AxisView } from "./AxisView";
-import { AxisGuideContainer, BodyView } from "./BodyView";
+import { AxisGuideContainer, BodyView, createAnnotationView } from "./BodyView";
 import { ChartElement, SectionView } from "./ChartElement";
 import { HistoryView } from "./HistoryView";
 import { LegendView } from "./LegendView";
@@ -169,8 +171,8 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    axes: Axis[]; 
     views: AxisView[] = [];
+    visibles: AxisView[] = [];
     isX: boolean;
     isHorz: boolean;
     isOpposite: boolean;
@@ -188,15 +190,19 @@ class AxisSectionView extends SectionView {
     //-------------------------------------------------------------------------
     prepare(doc: Document, axes: Axis[], guideContainer: AxisGuideContainer, frontGuideContainer: AxisGuideContainer): void {
         const views = this.views;
+        let i = views.length;
 
         while (views.length < axes.length) {
             const v = new AxisView(doc);
 
-            this.add(v);
+            if (axes[i++].visible) {
+                this.add(v);
+            }
             views.push(v);
         }
         while (views.length > axes.length) {
-            views.pop().remove();
+            const v = views.pop();
+            v.parent && v.remove();
         }
 
         // 추측 계산을 위해 모델을 미리 설정할 필요가 있다.
@@ -205,9 +211,7 @@ class AxisSectionView extends SectionView {
             v.prepareGuides(doc, guideContainer, frontGuideContainer);
         });
 
-        this.axes = axes;
-
-        if (this.setVisible(views.length > 0)) {
+        if (this.setVisible(views.filter(v => v.visible).length > 0)) {
             const m = views[0].model;
 
             this.isX = m._isX;
@@ -279,18 +283,19 @@ class AxisSectionView extends SectionView {
 
         [this.views].forEach(views => {
             if (views) {
-                const axes = this.axes;
                 const width = !this.isX && inverted ? hintWidth : hintWidth;
                 const height = !this.isX ? hintHeight : hintHeight;
                 let w2 = 0;
                 let h2 = 0;
 
-                views.forEach((v, i) => {
-                    const sz = v.measure(doc, axes[i], width, height, phase);
+                views.forEach(v => {
+                    if (v.visible) {
+                        const sz = v.measure(doc, v.model, width, height, phase);
         
-                    v.setAttr('xy', axes[i]._isX ? 'x' : 'y');
-                    w2 += sz.width;
-                    h2 += sz.height;
+                        v.setAttr('xy', v.model._isX ? 'x' : 'y');
+                        w2 += sz.width;
+                        h2 += sz.height;
+                    }
                 })
                 if (this.isHorz) {
                     h2 += (views.length - 1) * this._gap;
@@ -322,19 +327,21 @@ class AxisSectionView extends SectionView {
                 let p = 0;
 
                 views.forEach(v => {
-                    if (this.isHorz) {
-                        v.resize(w, v.mh);
-                    } else {
-                        v.resize(v.mw, h);
-                    }
-                    v.layout();
-        
-                    if (this.isHorz) {
-                        v.translate(x, this.dir === SectionDir.TOP ? h - p - v.mh : p);
-                        p += v.mh + this._gap;
-                    } else {
-                        v.translate(this.dir === SectionDir.RIGHT ? p : w - p - v.mw, y);
-                        p += v.mw + this._gap;
+                    if (v.visible) {
+                        if (this.isHorz) {
+                            v.resize(w, v.mh);
+                        } else {
+                            v.resize(v.mw, h);
+                        }
+                        v.layout();
+            
+                        if (this.isHorz) {
+                            v.translate(x, this.dir === SectionDir.TOP ? h - p - v.mh : p);
+                            p += v.mh + this._gap;
+                        } else {
+                            v.translate(this.dir === SectionDir.RIGHT ? p : w - p - v.mw, y);
+                            p += v.mw + this._gap;
+                        }
                     }
                 });
     
@@ -414,6 +421,11 @@ export class ChartView extends LayerElement {
     private _currBody: BodyView;
     private _axisSectionMap: {[key: string]: AxisSectionView} = {};
     private _paneContainer: PaneContainer;
+    private _annotationContainer: LayerElement;
+    private _frontAnnotationContainer: LayerElement;
+    private _annotationViews: AnnotationView<Annotation>[] = [];
+    private _annotationMap = new Map<Annotation, AnnotationView<Annotation>>();
+    private _annotations: Annotation[];
     _navigatorView: NavigatorView;
     private _creditView: CreditView;
     private _historyView: HistoryView;
@@ -430,6 +442,8 @@ export class ChartView extends LayerElement {
     constructor(doc: Document) {
         super(doc, 'rct-chart');
 
+        this.add(this._annotationContainer = new LayerElement(doc, 'rct-annotations'));
+
         // plot 영역이 마지막이어야 line marker 등이 축 상에 표시될 수 있다.
         this.add(this._plotContainer = new LayerElement(doc, 'rct-plot-container'));
         this._plotContainer.add(this._currBody = this._bodyView = new BodyView(doc, this));
@@ -442,9 +456,9 @@ export class ChartView extends LayerElement {
         };
 
         this.add(this._paneContainer = new PaneContainer(doc, this))
-
         this.add(this._titleSectionView = new TitleSectionView(doc));
         this.add(this._legendSectionView = new LegendSectionView(doc));
+        this.add(this._frontAnnotationContainer = new LayerElement(doc, 'rct-front-annotations'));
         this.add(this._navigatorView = new NavigatorView(doc));
         this.add(this._creditView = new CreditView(doc));
         this.add(this._historyView = new HistoryView(doc));
@@ -551,6 +565,9 @@ export class ChartView extends LayerElement {
             }
             this._navigatorView.measure(doc, navigator, w, h, phase);
         }
+
+        // annotations
+        this.$_prepareAnnotations(doc, model.getAnnotations());
     }
 
     layout(): void {
@@ -828,7 +845,7 @@ export class ChartView extends LayerElement {
         if (vLegend.visible) {
             let v: number;
 
-            if (legend.location === LegendLocation.PLOT) {
+            if (legend.location === LegendLocation.BODY || legend.location === LegendLocation.PLOT) {
                 let off = +legend.offsetX || 0;
 
                 // x = y = 0;
@@ -1073,7 +1090,7 @@ export class ChartView extends LayerElement {
             const v = map[dir];
 
             if (need) {
-                v.prepare(doc, m.getAxes(dir as any), guideContainer, frontContainer);
+                v.prepare(doc, m.getAxes(dir as any, false), guideContainer, frontContainer);
             } else {
                 v.visible = false;
             }
@@ -1218,5 +1235,29 @@ export class ChartView extends LayerElement {
 
         // body
         this._polarView.measure(doc, m.body, w, h, phase);
+    }
+
+    private $_prepareAnnotations(doc: Document, annotations: Annotation[]): void {
+        const container = this._annotationContainer;
+        const map = this._annotationMap;
+        const views = this._annotationViews;
+
+        for (const a of map.keys()) {
+            if (annotations.indexOf(a) < 0) {
+                map.delete(a);
+            }
+        }
+
+        views.forEach(v => v.remove());
+        views.length = 0;
+
+        (this._annotations = annotations).forEach(a => {
+            const v = map.get(a) || createAnnotationView(doc, a);
+
+            container.add(v);
+            map.set(a, v);
+            views.push(v);
+            // v.prepare(doc, a);
+        });
     }
 }

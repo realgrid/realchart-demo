@@ -6,11 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isBoolean, isObject, isString } from "../common/Common";
+import { isArray, isBoolean, isObject, isString, pickNum } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { SvgRichText, RichTextParamCallback } from "../common/RichText";
-import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
+import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
 import { IChart } from "./Chart";
@@ -240,6 +240,16 @@ export enum ChartTextEffect {
 }
 
 export abstract class ChartText extends ChartItem {
+    
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _outlineThickness = 2;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _outlineWidth = '2px';
 
     //-------------------------------------------------------------------------
     // properties
@@ -271,6 +281,16 @@ export abstract class ChartText extends ChartItem {
      * @config
      */
     autoContrast = true;// true;
+    
+    get outlineThickness(): number {
+        return this._outlineThickness;
+    }
+    set outlineThickness(value: number) {
+        if (value !== this._outlineThickness) {
+            this._outlineThickness = value;
+            this._outlineWidth = pickNum(value, 2) + 'px';
+        }
+    }
 }
 
 export abstract class FormattableText extends ChartText {

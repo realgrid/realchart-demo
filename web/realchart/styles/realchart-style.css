@@ -407,7 +407,7 @@
     stroke: var(--rct-axis-tick-stroke);
     stroke-width: 1px;
 }
-.rct-axis-label {
+.rct-axis-labels {
     font-size: 14px;
     fill: var(--rct-axis-label-fill);
 }
@@ -425,12 +425,11 @@
     fill-opacity: 0.9;
 }
 .rct-axis-guide-label {
-    fill: blue;
+    fill: #555;
 }
 .rct-axis-guide-line {
-    stroke: blue;
+    stroke: #555;
     stroke-width: 2px;
-    stroke-dasharray: 4;
 }
 .rct-axis-guide-range {
     stroke: none;

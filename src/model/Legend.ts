@@ -19,7 +19,7 @@ import { Widget } from "./Widget";
 export interface ILegendSource {
     visible: boolean;
 
-    legendMarker(doc: Document): RcElement;
+    legendMarker(doc: Document, size: number): RcElement;
     legendColor(): string;
     legendLabel(): string;
 }
@@ -79,8 +79,8 @@ export enum LegendLocation {
      * 
      * @config
      */
-    PLOT = 'plot',
-    SUBPLOT = 'subplot'
+    PLOT = 'plot', // TODO: 제거
+    BODY = 'body',
 }
 
 export enum LegendLayout {
@@ -198,6 +198,13 @@ export class Legend extends Widget {
      */
     itemGap = 8;
     /**
+     * marker 크기.
+     * 
+     * @default 10 픽셀.
+     * @config
+     */
+    markerSize: number;
+    /**
      * marker와 text사이의 간격.
      * 
      * @config
@@ -277,7 +284,7 @@ export class Legend extends Widget {
     }
 
     getLayout(): LegendLayout {
-        if (this.layout === LegendLayout.AUTO && this._location !== LegendLocation.PLOT) {
+        if (this.layout === LegendLayout.AUTO && this._location !== LegendLocation.BODY && this._location !== LegendLocation.PLOT) {
             switch (this._location) {
                 case LegendLocation.BOTTOM:
                 case LegendLocation.TOP:

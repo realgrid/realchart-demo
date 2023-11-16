@@ -355,7 +355,7 @@ export abstract class AxisGuide extends AxisItem {
      * 
      * @config
      */
-    front = true;
+    front = false;
     /**
      * 모든 guide들 중에서 값이 클수록 나중에 그려진다.
      * 
@@ -468,6 +468,16 @@ export abstract class AxisTick extends AxisItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doLoadSimple(source: any): boolean {
+        if (!isNaN(+source)) {
+            this.length = +source;
+            return true;
+        }
+        return super._doLoadSimple(source);
+    }
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

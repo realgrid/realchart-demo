@@ -23,7 +23,16 @@ const config = {
         guides: [{
             type: 'line',
             value: 12,
-            label: 'line guide'
+            label: {
+                text: 'line guide',
+                style: {
+                    fill: 'blue'
+                }
+            },
+            style: {
+                stroke: 'blue',
+                strokeDasharray: '4'
+            }
         }, {
             type: 'range',
             start: 3,

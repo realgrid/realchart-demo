@@ -8,8 +8,7 @@
 
 import { isArray, isNumber, isObject, isString, pickNum } from "../../common/Common";
 import { DatetimeFormatter } from "../../common/DatetimeFormatter";
-import { isNull, pad2 } from "../../common/Types";
-import { AxisLabel, AxisTick, IAxisTick } from "../Axis";
+import { AxisLabel, AxisTick } from "../Axis";
 import { IChart } from "../Chart";
 import { ContinuousAxis, ContinuousAxisTick } from "./LinearAxis";
 

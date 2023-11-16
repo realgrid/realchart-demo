@@ -71,10 +71,10 @@ export class ScatterSeries extends MarkerSeries {
         return new ShapeLegendMarkerView(doc, size);
     }
 
-    legendMarker(doc: Document): RcElement {
-        const m = super.legendMarker(doc);
+    legendMarker(doc: Document, size: number): RcElement {
+        const m = super.legendMarker(doc, size);
 
-        (m as ShapeLegendMarkerView).setShape(this.shape, Math.min(LegendItem.MARKER_SIZE, this.radius * 2));
+        (m as ShapeLegendMarkerView).setShape(this.shape, Math.min(+size || LegendItem.MARKER_SIZE, this.radius * 2));
         return m;
     }
 }
