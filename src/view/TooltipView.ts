@@ -32,6 +32,7 @@ export class TooltipView extends RcElement {
     private _topHeight = 10;
     private _tail: PathElement;
     private _tailSize = 10;
+    private _radius = 5;
     private _back: PathElement;
     private _textView: TextElement;
     private _richText: SvgRichText;
@@ -134,12 +135,13 @@ export class TooltipView extends RcElement {
 
     private draw(x, y, w, h, position: string): void {
         const tail = this._tailSize;
-        const border = 1;
-        let pb, path;
+        const radius = this._radius;
+        const topHeight = this._topHeight;
+        let backPath, topPath;
         switch (position) {
             case TooltipPosition.LEFT:
                 x -= tail
-                path = [
+                backPath = [
                     'M', x, y,
                     'L', x + w, y,
                     'L', x + w, y + (h / 2) - (tail / 2),
@@ -152,7 +154,7 @@ export class TooltipView extends RcElement {
                 break;
             case TooltipPosition.RIGHT:
                 x += tail
-                path = [
+                backPath = [
                     'M', x, y,
                     'L', x + w, y,
                     'L', x + w, y + h,
@@ -165,7 +167,7 @@ export class TooltipView extends RcElement {
                 break;
             case TooltipPosition.BOTTOM:
                 y += tail;
-                path = [
+                backPath = [
                     'M', x, y,
                     'L', x + (w / 2) - (tail / 2), y,
                     'L', x + (w / 2), y - tail,
@@ -179,27 +181,43 @@ export class TooltipView extends RcElement {
             case TooltipPosition.TOP:
             default:
             y -= tail;
-            path = [
-                'M', x, y,
-                'L', x + w, y,
-                'L', x + w, y + h,
-                'L', x + (w / 2) + (tail / 2), y + h,
-                'L', x + (w / 2), y + h + tail,
-                'L', x + (w / 2) - (tail / 2), y + h,
-                'L', x, y + h,
+            backPath = [
+                'M', x + radius, y,
+                'l', w - (radius * 2), 0,
+                'q', radius, 0, radius, radius,
+                'l', 0, h - (radius * 2),
+                'q', 0, radius, -radius, radius,
+                'l', radius - (w / 2) + (tail / 2), 0,
+                'l', -(tail / 2), tail,
+                'l', -(tail / 2), - tail,
+                'l', radius - (w / 2) + (tail / 2), 0,
+                'q', -radius, 0, -radius, -radius,
+                'l', 0, (radius * 2) - h,
+                'q', 0, -radius, radius, -radius,
                 'Z'
-            ];  
+            ];
+            topPath = [
+                'M', x + radius, y,
+                'l', w - (radius * 2), 0,
+                'q', radius, 0, radius, radius,
+                'l', 0, topHeight - radius,
+                'l', -w, 0,
+                'l', 0, radius - topHeight,
+                'q', 0, -radius, radius, -radius,
+                'Z'
+            ]
         }
         // text
         const tv = this._textView;
         const r = tv.getBBounds();
         tv.translate(x + (w - r.width) / 2, y + (h - r.height + this._topHeight) / 2);
         // top
-        pb = new PathBuilder();
-        pb.rect(x + border / 2, y + border / 2, w - border, this._topHeight);
-        this._top.setPath(pb.end(true));
+        // pb = new PathBuilder();
+        // pb.rect(x + border / 2, y + border / 2, w - border, this._topHeight);
+        // this._top.setPath(pb.end(true));
         
-        this._back.setPath(path);
+        this._top.setPath(topPath);
+        this._back.setPath(backPath);
     }
 
     // M402.5,134.5
