@@ -54,6 +54,7 @@ import { Split } from "./Split";
 import { TextAnnotation } from "./annotation/TextAnnotation";
 import { ImageAnnotation } from "./annotation/ImageAnnotation";
 import { AnnotationCollection } from "./Annotation";
+import { ShapeAnnotation } from "./annotation/ShapeAnnotation";
 
 export interface IChart {
     type: string;
@@ -170,6 +171,7 @@ const gauge_group_types = {
 const annotation_type = {
     'text': TextAnnotation,
     'image': ImageAnnotation,
+    'shape': ShapeAnnotation,
 };
 
 export class Credits extends ChartItem {

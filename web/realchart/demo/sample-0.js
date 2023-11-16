@@ -122,7 +122,6 @@ const config = {
         }],
         viewRanges: {
             fromValue: 15.4,
-            step: 0.1,
             colors: ['#08529d', '#4392ca', '#69aed4', '#9fcadf', '#ffe0d1', '#fdb89e', '#fa9275', '#fa684b', '#f23a29', '#ef392f', '#ce161e', '#a40f15']
         }
 	},

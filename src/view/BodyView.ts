@@ -58,8 +58,9 @@ import { BulletGaugeGroupView, BulletGaugeView } from "./gauge/BulletGaugeView";
 import { ButtonElement } from "../common/ButtonElement";
 import { TextAnnotationView } from "./annotation/TextAnnotationView";
 import { Annotation } from "../model/Annotation";
-import { AnnotationView } from "./annotation/AnnotationView";
+import { AnnotationView } from "./AnnotationView";
 import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
+import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -95,9 +96,15 @@ const gauge_types = {
     'lineargroup': LinearGaugeGroupView,
     'bulletgroup': BulletGaugeGroupView,
 };
+
 const annotation_types = {
     'text': TextAnnotationView,
     'image': ImageAnnotationView,
+    'shape': ShapeAnnotationView,
+}
+
+export function createAnnotationView(doc: Document, annotation: Annotation): AnnotationView<Annotation> {
+    return new annotation_types[annotation._type()](doc);
 }
 
 export function createSeriesView(doc: Document, series: Series): SeriesView<Series> {
@@ -1032,10 +1039,6 @@ export class BodyView extends ChartElement<Body> {
         return new gauge_types[gauge._type()](doc);
     }
 
-    private $_createAnnotationView(doc: Document, annotation: Annotation): AnnotationView<Annotation> {
-        return new annotation_types[annotation._type()](doc);
-    }
-
     private $_prepareGrids(doc: Document, chart: Chart): void {
         const needAxes = chart.needAxes();
         const container = this._gridContainer;
@@ -1132,7 +1135,7 @@ export class BodyView extends ChartElement<Body> {
         views.length = 0;
 
         (this._annotations = annotations).forEach(a => {
-            const v = map.get(a) || this.$_createAnnotationView(doc, a);
+            const v = map.get(a) || createAnnotationView(doc, a);
 
             container.add(v);
             map.set(a, v);

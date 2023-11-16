@@ -6,9 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { _undefined } from "../../common/Types";
-import { Annotation } from "../../model/Annotation";
-import { BoundableElement } from "../ChartElement";
+import { _undefined } from "../common/Types";
+import { Annotation } from "../model/Annotation";
+import { BoundableElement } from "./ChartElement";
 
 export abstract class AnnotationView<T extends Annotation> extends BoundableElement<T> {
 

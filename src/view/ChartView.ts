@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ButtonElement } from "../common/ButtonElement";
-import { pickNum } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { ClipElement, LayerElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";

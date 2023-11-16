@@ -7,11 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isString } from "../../common/Common";
-import { SVGStyleOrClass, isNull } from "../../common/Types";
-import { Annotation, SizableAnnotation } from "../Annotation";
+import { isNull } from "../../common/Types";
+import { SizableAnnotation } from "../Annotation";
 
 /**
  * 이미지 Annotation 모델.
+ * 
+ * @config chart.annotation[type=image]
  */
 export class ImageAnnotation extends SizableAnnotation {
 

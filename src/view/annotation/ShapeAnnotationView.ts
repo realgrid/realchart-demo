@@ -1,58 +1,57 @@
 ////////////////////////////////////////////////////////////////////////////////
-// TextAnnotationView.ts
+// ShapeAnnotationView.ts
 // 2023. 06. 20. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { PathElement } from "../../common/RcControl";
 import { toSize } from "../../common/Rectangle";
 import { ISize } from "../../common/Size";
 import { RectElement } from "../../common/impl/RectElement";
-import { TextAnchor, TextElement, TextLayout } from "../../common/impl/TextElement";
-import { TextAnnotation } from "../../model/annotation/TextAnnotation";
+import { SvgShapes } from "../../common/impl/SvgShape";
+import { ShapeAnnotation } from "../../model/annotation/ShapeAnnotation";
 import { AnnotationView } from "../AnnotationView";
 
-export class TextAnnotationView extends AnnotationView<TextAnnotation> {
+export class ShapeAnnotationView extends AnnotationView<ShapeAnnotation> {
 
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly CLASS_NAME: string = 'rct-text-annotation';
+    static readonly CLASS_NAME: string = 'rct-shape-annotation';
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _textView: TextElement;
+    private _shapeView: PathElement;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, TextAnnotationView.CLASS_NAME);
+        super(doc, ShapeAnnotationView.CLASS_NAME);
 
-        this.add(this._textView = new TextElement(doc));
-        this._textView.anchor = TextAnchor.START;
+        this.add(this._shapeView = new PathElement(doc));
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _setBackgroundStyle(back: RectElement): void {
-        back.setStyleOrClass(this.model.backgroundStyle);
+        back.setStyle('fill', 'none');
     }
 
-    protected _doMeasure(doc: Document, model: TextAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this._textView.text = this.model.text;
+    protected _doMeasure(doc: Document, model: ShapeAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
+        const sz = model.getSize(hintWidth, hintHeight);
 
-        return toSize(this._textView.getBBounds());
+        SvgShapes.setShape(this._shapeView, model.shape, sz.width / 2, sz.height / 2);
+
+        return sz;
     }
 
     protected _doLayout(param: any): void {
-        const r = this._textView.getBBounds();
-
-        this._textView.translate(this._paddings.left, this._paddings.top);
-        this._textView.layoutText();
+        this._shapeView.translate(this._paddings.left, this._paddings.top);
 
         super._doLayout(param);
     }

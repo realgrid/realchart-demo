@@ -237,7 +237,7 @@ export class SvgShapes {
         return path;
     }
 
-    static setShape(target: PathElement, shape: Shape, radius: number): void {
+    static setShape(target: PathElement, shape: Shape, rx: number, ry: number): void {
         let path: (string | number)[];
 
         switch (shape) {
@@ -247,11 +247,11 @@ export class SvgShapes {
             case Shape.TRIANGLE:
             case Shape.ITRIANGLE:
             case Shape.STAR:
-                path = SvgShapes[shape](0, 0, radius * 2, radius * 2);
+                path = SvgShapes[shape](0, 0, rx * 2, ry * 2);
                 break;
 
             default:
-                path = SvgShapes.circle(radius, radius, radius);
+                path = SvgShapes.circle(rx, rx, rx);
                 break;
         }
         target.setPath(path);

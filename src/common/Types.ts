@@ -137,6 +137,7 @@ export function calcPercentF(size: IPercentSize, domain: number): number {
 
 export interface SVGStyles {
     fill?: string;
+    fillOpacity?: string;
     stroke?: string;
     strokeWidth?: string;
     fontFamily?: string;
@@ -330,7 +331,7 @@ export interface IValueRange {
 export interface IValueRanges {
     fromValue?: number;
     toValue?: number;
-    step: number;
+    steps?: number[];
     colors: string[];
     labels?: string[];
     styles?: SVGStyleOrClass[];
@@ -372,24 +373,42 @@ export const buildValueRanges = function (source: IValueRange[] | IValueRanges, 
                 r.toValue = Math.min(r.toValue, max);
             })
         }
-    } else if (isObject(source) && source.step > 0 && isArray(source.colors) && source.colors.length > 0) {
-        let from = pickNum(source.fromValue, min);
-        const to = pickNum(source.toValue, max);
-        const step = source.step;
+    } else if (isObject(source) && isArray(source.colors) && source.colors.length > 0) {
         const colors = source.colors;
         const styles = isArray(source.styles) ? source.styles : null;
-        let i = 0;
 
         ranges = [];
 
-        while (from < to) {
-            ranges.push({
-                fromValue: from,
-                toValue: from += step,
-                color: colors[Math.min(i, colors.length - 1)],
-                style: styles ? styles[Math.min(i, styles.length - 1)] : _undefined
-            });
-            i++;
+        if (isArray(source.steps) && source.steps.length > 0) {
+            const steps = isArray(source.steps) ? source.steps : null;
+
+            if (min < steps[0]) steps.unshift(min);
+            if (max > steps[steps.length - 1]) steps.push(max);
+
+            for (let i = 0; i < steps.length - 1; i++) {
+                ranges.push({
+                    fromValue: steps[i],
+                    toValue: steps[i + 1],
+                    color: colors[Math.min(i, colors.length - 1)],
+                    style: styles ? styles[Math.min(i, styles.length - 1)] : _undefined
+                });
+            }
+
+        } else {
+            let from = pickNum(source.fromValue, min);
+            const to = pickNum(source.toValue, max);
+            const step = (to - from) / colors.length;
+            let i = 0;
+
+            while (from < to) {
+                ranges.push({
+                    fromValue: from,
+                    toValue: from += step,
+                    color: colors[Math.min(i, colors.length - 1)],
+                    style: styles ? styles[Math.min(i, styles.length - 1)] : _undefined
+                });
+                i++;
+            }
         }
     }
     return ranges;

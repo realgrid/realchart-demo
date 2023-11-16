@@ -1,21 +1,22 @@
 ////////////////////////////////////////////////////////////////////////////////
-// TextAnnotation.ts
-// 2023. 11. 11. created by woori
+// ShapeAnnotation.ts
+// 2023. 11. 16. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isString } from "../../common/Common";
-import { SVGStyleOrClass, isNull } from "../../common/Types";
-import { Annotation } from "../Annotation";
+import { Shape } from "../../common/impl/SvgShape";
+import { SizableAnnotation } from "../Annotation";
+import { IChart } from "../Chart";
 
 /**
- * Text Annotation 모델.
+ * Shape Annotation 모델.
  * 
- * @config chart.annotation[type=text]
+ * @config chart.annotation[type=shape]
  */
-export class TextAnnotation extends Annotation {
+export class ShapeAnnotation extends SizableAnnotation {
 
     //-------------------------------------------------------------------------
     // consts
@@ -32,40 +33,43 @@ export class TextAnnotation extends Annotation {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart);
+
+        this.width = this.height = 64;
+    }
+
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    '@config width' = 64;
+    '@config height' = 64;
+
     /**
-     * 표시할 텍스트.
+     * Shape 종류.
      * 
      * @config 
      */
-    text = 'Title';
+    shape: Shape = Shape.SQUARE;
     /**
-     * 텍스트 배경 스타일.
-     * 경계 및 배경 색, padding 스타일을 지정할 수 있다.
-     * 
-     * @config
+     * Shape path.
+     * 이 속성이 지정되면 {@link shape}는 무시된다.
      */
-    backgroundStyle: SVGStyleOrClass;
+    path: string;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    isVisible(): boolean {
-        return this.visible && !isNull(this.text);
-    }
-    
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     _type(): string {
-        return 'text';
+        return 'shape';
     }
 
     protected _doLoadSimple(source: any): boolean {
         if (isString(source)) {
-            this.text = source;
+            this.shape = source as any;
             return true;
         }
         return super._doLoadSimple(source);

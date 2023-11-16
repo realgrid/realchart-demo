@@ -262,7 +262,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const p = mv.point as LineSeriesPoint;
         const rd = mv._radius = series.getRadius(p);
 
-        SvgShapes.setShape(mv, series.getShape(p), rd);
+        SvgShapes.setShape(mv, series.getShape(p), rd, rd);
         mv.translate(x -= rd, y -= rd);
     }
 

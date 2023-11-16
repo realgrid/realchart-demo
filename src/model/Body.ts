@@ -77,6 +77,8 @@ export class BodySplit extends ChartItem {
 /**
  * 시리즈 및 게이지들이 plotting되는 영역 모델.\
  * 설정 모델 등에서 'body'로 접근한다.
+ * 
+ * @config chart.body
  */
 export class Body extends ChartItem {
 
