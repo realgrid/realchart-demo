@@ -7,13 +7,23 @@ true면 초 이동 시 애니메이션 효과로 표시한다.
 `default: false`  
 
 ### duration: `number{:js}`[#duration]
-animatable 이 true일 때 애니메이션 기간.
+**[animatable](#animatable)** 이 true일 때 애니메이션 기간.
 밀리초 단위로 지정한다.  
 `default: 200`  
 
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
 
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |
 ### thickness: `number{:js}`[#thickness]
 픽셀 단위 바늘 두께.
 침 종류에 따라 기본값이 다르다.  
@@ -24,6 +34,5 @@ animatable 이 true일 때 애니메이션 기간.
 침 종류에 따라 기본값이 다르다.  
 
 ### visible: `boolean{:js}`[#visible]
-표시 여부.\
-모델에 따라 기본값이 다르다.
-<FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  
+표시 여부.\  
+`default: true`  

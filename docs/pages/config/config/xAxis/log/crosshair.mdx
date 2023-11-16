@@ -15,8 +15,18 @@ true면 마우스 위치를 따라 항상 표시하고, false면 data point 위�
 
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
 
-### type[#type]
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |
+### type: `'auto'|'line'{:js}`[#type]
 표시 방식.  
 - `'auto'` 카테고리 축이면 bar, 연속 축이면 line으로 표시한다.
 - `'line'` 항상 line으로 표시한다.
@@ -24,6 +34,5 @@ true면 마우스 위치를 따라 항상 표시하고, false면 data point 위�
 `default: CrosshairType.AUTO`  
 
 ### visible: `boolean{:js}`[#visible]
-표시 여부.\
-모델에 따라 기본값이 다르다.
-<FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  
+표시 여부.\  
+`default: true`  

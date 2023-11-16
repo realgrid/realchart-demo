@@ -724,18 +724,20 @@ ${table(tableHead, tableBody)}
     if (!properties.length)
       return "";
     const head = heading("Config Properties", 2);
-    const body = properties.map((m) => {
+    const cols = ["Name", "Type", "Description"];
+    const tableCols = ["", ...cols, ""].join(" | ");
+    const seperator = ["", ...Array(cols.length).fill("---"), ""].join(" | ");
+    const tableHead = [tableCols, seperator].join("  \n");
+    const tableBody = properties.map((p) => {
       var _a;
-      const ename = escape(m.name);
-      const name = `${m.static ? "static " : ""}${m.readonly ? "*`<readonly>`* " : ""}${ename}`.trim();
-      const title = heading(`${name}: \`${m.type || m.dtype.name}{:js}\``, 3) + `[#${ename}]`;
-      const desc = ((_a = m.content) == null ? void 0 : _a.trim()) || "";
-      return `${title}
-${desc}
-${this.getSee(m.see)}`;
+      const pname = escape(p.name).trim();
+      const ptype = (p.type || p.dtype.name).replace(/\|/g, "\\|");
+      const desc = ((_a = p.content) == null ? void 0 : _a.trim()) || "";
+      return ["", pname, `\`${ptype}{:js}\``, desc, ""].join(" | ");
     });
     return `${head}
-${body.join("\n")}`;
+${tableHead}
+${tableBody.join("  \n")}`;
   }
   getProperties(properties) {
     if (!properties.length)

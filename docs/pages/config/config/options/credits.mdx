@@ -8,21 +8,31 @@
 `default: Align.RIGHT`  
 
 ### floating: `boolean{:js}`[#floating]
-true이면  verticalAlign 이 'top', 'bottom'일 때도,
+true이면  **[verticalAlign](#verticalalign)** 이 'top', 'bottom'일 때도,
 별도의 영역을 차지하지 않고 chart view위에 표시된다.  
 `default: false`  
 
 ### offsetX: `number{:js}`[#offsetX]
-align 으로 지정된 수평 위치에서, 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.  
+**[align](#align)** 으로 지정된 수평 위치에서, 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.  
 `default: 2`  
 
 ### offsetY: `number{:js}`[#offsetY]
-verticalAlign 으로 지정된 수직 위치에서, 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.  
+**[verticalAlign](#verticalalign)** 으로 지정된 수직 위치에서, 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.  
 `default: 1`  
 
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
 
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |
 ### text: `string{:js}`[#text]
 표시할 문자열.  
 `default: 'RealChart` v1.0' 
@@ -37,6 +47,5 @@ verticalAlign 으로 지정된 수직 위치에서, 양수로 지정하면 안�
 `default: VerticalAlign.BOTTOM`  
 
 ### visible: `boolean{:js}`[#visible]
-표시 여부.\
-모델에 따라 기본값이 다르다.
-<FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  
+표시 여부.\  
+`default: true`  

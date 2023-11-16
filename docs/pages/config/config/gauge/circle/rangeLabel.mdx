@@ -1,11 +1,20 @@
 ## rangeLabel
-position 이 'inside'일 때만 표시될 수 있다.
+**[position](#position)** 이 'inside'일 때만 표시될 수 있다.
 ## Properties
 
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
 
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |
 ### visible: `boolean{:js}`[#visible]
-표시 여부.\
-모델에 따라 기본값이 다르다.
-<FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  
+표시 여부.\  
+`default: true`  

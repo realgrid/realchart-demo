@@ -10,63 +10,30 @@
 
 
 ## Config Properties
-### clipped: `boolean{:js}`[#clipped]
-body 영역을 벗어난 data point view는 잘라낸다.
-
-### color: `string{:js}`[#color]
-데이터 포인트 기본 색.
-
-### colorField: `string{:js}`[#colorField]
-undefined이면, data point의 값이 객체일 때 'color'.
-
-### dataProp: `string{:js}`[#dataProp]
-undefined이면 "data".
-
-### onPointClick: `PointClickCallbck{:js}`[#onPointClick]
-데이터 point가 클릭될 때 발생하는 이벤트 콜백.
-
-### pointColors: `boolean | string[]{:js}`[#pointColors]
-데이터 포인트별 색들을 지정한다.
-
-### pointStyleCallback: `PointStyleCallback{:js}`[#pointStyleCallback]
-데이터 point의 동적 스타일 콜백.
-
-### ranges: `IValueRange[]{:js}`[#ranges]
-값 범위 목록.
-
-### shape: `Shape{:js}`[#shape]
-명시적으로 지정하지 않으면 typeIndex에 따라 Shapes 중 하나로 돌아가면서 설정된다.
-
-### style: `SVGStyles | string{:js}`[#style]
-스타일셋 혹은 class selector.
-
-### visibleInLegend: `boolean{:js}`[#visibleInLegend]
-명시적 false로 지정하면 legend에 표시하지 않는다.
-
-### xAxis: `string | number{:js}`[#xAxis]
-
-
-### xField: `string | number{:js}`[#xField]
-undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'.
-
-### xStart: `any{:js}`[#xStart]
-x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.
-
-### xStep: `string | number{:js}`[#xStep]
-x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
-
-### yAxis: `string | number{:js}`[#yAxis]
-
-
-### yField: `string | number{:js}`[#yField]
-undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'.
-
-### zOrder: `number{:js}`[#zOrder]
-
-
-### visible: `boolean{:js}`[#visible]
-표시 여부.
-
+ | Name | Type | Description |   
+ | --- | --- | --- | 
+ | clipped | `boolean{:js}` | body 영역을 벗어난 data point view는 잘라낸다. |   
+ | color | `string{:js}` | 데이터 포인트 기본 색. |   
+ | colorField | `string{:js}` | undefined이면, data point의 값이 객체일 때 'color'. |   
+ | dataProp | `string{:js}` | undefined이면 "data". |   
+ | label | `string{:js}` | 이 시리즈를 나타내는 텍스트. |   
+ | name | `string{:js}` | 시리즈 이름. |   
+ | onPointClick | `PointClickCallbck{:js}` | 데이터 point가 클릭될 때 발생하는 이벤트 콜백. |   
+ | pointColors | `boolean \| string[]{:js}` | 데이터 포인트별 색들을 지정한다. |   
+ | pointStyleCallback | `PointStyleCallback{:js}` | 데이터 point의 동적 스타일 콜백. |   
+ | shape | `Shape{:js}` | 명시적으로 지정하지 않으면 typeIndex에 따라 Shapes 중 하나로 돌아가면서 설정된다. |   
+ | style | `SVGStyles \| string{:js}` | 스타일셋 혹은 class selector. |   
+ | viewRangeValue | `'z' \| 'x' \| 'y'{:js}` | ranges가 적용되는 값. |   
+ | viewRanges | `IValueRanges \| IValueRange[]{:js}` | 값 범위 목록. |   
+ | visibleInLegend | `boolean{:js}` | 명시적 false로 지정하면 legend에 표시하지 않는다. |   
+ | xAxis | `string \| number{:js}` |  |   
+ | xField | `string \| number{:js}` | undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'. |   
+ | xStart | `any{:js}` | x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값. |   
+ | xStep | `string \| number{:js}` | x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격. |   
+ | yAxis | `string \| number{:js}` |  |   
+ | yField | `string \| number{:js}` | undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'. |   
+ | zOrder | `number{:js}` |  |   
+ | visible | `boolean{:js}` | 표시 여부. | 
 
 ## Properties
 ### pointLabel: [RcChartObject](../classes/RcChartObject)[#pointLabel]
