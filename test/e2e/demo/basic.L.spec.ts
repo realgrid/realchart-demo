@@ -282,7 +282,7 @@ test.describe("basic.html test", () => {
     const points = await barSeries.$$(".rct-series-points .rct-point");
     const labels = await barSeries.$$(".rct-point-labels rct-point-label");
     const pointChildCount = await getChildCount(seriesPoints);
-    const labelsChildCount = (await pointLabels.$$('.rct-point-label[y="12"]')).length;
+    const labelsChildCount = (await pointLabels.$$('.rct-point-label')).length;
 
     // rct-point
     // expect(pointChildCount).is.equal(xTicksChildCount);
