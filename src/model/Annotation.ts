@@ -13,6 +13,12 @@ import { Align, IPercentSize, RtPercentSize, VerticalAlign, calcPercent, parsePe
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 
+export enum AnnotationScope {
+    // BODY = 'body',
+    CHART = 'chart',
+    CONTAINER = 'container'
+};
+
 /**
  * Annotation 모델.
  */
@@ -36,7 +42,7 @@ export abstract class Annotation extends ChartItem {
      */
     front = false;
     /**
-     * Annotation 이름.
+     * Annotation 이름.\
      * 동적으로 Annotation을 다루기 위해서는 반드시 지정해야 한다. 
      * 
      * @config
@@ -50,44 +56,52 @@ export abstract class Annotation extends ChartItem {
     align = Align.LEFT
     /**
      * 수직 배치.
+     * 
+     * @config
      */
     verticalAlign = VerticalAlign.TOP;
     offsetX = 10;
     offsetY = 10;
     rotation: number;
+    /**
+     * 차트 모델에서 지정된 annotationd의 표시 기준 영역.
+     * 
+     * @config
+     */
+    scope = AnnotationScope.CHART;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getPostion(inverted: boolean, wDomain: number, hDomain: number, width: number, height: number): IPoint {
-        let x: number;
-        let y: number
+    getPostion(inverted: boolean, left: number, top: number, wDomain: number, hDomain: number, width: number, height: number): IPoint {
+        let x = left;
+        let y = top;
 
         switch (this.align) {
             case Align.CENTER:
-                x = (wDomain - width) / 2 + this.offsetX;
+                x += (wDomain - width) / 2 + this.offsetX;
                 break;
 
             case Align.RIGHT:
-                x = wDomain - this.offsetX - width;
+                x += wDomain - this.offsetX - width;
                 break;
 
             default:
-                x = this.offsetX;
+                x += this.offsetX;
                 break;
         }
 
         switch (this.verticalAlign) {
             case VerticalAlign.MIDDLE:
-                y = (hDomain - height) / 2 - this.offsetY;
+                y += (hDomain - height) / 2 - this.offsetY;
                 break;
 
             case VerticalAlign.BOTTOM:
-                y = hDomain - this.offsetY - height;
+                y += hDomain - this.offsetY - height;
                 break;
 
             default:
-                y = this.offsetY;
+                y += this.offsetY;
                 break;
         }
 
@@ -175,7 +189,15 @@ export class AnnotationCollection {
     // internal members
     //-------------------------------------------------------------------------
     private $_loadItem(chart: IChart, src: any, index: number): Annotation {
-        const cls = chart._getAnnotationType(src.type || 'text');
+        let t = src.type;
+
+        if (!t) {
+            if (isString(src.imageUrl)) t = 'image';
+            else if (isString(src.shape)) t = 'shape';
+            else t = 'text';
+        }
+
+        const cls = chart._getAnnotationType(t);
 
         if (!cls) {
             throw new Error('Invalid annotation type: ' + src.type);

@@ -59,12 +59,11 @@ const config = {
                 fillOpacity: 0.7
             }
         }, {
-            type: 'image',
+            imageUrl: '../assets/images/daum.png',
             align: 'right',
             offsetX: 50,
             offsetY: 0,
             width: 150,
-            imageUrl: '../assets/images/daum.png'
         }]
     }
 }

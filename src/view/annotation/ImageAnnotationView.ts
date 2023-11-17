@@ -37,10 +37,6 @@ export class ImageAnnotationView extends AnnotationView<ImageAnnotation> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _setBackgroundStyle(back: RectElement): void {
-        back.setStyle('fill', 'none');
-    }
-
     protected _doMeasure(doc: Document, model: ImageAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
         const sz = model.getSize(hintWidth, hintHeight);
 

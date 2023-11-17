@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { _undefined } from "../common/Types";
+import { RectElement } from "../common/impl/RectElement";
 import { Annotation } from "../model/Annotation";
 import { BoundableElement } from "./ChartElement";
 
@@ -30,6 +31,10 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _setBackgroundStyle(back: RectElement): void {
+        back.setStyle('fill', 'none');
+    }
+
     protected _doLayout(param: any): void {
         const rot = this.model.rotation;
 

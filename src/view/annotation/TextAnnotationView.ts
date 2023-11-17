@@ -7,9 +7,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { toSize } from "../../common/Rectangle";
+import { SvgRichText } from "../../common/RichText";
 import { ISize } from "../../common/Size";
 import { RectElement } from "../../common/impl/RectElement";
-import { TextAnchor, TextElement, TextLayout } from "../../common/impl/TextElement";
+import { TextAnchor, TextElement } from "../../common/impl/TextElement";
 import { TextAnnotation } from "../../model/annotation/TextAnnotation";
 import { AnnotationView } from "../AnnotationView";
 
@@ -24,6 +25,7 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
     // fields
     //-------------------------------------------------------------------------
     private _textView: TextElement;
+    private _richText: SvgRichText;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -33,26 +35,30 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
 
         this.add(this._textView = new TextElement(doc));
         this._textView.anchor = TextAnchor.START;
+
+        this._richText = new SvgRichText();
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _setBackgroundStyle(back: RectElement): void {
-        back.setStyleOrClass(this.model.backgroundStyle);
+        super._setBackgroundStyle(back);
+
+        back.internalSetStyleOrClass(this.model.backgroundStyle);
     }
 
     protected _doMeasure(doc: Document, model: TextAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this._textView.text = this.model.text;
+        const tv = this._textView;
+
+        this._richText.setFormat(model.text);
+        this._richText.build(tv, hintHeight, hintWidth, null, null);
 
         return toSize(this._textView.getBBounds());
     }
 
     protected _doLayout(param: any): void {
-        const r = this._textView.getBBounds();
-
         this._textView.translate(this._paddings.left, this._paddings.top);
-        this._textView.layoutText();
 
         super._doLayout(param);
     }

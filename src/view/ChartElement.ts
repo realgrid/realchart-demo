@@ -149,6 +149,8 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         this._prepareStyleOrClass(model);
         this.setModel(model);
+
+        this._background.internalClearStyleAndClass();
         this._setBackgroundStyle(this._background);
 
         const sz = this._doMeasure(doc, model, hintWidth, hintHeight, phase);

@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
-import { Path, SVGStyleOrClass, _undefined, getCssProp, isNull, pixel, throwFormat } from "./Types";
+import { ISides, Path, SVGStyleOrClass, _undefined, getCssProp, isNull, pixel, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
 import { SVGNS, isObject, isString, pickProp } from "./Common";
@@ -56,6 +56,7 @@ export abstract class RcControl extends RcWrappableObject {
     private _htmlRoot: HTMLDivElement;
     private _svg: SVGSVGElement;
     private _defs: SVGDefsElement;
+    private _back: RcElement;
     private _root: RootElement;
 
     private _pointerHandler: IPointerHandler;
@@ -71,6 +72,7 @@ export abstract class RcControl extends RcWrappableObject {
     private _cssVars = {};
 
     loaded = false;
+    _padding: ISides;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -406,7 +408,6 @@ export abstract class RcControl extends RcWrappableObject {
             height: '100%',  
             boxSizing: 'border-box',
             overflow: 'hidden',
-            // padding: '20px',
             "-webkit-touch-callout": "none",
             "-webkit-user-select": "none",
             "user-select": "none",
@@ -431,6 +432,10 @@ export abstract class RcControl extends RcWrappableObject {
         this._initDefs(doc, defs);
         svg.appendChild(defs);
         dom.appendChild(svg);
+
+        // this._back = new RcElement(doc, '', 'rect');
+        // svg.appendChild(this._back.dom);
+        // this._back.setStyle('fill', 'lightgray');
 
         this._root = new RootElement(this);
         svg.appendChild(this._root['_dom']);
@@ -497,13 +502,15 @@ export abstract class RcControl extends RcWrappableObject {
             const w = this._svg.clientWidth;
             const h = this._svg.clientHeight;
 
+            // this._back.resize(w, h);
+
             Object.assign(this._htmlRoot.style, {
                 left: pixel(sr.left - cr.left),
                 top: pixel(sr.top - cr.top)
             });
             this._doRenderBackground(this._container.firstElementChild as HTMLDivElement, this._root, w, h);
 
-            const p = Dom.getPadding(this._root.dom);
+            const p = this._padding = Dom.getPadding(this._root.dom);
 
             this._doRender({x: p.left, y: p.top, width: w - p.left - p.right, height: h - p.top - p.bottom});
 

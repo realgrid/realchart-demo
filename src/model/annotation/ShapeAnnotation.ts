@@ -126,7 +126,7 @@ export class ShapeAnnotation extends SizableAnnotation {
         return super.getSize(wDomain, hDomain);
     }
 
-    getPostion(inverted: boolean, wDomain: number, hDomain: number, width: number, height: number): IPoint {
+    getPostion(inverted: boolean, left: number, top: number, wDomain: number, hDomain: number, width: number, height: number): IPoint {
         const ser = this.getSeries();
 
         if (ser) {
@@ -136,7 +136,7 @@ export class ShapeAnnotation extends SizableAnnotation {
                 return { x: this._x, y: hDomain - this._y };
             }
         } else {
-            return super.getPostion(inverted, wDomain, hDomain, width, height);
+            return super.getPostion(inverted, left, top, wDomain, hDomain, width, height);
         }
     }
 }

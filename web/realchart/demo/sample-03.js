@@ -19,6 +19,11 @@ const config = {
             }
         }
     },
+    options: {
+        style: {
+            paddingBottom: '42px'
+        }
+    },
     title: {
         text: "7개 카드사 연체율 추이",
         align: 'left',
@@ -34,7 +39,8 @@ const config = {
         align: 'left',
         verticalAlign: 'bottom',
         style: {
-            fontSize: '20px'
+            fontSize: '20px',
+            fontFamily: 'Malgun'
         }
     },
     xAxis: {
@@ -90,7 +96,25 @@ const config = {
             fontWeight: 'bold',
             fill: '#555'
         }
-    }
+    },
+    annotations: [{
+        imageUrl: '../assets/images/cards.png',
+        front: true,
+        width: 150,
+        align: 'center',
+        verticalAlign: 'top',
+        offsetX: 100
+    }, {
+        text: '*자료: 금융감독원<br>그래픽: 조아라 디자인기자',
+        verticalAlign: 'bottom',
+        scope: 'container',
+        offsetX: 20,
+        style: {
+            fontSize: '18px',
+            fontWeight: 'bold',
+            fill: '#666'
+        }
+    }]
 }
 
 let animate = false;

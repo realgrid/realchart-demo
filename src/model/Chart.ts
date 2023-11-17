@@ -772,6 +772,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // body
         this._body.prepareRender();
 
+        // annotations
+        this._annotations.prepareRender();
+
         // navigator
         this._navigator.visible && this._navigator.prepareRender();
     }

@@ -9,11 +9,12 @@
 import { ButtonElement } from "../common/ButtonElement";
 import { IPoint, Point } from "../common/Point";
 import { ClipElement, LayerElement, RcElement } from "../common/RcControl";
+import { IRect, Rectangle } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { Align, AlignBase, SectionDir, VerticalAlign, _undefined } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Annotation } from "../model/Annotation";
+import { Annotation, AnnotationScope } from "../model/Annotation";
 import { Axis } from "../model/Axis";
 import { Chart, Credits } from "../model/Chart";
 import { DataPoint } from "../model/DataPoint";
@@ -395,7 +396,7 @@ class AxisSectionView extends SectionView {
             v.prepareGuides(doc, guideContainer, frontGuideContainer);
         });
 
-        if (this.setVisible(views.filter(v => v.visible).length > 0)) {
+        if (this.setVisible(views.filter(v => v.model.visible).length > 0)) {
             const m = views[0].model;
 
             this.isX = m._isX;
@@ -752,6 +753,9 @@ export class ChartView extends LayerElement {
 
         // annotations
         this.$_prepareAnnotations(doc, model.getAnnotations());
+        this._annotationViews.forEach((v, i) => {
+            v.measure(doc, this._annotations[i], hintWidth, hintHeight, phase);
+        });
     }
 
     layout(): void {
@@ -863,12 +867,14 @@ export class ChartView extends LayerElement {
         let hMiddle = 0;
         let hPlot = 0;
         let wPlot = 0;
+        let rPlot: IRect;
 
         if (this._paneContainer.visible) {
             this._paneContainer.resize(w, h).translate(x, yTitle + hTitle);
             this._paneContainer.layout();
             hPlot = h;
             wPlot = w;
+            rPlot = this._paneContainer.getRect();
         } else {
             // axes
             const axisMap = this._axisSectionMap;
@@ -982,6 +988,7 @@ export class ChartView extends LayerElement {
 
             this._currBody.resize(wPlot, hPlot);
             this._currBody.layout().translate(x, y);
+            rPlot = this._currBody.getRect();
         }
 
         // credits
@@ -1135,6 +1142,8 @@ export class ChartView extends LayerElement {
             }
             vLegend.translate(x, y);
         }
+
+        this.$_layoutAnnotations(this._inverted, width, height, rPlot);
 
         this._tooltipView.close(true, false);
     }
@@ -1423,6 +1432,7 @@ export class ChartView extends LayerElement {
 
     private $_prepareAnnotations(doc: Document, annotations: Annotation[]): void {
         const container = this._annotationContainer;
+        const frontContainer = this._frontAnnotationContainer;
         const map = this._annotationMap;
         const views = this._annotationViews;
 
@@ -1438,10 +1448,43 @@ export class ChartView extends LayerElement {
         (this._annotations = annotations).forEach(a => {
             const v = map.get(a) || createAnnotationView(doc, a);
 
-            container.add(v);
+            (a.front ? frontContainer : container).add(v);
             map.set(a, v);
             views.push(v);
             // v.prepare(doc, a);
+        });
+    }
+
+    private $_layoutAnnotations(inverted: boolean, width: number, height: number, rPlot: IRect): void {
+        const pad = this.control._padding;
+        let x: number;
+        let y: number;
+        let w: number;
+        let h: number;
+
+        this._annotationViews.forEach(v => {
+            switch (v.model.scope) {
+                // case AnnotationScope.BODY:
+                //     // TODO:
+                //     x = y = 0;
+                //     w = width;
+                //     h = height;
+                //     break;
+                case AnnotationScope.CONTAINER:
+                    x = -pad.left;
+                    y = -pad.top;
+                    w = width + pad.left + pad.right;
+                    h = height + pad.top + pad.bottom;
+                    break;
+                default:
+                    x = y = 0;
+                    w = width;
+                    h = height;
+                    break;
+            }
+
+            v.resizeByMeasured();
+            v.layout().translatep(v.model.getPostion(inverted, x, y, w, h, v.width, v.height));
         });
     }
 }

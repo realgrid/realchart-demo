@@ -37,10 +37,6 @@ export class ShapeAnnotationView extends AnnotationView<ShapeAnnotation> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _setBackgroundStyle(back: RectElement): void {
-        back.setStyle('display', 'none');
-    }
-
     protected _doMeasure(doc: Document, model: ShapeAnnotation, hintWidth: number, hintHeight: number, phase: number): ISize {
         const sz = model.getSize(hintWidth, hintHeight);
 
