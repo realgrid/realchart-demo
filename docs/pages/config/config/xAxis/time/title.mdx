@@ -33,6 +33,12 @@ plus 값을 지정하면 차트 안쪽으로 들어온다.
 align이 'middle'일 때는 음수일 때 축 시작값 쪽으로 밀린다.  
 `default: 0`  
 
+### rotation: `0 | 90 | 270 | -90 | -270{:js}`[#rotation]
+텍스트 회전 각도.\
+수직 축일 때는 0, 90, 270, -90, -270 중 하나로 지정할 수 있다.
+수평 축일 때는 무조건 0이다.  
+`default: undefined` 수직 축일 때 왼쪽에 표시되면 90, 오른쪽에 표시되면 270, 수평 축일 때는 0 
+
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 
@@ -51,12 +57,6 @@ align이 'middle'일 때는 음수일 때 축 시작값 쪽으로 밀린다.
 타이틀 텍스트.\
 지정하지 않으면 타이틀 영역 자체가 없어진다.  
 
-### rotation: `0 | 90 | 270 | -90 | -270{:js}`[#rotation]
-텍스트 회전 각도.\
-수직 축일 때는 0, 90, 270, -90, -270 중 하나로 지정할 수 있다.
-수평 축일 때는 무조건 0이다.  
-`default: undefined` 수직 축일 때 왼쪽에 표시되면 90, 오른쪽에 표시되면 270, 수평 축일 때는 0 
-
 ### visible: `boolean{:js}`[#visible]
-표시 여부.\  
+표시 여부.  
 `default: true`  

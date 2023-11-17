@@ -60,6 +60,13 @@ darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.
 | fontWeight | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |
+### numberFormat: `string{:js}`[#numberFormat]
+label이 숫자일 때 표시 형식.  
+
+### numberSymbols: `string{:js}`[#numberSymbols]
+축의 tick 간격이 1000 이상인 큰 수를 표시할 때 
+이 속성에 지정한 symbol을 이용해서 축약형으로 표시한다.  
+
 ### offsetX: `string | number{:js}`[#offsetX]
 게이지 중심 등, label이 표시될 기준 위치에서 x 방향으로 이동한 픽셀 크기.
 기준 위치는 게이지 종류에 따라 달라진다.  
@@ -90,16 +97,9 @@ label 문자열 앞에 추가되는 문자열.
 ### suffix: `string{:js}`[#suffix]
 label 문자열 끝에 추가되는 문자열.  
 
-### numberFormat: `string{:js}`[#numberFormat]
-label이 숫자일 때 표시 형식.  
-
-### numberSymbols: `string{:js}`[#numberSymbols]
-축의 tick 간격이 1000 이상인 큰 수를 표시할 때 
-이 속성에 지정한 symbol을 이용해서 축약형으로 표시한다.  
-
 ### text: `string{:js}`[#text]
 rich text format을 지정할 수 있다.  
 
 ### visible: `boolean{:js}`[#visible]
-표시 여부.\  
+표시 여부.  
 `default: true`  

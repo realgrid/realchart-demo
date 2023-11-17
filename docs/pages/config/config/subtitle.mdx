@@ -8,9 +8,10 @@
 
 `default: Align.CENTER`  
 
-### alignBase: `'chart'|'plot'{:js}`[#alignBase]
+### alignBase: `'chart'|'parent'|'plot'{:js}`[#alignBase]
 정렬 기준.  
 - `'chart'` 
+- `'parent'` 상위 모델이 존재하는 경우 상위 모델 영역 기준.\  상위가 없으면 기본값(대부분 'plot')과 동일.  ex) subtitle인 경우 title 기준.
 - `'plot'` 
 
 `default: AlignBase.PLOT`  
@@ -29,6 +30,10 @@
 | fontWeight | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |
+### gap: `number{:js}`[#gap]
+제목과 사이의 간격.  
+`default: 2`  
+
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 
@@ -48,5 +53,5 @@
 `default: ''`  
 
 ### visible: `boolean{:js}`[#visible]
-표시 여부.\  
+표시 여부.  
 `default: true`  

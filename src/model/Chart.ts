@@ -509,6 +509,11 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._yAxes;
     }
 
+    /**
+     * 차트 보조 요소 설정
+     */
+    '@config annotation': Annotation[];
+    
     getAnnotations(): Annotation[] {
         return this._annotations.getVisibles();
     }

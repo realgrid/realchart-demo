@@ -21,7 +21,7 @@ const config: DocsThemeConfig = {
     titleComponent({ title: _title, type,  route }) {
       if (route.indexOf('/config/config') >= 0) {
         const [title] = route.split('/').slice(-1);
-        let prefix = (title.includes('Axis') || title.includes('series') || title.includes('gauge')) ? '[]' : '';
+        let prefix = ['Axis', 'series', 'gauge', 'annotation'].some(v => title.indexOf(v) >= 0 ) ? '[]' : '';
         return <>{title}{prefix}</>;
       } else if (type == 'separator') {
         return <>{_title}</>;

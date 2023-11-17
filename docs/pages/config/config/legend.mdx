@@ -4,9 +4,10 @@ visible 기본값이 undefined이고,
 따로 지정하지 않으면 시리즈가 둘 이상 포함돼야 legend를 표시한다.
 ## Properties
 
-### alignBase: `'chart'|'plot'{:js}`[#alignBase]
+### alignBase: `'chart'|'parent'|'plot'{:js}`[#alignBase]
 legend 정렬 기준.  
 - `'chart'` 
+- `'parent'` 상위 모델이 존재하는 경우 상위 모델 영역 기준.\  상위가 없으면 기본값(대부분 'plot')과 동일.  ex) subtitle인 경우 title 기준.
 - `'plot'` 
 
 `default: AlignBase.PLOT`  
@@ -72,6 +73,10 @@ item 배치 방향.
 marker와 text사이의 간격.  
 `default: 4`  
 
+### markerSize: `number{:js}`[#markerSize]
+marker 크기.  
+`default: 10` 픽셀. 
+
 ### maxHeight: `string | number{:js}`[#maxHeight]
 수직  **[배치](#layout)** 일 때,
 최대 높이를 픽셀 단위의 크기 혹은 plot 높이에 대한 상대 길이를 '%'로 지정한다.  
@@ -95,7 +100,7 @@ marker와 text사이의 간격.
 | stroke | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |
 ### visible: `boolean{:js}`[#visible]
-표시 여부.\
+표시 여부.  
 명시적으로 true로 설정되거나, 명시적 false가 아니면서 표시 항목 수가 1보다 클 때 표시된다..\
 <FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  
 `default: undefined`  
