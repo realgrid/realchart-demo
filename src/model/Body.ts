@@ -238,6 +238,11 @@ export class Body extends ChartItem {
         return this.chart._getXAxes().isZoomed() || this.chart._getYAxes().isZoomed();
     }
 
+    /**
+     * {@link Chart.annotation} 설정을 Body에 할 수도 있다.
+     */
+    '@config annotation': Annotation[];
+
     getAnnotations(): Annotation[] {
         return this._annotations.getVisibles();
     }

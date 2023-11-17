@@ -720,6 +720,7 @@ ${table(tableHead, tableBody)}
   getMarkdown(c) {
     return [this.getClassHeading(c), this.getCtor(c.constructor), this.getConfigProperties(c.configProperties), this.getProperties(c.properties), this.getMethods(c.methods)].join("\n\n");
   }
+  // config props를 테이블로 표현
   getConfigProperties(properties) {
     if (!properties.length)
       return "";

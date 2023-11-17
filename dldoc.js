@@ -78,21 +78,14 @@ class Tunner {
   }
 
   _findModel(model, name) {
-    // console.debug(`finding ${name} from ${model.name}`);
     for (const child of model.children) {
-      // if (typeof child === 'number') {
-      //   console.debug('number', name);
-      //   return;
-      // };
       if (child.name == name) {
-        // console.debug('found', name)
         return child;
       } else if (child.children) {
         const found = this._findModel(child, name)
         if (found) return found;
       };
     }
-    // throw new Error(`${name}, ${model.name}`);
   }
 
   _findModelById(model, id) {
@@ -191,10 +184,7 @@ class Tunner {
 
   _getConfigLinkById(id) {
     const model = this._findModelById(this.model, id);
-    if (!model) return null;
-    // @TODO: BulletGauge size 설명 중 width, height 무시되는 문제.
-
-    switch (model.kind) {
+    switch (model?.kind) {
       case ReflectionKind.EnumMember:
         return `\`${model.type.value}\``;
       case ReflectionKind.Property:
@@ -218,17 +208,19 @@ class Tunner {
 
   _getConfigLink(name, prop) {
     const model = this._findModel(this.model, name);
-    if (!model) return null;
-    if (model.kind == ReflectionKind.Class) {
-      const [config] = this._parseConfigTag(model.comment?.blockTags) || [];
-      if (config) {
-        const { opt } = MDGenerater.destructConfig(config);
-        const link = ['/config', 'config', opt].filter(v => v).join('/');
-        return `[${prop}](${link}#${prop.toLowerCase()})`;
-      }
-    } else {
-      return '';
+    switch(model?.kind){
+      case ReflectionKind.Class:
+        const [config] = this._parseConfigTag(model.comment?.blockTags) || [];
+        if (config) {
+          const { opt } = MDGenerater.destructConfig(config);
+          const link = ['/config', 'config', opt].filter(v => v).join('/');
+          return `[${prop}](${link}#${prop.toLowerCase()})`;
+        }
+        break;
+      default:
+        break;
     }
+    return '';
   }
 
   /**
@@ -258,11 +250,6 @@ class Tunner {
         );
         // 다른 구조체에서 이름이 같을 수 있음. Series.xStart, ChartOptions.xStart
         // || p.name == line.text
-        if (current.name == 'CircleGauge' && line.text == 'radius') {
-          console.debug(current);
-        }
-        
-
         if (prop) return `**[${line.text}](#${prop.name.toLowerCase()})**`;
         
         // 레퍼런스
@@ -373,20 +360,14 @@ class Tunner {
         // console.warn(`[WARN] ignored ${type}`, obj);
         return typeof obj.value === 'string' ? `'${obj.value}'` : obj.value;
       case 'reflection':
-        // if (obj.declaration?.signatures.length > 1) {
-        //   console.debug(JSON.stringify(obj));
-        // }
         return obj.declaration?.signatures.map(s => {return this._parseType(s)}).join(' | ');
-        // const [{ kind, kindString, parameters, type: _type }] = obj.declaration?.signatures || {};
-        // console.debug({ kindString, parameters, type: _type });
       default:
         // type 없음. class, Interface, Enumeration...
-        // name && console.warn(`[WARN] Unexpected type ${name}:${obj.kindString}`);
-        return this._parseNonType(obj);
+        return this._parseStructure(obj);
     }
   }
 
-  _parseNonType(obj) {
+  _parseStructure(obj) {
     switch(obj.kind) {
       case ReflectionKind.Interface:
         return obj.name;
@@ -468,7 +449,7 @@ class Tunner {
   }
   _doclet(name) {
     const isDoclet = this._isDoclet(name);
-    return { isDoclet, name: isDoclet ? name.split(' ').slice(-1) : name };
+    return { isDoclet, name: isDoclet ? name.split(' ').pop() : name };
   }
   _setContent (prop) {
     // return prop.name;
@@ -519,24 +500,29 @@ class Tunner {
               : this._setContent(c.getSignature)
             })
             .sort((prev, next) => {
-              // doclet은 끝으로 보낸다.
+              // doclet을 뒤로 보낸다. 다음 reduce에서 부모 속성을 덮어쓴다.
               const { isDoclet, name } = this._doclet(next.name);
-              if (isDoclet) return -1;
-              else return 0;
+              return isDoclet ? -1 : 0;
             })
             .reduce((acc, curr) => {
               // 상위 클래스 속성 설명에 doclet 설명을 추가하고, defaultValue는 덮어쓴다.
               const { isDoclet, name } = this._doclet(curr.name);
               const found = acc.findIndex((el) => el.name == name);
               if (found >= 0 && isDoclet) {
-                acc[found].content += `\n${curr.content}`
+                acc[found].content += `  \n${curr.content}`
                 acc[found].defaultValue = curr.defaultValue;
                 acc[found].defaultBlock = curr.defaultBlock;
+              } else if (isDoclet) {
+                curr.name = name;
+                acc.push(curr);
               } else {
                 acc.push(curr);
               }
               return acc;
             }, [])
+            .sort((prev, next) => {
+              return prev.name > next.name ? 1 : -1;
+            })
         };
         break;
       case ReflectionKind.Enum:
@@ -624,6 +610,34 @@ class MDGenerater {
     return content?.replace(/<br>/g, '\n').trim() || '';
   }
 
+  _makeClassProp(param, classMap) {
+    const { opt, type: chartType, prop: { name, dtype, content } } = param;
+    if (dtype.name == 'Annotation')
+      debugger;
+    let docMap = this.docMap;
+    const keys = [opt, chartType, name].filter(v => v);
+    keys.forEach((key, i) => {
+      if (!docMap[key]) {
+        // is the last
+        if (i == keys.length - 1) {
+          const _content = `## ${name}\n${this._fixContent(content)}\n`
+                + this._makeProps({ name, opt, type: chartType, props: classMap.props });
+          docMap[key] = { _content };
+          // this._writeJsonFile('./docs/.tdout/' + keys.join('.') + '.json', docMap);
+        } else {
+          docMap[key] = { _content: '' };
+        }
+      }
+      docMap = docMap[key];
+    });
+    // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
+
+    // 상대경로.
+    // series, axis 등은 type으로 시작. 그 외에는 opt로 시작. 아무 정보도 없으면 config root.
+    let lines = `### [${name}](./${[chartType || opt || 'config', name].join('/')})\n`;
+    lines += `${this._fixContent(classMap.content)}  \n`;
+    return lines;
+  }
 
   /**
    * 
@@ -635,6 +649,7 @@ class MDGenerater {
   _makeProp(param) {
     const { opt, type: chartType, prop } = param;
     const { header, name, type, dtype, content, defaultValue, defaultBlock, readonly } = prop;
+
     let extraLines = ''
     let lines = `### ${readonly ? '*`<readonly>`* ' : ''}`
       + `${name}`
@@ -659,38 +674,14 @@ class MDGenerater {
       const v = this.classMap[dtype.name];
       if (!v) return console.warn(`[WARN] Not found classMap of ${dtype.name}`);
       switch(v.kind) {
-        case ReflectionKind.Class:
-          let accessor = this.docMap;
-          const keys = [opt, chartType, name].filter(v => v);
-          keys.forEach((key, i) => {
-            if (!accessor[key]) {
-              // is the last
-              if (i == keys.length - 1) {
-                const _content = `## ${name}\n${this._fixContent(content)}\n`
-                      + this._makeProps({ name, opt, type: chartType, props: v.props });
-                accessor[key] = { _content };
-                // this._writeJsonFile('./docs/.tdout/' + keys.join('.') + '.json', accessor);
-              } else {
-                accessor[key] = { _content: '' };
-              }
-            }
-            accessor = accessor[key];
-          });
-          // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
-
-          // 상대경로.
-          // series, axis 등은 type으로 시작. 그 외에는 opt로 시작.
-          lines = `### [${name}](./${chartType || opt}/${name})\n`;
-          lines += `${this._fixContent(v.content)}  \n`;
-          return lines;
+        case ReflectionKind.Class:  
+          return this._makeClassProp(param, v);
         case ReflectionKind.Enum:
           extraLines = this._makeEnums({ name, enums: v.props });
           break;
         case ReflectionKind.Interface:
           const { props, content: itfContent } = this.classMap[type];
           const itfContents = this._makeInterfaceProps({ name: type, content: itfContent, props });
-          // console.debug({itfContents});
-          // return itfContents;
           extraLines = itfContents;
           break;
         case ReflectionKind.TypeAlias:
@@ -720,10 +711,15 @@ class MDGenerater {
       const { elementType: { name: ename, type: etype } } = dtype;
       if (etype == 'reference') {
         const ref = this.classMap[ename];
-        if (ref?.kind == ReflectionKind.Interface) {
-          const { props, content: itfContent } = this.classMap[ename];
-          extraLines = this._makeInterfaceProps({ name: ename, content: itfContent, props });
-          // console.debug(`[DEBUG] array`, param.prop.dtype.elementType)
+        switch (ref?.kind) {
+          case ReflectionKind.Interface:
+            const { props, content: itfContent } = this.classMap[ename];
+            extraLines = this._makeInterfaceProps({ name: ename, content: itfContent, props });
+            break;
+          case ReflectionKind.Class:
+            return this._makeClassProp(param, ref);
+          default:
+            break;
         }
       }
     }
@@ -845,7 +841,7 @@ class MDGenerater {
    * series/{type}.mdx에는 속성이 포함된 문서를 생성한다.
    * 이 후, property 생성에서 참조하는 confg정보는 재귀 처리한다.
    */
-  _setContent(docMap, dconf) {
+  _setChartContent(docMap, dconf) {
     const { name, root, opt, label, type, props, content } = dconf;
     if (root != 'chart') return;
 
@@ -858,7 +854,7 @@ class MDGenerater {
     }
     const _content = `${this._fixContent(content)}\n`;
     
-    if (['series', 'xAxis', 'yAxis', 'gauge'].indexOf(opt) >= 0 && !type) 
+    if (['series', 'xAxis', 'yAxis', 'gauge', 'annotation'].indexOf(opt) >= 0 && !type) 
       return console.warn(`[WARN] ${name} type missed.`);
 
     if (opt) {
@@ -885,7 +881,7 @@ class MDGenerater {
       config?.map(conf => {
         const dconf = MDGenerater.destructConfig(conf);
         // const { name, root, opt, label, type } = dconf;
-        this._setContent(this.docMap, { ...dconf, props, content })
+        this._setChartContent(this.docMap, { ...dconf, props, content })
       });
     })
 

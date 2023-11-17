@@ -19,8 +19,9 @@ RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 visible 기본값이 undefined이다.
 visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.  
 
-### guides: `AxisGuide[]{:js}`[#guides]
-`default: []`  
+### [guides](./linear/guides)
+'between'인 경우 양쪽 body에 모두 표시된다.
+TODO: body 단위로도 지정할 수 있게 한다.  
 
 ### [label](./linear/label)
 [겹치는 경우가 발생할 때]
@@ -50,7 +51,7 @@ data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격�
  **[strictMax](#strictmax)** 가 지정되거나,  **[maxValue](#maxvalue)** 가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다.  
 
 ### maxValue: `number{:js}`[#maxValue]
-명시적으로 지정하는 최대값.
+명시적으로 지정하는 최대값.  
 명시적으로 지정하는 최대값.\
 축에 연결된 data point들의 값으로 계산된 최대값보다 이 속성 값이 크면 대신 이 값이 축의 최대값이 되고,
  **[maxPadding](#maxpadding)** 도 무시된다.
@@ -65,7 +66,7 @@ data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격�
  **[strictMin](#strictmin)** 가 지정되거나,  **[minValue](#minvalue)** 가 계산된 최소값보다 작은 경우에도 이 속성은 무시된다.  
 
 ### minValue: `number{:js}`[#minValue]
-명시적으로 지정하는 최소값.
+명시적으로 지정하는 최소값.  
 명시적으로 지정하는 최소값.\
 축에 연결된 data point들의 값으로 계산된 최소값보다 이 속성 값이 작으면 대신 이 값이 축의 최소값이 되고,
  **[minPadding](#minpadding)** 도 무시된다.
@@ -137,5 +138,5 @@ minPadding도 적용되지 않는다.
 축 타이틀 설정 모델.  
 
 ### visible: `boolean{:js}`[#visible]
-표시 여부.\  
+표시 여부.  
 `default: true`  
