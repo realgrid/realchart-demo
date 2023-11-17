@@ -52,13 +52,17 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
         this.setStyleOrClass(model.style);
     }
 
-    measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this._prepareStyleOrClass(model);
-
+    // visible이 false인 경우 measure가 호출되지 않아서 model이 재설정되지 않을 수 있다.
+    setModel(model: T): void {
         if (model !== this.model) {
             this.model = model;
             this._doModelChanged();
         }
+    }
+
+    measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this._prepareStyleOrClass(model);
+        this.setModel(model);
 
         const sz = this._doMeasure(doc, this.model, hintWidth, hintHeight, phase);
 
@@ -143,11 +147,8 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     }
 
     measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this.setStyleOrClass(model.style);
-        if (model !== this.model) {
-            this.model = model;
-            this._doModelChanged();
-        }
+        this._prepareStyleOrClass(model);
+        this.setModel(model);
         this._setBackgroundStyle(this._background);
 
         const sz = this._doMeasure(doc, model, hintWidth, hintHeight, phase);

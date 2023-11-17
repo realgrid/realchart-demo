@@ -8,6 +8,7 @@
 
 import { isArray, isNumber, isObject, isString, pickNum, pickNum3 } from "../common/Common";
 import { Align, SVGStyleOrClass, VerticalAlign, _undefined, fixnum, isNull } from "../common/Types";
+import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
@@ -399,25 +400,25 @@ export class AxisRangeGuide extends AxisGuide {
     end: number;
 }
 
-/**
- * 기본적으로 tick 위치에 선으로 표시된다.
- */
-export class AxisTickMark extends AxisItem {
+// /**
+//  * 기본적으로 tick 위치에 선으로 표시된다.
+//  */
+// export class AxisTickMark extends AxisItem {
 
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
-    /**
-     * 선의 길이.
-     * 
-     * @link
-     */
-    length = 7;
+//     //-------------------------------------------------------------------------
+//     // property fields
+//     //-------------------------------------------------------------------------
+//     /**
+//      * 선의 길이.
+//      * 
+//      * @link
+//      */
+//     length = 7;
 
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-}
+//     //-------------------------------------------------------------------------
+//     // fields
+//     //-------------------------------------------------------------------------
+// }
 
 /**
  * 축에 표시되는 tick 위치와 표시 마크에 관한 설정 모델.
@@ -472,7 +473,7 @@ export abstract class AxisTick extends AxisItem {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doLoadSimple(source: any): boolean {
-        if (!isNaN(+source)) {
+        if (Utils.canNumber(source)) {
             this.length = +source;
             return true;
         }

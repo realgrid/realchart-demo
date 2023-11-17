@@ -75,6 +75,8 @@ class TitleSectionView extends SectionView {
             sz = v.measure(doc, title, hintWidth, hintHeight, phase);
             hTitle = this._hTitle = sz.height;
             wTitle = this._wTitle = sz.width;
+        } else {
+            v.setModel(title);
         }
 
         if ((v = this.subtitleView).visible = sub.isVisible()) {
@@ -82,6 +84,8 @@ class TitleSectionView extends SectionView {
             hSub = this._hSub = sz.height;
             wSub = this._wSub = sz.width;
             gap = this._gap = +chart.subtitle.gap || 0;
+        } else {
+            v.setModel(sub);
         }
 
         switch (sub.position) {
@@ -196,8 +200,12 @@ class TitleSectionView extends SectionView {
                         case SubtitlePosition.RIGHT:
                             break;
                         case SubtitlePosition.TOP:
+                            xTitle = pTitle + (dTitle - this._wTitle) / 2;
                             break;
                         default:
+                            xTitle = pTitle + (dTitle - this._wTitle) / 2;
+                            xSub = pSub + (dSub - this._wSub) / 2;
+                            ySub = yTitle + this._hTitle + gap;
                             break;
                     }
                     break;

@@ -206,6 +206,13 @@ export class Utils {
         return typeof value === "number";
     }
 
+    // 금지: +false => 0, +true => 1
+    // '123'은 허락한다.
+    // TODO: 개선할 것.
+    static canNumber(value: any): value is number {
+        return !isNaN(+value) && !isNaN(parseFloat(value));
+    }
+
     static isValidNumber(value: any): value is number {
         return typeof value === 'number' && !isNaN(value) && isFinite(value);
     }

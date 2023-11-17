@@ -15,7 +15,7 @@ import { DEG_RAD } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis, AxisGuide, AxisLabelArrange, AxisScrollBar, AxisTickMark, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
+import { Axis, AxisGuide, AxisLabelArrange, AxisScrollBar, AxisTick, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { Crosshair } from "../model/Crosshair";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
@@ -102,7 +102,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
     }
 }
 
-class AxisTickMarkView extends ChartElement<AxisTickMark> {
+class AxisTickMarkView extends ChartElement<AxisTick> {
 
     //-------------------------------------------------------------------------
     // fields

@@ -19,7 +19,7 @@ const config = {
         }
     },
 	xAxis: {
-		// tick:true,
+		tick:true,
 		// type: 'category',
 		// position: 'apposite'
 		// position: 'base',
