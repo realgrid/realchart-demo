@@ -121,7 +121,7 @@ class TitleSectionView extends SectionView {
                     case VerticalAlign.BOTTOM:
                         return h - hTitle;
                     default:
-                        0;
+                        return 0;
                 }
             };
             const calcYs = () => {
@@ -183,28 +183,62 @@ class TitleSectionView extends SectionView {
                 case Align.RIGHT:
                     switch (sub.position) {
                         case SubtitlePosition.LEFT:
+                            calcYs();
                             break;
                         case SubtitlePosition.RIGHT:
+                            xSub += dSub - this._wSub;
+                            xTitle = xSub - gap - this._wTitle;
+                            calcYs();
                             break;
                         case SubtitlePosition.TOP:
+                            calcXs();
+                            yTitle = ySub + this._hSub + gap;
                             break;
                         default:
+                            calcXs();
+                            ySub = yTitle + this._hTitle + gap;
                             break;
                     }
                     break;
 
-                default:
+                default: // Align.CENTER
                     switch (sub.position) {
                         case SubtitlePosition.LEFT:
+                            xTitle += (dTitle - this._wTitle) / 2;
+                            switch (sub.align) {
+                                case Align.LEFT:
+                                    break;
+                                case Align.CENTER:
+                                    xSub = xSub + ((xTitle - xSub) - this._wSub) / 2;
+                                    break;
+                                case Align.RIGHT:
+                                    xSub = xTitle - gap - this._wSub;
+                                    break;
+                            }
+                            calcYs();
                             break;
                         case SubtitlePosition.RIGHT:
+                            xTitle += (dTitle - this._wTitle) / 2;
+                            switch (sub.align) {
+                                case Align.LEFT:
+                                    xSub = xTitle + this._wTitle + gap;
+                                    break;
+                                case Align.CENTER:
+                                    xSub = xTitle + this._wTitle + gap;
+                                    xSub += (dSub - xSub - this._wSub) / 2;
+                                    break;
+                                case Align.RIGHT:
+                                    xSub += dSub - gap - this._wSub;
+                                    break;
+                            }
+                            calcYs();
                             break;
                         case SubtitlePosition.TOP:
-                            xTitle = pTitle + (dTitle - this._wTitle) / 2;
+                            calcXs();
+                            yTitle = ySub + this._hSub + gap;
                             break;
                         default:
-                            xTitle = pTitle + (dTitle - this._wTitle) / 2;
-                            xSub = pSub + (dSub - this._wSub) / 2;
+                            calcXs();
                             ySub = yTitle + this._hTitle + gap;
                             break;
                     }
