@@ -191,7 +191,7 @@ test.describe('area.html test', async function () {
 			rangeText
 		);
 
-		expect(lineLabel).eq(config.yAxis.guides[0].label);
+		expect(lineLabel).eq(config.yAxis.guides[0].label.text);
 		expect(rangeLabel).eq(config.yAxis.guides[1].label.text);
 	});
 });
