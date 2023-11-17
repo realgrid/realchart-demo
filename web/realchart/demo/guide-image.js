@@ -36,7 +36,8 @@ const config = {
             visible: true
         }
 	},
-	yAxis: {
+	yAxis: [{
+		
 		crosshair: true,
 		grid: true,
 		line: true,
@@ -56,18 +57,58 @@ const config = {
 			  end: 90,
 			  label: { text: 'range guide', align: 'right', style: { fill: 'red' } }
 			}
-		  ]
-	},
+		  ],
+		
+	}],
 	body: {
         zoomType: 'x',
         style: {
             // stroke: 'none'
-        }
+        },
+		annotations: [{
+            offsetX: 30,
+            offsetY: 25,
+            rotation: 5,
+            text: 'Annotation Sample',
+            style: {
+                padding: '3px 5px',
+                fill: 'white'
+            },
+            backgroundStyle: {
+                fill: '#333',
+                rx: 5,
+                fillOpacity: 0.7
+            }
+        }, 
+		{
+            offsetX: 260,
+            offsetY: 25,
+            rotation: -5,
+            text: 'Text',
+            style: {
+                padding: '3px 5px',
+                fill: 'white'
+            },
+            backgroundStyle: {
+                fill: 'blue',
+                rx: 5,
+                fillOpacity: 0.7
+            }
+        },{
+            type: 'image',
+            align: 'right',
+            offsetX: 50,
+            offsetY: 50,
+            width: 100,
+            imageUrl: '../assets/images/annotation.png'
+        }],
+		
     },
 	series: [{
 		colorByPoint: true,
 		pointLabel: true,
 		pointWidth: 30,
+		yAxis: 0,
 		data: [
 			[150], // 1월은 -2°C
 			[140], // 2월은 -1°C
@@ -87,6 +128,14 @@ const config = {
 		lineType: 'spline',
 		type: 'line',
 		color: '#333',
+		trendline: {
+            visible: true,
+            type: 'movingAverage',
+            movingAverage: {
+                interval: 4,
+            }
+        },
+		yAxis: 1,
 		data : [10,20,30,50,70,90,110,130,150,160,170,180]
 	}
 	
@@ -94,6 +143,9 @@ const config = {
 	ChartTextEffect: {
 		autoContrast: true,
 	},
+	seriesNavigator: {
+        visible: true
+    },
 };
 
 let animate = false;
