@@ -210,7 +210,7 @@ export class Utils {
     // '123'은 허락한다.
     // TODO: 개선할 것.
     static canNumber(value: any): value is number {
-        return !isNaN(+value) && !isNaN(parseFloat(value));
+        return !isNaN(value) && !isNaN(parseFloat(value));
     }
 
     static isValidNumber(value: any): value is number {

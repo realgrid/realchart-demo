@@ -12,9 +12,16 @@ const config = {
     },
     xAxis: {
         type: 'time',
+        tick: {
+            stepInterval: '2m'
+        },
         label: {
             rotation: -90,
-            timeFormat: 'yyyy년 MM월'
+            timeFormat: 'yyyy년 MM월',
+            style: {
+                fontFamily: 'Arial',
+                fontSize: '20px'
+            }
         }
     },
     yAxis: {

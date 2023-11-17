@@ -492,7 +492,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     /**
      * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
      * 첫번째 값은 {@link xStart}로 설정한다.
-     * time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.
+     * time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'w', 'd', 'h', 'n', 's')로 지정할 수 있다.
      * 이 속성이 지정되지 않으면 {@link ChartOptions.xStep}이 적용된다.
      * 
      * @config
@@ -709,7 +709,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             if (fld != null) {
                 return this._points.getProps(fld);
             } else {
-                return this._points.getValues(axis === this._xAxisObj ? 'x' : 'y').filter(v => isString(v));
+                return this._points.getCategories(axis === this._xAxisObj ? 'x' : 'y').filter(v => isString(v));
             }
         }
     }

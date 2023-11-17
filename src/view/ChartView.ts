@@ -183,6 +183,15 @@ class TitleSectionView extends SectionView {
                 case Align.RIGHT:
                     switch (sub.position) {
                         case SubtitlePosition.LEFT:
+                            xTitle += dTitle - this._wTitle;
+                            switch (sub.align) {
+                                case Align.CENTER:
+                                    xSub += (dTitle - this._wTitle - this._wSub) / 2;
+                                    break;
+                                case Align.RIGHT:
+                                    xSub = xTitle - gap - this._wSub;
+                                    break;
+                            }
                             calcYs();
                             break;
                         case SubtitlePosition.RIGHT:

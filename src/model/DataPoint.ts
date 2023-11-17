@@ -251,7 +251,7 @@ export class DataPointCollection {
         return this._points.map(p => p.getProp(prop));
     }
 
-    getValues(axis: string): any[] {
+    getCategories(axis: string): any[] {
         return this._points.map(p => p[axis]);
     }
 

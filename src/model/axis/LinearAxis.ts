@@ -23,7 +23,7 @@ export class ContinuousAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    stepInterval: number;
+    stepInterval: number | string;
     stepPixels = 72;
     stepCount: number;
     steps: number[];
@@ -46,6 +46,10 @@ export class ContinuousAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    protected _isValidInterval(v: any): boolean {
+        return v > 0;
+    }
+
     buildSteps(length: number, base: number, min: number, max: number, broken = false): number[] {
         let pts: number[];
 
@@ -60,7 +64,7 @@ export class ContinuousAxisTick extends AxisTick {
             pts = this._getStepsByCount(this._baseAxis._ticks.length, base, min, max);
         } else if (this.stepCount > 0) {
             pts = this._getStepsByCount(this.stepCount, base, min, max);
-        } else if (this.stepInterval > 0) {
+        } else if (this._isValidInterval(this.stepInterval)) {
             pts = this._getStepsByInterval(this.stepInterval, base, min, max);
         } else if (this.stepPixels > 0) {
             pts = this._getStepsByPixels(length, (this.axis?._isPolar && !this.axis?._isX ? 0.5 : 1) * this.stepPixels, base, min, max);
@@ -139,16 +143,20 @@ export class ContinuousAxisTick extends AxisTick {
         return steps;
     }
 
-    protected _getStepsByInterval(interval: number, base: number, min: number, max: number): number[] {
-        const steps: number[] = [];
-        let v: number;
-
+    protected _normalizeMin(min: number, interval: number): number {
         if (min > Math.floor(min / interval) * interval) {
             min = Math.floor(min / interval) * interval;
         } else if (min < Math.ceil(min / interval) * interval) {
             min = Math.ceil(min / interval) * interval;
         }
-        min = fixnum(min);
+        return fixnum(min);
+    }
+
+    protected _getStepsByInterval(interval: any, base: number, min: number, max: number): number[] {
+        const steps: number[] = [];
+        let v: number;
+
+        min = this._normalizeMin(min, interval);
 
         if (!isNaN(base)) {
             steps.push(v = base);
@@ -227,11 +235,7 @@ export class ContinuousAxisTick extends AxisTick {
             min = base - ceil((base - min) / step) * step;
 
         } else {
-            if (min > Math.floor(min / step) * step) {
-                min = Math.floor(min / step) * step;
-            } else if (min < Math.ceil(min / step) * step) {
-                min = Math.ceil(min / step) * step;
-            }
+            min = this._normalizeMin(min, step);
         }
 
         this._step = step;
