@@ -26,7 +26,13 @@ const config = {
         },
         data: [{
             "name": "A",
-            "value": 6
+            "value": 6,
+            data:[
+                {
+                    "name": "AA",
+                    "value": 6,
+                }
+            ]
         }, {
             "name": "B",
             "value": 5
