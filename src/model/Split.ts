@@ -96,8 +96,18 @@ export class Pane extends ChartItem {
     body = new PaneBody(this);
 
     //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    prepareRender(): void {
+        this.body.prepareRender();
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doLoad(source: any): void {
+        super._doLoad(source);
+    }
 }
 
 interface IRelativeSize {
@@ -228,6 +238,8 @@ export class Split extends ChartItem {
         this._xAxes = chart._xPaneAxes;
         this._yAxes = chart._yPaneAxes;
         this._vpanes = this.$_collectPanes(chart);
+        this._vpanes.forEach(panes => panes.forEach(pane => pane.prepareRender()));
+
     }
 
     getXLens(length: number): number[] {

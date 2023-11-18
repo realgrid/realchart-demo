@@ -10,7 +10,7 @@ import { pickNum } from "../common/Common";
 import { Dom } from "../common/Dom";
 import { ElementPool } from "../common/ElementPool";
 import { RcElement } from "../common/RcControl";
-import { toSize } from "../common/Rectangle";
+import { Rectangle, toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";

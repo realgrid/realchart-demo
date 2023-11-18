@@ -1352,20 +1352,25 @@ export abstract class PaneAxisMatrix {
 
     buildTicks(lens: number[]): void {
         // 다른 축을 참조하는 axis를 나중에 계산한다.
-        this._matrix.forEach(mat => {
-            mat.forEach((m, i) => {
+        this._matrix.forEach((mat, i) => {
+            mat.forEach((m, j) => {
                 m._axes.forEach(axis => {
                     if (!axis.isBased()) {
-                        axis.buildTicks(lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i]);
+                        // if (!lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i]) debugger;
+                        // axis.buildTicks(lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i]);
+                        // axis.buildTicks(lens[i]);
+                        axis.buildTicks(lens[axis._isX ? axis.col : axis.row]);
                     }
                 });
             });
         })
-        this._matrix.forEach(mat => {
-            mat.forEach((m, i) => {
+        this._matrix.forEach((mat, i) => {
+            mat.forEach((m, j) => {
                 m._axes.forEach(axis => {
                     if (axis.isBased()) {
-                        axis.buildTicks(lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i]);
+                        // axis.buildTicks(lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i]);
+                        // axis.buildTicks(lens[i]);
+                        axis.buildTicks(lens[axis._isX ? axis.col : axis.row]);
                     }
                 });
             });

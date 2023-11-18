@@ -1,13 +1,19 @@
 const config = {
+    // inverted: true,
+    options: {
+        // animatable: false
+    },
     title: {
         text: '2017년 3/4분기',
+        gap: 10,
         backgroundStyle: {
-            fill: 'black'
+            fill: 'black',
+            rx: '3px'
         },
         style: {
             fill: '#fff',
             fontSize: '16px',
-            marginBottom: '10px'
+            padding: '2px 5px',
         }
     },
     subtitle: {
@@ -19,10 +25,38 @@ const config = {
             marginBottom: '10px'
         }
     },
-    inverted: true,
     split: {
         visible: true,
-        cols: 2
+        cols: 2,
+        panes: [{
+            body: {
+                annotations: {
+                    text: "운영체제",
+                    align: 'center',
+                    style: {
+                        fontSize: '24px',
+                        fontWeight: 'bold'
+                    }
+                }
+            }
+        }, {
+            col: 1,
+            body: {
+                annotations: {
+                    text: '안드로이드(Android) 버전별',
+                    align: 'center',
+                    backgroundStyle: {
+                        stroke: '#d3d3d3',
+                        strokeWidth: '0.3px',
+                        fill: '#f0f0f0'
+                    },
+                    style: {
+                        padding: '5px 20px',
+                        fontSize: '18px'
+                    }
+                }
+            }
+        }]
     },
     legend: {
         align: 'left',
@@ -50,37 +84,37 @@ const config = {
         reversed: true
     }],
     yAxis: [{
-        title: {
-            text: '운영체제',
-            style: {
-                fontSize: '24px',
-                fontWeight: 'bold'
-            }
-        },
+        // title: {
+        //     text: '운영체제',
+        //     style: {
+        //         fontSize: '24px',
+        //         fontWeight: 'bold'
+        //     }
+        // },
         position: 'opposite',
         label: false,
         grid: false
     }, {
         col: 1,
-        title: {
-            text: '안드로이드(Android) 버전별',
-            backgroundStyle: {
-                stroke: '#d3d3d3',
-                strokeWidth: '0.3px'
-            },
-            style: {
-                padding: '5px 20px',
-                fontSize: '18px'
-            }
-        },
+        // title: {
+        //     text: '안드로이드(Android) 버전별',
+        //     backgroundStyle: {
+        //         stroke: '#d3d3d3',
+        //         strokeWidth: '0.3px'
+        //     },
+        //     style: {
+        //         padding: '5px 20px',
+        //         fontSize: '18px'
+        //     }
+        // },
         position: 'opposite',
-        side: true,
         label: false,
         grid: false
     }],
     series: [{
         type: 'pie',
-        radius: '45%',
+        radius: '40%',
+        centerY: '60%',
         innerRadius: '50%',
         innerText: '<t style="fill:#000;font-weight:bold;font-size:24px">OS</t>',
         legendByPoint: true,
@@ -124,18 +158,22 @@ const config = {
             config.series[0].data.forEach(value => {
                 value.sliced = value.x === arg.x ? true : false;
                 config.series[1].color = colors[arg.index];
-                switch(value.x) {
+                switch(arg.x) {
                     case 'Android':
-                        config.yAxis[1].title.text = '안드로이드(Android) 버전별 사용량';
+                        //config.yAxis[1].title.text = '안드로이드(Android) 버전별 사용량';
+                        config.split.panes[1].body.annotations.text = '안드로이드(Android) 버전별 사용량';
                         break;
                     case 'iOS':
-                        config.yAxis[1].title.text = 'iOS 버전별 사용량';
+                        //config.yAxis[1].title.text = 'iOS 버전별 사용량';
+                        config.split.panes[1].body.annotations.text = 'iOS 버전별 사용량';
                         break;
                     case 'Windos':
-                        config.yAxis[1].title.text = 'Windows 버전별 사용량';
+                        //config.yAxis[1].title.text = 'Windows 버전별 사용량';
+                        config.split.panes[1].body.annotations.text = 'Windows 버전별 사용량';
                         break;
                     case '기타':
-                        config.yAxis[1].title.text = '기타 OS 버전별 사용량';
+                        //config.yAxis[1].title.text = '기타 OS 버전별 사용량';
+                        config.split.panes[1].body.annotations.text = '기타 OS 버전별 사용량';
                         break;
                     default:
                         break;

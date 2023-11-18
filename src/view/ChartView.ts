@@ -20,6 +20,7 @@ import { Chart, Credits } from "../model/Chart";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem, LegendLocation } from "../model/Legend";
 import { Series } from "../model/Series";
+import { Split } from "../model/Split";
 import { Subtitle, SubtitlePosition, Title } from "../model/Title";
 import { AnnotationView } from "./AnnotationView";
 import { AxisScrollView, AxisView } from "./AxisView";
@@ -254,8 +255,8 @@ class TitleSectionView extends SectionView {
                     }
                     break;
             }
-            vTitle.translate(xTitle, yTitle);
-            vSub.translate(xSub, ySub);
+            vTitle.resizeByMeasured().layout().translate(xTitle, yTitle);
+            vSub.resizeByMeasured().layout().translate(xSub, ySub);
 
         } else if (dTitle > 0 || dSub > 0) {
             const m = dTitle ? title : sub;
@@ -692,7 +693,7 @@ export class ChartView extends LayerElement {
         if (m.isSplitted()) {
             this._plotContainer.setVisible(false);
             this._paneContainer.setVisible(true);
-            this.$_preparePanes(doc);
+            this.$_preparePanes(doc, m.split);
         } else {
             this._plotContainer.setVisible(true);
             this._paneContainer.setVisible(false);
@@ -1164,7 +1165,11 @@ export class ChartView extends LayerElement {
     }
 
     seriesByDom(dom: Element): SeriesView<Series> {
-        return this._bodyView.seriesByDom(dom);
+        if (this._paneContainer.visible) {
+            return this._paneContainer.seriesByDom(dom);
+        } else {
+            return this._bodyView.seriesByDom(dom);
+        }
     }
 
     findSeriesView(series: Series): SeriesView<Series> {
@@ -1253,7 +1258,8 @@ export class ChartView extends LayerElement {
         }
     }
 
-    private $_preparePanes(doc: Document): void {
+    private $_preparePanes(doc: Document, split: Split): void {
+        this._paneContainer.prepare(doc, split);
     }
 
     private $_prepareBody(doc: Document, polar: boolean): void {

@@ -808,7 +808,7 @@ export class BodyView extends ChartElement<Body> {
 
         this._prepareSeries(doc, chart, chart._getSeries().getVisibleSeries());
         this._prepareGauges(doc, chart, chart._getGauges().getVisibles());
-        this.$_prepareAnnotations(doc, chart.body.getAnnotations());
+        this._prepareAnnotations(doc, chart.body.getAnnotations());
     }
 
     prepareGuideContainers(): void {
@@ -1118,7 +1118,7 @@ export class BodyView extends ChartElement<Body> {
         });
     }
 
-    private $_prepareAnnotations(doc: Document, annotations: Annotation[]): void {
+    protected _prepareAnnotations(doc: Document, annotations: Annotation[]): void {
         const container = this._annotationContainer;
         const frontContainer = this._frontAnnotationContainer;
         const map = this._annotationMap;

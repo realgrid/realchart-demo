@@ -10,12 +10,14 @@ import { LayerElement, RcControl } from "../common/RcControl";
 import { ISize } from "../common/Size";
 import { _undefined } from "../common/Types";
 import { RectElement } from "../common/impl/RectElement";
-import { Axis, AxisPosition, PaneAxes, PaneAxisMatrix } from "../model/Axis";
+import { Axis, PaneAxes, PaneAxisMatrix } from "../model/Axis";
 import { Chart, IChart } from "../model/Chart";
+import { Series } from "../model/Series";
 import { Split } from "../model/Split";
 import { AxisScrollView, AxisView } from "./AxisView";
 import { BodyView, IPlottingOwner } from "./BodyView";
 import { SectionView } from "./ChartElement";
+import { SeriesView } from "./SeriesView";
 
 class AxisSectionView extends SectionView {
 
@@ -63,18 +65,18 @@ class AxisSectionView extends SectionView {
 
             v.model = axes[i];
 
-            if (pos === AxisPosition.BETWEEN) {
-                let row = !this.isX ? this.row - 1 : this.row;
-                let col = this.isX ? this.col - 1 : this.col;
-                v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
-                row = this.row;
-                col = this.col;
-                v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
-            } else {
-                const row = pos === AxisPosition.OPPOSITE ? this.row - 1 : this.row;
-                const col = pos === AxisPosition.OPPOSITE ? this.col - 1 : this.col;
-                v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
-            }
+            // if (pos === AxisPosition.BETWEEN) {
+            //     let row = !this.isX ? this.row - 1 : this.row;
+            //     let col = this.isX ? this.col - 1 : this.col;
+            //     v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
+            //     row = this.row;
+            //     col = this.col;
+            //     v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
+            // } else {
+            //     const row = this.row;// pos === AxisPosition.OPPOSITE ? this.row - 1 : this.row;
+            //     const col = this.col;//pos === AxisPosition.OPPOSITE ? this.col - 1 : this.col;
+            //     v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
+            // }
         });
 
         this.axes = axes;
@@ -291,9 +293,10 @@ export class PaneBodyView extends BodyView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepareSeries(doc: Document, chart: IChart): void {
+    prepareRender(doc: Document, chart: IChart): void {
         const r = this.row;
         const c = this.col;
+        const body = chart.split.getPane(r, c).body;
         const series = chart._getSeries().getPaneSeries(r, c);
         const gauges = chart._getGauges().getPaneVisibles(r, c);
 
@@ -301,6 +304,7 @@ export class PaneBodyView extends BodyView {
 
         this._prepareSeries(doc, chart, series);
         this._prepareGauges(doc, chart, gauges);
+        this._prepareAnnotations(doc, body.getAnnotations());
     }
 }
 
@@ -341,16 +345,21 @@ export class PaneContainer extends LayerElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    prepare(doc: Document, model: Split): void {
+        const chart = model.chart as Chart;
+
+        this.$_init(doc);
+        this._model = model;
+
+        this.$_prepareBodies(doc, model);
+    }
+
     measure(doc: Document, model: Split, xAxes: PaneAxisMatrix, yAxes: PaneAxisMatrix, w: number, h: number, phase: number): void {
         const chart = model.chart as Chart;
         const inverted = this._inverted = model.chart.isInverted();
         const wSave = w;
         const hSave = h;
 
-        this.$_init(doc);
-        this._model = model;
-
-        this.$_prepareBodies(doc, model);
         this.$_prepareAxes(doc, xAxes, true);
         this.$_prepareAxes(doc, yAxes, false);
 
@@ -412,6 +421,13 @@ export class PaneContainer extends LayerElement {
         this.$_layoutBodies(model, w, h);
     }
 
+    seriesByDom(dom: Element): SeriesView<Series> {
+        for (const body of this._bodies) {
+            const v = body.seriesByDom(dom);
+            if (v) return v;
+        }
+    }
+
     //-------------------------------------------------------------------------
     // internal
     //-------------------------------------------------------------------------
@@ -458,7 +474,7 @@ export class PaneContainer extends LayerElement {
             map.push(list);
         }
         views.forEach(v => {
-            v.prepareSeries(doc, chart);
+            v.prepareRender(doc, chart);
             // guides - axis view에서 guide view들을 추가할 수 있도록 초기화한다.
             v.prepareGuideContainers();
         });
@@ -579,7 +595,7 @@ export class PaneContainer extends LayerElement {
                     const y1 = colPts[c * 2 + 1];
                     const y2 = colPts[(c + 1) * 2];
 
-                    view.measure(this.doc, body, x2 - x1, y2 - y1, 1);
+                    view.measure(this.doc, model.getPane(r, c).body, x2 - x1, y2 - y1, 1);
                     view.resize(x2 - x1, y2 - y1).translate(x1, this.height - y2);
                     view.layout();
                 }
@@ -594,7 +610,7 @@ export class PaneContainer extends LayerElement {
                     const x1 = colPts[(c + 1) * 2 - 1];
                     const x2 = colPts[(c + 1) * 2];
 
-                    view.measure(this.doc, body, x2 - x1, y2 - y1, 1);
+                    view.measure(this.doc, model.getPane(r, c).body, x2 - x1, y2 - y1, 1);
                     view.resize(x2 - x1, y2 - y1).translate(x1, h - y2);
                     view.layout();
                 }

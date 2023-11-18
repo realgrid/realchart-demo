@@ -50,6 +50,8 @@ export class PointLabelView extends LabelElement {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-point-label');
+
+        this.ignorePointer();
     }
 
     //-------------------------------------------------------------------------
