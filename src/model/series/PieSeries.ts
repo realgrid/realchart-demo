@@ -10,28 +10,44 @@ import { pickNum } from "../../common/Common";
 import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { FormattableText } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
-import { ILegendSource } from "../Legend";
-import { ISeries, PointItemPosition, RadialSeries, Series, SeriesGroup, SeriesGroupLayout, WidgetSeriesPoint } from "../Series";
+import { ISeries, RadialSeries, Series, SeriesGroup, SeriesGroupLayout, WidgetSeriesPoint } from "../Series";
 
 export class PieSeriesPoint extends WidgetSeriesPoint {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    private _thickness: RtPercentSize;
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _thickDim: IPercentSize;
     sliced = false;
     startAngle = 0;
     angle = 0;
-    borderRaidus: number;
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    get endAngle(): number {
-        return this.startAngle + this.angle;
+    borderRaidus: number;
+
+    /**
+     * 원호 두께.
+     */
+    get thickness(): RtPercentSize {
+        return this._thickness;
     }
+    set thickness(value: RtPercentSize) {
+        if (value !== this._thickness) {
+            this._thickness = value;
+            this._thickDim = parsePercentSize(value, true);
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
 
     //-------------------------------------------------------------------------
     // overriden members

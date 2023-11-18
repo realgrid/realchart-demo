@@ -415,13 +415,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * @config
      */
     inverted: boolean;
-    /**
-     * true면 x축 방향을 기준으로 body 영역을 분할한다.\
-     * [주의] 차트 로딩 후 변경할 수 없다.
-     *
-     * @config
-     */
-    splitted: boolean;
 
     get assets(): AssetCollection {
         return this._assets;
