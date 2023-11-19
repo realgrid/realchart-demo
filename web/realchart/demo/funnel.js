@@ -35,7 +35,7 @@ const config = {
         legendByPoint: true,
         data: [ 
             { name: 'moon', y: 53, sliced: true }, 
-            { name: 'yeon', y: 97, color: '#0088ff' }, 
+            { name: 'yeon', y: 97 }, 
             { name: 'lim', y: 17}, 
             { name: 'moon', y: 9}, 
             { name: 'hong', y: 13 }, 

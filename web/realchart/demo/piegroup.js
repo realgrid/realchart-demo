@@ -1,64 +1,81 @@
 /**
  * @demo
- * 
+ *
  */
 const config = {
-    title: "Pie Series",
-    options: {
-        animatable: false,
-    },
-    legend: {
-        position: 'right',
-        // layout: 'auto',
-        style: {
-            marginRight: '20px'
+    templates: {
+        series:  {
+            pointStyle2: {
+                stroke: 'white'
+            }
         }
     },
-    plot: {
-        // style: { fill: 'yellow' }
-    },
-    series: {
-        type: 'pie',
-        legendByPoint: true,
-        pointLabel: {
-            visible: true,
-            // position: 'outside',
-            text: "${name} (${y})",
-            // effect: 'outline',
-            style: {
-                // fill: '#eee'
-            }
-        },
-        data: [ 
-            { name: 'moon', y: 53, sliced: true }, 
-            { name: 'yeon', y: 97 },// color: '#0088ff' }, 
-            { name: 'lim', y: 17}, 
-            { name: 'moon', y: 9}, 
-            { name: 'hong', y: 13 }, 
-            { name: 'america', y: 23}, 
-            { name: 'asia', y: 29}, 
-            // 23,
-            // 7,
-            // 17,
-            // 13
+	title: 'Pie Group',
+	options: {
+		// animatable: false
+	},
+	series: {
+        type: 'piegroup',
+        children: [
+            {
+                template: 'series',
+                name: 'pie1',
+                pointLabel: {
+                    visible: true,
+                    position: 'inside',
+                    effect: 'outline',
+                },
+                // pointWidth: '100%',
+                data: [11, 22, 15, 9, 13, 27],
+            },
+            {
+                template: 'series',
+                name: 'pie2',
+                pointLabel: {
+                    visible: true,
+                    position: 'inside',
+                    effect: 'outline',
+                },
+                data: [15, 19, 19, 6, 21, 21],
+            },
+            {
+                template: 'series',
+                name: 'pie3',
+                pointLabel: {
+                    visible: true,
+                    position: 'inside',
+                    effect: 'outline',
+                },
+                data: [13, 17, 15, 11, 23, 17],
+            },
         ],
-    }
-}
+    },
+};
 
 let animate = false;
 let chart;
 
 function setActions(container) {
-    createCheckBox(container, 'Debug', function (e) {
-        RealChart.setDebugging(_getChecked(e));
-        chart.render();
-    }, false);
-    createCheckBox(container, 'Always Animate', function (e) {
-        animate = _getChecked(e);
-    }, false);
-    createButton(container, 'Test', function(e) {
-        alert('hello');
-    });
+	createCheckBox(
+		container,
+		'Debug',
+		function (e) {
+			RealChart.setDebugging(_getChecked(e));
+			chart.render();
+		},
+		false
+	);
+	createCheckBox(
+		container,
+		'Always Animate',
+		function (e) {
+			animate = _getChecked(e);
+		},
+		false
+	);
+	createButton(container, 'Test', function (e) {
+		alert('hello2');
+	});
     createListBox(container, "options.palette", ['default', 'warm', 'cool', 'forest', 'gray'], function (e) {
         config.options.palette = _getValue(e);
         chart.load(config, animate);
@@ -98,15 +115,15 @@ function setActions(container) {
     }, '50%');
     line(container);
     createListBox(container, "series.pointLabel.position", ['auto', 'outside'], function (e) {
-        config.series.pointLabel.position = _getValue(e);
+        config.series.children[2].pointLabel.position = _getValue(e);
         chart.load(config, animate);
     }, 'auto');
 }
 
 function init() {
-    console.log('RealChart v' + RealChart.getVersion());
-    // RealChart.setDebugging(true);
+	console.log('RealChart v' + RealChart.getVersion());
+	// RealChart.setDebugging(true);
 
-    chart = RealChart.createChart(document, 'realchart', config);
-    setActions('actions')
+	chart = RealChart.createChart(document, 'realchart', config);
+	setActions('actions');
 }

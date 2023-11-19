@@ -12,7 +12,7 @@ import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
 import { ClipElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
-import { IValueRange } from "../common/Types";
+import { IValueRange, _undefined } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { RectElement } from "../common/impl/RectElement";
@@ -423,7 +423,7 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     prepareSeries(doc: Document, model: T): void {
         // this._viewRate = NaN; // animating 중 다른 시리즈 등의 요청에 의해 여기로 진입할 수 있다.
         this.setData('index', (model.index % PALETTE_LEN) as any);
-        this.setBoolData('pointcolors', model._colorByPoint());
+        this.setData('pointcolors', model._colorByPoint() ? 'a' : _undefined);
 
         this.internalClearStyleAndClass();
         this.internalSetStyleOrClass(model.style);
@@ -494,6 +494,8 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         v.setAttr('aria-label', p.ariaHint());
         this.$_setColorIndex(v, p);
         v.internalClearStyleAndClass();
+
+        model.pointStyle && v.internalSetStyleOrClass(model.pointStyle);
 
         // 정적 point style (ex, line marker)
         if (styles) {
@@ -1025,6 +1027,8 @@ export abstract class WidgetSeriesView<T extends WidgetSeries> extends SeriesVie
             this._zombieAni = new ZombiAnimation(this);
             this._zombieAni.start();
         }
+
+        this.setData('pointcolors', 'f');
     }
 
     //-------------------------------------------------------------------------

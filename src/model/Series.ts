@@ -499,6 +499,12 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     xStep: number | string;
     /**
+     * 모든 데이터포인트에 적용되는 inline 스타일셋.\
+     * {@link Series.style}로 설정되는 시리즈의 inline 스타일이
+     * 데이터포인터에 적용되지 않는 경우 이 속성을 사용할 수 있다.
+     */
+    pointStyle: SVGStyleOrClass;
+    /**
      * 데이터 포인트 기본 색.
      * 
      * @config

@@ -270,7 +270,7 @@ export class PieSeriesGroup extends SeriesGroup<PieSeries> {
     }
 
     protected _doPrepareSeries(series: PieSeries[]): void {
-        if (this.layout === SeriesGroupLayout.STACK || this.layout === SeriesGroupLayout.FILL) {
+        // if (this.layout === SeriesGroupLayout.STACK || this.layout === SeriesGroupLayout.FILL) {
             const sum = series.map(ser => (ser as PieSeries).groupSize).reduce((a, c) => a + pickNum(c, 1), 0);
             let p = 0;
             
@@ -278,6 +278,6 @@ export class PieSeriesGroup extends SeriesGroup<PieSeries> {
                 ser._groupPos = p;
                 p += ser._groupSize = pickNum(ser.groupSize, 1) / sum;
             });
-        }
+        // }
     }
 }
