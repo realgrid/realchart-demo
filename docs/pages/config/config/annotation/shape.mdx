@@ -19,8 +19,14 @@ undefined
 `default: 64`  
 
 ### name: `string{:js}`[#name]
-Annotation 이름.
+Annotation 이름.\
 동적으로 Annotation을 다루기 위해서는 반드시 지정해야 한다.  
+
+### scope[#scope]
+차트 모델에서 지정된 annotationd의 표시 기준 영역.  
+
+
+`default: AnnotationScope.CHART`  
 
 ### shape[#shape]
 Shape 종류.  
@@ -42,6 +48,12 @@ Shape 종류.
 | fontWeight | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |
+### verticalAlign[#verticalAlign]
+수직 배치.  
+
+
+`default: VerticalAlign.TOP`  
+
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
 `default: true`  

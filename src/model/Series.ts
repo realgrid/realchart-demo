@@ -346,7 +346,7 @@ export interface IDataPointCallbackArgs {
 }
 
 export type PointStyleCallback = (args: IDataPointCallbackArgs) => SVGStyleOrClass;
-export type PointClickCallbck = (args: IDataPointCallbackArgs) => boolean;
+export type PointClickCallback = (args: IDataPointCallbackArgs) => boolean;
 
 const AXIS_VALUE = {
     'x': 'xValue',
@@ -559,7 +559,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * 
      * @config
      */
-    onPointClick: PointClickCallbck;
+    onPointClick: PointClickCallback;
 
     contains(p: DataPoint): boolean {
         return this._points.contains(p);
