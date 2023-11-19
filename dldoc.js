@@ -11,6 +11,7 @@
  * ```yarn dldoc``` script에 해당 명령을 포함한다.
  * export 한 클래스만 찾는다. export하지 않은 것을 포함하려면 typedoc plugin 필요.
  * https://github.com/tomchen/typedoc-plugin-not-exported
+ * typedoc 기본 설정은 typedoc.json을 사용한다.
  */
 import fs from 'fs';
 import path from 'path';
@@ -598,10 +599,58 @@ class Tunner {
  * Tunner에서 가공한 모델을 가지고 config별 mdx문서를 내보낸다.
  */
 class MDGenerater {
+
+  static get TYPE_ELEMENTS() {
+    return ['series', 'xAxis', 'yAxis', 'gauge', 'annotation'];
+  } 
+
   constructor(map, { debug=false }) {
     this.classMap = map;
     this.docMap = {};
     this.debug = debug;
+  }
+
+  /**
+   * root.opt[type] label
+   * @param config: any
+   * @returns { name, root, opt, label, ...attr }
+   * @rparam name: head of line
+   * @rparam root: root name of head line
+   * @rparam opt: option name of head line; 2nd value of . connected string
+   * @rparam label: tail of line
+   * @rparam ...attr: key, value pair object bind in []
+   */
+  static destructConfig(config) {
+    // ex) chart.series[type=vector,type2=bar] foo bar...
+    const regex = /(\w+(?:\.\w+)?)(?:\[(.*?)\])?(?:\s(.*))?/;
+    const matches = config?.match(regex);
+  
+    if (!matches) {
+      return [];
+    }
+  
+    const [, name, optionsStr, rest] = matches;
+    const [root, opt] = name.split('.');
+    const result = { name, root, opt };
+  
+    if (optionsStr) {
+      const options = {};
+      optionsStr.split(',').forEach(option => {
+        const [key, value] = option.split('=');
+        if (key && value) {
+          options[key] = value.replace(/["']/g, '');
+        }
+      });
+      // result.push(options);
+      Object.assign(result, options);
+    }
+  
+    if (rest) {
+      // result.push(rest.trim());
+      result['label'] = rest.trim();
+    }
+  
+    return result;
   }
 
   // <br> 태그 변환
@@ -610,31 +659,44 @@ class MDGenerater {
     return content?.replace(/<br>/g, '\n').trim() || '';
   }
 
-  _makeClassProp(param, classMap) {
-    const { opt, type: chartType, prop: { name, dtype, content } } = param;
-    if (dtype.name == 'Annotation')
-      debugger;
-    let docMap = this.docMap;
-    const keys = [opt, chartType, name].filter(v => v);
-    keys.forEach((key, i) => {
-      if (!docMap[key]) {
-        // is the last
-        if (i == keys.length - 1) {
-          const _content = `## ${name}\n${this._fixContent(content)}\n`
-                + this._makeProps({ name, opt, type: chartType, props: classMap.props });
-          docMap[key] = { _content };
-          // this._writeJsonFile('./docs/.tdout/' + keys.join('.') + '.json', docMap);
-        } else {
-          docMap[key] = { _content: '' };
+  _getDoc(keys, docMap) {
+    const _keys = keys.slice();
+    if (keys.length) {
+      const key = _keys.shift();
+      try {
+        if (!docMap[key]) {
+          docMap[key] = { _key: [docMap._key, key].filter(v=>v).join('.'), _content: '' };
         }
+        return this._getDoc(_keys, docMap[key]);
+      } catch(err) {
+        console.error(err);
       }
-      docMap = docMap[key];
-    });
-    // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
+    }
+    return docMap;
+  }
 
-    // 상대경로.
-    // series, axis 등은 type으로 시작. 그 외에는 opt로 시작. 아무 정보도 없으면 config root.
-    let lines = `### [${name}](./${[chartType || opt || 'config', name].join('/')})\n`;
+  _makeClassProp(param, classMap) {
+    const { prop: { name, content } } = param;
+    const keys = param.keys.slice();
+    const docMap = this._getDoc(keys, this.docMap);
+    if (!docMap) throw Error();
+
+    // 개요
+    const outline = `[${name}](/config/config/${name})\n${this._fixContent(content)}\n`
+    if (MDGenerater.TYPE_ELEMENTS.includes(name)){
+      return `### ${outline}`;
+    }
+
+    keys.push(name);
+    const _key = keys.join('.');
+    const _content = '## ' + outline + this._makeProps({ keys, props: classMap.props });
+    docMap[name] = { _key , ...docMap[name], _content };
+
+    // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
+    const title = keys.pop();
+    const parent = keys.pop();
+
+    let lines = `### [${title}](./${[parent || 'config', title].join('/')})\n`;
     lines += `${this._fixContent(classMap.content)}  \n`;
     return lines;
   }
@@ -647,7 +709,7 @@ class MDGenerater {
    * @returns 
    */
   _makeProp(param) {
-    const { opt, type: chartType, prop } = param;
+    const { prop } = param;
     const { header, name, type, dtype, content, defaultValue, defaultBlock, readonly } = prop;
 
     let extraLines = ''
@@ -747,10 +809,10 @@ class MDGenerater {
    * @iparam props:any[] properties
    * @returns contents
    */
-  _makeProps({ name, opt, type, props }) {
+  _makeProps({ keys, props }) {
     const h = '## Properties\n';
     return [ h, ...props.map(prop => {
-      return this._makeProp({ name, opt, type, prop })
+      return this._makeProp({ keys, prop })
     })].join('\n');
   }
 
@@ -781,58 +843,23 @@ class MDGenerater {
     return lines.trim();
   }
 
-  /**
-   * root.opt[type] label
-   * @param config: any
-   * @returns { name, root, opt, label, ...attr }
-   * @rparam name: head of line
-   * @rparam root: root name of head line
-   * @rparam opt: option name of head line; 2nd value of . connected string
-   * @rparam label: tail of line
-   * @rparam ...attr: key, value pair object bind in []
-   */
-  static destructConfig(config) {
-    // ex) chart.series[type=vector,type2=bar] foo bar...
-    const regex = /(\w+(?:\.\w+)?)(?:\[(.*?)\])?(?:\s(.*))?/;
-    const matches = config?.match(regex);
-  
-    if (!matches) {
-      return [];
-    }
-  
-    const [, name, optionsStr, rest] = matches;
-    const [root, opt] = name.split('.');
-    const result = { name, root, opt };
-  
-    if (optionsStr) {
-      const options = {};
-      optionsStr.split(',').forEach(option => {
-        const [key, value] = option.split('=');
-        if (key && value) {
-          options[key] = value.replace(/["']/g, '');
-        }
-      });
-      // result.push(options);
-      Object.assign(result, options);
-    }
-  
-    if (rest) {
-      // result.push(rest.trim());
-      result['label'] = rest.trim();
-    }
-  
-    return result;
-  }
-
-  _setPropContents(docMap, { name, opt, type, _content }) {
-    if (name == 'chart') {
-      docMap[name] = { ...docMap[name], _content };
-    } else if (type) {
-      // if (opt != 'series') console.debug(opt, type, _content)
-      docMap[opt][type] = { ...docMap[opt][type], _content }
+  _setPropContents({ keys, _content }) {
+    // root config
+    // const [root] = keys;
+    const _key = keys.join('.');
+    const [name] = keys.splice(-1, 1);
+    if (!_key) {
+      this.docMap = { ...this.docMap, _content };
     } else {
-      docMap[opt] = { ...docMap[opt], _content }
+      let docMap = this._getDoc(keys, this.docMap);
+      docMap[name] = { _key, ...docMap[name], _content };
     }
+    // else if (opt && type) {
+    //   // if (opt != 'series') console.debug(opt, type, _content)
+    //   this.docMap[opt][type] = { _key: [opt, type].join('.'), ...this.docMap[opt][type], _content }
+    // } else {
+    //   this.docMap[opt] = { _key: opt, ...this.docMap[opt], _content }
+    // }
   }
 
   /**
@@ -841,12 +868,14 @@ class MDGenerater {
    * series/{type}.mdx에는 속성이 포함된 문서를 생성한다.
    * 이 후, property 생성에서 참조하는 confg정보는 재귀 처리한다.
    */
-  _setChartContent(docMap, dconf) {
+  _setChartContent(dconf) {
     const { name, root, opt, label, type, props, content } = dconf;
     if (root != 'chart') return;
 
     let subtitle = '';
     let subtitleText = opt;
+    
+
     // 개요 문서에만 링크 추가
     if (type) {
       subtitleText += `[type=${type}]`;  
@@ -854,20 +883,30 @@ class MDGenerater {
     }
     const _content = `${this._fixContent(content)}\n`;
     
-    if (['series', 'xAxis', 'yAxis', 'gauge', 'annotation'].indexOf(opt) >= 0 && !type) 
+    if (MDGenerater.TYPE_ELEMENTS.indexOf(opt) >= 0 && !type) 
       return console.warn(`[WARN] ${name} type missed.`);
 
     if (opt) {
-      if (!docMap[opt]) docMap[opt] = { _content: ''};
-      // docMap 참조 주의...
-      docMap[opt] = { ...docMap[opt], _content: docMap[opt]._content += `${subtitle}\n${_content}` };
+      // if (!this.docMap[opt]) 
+      //   this.docMap[opt] = { _key: opt, _content: ''};
+      
+        // docMap 참조 주의...
+      this.docMap[opt] = {
+        _key: opt, 
+        ...this.docMap[opt], 
+        _content: (this.docMap[opt]?._content || '') + `${subtitle}\n${_content}` 
+      };
     }
     
     // 속성 추가
     if (props) {
-      const propContents = this._makeProps({ name, opt, type, props });
-      this._setPropContents(docMap, { 
-        name, opt, type, 
+      const keys = [opt, type].filter(v => v);
+      // chart면 키가 없음...
+
+      const propContents = this._makeProps({ keys , props });
+      this._setPropContents({ 
+        // name, opt, type, 
+        keys,
         _content: (subtitleText ? `## ${subtitleText}\n${_content}` : '') 
           + propContents 
       });
@@ -881,7 +920,7 @@ class MDGenerater {
       config?.map(conf => {
         const dconf = MDGenerater.destructConfig(conf);
         // const { name, root, opt, label, type } = dconf;
-        this._setChartContent(this.docMap, { ...dconf, props, content })
+        this._setChartContent({ ...dconf, props, content })
       });
     })
 
@@ -903,7 +942,7 @@ class MDGenerater {
         }
         // console.debug('write', `${path}.mdx`);
         fs.writeFileSync(`${path}.mdx`, value , { encoding: 'utf-8'});
-      } else {
+      } else if (key != '_key') {
         !fs.existsSync(`${path}`) && fs.mkdirSync(path);
         this._saveFile(`${path}/${key}`, value);
       }
@@ -929,6 +968,6 @@ class MDGenerater {
   }
 }
 
-const classMap = new Tunner({debug:true}).scan();
+const classMap = new Tunner({ debug:true }).scan();
 const generator = new MDGenerater(classMap, { debug:true })
 generator.run();

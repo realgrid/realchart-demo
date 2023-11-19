@@ -136,9 +136,9 @@ minPadding도 적용되지 않는다.
 ### timeOffset: `number{:js}`[#timeOffset]
 javascript에서 숫자 단위로 전달되는 날짜값은 기본적으로 local이 아니라 new Date 기준이다.
 그러므로 보통 숫자로 지정된 날짜값은 utc 값이다.
-local 기준으로 표시하기 위해, 숫자로 지정된 날짜값에 더해야 하는 시간을 시간단위로 지정한다.
-ex) 한국은 -9  
-`default: 0`  
+local 기준으로 표시하기 위해, 숫자로 지정된 날짜값에 더해야 하는 시간을 분단위로 지정한다.
+ex) 한국은 -9 * 60  
+`default: ...`  
 
 ### [title](./time/title)
 축 타이틀 설정 모델.  

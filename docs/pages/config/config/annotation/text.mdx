@@ -28,8 +28,14 @@ true로 지정하면 시리즈들 위에 표시된다.
 `default: false`  
 
 ### name: `string{:js}`[#name]
-Annotation 이름.
+Annotation 이름.\
 동적으로 Annotation을 다루기 위해서는 반드시 지정해야 한다.  
+
+### scope[#scope]
+차트 모델에서 지정된 annotationd의 표시 기준 영역.  
+
+
+`default: AnnotationScope.CHART`  
 
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
@@ -48,6 +54,12 @@ Annotation 이름.
 ### text: `string{:js}`[#text]
 표시할 텍스트.  
 `default: 'Title'`  
+
+### verticalAlign[#verticalAlign]
+수직 배치.  
+
+
+`default: VerticalAlign.TOP`  
 
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
