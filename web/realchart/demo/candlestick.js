@@ -13,6 +13,7 @@ const config = {
     yAxis: {
     },
     series: {
+        // pointStyleCallback: args => {return { fill: 'red', stroke: 'red'}},
         type: 'candlestick',
         pointLabel: true,
         openField: 'openprc',

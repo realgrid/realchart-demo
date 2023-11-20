@@ -14,7 +14,7 @@ import { IPercentSize, IValueRange, IValueRanges, RtPercentSize, SVGStyleOrClass
 import { Utils } from "../common/Utils";
 import { RectElement } from "../common/impl/RectElement";
 import { Shape, Shapes } from "../common/impl/SvgShape";
-import { AxisScrollBar, IAxis } from "./Axis";
+import { IAxis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { LineType } from "./ChartTypes";

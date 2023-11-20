@@ -731,6 +731,10 @@
 .rct-candlestick-series .rct-point[data-focus] {
     fill-opacity: 0.5;
 }
+.rct-candlestick-series .rct-point[data-fall] {
+    fill: #008;
+    stroke: #008;
+}
 .rct-candlestick-point-border {
     stroke: #333;
 }
