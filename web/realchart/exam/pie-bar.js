@@ -46,12 +46,12 @@ const config = {
                     text: '안드로이드(Android) 버전별',
                     align: 'center',
                     backgroundStyle: {
+                        padding: '5px 20px',
                         stroke: '#d3d3d3',
                         strokeWidth: '0.3px',
                         fill: '#f0f0f0'
                     },
                     style: {
-                        padding: '5px 20px',
                         fontSize: '18px'
                     }
                 }
@@ -99,11 +99,11 @@ const config = {
         // title: {
         //     text: '안드로이드(Android) 버전별',
         //     backgroundStyle: {
+        //         padding: '5px 20px',
         //         stroke: '#d3d3d3',
         //         strokeWidth: '0.3px'
         //     },
         //     style: {
-        //         padding: '5px 20px',
         //         fontSize: '18px'
         //     }
         // },

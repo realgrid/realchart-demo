@@ -234,6 +234,7 @@ export class AxisGrid extends AxisItem {
     /**
      * 끝 값에 표시되는 그리드 선을 표시할 지 여부.
      * 
+     * @default x축이면 false, y축이면 true.
      * @config
      */
     endVisible: boolean;

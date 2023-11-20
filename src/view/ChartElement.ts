@@ -156,7 +156,7 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
         const sz = this._doMeasure(doc, model, hintWidth, hintHeight, phase);
 
         // TODO: 캐쉬!
-        const cs = getComputedStyle(this.dom);
+        let cs = getComputedStyle(this._background.dom);
         const padding = this._paddings;
 
         padding.applyPadding(cs);
@@ -167,6 +167,7 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
         if (this._marginable()) {
             const margin = this._margins;
 
+            cs = getComputedStyle(this.dom);
             margin.applyMargin(cs);
             this.mw = sz.width += margin.left + margin.right;
             this.mh = sz.height += margin.top + margin.bottom;

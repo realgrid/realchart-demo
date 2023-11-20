@@ -22,11 +22,17 @@ const config = {
         title: 'Y Axis',
         guides: [{
             type: 'line',
+            // front: true,
             value: 12,
             label: {
                 text: 'line guide',
+                effect: 'background',
                 style: {
-                    fill: 'blue'
+                    fill: 'white',
+                },
+                backgroundStyle: {
+                    fill: 'black',
+                    padding: '2px 5px'
                 }
             },
             style: {
@@ -35,6 +41,7 @@ const config = {
             }
         }, {
             type: 'range',
+            front: true,
             start: 3,
             end: 6,
             label: {
@@ -80,10 +87,17 @@ function setActions(container) {
         alert('hello');
     });
     createCheckBox(container, 'inverted', function (e) {
-        RealChart.setDebugging(_getChecked(e));
         config.inverted = _getChecked(e);
         chart.load(config);
     }, false);
+    createCheckBox(container, 'guide[0].front', function (e) {
+        config.yAxis.guides[0].front = _getChecked(e);
+        chart.load(config);
+    }, false);
+    createCheckBox(container, 'guide[1].front', function (e) {
+        config.yAxis.guides[1].front = _getChecked(e);
+        chart.load(config);
+    }, true);
 }
 
 function init() {

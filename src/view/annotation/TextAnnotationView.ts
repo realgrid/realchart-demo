@@ -52,7 +52,7 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
         const tv = this._textView;
 
         this._richText.setFormat(model.text);
-        this._richText.build(tv, hintHeight, hintWidth, null, null);
+        this._richText.build(tv, hintWidth, hintHeight, null, null);
 
         return toSize(this._textView.getBBounds());
     }

@@ -43,10 +43,10 @@ const config = {
             rotation: 5,
             text: 'Annotation Sample',
             style: {
-                padding: '3px 5px',
                 fill: 'white'
             },
             backgroundStyle: {
+                padding: '3px 5px',
                 fill: '#333',
                 rx: 5,
                 fillOpacity: 0.7
@@ -58,10 +58,10 @@ const config = {
             rotation: -5,
             text: 'Text',
             style: {
-                padding: '3px 5px',
                 fill: 'white'
             },
             backgroundStyle: {
+                padding: '3px 5px',
                 fill: 'blue',
                 rx: 5,
                 fillOpacity: 0.7

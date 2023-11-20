@@ -61,6 +61,8 @@ import { Annotation } from "../model/Annotation";
 import { AnnotationView } from "./AnnotationView";
 import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
+import { SvgRichText } from "../common/RichText";
+import { LabelElement } from "../common/impl/LabelElement";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -310,7 +312,7 @@ export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
     // fields
     //-------------------------------------------------------------------------
     model: T;
-    protected _label: TextElement;
+    protected _labelView: LabelElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -318,7 +320,7 @@ export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
     constructor(doc: Document) {
         super(doc, 'rct-axis-guide');
 
-        this.add(this._label = new TextElement(doc, 'rct-axis-guide-label'));
+        this.add(this._labelView = new LabelElement(doc, 'rct-axis-guide-label'));
     }
 
     //-------------------------------------------------------------------------
@@ -329,15 +331,26 @@ export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
     }
 
     //-------------------------------------------------------------------------
-    // overriden members
+    // methods
     //-------------------------------------------------------------------------
-    prepare(model: T): void {
+    prepare(doc: Document, model: T): void {
         this.model = model;
-        this._label.text = model.label.text;
-        this._label.setStyles(model.label.style);
+        // this._labelView.text = model.label.text;
+        this._labelView.setModel(doc, model.label, null);
+        this._labelView.setStyles(model.label.style);
     }
 
-    abstract layout(width: number, height: number): void;
+    layout(width: number, height: number): void {
+        this.model.label.buildSvg(this._labelView._text, width, height, null, null);
+        this._labelView.layout();
+
+        this._doLayout(width, height);
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    abstract _doLayout(width: number, height: number): void;
 }
 
 export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
@@ -359,16 +372,16 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepare(model: AxisLineGuide): void {
-        super.prepare(model);
+    prepare(doc: Document, model: AxisLineGuide): void {
+        super.prepare(doc, model);
 
         this._line.setStyles(model.style);
     }
 
-    layout(width: number, height: number): void {
+    _doLayout(width: number, height: number): void {
         const m = this.model;
         const label = m.label;
-        const labelView = this._label;
+        const labelView = this._labelView;
         let x: number;
         let y: number;
         let anchor: TextAnchor;
@@ -454,7 +467,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
             }
         }
         labelView.anchor = anchor;
-        labelView.layout = layout;
+        // labelView.layout = layout;
         labelView.translate(x, y);
     }
 }
@@ -478,13 +491,13 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepare(model: AxisRangeGuide): void {
-        super.prepare(model);
+    prepare(doc: Document, model: AxisRangeGuide): void {
+        super.prepare(doc, model);
     }
 
-    layout(width: number, height: number): void {
+    _doLayout(width: number, height: number): void {
         const m = this.model;
-        const label = this._label;
+        const label = this._labelView;
 
         if (this.vertical()) {
             const x1 = m.axis.getPosition(width, m.start, true);
@@ -530,7 +543,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
             }
 
             label.anchor = anchor;
-            label.layout = layout;
+            // label.layout = layout;
             label.translate(x, y);
 
             this._box.setBox(x1, 0, x2, height);
@@ -578,7 +591,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
             }
 
             label.anchor = anchor;
-            label.layout = layout;
+            // label.layout = layout;
             label.translate(x, y);
 
             this._box.setBox(0, y2, width, y1);
@@ -621,13 +634,13 @@ export class AxisGuideContainer extends LayerElement {
                 let v = this._rangePool.pop() || new AxisGuideRangeView(doc);
 
                 this.add(v);
-                v.prepare(g)
+                v.prepare(doc, g)
                 this._views.push(v);
             } else if (g instanceof AxisLineGuide) {
                 let v = this._linePool.pop() || new AxisGuideLineView(doc);
 
                 this.add(v);
-                v.prepare(g)
+                v.prepare(doc, g)
             }
         });
     }

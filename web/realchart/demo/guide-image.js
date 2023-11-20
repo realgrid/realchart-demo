@@ -71,11 +71,11 @@ const config = {
             rotation: 5,
             text: 'Annotation Sample',
             style: {
-                padding: '3px 5px',
                 fill: 'white'
             },
             backgroundStyle: {
                 fill: '#333',
+                padding: '3px 5px',
                 rx: 5,
                 fillOpacity: 0.7
             }
@@ -86,10 +86,10 @@ const config = {
             rotation: -5,
             text: 'Text',
             style: {
-                padding: '3px 5px',
                 fill: 'white'
             },
             backgroundStyle: {
+                padding: '3px 5px',
                 fill: 'blue',
                 rx: 5,
                 fillOpacity: 0.7
@@ -176,10 +176,10 @@ function setActions(container) {
 		container,
 		'ColorByPoint',
 		function (e) {
-			config.series.colorByPoint = _getChecked(e);
+			config.series[0].colorByPoint = _getChecked(e);
 			chart.load(config, animate);
 		},
-		false
+		true
 	);
 	createCheckBox(
 		container,
