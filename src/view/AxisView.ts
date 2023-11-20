@@ -15,7 +15,7 @@ import { DEG_RAD } from "../common/Types";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis, AxisGuide, AxisLabelArrange, AxisScrollBar, AxisTick, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
+import { Axis, AxisGuide, AxisLabelArrange, AxisPosition, AxisScrollBar, AxisTick, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { Crosshair } from "../model/Crosshair";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
@@ -442,6 +442,7 @@ export class AxisView extends ChartElement<Axis> {
 
     showCrosshair(pos: number, text: string): void {
         let cv = this._crosshairView;
+        let x: number;
 
         if (!cv) {
             this.add(this._crosshairView = cv = new CrosshairFlagView(this.doc));
@@ -454,7 +455,12 @@ export class AxisView extends ChartElement<Axis> {
         if (this.model._isHorz) {
             cv.translate(pos - r.width / 2, this.model.tick.length);
         } else {
-            cv.translate(this.width - this.model.tick.length - r.width, pos - r.height / 2);
+            if (this.model._runPos === AxisPosition.OPPOSITE) {
+                x = Math.min(0, this.width - r.width);
+            } else {
+                x = Math.max(0, this.width - this.model.tick.length - r.width);
+            }
+            cv.translate(x, pos - r.height / 2);
         }
     }
 
