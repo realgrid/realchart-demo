@@ -55,7 +55,7 @@
     "jsdoc": "^4.0.2",
     "jsdom": "^21.1.0",
     "jsdom-global": "^3.0.2",
-    "live-server": "git+https://github.com/tapio/live-server.git#ad22544",
+    "live-server": "^1.2.2",
     "marked": "^4.2.12",
     "mocha": "^10.2.0",
     "path": "^0.12.7",
