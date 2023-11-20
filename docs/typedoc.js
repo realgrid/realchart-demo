@@ -1,3 +1,7 @@
+/**
+ * Class Api 문서를 생성한다.
+ **/ 
+
 const fs = require('fs')
 const path = require('path')
 const typedocNextra = require('./lib/typedoc-nextra');

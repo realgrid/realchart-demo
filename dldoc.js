@@ -1,5 +1,7 @@
+
 ////////////////////////////////////////////////////////////////////////////////
 // dldoc.js
+// config 문서를 생성한다.
 // 2023. 09. 17. created by benny
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
@@ -68,7 +70,6 @@ class Tunner {
   static get fiddleUrl() {
     return JSFIDDLE_URL;
   }
-
 
   _findTag(tags, tag) {
     return tags?.find(t => t.tag == tag );
@@ -256,7 +257,6 @@ class Tunner {
         // 레퍼런스
         // line.target 이 number 타입으로 reference가 있는 경우...
         if (typeof line.target === 'number') {
-
           const link = this._getConfigLinkById(line.target);
           return link;
         } else {
@@ -471,6 +471,10 @@ class Tunner {
           && this._findTag(child.getSignature?.comment?.blockTags, '@config')
       );
     }
+    const staticPropFilter = (child) => {
+      return child.kind === ReflectionKind.Property
+        && child.flags?.isStatic
+    }
     this.currents.push({ name, kind, comment });
 
     const { config, content } = this._parseComment(comment);
@@ -486,6 +490,9 @@ class Tunner {
           config,
           content,
           extended: extendedTypes.map(t => t.name),
+          staticProps: children
+            .filter(staticPropFilter)
+            .map(c => { return { name: c.name, value: c.type?.value }}),
           props: clsProps
             .map(c => {
               return c.kind === ReflectionKind.Property
@@ -799,7 +806,53 @@ class MDGenerater {
     if (dft) {
       // strip ```ts ... ```
       const dftValue = dft.match(/```ts([\s\S]*?)```/)?.[1].trim() || dft.trim();
-      const [value, ...content] = dftValue.split(' ');
+      let [value, ...content] = dftValue.split(' ');
+      // this.classMap[dtype.name].staticProps
+      if (dtype?.kind === ReflectionKind.Enum) {
+        // console.debug(dtype, value, typeof value);
+        
+        // ex) name: 'ChartTextEffect', value: ChartTextEffect.NONE
+        // name과 value head가 같다.
+        const [enumName, memberName] = value.split('.');
+        if (dtype.name == enumName) {
+          const enumEl = this.classMap[enumName];
+          if (!enumEl) {
+            console.warn(`[WARN] Could not find.`, enumName)
+          } else {
+            const em = enumEl.props?.find(m => m.name == memberName)
+            if (em && em.value) {
+              value = em.value;
+              if (typeof value == 'string' ) value = `'${value}'`;
+            } else {
+              console.warn(`[WARN] EnumMember @config may not set.`, value)
+            }
+          }
+        } else {
+          console.warn(`[WARN] Unexpected default value pattern.`, dftValue);
+        }
+      } else if (dtype?.kind === ReflectionKind.TypeAlias) {
+        // ex) name: RtPercentSize, value: CircularGauge.DEF_CENTER
+        // 1. find static vars
+        const regex = /\b[A-Z].+\.\b[A-Z].*/g;
+        if (regex.test(value)) {
+          const [clsName, propName] = value.split('.');
+          const clsEl = this.classMap[clsName];
+          if (!clsEl) {
+            console.warn(`[WARN] Not found class static variable`, value);
+          } else {
+            const sm = clsEl.staticProps?.find(p => p.name == propName)
+            if (sm && sm.value) {
+              value = sm.value;
+              if (typeof value == 'string' ) value = `'${value}'`;
+            } else {
+              console.warn(`[WARN] Not found class static variable.`, value)
+            }
+          }
+        } else {
+          // ex) name: RtPercentSize, value: '7%'
+        }
+      }
+
       lines += `\`default: ${value}\` ${content.join(' ')} \n`;
     }
 
