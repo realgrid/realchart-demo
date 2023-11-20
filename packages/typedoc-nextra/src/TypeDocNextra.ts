@@ -157,9 +157,11 @@ export class TypeDocNextra {
         const tableHead = [tableCols, seperator].join('  \n');
         const tableBody = properties.map((p) => {
             const pname = escape(p.name).trim();
+            // pipe가 특수문자로 사용되지 않도록 한다.
             const ptype = (p.type || p.dtype.name).replace(/\|/g, '\\|');
-            const desc = p.content?.trim() || '';
-            return ['', pname, `\`${ptype}{:js}\``, desc, ''].join(' | ');
+            // 개행문자가 다음 셀로 넘어가지 않도록, 띄어쓰기로 변경한다.
+            const desc = p.content?.replace(/\n/g, ' ').trim() || '';
+            return ['', `[${pname}](/config/config/${p.link})`, `\`${ptype}{:js}\``, desc, ''].join(' | ');
         });
         
         // const body = properties.map((m) => {

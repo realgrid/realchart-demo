@@ -344,16 +344,7 @@ class Tunner {
           return qlfName;
         } 
 
-        // pre-scan. 아직 정보가 없으면 모델을 찾아서 업데이트 한다.
-        if (!this.classMap[name]) {
-          const model = this._findModel(this.model, name)
-          if (!model){
-            return console.warn(`[WARN] Not found ${name} model. Check it's @internal or not exported.`)
-          } else {
-            this._visit(model);
-          }
-        }
-
+        this._preScan(name);
         const cls = this.classMap[name];
         if (!cls) throw new Error(name);
         return this._parseType(cls.type ?? { name, ...cls });
@@ -399,8 +390,9 @@ class Tunner {
       case 'array':
         return { type, name:`${elementType.name}[]`, elementType };
       case 'reference':
-        // console.info(obj)
-        return { type, name, id };
+        this._preScan(name);
+        const { kind } = this.classMap[name] || {};
+        return { type, name, kind, id };
       default:
         return {};
     }
@@ -578,6 +570,18 @@ class Tunner {
     });
 
     return extendedTypes.map(type => type.name);
+  }
+
+  // 아직 classMap에 없으면 모델을 찾아서 업데이트 한다.
+  _preScan(name) {
+    if (!this.classMap[name]) {
+      const model = this._findModel(this.model, name)
+      if (!model){
+        return console.warn(`[WARN] Not found ${name} model. Check it's @internal or not exported.`)
+      } else {
+        this._visit(model);
+      }
+    }
   }
 
   scan() {
@@ -775,7 +779,7 @@ class MDGenerater {
         const ref = this.classMap[ename];
         switch (ref?.kind) {
           case ReflectionKind.Interface:
-            const { props, content: itfContent } = this.classMap[ename];
+            const { props, content: itfContent } = ref;
             extraLines = this._makeInterfaceProps({ name: ename, content: itfContent, props });
             break;
           case ReflectionKind.Class:
