@@ -405,17 +405,25 @@ var ClassSerializer = class extends AbstractSerializer {
     };
   }
   parseConfigProperties(name) {
-    const seriesRegex = /Rc(?!Chart).*Series(Group)?/;
-    const gaugeRegex = /Rc(?!Chart).*Gauge(Group)?(?!Base)/;
-    const [series] = seriesRegex.exec(name) || [];
-    const [gauge] = gaugeRegex.exec(name) || [];
+    const typedChartRegex = /Rc(?!Chart).*[Series|Gauge|Axis|Annotation](Group)?/;
+    const [chart] = typedChartRegex.exec(name) || [];
     const key = name.slice(2);
-    if (series || gauge) {
-      const { props } = this.config[key] || {};
+    if (chart) {
+      const { props, config: configs } = this.config[key] || {};
+      const [config] = configs || [];
+      const regex = /(\w+)\.(\w+)(?:\[(.*?)\])?(?:\s(.*))?/;
+      const matches = config == null ? void 0 : config.match(regex);
+      if (!matches || !matches.length) {
+        return [];
+      }
+      const [_, _root, subname, options] = matches;
+      const [_typeKey, chartType] = (options == null ? void 0 : options.split("=")) || [];
       return (props == null ? void 0 : props.map((p) => {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
+        const sep = ((_a = p.dtype) == null ? void 0 : _a.kind) === ReflectionKind.Class ? "/" : "#";
         return __spreadProps(__spreadValues({}, p), {
-          content: (_c = (_b = (_a = p.content) == null ? void 0 : _a.split(".").filter((c) => c).shift()) == null ? void 0 : _b.concat(".")) != null ? _c : ""
+          link: [subname, chartType].filter((v) => v).join("/") + sep + p.name.toLowerCase(),
+          content: (_d = (_c = (_b = p.content) == null ? void 0 : _b.split(".").filter((c) => c).shift()) == null ? void 0 : _c.concat(".")) != null ? _d : ""
         });
       })) || [];
     }
@@ -733,8 +741,8 @@ ${table(tableHead, tableBody)}
       var _a;
       const pname = escape(p.name).trim();
       const ptype = (p.type || p.dtype.name).replace(/\|/g, "\\|");
-      const desc = ((_a = p.content) == null ? void 0 : _a.trim()) || "";
-      return ["", pname, `\`${ptype}{:js}\``, desc, ""].join(" | ");
+      const desc = ((_a = p.content) == null ? void 0 : _a.replace(/\n/g, " ").trim()) || "";
+      return ["", `[${pname}](/config/config/${p.link})`, `\`${ptype}{:js}\``, desc, ""].join(" | ");
     });
     return `${head}
 ${tableHead}

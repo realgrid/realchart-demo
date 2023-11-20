@@ -118,18 +118,34 @@ export class ClassSerializer extends AbstractSerializer {
     }
 
     public parseConfigProperties(name: string): any[] {
-        const seriesRegex = /Rc(?!Chart).*Series(Group)?/;
-        const gaugeRegex = /Rc(?!Chart).*Gauge(Group)?(?!Base)/;
-        const [series] = seriesRegex.exec(name) || [];
-        const [gauge] = gaugeRegex.exec(name) || [];
-        const key = name.slice(2)
+        // const seriesRegex = /Rc(?!Chart).*Series(Group)?/;
+        // const gaugeRegex = /Rc(?!Chart).*Gauge(Group)?(?!Base)/;
+        // const [series] = seriesRegex.exec(name) || [];
+        // const [gauge] = gaugeRegex.exec(name) || [];
+        const typedChartRegex = /Rc(?!Chart).*[Series|Gauge|Axis|Annotation](Group)?/;
+        const [chart] = typedChartRegex.exec(name) || [];
+        const key = name.slice(2);
 
-        if (series || gauge) {
+
+        if (chart) {
             // DocumentReflection?
-            const { props } = this.config[key] || {};
+            const { props, config: configs } = this.config[key] || {};
+            const [config] = configs || [];
+            // ex) chart.series[type=vector] foo bar...
+            const regex = /(\w+)\.(\w+)(?:\[(.*?)\])?(?:\s(.*))?/;
+            const matches = config?.match(regex);
+            if (!matches || !matches.length) {
+                return [];
+            }
+            const [_, _root, subname, options] = matches;
+            const [_typeKey, chartType] = options?.split('=') || [];
+
             return props?.map((p: any) => {
+                const sep = p.dtype?.kind === ReflectionKind.Class ? '/' : '#';
                 return {
                     ...p,
+                    link: [subname, chartType].filter(v=>v).join('/') 
+                        + sep + p.name.toLowerCase(),
                     content: p.content?.split('.')
                         .filter((c: any) => c)
                         .shift()?.concat('.') ?? ''

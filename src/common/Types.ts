@@ -280,14 +280,20 @@ export interface StyleProps {
 }
 
 export enum Align {
+    /** @config */
     LEFT = 'left',
+    /** @config */
     CENTER = 'center',
+    /** @config */
     RIGHT = 'right'
 }
 
 export enum VerticalAlign {
+    /** @config */
     TOP = 'top',
+    /** @config */
     MIDDLE = 'middle',
+    /** @config */
     BOTTOM = 'bottom'
 }
 

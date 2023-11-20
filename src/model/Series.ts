@@ -1252,11 +1252,23 @@ export class PlottingItemCollection  {
 }
 
 export enum MarkerVisibility {
-    /** visible 속성에 따른다. */
+    /** 
+     * visible 속성에 따른다. 
+     * 
+     * @config
+     * */
     DEFAULT = 'default',
-    /** visible 속성과 상관없이 항상 표시한다. */
+    /** 
+     * visible 속성과 상관없이 항상 표시한다. 
+     * 
+     * @config
+     * */
     VISIBLE = 'visible',
-    /** visible 속성과 상관없이 항상 표시하지 않는다. */
+    /** 
+     * visible 속성과 상관없이 항상 표시하지 않는다. 
+     * 
+     * @config
+     * */
     HIDDEN = 'hidden'
 }
 
