@@ -125,7 +125,12 @@ test.describe("basic.html test", () => {
 
   test("yAxis", async ({ page }) => {
     const yAxis = await PWTester.getAxis(page, "y");
-    let config: any = await page.evaluate("config");
+    let config: any = await page.evaluate(() => {
+      config.yAxis.line = true;
+      chart.load(config, false);
+
+      return config;
+    });
 
     const ticks = await yAxis.$$(".rct-axis-tick");
     const labels = await yAxis.$$(".rct-axis-label");
@@ -152,7 +157,7 @@ test.describe("basic.html test", () => {
       // tick의 가장 높은 높이와 line의 높이가 동일한지 확인한다.
       const axisLine = await yAxis.$(".rct-axis-line");
       const d = await axisLine.getAttribute("d");
-      const coordinates = d.match(/(\d+(\.\d+)?)/g).map(Number);
+      const coordinates = d?.match(/(\d+(\.\d+)?)/g).map(Number);
       const height = coordinates[3] - coordinates[1];
 
       if (i === 0) {
