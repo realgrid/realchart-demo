@@ -308,7 +308,7 @@ export abstract class RcControl extends RcWrappableObject {
 
     svgToElement(element: RcElement, x: number, y: number): IPoint {
         const cr = this._svg.getBoundingClientRect();
-        const br = element.getBBounds();
+        const br = element.getBounds();
 
         return { x: x - br.x + cr.x, y: y - br.y + cr.y };
     }
