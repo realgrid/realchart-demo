@@ -45,8 +45,8 @@ const config = {
             align: 'left',
             offsetX: 70,
             offsetY: 5,
-            width: 170,
-            imageUrl: '../assets/images/태극기.png'
+            width: 230,
+            imageUrl: '../assets/images/동전.png'
         }],
 		image: {
             url: '../assets/images/컨테이너선.jpeg',
