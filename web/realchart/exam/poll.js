@@ -41,70 +41,7 @@ const config = {
     split: {
         visible: true,
         cols: 2,
-        rows: 1,
-        // panes: [{
-        //     col: 0,
-        //     row: 0,
-        //     body: {
-        //         annotations: {
-        //             text: "CATI",
-        //             align: 'center',
-        //             style: {
-        //                 fontSize: '24px',
-        //                 fontWeight: 'bold'
-        //             }
-        //         }
-        //     }
-        // }, {
-        //     col: 0,
-        //     row: 1,
-        //     body: {
-        //         annotations: {
-        //             text: "ARS",
-        //             align: 'center',
-        //             style: {
-        //                 fontSize: '24px',
-        //                 fontWeight: 'bold'
-        //             }
-        //         }
-        //     }
-        // }, {
-        //     col: 1,
-        //     row: 0,
-        //     body: {
-        //         annotations: {
-        //             text: 'CATI-권역',
-        //             align: 'center',
-        //             backgroundStyle: {
-        //                 padding: '5px 20px',
-        //                 stroke: '#d3d3d3',
-        //                 strokeWidth: '0.3px',
-        //                 fill: '#f0f0f0'
-        //             },
-        //             style: {
-        //                 fontSize: '18px'
-        //             }
-        //         }
-        //     },
-        // }, {
-        //     row: 1,
-        //     col: 1,
-        //     body: {
-        //         annotations: {
-        //             text: 'ARS-권역',
-        //             align: 'center',
-        //             backgroundStyle: {
-        //                 padding: '5px 20px',
-        //                 stroke: '#d3d3d3',
-        //                 strokeWidth: '0.3px',
-        //                 fill: '#f0f0f0'
-        //             },
-        //             style: {
-        //                 fontSize: '18px'
-        //             }
-        //         }
-        //     }
-        // }]
+        rows: 2,
     },
     legend: {
         align: 'left',
@@ -169,37 +106,6 @@ const config = {
             { label: '잘 모름', value: 7.1},
         ],
     },
-    // {
-    //     type: 'pie',
-    //     xAxis: 0,
-    //     yAxis: 1,
-    //     startAngle: -90,
-    //     totalAngle: 180,
-    //     clockwise: false,
-    //     radius: '40%',
-    //     centerY: '60%',
-    //     innerRadius: '40%',
-    //     // innerText: '<t style="fill:#000;font-weight:bold;font-size:24px">OS</t>',
-    //     legendByPoint: true,
-    //     pointLabel: {
-    //         text: '${x}<br>${y}%',
-    //         visible: true,
-    //         numberFormat: '#.00',
-    //         style: {
-    //             fill: '#fff',
-    //             stroke: '#d3d3d3',
-    //             strokeWidth: '0.2px',
-    //             fontSize: '14px'
-    //         }
-    //     },
-    //     data: [
-    //         { label: '매우 긍정', value: 11},
-    //         { label: '어느정도 긍정', value: 22.4},
-    //         { label: '어느정도 부정', value: 16.9},
-    //         { label: '매우 부정', value: 43.6},
-    //         { label: '잘 모름', value: 7.1},
-    //     ],
-    // }, 
     {
         type: 'bargroup',
         color: '#0098ff',
