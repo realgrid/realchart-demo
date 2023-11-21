@@ -184,7 +184,13 @@ test.describe("basic.html test", () => {
 
   test("xAxis", async ({ page }) => {
     const xAxis = await PWTester.getAxis(page, "x");
-    let config: any = await page.evaluate("config");
+    let config: any = await page.evaluate(() => {
+      config.xAxis.label = {};
+
+      chart.load(config, false);
+
+      return config;
+    });
 
     const ticks = await xAxis.$$(".rct-axis-tick");
     const labels = await xAxis.$$(".rct-axis-label");
@@ -263,7 +269,7 @@ test.describe("basic.html test", () => {
     expect(rChartView.x).is.lessThanOrEqual(rBody.x);
     expect(rChartView.y).is.lessThanOrEqual(rBody.y);
 
-    expect(gridChildCount).is.equal(1);
+    expect(gridChildCount).is.equal(2);
 
     // rct-grids
     const xTicks = await xAxis.$(`.rct-axis-ticks`);
