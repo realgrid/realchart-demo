@@ -22,6 +22,8 @@ const config = {
         startAngle: -90,
         totalAngle: 180,
         innerRadius: '50%',
+        radius: '70%',
+        centerY: '80%',
         //innerText: 'Inner Title',
         innerText: '내부 타이틀<br><t style="fill:blue;font-weight:bold;">Inner</t><t style="fill:red;">Title입니다.</t>',
         legendByPoint: true,
