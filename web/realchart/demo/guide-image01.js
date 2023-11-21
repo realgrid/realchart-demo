@@ -14,7 +14,7 @@ const config = {
 		visible: true,
 		text: "1월부터 12월까지의 매출 변화 추적"
 	},
-	colorByPoint: true,
+	colorByPoint: false,
 	options: {
 		// animatable: false
 	},
@@ -72,9 +72,9 @@ const config = {
 	}],
 	body: {
         zoomType: 'x',
-        style: {
-            // stroke: 'none'
-        },
+        // style: {
+        //      stroke: 'red'
+        // },
     },
 	series: [{
 		colorByPoint: true,
