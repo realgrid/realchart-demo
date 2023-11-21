@@ -5,12 +5,16 @@
  */
 const config = {
 	type: 'bar',
-	title: 'Title',
+	title: {text : '월별 매출 현황 분석',
+	style: {
+		fontWeight: 'bold'
+	}
+	},
 	subtitle: {
 		visible: true,
-		text: "Subtitle"
+		text: "1월부터 12월까지의 매출 변화 추적"
 	},
-	
+	colorByPoint: false,
 	options: {
 		// animatable: false
 	},
@@ -25,10 +29,10 @@ const config = {
         },
 		crosshair: true,
 		tick: true,
-		title: 'Title',
-		categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+		title: '월 (1월 - 12월)',
+		categories: ['Jan', 'Fed', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Ang', 'Sep', 'Oct', 'Nov', 'Dec'],
 		label: {
-			// startStep: 0,
+			startStep: 0,
 			step: 2,
 		},
         line: true,
@@ -42,67 +46,35 @@ const config = {
 		grid: true,
 		line: true,
 		tick: true,
-		title: 'Title',
+		title: '월별 매출액 (단위: 백만 원)',
 		// reversed: true,
 		// baseValue: -1
 		break : {
-			from : 50,
-			to: 60
+			from : 90,
+			to: 100
 		},
 		guide: [
-			{ type: 'line', value: 12, label: 'line guide' },
+			{ type: 'line', 
+			value: -72, 
+			label: {align: 'right', text: '안정성 임계선', style: {fill: 'red', stroke: 'red'} },
+			style: {
+				stroke: 'red'
+			},
+			},
 			{
 			  type: 'range',
-			  start: 70,
-			  end: 90,
-			  label: { text: 'range guide', align: 'right', style: { fill: 'red' } }
+			  start: 110,
+			  end: 120,
+			  label: { text: '업계 평균 매출 범위', align: 'left', style: { fill: 'black' } }
 			}
 		  ],
 		
 	}],
 	body: {
         zoomType: 'x',
-        style: {
-            // stroke: 'none'
-        },
-		annotations: [{
-            offsetX: 30,
-            offsetY: 25,
-            rotation: 5,
-            text: 'Annotation Sample',
-            style: {
-                fill: 'white'
-            },
-            backgroundStyle: {
-                fill: '#333',
-                padding: '3px 5px',
-                rx: 5,
-                fillOpacity: 0.7
-            }
-        }, 
-		{
-            offsetX: 260,
-            offsetY: 25,
-            rotation: -5,
-            text: 'Text',
-            style: {
-                fill: 'white'
-            },
-            backgroundStyle: {
-                padding: '3px 5px',
-                fill: 'blue',
-                rx: 5,
-                fillOpacity: 0.7
-            }
-        },{
-            type: 'image',
-            align: 'right',
-            offsetX: 50,
-            offsetY: 50,
-            width: 100,
-            imageUrl: '../assets/images/annotation.png'
-        }],
-		
+        // style: {
+        //      stroke: 'red'
+        // },
     },
 	series: [{
 		colorByPoint: true,
@@ -110,34 +82,20 @@ const config = {
 		pointWidth: 30,
 		yAxis: 0,
 		data: [
-			[150], // 1월은 -2°C
-			[140], // 2월은 -1°C
-			[130], // 3월은 1°C
-			[120], // 4월은 5°C
-			[110], // 5월은 10°C
-			[90], // 6월은 14°C
-			[80], // 7월은 16°C
-			[70], // 8월은 15°C
-			[60], // 9월은 10°C
-			[50], 
-			[40], 
-		 	[30], 
+			[-130], // 1월은 -2°C
+			[-100], // 2월은 -1°C
+			[-50], // 3월은 1°C
+			[60], // 4월은 5°C
+			[70], // 5월은 10°C
+			[115], // 6월은 14°C
+			[90], // 7월은 16°C
+			[100], // 8월은 15°C
+			[120], // 9월은 10°C
+			[130], 
+			[140], 
+		 	[160], 
 		],
 	},
-	{
-		lineType: 'spline',
-		type: 'line',
-		color: '#333',
-		trendline: {
-            visible: true,
-            type: 'movingAverage',
-            movingAverage: {
-                interval: 4,
-            }
-        },
-		yAxis: 1,
-		data : [10,20,30,50,70,90,110,130,150,160,170,180]
-	}
 	
 	],
 	ChartTextEffect: {
@@ -176,10 +134,10 @@ function setActions(container) {
 		container,
 		'ColorByPoint',
 		function (e) {
-			config.series[0].colorByPoint = _getChecked(e);
+			config.series.colorByPoint = _getChecked(e);
 			chart.load(config, animate);
 		},
-		true
+		false
 	);
 	createCheckBox(
 		container,

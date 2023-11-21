@@ -19,6 +19,14 @@ const config = {
         }
     },
 	xAxis: {
+		label: {
+			startStep: 0,
+			step: 2,
+		},
+		grid: {
+            visible: true,
+            endVisible: true,
+        },
 		tick:true,
 		// type: 'category',
 		// position: 'apposite'
@@ -31,6 +39,8 @@ const config = {
         crosshair: true,
 	},
 	yAxis: {
+		tick: true,
+		crosshair: true,
 		title: {
 			text: '전체 인구수'
 		},
@@ -40,6 +50,7 @@ const config = {
 	series: {
         // visible: false,
 		// baseValue: null,
+		name: "인구수",
 		pointLabel: {
 			visible: true,
 			//position: 'head',
