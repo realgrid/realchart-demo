@@ -7,50 +7,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, isString, pickNum } from "../common/Common";
-import { Align, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
+import { _undefined } from "../common/Types";
 import { PaneAxisMatrix } from "./Axis";
 import { Body } from "./Body";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
-
-export class PaneTitle extends ChartItem {
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(public pane: Pane) {
-        super(pane.chart, true);
-    }
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    /**
-     * 제목 텍스트
-     * @config 
-     */
-    text: string;
-    align = Align.CENTER;
-    backgroundStyle: SVGStyleOrClass;
-
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    isVisible(): boolean {
-        return this.visible && !isNull(this.text);
-    }
-    
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    protected _doLoadSimple(source: any): boolean {
-        if (isString(source)) {
-            this.text = source;
-            return true;
-        }
-        return super._doLoadSimple(source);
-    }
-}
 
 export class PaneBody extends Body {
 
@@ -92,7 +53,6 @@ export class Pane extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    title = new PaneTitle(this);
     body = new PaneBody(this);
 
     //-------------------------------------------------------------------------
@@ -105,9 +65,6 @@ export class Pane extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoad(source: any): void {
-        super._doLoad(source);
-    }
 }
 
 interface IRelativeSize {

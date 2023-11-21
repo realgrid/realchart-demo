@@ -201,7 +201,7 @@ const config = {
     //     ],
     // }, 
     {
-        type: 'bar',
+        type: 'bargroup',
         color: '#0098ff',
         // visibleInLegend: false,
         xAxis: 1,

@@ -68,6 +68,7 @@ const config = {
         pointLabel: true,
         data: [7, 11, 9, 7.5, 15.3, 13, 7, 9, 11, 2.5]
     }, {
+        type: 'bar',
         xAxis: 1,
         lineType: 'spline',
         pointLabel: true,

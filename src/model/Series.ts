@@ -140,6 +140,8 @@ export interface IPlottingItem {
     visible: boolean;
     zOrder: number;
 
+    setCol(col: number): void;
+    setRow(row: number): void;
     getVisiblePoints(): DataPoint[];
     getLegendSources(list: ILegendSource[]): void;
     needAxes(): boolean;
@@ -682,6 +684,14 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    setCol(col: number): void {
+        this._col = col;
+    }
+
+    setRow(row: number): void {
+        this._row = row;
+    }
+
     createPoints(source: any[]): DataPoint[] {
         return source.map((s, i) => {
             const p = this._createPoint(s);
@@ -1837,6 +1847,16 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     abstract _type(): string;
     abstract _seriesType(): string;
+
+    setCol(col: number): void {
+        this._col = col;
+        this._series.forEach(ser => ser.setCol(col));
+    }
+
+    setRow(row: number): void {
+        this._row = row;
+        this._series.forEach(ser => ser.setRow(row));
+    }
 
     // Axis에서 요청한다.
     collectValues(axis: IAxis, vals: number[]): void {

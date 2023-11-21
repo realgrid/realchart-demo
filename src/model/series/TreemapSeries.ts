@@ -8,6 +8,7 @@
 
 import { Color } from "../../common/Color";
 import { toStr } from "../../common/Types";
+import { ChartItem } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
 import { IPlottingItem, Series } from "../Series";
 
@@ -48,6 +49,23 @@ export class TreemapSeriesPoint extends DataPoint {
         this.id = toStr(v[series.idField]);
         this.group = toStr(v[series.groupField]);
     }
+}
+
+export class TreeGroupHead extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+}
+
+export class TreeGroup extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
 }
 
 interface IArea {

@@ -1244,9 +1244,9 @@ export class AxisCollection {
         if (axis) {
             axis._connect(series);
             if (this.isX) {
-                series._col = pickNum(series.col, axis.col);
+                series.setCol(pickNum(series.col, axis.col));
             } else {
-                series._row = pickNum(series.row, axis.row);
+                series.setRow(pickNum(series.row, axis.row));
             }
         }
         return axis;
