@@ -394,7 +394,7 @@ class AxisSectionView extends SectionView {
         // 추측 계산을 위해 모델을 미리 설정할 필요가 있다.
         views.forEach((v, i) => {
             v.model = axes[i];
-            v.prepareGuides(doc, guideContainer, frontGuideContainer);
+            v.prepareGuides(doc, NaN, NaN, guideContainer, frontGuideContainer);
         });
 
         if (this.setVisible(views.filter(v => v.model.visible).length > 0)) {

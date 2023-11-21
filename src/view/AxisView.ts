@@ -18,6 +18,7 @@ import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Axis, AxisGuide, AxisLabelArrange, AxisPosition, AxisScrollBar, AxisTick, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { Crosshair } from "../model/Crosshair";
+import { LinearAxis } from "../model/axis/LinearAxis";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
@@ -432,11 +433,11 @@ export class AxisView extends ChartElement<Axis> {
         return w;
     }
 
-    prepareGuides(doc: Document, container: AxisGuideContainer, frontContainer: AxisGuideContainer): void {
-        let guides = this.model.guides.filter(g => !g.front);
+    prepareGuides(doc: Document, row: number, col: number, container: AxisGuideContainer, frontContainer: AxisGuideContainer): void {
+        let guides = this.model.guides.filter(g => !g.front && g.canConstainedTo(row, col));
         container.addAll(doc, guides);
 
-        guides = this.model.guides.filter(g => g.front);
+        guides = this.model.guides.filter(g => g.front && g.canConstainedTo(row, col));
         frontContainer.addAll(doc, guides);
     }
 

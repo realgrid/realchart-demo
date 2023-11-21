@@ -4,7 +4,9 @@
  */
 const config = {
     type: 'line',
-    options: {},
+    options: {
+        animatable: false
+    },
     title: "Column Split Lines",
     split: {
         visible: true,
@@ -26,6 +28,40 @@ const config = {
         ]
     }],
     yAxis: {
+        guides: [{
+            type: 'line',
+            col: 0,
+            // front: true,
+            value: 12,
+            label: {
+                text: 'line guide',
+                effect: 'background',
+                style: {
+                    fill: 'white',
+                },
+                backgroundStyle: {
+                    fill: 'black',
+                    padding: '2px 5px'
+                }
+            },
+            style: {
+                stroke: 'blue',
+                strokeDasharray: '4'
+            }
+        }, {
+            type: 'range',
+            col: [0, 2],
+            front: true,
+            start: 3,
+            end: 6,
+            label: {
+                text: 'range guide',
+                align: 'right',
+                style: {
+                    fill: 'red'
+                }
+            }
+        }]
     },
     series: [{
         lineType: 'spline',

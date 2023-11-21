@@ -890,6 +890,10 @@ export class BodyView extends ChartElement<Body> {
         return this._seriesViews.find(v => v.model === ser);
     }
 
+    isConnected(axis: Axis): boolean {
+        return !!this._seriesViews.find(v => v.model._xAxisObj == axis || v.model._yAxisObj == axis)
+    }
+
     getButton(dom: Element): ButtonElement {
         if (this._zoomButton.contains(dom)) {
             return this._zoomButton;

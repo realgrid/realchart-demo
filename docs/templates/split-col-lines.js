@@ -1,7 +1,7 @@
 export const config = {
   type: 'line',
   options: {},
-  title: 'Column Split Lines',
+  title: 'Column Split Lines2',
   split: { visible: true, cols: 3 },
   xAxis: [
     {
@@ -34,7 +34,41 @@ export const config = {
       ]
     }
   ],
-  yAxis: {},
+  yAxis: {
+    title: 'good',
+    guides: [{
+        type: 'line',
+        // front: true,
+        value: 12,
+        label: {
+            text: 'line guide',
+            effect: 'background',
+            style: {
+                fill: 'white',
+            },
+            backgroundStyle: {
+                fill: 'black',
+                padding: '2px 5px'
+            }
+        },
+        style: {
+            stroke: 'blue',
+            strokeDasharray: '4'
+        }
+    }, {
+        type: 'range',
+        front: true,
+        start: 3,
+        end: 6,
+        label: {
+            text: 'range guide',
+            align: 'right',
+            style: {
+                fill: 'red'
+            }
+        }
+    }]
+  },
   series: [
     {
       lineType: 'spline',

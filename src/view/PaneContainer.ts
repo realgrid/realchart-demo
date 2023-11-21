@@ -65,6 +65,18 @@ class AxisSectionView extends SectionView {
 
             v.model = axes[i];
 
+            bodies.forEach(bodies2 => {
+                bodies2.forEach((body: PaneBodyView) => {
+                    if (body.isConnected(axis)) {
+                        v.prepareGuides(doc, body.row, body.col, body._guideContainer, body._frontGuideContainer);
+                    }
+                })
+            })
+
+            // const row = this.row;// pos === AxisPosition.OPPOSITE ? this.row - 1 : this.row;
+            // const col = this.col;//pos === AxisPosition.OPPOSITE ? this.col - 1 : this.col;
+            // v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
+
             // if (pos === AxisPosition.BETWEEN) {
             //     let row = !this.isX ? this.row - 1 : this.row;
             //     let col = this.isX ? this.col - 1 : this.col;
@@ -290,6 +302,9 @@ export class PaneBodyView extends BodyView {
     row = 0;
     col = 0;
 
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

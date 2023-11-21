@@ -417,6 +417,9 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     prepareSeries(doc: Document, model: T): void {
+        // measuer()에서 설정하지만 prepare 단계에서 참조하는 곳이 많아 미리 설정한다.
+        this.setModel(model);
+
         // this._viewRate = NaN; // animating 중 다른 시리즈 등의 요청에 의해 여기로 진입할 수 있다.
         this.setData('index', (model.index % PALETTE_LEN) as any);
         this.setData('pointcolors', model._colorByPoint() ? 'a' : _undefined);

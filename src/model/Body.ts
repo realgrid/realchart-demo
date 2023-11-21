@@ -7,9 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, pickNum } from "../common/Common";
-import { DEG_RAD, IPercentSize, ORG_ANGLE, PI_2, RtPercentSize, _undefined, calcPercent, parsePercentSize } from "../common/Types";
+import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, _undefined, calcPercent, parsePercentSize } from "../common/Types";
 import { Annotation, AnnotationCollection } from "./Annotation";
-import { AxisGuide } from "./Axis";
+import { Axis } from "./Axis";
 import { IChart } from "./Chart";
 import { BackgroundImage, ChartItem } from "./ChartItem";
 import { Series } from "./Series";
@@ -97,9 +97,6 @@ export class Body extends ChartItem {
     private _radiusDim: IPercentSize;
     private _cxDim: IPercentSize;
     private _cyDim: IPercentSize;
-
-    // _guides: AxisGuide[] = [];
-    // _frontGuides: AxisGuide[] = [];
 
     private _rd: number;
     private _cx: number;
@@ -205,11 +202,6 @@ export class Body extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getSplits(): number[] {
-        const sz = Math.max(0, Math.min(1, pickNum(this.split.size, 0.5)));
-        return [1 - sz, sz];
-    }
-
     calcRadius(width: number, height: number): number {
         return calcPercent(this._radiusDim, Math.min(width, height));
     }

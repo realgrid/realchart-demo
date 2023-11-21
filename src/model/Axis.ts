@@ -329,8 +329,8 @@ export enum AxisGuideType {
 }
 
 /**
- * 'between'인 경우 양쪽 body에 모두 표시된다.
- * TODO: body 단위로도 지정할 수 있게 한다.
+ * 기본적으로 이 축에 연결된 모든 body에 모두 표시된다.
+ * col, row를 지정해서 특정 body에만 표시되도록 할 수 있다.
  */
 export abstract class AxisGuide extends AxisItem {
 
@@ -364,6 +364,31 @@ export abstract class AxisGuide extends AxisItem {
      * @config
      */
     zindex = 0;
+    col: number | number[];
+    row: number | number[];
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    canConstainedTo(row: number, col: number): boolean {
+        if (isArray(this.col)) {
+            for (const c of this.col) {
+                if (col == c) return true;
+            }
+            return false;
+        } else if (!isNaN(this.col)) {
+            if (col != this.col) return false;
+        }
+        if (isArray(this.row)) {
+            for (const r of this.row) {
+                if (row == r) return true;
+            }
+            return false;
+        } else if (!isNaN(this.row)) {
+            if (row != this.row) return false;
+        }
+        return true;
+    }
 }
 
 export class AxisLineGuide extends AxisGuide {
