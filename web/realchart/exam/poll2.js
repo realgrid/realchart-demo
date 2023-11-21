@@ -95,6 +95,7 @@ const catiBar = {
     color: '#0098ff',
     // pointWidth: 1,
     layout: 'stack',
+    // maxValue: 100,
     // inverted: true,
 }
 
@@ -102,7 +103,7 @@ const catiBar = {
 const catiBarByArea = {
     ...catiBar,
     // visibleInLegend: false,
-    xAxis: 1,
+    xAxis: 4,
     yAxis: 4,
     children: [
         {
@@ -132,7 +133,7 @@ const catiBarByArea = {
 const catiBarByAge = {
     ...catiBar,
     visibleInLegend: true,
-    xAxis: 2,
+    xAxis: 5,
     yAxis: 5,
     children: [
         {
