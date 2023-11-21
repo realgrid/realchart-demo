@@ -6,17 +6,18 @@ const catiGenderData = data.filter(row => row['구분'] == '성별');
 const [catiMaleData] = catiGenderData.filter(row => row['구분값'] == '남성');
 const [catiFemaleData] = catiGenderData.filter(row => row['구분값'] == '여성');
 
-
 const pointLabel = {
     visible: true,
-    text: '${x}<br>${y}%',
     numberFormat: '#.00',
     suffix: '%',
     position: 'inside',
-    style: {
-        // fill: '#fff'
-    }
 };
+
+const piePointLabel = {
+   ...pointLabel,
+   text: '${x}<br>${y}%',
+};
+
 
 const pieChart = {
     type: 'pie',
@@ -29,7 +30,7 @@ const pieChart = {
     innerRadius: '40%',
     // innerText: '<t style="fill:#000;font-weight:bold;font-size:24px">OS</t>',
     // legendByPoint: true,
-    pointLabel,
+    pointLabel: piePointLabel,
 }
 
 // CATI main response
@@ -48,7 +49,7 @@ const catiPieByMale = {
     ...pieChart,
     xAxis: 1,
     data: Object.entries(catiMaleData)
-        .filter((_, i) => [7,8].includes(i))
+        .filter((_, i) => [7,8,9].includes(i))
         .map(([key, value], i) => {
             return { label: key, value }
         }),
@@ -58,7 +59,7 @@ const catiPieByFemale = {
     ...pieChart,
     xAxis: 2,
     data: Object.entries(catiFemaleData)
-        .filter((_, i) => [7,8].includes(i))
+        .filter((_, i) => [7,8,9].includes(i))
         .map(([key, value], i) => {
             return { label: key, value }
         }),
@@ -80,6 +81,7 @@ const barXAxis = {
     row: 1,
     line: true,
     label: true,
+    // position: 'opposite'
 }
 
 const barYAxis = {
