@@ -23,7 +23,9 @@ import { RcChartControl } from "../../../src/main";
 test.describe("basic.html test", () => {
   let chart: RcChartControl = null;
   const url = "demo/basic.html?debug";
-
+  const sleep = async (time = 500) => {
+    await new Promise((resolve) => setTimeout(resolve, time));
+  };
   const getChildCount = async (el: any) => {
     if (!el) return 0;
     return await el.evaluate((el) => el.childElementCount);
@@ -98,7 +100,7 @@ test.describe("basic.html test", () => {
       config.title = "TitleTest";
       chart.load(config, false);
     });
-
+    await sleep();
     title = await page.$("." + TitleView.TITLE_CLASS);
     titleText = await page.evaluate((el) => el.textContent, title);
     config = await page.evaluate("config");
@@ -226,8 +228,7 @@ test.describe("basic.html test", () => {
     }
   });
 
-  test("plot", async ({page}) => {
-
+  test("plot", async ({ page }) => {
     const chartView = await page.$(".rct-chart");
     const body = await page.$(`.${BodyView.BODY_CLASS}`);
     const grids = await page.$(".rct-grids");
@@ -282,7 +283,7 @@ test.describe("basic.html test", () => {
     const points = await barSeries.$$(".rct-series-points .rct-point");
     const labels = await barSeries.$$(".rct-point-labels rct-point-label");
     const pointChildCount = await getChildCount(seriesPoints);
-    const labelsChildCount = (await pointLabels.$$('.rct-point-label')).length;
+    const labelsChildCount = (await pointLabels.$$(".rct-point-label")).length;
 
     // rct-point
     // expect(pointChildCount).is.equal(xTicksChildCount);
@@ -290,7 +291,6 @@ test.describe("basic.html test", () => {
     // rct-labels
     // expect(labelsChildCount).is.equal(xTicksChildCount);
     expect(labelsChildCount).is.equal(pointChildCount);
-
 
     for (let i = 0; i < points.length - 1; i++) {
       const [pointSize, nextPointSize] = await Promise.all([
