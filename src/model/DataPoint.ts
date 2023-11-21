@@ -75,6 +75,8 @@ export class DataPoint {
     drillDown: any[] | object;  // array이면 현재 시리즈의 data 교체. object면 다른 시리즈로 교체.
     range: IValueRange;
 
+    zValue: number;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------

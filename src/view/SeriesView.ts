@@ -416,10 +416,6 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
         // console.log('CLICKED: ' + view.point.yValue);
     }
 
-    protected _getColor(): string {
-        return this.model._calcedColor;
-    }
-
     prepareSeries(doc: Document, model: T): void {
         // this._viewRate = NaN; // animating 중 다른 시리즈 등의 요청에 의해 여기로 진입할 수 있다.
         this.setData('index', (model.index % PALETTE_LEN) as any);

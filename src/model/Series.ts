@@ -335,14 +335,18 @@ export interface IDataPointCallbackArgs {
     yMax: number;
     xMin: number;
     xMax: number;
+    zMin: number;
+    zMax: number;
 
     /* point proxy */
     index: number;
     vindex: number;
     x: any;
     y: any;
+    z: any;
     xValue: any;
     yValue: any;
+    zValue: any;
 }
 
 export type PointStyleCallback = (args: IDataPointCallbackArgs) => SVGStyleOrClass;
@@ -392,6 +396,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _maxX: number;
     _minY: number;
     _maxY: number;
+    _minZ: number;
+    _maxZ: number;
     _referents: Series[];
     _calcedColor: string;
     _simpleMode = false;
@@ -605,6 +611,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return false;
     }
 
+    hasZ(): boolean {
+        return false;
+    }
+
     defaultYAxisType(): string {
         return 'linear';
     }
@@ -778,6 +788,9 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             let maxX = minX;
             let minY = p.yValue;
             let maxY = minY;
+            let minZ = p.zValue
+            let maxZ = minZ;
+            const hasZ = this.hasZ();
 
             p.vindex = 0;
 
@@ -793,10 +806,23 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 else if (p.xValue < minX) minX = p.xValue;
             }
 
+            if (hasZ) {
+                for (let i = 1; i < len; i++) {
+                    const v = visPoints[i].zValue;
+    
+                    if (v > maxZ) maxZ = v;
+                    else if (v < minZ) minZ = v;
+                }
+            }
+
             this._pointArgs.yMin = this._minY = minY;
             this._pointArgs.yMax = this._maxY = maxY;
             this._pointArgs.xMin = this._minX = minX;
             this._pointArgs.xMax = this._maxX = maxX;
+            if (hasZ) {
+                this._pointArgs.zMin = this._minZ = minZ;
+                this._pointArgs.zMax = this._maxZ = maxZ;
+            }
         }
 
         this.prepareViewRanges();
@@ -811,6 +837,9 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         if (axis === 'x') {
             min = this._minX;
             max = this._maxX;
+        } else if (axis === 'z') {
+            min = this._minZ;
+            max = this._maxZ;
         } else {
             min = this._minY;
             max = this._maxY;
