@@ -279,7 +279,7 @@ class PolarYAxisView extends PolarAxisView {
                     const pts: number[] = [];
 
                     other._ticks.forEach(tick => {
-                        const p = tick.pos * Math.PI * 2;
+                        const p = tick.pos;
                         pts.push(cx + Math.cos(start + p) * pos, cy + Math.sin(start + p) * pos);
                     });
                     (view as PolylineElement).setPoints(...pts);

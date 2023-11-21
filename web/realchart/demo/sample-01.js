@@ -8,7 +8,7 @@ const config = {
 		// animatable: false,
         theme: 'dark',
         style: {
-            // paddingBottom: '60px'
+            paddingBottom: '60px'
         }
 	},
 	title: {
@@ -125,9 +125,33 @@ const config = {
             colors: ['#08529d', '#4392ca', '#69aed4', '#9fcadf', '#ffe0d1', '#fdb89e', '#fa9275', '#fa684b', '#f23a29', '#ef392f', '#ce161e', '#a40f15']
         }
 	},
-	ChartTextEffect: {
-		autoContrast: false,
-	},
+    annotations: [{
+        imageUrl: '../assets/images/climate.png',
+        scope: 'container',
+        width: 100,
+        align: 'right',
+        offsetX: 30
+    }, {
+        imageUrl: '../assets/images/twitter.png',
+        scope: 'container',
+        width: 43,
+        align: 'center',
+        verticalAlign: 'bottom'
+    }, {
+        imageUrl: '../assets/images/insta.png',
+        scope: 'container',
+        width: 43,
+        align: 'center',
+        verticalAlign: 'bottom',
+        offsetX: 60
+    }, {
+        imageUrl: '../assets/images/rss.png',
+        scope: 'container',
+        width: 43,
+        align: 'center',
+        verticalAlign: 'bottom',
+        offsetX: -40
+    }]
 };
 
 let animate = false;

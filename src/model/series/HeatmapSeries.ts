@@ -24,7 +24,18 @@ export class HeatmapSeriesPoint extends DataPoint {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    heatValue: number;
+    zValue: number;
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    get z(): number {
+        return this.heat;
+    }
+
+    get heatValue(): number {
+        return this.zValue;
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -32,15 +43,15 @@ export class HeatmapSeriesPoint extends DataPoint {
     parse(series: HeatmapSeries): void {
         super.parse(series);
 
-        this.heatValue = parseFloat(this.heat);
+        this.zValue = parseFloat(this.heat);
 
-        this.isNull ||= isNaN(this.heatValue);
+        this.isNull ||= isNaN(this.zValue);
     }
 
     protected _assignTo(proxy: any): any {
         return Object.assign(super._assignTo(proxy), {
             heat: this.heat,
-            heatValue: this.heatValue
+            heatValue: this.zValue
         });
     }
 
@@ -109,6 +120,10 @@ export class HeatmapSeries extends Series {
     }
 
     canCategorized(): boolean {
+        return true;
+    }
+
+    hasZ(): boolean {
         return true;
     }
 

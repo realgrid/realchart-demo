@@ -10,7 +10,7 @@ legend 정렬 기준.
 - `'parent'` 상위 모델이 존재하는 경우 상위 모델 영역 기준.\  상위가 없으면 기본값(대부분 'plot')과 동일.  ex) subtitle인 경우 title 기준.
 - `'plot'` 
 
-`default: AlignBase.PLOT`  
+`default: 'plot'`  
 
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
 배경 스타일 셋.
@@ -42,7 +42,7 @@ legend 아이템들 사이의 간격.
 - `'end'` 수평일 때 오른쪽, 수직일 때는 아래쪽으로 몰아서 배치한다.
 - `'start'` 수평일 때 왼쪽, 수직일 때는 위쪽으로 몰아서 배치한다.
 
-`default: LegendItemsAlign.CENTER`  
+`default: 'center'`  
 
 ### itemsPerLine: `number{:js}`[#itemsPerLine]
 한 줄 당 표시할 최대 legend 항목 수.  
@@ -53,7 +53,7 @@ item 배치 방향.
 - `'horizontal'` item들을 수평으로 배치
 - `'vertical'` item들을 수직으로 배치
 
-`default: LegendLayout.AUTO`  
+`default: 'auto'`  
 
 ### lineGap: `number{:js}`[#lineGap]
 라인 사이의 간격.  
@@ -67,7 +67,7 @@ item 배치 방향.
 - `'right'` 차트 본체 오른쪽에 표시한다.
 - `'top'` 차트 타이틀 아래 표시한다.
 
-`default: LegendLocation.BOTTOM`  
+`default: 'bottom'`  
 
 ### markerGap: `number{:js}`[#markerGap]
 marker와 text사이의 간격.  

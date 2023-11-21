@@ -51,11 +51,11 @@ const config = {
         rotation: -20,
         text: 'Annotation Sample',
         style: {
-            padding: '3px 5px',
             fill: 'white'
         },
         backgroundStyle: {
             fill: '#33f',
+            padding: '3px 5px',
             rx: 5,
             fillOpacity: 0.7
         }

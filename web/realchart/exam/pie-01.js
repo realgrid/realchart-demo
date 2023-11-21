@@ -7,12 +7,12 @@ const config = {
         gap: 10,
         backgroundStyle: {
             fill: 'black',
+            padding: '2px 5px',
             rx: '3px'
         },
         style: {
             fill: '#fff',
             fontSize: '16px',
-            padding: '2px 5px',
         }
     },
     subtitle: {

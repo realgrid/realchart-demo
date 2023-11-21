@@ -234,6 +234,7 @@ export class AxisGrid extends AxisItem {
     /**
      * 끝 값에 표시되는 그리드 선을 표시할 지 여부.
      * 
+     * @default x축이면 false, y축이면 true.
      * @config
      */
     endVisible: boolean;
@@ -921,6 +922,7 @@ export abstract class Axis extends ChartItem implements IAxis {
         this._isHorz = this.chart.isInverted() ? !this._isX : this._isX;
         this._isBetween = this.chart.isSplitted() && this.position === AxisPosition.BETWEEN && this._isX;
         this._isOpposite = this.position === AxisPosition.OPPOSITE;
+        this._runPos = this.position;
 
         this._doPrepareRender();
 

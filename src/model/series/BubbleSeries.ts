@@ -79,6 +79,10 @@ export class BubbleSeriesPoint extends DataPoint {
 
         this.z = this.y;
     }
+
+    getZValue(): number {
+        return this.zValue;
+    }
 }
 
 export enum BubbleSizeMode {
@@ -151,6 +155,10 @@ export class BubbleSeries extends MarkerSeries {
 
     protected _createPoint(source: any): DataPoint {
         return new BubbleSeriesPoint(source);
+    }
+
+    hasZ(): boolean {
+        return true;
     }
 
     _colorByPoint(): boolean {

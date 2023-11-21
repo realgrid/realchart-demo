@@ -2,11 +2,13 @@
 차트 타이틀 설정 모델.
 ## Properties
 
-### align[#align]
+### align: `'center'|'left'|'right'{:js}`[#align]
 정렬.  
+- `'center'` 
+- `'left'` 
+- `'right'` 
 
-
-`default: Align.CENTER`  
+`default: 'center'`  
 
 ### alignBase: `'chart'|'parent'|'plot'{:js}`[#alignBase]
 정렬 기준.  
@@ -14,7 +16,7 @@
 - `'parent'` 상위 모델이 존재하는 경우 상위 모델 영역 기준.\  상위가 없으면 기본값(대부분 'plot')과 동일.  ex) subtitle인 경우 title 기준.
 - `'plot'` 
 
-`default: AlignBase.PLOT`  
+`default: 'plot'`  
 
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
 배경 스타일 셋.  

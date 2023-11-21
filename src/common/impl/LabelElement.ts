@@ -132,7 +132,7 @@ export class LabelElement extends GroupElement {
                 -top,//-r.height / 2,
                 r.width + left + (parseFloat(cs.paddingRight) || 0),
                 r.height + top + (parseFloat(cs.paddingBottom) || 0),
-                3
+                cs['rx']
             )
             // this._text.translate(left, top);
         }
