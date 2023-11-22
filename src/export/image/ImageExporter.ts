@@ -1,14 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 // ImageExporter.ts
-// 2021. 09. 29. created by woori
+// 2023. 11. 22. created by wooriPbg
 // -----------------------------------------------------------------------------
 // Copyright (c) 2020-2021 Wooritech Inc.
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
 import htmlToCanvas from 'html2canvas';
-import download from 'downloadjs';
-import { Utils } from '../../common/Utils';
 import { RcObject } from '../../common/RcObject';
 
 export interface ImageExportOptions {
@@ -50,10 +48,8 @@ export class ImageExporter extends RcObject {
     // methods
     //-------------------------------------------------------------------------
     export(dom: HTMLElement, options?: ImageExportOptions): void {
+        console.time('export image')
 
-        const t = +new Date();
-
-        debugger;
         const type = options?.type || 'png';
         const fileName = options?.fileName || 'realchart';
 
@@ -72,32 +68,17 @@ export class ImageExporter extends RcObject {
 
         htmlToCanvas(dom, opts).then((canvas) => {
             const url = canvas.toDataURL(mimes[type]);
-            const data = Utils.dataUriToBinary(url);
 
             const name = fileName + '.' + type;
-            download(data, name);
+            const link = document.createElement('a');
+            document.body.appendChild(link);
+            link.href = url;
+            link.download = name;
+            link.click();
+            link.remove();
         })
-        
 
-        // for (let i = 0; i < pages.length; i++) {
-        //     const p = (function (i: number, page: HTMLElement) {
-        //         return new Promise((resolve, reject) => {
-        //             htmlToCanvas(page, opts).then(canvas => {
-        //                 const url = canvas.toDataURL(mimes[type]);
-        //                 const data = Utils.dataUriToBinary(url);
-
-        //                 const name = fileName + (pages.length > 1 ? (i + 1) : '');
-        //                 fileMap[name + '.' + type] = [data, {}];
-        //                 resolve(i);
-        //             })
-        //         })
-        //     })(i, pages[i].page);
-        //     promises.push(p);
-        // }
-
-        // Promise.all(promises).then(() => {
-        //     this.$_saveFile(fileMap, zipName, saveCallback);
-        // })
+        console.timeEnd('export image')
     }
 
     //-------------------------------------------------------------------------
