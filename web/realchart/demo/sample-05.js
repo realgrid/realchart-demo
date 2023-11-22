@@ -3,265 +3,336 @@
  * 
  */
 const config = {
-    title: "Candlestick",
-    options: {
-        // animatable: false,
-    },
+    title: "Treemap - Levels",
     xAxis: {
-        type: 'category',
     },
     yAxis: {
     },
     series: {
-        type: 'candlestick',
-        pointLabel: true,
-        openField: 'openprc',
-        highField: 'highprc',
-        lowField: 'lowprc',
-        closeField: 'closeprc',
-        trendline: {
+        type: 'treemap',
+        // startDir: 'vertical',
+        algorithm: 'squarify',
+        // algorithm: 'strip',
+        // algorithm: 'sliceDice',
+        // algorithm: 'slice',
+        pointLabel: {
             visible: true,
-            type: 'movingAverage',
-            movingAverage: {
-                interval: 4,
-            }
+            text: '${x}',
+            effect: 'outline',
+            style: {
+            },
         },
         data: [{
-            "openprc" : 22000,
-            "highprc" : 22222,
-            "lowprc" : 21400,
-            "closeprc" : 21500,
-            "trdvolume" : 14033,
-            "trdamnt" : 324987500,
-            "date" : "2019-01-11"
-    },{
-            "openprc" : 21400,
-            "highprc" : 21300,
-            "lowprc" : 21700,
-            "closeprc" : 21250,
-            "trdvolume" : 11608,
-            "trdamnt" : 266665250,
-            "date" : "2019-01-14"
-    },{
-            "openprc" : 21630,
-            "highprc" : 22500,
-            "lowprc" : 21200,
-            "closeprc" : 22300,
-            "trdvolume" : 31502,
-            "trdamnt" : 713561800,
-            "date" : "2019-01-15"
-    },{
-            "openprc" : 22000,
-            "highprc" : 22500,
-            "lowprc" : 21600,
-            "closeprc" : 22300,
-            "trdvolume" : 16853,
-            "trdamnt" : 383179850,
-            "date" : "2019-01-16"
-    },{
-            "openprc" : 22850,
-            "highprc" : 23050,
-            "lowprc" : 22550,
-            "closeprc" : 22850,
-            "trdvolume" : 7571,
-            "trdamnt" : 172444650,
-            "date" : "2019-01-17"
-    },{
-            "openprc" : 22850,
-            "highprc" : 22900,
-            "lowprc" : 22400,
-            "closeprc" : 22500,
-            "trdvolume" : 11942,
-            "trdamnt" : 269458200,
-            "date" : "2019-01-18"
-    },{
-            "openprc" : 22450,
-            "highprc" : 22550,
-            "lowprc" : 21550,
-            "closeprc" : 21700,
-            "trdvolume" : 50060,
-            "trdamnt" : 1094399700,
-            "date" : "2019-01-21"
-    },{
-            "openprc" : 21750,
-            "highprc" : 21950,
-            "lowprc" : 21550,
-            "closeprc" : 21700,
-            "trdvolume" : 23327,
-            "trdamnt" : 505653900,
-            "date" : "2019-01-22"
-    },{
-            "openprc" : 21950,
-            "highprc" : 21950,
-            "lowprc" : 21500,
-            "closeprc" : 21700,
-            "trdvolume" : 11106,
-            "trdamnt" : 241429700,
-            "date" : "2019-01-23"
-    },{
-            "openprc" : 21900,
-            "highprc" : 21900,
-            "lowprc" : 21550,
-            "closeprc" : 21650,
-            "trdvolume" : 10902,
-            "trdamnt" : 237351300,
-            "date" : "2019-01-24"
-    },{
-            "openprc" : 21800,
-            "highprc" : 21850,
-            "lowprc" : 21300,
-            "closeprc" : 21800,
-            "trdvolume" : 17613,
-            "trdamnt" : 379367900,
-            "date" : "2019-01-25"
-    },{
-            "openprc" : 21950,
-            "highprc" : 22150,
-            "lowprc" : 21650,
-            "closeprc" : 22050,
-            "trdvolume" : 13681,
-            "trdamnt" : 299266150,
-            "date" : "2019-01-28"
-    },{
-            "openprc" : 22050,
-            "highprc" : 22400,
-            "lowprc" : 22050,
-            "closeprc" : 22350,
-            "trdvolume" : 13651,
-            "trdamnt" : 303871550,
-            "date" : "2019-01-29"
-    },{
-            "openprc" : 22400,
-            "highprc" : 22400,
-            "lowprc" : 21900,
-            "closeprc" : 21900,
-            "trdvolume" : 11833,
-            "trdamnt" : 260954750,
-            "date" : "2019-01-30"
-    },{
-            "openprc" : 21950,
-            "highprc" : 21950,
-            "lowprc" : 21550,
-            "closeprc" : 21700,
-            "trdvolume" : 16518,
-            "trdamnt" : 358109800,
-            "date" : "2019-02-01"
-    },{
-            "openprc" : 21800,
-            "highprc" : 21850,
-            "lowprc" : 21500,
-            "closeprc" : 21750,
-            "trdvolume" : 9485,
-            "trdamnt" : 205373700,
-            "date" : "2019-02-04"
-    },{
-            "openprc" : 21700,
-            "highprc" : 21800,
-            "lowprc" : 21450,
-            "closeprc" : 21600,
-            "trdvolume" : 10826,
-            "trdamnt" : 234154100,
-            "date" : "2019-02-05"
-    },{
-            "openprc" : 21300,
-            "highprc" : 21550,
-            "lowprc" : 21000,
-            "closeprc" : 21500,
-            "trdvolume" : 15898,
-            "trdamnt" : 338072500,
-            "date" : "2019-02-06"
-    },{
-            "openprc" : 21400,
-            "highprc" : 21450,
-            "lowprc" : 21100,
-            "closeprc" : 21450,
-            "trdvolume" : 15513,
-            "trdamnt" : 329680000,
-            "date" : "2019-02-07"
-    },{
-            "openprc" : 21000,
-            "highprc" : 21750,
-            "lowprc" : 21000,
-            "closeprc" : 21500,
-            "trdvolume" : 8835,
-            "trdamnt" : 189128000,
-            "date" : "2019-02-08"
-    },{
-            "openprc" : 21500,
-            "highprc" : 21550,
-            "lowprc" : 21300,
-            "closeprc" : 21450,
-            "trdvolume" : 5568,
-            "trdamnt" : 119232800,
-            "date" : "2019-02-12"
-    },{
-            "openprc" : 21450,
-            "highprc" : 21500,
-            "lowprc" : 21000,
-            "closeprc" : 21300,
-            "trdvolume" : 14793,
-            "trdamnt" : 314701900,
-            "date" : "2019-02-13"
-    },{
-            "openprc" : 21300,
-            "highprc" : 21700,
-            "lowprc" : 21100,
-            "closeprc" : 21600,
-            "trdvolume" : 13703,
-            "trdamnt" : 294467800,
-            "date" : "2019-02-14"
-    },{
-            "openprc" : 21350,
-            "highprc" : 22200,
-            "lowprc" : 21350,
-            "closeprc" : 22050,
-            "trdvolume" : 19506,
-            "trdamnt" : 428998650,
-            "date" : "2019-02-15"
-    },{
-            "openprc" : 22050,
-            "highprc" : 22250,
-            "lowprc" : 21800,
-            "closeprc" : 22100,
-            "trdvolume" : 10535,
-            "trdamnt" : 231930000,
-            "date" : "2019-02-18"
-    },{
-            "openprc" : 22150,
-            "highprc" : 22300,
-            "lowprc" : 21750,
-            "closeprc" : 22050,
-            "trdvolume" : 7478,
-            "trdamnt" : 164174050,
-            "date" : "2019-02-19"
-    },{
-            "openprc" : 22050,
-            "highprc" : 22600,
-            "lowprc" : 21750,
-            "closeprc" : 22450,
-            "trdvolume" : 31989,
-            "trdamnt" : 717825050,
-            "date" : "2019-02-20"
-    },{
-            "openprc" : 22800,
-            "highprc" : 23000,
-            "lowprc" : 22600,
-            "closeprc" : 22750,
-            "trdvolume" : 43192,
-            "trdamnt" : 986617500,
-            "date" : "2019-02-21"
-    },{
-            "openprc" : 22750,
-            "highprc" : 23050,
-            "lowprc" : 22500,
-            "closeprc" : 23000,
-            "trdvolume" : 18101,
-            "trdamnt" : 413611500,
-            "date" : "2019-02-22"
-    }]
+            "id": "A",
+            "name": "Nord-Norge",
+            "color": "#50FFB1"
+        }, {
+            "id": "B",
+            "name": "Trøndelag",
+            "color": "#F5FBEF"
+        }, {
+            "id": "C",
+            "name": "Vestlandet",
+            "color": "#A09FA8"
+        }, {
+            "id": "D",
+            "name": "Østlandet",
+            "color": "#E7ECEF"
+        }, {
+            "name": "A1",
+            "group": "A",
+            "value": 70923
+        }, {
+            "name": "A2",
+            "group": "A",
+            "value": 35759
+        }, {
+            "name": "A3",
+            "group": "A",
+            "value": 33494
+        }, {
+            "name": "A4",
+            "group": "A",
+            "value": 32494
+        }, {
+            "name": "A5",
+            "group": "A",
+            "value": 31494
+        }, {
+            "name": "A6",
+            "group": "A",
+            "value": 30494
+        }, {
+            "name": "A7",
+            "group": "A",
+            "value": 29094
+        }, {
+            "name": "A8",
+            "group": "A",
+            "value": 28694
+        }, {
+            "name": "A9",
+            "group": "A",
+            "value": 28494
+        }, {
+            "name": "A10",
+            "group": "A",
+            "value": 28494
+        }, {
+            "name": "A11",
+            "group": "A",
+            "value": 27494
+        }, {
+            "name": "A12",
+            "group": "A",
+            "value": 26494
+        }, {
+            "name": "A13",
+            "group": "A",
+            "value": 25494
+        }, {
+            "name": "A14",
+            "group": "A",
+            "value": 24494
+        }, {
+            "name": "A15",
+            "group": "A",
+            "value": 23494
+        }, {
+            "name": "A16",
+            "group": "A",
+            "value": 22494
+        }, {
+            "name": "A17",
+            "group": "A",
+            "value": 21494
+        }, {
+            "name": "A18",
+            "group": "A",
+            "value": 19494
+        }, {
+            "name": "A19",
+            "group": "A",
+            "value": 18494
+        }, {
+            "name": "A20",
+            "group": "A",
+            "value": 17494
+        }, {
+            "name": "A21",
+            "group": "A",
+            "value": 16494
+        }, {
+            "name": "A22",
+            "group": "A",
+            "value": 15494
+        }, {
+            "name": "A23",
+            "group": "A",
+            "value": 14494
+        }, {
+            "name": "A24",
+            "group": "A",
+            "value": 13494
+        }, {
+            "name": "A25",
+            "group": "A",
+            "value": 12494
+        }, {
+            "name": "A26",
+            "group": "A",
+            "value": 11494
+        }, {
+            "name": "A27",
+            "group": "A",
+            "value": 10494
+        }, {
+            "name": "A28",
+            "group": "A",
+            "value": 9494
+        }, {
+            "name": "A29",
+            "group": "A",
+            "value": 8494
+        }, {
+            "name": "A30",
+            "group": "A",
+            "value": 7494
+        }, {
+            "name": "A31",
+            "group": "A",
+            "value": 6494
+        }, {
+            "name": "A32",
+            "group": "A",
+            "value": 5494
+        }, {
+            "name": "A33",
+            "group": "A",
+            "value": 4494
+        }, {
+            "name": "A34",
+            "group": "A",
+            "value": 3494
+        }, {
+            "name": "B1",
+            "group": "B",
+            "value": 59840
+        }, {
+            "name": "B2",
+            "group": "B",
+            "value": 57969
+        }, {
+            "name": "B3",
+            "group": "B",
+            "value": 56576
+        }, {
+            "name": "C1",
+            "group": "C",
+            "value": 215768
+        }, 
+        // 이 부분 시리아 경제2.jpeg 그림과 같이 그룹안에 그룹을 만들기위해 name이 "C2" 이고 group이 "C"인 곳에 id를 추가해야 그림처럼 나눌 수 있습니다.
+        {
+            "id": "CC",
+            "name": "C2",
+            "group": "C",
+            "value": 115768
+        },{
+            "name": "CC1",
+            "group": "CC",
+            "value": 105768
+        },{
+            "name": "CC2",
+            "group": "CC",
+            "value": 95768
+        },{
+            "name": "CC3",
+            "group": "CC",
+            "value": 94768
+        },{
+            "name": "CC4",
+            "group": "CC",
+            "value": 93768
+        },
+        {
+            "name": "CC5",
+            "group": "CC",
+            "value": 92768
+        },{
+            "name": "CC6",
+            "group": "CC",
+            "value": 91768
+        },{
+            "name": "CC7",
+            "group": "CC",
+            "value": 90768
+        },{
+            "name": "CC8",
+            "group": "CC",
+            "value": 89768
+        },{
+            "name": "CC9",
+            "group": "CC",
+            "value": 88768
+        },{
+            "name": "CC10",
+            "group": "CC",
+            "value": 87768
+        },{
+            "name": "CC11",
+            "group": "CC",
+            "value": 86768
+        },{
+            "name": "CC12",
+            "group": "CC",
+            "value": 85768
+        },{
+            "name": "CC13",
+            "group": "CC",
+            "value": 84768
+        },{
+            "name": "CC14",
+            "group": "CC",
+            "value": 83768
+        },{
+            "name": "CC15",
+            "group": "CC",
+            "value": 82768
+        },{
+            "name": "CC16",
+            "group": "CC",
+            "value": 81768
+        },{
+            "name": "CC17",
+            "group": "CC",
+            "value": 80768
+        },{
+            "name": "CC18",
+            "group": "CC",
+            "value": 79768
+        },{
+            "name": "CC19",
+            "group": "CC",
+            "value": 78768
+        },{
+            "name": "CC20",
+            "group": "CC",
+            "value": 77768
+        },{
+            "name": "CC21",
+            "group": "CC",
+            "value": 76768
+        },{
+            "name": "CC22",
+            "group": "CC",
+            "value": 75768
+        },{
+            "name": "CC23",
+            "group": "CC",
+            "value": 74768
+        },{
+            "name": "CC24",
+            "group": "CC",
+            "value": 73768
+        },{
+            "name": "CC25",
+            "group": "CC",
+            "value": 72768
+        },{
+            "name": "CC26",
+            "group": "CC",
+            "value": 71768
+        },{
+            "name": "CC27",
+            "group": "CC",
+            "value": 70768
+        },{
+            "name": "CC28",
+            "group": "CC",
+            "value": 69768
+        },{
+            "name": "CC29",
+            "group": "CC",
+            "value": 68768
+        },{
+            "name": "CC30",
+            "group": "CC",
+            "value": 67768
+        },
+        {
+            "name": "D1",
+            "group": "D",
+            "value": 15925
+        },
+        {
+            "name": "D2",
+            "group": "D",
+            "value": 14981
+        }],
+        style: {
+        }
     }
 }
-
 let chart;
 
 function setActions(container) {
@@ -272,18 +343,6 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createCheckBox(container, 'Inverted', function (e) {
-        config.inverted = _getChecked(e);
-        chart.load(config);
-    }, false);
-    createCheckBox(container, 'X Reversed', function (e) {
-        config.xAxis.reversed = _getChecked(e);
-        chart.load(config);
-    }, false);
-    createCheckBox(container, 'Y Reversed', function (e) {
-        config.yAxis.reversed = _getChecked(e);
-        chart.load(config);
-    }, false);
 }
 
 function init() {

@@ -23,10 +23,7 @@ const config = {
 			startStep: 0,
 			step: 2,
 		},
-		grid: {
-            visible: true,
-            endVisible: true,
-        },
+
 		tick:true,
 		// type: 'category',
 		// position: 'apposite'
