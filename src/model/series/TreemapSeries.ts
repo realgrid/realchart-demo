@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { Color } from "../../common/Color";
+import { isArray, isObject } from "../../common/Common";
 import { toStr } from "../../common/Types";
 import { ChartItem } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
@@ -56,18 +57,77 @@ export class TreeGroupHead extends ChartItem {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
+    constructor(public level: TreeGroupLevel) {
+        super(level.chart, false);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    floating = true;
 }
 
-export class TreeGroup extends ChartItem {
+export class TreeGroupLevel extends ChartItem {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    head: TreeGroupHead;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
+    constructor(public series: TreemapSeries, public level: number) {
+        super(series.chart, true);
+
+        this.head = new TreeGroupHead(this);
+    }
 }
 
+export class TreeGroupLevelCollection {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _levels: TreeGroupLevel[] = [];
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public series: TreemapSeries) {
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    load(source: any): void {
+        const levels = this._levels = [];
+
+        if (isObject(source)) {
+            source = [source];
+        }
+        if (isArray(source)) {
+            source.forEach(src => {
+                if (isObject(src) && src.level >= 0) {
+                    levels[src.level] = this.$_loadLevel(src);
+                }
+            })
+        }
+    }
+
+    getLevel(level: number): TreeGroupLevel {
+        return this._levels[level];
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_loadLevel(src: any): TreeGroupLevel {
+        const level = new TreeGroupLevel(this.series, src.level);
+        level.load(src);
+        return level;
+    }
+}
 interface IArea {
     x: number, 
     y: number,
@@ -77,6 +137,7 @@ interface IArea {
 
 export class TreeNode {
     parent: TreeNode;
+    expaned: boolean;
     children: TreeNode[];
     index: number;
     value: number;
@@ -159,6 +220,7 @@ export class TreemapSeries extends Series {
      * 지정하지 않으면 ploting 영역의 너비/높이 비율 기준으로 정해진다.
      */
     startDir: 'vertical' | 'horizontal';
+    groupLevels = new TreeGroupLevelCollection(this);
 
     //-------------------------------------------------------------------------
     // fields
@@ -170,7 +232,7 @@ export class TreemapSeries extends Series {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    buildMap(width: number, height: number): TreeNode[] {
+    buildMap(width: number, height: number): {roots: TreeNode[], leafs: TreeNode[]} {
 
         function visit(node: TreeNode): void {
             if (node.children) {
@@ -204,7 +266,7 @@ export class TreemapSeries extends Series {
         });
 
         (this[this.algorithm] || this.squarify).call(this, this._roots, width, height, vertical);
-        return this._leafs;
+        return { roots: this._roots, leafs: this._leafs };
     }
 
     //-------------------------------------------------------------------------
