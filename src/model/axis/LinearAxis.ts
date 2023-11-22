@@ -891,7 +891,7 @@ export class LinearAxis extends ContinuousAxis {
         const v = super._adjustMinMax(min, max);
         const series = this._series;
 
-        if (series.length === 1 && series[0] instanceof SeriesGroup && series[0].layout === SeriesGroupLayout.FILL) {
+        if (!this._isX && series.length === 1 && series[0] instanceof SeriesGroup && series[0].layout === SeriesGroupLayout.FILL) {
             v.max = series[0].layoutMax;
         }
         return v;

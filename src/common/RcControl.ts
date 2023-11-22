@@ -320,7 +320,24 @@ export abstract class RcControl extends RcWrappableObject {
         return { x: x + br.x - cr.x, y: y + br.y - cr.y };
     }
 
-    abstract useImage(src: string): void; // 실제 이미지가 로드됐을 때 다시 그려지도록 한다.
+    // TODO: svg 크기에서 '%'제거
+    //       svg 복사본 생성: 외부 스타일 내부로 가져오기
+    test(canvas: HTMLCanvasElement): void {
+        const svg = this._svg.outerHTML;
+        const image = new Image();
+        const ctx = canvas.getContext("2d");
+
+        document.body.appendChild(image);
+
+        image.width = 850;
+        image.height = 550;
+        // image.src = `data:image/svg+xml;base64,${window.btoa(unescape(encodeURIComponent(svg)))}`;
+        // image.src = `data:image/svg+xml;base64,${window.btoa(encodeURIComponent(svg))}`;
+        image.src = `data:image/svg+xml;charset=utf-8,&lt;${svg}`;
+        image.onload = () => {
+            ctx.drawImage(image, 0, 0);
+        };
+    }
 
     //-------------------------------------------------------------------------
     // overriden members

@@ -157,6 +157,7 @@ function setActions(container) {
         // chart.series.set('pointLabel', false);
         // chart.series.toggle('pointLabel.visible');
         // chart.series.pointLabel.toggle('visible');
+		// chart.$_p.test(document.getElementById('canvas'));
 	});
 	createCheckBox(
 		container,

@@ -150,6 +150,10 @@ export class TreeNode {
 
     constructor(public point: TreemapSeriesPoint) {}
 
+    level(): number {
+        return this.parent ? this.parent.level() + 1 : 0;
+    }
+
     getArea(): IArea {
         return {x: this.x, y: this.y, width: this.width, height: this.height};
     }
@@ -207,6 +211,17 @@ export class TreemapSeries extends Series {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _roots: TreeNode[];
+    _leafs: TreeNode[];
+    private _map: {[id: string]: TreeNode} = {};
+    private _levels = 1;
+
+    //-------------------------------------------------------------------------
+    // propertis
+    //-------------------------------------------------------------------------
     idField = 'id';
     groupField = 'group';
     algorithm = TreemapAlgorithm.SQUARIFY;
@@ -220,14 +235,14 @@ export class TreemapSeries extends Series {
      * 지정하지 않으면 ploting 영역의 너비/높이 비율 기준으로 정해진다.
      */
     startDir: 'vertical' | 'horizontal';
+    /**
+     * tree level이 2 이상일 때 그룹 헤더를 표시하고, 자식들을 감추거나 표시할 수 있도록 한다.
+     */
+    groupMode = true;
+    /**
+     * group mode일 때 group 레벨별 표시 방식 지정.
+     */
     groupLevels = new TreeGroupLevelCollection(this);
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    _roots: TreeNode[];
-    _leafs: TreeNode[];
-    private _map: {[id: string]: TreeNode} = {};
 
     //-------------------------------------------------------------------------
     // methods
@@ -247,6 +262,7 @@ export class TreemapSeries extends Series {
                 node.children.forEach((node, i) => {
                     node.index = i;
                 });
+                levels = Math.max(levels, node.level() + 1 + 1);
             } else {
                 leafs.push(node);
                 node.value = node.point ? node.point.yValue : 0;
@@ -255,6 +271,7 @@ export class TreemapSeries extends Series {
 
         const vertical = this.startDir === 'vertical' || height > width;
         const leafs = this._leafs = [];
+        let levels = 1;
 
         this._roots.forEach((node, i) => {
             visit(node);
@@ -266,6 +283,8 @@ export class TreemapSeries extends Series {
         });
 
         (this[this.algorithm] || this.squarify).call(this, this._roots, width, height, vertical);
+        this._levels = levels;
+        console.log('levels', this._levels);
         return { roots: this._roots, leafs: this._leafs };
     }
 

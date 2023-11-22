@@ -5,6 +5,7 @@
 const config = {
     type: "line",
     options: {
+        animatable: false
     },
     title: "Line Group",
     xAxis: {

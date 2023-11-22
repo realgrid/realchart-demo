@@ -108,9 +108,6 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    useImage(src: string): void {
-    }
-
     protected _doRender(bounds: IRect): void {
         const model = this._model;
         const view = this._chartView;
