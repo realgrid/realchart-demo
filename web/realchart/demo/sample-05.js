@@ -175,23 +175,136 @@ const config = {
             "group": "A",
             "value": 3494
         }, {
+            "id": 'B1',
             "name": "B1",
             "group": "B",
             "value": 59840
         }, {
+            "name": "B1-1",
+            "group": "B1",
+            "value": 59840
+        }, {
+            "name": "B1-2",
+            "group": "B1",
+            "value": 59840
+        }, {
+            "name": "B1-3",
+            "group": "B1",
+            "value": 59840
+        }, {
+            "name": "B1-4",
+            "group": "B1",
+            "value": 59840
+        }, {
+            "name": "B1-5",
+            "group": "B1",
+            "value": 59840
+        }, {
+            "name": "B1-6",
+            "group": "B1",
+            "value": 59840
+        }, {
+            "name": "B1-7",
+            "group": "B1",
+            "value": 59840
+        }, {
+            "name": "B1-8",
+            "group": "B1",
+            "value": 59840
+        },{
+            "id": "B2",
             "name": "B2",
             "group": "B",
             "value": 57969
-        }, {
-            "name": "B3",
-            "group": "B",
-            "value": 56576
-        }, {
+        },{
+            "name": "B2-1",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-2",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-3",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-4",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-5",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-6",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-7",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-8",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-9",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-10",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-1",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-1",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-1",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-1",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-1",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-1",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-1",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-1",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-1",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-1",
+            "group": "B2",
+            "value": 57969
+        },{
+            "name": "B2-1",
+            "group": "B2",
+            "value": 57969
+        },{
             "name": "C1",
             "group": "C",
             "value": 215768
         }, 
-        // 이 부분 시리아 경제2.jpeg 그림과 같이 그룹안에 그룹을 만들기위해 name이 "C2" 이고 group이 "C"인 곳에 id를 추가해야 그림처럼 나눌 수 있습니다.
         {
             "id": "CC",
             "name": "C2",
@@ -317,6 +430,95 @@ const config = {
         },{
             "name": "CC30",
             "group": "CC",
+            "value": 67768
+        },{
+            "id": "C2",
+            "name": "C2",
+            "group": "C",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
+            "value": 67768
+        },{
+            "name": "C2-1",
+            "group": "C2",
             "value": 67768
         },
         {
