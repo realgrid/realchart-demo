@@ -205,7 +205,7 @@ class AxisContainer extends SectionView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, public isX: boolean) {
-        super(doc);
+        super(doc, 'rct-axis-container');
     }
 
     //-------------------------------------------------------------------------
@@ -563,10 +563,11 @@ export class PaneContainer extends LayerElement {
                 });
             } else {
                 const x = rowPts[1];
-                const w2 = rowPts[2] - x;
+                const w2 = rowPts[rowPts.length - 2] - x;
 
                 containers.forEach((c, i) => {
-                    c.resize(w2, c.mh).translate(rowPts[i * 2 + 1], h - colPts[i * 2 + 1]);
+                    // c.resize(w2, c.mh).translate(rowPts[i * 2 + 1], h - colPts[i * 2 + 1]);
+                    c.resize(w2, c.mh).translate(x, h - colPts[i * 2 + 1]);
                     c.layout(rowPts);
                 });
             }

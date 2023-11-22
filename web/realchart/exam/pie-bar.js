@@ -62,7 +62,7 @@ const config = {
                 fontWeight: 'bold'
             }
         },
-        // position: 'opposite',
+        position: 'opposite',
         label: false,
         grid: false
     }, {
@@ -78,14 +78,14 @@ const config = {
                 fontSize: '18px'
             }
         },
-        // position: 'opposite',
+        position: 'opposite',
         label: false,
         grid: false
     }],
     series: [{
         type: 'pie',
         radius: '40%',
-        centerY: '60%',
+        centerY: '50%',
         innerRadius: '50%',
         innerText: '<t style="fill:#000;font-weight:bold;font-size:24px">OS</t>',
         legendByPoint: true,
