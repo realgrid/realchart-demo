@@ -54,6 +54,15 @@ function setActions(container) {
         config.gauge.label.position = _getValue(e);
         chart.load(config);
     }, 0);
+    createButton(container, 'PNG', function (e) {
+		chart.exportImage();
+	});
+	createButton(container, 'JPG', function (e) {
+		chart.exportImage({type: 'jpg'});
+	});
+	createButton(container, 'JPEG', function (e) {
+		chart.exportImage({type: 'jpeg'});
+	});
 }
 
 function init() {

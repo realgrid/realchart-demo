@@ -161,6 +161,15 @@ function setActions(container) {
     },
     "linear"
   );
+  createButton(container, 'PNG', function (e) {
+		chart.exportImage();
+	});
+	createButton(container, 'JPG', function (e) {
+		chart.exportImage({type: 'jpg'});
+	});
+	createButton(container, 'JPEG', function (e) {
+		chart.exportImage({type: 'jpeg'});
+	});
 }
 
 function init() {

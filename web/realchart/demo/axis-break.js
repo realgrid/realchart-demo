@@ -63,6 +63,15 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.load(config, animate);
     }, false);
+    createButton(container, 'PNG', function (e) {
+		chart.exportImage();
+	});
+	createButton(container, 'JPG', function (e) {
+		chart.exportImage({type: 'jpg'});
+	});
+	createButton(container, 'JPEG', function (e) {
+		chart.exportImage({type: 'jpeg'});
+	});
 }
 
 function init() {

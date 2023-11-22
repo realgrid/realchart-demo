@@ -147,6 +147,15 @@ function setActions(container) {
         config.gauge[0].scale.position = _getValue(e);
         chart.load(config);
     }, 'default');
+    createButton(container, 'PNG', function (e) {
+		chart.exportImage();
+	});
+	createButton(container, 'JPG', function (e) {
+		chart.exportImage({type: 'jpg'});
+	});
+	createButton(container, 'JPEG', function (e) {
+		chart.exportImage({type: 'jpeg'});
+	});
 }
 
 function init() {

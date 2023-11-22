@@ -15,6 +15,7 @@ import { Legend } from "../model/Legend";
 import { Series } from "../model/Series";
 import { Subtitle, Title } from "../model/Title";
 import { RcAreaRangeSeries, RcAreaSeries, RcBarRangeSeries, RcBarSeries, RcBellCurveSeries, RcBody, RcBoxPlotSeries, RcBubbleSeries, RcBulletGauge, RcCandlestickSeries, RcCategoryAxis, RcChartAxis, RcChartGauge, RcChartObject, RcChartSeries, RcCircleGauge, RcClockGauge, RcDumbbellSeries, RcEqualizerSeries, RcErrorBarSeries, RcFunnelSeries, RcGaugeGroup, RcHeatmapSeries, RcHistogramSeries, RcLegend, RcLineSeries, RcLinearGauge, RcLogAxis, RcLollipopSeries, RcOhlcSeries, RcParetoSeries, RcPieSeries, RcScatterSeries, RcSubtitle, RcTimeAxis, RcTitle, RcTreemapSeries, RcVectorSeries, RcWaterfallSeries } from "./RcChartModels";
+import { ImageExportOptions, ImageExporter } from "../export/image/ImageExporter";
 
 const axis_types = {
     'category': RcCategoryAxis,
@@ -267,5 +268,9 @@ export class RcChartControl {
 
     scroll(axis: RcChartAxis, pos: number): void {
         this.$_p.scroll(axis.$_p as any, pos);
+    }
+
+    exportImage(options?: ImageExportOptions) {
+        new ImageExporter().export(this.$_p.dom(), options)
     }
 }
