@@ -665,6 +665,13 @@ export abstract class PointElement extends PathElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     point: DataPoint;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, SeriesView.POINT_CLASS);
+    }
 }
 
 export abstract class BoxPointElement extends PointElement {
@@ -679,10 +686,6 @@ export abstract class BoxPointElement extends PointElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS);
-    }
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

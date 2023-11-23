@@ -63,6 +63,7 @@ import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
 import { SvgRichText } from "../common/RichText";
 import { LabelElement } from "../common/impl/LabelElement";
+import { CircleBarSeriesView } from "./series/CircleBarSeriesView";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -73,6 +74,7 @@ const series_types = {
     'boxplot': BoxPlotSeriesView,
     'bubble': BubbleSeriesView,
     'candlestick': CandlestickSeriesView,
+    'circlebar': CircleBarSeriesView,
     'dumbbell': DumbbellSeriesView,
     'equalizer': EqualizerSeriesView,
     'errorbar': ErrorBarSeriesView,

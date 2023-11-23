@@ -426,6 +426,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
         this._points = new DataPointCollection(this);
         this._pointArgs = this._createPointArgs();
+
+        this._initProps();
+    }
+
+    protected _initProps(): void {
     }
 
     //-------------------------------------------------------------------------

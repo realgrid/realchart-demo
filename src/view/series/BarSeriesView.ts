@@ -31,7 +31,7 @@ class BarSectorView extends SectorElement implements IPointView {
     point: DataPoint;
 }
 
-export abstract class BarSeriesViewBase extends BoxedSeriesView<BarSeriesBase> {
+export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSeriesView<T> {
 
     //-------------------------------------------------------------------------
     // fields
@@ -41,20 +41,13 @@ export abstract class BarSeriesViewBase extends BoxedSeriesView<BarSeriesBase> {
     protected _labelInfo: LabelLayoutInfo = {} as any;
 
     //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc, 'rct-bar-series')
-    }
-
-    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _getPointPool(): ElementPool<RcElement> {
         return this.chart().isPolar() ? this._sectors : this._bars;
     }
 
-    protected _preparePointViews(doc: Document, model: BarSeries, points: DataPoint[]): void {
+    protected _preparePointViews(doc: Document, model: T, points: DataPoint[]): void {
         if (model.chart.isPolar()) {
             this.$_parepareSectors(doc, model, this._visPoints);
         } else {
@@ -62,7 +55,7 @@ export abstract class BarSeriesViewBase extends BoxedSeriesView<BarSeriesBase> {
         }
     }
 
-    protected _setPointStyle(v: RcElement, model: BarSeries, p: DataPoint): void {
+    protected _setPointStyle(v: RcElement, model: T, p: DataPoint): void {
         super._setPointStyle(v, model, p);
 
         if (p.yValue < model.baseValue && model.belowStyle) {
@@ -83,7 +76,7 @@ export abstract class BarSeriesViewBase extends BoxedSeriesView<BarSeriesBase> {
     //-------------------------------------------------------------------------
     protected abstract _createBarPool(container: RcElement): ElementPool<PointElement>;
 
-    private $_parepareBars(doc: Document, model: BarSeries, points: DataPoint[]): void {
+    private $_parepareBars(doc: Document, model: T, points: DataPoint[]): void {
         if (!this._bars) {
             this._bars = this._createBarPool(this._pointContainer);
         }
@@ -94,7 +87,7 @@ export abstract class BarSeriesViewBase extends BoxedSeriesView<BarSeriesBase> {
         });
     }
 
-    private $_parepareSectors(doc: Document, model: BarSeries, points: DataPoint[]): void {
+    private $_parepareSectors(doc: Document, model: T, points: DataPoint[]): void {
         if (!this._sectors) {
             this._sectors = new ElementPool(this._pointContainer, BarSectorView);
         }
@@ -149,7 +142,14 @@ export abstract class BarSeriesViewBase extends BoxedSeriesView<BarSeriesBase> {
     }
 }
 
-export class BarSeriesView extends BarSeriesViewBase {
+export class BarSeriesView extends BarSeriesViewBase<BarSeries> {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-bar-series')
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
