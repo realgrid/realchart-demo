@@ -12,7 +12,12 @@ const config = {
         type: 'treemap',
         algorithm: 'squarify',
         pointLabel: {
-            visible: true,
+            visibleCallback: (args) => {
+                if(args.yValue < 3){
+                    return ""
+                }
+                return args.yValue
+            },
             text: '${x}',
             effect: 'outline',
             style: {
