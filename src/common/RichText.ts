@@ -291,8 +291,8 @@ export class SvgRichText {
     //-------------------------------------------------------------------------
     setFormat(value: string) {
         if (value !== this._format) {
-            this._format = value;
-            value && this.$_parse(value);
+            this._format = value != null ? String(value) : value;
+            value && this.$_parse(this._format);
         }
     }
 
