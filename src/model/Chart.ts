@@ -55,6 +55,7 @@ import { TextAnnotation } from "./annotation/TextAnnotation";
 import { ImageAnnotation } from "./annotation/ImageAnnotation";
 import { Annotation, AnnotationCollection } from "./Annotation";
 import { ShapeAnnotation } from "./annotation/ShapeAnnotation";
+import { CircleBarSeries, CircleBarSeriesGroup } from "./series/CircleBarSeries";
 
 export interface IChart {
     type: string;
@@ -111,10 +112,12 @@ export interface IChart {
 const group_types = {
     // TODO: '...group'으로 통일한다.
     'bar': BarSeriesGroup,
+    'circlebar': CircleBarSeriesGroup,
     'line': LineSeriesGroup,
     'area': AreaSeriesGroup,
     'pie': PieSeriesGroup,
     'bargroup': BarSeriesGroup,
+    'circlebargroup': BarSeriesGroup,
     'linegroup': LineSeriesGroup,
     'areagroup': AreaSeriesGroup,
     'piegroup': PieSeriesGroup,
@@ -129,6 +132,7 @@ const series_types = {
     'boxplot': BoxPlotSeries,
     'bubble': BubbleSeries,
     'candlestick': CandlestickSeries,
+    'circlebar': CircleBarSeries,
     'dumbbell': DumbbellSeries,
     'equalizer': EqualizerSeries,
     'errorbar': ErrorBarSeries,

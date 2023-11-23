@@ -66,11 +66,6 @@ export class LabelElement extends GroupElement {
         return this;
     }
 
-    setSvg(s: string): LabelElement {
-        this._text.svg = s;
-        return this;
-    }
-
     setModel(doc: Document, model: ChartText, contrastTarget: Element): LabelElement {
         const e = model.effect;
 

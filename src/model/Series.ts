@@ -1008,6 +1008,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._points.load(data);
         this._changed();
     }
+
+    getPointAt(xValue: number): DataPoint {
+        return this._points.pointAt(xValue);
+    }
     
     //-------------------------------------------------------------------------
     // overriden members

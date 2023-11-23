@@ -24,6 +24,12 @@
         },
     },
     series: {
+		pointLabel: {
+			visible: true,
+			textCallback: ({index, y}) => {
+                return index === 0 ? y + '%' : y;
+            },
+		},
 		onPointClick: args => {
 		    //alert(JSON.stringify(args));
 			console.log(args)

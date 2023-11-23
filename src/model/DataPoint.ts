@@ -234,6 +234,12 @@ export class DataPointCollection {
         return this._points[index];
     }
 
+    pointAt(xValue: number): DataPoint {
+        for (const p of this._points) {
+            if (p.xValue === xValue) return p;
+        }
+    }
+
     contains(p: DataPoint) {
         return this._points.indexOf(p) >= 0;
     }

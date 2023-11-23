@@ -21,7 +21,7 @@ const config = {
     },
     options: {
         style: {
-            paddingBottom: '42px'
+            paddingBottom: '45px'
         }
     },
     title: {
@@ -51,6 +51,11 @@ const config = {
                 fontSize: '20px',
                 fontWeight: 'bold',
                 fill: '#555'
+            },
+            styleCallback: args => { 
+                return { 
+                    fill: chart.getSeries('curr').getValueAt(args.value) >= 2 ? 'red' : undefined
+                }
             }
         },
         crosshair: true

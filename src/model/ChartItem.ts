@@ -13,6 +13,7 @@ import { SvgRichText, RichTextParamCallback } from "../common/RichText";
 import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
+import { IAxisTick } from "./Axis";
 import { IChart } from "./Chart";
 
 export let n_char_item = 0;
@@ -402,6 +403,7 @@ export abstract class FormattableText extends ChartText {
     }
     prepareRich(text: string): void {
         if (text) {
+            
             if (!this._richTextImpl) {
                 this._richTextImpl = new SvgRichText();
             }

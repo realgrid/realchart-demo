@@ -540,6 +540,13 @@ export enum AxisLabelArrange {
     ROWS = 'rows'
 }
 
+export interface IAxisLabelArgs {
+    axis: string | number;
+    count: number;
+    index: number;
+    value: number;
+}
+
 /**
  * [겹치는 경우가 발생할 때]
  * 1. step이 0보다 큰 값으로 설정되면 반영한다.
@@ -554,6 +561,11 @@ export abstract class AxisLabel extends FormattableText {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _paramTick: IAxisTick;
+    _getParam = (target: any, param: string, format: string): any => {
+        return this._getParamValue(this._paramTick, param);
+    }
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -602,10 +614,31 @@ export abstract class AxisLabel extends FormattableText {
      */
     wrap = false;
 
+    textCallback: (args: IAxisLabelArgs) => string;
+    styleCallback: (args: any) => SVGStyleOrClass;
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     abstract getTick(index: number, value: any): string;
+
+    protected _getParamValue(tick: IAxisTick, param: string): any {
+        return tick[param];
+    }
+
+    getLabelText(tick: IAxisTick): string {
+        if (this.textCallback) {
+            const s = this.textCallback(this.axis.getTickLabelArgs(tick.index, tick.value));
+            if (s !== _undefined) return s;
+        }
+        return this.text;
+    }
+
+    getLabelStyle(tick: IAxisTick): any {
+        if (this.styleCallback) {
+            return this.styleCallback(this.axis.getTickLabelArgs(tick.index, tick.value));
+        }
+    }
 
     getRotation(): number {
         return this.rotation || 0;
@@ -613,8 +646,9 @@ export abstract class AxisLabel extends FormattableText {
 }
 
 export interface IAxisTick {
-    pos: number;
+    index: number;
     value: number;
+    pos: number;
     label: string;
 }
 
@@ -787,6 +821,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected _max: number;
     _zoom: AxisZoom;
     _runPos: AxisPosition;
+    _labelArgs: IAxisLabelArgs = {} as any;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1013,6 +1048,9 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     buildTicks(length: number): void {
         this._ticks = this._doBuildTicks(this._range.min, this._range.max, this._vlen = length);
+
+        this._labelArgs.axis = this.name || this._index;
+        this._labelArgs.count = this._ticks.length;
     }
 
     calcPoints(length: number, phase: number): void {
@@ -1082,6 +1120,12 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     isBreak(pos: number): boolean {
         return false;
+    }
+
+    getTickLabelArgs(index: number, value: any): IAxisLabelArgs {
+        this._labelArgs.index = index;
+        this._labelArgs.value = value;
+        return this._labelArgs;
     }
 
     //-------------------------------------------------------------------------

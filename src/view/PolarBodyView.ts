@@ -107,6 +107,12 @@ abstract class PolarAxisView extends RcElement {
         this._markViews.prepare(m._ticks.length);
     }
 
+    // protected _prepareLabel(view: AxisLabelView, tick: IAxisTick): void {
+    //     view.value = tick.value;
+    //     view.setText(tick.label);
+    //     // view.text = ticks[i].label;
+    // }
+
     private $_prepareLabels(doc: Document, m: Axis): void {
         if (this._labelContainer.setVisible(m.label.visible)) {
             const ticks = m._ticks;

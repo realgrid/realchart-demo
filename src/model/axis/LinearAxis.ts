@@ -584,15 +584,12 @@ export abstract class ContinuousAxis extends Axis {
         return ticks;
     }
 
-    protected _getTickLabel(index: number, value: number): string {
-        return this.label.getTick(index, value) || String(value);
-    }
-
     protected _createTick(length: number, index: number, step: number): IAxisTick {
         return {
+            index,
             pos: NaN,//this.getPosition(length, step),
             value: step,
-            label: this._getTickLabel(index, step)
+            label: this.label.getTick(index, step) || String(step)
         }
     }
 

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
-// BarSeries.ts
-// 2023. 06. 20. created by woori
+// CircleBarSeries.ts
+// 2023. 11. 23. created by woori
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
 // All rights reserved.
@@ -17,15 +17,17 @@ import { BasedSeries, ClusterableSeriesGroup, IClusterable, Series, SeriesGroupL
  * [y]
  * [x, y]
  */
-export class BarSeriesPoint extends DataPoint {
+export class CircleBarSeriesPoint extends DataPoint {
     
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    // borderRaidus: number;
 }
 
-export abstract class BarSeriesBase extends BasedSeries {
+/**
+ * @config chart.series[type=CircleBar]
+ */
+export class CircleBarSeries extends BasedSeries {
 
     //-------------------------------------------------------------------------
     // consts
@@ -37,7 +39,7 @@ export abstract class BarSeriesBase extends BasedSeries {
     // properties
     //-------------------------------------------------------------------------
     /**
-     * true로 지정하면 포인트 bar 별로 색을 다르게 표시한다.
+     * true로 지정하면 포인트 CircleBar 별로 색을 다르게 표시한다.
      * 
      * @config
      */
@@ -49,6 +51,10 @@ export abstract class BarSeriesBase extends BasedSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    _type(): string {
+        return 'circlebar';
+    }
+
     canCategorized(): boolean {
         return true;
     }
@@ -58,37 +64,18 @@ export abstract class BarSeriesBase extends BasedSeries {
     }
 
     protected _createPoint(source: any): DataPoint {
-        return new BarSeriesPoint(source);
+        return new CircleBarSeriesPoint(source);
     }
 
     protected _getGroupBase(): number {
-        return this.group ? (this.group as BarSeriesGroupBase<any>).baseValue: this.baseValue;
+        return this.group ? (this.group as CircleBarSeriesGroup).baseValue: this.baseValue;
     }
 }
 
 /**
- * @config chart.series[type=bar]
+ * @config chart.series[type=circlebargroup]
  */
-export class BarSeries extends BarSeriesBase {
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    borderRaidus = 0;
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    _type(): string {
-        return 'bar';
-    }
-
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
-        return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, 2);
-    }
-}
-
-export abstract class BarSeriesGroupBase<T extends BarSeriesBase> extends ClusterableSeriesGroup<T> implements IClusterable {
+export class CircleBarSeriesGroup extends ClusterableSeriesGroup<CircleBarSeries> implements IClusterable {
 
     //-------------------------------------------------------------------------
     // fields
@@ -104,6 +91,18 @@ export abstract class BarSeriesGroupBase<T extends BarSeriesBase> extends Cluste
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    _type(): string {
+        return 'circlebargroup';
+    }
+
+    _seriesType(): string {
+        return 'circlebar';
+    }
+
+    protected _canContain(ser: Series): boolean {
+        return ser instanceof CircleBarSeries;
+    }
+
     canCategorized(): boolean {
         return true;
     }
@@ -112,7 +111,7 @@ export abstract class BarSeriesGroupBase<T extends BarSeriesBase> extends Cluste
         return axis._isX ? NaN : pickNum(this.baseValue, axis.getBaseValue());
     }
 
-    protected _doPrepareSeries(series: T[]): void {
+    protected _doPrepareSeries(series: CircleBarSeries[]): void {
         if (this.layout === SeriesGroupLayout.DEFAULT) {
             const sum = series.length > 1 ? series.map(ser => ser.pointWidth).reduce((a, c) => a + c, 0) : series[0].pointWidth;
             let x = 0;
@@ -124,26 +123,5 @@ export abstract class BarSeriesGroupBase<T extends BarSeriesBase> extends Cluste
             });
         } else if (this.layout === SeriesGroupLayout.STACK) {
         }
-    }
-}
-
-/**
- * @config chart.series[type=bargroup]
- */
-export class BarSeriesGroup extends BarSeriesGroupBase<BarSeries> {
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    _type(): string {
-        return 'bargroup';
-    }
-
-    _seriesType(): string {
-        return 'bar';
-    }
-
-    protected _canContain(ser: Series): boolean {
-        return ser instanceof BarSeries;
     }
 }

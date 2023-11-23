@@ -295,6 +295,7 @@ export class CategoryAxis extends Axis {
                 const v = min + i - 1;
 
                 ticks.push({
+                    index: i - 1,
                     pos: NaN,//this.getPosition(length, v),
                     value: v,
                     label: label.getTick(i - 1, cats[i - 1]),

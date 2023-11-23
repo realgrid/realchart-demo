@@ -13,8 +13,8 @@ import { SectorElement } from "../../common/impl/SectorElement";
 import { TextAnchor } from "../../common/impl/TextElement";
 import { Chart } from "../../model/Chart";
 import { DataPoint } from "../../model/DataPoint";
-import { BarSeries } from "../../model/series/BarSeries";
-import { BarElement, BoxedSeriesView, IPointView, LabelLayoutInfo, SeriesView } from "../SeriesView";
+import { BarSeries, BarSeriesBase } from "../../model/series/BarSeries";
+import { BarElement, BoxedSeriesView, IPointView, LabelLayoutInfo, PointElement, SeriesView } from "../SeriesView";
 
 class BarSectorView extends SectorElement implements IPointView {
 
@@ -31,12 +31,12 @@ class BarSectorView extends SectorElement implements IPointView {
     point: DataPoint;
 }
 
-export class BarSeriesView extends BoxedSeriesView<BarSeries> {
+export abstract class BarSeriesViewBase extends BoxedSeriesView<BarSeriesBase> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _bars: ElementPool<BarElement>;
+    private _bars: ElementPool<PointElement>;
     private _sectors: ElementPool<BarSectorView>;
     protected _labelInfo: LabelLayoutInfo = {} as any;
 
@@ -78,18 +78,14 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         }
     }
 
-    protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
-        view.wPoint = wPoint;
-        view.hPoint = hPoint;
-        view.layout(x, y);
-    }
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected abstract _createBarPool(container: RcElement): ElementPool<PointElement>;
+
     private $_parepareBars(doc: Document, model: BarSeries, points: DataPoint[]): void {
         if (!this._bars) {
-            this._bars = new ElementPool(this._pointContainer, BarElement);
+            this._bars = this._createBarPool(this._pointContainer);
         }
         this._bars.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
@@ -150,5 +146,21 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
                 labelInfo.labelView.translate(x, y - r.height / 2);
             }
         })
+    }
+}
+
+export class BarSeriesView extends BarSeriesViewBase {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _createBarPool(container: RcElement): ElementPool<PointElement> {
+        return new ElementPool(container, BarElement);
+    }
+
+    protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
+        view.wPoint = wPoint;
+        view.hPoint = hPoint;
+        view.layout(x, y);
     }
 }

@@ -12,10 +12,11 @@ import { PathElement, RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { DEG_RAD } from "../common/Types";
+import { LabelElement } from "../common/impl/LabelElement";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { Axis, AxisGuide, AxisLabelArrange, AxisPosition, AxisScrollBar, AxisTick, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
+import { Axis, AxisGuide, AxisLabel, AxisLabelArrange, AxisPosition, AxisScrollBar, AxisTick, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { Crosshair } from "../model/Crosshair";
 import { LinearAxis } from "../model/axis/LinearAxis";
@@ -133,8 +134,11 @@ class AxisTickMarkView extends ChartElement<AxisTick> {
     }
 }
 
-class AxisLabelView extends TextElement {
+class AxisLabelView extends LabelElement {
 
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
     index = -1;
     value: number;
     col = 0;
@@ -142,14 +146,17 @@ class AxisLabelView extends TextElement {
     tickWidth = 0;
     // bbox: IRect;
 
-    get rotatedWidth(): number {
-        const d = this.rotation * DEG_RAD;
-        const r = this.getBBounds();
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    // rotatedWidth(): number {
+    //     const d = this.rotation * DEG_RAD;
+    //     const r = this.getBBounds();
 
-        return Math.abs(Math.sin(d) * r.height) + Math.abs(Math.cos(d) * r.width);
-    }
+    //     return Math.abs(Math.sin(d) * r.height) + Math.abs(Math.cos(d) * r.width);
+    // }
 
-    get rotatedHeight(): number {
+    rotatedHeight(): number {
         const d = this.rotation * DEG_RAD;
         const r = this.getBBounds();
 
@@ -747,10 +754,29 @@ export class AxisView extends ChartElement<Axis> {
         }
     }
 
+    protected _prepareLabel(view: AxisLabelView, tick: IAxisTick, model: AxisLabel): void {
+        const richFormat = model.getLabelText(tick);
+
+        view.value = tick.value;
+
+        view.internalClearStyleAndClass();
+        view.internalSetStyleOrClass(model.getLabelStyle(tick));
+
+        if (richFormat) {
+            model.prepareRich(richFormat);
+            model._paramTick = tick;
+            model.buildSvg(view._text, view._outline, NaN, NaN, model, model._getParam);
+        } else {
+            view.setText(tick.label);
+            // view.text = ticks[i].label;
+        }
+    }
+
     private $_prepareLabels(doc: Document, m: Axis): number {
         const container = this._labelContainer;
+        const label = m.label;
 
-        if (container.visible = m.label.visible) {
+        if (container.visible = label.visible) {
             const ticks = m._ticks;
             const nTick = ticks.length;
             const views = this._labelViews;
@@ -770,8 +796,7 @@ export class AxisView extends ChartElement<Axis> {
 
             views.forEach((v, i) => {
                 v.setVisible(true); // visible false이면 getBBox()가 계산되지 않는다.
-                v.value = ticks[i].value;
-                v.text = ticks[i].label;
+                this._prepareLabel(v, ticks[i], label);
             });
             return views.length;
         }
@@ -907,7 +932,7 @@ export class AxisView extends ChartElement<Axis> {
             }
 
             views.forEach(v => {
-                pts[v.row] = Math.max(pts[v.row], rotated ? v.rotatedHeight : v.getBBounds().height);
+                pts[v.row] = Math.max(pts[v.row], rotated ? v.rotatedHeight() : v.getBBounds().height);
             })
 
             pts.unshift(0);
@@ -918,9 +943,9 @@ export class AxisView extends ChartElement<Axis> {
 
         } else {
             if (!isNaN(rotation) && rotation != 0) {
-                sz = views[0].rotatedHeight;
+                sz = views[0].rotatedHeight();
                 for (let i = 1; i < views.length; i++) {
-                    sz = Math.max(sz, views[i].rotatedHeight);
+                    sz = Math.max(sz, views[i].rotatedHeight());
                 }
             } else {
                 sz = views[0].getBBounds().height;
@@ -982,7 +1007,7 @@ export class AxisView extends ChartElement<Axis> {
                 const rot = v.rotation;
                 const a = rot * DEG_RAD;
                 const r = v.getBBounds();
-                const ascent = Math.floor(v.getAscent(r.height));
+                const ascent = Math.floor(v._text.getAscent(r.height));
                 let x = ticks[v.index].pos;
                 let y = opp ? (h - len - r.height - pts[v.row]) : (len + pts[v.row]);
     

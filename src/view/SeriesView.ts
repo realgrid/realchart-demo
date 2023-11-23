@@ -659,12 +659,19 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 }
 
-export abstract class BoxPointElement extends PathElement implements IPointView {
+export abstract class PointElement extends PathElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     point: DataPoint;
+}
+
+export abstract class BoxPointElement extends PointElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
     labelViews: PointLabelView[] = [];
     wPoint: number;
     hPoint: number;
