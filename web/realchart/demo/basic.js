@@ -18,7 +18,7 @@ const config = {
             stroke: 'none'
         }
     },
-	xAxis: {
+    xAxis: {
         tick: true,
         title: {
             text: '수정구' + (Math.random() * 10000 >> 0)
