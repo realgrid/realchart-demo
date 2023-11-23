@@ -19,20 +19,11 @@ const config = {
         }
     },
 	xAxis: {
-		label: {
-			startStep: 0,
-			step: 2,
-		},
-
-		tick:true,
-		// type: 'category',
-		// position: 'apposite'
-		// position: 'base',
-		// baseAxis: 1,
-		title: {
-			text: '수정구' + (Math.random() * 10000 >> 0)
-		},
-		// grid: true,
+        tick: true,
+        title: {
+            text: '수정구' + (Math.random() * 10000 >> 0)
+        },
+        // grid: true,
         crosshair: true,
 	},
 	yAxis: {
