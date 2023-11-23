@@ -17,6 +17,8 @@ import { PWTester } from '../PWTester';
  * Puppeteer Tests for bar.html
  */
 test.describe('bar.html test', async function () {
+	let chart: any = null, config: any = null;
+	let nodeConfig: any = null
 	const url = 'demo/bar.html?debug';
 
 	test.beforeEach(async ({ page }) => {
@@ -58,6 +60,38 @@ test.describe('bar.html test', async function () {
 
 		// await page.screenshot({path: 'out/ss/bar.png'});
 		// page.close();
+	});
+
+	test('x axis tick의 갯수와 존재 하는지 확인', async({ page }) => {
+		nodeConfig = await page.evaluate(() => {
+			config.xAxis.tick = true;
+
+			chart.load(config, false);
+
+			return config;
+		});
+	
+		const xAxis = await PWTester.getAxis(page, "x");
+		const ticks = (await xAxis.$$(".rct-axis-tick")).length;
+
+		const datas = nodeConfig.xAxis.categories.length
+		expect(ticks).eq(datas)
+	});
+	
+	test('legend가 있는지 확인', async({ page }) => {
+		nodeConfig = await page.evaluate(() => {
+			config.legend = true;
+			chart.load(config, false)
+			return config
+		});
+
+		const series = await page.$('.rct-series rct-bar-series');
+		
+			
+		
+
+		const marker = await page.$('.rct-legend-item-marker');
+		expect(marker).exist;
 	});
 
 	test('Y-reversed', async ({ page }) => {
