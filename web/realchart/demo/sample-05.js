@@ -20,654 +20,1715 @@ const config = {
         },
         data: [{
             "id": "A",
-            "name": "Nord-Norge",
+            "name": "A",
             "color": "#50FFB1"
         }, {
             "id": "B",
-            "name": "Trøndelag",
+            "name": "B",
             "color": "#F5FBEF"
         }, {
             "id": "C",
-            "name": "Vestlandet",
+            "name": "C",
             "color": "#A09FA8"
         }, {
-            "name": "A1",
+            'id': 'A-1',
+            "name": "A-1",
             "group": "A",
-            "value": 250923
-        }, {
-            "name": "A2",
-            "group": "A",
-            "value": 245759
-        }, {
-            "name": "A3",
-            "group": "A",
-            "value": 233494
-        }, {
-            "name": "A4",
-            "group": "A",
-            "value": 222494
-        }, {
-            "name": "A5",
-            "group": "A",
-            "value": 211494
-        }, {
-            "name": "A6",
-            "group": "A",
-            "value": 200494
-        }, {
-            "name": "A7",
-            "group": "A",
-            "value": 159094
-        }, {
-            "name": "A8",
-            "group": "A",
-            "value": 138694
-        }, {
-            "name": "A9",
-            "group": "A",
-            "value": 138494
-        }, {
-            "name": "A10",
-            "group": "A",
-            "value": 128494
-        }, {
-            "name": "A11",
-            "group": "A",
-            "value": 127494
-        }, {
-            "name": "A12",
-            "group": "A",
-            "value": 126494
-        }, {
-            "name": "A13",
-            "group": "A",
-            "value": 125494
-        }, {
-            "name": "A14",
-            "group": "A",
-            "value": 124494
-        }, {
-            "name": "A15",
-            "group": "A",
-            "value": 123494
-        }, {
-            "name": "A16",
-            "group": "A",
-            "value": 122494
-        }, {
-            "name": "A17",
-            "group": "A",
-            "value": 121494
-        }, {
-            "name": "A18",
-            "group": "A",
-            "value": 119494
-        }, {
-            "name": "A19",
-            "group": "A",
-            "value": 118494
-        }, {
-            "name": "A20",
-            "group": "A",
-            "value": 117494
-        }, {
-            "name": "A21",
-            "group": "A",
-            "value": 116494
-        }, {
-            "name": "A22",
-            "group": "A",
-            "value": 115494
-        }, {
-            "name": "A23",
-            "group": "A",
-            "value": 114494
-        }, {
-            "name": "A24",
-            "group": "A",
-            "value": 113494
-        }, {
-            "name": "A25",
-            "group": "A",
-            "value": 112494
-        }, {
-            "name": "A26",
-            "group": "A",
-            "value": 111494
-        }, {
-            "name": "A27",
-            "group": "A",
-            "value": 110494
-        }, {
-            "name": "A28",
-            "group": "A",
-            "value": 119494
-        }, {
-            "name": "A29",
-            "group": "A",
-            "value": 118494
-        }, {
-            "name": "A30",
-            "group": "A",
-            "value": 57494
-        }, {
-            "name": "A31",
-            "group": "A",
-            "value": 46494
-        }, {
-            "name": "A32",
-            "group": "A",
-            "value": 135494
-        }, {
-            "name": "A33",
-            "group": "A",
-            "value": 124494
-        }, {
-            "name": "A34",
-            "group": "A",
-            "value": 119494
-        }, {
-            "id": 'B1',
-            "name": "B1",
+            'color': '#FF0000'
+        },{
+            "name": "A-1-1",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-2",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-3",
+            "group": "A-1",
+            'value': 30
+        },{
+            "name": "A-1-4",
+            "group": "A-1",
+            'value': 25
+        },{
+            "name": "A-1-5",
+            "group": "A-1",
+            'value': 15
+        },{
+            "name": "A-1-6",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-7",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-8",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-9",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-10",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-11",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-12",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-13",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-14",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-15",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-16",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-17",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-18",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-19",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-20",
+            "group": "A-1",
+            'value': 5
+        },{
+            "name": "A-1-21",
+            "group": "A-1",
+            'value': 5
+        },{
+            "id": "B-1",
+            "name": "B-1",
             "group": "B",
-            "value": 670840
         }, {
-            "name": "B1-1",
-            "group": "B1",
-            "value":350040
+            'id': 'B-1-1',
+            "name": "B-1-1",
+            "group": "B-1",
+            'color': '#FFA500'
         }, {
-            "name": "B1-2",
-            "group": "B1",
-            "value": 265840
+            "name": "B-1-1-1",
+            "group": "B-1-1",
+            'value': 1
         }, {
-            "name": "B1-3",
-            "group": "B1",
-            "value": 159840
+            "name": "B-1-1-2",
+            "group": "B-1-1",
+            'value': 1
         }, {
-            "name": "B1-4",
-            "group": "B1",
-            "value": 155840
+            "name": "B-1-1-3",
+            "group": "B-1-1",
+            'value': 1
         }, {
-            "name": "B1-5",
-            "group": "B1",
-            "value": 152840
+            "name": "B-1-1-4",
+            "group": "B-1-1",
+            'value': 1
         }, {
-            "name": "B1-6",
-            "group": "B1",
-            "value": 131840
+            "name": "B-1-1-5",
+            "group": "B-1-1",
+            'value': 1
         }, {
-            "name": "B1-7",
-            "group": "B1",
-            "value": 129840
+            "name": "B-1-1-6",
+            "group": "B-1-1",
+            'value': 1
         }, {
-            "name": "B1-8",
-            "group": "B1",
-            "value": 126840
+            "name": "B-1-1-7",
+            "group": "B-1-1",
+            'value': 1
+        }, {
+            "name": "B-1-1-8",
+            "group": "B-1-1",
+            'value': 1
+        }, {
+            "name": "B-1-1-9",
+            "group": "B-1-1",
+            'value': 1
+        }, {
+            "name": "B-1-1-10",
+            "group": "B-1-1",
+            'value': 1
+        }, {
+            "name": "B-1-1-11",
+            "group": "B-1-1",
+            'value': 1
+        }, {
+            'id': 'B-1-2',
+            "name": "B-1-2",
+            "group": "B-1",
+            'color': '#FFFF00'
         },{
-            "id": "B2",
-            "name": "B2",
-            "group": "B",
-            "value": 36969
+            "name": "B-1-2-1",
+            "group": "B-1-2",
+            'value': 1
         },{
-            "name": "B2-1",
-            "group": "B2",
-            "value": 27969
+            "name": "B-1-2-2",
+            "group": "B-1-2",
+            'value': 1
         },{
-            "name": "B2-2",
-            "group": "B2",
-            "value": 24969
+            "name": "B-1-2-3",
+            "group": "B-1-2",
+            'value': 1
         },{
-            "name": "B2-3",
-            "group": "B2",
-            "value": 23969
+            "name": "B-1-2-4",
+            "group": "B-1-2",
+            'value': 1
         },{
-            "name": "B2-4",
-            "group": "B2",
-            "value": 22969
+            "name": "B-1-2-5",
+            "group": "B-1-2",
+            'value': 1
         },{
-            "name": "B2-5",
-            "group": "B2",
-            "value": 21969
+            "name": "B-1-2-6",
+            "group": "B-1-2",
+            'value': 1
         },{
-            "name": "B2-6",
-            "group": "B2",
-            "value": 17969
+            "name": "B-1-2-7",
+            "group": "B-1-2",
+            'value': 1
         },{
-            "name": "B2-7",
-            "group": "B2",
-            "value": 17969
+            "name": "B-1-2-8",
+            "group": "B-1-2",
+            'value': 1
         },{
-            "name": "B2-8",
-            "group": "B2",
-            "value": 15969
+            "name": "B-1-2-9",
+            "group": "B-1-2",
+            'value': 1
         },{
-            "name": "B2-9",
-            "group": "B2",
-            "value": 15969
+            "name": "B-1-2-10",
+            "group": "B-1-2",
+            'value': 1
         },{
-            "name": "B2-10",
-            "group": "B2",
-            "value": 14969
+            "name": "B-1-2-11",
+            "group": "B-1-2",
+            'value': 1
         },{
-            "name": "B2-11",
-            "group": "B2",
-            "value": 13969
+            "name": "B-1-2-12",
+            "group": "B-1-2",
+            'value': 1
         },{
-            "name": "B2-12",
-            "group": "B2",
-            "value": 12969
-        },{
-            "name": "B2-13",
-            "group": "B2",
-            "value": 10069
-        },{
-            "name": "B2-14",
-            "group": "B2",
-            "value": 7969
-        },{
-            "name": "B2-15",
-            "group": "B2",
-            "value": 6969
-        },{
-            "name": "B2-16",
-            "group": "B2",
-            "value": 5969
-        },{
-            "name": "B2-17",
-            "group": "B2",
-            "value": 4969
-        },{
-            "name": "B2-18",
-            "group": "B2",
-            "value": 3799
-        },{
-            "name": "B2-19",
-            "group": "B2",
-            "value": 2969
-        },{
-            "name": "B2-20",
-            "group": "B2",
-            "value": 1969
-        },{
-            "name": "B2-21",
-            "group": "B2",
-            "value": 99969
-        },{
-            "name": "B2-22",
-            "group": "B2",
-            "value": 98969
-        },{
-            "name": "B2-23",
-            "group": "B2",
-            "value": 97969
-        },{
-            "name": "B2-24",
-            "group": "B2",
-            "value": 96969
-        },{
-            "name": "B2-25",
-            "group": "B2",
-            "value": 95969
-        },{
-            "name": "B2-26",
-            "group": "B2",
-            "value": 94469
-        },{
-            "name": "B2-27",
-            "group": "B2",
-            "value": 93969
-        },{
-            "name": "B2-28",
-            "group": "B2",
-            "value": 92969
-        },{
-            "name": "B2-29",
-            "group": "B2",
-            "value": 91969
-        },{
-            "name": "B2-30",
-            "group": "B2",
-            "value": 90969
-        },{
-            "name": "B2-31",
-            "group": "B2",
-            "value": 89969
-        },{
-            "name": "B2-32",
-            "group": "B2",
-            "value": 88969
-        },{
-            "name": "B2-33",
-            "group": "B2",
-            "value": 87969
-        },{
-            "name": "B2-34",
-            "group": "B2",
-            "value": 86969
-        },{
-            "name": "B2-35",
-            "group": "B2",
-            "value": 85969
-        },{
-            "name": "B2-36",
-            "group": "B2",
-            "value": 83369
-        },{
-            "name": "B2-37",
-            "group": "B2",
-            "value": 82969
-        },{
-            "name": "B2-38",
-            "group": "B2",
-            "value": 81969
-        },{
-            "name": "B2-39",
-            "group": "B2",
-            "value": 80969
-        },{
-            "name": "B2-40",
-            "group": "B2",
-            "value": 79969
-        },{
-            "name": "B2-41",
-            "group": "B2",
-            "value": 78969
-        },{
-            "name": "B2-42",
-            "group": "B2",
-            "value": 77969
-        },{
-            "name": "B2-43",
-            "group": "B2",
-            "value": 76969
-        },{
-            "name": "B2-44",
-            "group": "B2",
-            "value": 74969
-        },{
-            "name": "B2-45",
-            "group": "B2",
-            "value": 73969
-        },{
-            "name": "B2-46",
-            "group": "B2",
-            "value": 72969
-        },{
-            "name": "B2-47",
-            "group": "B2",
-            "value": 71969
-        },{
-            "name": "B2-48",
-            "group": "B2",
-            "value": 69969
-        },{
-            "name": "B2-49",
-            "group": "B2",
-            "value": 68969
-        },{
-            "name": "B2-50",
-            "group": "B2",
-            "value": 75969
-        },{
-            "name": "B2-51",
-            "group": "B2",
-            "value": 73969
-        },{
-            "name": "C1",
+            "id": "C-1",
+            "name": "C-1",
             "group": "C",
-            "value": 315768
+        }, {
+            'id': 'C-1-1',
+            "name": "C-1-1",
+            "group": "C-1",
+            'color': '#7FFF00'
+        }, {
+            "name": "C-1-1-1",
+            "group": "C-1-1",
+            'value': 1
+        }, {
+            "name": "C-1-1-2",
+            "group": "C-1-1",
+            'value': 1
+        }, {
+            "name": "C-1-1-3",
+            "group": "C-1-1",
+            'value': 1
+        }, {
+            "name": "C-1-1-4",
+            "group": "C-1-1",
+            'value': 1
+        }, {
+            "name": "C-1-1-5",
+            "group": "C-1-1",
+            'value': 1
+        }, {
+            "name": "C-1-1-6",
+            "group": "C-1-1",
+            'value': 1
+        }, {
+            "name": "C-1-1-7",
+            "group": "C-1-1",
+            'value': 1
+        }, {
+            "name": "C-1-1-8",
+            "group": "C-1-1",
+            'value': 1
+        }, {
+            "name": "C-1-1-9",
+            "group": "C-1-1",
+            'value': 1
+        }, {
+            "name": "C-1-1-10",
+            "group": "C-1-1",
+            'value': 1
+        }, {
+            "name": "C-1-1-11",
+            "group": "C-1-1",
+            'value': 1
+        }, {
+            'id':'C-1-2',
+            "name": "C-1-2",
+            "group": "C-1",
+            'color': '#008000'
         },{
-            "id": "CC",
-            "name": "C2",
+            "name": "C-1-2-1",
+            "group": "C-1-2",
+            'value': 1
+        },{
+            "name": "C-1-2-2",
+            "group": "C-1-2",
+            'value': 1
+        },{
+            "name": "C-1-2-3",
+            "group": "C-1-2",
+            'value': 1
+        },{
+            "name": "C-1-2-4",
+            "group": "C-1-2",
+            'value': 1
+        },{
+            "name": "C-1-2-5",
+            "group": "C-1-2",
+            'value': 1
+        },{
+            "name": "C-1-2-6",
+            "group": "C-1-2",
+            'value': 1
+        },{
+            "name": "C-1-2-7",
+            "group": "C-1-2",
+            'value': 1
+        },{
+            "name": "C-1-2-8",
+            "group": "C-1-2",
+            'value': 1
+        },{
+            "name": "C-1-2-9",
+            "group": "C-1-2",
+            'value': 1
+        },{
+            "name": "C-1-2-10",
+            "group": "C-1-2",
+            'value': 1
+        },{
+            "name": "C-1-2-11",
+            "group": "C-1-2",
+            'value': 1
+        },{
+            "id": "C-2",
+            "name": "C-2",
             "group": "C",
-            "value": 115768
+        }, {
+            "id": "C-2-1",
+            "name": "C-2-1",
+            "group": "C-2",
         },{
-            "name": "CC1",
-            "group": "CC",
-            "value": 105768
+            'id': 'C-2-1-1',
+            "name": "C-2-1-1",
+            "group": "C-2-1",
+            'color': '#00FFFF'
         },{
-            "name": "CC2",
-            "group": "CC",
-            "value": 95768
+            "name": "C-2-1-1-1",
+            "group": "C-2-1-1",
+            'value': 1
         },{
-            "name": "CC3",
-            "group": "CC",
-            "value": 94768
+            "name": "C-2-1-1-2",
+            "group": "C-2-1-1",
+            'value': 1
         },{
-            "name": "CC4",
-            "group": "CC",
-            "value": 93768
+            "name": "C-2-1-1-3",
+            "group": "C-2-1-1",
+            'value': 1
         },{
-            "name": "CC5",
-            "group": "CC",
-            "value": 92768
+            "name": "C-2-1-1-4",
+            "group": "C-2-1-1",
+            'value': 1
         },{
-            "name": "CC6",
-            "group": "CC",
-            "value": 91768
+            "name": "C-2-1-1-5",
+            "group": "C-2-1-1",
+            'value': 1
         },{
-            "name": "CC7",
-            "group": "CC",
-            "value": 90768
+            "name": "C-2-1-1-6",
+            "group": "C-2-1-1",
+            'value': 1
         },{
-            "name": "CC8",
-            "group": "CC",
-            "value": 89768
+            "name": "C-2-1-1-7",
+            "group": "C-2-1-1",
+            'value': 1
         },{
-            "name": "CC9",
-            "group": "CC",
-            "value": 88768
+            "name": "C-2-1-1-8",
+            "group": "C-2-1-1",
+            'value': 1
         },{
-            "name": "CC10",
-            "group": "CC",
-            "value": 87768
+            "name": "C-2-1-1-9",
+            "group": "C-2-1-1",
+            'value': 1
         },{
-            "name": "CC11",
-            "group": "CC",
-            "value": 86768
+            "name": "C-2-1-1-10",
+            "group": "C-2-1-1",
+            'value': 1
         },{
-            "name": "CC12",
-            "group": "CC",
-            "value": 85768
+            "name": "C-2-1-1-11",
+            "group": "C-2-1-1",
+            'value': 1
         },{
-            "name": "CC13",
-            "group": "CC",
-            "value": 84768
+            'id': 'C-2-1-2',
+            "name": "C-2-1-2",
+            "group": "C-2-1",
+            'color': '#87CEEB'
         },{
-            "name": "CC14",
-            "group": "CC",
-            "value": 83768
+            "name": "C-2-1-2-1",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC15",
-            "group": "CC",
-            "value": 82768
+            "name": "C-2-1-2-2",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC16",
-            "group": "CC",
-            "value": 81768
+            "name": "C-2-1-2-3",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC17",
-            "group": "CC",
-            "value": 80768
+            "name": "C-2-1-2-4",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC18",
-            "group": "CC",
-            "value": 79768
+            "name": "C-2-1-2-5",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC19",
-            "group": "CC",
-            "value": 78768
+            "name": "C-2-1-2-6",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC20",
-            "group": "CC",
-            "value": 77768
+            "name": "C-2-1-2-7",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC21",
-            "group": "CC",
-            "value": 76768
+            "name": "C-2-1-2-8",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC22",
-            "group": "CC",
-            "value": 75768
+            "name": "C-2-1-2-9",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC23",
-            "group": "CC",
-            "value": 74768
+            "name": "C-2-1-2-10",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC24",
-            "group": "CC",
-            "value": 73768
+            "name": "C-2-1-2-11",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC25",
-            "group": "CC",
-            "value": 72768
+            "name": "C-2-1-2-12",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC26",
-            "group": "CC",
-            "value": 71768
+            "name": "C-2-1-2-13",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC27",
-            "group": "CC",
-            "value": 70768
+            "name": "C-2-1-2-14",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC28",
-            "group": "CC",
-            "value": 69768
+            "name": "C-2-1-2-15",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC29",
-            "group": "CC",
-            "value": 68768
+            "name": "C-2-1-2-16",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "name": "CC30",
-            "group": "CC",
-            "value": 67768
+            "name": "C-2-1-2-17",
+            "group": "C-2-1-2",
+            'value': 1
         },{
-            "id": "C2",
-            "name": "C2",
-            "group": "C",
-            "value": 77768
+            'id': 'C-2-1-3',
+            "name": "C-2-1-3",
+            "group": "C-2-1",
+            'color': '#98FF98'
         },{
-            "name": "C2-1",
-            "group": "C2",
-            "value": 78768
+            "name": "C-2-1-3-1",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-2",
-            "group": "C2",
-            "value": 66768
+            "name": "C-2-1-3-2",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-3",
-            "group": "C2",
-            "value": 65768
+            "name": "C-2-1-3-3",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-4",
-            "group": "C2",
-            "value": 64768
+            "name": "C-2-1-3-4",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-5",
-            "group": "C2",
-            "value": 63768
+            "name": "C-2-1-3-5",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-6",
-            "group": "C2",
-            "value": 62768
+            "name": "C-2-1-3-6",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-7",
-            "group": "C2",
-            "value": 61768
+            "name": "C-2-1-3-7",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-8",
-            "group": "C2",
-            "value": 60768
+            "name": "C-2-1-3-8",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-9",
-            "group": "C2",
-            "value": 59768
+            "name": "C-2-1-3-9",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-10",
-            "group": "C2",
-            "value": 58768
+            "name": "C-2-1-3-10",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-11",
-            "group": "C2",
-            "value": 57768
+            "name": "C-2-1-3-11",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-12",
-            "group": "C2",
-            "value": 56768
+            "name": "C-2-1-3-12",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-13",
-            "group": "C2",
-            "value": 55768
+            "name": "C-2-1-3-13",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-14",
-            "group": "C2",
-            "value": 54768
+            "name": "C-2-1-3-14",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-15",
-            "group": "C2",
-            "value": 53768
+            "name": "C-2-1-3-15",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-16",
-            "group": "C2",
-            "value": 52768
+            "name": "C-2-1-3-16",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-17",
-            "group": "C2",
-            "value": 51768
+            "name": "C-2-1-3-17",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-18",
-            "group": "C2",
-            "value": 50768
+            "name": "C-2-1-3-18",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-19",
-            "group": "C2",
-            "value": 49768
+            "name": "C-2-1-3-19",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-20",
-            "group": "C2",
-            "value": 48768
+            "name": "C-2-1-3-20",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C2-21",
-            "group": "C2",
-            "value": 47768
+            "name": "C-2-1-3-21",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "id": 'C3',
-            "name": "C3-1",
-            "group": "C2",
-            "value": 46768
+            "name": "C-2-1-3-22",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C3-2",
-            "group": "C3",
-            "value": 45768
+            "name": "C-2-1-3-23",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C3-3",
-            "group": "C3",
-            "value": 44768
+            "name": "C-2-1-3-24",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C3-4",
-            "group": "C3",
-            "value": 43768
+            "name": "C-2-1-3-25",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C3-5",
-            "group": "C3",
-            "value": 41768
+            "name": "C-2-1-3-26",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C3-6",
-            "group": "C3",
-            "value": 40768
+            "name": "C-2-1-3-27",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C3-7",
-            "group": "C3",
-            "value": 39768
+            "name": "C-2-1-3-28",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C3-8",
-            "group": "C3",
-            "value": 38768
+            "name": "C-2-1-3-29",
+            "group": "C-2-1-3",
+            'value': 1
         },{
-            "name": "C3-9",
-            "group": "C3",
-            "value": 37768
+            "name": "C-2-1-3-30",
+            "group": "C-2-1-3",
+            'value': 1
+        },{
+            "name": "C-2-1-3-31",
+            "group": "C-2-1-3",
+            'value': 1
         },
+        // C-2-1
+        {
+            "id": "C-2-2",
+            "name": "C-2-2",
+            "group": "C-2",
+        },{
+            'id': 'C-2-2-1',
+            "name": "C-2-2-1",
+            "group": "C-2-2",
+            'color':'#0000FF'
+        },{
+            "name": "C-2-2-1-1",
+            "group": "C-2-2-1",
+            'value': 1
+        },{
+            "name": "C-2-2-1-2",
+            "group": "C-2-2-1",
+            'value': 1
+        },{
+            "name": "C-2-2-1-3",
+            "group": "C-2-2-1",
+            'value': 1
+        },{
+            "name": "C-2-2-1-4",
+            "group": "C-2-2-1",
+            'value': 1
+        },{
+            "name": "C-2-2-1-5",
+            "group": "C-2-2-1",
+            'value': 1
+        },{
+            "name": "C-2-2-1-6",
+            "group": "C-2-2-1",
+            'value': 1
+        },{
+            "name": "C-2-2-1-7",
+            "group": "C-2-2-1",
+            'value': 1
+        },{
+            "name": "C-2-2-1-8",
+            "group": "C-2-2-1",
+            'value': 1
+        },{
+            "name": "C-2-2-1-9",
+            "group": "C-2-2-1",
+            'value': 1
+        },{
+            "name": "C-2-2-1-10",
+            "group": "C-2-2-1",
+            'value': 1
+        },{
+            "name": "C-2-2-1-11",
+            "group": "C-2-2-1",
+            'value': 1
+        },{
+            'id': 'C-2-2-2',
+            "name": "C-2-2-2",
+            "group": "C-2-2",
+            'color':'#000080'
+        },{
+            "name": "C-2-2-2-1",
+            "group": "C-2-2-2",
+            'value': 1
+        },{
+            "name": "C-2-2-2-2",
+            "group": "C-2-2-2",
+            'value': 1
+        },{
+            "name": "C-2-2-2-3",
+            "group": "C-2-2-2",
+            'value': 1
+        },{
+            "name": "C-2-2-2-4",
+            "group": "C-2-2-2",
+            'value': 1
+        },{
+            "name": "C-2-2-2-5",
+            "group": "C-2-2-2",
+            'value': 1
+        },{
+            "name": "C-2-2-2-6",
+            "group": "C-2-2-2",
+            'value': 1
+        },{
+            "name": "C-2-2-2-7",
+            "group": "C-2-2-2",
+            'value': 1
+        },{
+            "name": "C-2-2-2-8",
+            "group": "C-2-2-2",
+            'value': 1
+        },{
+            "name": "C-2-2-2-9",
+            "group": "C-2-2-2",
+            'value': 1
+        },{
+            "name": "C-2-2-2-10",
+            "group": "C-2-2-2",
+            'value': 1
+        },{
+            "name": "C-2-2-2-11",
+            "group": "C-2-2-2",
+            'value': 1
+        },{
+            'id': 'C-2-2-3',
+            "name": "C-2-2-3",
+            "group": "C-2-2",
+            'color': '#800080'
+        },{
+            "name": "C-2-2-3-1",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-2",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-3",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-4",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-5",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-6",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-7",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-8",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-9",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-10",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-11",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-12",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-13",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-14",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-15",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-16",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-17",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-18",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-19",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-20",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-21",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-22",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-23",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-24",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-25",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-26",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-27",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-28",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-29",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-30",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-31",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-32",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-33",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-34",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-35",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-36",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-37",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-38",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-39",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-40",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-41",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-42",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-43",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            "name": "C-2-2-3-44",
+            "group": "C-2-2-3",
+            'value': 1
+        },{
+            'id': 'C-2-2-4-1',
+            "name": "C-2-2-4",
+            "group": "C-2-2",
+            'color': '#FFC0CB'
+        },{
+            "name": "C-2-2-4-1",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-2",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-3",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-4",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-5",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-6",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-7",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-8",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-9",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-10",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-11",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-12",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-13",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-14",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-15",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-16",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-17",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-18",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-19",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-20",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-21",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-22",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-23",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-24",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-25",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-26",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-27",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-28",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-29",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-30",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-31",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-32",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-33",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-34",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-35",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-36",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-37",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-38",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-39",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-40",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-41",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-42",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-43",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-44",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-45",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-46",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-47",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-48",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-49",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-50",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-51",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-52",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-53",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-54",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-55",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-56",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-57",
+            "group": "C-2-2-4-1",
+            'value':1
+        },{
+            "name": "C-2-2-4-58",
+            "group": "C-2-2-4-1",
+            'value':1
+        },
+        // C-2-2
+        {
+            "id": "C-2-3",
+            "name": "C-2-3",
+            "group": "C-2",
+        },{
+            'id': 'C-2-3-1',
+            "name": "C-2-3-1",
+            "group": "C-2-3",
+            'color': '#A52A2A'
+        },{
+            "name": "C-2-3-1-1",
+            "group": "C-2-3-1",
+            'value':1
+        },{
+            "name": "C-2-3-1-2",
+            "group": "C-2-3-1",
+            'value':1
+        },{
+            "name": "C-2-3-1-3",
+            "group": "C-2-3-1",
+            'value':1
+        },{
+            "name": "C-2-3-1-4",
+            "group": "C-2-3-1",
+            'value':1
+        },{
+            "name": "C-2-3-1-5",
+            "group": "C-2-3-1",
+            'value':1
+        },{
+            "name": "C-2-3-1-6",
+            "group": "C-2-3-1",
+            'value':1
+        },{
+            'id': 'C-2-3-2',
+            "name": "C-2-3-2",
+            "group": "C-2-3",
+        },{
+            'id': 'C-2-3-2-1',
+            "name": "C-2-3-2-1",
+            "group": "C-2-3-2",
+            'color': '#008080'
+        },{
+            "name": "C-2-3-2-1-1",
+            "group": "C-2-3-2-1",
+            'value': 1
+        },{
+            "name": "C-2-3-2-1-2",
+            "group": "C-2-3-2-1",
+            'value': 1
+        },{
+            "name": "C-2-3-2-1-3",
+            "group": "C-2-3-2-1",
+            'value': 1
+        },{
+            "name": "C-2-3-2-1-4",
+            "group": "C-2-3-2-1",
+            'value': 1
+        },{
+            "name": "C-2-3-2-1-5",
+            "group": "C-2-3-2-1",
+            'value': 1
+        },{
+            "name": "C-2-3-2-1-6",
+            "group": "C-2-3-2-1",
+            'value': 1
+        },{
+            "name": "C-2-3-2-1-7",
+            "group": "C-2-3-2-1",
+            'value': 1
+        },{
+            "name": "C-2-3-2-1-8",
+            "group": "C-2-3-2-1",
+            'value': 1
+        },{
+            "name": "C-2-3-2-1-9",
+            "group": "C-2-3-2-1",
+            'value': 1
+        },{
+            "name": "C-2-3-2-1-10",
+            "group": "C-2-3-2-1",
+            'value': 1
+        },{
+            "name": "C-2-3-2-1-11",
+            "group": "C-2-3-2-1",
+            'value': 1
+        },{
+            'id': 'C-2-3-2-2',
+            "name": "C-2-3-2-2",
+            "group": "C-2-3-2",
+            'color': '#ADD8E6'
+        },{
+            "name": "C-2-3-2-2-1",
+            "group": "C-2-3-2-2",
+            'value': 1
+        },{
+            "name": "C-2-3-2-2-2",
+            "group": "C-2-3-2-2",
+            'value': 1
+        },{
+            "name": "C-2-3-2-2-4",
+            "group": "C-2-3-2-2",
+            'value': 1
+        },{
+            "name": "C-2-3-2-2-5",
+            "group": "C-2-3-2-2",
+            'value': 1
+        },{
+            "name": "C-2-3-2-2-6",
+            "group": "C-2-3-2-2",
+            'value': 1
+        },{
+            "name": "C-2-3-2-2-7",
+            "group": "C-2-3-2-2",
+            'value': 1
+        },{
+            "name": "C-2-3-2-2-8",
+            "group": "C-2-3-2-2",
+            'value': 1
+        },{
+            "name": "C-2-3-2-2-9",
+            "group": "C-2-3-2-2",
+            'value': 1
+        },{
+            "name": "C-2-3-2-2-10",
+            "group": "C-2-3-2-2",
+            'value': 1
+        },{
+            "name": "C-2-3-2-2-11",
+            "group": "C-2-3-2-2",
+            'value': 1
+        },{
+            "name": "C-2-3-2-2-12",
+            "group": "C-2-3-2-2",
+            'value': 1
+        },{
+            "name": "C-2-3-2-2-13",
+            "group": "C-2-3-2-2",
+            'value': 1
+        },{
+            "name": "C-2-3-2-2-14",
+            "group": "C-2-3-2-2",
+            'value': 1
+        },{
+            "name": "C-2-3-2-2-15",
+            "group": "C-2-3-2-2",
+            'value': 1
+        },{
+            'id': 'C-2-3-3',
+            "name": "C-2-3-3",
+            "group": "C-2-3",
+        },{
+            'id': 'C-2-3-3-1',
+            "name": "C-2-3-3-1",
+            "group": "C-2-3-3",
+            'color': '#800000'
+        },{
+            "name": "C-2-3-3-1-1",
+            "group": "C-2-3-3-1",
+            'value': 1
+        },{
+            "name": "C-2-3-3-1-2",
+            "group": "C-2-3-3-1",
+            'value': 1
+        },{
+            "name": "C-2-3-3-1-3",
+            "group": "C-2-3-3-1",
+            'value': 1
+        },{
+            "name": "C-2-3-3-1-4",
+            "group": "C-2-3-3-1",
+            'value': 1
+        },{
+            "name": "C-2-3-3-1-5",
+            "group": "C-2-3-3-1",
+            'value': 1
+        },{
+            "name": "C-2-3-3-1-6",
+            "group": "C-2-3-3-1",
+            'value': 1
+        },{
+            "name": "C-2-3-3-1-7",
+            "group": "C-2-3-3-1",
+            'value': 1
+        },{
+            "name": "C-2-3-3-1-8",
+            "group": "C-2-3-3-1",
+            'value': 1
+        },{
+            "name": "C-2-3-3-1-9",
+            "group": "C-2-3-3-1",
+            'value': 1
+        },{
+            "name": "C-2-3-3-1-10",
+            "group": "C-2-3-3-1",
+            'value': 1
+        },{
+            "name": "C-2-3-3-1-11",
+            "group": "C-2-3-3-1",
+            'value': 1
+        },{
+            "name": "C-2-3-3-1-12",
+            "group": "C-2-3-3-1",
+            'value': 1
+        },{
+            "name": "C-2-3-3-1-13",
+            "group": "C-2-3-3-1",
+            'value': 1
+        },{
+            "name": "C-2-3-3-1-14",
+            "group": "C-2-3-3-1",
+            'value': 1
+        },{
+            "name": "C-2-3-3-1-15",
+            "group": "C-2-3-3-1",
+            'value': 1
+        },{
+            'id': 'C-2-3-3-2',
+            "name": "C-2-3-3-2",
+            "group": "C-2-3-3",
+            'color': '#FFD700'
+        },{
+            "name": "C-2-3-3-2-1",
+            "group": "C-2-3-3-2",
+            'value': 1
+        },{
+            "name": "C-2-3-3-2-2",
+            "group": "C-2-3-3-2",
+            'value': 1
+        },{
+            "name": "C-2-3-3-2-3",
+            "group": "C-2-3-3-2",
+            'value': 1
+        },{
+            "name": "C-2-3-3-2-4",
+            "group": "C-2-3-3-2",
+            'value': 1
+        },{
+            "name": "C-2-3-3-2-5",
+            "group": "C-2-3-3-2",
+            'value': 1
+        },{
+            "name": "C-2-3-3-2-6",
+            "group": "C-2-3-3-2",
+            'value': 1
+        },{
+            "name": "C-2-3-3-2-7",
+            "group": "C-2-3-3-2",
+            'value': 1
+        },{
+            "name": "C-2-3-3-2-8",
+            "group": "C-2-3-3-2",
+            'value': 1
+        },{
+            "name": "C-2-3-3-2-9",
+            "group": "C-2-3-3-2",
+            'value': 1
+        },{
+            "name": "C-2-3-3-2-10",
+            "group": "C-2-3-3-2",
+            'value': 1
+        },{
+            "name": "C-2-3-3-2-11",
+            "group": "C-2-3-3-2",
+            'value': 1
+        },{
+            "name": "C-2-3-3-2-12",
+            "group": "C-2-3-3-2",
+            'value': 1
+        },{
+            "name": "C-2-3-3-2-13",
+            "group": "C-2-3-3-2",
+            'value': 1
+        },{
+            "name": "C-2-3-3-2-14",
+            "group": "C-2-3-3-2",
+            'value': 1
+        },{
+            "name": "C-2-3-3-2-15",
+            "group": "C-2-3-3-2",
+            'value': 1
+        },{
+            'id': 'C-2-3-4',
+            "name": "C-2-3-4",
+            "group": "C-2-3",
+        },{
+            'id': 'C-2-3-4-1',
+            "name": "C-2-3-4-1",
+            "group": "C-2-3-4",
+            'color': '#E6E6FA'
+        },{
+            "name": "C-2-3-4-1-1",
+            "group": "C-2-3-4-1",
+            'value': 1
+        },{
+            "name": "C-2-3-4-1-2",
+            "group": "C-2-3-4-1",
+            'value': 1
+        },{
+            "name": "C-2-3-4-1-3",
+            "group": "C-2-3-4-1",
+            'value': 1
+        },{
+            "name": "C-2-3-4-1-4",
+            "group": "C-2-3-4-1",
+            'value': 1
+        },{
+            "name": "C-2-3-4-1-5",
+            "group": "C-2-3-4-1",
+            'value': 1
+        },{
+            "name": "C-2-3-4-1-6",
+            "group": "C-2-3-4-1",
+            'value': 1
+        },{
+            "name": "C-2-3-4-1-7",
+            "group": "C-2-3-4-1",
+            'value': 1
+        },{
+            "name": "C-2-3-4-1-8",
+            "group": "C-2-3-4-1",
+            'value': 1
+        },{
+            "name": "C-2-3-4-1-9",
+            "group": "C-2-3-4-1",
+            'value': 1
+        },{
+            "name": "C-2-3-4-1-10",
+            "group": "C-2-3-4-1",
+            'value': 1
+        },{
+            "name": "C-2-3-4-1-11",
+            "group": "C-2-3-4-1",
+            'value': 1
+        },{
+            'id': 'C-2-3-4-2',
+            "name": "C-2-3-4-2",
+            "group": "C-2-3-4",
+            'color': '#808080'
+        },{
+            "name": "C-2-3-4-2-1",
+            "group": "C-2-3-4-2",
+            'value': 1
+        },{
+            "name": "C-2-3-4-2-2",
+            "group": "C-2-3-4-2",
+            'value': 1
+        },{
+            "name": "C-2-3-4-2-3",
+            "group": "C-2-3-4-2",
+            'value': 1
+        },{
+            "name": "C-2-3-4-2-4",
+            "group": "C-2-3-4-2",
+            'value': 1
+        },{
+            "name": "C-2-3-4-2-5",
+            "group": "C-2-3-4-2",
+            'value': 1
+        },{
+            "name": "C-2-3-4-2-6",
+            "group": "C-2-3-4-2",
+            'value': 1
+        },{
+            "name": "C-2-3-4-2-7",
+            "group": "C-2-3-4-2",
+            'value': 1
+        },{
+            "name": "C-2-3-4-2-8",
+            "group": "C-2-3-4-2",
+            'value': 1
+        },{
+            "name": "C-2-3-4-2-9",
+            "group": "C-2-3-4-2",
+            'value': 1
+        },{
+            "name": "C-2-3-4-2-10",
+            "group": "C-2-3-4-2",
+            'value': 1
+        },{
+            "name": "C-2-3-4-2-11",
+            "group": "C-2-3-4-2",
+            'value': 1
+        },{
+            "name": "C-2-3-4-2-12",
+            "group": "C-2-3-4-2",
+            'value': 1
+        },{
+            'id': "C-2-3-4-3",
+            "name": "C-2-3-4-3",
+            "group": "C-2-3-4",
+            'color': '#A75D67'
+        },{
+            "name": "C-2-3-4-3-1",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-2",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-3",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-4",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-5",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-6",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-7",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-8",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-9",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-10",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-11",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-12",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-13",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-14",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-15",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-16",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            "name": "C-2-3-4-3-17",
+            "group": "C-2-3-4-3",
+            'value': 1
+        },{
+            'id': 'C-2-3-4-4',
+            "name": "C-2-3-4-4",
+            "group": "C-2-3-4",
+            'color': '#98FF98'
+        },{
+            "name": "C-2-3-4-4-1",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-2",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-3",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-4",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-5",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-6",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-7",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-8",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-9",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-10",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-11",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-12",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-13",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-14",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-15",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-16",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-17",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-18",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-19",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-20",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-21",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-22",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-23",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-24",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-25",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-26",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-27",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-28",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-29",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-30",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-31",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-32",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-33",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-34",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-34",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-35",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-36",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },{
+            "name": "C-2-3-4-4-37",
+            "group": "C-2-3-4-4",
+            'value': 1
+        },
+        // C-2-3
     ],
         style: {
         }
