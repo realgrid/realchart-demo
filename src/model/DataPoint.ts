@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4 } from "../common/Common";
-import { IValueRange } from "../common/Types";
+import { IValueRange, _undefined } from "../common/Types";
 import { IAxis } from "./Axis";
 import { ISeries } from "./Series";
 
@@ -76,6 +76,7 @@ export class DataPoint {
     range: IValueRange;
 
     zValue: number;
+    label: any;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -133,7 +134,7 @@ export class DataPoint {
     }
 
     getLabel(index: number): any {
-        return this.yValue;
+        return this.label === _undefined ? this.yValue : this.label;
     }
 
     getValueOf = (traget: any, param: string): any => {
