@@ -1,92 +1,44 @@
 /**
  * @demo
  *
- */
-const config = {
-	options: {
-		// animatable: false,
-		credits: {
-			// visible: false,
-			// verticalAlign: 'top',
-			// align: 'center',
-		},
-	},
-	title: '경기도 성남시 인구 현황',
-	legend: true,
+ */const config = {
+    options: {},
+    title: '경기도 성남시 인구 현황',
+    legend: true,
     body: {
         style: {
             stroke: 'none'
         }
     },
-	xAxis: {
-		label: {
-			startStep: 0,
-			step: 2,
-		},
-		grid: {
-            visible: true,
-            endVisible: true,
+    xAxis: {
+        tick: true,
+        title: {
+            text: '수정구' + (Math.random() * 10000 >> 0)
         },
-		tick:true,
-		// type: 'category',
-		// position: 'apposite'
-		// position: 'base',
-		// baseAxis: 1,
-		title: {
-			text: '수정구' + (Math.random() * 10000 >> 0)
-		},
-		// grid: true,
+        // grid: true,
         crosshair: true,
-	},
-	yAxis: {
-		tick: true,
-		crosshair: true,
-		title: {
-			text: '전체 인구수'
-		},
-		// maxPadding: 0
-		// strictMin: 1
-	},
-	series: {
-        // visible: false,
-		// baseValue: null,
-		name: "인구수",
-		pointLabel: {
-			visible: true,
-			//position: 'head',
-			// offset: 10,
-			// text: '<b style="fill:red">${x}</b>',
-			effect: 'outline', // 'background',
-			style: {},
-			// textCallback: args => args.index === 0 ? 'good<br>morning!' : undefined,
-            styleCallback: args => args.yValue === args.yMax ? { fill: 'red', fontSize: '20px', background: {} } : null
-		},
-		data: [
-			['신흥1동', 12904],
-			['신흥2동', 19796],
-			['신흥3동', 10995],
-			['태평1동', 14625],
-			['태평2동', 14627],
-			['태평3동', 12649],
-			['태평4동', 12279],
-		],
-		data2: [
-			[1, 7],
-			[2, 11],
-			[3, 9],
-			[4, 10],
-			[5, 14.3],
-			[6, 13],
-			[7, 12.5],
-		],
-		style: {
-			// fill: 'yellow'
-		},
+    },
+    yAxis: {
+        title: {
+            text: '전체 인구수'
+        },
+    },
+    series: {
 		onPointClick: args => {
 		    //alert(JSON.stringify(args));
+			console.log(args)
 			chart.series.updateData([["신흥1동", 100], ["신흥2동", 200]], true);
-		}
-	},
+		},
+        data: [
+            ['신흥1동', 12904],
+            ['신흥2동', 19796],
+            ['신흥3동', 10995],
+            ['태평1동', 14625],
+            ['태평2동', 14627],
+            ['태평3동', 12649],
+            ['태평4동', 12279],
+        ]
+    },
 };
 
 let animate;
