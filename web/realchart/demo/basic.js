@@ -58,6 +58,7 @@ const config = {
 			// text: '<b style="fill:red">${x}</b>',
 			effect: 'outline', // 'background',
 			style: {},
+			// textCallback: args => args.index === 0 ? 'good<br>morning!' : undefined,
             styleCallback: args => args.yValue === args.yMax ? { fill: 'red', fontSize: '20px', background: {} } : null
 		},
 		data: [
@@ -81,9 +82,10 @@ const config = {
 		style: {
 			// fill: 'yellow'
 		},
-		// onPointClick: args => {
-		//     alert(JSON.stringify(args));
-		// }
+		onPointClick: args => {
+		    //alert(JSON.stringify(args));
+			chart.series.updateData([["신흥1동", 100], ["신흥2동", 200]], true);
+		}
 	},
 };
 

@@ -89,10 +89,10 @@ export class LabelElement extends GroupElement {
             this._back?.remove();
             if (!this._outline) {
                 this._outline = new TextElement(doc);
-                this._outline.anchor = TextAnchor.START;
             }
             this.insertFirst(this._outline);
 
+            this._outline.anchor = this._text.anchor;
             this._outline.setStyleOrClass(model.style);
 
         } else {
@@ -120,6 +120,10 @@ export class LabelElement extends GroupElement {
     }
 
     layout(): LabelElement {
+        if (this._outline) {
+            this._outline.anchor = this._text.anchor;
+            this._outline.setAttr('y', this._text.getAttr('y'));
+        }
         // background
         if (this._back && this._back.parent) {
             const cs = getComputedStyle(this._back.dom);

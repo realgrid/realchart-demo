@@ -341,7 +341,7 @@ export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
     }
 
     layout(width: number, height: number): void {
-        this.model.label.buildSvg(this._labelView._text, width, height, null, null);
+        this.model.label.buildSvg(this._labelView._text, this._labelView._outline, width, height, null, null);
         this._labelView.layout();
 
         this._doLayout(width, height);

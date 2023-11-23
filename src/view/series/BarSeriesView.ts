@@ -142,13 +142,12 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
 
             // label
             if (labelViews && (labelInfo.labelView = labelViews.get(p, 0))) {
-                const a = view.start + view.angle
-                const x = view.cx + view.rx / 2 * Math.cos(a);
-                const y = view.cy + view.ry / 2 * Math.sin(a);
+                const a = view.start + view.angle / 2;
+                const x = view.cx + view.rx * 0.7 * Math.cos(a);
+                const y = view.cy + view.ry * 0.7 * Math.sin(a);
                 const r = labelInfo.labelView.getBBounds();
 
-                labelInfo.labelView._text.anchor = TextAnchor.MIDDLE;
-                labelInfo.labelView.translate(x - r.width / 2, y - r.height / 2);
+                labelInfo.labelView.translate(x, y - r.height / 2);
             }
         })
     }

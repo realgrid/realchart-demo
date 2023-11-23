@@ -76,7 +76,7 @@ export class HeatmapSeriesPoint extends DataPoint {
     }
 
     getLabel(index: number) {
-        return this.heat;
+        return this.heatValue;
     }
 }
 

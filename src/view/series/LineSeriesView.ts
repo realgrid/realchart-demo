@@ -313,7 +313,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
                     lv.visible = true;
                     lv.setContrast(null);
-                    lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
+                    //lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
+                    lv.translate(px, py - r.height - labelOff - (vis ? mv._radius : 0));
                 }
             } else if (lv) {
                 lv.visible = false;

@@ -150,10 +150,10 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
                 if (labelView.setVisible(m.width >= r.height && m.height >= r.height)) {
                 // if (labelView.setVisible(m.width >= r.width && m.height >= r.height)) {
                     if (inverted) {
-                        x = -m.y - (m.height + r.width) / 2;
+                        x = -m.y - m.height / 2;// (m.height + r.width) / 2;
                         y = xLen - m.x - (m.width + r.height) / 2;
                     } else {
-                        x -= r.width / 2;
+                        //x -= r.width / 2;
                         y -= r.height / 2;
                     }
 

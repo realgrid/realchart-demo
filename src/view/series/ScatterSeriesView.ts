@@ -6,8 +6,6 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ElementPool } from "../../common/ElementPool";
-import { PathElement, RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
@@ -15,7 +13,7 @@ import { SvgShapes } from "../../common/impl/SvgShape";
 import { Chart } from "../../model/Chart";
 import { PointItemPosition } from "../../model/Series";
 import { ScatterSeries, ScatterSeriesPoint } from "../../model/series/ScatterSeries";
-import { IPointView, MarkerSeriesPointView, MarkerSeriesView, PointLabelView, SeriesView } from "../SeriesView";
+import { MarkerSeriesView, PointLabelView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {

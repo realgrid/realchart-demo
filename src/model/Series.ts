@@ -73,6 +73,11 @@ export class DataPointLabel extends FormattableText {
      */
     distance = 25;
     /**
+     * 계산되는 기본 text 대신, data point label로 표시될 text 리턴.\
+     * undefined를 리턴하면 기본 text 표시.
+     */
+    textCallback: (point: any) => string;
+    /**
      * 데이터 포인트별 label 표시 여부를 리턴하는 콜백.
      * 
      * @config
@@ -404,7 +409,9 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _calcedColor: string;
     _simpleMode = false;
     private _legendMarker: RcElement;
+    private _pointLabelCallback: (point: any) => string;
     protected _pointArgs: IDataPointCallbackArgs;
+    private _argsPoint: DataPoint;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -793,6 +800,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         const len = visPoints.length;
 
         if (len > 0) {
+            const args = this._pointArgs;
             let p = visPoints[0];
             let minX = p.xValue;
             let maxX = minX;
@@ -825,13 +833,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 }
             }
 
-            this._pointArgs.yMin = this._minY = minY;
-            this._pointArgs.yMax = this._maxY = maxY;
-            this._pointArgs.xMin = this._minX = minX;
-            this._pointArgs.xMax = this._maxX = maxX;
+            args.yMin = this._minY = minY;
+            args.yMax = this._maxY = maxY;
+            args.xMin = this._minX = minX;
+            args.xMax = this._maxX = maxX;
             if (hasZ) {
-                this._pointArgs.zMin = this._minZ = minZ;
-                this._pointArgs.zMax = this._maxZ = maxZ;
+                args.zMin = this._minZ = minZ;
+                args.zMax = this._maxZ = maxZ;
             }
         }
 
@@ -918,13 +926,27 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     protected _preparePointArgs(args: IDataPointCallbackArgs): void {
+        this._pointLabelCallback = this.pointLabel.textCallback;
+        this._argsPoint = null;
+
         args.series = this.name || this.index;
         args.count = this._points.count;
         // args.vcount = 
     }
 
     protected _getPointCallbackArgs(args: IDataPointCallbackArgs, p: DataPoint): void {
-        p.assignTo(args);
+        if (p !== this._argsPoint) {
+            (this._argsPoint = p).assignTo(args);
+        }
+    }
+
+    getPointText(p: DataPoint, label: any): string {
+        if (this._pointLabelCallback) {
+            this._getPointCallbackArgs(this._pointArgs, p);
+            const s = this._pointLabelCallback(this._pointArgs);
+            if (s !== _undefined) return s;
+        }
+        return label;
     }
 
     getPointStyle(p: DataPoint): any {
@@ -980,6 +1002,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             return m.visibleCallback(this._pointArgs);
         }
         return m.visible === true;
+    }
+
+    updateData(data: any): void {
+        this._points.load(data);
+        this._changed();
     }
     
     //-------------------------------------------------------------------------

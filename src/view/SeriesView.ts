@@ -17,6 +17,7 @@ import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { RectElement } from "../common/impl/RectElement";
 import { SvgShapes } from "../common/impl/SvgShape";
+import { TextAnchor } from "../common/impl/TextElement";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { ClusterableSeries, DataPointLabel, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
@@ -52,6 +53,7 @@ export class PointLabelView extends LabelElement {
         super(doc, 'rct-point-label');
 
         this.ignorePointer();
+        this._text.anchor = TextAnchor.MIDDLE;
     }
 
     //-------------------------------------------------------------------------
@@ -103,7 +105,7 @@ export class PointLabelContainer extends LayerElement {
     }
 
     prepareLabel(doc: Document, view: PointLabelView, index: number, p: DataPoint, series: Series, model: DataPointLabel): void {
-        const richFormat = model.text;
+        const richFormat = series.getPointText(p, model.text);
         const styles = model.style;
 
         view.point = p;
@@ -114,12 +116,9 @@ export class PointLabelContainer extends LayerElement {
         view.internalSetStyleOrClass(series.getPointLabelStyle(p));
 
         if (richFormat) {
-            model.buildSvg(view._text, NaN, NaN, model, p.getValueOf);
+            model.prepareRich(richFormat);
+            model.buildSvg(view._text, view._outline, NaN, NaN, model, p.getValueOf);
             // view.setStyles(styles);
-
-            if (view._outline) {
-                model.buildSvg(view._outline, NaN, NaN, model, p.getValueOf);
-            }
 
             // label.setStyles(styles);
             // label.setSvg(pointLabel.getSvg(p.getValueOf))
@@ -554,8 +553,9 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 
         if (inverted) {
             y -= r.height / 2;
+            x += r.width / 2;
         } else {
-            x -= r.width / 2;
+            // x -= r.width / 2;
         }
 
         switch (info.labelPos) {
@@ -941,9 +941,9 @@ export abstract class MarkerSeriesView<T extends MarkerSeries> extends SeriesVie
         }
         if (labelView.setVisible(pos != null)) {
             if (pos === PointItemPosition.INSIDE) {
-                labelView.translate(x - r.width / 2, y - r.height / 2);
+                labelView.translate(x, y - r.height / 2);
             } else if (pos) {
-                labelView.translate(x - r.width / 2, y - radius - r.height - off);
+                labelView.translate(x, y - radius - r.height - off);
             }
         }
     }

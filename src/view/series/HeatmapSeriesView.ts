@@ -117,9 +117,9 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
                         y = xLen - xAxis.getPosition(xLen, p.xValue);
                         x = org;
                         y -= r.height / 2;
-                        x += yAxis.getPosition(yLen, p.yValue) - r.width / 2;
+                        x += yAxis.getPosition(yLen, p.yValue);// - r.width / 2;
                     } else {
-                        x += (wPoint - r.width) / 2;
+                        x += wPoint / 2;// (wPoint - r.width) / 2;
                         y += (hPoint - r.height) / 2;
                     }
     

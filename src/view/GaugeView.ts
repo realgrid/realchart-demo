@@ -416,7 +416,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
 
         label.setText(m.getLabel(label, m.value));
         v.text = label.text;
-        label.buildSvg(v, width, height, m, this.valueOf);
+        label.buildSvg(v, null, width, height, m, this.valueOf);
 
         return toSize(v.getBBounds());
     }
@@ -488,7 +488,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
 
             label.setText(m.getLabel(label, label.animatable ? value : m.value));
             labelView.text = label.text;
-            label.buildSvg(labelView, pickNum(w, wMax), pickNum(h, hMax), m, this.valueOf);
+            label.buildSvg(labelView, null, pickNum(w, wMax), pickNum(h, hMax), m, this.valueOf);
 
             const rText = labelView.getBBounds();
 

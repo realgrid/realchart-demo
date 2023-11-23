@@ -90,7 +90,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
 
         if (this._textView.setVisible(model.hasInner() && model.innerText.isVisible())) {
             this._textView.setModel(doc, model.innerText, null);
-            model.innerText.buildSvg(this._textView._text, NaN, NaN, model, null);
+            model.innerText.buildSvg(this._textView._text, this._textView._outline, NaN, NaN, model, null);
         }
     }
 
@@ -256,6 +256,8 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
                     const line = lineViews.get(p);
+
+                    labelView.anchor = TextAnchor.START; // 기본이 MIDDLE이다.
 
                     if (line.setVisible(!labelInside)) {
                         // this.$_layoutLabel(p, labelView, line, off, dist, slicedOff, pb);

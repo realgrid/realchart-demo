@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "./Common";
-import { Align, ZWSP } from "./Types";
+import { ZWSP } from "./Types";
 import { TextElement } from "./impl/TextElement";
 
 const HEIGHT = '$_TH';

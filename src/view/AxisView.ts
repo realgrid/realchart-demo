@@ -133,7 +133,7 @@ class AxisTickMarkView extends ChartElement<AxisTick> {
     }
 }
 
-class AxisLabelElement extends TextElement {
+class AxisLabelView extends TextElement {
 
     index = -1;
     value: number;
@@ -339,7 +339,7 @@ export class AxisView extends ChartElement<Axis> {
     private _markContainer: RcElement;
     private _markViews: AxisTickMarkView[] = [];
     private _labelContainer: RcElement;
-    private _labelViews: AxisLabelElement[] = []; 
+    private _labelViews: AxisLabelView[] = []; 
     _scrollView: AxisScrollView;
 
     private _markLen: number;
@@ -758,7 +758,7 @@ export class AxisView extends ChartElement<Axis> {
             container.setStyleOrClass(m.label.style);
 
             while (views.length < nTick) {
-                const t = new AxisLabelElement(doc, 'rct-axis-label');
+                const t = new AxisLabelView(doc, 'rct-axis-label');
     
                 t.anchor = TextAnchor.START;
                 container.add(t);
@@ -778,15 +778,15 @@ export class AxisView extends ChartElement<Axis> {
         return 0;
     }
 
-    private $_getRows(views: AxisLabelElement[]): number {
+    private $_getRows(views: AxisLabelView[]): number {
         return 2;
     }
 
-    private $_getStep(view: AxisLabelElement[]): number {
+    private $_getStep(view: AxisLabelView[]): number {
         return 2;
     }
 
-    private $_checkOverlappedHorz(axis: Axis, views: AxisLabelElement[], width: number, step: number, rows: number, rotation: number): boolean {
+    private $_checkOverlappedHorz(axis: Axis, views: AxisLabelView[], width: number, step: number, rows: number, rotation: number): boolean {
         const nView = views.length;
         const inc = Math.max(1, step) * Math.max(1, rows);
         const a = rotation || 0;
@@ -812,7 +812,7 @@ export class AxisView extends ChartElement<Axis> {
         return overalpped;
     }
 
-    private $_applyStep(axis: Axis, views: AxisLabelElement[], step: number): AxisLabelElement[] {
+    private $_applyStep(axis: Axis, views: AxisLabelView[], step: number): AxisLabelView[] {
         const m = axis.label;
         const start = Math.max(0, m.startStep || 0);
             
@@ -824,7 +824,7 @@ export class AxisView extends ChartElement<Axis> {
         return views.filter(v => v.visible);
     }
 
-    private $_measureLabelsHorz(axis: Axis, views: AxisLabelElement[], width: number): number {
+    private $_measureLabelsHorz(axis: Axis, views: AxisLabelView[], width: number): number {
         const m = axis.label;
         let step = +m.step >> 0;
         let rows = +m.rows >> 0;
@@ -932,7 +932,7 @@ export class AxisView extends ChartElement<Axis> {
         return sz;
     }
 
-    private $_checkOverlappedVert(axis: Axis, views: AxisLabelElement[], height: number, step: number): boolean {
+    private $_checkOverlappedVert(axis: Axis, views: AxisLabelView[], height: number, step: number): boolean {
         const nView = views.length;
         const inc = Math.max(1, step);
 
@@ -948,7 +948,7 @@ export class AxisView extends ChartElement<Axis> {
         }
     }
 
-    private $_measureLabelsVert(axis: Axis, views: AxisLabelElement[], height: number): number {
+    private $_measureLabelsVert(axis: Axis, views: AxisLabelView[], height: number): number {
         const m = axis.label;
         let step = Math.max(1, +m.step >> 0);
         const overalpped = this.$_checkOverlappedVert(axis, views, height, step);
@@ -974,7 +974,7 @@ export class AxisView extends ChartElement<Axis> {
         return sz;
     }
 
-    private $_layoutLabelsHorz(views: AxisLabelElement[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, len: number): void {
+    private $_layoutLabelsHorz(views: AxisLabelView[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, len: number): void {
         const pts = this._labelRowPts;
 
         views.forEach(v => {
@@ -1002,7 +1002,7 @@ export class AxisView extends ChartElement<Axis> {
         });
     }
 
-    private $_layoutLabelsVert(views: AxisLabelElement[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, len: number): void {
+    private $_layoutLabelsVert(views: AxisLabelView[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, len: number): void {
         const x = opp ? len : w - len;
     
         views.forEach((v, i) => {

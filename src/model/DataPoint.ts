@@ -133,7 +133,7 @@ export class DataPoint {
     }
 
     getLabel(index: number): any {
-        return this.y;// this.yValue;
+        return this.yValue;
     }
 
     getValueOf = (traget: any, param: string): any => {

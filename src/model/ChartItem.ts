@@ -395,18 +395,20 @@ export abstract class FormattableText extends ChartText {
     }
     setText(value: string): FormattableText {
         if (value !== this._text) {
-            this._text = value;
-            if (value) {
-                if (!this._richTextImpl) {
-                    this._richTextImpl = new SvgRichText();
-                }
-                this._richTextImpl.setFormat(value);
-            } else {
-                this._richTextImpl = null;
-            }
+            this.prepareRich(this._text = value);
         }
         !isNaN(this.lineHeight) && this._richTextImpl && (this._richTextImpl.lineHeight = this.lineHeight);
         return this;
+    }
+    prepareRich(text: string): void {
+        if (text) {
+            if (!this._richTextImpl) {
+                this._richTextImpl = new SvgRichText();
+            }
+            this._richTextImpl.setFormat(text);
+        } else {
+            this._richTextImpl = null;
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -422,8 +424,9 @@ export abstract class FormattableText extends ChartText {
     //     }
     // }
 
-    buildSvg(view: TextElement, maxWidth: number, maxHeight: number, target: any, callback: RichTextParamCallback): void {
+    buildSvg(view: TextElement, outline: TextElement, maxWidth: number, maxHeight: number, target: any, callback: RichTextParamCallback): void {
         this._richTextImpl.build(view, maxWidth, maxHeight, target, callback);
+        outline && this._richTextImpl.build(outline, maxWidth, maxHeight, target, callback);
     }
 
     // setLineHeight(v: number): void {

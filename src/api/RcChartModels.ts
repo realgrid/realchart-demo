@@ -9,6 +9,7 @@
 import { Axis } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { ValueGauge } from "../model/Gauge";
+import { Series } from "../model/Series";
 import { CircleGauge } from "../model/gauge/CircleGauge";
 
 /**
@@ -280,6 +281,10 @@ export abstract class RcChartSeries extends RcChartObject {
      * point label 모델.
      */
     get tooltip(): RcChartObject { return this._tooltip; }
+
+    updateData(data: any): void {
+        (this.$_p as Series).updateData(data);
+    }
 }
 
 /**
