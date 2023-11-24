@@ -1224,12 +1224,11 @@ export class AxisCollection {
     //-------------------------------------------------------------------------
     load(src: any): void {
         const chart = this.chart;
-        const items = this._items;
 
         if (isArray(src)) {
-            src.forEach((s, i) => items.push(this.$_loadAxis(chart, s, i)));
-        } else if (isObject(src)) {
-            items.push(this.$_loadAxis(chart, src, 0));
+            src.forEach((s, i) => this._items.push(this.$_loadAxis(chart, s, i)));
+        } else {
+            this._items.push(this.$_loadAxis(chart, src, 0));
         }
     }
 

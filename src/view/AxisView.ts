@@ -999,26 +999,32 @@ export class AxisView extends ChartElement<Axis> {
         return sz;
     }
 
-    private $_layoutLabelsHorz(views: AxisLabelView[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, len: number): void {
+    private $_layoutLabelsHorz(views: AxisLabelView[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, gap: number): void {
         const pts = this._labelRowPts;
 
         views.forEach(v => {
             if (v.visible) {
+
                 const rot = v.rotation;
                 const a = rot * DEG_RAD;
                 const r = v.getBBounds();
-                const ascent = Math.floor(v._text.getAscent(r.height));
+                const ascent = Math.floor(r.height);//v._text.getAscent(r.height));
                 let x = ticks[v.index].pos;
-                let y = opp ? (h - len - r.height - pts[v.row]) : (len + pts[v.row]);
+                let y = opp ? (h - gap - r.height - pts[v.row]) : (gap + pts[v.row]);
     
                 if (rot < -15 && rot >= -90) {
                     v.anchor = TextAnchor.END;
-                    x += -Math.sin(a) * ascent / 2 - 1;
-                    y += Math.cos(a) * ascent - ascent;
+                    // console.log(-Math.sin(a) * ascent / 2 - 1, Math.cos(a) * ascent - ascent)
+                    //x += -Math.sin(a) * ascent / 2 - 1;
+                    // y += Math.cos(a) * ascent - ascent;
+                    x += Math.sin(a) * ascent / 2;// - 1;
+                    //y += -Math.cos(a) * ascent + ascent / 2;
                 } else if (rot > 15 && rot <= 90) {
                     v.anchor = TextAnchor.START;
-                    x -= Math.sin(a) * ascent / 2 - 1;
-                    y += Math.cos(a) * ascent - ascent;
+                    // x -= Math.sin(a) * ascent / 2 - 1;
+                    // y += Math.cos(a) * ascent - ascent;
+                    x += Math.sin(a) * ascent / 2;// - 1;
+                    // y -= -Math.cos(a) * ascent - ascent / 2;
                 } else {
                     v.anchor = TextAnchor.MIDDLE;
                 }

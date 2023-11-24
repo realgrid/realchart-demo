@@ -9,37 +9,34 @@ const config = {
 		// animatable: false
 	},
 	xAxis: {
-		title: '서울시',
-		categories: ['2014', '2015', '2016', '2017', '2018', '2019', '2020'],
-		grid: true,
-		
+		categories: [{
+			name: 'a',
+			label: '개똥이를<br>지지할 것이다.',
+			weight: 33.5
+		}, {
+			name: 'b',
+			label: '개똥이를<br>지지하지 않을 것이다.',
+			weight: 59.5
+		 }, {
+			name: 'c',
+			label: '잘모름',
+			weight: 7
+		 }],
+		categoryPadding: 0,
 		label: {
-			// startStep: 0,
-			step: 3,
 		},
 	},
-	yAxis: {
-		title: '대기질 지수(Air Quality Index, AQI)',
-		// reversed: true,
-		// baseValue: -1,
-        // strictMin: 11,
-        // strictMax: 161
-	},
+	yAxis: false,
 	series: [{
 		name: '대기질',
 		// baseValue: null,
 		pointLabel: true,
-		// pointWidth: '100%',
+		pointPadding: 0,
+		colors: ['red', 'green', 'blue'],
+		colorByPoint: true,
 		// colorByPoint: true,
-		data: [155, 138, 122, 133, 114, 113, 123]
-	}, {
-		name: '대기질2',
-		// baseValue: null,
-		pointLabel: true,
-		// pointWidth: '100%',
-		// colorByPoint: true,
-		data: [55, 38, 22, 33, 14, 13, 23]
-	}],
+		data: [122, 122, 122]},
+	],
 };
 
 let animate = false;

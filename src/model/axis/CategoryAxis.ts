@@ -106,7 +106,7 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _categories: {c: string, w: number}[];
+    _categories: {c: string, t: string, w: number}[];
     _cats: string[];
     _weights: number[];  // 한 카테고리의 상대 너비. 한 카테고리의 기본 크기는 1
     _len: number;
@@ -245,7 +245,6 @@ export class CategoryAxis extends Axis {
             // 시리즈가 연결되지 않은 category 축을 categories 설정만으로 표시할 수 있다.
             this._values = Utils.makeIntArray(0, this._categories.length);
         }
-
     }
 
     protected _doPrepareRender(): void {
@@ -261,7 +260,7 @@ export class CategoryAxis extends Axis {
 
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
         const label = this.label as CategoryAxisLabel;
-        let cats = this._cats = this._categories.map(cat => cat.c);
+        let cats = this._categories.map(cat => cat.c);
         let weights = this._weights = this._categories.map(cat => cat.w);
         const steps = (this.tick as CategoryAxisTick).step || 1;
         const ticks: IAxisTick[] = [];
@@ -298,7 +297,7 @@ export class CategoryAxis extends Axis {
                     index: i - 1,
                     pos: NaN,//this.getPosition(length, v),
                     value: v,
-                    label: label.getTick(i - 1, cats[i - 1]),
+                    label: label.getTick(i - 1, this._categories[min + i - 1].t)// cats[i - 1]),
                 });
             }
         } else {
@@ -393,13 +392,17 @@ export class CategoryAxis extends Axis {
             categories.forEach(cat => {
                 let w = cat == null ? 1 : pickNum(cat.weight, 1);
                 let c: string;
+                let t: string;
 
-                if (cat == null) c = null;
-                else if (isString(cat)) c = cat;
-                else c = cat.name || cat.label;
+                if (cat == null) t = c = null;
+                else if (isString(cat)) t = c = cat;
+                else {
+                    c = cat.name || cat.label;
+                    t = cat.label || c;
+                }
 
                 this._len += w;
-                cats.push({c, w});
+                cats.push({c, t, w});
             })
         } else {
             if (isArray(series)) {
@@ -408,7 +411,7 @@ export class CategoryAxis extends Axis {
 
                     for (const c of cats2) {
                         if (!cats.find(cat => cat.c === c)) {
-                            cats.push({c, w: 1});
+                            cats.push({c, w: 1, t: c});
                         }
                     }
                 }

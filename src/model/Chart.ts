@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, mergeObj } from "../common/Common";
+import { isArray, isObject, isString, mergeObj, pickProp3 } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
@@ -697,8 +697,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         if (!this._gaugeOnly) {
             // axes
             // 축은 반드시 존재해야 한다. (TODO: 동적으로 series를 추가하는 경우)
-            this._xAxes.load(source.xAxes || source.xAxis || {});
-            this._yAxes.load(source.yAxes || source.yAxis || {});
+            this._xAxes.load(pickProp3(source.xAxes, source.xAxis, {}));
+            this._yAxes.load(pickProp3(source.yAxes, source.yAxis, {}));
         }
 
         // body
