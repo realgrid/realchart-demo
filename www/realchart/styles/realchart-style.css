@@ -629,6 +629,11 @@
     stroke-width: 2px;
 }
 
+/** circlebar series */
+.rct-circlebar-series .rct-point {
+    stroke: white;
+}
+
 /** barrange series */
 .rct-barrange-series {
     fill-opacity: 0.85;
