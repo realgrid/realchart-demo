@@ -24,6 +24,7 @@ const config = {
 		 }],
 		categoryPadding: 0,
 		label: {
+			text: "${label}"
 		},
 	},
 	yAxis: false,

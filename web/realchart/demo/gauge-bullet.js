@@ -109,7 +109,7 @@ function setActions(container) {
         chart.load(config);
     }, '8');
     createCheckBox(container, 'scale.opposite', function (e) {
-        config.gauge[0].scale.opposite = _getChecked(e);
+        config.gauge[0].scale.position = _getChecked(e) ? 'opposite' : 'default';
         chart.load(config);
     }, false);
     line(container);
@@ -141,7 +141,7 @@ function setActions(container) {
         chart.load(config);
     }, '8');
     createCheckBox(container, 'scale2.opposite', function (e) {
-        config.gauge[1].scale.opposite = _getChecked(e);
+        config.gauge[1].scale.position = _getChecked(e) ? 'opposite' : 'default';
         chart.load(config);
     }, false);
 }

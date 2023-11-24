@@ -399,7 +399,7 @@ export class CategoryAxis extends Axis {
                 else if (isString(cat)) t = c = cat;
                 else {
                     c = pickProp(cat.name, cat.label);
-                    t = pickProp(cat.label, c);
+                    t = pickProp(cat.label, cat.name);
                 }
 
                 this._len += w;
