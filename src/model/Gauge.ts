@@ -938,6 +938,13 @@ export class GaugeRangeBand extends ChartItem {
         }
     }
     /**
+     * true로 지정하면 {@link ranges} 항목에서  **toValue**나 **fromValue**가 지정되지 않은 경우,  
+     * 모든 값이 포함되는 값으로 확장한다.
+     * 
+     * @config
+     */
+    rangeInclusive = true;
+    /**
      * {@link position}이 'inside'일 때만 표시될 수 있다.
      * 
      * @config
@@ -969,7 +976,7 @@ export class GaugeRangeBand extends ChartItem {
     private $_internalRanges(): IValueRange[] {
         if (!this._runRanges) {
             const v = this.gauge.calcedMinMax();
-            this._runRanges = buildValueRanges(this._ranges, v.min, v.max) || [];
+            this._runRanges = buildValueRanges(this._ranges, v.min, v.max, this.rangeInclusive) || [];
         }
         return this._runRanges;
     }

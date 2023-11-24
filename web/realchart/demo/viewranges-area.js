@@ -28,7 +28,7 @@ const config = {
     },
 	title: 'View Ranges - Area',
 	options: {
-		animatable: false
+		// animatable: false
 	},
 	xAxis: {
 		title: '서울시',
