@@ -5,34 +5,52 @@
 const config = {
     type: "line",
     options: {},
-    title: "Multiple Lines",
+    title: "부서별 월간 성과 비교",
     xAxis: {
-        title: "일일 Daily fat",
+		label: {
+			step: 1
+		},
+		categories:["1월", "2월","3월","4월","5월","6월","7월","8월"],
+        title: "월별 성과 측정",
     },
+	legend: {
+		position: 'left'
+	},
     yAxis: {
-        title: "Vertical 수직축 Axis",
+        title: "성과 지표 (단위: 점수)",
     },
     series: [{
-        name: 'Installation & Developers',
-        data: [43934, 48656, 65165, 81827, 112143, 142383,
-            171533, 165174, 155157, 161454, 154610]
-    }, {
-        name: 'Manufacturing',
-        data: [24916, 37941, 29742, 29851, 32490, 30282,
-            38121, 36885, 33726, 34243, 31050]
-    }, {
-        name: 'Sales & Distribution',
-        data: [11744, 30000, 16005, 19771, 20185, 24377,
-            32147, 30912, 29243, 29213, 25663]
-    }, {
-        name: 'Operations & Maintenance',
-        data: [null, null, null, null, null, null, null,
-            null, 11164, 11218, 10077]
-    }, {
-        name: 'Other',
-        data: [21908, 5548, 8105, 11248, 8989, 11816, 18274,
-            17300, 13053, 11906, 10073]
-    }],
+		children:[
+			{
+				lineType: 'spline',
+				name: '기술 및 개발 부문',
+				data: [200, 455, 385, 340, 260, 200,
+					300, 375]
+			}, {
+				lineType: 'spline',
+				name: '제조 부문',
+				data: [90, 205, 245, 160, 220, 210,
+					155,145]
+			}, {
+				lineType: 'spline',
+				name: '영업 및 유통 부문',
+				data: [150, 215, 170, 260, 190, 280,
+					290, 270]
+			}, {
+				lineType: 'spline',
+				name: '운영 및 유지보수 부문',
+				data: [40, 65, 85, 55, 220, 35, 49,
+					55]
+			}, {
+				lineType: 'spline',
+				name: '기타 부문',
+				data: [105, 102, 190, 255, 180, 240, 220,
+					210]
+			}
+		]
+	}
+		
+	],
 }
 
 let animate;
