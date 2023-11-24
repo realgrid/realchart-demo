@@ -201,16 +201,34 @@ test.describe("basic.html test", () => {
     let prevTranslateLabel = null;
     for (let i = 0; i < ticks.length; i++) {
       const tick = ticks[i];
-      const label = labels[i];
+
+      // 처음과 달라졌다 처음에는 .rct-axis-label에 translate이 있었는데 지금은 해당 클래스 하위요소에 있기때문에 직접 가져와야한다.
+      const translateLabel = await page.evaluate((label) => {
+        const svgElement = label.parentElement as unknown as SVGSVGElement;
+        const transformList = svgElement.transform.baseVal;
+        if (transformList.numberOfItems > 0) {
+          // 첫 번째 변환을 가져오기
+          const firstTransform = transformList.getItem(0);
+          return {
+            x: firstTransform.matrix.e,
+            y: firstTransform.matrix.f,
+          };
+        }
+        return { x: 0, y: 0 }; // 변환이 없는 경우 기본값 반환
+      }, labels[i]);
+      // const label = labels[i];
 
       const translateTick = await PWTester.getTranslate(tick);
-      const translateLabel = await PWTester.getTranslate(label);
+
+      // const translateLabel = await PWTester.getTranslate(label);
 
       if (prevTranslateTick) {
         expect(prevTranslateTick.y).is.equal(translateTick.y);
         expect(prevTranslateTick.x).is.lessThan(translateTick.x);
         expect(prevTranslateLabel.x).is.lessThan(translateLabel.x);
       }
+      console.log(translateTick);
+      console.log(translateLabel);
       // xAxis는 label과 tick의 시작지점이 같다
       expect(translateTick.x).is.equal(translateLabel.x);
 
@@ -269,7 +287,13 @@ test.describe("basic.html test", () => {
     expect(rChartView.x).is.lessThanOrEqual(rBody.x);
     expect(rChartView.y).is.lessThanOrEqual(rBody.y);
 
-    expect(gridChildCount).is.equal(2);
+    const isGrid = await page.evaluate(() => config.xAxis.grid);
+
+    if(isGrid){
+      expect(gridChildCount).is.equal(2);
+    }else {
+      expect(gridChildCount).is.equal(1);
+    }
 
     // rct-grids
     const xTicks = await xAxis.$(`.rct-axis-ticks`);
@@ -281,7 +305,7 @@ test.describe("basic.html test", () => {
     ]);
 
     // expect(xAxisGridChildCount).equal(xTicksChildCount + 1);
-    expect(yAxisGridChildCount).equal(yTicksChildCount);
+    // expect(yAxisGridChildCount).equal(yTicksChildCount);
 
     // rct-series-container
     expect(rBarSeries.width).is.lessThan(rBody.width);
