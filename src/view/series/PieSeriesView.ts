@@ -344,10 +344,6 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         const dur = m.autoSlice ? m.sliceDuration : 0;
         const p = view.point;
         const a = p.startAngle + p.angle / 2;
-        const labelViews = this._labelViews();
-        const labels = m.pointLabel;
-        const lineViews = this._lineContainer;
-        const labelInside = m.getLabelPosition() === PointItemPosition.INSIDE;
 
         if (p.sliced = sliced) {
             view.translateEx(Math.cos(a) * this._slicedOff, Math.sin(a) * this._slicedOff, dur);
@@ -355,41 +351,48 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             view.translateEx(0, 0, dur);
         }
 
-        const labelView = labelViews.get(p, 0);
-
-        if (labelView) {
-            const lineView = !labelInside && lineViews.get(p);
-
-            if (needLayout) {
-                if (labelInside) {
-                    this.$_layoutLabelInner(p, labelView, labels.offset, labels.distance, this._slicedOff);
-                } else {
-                    this.$_layoutLabel(p, labelView, lineView, labels.offset, labels.distance, this._slicedOff, m.clockwise);
-                }
-            }
-
-            if (sliced) {
-                let tx = labelView.tx;
-                let ty = labelView.ty;
-
-                labelView.translate(labelView.x, labelView.y);
-                labelView.translateEx(tx, ty, dur);
-
-                if (lineView) {
-                    tx = lineView.tx;
-                    ty = lineView.ty;
-                    lineView.translate(lineView.x, lineView.y);
-                    lineView.translateEx(tx, ty, dur);
-                }
-            } else {
-                labelView.translate(labelView.tx, labelView.ty);
-                labelView.translateEx(labelView.x, labelView.y, dur);
+        const labelViews = this._labelViews();
+        // TODO: 다이어트할 것!
+        if (labelViews) {
+            const labels = m.pointLabel;
+            const lineViews = this._lineContainer;
+            const labelInside = m.getLabelPosition() === PointItemPosition.INSIDE;
+            const labelView = labelViews.get(p, 0);
     
-                if (lineView) {
-                    lineView.translate(lineView.tx, lineView.ty);
-                    lineView.translateEx(lineView.x, lineView.y, dur);
+            if (labelView) {
+                const lineView = !labelInside && lineViews.get(p);
+    
+                if (needLayout) {
+                    if (labelInside) {
+                        this.$_layoutLabelInner(p, labelView, labels.offset, labels.distance, this._slicedOff);
+                    } else {
+                        this.$_layoutLabel(p, labelView, lineView, labels.offset, labels.distance, this._slicedOff, m.clockwise);
+                    }
+                }
+    
+                if (sliced) {
+                    let tx = labelView.tx;
+                    let ty = labelView.ty;
+    
+                    labelView.translate(labelView.x, labelView.y);
+                    labelView.translateEx(tx, ty, dur);
+    
+                    if (lineView) {
+                        tx = lineView.tx;
+                        ty = lineView.ty;
+                        lineView.translate(lineView.x, lineView.y);
+                        lineView.translateEx(tx, ty, dur);
+                    }
+                } else {
+                    labelView.translate(labelView.tx, labelView.ty);
+                    labelView.translateEx(labelView.x, labelView.y, dur);
+        
+                    if (lineView) {
+                        lineView.translate(lineView.tx, lineView.ty);
+                        lineView.translateEx(lineView.x, lineView.y, dur);
+                    }
                 }
             }
         }
-}
+    }
 }
