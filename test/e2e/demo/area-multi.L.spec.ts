@@ -453,6 +453,7 @@ test.describe("area-multi.html test", () => {
       const count = Utils.irandom(4, 10);
       for (let i = 0; i < count; i++) {
         await clickHandle[0].click();
+        await sleep();
       }
       expect(count).is.equal(clicked);
     });
@@ -466,7 +467,7 @@ test.describe("area-multi.html test", () => {
 
         return config;
       }, colorArray);
-
+      await sleep();
       const areaSeries = await page.$$(".rct-area-series");
       const firstAreaSeries = areaSeries[0];
 
