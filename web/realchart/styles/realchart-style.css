@@ -21,6 +21,10 @@
     stroke: none;
 }
 
+.rct-pattern {
+    stroke: #000;
+}
+
 /** palette */
 .rct-root {
     --color-1: #0098ff;
