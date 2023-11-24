@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isString, pickNum, pickNum3 } from "../../common/Common";
+import { isArray, isNumber, isString, pickNum, pickNum3, pickProp } from "../../common/Common";
 import { PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { Axis, AxisGrid, AxisTick, AxisLabel, IAxisTick } from "../Axis";
@@ -292,12 +292,13 @@ export class CategoryAxis extends Axis {
 
             for (let i = 1; i < pts.length - 2; i += steps) {
                 const v = min + i - 1;
+                const c = this._categories[min + i - 1];
 
                 ticks.push({
                     index: i - 1,
                     pos: NaN,//this.getPosition(length, v),
                     value: v,
-                    label: label.getTick(i - 1, this._categories[min + i - 1].t)// cats[i - 1]),
+                    label: label.getTick(i - 1, c ? c.t : cats[i - 1]),
                 });
             }
         } else {
@@ -397,8 +398,8 @@ export class CategoryAxis extends Axis {
                 if (cat == null) t = c = null;
                 else if (isString(cat)) t = c = cat;
                 else {
-                    c = cat.name || cat.label;
-                    t = cat.label || c;
+                    c = pickProp(cat.name, cat.label);
+                    t = pickProp(cat.label, c);
                 }
 
                 this._len += w;
