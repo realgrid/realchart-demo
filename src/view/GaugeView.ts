@@ -445,20 +445,21 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
         if (rBand.height > 0) {
             // band background
             this.background().setRect(rBand);
-
             // band
             this._renderBand(m, rBand, value);
+        }
 
-            // label
+        // label
+        if (label._runPos === 'top' || label._runPos === 'bottom') {
             this._rLabel.height = rBand.height;
-            this._renderLabel(m, label, labelView, value);
+        }
+        this._renderLabel(m, label, labelView, value);
 
-            // 아래쪽으로 넘치지 않게 한다.
-            if (!this._vertical && (label._runPos === 'left' || label._runPos === 'right') && scale.visible && scale.position === GaugeItemPosition.OPPOSITE) {
-                const r = labelView.getBBounds();
-                if (labelView.ty + r.height > this.height) {
-                    labelView.translateY(Math.max(0, this.height - r.height));
-                }
+        // 아래쪽으로 넘치지 않게 한다.
+        if (!this._vertical && (label._runPos === 'left' || label._runPos === 'right') && scale.visible && scale.position === GaugeItemPosition.OPPOSITE) {
+            const r = labelView.getBBounds();
+            if (labelView.ty + r.height > this.height) {
+                labelView.translateY(Math.max(0, this.height - r.height));
             }
         }
     }
