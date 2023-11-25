@@ -10,6 +10,7 @@ import { pickNum } from "../common/Common";
 import { PathBuilder } from "../common/PathBuilder";
 import { PathElement, RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
+import { SvgRichText } from "../common/RichText";
 import { ISize, Size } from "../common/Size";
 import { DEG_RAD } from "../common/Types";
 import { LabelElement } from "../common/impl/LabelElement";
@@ -144,11 +145,27 @@ class AxisLabelView extends LabelElement {
     col = 0;
     row = 0;
     tickWidth = 0;
-    // bbox: IRect;
+    private _richText: SvgRichText;
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    setLabel(model: AxisLabel, label: string, maxWidth: number, maxHeight: number): void {
+        if (label) {
+            if (!this._richText) {
+                this._richText = new SvgRichText(label);
+                
+            } else if (this._richText._format !== label) {
+                this._richText.setFormat(label);
+            }
+            this._richText.build(this._text, maxWidth, maxHeight, model, model._getParam);
+            this._outline && this._richText.build(this._outline, maxWidth, maxHeight, model, model._getParam);
+        } else if (this._richText) {
+            this._richText = null;
+            this._text.text = '';
+        }
+    }
+
     // rotatedWidth(): number {
     //     const d = this.rotation * DEG_RAD;
     //     const r = this.getBBounds();
@@ -323,6 +340,8 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
         }
     }
 }
+
+const label_reg = /\${label}.*?/g;
 
 /**
  * @internal
@@ -755,20 +774,27 @@ export class AxisView extends ChartElement<Axis> {
     }
 
     protected _prepareLabel(view: AxisLabelView, tick: IAxisTick, model: AxisLabel): void {
-        const richFormat = model.getLabelText(tick);
+        const text = model.getLabelText(tick);
+        const label = tick.label;
 
         view.value = tick.value;
 
         view.internalClearStyleAndClass();
         view.internalSetStyleOrClass(model.getLabelStyle(tick));
 
-        if (richFormat) {
-            model.prepareRich(richFormat);
-            model._paramTick = tick;
-            model.buildSvg(view._text, view._outline, NaN, NaN, model, model._getParam);
+        if (text) {
+            const m = label && text.match(label_reg);
+            
+            if (m) {
+                view.setLabel(model, text.replace(label_reg, label), 1000, 1000);
+            } else {
+                model.prepareRich(text);
+                model._paramTick = tick;
+                model.buildSvg(view._text, view._outline, NaN, NaN, model, model._getParam);
+            }
         } else {
-            view.setText(tick.label);
-            // view.text = ticks[i].label;
+            // view.setText(tick.label);
+            view.setLabel(model, label, 1000, 1000);
         }
     }
 

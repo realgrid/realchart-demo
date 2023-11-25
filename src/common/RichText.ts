@@ -273,7 +273,7 @@ export class SvgRichText {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private _format: string;
+    _format: string;
     lineHeight: number;
 
     //-------------------------------------------------------------------------
@@ -293,8 +293,7 @@ export class SvgRichText {
     //-------------------------------------------------------------------------
     setFormat(value: string) {
         if (value !== this._format) {
-            this._format = value != null ? String(value) : value;
-            value && this.$_parse(this._format);
+            this.$_parse(this._format = value != null ? String(value) : value);
         }
     }
 

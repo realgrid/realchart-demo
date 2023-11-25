@@ -24,7 +24,7 @@ const config = {
 		 }],
 		categoryPadding: 0,
 		label: {
-			text: "${label}"
+			// text: "${label}xxx${label}"
 		},
 	},
 	yAxis: false,
@@ -64,15 +64,6 @@ function setActions(container) {
 	createButton(container, 'Test', function (e) {
 		alert('hello');
 	});
-	createCheckBox(
-		container,
-		'ColorByPoint',
-		function (e) {
-			config.series.colorByPoint = _getChecked(e);
-			chart.load(config, animate);
-		},
-		false
-	);
 	createCheckBox(
 		container,
 		'Inverted',
