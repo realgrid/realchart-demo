@@ -3,12 +3,15 @@
  * 
  */
 const config = {
-    options: {},
+    options: {
+        animatable: false
+    },
     title: "Line Series 01",
     xAxis: {
         type: 'category',
     },
     yAxis: {
+        strictMax: 15
     },
     series: {
         type: 'line',

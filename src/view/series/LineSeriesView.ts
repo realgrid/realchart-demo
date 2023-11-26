@@ -9,7 +9,7 @@
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
-import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
+import { ClipElement, LayerElement, PathElement, RcElement } from "../../common/RcControl";
 import { IValueRange, PI_2 } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Chart } from "../../model/Chart";
@@ -36,7 +36,7 @@ export class LineMarkerView extends PathElement implements IPointView {
     }
 }
 
-export class LineContainer extends RcElement {
+export class LineContainer extends LayerElement {
 
     //-------------------------------------------------------------------------
     // fields
@@ -49,11 +49,11 @@ export class LineContainer extends RcElement {
     invert(v: boolean, height: number): boolean {
         if (v !== this.inverted) {
             if (this.inverted = v) {
-                this.dom.style.transform = `translate(${height}px, ${height}px) rotate(-90deg) scale(1, -1)`;
-                // this.dom.style.transform = `translate(0px, ${height}px) rotate(90deg) scale(-1, 1)`;
-                // this.dom.style.transform = `rotate(-90deg) scale(-1, 1)`;
+                // TODO: 아래 PointContaier와 다르게 하고 있다. 그래서 ChartView.clipSeries도 다르게 해야 한다. 통일할 것!
+                this.setAttr('transform', `translate(${height},${height}) rotate(-90) scale(1,-1)`);
+                //this.setAttr('transform', `translate(0,${height}) rotate(90) scale(-1,1)`);
             } else {
-                this.dom.style.transform = ``;
+                this.setAttr('transform', '');
             }
         }
         return this.inverted;
@@ -92,7 +92,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     // overriden members
     //-------------------------------------------------------------------------
     getClipContainer(): RcElement {
-        return null;
+        return this._lineContainer;
     }
 
     protected _getPointPool(): ElementPool<RcElement> {

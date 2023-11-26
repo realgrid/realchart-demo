@@ -22,6 +22,7 @@ import { LegendItem, LegendLocation } from "../model/Legend";
 import { Series } from "../model/Series";
 import { Split } from "../model/Split";
 import { Subtitle, SubtitlePosition, Title } from "../model/Title";
+import { LineSeries, LineSeriesBase } from "../model/series/LineSeries";
 import { AnnotationView } from "./AnnotationView";
 import { AxisScrollView, AxisView } from "./AxisView";
 import { AxisGuideContainer, BodyView, createAnnotationView } from "./BodyView";
@@ -1184,7 +1185,12 @@ export class ChartView extends LayerElement {
         // TODO: pane 단위로
         if (view) {
             if (this._model.inverted && invertable) {
-                this._seriesClip.setBounds(0, -w, h, w);
+                // TODO: 이런 구분은 없애야 한다!. LineContainer 참조.
+                if ((view.parent as SeriesView<any>).model instanceof LineSeriesBase) {
+                    this._seriesClip.setBounds(0, h - w, h, w);
+                } else {
+                    this._seriesClip.setBounds(0, -w, h, w);
+                }
             } else {
                 this._seriesClip.setBounds(0, 0, w, h);
             }
