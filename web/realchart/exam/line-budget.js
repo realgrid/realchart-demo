@@ -1,10 +1,10 @@
 
 const budgetData = data.filter(row => row['Medicare']);
 
-const actualSpending = [83.1, 89.0, 101.1, 110.2, 120.6, 136.0, 150.0, 167.7, 184.4, 198.7, 210.4, 209.4, 213.2, 224.8, 247.7, 265.4, 282.7, 311.1, 339.8, 403.7, 432.7, 467.0, 498.6, 519.5, 544.6, 568.3, 588.9, 617.3, 647.9, 675.9, 704.9, 749.6, 802.0, 831.2, 900.8]
-const actualSpendingFrom = 1987;
-const spendingData = actualSpending.map((v, i) => {
-    return [actualSpendingFrom + i, v];
+const trend = [83.1, 89.0, 101.1, 110.2, 120.6, 136.0, 150.0, 167.7, 184.4, 198.7, 210.4, 209.4, 213.2, 224.8, 247.7, 265.4, 282.7, 311.1, 339.8, 403.7, 432.7, 467.0, 498.6, 519.5, 544.6, 568.3, 588.9, 617.3, 647.9, 675.9, 704.9, 749.6, 802.0, 831.2, 900.8]
+const trendFrom = 1987;
+const spendingData = trend.map((v, i) => {
+    return [trendFrom + i, v];
 });
 
 const lastVisiblePointLabel = (fill) => {
@@ -18,35 +18,46 @@ const lastVisiblePointLabel = (fill) => {
 
 const budgetSeries = {
     name: 'budget',
-    type: 'line',
     xField: 'Year',
     yField: 'Medicare',
     marker: {
         visible: true,
+        shape: 'circle',
+        // radius: 0,
         firstVisible: 'visible',
         lastVisible: 'visible',
         
+    },
+    trendline: {
+        "visible": !true,
+        "type": "movingAverage",
+        "movingAverage": {
+            "interval": 10
+        }
     },
     pointLabel: lastVisiblePointLabel('var(--color-9)'),
     style: {
         fill: 'var(--color-9)',
         stroke: 'var(--color-9)',
+    },
+    areaStyle: {
+        fill: 'none',
     }
 }
-const spendingSeries = {
-    name: 'spending',
-    type: 'line',
+const trendSeries = {
+    name: 'trend',
     marker: false,
     style: {
         strokeWidth: 4,
         stroke: 'var(--color-5)',
-        strokeDasharray: '1 0 1 0'
+        strokeDasharray: '4 2',
     },
     pointLabel: lastVisiblePointLabel('var(--color-5)'),
     data: spendingData,
 }
 
 const config = {
+    type: 'line',
     // inverted: true,
     options: {
         // animatable: false
@@ -86,7 +97,7 @@ const config = {
         }
     },
     series: [
-        spendingSeries,
+        trendSeries,
         budgetSeries,
     ]
 }
