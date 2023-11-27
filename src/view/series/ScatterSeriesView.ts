@@ -94,6 +94,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
 
         this._markers.forEach((mv, i) => {
             const p = mv.point;
+            const lv = labelViews && (labelView = labelViews.get(p, 0));
 
             if (mv.setVisible(!p.isNull)) {
                 const s = series.shape;
@@ -121,26 +122,32 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                     }
                 }
 
-                switch (s) {
-                    case 'square':
-                    case 'diamond':
-                    case 'triangle':
-                    case 'itriangle':
-                    case 'star':
-                        path = SvgShapes[s](0 - sz, 0 - sz, sz * 2, sz * 2);
-                        break;
-
-                    default:
-                        path = SvgShapes.circle(0, 0, sz);
-                        break;
+                if (mv.setVisible(x >= 0 && x <= width && y >= 0 && y <= height)) {
+                    switch (s) {
+                        case 'square':
+                        case 'diamond':
+                        case 'triangle':
+                        case 'itriangle':
+                        case 'star':
+                            path = SvgShapes[s](0 - sz, 0 - sz, sz * 2, sz * 2);
+                            break;
+    
+                        default:
+                            path = SvgShapes.circle(0, 0, sz);
+                            break;
+                    }
+                    mv.setPath(path);
+                    mv.translate(x, y);
+    
+                    // label
+                    if (lv) {
+                        this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
+                    }
+                } else if (lv) {
+                    lv.setVisible(false);
                 }
-                mv.setPath(path);
-                mv.translate(x, y);
-
-                // label
-                if (labelViews && (labelView = labelViews.get(p, 0))) {
-                    this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
-                }
+            } else if (lv) {
+                lv.setVisible(false);
             }
         });
     }

@@ -305,7 +305,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             const mv = this._markers.get(i);
             const lv = labelViews && labelViews.get(p, 0);
 
-            if (mv && mv.setVisible(!p.isNull)) {
+            if (mv && mv.setVisible(!p.isNull && px >= 0 && px <= width && py >= 0 && py <= height)) {
                 this._layoutMarker(mv, px, py);
 
                 if (lv) {
@@ -317,7 +317,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     lv.translate(px, py - r.height - labelOff - (vis ? mv._radius : 0));
                 }
             } else if (lv) {
-                lv.visible = false;
+                lv.setVisible(false);
             }
         }
     }

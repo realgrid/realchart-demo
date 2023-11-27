@@ -11,7 +11,7 @@ const config = {
         type: 'category',
     },
     yAxis: {
-        // strictMax: 15
+        strictMax: 15
     },
     series: {
         type: 'line',
