@@ -19,6 +19,9 @@ export const PI_2 = Math.PI * 2;
 export const ORG_ANGLE = -Math.PI / 2;
 export const DEG_RAD = Math.PI * 2 / 360;
 export const RAD_DEG = 360 / Math.PI / 2;
+export function fixAngle(a: number): number {
+    return a > PI_2 ? a % PI_2 : a;
+}
 
 export const NUMBER_SYMBOLS = 'k,M,G,T,P,E';
 export const NUMBER_FORMAT = '#,##0.#';

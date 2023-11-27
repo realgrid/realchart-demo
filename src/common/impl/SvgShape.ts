@@ -8,7 +8,7 @@
 
 import { PathElement } from '../RcControl';
 import { IRect } from '../Rectangle';
-import { PathValue } from '../Types';
+import { PI_2, PathValue, fixAngle } from '../Types';
 import { Utils } from '../Utils';
 
 export enum Shape {
@@ -104,8 +104,9 @@ export class SvgShapes {
 
     // TODO: 개선할 것!
     static arc(cx: number, cy: number, rx: number, ry: number, start: number, end: number, clockwise: boolean, close = false): PathValue[] {
-        const circled = 2 * PI - Math.abs(end - start) < SECTOR_ERROR * 10;
-        const long = Math.abs(end - start) - PI < SECTOR_ERROR * 10 ? 0 : 1;
+        const len = fixAngle(Math.abs(end - start));
+        const circled = 2 * PI - len < SECTOR_ERROR * 10;
+        const long = len - PI < SECTOR_ERROR * 10 ? 0 : 1;
         const cw = clockwise ? 1 : 0;
         const x1 = Math.cos(start);
         const y1 = Math.sin(start);
@@ -139,8 +140,9 @@ export class SvgShapes {
 
     // TODO: 개선할 것!
     static sector(cx: number, cy: number, rx: number, ry: number, rInner: number, start: number, end: number, clockwise: boolean): PathValue[] {
-        const circled = 2 * PI - Math.abs(end - start) < SECTOR_ERROR;
-        let long = Math.abs(end - start) - PI < SECTOR_ERROR ? 0 : 1;
+        const len = fixAngle(Math.abs(end - start));
+        const circled = 2 * PI - len < SECTOR_ERROR;
+        let long = len - PI < SECTOR_ERROR ? 0 : 1;
         const cw = clockwise ? 1 : 0;
         const x1 = Math.cos(start);
         const y1 = Math.sin(start);

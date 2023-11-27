@@ -8,7 +8,7 @@ const config = {
         alignBase: 'chart'
     },
     options: {
-        animatable: false,
+        // animatable: false,
     },
     legend: {
         location: 'right',
