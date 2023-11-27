@@ -140,6 +140,7 @@ export interface SVGStyles {
     fillOpacity?: string;
     stroke?: string;
     strokeWidth?: string;
+    strokeDasharray?: string;
     fontFamily?: string;
     fontSize?: string;
     fontWeight?: string;
