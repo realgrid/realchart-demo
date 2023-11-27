@@ -32,18 +32,14 @@ const config = {
 		// pointWidth: '100%',
 		// colorByPoint: true,
 		data: [155, 138, 122, 133, 114, 113, 123]
-	},{
+	}, {
 		name: '대기질2',
 		// baseValue: null,
 		pointLabel: true,
 		// pointWidth: '100%',
 		// colorByPoint: true,
 		data: [55, 38, 22, 33, 14, 13, 23]
-	},
-],
-	ChartTextEffect: {
-		autoContrast: false,
-	},
+	}],
 };
 
 let animate = false;
