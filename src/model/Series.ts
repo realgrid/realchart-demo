@@ -753,7 +753,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     /**
-     * vals가 지정되지 않은 상태로 호추될 수 있다.
+     * vals가 지정되지 않은 상태로 호출될 수 있다.
      * x값이 숫자가 아닐 때 axis가 해석하지 못하면 xStart 부터 xStep으로 증가 시켜 가면서 순서대로 지정한다.
      */
     collectValues(axis: IAxis, vals: number[]): void {

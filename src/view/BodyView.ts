@@ -15,7 +15,7 @@ import { Align, VerticalAlign, _undefined, assert } from "../common/Types";
 import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
-import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
+import { TextAnchor, TextLayout } from "../common/impl/TextElement";
 import { Axis, AxisGrid, AxisGuide, AxisLineGuide, AxisRangeGuide } from "../model/Axis";
 import { Body } from "../model/Body";
 import { Chart, IChart } from "../model/Chart";
@@ -61,7 +61,6 @@ import { Annotation } from "../model/Annotation";
 import { AnnotationView } from "./AnnotationView";
 import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
-import { SvgRichText } from "../common/RichText";
 import { LabelElement } from "../common/impl/LabelElement";
 import { CircleBarSeriesView } from "./series/CircleBarSeriesView";
 
@@ -383,6 +382,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
     _doLayout(width: number, height: number): void {
         const m = this.model;
         const label = m.label;
+        const line = this._line;
         const labelView = this._labelView;
         let x: number;
         let y: number;
@@ -392,7 +392,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
         if (this.vertical()) {
             const p = m.axis.getPosition(width, m.value, true);
 
-            this._line.setVLineC(p, 0, height);
+            line.setVLineC(p, 0, height);
 
             switch (label.align) {
                 case Align.CENTER:
@@ -430,7 +430,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
         } else {
             const p = height - m.axis.getPosition(height, m.value, true);
 
-            this._line.setHLineC(p, 0, width);
+            line.setHLineC(p, 0, width);
 
             switch (label.align) {
                 case Align.CENTER:
@@ -467,10 +467,11 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
                     layout = TextLayout.TOP;
                     break;
             }
+
+            labelView.anchor = anchor;
+            // labelView.layout = layout;
+            labelView.translate(x, y);
         }
-        labelView.anchor = anchor;
-        // labelView.layout = layout;
-        labelView.translate(x, y);
     }
 }
 
@@ -499,60 +500,66 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
 
     _doLayout(width: number, height: number): void {
         const m = this.model;
+        const box = this._box;
+        const start = Math.min(m.start, m.end);
+        const end = Math.max(m.start, m.end);
         const label = this._labelView;
 
         if (this.vertical()) {
-            const x1 = m.axis.getPosition(width, m.start, true);
-            const x2 = m.axis.getPosition(width, m.end, true);
-
+            const x1 = m.axis.getPosition(width, start, true);
+            const x2 = m.axis.getPosition(width, end, true);
             let x: number;
             let y: number;
             let anchor: TextAnchor;
-            let layout: TextLayout;
 
-            switch (m.label.align) {
-                case Align.CENTER:
-                    x = x + (x2 - x1) / 2;
-                    anchor = TextAnchor.MIDDLE;
-                    break;
-
-                case Align.RIGHT:
-                    x = x2;
-                    anchor = TextAnchor.END;
-                    break;
-
-                default:
-                    x = x1;
-                    anchor = TextAnchor.START;
-                    break;
+            if (box.setVisible(x2 >= x1)) {
+                let layout: TextLayout;
+    
+                switch (m.label.align) {
+                    case Align.CENTER:
+                        x = x + (x2 - x1) / 2;
+                        anchor = TextAnchor.MIDDLE;
+                        break;
+    
+                    case Align.RIGHT:
+                        x = x2;
+                        anchor = TextAnchor.END;
+                        break;
+    
+                    default:
+                        x = x1;
+                        anchor = TextAnchor.START;
+                        break;
+                }
+    
+                switch (m.label.verticalAlign) {
+                    case VerticalAlign.BOTTOM:
+                        y = height;
+                        layout = TextLayout.BOTTOM;
+                        break;
+    
+                    case VerticalAlign.MIDDLE:
+                        y = height / 2;
+                        layout = TextLayout.MIDDLE;
+                        break;
+    
+                    default:
+                        y = 0;
+                        layout = TextLayout.TOP;
+                        break;
+                }
+    
+    
+                box.setBox(x1, 0, x2, height);
             }
-
-            switch (m.label.verticalAlign) {
-                case VerticalAlign.BOTTOM:
-                    y = height;
-                    layout = TextLayout.BOTTOM;
-                    break;
-
-                case VerticalAlign.MIDDLE:
-                    y = height / 2;
-                    layout = TextLayout.MIDDLE;
-                    break;
-
-                default:
-                    y = 0;
-                    layout = TextLayout.TOP;
-                    break;
+            if (label.setVisible(this._box.visible)) {
+                label.anchor = anchor;
+                // label.layout = layout;
+                label.translate(Math.max(0, Math.min(width, x)), y);
             }
-
-            label.anchor = anchor;
-            // label.layout = layout;
-            label.translate(x, y);
-
-            this._box.setBox(x1, 0, x2, height);
-
         } else {
-            const y1 = height - this.model.axis.getPosition(height, Math.min(m.start, m.end), true);
-            const y2 = height - this.model.axis.getPosition(height, Math.max(m.start, m.end), true);
+            const y1 = height - m.axis.getPosition(height, start, true);
+            const y2 = height - m.axis.getPosition(height, end, true);
             let x: number;
             let y: number;
             let anchor: TextAnchor;
@@ -596,7 +603,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
             // label.layout = layout;
             label.translate(x, y);
 
-            this._box.setBox(0, y2, width, y1);
+            box.setBox(0, y2, width, y1);
         }
     }
 }
@@ -776,6 +783,7 @@ export class BodyView extends ChartElement<Body> {
     private _gauges: GaugeBase[];
     _guideContainer: AxisGuideContainer;
     _frontGuideContainer: AxisGuideContainer;
+    _guideClip: ClipElement;
     // axis breaks
     _axisBreakContainer: LayerElement;
     // items
@@ -1026,8 +1034,14 @@ export class BodyView extends ChartElement<Body> {
             });
 
             // axis guides
+            if (!this._guideClip) {
+                this._guideClip = this.control.clipBounds(0, 0, w, h);
+            } else {
+                this._guideClip.resize(w, h);
+            }
             [this._guideContainer, this._frontGuideContainer].forEach(c => {
                 c._views.forEach(v => v.layout(w, h));
+                c.setClip(this._guideClip);
             });
         }
 

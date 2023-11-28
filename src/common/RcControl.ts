@@ -17,6 +17,7 @@ import { SvgShapes } from "./impl/SvgShape";
 import { ISize } from "./Size";
 import { IPoint } from "./Point";
 import { $_lc } from "./LicChecker";
+import { __importDefault } from "tslib";
 
 export interface IPointerHandler {
     handleDown(ev: PointerEvent): void;
@@ -270,7 +271,7 @@ export abstract class RcControl extends RcWrappableObject {
         return clip;
     }
 
-    clipRect(r: IRect): ClipElement {
+    clipRect(r: IRect): ClipElement {   
         return this.clipBounds(r.x, r.y, r.width, r.height);
     }
 
