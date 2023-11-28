@@ -342,7 +342,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
         this._linePts = pts;
 
-        if (i < pts.length - 1) {
+        if (i < pts.length) {
             const inverted = this._inverted;
             const w = this.width;
             const h = this.height;
