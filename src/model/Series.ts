@@ -975,9 +975,14 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             case 'name':
                 return this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : pickProp(point.x, point.xValue);
             case 'x':
-                return point.x || (this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : point.xValue);
+                return this._xAxisObj.value2Tooltip(point.x || (this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : point.xValue));
+            case 'xValue':
+                return this._xAxisObj.value2Tooltip(point[param]);
+            case 'y':
+            case 'yValue':
+                return this._yAxisObj.value2Tooltip(point[param]);
             default:
-                return param in point ? point[param] : param;
+                return param in point ? point[param] : point.source?.[param];
         }
     }
 

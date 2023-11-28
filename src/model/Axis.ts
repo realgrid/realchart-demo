@@ -12,6 +12,7 @@ import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
+import { DataPoint } from "./DataPoint";
 import { IClusterable, IPlottingItem } from "./Series";
 
 /**
@@ -58,6 +59,8 @@ export interface IAxis {
      * 값에 따라 크기가 다를 수도 있다.
      */
     getUnitLength(length: number, value: number): number;
+
+    value2Tooltip(value: number): any;
 
     hasBreak(): boolean;
     isBreak(pos: number): boolean;
@@ -961,6 +964,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected abstract _createLabelModel(): AxisLabel;
     protected abstract _doPrepareRender(): void;
     protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[];
+
+    value2Tooltip(value: number): any {
+        return value;
+    }
 
     isBased(): boolean {
         return false;

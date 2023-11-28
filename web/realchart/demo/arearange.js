@@ -28,7 +28,7 @@ const config = {
       type: "arearange",
       name: "11월 최고,최저 기온",
       tooltip: {
-        text: "${x} , 최저온도 ${y}",
+        text: "${x}, 최저온도 ${y}",
       },
       data: [
         [20.6, 17.2],
@@ -64,6 +64,7 @@ const config = {
       ],
       xStart: "2023-11",
       xStep: "1d",
+      marker: {},
       style: {
         fill: "#66d0ff",
         stroke: "none",
@@ -101,7 +102,7 @@ function setActions(container) {
     container,
     "Point Marker",
     function (e) {
-      config.series.marker.visible = _getChecked(e);
+      config.series[0].marker.visible = _getChecked(e);
       chart.load(config);
     },
     true

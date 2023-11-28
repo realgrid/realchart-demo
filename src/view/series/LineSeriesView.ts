@@ -239,7 +239,9 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const marker = series.marker;
         const sts = [marker.style, null];
 
-        if (this._pointContainer.visible = (marker.visible && !series._simpleMode)) {
+        this._pointContainer.setStyle('opacity', marker.visible ? '1' : '0');
+
+        if (this._pointContainer.setVisible(!series._simpleMode)) {
             const mpp = this._markersPerPoint();
             const count = points.length;
     

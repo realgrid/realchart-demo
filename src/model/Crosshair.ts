@@ -101,7 +101,17 @@ export class Crosshair extends ChartItem {
      * @config
      */
     followPointer = true;
+    /**
+     * 표시되는 값이 숫자일 때 사용되는 표시 형식.
+     * 
+     * @config
+     */
     numberFormat = '#,##0.#';
+    /**
+     * 표시되는 값이 날짜(시간)일 때 사용되는 표시 형식.
+     * 
+     * @config
+     */
     timeFormat = 'yyyy-MM-dd HH:mm'
 
     //-------------------------------------------------------------------------
@@ -115,7 +125,7 @@ export class Crosshair extends ChartItem {
         const v = this.axis.getAxisValueAt(length, pos);
 
         if (v instanceof Date) {
-            return DatetimeFormatter.getFormatter(this.timeFormat).toStr(new Date(v), 0);
+            return DatetimeFormatter.getFormatter(this.timeFormat).toStr(new Date(v), this.chart.startOfWeek);
         } else {
             return NumberFormatter.getFormatter(this.numberFormat).toStr(v);
         }
