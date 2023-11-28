@@ -816,6 +816,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     _vlen: number;
     _minPad = 0;
     _maxPad = 0;
+    _startAngle = 0;
     _values: number[] = [];
     protected _min: number;
     protected _max: number;
@@ -949,6 +950,10 @@ export abstract class Axis extends ChartItem implements IAxis {
         return this.getValueAt(length, pos);
     }
 
+    startAngle(): number {
+        return this._startAngle;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -1055,6 +1060,9 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     calcPoints(length: number, phase: number): void {
         this._ticks.forEach(t => t.pos = this.getPosition(length, t.value));
+        if (this._isPolar) {
+            this._startAngle = this._getStartAngle(this.chart.startAngle());
+        }
     }
 
     /**
@@ -1143,6 +1151,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _getStartAngle(start: number): number {
+        return start;
+    }
+
     protected _createGrid(): AxisGrid {
         return new AxisGrid(this);
     }

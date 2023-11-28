@@ -9,13 +9,12 @@
 import { ElementPool } from "../common/ElementPool";
 import { LayerElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
-import { PI_2 } from "../common/Types";
 import { CircleElement, CircumElement } from "../common/impl/CircleElement";
-import { LineElement, PolygonElement, PolylineElement } from "../common/impl/PathElement";
+import { LineElement, PolylineElement } from "../common/impl/PathElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { Axis, AxisTick, IAxisTick } from "../model/Axis";
 import { Body } from "../model/Body";
-import { ContinuousAxis } from "../model/axis/LinearAxis";
+import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { BodyView, IPlottingOwner } from "./BodyView";
 
 class PolarAxisTickMarkView extends RcElement {
@@ -174,7 +173,7 @@ class PolarXAxisView extends PolarAxisView {
     }
 
     protected _doLayout(axis: Axis, cx: number, cy: number, rd: number, ticks: IAxisTick[], other: Axis): void {
-        const start = axis.chart.startAngle();
+        const start = axis.startAngle();// axis.chart.startAngle();
 
         ticks.forEach(tick => tick.pos = tick.pos / rd);
 
@@ -281,7 +280,7 @@ class PolarYAxisView extends PolarAxisView {
                 if (view instanceof CircumElement) {
                     view.setCircle(cx, cy, pos);
                 } else if (view instanceof PolylineElement) {
-                    const start = axis.chart.startAngle();
+                    const start = axis.startAngle();// axis.chart.startAngle();
                     const pts: number[] = [];
 
                     other._ticks.forEach(tick => {

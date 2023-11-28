@@ -217,9 +217,9 @@ export class Body extends ChartItem {
         return ORG_ANGLE + DEG_RAD * this.startAngle;
     }
 
-    getPolar(series: Series): {start: number, cx: number, cy: number, rd: number } {
+    getPolar(axis: Axis): {start: number, cx: number, cy: number, rd: number } {
         return this.chart.isPolar() ? {
-            start: this.getStartAngle(),
+            start: axis ? axis.startAngle() : this.getStartAngle(),
             cx: this._cx,
             cy: this._cy,
             rd: this._rd

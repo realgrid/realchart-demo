@@ -12,6 +12,7 @@ import { PathBuilder } from "../../common/PathBuilder";
 import { ClipElement, LayerElement, PathElement, RcElement } from "../../common/RcControl";
 import { IValueRange, PI_2 } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
+import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { LineType } from "../../model/ChartTypes";
 import { DataPoint, IPointPos } from "../../model/DataPoint";
@@ -269,14 +270,15 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
-        const polar = this._polar = (series.chart as Chart).body.getPolar(series);
         const vr = this._getViewRate();
         const vis = series.marker.visible;
         const labels = series.pointLabel;
         const labelOff = labels.offset;
         const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
+        const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj;
+        const polar = this._polar = (series.chart as Chart).body.getPolar(xAxis);
+        const polared = !!polar;
         const yLen = inverted ? width : height;
         const xLen = polar ? polar.rd * PI_2 : inverted ? height : width;
         const yOrg = height;
@@ -305,7 +307,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             const mv = this._markers.get(i);
             const lv = labelViews && labelViews.get(p, 0);
 
-            if (mv && mv.setVisible(!p.isNull && px >= 0 && px <= width && py >= 0 && py <= height)) {
+            if (mv && mv.setVisible(!p.isNull && (polared || px >= 0 && px <= width && py >= 0 && py <= height))) {
                 this._layoutMarker(mv, px, py);
 
                 if (lv) {
