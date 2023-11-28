@@ -1,5 +1,5 @@
 // https://www.nytimes.com/2023/09/05/upshot/biden-trump-black-hispanic-voters.html
-const x = [12, 16, 20, 24].map(v => `'${v}`);
+const x = [2020, 2023].map(v => `'${v}`);
 const appendX = (data) => {
     return Object.fromEntries(Object.entries(data).map(([key, values]) => {
         // return { [key]: [x[i], values[i]] }
@@ -7,32 +7,19 @@ const appendX = (data) => {
     }));
 }
 
-const raceData = appendX({
-    Black: [96, 95, 91, 89],
-    "All nonwhite": [82, 80, 73, 68],
-    Hispanic: [70, 69, 64, 59],
-    Other: [65, 66, 58, 56],
+const poll1Data = appendX({
+    Biden: [34, 71],
+    Trump: [18, 39],
 });
 
-const genderData = appendX({
-    Female: [85, 85, 78, 73],
-    Male: [78, 74, 67, 62],
+const poll2Data = appendX({
+    Biden: [45, 62],
+    Trump: [48, 44],
 });
 
-const ageData = appendX({
-    "Age 45+": [83, 81, 75, 68],
-    "Age 18 to 44": [81, 79, 71, 70],
-});
-
-const educationData = appendX({
-    "College deg.": [80, 80, 75, 74],
-    "No college deg.": [82, 81, 72, 66],
-});
-
-const incomeData = appendX({
-    "Less than $50k": [88, 87, 78, 71],
-    "$50k to $100k": [79, 78, 71, 62],
-    "$100k+": [71, 73, 69, 70],
+const poll3Data = appendX({
+    Biden: [39, 51],
+    Trump: [58, 55],
 });
 
 const primary = 'var(--color-1)';
@@ -42,7 +29,7 @@ const lineSeries = (m, i) => {
         name: key,
         marker: {
             shape: 'circle',
-            radius: 5,
+            radius: 0,
             style: {
                 stroke: '#fff',
             }
@@ -76,11 +63,9 @@ const makeSeries = (data) => {
     })
 }
 
-const raceSeries = makeSeries(raceData);
-const genderSeries = makeSeries(genderData);
-const ageSeries = makeSeries(ageData);
-const eduSeries = makeSeries(educationData);
-const incomeSeries = makeSeries(incomeData);
+const poll1Series = makeSeries(poll1Data);
+const poll2Series = makeSeries(poll2Data);
+const poll3Series = makeSeries(poll3Data);
 
 const xAxis = {
     type: 'category',
@@ -92,11 +77,11 @@ const xAxis = {
 };
 
 const yAxis = {
-    strictMin: 50,
-    strictMax: 100,
+    // strictMin: 50,
+    // strictMax: 100,
     // step: 10,
     tick: {
-        // gap: 10,
+        gap: 10,
     },
     label: {
         suffix: '%'
@@ -115,13 +100,12 @@ const paneBody = {
 };
 
 const subtitles = [
-    'By race',
-    'Gender',
-    'Age',
-    'Education',
-    'Income',
+    'is too old',
+    'does not have the mental sharpness',
+    'does not have the temperament',
 ]
 
+const cols = 3;
 const config = {
     type: 'line',
     title: false,
@@ -129,8 +113,8 @@ const config = {
     split: {
         visible: true,
         rows: 1,
-        cols: 5,
-        panes: Array(5).fill(paneBody).map((m, i) => { 
+        cols,
+        panes: Array(cols).fill(paneBody).map((m, i) => { 
             return { 
                 body: {
                     ...m,
@@ -154,10 +138,9 @@ const config = {
             // backgroundColor: '#EFEEE5'
         },
         credits: false,
-        
     },
     legend: false,
-    xAxis: Array(5).fill(xAxis).map((ax, i) => { return { ...ax, col: i } }),
+    xAxis: Array(cols).fill(xAxis).map((ax, i) => { return { ...ax, col: i } }),
     yAxis,
     body: {
         style: {
@@ -166,29 +149,15 @@ const config = {
         }
     },
     series: [{
-            name: 'Races',
             xAxis: 0,
-            children: raceSeries,
-            style: {
-                backgroundColor: '#112233'
-            }
+            children: poll1Series,
         }, {
-            name: 'Gender',
             xAxis: 1,
-            children: genderSeries,
+            children: poll2Series,
         }, {
-            name: 'Age',
             xAxis: 2,
-            children: ageSeries
-        }, {
-            name: 'Education',
-            xAxis: 3,
-            children: eduSeries,
-        }, {
-            name: 'Income',
-            xAxis: 4,
-            children: incomeSeries
-        }
+            children: poll3Series
+        }, 
     ],
 }
 
