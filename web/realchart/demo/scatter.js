@@ -7,19 +7,25 @@ const config = {
 	options: {
 		// palette: 'gray'
 	},
-	title: 'Scatter Series',
+	title: '성별에 따른 나이와 최대 심박수의 관계',
 	xAxis: {
-		title: 'Height',
+		title: '나이',
 		baseValue: null,
 	},
 	yAxis: {
-		title: 'Weight',
+		title: '최대 심박수 (thalachh)',
 	},
 	series: [
 		{
-			data: bike_data,
-			xField: 'hour',
-			yField: 'cnt'
+			name: '남자',
+			data: heart_data.slice(0,600).filter(d => d.sex===1),
+			xField: 'age',
+			yField: 'thalachh'
+		},{
+			name: '여자',
+			data: heart_data.slice(0,600).filter(d => d.sex===0),
+			xField: 'age',
+			yField: 'thalachh',
 		},
 	],
 };
