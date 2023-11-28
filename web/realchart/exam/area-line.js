@@ -13,7 +13,7 @@ const config = {
     },
   },
   options: {
-    // animatable: false=
+    // animatable: false
   },
   xAxis: {
     type: "time",
@@ -27,9 +27,6 @@ const config = {
     {
       type: "arearange",
       name: "11월 최고,최저 기온",
-      tooltip: {
-        text: "${x} , 최저온도 ${y}",
-      },
       data: [
         [20.6, 17.2],
         [25.9, 18.7],
@@ -64,9 +61,33 @@ const config = {
       ],
       xStart: "2023-11",
       xStep: "1d",
+      pointLabel: {},
+      marker: {
+        visible: false,
+      },
       style: {
         fill: "#66d0ff",
         stroke: "none",
+      },
+    },
+    {
+      type: "line",
+      name: "11월 평균기온",
+      data: [
+        18.9, 22.29, 20.04, 17.5, 17.75, 12.95, 6.75, 8.95, 12.15, 4.8, 2.4,
+        1.85, 2.25, 5, 7.25, 6.55, 2, 0.95, 6.55, 7.3, 8.1, 9, 8.25, -1.1,
+        -0.95, 3.55, 6.85, 0.5, -1.6, -3.2,
+      ],
+      tooltip: {
+        followPointer: true,
+        visible: true,
+        text: '${x} 평균 온도 : ${y}°C'
+      },
+      xStart: "2023-11",
+      xStep: "1d",
+      style: {
+        fill: "#eee",
+        stroke: "#0098ff",
       },
     },
   ],
