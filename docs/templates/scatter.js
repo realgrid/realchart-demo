@@ -6,7 +6,6 @@ export const config = {
   yAxis: { title: 'Weight' },
   series: [
     {
-      pointLabel: { visible: true },
       data: [
         {
           continent: 'Asia',

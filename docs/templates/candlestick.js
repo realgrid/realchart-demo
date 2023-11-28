@@ -2,7 +2,7 @@ export const config = {
   title: 'Candlestick',
   options: {},
   xAxis: { type: 'category' },
-  yAxis: {},
+  yAxis: { crosshair: true },
   series: {
     type: 'candlestick',
     pointLabel: true,

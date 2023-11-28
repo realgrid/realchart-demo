@@ -229,7 +229,7 @@ export class TreemapSeries extends Series {
      * 수직, 수평으로 방향을 바꾸어 가며 배치한다.
      */
     alternate = true;
-    /**
+    /**백
      * 시작 방향.
      * <br>
      * 지정하지 않으면 ploting 영역의 너비/높이 비율 기준으로 정해진다.

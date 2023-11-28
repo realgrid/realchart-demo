@@ -13,16 +13,23 @@ export const config = {
     label: { step: 3 }
   },
   yAxis: { title: '대기질 지수(Air Quality Index, AQI)' },
-  series: {
-    name: '대기질',
-    pointLabel: true,
-    color: 'green',
-    colorField: 'green',
-    data: [
-      155, 138, 122,
-      133, 114, 113,
-      123
-    ]
-  },
-  ChartTextEffect: { autoContrast: false }
+  series: [
+    {
+      name: '대기질',
+      pointLabel: true,
+      data: [
+        155, 138, 122,
+        133, 114, 113,
+        123
+      ]
+    },
+    {
+      name: '대기질2',
+      pointLabel: true,
+      data: [
+        55, 38, 22, 33,
+        14, 13, 23
+      ]
+    }
+  ]
 }
