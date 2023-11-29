@@ -366,7 +366,6 @@ export class TimeAxisLabel extends AxisLabel {
 
         const fmts = this._formats;
         const scale = (axis.tick as TimeAxisTick).scale;
-        let t: number;
 
         switch (scale) {
             case TimeScale.YEAR:

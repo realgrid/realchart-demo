@@ -45,7 +45,10 @@ export function isNull(v: any): boolean {
     return v == null || Number.isNaN(v) || v === '';
 }
 export function pad2(v: number): string {
-    return v < 10 ? `0${v}` : String(v);
+	return (v < 10) ? ("0" + v) : String(v);
+}
+export function pad3(v: number): string {
+	return (v < 10) ? ("00" + v) : (v < 100) ? ("0" + v) : String(v);
 }
 export function newObject(prop: string, value: any): {} {
     const obj = {};

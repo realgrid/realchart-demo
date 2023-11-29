@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { locale } from "./RcLocale";
-import { throwFormat } from "./Types";
+import { pad2, pad3, throwFormat } from "./Types";
 import { Utils } from "./Utils";
 
 const $$_DT_DATE_TOKENS = [
@@ -42,13 +42,6 @@ const U_H = "H".charCodeAt(0);
 const L_H = "h".charCodeAt(0);
 const U_S = "S".charCodeAt(0);
 const L_S = "s".charCodeAt(0);
-
-const pad = function (v: number): string {
-	return (v < 10) ? "0" + v : String(v);
-}
-const pad3 = function (v: number): string {
-	return (v < 10) ? "00" + v : (v < 100) ? "0" : String(v);
-}
 
 /**
  * @internal
@@ -135,22 +128,22 @@ export class DatetimeFormatter {
 			var len = t.length;
 			switch (t.charCodeAt(0)) {
 				case L_Y:
-					s += len > 2 ? date.getFullYear() : pad(date.getFullYear() % 100);
+					s += len > 2 ? date.getFullYear() : pad2(date.getFullYear() % 100);
 					break;
 				case U_M:
-					s += len > 1 ? pad(date.getMonth() + 1) : (date.getMonth() + 1);
+					s += len > 1 ? pad2(date.getMonth() + 1) : (date.getMonth() + 1);
 					break;
 				case L_D:
-					s += len > 1 ? pad(date.getDate()) : date.getDate();
+					s += len > 1 ? pad2(date.getDate()) : date.getDate();
 					break;
                 case U_W:
-                    s += len > 1 ? pad(Utils.weekOfYear(date, startOfWeek)) : Utils.weekOfMonth(date, startOfWeek, true);
+                    s += len > 1 ? pad2(Utils.weekOfYear(date, startOfWeek)) : Utils.weekOfMonth(date, startOfWeek, true);
                     break;
                 case L_W:
                     s += len > 1 ? Utils.long_week_days[date.getDay()] : Utils.week_days[date.getDay()];
                     break;
 				case U_H:
-					s += len > 1 ? pad(date.getHours()) : date.getHours();
+					s += len > 1 ? pad2(date.getHours()) : date.getHours();
 					break;
 				case L_H:
 					if (this._hasAmPm) {
@@ -160,16 +153,16 @@ export class DatetimeFormatter {
 						} else if (h > 12) {
 							h = h - 12;
 						}
-						s += len > 1 ? pad(h) : h;
+						s += len > 1 ? pad2(h) : h;
 					} else {
-						s += len > 1 ? pad(date.getHours()) : date.getHours();
+						s += len > 1 ? pad2(date.getHours()) : date.getHours();
 					}
 					break;
 				case L_M:
-					s += len > 1 ? pad(date.getMinutes()) : date.getMinutes();
+					s += len > 1 ? pad2(date.getMinutes()) : date.getMinutes();
 					break;
 				case L_S:
-					s += len > 1 ? pad(date.getSeconds()) : date.getSeconds();
+					s += len > 1 ? pad2(date.getSeconds()) : date.getSeconds();
 					break;
 				case L_A:
 				case U_A:
@@ -182,8 +175,8 @@ export class DatetimeFormatter {
 				case U_S:
                     let v = date.getMilliseconds();
                     if (len == 3) s += pad3(v);
-                    else if (len == 2) s += pad(v);
-                    else s += v.toString().substr(0, len);
+                    else if (len == 2) s += pad2(v);
+                    else s += v.toString().substring(0, len);
 					break;
 				/*
 				 case U_Y:
