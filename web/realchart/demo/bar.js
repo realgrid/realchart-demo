@@ -4,42 +4,46 @@
  * Bar Series 기본 예제.
  */
 const config = {
-	title: '세종특별자치시 1인당 지방세 부담액',
+	title: '년도별 서울시 평균 대기질 지수',
 	options: {
 		// animatable: false
 	},
 	xAxis: {
-		title: '년도',
-		categories: ['2017', '2018', '2019', '2020', '2021', '2022',],
+		title: '서울시',
+		categories: ['2014', '2015', '2016', '2017', '2018', '2019', '2020'],
 		grid: true,
 		
 		label: {
 			// startStep: 0,
-			step: 1,
+			step: 3,
 		},
 	},
 	yAxis: {
-		title: '인구수',
+		title: '대기질 지수(Air Quality Index, AQI)',
 		// reversed: true,
 		// baseValue: -1,
         // strictMin: 11,
         // strictMax: 161
 	},
 	series: [{
-		name: '주민1인당 부담금액',
+		name: '대기질',
 		// baseValue: null,
 		pointLabel: true,
 		// pointWidth: '100%',
 		// colorByPoint: true,
-		data: [237466, 213497, 195827, 223488, 235850, 224338]
-	}, {
-		name: '인구수',
+		data: [155, 138, 122, 133, 114, 113, 123]
+	},{
+		name: '대기질2',
 		// baseValue: null,
 		pointLabel: true,
 		// pointWidth: '100%',
 		// colorByPoint: true,
-		data: [28010, 31412, 34057, 35583, 37189, 38359]
-	}],
+		data: [55, 38, 22, 33, 14, 13, 23]
+	},
+],
+	ChartTextEffect: {
+		autoContrast: false,
+	},
 };
 
 let animate = false;
