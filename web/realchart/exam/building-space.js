@@ -5,50 +5,113 @@
  * https://www.nytimes.com/interactive/2023/07/21/nyregion/nyc-developers-private-owned-public-spaces.html
  */
 
+const space = (n) => {
+    return Array(n).fill('&nbsp;').join('');
+}
+const buildingData = data.map(r => {
+    r['Building'] = r['Building'] + `<t>${space(9)}</t><t style="fill:var(--color-10);font-weight:700">${r['Violations']}</t>`
+    return r;
+})
+
 const yAxis = {
     grid: false,
     label: false,
     strictMax: 520000
 }
 
+const pointLabelStyle = {
+    fontSize: '9pt',
+}
 const pointLabel = {
     visible: true,
     // position: 'inside',
     position: 'auto',
     // numberFormat: '#'
-    style: {
-        fontSize: '6pt',
-    }
+    style: pointLabelStyle
 };
 
+const annotationStyle = {
+    fontSize: '10pt',
+    fontWeight: 600,
+    fontFamily: 'monospace',
+    textAlign: 'right',
+}
+
 const config = {
-    templates: {
-    },
     inverted: true,
-    title: "Building Space",
+    title: 'Building Space',
+    subtitle: {
+        text: '<t></t>',
+        gap: 50,
+    },
     options: {
         // animatable: false
     },
+
     legend: {
         visible: false,
-        itemGap: 100,
-        backgroundStyle: {
-            fill: 'none'
-        }
+        location: 'top',
+        // gap: -100,
+        // offsetY: -100,
     },
     split: {
         visible: true,
-        rows: 2
+        rows: 2,
+        panes: [
+            {
+                body: {
+                    annotations: [
+                        {
+                            offsetX: 44,
+                            offsetY: -50,
+                            text: 'Number of<br>Violations',
+                            style: annotationStyle,
+                        },
+                        {
+                            offsetX: 142,
+                            offsetY: -50,
+                            text: 'Public<br>Space',
+                            style: annotationStyle,
+                        },
+                    ]
+                }
+            }, 
+            {
+                row: 1,
+                body: {
+                    annotations: [
+                        {
+                            offsetX: 8,
+                            offsetY: -50,
+                            text: 'Bonus Floor<br>Space',
+                            style: {
+                                ...annotationStyle,
+                                textAlign: 'left'
+                            },
+                        },
+                    ]
+                },
+            }
+        ]
     },
     xAxis: [{
         type: 'category',
+        width: 100,
+        tick: {
+            margin: -100,
+        },
         label: {
             visible: true,
             step: 1,
+            style: {
+                fill: '#333',
+                fontWeight: 500,
+                fontFamily: 'monospace'
+            },
         },
         reversed: true,
         line: false,
-        grid: !false,
+        grid: true,
     }],
     yAxis: [{
         reversed: true,
@@ -59,26 +122,40 @@ const config = {
     }],
     series: [{
         name: 'Public',
-        pointLabel,
+        pointLabel: {
+            visible: true,
+            position: 'auto',
+            style: {
+                ...pointLabelStyle,
+                fill: '#999',
+            },
+        },
         yField: 'Public',
         xField: 'Building',
         style: {
             fill: '#333',
             stroke: '#333'
         },
-        data,
+        data: buildingData,
     }, {
         name: 'Bonus Floor',
-        color: '#ffaa00',
         yAxis: 1,
-        pointLabel,
+        pointLabel: {
+            visible: true,
+            position: 'inside',
+            align: 'left',
+            style: {
+                ...pointLabelStyle,
+                fill: '#fff',
+            },
+        },
         yField: 'Bonus Floor',
         xField: 'Building',
         style: {
-            fill: 'var(--color-1)',
-            stroke: 'var(--color-1)',
+            fill: 'var(--color-8)',
+            stroke: 'var(--color-8)',
         },
-        data,
+        data: buildingData,
     }]
 }
 
