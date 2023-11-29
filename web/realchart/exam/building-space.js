@@ -13,33 +13,14 @@ const buildingData = data.map(r => {
     return r;
 })
 
-const yAxis = {
-    grid: false,
-    label: false,
-    strictMax: 520000
-}
-
-const pointLabelStyle = {
-    fontSize: '9pt',
-}
-const pointLabel = {
-    visible: true,
-    // position: 'inside',
-    position: 'auto',
-    // numberFormat: '#'
-    // style: pointLabelStyle
-};
-
-const annotationStyle = {
-    fontSize: '10pt',
-    fontWeight: 600,
-    fontFamily: 'monospace',
-    textAlign: 'right',
-}
-
 const config = {
     templates: {
-        sersies: {
+        yAxis: {
+            grid: false,
+            label: false,
+            strictMax: 520000
+        },
+        series: {
             pointLabel: {
                 visible: true,
                 position: 'auto',
@@ -134,18 +115,16 @@ const config = {
         grid: true,
     }],
     yAxis: [{
+        template: 'yAxis',
         reversed: true,
-        ...yAxis
     }, {
+        template: 'yAxis',
         row: 1,
-        ...yAxis
     }],
     series: [{
         name: 'Public',
         template: 'series',
         pointLabel: {
-            visible: true,
-            position: 'auto',
             style: {
                 fill: '#999',
             },
@@ -162,9 +141,7 @@ const config = {
         template: 'series',
         yAxis: 1,
         pointLabel: {
-            visible: true,
             position: 'inside',
-            align: 'left',
             style: {
                 fill: '#fff',
             },
