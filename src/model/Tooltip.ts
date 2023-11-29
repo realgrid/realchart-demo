@@ -6,12 +6,16 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isNumber } from "../common/Common";
+import { isNumber, isString } from "../common/Common";
+import { DatetimeFormatter } from "../common/DatetimeFormatter";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { ChartItem } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
 import { ISeries, Series } from "./Series";
 
+/**
+ * Series.tooltip 모델.
+ */
 export class Tooltip extends ChartItem {
 
     //-------------------------------------------------------------------------
@@ -58,7 +62,9 @@ export class Tooltip extends ChartItem {
      * @config
      */
     hideDelay = Tooltip.HIDE_DELAY;
+    // TODO: 구현할 것!
     minWidth = 100;
+    // TODO: 구현할 것!
     minHeight = 40;
     /**
      * true이면 툴팁 상자가 마우스 포인터를 따라 다닌다.
@@ -70,9 +76,19 @@ export class Tooltip extends ChartItem {
      */
     followPointer: boolean;
     /**
-     * 툴팁에 표시될 숫자값의 기본 형식.
+     * 툴팁에 표시될 숫자값의 기본 형식.\
+     * {@link text}예 표시 문자열을 지정할 때 '${yValue;#,###.0}'와 같은 식으로 숫자 형식을 지정할 수 있다.
+     * 
+     * @config
      */
-    numberFormat: '#.##';
+    numberFormat = ',#.##';
+    /**
+     * 툴팁에 표시될 날짜(시간)값의 기본 형식.\
+     * {@link text}예 표시 문자열을 지정할 때 '${x;yyyy.MM}'와 같은 식으로 날짜(시간) 형식을 지정할 수 있다.
+     * 
+     * @config
+     */
+    timeFormat = 'yyyy-MM-dd';
 
     //-------------------------------------------------------------------------
     // methods
@@ -84,12 +100,24 @@ export class Tooltip extends ChartItem {
             const f = format || this.numberFormat;
             return f ? NumberFormatter.getFormatter(f).toStr(v) : v as any;
         } 
+        if (v instanceof Date) {
+            const f = format || this.timeFormat;
+            return f ? DatetimeFormatter.getFormatter(f).toStr(v, this.chart.startOfWeek) : v.toString();
+        }
         return v;
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doLoadSimple(source: any): boolean {
+        if (isString(source)) {
+            this.text = source;
+            return true;
+        }
+        return super._doLoadSimple(source);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
