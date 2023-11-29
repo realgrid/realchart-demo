@@ -35,7 +35,6 @@ const config = {
                 fontSize: '10pt',
                 fontWeight: 600,
                 fontFamily: 'monospace',
-                textAlign: 'right',
             }
         }
     },
@@ -70,9 +69,10 @@ const config = {
                         },
                         {
                             template: 'annotation',
-                            offsetX: 142,
+                            offsetX: 144,
                             offsetY: -50,
                             text: 'Public<br>Space',
+                            textAlign: 'right',
                         },
                     ]
                 }
@@ -86,9 +86,7 @@ const config = {
                             offsetX: 8,
                             offsetY: -50,
                             text: 'Bonus Floor<br>Space',
-                            style: {
-                                textAlign: 'left'
-                            },
+                            textAlign: 'left',
                         },
                     ]
                 },
