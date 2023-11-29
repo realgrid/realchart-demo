@@ -27,7 +27,7 @@ const pointLabel = {
     // position: 'inside',
     position: 'auto',
     // numberFormat: '#'
-    style: pointLabelStyle
+    // style: pointLabelStyle
 };
 
 const annotationStyle = {
@@ -38,6 +38,26 @@ const annotationStyle = {
 }
 
 const config = {
+    templates: {
+        sersies: {
+            pointLabel: {
+                visible: true,
+                position: 'auto',
+                style: {
+                    fontSize: '9pt',
+                }
+            }
+            
+        },
+        annotation: {
+            style: {
+                fontSize: '10pt',
+                fontWeight: 600,
+                fontFamily: 'monospace',
+                textAlign: 'right',
+            }
+        }
+    },
     inverted: true,
     title: 'Building Space',
     subtitle: {
@@ -62,16 +82,16 @@ const config = {
                 body: {
                     annotations: [
                         {
+                            template: 'annotation',
                             offsetX: 44,
                             offsetY: -50,
                             text: 'Number of<br>Violations',
-                            style: annotationStyle,
                         },
                         {
+                            template: 'annotation',
                             offsetX: 142,
                             offsetY: -50,
                             text: 'Public<br>Space',
-                            style: annotationStyle,
                         },
                     ]
                 }
@@ -81,11 +101,11 @@ const config = {
                 body: {
                     annotations: [
                         {
+                            template: 'annotation',
                             offsetX: 8,
                             offsetY: -50,
                             text: 'Bonus Floor<br>Space',
                             style: {
-                                ...annotationStyle,
                                 textAlign: 'left'
                             },
                         },
@@ -98,7 +118,7 @@ const config = {
         type: 'category',
         width: 100,
         tick: {
-            margin: -100,
+            gap: -100,
         },
         label: {
             visible: true,
@@ -122,11 +142,11 @@ const config = {
     }],
     series: [{
         name: 'Public',
+        template: 'series',
         pointLabel: {
             visible: true,
             position: 'auto',
             style: {
-                ...pointLabelStyle,
                 fill: '#999',
             },
         },
@@ -139,13 +159,13 @@ const config = {
         data: buildingData,
     }, {
         name: 'Bonus Floor',
+        template: 'series',
         yAxis: 1,
         pointLabel: {
             visible: true,
             position: 'inside',
             align: 'left',
             style: {
-                ...pointLabelStyle,
                 fill: '#fff',
             },
         },
