@@ -38,6 +38,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
     // fields
     //-------------------------------------------------------------------------
     private _textView: TextElement;
+    private _richText: SvgRichText;
     _angle: number;
 
     //-------------------------------------------------------------------------
@@ -47,6 +48,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
         super(doc, AxisTitleView.TITLE_CLASS, 'rct-axis-title-background');
 
         this.add(this._textView = new TextElement(doc));
+        this._richText = new SvgRichText();
     }
 
     //-------------------------------------------------------------------------
@@ -62,7 +64,10 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
 
     protected _doMeasure(doc: Document, model: AxisTitle, hintWidth: number, hintHeight: number, phase: number): ISize {
         this._angle = model.getRotation(model.axis);
-        this._textView.text = model.text;
+
+        // this._textView.text = model.text;
+        this._richText.setFormat(model.text);
+        this._richText.build(this._textView, hintWidth, hintHeight, null, null);
 
         const sz = toSize(this._textView.getBBounds());
 
@@ -77,6 +82,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
     protected _doLayout(isHorz: boolean): void {
         // text
         this._textView.translateY(this._margins.top + this._paddings.top);
+        // this._textView.translate(this._paddings.left, this._paddings.top);
 
         // rotation
         if (!isHorz) {

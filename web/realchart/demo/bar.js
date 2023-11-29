@@ -18,7 +18,7 @@ const config = {
 		},
 	},
 	yAxis: {
-		title: '대기질 지수(Air Quality Index, AQI)',
+		title: '대기질 지수<br><t style="fill:gray;font-size:0.9em;">(Air Quality Index, AQI)</t>',
 		// reversed: true,
 		// baseValue: -1,
         // strictMin: 11,

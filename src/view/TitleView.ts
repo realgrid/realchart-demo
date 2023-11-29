@@ -36,8 +36,6 @@ export class TitleView extends BoundableElement<Title> {
         super(doc, isSub ? TitleView.SUBTITLE_CLASS : TitleView.TITLE_CLASS, isSub ? 'rct-subtitle-background' : 'rct-title-background');
 
         this.add(this._textView = new TextElement(doc));
-        this._textView.anchor = TextAnchor.MIDDLE;// TextAnchor.START;
-
         this._richText = new SvgRichText();
     }
 
