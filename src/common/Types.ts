@@ -363,7 +363,7 @@ export interface IValueRanges {
  * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
  * startValue를 기준으로 정렬한다.
  */
-export const buildValueRanges = function (source: IValueRange[] | IValueRanges, min: number, max: number, inclusive = true, strict = true): IValueRange[] {
+export const buildValueRanges = function (source: IValueRange[] | IValueRanges, min: number, max: number, inclusive = true, strict = true, fill = false, color?: string): IValueRange[] {
     let ranges: IValueRange[];
     let prev: IValueRange;
 
@@ -432,6 +432,31 @@ export const buildValueRanges = function (source: IValueRange[] | IValueRanges, 
                 });
                 i++;
             }
+        }
+    }
+
+    // 빈 간격을 메꾼다.
+    if (fill && ranges && ranges.length > 0) {
+        let i = 0;
+        let prev = min;
+
+        while (i < ranges.length) {
+            if (ranges[i].fromValue < prev) {
+                ranges.splice(i, 0, {
+                    fromValue: prev,
+                    toValue: ranges[i].fromValue,
+                    color: color
+                });
+            }
+            prev = ranges[i].toValue;
+            i++;
+        }
+        if (ranges[i - 1].toValue < max) {
+            ranges.push({
+                fromValue: ranges[i - 1].toValue,
+                toValue: max,
+                color: color
+            });
         }
     }
     return ranges;

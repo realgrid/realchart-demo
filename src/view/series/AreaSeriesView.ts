@@ -184,12 +184,13 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             sb.line(path[path.length - 2] as number, yMin);
         }
 
-        area.unsetData('polar');
-        area.setBoolData('simple', this._simpleMode);
-        area.setPath(s = sb.end());
-        area.internalClearStyleAndClass();
-        series.color && area.setStyle('fill', series.color);
-        series.style && area.internalSetStyleOrClass(series.style);
+        s = sb.end();
+        // area.unsetData('polar');
+        // area.setBoolData('simple', this._simpleMode);
+        // area.setPath(s);
+        // area.internalClearStyleAndClass();
+        // series.color && area.setStyle('fill', series.color);
+        // series.style && area.internalSetStyleOrClass(series.style);
 
         if (series._runRanges) {
             this._rangeAreas.forEach((area, i) => {
@@ -203,6 +204,13 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
                 area.setClip(this._rangeAreaClips[i]);
                 this._clipRange(w, h, series._runRangeValue, range, this._rangeAreaClips[i], inverted);
             })
+        } else {
+            area.unsetData('polar');
+            area.setBoolData('simple', this._simpleMode);
+            area.setPath(s);
+            area.internalClearStyleAndClass();
+            series.color && area.setStyle('fill', series.color);
+            series.style && area.internalSetStyleOrClass(series.style);
         }
 
         if (lowArea) {

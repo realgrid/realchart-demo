@@ -350,12 +350,13 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             const h = this.height;
 
             this._buildLines(pts, i, sb);
+            s = sb.end(this._polar);
 
-            this._line.setPath(s = sb.end(this._polar));
-            this._line.internalClearStyleAndClass();
-            this._line.setStyle('stroke', series.color);
-            this._line.addStyleOrClass(series.style);
-            Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
+            // this._line.setPath(s);
+            // this._line.internalClearStyleAndClass();
+            // this._line.setStyle('stroke', series.color);
+            // this._line.addStyleOrClass(series.style);
+            // Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
 
             if (series._runRanges) {
                 this._rangeLines.forEach((line, i) => {
@@ -369,6 +370,12 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     line.setClip(this._rangeClips[i]);
                     this._clipRange(w, h, series._runRangeValue, range, this._rangeClips[i], inverted);
                 })
+            } else {
+                this._line.setPath(s);
+                this._line.internalClearStyleAndClass();
+                this._line.setStyle('stroke', series.color);
+                this._line.addStyleOrClass(series.style);
+                Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
             }
 
             if (needBelow) {

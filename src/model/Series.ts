@@ -873,7 +873,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     prepareViewRanges(): void {
         const rangeMinMax =  this._getRangeMinMax(this._runRangeValue = this.getViewRangeAxis());
 
-        if (this._runRanges = buildValueRanges(this.viewRanges, rangeMinMax.min, rangeMinMax.max, false, false)) {
+        if (this._runRanges = buildValueRanges(this.viewRanges, rangeMinMax.min, rangeMinMax.max, false, false, true, this.color)) {
             this._visPoints.forEach((p, i) => {
                 this._setViewRange(p, this._runRangeValue);
             });
