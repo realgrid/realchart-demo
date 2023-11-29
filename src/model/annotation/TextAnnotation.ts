@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isString } from "../../common/Common";
-import { SVGStyleOrClass, isNull } from "../../common/Types";
+import { Align, SVGStyleOrClass, isNull } from "../../common/Types";
 import { Annotation } from "../Annotation";
 
 /**
@@ -42,12 +42,18 @@ export class TextAnnotation extends Annotation {
      */
     text = 'Title';
     /**
-     * 텍스트 배경 스타일.
+     * 텍스트 배경 스타일.\
      * 경계 및 배경 색, padding 스타일을 지정할 수 있다.
      * 
      * @config
      */
     backgroundStyle: SVGStyleOrClass;
+    /**
+     * 멀티라인일 때 라인 정렬.
+     * 
+     * @config
+     */
+    textAlign = Align.CENTER;
 
     //-------------------------------------------------------------------------
     // methods
