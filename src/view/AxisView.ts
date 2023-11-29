@@ -993,6 +993,8 @@ export class AxisView extends ChartElement<Axis> {
         const nView = views.length;
         const inc = Math.max(1, step);
 
+        views.forEach(v => v.rotation = 0);
+
         for (let i = 0; i < nView - 1; i += inc) {
             let h = 0;
             for (let j = i; j < i + inc && j < nView - 1; j++) {
