@@ -1143,11 +1143,11 @@ export class BodyView extends ChartElement<Body> {
         gauges.forEach(g => {
             const v = map.get(g) || this.$_createGaugeView(doc, g);
 
-            v._setChartOptions(inverted, this._animatable);
             container.add(v);
             map.set(g, v);
             views.push(v);
             v.prepareGauge(doc, g);
+            v._setChartOptions(inverted, this._animatable);
         });
     }
 

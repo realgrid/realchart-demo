@@ -20,9 +20,9 @@ import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { CircularGauge, GaugeBase, GaugeGroup, GaugeItemPosition, GaugeScale, LinearGaugeScale, ValueGauge } from "../model/Gauge";
 import { LinearGaugeBase, LinearGaugeGroupBase, LinearGaugeLabel } from "../model/gauge/LinearGauge";
-import { ChartElement } from "./ChartElement";
+import { ChartElement, ContentView } from "./ChartElement";
 
-export abstract class GaugeView<T extends GaugeBase> extends ChartElement<T> {
+export abstract class GaugeView<T extends GaugeBase> extends ContentView<T> {
 
     //-------------------------------------------------------------------------
     // consts
@@ -35,9 +35,6 @@ export abstract class GaugeView<T extends GaugeBase> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     private _paneElement: RectElement;
     private _contentContainer: LayerElement;
-
-    protected _inverted = false;
-    protected _animatable = true;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -58,11 +55,6 @@ export abstract class GaugeView<T extends GaugeBase> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    _setChartOptions(inverted: boolean, animatable: boolean): void {
-        this._inverted = inverted;
-        this._animatable = animatable;
-    }
-
     clicked(elt: Element): void {
     }
 
@@ -664,6 +656,11 @@ export abstract class GaugeGroupView<G extends ValueGauge, T extends GaugeGroup<
     protected _doInitContents(doc: Document, container: LayerElement): void {
         container.add(this._gaugeContainer = new LayerElement(doc, 'rct-gauge-group-container'));
         this._gaugeViews = this._createPool(this._gaugeContainer);
+    }
+
+    _setChartOptions(inverted: boolean, animatable: boolean): void {
+        super._setChartOptions(inverted, animatable);
+        this._gaugeViews.forEach(v => v._setChartOptions(inverted, animatable));
     }
 
     protected _prepareGauge(doc: Document, model: T): void {    

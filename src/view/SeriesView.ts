@@ -22,7 +22,7 @@ import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { ClusterableSeries, DataPointLabel, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
-import { ChartElement } from "./ChartElement";
+import { ChartElement, ContentView } from "./ChartElement";
 import { SeriesAnimation } from "./animation/SeriesAnimation";
 
 export interface IPointView {
@@ -306,7 +306,7 @@ export type LabelLayoutInfo = {
 
 const PALETTE_LEN = 12;
 
-export abstract class SeriesView<T extends Series> extends ChartElement<T> {
+export abstract class SeriesView<T extends Series> extends ContentView<T> {
 
     //-------------------------------------------------------------------------
     // consts
@@ -325,8 +325,6 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
 
     protected _legendMarker: RcElement;
     protected _visPoints: DataPoint[];
-    protected _inverted = false;
-    protected _animatable = true;
     private _viewRate = NaN;
     _animations: Animation[] = [];
 
@@ -370,11 +368,6 @@ export abstract class SeriesView<T extends Series> extends ChartElement<T> {
     }
 
     protected _doViewRateChanged(rate: number): void {
-    }
-
-    _setChartOptions(inverted: boolean, animatable: boolean): void {
-        this._inverted = inverted;
-        this._animatable = animatable;
     }
 
     _animationStarted(ani: Animation): void {

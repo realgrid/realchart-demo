@@ -259,3 +259,20 @@ export abstract class SectionView extends GroupElement {
         this._inverted = inverted;
     }
 }
+
+export abstract class ContentView<T extends ChartItem> extends ChartElement<T> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    protected _inverted = false;
+    protected _animatable = true;
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    _setChartOptions(inverted: boolean, animatable: boolean): void {
+        this._inverted = inverted;
+        this._animatable = animatable;
+    }
+}
