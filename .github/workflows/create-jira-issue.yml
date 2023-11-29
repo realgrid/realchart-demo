@@ -20,6 +20,6 @@ jobs:
       uses: atlassian/gajira-create@v3
       with:
         project: CHART  
-        issuetype: Story 
+        issuetype: Task 
         summary: '${{ github.event.issue.title }}'
         description: '${{ github.event.issue.html_url }}'
