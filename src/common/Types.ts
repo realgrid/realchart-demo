@@ -8,6 +8,7 @@
 
 import { isArray, isObject, isString, pickNum } from "./Common";
 import { locale } from "./RcLocale";
+import { TextAnchor } from "./impl/TextElement";
 
 export const _undefined = void 0; // 불필요
 export const ONE_CHAR = '①'.charCodeAt(0);

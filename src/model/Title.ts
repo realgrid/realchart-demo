@@ -57,6 +57,7 @@ export class Title extends ChartItem {
      * 타이틀과 부제목이 표시되는 영역과 차트 본체 등 과의 간격.
      */
     sectionGap = 10;
+    textAlign = Align.CENTER;
 
     //-------------------------------------------------------------------------
     // methods
