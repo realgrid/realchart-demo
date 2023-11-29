@@ -471,7 +471,7 @@ export abstract class AxisTick extends AxisItem {
      * 
      * @config
      */
-    margin = 3;
+    gap = 3;
     /**
      * true면 소수점값애 해당하는 tick은 표시되지 않도록 한다.
      */

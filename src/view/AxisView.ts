@@ -534,7 +534,7 @@ export class AxisView extends ChartElement<Axis> {
         // tick marks 
         this._markLen = model.tick.length || 0; // tick.mark.visible이 false이어도 자리는 차지한다.
         if (this._markLen > 0) {
-            sz += model.tick.margin || 0;
+            sz += model.tick.gap || 0;
         }
         sz += this._markLen;
         if (this.$_prepareTickMarks(doc, model)) {
@@ -618,7 +618,7 @@ export class AxisView extends ChartElement<Axis> {
         }
 
         // labels
-        const len = markLen + (model.tick.margin || 0);
+        const len = markLen + (model.tick.gap || 0);
 
         if (this._labelContainer.visible) {
             if (horz) {
