@@ -15,6 +15,7 @@
  | [areaStyle](/config/config/series/bellcurve#areastyle) | `StyleProps{:js}` | area 영역에 적용할 스타일셋이나 class selector. |   
  | [baseValue](/config/config/series/bellcurve#basevalue) | `number{:js}` | 위/아래 구분의 기준이 되는 값. |   
  | [belowStyle](/config/config/series/bellcurve#belowstyle) | `SVGStyles \| string{:js}` | **[baseValue](#basevalue)**  혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일. |   
+ | [col](/config/config/series/bellcurve#col) | `number{:js}` | 분할 모드일 때 시리즈가 표시될 pane의 수직 위치. |   
  | [color](/config/config/series/bellcurve#color) | `string{:js}` | 데이터 포인트 기본 색. |   
  | [colorField](/config/config/series/bellcurve#colorfield) | `string{:js}` | undefined이면, data point의 값이 객체일 때 'color'. |   
  | [connectNullPoints](/config/config/series/bellcurve#connectnullpoints) | `boolean{:js}` | true로 지정하면 y값이 지정되지 않은 null 포인터를 무시하고 다음 포인트에 연결한다. |   
@@ -28,12 +29,16 @@
  | [nullAsBase](/config/config/series/bellcurve#nullasbase) | `boolean{:js}` | null인 y값을  **[baseValue](#basevalue)** 로 간주한다. |   
  | [onPointClick](/config/config/series/bellcurve#onpointclick) | `PointClickCallback{:js}` | 데이터 point가 클릭될 때 발생하는 이벤트 콜백. |   
  | [pointColors](/config/config/series/bellcurve#pointcolors) | `boolean \| string[]{:js}` | 데이터 포인트별 색들을 지정한다. |   
+ | [pointLabel](/config/config/series/bellcurve/pointlabel) | `DataPointLabel{:js}` | 데이터포인트 label 설정 모델. |   
  | [pointStyleCallback](/config/config/series/bellcurve#pointstylecallback) | `PointStyleCallback{:js}` | 데이터 point의 동적 스타일 콜백. |   
  | [pointsInSigma](/config/config/series/bellcurve#pointsinsigma) | `number{:js}` |  |   
+ | [row](/config/config/series/bellcurve#row) | `number{:js}` | 분할 모드일 때 시리즈가 표시될 pane의 수평 위치. |   
  | [sigmas](/config/config/series/bellcurve#sigmas) | `number{:js}` |  |   
  | [source](/config/config/series/bellcurve#source) | `string \| number{:js}` | 이 시리즈 data point들을 구성할 수 있는 데이터를 포함한 원본 시리즈. |   
  | [stepDir](/config/config/series/bellcurve#stepdir) | `LineStepDirection{:js}` |  |   
  | [style](/config/config/series/bellcurve#style) | `SVGStyles \| string{:js}` | 스타일셋 혹은 class selector. |   
+ | [tooltip](/config/config/series/bellcurve/tooltip) | `Tooltip{:js}` | 데이터포인트 툴팁 설정 모델. |   
+ | [trendline](/config/config/series/bellcurve/trendline) | `Trendline{:js}` | 추세선 설정 모델. |   
  | [viewRangeValue](/config/config/series/bellcurve#viewrangevalue) | `'z' \| 'y' \| 'x'{:js}` | ranges가 적용되는 값. |   
  | [viewRanges](/config/config/series/bellcurve#viewranges) | `IValueRanges \| IValueRange[]{:js}` | 값 범위 목록. |   
  | [visible](/config/config/series/bellcurve#visible) | `boolean{:js}` | 표시 여부. |   

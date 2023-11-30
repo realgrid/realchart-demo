@@ -3,10 +3,16 @@
  *
  */
 const config = {
+    inverted: true,
 	options: {
 		// animatable: false
 	},
-	title: '기업별 전자제품 판매 현황',
+	title: {
+        text: '기업별 전자제품 판매 현황',
+    },
+    subtitle: {
+        text: '2023.01 ~ 12',
+    },  
 	xAxis: {
 		title: '기업',
 		categories: ['A기업', 'B기업', 'C기업', 'D기업', 'E기업'],

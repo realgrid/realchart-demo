@@ -1,0 +1,52 @@
+## [tooltip](/config/config/tooltip)
+데이터포인트 툴팁 설정 모델.
+## Properties
+
+### followPointer: `boolean{:js}`[#followPointer]
+true이면 툴팁 상자가 마우스 포인터를 따라 다닌다.
+
+
+false, true를 명시적으로 지정하지 않으면 시리즈 종류에 따라 자동 설정된다.
+ex) pie 시리즈는 true, bar 시리즈는 false가 된다.  
+
+### hideDelay: `number{:js}`[#hideDelay]
+툴팁이 점진적으로 닫히는 시간을 밀리초 단위로 지정한다.  
+default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>Tooltip.HIDE_DELAY</span>
+### numberFormat: `string{:js}`[#numberFormat]
+툴팁에 표시될 숫자값의 기본 형식.\
+ **[text](#text)** 예 표시 문자열을 지정할 때 '${yValue;#,###.0}'와 같은 식으로 숫자 형식을 지정할 수 있다.  
+default: <span style={{ color: 'var(--shiki-token-string-expression)', fontWeight: 700 }}>',#.##'</span>
+### style: `SVGStyles | string{:js}`[#style]
+스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |
+### text: `string{:js}`[#text]
+툴팁에 표시할 텍스트 형식.
+'${...}' 형식으로 아래과 같은 변수로 데이터 포인트 및 시리즈 값을 지정할 수 있다.
+|변수|설명|
+|---|---|
+|series|시리즈 이름|
+|name|포인트 이름. 포인트가 속한 카테고리 이름이거나, 'x' 속성으로 지정한 값|
+|x|'x' 속성으로 지정한 값이거 카테고리 이름|
+|y|'y' 속성으로 지정한 값|
+|xValue|계산된 x값|
+|yValue|계산된 y값|  
+default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>'<b>${name}</b><br>${series}:<b></span> ${yValue}</b>'
+### timeFormat: `string{:js}`[#timeFormat]
+툴팁에 표시될 날짜(시간)값의 기본 형식.\
+ **[text](#text)** 예 표시 문자열을 지정할 때 '${x;yyyy.MM}'와 같은 식으로 날짜(시간) 형식을 지정할 수 있다.  
+default: <span style={{ color: 'var(--shiki-token-string-expression)', fontWeight: 700 }}>'yyyy-MM-dd'</span>
+### visible: `boolean{:js}`[#visible]
+표시 여부.  
+default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>true</span>

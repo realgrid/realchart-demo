@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ButtonElement } from "../common/ButtonElement";
+import { pickNum } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { ClipElement, LayerElement, RcElement } from "../common/RcControl";
 import { IRect, Rectangle } from "../common/Rectangle";
@@ -51,7 +52,6 @@ class TitleSectionView extends SectionView {
     private _wTitle = 0;
     private _hSub = 0;
     private _wSub = 0;
-    private _gap = 0;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -71,22 +71,23 @@ class TitleSectionView extends SectionView {
         let v = this.titleView;
         let width = hintWidth;
         let height = 0;
-        let gap = 0;
+        let titleGap = 0;
         let sz: ISize;
 
-        if (v.visible = title.isVisible()) {
+        // title
+        if (v.setVisible(title.isVisible())) {
             sz = v.measure(doc, title, hintWidth, hintHeight, phase);
             hTitle = this._hTitle = sz.height;
             wTitle = this._wTitle = sz.width;
         } else {
             v.setModel(title);
         }
-
-        if ((v = this.subtitleView).visible = sub.isVisible()) {
+        // subtitle
+        if ((v = this.subtitleView).setVisible(sub.isVisible())) {
             sz = v.measure(doc, sub, hintWidth, hintHeight, phase);
             hSub = this._hSub = sz.height;
             wSub = this._wSub = sz.width;
-            gap = this._gap = +chart.subtitle.titleGap || 0;
+            titleGap = +chart.subtitle.titleGap || 0;
         } else {
             v.setModel(sub);
         }
@@ -95,14 +96,18 @@ class TitleSectionView extends SectionView {
             case SubtitlePosition.LEFT:
             case SubtitlePosition.RIGHT:
                 height = Math.max(hTitle, hSub);
-                width = wTitle + gap + wSub;
+                width = wTitle + titleGap + wSub;
                 break;
             default:
-                height = hTitle + gap + hSub;
+                height = hTitle + titleGap + hSub;
                 width = Math.max(width, wTitle + wSub);
                 break;
         }
-        return { width, height: height + Math.max(+title.gap, +sub.gap) };
+
+        if (height > 0) {
+            height += this.titleView.visible ? pickNum(title.gap, 0) : pickNum(sub.gap, 0);
+        }
+        return { width, height };
     }
 
 
@@ -146,7 +151,7 @@ class TitleSectionView extends SectionView {
                 xTitle = Math.max(xTitle, xTitle + getX(title, dTitle, this._wTitle));
                 xSub = Math.max(xSub, xSub + getX(sub, dSub, this._wSub));
             };
-            const gap = sub.titleGap;
+            const gap = pickNum(sub.titleGap, 0);
             let yTitle = 0;
             let xTitle = pTitle;
             let ySub = 0;

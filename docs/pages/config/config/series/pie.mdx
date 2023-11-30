@@ -17,6 +17,9 @@ default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</
 ### clockwise: `boolean{:js}`[#clockwise]
 true면 시계 방향으로 회전한다.  
 default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>true</span>
+### col: `number{:js}`[#col]
+분할 모드일 때 시리즈가 표시될 pane의 수직 위치.  
+
 ### color: `string{:js}`[#color]
 데이터 포인트 기본 색.  
 
@@ -62,6 +65,9 @@ true로 지정하면 기본 색들로 표시된다.
 색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.
 undefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.  
 
+### [pointLabel](./pie/pointLabel)
+Series data point label options.  
+
 ### pointStyleCallback[#pointStyleCallback]
 데이터 point의 동적 스타일 콜백.  
 
@@ -70,6 +76,9 @@ undefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석�
 픽셀 크기나 plot 영역 크기에 대한 상대적 크기로 지정할 수 있다.
 '50%'로 지정하면 plot 영역의 width나 height중 작은 크기와 동일한 반지름으로 표시된다.  
 default: <span style={{ color: 'var(--shiki-token-string-expression)', fontWeight: 700 }}>'40%'</span>
+### row: `number{:js}`[#row]
+분할 모드일 때 시리즈가 표시될 pane의 수평 위치.  
+
 ### sliceDuration: `number{:js}`[#sliceDuration]
 Slice animation duration.
 밀리세컨드(ms) 단위로 지정.  
@@ -96,12 +105,18 @@ default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |
+### [tooltip](./pie/tooltip)
+Series.tooltip 모델.  
+
 ### totalAngle: `number{:js}`[#totalAngle]
 시리즈 원호 전체 각도.
 0 ~ 360 사이의 값으로 지정해야 한다.
 범위를 벗어난 값은 범위 안으로 조정된다.
 지정하지 않거나 잘못된 값이면 360으로 계산된다.  
 default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>360</span>
+### [trendline](./pie/trendline)
+시리즈 추세선.  
+
 ### viewRangeValue: `'z' | 'y' | 'x'{:js}`[#viewRangeValue]
 ranges가 적용되는 값.\
 지정하지 않으면 시리즈 종류에 띠라 자동 적용된다.

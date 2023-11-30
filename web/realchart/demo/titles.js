@@ -80,6 +80,10 @@ function setActions(container) {
         config.title.verticalAlign = _getValue(e);
         chart.load(config);
     }, 'middle');
+    createListBox(container, "title.gap", ['0', '10', '20'], function (e) {
+        config.title.gap = _getValue(e);
+        chart.load(config);
+    }, '10');
     line(container);
     createCheckBox(container, 'Subtitle', function (e) {
         config.subtitle.visible = _getChecked(e);
@@ -101,6 +105,14 @@ function setActions(container) {
         config.subtitle.verticalAlign = _getValue(e);
         chart.load(config);
     }, 'bottom');
+    createListBox(container, "subtitle.gap", ['0', '10', '20'], function (e) {
+        config.subtitle.gap = _getValue(e);
+        chart.load(config);
+    }, '10');
+    createListBox(container, "subtitle.titleGap", ['0', '2', '10'], function (e) {
+        config.subtitle.titleGap = _getValue(e);
+        chart.load(config);
+    }, '2');
 }
 
 function init() {

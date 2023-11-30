@@ -31,6 +31,11 @@ default: <span style={{ color: 'var(--shiki-token-string-expression)', fontWeigh
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |
+### gap: `number{:js}`[#gap]
+주 제목과 부 제목이 표시되는 영역과 차트 본체 등 과의 간격.\
+주 제목이 표시되면 (부 제목의 값은 무시되고)주 제목의 값을 사용하고,
+부 제목만 표시될 때는 부 제목의 값을 사용한다.  
+default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>10</span>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 

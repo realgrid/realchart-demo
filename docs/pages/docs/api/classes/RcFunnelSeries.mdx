@@ -15,6 +15,7 @@
  | [center](/config/config/series/funnel#center) | `string \| number{:js}` |  |   
  | [centerX](/config/config/series/funnel#centerx) | `string \| number{:js}` |  |   
  | [centerY](/config/config/series/funnel#centery) | `string \| number{:js}` |  |   
+ | [col](/config/config/series/funnel#col) | `number{:js}` | 분할 모드일 때 시리즈가 표시될 pane의 수직 위치. |   
  | [color](/config/config/series/funnel#color) | `string{:js}` | 데이터 포인트 기본 색. |   
  | [colorField](/config/config/series/funnel#colorfield) | `string{:js}` | undefined이면, data point의 값이 객체일 때 'color'. |   
  | [dataProp](/config/config/series/funnel#dataprop) | `string{:js}` | undefined이면 "data". |   
@@ -27,9 +28,13 @@
  | [noClip](/config/config/series/funnel#noclip) | `boolean{:js}` | true로 지정하면 body를 벗어난 data point 영역도 표시된다. |   
  | [onPointClick](/config/config/series/funnel#onpointclick) | `PointClickCallback{:js}` | 데이터 point가 클릭될 때 발생하는 이벤트 콜백. |   
  | [pointColors](/config/config/series/funnel#pointcolors) | `boolean \| string[]{:js}` | 데이터 포인트별 색들을 지정한다. |   
+ | [pointLabel](/config/config/series/funnel/pointlabel) | `DataPointLabel{:js}` | 데이터포인트 label 설정 모델. |   
  | [pointStyleCallback](/config/config/series/funnel#pointstylecallback) | `PointStyleCallback{:js}` | 데이터 point의 동적 스타일 콜백. |   
  | [reversed](/config/config/series/funnel#reversed) | `boolean{:js}` |  |   
+ | [row](/config/config/series/funnel#row) | `number{:js}` | 분할 모드일 때 시리즈가 표시될 pane의 수평 위치. |   
  | [style](/config/config/series/funnel#style) | `SVGStyles \| string{:js}` | 스타일셋 혹은 class selector. |   
+ | [tooltip](/config/config/series/funnel/tooltip) | `Tooltip{:js}` | 데이터포인트 툴팁 설정 모델. |   
+ | [trendline](/config/config/series/funnel/trendline) | `Trendline{:js}` | 추세선 설정 모델. |   
  | [viewRangeValue](/config/config/series/funnel#viewrangevalue) | `'z' \| 'y' \| 'x'{:js}` | ranges가 적용되는 값. |   
  | [viewRanges](/config/config/series/funnel#viewranges) | `IValueRanges \| IValueRange[]{:js}` | 값 범위 목록. |   
  | [visible](/config/config/series/funnel#visible) | `boolean{:js}` | 표시 여부. |   

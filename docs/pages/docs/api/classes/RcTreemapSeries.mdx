@@ -14,6 +14,7 @@
  | --- | --- | --- | 
  | [algorithm](/config/config/series/treemap#algorithm) | `TreemapAlgorithm{:js}` | 노든 분할 알고리즘. |   
  | [alternate](/config/config/series/treemap#alternate) | `boolean{:js}` | 수직, 수평으로 방향을 바꾸어 가며 배치한다. |   
+ | [col](/config/config/series/treemap#col) | `number{:js}` | 분할 모드일 때 시리즈가 표시될 pane의 수직 위치. |   
  | [color](/config/config/series/treemap#color) | `string{:js}` | 데이터 포인트 기본 색. |   
  | [colorField](/config/config/series/treemap#colorfield) | `string{:js}` | undefined이면, data point의 값이 객체일 때 'color'. |   
  | [dataProp](/config/config/series/treemap#dataprop) | `string{:js}` | undefined이면 "data". |   
@@ -22,9 +23,13 @@
  | [noClip](/config/config/series/treemap#noclip) | `boolean{:js}` | true로 지정하면 body를 벗어난 data point 영역도 표시된다. |   
  | [onPointClick](/config/config/series/treemap#onpointclick) | `PointClickCallback{:js}` | 데이터 point가 클릭될 때 발생하는 이벤트 콜백. |   
  | [pointColors](/config/config/series/treemap#pointcolors) | `boolean \| string[]{:js}` | 데이터 포인트별 색들을 지정한다. |   
+ | [pointLabel](/config/config/series/treemap/pointlabel) | `DataPointLabel{:js}` | 데이터포인트 label 설정 모델. |   
  | [pointStyleCallback](/config/config/series/treemap#pointstylecallback) | `PointStyleCallback{:js}` | 데이터 point의 동적 스타일 콜백. |   
+ | [row](/config/config/series/treemap#row) | `number{:js}` | 분할 모드일 때 시리즈가 표시될 pane의 수평 위치. |   
  | [startDir](/config/config/series/treemap#startdir) | `'vertical' \| 'horizontal'{:js}` | 백 시작 방향. |   
  | [style](/config/config/series/treemap#style) | `SVGStyles \| string{:js}` | 스타일셋 혹은 class selector. |   
+ | [tooltip](/config/config/series/treemap/tooltip) | `Tooltip{:js}` | 데이터포인트 툴팁 설정 모델. |   
+ | [trendline](/config/config/series/treemap/trendline) | `Trendline{:js}` | 추세선 설정 모델. |   
  | [viewRangeValue](/config/config/series/treemap#viewrangevalue) | `'z' \| 'y' \| 'x'{:js}` | ranges가 적용되는 값. |   
  | [viewRanges](/config/config/series/treemap#viewranges) | `IValueRanges \| IValueRange[]{:js}` | 값 범위 목록. |   
  | [visible](/config/config/series/treemap#visible) | `boolean{:js}` | 표시 여부. |   

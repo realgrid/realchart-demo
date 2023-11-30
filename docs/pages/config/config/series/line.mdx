@@ -20,6 +20,9 @@ default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |
+### col: `number{:js}`[#col]
+분할 모드일 때 시리즈가 표시될 pane의 수직 위치.  
+
 ### color: `string{:js}`[#color]
 데이터 포인트 기본 색.  
 
@@ -66,8 +69,14 @@ true로 지정하면 기본 색들로 표시된다.
 색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.
 undefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석된다.  
 
+### [pointLabel](./line/pointLabel)
+Series data point label options.  
+
 ### pointStyleCallback[#pointStyleCallback]
 데이터 point의 동적 스타일 콜백.  
+
+### row: `number{:js}`[#row]
+분할 모드일 때 시리즈가 표시될 pane의 수평 위치.  
 
 ### stepDir[#stepDir]
 
@@ -88,6 +97,12 @@ default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>Lin
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |
+### [tooltip](./line/tooltip)
+Series.tooltip 모델.  
+
+### [trendline](./line/trendline)
+시리즈 추세선.  
+
 ### viewRangeValue: `'z' | 'y' | 'x'{:js}`[#viewRangeValue]
 ranges가 적용되는 값.\
 지정하지 않으면 시리즈 종류에 띠라 자동 적용된다.
