@@ -15,7 +15,6 @@ const config = {
         categories_l: ['Alexander-Long', 'Marie-Long', 'Maximilian-Long', 'Sophia-Long', 'Lukas-Long', '마리아-Long', 'Leon-Long', 'Anna-Long', 'Tim-Long', 'Laura-Long'],
         label: {
         },
-        position: 'opposite'
     },
     yAxis: {
         title: 'Y Axis',
