@@ -453,13 +453,36 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * @config
      */
     label: string;
+    /**
+     * 데이터포인트 label 설정 모델.
+     * 
+     * @config
+     */
     readonly pointLabel: DataPointLabel;
+    /**
+     * 추세선 설정 모델.
+     * 
+     * @config
+     */
     readonly trendline: Trendline;
+    /**
+     * 데이터포인트 툴팁 설정 모델.
+     * 
+     * @config
+     */
     readonly tooltip: Tooltip;
-
+    /**
+     * 분할 모드일 때 시리즈가 표시될 pane의 수평 위치.
+     * 
+     * @config
+     */
     row: number;
+    /**
+     * 분할 모드일 때 시리즈가 표시될 pane의 수직 위치.
+     * 
+     * @config
+     */
     col: number;
-
     /**
      * 포인터가 차지하는 너비가 이 값 미만이면 표시하지 않는다.
      * // TODO: 구현할 것!

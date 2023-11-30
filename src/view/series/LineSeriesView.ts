@@ -272,6 +272,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
+        const noClip = series.noClip;
         const vr = this._getViewRate();
         const vis = series.marker.visible;
         const labels = series.pointLabel;
@@ -309,7 +310,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             const mv = this._markers.get(i);
             const lv = labelViews && labelViews.get(p, 0);
 
-            if (mv && mv.setVisible(!p.isNull && (polared || px >= 0 && px <= width && py >= 0 && py <= height))) {
+            if (mv && mv.setVisible(!p.isNull && (polared || noClip || px >= 0 && px <= width && py >= 0 && py <= height))) {
                 this._layoutMarker(mv, px, py);
 
                 if (lv) {

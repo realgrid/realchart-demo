@@ -958,7 +958,9 @@ export class BodyView extends ChartElement<Body> {
 
         // series
         this._seriesViews.forEach(v => {
-            this._owner.clipSeries(v.getClipContainer(), v.getClipContainer2(), 0, 0, w, h, v.invertable());
+            if (v.model.noClip !== true) {
+                this._owner.clipSeries(v.getClipContainer(), v.getClipContainer2(), 0, 0, w, h, v.invertable());
+            }
             v.resize(w, h);
             v.layout();
         })
