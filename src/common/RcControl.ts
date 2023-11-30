@@ -1426,6 +1426,12 @@ export class ClipElement extends RcElement {
         return this;
     }
 
+    resize(width: number, height: number, attr?: boolean): RcElement {
+        // super.resize(width, height);
+        this._rect.resize(width, height);
+        return this;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

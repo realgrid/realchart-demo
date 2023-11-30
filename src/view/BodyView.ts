@@ -63,6 +63,8 @@ import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
 import { LabelElement } from "../common/impl/LabelElement";
 import { CircleBarSeriesView } from "./series/CircleBarSeriesView";
+import { pickNum } from "../common/Common";
+import { relative } from "path";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -383,8 +385,10 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
         const m = this.model;
         const label = m.label;
         const line = this._line;
-        const labelView = this._labelView;
+        const labelView = this._labelView.setVisible(label.visible) && this._labelView;
         const rLabel = labelView.getBBounds();
+        const xOff = pickNum(label.offsetX, 0);
+        const yOff = pickNum(label.offsetY, 0);
         let x: number;
         let y: number;
 
@@ -393,61 +397,65 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
 
             line.setVLineC(p, 0, height);
 
-            switch (label.align) {
-                case Align.CENTER:
-                    x = p;
-                    break;
-                case Align.RIGHT:
-                    x = p;
-                    break;
-                default:
-                    x = p;
-                    break;
-            }
-
-            switch (label.verticalAlign) {
-                case VerticalAlign.BOTTOM:
-                    y = height;
-                    break;
-
-                case VerticalAlign.MIDDLE:
-                    y = height / 2;
-                    break;
-
-                default:
-                    y = 0;
-                    break;
+            if (labelView) {
+                switch (label.align) {
+                    case Align.CENTER:
+                        x = p - rLabel.width / 2 + xOff;
+                        break;
+                    case Align.RIGHT:
+                        x = p + xOff;
+                        break;
+                    default:
+                        x = p - rLabel.width - xOff;
+                        break;
+                }
+    
+                switch (label.verticalAlign) {
+                    case VerticalAlign.BOTTOM:
+                        y = height - rLabel.height - yOff;
+                        break;
+    
+                    case VerticalAlign.MIDDLE:
+                        y = (height - rLabel.height) / 2 - yOff;
+                        break;
+    
+                    default:
+                        y = yOff;
+                        break;
+                }
             }
         } else {
             const p = height - m.axis.getPosition(height, m.value, true);
 
             line.setHLineC(p, 0, width);
 
-            switch (label.align) {
-                case Align.CENTER:
-                    x = (width - rLabel.width) / 2;
-                    break;
-                case Align.RIGHT:
-                    x = width - rLabel.width;
-                    break;
-                default:
-                    x = 0;
-                    break;
-            }
-
-            switch (label.verticalAlign) {
-                case VerticalAlign.BOTTOM:
-                    y = p + 1;
-                    break;
-                case VerticalAlign.MIDDLE:
-                    y = p;
-                    break;
-                default:
-                    y = p - rLabel.height;
-                    break;
+            if (labelView) {
+                switch (label.align) {
+                    case Align.CENTER:
+                        x = (width - rLabel.width) / 2 - xOff;
+                        break;
+                    case Align.RIGHT:
+                        x = width - rLabel.width - xOff;
+                        break;
+                    default:
+                        x = xOff;
+                        break;
+                }
+    
+                switch (label.verticalAlign) {
+                    case VerticalAlign.BOTTOM:
+                        y = p + yOff;
+                        break;
+                    case VerticalAlign.MIDDLE:
+                        y = p - rLabel.height / 2 - yOff;
+                        break;
+                    default:
+                        y = p - rLabel.height - yOff;
+                        break;
+                }
             }
         }
-        labelView.translate(x, y);
+        labelView && labelView.translate(x, y);
     }
 }
 
@@ -476,109 +484,83 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
 
     _doLayout(width: number, height: number): void {
         const m = this.model;
+        const label = m.label;
         const box = this._box;
         const start = Math.min(m.start, m.end);
         const end = Math.max(m.start, m.end);
-        const label = this._labelView;
+        const labelView = this._labelView.setVisible(label.visible) && this._labelView;
+        const rLabel = labelView.getBBounds();
+        const xOff = pickNum(label.offsetX, 0);
+        const yOff = pickNum(label.offsetY, 0);
 
         if (this.vertical()) {
             const x1 = m.axis.getPosition(width, start, true);
             const x2 = m.axis.getPosition(width, end, true);
             let x: number;
             let y: number;
-            let anchor: TextAnchor;
 
-            if (box.setVisible(x2 >= x1)) {
-                let layout: TextLayout;
-    
-                switch (m.label.align) {
+            if (box.setVisible(x2 !== x1)) {
+                switch (label.align) {
                     case Align.CENTER:
-                        x = x + (x2 - x1) / 2;
-                        // anchor = TextAnchor.MIDDLE;
+                        x = x1 + (x2 - x1 - rLabel.width) / 2 + xOff;
                         break;
-    
                     case Align.RIGHT:
-                        x = x2;
-                        // anchor = TextAnchor.END;
+                        x = x2 - rLabel.width - xOff;
                         break;
-    
                     default:
-                        x = x1;
-                        // anchor = TextAnchor.START;
+                        x = x1 + xOff;
                         break;
                 }
     
-                switch (m.label.verticalAlign) {
+                switch (label.verticalAlign) {
                     case VerticalAlign.BOTTOM:
-                        y = height;
-                        // layout = TextLayout.BOTTOM;
+                        y = height - rLabel.height - yOff;
                         break;
-    
                     case VerticalAlign.MIDDLE:
-                        y = height / 2;
-                        // layout = TextLayout.MIDDLE;
+                        y = (height - rLabel.height) / 2 - yOff;
                         break;
-    
                     default:
-                        y = 0;
-                        // layout = TextLayout.TOP;
+                        y = yOff;
                         break;
                 }
-    
     
                 box.setBox(x1, 0, x2, height);
+                labelView && labelView.translate(Math.max(0, Math.min(width, x)), y);
             }
-            if (label.setVisible(this._box.visible)) {
-                // label.anchor = anchor;
-                // label.layout = layout;
-                label.translate(Math.max(0, Math.min(width, x)), y);
-            }
+
         } else {
             const y1 = height - m.axis.getPosition(height, start, true);
             const y2 = height - m.axis.getPosition(height, end, true);
             let x: number;
             let y: number;
-            let anchor: TextAnchor;
-            let layout: TextLayout;
 
-            switch (m.label.align) {
+            switch (label.align) {
                 case Align.CENTER:
-                    x = width / 2;
-                    // anchor = TextAnchor.MIDDLE;
+                    x = (width - rLabel.width) / 2 - xOff;
                     break;
-
                 case Align.RIGHT:
-                    x = width;
-                    // anchor = TextAnchor.END;
+                    x = width - rLabel.width - xOff;
                     break;
-
                 default:
-                    x = 0;
-                    // anchor = TextAnchor.START;
+                    x = xOff;
                     break;
             }
 
-            switch (m.label.verticalAlign) {
+            switch (label.verticalAlign) {
                 case VerticalAlign.BOTTOM:
-                    y = y1;
-                    // layout = TextLayout.BOTTOM;
+                    y = y1 - rLabel.height - yOff;
                     break;
 
                 case VerticalAlign.MIDDLE:
-                    y = y2 + (y1 - y2) / 2;
-                    // layout = TextLayout.MIDDLE;
+                    y = y2 + (y1 - y2 - rLabel.height) / 2 - yOff;
                     break;
 
                 default:
-                    y = y2;
-                    // layout = TextLayout.TOP;
+                    y = y2 + yOff;
                     break;
             }
 
-            // label.anchor = anchor;
-            // label.layout = layout;
-            label.translate(x, y);
-
+            labelView && labelView.translate(x, y);
             box.setBox(0, y2, width, y1);
         }
     }

@@ -12,7 +12,6 @@ import { Axis, AxisLabel, AxisTick, IAxisTick } from '../../../src/model/Axis';
 import { Tester } from '../Tester';
 import { Chart } from '../../../src/model/Chart';
 import { Utils } from '../../../src/common/Utils';
-import { CategoryAxisTick } from '../../../src/model/axis/CategoryAxis';
 
 const type = 'test'
 

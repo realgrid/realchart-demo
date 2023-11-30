@@ -304,6 +304,18 @@ export class AxisGuideLabel extends FormattableText {
      * @config
      */
     verticalAlign = VerticalAlign.TOP;
+    /**
+     * label과 가이드 사이의 수평 간격.
+     * 
+     * @config
+     */
+    offsetX = 3;
+    /**
+     * label과 가이드 사이의 수직 간격.
+     * 
+     * @config
+     */
+    offsetY = 3;
 
     //-------------------------------------------------------------------------
     // overriden members

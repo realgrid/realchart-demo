@@ -4,6 +4,7 @@
  * 축의 특정한 위치나 범위를 강조해서 표시하는 방법.
  */
 const config = {
+    inverted: true,
     options: {
         animatable: false
     },
@@ -23,10 +24,11 @@ const config = {
         title: 'Y Axis',
         guides: [{
             type: 'line',
+            visible: false,
             // front: true,
             value: 12,
             label: {
-                text: 'line guide<br>test',
+                text: 'line guide',
                 effect: 'background',
                 style: {
                     fill: 'white',
@@ -34,25 +36,25 @@ const config = {
                 backgroundStyle: {
                     fill: 'black',
                     padding: '2px 5px',
-                    rx: 3
+                    // rx: 3
                 }
             },
             style: {
                 stroke: 'blue',
                 strokeDasharray: '4'
             }
-        // }, {
-        //     type: 'range',
-        //     front: true,
-        //     start: 3,
-        //     end: 6,
-        //     label: {
-        //         text: 'range guide',
-        //         align: 'right',
-        //         style: {
-        //             fill: 'red'
-        //         }
-        //     }
+        }, {
+            type: 'range',
+            front: true,
+            start: 3,
+            end: 6,
+            label: {
+                text: 'range guide',
+                align: 'right',
+                style: {
+                    fill: 'red'
+                }
+            }
         }]
     },
     series: {
@@ -109,6 +111,7 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.load(config, animate);
     }, false);
+    line(container);
     createCheckBox(container, 'guide[0].front', function (e) {
         config.yAxis.guides[0].front = _getChecked(e);
         chart.load(config);
@@ -117,10 +120,39 @@ function setActions(container) {
         config.yAxis.guides[0].label.align = _getValue(e);
         chart.load(config);
     }, 'left');
+    createListBox(container, "guide[0].label.offsetX", ['0', '3', '10', '-3', '-10'], function (e) {
+        config.yAxis.guides[0].label.offsetX = _getValue(e);
+        chart.load(config);
+    }, '3');
+    createListBox(container, "guide[0].label.verticalAlign", ['top', 'middle', 'bottom'], function (e) {
+        config.yAxis.guides[0].label.verticalAlign = _getValue(e);
+        chart.load(config);
+    }, 'top');
+    createListBox(container, "guide[0].label.offsetY", ['0', '3', '10', '-3', '-10'], function (e) {
+        config.yAxis.guides[0].label.offsetY = _getValue(e);
+        chart.load(config);
+    }, '3');
+    line(container);
     createCheckBox(container, 'guide[1].front', function (e) {
         config.yAxis.guides[1].front = _getChecked(e);
         chart.load(config);
     }, true);
+    createListBox(container, "guide[1].label.align", ['left', 'center', 'right'], function (e) {
+        config.yAxis.guides[1].label.align = _getValue(e);
+        chart.load(config);
+    }, 'right');
+    createListBox(container, "guide[1].label.offsetX", ['0', '3', '10', '-3', '-10'], function (e) {
+        config.yAxis.guides[1].label.offsetX = _getValue(e);
+        chart.load(config);
+    }, '3');
+    createListBox(container, "guide[1].label.verticalAlign", ['top', 'middle', 'bottom'], function (e) {
+        config.yAxis.guides[1].label.verticalAlign = _getValue(e);
+        chart.load(config);
+    }, 'top');
+    createListBox(container, "guide[1].label.offsetY", ['0', '3', '10', '-3', '-10'], function (e) {
+        config.yAxis.guides[1].label.offsetY = _getValue(e);
+        chart.load(config);
+    }, '3');
 }
 
 function init() {
