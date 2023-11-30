@@ -1181,21 +1181,28 @@ export class ChartView extends LayerElement {
         return this._creditView.dom.contains(dom) ? this._creditView : null;
     }
 
-    clipSeries(view: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void {
-        // TODO: pane 단위로
-        if (view) {
-            if (this._model.inverted && invertable) {
+    clipSeries(view: RcElement, view2: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void {
+
+        function clip(v: RcElement): void {
+            if (inverted) {
                 // TODO: 이런 구분은 없애야 한다!. LineContainer 참조.
-                if ((view.parent as SeriesView<any>).model instanceof LineSeriesBase) {
-                    this._seriesClip.setBounds(0, h - w, h, w);
+                if ((v.parent as SeriesView<any>).model instanceof LineSeriesBase) {
+                    sc.setBounds(0, h - w, h, w);
                 } else {
-                    this._seriesClip.setBounds(0, -w, h, w);
+                    sc.setBounds(0, -w, h, w);
                 }
             } else {
-                this._seriesClip.setBounds(0, 0, w, h);
+                sc.setBounds(0, 0, w, h);
             }
-            view.setClip(this._seriesClip);
+            v.setClip(sc);
         }
+
+        const inverted = this._model.inverted && invertable;
+        const sc = this._seriesClip;
+
+        // TODO: pane 단위로
+        view && clip(view);
+        view2 && clip(view2);
     }
 
     pointerMoved(x: number, y: number, target: EventTarget): void {

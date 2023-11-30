@@ -54,6 +54,10 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    getClipContainer2(): RcElement {
+        return this._areaContainer;
+    }
+
     protected _prepareBelow(series: AreaSeries): boolean {
         let lowArea = this._lowArea;
 

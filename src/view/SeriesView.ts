@@ -349,6 +349,10 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         return this._pointContainer;
     }
 
+    getClipContainer2(): RcElement {
+        return null;
+    }
+
     setViewRate(rate: number): void {
         if ((!isNaN(rate) || !isNaN(this._viewRate)) && rate !== this._viewRate) {
             this._viewRate = rate;

@@ -701,7 +701,7 @@ class ZoomButton extends ButtonElement {
 
 export interface IPlottingOwner {
 
-    clipSeries(view: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
+    clipSeries(view: RcElement, view2: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
     showTooltip(series: Series, point: DataPoint): void;
     hideTooltip(): void;
 }
@@ -958,7 +958,7 @@ export class BodyView extends ChartElement<Body> {
 
         // series
         this._seriesViews.forEach(v => {
-            this._owner.clipSeries(v.getClipContainer(), 0, 0, w, h, v.invertable());
+            this._owner.clipSeries(v.getClipContainer(), v.getClipContainer2(), 0, 0, w, h, v.invertable());
             v.resize(w, h);
             v.layout();
         })
