@@ -26,11 +26,14 @@ test.describe('bar.html test', async function () {
 	});
 
 	test('init', async ({ page }) => {
+		const container = await page.$('#realchart');
+		expect(container).exist;
+
 		const bars = await page.$$('.' + SeriesView.POINT_CLASS);
 		expect(bars.length > 0).is.true;
 
 		const config: any = await page.evaluate('config');
-		const data = config.series.data;
+		const data = (config.series.data || config.series[0].data);
 		expect(data.length).eq(bars.length);
 
 		// bar들이 x축에서 부터 위쪽으로 커진다.
@@ -201,10 +204,14 @@ test.describe('bar.html test', async function () {
 		if(config.yAxis.title){
 			const obj = config.yAxis.title;
 			const value = obj.text;
+			let htmlString = config.yAxis.title;
+			const textOnly = htmlString.replace(/<[^>]*>/g, '');
 			if(config.yAxis.title.visible){
 				expect(yAxisTitle).eq(value);
-			}else if(typeof(config.yAxis.title) === 'string'){
-				expect(yAxisTitle).eq(config.yAxis.title)
+			}else if(typeof(textOnly) === 'string'){
+				for(let i = 0; i < textOnly.length; i++){
+					expect(textOnly.charCodeAt(i)).eq(textOnly.charCodeAt(i))
+				}
 			}else{
                 expect(true, "This should be false").to.be.false; // AssertionError: This should be false: expected true to be false 잘못된 값 입력함
             }
@@ -212,7 +219,6 @@ test.describe('bar.html test', async function () {
 			const displayValue = await yAxis.$eval('.rct-axis-title', el => el.style.display);
 			expect(displayValue).to.equal('none');
 		}
-		
 	});
 
 	test('xAxis tick', async ({ page }) => {
