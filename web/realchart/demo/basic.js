@@ -11,11 +11,23 @@
         }
     },
     xAxis: {
-        tick: true,
-        title: {
-            text: '수정구' + (Math.random() * 10000 >> 0)
+		label: {
+			startStep: 0,
+			step: 2,
+		},
+		grid: {
+            visible: true,
+            endVisible: true,
         },
-        // grid: true,
+		tick:true,
+		// type: 'category',
+		// position: 'apposite'
+		// position: 'base',
+		// baseAxis: 1,
+		title: {
+			text: '수정구' + (Math.random() * 10000 >> 0)
+		},
+		// grid: true,
         crosshair: true,
     },
     yAxis: {
