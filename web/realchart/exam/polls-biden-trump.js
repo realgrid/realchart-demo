@@ -1,9 +1,8 @@
 // https://www.nytimes.com/2023/09/05/upshot/biden-trump-black-hispanic-voters.html
-const x = [2020, 2023].map(v => `'${v}`);
+const x = [2020, 2023];
 const appendX = (data) => {
     return Object.fromEntries(Object.entries(data).map(([key, values]) => {
-        // return { [key]: [x[i], values[i]] }
-        return [key, values.map((v, i) => [x[i], v])];
+        return [key, values.map((v, i) => [x[i].toString(), v])];
     }));
 }
 
@@ -67,37 +66,7 @@ const poll1Series = makeSeries(poll1Data);
 const poll2Series = makeSeries(poll2Data);
 const poll3Series = makeSeries(poll3Data);
 
-const xAxis = {
-    type: 'category',
-    line: false,
-    tick: true,
-    padding: 0.4,
-    // marginNear: 10,
-    // marginFar: 10,
-};
-
-const yAxis = {
-    // strictMin: 50,
-    // strictMax: 100,
-    // step: 10,
-    tick: {
-        gap: 10,
-    },
-    label: {
-        suffix: '%'
-    },
-    grid: {
-        style: {
-            stroke: '#fff'
-        }
-    }
-}
-
-const paneBody = {
-    style: {
-        fill: '#EFEEE5',
-    },
-};
+console.debug(poll1Series)
 
 const subtitles = [
     'is too old',
@@ -108,25 +77,62 @@ const subtitles = [
 const cols = 3;
 const config = {
     type: 'line',
-    title: false,
-    // title: 'Democratic share of major party vote among nonwhite voters',
+    templates: {
+        xAxis: {
+            type: 'category',
+            line: false,
+            tick: true,
+            label: true,
+            padding: 0.2,
+        },
+        yAxis: {
+            // step: 10,
+            tick: {
+                gap: 10,
+            },
+            label: {
+                suffix: '%'
+            },
+            grid: {
+                style: {
+                    stroke: '#fff'
+                }
+            }
+        },
+        paneBody: {
+            body: {
+                style: {
+                    fill: '#EFEEE5',
+                },
+                annotations: {
+                    offsetY: -30,
+                    align: 'left',
+                    style: {
+                        fill: '#000',
+                        fontSize: '10pt',
+                        fontWeight: 'bold'
+                    }
+                }
+            }
+        }
+    },
+    title: {
+        text: 'Democratic share of major party vote among nonwhite voters',
+        align: 'left',
+    },
+    subtitle: {
+        text: '<t></t>',
+        gap: 30,
+    },
     split: {
         visible: true,
-        rows: 1,
         cols,
-        panes: Array(cols).fill(paneBody).map((m, i) => { 
+        panes: Array(cols).fill().map((_, i) => { 
             return { 
+                template: 'paneBody',
                 body: {
-                    ...m,
                     annotations: {
-                        text: subtitles[i],
-                        offsetY: -30,
-                        align: 'left',
-                        style: {
-                            fill: '#000',
-                            fontSize: '10pt',
-                            fontWeight: 'bold'
-                        }
+                        text: subtitles[i]
                     }
                 },
                 col: i, 
@@ -140,11 +146,16 @@ const config = {
         credits: false,
     },
     legend: false,
-    xAxis: Array(cols).fill(xAxis).map((ax, i) => { return { ...ax, col: i } }),
-    yAxis,
+    xAxis: Array(cols).fill().map((_, i) => { 
+        return { 
+            template: 'xAxis', 
+            col: i } 
+        }),
+    yAxis: {
+        template: 'yAxis'
+    },
     body: {
         style: {
-
             backgroundColor: '#EFEEE5',
         }
     },
