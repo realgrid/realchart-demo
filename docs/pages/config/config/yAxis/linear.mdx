@@ -13,8 +13,7 @@ RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
  **[strictMax](#strictmax)** 가 설정되면 무시되고  `value` 로 적용된다.  
 
 
-`default: AxisFit.DEFAULT`  
-
+default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>AxisFit.DEFAULT</span>
 ### [grid](./linear/grid)
 visible 기본값이 undefined이다.
 visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.  
@@ -37,12 +36,10 @@ col, row를 지정해서 특정 body에만 표시되도록 할 수 있다.
 
 ### marginFar: `number{:js}`[#marginFar]
 차트 경계나 뒤쪽 축 사이의 여백 크기.  
-`default: 0`  
-
+default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</span>
 ### marginNear: `number{:js}`[#marginNear]
 plot 영역이나 먼저 표시되는 축 사이의 여백 크기.  
-`default: 0`  
-
+default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</span>
 ### maxPadding: `number{:js}`[#maxPadding]
 마지막 tick 뒤쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
 이 값을 지정하지 않으면  **[padding](#padding)** 에 지정된 값을 따른다.
@@ -77,12 +74,10 @@ data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격�
 
 ### nullable: `boolean{:js}`[#nullable]
 data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.  
-`default: true`  
-
+default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>true</span>
 ### padding: `number{:js}`[#padding]
 **[minPadding](#minpadding)** ,  **[maxPadding](#maxpadding)** 이 설정되지 않았을 때 적용되는 기본값이다.  
-`default: 0.04`  
-
+default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0.04</span>
 ### position: `'base'|'normal'|'opposite'{:js}`[#position]
 표시 위치.
 기본적으로 상대 축의 원점 쪽에 표시된다.  
@@ -90,12 +85,10 @@ data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.
 - `'normal'` X축은 아래쪽에 수평으로, Y축은 왼쪽에 수직으로 표시된다.       [inverted](/config/config#inverted) 이면 Y축이 아래쪽에 수평으로, X축은 왼쪽에 수직으로 표시된다.
 - `'opposite'` X축은 위쪽에 수평으로, Y축은 오른쪽에 수직으로 표시된다.       [inverted](/config/config#inverted) 이면 Y축이 위쪽에 수평으로, X축은 오른쪽에 수직으로 표시된다.
 
-`default: 'normal'`  
-
+default: <span style={{ color: 'var(--shiki-token-string-expression)', fontWeight: 700 }}>'normal'</span>
 ### reversed: `boolean{:js}`[#reversed]
 true면 반대 방향으로 point 위치들이 지정된다.  
-`default: false`  
-
+default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>false</span>
 ### [scrollBar](./linear/scrollBar)
 축 스크롤바 모델.\
 축 스크롤 상태를 표시하고, 사용자가 스크롤 범위나 위치를 변경할 수 있다.  
@@ -105,8 +98,7 @@ true면 반대 방향으로 point 위치들이 지정된다.
  **[strictMin](#strictmin)** 이 설정되면  `value` 로 적용된다.  
 
 
-`default: AxisFit.DEFAULT`  
-
+default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>AxisFit.DEFAULT</span>
 ### strictMax: `number{:js}`[#strictMax]
 무조건 적용되는 최대값.
 즉, 이 값보다 큰 값을 갖는 시리즈 포인트들은 표시되지 않는다.
@@ -140,4 +132,4 @@ minPadding도 적용되지 않는다.
 
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
-`default: true`  
+default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>true</span>

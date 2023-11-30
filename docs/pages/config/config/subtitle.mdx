@@ -8,16 +8,14 @@
 - `'left'` 
 - `'right'` 
 
-`default: 'center'`  
-
+default: <span style={{ color: 'var(--shiki-token-string-expression)', fontWeight: 700 }}>'center'</span>
 ### alignBase: `'chart'|'parent'|'plot'{:js}`[#alignBase]
 정렬 기준.  
 - `'chart'` 
 - `'parent'` 상위 모델이 존재하는 경우 상위 모델 영역 기준.\  상위가 없으면 기본값(대부분 'plot')과 동일.  ex) subtitle인 경우 title 기준.
 - `'plot'` 
 
-`default: 'plot'`  
-
+default: <span style={{ color: 'var(--shiki-token-string-expression)', fontWeight: 700 }}>'plot'</span>
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
 배경 스타일 셋.  
 - `SVGStyles{:js}` 
@@ -33,10 +31,6 @@
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |
-### gap: `number{:js}`[#gap]
-제목과 사이의 간격.  
-`default: 2`  
-
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 
@@ -54,8 +48,10 @@
 | strokeWidth | `string{:js}` | true |
 ### text: `string{:js}`[#text]
 부제목 텍스트  
-`default: ''`  
-
+default: <span style={{ color: 'var(--shiki-token-string-expression)', fontWeight: 700 }}>''</span>
+### titleGap: `number{:js}`[#titleGap]
+주 제목과 사이의 간격.  
+default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>2</span>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
-`default: true`  
+default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>true</span>

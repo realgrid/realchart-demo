@@ -10,8 +10,7 @@ legend 정렬 기준.
 - `'parent'` 상위 모델이 존재하는 경우 상위 모델 영역 기준.\  상위가 없으면 기본값(대부분 'plot')과 동일.  ex) subtitle인 경우 title 기준.
 - `'plot'` 
 
-`default: 'plot'`  
-
+default: <span style={{ color: 'var(--shiki-token-string-expression)', fontWeight: 700 }}>'plot'</span>
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
 배경 스타일 셋.
 배경 색상 및 경계선 스타일을 지정할 수 있다.  
@@ -31,20 +30,17 @@ legend 정렬 기준.
 ### gap: `number{:js}`[#gap]
 **[location](#location)** 이 'plot'이 아닐 때,
 legend view와 나머지 chart 영역 사이의 gap.  
-`default: 6`  
-
+default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>6</span>
 ### itemGap: `number{:js}`[#itemGap]
 legend 아이템들 사이의 간격.  
-`default: 8`  
-
+default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>8</span>
 ### itemsAlign: `'center'|'end'|'start'{:js}`[#itemsAlign]
 한 라인의 item들이 배치되는 위치.  
 - `'center'` 수평 혹은 수직의 중앙으로 몰아서 배치한다.
 - `'end'` 수평일 때 오른쪽, 수직일 때는 아래쪽으로 몰아서 배치한다.
 - `'start'` 수평일 때 왼쪽, 수직일 때는 위쪽으로 몰아서 배치한다.
 
-`default: 'center'`  
-
+default: <span style={{ color: 'var(--shiki-token-string-expression)', fontWeight: 700 }}>'center'</span>
 ### itemsPerLine: `number{:js}`[#itemsPerLine]
 한 줄 당 표시할 최대 legend 항목 수.  
 
@@ -54,12 +50,10 @@ item 배치 방향.
 - `'horizontal'` item들을 수평으로 배치
 - `'vertical'` item들을 수직으로 배치
 
-`default: 'auto'`  
-
+default: <span style={{ color: 'var(--shiki-token-string-expression)', fontWeight: 700 }}>'auto'</span>
 ### lineGap: `number{:js}`[#lineGap]
 라인 사이의 간격.  
-`default: 4`  
-
+default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>4</span>
 ### location: `'bottom'|'left'|'plot'|'right'|'top'{:js}`[#location]
 표시 위치.  
 - `'bottom'` 차트 본체 아래 표시한다.
@@ -68,16 +62,13 @@ item 배치 방향.
 - `'right'` 차트 본체 오른쪽에 표시한다.
 - `'top'` 차트 타이틀 아래 표시한다.
 
-`default: 'bottom'`  
-
+default: <span style={{ color: 'var(--shiki-token-string-expression)', fontWeight: 700 }}>'bottom'</span>
 ### markerGap: `number{:js}`[#markerGap]
 marker와 text사이의 간격.  
-`default: 4`  
-
+default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>4</span>
 ### markerSize: `number{:js}`[#markerSize]
 marker 크기.  
-`default: 10` 픽셀. 
-
+default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>10</span> 픽셀.
 ### maxHeight: `string | number{:js}`[#maxHeight]
 수직  **[배치](#layout)** 일 때,
 최대 높이를 픽셀 단위의 크기 혹은 plot 높이에 대한 상대 길이를 '%'로 지정한다.  
@@ -105,4 +96,4 @@ marker 크기.
 표시 여부.  
 명시적으로 true로 설정되거나, 명시적 false가 아니면서 표시 항목 수가 1보다 클 때 표시된다..\
 <FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  
-`default: undefined`  
+default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>undefined</span>
