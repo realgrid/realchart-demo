@@ -853,7 +853,10 @@ class MDGenerater {
         }
       }
 
-      lines += `\`default: ${value}\` ${content.join(' ')} \n`;
+      const spcValues = ['null', 'undefined', 'true', 'false', 'NaN'];
+      const color = spcValues.includes(value) ? 'var(--shiki-token-keyword)' : 
+        /'.*'/.test(value) ? 'var(--shiki-token-string-expression)' : 'var(--shiki-color-text)'
+      lines += `default: <span style={{ color: '${color}', fontWeight: 700 }}>${value}</span> ${content.join(' ')} \n`.trim();
     }
 
     return lines;
