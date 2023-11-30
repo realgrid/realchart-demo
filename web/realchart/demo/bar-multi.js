@@ -4,13 +4,13 @@
  * Bar Series 기본 예제.
  */
 const config = {
-	title: '세종특별자치시 1인당 지방세 부담액',
+	title: '관세청 마스크 수출통계 (2021-2023)',
 	options: {
 		// animatable: false
 	},
 	xAxis: {
 		title: '년도',
-		categories: ['2017', '2018', '2019', '2020', '2021', '2022',],
+		categories: ['2021년', '2022년', '2023년'],
 		grid: true,
 		
 		label: {
@@ -26,19 +26,26 @@ const config = {
         // strictMax: 161
 	},
 	series: [{
-		name: '주민1인당 부담금액',
+		name: '보건용 마스크',
 		// baseValue: null,
 		pointLabel: true,
 		// pointWidth: '100%',
 		// colorByPoint: true,
-		data: [237466, 213497, 195827, 223488, 235850, 224338]
+		data: [84861, 111149, 12534]
 	}, {
-		name: '인구수',
+		name: '비말차단용 마스크',
 		// baseValue: null,
 		pointLabel: true,
 		// pointWidth: '100%',
 		// colorByPoint: true,
-		data: [28010, 31412, 34057, 35583, 37189, 38359]
+		data: [13626, 9400, 2233]
+	}, {
+		name: '기타 안면마스크',
+		// baseValue: null,
+		pointLabel: true,
+		// pointWidth: '100%',
+		// colorByPoint: true,
+		data: [73639, 33923, 12487]
 	}],
 };
 
