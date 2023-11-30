@@ -25,7 +25,7 @@
 		// position: 'base',
 		// baseAxis: 1,
 		title: {
-			text: '수정구' + (Math.random() * 10000 >> 0)
+			text: '수정구'
 		},
 		// grid: true,
         crosshair: true,
@@ -44,7 +44,6 @@
 		},
 		onPointClick: args => {
 		    //alert(JSON.stringify(args));
-			console.log(args)
 			chart.series.updateData([["신흥1동", 100], ["신흥2동", 200]], true);
 		},
         data: [

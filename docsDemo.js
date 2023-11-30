@@ -61,8 +61,55 @@ function createMetaJson() {
         if (typeof value !== 'object') continue;
         for (const [key2, value2] of Object.entries(value)) {
             await page.goto(baseUrl + category + value2 + '.html');
-            const config = await page.evaluate('config');
-			writeFileSync('./docs/templates/' + value2 + '.js', `export const config = ${util.inspect(config, { depth: null, maxArrayLength: null })}
+
+            // callback 함수를 문자열로 변환하지 않을 경우 undefined로 반환됨
+            const {config, callbacks} = await page.evaluate(() => {
+                let callbacks = [];
+                function functionToStirng(obj) {
+                    for (const key in obj) {
+                        if (typeof obj[key] === 'object' && obj[key] !== null) {
+                            obj[key] = functionToStirng(obj[key]);
+                        } else {
+                            if (typeof obj[key] === 'function') {
+                                obj[key] = obj[key].toString()
+                                .replace(/\/\/.*|\/\*[\s\S]*?\*\//g, '') // 주석제거
+                                .replace(/[\r\n\t]/g, '') // 이스케이프 문자 제거
+                                .replace(/\s{2,}/g, ' '); // 공백 최소화
+                                callbacks.push(obj[key])
+                            } 
+                        }
+                    }
+                    return obj;
+                }
+
+                return { config: functionToStirng(config), callbacks};
+            });
+
+            // 문자로 변환한 callback 함수 복원
+            const restoreFunctions = (obj) => {
+                for (const key in obj) {
+                    if (typeof obj[key] === 'string' && (obj[key].startsWith('function') || obj[key].includes('=>'))) {
+                        console.log(new Function(`return ${obj[key]}`));
+                        obj[key] = new Function(`return ${obj[key]}`);
+                    } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+                        obj[key] = restoreFunctions(obj[key]);
+                    }
+                }
+
+                return obj;
+            };
+
+            let configString = util.inspect(config, { showHidden: false, depth: null, maxArrayLength: null});
+            
+            callbacks.forEach((callback) => {
+                const index = configString.indexOf(callback);
+                if (index > 0) {
+                    let temp = configString.slice(0, index - 1) + configString.slice(index, index + callback.length) +  configString.slice(index + callback.length + 1);
+                    configString = temp;
+                };
+            })
+
+			writeFileSync('./docs/templates/' + value2 + '.js', `export const config = ${configString}
 `);
             ++count;
             console.log(count, `./docs/templates/${value2}.js`);

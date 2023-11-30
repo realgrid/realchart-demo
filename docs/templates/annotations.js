@@ -23,16 +23,15 @@ export const config = {
         offsetY: 40,
         rotation: -20,
         text: 'Annotation Sample',
-        style: { padding: '3px 5px', fill: 'white' },
-        backgroundStyle: { fill: '#33f', rx: 5, fillOpacity: 0.7 }
+        style: { fill: 'white' },
+        backgroundStyle: { padding: '3px 5px', fill: '#33f', rx: 5, fillOpacity: 0.7 }
       },
       {
-        type: 'image',
+        imageUrl: '../assets/images/daum.png',
         align: 'right',
         offsetX: 50,
         offsetY: 0,
-        width: 150,
-        imageUrl: '/assets/images/daum.png'
+        width: 150
       }
     ]
   }

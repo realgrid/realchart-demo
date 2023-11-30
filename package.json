@@ -33,7 +33,8 @@
     "dev:www": "npm run dldoc && npx live-server web/realchart",
     "dev": "concurrently \"npm run build-w\" \"npm run dbw\" \"node app\"",
     "fiddle": "node exportDemo",
-    "docs:demo": "node docsDemo"
+    "docs:demo": "node docsDemo",
+    "update:s2": "node snapshotBackup && yarn test:s2"
   },
   "devDependencies": {
     "@babel/generator": "^7.22.15",

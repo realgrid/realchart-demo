@@ -1,5 +1,5 @@
 import { chromium, test, expect } from '@playwright/test';
-import { readFileSync, readdirSync } from 'fs';
+import { existsSync, readFileSync, readdirSync } from 'fs';
 
 function readFile(file) {
     return readFileSync(file, "utf-8");

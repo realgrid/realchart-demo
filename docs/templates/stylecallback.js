@@ -13,7 +13,7 @@ export const config = {
     {
       name: 'column1',
       pointLabel: { visible: true, position: 'inside', effect: 'outline' },
-      pointStyleCallback: undefined,
+      pointStyleCallback: args => { if (args.index == 0) { return { fill: 'lightgray' } } else if(args.yValue === args.yMax) { return { fill: 'green' } } },
       data: [
         11, 22, 15,  9,
         19, 13, 27, 15
@@ -30,7 +30,7 @@ export const config = {
       ],
       style: { strokeDasharray: '5' },
       marker: { style: { stroke: 'white', strokeDasharray: 'none' } },
-      pointStyleCallback: undefined
+      pointStyleCallback: args => { if (args.yValue === args.yMax) { return { fill: 'red', strokeWidth: '5px', stroke: 'red' } } return { fill: 'green' } }
     }
   ]
 }

@@ -45,7 +45,7 @@ export const config = {
       centerY: '40%',
       radius: '30%',
       legendByPoint: true,
-      pointStyleCallback: undefined,
+      pointStyleCallback: ({index}) => {return {fill: `url(#pattern-${index})`,stroke: '#FFF',strokeWidth: '4px'}},
       data: [
         1, 1, 1, 1, 1,
         1, 1, 1, 1, 1,

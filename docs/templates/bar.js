@@ -12,7 +12,9 @@ export const config = {
     grid: true,
     label: { step: 3 }
   },
-  yAxis: { title: '대기질 지수(Air Quality Index, AQI)' },
+  yAxis: {
+    title: '대기질 지수<br><t style="fill:gray;font-size:0.9em;">(Air Quality Index, AQI)</t>'
+  },
   series: [
     {
       name: '대기질',
@@ -22,14 +24,7 @@ export const config = {
         133, 114, 113,
         123
       ]
-    },
-    {
-      name: '대기질2',
-      pointLabel: true,
-      data: [
-        55, 38, 22, 33,
-        14, 13, 23
-      ]
     }
-  ]
+  ],
+  ChartTextEffect: { autoContrast: false }
 }

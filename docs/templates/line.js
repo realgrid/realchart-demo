@@ -2,7 +2,7 @@ export const config = {
   options: { animatable: false },
   title: 'Line Series 01',
   xAxis: { type: 'category' },
-  yAxis: { strictMax: 15 },
+  yAxis: {},
   series: {
     type: 'line',
     marker: true,

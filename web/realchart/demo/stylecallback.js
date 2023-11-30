@@ -33,8 +33,12 @@ const config = {
         },
         // pointWidth: '100%',
         pointStyleCallback: args => {
-            if (args.index == 0) return { fill: 'lightgray' }
-            else if (args.yValue === args.yMax) return { fill: 'green' }
+            if (args.index == 0) {
+                return { fill: 'lightgray' }
+            }
+            else if(args.yValue === args.yMax) {
+                return { fill: 'green' }
+            }
         },
         data: [11, 22, 15, 9, 19, 13, 27, 15]
     }, {
@@ -53,7 +57,9 @@ const config = {
             }
         },
         pointStyleCallback: args => {
-            if (args.yValue === args.yMax) return { fill: 'red', strokeWidth: '5px', stroke: 'red' }    
+            if (args.yValue === args.yMax) {
+                return { fill: 'red', strokeWidth: '5px', stroke: 'red' }
+            }
             return { fill: 'green' }
         }
     }]

@@ -1,5 +1,6 @@
 export const config = {
-  options: {},
+  inverted: true,
+  options: { animatable: false },
   title: 'Axis Guides',
   legend: true,
   xAxis: { tick: true, title: 'X Axis', grid: true },
@@ -9,6 +10,7 @@ export const config = {
     guides: [
       {
         type: 'line',
+        visible: false,
         value: 12,
         label: {
           text: 'line guide',
