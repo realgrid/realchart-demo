@@ -30,7 +30,7 @@ test.describe('bar.html test', () => {
 		expect(bars.length > 0).is.true;
 
 		const config: any = await page.evaluate('config');
-		const data = config.series.data;
+		const data = (config.series.data || config.series[0].data);
 		expect(data.length).eq(bars.length);
 
 		// bar들이 x축에서 부터 위쪽으로 커진다.
@@ -85,7 +85,7 @@ test.describe('bar.html test', () => {
 		const rGrids = await PWTester.getGridBounds(page);
 		const bars = await page.$$('.' + SeriesView.POINT_CLASS);
 		const config: any = await page.evaluate('config');
-		const data = config.series.data;
+		const data = (config.series.data || config.series[0].data);
 
 		// 가로가 더 길어야 한다.
 		bars.forEach(async (bar) => {
@@ -107,7 +107,7 @@ test.describe('bar.html test', () => {
 
 			const rPrev = await PWTester.getBounds(prev);
 			const rBar = await PWTester.getBounds(bar);
-
+			
 			if (data[i] >= data[i - 1]) {
 				expect(rBar.width).gte(rPrev.width);
 			} else {
