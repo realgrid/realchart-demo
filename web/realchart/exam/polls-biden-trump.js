@@ -1,4 +1,4 @@
-// https://www.nytimes.com/2023/09/05/upshot/biden-trump-black-hispanic-voters.html
+// https://www.nytimes.com/2023/11/05/upshot/polls-biden-trump-2024.html
 const x = [2020, 2023];
 const appendX = (data) => {
     return Object.fromEntries(Object.entries(data).map(([key, values]) => {
@@ -6,52 +6,28 @@ const appendX = (data) => {
     }));
 }
 
-const poll1Data = appendX({
+const data = [{
     Biden: [34, 71],
     Trump: [18, 39],
-});
-
-const poll2Data = appendX({
+}, {
     Biden: [45, 62],
     Trump: [48, 44],
-});
-
-const poll3Data = appendX({
+}, {
     Biden: [39, 51],
     Trump: [58, 55],
-});
+}];
+const pollData = data.map(m => appendX(m));
 
 const primary = 'var(--color-1)';
+const secondary = '#bbb';
 const lineSeries = (m, i) => {
     const [key, values] = m;
     return {
+        template: 'series',
         name: key,
-        marker: {
-            shape: 'circle',
-            radius: 0,
-            style: {
-                stroke: '#fff',
-            }
-        },
-        pointLabel: {
-            text: key,
-            visibleCallback: ({vindex}) => {
-                // even i, vi 0
-                // odd i, vi last.
-                const even = i % 2 == 0;
-                return even ? vindex == 0 : vindex == (values.length - 1);
-            },
-            position: 'foot',
-            style: {
-                fontSize: '10pt',
-                fontWeight: 500,
-            }
-        },
         data: values,
         style: {
-            fill: primary,
-            stroke: primary,
-            strokeWidth: 2,
+            stroke: i % 2 == 0 ? primary : secondary
         }
     };
 }
@@ -62,11 +38,7 @@ const makeSeries = (data) => {
     })
 }
 
-const poll1Series = makeSeries(poll1Data);
-const poll2Series = makeSeries(poll2Data);
-const poll3Series = makeSeries(poll3Data);
-
-console.debug(poll1Series)
+const pollSeries = pollData.map(m => makeSeries(m))
 
 const subtitles = [
     'is too old',
@@ -74,50 +46,80 @@ const subtitles = [
     'does not have the temperament',
 ]
 
+const yMax = 80;
+const chartHeight = 264;
 const cols = 3;
+
+const avg = (arr) => arr.reduce((prev, next) => prev + next) / arr.length;
+const annoLegendOffset = (data, name) => {
+    const avgset = {
+        Biden: avg(data.Biden),
+        Trump: avg(data.Trump)
+    }
+    const isLower = Math.max(avgset.Biden, avgset.Trump) > avgset[name];
+    // if gt than append more
+    const padding = 50;
+    return (yMax - avgset[name]) / yMax * chartHeight + (isLower ? padding : 0);
+}
+
 const config = {
     type: 'line',
     templates: {
         xAxis: {
-            type: 'category',
-            line: false,
-            tick: true,
+            line: {
+                visible: true,
+                style: {
+                    strokeWidth: 3
+                }
+            },
+            tick: false,
             label: true,
-            padding: 0.2,
+            padding: -0.1,
+            style: {
+                fill: '#fff'
+            }
         },
         yAxis: {
-            // step: 10,
-            tick: {
-                gap: 10,
-            },
-            label: {
-                suffix: '%'
-            },
-            grid: {
-                style: {
-                    stroke: '#fff'
-                }
-            }
+            grid: false,
+            label: false,
+            maxValue: yMax,
         },
         paneBody: {
             body: {
                 style: {
-                    fill: '#EFEEE5',
+                    fill: '#F7F5F5',
                 },
-                annotations: {
-                    offsetY: -30,
-                    align: 'left',
-                    style: {
-                        fill: '#000',
-                        fontSize: '10pt',
-                        fontWeight: 'bold'
-                    }
-                }
+            }
+        },
+        annoSubtitle: {
+            offsetY: -30,
+            align: 'left',
+            style: {
+                fill: '#000',
+                fontSize: '10pt',
+                fontWeight: 'bold'
+            }
+        },
+        annoLegend: {
+            offsetX: 100,
+            style: {
+                fontSize: '11pt',
+                fontWeight: 'bold'
+            }
+        },
+        series: {
+            marker: false,
+            pointLabel: {
+                visible: true,
+                posotion: 'foot',
+            },
+            style: {
+                strokeWidth: 4,
             }
         }
     },
     title: {
-        text: 'Democratic share of major party vote among nonwhite voters',
+        text: 'Share Who Think Each Candidate ...',
         align: 'left',
     },
     subtitle: {
@@ -131,9 +133,24 @@ const config = {
             return { 
                 template: 'paneBody',
                 body: {
-                    annotations: {
+                    annotations: [{
+                        template: 'annoSubtitle',
                         text: subtitles[i]
-                    }
+                    }, {
+                        template: 'annoLegend',
+                        offsetY: annoLegendOffset(data[i], 'Biden'),
+                        text: 'Biden',
+                        style: {
+                            fill: primary,
+                        }
+                    }, {
+                        template: 'annoLegend',
+                        offsetY: annoLegendOffset(data[i], 'Trump'),
+                        text: 'Trump',
+                        style: {
+                            fill: '#aaa',
+                        }
+                    }]
                 },
                 col: i, 
             };
@@ -160,17 +177,12 @@ const config = {
             backgroundColor: '#EFEEE5',
         }
     },
-    series: [{
-            xAxis: 0,
-            children: poll1Series,
-        }, {
-            xAxis: 1,
-            children: poll2Series,
-        }, {
-            xAxis: 2,
-            children: poll3Series
-        }, 
-    ],
+    series: pollSeries.map((s, i) => {
+        return {
+            xAxis: i,
+            children: s
+        }
+    })
 }
 
 let animate = false;
