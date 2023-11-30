@@ -25,7 +25,7 @@ width 속성에 상대 너비(1이 기본 너비)를 지정한다.
 
 ### categoryPadding: `number{:js}`[#categoryPadding]
 각 카테고리의 양 끝에 추가되는 여백의 카테고리에 너비에 대한 상대적 크기.  
-default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0.1</span>
+<DefaultValue value="0.1" contents=""></DefaultValue>
 ### categorySeries: `string{:js}`[#categorySeries]
 Category 목록을 수집하는 시리즈.\
 지정하지 않으면 모든 시리즈에서 카테고리를 수집한다.  
@@ -55,10 +55,10 @@ col, row를 지정해서 특정 body에만 표시되도록 할 수 있다.
 
 ### marginFar: `number{:js}`[#marginFar]
 차트 경계나 뒤쪽 축 사이의 여백 크기.  
-default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</span>
+<DefaultValue value="0" contents=""></DefaultValue>
 ### marginNear: `number{:js}`[#marginNear]
 plot 영역이나 먼저 표시되는 축 사이의 여백 크기.  
-default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</span>
+<DefaultValue value="0" contents=""></DefaultValue>
 ### maxPadding: `number{:js}`[#maxPadding]
 축의 끝 카테고리 위치 이 후에 여백으로 추가되는 크기.\
 카테고리 기본 너비(1)에 대한 상대적 크기로 지정한다.
@@ -81,7 +81,7 @@ default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</
 축의 양 끝 카테고리 위치 전후에 여백으로 추가되는 크기.\
 각각 시작/끝 카테고리에 대한 상대적 크기로 지정한다.
  **[minPadding](#minpadding)** ,  **[maxPadding](#maxpadding)** 으로 별도 지정할 수 있다.  
-default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</span>
+<DefaultValue value="0" contents=""></DefaultValue>
 ### position: `'base'|'normal'|'opposite'{:js}`[#position]
 표시 위치.
 기본적으로 상대 축의 원점 쪽에 표시된다.  
@@ -89,10 +89,10 @@ default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</
 - `'normal'` X축은 아래쪽에 수평으로, Y축은 왼쪽에 수직으로 표시된다.       [inverted](/config/config#inverted) 이면 Y축이 아래쪽에 수평으로, X축은 왼쪽에 수직으로 표시된다.
 - `'opposite'` X축은 위쪽에 수평으로, Y축은 오른쪽에 수직으로 표시된다.       [inverted](/config/config#inverted) 이면 Y축이 위쪽에 수평으로, X축은 오른쪽에 수직으로 표시된다.
 
-default: <span style={{ color: 'var(--shiki-token-string-expression)', fontWeight: 700 }}>'normal'</span>
+<DefaultValue value="'normal'" contents=""></DefaultValue>
 ### reversed: `boolean{:js}`[#reversed]
 true면 반대 방향으로 point 위치들이 지정된다.  
-default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>false</span>
+<DefaultValue value="false" contents=""></DefaultValue>
 ### [scrollBar](./category/scrollBar)
 축 스크롤바 모델.\
 축 스크롤 상태를 표시하고, 사용자가 스크롤 범위나 위치를 변경할 수 있다.  
@@ -101,7 +101,7 @@ default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>
 polar 축일 때 시작 위치 간격.\
 첫번째 카테고리 너비(각도)에 대한 상대값으로 0~1 사이의 값을 지정한다.
 ex) 0.5로 지정하면 bar 시리즈의 첫 째 bar가 12시 위치에 표시된다.  
-default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</span>
+<DefaultValue value="0" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 
@@ -125,4 +125,4 @@ default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</
 
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
-default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>true</span>
+<DefaultValue value="true" contents=""></DefaultValue>

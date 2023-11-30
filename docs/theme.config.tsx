@@ -5,10 +5,12 @@ import { MainFooter } from "@/components/MainFooter";
 import { brand, company, footerData } from "@/lib/const";
 import { theme } from "./lib/theme";
 import { FiddleLink } from "./components/FiddleLink";
+import { DefaultValue } from "./components/DefaultValue";
 
 const config: DocsThemeConfig = {
   components: {
     FiddleLink,
+    DefaultValue
   },
   useNextSeoProps() {
     return {

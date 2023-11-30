@@ -5,9 +5,9 @@
 ### autoSlice: `boolean{:js}`[#autoSlice]
 클릭한 데이터 포인트를 slice 시킨다.
 기존 slice 됐던 포인트는 원복된다.  
-default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>true</span>
+<DefaultValue value="true" contents=""></DefaultValue>
 ### borderRadius: `number{:js}`[#borderRadius]
-default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</span>
+<DefaultValue value="0" contents=""></DefaultValue>
 ### center: `string | number{:js}`[#center]
 
 ### centerX: `string | number{:js}`[#centerX]
@@ -16,7 +16,7 @@ default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</
 
 ### clockwise: `boolean{:js}`[#clockwise]
 true면 시계 방향으로 회전한다.  
-default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>true</span>
+<DefaultValue value="true" contents=""></DefaultValue>
 ### col: `number{:js}`[#col]
 분할 모드일 때 시리즈가 표시될 pane의 수직 위치.  
 
@@ -30,7 +30,7 @@ undefined이면, data point의 값이 객체일 때 'color'.
 undefined이면 "data".  
 
 ### groupSize: `number{:js}`[#groupSize]
-default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>1</span>
+<DefaultValue value="1" contents=""></DefaultValue>
 ### innerRadius: `string | number{:js}`[#innerRadius]
 0보다 큰 값을 지정해서 도넛 형태로 표시할 수 있다.
 시리즈 원호의 반지름에 대한 상대적 크기나 픽셀 수로 지정할 수 있다.
@@ -43,17 +43,17 @@ default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>1</
 이 속성이 지정되지 않으면  **[name](#name)** 이 사용된다.  
 
 ### labelDistance: `number{:js}`[#labelDistance]
-default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>25</span>
+<DefaultValue value="25" contents=""></DefaultValue>
 ### legendByPoint: `boolean{:js}`[#legendByPoint]
 데이터 포인트별 legend 항목을 표시한다.  
-default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>false</span>
+<DefaultValue value="false" contents=""></DefaultValue>
 ### name: `string{:js}`[#name]
 시리즈 이름.\
 시리즈 생성시 지정되고 변경할 수 없다.  
 
 ### noClip: `boolean{:js}`[#noClip]
 true로 지정하면 body를 벗어난 data point 영역도 표시된다.  
-default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>false</span>
+<DefaultValue value="false" contents=""></DefaultValue>
 ### onPointClick[#onPointClick]
 데이터 point가 클릭될 때 발생하는 이벤트 콜백.
 명시적 true를 리턴하면 기본 동작이 진행되지 않는다.  
@@ -75,21 +75,21 @@ Series data point label options.
 시리즈 원호의 반지름.
 픽셀 크기나 plot 영역 크기에 대한 상대적 크기로 지정할 수 있다.
 '50%'로 지정하면 plot 영역의 width나 height중 작은 크기와 동일한 반지름으로 표시된다.  
-default: <span style={{ color: 'var(--shiki-token-string-expression)', fontWeight: 700 }}>'40%'</span>
+<DefaultValue value="'40%'" contents=""></DefaultValue>
 ### row: `number{:js}`[#row]
 분할 모드일 때 시리즈가 표시될 pane의 수평 위치.  
 
 ### sliceDuration: `number{:js}`[#sliceDuration]
 Slice animation duration.
 밀리세컨드(ms) 단위로 지정.  
-default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>300</span>
+<DefaultValue value="300" contents=""></DefaultValue>
 ### sliceOffset: `string | number{:js}`[#sliceOffset]
-default: <span style={{ color: 'var(--shiki-token-string-expression)', fontWeight: 700 }}>'7%'</span>
+<DefaultValue value="'7%'" contents=""></DefaultValue>
 ### startAngle: `number{:js}`[#startAngle]
 시리즈 원호 시작 각도.
 지정하지 않거나 잘못된 값이면 0으로 계산된다.
 0은 시계의 12시 위치다.  
-default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</span>
+<DefaultValue value="0" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 
@@ -113,7 +113,7 @@ Series.tooltip 모델.
 0 ~ 360 사이의 값으로 지정해야 한다.
 범위를 벗어난 값은 범위 안으로 조정된다.
 지정하지 않거나 잘못된 값이면 360으로 계산된다.  
-default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>360</span>
+<DefaultValue value="360" contents=""></DefaultValue>
 ### [trendline](./pie/trendline)
 시리즈 추세선.  
 
@@ -130,10 +130,10 @@ ranges가 적용되는 값.\
 
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
-default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>true</span>
+<DefaultValue value="true" contents=""></DefaultValue>
 ### visibleInLegend: `boolean{:js}`[#visibleInLegend]
 명시적 false로 지정하면 legend에 표시하지 않는다.  
-default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>true</span>
+<DefaultValue value="true" contents=""></DefaultValue>
 ### xAxis: `string | number{:js}`[#xAxis]
 
 ### xField: `string | number{:js}`[#xField]
@@ -156,4 +156,4 @@ time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'w', 'd', 'h', 'n', '
 undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'.  
 
 ### zOrder: `number{:js}`[#zOrder]
-default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</span>
+<DefaultValue value="0" contents=""></DefaultValue>

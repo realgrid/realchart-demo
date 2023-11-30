@@ -42,7 +42,7 @@ export class Tooltip extends ChartItem {
     html: string;
     /**
      * 툴팁에 표시할 텍스트 형식.
-     * '${...}' 형식으로 아래과 같은 변수로 데이터 포인트 및 시리즈 값을 지정할 수 있다.
+     * `${...}` 형식으로 아래과 같은 변수로 데이터 포인트 및 시리즈 값을 지정할 수 있다.
      * |변수|설명|
      * |---|---|
      * |series|시리즈 이름|
@@ -77,14 +77,14 @@ export class Tooltip extends ChartItem {
     followPointer: boolean;
     /**
      * 툴팁에 표시될 숫자값의 기본 형식.\
-     * {@link text}예 표시 문자열을 지정할 때 '${yValue;#,###.0}'와 같은 식으로 숫자 형식을 지정할 수 있다.
+     * {@link text}예 표시 문자열을 지정할 때 `${yValue;#,###.0}`와 같은 식으로 숫자 형식을 지정할 수 있다.
      * 
      * @config
      */
     numberFormat = ',#.##';
     /**
      * 툴팁에 표시될 날짜(시간)값의 기본 형식.\
-     * {@link text}예 표시 문자열을 지정할 때 '${x;yyyy.MM}'와 같은 식으로 날짜(시간) 형식을 지정할 수 있다.
+     * {@link text}예 표시 문자열을 지정할 때 `${x;yyyy.MM}`와 같은 식으로 날짜(시간) 형식을 지정할 수 있다.
      * 
      * @config
      */

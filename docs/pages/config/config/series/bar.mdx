@@ -5,7 +5,7 @@
 ### baseValue: `number{:js}`[#baseValue]
 상/하 값 구분의 기준이 되는 값.\
 숫자가 아닌 값으로 지정하면 0으로 간주한다.  
-default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</span>
+<DefaultValue value="0" contents=""></DefaultValue>
 ### belowStyle: `SVGStyles | string{:js}`[#belowStyle]
 **[baseValue](#basevalue)**  혹은 y축의 baseValue보다 작은 쪽의 point들에 적용되는 스타일.  
 - `SVGStyles{:js}` 
@@ -29,7 +29,7 @@ default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</
 
 ### colorByPoint: `boolean{:js}`[#colorByPoint]
 true로 지정하면 포인트 bar 별로 색을 다르게 표시한다.  
-default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>false</span>
+<DefaultValue value="false" contents=""></DefaultValue>
 ### colorField: `string{:js}`[#colorField]
 undefined이면, data point의 값이 객체일 때 'color'.  
 
@@ -47,10 +47,10 @@ undefined이면 "data".
 
 ### noClip: `boolean{:js}`[#noClip]
 true로 지정하면 body를 벗어난 data point 영역도 표시된다.  
-default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>false</span>
+<DefaultValue value="false" contents=""></DefaultValue>
 ### nullAsBase: `boolean{:js}`[#nullAsBase]
 null인 y값을  **[baseValue](#basevalue)** 로 간주한다.  
-default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>false</span>
+<DefaultValue value="false" contents=""></DefaultValue>
 ### onPointClick[#onPointClick]
 데이터 point가 클릭될 때 발생하는 이벤트 콜백.
 명시적 true를 리턴하면 기본 동작이 진행되지 않는다.  
@@ -71,7 +71,7 @@ Series data point label options.
 
 point가 차지할 원래 크기에 대한 상대 값으로서,
 0 ~ 1 사이의 비율 값으로 지정한다.  
-default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>undefined</span> 한 카테고리에 cluster 가능한 시리즈가 하나만 표시되면 0.25, group에 포함된 경우 0.1, 여러 시리즈와 같이 표시되면 0.2.
+<DefaultValue value="undefined" contents="한 카테고리에 cluster 가능한 시리즈가 하나만 표시되면 0.25, group에 포함된 경우 0.1, 여러 시리즈와 같이 표시되면 0.2."></DefaultValue>
 ### pointStyleCallback[#pointStyleCallback]
 데이터 point의 동적 스타일 콜백.  
 
@@ -82,7 +82,7 @@ default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>
 포인트 표시 영역 내에서 이 시리즈의 포인트가 차지하는 영역의 상대 크기.
 예를 들어 이 시리즈의 속성값이 1이고 다른 시리즈의 값이 2이면 다른 시리즈의 data point가 두 배 두껍게 표시된다.
 또, 그룹에 포함되고 그룹의 layout이  `default`  
-default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>1</span>
+<DefaultValue value="1" contents=""></DefaultValue>
 ### row: `number{:js}`[#row]
 분할 모드일 때 시리즈가 표시될 pane의 수평 위치.  
 
@@ -120,10 +120,10 @@ ranges가 적용되는 값.\
 
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
-default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>true</span>
+<DefaultValue value="true" contents=""></DefaultValue>
 ### visibleInLegend: `boolean{:js}`[#visibleInLegend]
 명시적 false로 지정하면 legend에 표시하지 않는다.  
-default: <span style={{ color: 'var(--shiki-token-keyword)', fontWeight: 700 }}>true</span>
+<DefaultValue value="true" contents=""></DefaultValue>
 ### xAxis: `string | number{:js}`[#xAxis]
 
 ### xField: `string | number{:js}`[#xField]
@@ -146,4 +146,4 @@ time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'w', 'd', 'h', 'n', '
 undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'.  
 
 ### zOrder: `number{:js}`[#zOrder]
-default: <span style={{ color: 'var(--shiki-color-text)', fontWeight: 700 }}>0</span>
+<DefaultValue value="0" contents=""></DefaultValue>
