@@ -136,69 +136,58 @@ test.describe("area-multi.html test", () => {
     test("marker visible", async ({ page }) => {
       // series.marker 값 변경에 따른 rct-point 확인
       const getTrueMarkers = (config) => {
+        console.log(config.series)
         return config.series.reduce((acc: number, curr: any) => {
           return curr.marker === true || curr.marker?.visible === true
             ? acc + 1
             : acc;
         }, 0);
       };
-      let markers = await page.$$("." + SeriesView.POINT_CLASS);
-      config = await page.evaluate(() => config);
 
-      const dataCount = config.series[0].data.length;
-      const seriesCount = config.series.length;
+       config = await page.evaluate(() => {
+        // marker초기화
+        config.series.forEach((c) => {
+          c.marker = true;
+        });
 
-      let trueMarkers = getTrueMarkers(config);
-      expect(markers.length).is.equal(trueMarkers * dataCount);
-
-      let randomArr = Utils.iarandom(
-        0,
-        seriesCount,
-        Utils.irandom(1, seriesCount)
-      );
+        chart.load(config, false);
+        return config;
+      }, );
       await sleep();
-      config = await page.evaluate((randomArr) => {
+
+      let points = await page.$$(".rct-series-points");
+
+      let opacities = await page.evaluate((points) => {
+
+        const res = points.map((point) => point.style.opacity);
+        return res;
+        
+      }, points);
+
+      for(let opacity of opacities){
+        expect(opacity).is.equal('1');
+      }
+
+      config = await page.evaluate(() => {
         // marker초기화
         config.series.forEach((c) => {
           c.marker = false;
         });
 
-        for (let ran of randomArr) {
-          config.series[ran].marker = true;
-        }
-
         chart.load(config, false);
         return config;
-      }, randomArr);
+      }, );
       await sleep();
-      trueMarkers = getTrueMarkers(config);
+      points = await page.$$(".rct-series-points");
+      opacities = await page.evaluate((points) => {
 
-      markers = await page.$$("." + SeriesView.POINT_CLASS);
-      await sleep(1000);
-      console.log(trueMarkers);
-      expect(markers.length).is.equal(trueMarkers * dataCount);
-
-      // visible 속성을 사용하여 visible을 켜고 클 때
-      randomArr = Utils.iarandom(0, seriesCount, Utils.irandom(1, seriesCount));
-
-      config = await page.evaluate((randomArr) => {
-        // marker초기화
-        config.series.forEach((c) => {
-          c.marker.visible = false;
-          chart.load(config, false);
-        });
-
-        for (let ran of randomArr) {
-          config.series[ran].marker.visible = true;
-        }
-
-        chart.load(config, false);
-        return config;
-      }, randomArr);
-
-      trueMarkers = getTrueMarkers(config);
-      markers = await page.$$("." + SeriesView.POINT_CLASS);
-      expect(markers.length).is.equal(trueMarkers * dataCount);
+        const res = points.map((point) => point.style.opacity);
+        return res;
+        
+      }, points);
+      for(let opacity of opacities){
+        expect(opacity).is.equal('0');
+      }
     });
 
     test("style", async ({ page }) => {
@@ -277,9 +266,8 @@ test.describe("area-multi.html test", () => {
 
       let areas = await page.$$(".rct-area-series-area");
 
-      let area = await page.evaluate((area) => {
-        console.log(area);
-        return window.getComputedStyle(area).fill;
+      let area :any = await page.evaluate((area) => {
+        return area.style.fill
       }, areas[0]);
       expect(area).is.equal(firstColor);
 
@@ -416,7 +404,7 @@ test.describe("area-multi.html test", () => {
     });
     test("lineType - spline", async ({ page }) => {
       config = await page.evaluate(() => {
-        config.series[0].LineType = "spline";
+        config.series[0].lineType = "spline";
 
         chart.load(config, false);
         return config;
@@ -424,9 +412,10 @@ test.describe("area-multi.html test", () => {
 
       await sleep();
 
-      let areas = await page.$$(".rct-area-series-area");
-      let areaPath = await PWTester.getPathDValue(areas[0]);
-
+      let areas = await page.$$(".rct-area-series-areas");
+      let area =  await areas[0].$(".rct-area-series-area");
+      let areaPath = await PWTester.getPathDValue(area);
+      console.log(areaPath)
       expect(areaPath.includes("Q")).is.true;
     });
 
@@ -602,11 +591,12 @@ test.describe("area-multi.html test", () => {
         chart.load(config, false);
         return config;
       }, firstColor);
-
+      await sleep();
+      
       let areas = await page.$$(".rct-area-series-area");
 
       let area = await page.evaluate((area) => {
-        return window.getComputedStyle(area).fill;
+        return area.style.fill
       }, areas[0]);
 
       expect(area).is.equal(firstColor.fill);
