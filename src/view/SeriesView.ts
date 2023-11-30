@@ -788,21 +788,22 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 // 아래에서 위로 올라가는 animation을 위해 기준 지점을 전달한다.
                 this._layoutPointView(pv, i, x, yOrg - yBase - yGroup, wPoint, hPoint);
 
+                // [주의] tooltip이 p.xPos, p.yPos를 사용한다. label이 미표시여도 계산한다.
+                if (inverted) {
+                    // y = xLen - xAxis.getPosition(xLen, p.xValue) - wUnit / 2; // 위에서 아래로 내려갈 때
+                    y = xLen - xAxis.getPosition(xLen, p.xValue) + wUnit / 2;
+                    x = yOrg;
+                    p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
+                    // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+                    if (based) {
+                        p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr; // stack/fill일 때 org와 다르다.
+                    } else {
+                        p.xPos = x += yAxis.getPosition(yLen, p.yGroup * vr);
+                    }
+                }
+
                 // label
                 if (info && (info.labelView = labelViews.get(p, 0))) {
-                    if (inverted) {
-                        // y = xLen - xAxis.getPosition(xLen, p.xValue) - wUnit / 2; // 위에서 아래로 내려갈 때
-                        y = xLen - xAxis.getPosition(xLen, p.xValue) + wUnit / 2;
-                        x = yOrg;
-                        p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
-                        // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
-                        if (based) {
-                            p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr; // stack/fill일 때 org와 다르다.
-                        } else {
-                            p.xPos = x += yAxis.getPosition(yLen, p.yGroup * vr);
-                        }
-                    }
-
                     info.pointView = pv;
                     info.x = x;
                     info.y = y;
@@ -856,16 +857,18 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
 
                 this._layoutPointView(pv, i, x, y, wPoint, hPoint);
 
+                // [주의] tooltip이 p.xPos, p.yPos를 사용한다. label이 미표시여도 계산한다.
+                if (inverted) {
+                    // y = xLen - xAxis.getPosition(xLen, p.xVAlue) - wUnit / 2; // 위에서 아래로 내려갈 때
+                    y = xLen - xAxis.getPosition(xLen, p.xValue) + wUnit / 2;
+                    x = org;
+                    // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
+                    p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
+                    p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
+                }
+
                 // labels
                 if (labelViews) {
-                    if (inverted) {
-                        // y = xLen - xAxis.getPosition(xLen, p.xVAlue) - wUnit / 2; // 위에서 아래로 내려갈 때
-                        y = xLen - xAxis.getPosition(xLen, p.xValue) + wUnit / 2;
-                        x = org;
-                        // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
-                        p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
-                        p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
-                    }
                     info.pointView = pv;
                     info.hPoint = hPoint;
                     info.x = x;
