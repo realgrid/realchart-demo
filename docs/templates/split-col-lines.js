@@ -1,7 +1,7 @@
 export const config = {
   type: 'line',
-  options: {},
-  title: 'Column Split Lines2',
+  options: { animatable: false },
+  title: 'Column Split Lines',
   split: { visible: true, cols: 3 },
   xAxis: [
     {
@@ -35,39 +35,28 @@ export const config = {
     }
   ],
   yAxis: {
-    title: 'good',
-    guides: [{
+    guides: [
+      {
         type: 'line',
-        // front: true,
+        col: 0,
         value: 12,
         label: {
-            text: 'line guide',
-            effect: 'background',
-            style: {
-                fill: 'white',
-            },
-            backgroundStyle: {
-                fill: 'black',
-                padding: '2px 5px'
-            }
+          text: 'line guide',
+          effect: 'background',
+          style: { fill: 'white' },
+          backgroundStyle: { fill: 'black', padding: '2px 5px' }
         },
-        style: {
-            stroke: 'blue',
-            strokeDasharray: '4'
-        }
-    }, {
+        style: { stroke: 'blue', strokeDasharray: '4' }
+      },
+      {
         type: 'range',
+        col: [ 0, 2 ],
         front: true,
         start: 3,
         end: 6,
-        label: {
-            text: 'range guide',
-            align: 'right',
-            style: {
-                fill: 'red'
-            }
-        }
-    }]
+        label: { text: 'range guide', align: 'right', style: { fill: 'red' } }
+      }
+    ]
   },
   series: [
     {
@@ -80,6 +69,7 @@ export const config = {
       ]
     },
     {
+      type: 'bar',
       xAxis: 1,
       lineType: 'spline',
       pointLabel: true,

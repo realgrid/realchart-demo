@@ -224,15 +224,23 @@ export class TreemapSeries extends Series {
     //-------------------------------------------------------------------------
     idField = 'id';
     groupField = 'group';
+    /**
+     * 노든 분할 알고리즘.
+     * 
+     * @config
+     */
     algorithm = TreemapAlgorithm.SQUARIFY;
     /**
      * 수직, 수평으로 방향을 바꾸어 가며 배치한다.
+     * 
+     * @config
      */
     alternate = true;
-    /**
-     * 시작 방향.
-     * <br>
+    /**백
+     * 시작 방향.\
      * 지정하지 않으면 ploting 영역의 너비/높이 비율 기준으로 정해진다.
+     * 
+     * @config
      */
     startDir: 'vertical' | 'horizontal';
     /**
@@ -243,6 +251,13 @@ export class TreemapSeries extends Series {
      * group mode일 때 group 레벨별 표시 방식 지정.
      */
     groupLevels = new TreeGroupLevelCollection(this);
+    /**
+     * 툴팁 표시 기준 level.\
+     * 값을 지정하지 않거나 범위를 벗어나면 마우스 아래 표시되는 node의 툴팁을 표시한다.
+     * 
+     * // TODO:
+     */
+    tooltipLevel: number;
 
     //-------------------------------------------------------------------------
     // methods

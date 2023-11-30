@@ -9,9 +9,10 @@
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
-import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
+import { ClipElement, LayerElement, PathElement, RcElement } from "../../common/RcControl";
 import { IValueRange, PI_2 } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
+import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { LineType } from "../../model/ChartTypes";
 import { DataPoint, IPointPos } from "../../model/DataPoint";
@@ -36,7 +37,7 @@ export class LineMarkerView extends PathElement implements IPointView {
     }
 }
 
-export class LineContainer extends RcElement {
+export class LineContainer extends LayerElement {
 
     //-------------------------------------------------------------------------
     // fields
@@ -49,11 +50,11 @@ export class LineContainer extends RcElement {
     invert(v: boolean, height: number): boolean {
         if (v !== this.inverted) {
             if (this.inverted = v) {
-                this.dom.style.transform = `translate(${height}px, ${height}px) rotate(-90deg) scale(1, -1)`;
-                // this.dom.style.transform = `translate(0px, ${height}px) rotate(90deg) scale(-1, 1)`;
-                // this.dom.style.transform = `rotate(-90deg) scale(-1, 1)`;
+                // TODO: 아래 PointContaier와 다르게 하고 있다. 그래서 ChartView.clipSeries도 다르게 해야 한다. 통일할 것!
+                this.setAttr('transform', `translate(${height},${height}) rotate(-90) scale(1,-1)`);
+                //this.setAttr('transform', `translate(0,${height}) rotate(90) scale(-1,1)`);
             } else {
-                this.dom.style.transform = ``;
+                this.setAttr('transform', '');
             }
         }
         return this.inverted;
@@ -92,7 +93,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     // overriden members
     //-------------------------------------------------------------------------
     getClipContainer(): RcElement {
-        return null;
+        return this._lineContainer;
     }
 
     protected _getPointPool(): ElementPool<RcElement> {
@@ -238,7 +239,9 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const marker = series.marker;
         const sts = [marker.style, null];
 
-        if (this._pointContainer.visible = (marker.visible && !series._simpleMode)) {
+        this._pointContainer.setStyle('opacity', marker.visible ? '1' : '0');
+
+        if (this._pointContainer.setVisible(!series._simpleMode)) {
             const mpp = this._markersPerPoint();
             const count = points.length;
     
@@ -269,14 +272,15 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
-        const polar = this._polar = (series.chart as Chart).body.getPolar(series);
         const vr = this._getViewRate();
         const vis = series.marker.visible;
         const labels = series.pointLabel;
         const labelOff = labels.offset;
         const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
+        const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj;
+        const polar = this._polar = (series.chart as Chart).body.getPolar(xAxis);
+        const polared = !!polar;
         const yLen = inverted ? width : height;
         const xLen = polar ? polar.rd * PI_2 : inverted ? height : width;
         const yOrg = height;
@@ -305,7 +309,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             const mv = this._markers.get(i);
             const lv = labelViews && labelViews.get(p, 0);
 
-            if (mv && mv.setVisible(!p.isNull)) {
+            if (mv && mv.setVisible(!p.isNull && (polared || px >= 0 && px <= width && py >= 0 && py <= height))) {
                 this._layoutMarker(mv, px, py);
 
                 if (lv) {
@@ -317,7 +321,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     lv.translate(px, py - r.height - labelOff - (vis ? mv._radius : 0));
                 }
             } else if (lv) {
-                lv.visible = false;
+                lv.setVisible(false);
             }
         }
     }
@@ -340,18 +344,19 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
         this._linePts = pts;
 
-        if (i < pts.length - 1) {
+        if (i < pts.length) {
             const inverted = this._inverted;
             const w = this.width;
             const h = this.height;
 
             this._buildLines(pts, i, sb);
+            s = sb.end(this._polar);
 
-            this._line.setPath(s = sb.end(this._polar));
-            this._line.internalClearStyleAndClass();
-            this._line.setStyle('stroke', series.color);
-            this._line.addStyleOrClass(series.style);
-            Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
+            // this._line.setPath(s);
+            // this._line.internalClearStyleAndClass();
+            // this._line.setStyle('stroke', series.color);
+            // this._line.addStyleOrClass(series.style);
+            // Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
 
             if (series._runRanges) {
                 this._rangeLines.forEach((line, i) => {
@@ -365,6 +370,12 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     line.setClip(this._rangeClips[i]);
                     this._clipRange(w, h, series._runRangeValue, range, this._rangeClips[i], inverted);
                 })
+            } else {
+                this._line.setPath(s);
+                this._line.internalClearStyleAndClass();
+                this._line.setStyle('stroke', series.color);
+                this._line.addStyleOrClass(series.style);
+                Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
             }
 
             if (needBelow) {

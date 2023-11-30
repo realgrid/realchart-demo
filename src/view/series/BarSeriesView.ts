@@ -10,7 +10,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { PI_2 } from "../../common/Types";
 import { SectorElement } from "../../common/impl/SectorElement";
-import { TextAnchor } from "../../common/impl/TextElement";
+import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { DataPoint } from "../../model/DataPoint";
 import { BarSeries, BarSeriesBase } from "../../model/series/BarSeries";
@@ -104,9 +104,9 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
         const body = (series.chart as Chart).body;
-        const xAxis = series._xAxisObj;
+        const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj;
-        const polar = body.getPolar(series);
+        const polar = body.getPolar(xAxis);
         const labelInfo: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
             labelPos: series.getLabelPosition(labels.position),
             labelOff: series.getLabelOff(labels.offset)

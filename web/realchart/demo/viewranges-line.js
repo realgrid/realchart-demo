@@ -3,7 +3,10 @@ const x_ranges = [{
     color: 'blue'
 }, {
     toValue: 6,
-    color: '#dddd00'
+    color: '#555',
+	style: {
+		strokeDasharray: 4,
+	}
 }, {
     color: 'red'
 }];

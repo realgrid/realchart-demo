@@ -10,6 +10,7 @@ import { pickNum } from "../common/Common";
 import { PathBuilder } from "../common/PathBuilder";
 import { PathElement, RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
+import { SvgRichText } from "../common/RichText";
 import { ISize, Size } from "../common/Size";
 import { DEG_RAD } from "../common/Types";
 import { LabelElement } from "../common/impl/LabelElement";
@@ -37,6 +38,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
     // fields
     //-------------------------------------------------------------------------
     private _textView: TextElement;
+    private _richText: SvgRichText;
     _angle: number;
 
     //-------------------------------------------------------------------------
@@ -46,6 +48,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
         super(doc, AxisTitleView.TITLE_CLASS, 'rct-axis-title-background');
 
         this.add(this._textView = new TextElement(doc));
+        this._richText = new SvgRichText();
     }
 
     //-------------------------------------------------------------------------
@@ -61,7 +64,10 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
 
     protected _doMeasure(doc: Document, model: AxisTitle, hintWidth: number, hintHeight: number, phase: number): ISize {
         this._angle = model.getRotation(model.axis);
-        this._textView.text = model.text;
+
+        // this._textView.text = model.text;
+        this._richText.setFormat(model.text);
+        this._richText.build(this._textView, hintWidth, hintHeight, null, null);
 
         const sz = toSize(this._textView.getBBounds());
 
@@ -76,6 +82,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
     protected _doLayout(isHorz: boolean): void {
         // text
         this._textView.translateY(this._margins.top + this._paddings.top);
+        // this._textView.translate(this._paddings.left, this._paddings.top);
 
         // rotation
         if (!isHorz) {
@@ -144,11 +151,27 @@ class AxisLabelView extends LabelElement {
     col = 0;
     row = 0;
     tickWidth = 0;
-    // bbox: IRect;
+    private _richText: SvgRichText;
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    setLabel(model: AxisLabel, label: string, maxWidth: number, maxHeight: number): void {
+        if (label) {
+            if (!this._richText) {
+                this._richText = new SvgRichText(label);
+                
+            } else if (this._richText._format !== label) {
+                this._richText.setFormat(label);
+            }
+            this._richText.build(this._text, maxWidth, maxHeight, model, model._getParam);
+            this._outline && this._richText.build(this._outline, maxWidth, maxHeight, model, model._getParam);
+        } else if (this._richText) {
+            this._richText = null;
+            this._text.text = '';
+        }
+    }
+
     // rotatedWidth(): number {
     //     const d = this.rotation * DEG_RAD;
     //     const r = this.getBBounds();
@@ -323,6 +346,8 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
         }
     }
 }
+
+const label_reg = /\${label}.*?/g;
 
 /**
  * @internal
@@ -509,7 +534,7 @@ export class AxisView extends ChartElement<Axis> {
         // tick marks 
         this._markLen = model.tick.length || 0; // tick.mark.visible이 false이어도 자리는 차지한다.
         if (this._markLen > 0) {
-            sz += model.tick.margin || 0;
+            sz += model.tick.gap || 0;
         }
         sz += this._markLen;
         if (this.$_prepareTickMarks(doc, model)) {
@@ -593,7 +618,7 @@ export class AxisView extends ChartElement<Axis> {
         }
 
         // labels
-        const len = markLen + (model.tick.margin || 0);
+        const len = markLen + (model.tick.gap || 0);
 
         if (this._labelContainer.visible) {
             if (horz) {
@@ -755,20 +780,27 @@ export class AxisView extends ChartElement<Axis> {
     }
 
     protected _prepareLabel(view: AxisLabelView, tick: IAxisTick, model: AxisLabel): void {
-        const richFormat = model.getLabelText(tick);
+        const text = model.getLabelText(tick);
+        const label = tick.label;
 
         view.value = tick.value;
 
         view.internalClearStyleAndClass();
         view.internalSetStyleOrClass(model.getLabelStyle(tick));
 
-        if (richFormat) {
-            model.prepareRich(richFormat);
-            model._paramTick = tick;
-            model.buildSvg(view._text, view._outline, NaN, NaN, model, model._getParam);
+        if (text) {
+            const m = label && text.match(label_reg);
+            
+            if (m) {
+                view.setLabel(model, text.replace(label_reg, label), 1000, 1000);
+            } else {
+                model.prepareRich(text);
+                model._paramTick = tick;
+                model.buildSvg(view._text, view._outline, NaN, NaN, model, model._getParam);
+            }
         } else {
-            view.setText(tick.label);
-            // view.text = ticks[i].label;
+            // view.setText(tick.label);
+            view.setLabel(model, label, 1000, 1000);
         }
     }
 
@@ -961,6 +993,8 @@ export class AxisView extends ChartElement<Axis> {
         const nView = views.length;
         const inc = Math.max(1, step);
 
+        views.forEach(v => v.rotation = 0);
+
         for (let i = 0; i < nView - 1; i += inc) {
             let h = 0;
             for (let j = i; j < i + inc && j < nView - 1; j++) {
@@ -999,26 +1033,32 @@ export class AxisView extends ChartElement<Axis> {
         return sz;
     }
 
-    private $_layoutLabelsHorz(views: AxisLabelView[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, len: number): void {
+    private $_layoutLabelsHorz(views: AxisLabelView[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, gap: number): void {
         const pts = this._labelRowPts;
 
         views.forEach(v => {
             if (v.visible) {
+
                 const rot = v.rotation;
                 const a = rot * DEG_RAD;
                 const r = v.getBBounds();
-                const ascent = Math.floor(v._text.getAscent(r.height));
+                const ascent = Math.floor(r.height);//v._text.getAscent(r.height));
                 let x = ticks[v.index].pos;
-                let y = opp ? (h - len - r.height - pts[v.row]) : (len + pts[v.row]);
+                let y = opp ? (h - gap - r.height - pts[v.row]) : (gap + pts[v.row]);
     
                 if (rot < -15 && rot >= -90) {
                     v.anchor = TextAnchor.END;
-                    x += -Math.sin(a) * ascent / 2 - 1;
-                    y += Math.cos(a) * ascent - ascent;
+                    // console.log(-Math.sin(a) * ascent / 2 - 1, Math.cos(a) * ascent - ascent)
+                    //x += -Math.sin(a) * ascent / 2 - 1;
+                    // y += Math.cos(a) * ascent - ascent;
+                    x += Math.sin(a) * ascent / 2;// - 1;
+                    //y += -Math.cos(a) * ascent + ascent / 2;
                 } else if (rot > 15 && rot <= 90) {
                     v.anchor = TextAnchor.START;
-                    x -= Math.sin(a) * ascent / 2 - 1;
-                    y += Math.cos(a) * ascent - ascent;
+                    // x -= Math.sin(a) * ascent / 2 - 1;
+                    // y += Math.cos(a) * ascent - ascent;
+                    x += Math.sin(a) * ascent / 2;// - 1;
+                    // y -= -Math.cos(a) * ascent - ascent / 2;
                 } else {
                     v.anchor = TextAnchor.MIDDLE;
                 }

@@ -969,7 +969,7 @@ export class GaugeRangeBand extends ChartItem {
     private $_internalRanges(): IValueRange[] {
         if (!this._runRanges) {
             const v = this.gauge.calcedMinMax();
-            this._runRanges = buildValueRanges(this._ranges, v.min, v.max) || [];
+            this._runRanges = buildValueRanges(this._ranges, v.min, v.max, false, true) || [];
         }
         return this._runRanges;
     }

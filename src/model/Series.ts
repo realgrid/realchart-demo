@@ -753,7 +753,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     /**
-     * vals가 지정되지 않은 상태로 호추될 수 있다.
+     * vals가 지정되지 않은 상태로 호출될 수 있다.
      * x값이 숫자가 아닐 때 axis가 해석하지 못하면 xStart 부터 xStep으로 증가 시켜 가면서 순서대로 지정한다.
      */
     collectValues(axis: IAxis, vals: number[]): void {
@@ -873,7 +873,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     prepareViewRanges(): void {
         const rangeMinMax =  this._getRangeMinMax(this._runRangeValue = this.getViewRangeAxis());
 
-        if (this._runRanges = buildValueRanges(this.viewRanges, rangeMinMax.min, rangeMinMax.max, false)) {
+        if (this._runRanges = buildValueRanges(this.viewRanges, rangeMinMax.min, rangeMinMax.max, false, false, true, this.color)) {
             this._visPoints.forEach((p, i) => {
                 this._setViewRange(p, this._runRangeValue);
             });
@@ -975,9 +975,14 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             case 'name':
                 return this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : pickProp(point.x, point.xValue);
             case 'x':
-                return point.x || (this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : point.xValue);
+                return this._xAxisObj.value2Tooltip(point.x || (this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : point.xValue));
+            case 'xValue':
+                return this._xAxisObj.value2Tooltip(point[param]);
+            case 'y':
+            case 'yValue':
+                return this._yAxisObj.value2Tooltip(point[param]);
             default:
-                return param in point ? point[param] : param;
+                return param in point ? point[param] : point.source?.[param];
         }
     }
 

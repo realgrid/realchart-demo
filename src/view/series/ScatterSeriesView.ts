@@ -10,6 +10,7 @@ import { IRect } from "../../common/Rectangle";
 import { PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { SvgShapes } from "../../common/impl/SvgShape";
+import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { PointItemPosition } from "../../model/Series";
 import { ScatterSeries, ScatterSeriesPoint } from "../../model/series/ScatterSeries";
@@ -76,7 +77,10 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
     private $_layoutMarkers(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
-        const polar = this._polar = (series.chart as Chart).body.getPolar(series);
+        const xAxis = series._xAxisObj as Axis;
+        const yAxis = series._yAxisObj;
+        const polar = this._polar = (series.chart as Chart).body.getPolar(xAxis);
+        const polared = !!polar;
         const vr = polar ? this._getViewRate() : 1;
         const jitterX = series.jitterX;
         const jitterY = series.jitterY;
@@ -84,8 +88,6 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
         const labelPos = labels.position;
         const labelOff = labels.offset;
         const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
-        const yAxis = series._yAxisObj;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
         const yOrg = height;
@@ -94,6 +96,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
 
         this._markers.forEach((mv, i) => {
             const p = mv.point;
+            const lv = labelViews && (labelView = labelViews.get(p, 0));
 
             if (mv.setVisible(!p.isNull)) {
                 const s = series.shape;
@@ -121,26 +124,32 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                     }
                 }
 
-                switch (s) {
-                    case 'square':
-                    case 'diamond':
-                    case 'triangle':
-                    case 'itriangle':
-                    case 'star':
-                        path = SvgShapes[s](0 - sz, 0 - sz, sz * 2, sz * 2);
-                        break;
-
-                    default:
-                        path = SvgShapes.circle(0, 0, sz);
-                        break;
+                if (mv.setVisible(polared || x >= 0 && x <= width && y >= 0 && y <= height)) {
+                    switch (s) {
+                        case 'square':
+                        case 'diamond':
+                        case 'triangle':
+                        case 'itriangle':
+                        case 'star':
+                            path = SvgShapes[s](0 - sz, 0 - sz, sz * 2, sz * 2);
+                            break;
+    
+                        default:
+                            path = SvgShapes.circle(0, 0, sz);
+                            break;
+                    }
+                    mv.setPath(path);
+                    mv.translate(x, y);
+    
+                    // label
+                    if (lv) {
+                        this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
+                    }
+                } else if (lv) {
+                    lv.setVisible(false);
                 }
-                mv.setPath(path);
-                mv.translate(x, y);
-
-                // label
-                if (labelViews && (labelView = labelViews.get(p, 0))) {
-                    this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
-                }
+            } else if (lv) {
+                lv.setVisible(false);
             }
         });
     }

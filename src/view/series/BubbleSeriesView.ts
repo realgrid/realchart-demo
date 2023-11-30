@@ -6,13 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ElementPool } from "../../common/ElementPool";
-import { PathElement, RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { PointItemPosition } from "../../model/Series";
 import { BubbleSeries, BubbleSeriesPoint } from "../../model/series/BubbleSeries";
-import { IPointView, MarkerSeriesPointView, MarkerSeriesView, PointLabelView, SeriesView } from "../SeriesView";
+import { MarkerSeriesPointView, MarkerSeriesView, PointLabelView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class MarkerView extends MarkerSeriesPointView<BubbleSeriesPoint> {
@@ -97,6 +95,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
 
         this._markers.forEach((mv, i) => {
             const p = mv.point as BubbleSeriesPoint;
+            const lv = labelViews && (labelView = labelViews.get(p, 0));
 
             if (mv.setVisible(!p.isNull && !isNaN(p.zValue))) {
                 const sz = (p.radius = series.getRadius(p.zValue, min, max)) * vr;
@@ -113,16 +112,22 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
                     y = yOrg - xAxis.getPosition(xLen, p.xValue);
                 }
     
-                path = SvgShapes.circle(0, 0, sz);
-                mv.setPath(path);
-                mv.translate(x, y);
-
-                // label
-                if (labelViews && (labelView = labelViews.get(p, 0))) {
-                    labelView.setContrast(mv.dom);
-                    labelView.layout();
-                    this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
+                if (mv.setVisible(x >= 0 && x <= width && y >= 0 && y <= height)) {
+                    path = SvgShapes.circle(0, 0, sz);
+                    mv.setPath(path);
+                    mv.translate(x, y);
+    
+                    // label
+                    if (lv) {
+                        labelView.setContrast(mv.dom);
+                        labelView.layout();
+                        this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
+                    }
+                } else if (lv) {
+                    lv.setVisible(false);
                 }
+            } else if (lv) {
+                lv.setVisible(false);
             }
         });
     }

@@ -8,6 +8,7 @@
 
 import { isArray, isObject, isString, pickNum } from "./Common";
 import { locale } from "./RcLocale";
+import { TextAnchor } from "./impl/TextElement";
 
 export const _undefined = void 0; // 불필요
 export const ONE_CHAR = '①'.charCodeAt(0);
@@ -19,6 +20,9 @@ export const PI_2 = Math.PI * 2;
 export const ORG_ANGLE = -Math.PI / 2;
 export const DEG_RAD = Math.PI * 2 / 360;
 export const RAD_DEG = 360 / Math.PI / 2;
+export function fixAngle(a: number): number {
+    return a > PI_2 ? a % PI_2 : a;
+}
 
 export const NUMBER_SYMBOLS = 'k,M,G,T,P,E';
 export const NUMBER_FORMAT = '#,##0.#';
@@ -41,7 +45,10 @@ export function isNull(v: any): boolean {
     return v == null || Number.isNaN(v) || v === '';
 }
 export function pad2(v: number): string {
-    return v < 10 ? `0${v}` : String(v);
+	return (v < 10) ? ("0" + v) : String(v);
+}
+export function pad3(v: number): string {
+	return (v < 10) ? ("00" + v) : (v < 100) ? ("0" + v) : String(v);
 }
 export function newObject(prop: string, value: any): {} {
     const obj = {};
@@ -140,6 +147,7 @@ export interface SVGStyles {
     fillOpacity?: string;
     stroke?: string;
     strokeWidth?: string;
+    strokeDasharray?: string;
     fontFamily?: string;
     fontSize?: string;
     fontWeight?: string;
@@ -359,11 +367,16 @@ export interface IValueRanges {
  * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
  * startValue를 기준으로 정렬한다.
  */
-export const buildValueRanges = function (source: IValueRange[] | IValueRanges, min: number, max: number, strict = true): IValueRange[] {
+export const buildValueRanges = function (source: IValueRange[] | IValueRanges, min: number, max: number, inclusive = true, strict = true, fill = false, color?: string): IValueRange[] {
     let ranges: IValueRange[];
     let prev: IValueRange;
 
     if (isArray(source)) {
+        if (inclusive) {
+            min = Number.MIN_VALUE;
+            max = Number.MAX_VALUE;
+        }
+
         ranges = [];
         source.forEach(src => {
             if (isObject(src) && isString(src.color)) {
@@ -423,6 +436,31 @@ export const buildValueRanges = function (source: IValueRange[] | IValueRanges, 
                 });
                 i++;
             }
+        }
+    }
+
+    // 빈 간격을 메꾼다.
+    if (fill && ranges && ranges.length > 0) {
+        let i = 0;
+        let prev = min;
+
+        while (i < ranges.length) {
+            if (ranges[i].fromValue < prev) {
+                ranges.splice(i, 0, {
+                    fromValue: prev,
+                    toValue: ranges[i].fromValue,
+                    color: color
+                });
+            }
+            prev = ranges[i].toValue;
+            i++;
+        }
+        if (ranges[i - 1].toValue < max) {
+            ranges.push({
+                fromValue: ranges[i - 1].toValue,
+                toValue: max,
+                color: color
+            });
         }
     }
     return ranges;

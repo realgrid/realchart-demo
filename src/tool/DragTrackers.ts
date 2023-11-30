@@ -49,29 +49,35 @@ export class ZoomTracker extends ChartDragTracker {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
-        this._xStart = xStart - this._body.tx;
-        this._yStart = yStart - this._body.ty;
+        const cr = this.chart.getBounds();
+        const br = this._body.getBounds();
+        this._xStart = xStart - (br.x - cr.x);
+        this._yStart = yStart - (br.y - cr.y);
         this._body.addFeedback(this._feedback = new RectElement(this.chart.doc(), 'rct-zoom-tracker'));
         return true;
     }
 
     protected _doEnded(x: number, y: number): void {
+        const cr = this.chart.getBounds();
+        const br = this._body.getBounds();
         if (this._vertical) {
-            y -= this._body.ty;
+            y -= br.y - cr.y;
             this._body.setZoom(0, Math.min(this._yStart, y), this._body.width, Math.max(this._yStart, y));
         } else {
-            x -= this._body.tx;
+            x -= br.x - cr.x;
             this._body.setZoom(Math.min(this._xStart, x), 0, Math.max(this._xStart, x), this._body.height);
         }
         this._feedback.remove();
     }
 
     protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
+        const cr = this.chart.getBounds();
+        const br = this._body.getBounds();
         if (this._vertical) {
-            y -= this._body.ty;
+            y -= br.y - cr.y;
             this._feedback.setBounds(0, Math.min(this._yStart, y), this._body.width, Math.abs(this._yStart - y));
         } else {
-            x -= this._body.tx;
+            x -= br.x - cr.x;
             this._feedback.setBounds(Math.min(this._xStart, x), 0, Math.abs(this._xStart - x), this._body.height);
         }
         return true;

@@ -13,7 +13,11 @@ const config = {
         text: "Sub Title",
         style: {
             fill: 'red'
-        }
+        },
+        // backgroundStyle: {
+        //     fill: 'black',
+        //     padding: "2px 4px"
+        // }
     },
     xAxis: {
         // type: 'category',

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, mergeObj } from "../common/Common";
+import { isArray, isObject, isString, mergeObj, pickProp3 } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
@@ -71,6 +71,8 @@ export interface IChart {
     body: Body;
     split: Split;
     colors: string[];
+    startOfWeek: number;
+    timeOffset: number;
 
     _createChart(config: any): IChart;
     assignTemplates(target: any): any;
@@ -420,6 +422,22 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      */
     inverted: boolean;
 
+    /**
+     * // TODO: -> locale
+     * javascript에서 숫자 단위로 전달되는 날짜값은 기본적으로 local이 아니라 new Date 기준이다.
+     * 그러므로 보통 숫자로 지정된 날짜값은 utc 값이다.
+     * local 기준으로 표시하기 위해, 숫자로 지정된 날짜값에 더해야 하는 시간을 분단위로 지정한다.
+     * ex) 한국은 -9 * 60
+     * 
+     */
+    timeOffset = new Date().getTimezoneOffset();
+    /**
+     * // TODO: -> locale
+     * 한 주의 시작 요일.
+     * 0: 일요일, 1: 월요일
+     */
+    startOfWeek = 0;
+
     get assets(): AssetCollection {
         return this._assets;
     }
@@ -697,8 +715,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         if (!this._gaugeOnly) {
             // axes
             // 축은 반드시 존재해야 한다. (TODO: 동적으로 series를 추가하는 경우)
-            this._xAxes.load(source.xAxes || source.xAxis || {});
-            this._yAxes.load(source.yAxes || source.yAxis || {});
+            this._xAxes.load(pickProp3(source.xAxes, source.xAxis, {}));
+            this._yAxes.load(pickProp3(source.yAxes, source.yAxis, {}));
         }
 
         // body

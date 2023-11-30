@@ -2,8 +2,6 @@ export const config = {
   title: 'Pie Series',
   options: {},
   legend: { position: 'right', style: { marginRight: '20px' } },
-  xAxis: {},
-  yAxis: {},
   plot: {},
   series: {
     type: 'pie',

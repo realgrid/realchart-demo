@@ -374,7 +374,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
                 valueView.setStyle(rim.stroked ? 'stroke' : 'fill', range.color);
                 range.style && valueView.addStyleOrClass(range.style);
             }
-            if (m.valueRim.stroked) {
+            if (rim.stroked) {
                 valueView.setStyle('fill', 'none');
                 valueView.setStyle('strokeWidth', pixel(thick));
             }

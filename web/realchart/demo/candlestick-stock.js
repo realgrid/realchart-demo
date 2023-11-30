@@ -7,7 +7,6 @@ const config = {
     options: {
         // animatable: false,
     },
-    
     xAxis: {
         crosshair: true,
         // grid: true,

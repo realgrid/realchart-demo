@@ -403,7 +403,6 @@ export abstract class FormattableText extends ChartText {
     }
     prepareRich(text: string): void {
         if (text) {
-            
             if (!this._richTextImpl) {
                 this._richTextImpl = new SvgRichText();
             }

@@ -82,11 +82,11 @@ function setActions(container) {
         config.xAxis.label.rows = +_getValue(e);
         chart.load(config);
     }, '0');
-    createListBox(container, "X.label.rotation", ['NaN', '0', '-90', '-80', '-70', '-60', '-50', '-45', '-40', '-30', '-20', '-16'], function (e) {
+    createListBox(container, "X.label.rotation", ['NaN', '0', '-90', '-80', '-70', '-60', '-50', '-45', '-40', '-30', '-20', '-16', '-15'], function (e) {
         config.xAxis.label.rotation = +_getValue(e);
         chart.load(config);
     }, 'NaN');
-    createListBox(container, "X.label.rotation.2", ['NaN', '0', '90', '80', '70', '60', '50', '45', '40', '30', '20', '16'], function (e) {
+    createListBox(container, "X.label.rotation.2", ['NaN', '0', '90', '80', '70', '60', '50', '45', '40', '30', '20', '16', '15'], function (e) {
         config.xAxis.label.rotation = +_getValue(e);
         chart.load(config);
     }, 'NaN');

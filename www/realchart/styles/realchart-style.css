@@ -21,6 +21,10 @@
     stroke: none;
 }
 
+.rct-pattern {
+    stroke: #000;
+}
+
 /** palette */
 .rct-root {
     --color-1: #0098ff;
@@ -627,6 +631,11 @@
 .rct-bar-series .rct-point[data-focus] {
     stroke: var(--rct-focus-border);
     stroke-width: 2px;
+}
+
+/** circlebar series */
+.rct-circlebar-series .rct-point {
+    stroke: white;
 }
 
 /** barrange series */

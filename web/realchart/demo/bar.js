@@ -12,14 +12,13 @@ const config = {
 		title: '서울시',
 		categories: ['2014', '2015', '2016', '2017', '2018', '2019', '2020'],
 		grid: true,
-		
 		label: {
 			// startStep: 0,
 			step: 3,
 		},
 	},
 	yAxis: {
-		title: '대기질 지수(Air Quality Index, AQI)',
+		title: '대기질 지수<br><t style="fill:gray;font-size:0.9em;">(Air Quality Index, AQI)</t>',
 		// reversed: true,
 		// baseValue: -1,
         // strictMin: 11,
@@ -32,6 +31,7 @@ const config = {
 		// pointWidth: '100%',
 		// colorByPoint: true,
 		data: [155, 138, 122, 133, 114, 113, 123]
+<<<<<<< HEAD
 	},{
 		name: '대기질2',
 		// baseValue: null,
@@ -44,6 +44,9 @@ const config = {
 	ChartTextEffect: {
 		autoContrast: false,
 	},
+=======
+	}],
+>>>>>>> main
 };
 
 let animate = false;

@@ -5,7 +5,7 @@
 const config = {
     title: "Pie Series",
     options: {
-        animatable: false,
+        // animatable: false,
     },
     legend: {
         position: 'right',

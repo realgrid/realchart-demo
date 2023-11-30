@@ -108,6 +108,7 @@ export class CandlestickSeriesView extends RangedSeriesView<CandlestickSeries> {
     }
 
     protected _layoutPointView(box: StickView, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
+        if (wPoint < 0) debugger;
         box.setBounds(x, y, wPoint, hPoint);
         box.layout();
     } 

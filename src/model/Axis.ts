@@ -12,6 +12,7 @@ import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
+import { DataPoint } from "./DataPoint";
 import { IClusterable, IPlottingItem } from "./Series";
 
 /**
@@ -58,6 +59,8 @@ export interface IAxis {
      * 값에 따라 크기가 다를 수도 있다.
      */
     getUnitLength(length: number, value: number): number;
+
+    value2Tooltip(value: number): any;
 
     hasBreak(): boolean;
     isBreak(pos: number): boolean;
@@ -468,7 +471,7 @@ export abstract class AxisTick extends AxisItem {
      * 
      * @config
      */
-    margin = 3;
+    gap = 3;
     /**
      * true면 소수점값애 해당하는 tick은 표시되지 않도록 한다.
      */
@@ -816,6 +819,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     _vlen: number;
     _minPad = 0;
     _maxPad = 0;
+    _startAngle = 0;
     _values: number[] = [];
     protected _min: number;
     protected _max: number;
@@ -949,6 +953,10 @@ export abstract class Axis extends ChartItem implements IAxis {
         return this.getValueAt(length, pos);
     }
 
+    startAngle(): number {
+        return this._startAngle;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -956,6 +964,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected abstract _createLabelModel(): AxisLabel;
     protected abstract _doPrepareRender(): void;
     protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[];
+
+    value2Tooltip(value: number): any {
+        return value;
+    }
 
     isBased(): boolean {
         return false;
@@ -1055,6 +1067,9 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     calcPoints(length: number, phase: number): void {
         this._ticks.forEach(t => t.pos = this.getPosition(length, t.value));
+        if (this._isPolar) {
+            this._startAngle = this._getStartAngle(this.chart.startAngle());
+        }
     }
 
     /**
@@ -1143,6 +1158,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _getStartAngle(start: number): number {
+        return start;
+    }
+
     protected _createGrid(): AxisGrid {
         return new AxisGrid(this);
     }
@@ -1224,12 +1243,11 @@ export class AxisCollection {
     //-------------------------------------------------------------------------
     load(src: any): void {
         const chart = this.chart;
-        const items = this._items;
 
         if (isArray(src)) {
-            src.forEach((s, i) => items.push(this.$_loadAxis(chart, s, i)));
-        } else if (isObject(src)) {
-            items.push(this.$_loadAxis(chart, src, 0));
+            src.forEach((s, i) => this._items.push(this.$_loadAxis(chart, s, i)));
+        } else {
+            this._items.push(this.$_loadAxis(chart, src, 0));
         }
     }
 

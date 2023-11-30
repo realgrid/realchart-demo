@@ -249,15 +249,17 @@ class SvgLine {
         return this;
     }
 
-    getText(target: any, domain: RichTextParamCallback): string {
-        let s = '';
+    // getText(target: any, domain: RichTextParamCallback): string {
+    //     let s = '';
         
-        for (let w of this._words) {
-            s += w.getText(target, domain);
-        }
-        return s;
-    }
+    //     for (let w of this._words) {
+    //         s += w.getText(target, domain);
+    //     }
+    //     return s;
+    // }
 }
+
+const line_sep = /<br.*?>|\r\n|\n/;
 
 /**
  * <t>, <b>, <i>, <br>,
@@ -271,7 +273,7 @@ export class SvgRichText {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private _format: string;
+    _format: string;
     lineHeight: number;
 
     //-------------------------------------------------------------------------
@@ -291,8 +293,7 @@ export class SvgRichText {
     //-------------------------------------------------------------------------
     setFormat(value: string) {
         if (value !== this._format) {
-            this._format = value != null ? String(value) : value;
-            value && this.$_parse(this._format);
+            this.$_parse(this._format = value != null ? String(value) : value);
         }
     }
 
@@ -388,7 +389,7 @@ export class SvgRichText {
         const lines = this._lines = [];
 
         if (fmt) {
-            const strs = fmt.split(/<br.*?>|\r\n|\n/);
+            const strs = fmt.split(line_sep);
 
             for (let s of strs) {
                 lines.push(new SvgLine().parse(s));
