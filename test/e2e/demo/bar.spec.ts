@@ -69,12 +69,11 @@ test.describe('bar.html test', () => {
 		const rGrids = await PWTester.getGridBounds(page);
 
 		// bar들이 상단의 x축에서 부터 아래쪽으로 커진다.
-		bars.forEach(async (bar) => {
+		for(let bar of bars){
 			const r = await PWTester.getBounds(bar);
-
 			expect(PWTester.same(r.y, rGrids.y), `${r.y}, ${rGrids.y}`).is.true;
 			// expect(r.y).eq(rTop.y);
-		});
+		};
 
 		await page.evaluate('config.yAxis.reversed = false; chart.load(config)');
 	});
@@ -94,11 +93,11 @@ test.describe('bar.html test', () => {
 		});
 
 		// bar들이 왼쪽 Y축에서 부터 오른쪽 방향으로 커진다.
-		bars.forEach(async (bar) => {
+		for(let bar of bars){
 			const r = await PWTester.getBounds(bar);
 
 			expect(r.x + r.width <= rGrids.x + rGrids.width).is.true;
-		});
+		};
 
 		// 값과 너비들을 비교한다.
 		for (let i = 1; i < bars.length; i++) {
