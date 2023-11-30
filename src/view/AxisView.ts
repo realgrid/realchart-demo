@@ -16,11 +16,10 @@ import { DEG_RAD } from "../common/Types";
 import { LabelElement } from "../common/impl/LabelElement";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
-import { TextAnchor, TextElement } from "../common/impl/TextElement";
+import { TextElement } from "../common/impl/TextElement";
 import { Axis, AxisGuide, AxisLabel, AxisLabelArrange, AxisPosition, AxisScrollBar, AxisTick, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { Crosshair } from "../model/Crosshair";
-import { LinearAxis } from "../model/axis/LinearAxis";
 import { AxisGuideContainer, AxisGuideView } from "./BodyView";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
@@ -818,7 +817,6 @@ export class AxisView extends ChartElement<Axis> {
             while (views.length < nTick) {
                 const t = new AxisLabelView(doc, 'rct-axis-label');
     
-                t.anchor = TextAnchor.START;
                 container.add(t);
                 views.push(t);
             }
@@ -1038,30 +1036,34 @@ export class AxisView extends ChartElement<Axis> {
 
         views.forEach(v => {
             if (v.visible) {
-
                 const rot = v.rotation;
                 const a = rot * DEG_RAD;
                 const r = v.getBBounds();
-                const ascent = Math.floor(r.height);//v._text.getAscent(r.height));
                 let x = ticks[v.index].pos;
                 let y = opp ? (h - gap - r.height - pts[v.row]) : (gap + pts[v.row]);
     
                 if (rot < -15 && rot >= -90) {
-                    v.anchor = TextAnchor.END;
-                    // console.log(-Math.sin(a) * ascent / 2 - 1, Math.cos(a) * ascent - ascent)
-                    //x += -Math.sin(a) * ascent / 2 - 1;
-                    // y += Math.cos(a) * ascent - ascent;
-                    x += Math.sin(a) * ascent / 2;// - 1;
-                    //y += -Math.cos(a) * ascent + ascent / 2;
+                    if (opp) {
+                        x -= r.width;
+                        y -= Math.sin(a) * r.height / 2;
+                        v.setRotation(r.width, r.height / 2, -rot);
+                    } else {
+                        x -= r.width;
+                        y += Math.sin(a) * r.height / 2;
+                        v.setRotation(r.width, r.height / 2, rot);
+                    }
                 } else if (rot > 15 && rot <= 90) {
-                    v.anchor = TextAnchor.START;
-                    // x -= Math.sin(a) * ascent / 2 - 1;
-                    // y += Math.cos(a) * ascent - ascent;
-                    x += Math.sin(a) * ascent / 2;// - 1;
-                    // y -= -Math.cos(a) * ascent - ascent / 2;
+                    if (opp) {
+                        y += Math.sin(a) * r.height / 2;
+                        v.setRotation(0, r.height / 2, -rot);
+                    } else {
+                        y -= Math.sin(a) * r.height / 2;
+                        v.setRotation(0, r.height / 2, rot);
+                    }
                 } else {
-                    v.anchor = TextAnchor.MIDDLE;
-                }
+                    x -= r.width / 2;
+                    v.setRotation(r.width / 2, 0, opp ? -rot : rot);
+                }   
                 v.translate(x, y);
             }
         });
@@ -1075,7 +1077,6 @@ export class AxisView extends ChartElement<Axis> {
                 const r = v.getBBounds();
                 const x2 = opp ? x : between ? (w - r.width) / 2 : x - r.width;
     
-                v.anchor = TextAnchor.START;
                 v.translate(x2, h - ticks[i].pos - r.height / 2);
             }
         });

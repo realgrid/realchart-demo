@@ -59,24 +59,26 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
     }
 
     protected _doLayout(param: any): void {
-        const view = this._textView;
-        let x = 0;
+        this._richText.layout(this._textView, this.model.textAlign, this.width, this.height, this._paddings);
 
-        switch (this.model.textAlign) {
-            case Align.CENTER:
-                view.anchor = TextAnchor.MIDDLE;
-                x += view.getBBounds().width / 2;
-                break;
-            case Align.RIGHT:
-                view.anchor = TextAnchor.END;
-                x += view.getBBounds().width;
-                break;
-            default:
-                view.anchor = TextAnchor.START;
-                break;
-        }
+        // const view = this._textView;
+        // let x = 0;
 
-        view.translate(this._paddings.left + x, this._paddings.top);
+        // switch (this.model.textAlign) {
+        //     case Align.CENTER:
+        //         view.anchor = TextAnchor.MIDDLE;
+        //         x += view.getBBounds().width / 2;
+        //         break;
+        //     case Align.RIGHT:
+        //         view.anchor = TextAnchor.END;
+        //         x += view.getBBounds().width;
+        //         break;
+        //     default:
+        //         view.anchor = TextAnchor.START;
+        //         break;
+        // }
+
+        // view.translate(this._paddings.left + x, this._paddings.top);
 
         super._doLayout(param);
     }

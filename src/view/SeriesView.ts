@@ -22,7 +22,7 @@ import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { ClusterableSeries, DataPointLabel, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
-import { ChartElement, ContentView } from "./ChartElement";
+import { ContentView } from "./ChartElement";
 import { SeriesAnimation } from "./animation/SeriesAnimation";
 
 export interface IPointView {

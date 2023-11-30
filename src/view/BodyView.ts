@@ -384,10 +384,9 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
         const label = m.label;
         const line = this._line;
         const labelView = this._labelView;
+        const rLabel = labelView.getBBounds();
         let x: number;
         let y: number;
-        let anchor: TextAnchor;
-        let layout: TextLayout;
 
         if (this.vertical()) {
             const p = m.axis.getPosition(width, m.value, true);
@@ -397,34 +396,26 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
             switch (label.align) {
                 case Align.CENTER:
                     x = p;
-                    anchor = TextAnchor.MIDDLE;
                     break;
-
                 case Align.RIGHT:
                     x = p;
-                    anchor = TextAnchor.START;
                     break;
-
                 default:
                     x = p;
-                    anchor = TextAnchor.END;
                     break;
             }
 
             switch (label.verticalAlign) {
                 case VerticalAlign.BOTTOM:
                     y = height;
-                    layout = TextLayout.BOTTOM;
                     break;
 
                 case VerticalAlign.MIDDLE:
                     y = height / 2;
-                    layout = TextLayout.MIDDLE;
                     break;
 
                 default:
                     y = 0;
-                    layout = TextLayout.TOP;
                     break;
             }
         } else {
@@ -434,44 +425,29 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
 
             switch (label.align) {
                 case Align.CENTER:
-                    x = width / 2;
-                    anchor = TextAnchor.MIDDLE;
+                    x = (width - rLabel.width) / 2;
                     break;
-
                 case Align.RIGHT:
-                    x = width;
-                    anchor = TextAnchor.END;
+                    x = width - rLabel.width;
                     break;
-
                 default:
                     x = 0;
-                    anchor = TextAnchor.START;
                     break;
             }
 
             switch (label.verticalAlign) {
                 case VerticalAlign.BOTTOM:
                     y = p + 1;
-                    layout = TextLayout.TOP;
                     break;
-
                 case VerticalAlign.MIDDLE:
                     y = p;
-                    layout = TextLayout.MIDDLE;
                     break;
-
                 default:
-                    // y = -3; 
-                    // layout = TextLayout.BOTTOM;
-                    y = p - labelView.getBBounds().height;
-                    layout = TextLayout.TOP;
+                    y = p - rLabel.height;
                     break;
             }
-
-            labelView.anchor = anchor;
-            // labelView.layout = layout;
-            labelView.translate(x, y);
         }
+        labelView.translate(x, y);
     }
 }
 
@@ -518,34 +494,34 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
                 switch (m.label.align) {
                     case Align.CENTER:
                         x = x + (x2 - x1) / 2;
-                        anchor = TextAnchor.MIDDLE;
+                        // anchor = TextAnchor.MIDDLE;
                         break;
     
                     case Align.RIGHT:
                         x = x2;
-                        anchor = TextAnchor.END;
+                        // anchor = TextAnchor.END;
                         break;
     
                     default:
                         x = x1;
-                        anchor = TextAnchor.START;
+                        // anchor = TextAnchor.START;
                         break;
                 }
     
                 switch (m.label.verticalAlign) {
                     case VerticalAlign.BOTTOM:
                         y = height;
-                        layout = TextLayout.BOTTOM;
+                        // layout = TextLayout.BOTTOM;
                         break;
     
                     case VerticalAlign.MIDDLE:
                         y = height / 2;
-                        layout = TextLayout.MIDDLE;
+                        // layout = TextLayout.MIDDLE;
                         break;
     
                     default:
                         y = 0;
-                        layout = TextLayout.TOP;
+                        // layout = TextLayout.TOP;
                         break;
                 }
     
@@ -553,7 +529,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
                 box.setBox(x1, 0, x2, height);
             }
             if (label.setVisible(this._box.visible)) {
-                label.anchor = anchor;
+                // label.anchor = anchor;
                 // label.layout = layout;
                 label.translate(Math.max(0, Math.min(width, x)), y);
             }
@@ -568,38 +544,38 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
             switch (m.label.align) {
                 case Align.CENTER:
                     x = width / 2;
-                    anchor = TextAnchor.MIDDLE;
+                    // anchor = TextAnchor.MIDDLE;
                     break;
 
                 case Align.RIGHT:
                     x = width;
-                    anchor = TextAnchor.END;
+                    // anchor = TextAnchor.END;
                     break;
 
                 default:
                     x = 0;
-                    anchor = TextAnchor.START;
+                    // anchor = TextAnchor.START;
                     break;
             }
 
             switch (m.label.verticalAlign) {
                 case VerticalAlign.BOTTOM:
                     y = y1;
-                    layout = TextLayout.BOTTOM;
+                    // layout = TextLayout.BOTTOM;
                     break;
 
                 case VerticalAlign.MIDDLE:
                     y = y2 + (y1 - y2) / 2;
-                    layout = TextLayout.MIDDLE;
+                    // layout = TextLayout.MIDDLE;
                     break;
 
                 default:
                     y = y2;
-                    layout = TextLayout.TOP;
+                    // layout = TextLayout.TOP;
                     break;
             }
 
-            label.anchor = anchor;
+            // label.anchor = anchor;
             // label.layout = layout;
             label.translate(x, y);
 

@@ -7,8 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "./Common";
-import { ZWSP } from "./Types";
-import { TextElement } from "./impl/TextElement";
+import { Sides } from "./Sides";
+import { Align, ZWSP } from "./Types";
+import { TextAnchor, TextElement } from "./impl/TextElement";
 
 const HEIGHT = '$_TH';
 const WIDTH = '$_TW';
@@ -380,6 +381,29 @@ export class SvgRichText {
 
         view.layoutText(lines[0][HEIGHT]); // 첫 행의 높이를 전달한다.
         // view.layoutText(hMax); // 가장 큰 높이의 행 높이를 전달한다. 맞나?
+    }
+
+    layout(view: TextElement, align: Align, width: number, height: number, padding: Sides): void {
+        const r = view.getBBounds();
+        let x: number;
+        let y = Math.max(padding.top, padding.top + (height - r.height) / 2);
+
+        switch (align) {
+            case Align.CENTER:
+                view.anchor = TextAnchor.MIDDLE;
+                x = padding.left + (width - padding.left - padding.right) / 2;
+                break;
+            case Align.RIGHT:
+                view.anchor = TextAnchor.END;
+                x = view.getBBounds().width - padding.right;
+                break;
+            default:
+                view.anchor = TextAnchor.START;
+                x = padding.left;
+                break;
+        }
+
+        view.translate(x, y);
     }
 
 	//-------------------------------------------------------------------------

@@ -642,10 +642,6 @@ export abstract class AxisLabel extends FormattableText {
             return this.styleCallback(this.axis.getTickLabelArgs(tick.index, tick.value));
         }
     }
-
-    getRotation(): number {
-        return this.rotation || 0;
-    }
 }
 
 export interface IAxisTick {

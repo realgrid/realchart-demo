@@ -211,7 +211,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
                     const line = lineViews.get(p);
 
-                    labelView.anchor = TextAnchor.START; // 기본이 MIDDLE이다.
+                    // labelView.anchor = TextAnchor.START; // 기본이 MIDDLE이다.
 
                     if (line.setVisible(!labelInside)) {
                         const rSeg = seg.getBBounds();

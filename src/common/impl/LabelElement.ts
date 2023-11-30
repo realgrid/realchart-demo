@@ -49,14 +49,6 @@ export class LabelElement extends GroupElement {
         return this._text.text;
     }
 
-    /** anchor */
-    get anchor(): TextAnchor {
-        return this._text.anchor;
-    }
-    set anchor(value: TextAnchor) {
-        this._text.anchor = value;
-    }
-
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -115,25 +107,31 @@ export class LabelElement extends GroupElement {
     }
 
     layout(): LabelElement {
-        if (this._outline) {
-            this._outline.anchor = this._text.anchor;
-            this._outline.setAttr('y', this._text.getAttr('y'));
-        }
+        let x = 0;
+        let y = 0;
+
         // background
         if (this._back && this._back.parent) {
             const cs = getComputedStyle(this._back.dom);
             const r = this._text.getBBounds();
-            const left = parseFloat(cs.paddingLeft) || 0;
-            const top = parseFloat(cs.paddingTop) || 0;
+
+            x = parseFloat(cs.paddingLeft) || 0;
+            y = parseFloat(cs.paddingTop) || 0;
 
             this._back.setBounds(
-                -left,//-r.width / 2, 
-                -top,//-r.height / 2,
-                r.width + left + (parseFloat(cs.paddingRight) || 0),
-                r.height + top + (parseFloat(cs.paddingBottom) || 0),
+                0,//-left,//-r.width / 2, 
+                0,//-top,//-r.height / 2,
+                r.width + x + (parseFloat(cs.paddingRight) || 0),
+                r.height + y + (parseFloat(cs.paddingBottom) || 0),
                 cs['rx']
             )
-            // this._text.translate(left, top);
+        }
+
+        this._text.translate(x, y);
+        if (this._outline) {
+            this._outline.anchor = this._text.anchor;
+            this._outline.setAttr('y', this._text.getAttr('y'));
+            this._outline.translate(x, y);
         }
         return this;
     }

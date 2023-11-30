@@ -71,7 +71,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         });
 
         this.add(this._textView = new LabelElement(doc, 'rct-pie-series-inner'));
-        this._textView.anchor = TextAnchor.MIDDLE;
+        // this._textView.anchor = TextAnchor.MIDDLE;
         this.add(this._lineContainer = new PointLabelLineContainer(doc));
     }
 
@@ -257,7 +257,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
                     const line = lineViews.get(p);
 
-                    labelView.anchor = TextAnchor.START; // 기본이 MIDDLE이다.
+                    // labelView.anchor = TextAnchor.START; // 기본이 MIDDLE이다.
 
                     if (line.setVisible(!labelInside)) {
                         // this.$_layoutLabel(p, labelView, line, off, dist, slicedOff, pb);

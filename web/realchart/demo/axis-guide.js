@@ -5,6 +5,7 @@
  */
 const config = {
     options: {
+        animatable: false
     },
     title: "Axis Guides",
     legend: true,
@@ -25,32 +26,33 @@ const config = {
             // front: true,
             value: 12,
             label: {
-                text: 'line guide',
+                text: 'line guide<br>test',
                 effect: 'background',
                 style: {
                     fill: 'white',
                 },
                 backgroundStyle: {
                     fill: 'black',
-                    padding: '2px 5px'
+                    padding: '2px 5px',
+                    rx: 3
                 }
             },
             style: {
                 stroke: 'blue',
                 strokeDasharray: '4'
             }
-        }, {
-            type: 'range',
-            front: true,
-            start: 3,
-            end: 6,
-            label: {
-                text: 'range guide',
-                align: 'right',
-                style: {
-                    fill: 'red'
-                }
-            }
+        // }, {
+        //     type: 'range',
+        //     front: true,
+        //     start: 3,
+        //     end: 6,
+        //     label: {
+        //         text: 'range guide',
+        //         align: 'right',
+        //         style: {
+        //             fill: 'red'
+        //         }
+        //     }
         }]
     },
     series: {
@@ -111,6 +113,10 @@ function setActions(container) {
         config.yAxis.guides[0].front = _getChecked(e);
         chart.load(config);
     }, false);
+    createListBox(container, "guide[0].label.align", ['left', 'center', 'right'], function (e) {
+        config.yAxis.guides[0].label.align = _getValue(e);
+        chart.load(config);
+    }, 'left');
     createCheckBox(container, 'guide[1].front', function (e) {
         config.yAxis.guides[1].front = _getChecked(e);
         chart.load(config);
