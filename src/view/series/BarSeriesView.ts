@@ -132,8 +132,8 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
             // label
             if (labelViews && (labelInfo.labelView = labelViews.get(p, 0))) {
                 const a = view.start + view.angle / 2;
-                const x = view.cx + view.rx * 0.7 * Math.cos(a);
-                const y = view.cy + view.ry * 0.7 * Math.sin(a);
+                const x = p.xPos = view.cx + view.rx * 0.7 * Math.cos(a);
+                const y = p.yPos =  view.cy + view.ry * 0.7 * Math.sin(a);
                 const r = labelInfo.labelView.getBBounds();
 
                 labelInfo.labelView.translate(x, y - r.height / 2);

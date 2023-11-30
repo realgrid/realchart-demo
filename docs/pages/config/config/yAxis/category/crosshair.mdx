@@ -9,6 +9,10 @@
 false면 type이 'line'인 경우 데이터포인트나 카테고리 단위로 이동한다.  
 `default: true`  
 
+### numberFormat: `string{:js}`[#numberFormat]
+표시되는 값이 숫자일 때 사용되는 표시 형식.  
+`default: '#,##0.#'`  
+
 ### showAlways: `boolean{:js}`[#showAlways]
 true면 마우스 위치를 따라 항상 표시하고, false면 data point 위에 마우스가 있을 때만 표시한다.  
 `default: true`  
@@ -26,7 +30,12 @@ true면 마우스 위치를 따라 항상 표시하고, false면 data point 위�
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |
+### timeFormat: `string{:js}`[#timeFormat]
+표시되는 값이 날짜(시간)일 때 사용되는 표시 형식.  
+`default: 'yyyy-MM-dd` HH:mm' 
+
 ### type: `'auto'|'line'{:js}`[#type]
 표시 방식.  
 - `'auto'` 카테고리 축이면 bar, 연속 축이면 line으로 표시한다.

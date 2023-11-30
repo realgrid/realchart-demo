@@ -5,6 +5,11 @@
 ### height: `string | number{:js}`[#height]
 높이  
 
+### rangeInclusive: `boolean{:js}`[#rangeInclusive]
+true로 지정하면  **[ranges](#ranges)**  항목에서  **toValue**나 **fromValue**가 지정되지 않은 경우,  
+모든 값이 포함되는 값으로 확장한다.  
+`default: true`  
+
 ### ranges: `IValueRange[]{:js}`[#ranges]
 값 범위 목록.
 범위별로 다른 스타일을 적용할 수 있다.  
@@ -30,6 +35,7 @@
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |
 ### vertical: `boolean{:js}`[#vertical]
 true면 수직 bar로 표시한다.  

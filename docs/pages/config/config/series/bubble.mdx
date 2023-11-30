@@ -2,10 +2,6 @@
 
 ## Properties
 
-### clipped: `boolean{:js}`[#clipped]
-body 영역을 벗어난 data point view는 잘라낸다.  
-`default: false`  
-
 ### color: `string{:js}`[#color]
 데이터 포인트 기본 색.  
 
@@ -24,12 +20,16 @@ undefined이면 "data".
 시리즈 이름.\
 시리즈 생성시 지정되고 변경할 수 없다.  
 
+### noClip: `boolean{:js}`[#noClip]
+true로 지정하면 body를 벗어난 data point 영역도 표시된다.  
+`default: false`  
+
 ### onPointClick[#onPointClick]
 데이터 point가 클릭될 때 발생하는 이벤트 콜백.
 명시적 true를 리턴하면 기본 동작이 진행되지 않는다.  
 
 ### pointColors: `boolean | string[]{:js}`[#pointColors]
-데이터 포인트별 색들을 지정한다.
+데이터 포인트별 색들을 지정한다.\
 false로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.
 true로 지정하면 기본 색들로 표시된다.
 색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.
@@ -56,8 +56,9 @@ undefined나 null이면 시리즈 종류에 따라 false 혹은 true로 해석�
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |
-### viewRangeValue: `'z' | 'x' | 'y'{:js}`[#viewRangeValue]
+### viewRangeValue: `'z' | 'y' | 'x'{:js}`[#viewRangeValue]
 ranges가 적용되는 값.\
 지정하지 않으면 시리즈 종류에 띠라 자동 적용된다.
 'line' 시리즈 계열은 'x', 나머지는 'y'가 된다.
@@ -82,12 +83,12 @@ ranges가 적용되는 값.\
 undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'.  
 
 ### xStart: `any{:js}`[#xStart]
-x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.
+x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.\
 이 후에는  **[xStep](#xstep)** 씩 증가시키면서 설정한다.
 이 속성이 지징되지 않은 경우  [xStart](/config/config/options#xstart) 가 적용된다.  
 
 ### xStep: `string | number{:js}`[#xStep]
-x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
+x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\
 첫번째 값은  **[xStart](#xstart)** 로 설정한다.
 time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'w', 'd', 'h', 'n', 's')로 지정할 수 있다.
 이 속성이 지정되지 않으면  [xStep](/config/config/options#xstep) 이 적용된다.  

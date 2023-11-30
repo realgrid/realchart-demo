@@ -14,7 +14,6 @@ import { LineElement, PolylineElement } from "../common/impl/PathElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { Axis, AxisTick, IAxisTick } from "../model/Axis";
 import { Body } from "../model/Body";
-import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { BodyView, IPlottingOwner } from "./BodyView";
 
 class PolarAxisTickMarkView extends RcElement {

@@ -1151,8 +1151,8 @@ export class ChartView extends LayerElement {
     }
 
     showTooltip(series: Series, point: DataPoint): void {
-        const x = point.xPos + this._bodyView.tx;
-        const y = point.yPos + this._bodyView.ty;
+        const x = point.xPos + this._currBody.tx;
+        const y = point.yPos + this._currBody.ty;
 
         this._tooltipView.show(series, point, x, y, true);
     }
@@ -1169,12 +1169,12 @@ export class ChartView extends LayerElement {
         if (this._paneContainer.visible) {
             return this._paneContainer.seriesByDom(dom);
         } else {
-            return this._bodyView.seriesByDom(dom);
+            return this._currBody.seriesByDom(dom);
         }
     }
 
     findSeriesView(series: Series): SeriesView<Series> {
-        return this._bodyView.findSeries(series);
+        return this._currBody.findSeries(series);
     }
 
     creditByDom(dom: Element): CreditView {
@@ -1199,13 +1199,14 @@ export class ChartView extends LayerElement {
     }
 
     pointerMoved(x: number, y: number, target: EventTarget): void {
-        const p = this._bodyView.controlToElement(x, y);
-        const inBody = this._bodyView.pointerMoved(p, target);
+        const body = this._currBody;
+        const p = body.controlToElement(x, y);
+        const inBody = body.pointerMoved(p, target);
         
         for (const dir in this._axisSectionMap) {
             this._axisSectionMap[dir].views.forEach(av => {
                 const m = av.model.crosshair;
-                const len = av.model._isHorz ? this._bodyView.width : this._bodyView.height;
+                const len = av.model._isHorz ? body.width : body.height;
                 const pos = av.model._isHorz ? p.x : p.y;
                 const flag = inBody && m.visible && m.flag.visible && !m.isBar() && m.getFlag(len, pos);
 
@@ -1226,11 +1227,11 @@ export class ChartView extends LayerElement {
     }
 
     getButton(dom: Element): ButtonElement {
-        return this._bodyView.getButton(dom);
+        return this._currBody.getButton(dom);
     }
 
     buttonClicked(button: ButtonElement): void {
-        this._bodyView.buttonClicked(button);
+        this._currBody.buttonClicked(button);
     }
 
     getScrollView(dom: Element): AxisScrollView {

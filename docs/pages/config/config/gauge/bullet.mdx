@@ -45,6 +45,11 @@ group에 포함되면 이 값 대신 group의 최소값이 사용된다.
 게이지 이름.
 동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다.  
 
+### rangeInclusive: `boolean{:js}`[#rangeInclusive]
+true로 지정하면  **[ranges](#ranges)**  항목에서  **toValue**나 **fromValue**가 지정되지 않은 경우,  
+모든 값이 포함되는 값으로 확장한다.  
+`default: true`  
+
 ### ranges: `IValueRange[]{:js}`[#ranges]
 값 범위 목록.
 범위별로 다른 스타일을 적용할 수 있다.  
@@ -83,6 +88,7 @@ Gauge scale.
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |
 ### [targetBar](./bullet/targetBar)
 RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  

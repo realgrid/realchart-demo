@@ -502,7 +502,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     dataProp: string;
     /**
-     * x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.
+     * x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.\
      * 이 후에는 {@link xStep}씩 증가시키면서 설정한다.
      * 이 속성이 지징되지 않은 경우 {@link ChartOptions.xStart}가 적용된다.
      * 
@@ -510,7 +510,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     xStart: any;
     /**
-     * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
+     * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\
      * 첫번째 값은 {@link xStart}로 설정한다.
      * time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'w', 'd', 'h', 'n', 's')로 지정할 수 있다.
      * 이 속성이 지정되지 않으면 {@link ChartOptions.xStep}이 적용된다.
@@ -531,7 +531,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     color: string;
     /**
-     * 데이터 포인트별 색들을 지정한다.
+     * 데이터 포인트별 색들을 지정한다.\
      * false로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.
      * true로 지정하면 기본 색들로 표시된다.
      * 색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.
@@ -558,11 +558,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     viewRangeValue: 'x' | 'y' | 'z';
     /**
-     * body 영역을 벗어난 data point view는 잘라낸다.
+     * true로 지정하면 body를 벗어난 data point 영역도 표시된다.
      * 
      * @config
      */
-    clipped = false;
+    noClip = false;
     /**
      * 명시적 false로 지정하면 legend에 표시하지 않는다.
      * 
