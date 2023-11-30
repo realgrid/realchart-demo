@@ -63,6 +63,7 @@ const config = {
             grid: false,
         },
         series: {
+            noClip: true,
             marker: false,
             pointLabel: false,
             xField: 'Age',
