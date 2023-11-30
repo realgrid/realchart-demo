@@ -6,7 +6,7 @@ const config = {
     title: {
         text: '사망자수 역대최대 기록',
         align: 'left',
-        sectionGap: 100,
+        gap: 100,
     },
     legend: false,
     split: {

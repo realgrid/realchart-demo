@@ -7,6 +7,7 @@ const config = {
     options: {},
     title: {
         text: "Bump Chart",
+        gap: 30,
         style: {
             marginBottom: '30px'
         },

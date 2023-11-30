@@ -86,7 +86,7 @@ class TitleSectionView extends SectionView {
             sz = v.measure(doc, sub, hintWidth, hintHeight, phase);
             hSub = this._hSub = sz.height;
             wSub = this._wSub = sz.width;
-            gap = this._gap = +chart.subtitle.gap || 0;
+            gap = this._gap = +chart.subtitle.titleGap || 0;
         } else {
             v.setModel(sub);
         }
@@ -102,7 +102,7 @@ class TitleSectionView extends SectionView {
                 width = Math.max(width, wTitle + wSub);
                 break;
         }
-        return { width, height: height + Math.max(+title.sectionGap, +sub.sectionGap) };
+        return { width, height: height + Math.max(+title.gap, +sub.gap) };
     }
 
 
@@ -146,7 +146,7 @@ class TitleSectionView extends SectionView {
                 xTitle = Math.max(xTitle, xTitle + getX(title, dTitle, this._wTitle));
                 xSub = Math.max(xSub, xSub + getX(sub, dSub, this._wSub));
             };
-            const gap = sub.gap;
+            const gap = sub.titleGap;
             let yTitle = 0;
             let xTitle = pTitle;
             let ySub = 0;

@@ -42,7 +42,7 @@ const config = {
     title: 'Building Space',
     subtitle: {
         text: '<t></t>',
-        gap: 50,
+        titleGap: 50,
     },
     options: {
         // animatable: false

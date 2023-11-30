@@ -77,7 +77,7 @@ const config = {
     },
     title: {
         text: '2023 East Asia Population',
-        sectionGap: 50,
+        gap: 50,
     },
     split: {
         visible: true,

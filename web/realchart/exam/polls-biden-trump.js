@@ -122,7 +122,7 @@ const config = {
     },
     subtitle: {
         text: '<t></t>',
-        gap: 30,
+        titleGap: 30,
     },
     split: {
         visible: true,

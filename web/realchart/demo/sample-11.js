@@ -13,7 +13,7 @@ const config = {
             fontSize: '36px',
             fontWeight: 'bold'
         },
-        sectionGap: 20
+        gap: 20
     },
     inverted: true,
     legend: false,
