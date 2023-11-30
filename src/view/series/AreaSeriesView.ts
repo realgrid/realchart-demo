@@ -215,6 +215,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             area.internalClearStyleAndClass();
             series.color && area.setStyle('fill', series.color);
             series.style && area.internalSetStyleOrClass(series.style);
+            series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
         }
 
         if (lowArea) {
@@ -222,6 +223,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             lowArea.setPath(s);
             lowArea.internalClearStyleAndClass();
             series.color && lowArea.setStyle('fill', series.color);
+            series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
             series.belowStyle && lowArea.internalSetStyleOrClass(series.belowStyle);
         }
     }

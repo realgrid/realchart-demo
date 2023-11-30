@@ -114,6 +114,7 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
     }
 
     private $_layoutArea(area: PathElement, pts: IPointPos[], lowPts: IPointPos[]): void {
+        const series = this.model;
         const sb = new PathBuilder();
         let i = 0;
 
@@ -166,6 +167,11 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
             this._buildLines(lowPts2, 1, sb);
         }
         area.setPath(sb.end());
+
+        area.internalClearStyleAndClass();
+        series.color && area.setStyle('fill', series.color);
+        series.style && area.internalSetStyleOrClass(series.style);
+        series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
     }
 
     //-------------------------------------------------------------------------

@@ -132,7 +132,9 @@ const config = {
             xAxis: i,
             yAxis: i,
             data,
-            // areaStyle: {},
+            areaStyle: {
+                stroke: 'none'
+            },
             style: {
                 fill: primary,
                 stroke: primary,

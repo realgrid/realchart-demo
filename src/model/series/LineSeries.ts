@@ -225,7 +225,7 @@ export class AreaSeries extends LineSeries {
     // property fields
     //-------------------------------------------------------------------------
     /**
-     * area 영역에 적용할 스타일셋이나 class selector.
+     * area 영역에 추가적으로 적용되는 스타일셋이나 class selector.\
      * 
      * @config
      */
@@ -327,6 +327,11 @@ export class AreaRangeSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     lowField: string;
     highField: string;
+    /**
+     * area 영역에 추가적으로 적용되는 스타일셋이나 class selector.\
+     * 
+     * @config
+     */
     areaStyle: StyleProps;
     /**
      * true면 spline 곡선으로 표시한다.
