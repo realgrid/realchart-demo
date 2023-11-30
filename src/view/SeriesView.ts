@@ -426,10 +426,14 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
             this.internalSetStyle('fill', model.color);
             this.internalSetStyle('stroke', model.color);
         }
-        model._calcedColor = getComputedStyle(this.dom).fill;
+        model._calcedColor = getComputedStyle(this.dom)[this._legendColorProp()];
 
         this._visPoints = this._collectVisPoints(model);
         this._prepareSeries(doc, model);
+    }
+
+    protected _legendColorProp(): string {
+        return 'fill';
     }
 
     //-------------------------------------------------------------------------

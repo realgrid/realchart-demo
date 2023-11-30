@@ -63,7 +63,7 @@ export class LegendItemView extends ChartElement<LegendItem> {
 
         this._label.text = model.text();
 
-        const rMarker = this._marker.getBBounds();
+        const rMarker = this._marker.setVisible(model.legend.markerVisible) ? this._marker.getBBounds() : Rectangle.Empty;
         const sz = toSize(this._label.getBBounds());
         this._gap = pickNum(model.legend.markerGap, 0);
 
@@ -71,9 +71,9 @@ export class LegendItemView extends ChartElement<LegendItem> {
     }
 
     protected _doLayout(): void {
-        const rMarker = this._marker.getBBounds();
+        const rMarker = this._marker.visible ? this._marker.getBBounds() : Rectangle.Empty;
 
-        this._marker.translate(0, (this.height - rMarker.height) / 2);
+        this._marker.visible && this._marker.translate(0, (this.height - rMarker.height) / 2);
         this._label.translate(rMarker.width + this._gap, (this.height - this._label.getBBounds().height) / 2);
     }
 }

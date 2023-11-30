@@ -628,4 +628,7 @@ export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _legendColorProp(): string {
+        return 'stroke';
+    }
 }

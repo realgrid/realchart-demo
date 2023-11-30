@@ -40,6 +40,7 @@ const lines = [
 
 const lineConfig = {
   legend: {
+    // markerVisible: false,
     location: 'top',
     alignBase: 'parent',
     itemsAlign: 'start',

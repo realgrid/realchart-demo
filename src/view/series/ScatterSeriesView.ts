@@ -100,7 +100,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
             const lv = labelViews && (labelView = labelViews.get(p, 0));
 
             if (mv.setVisible(!p.isNull)) {
-                const s = series.shape;
+                const s = series.getShape(p);
                 const sz = series.radius * vr;
                 const xJitter = Utils.jitter(p.xValue, jitterX);
                 const yJitter = Utils.jitter(p.yGroup, jitterY);
