@@ -147,7 +147,8 @@ const config = {
     },
     legend: false,
     xAxis: Array(cols).fill().map((_, i) => { 
-        return { 
+        return {
+            type: 'category',
             template: 'xAxis', 
             col: i } 
         }),
