@@ -8,7 +8,7 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
-import { PI_2 } from "../../common/Types";
+import { Align, PI_2 } from "../../common/Types";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
@@ -137,7 +137,7 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
             if (labelViews && (labelInfo.labelView = labelViews.get(p, 0))) {
                 const r = labelInfo.labelView.getBBounds();
 
-                labelInfo.labelView.translate(x, y - r.height / 2);
+                labelInfo.labelView.layout(Align.CENTER).translate(x - r.width / 2, y - r.height / 2);
             }
         })
     }
