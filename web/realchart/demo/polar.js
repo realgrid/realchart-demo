@@ -66,6 +66,14 @@ function setActions(container) {
 	createButton(container, 'Test', function (e) {
         alert('hello');
     });
+    createListBox(container, "X.startAngle", ['0', '90', '180', '270'], function (e) {
+        config.xAxis.startAngle = _getValue(e);
+        chart.load(config);
+    }, '0');
+    createListBox(container, "X.totalAngle", ['360', '270', '180'], function (e) {
+        config.xAxis.totalAngle = _getValue(e);
+        chart.load(config);
+    }, '360');
     createListBox(container, "X.startOffset", ['0', '0.5'], function (e) {
         config.xAxis.startOffset = _getValue(e);
         chart.load(config);

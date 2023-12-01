@@ -257,7 +257,8 @@ export class CategoryAxis extends Axis {
         }
     }
 
-    protected _getStartAngle(start: number): number {
+    getStartAngle(): number {
+        let start = super.getStartAngle();
         let a = +this.startOffset;
 
         if (a > 0) {

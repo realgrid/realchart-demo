@@ -131,6 +131,14 @@ export abstract class RcControl extends RcWrappableObject {
         return this._container.offsetHeight;
     }
 
+    contentWidth(): number {
+        return this.width() - this._padding.left - this._padding.right;
+    }
+
+    contentHeight(): number {
+        return this.height() - this._padding.top - this._padding.bottom;
+    }
+
     clipContainer(): SVGElement {
         return this._defs;
     }

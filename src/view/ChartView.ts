@@ -1164,9 +1164,9 @@ export class ChartView extends LayerElement {
         this._tooltipView.close(true, false);
     }
 
-    showTooltip(series: Series, point: DataPoint): void {
-        const x = point.xPos + this._currBody.tx;
-        const y = point.yPos + this._currBody.ty;
+    showTooltip(series: Series, point: DataPoint, body: RcElement): void {
+        const x = point.xPos + body.tx;
+        const y = point.yPos + body.ty;
 
         this._tooltipView.show(series, point, x, y, true);
     }
@@ -1221,24 +1221,34 @@ export class ChartView extends LayerElement {
         view2 && clip(view2);
     }
 
-    pointerMoved(x: number, y: number, target: EventTarget): void {
-        const body = this._currBody;
-        const p = body.controlToElement(x, y);
-        const inBody = body.pointerMoved(p, target);
-        
-        for (const dir in this._axisSectionMap) {
-            this._axisSectionMap[dir].views.forEach(av => {
-                const m = av.model.crosshair;
-                const len = av.model._isHorz ? body.width : body.height;
-                const pos = av.model._isHorz ? p.x : p.y;
-                const flag = inBody && m.visible && m.flag.visible && !m.isBar() && m.getFlag(len, pos);
+    bodyOf(elt: Element): BodyView {
+        if (this._model.isSplitted()) {
+            return this._paneContainer.bodyViewOf(elt);
+        }
+        return this._currBody;
+    }
 
-                if (flag) {
-                    av.showCrosshair(pos, flag);
-                } else {
-                    av.hideCrosshiar();
-                }
-            })
+    pointerMoved(x: number, y: number, target: EventTarget): void {
+        const body = this.bodyOf(target as any);// this._currBody;
+
+        if (body) {
+            const p = body.controlToElement(x, y);
+            const inBody = body.pointerMoved(p, target);
+            
+            for (const dir in this._axisSectionMap) {
+                this._axisSectionMap[dir].views.forEach(av => {
+                    const m = av.model.crosshair;
+                    const len = av.model._isHorz ? body.width : body.height;
+                    const pos = av.model._isHorz ? p.x : p.y;
+                    const flag = inBody && m.visible && m.flag.visible && !m.isBar() && m.getFlag(len, pos);
+    
+                    if (flag) {
+                        av.showCrosshair(pos, flag);
+                    } else {
+                        av.hideCrosshiar();
+                    }
+                })
+            }
         }
     }
 
@@ -1462,6 +1472,9 @@ export class ChartView extends LayerElement {
         const rd = body.calcRadius(w, h);
         const wPolar = Math.PI * 2 * rd;
         const hPolar = rd;
+
+        // guides - axis view에서 guide view들을 추가할 수 있도록 초기화한다.
+        this._polarView.prepareGuideContainers();
 
         // axes
         this.$_prepareAxes(doc, m);

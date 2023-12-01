@@ -60,6 +60,8 @@ export class TooltipView extends RcElement {
     // methods
     //-------------------------------------------------------------------------
     show(series: Series, point: DataPoint, x: number, y: number, animate: boolean): void {
+        const cw = this.control.contentWidth();
+        const ch = this.control.contentHeight();
         const model = this._model = series.tooltip;
         const tv = this._textView;
 
@@ -83,15 +85,20 @@ export class TooltipView extends RcElement {
         // view
         const dur = this.getStyle('visibility') === 'visible' ? 300 : 0;
 
-        if (model.series.chart.isInverted()) {
-            this.translateEx(x + model.offset, y - h / 2, dur, false);
+        if (series.chart.isInverted()) {
+            x += model.offset;
+            y -= h / 2;
         } else {
-            this.translateEx(x - w / 2, y - h - model.offset, dur, false);
+            x -= w / 2;
+            y -= h + model.offset;
         }
+        x = Math.max(0, Math.min(x, cw - w));
+        y = Math.max(0, Math.min(y, ch - h));
+        this.translateEx(x, y, dur, false);
+
         if (dur === 0) {
             this.setStyle('visibility', 'visible');
         }
-
         if (this._hideTimer) {
             clearTimeout(this._hideTimer);
             this._hideTimer = void 0;
@@ -121,17 +128,4 @@ export class TooltipView extends RcElement {
             this.setStyle('visibility', 'hidden');
         })
     }
-
-    // M402.5,134.5
-    // A1,1,0,0,1,401.5,133.5
-    // L401.5,85.5
-    // A1,1,0,0,1,402.5,84.5
-    // L513.5,84.5
-    // A1,1,0,0,1,514.5,85.5
-    // L514.5,133.5
-    // A1,1,0,0,1,513.5,134.5
-    // L471.5,134.5
-    // L443.5,148.5
-    // L457.5,134.5
-    // Z
 }

@@ -207,9 +207,10 @@ export class Body extends ChartItem {
         return this;
     }
 
-    getPolar(axis: Axis): {start: number, cx: number, cy: number, rd: number } {
+    getPolar(axis: Axis): {start: number, total: number, cx: number, cy: number, rd: number } {
         return this.chart.isPolar() ? {
             start: axis ? axis.getStartAngle() : 0,
+            total: axis ? axis.getTotalAngle() : 0,
             cx: this._cx,
             cy: this._cy,
             rd: this._rd

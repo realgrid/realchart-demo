@@ -702,7 +702,7 @@ class ZoomButton extends ButtonElement {
 export interface IPlottingOwner {
 
     clipSeries(view: RcElement, view2: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
-    showTooltip(series: Series, point: DataPoint): void;
+    showTooltip(series: Series, point: DataPoint, body: RcElement): void;
     hideTooltip(): void;
 }
 
@@ -842,7 +842,7 @@ export class BodyView extends ChartElement<Body> {
             this._focused = p;
             if (this._focused) {
                 (this._focused as any as RcElement).setData(SeriesView.DATA_FOUCS);
-                this._owner.showTooltip(series, p.point);
+                this._owner.showTooltip(series, p.point, this);
             } else {
                 this._owner.hideTooltip();
             }

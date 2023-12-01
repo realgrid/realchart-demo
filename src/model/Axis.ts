@@ -1020,6 +1020,10 @@ export abstract class Axis extends ChartItem implements IAxis {
         return ORG_ANGLE + DEG_RAD * this.startAngle;
     }
 
+    getTotalAngle(): number {
+        return DEG_RAD * Math.max(0, Math.min(360, pickNum(this.totalAngle, 360)));
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -1218,10 +1222,6 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    protected _getStartAngle(start: number): number {
-        return start;
-    }
-
     protected _createGrid(): AxisGrid {
         return new AxisGrid(this);
     }
