@@ -11,7 +11,9 @@ const config = {
   xAxis: {
     title: "서울시",
     categories: ["2014", "2015", "2016", "2017", "2018", "2019", "2020"],
-    grid: true,
+    grid: {
+        visible: true
+    },
     label: {
       // startStep: 0,
       step: 3,

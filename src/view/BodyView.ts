@@ -143,14 +143,12 @@ export class AxisGridView extends ChartElement<AxisGrid> {
         const w = this.width;
         const h = this.height;
         const pts = m.getPoints(axis._isHorz ? w : h);
-        const lines = this._lines;
-        const end = lines.count - 1;
-
-        lines.prepare(pts.length, (line) => {
+        const lines = this._lines.prepare(pts.length, (line) => {
             line.internalClearStyleAndClass();
             line.internalSetStyleOrClass(axis.grid.style);
             line.setClass('rct-axis-grid-line');
         });
+        const end = lines.count - 1;
 
         lines.forEach((line, i) => {
             line.setBoolData('first', i === 0);
