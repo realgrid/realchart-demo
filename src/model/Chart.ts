@@ -82,7 +82,6 @@ export interface IChart {
     isInverted(): boolean;
     isSplitted(): boolean;
     animatable(): boolean;
-    startAngle(): number;
 
     seriesByName(series: string): Series;
     axisByName(axis: string): Axis;
@@ -364,10 +363,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     _createChart(config: any): IChart {
         return new Chart(config);
-    }
-
-    startAngle(): number {
-        return this.body.getStartAngle();
     }
 
     animatable(): boolean {

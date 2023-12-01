@@ -4,7 +4,7 @@
  * 축의 특정한 위치나 범위를 강조해서 표시하는 방법.
  */
 const config = {
-    inverted: true,
+    // inverted: true,
     options: {
         animatable: false
     },

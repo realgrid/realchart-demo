@@ -51,7 +51,7 @@ const config = {
         },
         // step: 5,
         grid: {
-            visible: false,
+            // visible: false,
         }
     },
     yAxis: {
@@ -67,6 +67,7 @@ const config = {
     },
     body: {
         // startAngle: 90,
+        totalAngle: 180,
     },
     series: [{
         type: 'bar',

@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isObject, isString, pickNum, pickNum3 } from "../common/Common";
-import { Align, SVGStyleOrClass, VerticalAlign, _undefined, fixnum, isNull } from "../common/Types";
+import { Align, DEG_RAD, ORG_ANGLE, SVGStyleOrClass, VerticalAlign, _undefined, fixnum, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
@@ -862,7 +862,6 @@ export abstract class Axis extends ChartItem implements IAxis {
     _vlen: number;
     _minPad = 0;
     _maxPad = 0;
-    _startAngle = 0;
     _values: number[] = [];
     protected _min: number;
     protected _max: number;
@@ -931,6 +930,21 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     row = 0;
     col = 0;
+    /**
+     * Polar 차트에서 사용될 때 시작 각도.
+     * 
+     * @config
+     */
+    startAngle = 0;
+    /**
+     * Polar 차트에서 사용될 때 원호 전체 각도.
+     * 0 ~ 360 사이의 값으로 지정해야 한다.
+     * 범위를 벗어난 값은 범위 안으로 조정된다.
+     * 지정하지 않거나 잘못된 값이면 360으로 계산된다.
+     * 
+     * @config
+     */
+    totalAngle = 360
     /**
      * 표시 위치.
      * 기본적으로 상대 축의 원점 쪽에 표시된다.
@@ -1002,8 +1016,8 @@ export abstract class Axis extends ChartItem implements IAxis {
         return this.getValueAt(length, pos);
     }
 
-    startAngle(): number {
-        return this._startAngle;
+    getStartAngle(): number {
+        return ORG_ANGLE + DEG_RAD * this.startAngle;
     }
 
     //-------------------------------------------------------------------------
@@ -1116,9 +1130,6 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     calcPoints(length: number, phase: number): void {
         this._ticks.forEach(t => t.pos = this.getPosition(length, t.value));
-        if (this._isPolar) {
-            this._startAngle = this._getStartAngle(this.chart.startAngle());
-        }
     }
 
     /**

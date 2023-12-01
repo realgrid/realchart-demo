@@ -165,12 +165,6 @@ export class Body extends ChartItem {
         }
     }
     /**
-     * 시작 각도.
-     * 
-     * @CONFIG
-     */
-    startAngle = 0;
-    /**
      * false이면 polar 차트일 때, x 축선과 y축 그리드 선들을 다각형으로 표시한다.
      * 
      * @config
@@ -213,13 +207,9 @@ export class Body extends ChartItem {
         return this;
     }
 
-    getStartAngle(): number {
-        return ORG_ANGLE + DEG_RAD * this.startAngle;
-    }
-
     getPolar(axis: Axis): {start: number, cx: number, cy: number, rd: number } {
         return this.chart.isPolar() ? {
-            start: axis ? axis.startAngle() : this.getStartAngle(),
+            start: axis ? axis.getStartAngle() : 0,
             cx: this._cx,
             cy: this._cy,
             rd: this._rd

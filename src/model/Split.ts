@@ -27,7 +27,6 @@ export class PaneBody extends Body {
         this.radius = _undefined;
         this.centerX = _undefined;
         this.centerY = _undefined;
-        this.startAngle = _undefined;
     }
 
     //-------------------------------------------------------------------------

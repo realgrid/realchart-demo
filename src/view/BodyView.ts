@@ -336,15 +336,17 @@ export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
     //-------------------------------------------------------------------------
     prepare(doc: Document, model: T): void {
         this.model = model;
-        // this._labelView.text = model.label.text;
-        this._labelView.setModel(doc, model.label, null);
-        this._labelView.setStyles(model.label.style);
+        if (this._labelView.setVisible(!!model.label.text)) {
+            this._labelView.setModel(doc, model.label, null);
+            this._labelView.setStyles(model.label.style);
+        }
     }
 
     layout(width: number, height: number): void {
-        this.model.label.buildSvg(this._labelView._text, this._labelView._outline, width, height, null, null);
-        this._labelView.layout(Align.CENTER);
-
+        if (this._labelView.visible) {
+            this.model.label.buildSvg(this._labelView._text, this._labelView._outline, width, height, null, null);
+            this._labelView.layout(Align.CENTER);
+        }
         this._doLayout(width, height);
     }
 

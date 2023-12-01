@@ -115,9 +115,10 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
         this._sectors.forEach((view, i) => {
             const p = view.point;
             let y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
-            const wUnit = xAxis.getUnitLength(Math.PI * 2, p.xValue);
+            const wUnit = xAxis.getUnitLength(PI_2, p.xValue);
             const wPoint = series.getPointWidth(wUnit);
-            let a = polar.start + xAxis.getPosition(PI_2 * polar.rd, p.xValue);
+            // let a = polar.start + xAxis.getPosition(PI_2 * polar.rd, p.xValue);
+            let a = polar.start + xAxis.getPosition(PI_2, p.xValue);
     
             view.setSector({
                 cx: polar.cx, 
