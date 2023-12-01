@@ -1212,7 +1212,8 @@ export class ChartView extends LayerElement {
         }
 
         const inverted = this._model.inverted && invertable;
-        const line = (view.parent as SeriesView<any>).model instanceof LineSeriesBase;
+        const line = view && (view.parent as SeriesView<any>).model instanceof LineSeriesBase;
+        // TODO: line과 아닌 것들이 동시에 표시될 수 있다. 이것도 해결돼야 한다.
         const sc = line ? this._lineSeriesClip : this._seriesClip;
 
         // TODO: pane 단위로

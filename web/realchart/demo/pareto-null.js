@@ -17,7 +17,7 @@ const config = {
         padding: 0,
         position: 'opposite',
         tick: {
-            baseAxis: 0,
+            // baseAxis: 0,
         },
         label: {
             suffix: '%'

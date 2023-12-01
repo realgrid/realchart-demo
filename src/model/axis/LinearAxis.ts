@@ -61,9 +61,9 @@ export class ContinuousAxisTick extends AxisTick {
             // 지정한 위치대로 tick들을 생성한다.
             pts = this.steps.slice(0);
         } else if (this._baseAxis instanceof ContinuousAxis) {
-            pts = this._getStepsByCount(this._baseAxis._ticks.length, base, min, max);
+            pts = this._getStepsByCount(this._baseAxis._ticks.length, base, min, max, true);
         } else if (this.stepCount > 0) {
-            pts = this._getStepsByCount(this.stepCount, base, min, max);
+            pts = this._getStepsByCount(this.stepCount, base, min, max, false);
         } else if (this._isValidInterval(this.stepInterval)) {
             pts = this._getStepsByInterval(this.stepInterval, base, min, max);
         } else if (this.stepPixels > 0) {
@@ -97,7 +97,7 @@ export class ContinuousAxisTick extends AxisTick {
         }
     }
 
-    protected _getStepsByCount(count: number, base: number, min: number, max: number): number[] {
+    protected _getStepsByCount(count: number, base: number, min: number, max: number, based: boolean): number[] {
         if (min > base) {
             min = base;
             base = NaN;
@@ -112,7 +112,12 @@ export class ContinuousAxisTick extends AxisTick {
         const scale = Math.pow(10, Math.floor(Math.log10(step)));
         const steps: number[] = [];
 
-        step = this._step = Math.ceil(step / scale) * scale;
+        if (based && step / scale === 2.5 && Math.floor(count * len / step) == count * len / step) {
+        // if (based && step > 10 && step / scale === 2.5 && Math.floor(count * len / step) == count * len / step) {
+            this._step = step;
+        } else {
+            step = this._step = Math.ceil(step / scale) * scale;
+        }
 
         if (!isNaN(base)) { // min이 base 아래, max가 base 위에 있다.
             assert(min < base && max > base, "base error");

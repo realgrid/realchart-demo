@@ -20,6 +20,7 @@ const config = {
         tick: {
             baseAxis: 0,
         },
+        grid: false,
         label: {
             suffix: '%'
         }
