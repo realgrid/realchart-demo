@@ -91,7 +91,7 @@ export abstract class LineSeriesBase extends Series {
     // methods
     //-------------------------------------------------------------------------
     getShape(p: LineSeriesPoint): Shape {
-        return (p && p.shape) || this.marker.shape || this._shape;
+        return this.marker.visible ? ((p && p.shape) || this.marker.shape || this._shape) : null;
     }
 
     getRadius(p: LineSeriesPoint): number {
@@ -118,6 +118,17 @@ export abstract class LineSeriesBase extends Series {
 
     _defViewRangeValue(): "x" | "y" | "z" {
         return 'x';
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return new LineLegendMarkerView(doc, size);
+    }
+
+    legendMarker(doc: Document, size: number): RcElement {
+        const m = super.legendMarker(doc, size);
+
+        (m as LineLegendMarkerView).setShape(this.getShape(null), Math.min(+size || LegendItem.MARKER_SIZE, this.marker.radius * 2));
+        return m;
     }
 
     //-------------------------------------------------------------------------
@@ -186,17 +197,6 @@ export class LineSeries extends LineSeriesBase {
     }
     getLineType(): LineType {
         return this.lineType;
-    }
-
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
-        return new LineLegendMarkerView(doc, size);
-    }
-
-    legendMarker(doc: Document, size: number): RcElement {
-        const m = super.legendMarker(doc, size);
-
-        (m as LineLegendMarkerView).setShape(this.getShape(null), Math.min(+size || LegendItem.MARKER_SIZE, this.marker.radius * 2));
-        return m;
     }
 }
 

@@ -8,7 +8,7 @@
 
 import { ChartText, ChartTextEffect } from "../../model/ChartItem";
 import { Color } from "../Color";
-import { _undefined } from "../Types";
+import { Align, _undefined } from "../Types";
 import { GroupElement } from "./GroupElement";
 import { RectElement } from "./RectElement";
 import { TextAnchor, TextElement } from "./TextElement";
@@ -31,11 +31,6 @@ export class LabelElement extends GroupElement {
     //-------------------------------------------------------------------------
     constructor(doc: Document, styleName: string = _undefined) {
         super(doc);
-
-        // this.add(this._back = new RectElement(doc));
-
-        // this.add(this._outline = new TextElement(doc));
-        // this._outline.anchor = TextAnchor.START;
 
         this.add(this._text = new TextElement(doc, styleName));
         this._text.anchor = TextAnchor.START;
@@ -106,14 +101,17 @@ export class LabelElement extends GroupElement {
         return this;
     }
 
-    layout(): LabelElement {
+    layout(align: Align): LabelElement {
+        const r = this._text.getBBounds();
+        // TODO: 높이 너비를 지정할 수 있다.
+        const w = r.width;
+        const h = r.height;
         let x = 0;
         let y = 0;
 
         // background
         if (this._back && this._back.parent) {
             const cs = getComputedStyle(this._back.dom);
-            const r = this._text.getBBounds();
 
             x = parseFloat(cs.paddingLeft) || 0;
             y = parseFloat(cs.paddingTop) || 0;
@@ -121,10 +119,24 @@ export class LabelElement extends GroupElement {
             this._back.setBounds(
                 0,//-left,//-r.width / 2, 
                 0,//-top,//-r.height / 2,
-                r.width + x + (parseFloat(cs.paddingRight) || 0),
-                r.height + y + (parseFloat(cs.paddingBottom) || 0),
+                w + x + (parseFloat(cs.paddingRight) || 0),
+                h + y + (parseFloat(cs.paddingBottom) || 0),
                 cs['rx']
             )
+        }
+
+        // [주의] 멀티라인을 위해 anchor를 지정해야 한다.
+        switch (align) {
+            case Align.CENTER:
+                x += w / 2;
+                this._text.anchor = TextAnchor.MIDDLE;
+                break;
+            case Align.RIGHT:
+                x += w;
+                this._text.anchor = TextAnchor.END;
+                break;
+            default:
+                this._text.anchor = TextAnchor.START;
         }
 
         this._text.translate(x, y);

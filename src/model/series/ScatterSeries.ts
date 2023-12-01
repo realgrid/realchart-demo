@@ -11,7 +11,7 @@ import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { LegendItem } from "../Legend";
-import { MarkerSeries, Series } from "../Series";
+import { MarkerSeries } from "../Series";
 import { ShapeLegendMarkerView } from "./legend/ShapeLegendMarkerView";
 
 export class ScatterSeriesPoint extends DataPoint {
@@ -33,7 +33,7 @@ export class ScatterSeries extends MarkerSeries {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _shape: Shape;
+    _defShape: Shape;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -76,11 +76,11 @@ export class ScatterSeries extends MarkerSeries {
      * rendering 시점에 chart가 series별로 기본 shape를 지정한다.
      */
     setShape(shape: Shape): void {
-        this._shape = shape;
+        this._defShape = shape;
     }
 
     getShape(p: ScatterSeriesPoint): Shape {
-        return this.shape || this._shape;
+        return this.shape || this._defShape;
     }
 
     hasMarker(): boolean {

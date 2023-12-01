@@ -12,7 +12,7 @@ import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
 import { ClipElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
-import { IValueRange, _undefined } from "../common/Types";
+import { Align, IValueRange, _undefined } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { RectElement } from "../common/impl/RectElement";
@@ -23,6 +23,7 @@ import { LegendItem } from "../model/Legend";
 import { ClusterableSeries, DataPointLabel, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { ContentView } from "./ChartElement";
+import { LegendItemView } from "./LegendView";
 import { SeriesAnimation } from "./animation/SeriesAnimation";
 
 export interface IPointView {
@@ -53,7 +54,6 @@ export class PointLabelView extends LabelElement {
         super(doc, 'rct-point-label');
 
         this.ignorePointer();
-        this._text.anchor = TextAnchor.MIDDLE;
     }
 
     //-------------------------------------------------------------------------
@@ -422,18 +422,27 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
 
         this.internalClearStyleAndClass();
         this.internalSetStyleOrClass(model.style);
-        if (model.color) {
-            this.internalSetStyle('fill', model.color);
-            this.internalSetStyle('stroke', model.color);
-        }
+        model.color && this._setModelColor(model.color);
         model._calcedColor = getComputedStyle(this.dom)[this._legendColorProp()];
 
         this._visPoints = this._collectVisPoints(model);
         this._prepareSeries(doc, model);
     }
 
+    protected _setModelColor(color: string): void {
+        this.internalSetStyle('fill', color);
+        this.internalSetStyle('stroke', color);
+    }
+
     protected _legendColorProp(): string {
         return 'fill';
+    }
+
+    needDecoreateLegend(): boolean {
+        return false;
+    }
+
+    decoreateLegend(legendView: LegendItemView): void {
     }
 
     //-------------------------------------------------------------------------
@@ -554,9 +563,9 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
 
         if (inverted) {
             y -= r.height / 2;
-            x += r.width / 2;
-        } else {
             // x -= r.width / 2;
+        } else {
+            x -= r.width / 2;
         }
 
         switch (info.labelPos) {
@@ -620,7 +629,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         }
 
         labelView.setContrast(inner && info.pointView.dom);
-        labelView.layout().translate(x, y);
+        labelView.layout(Align.RIGHT).translate(x, y);
     }
 
     protected _clipRange(w: number, h: number, rangeAxis: 'x' | 'y' | 'z', range: IValueRange, clip: ClipElement, inverted: boolean): void {

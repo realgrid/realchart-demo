@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { IRect } from "../../common/Rectangle";
+import { Align } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { PointItemPosition } from "../../model/Series";
 import { BubbleSeries, BubbleSeriesPoint } from "../../model/series/BubbleSeries";
@@ -121,7 +122,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
                     // label
                     if (lv) {
                         labelView.setContrast(mv.dom);
-                        labelView.layout();
+                        labelView.layout(Align.CENTER);
                         this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
                     }
                 } else if (lv) {

@@ -10,7 +10,7 @@ import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipElement, LayerElement, PathElement, RcElement } from "../../common/RcControl";
-import { IValueRange, PI_2 } from "../../common/Types";
+import { Align, IValueRange, PI_2 } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
@@ -18,6 +18,8 @@ import { LineType } from "../../model/ChartTypes";
 import { DataPoint, IPointPos } from "../../model/DataPoint";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
 import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
+import { LineLegendMarkerView } from "../../model/series/legend/LineLegendMarkerView";
+import { LegendItemView } from "../LegendView";
 import { IPointView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
@@ -98,6 +100,14 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     protected _getPointPool(): ElementPool<RcElement> {
         return this._markers;
+    }
+
+    needDecoreateLegend(): boolean {
+        return true;
+    }
+
+    decoreateLegend(legendView: LegendItemView): void {
+        (legendView._marker as LineLegendMarkerView)._line.setStyle('strokeWidth', getComputedStyle(this._line.dom).strokeWidth);
     }
 
     protected _prepareSeries(doc: Document, model: T): void {
@@ -318,8 +328,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
                     lv.visible = true;
                     lv.setContrast(null);
-                    //lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
-                    lv.translate(px, py - r.height - labelOff - (vis ? mv._radius : 0));
+                    lv.layout(Align.CENTER).translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
                 }
             } else if (lv) {
                 lv.setVisible(false);

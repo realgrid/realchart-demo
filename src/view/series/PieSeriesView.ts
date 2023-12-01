@@ -9,7 +9,7 @@
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { RcElement } from "../../common/RcControl";
-import { fixnum } from "../../common/Types";
+import { Align, fixnum } from "../../common/Types";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { LabelElement } from "../../common/impl/LabelElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
@@ -71,7 +71,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         });
 
         this.add(this._textView = new LabelElement(doc, 'rct-pie-series-inner'));
-        // this._textView.anchor = TextAnchor.MIDDLE;
+        this._textView._text.anchor = TextAnchor.MIDDLE;
         this.add(this._lineContainer = new PointLabelLineContainer(doc));
     }
 
@@ -80,6 +80,10 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     //-------------------------------------------------------------------------
     protected _getPointPool(): ElementPool<RcElement> {
         return this._sectors;
+    }
+
+    protected _setPointColor(v: RcElement, color: string): void {
+        v.internalSetStyle('fill', color);
     }
 
     protected _prepareSeries(doc: Document, model: PieSeries): void {
@@ -321,7 +325,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             y2 -= r.height / 2;
         }
         view.move(x3, y2); // 위치 정보 저장.
-        !view.isDomAnimating() && view.layout().translate(x3 + dx, y2 + dy);
+        !view.isDomAnimating() && view.layout(Align.CENTER).translate(x3 + dx, y2 + dy);
     }
 
     private $_layoutLabelInner(p: PieSeriesPoint, view: PointLabelView, off: number, dist: number, sliceOff: number): void {
@@ -336,7 +340,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
 
         x = this._cx + Math.cos(a) * (sliceOff + rd);
         y = this._cy + Math.sin(a) * (sliceOff + rd);
-        view.layout().translate(x - r.width / 2, y - r.height / 2);
+        view.layout(Align.CENTER).translate(x - r.width / 2, y - r.height / 2);
     }
 
     private $_slice(view: SectorView, sliced: boolean, needLayout: boolean): void {

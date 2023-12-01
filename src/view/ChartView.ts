@@ -996,6 +996,14 @@ export class ChartView extends LayerElement {
             this._currBody.resize(wPlot, hPlot);
             this._currBody.layout().translate(x, y);
             rPlot = this._currBody.getRect();
+            this._currBody._seriesViews.forEach(v => {
+                if (v.needDecoreateLegend()) {
+                    const lv = this._legendSectionView._legendView.legendOfSeries(v.model);
+                    if (lv) {
+                        v.decoreateLegend(lv);
+                    }
+                }
+            })
         }
 
         // credits

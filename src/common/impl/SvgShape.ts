@@ -8,19 +8,17 @@
 
 import { PathElement } from '../RcControl';
 import { IRect } from '../Rectangle';
-import { PI_2, PathValue, fixAngle } from '../Types';
+import { PathValue, fixAngle } from '../Types';
 import { Utils } from '../Utils';
 
 export enum Shape {
-    // LINE = 'line',
-    // LINES = 'lines',
     CIRCLE = 'circle',
     DIAMOND = 'diamond',
-    RECTANGLE = 'rectangle',
     SQUARE = 'square',
     TRIANGLE = 'triangle',
-    ITRIANGLE = 'itriangle',
     STAR = 'star',
+    ITRIANGLE = 'itriangle',
+    RECTANGLE = 'rectangle'
 }
 
 export const Shapes = Utils.getEnumValues(Shape);
@@ -253,11 +251,11 @@ export class SvgShapes {
 
         switch (shape) {
             case Shape.SQUARE:
-            case Shape.RECTANGLE:
             case Shape.DIAMOND:
             case Shape.TRIANGLE:
             case Shape.ITRIANGLE:
             case Shape.STAR:
+            case Shape.RECTANGLE:
                 path = SvgShapes[shape](0, 0, rx * 2, ry * 2);
                 break;
 

@@ -132,9 +132,9 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                         case 'triangle':
                         case 'itriangle':
                         case 'star':
+                        case 'rectangle':
                             path = SvgShapes[s](0 - sz, 0 - sz, sz * 2, sz * 2);
                             break;
-    
                         default:
                             path = SvgShapes.circle(0, 0, sz);
                             break;

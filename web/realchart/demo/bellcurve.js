@@ -7,6 +7,7 @@ const config = {
     options: {
         // animatable: false
     },
+    legend: true,
     xAxis: {
         name: 'baxis',
         title: 'X Axis',

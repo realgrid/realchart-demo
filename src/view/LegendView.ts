@@ -15,6 +15,7 @@ import { ISize, Size } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Legend, LegendItem, LegendItemsAlign, LegendLayout, LegendLocation } from "../model/Legend";
+import { Series } from "../model/Series";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
 /**
@@ -108,6 +109,10 @@ export class LegendView extends BoundableElement<Legend> {
     legendByDom(dom: Element): LegendItem {
         const v = this._itemViews.elementOf(dom);
         return v && v.model;
+    }
+
+    legendOfSeries(series: Series): LegendItemView {
+        return this._itemViews.find(v => v.model.source === series);
     }
 
     //-------------------------------------------------------------------------

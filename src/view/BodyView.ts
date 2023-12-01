@@ -345,7 +345,7 @@ export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
 
     layout(width: number, height: number): void {
         this.model.label.buildSvg(this._labelView._text, this._labelView._outline, width, height, null, null);
-        this._labelView.layout();
+        this._labelView.layout(Align.CENTER);
 
         this._doLayout(width, height);
     }
@@ -726,7 +726,7 @@ export class BodyView extends ChartElement<Body> {
     private _breakViews: AxisBreakView[] = [];
     private _seriesContainer: LayerElement;
     private _labelContainer: LayerElement;
-    protected _seriesViews: SeriesView<Series>[] = [];
+    _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
     private _series: Series[];
     // annotations

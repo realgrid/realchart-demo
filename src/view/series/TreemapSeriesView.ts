@@ -9,6 +9,7 @@
 import { Color } from "../../common/Color";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
+import { Align } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
 import { DataPoint } from "../../model/DataPoint";
 import { TreeNode, TreemapSeries } from "../../model/series/TreemapSeries";
@@ -150,14 +151,14 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
                 if (labelView.setVisible(m.width >= r.height && m.height >= r.height)) {
                 // if (labelView.setVisible(m.width >= r.width && m.height >= r.height)) {
                     if (inverted) {
-                        x = -m.y - m.height / 2;// (m.height + r.width) / 2;
+                        x = -m.y - m.height / 2 - r.width / 2;// (m.height + r.width) / 2;
                         y = xLen - m.x - (m.width + r.height) / 2;
                     } else {
-                        //x -= r.width / 2;
+                        x -= r.width / 2;
                         y -= r.height / 2;
                     }
 
-                    labelView.translate(x, y);
+                    labelView.layout(Align.CENTER).translate(x, y);
                 }
             }
         })
