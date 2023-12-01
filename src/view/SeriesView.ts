@@ -963,6 +963,7 @@ export abstract class MarkerSeriesView<T extends MarkerSeries> extends SeriesVie
             pos = this._getAutoPos(r.width >= radius * 2 * 0.9);
         }
         if (labelView.setVisible(pos != null)) {
+            x -= r.width / 2;
             if (pos === PointItemPosition.INSIDE) {
                 labelView.translate(x, y - r.height / 2);
             } else if (pos) {

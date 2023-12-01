@@ -623,6 +623,7 @@ export class ChartView extends LayerElement {
     private _historyView: HistoryView;
     private _tooltipView: TooltipView;
     private _seriesClip: ClipElement;
+    private _lineSeriesClip: ClipElement;
 
     _org: IPoint;
     private _plotWidth: number;
@@ -1199,7 +1200,7 @@ export class ChartView extends LayerElement {
         function clip(v: RcElement): void {
             if (inverted) {
                 // TODO: 이런 구분은 없애야 한다!. LineContainer 참조.
-                if ((v.parent as SeriesView<any>).model instanceof LineSeriesBase) {
+                if (line) {
                     sc.setBounds(0, h - w, h, w);
                 } else {
                     sc.setBounds(0, -w, h, w);
@@ -1211,7 +1212,8 @@ export class ChartView extends LayerElement {
         }
 
         const inverted = this._model.inverted && invertable;
-        const sc = this._seriesClip;
+        const line = (view.parent as SeriesView<any>).model instanceof LineSeriesBase;
+        const sc = line ? this._lineSeriesClip : this._seriesClip;
 
         // TODO: pane 단위로
         view && clip(view);
@@ -1266,6 +1268,7 @@ export class ChartView extends LayerElement {
     //-------------------------------------------------------------------------
     protected _doAttached(parent: RcElement): void {
         this._seriesClip = this.control.clipBounds();
+        this._lineSeriesClip = this.control.clipBounds();
     }
 
     //-------------------------------------------------------------------------

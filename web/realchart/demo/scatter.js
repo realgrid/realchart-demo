@@ -20,7 +20,8 @@ const config = {
 			name: '남자',
 			data: heart_data.slice(0,600).filter(d => d.sex===1),
 			xField: 'age',
-			yField: 'thalachh'
+			yField: 'thalachh',
+            // pointLabel: true
 		},{
 			name: '여자',
 			data: heart_data.slice(0,600).filter(d => d.sex===0),
