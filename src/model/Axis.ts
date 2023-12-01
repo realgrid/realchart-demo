@@ -623,9 +623,29 @@ export abstract class AxisLabel extends FormattableText {
      * false이면 줄 나누기 대신 ellipsis('...')로 표시한다.
      */
     wrap = false;
+    /**
+     * 첫번째 tick 라벨에 표시될 텍스트.
+     * 
+     * @config
+     */
     firstText: string;
+    /**
+     * 마지막 tick 라벨에 표시될 텍스트.
+     * 
+     * @config
+     */
     lastText: string;
+    /**
+     * 첫번째 tick 라벨에 추가로 적용되는 스타일.
+     * 
+     * @config
+     */
     firstStyle: SVGStyleOrClass;
+    /**
+     * 마지막 tick 라벨에 추가로 적용되는 스타일.
+     * 
+     * @config
+     */
     lastStyle: SVGStyleOrClass;
 
     textCallback: (args: IAxisLabelArgs) => string;
