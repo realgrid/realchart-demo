@@ -9,7 +9,7 @@
 import { Color } from "../../common/Color";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
-import { _undefined } from "../../common/Types";
+import { Align, _undefined } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
 import { HeatmapSeries, HeatmapSeriesPoint } from "../../model/series/HeatmapSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
@@ -123,7 +123,8 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
                         y += (hPoint - r.height) / 2;
                     }
     
-                    labelView.translate(x, y);
+                    x -= r.width / 2;
+                    labelView.layout(Align.CENTER).translate(x, y);
                 }
             }
        });
