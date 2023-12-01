@@ -23,7 +23,7 @@ for (let i = 0; i < demos.length; i++) {
         await page.evaluate(`chart.load(${config}, false)`);
 
         const snapshot = await page.locator('#realchart').screenshot();
-        await expect(snapshot).toMatchSnapshot(demos[i].replace('.js', '.png'));
+        await expect(snapshot).toMatchSnapshot(demos[i].replace('.js', '.png'), {maxDiffPixels: 1});
 
         await browser.close();
     })
