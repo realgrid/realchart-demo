@@ -73,11 +73,10 @@ const config = {
         pointLabel: {
             visible: !true,
         },
-        pointWidth: 0.1,
+        // pointWidth: 0.1,
         data: ballsData,
         xField: 'angle',
         yField: 'hits',
-        // zField: 'hits'
     }]
 }
 
