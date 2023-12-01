@@ -217,7 +217,8 @@ export class AxisTitle extends AxisItem {
 }
 
 /**
- * visible 기본값이 undefined이다.
+ * Axis tick의 위치에 수평 혹은 수직선으로 plot 영역을 구분 표시한다.\
+ * {@link visible} 기본값이 undefined인데,
  * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
  * 
  * @config
@@ -273,7 +274,9 @@ export class AxisGrid extends AxisItem {
 }
 
 /**
- *
+ * 축 가이드 label 설정 모델.
+ * 
+ * @config
  */
 export class AxisGuideLabel extends FormattableText {
 

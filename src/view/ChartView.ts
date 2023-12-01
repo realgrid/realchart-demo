@@ -1264,6 +1264,14 @@ export class ChartView extends LayerElement {
         };
     }
 
+    bodyViewOf(dom: Element): BodyView {
+        if (this._model.isSplitted()) {
+            return this._paneContainer.bodyViewOf(dom);
+        } else if (this._currBody.contains(dom)) {
+            return this._currBody;
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

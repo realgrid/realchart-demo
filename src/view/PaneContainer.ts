@@ -360,6 +360,10 @@ export class PaneContainer extends LayerElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    bodyViewOf(dom: Element): PaneBodyView {
+        return this._bodies.find(b => b.contains(dom));
+    }
+
     prepare(doc: Document, model: Split): void {
         const chart = model.chart as Chart;
 

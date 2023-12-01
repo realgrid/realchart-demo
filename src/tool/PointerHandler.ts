@@ -173,15 +173,15 @@ export class ChartPointerHandler implements IPointerHandler {
 
     protected _getDragTracker(elt: Element, dx: number, dy: number): any {
         const chartView = this._chart.chartView();
-        const body = chartView.bodyView();
+        const body = chartView.bodyViewOf(elt);
 
         if (AxisScrollView.isThumb(elt)) {
             return new ScrollTracker(this._chart, chartView.getScrollView(elt));
-        } else if (body.model.canZoom() && body.contains(elt)) {
+        } else if (body && body.model.canZoom()) {
             return new ZoomTracker(this._chart, body, chartView._inverted);
         } else if (NavigatorView.isHandle(elt)) {
             return new NavigatorHandleTracker(this._chart, chartView._navigatorView, elt);
-        } else if (NavigatorView.isMask(elt) && this._chart.model.body.isZoomed()) {
+        } else if (NavigatorView.isMask(elt) && body && body.model.isZoomed()) {
             return new NavigatorMaskTracker(this._chart, chartView._navigatorView, elt);            
         }
     }
