@@ -12,7 +12,6 @@ import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
-import { DataPoint } from "./DataPoint";
 import { IClusterable, IPlottingItem } from "./Series";
 
 /**
@@ -484,18 +483,14 @@ export abstract class AxisTick extends AxisItem {
      * @config
      */
     gap = 3;
-    /**
-     * true면 소수점값애 해당하는 tick은 표시되지 않도록 한다.
-     */
-    integral = false;
-    /**
-     * true면 다른 설정과 상관없이 첫번째 tick은 항상 표시된다.
-     */
-    showFirst = false;
-    /**
-     * true면 다른 설정과 상관없이 마지막 tick은 항상 표시된다.
-     */
-    showLast = false;
+    // /**
+    //  * true면 다른 설정과 상관없이 첫번째 tick은 항상 표시된다.
+    //  */
+    // showFirst: boolean;
+    // /**
+    //  * true면 다른 설정과 상관없이 마지막 tick은 항상 표시된다.
+    //  */
+    // showLast: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -628,6 +623,10 @@ export abstract class AxisLabel extends FormattableText {
      * false이면 줄 나누기 대신 ellipsis('...')로 표시한다.
      */
     wrap = false;
+    firstText: string;
+    lastText: string;
+    firstStyle: SVGStyleOrClass;
+    lastStyle: SVGStyleOrClass;
 
     textCallback: (args: IAxisLabelArgs) => string;
     styleCallback: (args: any) => SVGStyleOrClass;
@@ -638,21 +637,34 @@ export abstract class AxisLabel extends FormattableText {
     abstract getTick(index: number, value: any): string;
 
     protected _getParamValue(tick: IAxisTick, param: string): any {
-        return tick[param];
+        if (param.startsWith('axis.')) {
+            return this.axis[param.substring(5)];
+        } else {
+            return tick[param];
+        }
     }
 
-    getLabelText(tick: IAxisTick): string {
+    getLabelText(tick: IAxisTick, count: number): string {
+        const idx = tick.index;
+
         if (this.textCallback) {
-            const s = this.textCallback(this.axis.getTickLabelArgs(tick.index, tick.value));
+            const s = this.textCallback(this.axis.getTickLabelArgs(idx, tick.value));
             if (s !== _undefined) return s;
         }
+
+        if (idx === 0) return this.firstText || this.text;
+        if (idx === count - 1) return this.lastText || this.text;
         return this.text;
     }
 
-    getLabelStyle(tick: IAxisTick): any {
+    getLabelStyle(tick: IAxisTick, count: number): any {
+        const idx = tick.index;
+
         if (this.styleCallback) {
-            return this.styleCallback(this.axis.getTickLabelArgs(tick.index, tick.value));
+            return this.styleCallback(this.axis.getTickLabelArgs(idx, tick.value));
         }
+        if (idx === 0) return this.firstStyle;
+        if (idx === count - 1) return this.lastStyle;
     }
 }
 
@@ -933,6 +945,12 @@ export abstract class Axis extends ChartItem implements IAxis {
      * @config
      */
     marginFar = 0;
+    /**
+     * label 등에 표시할 수 있는 단위 정보 문자열.
+     * 
+     * @config
+     */
+    unit: string;
 
     isEmpty(): boolean {
         return this._series.length < 1;

@@ -12,7 +12,7 @@ import { PathElement, RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
 import { SvgRichText } from "../common/RichText";
 import { ISize, Size } from "../common/Size";
-import { DEG_RAD } from "../common/Types";
+import { Align, DEG_RAD } from "../common/Types";
 import { LabelElement } from "../common/impl/LabelElement";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
@@ -778,14 +778,15 @@ export class AxisView extends ChartElement<Axis> {
         }
     }
 
-    protected _prepareLabel(view: AxisLabelView, tick: IAxisTick, model: AxisLabel): void {
-        const text = model.getLabelText(tick);
+    protected _prepareLabel(view: AxisLabelView, tick: IAxisTick, model: AxisLabel, count: number): void {
+        const text = model.getLabelText(tick, count);
         const label = tick.label;
 
         view.value = tick.value;
 
         view.internalClearStyleAndClass();
-        view.internalSetStyleOrClass(model.getLabelStyle(tick));
+        view.internalSetStyleOrClass(model.style);
+        view.internalSetStyleOrClass(model.getLabelStyle(tick, count));
 
         if (text) {
             const m = label && text.match(label_reg);
@@ -826,7 +827,7 @@ export class AxisView extends ChartElement<Axis> {
 
             views.forEach((v, i) => {
                 v.setVisible(true); // visible false이면 getBBox()가 계산되지 않는다.
-                this._prepareLabel(v, ticks[i], label);
+                this._prepareLabel(v, ticks[i], label, nTick);
             });
             return views.length;
         }
@@ -1032,6 +1033,7 @@ export class AxisView extends ChartElement<Axis> {
     }
 
     private $_layoutLabelsHorz(views: AxisLabelView[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, gap: number): void {
+        const align = Align.CENTER;
         const pts = this._labelRowPts;
 
         views.forEach(v => {
@@ -1064,12 +1066,13 @@ export class AxisView extends ChartElement<Axis> {
                     x -= r.width / 2;
                     v.setRotation(r.width / 2, 0, opp ? -rot : rot);
                 }   
-                v.translate(x, y);
+                v.layout(align).translate(x, y);
             }
         });
     }
 
     private $_layoutLabelsVert(views: AxisLabelView[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, len: number): void {
+        const align = opp ? Align.LEFT : between ? Align.CENTER : Align.RIGHT;
         const x = opp ? len : w - len;
     
         views.forEach((v, i) => {
@@ -1077,7 +1080,7 @@ export class AxisView extends ChartElement<Axis> {
                 const r = v.getBBounds();
                 const x2 = opp ? x : between ? (w - r.width) / 2 : x - r.width;
     
-                v.translate(x2, h - ticks[i].pos - r.height / 2);
+                v.layout(align).translate(x2, h - ticks[i].pos - r.height / 2);
             }
         });
     }

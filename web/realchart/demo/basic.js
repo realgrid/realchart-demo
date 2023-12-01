@@ -34,6 +34,11 @@
         title: {
             text: '전체 인구수'
         },
+        unit: '(명)',
+        label: {
+            lastText: '${label}<br>${axis.unit}',
+            lastStyle: { fontWeight: 'bold' },
+        }
     },
     series: {
 		pointLabel: {

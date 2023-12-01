@@ -42,6 +42,10 @@ export class ContinuousAxisTick extends AxisTick {
      * @config
      */
     baseRange = false;
+    /**
+     * true면 소수점값애 해당하는 tick은 표시되지 않도록 한다.
+     */
+    integral = false;
 
     //-------------------------------------------------------------------------
     // methods
