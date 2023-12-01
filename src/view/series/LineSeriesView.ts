@@ -10,7 +10,7 @@ import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipElement, LayerElement, PathElement, RcElement } from "../../common/RcControl";
-import { Align, IValueRange, PI_2 } from "../../common/Types";
+import { Align, IValueRange, PI_2, SVGStyleOrClass } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
@@ -270,17 +270,19 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         }
     }
 
-    protected _layoutMarker(mv: LineMarkerView, x: number, y: number): void {
+    protected _layoutMarker(mv: LineMarkerView, markerStyle: SVGStyleOrClass, x: number, y: number): void {
         const series = this.model;
         const p = mv.point as LineSeriesPoint;
         const rd = mv._radius = series.getRadius(p);
 
+        markerStyle && mv.internalSetStyleOrClass(markerStyle);
         SvgShapes.setShape(mv, series.getShape(p), rd, rd);
         mv.translate(x -= rd, y -= rd);
     }
 
     protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
         const series = this.model;
+        const markerStyle = series.marker.style;
         const inverted = this._inverted;
         const noClip = series.noClip;
         const vr = this._getViewRate();
@@ -321,7 +323,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             const lv = labelViews && labelViews.get(p, 0);
 
             if (mv && mv.setVisible(!p.isNull && (polared || noClip || px >= 0 && px <= width && py >= 0 && py <= height))) {
-                this._layoutMarker(mv, px, py);
+                this._layoutMarker(mv, markerStyle, px, py);
 
                 if (lv) {
                     const r = lv.getBBounds();
