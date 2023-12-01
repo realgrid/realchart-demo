@@ -53,6 +53,7 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         super._layoutMarkers(pts, width, height);
 
         const series = this.model;
+        const markerStyle = series.marker.style;
         const inverted = this._inverted;
         const yAxis = series._yAxisObj;
         const yLen = inverted ? width : height;
@@ -83,7 +84,7 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
                 }
 
                 if (mv && mv.setVisible(!p.isNull && x >= 0 && x <= width && y >= 0 && y <= height)) {
-                    this._layoutMarker(mv, x, y);
+                    this._layoutMarker(mv, markerStyle, x, y);
                 }
             }
         // }

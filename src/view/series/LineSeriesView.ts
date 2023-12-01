@@ -107,7 +107,9 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     }
 
     decoreateLegend(legendView: LegendItemView): void {
-        (legendView._marker as LineLegendMarkerView)._line.setStyle('strokeWidth', getComputedStyle(this._line.dom).strokeWidth);
+        const cs = getComputedStyle(this._line.dom);
+        (legendView._marker as LineLegendMarkerView)._line.setStyle('strokeWidth', cs.strokeWidth);
+        (legendView._marker as LineLegendMarkerView)._line.setStyle('strokeDasharray', cs.strokeDasharray);
     }
 
     protected _prepareSeries(doc: Document, model: T): void {
