@@ -72,7 +72,9 @@ const config = {
                             offsetX: 144,
                             offsetY: -50,
                             text: 'Public<br>Space',
-                            textAlign: 'right',
+                            style: {
+                                textAlign: 'right'
+                            }
                         },
                     ]
                 }
@@ -86,7 +88,9 @@ const config = {
                             offsetX: 8,
                             offsetY: -50,
                             text: 'Bonus Floor<br>Space',
-                            textAlign: 'left',
+                            style: {
+                                textAlign: 'left'
+                            }
                         },
                     ]
                 },

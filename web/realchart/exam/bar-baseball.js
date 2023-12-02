@@ -66,7 +66,9 @@ const config = {
     subtitle: {
         text: '<t style="fill:#888">Balls in play</t><br><t style="fill:var(--color-3)">Hits</t>',
         align: 'left',
-        textAlign: 'left',
+        style: {
+            textAlign: 'left'
+        }
     },
     xAxis: {
         type: 'linear',

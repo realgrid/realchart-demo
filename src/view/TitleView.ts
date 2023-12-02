@@ -58,7 +58,7 @@ export class TitleView extends BoundableElement<Title> {
     }
 
     protected _doLayout(): void {
-        this._richText.layout(this._textView, this.model.textAlign, this.width, this.height, this._paddings);
+        this._richText.layout(this._textView, this.textAlign(), this.width, this.height, this._paddings);
 
         // const view = this._textView;
         // let x = 0;

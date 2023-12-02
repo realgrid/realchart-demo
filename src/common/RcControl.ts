@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
-import { ISides, Path, SVGStyleOrClass, _undefined, getCssProp, isNull, pixel, throwFormat } from "./Types";
+import { Align, ISides, Path, SVGStyleOrClass, _undefined, getCssProp, isNull, pixel, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
 import { SVGNS, isObject, isString, pickProp } from "./Common";
@@ -17,7 +17,6 @@ import { SvgShapes } from "./impl/SvgShape";
 import { ISize } from "./Size";
 import { IPoint } from "./Point";
 import { $_lc } from "./LicChecker";
-import { __importDefault } from "tslib";
 
 export interface IPointerHandler {
     handleDown(ev: PointerEvent): void;
@@ -613,6 +612,8 @@ export abstract class RcControl extends RcWrappableObject {
     }
 }
 
+const TEXT_ALIGN = 'textAlign';
+
 export type RtControlOrWrapper = RcControl | RcWrapper<RcControl>;
 
 /**
@@ -1184,20 +1185,8 @@ export class RcElement extends RcObject {
         }
     }
 
-    putStyles(styles: any, buff?: any): any {
-        buff = buff || {};
-        if (styles) {
-            for (let p in styles) {
-                buff[p] = styles[p];
-            }
-        }
-        return buff;
-    }
-
-    putStyle(prop: string, value: string, buff?: any): any {
-        buff = buff || {};
-        buff[prop] = value;
-        return buff;
+    textAlign(): Align {
+        return this._styles[TEXT_ALIGN];
     }
 
     setData(data: string, value?: string): void {

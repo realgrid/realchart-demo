@@ -152,6 +152,13 @@ export interface SVGStyles {
     fontSize?: string;
     fontWeight?: string;
     fontStyle?: string;
+    rx?: string;
+    /**
+     * Svg에 적용되는 정식 css style이 아니다.
+     * 즉, realchart-style.css 등의 외부 css 파일에서 사용할 수 없고,
+     * RealChart 내부에서 title, data point label 등의 inline 스타일로 적용할 수 있다.
+     */
+    textAlign?: 'left' | 'center' | 'right';
 }
 
 export type SVGStyleOrClass = SVGStyles | string;

@@ -48,12 +48,6 @@ export class TextAnnotation extends Annotation {
      * @config
      */
     backgroundStyle: SVGStyleOrClass;
-    /**
-     * 멀티라인일 때 라인 정렬.
-     * 
-     * @config
-     */
-    textAlign = Align.CENTER;
 
     //-------------------------------------------------------------------------
     // methods

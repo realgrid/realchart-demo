@@ -61,7 +61,6 @@ export class Title extends ChartItem {
      * @config
      */
     gap = 10;
-    textAlign = Align.CENTER;
 
     //-------------------------------------------------------------------------
     // methods

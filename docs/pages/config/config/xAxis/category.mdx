@@ -98,6 +98,9 @@ true면 반대 방향으로 point 위치들이 지정된다.
 축 스크롤바 모델.\
 축 스크롤 상태를 표시하고, 사용자가 스크롤 범위나 위치를 변경할 수 있다.  
 
+### startAngle: `number{:js}`[#startAngle]
+Polar 차트에서 사용될 때 시작 각도.  
+<DefaultValue value="0" contents=""></DefaultValue>
 ### startOffset: `number{:js}`[#startOffset]
 polar 축일 때 시작 위치 간격.\
 첫번째 카테고리 너비(각도)에 대한 상대값으로 0~1 사이의 값을 지정한다.
@@ -115,15 +118,23 @@ ex) 0.5로 지정하면 bar 시리즈의 첫 째 bar가 12시 위치에 표시�
 | fontSize | `string{:js}` | true |  
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
 | strokeDasharray | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### [tick](./category/tick)
 축에 표시되는 tick 위치와 표시 마크에 관한 설정 모델.  
 
 ### [title](./category/title)
 축 타이틀 설정 모델.  
 
+### totalAngle: `number{:js}`[#totalAngle]
+Polar 차트에서 사용될 때 원호 전체 각도.
+0 ~ 360 사이의 값으로 지정해야 한다.
+범위를 벗어난 값은 범위 안으로 조정된다.
+지정하지 않거나 잘못된 값이면 360으로 계산된다.  
+<DefaultValue value="360" contents=""></DefaultValue>
 ### unit: `string{:js}`[#unit]
 label 등에 표시할 수 있는 단위 정보 문자열.  
 
