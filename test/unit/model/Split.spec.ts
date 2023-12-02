@@ -11,7 +11,7 @@ import { describe, it } from 'mocha';
 import { Pane, Split } from '../../../src/model/Split';
 import { Chart } from '../../../src/model/Chart';
 import { Utils } from '../../../src/common/Utils';
-import { PaneAxisMatrix, XPaneAxisMatrix, YPaneAxisMatrix } from '../../../src/model/Axis';
+import { PaneAxisMatrix, PaneXAxisMatrix, PaneYAxisMatrix } from '../../../src/model/Axis';
 
 /**
  * Tests for Split class.
@@ -128,8 +128,8 @@ import { PaneAxisMatrix, XPaneAxisMatrix, YPaneAxisMatrix } from '../../../src/m
         const heights = split['_vheights'];
 
         // axes matrix
-        const xmatrix = new XPaneAxisMatrix(chart);
-        const ymatrix = new YPaneAxisMatrix(chart);
+        const xmatrix = new PaneXAxisMatrix(chart);
+        const ymatrix = new PaneYAxisMatrix(chart);
 
         xmatrix.prepare(chart._getXAxes(), split._vrows, split._vcols);
         ymatrix.prepare(chart._getYAxes(), split._vrows, split._vcols);
@@ -175,8 +175,8 @@ import { PaneAxisMatrix, XPaneAxisMatrix, YPaneAxisMatrix } from '../../../src/m
         const heights = split['_vheights'];
 
         // axes matrix
-        const xmatrix = new XPaneAxisMatrix(chart);
-        const ymatrix = new YPaneAxisMatrix(chart);
+        const xmatrix = new PaneXAxisMatrix(chart);
+        const ymatrix = new PaneYAxisMatrix(chart);
 
         xmatrix.prepare(chart._getXAxes(), split._vrows, split._vcols);
         ymatrix.prepare(chart._getYAxes(), split._vrows, split._vcols);

@@ -1530,7 +1530,8 @@ export abstract class PaneAxisMatrix {
         this._matrix.forEach(mat => {
             mat.forEach((m, i) => {
                 m._axes.forEach(axis => {
-                    axis.calcPoints(lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i], phase);
+                    // axis.calcPoints(lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i], phase);
+                    axis.calcPoints(lens[i], phase);
                 });
             });
         })
@@ -1540,7 +1541,7 @@ export abstract class PaneAxisMatrix {
 /**
  * (r + 1) * c
  */
-export class XPaneAxisMatrix extends PaneAxisMatrix {
+export class PaneXAxisMatrix extends PaneAxisMatrix {
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1562,16 +1563,17 @@ export class XPaneAxisMatrix extends PaneAxisMatrix {
             }
         }
         axes.forEach(axis => {
+            const pos = axis.position;
             let row = axis._row;
 
-            if (axis.position === AxisPosition.OPPOSITE) {
+            if (pos === AxisPosition.OPPOSITE) {
                 row++;
-                axis._runPos = axis.position;
-            } else if ((axis._row < rows - 1) && axis.position === AxisPosition.BETWEEN) {
+                axis._runPos = pos;
+            } else if ((row < rows - 1) && pos === AxisPosition.BETWEEN) {
                 row++;
                 axis._runPos = AxisPosition.NORMAL;
             } else {
-                axis._runPos = axis.position;
+                axis._runPos = pos
             }
             mat[row][axis._col]._axes.push(axis);
         });
@@ -1581,7 +1583,7 @@ export class XPaneAxisMatrix extends PaneAxisMatrix {
 /**
  * r * (c + 1)
  */
-export class YPaneAxisMatrix extends PaneAxisMatrix {
+export class PaneYAxisMatrix extends PaneAxisMatrix {
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1603,16 +1605,17 @@ export class YPaneAxisMatrix extends PaneAxisMatrix {
             }
         }
         axes.forEach(axis => {
+            const pos = axis.position;
             let col = axis._col;
 
-            if (axis.position === AxisPosition.OPPOSITE) {
+            if (pos === AxisPosition.OPPOSITE) {
                 col++;
-                axis._runPos = axis.position;
-            } else if ((axis._col < cols - 1) && axis.position === AxisPosition.BETWEEN) {
+                axis._runPos = pos;
+            } else if ((axis._col < cols - 1) && pos === AxisPosition.BETWEEN) {
                 col++;
                 axis._runPos = AxisPosition.NORMAL;
             } else {
-                axis._runPos = axis.position;
+                axis._runPos = pos;
             }
             mat[axis._row][col]._axes.push(axis);
         });

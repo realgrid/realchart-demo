@@ -61,6 +61,7 @@ const config = {
             strictMax: 0.5,
             label: false,
             grid: false,
+            // position: 'opposite',
         },
         series: {
             noClip: true,

@@ -10,7 +10,7 @@ import { isArray, isObject, isString, mergeObj, pickProp3 } from "../common/Comm
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
-import { Axis, AxisCollection, IAxis, PaneAxes, PaneAxisMatrix, XPaneAxisMatrix, YPaneAxisMatrix } from "./Axis";
+import { Axis, AxisCollection, IAxis, PaneAxes, PaneAxisMatrix, PaneXAxisMatrix, PaneYAxisMatrix } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem, n_char_item } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
@@ -60,8 +60,8 @@ import { CircleBarSeries, CircleBarSeriesGroup } from "./series/CircleBarSeries"
 export interface IChart {
     type: string;
     gaugeType: string;
-    _xPaneAxes: XPaneAxisMatrix;
-    _yPaneAxes: YPaneAxisMatrix;
+    _xPaneAxes: PaneXAxisMatrix;
+    _yPaneAxes: PaneYAxisMatrix;
     options: ChartOptions;
     first: IPlottingItem;
     firstSeries: Series;
@@ -318,8 +318,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
     private _split: Split;
-    _xPaneAxes: XPaneAxisMatrix;
-    _yPaneAxes: YPaneAxisMatrix;
+    _xPaneAxes: PaneXAxisMatrix;
+    _yPaneAxes: PaneYAxisMatrix;
     private _gauges: GaugeCollection;
     private _body: Body;
     private _annotations: AnnotationCollection;
@@ -348,8 +348,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._series = new PlottingItemCollection(this);
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new AxisCollection(this, false);
-        this._xPaneAxes = new XPaneAxisMatrix(this);
-        this._yPaneAxes = new YPaneAxisMatrix(this);
+        this._xPaneAxes = new PaneXAxisMatrix(this);
+        this._yPaneAxes = new PaneYAxisMatrix(this);
         this._gauges = new GaugeCollection(this);
         this._body = new Body(this);
         this._annotations = new AnnotationCollection(this);
@@ -481,11 +481,11 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._split;
     }
 
-    get xPaneAxes(): XPaneAxisMatrix {
+    get xPaneAxes(): PaneXAxisMatrix {
         return this._xPaneAxes;
     }
 
-    get yPaneAxes(): YPaneAxisMatrix {
+    get yPaneAxes(): PaneYAxisMatrix {
         return this._yPaneAxes;
     }
 
