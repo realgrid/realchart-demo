@@ -82,6 +82,7 @@ function setActions(container) {
         chart.render();
     }, false);
     createButton(container, 'Test', function(e) {
+        chart.xAxis.zoom(30, 20);
         // alert('hello');
     });
     createListBox(container, "options.theme", ['', 'dark'], function (e) {

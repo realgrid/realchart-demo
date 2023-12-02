@@ -840,7 +840,7 @@ export class AxisZoom {
         start = isNaN(start) ? this.start : Math.max(this.min, Math.min(this.max, start));
         end = isNaN(end) ? this.end : Math.max(start, Math.min(this.max, end));
 
-        if (start !== this.start || end !== this.end) {
+        if ((start !== this.start || end !== this.end) && (end - start > (this.max - this.min) * 0.05)) {
             this.start = start;
             this.end = end;
             return true;
