@@ -10,6 +10,7 @@ import { isArray, isNumber, isString, pickNum, pickNum3, pickProp } from "../../
 import { PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { Axis, AxisGrid, AxisTick, AxisLabel, IAxisTick } from "../Axis";
+import { IChart } from "../Chart";
 import { IPlottingItem } from "../Series";
 
 export enum CategoryTickPosition {
@@ -115,6 +116,13 @@ export class CategoryAxis extends Axis {
     private _catPad = 0;
     _pts: number[];
     _vlen: number;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart, isX: boolean, name?: string) {
+        super(chart, isX, name);
+    }
 
     //-------------------------------------------------------------------------
     // properties

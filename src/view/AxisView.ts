@@ -853,16 +853,21 @@ export class AxisView extends ChartElement<Axis> {
 
         for (let i = 0; i < nView - 1; i += inc) {
             let w = 0;
-            for (let j = i; j < i + inc && j < nView - 1; j++) {
+            let j = i;
+
+            for (; j < i + inc && j < nView - 1; j++) {
                 w += axis.getLabelLength(width, views[i].value);
             }
 
-            if (a === 0 && views[i].getBBounds().width >= w) {
-                overalpped = true;
-                break;
-            } else if  (a !== 0 && (views[i].getBBounds().width + views[i].getBBounds().height) * Math.cos(arad) >= w) {
-                overalpped = true;
-                break;
+            // [주의] 끝 차투리는 무시한다.
+            if (j === i + inc) {
+                if (a === 0 && views[i].getBBounds().width >= w) {
+                    overalpped = true;
+                    break;
+                } else if  (a !== 0 && (views[i].getBBounds().width + views[i].getBBounds().height) * Math.cos(arad) >= w) {
+                    overalpped = true;
+                    break;
+                }
             }
         }
         return overalpped;
@@ -917,6 +922,7 @@ export class AxisView extends ChartElement<Axis> {
                     }
                     step++;
                 }
+                // this._labelViews = views;
             } else if (rows > 1) {
                 while (views.length > rows) {
                     views.forEach((v, i) => {

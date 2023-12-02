@@ -521,7 +521,6 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
-        // if (this._runPos === AxisPosition.OPPOSITE) debugger;
         if (isNaN(calcedMin) || isNaN(calcedMax)) {
             return[];
         }
@@ -733,8 +732,8 @@ export abstract class ContinuousAxis extends Axis {
     // internal members
     //-------------------------------------------------------------------------
     protected _adjustMinMax(min: number, max: number): { min: number, max: number } {
-        let minFixed = false;
-        let maxFixed = false;
+        let minFixed = this.isZoomed();
+        let maxFixed = this.isZoomed();
 
         this._series.forEach(ser => {
             const base = ser.getBaseValue(this);
@@ -803,7 +802,7 @@ export abstract class ContinuousAxis extends Axis {
         })
 
         const isX = this._isX;
-        const vals = pts.map(p => isX ? p.xValue : p.yValue).sort();
+        const vals = pts.map(p => isX ? p.xValue : p.yValue).sort((v1, v2) => v1 - v2);
         let min = vals[1] - vals[0];
 
         for (let i = 2; i < vals.length; i++) {

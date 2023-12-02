@@ -139,6 +139,20 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    dblClick(elt: Element): boolean {
+        const axis = this.model.axis();
+
+        if (this._startHandle.contains(elt)) {
+            axis.zoom(axis._zoom.min, axis._zoom.end);
+            return true;
+        } else if (this._endHandle.contains(elt)) {
+            axis.zoom(axis._zoom.start, axis._zoom.max);
+            return true;
+        } else if (this.contains(elt)) {
+            axis.resetZoom();
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

@@ -817,16 +817,25 @@ export class AxisZoom {
     start: number;
     end: number;
 
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
     constructor(public axis: Axis, start: number, end: number) {
         this.min = axis.axisMin();
         this.max = axis.axisMax();
         this.resize(start, end);
     }
 
-    get length(): number {
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    length(): number {
         return this.end - this.start;
     }
     
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
     resize(start: number, end: number): boolean {
         start = isNaN(start) ? this.start : Math.max(this.min, Math.min(this.max, start));
         end = isNaN(end) ? this.end : Math.max(start, Math.min(this.max, end));

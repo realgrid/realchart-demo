@@ -50,6 +50,7 @@ const hitsData = [
 
 const config = {
     inverted: true,
+    // polar: true,
     options: {
         // animatable: false
         style: {

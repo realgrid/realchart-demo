@@ -652,8 +652,8 @@ export class ChartView extends LayerElement {
         this.add(this._titleSectionView = new TitleSectionView(doc));
         this.add(this._legendSectionView = new LegendSectionView(doc));
         this.add(this._frontAnnotationContainer = new LayerElement(doc, 'rct-front-annotations'));
-        this.add(this._navigatorView = new NavigatorView(doc));
         this.add(this._creditView = new CreditView(doc));
+        this.add(this._navigatorView = new NavigatorView(doc));
         this.add(this._historyView = new HistoryView(doc));
         this.add(this._tooltipView = new TooltipView(doc));
     }
@@ -1272,14 +1272,6 @@ export class ChartView extends LayerElement {
             const v = this._axisSectionMap[SectionDir[dir]].getScrollView(dom)
             if (v) return v;
         };
-    }
-
-    bodyViewOf(dom: Element): BodyView {
-        if (this._model.isSplitted()) {
-            return this._paneContainer.bodyViewOf(dom);
-        } else if (this._currBody.contains(dom)) {
-            return this._currBody;
-        }
     }
 
     //-------------------------------------------------------------------------

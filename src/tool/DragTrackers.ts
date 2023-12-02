@@ -110,7 +110,7 @@ export class ScrollTracker extends ChartDragTracker {
         const p = v._thumbView.elementToSvg(0, 0);
 
         this._startOff = v._vertical ? (yStart - p.y) : (xStart - p.x);
-        this._zoomLen = v.model.axis._zoom.length;
+        this._zoomLen = v.model.axis._zoom.length();
         return true;
     }
 
@@ -226,7 +226,7 @@ export class NavigatorMaskTracker extends ChartDragTracker {
         const p = v.elementToSvg(0, 0);
 
         this._startOff = this._view.model._vertical ? (yStart - p.y) : (xStart - p.x);
-        this._zoomLen = axis._zoom.length;
+        this._zoomLen = axis._zoom.length();
 
         return true;
     }
