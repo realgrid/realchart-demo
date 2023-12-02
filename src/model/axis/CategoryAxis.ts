@@ -296,8 +296,8 @@ export class CategoryAxis extends Axis {
         const steps = (this.tick as CategoryAxisTick).step || 1;
         const ticks: IAxisTick[] = [];
 
-        min = this._min = Math.floor(min);
-        max = this._max = Math.ceil(max);
+        min = Math.floor(min);
+        max = Math.ceil(max);
 
         while (cats.length <= max) {
             cats.push(String(cats.length));
@@ -335,6 +335,8 @@ export class CategoryAxis extends Axis {
         } else {
             this._pts = [];
         }
+
+        this._setMinMax(min, max);
         return ticks;
     }
 

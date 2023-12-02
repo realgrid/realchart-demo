@@ -874,6 +874,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     _values: number[] = [];
     protected _min: number;
     protected _max: number;
+    protected _single: boolean;
     _zoom: AxisZoom;
     _runPos: AxisPosition;
     _labelArgs: IAxisLabelArgs = {} as any;
@@ -1187,12 +1188,14 @@ export abstract class Axis extends ChartItem implements IAxis {
             end = t;
         }
         if (!this._zoom) {
+            // padding 없는 _min, _max를 계산하기 위해
+            this._zoom = new AxisZoom(this, NaN, NaN);
+            this.buildTicks(this._vlen);
+
             if (isNaN(start)) start = this._min;
             if (isNaN(end)) end = this._max;
-            this._zoom = new AxisZoom(this, start, end);
-            this._changed();
-            return true;
-        } else if (this._zoom.resize(start, end)) {
+        }
+        if (this._zoom.resize(start, end)) {
             this._changed();
             return true;
         }
@@ -1231,6 +1234,12 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _setMinMax(min: number, max: number): void {
+        this._min = min;
+        this._max = max;
+        this._single = min === max;
+    }
+
     protected _createGrid(): AxisGrid {
         return new AxisGrid(this);
     }
@@ -1263,10 +1272,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     protected _doCalcluateRange(values: number[]): { min: number, max: number } {
-        let min = values.length > 0 ? fixnum(Math.min(...values) || 0) : NaN;
-        let max = values.length > 0 ?  fixnum(Math.max(...values) || 0) : NaN;
-
-        return { min, max };
+        return {
+            min: values.length > 0 ? fixnum(Math.min(...values) || 0) : NaN,
+            max: values.length > 0 ?  fixnum(Math.max(...values) || 0) : NaN
+        };
     }
 }
 
@@ -1352,10 +1361,7 @@ export class AxisCollection {
     $_buildTicks(length: number): void {
         // 다른 축을 참조하는 axis를 나중에 계산한다.
         this._items.sort((a1, a2) => a1.isBased() ? 1 : a2.isBased() ? -1 : 0)
-                   .forEach(axis => axis.buildTicks(this._getLength(axis, length)));
-    }
-    protected _getLength(axis: Axis, length: number): number {
-        return length;
+                   .forEach(axis => axis.buildTicks(length));
     }
 
     connect(series: IPlottingItem): Axis {

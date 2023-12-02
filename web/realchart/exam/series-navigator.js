@@ -27,7 +27,7 @@ const config = {
             text: 'Period',
         },
         crosshair: true,
-        // padding: 0,
+        padding: 0,
         label: {
             autoArrange: 'step', //'step',
             // step: 2,

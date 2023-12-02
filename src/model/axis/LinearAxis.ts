@@ -350,7 +350,6 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _single: boolean;
     private _base: number;
     private _unitLen: number;
     _calcedMin: number;
@@ -784,12 +783,6 @@ export abstract class ContinuousAxis extends Axis {
         max += len * (this._maxPad = maxPad);
 
         return { min, max };
-    }
-
-    protected _setMinMax(min: number, max: number): void {
-        this._min = min;
-        this._max = max;
-        this._single = min === max;
     }
 
     protected $_calcUnitLength(length: number): number {
