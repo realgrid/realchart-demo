@@ -97,6 +97,7 @@ const yAxis = {
     // step: 10,
     tick: {
         // gap: 10,
+        stepInterval: 10,
     },
     label: {
         suffix: '%'

@@ -126,22 +126,8 @@ const config = {
     },
     legend: false,
     series: {
-        layout: 'stack',
+        layout: 'overlap',
         children: [{
-            noClip: true,
-            type: 'bar',
-            pointLabel: {
-                visible: !true,
-            },
-            data: hitsData,
-            xField: 'angle',
-            yField: 'hits',
-            // zField: 'hits'
-            style: {
-                stroke: 'none',
-                fill: 'var(--color-3)',
-            }
-        }, {
             noClip: true,
             type: 'bar',
             pointLabel: {
@@ -150,12 +136,24 @@ const config = {
             data: ballsData,
             xField: 'angle',
             yField: 'hits',
-            // zField: 'hits'
             style: {
                 stroke: 'none',
                 fill: '#bbb',
             }
-        }, ]
+        }, {
+            noClip: true,
+            type: 'bar',
+            pointLabel: {
+                visible: !true,
+            },
+            data: hitsData,
+            xField: 'angle',
+            yField: 'hits',
+            style: {
+                stroke: 'none',
+                fill: 'var(--color-3)',
+            }
+        },]
     }
 }
 

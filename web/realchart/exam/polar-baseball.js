@@ -32,53 +32,127 @@ const ballsData = [
     { angle: -55, hits: 1 },
     { angle: -65, hits: 2 },
 ];
-
+const hitsData = [
+    { angle: 30, hits: 1 },
+    { angle: 25, hits: 4 },
+    { angle: 20, hits: 4 },
+    { angle: 15, hits: 5 },
+    { angle: 10, hits: 10 },
+    { angle: 5, hits: 10 },
+    { angle: 0, hits: 7 },
+    { angle: -5, hits: 2 },
+    { angle: -10, hits: 5 },
+    { angle: -20, hits: 4 },
+    { angle: -65, hits: 1 },
+]
 
 const config = {
     polar: true,
-    options: {
-        // animatable: false
+    templates: {
+        series: {
+            noClip: true,
+            type: 'bar',
+            pointLabel: false,
+            xField: 'angle',
+            yField: 'hits',
+            tooltip: {
+                text: '${x}°: ${y}hits',
+            }
+        }
     },
-    title: "Jose Reyes Mets",
+    options: {
+        style: {
+            paddingLeft: '100px'
+        }
+    },
+    title: {
+        text: 'J.D Reyes',
+        align: 'left',
+        style: {
+            fontWeight: 700,
+        }
+    },
+    subtitle: {
+        text: '<t style="fill:#888">Balls in play</t><br><t style="fill:var(--color-3)">Hits</t>',
+        align: 'left',
+        style: {
+            textAlign: 'left'
+        }
+    },
+    legend: false,
     xAxis: {
         type: 'linear',
+        reversed: true,
+        startAngle: -90,
         minValue: -180,
         maxValue: 180,
-        // strictMin: 0,
-        // strictMax: 360,
-        tick: {
-            stepInterval: 5,
+        label: {
+            visible: true,
+            suffix: '°',
+            style: {
+                fill: '#999'
+            },
+            textCallback: ({ count, index, value }) => {
+                return (value > -90 && value < 90) ? value.toString() : '';
+            },
         },
-        // step: 5,
+        tick: {
+            stepInterval: 10,
+        },
         grid: {
             // visible: false,
         }
     },
     yAxis: {
-        // line: true,
-        label: true,
-        guide: [{
-            type: 'line',
-            value: 5.5,
+        label: {
+            visible: true,
             style: {
-                stroke: 'red'
+                fill: '#999'
             }
-        }]
+        },
+        title: 'hits',
+        grid: {
+            visible: true,
+            // startVisible: false,
+        },
+        strictMax: 25,
+        tick: { 
+            visible: !true,
+            stepInterval: 5 
+        },
     },
     body: {
-        // startAngle: 90,
         totalAngle: 180,
+        annotations: [
+            {
+                imageUrl: '../assets/images/baseball-player.png',
+                // align: 'right',
+                // offsetX: 300,
+                // offsetY: 0,
+                width: 300
+            }
+        ]
     },
-    series: [{
-        type: 'bar',
-        pointLabel: {
-            visible: !true,
+    series: {
+        layout: 'overlap',
+        children: [
+        {
+            template: 'series',
+            data: ballsData,
+            style: {
+                stroke: 'none',
+                fill: '#bbb',
+            }
         },
-        // pointWidth: 0.1,
-        data: ballsData,
-        xField: 'angle',
-        yField: 'hits',
-    }]
+        {
+            template: 'series',
+            data: hitsData,
+            style: {
+                stroke: 'none',
+                fill: 'var(--color-3)',
+            }
+        },]
+    }
 }
 
 let animate;

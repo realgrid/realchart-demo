@@ -39,15 +39,13 @@ const config = {
         }
     },
     inverted: true,
-    title: 'Building Space',
-    subtitle: {
-        text: '<t></t>',
-        titleGap: 50,
+    title: {
+        text: 'Building Space',
+        gap: 50,
     },
     options: {
         // animatable: false
     },
-
     legend: {
         visible: false,
         location: 'top',
