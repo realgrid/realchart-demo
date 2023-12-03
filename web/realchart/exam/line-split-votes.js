@@ -56,9 +56,12 @@ const lineSeries = (m, i) => {
                 return even ? vindex == 0 : vindex == (values.length - 1);
             },
             position: 'foot',
+            effect: 'outline',
             style: {
                 fontSize: '10pt',
-                fontWeight: 500,
+                fontWeight: 600,
+                fill: '#666',
+
             }
         },
         data: values,
@@ -125,8 +128,17 @@ const subtitles = [
 
 const config = {
     type: 'line',
-    title: false,
-    // title: 'Democratic share of major party vote among nonwhite voters',
+    title: {
+        visible: true,
+        text: 'Democratic share of major party vote among nonwhite voters',
+        align: 'left',
+        gap: 50,
+        style: {
+            fontWeight: 700,
+            fontSize: '14pt',
+            fill: '#555',
+        }
+    },
     split: {
         visible: true,
         rows: 1,
@@ -140,7 +152,7 @@ const config = {
                         offsetY: -30,
                         align: 'left',
                         style: {
-                            fill: '#000',
+                            fill: '#555',
                             fontSize: '10pt',
                             fontWeight: 'bold'
                         }

@@ -3,47 +3,17 @@
  * 
  */
 
-const ballsData = [
-    { angle: 85, hits: 1 },
-    { angle: 80, hits: 3 },
-    { angle: 65, hits: 13 },
-    { angle: 60, hits: 1 },
-    { angle: 55, hits: 4 },
-    { angle: 50, hits: 6 },
-    { angle: 45, hits: 8 },
-    { angle: 40, hits: 6 },
-    { angle: 35, hits: 14 },
-    { angle: 30, hits: 11 },
-    { angle: 25, hits: 11 },
-    { angle: 20, hits: 17 },
-    { angle: 15, hits: 15 },
-    { angle: 10, hits: 16 },
-    { angle: 5, hits: 15 },
-    { angle: 0, hits: 15 },
-    { angle: -5, hits: 9 },
-    { angle: -10, hits: 9 },
-    { angle: -15, hits: 11 },
-    { angle: -20, hits: 6 },
-    { angle: -25, hits: 22 },
-    { angle: -30, hits: 5 },
-    { angle: -35, hits: 3 },
-    { angle: -40, hits: 7 },
-    { angle: -45, hits: 3 },
-    { angle: -55, hits: 1 },
-    { angle: -65, hits: 2 },
-];
-const hitsData = [
-    { angle: 30, hits: 1 },
-    { angle: 25, hits: 4 },
-    { angle: 20, hits: 4 },
-    { angle: 15, hits: 5 },
-    { angle: 10, hits: 10 },
-    { angle: 5, hits: 10 },
-    { angle: 0, hits: 7 },
-    { angle: -5, hits: 2 },
-    { angle: -10, hits: 5 },
-    { angle: -20, hits: 4 },
-    { angle: -65, hits: 1 },
+const data = [
+    [162.0,  6.0, 220.61],
+    [158.0,  7.0, 184.78],
+    [166.0,  5.0, 144.61],
+    [154.0,  8.0, 125.71],
+    [166.0,  5.0, 105.50],
+    [153.0,  9.0,  79.47],
+    [154.0,  8.0,  63.10],
+    [177.0,  4.0,  59.64],
+    [154.0,  8.0,  54.96],
+    [151.0,  7.0,  34.98],
 ]
 
 const config = {
@@ -52,10 +22,8 @@ const config = {
         series: {
             noClip: true,
             pointLabel: false,
-            xField: 'angle',
-            yField: 'hits',
             tooltip: {
-                text: '${x}°: ${y}hits',
+                text: '${x}°: ${y}m/s',
             }
         }
     },
@@ -65,14 +33,14 @@ const config = {
         }
     },
     title: {
-        text: 'J.D Reyes',
+        text: 'Air Polution',
         align: 'left',
         style: {
             fontWeight: 700,
         }
     },
     subtitle: {
-        text: '<t style="fill:#888">Balls in play</t><br><t style="fill:var(--color-3)">Hits</t>',
+        text: '',
         align: 'left',
         style: {
             textAlign: 'left'
@@ -81,10 +49,9 @@ const config = {
     legend: false,
     xAxis: {
         type: 'linear',
-        reversed: true,
-        startAngle: -90,
-        minValue: -180,
-        maxValue: 180,
+        // startAngle: -90,
+        minValue: 0,
+        maxValue: 359.9,
         label: {
             visible: true,
             suffix: '°',
@@ -96,7 +63,7 @@ const config = {
             },
         },
         tick: {
-            stepInterval: 10,
+            stepInterval: 90,
         },
         grid: {
             // visible: false,
@@ -109,49 +76,44 @@ const config = {
                 fill: '#999'
             }
         },
-        title: 'hits',
+        title: false,
         grid: {
             visible: true,
             // startVisible: false,
         },
-        strictMax: 25,
+        // strictMax: 25,
         tick: { 
             visible: !true,
             stepInterval: 5 
         },
     },
     body: {
-        totalAngle: 180,
+        totalAngle: 360,
         annotations: [
-            {
-                imageUrl: '../assets/images/baseball-player.png',
-                // align: 'right',
-                // offsetX: 300,
-                // offsetY: 0,
-                width: 300
-            }
+            
         ]
     },
-    series: {
-        layout: 'overlap',
-        children: [
+    series: [
         {
             template: 'series',
-            data: ballsData,
+            type: 'bubble',
+            data,
+            // zProp: '',
             style: {
                 stroke: 'none',
                 fill: '#bbb',
             }
         },
-        {
-            template: 'series',
-            data: hitsData,
-            style: {
-                stroke: 'none',
-                fill: 'var(--color-3)',
-            }
-        },]
-    }
+        // {
+        //     template: 'series',
+        //     type: 'scatter',
+        //     data: hitsData,
+        //     style: {
+        //         stroke: 'none',
+        //         fill: 'var(--color-3)',
+        //     }
+        // },
+    ]
 }
 
 let animate;
