@@ -3,19 +3,6 @@
  * 
  */
 
-const data = [
-    [162.0,  6.0, 220.61],
-    [158.0,  7.0, 184.78],
-    [166.0,  5.0, 144.61],
-    [154.0,  8.0, 125.71],
-    [166.0,  5.0, 105.50],
-    [153.0,  9.0,  79.47],
-    [154.0,  8.0,  63.10],
-    [177.0,  4.0,  59.64],
-    [154.0,  8.0,  54.96],
-    [151.0,  7.0,  34.98],
-]
-
 const config = {
     polar: true,
     templates: {
@@ -33,7 +20,7 @@ const config = {
         }
     },
     title: {
-        text: 'Air Polution',
+        text: 'Air Pollution (Ozone)',
         align: 'left',
         style: {
             fontWeight: 700,
@@ -58,9 +45,9 @@ const config = {
             style: {
                 fill: '#999'
             },
-            textCallback: ({ count, index, value }) => {
-                return (value > -90 && value < 90) ? value.toString() : '';
-            },
+            // textCallback: ({ count, index, value }) => {
+            //     return (value > -90 && value < 90) ? value.toString() : '';
+            // },
         },
         tick: {
             stepInterval: 90,
@@ -86,6 +73,9 @@ const config = {
             visible: !true,
             stepInterval: 5 
         },
+        style: {
+            strokeDasharray: '4',
+        }
     },
     body: {
         totalAngle: 360,
@@ -98,11 +88,32 @@ const config = {
             template: 'series',
             type: 'bubble',
             data,
-            // zProp: '',
+            xField: "Wind Direction",
+            yField: "Wind Speed",
+            zProp: "Ozone",
             style: {
                 stroke: 'none',
-                fill: '#bbb',
+                // mixBlendMode: 'screen', // not working here...
+            },
+            pointStyleCallback: (p) => {
+                const z = p.zValue;
+                let fill = '';
+                if (z < 10) {
+                    fill = 'yellow'
+                } else if (z < 30) {
+                    fill = 'orange'
+                } else if (z < 50) {
+                    fill = 'red'
+                } else {
+                    fill = 'darkred'
+                }
+                return { fill, mixBlendMode: 'screen' };
             }
+            // zProp: '',
+            // style: {
+            //     stroke: 'none',
+            //     fill: '#bbb',
+            // }
         },
         // {
         //     template: 'series',
