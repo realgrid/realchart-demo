@@ -571,9 +571,9 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         switch (info.labelPos) {
             case PointItemPosition.INSIDE:
                 if (inverted) {
-                    x -= hPoint / 2 + labelOff;
+                    x -= (hPoint + r.width) / 2  + (info.reversed ? labelOff : -labelOff);
                 } else {
-                    y += (hPoint - r.height) / 2 + labelOff;
+                    y += (hPoint - r.height) / 2 + (info.reversed ? labelOff : -labelOff);
                 }
                 break;
 
@@ -629,7 +629,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         }
 
         labelView.setContrast(inner && info.pointView.dom);
-        labelView.layout(Align.RIGHT).translate(x, y);
+        labelView.layout(labelView.textAlign()).translate(x, y);
     }
 
     protected _clipRange(w: number, h: number, rangeAxis: 'x' | 'y' | 'z', range: IValueRange, clip: ClipElement, inverted: boolean): void {
@@ -779,7 +779,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
             inverted,
             reversed: yAxis.reversed,
             labelPos: series.getLabelPosition(labels.position),
-            labelOff: series.getLabelOff(labels.offset)
+            labelOff: series.getLabelOff(labels.getOffset())
         });
 
         this._getPointPool().forEach((pv: RcElement, i) => {

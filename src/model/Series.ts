@@ -42,6 +42,11 @@ export const NUMBER_FORMAT = '#,##0.#';
 export class DataPointLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
+    // const
+    //-------------------------------------------------------------------------
+    private static readonly OFFSET = 4;
+
+    //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     /**
@@ -60,12 +65,12 @@ export class DataPointLabel extends FormattableText {
     // verticalAlign = VerticalAlign.MIDDLE;
 
     /**
-     * label과 point view 사이의 기본 간격.
+     * label과 point view 사이의 기본 간격.\
+     * 값을 지정하지 않으면 {@link position}이 'inside'일 때는 0, 그 외는 4 픽셀이다.
      * 
      * @config
      */
-    offset = 4;
-
+    offset: number;
     /**
      * 'pie', 'funnel' 시리즈에서 label이 외부에 표시될 때 label과 시리즈 본체와의 기본 간격.
      * 
@@ -116,6 +121,13 @@ export class DataPointLabel extends FormattableText {
             return s;
         }
         return value;
+    }
+
+    getOffset(): number {
+        if (isNaN(this.offset)) {
+            return this.position === PointItemPosition.INSIDE ? 0 : DataPointLabel.OFFSET;
+        }
+        return this.offset;
     }
 
     //-------------------------------------------------------------------------

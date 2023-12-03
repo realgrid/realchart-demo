@@ -17,7 +17,8 @@ const config = {
         categories: ['Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', '마리아', 'Leon', 'Anna', 'Tim', 'Laura'],
         grid: true,
         label: {
-            rotation: -45
+            rotation: 20,
+            autoArrange: 'none'
         }
     },
     yAxis: {

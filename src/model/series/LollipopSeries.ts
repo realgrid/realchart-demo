@@ -55,7 +55,7 @@ export class LollipopSeries extends BasedSeries {
     }
 
     getLabelOff(off: number): number {
-        return off + this.marker.radius;
+        return super.getLabelOff(off) + this.marker.radius;
     }
 
     protected _createPoint(source: any): DataPoint {

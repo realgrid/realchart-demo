@@ -840,6 +840,7 @@ export class AxisZoom {
         start = isNaN(start) ? this.start : Math.max(this.min, Math.min(this.max, start));
         end = isNaN(end) ? this.end : Math.max(start, Math.min(this.max, end));
 
+        // 최소 크기를 갖게 한다. #244 #245
         if ((start !== this.start || end !== this.end) && (end - start > (this.max - this.min) * 0.05)) {
             this.start = start;
             this.end = end;
