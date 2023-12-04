@@ -60,6 +60,7 @@ const config = {
         }
     },
     options: {
+        animatable: false,
         style: {
             paddingLeft: '100px'
         }

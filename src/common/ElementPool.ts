@@ -86,6 +86,10 @@ export class ElementPool<T extends RcElement> extends RcObject {
         return this._views.slice();
     }
 
+    _internalItems(): T[] {
+        return this._views;
+    }
+
     elementOf(dom: Element): T {
         for (let v of this._views) {
             if (v.dom.contains(dom)) return v;

@@ -426,8 +426,10 @@ export abstract class FormattableText extends ChartText {
     // }
 
     buildSvg(view: TextElement, outline: TextElement, maxWidth: number, maxHeight: number, target: any, callback: RichTextParamCallback): void {
-        this._richTextImpl.build(view, maxWidth, maxHeight, target, callback);
-        outline && this._richTextImpl.build(outline, maxWidth, maxHeight, target, callback);
+        if (this._richTextImpl) {
+            this._richTextImpl.build(view, maxWidth, maxHeight, target, callback);
+            outline && this._richTextImpl.build(outline, maxWidth, maxHeight, target, callback);
+        }
     }
 
     // setLineHeight(v: number): void {

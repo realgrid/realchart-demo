@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "../common/Common";
+import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { PathElement, RcElement } from "../common/RcControl";
 import { toSize } from "../common/Rectangle";
@@ -140,7 +141,7 @@ class AxisTickMarkView extends ChartElement<AxisTick> {
     }
 }
 
-class AxisLabelView extends LabelElement {
+export class AxisLabelView extends LabelElement {
 
     //-------------------------------------------------------------------------
     // fields
@@ -346,7 +347,7 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
     }
 }
 
-const label_reg = /\${label}.*?/g;
+export const axis_label_reg = /\${label}.*?/g;
 
 /**
  * @internal
@@ -370,7 +371,7 @@ export class AxisView extends ChartElement<Axis> {
     private _markContainer: RcElement;
     private _markViews: AxisTickMarkView[] = [];
     private _labelContainer: RcElement;
-    private _labelViews: AxisLabelView[] = []; 
+    private _labelViews: ElementPool<AxisLabelView>;
     _scrollView: AxisScrollView;
 
     private _markLen: number;
@@ -391,6 +392,7 @@ export class AxisView extends ChartElement<Axis> {
         this.add(this._titleView = new AxisTitleView(doc));
         this.add(this._markContainer = new RcElement(doc, 'rct-axis-ticks'));
         this.add(this._labelContainer = new RcElement(doc, 'rct-axis-labels'));
+        this._labelViews = new ElementPool(this._labelContainer, AxisLabelView, 'rct-axis-label');
     }
 
     //-------------------------------------------------------------------------
@@ -422,8 +424,8 @@ export class AxisView extends ChartElement<Axis> {
 
         // h += t ? (t.rotation != 0 ? t.rotatedHeight : t.getBBounds().height) : 0;
 
-        if (this.$_prepareLabels(doc, m)) {
-            h += this.$_measureLabelsHorz(m, this._labelViews, width);
+        if (this.$_prepareLabels(m)) {
+            h += this.$_measureLabelsHorz(m, width);
         }
 
         // title
@@ -448,8 +450,8 @@ export class AxisView extends ChartElement<Axis> {
 
         // w += t ? t.getBBounds().width : 0;
 
-        if (this.$_prepareLabels(doc, m)) {
-            w += this.$_measureLabelsVert(m, this._labelViews, width);
+        if (this.$_prepareLabels(m)) {
+            w += this.$_measureLabelsVert(m, width);
         }
 
         // title
@@ -512,7 +514,6 @@ export class AxisView extends ChartElement<Axis> {
         const horz = model._isHorz;
         const between = model._isBetween;
         const titleView = this._titleView;
-        const labelViews = this._labelViews;
         let sz = 0;
 
         // line
@@ -542,11 +543,11 @@ export class AxisView extends ChartElement<Axis> {
         if (between) sz *= 2; // 양쪽에 간격은 둔다.
 
         // labels
-        if (this.$_prepareLabels(doc, model)) {
+        if (this.$_prepareLabels(model)) {
             if (horz) {
-                sz += this._labelSize = this.$_measureLabelsHorz(model, labelViews, hintWidth);
+                sz += this._labelSize = this.$_measureLabelsHorz(model, hintWidth);
             } else {
-                sz += this._labelSize = this.$_measureLabelsVert(model, labelViews, hintHeight);
+                sz += this._labelSize = this.$_measureLabelsVert(model, hintHeight);
             }
         } else {
             this._labelSize = 0;
@@ -778,7 +779,7 @@ export class AxisView extends ChartElement<Axis> {
         }
     }
 
-    protected _prepareLabel(view: AxisLabelView, tick: IAxisTick, model: AxisLabel, count: number): void {
+    private _prepareLabel(view: AxisLabelView, tick: IAxisTick, model: AxisLabel, count: number): void {
         const text = model.getLabelText(tick, count);
         const label = tick.label;
 
@@ -788,11 +789,12 @@ export class AxisView extends ChartElement<Axis> {
         view.internalSetStyleOrClass(model.style);
         view.internalSetStyleOrClass(model.getLabelStyle(tick, count));
 
-        if (text) {
-            const m = label && text.match(label_reg);
+        // model.getLabelText()에서 빈 문자열를 리턴할 수 있다.
+        if (text != null) {
+            const m = label && text.match(axis_label_reg);
             
             if (m) {
-                view.setLabel(model, text.replace(label_reg, label), 1000, 1000);
+                view.setLabel(model, text.replace(axis_label_reg, label), 1000, 1000);
             } else {
                 model.prepareRich(text);
                 model._paramTick = tick;
@@ -804,32 +806,18 @@ export class AxisView extends ChartElement<Axis> {
         }
     }
 
-    private $_prepareLabels(doc: Document, m: Axis): number {
-        const container = this._labelContainer;
-        const label = m.label;
+    private $_prepareLabels(m: Axis): number {
+        const labels = m.label;
 
-        if (container.visible = label.visible) {
+        if (this._labelContainer.setVisible(labels.visible)) {
             const ticks = m._ticks;
-            const nTick = ticks.length;
-            const views = this._labelViews;
 
-            container.setStyleOrClass(m.label.style);
+            this._labelContainer.setStyleOrClass(labels.style);
 
-            while (views.length < nTick) {
-                const t = new AxisLabelView(doc, 'rct-axis-label');
-    
-                container.add(t);
-                views.push(t);
-            }
-            while (views.length > nTick) {
-                views.pop().remove();
-            }
-
-            views.forEach((v, i) => {
-                v.setVisible(true); // visible false이면 getBBox()가 계산되지 않는다.
-                this._prepareLabel(v, ticks[i], label, nTick);
-            });
-            return views.length;
+            return this._labelViews.prepare(ticks.length, (v, i, count) => {
+                v.setVisible(true);
+                this._prepareLabel(v, ticks[i], labels, count);
+            }).count;
         }
         return 0;
     }
@@ -885,8 +873,9 @@ export class AxisView extends ChartElement<Axis> {
         return views.filter(v => v.visible);
     }
 
-    private $_measureLabelsHorz(axis: Axis, views: AxisLabelView[], width: number): number {
+    private $_measureLabelsHorz(axis: Axis, width: number): number {
         const m = axis.label;
+        let views = this._labelViews._internalItems();
         let step = +m.step >> 0;
         let rows = +m.rows >> 0;
         let rotation = +m.rotation % 360;
@@ -1012,8 +1001,9 @@ export class AxisView extends ChartElement<Axis> {
         }
     }
 
-    private $_measureLabelsVert(axis: Axis, views: AxisLabelView[], height: number): number {
+    private $_measureLabelsVert(axis: Axis, height: number): number {
         const m = axis.label;
+        let views = this._labelViews._internalItems();
         let step = Math.max(1, +m.step >> 0);
         const overalpped = this.$_checkOverlappedVert(axis, views, height, step);
 
@@ -1038,7 +1028,7 @@ export class AxisView extends ChartElement<Axis> {
         return sz;
     }
 
-    private $_layoutLabelsHorz(views: AxisLabelView[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, gap: number): void {
+    private $_layoutLabelsHorz(views: ElementPool<AxisLabelView>, ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, gap: number): void {
         const align = Align.CENTER;
         const pts = this._labelRowPts;
 
@@ -1077,7 +1067,7 @@ export class AxisView extends ChartElement<Axis> {
         });
     }
 
-    private $_layoutLabelsVert(views: AxisLabelView[], ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, len: number): void {
+    private $_layoutLabelsVert(views: ElementPool<AxisLabelView>, ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, len: number): void {
         const align = opp ? Align.LEFT : between ? Align.CENTER : Align.RIGHT;
         const x = opp ? len : w - len;
     

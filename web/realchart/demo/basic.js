@@ -14,6 +14,8 @@
 		label: {
 			startStep: 0,
 			step: 2,
+            style: {
+            }
 		},
 		grid: {
             visible: true,

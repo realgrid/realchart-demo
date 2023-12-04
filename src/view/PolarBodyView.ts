@@ -9,12 +9,13 @@
 import { ElementPool } from "../common/ElementPool";
 import { LayerElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
-import { PI_2 } from "../common/Types";
+import { Align, PI_2, RAD_DEG } from "../common/Types";
 import { CircleElement, CircumElement } from "../common/impl/CircleElement";
 import { LineElement, PolylineElement } from "../common/impl/PathElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
-import { Axis, AxisTick, IAxisTick } from "../model/Axis";
+import { Axis, AxisLabel, AxisTick, IAxisTick } from "../model/Axis";
 import { Body } from "../model/Body";
+import { AxisLabelView, axis_label_reg } from "./AxisView";
 import { BodyView, IPlottingOwner } from "./BodyView";
 
 class PolarAxisTickMarkView extends RcElement {
@@ -51,7 +52,7 @@ abstract class PolarAxisView extends RcElement {
     private _markViews: ElementPool<PolarAxisTickMarkView>;
     protected _gridContainer: RcElement;
     protected _labelContainer: RcElement;
-    protected _labelViews: ElementPool<TextElement>;
+    protected _labelViews: ElementPool<AxisLabelView>;
     private _markLen: number;
 
     //-------------------------------------------------------------------------
@@ -64,7 +65,7 @@ abstract class PolarAxisView extends RcElement {
         this._markViews = new ElementPool(this._markContainer, PolarAxisTickMarkView);
         this.add(this._gridContainer = new RcElement(doc, 'rct-polar-axis-grids'));
         this.add(this._labelContainer = new LayerElement(doc, 'rct-polar-axis-labels'));
-        this._labelViews = new ElementPool(this._labelContainer, TextElement, 'rct-polar-axis-label')
+        this._labelViews = new ElementPool(this._labelContainer, AxisLabelView, 'rct-polar-axis-label')
     }
 
     //-------------------------------------------------------------------------
@@ -106,6 +107,34 @@ abstract class PolarAxisView extends RcElement {
         this._markViews.prepare(m._ticks.length);
     }
 
+
+    protected _prepareLabel(view: AxisLabelView, tick: IAxisTick, model: AxisLabel, count: number): void {
+        const text = model.getLabelText(tick, count);
+        const label = tick.label;
+
+        view.value = tick.value;
+
+        view.internalClearStyleAndClass();
+        view.internalSetStyleOrClass(model.style);
+        view.internalSetStyleOrClass(model.getLabelStyle(tick, count));
+
+        // model.getLabelText()에서 빈 문자열를 리턴할 수 있다.
+        if (text != null) {
+            const m = label && text.match(axis_label_reg);
+            
+            if (m) {
+                view.setLabel(model, text.replace(axis_label_reg, label), 1000, 1000);
+            } else {
+                model.prepareRich(text);
+                model._paramTick = tick;
+                model.buildSvg(view._text, view._outline, NaN, NaN, model, model._getParam);
+            }
+        } else {
+            // view.setText(tick.label);
+            view.setLabel(model, label, 1000, 1000);
+        }
+    }
+
     // protected _prepareLabel(view: AxisLabelView, tick: IAxisTick): void {
     //     view.value = tick.value;
     //     view.setText(tick.label);
@@ -113,14 +142,23 @@ abstract class PolarAxisView extends RcElement {
     // }
 
     private $_prepareLabels(doc: Document, m: Axis): void {
-        if (this._labelContainer.setVisible(m.label.visible)) {
+        const labels = m.label;
+
+        if (this._labelContainer.setVisible(labels.visible)) {
             const ticks = m._ticks;
 
-            this._labelViews.prepare(ticks.length, (view, i) => {
-                view.text = ticks[i].label;
-            }, view => {
-                view.anchor = TextAnchor.START;
+            this._labelContainer.setStyleOrClass(labels.style);
+
+            this._labelViews.prepare(ticks.length, (v, i, count) => {
+                v.setVisible(true);
+                this._prepareLabel(v, ticks[i], labels, count);
             });
+
+            // this._labelViews.prepare(ticks.length, (view, i) => {
+            //     view.text = ticks[i].label;
+            // }, view => {
+            //     view.anchor = TextAnchor.START;
+            // });
         }
     }
 }
@@ -195,21 +233,24 @@ class PolarXAxisView extends PolarAxisView {
             // TODO: 가장 긴 label이 겹쳐지는 지로 확인할 것!
             const step = Math.ceil(9 / (360 / count));
             const rd2 = rd + axis.tick.length;
+            const align = Align.CENTER;
 
             this._labelViews.forEach((view, i) => {
                 if (view.setVisible(i % step === 0)) {
                     const tick = ticks[i];
     
-                    view.anchor = TextAnchor.MIDDLE;
-                    view.layout = TextLayout.MIDDLE;
-                    view.text = tick.label;
-        
                     const r = view.getBBounds();
-                    const p = tick.pos;
-                    const x = cx + Math.cos(start + p) * (rd2 + r.width / 2);
-                    const y = cy + Math.sin(start + p) * (rd2 + r.height / 2);
+                    const p = start + tick.pos;
+                    const x = cx + Math.cos(p) * rd2 + (Math.cos(p) * r.width / 2);
+                    const y = cy + Math.sin(p) * rd2 + (Math.sin(p) * r.width / 2);
         
-                    view.translate(x, y);
+                    view.layout(align).translate(x - Math.cos(p) * r.width / 2, y - Math.sin(p) * r.width / 2 - r.height / 2);
+                    // view.layout(align).translate(x - Math.cos(p) * r.width / 2, y - Math.sin(p) * r.width / 2 - r.height / 2);
+
+                    // const x = cx + Math.cos(p) * (rd2 + r.width / 2);// - (Math.cos(p) * (r.width / 2));
+                    // const y = cy + Math.sin(p) * (rd2 + r.width / 2);// - (Math.sin(p) * (r.height / 2));
+                    // view.layout(align).translate(x - r.width / 2, y - r.height / 2);
+                    // view.setRotation(r.width / 2, r.height / 2, p * RAD_DEG);
                 }
             });
             // 마지막이 겹치는 지 확인한다.
@@ -306,13 +347,7 @@ class PolarYAxisView extends PolarAxisView {
         // labels
         if (this._labelContainer.visible) {
             this._labelViews.forEach((view, i) => {
-                const tick = ticks[i];
-    
-                view.anchor = TextAnchor.END;
-                view.layout = TextLayout.MIDDLE;
-                view.text = tick.label;
-    
-                view.translate(cx - 4, cy - tick.pos);
+                view.translate(cx + 2, cy - ticks[i].pos - view.getBBounds().height / 2);
             });
         }
 
