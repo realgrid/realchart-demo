@@ -9,7 +9,7 @@
 import { ElementPool } from "../common/ElementPool";
 import { LayerElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
-import { Align, PI_2, RAD_DEG } from "../common/Types";
+import { Align, PI_2, RAD_DEG, fixnum } from "../common/Types";
 import { CircleElement, CircumElement } from "../common/impl/CircleElement";
 import { LineElement, PolylineElement } from "../common/impl/PathElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
@@ -241,12 +241,12 @@ class PolarXAxisView extends PolarAxisView {
     
                     const r = view.getBBounds();
                     const p = start + tick.pos;
-                    const x = cx + Math.cos(p) * rd2 + (Math.cos(p) * r.width / 2);
-                    const y = cy + Math.sin(p) * rd2 + (Math.sin(p) * r.width / 2);
+                    const x = cx + Math.cos(p) * (rd2 + r.width / 2) - r.width / 2;
+                    const y = cy + Math.sin(p) * (rd2 + r.height / 2) - r.height / 2;
         
-                    view.layout(align).translate(x - Math.cos(p) * r.width / 2, y - Math.sin(p) * r.width / 2 - r.height / 2);
-                    // view.layout(align).translate(x - Math.cos(p) * r.width / 2, y - Math.sin(p) * r.width / 2 - r.height / 2);
+                    view.layout(align).translate(x, y);
 
+                    // TODO: label을 회전 시킬 때...?
                     // const x = cx + Math.cos(p) * (rd2 + r.width / 2);// - (Math.cos(p) * (r.width / 2));
                     // const y = cy + Math.sin(p) * (rd2 + r.width / 2);// - (Math.sin(p) * (r.height / 2));
                     // view.layout(align).translate(x - r.width / 2, y - r.height / 2);
