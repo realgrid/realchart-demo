@@ -79,7 +79,10 @@ export class DataPointLabel extends FormattableText {
     distance = 25;
     /**
      * 계산되는 기본 text 대신, data point label로 표시될 text 리턴.\
-     * undefined를 리턴하면 기본 text 표시.
+     * undefined나 null을 리턴하면 {@link text} 속성 등에 설정된 값으로 표시하거나,
+     * 값에 따라 자동 생성되는 텍스트를 사용한다.
+     * 빈 문자열 등 정상적인 문자열을 리턴하면 그 문자열대로 표시된다. 
+     * {@link prefix}나 포맷 속성 등은 적용되지 않는다.
      */
     textCallback: (point: any) => string;
     /**
@@ -88,6 +91,9 @@ export class DataPointLabel extends FormattableText {
      * @config
      */
     visibleCallback: (point: any) => boolean;
+    /**
+     * 데이터 포인트별로 추가 적용되는 스타일을 리턴한다.\
+     */
     styleCallback: (point: any) => SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
@@ -984,7 +990,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         if (this._pointLabelCallback) {
             this._getPointCallbackArgs(this._pointArgs, p);
             const s = this._pointLabelCallback(this._pointArgs);
-            if (s !== _undefined) return s;
+            if (s != null) return s;
         }
         return label;
     }

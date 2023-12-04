@@ -650,8 +650,18 @@ export abstract class AxisLabel extends FormattableText {
      * @config
      */
     lastStyle: SVGStyleOrClass;
-
+    /**
+     * 축 tick 라벨에 표시될 텍스트를 리턴한다.\
+     * undefined나 null을 리턴하면 {@link text} 속성 등에 설정된 값으로 표시하거나,
+     * 값에 따라 자동 생성되는 텍스트를 사용한다.
+     * 빈 문자열 등 정상적인 문자열을 리턴하면 그 문자열대로 표시된다. 
+     * {@link prefix}나 포맷 속성 등은 적용되지 않는다.
+     */    
     textCallback: (args: IAxisLabelArgs) => string;
+    /**
+     * 라벨 별로 추가 적용되는 스타일을 리턴한다.\
+     * 기본 설정을 따르게 하고 싶으면 undefined나 null을 리턴한다.
+     */
     styleCallback: (args: any) => SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
@@ -672,7 +682,7 @@ export abstract class AxisLabel extends FormattableText {
 
         if (this.textCallback) {
             const s = this.textCallback(this.axis.getTickLabelArgs(idx, tick.value));
-            if (s !== _undefined) return s;
+            if (s != null) return s;
         }
 
         if (idx === 0) return this.firstText || this.text;
@@ -684,7 +694,8 @@ export abstract class AxisLabel extends FormattableText {
         const idx = tick.index;
 
         if (this.styleCallback) {
-            return this.styleCallback(this.axis.getTickLabelArgs(idx, tick.value));
+            const st = this.styleCallback(this.axis.getTickLabelArgs(idx, tick.value));
+            if (isObject(st)) return st;
         }
         if (idx === 0) return this.firstStyle;
         if (idx === count - 1) return this.lastStyle;
