@@ -1025,42 +1025,6 @@
 .rct-tooltip-tail {
     fill: white;
 }
-.rct-tooltip-top[data-index="0"] {
-    fill: var(--color-1);
-}
-.rct-tooltip-top[data-index="1"] {
-    fill: var(--color-2);
-}
-.rct-tooltip-top[data-index="2"] {
-    fill: var(--color-3);
-}
-.rct-tooltip-top[data-index="3"] {
-    fill: var(--color-4);
-}
-.rct-tooltip-top[data-index="4"] {
-    fill: var(--color-5);
-}
-.rct-tooltip-top[data-index="5"] {
-    fill: var(--color-6);
-}
-.rct-tooltip-top[data-index="6"] {
-    fill: var(--color-7);
-}
-.rct-tooltip-top[data-index="7"] {
-    fill: var(--color-8);
-}
-.rct-tooltip-top[data-index="8"] {
-    fill: var(--color-9);
-}
-.rct-tooltip-top[data-index="9"] {
-    fill: var(--color-10);
-}
-.rct-tooltip-top[data-index="10"] {
-    fill: var(--color-11);
-}
-.rct-tooltip-top[data-index="11"] {
-    fill: var(--color-12);
-}
 .rct-tooltip-text {
     fill: #333;
     stroke: none;

@@ -108,8 +108,6 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                 let x: number;
                 let y: number;
 
-                // m.className = model.getPointStyle(i);
-
                 if (polar) {
                     const a = polar.start + xAxis.getPosition(PI_2, xJitter);
                     const py = yAxis.getPosition(polar.rd, yJitter) * vr;

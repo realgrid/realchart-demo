@@ -7,8 +7,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { IRect } from "../../common/Rectangle";
-import { Align } from "../../common/Types";
+import { Align, PI_2 } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
+import { Axis } from "../../model/Axis";
+import { Chart } from "../../model/Chart";
 import { PointItemPosition } from "../../model/Series";
 import { BubbleSeries, BubbleSeriesPoint } from "../../model/series/BubbleSeries";
 import { MarkerSeriesPointView, MarkerSeriesView, PointLabelView } from "../SeriesView";
@@ -27,6 +29,8 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _polar: any;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -84,8 +88,9 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
         const labelPos = labels.position;
         const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
+        const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj;
+        const polar = this._polar = (series.chart as Chart).body.getPolar(xAxis);
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
         const zAxis = series._xAxisObj._vlen < series._yAxisObj._vlen ? series._xAxisObj : series._yAxisObj;
@@ -105,13 +110,19 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
                 let x: number;
                 let y: number;
 
-                // m.className = model.getPointStyle(i);
-
-                x = p.xPos = xAxis.getPosition(xLen, p.xValue);
-                y = p.yPos = yOrg - yAxis.getPosition(yLen, p.yValue);
-                if (inverted) {
-                    x = yAxis.getPosition(yLen, p.yGroup);
-                    y = yOrg - xAxis.getPosition(xLen, p.xValue);
+                if (polar) {
+                    const a = polar.start + xAxis.getPosition(PI_2, p.xValue);
+                    const py = yAxis.getPosition(polar.rd, p.yValue);
+    
+                    x = p.xPos = polar.cx + py * Math.cos(a);
+                    y = p.yPos = polar.cy + py * Math.sin(a);
+                } else {
+                    x = p.xPos = xAxis.getPosition(xLen, p.xValue);
+                    y = p.yPos = yOrg - yAxis.getPosition(yLen, p.yValue);
+                    if (inverted) {
+                        x = yAxis.getPosition(yLen, p.yGroup);
+                        y = yOrg - xAxis.getPosition(xLen, p.xValue);
+                    }
                 }
     
                 if (mv.setVisible(noClip || x >= 0 && x <= width && y >= 0 && y <= height)) {

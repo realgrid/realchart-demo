@@ -124,7 +124,8 @@ const config = {
         //         fill: 'var(--color-3)',
         //     }
         // },
-    ]
+    ],
+    legend: true
 }
 
 let animate;

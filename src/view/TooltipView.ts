@@ -6,11 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { PathBuilder } from "../common/PathBuilder";
 import { createAnimation } from "../common/RcAnimation";
 import { PathElement, RcControl, RcElement } from "../common/RcControl";
 import { SvgRichText } from "../common/RichText";
-import { Path } from "../common/Types";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { DataPoint } from "../model/DataPoint";
 import { Series } from "../model/Series";
@@ -77,7 +75,7 @@ export class TooltipView extends RcElement {
         const ch = this.control.contentHeight();
         const model = this._model = series.tooltip;
         const tv = this._textView;
-        const isInverted = model.series.chart.isInverted();
+        const isInverted = series.chart.isInverted();
 
         this._series = series;
 
@@ -86,24 +84,30 @@ export class TooltipView extends RcElement {
         this._richText.build(tv, NaN, NaN, point, this._textCallback);
 
         const r = tv.getBBounds();
-        const w = Math.max(model.minWidth || 0, r.width + 8 * 2);
-        const h = Math.max(model.minHeight || 0, r.height + 6 * 2);
+        let w = Math.max(model.minWidth || 0, r.width + 8 * 2);
+        let h = Math.max(model.minHeight || 0, r.height + 6 * 2);
 
-        this._top.setData('index', (series.index % PALETTE_LEN) as any);
+        // 시리즈 색은 동적일 수 있다.
+        //this._top.setData('index', (series.index % PALETTE_LEN) as any);
+        // TODO: point별로 색상이 다를 수 있다.
+        this._top.setStyle('fill', series._calcedColor);
 
         const dur = this.getStyle('visibility') === 'visible' ? 300 : 0;
 
         if (isInverted) {
-            this.drawTooltip(0, -this._topHeight / 2, w, h + this._topHeight, TooltipPosition.RIGHT);
-            this.translateEx(x + model.offset, y - h / 2, dur, false);
+            h += this._topHeight;
+            this.drawTooltip(0, -this._topHeight / 2, w, h, TooltipPosition.RIGHT);
+            x = x + model.offset;
+            y = y - h / 2, dur, false;
         } else {
-            this.drawTooltip(0, -this._topHeight, w, h + this._topHeight, TooltipPosition.TOP);
-            this.translateEx(x - w / 2, y - h - model.offset, dur, false);
+            h += this._topHeight;
+            this.drawTooltip(0, -this._topHeight, w, h, TooltipPosition.TOP);
+            x = x - w / 2;
+            y = y - h - model.offset;
         };
-
-        // x = Math.max(0, Math.min(x, cw - w));
-        // y = Math.max(0, Math.min(y, ch - h));
-        // this.translateEx(x, y, dur, false);
+        x = Math.max(0, Math.min(x, cw - w));
+        y = Math.max(0, Math.min(y, ch - h));
+        this.translateEx(x, y, dur, false);
 
         if (dur === 0) {
             this.setStyle('visibility', 'visible');
@@ -136,26 +140,26 @@ export class TooltipView extends RcElement {
     private $_hide(): void {
         createAnimation(this.dom, 'opacity', void 0, 0, 200, () => {
             this.setStyle('visibility', 'hidden');
-        })
+        });
     }
   
     private drawTooltip(x: number, y: number, w: number, h: number, position: string): void {
         const tail = this._tailSize;
-        const radius = this._radius;
+        const rd = this._radius;
         const topHeight = this._topHeight;
 
         position === TooltipPosition.RIGHT ? (x += tail) : position === TooltipPosition.TOP && (y -= tail);
 
         let backPath = [
-            'M', x + radius, y,
-            'L', x + w - (radius * 2), y,
-            'Q', x + w - radius, y, x + w, y + radius,
-            'L', x + w, y + h - radius,
-            'Q', x + w, y + h, x + w - radius, y + h,
-            'L', x + radius, y + h,
-            'Q', x, y + h, x, y + h - radius,
-            'L', x, y + radius,
-            'Q', x, y, x + radius, y
+            'M', x + rd, y,
+            'L', x + w - (rd * 2), y,
+            'Q', x + w - rd, y, x + w, y + rd,
+            'L', x + w, y + h - rd,
+            'Q', x + w, y + h, x + w - rd, y + h,
+            'L', x + rd, y + h,
+            'Q', x, y + h, x, y + h - rd,
+            'L', x, y + rd,
+            'Q', x, y, x + rd, y
         ];
 
         backPath = position === TooltipPosition.RIGHT ? backPath.concat([
@@ -169,17 +173,18 @@ export class TooltipView extends RcElement {
         ]);
 
         const topPath = [
-            'M', x + radius, y,
-            'l', w - (radius * 2), 0,
-            'q', radius, 0, radius, radius,
-            'l', 0, topHeight - radius,
+            'M', x + rd, y,
+            'l', w - (rd * 2), 0,
+            'q', rd, 0, rd, rd,
+            'l', 0, topHeight - rd,
             'l', -w, 0,
-            'l', 0, radius - topHeight,
-            'q', 0, -radius, radius, -radius,
+            'l', 0, rd - topHeight,
+            'q', 0, -rd, rd, -rd,
         ];
 
         const tv = this._textView;
         const r = tv.getBBounds();
+
         tv.translate(x + (w - r.width) / 2, y + (h - r.height + topHeight) / 2);
         this._top.setPath(topPath);
         this._back.setPath(backPath);
