@@ -1033,7 +1033,7 @@ export class BodyView extends ChartElement<Body> {
         });
 
         // annotations
-        this.$_layoutAnnotations(this._inverted, w, h);
+        this._layoutAnnotations(this._inverted, w, h);
 
         // zoom button
         if (this._zoomButton.visible) {
@@ -1191,10 +1191,10 @@ export class BodyView extends ChartElement<Body> {
         });
     }
 
-    private $_layoutAnnotations(inverted: boolean, w: number, h: number): void {
+    protected _layoutAnnotations(inverted: boolean, w: number, h: number): void {
         this._annotationViews.forEach(v => {
             v.resizeByMeasured();
-            v.layout().translatep(v.model.getPostion(inverted, 0, 0, w, h, v.width, v.height));
+            v.layout().translatep(v.model.getPosition(inverted, 0, 0, w, h, v.width, v.height));
         });
     }
 }

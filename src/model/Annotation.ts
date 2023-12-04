@@ -62,6 +62,10 @@ export abstract class Annotation extends ChartItem {
     verticalAlign = VerticalAlign.TOP;
     offsetX = 10;
     offsetY = 10;
+    /**
+     * 회전 각도.\
+     * 0 ~ 360 사이의 값으로 지정한다.
+     */
     rotation: number;
     /**
      * 차트 모델에서 지정된 annotationd의 표시 기준 영역.
@@ -73,7 +77,7 @@ export abstract class Annotation extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getPostion(inverted: boolean, left: number, top: number, wDomain: number, hDomain: number, width: number, height: number): IPoint {
+    getPosition(inverted: boolean, left: number, top: number, wDomain: number, hDomain: number, width: number, height: number): IPoint {
         let x = left;
         let y = top;
 

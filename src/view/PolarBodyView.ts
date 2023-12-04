@@ -406,6 +406,9 @@ export class PolarBodyView extends BodyView {
         this._yAxisViews.forEach(v => {
             v.layout(m.chart.xAxis as Axis, cx, cy, rd);
         })
+
+        // annotations
+        this._layoutAnnotations(false, this.width, this.height);
     }
 
     //-------------------------------------------------------------------------

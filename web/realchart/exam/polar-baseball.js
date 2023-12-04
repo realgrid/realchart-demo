@@ -127,7 +127,7 @@ const config = {
             {
                 imageUrl: '../assets/images/baseball-player.png',
                 // align: 'right',
-                // offsetX: 300,
+                offsetX: 50,
                 // offsetY: 0,
                 width: 300
             }
