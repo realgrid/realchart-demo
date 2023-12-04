@@ -1,5 +1,7 @@
+
 ////////////////////////////////////////////////////////////////////////////////
 // dldoc.js
+// config 문서를 생성한다.
 // 2023. 09. 17. created by benny
 // -----------------------------------------------------------------------------
 // Copyright (c) 2023 Wooritech Inc.
@@ -11,9 +13,44 @@
  * ```yarn dldoc``` script에 해당 명령을 포함한다.
  * export 한 클래스만 찾는다. export하지 않은 것을 포함하려면 typedoc plugin 필요.
  * https://github.com/tomchen/typedoc-plugin-not-exported
+ * typedoc 기본 설정은 typedoc.json을 사용한다.
  */
 import fs from 'fs';
 import path from 'path';
+
+const ReflectionKind = {
+  Project: 1,
+  Module: 2,
+  Namespace: 4,
+  Enum: 8,
+  EnumMember: 16,
+  Variable: 32,
+  Function: 64,
+  Class: 128,
+  Interface: 256,
+  Constructor: 512,
+  Property: 1024,
+  Method: 2048,
+  CallSignature: 4096,
+  IndexSignature: 8192,
+  ConstructorSignature: 16384,
+  Parameter: 32768,
+  TypeLiteral: 65536,
+  TypeParameter: 131072,
+  Accessor: 262144,
+  GetSignature: 524288,
+  SetSignature: 1048576,
+  TypeAlias: 2097152,
+  Reference: 4194304
+}
+Object.freeze(ReflectionKind);
+
+const ReflectionKindString = Object.fromEntries(
+  Object.entries(ReflectionKind).map(([key, value]) => {
+    return [value, key]
+  })
+);
+Object.freeze(ReflectionKindString);
 
 const JSFIDDLE_URL = 'https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/';
 /**
@@ -25,12 +62,14 @@ class Tunner {
     const text = fs.readFileSync(path || './docs/.tdout/model.json', { encoding: 'utf-8'});
     this.model = JSON.parse(text);
     this.classMap = {};
+    // temporary map
+    this.currents = [];
+    this.current = { name: '', kind: 0, props: {} };
   }
 
   static get fiddleUrl() {
     return JSFIDDLE_URL;
   }
-
 
   _findTag(tags, tag) {
     return tags?.find(t => t.tag == tag );
@@ -41,16 +80,24 @@ class Tunner {
   }
 
   _findModel(model, name) {
-    // return model.children?.find(c => {
-    //   if (c.name == name) {
-    //     return true;
-    //   } else {
-    //     return c.children && this._findModel(c, name);
-    //   }
-    // })
     for (const child of model.children) {
-      if (child.name == name) return child;
-      if (child.children) return this._findModel(child, name);
+      if (child.name == name) {
+        return child;
+      } else if (child.children) {
+        const found = this._findModel(child, name)
+        if (found) return found;
+      };
+    }
+  }
+
+  _findModelById(model, id) {
+    for (const child of model.children) {
+      if (child.id == id) {
+        return { ...child };
+      } else if (child.children) {
+        const found = this._findModelById(child, id)
+        if (found) return found;
+      };
     }
   }
 
@@ -137,23 +184,139 @@ class Tunner {
     }
   }
 
+  _getConfigLinkById(id) {
+    const model = this._findModelById(this.model, id);
+    switch (model?.kind) {
+      case ReflectionKind.EnumMember:
+        return `\`${model.type.value}\``;
+      case ReflectionKind.Property:
+      case ReflectionKind.Accessor:
+        // this.current.name == 'BulletGauge' && console.debug(`[DEBUG] ${model.name}`, model)
+        const [current] = this.currents.slice(-1);
+        const [config] = this._parseConfigTag(current.comment?.blockTags) || [];
+        if (config) {
+          const { opt, type } = MDGenerater.destructConfig(config);
+          const link = ['/config', 'config', opt, type].filter(v => v).join('/');
+          return `[${model.name}](${link}#${model.name.toLowerCase()})`;
+        }
+        break;
+      default:
+        // console.warn(`[WARN] ${model.name}`, model)
+        break;
+    }
+
+    return;
+  }
+
+  _getConfigLink(name, prop) {
+    const model = this._findModel(this.model, name);
+    switch(model?.kind){
+      case ReflectionKind.Class:
+        const [config] = this._parseConfigTag(model.comment?.blockTags) || [];
+        if (config) {
+          const { opt } = MDGenerater.destructConfig(config);
+          const link = ['/config', 'config', opt].filter(v => v).join('/');
+          return `[${prop}](${link}#${prop.toLowerCase()})`;
+        }
+        break;
+      default:
+        break;
+    }
+    return '';
+  }
+
   /**
    * 
    * @param line: string
    * @returns string
    */
   _parseInlineTag(line) {
-    switch(line) {
-      case '@link':
-        return `**[${line.text}](./${line.text})**`
-      default:
+    if(line.tag == '@link') {
+      /** line.target 정보로 찾기 */
+      if (/^(http:|https:)/.test(line.target)) {
+        return `**[${line.text}](${line.target})**`;
+      } else if (line.target) {
+        // ts 제공 구조체인 경우
+        const { sourceFileName, qualifiedName } = line.target;
+        if (sourceFileName?.indexOf('node_modules/typescript') == 0) {
+          return `**${qualifiedName}**`;
+        }
+        
+        // 현재 구조체의 속성인 경우
+        // % 상속받은 prop이면 현재 prop id와 다르다.
+        const [current] = this.currents.slice(-1);
+        // 현재 속성 중에 있거나, 상속 받은 속성. 조상까지 찾을 필요는 없다.
+        const prop = current.props?.find(
+          p => (line.target == p.id)
+          || (line.text == p.inheritedFrom?.name.split('.').pop())
+        );
+        // 다른 구조체에서 이름이 같을 수 있음. Series.xStart, ChartOptions.xStart
+        // || p.name == line.text
+        if (prop) return `**[${line.text}](#${prop.name.toLowerCase()})**`;
+        
+        // 레퍼런스
+        // line.target 이 number 타입으로 reference가 있는 경우...
+        if (typeof line.target === 'number') {
+          const link = this._getConfigLinkById(line.target);
+          return link;
+        } else {
+          console.warn(`[WARN] Unexpected inline link`, line);
+        }
         return line.text;
+      } else {
+        // target정보가 없어서, line.text에서 클래스 이름과 속성으로 가정하고 config 찾기
+        const [name, prop] = line.text.split('.');
+        const link = this._getConfigLink(name, prop);
+        if (link) return link;
+      }
+
+      /** 
+       * 클래스 API 링크 
+       * 여기까지 리턴하지 못했으면 API 클래스 링크 로직 시작
+       */
+      // 구분자와 라벨
+      const [sep, ...label] = line.text.split(' ');
+      // 접근자와 속성 구분
+      const [accessor, ...props] = sep.split('.');
+      let path = '';
+      const [prop] = props.splice(-1, 1);
+      switch (accessor) {
+        case 'g':
+        case 'global':
+          path = '/docs/api/globals';
+          break;
+        case 'rc':
+        case 'realchart':
+        default:
+          path = '/docs/api/classes';
+          break;
+        
+          // props.unshift(accessor);
+          // path = `/config/config`;
+          // break;
+      }
+
+      // single word. 현재 페이지의 속성
+      if (sep == accessor) {
+        path = `#${sep}`;
+        !label.length && label.push(sep);
+      } else if (props.length) {
+        path = `${path}/${props.join('/')}#${prop}`;
+      } else {
+        path = `${path}/${prop}`;
+      }
+      !label.length && label.push(prop);
+
+      return `**[${label.join(' ')}](${path})**`
     }
+
+    return line.text;
   }
 
   // parse property type
   _parseType(obj) {
-    const { type, name, types, elementType, qualifiedName } = { ...obj };
+    const { type, name, types, elementType, qualifiedName, target} = { ...obj };
+    const { name: ename, type: etype, target: etarget } = { ...elementType };
     switch(type) {
       case 'intrinsic':
         return name;
@@ -161,57 +324,63 @@ class Tunner {
         return types.map(t => {return this._parseType(t)}).join(' | ');
       case 'array':
         // IValueRange
-        switch (elementType.type) {
+        switch (etype) {
           case 'reference':
-            // @TODO: Link Required...
-            return `${elementType.name}[]`;
-            break;
+            return `${ename}[]`;
           case 'intrinsic':
-            return `${elementType.name}[]`;
+            return `${ename}[]`;
           default:
-            console.warn(`[WARN] unexpected type ${elementType.type}, ${elementType.name}`, obj);
+            console.warn(`[WARN] Unexpected array type ${etype}, ${ename}`, obj);
         }
         return;
       case 'reference':
-        if (qualifiedName) { // Date
-          return qualifiedName;
-        } else if (name == 'SVGStyles') { //special interface
-          return name;
-        }
+        const qlfName = qualifiedName || target.qualifiedName
+        if (qlfName) { 
+          
+          if (target.sourceFileName.indexOf('node_modules/typescript') == -1) {
+            console.warn(`[WARN] Not found ${qlfName} qualified model. Check it's @internal or not exported.`)
+          }
+          // else Date
+          return qlfName;
+        } 
 
-        // pre-scan
-        if (!this.classMap[name]) {
-          // console.debug(name, obj)
-          const model = this._findModel(this.model, name);
-          model && this._visit(model);
-
-          // if (name == 'SVGStyles' && !model)
-          //   throw new Error(`not found ${name} model.`)
-        }
-
-        return this._parseType(this.classMap[name]?.type);
+        this._preScan(name);
+        const cls = this.classMap[name];
+        if (!cls) throw new Error(name);
+        return this._parseType(cls.type ?? { name, ...cls });
       case 'literal':
         // console.warn(`[WARN] ignored ${type}`, obj);
         return typeof obj.value === 'string' ? `'${obj.value}'` : obj.value;
       case 'reflection':
-        // console.warn(`[WARN] ignored ${type}`);
-        if (obj.declaration?.signatures.length > 1) {
-          console.debug(JSON.stringify(obj));
-        }
         return obj.declaration?.signatures.map(s => {return this._parseType(s)}).join(' | ');
-        // const [{ kind, kindString, parameters, type: _type }] = obj.declaration?.signatures || {};
-        // console.debug({ kindString, parameters, type: _type });
       default:
-        // class 인 경우, type 없음.
-        // console.warn('[WARN] unexpected type');
-        return;
+        // type 없음. class, Interface, Enumeration...
+        return this._parseStructure(obj);
     }
   }
 
-  _parseTypeD(obj) {
-    const { id, type, name, types, elementType, kindString } = { ...obj };
+  _parseStructure(obj) {
+    switch(obj.kind) {
+      case ReflectionKind.Interface:
+        return obj.name;
+      case ReflectionKind.Enum:
+        if (!obj.props) throw new Error(obj.name);
+        return obj.props?.map(p => `'${p.value}'`).join('|');
+      case ReflectionKind.Class:
+        break;
+      case ReflectionKind.CallSignature:
+        console.warn(`[WARN] TODO - ${obj.name}:${ReflectionKindString[obj.kind]}`);
+        break;
+      default:
+        console.warn(`[WARN] Unexpected type ${obj.name}:${ReflectionKindString[obj.kind]}`);
+        break;
+    }
 
-    // if kindString == 
+    return null;
+  }
+
+  _parseTypeD(obj) {
+    const { id, type, name, types, elementType } = { ...obj };
 
     switch(type) {
       case 'intrinsic':
@@ -219,10 +388,11 @@ class Tunner {
       case 'union':
         return types.map(this._parseTypeD.bind(this));
       case 'array':
-        return { type, name:`${elementType.name}[]`};
+        return { type, name:`${elementType.name}[]`, elementType };
       case 'reference':
-        // console.info(obj)
-        return { type, name, id };
+        this._preScan(name);
+        const { kind } = this.classMap[name] || {};
+        return { type, name, kind, id };
       default:
         return {};
     }
@@ -272,7 +442,7 @@ class Tunner {
   }
   _doclet(name) {
     const isDoclet = this._isDoclet(name);
-    return { isDoclet, name: isDoclet ? name.split(' ').slice(-1) : name };
+    return { isDoclet, name: isDoclet ? name.split(' ').pop() : name };
   }
   _setContent (prop) {
     // return prop.name;
@@ -281,86 +451,144 @@ class Tunner {
         name: prop.name,
         type: this._parseType(prop.type),
         dtype: this._parseTypeD(prop.type),
-        header: config.join('|'), 
+        header: config?.join('|'), 
         // readonly: prop.flags?.isReadonly, // config에서 readonly 표기가 유효한지 확인.
+        optional: prop.flags?.isOptional,
         content,
         defaultValue: prop.defaultValue,
         defaultBlock,
     };
   }
   // scan all classes
-  _visit(obj) {
-    const { name, children, kindString, type, typeParameters, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
-    const { config, content } = this._parseComment(comment);
+  _visit(obj, level=0) {
+    const { name, children, kind, type, typeParameters, comment, extendedTypes = [], extendedBy = [] } = { ...obj };
     const propFilter = (child) => {
       return (
-        child.kindString == 'Property' 
-          && (this._isDoclet(child.name) || this._findTag(child.comment?.blockTags, '@config')))
-        || (child.kindString == 'Accessor' && this._findTag(child.getSignature?.comment?.blockTags, '@config'))
+        child.kind === ReflectionKind.Property 
+          && (this._isDoclet(child.name) || this._findTag(child.comment?.blockTags, '@config'))
+        ) || (
+        child.kind === ReflectionKind.Accessor 
+          && this._findTag(child.getSignature?.comment?.blockTags, '@config')
+      );
     }
+    const staticPropFilter = (child) => {
+      return child.kind === ReflectionKind.Property
+        && child.flags?.isStatic
+    }
+    this.currents.push({ name, kind, comment });
 
-    switch (kindString) {
-      case 'Class':
+    const { config, content } = this._parseComment(comment);
+    switch (kind) {
+      case ReflectionKind.Class:
+
+        // this.current = { name, kind, comment, props: children.filter(propFilter)}
+        const clsProps = children.filter(propFilter);
+        this.currents[this.currents.length -1].props = clsProps;
         this.classMap[name] = { 
           // header, content, prop, type,
-          kindString,
+          kind,
           config,
           content,
           extended: extendedTypes.map(t => t.name),
-          props: children.filter(propFilter)
+          staticProps: children
+            .filter(staticPropFilter)
+            .map(c => { return { name: c.name, value: c.type?.value }}),
+          props: clsProps
             .map(c => {
-              return c.kindString == 'Property' 
+              return c.kind === ReflectionKind.Property
               ? this._setContent(c)
               : this._setContent(c.getSignature)
             })
             .sort((prev, next) => {
-              // doclet은 끝으로 보낸다.
+              // doclet을 뒤로 보낸다. 다음 reduce에서 부모 속성을 덮어쓴다.
               const { isDoclet, name } = this._doclet(next.name);
-              if (isDoclet) return -1;
-              else return 0;
+              return isDoclet ? -1 : 0;
             })
             .reduce((acc, curr) => {
               // 상위 클래스 속성 설명에 doclet 설명을 추가하고, defaultValue는 덮어쓴다.
               const { isDoclet, name } = this._doclet(curr.name);
               const found = acc.findIndex((el) => el.name == name);
               if (found >= 0 && isDoclet) {
-                acc[found].content += `\n${curr.content}`
+                acc[found].content += `  \n${curr.content}`
                 acc[found].defaultValue = curr.defaultValue;
                 acc[found].defaultBlock = curr.defaultBlock;
+              } else if (isDoclet) {
+                curr.name = name;
+                acc.push(curr);
               } else {
                 acc.push(curr);
               }
               return acc;
             }, [])
+            .sort((prev, next) => {
+              return prev.name > next.name ? 1 : -1;
+            })
         };
         break;
-      case 'Enumeration':
+      case ReflectionKind.Enum:
+        const enumProps = children.filter(c => 
+          c.kind == ReflectionKind.EnumMember
+          && this._findTag(c.comment?.blockTags, '@config')
+        ).map(c => {
+          const { content } = this._parseComment(c.comment);
+          return { name: c.name, value: c.type.value, content };
+        });
+
+        this.currents[this.currents.length - 1].props = enumProps;
         this.classMap[name] = {
-          kindString,
-          props: children.filter(c => 
-            c.kindString == "Enumeration Member"
-            && this._findTag(c.comment?.blockTags, '@config')
-          ).map(c => {
-            const { content } = this._parseComment(c.comment);
-            return { name: c.name, value: c.type.value, content };
-          }),
+          kind,
+          props: enumProps,
         }
         // console.debug(name, this.classMap[name]);
         break;
-      case 'Type alias':
+      case ReflectionKind.TypeAlias:
         this.classMap[name] = {
-          kindString,
+          kind,
           type,
           typeParameters
         }
         break;
+      case ReflectionKind.Interface:
+        // !children && console.debug(name, children);
+        const itfProps = children?.filter(c => c.kind === ReflectionKind.Property)?.map(c => {
+          return this._setContent(c);
+        });
+        this.currents[this.currents.length -1].props = itfProps;
+        this.classMap[name] = {
+          kind,
+          type,
+          props: itfProps
+        }
+        break;
+      default:
+        // console.debug('Ignored.', name, kindString, obj)
+        break;
     }
 
+    if (!this.currents.length)
+      throw Error();
+    this.currents.pop();
+
+
+    // project or module
+    // kind == 1 || kind == 2 
     children?.forEach(child => {
       this._visit(child);
     });
 
     return extendedTypes.map(type => type.name);
+  }
+
+  // 아직 classMap에 없으면 모델을 찾아서 업데이트 한다.
+  _preScan(name) {
+    if (!this.classMap[name]) {
+      const model = this._findModel(this.model, name)
+      if (!model){
+        return console.warn(`[WARN] Not found ${name} model. Check it's @internal or not exported.`)
+      } else {
+        this._visit(model);
+      }
+    }
   }
 
   scan() {
@@ -382,116 +610,15 @@ class Tunner {
  * Tunner에서 가공한 모델을 가지고 config별 mdx문서를 내보낸다.
  */
 class MDGenerater {
+
+  static get TYPE_ELEMENTS() {
+    return ['series', 'xAxis', 'yAxis', 'gauge', 'annotation'];
+  } 
+
   constructor(map, { debug=false }) {
     this.classMap = map;
     this.docMap = {};
     this.debug = debug;
-  }
-
-  // <br> 태그 변환
-  _fixContent(content) {
-    // replace \n or double space
-    return content?.replace(/<br>/g, '\n') || '';
-  }
-
-
-  /**
-   * 
-   * @iparam name:string config name
-   * @iparam type:string attr type value
-   * @iparam prop:any
-   * @returns 
-   */
-  _makeProp(param) {
-    const { name: _name, opt, type: _type, prop } = param;
-    const { header, name, type, dtype, content, defaultValue, defaultBlock } = prop;
-    let enumLines = ''
-    let lines = `### ${prop.readonly ? '*`<readonly>`* ' : ''}`
-      + `${name}`
-      + `${type ? ': \`' + type  + '\{:js}`': ''}`
-      + `[#${name}]\n`;
-
-    if (dtype instanceof Array) {
-      dtype.map(t => {
-        if (t.type == 'reference') {
-          console.warn('Not Implemented union references');
-        }
-      });
-    } else if (dtype?.type == 'reference') {
-      const v = this.classMap[dtype.name];
-      if (v?.kindString == 'Class') {
-        let accessor = this.docMap;
-        const keys = _type 
-          ? [opt, _type, name]
-          : [opt, name];
-        keys.forEach((key, i) => {
-          if (!accessor[key]) {
-            // is the last
-            if (i == keys.length - 1) {
-
-              const _content = `## ${name}\n${this._fixContent(content)}\n`
-                    + this._makeProps({ name, opt, type: _type, props: v.props });
-              accessor[key] = { _content };
-              // this._writeJsonFile('./docs/.tdout/' + keys.join('.') + '.json', accessor);
-            } else {
-              accessor[key] = { _content: '' };
-            }
-          }
-          accessor = accessor[key];
-        });
-        // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
-
-        lines = `### [${name}](./${_type}/${name})\n`;
-        lines += `${this._fixContent(v.content)}  \n`;
-        return lines;
-      } else if (v?.kindString == 'Enumeration') {
-        enumLines = this._makeEnums({ name, enums: v.props });
-      } else if (v?.kindString == 'Type Alias') {
-        // Interface?
-        console.debug({v});
-      }
-    }
-    
-    if (header) lines += `${header}  \n`;
-    if (content) lines += `${this._fixContent(content)}  \n`;
-    
-    lines += enumLines;
-    // @defalut가 없으면 typedoc에서 정의한 defaultValue를 사용한다.
-    const dft = defaultBlock || defaultValue ;
-    if (dft) {
-      const [value, ...content] = dft.split(' ');
-      lines += `\`default: ${value}\` ${content.join(' ')} \n`;
-    }
-
-    return lines;
-  }
-
-  /**
-   * 
-   * @iparam name:string config name
-   * @iparam type:string attr value
-   * @iparam props:any[] properties
-   * @returns contents
-   */
-  _makeProps(param) {
-    const { name, opt, type, props } = param;
-    const h = '## Properties\n';
-    return [ h, ...props.map(prop => {
-      return this._makeProp({ name, opt, type, prop })
-    })].join('\n');
-  }
-
-  /**
-   * 
-   * @iparam name
-   * @iparam enums
-   */
-  _makeEnums(param) {
-    const { name, enums } = param;
-    return enums.map(e => {
-      const content = this._fixContent(e.content).replace(/\n/g, '  ');
-      return `- \`'${e.value}'\` ${content}`
-    }).join('\n') + '\n\n';
   }
 
   /**
@@ -504,8 +631,8 @@ class MDGenerater {
    * @rparam label: tail of line
    * @rparam ...attr: key, value pair object bind in []
    */
-  _destructConfig(config) {
-    // ex) chart.series[type=vector]
+  static destructConfig(config) {
+    // ex) chart.series[type=vector,type2=bar] foo bar...
     const regex = /(\w+(?:\.\w+)?)(?:\[(.*?)\])?(?:\s(.*))?/;
     const matches = config?.match(regex);
   
@@ -537,15 +664,259 @@ class MDGenerater {
     return result;
   }
 
-  _setPropContents(docMap, { name, opt, type, _content }) {
-    if (name == 'chart') {
-      docMap[name] = { ...docMap[name], _content };
-    } else if (type) {
-      // if (opt != 'series') console.debug(opt, type, _content)
-      docMap[opt][type] = { ...docMap[opt][type], _content }
-    } else {
-      docMap[opt] = { ...docMap[opt], _content }
+  // <br> 태그 변환
+  _fixContent(content) {
+    // replace \n or double space
+    return content?.replace(/<br>/g, '\n').trim() || '';
+  }
+
+  _getDoc(keys, docMap) {
+    const _keys = keys.slice();
+    if (keys.length) {
+      const key = _keys.shift();
+      try {
+        if (!docMap[key]) {
+          docMap[key] = { _key: [docMap._key, key].filter(v=>v).join('.'), _content: '' };
+        }
+        return this._getDoc(_keys, docMap[key]);
+      } catch(err) {
+        console.error(err);
+      }
     }
+    return docMap;
+  }
+
+  _makeClassProp(param, classMap) {
+    const { prop: { name, content } } = param;
+    const keys = param.keys.slice();
+    const docMap = this._getDoc(keys, this.docMap);
+    if (!docMap) throw Error();
+
+    // 개요
+    const outline = `[${name}](/config/config/${name})\n${this._fixContent(content)}\n`
+    if (MDGenerater.TYPE_ELEMENTS.includes(name)){
+      return `### ${outline}`;
+    }
+
+    keys.push(name);
+    const _key = keys.join('.');
+    const _content = '## ' + outline + this._makeProps({ keys, props: classMap.props });
+    docMap[name] = { _key , ...docMap[name], _content };
+
+    // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
+    const title = keys.pop();
+    const parent = keys.pop();
+
+    let lines = `### [${title}](./${[parent || 'config', title].join('/')})\n`;
+    lines += `${this._fixContent(classMap.content)}  \n`;
+    return lines;
+  }
+
+  /**
+   * 
+   * @iparam name:string config name
+   * @iparam type:string attr type value
+   * @iparam prop:any
+   * @returns 
+   */
+  _makeProp(param) {
+    const { prop } = param;
+    const { header, name, type, dtype, content, defaultValue, defaultBlock, readonly } = prop;
+
+    let extraLines = ''
+    let lines = `### ${readonly ? '*`<readonly>`* ' : ''}`
+      + `${name}`
+      + `${type ? ': \`' + type  + '\{:js}`': ''}`
+      + `[#${name}]\n`;
+
+    if (dtype instanceof Array) {
+      // dtype.map(t => {
+      //   if (t.type == 'reference') {
+      //     t.name != 'Date' && console.warn('Not Implemented union references', t);
+      //     // Date
+      //     return t.name;
+      //   } else if (t.type == 'array') {
+      //     // console.warn(`[WARN] Unexpected type in array`, t)
+      //   } else if (t.type == 'intrinsic') {
+      //     // console.warn(`[WARN] Unexpected type in array`, t)
+      //   } else if (Object.keys(t.type || {}).length) {
+      //     // console.warn(`[WARN] Unexpected type in array`, t)
+      //   }
+      // });
+    } else if (dtype?.type == 'reference') {
+      const v = this.classMap[dtype.name];
+      if (!v) return console.warn(`[WARN] Not found classMap of ${dtype.name}`);
+      switch(v.kind) {
+        case ReflectionKind.Class:  
+          return this._makeClassProp(param, v);
+        case ReflectionKind.Enum:
+          extraLines = this._makeEnums({ name, enums: v.props });
+          break;
+        case ReflectionKind.Interface:
+          const { props, content: itfContent } = this.classMap[type];
+          const itfContents = this._makeInterfaceProps({ name: type, content: itfContent, props });
+          extraLines = itfContents;
+          break;
+        case ReflectionKind.TypeAlias:
+          // union에 reference가 있고, Interface 이면,
+          v.type.types?.map(({ name, type }) => {
+            // if (type.target)
+            if (type == 'reference') {
+              const { kind, props, content: itfContent } = this.classMap[name];
+              if (kind == ReflectionKind.Interface) {
+                extraLines += this._makeInterfaceProps({ name, content: itfContent, props });
+              } else {
+                // class??
+                console.warn(`[WARN] Unexpected union alias ${name}`, type);
+              }
+            } else if (type != 'intrinsic'){
+              console.warn(`[DEBUG] TODO: ${name}`, type);
+            }
+          });
+          // callback function
+          const { declaration } = v;
+          if (declaration) console.debug({ declaration });
+          break;
+        default:
+          console.warn('[WARN] Unexpected prop type', v);
+      }
+    } else if (dtype?.type == 'array') {
+      const { elementType: { name: ename, type: etype } } = dtype;
+      if (etype == 'reference') {
+        const ref = this.classMap[ename];
+        switch (ref?.kind) {
+          case ReflectionKind.Interface:
+            const { props, content: itfContent } = ref;
+            extraLines = this._makeInterfaceProps({ name: ename, content: itfContent, props });
+            break;
+          case ReflectionKind.Class:
+            return this._makeClassProp(param, ref);
+          default:
+            break;
+        }
+      }
+    }
+    
+    if (header) lines += `${header}  \n`;
+    if (content) lines += `${this._fixContent(content)}  \n`;
+    
+    lines += extraLines;
+    // @defalut가 없으면 typedoc에서 정의한 defaultValue를 사용한다.
+    const dft = defaultBlock || defaultValue ;
+    if (dft) {
+      // strip ```ts ... ```
+      const dftValue = dft.match(/```ts([\s\S]*?)```/)?.[1].trim() || dft.trim();
+      let [value, ...content] = dftValue.split(' ');
+      // this.classMap[dtype.name].staticProps
+      if (dtype?.kind === ReflectionKind.Enum) {
+        // console.debug(dtype, value, typeof value);
+        
+        // ex) name: 'ChartTextEffect', value: ChartTextEffect.NONE
+        // name과 value head가 같다.
+        const [enumName, memberName] = value.split('.');
+        if (dtype.name == enumName) {
+          const enumEl = this.classMap[enumName];
+          if (!enumEl) {
+            console.warn(`[WARN] Could not find.`, enumName)
+          } else {
+            const em = enumEl.props?.find(m => m.name == memberName)
+            if (em && em.value) {
+              value = em.value;
+              if (typeof value == 'string' ) value = `'${value}'`;
+            } else {
+              console.warn(`[WARN] EnumMember @config may not set.`, value)
+            }
+          }
+        } else {
+          console.warn(`[WARN] Unexpected default value pattern.`, dftValue);
+        }
+      } else if (dtype?.kind === ReflectionKind.TypeAlias) {
+        // ex) name: RtPercentSize, value: CircularGauge.DEF_CENTER
+        // 1. find static vars
+        const regex = /\b[A-Z].+\.\b[A-Z].*/g;
+        if (regex.test(value)) {
+          const [clsName, propName] = value.split('.');
+          const clsEl = this.classMap[clsName];
+          if (!clsEl) {
+            console.warn(`[WARN] Not found class static variable`, value);
+          } else {
+            const sm = clsEl.staticProps?.find(p => p.name == propName)
+            if (sm && sm.value) {
+              value = sm.value;
+              if (typeof value == 'string' ) value = `'${value}'`;
+            } else {
+              console.warn(`[WARN] Not found class static variable.`, value)
+            }
+          }
+        } else {
+          // ex) name: RtPercentSize, value: '7%'
+        }
+      }
+
+      lines += `<DefaultValue value="${value}" contents="${content.join(' ')}"></DefaultValue>`.trim();
+    }
+
+    return lines;
+  }
+
+  /**
+   * 
+   * @iparam name:string config name
+   * @iparam type:string attr value
+   * @iparam props:any[] properties
+   * @returns contents
+   */
+  _makeProps({ keys, props }) {
+    const h = '## Properties\n';
+    return [ h, ...props.map(prop => {
+      return this._makeProp({ keys, prop })
+    })].join('\n');
+  }
+
+  /**
+   * 
+   * @iparam name
+   * @iparam enums
+   */
+  _makeEnums(param) {
+    const { name, enums } = param;
+    return enums.map(e => {
+      const content = this._fixContent(e.content).replace(/\n/g, '  ');
+      return `- \`'${e.value}'\` ${content}`
+    }).join('\n') + '\n\n';
+  }
+
+  _makeInterfaceProps({name, content, props }) {
+    // section head 
+    let lines = `- \`${name}{:js}\` \n\n`;
+    if (content) lines += content + ' \n';
+    // table head
+    lines += `| Name | Type | Optional |  \n`;
+    lines += '| ----- | ----- | ----- |  \n';
+    lines += props?.map(({name, type, optional}) => {
+      // code 블록안에 pipe character 있으면 acorn 오류
+      return `| ${name} | \`${type.replace(/\|/g, '\\|')}{:js}\` | ${optional ?? 'false'} |`;
+    }).join('  \n');
+    return lines.trim();
+  }
+
+  _setPropContents({ keys, _content }) {
+    // root config
+    // const [root] = keys;
+    const _key = keys.join('.');
+    const [name] = keys.splice(-1, 1);
+    if (!_key) {
+      this.docMap = { ...this.docMap, _content };
+    } else {
+      let docMap = this._getDoc(keys, this.docMap);
+      docMap[name] = { _key, ...docMap[name], _content };
+    }
+    // else if (opt && type) {
+    //   // if (opt != 'series') console.debug(opt, type, _content)
+    //   this.docMap[opt][type] = { _key: [opt, type].join('.'), ...this.docMap[opt][type], _content }
+    // } else {
+    //   this.docMap[opt] = { _key: opt, ...this.docMap[opt], _content }
+    // }
   }
 
   /**
@@ -554,12 +925,14 @@ class MDGenerater {
    * series/{type}.mdx에는 속성이 포함된 문서를 생성한다.
    * 이 후, property 생성에서 참조하는 confg정보는 재귀 처리한다.
    */
-  _setContent(docMap, dconf) {
+  _setChartContent(dconf) {
     const { name, root, opt, label, type, props, content } = dconf;
     if (root != 'chart') return;
 
     let subtitle = '';
     let subtitleText = opt;
+    
+
     // 개요 문서에만 링크 추가
     if (type) {
       subtitleText += `[type=${type}]`;  
@@ -567,20 +940,30 @@ class MDGenerater {
     }
     const _content = `${this._fixContent(content)}\n`;
     
-    if (['series', 'xAxis', 'yAxis', 'gauge'].indexOf(opt) >= 0 && !type) 
+    if (MDGenerater.TYPE_ELEMENTS.indexOf(opt) >= 0 && !type) 
       return console.warn(`[WARN] ${name} type missed.`);
 
     if (opt) {
-      if (!docMap[opt]) docMap[opt] = { _content: ''};
-      // docMap 참조 주의...
-      docMap[opt] = { ...docMap[opt], _content: docMap[opt]._content += `${subtitle}\n${_content}` };
+      // if (!this.docMap[opt]) 
+      //   this.docMap[opt] = { _key: opt, _content: ''};
+      
+        // docMap 참조 주의...
+      this.docMap[opt] = {
+        _key: opt, 
+        ...this.docMap[opt], 
+        _content: (this.docMap[opt]?._content || '') + `${subtitle}\n${_content}` 
+      };
     }
     
     // 속성 추가
     if (props) {
-      const propContents = this._makeProps({ name, opt, type, props });
-      this._setPropContents(docMap, { 
-        name, opt, type, 
+      const keys = [opt, type].filter(v => v);
+      // chart면 키가 없음...
+
+      const propContents = this._makeProps({ keys , props });
+      this._setPropContents({ 
+        // name, opt, type, 
+        keys,
         _content: (subtitleText ? `## ${subtitleText}\n${_content}` : '') 
           + propContents 
       });
@@ -592,9 +975,9 @@ class MDGenerater {
       const { config, props, content } = value;
       // 동일한 내용이지만 xAxis, yAxis처럼 속성만 다른 경우를 처리하기 위해 @config가 2개 이상일 수 있다.
       config?.map(conf => {
-        const dconf = this._destructConfig(conf);
+        const dconf = MDGenerater.destructConfig(conf);
         // const { name, root, opt, label, type } = dconf;
-        this._setContent(this.docMap, { ...dconf, props, content })
+        this._setChartContent({ ...dconf, props, content })
       });
     })
 
@@ -614,9 +997,9 @@ class MDGenerater {
         if (last == 'chart') {
           path = paths.join('/');
         }
-        console.debug('write', `${path}.mdx`);
+        // console.debug('write', `${path}.mdx`);
         fs.writeFileSync(`${path}.mdx`, value , { encoding: 'utf-8'});
-      } else {
+      } else if (key != '_key') {
         !fs.existsSync(`${path}`) && fs.mkdirSync(path);
         this._saveFile(`${path}/${key}`, value);
       }
@@ -642,6 +1025,6 @@ class MDGenerater {
   }
 }
 
-const classMap = new Tunner({debug:true}).scan();
+const classMap = new Tunner({ debug:true }).scan();
 const generator = new MDGenerater(classMap, { debug:true })
 generator.run();

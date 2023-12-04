@@ -19,5 +19,8 @@
 	},
 	"bargroup-negative": {
 		"title": "Negative Bars"
+	},
+	"bar-wing": {
+		"title": "Wing Chart"
 	}
 }

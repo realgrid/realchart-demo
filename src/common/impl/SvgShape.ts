@@ -8,24 +8,23 @@
 
 import { PathElement } from '../RcControl';
 import { IRect } from '../Rectangle';
-import { PathValue } from '../Types';
+import { PathValue, fixAngle } from '../Types';
 import { Utils } from '../Utils';
 
 export enum Shape {
-    // LINE = 'line',
-    // LINES = 'lines',
     CIRCLE = 'circle',
     DIAMOND = 'diamond',
-    RECTANGLE = 'rectangle',
     SQUARE = 'square',
     TRIANGLE = 'triangle',
-    ITRIANGLE = 'itriangle',
     STAR = 'star',
+    ITRIANGLE = 'itriangle',
+    RECTANGLE = 'rectangle'
 }
 
 export const Shapes = Utils.getEnumValues(Shape);
 
 const SECTOR_ERROR = 0.001;
+const PI = Math.PI;
 
 export class SvgShapes {
 
@@ -103,35 +102,45 @@ export class SvgShapes {
 
     // TODO: 개선할 것!
     static arc(cx: number, cy: number, rx: number, ry: number, start: number, end: number, clockwise: boolean, close = false): PathValue[] {
-        const cosStart = Math.cos(start);
-        const sinStart = Math.sin(start);
-        const cosEnd = Math.cos(end -= SECTOR_ERROR);
-        const sinEnd = Math.sin(end);
-        const longArc = end - start - Math.PI < SECTOR_ERROR ? 0 : 1;
+        const len = fixAngle(Math.abs(end - start));
+        const circled = 2 * PI - len < SECTOR_ERROR * 10;
+        const long = len - PI < SECTOR_ERROR * 10 ? 0 : 1;
         const cw = clockwise ? 1 : 0;
+        const x1 = Math.cos(start);
+        const y1 = Math.sin(start);
+        const x2 = Math.cos(end -= circled ? (cw ? SECTOR_ERROR * 10 : -SECTOR_ERROR * 10) : 0);
+        const y2 = Math.sin(end);
         const path = [];
 
         path.push(
             'M',
-            cx + rx * cosStart,
-            cy + ry * sinStart,
+            cx + rx * x1,
+            cy + ry * y1,
             'A',
             rx,
             ry,
             0,
-            longArc,
+            long,
             cw,
-            cx + rx * cosEnd,
-            cy + ry * sinEnd,
+            cx + rx * x2,
+            cy + ry * y2,
         );
+        if (circled) {
+            path.push(
+                'M',
+                cx,
+                cy
+            )
+        }
         close && path.push('Z');
         return path;
     }
 
     // TODO: 개선할 것!
     static sector(cx: number, cy: number, rx: number, ry: number, rInner: number, start: number, end: number, clockwise: boolean): PathValue[] {
-        const circled = 2 * Math.PI - Math.abs(end - start) < SECTOR_ERROR;
-        let long = Math.abs(end - start) - Math.PI < SECTOR_ERROR ? 0 : 1;
+        const len = fixAngle(Math.abs(end - start));
+        const circled = 2 * PI - len < SECTOR_ERROR;
+        let long = len - PI < SECTOR_ERROR ? 0 : 1;
         const cw = clockwise ? 1 : 0;
         const x1 = Math.cos(start);
         const y1 = Math.sin(start);
@@ -237,21 +246,21 @@ export class SvgShapes {
         return path;
     }
 
-    static setShape(target: PathElement, shape: Shape, radius: number): void {
+    static setShape(target: PathElement, shape: Shape, rx: number, ry: number): void {
         let path: (string | number)[];
 
         switch (shape) {
             case Shape.SQUARE:
-            case Shape.RECTANGLE:
             case Shape.DIAMOND:
             case Shape.TRIANGLE:
             case Shape.ITRIANGLE:
             case Shape.STAR:
-                path = SvgShapes[shape](0, 0, radius * 2, radius * 2);
+            case Shape.RECTANGLE:
+                path = SvgShapes[shape](0, 0, rx * 2, ry * 2);
                 break;
 
             default:
-                path = SvgShapes.circle(radius, radius, radius);
+                path = SvgShapes.circle(rx, rx, rx);
                 break;
         }
         target.setPath(path);

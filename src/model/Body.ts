@@ -6,9 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../common/Common";
-import { DEG_RAD, IPercentSize, ORG_ANGLE, PI_2, RtPercentSize, _undefined, calcPercent, parsePercentSize } from "../common/Types";
-import { AxisGuide } from "./Axis";
+import { isArray, isObject, pickNum } from "../common/Common";
+import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, _undefined, calcPercent, parsePercentSize } from "../common/Types";
+import { Annotation, AnnotationCollection } from "./Annotation";
+import { Axis } from "./Axis";
 import { IChart } from "./Chart";
 import { BackgroundImage, ChartItem } from "./ChartItem";
 import { Series } from "./Series";
@@ -76,6 +77,8 @@ export class BodySplit extends ChartItem {
 /**
  * 시리즈 및 게이지들이 plotting되는 영역 모델.\
  * 설정 모델 등에서 'body'로 접근한다.
+ * 
+ * @config chart.body
  */
 export class Body extends ChartItem {
 
@@ -89,12 +92,12 @@ export class Body extends ChartItem {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _annotations: AnnotationCollection;
+
     private _radiusDim: IPercentSize;
     private _cxDim: IPercentSize;
     private _cyDim: IPercentSize;
 
-    _guides: AxisGuide[] = [];
-    _frontGuides: AxisGuide[] = [];
     private _rd: number;
     private _cx: number;
     private _cy: number;
@@ -103,7 +106,9 @@ export class Body extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
-        super(chart);
+        super(chart, true);
+
+        this._annotations = new AnnotationCollection(this);
 
         this.radius = '45%';
         this.centerX = '50%';
@@ -160,12 +165,6 @@ export class Body extends ChartItem {
         }
     }
     /**
-     * 시작 각도.
-     * 
-     * @CONFIG
-     */
-    startAngle = 0;
-    /**
      * false이면 polar 차트일 때, x 축선과 y축 그리드 선들을 다각형으로 표시한다.
      * 
      * @config
@@ -176,7 +175,7 @@ export class Body extends ChartItem {
      * 
      * @config
      */
-    image = new BackgroundImage(null);
+    image = new BackgroundImage(null, true);
     /**
      * plot 영역 마우스 드래깅을 통한 zooming 방식.
      * 
@@ -197,11 +196,6 @@ export class Body extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getSplits(): number[] {
-        const sz = Math.max(0, Math.min(1, pickNum(this.split.size, 0.5)));
-        return [1 - sz, sz];
-    }
-
     calcRadius(width: number, height: number): number {
         return calcPercent(this._radiusDim, Math.min(width, height));
     }
@@ -213,13 +207,10 @@ export class Body extends ChartItem {
         return this;
     }
 
-    getStartAngle(): number {
-        return ORG_ANGLE + DEG_RAD * this.startAngle;
-    }
-
-    getPolar(series: Series): {start: number, cx: number, cy: number, rd: number } {
+    getPolar(axis: Axis): {start: number, total: number, cx: number, cy: number, rd: number } {
         return this.chart.isPolar() ? {
-            start: this.getStartAngle(),
+            start: axis ? axis.getStartAngle() : 0,
+            total: axis ? axis.getTotalAngle() : 0,
             cx: this._cx,
             cy: this._cy,
             rd: this._rd
@@ -230,19 +221,34 @@ export class Body extends ChartItem {
         return this.chart._getXAxes().isZoomed() || this.chart._getYAxes().isZoomed();
     }
 
+    /**
+     * {@link Chart.annotation} 설정을 Body에 할 수도 있다.
+     */
+    '@config annotation': Annotation[];
+
+    getAnnotations(): Annotation[] {
+        return this._annotations.getVisibles();
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doLoadProp(prop: string, value: any): boolean {
+        if (prop === 'annotations' || prop === 'annotation') {
+            if (isArray(value)) this.$_loadAnnotations(value);
+            else if (isObject(value)) this.$_loadAnnotations([value]);
+            return true;
+        }
+    }
+
     protected _doPrepareRender(chart: IChart): void {
-        super._doPrepareRender(chart);
+        this._annotations.prepareRender();
+    }
 
-        const guides = this._guides = [];
-        const frontGuides = this._frontGuides = [];
-
-        chart._getXAxes().forEach(axis => {
-            axis.guides.forEach(g => {
-                g.front ? frontGuides.push(g) : guides.push(g);
-            })
-        });
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_loadAnnotations(source: any[]): void {
+        this._annotations.load(source);
     }
 }

@@ -7,8 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "./Common";
+import { Sides } from "./Sides";
 import { Align, ZWSP } from "./Types";
-import { TextElement } from "./impl/TextElement";
+import { TextAnchor, TextElement } from "./impl/TextElement";
 
 const HEIGHT = '$_TH';
 const WIDTH = '$_TW';
@@ -249,15 +250,17 @@ class SvgLine {
         return this;
     }
 
-    getText(target: any, domain: RichTextParamCallback): string {
-        let s = '';
+    // getText(target: any, domain: RichTextParamCallback): string {
+    //     let s = '';
         
-        for (let w of this._words) {
-            s += w.getText(target, domain);
-        }
-        return s;
-    }
+    //     for (let w of this._words) {
+    //         s += w.getText(target, domain);
+    //     }
+    //     return s;
+    // }
 }
+
+const line_sep = /<br.*?>|\r\n|\n/;
 
 /**
  * <t>, <b>, <i>, <br>,
@@ -271,7 +274,7 @@ export class SvgRichText {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private _format: string;
+    _format: string;
     lineHeight: number;
 
     //-------------------------------------------------------------------------
@@ -291,8 +294,7 @@ export class SvgRichText {
     //-------------------------------------------------------------------------
     setFormat(value: string) {
         if (value !== this._format) {
-            this._format = value;
-            value && this.$_parse(value);
+            this.$_parse(this._format = value != null ? String(value) : value);
         }
     }
 
@@ -381,6 +383,29 @@ export class SvgRichText {
         // view.layoutText(hMax); // 가장 큰 높이의 행 높이를 전달한다. 맞나?
     }
 
+    layout(view: TextElement, align: Align, width: number, height: number, padding: Sides): void {
+        const r = view.getBBounds();
+        let x: number;
+        let y = Math.max(padding.top, padding.top + (height - r.height) / 2);
+
+        switch (align) {
+            case Align.CENTER:
+                view.anchor = TextAnchor.MIDDLE;
+                x = padding.left + (width - padding.left - padding.right) / 2;
+                break;
+            case Align.RIGHT:
+                view.anchor = TextAnchor.END;
+                x = view.getBBounds().width - padding.right;
+                break;
+            default:
+                view.anchor = TextAnchor.START;
+                x = padding.left;
+                break;
+        }
+
+        view.translate(x, y);
+    }
+
 	//-------------------------------------------------------------------------
     // internal members
 	//-------------------------------------------------------------------------
@@ -388,7 +413,7 @@ export class SvgRichText {
         const lines = this._lines = [];
 
         if (fmt) {
-            const strs = fmt.split(/<br.*?>|\r\n|\n/);
+            const strs = fmt.split(line_sep);
 
             for (let s of strs) {
                 lines.push(new SvgLine().parse(s));

@@ -30,7 +30,7 @@ test.describe('bar.html test', () => {
 		expect(bars.length > 0).is.true;
 
 		const config: any = await page.evaluate('config');
-		const data = config.series.data;
+		const data = (config.series.data || config.series[0].data);
 		expect(data.length).eq(bars.length);
 
 		// bar들이 x축에서 부터 위쪽으로 커진다.
@@ -69,12 +69,11 @@ test.describe('bar.html test', () => {
 		const rGrids = await PWTester.getGridBounds(page);
 
 		// bar들이 상단의 x축에서 부터 아래쪽으로 커진다.
-		bars.forEach(async (bar) => {
+		for(let bar of bars){
 			const r = await PWTester.getBounds(bar);
-
 			expect(PWTester.same(r.y, rGrids.y), `${r.y}, ${rGrids.y}`).is.true;
 			// expect(r.y).eq(rTop.y);
-		});
+		};
 
 		await page.evaluate('config.yAxis.reversed = false; chart.load(config)');
 	});
@@ -85,7 +84,7 @@ test.describe('bar.html test', () => {
 		const rGrids = await PWTester.getGridBounds(page);
 		const bars = await page.$$('.' + SeriesView.POINT_CLASS);
 		const config: any = await page.evaluate('config');
-		const data = config.series.data;
+		const data = (config.series.data || config.series[0].data);
 
 		// 가로가 더 길어야 한다.
 		bars.forEach(async (bar) => {
@@ -94,11 +93,11 @@ test.describe('bar.html test', () => {
 		});
 
 		// bar들이 왼쪽 Y축에서 부터 오른쪽 방향으로 커진다.
-		bars.forEach(async (bar) => {
+		for(let bar of bars){
 			const r = await PWTester.getBounds(bar);
 
 			expect(r.x + r.width <= rGrids.x + rGrids.width).is.true;
-		});
+		};
 
 		// 값과 너비들을 비교한다.
 		for (let i = 1; i < bars.length; i++) {
@@ -107,7 +106,7 @@ test.describe('bar.html test', () => {
 
 			const rPrev = await PWTester.getBounds(prev);
 			const rBar = await PWTester.getBounds(bar);
-
+			
 			if (data[i] >= data[i - 1]) {
 				expect(rBar.width).gte(rPrev.width);
 			} else {

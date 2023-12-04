@@ -6,7 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcControl } from "./common/RcControl";
+import { isObject } from "./common/Common";
+import { RcControl, RcElement } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
 import { Axis } from "./model/Axis";
 import { Chart, IChartEventListener } from "./model/Chart";
@@ -107,9 +108,6 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    useImage(src: string): void {
-    }
-
     protected _doRender(bounds: IRect): void {
         const model = this._model;
         const view = this._chartView;
@@ -121,13 +119,23 @@ export class ChartControl extends RcControl implements IChartEventListener {
             this.setData('palette', model.options.palette);
         }
         view.measure(this.doc(), model, bounds.width, bounds.height, 1);
-        view.resize(bounds.width, bounds.height);
+        view.setRect(bounds);
         view.layout();
     }
 
-    protected _doRenderBackground(elt: HTMLDivElement, width: number, height: number): void {
+    protected _doRenderBackground(elt: HTMLDivElement, root: RcElement, width: number, height: number): void {
         if (this._model) {
-            Object.assign(elt.style, this._model.options.style);
+            const style: any = this._model.options.style;
+
+            if (isObject(style)) {
+                for (const p in style) {
+                    if (p.startsWith('padding')) {
+                        root.setStyle(p, style[p]);
+                    } else {
+                        elt.style[p] = style[p];
+                    }
+                }
+            }
         }
     }
 

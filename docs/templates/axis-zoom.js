@@ -2,13 +2,8 @@ export const config = {
   options: {},
   title: {
     text: 'Axis Zooming',
-    style: {
-      padding: '1px 5px',
-      marginBottom: '8px',
-      fill: 'white',
-      fontSize: '1.1em'
-    },
-    backgroundStyle: { fill: '#338', rx: '5px' }
+    style: { marginBottom: '8px', fill: 'white', fontSize: '1.1em' },
+    backgroundStyle: { padding: '1px 5px', fill: '#338', rx: '5px' }
   },
   legend: true,
   body: { zoomType: 'x', style: {} },

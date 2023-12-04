@@ -8,6 +8,7 @@
 
 import { isArray, isObject, isString, pickNum } from "./Common";
 import { locale } from "./RcLocale";
+import { TextAnchor } from "./impl/TextElement";
 
 export const _undefined = void 0; // 불필요
 export const ONE_CHAR = '①'.charCodeAt(0);
@@ -19,6 +20,9 @@ export const PI_2 = Math.PI * 2;
 export const ORG_ANGLE = -Math.PI / 2;
 export const DEG_RAD = Math.PI * 2 / 360;
 export const RAD_DEG = 360 / Math.PI / 2;
+export function fixAngle(a: number): number {
+    return a > PI_2 ? a % PI_2 : a;
+}
 
 export const NUMBER_SYMBOLS = 'k,M,G,T,P,E';
 export const NUMBER_FORMAT = '#,##0.#';
@@ -41,7 +45,10 @@ export function isNull(v: any): boolean {
     return v == null || Number.isNaN(v) || v === '';
 }
 export function pad2(v: number): string {
-    return v < 10 ? `0${v}` : String(v);
+	return (v < 10) ? ("0" + v) : String(v);
+}
+export function pad3(v: number): string {
+	return (v < 10) ? ("00" + v) : (v < 100) ? ("0" + v) : String(v);
 }
 export function newObject(prop: string, value: any): {} {
     const obj = {};
@@ -137,12 +144,21 @@ export function calcPercentF(size: IPercentSize, domain: number): number {
 
 export interface SVGStyles {
     fill?: string;
+    fillOpacity?: string;
     stroke?: string;
     strokeWidth?: string;
+    strokeDasharray?: string;
     fontFamily?: string;
     fontSize?: string;
     fontWeight?: string;
     fontStyle?: string;
+    rx?: string;
+    /**
+     * Svg에 적용되는 정식 css style이 아니다.
+     * 즉, realchart-style.css 등의 외부 css 파일에서 사용할 수 없고,
+     * RealChart 내부에서 title, data point label 등의 inline 스타일로 적용할 수 있다.
+     */
+    textAlign?: 'left' | 'center' | 'right';
 }
 
 export type SVGStyleOrClass = SVGStyles | string;
@@ -279,14 +295,20 @@ export interface StyleProps {
 }
 
 export enum Align {
+    /** @config */
     LEFT = 'left',
+    /** @config */
     CENTER = 'center',
+    /** @config */
     RIGHT = 'right'
 }
 
 export enum VerticalAlign {
+    /** @config */
     TOP = 'top',
+    /** @config */
     MIDDLE = 'middle',
+    /** @config */
     BOTTOM = 'bottom'
 }
 
@@ -316,7 +338,15 @@ export enum AlignBase {
     /**
      * @config
      */
-    PLOT = 'plot'
+    PLOT = 'plot',
+    /**
+     * 상위 모델이 존재하는 경우 상위 모델 영역 기준.\
+     * 상위가 없으면 기본값(대부분 'plot')과 동일.
+     * ex) subtitle인 경우 title 기준.
+     * 
+     * @config
+     */
+    PARENT = 'parent'
 }
 
 export interface IValueRange {
@@ -324,6 +354,16 @@ export interface IValueRange {
     toValue?: number;
     color: string;
     label?: string;
+    style?: SVGStyleOrClass;
+}
+
+export interface IValueRanges {
+    fromValue?: number;
+    toValue?: number;
+    steps?: number[];
+    colors: string[];
+    labels?: string[];
+    styles?: SVGStyleOrClass[];
 }
 
 /**
@@ -334,18 +374,24 @@ export interface IValueRange {
  * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
  * startValue를 기준으로 정렬한다.
  */
-export const buildValueRanges = function (source: IValueRange[], min: number, max: number): IValueRange[] {
+export const buildValueRanges = function (source: IValueRange[] | IValueRanges, min: number, max: number, inclusive = true, strict = true, fill = false, color?: string): IValueRange[] {
     let ranges: IValueRange[];
     let prev: IValueRange;
 
     if (isArray(source)) {
+        if (inclusive) {
+            min = Number.MIN_VALUE;
+            max = Number.MAX_VALUE;
+        }
+
         ranges = [];
         source.forEach(src => {
             if (isObject(src) && isString(src.color)) {
                 const range: IValueRange = {
                     fromValue: pickNum(src.fromValue, prev ? prev.toValue : min),
                     toValue: pickNum(src.toValue, max),
-                    color: src.color
+                    color: src.color,
+                    style: src.style ? Object.assign({}, src.style) : _undefined
                 };
                 if (range.fromValue < range.toValue) {
                     ranges.push(range);
@@ -355,10 +401,74 @@ export const buildValueRanges = function (source: IValueRange[], min: number, ma
         });
         ranges = ranges.sort((r1, r2) => r1.fromValue - r2.fromValue)
                        .filter(r => r.toValue >= min && r.fromValue < max);
-        ranges.forEach(r => {
-            r.fromValue = Math.max(r.fromValue, min);
-            r.toValue = Math.min(r.toValue, max);
-        })
+        if (strict) {
+            ranges.forEach(r => {
+                r.fromValue = Math.max(r.fromValue, min);
+                r.toValue = Math.min(r.toValue, max);
+            })
+        }
+    } else if (isObject(source) && isArray(source.colors) && source.colors.length > 0) {
+        const colors = source.colors;
+        const styles = isArray(source.styles) ? source.styles : null;
+
+        ranges = [];
+
+        if (isArray(source.steps) && source.steps.length > 0) {
+            const steps = isArray(source.steps) ? source.steps : null;
+
+            if (min < steps[0]) steps.unshift(min);
+            if (max > steps[steps.length - 1]) steps.push(max);
+
+            for (let i = 0; i < steps.length - 1; i++) {
+                ranges.push({
+                    fromValue: steps[i],
+                    toValue: steps[i + 1],
+                    color: colors[Math.min(i, colors.length - 1)],
+                    style: styles ? styles[Math.min(i, styles.length - 1)] : _undefined
+                });
+            }
+
+        } else {
+            let from = pickNum(source.fromValue, min);
+            const to = pickNum(source.toValue, max);
+            const step = (to - from) / colors.length;
+            let i = 0;
+
+            while (from < to) {
+                ranges.push({
+                    fromValue: from,
+                    toValue: from += step,
+                    color: colors[Math.min(i, colors.length - 1)],
+                    style: styles ? styles[Math.min(i, styles.length - 1)] : _undefined
+                });
+                i++;
+            }
+        }
+    }
+
+    // 빈 간격을 메꾼다.
+    if (fill && ranges && ranges.length > 0) {
+        let i = 0;
+        let prev = min;
+
+        while (i < ranges.length) {
+            if (ranges[i].fromValue < prev) {
+                ranges.splice(i, 0, {
+                    fromValue: prev,
+                    toValue: ranges[i].fromValue,
+                    color: color
+                });
+            }
+            prev = ranges[i].toValue;
+            i++;
+        }
+        if (ranges[i - 1].toValue < max) {
+            ranges.push({
+                fromValue: ranges[i - 1].toValue,
+                toValue: max,
+                color: color
+            });
+        }
     }
     return ranges;
 }

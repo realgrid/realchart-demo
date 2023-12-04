@@ -14,12 +14,11 @@ const config = {
         categories_s: ['Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', '마리아', 'Leon', 'Anna', 'Tim', 'Laura'],
         categories_l: ['Alexander-Long', 'Marie-Long', 'Maximilian-Long', 'Sophia-Long', 'Lukas-Long', '마리아-Long', 'Leon-Long', 'Anna-Long', 'Tim-Long', 'Laura-Long'],
         label: {
-            // rotation: -90
-        }
+        },
     },
     yAxis: {
         title: 'Y Axis',
-        grid: true
+        grid: true,
     },
     series: {
         pointLabel: {
@@ -82,11 +81,11 @@ function setActions(container) {
         config.xAxis.label.rows = +_getValue(e);
         chart.load(config);
     }, '0');
-    createListBox(container, "X.label.rotation", ['NaN', '0', '-90', '-80', '-70', '-60', '-50', '-45', '-40', '-30', '-20', '-16'], function (e) {
+    createListBox(container, "X.label.rotation", ['NaN', '0', '-90', '-80', '-70', '-60', '-50', '-45', '-40', '-30', '-20', '-16', '-15', '-5', '-2'], function (e) {
         config.xAxis.label.rotation = +_getValue(e);
         chart.load(config);
     }, 'NaN');
-    createListBox(container, "X.label.rotation.2", ['NaN', '0', '90', '80', '70', '60', '50', '45', '40', '30', '20', '16'], function (e) {
+    createListBox(container, "X.label.rotation.2", ['NaN', '0', '90', '80', '70', '60', '50', '45', '40', '30', '20', '16', '15', '5', '2'], function (e) {
         config.xAxis.label.rotation = +_getValue(e);
         chart.load(config);
     }, 'NaN');

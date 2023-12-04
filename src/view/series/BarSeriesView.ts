@@ -8,13 +8,13 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
-import { PI_2 } from "../../common/Types";
+import { Align, PI_2 } from "../../common/Types";
 import { SectorElement } from "../../common/impl/SectorElement";
-import { TextAnchor } from "../../common/impl/TextElement";
+import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { DataPoint } from "../../model/DataPoint";
-import { BarSeries } from "../../model/series/BarSeries";
-import { BarElement, BoxedSeriesView, IPointView, LabelLayoutInfo, SeriesView } from "../SeriesView";
+import { BarSeries, BarSeriesBase } from "../../model/series/BarSeries";
+import { BarElement, BoxedSeriesView, IPointView, LabelLayoutInfo, PointElement, SeriesView } from "../SeriesView";
 
 class BarSectorView extends SectorElement implements IPointView {
 
@@ -31,21 +31,14 @@ class BarSectorView extends SectorElement implements IPointView {
     point: DataPoint;
 }
 
-export class BarSeriesView extends BoxedSeriesView<BarSeries> {
+export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSeriesView<T> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _bars: ElementPool<BarElement>;
+    private _bars: ElementPool<PointElement>;
     private _sectors: ElementPool<BarSectorView>;
     protected _labelInfo: LabelLayoutInfo = {} as any;
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc, 'rct-bar-series')
-    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -54,7 +47,7 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         return this.chart().isPolar() ? this._sectors : this._bars;
     }
 
-    protected _preparePointViews(doc: Document, model: BarSeries, points: DataPoint[]): void {
+    protected _preparePointViews(doc: Document, model: T, points: DataPoint[]): void {
         if (model.chart.isPolar()) {
             this.$_parepareSectors(doc, model, this._visPoints);
         } else {
@@ -62,8 +55,8 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         }
     }
 
-    protected _setPointStyle(v: RcElement, model: BarSeries, p: DataPoint, style?: any[]): void {
-        super._setPointStyle(v, model, p, style);
+    protected _setPointStyle(v: RcElement, model: T, p: DataPoint): void {
+        super._setPointStyle(v, model, p);
 
         if (p.yValue < model.baseValue && model.belowStyle) {
             v.addStyleOrClass(model.belowStyle);
@@ -78,18 +71,14 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         }
     }
 
-    protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
-        view.wPoint = wPoint;
-        view.hPoint = hPoint;
-        view.layout(x, y);
-    }
-
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_parepareBars(doc: Document, model: BarSeries, points: DataPoint[]): void {
+    protected abstract _createBarPool(container: RcElement): ElementPool<PointElement>;
+
+    private $_parepareBars(doc: Document, model: T, points: DataPoint[]): void {
         if (!this._bars) {
-            this._bars = new ElementPool(this._pointContainer, BarElement);
+            this._bars = this._createBarPool(this._pointContainer);
         }
         this._bars.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
@@ -98,7 +87,7 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         });
     }
 
-    private $_parepareSectors(doc: Document, model: BarSeries, points: DataPoint[]): void {
+    private $_parepareSectors(doc: Document, model: T, points: DataPoint[]): void {
         if (!this._sectors) {
             this._sectors = new ElementPool(this._pointContainer, BarSectorView);
         }
@@ -115,20 +104,20 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
         const body = (series.chart as Chart).body;
-        const xAxis = series._xAxisObj;
+        const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj;
-        const polar = body.getPolar(series);
+        const polar = body.getPolar(xAxis);
         const labelInfo: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
             labelPos: series.getLabelPosition(labels.position),
-            labelOff: series.getLabelOff(labels.offset)
+            labelOff: series.getLabelOff(labels.getOffset())
         });
 
         this._sectors.forEach((view, i) => {
             const p = view.point;
-            const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
-            const wUnit = xAxis.getUnitLength(Math.PI * 2, p.xValue);
+            let y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
+            const wUnit = xAxis.getUnitLength(PI_2, p.xValue);
             const wPoint = series.getPointWidth(wUnit);
-            const a = polar.start + xAxis.getPosition(PI_2, p.xValue);
+            let a = polar.start + xAxis.getPosition(PI_2, p.xValue);
     
             view.setSector({
                 cx: polar.cx, 
@@ -140,16 +129,39 @@ export class BarSeriesView extends BoxedSeriesView<BarSeries> {
                 clockwise: true
             })
 
+            const x = p.xPos = view.cx + view.rx * 0.7 * Math.cos(a);
+            a = view.start + view.angle / 2;
+            y = p.yPos = view.cy + view.ry * 0.7 * Math.sin(a);
+
             // label
             if (labelViews && (labelInfo.labelView = labelViews.get(p, 0))) {
-                const a = view.start + view.angle
-                const x = view.cx + view.rx / 2 * Math.cos(a);
-                const y = view.cy + view.ry / 2 * Math.sin(a);
                 const r = labelInfo.labelView.getBBounds();
 
-                labelInfo.labelView._text.anchor = TextAnchor.MIDDLE;
-                labelInfo.labelView.translate(x - r.width / 2, y - r.height / 2);
+                labelInfo.labelView.layout(Align.CENTER).translate(x - r.width / 2, y - r.height / 2);
             }
         })
+    }
+}
+
+export class BarSeriesView extends BarSeriesViewBase<BarSeries> {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, 'rct-bar-series')
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _createBarPool(container: RcElement): ElementPool<PointElement> {
+        return new ElementPool(container, BarElement);
+    }
+
+    protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
+        view.wPoint = wPoint;
+        view.hPoint = hPoint;
+        view.layout(x, y);
     }
 }

@@ -1,29 +1,45 @@
-## crosshair
+## [crosshair](/config/config/crosshair)
 
 ## Properties
 
-### [flag](./category/flag)
+### [flag](./crosshair/flag)
 축 상에 crosshair의 정보를 표시하는 view 설정 모델.  
 
 ### followPointer: `boolean{:js}`[#followPointer]
 false면 type이 'line'인 경우 데이터포인트나 카테고리 단위로 이동한다.  
-`default: true`  
-
+<DefaultValue value="true" contents=""></DefaultValue>
+### numberFormat: `string{:js}`[#numberFormat]
+표시되는 값이 숫자일 때 사용되는 표시 형식.  
+<DefaultValue value="'#,##0.#'" contents=""></DefaultValue>
 ### showAlways: `boolean{:js}`[#showAlways]
 true면 마우스 위치를 따라 항상 표시하고, false면 data point 위에 마우스가 있을 때만 표시한다.  
-`default: true`  
-
+<DefaultValue value="true" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
 
-### type[#type]
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+### timeFormat: `string{:js}`[#timeFormat]
+표시되는 값이 날짜(시간)일 때 사용되는 표시 형식.  
+<DefaultValue value="'yyyy-MM-dd" contents="HH:mm'"></DefaultValue>
+### type: `'auto'|'line'{:js}`[#type]
 표시 방식.  
 - `'auto'` 카테고리 축이면 bar, 연속 축이면 line으로 표시한다.
 - `'line'` 항상 line으로 표시한다.
 
-`default: CrosshairType.AUTO`  
-
+<DefaultValue value="'auto'" contents=""></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
-표시 여부.\
-모델에 따라 기본값이 다르다.
-<FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  
+표시 여부.  
+<DefaultValue value="true" contents=""></DefaultValue>

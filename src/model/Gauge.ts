@@ -56,7 +56,7 @@ export abstract class GaugeBase extends Widget {
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
-        super(chart);
+        super(chart, true);
 
         this.size = '100%';
     }
@@ -65,10 +65,6 @@ export abstract class GaugeBase extends Widget {
     // properties
     //-------------------------------------------------------------------------
     abstract _type(): string;
-    /**
-     * body가 분할된 경우 분할된 쪽에 표시된다.
-     */
-    side: boolean;
     /**
      * 게이지 이름.
      * 동적으로 게이지를 다루기 위해서는 반드시 지정해야 한다. 
@@ -405,8 +401,8 @@ export class GaugeCollection {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getVisibles(side: boolean): GaugeBase[] {
-        return this._visibles.filter(g => !g.side == !side);
+    getVisibles(): GaugeBase[] {
+        return this._visibles.slice(0);
     }
 
     getPaneVisibles(row: number, col: number): GaugeBase[] {
@@ -490,7 +486,6 @@ export class GaugeCollection {
         return g;
     }
 }
-
 
 /**
  * 게이지 모델.
@@ -583,7 +578,7 @@ export class GuageScaleTick extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public scale: GaugeScale) {
-        super(scale.chart);
+        super(scale.chart, true);
     }
 
     //-------------------------------------------------------------------------
@@ -619,7 +614,7 @@ export abstract class GaugeScale extends ChartItem {
 
         this.line = new ChartItem(gauge.chart, true);
         this.tick = new GuageScaleTick(this);
-        this.tickLabel = new ChartItem(gauge.chart);
+        this.tickLabel = new ChartItem(gauge.chart, true);
     }
 
     //-------------------------------------------------------------------------
@@ -974,7 +969,7 @@ export class GaugeRangeBand extends ChartItem {
     private $_internalRanges(): IValueRange[] {
         if (!this._runRanges) {
             const v = this.gauge.calcedMinMax();
-            this._runRanges = buildValueRanges(this._ranges, v.min, v.max) || [];
+            this._runRanges = buildValueRanges(this._ranges, v.min, v.max, false, true) || [];
         }
         return this._runRanges;
     }

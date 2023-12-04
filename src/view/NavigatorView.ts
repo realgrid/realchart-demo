@@ -39,6 +39,7 @@ export class NavigatorHandleView extends RcElement {
 
         this.add(this._back = new RectElement(doc));
         this.add(this._shape = new PathElement(doc));
+        
         this._shape.setStyle('fill', 'white');
     }
 
@@ -83,6 +84,8 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
     static readonly MASK_STYLE = 'rct-navigator-mask';
     static readonly HANDLE_STYLE = 'rct-navigator-handle';
     static readonly HANDLE_BACK_STYLE = 'rct-navigator-handle-back';
+    static readonly TRACK_CLASS = 'rct-navigator-track';
+    static readonly THUMB_CLASS = 'rct-navigator-thumb';
 
     //-------------------------------------------------------------------------
     // static members
@@ -104,6 +107,8 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
     private _xAxisView: AxisView;
     private _yAxisView: AxisView;
     _mask: RectElement;
+    _trackView: RectElement;
+    _thumbView: RectElement;
     _startHandle: NavigatorHandleView;
     _endHandle: NavigatorHandleView;
 
@@ -116,6 +121,8 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
         this.add(this._back = new RectElement(doc, NavigatorView.BACK_STYLE))
         this.add(this._container = new LayerElement(doc, null));
         this.add(this._mask = new RectElement(doc, NavigatorView.MASK_STYLE))
+        this.add(this._trackView = new RectElement(doc, NavigatorView.TRACK_CLASS));
+        this.add(this._thumbView = new RectElement(doc, NavigatorView.THUMB_CLASS));
         this.add(this._startHandle = new NavigatorHandleView(doc));
         this.add(this._endHandle = new NavigatorHandleView(doc));
 
@@ -132,6 +139,20 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    dblClick(elt: Element): boolean {
+        const axis = this.model.axis();
+
+        if (this._startHandle.contains(elt)) {
+            axis.zoom(axis._zoom.min, axis._zoom.end);
+            return true;
+        } else if (this._endHandle.contains(elt)) {
+            axis.zoom(axis._zoom.start, axis._zoom.max);
+            return true;
+        } else if (this.contains(elt)) {
+            axis.resetZoom();
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -178,10 +199,14 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
 
             this._mask.setBounds(x1, 0, x2 - x1, h);
 
+            this._trackView.setBounds(-2, h, w + 4, 6);
+            this._trackView.setRadius(4);
+            this._thumbView.setBounds(x1, h, x2 - x1, 6);
+
             this._startHandle.layout(h / 3, h / 3, false)
-            this._startHandle.translate(x1, h / 2);
+            this._startHandle.translate(x1, h + 3);
             this._endHandle.layout(h / 3, h / 3, false);
-            this._endHandle.translate(x2, h / 2);
+            this._endHandle.translate(x2, h + 3);
         }
 
         // TODO: reversed

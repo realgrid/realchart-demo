@@ -1,8 +1,10 @@
 {
-  "series": "series[]",
-  "gauge": "gauge[]",
+  "series": "series",
+  "gauge": "gauge",
   "xAxis": "xAxis",
   "yAxis": "yAxis",
+  "annotation": "annotation",
+  "body": "body",
   "legend": "legend",
   "widget": "widget",
   "title": "title",

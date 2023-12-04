@@ -365,7 +365,7 @@ export abstract class LinearGaugeGroupBase<T extends LinearGaugeBase> extends Ga
      * 
      * @config
      */
-    itemLabel = new LinearGaugeChildLabel(this.chart);
+    itemLabel = new LinearGaugeChildLabel(this.chart, true);
     /**
      * scale.
      * 

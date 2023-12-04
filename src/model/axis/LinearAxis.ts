@@ -8,7 +8,7 @@
 
 import { isArray, isObject, pickNum, pickNum3 } from "../../common/Common";
 import { IPercentSize, RtPercentSize, assert, calcPercent, ceil, fixnum, parsePercentSize } from "../../common/Types";
-import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick, IAxis } from "../Axis";
+import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick, IAxis, AxisPosition } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { SeriesGroup, SeriesGroupLayout } from "../Series";
 
@@ -23,7 +23,7 @@ export class ContinuousAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    stepInterval: number;
+    stepInterval: number | string;
     stepPixels = 72;
     stepCount: number;
     steps: number[];
@@ -42,10 +42,18 @@ export class ContinuousAxisTick extends AxisTick {
      * @config
      */
     baseRange = false;
+    /**
+     * true면 소수점값애 해당하는 tick은 표시되지 않도록 한다.
+     */
+    integral = false;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    protected _isValidInterval(v: any): boolean {
+        return v > 0;
+    }
+
     buildSteps(length: number, base: number, min: number, max: number, broken = false): number[] {
         let pts: number[];
 
@@ -57,13 +65,14 @@ export class ContinuousAxisTick extends AxisTick {
             // 지정한 위치대로 tick들을 생성한다.
             pts = this.steps.slice(0);
         } else if (this._baseAxis instanceof ContinuousAxis) {
-            pts = this._getStepsByCount(this._baseAxis._ticks.length, base, min, max);
+            pts = this._getStepsByCount(this._baseAxis._ticks.length, base, min, max, true);
         } else if (this.stepCount > 0) {
-            pts = this._getStepsByCount(this.stepCount, base, min, max);
-        } else if (this.stepInterval > 0) {
+            pts = this._getStepsByCount(this.stepCount, base, min, max, false);
+        } else if (this._isValidInterval(this.stepInterval)) {
             pts = this._getStepsByInterval(this.stepInterval, base, min, max);
         } else if (this.stepPixels > 0) {
-            pts = this._getStepsByPixels(length, (this.axis?._isPolar ? 0.5 : 1) * this.stepPixels, base, min, max);
+            pts = this._getStepsByPixels(length, (this.axis?._isPolar && !this.axis?._isX ? 0.5 : 1) * this.stepPixels, base, min, max);
+            // pts = this._getStepsByPixels(length, this.stepPixels, base, min, max);
         } else {
             pts = min !== max ? [min, max] : [min];
         }
@@ -92,7 +101,7 @@ export class ContinuousAxisTick extends AxisTick {
         }
     }
 
-    protected _getStepsByCount(count: number, base: number, min: number, max: number): number[] {
+    protected _getStepsByCount(count: number, base: number, min: number, max: number, based: boolean): number[] {
         if (min > base) {
             min = base;
             base = NaN;
@@ -107,7 +116,12 @@ export class ContinuousAxisTick extends AxisTick {
         const scale = Math.pow(10, Math.floor(Math.log10(step)));
         const steps: number[] = [];
 
-        step = this._step = Math.ceil(step / scale) * scale;
+        if (based && step / scale === 2.5 && Math.floor(count * len / step) == count * len / step) {
+        // if (based && step > 10 && step / scale === 2.5 && Math.floor(count * len / step) == count * len / step) {
+            this._step = step;
+        } else {
+            step = this._step = Math.ceil(step / scale) * scale;
+        }
 
         if (!isNaN(base)) { // min이 base 아래, max가 base 위에 있다.
             assert(min < base && max > base, "base error");
@@ -138,23 +152,34 @@ export class ContinuousAxisTick extends AxisTick {
         return steps;
     }
 
-    protected _getStepsByInterval(interval: number, base: number, min: number, max: number): number[] {
+    protected _normalizeMin(min: number, interval: number): number {
+        if (min > Math.floor(min / interval) * interval) {
+            min = Math.floor(min / interval) * interval;
+        } else if (min < Math.ceil(min / interval) * interval) {
+            min = Math.ceil(min / interval) * interval;
+        }
+        return fixnum(min);
+    }
+
+    protected _getStepsByInterval(interval: any, base: number, min: number, max: number): number[] {
         const steps: number[] = [];
         let v: number;
+
+        min = this._normalizeMin(min, interval);
 
         if (!isNaN(base)) {
             steps.push(v = base);
             while (v > min) {
-                steps.unshift(v -= interval);
+                steps.unshift(v = fixnum(v -interval));
             }
             v = base;
             while (v < max) {
-                steps.push(v += interval);
+                steps.push(v = fixnum(v + interval));
             }
         } else {
             steps.push(v = min);
             while (v < max) {
-                steps.push(v += interval);
+                steps.push(v = fixnum(v + interval));
             }
         }
         this._step = interval;
@@ -219,11 +244,7 @@ export class ContinuousAxisTick extends AxisTick {
             min = base - ceil((base - min) / step) * step;
 
         } else {
-            if (min > Math.floor(min / step) * step) {
-                min = Math.floor(min / step) * step;
-            } else if (min < Math.ceil(min / step) * step) {
-                min = Math.ceil(min / step) * step;
-            }
+            min = this._normalizeMin(min, step);
         }
 
         this._step = step;
@@ -329,7 +350,6 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _single: boolean;
     private _base: number;
     private _unitLen: number;
     _calcedMin: number;
@@ -351,20 +371,16 @@ export abstract class ContinuousAxis extends Axis {
      * {@link minPadding}도 무시된다.
      * 계산값이 더 작으면 이 속성은 무시된다.\
      * 계산값과 무관하게 최소값을 지정하려면 {@link strictMin}을 사용한다.
-     * 
-     * @config
      */
-    'minValue': number;
+    '@config minValue': number;
     /**
      * 명시적으로 지정하는 최대값.\
      * 축에 연결된 data point들의 값으로 계산된 최대값보다 이 속성 값이 크면 대신 이 값이 축의 최대값이 되고,
      * {@link maxPadding}도 무시된다.
      * 계산값이 더 크면 이 속성은 무시된다.\
      * 계산값과 무관하게 최대값을 지정하려면 {@link strictMax}을 사용한다.
-     * 
-     * @config
      */
-    'maxValue': number;
+    '@config maxValue': number;
     /**
      * data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.
      * 
@@ -382,7 +398,7 @@ export abstract class ContinuousAxis extends Axis {
      * 
      * @config
      */
-    padding = 0.05;
+    padding = 0.04;
     /**
      * 첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
      * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.
@@ -575,15 +591,12 @@ export abstract class ContinuousAxis extends Axis {
         return ticks;
     }
 
-    protected _getTickLabel(index: number, value: number): string {
-        return this.label.getTick(index, value) || String(value);
-    }
-
     protected _createTick(length: number, index: number, step: number): IAxisTick {
         return {
+            index,
             pos: NaN,//this.getPosition(length, step),
             value: step,
-            label: this._getTickLabel(index, step)
+            label: this.label.getTick(index, step) || String(step)
         }
     }
 
@@ -718,8 +731,8 @@ export abstract class ContinuousAxis extends Axis {
     // internal members
     //-------------------------------------------------------------------------
     protected _adjustMinMax(min: number, max: number): { min: number, max: number } {
-        let minFixed = false;
-        let maxFixed = false;
+        let minFixed = this.isZoomed();
+        let maxFixed = this.isZoomed();
 
         this._series.forEach(ser => {
             const base = ser.getBaseValue(this);
@@ -772,12 +785,6 @@ export abstract class ContinuousAxis extends Axis {
         return { min, max };
     }
 
-    protected _setMinMax(min: number, max: number): void {
-        this._min = min;
-        this._max = max;
-        this._single = min === max;
-    }
-
     protected $_calcUnitLength(length: number): number {
         const pts: DataPoint[] = [];
 
@@ -788,7 +795,7 @@ export abstract class ContinuousAxis extends Axis {
         })
 
         const isX = this._isX;
-        const vals = pts.map(p => isX ? p.xValue : p.yValue).sort();
+        const vals = pts.map(p => isX ? p.xValue : p.yValue).sort((v1, v2) => v1 - v2);
         let min = vals[1] - vals[0];
 
         for (let i = 2; i < vals.length; i++) {
@@ -797,7 +804,10 @@ export abstract class ContinuousAxis extends Axis {
 
         // 이 축에 연결된 clsuterable 시리즈들의 point 최소 간격.
         length *= min / (this._max - this._min);
-        return this._unitLen = pickNum(length, 1);
+
+        // [주의] polar인 경우 1보다 작을 수 있다.
+        // return Math.max(1, pickNum(length, 1));
+        return pickNum(length, 1);
     }
     private $_loadBreak(source: any): AxisBreak {
         if (isObject(source) && 'from' in source && 'to' in source) {
@@ -882,7 +892,7 @@ export class LinearAxis extends ContinuousAxis {
         const v = super._adjustMinMax(min, max);
         const series = this._series;
 
-        if (series.length === 1 && series[0] instanceof SeriesGroup && series[0].layout === SeriesGroupLayout.FILL) {
+        if (!this._isX && series.length === 1 && series[0] instanceof SeriesGroup && series[0].layout === SeriesGroupLayout.FILL) {
             v.max = series[0].layoutMax;
         }
         return v;

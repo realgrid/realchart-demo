@@ -8,14 +8,15 @@
 
 import { Color } from "../../common/Color";
 import { ElementPool } from "../../common/ElementPool";
-import { PathElement, RcElement } from "../../common/RcControl";
-import { SvgShapes } from "../../common/impl/SvgShape";
+import { RcElement } from "../../common/RcControl";
+import { Align } from "../../common/Types";
+import { RectElement } from "../../common/impl/RectElement";
 import { DataPoint } from "../../model/DataPoint";
 import { TreeNode, TreemapSeries } from "../../model/series/TreemapSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
-import { SlideAnimation } from "../animation/SeriesAnimation";
+import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class NodeView extends PathElement implements IPointView {
+class NodeView extends RectElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -29,6 +30,9 @@ class NodeView extends PathElement implements IPointView {
         super(doc, SeriesView.POINT_CLASS);
     }
 
+    //-------------------------------------------------------------------------
+    // IPointView
+    //-------------------------------------------------------------------------
     get point(): DataPoint {
         return this.node.point;
     }
@@ -37,8 +41,21 @@ class NodeView extends PathElement implements IPointView {
     // methods
     //-------------------------------------------------------------------------
     render(): void {
-        this.setPath(SvgShapes.rect(this.node));
+        this.setRect(this.node);
     }
+}
+
+class GroupView extends NodeView {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
 }
 
 export class TreemapSeriesView extends SeriesView<TreemapSeries> {
@@ -47,6 +64,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
     // fields
     //-------------------------------------------------------------------------
     private _nodeViews: ElementPool<NodeView>;
+    private _rootView: GroupView;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -72,18 +90,39 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
     }
 
     protected _renderSeries(width: number, height: number): void {
+        this._pointContainer.invert(this._inverted, height);
+
+        if (this._rootView) {
+            this.$_renderGroups(width, height);
+        } else {
+            this.$_renderLeafs(width, height);
+        }
+    }
+
+    protected _runShowEffect(firstTime: boolean): void {
+        firstTime && SeriesAnimation.slide(this);
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_renderLeafs(width: number, height: number): void {
         const series = this.model;
+        const inverted = series.chart.isInverted();
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
-        const nodes = series.buildMap(width, height);
+        const yLen = inverted ? width : height;
+        const xLen = inverted ? height : width;
+        const { roots, leafs } = series.buildMap(xLen, yLen);
         const color = new Color(series._calcedColor);
         let labelView: PointLabelView;
 
         // buildMap()으로 leafs가 결정돼야 한다.
         labelViews.prepare(this.doc, this);
 
-        this._nodeViews.prepare(nodes.length, (v, i, count) => {
-            const m = nodes[i];
+        this._nodeViews.prepare(leafs.length, (v, i, count) => {
+            const m = leafs[i];
+            const p = m.point;
             const g = m.parent;
             let c = color;
 
@@ -97,28 +136,34 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
 
             v.node = m;
             v.setStyle('fill', c.brighten(m.index / count).toString());
+
+            if (inverted) m.y = m.y - yLen;
             v.render();
-            m.point.xPos = m.x + m.width / 2;
-            m.point.yPos = m.y + m.height / 2;
+
+            let x = p.xPos = m.x + m.width / 2;
+            let y = p.yPos = m.y + m.height / 2;
 
             // label
-            if (labelViews && (labelView = labelViews.get(m.point, 0))) {
+            if (labelViews && (labelView = labelViews.get(p, 0))) {
                 const r = labelView.getBBounds();
 
                 // 너비나 높이가 모두 한글자는 표시할 수 있을 정도가 돼야 표시.
                 if (labelView.setVisible(m.width >= r.height && m.height >= r.height)) {
                 // if (labelView.setVisible(m.width >= r.width && m.height >= r.height)) {
-                    labelView.translate(m.x + m.width / 2 - r.width / 2, m.y + m.height / 2 - r.height / 2);
+                    if (inverted) {
+                        x = -m.y - m.height / 2 - r.width / 2;// (m.height + r.width) / 2;
+                        y = xLen - m.x - (m.width + r.height) / 2;
+                    } else {
+                        x -= r.width / 2;
+                        y -= r.height / 2;
+                    }
+
+                    labelView.layout(Align.CENTER).translate(x, y);
                 }
             }
         })
     }
 
-    protected _runShowEffect(firstTime: boolean): void {
-        firstTime && new SlideAnimation(this);
+    private $_renderGroups(width: number, height: number): void {
     }
-
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
 }

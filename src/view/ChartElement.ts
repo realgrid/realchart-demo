@@ -52,13 +52,17 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
         this.setStyleOrClass(model.style);
     }
 
-    measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this._prepareStyleOrClass(model);
-
+    // visible이 false인 경우 measure가 호출되지 않아서 model이 재설정되지 않을 수 있다.
+    setModel(model: T): void {
         if (model !== this.model) {
             this.model = model;
             this._doModelChanged();
         }
+    }
+
+    measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
+        this._prepareStyleOrClass(model);
+        this.setModel(model);
 
         const sz = this._doMeasure(doc, this.model, hintWidth, hintHeight, phase);
 
@@ -143,25 +147,34 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     }
 
     measure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this.setStyleOrClass(model.style);
-        if (model !== this.model) {
-            this.model = model;
-            this._doModelChanged();
-        }
+        this._prepareStyleOrClass(model);
+        this.setModel(model);
+
+        this._background.internalClearStyleAndClass();
         this._setBackgroundStyle(this._background);
 
         const sz = this._doMeasure(doc, model, hintWidth, hintHeight, phase);
 
         // TODO: 캐쉬!
-        const cs = getComputedStyle(this.dom);
+        let cs = getComputedStyle(this._background.dom);
         const padding = this._paddings;
-        const margin = this._margins;
 
         padding.applyPadding(cs);
-        margin.applyMargin(cs);
 
-        this.mw = sz.width += margin.left + margin.right + padding.left + padding.right;
-        this.mh = sz.height += margin.top + margin.bottom + padding.top + padding.bottom;
+        sz.width += padding.left + padding.right;
+        sz.height += padding.top + padding.bottom;
+
+        if (this._marginable()) {
+            const margin = this._margins;
+
+            cs = getComputedStyle(this.dom);
+            margin.applyMargin(cs);
+            this.mw = sz.width += margin.left + margin.right;
+            this.mh = sz.height += margin.top + margin.bottom;
+        
+        }
+        this.mw = sz.width;
+        this.mh = sz.height;
         return sz;
     }
 
@@ -169,15 +182,18 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
         super.layout(param);
 
         // background
-        const margin = this._margins;
+        if (this._marginable()) {
+            const margin = this._margins;
 
-        this._background.setBounds(
-            margin.left + this._getBackOffset(), 
-            margin.top, 
-            this.width - margin.left - margin.right,
-            this.height - margin.top - margin.bottom
-        );
-
+            this._background.setBounds(
+                margin.left + this._getBackOffset(), 
+                margin.top, 
+                this.width - margin.left - margin.right,
+                this.height - margin.top - margin.bottom
+            );
+        } else {
+            this._background.setBounds(0, 0, this.width, this.height);
+        }
         return this;
     }
 
@@ -186,6 +202,10 @@ export abstract class BoundableElement<T extends ChartItem> extends ChartElement
     //-------------------------------------------------------------------------
     protected abstract _setBackgroundStyle(back: RectElement): void;
     
+    protected _marginable(): boolean {
+        return true;
+    }
+
     protected _getBackOffset(): number {
         return 0;
     }
@@ -237,5 +257,22 @@ export abstract class SectionView extends GroupElement {
 
     protected _setInverted(inverted: boolean): void {
         this._inverted = inverted;
+    }
+}
+
+export abstract class ContentView<T extends ChartItem> extends ChartElement<T> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    protected _inverted = false;
+    protected _animatable = true;
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    _setChartOptions(inverted: boolean, animatable: boolean): void {
+        this._inverted = inverted;
+        this._animatable = animatable;
     }
 }

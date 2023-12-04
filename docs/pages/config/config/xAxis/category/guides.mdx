@@ -1,0 +1,33 @@
+## [guides](/config/config/guides)
+
+## Properties
+
+### front: `boolean{:js}`[#front]
+true면 시리즈들보다 위에 표시된다.  
+<DefaultValue value="false" contents=""></DefaultValue>
+### [label](./guides/label)
+축 가이드 label 설정 모델.  
+
+### style: `SVGStyles | string{:js}`[#style]
+스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+### visible: `boolean{:js}`[#visible]
+표시 여부.  
+<DefaultValue value="true" contents=""></DefaultValue>
+### zindex: `number{:js}`[#zindex]
+모든 guide들 중에서 값이 클수록 나중에 그려진다.  
+<DefaultValue value="0" contents=""></DefaultValue>

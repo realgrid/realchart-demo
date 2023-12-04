@@ -30,9 +30,8 @@ test.describe('area.html test', async function () {
 		expect(markers.length > 0).is.true;
 
 		const config: any = await page.evaluate('config');
-		const data = (config.series || config.series[0]).data;
-		expect(data.length * 2).eq(markers.length);
-
+		const numberOfDataArrays = config.series[0].data.length;
+		expect(numberOfDataArrays * 2).eq(markers.length);
 		// await page.screenshot({path: 'out/ss/arearange.png'});
 		page.close();
 	});
@@ -162,6 +161,6 @@ test.describe('area.html test', async function () {
 		const dataPoint = await page.$('.rct-series-points');
 		expect(dataPoint).exist;
 		const point = await dataPoint.$$('.' + SeriesView.POINT_CLASS);
-		expect(point.length).eq(config.series.data.length * 2);
+		expect(point.length).eq(config.series[0].data.length * 2);
 	});
 });

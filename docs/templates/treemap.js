@@ -1,4 +1,5 @@
 export const config = {
+  options: { animatable: false },
   title: 'Treemap',
   xAxis: {},
   yAxis: {},

@@ -5,10 +5,12 @@ import { MainFooter } from "@/components/MainFooter";
 import { brand, company, footerData } from "@/lib/const";
 import { theme } from "./lib/theme";
 import { FiddleLink } from "./components/FiddleLink";
+import { DefaultValue } from "./components/DefaultValue";
 
 const config: DocsThemeConfig = {
   components: {
     FiddleLink,
+    DefaultValue
   },
   useNextSeoProps() {
     return {
@@ -21,7 +23,7 @@ const config: DocsThemeConfig = {
     titleComponent({ title: _title, type,  route }) {
       if (route.indexOf('/config/config') >= 0) {
         const [title] = route.split('/').slice(-1);
-        let prefix = (title.includes('Axis') || title.includes('series') || title.includes('gauge')) ? '[]' : '';
+        let prefix = ['Axis', 'series', 'gauge', 'annotation'].some(v => title.indexOf(v) >= 0 ) ? '[]' : '';
         return <>{title}{prefix}</>;
       } else if (type == 'separator') {
         return <>{_title}</>;

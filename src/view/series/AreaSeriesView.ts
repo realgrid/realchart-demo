@@ -7,22 +7,26 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "../../common/Common";
+import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
-import { PathElement } from "../../common/RcControl";
+import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
+import { IValueRange } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { SeriesGroupLayout } from "../../model/Series";
 import { LinearAxis } from "../../model/axis/LinearAxis";
 import { AreaSeries, AreaSeriesPoint } from "../../model/series/LineSeries";
-import { LineSeriesBaseView } from "./LineSeriesView";
+import { LineContainer, LineSeriesBaseView } from "./LineSeriesView";
 
 export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    // private _areaContainer: RcElement;
+    private _areaContainer: LineContainer;
     private _area: PathElement;
     private _lowArea: PathElement;
+    private _rangeAreas: ElementPool<PathElement>;
+    private _rangeAreaClips: ClipElement[] = [];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -30,7 +34,8 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     constructor(doc: Document, className?: string) {
         super(doc, className || 'rct-area-series');
 
-        this._lineContainer.insertFirst(this._area = new PathElement(doc, 'rct-area-series-area'));
+        this.insertFirst(this._areaContainer = new LineContainer(doc, 'rct-area-series-areas'));
+        this._areaContainer.insertFirst(this._area = new PathElement(doc, 'rct-area-series-area'));
     }
 
     //-------------------------------------------------------------------------
@@ -49,12 +54,16 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    getClipContainer2(): RcElement {
+        return this._areaContainer;
+    }
+
     protected _prepareBelow(series: AreaSeries): boolean {
         let lowArea = this._lowArea;
 
         if (super._prepareBelow(series)) {
             if (!lowArea) {
-                this._lineContainer.insertChild(lowArea = this._lowArea = new PathElement(this.doc, 'rct-area-series-area'), this._area);
+                this._areaContainer.add(lowArea = this._lowArea = new PathElement(this.doc, 'rct-area-series-area'));
             }
             this._area.setClip(this._upperClip);
             lowArea.setClip(this._lowerClip);
@@ -63,6 +72,43 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             lowArea?.setClip();
             this._area.setClip();
         }
+    }
+
+    protected _prepareRanges(model: AreaSeries, ranges: IValueRange[]): void {
+        super._prepareRanges(model, ranges);
+
+        let areas = this._rangeAreas;
+        let clips = this._rangeAreaClips;
+
+        if (!ranges) {
+            if (areas) {
+                areas.freeAll();
+                clips.forEach(c => c.remove());
+                clips.length = 0; 
+            }
+        } else {
+            if (!areas) {
+                areas = this._rangeAreas = new ElementPool(this._areaContainer, PathElement);
+            }
+            areas.prepare(ranges.length);
+
+            while (clips.length < ranges.length) {
+                const c = new ClipElement(this.doc);
+
+                c.setAttr(RcElement.ASSET_KEY, '1');
+                this.control.clipContainer().append(c.dom);
+                clips.push(c);
+            }
+            while (clips.length > ranges.length) {
+                clips.pop().remove();
+            }
+        }
+    }
+
+    protected _renderSeries(width: number, height: number): void {
+        super._renderSeries(width, height);
+
+        this._areaContainer.invert(this._inverted, height);
     }
 
     protected _layoutMarkers(pts: AreaSeriesPoint[], width: number, height: number): void {
@@ -78,6 +124,8 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     }
 
     protected _layoutArea(area: PathElement, pts: AreaSeriesPoint[]): void {
+        const w = this.width;
+        const h = this.height;
         const series = this.model;
         const lowArea = this._needBelow ? this._lowArea : void 0;
         const g = series.group;
@@ -140,18 +188,42 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             sb.line(path[path.length - 2] as number, yMin);
         }
 
-        area.unsetData('polar');
-        area.setBoolData('simple', this._simpleMode);
-        area.setPath(s = sb.end());
-        area.internalClearStyleAndClass();
-        series.color && area.setStyle('fill', series.color);
-        series.style && area.internalSetStyleOrClass(series.style);
+        s = sb.end();
+        // area.unsetData('polar');
+        // area.setBoolData('simple', this._simpleMode);
+        // area.setPath(s);
+        // area.internalClearStyleAndClass();
+        // series.color && area.setStyle('fill', series.color);
+        // series.style && area.internalSetStyleOrClass(series.style);
+
+        if (series._runRanges) {
+            this._rangeAreas.forEach((area, i) => {
+                const range = series._runRanges[i];
+
+                area.setBoolData('simple', this._simpleMode);
+                area.setPath(s);
+                area.internalClearStyleAndClass();
+                area.setStyle('fill', range.color);
+                area.addStyleOrClass(range.style);
+                area.setClip(this._rangeAreaClips[i]);
+                this._clipRange(w, h, series._runRangeValue, range, this._rangeAreaClips[i], inverted);
+            })
+        } else {
+            area.unsetData('polar');
+            area.setBoolData('simple', this._simpleMode);
+            area.setPath(s);
+            area.internalClearStyleAndClass();
+            series.color && area.setStyle('fill', series.color);
+            series.style && area.internalSetStyleOrClass(series.style);
+            series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
+        }
 
         if (lowArea) {
             lowArea.setBoolData('simple', this._simpleMode);
             lowArea.setPath(s);
             lowArea.internalClearStyleAndClass();
             series.color && lowArea.setStyle('fill', series.color);
+            series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
             series.belowStyle && lowArea.internalSetStyleOrClass(series.belowStyle);
         }
     }

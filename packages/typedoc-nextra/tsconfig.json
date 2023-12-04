@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "incremental": true,                   /* Enable incremental compilation */
         "allowJs": false,
         "strict": true,
         "strictNullChecks": true,

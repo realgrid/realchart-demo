@@ -115,7 +115,9 @@ class BandView extends ChartElement<GaugeRangeBand> {
                     v.setBounds(p, y, w, this._thick);
                 }
                 
+                v.internalClearStyleAndClass();
                 v.setStyle('fill', range.color);
+                range.style && v.addStyleOrClass(range.style);
                 p += w;
             });
             return true;
@@ -307,7 +309,7 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
 
         if (tv.visible) {
             tv.text = m.label.text;
-            m.label.buildSvg(tv, NaN, NaN, m, null);
+            m.label.buildSvg(tv, null, NaN, NaN, m, null);
 
             const rText = this._textView.getBBounds();
             const h = rText.height + m.label.getGap(height);

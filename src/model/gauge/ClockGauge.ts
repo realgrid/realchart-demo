@@ -28,7 +28,7 @@ export class ClockGaugeRim extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(gauge: ClockGauge) {
-        super(gauge.chart);
+        super(gauge.chart, true);
 
         this.thickness = 7;
     }
@@ -77,7 +77,7 @@ export class ClockGaugeHand extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(gauge: ClockGauge, thickness: number, length: RtPercentSize) {
-        super(gauge.chart);
+        super(gauge.chart, true);
 
         this.thickness = thickness;
         this.length = length;
@@ -145,7 +145,7 @@ export class ClockGaugeTick extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(gauge: ClockGauge, public length: number) {
-        super(gauge.chart);
+        super(gauge.chart, true);
     }
 
     //-------------------------------------------------------------------------
@@ -159,7 +159,7 @@ export class ClockGaugeTickLabel extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(gauge: ClockGauge) {
-        super(gauge.chart);
+        super(gauge.chart, true);
     }
 
     //-------------------------------------------------------------------------
@@ -175,7 +175,7 @@ export class ClockGaugePin extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(gauge: ClockGauge, public raidus: number) {
-        super(gauge.chart);
+        super(gauge.chart, true);
     }
 }
 

@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4 } from "../common/Common";
+import { IValueRange, _undefined } from "../common/Types";
 import { IAxis } from "./Axis";
 import { ISeries } from "./Series";
 
@@ -72,6 +73,10 @@ export class DataPoint {
     yGroup: number;     // for stacking. stacking 가능한 경우 이 값으로 축 상 위치를 계산한다.
                         // [주의] yValue를 강제로 재설정하는 경우 이 값도 재설정할 것!
     drillDown: any[] | object;  // array이면 현재 시리즈의 data 교체. object면 다른 시리즈로 교체.
+    range: IValueRange;
+
+    zValue: number;
+    label: any;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -129,7 +134,7 @@ export class DataPoint {
     }
 
     getLabel(index: number): any {
-        return this.y;// this.yValue;
+        return this.label === _undefined ? this.yValue : this.label;
     }
 
     getValueOf = (traget: any, param: string): any => {
@@ -229,6 +234,12 @@ export class DataPointCollection {
         return this._points[index];
     }
 
+    pointAt(xValue: number): DataPoint {
+        for (const p of this._points) {
+            if (p.xValue === xValue) return p;
+        }
+    }
+
     contains(p: DataPoint) {
         return this._points.indexOf(p) >= 0;
     }
@@ -249,7 +260,7 @@ export class DataPointCollection {
         return this._points.map(p => p.getProp(prop));
     }
 
-    getValues(axis: string): any[] {
+    getCategories(axis: string): any[] {
         return this._points.map(p => p[axis]);
     }
 

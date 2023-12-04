@@ -34,9 +34,6 @@ export class LineSeriesMarker extends SeriesMarker {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    /**
-     * @config
-     */
     radius = 4;
     /**
      * 첫번째 point의 marker 표시 여부.
@@ -94,7 +91,7 @@ export abstract class LineSeriesBase extends Series {
     // methods
     //-------------------------------------------------------------------------
     getShape(p: LineSeriesPoint): Shape {
-        return (p && p.shape) || this.marker.shape || this._shape;
+        return this.marker.visible ? ((p && p.shape) || this.marker.shape || this._shape) : null;
     }
 
     getRadius(p: LineSeriesPoint): number {
@@ -117,6 +114,21 @@ export abstract class LineSeriesBase extends Series {
      */
     setShape(shape: Shape): void {
         this._shape = shape;
+    }
+
+    _defViewRangeValue(): "x" | "y" | "z" {
+        return 'x';
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return new LineLegendMarkerView(doc, size);
+    }
+
+    legendMarker(doc: Document, size: number): RcElement {
+        const m = super.legendMarker(doc, size);
+
+        (m as LineLegendMarkerView).setShape(this.getShape(null), Math.min(+size || LegendItem.MARKER_SIZE, this.marker.radius * 2));
+        return m;
     }
 
     //-------------------------------------------------------------------------
@@ -186,17 +198,6 @@ export class LineSeries extends LineSeriesBase {
     getLineType(): LineType {
         return this.lineType;
     }
-
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
-        return new LineLegendMarkerView(doc, size);
-    }
-
-    legendMarker(doc: Document): RcElement {
-        const m = super.legendMarker(doc);
-
-        (m as LineLegendMarkerView).setShape(this.getShape(null), Math.min(LegendItem.MARKER_SIZE, this.marker.radius * 2));
-        return m;
-    }
 }
 
 export class AreaSeriesPoint extends LineSeriesPoint {
@@ -224,7 +225,7 @@ export class AreaSeries extends LineSeries {
     // property fields
     //-------------------------------------------------------------------------
     /**
-     * area 영역에 적용할 스타일셋이나 class selector.
+     * area 영역에 추가적으로 적용되는 스타일셋이나 class selector.\
      * 
      * @config
      */
@@ -326,6 +327,11 @@ export class AreaRangeSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     lowField: string;
     highField: string;
+    /**
+     * area 영역에 추가적으로 적용되는 스타일셋이나 class selector.\
+     * 
+     * @config
+     */
     areaStyle: StyleProps;
     /**
      * true면 spline 곡선으로 표시한다.

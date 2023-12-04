@@ -6,13 +6,14 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isBoolean, isObject, isString } from "../common/Common";
+import { isArray, isBoolean, isObject, isString, pickNum } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { SvgRichText, RichTextParamCallback } from "../common/RichText";
-import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
+import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
+import { IAxisTick } from "./Axis";
 import { IChart } from "./Chart";
 
 export let n_char_item = 0;
@@ -31,7 +32,7 @@ export class ChartItem extends RcObject {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart, visible = true) {
+    constructor(chart: IChart, visible: boolean) {
         super();
 
         this.chart = chart;
@@ -43,8 +44,8 @@ export class ChartItem extends RcObject {
     // properties
     //-------------------------------------------------------------------------
     /** 
-     * 표시 여부.\
-     * 
+     * 표시 여부.
+     *  
      * @default true
      * @config
      */
@@ -240,6 +241,16 @@ export enum ChartTextEffect {
 }
 
 export abstract class ChartText extends ChartItem {
+    
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _outlineThickness = 2;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _outlineWidth = '2px';
 
     //-------------------------------------------------------------------------
     // properties
@@ -271,6 +282,16 @@ export abstract class ChartText extends ChartItem {
      * @config
      */
     autoContrast = true;// true;
+    
+    get outlineThickness(): number {
+        return this._outlineThickness;
+    }
+    set outlineThickness(value: number) {
+        if (value !== this._outlineThickness) {
+            this._outlineThickness = value;
+            this._outlineWidth = pickNum(value, 2) + 'px';
+        }
+    }
 }
 
 export abstract class FormattableText extends ChartText {
@@ -375,18 +396,20 @@ export abstract class FormattableText extends ChartText {
     }
     setText(value: string): FormattableText {
         if (value !== this._text) {
-            this._text = value;
-            if (value) {
-                if (!this._richTextImpl) {
-                    this._richTextImpl = new SvgRichText();
-                }
-                this._richTextImpl.setFormat(value);
-            } else {
-                this._richTextImpl = null;
-            }
+            this.prepareRich(this._text = value);
         }
         !isNaN(this.lineHeight) && this._richTextImpl && (this._richTextImpl.lineHeight = this.lineHeight);
         return this;
+    }
+    prepareRich(text: string): void {
+        if (text) {
+            if (!this._richTextImpl) {
+                this._richTextImpl = new SvgRichText();
+            }
+            this._richTextImpl.setFormat(text);
+        } else {
+            this._richTextImpl = null;
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -402,8 +425,9 @@ export abstract class FormattableText extends ChartText {
     //     }
     // }
 
-    buildSvg(view: TextElement, maxWidth: number, maxHeight: number, target: any, callback: RichTextParamCallback): void {
+    buildSvg(view: TextElement, outline: TextElement, maxWidth: number, maxHeight: number, target: any, callback: RichTextParamCallback): void {
         this._richTextImpl.build(view, maxWidth, maxHeight, target, callback);
+        outline && this._richTextImpl.build(outline, maxWidth, maxHeight, target, callback);
     }
 
     // setLineHeight(v: number): void {

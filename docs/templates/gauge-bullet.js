@@ -1,6 +1,6 @@
 export const config = {
   options: { credits: {} },
-  title: 'Bullet Guage',
+  title: 'Bullet Gauges',
   gauge: [
     {
       type: 'bullet',

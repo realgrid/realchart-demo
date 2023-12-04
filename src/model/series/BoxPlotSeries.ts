@@ -143,29 +143,6 @@ export class BoxPlotSeries extends RangedSeries {
         return 'boxplot';
     }
 
-    getPointTooltip(point: BoxPlotSeriesPoint, param: string): any {
-        switch (param) {
-            case 'min':
-                return point.min;
-            case 'minValue':
-                return point.minValue;
-            case 'low':
-                return point.low;
-            case 'lowValue':
-                return point.lowValue;
-            case 'mid':
-                return point.mid;
-            case 'midValue':
-                return point.midValue;
-            case 'high':
-                return point.high;
-            case 'highValue':
-                return point.highValue;
-            default:
-                return super.getPointTooltip(point, param);
-        }
-    }
-
     pointLabelCount(): number {
         return 2;
     }

@@ -42,12 +42,6 @@ export class TextElement extends RcElement {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
-    static createCenter(doc: Document): TextElement {
-        const elt = new TextElement(doc);
-        elt._layout = TextLayout.MIDDLE;
-        return elt;
-    }
-
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
@@ -118,15 +112,7 @@ export class TextElement extends RcElement {
         }
     }
 
-    /** svg */
-    get svg(): string {
-        return this.dom.innerHTML;
-    }
-    set svg(value: string) {
-        value = value || '';
-        this.dom.innerHTML = value;
-    }
-    
+    /** opacity */
     get opacity(): number {
         return this.getAttr('fill-opacity');
     }

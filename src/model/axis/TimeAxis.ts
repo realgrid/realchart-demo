@@ -8,8 +8,7 @@
 
 import { isArray, isNumber, isObject, isString, pickNum } from "../../common/Common";
 import { DatetimeFormatter } from "../../common/DatetimeFormatter";
-import { isNull, pad2 } from "../../common/Types";
-import { AxisLabel, AxisTick, IAxisTick } from "../Axis";
+import { AxisLabel, AxisTick } from "../Axis";
 import { IChart } from "../Chart";
 import { ContinuousAxis, ContinuousAxisTick } from "./LinearAxis";
 
@@ -35,7 +34,6 @@ const time_scales = [
     28 * 24 * 60 * 60 * 1000,    // 최소 월 일수
     364 * 24 * 60 * 60 * 1000    // 최소 연 일수
 ];
-
 const time_multiples = [
     [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500],  // ms
     [1, 2, 5, 10, 15, 30],                          // sec
@@ -45,6 +43,15 @@ const time_multiples = [
     [1, 2],                                         // week
     [1, 2, 3, 4, 6]                                 // mon
 ]
+const time_periods = {
+    s: 1,
+    n: 2,
+    h: 3,
+    d: 4,
+    w: 5,
+    m: 6,
+    y: 7
+};
 
 /**
  * @internal
@@ -93,6 +100,11 @@ export class TimeAxisTick extends ContinuousAxisTick {
                 break;
         }
         return +t;
+    }
+
+    protected _isValidInterval(v: any): boolean {
+        return !isNaN(v) ||
+               (isString(v) && !isNaN(parseFloat(v)) && time_periods.hasOwnProperty(v.charAt(v.length - 1)));
     }
 
     protected _getStepMultiples(step: number): number[] {
@@ -225,6 +237,43 @@ export class TimeAxisTick extends ContinuousAxisTick {
         }
         return steps;
     }
+
+    protected _getStepsByInterval(interval: any, base: number, min: number, max: number): number[] {
+        if (isString(interval)) {
+            const steps: number[] = [];
+            const scale = interval.charAt(interval.length - 1);
+            let v: number;
+
+            this._step = parseFloat(interval);
+            this.scale = time_periods[scale];
+            interval = time_scales[this.scale];
+
+            // 정규화하지 않는다. [검토 필요]
+            //min = this._normalizeMin(min, interval) + (this.axis as TimeAxis)._offset;
+            min += (this.axis as TimeAxis)._offset;
+
+            if (!isNaN(base)) {
+                steps.push(v = base);
+                while (v > min) {
+                    steps.unshift(v = this.getNextStep(v, -1));
+                }
+                v = base;
+                while (v < max) {
+                    steps.push(v = this.getNextStep(v, 1));
+                }
+            } else {
+                steps.push(v = min);
+                while (v < max) {
+                    steps.push(v = this.getNextStep(v, 1));
+                }
+            }
+            this._step = interval;
+    
+            return steps;
+        } else {
+            return super._getStepsByInterval(interval, base, min, max);
+        }
+    }
 }
 
 const FORMATS = [
@@ -244,6 +293,7 @@ export class TimeAxisLabel extends AxisLabel {
     // fields
     //-------------------------------------------------------------------------
     private _formats: { format: string, beginningFormat: string}[];
+    private _formatter: DatetimeFormatter;
 
     //-------------------------------------------------------------------------
     // properties
@@ -267,10 +317,6 @@ export class TimeAxisLabel extends AxisLabel {
      * 스케일 시작일시에 표시에 사용되는 형식.
      */
     beginningFormat: string;
-    /**
-     * 한 주의 시작 요일.
-     */
-    startOfWeek = 0;    // 0: 일요일, 1: 월요일
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -283,6 +329,7 @@ export class TimeAxisLabel extends AxisLabel {
         const fmts = this.timeFormats;
         const use = this.useBeginningFormat;
 
+        this._formatter = f1 ? DatetimeFormatter.getFormatter(f1) : void 0;
         this._formats = FORMATS.map(f => Object.assign(f));
 
         if (isArray(fmts)) {
@@ -309,51 +356,56 @@ export class TimeAxisLabel extends AxisLabel {
     }
 
     getTick(index: number, v: any): string {
+        const chart = this.chart;
         const axis = this.axis as TimeAxis;
+        const d = axis.date(v);
+
+        if (this._formatter) {
+            return this._formatter.toStr(d, chart.startOfWeek);
+        }
+
         const fmts = this._formats;
         const scale = (axis.tick as TimeAxisTick).scale;
-        const d = axis.date(v);
-        let t: number;
 
         switch (scale) {
             case TimeScale.YEAR:
-                return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
             case TimeScale.MONTH:
                 if (index === 0 || d.getMonth() === 0) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }      
             case TimeScale.WEEK:
             case TimeScale.DAY:
                 if (index === 0 || d.getDate() === 1) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }      
             case TimeScale.HOUR:
                 if (index === 0 || d.getHours() === 0) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }
             case TimeScale.MIN:
                 if (index === 0 || d.getMinutes() === 0) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }
             case TimeScale.SEC:
                 if (index === 0 || d.getSeconds() === 0) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }
             case TimeScale.MS:
                 if (index === 0 || d.getMilliseconds() === 0) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }
         }
      }
@@ -373,8 +425,7 @@ export class TimeAxis extends ContinuousAxis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    // private _zone = new Date().getTimezoneOffset();
-    private _offset: number;
+    _offset: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -393,16 +444,6 @@ export class TimeAxis extends ContinuousAxis {
      * @config
      */
     readonly label: TimeAxisLabel;
-
-    /**
-     * javascript에서 숫자 단위로 전달되는 날짜값은 기본적으로 local이 아니라 new Date 기준이다.
-     * 그러므로 보통 숫자로 지정된 날짜값은 utc 값이다.
-     * local 기준으로 표시하기 위해, 숫자로 지정된 날짜값에 더해야 하는 시간을 시간단위로 지정한다.
-     * ex) 한국은 -9
-     * 
-     * @config
-     */
-    timeOffset = 0;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -428,7 +469,7 @@ export class TimeAxis extends ContinuousAxis {
     }
 
     collectValues(): void {
-        this._offset = pickNum(this.timeOffset, 0) * 60 * 60 * 1000;
+        this._offset = pickNum(this.chart.timeOffset, 0) * 60 * 1000;
         super.collectValues();
     }
 
@@ -464,6 +505,9 @@ export class TimeAxis extends ContinuousAxis {
                     case 'd':
                         d.setDate(d.getDate() + v);
                         break;
+                    case 'w':
+                        d.setDate(d.getDate() + 7 * v);
+                        break;
                     case 'h':
                         d.setHours(d.getHours() + v);
                         break;
@@ -487,6 +531,10 @@ export class TimeAxis extends ContinuousAxis {
 
     getAxisValueAt(length: number, pos: number): any {
         return new Date(this.getValueAt(length, pos));
+    }
+
+    value2Tooltip(value: number) {
+        return isNaN(value) ? NaN : new Date(value);
     }
 
     //-------------------------------------------------------------------------

@@ -2,7 +2,10 @@ export const config = {
   title: 'Body(Plotting Area) Background',
   xAxis: { title: 'X Axis' },
   yAxis: { title: 'Y Axis' },
-  body: { image: { style: { opacity: 0.2 } }, style: { fill: 'none' } },
+  body: {
+    image: { url: '../assets/mountain.jpeg', style: { opacity: 0.2 } },
+    style: { fill: 'none' }
+  },
   series: {
     color: '#0044ff',
     type: 'vector',

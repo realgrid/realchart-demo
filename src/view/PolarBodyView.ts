@@ -9,8 +9,9 @@
 import { ElementPool } from "../common/ElementPool";
 import { LayerElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
+import { PI_2 } from "../common/Types";
 import { CircleElement, CircumElement } from "../common/impl/CircleElement";
-import { LineElement, PolygonElement, PolylineElement } from "../common/impl/PathElement";
+import { LineElement, PolylineElement } from "../common/impl/PathElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { Axis, AxisTick, IAxisTick } from "../model/Axis";
 import { Body } from "../model/Body";
@@ -105,6 +106,12 @@ abstract class PolarAxisView extends RcElement {
         this._markViews.prepare(m._ticks.length);
     }
 
+    // protected _prepareLabel(view: AxisLabelView, tick: IAxisTick): void {
+    //     view.value = tick.value;
+    //     view.setText(tick.label);
+    //     // view.text = ticks[i].label;
+    // }
+
     private $_prepareLabels(doc: Document, m: Axis): void {
         if (this._labelContainer.setVisible(m.label.visible)) {
             const ticks = m._ticks;
@@ -166,13 +173,15 @@ class PolarXAxisView extends PolarAxisView {
     }
 
     protected _doLayout(axis: Axis, cx: number, cy: number, rd: number, ticks: IAxisTick[], other: Axis): void {
-        const start = axis.chart.startAngle();
+        const start = axis.getStartAngle();
+
+        ticks.forEach(tick => tick.pos = tick.pos / rd);
 
         // grid lines
         if (this._gridContainer.visible) {
             this._gridLines.forEach((view, i) => {
                 const tick = ticks[i];
-                const p = tick.pos * Math.PI * 2;
+                const p = tick.pos;
                 const x = cx + Math.cos(start + p) * rd;
                 const y = cy + Math.sin(start + p) * rd;
     
@@ -182,22 +191,33 @@ class PolarXAxisView extends PolarAxisView {
 
         // labels
         if (this._labelContainer.visible) {
+            const count = this._labelViews.count;
+            // TODO: 가장 긴 label이 겹쳐지는 지로 확인할 것!
+            const step = Math.ceil(9 / (360 / count));
             const rd2 = rd + axis.tick.length;
 
             this._labelViews.forEach((view, i) => {
-                const tick = ticks[i];
+                if (view.setVisible(i % step === 0)) {
+                    const tick = ticks[i];
     
-                view.anchor = TextAnchor.MIDDLE;
-                view.layout = TextLayout.MIDDLE;
-                view.text = tick.label;
-    
-                const r = view.getBBounds();
-                const p = tick.pos * Math.PI * 2;
-                const x = cx + Math.cos(start + p) * (rd2 + r.width / 2);
-                const y = cy + Math.sin(start + p) * (rd2 + r.height / 2);
-    
-                view.translate(x, y);
+                    view.anchor = TextAnchor.MIDDLE;
+                    view.layout = TextLayout.MIDDLE;
+                    view.text = tick.label;
+        
+                    const r = view.getBBounds();
+                    const p = tick.pos;
+                    const x = cx + Math.cos(start + p) * (rd2 + r.width / 2);
+                    const y = cy + Math.sin(start + p) * (rd2 + r.height / 2);
+        
+                    view.translate(x, y);
+                }
             });
+            // 마지막이 겹치는 지 확인한다.
+            if (count > 2) {
+                if (Math.abs(ticks[count - 1].pos - ticks[count - 2].pos) < PI_2 / 24) {
+                    this._labelViews.get(count - 1).setVisible(false);
+                }
+            }
         }
 
         // line
@@ -208,7 +228,7 @@ class PolarXAxisView extends PolarAxisView {
                 const pts: number[] = [];
 
                 ticks.forEach(tick => {
-                    const p = tick.pos * Math.PI * 2;
+                    const p = tick.pos;
                     pts.push(cx + Math.cos(start + p) * rd, cy + Math.sin(start + p) * rd);
                 });
                 (this._lineView as PolylineElement).setPoints(...pts);
@@ -271,11 +291,11 @@ class PolarYAxisView extends PolarAxisView {
                 if (view instanceof CircumElement) {
                     view.setCircle(cx, cy, pos);
                 } else if (view instanceof PolylineElement) {
-                    const start = axis.chart.startAngle();
+                    const start = axis.getStartAngle();
                     const pts: number[] = [];
 
                     other._ticks.forEach(tick => {
-                        const p = tick.pos * Math.PI * 2;
+                        const p = tick.pos;
                         pts.push(cx + Math.cos(start + p) * pos, cy + Math.sin(start + p) * pos);
                     });
                     (view as PolylineElement).setPoints(...pts);
@@ -321,7 +341,7 @@ export class PolarBodyView extends BodyView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, owner: IPlottingOwner) {
-        super(doc, owner, false);
+        super(doc, owner);
     }
 
     //-------------------------------------------------------------------------

@@ -10,6 +10,7 @@ const config = {
         type: 'category'
     },
     yAxis: {
+        // strictMax: 13
     },
     series: {
         type: 'area',

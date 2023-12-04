@@ -99,7 +99,7 @@ function setActions(container) {
     //     config.gauge.active = false;
     //     chart.load(config);
     // });
-    createListBox(container, "label.position", ['', 'left', 'right', 'top', 'bottom'], function (e) {
+    createListBox(container, "label.position", ['', 'top', 'bottom'], function (e) {
         config.gauge[0].label.position = _getValue(e);
         chart.load(config);
     }, '');
@@ -124,7 +124,7 @@ function setActions(container) {
         chart.load(config);
     }, 'default');
     line(container);
-    createListBox(container, "label2.position", ['left', 'right', 'top', 'bottom'], function (e) {
+    createListBox(container, "label2.position", ['left', 'right'], function (e) {
         config.gauge[1].label.position = _getValue(e);
         chart.load(config);
     }, 'left');

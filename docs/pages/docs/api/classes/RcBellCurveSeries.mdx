@@ -10,96 +10,46 @@
 
 
 ## Config Properties
-### areaStyle: `StyleProps{:js}`[#areaStyle]
-area 영역에 적용할 스타일셋이나 class selector.
-
-### baseValue: `number{:js}`[#baseValue]
-위/아래 구분의 기준이 되는 값.
-
-### belowStyle: `SVGStyles | string{:js}`[#belowStyle]
-baseValue  혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.
-
-### clipped: `boolean{:js}`[#clipped]
-body 영역을 벗어난 data point view는 잘라낸다.
-
-### color: `string{:js}`[#color]
-데이터 포인트 기본 색.
-
-### colorField: `string{:js}`[#colorField]
-undefined이면, data point의 값이 객체일 때 'color'.
-
-### connectNullPoints: `boolean{:js}`[#connectNullPoints]
-true로 지정하면 y값이 지정되지 않은 null 포인터를 무시하고 다음 포인트에 연결한다.
-
-### curved: `boolean{:js}`[#curved]
-true면 spline 곡선으로 표시한다.
-
-### dataProp: `string{:js}`[#dataProp]
-undefined이면 "data".
-
-### lineType: `LineType{:js}`[#lineType]
-
-
-### marker: `LineSeriesMarker{:js}`[#marker]
-
-
-### nullAsBase: `boolean{:js}`[#nullAsBase]
-null인 y값을  baseValue 로 간주한다.
-
-### onPointClick: `PointClickCallbck{:js}`[#onPointClick]
-데이터 point가 클릭될 때 발생하는 이벤트 콜백.
-
-### pointColors: `boolean | string[]{:js}`[#pointColors]
-데이터 포인트별 색들을 지정한다.
-
-### pointStyleCallback: `PointStyleCallback{:js}`[#pointStyleCallback]
-데이터 point의 동적 스타일 콜백.
-
-### pointsInSigma: `number{:js}`[#pointsInSigma]
-
-
-### ranges: `IValueRange[]{:js}`[#ranges]
-값 범위 목록.
-
-### sigmas: `number{:js}`[#sigmas]
-
-
-### source: `string | number{:js}`[#source]
-이 시리즈 data point들을 구성할 수 있는 데이터를 포함한 원본 시리즈.
-
-### stepDir: `LineStepDirection{:js}`[#stepDir]
-
-
-### style: `SVGStyles | string{:js}`[#style]
-스타일셋 혹은 class selector.
-
-### visibleInLegend: `boolean{:js}`[#visibleInLegend]
-명시적 false로 지정하면 legend에 표시하지 않는다.
-
-### xAxis: `string | number{:js}`[#xAxis]
-
-
-### xField: `string | number{:js}`[#xField]
-undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'.
-
-### xStart: `any{:js}`[#xStart]
-x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.
-
-### xStep: `string | number{:js}`[#xStep]
-x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
-
-### yAxis: `string | number{:js}`[#yAxis]
-
-
-### yField: `string | number{:js}`[#yField]
-undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'.
-
-### zOrder: `number{:js}`[#zOrder]
-
-
-### visible: `boolean{:js}`[#visible]
-표시 여부.
-
+ | Name | Type | Description |   
+ | --- | --- | --- | 
+ | [areaStyle](/config/config/series/bellcurve#areastyle) | `StyleProps{:js}` | area 영역에 추가적으로 적용되는 스타일셋이나 class selector. |   
+ | [baseValue](/config/config/series/bellcurve#basevalue) | `number{:js}` | 위/아래 구분의 기준이 되는 값. |   
+ | [belowStyle](/config/config/series/bellcurve#belowstyle) | `SVGStyles \| string{:js}` | **[baseValue](#basevalue)**  혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일. |   
+ | [col](/config/config/series/bellcurve#col) | `number{:js}` | 분할 모드일 때 시리즈가 표시될 pane의 수직 위치. |   
+ | [color](/config/config/series/bellcurve#color) | `string{:js}` | 데이터 포인트 기본 색. |   
+ | [colorField](/config/config/series/bellcurve#colorfield) | `string{:js}` | undefined이면, data point의 값이 객체일 때 'color'. |   
+ | [connectNullPoints](/config/config/series/bellcurve#connectnullpoints) | `boolean{:js}` | true로 지정하면 y값이 지정되지 않은 null 포인터를 무시하고 다음 포인트에 연결한다. |   
+ | [curved](/config/config/series/bellcurve#curved) | `boolean{:js}` | true면 spline 곡선으로 표시한다. |   
+ | [dataProp](/config/config/series/bellcurve#dataprop) | `string{:js}` | undefined이면 "data". |   
+ | [label](/config/config/series/bellcurve#label) | `string{:js}` | 이 시리즈를 나타내는 텍스트. |   
+ | [lineType](/config/config/series/bellcurve#linetype) | `LineType{:js}` |  |   
+ | [marker](/config/config/series/bellcurve/marker) | `LineSeriesMarker{:js}` |  |   
+ | [name](/config/config/series/bellcurve#name) | `string{:js}` | 시리즈 이름. |   
+ | [noClip](/config/config/series/bellcurve#noclip) | `boolean{:js}` | true로 지정하면 body를 벗어난 data point 영역도 표시된다. |   
+ | [nullAsBase](/config/config/series/bellcurve#nullasbase) | `boolean{:js}` | null인 y값을  **[baseValue](#basevalue)** 로 간주한다. |   
+ | [onPointClick](/config/config/series/bellcurve#onpointclick) | `PointClickCallback{:js}` | 데이터 point가 클릭될 때 발생하는 이벤트 콜백. |   
+ | [pointColors](/config/config/series/bellcurve#pointcolors) | `boolean \| string[]{:js}` | 데이터 포인트별 색들을 지정한다. |   
+ | [pointLabel](/config/config/series/bellcurve/pointlabel) | `DataPointLabel{:js}` | 데이터포인트 label 설정 모델. |   
+ | [pointStyleCallback](/config/config/series/bellcurve#pointstylecallback) | `PointStyleCallback{:js}` | 데이터 point의 동적 스타일 콜백. |   
+ | [pointsInSigma](/config/config/series/bellcurve#pointsinsigma) | `number{:js}` |  |   
+ | [row](/config/config/series/bellcurve#row) | `number{:js}` | 분할 모드일 때 시리즈가 표시될 pane의 수평 위치. |   
+ | [sigmas](/config/config/series/bellcurve#sigmas) | `number{:js}` |  |   
+ | [source](/config/config/series/bellcurve#source) | `string \| number{:js}` | 이 시리즈 data point들을 구성할 수 있는 데이터를 포함한 원본 시리즈. |   
+ | [stepDir](/config/config/series/bellcurve#stepdir) | `LineStepDirection{:js}` |  |   
+ | [style](/config/config/series/bellcurve#style) | `SVGStyles \| string{:js}` | 스타일셋 혹은 class selector. |   
+ | [tooltip](/config/config/series/bellcurve/tooltip) | `Tooltip{:js}` | 데이터포인트 툴팁 설정 모델. |   
+ | [trendline](/config/config/series/bellcurve/trendline) | `Trendline{:js}` | 추세선 설정 모델. |   
+ | [viewRangeValue](/config/config/series/bellcurve#viewrangevalue) | `'z' \| 'y' \| 'x'{:js}` | ranges가 적용되는 값. |   
+ | [viewRanges](/config/config/series/bellcurve#viewranges) | `IValueRanges \| IValueRange[]{:js}` | 값 범위 목록. |   
+ | [visible](/config/config/series/bellcurve#visible) | `boolean{:js}` | 표시 여부. |   
+ | [visibleInLegend](/config/config/series/bellcurve#visibleinlegend) | `boolean{:js}` | 명시적 false로 지정하면 legend에 표시하지 않는다. |   
+ | [xAxis](/config/config/series/bellcurve#xaxis) | `string \| number{:js}` |  |   
+ | [xField](/config/config/series/bellcurve#xfield) | `string \| number{:js}` | undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'. |   
+ | [xStart](/config/config/series/bellcurve#xstart) | `any{:js}` | x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값. |   
+ | [xStep](/config/config/series/bellcurve#xstep) | `string \| number{:js}` | x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격. |   
+ | [yAxis](/config/config/series/bellcurve#yaxis) | `string \| number{:js}` |  |   
+ | [yField](/config/config/series/bellcurve#yfield) | `string \| number{:js}` | undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'. |   
+ | [zOrder](/config/config/series/bellcurve#zorder) | `number{:js}` |  | 
 
 ## Properties
 ### pointLabel: [RcChartObject](../classes/RcChartObject)[#pointLabel]
@@ -132,6 +82,14 @@ console.log(chart.axis.get('title.text'));
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 속성 경로. |
+### getValueAt(xValue): [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)[#getValueAt]
+xValue에 해당하는 데이터포인터의 yValue를 리턴한다.
+
+
+
+| Parameter | Type |
+| ----------- | ----------- |
+| xValue | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
 ### set(prop, value, redraw): [RcChartObject](../classes/RcChartObject)[#set]
 지정한 속성의 값(들)을 설정한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다.\
@@ -186,3 +144,7 @@ chart.getSeries('ser02').toggle('visible');
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 이름 |
 | redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+### updateData(data): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#updateData]
+| Parameter | Type |
+| ----------- | ----------- |
+| data | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |

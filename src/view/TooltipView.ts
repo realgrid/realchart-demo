@@ -73,6 +73,8 @@ export class TooltipView extends RcElement {
     // methods
     //-------------------------------------------------------------------------
     show(series: Series, point: DataPoint, x: number, y: number, animate: boolean): void {
+        const cw = this.control.contentWidth();
+        const ch = this.control.contentHeight();
         const model = this._model = series.tooltip;
         const tv = this._textView;
         const isInverted = model.series.chart.isInverted();
@@ -98,10 +100,13 @@ export class TooltipView extends RcElement {
             this.drawTooltip(0, -this._topHeight, w, h + this._topHeight, TooltipPosition.TOP);
             this.translateEx(x - w / 2, y - h - model.offset, dur, false);
         }
+        x = Math.max(0, Math.min(x, cw - w));
+        y = Math.max(0, Math.min(y, ch - h));
+        this.translateEx(x, y, dur, false);
+
         if (dur === 0) {
             this.setStyle('visibility', 'visible');
         }
-
         if (this._hideTimer) {
             clearTimeout(this._hideTimer);
             this._hideTimer = void 0;
@@ -131,7 +136,7 @@ export class TooltipView extends RcElement {
             this.setStyle('visibility', 'hidden');
         })
     }
-
+  
     private drawTooltip(x: number, y: number, w: number, h: number, position: string): void {
         const tail = this._tailSize;
         const radius = this._radius;

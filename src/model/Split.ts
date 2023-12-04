@@ -6,51 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString } from "../common/Common";
-import { Align, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
+import { isArray, isObject, isString, pickNum } from "../common/Common";
+import { _undefined } from "../common/Types";
 import { PaneAxisMatrix } from "./Axis";
 import { Body } from "./Body";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
-
-export class PaneTitle extends ChartItem {
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(public pane: Pane) {
-        super(pane.chart);
-    }
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    /**
-     * 제목 텍스트
-     * @config 
-     */
-    text: string;
-    align = Align.CENTER;
-    backgroundStyle: SVGStyleOrClass;
-
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    isVisible(): boolean {
-        return this.visible && !isNull(this.text);
-    }
-    
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    protected _doLoadSimple(source: any): boolean {
-        if (isString(source)) {
-            this.text = source;
-            return true;
-        }
-        return super._doLoadSimple(source);
-    }
-}
 
 export class PaneBody extends Body {
 
@@ -66,7 +27,6 @@ export class PaneBody extends Body {
         this.radius = _undefined;
         this.centerX = _undefined;
         this.centerY = _undefined;
-        this.startAngle = _undefined;
     }
 
     //-------------------------------------------------------------------------
@@ -86,14 +46,21 @@ export class Pane extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart, public row: number, public col: number) {
-        super(chart);
+        super(chart, true);
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    title = new PaneTitle(this);
+    inverted: boolean;
     body = new PaneBody(this);
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    prepareRender(): void {
+        this.body.prepareRender();
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -195,6 +162,19 @@ export class Split extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doLoadSimple(source: any): boolean {
+        if (isArray(source) && source.length > 0) {
+            this.rows = Math.max(1, +source[0]);
+            this.cols = Math.max(1, pickNum(+source[1], this.rows));
+            if (this.rows > 0 && this.cols > 0) {
+                this.$_parsePanes(this.rows, this.cols);
+                this.visible = true;
+            }
+            return true;
+        }
+        return super._doLoadSimple(source);
+    }
+
     protected _doLoadProp(prop: string, value: any): boolean {
         if (['panes', 'cols', 'rows'].indexOf(prop) >= 0) {
             return true;
@@ -205,7 +185,7 @@ export class Split extends ChartItem {
         super.load(source);
 
         if (isObject(source)) {
-            this.$_parsePanes(source.rows, source.cols);
+            this.$_parsePanes(this.rows = source.rows, this.cols = source.cols);
             this._panes = this.$_loadPanes(source.panes);
         }
         return this;
@@ -215,6 +195,8 @@ export class Split extends ChartItem {
         this._xAxes = chart._xPaneAxes;
         this._yAxes = chart._yPaneAxes;
         this._vpanes = this.$_collectPanes(chart);
+        this._vpanes.forEach(panes => panes.forEach(pane => pane.prepareRender()));
+
     }
 
     getXLens(length: number): number[] {

@@ -18,6 +18,10 @@ const config = {
             fill: 'none'
         }
     },
+    split: {
+        visible: true,
+        rows: 2
+    },
     xAxis: [{
         // title: "일일 Daily fat",
         position: 'between',
@@ -45,10 +49,6 @@ const config = {
             margin: 0
         }
     }],
-    split: {
-        visible: true,
-        rows: 2
-    },
     series: [{
         name: '남자',
         pointLabel: {

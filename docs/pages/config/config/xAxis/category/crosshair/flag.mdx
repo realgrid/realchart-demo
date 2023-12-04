@@ -1,0 +1,48 @@
+## [flag](/config/config/flag)
+축 상에 crosshair의 정보를 표시하는 view.
+## Properties
+
+### format: `string{:js}`[#format]
+flag에 표시될 텍스트 형식.
+
+
+별도로 지정하지 않으면 현재 위치에 해당하는 축 값을 표시한다.
+Category 축인 경위 위치에 해당하는 category 이름을 표시한다.  
+
+### style: `SVGStyles | string{:js}`[#style]
+스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+### textStyles: `SVGStyles | string{:js}`[#textStyles]
+flag에 표시되는 text의 스타일.  
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+### visible: `boolean{:js}`[#visible]
+표시 여부.  
+<DefaultValue value="true" contents=""></DefaultValue>

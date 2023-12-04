@@ -36,7 +36,6 @@ export class ElementPool<T extends RcElement> extends RcObject {
     private _removes: T[] = [];
     private _styleName: string;
 
-
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------

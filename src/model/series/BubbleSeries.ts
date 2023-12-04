@@ -10,9 +10,8 @@ import { pickNum, pickProp } from "../../common/Common";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
-import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { MarkerSeries, Series, SeriesMarker } from "../Series";
+import { MarkerSeries } from "../Series";
 
 /**
  * [y, z]
@@ -36,7 +35,7 @@ export class BubbleSeriesPoint extends DataPoint {
     // overriden members
     //-------------------------------------------------------------------------
     getLabel(index: number) {
-        return this.z;
+        return this.zValue;
     }
 
     parse(series: BubbleSeries): void {
@@ -78,6 +77,10 @@ export class BubbleSeriesPoint extends DataPoint {
         super._readSingle(v);
 
         this.z = this.y;
+    }
+
+    getZValue(): number {
+        return this.zValue;
     }
 }
 
@@ -149,19 +152,12 @@ export class BubbleSeries extends MarkerSeries {
         return true;
     }
 
-    getPointTooltip(point: BubbleSeriesPoint, param: string): any {
-        switch (param) {
-            case 'z':
-                return point.z;
-            case 'zValue':
-                return point.zValue;
-            default:
-                return super.getPointTooltip(point, param);
-        }
-    }
-
     protected _createPoint(source: any): DataPoint {
         return new BubbleSeriesPoint(source);
+    }
+
+    hasZ(): boolean {
+        return true;
     }
 
     _colorByPoint(): boolean {
@@ -189,5 +185,12 @@ export class BubbleSeries extends MarkerSeries {
             }
         })
         this._noSize = this._zMin === this._zMax;
+    }
+
+    protected _getRangeMinMax(axis: "x" | "y" | "z"): { min: number; max: number; } {
+        if (axis === 'z') {
+            return { min: this._zMin, max: this._zMax };
+        }
+        return super._getRangeMinMax(axis);
     }
 }

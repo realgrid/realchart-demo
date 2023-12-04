@@ -1,28 +1,23 @@
 export const config = {
-  title: '한국가스공사 월간 시도별 도시가스 판매현황',
+  title: '세종특별자치시 1인당 지방세 부담액',
   options: {},
   xAxis: {
-    title: '시도별',
-    categories: [ '강원', '서울', '경기', '인천', '부산', '경북' ],
-    grid: true
+    title: '년도',
+    categories: [ '2017', '2018', '2019', '2020', '2021', '2022' ],
+    grid: true,
+    label: { step: 1 }
   },
-  yAxis: { title: 'Vertical 수직축 Axis' },
+  yAxis: { title: '인구수' },
   series: [
     {
-      name: '2019년도',
+      name: '주민1인당 부담금액',
       pointLabel: true,
-      data: [ 413340, 4295799, 4582903, 1504513, 1428640, 1495929 ]
+      data: [ 237466, 213497, 195827, 223488, 235850, 224338 ]
     },
     {
-      name: '2020년도',
-      pointWidth: 2,
+      name: '인구수',
       pointLabel: true,
-      data: [ 416570, 4180225, 5236434, 1393145, 1408886, 1479257 ]
-    },
-    {
-      name: '2021년도',
-      pointLabel: true,
-      data: [ 459931, 4201860, 5498483, 1472529, 1316482, 1421999 ]
+      data: [ 28010, 31412, 34057, 35583, 37189, 38359 ]
     }
   ]
 }

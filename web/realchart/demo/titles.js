@@ -13,7 +13,11 @@ const config = {
         text: "Sub Title",
         style: {
             fill: 'red'
-        }
+        },
+        // backgroundStyle: {
+        //     fill: 'black',
+        //     padding: "2px 4px"
+        // }
     },
     xAxis: {
         // type: 'category',
@@ -64,27 +68,51 @@ function setActions(container) {
         config.title.visible = _getChecked(e);
         chart.load(config);
     }, true);
-    createListBox(container, "alignBase", ['plot', 'chart'], function (e) {
+    createListBox(container, "title.alignBase", ['plot', 'chart'], function (e) {
         config.title.alignBase = _getValue(e);
         chart.load(config);
     }, 'plot');
-    createListBox(container, "align", ['left', 'center', 'right'], function (e) {
+    createListBox(container, "title.align", ['left', 'center', 'right'], function (e) {
         config.title.align = _getValue(e);
         chart.load(config);
     }, 'center');
+    createListBox(container, "title.verticalAlign", ['top', 'middle', 'bottom'], function (e) {
+        config.title.verticalAlign = _getValue(e);
+        chart.load(config);
+    }, 'middle');
+    createListBox(container, "title.gap", ['0', '10', '20'], function (e) {
+        config.title.gap = _getValue(e);
+        chart.load(config);
+    }, '10');
     line(container);
     createCheckBox(container, 'Subtitle', function (e) {
         config.subtitle.visible = _getChecked(e);
         chart.load(config);
     }, true);
-    createListBox(container, "alignBase", ['plot', 'chart'], function (e) {
+    createListBox(container, "subtitle.position", ['top', 'bottom', 'left', 'right'], function (e) {
+        config.subtitle.position = _getValue(e);
+        chart.load(config);
+    }, 'bottom');
+    createListBox(container, "subtitle.alignBase", ['plot', 'chart', 'parent'], function (e) {
         config.subtitle.alignBase = _getValue(e);
         chart.load(config);
     }, 'plot');
-    createListBox(container, "align", ['left', 'center', 'right'], function (e) {
+    createListBox(container, "subtitle.align", ['left', 'center', 'right'], function (e) {
         config.subtitle.align = _getValue(e);
         chart.load(config);
     }, 'center');
+    createListBox(container, "subtitle.verticalAlign", ['top', 'middle', 'bottom'], function (e) {
+        config.subtitle.verticalAlign = _getValue(e);
+        chart.load(config);
+    }, 'bottom');
+    createListBox(container, "subtitle.gap", ['0', '10', '20'], function (e) {
+        config.subtitle.gap = _getValue(e);
+        chart.load(config);
+    }, '10');
+    createListBox(container, "subtitle.titleGap", ['0', '2', '10'], function (e) {
+        config.subtitle.titleGap = _getValue(e);
+        chart.load(config);
+    }, '2');
 }
 
 function init() {

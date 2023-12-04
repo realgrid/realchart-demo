@@ -14,10 +14,6 @@ const config = {
             marginRight: '20px'
         }
     },
-    xAxis: {
-    },
-    yAxis: {
-    },
     plot: {
         // style: { fill: 'yellow' }
     },

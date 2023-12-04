@@ -4,24 +4,183 @@ title: '개요'
 
 # 차트 설정(Configuration)
 
-RealChart는 차트 구성 요소들의 배치 정보와 스타일들이 지정된 JSON 설정 객체를 이용하여 생성된다.
+RealChart는 차트 구성 요소들의 배치 정보와 스타일들이 지정된 [JSON](https://www.oracle.com/kr/database/what-is-json/) 설정 객체를 이용하여 생성된다.
 
 ```js
 const config = {
+    type: 'bar',
     polar: false,
     inverted: false,
-    type: 'bar',
     gaugeType: 'circle',
     templates: {},
     options: {},
     title: {},
     subtitle: {},
-    body: {},
-    legend: {},
     xAxis: [],
     yAxis: [],
     series: [],
-    gauge: [],
+    gauges: [],
+    annotations: [],
+    legend: {},
+    body: {},
+    split: {}
 };
 const chart = RealChart.createChart(document, 'div', config);
+```
+
+## 최상위 속성들
+
+차트 기본 형태와 시리즈 및 게이지의 기본 종류 등을 최상위에서 바로 지정한다.\
+[최상위 속성들](/config/config) 페이지를 참조한다.
+
+```js
+const config = {
+    // 기본 시리즈 종류
+    type: 'bar',
+    // 기본 게이지 종류
+    gaugeType: 'circle'
+    // 극좌표 사용 여부.
+    polar: false,
+    // x, y축의 위치를 바꿔서 표시
+    invertedd: false,
+}
+```
+
+## 차트 수준 옵션들
+
+차트 전체에 영향을 주는 속성들을 지정한다.\
+[차트 옵션](/config/config/options) 페이지를 참조한다.
+
+```js
+const config = {
+    options: {
+        // 애니메이션 실행 여부
+        animatable: true;
+        // 테마 이름
+        theme: '',
+        // 시리즈 및 데이터포인트에 적용되는 기본 색상 팔레트 이름.
+        palette: '',
+        // palette로 지정된 팔레트 색상들을 시리즈에 적용하는 방식.
+        paletteMode = 'normal',
+        // 복수 axis가 표시되는 경우 axis 사이의 간격
+        axisGap = 8,
+        // 크레딧 설정
+        credits = {}
+    }
+}
+```
+
+## 차트 타이틀
+
+주/부 두 개의 타이틀을 다양한 스타일과 방식으로 배치할 수 있다.\
+[타이틀](/config/config/title)및 [부 타이틀](/config/config/subtitle) 페이지를 참조한다.
+
+```js
+const config = {
+    // 주 제목
+    title: {
+    },
+    // 문자열로 지정하면 타이틀의 text로 지정된다.
+    title: 'Title',
+    // 부 제목
+    subtitle: {
+    }
+}
+```
+
+## X 축
+
+**'xAxes'** 또는 **'xAxis'** 이름으로 하나 이상의 X축(들)을 설정한다.\
+축은 'category', 'linear', 'time', 'log' 등 네가지 종류가 있고,
+공통 속성 외에 종류별로 다른 속성들이 추가 포함된다.
+둘 이상의 X축은 array로 설정한다.
+
+```js
+const config = {
+    xAxis: [{
+    }, {
+    }]
+}
+```
+
+## Y 축
+
+**'yAxes'** 또는 **'yAxis'** 이름으로 하나 이상의 Y축(들)을 설정한다.\
+축은 'category', 'linear', 'time', 'log' 등 네가지 종류가 있고,
+공통 속성 외에 종류별로 다른 속성들이 추가 포함된다.
+둘 이상의 Y축은 array로 설정한다.
+
+```js
+const config = {
+    yAxis: [{
+    }, {
+    }]
+}
+```
+
+## 시리즈
+
+시리즈는 데이터를 표시하는 차트의 기본 구성요소이다.\
+'bar', 'linear', 'area', 'pie' 등 몇 십 종류의 시리즈가 있으며,
+시리즈 공통 속성 외에 종류별로 추가 속성들이 존재할 수 있다.
+둘 이상의 시리즈는 배열로 설정한다.
+
+```js
+const config = {
+    series: [{
+    }, {
+    }]
+}
+```
+
+## 게이지
+
+게이지는 단일 값을 표시하는 차트의 기본 구성요소이다.\
+'circle', 'linear' 등 몇 종류의 게이지가 있으며,
+게이지 공통 속성 외에 종류별로 추가 속성들이 존재할 수 있다.
+**'gauges'** 또는 **'gauge'** 이름으로 하나 이상의 게이지(들)을 설정한다.\
+둘 이상의 게이지는 배열로 설정한다.
+
+```js
+const config = {
+    gauges: [{
+    }, {
+    }]
+}
+```
+
+## 어노테이션
+
+어노테이션은 시리즈나 게이지와 관련된 부가적인 정보(텍스트나 이미지)를 표시하는 차트 구성 요소이다.\
+**'annotations'** 또는 **'annotation'** 이름으로 하나 이상의 어노테이션(들)을 설정한다.\
+둘 이상의 어노테이션은 배열로 설정한다.
+
+```js
+const config = {
+    annotations: [{
+    }, {
+    }]
+}
+```
+
+## Body
+
+시리즈나 게이지가 표시되는 차트 본체 영역에 대한 속성들을 설정한다.\
+
+```js
+const config = {
+    body: {
+    }
+}
+```
+
+## Split
+
+차트 본체를 하나 이상의 행과 열로 분할해서 보다 다양한 배치로 시리즈와 게이지를 표시할 수 있다.\
+
+```js
+const config = {
+    split: {
+    }
+}
 ```

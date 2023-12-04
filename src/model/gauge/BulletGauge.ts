@@ -31,7 +31,7 @@ export class BulletGaugeBand extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public gauge: BulletGauge | BulletGaugeGroup) {
-        super(gauge.chart);
+        super(gauge.chart, true);
     }
 
     //-------------------------------------------------------------------------
@@ -88,12 +88,20 @@ export class BulletGaugeBand extends ChartItem {
         }
     }
 
+    /**
+     * true로 지정하면 {@link ranges} 항목에서  **toValue**나 **fromValue**가 지정되지 않은 경우,  
+     * 모든 값이 포함되는 값으로 확장한다.
+     * 
+     * @config
+     */
+    rangeInclusive = true;
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
     private $_internalRanges(): IValueRange[] {
         if (!this._runRanges) {
-            this._runRanges = buildValueRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue);
+            this._runRanges = buildValueRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue, this.rangeInclusive);
         }
         return this._runRanges;
     }
@@ -105,7 +113,7 @@ export class BulletTargetBar extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(gauge: BulletGauge) {
-        super(gauge.chart);
+        super(gauge.chart, true);
     }
 
     //-------------------------------------------------------------------------
@@ -126,7 +134,7 @@ export class BulletActualBar extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(gauge: BulletGauge) {
-        super(gauge.chart);
+        super(gauge.chart, true);
     }
 }
 
@@ -189,12 +197,19 @@ export class BulletGauge extends LinearGaugeBase {
      * @config
      */
     ranges: IValueRange[];
-
+    /**
+     * true로 지정하면 {@link ranges} 항목에서  **toValue**나 **fromValue**가 지정되지 않은 경우,  
+     * 모든 값이 포함되는 값으로 확장한다.
+     * 
+     * @config
+     */
+    rangeInclusive = true;
+    
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     getRanges(min: number, max: number): IValueRange[] {
-        return buildValueRanges(this.ranges, min, max);
+        return buildValueRanges(this.ranges, min, max, this.rangeInclusive);
     }
 
     //-------------------------------------------------------------------------
@@ -221,12 +236,19 @@ export class BulletGaugeGroup extends LinearGaugeGroupBase<BulletGauge> {
      * @config
      */
     ranges: IValueRange[];
+    /**
+     * true로 지정하면 {@link ranges} 항목에서  **toValue**나 **fromValue**가 지정되지 않은 경우,  
+     * 모든 값이 포함되는 값으로 확장한다.
+     * 
+     * @config
+     */
+    rangeInclusive = true;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     getRanges(min: number, max: number): IValueRange[] {
-        return buildValueRanges(this.ranges, min, max);
+        return buildValueRanges(this.ranges, min, max, this.rangeInclusive);
     }
 
     //-------------------------------------------------------------------------

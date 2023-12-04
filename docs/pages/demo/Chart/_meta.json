@@ -2,6 +2,9 @@
 	"background": {
 		"title": "Background"
 	},
+	"series-navigator": {
+		"title": "Navigator"
+	},
 	"resize": {
 		"title": "Resize"
 	}

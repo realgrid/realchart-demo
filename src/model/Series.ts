@@ -6,11 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, pickNum, pickProp, pickProp3 } from "../common/Common";
+import { isArray, isFunc, isObject, isString, pickNum, pickProp, pickProp3 } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { RcElement } from "../common/RcControl";
 import { RcObject } from "../common/RcObject";
-import { IPercentSize, IValueRange, RtPercentSize, SVGStyleOrClass, buildValueRanges, calcPercent, parsePercentSize } from "../common/Types";
+import { IPercentSize, IValueRange, IValueRanges, RtPercentSize, SVGStyleOrClass, _undefined, buildValueRanges, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { RectElement } from "../common/impl/RectElement";
 import { Shape, Shapes } from "../common/impl/SvgShape";
@@ -42,6 +42,11 @@ export const NUMBER_FORMAT = '#,##0.#';
 export class DataPointLabel extends FormattableText {
 
     //-------------------------------------------------------------------------
+    // const
+    //-------------------------------------------------------------------------
+    private static readonly OFFSET = 4;
+
+    //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     /**
@@ -60,18 +65,30 @@ export class DataPointLabel extends FormattableText {
     // verticalAlign = VerticalAlign.MIDDLE;
 
     /**
-     * label과 point view 사이의 기본 간격.
+     * label과 point view 사이의 기본 간격.\
+     * 값을 지정하지 않으면 {@link position}이 'inside'일 때는 0, 그 외는 4 픽셀이다.
      * 
      * @config
      */
-    offset = 4;
-
+    offset: number;
     /**
      * 'pie', 'funnel' 시리즈에서 label이 외부에 표시될 때 label과 시리즈 본체와의 기본 간격.
      * 
      * @config
      */
     distance = 25;
+    /**
+     * 계산되는 기본 text 대신, data point label로 표시될 text 리턴.\
+     * undefined를 리턴하면 기본 text 표시.
+     */
+    textCallback: (point: any) => string;
+    /**
+     * 데이터 포인트별 label 표시 여부를 리턴하는 콜백.
+     * 
+     * @config
+     */
+    visibleCallback: (point: any) => boolean;
+    styleCallback: (point: any) => SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // fields
@@ -80,12 +97,21 @@ export class DataPointLabel extends FormattableText {
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart) {
-        super(chart, false);
+        super(chart, _undefined);
+
+        this.visible = _undefined;
     }
 
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 데이터 포인트 label 표시 여부.
+     * 값을 설정하지 않고 {@link visibleCallback}이 설정되면 콜백 리턴값을 따른다.
+     * 명시적으로 값을 설정하면 그 값에 따른다.
+     */
+    "@config visible" = undefined;
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -97,16 +123,26 @@ export class DataPointLabel extends FormattableText {
         return value;
     }
 
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    protected _doLoad(source: any): void {
-        super._doLoad(source);
+    getOffset(): number {
+        if (isNaN(this.offset)) {
+            return this.position === PointItemPosition.INSIDE ? 0 : DataPointLabel.OFFSET;
+        }
+        return this.offset;
     }
 
     //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _doLoadSimple(source: any): boolean {
+        if (isFunc(source)) {
+            this.visibleCallback = source;
+            return this.visible = true;
+        }
+        return super._doLoadSimple(source);
+    }
 }
 
 export interface IPlottingItem {
@@ -119,8 +155,10 @@ export interface IPlottingItem {
     xAxis: string | number;
     yAxis: string | number;
     visible: boolean;
+    zOrder: number;
 
-    isSide(): boolean;
+    setCol(col: number): void;
+    setRow(row: number): void;
     getVisiblePoints(): DataPoint[];
     getLegendSources(list: ILegendSource[]): void;
     needAxes(): boolean;
@@ -172,9 +210,7 @@ export class Trendline extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public series: Series) {
-        super(series.chart);
-
-        this.visible = false;
+        super(series.chart, false);
     }
 
     //-------------------------------------------------------------------------
@@ -306,7 +342,6 @@ export interface ISeries extends IPlottingItem {
     displayName(): string;
     createPoints(source: any[]): DataPoint[];
     getPoints(): DataPointCollection;
-    getValue(point: DataPoint, axis: IAxis): number;
     isVisible(p: DataPoint): boolean;
 }
 
@@ -317,18 +352,30 @@ export interface IDataPointCallbackArgs {
     vcount: number;
     yMin: number;
     yMax: number;
+    xMin: number;
+    xMax: number;
+    zMin: number;
+    zMax: number;
 
     /* point proxy */
     index: number;
     vindex: number;
     x: any;
     y: any;
+    z: any;
     xValue: any;
     yValue: any;
+    zValue: any;
 }
 
 export type PointStyleCallback = (args: IDataPointCallbackArgs) => SVGStyleOrClass;
-export type PointClickCallbck = (args: IDataPointCallbackArgs) => boolean;
+export type PointClickCallback = (args: IDataPointCallbackArgs) => boolean;
+
+const AXIS_VALUE = {
+    'x': 'xValue',
+    'y': 'yValue',
+    'z': 'zValue'
+}
 
 /**
  */
@@ -343,23 +390,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     // static members
     //-------------------------------------------------------------------------
     static _loadSeries(chart: IChart, src: any, defType?: string): Series {
-        let cls = chart._getSeriesType(src.type);
-
-        if (!cls) {
-            cls = chart._getSeriesType(defType || chart.type);
-        }
-
-        const ser = new cls(chart, src.name);
-
-        ser.load(src);
-        return ser;
+        const cls = chart._getSeriesType(src.type) || chart._getSeriesType(defType || chart.type);
+        return new cls(chart, src.name).load(src);
     }
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private _ranges: IValueRange[];
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -371,20 +408,28 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _yAxisObj: IAxis;
     protected _points: DataPointCollection;
     _runPoints: DataPoint[];
+    _visPoints: DataPoint[];
+    _runRangeValue: 'x' | 'y' | 'z';
     _runRanges: IValueRange[];
-    _minValue: number;
-    _maxValue: number;
+    _minX: number;
+    _maxX: number;
+    _minY: number;
+    _maxY: number;
+    _minZ: number;
+    _maxZ: number;
     _referents: Series[];
     _calcedColor: string;
     _simpleMode = false;
     private _legendMarker: RcElement;
+    private _pointLabelCallback: (point: any) => string;
     protected _pointArgs: IDataPointCallbackArgs;
+    private _argsPoint: DataPoint;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(chart: IChart, name?: string) {
-        super(chart);
+        super(chart, true);
 
         this.name = name;
         this.pointLabel = new DataPointLabel(chart);
@@ -393,6 +438,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
         this._points = new DataPointCollection(this);
         this._pointArgs = this._createPointArgs();
+
+        this._initProps();
+    }
+
+    protected _initProps(): void {
     }
 
     //-------------------------------------------------------------------------
@@ -400,15 +450,51 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     abstract _type(): string; // for debugging, ...
 
+    /**
+     * 시리즈 이름.\
+     * 시리즈 생성시 지정되고 변경할 수 없다.
+     * 
+     * @config
+     */
     readonly name: string;
-    readonly label: string;
+    /**
+     * 이 시리즈를 나타내는 텍스트.\
+     * 레전드나 툴팁에서 시리즈를 대표한다.
+     * 이 속성이 지정되지 않으면 {@link name}이 사용된다.
+     * 
+     * @config
+     */
+    label: string;
+    /**
+     * 데이터포인트 label 설정 모델.
+     * 
+     * @config
+     */
     readonly pointLabel: DataPointLabel;
+    /**
+     * 추세선 설정 모델.
+     * 
+     * @config
+     */
     readonly trendline: Trendline;
+    /**
+     * 데이터포인트 툴팁 설정 모델.
+     * 
+     * @config
+     */
     readonly tooltip: Tooltip;
-
+    /**
+     * 분할 모드일 때 시리즈가 표시될 pane의 수평 위치.
+     * 
+     * @config
+     */
     row: number;
+    /**
+     * 분할 모드일 때 시리즈가 표시될 pane의 수직 위치.
+     * 
+     * @config
+     */
     col: number;
-
     /**
      * 포인터가 차지하는 너비가 이 값 미만이면 표시하지 않는다.
      * // TODO: 구현할 것!
@@ -451,7 +537,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     dataProp: string;
     /**
-     * x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.
+     * x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.\
      * 이 후에는 {@link xStep}씩 증가시키면서 설정한다.
      * 이 속성이 지징되지 않은 경우 {@link ChartOptions.xStart}가 적용된다.
      * 
@@ -459,14 +545,20 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     xStart: any;
     /**
-     * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
+     * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\
      * 첫번째 값은 {@link xStart}로 설정한다.
-     * time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.
+     * time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'w', 'd', 'h', 'n', 's')로 지정할 수 있다.
      * 이 속성이 지정되지 않으면 {@link ChartOptions.xStep}이 적용된다.
      * 
      * @config
      */
     xStep: number | string;
+    /**
+     * 모든 데이터포인트에 적용되는 inline 스타일셋.\
+     * {@link Series.style}로 설정되는 시리즈의 inline 스타일이
+     * 데이터포인터에 적용되지 않는 경우 이 속성을 사용할 수 있다.
+     */
+    pointStyle: SVGStyleOrClass;
     /**
      * 데이터 포인트 기본 색.
      * 
@@ -474,7 +566,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     color: string;
     /**
-     * 데이터 포인트별 색들을 지정한다.
+     * 데이터 포인트별 색들을 지정한다.\
      * false로 지정하면 모든 포인트들이 시리즈 색으로 표시된다.
      * true로 지정하면 기본 색들로 표시된다.
      * 색 문자열 배열로 지정하면 포함된 색 순서대로 표시된다.
@@ -484,19 +576,28 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     pointColors: boolean | string[];
     /**
-     * 값 범위 목록.
+     * 값 범위 목록.\
      * 범위별로 다른 스타일을 적용할 수 있다.
+     * 범위들은 중첩될 수 없다.
      * 
      * @config
      */
-    ranges: IValueRange[];
-    rangeAxis: 'x' | 'y' | 'z';
+    viewRanges: IValueRange[] | IValueRanges;
     /**
-     * body 영역을 벗어난 data point view는 잘라낸다.
+     * ranges가 적용되는 값.\
+     * 지정하지 않으면 시리즈 종류에 띠라 자동 적용된다.
+     * 'line' 시리즈 계열은 'x', 나머지는 'y'가 된다.
+     * 현재 'z'은 range는 bubble 시리즈에만 적용할 수 있다.
      * 
      * @config
      */
-    clipped = false;
+    viewRangeValue: 'x' | 'y' | 'z';
+    /**
+     * true로 지정하면 body를 벗어난 data point 영역도 표시된다.
+     * 
+     * @config
+     */
+    noClip = false;
     /**
      * 명시적 false로 지정하면 legend에 표시하지 않는다.
      * 
@@ -519,7 +620,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * 
      * @config
      */
-    onPointClick: PointClickCallbck;
+    onPointClick: PointClickCallback;
 
     contains(p: DataPoint): boolean {
         return this._points.contains(p);
@@ -550,16 +651,16 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return true;
     }
 
-    isSide(): boolean {
-        return this._yAxisObj.side;
-    }
-
     /**
      * @internal
      * 
      * CategoryAxis에 연결 가능한가?
      */
     canCategorized(): boolean {
+        return false;
+    }
+
+    hasZ(): boolean {
         return false;
     }
 
@@ -580,15 +681,15 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return this.label || this.name;
     }
 
-    legendMarker(doc: Document): RcElement {
+    legendMarker(doc: Document, size: number): RcElement {
         if (!this._legendMarker) {
-            this._legendMarker = this._createLegendMarker(doc, LegendItem.MARKER_SIZE);
+            this._legendMarker = this._createLegendMarker(doc, +size || LegendItem.MARKER_SIZE);
         }
         return this._legendMarker;
     }
-    setLegendMarker(elt: RcElement): void {
-        this._legendMarker = elt;
-    }
+    // setLegendMarker(elt: RcElement): void {
+    //     this._legendMarker = elt;
+    // }
 
     legendColor(): string {
         return this._calcedColor;
@@ -630,6 +731,14 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    setCol(col: number): void {
+        this._col = col;
+    }
+
+    setRow(row: number): void {
+        this._row = row;
+    }
+
     createPoints(source: any[]): DataPoint[] {
         return source.map((s, i) => {
             const p = this._createPoint(s);
@@ -652,26 +761,18 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return pickProp(this.xStep, this.chart.options.xStep);
     }
 
-    getValue(point: DataPoint, axis: IAxis): number {
-        const pv = point.source;
-
-        if (pv != null) {
-            const fld = this._getField(axis);
-            const v = pv[fld];
-
-        } else {
-            return NaN;
-        }
-    }
-
     prepareRender(): void {
-        this._calcedColor = void 0;
         this._xAxisObj = this.group ? this.group._xAxisObj : this.chart._connectSeries(this, true);
         this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
+        this._calcedColor = void 0;
         this._runPoints = this._points.getPoints(this._xAxisObj, this._yAxisObj);
-        this._runRanges = buildValueRanges(this.ranges, this._xAxisObj.axisMin(), this._xAxisObj.axisMax());
 
         super.prepareRender();
+    }
+
+    prepareAfter(): void {
+        // DataPoint.xValue가 필요하다.
+        this.trendline.visible && this.trendline.prepareRender();
     }
 
     collectCategories(axis: IAxis): string[] {
@@ -681,13 +782,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             if (fld != null) {
                 return this._points.getProps(fld);
             } else {
-                return this._points.getValues(axis === this._xAxisObj ? 'x' : 'y').filter(v => isString(v));
+                return this._points.getCategories(axis === this._xAxisObj ? 'x' : 'y').filter(v => isString(v));
             }
         }
     }
 
     /**
-     * vals가 지정되지 않은 상태로 호추될 수 있다.
+     * vals가 지정되지 않은 상태로 호출될 수 있다.
      * x값이 숫자가 아닐 때 axis가 해석하지 못하면 xStart 부터 xStep으로 증가 시켜 가면서 순서대로 지정한다.
      */
     collectValues(axis: IAxis, vals: number[]): void {
@@ -731,40 +832,91 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                     p.isNull = isNaN(p.yValue);
                 }
             });
-
-            // if (vals) {
-            //     this._minValue = Math.min(...vals);
-            //     this._maxValue = Math.max(...vals);
-            // }
         }
     }
 
     collectVisibles(): DataPoint[] {
-        const visPoints = this._runPoints.filter(p => p.visible);
+        const visPoints = this._visPoints = this._runPoints.filter(p => p.visible);
         const len = visPoints.length;
 
         if (len > 0) {
-            let min = visPoints[0].yValue;
-            let max = min;
+            const args = this._pointArgs;
+            let p = visPoints[0];
+            let minX = p.xValue;
+            let maxX = minX;
+            let minY = p.yValue;
+            let maxY = minY;
+            let minZ = p.zValue
+            let maxZ = minZ;
+            const hasZ = this.hasZ();
 
-            visPoints[0].vindex = 0;
+            p.vindex = 0;
+
             for (let i = 1; i < len; i++) {
-                const p = visPoints[i];
+                p = visPoints[i];
                 
                 p.vindex = i;
-                if (p.yValue > max) max = p.yValue;
-                else if (p.yValue < min) min = p.yValue;
+
+                if (p.yValue > maxY) maxY = p.yValue;
+                else if (p.yValue < minY) minY = p.yValue;
+
+                if (p.xValue > maxX) maxX = p.xValue;
+                else if (p.xValue < minX) minX = p.xValue;
             }
 
-            visPoints.forEach((p, i) => {
-                p.vindex = i;
-                max = Math.max(p.yValue, max);
-            });
+            if (hasZ) {
+                for (let i = 1; i < len; i++) {
+                    const v = visPoints[i].zValue;
+    
+                    if (v > maxZ) maxZ = v;
+                    else if (v < minZ) minZ = v;
+                }
+            }
 
-            this._pointArgs.yMin = this._minValue = min;
-            this._pointArgs.yMax = this._maxValue = max;
+            args.yMin = this._minY = minY;
+            args.yMax = this._maxY = maxY;
+            args.xMin = this._minX = minX;
+            args.xMax = this._maxX = maxX;
+            if (hasZ) {
+                args.zMin = this._minZ = minZ;
+                args.zMax = this._maxZ = maxZ;
+            }
         }
+
+        this.prepareViewRanges();
+
         return visPoints;
+    }
+
+    protected _getRangeMinMax(axis: 'x' | 'y' | 'z'): { min: number, max: number } {
+        let min: number;
+        let max: number;
+
+        if (axis === 'x') {
+            min = this._minX;
+            max = this._maxX;
+        } else if (axis === 'z') {
+            min = this._minZ;
+            max = this._maxZ;
+        } else {
+            min = this._minY;
+            max = this._maxY;
+        }
+        return { min, max }; 
+    }
+
+    prepareViewRanges(): void {
+        const rangeMinMax =  this._getRangeMinMax(this._runRangeValue = this.getViewRangeAxis());
+
+        if (this._runRanges = buildValueRanges(this.viewRanges, rangeMinMax.min, rangeMinMax.max, false, false, true, this.color)) {
+            this._visPoints.forEach((p, i) => {
+                this._setViewRange(p, this._runRangeValue);
+            });
+        } else {
+            this._visPoints.forEach((p, i) => {
+                p.range = _undefined;
+            });
+        }
     }
 
     pointValuesPrepared(axis: IAxis): void {
@@ -814,13 +966,27 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     protected _preparePointArgs(args: IDataPointCallbackArgs): void {
+        this._pointLabelCallback = this.pointLabel.textCallback;
+        this._argsPoint = null;
+
         args.series = this.name || this.index;
         args.count = this._points.count;
         // args.vcount = 
     }
 
     protected _getPointCallbackArgs(args: IDataPointCallbackArgs, p: DataPoint): void {
-        p.assignTo(args);
+        if (p !== this._argsPoint) {
+            (this._argsPoint = p).assignTo(args);
+        }
+    }
+
+    getPointText(p: DataPoint, label: any): string {
+        if (this._pointLabelCallback) {
+            this._getPointCallbackArgs(this._pointArgs, p);
+            const s = this._pointLabelCallback(this._pointArgs);
+            if (s !== _undefined) return s;
+        }
+        return label;
     }
 
     getPointStyle(p: DataPoint): any {
@@ -830,22 +996,28 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         }
     }
 
+    getPointLabelStyle(p: DataPoint): any {
+        if (this.pointLabel.styleCallback) {
+            this._getPointCallbackArgs(this._pointArgs, p);
+            return this.pointLabel.styleCallback(this._pointArgs);
+        }
+    }
+
     getPointTooltip(point: DataPoint, param: string): any {
         switch (param) {
             case 'series':
                 return this.displayName();
             case 'name':
-                return this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : point.x;
+                return this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : pickProp(point.x, point.xValue);
             case 'x':
-                return point.x || (this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : '');
-            case 'y':
-                return point.y;
+                return this._xAxisObj.value2Tooltip(point.x || (this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : point.xValue));
             case 'xValue':
-                return point.xValue;
+                return this._xAxisObj.value2Tooltip(point[param]);
+            case 'y':
             case 'yValue':
-                return point.yValue;
+                return this._yAxisObj.value2Tooltip(point[param]);
             default:
-                return param;
+                return param in point ? point[param] : point.source?.[param];
         }
     }
 
@@ -854,6 +1026,36 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             this._getPointCallbackArgs(this._pointArgs, p);
             return this.onPointClick(this._pointArgs);
         }
+    }
+
+    getViewRangeAxis(): 'x' | 'y' | 'z' {
+        return this.viewRangeValue || this._defViewRangeValue();
+    }
+
+    isPointLabelsVisible(): boolean {
+        return this.pointLabel.visible || isFunc(this.pointLabel.visibleCallback);
+    }
+
+    isPointLabelVisible(p: DataPoint): boolean {
+        const m = this.pointLabel;
+
+        if (m.visible === false) {
+            return false;
+        }
+        if (m.visibleCallback) {
+            this._getPointCallbackArgs(this._pointArgs, p);
+            return m.visibleCallback(this._pointArgs);
+        }
+        return m.visible === true;
+    }
+
+    updateData(data: any): void {
+        this._points.load(data);
+        this._changed();
+    }
+
+    getPointAt(xValue: number): DataPoint {
+        return this._points.pointAt(xValue);
     }
     
     //-------------------------------------------------------------------------
@@ -921,9 +1123,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         }
 
         this._runPoints.forEach((p, i) => {
-            // if (!p.color) {
-            //     p.color = color || colors[i % colors.length];
-            // }
             if (!p.color && colors) {
                 p.color = color || colors[i % colors.length];
             }
@@ -932,9 +1131,20 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._preparePointArgs(this._pointArgs);
     }
 
-    prepareAfter(): void {
-        // DataPoint.xValue가 필요하다.
-        this.trendline.visible && this.trendline.prepareRender();
+    protected _setViewRange(p: DataPoint, axis: 'x' | 'y' | 'z'): void {
+        const v = p[AXIS_VALUE[axis]];
+
+        for (const r of this._runRanges) {
+            if (v >= r.fromValue && v <= r.toValue) {
+                p.range = r;
+                return;
+            }
+        }
+        p.range = _undefined;
+    }
+
+    _defViewRangeValue(): 'x' | 'y' | 'z' {
+        return 'y';
     }
 }
 
@@ -1019,12 +1229,8 @@ export class PlottingItemCollection  {
         return this._map[name];
     }
 
-    getVisibleSeries(side: boolean): Series[] {
-        if (this.chart._splitted) {
-            return this._visibleSeries.filter(ser => !ser._yAxisObj.side == !side);
-        } else {
-            return this._visibleSeries.slice(0);
-        }
+    getVisibleSeries(): Series[] {
+        return this._visibleSeries.slice(0);
     }
 
     getPaneSeries(row: number, col: number): Series[] {
@@ -1096,14 +1302,26 @@ export class PlottingItemCollection  {
     }
 
     prepareRender(): void {
-        const visibles = this._visibleSeries = [];
+        const visibles = [];
         let iShape = 0;
+
+        this._visibles = this._items.filter(item => item.visible).sort((i1, i2) => (+i1.zOrder || 0) - (+i2.zOrder || 0));
 
         this._series.forEach(ser => {
             ser.visible && visibles.push(ser);
             if (ser.hasMarker()) {
                 ser.setShape(Shapes[iShape++ % Shapes.length]);
             }
+        });
+
+        this._visibleSeries = visibles.sort((s1, s2) => {
+            let order1 = +(s1.group ? s1.group.zOrder : s1.zOrder) || 0;
+            let order2 = +(s2.group ? s2.group.zOrder : s2.zOrder) || 0;
+
+            if (order1 === order2 && s1.group && s1.group === s2.group) {
+                return (+s1.zOrder || 0) - (+s2.zOrder || 0);
+            }
+            return order1 - order2;
         })
 
         const nCluster = this._visibleSeries.filter(ser => ser.clusterable()).length;
@@ -1114,7 +1332,6 @@ export class PlottingItemCollection  {
             }
         });
 
-        this._visibles = this._items.filter(item => item.visible);
         this._visibles.forEach(item => item.prepareRender());
     }
 
@@ -1150,11 +1367,23 @@ export class PlottingItemCollection  {
 }
 
 export enum MarkerVisibility {
-    /** visible 속성에 따른다. */
+    /** 
+     * visible 속성에 따른다. 
+     * 
+     * @config
+     * */
     DEFAULT = 'default',
-    /** visible 속성과 상관없이 항상 표시한다. */
+    /** 
+     * visible 속성과 상관없이 항상 표시한다. 
+     * 
+     * @config
+     * */
     VISIBLE = 'visible',
-    /** visible 속성과 상관없이 항상 표시하지 않는다. */
+    /** 
+     * visible 속성과 상관없이 항상 표시하지 않는다. 
+     * 
+     * @config
+     * */
     HIDDEN = 'hidden'
 }
 
@@ -1183,7 +1412,7 @@ export abstract class SeriesMarker extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public series: Series) {
-        super(series.chart);
+        super(series.chart, true);
     }
 }
 
@@ -1485,6 +1714,8 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
 }
 
 /**
+ * 'bar'와 같이 바닥이 필요한 시리즈.\
+ * 바닥 값은 {@link baseValue}로 지정한다.
  */
 export abstract class BasedSeries extends ClusterableSeries {
 
@@ -1626,6 +1857,13 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     _stackPoints: Map<number, DataPoint[]>;
 
     //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart, true);
+    }
+
+    //-------------------------------------------------------------------------
     // ISeriesGroup
     //-------------------------------------------------------------------------
     row: number;
@@ -1649,13 +1887,10 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
      * @config
      */
     visibleInLegend = true;
+    zOrder = 0;
 
     get series(): T[] {
         return this._series.slice(0);
-    }
-
-    isSide(): boolean {
-        return this._yAxisObj.side;
     }
 
     needAxes(): boolean {
@@ -1688,6 +1923,16 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     abstract _type(): string;
     abstract _seriesType(): string;
+
+    setCol(col: number): void {
+        this._col = col;
+        this._series.forEach(ser => ser.setCol(col));
+    }
+
+    setRow(row: number): void {
+        this._row = row;
+        this._series.forEach(ser => ser.setRow(row));
+    }
 
     // Axis에서 요청한다.
     collectValues(axis: IAxis, vals: number[]): void {
@@ -1762,20 +2007,18 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     prepareRender(): void {
-        this._visibles = this._series.filter(ser => ser.visible);
+        this._visibles = this._series.filter(ser => ser.visible).sort((s1, s2) => (+s1.zOrder || 0) - (+s2.zOrder || 0));
 
         super.prepareRender();
     }
 
     protected _doPrepareRender(chart: IChart): void {
-        const series = this._visibles.sort((s1, s2) => (s1.zOrder || 0) - (s2.zOrder || 0));
-        
         this._xAxisObj = this.chart._connectSeries(this, true);
         this._yAxisObj = this.chart._connectSeries(this, false);
 
-        if (series.length > 0) {
-            series.forEach(ser => ser.prepareRender());
-            this._doPrepareSeries(series);
+        if (this._visibles.length > 0) {
+            this._visibles.forEach(ser => ser.prepareRender());
+            this._doPrepareSeries(this._visibles);
         }
     }
 

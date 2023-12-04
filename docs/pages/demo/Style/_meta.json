@@ -5,6 +5,9 @@
 	"radialgradient": {
 		"title": "Radial Gradient"
 	},
+	"pattern-fill": {
+		"title": "Pattern Fill"
+	},
 	"palette": {
 		"title": "Palette"
 	},
@@ -13,5 +16,14 @@
 	},
 	"stylecallback": {
 		"title": "Style Callback"
+	},
+	"viewranges-bar": {
+		"title": "View Ranges - Bar"
+	},
+	"viewranges-line": {
+		"title": "View Ranges - Line"
+	},
+	"viewranges-area": {
+		"title": "View Ranges - Area"
 	}
 }

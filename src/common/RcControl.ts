@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
-import { Path, SVGStyleOrClass, _undefined, getCssProp, isNull, pixel, throwFormat } from "./Types";
+import { Align, ISides, Path, SVGStyleOrClass, _undefined, getCssProp, isNull, pixel, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
 import { SVGNS, isObject, isString, pickProp } from "./Common";
@@ -56,6 +56,7 @@ export abstract class RcControl extends RcWrappableObject {
     private _htmlRoot: HTMLDivElement;
     private _svg: SVGSVGElement;
     private _defs: SVGDefsElement;
+    private _back: RcElement;
     private _root: RootElement;
 
     private _pointerHandler: IPointerHandler;
@@ -71,6 +72,7 @@ export abstract class RcControl extends RcWrappableObject {
     private _cssVars = {};
 
     loaded = false;
+    _padding: ISides;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -128,17 +130,29 @@ export abstract class RcControl extends RcWrappableObject {
         return this._container.offsetHeight;
     }
 
+    contentWidth(): number {
+        return this.width() - this._padding.left - this._padding.right;
+    }
+
+    contentHeight(): number {
+        return this.height() - this._padding.top - this._padding.bottom;
+    }
+
+    clipContainer(): SVGElement {
+        return this._defs;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     setData(data: string, value: any, container?: boolean): void {
         if (!isNull(value)) {
-            this._svg.dataset[data] = value;
+            this._root.dom.dataset[data] = value;
             if (container) {
                 this._dom.dataset[data] = value;
             }
         } else {
-            delete this._svg.dataset[data];
+            delete this._root.dom.dataset[data];
             if (container) {
                 delete this._dom.dataset[data];
             }
@@ -150,12 +164,11 @@ export abstract class RcControl extends RcWrappableObject {
     }
 
     private $_clearDefs(key: string): void {
-        const defs = this._defs;
-        const childs = defs.children;
+        const childs = this._defs.children;
 
-        for (let i = 0; i < childs.length; i++) {
+        for (let i = childs.length - 1; i >= 0; i--) {
             if (childs[i].hasAttribute(key)) {
-                defs.removeChild(childs[i]);
+                childs[i].remove();
             }
         }
     }
@@ -265,7 +278,7 @@ export abstract class RcControl extends RcWrappableObject {
         return clip;
     }
 
-    clipRect(r: IRect): ClipElement {
+    clipRect(r: IRect): ClipElement {   
         return this.clipBounds(r.x, r.y, r.width, r.height);
     }
 
@@ -303,7 +316,7 @@ export abstract class RcControl extends RcWrappableObject {
 
     svgToElement(element: RcElement, x: number, y: number): IPoint {
         const cr = this._svg.getBoundingClientRect();
-        const br = element.getBBounds();
+        const br = element.getBounds();
 
         return { x: x - br.x + cr.x, y: y - br.y + cr.y };
     }
@@ -315,7 +328,24 @@ export abstract class RcControl extends RcWrappableObject {
         return { x: x + br.x - cr.x, y: y + br.y - cr.y };
     }
 
-    abstract useImage(src: string): void; // 실제 이미지가 로드됐을 때 다시 그려지도록 한다.
+    // TODO: svg 크기에서 '%'제거
+    //       svg 복사본 생성: 외부 스타일 내부로 가져오기
+    test(canvas: HTMLCanvasElement): void {
+        const svg = this._svg.outerHTML;
+        const image = new Image();
+        const ctx = canvas.getContext("2d");
+
+        document.body.appendChild(image);
+
+        image.width = 850;
+        image.height = 550;
+        // image.src = `data:image/svg+xml;base64,${window.btoa(unescape(encodeURIComponent(svg)))}`;
+        // image.src = `data:image/svg+xml;base64,${window.btoa(encodeURIComponent(svg))}`;
+        image.src = `data:image/svg+xml;charset=utf-8,&lt;${svg}`;
+        image.onload = () => {
+            ctx.drawImage(image, 0, 0);
+        };
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -403,7 +433,6 @@ export abstract class RcControl extends RcWrappableObject {
             height: '100%',  
             boxSizing: 'border-box',
             overflow: 'hidden',
-            padding: '20px',
             "-webkit-touch-callout": "none",
             "-webkit-user-select": "none",
             "user-select": "none",
@@ -414,20 +443,24 @@ export abstract class RcControl extends RcWrappableObject {
 
         // svg
         const svg = this._svg = doc.createElementNS(SVGNS, 'svg');
-        svg.classList.add('rct-root');
+        svg.classList.add('rct-svg');
         svg.style.setProperty('overflow', 'visible', 'important');
         svg.setAttribute('width', '100%');// contentDiv.clientWidth + 'px');
         svg.setAttribute('height', '100%');//contentDiv.clientHeight + 'px');
 
         const desc = doc.createElement('desc');
         // desc.textContent = 'Created by RealChart v$Version'; // sourcemap, rollup issue
-        desc.textContent = 'Created by RealChart v0.9.14';
+        desc.textContent = 'Created by RealChart v0.9.24';
         svg.appendChild(desc);
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
         this._initDefs(doc, defs);
         svg.appendChild(defs);
         dom.appendChild(svg);
+
+        // this._back = new RcElement(doc, '', 'rect');
+        // svg.appendChild(this._back.dom);
+        // this._back.setStyle('fill', 'lightgray');
 
         this._root = new RootElement(this);
         svg.appendChild(this._root['_dom']);
@@ -494,12 +527,17 @@ export abstract class RcControl extends RcWrappableObject {
             const w = this._svg.clientWidth;
             const h = this._svg.clientHeight;
 
+            // this._back.resize(w, h);
+
             Object.assign(this._htmlRoot.style, {
                 left: pixel(sr.left - cr.left),
                 top: pixel(sr.top - cr.top)
             });
-            this._doRender({x: 0, y: 0, width: w, height: h});
-            this._doRenderBackground(this._container.firstElementChild as HTMLDivElement, w, h);
+            this._doRenderBackground(this._container.firstElementChild as HTMLDivElement, this._root, w, h);
+
+            const p = this._padding = Dom.getPadding(this._root.dom);
+
+            this._doRender({x: p.left, y: p.top, width: w - p.left - p.right, height: h - p.top - p.bottom});
 
         } finally {
             this.loaded = true;
@@ -515,7 +553,7 @@ export abstract class RcControl extends RcWrappableObject {
     protected abstract _doRender(bounds: IRect): void;
     protected _doBeforeRender(): void {}
     protected _doAfterRender(): void {}
-    protected _doRenderBackground(elt: HTMLDivElement, width: number, height: number): void {}
+    protected _doRenderBackground(elt: HTMLDivElement, root: RcElement, width: number, height: number): void {}
 
     //-------------------------------------------------------------------------
     // event handlers
@@ -573,6 +611,8 @@ export abstract class RcControl extends RcWrappableObject {
     private _wheelHandler = (ev: WheelEvent) => {
     }
 }
+
+const TEXT_ALIGN = 'textAlign';
 
 export type RtControlOrWrapper = RcControl | RcWrapper<RcControl>;
 
@@ -746,8 +786,7 @@ export class RcElement extends RcObject {
             this._updateTransform();
         }
     }
-
-    setRotaion(originX: number, originY: number, rotation: number): RcElement {
+    setRotation(originX: number, originY: number, rotation: number): RcElement {
         if (originX !== this._originX || originY !== this._originY || rotation !== this._rotation) {
             this._originX = originX;
             this._originY = originY;;
@@ -981,10 +1020,12 @@ export class RcElement extends RcObject {
 
     resize(width: number, height: number, attr = true): RcElement {
         if (width !== this._width) {
-            attr && this.setAttr('width', this._width = width);
+            this._width = width;
+            attr &&  this.setAttrEx('width', width);
         }
         if (height !== this._height) {
-            attr && this.setAttr('height', this._height = height);
+            this._height = height;
+            attr && this.setAttrEx('height', height);
         }
         return this;
     }
@@ -1144,20 +1185,8 @@ export class RcElement extends RcObject {
         }
     }
 
-    putStyles(styles: any, buff?: any): any {
-        buff = buff || {};
-        if (styles) {
-            for (let p in styles) {
-                buff[p] = styles[p];
-            }
-        }
-        return buff;
-    }
-
-    putStyle(prop: string, value: string, buff?: any): any {
-        buff = buff || {};
-        buff[prop] = value;
-        return buff;
+    textAlign(): Align {
+        return this._styles[TEXT_ALIGN];
     }
 
     setData(data: string, value?: string): void {
@@ -1336,7 +1365,7 @@ class RootElement extends RcElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(control: RcControl) {
-        super(control.doc(), null);
+        super(control.doc(), 'rct-root');
 
         this._control = control;
     }
@@ -1360,7 +1389,7 @@ export class ClipElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, x: number, y: number, width: number, height: number, rx = 0, ry = 0) {
+    constructor(doc: Document, x = NaN, y = NaN, width = NaN, height = NaN, rx = 0, ry = 0) {
         super(doc, _undefined, 'clipPath');
 
         const id = this._id = Utils.uniqueKey() + '-';
@@ -1391,6 +1420,12 @@ export class ClipElement extends RcElement {
         // this._rect.setAttr('transform', '');
         this._rect.move(x, y);
         this._rect.resize(w, h);
+        return this;
+    }
+
+    resize(width: number, height: number, attr?: boolean): RcElement {
+        // super.resize(width, height);
+        this._rect.resize(width, height);
         return this;
     }
 

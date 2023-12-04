@@ -27,7 +27,7 @@ export class ImageElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string) {
+    constructor(doc: Document, styleName?: string) {
         super(doc, styleName, 'image');
 
         this.setAttr('preserveAspectRatio', 'none');

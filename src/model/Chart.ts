@@ -6,16 +6,16 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, mergeObj } from "../common/Common";
+import { isArray, isObject, isString, mergeObj, pickProp3 } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
-import { Axis, AxisCollection, IAxis, PaneAxes, PaneAxisMatrix, XPaneAxisMatrix, YAxisCollection, YPaneAxisMatrix } from "./Axis";
+import { Axis, AxisCollection, IAxis, PaneAxes, PaneAxisMatrix, PaneXAxisMatrix, PaneYAxisMatrix } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem, n_char_item } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
 import { ILegendSource, Legend } from "./Legend";
-import { IPlottingItem, PlottingItemCollection, Series } from "./Series";
+import { IPlottingItem, ISeries, PlottingItemCollection, Series } from "./Series";
 import { PaletteMode, ThemeCollection } from "./Theme";
 import { Subtitle, Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
@@ -51,24 +51,28 @@ import { LinearGauge, LinearGaugeGroup } from "./gauge/LinearGauge";
 import { BulletGauge, BulletGaugeGroup } from "./gauge/BulletGauge";
 import { SeriesNavigator } from "./SeriesNavigator";
 import { Split } from "./Split";
+import { TextAnnotation } from "./annotation/TextAnnotation";
+import { ImageAnnotation } from "./annotation/ImageAnnotation";
+import { Annotation, AnnotationCollection } from "./Annotation";
+import { ShapeAnnotation } from "./annotation/ShapeAnnotation";
+import { CircleBarSeries, CircleBarSeriesGroup } from "./series/CircleBarSeries";
 
 export interface IChart {
     type: string;
     gaugeType: string;
-    _splitted: boolean;
-    _splits: number[];
-    // series2: ISeries;
-    _xPaneAxes: XPaneAxisMatrix;
-    _yPaneAxes: YPaneAxisMatrix;
+    _xPaneAxes: PaneXAxisMatrix;
+    _yPaneAxes: PaneYAxisMatrix;
     options: ChartOptions;
     first: IPlottingItem;
     firstSeries: Series;
     xAxis: IAxis;
     yAxis: IAxis;
-    subtitle: Title;
+    subtitle: Subtitle;
     body: Body;
     split: Split;
     colors: string[];
+    startOfWeek: number;
+    timeOffset: number;
 
     _createChart(config: any): IChart;
     assignTemplates(target: any): any;
@@ -76,19 +80,20 @@ export interface IChart {
     isGauge(): boolean;
     isPolar(): boolean;
     isInverted(): boolean;
+    isSplitted(): boolean;
     animatable(): boolean;
-    startAngle(): number;
 
     seriesByName(series: string): Series;
     axisByName(axis: string): Axis;
     // getGroup(group: String): SeriesGroup2;
-    getAxes(dir: SectionDir): Axis[];
+    getAxes(dir: SectionDir, visibleOnly: boolean): Axis[];
 
     _getGroupType(type: string): any;
     _getSeriesType(type: string): any;
     _getAxisType(type: string): any;
     _getGaugeType(type: string): any;
     _getGaugeGroupType(type: string): any;
+    _getAnnotationType(type: string): any;
     _getSeries(): PlottingItemCollection;
     _getGauges(): GaugeCollection;
     _getXAxes(): AxisCollection;
@@ -108,10 +113,12 @@ export interface IChart {
 const group_types = {
     // TODO: '...group'으로 통일한다.
     'bar': BarSeriesGroup,
+    'circlebar': CircleBarSeriesGroup,
     'line': LineSeriesGroup,
     'area': AreaSeriesGroup,
     'pie': PieSeriesGroup,
     'bargroup': BarSeriesGroup,
+    'circlebargroup': BarSeriesGroup,
     'linegroup': LineSeriesGroup,
     'areagroup': AreaSeriesGroup,
     'piegroup': PieSeriesGroup,
@@ -126,6 +133,7 @@ const series_types = {
     'boxplot': BoxPlotSeries,
     'bubble': BubbleSeries,
     'candlestick': CandlestickSeries,
+    'circlebar': CircleBarSeries,
     'dumbbell': DumbbellSeries,
     'equalizer': EqualizerSeries,
     'errorbar': ErrorBarSeries,
@@ -148,14 +156,14 @@ const axis_types = {
     'time': TimeAxis,
     'date': TimeAxis,
     'log': LogAxis,
-}
+};
 
 const gauge_types = {
     'circle': CircleGauge,
     'linear': LinearGauge,
     'bullet': BulletGauge,
     'clock': ClockGauge,
-}
+};
 const gauge_group_types = {
     'circle': CircleGaugeGroup,
     'linear': LinearGaugeGroup,
@@ -163,7 +171,13 @@ const gauge_group_types = {
     'circlegroup': CircleGaugeGroup,
     'lineargroup': LinearGaugeGroup,
     'bulletgroup': BulletGaugeGroup,
-}
+};
+
+const annotation_type = {
+    'text': TextAnnotation,
+    'image': ImageAnnotation,
+    'shape': ShapeAnnotation,
+};
 
 export class Credits extends ChartItem {
 
@@ -269,7 +283,7 @@ export class ChartOptions extends ChartItem {
      * 크레딧 모델.
      * @config
      */
-    credits = new Credits(null);
+    credits = new Credits(null, true);
 
     //-------------------------------------------------------------------------
     // methods
@@ -302,17 +316,17 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _legend: Legend;
     private _series: PlottingItemCollection;
     private _xAxes: AxisCollection;
-    private _yAxes: YAxisCollection;
+    private _yAxes: AxisCollection;
     private _split: Split;
-    _xPaneAxes: XPaneAxisMatrix;
-    _yPaneAxes: YPaneAxisMatrix;
+    _xPaneAxes: PaneXAxisMatrix;
+    _yPaneAxes: PaneYAxisMatrix;
     private _gauges: GaugeCollection;
     private _body: Body;
+    private _annotations: AnnotationCollection;
     private _navigator: SeriesNavigator;
 
-    _splitted: boolean;
-    _splits: number[];
     private _inverted: boolean;
+    private _splitted: boolean;
     private _polar: boolean;
     private _gaugeOnly: boolean;
     colors: string[];
@@ -326,18 +340,19 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         this._assets = new AssetCollection();
         this._themes = new ThemeCollection();
-        this._options = new ChartOptions(this);
+        this._options = new ChartOptions(this, true);
         this._title = new Title(this);
         this._subtitle = new Subtitle(this);
         this._legend = new Legend(this);
         this._split = new Split(this);
         this._series = new PlottingItemCollection(this);
         this._xAxes = new AxisCollection(this, true);
-        this._yAxes = new YAxisCollection(this, false);
-        this._xPaneAxes = new XPaneAxisMatrix(this);
-        this._yPaneAxes = new YPaneAxisMatrix(this);
+        this._yAxes = new AxisCollection(this, false);
+        this._xPaneAxes = new PaneXAxisMatrix(this);
+        this._yPaneAxes = new PaneYAxisMatrix(this);
         this._gauges = new GaugeCollection(this);
         this._body = new Body(this);
+        this._annotations = new AnnotationCollection(this);
         this._navigator = new SeriesNavigator(this);
 
         source && this.load(source);
@@ -350,13 +365,14 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return new Chart(config);
     }
 
-    startAngle(): number {
-        return this.body.getStartAngle();
-    }
-
     animatable(): boolean {
         return this._options.animatable !== false;
     }
+
+    //-------------------------------------------------------------------------
+    // IAnnotationOwner
+    //-------------------------------------------------------------------------
+    get chart(): IChart { return this }
 
     //-------------------------------------------------------------------------
     // properties
@@ -400,13 +416,22 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * @config
      */
     inverted: boolean;
+
     /**
-     * true면 x축 방향을 기준으로 body 영역을 분할한다.\
-     * [주의] 차트 로딩 후 변경할 수 없다.
-     *
-     * @config
+     * // TODO: -> locale
+     * javascript에서 숫자 단위로 전달되는 날짜값은 기본적으로 local이 아니라 new Date 기준이다.
+     * 그러므로 보통 숫자로 지정된 날짜값은 utc 값이다.
+     * local 기준으로 표시하기 위해, 숫자로 지정된 날짜값에 더해야 하는 시간을 분단위로 지정한다.
+     * ex) 한국은 -9 * 60
+     * 
      */
-    splitted: boolean;
+    timeOffset = new Date().getTimezoneOffset();
+    /**
+     * // TODO: -> locale
+     * 한 주의 시작 요일.
+     * 0: 일요일, 1: 월요일
+     */
+    startOfWeek = 0;
 
     get assets(): AssetCollection {
         return this._assets;
@@ -456,11 +481,11 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._split;
     }
 
-    get xPaneAxes(): XPaneAxisMatrix {
+    get xPaneAxes(): PaneXAxisMatrix {
         return this._xPaneAxes;
     }
 
-    get yPaneAxes(): YPaneAxisMatrix {
+    get yPaneAxes(): PaneYAxisMatrix {
         return this._yPaneAxes;
     }
 
@@ -494,6 +519,15 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._yAxes;
     }
 
+    /**
+     * 차트 보조 요소 설정
+     */
+    '@config annotation': Annotation[];
+    
+    getAnnotations(): Annotation[] {
+        return this._annotations.getVisibles();
+    }
+
     isGauge(): boolean {
         return this._gaugeOnly;
     }
@@ -508,6 +542,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     isInverted(): boolean {
         return this._inverted;
+    }
+
+    isSplitted(): boolean {
+        return this._splitted;
     }
 
     isEmpty(): boolean {
@@ -549,7 +587,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._yAxes.get(name);
     }
 
-    getAxes(dir: SectionDir): Axis[] {
+    getAxes(dir: SectionDir, visibleOnly: boolean): Axis[] {
         const xAxes = this._xAxes.items;
         const yAxes = this._yAxes.items;
         let axes: Axis[];
@@ -591,7 +629,11 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
                     break;
             } 
         }
-        return axes || [];
+
+        if (axes) {
+            return visibleOnly ? axes.filter(a => a.visible) : axes;
+        }
+        return [];
     }
 
     _getLegendSources(): ILegendSource[] {
@@ -668,12 +710,15 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         if (!this._gaugeOnly) {
             // axes
             // 축은 반드시 존재해야 한다. (TODO: 동적으로 series를 추가하는 경우)
-            this._xAxes.load(source.xAxes || source.xAxis || {});
-            this._yAxes.load(source.yAxes || source.yAxis || {});
+            this._xAxes.load(pickProp3(source.xAxes, source.xAxis, {}));
+            this._yAxes.load(pickProp3(source.yAxes, source.yAxis, {}));
         }
 
         // body
         this._body.load(source.body || source.plot); // TODO: plot 제거
+
+        // annotations
+        this._annotations.load(source.annotations || source.annotation);
 
         // series navigator
         this._navigator.load(source.seriesNavigator);
@@ -699,12 +744,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         })
 
         this._inverted = !this._polar && this.inverted;
+        this._splitted = split.visible;
         
-        if (this._splitted = !this._polar && this._body.split.visible) {
-            this._splits = this._body.getSplits();
-            yAxes.split(this._splits);
-        }
-
         xAxes.disconnect();
         yAxes.disconnect();
 
@@ -720,7 +761,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         xAxes.prepareRender();
         yAxes.prepareRender();
 
-        if (split.visible && !this._gaugeOnly) {
+        if (this._splitted && !this._gaugeOnly) {
             // split
             split.prepareRender();
 
@@ -738,6 +779,12 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // gauges
         this._gauges.prepareRender();
 
+        // body
+        this._body.prepareRender();
+
+        // annotations
+        this._annotations.prepareRender();
+
         // navigator
         this._navigator.visible && this._navigator.prepareRender();
     }
@@ -749,10 +796,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this.$_calcAxesPoints(width, height, inverted, 0);
     }
 
-    calcAxesPoints(width: number, height: number, inverted: boolean): void {
-        this.$_calcAxesPoints(width, height, inverted, 1);
-    }
-
     private $_calcAxesPoints(width: number, height: number, inverted: boolean, phase: number): void {
         let len = inverted ? height : width;
         this._xAxes.forEach(axis => {
@@ -760,12 +803,12 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         });
         len = inverted ? width : height;
         this._yAxes.forEach(axis => {
-            let len2 = len;
-            if (this._splitted) {
-                len2 *= this._splits[axis.side ? 1 : 0];
-            }
-            axis.calcPoints(len2, phase);
+            axis.calcPoints(len, phase);
         });
+    }
+
+    axesLayouted(width: number, height: number, inverted: boolean): void {
+        this.$_calcAxesPoints(width, height, inverted, 1);
     }
 
     /**
@@ -811,6 +854,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     _getGaugeGroupType(type: string): any {
         return isString(type) && gauge_group_types[type.toLowerCase()];
+    }
+    
+    _getAnnotationType(type: string): any {
+        return isString(type) && annotation_type[type.toLowerCase()];
     }
 
     getAxesGap(): number {

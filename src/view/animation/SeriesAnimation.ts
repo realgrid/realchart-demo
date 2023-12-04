@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcAnimation, RcAnimationEndHandler } from "../../common/RcAnimation";
-import { RcElement } from "../../common/RcControl";
+import { ClipElement, RcElement } from "../../common/RcControl";
 import { pixel } from "../../common/Types";
 import { Series } from "../../model/Series";
 import { SeriesView } from "../SeriesView";
@@ -103,7 +103,7 @@ export class SlideAnimation extends SeriesAnimation {
         const cr = this.$_clipRect(v);
         let ani: Animation;
 
-        switch (options &&options.from) {
+        switch (options && options.from) {
             case 'top':
                 ani = this.$_top(v, cr, options);
                 break;
@@ -135,11 +135,22 @@ export class SlideAnimation extends SeriesAnimation {
     }
 
     private $_clipRect(v: SeriesView<Series>): RcElement {
-        // plot area 경계에 걸친 point들이 표시되도록 infliate한다.
-        return v.clipRect(-v.width * .1, -v.height * .1, v.width * 1.2, v.height * 1.2)
-                .setTemporary();
-        // return v.clipRect(0, 0, v.width, v.height)
-        // .setTemporary();
+        let vClip: ClipElement;
+
+        if (v.model.noClip) {
+            const control = v.control;
+
+            if (v.model.chart.isInverted()) {
+                vClip = v.clipRect(-control.width(), -v.height * .1, control.width() * 2, v.height * 1.2)
+            } else {
+                vClip = v.clipRect(-v.width * .1, -control.height(), v.width * 1.2, control.height() * 2);
+            }
+        } else {
+            // plot area 경계에 걸친 point들이 표시되도록 infliate한다.
+            vClip = v.clipRect(-v.width * .1, -v.height * .1, v.width * 1.2, v.height * 1.2)
+        }
+
+        return vClip.setTemporary();
     }
 
     private $_left(v: SeriesView<Series>, cr: RcElement, options: ISlideAnimation): Animation {
@@ -238,7 +249,7 @@ export class UnfoldAnimation extends PointAnimation {
     //-------------------------------------------------------------------------
     protected _doUpdate(rate: number): boolean {
         if (this._series.parent) {
-            this._series.setPosRate(rate);
+            this._series.setPositionRate(rate);
             return true;
         }
         return false;
@@ -247,7 +258,7 @@ export class UnfoldAnimation extends PointAnimation {
     protected _doStop(): void {
         // animation 기간 중 제거됐을 수 있다.
         if (this._series.parent) {
-            this._series.setPosRate(NaN);
+            this._series.setPositionRate(NaN);
         }
         super._doStop();
     }

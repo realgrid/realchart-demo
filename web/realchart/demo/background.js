@@ -6,6 +6,7 @@ const config = {
     title: "Chart Background",
     options: {
         style: {
+            backgroundImage: 'url(../assets/mountain.jpeg)'
         }
     },
     xAxis: {
@@ -70,7 +71,7 @@ function setActions(container) {
     createCheckBox(container, 'backgroundImage', function (e) {
         config.options.style.backgroundImage = _getChecked(e) ? 'url(../assets/mountain.jpeg)' : '';
         chart.load(config);
-    }, false);
+    }, true);
 }
 
 function init() {

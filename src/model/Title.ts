@@ -8,6 +8,7 @@
 
 import { isString } from "../common/Common";
 import { Align, AlignBase, SVGStyleOrClass, VerticalAlign, isNull } from "../common/Types";
+import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 
 /**
@@ -18,10 +19,19 @@ import { ChartItem } from "./ChartItem";
 export class Title extends ChartItem {
 
     //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart, true);
+    }
+
+    //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    verticalAlign = VerticalAlign.MIDDLE;
     /**
-     * 제목 텍스트
+     * 제목 텍스트.
+     * 
      * @config 
      */
     text = 'Title';
@@ -31,8 +41,26 @@ export class Title extends ChartItem {
      * @config
      */
     alignBase = AlignBase.PLOT;
+    /**
+     * 정렬.
+     * 
+     * @config
+     */
     align = Align.CENTER;
+    /**
+     * 배경 스타일 셋.
+     * 
+     * @config
+     */
     backgroundStyle: SVGStyleOrClass;
+    /**
+     * 주 제목과 부 제목이 표시되는 영역과 차트 본체 등 과의 간격.\
+     * 주 제목이 표시되면 (부 제목의 값은 무시되고)주 제목의 값을 사용하고,
+     * 부 제목만 표시될 때는 부 제목의 값을 사용한다.
+     * 
+     * @config
+     */
+    gap = 10;
 
     //-------------------------------------------------------------------------
     // methods
@@ -74,7 +102,14 @@ export class Subtitle extends Title {
     verticalAlign = VerticalAlign.BOTTOM;
     /**
      * 부제목 텍스트
+     * 
      * @config
      */
     text = '';
+    /**
+     * 주 제목과 사이의 간격.
+     * 
+     * @config
+     */
+    titleGap = 2;
 }

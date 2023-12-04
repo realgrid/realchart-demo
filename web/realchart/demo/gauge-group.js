@@ -11,7 +11,7 @@ const config = {
         }
     },
     options: {
-        animatable: false,
+        // animatable: false,
         theme: 'dark',
         credits: {
             // visible: false,

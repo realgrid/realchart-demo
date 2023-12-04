@@ -1,4 +1,4 @@
-## label
+## [label](/config/config/label)
 
 ## Properties
 
@@ -6,32 +6,103 @@
 텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
 
 
-밝게 표시할 때는  lightStyle 을 적용하고,
-어둡게 표시할 때는  darkStyle 이 적용된다.
+밝게 표시할 때는  **[lightStyle](#lightstyle)** 을 적용하고,
+어둡게 표시할 때는  **[darkStyle](#darkstyle)** 이 적용된다.
 brightStyle이 지정되지 않으면 'rct-text-light'이,
 darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.  
-`default: true`  
-
+<DefaultValue value="true" contents=""></DefaultValue>
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
+- `SVGStyles{:js}` 
 
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### darkStyle: `SVGStyles | string{:js}`[#darkStyle]
+- `SVGStyles{:js}` 
 
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### effect[#effect]
 
 
-`default: ChartTextEffect.NONE`  
+<DefaultValue value="ChartTextEffect.NONE" contents=""></DefaultValue>
+### firstStyle: `SVGStyles | string{:js}`[#firstStyle]
+첫번째 tick 라벨에 추가로 적용되는 스타일.  
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+### firstText: `string{:js}`[#firstText]
+첫번째 tick 라벨에 표시될 텍스트.  
+
+### lastStyle: `SVGStyles | string{:js}`[#lastStyle]
+마지막 tick 라벨에 추가로 적용되는 스타일.  
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+### lastText: `string{:js}`[#lastText]
+마지막 tick 라벨에 표시될 텍스트.  
 
 ### lightStyle: `SVGStyles | string{:js}`[#lightStyle]
+- `SVGStyles{:js}` 
 
-### prefix: `string{:js}`[#prefix]
-label 문자열 앞에 추가되는 문자열.  
-
-### style: `SVGStyles | string{:js}`[#style]
-스타일셋 혹은 class selector.  
-
-### suffix: `string{:js}`[#suffix]
-label 문자열 끝에 추가되는 문자열.  
-
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### numberFormat: `string{:js}`[#numberFormat]
 label이 숫자일 때 표시 형식.  
 
@@ -39,10 +110,32 @@ label이 숫자일 때 표시 형식.
 축의 tick 간격이 1000 이상인 큰 수를 표시할 때 
 이 속성에 지정한 symbol을 이용해서 축약형으로 표시한다.  
 
+### prefix: `string{:js}`[#prefix]
+label 문자열 앞에 추가되는 문자열.  
+
+### style: `SVGStyles | string{:js}`[#style]
+스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+### suffix: `string{:js}`[#suffix]
+label 문자열 끝에 추가되는 문자열.  
+
 ### text: `string{:js}`[#text]
 rich text format을 지정할 수 있다.  
 
 ### visible: `boolean{:js}`[#visible]
-표시 여부.\
-모델에 따라 기본값이 다르다.
-<FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  
+표시 여부.  
+<DefaultValue value="true" contents=""></DefaultValue>

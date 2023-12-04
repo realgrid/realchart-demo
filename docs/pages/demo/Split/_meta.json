@@ -1,0 +1,14 @@
+{
+	"split-wing-chart": {
+		"title": "Wing Chart"
+	},
+	"split-row-lines": {
+		"title": "Series Row"
+	},
+	"split-col-lines": {
+		"title": "Series Column"
+	},
+	"split-grid-lines": {
+		"title": "Series Grid"
+	}
+}

@@ -11,7 +11,7 @@
 	"body-background": {
 		"title": "Background"
 	},
-	"wing-chart": {
-		"title": "Wing Chart by Split"
+	"annotations": {
+		"title": "Annotations"
 	}
 }

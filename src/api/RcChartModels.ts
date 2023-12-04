@@ -6,9 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { _undefined } from "../common/Types";
 import { Axis } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { ValueGauge } from "../model/Gauge";
+import { Series } from "../model/Series";
 import { CircleGauge } from "../model/gauge/CircleGauge";
 
 /**
@@ -280,6 +282,18 @@ export abstract class RcChartSeries extends RcChartObject {
      * point label 모델.
      */
     get tooltip(): RcChartObject { return this._tooltip; }
+
+    /**
+     * xValue에 해당하는 데이터포인터의 yValue를 리턴한다.
+     */
+    getValueAt(xValue: number): number {
+        const p = (this.$_p as Series).getPointAt(xValue);
+        return p ? p.yValue : _undefined;
+    }
+
+    updateData(data: any): void {
+        (this.$_p as Series).updateData(data);
+    }
 }
 
 /**

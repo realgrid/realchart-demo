@@ -8,7 +8,7 @@
 
 import { ChartText, ChartTextEffect } from "../../model/ChartItem";
 import { Color } from "../Color";
-import { _undefined } from "../Types";
+import { Align, _undefined } from "../Types";
 import { GroupElement } from "./GroupElement";
 import { RectElement } from "./RectElement";
 import { TextAnchor, TextElement } from "./TextElement";
@@ -32,11 +32,6 @@ export class LabelElement extends GroupElement {
     constructor(doc: Document, styleName: string = _undefined) {
         super(doc);
 
-        // this.add(this._back = new RectElement(doc));
-
-        // this.add(this._outline = new TextElement(doc));
-        // this._outline.anchor = TextAnchor.START;
-
         this.add(this._text = new TextElement(doc, styleName));
         this._text.anchor = TextAnchor.START;
     }
@@ -49,25 +44,12 @@ export class LabelElement extends GroupElement {
         return this._text.text;
     }
 
-    /** anchor */
-    get anchor(): TextAnchor {
-        return this._text.anchor;
-    }
-    set anchor(value: TextAnchor) {
-        this._text.anchor = value;
-    }
-
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     setText(s: string): LabelElement {
         this._outline && (this._outline.text = s);
         this._text.text = s;
-        return this;
-    }
-
-    setSvg(s: string): LabelElement {
-        this._text.svg = s;
         return this;
     }
 
@@ -89,18 +71,16 @@ export class LabelElement extends GroupElement {
             this._back?.remove();
             if (!this._outline) {
                 this._outline = new TextElement(doc);
-                this._outline.anchor = TextAnchor.START;
             }
             this.insertFirst(this._outline);
 
+            this._outline.anchor = this._text.anchor;
             this._outline.setStyleOrClass(model.style);
 
         } else {
             this._back?.remove();
             this._outline?.remove();
         }
-        this._text.setBoolData('outlined', !!this._outline);
-
         return this;
     }
 
@@ -115,28 +95,55 @@ export class LabelElement extends GroupElement {
             this._outline.setStyles({
                 fill: color,
                 stroke: color,
-                strokeWidth: '2px'
+                strokeWidth: this._model._outlineWidth
             });
         }
         return this;
     }
 
-    layout(): LabelElement {
+    layout(align: Align): LabelElement {
+        const r = this._text.getBBounds();
+        // TODO: 높이 너비를 지정할 수 있다.
+        const w = r.width;
+        const h = r.height;
+        let x = 0;
+        let y = 0;
+
         // background
         if (this._back && this._back.parent) {
             const cs = getComputedStyle(this._back.dom);
-            const r = this._text.getBBounds();
-            const left = parseFloat(cs.paddingLeft) || 0;
-            const top = parseFloat(cs.paddingTop) || 0;
+
+            x = parseFloat(cs.paddingLeft) || 0;
+            y = parseFloat(cs.paddingTop) || 0;
 
             this._back.setBounds(
-                -left,//-r.width / 2, 
-                -top,//-r.height / 2,
-                r.width + left + (parseFloat(cs.paddingRight) || 0),
-                r.height + top + (parseFloat(cs.paddingBottom) || 0),
-                3
+                0,//-left,//-r.width / 2, 
+                0,//-top,//-r.height / 2,
+                w + x + (parseFloat(cs.paddingRight) || 0),
+                h + y + (parseFloat(cs.paddingBottom) || 0),
+                cs['rx']
             )
-            // this._text.translate(left, top);
+        }
+
+        // [주의] 멀티라인을 위해 anchor를 지정해야 한다.
+        switch (align) {
+            case Align.CENTER:
+                x += w / 2;
+                this._text.anchor = TextAnchor.MIDDLE;
+                break;
+            case Align.RIGHT:
+                x += w;
+                this._text.anchor = TextAnchor.END;
+                break;
+            default:
+                this._text.anchor = TextAnchor.START;
+        }
+
+        this._text.translate(x, y);
+        if (this._outline) {
+            this._outline.anchor = this._text.anchor;
+            this._outline.setAttr('y', this._text.getAttr('y'));
+            this._outline.translate(x, y);
         }
         return this;
     }

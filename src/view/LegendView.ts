@@ -10,11 +10,12 @@ import { pickNum } from "../common/Common";
 import { Dom } from "../common/Dom";
 import { ElementPool } from "../common/ElementPool";
 import { RcElement } from "../common/RcControl";
-import { toSize } from "../common/Rectangle";
+import { Rectangle, toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Legend, LegendItem, LegendItemsAlign, LegendLayout, LegendLocation } from "../model/Legend";
+import { Series } from "../model/Series";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
 /**
@@ -63,7 +64,7 @@ export class LegendItemView extends ChartElement<LegendItem> {
 
         this._label.text = model.text();
 
-        const rMarker = this._marker.getBBounds();
+        const rMarker = this._marker.setVisible(model.legend.markerVisible) ? this._marker.getBBounds() : Rectangle.Empty;
         const sz = toSize(this._label.getBBounds());
         this._gap = pickNum(model.legend.markerGap, 0);
 
@@ -71,9 +72,9 @@ export class LegendItemView extends ChartElement<LegendItem> {
     }
 
     protected _doLayout(): void {
-        const rMarker = this._marker.getBBounds();
+        const rMarker = this._marker.visible ? this._marker.getBBounds() : Rectangle.Empty;
 
-        this._marker.translate(0, (this.height - rMarker.height) / 2);
+        this._marker.visible && this._marker.translate(0, (this.height - rMarker.height) / 2);
         this._label.translate(rMarker.width + this._gap, (this.height - this._label.getBBounds().height) / 2);
     }
 }
@@ -110,6 +111,10 @@ export class LegendView extends BoundableElement<Legend> {
         return v && v.model;
     }
 
+    legendOfSeries(series: Series): LegendItemView {
+        return this._itemViews.find(v => v.model.source === series);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -122,7 +127,7 @@ export class LegendView extends BoundableElement<Legend> {
         const vertical = this._vertical = model.getLayout() === LegendLayout.VERTICAL;
         
         this._ipr = pickNum(model.itemsPerLine, Number.MAX_SAFE_INTEGER);
-        this._gap = model.location !== LegendLocation.PLOT ? pickNum(model.gap, 0) : 0;
+        this._gap = model.location !== LegendLocation.BODY && model.location !== LegendLocation.PLOT ? pickNum(model.gap, 0) : 0;
 
         if (vertical) {
             hintHeight = model.getMaxHeight(hintHeight);
@@ -208,7 +213,7 @@ export class LegendView extends BoundableElement<Legend> {
         let view: LegendItemView;
 
         views.forEach((v, i) => {
-            v.setMarker(items[i].source.legendMarker(doc));
+            v.setMarker(items[i].source.legendMarker(doc, model.markerSize));
             v.measure(doc, items[i], hintWidth, hintHeight, 1);
         });
 

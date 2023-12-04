@@ -9,6 +9,7 @@
 export const SVGNS = 'http://www.w3.org/2000/svg';
 export const isObject = function (v: any): boolean { return v && typeof v === 'object' && !Array.isArray(v); }
 export const isArray = Array.isArray;
+export const isArrayEx = function (v: any, length: number): v is Array<any> { return Array.isArray(v) && v.length >= length; }
 export const isFunc = function (v: any): v is Function { return typeof v === 'function'; }
 export const isString = function (v: any): v is string { return typeof v === 'string'; }
 export const isNumber = function (v: any): v is number { return typeof v === 'number'; }

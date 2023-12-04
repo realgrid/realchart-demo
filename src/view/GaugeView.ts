@@ -20,9 +20,9 @@ import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { CircularGauge, GaugeBase, GaugeGroup, GaugeItemPosition, GaugeScale, LinearGaugeScale, ValueGauge } from "../model/Gauge";
 import { LinearGaugeBase, LinearGaugeGroupBase, LinearGaugeLabel } from "../model/gauge/LinearGauge";
-import { ChartElement } from "./ChartElement";
+import { ChartElement, ContentView } from "./ChartElement";
 
-export abstract class GaugeView<T extends GaugeBase> extends ChartElement<T> {
+export abstract class GaugeView<T extends GaugeBase> extends ContentView<T> {
 
     //-------------------------------------------------------------------------
     // consts
@@ -35,9 +35,6 @@ export abstract class GaugeView<T extends GaugeBase> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     private _paneElement: RectElement;
     private _contentContainer: LayerElement;
-
-    protected _inverted = false;
-    protected _animatable = true;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -58,11 +55,6 @@ export abstract class GaugeView<T extends GaugeBase> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    _setChartOptions(inverted: boolean, animatable: boolean): void {
-        this._inverted = inverted;
-        this._animatable = animatable;
-    }
-
     clicked(elt: Element): void {
     }
 
@@ -416,7 +408,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
 
         label.setText(m.getLabel(label, m.value));
         v.text = label.text;
-        label.buildSvg(v, width, height, m, this.valueOf);
+        label.buildSvg(v, null, width, height, m, this.valueOf);
 
         return toSize(v.getBBounds());
     }
@@ -445,20 +437,21 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
         if (rBand.height > 0) {
             // band background
             this.background().setRect(rBand);
-
             // band
             this._renderBand(m, rBand, value);
+        }
 
-            // label
+        // label
+        if (label._runPos === 'top' || label._runPos === 'bottom') {
             this._rLabel.height = rBand.height;
-            this._renderLabel(m, label, labelView, value);
+        }
+        this._renderLabel(m, label, labelView, value);
 
-            // 아래쪽으로 넘치지 않게 한다.
-            if (!this._vertical && (label._runPos === 'left' || label._runPos === 'right') && scale.visible && scale.position === GaugeItemPosition.OPPOSITE) {
-                const r = labelView.getBBounds();
-                if (labelView.ty + r.height > this.height) {
-                    labelView.translateY(Math.max(0, this.height - r.height));
-                }
+        // 아래쪽으로 넘치지 않게 한다.
+        if (!this._vertical && (label._runPos === 'left' || label._runPos === 'right') && scale.visible && scale.position === GaugeItemPosition.OPPOSITE) {
+            const r = labelView.getBBounds();
+            if (labelView.ty + r.height > this.height) {
+                labelView.translateY(Math.max(0, this.height - r.height));
             }
         }
     }
@@ -488,7 +481,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
 
             label.setText(m.getLabel(label, label.animatable ? value : m.value));
             labelView.text = label.text;
-            label.buildSvg(labelView, pickNum(w, wMax), pickNum(h, hMax), m, this.valueOf);
+            label.buildSvg(labelView, null, pickNum(w, wMax), pickNum(h, hMax), m, this.valueOf);
 
             const rText = labelView.getBBounds();
 
@@ -663,6 +656,11 @@ export abstract class GaugeGroupView<G extends ValueGauge, T extends GaugeGroup<
     protected _doInitContents(doc: Document, container: LayerElement): void {
         container.add(this._gaugeContainer = new LayerElement(doc, 'rct-gauge-group-container'));
         this._gaugeViews = this._createPool(this._gaugeContainer);
+    }
+
+    _setChartOptions(inverted: boolean, animatable: boolean): void {
+        super._setChartOptions(inverted, animatable);
+        this._gaugeViews.forEach(v => v._setChartOptions(inverted, animatable));
     }
 
     protected _prepareGauge(doc: Document, model: T): void {    

@@ -19,7 +19,7 @@ import { Widget } from "./Widget";
 export interface ILegendSource {
     visible: boolean;
 
-    legendMarker(doc: Document): RcElement;
+    legendMarker(doc: Document, size: number): RcElement;
     legendColor(): string;
     legendLabel(): string;
 }
@@ -38,7 +38,7 @@ export class LegendItem extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public legend: Legend, public source: ILegendSource) {
-        super(legend.chart)
+        super(legend.chart, true)
     }
 
     //-------------------------------------------------------------------------
@@ -79,8 +79,8 @@ export enum LegendLocation {
      * 
      * @config
      */
-    PLOT = 'plot',
-    SUBPLOT = 'subplot'
+    PLOT = 'plot', // TODO: 제거
+    BODY = 'body',
 }
 
 export enum LegendLayout {
@@ -162,7 +162,6 @@ export class Legend extends Widget {
      * 명시적으로 true로 설정되거나, 명시적 false가 아니면서 표시 항목 수가 1보다 클 때 표시된다..\
      * 
      * @fiddle common/legend-visible Legend Visible
-     * 
      * @default undefined
      */
     '@config visible': boolean;
@@ -197,6 +196,17 @@ export class Legend extends Widget {
      * @config
      */
     itemGap = 8;
+    /**
+     * marker 표시 여부.
+     */
+    markerVisible = true;
+    /**
+     * marker 크기.
+     * 
+     * @default 10 픽셀.
+     * @config
+     */
+    markerSize: number;
     /**
      * marker와 text사이의 간격.
      * 
@@ -277,7 +287,7 @@ export class Legend extends Widget {
     }
 
     getLayout(): LegendLayout {
-        if (this.layout === LegendLayout.AUTO && this._location !== LegendLocation.PLOT) {
+        if (this.layout === LegendLayout.AUTO && this._location !== LegendLocation.BODY && this._location !== LegendLocation.PLOT) {
             switch (this._location) {
                 case LegendLocation.BOTTOM:
                 case LegendLocation.TOP:

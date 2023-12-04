@@ -102,9 +102,9 @@ export class SeriesNavigator extends ChartItem {
     constructor(chart: IChart) {
         super(chart, false);
 
-        this.handle = new NavigiatorHandle(chart);
-        this.mask = new NavigatorMask(chart);
-        this.borderLine = new ChartItem(chart);
+        this.handle = new NavigiatorHandle(chart, true);
+        this.mask = new NavigatorMask(chart, true);
+        this.borderLine = new ChartItem(chart, true);
     }
     
     //-------------------------------------------------------------------------

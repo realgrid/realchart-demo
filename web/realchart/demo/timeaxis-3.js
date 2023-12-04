@@ -22,7 +22,8 @@ const config = {
         }
     },
     tick: {
-      step: 30,
+      // step: 30,
+      stepInterval: '1m'
     },
     minPadding: 0,
     maxPadding: 0,

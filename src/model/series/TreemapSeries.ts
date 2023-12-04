@@ -7,7 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { Color } from "../../common/Color";
+import { isArray, isObject } from "../../common/Common";
 import { toStr } from "../../common/Types";
+import { ChartItem } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
 import { IPlottingItem, Series } from "../Series";
 
@@ -50,6 +52,82 @@ export class TreemapSeriesPoint extends DataPoint {
     }
 }
 
+export class TreeGroupHead extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public level: TreeGroupLevel) {
+        super(level.chart, false);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    floating = true;
+}
+
+export class TreeGroupLevel extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    head: TreeGroupHead;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public series: TreemapSeries, public level: number) {
+        super(series.chart, true);
+
+        this.head = new TreeGroupHead(this);
+    }
+}
+
+export class TreeGroupLevelCollection {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _levels: TreeGroupLevel[] = [];
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(public series: TreemapSeries) {
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    load(source: any): void {
+        const levels = this._levels = [];
+
+        if (isObject(source)) {
+            source = [source];
+        }
+        if (isArray(source)) {
+            source.forEach(src => {
+                if (isObject(src) && src.level >= 0) {
+                    levels[src.level] = this.$_loadLevel(src);
+                }
+            })
+        }
+    }
+
+    getLevel(level: number): TreeGroupLevel {
+        return this._levels[level];
+    }
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    private $_loadLevel(src: any): TreeGroupLevel {
+        const level = new TreeGroupLevel(this.series, src.level);
+        level.load(src);
+        return level;
+    }
+}
 interface IArea {
     x: number, 
     y: number,
@@ -59,6 +137,7 @@ interface IArea {
 
 export class TreeNode {
     parent: TreeNode;
+    expaned: boolean;
     children: TreeNode[];
     index: number;
     value: number;
@@ -70,6 +149,10 @@ export class TreeNode {
     _color: Color;
 
     constructor(public point: TreemapSeriesPoint) {}
+
+    level(): number {
+        return this.parent ? this.parent.level() + 1 : 0;
+    }
 
     getArea(): IArea {
         return {x: this.x, y: this.y, width: this.width, height: this.height};
@@ -128,31 +211,58 @@ export class TreemapSeries extends Series {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    idField = 'id';
-    groupField = 'group';
-    algorithm = TreemapAlgorithm.SQUARIFY;
-    /**
-     * 수직, 수평으로 방향을 바꾸어 가며 배치한다.
-     */
-    alternate = true;
-    /**
-     * 시작 방향.
-     * <br>
-     * 지정하지 않으면 ploting 영역의 너비/높이 비율 기준으로 정해진다.
-     */
-    startDir: 'vertical' | 'horizontal';
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     _roots: TreeNode[];
     _leafs: TreeNode[];
     private _map: {[id: string]: TreeNode} = {};
+    private _levels = 1;
+
+    //-------------------------------------------------------------------------
+    // propertis
+    //-------------------------------------------------------------------------
+    idField = 'id';
+    groupField = 'group';
+    /**
+     * 노든 분할 알고리즘.
+     * 
+     * @config
+     */
+    algorithm = TreemapAlgorithm.SQUARIFY;
+    /**
+     * 수직, 수평으로 방향을 바꾸어 가며 배치한다.
+     * 
+     * @config
+     */
+    alternate = true;
+    /**백
+     * 시작 방향.\
+     * 지정하지 않으면 ploting 영역의 너비/높이 비율 기준으로 정해진다.
+     * 
+     * @config
+     */
+    startDir: 'vertical' | 'horizontal';
+    /**
+     * tree level이 2 이상일 때 그룹 헤더를 표시하고, 자식들을 감추거나 표시할 수 있도록 한다.
+     */
+    groupMode = true;
+    /**
+     * group mode일 때 group 레벨별 표시 방식 지정.
+     */
+    groupLevels = new TreeGroupLevelCollection(this);
+    /**
+     * 툴팁 표시 기준 level.\
+     * 값을 지정하지 않거나 범위를 벗어나면 마우스 아래 표시되는 node의 툴팁을 표시한다.
+     * 
+     * // TODO:
+     */
+    tooltipLevel: number;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    buildMap(width: number, height: number): TreeNode[] {
+    buildMap(width: number, height: number): {roots: TreeNode[], leafs: TreeNode[]} {
 
         function visit(node: TreeNode): void {
             if (node.children) {
@@ -167,6 +277,7 @@ export class TreemapSeries extends Series {
                 node.children.forEach((node, i) => {
                     node.index = i;
                 });
+                levels = Math.max(levels, node.level() + 1 + 1);
             } else {
                 leafs.push(node);
                 node.value = node.point ? node.point.yValue : 0;
@@ -175,6 +286,7 @@ export class TreemapSeries extends Series {
 
         const vertical = this.startDir === 'vertical' || height > width;
         const leafs = this._leafs = [];
+        let levels = 1;
 
         this._roots.forEach((node, i) => {
             visit(node);
@@ -186,7 +298,9 @@ export class TreemapSeries extends Series {
         });
 
         (this[this.algorithm] || this.squarify).call(this, this._roots, width, height, vertical);
-        return this._leafs;
+        this._levels = levels;
+        console.log('levels', this._levels);
+        return { roots: this._roots, leafs: this._leafs };
     }
 
     //-------------------------------------------------------------------------
@@ -194,17 +308,6 @@ export class TreemapSeries extends Series {
     //-------------------------------------------------------------------------
     _type(): string {
         return 'treemap';
-    }
-
-    getPointTooltip(point: TreemapSeriesPoint, param: string): any {
-        switch (param) {
-            case 'id':
-                return point.id;
-            case 'group':
-                return point.group;
-            default:
-                return super.getPointTooltip(point, param);
-        }
     }
 
     needAxes(): boolean {

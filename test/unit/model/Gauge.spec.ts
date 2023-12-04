@@ -55,7 +55,7 @@ describe("ValueGauge test", function() {
         }, {
             color: 'red'
         }];
-        const ranges = buildValueRanges(src, min, max);
+        const ranges = buildValueRanges(src, min, max, false);
 
         expect(ranges).instanceOf(Array);
         expect(ranges.length).eq(src.length);

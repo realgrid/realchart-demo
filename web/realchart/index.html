@@ -105,6 +105,8 @@ window.addEventListener('DOMContentLoaded', function () {
 			<div class="menu" id="menu">
 				<li class="menu-group">Basic</li>
 				<li class="menu-leaf"><a href='./demo/basic.html' target="blank" onclick="return clickRef(event);">Basic</a></li>
+				<li class="menu-leaf"><a href='./demo/guide-image01.html' target="blank" onclick="return clickRef(event);">guide-image01</a></li>
+				<li class="menu-leaf"><a href='./demo/guide-image02.html' target="blank" onclick="return clickRef(event);">guide-image02</a></li>
 
                 <li class="menu-group">Bar</li>
 				<li class="menu-leaf"><a href='./demo/bar.html' target="blank" onclick="return clickRef(event);">Bar</a></li>
@@ -140,6 +142,7 @@ window.addEventListener('DOMContentLoaded', function () {
 				<li class="menu-group">Area</li>
 				<li class="menu-leaf"><a href='./demo/area.html' target="blank" onclick="return clickRef(event);">Area</a></li>
 				<li class="menu-leaf"><a href='./demo/area-multi.html' target="blank" onclick="return clickRef(event);">Multiple Areas</a></li>
+				<li class="menu-leaf"><a href='./demo/area-multi2.html' target="blank" onclick="return clickRef(event);">Multiple Areas2</a></li>
 				<li class="menu-leaf"><a href='./demo/areagroup.html' target="blank" onclick="return clickRef(event);">Area Group</a></li>
 				<li class="menu-leaf"><a href='./demo/area-negative.html' target="blank" onclick="return clickRef(event);">Area Negative</a></li>
 				<li class="menu-leaf"><a href='./demo/areagroup-negative.html' target="blank" onclick="return clickRef(event);">Negative Areas</a></li>
@@ -175,6 +178,7 @@ window.addEventListener('DOMContentLoaded', function () {
 				<li class="menu-group">Candlestick</li>
 				<li class="menu-leaf"><a href='./demo/candlestick.html' target="blank" onclick="return clickRef(event);">Candlestick</a></li>
 				<li class="menu-leaf"><a href='./demo/candlestick-null.html' target="blank" onclick="return clickRef(event);">Null Point</a></li>
+				<li class="menu-leaf"><a href='./demo/candlestick-stock.html' target="blank" onclick="return clickRef(event);">Stock Data</a></li>
 
 				<li class="menu-group">Ohlc</li>
 				<li class="menu-leaf"><a href='./demo/ohlc.html' target="blank" onclick="return clickRef(event);">Ohlc</a></li>
@@ -217,6 +221,8 @@ window.addEventListener('DOMContentLoaded', function () {
 				<li class="menu-leaf"><a href='./demo/pie.html' target="blank" onclick="return clickRef(event);">Pie</a></li>
 				<li class="menu-leaf"><a href='./demo/pie-null.html' target="blank" onclick="return clickRef(event);">Null Point</a></li>
 				<li class="menu-leaf"><a href='./demo/pie-donut.html' target="blank" onclick="return clickRef(event);">Donut</a></li>
+				<li class="menu-leaf"><a href='./demo/pie-half.html' target="blank" onclick="return clickRef(event);">Half Pie</a></li>
+				<li class="menu-leaf"><a href='./demo/pie-donut-half.html' target="blank" onclick="return clickRef(event);">Half Donut</a></li>
 
 				<li class="menu-group">Funnel</li>
 				<li class="menu-leaf"><a href='./demo/funnel.html' target="blank" onclick="return clickRef(event);">Funnel</a></li>
@@ -226,6 +232,7 @@ window.addEventListener('DOMContentLoaded', function () {
 				<li class="menu-leaf"><a href='./demo/polar.html' target="blank" onclick="return clickRef(event);">Polar(Radar)</a></li>
 				<li class="menu-leaf"><a href='./demo/polar-categoryvar.html' target="blank" onclick="return clickRef(event);">Polar - Variable Category</a></li>
 				<!-- <li class="menu-leaf"><a href='./demo/windrose.html' target="blank" onclick="return clickRef(event);">WindRose</a></li> -->
+				<li class="menu-leaf"><a href='./demo/polar-scatter.html' target="blank" onclick="return clickRef(event);">Polar - Scatter</a></li>
 
 				<!-- <li class="menu-group">Word Cloud</li>
 				<li class="menu-leaf"><a href='./demo/wordcloud.html' target="blank" onclick="return clickRef(event);">Wordcloud</a></li> -->
@@ -273,9 +280,15 @@ window.addEventListener('DOMContentLoaded', function () {
 				<!-- <li class="menu-leaf"><a href='./demo/guide-image.html' target="blank" onclick="return clickRef(event);">Guide Image</a></li> -->
 				<li class="menu-leaf"><a href='./demo/crosshair.html' target="blank" onclick="return clickRef(event);">Crosshair</a></li>
 				<li class="menu-leaf"><a href='./demo/body-background.html' target="blank" onclick="return clickRef(event);">Background</a></li>
-				<li class="menu-leaf"><a href='./demo/wing-chart.html' target="blank" onclick="return clickRef(event);">Wing Chart by Split</a></li>
+				<li class="menu-leaf"><a href='./demo/annotations.html' target="blank" onclick="return clickRef(event);">Annotations</a></li>
 
-				<li class="menu-group">Chart</li>
+				<li class="menu-group">Split</li>
+				<li class="menu-leaf"><a href='./demo/split-wing-chart.html' target="blank" onclick="return clickRef(event);">Wing Chart</a></li>
+				<li class="menu-leaf"><a href='./demo/split-row-lines.html' target="blank" onclick="return clickRef(event);">Series Row</a></li>
+				<li class="menu-leaf"><a href='./demo/split-col-lines.html' target="blank" onclick="return clickRef(event);">Seires Column</a></li>
+				<li class="menu-leaf"><a href='./demo/split-grid-lines.html' target="blank" onclick="return clickRef(event);">Seires Grid</a></li>
+
+                <li class="menu-group">Chart</li>
 				<li class="menu-leaf"><a href='./demo/background.html' target="blank" onclick="return clickRef(event);">Background</a></li>
 				<li class="menu-leaf"><a href='./demo/series-navigator.html' target="blank" onclick="return clickRef(event);">Navigator</a></li>
 				<li class="menu-leaf"><a href='./demo/resize.html' target="blank" onclick="return clickRef(event);">Resize</a></li>
@@ -287,9 +300,22 @@ window.addEventListener('DOMContentLoaded', function () {
 				<li class="menu-leaf"><a href='./demo/palette.html' target="blank" onclick="return clickRef(event);">Palette</a></li>
 				<li class="menu-leaf"><a href='./demo/theme.html' target="blank" onclick="return clickRef(event);">Theme</a></li>
 				<li class="menu-leaf"><a href='./demo/stylecallback.html' target="blank" onclick="return clickRef(event);">Style Callback</a></li>
+				<li class="menu-leaf"><a href='./demo/viewranges-bar.html' target="blank" onclick="return clickRef(event);">View Ranges - Bar</a></li>
+				<li class="menu-leaf"><a href='./demo/viewranges-line.html' target="blank" onclick="return clickRef(event);">View Ranges - Line</a></li>
+				<li class="menu-leaf"><a href='./demo/viewranges-area.html' target="blank" onclick="return clickRef(event);">View Ranges - Area</a></li>
 
-				<li class="menu-group">Data</li>
-				<li class="menu-leaf"><a href='./demo/data.html' target="blank" onclick="return clickRef(event);">Data</a></li>
+				<!-- <li class="menu-group">Data</li>
+				<li class="menu-leaf"><a href='./demo/data.html' target="blank" onclick="return clickRef(event);">Data</a></li> -->
+
+				<li class="menu-group">Samples</li>
+				<li class="menu-leaf"><a href='./demo/sample-01.html' target="blank" onclick="return clickRef(event);">Sample 01</a></li>
+				<li class="menu-leaf"><a href='./demo/sample-02.html' target="blank" onclick="return clickRef(event);">Sample 02</a></li>
+				<li class="menu-leaf"><a href='./demo/sample-03.html' target="blank" onclick="return clickRef(event);">Sample 03</a></li>
+				<li class="menu-leaf"><a href='./demo/sample-10.html' target="blank" onclick="return clickRef(event);">Sample 10</a></li>
+				<li class="menu-leaf"><a href='./demo/sample-11.html' target="blank" onclick="return clickRef(event);">Sample 11</a></li>
+				<li class="menu-leaf"><a href='./demo/sample-12.html' target="blank" onclick="return clickRef(event);">Sample 12</a></li>
+				<li class="menu-leaf"><a href='./demo/sample-13.html' target="blank" onclick="return clickRef(event);">Sample 13</a></li>
+				<li class="menu-leaf"><a href='./demo/sample-14.html' target="blank" onclick="return clickRef(event);">Sample 14</a></li>
 			</div>
 		</div>
 		<div class="content">

@@ -11,6 +11,7 @@ import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { IRect } from "../../common/Rectangle";
 import { fixnum } from "../../common/Types";
+import { TextAnchor } from "../../common/impl/TextElement";
 import { PointItemPosition } from "../../model/Series";
 import { FunnelSeries, FunnelSeriesPoint } from "../../model/series/FunnelSeries";
 import { IPointView, PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
@@ -143,7 +144,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
         const labelViews = this._labelViews();
         const labelInside = series.getLabelPosition() === PointItemPosition.INSIDE;
         const labels = series.pointLabel;
-        const labelOff = labels.offset;
+        const labelOff = labels.getOffset();
         const labelDist = labelViews ? (labels.distance || 0) : 0;
         const lineViews = this._lineContainer;
         const reversed = series.reversed;
@@ -209,6 +210,8 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
                     const line = lineViews.get(p);
+
+                    // labelView.anchor = TextAnchor.START; // 기본이 MIDDLE이다.
 
                     if (line.setVisible(!labelInside)) {
                         const rSeg = seg.getBBounds();

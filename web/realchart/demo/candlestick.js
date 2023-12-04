@@ -7,12 +7,16 @@ const config = {
     options: {
         // animatable: false,
     },
+    legend: true,
     xAxis: {
         type: 'category',
     },
     yAxis: {
+        crosshair: true,
+        // position: 'opposite'
     },
     series: {
+        // pointStyleCallback: args => {return { fill: 'red', stroke: 'red'}},
         type: 'candlestick',
         pointLabel: true,
         openField: 'openprc',

@@ -110,17 +110,6 @@ export class HistogramSeries extends Series {
         return 'histogram';
     }
 
-    getPointTooltip(point: HistogramSeriesPoint, param: string): any {
-        switch (param) {
-            case 'min':
-                return point.min;
-            case 'max':
-                return point.max;
-            default:
-                return super.getPointTooltip(point, param);
-        }
-    }
-
     ignoreAxisBase(axis: IAxis): boolean {
         return axis === this._xAxisObj;
     }

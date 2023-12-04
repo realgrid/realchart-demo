@@ -6,9 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isString, pickNum, pickNum3 } from "../../common/Common";
+import { isArray, isNumber, isString, pickNum, pickNum3, pickProp } from "../../common/Common";
+import { PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { Axis, AxisGrid, AxisTick, AxisLabel, IAxisTick } from "../Axis";
+import { IChart } from "../Chart";
 import { IPlottingItem } from "../Series";
 
 export enum CategoryTickPosition {
@@ -31,7 +33,7 @@ export class CategoryAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    position = CategoryTickPosition.POINT;
+    position: CategoryTickPosition;
     step = 1;
 
     //-------------------------------------------------------------------------
@@ -105,7 +107,7 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _categories: {c: string, w: number}[];
+    _categories: {c: string, t: string, w: number}[];
     _cats: string[];
     _weights: number[];  // 한 카테고리의 상대 너비. 한 카테고리의 기본 크기는 1
     _len: number;
@@ -114,6 +116,13 @@ export class CategoryAxis extends Axis {
     private _catPad = 0;
     _pts: number[];
     _vlen: number;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart, isX: boolean, name?: string) {
+        super(chart, isX, name);
+    }
 
     //-------------------------------------------------------------------------
     // properties
@@ -127,22 +136,27 @@ export class CategoryAxis extends Axis {
     //  */
     // valueStep = 1;
     /**
-     * Category 목록을 수집하는 시리즈.
+     * Category 목록을 수집하는 시리즈.\
      * 지정하지 않으면 모든 시리즈에서 카테고리를 수집한다.
+     * 
+     * @config
      */
     categorySeries: string;
     /**
-     * 카테고리로 사용되는 dataPoint 속성.
+     * 카테고리로 사용되는 dataPoint 속성.\
      * {@link categories}가 지정되면 이 속성은 무시된다.
+     * 
+     * @config
      */
     categoryField: string | number;
     /**
-     * 명시적으로 지정하는 카테고리 목록.
-     * <br>
+     * 명시적으로 지정하는 카테고리 목록.\
      * 카테고리 항목을 object로 지정할 때에는 name(혹은 label) 속성에 카테고리 이름을,
      * width 속성에 상대 너비(1이 기본 너비)를 지정한다.
      * 첫 번째 값이 {@link startValue}에 해당하고 {@link valueStep}씩 증가한다.
      * 각 카테고리의 상대적 너비를 지정할 수 있다.
+     * 
+     * @config
      */
     categories: any[];
     // /** 
@@ -150,38 +164,43 @@ export class CategoryAxis extends Axis {
     //  */
     // categoryStep = 1;
     /**
-     * 축의 양 끝 카테고리 위치 전후에 여백으로 추가되는 크기.
-     * <br>
+     * 축의 양 끝 카테고리 위치 전후에 여백으로 추가되는 크기.\
      * 각각 시작/끝 카테고리에 대한 상대적 크기로 지정한다.
      * {@link minPadding}, {@link maxPadding}으로 별도 지정할 수 있다.
      * 
-     * @default 0
+     * @config
      */
     padding = 0;
     /**
-     * 축의 시작 카테고리 위치 이 전에 여백으로 추가되는 크기.
-     * <br>
+     * 축의 시작 카테고리 위치 이 전에 여백으로 추가되는 크기.\
      * 카테고리 기본 너비(1)에 대한 상대적 크기로 지정한다.
      * {@link padding} 속성으로 양끝 padding을 한꺼번에 지정할 수 있다.
      * 
-     * @default undefined
+     * @config
      */
     minPadding: number;
     /**
-     * 축의 끝 카테고리 위치 이 후에 여백으로 추가되는 크기.
-     * <br>
+     * 축의 끝 카테고리 위치 이 후에 여백으로 추가되는 크기.\
      * 카테고리 기본 너비(1)에 대한 상대적 크기로 지정한다.
      * {@link padding} 속성으로 양끝 padding을 한꺼번에 지정할 수 있다.
      * 
-     * @default undefined
+     * @config
      */
     maxPadding: number;
     /**
      * 각 카테고리의 양 끝에 추가되는 여백의 카테고리에 너비에 대한 상대적 크기.
-     * <br>
-     * @default 0.1.
+     * 
+     * @config
      */
     categoryPadding = 0.1;
+    /**
+     * polar 축일 때 시작 위치 간격.\
+     * 첫번째 카테고리 너비(각도)에 대한 상대값으로 0~1 사이의 값을 지정한다.
+     * ex) 0.5로 지정하면 bar 시리즈의 첫 째 bar가 12시 위치에 표시된다.
+     * 
+     * @config
+     */
+    startOffset = 0;
 
     //-------------------------------------------------------------------------
     // methods
@@ -235,6 +254,7 @@ export class CategoryAxis extends Axis {
     }
 
     collectValues(): void {
+        // [주의] collectValues()에서 category에 해당하는 값을 가져올 수 있다면 순서를 바꿔야 한다.
         this.$_collectCategories(this._series);
 
         if (this._series.length > 0) {
@@ -245,26 +265,39 @@ export class CategoryAxis extends Axis {
         }
     }
 
+    getStartAngle(): number {
+        let start = super.getStartAngle();
+        let a = +this.startOffset;
+
+        if (a > 0) {
+            start -= Math.min(a, 1) * this._categories[0].w * PI_2 / this._len;
+        }
+        return start;
+    }
+
     protected _doPrepareRender(): void {
         this._cats = [];
         this._weights = [];
 
-        this._minPad = pickNum3(this.minPadding, this.padding, 0);
-        this._maxPad = pickNum3(this.maxPadding, this.padding, 0);
-
-        // category padding
-        this._catPad = pickNum(this.categoryPadding, 0);
+        if (this._isPolar) {
+            this._minPad = this._maxPad = this._catPad = 0;
+        } else {
+            this._minPad = pickNum3(this.minPadding, this.padding, 0);
+            this._maxPad = pickNum3(this.maxPadding, this.padding, 0);
+            // category padding
+            this._catPad = pickNum(this.categoryPadding, 0);
+        }
     }
 
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] {
         const label = this.label as CategoryAxisLabel;
-        let cats = this._cats = this._categories.map(cat => cat.c);
+        let cats = this._categories.map(cat => cat.c);
         let weights = this._weights = this._categories.map(cat => cat.w);
         const steps = (this.tick as CategoryAxisTick).step || 1;
         const ticks: IAxisTick[] = [];
 
-        min = this._min = Math.floor(min);
-        max = this._max = Math.ceil(max);
+        min = Math.floor(min);
+        max = Math.ceil(max);
 
         while (cats.length <= max) {
             cats.push(String(cats.length));
@@ -290,16 +323,20 @@ export class CategoryAxis extends Axis {
 
             for (let i = 1; i < pts.length - 2; i += steps) {
                 const v = min + i - 1;
+                const c = this._categories[min + i - 1];
 
                 ticks.push({
+                    index: i - 1,
                     pos: NaN,//this.getPosition(length, v),
                     value: v,
-                    label: label.getTick(i - 1, cats[i - 1]),
+                    label: label.getTick(i - 1, c ? c.t : cats[i - 1]),
                 });
             }
         } else {
             this._pts = [];
         }
+
+        this._setMinMax(min, max);
         return ticks;
     }
 
@@ -318,15 +355,22 @@ export class CategoryAxis extends Axis {
             pts[i] *= length;
         }
 
-        const tick = this.tick as CategoryAxisTick;
-        let markPoints: number[];
-
-        if (tick.getPosition() === CategoryTickPosition.EDGE) {
-            markPoints = pts.slice(1, pts.length - 1);
+        if (this._isPolar) {
+            if (phase > 0) {
+                // getPosition()에서 바로 각도를 리턴할 수 있도록...
+                this._pts = pts.map(t => t / length * PI_2);
+            }
         } else {
-            markPoints = this._ticks.map(t => t.pos);
+            const tick = this.tick as CategoryAxisTick;
+            let markPoints: number[];
+
+            if (tick.getPosition() === CategoryTickPosition.EDGE) {
+                markPoints = pts.slice(1, pts.length - 1);
+            } else {
+                markPoints = this._ticks.map(t => t.pos);
+            }
+            this._markPoints = markPoints;
         }
-        this._markPoints = markPoints;
     }
 
     getPosition(length: number, value: number, point = true): number {
@@ -335,7 +379,13 @@ export class CategoryAxis extends Axis {
         if (point) value += 0.5;//this._step / 2;
         const v = Math.floor(value);
         const p = this._pts[v + 1] + (this._pts[v + 2] - this._pts[v + 1]) * (value - v);
-        return this.reversed ? length - p : p;
+
+        // if (this._isPolar) {
+        //     // length는 원주, 각도를 리턴한다.
+        //     return p / length * PI_2;
+        // } else {
+            return this.reversed ? length - p : p;
+        // }
     }
 
     getValueAt(length: number, pos: number): number {
@@ -351,6 +401,7 @@ export class CategoryAxis extends Axis {
 
     getUnitLength(length: number, value: number): number {
         const v = Math.floor(value - this._min);
+
         return (this._pts[v + 2] - this._pts[v + 1]);
     }
 
@@ -375,13 +426,17 @@ export class CategoryAxis extends Axis {
             categories.forEach(cat => {
                 let w = cat == null ? 1 : pickNum(cat.weight, 1);
                 let c: string;
+                let t: string;
 
-                if (cat == null) c = null;
-                else if (isString(cat)) c = cat;
-                else c = cat.name || cat.label;
+                if (cat == null) t = c = null;
+                else if (isString(cat)) t = c = cat;
+                else {
+                    c = pickProp(cat.name, cat.label);
+                    t = pickProp(cat.label, cat.name);
+                }
 
                 this._len += w;
-                cats.push({c, w});
+                cats.push({c, t, w});
             })
         } else {
             if (isArray(series)) {
@@ -390,7 +445,7 @@ export class CategoryAxis extends Axis {
 
                     for (const c of cats2) {
                         if (!cats.find(cat => cat.c === c)) {
-                            cats.push({c, w: 1});
+                            cats.push({c, w: 1, t: c});
                         }
                     }
                 }

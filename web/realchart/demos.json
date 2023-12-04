@@ -9,7 +9,8 @@
         "Multi Groups": "bargroup-multi",
         "Bar Negative": "bar-negative",
         "Null Point": "bar-null",
-        "Negative Bars": "bargroup-negative"
+        "Negative Bars": "bargroup-negative",
+        "Wing Chart": "bar-wing"
     },
     "BarRange": {
         "Bar Range": "barrange",
@@ -49,7 +50,9 @@
         "Null Point": "pareto-null"
     },
     "Scatter": {
-        "Scatter": "scatter"
+        "Scatter": "scatter",
+        "Scatter - Many Points": "scatter-bigdata",
+        "Scatter - Jittering": "scatter-jitter"
     },
     "Bubble": {
         "Bubble": "bubble",
@@ -115,11 +118,14 @@
         "Funnel": "funnel"
     },
     "Polar": {
-        "Polar": "polar"
+        "Polar": "polar",
+        "Polar - Variable Category": "polar-categoryvar",
+        "Polar - Scatter": "polar-scatter"
     },
     "Combination": {
         "AreaRange & Line": "combo-arearange-line",
-        "Bar & Pie": "combo-bar-pie"
+        "Bar & Pie": "combo-bar-pie",
+        "Line & Lollipop": "combo-line-lollipop"
     },
     "Axis": {
         "Category Axis": "categoryaxis",
@@ -158,18 +164,28 @@
         "Guides": "axis-guide",
         "Crosshair": "crosshair",
         "Background": "body-background",
-        "Wing Chart by Split": "wing-chart"
-
-    },
+        "Annotations": "annotations"
+    }, 
+    "Split": {
+        "Wing Chart": "split-wing-chart",
+        "Series Row": "split-row-lines",
+        "Series Column": "split-col-lines",
+        "Series Grid": "split-grid-lines"
+    }, 
     "Chart": {
         "Background": "background",
+        "Navigator": "series-navigator",
         "Resize": "resize"
     },
     "Style": {
         "Linear Gradient": "lineargradient",
         "Radial Gradient": "radialgradient",
+        "Pattern Fill": "pattern-fill",
         "Palette": "palette",
         "Theme": "theme",
-        "Style Callback": "stylecallback"
+        "Style Callback": "stylecallback",
+        "View Ranges - Bar": "viewranges-bar",
+        "View Ranges - Line": "viewranges-line",
+        "View Ranges - Area": "viewranges-area"
     }
 }

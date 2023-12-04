@@ -183,15 +183,10 @@ test.describe('area.html test', async function () {
 		const guideText = await page.$$('.rct-axis-guide-label');
 
 		const lineText = guideText[0];
-		const rangeText = guideText[1];
 
 		const lineLabel = await page.evaluate((el) => el.textContent, lineText);
-		const rangeLabel = await page.evaluate(
-			(el) => el.textContent,
-			rangeText
-		);
-
-		expect(lineLabel).eq(config.yAxis.guide[0].label);
-		expect(rangeLabel).eq(config.yAxis.guide[1].label.text);
+		const strRange = config.yAxis.guides[0].label.text;
+		
+		expect(lineLabel).eq(strRange);
 	});
 });

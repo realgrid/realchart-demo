@@ -1,44 +1,48 @@
-## scale
+## [scale](/config/config/scale)
 scale.
 ## Properties
 
-### [line](./linear/line)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
-
-  
+### gap: `number{:js}`[#gap]
+게이지 본체와의 간격.  
+<DefaultValue value="8" contents="픽셀."></DefaultValue>
+### [line](./scale/line)
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
 
 ### position[#position]
 
 
-`default: GaugeItemPosition.DEFAULT`  
-
+<DefaultValue value="GaugeItemPosition.DEFAULT" contents=""></DefaultValue>
 ### stepCount: `number{:js}`[#stepCount]
 
 ### stepInterval: `number{:js}`[#stepInterval]
 
 ### stepPixels: `number{:js}`[#stepPixels]
-`default: 48`  
-
+<DefaultValue value="48" contents=""></DefaultValue>
 ### steps: `number[]{:js}`[#steps]
 
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
 
-### [tick](./linear/tick)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+### [tick](./scale/tick)
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
 
-  
-
-### [tickLabel](./linear/tickLabel)
-RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
-
-  
-
-### gap: `number{:js}`[#gap]
-게이지 본체와의 간격.  
-`default: 8` 픽셀. 
+### [tickLabel](./scale/tickLabel)
+RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
 
 ### visible: `boolean{:js}`[#visible]
-표시 여부.\
-모델에 따라 기본값이 다르다.
-<FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  
+표시 여부.  
+<DefaultValue value="true" contents=""></DefaultValue>

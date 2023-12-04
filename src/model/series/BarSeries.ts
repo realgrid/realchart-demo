@@ -7,9 +7,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "../../common/Common";
+import { RcElement } from "../../common/RcControl";
+import { RectElement } from "../../common/impl/RectElement";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
-import { BasedSeries, ClusterableSeriesGroup, IClusterable, Series, SeriesGroup, SeriesGroupLayout } from "../Series";
+import { BasedSeries, ClusterableSeriesGroup, IClusterable, Series, SeriesGroupLayout } from "../Series";
 
 /**
  * [y]
@@ -23,10 +25,7 @@ export class BarSeriesPoint extends DataPoint {
     // borderRaidus: number;
 }
 
-/**
- * @config chart.series[type=bar]
- */
-export class BarSeries extends BasedSeries {
+export abstract class BarSeriesBase extends BasedSeries {
 
     //-------------------------------------------------------------------------
     // consts
@@ -37,7 +36,6 @@ export class BarSeries extends BasedSeries {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    borderRaidus = 0;
     /**
      * true로 지정하면 포인트 bar 별로 색을 다르게 표시한다.
      * 
@@ -51,10 +49,6 @@ export class BarSeries extends BasedSeries {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    _type(): string {
-        return 'bar';
-    }
-
     canCategorized(): boolean {
         return true;
     }
@@ -68,14 +62,33 @@ export class BarSeries extends BasedSeries {
     }
 
     protected _getGroupBase(): number {
-        return this.group ? (this.group as BarSeriesGroup).baseValue: this.baseValue;
+        return this.group ? (this.group as BarSeriesGroupBase<any>).baseValue: this.baseValue;
     }
 }
 
 /**
- * @config chart.series[type=bargroup]
+ * @config chart.series[type=bar]
  */
-export class BarSeriesGroup extends ClusterableSeriesGroup<BarSeries> implements IClusterable {
+export class BarSeries extends BarSeriesBase {
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    borderRaidus = 0;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    _type(): string {
+        return 'bar';
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, 2);
+    }
+}
+
+export abstract class BarSeriesGroupBase<T extends BarSeriesBase> extends ClusterableSeriesGroup<T> implements IClusterable {
 
     //-------------------------------------------------------------------------
     // fields
@@ -91,18 +104,6 @@ export class BarSeriesGroup extends ClusterableSeriesGroup<BarSeries> implements
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    _type(): string {
-        return 'bargroup';
-    }
-
-    _seriesType(): string {
-        return 'bar';
-    }
-
-    protected _canContain(ser: Series): boolean {
-        return ser instanceof BarSeries;
-    }
-
     canCategorized(): boolean {
         return true;
     }
@@ -111,7 +112,7 @@ export class BarSeriesGroup extends ClusterableSeriesGroup<BarSeries> implements
         return axis._isX ? NaN : pickNum(this.baseValue, axis.getBaseValue());
     }
 
-    protected _doPrepareSeries(series: BarSeries[]): void {
+    protected _doPrepareSeries(series: T[]): void {
         if (this.layout === SeriesGroupLayout.DEFAULT) {
             const sum = series.length > 1 ? series.map(ser => ser.pointWidth).reduce((a, c) => a + c, 0) : series[0].pointWidth;
             let x = 0;
@@ -123,5 +124,26 @@ export class BarSeriesGroup extends ClusterableSeriesGroup<BarSeries> implements
             });
         } else if (this.layout === SeriesGroupLayout.STACK) {
         }
+    }
+}
+
+/**
+ * @config chart.series[type=bargroup]
+ */
+export class BarSeriesGroup extends BarSeriesGroupBase<BarSeries> {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    _type(): string {
+        return 'bargroup';
+    }
+
+    _seriesType(): string {
+        return 'bar';
+    }
+
+    protected _canContain(ser: Series): boolean {
+        return ser instanceof BarSeries;
     }
 }
