@@ -24,7 +24,7 @@ const config = {
     name: "heatmap",
     options: {
         credits: {
-            visible: false
+            visible: true
         },
     },
     xAxis: {

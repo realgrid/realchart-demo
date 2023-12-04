@@ -34,8 +34,8 @@ test.describe('bar-multi.html test', async function () {
 		const config: any = await page.evaluate('config');
 		const data = [];
 
-		for (let i = 0; i < config.series.length; i++) {
-			data.push(...config.series[i].data);
+		for (let i = 0; i < config.series[0].children.length; i++) {
+			data.push(...config.series[0].children[i].data);
 		}
 		expect(data.length).eq(bars.length);
 

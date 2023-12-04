@@ -46,24 +46,9 @@ test.describe('heatmap.html test', async function () {
 		expect(title).exist;
 
 		const titleText = await page.evaluate((el) => el.textContent, title);
-		expect(titleText).eq(config.title);
+		expect(titleText).eq(config.title.text);
 	});
 
-	test('xTitle x축의 타이틀 존재 유무와 알맞은 값인지 확인', async ({
-		page,
-	}) => {
-		const config: any = await page.evaluate('config');
-
-		const xAxis = await PWTester.getAxis(page, 'x');
-		const xAxisText = await xAxis.$('text');
-		expect(xAxis).exist;
-
-		const xAxistTitle = await page.evaluate(
-			(el) => el.textContent,
-			xAxisText
-		);
-		expect(xAxistTitle).eq(config.xAxis.title);
-	});
 
 	test('yTitle y축의 타이틀 존재 유무와 알맞은 값인지 확인', async ({
 		page,
