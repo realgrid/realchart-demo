@@ -1,30 +1,44 @@
 const config = {
     options: {
-        // animatable: false
     },
-    title: 'Gapminder Global Indicators',
+    title: {
+        text: 'Gapminder Global Indicators',
+        style: {
+            fontWeight: 'bold'
+        }
+    },
     xAxis: {
-        title: 'xAxis'
+        title: {
+            text: 'GDP per Capita',
+            style: {
+                fontWeight: 'bold'
+            }
+        },
+        grid: true,
+        line: false
     },
     yAxis: {
-        title: 'yAxis'
+        title: {
+            text: 'Life Expectancy',
+            style: {
+                fontWeight: 'bold'
+            }
+        },
+        strictMin: 20,
+        strictMax: 120,
+        tick: {
+            stepInterval: 10,
+        },
+        grid: {
+            visible: true,
+            startVisible: false,
+            endVisible: false
+        },
     },
-    series: [{
-        type: 'bubble',
-        pointLabel: {
-            // visible: true,
-            suffix: 'm',
-            effect: 'outline',
-            // position: 'outside'
-        },
-        tooltip: {
-            text: 'x: ${x}<br>y: ${y}<br>z: ${z}'
-        },
-        sizeMode: 'width',
-        shape: 'rectangle',
-        radius: 0.1,
-        data: {}
-    }]
+    legend: {
+        location: 'right',
+        verticalAlign: 'top'
+    }
 };
 
 let animate = false;
@@ -41,25 +55,13 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
-    createCheckBox(container, 'series.alternate', function (e) {
-        config.series.alternate = _getChecked(e);
+    createListBox(container, 'year', [1952, 1957, 1962, 1967, 1972, 1977, 1982, 1987, 1992, 1997, 2002, 2007], function (e) {
+        config.series = createSeries(Number(_getValue(e)));
         chart.load(config, animate);
-    }, false);
-    createCheckBox(container, 'series.groupMode', function (e) {
-        config.series.groupMode = _getChecked(e);
-        chart.load(config, animate);
-    }, true);
-    createListBox(container, "series.startDir", ['vertical', 'horizontal'], function (e) {
-        config.series.startDir = _getValue(e);
-        chart.load(config, animate);
-    }, 'vertical');
-    createListBox(container, "series.algorithm", [1952, 1957, 1962, 1967, 1972, 1977, 1982, 1987, 1992, 1997], function (e) {
-        config.series.algorithm = _getValue(e);
-        chart.load(config, animate);
-    }, 'squarify');
+    }, 1952);
 }
 
-const createData = (year) => {
+const createSeries = (year) => {
     let result = [];
     const continents = [...new Set(bubble.map((value) => value.continent))];
 
@@ -69,20 +71,15 @@ const createData = (year) => {
         result.push({
             name: continent,
             type: 'bubble',
-            // pointLabel: {
-            //     visible: true,
-            //     suffix: 'm',
-            //     effect: 'outline',
-            //     position: 'outside'
-            // },
             tooltip: {
-                text: 'x: ${x}<br>y: ${y}<br>z: ${z}'
+                text: 'country: ${country}<br>gdpPercap: ${x}<br>lifeExp: ${y}<br>pop: ${z}'
             },
             sizeMode: 'width',
             shape: 'rectangle',
             radius: 0.1,
             data: data.filter((value) => value.continent === continent).map((value) => {
-                return [value.gdpPercap, value.lifeExp, value.pop]; 
+                if (value.country === 'Kuwait') return;
+                return {x: value.gdpPercap, y: value.lifeExp, z: value.pop, country: value.country}; 
             })
         });
     });
@@ -94,8 +91,7 @@ const createData = (year) => {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
-
-    config.series = createData(1952);
+    config.series = createSeries(1952);
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')
 }
