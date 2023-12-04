@@ -85,7 +85,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         const series = this.model;
         const inverted = series.chart.isInverted();
         const labels = series.pointLabel;
-        const labelOff = labels.offset;
+        const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;

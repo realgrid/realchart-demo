@@ -144,7 +144,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
         const labelViews = this._labelViews();
         const labelInside = series.getLabelPosition() === PointItemPosition.INSIDE;
         const labels = series.pointLabel;
-        const labelOff = labels.offset;
+        const labelOff = labels.getOffset();
         const labelDist = labelViews ? (labels.distance || 0) : 0;
         const lineViews = this._lineContainer;
         const reversed = series.reversed;

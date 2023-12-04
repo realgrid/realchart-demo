@@ -290,7 +290,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const vr = this._getViewRate();
         const vis = series.marker.visible;
         const labels = series.pointLabel;
-        const labelOff = labels.offset;
+        const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj;

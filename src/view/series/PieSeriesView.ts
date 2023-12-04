@@ -210,7 +210,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
         const labelInside = series.getLabelPosition() === PointItemPosition.INSIDE;
-        const labelOff = labels.offset;
+        const labelOff = labels.getOffset();
         const labelDist = labels.distance || 0;
         const lineViews = this._lineContainer;
         const sliceOff = this._slicedOff = series.getSliceOffset(rd) * vr; // TODO: sector 후에...
@@ -368,9 +368,9 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     
                 if (needLayout) {
                     if (labelInside) {
-                        this.$_layoutLabelInner(p, labelView, labels.offset, labels.distance, this._slicedOff);
+                        this.$_layoutLabelInner(p, labelView, labels.getOffset(), labels.distance, this._slicedOff);
                     } else {
-                        this.$_layoutLabel(p, labelView, lineView, labels.offset, labels.distance, this._slicedOff, m.clockwise);
+                        this.$_layoutLabel(p, labelView, lineView, labels.getOffset(), labels.distance, this._slicedOff, m.clockwise);
                     }
                 }
     

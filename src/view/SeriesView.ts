@@ -851,7 +851,7 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
         const info: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
             inverted,
             labelPos: series.getLabelPosition(labels.position),
-            labelOff: series.getLabelOff(labels.offset)
+            labelOff: series.getLabelOff(labels.getOffset())
         });
 
         this._getPointPool().forEach((pv, i) => {

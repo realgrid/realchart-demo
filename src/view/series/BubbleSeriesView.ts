@@ -82,7 +82,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
         const vr = this._getViewRate();
         const labels = series.pointLabel;
         const labelPos = labels.position;
-        const labelOff = labels.offset;
+        const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;

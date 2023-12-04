@@ -109,7 +109,7 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
         const polar = body.getPolar(xAxis);
         const labelInfo: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
             labelPos: series.getLabelPosition(labels.position),
-            labelOff: series.getLabelOff(labels.offset)
+            labelOff: series.getLabelOff(labels.getOffset())
         });
 
         this._sectors.forEach((view, i) => {

@@ -73,7 +73,7 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
         const info: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
             inverted,
             labelPos: series.getLabelPosition(labels.position),
-            labelOff: series.getLabelOff(labels.offset)
+            labelOff: series.getLabelOff(labels.getOffset())
         });
 
         this._getPointPool().forEach((pointView: BarElement, i) => {

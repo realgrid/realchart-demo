@@ -87,7 +87,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
         const jitterY = series.jitterY;
         const labels = series.pointLabel;
         const labelPos = labels.position;
-        const labelOff = labels.offset;
+        const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
