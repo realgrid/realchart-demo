@@ -26,6 +26,7 @@ const config = {
         line: false
     },
     yAxis: {
+        // reversed: true,
         title: {
             text: 'Life Expectancy',
             style: {

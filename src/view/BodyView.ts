@@ -140,6 +140,7 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     protected _doLayout(): void {
         const m = this.model;
         const axis = m.axis;
+        const reversed = axis.reversed;
         const w = this.width;
         const h = this.height;
         const pts = m.getPoints(axis._isHorz ? w : h);
@@ -149,6 +150,8 @@ export class AxisGridView extends ChartElement<AxisGrid> {
             line.setClass('rct-axis-grid-line');
         });
         const end = lines.count - 1;
+        let p: number;
+        let vis: boolean;
 
         lines.forEach((line, i) => {
             line.setBoolData('first', i === 0);
@@ -158,14 +161,29 @@ export class AxisGridView extends ChartElement<AxisGrid> {
         if (axis._isHorz) {
             lines.forEach((line, i) => {
                 // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
-                if (line.setVisible((pts[i] > 0 || i !== 0 || m.startVisible) && (pts[i] < w || i !== end || m.endVisible))) {
+                if (i === 0) {
+                    vis = m.startVisible || !reversed && pts[i] > 0 || reversed && pts[i] < w;
+                } else if (i === end) {
+                    vis = m.endVisible || !reversed && pts[i] < w || reversed && pts[i] > 0;
+                } else {
+                    vis = true;
+                }
+                if (line.setVisible(true)) {
                     line.setVLineC(pts[i], 0, h);
                 }
             });
         } else {
             lines.forEach((line, i) => {
+                p = h - pts[i];
                 // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
-                if (line.setVisible((pts[i] < h || i !== 0 || m.startVisible) && (pts[i] > 0 || i !== end || m.endVisible))) {
+                if (i === 0) {
+                    vis = m.startVisible || !reversed && p < h || reversed && p > 0;
+                } else if (i === end) {
+                    vis = m.endVisible || !reversed && p > 0 || reversed && p < h;
+                } else {
+                    vis = true;
+                }
+                if (line.setVisible(vis)) {
                     line.setHLineC(h - pts[i], 0, w);
                 }
             });
