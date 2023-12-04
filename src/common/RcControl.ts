@@ -13,7 +13,7 @@ import { locale } from "./RcLocale";
 import { SVGNS, isObject, isString, pickProp } from "./Common";
 import { Utils } from "./Utils";
 import { IRect, Rectangle } from "./Rectangle";
-import { SvgShapes } from "./impl/SvgShape";
+import { Shape, SvgShapes } from "./impl/SvgShape";
 import { ISize } from "./Size";
 import { IPoint } from "./Point";
 import { $_lc } from "./LicChecker";
@@ -1510,10 +1510,10 @@ export class PathElement extends RcElement {
         let path: any;
         
         switch (shape) {
-            case 'squre':
-            case 'diamond':
-            case 'triangle':
-            case 'itriangle':
+            case Shape.SQUARE:
+            case Shape.DIAMOND:
+            case Shape.TRIANGLE:
+            case Shape.ITRIANGLE:
                 path = SvgShapes[shape](x - rd, y - rd, rd * 2, rd * 2);
                 break;
 

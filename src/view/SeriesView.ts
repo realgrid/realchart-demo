@@ -304,7 +304,7 @@ export type LabelLayoutInfo = {
     labelOff: number;
 };
 
-const PALETTE_LEN = 12;
+export const PALETTE_LEN = 12;
 
 export abstract class SeriesView<T extends Series> extends ContentView<T> {
 
