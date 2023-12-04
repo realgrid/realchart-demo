@@ -1,5 +1,13 @@
 const config = {
-    options: {
+    annotations: {
+        text: 'IN 1952',
+        offsetX: 180,
+        offsetY: 24,
+        scope: 'container',
+        align: 'center',
+            style: {
+                fontWeight: 'bold',
+            },
     },
     title: {
         text: 'Gapminder Global Indicators',
@@ -57,6 +65,7 @@ function setActions(container) {
     });
     createListBox(container, 'year', [1952, 1957, 1962, 1967, 1972, 1977, 1982, 1987, 1992, 1997, 2002, 2007], function (e) {
         config.series = createSeries(Number(_getValue(e)));
+        config.annotations.text = 'IN ' + _getValue(e);
         chart.load(config, animate);
     }, 1952);
 }
