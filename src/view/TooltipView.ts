@@ -10,6 +10,7 @@ import { PathBuilder } from "../common/PathBuilder";
 import { createAnimation } from "../common/RcAnimation";
 import { PathElement, RcControl, RcElement } from "../common/RcControl";
 import { SvgRichText } from "../common/RichText";
+import { Path } from "../common/Types";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { DataPoint } from "../model/DataPoint";
 import { Series } from "../model/Series";
@@ -18,8 +19,8 @@ import { PALETTE_LEN } from "./SeriesView";
 
 export enum TooltipPosition {
     TOP = 'top',
-    BOTTOM = 'bottom',
-    LEFT = 'left',
+    // BOTTOM = 'bottom',
+    // LEFT = 'left',
     RIGHT = 'right',
 }
 
@@ -30,7 +31,6 @@ export class TooltipView extends RcElement {
     //-------------------------------------------------------------------------
     private _top: PathElement;
     private _topHeight = 10;
-    private _tail: PathElement;
     private _tailSize = 10;
     private _radius = 5;
     private _back: PathElement;
@@ -56,7 +56,6 @@ export class TooltipView extends RcElement {
 
         this.add(this._back = new PathElement(doc, 'rct-tooltip-back'));
         this.add(this._top = new PathElement(doc, 'rct-tooltip-top'));
-        this.add(this._tail = new PathElement(doc, 'rct-tooltip-tail'));
         this.add(this._textView = new TextElement(doc, 'rct-tooltip-text'));
 
         this._back.setAttr('filter', 'url(#' + RcControl.SHADOW_FILTER + ')');
@@ -93,10 +92,10 @@ export class TooltipView extends RcElement {
         const dur = this.getStyle('visibility') === 'visible' ? 300 : 0;
 
         if (isInverted) {
-            this.draw(0, -this._topHeight / 2, w, h + this._topHeight, TooltipPosition.RIGHT);
+            this.drawTooltip(0, -this._topHeight / 2, w, h + this._topHeight, TooltipPosition.RIGHT);
             this.translateEx(x + model.offset, y - h / 2, dur, false);
         } else {
-            this.draw(0, -this._topHeight, w, h + this._topHeight, TooltipPosition.TOP);
+            this.drawTooltip(0, -this._topHeight, w, h + this._topHeight, TooltipPosition.TOP);
             this.translateEx(x - w / 2, y - h - model.offset, dur, false);
         }
         if (dur === 0) {
@@ -133,89 +132,48 @@ export class TooltipView extends RcElement {
         })
     }
 
-    private draw(x, y, w, h, position: string): void {
+    private drawTooltip(x: number, y: number, w: number, h: number, position: string): void {
         const tail = this._tailSize;
         const radius = this._radius;
         const topHeight = this._topHeight;
-        let backPath, topPath;
-        switch (position) {
-            case TooltipPosition.LEFT:
-                x -= tail
-                backPath = [
-                    'M', x, y,
-                    'L', x + w, y,
-                    'L', x + w, y + (h / 2) - (tail / 2),
-                    'L', x + w + tail, y + h / 2,
-                    'L', x + w, y + (h / 2) + (tail / 2),
-                    'L', x + w, y + h,
-                    'L', x, y + h,
-                    'Z'
-                ];
-                break;
-            case TooltipPosition.RIGHT:
-                x += tail
-                backPath = [
-                    'M', x, y,
-                    'L', x + w, y,
-                    'L', x + w, y + h,
-                    'L', x, y + h,
-                    'L', x, y + (h / 2) + (tail / 2),
-                    'L', x - tail, y + (h / 2),
-                    'L', x, y + (h / 2) - (tail / 2),
-                    'Z'
-                ];
-                break;
-            case TooltipPosition.BOTTOM:
-                y += tail;
-                backPath = [
-                    'M', x, y,
-                    'L', x + (w / 2) - (tail / 2), y,
-                    'L', x + (w / 2), y - tail,
-                    'L', x + (w / 2) + (tail / 2), y,
-                    'L', x + w, y,
-                    'L', x + w, y + h,
-                    'L', x, y + h,
-                    'Z'
-                ];
-                break;
-            case TooltipPosition.TOP:
-            default:
-            y -= tail;
-            backPath = [
-                'M', x + radius, y,
-                'l', w - (radius * 2), 0,
-                'q', radius, 0, radius, radius,
-                'l', 0, h - (radius * 2),
-                'q', 0, radius, -radius, radius,
-                'l', radius - (w / 2) + (tail / 2), 0,
-                'l', -(tail / 2), tail,
-                'l', -(tail / 2), - tail,
-                'l', radius - (w / 2) + (tail / 2), 0,
-                'q', -radius, 0, -radius, -radius,
-                'l', 0, (radius * 2) - h,
-                'q', 0, -radius, radius, -radius,
-                'Z'
-            ];
-            topPath = [
-                'M', x + radius, y,
-                'l', w - (radius * 2), 0,
-                'q', radius, 0, radius, radius,
-                'l', 0, topHeight - radius,
-                'l', -w, 0,
-                'l', 0, radius - topHeight,
-                'q', 0, -radius, radius, -radius,
-                'Z'
-            ]
-        }
-        // text
+
+        position === TooltipPosition.RIGHT ? (x += tail) : position === TooltipPosition.TOP && (y -= tail);
+
+        let backPath = [
+            'M', x + radius, y,
+            'L', x + w - (radius * 2), y,
+            'Q', x + w - radius, y, x + w, y + radius,
+            'L', x + w, y + h - radius,
+            'Q', x + w, y + h, x + w - radius, y + h,
+            'L', x + radius, y + h,
+            'Q', x, y + h, x, y + h - radius,
+            'L', x, y + radius,
+            'Q', x, y, x + radius, y
+        ];
+
+        backPath = position === TooltipPosition.RIGHT ? backPath.concat([
+            'M', x, y + (h / 2) - (tail / 2),
+            'L', x - tail, y + (h / 2),
+            'L', x, y + (h / 2) + (tail / 2)
+        ]) : position === TooltipPosition.TOP && backPath.concat([
+            'M', x + (w / 2) - (tail / 2), y + h,
+            'L', x + (w / 2), y + h + tail,
+            'L', x + x + (w / 2) + (tail / 2), y + h
+        ]);
+
+        const topPath = [
+            'M', x + radius, y,
+            'l', w - (radius * 2), 0,
+            'q', radius, 0, radius, radius,
+            'l', 0, topHeight - radius,
+            'l', -w, 0,
+            'l', 0, radius - topHeight,
+            'q', 0, -radius, radius, -radius,
+        ];
+
         const tv = this._textView;
         const r = tv.getBBounds();
-        tv.translate(x + (w - r.width) / 2, y + (h - r.height + this._topHeight) / 2);
-        // top
-        // pb = new PathBuilder();
-        // pb.rect(x + border / 2, y + border / 2, w - border, this._topHeight);
-        // this._top.setPath(pb.end(true));
-        
+        tv.translate(x + (w - r.width) / 2, y + (h - r.height + topHeight) / 2);
         this._top.setPath(topPath);
         this._back.setPath(backPath);
     }
