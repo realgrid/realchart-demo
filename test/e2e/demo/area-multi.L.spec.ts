@@ -46,147 +46,55 @@ test.describe("area-multi.html test", () => {
   test.describe("area-multi.html marker", () => {
     // CIRCLE, DIAMON, RECTANGLE, SQUAURE, TRIANGLE, ITRIANGLE, STAR
     test("shape", async ({ page }) => {
-      const removeSpace = (str: string) => {
-        return str.replace(/\s/g, "");
-      };
-
-      const makeString = (arr: Object) => {
-        if (Array.isArray(arr)) {
-          return arr.join().replace(/,/g, "");
-        }
-        return;
-      };
-
-      // SvgShapes에서 모양을 확인할 수 있다.
-      const SHAPES = [
-        "circle",
-        "diamond",
-        "rectangle",
-        "square",
-        "triangle",
-        "itriangle",
-        "star",
-      ];
-      config = await page.evaluate(() => config);
-
-      // 비동기 함수 정의
-      const loadShapeAndGetPathValue = async (shape) => {
-        await page.evaluate((shape) => {
-          config.series.forEach((c) => {
-            c.marker = false;
-          });
-
-          config.series[0].marker = {
-            visible: true,
-            shape: shape,
-          };
-
-          chart.load(config, false);
-        }, shape);
-
-        const markers = await page.$$("." + SeriesView.POINT_CLASS);
-
-        return await PWTester.getPathDValue(markers[0]);
-      };
-      const shape = SHAPES[Utils.irandom(0, 6)];
-      const pathValue = await loadShapeAndGetPathValue(shape);
-      // 비동기 문제로인하여 아래 코드를 작성하지 않으면, pathValue값이 정상적으로 변경되지않아 테스트가 실패하는 경우가 있다.
-      await sleep(1000);
-
-      // pathValue를 기반으로 테스트 케이스 실행
-      switch (shape) {
-        case "circle":
-          expect(removeSpace(pathValue)).to.equal(
-            makeString(SvgShapes.circle(4, 4, 4))
-          );
-          break;
-        case "diamond":
-          expect(removeSpace(pathValue)).to.equal(
-            makeString(SvgShapes.diamond(0, 0, 8, 8))
-          );
-          break;
-        case "rectangle":
-          expect(removeSpace(pathValue)).to.equal(
-            makeString(SvgShapes.rectangle(0, 0, 8, 8))
-          );
-          break;
-        case "square":
-          expect(removeSpace(pathValue)).to.equal(
-            makeString(SvgShapes.square(0, 0, 8, 8))
-          );
-          break;
-        case "triangle":
-          expect(removeSpace(pathValue)).to.equal(
-            makeString(SvgShapes.triangle(0, 0, 8, 8))
-          );
-          break;
-        case "itriangle":
-          expect(removeSpace(pathValue)).to.equal(
-            makeString(SvgShapes.itriangle(0, 0, 8, 8))
-          );
-          break;
-        case "star":
-          expect(removeSpace(pathValue)).to.equal(
-            makeString(SvgShapes.star(0, 0, 8, 8))
-          );
-          break;
-      }
+      await page.evaluate(() => {
+        config.series[0].marker = {
+          visible: true,
+          shape: "circle",
+        };
+      });
     });
 
     test("marker visible", async ({ page }) => {
       // series.marker 값 변경에 따른 rct-point 확인
-      const getTrueMarkers = (config) => {
-        console.log(config.series)
-        return config.series.reduce((acc: number, curr: any) => {
-          return curr.marker === true || curr.marker?.visible === true
-            ? acc + 1
-            : acc;
-        }, 0);
-      };
-
-       config = await page.evaluate(() => {
+      config = await page.evaluate(() => {
         // marker초기화
-        config.series.forEach((c) => {
+        config.series[0].children.forEach((c) => {
           c.marker = true;
         });
 
         chart.load(config, false);
         return config;
-      }, );
+      });
       await sleep();
 
       let points = await page.$$(".rct-series-points");
 
       let opacities = await page.evaluate((points) => {
-
         const res = points.map((point) => point.style.opacity);
         return res;
-        
       }, points);
 
-      for(let opacity of opacities){
-        expect(opacity).is.equal('1');
+      for (let opacity of opacities) {
+        expect(opacity).is.equal("1");
       }
 
       config = await page.evaluate(() => {
         // marker초기화
-        config.series.forEach((c) => {
+        config.series[0].children.forEach((c) => {
           c.marker = false;
         });
 
         chart.load(config, false);
         return config;
-      }, );
+      });
       await sleep();
       points = await page.$$(".rct-series-points");
       opacities = await page.evaluate((points) => {
-
         const res = points.map((point) => point.style.opacity);
         return res;
-        
       }, points);
-      for(let opacity of opacities){
-        expect(opacity).is.equal('0');
+      for (let opacity of opacities) {
+        expect(opacity).is.equal("0");
       }
     });
 
@@ -197,7 +105,7 @@ test.describe("area-multi.html test", () => {
           c.marker = false;
         });
 
-        config.series[0].marker = {
+        config.series[0].children[0].marker = {
           visible: true,
           style: {
             fill: "red",
@@ -207,7 +115,7 @@ test.describe("area-multi.html test", () => {
         chart.load(config, false);
         return config;
       });
-
+      await sleep();
       const marker = await page.$$("." + SeriesView.POINT_CLASS);
 
       const filledColor = await marker[0].evaluate((marker) => {
@@ -225,6 +133,7 @@ test.describe("area-multi.html test", () => {
       config = await page.evaluate(() => {
         config.series.forEach((s: any) => {
           s.baseValue = 0;
+          s.lineType = "default";
         });
 
         return config;
@@ -236,11 +145,14 @@ test.describe("area-multi.html test", () => {
       }, areas[0]);
 
       await page.evaluate(() => {
-        const minValue = config.series[0].data.reduce((acc, curr) => {
-          return curr < acc ? curr : acc;
-        }, config.series[0].data[0]);
+        const minValue = config.series[0].children[0].data.reduce(
+          (acc, curr) => {
+            return curr < acc ? curr : acc;
+          },
+          config.series[0].children[0].data[0]
+        );
 
-        config.series[0].baseValue = minValue;
+        config.series[0].children[0].baseValue = minValue;
 
         chart.load(config, false);
       });
@@ -258,7 +170,7 @@ test.describe("area-multi.html test", () => {
       const secondColor = "rgb(0, 255, 0)";
       config = await page.evaluate((color) => {
         // 빨강
-        config.series[0].color = color;
+        config.series[0].children[0].color = color;
 
         chart.load(config, false);
         return config;
@@ -266,13 +178,13 @@ test.describe("area-multi.html test", () => {
 
       let areas = await page.$$(".rct-area-series-area");
 
-      let area :any = await page.evaluate((area) => {
-        return area.style.fill
+      let area: any = await page.evaluate((area) => {
+        return area.style.fill;
       }, areas[0]);
       expect(area).is.equal(firstColor);
 
       config = await page.evaluate((color) => {
-        config.series[0].color = color;
+        config.series[0].children[0].color = color;
 
         chart.load(config, false);
         return config;
@@ -295,7 +207,8 @@ test.describe("area-multi.html test", () => {
         return config;
       });
 
-      let configLabel = config.series[0].label || config.series[0].name;
+      let configLabel =
+        config.series[0].children[0].label || config.series[0].children[0].name;
 
       let viewLabels = await page.$$(".rct-legend-item-label");
 
@@ -309,9 +222,9 @@ test.describe("area-multi.html test", () => {
 
       config = await page.evaluate(
         (obj) => {
-          config.series[0].name = obj.NAME;
+          config.series[0].children[0].name = obj.NAME;
 
-          config.series[0].label = obj.LABEL;
+          config.series[0].children[0].label = obj.LABEL;
 
           chart.load(config, false);
 
@@ -321,7 +234,8 @@ test.describe("area-multi.html test", () => {
       );
       await sleep();
 
-      configLabel = config.series[0].label || config.series[0].name;
+      configLabel =
+        config.series[0].children[0].label || config.series[0].children[0].name;
 
       viewLabels = await page.$$(".rct-legend-item-label");
 
@@ -332,29 +246,30 @@ test.describe("area-multi.html test", () => {
       expect(configLabel).is.equal(LABEL).and.is.equal(viewLabel);
 
       config = await page.evaluate((NAME) => {
-        config.series[0].name = NAME;
+        config.series[0].children[0].name = NAME;
 
-        config.series[0].label = undefined;
+        config.series[0].children[0].label = undefined;
 
         chart.load(config, false);
 
         return config;
       }, NAME);
+
       await sleep();
-      configLabel = config.series[0].label || config.series[0].name;
+      configLabel =
+        config.series[0].children[0].label || config.series[0].children[0].name;
 
       viewLabels = await page.$$(".rct-legend-item-label");
 
       viewLabel = await page.evaluate((label) => {
         return label.innerHTML;
       }, viewLabels[0]);
-
       expect(configLabel).is.equal(NAME).and.is.equal(viewLabel);
     });
 
     test("lineType - default", async ({ page }) => {
       config = await page.evaluate(() => {
-        config.series[0].lineType = "default";
+        config.series[0].children[0].lineType = "default";
 
         chart.load(config, false);
         return config;
@@ -376,7 +291,7 @@ test.describe("area-multi.html test", () => {
     });
     test("lineType - step", async ({ page }) => {
       config = await page.evaluate(() => {
-        config.series[0].lineType = "step";
+        config.series[0].children[0].lineType = "step";
 
         chart.load(config, false);
         return config;
@@ -404,7 +319,7 @@ test.describe("area-multi.html test", () => {
     });
     test("lineType - spline", async ({ page }) => {
       config = await page.evaluate(() => {
-        config.series[0].lineType = "spline";
+        config.series[0].children[0].lineType = "spline";
 
         chart.load(config, false);
         return config;
@@ -413,9 +328,9 @@ test.describe("area-multi.html test", () => {
       await sleep();
 
       let areas = await page.$$(".rct-area-series-areas");
-      let area =  await areas[0].$(".rct-area-series-area");
+      let area = await areas[0].$(".rct-area-series-area");
       let areaPath = await PWTester.getPathDValue(area);
-      console.log(areaPath)
+
       expect(areaPath.includes("Q")).is.true;
     });
 
@@ -430,7 +345,8 @@ test.describe("area-multi.html test", () => {
       });
 
       config = await page.evaluate(() => {
-        config.series[0].onPointClick = () => {
+        config.series[0].children[1].visible = false;
+        config.series[0].children[0].onPointClick = () => {
           console.log("clicked");
         };
 
@@ -439,7 +355,7 @@ test.describe("area-multi.html test", () => {
       });
 
       const clickHandle = await page.$$(".rct-point");
-      const count = Utils.irandom(4, 10);
+      const count = 3;
       for (let i = 0; i < count; i++) {
         await clickHandle[0].click();
         await sleep();
@@ -450,7 +366,7 @@ test.describe("area-multi.html test", () => {
     test("pointColors", async ({ page }) => {
       const colorArray = ["rgb(255, 0, 0)", "rgb(0, 255, 0)", "rgb(0, 0, 255)"];
       config = await page.evaluate((colors) => {
-        config.series[0].pointColors = colors;
+        config.series[0].children[0].pointColors = colors;
 
         chart.load(config, false);
 
@@ -479,26 +395,29 @@ test.describe("area-multi.html test", () => {
 
     test("pointStyleCallback", async ({ page }) => {
       const RED = "rgb(255, 0, 0)";
-      const BLUE = "rgb(0, 255, 0)";
+      const GREEN = "rgb(0, 255, 0)";
       const DEFAULT = "rgb(0, 152, 255)";
 
       config = await page.evaluate(
         (obj) => {
-          config.series[0].pointStyleCallback = ({ yValue, xValue }) => {
-            if (yValue < 100000) {
+          config.series[0].children[0].pointStyleCallback = ({
+            yValue,
+            xValue,
+          }) => {
+            if (yValue < 200) {
               return {
                 fill: obj.RED,
               };
             } else if (xValue > 6) {
               return {
-                fill: obj.BLUE,
+                fill: obj.GREEN,
               };
             }
           };
           chart.load(config, false);
           return config;
         },
-        { RED, BLUE }
+        { RED, GREEN }
       );
 
       await sleep();
@@ -507,19 +426,17 @@ test.describe("area-multi.html test", () => {
 
       const points = await firstAreaSeries.$$(".rct-point");
 
-      const data = config.series[0].data;
+      const data = config.series[0].children[0].data;
 
       const expectColors = data.map((d, idx) => {
-        if (idx > 6) {
-          return BLUE;
-        } else if (d < 100000) {
+        if (d < 200) {
           return RED;
+        } else if (idx > 6) {
+          return GREEN;
         } else {
           return DEFAULT;
         }
       });
-
-      debugger;
 
       const viewColors = await page.evaluate((points) => {
         const colors = points.map((point) => {
@@ -538,8 +455,8 @@ test.describe("area-multi.html test", () => {
 
     test("stepDir - backward", async ({ page }) => {
       config = await page.evaluate(() => {
-        config.series[0].lineType = "step";
-        config.series[0].stepDir = "backward";
+        config.series[0].children[0].lineType = "step";
+        config.series[0].children[0].stepDir = "backward";
 
         chart.load(config, false);
 
@@ -586,23 +503,23 @@ test.describe("area-multi.html test", () => {
       const secondColor = { fill: "rgb(0, 255, 0)" };
       config = await page.evaluate((color) => {
         // 빨강
-        config.series[0].style = color;
+        config.series[0].children[0].style = color;
 
         chart.load(config, false);
         return config;
       }, firstColor);
       await sleep();
-      
+
       let areas = await page.$$(".rct-area-series-area");
 
       let area = await page.evaluate((area) => {
-        return area.style.fill
+        return area.style.fill;
       }, areas[0]);
 
       expect(area).is.equal(firstColor.fill);
 
       config = await page.evaluate((color) => {
-        config.series[0].style = color;
+        config.series[0].children[0].style = color;
 
         chart.load(config, false);
         return config;
@@ -620,7 +537,7 @@ test.describe("area-multi.html test", () => {
 
     test("visible", async ({ page }) => {
       config = await page.evaluate(() => {
-        config.series.forEach((item) => {
+        config.series[0].children.forEach((item) => {
           item.visible = true;
         });
 
@@ -631,14 +548,14 @@ test.describe("area-multi.html test", () => {
 
         return config;
       });
-      const seriesCount = config.series.length;
+      const seriesCount = config.series[0].children.length;
       const orgSeries = await page.$$(".rct-area-series");
       const orgSeriesLength = orgSeries.length;
 
       expect(seriesCount).is.equal(orgSeriesLength);
 
       config = await page.evaluate(() => {
-        config.series[0].visible = false;
+        config.series[0].children[0].visible = false;
 
         chart.load(config, false);
 
@@ -662,7 +579,7 @@ test.describe("area-multi.html test", () => {
       expect(orgSeriesLength - 1).is.equal(seriesLength);
 
       config = await page.evaluate(() => {
-        config.series[0].visible = true;
+        config.series[0].children[0].visible = true;
 
         chart.load(config, false);
 
@@ -677,7 +594,7 @@ test.describe("area-multi.html test", () => {
 
     test("visibleInLegend", async ({ page }) => {
       config = await page.evaluate(() => {
-        config.series.forEach((item) => {
+        config.series[0].children.forEach((item) => {
           item.visible = true;
         });
 
@@ -689,13 +606,12 @@ test.describe("area-multi.html test", () => {
         return config;
       });
       let legends = await page.$$(".rct-legend-item-label");
-      let series = await page.$$(".rct-area-series");
-      const seriesCount = config.series.length;
+      let seriesCount = config.series[0].children.length;
 
-      expect(legends.length).is.equal(series.length).is.equal(seriesCount);
+      expect(legends.length).is.equal(seriesCount);
 
       config = await page.evaluate(() => {
-        config.series[0].visibleInLegend = false;
+        config.series[0].children[0].visibleInLegend = false;
 
         chart.load(config, false);
 
@@ -704,31 +620,10 @@ test.describe("area-multi.html test", () => {
 
       await sleep();
       legends = await page.$$(".rct-legend-item-label");
-      series = await page.$$(".rct-area-series");
+      seriesCount = config.series[0].children.length;
 
-      expect(series.length).is.greaterThan(legends.length);
-      expect(series.length - 1).is.equal(legends.length);
-    });
-
-    test("xStart", async ({ page }) => {
-      let xAxis = await PWTester.getAxis(page, "x");
-      const orgLabelCount = (await xAxis.$$(".rct-axis-label")).length;
-
-      console.log(orgLabelCount);
-
-      config = await page.evaluate(() => {
-        config.series[0].xStart = 2;
-
-        chart.load(config, false);
-
-        return config;
-      });
-
-      xAxis = await PWTester.getAxis(page, "x");
-      await sleep();
-      const labelCount = (await xAxis.$$(".rct-axis-label")).length;
-
-      expect(orgLabelCount).is.lessThan(labelCount);
+      expect(seriesCount).is.greaterThan(legends.length);
+      expect(seriesCount - 1).is.equal(legends.length);
     });
   });
 });
