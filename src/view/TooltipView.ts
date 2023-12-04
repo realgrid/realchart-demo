@@ -99,18 +99,20 @@ export class TooltipView extends RcElement {
         } else {
             this.drawTooltip(0, -this._topHeight, w, h + this._topHeight, TooltipPosition.TOP);
             this.translateEx(x - w / 2, y - h - model.offset, dur, false);
-        }
-        x = Math.max(0, Math.min(x, cw - w));
-        y = Math.max(0, Math.min(y, ch - h));
-        this.translateEx(x, y, dur, false);
+        };
+
+        // x = Math.max(0, Math.min(x, cw - w));
+        // y = Math.max(0, Math.min(y, ch - h));
+        // this.translateEx(x, y, dur, false);
 
         if (dur === 0) {
             this.setStyle('visibility', 'visible');
-        }
+        };
+
         if (this._hideTimer) {
             clearTimeout(this._hideTimer);
             this._hideTimer = void 0;
-        }
+        };
     }
 
     close(force: boolean, animate: boolean): void {
