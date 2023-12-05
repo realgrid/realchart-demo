@@ -9,6 +9,7 @@
 import { ChartControl } from "./ChartControl";
 import { RcChartControl } from "./api/RcChartControl";
 import { RcControl, RcElement } from "./common/RcControl";
+import { Utils } from "./common/Utils";
 import { Chart } from "./model/Chart";
 
 const clazz: any = RcChartControl;
@@ -23,7 +24,7 @@ export class Globals {
      * RealChart 라이브러리 버전 정보를 리턴한다.
      * 
      * ```js
-     * console.log(RealChart.getVersion()); // '1.1.2'
+     * Utils.log(RealChart.getVersion()); // '1.1.2'
      * ```
      * 
      * @returns 버전 문자열
@@ -43,6 +44,12 @@ export class Globals {
      */
     static setDebugging(debug: boolean): void {
         RcElement.DEBUGGING = debug;
+    }
+    /**
+     * true로 지정하면 라이브러리 내부 메시지를 출력한다.
+     */
+    static setLogging(logging: boolean): void {
+        Utils.LOGGING = logging;
     }
     /**
      * false로 지정하면 시리즈 시작 애니메이션 등을 포함,

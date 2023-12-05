@@ -212,7 +212,7 @@ export class ElementPool<T extends RcElement> extends RcObject {
         }
 
         this._views = views;
-        // console.log('pool views', this._views.length);
+        // Utils.log('pool views', this._views.length);
         visitor && this.forEach(visitor);
         return this;
     }

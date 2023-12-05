@@ -9,7 +9,7 @@
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
-import { ClipElement, LayerElement, PathElement, RcElement } from "../../common/RcControl";
+import { ClipRectElement, LayerElement, PathElement, RcElement } from "../../common/RcControl";
 import { Align, IValueRange, PI_2, SVGStyleOrClass } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Axis } from "../../model/Axis";
@@ -72,11 +72,11 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     private _line: PathElement;
     protected _needBelow = false;
     private _lowLine: PathElement;
-    protected _upperClip: ClipElement;
-    protected _lowerClip: ClipElement;
+    protected _upperClip: ClipRectElement;
+    protected _lowerClip: ClipRectElement;
     protected _markers: ElementPool<LineMarkerView>;
     private _rangeLines: ElementPool<PathElement>;
-    private _rangeClips: ClipElement[] = [];
+    private _rangeClips: ClipRectElement[] = [];
     protected _polar: any;
     protected _linePts: IPointPos[];
 
@@ -195,7 +195,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             lines.prepare(ranges.length);
 
             while (clips.length < ranges.length) {
-                const c = new ClipElement(this.doc);
+                const c = new ClipRectElement(this.doc);
 
                 c.setAttr(RcElement.ASSET_KEY, '1');
                 this.control.clipContainer().append(c.dom);
@@ -211,7 +211,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const reversed = this.model._yAxisObj.reversed;
         const x = 0;
         const y = 0;
-        let clip: ClipElement;
+        let clip: ClipRectElement;
 
         if (clip = this._upperClip) {
             if (inverted) {
@@ -286,7 +286,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const series = this.model;
         const markerStyle = series.marker.style;
         const inverted = this._inverted;
-        const noClip = series.noClip;
+        const needClip = series.needClip(false);
         const vr = this._getViewRate();
         const vis = series.marker.visible;
         const labels = series.pointLabel;
@@ -324,7 +324,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             const mv = this._markers.get(i);
             const lv = labelViews && labelViews.get(p, 0);
 
-            if (mv && mv.setVisible(!p.isNull && (polared || noClip || px >= 0 && px <= width && py >= 0 && py <= height))) {
+            if (mv && mv.setVisible(!p.isNull && (polared || !needClip || px >= 0 && px <= width && py >= 0 && py <= height))) {
                 this._layoutMarker(mv, markerStyle, px, py);
 
                 if (lv) {

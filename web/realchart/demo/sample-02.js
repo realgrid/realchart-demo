@@ -13,7 +13,7 @@ const config = {
     xAxis: {
         type: 'time',
         tick: {
-            stepInterval: '2m'
+            stepInterval: '1m'
         },
         label: {
             rotation: -90,
@@ -96,6 +96,7 @@ function setActions(container) {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

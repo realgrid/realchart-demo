@@ -52,7 +52,7 @@ export class ChartPointerHandler implements IPointerHandler {
         if (!elt) return;
         
         const p = this.$_pointerToPoint(ev);
-        // console.log('POINT DOWN', p.x, p.y);
+        // Utils.log('POINT DOWN', p.x, p.y);
 
         if (this._dragTracker) {
             this.$_stopDragTracker(elt, p.x, p.y);
@@ -190,12 +190,12 @@ export class ChartPointerHandler implements IPointerHandler {
 
         if (AxisScrollView.isThumb(elt)) {
             return new ScrollTracker(this._chart, chartView.getScrollView(elt));
-        } else if (body && body.model.canZoom()) {
-            return new ZoomTracker(this._chart, body, chartView._inverted);
         } else if (NavigatorView.isHandle(elt)) {
             return new NavigatorHandleTracker(this._chart, chartView._navigatorView, elt);
         } else if (NavigatorView.isMask(elt) && body && body.model.isZoomed()) {
             return new NavigatorMaskTracker(this._chart, chartView._navigatorView, elt);            
+        } else if (body && body.model.canZoom() && body.contains(elt)) {
+            return new ZoomTracker(this._chart, body, chartView._inverted);
         }
     }
 

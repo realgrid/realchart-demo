@@ -157,7 +157,9 @@ export class DataPoint {
             x: this.x,
             y: this.y,
             xValue: this.xValue,
-            yValue: this.yValue
+            yValue: this.yValue,
+            color: this.color,
+            source: this.source,
         });
     }
 

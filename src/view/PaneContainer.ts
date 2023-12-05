@@ -502,7 +502,7 @@ export class PaneContainer extends LayerElement {
     private $_prepareAxes(doc: Document, mats: PaneAxisMatrix, isX: boolean): void {
         const containers = isX ? this._xContainers : this._yContainers;
         const count = isX ? mats.rows() : mats.cols();
-        // console.log(isX ? 'x' : 'y', count);
+        // Utils.log(isX ? 'x' : 'y', count);
 
         while (containers.length < count) {
             const c = new AxisContainer(doc, isX);

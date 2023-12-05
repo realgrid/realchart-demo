@@ -499,6 +499,7 @@ function setActions(container) {
 function init() {
   console.log("RealChart v" + RealChart.getVersion());
   // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
   // 그룹별 최대 값 저장을 위한 객체
 
   chart = RealChart.createChart(document, "realchart", config);

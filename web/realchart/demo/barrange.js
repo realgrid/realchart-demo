@@ -65,6 +65,7 @@ function setActions(container) {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     console.log('Animatable', config.options.animatable);
     chart = RealChart.createChart(document, 'realchart', config);

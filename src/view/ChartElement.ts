@@ -11,6 +11,7 @@ import { IRect } from "../common/Rectangle";
 import { Sides } from "../common/Sides";
 import { ISize } from "../common/Size";
 import { _undefined } from "../common/Types";
+import { Utils } from "../common/Utils";
 import { GroupElement } from "../common/impl/GroupElement";
 import { RectElement } from "../common/impl/RectElement";
 import { Chart, IChart } from "../model/Chart";

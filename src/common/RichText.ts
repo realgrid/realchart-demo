@@ -58,7 +58,7 @@ class Word {
         const s = this.getText(target, domain);
 
         span.textContent = s;
-        //console.log(span.textContent, span.getBBox().y, span.getBBox().height);
+        //Utils.log(span.textContent, span.getBBox().y, span.getBBox().height);
         return span;
     }
 
@@ -107,7 +107,7 @@ abstract class SpanWord extends Word {
 
         this._doPrepare(span, s, x1, x2);
 
-        //console.log(span.textContent, span.getBBox().y, span.getBBox().height);
+        //Utils.log(span.textContent, span.getBBox().y, span.getBBox().height);
         return span;
     }
 

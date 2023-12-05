@@ -51,6 +51,12 @@ const QUOTE = "'".charCodeAt(0);
  */
 export class Utils {
 
+    static LOGGING = false;
+
+    static log(...msg: any[]): void {
+        this.LOGGING && console.log(...msg);
+    }
+
     // TODO: => locale
     static week_days = [
         '일', '월', '화', '수', '목', '금', '토'
@@ -694,7 +700,7 @@ export class Utils {
     static logElapsed(message: string, runner: () => void ): void {
         const t = +new Date();
         runner();
-        console.log(message, (+new Date() - t) + 'ms');
+        Utils.log(message, (+new Date() - t) + 'ms');
     }
 
     static clamp(v: number, min: number, max: number): number {

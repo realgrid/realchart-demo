@@ -7,12 +7,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ElementPool } from "../common/ElementPool";
-import { LayerElement, RcElement } from "../common/RcControl";
+import { ClipCircleElement, ClipRectElement, LayerElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
-import { Align, PI_2, RAD_DEG, fixnum } from "../common/Types";
+import { Align, PI_2 } from "../common/Types";
 import { CircleElement, CircumElement } from "../common/impl/CircleElement";
 import { LineElement, PolylineElement } from "../common/impl/PathElement";
-import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { Axis, AxisLabel, AxisTick, IAxisTick } from "../model/Axis";
 import { Body } from "../model/Body";
 import { AxisLabelView, axis_label_reg } from "./AxisView";
@@ -371,6 +370,7 @@ export class PolarBodyView extends BodyView {
     private _lineContainer: LayerElement;
     private _xAxisView: PolarXAxisView;
     private _yAxisViews: PolarYAxisView[] = [];
+    private _polarClip: ClipCircleElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -397,6 +397,15 @@ export class PolarBodyView extends BodyView {
 
         // series
         this._seriesViews.forEach(v => {
+            // [주의] 명시적으로 false일 때만, undefined나 null이면 true로 간주.
+            if (v.model.needClip(true)) {
+                if (!this._polarClip) {
+                    this._polarClip = this.control.clipCircle();
+                }
+                this._polarClip.setCircle(cx, cy, rd);
+                v.getClipContainer().setClip(this._polarClip);
+                v.getClipContainer2()?.setClip(this._polarClip);
+            }
             v.resize(rd * 2, rd * 2);
             v.layout();//.translate(x, y);
         })

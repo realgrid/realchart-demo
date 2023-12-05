@@ -116,7 +116,7 @@ export class DataPointLabel extends FormattableText {
      * 값을 설정하지 않고 {@link visibleCallback}이 설정되면 콜백 리턴값을 따른다.
      * 명시적으로 값을 설정하면 그 값에 따른다.
      */
-    "@config visible" = undefined;
+    //"@config visible" = undefined;
 
     //-------------------------------------------------------------------------
     // methods
@@ -372,6 +372,8 @@ export interface IDataPointCallbackArgs {
     xValue: any;
     yValue: any;
     zValue: any;
+    
+    source: any;
 }
 
 export type PointStyleCallback = (args: IDataPointCallbackArgs) => SVGStyleOrClass;
@@ -599,11 +601,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     viewRangeValue: 'x' | 'y' | 'z';
     /**
-     * true로 지정하면 body를 벗어난 data point 영역도 표시된다.
+     * true로 지정하면 body를 벗어난 data point 영역도 표시된다.\
+     * 값을 지정하지 않으면 polar 차트에서는 true, 직교 차트에서는 false이다.
+     * group에 포함되면 group의 noClip 설정을 따른다.
      * 
      * @config
      */
-    noClip = false;
+    noClip: boolean;
     /**
      * 명시적 false로 지정하면 legend에 표시하지 않는다.
      * 
@@ -737,6 +741,18 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    needClip(polar: boolean): boolean {
+        const no = (this.group ? this.group.noClip : this.noClip);
+
+        if (polar) {
+            // [주의] 명시적으로 false일 때만, undefined나 null이면 true로 간주.
+            return no === false;
+        } else {
+            // when undefined, null, false
+            return no !== true;
+        }
+    }
+
     setCol(col: number): void {
         this._col = col;
     }
@@ -1894,6 +1910,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
      */
     visibleInLegend = true;
     zOrder = 0;
+    noClip: boolean;
 
     get series(): T[] {
         return this._series.slice(0);
@@ -1953,8 +1970,9 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
                         this.$_collectFill(axis, vals);
                         break;
         
-                    case SeriesGroupLayout.DEFAULT:
-                    case SeriesGroupLayout.OVERLAP:
+                    //case SeriesGroupLayout.DEFAULT:
+                    //case SeriesGroupLayout.OVERLAP:
+                    default:
                         this.$_collectValues(axis, vals);
                         break;
                 }

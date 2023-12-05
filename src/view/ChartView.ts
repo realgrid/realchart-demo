@@ -9,7 +9,7 @@
 import { ButtonElement } from "../common/ButtonElement";
 import { pickNum } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
-import { ClipElement, LayerElement, RcElement } from "../common/RcControl";
+import { ClipRectElement, LayerElement, RcElement } from "../common/RcControl";
 import { IRect, Rectangle } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { Align, AlignBase, SectionDir, VerticalAlign, _undefined } from "../common/Types";
@@ -622,8 +622,8 @@ export class ChartView extends LayerElement {
     private _creditView: CreditView;
     private _historyView: HistoryView;
     private _tooltipView: TooltipView;
-    private _seriesClip: ClipElement;
-    private _lineSeriesClip: ClipElement;
+    private _seriesClip: ClipRectElement;
+    private _lineSeriesClip: ClipRectElement;
 
     _org: IPoint;
     private _plotWidth: number;
@@ -1213,10 +1213,9 @@ export class ChartView extends LayerElement {
 
         const inverted = this._model.inverted && invertable;
         const line = view && (view.parent as SeriesView<any>).model instanceof LineSeriesBase;
-        // TODO: line과 아닌 것들이 동시에 표시될 수 있다. 이것도 해결돼야 한다.
         const sc = line ? this._lineSeriesClip : this._seriesClip;
 
-        // TODO: pane 단위로
+        // TODO: pane 단위로 -> body로 가야하나?
         view && clip(view);
         view2 && clip(view2);
     }

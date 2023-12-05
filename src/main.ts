@@ -10,6 +10,7 @@ import { Globals } from "./globals";
 
 export const getVersion = Globals.getVersion;
 export const setDebugging = Globals.setDebugging;
+export const setLogging = Globals.setLogging;
 export const setAnimatable = Globals.setAnimatable;
 export const createChart = Globals.createChart;
 

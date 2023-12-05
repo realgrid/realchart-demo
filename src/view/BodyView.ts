@@ -9,7 +9,7 @@
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
-import { ClipElement, LayerElement, PathElement, RcControl, RcElement } from "../common/RcControl";
+import { ClipRectElement, LayerElement, PathElement, RcControl, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { Align, VerticalAlign, _undefined, assert } from "../common/Types";
 import { ImageElement } from "../common/impl/ImageElement";
@@ -204,7 +204,7 @@ export class AxisBreakView extends RcElement {
     private _upLine: PathElement;
     private _downLine: PathElement;
     private _mask: PathElement;
-    private _clip: ClipElement;
+    private _clip: ClipRectElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -759,7 +759,7 @@ export class BodyView extends ChartElement<Body> {
     private _gauges: GaugeBase[];
     _guideContainer: AxisGuideContainer;
     _frontGuideContainer: AxisGuideContainer;
-    _guideClip: ClipElement;
+    _guideClip: ClipRectElement;
     // axis breaks
     _axisBreakContainer: LayerElement;
     // items
@@ -976,7 +976,7 @@ export class BodyView extends ChartElement<Body> {
 
         // series
         this._seriesViews.forEach(v => {
-            if (v.model.noClip !== true) {
+            if (v.model.needClip(false)) {
                 this._owner.clipSeries(v.getClipContainer(), v.getClipContainer2(), 0, 0, w, h, v.invertable());
             }
             v.resize(w, h);

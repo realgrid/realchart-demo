@@ -316,6 +316,7 @@ function setActions(container) {
 function init() {
   console.log('RealChart v' + RealChart.getVersion());
   // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
   linechart = RealChart.createChart(document, 'linechart', lineConfig);
   groupchart = RealChart.createChart(document, 'realchart', config);
