@@ -1955,8 +1955,9 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
                         this.$_collectFill(axis, vals);
                         break;
         
-                    case SeriesGroupLayout.DEFAULT:
-                    case SeriesGroupLayout.OVERLAP:
+                    //case SeriesGroupLayout.DEFAULT:
+                    //case SeriesGroupLayout.OVERLAP:
+                    default:
                         this.$_collectValues(axis, vals);
                         break;
                 }

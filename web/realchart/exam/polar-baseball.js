@@ -122,7 +122,7 @@ const config = {
             visible: true,
             // startVisible: false,
         },
-        strictMax: 22,
+        // strictMax: 22,
         tick: { 
             visible: !true,
             stepInterval: 5 
@@ -141,7 +141,8 @@ const config = {
         ]
     },
     series: {
-        layout: 'overlap',
+        layout: 'stack',
+        // layout: 'overlap',
         children: [
         {
             template: 'series',
