@@ -111,7 +111,7 @@ const config = {
             marker: false,
             pointLabel: {
                 visible: true,
-                posotion: 'foot',
+                // position: 'foot',
             },
             style: {
                 strokeWidth: 4,

@@ -101,6 +101,13 @@ const config = {
         },
         grid: {
             // visible: false,
+        },
+        line: {
+            visible: true,
+            style: {
+                stroke: '#999',
+                // fill: '#999'
+            }
         }
     },
     yAxis: {
@@ -115,7 +122,7 @@ const config = {
             visible: true,
             // startVisible: false,
         },
-        strictMax: 25,
+        strictMax: 22,
         tick: { 
             visible: !true,
             stepInterval: 5 
@@ -129,7 +136,7 @@ const config = {
                 // align: 'right',
                 offsetX: 50,
                 // offsetY: 0,
-                width: 300
+                width: 400
             }
         ]
     },

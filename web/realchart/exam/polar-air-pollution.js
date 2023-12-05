@@ -38,7 +38,7 @@ const config = {
         type: 'linear',
         // startAngle: -90,
         minValue: 0,
-        maxValue: 359.9,
+        maxValue: 360,
         label: {
             visible: true,
             suffix: '°',
@@ -86,27 +86,35 @@ const config = {
     series: [
         {
             template: 'series',
-            type: 'bubble',
+            type: 'scatter',
+            radius: 20,
             data,
             xField: "Wind Direction",
             yField: "Wind Speed",
+            colorField: "Ozone",
             zProp: "Ozone",
             style: {
                 stroke: 'none',
                 // mixBlendMode: 'screen', // not working here...
             },
             pointStyleCallback: (p) => {
-                const z = p.zValue;
+                const { Ozone: z } = data[p.index];
+                // const { z } = p;
                 let fill = '';
                 if (z < 10) {
-                    fill = 'yellow'
+                    fill = 'blue'
+                } else if (z < 20) {
+                    fill = 'green'
                 } else if (z < 30) {
+                    fill = 'yellow'
+                } else if (z < 40) {
                     fill = 'orange'
                 } else if (z < 50) {
                     fill = 'red'
                 } else {
                     fill = 'darkred'
                 }
+                // return { fill };
                 return { fill, mixBlendMode: 'screen' };
             }
             // zProp: '',
