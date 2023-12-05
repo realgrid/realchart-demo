@@ -887,18 +887,22 @@ export class AxisView extends ChartElement<Axis> {
 
         if (!overlapped) {
             views = this.$_applyStep(axis, views, step || 1);
+        } else if (m.autoArrange === AxisLabelArrange.NONE) {
+            // TODO: clip | ellipsis | wrap
+            views = this.$_applyStep(axis, views, 1);
         } else {
             step = rows = rotation = 0;
 
             switch (m.autoArrange) {
-                case AxisLabelArrange.ROTATE:
-                    rotation = -45;
-                    break;
                 case AxisLabelArrange.ROWS:
                     rows = this.$_getRows(views);
                     break;
                 case AxisLabelArrange.STEP:
                     step = this.$_getStep(views);
+                    break;
+                // case AxisLabelArrange.ROTATE:
+                default:
+                    rotation = -45;
                     break;
             }
 

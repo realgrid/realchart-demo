@@ -17,7 +17,7 @@ const config = {
         categories: ['Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', '마리아', 'Leon', 'Anna', 'Tim', 'Laura'],
         grid: true,
         label: {
-            rotation: 20,
+            // rotation: 30,
             autoArrange: 'none'
         }
     },
