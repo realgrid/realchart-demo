@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>RealChart - Sap</title>
+
+<link href="../styles/realchart-style.css" rel="stylesheet">
+<link href="../demo/demo.css" rel="stylesheet">
+
+<style>
+	html {
+		margin: 0px;
+	}
+	body {
+		margin: 20px 30px !important;
+	}
+	#barchart {
+		/* width: 850px; */
+		height: 300px;
+		/* margin-bottom: 20px; */
+	}
+	#linechart {
+		/* width: 850px; */
+		height: 300px;
+		/* margin-bottom: 20px; */
+	}
+	
+	.rct-root {
+		padding: 0;
+	}
+	</style>
+<style>
+.green-layout {
+    background-color: #00880020;
+}
+.red-button {
+    color: red;
+}
+</style>
+<script type="text/javascript" src="../lib/jquery-1.11.3.min.js"></script>
+<!-- bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="../lib/domutils.js"></script>
+<!-- <script type="text/javascript" src="../lib/realreport-chart-lic.js"></script> -->
+<script type="text/javascript" src="../lib/realchart.js"></script>
+<script type="text/javascript" src="../lib/debug.js"></script>
+<script type="text/javascript" src="./sap.js"></script>
+<script type="text/javascript">
+	window.addEventListener('DOMContentLoaded', function () {
+		try {
+			init();
+		} catch (err) {
+			alert(err);
+			console.error(err);
+		}
+	});	
+</script>
+</head>
+<body>
+	<!-- <div id="realchart" class="col col-md-9"></div> -->
+	<div class="row">
+		<div id="linechart" class="col col-md-9"></div>
+	</div>
+	<div class="row">
+		<div id="barchart" class="col col-md-9"></div>	
+		<!-- <div id="bar16chart" class="col col-md-3"></div> -->
+	</div>
+	<div id="actions"></div>
+</body>
+</html>		
