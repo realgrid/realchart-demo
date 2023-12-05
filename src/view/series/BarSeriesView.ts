@@ -114,7 +114,7 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
 
         this._sectors.forEach((view, i) => {
             const p = view.point;
-            let yVal = yAxis.getPosition(polar.rd, p.yValue) * vr;
+            const yVal = yAxis.getPosition(polar.rd, p.yValue) * vr;
             let yGroup = yAxis.getPosition(polar.rd, p.yGroup) * vr;
             const wUnit = xAxis.getUnitLength(PI_2, p.xValue);
             const wPoint = series.getPointWidth(wUnit);
@@ -125,7 +125,7 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
                 cy: polar.cy, 
                 rx: yGroup, 
                 ry: yGroup,
-                innerRadius: (yGroup - yVal) / polar.rd,
+                innerRadius: (yGroup - yVal) / yGroup,
                 start: a - wPoint / 2,
                 angle: wPoint,
                 clockwise: true

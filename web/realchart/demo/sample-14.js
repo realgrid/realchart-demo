@@ -101,6 +101,7 @@ const createSeries = (year) => {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
     config.series = createSeries(1952);
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

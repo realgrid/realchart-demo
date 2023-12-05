@@ -82,7 +82,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
     private $_layoutMarkers(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
-        const noClip = series.noClip;
+        const needClip = series.needClip(false);
         const vr = this._getViewRate();
         const labels = series.pointLabel;
         const labelPos = labels.position;
@@ -125,7 +125,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
                     }
                 }
     
-                if (mv.setVisible(noClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
+                if (mv.setVisible(!needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
                     path = SvgShapes.circle(0, 0, sz);
                     mv.setPath(path);
                     mv.translate(x, y);

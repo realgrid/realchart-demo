@@ -9,7 +9,7 @@
 import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
-import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
+import { ClipRectElement, PathElement, RcElement } from "../../common/RcControl";
 import { IValueRange } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { SeriesGroupLayout } from "../../model/Series";
@@ -26,7 +26,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     private _area: PathElement;
     private _lowArea: PathElement;
     private _rangeAreas: ElementPool<PathElement>;
-    private _rangeAreaClips: ClipElement[] = [];
+    private _rangeAreaClips: ClipRectElement[] = [];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -93,7 +93,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             areas.prepare(ranges.length);
 
             while (clips.length < ranges.length) {
-                const c = new ClipElement(this.doc);
+                const c = new ClipRectElement(this.doc);
 
                 c.setAttr(RcElement.ASSET_KEY, '1');
                 this.control.clipContainer().append(c.dom);

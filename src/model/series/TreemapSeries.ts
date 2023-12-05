@@ -9,6 +9,7 @@
 import { Color } from "../../common/Color";
 import { isArray, isObject } from "../../common/Common";
 import { toStr } from "../../common/Types";
+import { Utils } from "../../common/Utils";
 import { ChartItem } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
 import { IPlottingItem, Series } from "../Series";
@@ -299,7 +300,7 @@ export class TreemapSeries extends Series {
 
         (this[this.algorithm] || this.squarify).call(this, this._roots, width, height, vertical);
         this._levels = levels;
-        console.log('levels', this._levels);
+        Utils.log('levels', this._levels);
         return { roots: this._roots, leafs: this._leafs };
     }
 

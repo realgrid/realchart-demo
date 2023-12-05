@@ -10,7 +10,7 @@ import { pickNum } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
-import { ClipElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
+import { ClipRectElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { Align, IValueRange, _undefined } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
@@ -409,7 +409,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     protected _doPointClicked(view: IPointView): void {
-        // console.log('CLICKED: ' + view.point.yValue);
+        // Utils.log('CLICKED: ' + view.point.yValue);
     }
 
     prepareSeries(doc: Document, model: T): void {
@@ -632,7 +632,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         labelView.layout(labelView.textAlign()).translate(x, y);
     }
 
-    protected _clipRange(w: number, h: number, rangeAxis: 'x' | 'y' | 'z', range: IValueRange, clip: ClipElement, inverted: boolean): void {
+    protected _clipRange(w: number, h: number, rangeAxis: 'x' | 'y' | 'z', range: IValueRange, clip: ClipRectElement, inverted: boolean): void {
         if (inverted) {
             const t = w;
             w = h;

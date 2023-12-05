@@ -57,13 +57,13 @@ export class RcChartObject {
      * 지정 가능한 설정 값 목록은 {@link config Configuration API 페이지}에서 확인할 수 있다. 
      * 
      * ```js
-     * console.log(chart.series.get('name'))
+     * Utils.log(chart.series.get('name'))
      * ```
      * 
      * 하위 객체의 설정 속성은 속성 경로를 지정해서 직접 가져올 수도 있다.
      * 
      * ```js
-     * console.log(chart.axis.get('title.text'));
+     * Utils.log(chart.axis.get('title.text'));
      * ```
      * 
      * @param prop 속성 경로.

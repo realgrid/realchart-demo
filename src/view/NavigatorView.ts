@@ -195,7 +195,7 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
         } else {
             const x1 = zoom ? zoom.start * w / model.axisLen() : 0;
             const x2 = zoom ? zoom.end * w / model.axisLen() : w;
-            // console.log('end', zoom ? zoom.end : w, x2);
+            // Utils.log('end', zoom ? zoom.end : w, x2);
 
             this._mask.setBounds(x1, 0, x2 - x1, h);
 

@@ -32,8 +32,10 @@ undefined이면 "data".
 시리즈 생성시 지정되고 변경할 수 없다.  
 
 ### noClip: `boolean{:js}`[#noClip]
-true로 지정하면 body를 벗어난 data point 영역도 표시된다.  
-<DefaultValue value="false" contents=""></DefaultValue>
+true로 지정하면 body를 벗어난 data point 영역도 표시된다.\
+값을 지정하지 않으면 polar 차트에서는 true, 직교 차트에서는 false이다.
+group에 포함되면 group의 noClip 설정을 따른다.  
+
 ### onPointClick[#onPointClick]
 데이터 point가 클릭될 때 발생하는 이벤트 콜백.
 명시적 true를 리턴하면 기본 동작이 진행되지 않는다.  
@@ -92,7 +94,7 @@ Series.tooltip 모델.
 ### [trendline](./boxplot/trendline)
 시리즈 추세선.  
 
-### viewRangeValue: `'z' | 'y' | 'x'{:js}`[#viewRangeValue]
+### viewRangeValue: `'z' | 'x' | 'y'{:js}`[#viewRangeValue]
 ranges가 적용되는 값.\
 지정하지 않으면 시리즈 종류에 띠라 자동 적용된다.
 'line' 시리즈 계열은 'x', 나머지는 'y'가 된다.

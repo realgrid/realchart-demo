@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcAnimation, RcAnimationEndHandler } from "../../common/RcAnimation";
-import { ClipElement, RcElement } from "../../common/RcControl";
+import { ClipRectElement, RcElement } from "../../common/RcControl";
 import { pixel } from "../../common/Types";
 import { Series } from "../../model/Series";
 import { SeriesView } from "../SeriesView";
@@ -135,9 +135,12 @@ export class SlideAnimation extends SeriesAnimation {
     }
 
     private $_clipRect(v: SeriesView<Series>): RcElement {
-        let vClip: ClipElement;
+        let vClip: ClipRectElement;
 
-        if (v.model.noClip) {
+        if (v.model.needClip(false)) {
+            // plot area 경계에 걸친 point들이 표시되도록 infliate한다.
+            vClip = v.clipRect(-v.width * .1, -v.height * .1, v.width * 1.2, v.height * 1.2)
+        } else {
             const control = v.control;
 
             if (v.model.chart.isInverted()) {
@@ -145,9 +148,6 @@ export class SlideAnimation extends SeriesAnimation {
             } else {
                 vClip = v.clipRect(-v.width * .1, -control.height(), v.width * 1.2, control.height() * 2);
             }
-        } else {
-            // plot area 경계에 걸친 point들이 표시되도록 infliate한다.
-            vClip = v.clipRect(-v.width * .1, -v.height * .1, v.width * 1.2, v.height * 1.2)
         }
 
         return vClip.setTemporary();

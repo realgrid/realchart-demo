@@ -52,7 +52,7 @@ export class ChartPointerHandler implements IPointerHandler {
         if (!elt) return;
         
         const p = this.$_pointerToPoint(ev);
-        // console.log('POINT DOWN', p.x, p.y);
+        // Utils.log('POINT DOWN', p.x, p.y);
 
         if (this._dragTracker) {
             this.$_stopDragTracker(elt, p.x, p.y);

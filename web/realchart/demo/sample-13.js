@@ -192,6 +192,7 @@ const createData = () => {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     config.series.data = createData();
     chart = RealChart.createChart(document, 'realchart', config);

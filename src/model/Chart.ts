@@ -56,6 +56,7 @@ import { ImageAnnotation } from "./annotation/ImageAnnotation";
 import { Annotation, AnnotationCollection } from "./Annotation";
 import { ShapeAnnotation } from "./annotation/ShapeAnnotation";
 import { CircleBarSeries, CircleBarSeriesGroup } from "./series/CircleBarSeries";
+import { Utils } from "../common/Utils";
 
 export interface IChart {
     type: string;
@@ -667,7 +668,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     load(source: any): void {
         const sTime = 'load chart ' + Math.random() * 1000000;
-        console.time(sTime);
+        Utils.LOGGING && console.time(sTime);
 
         // defaults
         this.$_loadTemplates(source.templates);
@@ -723,8 +724,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // series navigator
         this._navigator.load(source.seriesNavigator);
 
-        console.log('chart-items:', n_char_item);
-        console.timeEnd(sTime);
+        Utils.log('chart-items:', n_char_item);
+        Utils.LOGGING && console.timeEnd(sTime);
     }
 
     _connectSeries(series: IPlottingItem, isX: boolean): Axis {
