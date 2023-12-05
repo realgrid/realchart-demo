@@ -103,8 +103,12 @@ export class TimeAxisTick extends ContinuousAxisTick {
     }
 
     protected _isValidInterval(v: any): boolean {
-        return !isNaN(v) ||
-               (isString(v) && !isNaN(parseFloat(v)) && time_periods.hasOwnProperty(v.charAt(v.length - 1)));
+        if (!isNaN(v)) {
+            return +v !== 0;
+        } else if (isString(v) && time_periods.hasOwnProperty(v.charAt(v.length - 1))) {
+            v = parseFloat(v);
+            return !isNaN(v) && (v <= -1 || v >= 1);
+        } 
     }
 
     protected _getStepMultiples(step: number): number[] {

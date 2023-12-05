@@ -12,6 +12,7 @@ import { ISize } from "../common/Size";
 import { Align, IPercentSize, RtPercentSize, VerticalAlign, calcPercent, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
+import { ISeries } from "./Series";
 
 export enum AnnotationScope {
     // BODY = 'body',
@@ -23,6 +24,11 @@ export enum AnnotationScope {
  * Annotation 모델.
  */
 export abstract class Annotation extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _seriesObj: ISeries;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -73,6 +79,11 @@ export abstract class Annotation extends ChartItem {
      * @config
      */
     scope = AnnotationScope.CHART;
+    /**
+     * 연관 시리즈.\
+     * 이 시리즈가 감춰질 때 같이 감춰진다.
+     */
+    series: string;
 
     //-------------------------------------------------------------------------
     // methods
@@ -115,6 +126,9 @@ export abstract class Annotation extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doPrepareRender(chart: IChart): void {
+        this._seriesObj = chart.seriesByName(this.series);
+    }
 }
 
 export interface IAnnotationOwner {
