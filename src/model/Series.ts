@@ -372,6 +372,8 @@ export interface IDataPointCallbackArgs {
     xValue: any;
     yValue: any;
     zValue: any;
+    
+    source: any;
 }
 
 export type PointStyleCallback = (args: IDataPointCallbackArgs) => SVGStyleOrClass;
