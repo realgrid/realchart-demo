@@ -116,7 +116,7 @@ export class DataPointLabel extends FormattableText {
      * 값을 설정하지 않고 {@link visibleCallback}이 설정되면 콜백 리턴값을 따른다.
      * 명시적으로 값을 설정하면 그 값에 따른다.
      */
-    "@config visible" = undefined;
+    //"@config visible" = undefined;
 
     //-------------------------------------------------------------------------
     // methods

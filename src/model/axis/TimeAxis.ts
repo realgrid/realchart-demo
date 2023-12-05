@@ -68,6 +68,11 @@ export class TimeAxisTick extends ContinuousAxisTick {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    /**
+     * 단위가 지정된 문자열로 지정하는 경우 값이 -1 이하이거나 1 이상이어야 한다. #141
+     */
+    "@config stepInerval" = undefined;
+
     getNextStep(curr: number, delta: number): number {
         const t = new Date(curr);
         

@@ -8,7 +8,7 @@
 
 import { isArray, isObject, pickNum, pickNum3 } from "../../common/Common";
 import { IPercentSize, RtPercentSize, assert, calcPercent, ceil, fixnum, parsePercentSize } from "../../common/Types";
-import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick, IAxis, AxisPosition } from "../Axis";
+import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { SeriesGroup, SeriesGroupLayout } from "../Series";
 
