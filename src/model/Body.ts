@@ -6,13 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum } from "../common/Common";
-import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, _undefined, calcPercent, parsePercentSize } from "../common/Types";
+import { isArray, isObject } from "../common/Common";
+import { IPercentSize, RtPercentSize, _undefined, calcPercent, parsePercentSize } from "../common/Types";
 import { Annotation, AnnotationCollection } from "./Annotation";
 import { Axis } from "./Axis";
 import { IChart } from "./Chart";
 import { BackgroundImage, ChartItem } from "./ChartItem";
-import { Series } from "./Series";
 
 export enum ZoomType {
     NONE = 'none',
@@ -134,6 +133,9 @@ export class Body extends ChartItem {
             this._radiusDim = parsePercentSize(value, true);
         }
     }
+
+    // TODO: 구현할 것!
+    innerRadius: RtPercentSize;
 
     /**
      * 차트가 극좌표(polar)일 때 중심 x 좌표.

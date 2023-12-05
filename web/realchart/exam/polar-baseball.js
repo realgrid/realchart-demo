@@ -83,9 +83,10 @@ const config = {
     xAxis: {
         type: 'linear',
         reversed: true,
-        startAngle: -90,
-        minValue: -180,
-        maxValue: 180,
+        startAngle: 10,
+        totalAngle: 160,
+        minValue: -90,
+        maxValue: 90,
         label: {
             visible: true,
             suffix: '°',
@@ -101,11 +102,14 @@ const config = {
         },
         grid: {
             // visible: false,
+            startVisible: false
         },
         line: {
             visible: true,
             style: {
                 stroke: '#999',
+                // stroke: 'red',
+                // strokeWidth: '2px',
                 // fill: '#999'
             }
         }
@@ -114,8 +118,8 @@ const config = {
         label: {
             visible: true,
             style: {
-                fill: '#999'
-            }
+                fill: '#555',
+            },
         },
         title: 'hits',
         grid: {
@@ -129,7 +133,6 @@ const config = {
         },
     },
     body: {
-        totalAngle: 180,
         annotations: [
             {
                 imageUrl: '../assets/images/baseball-player.png',
@@ -144,6 +147,7 @@ const config = {
         layout: 'stack',
         // layout: 'overlap',
         // noClip: false,
+        groupPadding: 0,
         children: [
         {
             template: 'series',
@@ -151,7 +155,7 @@ const config = {
             style: {
                 stroke: 'none',
                 fill: '#bbb',
-            }
+            },
         },
         {
             template: 'series',
@@ -159,7 +163,7 @@ const config = {
             style: {
                 stroke: 'none',
                 fill: 'var(--color-3)',
-            }
+            },
         },]
     }
 }

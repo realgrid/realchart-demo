@@ -254,8 +254,9 @@ export class AxisGrid extends AxisItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    isVisible(): boolean {
-        return this.visible == null ? !this.axis._isX : this.visible;
+    isVisible(polar: boolean): boolean {
+        if (polar) return this.visible !== false;
+        else return this.visible == null ? !this.axis._isX : this.visible;
     }
 
     getPoints(length: number): number[] {
@@ -1044,6 +1045,10 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     getTotalAngle(): number {
         return DEG_RAD * Math.max(0, Math.min(360, pickNum(this.totalAngle, 360)));
+    }
+
+    isArced(): boolean {
+        return this.totalAngle > 0 && this.totalAngle < 360;
     }
 
     //-------------------------------------------------------------------------

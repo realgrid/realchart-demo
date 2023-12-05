@@ -9,8 +9,8 @@
 import { ElementPool } from "../common/ElementPool";
 import { ClipCircleElement, ClipRectElement, LayerElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
-import { Align, PI_2 } from "../common/Types";
-import { CircleElement, CircumElement } from "../common/impl/CircleElement";
+import { Align, DEG_RAD, PI_2 } from "../common/Types";
+import { ArcElement, CircleElement, CircumElement } from "../common/impl/CircleElement";
 import { LineElement, PolylineElement } from "../common/impl/PathElement";
 import { Axis, AxisLabel, AxisTick, IAxisTick } from "../model/Axis";
 import { Body } from "../model/Body";
@@ -50,21 +50,20 @@ abstract class PolarAxisView extends RcElement {
     private _markContainer: RcElement;
     private _markViews: ElementPool<PolarAxisTickMarkView>;
     protected _gridContainer: RcElement;
-    protected _labelContainer: RcElement;
     protected _labelViews: ElementPool<AxisLabelView>;
+    protected _labelContainer: LayerElement;
     private _markLen: number;
 
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string) {
+    constructor(doc: Document, styleName: string, labelContainer: LayerElement, isX: boolean) {
         super(doc, styleName);
 
         this.add(this._markContainer = new LayerElement(doc, 'rct-polar-axis-markers'));
         this._markViews = new ElementPool(this._markContainer, PolarAxisTickMarkView);
         this.add(this._gridContainer = new RcElement(doc, 'rct-polar-axis-grids'));
-        this.add(this._labelContainer = new LayerElement(doc, 'rct-polar-axis-labels'));
-        this._labelViews = new ElementPool(this._labelContainer, AxisLabelView, 'rct-polar-axis-label')
+        this._labelViews = new ElementPool(this._labelContainer = labelContainer, AxisLabelView, isX ? 'rct-polar-xaxis-label' : 'rct-polar-yaxis-label')
     }
 
     //-------------------------------------------------------------------------
@@ -73,7 +72,7 @@ abstract class PolarAxisView extends RcElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepare(doc: Document, model: Axis, circular: boolean): void {
+    prepare(doc: Document, model: Axis, circular: boolean, arced: boolean): void {
         this._model = model;
 
         // tick marks
@@ -84,7 +83,7 @@ abstract class PolarAxisView extends RcElement {
         // labels
         this.$_prepareLabels(doc, model);
 
-        this._doPrepare(model, model._ticks, circular);
+        this._doPrepare(model, model._ticks, circular, arced);
     }
 
     layout(other: Axis, cx: number, cy: number, rd: number): PolarAxisView {
@@ -99,7 +98,7 @@ abstract class PolarAxisView extends RcElement {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    protected abstract _doPrepare(model: Axis, ticks: IAxisTick[], circular: boolean): void;
+    protected abstract _doPrepare(model: Axis, ticks: IAxisTick[], circular: boolean, arced: boolean): void;
     protected abstract _doLayout(model: Axis, cx: number, cy: number, rd: number, ticks: IAxisTick[], other: Axis): void;
 
     private $_prepareTickMarks(doc: Document, m: Axis): void {
@@ -179,8 +178,8 @@ class PolarXAxisView extends PolarAxisView {
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
-    constructor(doc: Document, lineContainer: LayerElement) {
-        super(doc, 'rct-polar-xaxis');
+    constructor(doc: Document, lineContainer: LayerElement, labelContainer: LayerElement) {
+        super(doc, 'rct-polar-xaxis', labelContainer, true);
 
         this._gridLines = new ElementPool(this._gridContainer, LineElement, PolarXAxisView.GRID_CLASS);
 
@@ -192,27 +191,40 @@ class PolarXAxisView extends PolarAxisView {
     //-------------------------------------------------------------------------
     protected _doPrepare(model: Axis, ticks: IAxisTick[], circular: boolean): void {
         // grid lines
-        if (this._gridContainer.setVisible(model.grid.visible !== false)) {
+        if (this._gridContainer.setVisible(model.grid.isVisible(true))) {
             this._gridLines.prepare(ticks.length);
         }
 
         // line
-        if (this._lineView.visible = model.line.visible) {
-            if (circular && this._lineView instanceof PolylineElement) {
-                this._lineView.remove();
-                this.add(this._lineView = new CircumElement(this.doc, PolarXAxisView.LINE_CLASS));
-            } else if (!circular && this._lineView instanceof CircleElement) {
-                this._lineView.remove();
-                this.add(this._lineView = new PolylineElement(this.doc, PolarXAxisView.LINE_CLASS));
+        if (this._lineView.setVisible(model.line.visible)) {
+            if (circular) {
+                if (model.isArced()) {
+                    if (!(this._lineView instanceof ArcElement)) {
+                        this._lineView.remove();
+                        this.add(this._lineView = new ArcElement(this.doc, PolarXAxisView.LINE_CLASS));
+                    }
+                } else {
+                    if (!(this._lineView instanceof CircumElement)) {
+                        this._lineView.remove();
+                        this.add(this._lineView = new CircumElement(this.doc, PolarXAxisView.LINE_CLASS));
+                    }
+                }
+            } else {
+                if (!(this._lineView instanceof PolylineElement)) {
+                    this._lineView.remove();
+                    this.add(this._lineView = new PolylineElement(this.doc, PolarXAxisView.LINE_CLASS));
+                }
             }
             this._lineView.setStyleOrClass(model.line.style);
+            this._lineView.setStyle('fill', 'none');
         }
     }
 
     protected _doLayout(axis: Axis, cx: number, cy: number, rd: number, ticks: IAxisTick[], other: Axis): void {
         const start = axis.getStartAngle();
+        const total = axis.getTotalAngle();
 
-        ticks.forEach(tick => tick.pos = tick.pos / rd);
+        ticks.forEach(tick => tick.pos = tick.pos / rd * total / PI_2);
 
         // grid lines
         if (this._gridContainer.visible) {
@@ -264,6 +276,8 @@ class PolarXAxisView extends PolarAxisView {
         if (this._lineView.visible) {
             if (this._lineView instanceof CircleElement) {
                 this._lineView.setCircle(cx, cy, rd);
+            } else if (this._lineView instanceof ArcElement) {
+                this._lineView.setArc(cx, cy, rd, start, axis.getTotalAngle(), true);
             } else {
                 const pts: number[] = [];
 
@@ -280,6 +294,11 @@ class PolarXAxisView extends PolarAxisView {
 class PolarYAxisView extends PolarAxisView {
 
     //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly GRID_LINE_STYLE = 'rct-polar-yaxis-grid-line';
+
+    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _lineView: LineElement;
@@ -289,11 +308,12 @@ class PolarYAxisView extends PolarAxisView {
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
-    constructor(doc: Document, lineContainer: LayerElement) {
-        super(doc, 'rct-polar-yaxis');
+    constructor(doc: Document, lineContainer: LayerElement, labelContainer: LayerElement) {
+        super(doc, 'rct-polar-yaxis', labelContainer, false);
 
-        this._gridLines = new ElementPool(this._gridContainer, CircumElement, 'rct-polar-yaxis-grid-line');
+        this._gridLines = new ElementPool(this._gridContainer, CircumElement, PolarYAxisView.GRID_LINE_STYLE);
         (this._gridLines as any).circular = false;
+        (this._gridLines as any).arced = false;
 
         lineContainer.add(this._lineView = new LineElement(doc, 'rct-polar-yaxis-line'));
     }
@@ -301,17 +321,24 @@ class PolarYAxisView extends PolarAxisView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doPrepare(model: Axis, ticks: IAxisTick[], circular: boolean): void {
+    protected _doPrepare(model: Axis, ticks: IAxisTick[], circular: boolean, arced: boolean): void {
+        const container = this._gridContainer;
+
         // grid lines
-        if (this._gridContainer.setVisible(model.grid.visible !== false)) {
-            if (circular !== (this._gridContainer as any).circular) {
+        if (container.setVisible(model.grid.visible !== false)) {
+            if (circular !== (container as any).circular || arced !== (container as any).arced) {
                 this._gridLines.destroy();
                 if (circular) {
-                    this._gridLines = new ElementPool(this._gridContainer, CircumElement, 'rct-polar-yaxis-grid-line');
+                    if (arced) {
+                        this._gridLines = new ElementPool(container, ArcElement, PolarYAxisView.GRID_LINE_STYLE);
+                    } else {
+                        this._gridLines = new ElementPool(container, CircumElement, PolarYAxisView.GRID_LINE_STYLE);
+                    }
                 } else {
-                    this._gridLines = new ElementPool(this._gridContainer, PolylineElement, 'rct-polar-yaxis-grid-line');
+                    this._gridLines = new ElementPool(container, PolylineElement, PolarYAxisView.GRID_LINE_STYLE);
                 }
-                (this._gridContainer as any).circular = circular;
+                (container as any).circular = circular;
+                (container as any).arced = arced;
             }
             this._gridLines.prepare(ticks.length, null);
         }
@@ -323,6 +350,9 @@ class PolarYAxisView extends PolarAxisView {
     }
 
     protected _doLayout(axis: Axis, cx: number, cy: number, rd: number, ticks: IAxisTick[], other: Axis): void {
+        const start = other.getStartAngle();
+        const total = other.getTotalAngle();
+
         // grid lines
         if (this._gridContainer.visible) {
             this._gridLines.forEach((view, i) => {
@@ -330,6 +360,9 @@ class PolarYAxisView extends PolarAxisView {
     
                 if (view instanceof CircumElement) {
                     view.setCircle(cx, cy, pos);
+                } else if (view instanceof ArcElement) {
+                    view.setArc(cx, cy, pos, start, total, true);
+                    view.setStyle('fill', 'none');
                 } else if (view instanceof PolylineElement) {
                     const start = axis.getStartAngle();
                     const pts: number[] = [];
@@ -338,16 +371,25 @@ class PolarYAxisView extends PolarAxisView {
                         const p = tick.pos;
                         pts.push(cx + Math.cos(start + p) * pos, cy + Math.sin(start + p) * pos);
                     });
-                    (view as PolylineElement).setPoints(...pts);
+                    view.setPoints(...pts);
                 }
             });
         }
 
         // labels
         if (this._labelContainer.visible) {
-            this._labelViews.forEach((view, i) => {
-                view.translate(cx + 2, cy - ticks[i].pos - view.getBBounds().height / 2);
-            });
+            if (other.isArced()) {
+                const start = other.getStartAngle();
+                this._labelViews.forEach((view, i) => {
+                    const x = cx + Math.cos(start) * (ticks[i].pos) - (view.getBBounds().width / 2);
+                    const y = cy + Math.sin(start) * (ticks[i].pos) - (view.getBBounds().height / 2);
+                    view.translate(x, y);
+                });
+            } else {
+                this._labelViews.forEach((view, i) => {
+                    view.translate(cx + 2, cy - ticks[i].pos - view.getBBounds().height / 2);
+                });
+            }
         }
 
         // line
@@ -370,6 +412,7 @@ export class PolarBodyView extends BodyView {
     private _lineContainer: LayerElement;
     private _xAxisView: PolarXAxisView;
     private _yAxisViews: PolarYAxisView[] = [];
+    private _axisLabelContainer: LayerElement;
     private _polarClip: ClipCircleElement;
 
     //-------------------------------------------------------------------------
@@ -386,7 +429,7 @@ export class PolarBodyView extends BodyView {
         const chart = model.chart;
         const sz = super._doMeasure(doc, model, hintWidth, hintHeight, phase);
 
-        this.$_prepareAxes(doc, chart.xAxis as Axis, chart._getYAxes().items, this.model.circular);
+        this.$_prepareAxes(doc, chart.xAxis as Axis, chart._getYAxes().items, this.model.circular, (chart.xAxis as Axis).isArced());
 
         return sz;
     }
@@ -423,21 +466,18 @@ export class PolarBodyView extends BodyView {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_prepareAxes(doc: Document, xAxis: Axis, yAxes: Axis[], circular: boolean): void {
-        // x axis
+    private $_prepareAxes(doc: Document, xAxis: Axis, yAxes: Axis[], circular: boolean, arced: boolean): void {
         if (!this._axisContainer) {
+            this.insertFirst(this._axisLabelContainer = new LayerElement(doc, 'rct-polar-axis-labels'));
             this.insertFirst(this._lineContainer = new LayerElement(doc, 'rct_axis-lines'));
             this.insertFirst(this._axisContainer = new LayerElement(doc, 'rct-polar-axes'));
-
-            this._axisContainer.add(this._xAxisView = new PolarXAxisView(doc, this._lineContainer));
         }
-        this._xAxisView.prepare(doc, xAxis, circular);
 
         // y axes
         const views = this._yAxisViews;
 
         while (views.length < yAxes.length) {
-            const view = new PolarYAxisView(doc, this._lineContainer);
+            const view = new PolarYAxisView(doc, this._lineContainer, this._axisLabelContainer);
 
             this._axisContainer.add(view);
             views.push(view);
@@ -445,6 +485,13 @@ export class PolarBodyView extends BodyView {
         while (views.length > yAxes.length) {
             views.pop().remove();
         }
-        views.forEach((v, i) => v.prepare(doc, yAxes[i], circular));
+        views.forEach((v, i) => v.prepare(doc, yAxes[i], circular, arced));
+
+        // [주의] x axis가 나중에 그려지게 해야 한다.
+        // x axis
+        if (!this._xAxisView) {
+            this._axisContainer.add(this._xAxisView = new PolarXAxisView(doc, this._lineContainer, this._axisLabelContainer));
+        }
+        this._xAxisView.prepare(doc, xAxis, circular, arced);
     }
 }

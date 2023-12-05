@@ -1054,14 +1054,14 @@ export class BodyView extends ChartElement<Body> {
         const views = this._gridViews;
 
         for (const axis of views.keys()) {
-            if (!needAxes || !chart.containsAxis(axis) || !axis.grid.isVisible()) {
+            if (!needAxes || !chart.containsAxis(axis) || !axis.grid.isVisible(false)) {
                 views.get(axis).remove();
                 views.delete(axis);
             }
         }
 
         [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
-            if (needAxes && axis.grid.isVisible() && !views.has(axis)) {
+            if (needAxes && axis.grid.isVisible(false) && !views.has(axis)) {
                 const v = new AxisGridView(doc);
 
                 views.set(axis, v);
