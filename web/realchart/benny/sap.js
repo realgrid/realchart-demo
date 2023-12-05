@@ -93,49 +93,47 @@ const lineConfig = {
         }
       }
       // padding: -0.5,
+    },
+    annoAmount: {
+      style: {
+        fontSize: '24pt',
+        fontWeight: 500,
+        fill: '#aaa'
+      }
+    },
+    annoLabel: {
+      style: {
+        fontSize: '12pt',
+        fontWeight: 500,
+        fill: primary,
+      }
     }
   },
   body: {
     annotations: [
       {
+        template: 'annoAmount',
         text: "71M",
-        offsetX: 320,
+        offsetX: 416,
         offsetY: -100,
-        style: {
-          fontSize: '24pt',
-          fontWeight: 500,
-          fill: '#aaa'
-        }
       },
       {
+        template: 'annoLabel',
         text: `Total Amount in ${startYear + 1}`,
-        offsetX: 320,
+        offsetX: 416,
         offsetY: -60,
-        style: {
-          fontSize: '12pt',
-          fontWeight: 500,
-          fill: primary,
-        }
       },
       {
+        template: 'annoAmount',
         text: "94M",
-        offsetX: 600,
+        offsetX: 800,
         offsetY: -100,
-        style: {
-          fontSize: '24pt',
-          fontWeight: 500,
-          fill: '#aaa'
-        }
       },
       {
+        template: 'annoLabel',
         text: `Total Amount in ${startYear + 2}`,
-        offsetX: 600,
+        offsetX: 800,
         offsetY: -60,
-        style: {
-          fontSize: '12pt',
-          fontWeight: 500,
-          fill: primary,
-        }
       }
     ],
   },
@@ -369,6 +367,7 @@ const barConfig = {
       template: 'bar',
       style: {
         fill: 'none',
+        strokeWidth: 2,
       },
       pointLabel: true,
       pointWidth: 5,
