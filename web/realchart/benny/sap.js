@@ -1,10 +1,6 @@
+const width = 1280;
+const padding = 40;
 const startYear = 2020;
-
-const appendX = (v, i) => {
-  const year = startYear + Math.floor(i / 4);
-  const q = i % 4;
-  return [`${year} Q${q + 1}`, v];
-};
 
 const quarters = Array(12).fill().map((_, i) => {
   const year = startYear + Math.floor(i / 4);
@@ -114,25 +110,25 @@ const lineConfig = {
       {
         template: 'annoAmount',
         text: "71M",
-        offsetX: 416,
+        offsetX: width * 0.33 + padding,
         offsetY: -100,
       },
       {
         template: 'annoLabel',
         text: `Total Amount in ${startYear + 1}`,
-        offsetX: 416,
+        offsetX: width * 0.33 + padding,
         offsetY: -60,
       },
       {
         template: 'annoAmount',
         text: "94M",
-        offsetX: 800,
+        offsetX: width * 0.66 + padding,
         offsetY: -100,
       },
       {
         template: 'annoLabel',
         text: `Total Amount in ${startYear + 2}`,
-        offsetX: 800,
+        offsetX: width * 0.66 + padding,
         offsetY: -60,
       }
     ],
