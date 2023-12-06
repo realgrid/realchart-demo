@@ -2,7 +2,6 @@
  * @demo
  * 
  */
-
 const config = {
     polar: true,
     templates: {
@@ -16,7 +15,7 @@ const config = {
     },
     options: {
         style: {
-            paddingLeft: '100px'
+            // paddingLeft: '100px'
         }
     },
     title: {
@@ -26,19 +25,13 @@ const config = {
             fontWeight: 700,
         }
     },
-    subtitle: {
-        text: '',
-        align: 'left',
-        style: {
-            textAlign: 'left'
-        }
-    },
     legend: false,
     xAxis: {
         type: 'linear',
         // startAngle: -90,
-        minValue: 0,
-        maxValue: 360,
+        totalAngle: 360,
+        // minValue: 0,
+        // maxValue: 360,
         label: {
             visible: true,
             suffix: '°',
@@ -78,7 +71,6 @@ const config = {
         }
     },
     body: {
-        totalAngle: 360,
         annotations: [
             
         ]
@@ -91,14 +83,12 @@ const config = {
             data,
             xField: "Wind Direction",
             yField: "Wind Speed",
-            colorField: "Ozone",
-            zProp: "Ozone",
             style: {
                 stroke: 'none',
                 // mixBlendMode: 'screen', // not working here...
             },
             pointStyleCallback: (p) => {
-                const { Ozone: z } = data[p.index];
+                const { Ozone: z } = p.source;
                 // const { z } = p;
                 let fill = '';
                 if (z < 10) {
@@ -117,21 +107,7 @@ const config = {
                 return { fill };
                 // return { fill, mixBlendMode: 'screen' };
             }
-            // zProp: '',
-            // style: {
-            //     stroke: 'none',
-            //     fill: '#bbb',
-            // }
         },
-        // {
-        //     template: 'series',
-        //     type: 'scatter',
-        //     data: hitsData,
-        //     style: {
-        //         stroke: 'none',
-        //         fill: 'var(--color-3)',
-        //     }
-        // },
     ]
 }
 
