@@ -13,7 +13,6 @@ import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { DataPoint } from "../model/DataPoint";
 import { Series } from "../model/Series";
 import { Tooltip } from "../model/Tooltip";
-import { PALETTE_LEN } from "./SeriesView";
 
 export enum TooltipPosition {
     TOP = 'top',

@@ -63,8 +63,8 @@ const config = {
 			},
 			{
 			  type: 'range',
-			  start: 110,
-			  end: 120,
+			  startValue: 110,
+			  endValue: 120,
 			  label: { text: '업계 평균 매출 범위', align: 'left', style: { fill: 'black' } }
 			}
 		  ],

@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcElement } from '../RcControl';
-import { IRect } from '../Rectangle';
+import { IRect, Rectangle } from '../Rectangle';
 import { _undefined } from '../Types';
 
 export class ImageElement extends RcElement {
@@ -22,7 +22,7 @@ export class ImageElement extends RcElement {
     // fields
     //-------------------------------------------------------------------------
     private _dirty = true;
-    private _bounds: IRect;
+    private _bounds: IRect = Rectangle.Empty;
 
     //-------------------------------------------------------------------------
     // constructor

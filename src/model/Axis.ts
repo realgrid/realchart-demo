@@ -435,13 +435,13 @@ export class AxisRangeGuide extends AxisGuide {
      * 
      * @config
      */
-    start: number;  // TODO: RtPercentSize
+    startValue: number;  // TODO: RtPercentSize
     /**
      * 가이드 영역의 끝 값.
      * 
      * @config
      */
-    end: number;
+    endValue: number;
 }
 
 // /**
@@ -903,6 +903,7 @@ export abstract class Axis extends ChartItem implements IAxis {
         this.name = name;
         this.title = new AxisTitle(this);
         this.line = new AxisLine(this);
+        this.sectorLine = new AxisLine(this);
         this.tick = this._createTickModel();
         this.label = this._createLabelModel();
         this.grid = this._createGrid();
@@ -925,6 +926,13 @@ export abstract class Axis extends ChartItem implements IAxis {
      * @config
      */
     readonly line: AxisLine;
+    /**
+     * 부채꼴 polar 좌표계의 X 축일 때 원호의 양 끝과 중심에 연결되는 선분들의 설정모델.\
+     * //{@link config.xAxis.startAngle}, {@link config.xAxis.totalAngle}을 참조한다.
+     * 
+     * @config
+     */
+    readonly sectorLine: AxisLine;
     /**
      * @config
      */
@@ -1267,15 +1275,14 @@ export abstract class Axis extends ChartItem implements IAxis {
             const g: any = source[i]
             let guide: AxisGuide;
 
-            switch (g.type) {
-                case 'range':
-                    guide = new AxisRangeGuide(this);
-                    break;
-
-                case 'line':
-                default:    
-                    guide = new AxisLineGuide(this);
-                    break;
+            if (g.type === 'range') {
+                guide = new AxisRangeGuide(this);
+            } else if (g.type === 'line') {
+                guide = new AxisLineGuide(this);
+            } else if (!isNaN(g.startValue) && !isNaN(g.endValue)) {
+                guide = new AxisRangeGuide(this);
+            } else {
+                guide = new AxisLineGuide(this);
             }
 
             guide.load(g);

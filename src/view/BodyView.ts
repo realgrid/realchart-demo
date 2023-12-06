@@ -17,7 +17,7 @@ import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextLayout } from "../common/impl/TextElement";
 import { Axis, AxisGrid, AxisGuide, AxisLineGuide, AxisRangeGuide } from "../model/Axis";
-import { Body } from "../model/Body";
+import { Body, IPolar } from "../model/Body";
 import { Chart, IChart } from "../model/Chart";
 import { Crosshair } from "../model/Crosshair";
 import { DataPoint } from "../model/DataPoint";
@@ -63,7 +63,7 @@ import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
 import { LabelElement } from "../common/impl/LabelElement";
 import { CircleBarSeriesView } from "./series/CircleBarSeriesView";
-import { pickNum } from "../common/Common";
+import { isObject, pickNum } from "../common/Common";
 import { relative } from "path";
 
 const series_types = {
@@ -360,18 +360,23 @@ export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
         }
     }
 
-    layout(width: number, height: number): void {
+    layout(width: number, height: number, polar?: IPolar): void {
         if (this._labelView.visible) {
             this.model.label.buildSvg(this._labelView._text, this._labelView._outline, width, height, null, null);
             this._labelView.layout(Align.CENTER);
         }
-        this._doLayout(width, height);
+        if (polar) {
+            this._doLayoutPolar(width, height, polar);
+        } else {
+            this._doLayout(width, height);
+        }
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     abstract _doLayout(width: number, height: number): void;
+    abstract _doLayoutPolar(width: number, height: number, polar: IPolar): void;
 }
 
 export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
@@ -475,6 +480,9 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
         }
         labelView && labelView.translate(x, y);
     }
+
+    _doLayoutPolar(width: number, height: number, polar: IPolar): void {
+    }
 }
 
 export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
@@ -504,8 +512,8 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
         const m = this.model;
         const label = m.label;
         const box = this._box;
-        const start = Math.min(m.start, m.end);
-        const end = Math.max(m.start, m.end);
+        const start = Math.min(m.startValue, m.endValue);
+        const end = Math.max(m.startValue, m.endValue);
         const labelView = this._labelView.setVisible(label.visible) && this._labelView;
         const rLabel = labelView.getBBounds();
         const xOff = pickNum(label.offsetX, 0);
@@ -581,6 +589,10 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
             labelView && labelView.translate(x, y);
             box.setBox(0, y2, width, y1);
         }
+    }
+
+    _doLayoutPolar(width: number, height: number, polar: IPolar): void {
+        debugger;
     }
 }
 

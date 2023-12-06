@@ -452,6 +452,9 @@
 .rct-polar-xaxis-line {
     stroke: #333;
 }
+.rct-polar-xaxis-sector-line {
+    stroke: #555;
+}
 .rct-polar-xaxis-grid-line {
     stroke: var(--rct-polar-xaxis-grid-line-stroke)
 }

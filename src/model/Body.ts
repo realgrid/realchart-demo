@@ -73,6 +73,14 @@ export class BodySplit extends ChartItem {
     //-------------------------------------------------------------------------
 }
 
+export interface IPolar { 
+    start: number;
+    total: number;
+    cx: number;
+    cy: number;
+    rd: number;
+};
+
 /**
  * 시리즈 및 게이지들이 plotting되는 영역 모델.\
  * 설정 모델 등에서 'body'로 접근한다.
@@ -209,7 +217,7 @@ export class Body extends ChartItem {
         return this;
     }
 
-    getPolar(axis: Axis): {start: number, total: number, cx: number, cy: number, rd: number } {
+    getPolar(axis: Axis): IPolar {
         return this.chart.isPolar() ? {
             start: axis ? axis.getStartAngle() : 0,
             total: axis ? axis.getTotalAngle() : 0,

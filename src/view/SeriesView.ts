@@ -12,12 +12,11 @@ import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
 import { ClipRectElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
-import { Align, IValueRange, _undefined } from "../common/Types";
+import { IValueRange, _undefined } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { RectElement } from "../common/impl/RectElement";
 import { SvgShapes } from "../common/impl/SvgShape";
-import { TextAnchor } from "../common/impl/TextElement";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { ClusterableSeries, DataPointLabel, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
@@ -179,16 +178,6 @@ export class PointLabelContainer extends LayerElement {
             }
         }
     }
-
-    // borrow(index: number): PointLabelView { 
-    //     return this._labels[index].borrow();
-    // }
-
-    // free(index: number, view: PointLabelView, removeDelay = 0): void {
-    //     if (view) {
-    //         this._labels[index].free(view, removeDelay);
-    //     }
-    // }
 }
 
 export class PointLabelLine extends GroupElement {

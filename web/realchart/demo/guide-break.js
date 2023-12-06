@@ -47,8 +47,8 @@ const config = {
 			{ type: 'line', value: 12, label: 'line guide' },
 			{
 			  type: 'range',
-			  start: 70,
-			  end: 90,
+			  startValue: 70,
+			  endValue: 90,
 			  label: { text: 'range guide', align: 'right', style: { fill: 'red' } }
 			}
 		  ]

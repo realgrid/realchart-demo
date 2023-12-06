@@ -4,6 +4,15 @@ visible 기본값이 undefined이고,
 따로 지정하지 않으면 시리즈가 둘 이상 포함돼야 legend를 표시한다.
 ## Properties
 
+### align: `'center'|'left'|'right'{:js}`[#align]
+수평 배치.
+값을 지정하지 않으면, 기본값이  **[location](#location)** 이 'plot'일 때는 'left',
+'left', 'right'일 때는 'center'이다.  
+- `'center'` 
+- `'left'` 
+- `'right'` 
+
+
 ### alignBase: `'chart'|'parent'|'plot'{:js}`[#alignBase]
 legend 정렬 기준.  
 - `'chart'` 
@@ -71,6 +80,9 @@ marker와 text사이의 간격.
 ### markerSize: `number{:js}`[#markerSize]
 marker 크기.  
 <DefaultValue value="10" contents="픽셀."></DefaultValue>
+### markerVisible: `boolean{:js}`[#markerVisible]
+marker 표시 여부.  
+<DefaultValue value="true" contents=""></DefaultValue>
 ### maxHeight: `string | number{:js}`[#maxHeight]
 수직  **[배치](#layout)** 일 때,
 최대 높이를 픽셀 단위의 크기 혹은 plot 높이에 대한 상대 길이를 '%'로 지정한다.  
@@ -79,6 +91,12 @@ marker 크기.
 수평  **[배치](#layout)** 일 때,
 최대 너비를 픽셀 단위의 크기 혹은 plot 너비에 대한 상대 길이를 '%'로 지정한다.  
 
+### offsetX: `number{:js}`[#offsetX]
+범례와 body 혹은 차트 경계 사이의 수평 간격.  
+<DefaultValue value="0" contents=""></DefaultValue>
+### offsetY: `number{:js}`[#offsetY]
+범례와 body 혹은 차트 경계 사이의 수직 간격.  
+<DefaultValue value="0" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 
@@ -96,6 +114,18 @@ marker 크기.
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |  
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+### useTextColor: `boolean{:js}`[#useTextColor]
+범례 항목의 텍스트에도 marker와 동일한 색상을 적용한다.  
+
+### verticalAlign: `'bottom'|'middle'|'top'{:js}`[#verticalAlign]
+수직 배치.
+값을 지정하지 않으면, 기본값이  **[location](#location)** 이 'plot'일 때는 'top',
+'top', 'bottom'일 때는 'middle'이다.  
+- `'bottom'` 
+- `'middle'` 
+- `'top'` 
+
+
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
 명시적으로 true로 설정되거나, 명시적 false가 아니면서 표시 항목 수가 1보다 클 때 표시된다..\

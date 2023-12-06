@@ -17,7 +17,7 @@ const config = {
     yAxis: {
         // line: true,
         label: true,
-        guide: [{
+        guides: [{
             type: 'line',
             value: 5.5,
             style: {
@@ -26,7 +26,6 @@ const config = {
         }]
     },
     body: {
-        // startAngle: -30
     },
     series: [{
         type: 'bar',

@@ -13,9 +13,9 @@ import { Align, DEG_RAD, PI_2 } from "../common/Types";
 import { ArcElement, CircleElement, CircumElement } from "../common/impl/CircleElement";
 import { LineElement, PolylineElement } from "../common/impl/PathElement";
 import { Axis, AxisLabel, AxisTick, IAxisTick } from "../model/Axis";
-import { Body } from "../model/Body";
+import { Body, IPolar } from "../model/Body";
 import { AxisLabelView, axis_label_reg } from "./AxisView";
-import { BodyView, IPlottingOwner } from "./BodyView";
+import { AxisGuideContainer, BodyView, IPlottingOwner } from "./BodyView";
 
 class PolarAxisTickMarkView extends RcElement {
 
@@ -159,6 +159,14 @@ abstract class PolarAxisView extends RcElement {
             // });
         }
     }
+
+    prepareGuides(doc: Document, container: AxisGuideContainer, frontContainer: AxisGuideContainer): void {
+        let guides = this._model.guides.filter(g => !g.front);
+        container.addAll(doc, guides);
+
+        guides = this._model.guides.filter(g => g.front);
+        frontContainer.addAll(doc, guides);
+    }
 }
 
 class PolarXAxisView extends PolarAxisView {
@@ -167,12 +175,15 @@ class PolarXAxisView extends PolarAxisView {
     // consts
     //-------------------------------------------------------------------------
     static readonly LINE_CLASS = 'rct-polar-xaxis-line';
+    static readonly SECTOR_LINE_CLASS = 'rct-polar-xaxis-sector-line';
     static readonly GRID_CLASS = 'rct-polar-xaxis-grid-line';
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _lineView: RcElement;
+    private _startView: LineElement;
+    private _endView: LineElement;
     private _gridLines: ElementPool<LineElement>;
 
     //-------------------------------------------------------------------------
@@ -184,39 +195,52 @@ class PolarXAxisView extends PolarAxisView {
         this._gridLines = new ElementPool(this._gridContainer, LineElement, PolarXAxisView.GRID_CLASS);
 
         lineContainer.add(this._lineView = new CircumElement(doc, PolarXAxisView.LINE_CLASS));
+        lineContainer.add(this._startView = new LineElement(doc, PolarXAxisView.SECTOR_LINE_CLASS));
+        lineContainer.add(this._endView = new LineElement(doc, PolarXAxisView.SECTOR_LINE_CLASS));
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _doPrepare(model: Axis, ticks: IAxisTick[], circular: boolean): void {
+        let vLine = this._lineView;
+
         // grid lines
         if (this._gridContainer.setVisible(model.grid.isVisible(true))) {
             this._gridLines.prepare(ticks.length);
         }
 
         // line
-        if (this._lineView.setVisible(model.line.visible)) {
+        if (vLine.setVisible(model.line.visible)) {
             if (circular) {
                 if (model.isArced()) {
-                    if (!(this._lineView instanceof ArcElement)) {
-                        this._lineView.remove();
-                        this.add(this._lineView = new ArcElement(this.doc, PolarXAxisView.LINE_CLASS));
+                    if (!(vLine instanceof ArcElement)) {
+                        vLine.remove();
+                        this.add(vLine = this._lineView = new ArcElement(this.doc, PolarXAxisView.LINE_CLASS));
                     }
                 } else {
-                    if (!(this._lineView instanceof CircumElement)) {
-                        this._lineView.remove();
-                        this.add(this._lineView = new CircumElement(this.doc, PolarXAxisView.LINE_CLASS));
+                    if (!(vLine instanceof CircumElement)) {
+                        vLine.remove();
+                        this.add(vLine = this._lineView = new CircumElement(this.doc, PolarXAxisView.LINE_CLASS));
                     }
                 }
             } else {
-                if (!(this._lineView instanceof PolylineElement)) {
-                    this._lineView.remove();
-                    this.add(this._lineView = new PolylineElement(this.doc, PolarXAxisView.LINE_CLASS));
+                if (!(vLine instanceof PolylineElement)) {
+                    vLine.remove();
+                    this.add(vLine = this._lineView = new PolylineElement(this.doc, PolarXAxisView.LINE_CLASS));
                 }
             }
-            this._lineView.setStyleOrClass(model.line.style);
-            this._lineView.setStyle('fill', 'none');
+            vLine.setStyleOrClass(model.line.style);
+            vLine.setStyle('fill', 'none');
+        }
+
+        // sector lines
+        if (this._startView.setVisible(circular && model.isArced() && model.sectorLine.visible)) {
+            this._startView.setStyleOrClass(model.sectorLine.style);
+            this._endView.setVisible(true);
+            this._endView.setStyleOrClass(model.sectorLine.style);
+        } else {
+            this._endView.setVisible(false);
         }
     }
 
@@ -457,7 +481,12 @@ export class PolarBodyView extends BodyView {
         this._xAxisView.layout(m.chart.yAxis as Axis, cx, cy, rd);
         this._yAxisViews.forEach(v => {
             v.layout(m.chart.xAxis as Axis, cx, cy, rd);
-        })
+        });
+
+        // axis guides
+        [this._guideContainer, this._frontGuideContainer].forEach(c => {
+            c._views.forEach(v => v.layout(this.width, this.height, m.getPolar(v.model.axis)));
+        });
 
         // annotations
         this._layoutAnnotations(false, this.width, this.height);
@@ -485,7 +514,10 @@ export class PolarBodyView extends BodyView {
         while (views.length > yAxes.length) {
             views.pop().remove();
         }
-        views.forEach((v, i) => v.prepare(doc, yAxes[i], circular, arced));
+        views.forEach((v, i) => {
+            v.prepare(doc, yAxes[i], circular, arced);
+            v.prepareGuides(doc, this._guideContainer, this._frontGuideContainer,)
+        });
 
         // [주의] x axis가 나중에 그려지게 해야 한다.
         // x axis

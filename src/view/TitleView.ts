@@ -9,9 +9,8 @@
 import { toSize } from "../common/Rectangle";
 import { SvgRichText } from "../common/RichText";
 import { ISize } from "../common/Size";
-import { Align } from "../common/Types";
 import { RectElement } from "../common/impl/RectElement";
-import { TextAnchor, TextElement } from "../common/impl/TextElement";
+import { TextElement } from "../common/impl/TextElement";
 import { Title } from "../model/Title";
 import { BoundableElement } from "./ChartElement";
 
@@ -59,24 +58,5 @@ export class TitleView extends BoundableElement<Title> {
 
     protected _doLayout(): void {
         this._richText.layout(this._textView, this.textAlign(), this.width, this.height, this._paddings);
-
-        // const view = this._textView;
-        // let x = 0;
-
-        // switch (this.model.textAlign) {
-        //     case Align.CENTER:
-        //         view.anchor = TextAnchor.MIDDLE;
-        //         x += view.getBBounds().width / 2;
-        //         break;
-        //     case Align.RIGHT:
-        //         view.anchor = TextAnchor.END;
-        //         x += view.getBBounds().width;
-        //         break;
-        //     default:
-        //         view.anchor = TextAnchor.START;
-        //         break;
-        // }
-
-        // view.translate(this._paddings.left + x, this._paddings.top);
     }
 }
