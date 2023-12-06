@@ -711,7 +711,7 @@ export class ChartView extends LayerElement {
         if (this._creditView.setVisible(credit.visible)) {
             sz = this._creditView.measure(doc, credit, w, h, phase);
             if (!credit.isFloating()) {
-                h -= sz.height + (+credit.offsetY || 0) - (+credit.gap || 0);
+                h -= sz.height + (+credit.offsetY || 0) + (+credit.gap || 0);
             }
         }
         

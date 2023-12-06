@@ -12,7 +12,7 @@ import { RcControl, RcElement } from "./common/RcControl";
 import { Utils } from "./common/Utils";
 import { Chart } from "./model/Chart";
 
-const clazz: any = RcChartControl;
+// const clazz: any = RcChartControl;
 
 // [주의]main.ts에서 직접 구현하면 되지만, dldoc에서 global을 별도 구성할 수 있도록 자체 class에서 구현한다.
 /**
@@ -69,12 +69,11 @@ export class Globals {
      * 차트 설정 모델을 기빈으로
      * {@link rc.RcChartControl Chart 컨트롤} svg를 생성한 후,
      * 지정된 div 엘리먼트의 유일한 자식으로 포함시킨다.\
-     * div 스타일에 지정된 padding을 제외한 전체 영역의 크기대로 표시된다.
+     * div 전체 영역의 크기로 표시된다.
      * 
      * ```js
      * const chart = RealChart.createChart(document, 'realchart', config);
      * ```
-     * 
      * 
      * @param doc
      * @param container 컨트롤이 생성되는 div 엘리먼트나 id
