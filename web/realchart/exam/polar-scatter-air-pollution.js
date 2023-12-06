@@ -14,6 +14,7 @@ const config = {
         }
     },
     options: {
+        animatable: false,
         style: {
             // paddingLeft: '100px'
         }
@@ -29,7 +30,7 @@ const config = {
     xAxis: {
         type: 'linear',
         // startAngle: -90,
-        totalAngle: 360,
+        // totalAngle: 360,
         // minValue: 0,
         // maxValue: 360,
         strictMin: 0,
@@ -82,7 +83,7 @@ const config = {
         {
             template: 'series',
             type: 'scatter',
-            radius: 20,
+            radius: 15,
             data,
             xField: "Wind Direction",
             yField: "Wind Speed",
@@ -107,8 +108,9 @@ const config = {
                 } else {
                     fill = 'darkred'
                 }
-                return { fill };
-                // return { fill, mixBlendMode: 'screen' };
+                // return { fill };
+                // mixBlendMode는 애니메이션 성능 이슈와 브라우저 호환 이슈가 있음.
+                return { fill, mixBlendMode: 'screen' };
             }
         },
     ]

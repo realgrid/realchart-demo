@@ -14,11 +14,11 @@ const config = {
         }
     },
     options: {
-        // animatable: false,
+        credits: false,
     },
     body: {
         style: {
-            fill: '#F7F5F5'
+            // fill: '#F7F5F5'
         }
     },
     annotation: [
