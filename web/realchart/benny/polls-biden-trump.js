@@ -47,7 +47,8 @@ const subtitles = [
 ]
 
 const yMax = 80;
-const chartHeight = 400;
+const strictMin = 10;
+const chartHeight = 340;
 const cols = 3;
 
 const avg = (arr) => arr.reduce((prev, next) => prev + next) / arr.length;
@@ -59,7 +60,7 @@ const annoLegendOffset = (data, name) => {
     const isLower = Math.max(avgset.Biden, avgset.Trump) > avgset[name];
     // if gt than append more
     const padding = 80;
-    return (yMax - avgset[name]) / yMax * chartHeight + (isLower ? padding : 0);
+    return (yMax - strictMin - avgset[name]) / (yMax - strictMin) * chartHeight + (isLower ? padding : 0);
 }
 
 const config = {
@@ -82,7 +83,7 @@ const config = {
         yAxis: {
             grid: false,
             label: false,
-            // strictMin: 10,
+            strictMin,
             maxValue: yMax,
         },
         paneBody: {
@@ -104,7 +105,7 @@ const config = {
         annoLegend: {
             offsetX: 180,
             style: {
-                fontSize: '12pt',
+                fontSize: '14pt',
                 fontWeight: 'bold'
             }
         },
