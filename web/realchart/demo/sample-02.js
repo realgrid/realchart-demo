@@ -13,7 +13,7 @@ const config = {
     xAxis: {
         type: 'time',
         tick: {
-            stepInterval: '1m'
+            stepInterval: '2m'
         },
         label: {
             rotation: -90,
