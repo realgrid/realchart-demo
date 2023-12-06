@@ -1,4 +1,7 @@
 const config = {
+    options: {
+        credits: false,
+    },
     annotations: {
         text: 'IN 1952',
         offsetX: 180,
