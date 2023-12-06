@@ -710,8 +710,8 @@ export class ChartView extends LayerElement {
         // credits
         if (this._creditView.setVisible(credit.visible)) {
             sz = this._creditView.measure(doc, credit, w, h, phase);
-            if (!credit.floating) {
-                h -= sz.height + (+credit.offsetY || 0);
+            if (!credit.isFloating()) {
+                h -= sz.height + (+credit.offsetY || 0) - (+credit.gap || 0);
             }
         }
         
@@ -784,6 +784,7 @@ export class ChartView extends LayerElement {
         const credit = m.options.credits;
         const vCredit = this._creditView;
         const offCredit = +credit.offsetY || 0;
+        const gapCredit = +credit.gap || 0;
         let h1Credit = 0;
         let h2Credit = 0;
         let x = 0;
@@ -793,11 +794,11 @@ export class ChartView extends LayerElement {
         if (vCredit.visible) {
             vCredit.resizeByMeasured();
 
-            if (!credit.floating) {
+            if (!credit.isFloating()) {
                 if (credit.verticalAlign === VerticalAlign.TOP) {
-                    h -= h1Credit = vCredit.height + offCredit
+                    h -= h1Credit = vCredit.height + offCredit + gapCredit;
                 } else {
-                    h -= h2Credit = vCredit.height + offCredit
+                    h -= h2Credit = vCredit.height + offCredit + gapCredit;
                 }
             }
         }
@@ -1024,7 +1025,7 @@ export class ChartView extends LayerElement {
                     cy = (height - vCredit.height) / 2 + yOff;
                     break;
                 default:
-                    cy = height - h2Credit;
+                    cy = height - h2Credit + gapCredit;
                     break;
             }
             switch (credit.align) {

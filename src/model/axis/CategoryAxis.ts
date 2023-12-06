@@ -413,6 +413,10 @@ export class CategoryAxis extends Axis {
         }
     }
 
+    value2Tooltip(value: number): any {
+        return this._cats[value] || value;
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

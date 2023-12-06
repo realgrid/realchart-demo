@@ -4,7 +4,7 @@ const config = {
             text: 'Source: Korea Cloud Opportunity Forecost by Industry, 2021-2025',
             url: 'https://www.idc.com/getdoc.jsp?containerId=AP47751622',
             align: 'left',
-            offsetY: -15
+            offsetY: -15,
         }
     },
     title: {
@@ -46,7 +46,8 @@ const config = {
     legend: {
         layout: 'vertical',
         itemsPerLine: 2,
-        lineGap: 40
+        lineGap: 40,
+        itemGap: 4
     },
 	xAxis: {
         categories: [

@@ -224,6 +224,17 @@ export class Credits extends ChartItem {
      * @config
      */
     offsetY = 1;
+    /**
+     * 크레딧과 차트 영역 사이의 간격.
+     */
+    gap = 4;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    isFloating(): boolean {
+        return this.floating || this.verticalAlign === VerticalAlign.MIDDLE;
+    }
 
     //-------------------------------------------------------------------------
     // overriden members

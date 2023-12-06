@@ -542,7 +542,7 @@ export class TimeAxis extends ContinuousAxis {
         return new Date(this.getValueAt(length, pos));
     }
 
-    value2Tooltip(value: number) {
+    value2Tooltip(value: number): any {
         return isNaN(value) ? NaN : new Date(value);
     }
 
