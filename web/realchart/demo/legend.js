@@ -76,6 +76,10 @@ function setActions(container) {
         config.legend.markerVisible = _getChecked(e);
         chart.load(config);
     }, true);
+    createCheckBox(container, 'useTextColor', function (e) {
+        config.legend.useTextColor = _getChecked(e);
+        chart.load(config);
+    }, false);
     // createCheckBox(container, 'clickable', function (e) {
     //     chart.model.legend.clickable = _getChecked(e);
     // }, true);

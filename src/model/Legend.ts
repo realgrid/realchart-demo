@@ -198,6 +198,8 @@ export class Legend extends Widget {
     itemGap = 8;
     /**
      * marker 표시 여부.
+     * 
+     * @config
      */
     markerVisible = true;
     /**
@@ -250,15 +252,29 @@ export class Legend extends Widget {
      * 수평 배치.
      * 값을 지정하지 않으면, 기본값이 {@link location}이 'plot'일 때는 'left',
      * 'left', 'right'일 때는 'center'이다.
+     * 
+     * @config
      */
     align: Align;
     /**
      * 수직 배치.
      * 값을 지정하지 않으면, 기본값이 {@link location}이 'plot'일 때는 'top',
      * 'top', 'bottom'일 때는 'middle'이다.
+     * 
+     * @config
      */
     verticalAlign: VerticalAlign;
+    /**
+     * 범례와 body 혹은 차트 경계 사이의 수평 간격.
+     * 
+     * @config
+     */
     offsetX = 0;
+    /**
+     * 범례와 body 혹은 차트 경계 사이의 수직 간격.
+     * 
+     * @config
+     */
     offsetY = 0;
     /**
      * 한 라인의 item들이 배치되는 위치.
@@ -266,6 +282,12 @@ export class Legend extends Widget {
      * @config
      */
     itemsAlign = LegendItemsAlign.CENTER;
+    /**
+     * 범례 항목의 텍스트에도 marker와 동일한 색상을 적용한다.
+     * 
+     * @config
+     */
+    useTextColor: boolean;
 
     items(): LegendItem[] {
         return this._items.slice(0);
