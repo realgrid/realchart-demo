@@ -1,4 +1,4 @@
-const olympic_data = [{
+const data = [{
     "continent": "Asia",
     "country": "AFG",
     "height": 1.75,

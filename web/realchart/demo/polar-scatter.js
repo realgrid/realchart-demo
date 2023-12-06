@@ -3,7 +3,7 @@
  *
  */
 const config = {
-    polar: true,
+  polar: true,
 	type: 'scatter',
 	options: {
 		// palette: 'gray'
@@ -24,13 +24,13 @@ const config = {
 	},
 	series: [
 		{
-			data: olympic_data.slice(0, 200).filter((v) => v.height > 1),
+			data: data.slice(0, 200).filter((v) => v.height > 1),
 			xField: 'height',
 			yField: 'weight',
 			// pointLabel: true
 		},
 		{
-			data: olympic_data.slice(1000, 1200).filter((v) => v.height > 1),
+			data: data.slice(1000, 1200).filter((v) => v.height > 1),
 			xField: 'height',
 			yField: 'weight',
             shape: 'diamond',

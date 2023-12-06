@@ -3,10 +3,11 @@
  *
  */
 const config = {
-    polar: true,
+  polar: !true,
 	type: 'scatter',
 	options: {
-		// palette: 'gray'
+		// palette: 'gray',
+		credits: false,
 	},
 	title: 'Olympic player\'s physique',
 	xAxis: {
@@ -14,27 +15,30 @@ const config = {
 		baseValue: null,
 	},
 	yAxis: {
-        line: {
-            visible: true,
-            style: {
-                stroke: 'blue'
-            }
-        },
+		// strictMin: 0,
+		line: {
+			visible: true,
+			// style: {
+			//     stroke: 'blue'
+			// }
+		},
 		title: 'Weight',
 	},
 	series: [
 		{
 			name: 'Asia',
-			data: data.filter(r => r.continent == 'Asia').slice(0, 200).filter((v) => v.height > 1),
+			data: data.filter(r => r.continent == 'Asia').slice(0, 200).filter((v) => v.height > 0 && v.weight > 0),
 			xField: 'height',
 			yField: 'weight',
+			radius: 10,
 			// pointLabel: true
 		},
 		{
 			name: 'Europe',
-			data: data.filter(r => r.continent == 'Europe').slice(1000, 1200).filter((v) => v.height > 1),
+			data: data.filter(r => r.continent == 'Europe').slice(0, 200).filter((v) => v.height > 0 && v.weight > 0),
 			xField: 'height',
 			yField: 'weight',
+			radius: 10,
 			shape: 'diamond',
 			color: 'var(--color-3)'
 		},
@@ -79,6 +83,15 @@ function setActions(container) {
 		'Y Reversed',
 		function (e) {
 			config.yAxis.reversed = _getChecked(e);
+			chart.load(config);
+		},
+		false
+	);
+	createCheckBox(
+		container,
+		'Polar',
+		function (e) {
+			config.polar = _getChecked(e);
 			chart.load(config);
 		},
 		false

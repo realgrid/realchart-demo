@@ -86,7 +86,7 @@ const config = {
     },
     options: {
         // style: {},
-        // credits: false,
+        credits: false,
     },
     legend: false,
     xAxis: countries.map((c, i) => {

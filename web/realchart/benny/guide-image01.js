@@ -17,6 +17,7 @@ const config = {
 	colorByPoint: false,
 	options: {
 		// animatable: false
+		credits: false,
 	},
 	legend:{
 		visible: !true,
@@ -33,7 +34,7 @@ const config = {
 		categories: ['Jan', 'Fed', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Ang', 'Sep', 'Oct', 'Nov', 'Dec'],
 		label: {
 			startStep: 0,
-			step: 2,
+			// step: 2,
 		},
 		line: true,
 		scrollBar: {
@@ -41,11 +42,15 @@ const config = {
 		}
 	},
 	yAxis: [{
-		
+		strictMax: 170,
+		// step: 10,
 		crosshair: true,
 		grid: true,
 		line: true,
-		tick: true,
+		tick: {
+			visible: true,
+			// stepInterval: 10,
+		},
 		title: '월별 매출액 (단위: 백만 원)',
 		// reversed: true,
 		// baseValue: -1
