@@ -105,7 +105,7 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
                 info.y = y;
                 info.wPoint = w;
                 info.hPoint = h;
-                this._layoutLabel(info);
+                this._layoutLabel(info, width, height);
             }
         })
     }

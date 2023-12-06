@@ -554,9 +554,14 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         this._trendLineView.setPath(sb.end(false));
     }
 
-    protected _layoutLabel(info: LabelLayoutInfo): void {
+    protected _layoutLabel(info: LabelLayoutInfo, w: number, h: number): void {
         // below이면 hPoint가 음수이다.
         let {inverted, x, y, hPoint, labelView, labelOff} = info;
+
+        if (!labelView.setVisible(x >= 0 && x <= w && y >= 0 && y <= h)) {
+            return;
+        }
+
         const below = info.reversed ? hPoint <= 0 : hPoint < 0;
         const r = labelView.getBBounds();
         let inner = true;
@@ -821,7 +826,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                     info.y = y;
                     info.wPoint = wPoint;
                     info.hPoint = hPoint;
-                    this._layoutLabel(info);
+                    this._layoutLabel(info, width, height);
                 }
             }
         })
@@ -889,14 +894,14 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
                     // top
                     if (info.labelView = labelViews.get(p, 0)) {
                         info.hPoint = hPoint;
-                        this._layoutLabel(info);
+                        this._layoutLabel(info, width, height);
                     }
                     // bottom
                     if (info.labelView = labelViews.get(p, 1)) {
                         if (inverted) info.x -= hPoint;
                         else info.y += hPoint;
                         info.hPoint = -hPoint;
-                        this._layoutLabel(info);
+                        this._layoutLabel(info, width, height);
                     }
                 }
             }
