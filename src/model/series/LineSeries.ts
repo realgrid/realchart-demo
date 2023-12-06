@@ -212,6 +212,9 @@ export class AreaSeriesPoint extends LineSeriesPoint {
 }
 
 /**
+ * 영역 시리즈.\
+ * 대부분 {@link config.series.line 'line'} 시리즈와 동일하고 라인 아래 부분을 별도의 색상으로 채운다.
+ * 
  * @config chart.series[type=area]
  */
 export class AreaSeries extends LineSeries {
@@ -225,7 +228,7 @@ export class AreaSeries extends LineSeries {
     // property fields
     //-------------------------------------------------------------------------
     /**
-     * area 영역에 추가적으로 적용되는 스타일셋이나 class selector.\
+     * area 영역에 추가적으로 적용되는 스타일셋이나 class selector.
      * 
      * @config
      */

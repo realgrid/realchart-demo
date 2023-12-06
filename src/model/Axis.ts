@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isObject, isString, pickNum, pickNum3 } from "../common/Common";
+import { isArray, isNumber, isObject, isString, pickNum, pickNum3, pickProp } from "../common/Common";
 import { Align, DEG_RAD, ORG_ANGLE, SVGStyleOrClass, VerticalAlign, _undefined, fixnum, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
@@ -686,8 +686,9 @@ export abstract class AxisLabel extends FormattableText {
             if (s != null) return s;
         }
 
-        if (idx === 0) return this.firstText || this.text;
-        if (idx === count - 1) return this.lastText || this.text;
+        // [주의] 빈 문자열을 지정할 수 있다.
+        if (idx === 0) return pickProp(this.firstText, this.text);
+        if (idx === count - 1) return pickProp(this.lastText, this.text);
         return this.text;
     }
 

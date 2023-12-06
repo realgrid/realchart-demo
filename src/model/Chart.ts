@@ -309,6 +309,8 @@ export interface IChartEventListener {
 }
 
 /**
+ * 차트 설정 모델.
+ * 
  * @config chart
  */
 export class Chart extends RcEventProvider<IChartEventListener> implements IChart {
@@ -414,7 +416,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * 1. x축은 첫번째 축 하나만 사용된다.
      * 2. axis.position 속성은 무시된다.
      * 3. chart, series의 inverted 속성이 무시된다.
-     * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.\
+     * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
      * 
      * [주의] 차트 로딩 후 변경할 수 없다.
      * 
@@ -422,26 +424,33 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      */
     polar = false;
     /**
-     * true면 x축이 수직, y축이 수평으로 배치된다.\
+     * {@link polar}가 아닌 기본 직교 좌표계일 때 true로 지정하면 x축이 수직, y축이 수평으로 배치된다.\
      * [주의] 차트 로딩 후 변경할 수 없다.
      *
      * @config
      */
     inverted: boolean;
-
     /**
-     * // TODO: -> locale
      * javascript에서 숫자 단위로 전달되는 날짜값은 기본적으로 local이 아니라 new Date 기준이다.
      * 그러므로 보통 숫자로 지정된 날짜값은 utc 값이다.
-     * local 기준으로 표시하기 위해, 숫자로 지정된 날짜값에 더해야 하는 시간을 분단위로 지정한다.
+     * local 기준으로 표시하기 위해, 숫자로 지정된 날짜값에 더해야 하는 시간을 분단위로 지정한다.\
      * ex) 한국은 -9 * 60
      * 
+     * 명시적으로 지정하지 않으면 현재 위치에 따른 값으로 자동 설정된다.\
+     * [주의] 차트 로딩 후 변경할 수 없다.
+     * 
+     * @default undefined
+     * @config  
      */
     timeOffset = new Date().getTimezoneOffset();
     /**
-     * // TODO: -> locale
-     * 한 주의 시작 요일.
-     * 0: 일요일, 1: 월요일
+     * //TODO: locale에서 기본값 가져오기
+     * 한 주의 시작 요일.\
+     * ex) 0: 일요일, 1: 월요일
+     * 
+     * [주의] 차트 로딩 후 변경할 수 없다.
+     * 
+     * @config
      */
     startOfWeek = 0;
 

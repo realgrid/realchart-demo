@@ -1229,7 +1229,7 @@ export class ChartView extends LayerElement {
     }
 
     pointerMoved(x: number, y: number, target: EventTarget): void {
-        const body = this.bodyOf(target as any);// this._currBody;
+        const body = this._model && this.bodyOf(target as any);// this._currBody;
 
         if (body) {
             const p = body.controlToElement(x, y);

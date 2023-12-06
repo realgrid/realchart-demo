@@ -30,7 +30,11 @@ export class ImageElement extends RcElement {
     constructor(doc: Document, styleName?: string) {
         super(doc, styleName, 'image');
 
-        this.setAttr('preserveAspectRatio', 'none');
+        // this.setAttr('preserveAspectRatio', 'none');
+        this.dom.onload = () => {
+            this._dirty = true;
+            this.control.invalidateLayout();
+        }
     }
 
 	//-------------------------------------------------------------------------
