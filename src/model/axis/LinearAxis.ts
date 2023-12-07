@@ -884,7 +884,7 @@ export class LinearAxis extends ContinuousAxis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'linear';
     }
 

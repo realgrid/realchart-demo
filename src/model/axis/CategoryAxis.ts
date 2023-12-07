@@ -233,7 +233,7 @@ export class CategoryAxis extends Axis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'category';
     }
 

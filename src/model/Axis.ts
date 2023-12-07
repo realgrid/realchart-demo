@@ -18,7 +18,7 @@ import { IClusterable, IPlottingItem } from "./Series";
  * @internal
  */
 export interface IAxis {
-    type(): string;
+    _type(): string;
     chart: IChart;
     
     row: number;
@@ -555,7 +555,7 @@ export enum AxisLabelArrange {
 }
 
 export interface IAxisLabelArgs {
-    axis: string | number;
+    axis: object;//string | number;
     count: number;
     index: number;
     value: number;
@@ -924,7 +924,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    abstract type(): string;
+    abstract _type(): string;
 
     /**
      * @config
@@ -1110,6 +1110,7 @@ export abstract class Axis extends ChartItem implements IAxis {
         this._isBetween = this.chart.isSplitted() && this.position === AxisPosition.BETWEEN && this._isX;
         this._isOpposite = this.position === AxisPosition.OPPOSITE;
         this._runPos = this.position;
+        this._labelArgs.axis = this.chart._proxy?.getChartObject(this);
 
         this._doPrepareRender();
 
@@ -1176,7 +1177,6 @@ export abstract class Axis extends ChartItem implements IAxis {
     buildTicks(length: number): void {
         this._ticks = this._doBuildTicks(this._range.min, this._range.max, this._vlen = length);
 
-        this._labelArgs.axis = this.name || this._index;
         this._labelArgs.count = this._ticks.length;
     }
 

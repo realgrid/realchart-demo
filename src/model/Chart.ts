@@ -10,7 +10,7 @@ import { isArray, isObject, isString, mergeObj, pickProp3, assign } from "../com
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
-import { Axis, AxisCollection, IAxis, PaneAxes, PaneAxisMatrix, PaneXAxisMatrix, PaneYAxisMatrix } from "./Axis";
+import { Axis, AxisCollection, IAxis, PaneXAxisMatrix, PaneYAxisMatrix } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem, n_char_item } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
@@ -58,7 +58,12 @@ import { ShapeAnnotation } from "./annotation/ShapeAnnotation";
 import { CircleBarSeries, CircleBarSeriesGroup } from "./series/CircleBarSeries";
 import { Utils } from "../common/Utils";
 
+export interface IChartProxy {
+    getChartObject(model: any): object;
+}
+
 export interface IChart {
+    _proxy: IChartProxy;
     type: string;
     gaugeType: string;
     _xPaneAxes: PaneXAxisMatrix;
@@ -321,6 +326,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _proxy: IChartProxy;
     private _templates: {[key: string]: any};
     private _assets: AssetCollection;
     private _themes: ThemeCollection;

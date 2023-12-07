@@ -82,8 +82,8 @@ export class Globals {
      * @returns 생성된 차트 컨트롤 객체
      */
     static createChart(doc: Document, container: string | HTMLDivElement, config: any): RcChartControl {
-        const c = new ChartControl(doc, container);
-        c.model = new Chart(config);
-        return new (RcChartControl as any)(c);
+        const c =  new (RcChartControl as any)(new ChartControl(doc, container));
+        config && c.load(config);
+        return c;
     }
 }

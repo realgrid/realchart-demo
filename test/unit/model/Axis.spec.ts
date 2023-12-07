@@ -15,7 +15,7 @@ class AxisImpl extends Axis {
 
     protected _createTickModel(): AxisTick { return }
     protected _createLabelModel(): AxisLabel { return }
-    type(): string { return 'test'; }
+    _type(): string { return 'test'; }
     protected _doPrepareRender(): void {}
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] { return [];}
     getPosition(length: number, value: number): number { return 0; }

@@ -457,7 +457,7 @@ export class TimeAxis extends ContinuousAxis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'time';
     }
 

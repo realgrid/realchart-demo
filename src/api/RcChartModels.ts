@@ -254,10 +254,17 @@ export class RcLogAxis extends RcContinuousAxis {
 export class RcPointLabel extends RcChartAxis {
 }
 
+export abstract class RcNamedObject extends RcChartObject {
+
+    get name(): string {
+        return (this.$_p as any).name;
+    }
+}
+
 /**
  * 차트 시리즈 모델들의 기반 클래스.\
  */
-export abstract class RcChartSeries extends RcChartObject {
+export abstract class RcChartSeries extends RcNamedObject {
 
     private _pointLabel: RcChartObject;
     private _trendLine: RcChartObject;
@@ -299,7 +306,7 @@ export abstract class RcChartSeries extends RcChartObject {
 /**
  * 차트 시리즈그룹 모델들의 기반 클래스.
  */
-export abstract class RcSeriesGroup extends RcChartObject {
+export abstract class RcSeriesGroup extends RcNamedObject {
 }
 
 export abstract class RcLineSeriesBase extends RcChartSeries {
@@ -490,7 +497,7 @@ export class RcBumpSeriesGroup extends RcSeriesGroup {
 /**
  * {@link RcChartGauge 차트 게이지}와 {@link RcGaugeGroup 게이지그룹} 모델들의 기반 클래스.
  */
-export abstract class RcChartGaugeBase extends RcChartObject {
+export abstract class RcChartGaugeBase extends RcNamedObject {
 }
 
 /**
@@ -734,4 +741,7 @@ export class RcLegend extends RcChartObject {
 }
 
 export class RcBody extends RcChartObject {
+}
+
+export abstract class RcAnnotation extends RcNamedObject {
 }

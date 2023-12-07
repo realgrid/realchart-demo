@@ -459,7 +459,7 @@ const config = {
         text: "${x} ${y}%",
       },
       onPointClick: (args) => {
-        const weather = args.series.split(" ")[1];
+        const weather = args.series.name.split(" ")[1];
         const index = categories[args.xValue];
         const datas = data.filter((d) => {
           return d.기상상태 === weather && d.도로종류 === index;

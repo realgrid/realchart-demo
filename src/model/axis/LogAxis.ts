@@ -37,7 +37,7 @@ export class LogAxis extends ContinuousAxis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'log';
     }
 

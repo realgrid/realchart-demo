@@ -350,7 +350,7 @@ export interface ISeries extends IPlottingItem {
 
 export interface IDataPointCallbackArgs {
     /* series */
-    series: string | number;
+    series: object;
     count: number;
     vcount: number;
     yMin: number;
@@ -992,7 +992,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._pointLabelCallback = this.pointLabel.textCallback;
         this._argsPoint = null;
 
-        args.series = this.name || this.index;
+        args.series = this.chart._proxy?.getChartObject(this);
         args.count = this._points.count;
         // args.vcount = 
     }
