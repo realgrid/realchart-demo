@@ -8,13 +8,14 @@
 
 import { pickNum, pickProp, assign } from "../../common/Common";
 import { RcElement } from "../../common/RcControl";
-import { SVGStyleOrClass, StyleProps } from "../../common/Types";
+import { Align, SVGStyleOrClass, StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
+import { IChart } from "../Chart";
 import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
 import { LegendItem } from "../Legend";
-import { MarkerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
+import { DataPointLabel, MarkerVisibility, PointItemPosition, Series, SeriesGroup, SeriesMarker } from "../Series";
 import { LineLegendMarkerView } from "./legend/LineLegendMarkerView";
 
 export class LineSeriesPoint extends DataPoint {
@@ -61,7 +62,47 @@ export class LineSeriesMarker extends SeriesMarker {
     maxVisible = MarkerVisibility.DEFAULT;
 }
 
+export class LinePointLabel extends DataPointLabel {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly ALIGN_GAP = 4;
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
+    position = PointItemPosition.HEAD;
+    /**
+     * position 위치에서 수평 정렬 상태.
+     * 
+     * @config
+     */
+    align = Align.CENTER;
+    /**
+     * {@link align}이 'left', 'right'일 때 원래 표시 위치와의 간격.
+     */
+    alignOffset: number;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getAlignOffset(): number {
+        const off = +this.alignOffset;
+        if (isNaN(off)) {
+            return this.align === Align.LEFT || this.align === Align.RIGHT ? LinePointLabel.ALIGN_GAP : 0;
+        }
+        return off;
+    }
+}
+
 /**
+ * 포인트 label들은 PointItemPosition.HEAD, FOOT, INSIDE에 위치할 수 있다.
+ * 기본값은 AUTO(HEAD)이다.
+ * pointLabel.align으로 수평 정렬을 설정할 수있다.
  */
 export abstract class LineSeriesBase extends Series {
 
@@ -101,6 +142,10 @@ export abstract class LineSeriesBase extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _createLabel(chart: IChart): DataPointLabel {
+        return new LinePointLabel(chart);
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new LineSeriesPoint(source);
     }

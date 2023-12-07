@@ -17,8 +17,9 @@ import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { LineType } from "../../model/ChartTypes";
 import { DataPoint, IPointPos } from "../../model/DataPoint";
+import { PointItemPosition } from "../../model/Series";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
-import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
+import { LinePointLabel, LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
 import { LineLegendMarkerView } from "../../model/series/legend/LineLegendMarkerView";
 import { LegendItemView } from "../LegendView";
 import { IPointView, SeriesView } from "../SeriesView";
@@ -290,7 +291,11 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const needClip = series.needClip(false);
         const vr = this._getViewRate();
         const vis = series.marker.visible;
-        const labels = series.pointLabel;
+        const labels = series.pointLabel as LinePointLabel;
+        const labelPos = labels.position;
+        const labelAlign = labels.align;
+        const alignOff = labels.getAlignOffset();
+        const textAlign = labels.textAlign;
         const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj as Axis;
@@ -301,8 +306,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const xLen = polar ? polar.rd * PI_2 : inverted ? height : width;
         const yOrg = height;
 
-        for (let i = 0, cnt = pts.length; i < cnt; i++) {
-            const p = pts[i];
+        pts.forEach((p, i) => {
+            // const p = pts[i];
             let px: number;
             let py: number;
 
@@ -333,12 +338,35 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
                     lv.visible = true;
                     lv.setContrast(null);
-                    lv.layout(Align.CENTER).translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
+
+                    switch (labelPos) {
+                        case PointItemPosition.INSIDE:
+                            py -= r.height / 2 + labelOff;
+                            break;
+                        case PointItemPosition.FOOT:
+                            py += labelOff + (vis ? mv._radius : 0);                            
+                            break;
+                        default:
+                            py -= r.height + labelOff + (vis ? mv._radius : 0);
+                            break;
+                    }
+                    switch (labelAlign) {
+                        case Align.LEFT:
+                            px -= r.width + (vis ? mv._radius : 0) + alignOff;
+                            break;
+                        case Align.RIGHT:
+                            px += (vis ? mv._radius : 0) + alignOff;
+                            break;
+                        default:
+                            px -= r.width / 2 + alignOff;
+                            break;
+                    }
+                    lv.layout(textAlign).translate(px, py);
                 }
             } else if (lv) {
                 lv.setVis(false);
             }
-        }
+        })
     }
 
     protected _layoutLines(pts: DataPoint[]): void {

@@ -10,7 +10,7 @@ import { isArray, isFunc, isObject, isString, pickNum, pickProp, pickProp3 } fro
 import { IPoint } from "../common/Point";
 import { RcElement } from "../common/RcControl";
 import { RcObject } from "../common/RcObject";
-import { IPercentSize, IValueRange, IValueRanges, RtPercentSize, SVGStyleOrClass, _undefined, buildValueRanges, calcPercent, parsePercentSize } from "../common/Types";
+import { Align, IPercentSize, IValueRange, IValueRanges, RtPercentSize, SVGStyleOrClass, VerticalAlign, _undefined, buildValueRanges, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { RectElement } from "../common/impl/RectElement";
 import { Shape, Shapes } from "../common/impl/SvgShape";
@@ -51,19 +51,15 @@ export class DataPointLabel extends FormattableText {
     //-------------------------------------------------------------------------
     /**
      * 포인트 label 표시 위치.
+     * 
+     * @config
      */
     position = PointItemPosition.AUTO;
-    
-    // /**
-    //  * position 위치에서 수평 정렬 상태.
-    //  * pie 시리즈에서는 무시.
-    //  */
-    // align = Align.CENTER;
-    // /**
-    //  * position 위치에서 수직 정렬 상태.
-    //  */
-    // verticalAlign = VerticalAlign.MIDDLE;
-
+    /**
+     * 다중 라인이거나 경계가 있을 때,
+     * 텍스트 상자 내에서 텍스트 라인들의 수평 정렬.
+     */
+    textAlign = Align.CENTER;
     /**
      * label과 point view 사이의 기본 간격.\
      * 값을 지정하지 않으면 {@link position}이 'inside'일 때는 0, 그 외는 4 픽셀이다.
@@ -130,10 +126,11 @@ export class DataPointLabel extends FormattableText {
     }
 
     getOffset(): number {
-        if (isNaN(this.offset)) {
+        const off = +this.offset;
+        if (isNaN(off)) {
             return this.position === PointItemPosition.INSIDE ? 0 : DataPointLabel.OFFSET;
         }
-        return this.offset;
+        return off;
     }
 
     //-------------------------------------------------------------------------
@@ -440,7 +437,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         super(chart, true);
 
         this.name = name;
-        this.pointLabel = new DataPointLabel(chart);
+        this.pointLabel = this._createLabel(chart);
         this.trendline = new Trendline(this);
         this.tooltip = new Tooltip(this);
 
@@ -451,6 +448,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     protected _initProps(): void {
+    }
+
+    protected _createLabel(chart: IChart): DataPointLabel {
+        return new DataPointLabel(chart);
     }
 
     //-------------------------------------------------------------------------
