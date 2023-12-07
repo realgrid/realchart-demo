@@ -6,9 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isFunc } from "../common/Common";
 import { DatetimeFormatter } from "../common/DatetimeFormatter";
 import { NumberFormatter } from "../common/NumberFormatter";
-import { SVGStyleOrClass } from "../common/Types";
+import { SVGStyleOrClass, _undefined } from "../common/Types";
 import { IAxis } from "./Axis";
 import { ChartItem } from "./ChartItem";
 
@@ -55,11 +56,16 @@ export class CrosshairFlag extends ChartItem {
     minWidth = 50;
 }
 
+export interface ICrosshairCallbackArgs {
+    axis: object;
+    pos: number;
+    flag: string;
+}
+
+export type CrosshairChangeCallback = (args: ICrosshairCallbackArgs) => void;
+
 export class Crosshair extends ChartItem {
 
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -69,6 +75,7 @@ export class Crosshair extends ChartItem {
      * @config
      */
     readonly flag: CrosshairFlag;
+    _args: ICrosshairCallbackArgs;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -78,6 +85,11 @@ export class Crosshair extends ChartItem {
 
         this.flag = new CrosshairFlag(axis.chart, true);
         this.visible = false;
+        this._args = {
+            axis: _undefined,
+            pos: _undefined,
+            flag: _undefined
+        };
     }
 
     //-------------------------------------------------------------------------
@@ -113,6 +125,7 @@ export class Crosshair extends ChartItem {
      * @config
      */
     timeFormat = 'yyyy-MM-dd HH:mm'
+    onChange: any;
 
     //-------------------------------------------------------------------------
     // methods
@@ -131,9 +144,26 @@ export class Crosshair extends ChartItem {
         }
     }
 
+    moved(pos: number, flag: string): void {
+        if (this.onChange) {
+            this._args.pos = pos;
+            this._args.flag = flag;
+            this.onChange(this._args);
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doLoadSimple(source: any): boolean {
+        if (isFunc(source)) {
+            this.visible = true;
+            this.onChange = source;
+            return true;
+        }
+        return super._doLoadSimple(source);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

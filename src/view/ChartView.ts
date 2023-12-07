@@ -1244,6 +1244,7 @@ export class ChartView extends LayerElement {
     
                     if (flag) {
                         av.showCrosshair(pos, flag);
+                        av.model.crosshair.moved(pos, flag);
                     } else {
                         av.hideCrosshiar();
                     }
@@ -1272,6 +1273,23 @@ export class ChartView extends LayerElement {
             const v = this._axisSectionMap[SectionDir[dir]].getScrollView(dom)
             if (v) return v;
         };
+    }
+
+    updateAnnotation(anno: Annotation): void {
+        let v = this._annotationViews.find(v => v.model === anno);
+        
+        if (v) {
+            v.update(this.width, this.height);
+        } else {
+            if (this._model.isSplitted()) {
+                // TODO:
+            } else {
+                v = this._currBody._annotationViews.find(v => v.model === anno);
+                if (v) {
+                    v.update(this._currBody.width, this._currBody.height);
+                }
+            }
+        }
     }
 
     //-------------------------------------------------------------------------

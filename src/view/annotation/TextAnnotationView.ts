@@ -9,7 +9,6 @@
 import { toSize } from "../../common/Rectangle";
 import { SvgRichText } from "../../common/RichText";
 import { ISize } from "../../common/Size";
-import { Align } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../../common/impl/TextElement";
 import { TextAnnotation } from "../../model/annotation/TextAnnotation";
@@ -27,6 +26,9 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
     //-------------------------------------------------------------------------
     private _textView: TextElement;
     private _richText: SvgRichText;
+    private _params = (target: any, param: string, format: string): string => {
+        return this.chart().getParam(target, param);
+    };
 
     //-------------------------------------------------------------------------
     // constructor
@@ -53,7 +55,7 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
         const tv = this._textView;
 
         this._richText.setFormat(model.text);
-        this._richText.build(tv, hintWidth, hintHeight, null, null);
+        this._richText.build(tv, hintWidth, hintHeight, null, this._params);
 
         return toSize(this._textView.getBBounds());
     }

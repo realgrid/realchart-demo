@@ -123,6 +123,10 @@ export abstract class Annotation extends ChartItem {
         return { x, y };
     }
 
+    update(): void {
+        this._changed(ChartItem.UPDATED);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------

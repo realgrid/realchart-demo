@@ -762,7 +762,7 @@ export class BodyView extends ChartElement<Body> {
     // annotations
     private _annotationContainer: LayerElement;
     private _frontAnnotationContainer: LayerElement;
-    private _annotationViews: AnnotationView<Annotation>[] = [];
+    _annotationViews: AnnotationView<Annotation>[] = [];
     private _annotationMap = new Map<Annotation, AnnotationView<Annotation>>();
     private _annotations: Annotation[];
     // guides

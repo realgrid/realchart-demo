@@ -7,8 +7,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "./Common";
+import { DatetimeFormatter } from "./DatetimeFormatter";
+import { NumberFormatter } from "./NumberFormatter";
 import { Sides } from "./Sides";
-import { Align, ZWSP } from "./Types";
+import { Align, ZWSP, _undefined } from "./Types";
 import { TextAnchor, TextElement } from "./impl/TextElement";
 
 const HEIGHT = '$_TH';
@@ -16,6 +18,10 @@ const WIDTH = '$_TW';
 
 export type RichTextParamCallback = (target: any, param: string, format: string) => string;
 
+/**
+ * '${name;default;format}', 
+ * [주의] default에는 format이 적용되지 않는다. 즉, format이 적용된 문자열을 설정해야 한다.
+ */
 class Word {
 
     //-------------------------------------------------------------------------
@@ -46,8 +52,20 @@ class Word {
         if (literals && callback) {
             let s = this.text;
 
-            for (let i = 0; i < literals.length; i += 3) {
-                s = s.replace(literals[i], callback(target, literals[i + 1], literals[i + 2]));
+            for (let i = 0; i < literals.length; i += 4) {
+                let v: any = callback(target, literals[i + 1], literals[i + 3]);
+                if (v != null) {
+                    if (literals[i + 3]) {
+                        if (typeof v === 'number' || typeof v === 'bigint') {
+                            v = NumberFormatter.getFormatter(literals[3]).toStr(v);
+                        } else if (v instanceof Date) {
+                            return DatetimeFormatter.getFormatter(literals[3]).toStr(v, 0);
+                        }
+                    }
+                } else {
+                    v = literals[i + 2];
+                }
+                s = s.replace(literals[i], v);
             }
             return s;
         }
@@ -82,9 +100,15 @@ class Word {
             const k = s2.indexOf(';');
 
             if (k > 0) {
-                this._literals.push(s, s2.substring(0, k), s2.substring(k + 1));
+                const k2 = s2.indexOf(';', k + 1);
+                if (k2 >= k) {
+                    this._literals.push(s, s2.substring(0, k), s2.substring(k + 1, k2), s2.substring(k2 + 1));
+                } else {
+                    this._literals.push(s, s2.substring(0, k), s2.substring(k + 1), _undefined);
+                }
+                if (this._literals[2].length === 0) this._literals[2] = _undefined;
             } else {
-                this._literals.push(s, s2, '');
+                this._literals.push(s, s2, _undefined, _undefined);
             }
 
             x = j + 1;

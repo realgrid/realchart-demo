@@ -8,6 +8,7 @@
 
 import { isArray, isObject, isString, pickNum } from "../common/Common";
 import { _undefined } from "../common/Types";
+import { Annotation } from "./Annotation";
 import { PaneAxisMatrix } from "./Axis";
 import { Body } from "./Body";
 import { IChart } from "./Chart";
@@ -235,6 +236,13 @@ export class Split extends ChartItem {
     calcSizes(width: number, height: number): void {
         this._widths = this.$_calcSizes(width, this._widths);
         this._heights = this.$_calcSizes(height, this._heights);
+    }
+
+    getAnnotation(name: string): Annotation {
+        for (const pos in this._panes) {
+            const a = this._panes[pos].body.getAnnotation(name);
+            if (a) return a;
+        }
     }
 
     //-------------------------------------------------------------------------

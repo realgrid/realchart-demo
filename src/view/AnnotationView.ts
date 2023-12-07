@@ -29,6 +29,14 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
     }
 
     //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    update(hintWidth: number, hintHeight: number): void {
+        this.measure(this.doc, this.model, hintWidth, hintHeight, 0);
+        this.layout();
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _setBackgroundStyle(back: RectElement): void {

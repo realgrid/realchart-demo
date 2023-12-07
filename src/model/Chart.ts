@@ -6,9 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, mergeObj, pickProp3, assign } from "../common/Common";
+import { isArray, isObject, isString, mergeObj, pickProp3, assign, pickProp, isNumber } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
-import { Align, SectionDir, VerticalAlign } from "../common/Types";
+import { Align, SectionDir, VerticalAlign, _undefined } from "../common/Types";
 import { AssetCollection } from "./Asset";
 import { Axis, AxisCollection, IAxis, PaneXAxisMatrix, PaneYAxisMatrix } from "./Axis";
 import { Body } from "./Body";
@@ -57,6 +57,7 @@ import { Annotation, AnnotationCollection } from "./Annotation";
 import { ShapeAnnotation } from "./annotation/ShapeAnnotation";
 import { CircleBarSeries, CircleBarSeriesGroup } from "./series/CircleBarSeries";
 import { Utils } from "../common/Utils";
+import { NumberFormatter } from "../common/NumberFormatter";
 
 export interface IChartProxy {
     getChartObject(model: any): object;
@@ -114,6 +115,9 @@ export interface IChart {
     // for series navigator
     prepareRender(): void;
     layoutAxes(width: number, height: number, inverted: boolean, phase: number): void;
+
+    getParam(target: any, param: string): any;
+    setParam(param: string, value: any, redraw?: boolean): void;
 }
 
 const group_types = {
@@ -308,7 +312,7 @@ export class ChartOptions extends ChartItem {
 }
 
 export interface IChartEventListener {
-    onModelChanged?(chart: Chart, item: ChartItem): void;
+    onModelChanged?(chart: Chart, item: ChartItem, tag?: any): void;
     onVisibleChanged?(chart: Chart, item: ChartItem): void;
     onPointVisibleChange?(chart: Chart, series: Series, point: DataPoint): void;
 }
@@ -344,6 +348,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _body: Body;
     private _annotations: AnnotationCollection;
     private _navigator: SeriesNavigator;
+    private _params = {};
 
     private _inverted: boolean;
     private _splitted: boolean;
@@ -592,6 +597,11 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     gaugeByName(gauge: string): Gauge {
         return this._gauges.getGauge(gauge);
+    }
+
+    annotationByName(annotation: string): Annotation {
+        return this._annotations.getAnnotation(annotation) || 
+               (this._splitted ? this._split.getAnnotation(annotation) : this._body.getAnnotation(annotation));
     }
 
     axisByName(axis: string): Axis {
@@ -844,6 +854,19 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     update(): void {
     }
 
+    getParam(target: any, param: string): any {
+        return this._params[param];
+    }
+
+    setParam(param: string, value: any, redraw?: boolean): void {
+        if (redraw && value !== this._params[param]) {
+            this._params[param] = value;
+            this._modelChanged(null);
+        } else {
+            this._params[param] = value;
+        }
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -891,8 +914,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._options.axisGap || 0;
     }
 
-    _modelChanged(item: ChartItem): void {
-        this._fireEvent('onModelChanged', item);
+    _modelChanged(item: ChartItem, tag?: any): void {
+        this._fireEvent('onModelChanged', item, tag);
     }
 
     _visibleChanged(item: ChartItem): void {

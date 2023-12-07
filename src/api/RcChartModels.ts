@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { _undefined } from "../common/Types";
+import { Annotation } from "../model/Annotation";
 import { Axis } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { ValueGauge } from "../model/Gauge";
@@ -184,6 +185,18 @@ export abstract class RcChartAxis extends RcChartObject {
         this._createObjects('title', 'line', 'grid', 'tick', 'label', 'crosshair');
     }
 
+    /**
+     * 축 방향.
+     */
+    get xy(): 'x' | 'y' {
+        return (this.$_p as Axis)._isX ? 'x' : 'y';
+    }
+    /**
+     * x축이면 true.
+     */
+    get isX(): boolean {
+        return (this.$_p as Axis)._isX;
+    }
     /**
      * 축 타이틀 설정 모델.
      */
@@ -744,4 +757,17 @@ export class RcBody extends RcChartObject {
 }
 
 export abstract class RcAnnotation extends RcNamedObject {
+
+    update(): void {
+        (this.$_p as Annotation).update();
+    }
+}
+
+export class RcTextAnnotation extends RcAnnotation {
+}
+
+export class RcImageAnnotation extends RcAnnotation {
+}
+
+export class RcShapeAnnotation extends RcAnnotation {
 }

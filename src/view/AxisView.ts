@@ -480,7 +480,7 @@ export class AxisView extends ChartElement<Axis> {
         let x: number;
 
         if (!cv) {
-            this.add(this._crosshairView = cv = new CrosshairFlagView(this.doc));
+            this.add(cv = this._crosshairView = new CrosshairFlagView(this.doc));
         }
         cv.setVis(true);
 

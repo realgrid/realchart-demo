@@ -9,6 +9,7 @@
 import { isObject } from "./common/Common";
 import { RcControl, RcElement } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
+import { Annotation } from "./model/Annotation";
 import { Axis } from "./model/Axis";
 import { Chart, IChartEventListener } from "./model/Chart";
 import { ChartItem } from "./model/ChartItem";
@@ -42,8 +43,12 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     // IChartEventListener
     //-------------------------------------------------------------------------
-    onModelChanged(chart: Chart, item: ChartItem): void {
-        this.invalidateLayout();
+    onModelChanged(chart: Chart, item: ChartItem, tag: any): void {
+        if (item instanceof Annotation && tag === ChartItem.UPDATED) {
+            this._chartView.updateAnnotation(item);
+        } else {
+            this.invalidateLayout();
+        }
     }
 
     onVisibleChanged(chart: Chart, item: ChartItem): void {

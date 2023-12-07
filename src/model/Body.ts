@@ -240,6 +240,10 @@ export class Body extends ChartItem {
         return this._annotations.getVisibles();
     }
 
+    getAnnotation(name: string): Annotation {
+        return this._annotations.getAnnotation(name);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
