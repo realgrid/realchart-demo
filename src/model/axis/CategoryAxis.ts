@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isString, pickNum, pickNum3, pickProp } from "../../common/Common";
-import { PI_2 } from "../../common/Types";
+import { DEG_RAD, PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { Axis, AxisGrid, AxisTick, AxisLabel, IAxisTick } from "../Axis";
 import { IChart } from "../Chart";
@@ -358,7 +358,8 @@ export class CategoryAxis extends Axis {
         if (this._isPolar) {
             if (phase > 0) {
                 // getPosition()에서 바로 각도를 리턴할 수 있도록...
-                this._pts = pts.map(t => t / length * PI_2);
+                const total = this.totalAngle * DEG_RAD;
+                this._pts = pts.map(t => t / length * total);
             }
         } else {
             const tick = this.tick as CategoryAxisTick;
@@ -382,7 +383,7 @@ export class CategoryAxis extends Axis {
 
         // if (this._isPolar) {
         //     // length는 원주, 각도를 리턴한다.
-        //     return p / length * PI_2;
+        //     return p * length / PI_2;
         // } else {
             return this.reversed ? length - p : p;
         // }
