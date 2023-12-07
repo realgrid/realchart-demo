@@ -53,10 +53,11 @@ config로 노출하고자 하는 구성에 @config를 사용한다.
   - `@default text`로 default값에 대한 설명을 추가한다.
 
 - 상속 받는 클래스 속성의 설명(comment)에서 @link를 동적으로 변경
-  - 부모/추상 클래스 속성의 설명에서 링크를 `{@link config.gauge.$guage.label 라벨 ...}` 처럼 설정한다.
+  - 부모/추상 클래스 속성의 설명에서 링크를 `{@link config.gauge.$guage.label 라벨}` 처럼 설정한다.
   - 상속 받는 클래스의 설명에서 `@configvar gauge=band`처럼 $gauge를 교체할 값을 설정한다.
 
 - jsfiddle 링크를 추가하려면 `@fiddle url label...` 을 설정한다.
+- 주의: config 설명에 double quotes(`""`)를 써서는 안된다.
 ```
 /**
  * foo class 설명
