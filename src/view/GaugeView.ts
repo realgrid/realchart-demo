@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isNumber, pickNum, pickProp } from "../common/Common";
+import { isNumber, pickNum, pickProp, assign } from "../common/Common";
 import { Dom } from "../common/Dom";
 import { ElementPool } from "../common/ElementPool";
 import { NumberFormatter } from "../common/NumberFormatter";
@@ -112,7 +112,7 @@ export abstract class GaugeView<T extends GaugeBase> extends ContentView<T> {
         this._paneElement.resizeRect(w, h);
 
         // gauge
-        const pads = Object.assign(Dom.getPadding(this.dom));
+        const pads = assign(Dom.getPadding(this.dom));
 
         w -= pads.left + pads.right;
         h -= pads.top + pads.bottom;
@@ -260,7 +260,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         let width = vertical ? model.gap : hintWidth;
         let height = vertical ? hintHeight : model.gap;
 
-        if (this._tickContainer.setVisible(model.tick.visible)) {
+        if (this._tickContainer.setVis(model.tick.visible)) {
             this._tickContainer.setStyleOrClass(model.tick.style);
             this._ticks.prepare(nStep);
         }
@@ -271,7 +271,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
             height += model.tick.length;
         }
 
-        if (this._labelContainer.setVisible(model.tickLabel.visible)) {
+        if (this._labelContainer.setVis(model.tickLabel.visible)) {
             this._labelContainer.setStyleOrClass(model.tickLabel.style);
             this._labels.prepare(nStep);
 
@@ -317,13 +317,13 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         let x: number;
 
         // line
-        if (line.setVisible(m.line.visible)) {
+        if (line.setVis(m.line.visible)) {
             line.setStyleOrClass(m.line.style);
             line.setHLineC(y, 0, width);
         }
 
         // ticks
-        if (this._tickContainer.setVisible(tick.visible)) {
+        if (this._tickContainer.setVis(tick.visible)) {
             this._ticks.forEach((v, i) => {
                 x = m.getRate(steps[i]) * width;
                 // v.setVLineC(x, y, y + len);
@@ -340,7 +340,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
                 const r = v.getBBounds();
                 x = m.getRate(steps[i]) * width;
 
-                if (v.setVisible(x - r.width / 2 > prev)) {
+                if (v.setVis(x - r.width / 2 > prev)) {
                     // v.anchor = i < steps.length - 1 ? TextAnchor.MIDDLE : TextAnchor.END;
                     v.translate(x, y);
                     prev = x + r.width / 2;
@@ -360,13 +360,13 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         let y: number;
 
         // line
-        if (line.setVisible(m.line.visible)) {
+        if (line.setVis(m.line.visible)) {
             line.setStyleOrClass(m.line.style);
             line.setVLineC(x, 0, height);
         }
 
         // ticks
-        if (this._tickContainer.setVisible(tick.visible)) {
+        if (this._tickContainer.setVis(tick.visible)) {
             this._ticks.forEach((v, i) => {
                 y = m.getRate(steps[i]) * height;
                 // v.setHLineC(y, x, x + len);
@@ -430,7 +430,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
         const scale = m.scale;
         const labelView = this.labelView();
         const value = pickNum(this._runValue, m.value);
-        const rBand = Object.assign({}, this._rBand);
+        const rBand = assign({}, this._rBand);
 
         this._renderScale(rBand);
 
@@ -563,7 +563,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
             scale.buildSteps(len, m.value);
         }
 
-        if (scaleView.setVisible(m.scaleVisible())) {
+        if (scaleView.setVis(m.scaleVisible())) {
             const sz = scaleView.measure(this.doc, scale, rBand.width, rBand.height, 1);
 
             if (this._vertical) {

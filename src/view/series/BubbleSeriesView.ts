@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { cos, sin } from "../../common/Common";
 import { IRect } from "../../common/Rectangle";
 import { Align, PI_2 } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
@@ -104,7 +105,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
             const p = mv.point as BubbleSeriesPoint;
             const lv = labelViews && (labelView = labelViews.get(p, 0));
 
-            if (mv.setVisible(!p.isNull && !isNaN(p.zValue))) {
+            if (mv.setVis(!p.isNull && !isNaN(p.zValue))) {
                 const sz = (p.radius = series.getRadius(p.zValue, min, max)) * vr;
                 let path: (string | number)[];
                 let x: number;
@@ -114,8 +115,8 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
                     const a = polar.start + xAxis.getPosition(PI_2, p.xValue);
                     const py = yAxis.getPosition(polar.rd, p.yValue);
     
-                    x = p.xPos = polar.cx + py * Math.cos(a);
-                    y = p.yPos = polar.cy + py * Math.sin(a);
+                    x = p.xPos = polar.cx + py * cos(a);
+                    y = p.yPos = polar.cy + py * sin(a);
                 } else {
                     x = p.xPos = xAxis.getPosition(xLen, p.xValue);
                     y = p.yPos = yOrg - yAxis.getPosition(yLen, p.yValue);
@@ -125,7 +126,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
                     }
                 }
     
-                if (mv.setVisible(!needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
+                if (mv.setVis(!needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
                     path = SvgShapes.circle(0, 0, sz);
                     mv.setPath(path);
                     mv.translate(x, y);
@@ -137,10 +138,10 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
                         this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
                     }
                 } else if (lv) {
-                    lv.setVisible(false);
+                    lv.setVis(false);
                 }
             } else if (lv) {
-                lv.setVisible(false);
+                lv.setVis(false);
             }
         });
     }

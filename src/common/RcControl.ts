@@ -10,7 +10,7 @@ import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
 import { Align, ISides, Path, SVGStyleOrClass, _undefined, getCssProp, isNull, pixel, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
-import { SVGNS, isObject, isString, pickProp } from "./Common";
+import { SVGNS, isObject, isString, pickProp, assign } from "./Common";
 import { Utils } from "./Utils";
 import { IRect, Rectangle } from "./Rectangle";
 import { Shape, SvgShapes } from "./impl/SvgShape";
@@ -434,7 +434,7 @@ export abstract class RcControl extends RcWrappableObject {
         const doc = this._container.ownerDocument;
         const dom = this._dom = doc.createElement('div');
 
-        Object.assign(dom.style, {
+        assign(dom.style, {
             position: 'relative',
             width: '100%',
             height: '100%',  
@@ -475,7 +475,7 @@ export abstract class RcControl extends RcWrappableObject {
         // html root
         this._htmlRoot = doc.createElement('div');
         dom.appendChild(this._htmlRoot);
-        Object.assign(this._htmlRoot.style, {
+        assign(this._htmlRoot.style, {
             position: 'absolute'
         });
     }
@@ -536,7 +536,7 @@ export abstract class RcControl extends RcWrappableObject {
 
             // this._back.resize(w, h);
 
-            Object.assign(this._htmlRoot.style, {
+            assign(this._htmlRoot.style, {
                 left: pixel(sr.left - cr.left),
                 top: pixel(sr.top - cr.top)
             });
@@ -769,9 +769,9 @@ export class RcElement extends RcObject {
         return this._visible;
     }
     set visible(value: boolean) {
-        this.setVisible(value);
+        this.setVis(value);
     }
-    setVisible(value: boolean): boolean {
+    setVis(value: boolean): boolean {
         if (value !== this._visible) {
             this._visible = value;
             if (this._dom) {
@@ -1244,10 +1244,10 @@ export class RcElement extends RcObject {
                     fill: 'none'
                 });
                 ani && ani.addEventListener('finish', () => {
-                    this.setVisible(false);
+                    this.setVis(false);
                 });
             } else {
-                this.setVisible(false);
+                this.setVis(false);
             }
         }
         return this;

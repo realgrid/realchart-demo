@@ -8,6 +8,7 @@
 
 import { ChartControl } from "./ChartControl";
 import { RcChartControl } from "./api/RcChartControl";
+import { RcDebug } from "./common/Common";
 import { RcControl, RcElement } from "./common/RcControl";
 import { Utils } from "./common/Utils";
 import { Chart } from "./model/Chart";
@@ -43,7 +44,7 @@ export class Globals {
      * @param debug 디버깅 상태 표시 여부
      */
     static setDebugging(debug: boolean): void {
-        RcElement.DEBUGGING = debug;
+        RcElement.DEBUGGING = RcDebug._debugging = debug;
     }
     /**
      * true로 지정하면 라이브러리 내부 메시지를 출력한다.

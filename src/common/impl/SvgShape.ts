@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { cos, sin } from '../Common';
 import { PathElement } from '../RcControl';
 import { IRect } from '../Rectangle';
 import { PathValue, fixAngle } from '../Types';
@@ -106,10 +107,10 @@ export class SvgShapes {
         const circled = 2 * PI - len < SECTOR_ERROR * 10;
         const long = len - PI < SECTOR_ERROR * 10 ? 0 : 1;
         const cw = clockwise ? 1 : 0;
-        const x1 = Math.cos(start);
-        const y1 = Math.sin(start);
-        const x2 = Math.cos(end -= circled ? (cw ? SECTOR_ERROR * 10 : -SECTOR_ERROR * 10) : 0);
-        const y2 = Math.sin(end);
+        const x1 = cos(start);
+        const y1 = sin(start);
+        const x2 = cos(end -= circled ? (cw ? SECTOR_ERROR * 10 : -SECTOR_ERROR * 10) : 0);
+        const y2 = sin(end);
         const path = [];
 
         path.push(
@@ -142,10 +143,10 @@ export class SvgShapes {
         const circled = 2 * PI - len < SECTOR_ERROR;
         let long = len - PI < SECTOR_ERROR ? 0 : 1;
         const cw = clockwise ? 1 : 0;
-        const x1 = Math.cos(start);
-        const y1 = Math.sin(start);
-        const x2 = Math.cos(end -= circled ? (cw ? SECTOR_ERROR : -SECTOR_ERROR) : 0);
-        const y2 = Math.sin(end);
+        const x1 = cos(start);
+        const y1 = sin(start);
+        const x2 = cos(end -= circled ? (cw ? SECTOR_ERROR : -SECTOR_ERROR) : 0);
+        const y2 = sin(end);
         const innerX = rx * rInner;
         const innerY = ry * rInner;
         const path = [];
@@ -236,10 +237,12 @@ export class SvgShapes {
         const path = [];
         let start = -Math.PI / 2
 
-        path.push('M', cx + rx * Math.cos(start), cy + ry * Math.sin(start));
+        path.push('M', cx + rx * cos(start), cy + ry * sin(start));
         for (let i = 0; i < 5; i++) {
-            path.push('L', cx + rx * Math.cos(start), cy + ry * Math.sin(start));
-            path.push('L', cx + rx2 * Math.cos(start + a2), cy + ry2 * Math.sin(start + a2));
+            path.push(
+                'L', cx + rx * cos(start), cy + ry * sin(start),
+                'L', cx + rx2 * cos(start + a2), cy + ry2 * sin(start + a2)
+            );
             start += a;
         }
         path.push('Z');

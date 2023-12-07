@@ -93,7 +93,7 @@ class AxisSectionView extends SectionView {
 
         this.axes = axes;
 
-        if (this.setVisible(views.length > 0)) {
+        if (this.setVis(views.length > 0)) {
             const m = views[0].model;
 
             // this.isHorz = m._isHorz;

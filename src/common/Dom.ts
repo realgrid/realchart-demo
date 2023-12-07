@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RtDebug } from "./Common";
+import { RcDebug } from "./Common";
 import { IRect } from "./Rectangle";
 import { ISides } from "./Types";
 
@@ -347,8 +347,8 @@ export class Dom {
             try {
                 ani.finish(); // cancel()?
             } catch (e) {
-                RtDebug.debugging();
                 console.error(e);
+                RcDebug.debug();
             }
         }
         return null;

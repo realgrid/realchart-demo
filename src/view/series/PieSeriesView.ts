@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { cos, sin } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { RcElement } from "../../common/RcControl";
@@ -92,7 +93,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         this.$_prepareSectors(doc, model, this._visPoints as PieSeriesPoint[]);
         this._lineContainer.prepare(model);
 
-        if (this._textView.setVisible(model.hasInner() && model.innerText.isVisible())) {
+        if (this._textView.setVis(model.hasInner() && model.innerText.isVisible())) {
             this._textView.setModel(doc, model.innerText, null);
             model.innerText.buildSvg(this._textView._text, this._textView._outline, NaN, NaN, model, null);
         }
@@ -237,14 +238,14 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     
                 if (p.sliced && vr >= 1 && !sector.isDomAnimating()) {
                     const a = start + p.angle / 2;
-                    dx += Math.cos(a) * sliceOff;
-                    dy += Math.sin(a) * sliceOff;
+                    dx += cos(a) * sliceOff;
+                    dy += sin(a) * sliceOff;
                 }
-                sector.translate(dx, dy).setVisible(true);
+                sector.translate(dx, dy).setVis(true);
     
                 const a = p.startAngle + p.angle / 2;
-                p.xPos = cx + Math.cos(a) * (sliceOff + rd * 0.7);
-                p.yPos = cy + Math.sin(a) * (sliceOff + rd * 0.7);
+                p.xPos = cx + cos(a) * (sliceOff + rd * 0.7);
+                p.yPos = cy + sin(a) * (sliceOff + rd * 0.7);
     
                 sector.setPieSector(labelViews, /*lines*/null, {
                     cx: cx,// + dx,
@@ -263,7 +264,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
 
                     // labelView.anchor = TextAnchor.START; // 기본이 MIDDLE이다.
 
-                    if (line.setVisible(!labelInside)) {
+                    if (line.setVis(!labelInside)) {
                         // this.$_layoutLabel(p, labelView, line, off, dist, slicedOff, pb);
                         this.$_layoutLabel(p, labelView, line, labelOff, labelDist, p.sliced ? sliceOff : 0, cw);
                     } else {
@@ -271,16 +272,16 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                         // this.$_layoutLabelInner(p, label, off, dist, slicedOff);
                         this.$_layoutLabelInner(p, labelView, labelOff, 0, p.sliced ? sliceOff : 0);
                     }
-                    labelView.setContrast(labelInside && sector.dom).setVisible(true);
+                    labelView.setContrast(labelInside && sector.dom).setVis(true);
                 } else {
-                    lineViews.get(p)?.setVisible(false);
+                    lineViews.get(p)?.setVis(false);
                 }
             } else {
-                sector.setVisible(false);
+                sector.setVis(false);
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
-                    labelView.setVisible(false);
+                    labelView.setVis(false);
                 }
-                lineViews.get(p)?.setVisible(false);
+                lineViews.get(p)?.setVis(false);
             }
         })
     }
@@ -291,13 +292,13 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         let cx = this._cx;
         let cy = this._cy;
         let rd = this._rd + dist * 0.8;
-        let dx = Math.cos(a) * sliceOff;
-        let dy = Math.sin(a) * sliceOff;
+        let dx = cos(a) * sliceOff;
+        let dy = sin(a) * sliceOff;
 
-        let x1 = cx + Math.cos(a) * this._rd;
-        let y1 = cy + Math.sin(a) * this._rd;
-        let x2 = cx + Math.cos(a) * rd;
-        let y2 = cy + Math.sin(a) * rd;
+        let x1 = cx + cos(a) * this._rd;
+        let y1 = cy + sin(a) * this._rd;
+        let x2 = cx + cos(a) * rd;
+        let y2 = cy + sin(a) * rd;
         const isLeft = x2 < cx;
         let x3: number;
 
@@ -308,7 +309,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         }
 
         // line
-        if (line && line.setVisible(rd > 0)) {
+        if (line && line.setVis(rd > 0)) {
             //line.move(x1, y1);
             //line.setPath(pb.move(x1, y1).lines(x2, y2, x3, y2).end())
             line.setLine(new PathBuilder().move(0, 0).quad(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end())
@@ -333,13 +334,13 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         const inner = this._rdInner * this._rd;
         const rd = inner > 0 ? inner + (this._rd - inner) / 2 : this._rd * 0.7;
         const a = p.startAngle + p.angle / 2;
-        let x = this._cx + Math.cos(a) * rd;
-        let y = this._cy + Math.sin(a) * rd;
+        let x = this._cx + cos(a) * rd;
+        let y = this._cy + sin(a) * rd;
 
         view.move(x - r.width / 2, y - r.height / 2); // 위치 정보 저장.
 
-        x = this._cx + Math.cos(a) * (sliceOff + rd);
-        y = this._cy + Math.sin(a) * (sliceOff + rd);
+        x = this._cx + cos(a) * (sliceOff + rd);
+        y = this._cy + sin(a) * (sliceOff + rd);
         view.layout(Align.CENTER).translate(x - r.width / 2, y - r.height / 2);
     }
 
@@ -350,7 +351,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         const a = p.startAngle + p.angle / 2;
 
         if (p.sliced = sliced) {
-            view.translateEx(Math.cos(a) * this._slicedOff, Math.sin(a) * this._slicedOff, dur);
+            view.translateEx(cos(a) * this._slicedOff, sin(a) * this._slicedOff, dur);
         } else {
             view.translateEx(0, 0, dur);
         }

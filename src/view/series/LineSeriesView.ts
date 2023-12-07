@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { cos, sin } from "../../common/Common";
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
@@ -253,7 +254,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
         this._pointContainer.setStyle('opacity', marker.visible ? '1' : '0');
 
-        if (this._pointContainer.setVisible(!series._simpleMode)) {
+        if (this._pointContainer.setVis(!series._simpleMode)) {
             const mpp = this._markersPerPoint();
             const count = points.length;
     
@@ -309,8 +310,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                 const a = polar.start + xAxis.getPosition(xLen, p.xValue);
                 const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
 
-                px = p.xPos = polar.cx + y * Math.cos(a);
-                py = p.yPos = polar.cy + y * Math.sin(a);
+                px = p.xPos = polar.cx + y * cos(a);
+                py = p.yPos = polar.cy + y * sin(a);
             } else {
                 px = p.xPos = xAxis.getPosition(xLen, p.xValue);
                 py = p.yPos = yOrg - yAxis.getPosition(yLen, p.yGroup);
@@ -324,7 +325,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             const mv = this._markers.get(i);
             const lv = labelViews && labelViews.get(p, 0);
 
-            if (mv && mv.setVisible(!p.isNull && (polared || !needClip || px >= 0 && px <= width && py >= 0 && py <= height))) {
+            if (mv && mv.setVis(!p.isNull && (polared || !needClip || px >= 0 && px <= width && py >= 0 && py <= height))) {
                 this._layoutMarker(mv, markerStyle, px, py);
 
                 if (lv) {
@@ -335,7 +336,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     lv.layout(Align.CENTER).translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
                 }
             } else if (lv) {
-                lv.setVisible(false);
+                lv.setVis(false);
             }
         }
     }

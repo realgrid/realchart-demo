@@ -56,7 +56,7 @@ class BandView extends ChartElement<GaugeRangeBand> {
         let height = vertical ? hintHeight : thick;
         const ranges = this._ranges = model.ranges;
 
-        if (this._labelContainer.setVisible(model.tickLabel.visible && ranges.length > 0)) {
+        if (this._labelContainer.setVis(model.tickLabel.visible && ranges.length > 0)) {
             const vals = [ranges[0].fromValue].concat(ranges.map(r => r.toValue));
 
             this._labelContainer.setStyleOrClass(model.tickLabel.style);
@@ -87,7 +87,7 @@ class BandView extends ChartElement<GaugeRangeBand> {
         const scale = g.scale;
         const sum = scale._max - scale._min;
 
-        if (this._labelContainer.setVisible(this.$_layoutBars(g, sum, this._ranges) && this._labelContainer.visible && m.position !== GaugeItemPosition.INSIDE)) {
+        if (this._labelContainer.setVis(this.$_layoutBars(g, sum, this._ranges) && this._labelContainer.visible && m.position !== GaugeItemPosition.INSIDE)) {
             this.$_layoutLabels(g, sum, this._ranges);
         }
     }
@@ -206,7 +206,7 @@ export class LinearGaugeView extends LinearGaugeBaseView<LinearGauge> {
 
         super._renderScale(r);
 
-        if (bandView.setVisible(band.visible)) {
+        if (bandView.setVis(band.visible)) {
             const gap = +band.gap || 0;
             const sz = bandView.measure(this.doc, band, r.width, r.height, 1);
 
@@ -243,7 +243,7 @@ export class LinearGaugeView extends LinearGaugeBaseView<LinearGauge> {
         const scale = m.group ? (m.group as LinearGaugeGroup).scale : m.scale;
 
         // value bar
-        if (this._valueView.setVisible(!scale.isEmpty() && !isNaN(m.value))) {
+        if (this._valueView.setVis(!scale.isEmpty() && !isNaN(m.value))) {
             if (this._vertical) {
                 const h = r.height * scale.getRate(value);
                 const y = reversed ? r.y : r.y + r.height - h;
@@ -291,11 +291,11 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
     //-------------------------------------------------------------------------
     protected _prepareGauge(doc: Document, model: T): void {
         // label
-        if (this._textView.setVisible(model.label.visible)) {
+        if (this._textView.setVis(model.label.visible)) {
             this._textView.setStyleOrClass(model.label.style);
         }
         // scale
-        if (this._scaleView.setVisible(model.scale.visible)) {
+        if (this._scaleView.setVis(model.scale.visible)) {
             this._scaleView.setStyleOrClass(model.scale.style);
         }
 
@@ -367,7 +367,7 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
 
         scale.buildGroupSteps(len, values);
 
-        if (scaleView.setVisible(scale.visible)) {
+        if (scaleView.setVis(scale.visible)) {
             if (model.vertical) { // 자식들이 수평 모드
                 const sz = scaleView.measure(this.doc, scale, rBody.width, rBody.height, 1);
 
@@ -454,7 +454,7 @@ export class LinearGaugeGroupView extends LinearGaugeGroupBaseView<LinearGauge, 
         const band = model.band;
         let x: number, y: number;
 
-        if (bandView.setVisible(band.visible)) {
+        if (bandView.setVis(band.visible)) {
             const gap = +band.gap || 0;
 
             if (model.vertical) { // 자식들이 수평 모드

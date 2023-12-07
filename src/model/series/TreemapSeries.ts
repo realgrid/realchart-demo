@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { Color } from "../../common/Color";
-import { isArray, isObject } from "../../common/Common";
+import { isArray, isObject, assign } from "../../common/Common";
 import { toStr } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { ChartItem } from "../ChartItem";
@@ -32,7 +32,7 @@ export class TreemapSeriesPoint extends DataPoint {
     // overriden members
     //-------------------------------------------------------------------------
     protected _assignTo(proxy: any): any {
-        return Object.assign(super._assignTo(proxy), {
+        return assign(super._assignTo(proxy), {
             id: this.id,
             group: this.group
         });

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
+import { pickNum, assign } from "../../common/Common";
 import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { FormattableText } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
@@ -59,7 +59,7 @@ export class PieSeriesPoint extends WidgetSeriesPoint {
     }
 
     protected _assignTo(proxy: any): any {
-        return Object.assign(super._assignTo(proxy), {
+        return assign(super._assignTo(proxy), {
             sliced: this.sliced
         });
     }

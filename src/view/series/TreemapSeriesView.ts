@@ -148,7 +148,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
                 const r = labelView.getBBounds();
 
                 // 너비나 높이가 모두 한글자는 표시할 수 있을 정도가 돼야 표시.
-                if (labelView.setVisible(m.width >= r.height && m.height >= r.height)) {
+                if (labelView.setVis(m.width >= r.height && m.height >= r.height)) {
                 // if (labelView.setVisible(m.width >= r.width && m.height >= r.height)) {
                     if (inverted) {
                         x = -m.y - m.height / 2 - r.width / 2;// (m.height + r.width) / 2;

@@ -6,9 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { assign, cos, sin } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
-import { Align, PI_2 } from "../../common/Types";
+import { Align } from "../../common/Types";
 import { SectorElement } from "../../common/impl/SectorElement";
 import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
@@ -108,7 +109,7 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
         const yAxis = series._yAxisObj;
         const polar = body.getPolar(xAxis);
         const totalAngle = xAxis.getTotalAngle();
-        const labelInfo: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
+        const labelInfo: LabelLayoutInfo = labelViews && assign(this._labelInfo, {
             labelPos: series.getLabelPosition(labels.position),
             labelOff: series.getLabelOff(labels.getOffset())
         });
@@ -132,9 +133,9 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
                 clockwise: true
             })
 
-            const x = p.xPos = view.cx + view.rx * 0.7 * Math.cos(a);
+            const x = p.xPos = view.cx + view.rx * 0.7 * cos(a);
             a = view.start + view.angle / 2;
-            yGroup = p.yPos = view.cy + view.ry * 0.7 * Math.sin(a);
+            yGroup = p.yPos = view.cy + view.ry * 0.7 * sin(a);
 
             // label
             if (labelViews && (labelInfo.labelView = labelViews.get(p, 0))) {

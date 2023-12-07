@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, pickNum } from "./Common";
+import { assign, isArray, isObject, isString, pickNum } from "./Common";
 import { locale } from "./RcLocale";
 
 export const _undefined = void 0; // 불필요
@@ -22,17 +22,11 @@ export const RAD_DEG = 360 / Math.PI / 2;
 export function fixAngle(a: number): number {
     return a > PI_2 ? a % PI_2 : a;
 }
-
 export const NUMBER_SYMBOLS = 'k,M,G,T,P,E';
 export const NUMBER_FORMAT = '#,##0.#';
-
-export const floor = Math.floor;
-export const ceil = Math.ceil;
 export function fixnum(value: number): number {
     return parseFloat(value.toPrecision(12));
 }
-export const cos = Math.cos;
-export const sin = Math.sin;
 export function toStr(value: any): string {
     return value == null ? null : String(value);
 }
@@ -58,12 +52,6 @@ export function newObject(prop: string, value: any): {} {
 }
 export function utc(year: number, monthIndex = 0, day = 1, hour = 0, minute = 0, second = 0, millisecond = 0): Date {
     return new Date(Date.UTC(year, monthIndex, day, hour, minute, second, millisecond));
-}
-export function polarX(cx: number, rd: number, angle: number): number {
-    return cx + Math.cos(angle) * rd;
-}
-export function polarY(cy: number, rd: number, angle: number): number {
-    return cy + Math.sin(angle) * rd;
 }
 
 export type PathValue = string | number;
@@ -398,7 +386,7 @@ export const buildValueRanges = function (source: IValueRange[] | IValueRanges, 
                     fromValue: pickNum(src.fromValue, prev ? prev.toValue : min),
                     toValue: pickNum(src.toValue, max),
                     color: src.color,
-                    style: src.style ? Object.assign({}, src.style) : _undefined
+                    style: src.style ? assign({}, src.style) : _undefined
                 };
                 if (range.fromValue < range.toValue) {
                     ranges.push(range);

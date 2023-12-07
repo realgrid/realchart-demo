@@ -168,7 +168,7 @@ export class AxisGridView extends ChartElement<AxisGrid> {
                 } else {
                     vis = true;
                 }
-                if (line.setVisible(true)) {
+                if (line.setVis(true)) {
                     line.setVLineC(pts[i], 0, h);
                 }
             });
@@ -183,7 +183,7 @@ export class AxisGridView extends ChartElement<AxisGrid> {
                 } else {
                     vis = true;
                 }
-                if (line.setVisible(vis)) {
+                if (line.setVis(vis)) {
                     line.setHLineC(h - pts[i], 0, w);
                 }
             });
@@ -354,7 +354,7 @@ export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
     //-------------------------------------------------------------------------
     prepare(doc: Document, model: T): void {
         this.model = model;
-        if (this._labelView.setVisible(!!model.label.text)) {
+        if (this._labelView.setVis(!!model.label.text)) {
             this._labelView.setModel(doc, model.label, null);
             this._labelView.setStyles(model.label.style);
         }
@@ -408,7 +408,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
         const m = this.model;
         const label = m.label;
         const line = this._line;
-        const labelView = this._labelView.setVisible(label.visible) && this._labelView;
+        const labelView = this._labelView.setVis(label.visible) && this._labelView;
         const rLabel = labelView.getBBounds();
         const xOff = pickNum(label.offsetX, 0);
         const yOff = pickNum(label.offsetY, 0);
@@ -514,7 +514,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
         const box = this._box;
         const start = Math.min(m.startValue, m.endValue);
         const end = Math.max(m.startValue, m.endValue);
-        const labelView = this._labelView.setVisible(label.visible) && this._labelView;
+        const labelView = this._labelView.setVis(label.visible) && this._labelView;
         const rLabel = labelView.getBBounds();
         const xOff = pickNum(label.offsetX, 0);
         const yOff = pickNum(label.offsetY, 0);
@@ -525,7 +525,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
             let x: number;
             let y: number;
 
-            if (box.setVisible(x2 !== x1)) {
+            if (box.setVis(x2 !== x1)) {
                 switch (label.align) {
                     case Align.CENTER:
                         x = x1 + (x2 - x1 - rLabel.width) / 2 + xOff;
@@ -850,7 +850,7 @@ export class BodyView extends ChartElement<Body> {
         // TODO: _zoomRequested 필요 없는 깔끔한 방식 필요. 
         if (!this._zoomRequested) {
             this._crosshairLines.forEach(v => {
-                if (v.setVisible(inBody)) {
+                if (v.setVis(inBody)) {
                     v.layout(pv, p.x, p.y, w, h);
                 }
             });
@@ -966,7 +966,7 @@ export class BodyView extends ChartElement<Body> {
         });
 
         // zoom button
-        if (this._zoomButton.setVisible(model.zoomButton.isVisible())) {
+        if (this._zoomButton.setVis(model.zoomButton.isVisible())) {
             this._zoomButton.layout();
         }
 
@@ -982,7 +982,7 @@ export class BodyView extends ChartElement<Body> {
         this._hitTester.resize(w, h);
         this._background.resize(w, h);
 
-        if (img.setVisible(img.setImage(this.model.image.url, w, h))) {
+        if (img.setVis(img.setImage(this.model.image.url, w, h))) {
             img.setStyleOrClass(this.model.image.style);
         }
 

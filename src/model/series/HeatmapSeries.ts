@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp } from "../../common/Common";
+import { pickNum, pickProp, assign } from "../../common/Common";
 import { DataPoint } from "../DataPoint";
 import { IPlottingItem, Series } from "../Series";
 
@@ -49,7 +49,7 @@ export class HeatmapSeriesPoint extends DataPoint {
     }
 
     protected _assignTo(proxy: any): any {
-        return Object.assign(super._assignTo(proxy), {
+        return assign(super._assignTo(proxy), {
             heat: this.heat,
             heatValue: this.zValue
         });

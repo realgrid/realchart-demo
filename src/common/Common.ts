@@ -15,6 +15,11 @@ export const isString = function (v: any): v is string { return typeof v === 'st
 export const isNumber = function (v: any): v is number { return typeof v === 'number'; }
 export const isBoolean = function (v: any): v is boolean { return typeof v === 'boolean'; }
 export const isNone = function (v: any): boolean { return v == null || isNaN(v); }
+export const assign = Object.assign;
+export const floor = Math.floor;
+export const ceil = Math.ceil;
+export const cos = Math.cos;
+export const sin = Math.sin;
 export const pickNum = function(v1: any, v2: any): number {
     v1 = parseFloat(v1);
     return !isNaN(v1) ? v1 : parseFloat(v2);
@@ -35,10 +40,10 @@ export const pickProp4 = function(v1: any, v2: any, v3: any, v4: any): any {
     return v1 !== void 0 ? v1 : v2 !== void 0 ? v2 : v3 != void 0 ? v3 : v4;
 }
 export const copyObj = (obj: any): any => {
-    return obj && Object.assign({}, obj);
+    return obj && assign({}, obj);
 }
 export const mergeObj = (v1: any, v2: any): any => {
-    const obj = Object.assign({}, v1);
+    const obj = assign({}, v1);
 
     for (const p in v2) {
         const v = v2[p];
@@ -50,34 +55,8 @@ export const mergeObj = (v1: any, v2: any): any => {
     }
     return obj;
 }
-
-export class RtLog {
-
-    //-------------------------------------------------------------------------
-    // static members
-    //-------------------------------------------------------------------------
-    private static _logging = false;
-    static setLogging(enabled = true) {
-        this._logging = enabled;
-    }
-    static log(...messages: any[]): void {
-        this._logging && console.log.apply(console, messages);
-    }
+export class RcDebug {
+    static _debugging = false;
+    static debug(): void { if (this._debugging) { debugger; } }
 }
-
-export class RtDebug {
-    //-------------------------------------------------------------------------
-    // static members
-    //-------------------------------------------------------------------------
-    private static _debugging = false;
-    static setDebugging(enabled = true) {
-        this._debugging = enabled;
-    }
-    static debugging(): void {
-        if (this._debugging) {
-            debugger;
-        }
-    }
-}
-export const NOT_IMPLEMENT = new Error("Not Implemented.");
 

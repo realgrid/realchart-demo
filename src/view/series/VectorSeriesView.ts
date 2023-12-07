@@ -118,7 +118,7 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
         this._arrows.forEach(v => {
             const p = v.point;
 
-            if (v.setVisible(!p.isNull)) {
+            if (v.setVis(!p.isNull)) {
                 const x = p.xPos = xAxis.getPosition(this.width, p.xValue);
                 const y = p.yPos = this.height - yAxis.getPosition(this.height, p.yValue);
     

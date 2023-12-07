@@ -97,7 +97,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         this._cells.forEach(cell => {
             const p = cell.point as HeatmapSeriesPoint;
 
-            if (cell.setVisible(!p.isNull)) {
+            if (cell.setVis(!p.isNull)) {
                 const wUnit = xAxis.getUnitLength(xLen, p.xValue);
                 const wPoint = wUnit;
                 const hUnit = yAxis.getUnitLength(yLen, p.yValue);

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../common/Common";
+import { cos, pickNum, sin } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { PathElement, RcElement } from "../common/RcControl";
@@ -177,14 +177,14 @@ export class AxisLabelView extends LabelElement {
     //     const d = this.rotation * DEG_RAD;
     //     const r = this.getBBounds();
 
-    //     return Math.abs(Math.sin(d) * r.height) + Math.abs(Math.cos(d) * r.width);
+    //     return Math.abs(sin(d) * r.height) + Math.abs(cos(d) * r.width);
     // }
 
     rotatedHeight(): number {
         const d = this.rotation * DEG_RAD;
         const r = this.getBBounds();
 
-        return Math.abs(Math.cos(d) * r.height) + Math.abs(Math.sin(d) * r.width);
+        return Math.abs(cos(d) * r.height) + Math.abs(sin(d) * r.width);
     }
 }
 
@@ -407,10 +407,10 @@ export class AxisView extends ChartElement<Axis> {
             if (!this._scrollView) {
                 this.add(this._scrollView = new AxisScrollView(doc));
             }
-            this._scrollView.setVisible(true);
+            this._scrollView.setVis(true);
             return this._scrollView.measure(doc, bar, width, height, 1)[prop];
         } else if (this._scrollView) {
-            this._scrollView.setVisible(false);
+            this._scrollView.setVis(false);
         }
         return 0;
     }
@@ -430,7 +430,7 @@ export class AxisView extends ChartElement<Axis> {
         }
 
         // title
-        if (this._titleView.setVisible(m.title.isVisible())) {
+        if (this._titleView.setVis(m.title.isVisible())) {
             h += this._titleView.measure(doc, m.title, width, height, 1).height;
             h += m.title.gap;
         }
@@ -482,7 +482,7 @@ export class AxisView extends ChartElement<Axis> {
         if (!cv) {
             this.add(this._crosshairView = cv = new CrosshairFlagView(this.doc));
         }
-        cv.setVisible(true);
+        cv.setVis(true);
 
         cv.setText(this.model.crosshair, text);
         const r = cv.getBBounds();
@@ -501,7 +501,7 @@ export class AxisView extends ChartElement<Axis> {
 
     hideCrosshiar(): void {
         if (this._crosshairView && this._crosshairView.visible) {
-            this._crosshairView.setVisible(false);
+            this._crosshairView.setVis(false);
         }
     }
 
@@ -524,12 +524,12 @@ export class AxisView extends ChartElement<Axis> {
                 if (!this._lineView2) {
                     this.insertChild(this._lineView2 = new LineElement(doc, AxisView.LINE_CLASS), this._lineView);
                 } else {
-                    this._lineView2.setVisible(true);
+                    this._lineView2.setVis(true);
                 }
                 this._lineView.setStyleOrClass(model.line.style);
             }
         } else if (this._lineView2) {
-            this._lineView2.setVisible(false);
+            this._lineView2.setVis(false);
         }
 
         // tick marks 
@@ -555,7 +555,7 @@ export class AxisView extends ChartElement<Axis> {
         }
 
         if (this._simpleMode) {
-            titleView.setVisible(false);
+            titleView.setVis(false);
         } else {
             // title
             if (titleView.visible) { // checkHeight/checkWidth 에서 visible 설정.
@@ -811,13 +811,13 @@ export class AxisView extends ChartElement<Axis> {
     private $_prepareLabels(m: Axis): number {
         const labels = m.label;
 
-        if (this._labelContainer.setVisible(labels.visible)) {
+        if (this._labelContainer.setVis(labels.visible)) {
             const ticks = m._ticks;
 
             this._labelContainer.setStyleOrClass(labels.style);
 
             return this._labelViews.prepare(ticks.length, (v, i, count) => {
-                v.setVisible(true);
+                v.setVis(true);
                 this._prepareLabel(v, ticks[i], labels, count);
             }).count;
         }
@@ -854,7 +854,7 @@ export class AxisView extends ChartElement<Axis> {
                 if (a === 0 && views[i].getBBounds().width >= w) {
                     overalpped = true;
                     break;
-                } else if  (a !== 0 && (views[i].getBBounds().width + views[i].getBBounds().height) * Math.cos(arad) >= w) {
+                } else if  (a !== 0 && (views[i].getBBounds().width + views[i].getBBounds().height) * cos(arad) >= w) {
                     overalpped = true;
                     break;
                 }
@@ -871,7 +871,7 @@ export class AxisView extends ChartElement<Axis> {
         for (let i = start; i < views.length; i += step) {
             views[i].index = i;
         }
-        views.forEach(v => v.setVisible(v.index >= 0));
+        views.forEach(v => v.setVis(v.index >= 0));
         return views.filter(v => v.visible);
     }
 
@@ -1049,19 +1049,19 @@ export class AxisView extends ChartElement<Axis> {
                 if (rot < -15 && rot >= -90) {
                     if (opp) {
                         x -= r.width;
-                        y -= Math.sin(a) * r.height / 2;
+                        y -= sin(a) * r.height / 2;
                         v.setRotation(r.width, r.height / 2, -rot);
                     } else {
                         x -= r.width;
-                        y += Math.sin(a) * r.height / 2;
+                        y += sin(a) * r.height / 2;
                         v.setRotation(r.width, r.height / 2, rot);
                     }
                 } else if (rot > 15 && rot <= 90) {
                     if (opp) {
-                        y += Math.sin(a) * r.height / 2;
+                        y += sin(a) * r.height / 2;
                         v.setRotation(0, r.height / 2, -rot);
                     } else {
-                        y -= Math.sin(a) * r.height / 2;
+                        y -= sin(a) * r.height / 2;
                         v.setRotation(0, r.height / 2, rot);
                     }
                 } else {

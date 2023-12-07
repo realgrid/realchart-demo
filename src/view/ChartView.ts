@@ -75,7 +75,7 @@ class TitleSectionView extends SectionView {
         let sz: ISize;
 
         // title
-        if (v.setVisible(title.isVisible())) {
+        if (v.setVis(title.isVisible())) {
             sz = v.measure(doc, title, hintWidth, hintHeight, phase);
             hTitle = this._hTitle = sz.height;
             wTitle = this._wTitle = sz.width;
@@ -83,7 +83,7 @@ class TitleSectionView extends SectionView {
             v.setModel(title);
         }
         // subtitle
-        if ((v = this.subtitleView).setVisible(sub.isVisible())) {
+        if ((v = this.subtitleView).setVis(sub.isVisible())) {
             sz = v.measure(doc, sub, hintWidth, hintHeight, phase);
             hSub = this._hSub = sz.height;
             wSub = this._wSub = sz.width;
@@ -403,7 +403,7 @@ class AxisSectionView extends SectionView {
             v.prepareGuides(doc, NaN, NaN, guideContainer, frontGuideContainer);
         });
 
-        if (this.setVisible(views.filter(v => v.model.visible).length > 0)) {
+        if (this.setVis(views.filter(v => v.model.visible).length > 0)) {
             const m = views[0].model;
 
             this.isX = m._isX;
@@ -698,17 +698,17 @@ export class ChartView extends LayerElement {
 
         // body
         if (m.isSplitted()) {
-            this._plotContainer.setVisible(false);
-            this._paneContainer.setVisible(true);
+            this._plotContainer.setVis(false);
+            this._paneContainer.setVis(true);
             this.$_preparePanes(doc, m.split);
         } else {
-            this._plotContainer.setVisible(true);
-            this._paneContainer.setVisible(false);
+            this._plotContainer.setVis(true);
+            this._paneContainer.setVis(false);
             this.$_prepareBody(doc, polar);
         }
 
         // credits
-        if (this._creditView.setVisible(credit.visible)) {
+        if (this._creditView.setVis(credit.visible)) {
             sz = this._creditView.measure(doc, credit, w, h, phase);
             if (!credit.isFloating()) {
                 h -= sz.height + (+credit.offsetY || 0) + (+credit.gap || 0);
@@ -720,7 +720,7 @@ export class ChartView extends LayerElement {
         h -= sz.height;
 
         // legend
-        if (this._legendSectionView.setVisible((legend.isVisible()))) {
+        if (this._legendSectionView.setVis((legend.isVisible()))) {
             sz = this._legendSectionView.measure(doc, m, w, h, phase);
 
             switch (legend.getLocatiion()) {
@@ -736,7 +736,7 @@ export class ChartView extends LayerElement {
         }
 
         // navigator
-        this._navigatorView.setVisible(navigator.isVisible());
+        this._navigatorView.setVis(navigator.isVisible());
 
         // body & axes
         if (this._paneContainer.visible) {
@@ -1310,11 +1310,11 @@ export class ChartView extends LayerElement {
                 this._plotContainer.insertChild(this._polarView, this._bodyView);
             }
             this._currBody = this._polarView;
-            this._bodyView?.setVisible(false);
-            this._polarView.setVisible(true);
+            this._bodyView?.setVis(false);
+            this._polarView.setVis(true);
         } else {
-            this._polarView?.setVisible(false);
-            this._bodyView.setVisible(true);
+            this._polarView?.setVis(false);
+            this._bodyView.setVis(true);
             this._currBody = this._bodyView;
         }
         this._currBody.prepareRender(doc, this._model);

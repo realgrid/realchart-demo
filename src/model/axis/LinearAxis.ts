@@ -6,8 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum, pickNum3 } from "../../common/Common";
-import { IPercentSize, RtPercentSize, assert, calcPercent, ceil, fixnum, parsePercentSize } from "../../common/Types";
+import { isArray, isObject, pickNum, pickNum3, assign, ceil, floor } from "../../common/Common";
+import { IPercentSize, RtPercentSize, assert, calcPercent, fixnum, parsePercentSize } from "../../common/Types";
 import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { SeriesGroup, SeriesGroupLayout } from "../Series";
@@ -116,11 +116,11 @@ export class ContinuousAxisTick extends AxisTick {
         const scale = Math.pow(10, Math.floor(Math.log10(step)));
         const steps: number[] = [];
 
-        if (based && step / scale === 2.5 && Math.floor(count * len / step) == count * len / step) {
+        if (based && step / scale === 2.5 && floor(count * len / step) == count * len / step) {
         // if (based && step > 10 && step / scale === 2.5 && Math.floor(count * len / step) == count * len / step) {
             this._step = step;
         } else {
-            step = this._step = Math.ceil(step / scale) * scale;
+            step = this._step = ceil(step / scale) * scale;
         }
 
         if (!isNaN(base)) { // min이 base 아래, max가 base 위에 있다.
@@ -138,8 +138,8 @@ export class ContinuousAxisTick extends AxisTick {
             min = base - ceil((base - min) / step) * step;
 
         } else {
-            if (min > Math.floor(min / scale) * scale) {
-                min = Math.floor(min / scale) * scale;
+            if (min > floor(min / scale) * scale) {
+                min = floor(min / scale) * scale;
             } else if (min < Math.ceil(min / scale) * scale) {
                 min = Math.ceil(min / scale) * scale;
             }
@@ -153,10 +153,10 @@ export class ContinuousAxisTick extends AxisTick {
     }
 
     protected _normalizeMin(min: number, interval: number): number {
-        if (min > Math.floor(min / interval) * interval) {
-            min = Math.floor(min / interval) * interval;
-        } else if (min < Math.ceil(min / interval) * interval) {
-            min = Math.ceil(min / interval) * interval;
+        if (min > floor(min / interval) * interval) {
+            min = floor(min / interval) * interval;
+        } else if (min < ceil(min / interval) * interval) {
+            min = ceil(min / interval) * interval;
         }
         return fixnum(min);
     }
@@ -850,7 +850,7 @@ export abstract class ContinuousAxis extends Axis {
         if (breaks.length > 0) {
             const runs = this._runBreaks = [];
 
-            runs.push(Object.assign(new AxisBreak(this), breaks[0]));
+            runs.push(assign(new AxisBreak(this), breaks[0]));
 
             for (let i = 1; i < breaks.length; i++) {
                 const r = runs[runs.length - 1];
@@ -859,7 +859,7 @@ export abstract class ContinuousAxis extends Axis {
                 if (intersects(r, b)) {
                     merge(r, b);
                 } else {
-                    runs.push(Object.assign(new AxisBreak(this), b));
+                    runs.push(assign(new AxisBreak(this), b));
                 }
             }
         }

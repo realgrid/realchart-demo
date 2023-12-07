@@ -128,7 +128,7 @@ export class OhlcSeriesView extends RangedSeriesView<OhlcSeries> {
         this._sticks.forEach((box, i) => {
             const p = box.point;
 
-            if (box.setVisible(!p.isNull)) {
+            if (box.setVis(!p.isNull)) {
                 const wUnit = xAxis.getUnitLength(width, p.xValue);
                 const wPoint = series.getPointWidth(wUnit);
                 const x = (p.xPos = xAxis.getPosition(width, p.xValue)) - wPoint / 2;

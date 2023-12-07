@@ -160,7 +160,7 @@ export class EqualizerSeriesView extends BoxedSeriesView<EqualizerSeries> {
         this._bars.forEach(bar => {
             const p = bar.point;
 
-            if (bar.setVisible(!p.isNull)) {
+            if (bar.setVis(!p.isNull)) {
                 const v = p.yValue / max;
                 let n = -1;
                 let decimal = 0;

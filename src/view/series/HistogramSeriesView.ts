@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { assign } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
@@ -70,7 +71,7 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
         const xLen = inverted ? height : width;
         const yBase = yAxis.getPosition(yLen, series.getBaseValue(yAxis));
         const org = inverted ? 0 : height;;
-        const info: LabelLayoutInfo = labelViews && Object.assign(this._labelInfo, {
+        const info: LabelLayoutInfo = labelViews && assign(this._labelInfo, {
             inverted,
             labelPos: series.getLabelPosition(labels.position),
             labelOff: series.getLabelOff(labels.getOffset())

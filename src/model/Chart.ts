@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, mergeObj, pickProp3 } from "../common/Common";
+import { isArray, isObject, isString, mergeObj, pickProp3, assign } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign } from "../common/Types";
 import { AssetCollection } from "./Asset";
@@ -848,7 +848,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
             for (const p in src) {
                 const v = src[p];
                 if (isObject(v)) {
-                    templs[p] = Object.assign({}, v);
+                    templs[p] = assign({}, v);
                 }
             }
             this.assignTemplates = this.$_assignTemplates.bind(this);

@@ -83,7 +83,7 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
                     y = p.yLow;
                 }
 
-                if (mv && mv.setVisible(!p.isNull && x >= 0 && x <= width && y >= 0 && y <= height)) {
+                if (mv && mv.setVis(!p.isNull && x >= 0 && x <= width && y >= 0 && y <= height)) {
                     this._layoutMarker(mv, markerStyle, x, y);
                 }
             }

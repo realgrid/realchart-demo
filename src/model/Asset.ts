@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { SVGNS, isArray, isObject, isString } from "../common/Common";
+import { SVGNS, isArray, isObject, isString, assign } from "../common/Common";
 import { RcElement } from "../common/RcControl";
 import { SVGStyles, isNull } from "../common/Types";
 
@@ -256,7 +256,7 @@ export class Pattern extends AssetItem<IPattern> {
         if (+src.pattern >= 0) {
             const stock = Pattern.STOCK[(+src.pattern) % Pattern.STOCK.length];
             path.setAttribute('d', stock.path);
-            if (stock.style) Object.assign(path.style, stock.style);
+            if (stock.style) assign(path.style, stock.style);
             noFill = !stock.fill;
             elt.setAttribute('width', String(stock.width || 20));
             elt.setAttribute('height', String(stock.height || 20));
@@ -267,7 +267,7 @@ export class Pattern extends AssetItem<IPattern> {
         }
 
         if (isObject(src.style)) {
-            Object.assign(path.style, src.style);
+            assign(path.style, src.style);
         }
         if (noFill) {
             path.style.fill = 'none';

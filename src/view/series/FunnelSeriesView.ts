@@ -81,7 +81,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
 
     _animationStarted(ani: Animation): void {
         super._animationStarted(ani);
-        this._lineContainer.setVisible(this._labelContainer.visible);
+        this._lineContainer.setVis(this._labelContainer.visible);
     }
 
     //-------------------------------------------------------------------------
@@ -161,12 +161,12 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
         let labelView: PointLabelView;
 
         // animation 시작 때 감춰진 걸 표시한다.
-        this._lineContainer.setVisible(labelViews && !labelInside);
+        this._lineContainer.setVis(labelViews && !labelInside);
 
         this._segments.forEach((seg) => {
             const p = seg.point;
 
-            if (seg.setVisible(!p.isNull)) {
+            if (seg.setVis(!p.isNull)) {
                 const start = p.yPos * sz.height;
                 const end = (p.yPos + p.height) * sz.height;
                 const y = reversed ? (yEnd - start) : y1 + start;
@@ -212,7 +212,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
 
                     // labelView.anchor = TextAnchor.START; // 기본이 MIDDLE이다.
 
-                    if (line.setVisible(!labelInside)) {
+                    if (line.setVis(!labelInside)) {
                         const rSeg = seg.getBBounds();
                         let lx = p.xPos;
                         let ly = p.yPos;
@@ -231,7 +231,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
                     }
                     labelView.setContrast(labelInside && seg.dom);
                 } else {
-                    lineViews.get(p)?.setVisible(false);
+                    lineViews.get(p)?.setVis(false);
                 }
             }
         });

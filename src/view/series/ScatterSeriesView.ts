@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { cos, sin } from "../../common/Common";
 import { IRect } from "../../common/Rectangle";
 import { PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
@@ -99,7 +100,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
             const p = mv.point;
             const lv = labelViews && (labelView = labelViews.get(p, 0));
 
-            if (mv.setVisible(!p.isNull)) {
+            if (mv.setVis(!p.isNull)) {
                 const s = series.getShape(p);
                 const sz = series.radius * vr;
                 const xJitter = Utils.jitter(p.xValue, jitterX);
@@ -112,8 +113,8 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                     const a = polar.start + xAxis.getPosition(PI_2, xJitter);
                     const py = yAxis.getPosition(polar.rd, yJitter) * vr;
     
-                    x = p.xPos = polar.cx + py * Math.cos(a);
-                    y = p.yPos = polar.cy + py * Math.sin(a);
+                    x = p.xPos = polar.cx + py * cos(a);
+                    y = p.yPos = polar.cy + py * sin(a);
                 } else {
                     x = p.xPos = xAxis.getPosition(xLen, xJitter);
                     y = p.yPos = yOrg - yAxis.getPosition(yLen, yJitter);
@@ -123,7 +124,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                     }
                 }
 
-                if (mv.setVisible(polared || !needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
+                if (mv.setVis(polared || !needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
                     switch (s) {
                         case 'square':
                         case 'diamond':
@@ -145,10 +146,10 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                         this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
                     }
                 } else if (lv) {
-                    lv.setVisible(false);
+                    lv.setVis(false);
                 }
             } else if (lv) {
-                lv.setVisible(false);
+                lv.setVis(false);
             }
         });
     }

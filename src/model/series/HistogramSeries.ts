@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum, pickProp3 } from "../../common/Common";
+import { isArray, isObject, pickNum, pickProp3, assign } from "../../common/Common";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { ISeries, Series } from "../Series";
@@ -34,7 +34,7 @@ export class HistogramSeriesPoint extends DataPoint {
         this.max = v.max;
     }
     protected _assignTo(proxy: any): any {
-        return Object.assign(super._assignTo(proxy), {
+        return assign(super._assignTo(proxy), {
             min: this.min,
             max: this.max
         });

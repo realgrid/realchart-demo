@@ -64,7 +64,7 @@ export class LegendItemView extends ChartElement<LegendItem> {
 
         this._label.text = model.text();
 
-        const rMarker = this._marker.setVisible(model.legend.markerVisible) ? this._marker.getBBounds() : Rectangle.Empty;
+        const rMarker = this._marker.setVis(model.legend.markerVisible) ? this._marker.getBBounds() : Rectangle.Empty;
         const sz = toSize(this._label.getBBounds());
         this._gap = pickNum(model.legend.markerGap, 0);
 

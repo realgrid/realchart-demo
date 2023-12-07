@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp } from "../../common/Common";
+import { pickNum, pickProp, assign } from "../../common/Common";
 import { RcElement } from "../../common/RcControl";
 import { SVGStyleOrClass, StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
@@ -288,7 +288,7 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
     }
 
     protected _assignTo(proxy: any): any {
-        return Object.assign(super._assignTo(proxy), {
+        return assign(super._assignTo(proxy), {
             low: this.low,
             high: this.high,
             lowValue: this.lowValue,

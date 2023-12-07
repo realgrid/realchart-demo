@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { cos, sin } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { RcAnimation } from "../../common/RcAnimation";
@@ -156,10 +157,10 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
 
         this._tickViews.forEach((v, i) => {
             v.setLine(
-                cx + Math.cos(a) * rd1,
-                cy + Math.sin(a) * rd1,
-                cx + Math.cos(a) * rd2,
-                cy + Math.sin(a) * rd2
+                cx + cos(a) * rd1,
+                cy + sin(a) * rd1,
+                cx + cos(a) * rd2,
+                cy + sin(a) * rd2
             )
             a += step;
         });
@@ -178,10 +179,10 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
                     i++;
                 }
                 v.setLine(
-                    cx + Math.cos(a) * rd1,
-                    cy + Math.sin(a) * rd1,
-                    cx + Math.cos(a) * rd2,
-                    cy + Math.sin(a) * rd2
+                    cx + cos(a) * rd1,
+                    cy + sin(a) * rd1,
+                    cx + cos(a) * rd2,
+                    cy + sin(a) * rd2
                 )
                 a += step;
                 i++;
@@ -201,7 +202,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
 
             this._tickLabelViews.forEach((v, i, cnt) => {
                 v.text = String(i === 0 ? 12 : i * step);
-                v.translate(cx + Math.cos(a) * rd2, cy + Math.sin(a) * rd2);
+                v.translate(cx + cos(a) * rd2, cy + sin(a) * rd2);
                 a += astep;
             })
         }
@@ -210,7 +211,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
         this._pinView.setCircle(cx, cy, model.pin.raidus);
 
         // label
-        if (labelView.setVisible(model.label.visible)) {
+        if (labelView.setVis(model.label.visible)) {
             labelView.internalSetStyleOrClass(model.label.style);
             model.label.buildSvg(labelView, null, NaN, NaN, null, null);
 
@@ -248,7 +249,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
         // hour hand
         hand = model.hourHand;
         handView = this._hourView;
-        if (handView.setVisible(hand.visible)) {
+        if (handView.setVis(hand.visible)) {
             a = PI_2 * (h / 12 + m / 60 / 12 + s / 60 / 60 / 12);
             len = hand.getLength(rd - this._rimThick);
             pb.rect(-hand.thickness / 2, -len, hand.thickness, len);
@@ -259,7 +260,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
         // minute hand
         hand = model.minuteHand;
         handView = this._minuteView;
-        if (handView.setVisible(hand.visible)) {
+        if (handView.setVis(hand.visible)) {
             a = PI_2 * (m / 60 + s / 60 / 60);
             len = hand.getLength(rd - this._rimThick);
             pb.rect(-hand.thickness / 2, -len, hand.thickness, len);
@@ -270,7 +271,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
         // second hand
         hand = model.secondHand;
         handView = this._secondView;
-        if (handView.setVisible(hand.visible)) {
+        if (handView.setVis(hand.visible)) {
             if (this._secRate < 1) {
                 a = PI_2 * (this._aniSec + this._secRate) / 60;
             } else {

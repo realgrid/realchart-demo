@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray } from "./Common";
+import { isArray, assign } from "./Common";
 
 const __epoch = new Date().getTime();
 
@@ -122,10 +122,6 @@ export class Utils {
         return v && typeof v === 'object' && !isArray(v);
     }
 
-    static assign(target: any, source: any): void {
-        this.isObject(source) && Object.assign(target, source);
-    }
-
     static isValidObject(v: any): boolean {
         if (this.isObject(v)) {
             for (let p in v) {
@@ -136,7 +132,7 @@ export class Utils {
 
     static copyObject(v: any): any {
         if (v && typeof v === 'object' && !isArray(v)) {
-            return Object.assign({}, v);
+            return assign({}, v);
         }
     }
 

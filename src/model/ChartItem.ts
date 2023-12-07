@@ -6,14 +6,13 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isBoolean, isObject, isString, pickNum } from "../common/Common";
+import { isArray, isBoolean, isObject, isString, pickNum, assign } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
 import { SvgRichText, RichTextParamCallback } from "../common/RichText";
 import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
-import { IAxisTick } from "./Axis";
 import { IChart } from "./Chart";
 
 export let n_char_item = 0;
@@ -71,8 +70,8 @@ export class ChartItem extends RcObject {
     load(source: any): ChartItem {
         if (source !== void 0 && !this._doLoadSimple(source)) {
             if (source !== null && source.template != null) {
-                const assign = this.chart && this.chart.assignTemplates;
-                assign && (source = assign(source));
+                const cb = this.chart && this.chart.assignTemplates;
+                cb && (source = cb(source));
             }
             this._doLoad(source);
         }
@@ -195,7 +194,7 @@ export class ChartItem extends RcObject {
                 } else if (v instanceof Date) {
                     this[p] = new Date(v);
                 } else if (isObject(v)) {
-                    this[p] = Object.assign({}, v);
+                    this[p] = assign({}, v);
                 } else {
                     this[p] = v;
                 }

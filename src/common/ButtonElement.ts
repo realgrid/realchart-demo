@@ -70,8 +70,8 @@ export class ButtonElement extends RcElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    setVisible(value: boolean): boolean {
-        if (super.setVisible(value)) {
+    setVis(value: boolean): boolean {
+        if (super.setVis(value)) {
             value && this._textView.stain(); // visible false -> true면 다시 계산하도록 한다.
             return true;
         }

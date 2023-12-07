@@ -6,10 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { cos, sin } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
-import { ClipCircleElement, ClipRectElement, LayerElement, RcElement } from "../common/RcControl";
+import { ClipCircleElement, LayerElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
-import { Align, DEG_RAD, PI_2, cos, sin } from "../common/Types";
+import { Align, PI_2 } from "../common/Types";
 import { ArcElement, CircleElement, CircumElement } from "../common/impl/CircleElement";
 import { LineElement, PolylineElement } from "../common/impl/PathElement";
 import { Axis, AxisLabel, AxisTick, IAxisTick } from "../model/Axis";
@@ -142,13 +143,13 @@ abstract class PolarAxisView extends RcElement {
     private $_prepareLabels(doc: Document, m: Axis): void {
         const labels = m.label;
 
-        if (this._labelContainer.setVisible(labels.visible)) {
+        if (this._labelContainer.setVis(labels.visible)) {
             const ticks = m._ticks;
 
             this._labelContainer.setStyleOrClass(labels.style);
 
             this._labelViews.prepare(ticks.length, (v, i, count) => {
-                v.setVisible(true);
+                v.setVis(true);
                 this._prepareLabel(v, ticks[i], labels, count);
             });
 
@@ -207,12 +208,12 @@ class PolarXAxisView extends PolarAxisView {
         let vLine = this._lineView;
 
         // grid lines
-        if (this._gridContainer.setVisible(model.grid.isVisible(true))) {
+        if (this._gridContainer.setVis(model.grid.isVisible(true))) {
             this._gridLines.prepare(ticks.length);
         }
 
         // line
-        if (vLine.setVisible(model.line.visible)) {
+        if (vLine.setVis(model.line.visible)) {
             const p = vLine.parent;
             if (circular) {
                 if (model.isArced()) {
@@ -237,12 +238,12 @@ class PolarXAxisView extends PolarAxisView {
         }
 
         // sector lines
-        if (this._startView.setVisible(circular && model.isArced() && model.sectorLine.visible)) {
+        if (this._startView.setVis(circular && model.isArced() && model.sectorLine.visible)) {
             this._startView.setStyleOrClass(model.sectorLine.style);
-            this._endView.setVisible(true);
+            this._endView.setVis(true);
             this._endView.setStyleOrClass(model.sectorLine.style);
         } else {
-            this._endView.setVisible(false);
+            this._endView.setVis(false);
         }
     }
 
@@ -257,8 +258,8 @@ class PolarXAxisView extends PolarAxisView {
             this._gridLines.forEach((view, i) => {
                 const tick = ticks[i];
                 const p = tick.pos;
-                const x = cx + Math.cos(start + p) * rd;
-                const y = cy + Math.sin(start + p) * rd;
+                const x = cx + cos(start + p) * rd;
+                const y = cy + sin(start + p) * rd;
     
                 view.setLine(cx, cy, x, y);
             });
@@ -273,19 +274,19 @@ class PolarXAxisView extends PolarAxisView {
             const align = Align.CENTER;
 
             this._labelViews.forEach((view, i) => {
-                if (view.setVisible(i % step === 0)) {
+                if (view.setVis(i % step === 0)) {
                     const tick = ticks[i];
     
                     const r = view.getBBounds();
                     const p = start + tick.pos;
-                    const x = cx + Math.cos(p) * (rd2 + r.width / 2) - r.width / 2;
-                    const y = cy + Math.sin(p) * (rd2 + r.height / 2) - r.height / 2;
+                    const x = cx + cos(p) * (rd2 + r.width / 2) - r.width / 2;
+                    const y = cy + sin(p) * (rd2 + r.height / 2) - r.height / 2;
         
                     view.layout(align).translate(x, y);
 
                     // TODO: label을 회전 시킬 때...?
-                    // const x = cx + Math.cos(p) * (rd2 + r.width / 2);// - (Math.cos(p) * (r.width / 2));
-                    // const y = cy + Math.sin(p) * (rd2 + r.width / 2);// - (Math.sin(p) * (r.height / 2));
+                    // const x = cx + cos(p) * (rd2 + r.width / 2);// - (cos(p) * (r.width / 2));
+                    // const y = cy + sin(p) * (rd2 + r.width / 2);// - (sin(p) * (r.height / 2));
                     // view.layout(align).translate(x - r.width / 2, y - r.height / 2);
                     // view.setRotation(r.width / 2, r.height / 2, p * RAD_DEG);
                 }
@@ -293,7 +294,7 @@ class PolarXAxisView extends PolarAxisView {
             // 마지막이 겹치는 지 확인한다.
             if (count > 2) {
                 if (Math.abs(ticks[count - 1].pos - ticks[count - 2].pos) < PI_2 / 24) {
-                    this._labelViews.get(count - 1).setVisible(false);
+                    this._labelViews.get(count - 1).setVis(false);
                 }
             }
         }
@@ -357,7 +358,7 @@ class PolarYAxisView extends PolarAxisView {
         const container = this._gridContainer;
 
         // grid lines
-        if (container.setVisible(model.grid.visible !== false)) {
+        if (container.setVis(model.grid.visible !== false)) {
             if (circular !== (container as any).circular || arced !== (container as any).arced) {
                 this._gridLines.destroy();
                 if (circular) {
@@ -401,7 +402,7 @@ class PolarYAxisView extends PolarAxisView {
 
                     other._ticks.forEach(tick => {
                         const p = tick.pos;
-                        pts.push(cx + Math.cos(start + p) * pos, cy + Math.sin(start + p) * pos);
+                        pts.push(cx + cos(start + p) * pos, cy + sin(start + p) * pos);
                     });
                     view.setPoints(...pts);
                 }
@@ -413,8 +414,8 @@ class PolarYAxisView extends PolarAxisView {
             if (other.isArced()) {
                 const start = other.getStartAngle();
                 this._labelViews.forEach((view, i) => {
-                    const x = cx + Math.cos(start) * (ticks[i].pos) - (view.getBBounds().width / 2);
-                    const y = cy + Math.sin(start) * (ticks[i].pos) - (view.getBBounds().height / 2);
+                    const x = cx + cos(start) * (ticks[i].pos) - (view.getBBounds().width / 2);
+                    const y = cy + sin(start) * (ticks[i].pos) - (view.getBBounds().height / 2);
                     view.setContrast(null).translate(x, y);
                 });
             } else {

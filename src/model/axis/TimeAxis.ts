@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isObject, isString, pickNum } from "../../common/Common";
+import { isArray, isNumber, isObject, isString, pickNum, assign } from "../../common/Common";
 import { DatetimeFormatter } from "../../common/DatetimeFormatter";
 import { AxisLabel, AxisTick } from "../Axis";
 import { IChart } from "../Chart";
@@ -339,7 +339,7 @@ export class TimeAxisLabel extends AxisLabel {
         const use = this.useBeginningFormat;
 
         this._formatter = f1 ? DatetimeFormatter.getFormatter(f1) : void 0;
-        this._formats = FORMATS.map(f => Object.assign(f));
+        this._formats = FORMATS.map(f => assign(f));
 
         if (isArray(fmts)) {
             for (let i = 0; i < fmts.length; i++) {

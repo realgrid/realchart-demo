@@ -72,7 +72,7 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
         const vertical = this._vertical;
         const scale = group ? group.scale : m.scale;
 
-        if (this._barContainer.setVisible(!scale.isEmpty())) {
+        if (this._barContainer.setVis(!scale.isEmpty())) {
             const ranges = m.getRanges(scale._min, scale._max) || group?.getRanges(scale._min, scale._max);
 
             if (ranges) {
@@ -110,7 +110,7 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
         }
 
         // value bar
-        if (this._valueView.setVisible(!scale.isEmpty() && !isNaN(value))) {
+        if (this._valueView.setVis(!scale.isEmpty() && !isNaN(value))) {
             if (vertical) {
                 const h = r.height * scale.getRate(value);
                 const y = reversed ? r.y : r.y + r.height - h;
@@ -125,7 +125,7 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
         }
 
         // target bar
-        if (this._targetView.setVisible(!scale.isEmpty() && !isNaN(m.targetValue))) {
+        if (this._targetView.setVis(!scale.isEmpty() && !isNaN(m.targetValue))) {
             if (vertical && r.width > 10) {
                 let y = r.height * scale.getRate(m.targetValue);
 

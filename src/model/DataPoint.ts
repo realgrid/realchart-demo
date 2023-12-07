@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4 } from "../common/Common";
+import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4, assign } from "../common/Common";
 import { IValueRange, _undefined } from "../common/Types";
 import { IAxis } from "./Axis";
 import { ISeries } from "./Series";
@@ -151,7 +151,7 @@ export class DataPoint {
     // internal members
     //-------------------------------------------------------------------------
     protected _assignTo(proxy: any): any {
-        return Object.assign(proxy, {
+        return assign(proxy, {
             index: this.index,
             vindex: this.vindex,
             x: this.x,

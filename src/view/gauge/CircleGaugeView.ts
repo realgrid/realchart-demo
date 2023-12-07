@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
+import { cos, pickNum, sin } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { IPoint } from "../../common/Point";
@@ -51,16 +51,16 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
         const steps = model._steps;
         const nStep = steps.length - ((model.gauge as CircleGauge).sweepAngle === 360 ? 1 : 0);
 
-        if (this._line.setVisible(model.line.visible)) {
+        if (this._line.setVis(model.line.visible)) {
             this._line.internalSetStyleOrClass(model.line.style);
         }
 
-        if (this._tickContainer.setVisible(model.tick.visible)) {
+        if (this._tickContainer.setVis(model.tick.visible)) {
             this._tickContainer.internalSetStyleOrClass(model.tick.style);
             this._ticks.prepare(nStep);
         }
 
-        if (this._labelContainer.setVisible(model.tickLabel.visible)) {
+        if (this._labelContainer.setVis(model.tickLabel.visible)) {
             this._labelContainer.internalSetStyleOrClass(model.tickLabel.style);
             this._labels.prepare(nStep, v => {
                 v.layout = TextLayout.MIDDLE;
@@ -96,10 +96,10 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
             this._ticks.forEach((v, i, count) => {
                 const a = m.getRate(steps[i]) * sweep + start;
 
-                x1 = cx + Math.cos(a) * rd;
-                y1 = cy + Math.sin(a) * rd;
-                x2 = cx + Math.cos(a) * rd2;
-                y2 = cy + Math.sin(a) * rd2;
+                x1 = cx + cos(a) * rd;
+                y1 = cy + sin(a) * rd;
+                x2 = cx + cos(a) * rd2;
+                y2 = cy + sin(a) * rd2;
                 v.setLine(x1, y1, x2, y2);
             });
         }
@@ -112,8 +112,8 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
             this._labels.forEach((v, i, count) => {
                 const a = m.getRate(steps[i]) * sweep + start;
 
-                x2 = cx + Math.cos(a) * rd;
-                y2 = cy + Math.sin(a) * rd;
+                x2 = cx + cos(a) * rd;
+                y2 = cy + sin(a) * rd;
                 v.text = String(fixnum(g.minValue + m.getRate(steps[i]) * sum));
                 v.translate(x2, y2);
             });
@@ -306,16 +306,16 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     //-------------------------------------------------------------------------
     protected _prepareGauge(doc: Document, model: CircleGauge): void {
         // rim
-        this._rimView.setVisible(model.rim.visible);
+        this._rimView.setVis(model.rim.visible);
 
         // scale
-        this._scaleView.setVisible(model.scale.visible);
+        this._scaleView.setVis(model.scale.visible);
 
         // band
-        this._bandView.setVisible(model.band.visible);
+        this._bandView.setVis(model.band.visible);
 
         // foreground rim
-        this._valueView.setVisible(model.valueRim.visible);
+        this._valueView.setVis(model.valueRim.visible);
 
         // pin & hand
         if (model.hand.visible) {
@@ -336,7 +336,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         }
 
         // label
-        if (this._textView.setVisible(model.labelVisible())) {
+        if (this._textView.setVis(model.labelVisible())) {
             this._textView.setStyleOrClass(model.label.style);
         }
     }
@@ -431,7 +431,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         m.scale.buildSteps(exts.scale * props._sweepRad, NaN);
 
         // rim
-        if (this._rimView.setVisible(m.rim.visible)) {
+        if (this._rimView.setVis(m.rim.visible)) {
             this._rimView.setSector({
                 cx: center.x,
                 cy: center.y,
