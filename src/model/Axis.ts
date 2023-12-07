@@ -10,7 +10,7 @@ import { isArray, isNumber, isObject, isString, pickNum, pickNum3, pickProp } fr
 import { Align, DEG_RAD, ORG_ANGLE, SVGStyleOrClass, VerticalAlign, _undefined, fixnum, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
-import { ChartItem, FormattableText } from "./ChartItem";
+import { ChartItem, ChartTextOverflow, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
 import { IClusterable, IPlottingItem } from "./Series";
 
@@ -597,20 +597,28 @@ export abstract class AxisLabel extends FormattableText {
      * label 표시 간격.\
      * 1이면 모든 tick 표시. 2이면 하나씩 건너 띄어서 표시.
      * 2 이상일 때 {@link startStep}으로 지정된 step부터 배치된다.
+     * 
+     * @config
      */
     step = 0;
     /**
      * step이 2 이상이 될 때, 표시가 시작되는 label 위치.
+     * 
+     * @config
      */
     startStep = 0;
     /**
      * 수평 축일 때 tick label 배치 행 수.\
      * 1은 한 줄, 2면 두 줄 등으로 여러 줄로 나눠서 표시한다.
+     * 
+     * @config
      */
     rows = 0;
     /**
      * 수평 축일 때, tick label 표시 회전 각도.
      * -90 ~ 90 사이의 각도로 지정할 수 있다.
+     * 
+     * @config
      */
     rotation: number;
     /**
@@ -618,15 +626,15 @@ export abstract class AxisLabel extends FormattableText {
      * {@link step}이나 {@link rows}가 1 이상으로 설정되지 않고,
      * {@link rotation}이 0이 아닌 명시적 값으로도 설정되지 않은 경우,
      * label들을 재배치하는 방식을 지정한다.
-     * <br>
+     * 
+     * @config
      */
     autoArrange = AxisLabelArrange.ROTATE;
     /**
-     * label 배치 후 텍스트가 차지하는 공간을 넘치는 경우 줄 나누기를 한다.
-     * <br>
-     * false이면 줄 나누기 대신 ellipsis('...')로 표시한다.
+     * // TODO:
+     * label 배치 후 텍스트가 차지하는 공간을 넘치는 경우 처리 방식.
      */
-    wrap = false;
+    overflow = ChartTextOverflow.CLIP;
     /**
      * 첫번째 tick 라벨에 표시될 텍스트.
      * 
@@ -657,11 +665,15 @@ export abstract class AxisLabel extends FormattableText {
      * 값에 따라 자동 생성되는 텍스트를 사용한다.
      * 빈 문자열 등 정상적인 문자열을 리턴하면 그 문자열대로 표시된다. 
      * {@link prefix}나 포맷 속성 등은 적용되지 않는다.
+     * 
+     * @config
      */    
     textCallback: (args: IAxisLabelArgs) => string;
     /**
      * 라벨 별로 추가 적용되는 스타일을 리턴한다.\
      * 기본 설정을 따르게 하고 싶으면 undefined나 null을 리턴한다.
+     * 
+     * @config
      */
     styleCallback: (args: any) => SVGStyleOrClass;
 

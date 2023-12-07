@@ -240,6 +240,12 @@ export enum ChartTextEffect {
     BACKGROUND = 'background'
 }
 
+export enum ChartTextOverflow {
+    CLIP = 'clip',
+    ELLIPSIS = 'ellipsis',
+    WRAP = 'wrap'
+}
+
 export abstract class ChartText extends ChartItem {
     
     //-------------------------------------------------------------------------

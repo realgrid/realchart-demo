@@ -112,11 +112,18 @@ const config = {
                 // strokeWidth: '2px',
                 // fill: '#999'
             }
+        },
+        sectorLine: {
+            style: {
+                stroke: '#999',
+            }
         }
     },
     yAxis: {
         label: {
             visible: true,
+            effect: 'outline',
+            outlineThickness: 5,
             style: {
                 fill: '#555',
             },

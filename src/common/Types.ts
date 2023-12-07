@@ -31,6 +31,8 @@ export const ceil = Math.ceil;
 export function fixnum(value: number): number {
     return parseFloat(value.toPrecision(12));
 }
+export const cos = Math.cos;
+export const sin = Math.sin;
 export function toStr(value: any): string {
     return value == null ? null : String(value);
 }
@@ -56,6 +58,12 @@ export function newObject(prop: string, value: any): {} {
 }
 export function utc(year: number, monthIndex = 0, day = 1, hour = 0, minute = 0, second = 0, millisecond = 0): Date {
     return new Date(Date.UTC(year, monthIndex, day, hour, minute, second, millisecond));
+}
+export function polarX(cx: number, rd: number, angle: number): number {
+    return cx + Math.cos(angle) * rd;
+}
+export function polarY(cy: number, rd: number, angle: number): number {
+    return cy + Math.sin(angle) * rd;
 }
 
 export type PathValue = string | number;

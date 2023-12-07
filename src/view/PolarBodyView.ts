@@ -9,7 +9,7 @@
 import { ElementPool } from "../common/ElementPool";
 import { ClipCircleElement, ClipRectElement, LayerElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
-import { Align, DEG_RAD, PI_2 } from "../common/Types";
+import { Align, DEG_RAD, PI_2, cos, sin } from "../common/Types";
 import { ArcElement, CircleElement, CircumElement } from "../common/impl/CircleElement";
 import { LineElement, PolylineElement } from "../common/impl/PathElement";
 import { Axis, AxisLabel, AxisTick, IAxisTick } from "../model/Axis";
@@ -194,9 +194,10 @@ class PolarXAxisView extends PolarAxisView {
 
         this._gridLines = new ElementPool(this._gridContainer, LineElement, PolarXAxisView.GRID_CLASS);
 
-        lineContainer.add(this._lineView = new CircumElement(doc, PolarXAxisView.LINE_CLASS));
-        lineContainer.add(this._startView = new LineElement(doc, PolarXAxisView.SECTOR_LINE_CLASS));
-        lineContainer.add(this._endView = new LineElement(doc, PolarXAxisView.SECTOR_LINE_CLASS));
+        // [주의] yAxis line이 start/end 선보다 나중에 표시되도록 한다.
+        lineContainer.insertFirst(this._startView = new LineElement(doc, PolarXAxisView.SECTOR_LINE_CLASS));
+        lineContainer.insertFirst(this._endView = new LineElement(doc, PolarXAxisView.SECTOR_LINE_CLASS));
+        lineContainer.insertFirst(this._lineView = new CircumElement(doc, PolarXAxisView.LINE_CLASS));
     }
 
     //-------------------------------------------------------------------------
@@ -212,22 +213,23 @@ class PolarXAxisView extends PolarAxisView {
 
         // line
         if (vLine.setVisible(model.line.visible)) {
+            const p = vLine.parent;
             if (circular) {
                 if (model.isArced()) {
                     if (!(vLine instanceof ArcElement)) {
                         vLine.remove();
-                        this.add(vLine = this._lineView = new ArcElement(this.doc, PolarXAxisView.LINE_CLASS));
+                        p.add(vLine = this._lineView = new ArcElement(this.doc, PolarXAxisView.LINE_CLASS));
                     }
                 } else {
                     if (!(vLine instanceof CircumElement)) {
                         vLine.remove();
-                        this.add(vLine = this._lineView = new CircumElement(this.doc, PolarXAxisView.LINE_CLASS));
+                        p.add(vLine = this._lineView = new CircumElement(this.doc, PolarXAxisView.LINE_CLASS));
                     }
                 }
             } else {
                 if (!(vLine instanceof PolylineElement)) {
                     vLine.remove();
-                    this.add(vLine = this._lineView = new PolylineElement(this.doc, PolarXAxisView.LINE_CLASS));
+                    p.add(vLine = this._lineView = new PolylineElement(this.doc, PolarXAxisView.LINE_CLASS));
                 }
             }
             vLine.setStyleOrClass(model.line.style);
@@ -307,10 +309,16 @@ class PolarXAxisView extends PolarAxisView {
 
                 ticks.forEach(tick => {
                     const p = tick.pos;
-                    pts.push(cx + Math.cos(start + p) * rd, cy + Math.sin(start + p) * rd);
+                    pts.push(cx + cos(start + p) * rd, cy + sin(start + p) * rd);
                 });
                 (this._lineView as PolylineElement).setPoints(...pts);
             }
+        }
+
+        // sector lines
+        if (this._startView.visible) {
+            this._startView.setLine(cx, cy, cx + cos(start) * rd, cy + sin(start) * rd);
+            this._endView.setLine(cx, cy, cx + cos(start + total) * rd, cy + sin(start + total) * rd);
         }
     }
 }
@@ -407,11 +415,11 @@ class PolarYAxisView extends PolarAxisView {
                 this._labelViews.forEach((view, i) => {
                     const x = cx + Math.cos(start) * (ticks[i].pos) - (view.getBBounds().width / 2);
                     const y = cy + Math.sin(start) * (ticks[i].pos) - (view.getBBounds().height / 2);
-                    view.translate(x, y);
+                    view.setContrast(null).translate(x, y);
                 });
             } else {
                 this._labelViews.forEach((view, i) => {
-                    view.translate(cx + 2, cy - ticks[i].pos - view.getBBounds().height / 2);
+                    view.setContrast(null).translate(cx + 2, cy - ticks[i].pos - view.getBBounds().height / 2);
                 });
             }
         }

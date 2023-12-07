@@ -164,6 +164,7 @@ export class AxisLabelView extends LabelElement {
             } else if (this._richText._format !== label) {
                 this._richText.setFormat(label);
             }
+            this.setModel(this.doc, model, null);
             this._richText.build(this._text, maxWidth, maxHeight, model, model._getParam);
             this._outline && this._richText.build(this._outline, maxWidth, maxHeight, model, model._getParam);
         } else if (this._richText) {
@@ -798,6 +799,7 @@ export class AxisView extends ChartElement<Axis> {
             } else {
                 model.prepareRich(text);
                 model._paramTick = tick;
+                view.setModel(this.doc, model, null);
                 model.buildSvg(view._text, view._outline, NaN, NaN, model, model._getParam);
             }
         } else {
@@ -1066,7 +1068,7 @@ export class AxisView extends ChartElement<Axis> {
                     x -= r.width / 2;
                     v.setRotation(r.width / 2, 0, opp ? -rot : rot);
                 }   
-                v.layout(align).translate(x, y);
+                v.setContrast(null).layout(align).translate(x, y);
             }
         });
     }
@@ -1080,7 +1082,7 @@ export class AxisView extends ChartElement<Axis> {
                 const r = v.getBBounds();
                 const x2 = opp ? x : between ? (w - r.width) / 2 : x - r.width;
     
-                v.layout(align).translate(x2, h - ticks[i].pos - r.height / 2);
+                v.setContrast(null).layout(align).translate(x2, h - ticks[i].pos - r.height / 2);
             }
         });
     }

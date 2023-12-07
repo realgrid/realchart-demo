@@ -103,11 +103,18 @@ const config = {
             style: {
                 stroke: '#999'
             }
+        },
+        sectorLine: {
+            style: {
+                stroke: '#999',
+            }
         }
     },
     yAxis: {
         label: {
             visible: true,
+            effect: 'outline',
+            outlineThickness: 5,
             style: {
                 fill: '#999'
             }

@@ -60,7 +60,7 @@ export class LabelElement extends GroupElement {
         this._text.setStyleOrClass(model.style);
 
         if (e === ChartTextEffect.BACKGROUND) {
-            this._outline?.remove();
+            this._outline && this._outline.remove();
             if (!this._back) {
                 this._back = new RectElement(doc, 'rct-label-background');
             }
@@ -68,7 +68,7 @@ export class LabelElement extends GroupElement {
             this._back.setStyleOrClass(model.backgroundStyle);
 
         } else if (e === ChartTextEffect.OUTLINE) {
-            this._back?.remove();
+            this._back && this._back.remove();
             if (!this._outline) {
                 this._outline = new TextElement(doc);
             }
@@ -78,8 +78,8 @@ export class LabelElement extends GroupElement {
             this._outline.setStyleOrClass(model.style);
 
         } else {
-            this._back?.remove();
-            this._outline?.remove();
+            this._back && this._back.remove();
+            this._outline && this._outline.remove();
         }
         return this;
     }
