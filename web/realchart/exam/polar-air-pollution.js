@@ -15,6 +15,7 @@ const config = {
         }
     },
     options: {
+        animatable: false,
         style: {
             paddingLeft: '100px'
         }
@@ -37,8 +38,8 @@ const config = {
     xAxis: {
         type: 'linear',
         // startAngle: -90,
-        minValue: 0,
-        maxValue: 360,
+        strictMin: 0,
+        strictMax: 360,
         label: {
             visible: true,
             suffix: '°',
@@ -48,6 +49,7 @@ const config = {
             // textCallback: ({ count, index, value }) => {
             //     return (value > -90 && value < 90) ? value.toString() : '';
             // },
+            lastText: ''
         },
         tick: {
             stepInterval: 90,

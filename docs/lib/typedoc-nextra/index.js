@@ -196,40 +196,44 @@ function hyperlink(text, link) {
 }
 __name(hyperlink, "hyperlink");
 function doclink(text, vars = {}) {
-  const [keyword, ...display] = text.split(" ");
+  const [keyword, ...display] = text.trim().split(" ");
   const [sep, ...keys] = keyword.split(".");
-  const t = display.length ? display.join(" ") : keys.length ? keys.slice(-1)[0] : keyword;
-  if (!keys.length) {
-    const subpaths = ["config", "docs", "demo", "guide"];
-    return subpaths.indexOf(keyword) >= 0 ? hyperlink(t, `/${keyword}`) : t;
-  }
+  const label = display.join(" ");
+  const lastKey = keys.length ? keys.slice(-1)[0] : keyword;
+  const subpaths = ["config", "docs", "demo", "guide"];
   let page = "";
-  switch (sep) {
-    case "g":
-    case "global":
-      page = `../globals/${[keys]}`;
-      break;
-    case "config":
-      keys.forEach((k, i) => {
-        keys[i] = k[0] === "$" ? vars[k.substring(1)] || "$" : k;
-      });
-      if (keys.some((k) => k === "$")) {
-        console.warn("[WARN] not found var", text);
-        return t;
-      }
-      page = "/config/config/" + keys.join("/");
-      break;
-    case "demo":
-    case "guide":
-      page = `/${sep}/` + keys.join("/");
-      break;
-    case "rc":
-    case "realchart":
-    default:
-      const [cls, prop] = keys;
-      page = `../classes/${cls}${prop ? "#" + prop : ""}`;
+  if (!keys.length && subpaths.includes(keyword)) {
+    page = `/${keyword}`;
+  } else if (keyword == sep) {
+    page = `#${keyword}`;
+  } else {
+    switch (sep) {
+      case "g":
+      case "global":
+        page = `/docs/api/globals/${[keys]}`;
+        break;
+      case "config":
+        keys.forEach((k, i) => {
+          keys[i] = k[0] === "$" ? vars[k.substring(1)] || "$" : k;
+        });
+        if (keys.some((k) => k === "$")) {
+          console.warn("[WARN] not found var", text);
+          return label;
+        }
+        page = "/config/config/" + keys.join("/");
+        break;
+      case "demo":
+      case "guide":
+        page = `/${sep}/` + keys.join("/");
+        break;
+      case "rc":
+      case "realchart":
+      default:
+        const [cls, prop] = keys;
+        page = `/docs/api/classes/${cls}${prop ? "#" + prop : ""}`;
+    }
   }
-  return hyperlink(t, page);
+  return hyperlink(label || lastKey, page);
 }
 __name(doclink, "doclink");
 function seelink(comment) {

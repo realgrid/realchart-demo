@@ -18,6 +18,8 @@
 import fs from 'fs';
 import path from 'path';
 
+import { doclink }  from './docs/lib/typedoc-nextra/index.mjs';
+
 const ReflectionKind = {
   Project: 1,
   Module: 2,
@@ -252,7 +254,7 @@ class Tunner {
         );
         // 다른 구조체에서 이름이 같을 수 있음. Series.xStart, ChartOptions.xStart
         // || p.name == line.text
-        if (prop) return `**[${line.text}](#${prop.name.toLowerCase()})**`;
+        if (prop) return `[${line.text}](#${prop.name.toLowerCase()})`;
         
         // 레퍼런스
         // line.target 이 number 타입으로 reference가 있는 경우...
@@ -275,39 +277,40 @@ class Tunner {
        * 여기까지 리턴하지 못했으면 API 클래스 링크 로직 시작
        */
       // 구분자와 라벨
-      const [sep, ...label] = line.text.split(' ');
-      // 접근자와 속성 구분
-      const [accessor, ...props] = sep.split('.');
-      let path = '';
-      const [prop] = props.splice(-1, 1);
-      switch (accessor) {
-        case 'g':
-        case 'global':
-          path = '/docs/api/globals';
-          break;
-        case 'rc':
-        case 'realchart':
-        default:
-          path = '/docs/api/classes';
-          break;
+      // const [sep, ...label] = line.text.split(' ');
+      // // 접근자와 속성 구분
+      // const [accessor, ...props] = sep.split('.');
+      // let path = '';
+      // const [prop] = props.splice(-1, 1);
+      // switch (accessor) {
+      //   case 'g':
+      //   case 'global':
+      //     path = '/docs/api/globals';
+      //     break;
+      //   case 'rc':
+      //   case 'realchart':
+      //   default:
+      //     path = '/docs/api/classes';
+      //     break;
         
-          // props.unshift(accessor);
-          // path = `/config/config`;
-          // break;
-      }
+      //     // props.unshift(accessor);
+      //     // path = `/config/config`;
+      //     // break;
+      // }
 
-      // single word. 현재 페이지의 속성
-      if (sep == accessor) {
-        path = `#${sep}`;
-        !label.length && label.push(sep);
-      } else if (props.length) {
-        path = `${path}/${props.join('/')}#${prop}`;
-      } else {
-        path = `${path}/${prop}`;
-      }
-      !label.length && label.push(prop);
+      // // single word. 현재 페이지의 속성
+      // if (sep == accessor) {
+      //   path = `#${sep}`;
+      //   !label.length && label.push(sep);
+      // } else if (props.length) {
+      //   path = `${path}/${props.join('/')}#${prop}`;
+      // } else {
+      //   path = `${path}/${prop}`;
+      // }
+      // !label.length && label.push(prop);
 
-      return `**[${label.join(' ')}](${path})**`
+      // return `**[${label.join(' ')}](${path})**`
+      return doclink(line.text);
     }
 
     return line.text;

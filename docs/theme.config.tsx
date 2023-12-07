@@ -59,7 +59,7 @@ const config: DocsThemeConfig = {
     link: "https://github.com/realgrid/realchart-examples",
   },
   chat: {
-    link: "https://forum.realgrid.com/categories/f3SA78vS9G6cKiYht",
+    link: "https://forum.realgrid.com/tickets/categories/f3SA78vS9G6cKiYht",
     icon: <IconHelp size={28} />,
   },
   footer: {
