@@ -540,7 +540,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     colorField: string;
     /**
-     * undefined이면 "data".
+     * undefined이면 'data'.
      * 
      * @config
      */

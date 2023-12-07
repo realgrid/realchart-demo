@@ -668,8 +668,6 @@ class MDGenerater {
   }
 
   _styleContent(content) {
-    // double quote 변환
-    content = content?.replace(/\"/g, '\'').trim() || '';
     // <br> 태그 변환
     content = content?.replace(/\\r|<br>|\\/g, '\n').trim() || '';
 
