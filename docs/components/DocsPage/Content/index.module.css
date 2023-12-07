@@ -1,0 +1,12 @@
+.keyword {
+  color: var(--shiki-token-keyword);
+}
+
+.expression {
+  color: var(--shiki-token-string-expression);
+}
+
+.contents {
+  display: inline;
+  font-size: 0.9rem;
+}

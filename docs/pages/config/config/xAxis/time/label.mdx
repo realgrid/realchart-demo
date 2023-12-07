@@ -19,8 +19,8 @@ label들을 재배치하는 방식을 지정한다.
 
 밝게 표시할 때는  [lightStyle](#lightstyle) 을 적용하고,
 어둡게 표시할 때는  [darkStyle](#darkstyle) 이 적용된다.
-brightStyle이 지정되지 않으면 'rct-text-light'이,
-darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.  
+brightStyle이 지정되지 않으면 <Content type="expression" value="'rct-text-light'"></Content>이,
+darkStyle이 지정되지 않으면 <Content type="expression" value="'rct-text-dark'"></Content>가 기본 적용된다.  
 <DefaultValue value="true" contents=""></DefaultValue>
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
 - `SVGStyles{:js}` 
@@ -129,14 +129,16 @@ label 문자열 앞에 추가되는 문자열.
 -90 ~ 90 사이의 각도로 지정할 수 있다.  
 
 ### rows: `number{:js}`[#rows]
-수평 축일 때 tick label 배치 행 수.\
+수평 축일 때 tick label 배치 행 수.
+
 1은 한 줄, 2면 두 줄 등으로 여러 줄로 나눠서 표시한다.  
 <DefaultValue value="0" contents=""></DefaultValue>
 ### startStep: `number{:js}`[#startStep]
 step이 2 이상이 될 때, 표시가 시작되는 label 위치.  
 <DefaultValue value="0" contents=""></DefaultValue>
 ### step: `number{:js}`[#step]
-label 표시 간격.\
+label 표시 간격.
+
 1이면 모든 tick 표시. 2이면 하나씩 건너 띄어서 표시.
 2 이상일 때  [startStep](#startstep) 으로 지정된 step부터 배치된다.  
 <DefaultValue value="0" contents=""></DefaultValue>

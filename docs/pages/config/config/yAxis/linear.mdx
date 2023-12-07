@@ -15,9 +15,10 @@ RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 
 <DefaultValue value="AxisFit.DEFAULT" contents=""></DefaultValue>
 ### [grid](./linear/grid)
-Axis tick의 위치에 수평 혹은 수직선으로 plot 영역을 구분 표시한다.\
-   기본값이 undefined인데,
-visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.  
+Axis tick의 위치에 수평 혹은 수직선으로 plot 영역을 구분 표시한다.
+
+   기본값이 <Content type="keyword" value="undefined"></Content>인데,
+visible이 <Content type="keyword" value="undefined"></Content>나 <Content type="keyword" value="null"></Content>로 지정되면, 축 위치에 따라 visible 여부가 결정된다.  
 
 ### [guides](./linear/guides)
 기본적으로 이 축에 연결된 모든 body에 모두 표시된다.
@@ -30,7 +31,7 @@ col, row를 지정해서 특정 body에만 표시되도록 할 수 있다.
 3. rotation이 0이 아닌 명시적 값으로 설정되면 반영한다.
 4. 1~3 모두 설정되지 않은 경우 autoArrange 설정에 따라 자동 배치한다.
 5. 배치 후 공간을 초과하는 label은 wrap 속성에 따라 줄나누기를 하거나, 
-   ellipsis('...')로 처리해서 표시한다.  
+   ellipsis(<Content type="expression" value="'...'"></Content>)로 처리해서 표시한다.  
 
 ### [line](./linear/line)
 축 선(line) 설정 모델.  
@@ -50,10 +51,12 @@ data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격�
 
 ### maxValue: `number{:js}`[#maxValue]
 명시적으로 지정하는 최대값.  
-명시적으로 지정하는 최대값.\
+명시적으로 지정하는 최대값.
+
 축에 연결된 data point들의 값으로 계산된 최대값보다 이 속성 값이 크면 대신 이 값이 축의 최대값이 되고,
  [maxPadding](#maxpadding) 도 무시된다.
-계산값이 더 크면 이 속성은 무시된다.\
+계산값이 더 크면 이 속성은 무시된다.
+
 계산값과 무관하게 최대값을 지정하려면  [strictMax](#strictmax) 을 사용한다.  
 
 ### minPadding: `number{:js}`[#minPadding]
@@ -65,16 +68,18 @@ data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격�
 
 ### minValue: `number{:js}`[#minValue]
 명시적으로 지정하는 최소값.  
-명시적으로 지정하는 최소값.\
+명시적으로 지정하는 최소값.
+
 축에 연결된 data point들의 값으로 계산된 최소값보다 이 속성 값이 작으면 대신 이 값이 축의 최소값이 되고,
  [minPadding](#minpadding) 도 무시된다.
-계산값이 더 작으면 이 속성은 무시된다.\
+계산값이 더 작으면 이 속성은 무시된다.
+
 계산값과 무관하게 최소값을 지정하려면  [strictMin](#strictmin) 을 사용한다.  
 
 ### name: `string{:js}`[#name]
 
 ### nullable: `boolean{:js}`[#nullable]
-data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.  
+data point의 이 축 값이 <Content type="keyword" value="NaN"></Content>일 때도 point를 표시할 지 여부.  
 <DefaultValue value="true" contents=""></DefaultValue>
 ### padding: `number{:js}`[#padding]
 [minPadding](#minpadding) ,  [maxPadding](#maxpadding) 이 설정되지 않았을 때 적용되는 기본값이다.  
@@ -88,10 +93,11 @@ data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부.
 
 <DefaultValue value="'normal'" contents=""></DefaultValue>
 ### reversed: `boolean{:js}`[#reversed]
-true면 반대 방향으로 point 위치들이 지정된다.  
+<Content type="keyword" value="true"></Content>면 반대 방향으로 point 위치들이 지정된다.  
 <DefaultValue value="false" contents=""></DefaultValue>
 ### [scrollBar](./linear/scrollBar)
-축 스크롤바 모델.\
+축 스크롤바 모델.
+
 축 스크롤 상태를 표시하고, 사용자가 스크롤 범위나 위치를 변경할 수 있다.  
 
 ### [sectorLine](./linear/sectorLine)

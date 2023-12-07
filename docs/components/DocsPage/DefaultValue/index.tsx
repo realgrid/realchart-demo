@@ -1,3 +1,4 @@
+import { Content } from '../Content';
 import styles from './index.module.css'
 
 export const DefaultValue = ({ value, contents }: { value: string, contents: string }) => {

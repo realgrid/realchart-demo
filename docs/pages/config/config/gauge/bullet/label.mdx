@@ -11,8 +11,8 @@ label 설정 모델.
 
 밝게 표시할 때는  [lightStyle](#lightstyle) 을 적용하고,
 어둡게 표시할 때는  [darkStyle](#darkstyle) 이 적용된다.
-brightStyle이 지정되지 않으면 'rct-text-light'이,
-darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.  
+brightStyle이 지정되지 않으면 <Content type="expression" value="'rct-text-light'"></Content>이,
+darkStyle이 지정되지 않으면 <Content type="expression" value="'rct-text-dark'"></Content>가 기본 적용된다.  
 <DefaultValue value="true" contents=""></DefaultValue>
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
 - `SVGStyles{:js}` 
@@ -55,7 +55,7 @@ label과 본체 사이의 간격.
 픽셀값이나 게이지 전체 크기(position에 따라 높이나 너비)에 대한 상대값으로 지정할 수 있다.  
 
 ### height: `string | number{:js}`[#height]
-position이 'top', 'bottom'일 때, label 표시 영역 높이.
+position이 <Content type="expression" value="'top', 'bottom'"></Content>일 때, label 표시 영역 높이.
 픽셀값이나 게이지 전체 높이에 대한 상대값으로 지정할 수 있다.  
 
 ### lightStyle: `SVGStyles | string{:js}`[#lightStyle]
@@ -75,12 +75,12 @@ position이 'top', 'bottom'일 때, label 표시 영역 높이.
 | strokeWidth | `string{:js}` | true |  
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### maxHeight: `string | number{:js}`[#maxHeight]
-position이 'top', 'bottom'일 때, label 표시 영역 최대 높이.
+position이 <Content type="expression" value="'top', 'bottom'"></Content>일 때, label 표시 영역 최대 높이.
 픽셀값이나 게이지 전체 높이에 대한 상대값으로 지정할 수 있다.
  [height](#height) 가 지정되면 이 속성은 무시된다.  
 
 ### maxWidth: `string | number{:js}`[#maxWidth]
-position이 'left', 'right'일 때, label 표시 영역 최대 너비.
+position이 <Content type="expression" value="'left', 'right'"></Content>일 때, label 표시 영역 최대 너비.
 픽셀값이나 게이지 전체 너비에 대한 상대값으로 지정할 수 있다.
  [width](#width) 가 지정되면 이 속성은 무시된다.  
 
@@ -124,5 +124,5 @@ rich text format을 지정할 수 있다.
 표시 여부.  
 <DefaultValue value="true" contents=""></DefaultValue>
 ### width: `string | number{:js}`[#width]
-position이 'left', 'right'일 때, label 표시 영역 너비.
+position이 <Content type="expression" value="'left', 'right'"></Content>일 때, label 표시 영역 너비.
 픽셀값이나 게이지 전체 너비에 대한 상대값으로 지정할 수 있다.  

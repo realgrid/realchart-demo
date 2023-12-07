@@ -667,10 +667,19 @@ class MDGenerater {
     return result;
   }
 
-  // <br> 태그 변환
-  _fixContent(content) {
-    // replace \n or double space
-    return content?.replace(/<br>/g, '\n').trim() || '';
+  _styleContent(content) {
+    // double quote 변환
+    content = content?.replace(/\"/g, '\'').trim() || '';
+    // <br> 태그 변환
+    content = content?.replace(/\\r|<br>|\\/g, '\n').trim() || '';
+
+    const specialRegex = /null|undefined|true|false|NaN/g;
+    const singleQuoteRegex = /'.*'/g;
+    content = content
+      .replace(specialRegex, (match) => `<Content type="keyword" value="${match}"></Content>`)
+      .replace(singleQuoteRegex, (match) => `<Content type="expression" value="${match}"></Content>`);
+
+    return content;
   }
 
   _getDoc(keys, docMap) {
@@ -696,7 +705,7 @@ class MDGenerater {
     if (!docMap) throw Error();
 
     // 개요
-    const outline = `[${name}](/config/config/${name})\n${this._fixContent(content)}\n`
+    const outline = `[${name}](/config/config/${name})\n${this._styleContent(content)}\n`
     if (MDGenerater.TYPE_ELEMENTS.includes(name)){
       return `### ${outline}`;
     }
@@ -711,7 +720,7 @@ class MDGenerater {
     const parent = keys.pop();
 
     let lines = `### [${title}](./${[parent || 'config', title].join('/')})\n`;
-    lines += `${this._fixContent(classMap.content)}  \n`;
+    lines += `${this._styleContent(classMap.content)}  \n`;
     return lines;
   }
 
@@ -801,7 +810,7 @@ class MDGenerater {
     }
     
     if (header) lines += `${header}  \n`;
-    if (content) lines += `${this._fixContent(content)}  \n`;
+    if (content) lines += `${this._styleContent(content)}  \n`;
     
     lines += extraLines;
     // @defalut가 없으면 typedoc에서 정의한 defaultValue를 사용한다.
@@ -884,7 +893,7 @@ class MDGenerater {
   _makeEnums(param) {
     const { name, enums } = param;
     return enums.map(e => {
-      const content = this._fixContent(e.content).replace(/\n/g, '  ');
+      const content = this._styleContent(e.content).replace(/\n/g, '  ');
       return `- \`'${e.value}'\` ${content}`
     }).join('\n') + '\n\n';
   }
@@ -941,7 +950,7 @@ class MDGenerater {
       subtitleText += `[type=${type}]`;  
       subtitle = `## [${subtitleText}](./${opt}/${type})`
     }
-    const _content = `${this._fixContent(content)}\n`;
+    const _content = `${this._styleContent(content)}\n`;
     
     if (MDGenerater.TYPE_ELEMENTS.indexOf(opt) >= 0 && !type) 
       return console.warn(`[WARN] ${name} type missed.`);

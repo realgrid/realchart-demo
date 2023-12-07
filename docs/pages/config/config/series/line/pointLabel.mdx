@@ -8,8 +8,8 @@
 
 밝게 표시할 때는  [lightStyle](#lightstyle) 을 적용하고,
 어둡게 표시할 때는  [darkStyle](#darkstyle) 이 적용된다.
-brightStyle이 지정되지 않으면 'rct-text-light'이,
-darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.  
+brightStyle이 지정되지 않으면 <Content type="expression" value="'rct-text-light'"></Content>이,
+darkStyle이 지정되지 않으면 <Content type="expression" value="'rct-text-dark'"></Content>가 기본 적용된다.  
 <DefaultValue value="true" contents=""></DefaultValue>
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
 - `SVGStyles{:js}` 
@@ -44,7 +44,7 @@ darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.
 | strokeWidth | `string{:js}` | true |  
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### distance: `number{:js}`[#distance]
-'pie', 'funnel' 시리즈에서 label이 외부에 표시될 때 label과 시리즈 본체와의 기본 간격.  
+<Content type="expression" value="'pie', 'funnel'"></Content> 시리즈에서 label이 외부에 표시될 때 label과 시리즈 본체와의 기본 간격.  
 <DefaultValue value="25" contents=""></DefaultValue>
 ### effect[#effect]
 
@@ -74,8 +74,9 @@ label이 숫자일 때 표시 형식.
 이 속성에 지정한 symbol을 이용해서 축약형으로 표시한다.  
 
 ### offset: `number{:js}`[#offset]
-label과 point view 사이의 기본 간격.\
-값을 지정하지 않으면  [position](#position) 이 'inside'일 때는 0, 그 외는 4 픽셀이다.  
+label과 point view 사이의 기본 간격.
+
+값을 지정하지 않으면  [position](#position) 이 <Content type="expression" value="'inside'"></Content>일 때는 0, 그 외는 4 픽셀이다.  
 
 ### position[#position]
 포인트 label 표시 위치.  

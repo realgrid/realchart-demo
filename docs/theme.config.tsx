@@ -4,12 +4,12 @@ import { IconHelp } from "@tabler/icons-react";
 import { MainFooter } from "@/components/MainFooter";
 import { brand, company, footerData } from "@/lib/const";
 import { theme } from "./lib/theme";
-import { FiddleLink } from "./components/FiddleLink";
-import { DefaultValue } from "./components/DefaultValue";
+import { Content, FiddleLink, DefaultValue } from "./components/DocsPage";
 
 const config: DocsThemeConfig = {
   components: {
     FiddleLink,
+    Content,
     DefaultValue
   },
   useNextSeoProps() {

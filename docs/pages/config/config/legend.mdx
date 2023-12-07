@@ -1,13 +1,13 @@
 ## legend
 차트 범례 설정 모델.
-visible 기본값이 undefined이고,
+visible 기본값이 <Content type="keyword" value="undefined"></Content>이고,
 따로 지정하지 않으면 시리즈가 둘 이상 포함돼야 legend를 표시한다.
 ## Properties
 
 ### align: `'center'|'left'|'right'{:js}`[#align]
 수평 배치.
-값을 지정하지 않으면, 기본값이  [location](#location) 이 'plot'일 때는 'left',
-'left', 'right'일 때는 'center'이다.  
+값을 지정하지 않으면, 기본값이  [location](#location) 이 <Content type="expression" value="'plot'일 때는 'left'"></Content>,
+<Content type="expression" value="'left', 'right'일 때는 'center'"></Content>이다.  
 - `'center'` 
 - `'left'` 
 - `'right'` 
@@ -16,7 +16,7 @@ visible 기본값이 undefined이고,
 ### alignBase: `'chart'|'parent'|'plot'{:js}`[#alignBase]
 legend 정렬 기준.  
 - `'chart'` 
-- `'parent'` 상위 모델이 존재하는 경우 상위 모델 영역 기준.\  상위가 없으면 기본값(대부분 'plot')과 동일.  ex) subtitle인 경우 title 기준.
+- `'parent'` 상위 모델이 존재하는 경우 상위 모델 영역 기준.    상위가 없으면 기본값(대부분 <Content type="expression" value="'plot'"></Content>)과 동일.  ex) subtitle인 경우 title 기준.
 - `'plot'` 
 
 <DefaultValue value="'plot'" contents=""></DefaultValue>
@@ -39,7 +39,7 @@ legend 정렬 기준.
 | strokeWidth | `string{:js}` | true |  
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### gap: `number{:js}`[#gap]
-[location](#location) 이 'plot'이 아닐 때,
+[location](#location) 이 <Content type="expression" value="'plot'"></Content>이 아닐 때,
 legend view와 나머지 chart 영역 사이의 gap.  
 <DefaultValue value="6" contents=""></DefaultValue>
 ### itemGap: `number{:js}`[#itemGap]
@@ -85,11 +85,11 @@ marker 표시 여부.
 <DefaultValue value="true" contents=""></DefaultValue>
 ### maxHeight: `string | number{:js}`[#maxHeight]
 수직  [배치](#layout) 일 때,
-최대 높이를 픽셀 단위의 크기 혹은 plot 높이에 대한 상대 길이를 '%'로 지정한다.  
+최대 높이를 픽셀 단위의 크기 혹은 plot 높이에 대한 상대 길이를 <Content type="expression" value="'%'"></Content>로 지정한다.  
 
 ### maxWidth: `string | number{:js}`[#maxWidth]
 수평  [배치](#layout) 일 때,
-최대 너비를 픽셀 단위의 크기 혹은 plot 너비에 대한 상대 길이를 '%'로 지정한다.  
+최대 너비를 픽셀 단위의 크기 혹은 plot 너비에 대한 상대 길이를 <Content type="expression" value="'%'"></Content>로 지정한다.  
 
 ### offsetX: `number{:js}`[#offsetX]
 범례와 body 혹은 차트 경계 사이의 수평 간격.  
@@ -119,8 +119,8 @@ marker 표시 여부.
 
 ### verticalAlign: `'bottom'|'middle'|'top'{:js}`[#verticalAlign]
 수직 배치.
-값을 지정하지 않으면, 기본값이  [location](#location) 이 'plot'일 때는 'top',
-'top', 'bottom'일 때는 'middle'이다.  
+값을 지정하지 않으면, 기본값이  [location](#location) 이 <Content type="expression" value="'plot'일 때는 'top'"></Content>,
+<Content type="expression" value="'top', 'bottom'일 때는 'middle'"></Content>이다.  
 - `'bottom'` 
 - `'middle'` 
 - `'top'` 
@@ -128,6 +128,7 @@ marker 표시 여부.
 
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
-명시적으로 true로 설정되거나, 명시적 false가 아니면서 표시 항목 수가 1보다 클 때 표시된다..\
-<FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  
+명시적으로 <Content type="keyword" value="true"></Content>로 설정되거나, 명시적 <Content type="keyword" value="false"></Content>가 아니면서 표시 항목 수가 1보다 클 때 표시된다..
+
+<FiddleLink label=<Content type="expression" value="'Legend Visible' href='https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible'"></Content>/>  
 <DefaultValue value="undefined" contents=""></DefaultValue>
