@@ -17,7 +17,12 @@ import { Series } from "../model/Series";
 import { Tooltip } from "../model/Tooltip";
 
 export class TooltipView extends RcElement {
- 
+    
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly CLASS_NAME = 'rct-tooltip';
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -40,7 +45,7 @@ export class TooltipView extends RcElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, 'rct-tooltip');
+        super(doc, TooltipView.CLASS_NAME);
 
         this.add(this._back = new PathElement(doc, 'rct-tooltip-back'));
         this.add(this._textView = new TextElement(doc, 'rct-tooltip-text'));

@@ -6,17 +6,34 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcObject } from '../common/RcObject';
 
 export interface ImageExportOptions {
-    type?: 'png' | 'jpeg';
+    /**
+     * 내보내기시 저장되는 파일명
+     */
+    type?: 'png' | 'jpeg',
+    /**
+     * 내보내기시 저장되는 파일명
+     */
     fileName?: string;
+    /**
+     * false로 지정하면 내보내기 결과에 {@link AxisScrollBar}가 포함되지 않는다.
+     */
+    includeScrollbar?: boolean;
+    /**
+     * false로 지정하면 내보내기 결과에 {@link SeriesNavigator}가 포함되지 않는다.
+     */
+    includeNavigator?: boolean;
+    /**
+     * false로 지정하면 내보내기 결과에 {@link ZoomButton}가 포함되지 않는다.
+     */
+    includeZoomButton?: boolean;
 }
 
 /**
  * 차트를 image 파일로 내보내기 한다.
  */
-export class ImageExporter extends RcObject {
+export class ImageExporter {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
@@ -33,13 +50,7 @@ export class ImageExporter extends RcObject {
     // constructors
     //-------------------------------------------------------------------------
     constructor() {
-        super();
     }
-
-    protected _doDestory(): void {
-        super._doDestory();
-    }
-
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -49,61 +60,104 @@ export class ImageExporter extends RcObject {
     export(dom: HTMLElement, options?: ImageExportOptions): void {
         const type = options?.type || 'png';
         const fileName = options?.fileName || 'realchart';
+        const rect = dom.getBoundingClientRect();
 
-		const link = document.createElement('a');
-		document.body.appendChild(link);
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = rect.width;
+        canvas.height = rect.height;
 
-		const img = new Image();
-		img.width = dom.clientWidth;
-		img.height = dom.clientHeight;
+        const svgToImageAndDownload = () => {
+            const svg = dom.querySelector('.rct-svg');
+            const img = new Image();
+            img.width = svg.clientWidth;
+            img.height = svg.clientHeight;
+            img.onload = function () {
+                context.drawImage(img, 0, 0);
 
-		img.onload = function () {
-			const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            context.drawImage(img, 0, 0);
+                const imageDataUrl = canvas.toDataURL(`image/${type}`);
 
-            const imageDataUrl = canvas.toDataURL(`image/${type}`);
+                const link = document.createElement('a');
+                document.body.appendChild(link);
+                link.href = imageDataUrl;
+                link.download = `${fileName}.${type}`;
+                link.click();
+                link.remove();
+            };
 
-            link.href = imageDataUrl;
-			link.download = `${fileName}.${type}`;
-			link.click();
-		};
+            const cloneSvg = svg.cloneNode(true) as Element;
 
-		const cloneSvg = dom.querySelector('.rct-svg').cloneNode(true) as Element;
+            // 자식이 없는 g태그 제거
+            cloneSvg.querySelectorAll('g').forEach((g) => {
+                if (g.childElementCount === 0) g.remove();
+            });
 
-        // 자식이 없는 g태그 제거
-        cloneSvg.querySelectorAll('g').forEach((g) => {
-            if (g.childElementCount === 0) g.remove();
-        });
+            // tooltip
+            cloneSvg.querySelectorAll('.rct-tooltip').forEach((tooltip) => {
+                tooltip.remove();
+            });
 
-        // tooltip 제거
-        cloneSvg.querySelectorAll('.rct-tooltip').forEach((tooltip) => {
-            tooltip.remove();
-        });
+            // navigator
+            if (!options.includeNavigator) {
+                cloneSvg.querySelectorAll('.rct-navigator').forEach((navigator) => {
+                    navigator.remove();
+                });
+            }
 
-        // aria-label 제거
-        this.$_removeAriaLabelRecursively(cloneSvg);
+            // scrollbar
+            if (!options.includeScrollbar) {
+                cloneSvg.querySelectorAll('.rct-axis-scrollbar').forEach((scrollbar) => {
+                    scrollbar.remove();
+                });
+            }
 
-        // display none 제거
-        this.$_removeHiddenElementsRecursively(cloneSvg);
+            // zoom button
+            if (!options.includeZoomButton) {
+                cloneSvg.querySelectorAll('.rct-reset-zoom').forEach((zoomButton) => {
+                    zoomButton.remove();
+                });
+            }
 
-        this.$_convertImagesToBase64(cloneSvg, () => {
-            const stringSvg = new XMLSerializer().serializeToString(cloneSvg);
-            const index = stringSvg.indexOf('>');
-            const usedStyles = this.$_getUsedStyles(cloneSvg);
-            const utf8Bytes = new TextEncoder().encode(`
-            ${stringSvg.slice(0, index + 1)}
-            <style type="text/css">
-            ${usedStyles.join(' ')}
-            </style>
-            ${stringSvg.slice(index + 1)}`);
+            // aria-label 제거
+            this.$_removeAriaLabelRecursively(cloneSvg);
 
-            const base64Encoded = btoa(String.fromCharCode.apply(null, utf8Bytes));
+            // display none 제거
+            this.$_removeHiddenElementsRecursively(cloneSvg);
 
-            img.src = 'data:image/svg+xml;base64,' + base64Encoded;
-        });
+            this.$_imagesToBase64(cloneSvg, () => {
+                const stringSvg = new XMLSerializer().serializeToString(cloneSvg);
+                const index = stringSvg.indexOf('>');
+                const usedStyles = this.$_getUsedStyles(cloneSvg);
+                const utf8Bytes = new TextEncoder().encode(`
+                ${stringSvg.slice(0, index + 1)}
+                <style type="text/css">
+                ${usedStyles.join(' ')}
+                </style>
+                ${stringSvg.slice(index + 1)}`);
+
+                const base64Encoded = btoa(String.fromCharCode.apply(null, utf8Bytes));
+
+                img.src = 'data:image/svg+xml;base64,' + base64Encoded;
+            });
+        }
+
+        // control background
+        const backgroundImageUrl = window.getComputedStyle(dom).getPropertyValue('background-image');
+
+        if (backgroundImageUrl && backgroundImageUrl !== 'none') {
+            const background = new Image();
+            background.width = rect.width;
+            background.height = rect.height;
+            background.onload = function () {
+                context.drawImage(background, 0, 0);
+                svgToImageAndDownload();
+            };
+
+            background.src = backgroundImageUrl.replace(/^url\(["']?(.*?)["']?\)$/, '$1');
+        } else {
+            svgToImageAndDownload();
+        }
+        
     }
 
     //-------------------------------------------------------------------------
@@ -157,7 +211,7 @@ export class ImageExporter extends RcObject {
         }
     }
 
-    private $_convertImagesToBase64(elt: Element, callback: () => void) {
+    private $_imagesToBase64(elt: Element, callback: () => void) {
 
         function imageToBase64(url: string, callback: (base64: any) => void) {
             fetch(url)

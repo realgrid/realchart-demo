@@ -82,16 +82,7 @@ function setActions(container) {
         RealChart.setDebugging(_getChecked(e));
         config.inverted = _getChecked(e);
         chart.load(config);
-    }, false);
-    createButton(container, 'PNG', function (e) {
-		chart.exportImage();
-	});
-	createButton(container, 'JPG', function (e) {
-		chart.exportImage({type: 'jpg'});
-	});
-	createButton(container, 'JPEG', function (e) {
-		chart.exportImage({type: 'jpeg'});
-	});
+    }, false);   
 }
 
 function init() {

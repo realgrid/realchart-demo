@@ -9,8 +9,10 @@
 import { isObject } from "./common/Common";
 import { RcControl, RcElement } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
+import { Align } from "./common/Types";
+import { ImageExporter } from "./export/ImageExporter";
 import { Axis } from "./model/Axis";
-import { Chart, IChartEventListener } from "./model/Chart";
+import { Chart, ExportOptions, ExportType, IChartEventListener } from "./model/Chart";
 import { ChartItem } from "./model/ChartItem";
 import { DataPoint } from "./model/DataPoint";
 import { Series } from "./model/Series";
@@ -27,6 +29,9 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     private _model: Chart;
     private _chartView: ChartView;
+    private _menuButton: HTMLDivElement;
+    private _contextmenu: HTMLDivElement;
+    private _menuList: HTMLUListElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -105,6 +110,34 @@ export class ChartControl extends RcControl implements IChartEventListener {
         this._chartView.getAxis(axis)?.scroll(pos);
     }
 
+    isMenuButton(dom: Element): boolean {
+        return dom.isEqualNode(this._menuButton);
+    }
+
+    isMenuItem(dom: Element): boolean {
+        return !dom.isEqualNode(this._menuList) && this._menuList.contains(dom);
+    }
+
+    onMenuClick(dom: Element): void {
+        const contextmenu = this._contextmenu;
+        if (contextmenu) {
+            contextmenu.style.display = contextmenu.style.display === 'none' ? 'block' : 'none';
+        }
+    }
+
+    onMenuItemClick(dom: Element): void {
+        const type = dom.id;
+        const {fileName, includeScrollbar, includeNavigator, includeZoomButton} = this._model.export;
+        switch(type) {
+            case ExportType.PNG:
+            case ExportType.JPEG:
+                new ImageExporter().export(this.dom(), {type, fileName, includeScrollbar, includeNavigator, includeZoomButton});
+                break;
+            default:
+                break;
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -120,6 +153,10 @@ export class ChartControl extends RcControl implements IChartEventListener {
         if (model) {
             this.setData('theme', model.options.theme, true);
             this.setData('palette', model.options.palette);
+
+            if (model.export.visible) {
+                this._menuButton ? this.$_layoutContextMenu(model.export) : this.$_initExportMenu(model.export);
+            }
         }
         view.measure(this.doc(), model, bounds.width, bounds.height, 1);
         view.setRect(bounds);
@@ -145,4 +182,52 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    private $_initExportMenu(options: ExportOptions): void {
+        const doc = this.doc();
+        const dom = this.dom();
+        
+        const contextmenuButton = this._menuButton = doc.createElement('div');
+        contextmenuButton.classList.add('rct-contextmenu-button');
+        contextmenuButton.style.position = 'absolute';
+
+        const contextmenu = this._contextmenu = doc.createElement('div');
+        contextmenu.classList.add('rct-contextmenu');
+        contextmenu.style.position = 'absolute';
+        contextmenu.style.display = 'none';
+        contextmenu.style.right = '0px';
+
+        const menuList = this._menuList = doc.createElement('ul');
+        menuList.classList.add('rct-contextmenu-list');
+        
+        contextmenu.appendChild(menuList);
+        contextmenuButton.appendChild(contextmenu);
+        dom.appendChild(contextmenuButton);
+
+        this.$_layoutContextMenu(options);
+    }
+
+    private $_layoutContextMenu(options: ExportOptions): void {
+        const doc = this.doc();
+        const dom = this.dom();
+        const rect = dom.getBoundingClientRect();
+        const contextmenuButton = this._menuButton;
+        const contextmenu = this._contextmenu;
+
+        contextmenuButton.style.top = options.offsetY + 'px';
+        contextmenuButton.style.left = rect.width - options.width + options.offsetX + 'px';
+        contextmenuButton.style.width = options.width + 'px';
+        contextmenuButton.style.height = options.height + 'px';
+        contextmenuButton.style.backgroundImage = options.imageUrl || '';
+
+        contextmenu.style.top = options.height + 'px';
+
+        this._menuList.innerHTML = '';
+        options.type.forEach((type) => {
+            const menuItem = doc.createElement('li');
+            menuItem.classList.add('rct-contextmenu-item');
+            menuItem.id = type;
+            menuItem.textContent = `Download ${type.toUpperCase()}`;
+            this._menuList.appendChild(menuItem);
+        });
+    }
 }

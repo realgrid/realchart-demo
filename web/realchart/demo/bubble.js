@@ -76,15 +76,6 @@ function setActions(container) {
         config.series.pointLabel.effect = _getChecked(e) ? 'outline' : 'none';
         chart.load(config);
     }, false);
-    createButton(container, 'PNG', function (e) {
-		chart.exportImage();
-	});
-	createButton(container, 'JPG', function (e) {
-		chart.exportImage({type: 'jpg'});
-	});
-	createButton(container, 'JPEG', function (e) {
-		chart.exportImage({type: 'jpeg'});
-	});
 }
 
 function init() {

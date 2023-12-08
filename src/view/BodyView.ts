@@ -723,10 +723,14 @@ class CrosshairView extends PathElement {
     }
 }
 
-class ZoomButton extends ButtonElement {
+export class ZoomButton extends ButtonElement {
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly CLASS_NAME = 'rct-reset-zoom';
 
     constructor(doc: Document) {
-        super(doc, 'Reset Zoom', 'rc-reset-zoom');
+        super(doc, 'Reset Zoom', ZoomButton.CLASS_NAME);
 
         this.visible = false;
     }

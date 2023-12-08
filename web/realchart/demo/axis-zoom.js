@@ -104,15 +104,6 @@ function setActions(container) {
     createCheckBox(container, 'Zooming', function (e) {
         _getChecked(e) ? chart.xAxis.zoom(10.2, 20.4) : chart.xAxis.resetZoom();
     }, false);
-    createButton(container, 'PNG', function (e) {
-		chart.exportImage();
-	});
-	createButton(container, 'JPG', function (e) {
-		chart.exportImage({type: 'jpg'});
-	});
-	createButton(container, 'JPEG', function (e) {
-		chart.exportImage({type: 'jpeg'});
-	});
 }
 
 function init() {

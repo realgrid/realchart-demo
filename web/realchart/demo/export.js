@@ -10,9 +10,13 @@ const config = {
 		visible: true,
 		text: "Subtitle"
 	},
-	
+	export: {
+		visible: true
+	},
 	options: {
-		// animatable: false
+		// style: {
+		// 	 backgroundImage: 'url(../assets/mountain.jpeg)'
+		// }
 	},
 	legend:{
 		visible: true,
@@ -172,42 +176,55 @@ function setActions(container) {
 	createButton(container, 'Test', function (e) {
 		alert('hello');
 	});
-	createCheckBox(
-		container,
-		'ColorByPoint',
-		function (e) {
-			config.series[0].colorByPoint = _getChecked(e);
-			chart.load(config, animate);
-		},
-		true
-	);
-	createCheckBox(
-		container,
-		'Inverted',
-		function (e) {
+	createCheckBox(container, 'Inverted', function (e) {
             chart.inverted = _getChecked(e);
-		},
-		false
-	);
-	createCheckBox(
-		container,
-		'X Reversed',
-		function (e) {
+		}, false);
+	createCheckBox(container, 'X Reversed', function (e) {
 			config.xAxis.reversed = _getChecked(e);
 			chart.load(config, animate);
-		},
-		false
-	);
-	createCheckBox(
-		container,
-		'Y Reversed',
-		function (e) {
+		}, false);
+	createCheckBox(container, 'Y Reversed', function (e) {
 			config.yAxis.reversed = _getChecked(e);
 			chart.load(config, animate);
-		},
-		false
-	);
-	
+		}, false);
+	line(container);
+	createCheckBox(container, 'export.visible', function (e) {
+			config.export.visible = _getChecked(e);
+			chart.load(config, animate);
+		}, true);
+	createCheckBox(container, 'export.includeNavigator', function (e) {
+			config.export.includeNavigator = _getChecked(e);
+			chart.load(config, animate);
+		}, true);
+	createCheckBox(container, 'export.includeScrollbar', function (e) {
+			config.export.includeScrollbar = _getChecked(e);
+			chart.load(config, animate);
+		}, true);
+	createCheckBox(container, 'export.includeZoomButton', function (e) {
+			config.export.includeZoomButton = _getChecked(e);
+			chart.load(config, animate);
+		}, true);
+	createCheckBox(container, 'export.imageUrl', function (e) {
+        config.export.imageUrl = _getChecked(e) ? 'url(../assets/mountain.jpeg)' : '';
+        chart.load(config);
+    }, false);
+	line(container);
+	createListBox(container, "export.width", ['10', '28', '40', '60'], function (e) {
+        config.export.width = Number(_getValue(e));
+        chart.load(config);
+    }, '28');
+	createListBox(container, "export.height", ['10', '28', '40', '60'], function (e) {
+        config.export.height = Number(_getValue(e));
+        chart.load(config);
+    }, '28');
+	createListBox(container, "export.offsetX", ['-20', '-11', '0', '10'], function (e) {
+        config.export.offsetX = Number(_getValue(e));
+        chart.load(config);
+    }, '-11');
+	createListBox(container, "export.offsetY", ['0', '11', '20', '30'], function (e) {
+        config.export.offsetY = Number(_getValue(e));
+        chart.load(config);
+    }, '20');
 }
 
 function init() {
