@@ -667,21 +667,22 @@ class MDGenerater {
     if (!docMap) throw Error();
 
     // 개요
-    const outline = `[${name}](/config/config/${name})\n${this._styleContent(content)}\n`
     if (MDGenerater.TYPE_ELEMENTS.includes(name)){
+      const title = `[${name}](/config/config/${name})`
+      const outline = `${title}\n${this._styleContent(content)}\n`
       return `### ${outline}`;
     }
 
     keys.push(name);
     const _key = keys.join('.');
-    const _content = '## ' + outline + this._makeProps({ keys, props: classMap.props });
+    const _content = `## **${name}**\n` + this._makeProps({ keys, props: classMap.props });
     docMap[name] = { _key , ...docMap[name], _content };
 
     // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
-    const title = keys.pop();
+    const subtitle = keys.pop();
     const parent = keys.pop();
 
-    let lines = `### [${title}](./${[parent || 'config', title].join('/')})\n`;
+    let lines = `### [${subtitle}](./${[parent || 'config', subtitle].join('/')})\n`;
     lines += `${this._styleContent(classMap.content)}  \n`;
     return lines;
   }
@@ -938,7 +939,7 @@ class MDGenerater {
       this._setPropContents({ 
         // name, opt, type, 
         keys,
-        _content: (subtitleText ? `## ${subtitleText}\n${_content}` : '') 
+        _content: (subtitleText ? `## **${subtitleText}**\n${_content}` : '') 
           + propContents 
       });
     }
