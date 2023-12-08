@@ -170,7 +170,7 @@ export class ContinuousAxisTick extends AxisTick {
         if (!isNaN(base)) {
             steps.push(v = base);
             while (v > min) {
-                steps.unshift(v = fixnum(v -interval));
+                steps.unshift(v = fixnum(v - interval));
             }
             v = base;
             while (v < max) {
@@ -183,6 +183,16 @@ export class ContinuousAxisTick extends AxisTick {
             }
         }
         this._step = interval;
+
+        // interval = interval * 10;// 1 / interval;
+        // for (let i = 0; i < steps.length - 1; i++) {
+        //     steps[i] = fixnum(Math.log10(i) * interval);
+        // }
+        // interval = interval * steps.length;
+        // for (let i = 0; i < steps.length - 1; i++) {
+        //     steps[i] = fixnum(Math.log10(i) * interval);
+        // }
+
         return steps;
     }
 
@@ -350,7 +360,7 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _base: number;
+    private _baseVal: number;
     private _unitLen: number;
     _calcedMin: number;
     _calcedMax: number;
@@ -514,7 +524,7 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected _doPrepareRender(): void {
-        this._base = parseFloat(this.baseValue as any);
+        this._baseVal = parseFloat(this.baseValue as any);
         this._unitLen = NaN;
         (this.tick as ContinuousAxisTick)._findBaseAxis();
     }
@@ -527,10 +537,10 @@ export abstract class ContinuousAxis extends Axis {
         const tick = this.tick as ContinuousAxisTick;
         const based = tick._baseAxis instanceof ContinuousAxis;
         let { min, max } = this._adjustMinMax(this._calcedMin = calcedMin, this._calcedMax = calcedMax);
-        let base = this._base;
+        let baseVal = this._baseVal;
 
-        if (isNaN(base) && min < 0 && max > 0) {
-            base = 0;
+        if (isNaN(baseVal) && min < 0 && max > 0) {
+            baseVal = 0;    // ?
         } 
 
         if (based && tick.baseRange) {
@@ -538,7 +548,7 @@ export abstract class ContinuousAxis extends Axis {
             max = tick._baseAxis.axisMax();
         }
 
-        let steps = tick.buildSteps(length, base, min, max, false);
+        let steps = tick.buildSteps(length, baseVal, min, max, false);
         const ticks: IAxisTick[] = [];
 
         if (!isNaN(this.strictMin) || this.getStartFit() === AxisFit.VALUE) {

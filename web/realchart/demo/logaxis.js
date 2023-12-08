@@ -10,7 +10,10 @@ const config = {
     xAxis: {
         // type: 'category',
         // type: 'linear'
-        type: 'log'
+        type: 'log',
+        tick: {
+            stepInterval: 0.1
+        }
     },
     yAxis: {
         type: 'log'
@@ -18,6 +21,7 @@ const config = {
     series: {
         type: 'line',
         xStart: 1,
+        // xStep: 100,
         data: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
     }
 }

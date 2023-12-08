@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { fixnum } from "../../common/Types";
 import { AxisTick, IAxisTick } from "../Axis";
 import { ContinuousAxis, ContinuousAxisTick } from "./LinearAxis";
 
@@ -20,6 +21,7 @@ export class LogAxisTick extends ContinuousAxisTick {
      */
     protected _getStepMultiples(scale: number): number[] {
         if (scale <= 0.1) {
+            // return [1 / scale / 100, 1 / scale / 10, 1 / scale];
             return [1 / scale];
         }
         return [1, 2, 3, 4, 5, 10];
@@ -54,7 +56,10 @@ export class LogAxis extends ContinuousAxis {
     }
 
     protected _createTick(length: number, index: number, step: number): IAxisTick {
-        return super._createTick(length, index, Math.pow(10, step));
+        // const interval = (this.tick as LogAxisTick)._step * 10;
+
+        // step = Math.log10(step) * interval;
+        return super._createTick(length, index, fixnum(Math.pow(10, step)));
     }
 
     getPosition(length: number, value: number): number {
