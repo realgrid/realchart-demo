@@ -14,6 +14,11 @@ import { ContinuousAxis, ContinuousAxisTick } from "./LinearAxis";
 export class LogAxisTick extends ContinuousAxisTick {
 
     //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    detailed = true;
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     /**
@@ -30,8 +35,9 @@ export class LogAxisTick extends ContinuousAxisTick {
     protected _getStepsByInterval(interval: any, base: number, min: number, max: number): number[] {
         let steps: number[];
 
-        if (interval <= 0.5) {
-            const threshold = interval >= 0.3 ? 4 : interval >= 0.15 ? 2 : 1;
+        // 0보다는 크다.
+        if (interval < 1 && this.detailed) {
+            const threshold = interval >= 0.5 ? 8 : interval >= 0.3 ? 4 : interval >= 0.15 ? 2 : 1;
             let start = floor(min);
             let v = pow10(start);
             let prev = v - threshold;
@@ -40,10 +46,10 @@ export class LogAxisTick extends ContinuousAxisTick {
 
             steps = [];
 
-            if (start < 0) {
+            if (start <= 0) {
                 steps.push(0);
                 prev = 0;
-                start = 0;
+                start = start == 0 ? 1 : 0;
             }
             if (start < min) {
                 while (i <= 9) {
