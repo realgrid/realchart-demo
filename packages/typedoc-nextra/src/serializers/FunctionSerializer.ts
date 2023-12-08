@@ -1,6 +1,6 @@
 import { JSONOutput, ReflectionKind } from 'typedoc';
 import { FunctionDeclaration } from 'typescript';
-import { getDescription, getDocLinkedDesc, getFileMetadata, getName, getVars, parseType, parseTypes } from '../utils';
+import { fiddlelink, getDescription, getDocLinkedDesc, getFileMetadata, getName, getVars, parseType, parseTypes } from '../utils';
 import { AbstractSerializer } from './AbstractSerializer';
 import { DocumentedClassMethod, DocumentedParameter } from './ClassSerializer';
 
@@ -18,6 +18,7 @@ export class FunctionSerializer extends AbstractSerializer {
             name: decl.name,
             description,
             see: signature.comment?.blockTags?.filter((r) => r.tag === '@see').map((t) => t.content.map((t) => t.text).join('')) || [],
+            fiddle: signature.comment?.blockTags?.filter((r) => r.tag === '@fiddle')?.map((m) => fiddlelink(m)) || [],
             static: !!signature.flags.isStatic || !!decl.flags.isStatic,
             private: decl.flags.isPrivate || !!signature.comment?.blockTags?.filter((r) => r.tag === '@private').length,
             examples: signature.comment?.blockTags?.filter((r) => r.tag === '@example').map((t) => t.content.map((t) => t.text).join('')) || [],

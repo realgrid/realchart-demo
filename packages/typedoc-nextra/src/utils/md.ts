@@ -1,4 +1,6 @@
 import { stripIndents } from 'common-tags';
+import { RealChartLinksFactory } from './links';
+import path from 'path';
 
 export type HeadingTypes = 1 | 2 | 3 | 4 | 5 | 6;
 export type MdHeading<T extends string> = `# ${T}` | `## ${T}` | `### ${T}` | `#### ${T}` | `##### ${T}` | `###### ${T}`;
@@ -88,8 +90,8 @@ export function doclink(text: string, vars: any = {}): string {
     const [keyword, ...display] = text.trim().split(' ');
     const [sep, ...keys] = keyword.split('.');
     const label = display.join(' ');
-    const lastKey = keys.length ? keys.slice(-1)[0] : keyword;
     const subpaths = ['config', 'docs', 'demo', 'guide'];
+    let lastKey = keys.length ? keys.slice(-1)[0] : keyword;
     let page = '';
     // subroot page
     if (!keys.length && subpaths.includes(keyword)) {
@@ -100,8 +102,8 @@ export function doclink(text: string, vars: any = {}): string {
         page = `#${keyword}`;
     } 
     else {
-        // @TODO: config.series.line#style 같은 property 처리
-        // class link의 경우와 동일하게 처리할지? class는 A.B로 고정됨.
+        // class link의 경우와 동일하게 처리할지 class는 A.Property 로 고정됨.
+        // config는 a.b#property
         switch (sep) {
             case 'g':
             case 'global':
@@ -115,6 +117,8 @@ export function doclink(text: string, vars: any = {}): string {
                     console.warn('[WARN] not found var', text);
                     return label;
                 }
+                // config에서는 #이 있으면 속성
+                lastKey = lastKey.split('#').slice(-1)[0];
                 page = '/config/config/' + keys.join('/');
                 break;
             case 'demo':
@@ -130,6 +134,15 @@ export function doclink(text: string, vars: any = {}): string {
     }
     
     return hyperlink(label || lastKey , page);
+}
+
+export function fiddlelink(comment: any): string {
+    if ((comment.tag  != '@fiddle')) return comment.text;
+
+    const [{text}] = comment.content;
+    const [src, ...label] = text.split(' ');
+    const href = path.join(RealChartLinksFactory['JSFIDDLE'], src);
+    return `<FiddleLink label="${label.join(' ')}" href="${href}"/>`;
 }
 
 export function seelink(comment:any): string {

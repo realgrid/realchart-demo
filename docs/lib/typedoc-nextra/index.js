@@ -81,6 +81,7 @@ __export(src_exports, {
   default: () => src_default,
   doclink: () => doclink,
   escape: () => escape,
+  fiddlelink: () => fiddlelink,
   getDescription: () => getDescription,
   getDocLinkedDesc: () => getDocLinkedDesc,
   getFileMetadata: () => getFileMetadata,
@@ -109,7 +110,7 @@ module.exports = __toCommonJS(src_exports);
 var TypeDoc = __toESM(require("typedoc"));
 var import_promises = require("fs/promises");
 var import_tmp = __toESM(require("tmp"));
-var import_path2 = __toESM(require("path"));
+var import_path3 = __toESM(require("path"));
 
 // src/serializers/AbstractSerializer.ts
 var AbstractSerializer = class {
@@ -125,10 +126,51 @@ __name(AbstractSerializer, "AbstractSerializer");
 var import_typedoc = require("typedoc");
 
 // src/utils/helpers.ts
-var import_path = __toESM(require("path"));
+var import_path2 = __toESM(require("path"));
 
 // src/utils/md.ts
 var import_common_tags = require("common-tags");
+
+// src/utils/links.ts
+var DefaultLinksFactory = {
+  String: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+  Number: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+  Boolean: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+  Symbol: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+  void: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+  Object: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+  Function: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+  Array: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+  Set: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+  Map: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+  Date: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+  RegExp: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+  Promise: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+  Error: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+  EventEmitter: "https://nodejs.org/dist/latest/docs/api/events.html#events_class_eventemitter",
+  Timeout: "https://nodejs.org/dist/latest/docs/api/timers.html#timers_class_timeout",
+  Buffer: "https://nodejs.org/dist/latest/docs/api/buffer.html#buffer_class_buffer",
+  ReadableStream: "https://nodejs.org/dist/latest/docs/api/stream.html#stream_class_stream_readable",
+  Readable: "https://nodejs.org/dist/latest/docs/api/stream.html#stream_class_stream_readable",
+  ChildProcess: "https://nodejs.org/dist/latest/docs/api/child_process.html#child_process_class_childprocess",
+  Worker: "https://nodejs.org/api/worker_threads.html#worker_threads_class_worker",
+  MessagePort: "https://nodejs.org/api/worker_threads.html#worker_threads_class_messageport",
+  IncomingMessage: "https://nodejs.org/dist/latest/docs/api/http.html#http_class_http_incomingmessage",
+  RequestInfo: "https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch",
+  RequestInit: "https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch",
+  RequestOptions: "https://nodejs.org/dist/latest/docs/api/http.html#http_http_request_options_callback",
+  Response: "https://developer.mozilla.org/en-US/docs/Web/API/Response",
+  any: "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any",
+  CanvasRenderingContext2D: "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
+  unknown: "https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type",
+  Duplex: "https://nodejs.org/dist/latest/docs/api/stream.html#stream_class_stream_duplex"
+};
+var RealChartLinksFactory = {
+  JSFIDDLE: "https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/"
+};
+
+// src/utils/md.ts
+var import_path = __toESM(require("path"));
 function heading(src, type = 1) {
   return `${"#".repeat(type)} ${src}`;
 }
@@ -199,8 +241,8 @@ function doclink(text, vars = {}) {
   const [keyword, ...display] = text.trim().split(" ");
   const [sep, ...keys] = keyword.split(".");
   const label = display.join(" ");
-  const lastKey = keys.length ? keys.slice(-1)[0] : keyword;
   const subpaths = ["config", "docs", "demo", "guide"];
+  let lastKey = keys.length ? keys.slice(-1)[0] : keyword;
   let page = "";
   if (!keys.length && subpaths.includes(keyword)) {
     page = `/${keyword}`;
@@ -220,6 +262,7 @@ function doclink(text, vars = {}) {
           console.warn("[WARN] not found var", text);
           return label;
         }
+        lastKey = lastKey.split("#").slice(-1)[0];
         page = "/config/config/" + keys.join("/");
         break;
       case "demo":
@@ -236,6 +279,15 @@ function doclink(text, vars = {}) {
   return hyperlink(label || lastKey, page);
 }
 __name(doclink, "doclink");
+function fiddlelink(comment) {
+  if (comment.tag != "@fiddle")
+    return comment.text;
+  const [{ text }] = comment.content;
+  const [src, ...label] = text.split(" ");
+  const href = import_path.default.join(RealChartLinksFactory["JSFIDDLE"], src);
+  return `<FiddleLink label="${label.join(" ")}" href="${href}"/>`;
+}
+__name(fiddlelink, "fiddlelink");
 function seelink(comment) {
   if (!(comment.kind == "inline-tag") || !(comment.tag == "@link"))
     return comment.text;
@@ -256,7 +308,7 @@ __name(table, "table");
 // src/utils/helpers.ts
 function getName(decl) {
   var _a;
-  return decl.name === "default" ? import_path.default.parse(((_a = getFileMetadata(decl)) == null ? void 0 : _a.name) || "default").name : decl.name;
+  return decl.name === "default" ? import_path2.default.parse(((_a = getFileMetadata(decl)) == null ? void 0 : _a.name) || "default").name : decl.name;
 }
 __name(getName, "getName");
 function getVars(decl) {
@@ -286,8 +338,8 @@ function getFileMetadata(decl) {
   if (!src)
     return null;
   return {
-    name: import_path.default.basename(src.fileName),
-    directory: import_path.default.dirname(src.fileName),
+    name: import_path2.default.basename(src.fileName),
+    directory: import_path2.default.dirname(src.fileName),
     line: src.line,
     url: src.url
   };
@@ -438,7 +490,7 @@ var ClassSerializer = class extends AbstractSerializer {
     this.config = config;
   }
   serialize() {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w;
     const ctor = (_a = this.declaration.children) == null ? void 0 : _a.find((c) => {
       return c.kind === import_typedoc.ReflectionKind.Constructor;
     });
@@ -471,7 +523,8 @@ var ClassSerializer = class extends AbstractSerializer {
       private: this.declaration.flags.isPrivate || !!((_p = (_o = this.declaration.comment) == null ? void 0 : _o.blockTags) == null ? void 0 : _p.some((r) => r.tag === "@private")),
       properties: (properties == null ? void 0 : properties.map((m) => this.parseProperties(m))) || [],
       configProperties: this.parseConfigProperties(name) || [],
-      see: ((_t = (_s = (_r = (_q = this.declaration.comment) == null ? void 0 : _q.blockTags) == null ? void 0 : _r.find((r) => r.tag === "@see")) == null ? void 0 : _s.content) == null ? void 0 : _t.map((m) => seelink(m))) || []
+      see: ((_t = (_s = (_r = (_q = this.declaration.comment) == null ? void 0 : _q.blockTags) == null ? void 0 : _r.find((r) => r.tag === "@see")) == null ? void 0 : _s.content) == null ? void 0 : _t.map((m) => seelink(m))) || [],
+      fiddle: ((_w = (_v = (_u = this.declaration.comment) == null ? void 0 : _u.blockTags) == null ? void 0 : _v.filter((r) => r.tag === "@fiddle")) == null ? void 0 : _w.map((m) => fiddlelink(m))) || []
     };
   }
   parseConfigProperties(name) {
@@ -500,7 +553,7 @@ var ClassSerializer = class extends AbstractSerializer {
     return [];
   }
   parseProperties(decl) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J;
     const vars = getVars(this.declaration);
     const description = getDescription(decl, vars);
     const base = {
@@ -513,8 +566,9 @@ var ClassSerializer = class extends AbstractSerializer {
       private: decl.flags.isPrivate || !!((_j = (_i = decl.comment) == null ? void 0 : _i.blockTags) == null ? void 0 : _j.some((r) => r.tag === "@private")),
       readonly: decl.flags.isReadonly || !!((_l = (_k = decl.comment) == null ? void 0 : _k.blockTags) == null ? void 0 : _l.some((r) => r.tag === "@readonly")),
       see: ((_p = (_o = (_n = (_m = decl.comment) == null ? void 0 : _m.blockTags) == null ? void 0 : _n.find((r) => r.tag === "@see")) == null ? void 0 : _o.content) == null ? void 0 : _p.map((m) => seelink(m))) || [],
+      fiddle: ((_s = (_r = (_q = decl.comment) == null ? void 0 : _q.blockTags) == null ? void 0 : _r.filter((r) => r.tag === "@fiddle")) == null ? void 0 : _s.map((m) => fiddlelink(m))) || [],
       vars,
-      static: decl.flags.isStatic || !!((_r = (_q = decl.comment) == null ? void 0 : _q.blockTags) == null ? void 0 : _r.some((r) => r.tag === "@static")),
+      static: decl.flags.isStatic || !!((_u = (_t = decl.comment) == null ? void 0 : _t.blockTags) == null ? void 0 : _u.some((r) => r.tag === "@static")),
       type: decl.type ? parseType(decl.type) : "any"
     };
     if (decl.kind === import_typedoc.ReflectionKind.Accessor) {
@@ -525,38 +579,40 @@ var ClassSerializer = class extends AbstractSerializer {
       if (!setter)
         base.readonly = true;
       return Object.assign(base, {
-        abstract: getter.flags.isAbstract || ((_t = (_s = getter.comment) == null ? void 0 : _s.blockTags) == null ? void 0 : _t.some((r) => r.tag === "@abstract")),
-        deprecated: (_v = (_u = getter.comment) == null ? void 0 : _u.blockTags) == null ? void 0 : _v.some((r) => r.tag === "@deprecated"),
+        abstract: getter.flags.isAbstract || ((_w = (_v = getter.comment) == null ? void 0 : _v.blockTags) == null ? void 0 : _w.some((r) => r.tag === "@abstract")),
+        deprecated: (_y = (_x = getter.comment) == null ? void 0 : _x.blockTags) == null ? void 0 : _y.some((r) => r.tag === "@deprecated"),
         description: getDescription(getter, vars),
         metadata: getFileMetadata(getter),
         name: getter.name,
-        private: getter.flags.isPrivate || ((_x = (_w = getter.comment) == null ? void 0 : _w.blockTags) == null ? void 0 : _x.some((r) => r.tag === "@private")),
-        readonly: getter.flags.isReadonly || ((_z = (_y = getter.comment) == null ? void 0 : _y.blockTags) == null ? void 0 : _z.some((r) => r.tag === "@readonly")),
-        see: (_B = (_A = getter.comment) == null ? void 0 : _A.blockTags) == null ? void 0 : _B.filter((r) => r.tag === "@see").map((m) => m.content.map((t) => seelink(t)).join("")),
-        static: getter.flags.isStatic || ((_D = (_C = getter.comment) == null ? void 0 : _C.blockTags) == null ? void 0 : _D.some((r) => r.tag === "@static")),
+        private: getter.flags.isPrivate || ((_A = (_z = getter.comment) == null ? void 0 : _z.blockTags) == null ? void 0 : _A.some((r) => r.tag === "@private")),
+        readonly: getter.flags.isReadonly || ((_C = (_B = getter.comment) == null ? void 0 : _B.blockTags) == null ? void 0 : _C.some((r) => r.tag === "@readonly")),
+        see: (_E = (_D = getter.comment) == null ? void 0 : _D.blockTags) == null ? void 0 : _E.filter((r) => r.tag === "@see").map((m) => m.content.map((t) => seelink(t)).join("")),
+        fiddle: ((_H = (_G = (_F = getter.comment) == null ? void 0 : _F.blockTags) == null ? void 0 : _G.filter((r) => r.tag === "@fiddle")) == null ? void 0 : _H.map((m) => fiddlelink(m))) || [],
+        static: getter.flags.isStatic || ((_J = (_I = getter.comment) == null ? void 0 : _I.blockTags) == null ? void 0 : _J.some((r) => r.tag === "@static")),
         type: getter.type ? parseType(getter.type) : "any"
       });
     }
     return base;
   }
   parseMethod(decl) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t;
     const signature = ((_a = decl.signatures) == null ? void 0 : _a[0]) || decl;
     const description = getDescription(signature);
     return {
       name: decl.name,
       description,
       see: ((_c = (_b = signature.comment) == null ? void 0 : _b.blockTags) == null ? void 0 : _c.filter((r) => r.tag === "@see").map((t) => t.content.map((t2) => seelink(t2)).join(""))) || [],
+      fiddle: ((_f = (_e = (_d = signature.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.filter((r) => r.tag === "@fiddle")) == null ? void 0 : _f.map((m) => fiddlelink(m))) || [],
       static: !!signature.flags.isStatic || !!decl.flags.isStatic,
-      private: decl.flags.isPrivate || !!((_e = (_d = signature.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.filter((r) => r.tag === "@private").length),
-      examples: ((_g = (_f = signature.comment) == null ? void 0 : _f.blockTags) == null ? void 0 : _g.filter((r) => r.tag === "@example").map((t) => t.content.map((t2) => t2.text).join(""))) || [],
-      abstract: decl.flags.isAbstract || !!((_i = (_h = signature.comment) == null ? void 0 : _h.blockTags) == null ? void 0 : _i.some((r) => r.tag === "@abstract")),
-      deprecated: !!((_k = (_j = signature.comment) == null ? void 0 : _j.blockTags) == null ? void 0 : _k.some((r) => r.tag === "@deprecated")),
-      parameters: ((_l = signature.parameters) == null ? void 0 : _l.map((m) => this.parseParameter(m))) || ((_m = decl.parameters || decl.typeParameters) == null ? void 0 : _m.map((m) => this.parseParameter(m))) || [],
+      private: decl.flags.isPrivate || !!((_h = (_g = signature.comment) == null ? void 0 : _g.blockTags) == null ? void 0 : _h.filter((r) => r.tag === "@private").length),
+      examples: ((_j = (_i = signature.comment) == null ? void 0 : _i.blockTags) == null ? void 0 : _j.filter((r) => r.tag === "@example").map((t) => t.content.map((t2) => t2.text).join(""))) || [],
+      abstract: decl.flags.isAbstract || !!((_l = (_k = signature.comment) == null ? void 0 : _k.blockTags) == null ? void 0 : _l.some((r) => r.tag === "@abstract")),
+      deprecated: !!((_n = (_m = signature.comment) == null ? void 0 : _m.blockTags) == null ? void 0 : _n.some((r) => r.tag === "@deprecated")),
+      parameters: ((_o = signature.parameters) == null ? void 0 : _o.map((m) => this.parseParameter(m))) || ((_p = decl.parameters || decl.typeParameters) == null ? void 0 : _p.map((m) => this.parseParameter(m))) || [],
       returns: {
         type: signature.type ? parseType(signature.type) : "any",
         rawType: signature.type ? parseTypes(signature.type) : ["any"],
-        description: ((_q = (_p = (_o = (_n = signature.comment) == null ? void 0 : _n.blockTags) == null ? void 0 : _o.find((r) => r.tag === "@returns")) == null ? void 0 : _p.content) == null ? void 0 : _q.map(getDocLinkedDesc).join("")) || null
+        description: ((_t = (_s = (_r = (_q = signature.comment) == null ? void 0 : _q.blockTags) == null ? void 0 : _r.find((r) => r.tag === "@returns")) == null ? void 0 : _s.content) == null ? void 0 : _t.map(getDocLinkedDesc).join("")) || null
       },
       metadata: getFileMetadata(decl)
     };
@@ -579,7 +635,7 @@ __name(ClassSerializer, "ClassSerializer");
 var import_typedoc2 = require("typedoc");
 var TypesSerializer = class extends AbstractSerializer {
   serialize() {
-    var _a, _b, _c, _d, _e, _f, _g, _h;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
     const base = {
       deprecated: !!((_b = (_a = this.declaration.comment) == null ? void 0 : _a.blockTags) == null ? void 0 : _b.some((r) => r.tag === "@deprecated")),
       description: ((_d = (_c = this.declaration.comment) == null ? void 0 : _c.summary) == null ? void 0 : _d.map((t) => t.text).join("")) || null,
@@ -590,12 +646,13 @@ var TypesSerializer = class extends AbstractSerializer {
       properties: [],
       returns: null,
       see: ((_h = (_g = (_f = (_e = this.declaration.comment) == null ? void 0 : _e.blockTags) == null ? void 0 : _f.find((r) => r.tag === "@see")) == null ? void 0 : _g.content) == null ? void 0 : _h.map((m) => m.text)) || [],
+      fiddle: ((_k = (_j = (_i = this.declaration.comment) == null ? void 0 : _i.blockTags) == null ? void 0 : _j.filter((r) => r.tag === "@fiddle")) == null ? void 0 : _k.map((m) => fiddlelink(m))) || [],
       type: this.declaration.type ? parseType(this.declaration.type) : "any"
     };
     if (this.declaration.kind === import_typedoc2.ReflectionKind.Enum || this.declaration.kind === import_typedoc2.ReflectionKind.Interface) {
       if (this.declaration.children) {
         base.properties = this.declaration.children.map((m) => {
-          var _a2, _b2, _c2, _d2, _e2, _f2, _g2, _h2, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w;
+          var _a2, _b2, _c2, _d2, _e2, _f2, _g2, _h2, _i2, _j2, _k2, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C;
           if (((_a2 = m.type) == null ? void 0 : _a2.type) !== "reflection")
             return {
               name: m.name,
@@ -607,22 +664,24 @@ var TypesSerializer = class extends AbstractSerializer {
               metadata: getFileMetadata(m),
               private: !!m.flags.isPrivate,
               readonly: !!m.flags.isReadonly,
-              see: ((_i = (_h2 = (_g2 = (_f2 = this.declaration.comment) == null ? void 0 : _f2.blockTags) == null ? void 0 : _g2.find((r) => r.tag === "@see")) == null ? void 0 : _h2.content) == null ? void 0 : _i.map((m2) => m2.text)) || [],
+              see: ((_i2 = (_h2 = (_g2 = (_f2 = this.declaration.comment) == null ? void 0 : _f2.blockTags) == null ? void 0 : _g2.find((r) => r.tag === "@see")) == null ? void 0 : _h2.content) == null ? void 0 : _i2.map((m2) => m2.text)) || [],
+              fiddle: ((_l = (_k2 = (_j2 = this.declaration.comment) == null ? void 0 : _j2.blockTags) == null ? void 0 : _k2.filter((r) => r.tag === "@fiddle")) == null ? void 0 : _l.map((m2) => fiddlelink(m2))) || [],
               static: !!m.flags.isStatic,
               type: m.type ? parseType(m.type) : "any",
               rawType: m.type ? parseTypes(m.type) : ["any"]
             };
           return {
             name: m.name,
-            description: ((_p = ((_n = (_m = (_l = (_k = (_j = m.type) == null ? void 0 : _j.declaration) == null ? void 0 : _k.signatures) == null ? void 0 : _l[0]) == null ? void 0 : _m.comment) == null ? void 0 : _n.summary) || ((_o = m.comment) == null ? void 0 : _o.summary)) == null ? void 0 : _p.map((t) => t.text).join("")) || null,
+            description: ((_s = ((_q = (_p = (_o = (_n = (_m = m.type) == null ? void 0 : _m.declaration) == null ? void 0 : _n.signatures) == null ? void 0 : _o[0]) == null ? void 0 : _p.comment) == null ? void 0 : _q.summary) || ((_r = m.comment) == null ? void 0 : _r.summary)) == null ? void 0 : _s.map((t) => t.text).join("")) || null,
             value: m.defaultValue || null,
             abstract: !!m.flags.isAbstract,
             default: m.defaultValue || null,
-            deprecated: !!((_r = (_q = m.comment) == null ? void 0 : _q.blockTags) == null ? void 0 : _r.some((r) => r.tag === "@deprecated")),
-            metadata: getFileMetadata(((_s = m.type) == null ? void 0 : _s.declaration) || m),
+            deprecated: !!((_u = (_t = m.comment) == null ? void 0 : _t.blockTags) == null ? void 0 : _u.some((r) => r.tag === "@deprecated")),
+            metadata: getFileMetadata(((_v = m.type) == null ? void 0 : _v.declaration) || m),
             private: !!m.flags.isPrivate,
             readonly: !!m.flags.isReadonly,
-            see: ((_w = (_v = (_u = (_t = this.declaration.comment) == null ? void 0 : _t.blockTags) == null ? void 0 : _u.find((r) => r.tag === "@see")) == null ? void 0 : _v.content) == null ? void 0 : _w.map((m2) => m2.text)) || [],
+            see: ((_z = (_y = (_x = (_w = this.declaration.comment) == null ? void 0 : _w.blockTags) == null ? void 0 : _x.find((r) => r.tag === "@see")) == null ? void 0 : _y.content) == null ? void 0 : _z.map((m2) => m2.text)) || [],
+            fiddle: ((_C = (_B = (_A = this.declaration.comment) == null ? void 0 : _A.blockTags) == null ? void 0 : _B.filter((r) => r.tag === "@fiddle")) == null ? void 0 : _C.map((m2) => fiddlelink(m2))) || [],
             static: !!m.flags.isStatic,
             type: m.type ? parseType(m.type) : "any",
             rawType: m.type ? parseTypes(m.type) : ["any"]
@@ -638,7 +697,7 @@ __name(TypesSerializer, "TypesSerializer");
 // src/serializers/FunctionSerializer.ts
 var FunctionSerializer = class extends AbstractSerializer {
   serialize() {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t;
     const decl = this.declaration;
     const signature = ((_a = decl.signatures) == null ? void 0 : _a[0]) || decl;
     const vars = getVars(this.declaration);
@@ -647,16 +706,17 @@ var FunctionSerializer = class extends AbstractSerializer {
       name: decl.name,
       description,
       see: ((_c = (_b = signature.comment) == null ? void 0 : _b.blockTags) == null ? void 0 : _c.filter((r) => r.tag === "@see").map((t) => t.content.map((t2) => t2.text).join(""))) || [],
+      fiddle: ((_f = (_e = (_d = signature.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.filter((r) => r.tag === "@fiddle")) == null ? void 0 : _f.map((m) => fiddlelink(m))) || [],
       static: !!signature.flags.isStatic || !!decl.flags.isStatic,
-      private: decl.flags.isPrivate || !!((_e = (_d = signature.comment) == null ? void 0 : _d.blockTags) == null ? void 0 : _e.filter((r) => r.tag === "@private").length),
-      examples: ((_g = (_f = signature.comment) == null ? void 0 : _f.blockTags) == null ? void 0 : _g.filter((r) => r.tag === "@example").map((t) => t.content.map((t2) => t2.text).join(""))) || [],
-      abstract: decl.flags.isAbstract || !!((_i = (_h = signature.comment) == null ? void 0 : _h.blockTags) == null ? void 0 : _i.some((r) => r.tag === "@abstract")),
-      deprecated: !!((_k = (_j = signature.comment) == null ? void 0 : _j.blockTags) == null ? void 0 : _k.some((r) => r.tag === "@deprecated")),
-      parameters: ((_l = signature.parameters) == null ? void 0 : _l.map((m) => this.parseParameter(m))) || ((_m = decl.parameters || decl.typeParameters) == null ? void 0 : _m.map((m) => this.parseParameter(m))) || [],
+      private: decl.flags.isPrivate || !!((_h = (_g = signature.comment) == null ? void 0 : _g.blockTags) == null ? void 0 : _h.filter((r) => r.tag === "@private").length),
+      examples: ((_j = (_i = signature.comment) == null ? void 0 : _i.blockTags) == null ? void 0 : _j.filter((r) => r.tag === "@example").map((t) => t.content.map((t2) => t2.text).join(""))) || [],
+      abstract: decl.flags.isAbstract || !!((_l = (_k = signature.comment) == null ? void 0 : _k.blockTags) == null ? void 0 : _l.some((r) => r.tag === "@abstract")),
+      deprecated: !!((_n = (_m = signature.comment) == null ? void 0 : _m.blockTags) == null ? void 0 : _n.some((r) => r.tag === "@deprecated")),
+      parameters: ((_o = signature.parameters) == null ? void 0 : _o.map((m) => this.parseParameter(m))) || ((_p = decl.parameters || decl.typeParameters) == null ? void 0 : _p.map((m) => this.parseParameter(m))) || [],
       returns: {
         type: signature.type ? parseType(signature.type) : "any",
         rawType: signature.type ? parseTypes(signature.type) : ["any"],
-        description: ((_q = (_p = (_o = (_n = signature.comment) == null ? void 0 : _n.blockTags) == null ? void 0 : _o.find((r) => r.tag === "@returns")) == null ? void 0 : _p.content) == null ? void 0 : _q.map((t) => t.text).join("")) || null
+        description: ((_t = (_s = (_r = (_q = signature.comment) == null ? void 0 : _q.blockTags) == null ? void 0 : _r.find((r) => r.tag === "@returns")) == null ? void 0 : _s.content) == null ? void 0 : _t.map((t) => t.text).join("")) || null
       },
       metadata: getFileMetadata(decl)
     };
@@ -700,13 +760,14 @@ ${heading("See Also", 3)}
 ${"- " + hyperlink(c.extends, "../classes/" + c.extends)}` : "";
     const imps = c.implements ? `${heading("Implements", 3)}
 ${"- " + hyperlink(c.implements, "../classes/" + c.implements)}` : "";
-    return `${heading(escape(c.name), 2)}
-            ${exts}
-            ${imps}
-            ${c.description ? `
-${c.description}
-` : ""}
-            ${this.getSee(c.see)}`;
+    return [
+      heading(escape(c.name), 2),
+      exts,
+      imps,
+      c.description,
+      this.getSee(c.see),
+      c.fiddle.join(" ")
+    ].map((v) => v == null ? void 0 : v.trim()).filter((v) => v).join("\n");
   }
   getCtor(c) {
     if (!c)
@@ -816,7 +877,7 @@ ${table(tableHead, tableBody)}
     });
     return `${head}
 ${tableHead}
-${tableBody.join("  \n")}`;
+${tableBody.join("  \n")}`.trim();
   }
   getProperties(properties) {
     if (!properties.length)
@@ -830,9 +891,12 @@ ${tableBody.join("  \n")}`;
       const desc = [m.description || "", m.deprecated ? `
 - ${bold("\u26A0\uFE0F Deprecated")}` : "", ((_a = m.metadata) == null ? void 0 : _a.url) ? `
 - ${hyperlink("Source", m.metadata.url)}` : ""].filter((r) => r.length > 0).join("\n").trim();
-      return `${title}
-${desc}
-${this.getSee(m.see)}`;
+      return [
+        title,
+        desc,
+        this.getSee(m.see),
+        m.fiddle.join(" ")
+      ].map((v) => v == null ? void 0 : v.trim()).filter((v) => v).join("\n");
     });
     return `${head}
 ${body.join("\n")}`;
@@ -878,8 +942,12 @@ ${table(tableHead, tableBody)}
         ((_b = m.metadata) == null ? void 0 : _b.url) ? `
 - ${hyperlink("Source", m.metadata.url)}` : ""
       ].filter((r) => r.length > 0).join("\n").trim();
-      return `${title}
-${desc}${this.getSee(m.see)}`;
+      return [
+        title,
+        desc,
+        this.getSee(m.see),
+        m.fiddle.join(" ")
+      ].map((v) => v.trim()).filter((v) => v).join("\n");
     });
     return `${head}
 ${body.join("\n")}`;
@@ -929,43 +997,6 @@ __name(TypeDocNextra, "TypeDocNextra");
 
 // src/index.ts
 var import_fs = require("fs");
-
-// src/utils/links.ts
-var DefaultLinksFactory = {
-  String: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
-  Number: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
-  Boolean: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
-  Symbol: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
-  void: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
-  Object: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
-  Function: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
-  Array: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
-  Set: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
-  Map: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
-  Date: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
-  RegExp: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
-  Promise: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
-  Error: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
-  EventEmitter: "https://nodejs.org/dist/latest/docs/api/events.html#events_class_eventemitter",
-  Timeout: "https://nodejs.org/dist/latest/docs/api/timers.html#timers_class_timeout",
-  Buffer: "https://nodejs.org/dist/latest/docs/api/buffer.html#buffer_class_buffer",
-  ReadableStream: "https://nodejs.org/dist/latest/docs/api/stream.html#stream_class_stream_readable",
-  Readable: "https://nodejs.org/dist/latest/docs/api/stream.html#stream_class_stream_readable",
-  ChildProcess: "https://nodejs.org/dist/latest/docs/api/child_process.html#child_process_class_childprocess",
-  Worker: "https://nodejs.org/api/worker_threads.html#worker_threads_class_worker",
-  MessagePort: "https://nodejs.org/api/worker_threads.html#worker_threads_class_messageport",
-  IncomingMessage: "https://nodejs.org/dist/latest/docs/api/http.html#http_class_http_incomingmessage",
-  RequestInfo: "https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch",
-  RequestInit: "https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch",
-  RequestOptions: "https://nodejs.org/dist/latest/docs/api/http.html#http_http_request_options_callback",
-  Response: "https://developer.mozilla.org/en-US/docs/Web/API/Response",
-  any: "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any",
-  CanvasRenderingContext2D: "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
-  unknown: "https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type",
-  Duplex: "https://nodejs.org/dist/latest/docs/api/stream.html#stream_class_stream_duplex"
-};
-
-// src/index.ts
 function createDocumentation(options) {
   return __async(this, null, function* () {
     var _a, _b, _c;
@@ -982,7 +1013,7 @@ function createDocumentation(options) {
         entryPoints: options.input,
         tsconfig: options.tsconfigPath
       });
-      const tmpOutputPath = import_path2.default.join(import_tmp.default.dirSync().name, "project-reflection.json");
+      const tmpOutputPath = import_path3.default.join(import_tmp.default.dirSync().name, "project-reflection.json");
       app.options.addReader(new TypeDoc.TSConfigReader());
       app.options.addReader(new TypeDoc.TypeDocReader());
       const _proj = yield app.convert();
@@ -1117,7 +1148,7 @@ function createDocumentation(options) {
         throw new Error("Output path was not specified");
       if (options.jsonName) {
         const docStr = JSON.stringify(doc, null, options.spaces || 0);
-        yield (0, import_promises.writeFile)(import_path2.default.join(options.output, options.jsonName), docStr);
+        yield (0, import_promises.writeFile)(import_path3.default.join(options.output, options.jsonName), docStr);
       }
       if (options.markdown) {
         for (const moduleIdx in doc.modules) {
@@ -1125,32 +1156,32 @@ function createDocumentation(options) {
           yield Promise.all([
             ...module2.classes.flatMap((cl) => {
               return cl.markdown.map((md) => __async(this, null, function* () {
-                const classPath = import_path2.default.join(options.output, "classes", module2.name);
+                const classPath = import_path3.default.join(options.output, "classes", module2.name);
                 if (!(0, import_fs.existsSync)(classPath))
                   yield (0, import_promises.mkdir)(classPath, {
                     recursive: true
                   });
-                yield (0, import_promises.writeFile)(import_path2.default.join(classPath, `${md.name}.${options.extension || "mdx"}`), md.content);
+                yield (0, import_promises.writeFile)(import_path3.default.join(classPath, `${md.name}.${options.extension || "mdx"}`), md.content);
               }));
             }),
             ...module2.types.flatMap((cl) => {
               return cl.markdown.map((md) => __async(this, null, function* () {
-                const typesPath = import_path2.default.join(options.output, "types", module2.name);
+                const typesPath = import_path3.default.join(options.output, "types", module2.name);
                 if (!(0, import_fs.existsSync)(typesPath))
                   yield (0, import_promises.mkdir)(typesPath, {
                     recursive: true
                   });
-                yield (0, import_promises.writeFile)(import_path2.default.join(typesPath, `${md.name}.${options.extension || "mdx"}`), md.content);
+                yield (0, import_promises.writeFile)(import_path3.default.join(typesPath, `${md.name}.${options.extension || "mdx"}`), md.content);
               }));
             }),
             ...module2.functions.flatMap((cl) => {
               return cl.markdown.map((md) => __async(this, null, function* () {
-                const funcsPath = import_path2.default.join(options.output, "functions", module2.name);
+                const funcsPath = import_path3.default.join(options.output, "functions", module2.name);
                 if (!(0, import_fs.existsSync)(funcsPath))
                   yield (0, import_promises.mkdir)(funcsPath, {
                     recursive: true
                   });
-                yield (0, import_promises.writeFile)(import_path2.default.join(funcsPath, `${md.name}.${options.extension || "mdx"}`), md.content);
+                yield (0, import_promises.writeFile)(import_path3.default.join(funcsPath, `${md.name}.${options.extension || "mdx"}`), md.content);
               }));
             })
           ]);
@@ -1159,12 +1190,12 @@ function createDocumentation(options) {
           const file = doc.custom[fileIdx];
           yield Promise.all(
             file.map((m) => __async(this, null, function* () {
-              const catPath = import_path2.default.join(options.output, import_path2.default.normalize(m.category));
+              const catPath = import_path3.default.join(options.output, import_path3.default.normalize(m.category));
               if (!(0, import_fs.existsSync)(catPath))
                 yield (0, import_promises.mkdir)(catPath, {
                   recursive: true
                 });
-              yield (0, import_promises.writeFile)(import_path2.default.join(catPath, `${m.name}${m.type || import_path2.default.extname(m.path)}`), m.content);
+              yield (0, import_promises.writeFile)(import_path3.default.join(catPath, `${m.name}${m.type || import_path3.default.extname(m.path)}`), m.content);
             }))
           );
         }
@@ -1189,6 +1220,7 @@ var src_default = createDocumentation;
   createDocumentation,
   doclink,
   escape,
+  fiddlelink,
   getDescription,
   getDocLinkedDesc,
   getFileMetadata,

@@ -18,7 +18,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { doclink }  from './docs/lib/typedoc-nextra/index.mjs';
+import { doclink, fiddlelink }  from './docs/lib/typedoc-nextra/index.mjs';
 
 const ReflectionKind = {
   Project: 1,
@@ -120,6 +120,7 @@ class Tunner {
   }
 
   _parseFiddle(tag) {
+    fiddlelink()
     const { label, href } = this._parseLink(tag, Tunner.fiddleUrl);
     return `<FiddleLink label="${label}" href="${href}"/>`;
   }
@@ -144,7 +145,8 @@ class Tunner {
   _parseFiddleTag(tags) {
     const fiddles = this._findTags(tags, '@fiddle');
     return fiddles?.map(fiddle => {
-      return this._parseFiddle(fiddle);
+      // return this._parseFiddle(fiddle);
+      return fiddlelink(fiddle);
     }).join('\n');
   }
 
@@ -272,44 +274,6 @@ class Tunner {
         if (link) return link;
       }
 
-      /** 
-       * 클래스 API 링크 
-       * 여기까지 리턴하지 못했으면 API 클래스 링크 로직 시작
-       */
-      // 구분자와 라벨
-      // const [sep, ...label] = line.text.split(' ');
-      // // 접근자와 속성 구분
-      // const [accessor, ...props] = sep.split('.');
-      // let path = '';
-      // const [prop] = props.splice(-1, 1);
-      // switch (accessor) {
-      //   case 'g':
-      //   case 'global':
-      //     path = '/docs/api/globals';
-      //     break;
-      //   case 'rc':
-      //   case 'realchart':
-      //   default:
-      //     path = '/docs/api/classes';
-      //     break;
-        
-      //     // props.unshift(accessor);
-      //     // path = `/config/config`;
-      //     // break;
-      // }
-
-      // // single word. 현재 페이지의 속성
-      // if (sep == accessor) {
-      //   path = `#${sep}`;
-      //   !label.length && label.push(sep);
-      // } else if (props.length) {
-      //   path = `${path}/${props.join('/')}#${prop}`;
-      // } else {
-      //   path = `${path}/${prop}`;
-      // }
-      // !label.length && label.push(prop);
-
-      // return `**[${label.join(' ')}](${path})**`
       return doclink(line.text);
     }
 

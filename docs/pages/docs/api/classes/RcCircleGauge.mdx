@@ -1,14 +1,10 @@
 ## RcCircleGauge
-            ### Extends
+### Extends
 - [RcCircularGauge](../classes/RcCircularGauge)
-            
-            
 **'circle'** 게이지.
 원이나 원호로 값을 표시하는 게이지.
 
 [Configuration 속성들](/config/config/gauge/circle) 참조.
-
-            
 
 
 
@@ -44,50 +40,40 @@
  | [value](/config/config/gauge/circle#value) | `number{:js}` | 현재값. |   
  | [valueRim](/config/config/gauge/circle/valuerim) | `CircleGaugeValueRim{:js}` | 게이지의 값 원호 테두리 설정 모델. |   
  | [visible](/config/config/gauge/circle#visible) | `boolean{:js}` | 표시 여부. |   
- | [width](/config/config/gauge/circle#width) | `string \| number{:js}` | 게이지 너비. | 
+ | [width](/config/config/gauge/circle#width) | `string \| number{:js}` | 게이지 너비. |
 
 ## Properties
 ### band: [RcGaugeRangeBand](../classes/RcGaugeRangeBand)[#band]
 band 모델.
 
 [Configuration 속성들](/config/config/gauge/circle/band) 참조.
-
 ### hand: [RcChartObject](../classes/RcChartObject)[#hand]
 hand 모델.
 
 [Configuration 속성들](/config/config/gauge/circle/hand) 참조.
-
 ### label: [RcChartObject](../classes/RcChartObject)[#label]
 label 모델.
-
 ### marker: [RcChartObject](../classes/RcChartObject)[#marker]
 marker 모델.
 
 [Configuration 속성들](/config/config/gauge/circle/marker) 참조.
-
 ### name: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)[#name]
-
-
 ### pin: [RcChartObject](../classes/RcChartObject)[#pin]
 pin 모델.
 
 [Configuration 속성들](/config/config/gauge/circle/pin) 참조.
-
 ### rim: [RcChartObject](../classes/RcChartObject)[#rim]
 rim 모델.
 
 [Configuration 속성들](/config/config/gauge/circle/rim) 참조.
-
 ### scale: [RcChartObject](../classes/RcChartObject)[#scale]
 scale 모델.
 
 [Configuration 속성들](/config/config/gauge/circle/scale) 참조.
-
 ### valueRim: [RcChartObject](../classes/RcChartObject)[#valueRim]
 valueRim 모델.
 
 [Configuration 속성들](/config/config/gauge/circle/valueRim) 참조.
-
 
 ## Methods
 ### get(prop): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#get]
@@ -108,7 +94,7 @@ Utils.log(chart.axis.get('title.text'));
 
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
-| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 속성 경로. |
+| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | '**.**'으로 구분되는 속성 경로. |
 ### set(prop, value, redraw): [RcChartObject](../classes/RcChartObject)[#set]
 지정한 속성의 값(들)을 설정한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다.\

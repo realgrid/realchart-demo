@@ -1,5 +1,5 @@
 import { JSONOutput, ReflectionKind } from 'typedoc';
-import { FileMetadata, getFileMetadata, getName, hyperlink, seelink, parseType, parseTypes, getVars, getDescription, getDocLinkedDesc } from '../utils';
+import { FileMetadata, getFileMetadata, getName, fiddlelink, seelink, parseType, parseTypes, getVars, getDescription, getDocLinkedDesc } from '../utils';
 import { AbstractSerializer } from './AbstractSerializer';
 import { TypeDocParameterReflection } from '..';
 
@@ -7,6 +7,7 @@ export interface DocumentedClass {
     name: string;
     description: string | null;
     see: string[];
+    fiddle: string[];
     extends: string | null;
     rawExtends: string[] | null;
     implements: string | null;
@@ -30,6 +31,7 @@ export interface DocumentedClassProperty {
     name: string;
     description: string | null;
     see: string[];
+    fiddle: string[];
     vars?: any;
     static: boolean;
     private: boolean;
@@ -55,6 +57,7 @@ export interface DocumentedClassMethod {
     name: string;
     description: string | null;
     see: string[];
+    fiddle: string[];
     static: boolean;
     private: boolean;
     examples: string[];
@@ -113,7 +116,8 @@ export class ClassSerializer extends AbstractSerializer {
             private: this.declaration.flags.isPrivate || !!this.declaration.comment?.blockTags?.some((r) => r.tag === '@private'),
             properties: properties?.map((m) => this.parseProperties(m)) || [],
             configProperties: this.parseConfigProperties(name) || [],
-            see: this.declaration.comment?.blockTags?.find((r) => r.tag === '@see')?.content?.map((m) => seelink(m)) || []
+            see: this.declaration.comment?.blockTags?.find((r) => r.tag === '@see')?.content?.map((m) => seelink(m)) || [],
+            fiddle: this.declaration.comment?.blockTags?.filter((r) => r.tag === '@fiddle')?.map((m) => fiddlelink(m)) || [],
         };
     }
 
@@ -169,6 +173,7 @@ export class ClassSerializer extends AbstractSerializer {
             private: decl.flags.isPrivate || !!decl.comment?.blockTags?.some((r) => r.tag === '@private'),
             readonly: decl.flags.isReadonly || !!decl.comment?.blockTags?.some((r) => r.tag === '@readonly'),
             see: decl.comment?.blockTags?.find((r) => r.tag === '@see')?.content?.map((m) => seelink(m)) || [],
+            fiddle: decl.comment?.blockTags?.filter((r) => r.tag === '@fiddle')?.map((m) => fiddlelink(m)) || [],
             vars,
             static: decl.flags.isStatic || !!decl.comment?.blockTags?.some((r) => r.tag === '@static'),
             type: decl.type ? parseType(decl.type) : 'any'
@@ -190,6 +195,7 @@ export class ClassSerializer extends AbstractSerializer {
                 private: getter.flags.isPrivate || getter.comment?.blockTags?.some((r) => r.tag === '@private'),
                 readonly: getter.flags.isReadonly || getter.comment?.blockTags?.some((r) => r.tag === '@readonly'),
                 see: getter.comment?.blockTags?.filter((r) => r.tag === '@see').map((m) => m.content.map((t) => seelink(t)).join('')),
+                fiddle: getter.comment?.blockTags?.filter((r) => r.tag === '@fiddle')?.map((m) => fiddlelink(m)) || [],
                 static: getter.flags.isStatic || getter.comment?.blockTags?.some((r) => r.tag === '@static'),
                 type: getter.type ? parseType(getter.type) : 'any'
             } as Partial<DocumentedClassProperty>);
@@ -205,6 +211,7 @@ export class ClassSerializer extends AbstractSerializer {
             name: decl.name,
             description,
             see: signature.comment?.blockTags?.filter((r) => r.tag === '@see').map((t) => t.content.map((t) => seelink(t)).join('')) || [],
+            fiddle: signature.comment?.blockTags?.filter((r) => r.tag === '@fiddle')?.map((m) => fiddlelink(m)) || [],
             static: !!signature.flags.isStatic || !!decl.flags.isStatic,
             private: decl.flags.isPrivate || !!signature.comment?.blockTags?.filter((r) => r.tag === '@private').length,
             examples: signature.comment?.blockTags?.filter((r) => r.tag === '@example').map((t) => t.content.map((t) => t.text).join('')) || [],

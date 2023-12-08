@@ -1,5 +1,5 @@
 import { ReflectionKind } from 'typedoc';
-import { FileMetadata, getFileMetadata, getName, parseType, parseTypes } from '../utils';
+import { FileMetadata, fiddlelink, getFileMetadata, getName, parseType, parseTypes } from '../utils';
 import { AbstractSerializer } from './AbstractSerializer';
 import { DocumentedClassProperty, DocumentedParameter } from './ClassSerializer';
 
@@ -35,6 +35,7 @@ export class TypesSerializer extends AbstractSerializer {
             properties: [],
             returns: null,
             see: this.declaration.comment?.blockTags?.find((r) => r.tag === '@see')?.content?.map((m) => m.text) || [],
+            fiddle: this.declaration.comment?.blockTags?.filter((r) => r.tag === '@fiddle')?.map((m) => fiddlelink(m)) || [],
             type: this.declaration.type ? parseType(this.declaration.type) : 'any'
         } as DocumentedTypes;
 
@@ -53,6 +54,7 @@ export class TypesSerializer extends AbstractSerializer {
                             private: !!m.flags.isPrivate,
                             readonly: !!m.flags.isReadonly,
                             see: this.declaration.comment?.blockTags?.find((r) => r.tag === '@see')?.content?.map((m) => m.text) || [],
+                            fiddle: this.declaration.comment?.blockTags?.filter((r) => r.tag === '@fiddle')?.map((m) => fiddlelink(m)) || [],
                             static: !!m.flags.isStatic,
                             type: m.type ? parseType(m.type) : 'any',
                             rawType: m.type ? parseTypes(m.type) : ['any']
@@ -69,6 +71,7 @@ export class TypesSerializer extends AbstractSerializer {
                         private: !!m.flags.isPrivate,
                         readonly: !!m.flags.isReadonly,
                         see: this.declaration.comment?.blockTags?.find((r) => r.tag === '@see')?.content?.map((m) => m.text) || [],
+                        fiddle: this.declaration.comment?.blockTags?.filter((r) => r.tag === '@fiddle')?.map((m) => fiddlelink(m)) || [],
                         static: !!m.flags.isStatic,
                         type: m.type ? parseType(m.type) : 'any',
                         rawType: m.type ? parseTypes(m.type) : ['any']

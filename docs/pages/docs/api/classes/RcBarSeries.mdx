@@ -1,11 +1,7 @@
 ## RcBarSeries
-            ### Extends
+### Extends
 - [RcChartSeries](../classes/RcChartSeries)
-            
-            
 **'bar'** 시리즈.
-
-            
 ### See Also
 
             [RcLineSeries](/docs/api/classes/RcLineSeries)
@@ -46,21 +42,16 @@
  | [xStep](/config/config/series/bar#xstep) | `string \| number{:js}` | x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격. |   
  | [yAxis](/config/config/series/bar#yaxis) | `string \| number{:js}` |  |   
  | [yField](/config/config/series/bar#yfield) | `string \| number{:js}` | undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'. |   
- | [zOrder](/config/config/series/bar#zorder) | `number{:js}` |  | 
+ | [zOrder](/config/config/series/bar#zorder) | `number{:js}` |  |
 
 ## Properties
 ### name: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)[#name]
-
-
 ### pointLabel: [RcChartObject](../classes/RcChartObject)[#pointLabel]
 point label 모델.
-
 ### tooltip: [RcChartObject](../classes/RcChartObject)[#tooltip]
 point label 모델.
-
 ### trendLine: [RcChartObject](../classes/RcChartObject)[#trendLine]
 point label 모델.
-
 
 ## Methods
 ### get(prop): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#get]
@@ -81,7 +72,7 @@ Utils.log(chart.axis.get('title.text'));
 
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
-| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 속성 경로. |
+| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | '**.**'으로 구분되는 속성 경로. |
 ### getValueAt(xValue): [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)[#getValueAt]
 xValue에 해당하는 데이터포인터의 yValue를 리턴한다.
 
