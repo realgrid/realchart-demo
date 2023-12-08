@@ -407,15 +407,15 @@ class Tunner {
    * @returns string
    */
   _parseSummary(summary) {
-    // 일반 주석 라인은 제거한다.
-    return summary?.filter(line => {
-      return line.text.trim().indexOf('//') < 0;
-    }).map(line => {
+    return summary?.map(line => {
       switch (line.kind) {
         case 'inline-tag':
           return this._parseInlineTag(line);
         case 'text':
-          return line.text
+          // 일반 주석 라인은 제거한다.
+          return line.text.trim().split('\n')
+            .filter(l => l.trim().indexOf('//') < 0)
+            .join('\n')
       }
     }).join(' ');
   }

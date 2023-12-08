@@ -940,7 +940,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     readonly line: AxisLine;
     /**
      * 부채꼴 polar 좌표계의 X 축일 때 원호의 양 끝과 중심에 연결되는 선분들의 설정모델.\
-     * //{@link config.xAxis.startAngle}, {@link config.xAxis.totalAngle}을 참조한다.
+     * //{@link config.xAxis.category#startAngle startAngle}, {@link config.xAxis.category#totalAngle totalAngle}을 참조한다.
      * 
      * @config
      */

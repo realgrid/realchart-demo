@@ -3,22 +3,20 @@
 ## Properties
 
 ### autoArrange: `'none'|'rotate'|'rows'|'step'{:js}`[#autoArrange]
-label들이 본래 차지하는 공간을 초과할 때,
- [step](#step) 이나  [rows](#rows) 가 1 이상으로 설정되지 않고,
- [rotation](#rotation) 이 0이 아닌 명시적 값으로도 설정되지 않은 경우,
+label들이 본래 차지하는 공간을 초과할 때, [step](#step) 이나 [rows](#rows) 가 1 이상으로 설정되지 않고, [rotation](#rotation) 이 0이 아닌 명시적 값으로도 설정되지 않은 경우,
 label들을 재배치하는 방식을 지정한다.  
 - `'none'` 아무것도 하지 않는다.
 - `'rotate'` -45도 회전시킨다.
 - `'rows'` label들이 겹치지 않도록 여러 줄로 나누어 배치한다.
-- `'step'` label들이 겹치지 않도록 건너 뛰면서 배치한다.       [startStep](#startStep) 으로 지정된 step부터 배치된다.
+- `'step'` label들이 겹치지 않도록 건너 뛰면서 배치한다.     [startStep](#startStep) 으로 지정된 step부터 배치된다.
 
 <DefaultValue value="'rotate'" contents=""></DefaultValue>
 ### autoContrast: `boolean{:js}`[#autoContrast]
 텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
 
 
-밝게 표시할 때는  [lightStyle](#lightstyle) 을 적용하고,
-어둡게 표시할 때는  [darkStyle](#darkstyle) 이 적용된다.
+밝게 표시할 때는 [lightStyle](#lightstyle) 을 적용하고,
+어둡게 표시할 때는 [darkStyle](#darkstyle) 이 적용된다.
 brightStyle이 지정되지 않으면 <Content type="expression" value="'rct-text-light'"></Content>이,
 darkStyle이 지정되지 않으면 <Content type="expression" value="'rct-text-dark'"></Content>가 기본 적용된다.  
 <DefaultValue value="true" contents=""></DefaultValue>
@@ -140,7 +138,7 @@ step이 2 이상이 될 때, 표시가 시작되는 label 위치.
 label 표시 간격.
 
 1이면 모든 tick 표시. 2이면 하나씩 건너 띄어서 표시.
-2 이상일 때  [startStep](#startstep) 으로 지정된 step부터 배치된다.  
+2 이상일 때 [startStep](#startstep) 으로 지정된 step부터 배치된다.  
 <DefaultValue value="0" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  

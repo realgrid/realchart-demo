@@ -1,7 +1,7 @@
 ## series[type=area]
 영역 시리즈.
 
-대부분  [<Content type="expression" value="'line'"></Content>](/config/config/series/line)  시리즈와 동일하고 라인 아래 부분을 별도의 색상으로 채운다.
+대부분 [<Content type="expression" value="'line'"></Content>](/config/config/series/line) 시리즈와 동일하고 라인 아래 부분을 별도의 색상으로 채운다.
 ## Properties
 
 ### areaStyle: `StyleProps{:js}`[#areaStyle]
@@ -23,7 +23,7 @@ area 영역에 추가적으로 적용되는 스타일셋이나 class selector.
 위/아래 구분의 기준이 되는 값.  
 <DefaultValue value="0" contents=""></DefaultValue>
 ### belowStyle: `SVGStyles | string{:js}`[#belowStyle]
-[baseValue](#basevalue)  혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.  
+[baseValue](#basevalue) 혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.  
 - `SVGStyles{:js}` 
 
 | Name | Type | Optional |  
@@ -59,7 +59,7 @@ area 영역에 추가적으로 적용되는 스타일셋이나 class selector.
 이 시리즈를 나타내는 텍스트.
 
 레전드나 툴팁에서 시리즈를 대표한다.
-이 속성이 지정되지 않으면  [name](#name) 이 사용된다.  
+이 속성이 지정되지 않으면 [name](#name) 이 사용된다.  
 
 ### lineType[#lineType]
 
@@ -80,7 +80,7 @@ area 영역에 추가적으로 적용되는 스타일셋이나 class selector.
 group에 포함되면 group의 noClip 설정을 따른다.  
 
 ### nullAsBase: `boolean{:js}`[#nullAsBase]
-<Content type="keyword" value="null"></Content>인 y값을  [baseValue](#basevalue) 로 간주한다.  
+<Content type="keyword" value="null"></Content>인 y값을 [baseValue](#basevalue) 로 간주한다.  
 <DefaultValue value="false" contents=""></DefaultValue>
 ### onPointClick[#onPointClick]
 데이터 point가 클릭될 때 발생하는 이벤트 콜백.
@@ -157,15 +157,15 @@ ranges가 적용되는 값.
 ### xStart: `any{:js}`[#xStart]
 x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값.
 
-이 후에는  [xStep](#xstep) 씩 증가시키면서 설정한다.
-이 속성이 지징되지 않은 경우  [xStart](/config/config/options#xstart) 가 적용된다.  
+이 후에는 [xStep](#xstep) 씩 증가시키면서 설정한다.
+이 속성이 지징되지 않은 경우 [xStart](/config/config/options#xstart) 가 적용된다.  
 
 ### xStep: `string | number{:js}`[#xStep]
 x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
 
-첫번째 값은  [xStart](#xstart) 로 설정한다.
+첫번째 값은 [xStart](#xstart) 로 설정한다.
 time 축일 때, 정수 값 대신 시간 단위(<Content type="expression" value="'y', 'm', 'w', 'd', 'h', 'n', 's'"></Content>)로 지정할 수 있다.
-이 속성이 지정되지 않으면  [xStep](/config/config/options#xstep) 이 적용된다.  
+이 속성이 지정되지 않으면 [xStep](/config/config/options#xstep) 이 적용된다.  
 
 ### yAxis: `string | number{:js}`[#yAxis]
 

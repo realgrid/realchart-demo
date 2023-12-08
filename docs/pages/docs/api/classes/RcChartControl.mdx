@@ -59,6 +59,14 @@ x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이
 
 
 ## Methods
+### getAnnotation(name): RcAnnotation[#getAnnotation]
+Annotation 이름에 해당하는 Annotation 객체를 리턴한다.
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | Annotation 이름 |
 ### getGauge(name): [RcChartGauge](../classes/RcChartGauge)[#getGauge]
 게이지 이름에 해당하는 게이지 객체를 리턴한다.
 
@@ -115,3 +123,9 @@ name 매개변수가 문자열이면 지정한 이름의 y 축을,
 | ----------- | ----------- |
 | axis | [RcChartAxis](../classes/RcChartAxis) |
 | pos | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
+### setParam(param, value, redraw?): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#setParam]
+| Parameter | Type |
+| ----------- | ----------- |
+| param | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) |
+| value | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
+| redraw | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) |

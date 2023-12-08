@@ -27,11 +27,11 @@
  | [minValue](/config/config/xAxis/linear#minvalue) | `number{:js}` | 명시적으로 지정하는 최소값. |   
  | [name](/config/config/xAxis/linear#name) | `string{:js}` |  |   
  | [nullable](/config/config/xAxis/linear#nullable) | `boolean{:js}` | data point의 이 축 값이 NaN일 때도 point를 표시할 지 여부. |   
- | [padding](/config/config/xAxis/linear#padding) | `number{:js}` | [minPadding](#minpadding) ,  [maxPadding](#maxpadding) 이 설정되지 않았을 때 적용되는 기본값이다. |   
+ | [padding](/config/config/xAxis/linear#padding) | `number{:js}` | [minPadding](#minpadding) , [maxPadding](#maxpadding) 이 설정되지 않았을 때 적용되는 기본값이다. |   
  | [position](/config/config/xAxis/linear#position) | `'base'\|'normal'\|'opposite'{:js}` | 표시 위치. |   
  | [reversed](/config/config/xAxis/linear#reversed) | `boolean{:js}` | true면 반대 방향으로 point 위치들이 지정된다. |   
  | [scrollBar](/config/config/xAxis/linear/scrollbar) | `AxisScrollBar{:js}` |  |   
- | [sectorLine](/config/config/xAxis/linear/sectorline) | `AxisLine{:js}` | [startAngle](/config/config/xAxis/startAngle) ,  [totalAngle](/config/config/xAxis/totalAngle) 을 참조한다. |   
+ | [sectorLine](/config/config/xAxis/linear/sectorline) | `AxisLine{:js}` | 부채꼴 polar 좌표계의 X 축일 때 원호의 양 끝과 중심에 연결되는 선분들의 설정모델. |   
  | [startAngle](/config/config/xAxis/linear#startangle) | `number{:js}` | Polar 차트에서 사용될 때 시작 각도. |   
  | [startFit](/config/config/xAxis/linear#startfit) | `AxisFit{:js}` | 축 시작 위치에 tick 표시 여부. |   
  | [strictMax](/config/config/xAxis/linear#strictmax) | `number{:js}` | 무조건 적용되는 최대값. |   
@@ -54,6 +54,9 @@
 시리즈 연결 여부.\
 연결된 시리즈가 하나도 없으면 true.
 
+### isX: [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)[#isX]
+x축이면 true.
+
 ### label: [RcChartObject](../classes/RcChartObject)[#label]
 tick label 설정 모델.
 
@@ -65,6 +68,9 @@ tick 선 설정 모델.
 
 ### title: [RcChartObject](../classes/RcChartObject)[#title]
 축 타이틀 설정 모델.
+
+### xy: 'x' \| 'y'[#xy]
+축 방향.
 
 
 ## Methods
