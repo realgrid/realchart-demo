@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4, assign } from "../common/Common";
+import { IPoint } from "../common/Point";
 import { IValueRange, _undef } from "../common/Types";
 import { IAxis } from "./Axis";
 import { ISeries } from "./Series";
@@ -141,6 +142,10 @@ export class DataPoint {
         const x = this.xPos;
         this.xPos = this.yPos;
         this.yPos = x;
+    }
+
+    getTooltipPos(): IPoint {
+        return { x: this.xPos, y: this.yPos };
     }
 
     //-------------------------------------------------------------------------

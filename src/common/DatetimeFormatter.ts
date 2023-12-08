@@ -46,6 +46,7 @@ const L_S = "s".charCodeAt(0);
 /**
  * @internal
  *
+ * //TODO: Intl.DateTimeFormat 사용할 것.
  */
 export class DatetimeFormatter {
 	
@@ -110,7 +111,6 @@ export class DatetimeFormatter {
 			this._formatString = value;
 		}
 	}
-
 
 	//-------------------------------------------------------------------------
     // methods

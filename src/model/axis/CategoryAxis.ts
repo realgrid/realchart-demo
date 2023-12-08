@@ -11,6 +11,7 @@ import { DEG_RAD, PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { Axis, AxisGrid, AxisTick, AxisLabel, IAxisTick } from "../Axis";
 import { IChart } from "../Chart";
+import { DataPoint } from "../DataPoint";
 import { IPlottingItem } from "../Series";
 
 export enum CategoryTickPosition {
@@ -416,6 +417,10 @@ export class CategoryAxis extends Axis {
 
     value2Tooltip(value: number): any {
         return this._cats[value] || value;
+    }
+
+    getXValue(value: number) {
+        return this.getCategory(value);
     }
 
     //-------------------------------------------------------------------------

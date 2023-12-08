@@ -45,6 +45,7 @@ export interface IAxis {
      * data point의 값을 축 상의 값으로 리턴한다.
      */
     getValue(value: any): number;
+    getXValue(value: number): any;
     contains(value: number): boolean;
     incStep(value: number, step: any): number;
     /**
@@ -1123,7 +1124,7 @@ export abstract class Axis extends ChartItem implements IAxis {
         this.crosshair._args.axis = this._labelArgs.axis = this.chart._proxy?.getChartObject(this);
 
         this._doPrepareRender();
-        
+
         this.label.prepareRender();
 
         // range
@@ -1267,6 +1268,10 @@ export abstract class Axis extends ChartItem implements IAxis {
         this._labelArgs.index = index;
         this._labelArgs.value = value;
         return this._labelArgs;
+    }
+
+    getXValue(value: number): any {
+        return value;
     }
 
     //-------------------------------------------------------------------------

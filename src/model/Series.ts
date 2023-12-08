@@ -1045,8 +1045,9 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             case 'series':
                 return this.displayName();
             case 'name':
+                return this._xAxisObj.getXValue(point.xValue);
                 // return this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : pickProp(point.x, point.xValue);
-                return this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.xValue) : pickProp(point.x, point.xValue);
+                // return this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.xValue) : pickProp(point.x, point.xValue);
             case 'x':
                 return this._xAxisObj.value2Tooltip(point.x || (this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : point.xValue));
             case 'xValue':

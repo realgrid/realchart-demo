@@ -67,7 +67,7 @@ export class RcChartObject {
      * Utils.log(chart.axis.get('title.text'));
      * ```
      * 
-     * @param prop 속성 경로.
+     * @param prop '**.**'으로 구분되는 속성 경로.
      * @returns 속성 값 혹은 객체.
      */
     get(prop: string): any {

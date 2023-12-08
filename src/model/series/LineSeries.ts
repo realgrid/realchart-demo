@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp, assign } from "../../common/Common";
+import { IPoint } from "../../common/Point";
 import { RcElement } from "../../common/RcControl";
 import { Align, SVGStyleOrClass, StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
@@ -362,6 +363,10 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
         super._readSingle(v);
 
         this.low = this.y;
+    }
+
+    getTooltipPos(): IPoint {
+        return { x: this.xPos, y: this.yLow };
     }
 }
 

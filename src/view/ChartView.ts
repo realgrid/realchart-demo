@@ -1166,10 +1166,8 @@ export class ChartView extends LayerElement {
     }
 
     showTooltip(series: Series, point: DataPoint, body: RcElement): void {
-        const x = point.xPos + body.tx;
-        const y = point.yPos + body.ty;
-
-        this._tooltipView.show(series, point, x, y, true);
+        const {x, y} = point.getTooltipPos();
+        this._tooltipView.show(series, point, x + body.tx, y + body.ty, true);
     }
 
     hideTooltip(): void {
