@@ -9,7 +9,7 @@
 import { isFunc } from "../common/Common";
 import { DatetimeFormatter } from "../common/DatetimeFormatter";
 import { NumberFormatter } from "../common/NumberFormatter";
-import { SVGStyleOrClass, _undefined } from "../common/Types";
+import { SVGStyleOrClass, _undef } from "../common/Types";
 import { IAxis } from "./Axis";
 import { ChartItem } from "./ChartItem";
 
@@ -86,9 +86,9 @@ export class Crosshair extends ChartItem {
         this.flag = new CrosshairFlag(axis.chart, true);
         this.visible = false;
         this._args = {
-            axis: _undefined,
-            pos: _undefined,
-            flag: _undefined
+            axis: _undef,
+            pos: _undef,
+            flag: _undef
         };
     }
 

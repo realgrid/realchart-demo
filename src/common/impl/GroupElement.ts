@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcElement } from '../RcControl';
-import { _undefined } from '../Types';
+import { _undef } from '../Types';
 
 export abstract class GroupElement extends RcElement {
 
@@ -28,7 +28,7 @@ export abstract class GroupElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string = _undefined) {
+    constructor(doc: Document, styleName: string = _undef) {
         super(doc, styleName, 'g');
 
         this._doInitChildren(doc);

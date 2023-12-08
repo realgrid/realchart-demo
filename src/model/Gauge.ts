@@ -8,6 +8,7 @@
 
 import { isArray, isObject, isString, pickNum, pickProp } from "../common/Common";
 import { IPoint } from "../common/Point";
+import { IRichTextDomain } from "../common/RichText";
 import { ISize } from "../common/Size";
 import { DEG_RAD, IMinMax, IPercentSize, IValueRange, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, buildValueRanges, calcPercent, fixnum, isNull, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
@@ -980,6 +981,12 @@ export abstract class GaugeLabel extends FormattableText {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _domain: IRichTextDomain = {
+        callback: (target: CircularGauge, param: string): any => {
+            return target.getParam(param);
+        }
+    }
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -1003,6 +1010,9 @@ export abstract class GaugeLabel extends FormattableText {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doPrepareRender(chart: IChart): void {
+        this._domain.numberFormatter = this._numberFormatter;
+    }
 }
 
 export class LinearGaugeScale extends GaugeScale {
@@ -1380,6 +1390,8 @@ export abstract class CircularGauge extends ValueGauge {
 
     protected _doPrepareRender(chart: IChart): void {
         super._doPrepareRender(chart);
+
+        this.label.prepareRender();
 
         const g = this.group as CircularGaugeGroup<CircularGauge>;
 

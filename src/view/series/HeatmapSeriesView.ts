@@ -9,7 +9,7 @@
 import { Color } from "../../common/Color";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
-import { Align, _undefined } from "../../common/Types";
+import { Align, _undef } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
 import { HeatmapSeries, HeatmapSeriesPoint } from "../../model/series/HeatmapSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
@@ -71,7 +71,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     //-------------------------------------------------------------------------
     private $_parepareCells(model: HeatmapSeries, points: HeatmapSeriesPoint[]): void {
         const color = new Color(model._calcedColor);
-        const obj = [{ fill: _undefined }];
+        const obj = [{ fill: _undef }];
 
         this._cells.prepare(points.length, (v, i) => {
             const p = v.point = points[i];

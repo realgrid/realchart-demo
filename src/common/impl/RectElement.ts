@@ -8,7 +8,7 @@
 
 import { PathElement, RcElement } from '../RcControl';
 import { IRect } from '../Rectangle';
-import { _undefined } from '../Types';
+import { _undef } from '../Types';
 import { SvgShapes } from './SvgShape';
 
 export interface IRectShape extends IRect {
@@ -47,7 +47,7 @@ export class RectElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string = _undefined, rect: IRectShape = _undefined) {
+    constructor(doc: Document, styleName: string = _undef, rect: IRectShape = _undef) {
         super(doc, styleName, 'rect');
 
         this.rect = rect;
@@ -127,7 +127,7 @@ export class BoxElement extends PathElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string = _undefined) {
+    constructor(doc: Document, styleName: string = _undef) {
         super(doc, styleName);
     }
 
@@ -145,7 +145,7 @@ export class BackElement extends RectElement {
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
-    constructor(doc: Document, rect: IRectShape = _undefined) {
+    constructor(doc: Document, rect: IRectShape = _undef) {
         super(doc, 'dlchart-point-back', rect);
 
         // this.setStyle('opacity', '0');

@@ -12,7 +12,7 @@ import { IPoint, Point } from "../common/Point";
 import { ClipRectElement, LayerElement, RcElement } from "../common/RcControl";
 import { IRect, Rectangle } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
-import { Align, AlignBase, SectionDir, VerticalAlign, _undefined } from "../common/Types";
+import { Align, AlignBase, SectionDir, VerticalAlign, _undef } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Annotation, AnnotationScope } from "../model/Annotation";

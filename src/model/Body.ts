@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject } from "../common/Common";
-import { IPercentSize, RtPercentSize, _undefined, calcPercent, parsePercentSize } from "../common/Types";
+import { IPercentSize, RtPercentSize, _undef, calcPercent, parsePercentSize } from "../common/Types";
 import { Annotation, AnnotationCollection } from "./Annotation";
 import { Axis } from "./Axis";
 import { IChart } from "./Chart";
@@ -26,7 +26,7 @@ export class ZoomButton extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public body: Body) {
-        super(body.chart, _undefined);
+        super(body.chart, _undef);
     }
 
     //-------------------------------------------------------------------------
@@ -224,7 +224,7 @@ export class Body extends ChartItem {
             cx: this._cx,
             cy: this._cy,
             rd: this._rd
-        } : _undefined;
+        } : _undef;
     }
 
     isZoomed(): boolean {

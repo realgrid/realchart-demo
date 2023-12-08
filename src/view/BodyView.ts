@@ -11,7 +11,7 @@ import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
 import { ClipRectElement, LayerElement, PathElement, RcControl, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
-import { Align, VerticalAlign, _undefined, assert } from "../common/Types";
+import { Align, VerticalAlign, _undef, assert } from "../common/Types";
 import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";

@@ -8,7 +8,7 @@
 
 import { LayerElement, RcControl } from "../common/RcControl";
 import { ISize } from "../common/Size";
-import { _undefined } from "../common/Types";
+import { _undef } from "../common/Types";
 import { RectElement } from "../common/impl/RectElement";
 import { Axis, PaneAxes, PaneAxisMatrix } from "../model/Axis";
 import { Chart, IChart } from "../model/Chart";
@@ -461,8 +461,8 @@ export class PaneContainer extends LayerElement {
             // strokeDasharray: '3'
         });
 
-        this.add(this._bodyContainer = new LayerElement(doc, _undefined));
-        this.add(this._axisContainer = new LayerElement(doc, _undefined));
+        this.add(this._bodyContainer = new LayerElement(doc, _undef));
+        this.add(this._axisContainer = new LayerElement(doc, _undef));
     }
 
     private $_prepareBodies(doc: Document, model: Split): void {

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ELLIPSIS, SVGStyleOrClass, _undefined } from '../Types';
+import { ELLIPSIS, SVGStyleOrClass, _undef } from '../Types';
 import { RcElement } from '../RcControl';
 import { IRect } from '../Rectangle';
 import { Color } from '../Color';
@@ -58,7 +58,7 @@ export class TextElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string = _undefined) {
+    constructor(doc: Document, styleName: string = _undef) {
         super(doc, styleName, 'text');
 
         this.anchor = TextAnchor.MIDDLE;

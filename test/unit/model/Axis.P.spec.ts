@@ -12,6 +12,7 @@ import { Axis, AxisLabel, AxisTick, IAxisTick } from '../../../src/model/Axis';
 import { Tester } from '../Tester';
 import { Chart } from '../../../src/model/Chart';
 import { Utils } from '../../../src/common/Utils';
+import { LinearAxisLabel } from '../../../src/model/axis/LinearAxis';
 
 const type = 'test'
 
@@ -67,7 +68,7 @@ const source = {
 
 class AxisImpl extends Axis {
     protected _createTickModel(): AxisTick { return }
-    protected _createLabelModel(): AxisLabel { return }
+    protected _createLabelModel(): AxisLabel { return new LinearAxisLabel(this); }
     _type(): string { return type; }
     protected _doPrepareRender(): void {}
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] { return [];}

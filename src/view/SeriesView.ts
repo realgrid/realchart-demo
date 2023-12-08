@@ -12,7 +12,7 @@ import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
 import { ClipRectElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
-import { IValueRange, _undefined } from "../common/Types";
+import { IValueRange, _undef } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { RectElement } from "../common/impl/RectElement";
@@ -116,7 +116,7 @@ export class PointLabelContainer extends LayerElement {
 
         if (richFormat) {
             model.prepareRich(richFormat);
-            model.buildSvg(view._text, view._outline, NaN, NaN, model, p.getValueOf);
+            model.buildSvg(view._text, view._outline, NaN, NaN, model, model.getTextDomain(p));
             // view.setStyles(styles);
 
             // label.setStyles(styles);
@@ -407,7 +407,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
 
         // this._viewRate = NaN; // animating 중 다른 시리즈 등의 요청에 의해 여기로 진입할 수 있다.
         this.setData('index', (model.index % PALETTE_LEN) as any);
-        this.setData('pointcolors', model._colorByPoint() ? 'a' : _undefined);
+        this.setData('pointcolors', model._colorByPoint() ? 'a' : _undef);
 
         this.internalClearStyleAndClass();
         this.internalSetStyleOrClass(model.style);

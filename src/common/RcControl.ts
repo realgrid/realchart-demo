@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
-import { Align, ISides, Path, SVGStyleOrClass, _undefined, getCssProp, isNull, pixel, throwFormat } from "./Types";
+import { Align, ISides, Path, SVGStyleOrClass, _undef, getCssProp, isNull, pixel, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
 import { SVGNS, isObject, isString, pickProp, assign } from "./Common";
@@ -674,7 +674,7 @@ export class RcElement extends RcObject {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string, tag: string = _undefined) {
+    constructor(doc: Document, styleName: string, tag: string = _undef) {
         super();
 
         this._dom = doc.createElementNS(SVGNS, tag || 'g');
@@ -1396,7 +1396,7 @@ export abstract class ClipElement extends RcElement {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, _undefined, 'clipPath');
+        super(doc, _undef, 'clipPath');
 
         const id = this._id = Utils.uniqueKey() + '-';
         this.setAttr('id', id);

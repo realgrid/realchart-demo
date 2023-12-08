@@ -9,6 +9,8 @@
 import { isNumber, isString } from "../common/Common";
 import { DatetimeFormatter } from "../common/DatetimeFormatter";
 import { NumberFormatter } from "../common/NumberFormatter";
+import { IRichTextDomain } from "../common/RichText";
+import { _undef } from "../common/Types";
 import { ChartItem } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
 import { ISeries, Series } from "./Series";
@@ -26,14 +28,27 @@ export class Tooltip extends ChartItem {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    private _numberFormat: string;
+    private _timeFormat: string;
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _series: Series;
+    private _domain: IRichTextDomain = {
+        callback: (point: DataPoint, param: string): string => {
+            return this._series.getPointTooltip(point, param);
+        },
+    }
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(public series: ISeries) {
         super(series.chart, true);
+
+        this.numberFormat = ',#.##';
+        this.timeFormat = 'yyyy-MM-dd';
     }
 
     //-------------------------------------------------------------------------
@@ -77,34 +92,41 @@ export class Tooltip extends ChartItem {
     followPointer: boolean;
     /**
      * 툴팁에 표시될 숫자값의 기본 형식.\
-     * {@link text}예 표시 문자열을 지정할 때 `${yValue;#,###.0}`와 같은 식으로 숫자 형식을 지정할 수 있다.
+     * {@link text}예 표시 문자열을 지정할 때 `${yValue;;#,###.0}`와 같은 식으로 숫자 형식을 지정할 수 있다.
      * 
      * @config
      */
-    numberFormat = ',#.##';
+    get numberFormat(): string {
+        return this._numberFormat;
+    }
+    set numberFormat(value: string) {
+        if (value !== this._numberFormat) {
+            this._numberFormat = value;
+            this._domain.numberFormatter = value ? NumberFormatter.getFormatter(value) : _undef;
+        }
+    }
     /**
      * 툴팁에 표시될 날짜(시간)값의 기본 형식.\
-     * {@link text}예 표시 문자열을 지정할 때 `${x;yyyy.MM}`와 같은 식으로 날짜(시간) 형식을 지정할 수 있다.
+     * {@link text}예 표시 문자열을 지정할 때 `${x;;yyyy.MM}`와 같은 식으로 날짜(시간) 형식을 지정할 수 있다.
      * 
      * @config
      */
-    timeFormat = 'yyyy-MM-dd';
+    get timeFormat(): string {
+        return this._timeFormat;
+    }
+    set timeFormat(value: string) {
+        if (value !== this._timeFormat) {
+            this._timeFormat = value;
+            this._domain.timeFormatter = value ? DatetimeFormatter.getFormatter(value) : _undef;
+        }
+    }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getValue(series: Series, point: DataPoint, param: string, format: string): string {
-        const v = series.getPointTooltip(point, param);
-
-        if (isNumber(v)) {
-            const f = format || this.numberFormat;
-            return f ? NumberFormatter.getFormatter(f).toStr(v) : v as any;
-        } 
-        if (v instanceof Date) {
-            const f = format || this.timeFormat;
-            return f ? DatetimeFormatter.getFormatter(f).toStr(v, this.chart.startOfWeek) : v.toString();
-        }
-        return v;
+    getTextDomain(series: Series): IRichTextDomain {
+        this._series = series;
+        return this._domain;
     }
 
     //-------------------------------------------------------------------------

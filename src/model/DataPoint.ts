@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4, assign } from "../common/Common";
-import { IValueRange, _undefined } from "../common/Types";
+import { IValueRange, _undef } from "../common/Types";
 import { IAxis } from "./Axis";
 import { ISeries } from "./Series";
 
@@ -134,11 +134,7 @@ export class DataPoint {
     }
 
     getLabel(index: number): any {
-        return this.label === _undefined ? this.yValue : this.label;
-    }
-
-    getValueOf = (traget: any, param: string): any => {
-        return this[param] || this.source[param];
+        return this.label === _undef ? this.yValue : this.label;
     }
 
     swap(): void {

@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { PathElement } from '../RcControl';
-import { PathValue, _undefined } from '../Types';
+import { PathValue, _undef } from '../Types';
 import { SvgShapes } from './SvgShape';
 
 export interface ISectorShape {
@@ -59,7 +59,7 @@ export class SectorElement extends PathElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string = _undefined, shape: ISectorShape = _undefined) {
+    constructor(doc: Document, styleName: string = _undef, shape: ISectorShape = _undef) {
         super(doc, styleName);
 
         shape && this._assignShape(shape, false);

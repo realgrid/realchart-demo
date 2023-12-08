@@ -9,7 +9,7 @@
 import { assign, isArray, isObject, isString, pickNum } from "./Common";
 import { locale } from "./RcLocale";
 
-export const _undefined = void 0; // 불필요
+export const _undef = void 0; // 불필요
 export const ONE_CHAR = '①'.charCodeAt(0);
 const ASTERISK = '*'.charCodeAt(0);
 const PERCENT = '%'.charCodeAt(0);
@@ -386,7 +386,7 @@ export const buildValueRanges = function (source: IValueRange[] | IValueRanges, 
                     fromValue: pickNum(src.fromValue, prev ? prev.toValue : min),
                     toValue: pickNum(src.toValue, max),
                     color: src.color,
-                    style: src.style ? assign({}, src.style) : _undefined
+                    style: src.style ? assign({}, src.style) : _undef
                 };
                 if (range.fromValue < range.toValue) {
                     ranges.push(range);
@@ -419,7 +419,7 @@ export const buildValueRanges = function (source: IValueRange[] | IValueRanges, 
                     fromValue: steps[i],
                     toValue: steps[i + 1],
                     color: colors[Math.min(i, colors.length - 1)],
-                    style: styles ? styles[Math.min(i, styles.length - 1)] : _undefined
+                    style: styles ? styles[Math.min(i, styles.length - 1)] : _undef
                 });
             }
 
@@ -434,7 +434,7 @@ export const buildValueRanges = function (source: IValueRange[] | IValueRanges, 
                     fromValue: from,
                     toValue: from += step,
                     color: colors[Math.min(i, colors.length - 1)],
-                    style: styles ? styles[Math.min(i, styles.length - 1)] : _undefined
+                    style: styles ? styles[Math.min(i, styles.length - 1)] : _undef
                 });
                 i++;
             }

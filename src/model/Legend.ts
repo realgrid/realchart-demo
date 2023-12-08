@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcElement } from "../common/RcControl";
-import { Align, AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, VerticalAlign, _undefined, calcPercent, parsePercentSize } from "../common/Types";
+import { Align, AlignBase, IPercentSize, RtPercentSize, SVGStyleOrClass, VerticalAlign, _undef, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";

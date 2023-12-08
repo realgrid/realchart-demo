@@ -408,7 +408,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
 
         label.setText(m.getLabel(label, m.value));
         v.text = label.text;
-        label.buildSvg(v, null, width, height, m, this.valueOf);
+        label.buildSvg(v, null, width, height, m, label._domain);
 
         return toSize(v.getBBounds());
     }
@@ -481,7 +481,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
 
             label.setText(m.getLabel(label, label.animatable ? value : m.value));
             labelView.text = label.text;
-            label.buildSvg(labelView, null, pickNum(w, wMax), pickNum(h, hMax), m, this.valueOf);
+            label.buildSvg(labelView, null, pickNum(w, wMax), pickNum(h, hMax), m, label._domain);
 
             const rText = labelView.getBBounds();
 
@@ -608,28 +608,6 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
  * View base for CircularGauge.
  */
 export abstract class CircularGaugeView<T extends CircularGauge> extends ValueGaugeView<T> {
-
-    //-------------------------------------------------------------------------
-    // consts
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    valueOf = (target: CircularGauge, param: string, format: string): any => {
-        const v = target.getParam(param);
-
-        if (isNumber(v)) {
-            return NumberFormatter.getFormatter(format || target.label.numberFormat).toStr(v);
-        }
-        return v;
-    }
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
 }
 
 export abstract class GaugeGroupView<G extends ValueGauge, T extends GaugeGroup<G>, GV extends GaugeView<G>> extends GaugeView<T> {

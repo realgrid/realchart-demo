@@ -8,7 +8,7 @@
 
 import { ChartText, ChartTextEffect } from "../../model/ChartItem";
 import { Color } from "../Color";
-import { Align, _undefined } from "../Types";
+import { Align, _undef } from "../Types";
 import { GroupElement } from "./GroupElement";
 import { RectElement } from "./RectElement";
 import { TextAnchor, TextElement } from "./TextElement";
@@ -29,7 +29,7 @@ export class LabelElement extends GroupElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string = _undefined) {
+    constructor(doc: Document, styleName: string = _undef) {
         super(doc);
 
         this.add(this._text = new TextElement(doc, styleName));

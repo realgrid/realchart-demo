@@ -8,7 +8,7 @@
 
 import { RcElement } from '../RcControl';
 import { IRect, Rectangle } from '../Rectangle';
-import { _undefined } from '../Types';
+import { _undef } from '../Types';
 
 export class ImageElement extends RcElement {
 

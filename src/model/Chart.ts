@@ -8,7 +8,7 @@
 
 import { isArray, isObject, isString, mergeObj, pickProp3, assign, pickProp, isNumber } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
-import { Align, SectionDir, VerticalAlign, _undefined } from "../common/Types";
+import { Align, SectionDir, VerticalAlign, _undef } from "../common/Types";
 import { AssetCollection } from "./Asset";
 import { Axis, AxisCollection, IAxis, PaneXAxisMatrix, PaneYAxisMatrix } from "./Axis";
 import { Body } from "./Body";

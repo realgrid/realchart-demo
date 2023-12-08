@@ -7,7 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isNumber, isObject, isString, pickNum, pickNum3, pickProp } from "../common/Common";
-import { Align, DEG_RAD, ORG_ANGLE, SVGStyleOrClass, VerticalAlign, _undefined, fixnum, isNull } from "../common/Types";
+import { IRichTextDomain } from "../common/RichText";
+import { Align, DEG_RAD, ORG_ANGLE, SVGStyleOrClass, VerticalAlign, _undef, fixnum, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem, ChartTextOverflow, FormattableText } from "./ChartItem";
@@ -576,9 +577,11 @@ export abstract class AxisLabel extends FormattableText {
     // fields
     //-------------------------------------------------------------------------
     _paramTick: IAxisTick;
-    _getParam = (target: any, param: string, format: string): any => {
-        return this._getParamValue(this._paramTick, param);
-    }
+    _domain: IRichTextDomain = {
+        callback: (target: any, param: string): any => {
+            return this._getParamValue(this._paramTick, param);
+        },
+    };
 
     //-------------------------------------------------------------------------
     // constructor
@@ -713,6 +716,13 @@ export abstract class AxisLabel extends FormattableText {
         }
         if (idx === 0) return this.firstStyle;
         if (idx === count - 1) return this.lastStyle;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doPrepareRender(chart: IChart): void {
+        this._domain.numberFormatter = this._numberFormatter;
     }
 }
 
@@ -1113,6 +1123,8 @@ export abstract class Axis extends ChartItem implements IAxis {
         this.crosshair._args.axis = this._labelArgs.axis = this.chart._proxy?.getChartObject(this);
 
         this._doPrepareRender();
+        
+        this.label.prepareRender();
 
         // range
         const series = this._series;
@@ -1462,13 +1474,13 @@ export class AxisCollection {
                     for (const ser of series) {
                         if (!ser.canCategorized()) {
                             if (src.name && ser.xAxis === src.name) {
-                                t = _undefined;
+                                t = _undef;
                                 break;
                             } else if (ser.xAxis === index) {
-                                t = _undefined;
+                                t = _undef;
                                 break;
                             } else if (isNull(ser.xAxis) && index === 0) {
-                                t = _undefined;
+                                t = _undef;
                                 break;
                             }
                         }   

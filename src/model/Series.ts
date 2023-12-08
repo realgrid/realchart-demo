@@ -10,7 +10,8 @@ import { isArray, isFunc, isObject, isString, pickNum, pickProp, pickProp3 } fro
 import { IPoint } from "../common/Point";
 import { RcElement } from "../common/RcControl";
 import { RcObject } from "../common/RcObject";
-import { Align, IPercentSize, IValueRange, IValueRanges, RtPercentSize, SVGStyleOrClass, VerticalAlign, _undefined, buildValueRanges, calcPercent, parsePercentSize } from "../common/Types";
+import { IRichTextDomain } from "../common/RichText";
+import { Align, IPercentSize, IValueRange, IValueRanges, RtPercentSize, SVGStyleOrClass, VerticalAlign, _undef, buildValueRanges, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { RectElement } from "../common/impl/RectElement";
 import { Shape, Shapes } from "../common/impl/SvgShape";
@@ -47,7 +48,26 @@ export class DataPointLabel extends FormattableText {
     private static readonly OFFSET = 4;
 
     //-------------------------------------------------------------------------
-    // property fields
+    // fields
+    //-------------------------------------------------------------------------
+    private _point: DataPoint;
+    _domain: IRichTextDomain = {
+        callback: (traget: any, param: string): any => {
+            return this._point[param] || this._point.source[param];
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart, _undef);
+
+        this.visible = _undef;
+    }
+
+	//-------------------------------------------------------------------------
+    // properties
     //-------------------------------------------------------------------------
     /**
      * 포인트 label 표시 위치.
@@ -91,22 +111,6 @@ export class DataPointLabel extends FormattableText {
      * 데이터 포인트별로 추가 적용되는 스타일을 리턴한다.\
      */
     styleCallback: (point: any) => SVGStyleOrClass;
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(chart: IChart) {
-        super(chart, _undefined);
-
-        this.visible = _undefined;
-    }
-
-	//-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
     /**
      * 데이터 포인트 label 표시 여부.
      * 값을 설정하지 않고 {@link visibleCallback}이 설정되면 콜백 리턴값을 따른다.
@@ -117,6 +121,11 @@ export class DataPointLabel extends FormattableText {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getTextDomain(p: DataPoint): IRichTextDomain {
+        this._point = p;
+        return this._domain;
+    }
+
     getText(value: any): string {
         if (Utils.isValidNumber(value)) {
             let s = this._getText(null, value, Math.abs(value) > 1000, true);
@@ -145,6 +154,10 @@ export class DataPointLabel extends FormattableText {
             return this.visible = true;
         }
         return super._doLoadSimple(source);
+    }
+
+    protected _doPrepareRender(chart: IChart): void {
+        this._domain.numberFormatter = this._numberFormatter;
     }
 }
 
@@ -789,6 +802,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
         this._calcedColor = void 0;
         this._runPoints = this._points.getPoints(this._xAxisObj, this._yAxisObj);
+        this.pointLabel.prepareRender();
 
         super.prepareRender();
     }
@@ -937,7 +951,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             });
         } else {
             this._visPoints.forEach((p, i) => {
-                p.range = _undefined;
+                p.range = _undef;
             });
         }
     }
@@ -1164,7 +1178,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 return;
             }
         }
-        p.range = _undefined;
+        p.range = _undef;
     }
 
     _defViewRangeValue(): 'x' | 'y' | 'z' {

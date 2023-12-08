@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { _undefined } from "../common/Types";
+import { _undef } from "../common/Types";
 import { Annotation } from "../model/Annotation";
 import { Axis } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
@@ -308,7 +308,7 @@ export abstract class RcChartSeries extends RcNamedObject {
      */
     getValueAt(xValue: number): number {
         const p = (this.$_p as Series).getPointAt(xValue);
-        return p ? p.yValue : _undefined;
+        return p ? p.yValue : _undef;
     }
 
     updateData(data: any): void {

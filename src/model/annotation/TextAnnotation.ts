@@ -7,7 +7,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isString } from "../../common/Common";
-import { SVGStyleOrClass, isNull } from "../../common/Types";
+import { DatetimeFormatter } from "../../common/DatetimeFormatter";
+import { NumberFormatter } from "../../common/NumberFormatter";
+import { IRichTextDomain } from "../../common/RichText";
+import { SVGStyleOrClass, _undef, isNull } from "../../common/Types";
 import { Annotation } from "../Annotation";
 
 /**
@@ -16,6 +19,21 @@ import { Annotation } from "../Annotation";
  * @config chart.annotation[type=text]
  */
 export class TextAnnotation extends Annotation {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    private _numberFormat: string;
+    private _timeFormat: string;
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    _domain: IRichTextDomain = {
+        callback: (target: any, param: string): string => {
+            return this.chart.getParam(target, param);
+        }
+    };
 
     //-------------------------------------------------------------------------
     // properties
@@ -33,6 +51,34 @@ export class TextAnnotation extends Annotation {
      * @config
      */
     backgroundStyle: SVGStyleOrClass;
+    /**
+     * {@link text}에 동적으로 전달되는 값이 숫자일 때 사용되는 표시 형식.
+     * 
+     * @config
+     */
+    get numberFormat(): string {
+        return this._numberFormat;
+    }
+    set numberFormat(value: string) {
+        if (value !== this._numberFormat) {
+            this._numberFormat = value;
+            this._domain.numberFormatter = value ? NumberFormatter.getFormatter(value) : _undef;
+        }
+    }
+    /**
+     * {@link text}에 동적으로 전달되는 값이 Date일 때 사용되는 표시 형식.
+     * 
+     * @config
+     */
+    get timeFormat(): string {
+        return this._timeFormat;
+    }
+    set timeFormat(value: string) {
+        if (value !== this._timeFormat) {
+            this._timeFormat = value;
+            this._domain.timeFormatter = value ? DatetimeFormatter.getFormatter(value) : _undef;
+        }
+    }
 
     //-------------------------------------------------------------------------
     // methods

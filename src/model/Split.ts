@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, isString, pickNum } from "../common/Common";
-import { _undefined } from "../common/Types";
+import { _undef } from "../common/Types";
 import { Annotation } from "./Annotation";
 import { PaneAxisMatrix } from "./Axis";
 import { Body } from "./Body";
@@ -25,9 +25,9 @@ export class PaneBody extends Body {
     constructor(public pane: Pane) {
         super(pane.chart);
 
-        this.radius = _undefined;
-        this.centerX = _undefined;
-        this.centerY = _undefined;
+        this.radius = _undef;
+        this.centerX = _undef;
+        this.centerY = _undef;
     }
 
     //-------------------------------------------------------------------------

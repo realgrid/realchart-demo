@@ -126,7 +126,7 @@ abstract class PolarAxisView extends RcElement {
             } else {
                 model.prepareRich(text);
                 model._paramTick = tick;
-                model.buildSvg(view._text, view._outline, NaN, NaN, model, model._getParam);
+                model.buildSvg(view._text, view._outline, NaN, NaN, model, model._domain);
             }
         } else {
             // view.setText(tick.label);

@@ -165,8 +165,8 @@ export class AxisLabelView extends LabelElement {
                 this._richText.setFormat(label);
             }
             this.setModel(this.doc, model, null);
-            this._richText.build(this._text, maxWidth, maxHeight, model, model._getParam);
-            this._outline && this._richText.build(this._outline, maxWidth, maxHeight, model, model._getParam);
+            this._richText.build(this._text, maxWidth, maxHeight, model, model._domain);
+            this._outline && this._richText.build(this._outline, maxWidth, maxHeight, model, model._domain);
         } else if (this._richText) {
             this._richText = null;
             this._text.text = '';
@@ -800,7 +800,7 @@ export class AxisView extends ChartElement<Axis> {
                 model.prepareRich(text);
                 model._paramTick = tick;
                 view.setModel(this.doc, model, null);
-                model.buildSvg(view._text, view._outline, NaN, NaN, model, model._getParam);
+                model.buildSvg(view._text, view._outline, NaN, NaN, model, model._domain);
             }
         } else {
             // view.setText(tick.label);

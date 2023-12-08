@@ -9,8 +9,8 @@
 import { isArray, isBoolean, isObject, isString, pickNum, assign } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
-import { SvgRichText, RichTextParamCallback } from "../common/RichText";
-import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined } from "../common/Types";
+import { SvgRichText, RichTextParamCallback, IRichTextDomain } from "../common/RichText";
+import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undef } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
 import { IChart } from "./Chart";
@@ -115,7 +115,7 @@ export class ChartItem extends RcObject {
             const path = this.$_parseProp(prop);
 
             if (path) {
-                return path === this.INVALID ? _undefined : path.obj[path.prop];
+                return path === this.INVALID ? _undef : path.obj[path.prop];
             } else {
                 return this[prop];
             }
@@ -317,7 +317,7 @@ export abstract class FormattableText extends ChartText {
     // fields
     //-------------------------------------------------------------------------
     private _numSymbols: string[];
-    private _numberFormatter: NumberFormatter;
+    protected _numberFormatter: NumberFormatter;
     protected _richTextImpl: SvgRichText;
 
     //-------------------------------------------------------------------------
@@ -435,10 +435,10 @@ export abstract class FormattableText extends ChartText {
     //     }
     // }
 
-    buildSvg(view: TextElement, outline: TextElement, maxWidth: number, maxHeight: number, target: any, callback: RichTextParamCallback): void {
+    buildSvg(view: TextElement, outline: TextElement, maxWidth: number, maxHeight: number, target: any, domain: IRichTextDomain): void {
         if (this._richTextImpl) {
-            this._richTextImpl.build(view, maxWidth, maxHeight, target, callback);
-            outline && this._richTextImpl.build(outline, maxWidth, maxHeight, target, callback);
+            this._richTextImpl.build(view, maxWidth, maxHeight, target, domain);
+            outline && this._richTextImpl.build(outline, maxWidth, maxHeight, target, domain);
         }
     }
 

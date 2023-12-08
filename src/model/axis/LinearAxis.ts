@@ -256,7 +256,7 @@ export class ContinuousAxisTick extends AxisTick {
     }
 }
 
-class LinearAxisLabel extends AxisLabel {
+export class LinearAxisLabel extends AxisLabel {
 
     //-------------------------------------------------------------------------
     // properties

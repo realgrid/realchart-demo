@@ -403,7 +403,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         if (tv.visible) {
             m.label.setText(m.getLabel(m.label, m.label.animatable ? value : m.value));
             tv.text = m.label.text;
-            m.label.buildSvg(tv, null, NaN, NaN, m, this.valueOf);
+            m.label.buildSvg(tv, null, NaN, NaN, m, m.label._domain);
             
             tv.setBoolData('grouped', !!m.group);
 

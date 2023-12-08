@@ -10,13 +10,22 @@ import { pickNum } from "./Common";
 import { DatetimeFormatter } from "./DatetimeFormatter";
 import { NumberFormatter } from "./NumberFormatter";
 import { Sides } from "./Sides";
-import { Align, ZWSP, _undefined } from "./Types";
+import { TextFormatter } from "./TextFormatter";
+import { Align, ZWSP, _undef } from "./Types";
 import { TextAnchor, TextElement } from "./impl/TextElement";
 
 const HEIGHT = '$_TH';
 const WIDTH = '$_TW';
 
-export type RichTextParamCallback = (target: any, param: string, format: string) => string;
+export type RichTextParamCallback = (target: any, param: string) => any;
+
+export interface IRichTextDomain {
+    callback?: RichTextParamCallback;
+    numberFormatter?: NumberFormatter;
+    timeFormatter?: DatetimeFormatter;
+    textFormatter?: TextFormatter;
+    startOfWeek?: number;
+}
 
 /**
  * '${name;default;format}', 
@@ -46,24 +55,23 @@ class Word {
         return this;
     }
 
-    getText(target: any, callback: RichTextParamCallback): string {
+    getText(target: any, domain: IRichTextDomain): string {
         const literals = this._literals;
 
-        if (literals && callback) {
+        if (literals && domain.callback) {
             let s = this.text;
 
             for (let i = 0; i < literals.length; i += 4) {
-                let v: any = callback(target, literals[i + 1], literals[i + 3]);
-                if (v != null) {
-                    if (literals[i + 3]) {
-                        if (typeof v === 'number' || typeof v === 'bigint') {
-                            v = NumberFormatter.getFormatter(literals[3]).toStr(v);
-                        } else if (v instanceof Date) {
-                            return DatetimeFormatter.getFormatter(literals[3]).toStr(v, 0);
-                        }
-                    }
-                } else {
-                    v = literals[i + 2];
+                let v: any = domain.callback(target, literals[i + 1]);
+
+                if (typeof v === 'number' && !isNaN(v) || typeof v === 'bigint') {
+                    const f = literals[3] ? NumberFormatter.getFormatter(literals[3]) : domain.numberFormatter;
+                    if (f) v = f.toStr(v);
+                } else if (v instanceof Date) {
+                    const f = literals[3] ? DatetimeFormatter.getFormatter(literals[3]) : domain.timeFormatter;
+                    if (f) v = f.toStr(v, domain.startOfWeek || 0);
+                } else if (v == null) {
+                    v = literals[i + 2] || '';
                 }
                 s = s.replace(literals[i], v);
             }
@@ -72,7 +80,7 @@ class Word {
         return this.text;
     }
 
-    prepareSpan(span: SVGTSpanElement, target: any, domain: RichTextParamCallback): SVGTSpanElement {
+    prepareSpan(span: SVGTSpanElement, target: any, domain: IRichTextDomain): SVGTSpanElement {
         const s = this.getText(target, domain);
 
         span.textContent = s;
@@ -104,11 +112,11 @@ class Word {
                 if (k2 >= k) {
                     this._literals.push(s, s2.substring(0, k), s2.substring(k + 1, k2), s2.substring(k2 + 1));
                 } else {
-                    this._literals.push(s, s2.substring(0, k), s2.substring(k + 1), _undefined);
+                    this._literals.push(s, s2.substring(0, k), s2.substring(k + 1), _undef);
                 }
-                if (this._literals[2].length === 0) this._literals[2] = _undefined;
+                if (this._literals[2].length === 0) this._literals[2] = _undef;
             } else {
-                this._literals.push(s, s2, _undefined, _undefined);
+                this._literals.push(s, s2, _undef, _undef);
             }
 
             x = j + 1;
@@ -124,7 +132,7 @@ abstract class SpanWord extends Word {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepareSpan(span: SVGTSpanElement, target: any, domain: RichTextParamCallback): SVGTSpanElement {
+    prepareSpan(span: SVGTSpanElement, target: any, domain: IRichTextDomain): SVGTSpanElement {
         const s = this.getText(target, domain);
         const x1 = s.indexOf('>') + 1;
         const x2 = s.indexOf('<', x1);
@@ -341,7 +349,7 @@ export class SvgRichText {
     /**
      * TODO: max width
      */
-    build(view: TextElement, maxWidth: number, maxHeight: number, target: any, domain: RichTextParamCallback): void {
+    build(view: TextElement, maxWidth: number, maxHeight: number, target: any, domain: IRichTextDomain): void {
         const doc = view.doc;
         const hLine = pickNum(this.lineHeight, 1);
         let hMax = 0;

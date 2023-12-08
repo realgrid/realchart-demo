@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { _undefined } from "../common/Types";
+import { _undef } from "../common/Types";
 import { RectElement } from "../common/impl/RectElement";
 import { Annotation } from "../model/Annotation";
 import { BoundableElement } from "./ChartElement";
@@ -25,7 +25,7 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, styleName: string) {
-        super(doc, AnnotationView.CLASS_NAME + ' ' + styleName, _undefined);
+        super(doc, AnnotationView.CLASS_NAME + ' ' + styleName, _undef);
     }
 
     //-------------------------------------------------------------------------

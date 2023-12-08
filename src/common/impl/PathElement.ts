@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { PathElement } from '../RcControl';
-import { _undefined } from '../Types';
+import { _undef } from '../Types';
 import { Utils } from '../Utils';
 import { SvgShapes } from './SvgShape';
 
@@ -34,7 +34,7 @@ export class LineElement extends PathElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string = _undefined, line: ILine = _undefined) {
+    constructor(doc: Document, styleName: string = _undef, line: ILine = _undef) {
         super(doc, styleName);
 
         // this.setAttr('shapeRendering', 'cripsEdges');
@@ -92,7 +92,7 @@ export class LineElementEx extends PathElement {
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName = _undefined, line: ILine = _undefined) {
+    constructor(doc: Document, styleName = _undef, line: ILine = _undef) {
         super(doc, null, styleName);
 
         this.setLine(line);

@@ -36,9 +36,6 @@ export class TooltipView extends RcElement {
 
     private _model: Tooltip;
     private _series: Series;
-    private _textCallback = (point: DataPoint, param: string, format: string): string => {
-        return this._model.getValue(this._series, point, param, format);
-    }
     private _hideTimer: any;
     private _hideHandler = () => {
         this.$_hide();
@@ -80,7 +77,7 @@ export class TooltipView extends RcElement {
 
         // text
         this._richText.setFormat(model.text);
-        this._richText.build(tv, NaN, NaN, point, this._textCallback);
+        this._richText.build(tv, NaN, NaN, point, model.getTextDomain(series));
 
         const r = tv.getBBounds();
         let w = Math.max(model.minWidth || 0, r.width + 8 * 2);
