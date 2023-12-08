@@ -18,8 +18,11 @@ export const isNone = function (v: any): boolean { return v == null || isNaN(v);
 export const assign = Object.assign;
 export const floor = Math.floor;
 export const ceil = Math.ceil;
+export const round = Math.round;
 export const cos = Math.cos;
 export const sin = Math.sin;
+export const pow10 = function (v: number): number { return Math.pow(10, v); };
+export const log10 = Math.log10;
 export const pickNum = function(v1: any, v2: any): number {
     v1 = parseFloat(v1);
     return !isNaN(v1) ? v1 : parseFloat(v2);

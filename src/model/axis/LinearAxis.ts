@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum, pickNum3, assign, ceil, floor } from "../../common/Common";
+import { isArray, isObject, pickNum, pickNum3, assign, ceil, floor, log10 } from "../../common/Common";
 import { IPercentSize, RtPercentSize, assert, calcPercent, fixnum, parsePercentSize } from "../../common/Types";
 import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick } from "../Axis";
 import { DataPoint } from "../DataPoint";
@@ -214,9 +214,9 @@ export class ContinuousAxisTick extends AxisTick {
             return isNaN(min) ? [] : [min];
         }
 
-        let count = Math.max(1, Math.floor(length / pixels)) + 1;
+        let count = Math.max(1, floor(length / pixels)) + 1;
         let step = len / (count - 1);
-        const scale = Math.pow(10, Math.floor(Math.log10(step)));
+        const scale = Math.pow(10, Math.floor(log10(step)));
         const multiples = this._getStepMultiples(scale);
         let i = 0;
         let v: number;
@@ -605,7 +605,7 @@ export abstract class ContinuousAxis extends Axis {
         return {
             index,
             pos: NaN,//this.getPosition(length, step),
-            value: step,
+            value: fixnum(step),
             label: this.label.getTick(index, step) || String(step)
         }
     }

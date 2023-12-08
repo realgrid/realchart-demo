@@ -120,6 +120,7 @@ const config = {
         }
     },
     yAxis: {
+        type: 'log',
         label: {
             visible: true,
             effect: 'outline',
@@ -136,7 +137,8 @@ const config = {
         // strictMax: 22,
         tick: { 
             visible: !true,
-            stepInterval: 5 
+            // stepInterval: 5,
+            stepInterval: 0.5,
         },
     },
     body: {
