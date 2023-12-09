@@ -10,6 +10,8 @@
 
 ## Properties
 ### name: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)[#name]
+config에서 설정해된 name을 리턴한다.\
+최초 설정한 이름은 변경할 수 없다.
 
 ## Methods
 ### get(prop): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#get]
@@ -25,6 +27,8 @@ Utils.log(chart.series.get('name'))
 ```js
 Utils.log(chart.axis.get('title.text'));
 ```
+
+속성 변경은 [set](#set), [setAll](#setAll), [toggle](#toggle)등으로 실행한다.
 
 
 

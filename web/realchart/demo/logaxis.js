@@ -59,6 +59,10 @@ function setActions(container) {
         config.xAxis.type = _getValue(e);
         chart.load(config);
     }, 'log');
+    createCheckBox(container, "XAxis.tick.arrangeDecimals", function (e) {
+        config.xAxis.tick.arrangeDecimals = _getChecked(e);
+        chart.load(config);
+    }, true);
     createListBox(container, "YAxis.type", ['linear', 'log'], function (e) {
         config.yAxis.type = _getValue(e);
         chart.load(config);

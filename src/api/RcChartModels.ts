@@ -67,6 +67,8 @@ export class RcChartObject {
      * Utils.log(chart.axis.get('title.text'));
      * ```
      * 
+     * 속성 변경은 {@link set}, {@link setAll}, {@link toggle}등으로 실행한다.
+     * 
      * @param prop '**.**'으로 구분되는 속성 경로.
      * @returns 속성 값 혹은 객체.
      */
@@ -160,6 +162,9 @@ export abstract class RcAxisGuide extends RcChartObject {
         this._createObjects('label');
     }
 
+    /**
+     * 가이드 라벨 설정 모델.
+     */
     get label(): RcChartObject {
         return this._label;
     }
@@ -240,10 +245,19 @@ export abstract class RcChartAxis extends RcChartObject {
         return (this.$_p as Axis).isEmpty();
     }
 
+    /**
+     * 줌 상태를 제거하고 모든 데이터포인트들이 표시되도록 한다.
+     */
     resetZoom(): void {
         (this.$_p as Axis).resetZoom();
     }
 
+    /**
+     * 지정한 영역에 포함된 데이터포인트들만 표시되도록 한다.
+     * 
+     * @param start 영역의 시작 값.
+     * @param end 영역의 끝 값. 영역에는 포함되지 않는다.
+     */
     zoom(start: number, end: number): void {
         (this.$_p as Axis).zoom(start, end);
     }
@@ -269,6 +283,10 @@ export class RcPointLabel extends RcChartAxis {
 
 export abstract class RcNamedObject extends RcChartObject {
 
+    /**
+     * config에서 설정해된 name을 리턴한다.\
+     * 최초 설정한 이름은 변경할 수 없다.
+     */
     get name(): string {
         return (this.$_p as any).name;
     }
