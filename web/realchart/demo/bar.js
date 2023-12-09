@@ -15,8 +15,6 @@ const config = {
         visible: true
     },
     label: {
-      // startStep: 0,
-      step: 3,
     },
   },
   yAxis: {
@@ -37,9 +35,6 @@ const config = {
       data: [155, 138, 122, 133, 114, 113, 123],
     },
   ],
-  ChartTextEffect: {
-    autoContrast: false,
-  },
 };
 
 let animate = false;

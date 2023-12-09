@@ -65,11 +65,65 @@ export class SvgShapes {
     static rectangle(x: number, y: number, width: number, height: number): PathValue[] {
         return [
             'M', x, y,
-            'L', x + width, y,
-            'L', x + width, y + height,
-            'L', x, y + height,
+            'h', width,
+            'v', height,
+            'h', -width,
             'Z'
         ];
+    }
+
+    // rounded bar - height가 0보다 작다. 즉, 아래서 위로 그린다.
+    static bar(x: number, y: number, width: number, height: number, rTop: number, rBottom: number): PathValue[] {
+        if (rTop > 0) {
+            if (rBottom > 0) {
+                rTop = Math.min(-height / 2 >> 0, rTop);
+                rBottom = Math.min(-height / 2 >> 0, rBottom);
+                return [
+                    'M', x, y - rBottom,
+                    'v', height + rBottom + rTop,
+                    'a', rTop, rTop, 0, 0, 1, rTop, -rTop,
+                    'h', width - rTop - rBottom,
+                    'a', rTop, rTop, 0, 0, 1, rTop, rTop,
+                    'v', -height - rTop - rBottom,
+                    'a', rBottom, rBottom, 0, 0, 1, -rBottom, rBottom,
+                    'h', -width + rBottom * 2,
+                    'a', rBottom, rBottom, 0, 0, 1, -rBottom, -rBottom,
+                    'Z'
+                ];
+            } else {
+                rTop = Math.min(-height, rTop);
+                return [
+                    'M', x, y,
+                    'v', height + rTop,
+                    'a', rTop, rTop, 0, 0, 1, rTop, -rTop,
+                    'h', width - rTop * 2,
+                    'a', rTop, rTop, 0, 0, 1, rTop, rTop,
+                    'v', -height - rTop,
+                    'Z'
+                ];
+            }
+        } else if (rBottom > 0) {
+            rBottom = Math.min(-height, rBottom);
+            return [
+                'M', x, y - rBottom,
+                'v', height + rBottom,
+                'h', width,
+                'v', -height - rBottom,
+                'a', rBottom, rBottom, 0, 0, 1, -rBottom, rBottom,
+                'h', -width + rBottom * 2,
+                'a', rBottom, rBottom, 0, 0, 1, -rBottom, -rBottom,
+                'Z'
+            ];
+        } else {
+            return [
+                'M', x, y,
+                'h', width,
+                'v', height,
+                'h', -width,
+                'v', -height,
+                'Z'
+            ];
+        }
     }
 
     // 정사각형
@@ -81,9 +135,9 @@ export class SvgShapes {
         
         return [
             'M', x, y,
-            'L', x + sz, y,
-            'L', x + sz, y + sz,
-            'L', x, y + sz,
+            'h', sz,
+            'v', sz,
+            'h', -sz,
             'Z'
         ];
     }
@@ -263,7 +317,7 @@ export class SvgShapes {
                 break;
 
             default:
-                path = SvgShapes.circle(rx, rx, rx);
+                path = SvgShapes.circle(rx, ry, Math.min(rx, ry));
                 break;
         }
         target.setPath(path);

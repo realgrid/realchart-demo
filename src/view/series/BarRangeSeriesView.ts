@@ -51,6 +51,6 @@ export class BarRangeSeriesView extends RangedSeriesView<BarRangeSeries> {
     protected _layoutPointView(bar: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         bar.wPoint = wPoint;
         bar.hPoint = hPoint;
-        bar.layout(x, y + hPoint);
+        bar.layout(x, y + hPoint, 0, 0);
     }
 }

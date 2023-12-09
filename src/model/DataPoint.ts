@@ -98,7 +98,7 @@ export class DataPoint {
     }
 
     ariaHint(): string {
-        return this.x + ', ' + this.yValue;
+        return (this.x || this.xValue) + ', ' + this.yValue;
     }
 
     labelCount(): number {

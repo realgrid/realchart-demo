@@ -1525,24 +1525,6 @@ export class PathElement extends RcElement {
         }
         return this;
     }
-
-    renderShape(shape: string, x: number, y: number, rd: number): void {
-        let path: any;
-        
-        switch (shape) {
-            case Shape.SQUARE:
-            case Shape.DIAMOND:
-            case Shape.TRIANGLE:
-            case Shape.ITRIANGLE:
-                path = SvgShapes[shape](x - rd, y - rd, rd * 2, rd * 2);
-                break;
-
-            default:
-                path = SvgShapes.circle(x, y, rd);
-                break;
-        }
-        this.setPath(path);
-    }
     
     //-------------------------------------------------------------------------
     // overriden members

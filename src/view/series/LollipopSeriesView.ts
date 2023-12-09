@@ -10,6 +10,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
+import { SvgShapes } from "../../common/impl/SvgShape";
 import { LollipopSeries, LollipopSeriesPoint } from "../../model/series/LollipopSeries";
 import { BoxedSeriesView, IPointView, SeriesView } from "../SeriesView";
 
@@ -37,8 +38,11 @@ class BarElement extends GroupElement implements IPointView {
     // methods
     //-------------------------------------------------------------------------
     layout(): void {
+        const rd = this.point.radius;
+
         this._line.setVLineC(0, 0, this.height);
-        this._marker.renderShape(this.point.shape, 0, 0, this.point.radius);
+        SvgShapes.setShape(this._marker, this.point.shape, rd, rd);
+        this._marker.translate(-rd, -rd);
     }
 }
 

@@ -7,8 +7,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp, pickProp3, assign } from "../../common/Common";
+import { RcElement } from "../../common/RcControl";
+import { RectElement } from "../../common/impl/RectElement";
 import { DataPoint } from "../DataPoint";
-import { RangedSeries } from "../Series";
+import { RangedSeries, Series } from "../Series";
 
 /**
  * [min, rlow, mid, high, y]
@@ -153,5 +155,9 @@ export class BoxPlotSeries extends RangedSeries {
 
     protected _getBottomValue(p: BoxPlotSeriesPoint): number {
         return p.minValue;
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, 2);
     }
 }

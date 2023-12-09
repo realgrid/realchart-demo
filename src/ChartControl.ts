@@ -92,7 +92,7 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    load(config: any, loadAnimation = false): void {
+    load(config: any, loadAnimation = true): void {
         this.loaded = !loadAnimation; 
         this.clearAssetDefs();
         this.model = new Chart(config);

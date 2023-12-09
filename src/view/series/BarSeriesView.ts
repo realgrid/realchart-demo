@@ -166,6 +166,6 @@ export class BarSeriesView extends BarSeriesViewBase<BarSeries> {
     protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         view.wPoint = wPoint;
         view.hPoint = hPoint;
-        view.layout(x, y);
+        view.layout(x, y, 0, 0);
     }
 }

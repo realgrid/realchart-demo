@@ -51,8 +51,6 @@ export class PointLabelView extends LabelElement {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, 'rct-point-label');
-
-        this.ignorePointer();
     }
 
     //-------------------------------------------------------------------------
@@ -89,7 +87,7 @@ export class PointLabelContainer extends LayerElement {
     constructor(doc: Document) {
         super(doc, 'rct-point-labels');
 
-        this.setStyle('pointerEvents', 'none');
+        this.ignorePointer();
     }
 
 	//-------------------------------------------------------------------------
@@ -488,7 +486,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     protected _setPointStyle(v: RcElement, model: T,  p: DataPoint, styles?: any[]): void {
-        v.setAttr('aria-label', p.ariaHint());
+        v.setAttrEx('aria-label', p.ariaHint());
         this.$_setColorIndex(v, p);
         v.internalClearStyleAndClass();
 
@@ -693,7 +691,7 @@ export abstract class BoxPointElement extends PointElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    public abstract layout(x: number, y: number): void;
+    public abstract layout(x: number, y: number, rTop: number, rBottom: number): void;
 }
 
 export class BarElement extends BoxPointElement {
@@ -701,13 +699,15 @@ export class BarElement extends BoxPointElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    layout(x: number, y: number): void {
-        this.setPath(SvgShapes.rect({
-            x: x - this.wPoint / 2,
+    layout(x: number, y: number, rTop: number, rBottom: number): void {
+        this.setPath(SvgShapes.bar(
+            x - this.wPoint / 2,
             y,
-            width: this.wPoint,
-            height: -this.hPoint
-        }));
+            this.wPoint,
+            -this.hPoint,
+            rTop,
+            rBottom
+        ));
     }
 }
 
