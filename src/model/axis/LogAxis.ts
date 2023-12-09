@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { floor, log10, pow10, round } from "../../common/Common";
+import { floor, log10, pow10 } from "../../common/Common";
 import { fixnum } from "../../common/Types";
 import { AxisTick, IAxisTick } from "../Axis";
 import { ContinuousAxis, ContinuousAxisTick } from "./LinearAxis";
@@ -16,74 +16,61 @@ export class LogAxisTick extends ContinuousAxisTick {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    detailed = true;
+    /**
+     * 소수점을 갖는 step들을 역로그된 값이 최대한 정수가 되는 위치로 재배치한다.
+     * 
+     * @config
+     */
+    arrangeDecimals = true;
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    /**
-     * scale은 0, ..., 0.1, 1, 10, 100, ...
-     * 정수화 되는 scale만 적용되도록 한다.
-     */
     protected _getStepMultiples(scale: number): number[] {
-        if (scale <= 0.1) {
+        // 그냥 scale이 사용되게 한다. 아래 _normalizeSteps()에서 정돈될 수 있다.
+        if (scale <= 0.1) { 
             return [1 / scale];
         }
         return [1, 2, 3, 4, 5, 10];
     }
 
-    protected _getStepsByInterval(interval: any, base: number, min: number, max: number): number[] {
-        let steps: number[];
+    /**
+     * 소수점을 갖는 step들을 역로그된 값이 최대한 정수가 되게 조정한다.
+     */
+    _normalizeSteps(steps: number[], min: number, max: number): number[] {
+        if (!this.arrangeDecimals) return  steps;
 
-        // 0보다는 크다.
-        if (interval < 1 && this.detailed) {
-            const threshold = interval >= 0.5 ? 8 : interval >= 0.3 ? 4 : interval >= 0.15 ? 2 : 1;
-            let start = floor(min);
-            let v = pow10(start);
-            let prev = v - threshold;
-            let i = 1;
-            let v2: number;
+        for (let i = 0; i < steps.length; i++) {
+            let v = steps[i];
+            let f = floor(v);
 
-            steps = [];
+            if (v > 0 && v > f) {
+                v = f + log10((v - f) * 10);
+                if (v <= max) {
+                    steps[i] = v;
+                } else if (i > 0) {
+                    if (steps[i - 1] >= max) {
+                        break;
+                    } else {
+                        const scale = pow10(floor(log10(steps[i] - steps[i - 1])));
+                        const v2 = steps[i];
+                        const v3 = v2 - floor(v2);
 
-            if (start <= 0) {
-                steps.push(0);
-                prev = 0;
-                start = start == 0 ? 1 : 0;
-            }
-            if (start < min) {
-                while (i <= 9) {
-                    v = log10(pow10(start) * interval * i++);
-                    // console.log('#', i - 1, v);
-                    if (v >= min) {
-                        v2 = fixnum(pow10(v));
-                        if ((v2 - prev) >= threshold && floor(v2) === v2) {
-                            steps.push(v);
-                            prev = v2;
+                        if (scale < 1) {
+                            for (let j = 1; j < 10; j++) {
+                                if (v3 > log10(j) && v3 < log10(j + 1)) {
+                                    const v4 = floor(v2) + log10(j);
+                                    if (v4 >= max) {
+                                        v = v4;
+                                        break;
+                                    }
+                                }
+                            }
                         }
+                        steps[i] = v;
                     }
                 }
-                start++;
             }
-            i = 1;
-            while (v < max) {
-                v = log10(pow10(start) * interval * i++);
-                v2 = fixnum(pow10(v));
-                // if ((v2 - prev) >= threshold * Math.max(1, v) && floor(v2) === v2) {
-                if ((v2 - prev) >= threshold && floor(v2) === v2) {
-                    steps.push(v);
-                    prev = v2;
-                }
-                if (i > 9) {
-                    start++;
-                    i = 1;
-                }
-            } 
-            if (steps[steps.length - 1] < max && v > max) {
-                steps.push(v);
-            }
-        } else {
-            steps = super._getStepsByInterval(round(interval), base, min, max);
         }
         return steps;
     }
@@ -110,7 +97,17 @@ export class LogAxis extends ContinuousAxis {
     
     collectValues(): void {
         super.collectValues();
+        
+        // 0보다 작은 값을 log할 수 없다.
         this._values = this._values.filter(v => v > 0);
+    }
+
+    /**
+     * 내부에서는 log 값들을 사용하고...
+     */
+    getPosition(length: number, value: number): number {
+        value = value > 0 ? log10(value) : -1;
+        return super.getPosition(length, value);
     }
 
     protected _doCalcluateRange(values: number[]): { min: number; max: number; } {
@@ -121,12 +118,10 @@ export class LogAxis extends ContinuousAxis {
         return v;
     }
 
+    /**
+     * 화면 표시는 역log 값들을 사용한다.
+     */
     protected _createTick(length: number, index: number, step: number): IAxisTick {
         return super._createTick(length, index, fixnum(pow10(step)));
-    }
-
-    getPosition(length: number, value: number): number {
-        value = value > 0 ? log10(value) : -1;
-        return super.getPosition(length, value);
     }
 }

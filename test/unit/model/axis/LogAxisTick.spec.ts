@@ -8,12 +8,14 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { LogAxisTick } from '../../../../src/model/axis/LogAxis';
+import { LogAxis, LogAxisTick } from '../../../../src/model/axis/LogAxis';
 
 /**
  * Tests for LogAxisTick class.
  */
  describe("LogAxisTick test", function() {
+
+    const axis = new LogAxis(null, false);
 
     it('init', () => {
         const model = new LogAxisTick(null);
@@ -22,7 +24,7 @@ import { LogAxisTick } from '../../../../src/model/axis/LogAxis';
     });
 
     it('build steps - steps', () => {
-        const model = new LogAxisTick(null);
+        const model = new LogAxisTick(axis);
         model.steps = [1, 2, 3, 4];
 
         const steps = model.buildSteps(1000, 0, 0, 10);
@@ -30,7 +32,7 @@ import { LogAxisTick } from '../../../../src/model/axis/LogAxis';
     });
 
     it('build steps - stepCount', () => {
-        const model = new LogAxisTick(null);
+        const model = new LogAxisTick(axis);
         const base = NaN;
         const min = 1;
         const max = 163;
@@ -43,7 +45,7 @@ import { LogAxisTick } from '../../../../src/model/axis/LogAxis';
     });
 
     it('build steps - based stepCount', () => {
-        const model = new LogAxisTick(null);
+        const model = new LogAxisTick(axis);
         const base = NaN;
         const min = 5;//-19;
         const max = 163;
@@ -56,7 +58,7 @@ import { LogAxisTick } from '../../../../src/model/axis/LogAxis';
     });
 
     it('build steps - stepSize', () => {
-        const model = new LogAxisTick(null);
+        const model = new LogAxisTick(axis);
         const min = 5;
         const max = 111;
 
@@ -67,7 +69,7 @@ import { LogAxisTick } from '../../../../src/model/axis/LogAxis';
     });
 
     it('build steps - stepPixels', () => {
-        const model = new LogAxisTick(null);
+        const model = new LogAxisTick(axis);
         const min = 15;
         const max = 111;
 

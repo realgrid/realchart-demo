@@ -134,11 +134,11 @@ const config = {
             visible: true,
             // startVisible: false,
         },
-        // strictMax: 2,
         tick: { 
             visible: !true,
-            // stepInterval: 5,
-            stepInterval: 0.5
+            stepInterval: 0.5,
+            // stepCount: 5,
+            // steps: [0, Math.log10(3), Math.log10(10), Math.log10(20), Math.log10(30)]
         },
     },
     body: {
