@@ -8,7 +8,7 @@
 
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { RangedSeries } from "../Series";
+import { CorneredSeries, RangedSeries } from "../Series";
 
 export class WaterfallSeriesPoint extends DataPoint {
 
@@ -38,7 +38,7 @@ export class WaterfallSeriesPoint extends DataPoint {
  * 
  * @config chart.series[type=waterfall]
  */
-export class WaterfallSeries extends RangedSeries {
+export class WaterfallSeries extends CorneredSeries {
 
     //-------------------------------------------------------------------------
     // property fields

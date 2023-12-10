@@ -97,11 +97,11 @@ function setActions(container) {
         },
         false
     );
-    createListBox(container, "topRadius", [0, 3, 5, 10], function (e) {
+    createListBox(container, "topRadius", [0, 3, 6, 10, 100], function (e) {
         config.series[0].topRadius = +_getValue(e);
         chart.load(config, animate);
     }, '0');
-    createListBox(container, "bottomRadius", [0, 3, 5, 10], function (e) {
+    createListBox(container, "bottomRadius", [0, 3, 6, 10, 100], function (e) {
         config.series[0].bottomRadius = +_getValue(e);
         chart.load(config, animate);
     }, '0');

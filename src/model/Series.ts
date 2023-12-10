@@ -535,12 +535,14 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     yAxis: string | number;
     /**
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 x 값을 지정하는 속성명이나 인덱스.\
      * undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'.
      * 
      * @config
      */
     xField: string | number;
     /**
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 y 값을 지정하는 속성명이나 인덱스.\
      * undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'.
      * 
      * @config
@@ -1829,6 +1831,22 @@ export abstract class RangedSeries extends ClusterableSeries {
     // internal members
     //-------------------------------------------------------------------------
     protected abstract _getBottomValue(p: DataPoint): number;
+}
+
+/**
+ */
+export abstract class CorneredSeries extends RangedSeries {
+
+    //-------------------------------------------------------------------------
+    // property fields
+    //-------------------------------------------------------------------------
+    /**
+     * 지정한 반지름 크기로 데이터포인트 bar의 모서리를 둥글게 표시한다.\
+     * 최대값이 bar 폭으로 절반으로 제한되므로 아주 큰 값을 지정하면 반원으로 표시된다.
+     * 
+     * @config
+     */
+    cornerRadius: number;
 }
 
 export enum SeriesGroupLayout {
