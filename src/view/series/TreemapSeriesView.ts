@@ -100,7 +100,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
     }
 
     protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.slide(this);
+        firstTime && SeriesAnimation.reveal(this);
     }
 
     //-------------------------------------------------------------------------

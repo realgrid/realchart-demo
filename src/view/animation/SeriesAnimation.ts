@@ -17,8 +17,8 @@ export abstract class SeriesAnimation {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
-    static slide(series: SeriesView<Series>, options?: ISlideAnimation): void {
-        new SlideAnimation(series, options);
+    static reveal(series: SeriesView<Series>, options?: IRevealAnimation): void {
+        new RevealAnimation(series, options);
     }
 
     static fadeIn(series: SeriesView<Series>): void {
@@ -83,23 +83,23 @@ export class StyleAnimation extends SeriesAnimation {
     }   
 }
 
-export interface ISlideAnimation {
+export interface IRevealAnimation {
     from: 'left' | 'right' | 'top' | 'bottom';
 }
 
-export class SlideAnimation extends SeriesAnimation {
+export class RevealAnimation extends SeriesAnimation {
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(series: SeriesView<Series>, options?: ISlideAnimation) {
+    constructor(series: SeriesView<Series>, options?: IRevealAnimation) {
         super(series, options);
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _createAnimation(v: SeriesView<Series>, options: ISlideAnimation): Animation {
+    protected _createAnimation(v: SeriesView<Series>, options: IRevealAnimation): Animation {
         const cr = this.$_clipRect(v);
         let ani: Animation;
 
@@ -127,7 +127,7 @@ export class SlideAnimation extends SeriesAnimation {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_aniOptions(options: ISlideAnimation): KeyframeAnimationOptions {
+    private $_aniOptions(options: IRevealAnimation): KeyframeAnimationOptions {
         return {
             duration: RcAnimation.DURATION,
             fill: 'none'
@@ -153,28 +153,28 @@ export class SlideAnimation extends SeriesAnimation {
         return vClip.setTemporary();
     }
 
-    private $_left(v: SeriesView<Series>, cr: RcElement, options: ISlideAnimation): Animation {
+    private $_left(v: SeriesView<Series>, cr: RcElement, options: IRevealAnimation): Animation {
         return cr.dom.firstElementChild.animate([
             { width: '0'},
             { width: pixel(v.width)}
         ], this.$_aniOptions(options));
     }
 
-    private $_right(v: SeriesView<Series>, cr: RcElement, options: ISlideAnimation): Animation {
+    private $_right(v: SeriesView<Series>, cr: RcElement, options: IRevealAnimation): Animation {
         return cr.dom.firstElementChild.animate([
             { transform: `translateX(${v.width}px)` },
             { transform: '' }
         ], this.$_aniOptions(options));
     }
 
-    private $_top(v: SeriesView<Series>, cr: RcElement, options: ISlideAnimation): Animation {
+    private $_top(v: SeriesView<Series>, cr: RcElement, options: IRevealAnimation): Animation {
         return cr.dom.firstElementChild.animate([
             { height: '0'},
             { height: pixel(v.height)}
         ], this.$_aniOptions(options));
     }
 
-    private $_bottom(v: SeriesView<Series>, cr: RcElement, options: ISlideAnimation): Animation {
+    private $_bottom(v: SeriesView<Series>, cr: RcElement, options: IRevealAnimation): Animation {
         return cr.dom.firstElementChild.animate([
             { transform: `translateY(${v.height}px)` },
             { transform: '' }

@@ -9,7 +9,7 @@
 import { isArray, isObject, isString } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { ISize } from "../common/Size";
-import { Align, IPercentSize, RtPercentSize, VerticalAlign, calcPercent, parsePercentSize } from "../common/Types";
+import { Align, IAnnotationAnimation, IPercentSize, RtPercentSize, VerticalAlign, calcPercent, parsePercentSize } from "../common/Types";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 import { ISeries } from "./Series";
@@ -71,6 +71,8 @@ export abstract class Annotation extends ChartItem {
     /**
      * 회전 각도.\
      * 0 ~ 360 사이의 값으로 지정한다.
+     * 
+     * @config
      */
     rotation: number;
     /**
@@ -84,6 +86,10 @@ export abstract class Annotation extends ChartItem {
      * 이 시리즈가 감춰질 때 같이 감춰진다.
      */
     series: string;
+    /**
+     * 처음 표시될 때 실행될 에니메이션 설정 정보.
+     */
+    loadAnimation: IAnnotationAnimation;
 
     //-------------------------------------------------------------------------
     // methods

@@ -143,7 +143,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         if (this._polar) {
             firstTime && SeriesAnimation.grow(this);
         } else {
-            firstTime && SeriesAnimation.slide(this, { from: getFrom(this) });
+            firstTime && SeriesAnimation.reveal(this, { from: getFrom(this) });
         }
     }
 

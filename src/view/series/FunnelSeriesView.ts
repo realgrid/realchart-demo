@@ -72,7 +72,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
     }
 
     protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.slide(this, { from: this.model.reversed ? 'bottom' : 'top'});
+        firstTime && SeriesAnimation.reveal(this, { from: this.model.reversed ? 'bottom' : 'top'});
     }
 
     _resizeZombie(): void {

@@ -63,7 +63,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     }
 
     protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.slide(this);
+        firstTime && SeriesAnimation.reveal(this);
     }
 
     //-------------------------------------------------------------------------
