@@ -76,13 +76,13 @@ export class SvgShapes {
     static bar(x: number, y: number, width: number, height: number, rTop: number, rBottom: number): PathValue[] {
         if (rTop > 0) {
             if (rBottom > 0) {
-                rTop = Math.min(-height / 2 >> 0, rTop);
-                rBottom = Math.min(-height / 2 >> 0, rBottom);
+                rTop = Math.min(-height / 2, width / 2, rTop);
+                rBottom = Math.min(-height / 2, width / 2, rBottom);
                 return [
                     'M', x, y - rBottom,
                     'v', height + rBottom + rTop,
                     'a', rTop, rTop, 0, 0, 1, rTop, -rTop,
-                    'h', width - rTop - rBottom,
+                    'h', width - rTop * 2,
                     'a', rTop, rTop, 0, 0, 1, rTop, rTop,
                     'v', -height - rTop - rBottom,
                     'a', rBottom, rBottom, 0, 0, 1, -rBottom, rBottom,
@@ -91,7 +91,7 @@ export class SvgShapes {
                     'Z'
                 ];
             } else {
-                rTop = Math.min(-height, rTop);
+                rTop = Math.min(-height / 2, width / 2, rTop);
                 return [
                     'M', x, y,
                     'v', height + rTop,
@@ -103,7 +103,7 @@ export class SvgShapes {
                 ];
             }
         } else if (rBottom > 0) {
-            rBottom = Math.min(-height, rBottom);
+            rBottom = Math.min(-height / 2, width / 2, rBottom);
             return [
                 'M', x, y - rBottom,
                 'v', height + rBottom,

@@ -150,6 +150,12 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
 export class BarSeriesView extends BarSeriesViewBase<BarSeries> {
 
     //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _rdTop: number;
+    private _rdBottom: number;
+
+    //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
@@ -163,9 +169,16 @@ export class BarSeriesView extends BarSeriesViewBase<BarSeries> {
         return new ElementPool(container, BarElement);
     }
 
+    protected _prepareSeries(doc: Document, model: BarSeries): void {
+        super._prepareSeries(doc, model);
+
+        this._rdTop = +model.topRadius || 0;
+        this._rdBottom = +model.bottomRadius || 0;
+    }
+
     protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         view.wPoint = wPoint;
         view.hPoint = hPoint;
-        view.layout(x, y, 0, 0);
+        view.layout(x, y, this._rdTop, this._rdBottom);
     }
 }
