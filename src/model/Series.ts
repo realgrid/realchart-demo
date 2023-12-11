@@ -1847,6 +1847,13 @@ export abstract class CorneredSeries extends RangedSeries {
      * @config
      */
     cornerRadius: number;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, 2);
+    }
 }
 
 export enum SeriesGroupLayout {

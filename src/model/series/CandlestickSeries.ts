@@ -7,8 +7,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum, pickProp, assign } from "../../common/Common";
+import { PathBuilder } from "../../common/PathBuilder";
+import { PathElement, RcElement } from "../../common/RcControl";
 import { DataPoint } from "../DataPoint";
-import { RangedSeries } from "../Series";
+import { RangedSeries, Series } from "../Series";
 
 /**
  * [low, open, close, high]
@@ -124,5 +126,12 @@ export class CandlestickSeries extends RangedSeries {
 
     protected _getBottomValue(p: CandlestickSeriesPoint): number {
         return p.lowValue;
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        const pb = new PathBuilder();
+        pb.rect(0, size * 0.2, size, size * 0.6);
+        pb.vline(size / 2, 0, size);
+        return new PathElement(doc, Series.LEGEND_MARKER, pb.end());
     }
 }

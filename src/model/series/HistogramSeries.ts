@@ -7,6 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, pickNum, pickProp3, assign } from "../../common/Common";
+import { RcElement } from "../../common/RcControl";
+import { RectElement } from "../../common/impl/RectElement";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { ISeries, Series } from "../Series";
@@ -211,4 +213,7 @@ export class HistogramSeries extends Series {
         return axis === this._yAxisObj ? this._base : NaN;
     }
 
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, 2);
+    }
 }
