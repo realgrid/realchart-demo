@@ -3,6 +3,7 @@ import express from "express";
 import path from "path";
 import reload from "reload";
 import cors from 'cors';
+import fs from 'fs';
 
 const app = express();
 const root = path.resolve();
@@ -21,6 +22,16 @@ app.get('/', function (req, res) {
     res.render('index.html')
 });
 
+app.get('/realchart/:sub', function(req, res) {
+    const files = fs.readdirSync(`web/realchart/${req.params.sub}`);
+    const htmlFiles = files.filter(fname => fname.endsWith('.html'));
+    const alinks =  htmlFiles.map(fname => {
+        return `<li><a href="./${fname}">${fname}</a></li>`
+    }).join('\n');
+    res.send(`<ul>
+    ${alinks}
+    </ul>`);
+});
 
 var server = http.createServer(app);
 

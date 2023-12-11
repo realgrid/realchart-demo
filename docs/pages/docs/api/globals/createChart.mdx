@@ -1,4 +1,4 @@
-### createChart(doc, container, config): [RcChartControl](../classes/RcChartControl)[#createChart]
+### createChart(doc, container, config, animate): [RcChartControl](../classes/RcChartControl)[#createChart]
 차트 설정 모델을 기빈으로
 [Chart 컨트롤](/docs/api/classes/RcChartControl) svg를 생성한 후,
 지정된 div 엘리먼트의 유일한 자식으로 포함시킨다.\
@@ -15,3 +15,4 @@ const chart = RealChart.createChart(document, 'realchart', config);
 | doc | Document | N/A |
 | container | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) &#124; HTMLDivElement | 컨트롤이 생성되는 div 엘리먼트나 id |
 | config | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 차트 모델 설정 JSON |
+| animate | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | 첫 로딩 animation을 실행한다. |

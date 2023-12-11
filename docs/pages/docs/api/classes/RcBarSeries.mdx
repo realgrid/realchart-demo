@@ -1,8 +1,8 @@
 ## RcBarSeries
-### Extends
+### Extends
 - [RcChartSeries](../classes/RcChartSeries)
-**'bar'** 시리즈.
-### See Also
+**'bar'** 시리즈.
+### See Also
 
             [RcLineSeries](/docs/api/classes/RcLineSeries)
 
@@ -13,6 +13,7 @@
  | --- | --- | --- | 
  | [baseValue](/config/config/series/bar#basevalue) | `number{:js}` | 상/하 값 구분의 기준이 되는 값. |   
  | [belowStyle](/config/config/series/bar#belowstyle) | `SVGStyles \| string{:js}` | [baseValue](#basevalue) 혹은 y축의 baseValue보다 작은 쪽의 point들에 적용되는 스타일. |   
+ | [bottomRadius](/config/config/series/bar#bottomradius) | `number{:js}` | 지정한 반지름 크기로 데이터포인트 bar의 아래쪽 모서리를 둥글게 표시한다. |   
  | [col](/config/config/series/bar#col) | `number{:js}` | 분할 모드일 때 시리즈가 표시될 pane의 수직 위치. |   
  | [color](/config/config/series/bar#color) | `string{:js}` | 데이터 포인트 기본 색. |   
  | [colorByPoint](/config/config/series/bar#colorbypoint) | `boolean{:js}` | true로 지정하면 포인트 bar 별로 색을 다르게 표시한다. |   
@@ -31,17 +32,18 @@
  | [row](/config/config/series/bar#row) | `number{:js}` | 분할 모드일 때 시리즈가 표시될 pane의 수평 위치. |   
  | [style](/config/config/series/bar#style) | `SVGStyles \| string{:js}` | 스타일셋 혹은 class selector. |   
  | [tooltip](/config/config/series/bar/tooltip) | `Tooltip{:js}` | 데이터포인트 툴팁 설정 모델. |   
+ | [topRadius](/config/config/series/bar#topradius) | `number{:js}` | 지정한 반지름 크기로 데이터포인트 bar의 위쪽 모서리를 둥글게 표시한다. |   
  | [trendline](/config/config/series/bar/trendline) | `Trendline{:js}` | 추세선 설정 모델. |   
  | [viewRangeValue](/config/config/series/bar#viewrangevalue) | `'z' \| 'x' \| 'y'{:js}` | ranges가 적용되는 값. |   
  | [viewRanges](/config/config/series/bar#viewranges) | `IValueRanges \| IValueRange[]{:js}` | 값 범위 목록. |   
  | [visible](/config/config/series/bar#visible) | `boolean{:js}` | 표시 여부. |   
  | [visibleInLegend](/config/config/series/bar#visibleinlegend) | `boolean{:js}` | 명시적 false로 지정하면 legend에 표시하지 않는다. |   
  | [xAxis](/config/config/series/bar#xaxis) | `string \| number{:js}` |  |   
- | [xField](/config/config/series/bar#xfield) | `string \| number{:js}` | undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'. |   
+ | [xField](/config/config/series/bar#xfield) | `string \| number{:js}` | json 객체나 배열로 전달되는 데이터포인트 정보에서 x 값을 지정하는 속성명이나 인덱스. |   
  | [xStart](/config/config/series/bar#xstart) | `any{:js}` | x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값. |   
  | [xStep](/config/config/series/bar#xstep) | `string \| number{:js}` | x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격. |   
  | [yAxis](/config/config/series/bar#yaxis) | `string \| number{:js}` |  |   
- | [yField](/config/config/series/bar#yfield) | `string \| number{:js}` | undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'. |   
+ | [yField](/config/config/series/bar#yfield) | `string \| number{:js}` | json 객체나 배열로 전달되는 데이터포인트 정보에서 y 값을 지정하는 속성명이나 인덱스. |   
  | [zOrder](/config/config/series/bar#zorder) | `number{:js}` |  |
 
 ## Properties

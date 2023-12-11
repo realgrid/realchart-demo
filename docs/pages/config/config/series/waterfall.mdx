@@ -11,6 +11,11 @@
 ### colorField: `string{:js}`[#colorField]
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 객체일 때 <Content type="expression" value="'color'"></Content>.  
 
+### cornerRadius: `number{:js}`[#cornerRadius]
+지정한 반지름 크기로 데이터포인트 bar의 모서리를 둥글게 표시한다.
+
+최대값이 bar 폭으로 절반으로 제한되므로 아주 큰 값을 지정하면 반원으로 표시된다.  
+
 ### dataProp: `string{:js}`[#dataProp]
 <Content type="keyword" value="undefined"></Content>이면 <Content type="expression" value="'data'"></Content>.  
 
@@ -112,6 +117,8 @@ ranges가 적용되는 값.
 ### xAxis: `string | number{:js}`[#xAxis]
 
 ### xField: `string | number{:js}`[#xField]
+json 객체나 배열로 전달되는 데이터포인트 정보에서 x 값을 지정하는 속성명이나 인덱스.
+
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 0, 객체이면 <Content type="expression" value="'x'"></Content>.  
 
 ### xStart: `any{:js}`[#xStart]
@@ -130,6 +137,8 @@ time 축일 때, 정수 값 대신 시간 단위(<Content type="expression" valu
 ### yAxis: `string | number{:js}`[#yAxis]
 
 ### yField: `string | number{:js}`[#yField]
+json 객체나 배열로 전달되는 데이터포인트 정보에서 y 값을 지정하는 속성명이나 인덱스.
+
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 1, 객체이면 <Content type="expression" value="'y'"></Content>.  
 
 ### zOrder: `number{:js}`[#zOrder]

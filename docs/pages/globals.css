@@ -30,15 +30,23 @@ article code {
   color: rgb(0, 90, 163);
   font-size: 1.4rem;
   margin-top: 2rem;
+  border: none;
 }
 
 .nextra-content h3 {
   font-size: 1rem;
   font-weight: 700;
-  margin-top: 1.5rem;
-  border-bottom: 1px;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  /* border-bottom: 1px; */
+  border-top: 1px;
+  /* border-color: hsl(var(--nextra-primary-hue)100% 94%/.1); */
   border-color: rgba(229,229,229,.7);
-  border-style: dashed;
+  border-style: solid;
+}
+
+:is(html[class~=dark] .nextra-content h3) {
+  border-color: hsl(var(--nextra-primary-hue)100% 94%/.1);
 }
 
 .nextra-content p {

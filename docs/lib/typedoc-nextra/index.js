@@ -764,10 +764,12 @@ ${"- " + hyperlink(c.implements, "../classes/" + c.implements)}` : "";
       heading(escape(c.name), 2),
       exts,
       imps,
-      c.description,
+      c.description ? `
+${c.description}
+` : "",
       this.getSee(c.see),
       c.fiddle.join(" ")
-    ].map((v) => v == null ? void 0 : v.trim()).filter((v) => v).join("\n");
+    ].map((v) => v == null ? void 0 : v.trim()).filter((v) => v).join("\n\r");
   }
   getCtor(c) {
     if (!c)

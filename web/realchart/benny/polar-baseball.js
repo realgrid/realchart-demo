@@ -60,9 +60,11 @@ const config = {
         }
     },
     options: {
+        // animatable: false,
         style: {
             paddingLeft: '100px'
-        }
+        },
+        credits: false,
     },
     title: {
         text: 'J.D Reyes',
@@ -82,9 +84,10 @@ const config = {
     xAxis: {
         type: 'linear',
         reversed: true,
-        startAngle: -90,
-        minValue: -180,
-        maxValue: 180,
+        startAngle: 10,
+        totalAngle: 160,
+        minValue: -90,
+        maxValue: 90,
         label: {
             visible: true,
             suffix: '°',
@@ -98,10 +101,17 @@ const config = {
         tick: {
             stepInterval: 10,
         },
+        grid: {
+            // visible: false,
+            startVisible: false
+        },
         line: {
             visible: true,
             style: {
-                stroke: '#999'
+                stroke: '#999',
+                // stroke: 'red',
+                // strokeWidth: '2px',
+                // fill: '#999'
             }
         },
         sectorLine: {
@@ -117,8 +127,9 @@ const config = {
             effect: 'outline',
             outlineThickness: 5,
             style: {
-                fill: '#999'
-            }
+                fill: '#555',
+            },
+            firstText: '',
         },
         title: 'hits',
         grid: {
@@ -127,25 +138,27 @@ const config = {
         },
         tick: { 
             visible: !true,
-            stepInterval: 0.5,
+            // stepInterval: 0.5,
             // stepCount: 5,
-            // steps: [0, Math.log10(3), Math.log10(10), Math.log10(20), Math.log10(30)]
+            steps: [0, Math.log10(5), Math.log10(10), Math.log10(20), Math.log10(30)]
         },
     },
     body: {
-        totalAngle: 180,
         annotations: [
             {
-                imageUrl: '../assets/images/baseball-player.png',
+                imageUrl: 'http://localhost:6010/realchart/assets/images/baseball-player.png',
                 // align: 'right',
-                offsetX: 50,
-                offsetY: 10,
-                width: 360
+                offsetX: 40,
+                offsetY: -30,
+                width: 400
             }
         ]
     },
     series: {
+        // layout: 'stack',
         layout: 'overlap',
+        // noClip: false,
+        groupPadding: 0,
         children: [
         {
             template: 'series',
@@ -153,7 +166,7 @@ const config = {
             style: {
                 stroke: 'none',
                 fill: '#bbb',
-            }
+            },
         },
         {
             template: 'series',
@@ -161,7 +174,7 @@ const config = {
             style: {
                 stroke: 'none',
                 fill: 'var(--color-3)',
-            }
+            },
         },]
     }
 }
@@ -225,6 +238,7 @@ function setActions(container) {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

@@ -63,7 +63,8 @@ const config = {
         // animatable: false,
         style: {
             paddingLeft: '100px'
-        }
+        },
+        credits: false,
     },
     title: {
         text: 'J.D Reyes',
@@ -128,6 +129,7 @@ const config = {
             style: {
                 fill: '#555',
             },
+            firstText: '',
         },
         title: 'hits',
         grid: {
@@ -136,15 +138,15 @@ const config = {
         },
         tick: { 
             visible: !true,
-            stepInterval: 0.5,
+            // stepInterval: 0.5,
             // stepCount: 5,
-            // steps: [0, Math.log10(3), Math.log10(10), Math.log10(20), Math.log10(30)]
+            steps: [0, Math.log10(5), Math.log10(10), Math.log10(20), Math.log10(30)]
         },
     },
     body: {
         annotations: [
             {
-                imageUrl: '../assets/images/baseball-player.png',
+                imageUrl: 'http://localhost:6010/realchart/assets/images/baseball-player.png',
                 // align: 'right',
                 offsetX: 50,
                 // offsetY: 0,
@@ -153,8 +155,8 @@ const config = {
         ]
     },
     series: {
-        layout: 'stack',
-        // layout: 'overlap',
+        // layout: 'stack',
+        layout: 'overlap',
         // noClip: false,
         groupPadding: 0,
         children: [

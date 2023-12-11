@@ -43,16 +43,10 @@ export class TypeDocNextra {
         return [heading(escape(c.name), 2),
             exts,
             imps,
-            c.description,
+            c.description ? `\n${c.description}\n` : '',
             this.getSee(c.see),
-            c.fiddle.join(' ')].map(v => v?.trim()).filter(v=>v).join('\n');
-        // return `${heading(escape(c.name), 2)}
-        //     ${exts}
-        //     ${imps}
-        //     ${c.description ? `\n${c.description}\n` : ''}
-        //     ${this.getSee(c.see)}
-        //     ${c.fiddle.join(' ')}
-        //     `;
+            c.fiddle.join(' ')]
+        .map(v => v?.trim()).filter(v=>v).join('\n\r');
     }
 
     public getCtor(c: DocumentedClassConstructor) {
