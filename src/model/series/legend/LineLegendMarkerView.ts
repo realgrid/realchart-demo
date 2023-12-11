@@ -35,7 +35,7 @@ export class LineLegendMarkerView extends ShapeLegendMarkerView {
         super._renderShape(size);
 
         // [주의] marker의 크기를 유지해야 line이 중앙에 표시된다.
-        // this._marker.setStyle('visibility', this._shape ? 'visible' : 'hidden');
+        this._marker.setStyle('visibility', this._shape ? 'visible' : 'hidden');
         this._line && this._line.setHLine(size / 2, 0, size * 2);
     }
 
