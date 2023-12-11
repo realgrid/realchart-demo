@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isNumber, isString } from "../common/Common";
+import { isString } from "../common/Common";
 import { DatetimeFormatter } from "../common/DatetimeFormatter";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { IRichTextDomain } from "../common/RichText";
@@ -14,6 +14,13 @@ import { _undef } from "../common/Types";
 import { ChartItem } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
 import { ISeries, Series } from "./Series";
+
+export enum TooltipLevel {
+    AUTO = 'auto',
+    SERIES = 'series',
+    GROUP = 'group',
+    AXIS = 'axis'
+}
 
 /**
  * Series.tooltip 모델.
@@ -23,6 +30,7 @@ export class Tooltip extends ChartItem {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
+    static readonly DEF_TEXT = '<b>${name}</b><br>${series}:<b> ${yValue}</b>';
     static readonly HIDE_DELAY = 700;
 
     //-------------------------------------------------------------------------
@@ -54,15 +62,16 @@ export class Tooltip extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    level = TooltipLevel.AUTO;
     html: string;
     /**
      * 툴팁에 표시할 텍스트 형식.
-     * `${...}` 형식으로 아래과 같은 변수로 데이터 포인트 및 시리즈 값을 지정할 수 있다.
+     * `${param;default;format}` 형식으로 아래과 같은 변수로 데이터 포인트 및 시리즈 값을 지정할 수 있다.
      * |변수|설명|
      * |---|---|
      * |series|시리즈 이름|
      * |name|포인트 이름. 포인트가 속한 카테고리 이름이거나, 'x' 속성으로 지정한 값|
-     * |x|'x' 속성으로 지정한 값이거 카테고리 이름|
+     * |x|'x' 속성으로 지정한 값이거나 카테고리 이름|
      * |y|'y' 속성으로 지정한 값|
      * |xValue|계산된 x값|
      * |yValue|계산된 y값|
@@ -124,6 +133,10 @@ export class Tooltip extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getText(): string {
+        return this.text || Tooltip.DEF_TEXT;
+    }
+
     getTextDomain(series: Series): IRichTextDomain {
         this._series = series;
         return this._domain;

@@ -1954,6 +1954,10 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     zOrder = 0;
     noClip: boolean;
 
+    tooltipHeader: string;
+    tooltipRow: string;
+    tooltipFooter: string;
+
     get series(): T[] {
         return this._series.slice(0);
     }

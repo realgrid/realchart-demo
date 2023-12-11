@@ -3,7 +3,7 @@
  */
 const config = {
     options: {
-        animatable: false,
+        // animatable: false,
         credits: {
             // visible: false,
             // verticalAlign: 'top'

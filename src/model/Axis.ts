@@ -1044,6 +1044,10 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     unit: string;
 
+    tooltipHeader = '<b>${x}</b>';
+    tooltipRow: '${series}:<b> ${yValue}</b>';
+    tooltipFooter: string;
+
     isEmpty(): boolean {
         return this._series.length < 1;
     }

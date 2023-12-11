@@ -76,7 +76,7 @@ export class TooltipView extends RcElement {
         this._series = series;
 
         // text
-        this._richText.setFormat(model.text);
+        this._richText.setFormat(model.getText());
         this._richText.build(tv, NaN, NaN, point, model.getTextDomain(series));
 
         const r = tv.getBBounds();
