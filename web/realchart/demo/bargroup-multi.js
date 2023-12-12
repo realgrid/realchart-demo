@@ -3,10 +3,16 @@
  *
  */
 const config = {
+    inverted: true,
 	options: {
 		// animatable: false
 	},
-	title: '기업별 전자제품 판매 현황',
+	title: {
+        text: '기업별 전자제품 판매 현황',
+    },
+    subtitle: {
+        text: '2023.01 ~ 12',
+    },  
 	xAxis: {
 		title: '기업',
 		categories: ['A기업', 'B기업', 'C기업', 'D기업', 'E기업'],
@@ -126,6 +132,7 @@ function setActions(container) {
 function init() {
 	console.log('RealChart v' + RealChart.getVersion());
 	// RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
 	chart = RealChart.createChart(document, 'realchart', config);
 	setActions('actions');

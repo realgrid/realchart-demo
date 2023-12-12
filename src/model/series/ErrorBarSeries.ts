@@ -6,9 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, pickProp3 } from "../../common/Common";
+import { pickNum, pickProp, pickProp3, assign } from "../../common/Common";
+import { PathBuilder } from "../../common/PathBuilder";
+import { PathElement, RcElement } from "../../common/RcControl";
 import { DataPoint } from "../DataPoint";
-import { RangedSeries } from "../Series";
+import { RangedSeries, Series } from "../Series";
 
 /**
  * [low, y]
@@ -41,7 +43,7 @@ export class ErrorBarSeriesPoint extends DataPoint {
     }
 
     protected _assignTo(proxy: any): any {
-        return Object.assign(super._assignTo(proxy), {
+        return assign(super._assignTo(proxy), {
             low: this.low,
             lowValue: this.lowValue
         });
@@ -111,5 +113,15 @@ export class ErrorBarSeries extends RangedSeries {
 
     protected _getBottomValue(p: ErrorBarSeriesPoint): number {
         return p.lowValue;
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        const pb = new PathBuilder();
+        pb.vline(size / 2, 0.1, size * 0.8);
+        pb.hline(0.1, 0, size);
+        pb.hline(size * 0.9, 0, size);
+        const elt = new PathElement(doc, Series.LEGEND_MARKER, pb.end());
+        elt.setStyle('strokeWidth', '2px');
+        return elt;
     }
 }

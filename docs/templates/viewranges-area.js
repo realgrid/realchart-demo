@@ -1,7 +1,7 @@
 export const config = {
   vars: {},
   title: 'View Ranges - Area',
-  options: { animatable: false },
+  options: {},
   xAxis: {
     title: '서울시',
     categories: [

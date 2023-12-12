@@ -39,11 +39,14 @@ export class TypeDocNextra {
         // const derived = `${c.extends ? ` extends ${this.linker(c.extends, [c.extends])}` : ''}${c.implements ? ` implements ${this.linker(c.implements, [c.implements])}` : ''}`;
         const exts = c.extends ? `${heading('Extends', 3)}\n${'- ' + hyperlink(c.extends, '../classes/' + c.extends)}` : '';
         const imps = c.implements ? `${heading('Implements', 3)}\n${'- ' + hyperlink(c.implements, '../classes/' + c.implements)}` : '';
-        return `${heading(escape(c.name), 2)}
-            ${exts}
-            ${imps}
-            ${c.description ? `\n${c.description}\n` : ''}
-            ${this.getSee(c.see)}`;
+
+        return [heading(escape(c.name), 2),
+            exts,
+            imps,
+            c.description ? `\n${c.description}\n` : '',
+            this.getSee(c.see),
+            c.fiddle.join(' ')]
+        .map(v => v?.trim()).filter(v=>v).join('\n\r');
     }
 
     public getCtor(c: DocumentedClassConstructor) {
@@ -176,7 +179,7 @@ export class TypeDocNextra {
         //     return `${title}\n${desc}\n${this.getSee(m.see)}`;
         // });
 
-        return `${head}\n${tableHead}\n${tableBody.join('  \n')}`;
+        return `${head}\n${tableHead}\n${tableBody.join('  \n')}`.trim();
     }
 
     public getProperties(properties: DocumentedClassProperty[]) {
@@ -194,7 +197,13 @@ export class TypeDocNextra {
                 .join('\n')
                 .trim();
 
-            return `${title}\n${desc}\n${this.getSee(m.see)}`;
+            return [
+                title,
+                desc,
+                this.getSee(m.see),
+                m.fiddle.join(' ')
+            ].map(v => v?.trim()).filter(v=>v).join('\n');
+            // return `${title}\n${desc}\n${this.getSee(m.see)}\n${m.fiddle.join(' ')}`.trim();
         });
 
         return `${head}\n${body.join('\n')}`;
@@ -243,13 +252,17 @@ export class TypeDocNextra {
                           return `\n${table(tableHead, tableBody)}\n`;
                       })()
                     : '',
-                m.metadata?.url ? `\n- ${hyperlink('Source', m.metadata.url)}` : ''
-            ]
+                m.metadata?.url ? `\n- ${hyperlink('Source', m.metadata.url)}` : '']
                 .filter((r) => r.length > 0)
                 .join('\n')
                 .trim();
 
-            return `${title}\n${desc}${this.getSee(m.see)}`;
+            return [
+                title,
+                desc,
+                this.getSee(m.see),
+                m.fiddle.join(' ')
+            ].map(v => v.trim()).filter(v=>v).join('\n');
         });
 
         return `${head}\n${body.join('\n')}`;

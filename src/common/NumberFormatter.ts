@@ -18,7 +18,8 @@ const ABS = 'a'.charCodeAt(0);
  * 'as,0.0#'
  * NOTE: 'a'는 bigint에 사용할 수 없다.
  * 
- * TODO: ',' 자리에 다른 문자(ex. space)를 표시할 수 있도록 한다.
+ * //TODO: ',' 자리에 다른 문자(ex. space)를 표시할 수 있도록 한다.
+ * //TODO: Intl.NumberFormat 사용할 것. toLocaleString()할 때마다 이 객체가 생성되는 듯.
  */
 export class NumberFormatter {
 

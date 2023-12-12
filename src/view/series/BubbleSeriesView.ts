@@ -6,13 +6,15 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ElementPool } from "../../common/ElementPool";
-import { PathElement, RcElement } from "../../common/RcControl";
+import { cos, sin } from "../../common/Common";
 import { IRect } from "../../common/Rectangle";
+import { Align, PI_2 } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
+import { Axis } from "../../model/Axis";
+import { Chart } from "../../model/Chart";
 import { PointItemPosition } from "../../model/Series";
 import { BubbleSeries, BubbleSeriesPoint } from "../../model/series/BubbleSeries";
-import { IPointView, MarkerSeriesPointView, MarkerSeriesView, PointLabelView, SeriesView } from "../SeriesView";
+import { MarkerSeriesPointView, MarkerSeriesView, PointLabelView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class MarkerView extends MarkerSeriesPointView<BubbleSeriesPoint> {
@@ -28,6 +30,8 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _polar: any;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -79,13 +83,15 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
     private $_layoutMarkers(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
+        const needClip = series.needClip(false);
         const vr = this._getViewRate();
         const labels = series.pointLabel;
         const labelPos = labels.position;
-        const labelOff = labels.offset;
+        const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
+        const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj;
+        const polar = this._polar = (series.chart as Chart).body.getPolar(xAxis);
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
         const zAxis = series._xAxisObj._vlen < series._yAxisObj._vlen ? series._xAxisObj : series._yAxisObj;
@@ -97,32 +103,45 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
 
         this._markers.forEach((mv, i) => {
             const p = mv.point as BubbleSeriesPoint;
+            const lv = labelViews && (labelView = labelViews.get(p, 0));
 
-            if (mv.setVisible(!p.isNull && !isNaN(p.zValue))) {
+            if (mv.setVis(!p.isNull && !isNaN(p.zValue))) {
                 const sz = (p.radius = series.getRadius(p.zValue, min, max)) * vr;
                 let path: (string | number)[];
                 let x: number;
                 let y: number;
 
-                // m.className = model.getPointStyle(i);
-
-                x = p.xPos = xAxis.getPosition(xLen, p.xValue);
-                y = p.yPos = yOrg - yAxis.getPosition(yLen, p.yValue);
-                if (inverted) {
-                    x = yAxis.getPosition(yLen, p.yGroup);
-                    y = yOrg - xAxis.getPosition(xLen, p.xValue);
+                if (polar) {
+                    const a = polar.start + xAxis.getPosition(PI_2, p.xValue);
+                    const py = yAxis.getPosition(polar.rd, p.yValue);
+    
+                    x = p.xPos = polar.cx + py * cos(a);
+                    y = p.yPos = polar.cy + py * sin(a);
+                } else {
+                    x = p.xPos = xAxis.getPosition(xLen, p.xValue);
+                    y = p.yPos = yOrg - yAxis.getPosition(yLen, p.yValue);
+                    if (inverted) {
+                        x = yAxis.getPosition(yLen, p.yGroup);
+                        y = yOrg - xAxis.getPosition(xLen, p.xValue);
+                    }
                 }
     
-                path = SvgShapes.circle(0, 0, sz);
-                mv.setPath(path);
-                mv.translate(x, y);
-
-                // label
-                if (labelViews && (labelView = labelViews.get(p, 0))) {
-                    labelView.setContrast(mv.dom);
-                    labelView.layout();
-                    this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
+                if (mv.setVis(!needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
+                    path = SvgShapes.circle(0, 0, sz);
+                    mv.setPath(path);
+                    mv.translate(x, y);
+    
+                    // label
+                    if (lv) {
+                        labelView.setContrast(mv.dom);
+                        labelView.layout(Align.CENTER);
+                        this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
+                    }
+                } else if (lv) {
+                    lv.setVis(false);
                 }
+            } else if (lv) {
+                lv.setVis(false);
             }
         });
     }

@@ -11,7 +11,7 @@ const config = {
         }
     },
     options: {
-        animatable: false,
+        // animatable: false,
         credits: {
             // visible: false,
             // verticalAlign: 'top'
@@ -162,6 +162,7 @@ function setActions(container) {
 function init() {
     console.log(RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

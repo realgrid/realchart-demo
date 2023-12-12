@@ -86,6 +86,10 @@ export class ElementPool<T extends RcElement> extends RcObject {
         return this._views.slice();
     }
 
+    _internalItems(): T[] {
+        return this._views;
+    }
+
     elementOf(dom: Element): T {
         for (let v of this._views) {
             if (v.dom.contains(dom)) return v;
@@ -208,7 +212,7 @@ export class ElementPool<T extends RcElement> extends RcObject {
         }
 
         this._views = views;
-        // console.log('pool views', this._views.length);
+        // Utils.log('pool views', this._views.length);
         visitor && this.forEach(visitor);
         return this;
     }

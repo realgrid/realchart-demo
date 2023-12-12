@@ -3,12 +3,15 @@
  * 
  */
 const config = {
-    options: {},
+    options: {
+        // animatable: false
+    },
     title: "Line Series 01",
     xAxis: {
         type: 'category',
     },
     yAxis: {
+        // strictMax: 15
     },
     series: {
         type: 'line',
@@ -62,6 +65,7 @@ function setActions(container) {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

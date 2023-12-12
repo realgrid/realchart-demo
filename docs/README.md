@@ -52,11 +52,22 @@ config로 노출하고자 하는 구성에 @config를 사용한다.
   - 상속 받는 클래스이 properties를 override하여 @config를 설정하면, 설명도 같이 override한다.
   - `@default text`로 default값에 대한 설명을 추가한다.
 
+- inline link
+  - 설명에 `{@link config.series.line 라인}`과 같은 포맷으로 링크를 설정한다. 라벨을 지정하지 않으면 마지막 구분자(`line`)를 라벨로 한다.
+  - class api 링크는 `sub.Class.Property`로 고정한다. 예를 들어,
+    - global 링크는 `g.createChart`
+    - class 링크는 `rc.RcAreaSeries`, class property 링크는 `rc.RcAreaSeries.name`. `rc.` 생략 가능
+  - config 링크는 a.b#property로 '#'을 써서 속성임을 명시해줘야 한다.
+  - 해당 코드는 `md.ts`의 `doclink`함수에 구현하고 있다. `dldoc.js`, `typedoc.js`에서 모두 사용한다.
+
 - 상속 받는 클래스 속성의 설명(comment)에서 @link를 동적으로 변경
-  - 부모/추상 클래스 속성의 설명에서 링크를 `{@link config.gauge.$guage.label 라벨 ...}` 처럼 설정한다.
+  - 부모/추상 클래스 속성의 설명에서 링크를 `{@link config.gauge.$guage.label 라벨}` 처럼 설정한다.
   - 상속 받는 클래스의 설명에서 `@configvar gauge=band`처럼 $gauge를 교체할 값을 설정한다.
 
 - jsfiddle 링크를 추가하려면 `@fiddle url label...` 을 설정한다.
+
+- **주의: config 설명에 double quotes(`""`)를 써서는 안된다.**
+
 ```
 /**
  * foo class 설명

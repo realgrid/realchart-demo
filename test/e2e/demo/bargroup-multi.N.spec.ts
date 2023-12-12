@@ -50,7 +50,7 @@ test.describe('area-multi.html test', async function () {
 		expect(title).exist;
 
 		const titleText = await page.evaluate((el) => el.textContent, title);
-		expect(titleText).eq(config.title);
+		expect(titleText).eq(config.title.text);
 	});
 
 	test('xTitle', async ({ page }) => {

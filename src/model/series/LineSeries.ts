@@ -6,15 +6,17 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp } from "../../common/Common";
+import { pickNum, pickProp, assign } from "../../common/Common";
+import { IPoint } from "../../common/Point";
 import { RcElement } from "../../common/RcControl";
-import { SVGStyleOrClass, StyleProps } from "../../common/Types";
+import { Align, SVGStyleOrClass, StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
+import { IChart } from "../Chart";
 import { LineType } from "../ChartTypes";
 import { DataPoint } from "../DataPoint";
 import { LegendItem } from "../Legend";
-import { MarkerVisibility, Series, SeriesGroup, SeriesMarker } from "../Series";
+import { DataPointLabel, MarkerVisibility, PointItemPosition, Series, SeriesGroup, SeriesMarker } from "../Series";
 import { LineLegendMarkerView } from "./legend/LineLegendMarkerView";
 
 export class LineSeriesPoint extends DataPoint {
@@ -34,9 +36,6 @@ export class LineSeriesMarker extends SeriesMarker {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    /**
-     * @config
-     */
     radius = 4;
     /**
      * 첫번째 point의 marker 표시 여부.
@@ -64,7 +63,47 @@ export class LineSeriesMarker extends SeriesMarker {
     maxVisible = MarkerVisibility.DEFAULT;
 }
 
+export class LinePointLabel extends DataPointLabel {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly ALIGN_GAP = 4;
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
+    position = PointItemPosition.HEAD;
+    /**
+     * position 위치에서 수평 정렬 상태.
+     * 
+     * @config
+     */
+    align = Align.CENTER;
+    /**
+     * {@link align}이 'left', 'right'일 때 원래 표시 위치와의 간격.
+     */
+    alignOffset: number;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getAlignOffset(): number {
+        const off = +this.alignOffset;
+        if (isNaN(off)) {
+            return this.align === Align.LEFT || this.align === Align.RIGHT ? LinePointLabel.ALIGN_GAP : 0;
+        }
+        return off;
+    }
+}
+
 /**
+ * 포인트 label들은 PointItemPosition.HEAD, FOOT, INSIDE에 위치할 수 있다.
+ * 기본값은 AUTO(HEAD)이다.
+ * pointLabel.align으로 수평 정렬을 설정할 수있다.
  */
 export abstract class LineSeriesBase extends Series {
 
@@ -94,7 +133,7 @@ export abstract class LineSeriesBase extends Series {
     // methods
     //-------------------------------------------------------------------------
     getShape(p: LineSeriesPoint): Shape {
-        return (p && p.shape) || this.marker.shape || this._shape;
+        return this.marker.visible ? ((p && p.shape) || this.marker.shape || this._shape) : null;
     }
 
     getRadius(p: LineSeriesPoint): number {
@@ -104,6 +143,10 @@ export abstract class LineSeriesBase extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _createLabel(chart: IChart): DataPointLabel {
+        return new LinePointLabel(chart);
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new LineSeriesPoint(source);
     }
@@ -121,6 +164,17 @@ export abstract class LineSeriesBase extends Series {
 
     _defViewRangeValue(): "x" | "y" | "z" {
         return 'x';
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return new LineLegendMarkerView(doc, size);
+    }
+
+    legendMarker(doc: Document, size: number): RcElement {
+        const m = super.legendMarker(doc, size);
+
+        (m as LineLegendMarkerView).setShape(this.getShape(null), Math.min(+size || LegendItem.MARKER_SIZE, this.marker.radius * 2));
+        return m;
     }
 
     //-------------------------------------------------------------------------
@@ -190,17 +244,6 @@ export class LineSeries extends LineSeriesBase {
     getLineType(): LineType {
         return this.lineType;
     }
-
-    protected _createLegendMarker(doc: Document, size: number): RcElement {
-        return new LineLegendMarkerView(doc, size);
-    }
-
-    legendMarker(doc: Document, size: number): RcElement {
-        const m = super.legendMarker(doc, size);
-
-        (m as LineLegendMarkerView).setShape(this.getShape(null), Math.min(+size || LegendItem.MARKER_SIZE, this.marker.radius * 2));
-        return m;
-    }
 }
 
 export class AreaSeriesPoint extends LineSeriesPoint {
@@ -215,6 +258,9 @@ export class AreaSeriesPoint extends LineSeriesPoint {
 }
 
 /**
+ * 영역 시리즈.\
+ * 대부분 {@link config.series.line 'line'} 시리즈와 동일하고 라인 아래 부분을 별도의 색상으로 채운다.
+ * 
  * @config chart.series[type=area]
  */
 export class AreaSeries extends LineSeries {
@@ -228,7 +274,7 @@ export class AreaSeries extends LineSeries {
     // property fields
     //-------------------------------------------------------------------------
     /**
-     * area 영역에 적용할 스타일셋이나 class selector.
+     * area 영역에 추가적으로 적용되는 스타일셋이나 class selector.
      * 
      * @config
      */
@@ -288,7 +334,7 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
     }
 
     protected _assignTo(proxy: any): any {
-        return Object.assign(super._assignTo(proxy), {
+        return assign(super._assignTo(proxy), {
             low: this.low,
             high: this.high,
             lowValue: this.lowValue,
@@ -318,6 +364,10 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
 
         this.low = this.y;
     }
+
+    getTooltipPos(): IPoint {
+        return { x: this.xPos, y: this.yLow };
+    }
 }
 
 /**
@@ -330,6 +380,11 @@ export class AreaRangeSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     lowField: string;
     highField: string;
+    /**
+     * area 영역에 추가적으로 적용되는 스타일셋이나 class selector.\
+     * 
+     * @config
+     */
     areaStyle: StyleProps;
     /**
      * true면 spline 곡선으로 표시한다.

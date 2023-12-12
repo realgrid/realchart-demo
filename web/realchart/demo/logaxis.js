@@ -10,7 +10,13 @@ const config = {
     xAxis: {
         // type: 'category',
         // type: 'linear'
-        type: 'log'
+        type: 'log',
+        tick: {
+            stepInterval: 0.1
+        },
+        label: {
+            // numberFormat: '#.0'
+        }
     },
     yAxis: {
         type: 'log'
@@ -18,6 +24,7 @@ const config = {
     series: {
         type: 'line',
         xStart: 1,
+        xStep: 1,
         data: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
     }
 }
@@ -52,6 +59,10 @@ function setActions(container) {
         config.xAxis.type = _getValue(e);
         chart.load(config);
     }, 'log');
+    createCheckBox(container, "XAxis.tick.arrangeDecimals", function (e) {
+        config.xAxis.tick.arrangeDecimals = _getChecked(e);
+        chart.load(config);
+    }, true);
     createListBox(container, "YAxis.type", ['linear', 'log'], function (e) {
         config.yAxis.type = _getValue(e);
         chart.load(config);
@@ -61,6 +72,7 @@ function setActions(container) {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

@@ -72,25 +72,34 @@ function setActions(container) {
         config.legend.offsetY = _getValue(e);
         chart.load(config);
     }, '0');
+    createCheckBox(container, 'markerVisible', function (e) {
+        config.legend.markerVisible = _getChecked(e);
+        chart.load(config);
+    }, true);
+    createCheckBox(container, 'useTextColor', function (e) {
+        config.legend.useTextColor = _getChecked(e);
+        chart.load(config);
+    }, false);
     // createCheckBox(container, 'clickable', function (e) {
     //     chart.model.legend.clickable = _getChecked(e);
-    // }, true)
+    // }, true);
     // createCheckBox(container, 'clickEvent', function (e) {
     //     chart.model.legend.onClick = !_getChecked(e) ? null : (chart, item) => {
     //         alert(item.label);
     //     }
-    // }, false)
+    // }, false);
     // createCheckBox(container, 'clickEventTrue', function (e) {
     //     chart.model.legend.onClick = !_getChecked(e) ? null : (chart, item) => {
     //         console.log('legend click', item.label);
     //         return true;
     //     }
-    // }, false)
+    // }, false);
 }
 
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

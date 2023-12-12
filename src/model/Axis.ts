@@ -6,11 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isObject, isString, pickNum, pickNum3 } from "../common/Common";
-import { Align, SVGStyleOrClass, VerticalAlign, _undefined, fixnum, isNull } from "../common/Types";
+import { isArray, isNumber, isObject, isString, pickNum, pickNum3, pickProp } from "../common/Common";
+import { IRichTextDomain } from "../common/RichText";
+import { Align, DEG_RAD, ORG_ANGLE, SVGStyleOrClass, VerticalAlign, _undef, fixnum, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
-import { ChartItem, FormattableText } from "./ChartItem";
+import { ChartItem, ChartTextOverflow, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
 import { IClusterable, IPlottingItem } from "./Series";
 
@@ -18,7 +19,7 @@ import { IClusterable, IPlottingItem } from "./Series";
  * @internal
  */
 export interface IAxis {
-    type(): string;
+    _type(): string;
     chart: IChart;
     
     row: number;
@@ -44,6 +45,7 @@ export interface IAxis {
      * data point의 값을 축 상의 값으로 리턴한다.
      */
     getValue(value: any): number;
+    getXValue(value: number): any;
     contains(value: number): boolean;
     incStep(value: number, step: any): number;
     /**
@@ -58,6 +60,8 @@ export interface IAxis {
      * 값에 따라 크기가 다를 수도 있다.
      */
     getUnitLength(length: number, value: number): number;
+
+    value2Tooltip(value: number): any;
 
     hasBreak(): boolean;
     isBreak(pos: number): boolean;
@@ -215,7 +219,8 @@ export class AxisTitle extends AxisItem {
 }
 
 /**
- * visible 기본값이 undefined이다.
+ * Axis tick의 위치에 수평 혹은 수직선으로 plot 영역을 구분 표시한다.\
+ * {@link visible} 기본값이 undefined인데,
  * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
  * 
  * @config
@@ -251,8 +256,9 @@ export class AxisGrid extends AxisItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    isVisible(): boolean {
-        return this.visible == null ? !this.axis._isX : this.visible;
+    isVisible(polar: boolean): boolean {
+        if (polar) return this.visible !== false;
+        else return this.visible == null ? !this.axis._isX : this.visible;
     }
 
     getPoints(length: number): number[] {
@@ -271,7 +277,9 @@ export class AxisGrid extends AxisItem {
 }
 
 /**
- *
+ * 축 가이드 label 설정 모델.
+ * 
+ * @config
  */
 export class AxisGuideLabel extends FormattableText {
 
@@ -301,6 +309,18 @@ export class AxisGuideLabel extends FormattableText {
      * @config
      */
     verticalAlign = VerticalAlign.TOP;
+    /**
+     * label과 가이드 사이의 수평 간격.
+     * 
+     * @config
+     */
+    offsetX = 3;
+    /**
+     * label과 가이드 사이의 수직 간격.
+     * 
+     * @config
+     */
+    offsetY = 3;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -329,8 +349,8 @@ export enum AxisGuideType {
 }
 
 /**
- * 'between'인 경우 양쪽 body에 모두 표시된다.
- * TODO: body 단위로도 지정할 수 있게 한다.
+ * 기본적으로 이 축에 연결된 모든 body에 모두 표시된다.
+ * col, row를 지정해서 특정 body에만 표시되도록 할 수 있다.
  */
 export abstract class AxisGuide extends AxisItem {
 
@@ -364,6 +384,31 @@ export abstract class AxisGuide extends AxisItem {
      * @config
      */
     zindex = 0;
+    col: number | number[];
+    row: number | number[];
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    canConstainedTo(row: number, col: number): boolean {
+        if (isArray(this.col)) {
+            for (const c of this.col) {
+                if (col == c) return true;
+            }
+            return false;
+        } else if (!isNaN(this.col)) {
+            if (col != this.col) return false;
+        }
+        if (isArray(this.row)) {
+            for (const r of this.row) {
+                if (row == r) return true;
+            }
+            return false;
+        } else if (!isNaN(this.row)) {
+            if (row != this.row) return false;
+        }
+        return true;
+    }
 }
 
 export class AxisLineGuide extends AxisGuide {
@@ -392,13 +437,13 @@ export class AxisRangeGuide extends AxisGuide {
      * 
      * @config
      */
-    start: number;  // TODO: RtPercentSize
+    startValue: number;  // TODO: RtPercentSize
     /**
      * 가이드 영역의 끝 값.
      * 
      * @config
      */
-    end: number;
+    endValue: number;
 }
 
 // /**
@@ -443,19 +488,15 @@ export abstract class AxisTick extends AxisItem {
      * 
      * @config
      */
-    margin = 3;
-    /**
-     * true면 소수점값애 해당하는 tick은 표시되지 않도록 한다.
-     */
-    integral = false;
-    /**
-     * true면 다른 설정과 상관없이 첫번째 tick은 항상 표시된다.
-     */
-    showFirst = false;
-    /**
-     * true면 다른 설정과 상관없이 마지막 tick은 항상 표시된다.
-     */
-    showLast = false;
+    gap = 3;
+    // /**
+    //  * true면 다른 설정과 상관없이 첫번째 tick은 항상 표시된다.
+    //  */
+    // showFirst: boolean;
+    // /**
+    //  * true면 다른 설정과 상관없이 마지막 tick은 항상 표시된다.
+    //  */
+    // showLast: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -515,6 +556,13 @@ export enum AxisLabelArrange {
     ROWS = 'rows'
 }
 
+export interface IAxisLabelArgs {
+    axis: object;//string | number;
+    count: number;
+    index: number;
+    value: number;
+}
+
 /**
  * [겹치는 경우가 발생할 때]
  * 1. step이 0보다 큰 값으로 설정되면 반영한다.
@@ -529,6 +577,13 @@ export abstract class AxisLabel extends FormattableText {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _paramTick: IAxisTick;
+    _domain: IRichTextDomain = {
+        callback: (target: any, param: string): any => {
+            return this._getParamValue(this._paramTick, param);
+        },
+    };
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -546,20 +601,28 @@ export abstract class AxisLabel extends FormattableText {
      * label 표시 간격.\
      * 1이면 모든 tick 표시. 2이면 하나씩 건너 띄어서 표시.
      * 2 이상일 때 {@link startStep}으로 지정된 step부터 배치된다.
+     * 
+     * @config
      */
     step = 0;
     /**
      * step이 2 이상이 될 때, 표시가 시작되는 label 위치.
+     * 
+     * @config
      */
     startStep = 0;
     /**
      * 수평 축일 때 tick label 배치 행 수.\
      * 1은 한 줄, 2면 두 줄 등으로 여러 줄로 나눠서 표시한다.
+     * 
+     * @config
      */
     rows = 0;
     /**
      * 수평 축일 때, tick label 표시 회전 각도.
      * -90 ~ 90 사이의 각도로 지정할 수 있다.
+     * 
+     * @config
      */
     rotation: number;
     /**
@@ -567,29 +630,107 @@ export abstract class AxisLabel extends FormattableText {
      * {@link step}이나 {@link rows}가 1 이상으로 설정되지 않고,
      * {@link rotation}이 0이 아닌 명시적 값으로도 설정되지 않은 경우,
      * label들을 재배치하는 방식을 지정한다.
-     * <br>
+     * 
+     * @config
      */
     autoArrange = AxisLabelArrange.ROTATE;
     /**
-     * label 배치 후 텍스트가 차지하는 공간을 넘치는 경우 줄 나누기를 한다.
-     * <br>
-     * false이면 줄 나누기 대신 ellipsis('...')로 표시한다.
+     * // TODO:
+     * label 배치 후 텍스트가 차지하는 공간을 넘치는 경우 처리 방식.
      */
-    wrap = false;
+    overflow = ChartTextOverflow.CLIP;
+    /**
+     * 첫번째 tick 라벨에 표시될 텍스트.
+     * 
+     * @config
+     */
+    firstText: string;
+    /**
+     * 마지막 tick 라벨에 표시될 텍스트.
+     * 
+     * @config
+     */
+    lastText: string;
+    /**
+     * 첫번째 tick 라벨에 추가로 적용되는 스타일.
+     * 
+     * @config
+     */
+    firstStyle: SVGStyleOrClass;
+    /**
+     * 마지막 tick 라벨에 추가로 적용되는 스타일.
+     * 
+     * @config
+     */
+    lastStyle: SVGStyleOrClass;
+    /**
+     * 축 tick 라벨에 표시될 텍스트를 리턴한다.\
+     * undefined나 null을 리턴하면 {@link text} 속성 등에 설정된 값으로 표시하거나,
+     * 값에 따라 자동 생성되는 텍스트를 사용한다.
+     * 빈 문자열 등 정상적인 문자열을 리턴하면 그 문자열대로 표시된다. 
+     * {@link prefix}나 포맷 속성 등은 적용되지 않는다.
+     * 
+     * @config
+     */    
+    textCallback: (args: IAxisLabelArgs) => string;
+    /**
+     * 라벨 별로 추가 적용되는 스타일을 리턴한다.\
+     * 기본 설정을 따르게 하고 싶으면 undefined나 null을 리턴한다.
+     * 
+     * @config
+     */
+    styleCallback: (args: any) => SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     abstract getTick(index: number, value: any): string;
 
-    getRotation(): number {
-        return this.rotation || 0;
+    protected _getParamValue(tick: IAxisTick, param: string): any {
+        if (param.startsWith('axis.')) {
+            return this.axis[param.substring(5)];
+        } else {
+            return tick[param];
+        }
+    }
+
+    getLabelText(tick: IAxisTick, count: number): string {
+        const idx = tick.index;
+
+        if (this.textCallback) {
+            const s = this.textCallback(this.axis.getTickLabelArgs(idx, tick.value));
+            if (s != null) return s;
+        }
+
+        // [주의] 빈 문자열을 지정할 수 있다.
+        if (idx === 0) return pickProp(this.firstText, this.text);
+        if (idx === count - 1) return pickProp(this.lastText, this.text);
+        return this.text;
+    }
+
+    getLabelStyle(tick: IAxisTick, count: number): any {
+        const idx = tick.index;
+
+        if (this.styleCallback) {
+            const st = this.styleCallback(this.axis.getTickLabelArgs(idx, tick.value));
+            if (isObject(st)) return st;
+        }
+        if (idx === 0) return this.firstStyle;
+        if (idx === count - 1) return this.lastStyle;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doPrepareRender(chart: IChart): void {
+        this._domain.numberFormatter = this._numberFormatter;
     }
 }
 
 export interface IAxisTick {
-    pos: number;
+    index: number;
     value: number;
+    pos: number;
     label: string;
 }
 
@@ -712,21 +853,31 @@ export class AxisZoom {
     start: number;
     end: number;
 
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
     constructor(public axis: Axis, start: number, end: number) {
         this.min = axis.axisMin();
         this.max = axis.axisMax();
         this.resize(start, end);
     }
 
-    get length(): number {
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    length(): number {
         return this.end - this.start;
     }
     
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
     resize(start: number, end: number): boolean {
         start = isNaN(start) ? this.start : Math.max(this.min, Math.min(this.max, start));
         end = isNaN(end) ? this.end : Math.max(start, Math.min(this.max, end));
 
-        if (start !== this.start || end !== this.end) {
+        // 최소 크기를 갖게 한다. #244 #245
+        if ((start !== this.start || end !== this.end) && (end - start > (this.max - this.min) * 0.05)) {
             this.start = start;
             this.end = end;
             return true;
@@ -760,8 +911,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     _values: number[] = [];
     protected _min: number;
     protected _max: number;
+    protected _single: boolean;
     _zoom: AxisZoom;
     _runPos: AxisPosition;
+    _labelArgs: IAxisLabelArgs = {} as any;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -773,6 +926,7 @@ export abstract class Axis extends ChartItem implements IAxis {
         this.name = name;
         this.title = new AxisTitle(this);
         this.line = new AxisLine(this);
+        this.sectorLine = new AxisLine(this);
         this.tick = this._createTickModel();
         this.label = this._createLabelModel();
         this.grid = this._createGrid();
@@ -781,7 +935,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    abstract type(): string;
+    abstract _type(): string;
 
     /**
      * @config
@@ -795,6 +949,13 @@ export abstract class Axis extends ChartItem implements IAxis {
      * @config
      */
     readonly line: AxisLine;
+    /**
+     * 부채꼴 polar 좌표계의 X 축일 때 원호의 양 끝과 중심에 연결되는 선분들의 설정모델.\
+     * //{@link config.xAxis.category#startAngle startAngle}, {@link config.xAxis.category#totalAngle totalAngle}을 참조한다.
+     * 
+     * @config
+     */
+    readonly sectorLine: AxisLine;
     /**
      * @config
      */
@@ -824,6 +985,21 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     row = 0;
     col = 0;
+    /**
+     * Polar 차트에서 사용될 때 시작 각도.
+     * 
+     * @config
+     */
+    startAngle = 0;
+    /**
+     * Polar 차트에서 사용될 때 원호 전체 각도.
+     * 0 ~ 360 사이의 값으로 지정해야 한다.
+     * 범위를 벗어난 값은 범위 안으로 조정된다.
+     * 지정하지 않거나 잘못된 값이면 360으로 계산된다.
+     * 
+     * @config
+     */
+    totalAngle = 360
     /**
      * 표시 위치.
      * 기본적으로 상대 축의 원점 쪽에 표시된다.
@@ -861,6 +1037,16 @@ export abstract class Axis extends ChartItem implements IAxis {
      * @config
      */
     marginFar = 0;
+    /**
+     * label 등에 표시할 수 있는 단위 정보 문자열.
+     * 
+     * @config
+     */
+    unit: string;
+
+    tooltipHeader = '<b>${x}</b>';
+    tooltipRow: '${series}:<b> ${yValue}</b>';
+    tooltipFooter: string;
 
     isEmpty(): boolean {
         return this._series.length < 1;
@@ -889,6 +1075,18 @@ export abstract class Axis extends ChartItem implements IAxis {
         return this.getValueAt(length, pos);
     }
 
+    getStartAngle(): number {
+        return ORG_ANGLE + DEG_RAD * this.startAngle;
+    }
+
+    getTotalAngle(): number {
+        return DEG_RAD * Math.max(0, Math.min(360, pickNum(this.totalAngle, 360)));
+    }
+
+    isArced(): boolean {
+        return this.totalAngle > 0 && this.totalAngle < 360;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -896,6 +1094,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected abstract _createLabelModel(): AxisLabel;
     protected abstract _doPrepareRender(): void;
     protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[];
+
+    value2Tooltip(value: number): any {
+        return value;
+    }
 
     isBased(): boolean {
         return false;
@@ -923,8 +1125,11 @@ export abstract class Axis extends ChartItem implements IAxis {
         this._isBetween = this.chart.isSplitted() && this.position === AxisPosition.BETWEEN && this._isX;
         this._isOpposite = this.position === AxisPosition.OPPOSITE;
         this._runPos = this.position;
+        this.crosshair._args.axis = this._labelArgs.axis = this.chart._proxy?.getChartObject(this);
 
         this._doPrepareRender();
+
+        this.label.prepareRender();
 
         // range
         const series = this._series;
@@ -988,6 +1193,8 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     buildTicks(length: number): void {
         this._ticks = this._doBuildTicks(this._range.min, this._range.max, this._vlen = length);
+
+        this._labelArgs.count = this._ticks.length;
     }
 
     calcPoints(length: number, phase: number): void {
@@ -1036,12 +1243,14 @@ export abstract class Axis extends ChartItem implements IAxis {
             end = t;
         }
         if (!this._zoom) {
+            // padding 없는 _min, _max를 계산하기 위해
+            this._zoom = new AxisZoom(this, NaN, NaN);
+            this.buildTicks(this._vlen);
+
             if (isNaN(start)) start = this._min;
             if (isNaN(end)) end = this._max;
-            this._zoom = new AxisZoom(this, start, end);
-            this._changed();
-            return true;
-        } else if (this._zoom.resize(start, end)) {
+        }
+        if (this._zoom.resize(start, end)) {
             this._changed();
             return true;
         }
@@ -1059,6 +1268,16 @@ export abstract class Axis extends ChartItem implements IAxis {
         return false;
     }
 
+    getTickLabelArgs(index: number, value: any): IAxisLabelArgs {
+        this._labelArgs.index = index;
+        this._labelArgs.value = value;
+        return this._labelArgs;
+    }
+
+    getXValue(value: number): any {
+        return value;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -1074,6 +1293,12 @@ export abstract class Axis extends ChartItem implements IAxis {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    protected _setMinMax(min: number, max: number): void {
+        this._min = min;
+        this._max = max;
+        this._single = min === max;
+    }
+
     protected _createGrid(): AxisGrid {
         return new AxisGrid(this);
     }
@@ -1083,15 +1308,14 @@ export abstract class Axis extends ChartItem implements IAxis {
             const g: any = source[i]
             let guide: AxisGuide;
 
-            switch (g.type) {
-                case 'range':
-                    guide = new AxisRangeGuide(this);
-                    break;
-
-                case 'line':
-                default:    
-                    guide = new AxisLineGuide(this);
-                    break;
+            if (g.type === 'range') {
+                guide = new AxisRangeGuide(this);
+            } else if (g.type === 'line') {
+                guide = new AxisLineGuide(this);
+            } else if (!isNaN(g.startValue) && !isNaN(g.endValue)) {
+                guide = new AxisRangeGuide(this);
+            } else {
+                guide = new AxisLineGuide(this);
             }
 
             guide.load(g);
@@ -1106,10 +1330,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     protected _doCalcluateRange(values: number[]): { min: number, max: number } {
-        let min = values.length > 0 ? fixnum(Math.min(...values) || 0) : NaN;
-        let max = values.length > 0 ?  fixnum(Math.max(...values) || 0) : NaN;
-
-        return { min, max };
+        return {
+            min: values.length > 0 ? fixnum(Math.min(...values) || 0) : NaN,
+            max: values.length > 0 ?  fixnum(Math.max(...values) || 0) : NaN
+        };
     }
 }
 
@@ -1155,12 +1379,11 @@ export class AxisCollection {
     //-------------------------------------------------------------------------
     load(src: any): void {
         const chart = this.chart;
-        const items = this._items;
 
         if (isArray(src)) {
-            src.forEach((s, i) => items.push(this.$_loadAxis(chart, s, i)));
-        } else if (isObject(src)) {
-            items.push(this.$_loadAxis(chart, src, 0));
+            src.forEach((s, i) => this._items.push(this.$_loadAxis(chart, s, i)));
+        } else {
+            this._items.push(this.$_loadAxis(chart, src, 0));
         }
     }
 
@@ -1196,10 +1419,7 @@ export class AxisCollection {
     $_buildTicks(length: number): void {
         // 다른 축을 참조하는 axis를 나중에 계산한다.
         this._items.sort((a1, a2) => a1.isBased() ? 1 : a2.isBased() ? -1 : 0)
-                   .forEach(axis => axis.buildTicks(this._getLength(axis, length)));
-    }
-    protected _getLength(axis: Axis, length: number): number {
-        return length;
+                   .forEach(axis => axis.buildTicks(length));
     }
 
     connect(series: IPlottingItem): Axis {
@@ -1219,9 +1439,9 @@ export class AxisCollection {
         if (axis) {
             axis._connect(series);
             if (this.isX) {
-                series._col = pickNum(series.col, axis.col);
+                series.setCol(pickNum(series.col, axis.col));
             } else {
-                series._row = pickNum(series.row, axis.row);
+                series.setRow(pickNum(series.row, axis.row));
             }
         }
         return axis;
@@ -1263,13 +1483,13 @@ export class AxisCollection {
                     for (const ser of series) {
                         if (!ser.canCategorized()) {
                             if (src.name && ser.xAxis === src.name) {
-                                t = _undefined;
+                                t = _undef;
                                 break;
                             } else if (ser.xAxis === index) {
-                                t = _undefined;
+                                t = _undef;
                                 break;
                             } else if (isNull(ser.xAxis) && index === 0) {
-                                t = _undefined;
+                                t = _undef;
                                 break;
                             }
                         }   
@@ -1383,7 +1603,8 @@ export abstract class PaneAxisMatrix {
         this._matrix.forEach(mat => {
             mat.forEach((m, i) => {
                 m._axes.forEach(axis => {
-                    axis.calcPoints(lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i], phase);
+                    // axis.calcPoints(lens[axis._runPos === AxisPosition.OPPOSITE ? i - 1 : i], phase);
+                    axis.calcPoints(lens[i], phase);
                 });
             });
         })
@@ -1393,7 +1614,7 @@ export abstract class PaneAxisMatrix {
 /**
  * (r + 1) * c
  */
-export class XPaneAxisMatrix extends PaneAxisMatrix {
+export class PaneXAxisMatrix extends PaneAxisMatrix {
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1415,16 +1636,17 @@ export class XPaneAxisMatrix extends PaneAxisMatrix {
             }
         }
         axes.forEach(axis => {
+            const pos = axis.position;
             let row = axis._row;
 
-            if (axis.position === AxisPosition.OPPOSITE) {
+            if (pos === AxisPosition.OPPOSITE) {
                 row++;
-                axis._runPos = axis.position;
-            } else if ((axis._row < rows - 1) && axis.position === AxisPosition.BETWEEN) {
+                axis._runPos = pos;
+            } else if ((row < rows - 1) && pos === AxisPosition.BETWEEN) {
                 row++;
                 axis._runPos = AxisPosition.NORMAL;
             } else {
-                axis._runPos = axis.position;
+                axis._runPos = pos
             }
             mat[row][axis._col]._axes.push(axis);
         });
@@ -1434,7 +1656,7 @@ export class XPaneAxisMatrix extends PaneAxisMatrix {
 /**
  * r * (c + 1)
  */
-export class YPaneAxisMatrix extends PaneAxisMatrix {
+export class PaneYAxisMatrix extends PaneAxisMatrix {
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1456,16 +1678,17 @@ export class YPaneAxisMatrix extends PaneAxisMatrix {
             }
         }
         axes.forEach(axis => {
+            const pos = axis.position;
             let col = axis._col;
 
-            if (axis.position === AxisPosition.OPPOSITE) {
+            if (pos === AxisPosition.OPPOSITE) {
                 col++;
-                axis._runPos = axis.position;
-            } else if ((axis._col < cols - 1) && axis.position === AxisPosition.BETWEEN) {
+                axis._runPos = pos;
+            } else if ((axis._col < cols - 1) && pos === AxisPosition.BETWEEN) {
                 col++;
                 axis._runPos = AxisPosition.NORMAL;
             } else {
-                axis._runPos = axis.position;
+                axis._runPos = pos;
             }
             mat[axis._row][col]._axes.push(axis);
         });

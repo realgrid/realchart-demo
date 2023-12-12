@@ -10,7 +10,7 @@ import { RcElement } from "../common/RcControl";
 import { IRect } from "../common/Rectangle";
 import { Sides } from "../common/Sides";
 import { ISize } from "../common/Size";
-import { _undefined } from "../common/Types";
+import { _undef } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { RectElement } from "../common/impl/RectElement";
 import { Chart, IChart } from "../model/Chart";
@@ -29,7 +29,7 @@ export abstract class ChartElement<T extends ChartItem> extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName = _undefined) {
+    constructor(doc: Document, styleName = _undef) {
         super(doc, styleName, 'g');
 
         if (RcElement.DEBUGGING) {
@@ -257,5 +257,22 @@ export abstract class SectionView extends GroupElement {
 
     protected _setInverted(inverted: boolean): void {
         this._inverted = inverted;
+    }
+}
+
+export abstract class ContentView<T extends ChartItem> extends ChartElement<T> {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    protected _inverted = false;
+    protected _animatable = true;
+
+    //-------------------------------------------------------------------------
+    // internal members
+    //-------------------------------------------------------------------------
+    _setChartOptions(inverted: boolean, animatable: boolean): void {
+        this._inverted = inverted;
+        this._animatable = animatable;
     }
 }

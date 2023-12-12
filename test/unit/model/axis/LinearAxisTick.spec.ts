@@ -8,12 +8,14 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { ContinuousAxisTick } from '../../../../src/model/axis/LinearAxis';
+import { ContinuousAxisTick, LinearAxis } from '../../../../src/model/axis/LinearAxis';
 
 /**
  * Tests for LinearAxisTick class.
  */
  describe("LinearAxisTick test", function() {
+
+    const axis = new LinearAxis(null, false);
 
     it('init', () => {
         const model = new ContinuousAxisTick(null);
@@ -30,7 +32,7 @@ import { ContinuousAxisTick } from '../../../../src/model/axis/LinearAxis';
     });
 
     it('build steps - stepCount', () => {
-        const model = new ContinuousAxisTick(null);
+        const model = new ContinuousAxisTick(axis);
         const base = NaN;
         const min = -19;
         const max = 163;
@@ -43,7 +45,7 @@ import { ContinuousAxisTick } from '../../../../src/model/axis/LinearAxis';
     });
 
     it('build steps - based stepCount', () => {
-        const model = new ContinuousAxisTick(null);
+        const model = new ContinuousAxisTick(axis);
         const base = NaN;
         const min = 5;//-19;
         const max = 163;

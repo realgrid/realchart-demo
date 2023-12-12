@@ -1,15 +1,20 @@
 /*
- * 노드에 배포되는 package.json의 version을 일치시킨다. 
+ * 노드에 배포되는 package.json의 version을 일치시킨다.
  */
 import replace from "replace-in-file";
 import fs from "fs";
 
 const pkg = JSON.parse(fs.readFileSync("./package.json"));
 
-const dest = ["./dist/.npm/package.json", "./dist/.npmdebug/package.json"];
+const dest = [
+  "./dist/.npm/package.json",
+  "./dist/.githubnpm/package.json",
+  "./dist/.npmdebug/package.json",
+  "./dist/.githubnpmdebug/package.json",
+];
 
 replace({
-    files: dest,
-    from: [/"version": "\d+.\d+.\d+"/],
-    to: [`"version": "${pkg.version}"`]
-})
+  files: dest,
+  from: [/"version": "\d+.\d+.\d+"/],
+  to: [`"version": "${pkg.version}"`],
+});

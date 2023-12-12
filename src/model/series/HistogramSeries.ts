@@ -6,7 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum, pickProp3 } from "../../common/Common";
+import { isArray, isObject, pickNum, pickProp3, assign } from "../../common/Common";
+import { RcElement } from "../../common/RcControl";
+import { RectElement } from "../../common/impl/RectElement";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { ISeries, Series } from "../Series";
@@ -34,7 +36,7 @@ export class HistogramSeriesPoint extends DataPoint {
         this.max = v.max;
     }
     protected _assignTo(proxy: any): any {
-        return Object.assign(super._assignTo(proxy), {
+        return assign(super._assignTo(proxy), {
             min: this.min,
             max: this.max
         });
@@ -211,4 +213,7 @@ export class HistogramSeries extends Series {
         return axis === this._yAxisObj ? this._base : NaN;
     }
 
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return RectElement.create(doc, Series.LEGEND_MARKER, 0, 0, size, size, 2);
+    }
 }

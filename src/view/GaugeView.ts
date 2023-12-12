@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isNumber, pickNum, pickProp } from "../common/Common";
+import { isNumber, pickNum, pickProp, assign } from "../common/Common";
 import { Dom } from "../common/Dom";
 import { ElementPool } from "../common/ElementPool";
 import { NumberFormatter } from "../common/NumberFormatter";
@@ -20,9 +20,9 @@ import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
 import { CircularGauge, GaugeBase, GaugeGroup, GaugeItemPosition, GaugeScale, LinearGaugeScale, ValueGauge } from "../model/Gauge";
 import { LinearGaugeBase, LinearGaugeGroupBase, LinearGaugeLabel } from "../model/gauge/LinearGauge";
-import { ChartElement } from "./ChartElement";
+import { ChartElement, ContentView } from "./ChartElement";
 
-export abstract class GaugeView<T extends GaugeBase> extends ChartElement<T> {
+export abstract class GaugeView<T extends GaugeBase> extends ContentView<T> {
 
     //-------------------------------------------------------------------------
     // consts
@@ -35,9 +35,6 @@ export abstract class GaugeView<T extends GaugeBase> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     private _paneElement: RectElement;
     private _contentContainer: LayerElement;
-
-    protected _inverted = false;
-    protected _animatable = true;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -58,11 +55,6 @@ export abstract class GaugeView<T extends GaugeBase> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    _setChartOptions(inverted: boolean, animatable: boolean): void {
-        this._inverted = inverted;
-        this._animatable = animatable;
-    }
-
     clicked(elt: Element): void {
     }
 
@@ -120,7 +112,7 @@ export abstract class GaugeView<T extends GaugeBase> extends ChartElement<T> {
         this._paneElement.resizeRect(w, h);
 
         // gauge
-        const pads = Object.assign(Dom.getPadding(this.dom));
+        const pads = assign(Dom.getPadding(this.dom));
 
         w -= pads.left + pads.right;
         h -= pads.top + pads.bottom;
@@ -268,7 +260,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         let width = vertical ? model.gap : hintWidth;
         let height = vertical ? hintHeight : model.gap;
 
-        if (this._tickContainer.setVisible(model.tick.visible)) {
+        if (this._tickContainer.setVis(model.tick.visible)) {
             this._tickContainer.setStyleOrClass(model.tick.style);
             this._ticks.prepare(nStep);
         }
@@ -279,7 +271,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
             height += model.tick.length;
         }
 
-        if (this._labelContainer.setVisible(model.tickLabel.visible)) {
+        if (this._labelContainer.setVis(model.tickLabel.visible)) {
             this._labelContainer.setStyleOrClass(model.tickLabel.style);
             this._labels.prepare(nStep);
 
@@ -325,13 +317,13 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         let x: number;
 
         // line
-        if (line.setVisible(m.line.visible)) {
+        if (line.setVis(m.line.visible)) {
             line.setStyleOrClass(m.line.style);
             line.setHLineC(y, 0, width);
         }
 
         // ticks
-        if (this._tickContainer.setVisible(tick.visible)) {
+        if (this._tickContainer.setVis(tick.visible)) {
             this._ticks.forEach((v, i) => {
                 x = m.getRate(steps[i]) * width;
                 // v.setVLineC(x, y, y + len);
@@ -348,7 +340,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
                 const r = v.getBBounds();
                 x = m.getRate(steps[i]) * width;
 
-                if (v.setVisible(x - r.width / 2 > prev)) {
+                if (v.setVis(x - r.width / 2 > prev)) {
                     // v.anchor = i < steps.length - 1 ? TextAnchor.MIDDLE : TextAnchor.END;
                     v.translate(x, y);
                     prev = x + r.width / 2;
@@ -368,13 +360,13 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         let y: number;
 
         // line
-        if (line.setVisible(m.line.visible)) {
+        if (line.setVis(m.line.visible)) {
             line.setStyleOrClass(m.line.style);
             line.setVLineC(x, 0, height);
         }
 
         // ticks
-        if (this._tickContainer.setVisible(tick.visible)) {
+        if (this._tickContainer.setVis(tick.visible)) {
             this._ticks.forEach((v, i) => {
                 y = m.getRate(steps[i]) * height;
                 // v.setHLineC(y, x, x + len);
@@ -416,7 +408,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
 
         label.setText(m.getLabel(label, m.value));
         v.text = label.text;
-        label.buildSvg(v, width, height, m, this.valueOf);
+        label.buildSvg(v, null, width, height, m, label._domain);
 
         return toSize(v.getBBounds());
     }
@@ -438,27 +430,28 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
         const scale = m.scale;
         const labelView = this.labelView();
         const value = pickNum(this._runValue, m.value);
-        const rBand = Object.assign({}, this._rBand);
+        const rBand = assign({}, this._rBand);
 
         this._renderScale(rBand);
 
         if (rBand.height > 0) {
             // band background
             this.background().setRect(rBand);
-
             // band
             this._renderBand(m, rBand, value);
+        }
 
-            // label
+        // label
+        if (label._runPos === 'top' || label._runPos === 'bottom') {
             this._rLabel.height = rBand.height;
-            this._renderLabel(m, label, labelView, value);
+        }
+        this._renderLabel(m, label, labelView, value);
 
-            // 아래쪽으로 넘치지 않게 한다.
-            if (!this._vertical && (label._runPos === 'left' || label._runPos === 'right') && scale.visible && scale.position === GaugeItemPosition.OPPOSITE) {
-                const r = labelView.getBBounds();
-                if (labelView.ty + r.height > this.height) {
-                    labelView.translateY(Math.max(0, this.height - r.height));
-                }
+        // 아래쪽으로 넘치지 않게 한다.
+        if (!this._vertical && (label._runPos === 'left' || label._runPos === 'right') && scale.visible && scale.position === GaugeItemPosition.OPPOSITE) {
+            const r = labelView.getBBounds();
+            if (labelView.ty + r.height > this.height) {
+                labelView.translateY(Math.max(0, this.height - r.height));
             }
         }
     }
@@ -488,7 +481,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
 
             label.setText(m.getLabel(label, label.animatable ? value : m.value));
             labelView.text = label.text;
-            label.buildSvg(labelView, pickNum(w, wMax), pickNum(h, hMax), m, this.valueOf);
+            label.buildSvg(labelView, null, pickNum(w, wMax), pickNum(h, hMax), m, label._domain);
 
             const rText = labelView.getBBounds();
 
@@ -570,7 +563,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
             scale.buildSteps(len, m.value);
         }
 
-        if (scaleView.setVisible(m.scaleVisible())) {
+        if (scaleView.setVis(m.scaleVisible())) {
             const sz = scaleView.measure(this.doc, scale, rBand.width, rBand.height, 1);
 
             if (this._vertical) {
@@ -615,28 +608,6 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
  * View base for CircularGauge.
  */
 export abstract class CircularGaugeView<T extends CircularGauge> extends ValueGaugeView<T> {
-
-    //-------------------------------------------------------------------------
-    // consts
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    valueOf = (target: CircularGauge, param: string, format: string): any => {
-        const v = target.getParam(param);
-
-        if (isNumber(v)) {
-            return NumberFormatter.getFormatter(format || target.label.numberFormat).toStr(v);
-        }
-        return v;
-    }
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
 }
 
 export abstract class GaugeGroupView<G extends ValueGauge, T extends GaugeGroup<G>, GV extends GaugeView<G>> extends GaugeView<T> {
@@ -663,6 +634,11 @@ export abstract class GaugeGroupView<G extends ValueGauge, T extends GaugeGroup<
     protected _doInitContents(doc: Document, container: LayerElement): void {
         container.add(this._gaugeContainer = new LayerElement(doc, 'rct-gauge-group-container'));
         this._gaugeViews = this._createPool(this._gaugeContainer);
+    }
+
+    _setChartOptions(inverted: boolean, animatable: boolean): void {
+        super._setChartOptions(inverted, animatable);
+        this._gaugeViews.forEach(v => v._setChartOptions(inverted, animatable));
     }
 
     protected _prepareGauge(doc: Document, model: T): void {    

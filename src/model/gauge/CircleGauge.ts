@@ -49,6 +49,14 @@ export abstract class CircleGaugeRimBase extends ChartItem {
         }
     }
 
+    /**
+     * true로 지정하면 {@link ranges} 항목에서  **toValue**나 **fromValue**가 지정되지 않은 경우,  
+     * 모든 값이 포함되는 값으로 확장한다.
+     * 
+     * @config
+     */
+    rangeInclusive = true;
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -79,7 +87,7 @@ export abstract class CircleGaugeRimBase extends ChartItem {
     //-------------------------------------------------------------------------
     private $_internalRanges(): IValueRange[] {
         if (!this._runRanges) {
-            this._runRanges = buildValueRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue);
+            this._runRanges = buildValueRanges(this._ranges, this.gauge.minValue, this.gauge.maxValue, this.rangeInclusive);
         }
         return this._runRanges;
     }

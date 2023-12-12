@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isObject, isString, pickNum } from "../../common/Common";
+import { isArray, isNumber, isObject, isString, pickNum, assign } from "../../common/Common";
 import { DatetimeFormatter } from "../../common/DatetimeFormatter";
 import { AxisLabel, AxisTick } from "../Axis";
 import { IChart } from "../Chart";
@@ -68,6 +68,11 @@ export class TimeAxisTick extends ContinuousAxisTick {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    /**
+     * 단위가 지정된 문자열로 지정하는 경우 값이 -1 이하이거나 1 이상이어야 한다. #141
+     */
+    "@config stepInerval" = undefined;
+
     getNextStep(curr: number, delta: number): number {
         const t = new Date(curr);
         
@@ -103,8 +108,12 @@ export class TimeAxisTick extends ContinuousAxisTick {
     }
 
     protected _isValidInterval(v: any): boolean {
-        return !isNaN(v) ||
-               (isString(v) && !isNaN(parseFloat(v)) && time_periods.hasOwnProperty(v.charAt(v.length - 1)));
+        if (!isNaN(v)) {
+            return +v !== 0;
+        } else if (isString(v) && time_periods.hasOwnProperty(v.charAt(v.length - 1))) {
+            v = parseFloat(v);
+            return !isNaN(v) && (v <= -1 || v >= 1);
+        } 
     }
 
     protected _getStepMultiples(step: number): number[] {
@@ -317,10 +326,6 @@ export class TimeAxisLabel extends AxisLabel {
      * 스케일 시작일시에 표시에 사용되는 형식.
      */
     beginningFormat: string;
-    /**
-     * 한 주의 시작 요일.
-     */
-    startOfWeek = 0;    // 0: 일요일, 1: 월요일
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -334,7 +339,7 @@ export class TimeAxisLabel extends AxisLabel {
         const use = this.useBeginningFormat;
 
         this._formatter = f1 ? DatetimeFormatter.getFormatter(f1) : void 0;
-        this._formats = FORMATS.map(f => Object.assign(f));
+        this._formats = FORMATS.map(f => assign(f));
 
         if (isArray(fmts)) {
             for (let i = 0; i < fmts.length; i++) {
@@ -360,56 +365,56 @@ export class TimeAxisLabel extends AxisLabel {
     }
 
     getTick(index: number, v: any): string {
+        const chart = this.chart;
         const axis = this.axis as TimeAxis;
         const d = axis.date(v);
 
         if (this._formatter) {
-            return this._formatter.toStr(d, this.startOfWeek);
+            return this._formatter.toStr(d, chart.startOfWeek);
         }
 
         const fmts = this._formats;
         const scale = (axis.tick as TimeAxisTick).scale;
-        let t: number;
 
         switch (scale) {
             case TimeScale.YEAR:
-                return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
             case TimeScale.MONTH:
                 if (index === 0 || d.getMonth() === 0) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }      
             case TimeScale.WEEK:
             case TimeScale.DAY:
                 if (index === 0 || d.getDate() === 1) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }      
             case TimeScale.HOUR:
                 if (index === 0 || d.getHours() === 0) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }
             case TimeScale.MIN:
                 if (index === 0 || d.getMinutes() === 0) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }
             case TimeScale.SEC:
                 if (index === 0 || d.getSeconds() === 0) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }
             case TimeScale.MS:
                 if (index === 0 || d.getMilliseconds() === 0) {
-                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].beginningFormat).toStr(d, chart.startOfWeek);
                 } else {
-                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, this.startOfWeek);
+                    return DatetimeFormatter.getFormatter(fmts[scale].format).toStr(d, chart.startOfWeek);
                 }
         }
      }
@@ -449,20 +454,10 @@ export class TimeAxis extends ContinuousAxis {
      */
     readonly label: TimeAxisLabel;
 
-    /**
-     * javascript에서 숫자 단위로 전달되는 날짜값은 기본적으로 local이 아니라 new Date 기준이다.
-     * 그러므로 보통 숫자로 지정된 날짜값은 utc 값이다.
-     * local 기준으로 표시하기 위해, 숫자로 지정된 날짜값에 더해야 하는 시간을 분단위로 지정한다.
-     * ex) 한국은 -9 * 60
-     * 
-     * @config
-     */
-    timeOffset = new Date().getTimezoneOffset();
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'time';
     }
 
@@ -483,7 +478,7 @@ export class TimeAxis extends ContinuousAxis {
     }
 
     collectValues(): void {
-        this._offset = pickNum(this.timeOffset, 0) * 60 * 1000;
+        this._offset = pickNum(this.chart.timeOffset, 0) * 60 * 1000;
         super.collectValues();
     }
 
@@ -545,6 +540,14 @@ export class TimeAxis extends ContinuousAxis {
 
     getAxisValueAt(length: number, pos: number): any {
         return new Date(this.getValueAt(length, pos));
+    }
+
+    value2Tooltip(value: number): any {
+        return isNaN(value) ? NaN : new Date(value);
+    }
+
+    getXValue(value: number) {
+        return this.date(value);
     }
 
     //-------------------------------------------------------------------------

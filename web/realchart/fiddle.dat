@@ -52,7 +52,7 @@ demo/scatter
 [Bubble]
 demo/bubble
 
-[Boxplot]
+[BoxPlot]
 demo/boxplot-multi
 demo/boxplot-null
 demo/boxplot

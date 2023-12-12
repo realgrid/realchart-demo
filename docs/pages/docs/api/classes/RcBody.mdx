@@ -1,18 +1,14 @@
 ## RcBody
-            ### Extends
+### Extends
 - [RcChartObject](../classes/RcChartObject)
-            
-            
-차트 구성 요소 모델들의 기반 클래스.
-
-            
+차트 구성 요소 모델들의 기반 클래스.
 
 
 
 ## Config Properties
  | Name | Type | Description |   
  | --- | --- | --- | 
- | [annotation](/config/config/body#annotation) | `Annotation[]{:js}` | [annotation](/config/config#annotation)  설정을 Body에 할 수도 있다. |   
+ | [annotation](/config/config/body#annotation) | `Annotation[]{:js}` | [annotation](/config/config#annotation) 설정을 Body에 할 수도 있다. |   
  | [centerX](/config/config/body#centerx) | `string \| number{:js}` | 차트가 극좌표(polar)일 때 중심 x 좌표. |   
  | [centerY](/config/config/body#centery) | `string \| number{:js}` | 차트가 극좌표(polar)일 때 중심 y 좌표. |   
  | [circular](/config/config/body#circular) | `boolean{:js}` | false이면 polar 차트일 때, x 축선과 y축 그리드 선들을 다각형으로 표시한다. |   
@@ -21,7 +17,7 @@
  | [style](/config/config/body#style) | `SVGStyles \| string{:js}` | 스타일셋 혹은 class selector. |   
  | [visible](/config/config/body#visible) | `boolean{:js}` | 표시 여부. |   
  | [zoomButton](/config/config/body/zoombutton) | `ZoomButton{:js}` | Zoom 리셋 버튼 설정 모델. |   
- | [zoomType](/config/config/body#zoomtype) | `ZoomType{:js}` | plot 영역 마우스 드래깅을 통한 zooming 방식. | 
+ | [zoomType](/config/config/body#zoomtype) | `ZoomType{:js}` | plot 영역 마우스 드래깅을 통한 zooming 방식. |
 
 
 
@@ -31,20 +27,22 @@
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
 
 ```js
-console.log(chart.series.get('name'))
+Utils.log(chart.series.get('name'))
 ```
 
 하위 객체의 설정 속성은 속성 경로를 지정해서 직접 가져올 수도 있다.
 
 ```js
-console.log(chart.axis.get('title.text'));
+Utils.log(chart.axis.get('title.text'));
 ```
+
+속성 변경은 [set](#set), [setAll](#setAll), [toggle](#toggle)등으로 실행한다.
 
 
 
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
-| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 속성 경로. |
+| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | '**.**'으로 구분되는 속성 경로. |
 ### set(prop, value, redraw): [RcChartObject](../classes/RcChartObject)[#set]
 지정한 속성의 값(들)을 설정한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다.\
@@ -66,7 +64,7 @@ chart.axis.set('title.text', 'New Title'));
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 경로 문자열 |
 | value | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 지정할 값(들) |
-| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
 ### setAll(props, redraw): [RcChartObject](../classes/RcChartObject)[#setAll]
 JSON 객체로 지정한 속성들의 값을 설정한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
@@ -84,7 +82,7 @@ JSON 객체로 지정한 속성들의 값을 설정한다.\
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | props | [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | 여러 설정 값들이 지정된 JSON 객체 |
-| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
 ### toggle(prop, redraw): [RcChartObject](../classes/RcChartObject)[#toggle]
 Boolean 타입의 설정값을 변경한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
@@ -98,4 +96,4 @@ chart.getSeries('ser02').toggle('visible');
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 이름 |
-| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |

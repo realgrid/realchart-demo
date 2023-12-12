@@ -9,15 +9,15 @@
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
-import { ClipElement, LayerElement, PathElement, RcControl, RcElement } from "../common/RcControl";
+import { ClipRectElement, LayerElement, PathElement, RcControl, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
-import { Align, VerticalAlign, _undefined, assert } from "../common/Types";
+import { Align, VerticalAlign, _undef, assert } from "../common/Types";
 import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
-import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
+import { TextAnchor, TextLayout } from "../common/impl/TextElement";
 import { Axis, AxisGrid, AxisGuide, AxisLineGuide, AxisRangeGuide } from "../model/Axis";
-import { Body } from "../model/Body";
+import { Body, IPolar } from "../model/Body";
 import { Chart, IChart } from "../model/Chart";
 import { Crosshair } from "../model/Crosshair";
 import { DataPoint } from "../model/DataPoint";
@@ -61,8 +61,10 @@ import { Annotation } from "../model/Annotation";
 import { AnnotationView } from "./AnnotationView";
 import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
-import { SvgRichText } from "../common/RichText";
 import { LabelElement } from "../common/impl/LabelElement";
+import { CircleBarSeriesView } from "./series/CircleBarSeriesView";
+import { isObject, pickNum } from "../common/Common";
+import { relative } from "path";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -73,6 +75,7 @@ const series_types = {
     'boxplot': BoxPlotSeriesView,
     'bubble': BubbleSeriesView,
     'candlestick': CandlestickSeriesView,
+    'circlebar': CircleBarSeriesView,
     'dumbbell': DumbbellSeriesView,
     'equalizer': EqualizerSeriesView,
     'errorbar': ErrorBarSeriesView,
@@ -137,17 +140,18 @@ export class AxisGridView extends ChartElement<AxisGrid> {
     protected _doLayout(): void {
         const m = this.model;
         const axis = m.axis;
+        const reversed = axis.reversed;
         const w = this.width;
         const h = this.height;
         const pts = m.getPoints(axis._isHorz ? w : h);
-        const lines = this._lines;
-        const end = lines.count - 1;
-
-        lines.prepare(pts.length, (line) => {
+        const lines = this._lines.prepare(pts.length, (line) => {
             line.internalClearStyleAndClass();
             line.internalSetStyleOrClass(axis.grid.style);
             line.setClass('rct-axis-grid-line');
         });
+        const end = lines.count - 1;
+        let p: number;
+        let vis: boolean;
 
         lines.forEach((line, i) => {
             line.setBoolData('first', i === 0);
@@ -157,14 +161,29 @@ export class AxisGridView extends ChartElement<AxisGrid> {
         if (axis._isHorz) {
             lines.forEach((line, i) => {
                 // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
-                if (line.setVisible((pts[i] > 0 || i !== 0 || m.startVisible) && (pts[i] < w || i !== end || m.endVisible))) {
+                if (i === 0) {
+                    vis = m.startVisible || !reversed && pts[i] > 0 || reversed && pts[i] < w;
+                } else if (i === end) {
+                    vis = m.endVisible || !reversed && pts[i] < w || reversed && pts[i] > 0;
+                } else {
+                    vis = true;
+                }
+                if (line.setVis(true)) {
                     line.setVLineC(pts[i], 0, h);
                 }
             });
         } else {
             lines.forEach((line, i) => {
+                p = h - pts[i];
                 // 최소/최대값이 tick에 해당되지 않을 때는 표시한다.
-                if (line.setVisible((pts[i] < h || i !== 0 || m.startVisible) && (pts[i] > 0 || i !== end || m.endVisible))) {
+                if (i === 0) {
+                    vis = m.startVisible || !reversed && p < h || reversed && p > 0;
+                } else if (i === end) {
+                    vis = m.endVisible || !reversed && p > 0 || reversed && p < h;
+                } else {
+                    vis = true;
+                }
+                if (line.setVis(vis)) {
                     line.setHLineC(h - pts[i], 0, w);
                 }
             });
@@ -185,7 +204,7 @@ export class AxisBreakView extends RcElement {
     private _upLine: PathElement;
     private _downLine: PathElement;
     private _mask: PathElement;
-    private _clip: ClipElement;
+    private _clip: ClipRectElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -335,22 +354,29 @@ export abstract class AxisGuideView<T extends AxisGuide> extends RcElement {
     //-------------------------------------------------------------------------
     prepare(doc: Document, model: T): void {
         this.model = model;
-        // this._labelView.text = model.label.text;
-        this._labelView.setModel(doc, model.label, null);
-        this._labelView.setStyles(model.label.style);
+        if (this._labelView.setVis(!!model.label.text)) {
+            this._labelView.setModel(doc, model.label, null);
+            this._labelView.setStyles(model.label.style);
+        }
     }
 
-    layout(width: number, height: number): void {
-        this.model.label.buildSvg(this._labelView._text, width, height, null, null);
-        this._labelView.layout();
-
-        this._doLayout(width, height);
+    layout(width: number, height: number, polar?: IPolar): void {
+        if (this._labelView.visible) {
+            this.model.label.buildSvg(this._labelView._text, this._labelView._outline, width, height, null, null);
+            this._labelView.layout(Align.CENTER);
+        }
+        if (polar) {
+            this._doLayoutPolar(width, height, polar);
+        } else {
+            this._doLayout(width, height);
+        }
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     abstract _doLayout(width: number, height: number): void;
+    abstract _doLayoutPolar(width: number, height: number, polar: IPolar): void;
 }
 
 export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
@@ -381,94 +407,81 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
     _doLayout(width: number, height: number): void {
         const m = this.model;
         const label = m.label;
-        const labelView = this._labelView;
+        const line = this._line;
+        const labelView = this._labelView.setVis(label.visible) && this._labelView;
+        const rLabel = labelView.getBBounds();
+        const xOff = pickNum(label.offsetX, 0);
+        const yOff = pickNum(label.offsetY, 0);
         let x: number;
         let y: number;
-        let anchor: TextAnchor;
-        let layout: TextLayout;
 
         if (this.vertical()) {
             const p = m.axis.getPosition(width, m.value, true);
 
-            this._line.setVLineC(p, 0, height);
+            line.setVLineC(p, 0, height);
 
-            switch (label.align) {
-                case Align.CENTER:
-                    x = p;
-                    anchor = TextAnchor.MIDDLE;
-                    break;
-
-                case Align.RIGHT:
-                    x = p;
-                    anchor = TextAnchor.START;
-                    break;
-
-                default:
-                    x = p;
-                    anchor = TextAnchor.END;
-                    break;
-            }
-
-            switch (label.verticalAlign) {
-                case VerticalAlign.BOTTOM:
-                    y = height;
-                    layout = TextLayout.BOTTOM;
-                    break;
-
-                case VerticalAlign.MIDDLE:
-                    y = height / 2;
-                    layout = TextLayout.MIDDLE;
-                    break;
-
-                default:
-                    y = 0;
-                    layout = TextLayout.TOP;
-                    break;
+            if (labelView) {
+                switch (label.align) {
+                    case Align.CENTER:
+                        x = p - rLabel.width / 2 + xOff;
+                        break;
+                    case Align.RIGHT:
+                        x = p + xOff;
+                        break;
+                    default:
+                        x = p - rLabel.width - xOff;
+                        break;
+                }
+    
+                switch (label.verticalAlign) {
+                    case VerticalAlign.BOTTOM:
+                        y = height - rLabel.height - yOff;
+                        break;
+    
+                    case VerticalAlign.MIDDLE:
+                        y = (height - rLabel.height) / 2 - yOff;
+                        break;
+    
+                    default:
+                        y = yOff;
+                        break;
+                }
             }
         } else {
             const p = height - m.axis.getPosition(height, m.value, true);
 
-            this._line.setHLineC(p, 0, width);
+            line.setHLineC(p, 0, width);
 
-            switch (label.align) {
-                case Align.CENTER:
-                    x = width / 2;
-                    anchor = TextAnchor.MIDDLE;
-                    break;
-
-                case Align.RIGHT:
-                    x = width;
-                    anchor = TextAnchor.END;
-                    break;
-
-                default:
-                    x = 0;
-                    anchor = TextAnchor.START;
-                    break;
-            }
-
-            switch (label.verticalAlign) {
-                case VerticalAlign.BOTTOM:
-                    y = p + 1;
-                    layout = TextLayout.TOP;
-                    break;
-
-                case VerticalAlign.MIDDLE:
-                    y = p;
-                    layout = TextLayout.MIDDLE;
-                    break;
-
-                default:
-                    // y = -3; 
-                    // layout = TextLayout.BOTTOM;
-                    y = p - labelView.getBBounds().height;
-                    layout = TextLayout.TOP;
-                    break;
+            if (labelView) {
+                switch (label.align) {
+                    case Align.CENTER:
+                        x = (width - rLabel.width) / 2 - xOff;
+                        break;
+                    case Align.RIGHT:
+                        x = width - rLabel.width - xOff;
+                        break;
+                    default:
+                        x = xOff;
+                        break;
+                }
+    
+                switch (label.verticalAlign) {
+                    case VerticalAlign.BOTTOM:
+                        y = p + yOff;
+                        break;
+                    case VerticalAlign.MIDDLE:
+                        y = p - rLabel.height / 2 - yOff;
+                        break;
+                    default:
+                        y = p - rLabel.height - yOff;
+                        break;
+                }
             }
         }
-        labelView.anchor = anchor;
-        // labelView.layout = layout;
-        labelView.translate(x, y);
+        labelView && labelView.translate(x, y);
+    }
+
+    _doLayoutPolar(width: number, height: number, polar: IPolar): void {
     }
 }
 
@@ -497,105 +510,89 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
 
     _doLayout(width: number, height: number): void {
         const m = this.model;
-        const label = this._labelView;
+        const label = m.label;
+        const box = this._box;
+        const start = Math.min(m.startValue, m.endValue);
+        const end = Math.max(m.startValue, m.endValue);
+        const labelView = this._labelView.setVis(label.visible) && this._labelView;
+        const rLabel = labelView.getBBounds();
+        const xOff = pickNum(label.offsetX, 0);
+        const yOff = pickNum(label.offsetY, 0);
 
         if (this.vertical()) {
-            const x1 = m.axis.getPosition(width, m.start, true);
-            const x2 = m.axis.getPosition(width, m.end, true);
-
+            const x1 = m.axis.getPosition(width, start, true);
+            const x2 = m.axis.getPosition(width, end, true);
             let x: number;
             let y: number;
-            let anchor: TextAnchor;
-            let layout: TextLayout;
 
-            switch (m.label.align) {
-                case Align.CENTER:
-                    x = x + (x2 - x1) / 2;
-                    anchor = TextAnchor.MIDDLE;
-                    break;
-
-                case Align.RIGHT:
-                    x = x2;
-                    anchor = TextAnchor.END;
-                    break;
-
-                default:
-                    x = x1;
-                    anchor = TextAnchor.START;
-                    break;
+            if (box.setVis(x2 !== x1)) {
+                switch (label.align) {
+                    case Align.CENTER:
+                        x = x1 + (x2 - x1 - rLabel.width) / 2 + xOff;
+                        break;
+                    case Align.RIGHT:
+                        x = x2 - rLabel.width - xOff;
+                        break;
+                    default:
+                        x = x1 + xOff;
+                        break;
+                }
+    
+                switch (label.verticalAlign) {
+                    case VerticalAlign.BOTTOM:
+                        y = height - rLabel.height - yOff;
+                        break;
+                    case VerticalAlign.MIDDLE:
+                        y = (height - rLabel.height) / 2 - yOff;
+                        break;
+                    default:
+                        y = yOff;
+                        break;
+                }
+    
+                box.setBox(x1, 0, x2, height);
+                labelView && labelView.translate(Math.max(0, Math.min(width, x)), y);
             }
-
-            switch (m.label.verticalAlign) {
-                case VerticalAlign.BOTTOM:
-                    y = height;
-                    layout = TextLayout.BOTTOM;
-                    break;
-
-                case VerticalAlign.MIDDLE:
-                    y = height / 2;
-                    layout = TextLayout.MIDDLE;
-                    break;
-
-                default:
-                    y = 0;
-                    layout = TextLayout.TOP;
-                    break;
-            }
-
-            label.anchor = anchor;
-            // label.layout = layout;
-            label.translate(x, y);
-
-            this._box.setBox(x1, 0, x2, height);
 
         } else {
-            const y1 = height - this.model.axis.getPosition(height, Math.min(m.start, m.end), true);
-            const y2 = height - this.model.axis.getPosition(height, Math.max(m.start, m.end), true);
+            const y1 = height - m.axis.getPosition(height, start, true);
+            const y2 = height - m.axis.getPosition(height, end, true);
             let x: number;
             let y: number;
-            let anchor: TextAnchor;
-            let layout: TextLayout;
 
-            switch (m.label.align) {
+            switch (label.align) {
                 case Align.CENTER:
-                    x = width / 2;
-                    anchor = TextAnchor.MIDDLE;
+                    x = (width - rLabel.width) / 2 - xOff;
                     break;
-
                 case Align.RIGHT:
-                    x = width;
-                    anchor = TextAnchor.END;
+                    x = width - rLabel.width - xOff;
                     break;
-
                 default:
-                    x = 0;
-                    anchor = TextAnchor.START;
+                    x = xOff;
                     break;
             }
 
-            switch (m.label.verticalAlign) {
+            switch (label.verticalAlign) {
                 case VerticalAlign.BOTTOM:
-                    y = y1;
-                    layout = TextLayout.BOTTOM;
+                    y = y1 - rLabel.height - yOff;
                     break;
 
                 case VerticalAlign.MIDDLE:
-                    y = y2 + (y1 - y2) / 2;
-                    layout = TextLayout.MIDDLE;
+                    y = y2 + (y1 - y2 - rLabel.height) / 2 - yOff;
                     break;
 
                 default:
-                    y = y2;
-                    layout = TextLayout.TOP;
+                    y = y2 + yOff;
                     break;
             }
 
-            label.anchor = anchor;
-            // label.layout = layout;
-            label.translate(x, y);
-
-            this._box.setBox(0, y2, width, y1);
+            labelView && labelView.translate(x, y);
+            box.setBox(0, y2, width, y1);
         }
+    }
+
+    _doLayoutPolar(width: number, height: number, polar: IPolar): void {
+        debugger;
     }
 }
 
@@ -738,8 +735,8 @@ export class ZoomButton extends ButtonElement {
 
 export interface IPlottingOwner {
 
-    clipSeries(view: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
-    showTooltip(series: Series, point: DataPoint): void;
+    clipSeries(view: RcElement, view2: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
+    showTooltip(series: Series, point: DataPoint, body: RcElement): void;
     hideTooltip(): void;
 }
 
@@ -763,13 +760,13 @@ export class BodyView extends ChartElement<Body> {
     private _breakViews: AxisBreakView[] = [];
     private _seriesContainer: LayerElement;
     private _labelContainer: LayerElement;
-    protected _seriesViews: SeriesView<Series>[] = [];
+    _seriesViews: SeriesView<Series>[] = [];
     private _seriesMap = new Map<Series, SeriesView<Series>>();
     private _series: Series[];
     // annotations
     private _annotationContainer: LayerElement;
     private _frontAnnotationContainer: LayerElement;
-    private _annotationViews: AnnotationView<Annotation>[] = [];
+    _annotationViews: AnnotationView<Annotation>[] = [];
     private _annotationMap = new Map<Annotation, AnnotationView<Annotation>>();
     private _annotations: Annotation[];
     // guides
@@ -778,6 +775,7 @@ export class BodyView extends ChartElement<Body> {
     private _gauges: GaugeBase[];
     _guideContainer: AxisGuideContainer;
     _frontGuideContainer: AxisGuideContainer;
+    _guideClip: ClipRectElement;
     // axis breaks
     _axisBreakContainer: LayerElement;
     // items
@@ -856,7 +854,7 @@ export class BodyView extends ChartElement<Body> {
         // TODO: _zoomRequested 필요 없는 깔끔한 방식 필요. 
         if (!this._zoomRequested) {
             this._crosshairLines.forEach(v => {
-                if (v.setVisible(inBody)) {
+                if (v.setVis(inBody)) {
                     v.layout(pv, p.x, p.y, w, h);
                 }
             });
@@ -878,7 +876,7 @@ export class BodyView extends ChartElement<Body> {
             this._focused = p;
             if (this._focused) {
                 (this._focused as any as RcElement).setData(SeriesView.DATA_FOUCS);
-                this._owner.showTooltip(series, p.point);
+                this._owner.showTooltip(series, p.point, this);
             } else {
                 this._owner.hideTooltip();
             }
@@ -892,6 +890,10 @@ export class BodyView extends ChartElement<Body> {
 
     findSeries(ser: Series): SeriesView<Series> {
         return this._seriesViews.find(v => v.model === ser);
+    }
+
+    isConnected(axis: Axis): boolean {
+        return !!this._seriesViews.find(v => v.model._xAxisObj == axis || v.model._yAxisObj == axis)
     }
 
     getButton(dom: Element): ButtonElement {
@@ -968,7 +970,7 @@ export class BodyView extends ChartElement<Body> {
         });
 
         // zoom button
-        if (this._zoomButton.setVisible(model.zoomButton.isVisible())) {
+        if (this._zoomButton.setVis(model.zoomButton.isVisible())) {
             this._zoomButton.layout();
         }
 
@@ -984,13 +986,15 @@ export class BodyView extends ChartElement<Body> {
         this._hitTester.resize(w, h);
         this._background.resize(w, h);
 
-        if (img.setVisible(img.setImage(this.model.image.url, w, h))) {
+        if (img.setVis(img.setImage(this.model.image.url, w, h))) {
             img.setStyleOrClass(this.model.image.style);
         }
 
         // series
         this._seriesViews.forEach(v => {
-            this._owner.clipSeries(v.getClipContainer(), 0, 0, w, h, v.invertable());
+            if (v.model.needClip(false)) {
+                this._owner.clipSeries(v.getClipContainer(), v.getClipContainer2(), 0, 0, w, h, v.invertable());
+            }
             v.resize(w, h);
             v.layout();
         })
@@ -1024,8 +1028,14 @@ export class BodyView extends ChartElement<Body> {
             });
 
             // axis guides
+            if (!this._guideClip) {
+                this._guideClip = this.control.clipBounds(0, 0, w, h);
+            } else {
+                this._guideClip.resize(w, h);
+            }
             [this._guideContainer, this._frontGuideContainer].forEach(c => {
                 c._views.forEach(v => v.layout(w, h));
+                c.setClip(this._guideClip);
             });
         }
 
@@ -1039,7 +1049,7 @@ export class BodyView extends ChartElement<Body> {
         });
 
         // annotations
-        this.$_layoutAnnotations(this._inverted, w, h);
+        this._layoutAnnotations(this._inverted, w, h);
 
         // zoom button
         if (this._zoomButton.visible) {
@@ -1060,14 +1070,14 @@ export class BodyView extends ChartElement<Body> {
         const views = this._gridViews;
 
         for (const axis of views.keys()) {
-            if (!needAxes || !chart.containsAxis(axis) || !axis.grid.isVisible()) {
+            if (!needAxes || !chart.containsAxis(axis) || !axis.grid.isVisible(false)) {
                 views.get(axis).remove();
                 views.delete(axis);
             }
         }
 
         [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
-            if (needAxes && axis.grid.isVisible() && !views.has(axis)) {
+            if (needAxes && axis.grid.isVisible(false) && !views.has(axis)) {
                 const v = new AxisGridView(doc);
 
                 views.set(axis, v);
@@ -1127,11 +1137,11 @@ export class BodyView extends ChartElement<Body> {
         gauges.forEach(g => {
             const v = map.get(g) || this.$_createGaugeView(doc, g);
 
-            v._setChartOptions(inverted, this._animatable);
             container.add(v);
             map.set(g, v);
             views.push(v);
             v.prepareGauge(doc, g);
+            v._setChartOptions(inverted, this._animatable);
         });
     }
 
@@ -1197,10 +1207,10 @@ export class BodyView extends ChartElement<Body> {
         });
     }
 
-    private $_layoutAnnotations(inverted: boolean, w: number, h: number): void {
+    protected _layoutAnnotations(inverted: boolean, w: number, h: number): void {
         this._annotationViews.forEach(v => {
             v.resizeByMeasured();
-            v.layout().translatep(v.model.getPostion(inverted, 0, 0, w, h, v.width, v.height));
+            v.layout().translatep(v.model.getPosition(inverted, 0, 0, w, h, v.width, v.height));
         });
     }
 }

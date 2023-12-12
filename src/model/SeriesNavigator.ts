@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isObject } from "../common/Common";
+import { isObject, assign } from "../common/Common";
 import { Axis } from "./Axis";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
@@ -176,22 +176,22 @@ export class SeriesNavigator extends ChartItem {
 
         // series
         if (isObject(src.series)) {
-            config.series = Object.assign((SERIES[src.series.type] || SERIES['area'])(), src.series);
+            config.series = assign((SERIES[src.series.type] || SERIES['area'])(), src.series);
         } else {
             config.series = SERIES['area']();
         }
         // x-axis
         if (isObject(src.xAxis)) {
-            config.xAxis = Object.assign((AXES[src.xAxis.type] || AXES['linear'])(), src.xAxis, AXIS);
+            config.xAxis = assign((AXES[src.xAxis.type] || AXES['linear'])(), src.xAxis, AXIS);
         } else {
-            config.xAxis = Object.assign(AXES['linear'](), AXIS);
+            config.xAxis = assign(AXES['linear'](), AXIS);
         }
 
         // y-axis
         if (isObject(src.yAxis)) {
-            config.yAxis = Object.assign((AXES[src.yAxis.type] || AXES['linear'])(), src.yAxis, AXIS);
+            config.yAxis = assign((AXES[src.yAxis.type] || AXES['linear'])(), src.yAxis, AXIS);
         } else {
-            config.yAxis = Object.assign(AXES['linear'](), AXIS);
+            config.yAxis = assign(AXES['linear'](), AXIS);
         }
 
         this._naviChart = this.chart._createChart(config);

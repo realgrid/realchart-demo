@@ -1,5 +1,6 @@
 export const config = {
   templates: {},
+  inverted: true,
   title: 'Wing Chart - Split Panes',
   options: {},
   legend: { visible: false, itemGap: 100, backgroundStyle: { fill: 'none' } },

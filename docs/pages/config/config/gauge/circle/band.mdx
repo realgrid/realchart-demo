@@ -1,13 +1,11 @@
-## [band](/config/config/band)
-게이지 본체 주변이나 내부에 값 영역들을 구분해서 표시하는 band의 모델.
+## **band**
 ## Properties
 
 ### position[#position]
 표시 위치.  
 
 
-`default: GaugeItemPosition.DEFAULT`  
-
+<DefaultValue value="GaugeItemPosition.DEFAULT" contents=""></DefaultValue>
 ### [rangeLabel](./band/rangeLabel)
   
 
@@ -35,12 +33,16 @@
 | fontSize | `string{:js}` | true |  
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### thickness: `string | number{:js}`[#thickness]
 밴드의 두께를 픽셀 단위나, 
-게이지 rim의 두께에 대한 상대적 크기로 지정할 수 있다.\
-값을 지정하지 않으면 게이지 본체 내부에 표시될 때 '100%'(본체 두께와 동일)로 표시되고,
+게이지 rim의 두께에 대한 상대적 크기로 지정할 수 있다.
+
+값을 지정하지 않으면 게이지 본체 내부에 표시될 때 <Content type="expression" value="'100%'"></Content>(본체 두께와 동일)로 표시되고,
 외부에 있을 때는 7 픽셀로 두께로 표시된다.  
 
 ### [tickLabel](./band/tickLabel)
@@ -48,4 +50,4 @@ RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
-`default: true`  
+<DefaultValue value="true" contents=""></DefaultValue>

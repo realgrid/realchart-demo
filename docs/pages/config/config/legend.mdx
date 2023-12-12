@@ -1,17 +1,25 @@
-## legend
+## **legend**
 차트 범례 설정 모델.
-visible 기본값이 undefined이고,
+visible 기본값이 <Content type="keyword" value="undefined"></Content>이고,
 따로 지정하지 않으면 시리즈가 둘 이상 포함돼야 legend를 표시한다.
 ## Properties
+
+### align: `'center'|'left'|'right'{:js}`[#align]
+수평 배치.
+값을 지정하지 않으면, 기본값이 [location](#location) 이 <Content type="expression" value="'plot'일 때는 'left'"></Content>,
+<Content type="expression" value="'left', 'right'일 때는 'center'"></Content>이다.  
+- `'center'` 
+- `'left'` 
+- `'right'` 
+
 
 ### alignBase: `'chart'|'parent'|'plot'{:js}`[#alignBase]
 legend 정렬 기준.  
 - `'chart'` 
-- `'parent'` 상위 모델이 존재하는 경우 상위 모델 영역 기준.\  상위가 없으면 기본값(대부분 'plot')과 동일.  ex) subtitle인 경우 title 기준.
+- `'parent'` 상위 모델이 존재하는 경우 상위 모델 영역 기준.    상위가 없으면 기본값(대부분 <Content type="expression" value="'plot'"></Content>)과 동일.  ex) subtitle인 경우 title 기준.
 - `'plot'` 
 
-`default: 'plot'`  
-
+<DefaultValue value="'plot'" contents=""></DefaultValue>
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
 배경 스타일 셋.
 배경 색상 및 경계선 스타일을 지정할 수 있다.  
@@ -25,25 +33,25 @@ legend 정렬 기준.
 | fontSize | `string{:js}` | true |  
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### gap: `number{:js}`[#gap]
-**[location](#location)** 이 'plot'이 아닐 때,
+[location](#location) 이 <Content type="expression" value="'plot'"></Content>이 아닐 때,
 legend view와 나머지 chart 영역 사이의 gap.  
-`default: 6`  
-
+<DefaultValue value="6" contents=""></DefaultValue>
 ### itemGap: `number{:js}`[#itemGap]
 legend 아이템들 사이의 간격.  
-`default: 8`  
-
+<DefaultValue value="8" contents=""></DefaultValue>
 ### itemsAlign: `'center'|'end'|'start'{:js}`[#itemsAlign]
 한 라인의 item들이 배치되는 위치.  
 - `'center'` 수평 혹은 수직의 중앙으로 몰아서 배치한다.
 - `'end'` 수평일 때 오른쪽, 수직일 때는 아래쪽으로 몰아서 배치한다.
 - `'start'` 수평일 때 왼쪽, 수직일 때는 위쪽으로 몰아서 배치한다.
 
-`default: 'center'`  
-
+<DefaultValue value="'center'" contents=""></DefaultValue>
 ### itemsPerLine: `number{:js}`[#itemsPerLine]
 한 줄 당 표시할 최대 legend 항목 수.  
 
@@ -53,12 +61,10 @@ item 배치 방향.
 - `'horizontal'` item들을 수평으로 배치
 - `'vertical'` item들을 수직으로 배치
 
-`default: 'auto'`  
-
+<DefaultValue value="'auto'" contents=""></DefaultValue>
 ### lineGap: `number{:js}`[#lineGap]
 라인 사이의 간격.  
-`default: 4`  
-
+<DefaultValue value="4" contents=""></DefaultValue>
 ### location: `'bottom'|'left'|'plot'|'right'|'top'{:js}`[#location]
 표시 위치.  
 - `'bottom'` 차트 본체 아래 표시한다.
@@ -67,24 +73,30 @@ item 배치 방향.
 - `'right'` 차트 본체 오른쪽에 표시한다.
 - `'top'` 차트 타이틀 아래 표시한다.
 
-`default: 'bottom'`  
-
+<DefaultValue value="'bottom'" contents=""></DefaultValue>
 ### markerGap: `number{:js}`[#markerGap]
 marker와 text사이의 간격.  
-`default: 4`  
-
+<DefaultValue value="4" contents=""></DefaultValue>
 ### markerSize: `number{:js}`[#markerSize]
 marker 크기.  
-`default: 10` 픽셀. 
-
+<DefaultValue value="10" contents="픽셀."></DefaultValue>
+### markerVisible: `boolean{:js}`[#markerVisible]
+marker 표시 여부.  
+<DefaultValue value="true" contents=""></DefaultValue>
 ### maxHeight: `string | number{:js}`[#maxHeight]
-수직  **[배치](#layout)** 일 때,
-최대 높이를 픽셀 단위의 크기 혹은 plot 높이에 대한 상대 길이를 '%'로 지정한다.  
+수직 [배치](#layout) 일 때,
+최대 높이를 픽셀 단위의 크기 혹은 plot 높이에 대한 상대 길이를 <Content type="expression" value="'%'"></Content>로 지정한다.  
 
 ### maxWidth: `string | number{:js}`[#maxWidth]
-수평  **[배치](#layout)** 일 때,
-최대 너비를 픽셀 단위의 크기 혹은 plot 너비에 대한 상대 길이를 '%'로 지정한다.  
+수평 [배치](#layout) 일 때,
+최대 너비를 픽셀 단위의 크기 혹은 plot 너비에 대한 상대 길이를 <Content type="expression" value="'%'"></Content>로 지정한다.  
 
+### offsetX: `number{:js}`[#offsetX]
+범례와 body 혹은 차트 경계 사이의 수평 간격.  
+<DefaultValue value="0" contents=""></DefaultValue>
+### offsetY: `number{:js}`[#offsetY]
+범례와 body 혹은 차트 경계 사이의 수직 간격.  
+<DefaultValue value="0" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 
@@ -97,10 +109,26 @@ marker 크기.
 | fontSize | `string{:js}` | true |  
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+### useTextColor: `boolean{:js}`[#useTextColor]
+범례 항목의 텍스트에도 marker와 동일한 색상을 적용한다.  
+
+### verticalAlign: `'bottom'|'middle'|'top'{:js}`[#verticalAlign]
+수직 배치.
+값을 지정하지 않으면, 기본값이 [location](#location) 이 <Content type="expression" value="'plot'일 때는 'top'"></Content>,
+<Content type="expression" value="'top', 'bottom'일 때는 'middle'"></Content>이다.  
+- `'bottom'` 
+- `'middle'` 
+- `'top'` 
+
+
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
-명시적으로 true로 설정되거나, 명시적 false가 아니면서 표시 항목 수가 1보다 클 때 표시된다..\
+명시적으로 <Content type="keyword" value="true"></Content>로 설정되거나, 명시적 <Content type="keyword" value="false"></Content>가 아니면서 표시 항목 수가 1보다 클 때 표시된다..
+
 <FiddleLink label="Legend Visible" href="https:/jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/common/legend-visible"/>  
-`default: undefined`  
+<DefaultValue value="undefined" contents=""></DefaultValue>

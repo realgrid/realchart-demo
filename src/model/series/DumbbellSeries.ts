@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, pickProp3 } from "../../common/Common";
+import { pickNum, pickProp, pickProp3, assign } from "../../common/Common";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
@@ -56,7 +56,7 @@ export class DumbbellSeriesPoint extends DataPoint {
     }
 
     protected _assignTo(proxy: any): any {
-        return Object.assign(super._assignTo(proxy), {
+        return assign(super._assignTo(proxy), {
             low: this.low,
             lowValue: this.lowValue
         });

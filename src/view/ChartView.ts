@@ -7,11 +7,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ButtonElement } from "../common/ButtonElement";
+import { pickNum } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
-import { ClipElement, LayerElement, RcElement } from "../common/RcControl";
+import { ClipRectElement, LayerElement, RcElement } from "../common/RcControl";
 import { IRect, Rectangle } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
-import { Align, AlignBase, SectionDir, VerticalAlign, _undefined } from "../common/Types";
+import { Align, AlignBase, SectionDir, VerticalAlign, _undef } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Annotation, AnnotationScope } from "../model/Annotation";
@@ -22,6 +23,7 @@ import { LegendItem, LegendLocation } from "../model/Legend";
 import { Series } from "../model/Series";
 import { Split } from "../model/Split";
 import { Subtitle, SubtitlePosition, Title } from "../model/Title";
+import { LineSeries, LineSeriesBase } from "../model/series/LineSeries";
 import { AnnotationView } from "./AnnotationView";
 import { AxisScrollView, AxisView } from "./AxisView";
 import { AxisGuideContainer, BodyView, createAnnotationView } from "./BodyView";
@@ -50,7 +52,6 @@ class TitleSectionView extends SectionView {
     private _wTitle = 0;
     private _hSub = 0;
     private _wSub = 0;
-    private _gap = 0;
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -70,22 +71,23 @@ class TitleSectionView extends SectionView {
         let v = this.titleView;
         let width = hintWidth;
         let height = 0;
-        let gap = 0;
+        let titleGap = 0;
         let sz: ISize;
 
-        if (v.visible = title.isVisible()) {
+        // title
+        if (v.setVis(title.isVisible())) {
             sz = v.measure(doc, title, hintWidth, hintHeight, phase);
             hTitle = this._hTitle = sz.height;
             wTitle = this._wTitle = sz.width;
         } else {
             v.setModel(title);
         }
-
-        if ((v = this.subtitleView).visible = sub.isVisible()) {
+        // subtitle
+        if ((v = this.subtitleView).setVis(sub.isVisible())) {
             sz = v.measure(doc, sub, hintWidth, hintHeight, phase);
             hSub = this._hSub = sz.height;
             wSub = this._wSub = sz.width;
-            gap = this._gap = +chart.subtitle.gap || 0;
+            titleGap = +chart.subtitle.titleGap || 0;
         } else {
             v.setModel(sub);
         }
@@ -94,14 +96,18 @@ class TitleSectionView extends SectionView {
             case SubtitlePosition.LEFT:
             case SubtitlePosition.RIGHT:
                 height = Math.max(hTitle, hSub);
-                width = wTitle + gap + wSub;
+                width = wTitle + titleGap + wSub;
                 break;
             default:
-                height = hTitle + gap + hSub;
+                height = hTitle + titleGap + hSub;
                 width = Math.max(width, wTitle + wSub);
                 break;
         }
-        return { width, height: height + Math.max(+title.sectionGap, +sub.sectionGap) };
+
+        if (height > 0) {
+            height += this.titleView.visible ? pickNum(title.gap, 0) : pickNum(sub.gap, 0);
+        }
+        return { width, height };
     }
 
 
@@ -145,7 +151,7 @@ class TitleSectionView extends SectionView {
                 xTitle = Math.max(xTitle, xTitle + getX(title, dTitle, this._wTitle));
                 xSub = Math.max(xSub, xSub + getX(sub, dSub, this._wSub));
             };
-            const gap = sub.gap;
+            const gap = pickNum(sub.titleGap, 0);
             let yTitle = 0;
             let xTitle = pTitle;
             let ySub = 0;
@@ -394,10 +400,10 @@ class AxisSectionView extends SectionView {
         // 추측 계산을 위해 모델을 미리 설정할 필요가 있다.
         views.forEach((v, i) => {
             v.model = axes[i];
-            v.prepareGuides(doc, guideContainer, frontGuideContainer);
+            v.prepareGuides(doc, NaN, NaN, guideContainer, frontGuideContainer);
         });
 
-        if (this.setVisible(views.filter(v => v.model.visible).length > 0)) {
+        if (this.setVis(views.filter(v => v.model.visible).length > 0)) {
             const m = views[0].model;
 
             this.isX = m._isX;
@@ -616,7 +622,8 @@ export class ChartView extends LayerElement {
     private _creditView: CreditView;
     private _historyView: HistoryView;
     private _tooltipView: TooltipView;
-    private _seriesClip: ClipElement;
+    private _seriesClip: ClipRectElement;
+    private _lineSeriesClip: ClipRectElement;
 
     _org: IPoint;
     private _plotWidth: number;
@@ -645,8 +652,8 @@ export class ChartView extends LayerElement {
         this.add(this._titleSectionView = new TitleSectionView(doc));
         this.add(this._legendSectionView = new LegendSectionView(doc));
         this.add(this._frontAnnotationContainer = new LayerElement(doc, 'rct-front-annotations'));
-        this.add(this._navigatorView = new NavigatorView(doc));
         this.add(this._creditView = new CreditView(doc));
+        this.add(this._navigatorView = new NavigatorView(doc));
         this.add(this._historyView = new HistoryView(doc));
         this.add(this._tooltipView = new TooltipView(doc));
     }
@@ -691,20 +698,20 @@ export class ChartView extends LayerElement {
 
         // body
         if (m.isSplitted()) {
-            this._plotContainer.setVisible(false);
-            this._paneContainer.setVisible(true);
+            this._plotContainer.setVis(false);
+            this._paneContainer.setVis(true);
             this.$_preparePanes(doc, m.split);
         } else {
-            this._plotContainer.setVisible(true);
-            this._paneContainer.setVisible(false);
+            this._plotContainer.setVis(true);
+            this._paneContainer.setVis(false);
             this.$_prepareBody(doc, polar);
         }
 
         // credits
-        if (this._creditView.setVisible(credit.visible)) {
+        if (this._creditView.setVis(credit.visible)) {
             sz = this._creditView.measure(doc, credit, w, h, phase);
-            if (!credit.floating) {
-                h -= sz.height + (+credit.offsetY || 0);
+            if (!credit.isFloating()) {
+                h -= sz.height + (+credit.offsetY || 0) + (+credit.gap || 0);
             }
         }
         
@@ -713,7 +720,7 @@ export class ChartView extends LayerElement {
         h -= sz.height;
 
         // legend
-        if (this._legendSectionView.setVisible((legend.isVisible()))) {
+        if (this._legendSectionView.setVis((legend.isVisible()))) {
             sz = this._legendSectionView.measure(doc, m, w, h, phase);
 
             switch (legend.getLocatiion()) {
@@ -729,7 +736,7 @@ export class ChartView extends LayerElement {
         }
 
         // navigator
-        this._navigatorView.setVisible(navigator.isVisible());
+        this._navigatorView.setVis(navigator.isVisible());
 
         // body & axes
         if (this._paneContainer.visible) {
@@ -777,6 +784,7 @@ export class ChartView extends LayerElement {
         const credit = m.options.credits;
         const vCredit = this._creditView;
         const offCredit = +credit.offsetY || 0;
+        const gapCredit = +credit.gap || 0;
         let h1Credit = 0;
         let h2Credit = 0;
         let x = 0;
@@ -786,11 +794,11 @@ export class ChartView extends LayerElement {
         if (vCredit.visible) {
             vCredit.resizeByMeasured();
 
-            if (!credit.floating) {
+            if (!credit.isFloating()) {
                 if (credit.verticalAlign === VerticalAlign.TOP) {
-                    h -= h1Credit = vCredit.height + offCredit
+                    h -= h1Credit = vCredit.height + offCredit + gapCredit;
                 } else {
-                    h -= h2Credit = vCredit.height + offCredit
+                    h -= h2Credit = vCredit.height + offCredit + gapCredit;
                 }
             }
         }
@@ -990,6 +998,14 @@ export class ChartView extends LayerElement {
             this._currBody.resize(wPlot, hPlot);
             this._currBody.layout().translate(x, y);
             rPlot = this._currBody.getRect();
+            this._currBody._seriesViews.forEach(v => {
+                if (v.needDecoreateLegend()) {
+                    const lv = this._legendSectionView._legendView.legendOfSeries(v.model);
+                    if (lv) {
+                        v.decoreateLegend(lv);
+                    }
+                }
+            })
         }
 
         // credits
@@ -1009,7 +1025,7 @@ export class ChartView extends LayerElement {
                     cy = (height - vCredit.height) / 2 + yOff;
                     break;
                 default:
-                    cy = height - h2Credit;
+                    cy = height - h2Credit + gapCredit;
                     break;
             }
             switch (credit.align) {
@@ -1149,11 +1165,9 @@ export class ChartView extends LayerElement {
         this._tooltipView.close(true, false);
     }
 
-    showTooltip(series: Series, point: DataPoint): void {
-        const x = point.xPos + this._bodyView.tx;
-        const y = point.yPos + this._bodyView.ty;
-
-        this._tooltipView.show(series, point, x, y, true);
+    showTooltip(series: Series, point: DataPoint, body: RcElement): void {
+        const {x, y} = point.getTooltipPos();
+        this._tooltipView.show(series, point, x + body.tx, y + body.ty, true);
     }
 
     hideTooltip(): void {
@@ -1168,47 +1182,72 @@ export class ChartView extends LayerElement {
         if (this._paneContainer.visible) {
             return this._paneContainer.seriesByDom(dom);
         } else {
-            return this._bodyView.seriesByDom(dom);
+            return this._currBody.seriesByDom(dom);
         }
     }
 
     findSeriesView(series: Series): SeriesView<Series> {
-        return this._bodyView.findSeries(series);
+        return this._currBody.findSeries(series);
     }
 
     creditByDom(dom: Element): CreditView {
         return this._creditView.dom.contains(dom) ? this._creditView : null;
     }
 
-    clipSeries(view: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void {
-        // TODO: pane 단위로
-        if (view) {
-            if (this._model.inverted && invertable) {
-                this._seriesClip.setBounds(0, -w, h, w);
+    clipSeries(view: RcElement, view2: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void {
+
+        function clip(v: RcElement): void {
+            if (inverted) {
+                // TODO: 이런 구분은 없애야 한다!. LineContainer 참조.
+                if (line) {
+                    sc.setBounds(0, h - w, h, w);
+                } else {
+                    sc.setBounds(0, -w, h, w);
+                }
             } else {
-                this._seriesClip.setBounds(0, 0, w, h);
+                sc.setBounds(0, 0, w, h);
             }
-            view.setClip(this._seriesClip);
+            v.setClip(sc);
         }
+
+        const inverted = this._model.inverted && invertable;
+        const line = view && (view.parent as SeriesView<any>).model instanceof LineSeriesBase;
+        const sc = line ? this._lineSeriesClip : this._seriesClip;
+
+        // TODO: pane 단위로 -> body로 가야하나?
+        view && clip(view);
+        view2 && clip(view2);
+    }
+
+    bodyOf(elt: Element): BodyView {
+        if (this._model.isSplitted()) {
+            return this._paneContainer.bodyViewOf(elt);
+        }
+        return this._currBody;
     }
 
     pointerMoved(x: number, y: number, target: EventTarget): void {
-        const p = this._bodyView.controlToElement(x, y);
-        const inBody = this._bodyView.pointerMoved(p, target);
-        
-        for (const dir in this._axisSectionMap) {
-            this._axisSectionMap[dir].views.forEach(av => {
-                const m = av.model.crosshair;
-                const len = av.model._isHorz ? this._bodyView.width : this._bodyView.height;
-                const pos = av.model._isHorz ? p.x : p.y;
-                const flag = inBody && m.visible && m.flag.visible && !m.isBar() && m.getFlag(len, pos);
+        const body = this._model && this.bodyOf(target as any);// this._currBody;
 
-                if (flag) {
-                    av.showCrosshair(pos, flag);
-                } else {
-                    av.hideCrosshiar();
-                }
-            })
+        if (body) {
+            const p = body.controlToElement(x, y);
+            const inBody = body.pointerMoved(p, target);
+            
+            for (const dir in this._axisSectionMap) {
+                this._axisSectionMap[dir].views.forEach(av => {
+                    const m = av.model.crosshair;
+                    const len = av.model._isHorz ? body.width : body.height;
+                    const pos = av.model._isHorz ? p.x : p.y;
+                    const flag = inBody && m.visible && m.flag.visible && !m.isBar() && m.getFlag(len, pos);
+    
+                    if (flag) {
+                        av.showCrosshair(pos, flag);
+                        av.model.crosshair.moved(pos, flag);
+                    } else {
+                        av.hideCrosshiar();
+                    }
+                })
+            }
         }
     }
 
@@ -1220,11 +1259,11 @@ export class ChartView extends LayerElement {
     }
 
     getButton(dom: Element): ButtonElement {
-        return this._bodyView.getButton(dom);
+        return this._currBody.getButton(dom);
     }
 
     buttonClicked(button: ButtonElement): void {
-        this._bodyView.buttonClicked(button);
+        this._currBody.buttonClicked(button);
     }
 
     getScrollView(dom: Element): AxisScrollView {
@@ -1234,11 +1273,29 @@ export class ChartView extends LayerElement {
         };
     }
 
+    updateAnnotation(anno: Annotation): void {
+        let v = this._annotationViews.find(v => v.model === anno);
+        
+        if (v) {
+            v.update(this.width, this.height);
+        } else {
+            if (this._model.isSplitted()) {
+                // TODO:
+            } else {
+                v = this._currBody._annotationViews.find(v => v.model === anno);
+                if (v) {
+                    v.update(this._currBody.width, this._currBody.height);
+                }
+            }
+        }
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _doAttached(parent: RcElement): void {
         this._seriesClip = this.control.clipBounds();
+        this._lineSeriesClip = this.control.clipBounds();
     }
 
     //-------------------------------------------------------------------------
@@ -1269,11 +1326,11 @@ export class ChartView extends LayerElement {
                 this._plotContainer.insertChild(this._polarView, this._bodyView);
             }
             this._currBody = this._polarView;
-            this._bodyView?.setVisible(false);
-            this._polarView.setVisible(true);
+            this._bodyView?.setVis(false);
+            this._polarView.setVis(true);
         } else {
-            this._polarView?.setVisible(false);
-            this._bodyView.setVisible(true);
+            this._polarView?.setVis(false);
+            this._bodyView.setVis(true);
             this._currBody = this._bodyView;
         }
         this._currBody.prepareRender(doc, this._model);
@@ -1424,6 +1481,9 @@ export class ChartView extends LayerElement {
         const wPolar = Math.PI * 2 * rd;
         const hPolar = rd;
 
+        // guides - axis view에서 guide view들을 추가할 수 있도록 초기화한다.
+        this._polarView.prepareGuideContainers();
+
         // axes
         this.$_prepareAxes(doc, m);
         // m.layoutAxes(Math.PI * 2, rd, false, phase);
@@ -1490,7 +1550,7 @@ export class ChartView extends LayerElement {
             }
 
             v.resizeByMeasured();
-            v.layout().translatep(v.model.getPostion(inverted, x, y, w, h, v.width, v.height));
+            v.layout().translatep(v.model.getPosition(inverted, x, y, w, h, v.width, v.height));
         });
     }
 }

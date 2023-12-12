@@ -7,10 +7,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { toSize } from "../common/Rectangle";
+import { SvgRichText } from "../common/RichText";
 import { ISize } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
-import { TextAnchor, TextElement } from "../common/impl/TextElement";
-import { SubtitlePosition, Title } from "../model/Title";
+import { TextElement } from "../common/impl/TextElement";
+import { Title } from "../model/Title";
 import { BoundableElement } from "./ChartElement";
 
 export class TitleView extends BoundableElement<Title> {
@@ -25,6 +26,7 @@ export class TitleView extends BoundableElement<Title> {
     // fields
     //-------------------------------------------------------------------------
     private _textView: TextElement;
+    private _richText: SvgRichText;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -33,7 +35,7 @@ export class TitleView extends BoundableElement<Title> {
         super(doc, isSub ? TitleView.SUBTITLE_CLASS : TitleView.TITLE_CLASS, isSub ? 'rct-subtitle-background' : 'rct-title-background');
 
         this.add(this._textView = new TextElement(doc));
-        this._textView.anchor = TextAnchor.START;
+        this._richText = new SvgRichText();
     }
 
     //-------------------------------------------------------------------------
@@ -48,19 +50,13 @@ export class TitleView extends BoundableElement<Title> {
     }
 
     protected _doMeasure(doc: Document, model: Title, hintWidth: number, hintHeight: number, phase: number): ISize {
-        if (this.isSub) {
-            this.setBoolData('hassub', false);
-        } else {
-            const sub = model.chart.subtitle;
-            this.setBoolData('hassub', sub.isVisible() && sub.position === SubtitlePosition.BOTTOM);
-        }
-        this._textView.text = model.text;
+        this._richText.setFormat(model.text);
+        this._richText.build(this._textView, hintWidth, hintHeight, null, null);
 
         return toSize(this._textView.getBBounds());
     }
 
     protected _doLayout(): void {
-        this._textView.translate(this._margins.left + this._paddings.left, this._margins.top + this._paddings.top);
-        this._textView.layoutText();
+        this._richText.layout(this._textView, this.textAlign(), this.width, this.height, this._paddings);
     }
 }

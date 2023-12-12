@@ -6,8 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4 } from "../common/Common";
-import { IValueRange } from "../common/Types";
+import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4, assign } from "../common/Common";
+import { IPoint } from "../common/Point";
+import { IValueRange, _undef } from "../common/Types";
 import { IAxis } from "./Axis";
 import { ISeries } from "./Series";
 
@@ -75,6 +76,9 @@ export class DataPoint {
     drillDown: any[] | object;  // array이면 현재 시리즈의 data 교체. object면 다른 시리즈로 교체.
     range: IValueRange;
 
+    zValue: number;
+    label: any;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -94,7 +98,7 @@ export class DataPoint {
     }
 
     ariaHint(): string {
-        return this.x + ', ' + this.yValue;
+        return (this.x || this.xValue) + ', ' + this.yValue;
     }
 
     labelCount(): number {
@@ -131,11 +135,7 @@ export class DataPoint {
     }
 
     getLabel(index: number): any {
-        return this.y;// this.yValue;
-    }
-
-    getValueOf = (traget: any, param: string): any => {
-        return this[param] || this.source[param];
+        return this.label === _undef ? this.yValue : this.label;
     }
 
     swap(): void {
@@ -144,17 +144,23 @@ export class DataPoint {
         this.yPos = x;
     }
 
+    getTooltipPos(): IPoint {
+        return { x: this.xPos, y: this.yPos };
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
     protected _assignTo(proxy: any): any {
-        return Object.assign(proxy, {
+        return assign(proxy, {
             index: this.index,
             vindex: this.vindex,
             x: this.x,
             y: this.y,
             xValue: this.xValue,
-            yValue: this.yValue
+            yValue: this.yValue,
+            color: this.color,
+            source: this.source,
         });
     }
 
@@ -229,6 +235,12 @@ export class DataPointCollection {
     //-------------------------------------------------------------------------
     get(index: number): DataPoint {
         return this._points[index];
+    }
+
+    pointAt(xValue: number): DataPoint {
+        for (const p of this._points) {
+            if (p.xValue === xValue) return p;
+        }
     }
 
     contains(p: DataPoint) {

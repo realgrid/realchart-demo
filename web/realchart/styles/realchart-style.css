@@ -21,6 +21,10 @@
     stroke: none;
 }
 
+.rct-pattern {
+    stroke: #000;
+}
+
 /** palette */
 .rct-root {
     --color-1: #0098ff;
@@ -175,7 +179,7 @@
     /* polar */
     --rct-polar-xaxis-grid-line-stroke: #ccc;
     --rct-polar-yaxis-grid-line-stroke: #ccc;
-    --rct-polar-axis-label-fill: #555;
+    --rct-polar-axis-labels-fill: #555;
 
     /* circle gauge */
     --rct-circle-gauge-back-fill: #ededed;
@@ -228,7 +232,7 @@
     /* polar */
     --rct-polar-xaxis-grid-line-stroke: #ccc;
     --rct-polar-yaxis-grid-line-stroke: #fff;
-    --rct-polar-axis-label-fill: #fff;
+    --rct-polar-axis-labels-fill: #fff;
 
     /* circle gauge */
     --rct-circle-gauge-back-fill: #515151;
@@ -268,7 +272,7 @@
     /* polar */
     --rct-polar-xaxis-grid-line-stroke: #ccc;
     --rct-polar-yaxis-grid-line-stroke: #f0d9be;
-    --rct-polar-axis-label-fill: #f0d9be;
+    --rct-polar-axis-labels-fill: #f0d9be;
 
     /* circle gauge */
     --rct-circle-gauge-back-fill: #515151;
@@ -448,6 +452,9 @@
 .rct-polar-xaxis-line {
     stroke: #333;
 }
+.rct-polar-xaxis-sector-line {
+    stroke: #555;
+}
 .rct-polar-xaxis-grid-line {
     stroke: var(--rct-polar-xaxis-grid-line-stroke)
 }
@@ -457,8 +464,8 @@
 .rct-polar-yaxis-grid-line {
     stroke: var(--rct-polar-yaxis-grid-line-stroke)
 }
-.rct-polar-axis-label {
-    fill: var(--rct-polar-axis-label-fill)
+.rct-polar-axis-labels {
+    fill: var(--rct-polar-axis-labels-fill)
 }
 
 /** series */
@@ -627,6 +634,11 @@
 .rct-bar-series .rct-point[data-focus] {
     stroke: var(--rct-focus-border);
     stroke-width: 2px;
+}
+
+/** circlebar series */
+.rct-circlebar-series .rct-point {
+    stroke: white;
 }
 
 /** barrange series */
@@ -1012,7 +1024,9 @@
 }
 .rct-tooltip-back {
     fill: white;
-    stroke: #ccc;
+}
+.rct-tooltip-tail {
+    fill: white;
 }
 .rct-tooltip-text {
     fill: #333;

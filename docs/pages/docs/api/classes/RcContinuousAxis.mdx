@@ -1,11 +1,7 @@
 ## RcContinuousAxis
-            ### Extends
+### Extends
 - [RcChartAxis](../classes/RcChartAxis)
-            
-            
-차트 축 모델들의 기반 클래스.\
-
-            
+차트 축 모델들의 기반 클래스.\
 
 
 
@@ -14,26 +10,23 @@
 ## Properties
 ### crosshair: [RcChartObject](../classes/RcChartObject)[#crosshair]
 크로스헤어 설정 모델.
-
 ### grid: [RcChartObject](../classes/RcChartObject)[#grid]
 축 그리드 설정 모델.
-
 ### isEmpty: [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)[#isEmpty]
 시리즈 연결 여부.\
 연결된 시리즈가 하나도 없으면 true.
-
+### isX: [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)[#isX]
+x축이면 true.
 ### label: [RcChartObject](../classes/RcChartObject)[#label]
 tick label 설정 모델.
-
 ### line: [RcChartObject](../classes/RcChartObject)[#line]
 축 선 설정 모델.
-
 ### tick: [RcChartObject](../classes/RcChartObject)[#tick]
 tick 선 설정 모델.
-
 ### title: [RcChartObject](../classes/RcChartObject)[#title]
 축 타이틀 설정 모델.
-
+### xy: 'x' \| 'y'[#xy]
+축 방향.
 
 ## Methods
 ### get(prop): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#get]
@@ -41,22 +34,24 @@ tick 선 설정 모델.
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
 
 ```js
-console.log(chart.series.get('name'))
+Utils.log(chart.series.get('name'))
 ```
 
 하위 객체의 설정 속성은 속성 경로를 지정해서 직접 가져올 수도 있다.
 
 ```js
-console.log(chart.axis.get('title.text'));
+Utils.log(chart.axis.get('title.text'));
 ```
+
+속성 변경은 [set](#set), [setAll](#setAll), [toggle](#toggle)등으로 실행한다.
 
 
 
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
-| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 속성 경로. |
+| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | '**.**'으로 구분되는 속성 경로. |
 ### resetZoom(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#resetZoom]
-
+줌 상태를 제거하고 모든 데이터포인트들이 표시되도록 한다.
 ### set(prop, value, redraw): [RcChartObject](../classes/RcChartObject)[#set]
 지정한 속성의 값(들)을 설정한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다.\
@@ -78,7 +73,7 @@ chart.axis.set('title.text', 'New Title'));
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 경로 문자열 |
 | value | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 지정할 값(들) |
-| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
 ### setAll(props, redraw): [RcChartObject](../classes/RcChartObject)[#setAll]
 JSON 객체로 지정한 속성들의 값을 설정한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
@@ -96,7 +91,7 @@ JSON 객체로 지정한 속성들의 값을 설정한다.\
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | props | [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | 여러 설정 값들이 지정된 JSON 객체 |
-| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
 ### toggle(prop, redraw): [RcChartObject](../classes/RcChartObject)[#toggle]
 Boolean 타입의 설정값을 변경한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
@@ -110,9 +105,13 @@ chart.getSeries('ser02').toggle('visible');
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 이름 |
-| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
 ### zoom(start, end): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#zoom]
-| Parameter | Type |
-| ----------- | ----------- |
-| start | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
-| end | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
+지정한 영역에 포함된 데이터포인트들만 표시되도록 한다.
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| start | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | 영역의 시작 값. |
+| end | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | 영역의 끝 값. 영역에는 포함되지 않는다. |

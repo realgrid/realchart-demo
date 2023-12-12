@@ -1,21 +1,17 @@
 ## RcCircleGauge
-            ### Extends
+### Extends
 - [RcCircularGauge](../classes/RcCircularGauge)
-            
-            
-**'circle'** 게이지.
+**'circle'** 게이지.
 원이나 원호로 값을 표시하는 게이지.
 
 [Configuration 속성들](/config/config/gauge/circle) 참조.
-
-            
 
 
 
 ## Config Properties
  | Name | Type | Description |   
  | --- | --- | --- | 
- | [animatable](/config/config/gauge/circle#animatable) | `boolean{:js}` | **[value](#value)**  변화를 애니메이션으로 표현한다. |   
+ | [animatable](/config/config/gauge/circle#animatable) | `boolean{:js}` | [value](#value) 변화를 애니메이션으로 표현한다. |   
  | [band](/config/config/gauge/circle/band) | `GaugeRangeBand{:js}` | 게이지 본체 주변이나 내부에 값 영역들을 구분해서 표시하는 band의 모델. |   
  | [bottom](/config/config/gauge/circle#bottom) | `string \| number{:js}` | plot 영역의 아래쪽 모서리와 widget 사이의 간격. |   
  | [centerX](/config/config/gauge/circle#centerx) | `string \| number{:js}` | 게이지 중심 수평 위치. |   
@@ -36,7 +32,7 @@
  | [right](/config/config/gauge/circle#right) | `string \| number{:js}` | plot 영역의 오른쪽 모서리와 widget 사이의 간격. |   
  | [rim](/config/config/gauge/circle/rim) | `CircleGaugeRim{:js}` | 게이지 배경 원호 테두리 설정 모델. |   
  | [scale](/config/config/gauge/circle/scale) | `CircleGaugeScale{:js}` | 스케일 모델. |   
- | [size](/config/config/gauge/circle#size) | `string \| number{:js}` | **[width](#width)** 와  **[height](#height)** 를 동시에 설정한다. |   
+ | [size](/config/config/gauge/circle#size) | `string \| number{:js}` | [width](#width) 와 [height](#height) 를 동시에 설정한다. |   
  | [startAngle](/config/config/gauge/circle#startangle) | `number{:js}` | 게이지 원호 시작 각도. |   
  | [style](/config/config/gauge/circle#style) | `SVGStyles \| string{:js}` | 스타일셋 혹은 class selector. |   
  | [sweepAngle](/config/config/gauge/circle#sweepangle) | `number{:js}` | 게이지 원호 전체 각도. |   
@@ -44,47 +40,42 @@
  | [value](/config/config/gauge/circle#value) | `number{:js}` | 현재값. |   
  | [valueRim](/config/config/gauge/circle/valuerim) | `CircleGaugeValueRim{:js}` | 게이지의 값 원호 테두리 설정 모델. |   
  | [visible](/config/config/gauge/circle#visible) | `boolean{:js}` | 표시 여부. |   
- | [width](/config/config/gauge/circle#width) | `string \| number{:js}` | 게이지 너비. | 
+ | [width](/config/config/gauge/circle#width) | `string \| number{:js}` | 게이지 너비. |
 
 ## Properties
 ### band: [RcGaugeRangeBand](../classes/RcGaugeRangeBand)[#band]
 band 모델.
 
 [Configuration 속성들](/config/config/gauge/circle/band) 참조.
-
 ### hand: [RcChartObject](../classes/RcChartObject)[#hand]
 hand 모델.
 
 [Configuration 속성들](/config/config/gauge/circle/hand) 참조.
-
 ### label: [RcChartObject](../classes/RcChartObject)[#label]
 label 모델.
-
 ### marker: [RcChartObject](../classes/RcChartObject)[#marker]
 marker 모델.
 
 [Configuration 속성들](/config/config/gauge/circle/marker) 참조.
-
+### name: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)[#name]
+config에서 설정해된 name을 리턴한다.\
+최초 설정한 이름은 변경할 수 없다.
 ### pin: [RcChartObject](../classes/RcChartObject)[#pin]
 pin 모델.
 
 [Configuration 속성들](/config/config/gauge/circle/pin) 참조.
-
 ### rim: [RcChartObject](../classes/RcChartObject)[#rim]
 rim 모델.
 
 [Configuration 속성들](/config/config/gauge/circle/rim) 참조.
-
 ### scale: [RcChartObject](../classes/RcChartObject)[#scale]
 scale 모델.
 
 [Configuration 속성들](/config/config/gauge/circle/scale) 참조.
-
 ### valueRim: [RcChartObject](../classes/RcChartObject)[#valueRim]
 valueRim 모델.
 
 [Configuration 속성들](/config/config/gauge/circle/valueRim) 참조.
-
 
 ## Methods
 ### get(prop): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#get]
@@ -92,20 +83,22 @@ valueRim 모델.
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
 
 ```js
-console.log(chart.series.get('name'))
+Utils.log(chart.series.get('name'))
 ```
 
 하위 객체의 설정 속성은 속성 경로를 지정해서 직접 가져올 수도 있다.
 
 ```js
-console.log(chart.axis.get('title.text'));
+Utils.log(chart.axis.get('title.text'));
 ```
+
+속성 변경은 [set](#set), [setAll](#setAll), [toggle](#toggle)등으로 실행한다.
 
 
 
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
-| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 속성 경로. |
+| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | '**.**'으로 구분되는 속성 경로. |
 ### set(prop, value, redraw): [RcChartObject](../classes/RcChartObject)[#set]
 지정한 속성의 값(들)을 설정한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다.\
@@ -127,7 +120,7 @@ chart.axis.set('title.text', 'New Title'));
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 경로 문자열 |
 | value | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 지정할 값(들) |
-| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
 ### setAll(props, redraw): [RcChartObject](../classes/RcChartObject)[#setAll]
 JSON 객체로 지정한 속성들의 값을 설정한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
@@ -145,7 +138,7 @@ JSON 객체로 지정한 속성들의 값을 설정한다.\
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | props | [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | 여러 설정 값들이 지정된 JSON 객체 |
-| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
 ### toggle(prop, redraw): [RcChartObject](../classes/RcChartObject)[#toggle]
 Boolean 타입의 설정값을 변경한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
@@ -159,7 +152,7 @@ chart.getSeries('ser02').toggle('visible');
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 이름 |
-| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
 ### updateValue(value, animate): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#updateValue]
 게이지의 값을 변경한다.
 

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ELLIPSIS, SVGStyleOrClass, _undefined } from '../Types';
+import { ELLIPSIS, SVGStyleOrClass, _undef } from '../Types';
 import { RcElement } from '../RcControl';
 import { IRect } from '../Rectangle';
 import { Color } from '../Color';
@@ -42,12 +42,6 @@ export class TextElement extends RcElement {
     //-------------------------------------------------------------------------
     // static members
     //-------------------------------------------------------------------------
-    static createCenter(doc: Document): TextElement {
-        const elt = new TextElement(doc);
-        elt._layout = TextLayout.MIDDLE;
-        return elt;
-    }
-
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
@@ -64,7 +58,7 @@ export class TextElement extends RcElement {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string = _undefined) {
+    constructor(doc: Document, styleName: string = _undef) {
         super(doc, styleName, 'text');
 
         this.anchor = TextAnchor.MIDDLE;
@@ -118,15 +112,7 @@ export class TextElement extends RcElement {
         }
     }
 
-    /** svg */
-    get svg(): string {
-        return this.dom.innerHTML;
-    }
-    set svg(value: string) {
-        value = value || '';
-        this.dom.innerHTML = value;
-    }
-    
+    /** opacity */
     get opacity(): number {
         return this.getAttr('fill-opacity');
     }

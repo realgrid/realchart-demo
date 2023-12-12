@@ -29,7 +29,7 @@ test.describe('arearange.html test', () => {
         expect(markers.length > 0).is.true;
 
         const config: any = await page.evaluate('config');
-        const data = (config.series || config.series[0]).data;
+        const data = (config.series.data || config.series[0].data);
         expect(data.length * 2).eq(markers.length);
 
         // await page.screenshot({path: 'out/ss/arearange.png'});

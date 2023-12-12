@@ -12,7 +12,7 @@ import { Axis, AxisLabel, AxisTick, IAxisTick } from '../../../src/model/Axis';
 import { Tester } from '../Tester';
 import { Chart } from '../../../src/model/Chart';
 import { Utils } from '../../../src/common/Utils';
-import { CategoryAxisTick } from '../../../src/model/axis/CategoryAxis';
+import { LinearAxisLabel } from '../../../src/model/axis/LinearAxis';
 
 const type = 'test'
 
@@ -68,8 +68,8 @@ const source = {
 
 class AxisImpl extends Axis {
     protected _createTickModel(): AxisTick { return }
-    protected _createLabelModel(): AxisLabel { return }
-    type(): string { return type; }
+    protected _createLabelModel(): AxisLabel { return new LinearAxisLabel(this); }
+    _type(): string { return type; }
     protected _doPrepareRender(): void {}
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] { return [];}
     getPosition(length: number, value: number): number { return 0; }
@@ -102,7 +102,7 @@ class AxisImpl extends Axis {
     });
 
     it('type', () => {
-        expect(axis.type).eq(source.type);
+        expect(axis._type()).eq(type);
     });
 
     it('position', () => {

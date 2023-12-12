@@ -15,6 +15,8 @@ import { TimeAxis, TimeAxisTick } from '../../../../src/model/axis/TimeAxis';
  */
  describe("TimeAxisTick test", function() {
 
+    const axis = new TimeAxis(null, false);
+
     it('init', () => {
         const model = new TimeAxisTick(null);
 
@@ -22,7 +24,7 @@ import { TimeAxis, TimeAxisTick } from '../../../../src/model/axis/TimeAxis';
     });
 
     it('build steps - steps', () => {
-        const model = new TimeAxisTick(null);
+        const model = new TimeAxisTick(axis);
         model.steps = [1, 2, 3, 4];
 
         const steps = model.buildSteps(1000, 0, 0, 10);
@@ -30,7 +32,7 @@ import { TimeAxis, TimeAxisTick } from '../../../../src/model/axis/TimeAxis';
     });
 
     it('build steps - stepCount', () => {
-        const model = new TimeAxisTick(null);
+        const model = new TimeAxisTick(axis);
         const base = NaN;
         const min = -19;
         const max = 163;
@@ -43,7 +45,7 @@ import { TimeAxis, TimeAxisTick } from '../../../../src/model/axis/TimeAxis';
     });
 
     it('build steps - based stepCount', () => {
-        const model = new TimeAxisTick(null);
+        const model = new TimeAxisTick(axis);
         const base = NaN;
         const min = 5;//-19;
         const max = 163;
@@ -56,7 +58,7 @@ import { TimeAxis, TimeAxisTick } from '../../../../src/model/axis/TimeAxis';
     });
 
     it('build steps - stepSize', () => {
-        const model = new TimeAxisTick(null);
+        const model = new TimeAxisTick(axis);
         const min = 5;
         const max = 111;
 

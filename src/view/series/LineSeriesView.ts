@@ -6,17 +6,22 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { cos, sin } from "../../common/Common";
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
-import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
-import { IValueRange, PI_2 } from "../../common/Types";
+import { ClipRectElement, LayerElement, PathElement, RcElement } from "../../common/RcControl";
+import { Align, IValueRange, PI_2, SVGStyleOrClass } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
+import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { LineType } from "../../model/ChartTypes";
 import { DataPoint, IPointPos } from "../../model/DataPoint";
+import { PointItemPosition } from "../../model/Series";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
-import { LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
+import { LinePointLabel, LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
+import { LineLegendMarkerView } from "../../model/series/legend/LineLegendMarkerView";
+import { LegendItemView } from "../LegendView";
 import { IPointView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
@@ -36,7 +41,7 @@ export class LineMarkerView extends PathElement implements IPointView {
     }
 }
 
-export class LineContainer extends RcElement {
+export class LineContainer extends LayerElement {
 
     //-------------------------------------------------------------------------
     // fields
@@ -49,11 +54,11 @@ export class LineContainer extends RcElement {
     invert(v: boolean, height: number): boolean {
         if (v !== this.inverted) {
             if (this.inverted = v) {
-                this.dom.style.transform = `translate(${height}px, ${height}px) rotate(-90deg) scale(1, -1)`;
-                // this.dom.style.transform = `translate(0px, ${height}px) rotate(90deg) scale(-1, 1)`;
-                // this.dom.style.transform = `rotate(-90deg) scale(-1, 1)`;
+                // TODO: 아래 PointContaier와 다르게 하고 있다. 그래서 ChartView.clipSeries도 다르게 해야 한다. 통일할 것!
+                this.setAttr('transform', `translate(${height},${height}) rotate(-90) scale(1,-1)`);
+                //this.setAttr('transform', `translate(0,${height}) rotate(90) scale(-1,1)`);
             } else {
-                this.dom.style.transform = ``;
+                this.setAttr('transform', '');
             }
         }
         return this.inverted;
@@ -69,11 +74,11 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     private _line: PathElement;
     protected _needBelow = false;
     private _lowLine: PathElement;
-    protected _upperClip: ClipElement;
-    protected _lowerClip: ClipElement;
+    protected _upperClip: ClipRectElement;
+    protected _lowerClip: ClipRectElement;
     protected _markers: ElementPool<LineMarkerView>;
     private _rangeLines: ElementPool<PathElement>;
-    private _rangeClips: ClipElement[] = [];
+    private _rangeClips: ClipRectElement[] = [];
     protected _polar: any;
     protected _linePts: IPointPos[];
 
@@ -92,11 +97,21 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     // overriden members
     //-------------------------------------------------------------------------
     getClipContainer(): RcElement {
-        return null;
+        return this._lineContainer;
     }
 
     protected _getPointPool(): ElementPool<RcElement> {
         return this._markers;
+    }
+
+    needDecoreateLegend(): boolean {
+        return true;
+    }
+
+    decoreateLegend(legendView: LegendItemView): void {
+        const cs = getComputedStyle(this._line.dom);
+        (legendView._marker as LineLegendMarkerView)._line.setStyle('strokeWidth', cs.strokeWidth);
+        (legendView._marker as LineLegendMarkerView)._line.setStyle('strokeDasharray', cs.strokeDasharray);
     }
 
     protected _prepareSeries(doc: Document, model: T): void {
@@ -128,7 +143,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         if (this._polar) {
             firstTime && SeriesAnimation.grow(this);
         } else {
-            firstTime && SeriesAnimation.slide(this, { from: getFrom(this) });
+            firstTime && SeriesAnimation.reveal(this, { from: getFrom(this) });
         }
     }
 
@@ -182,7 +197,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             lines.prepare(ranges.length);
 
             while (clips.length < ranges.length) {
-                const c = new ClipElement(this.doc);
+                const c = new ClipRectElement(this.doc);
 
                 c.setAttr(RcElement.ASSET_KEY, '1');
                 this.control.clipContainer().append(c.dom);
@@ -198,7 +213,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const reversed = this.model._yAxisObj.reversed;
         const x = 0;
         const y = 0;
-        let clip: ClipElement;
+        let clip: ClipRectElement;
 
         if (clip = this._upperClip) {
             if (inverted) {
@@ -238,7 +253,9 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const marker = series.marker;
         const sts = [marker.style, null];
 
-        if (this._pointContainer.visible = (marker.visible && !series._simpleMode)) {
+        this._pointContainer.setStyle('opacity', marker.visible ? '1' : '0');
+
+        if (this._pointContainer.setVis(!series._simpleMode)) {
             const mpp = this._markersPerPoint();
             const count = points.length;
     
@@ -257,32 +274,40 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         }
     }
 
-    protected _layoutMarker(mv: LineMarkerView, x: number, y: number): void {
+    protected _layoutMarker(mv: LineMarkerView, markerStyle: SVGStyleOrClass, x: number, y: number): void {
         const series = this.model;
         const p = mv.point as LineSeriesPoint;
         const rd = mv._radius = series.getRadius(p);
 
+        markerStyle && mv.internalSetStyleOrClass(markerStyle);
         SvgShapes.setShape(mv, series.getShape(p), rd, rd);
         mv.translate(x -= rd, y -= rd);
     }
 
     protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
         const series = this.model;
+        const markerStyle = series.marker.style;
         const inverted = this._inverted;
-        const polar = this._polar = (series.chart as Chart).body.getPolar(series);
+        const needClip = series.needClip(false);
         const vr = this._getViewRate();
         const vis = series.marker.visible;
-        const labels = series.pointLabel;
-        const labelOff = labels.offset;
+        const labels = series.pointLabel as LinePointLabel;
+        const labelPos = labels.position;
+        const labelAlign = labels.align;
+        const alignOff = labels.getAlignOffset();
+        const textAlign = labels.textAlign;
+        const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
+        const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj;
+        const polar = this._polar = (series.chart as Chart).body.getPolar(xAxis);
+        const polared = !!polar;
         const yLen = inverted ? width : height;
         const xLen = polar ? polar.rd * PI_2 : inverted ? height : width;
         const yOrg = height;
 
-        for (let i = 0, cnt = pts.length; i < cnt; i++) {
-            const p = pts[i];
+        pts.forEach((p, i) => {
+            // const p = pts[i];
             let px: number;
             let py: number;
 
@@ -290,8 +315,8 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                 const a = polar.start + xAxis.getPosition(xLen, p.xValue);
                 const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
 
-                px = p.xPos = polar.cx + y * Math.cos(a);
-                py = p.yPos = polar.cy + y * Math.sin(a);
+                px = p.xPos = polar.cx + y * cos(a);
+                py = p.yPos = polar.cy + y * sin(a);
             } else {
                 px = p.xPos = xAxis.getPosition(xLen, p.xValue);
                 py = p.yPos = yOrg - yAxis.getPosition(yLen, p.yGroup);
@@ -305,20 +330,43 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             const mv = this._markers.get(i);
             const lv = labelViews && labelViews.get(p, 0);
 
-            if (mv && mv.setVisible(!p.isNull)) {
-                this._layoutMarker(mv, px, py);
+            if (mv && mv.setVis(!p.isNull && (polared || !needClip || px >= 0 && px <= width && py >= 0 && py <= height))) {
+                this._layoutMarker(mv, markerStyle, px, py);
 
                 if (lv) {
                     const r = lv.getBBounds();
 
                     lv.visible = true;
                     lv.setContrast(null);
-                    lv.translate(px - r.width / 2, py - r.height - labelOff - (vis ? mv._radius : 0));
+
+                    switch (labelPos) {
+                        case PointItemPosition.INSIDE:
+                            py -= r.height / 2 + labelOff;
+                            break;
+                        case PointItemPosition.FOOT:
+                            py += labelOff + (vis ? mv._radius : 0);                            
+                            break;
+                        default:
+                            py -= r.height + labelOff + (vis ? mv._radius : 0);
+                            break;
+                    }
+                    switch (labelAlign) {
+                        case Align.LEFT:
+                            px -= r.width + (vis ? mv._radius : 0) + alignOff;
+                            break;
+                        case Align.RIGHT:
+                            px += (vis ? mv._radius : 0) + alignOff;
+                            break;
+                        default:
+                            px -= r.width / 2 + alignOff;
+                            break;
+                    }
+                    lv.layout(textAlign).translate(px, py);
                 }
             } else if (lv) {
-                lv.visible = false;
+                lv.setVis(false);
             }
-        }
+        })
     }
 
     protected _layoutLines(pts: DataPoint[]): void {
@@ -339,18 +387,19 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
         this._linePts = pts;
 
-        if (i < pts.length - 1) {
+        if (i < pts.length) {
             const inverted = this._inverted;
             const w = this.width;
             const h = this.height;
 
             this._buildLines(pts, i, sb);
+            s = sb.end(this._polar);
 
-            this._line.setPath(s = sb.end(this._polar));
-            this._line.internalClearStyleAndClass();
-            this._line.setStyle('stroke', series.color);
-            this._line.addStyleOrClass(series.style);
-            Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
+            // this._line.setPath(s);
+            // this._line.internalClearStyleAndClass();
+            // this._line.setStyle('stroke', series.color);
+            // this._line.addStyleOrClass(series.style);
+            // Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
 
             if (series._runRanges) {
                 this._rangeLines.forEach((line, i) => {
@@ -364,6 +413,12 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     line.setClip(this._rangeClips[i]);
                     this._clipRange(w, h, series._runRangeValue, range, this._rangeClips[i], inverted);
                 })
+            } else {
+                this._line.setPath(s);
+                this._line.internalClearStyleAndClass();
+                this._line.setStyle('stroke', series.color);
+                this._line.addStyleOrClass(series.style);
+                Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
             }
 
             if (needBelow) {
@@ -615,4 +670,7 @@ export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _legendColorProp(): string {
+        return 'stroke';
+    }
 }

@@ -9,7 +9,7 @@
 import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
-import { ClipElement, PathElement, RcElement } from "../../common/RcControl";
+import { ClipRectElement, PathElement, RcElement } from "../../common/RcControl";
 import { IValueRange } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { SeriesGroupLayout } from "../../model/Series";
@@ -26,7 +26,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     private _area: PathElement;
     private _lowArea: PathElement;
     private _rangeAreas: ElementPool<PathElement>;
-    private _rangeAreaClips: ClipElement[] = [];
+    private _rangeAreaClips: ClipRectElement[] = [];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -54,6 +54,10 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    getClipContainer2(): RcElement {
+        return this._areaContainer;
+    }
+
     protected _prepareBelow(series: AreaSeries): boolean {
         let lowArea = this._lowArea;
 
@@ -89,7 +93,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             areas.prepare(ranges.length);
 
             while (clips.length < ranges.length) {
-                const c = new ClipElement(this.doc);
+                const c = new ClipRectElement(this.doc);
 
                 c.setAttr(RcElement.ASSET_KEY, '1');
                 this.control.clipContainer().append(c.dom);
@@ -184,12 +188,13 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             sb.line(path[path.length - 2] as number, yMin);
         }
 
-        area.unsetData('polar');
-        area.setBoolData('simple', this._simpleMode);
-        area.setPath(s = sb.end());
-        area.internalClearStyleAndClass();
-        series.color && area.setStyle('fill', series.color);
-        series.style && area.internalSetStyleOrClass(series.style);
+        s = sb.end();
+        // area.unsetData('polar');
+        // area.setBoolData('simple', this._simpleMode);
+        // area.setPath(s);
+        // area.internalClearStyleAndClass();
+        // series.color && area.setStyle('fill', series.color);
+        // series.style && area.internalSetStyleOrClass(series.style);
 
         if (series._runRanges) {
             this._rangeAreas.forEach((area, i) => {
@@ -203,6 +208,14 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
                 area.setClip(this._rangeAreaClips[i]);
                 this._clipRange(w, h, series._runRangeValue, range, this._rangeAreaClips[i], inverted);
             })
+        } else {
+            area.unsetData('polar');
+            area.setBoolData('simple', this._simpleMode);
+            area.setPath(s);
+            area.internalClearStyleAndClass();
+            series.color && area.setStyle('fill', series.color);
+            series.style && area.internalSetStyleOrClass(series.style);
+            series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
         }
 
         if (lowArea) {
@@ -210,6 +223,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             lowArea.setPath(s);
             lowArea.internalClearStyleAndClass();
             series.color && lowArea.setStyle('fill', series.color);
+            series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
             series.belowStyle && lowArea.internalSetStyleOrClass(series.belowStyle);
         }
     }

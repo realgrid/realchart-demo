@@ -13,7 +13,7 @@ import { IRect } from "../../common/Rectangle";
 import { fixnum } from "../../common/Types";
 import { PointItemPosition } from "../../model/Series";
 import { FunnelSeries, FunnelSeriesPoint } from "../../model/series/FunnelSeries";
-import { IPointView, PointLabelContainer, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
+import { IPointView, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 class FunnelSegment extends PathElement implements IPointView {
@@ -72,7 +72,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
     }
 
     protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.slide(this, { from: this.model.reversed ? 'bottom' : 'top'});
+        firstTime && SeriesAnimation.reveal(this, { from: this.model.reversed ? 'bottom' : 'top'});
     }
 
     _resizeZombie(): void {
@@ -81,7 +81,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
 
     _animationStarted(ani: Animation): void {
         super._animationStarted(ani);
-        this._lineContainer.setVisible(this._labelContainer.visible);
+        this._lineContainer.setVis(this._labelContainer.visible);
     }
 
     //-------------------------------------------------------------------------
@@ -143,7 +143,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
         const labelViews = this._labelViews();
         const labelInside = series.getLabelPosition() === PointItemPosition.INSIDE;
         const labels = series.pointLabel;
-        const labelOff = labels.offset;
+        const labelOff = labels.getOffset();
         const labelDist = labelViews ? (labels.distance || 0) : 0;
         const lineViews = this._lineContainer;
         const reversed = series.reversed;
@@ -161,12 +161,12 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
         let labelView: PointLabelView;
 
         // animation 시작 때 감춰진 걸 표시한다.
-        this._lineContainer.setVisible(labelViews && !labelInside);
+        this._lineContainer.setVis(labelViews && !labelInside);
 
         this._segments.forEach((seg) => {
             const p = seg.point;
 
-            if (seg.setVisible(!p.isNull)) {
+            if (seg.setVis(!p.isNull)) {
                 const start = p.yPos * sz.height;
                 const end = (p.yPos + p.height) * sz.height;
                 const y = reversed ? (yEnd - start) : y1 + start;
@@ -210,7 +210,9 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
                     const line = lineViews.get(p);
 
-                    if (line.setVisible(!labelInside)) {
+                    // labelView.anchor = TextAnchor.START; // 기본이 MIDDLE이다.
+
+                    if (line.setVis(!labelInside)) {
                         const rSeg = seg.getBBounds();
                         let lx = p.xPos;
                         let ly = p.yPos;
@@ -229,7 +231,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
                     }
                     labelView.setContrast(labelInside && seg.dom);
                 } else {
-                    lineViews.get(p)?.setVisible(false);
+                    lineViews.get(p)?.setVis(false);
                 }
             }
         });

@@ -6,9 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, pickProp3 } from "../../common/Common";
+import { pickNum, pickProp, pickProp3, assign } from "../../common/Common";
 import { DataPoint } from "../DataPoint";
-import { RangedSeries } from "../Series";
+import { CorneredSeries, RangedSeries } from "../Series";
 
 /**
  * [low, y],
@@ -41,7 +41,7 @@ export class BarRangeSeriesPoint extends DataPoint {
     }
 
     protected _assignTo(proxy: any): any {
-        return Object.assign(super._assignTo(proxy), {
+        return assign(super._assignTo(proxy), {
             low: this.low,
             lowValue: this.lowValue
         });
@@ -77,11 +77,17 @@ export class BarRangeSeriesPoint extends DataPoint {
     }
 }
 
-export class BarRangeSeries extends RangedSeries {
+export class BarRangeSeries extends CorneredSeries {
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
+    /**
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 low 값을 지정하는 속성명이나 인덱스.\
+     * undefined이면, data point의 값이 array일 때는 1, 객체이면 'low'.
+     * 
+     * @config
+     */
     lowField: string;
 
     //-------------------------------------------------------------------------

@@ -6,11 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, mergeObj } from "../common/Common";
+import { isArray, isObject, isString, mergeObj, pickProp3, assign, pickProp, isNumber } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
-import { Align, SectionDir, VerticalAlign } from "../common/Types";
+import { Align, SectionDir, VerticalAlign, _undef } from "../common/Types";
 import { AssetCollection } from "./Asset";
-import { Axis, AxisCollection, IAxis, PaneAxes, PaneAxisMatrix, XPaneAxisMatrix, YPaneAxisMatrix } from "./Axis";
+import { Axis, AxisCollection, IAxis, PaneXAxisMatrix, PaneYAxisMatrix } from "./Axis";
 import { Body } from "./Body";
 import { ChartItem, n_char_item } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
@@ -55,12 +55,20 @@ import { TextAnnotation } from "./annotation/TextAnnotation";
 import { ImageAnnotation } from "./annotation/ImageAnnotation";
 import { Annotation, AnnotationCollection } from "./Annotation";
 import { ShapeAnnotation } from "./annotation/ShapeAnnotation";
+import { CircleBarSeries, CircleBarSeriesGroup } from "./series/CircleBarSeries";
+import { Utils } from "../common/Utils";
+import { NumberFormatter } from "../common/NumberFormatter";
+
+export interface IChartProxy {
+    getChartObject(model: any): object;
+}
 
 export interface IChart {
+    _proxy: IChartProxy;
     type: string;
     gaugeType: string;
-    _xPaneAxes: XPaneAxisMatrix;
-    _yPaneAxes: YPaneAxisMatrix;
+    _xPaneAxes: PaneXAxisMatrix;
+    _yPaneAxes: PaneYAxisMatrix;
     options: ChartOptions;
     export: ExportOptions;
     first: IPlottingItem;
@@ -71,6 +79,8 @@ export interface IChart {
     body: Body;
     split: Split;
     colors: string[];
+    startOfWeek: number;
+    timeOffset: number;
 
     _createChart(config: any): IChart;
     assignTemplates(target: any): any;
@@ -80,7 +90,6 @@ export interface IChart {
     isInverted(): boolean;
     isSplitted(): boolean;
     animatable(): boolean;
-    startAngle(): number;
 
     seriesByName(series: string): Series;
     axisByName(axis: string): Axis;
@@ -107,15 +116,20 @@ export interface IChart {
     // for series navigator
     prepareRender(): void;
     layoutAxes(width: number, height: number, inverted: boolean, phase: number): void;
+
+    getParam(target: any, param: string): any;
+    setParam(param: string, value: any, redraw?: boolean): void;
 }
 
 const group_types = {
     // TODO: '...group'으로 통일한다.
     'bar': BarSeriesGroup,
+    'circlebar': CircleBarSeriesGroup,
     'line': LineSeriesGroup,
     'area': AreaSeriesGroup,
     'pie': PieSeriesGroup,
     'bargroup': BarSeriesGroup,
+    'circlebargroup': BarSeriesGroup,
     'linegroup': LineSeriesGroup,
     'areagroup': AreaSeriesGroup,
     'piegroup': PieSeriesGroup,
@@ -130,6 +144,7 @@ const series_types = {
     'boxplot': BoxPlotSeries,
     'bubble': BubbleSeries,
     'candlestick': CandlestickSeries,
+    'circlebar': CircleBarSeries,
     'dumbbell': DumbbellSeries,
     'equalizer': EqualizerSeries,
     'errorbar': ErrorBarSeries,
@@ -219,6 +234,17 @@ export class Credits extends ChartItem {
      * @config
      */
     offsetY = 1;
+    /**
+     * 크레딧과 차트 영역 사이의 간격.
+     */
+    gap = 4;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    isFloating(): boolean {
+        return this.floating || this.verticalAlign === VerticalAlign.MIDDLE;
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -336,12 +362,14 @@ export class ExportOptions extends ChartItem {
 }
 
 export interface IChartEventListener {
-    onModelChanged?(chart: Chart, item: ChartItem): void;
+    onModelChanged?(chart: Chart, item: ChartItem, tag?: any): void;
     onVisibleChanged?(chart: Chart, item: ChartItem): void;
     onPointVisibleChange?(chart: Chart, series: Series, point: DataPoint): void;
 }
 
 /**
+ * 차트 설정 모델.
+ * 
  * @config chart
  */
 export class Chart extends RcEventProvider<IChartEventListener> implements IChart {
@@ -352,6 +380,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _proxy: IChartProxy;
     private _templates: {[key: string]: any};
     private _assets: AssetCollection;
     private _themes: ThemeCollection;
@@ -363,13 +392,14 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
     private _split: Split;
-    _xPaneAxes: XPaneAxisMatrix;
-    _yPaneAxes: YPaneAxisMatrix;
+    _xPaneAxes: PaneXAxisMatrix;
+    _yPaneAxes: PaneYAxisMatrix;
     private _gauges: GaugeCollection;
     private _body: Body;
     private _annotations: AnnotationCollection;
     private _navigator: SeriesNavigator;
     private _export: ExportOptions;
+    private _params = {};
 
     private _inverted: boolean;
     private _splitted: boolean;
@@ -395,8 +425,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._series = new PlottingItemCollection(this);
         this._xAxes = new AxisCollection(this, true);
         this._yAxes = new AxisCollection(this, false);
-        this._xPaneAxes = new XPaneAxisMatrix(this);
-        this._yPaneAxes = new YPaneAxisMatrix(this);
+        this._xPaneAxes = new PaneXAxisMatrix(this);
+        this._yPaneAxes = new PaneYAxisMatrix(this);
         this._gauges = new GaugeCollection(this);
         this._body = new Body(this);
         this._annotations = new AnnotationCollection(this);
@@ -411,10 +441,6 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     //-------------------------------------------------------------------------
     _createChart(config: any): IChart {
         return new Chart(config);
-    }
-
-    startAngle(): number {
-        return this.body.getStartAngle();
     }
 
     animatable(): boolean {
@@ -454,7 +480,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      * 1. x축은 첫번째 축 하나만 사용된다.
      * 2. axis.position 속성은 무시된다.
      * 3. chart, series의 inverted 속성이 무시된다.
-     * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.\
+     * 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
      * 
      * [주의] 차트 로딩 후 변경할 수 없다.
      * 
@@ -462,12 +488,35 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
      */
     polar = false;
     /**
-     * true면 x축이 수직, y축이 수평으로 배치된다.\
+     * {@link polar}가 아닌 기본 직교 좌표계일 때 true로 지정하면 x축이 수직, y축이 수평으로 배치된다.\
      * [주의] 차트 로딩 후 변경할 수 없다.
      *
      * @config
      */
     inverted: boolean;
+    /**
+     * javascript에서 숫자 단위로 전달되는 날짜값은 기본적으로 local이 아니라 new Date 기준이다.
+     * 그러므로 보통 숫자로 지정된 날짜값은 utc 값이다.
+     * local 기준으로 표시하기 위해, 숫자로 지정된 날짜값에 더해야 하는 시간을 분단위로 지정한다.\
+     * ex) 한국은 -9 * 60
+     * 
+     * 명시적으로 지정하지 않으면 현재 위치에 따른 값으로 자동 설정된다.\
+     * [주의] 차트 로딩 후 변경할 수 없다.
+     * 
+     * @default undefined
+     * @config  
+     */
+    timeOffset = new Date().getTimezoneOffset();
+    /**
+     * //TODO: locale에서 기본값 가져오기
+     * 한 주의 시작 요일.\
+     * ex) 0: 일요일, 1: 월요일
+     * 
+     * [주의] 차트 로딩 후 변경할 수 없다.
+     * 
+     * @config
+     */
+    startOfWeek = 0;
 
     get assets(): AssetCollection {
         return this._assets;
@@ -521,11 +570,11 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._split;
     }
 
-    get xPaneAxes(): XPaneAxisMatrix {
+    get xPaneAxes(): PaneXAxisMatrix {
         return this._xPaneAxes;
     }
 
-    get yPaneAxes(): YPaneAxisMatrix {
+    get yPaneAxes(): PaneYAxisMatrix {
         return this._yPaneAxes;
     }
 
@@ -609,6 +658,11 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     gaugeByName(gauge: string): Gauge {
         return this._gauges.getGauge(gauge);
+    }
+
+    annotationByName(annotation: string): Annotation {
+        return this._annotations.getAnnotation(annotation) || 
+               (this._splitted ? this._split.getAnnotation(annotation) : this._body.getAnnotation(annotation));
     }
 
     axisByName(axis: string): Axis {
@@ -711,7 +765,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     load(source: any): void {
         const sTime = 'load chart ' + Math.random() * 1000000;
-        console.time(sTime);
+        Utils.LOGGING && console.time(sTime);
 
         this._config = source;
         // defaults
@@ -758,8 +812,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         if (!this._gaugeOnly) {
             // axes
             // 축은 반드시 존재해야 한다. (TODO: 동적으로 series를 추가하는 경우)
-            this._xAxes.load(source.xAxes || source.xAxis || {});
-            this._yAxes.load(source.yAxes || source.yAxis || {});
+            this._xAxes.load(pickProp3(source.xAxes, source.xAxis, {}));
+            this._yAxes.load(pickProp3(source.yAxes, source.yAxis, {}));
         }
 
         // body
@@ -771,8 +825,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         // series navigator
         this._navigator.load(source.seriesNavigator);
 
-        console.log('chart-items:', n_char_item);
-        console.timeEnd(sTime);
+        Utils.log('chart-items:', n_char_item);
+        Utils.LOGGING && console.timeEnd(sTime);
     }
 
     _connectSeries(series: IPlottingItem, isX: boolean): Axis {
@@ -865,6 +919,19 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     update(): void {
     }
 
+    getParam(target: any, param: string): any {
+        return this._params[param];
+    }
+
+    setParam(param: string, value: any, redraw?: boolean): void {
+        if (redraw && value !== this._params[param]) {
+            this._params[param] = value;
+            this._modelChanged(null);
+        } else {
+            this._params[param] = value;
+        }
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -875,7 +942,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
             for (const p in src) {
                 const v = src[p];
                 if (isObject(v)) {
-                    templs[p] = Object.assign({}, v);
+                    templs[p] = assign({}, v);
                 }
             }
             this.assignTemplates = this.$_assignTemplates.bind(this);
@@ -912,8 +979,8 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._options.axisGap || 0;
     }
 
-    _modelChanged(item: ChartItem): void {
-        this._fireEvent('onModelChanged', item);
+    _modelChanged(item: ChartItem, tag?: any): void {
+        this._fireEvent('onModelChanged', item, tag);
     }
 
     _visibleChanged(item: ChartItem): void {

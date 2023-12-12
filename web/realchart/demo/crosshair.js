@@ -5,13 +5,29 @@
 const config = {
     type: 'scatter',
     title: "Crosshair",
+    params: {
+        'crosshair.x': 0,
+        'crosshair.y': 0,
+    },
     xAxis: {
         title: 'Height',
-        crosshair: true,
+        crosshair: args => {
+            chart.setParam('crosshair.x', args.pos);
+            chart.getAnnotation('anno').update();
+        },
     },
     yAxis: {
         title: 'Weight',
-        crosshair: true,
+        crosshair: args => {
+            chart.setParam('crosshair.y', args.pos);
+            chart.getAnnotation('anno').update();
+        },
+    },
+    body: {
+        annotations: [{
+            name: 'anno',
+            text: '${crosshair.x;0;0;#.0}, ${crosshair.y;0;#.0}'
+        }]
     },
     series: { 
         data: [
@@ -98,6 +114,7 @@ function setActions(container) {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

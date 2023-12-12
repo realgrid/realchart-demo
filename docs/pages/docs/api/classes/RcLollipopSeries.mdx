@@ -1,11 +1,7 @@
 ## RcLollipopSeries
-            ### Extends
+### Extends
 - [RcChartSeries](../classes/RcChartSeries)
-            
-            
-**'lollipop'** 시리즈.
-
-            
+**'lollipop'** 시리즈.
 
 
 
@@ -13,42 +9,47 @@
  | Name | Type | Description |   
  | --- | --- | --- | 
  | [baseValue](/config/config/series/lollipop#basevalue) | `number{:js}` | 상/하 값 구분의 기준이 되는 값. |   
- | [belowStyle](/config/config/series/lollipop#belowstyle) | `SVGStyles \| string{:js}` | **[baseValue](#basevalue)**  혹은 y축의 baseValue보다 작은 쪽의 point들에 적용되는 스타일. |   
- | [clipped](/config/config/series/lollipop#clipped) | `boolean{:js}` | body 영역을 벗어난 data point view는 잘라낸다. |   
+ | [belowStyle](/config/config/series/lollipop#belowstyle) | `SVGStyles \| string{:js}` | [baseValue](#basevalue) 혹은 y축의 baseValue보다 작은 쪽의 point들에 적용되는 스타일. |   
+ | [col](/config/config/series/lollipop#col) | `number{:js}` | 분할 모드일 때 시리즈가 표시될 pane의 수직 위치. |   
  | [color](/config/config/series/lollipop#color) | `string{:js}` | 데이터 포인트 기본 색. |   
  | [colorField](/config/config/series/lollipop#colorfield) | `string{:js}` | undefined이면, data point의 값이 객체일 때 'color'. |   
- | [dataProp](/config/config/series/lollipop#dataprop) | `string{:js}` | undefined이면 "data". |   
+ | [dataProp](/config/config/series/lollipop#dataprop) | `string{:js}` | undefined이면 'data'. |   
  | [label](/config/config/series/lollipop#label) | `string{:js}` | 이 시리즈를 나타내는 텍스트. |   
  | [name](/config/config/series/lollipop#name) | `string{:js}` | 시리즈 이름. |   
- | [nullAsBase](/config/config/series/lollipop#nullasbase) | `boolean{:js}` | null인 y값을  **[baseValue](#basevalue)** 로 간주한다. |   
+ | [noClip](/config/config/series/lollipop#noclip) | `boolean{:js}` | true로 지정하면 body를 벗어난 data point 영역도 표시된다. |   
+ | [nullAsBase](/config/config/series/lollipop#nullasbase) | `boolean{:js}` | null인 y값을 [baseValue](#basevalue) 로 간주한다. |   
  | [onPointClick](/config/config/series/lollipop#onpointclick) | `PointClickCallback{:js}` | 데이터 point가 클릭될 때 발생하는 이벤트 콜백. |   
  | [pointColors](/config/config/series/lollipop#pointcolors) | `boolean \| string[]{:js}` | 데이터 포인트별 색들을 지정한다. |   
+ | [pointLabel](/config/config/series/lollipop/pointlabel) | `DataPointLabel{:js}` | 데이터포인트 label 설정 모델. |   
  | [pointPadding](/config/config/series/lollipop#pointpadding) | `number{:js}` | 이 시리즈의 point가 차지하는 영역 중에서 point bar 양쪽 끝에 채워지는 빈 영역의 크기. |   
  | [pointStyleCallback](/config/config/series/lollipop#pointstylecallback) | `PointStyleCallback{:js}` | 데이터 point의 동적 스타일 콜백. |   
- | [pointWidth](/config/config/series/lollipop#pointwidth) | `number{:js}` | 시리즈가 그룹에 포함되지 않거나, 포함된 그룹의 layout이  `default` 이거나 특별히 설정되지 않아서, 그룹에 포함된 시리즈들의 data point가 옆으로 나열되어 표시될 때, 포인트 표시 영역 내에서 이 시리즈의 포인트가 차지하는 영역의 상대 크기. |   
+ | [pointWidth](/config/config/series/lollipop#pointwidth) | `number{:js}` | 시리즈가 그룹에 포함되지 않거나, 포함된 그룹의 layout이 `default` 이거나 특별히 설정되지 않아서, 그룹에 포함된 시리즈들의 data point가 옆으로 나열되어 표시될 때, 포인트 표시 영역 내에서 이 시리즈의 포인트가 차지하는 영역의 상대 크기. |   
+ | [row](/config/config/series/lollipop#row) | `number{:js}` | 분할 모드일 때 시리즈가 표시될 pane의 수평 위치. |   
  | [style](/config/config/series/lollipop#style) | `SVGStyles \| string{:js}` | 스타일셋 혹은 class selector. |   
+ | [tooltip](/config/config/series/lollipop/tooltip) | `Tooltip{:js}` | 데이터포인트 툴팁 설정 모델. |   
+ | [trendline](/config/config/series/lollipop/trendline) | `Trendline{:js}` | 추세선 설정 모델. |   
  | [viewRangeValue](/config/config/series/lollipop#viewrangevalue) | `'z' \| 'x' \| 'y'{:js}` | ranges가 적용되는 값. |   
  | [viewRanges](/config/config/series/lollipop#viewranges) | `IValueRanges \| IValueRange[]{:js}` | 값 범위 목록. |   
  | [visible](/config/config/series/lollipop#visible) | `boolean{:js}` | 표시 여부. |   
  | [visibleInLegend](/config/config/series/lollipop#visibleinlegend) | `boolean{:js}` | 명시적 false로 지정하면 legend에 표시하지 않는다. |   
  | [xAxis](/config/config/series/lollipop#xaxis) | `string \| number{:js}` |  |   
- | [xField](/config/config/series/lollipop#xfield) | `string \| number{:js}` | undefined이면, data point의 값이 array일 때는 0, 객체이면 'x'. |   
+ | [xField](/config/config/series/lollipop#xfield) | `string \| number{:js}` | json 객체나 배열로 전달되는 데이터포인트 정보에서 x 값을 지정하는 속성명이나 인덱스. |   
  | [xStart](/config/config/series/lollipop#xstart) | `any{:js}` | x축 값이 설정되지 않은 첫번째 데이터 point에 설정되는 x값. |   
  | [xStep](/config/config/series/lollipop#xstep) | `string \| number{:js}` | x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격. |   
  | [yAxis](/config/config/series/lollipop#yaxis) | `string \| number{:js}` |  |   
- | [yField](/config/config/series/lollipop#yfield) | `string \| number{:js}` | undefined이면, data point의 값이 array일 때는 1, 객체이면 'y'. |   
- | [zOrder](/config/config/series/lollipop#zorder) | `number{:js}` |  | 
+ | [yField](/config/config/series/lollipop#yfield) | `string \| number{:js}` | json 객체나 배열로 전달되는 데이터포인트 정보에서 y 값을 지정하는 속성명이나 인덱스. |   
+ | [zOrder](/config/config/series/lollipop#zorder) | `number{:js}` |  |
 
 ## Properties
+### name: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)[#name]
+config에서 설정해된 name을 리턴한다.\
+최초 설정한 이름은 변경할 수 없다.
 ### pointLabel: [RcChartObject](../classes/RcChartObject)[#pointLabel]
 point label 모델.
-
 ### tooltip: [RcChartObject](../classes/RcChartObject)[#tooltip]
 point label 모델.
-
 ### trendLine: [RcChartObject](../classes/RcChartObject)[#trendLine]
 point label 모델.
-
 
 ## Methods
 ### get(prop): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#get]
@@ -56,20 +57,30 @@ point label 모델.
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
 
 ```js
-console.log(chart.series.get('name'))
+Utils.log(chart.series.get('name'))
 ```
 
 하위 객체의 설정 속성은 속성 경로를 지정해서 직접 가져올 수도 있다.
 
 ```js
-console.log(chart.axis.get('title.text'));
+Utils.log(chart.axis.get('title.text'));
 ```
+
+속성 변경은 [set](#set), [setAll](#setAll), [toggle](#toggle)등으로 실행한다.
 
 
 
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
-| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 속성 경로. |
+| prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | '**.**'으로 구분되는 속성 경로. |
+### getValueAt(xValue): [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)[#getValueAt]
+xValue에 해당하는 데이터포인터의 yValue를 리턴한다.
+
+
+
+| Parameter | Type |
+| ----------- | ----------- |
+| xValue | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
 ### set(prop, value, redraw): [RcChartObject](../classes/RcChartObject)[#set]
 지정한 속성의 값(들)을 설정한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다.\
@@ -91,7 +102,7 @@ chart.axis.set('title.text', 'New Title'));
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 경로 문자열 |
 | value | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 지정할 값(들) |
-| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
 ### setAll(props, redraw): [RcChartObject](../classes/RcChartObject)[#setAll]
 JSON 객체로 지정한 속성들의 값을 설정한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
@@ -109,7 +120,7 @@ JSON 객체로 지정한 속성들의 값을 설정한다.\
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | props | [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | 여러 설정 값들이 지정된 JSON 객체 |
-| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
 ### toggle(prop, redraw): [RcChartObject](../classes/RcChartObject)[#toggle]
 Boolean 타입의 설정값을 변경한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
@@ -123,4 +134,8 @@ chart.getSeries('ser02').toggle('visible');
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 이름 |
-| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](../classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+| redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+### updateData(data): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#updateData]
+| Parameter | Type |
+| ----------- | ----------- |
+| data | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |

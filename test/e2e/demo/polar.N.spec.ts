@@ -54,13 +54,12 @@ test.describe('polar.html test', async function () {
 	test('axisLabel', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
-		const axisLabel = await page.$('.rct-polar-axis-labels');
-		const text = await axisLabel.$$('text');
+		const axisLabel = await page.$$('.rct-polar-xaxis-label');
 
-		for (let i = 0; i < text.length; i++) {
+		for (let i = 0; i < axisLabel.length; i++) {
 			const labelText = await page.evaluate(
 				(el) => el.textContent,
-				text[i]
+				axisLabel[i]
 			);
 			expect(labelText).eq(config.xAxis.categories[i]);
 		}
@@ -84,13 +83,10 @@ test.describe('polar.html test', async function () {
 	test('grid 의 존재유무와 데이터의 갯수와 같은지 확인', async ({ page }) => {
 		const config: any = await page.evaluate('config');
 
-		const grid = await page.$('.rct-grids');
-		expect(grid).exist;
-
 		const axisGrid = await page.$('.rct-polar-axis-grids');
 		expect(axisGrid).exist;
 
-		const axisLine = await axisGrid.$$('.rct-polar-xaxis-grid-line');
+		const axisLine = await page.$$('.rct-polar-xaxis-grid-line');
 		expect(axisLine.length).eq(config.series[0].data.length);
 	});
 });

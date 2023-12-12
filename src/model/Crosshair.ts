@@ -6,9 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isFunc } from "../common/Common";
 import { DatetimeFormatter } from "../common/DatetimeFormatter";
 import { NumberFormatter } from "../common/NumberFormatter";
-import { SVGStyleOrClass } from "../common/Types";
+import { SVGStyleOrClass, _undef } from "../common/Types";
 import { IAxis } from "./Axis";
 import { ChartItem } from "./ChartItem";
 
@@ -55,11 +56,16 @@ export class CrosshairFlag extends ChartItem {
     minWidth = 50;
 }
 
+export interface ICrosshairCallbackArgs {
+    axis: object;
+    pos: number;
+    flag: string;
+}
+
+export type CrosshairChangeCallback = (args: ICrosshairCallbackArgs) => void;
+
 export class Crosshair extends ChartItem {
 
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -69,6 +75,7 @@ export class Crosshair extends ChartItem {
      * @config
      */
     readonly flag: CrosshairFlag;
+    _args: ICrosshairCallbackArgs;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -78,6 +85,11 @@ export class Crosshair extends ChartItem {
 
         this.flag = new CrosshairFlag(axis.chart, true);
         this.visible = false;
+        this._args = {
+            axis: _undef,
+            pos: _undef,
+            flag: _undef
+        };
     }
 
     //-------------------------------------------------------------------------
@@ -101,8 +113,19 @@ export class Crosshair extends ChartItem {
      * @config
      */
     followPointer = true;
+    /**
+     * 표시되는 값이 숫자일 때 사용되는 표시 형식.
+     * 
+     * @config
+     */
     numberFormat = '#,##0.#';
+    /**
+     * 표시되는 값이 날짜(시간)일 때 사용되는 표시 형식.
+     * 
+     * @config
+     */
     timeFormat = 'yyyy-MM-dd HH:mm'
+    onChange: any;
 
     //-------------------------------------------------------------------------
     // methods
@@ -115,15 +138,32 @@ export class Crosshair extends ChartItem {
         const v = this.axis.getAxisValueAt(length, pos);
 
         if (v instanceof Date) {
-            return DatetimeFormatter.getFormatter(this.timeFormat).toStr(new Date(v), 0);
+            return DatetimeFormatter.getFormatter(this.timeFormat).toStr(new Date(v), this.chart.startOfWeek);
         } else {
             return NumberFormatter.getFormatter(this.numberFormat).toStr(v);
+        }
+    }
+
+    moved(pos: number, flag: string): void {
+        if (this.onChange) {
+            this._args.pos = pos;
+            this._args.flag = flag;
+            this.onChange(this._args);
         }
     }
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doLoadSimple(source: any): boolean {
+        if (isFunc(source)) {
+            this.visible = true;
+            this.onChange = source;
+            return true;
+        }
+        return super._doLoadSimple(source);
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------

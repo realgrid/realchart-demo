@@ -1,65 +1,58 @@
-/**
- * @demo
- * 
- */
 const config = {
     type: 'bubble',
     options: {
         // animatable: false
     },
-    title: "Bubble Series",
+    title: "기업의 매출, 이익, 시장 점유율",
     xAxis: {
-        title: 'xAxis'
+        title: '매출액 (백만 달러)'
     },
     yAxis: {
-        title: 'yAxis'
+        title: '순이익 (백만 달러)'
     },
-    series: [{
-        pointLabel: {
-            visible: true,
-            suffix: 'm'
+    series: [
+        {
+            name: '기업 A',
+            pointLabel: {
+                visible: true,
+                suffix: 'm'
+            },
+            data: [
+                [500, 80, 63],
+                [600, 90, 70],
+                [400, 65, 40],
+                [550, 85, 55],
+                [450, 75, 60],
+                [700, 95, 75],
+                [300, 60, 35],
+                [650, 78, 68],
+                [480, 66, 50],
+                [520, 70, 65]
+            ]
         },
-        data: [
-            [9, 81, 63],
-            [98, 5, 89],
-            [51, 50, 73],
-            [41, 22, 14],
-            [58, 24, 20],
-            [78, 37, 34],
-            [55, 56, 53],
-            [18, 45, 70],
-            [42, 44, 28],
-            [3, 52, 59],
-            [31, 18, 97],
-            [79, 91, 63],
-            [93, 23, 23],
-            [44, 83, 22]
-        ]
-    },
-    {
-        color: '#ff5c35',
-        pointLabel: {
-            visible: true,
-            suffix: 'm'
-        },
-        data: [
-            [4, 30, 50],
-            [66, 24, 63],
-            [18, 18, 18],
-            [24, 83, 36],
-            [27, 60, 51],
-            [50, 37, 61],
-            [80, 80, 80],
-            [41, 65, 41],
-            [95, 60, 28],
-            [11, 14, 22],
-            [36, 28, 95],
-            [79, 63, 56],
-            [2, 91, 87],
-            [62, 79, 77]
-        ]
-    }]
-}
+        {
+            name: '기업 B',
+            color: '#ff5c35',
+            pointLabel: {
+                visible: true,
+                suffix: 'm'
+            },
+            data: [
+                [450, 75, 50],
+                [550, 95, 80],
+                [350, 60, 30],
+                [600, 100, 85],
+                [400, 66, 45],
+                [480, 80, 55],
+                [530, 85, 65],
+                [410, 70, 48],
+                [570, 90, 72],
+                [490, 77, 60]
+            ]
+        }
+    ]
+};
+
 
 let chart;
 
@@ -88,6 +81,7 @@ function setActions(container) {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

@@ -6,9 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { PathBuilder } from "../../common/PathBuilder";
+import { PathElement, RcElement } from "../../common/RcControl";
 import { IPercentSize, RtPercentSize, SVGStyleOrClass, calcPercent, parsePercentSize } from "../../common/Types";
 import { DataPoint } from "../DataPoint";
-import { BasedSeries } from "../Series";
+import { BasedSeries, Series } from "../Series";
 
 export class EqualizerSeriesPoint extends DataPoint {
 
@@ -68,5 +70,12 @@ export class EqualizerSeries extends BasedSeries {
         super._doLoad(src);
 
         this._segmentDim = parsePercentSize(this.segmentSize, false);
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        const pb = new PathBuilder();
+        pb.rect(0, 0, size, size * 0.4);
+        pb.rect(0, size * 0.6, size, size * 0.4);
+        return new PathElement(doc, Series.LEGEND_MARKER, pb.end());
     }
 }

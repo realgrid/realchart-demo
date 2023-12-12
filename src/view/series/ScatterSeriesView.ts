@@ -6,16 +6,16 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { ElementPool } from "../../common/ElementPool";
-import { PathElement, RcElement } from "../../common/RcControl";
+import { cos, sin } from "../../common/Common";
 import { IRect } from "../../common/Rectangle";
 import { PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { SvgShapes } from "../../common/impl/SvgShape";
+import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { PointItemPosition } from "../../model/Series";
 import { ScatterSeries, ScatterSeriesPoint } from "../../model/series/ScatterSeries";
-import { IPointView, MarkerSeriesPointView, MarkerSeriesView, PointLabelView, SeriesView } from "../SeriesView";
+import { MarkerSeriesView, PointLabelView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
@@ -49,7 +49,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
             if (this._polar) {
                 SeriesAnimation.grow(this);
             } else {
-                SeriesAnimation.slide(this);
+                SeriesAnimation.reveal(this);
             }
         }
     }
@@ -78,16 +78,18 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
     private $_layoutMarkers(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
-        const polar = this._polar = (series.chart as Chart).body.getPolar(series);
+        const needClip = series.needClip(false);
+        const xAxis = series._xAxisObj as Axis;
+        const yAxis = series._yAxisObj;
+        const polar = this._polar = (series.chart as Chart).body.getPolar(xAxis);
+        const polared = !!polar;
         const vr = polar ? this._getViewRate() : 1;
         const jitterX = series.jitterX;
         const jitterY = series.jitterY;
         const labels = series.pointLabel;
         const labelPos = labels.position;
-        const labelOff = labels.offset;
+        const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
-        const yAxis = series._yAxisObj;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
         const yOrg = height;
@@ -96,9 +98,10 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
 
         this._markers.forEach((mv, i) => {
             const p = mv.point;
+            const lv = labelViews && (labelView = labelViews.get(p, 0));
 
-            if (mv.setVisible(!p.isNull)) {
-                const s = series.shape;
+            if (mv.setVis(!p.isNull)) {
+                const s = series.getShape(p);
                 const sz = series.radius * vr;
                 const xJitter = Utils.jitter(p.xValue, jitterX);
                 const yJitter = Utils.jitter(p.yGroup, jitterY);
@@ -106,14 +109,12 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                 let x: number;
                 let y: number;
 
-                // m.className = model.getPointStyle(i);
-
                 if (polar) {
                     const a = polar.start + xAxis.getPosition(PI_2, xJitter);
                     const py = yAxis.getPosition(polar.rd, yJitter) * vr;
     
-                    x = p.xPos = polar.cx + py * Math.cos(a);
-                    y = p.yPos = polar.cy + py * Math.sin(a);
+                    x = p.xPos = polar.cx + py * cos(a);
+                    y = p.yPos = polar.cy + py * sin(a);
                 } else {
                     x = p.xPos = xAxis.getPosition(xLen, xJitter);
                     y = p.yPos = yOrg - yAxis.getPosition(yLen, yJitter);
@@ -123,26 +124,32 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                     }
                 }
 
-                switch (s) {
-                    case 'square':
-                    case 'diamond':
-                    case 'triangle':
-                    case 'itriangle':
-                    case 'star':
-                        path = SvgShapes[s](0 - sz, 0 - sz, sz * 2, sz * 2);
-                        break;
-
-                    default:
-                        path = SvgShapes.circle(0, 0, sz);
-                        break;
+                if (mv.setVis(polared || !needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
+                    switch (s) {
+                        case 'square':
+                        case 'diamond':
+                        case 'triangle':
+                        case 'itriangle':
+                        case 'star':
+                        case 'rectangle':
+                            path = SvgShapes[s](0 - sz, 0 - sz, sz * 2, sz * 2);
+                            break;
+                        default:
+                            path = SvgShapes.circle(0, 0, sz);
+                            break;
+                    }
+                    mv.setPath(path);
+                    mv.translate(x, y);
+    
+                    // label
+                    if (lv) {
+                        this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
+                    }
+                } else if (lv) {
+                    lv.setVis(false);
                 }
-                mv.setPath(path);
-                mv.translate(x, y);
-
-                // label
-                if (labelViews && (labelView = labelViews.get(p, 0))) {
-                    this._layoutLabelView(labelView, labelPos, labelOff, sz, x, y);
-                }
+            } else if (lv) {
+                lv.setVis(false);
             }
         });
     }

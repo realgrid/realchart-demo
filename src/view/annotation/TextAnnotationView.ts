@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { toSize } from "../../common/Rectangle";
-import { SvgRichText } from "../../common/RichText";
+import { IRichTextDomain, SvgRichText } from "../../common/RichText";
 import { ISize } from "../../common/Size";
 import { RectElement } from "../../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../../common/impl/TextElement";
@@ -52,13 +52,32 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
         const tv = this._textView;
 
         this._richText.setFormat(model.text);
-        this._richText.build(tv, hintWidth, hintHeight, null, null);
+        this._richText.build(tv, hintWidth, hintHeight, null, model._domain);
 
         return toSize(this._textView.getBBounds());
     }
 
     protected _doLayout(param: any): void {
-        this._textView.translate(this._paddings.left, this._paddings.top);
+        this._richText.layout(this._textView, this.textAlign(), this.width, this.height, this._paddings);
+
+        // const view = this._textView;
+        // let x = 0;
+
+        // switch (this.model.textAlign) {
+        //     case Align.CENTER:
+        //         view.anchor = TextAnchor.MIDDLE;
+        //         x += view.getBBounds().width / 2;
+        //         break;
+        //     case Align.RIGHT:
+        //         view.anchor = TextAnchor.END;
+        //         x += view.getBBounds().width;
+        //         break;
+        //     default:
+        //         view.anchor = TextAnchor.START;
+        //         break;
+        // }
+
+        // view.translate(this._paddings.left + x, this._paddings.top);
 
         super._doLayout(param);
     }

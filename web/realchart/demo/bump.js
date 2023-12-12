@@ -7,6 +7,7 @@ const config = {
     options: {},
     title: {
         text: "Bump Chart",
+        gap: 30,
         style: {
             marginBottom: '30px'
         },
@@ -61,6 +62,7 @@ function setActions(container) {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

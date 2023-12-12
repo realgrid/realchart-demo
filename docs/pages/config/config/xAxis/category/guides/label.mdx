@@ -1,5 +1,4 @@
-## [label](/config/config/label)
-label 모델.
+## **label**
 ## Properties
 
 ### align: `'center'|'left'|'right'{:js}`[#align]
@@ -8,18 +7,16 @@ label 모델.
 - `'left'` 
 - `'right'` 
 
-`default: 'left'`  
-
+<DefaultValue value="'left'" contents=""></DefaultValue>
 ### autoContrast: `boolean{:js}`[#autoContrast]
 텍스트가 data point 내부에 표시되는 경우 포인트 색상과 대조되도록 표시한다.
 
 
-밝게 표시할 때는  **[lightStyle](#lightstyle)** 을 적용하고,
-어둡게 표시할 때는  **[darkStyle](#darkstyle)** 이 적용된다.
-brightStyle이 지정되지 않으면 'rct-text-light'이,
-darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.  
-`default: true`  
-
+밝게 표시할 때는 [lightStyle](#lightstyle) 을 적용하고,
+어둡게 표시할 때는 [darkStyle](#darkstyle) 이 적용된다.
+brightStyle이 지정되지 않으면 <Content type="expression" value="'rct-text-light'"></Content>이,
+darkStyle이 지정되지 않으면 <Content type="expression" value="'rct-text-dark'"></Content>가 기본 적용된다.  
+<DefaultValue value="true" contents=""></DefaultValue>
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
 - `SVGStyles{:js}` 
 
@@ -31,8 +28,11 @@ darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.
 | fontSize | `string{:js}` | true |  
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### darkStyle: `SVGStyles | string{:js}`[#darkStyle]
 - `SVGStyles{:js}` 
 
@@ -44,13 +44,15 @@ darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.
 | fontSize | `string{:js}` | true |  
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### effect[#effect]
 
 
-`default: ChartTextEffect.NONE`  
-
+<DefaultValue value="ChartTextEffect.NONE" contents=""></DefaultValue>
 ### lightStyle: `SVGStyles | string{:js}`[#lightStyle]
 - `SVGStyles{:js}` 
 
@@ -62,8 +64,11 @@ darkStyle이 지정되지 않으면 'rct-text-dark'가 기본 적용된다.
 | fontSize | `string{:js}` | true |  
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### numberFormat: `string{:js}`[#numberFormat]
 label이 숫자일 때 표시 형식.  
 
@@ -71,6 +76,12 @@ label이 숫자일 때 표시 형식.
 축의 tick 간격이 1000 이상인 큰 수를 표시할 때 
 이 속성에 지정한 symbol을 이용해서 축약형으로 표시한다.  
 
+### offsetX: `number{:js}`[#offsetX]
+label과 가이드 사이의 수평 간격.  
+<DefaultValue value="3" contents=""></DefaultValue>
+### offsetY: `number{:js}`[#offsetY]
+label과 가이드 사이의 수직 간격.  
+<DefaultValue value="3" contents=""></DefaultValue>
 ### prefix: `string{:js}`[#prefix]
 label 문자열 앞에 추가되는 문자열.  
 
@@ -86,8 +97,11 @@ label 문자열 앞에 추가되는 문자열.
 | fontSize | `string{:js}` | true |  
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### suffix: `string{:js}`[#suffix]
 label 문자열 끝에 추가되는 문자열.  
 
@@ -100,8 +114,7 @@ rich text format을 지정할 수 있다.
 - `'middle'` 
 - `'top'` 
 
-`default: 'top'`  
-
+<DefaultValue value="'top'" contents=""></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
-`default: true`  
+<DefaultValue value="true" contents=""></DefaultValue>

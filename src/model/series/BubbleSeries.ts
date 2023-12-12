@@ -6,13 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp } from "../../common/Common";
+import { pickNum, pickProp, assign } from "../../common/Common";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
-import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
-import { MarkerSeries, Series, SeriesMarker } from "../Series";
+import { MarkerSeries } from "../Series";
 
 /**
  * [y, z]
@@ -36,7 +35,7 @@ export class BubbleSeriesPoint extends DataPoint {
     // overriden members
     //-------------------------------------------------------------------------
     getLabel(index: number) {
-        return this.z;
+        return this.zValue;
     }
 
     parse(series: BubbleSeries): void {
@@ -46,7 +45,7 @@ export class BubbleSeriesPoint extends DataPoint {
     }
 
     protected _assignTo(proxy: any): any {
-        return Object.assign(super._assignTo(proxy), {
+        return assign(super._assignTo(proxy), {
             z: this.z,
             zValue: this.zValue
         });
@@ -59,7 +58,7 @@ export class BubbleSeriesPoint extends DataPoint {
             const d = v.length > 2 ? 1 : 0;
 
             this.y = v[pickNum(series.yField, 0 + d)];
-            this.z = v[pickNum(series.zProp, 1 + d)];
+            this.z = v[pickNum(series.zField, 1 + d)];
             if (d > 0) {
                 this.x = v[pickNum(series.xField, 0)];
             }
@@ -70,7 +69,7 @@ export class BubbleSeriesPoint extends DataPoint {
         super._readObject(series, v);
 
         if (!this.isNull) {
-            this.z = pickProp(v[series.zProp], v.z);
+            this.z = pickProp(v[series.zField], v.z);
         }
     }
 
@@ -78,6 +77,10 @@ export class BubbleSeriesPoint extends DataPoint {
         super._readSingle(v);
 
         this.z = this.y;
+    }
+
+    getZValue(): number {
+        return this.zValue;
     }
 }
 
@@ -95,7 +98,7 @@ export class BubbleSeries extends MarkerSeries {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    zProp: string;
+    zField: string;
     sizeMode = BubbleSizeMode.AREA;
     minSize: RtPercentSize = 8;
     maxSize: RtPercentSize = '20%';
@@ -151,6 +154,10 @@ export class BubbleSeries extends MarkerSeries {
 
     protected _createPoint(source: any): DataPoint {
         return new BubbleSeriesPoint(source);
+    }
+
+    hasZ(): boolean {
+        return true;
     }
 
     _colorByPoint(): boolean {

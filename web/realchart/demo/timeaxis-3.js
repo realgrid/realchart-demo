@@ -22,7 +22,8 @@ const config = {
         }
     },
     tick: {
-      step: 30,
+      // step: 30,
+      stepInterval: '1m'
     },
     minPadding: 0,
     maxPadding: 0,
@@ -167,6 +168,7 @@ function setActions(container) {
 function init() {
   console.log("RealChart v" + RealChart.getVersion());
   // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
   chart = RealChart.createChart(document, "realchart", config);
   setActions("actions");

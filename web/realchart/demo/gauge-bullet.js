@@ -10,7 +10,7 @@ const config = {
             // align: 'center'
         }
     },
-    title: "Bullet Guage",
+    title: "Bullet Gauges",
     gauge: [{
         type: 'bullet',
         name: 'bullet1',
@@ -31,8 +31,8 @@ const config = {
             color: '#aaa'
         }],
         label: {
-            text: "RealChart Bullet<br>ver 1.0"
-            // position: 'bottom',
+            text: "RealChart Bullet<br>ver 1.0",
+            // position: 'top',
         }
     }, {
         type: 'bullet',
@@ -86,7 +86,10 @@ function setActions(container) {
         chart.load(config);
     }, false);
     createListBox(container, "label.position", ['', 'left', 'right', 'top', 'bottom'], function (e) {
-        config.gauge[0].label.position = _getValue(e);
+        const pos = _getValue(e);
+        config.gauge[0].label.position = pos;
+        config.gauge[0].height = (pos === 'top' || pos === 'bottom') ? 86 : 65;
+        config.gauge[0].label.text = (pos === 'top' || pos === 'bottom') ? 'RealChart Bullet ver 1.0' : 'RealChart Bullet<br>ver 1.0';
         chart.load(config);
     }, '');
     createCheckBox(container, 'scale', function (e) {
@@ -106,7 +109,7 @@ function setActions(container) {
         chart.load(config);
     }, '8');
     createCheckBox(container, 'scale.opposite', function (e) {
-        config.gauge[0].scale.opposite = _getChecked(e);
+        config.gauge[0].scale.position = _getChecked(e) ? 'opposite' : 'default';
         chart.load(config);
     }, false);
     line(container);
@@ -115,7 +118,10 @@ function setActions(container) {
         chart.load(config);
     }, false);
     createListBox(container, "label2.position", ['', 'left', 'right', 'top', 'bottom'], function (e) {
-        config.gauge[1].label.position = _getValue(e);
+        const pos = _getValue(e);
+        config.gauge[1].label.position = pos;
+        config.gauge[1].width = (pos === 'left' || pos === 'right') ? 140 : 65;
+        // config.gauge[0].label.text = (pos === 'left' || pos === 'bottom') ? 'RealChart Bullet ver 1.0' : 'RealChart Bullet<br>ver 1.0';
         chart.load(config);
     }, '');
     createCheckBox(container, 'scale2', function (e) {
@@ -135,7 +141,7 @@ function setActions(container) {
         chart.load(config);
     }, '8');
     createCheckBox(container, 'scale2.opposite', function (e) {
-        config.gauge[1].scale.opposite = _getChecked(e);
+        config.gauge[1].scale.position = _getChecked(e) ? 'opposite' : 'default';
         chart.load(config);
     }, false);
 }
@@ -143,6 +149,7 @@ function setActions(container) {
 function init() {
     console.log(RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

@@ -4,17 +4,75 @@
  */
 const config = {
 	options: {
-		// animatable: false,
 	},
 	title: 'Pattern Fill',
     assets: [{
         type: 'pattern',
-        id: 'pattern-1',
+        id: 'pattern-0',
         pattern: 0,
         style: {
-            stroke: 'red',
-            fill: 'red'
+            stroke: 'black',
         }
+    },
+	{
+        type: 'pattern',
+        id: 'pattern-1',
+        pattern: 1,
+    },
+	{
+        type: 'pattern',
+        id: 'pattern-2',
+        pattern: 2,
+    },
+	{
+        type: 'pattern',
+        id: 'pattern-3',
+        pattern: 3,
+    },
+	{
+        type: 'pattern',
+        id: 'pattern-4',
+        pattern: 4,
+    },
+	{
+        type: 'pattern',
+        id: 'pattern-5',
+        pattern: 5,
+    },
+	{
+        type: 'pattern',
+        id: 'pattern-6',
+        pattern: 6,
+    },
+	{
+        type: 'pattern',
+        id: 'pattern-7',
+        pattern: 7,
+    },
+	{
+        type: 'pattern',
+        id: 'pattern-8',
+        pattern: 8,
+    },
+	{
+        type: 'pattern',
+        id: 'pattern-9',
+        pattern: 9,
+    },
+	{
+        type: 'pattern',
+        id: 'pattern-10',
+        pattern: 10,
+    },
+	{
+        type: 'pattern',
+        id: 'pattern-11',
+        pattern: 11,
+    },
+	{
+        type: 'pattern',
+        id: 'pattern-12',
+        pattern: 12,
     }],
 	legend: true,
     body: {
@@ -26,14 +84,13 @@ const config = {
 		title: {
 			text: '수정구'
 		},
-        crosshair: true,
 	},
 	yAxis: {
 		title: {
 			text: '전체 인구수'
 		},
 	},
-	series: {
+	series: [{
 		pointLabel: {
 			visible: true,
 			effect: 'outline', // 'background',
@@ -49,9 +106,23 @@ const config = {
 			['태평4동', 12279],
 		],
 		style: {
-            fill: 'url(#pattern-1)'
+            fill: 'url(#pattern-0)'
 		},
-	},
+	},{
+        type: 'pie',
+        centerX: '80%',
+        centerY: '40%',
+        radius: '30%',
+        legendByPoint: true,
+		pointStyleCallback: ({index}) => {
+			return {
+				fill: `url(#pattern-${index})`,
+				stroke: '#FFF',
+				strokeWidth: '4px'
+			}
+		},
+        data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    }],
 };
 
 let animate;
@@ -166,12 +237,12 @@ function setActions(container) {
 	createListBox(
 		container,
 		'color',
-		['red', 'blue', 'green', 'gray'],
+		['black', 'red', 'blue', 'green', 'gray'],
 		function (e) {
 			config.assets[0].style = { fill: _getValue(e), stroke: _getValue(e) };
 			chart.load(config, animate);
 		},
-		'red'
+		'black'
 	);
 	
 	createCodePenButton();
@@ -180,6 +251,7 @@ function setActions(container) {
 function init() {
 	console.log(RealChart.getVersion());
 	// RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
 	chart = RealChart.createChart(document, 'realchart', config);
 	setActions('actions');

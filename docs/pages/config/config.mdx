@@ -4,31 +4,52 @@
 차트 보조 요소 설정
 
 ### gaugeType: `string{:js}`[#gaugeType]
-기본 게이지 type.\
-게이지에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.\
-[주의] 차트 로딩 후 변경할 수 없다.  
-`default: 'circle'`  
+기본 게이지 type.
 
+게이지에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
+
+[주의] 차트 로딩 후 변경할 수 없다.  
+<DefaultValue value="'circle'" contents=""></DefaultValue>
 ### inverted: `boolean{:js}`[#inverted]
-true면 x축이 수직, y축이 수평으로 배치된다.\
+[polar](#polar) 가 아닌 기본 직교 좌표계일 때 <Content type="keyword" value="true"></Content>로 지정하면 x축이 수직, y축이 수평으로 배치된다.
+
 [주의] 차트 로딩 후 변경할 수 없다.  
 
 ### polar: `boolean{:js}`[#polar]
-true면 차트가  **[극좌표계](https://en.wikipedia.org/wiki/Polar_coordinate_system)** 로 표시된다.\
-기본은  **[직교좌표계](https://en.wikipedia.org/wiki/Cartesian_coordinate_system)** 이다.
+<Content type="keyword" value="true"></Content>면 차트가 **[극좌표계](https://en.wikipedia.org/wiki/Polar_coordinate_system)** 로 표시된다.
+
+기본은 **[직교좌표계](https://en.wikipedia.org/wiki/Cartesian_coordinate_system)** 이다.
 극좌표계일 때,
 x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이 있다.
 1. x축은 첫번째 축 하나만 사용된다.
 2. axis.position 속성은 무시된다.
 3. chart, series의 inverted 속성이 무시된다.
-4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.\
+4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
 
 [주의] 차트 로딩 후 변경할 수 없다.  
-`default: false`  
+<DefaultValue value="false" contents=""></DefaultValue>
+### startOfWeek: `number{:js}`[#startOfWeek]
+한 주의 시작 요일.
 
+ex) 0: 일요일, 1: 월요일
+
+[주의] 차트 로딩 후 변경할 수 없다.  
+<DefaultValue value="0" contents=""></DefaultValue>
+### timeOffset: `number{:js}`[#timeOffset]
+javascript에서 숫자 단위로 전달되는 날짜값은 기본적으로 local이 아니라 new Date 기준이다.
+그러므로 보통 숫자로 지정된 날짜값은 utc 값이다.
+local 기준으로 표시하기 위해, 숫자로 지정된 날짜값에 더해야 하는 시간을 분단위로 지정한다.
+
+ex) 한국은 -9 * 60
+
+명시적으로 지정하지 않으면 현재 위치에 따른 값으로 자동 설정된다.
+
+[주의] 차트 로딩 후 변경할 수 없다.  
+<DefaultValue value="undefined" contents=""></DefaultValue>
 ### type: `string{:js}`[#type]
-기본 시리즈 type.\
+기본 시리즈 type.
   의 기본값.
-시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.\
+시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
+
 [주의] 차트 로딩 후 변경할 수 없다.  
-`default: 'bar'`  
+<DefaultValue value="'bar'" contents=""></DefaultValue>

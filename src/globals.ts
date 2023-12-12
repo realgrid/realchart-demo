@@ -8,10 +8,12 @@
 
 import { ChartControl } from "./ChartControl";
 import { RcChartControl } from "./api/RcChartControl";
+import { RcDebug } from "./common/Common";
 import { RcControl, RcElement } from "./common/RcControl";
+import { Utils } from "./common/Utils";
 import { Chart } from "./model/Chart";
 
-const clazz: any = RcChartControl;
+// const clazz: any = RcChartControl;
 
 // [주의]main.ts에서 직접 구현하면 되지만, dldoc에서 global을 별도 구성할 수 있도록 자체 class에서 구현한다.
 /**
@@ -23,7 +25,7 @@ export class Globals {
      * RealChart 라이브러리 버전 정보를 리턴한다.
      * 
      * ```js
-     * console.log(RealChart.getVersion()); // '1.1.2'
+     * Utils.log(RealChart.getVersion()); // '1.1.2'
      * ```
      * 
      * @returns 버전 문자열
@@ -42,7 +44,13 @@ export class Globals {
      * @param debug 디버깅 상태 표시 여부
      */
     static setDebugging(debug: boolean): void {
-        RcElement.DEBUGGING = debug;
+        RcElement.DEBUGGING = RcDebug._debugging = debug;
+    }
+    /**
+     * true로 지정하면 라이브러리 내부 메시지를 출력한다.
+     */
+    static setLogging(logging: boolean): void {
+        Utils.LOGGING = logging;
     }
     /**
      * false로 지정하면 시리즈 시작 애니메이션 등을 포함,
@@ -62,21 +70,21 @@ export class Globals {
      * 차트 설정 모델을 기빈으로
      * {@link rc.RcChartControl Chart 컨트롤} svg를 생성한 후,
      * 지정된 div 엘리먼트의 유일한 자식으로 포함시킨다.\
-     * div 스타일에 지정된 padding을 제외한 전체 영역의 크기대로 표시된다.
+     * div 전체 영역의 크기로 표시된다.
      * 
      * ```js
      * const chart = RealChart.createChart(document, 'realchart', config);
      * ```
      * 
-     * 
      * @param doc
      * @param container 컨트롤이 생성되는 div 엘리먼트나 id
      * @param config 차트 모델 설정 JSON
+     * @param animate 첫 로딩 animation을 실행한다.
      * @returns 생성된 차트 컨트롤 객체
      */
-    static createChart(doc: Document, container: string | HTMLDivElement, config: any): RcChartControl {
-        const c = new ChartControl(doc, container);
-        c.model = new Chart(config);
-        return new (RcChartControl as any)(c);
+    static createChart(doc: Document, container: string | HTMLDivElement, config: any, animate = true): RcChartControl {
+        const c =  new (RcChartControl as any)(new ChartControl(doc, container));
+        config && c.load(config, true);
+        return c;
     }
 }

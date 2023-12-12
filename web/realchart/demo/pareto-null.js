@@ -17,7 +17,7 @@ const config = {
         padding: 0,
         position: 'opposite',
         tick: {
-            baseAxis: 0,
+            // baseAxis: 0,
         },
         label: {
             suffix: '%'
@@ -65,6 +65,7 @@ function setActions(container) {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

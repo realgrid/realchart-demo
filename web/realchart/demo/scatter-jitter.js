@@ -12,30 +12,34 @@ const config = {
     },
     yAxis: {
     },
-	series: [{
-        data: getJitterData(0, 200),
-        radius: 2
-    },
-    {
-        data: getJitterData(1, 200),
-        radius: 2
-    },
-    {
-        data: getJitterData(2, 200),
-        radius: 2
-    },
-    {
-        data: getJitterData(3, 200),
-        radius: 2
-    },
-    {
-        data: getJitterData(4, 200),
-        radius: 2
-    },
-    {
-        data: getJitterData(5, 200),
-        radius: 2
-    }],
+	series: [
+		{
+			name: '나이',
+			data: heart2_data.filter(d => d.features === 0),
+			xField: 'features',
+			yField: 'value'
+		},{
+			name: '안정시 혈압 (mmHg 단위)',
+			data: heart2_data.filter(d => d.features === 1),
+			xField: 'features',
+			yField: 'value'
+		},{
+			name: '콜레스테롤 수치 (mg/dl 단위)',
+			data: heart2_data.filter(d => d.features === 2),
+			xField: 'features',
+			yField: 'value'
+		},{
+			name: '최대 심박수',
+			data: heart2_data.filter(d => d.features === 3),
+			xField: 'features',
+			yField: 'value'
+		},{
+			name: 'ST 우울증',
+			data: heart2_data.filter(d => d.features === 4),
+			xField: 'features',
+			yField: 'value'
+		},
+     ],
 };
 
 let chart;
@@ -94,6 +98,7 @@ function setActions(container) {
 function init() {
 	console.log('RealChart v' + RealChart.getVersion());
 	// RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
 	chart = RealChart.createChart(document, 'realchart', config);
 	setActions('actions');

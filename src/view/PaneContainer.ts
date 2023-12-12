@@ -8,7 +8,7 @@
 
 import { LayerElement, RcControl } from "../common/RcControl";
 import { ISize } from "../common/Size";
-import { _undefined } from "../common/Types";
+import { _undef } from "../common/Types";
 import { RectElement } from "../common/impl/RectElement";
 import { Axis, PaneAxes, PaneAxisMatrix } from "../model/Axis";
 import { Chart, IChart } from "../model/Chart";
@@ -65,6 +65,18 @@ class AxisSectionView extends SectionView {
 
             v.model = axes[i];
 
+            bodies.forEach(bodies2 => {
+                bodies2.forEach((body: PaneBodyView) => {
+                    if (body.isConnected(axis)) {
+                        v.prepareGuides(doc, body.row, body.col, body._guideContainer, body._frontGuideContainer);
+                    }
+                })
+            })
+
+            // const row = this.row;// pos === AxisPosition.OPPOSITE ? this.row - 1 : this.row;
+            // const col = this.col;//pos === AxisPosition.OPPOSITE ? this.col - 1 : this.col;
+            // v.prepareGuides(doc, bodies[row][col]._guideContainer, bodies[row][col]._frontGuideContainer);
+
             // if (pos === AxisPosition.BETWEEN) {
             //     let row = !this.isX ? this.row - 1 : this.row;
             //     let col = this.isX ? this.col - 1 : this.col;
@@ -81,7 +93,7 @@ class AxisSectionView extends SectionView {
 
         this.axes = axes;
 
-        if (this.setVisible(views.length > 0)) {
+        if (this.setVis(views.length > 0)) {
             const m = views[0].model;
 
             // this.isHorz = m._isHorz;
@@ -193,7 +205,7 @@ class AxisContainer extends SectionView {
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, public isX: boolean) {
-        super(doc);
+        super(doc, 'rct-axis-container');
     }
 
     //-------------------------------------------------------------------------
@@ -291,6 +303,9 @@ export class PaneBodyView extends BodyView {
     col = 0;
 
     //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     prepareRender(doc: Document, chart: IChart): void {
@@ -345,6 +360,10 @@ export class PaneContainer extends LayerElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    bodyViewOf(dom: Element): PaneBodyView {
+        return this._bodies.find(b => b.contains(dom));
+    }
+
     prepare(doc: Document, model: Split): void {
         const chart = model.chart as Chart;
 
@@ -442,8 +461,8 @@ export class PaneContainer extends LayerElement {
             // strokeDasharray: '3'
         });
 
-        this.add(this._bodyContainer = new LayerElement(doc, _undefined));
-        this.add(this._axisContainer = new LayerElement(doc, _undefined));
+        this.add(this._bodyContainer = new LayerElement(doc, _undef));
+        this.add(this._axisContainer = new LayerElement(doc, _undef));
     }
 
     private $_prepareBodies(doc: Document, model: Split): void {
@@ -483,7 +502,7 @@ export class PaneContainer extends LayerElement {
     private $_prepareAxes(doc: Document, mats: PaneAxisMatrix, isX: boolean): void {
         const containers = isX ? this._xContainers : this._yContainers;
         const count = isX ? mats.rows() : mats.cols();
-        // console.log(isX ? 'x' : 'y', count);
+        // Utils.log(isX ? 'x' : 'y', count);
 
         while (containers.length < count) {
             const c = new AxisContainer(doc, isX);
@@ -548,10 +567,11 @@ export class PaneContainer extends LayerElement {
                 });
             } else {
                 const x = rowPts[1];
-                const w2 = rowPts[2] - x;
+                const w2 = rowPts[rowPts.length - 2] - x;
 
                 containers.forEach((c, i) => {
-                    c.resize(w2, c.mh).translate(rowPts[i * 2 + 1], h - colPts[i * 2 + 1]);
+                    // c.resize(w2, c.mh).translate(rowPts[i * 2 + 1], h - colPts[i * 2 + 1]);
+                    c.resize(w2, c.mh).translate(x, h - colPts[i * 2 + 1]);
                     c.layout(rowPts);
                 });
             }

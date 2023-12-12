@@ -7,14 +7,30 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { pickNum } from "./Common";
-import { Align, ZWSP } from "./Types";
-import { TextElement } from "./impl/TextElement";
+import { DatetimeFormatter } from "./DatetimeFormatter";
+import { NumberFormatter } from "./NumberFormatter";
+import { Sides } from "./Sides";
+import { TextFormatter } from "./TextFormatter";
+import { Align, ZWSP, _undef } from "./Types";
+import { TextAnchor, TextElement } from "./impl/TextElement";
 
 const HEIGHT = '$_TH';
 const WIDTH = '$_TW';
 
-export type RichTextParamCallback = (target: any, param: string, format: string) => string;
+export type RichTextParamCallback = (target: any, param: string) => any;
 
+export interface IRichTextDomain {
+    callback?: RichTextParamCallback;
+    numberFormatter?: NumberFormatter;
+    timeFormatter?: DatetimeFormatter;
+    textFormatter?: TextFormatter;
+    startOfWeek?: number;
+}
+
+/**
+ * '${name;default;format}', 
+ * [주의] default에는 format이 적용되지 않는다. 즉, format이 적용된 문자열을 설정해야 한다.
+ */
 class Word {
 
     //-------------------------------------------------------------------------
@@ -39,25 +55,36 @@ class Word {
         return this;
     }
 
-    getText(target: any, callback: RichTextParamCallback): string {
+    getText(target: any, domain: IRichTextDomain): string {
         const literals = this._literals;
 
-        if (literals && callback) {
+        if (literals && domain.callback) {
             let s = this.text;
 
-            for (let i = 0; i < literals.length; i += 3) {
-                s = s.replace(literals[i], callback(target, literals[i + 1], literals[i + 2]));
+            for (let i = 0; i < literals.length; i += 4) {
+                let v: any = domain.callback(target, literals[i + 1]);
+
+                if (typeof v === 'number' && !isNaN(v) || typeof v === 'bigint') {
+                    const f = literals[3] ? NumberFormatter.getFormatter(literals[3]) : domain.numberFormatter;
+                    if (f) v = f.toStr(v);
+                } else if (v instanceof Date) {
+                    const f = literals[3] ? DatetimeFormatter.getFormatter(literals[3]) : domain.timeFormatter;
+                    if (f) v = f.toStr(v, domain.startOfWeek || 0);
+                } else if (v == null) {
+                    v = literals[i + 2] || '';
+                }
+                s = s.replace(literals[i], v);
             }
             return s;
         }
         return this.text;
     }
 
-    prepareSpan(span: SVGTSpanElement, target: any, domain: RichTextParamCallback): SVGTSpanElement {
+    prepareSpan(span: SVGTSpanElement, target: any, domain: IRichTextDomain): SVGTSpanElement {
         const s = this.getText(target, domain);
 
         span.textContent = s;
-        //console.log(span.textContent, span.getBBox().y, span.getBBox().height);
+        //Utils.log(span.textContent, span.getBBox().y, span.getBBox().height);
         return span;
     }
 
@@ -81,9 +108,15 @@ class Word {
             const k = s2.indexOf(';');
 
             if (k > 0) {
-                this._literals.push(s, s2.substring(0, k), s2.substring(k + 1));
+                const k2 = s2.indexOf(';', k + 1);
+                if (k2 >= k) {
+                    this._literals.push(s, s2.substring(0, k), s2.substring(k + 1, k2), s2.substring(k2 + 1));
+                } else {
+                    this._literals.push(s, s2.substring(0, k), s2.substring(k + 1), _undef);
+                }
+                if (this._literals[2].length === 0) this._literals[2] = _undef;
             } else {
-                this._literals.push(s, s2, '');
+                this._literals.push(s, s2, _undef, _undef);
             }
 
             x = j + 1;
@@ -99,14 +132,14 @@ abstract class SpanWord extends Word {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    prepareSpan(span: SVGTSpanElement, target: any, domain: RichTextParamCallback): SVGTSpanElement {
+    prepareSpan(span: SVGTSpanElement, target: any, domain: IRichTextDomain): SVGTSpanElement {
         const s = this.getText(target, domain);
         const x1 = s.indexOf('>') + 1;
         const x2 = s.indexOf('<', x1);
 
         this._doPrepare(span, s, x1, x2);
 
-        //console.log(span.textContent, span.getBBox().y, span.getBBox().height);
+        //Utils.log(span.textContent, span.getBBox().y, span.getBBox().height);
         return span;
     }
 
@@ -249,15 +282,17 @@ class SvgLine {
         return this;
     }
 
-    getText(target: any, domain: RichTextParamCallback): string {
-        let s = '';
+    // getText(target: any, domain: RichTextParamCallback): string {
+    //     let s = '';
         
-        for (let w of this._words) {
-            s += w.getText(target, domain);
-        }
-        return s;
-    }
+    //     for (let w of this._words) {
+    //         s += w.getText(target, domain);
+    //     }
+    //     return s;
+    // }
 }
+
+const line_sep = /<br.*?>|\r\n|\n/;
 
 /**
  * <t>, <b>, <i>, <br>,
@@ -271,7 +306,7 @@ export class SvgRichText {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    private _format: string;
+    _format: string;
     lineHeight: number;
 
     //-------------------------------------------------------------------------
@@ -291,8 +326,7 @@ export class SvgRichText {
     //-------------------------------------------------------------------------
     setFormat(value: string) {
         if (value !== this._format) {
-            this._format = value;
-            value && this.$_parse(value);
+            this.$_parse(this._format = value != null ? String(value) : value);
         }
     }
 
@@ -315,7 +349,7 @@ export class SvgRichText {
     /**
      * TODO: max width
      */
-    build(view: TextElement, maxWidth: number, maxHeight: number, target: any, domain: RichTextParamCallback): void {
+    build(view: TextElement, maxWidth: number, maxHeight: number, target: any, domain: IRichTextDomain): void {
         const doc = view.doc;
         const hLine = pickNum(this.lineHeight, 1);
         let hMax = 0;
@@ -381,6 +415,29 @@ export class SvgRichText {
         // view.layoutText(hMax); // 가장 큰 높이의 행 높이를 전달한다. 맞나?
     }
 
+    layout(view: TextElement, align: Align, width: number, height: number, padding: Sides): void {
+        const r = view.getBBounds();
+        let x: number;
+        let y = Math.max(padding.top, padding.top + (height - r.height) / 2);
+
+        switch (align) {
+            case Align.CENTER:
+                view.anchor = TextAnchor.MIDDLE;
+                x = padding.left + (width - padding.left - padding.right) / 2;
+                break;
+            case Align.RIGHT:
+                view.anchor = TextAnchor.END;
+                x = view.getBBounds().width - padding.right;
+                break;
+            default:
+                view.anchor = TextAnchor.START;
+                x = padding.left;
+                break;
+        }
+
+        view.translate(x, y);
+    }
+
 	//-------------------------------------------------------------------------
     // internal members
 	//-------------------------------------------------------------------------
@@ -388,7 +445,7 @@ export class SvgRichText {
         const lines = this._lines = [];
 
         if (fmt) {
-            const strs = fmt.split(/<br.*?>|\r\n|\n/);
+            const strs = fmt.split(line_sep);
 
             for (let s of strs) {
                 lines.push(new SvgLine().parse(s));

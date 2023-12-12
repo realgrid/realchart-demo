@@ -6,13 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum } from "../common/Common";
-import { DEG_RAD, IPercentSize, ORG_ANGLE, PI_2, RtPercentSize, _undefined, calcPercent, parsePercentSize } from "../common/Types";
+import { isArray, isObject } from "../common/Common";
+import { IPercentSize, RtPercentSize, _undef, calcPercent, parsePercentSize } from "../common/Types";
 import { Annotation, AnnotationCollection } from "./Annotation";
-import { AxisGuide } from "./Axis";
+import { Axis } from "./Axis";
 import { IChart } from "./Chart";
 import { BackgroundImage, ChartItem } from "./ChartItem";
-import { Series } from "./Series";
 
 export enum ZoomType {
     NONE = 'none',
@@ -27,7 +26,7 @@ export class ZoomButton extends ChartItem {
     // constructor
     //-------------------------------------------------------------------------
     constructor(public body: Body) {
-        super(body.chart, _undefined);
+        super(body.chart, _undef);
     }
 
     //-------------------------------------------------------------------------
@@ -74,6 +73,14 @@ export class BodySplit extends ChartItem {
     //-------------------------------------------------------------------------
 }
 
+export interface IPolar { 
+    start: number;
+    total: number;
+    cx: number;
+    cy: number;
+    rd: number;
+};
+
 /**
  * 시리즈 및 게이지들이 plotting되는 영역 모델.\
  * 설정 모델 등에서 'body'로 접근한다.
@@ -97,9 +104,6 @@ export class Body extends ChartItem {
     private _radiusDim: IPercentSize;
     private _cxDim: IPercentSize;
     private _cyDim: IPercentSize;
-
-    // _guides: AxisGuide[] = [];
-    // _frontGuides: AxisGuide[] = [];
 
     private _rd: number;
     private _cx: number;
@@ -138,6 +142,9 @@ export class Body extends ChartItem {
         }
     }
 
+    // TODO: 구현할 것!
+    innerRadius: RtPercentSize;
+
     /**
      * 차트가 극좌표(polar)일 때 중심 x 좌표.
      * 
@@ -167,12 +174,6 @@ export class Body extends ChartItem {
             this._cyDim = parsePercentSize(value, true);
         }
     }
-    /**
-     * 시작 각도.
-     * 
-     * @CONFIG
-     */
-    startAngle = 0;
     /**
      * false이면 polar 차트일 때, x 축선과 y축 그리드 선들을 다각형으로 표시한다.
      * 
@@ -205,11 +206,6 @@ export class Body extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getSplits(): number[] {
-        const sz = Math.max(0, Math.min(1, pickNum(this.split.size, 0.5)));
-        return [1 - sz, sz];
-    }
-
     calcRadius(width: number, height: number): number {
         return calcPercent(this._radiusDim, Math.min(width, height));
     }
@@ -221,17 +217,14 @@ export class Body extends ChartItem {
         return this;
     }
 
-    getStartAngle(): number {
-        return ORG_ANGLE + DEG_RAD * this.startAngle;
-    }
-
-    getPolar(series: Series): {start: number, cx: number, cy: number, rd: number } {
+    getPolar(axis: Axis): IPolar {
         return this.chart.isPolar() ? {
-            start: this.getStartAngle(),
+            start: axis ? axis.getStartAngle() : 0,
+            total: axis ? axis.getTotalAngle() : 0,
             cx: this._cx,
             cy: this._cy,
             rd: this._rd
-        } : _undefined;
+        } : _undef;
     }
 
     isZoomed(): boolean {
@@ -245,6 +238,10 @@ export class Body extends ChartItem {
 
     getAnnotations(): Annotation[] {
         return this._annotations.getVisibles();
+    }
+
+    getAnnotation(name: string): Annotation {
+        return this._annotations.getAnnotation(name);
     }
 
     //-------------------------------------------------------------------------

@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartControl } from "../ChartControl";
+import { Annotation } from "../model/Annotation";
 import { Axis } from "../model/Axis";
 import { Body } from "../model/Body";
 import { ChartItem } from "../model/ChartItem";
@@ -14,12 +15,12 @@ import { Gauge } from "../model/Gauge";
 import { Legend } from "../model/Legend";
 import { Series } from "../model/Series";
 import { Subtitle, Title } from "../model/Title";
-import { RcAreaRangeSeries, RcAreaSeries, RcBarRangeSeries, RcBarSeries, RcBellCurveSeries, RcBody, RcBoxPlotSeries, RcBubbleSeries, RcBulletGauge, RcCandlestickSeries, RcCategoryAxis, RcChartAxis, RcChartGauge, RcChartObject, RcChartSeries, RcCircleGauge, RcClockGauge, RcDumbbellSeries, RcEqualizerSeries, RcErrorBarSeries, RcFunnelSeries, RcGaugeGroup, RcHeatmapSeries, RcHistogramSeries, RcLegend, RcLineSeries, RcLinearGauge, RcLogAxis, RcLollipopSeries, RcOhlcSeries, RcParetoSeries, RcPieSeries, RcScatterSeries, RcSubtitle, RcTimeAxis, RcTitle, RcTreemapSeries, RcVectorSeries, RcWaterfallSeries } from "./RcChartModels";
 import { ImageExportOptions, ImageExporter } from "../export/ImageExporter";
+import { RcAnnotation, RcAreaRangeSeries, RcAreaSeries, RcBarRangeSeries, RcBarSeries, RcBellCurveSeries, RcBody, RcBoxPlotSeries, RcBubbleSeries, RcBulletGauge, RcCandlestickSeries, RcCategoryAxis, RcChartAxis, RcChartGauge, RcChartObject, RcChartSeries, RcCircleGauge, RcClockGauge, RcDumbbellSeries, RcEqualizerSeries, RcErrorBarSeries, RcFunnelSeries, RcGaugeGroup, RcHeatmapSeries, RcHistogramSeries, RcImageAnnotation, RcLegend, RcLineSeries, RcLinearAxis, RcLinearGauge, RcLogAxis, RcLollipopSeries, RcOhlcSeries, RcParetoSeries, RcPieSeries, RcScatterSeries, RcShapeAnnotation, RcSubtitle, RcTextAnnotation, RcTimeAxis, RcTitle, RcTreemapSeries, RcVectorSeries, RcWaterfallSeries } from "./RcChartModels";
 
 const axis_types = {
     'category': RcCategoryAxis,
-    'linear': RcLineSeries,
+    'linear': RcLinearAxis,
     'time': RcTimeAxis,
     'log': RcLogAxis,
 }
@@ -54,6 +55,11 @@ const gauge_types = {
     'bullet': RcBulletGauge,
     'clock': RcClockGauge,
 }
+const annotation_types = {
+    'text': RcTextAnnotation,
+    'image': RcImageAnnotation,
+    'shape': RcShapeAnnotation
+}
 
 function getObject(map: Map<any, any>, obj: ChartItem): RcChartObject {
     if (obj) {
@@ -65,7 +71,9 @@ function getObject(map: Map<any, any>, obj: ChartItem): RcChartObject {
             } else if (obj instanceof Gauge) {
                 p = new gauge_types[obj._type()](obj);
             } else if (obj instanceof Axis) {
-                p = new axis_types[obj.type()](obj);
+                p = new axis_types[obj._type()](obj);
+            } else if (obj instanceof Annotation) {
+                p = new annotation_types[obj._type()](obj);
             } else if (obj instanceof Title) {
                 p = new (RcTitle as any)(obj);
             } else if (obj instanceof Subtitle) {
@@ -88,6 +96,11 @@ export class RcChartControl {
 
     private $_p: ChartControl;
     private _objects = new Map<ChartItem, RcChartObject>();
+    private _proxy = {
+        getChartObject: (model: any): object => {
+            return getObject(this._objects, model);
+        },
+    };
 
     /** 
      * @internal 
@@ -101,6 +114,7 @@ export class RcChartControl {
      */
     load(config: any, animate?: boolean): void {
         this.$_p.load(config, animate);
+        this.$_p.model._proxy = this._proxy;
         this._objects.clear();
     }
     /**
@@ -172,6 +186,15 @@ export class RcChartControl {
      */
     getGauge(name: string): RcChartGauge {
         return getObject(this._objects, this.$_p.model.gaugeByName(name)) as RcChartGauge;
+    }
+    /**
+     * Annotation 이름에 해당하는 Annotation 객체를 리턴한다.
+     * 
+     * @param name Annotation 이름
+     * @returns Annotation 객체
+     */
+    getAnnotation(name: string): RcAnnotation {
+        return getObject(this._objects, this.$_p.model.annotationByName(name)) as RcAnnotation;
     }
     /**
      * 차트 타이틀 모델.
@@ -272,5 +295,9 @@ export class RcChartControl {
 
     exportImage(options?: ImageExportOptions) {
         new ImageExporter().export(this.$_p.dom(), options)
+    }
+  
+    setParam(param: string, value: any, redraw?: boolean): void {
+        this.$_p.model?.setParam(param, value, redraw);
     }
 }

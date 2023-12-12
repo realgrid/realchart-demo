@@ -6,9 +6,12 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { _undef } from "../common/Types";
+import { Annotation } from "../model/Annotation";
 import { Axis } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { ValueGauge } from "../model/Gauge";
+import { Series } from "../model/Series";
 import { CircleGauge } from "../model/gauge/CircleGauge";
 
 /**
@@ -55,16 +58,18 @@ export class RcChartObject {
      * 지정 가능한 설정 값 목록은 {@link config Configuration API 페이지}에서 확인할 수 있다. 
      * 
      * ```js
-     * console.log(chart.series.get('name'))
+     * Utils.log(chart.series.get('name'))
      * ```
      * 
      * 하위 객체의 설정 속성은 속성 경로를 지정해서 직접 가져올 수도 있다.
      * 
      * ```js
-     * console.log(chart.axis.get('title.text'));
+     * Utils.log(chart.axis.get('title.text'));
      * ```
      * 
-     * @param prop 속성 경로.
+     * 속성 변경은 {@link set}, {@link setAll}, {@link toggle}등으로 실행한다.
+     * 
+     * @param prop '**.**'으로 구분되는 속성 경로.
      * @returns 속성 값 혹은 객체.
      */
     get(prop: string): any {
@@ -157,6 +162,9 @@ export abstract class RcAxisGuide extends RcChartObject {
         this._createObjects('label');
     }
 
+    /**
+     * 가이드 라벨 설정 모델.
+     */
     get label(): RcChartObject {
         return this._label;
     }
@@ -182,6 +190,18 @@ export abstract class RcChartAxis extends RcChartObject {
         this._createObjects('title', 'line', 'grid', 'tick', 'label', 'crosshair');
     }
 
+    /**
+     * 축 방향.
+     */
+    get xy(): 'x' | 'y' {
+        return (this.$_p as Axis)._isX ? 'x' : 'y';
+    }
+    /**
+     * x축이면 true.
+     */
+    get isX(): boolean {
+        return (this.$_p as Axis)._isX;
+    }
     /**
      * 축 타이틀 설정 모델.
      */
@@ -225,10 +245,19 @@ export abstract class RcChartAxis extends RcChartObject {
         return (this.$_p as Axis).isEmpty();
     }
 
+    /**
+     * 줌 상태를 제거하고 모든 데이터포인트들이 표시되도록 한다.
+     */
     resetZoom(): void {
         (this.$_p as Axis).resetZoom();
     }
 
+    /**
+     * 지정한 영역에 포함된 데이터포인트들만 표시되도록 한다.
+     * 
+     * @param start 영역의 시작 값.
+     * @param end 영역의 끝 값. 영역에는 포함되지 않는다.
+     */
     zoom(start: number, end: number): void {
         (this.$_p as Axis).zoom(start, end);
     }
@@ -252,10 +281,21 @@ export class RcLogAxis extends RcContinuousAxis {
 export class RcPointLabel extends RcChartAxis {
 }
 
+export abstract class RcNamedObject extends RcChartObject {
+
+    /**
+     * config에서 설정해된 name을 리턴한다.\
+     * 최초 설정한 이름은 변경할 수 없다.
+     */
+    get name(): string {
+        return (this.$_p as any).name;
+    }
+}
+
 /**
  * 차트 시리즈 모델들의 기반 클래스.\
  */
-export abstract class RcChartSeries extends RcChartObject {
+export abstract class RcChartSeries extends RcNamedObject {
 
     private _pointLabel: RcChartObject;
     private _trendLine: RcChartObject;
@@ -280,12 +320,24 @@ export abstract class RcChartSeries extends RcChartObject {
      * point label 모델.
      */
     get tooltip(): RcChartObject { return this._tooltip; }
+
+    /**
+     * xValue에 해당하는 데이터포인터의 yValue를 리턴한다.
+     */
+    getValueAt(xValue: number): number {
+        const p = (this.$_p as Series).getPointAt(xValue);
+        return p ? p.yValue : _undef;
+    }
+
+    updateData(data: any): void {
+        (this.$_p as Series).updateData(data);
+    }
 }
 
 /**
  * 차트 시리즈그룹 모델들의 기반 클래스.
  */
-export abstract class RcSeriesGroup extends RcChartObject {
+export abstract class RcSeriesGroup extends RcNamedObject {
 }
 
 export abstract class RcLineSeriesBase extends RcChartSeries {
@@ -476,7 +528,7 @@ export class RcBumpSeriesGroup extends RcSeriesGroup {
 /**
  * {@link RcChartGauge 차트 게이지}와 {@link RcGaugeGroup 게이지그룹} 모델들의 기반 클래스.
  */
-export abstract class RcChartGaugeBase extends RcChartObject {
+export abstract class RcChartGaugeBase extends RcNamedObject {
 }
 
 /**
@@ -720,4 +772,20 @@ export class RcLegend extends RcChartObject {
 }
 
 export class RcBody extends RcChartObject {
+}
+
+export abstract class RcAnnotation extends RcNamedObject {
+
+    update(): void {
+        (this.$_p as Annotation).update();
+    }
+}
+
+export class RcTextAnnotation extends RcAnnotation {
+}
+
+export class RcImageAnnotation extends RcAnnotation {
+}
+
+export class RcShapeAnnotation extends RcAnnotation {
 }

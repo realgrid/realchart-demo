@@ -7,13 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
-import { ISides, Path, SVGStyleOrClass, _undefined, getCssProp, isNull, pixel, throwFormat } from "./Types";
+import { Align, ISides, Path, SVGStyleOrClass, _undef, getCssProp, isNull, pixel, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
-import { SVGNS, isObject, isString, pickProp } from "./Common";
+import { SVGNS, isObject, isString, pickProp, assign } from "./Common";
 import { Utils } from "./Utils";
 import { IRect, Rectangle } from "./Rectangle";
-import { SvgShapes } from "./impl/SvgShape";
+import { Shape, SvgShapes } from "./impl/SvgShape";
 import { ISize } from "./Size";
 import { IPoint } from "./Point";
 import { $_lc } from "./LicChecker";
@@ -128,6 +128,14 @@ export abstract class RcControl extends RcWrappableObject {
 
     height(): number {
         return this._container.offsetHeight;
+    }
+
+    contentWidth(): number {
+        return this.width() - this._padding.left - this._padding.right;
+    }
+
+    contentHeight(): number {
+        return this.height() - this._padding.top - this._padding.bottom;
     }
 
     clipContainer(): SVGElement {
@@ -263,15 +271,22 @@ export abstract class RcControl extends RcWrappableObject {
     /**
      * defs에 직사각형 clipPath를 등록한다.
      */
-    clipBounds(x = NaN, y = NaN, width = NaN, height = NaN, rd = 0): ClipElement {
-        const clip = new ClipElement(this.doc(), x, y, width, height, rd, rd);
+    clipBounds(x = NaN, y = NaN, width = NaN, height = NaN, rd = 0): ClipRectElement {
+        const clip = new ClipRectElement(this.doc(), x, y, width, height, rd, rd);
 
         this._defs.appendChild(clip.dom);
         return clip;
     }
 
-    clipRect(r: IRect): ClipElement {
+    clipRect(r: IRect): ClipRectElement {   
         return this.clipBounds(r.x, r.y, r.width, r.height);
+    }
+
+    clipCircle(): ClipCircleElement {   
+        const clip = new ClipCircleElement(this.doc());
+
+        this._defs.appendChild(clip.dom);
+        return clip;
     }
 
     clipPath(): ClipPathElement {
@@ -308,7 +323,7 @@ export abstract class RcControl extends RcWrappableObject {
 
     svgToElement(element: RcElement, x: number, y: number): IPoint {
         const cr = this._svg.getBoundingClientRect();
-        const br = element.getBBounds();
+        const br = element.getBounds();
 
         return { x: x - br.x + cr.x, y: y - br.y + cr.y };
     }
@@ -320,7 +335,24 @@ export abstract class RcControl extends RcWrappableObject {
         return { x: x + br.x - cr.x, y: y + br.y - cr.y };
     }
 
-    abstract useImage(src: string): void; // 실제 이미지가 로드됐을 때 다시 그려지도록 한다.
+    // TODO: svg 크기에서 '%'제거
+    //       svg 복사본 생성: 외부 스타일 내부로 가져오기
+    test(canvas: HTMLCanvasElement): void {
+        const svg = this._svg.outerHTML;
+        const image = new Image();
+        const ctx = canvas.getContext("2d");
+
+        document.body.appendChild(image);
+
+        image.width = 850;
+        image.height = 550;
+        // image.src = `data:image/svg+xml;base64,${window.btoa(unescape(encodeURIComponent(svg)))}`;
+        // image.src = `data:image/svg+xml;base64,${window.btoa(encodeURIComponent(svg))}`;
+        image.src = `data:image/svg+xml;charset=utf-8,&lt;${svg}`;
+        image.onload = () => {
+            ctx.drawImage(image, 0, 0);
+        };
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -402,7 +434,7 @@ export abstract class RcControl extends RcWrappableObject {
         const doc = this._container.ownerDocument;
         const dom = this._dom = doc.createElement('div');
 
-        Object.assign(dom.style, {
+        assign(dom.style, {
             position: 'relative',
             width: '100%',
             height: '100%',  
@@ -425,7 +457,7 @@ export abstract class RcControl extends RcWrappableObject {
 
         const desc = doc.createElement('desc');
         // desc.textContent = 'Created by RealChart v$Version'; // sourcemap, rollup issue
-        desc.textContent = 'Created by RealChart v0.9.16';
+        desc.textContent = 'Created by RealChart v0.9.26';
         svg.appendChild(desc);
 
         const defs = this._defs = doc.createElementNS(SVGNS, 'defs');
@@ -443,7 +475,7 @@ export abstract class RcControl extends RcWrappableObject {
         // html root
         this._htmlRoot = doc.createElement('div');
         dom.appendChild(this._htmlRoot);
-        Object.assign(this._htmlRoot.style, {
+        assign(this._htmlRoot.style, {
             position: 'absolute'
         });
     }
@@ -493,7 +525,7 @@ export abstract class RcControl extends RcWrappableObject {
             return;
         }
 
-        console.time('render chart');
+        Utils.LOGGING && console.time('render chart');
         try {
             this._doBeforeRender();
 
@@ -504,7 +536,7 @@ export abstract class RcControl extends RcWrappableObject {
 
             // this._back.resize(w, h);
 
-            Object.assign(this._htmlRoot.style, {
+            assign(this._htmlRoot.style, {
                 left: pixel(sr.left - cr.left),
                 top: pixel(sr.top - cr.top)
             });
@@ -521,7 +553,7 @@ export abstract class RcControl extends RcWrappableObject {
             // this._invalidElements.forEach(elt => elt.validate());
             // this._invalidElements = [];
             this._doAfterRender();
-            console.timeEnd('render chart');
+            Utils.LOGGING && console.timeEnd('render chart');
         }
     }
 
@@ -587,6 +619,8 @@ export abstract class RcControl extends RcWrappableObject {
     }
 }
 
+const TEXT_ALIGN = 'textAlign';
+
 export type RtControlOrWrapper = RcControl | RcWrapper<RcControl>;
 
 /**
@@ -600,8 +634,8 @@ export class RcElement extends RcObject {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static TESTING = false;
     static DEBUGGING = false;
+    static TESTING = false;
     static ASSET_KEY = '_asset_';
     static TEMP_KEY = '_temp_';
 
@@ -640,7 +674,7 @@ export class RcElement extends RcObject {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName: string, tag: string = _undefined) {
+    constructor(doc: Document, styleName: string, tag: string = _undef) {
         super();
 
         this._dom = doc.createElementNS(SVGNS, tag || 'g');
@@ -735,9 +769,9 @@ export class RcElement extends RcObject {
         return this._visible;
     }
     set visible(value: boolean) {
-        this.setVisible(value);
+        this.setVis(value);
     }
-    setVisible(value: boolean): boolean {
+    setVis(value: boolean): boolean {
         if (value !== this._visible) {
             this._visible = value;
             if (this._dom) {
@@ -1158,20 +1192,8 @@ export class RcElement extends RcObject {
         }
     }
 
-    putStyles(styles: any, buff?: any): any {
-        buff = buff || {};
-        if (styles) {
-            for (let p in styles) {
-                buff[p] = styles[p];
-            }
-        }
-        return buff;
-    }
-
-    putStyle(prop: string, value: string, buff?: any): any {
-        buff = buff || {};
-        buff[prop] = value;
-        return buff;
+    textAlign(): Align {
+        return this._styles[TEXT_ALIGN];
     }
 
     setData(data: string, value?: string): void {
@@ -1222,10 +1244,10 @@ export class RcElement extends RcObject {
                     fill: 'none'
                 });
                 ani && ani.addEventListener('finish', () => {
-                    this.setVisible(false);
+                    this.setVis(false);
                 });
             } else {
-                this.setVisible(false);
+                this.setVis(false);
             }
         }
         return this;
@@ -1236,14 +1258,14 @@ export class RcElement extends RcObject {
     //     return this;
     // }
 
-    clipRect(x: number, y: number, width: number, height: number, rd = 0): ClipElement {
+    clipRect(x: number, y: number, width: number, height: number, rd = 0): ClipRectElement {
         const cr = this.control.clipBounds(x, y, width, height, rd);
 
         this.setClip(cr);
         return cr;
     }
 
-    setClip(cr?: ClipElement | ClipPathElement | string): void {
+    setClip(cr?: ClipElement | string): void {
         if (cr) {
             this.setAttr('clip-path', 'url(#' + (cr['id'] || cr) + ')');
         } else {
@@ -1363,22 +1385,43 @@ class RootElement extends RcElement {
     }
 }
 
-export class ClipElement extends RcElement {
+export abstract class ClipElement extends RcElement {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     private _id: string;
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc, _undef, 'clipPath');
+
+        const id = this._id = Utils.uniqueKey() + '-';
+        this.setAttr('id', id);
+    }
+
+	//-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    get id(): string {
+        return this._id;
+    }
+}
+
+export class ClipRectElement extends ClipElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
     private _rect: RcElement;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document, x = NaN, y = NaN, width = NaN, height = NaN, rx = 0, ry = 0) {
-        super(doc, _undefined, 'clipPath');
-
-        const id = this._id = Utils.uniqueKey() + '-';
-        this.setAttr('id', id);
+        super(doc);
 
         const rect = this._rect = new RcElement(doc, null, 'rect');
         rect.setAttr('fill', 'none');
@@ -1393,10 +1436,6 @@ export class ClipElement extends RcElement {
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    get id(): string {
-        return this._id;
-    }
-
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -1405,6 +1444,12 @@ export class ClipElement extends RcElement {
         // this._rect.setAttr('transform', '');
         this._rect.move(x, y);
         this._rect.resize(w, h);
+        return this;
+    }
+
+    resize(width: number, height: number, attr?: boolean): RcElement {
+        // super.resize(width, height);
+        this._rect.resize(width, height);
         return this;
     }
 
@@ -1438,10 +1483,6 @@ export class ClipElement extends RcElement {
     set height(value: number) {
         this._rect.height = value;
     }
-
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
 }
 
 export class PathElement extends RcElement {
@@ -1484,24 +1525,6 @@ export class PathElement extends RcElement {
         }
         return this;
     }
-
-    renderShape(shape: string, x: number, y: number, rd: number): void {
-        let path: any;
-        
-        switch (shape) {
-            case 'squre':
-            case 'diamond':
-            case 'triangle':
-            case 'itriangle':
-                path = SvgShapes[shape](x - rd, y - rd, rd * 2, rd * 2);
-                break;
-
-            default:
-                path = SvgShapes.circle(x, y, rd);
-                break;
-        }
-        this.setPath(path);
-    }
     
     //-------------------------------------------------------------------------
     // overriden members
@@ -1511,7 +1534,7 @@ export class PathElement extends RcElement {
     //-------------------------------------------------------------------------
 }
 
-export class ClipPathElement extends RcElement {
+export class ClipPathElement extends ClipElement {
 
     //-------------------------------------------------------------------------
     // consts
@@ -1522,17 +1545,13 @@ export class ClipPathElement extends RcElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _id: string;
     private _path: PathElement;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
-        super(doc, _undefined, 'clipPath');
-
-        const id = this._id = Utils.uniqueKey() + '-';
-        this.setAttr('id', id);
+        super(doc);
 
         this._path = new PathElement(doc);
         this.add(this._path);
@@ -1541,23 +1560,40 @@ export class ClipPathElement extends RcElement {
 	//-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    get id(): string {
-        return this._id;
-    }
-
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     setPath(path: Path): void {
         this._path.setPath(path);
     }
+}
+
+export class ClipCircleElement extends ClipElement {
 
     //-------------------------------------------------------------------------
-    // overriden members
+    // fields
     //-------------------------------------------------------------------------
+    private _circle: RcElement;
+
     //-------------------------------------------------------------------------
-    // internal members
+    // constructor
     //-------------------------------------------------------------------------
+    constructor(doc: Document) {
+        super(doc);
+
+        this.add(this._circle = new RcElement(doc, null, 'circle'));
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setCircle(cx: number, cy: number, radius: number) {
+        this._circle.setAttrs({
+            cx: cx, 
+            cy: cy,
+            r: radius
+        });
+    }
 }
 
 export abstract class DragTracker {

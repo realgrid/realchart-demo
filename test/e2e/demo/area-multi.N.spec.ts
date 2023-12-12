@@ -36,8 +36,8 @@ test.describe("area-multi.html test", () => {
         const config: any = await page.evaluate('config');
         const data = [];
 
-        for (let i = 0; i < config.series.length; i++) {
-            data.push(...config.series[i].data);
+        for (let i = 0; i < config.series[0].children.length; i++) {
+            data.push(...config.series[0].children[i].data);
         }
         expect(data.length).eq(markers.length);        
 
@@ -135,11 +135,11 @@ test.describe("area-multi.html test", () => {
 
         expect(legends).exist;
 
-        expect(legends.length).eq(config.series.length)
+        expect(legends.length).eq(config.series[0].children.length)
 
         for (let i = 0; i < legends.length; i++) {
            const data = await page.evaluate((el) => el.textContent, legends[i])
-           expect(data).eq(config.series[i].name);
+           expect(data).eq(config.series[0].children[i].name);
         }
 
     });
@@ -172,7 +172,7 @@ test.describe("area-multi.html test", () => {
         for(let i = 0; i < dataPoints.length; i++) {
             const rctPoint = dataPoints[i]
             const point = await rctPoint.$$('.' + SeriesView.POINT_CLASS);
-            expect(point.length).eq(config.series[i].data.length);
+            expect(point.length).eq(config.series[0].children[i].data.length);
         }
     });
 
@@ -184,7 +184,7 @@ test.describe("area-multi.html test", () => {
         for (let i = 0; i < labelPoint.length; i++) {
             const text = await labelPoint[i].$('text');
             const labelText = await page.evaluate((el) => el.textContent, text);
-            expect(labelText).eq(config.series[i].name)
+            expect(labelText).eq(config.series[0].children[i].name)
         }
     });
 
@@ -193,7 +193,7 @@ test.describe("area-multi.html test", () => {
 
         const itemMarker = await page.$$('.rct-legend-item-marker');
         expect(itemMarker).exist;
-        expect(itemMarker.length).eq(config.series.length)
+        expect(itemMarker.length).eq(config.series[0].children.length)
     });
 
     test('grid', async ({ page }) => {

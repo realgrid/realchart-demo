@@ -7,6 +7,7 @@ const config = {
     options: {
         // animatable: false
     },
+    legend: true,
     xAxis: {
         name: 'baxis',
         title: 'X Axis',
@@ -65,6 +66,7 @@ function setActions(container) {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

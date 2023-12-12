@@ -6,7 +6,9 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, pickProp3 } from "../../common/Common";
+import { pickNum, pickProp, pickProp3, assign } from "../../common/Common";
+import { PathBuilder } from "../../common/PathBuilder";
+import { PathElement, RcElement } from "../../common/RcControl";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { Series } from "../Series";
@@ -36,7 +38,7 @@ export class VectorSeriesPoint extends DataPoint {
     // overriden members
     //-------------------------------------------------------------------------
     protected _assignTo(proxy: any): any {
-        return Object.assign(super._assignTo(proxy), {
+        return assign(super._assignTo(proxy), {
             length: this.length,
             angle: this.angle,
             lengthValue: this.lengthValue,
@@ -159,5 +161,28 @@ export class VectorSeries extends Series {
                 }
             });
         }
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        const w = 2 / 10;
+        const h = 3 / 10;
+        const body = 0.6;//1 / 2;
+        const off = size * 0.7;
+        const pts = [
+            0, -h * size,
+            -w * size, -h * size,
+            0, -body * size,
+            w * size, -h * size,
+            0, -h * size,
+            0, body * size
+        ];
+        const path = ['M', pts[0], pts[1] + off];
+        for (let i = 2; i < pts.length; i += 2) {
+            path.push('L', pts[i], pts[i + 1] + off);
+        }
+        const elt = new PathElement(doc, Series.LEGEND_MARKER, path);
+        elt.setStyle('strokeWidth', '2px');
+        elt.rotation = 30;
+        return elt;
     }
 }

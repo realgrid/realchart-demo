@@ -33,3 +33,7 @@ export const DefaultLinksFactory: TypeDocNextraLink = {
     unknown: 'https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type',
     Duplex: 'https://nodejs.org/dist/latest/docs/api/stream.html#stream_class_stream_duplex'
 };
+
+export const RealChartLinksFactory: TypeDocNextraLink = {
+    JSFIDDLE: 'https://jsfiddle.net/gh/get/library/pure/realgrid/realchart-demo/tree/master/',
+}

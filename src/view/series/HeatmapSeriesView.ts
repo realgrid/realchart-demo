@@ -9,6 +9,7 @@
 import { Color } from "../../common/Color";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
+import { Align, _undef } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
 import { HeatmapSeries, HeatmapSeriesPoint } from "../../model/series/HeatmapSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
@@ -62,17 +63,21 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     }
 
     protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.slide(this);
+        firstTime && SeriesAnimation.reveal(this);
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
     private $_parepareCells(model: HeatmapSeries, points: HeatmapSeriesPoint[]): void {
+        const color = new Color(model._calcedColor);
+        const obj = [{ fill: _undef }];
+
         this._cells.prepare(points.length, (v, i) => {
             const p = v.point = points[i];
 
-            this._setPointStyle(v, model, p);
+            obj[0].fill = color.brighten(1 - p.heatValue / model._heatMax).toString();
+            this._setPointStyle(v, model, p, obj);
         });
     }
 
@@ -80,32 +85,29 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         const series = this.model;
         const inverted = series.chart.isInverted();
         const labels = series.pointLabel;
-        const labelOff = labels.offset;
+        const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
-        const color = new Color(this._getColor());
+        const org = inverted ? 0 : height;
+        // const color = new Color(this._getColor());
 
         this._cells.forEach(cell => {
             const p = cell.point as HeatmapSeriesPoint;
 
-            if (cell.setVisible(!p.isNull)) {
+            if (cell.setVis(!p.isNull)) {
                 const wUnit = xAxis.getUnitLength(xLen, p.xValue);
                 const wPoint = wUnit;
                 const hUnit = yAxis.getUnitLength(yLen, p.yValue);
                 const hPoint = hUnit;
-                const org = inverted ? 0 : height;;
-                let x: number;
-                let y: number;
+                let x = (p.xPos = xAxis.getPosition(xLen, p.xValue)) - wUnit / 2;
+                let y = (p.yPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
                 let labelView: PointLabelView;
     
-                x = (p.xPos = xAxis.getPosition(xLen, p.xValue)) - wUnit / 2;
-                y = (p.yPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
-    
                 cell.setBounds(x, y, wPoint, hPoint);
-                cell.setStyle('fill', color.brighten(1 - p.heatValue / series._heatMax).toString());
+                // cell.setStyle('fill', color.brighten(1 - p.heatValue / series._heatMax).toString());
     
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
@@ -115,13 +117,14 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
                         y = xLen - xAxis.getPosition(xLen, p.xValue);
                         x = org;
                         y -= r.height / 2;
-                        x += yAxis.getPosition(yLen, p.yValue) - r.width / 2;
+                        x += yAxis.getPosition(yLen, p.yValue);// - r.width / 2;
                     } else {
-                        x += (wPoint - r.width) / 2;
+                        x += wPoint / 2;// (wPoint - r.width) / 2;
                         y += (hPoint - r.height) / 2;
                     }
     
-                    labelView.translate(x, y);
+                    x -= r.width / 2;
+                    labelView.layout(Align.CENTER).translate(x, y);
                 }
             }
        });

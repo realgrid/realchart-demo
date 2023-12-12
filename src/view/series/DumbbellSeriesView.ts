@@ -10,6 +10,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
+import { SvgShapes } from "../../common/impl/SvgShape";
 import { DumbbellSeries, DumbbellSeriesPoint } from "../../model/series/DumbbellSeries";
 import { IPointView, RangedSeriesView, SeriesView } from "../SeriesView";
 
@@ -42,6 +43,7 @@ class BarView extends GroupElement implements IPointView {
         const p = this.point;
         const w = this.width;
         const h = this.height;
+        const rd = p.radius;
         const x = w / 2;
         let y = 0;
 
@@ -52,8 +54,10 @@ class BarView extends GroupElement implements IPointView {
         }
 
         this._line.setVLineC(x, y, h);
-        this._hmarker.renderShape(p.shape, x, y, p.radius);
-        this._lmarker.renderShape(p.shape, x, h, p.radius);
+        SvgShapes.setShape(this._hmarker, p.shape, rd, rd);
+        SvgShapes.setShape(this._lmarker, p.shape, rd, rd);
+        this._hmarker.translate(x - rd, y - rd);
+        this._lmarker.translate(x - rd, h - rd);
     }
 }
 

@@ -1,0 +1,112 @@
+/**
+ * @demo
+ *
+ * CircleBar Series 기본 예제.
+ */
+const config = {
+	title: '년도별 서울시 평균 대기질 지수',
+	options: {
+		// animatable: false
+	},
+	xAxis: {
+		title: '서울시',
+		categories: ['2021', '2022', '2023'],
+		minPadding: 0.25,
+		maxPadding: 0.1
+	},
+	yAxis: {
+		title: '대기질 지수(Air Quality Index, AQI)',
+		// reversed: true,
+		// baseValue: -1,
+        // strictMin: 11,
+        // strictMax: 161
+	},
+	series: [{
+		type: 'circlebar',
+		name: '대기질',
+		// baseValue: null,
+		pointLabel: {
+			visible: true,
+			style: {
+				fontSize: '20px'
+			}
+		},
+		// pointWidth: '100%',
+		// colorByPoint: true,
+		data: [155, 138, 122]},
+	],
+	ChartTextEffect: {
+		autoContrast: false,
+	},
+};
+
+let animate = false;
+let chart;
+
+function setActions(container) {
+	createCheckBox(
+		container,
+		'Debug',
+		function (e) {
+			RealChart.setDebugging(_getChecked(e));
+			chart.render();
+		},
+		false
+	);
+	createCheckBox(
+		container,
+		'Always Animate',
+		function (e) {
+			animate = _getChecked(e);
+		},
+		false
+	);
+	createButton(container, 'Test', function (e) {
+		alert('hello');
+	});
+	createCheckBox(
+		container,
+		'ColorByPoint',
+		function (e) {
+			config.series.colorByPoint = _getChecked(e);
+			chart.load(config, animate);
+		},
+		false
+	);
+	createCheckBox(
+		container,
+		'Inverted',
+		function (e) {
+            config.inverted = _getChecked(e);
+			chart.load(config, animate);
+		},
+		false
+	);
+	createCheckBox(
+		container,
+		'X Reversed',
+		function (e) {
+			config.xAxis.reversed = _getChecked(e);
+			chart.load(config, animate);
+		},
+		false
+	);
+	createCheckBox(
+		container,
+		'Y Reversed',
+		function (e) {
+			config.yAxis.reversed = _getChecked(e);
+			chart.load(config, animate);
+		},
+		false
+	);
+}
+
+function init() {
+	console.log('RealChart v' + RealChart.getVersion());
+	// RealChart.setDebugging(true);
+    RealChart.setLogging(true);
+
+	chart = RealChart.createChart(document, 'realchart', config);
+	setActions('actions');
+}

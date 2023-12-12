@@ -3,7 +3,10 @@ const x_ranges = [{
     color: 'blue'
 }, {
     toValue: 6,
-    color: '#dddd00'
+    color: '#555',
+	style: {
+		strokeDasharray: 4,
+	}
 }, {
     color: 'red'
 }];
@@ -134,6 +137,7 @@ function setActions(container) {
 function init() {
 	console.log('RealChart v' + RealChart.getVersion());
 	// RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
 	chart = RealChart.createChart(document, 'realchart', config);
 	setActions('actions');

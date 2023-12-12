@@ -6,7 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { PathBuilder } from "../../common/PathBuilder";
+import { PathElement, RcElement } from "../../common/RcControl";
 import { DataPoint } from "../DataPoint";
+import { Series } from "../Series";
 import { CandlestickSeries, CandlestickSeriesPoint } from "./CandlestickSeries";
 
 /**
@@ -58,5 +61,15 @@ export class OhlcSeries extends CandlestickSeries {
 
     protected _createPoint(source: any): DataPoint {
         return new OhlcSeriesPoint(source);
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        const pb = new PathBuilder();
+        pb.vline(size / 2, 0, size);
+        pb.hline(size * 0.4, size / 2, size);
+        pb.hline(size * 0.7, 0, size / 2);
+        const elt = new PathElement(doc, Series.LEGEND_MARKER, pb.end());
+        elt.setStyle('strokeWidth', '2px');
+        return elt;
     }
 }

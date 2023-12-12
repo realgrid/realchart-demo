@@ -52,7 +52,7 @@ export class ChartPointerHandler implements IPointerHandler {
         if (!elt) return;
         
         const p = this.$_pointerToPoint(ev);
-        // console.log('POINT DOWN', p.x, p.y);
+        // Utils.log('POINT DOWN', p.x, p.y);
 
         if (this._dragTracker) {
             this.$_stopDragTracker(elt, p.x, p.y);
@@ -106,6 +106,9 @@ export class ChartPointerHandler implements IPointerHandler {
         let legend: LegendItem;
         let series: SeriesView<Series>;
 
+        // TODO: 대부분 다르게 나온다!
+        // if (ev.target !== elt) return;
+
         if (button) {
             if (button.click() !== true) {
                 chart.buttonClicked(button);
@@ -136,6 +139,16 @@ export class ChartPointerHandler implements IPointerHandler {
     }
 
     handleDblClick(ev: PointerEvent): void {
+        const chart = this._chart.chartView();
+        const navigator = chart._navigatorView;
+        const elt = this._clickElement;
+
+        // TODO: 대부분 다르게 나온다!
+        // if (ev.target !== elt) return;
+
+        if (navigator.dblClick(elt)) {
+            return;
+        }
     }
 
     handleWheel(ev: WheelEvent): void {
@@ -177,16 +190,16 @@ export class ChartPointerHandler implements IPointerHandler {
 
     protected _getDragTracker(elt: Element, dx: number, dy: number): any {
         const chartView = this._chart.chartView();
-        const body = chartView.bodyView();
+        const body = chartView.bodyOf(elt);
 
         if (AxisScrollView.isThumb(elt)) {
             return new ScrollTracker(this._chart, chartView.getScrollView(elt));
-        } else if (body.model.canZoom() && body.contains(elt)) {
-            return new ZoomTracker(this._chart, body, chartView._inverted);
         } else if (NavigatorView.isHandle(elt)) {
             return new NavigatorHandleTracker(this._chart, chartView._navigatorView, elt);
-        } else if (NavigatorView.isMask(elt) && this._chart.model.body.isZoomed()) {
+        } else if (NavigatorView.isMask(elt) && body && body.model.isZoomed()) {
             return new NavigatorMaskTracker(this._chart, chartView._navigatorView, elt);            
+        } else if (body && body.model.canZoom() && body.contains(elt)) {
+            return new ZoomTracker(this._chart, body, chartView._inverted);
         }
     }
 

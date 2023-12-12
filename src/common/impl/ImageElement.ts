@@ -7,8 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcElement } from '../RcControl';
-import { IRect } from '../Rectangle';
-import { _undefined } from '../Types';
+import { IRect, Rectangle } from '../Rectangle';
+import { _undef } from '../Types';
 
 export class ImageElement extends RcElement {
 
@@ -22,7 +22,7 @@ export class ImageElement extends RcElement {
     // fields
     //-------------------------------------------------------------------------
     private _dirty = true;
-    private _bounds: IRect;
+    private _bounds: IRect = Rectangle.Empty;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -30,7 +30,11 @@ export class ImageElement extends RcElement {
     constructor(doc: Document, styleName?: string) {
         super(doc, styleName, 'image');
 
-        this.setAttr('preserveAspectRatio', 'none');
+        // this.setAttr('preserveAspectRatio', 'none');
+        this.dom.onload = () => {
+            this._dirty = true;
+            this.control.invalidateLayout();
+        }
     }
 
 	//-------------------------------------------------------------------------

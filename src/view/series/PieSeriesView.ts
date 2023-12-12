@@ -6,10 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { cos, sin } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { RcElement } from "../../common/RcControl";
-import { fixnum } from "../../common/Types";
+import { Align, fixnum } from "../../common/Types";
 import { CircleElement } from "../../common/impl/CircleElement";
 import { LabelElement } from "../../common/impl/LabelElement";
 import { ISectorShape, SectorElement } from "../../common/impl/SectorElement";
@@ -71,7 +72,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         });
 
         this.add(this._textView = new LabelElement(doc, 'rct-pie-series-inner'));
-        this._textView.anchor = TextAnchor.MIDDLE;
+        this._textView._text.anchor = TextAnchor.MIDDLE;
         this.add(this._lineContainer = new PointLabelLineContainer(doc));
     }
 
@@ -82,15 +83,19 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         return this._sectors;
     }
 
+    protected _setPointColor(v: RcElement, color: string): void {
+        v.internalSetStyle('fill', color);
+    }
+
     protected _prepareSeries(doc: Document, model: PieSeries): void {
         super._prepareSeries(doc, model);
         
         this.$_prepareSectors(doc, model, this._visPoints as PieSeriesPoint[]);
         this._lineContainer.prepare(model);
 
-        if (this._textView.setVisible(model.hasInner() && model.innerText.isVisible())) {
+        if (this._textView.setVis(model.hasInner() && model.innerText.isVisible())) {
             this._textView.setModel(doc, model.innerText, null);
-            model.innerText.buildSvg(this._textView._text, NaN, NaN, model, null);
+            model.innerText.buildSvg(this._textView._text, this._textView._outline, NaN, NaN, model, null);
         }
     }
 
@@ -206,7 +211,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
         const labelInside = series.getLabelPosition() === PointItemPosition.INSIDE;
-        const labelOff = labels.offset;
+        const labelOff = labels.getOffset();
         const labelDist = labels.distance || 0;
         const lineViews = this._lineContainer;
         const sliceOff = this._slicedOff = series.getSliceOffset(rd) * vr; // TODO: sector 후에...
@@ -233,14 +238,14 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     
                 if (p.sliced && vr >= 1 && !sector.isDomAnimating()) {
                     const a = start + p.angle / 2;
-                    dx += Math.cos(a) * sliceOff;
-                    dy += Math.sin(a) * sliceOff;
+                    dx += cos(a) * sliceOff;
+                    dy += sin(a) * sliceOff;
                 }
-                sector.translate(dx, dy).setVisible(true);
+                sector.translate(dx, dy).setVis(true);
     
                 const a = p.startAngle + p.angle / 2;
-                p.xPos = cx + Math.cos(a) * (sliceOff + rd * 0.7);
-                p.yPos = cy + Math.sin(a) * (sliceOff + rd * 0.7);
+                p.xPos = cx + cos(a) * (sliceOff + rd * 0.7);
+                p.yPos = cy + sin(a) * (sliceOff + rd * 0.7);
     
                 sector.setPieSector(labelViews, /*lines*/null, {
                     cx: cx,// + dx,
@@ -257,7 +262,9 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
                     const line = lineViews.get(p);
 
-                    if (line.setVisible(!labelInside)) {
+                    // labelView.anchor = TextAnchor.START; // 기본이 MIDDLE이다.
+
+                    if (line.setVis(!labelInside)) {
                         // this.$_layoutLabel(p, labelView, line, off, dist, slicedOff, pb);
                         this.$_layoutLabel(p, labelView, line, labelOff, labelDist, p.sliced ? sliceOff : 0, cw);
                     } else {
@@ -265,16 +272,16 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                         // this.$_layoutLabelInner(p, label, off, dist, slicedOff);
                         this.$_layoutLabelInner(p, labelView, labelOff, 0, p.sliced ? sliceOff : 0);
                     }
-                    labelView.setContrast(labelInside && sector.dom).setVisible(true);
+                    labelView.setContrast(labelInside && sector.dom).setVis(true);
                 } else {
-                    lineViews.get(p)?.setVisible(false);
+                    lineViews.get(p)?.setVis(false);
                 }
             } else {
-                sector.setVisible(false);
+                sector.setVis(false);
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
-                    labelView.setVisible(false);
+                    labelView.setVis(false);
                 }
-                lineViews.get(p)?.setVisible(false);
+                lineViews.get(p)?.setVis(false);
             }
         })
     }
@@ -285,13 +292,13 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         let cx = this._cx;
         let cy = this._cy;
         let rd = this._rd + dist * 0.8;
-        let dx = Math.cos(a) * sliceOff;
-        let dy = Math.sin(a) * sliceOff;
+        let dx = cos(a) * sliceOff;
+        let dy = sin(a) * sliceOff;
 
-        let x1 = cx + Math.cos(a) * this._rd;
-        let y1 = cy + Math.sin(a) * this._rd;
-        let x2 = cx + Math.cos(a) * rd;
-        let y2 = cy + Math.sin(a) * rd;
+        let x1 = cx + cos(a) * this._rd;
+        let y1 = cy + sin(a) * this._rd;
+        let x2 = cx + cos(a) * rd;
+        let y2 = cy + sin(a) * rd;
         const isLeft = x2 < cx;
         let x3: number;
 
@@ -302,7 +309,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         }
 
         // line
-        if (line && line.setVisible(rd > 0)) {
+        if (line && line.setVis(rd > 0)) {
             //line.move(x1, y1);
             //line.setPath(pb.move(x1, y1).lines(x2, y2, x3, y2).end())
             line.setLine(new PathBuilder().move(0, 0).quad(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end())
@@ -319,7 +326,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             y2 -= r.height / 2;
         }
         view.move(x3, y2); // 위치 정보 저장.
-        !view.isDomAnimating() && view.layout().translate(x3 + dx, y2 + dy);
+        !view.isDomAnimating() && view.layout(Align.CENTER).translate(x3 + dx, y2 + dy);
     }
 
     private $_layoutLabelInner(p: PieSeriesPoint, view: PointLabelView, off: number, dist: number, sliceOff: number): void {
@@ -327,14 +334,14 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         const inner = this._rdInner * this._rd;
         const rd = inner > 0 ? inner + (this._rd - inner) / 2 : this._rd * 0.7;
         const a = p.startAngle + p.angle / 2;
-        let x = this._cx + Math.cos(a) * rd;
-        let y = this._cy + Math.sin(a) * rd;
+        let x = this._cx + cos(a) * rd;
+        let y = this._cy + sin(a) * rd;
 
         view.move(x - r.width / 2, y - r.height / 2); // 위치 정보 저장.
 
-        x = this._cx + Math.cos(a) * (sliceOff + rd);
-        y = this._cy + Math.sin(a) * (sliceOff + rd);
-        view.layout().translate(x - r.width / 2, y - r.height / 2);
+        x = this._cx + cos(a) * (sliceOff + rd);
+        y = this._cy + sin(a) * (sliceOff + rd);
+        view.layout(Align.CENTER).translate(x - r.width / 2, y - r.height / 2);
     }
 
     private $_slice(view: SectorView, sliced: boolean, needLayout: boolean): void {
@@ -342,52 +349,55 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         const dur = m.autoSlice ? m.sliceDuration : 0;
         const p = view.point;
         const a = p.startAngle + p.angle / 2;
-        const labelViews = this._labelViews();
-        const labels = m.pointLabel;
-        const lineViews = this._lineContainer;
-        const labelInside = m.getLabelPosition() === PointItemPosition.INSIDE;
 
         if (p.sliced = sliced) {
-            view.translateEx(Math.cos(a) * this._slicedOff, Math.sin(a) * this._slicedOff, dur);
+            view.translateEx(cos(a) * this._slicedOff, sin(a) * this._slicedOff, dur);
         } else {
             view.translateEx(0, 0, dur);
         }
 
-        const labelView = labelViews.get(p, 0);
-
-        if (labelView) {
-            const lineView = !labelInside && lineViews.get(p);
-
-            if (needLayout) {
-                if (labelInside) {
-                    this.$_layoutLabelInner(p, labelView, labels.offset, labels.distance, this._slicedOff);
-                } else {
-                    this.$_layoutLabel(p, labelView, lineView, labels.offset, labels.distance, this._slicedOff, m.clockwise);
-                }
-            }
-
-            if (sliced) {
-                let tx = labelView.tx;
-                let ty = labelView.ty;
-
-                labelView.translate(labelView.x, labelView.y);
-                labelView.translateEx(tx, ty, dur);
-
-                if (lineView) {
-                    tx = lineView.tx;
-                    ty = lineView.ty;
-                    lineView.translate(lineView.x, lineView.y);
-                    lineView.translateEx(tx, ty, dur);
-                }
-            } else {
-                labelView.translate(labelView.tx, labelView.ty);
-                labelView.translateEx(labelView.x, labelView.y, dur);
+        const labelViews = this._labelViews();
+        // TODO: 다이어트할 것!
+        if (labelViews) {
+            const labels = m.pointLabel;
+            const lineViews = this._lineContainer;
+            const labelInside = m.getLabelPosition() === PointItemPosition.INSIDE;
+            const labelView = labelViews.get(p, 0);
     
-                if (lineView) {
-                    lineView.translate(lineView.tx, lineView.ty);
-                    lineView.translateEx(lineView.x, lineView.y, dur);
+            if (labelView) {
+                const lineView = !labelInside && lineViews.get(p);
+    
+                if (needLayout) {
+                    if (labelInside) {
+                        this.$_layoutLabelInner(p, labelView, labels.getOffset(), labels.distance, this._slicedOff);
+                    } else {
+                        this.$_layoutLabel(p, labelView, lineView, labels.getOffset(), labels.distance, this._slicedOff, m.clockwise);
+                    }
+                }
+    
+                if (sliced) {
+                    let tx = labelView.tx;
+                    let ty = labelView.ty;
+    
+                    labelView.translate(labelView.x, labelView.y);
+                    labelView.translateEx(tx, ty, dur);
+    
+                    if (lineView) {
+                        tx = lineView.tx;
+                        ty = lineView.ty;
+                        lineView.translate(lineView.x, lineView.y);
+                        lineView.translateEx(tx, ty, dur);
+                    }
+                } else {
+                    labelView.translate(labelView.tx, labelView.ty);
+                    labelView.translateEx(labelView.x, labelView.y, dur);
+        
+                    if (lineView) {
+                        lineView.translate(lineView.tx, lineView.ty);
+                        lineView.translateEx(lineView.x, lineView.y, dur);
+                    }
                 }
             }
         }
-}
+    }
 }

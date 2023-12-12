@@ -50,6 +50,7 @@ declare function ol<T extends string>(src: T): `${number}. ${T}`;
 declare function hr(): "---";
 declare function hyperlink<T extends string, U extends string>(text: T, link: U): `[${T}](${U})`;
 declare function doclink(text: string, vars?: any): string;
+declare function fiddlelink(comment: any): string;
 declare function seelink(comment: any): string;
 declare function image<T extends string, U extends string>(alt: T, link: U): `![${T}](${U})`;
 declare function table(heading: string[], body: string[][]): string;
@@ -58,6 +59,7 @@ interface DocumentedClass {
     name: string;
     description: string | null;
     see: string[];
+    fiddle: string[];
     extends: string | null;
     rawExtends: string[] | null;
     implements: string | null;
@@ -79,6 +81,7 @@ interface DocumentedClassProperty {
     name: string;
     description: string | null;
     see: string[];
+    fiddle: string[];
     vars?: any;
     static: boolean;
     private: boolean;
@@ -102,6 +105,7 @@ interface DocumentedClassMethod {
     name: string;
     description: string | null;
     see: string[];
+    fiddle: string[];
     static: boolean;
     private: boolean;
     examples: string[];
@@ -234,4 +238,4 @@ interface Documentation {
 }
 declare function createDocumentation(options: TypeDocNextraInit): Promise<Documentation>;
 
-export { AbstractSerializer, ClassSerializer, Documentation, DocumentationMetadata, DocumentedClass, DocumentedClassConstructor, DocumentedClassMethod, DocumentedClassProperty, DocumentedFunction, DocumentedParameter, DocumentedTypeProperty, DocumentedTypes, FileMetadata, FunctionSerializer, HeadingTypes, MdHeading, TypeDocNextra, TypeDocNextraCustomFile, TypeDocNextraInit, TypeDocNextraLink, TypeDocNextraMarkdownBuild, TypeDocNextraMdBuilderOptions, TypeDocParameterReflection, TypesSerializer, blockquote, bold, code, codeBlock, createDocumentation, createDocumentation as default, doclink, escape, getDescription, getDocLinkedDesc, getFileMetadata, getName, getVars, heading, headingId, highlight, hr, hyperlink, image, italic, makeId, ol, parseType, parseTypes, seelink, strikethrough, subscript, superscript, table, taskList, ul };
+export { AbstractSerializer, ClassSerializer, Documentation, DocumentationMetadata, DocumentedClass, DocumentedClassConstructor, DocumentedClassMethod, DocumentedClassProperty, DocumentedFunction, DocumentedParameter, DocumentedTypeProperty, DocumentedTypes, FileMetadata, FunctionSerializer, HeadingTypes, MdHeading, TypeDocNextra, TypeDocNextraCustomFile, TypeDocNextraInit, TypeDocNextraLink, TypeDocNextraMarkdownBuild, TypeDocNextraMdBuilderOptions, TypeDocParameterReflection, TypesSerializer, blockquote, bold, code, codeBlock, createDocumentation, createDocumentation as default, doclink, escape, fiddlelink, getDescription, getDocLinkedDesc, getFileMetadata, getName, getVars, heading, headingId, highlight, hr, hyperlink, image, italic, makeId, ol, parseType, parseTypes, seelink, strikethrough, subscript, superscript, table, taskList, ul };

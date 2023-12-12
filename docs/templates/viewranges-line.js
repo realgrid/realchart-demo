@@ -26,7 +26,7 @@ export const config = {
     viewRangeValue: 'x',
     viewRanges: [
       { toValue: 3, color: 'blue' },
-      { toValue: 6, color: '#dddd00' },
+      { toValue: 6, color: '#555', style: { strokeDasharray: 4 } },
       { color: 'red' }
     ],
     style: { strokeWidth: '2px' }

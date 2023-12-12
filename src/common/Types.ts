@@ -6,10 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, pickNum } from "./Common";
+import { assign, isArray, isObject, isString, pickNum } from "./Common";
 import { locale } from "./RcLocale";
 
-export const _undefined = void 0; // 불필요
+export const _undef = void 0; // 불필요
 export const ONE_CHAR = '①'.charCodeAt(0);
 const ASTERISK = '*'.charCodeAt(0);
 const PERCENT = '%'.charCodeAt(0);
@@ -19,12 +19,11 @@ export const PI_2 = Math.PI * 2;
 export const ORG_ANGLE = -Math.PI / 2;
 export const DEG_RAD = Math.PI * 2 / 360;
 export const RAD_DEG = 360 / Math.PI / 2;
-
+export function fixAngle(a: number): number {
+    return a > PI_2 ? a % PI_2 : a;
+}
 export const NUMBER_SYMBOLS = 'k,M,G,T,P,E';
 export const NUMBER_FORMAT = '#,##0.#';
-
-export const floor = Math.floor;
-export const ceil = Math.ceil;
 export function fixnum(value: number): number {
     return parseFloat(value.toPrecision(12));
 }
@@ -41,7 +40,10 @@ export function isNull(v: any): boolean {
     return v == null || Number.isNaN(v) || v === '';
 }
 export function pad2(v: number): string {
-    return v < 10 ? `0${v}` : String(v);
+	return (v < 10) ? ("0" + v) : String(v);
+}
+export function pad3(v: number): string {
+	return (v < 10) ? ("00" + v) : (v < 100) ? ("0" + v) : String(v);
 }
 export function newObject(prop: string, value: any): {} {
     const obj = {};
@@ -140,10 +142,18 @@ export interface SVGStyles {
     fillOpacity?: string;
     stroke?: string;
     strokeWidth?: string;
+    strokeDasharray?: string;
     fontFamily?: string;
     fontSize?: string;
     fontWeight?: string;
     fontStyle?: string;
+    rx?: string;
+    /**
+     * Svg에 적용되는 정식 css style이 아니다.
+     * 즉, realchart-style.css 등의 외부 css 파일에서 사용할 수 없고,
+     * RealChart 내부에서 title, data point label 등의 inline 스타일로 적용할 수 있다.
+     */
+    textAlign?: 'left' | 'center' | 'right';
 }
 
 export type SVGStyleOrClass = SVGStyles | string;
@@ -359,11 +369,16 @@ export interface IValueRanges {
  * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
  * startValue를 기준으로 정렬한다.
  */
-export const buildValueRanges = function (source: IValueRange[] | IValueRanges, min: number, max: number, strict = true): IValueRange[] {
+export const buildValueRanges = function (source: IValueRange[] | IValueRanges, min: number, max: number, inclusive = true, strict = true, fill = false, color?: string): IValueRange[] {
     let ranges: IValueRange[];
     let prev: IValueRange;
 
     if (isArray(source)) {
+        if (inclusive) {
+            min = Number.MIN_VALUE;
+            max = Number.MAX_VALUE;
+        }
+
         ranges = [];
         source.forEach(src => {
             if (isObject(src) && isString(src.color)) {
@@ -371,7 +386,7 @@ export const buildValueRanges = function (source: IValueRange[] | IValueRanges, 
                     fromValue: pickNum(src.fromValue, prev ? prev.toValue : min),
                     toValue: pickNum(src.toValue, max),
                     color: src.color,
-                    style: src.style ? Object.assign({}, src.style) : _undefined
+                    style: src.style ? assign({}, src.style) : _undef
                 };
                 if (range.fromValue < range.toValue) {
                     ranges.push(range);
@@ -404,7 +419,7 @@ export const buildValueRanges = function (source: IValueRange[] | IValueRanges, 
                     fromValue: steps[i],
                     toValue: steps[i + 1],
                     color: colors[Math.min(i, colors.length - 1)],
-                    style: styles ? styles[Math.min(i, styles.length - 1)] : _undefined
+                    style: styles ? styles[Math.min(i, styles.length - 1)] : _undef
                 });
             }
 
@@ -419,11 +434,117 @@ export const buildValueRanges = function (source: IValueRange[] | IValueRanges, 
                     fromValue: from,
                     toValue: from += step,
                     color: colors[Math.min(i, colors.length - 1)],
-                    style: styles ? styles[Math.min(i, styles.length - 1)] : _undefined
+                    style: styles ? styles[Math.min(i, styles.length - 1)] : _undef
                 });
                 i++;
             }
         }
     }
+
+    // 빈 간격을 메꾼다.
+    if (fill && ranges && ranges.length > 0) {
+        let i = 0;
+        let prev = min;
+
+        while (i < ranges.length) {
+            if (ranges[i].fromValue < prev) {
+                ranges.splice(i, 0, {
+                    fromValue: prev,
+                    toValue: ranges[i].fromValue,
+                    color: color
+                });
+            }
+            prev = ranges[i].toValue;
+            i++;
+        }
+        if (ranges[i - 1].toValue < max) {
+            ranges.push({
+                fromValue: ranges[i - 1].toValue,
+                toValue: max,
+                color: color
+            });
+        }
+    }
     return ranges;
+}
+
+export enum TextOverflow {
+    CLIP = 'clip',
+    ELLIPSIS = 'ellipsis',
+    WRAP = 'wrap'
+}
+
+export enum HoveringScope {
+    /**
+     * 시리즈의 개별 데이터포인트 단위로 hovering 효과 표시.
+     * 
+     * @config
+     */
+    SERIES = 'series',
+    /**
+     * 시리즈그룹에 포함된 동일한 x값을 갖는 데이터포인트들 모두 hovering 효과 표시.
+     * 
+     * @config
+     */
+    GROUP = 'group',
+    /**
+     * 같은 x축에 포함된 동일한 x값을 갖는 데이터포인트들 모두 hovering 효과 표시.
+     * 
+     * @config
+     */
+    AXIS = 'axis'
+}
+
+export enum HoveringEffect {
+    /**
+     * hovering 효과를 실행하지 않는다.
+     * 
+     * @config
+     */
+    NONE = 'none',
+    /**
+     * 시리즈별 기본 hovering 효과를 실행한다.
+     * 
+     * @config
+     */
+    DEFAULT = 'default',
+    /**
+     * hovering된 데이터포인트(들)을 더 밝게 표시한다.
+     * 
+     * @config
+     */
+    BRIGHTEN = 'brighten',
+    /**
+     * hovering된 데이터포인트(들)을 기본 크기보다 조금 더 크게 표시한다.
+     * 
+     * @config
+     */
+    ENLARGE = 'enlarge',
+    /**
+     * hovering된 데이터포인트(들)의 경계를 도드라지게 표시한다.
+     * 
+     * @config
+     */
+    BORDER = 'border'
+}
+
+export interface IAnnotationAnimation {
+    type: string;
+    duration?: number;
+}
+
+export interface IAnnotationSlidenimtaion extends IAnnotationAnimation {
+    from?: 'left' | 'right' | 'top' | 'bottom';
+    distance?: number;
+}
+
+export interface IAnnotationRevealAnimtaion extends IAnnotationAnimation {
+    from?: 'left' | 'right' | 'top' | 'bottom';
+    distance?: number;
+}
+
+export interface IAnnotationFadeInAnimtaion extends IAnnotationAnimation {
+}
+
+export interface IAnnotationZoomInAnimtaion extends IAnnotationAnimation {
 }

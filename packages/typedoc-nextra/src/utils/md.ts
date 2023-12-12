@@ -1,4 +1,6 @@
 import { stripIndents } from 'common-tags';
+import { RealChartLinksFactory } from './links';
+import path from 'path';
 
 export type HeadingTypes = 1 | 2 | 3 | 4 | 5 | 6;
 export type MdHeading<T extends string> = `# ${T}` | `## ${T}` | `### ${T}` | `#### ${T}` | `##### ${T}` | `###### ${T}`;
@@ -79,52 +81,68 @@ export function hyperlink<T extends string, U extends string>(text: T, link: U) 
 
 export function doclink(text: string, vars: any = {}): string {
     /**
-     * 'rc.RcChartControl some text ...'
+     * 'rc.RcChartControl label'
      * =>
      * keyword: rc.RcChartControl
      * sep: rc
      * keys: [RcChartControl]
-     * t: some text ...
      */
-    const [keyword, ...display] = text.split(' ');
+    const [keyword, ...display] = text.trim().split(' ');
     const [sep, ...keys] = keyword.split('.');
-    const t = display.length 
-        ? display.join(' ') 
-        : keys.length ? keys.slice(-1)[0] : keyword;
-    
-    if (!keys.length) {
-        const subpaths = ['config', 'docs', 'demo', 'guide'];
-        return subpaths.indexOf(keyword) >= 0 ? hyperlink(t , `/${keyword}`) : t;
-    }
-
+    const label = display.join(' ');
+    const subpaths = ['config', 'docs', 'demo', 'guide'];
+    let lastKey = keys.length ? keys.slice(-1)[0] : keyword;
     let page = '';
-    switch (sep) {
-        case 'g':
-        case 'global':
-            page = `../globals/${[keys]}`;
-            break;
-        case 'config':
-            keys.forEach((k, i) => {
-                keys[i] = k[0] === '$' ? vars[k.substring(1)] || '$' : k;
-            })
-            if (keys.some(k => k === '$')) {
-                console.warn('[WARN] not found var', text);
-                return t;
-            }
-            page = '/config/config/' + keys.join('/');
-            break;
-        case 'demo':
-        case 'guide':
-            page = `/${sep}/` + keys.join('/');
-            break;
-        case 'rc':
-        case 'realchart':
-        default:
-            const [cls, prop] = keys;
-            page = `../classes/${cls}${prop ? '#' + prop : ''}`;
+    // subroot page
+    if (!keys.length && subpaths.includes(keyword)) {
+        page = `/${keyword}`
+    } 
+    // self.property
+    else if (keyword == sep) {
+        page = `#${keyword}`;
+    } 
+    else {
+        // class link의 경우와 동일하게 처리할지 class는 A.Property 로 고정됨.
+        // config는 a.b#property
+        switch (sep) {
+            case 'g':
+            case 'global':
+                page = `/docs/api/globals/${[keys]}`;
+                break;
+            case 'config':
+                keys.forEach((k, i) => {
+                    keys[i] = k[0] === '$' ? vars[k.substring(1)] || '$' : k;
+                })
+                if (keys.some(k => k === '$')) {
+                    console.warn('[WARN] not found var', text);
+                    return label;
+                }
+                // config에서는 #이 있으면 속성
+                lastKey = lastKey.split('#').slice(-1)[0];
+                page = '/config/config/' + keys.join('/');
+                break;
+            case 'demo':
+            case 'guide':
+                page = `/${sep}/` + keys.join('/');
+                break;
+            case 'rc':
+            case 'realchart':
+            default:
+                const [cls, prop] = keys;
+                page = `/docs/api/classes/${cls}${prop ? '#' + prop : ''}`;
+        }
     }
     
-    return hyperlink(t , page);
+    return hyperlink(label || lastKey , page);
+}
+
+export function fiddlelink(comment: any): string {
+    if ((comment.tag  != '@fiddle')) return comment.text;
+
+    const [{text}] = comment.content;
+    const [src, ...label] = text.split(' ');
+    const href = path.join(RealChartLinksFactory['JSFIDDLE'], src);
+    return `<FiddleLink label="${label.join(' ')}" href="${href}"/>`;
 }
 
 export function seelink(comment:any): string {

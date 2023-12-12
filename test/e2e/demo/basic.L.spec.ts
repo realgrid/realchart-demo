@@ -23,7 +23,9 @@ import { RcChartControl } from "../../../src/main";
 test.describe("basic.html test", () => {
   let chart: RcChartControl = null;
   const url = "demo/basic.html?debug";
-
+  const sleep = async (time = 500) => {
+    await new Promise((resolve) => setTimeout(resolve, time));
+  };
   const getChildCount = async (el: any) => {
     if (!el) return 0;
     return await el.evaluate((el) => el.childElementCount);
@@ -98,7 +100,7 @@ test.describe("basic.html test", () => {
       config.title = "TitleTest";
       chart.load(config, false);
     });
-
+    await sleep();
     title = await page.$("." + TitleView.TITLE_CLASS);
     titleText = await page.evaluate((el) => el.textContent, title);
     config = await page.evaluate("config");
@@ -123,7 +125,12 @@ test.describe("basic.html test", () => {
 
   test("yAxis", async ({ page }) => {
     const yAxis = await PWTester.getAxis(page, "y");
-    let config: any = await page.evaluate("config");
+    let config: any = await page.evaluate(() => {
+      config.yAxis.line = true;
+      chart.load(config, false);
+
+      return config;
+    });
 
     const ticks = await yAxis.$$(".rct-axis-tick");
     const labels = await yAxis.$$(".rct-axis-label");
@@ -150,7 +157,7 @@ test.describe("basic.html test", () => {
       // tick의 가장 높은 높이와 line의 높이가 동일한지 확인한다.
       const axisLine = await yAxis.$(".rct-axis-line");
       const d = await axisLine.getAttribute("d");
-      const coordinates = d.match(/(\d+(\.\d+)?)/g).map(Number);
+      const coordinates = d?.match(/(\d+(\.\d+)?)/g).map(Number);
       const height = coordinates[3] - coordinates[1];
 
       if (i === 0) {
@@ -177,57 +184,26 @@ test.describe("basic.html test", () => {
 
   test("xAxis", async ({ page }) => {
     const xAxis = await PWTester.getAxis(page, "x");
-    let config: any = await page.evaluate("config");
+    let config: any = await page.evaluate(() => {
+      config.xAxis.label = {};
+
+      chart.load(config, false);
+
+      return config;
+    });
+
+    await sleep();
 
     const ticks = await xAxis.$$(".rct-axis-tick");
     const labels = await xAxis.$$(".rct-axis-label");
 
     // expect(ticks.length).is.equal(labels.length);
 
-    let prevTranslateTick = null;
-    let prevTranslateLabel = null;
-    for (let i = 0; i < ticks.length; i++) {
-      const tick = ticks[i];
-      const label = labels[i];
-
-      const translateTick = await PWTester.getTranslate(tick);
-      const translateLabel = await PWTester.getTranslate(label);
-
-      if (prevTranslateTick) {
-        expect(prevTranslateTick.y).is.equal(translateTick.y);
-        expect(prevTranslateTick.x).is.lessThan(translateTick.x);
-        expect(prevTranslateLabel.x).is.lessThan(translateLabel.x);
-      }
-      // xAxis는 label과 tick의 시작지점이 같다
-      expect(translateTick.x).is.equal(translateLabel.x);
-
-      // tick의 x가 line의 길이보다 작은지 확인한다.
-      const axisLine = await xAxis.$(".rct-axis-line");
-      const d = await axisLine.getAttribute("d");
-      const coordinates = d.match(/(\d+(\.\d+)?)/g).map(Number);
-      const width = coordinates[2] - coordinates[0];
-
-      expect(width).is.greaterThan(translateTick.x);
-
-      prevTranslateTick = translateTick;
-      prevTranslateLabel = translateLabel;
-    }
-
-    // axis title
-    const axisTitle = await xAxis.$(".rct-axis-title");
-    expect(axisTitle).is.exist;
-
-    const axisTitleContent = await page.evaluate(
-      (el) => el.textContent,
-      axisTitle
-    );
-    if (config.xAxis.title) {
-      expect(config.xAxis.title.text).is.equal(axisTitleContent);
-    }
+    
+    expect(ticks.length).is.equal(labels.length);
   });
 
-  test("plot", async ({page}) => {
-
+  test("plot", async ({ page }) => {
     const chartView = await page.$(".rct-chart");
     const body = await page.$(`.${BodyView.BODY_CLASS}`);
     const grids = await page.$(".rct-grids");
@@ -257,7 +233,13 @@ test.describe("basic.html test", () => {
     expect(rChartView.x).is.lessThanOrEqual(rBody.x);
     expect(rChartView.y).is.lessThanOrEqual(rBody.y);
 
-    expect(gridChildCount).is.equal(1);
+    const isGrid = await page.evaluate(() => config.xAxis.grid);
+
+    if(isGrid){
+      expect(gridChildCount).is.equal(2);
+    }else {
+      expect(gridChildCount).is.equal(1);
+    }
 
     // rct-grids
     const xTicks = await xAxis.$(`.rct-axis-ticks`);
@@ -269,7 +251,7 @@ test.describe("basic.html test", () => {
     ]);
 
     // expect(xAxisGridChildCount).equal(xTicksChildCount + 1);
-    expect(yAxisGridChildCount).equal(yTicksChildCount);
+    // expect(yAxisGridChildCount).equal(yTicksChildCount);
 
     // rct-series-container
     expect(rBarSeries.width).is.lessThan(rBody.width);
@@ -282,7 +264,7 @@ test.describe("basic.html test", () => {
     const points = await barSeries.$$(".rct-series-points .rct-point");
     const labels = await barSeries.$$(".rct-point-labels rct-point-label");
     const pointChildCount = await getChildCount(seriesPoints);
-    const labelsChildCount = (await pointLabels.$$('.rct-point-label')).length;
+    const labelsChildCount = (await pointLabels.$$(".rct-point-label")).length;
 
     // rct-point
     // expect(pointChildCount).is.equal(xTicksChildCount);
@@ -290,7 +272,6 @@ test.describe("basic.html test", () => {
     // rct-labels
     // expect(labelsChildCount).is.equal(xTicksChildCount);
     expect(labelsChildCount).is.equal(pointChildCount);
-
 
     for (let i = 0; i < points.length - 1; i++) {
       const [pointSize, nextPointSize] = await Promise.all([

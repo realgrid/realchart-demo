@@ -6,11 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isBoolean, isObject, isString, pickNum } from "../common/Common";
+import { isArray, isBoolean, isObject, isString, pickNum, assign } from "../common/Common";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { RcObject } from "../common/RcObject";
-import { SvgRichText, RichTextParamCallback } from "../common/RichText";
-import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undefined } from "../common/Types";
+import { SvgRichText, RichTextParamCallback, IRichTextDomain } from "../common/RichText";
+import { NUMBER_FORMAT, NUMBER_SYMBOLS, SVGStyleOrClass, _undef } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { TextElement } from "../common/impl/TextElement";
 import { IChart } from "./Chart";
@@ -18,6 +18,11 @@ import { IChart } from "./Chart";
 export let n_char_item = 0;
 
 export class ChartItem extends RcObject {
+
+    //-------------------------------------------------------------------------
+    // consts
+    //-------------------------------------------------------------------------
+    static readonly UPDATED = 'updated';
 
     //-------------------------------------------------------------------------
     // property fields
@@ -70,8 +75,8 @@ export class ChartItem extends RcObject {
     load(source: any): ChartItem {
         if (source !== void 0 && !this._doLoadSimple(source)) {
             if (source !== null && source.template != null) {
-                const assign = this.chart && this.chart.assignTemplates;
-                assign && (source = assign(source));
+                const cb = this.chart && this.chart.assignTemplates;
+                cb && (source = cb(source));
             }
             this._doLoad(source);
         }
@@ -110,7 +115,7 @@ export class ChartItem extends RcObject {
             const path = this.$_parseProp(prop);
 
             if (path) {
-                return path === this.INVALID ? _undefined : path.obj[path.prop];
+                return path === this.INVALID ? _undef : path.obj[path.prop];
             } else {
                 return this[prop];
             }
@@ -194,7 +199,7 @@ export class ChartItem extends RcObject {
                 } else if (v instanceof Date) {
                     this[p] = new Date(v);
                 } else if (isObject(v)) {
-                    this[p] = Object.assign({}, v);
+                    this[p] = assign({}, v);
                 } else {
                     this[p] = v;
                 }
@@ -237,6 +242,12 @@ export enum ChartTextEffect {
      * 스타일이 적용되지 않으면 기본 'rct-text-background'이 적용된다.
      */
     BACKGROUND = 'background'
+}
+
+export enum ChartTextOverflow {
+    CLIP = 'clip',
+    ELLIPSIS = 'ellipsis',
+    WRAP = 'wrap'
 }
 
 export abstract class ChartText extends ChartItem {
@@ -306,7 +317,7 @@ export abstract class FormattableText extends ChartText {
     // fields
     //-------------------------------------------------------------------------
     private _numSymbols: string[];
-    private _numberFormatter: NumberFormatter;
+    protected _numberFormatter: NumberFormatter;
     protected _richTextImpl: SvgRichText;
 
     //-------------------------------------------------------------------------
@@ -395,18 +406,20 @@ export abstract class FormattableText extends ChartText {
     }
     setText(value: string): FormattableText {
         if (value !== this._text) {
-            this._text = value;
-            if (value) {
-                if (!this._richTextImpl) {
-                    this._richTextImpl = new SvgRichText();
-                }
-                this._richTextImpl.setFormat(value);
-            } else {
-                this._richTextImpl = null;
-            }
+            this.prepareRich(this._text = value);
         }
         !isNaN(this.lineHeight) && this._richTextImpl && (this._richTextImpl.lineHeight = this.lineHeight);
         return this;
+    }
+    prepareRich(text: string): void {
+        if (text) {
+            if (!this._richTextImpl) {
+                this._richTextImpl = new SvgRichText();
+            }
+            this._richTextImpl.setFormat(text);
+        } else {
+            this._richTextImpl = null;
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -422,8 +435,11 @@ export abstract class FormattableText extends ChartText {
     //     }
     // }
 
-    buildSvg(view: TextElement, maxWidth: number, maxHeight: number, target: any, callback: RichTextParamCallback): void {
-        this._richTextImpl.build(view, maxWidth, maxHeight, target, callback);
+    buildSvg(view: TextElement, outline: TextElement, maxWidth: number, maxHeight: number, target: any, domain: IRichTextDomain): void {
+        if (this._richTextImpl) {
+            this._richTextImpl.build(view, maxWidth, maxHeight, target, domain);
+            outline && this._richTextImpl.build(outline, maxWidth, maxHeight, target, domain);
+        }
     }
 
     // setLineHeight(v: number): void {

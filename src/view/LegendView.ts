@@ -15,6 +15,7 @@ import { ISize, Size } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Legend, LegendItem, LegendItemsAlign, LegendLayout, LegendLocation } from "../model/Legend";
+import { Series } from "../model/Series";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
 /**
@@ -63,7 +64,7 @@ export class LegendItemView extends ChartElement<LegendItem> {
 
         this._label.text = model.text();
 
-        const rMarker = this._marker.getBBounds();
+        const rMarker = this._marker.setVis(model.legend.markerVisible) ? this._marker.getBBounds() : Rectangle.Empty;
         const sz = toSize(this._label.getBBounds());
         this._gap = pickNum(model.legend.markerGap, 0);
 
@@ -71,9 +72,9 @@ export class LegendItemView extends ChartElement<LegendItem> {
     }
 
     protected _doLayout(): void {
-        const rMarker = this._marker.getBBounds();
+        const rMarker = this._marker.visible ? this._marker.getBBounds() : Rectangle.Empty;
 
-        this._marker.translate(0, (this.height - rMarker.height) / 2);
+        this._marker.visible && this._marker.translate(0, (this.height - rMarker.height) / 2);
         this._label.translate(rMarker.width + this._gap, (this.height - this._label.getBBounds().height) / 2);
     }
 }
@@ -110,6 +111,10 @@ export class LegendView extends BoundableElement<Legend> {
         return v && v.model;
     }
 
+    legendOfSeries(series: Series): LegendItemView {
+        return this._itemViews.find(v => v.model.source === series);
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -138,6 +143,7 @@ export class LegendView extends BoundableElement<Legend> {
     protected _doLayout(): void {
         const model = this.model;
         const rowViews = this._rowViews;
+        const textColor = model.useTextColor;
         const sizes = this._sizes;
         const align = model.itemsAlign;
         const lineGap = model.lineGap || 0;
@@ -152,9 +158,16 @@ export class LegendView extends BoundableElement<Legend> {
         let sum: number;
 
         this._itemViews.forEach(v => {
+            const color = v.model.source.legendColor();
+
             // [주의] source가 getComputedStyle()로 색상을 가져온다. measure 시점에는 안된다.
-            v._marker.setStyle('fill', v.model.source.legendColor());
-            v._marker.setStyle('stroke', v.model.source.legendColor());
+            v._marker.setStyle('fill', color);
+            v._marker.setStyle('stroke', color);
+            if (textColor && v.model.source.visible) {
+                v._label.setStyle('fill', color);
+            } else {
+                v._label.setStyle('fill', '');
+            }
             v.resizeByMeasured().layout();
         });
 

@@ -1,15 +1,12 @@
-## [grid](/config/config/grid)
-visible 기본값이 undefined이다.
-visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
+## **grid**
 ## Properties
 
 ### endVisible: `boolean{:js}`[#endVisible]
 끝 값에 표시되는 그리드 선을 표시할 지 여부.  
-
+<DefaultValue value="x축이면" contents="false, y축이면 true."></DefaultValue>
 ### startVisible: `boolean{:js}`[#startVisible]
 시작 값에 표시되는 그리드 선을 표시할 지 여부.  
-`default: false`  
-
+<DefaultValue value="false" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 
@@ -22,8 +19,11 @@ visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여�
 | fontSize | `string{:js}` | true |  
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
-`default: true`  
+<DefaultValue value="true" contents=""></DefaultValue>

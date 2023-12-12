@@ -4,11 +4,13 @@ import { IconHelp } from "@tabler/icons-react";
 import { MainFooter } from "@/components/MainFooter";
 import { brand, company, footerData } from "@/lib/const";
 import { theme } from "./lib/theme";
-import { FiddleLink } from "./components/FiddleLink";
+import { Content, FiddleLink, DefaultValue } from "./components/DocsPage";
 
 const config: DocsThemeConfig = {
   components: {
     FiddleLink,
+    Content,
+    DefaultValue
   },
   useNextSeoProps() {
     return {
@@ -57,7 +59,7 @@ const config: DocsThemeConfig = {
     link: "https://github.com/realgrid/realchart-examples",
   },
   chat: {
-    link: "https://forum.realgrid.com/categories/f3SA78vS9G6cKiYht",
+    link: "https://forum.realgrid.com/tickets/categories/f3SA78vS9G6cKiYht",
     icon: <IconHelp size={28} />,
   },
   footer: {

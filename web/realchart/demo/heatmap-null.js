@@ -17,7 +17,8 @@ const config = {
         categories: ['Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', '마리아', 'Leon', 'Anna', 'Tim', 'Laura'],
         grid: true,
         label: {
-            rotation: -45
+            // rotation: 30,
+            autoArrange: 'none'
         }
     },
     yAxis: {
@@ -85,6 +86,7 @@ function setActions(container) {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

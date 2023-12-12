@@ -18,6 +18,8 @@
 import fs from 'fs';
 import path from 'path';
 
+import { doclink, fiddlelink }  from './docs/lib/typedoc-nextra/index.mjs';
+
 const ReflectionKind = {
   Project: 1,
   Module: 2,
@@ -118,6 +120,7 @@ class Tunner {
   }
 
   _parseFiddle(tag) {
+    fiddlelink()
     const { label, href } = this._parseLink(tag, Tunner.fiddleUrl);
     return `<FiddleLink label="${label}" href="${href}"/>`;
   }
@@ -142,7 +145,8 @@ class Tunner {
   _parseFiddleTag(tags) {
     const fiddles = this._findTags(tags, '@fiddle');
     return fiddles?.map(fiddle => {
-      return this._parseFiddle(fiddle);
+      // return this._parseFiddle(fiddle);
+      return fiddlelink(fiddle);
     }).join('\n');
   }
 
@@ -252,7 +256,7 @@ class Tunner {
         );
         // 다른 구조체에서 이름이 같을 수 있음. Series.xStart, ChartOptions.xStart
         // || p.name == line.text
-        if (prop) return `**[${line.text}](#${prop.name.toLowerCase()})**`;
+        if (prop) return `[${line.text}](#${prop.name.toLowerCase()})`;
         
         // 레퍼런스
         // line.target 이 number 타입으로 reference가 있는 경우...
@@ -270,44 +274,7 @@ class Tunner {
         if (link) return link;
       }
 
-      /** 
-       * 클래스 API 링크 
-       * 여기까지 리턴하지 못했으면 API 클래스 링크 로직 시작
-       */
-      // 구분자와 라벨
-      const [sep, ...label] = line.text.split(' ');
-      // 접근자와 속성 구분
-      const [accessor, ...props] = sep.split('.');
-      let path = '';
-      const [prop] = props.splice(-1, 1);
-      switch (accessor) {
-        case 'g':
-        case 'global':
-          path = '/docs/api/globals';
-          break;
-        case 'rc':
-        case 'realchart':
-        default:
-          path = '/docs/api/classes';
-          break;
-        
-          // props.unshift(accessor);
-          // path = `/config/config`;
-          // break;
-      }
-
-      // single word. 현재 페이지의 속성
-      if (sep == accessor) {
-        path = `#${sep}`;
-        !label.length && label.push(sep);
-      } else if (props.length) {
-        path = `${path}/${props.join('/')}#${prop}`;
-      } else {
-        path = `${path}/${prop}`;
-      }
-      !label.length && label.push(prop);
-
-      return `**[${label.join(' ')}](${path})**`
+      return doclink(line.text);
     }
 
     return line.text;
@@ -404,15 +371,15 @@ class Tunner {
    * @returns string
    */
   _parseSummary(summary) {
-    // 일반 주석 라인은 제거한다.
-    return summary?.filter(line => {
-      return line.text.trim().indexOf('//') < 0;
-    }).map(line => {
+    return summary?.map(line => {
       switch (line.kind) {
         case 'inline-tag':
           return this._parseInlineTag(line);
         case 'text':
-          return line.text
+          // 일반 주석 라인은 제거한다.
+          return line.text.trim().split('\n')
+            .filter(l => l.trim().indexOf('//') < 0)
+            .join('\n')
       }
     }).join(' ');
   }
@@ -664,10 +631,17 @@ class MDGenerater {
     return result;
   }
 
-  // <br> 태그 변환
-  _fixContent(content) {
-    // replace \n or double space
-    return content?.replace(/<br>/g, '\n').trim() || '';
+  _styleContent(content) {
+    // <br> 태그 변환
+    content = content?.replace(/\\r|<br>|\\/g, '\n').trim() || '';
+
+    const specialRegex = /null|undefined|true|false|NaN/g;
+    const singleQuoteRegex = /'.*'/g;
+    content = content
+      .replace(specialRegex, (match) => `<Content type="keyword" value="${match}"></Content>`)
+      .replace(singleQuoteRegex, (match) => `<Content type="expression" value="${match}"></Content>`);
+
+    return content;
   }
 
   _getDoc(keys, docMap) {
@@ -693,22 +667,23 @@ class MDGenerater {
     if (!docMap) throw Error();
 
     // 개요
-    const outline = `[${name}](/config/config/${name})\n${this._fixContent(content)}\n`
     if (MDGenerater.TYPE_ELEMENTS.includes(name)){
+      const title = `[${name}](/config/config/${name})`
+      const outline = `${title}\n${this._styleContent(content)}\n`
       return `### ${outline}`;
     }
 
     keys.push(name);
     const _key = keys.join('.');
-    const _content = '## ' + outline + this._makeProps({ keys, props: classMap.props });
+    const _content = `## **${name}**\n` + this._makeProps({ keys, props: classMap.props });
     docMap[name] = { _key , ...docMap[name], _content };
 
     // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
-    const title = keys.pop();
+    const subtitle = keys.pop();
     const parent = keys.pop();
 
-    let lines = `### [${title}](./${[parent || 'config', title].join('/')})\n`;
-    lines += `${this._fixContent(classMap.content)}  \n`;
+    let lines = `### [${subtitle}](./${[parent || 'config', subtitle].join('/')})\n`;
+    lines += `${this._styleContent(classMap.content)}  \n`;
     return lines;
   }
 
@@ -798,7 +773,7 @@ class MDGenerater {
     }
     
     if (header) lines += `${header}  \n`;
-    if (content) lines += `${this._fixContent(content)}  \n`;
+    if (content) lines += `${this._styleContent(content)}  \n`;
     
     lines += extraLines;
     // @defalut가 없으면 typedoc에서 정의한 defaultValue를 사용한다.
@@ -853,7 +828,7 @@ class MDGenerater {
         }
       }
 
-      lines += `\`default: ${value}\` ${content.join(' ')} \n`;
+      lines += `<DefaultValue value="${value}" contents="${content.join(' ')}"></DefaultValue>`.trim();
     }
 
     return lines;
@@ -881,7 +856,7 @@ class MDGenerater {
   _makeEnums(param) {
     const { name, enums } = param;
     return enums.map(e => {
-      const content = this._fixContent(e.content).replace(/\n/g, '  ');
+      const content = this._styleContent(e.content).replace(/\n/g, '  ');
       return `- \`'${e.value}'\` ${content}`
     }).join('\n') + '\n\n';
   }
@@ -938,7 +913,7 @@ class MDGenerater {
       subtitleText += `[type=${type}]`;  
       subtitle = `## [${subtitleText}](./${opt}/${type})`
     }
-    const _content = `${this._fixContent(content)}\n`;
+    const _content = `${this._styleContent(content)}\n`;
     
     if (MDGenerater.TYPE_ELEMENTS.indexOf(opt) >= 0 && !type) 
       return console.warn(`[WARN] ${name} type missed.`);
@@ -964,7 +939,7 @@ class MDGenerater {
       this._setPropContents({ 
         // name, opt, type, 
         keys,
-        _content: (subtitleText ? `## ${subtitleText}\n${_content}` : '') 
+        _content: (subtitleText ? `## **${subtitleText}**\n${_content}` : '') 
           + propContents 
       });
     }

@@ -1,13 +1,13 @@
 {
-  "series": "series",
-  "gauge": "gauge",
+  "options": "options",
   "xAxis": "xAxis",
   "yAxis": "yAxis",
+  "series": "series",
+  "gauge": "gauge",
   "annotation": "annotation",
   "body": "body",
   "legend": "legend",
   "widget": "widget",
   "title": "title",
-  "subtitle": "subtitle",
-  "options": "options"
+  "subtitle": "subtitle"
 }

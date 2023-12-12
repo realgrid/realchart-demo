@@ -119,7 +119,7 @@ export class OhlcSeriesView extends RangedSeriesView<OhlcSeries> {
         const inverted = this._inverted;
         const vr = this._getViewRate();
         const labels = series.pointLabel;
-        const labelOff = labels.offset;
+        const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
@@ -128,7 +128,7 @@ export class OhlcSeriesView extends RangedSeriesView<OhlcSeries> {
         this._sticks.forEach((box, i) => {
             const p = box.point;
 
-            if (box.setVisible(!p.isNull)) {
+            if (box.setVis(!p.isNull)) {
                 const wUnit = xAxis.getUnitLength(width, p.xValue);
                 const wPoint = series.getPointWidth(wUnit);
                 const x = (p.xPos = xAxis.getPosition(width, p.xValue)) - wPoint / 2;

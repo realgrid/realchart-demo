@@ -48,6 +48,7 @@ function createCheckBox(parentId, label, handler, checked) {
 	}
 	return null;
 }
+const createCheck = createCheckBox;
 
 function createListBox(parentId, label, items, handler, selectedItem) {
     var parent = document.getElementById(parentId);
@@ -81,6 +82,7 @@ function createListBox(parentId, label, items, handler, selectedItem) {
     }
     return null;
 }
+const createList = createListBox;
 
 function createRadioGroup(parentId, label, values, labels, handler) {
 	var parent = document.getElementById(parentId);

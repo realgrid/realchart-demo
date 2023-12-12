@@ -9,10 +9,9 @@
 import { RcElement } from "../../common/RcControl";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
-import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { LegendItem } from "../Legend";
-import { MarkerSeries, Series } from "../Series";
+import { MarkerSeries } from "../Series";
 import { ShapeLegendMarkerView } from "./legend/ShapeLegendMarkerView";
 
 export class ScatterSeriesPoint extends DataPoint {
@@ -34,6 +33,8 @@ export class ScatterSeries extends MarkerSeries {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _defShape: Shape;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -71,10 +72,25 @@ export class ScatterSeries extends MarkerSeries {
         return new ShapeLegendMarkerView(doc, size);
     }
 
+    /**
+     * rendering 시점에 chart가 series별로 기본 shape를 지정한다.
+     */
+    setShape(shape: Shape): void {
+        this._defShape = shape;
+    }
+
+    getShape(p: ScatterSeriesPoint): Shape {
+        return this.shape || this._defShape;
+    }
+
+    hasMarker(): boolean {
+        return true;
+    }
+
     legendMarker(doc: Document, size: number): RcElement {
         const m = super.legendMarker(doc, size);
 
-        (m as ShapeLegendMarkerView).setShape(this.shape, Math.min(+size || LegendItem.MARKER_SIZE, this.radius * 2));
+        (m as ShapeLegendMarkerView).setShape(this.getShape(null), Math.min(+size || LegendItem.MARKER_SIZE, this.radius * 2));
         return m;
     }
 }

@@ -37,7 +37,7 @@ export class HistoryView extends LayerElement {
     constructor(doc: Document) {
         super(doc, HistoryView.TITLE_CLASS);
 
-        this.setVisible(false);
+        this.setVis(false);
     }
 
     //-------------------------------------------------------------------------
@@ -49,7 +49,7 @@ export class HistoryView extends LayerElement {
     // methods
     //-------------------------------------------------------------------------
     setHistory(doc: Document, items: IHistoryItem[]): void {
-        if (this.setVisible(items && items.length > 0)) {
+        if (this.setVis(items && items.length > 0)) {
             const views = this._itemViews;
             const seps = this._separators;
     

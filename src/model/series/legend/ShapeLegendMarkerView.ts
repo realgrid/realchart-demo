@@ -16,8 +16,8 @@ export class ShapeLegendMarkerView extends RcElement {
     // constructor
     //-------------------------------------------------------------------------
     private _size: number;
-    private _shape: string;
-    private _marker: PathElement;
+    protected _shape: string;
+    protected _marker: PathElement;
 
     //-------------------------------------------------------------------------
     // constructor

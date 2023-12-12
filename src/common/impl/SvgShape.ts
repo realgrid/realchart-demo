@@ -6,26 +6,26 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { cos, sin } from '../Common';
 import { PathElement } from '../RcControl';
 import { IRect } from '../Rectangle';
-import { PathValue } from '../Types';
+import { PathValue, fixAngle } from '../Types';
 import { Utils } from '../Utils';
 
 export enum Shape {
-    // LINE = 'line',
-    // LINES = 'lines',
     CIRCLE = 'circle',
     DIAMOND = 'diamond',
-    RECTANGLE = 'rectangle',
     SQUARE = 'square',
     TRIANGLE = 'triangle',
-    ITRIANGLE = 'itriangle',
     STAR = 'star',
+    ITRIANGLE = 'itriangle',
+    RECTANGLE = 'rectangle'
 }
 
 export const Shapes = Utils.getEnumValues(Shape);
 
 const SECTOR_ERROR = 0.001;
+const PI = Math.PI;
 
 export class SvgShapes {
 
@@ -65,11 +65,65 @@ export class SvgShapes {
     static rectangle(x: number, y: number, width: number, height: number): PathValue[] {
         return [
             'M', x, y,
-            'L', x + width, y,
-            'L', x + width, y + height,
-            'L', x, y + height,
+            'h', width,
+            'v', height,
+            'h', -width,
             'Z'
         ];
+    }
+
+    // rounded bar - height가 0보다 작다. 즉, 아래서 위로 그린다.
+    static bar(x: number, y: number, width: number, height: number, rTop: number, rBottom: number): PathValue[] {
+        if (rTop > 0) {
+            if (rBottom > 0) {
+                rTop = Math.min(-height / 2, width / 2, rTop);
+                rBottom = Math.min(-height / 2, width / 2, rBottom);
+                return [
+                    'M', x, y - rBottom,
+                    'v', height + rBottom + rTop,
+                    'a', rTop, rTop, 0, 0, 1, rTop, -rTop,
+                    'h', width - rTop * 2,
+                    'a', rTop, rTop, 0, 0, 1, rTop, rTop,
+                    'v', -height - rTop - rBottom,
+                    'a', rBottom, rBottom, 0, 0, 1, -rBottom, rBottom,
+                    'h', -width + rBottom * 2,
+                    'a', rBottom, rBottom, 0, 0, 1, -rBottom, -rBottom,
+                    'Z'
+                ];
+            } else {
+                rTop = Math.min(-height / 2, width / 2, rTop);
+                return [
+                    'M', x, y,
+                    'v', height + rTop,
+                    'a', rTop, rTop, 0, 0, 1, rTop, -rTop,
+                    'h', width - rTop * 2,
+                    'a', rTop, rTop, 0, 0, 1, rTop, rTop,
+                    'v', -height - rTop,
+                    'Z'
+                ];
+            }
+        } else if (rBottom > 0) {
+            rBottom = Math.min(-height / 2, width / 2, rBottom);
+            return [
+                'M', x, y - rBottom,
+                'v', height + rBottom,
+                'h', width,
+                'v', -height - rBottom,
+                'a', rBottom, rBottom, 0, 0, 1, -rBottom, rBottom,
+                'h', -width + rBottom * 2,
+                'a', rBottom, rBottom, 0, 0, 1, -rBottom, -rBottom,
+                'Z'
+            ];
+        } else {
+            return [
+                'M', x, y,
+                'h', width,
+                'v', height,
+                'h', -width,
+                'v', -height,
+                'Z'
+            ];
+        }
     }
 
     // 정사각형
@@ -81,9 +135,9 @@ export class SvgShapes {
         
         return [
             'M', x, y,
-            'L', x + sz, y,
-            'L', x + sz, y + sz,
-            'L', x, y + sz,
+            'h', sz,
+            'v', sz,
+            'h', -sz,
             'Z'
         ];
     }
@@ -103,40 +157,50 @@ export class SvgShapes {
 
     // TODO: 개선할 것!
     static arc(cx: number, cy: number, rx: number, ry: number, start: number, end: number, clockwise: boolean, close = false): PathValue[] {
-        const cosStart = Math.cos(start);
-        const sinStart = Math.sin(start);
-        const cosEnd = Math.cos(end -= SECTOR_ERROR);
-        const sinEnd = Math.sin(end);
-        const longArc = end - start - Math.PI < SECTOR_ERROR ? 0 : 1;
+        const len = fixAngle(Math.abs(end - start));
+        const circled = 2 * PI - len < SECTOR_ERROR * 10;
+        const long = len - PI < SECTOR_ERROR * 10 ? 0 : 1;
         const cw = clockwise ? 1 : 0;
+        const x1 = cos(start);
+        const y1 = sin(start);
+        const x2 = cos(end -= circled ? (cw ? SECTOR_ERROR * 10 : -SECTOR_ERROR * 10) : 0);
+        const y2 = sin(end);
         const path = [];
 
         path.push(
             'M',
-            cx + rx * cosStart,
-            cy + ry * sinStart,
+            cx + rx * x1,
+            cy + ry * y1,
             'A',
             rx,
             ry,
             0,
-            longArc,
+            long,
             cw,
-            cx + rx * cosEnd,
-            cy + ry * sinEnd,
+            cx + rx * x2,
+            cy + ry * y2,
         );
+        if (circled) {
+            path.push(
+                'M',
+                cx,
+                cy
+            )
+        }
         close && path.push('Z');
         return path;
     }
 
     // TODO: 개선할 것!
     static sector(cx: number, cy: number, rx: number, ry: number, rInner: number, start: number, end: number, clockwise: boolean): PathValue[] {
-        const circled = 2 * Math.PI - Math.abs(end - start) < SECTOR_ERROR;
-        let long = Math.abs(end - start) - Math.PI < SECTOR_ERROR ? 0 : 1;
+        const len = fixAngle(Math.abs(end - start));
+        const circled = 2 * PI - len < SECTOR_ERROR;
+        let long = len - PI < SECTOR_ERROR ? 0 : 1;
         const cw = clockwise ? 1 : 0;
-        const x1 = Math.cos(start);
-        const y1 = Math.sin(start);
-        const x2 = Math.cos(end -= circled ? (cw ? SECTOR_ERROR : -SECTOR_ERROR) : 0);
-        const y2 = Math.sin(end);
+        const x1 = cos(start);
+        const y1 = sin(start);
+        const x2 = cos(end -= circled ? (cw ? SECTOR_ERROR : -SECTOR_ERROR) : 0);
+        const y2 = sin(end);
         const innerX = rx * rInner;
         const innerY = ry * rInner;
         const path = [];
@@ -227,10 +291,12 @@ export class SvgShapes {
         const path = [];
         let start = -Math.PI / 2
 
-        path.push('M', cx + rx * Math.cos(start), cy + ry * Math.sin(start));
+        path.push('M', cx + rx * cos(start), cy + ry * sin(start));
         for (let i = 0; i < 5; i++) {
-            path.push('L', cx + rx * Math.cos(start), cy + ry * Math.sin(start));
-            path.push('L', cx + rx2 * Math.cos(start + a2), cy + ry2 * Math.sin(start + a2));
+            path.push(
+                'L', cx + rx * cos(start), cy + ry * sin(start),
+                'L', cx + rx2 * cos(start + a2), cy + ry2 * sin(start + a2)
+            );
             start += a;
         }
         path.push('Z');
@@ -242,16 +308,16 @@ export class SvgShapes {
 
         switch (shape) {
             case Shape.SQUARE:
-            case Shape.RECTANGLE:
             case Shape.DIAMOND:
             case Shape.TRIANGLE:
             case Shape.ITRIANGLE:
             case Shape.STAR:
+            case Shape.RECTANGLE:
                 path = SvgShapes[shape](0, 0, rx * 2, ry * 2);
                 break;
 
             default:
-                path = SvgShapes.circle(rx, rx, rx);
+                path = SvgShapes.circle(rx, ry, Math.min(rx, ry));
                 break;
         }
         target.setPath(path);

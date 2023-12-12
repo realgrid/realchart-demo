@@ -6,9 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum, pickNum3 } from "../../common/Common";
-import { IPercentSize, RtPercentSize, assert, calcPercent, ceil, fixnum, parsePercentSize } from "../../common/Types";
-import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick, IAxis, AxisPosition } from "../Axis";
+import { isArray, isObject, pickNum, pickNum3, assign, ceil, floor, log10 } from "../../common/Common";
+import { IPercentSize, RtPercentSize, assert, calcPercent, fixnum, parsePercentSize } from "../../common/Types";
+import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick } from "../Axis";
+import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { SeriesGroup, SeriesGroupLayout } from "../Series";
 
@@ -19,6 +20,8 @@ export class ContinuousAxisTick extends AxisTick {
     //-------------------------------------------------------------------------
     _baseAxis: Axis;
     _step: number;
+    _strictEnds = false;
+    _strictTicks = false;
 
     //-------------------------------------------------------------------------
     // properties
@@ -26,6 +29,9 @@ export class ContinuousAxisTick extends AxisTick {
     stepInterval: number | string;
     stepPixels = 72;
     stepCount: number;
+    /**
+     * 양 끝을 NaN으로 지정하면 계산된 min/max로 설정된다.
+     */
     steps: number[];
     /**
      * tick 개수를 맞춰야 하는 대상 axis.
@@ -42,6 +48,10 @@ export class ContinuousAxisTick extends AxisTick {
      * @config
      */
     baseRange = false;
+    // /**
+    //  * true면 소수점값애 해당하는 tick은 표시되지 않도록 한다.
+    //  */
+    // integral = false;
 
     //-------------------------------------------------------------------------
     // methods
@@ -50,9 +60,14 @@ export class ContinuousAxisTick extends AxisTick {
         return v > 0;
     }
 
+    _normalizeSteps(steps: number[], min: number, max: number): number[] {
+        return steps;
+    }
+
     buildSteps(length: number, base: number, min: number, max: number, broken = false): number[] {
         let pts: number[];
 
+        this._strictTicks = this._strictEnds = false;
         this._step = NaN;
 
         if (broken) {
@@ -60,10 +75,13 @@ export class ContinuousAxisTick extends AxisTick {
         } else if (Array.isArray(this.steps)) {
             // 지정한 위치대로 tick들을 생성한다.
             pts = this.steps.slice(0);
+            if (pts.length > 0 && isNaN(pts[0])) pts[0] = min;
+            if (pts.length > 1 && isNaN(pts[pts.length - 1])) pts[pts.length - 1] = max;
+            this._strictTicks = this._strictEnds = true;
         } else if (this._baseAxis instanceof ContinuousAxis) {
-            pts = this._getStepsByCount(this._baseAxis._ticks.length, base, min, max);
+            pts = this._getStepsByCount(this._baseAxis._ticks.length, base, min, max, true);
         } else if (this.stepCount > 0) {
-            pts = this._getStepsByCount(this.stepCount, base, min, max);
+            pts = this._getStepsByCount(this.stepCount, base, min, max, false);
         } else if (this._isValidInterval(this.stepInterval)) {
             pts = this._getStepsByInterval(this.stepInterval, base, min, max);
         } else if (this.stepPixels > 0) {
@@ -97,43 +115,58 @@ export class ContinuousAxisTick extends AxisTick {
         }
     }
 
-    protected _getStepsByCount(count: number, base: number, min: number, max: number): number[] {
-        if (min > base) {
-            min = base;
-            base = NaN;
-        } else if (max < base) {
-            max = base;
-            base = NaN;
+    private $_normalizeMin(min: number, interval: number): number {
+        if (min > floor(min / interval) * interval) {
+            min = floor(min / interval) * interval;
+        } else if (min < ceil(min / interval) * interval) {
+            min = ceil(min / interval) * interval;
         }
+        return fixnum(min);
+    }
 
-        const integral = isNaN(base) && this.integral;
+    protected _getStepsByCount(count: number, baseVal: number, min: number, max: number, based: boolean): number[] {
+        if (min > baseVal) {
+            min = baseVal;
+            baseVal = NaN;
+        } else if (max < baseVal) {
+            max = baseVal;
+            baseVal = NaN;
+        }
+        this._strictEnds = true; // 양 끝 tick을 유지하게 한다.
+
+        const axis = this.axis as ContinuousAxis;
         const len = max - min;
         let step = len / (count - 1);
         const scale = Math.pow(10, Math.floor(Math.log10(step)));
         const steps: number[] = [];
 
-        step = this._step = Math.ceil(step / scale) * scale;
+        if (!isNaN(axis.strictMin) && !isNaN(axis.strictMax)) {
+            step = len / (count - 1);
+        } else if (based && step / scale === 2.5 && floor(count * len / step) == count * len / step) {
+            // if (based && step > 10 && step / scale === 2.5 && Math.floor(count * len / step) == count * len / step) {
+            this._step = step;
+        } else {
+            step = this._step = ceil(step / scale) * scale;
+        }
 
-        if (!isNaN(base)) { // min이 base 아래, max가 base 위에 있다.
-            assert(min < base && max > base, "base error");
+        if (!isNaN(axis.strictMin)) {
+            min = axis.strictMin;
+        } else if (!isNaN(baseVal)) { // min이 base 아래, max가 base 위에 있다.
+            assert(min < baseVal && max > baseVal, "base error");
             count = Math.max(3, count);
 
             while (true) {
-                const n = ceil((base - min) / step) + ceil((max - base) / step) + 1; // +1은 base
+                const n = ceil((baseVal - min) / step) + ceil((max - baseVal) / step) + 1; // +1은 base
                 if (n > count) {
                     step += scale;
                 } else {
                     break;
                 }
             }
-            min = base - ceil((base - min) / step) * step;
+            min = baseVal - ceil((baseVal - min) / step) * step;
 
         } else {
-            if (min > Math.floor(min / scale) * scale) {
-                min = Math.floor(min / scale) * scale;
-            } else if (min < Math.ceil(min / scale) * scale) {
-                min = Math.ceil(min / scale) * scale;
-            }
+            min = this.$_normalizeMin(min, scale);
         }
 
         steps.push(min);
@@ -143,25 +176,16 @@ export class ContinuousAxisTick extends AxisTick {
         return steps;
     }
 
-    protected _normalizeMin(min: number, interval: number): number {
-        if (min > Math.floor(min / interval) * interval) {
-            min = Math.floor(min / interval) * interval;
-        } else if (min < Math.ceil(min / interval) * interval) {
-            min = Math.ceil(min / interval) * interval;
-        }
-        return fixnum(min);
-    }
-
     protected _getStepsByInterval(interval: any, base: number, min: number, max: number): number[] {
         const steps: number[] = [];
         let v: number;
 
-        min = this._normalizeMin(min, interval);
+        min = this.$_normalizeMin(min, interval);
 
         if (!isNaN(base)) {
             steps.push(v = base);
             while (v > min) {
-                steps.unshift(v = fixnum(v -interval));
+                steps.unshift(v = fixnum(v - interval));
             }
             v = base;
             while (v < max) {
@@ -174,6 +198,16 @@ export class ContinuousAxisTick extends AxisTick {
             }
         }
         this._step = interval;
+
+        // interval = interval * 10;// 1 / interval;
+        // for (let i = 0; i < steps.length - 1; i++) {
+        //     steps[i] = fixnum(Math.log10(i) * interval);
+        // }
+        // interval = interval * steps.length;
+        // for (let i = 0; i < steps.length - 1; i++) {
+        //     steps[i] = fixnum(Math.log10(i) * interval);
+        // }
+
         return steps;
     }
 
@@ -195,9 +229,9 @@ export class ContinuousAxisTick extends AxisTick {
             return isNaN(min) ? [] : [min];
         }
 
-        let count = Math.max(1, Math.floor(length / pixels)) + 1;
+        let count = Math.max(1, floor(length / pixels)) + 1;
         let step = len / (count - 1);
-        const scale = Math.pow(10, Math.floor(Math.log10(step)));
+        const scale = Math.pow(10, Math.floor(log10(step)));
         const multiples = this._getStepMultiples(scale);
         let i = 0;
         let v: number;
@@ -235,7 +269,7 @@ export class ContinuousAxisTick extends AxisTick {
             min = base - ceil((base - min) / step) * step;
 
         } else {
-            min = this._normalizeMin(min, step);
+            min = this.$_normalizeMin(min, step);
         }
 
         this._step = step;
@@ -247,7 +281,7 @@ export class ContinuousAxisTick extends AxisTick {
     }
 }
 
-class LinearAxisLabel extends AxisLabel {
+export class LinearAxisLabel extends AxisLabel {
 
     //-------------------------------------------------------------------------
     // properties
@@ -341,8 +375,7 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _single: boolean;
-    private _base: number;
+    private _baseVal: number;
     private _unitLen: number;
     _calcedMin: number;
     _calcedMax: number;
@@ -354,6 +387,12 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
+    constructor(chart: IChart, isX: boolean, name?: string) {
+        super(chart, isX, name);
+
+        this.label.numberFormat = '0.##';
+    }
+
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
@@ -506,13 +545,12 @@ export abstract class ContinuousAxis extends Axis {
     }
 
     protected _doPrepareRender(): void {
-        this._base = parseFloat(this.baseValue as any);
+        this._baseVal = parseFloat(this.baseValue as any);
         this._unitLen = NaN;
         (this.tick as ContinuousAxisTick)._findBaseAxis();
     }
 
     protected _doBuildTicks(calcedMin: number, calcedMax: number, length: number): IAxisTick[] {
-        // if (this._runPos === AxisPosition.OPPOSITE) debugger;
         if (isNaN(calcedMin) || isNaN(calcedMax)) {
             return[];
         }
@@ -520,10 +558,10 @@ export abstract class ContinuousAxis extends Axis {
         const tick = this.tick as ContinuousAxisTick;
         const based = tick._baseAxis instanceof ContinuousAxis;
         let { min, max } = this._adjustMinMax(this._calcedMin = calcedMin, this._calcedMax = calcedMax);
-        let base = this._base;
+        let baseVal = this._baseVal;
 
-        if (isNaN(base) && min < 0 && max > 0) {
-            base = 0;
+        if (isNaN(baseVal) && min < 0 && max > 0) {
+            baseVal = 0;    // ?
         } 
 
         if (based && tick.baseRange) {
@@ -531,15 +569,19 @@ export abstract class ContinuousAxis extends Axis {
             max = tick._baseAxis.axisMax();
         }
 
-        let steps = tick.buildSteps(length, base, min, max, false);
+        let steps = tick.buildSteps(length, baseVal, min, max, false);
         const ticks: IAxisTick[] = [];
 
-        if (!isNaN(this.strictMin) || this.getStartFit() === AxisFit.VALUE) {
+        if (!tick._strictTicks) {
+            steps = tick._normalizeSteps(steps, min, max);
+        }
+
+        if (!isNaN(this.strictMin) || !tick._strictEnds && this.getStartFit() === AxisFit.VALUE) {
             while (steps.length > 1 && min > steps[0]) {
                 steps.shift();
             }
         } else {
-            if (!based) {
+            if (!tick._strictEnds && !based) {
                 while (steps.length > 2 && steps[1] <= min) {
                     steps.shift();
                 }
@@ -551,12 +593,12 @@ export abstract class ContinuousAxis extends Axis {
             }
             min = steps[0];
         }
-        if (!isNaN(this.strictMax) || this.getEndFit() === AxisFit.VALUE) {
+        if (!isNaN(this.strictMax) || !tick._strictEnds && this.getEndFit() === AxisFit.VALUE) {
             while (max < steps[steps.length - 1] && steps.length > 1) {
                 steps.pop();
             }
         } else {
-            if (!based) {
+            if (!tick._strictEnds && !based) {
                 while (steps.length > 2 && steps[steps.length - 2] >= max) {
                     steps.pop();
                 }
@@ -584,15 +626,12 @@ export abstract class ContinuousAxis extends Axis {
         return ticks;
     }
 
-    protected _getTickLabel(index: number, value: number): string {
-        return this.label.getTick(index, value) || String(value);
-    }
-
     protected _createTick(length: number, index: number, step: number): IAxisTick {
         return {
+            index,
             pos: NaN,//this.getPosition(length, step),
-            value: step,
-            label: this._getTickLabel(index, step)
+            value: fixnum(step),
+            label: this.label.getTick(index, step) || String(step)
         }
     }
 
@@ -727,8 +766,8 @@ export abstract class ContinuousAxis extends Axis {
     // internal members
     //-------------------------------------------------------------------------
     protected _adjustMinMax(min: number, max: number): { min: number, max: number } {
-        let minFixed = false;
-        let maxFixed = false;
+        let minFixed = this.isZoomed();
+        let maxFixed = this.isZoomed();
 
         this._series.forEach(ser => {
             const base = ser.getBaseValue(this);
@@ -781,12 +820,6 @@ export abstract class ContinuousAxis extends Axis {
         return { min, max };
     }
 
-    protected _setMinMax(min: number, max: number): void {
-        this._min = min;
-        this._max = max;
-        this._single = min === max;
-    }
-
     protected $_calcUnitLength(length: number): number {
         const pts: DataPoint[] = [];
 
@@ -797,7 +830,7 @@ export abstract class ContinuousAxis extends Axis {
         })
 
         const isX = this._isX;
-        const vals = pts.map(p => isX ? p.xValue : p.yValue).sort();
+        const vals = pts.map(p => isX ? p.xValue : p.yValue).sort((v1, v2) => v1 - v2);
         let min = vals[1] - vals[0];
 
         for (let i = 2; i < vals.length; i++) {
@@ -806,7 +839,10 @@ export abstract class ContinuousAxis extends Axis {
 
         // 이 축에 연결된 clsuterable 시리즈들의 point 최소 간격.
         length *= min / (this._max - this._min);
-        return this._unitLen = pickNum(length, 1);
+
+        // [주의] polar인 경우 1보다 작을 수 있다.
+        // return Math.max(1, pickNum(length, 1));
+        return pickNum(length, 1);
     }
     private $_loadBreak(source: any): AxisBreak {
         if (isObject(source) && 'from' in source && 'to' in source) {
@@ -849,7 +885,7 @@ export abstract class ContinuousAxis extends Axis {
         if (breaks.length > 0) {
             const runs = this._runBreaks = [];
 
-            runs.push(Object.assign(new AxisBreak(this), breaks[0]));
+            runs.push(assign(new AxisBreak(this), breaks[0]));
 
             for (let i = 1; i < breaks.length; i++) {
                 const r = runs[runs.length - 1];
@@ -858,7 +894,7 @@ export abstract class ContinuousAxis extends Axis {
                 if (intersects(r, b)) {
                     merge(r, b);
                 } else {
-                    runs.push(Object.assign(new AxisBreak(this), b));
+                    runs.push(assign(new AxisBreak(this), b));
                 }
             }
         }
@@ -883,7 +919,7 @@ export class LinearAxis extends ContinuousAxis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    type(): string {
+    _type(): string {
         return 'linear';
     }
 
@@ -891,7 +927,7 @@ export class LinearAxis extends ContinuousAxis {
         const v = super._adjustMinMax(min, max);
         const series = this._series;
 
-        if (series.length === 1 && series[0] instanceof SeriesGroup && series[0].layout === SeriesGroupLayout.FILL) {
+        if (!this._isX && series.length === 1 && series[0] instanceof SeriesGroup && series[0].layout === SeriesGroupLayout.FILL) {
             v.max = series[0].layoutMax;
         }
         return v;

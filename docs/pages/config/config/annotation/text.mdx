@@ -1,4 +1,4 @@
-## annotation[type=text]
+## **annotation[type=text]**
 Text Annotation 모델.
 ## Properties
 
@@ -8,10 +8,10 @@ Text Annotation 모델.
 - `'left'` 
 - `'right'` 
 
-`default: 'left'`  
-
+<DefaultValue value="'left'" contents=""></DefaultValue>
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
 텍스트 배경 스타일.
+
 경계 및 배경 색, padding 스타일을 지정할 수 있다.  
 - `SVGStyles{:js}` 
 
@@ -23,22 +23,32 @@ Text Annotation 모델.
 | fontSize | `string{:js}` | true |  
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### front: `boolean{:js}`[#front]
-true로 지정하면 시리즈들 위에 표시된다.  
-`default: false`  
-
+<Content type="keyword" value="true"></Content>로 지정하면 시리즈들 위에 표시된다.  
+<DefaultValue value="false" contents=""></DefaultValue>
 ### name: `string{:js}`[#name]
-Annotation 이름.\
+Annotation 이름.
+
 동적으로 Annotation을 다루기 위해서는 반드시 지정해야 한다.  
+
+### numberFormat: `string{:js}`[#numberFormat]
+[text](#text) 에 동적으로 전달되는 값이 숫자일 때 사용되는 표시 형식.  
+
+### rotation: `number{:js}`[#rotation]
+회전 각도.
+
+0 ~ 360 사이의 값으로 지정한다.  
 
 ### scope[#scope]
 차트 모델에서 지정된 annotationd의 표시 기준 영역.  
 
 
-`default: AnnotationScope.CHART`  
-
+<DefaultValue value="AnnotationScope.CHART" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 
@@ -51,11 +61,16 @@ Annotation 이름.\
 | fontSize | `string{:js}` | true |  
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### text: `string{:js}`[#text]
 표시할 텍스트.  
-`default: 'Title'`  
+<DefaultValue value="'Text'" contents=""></DefaultValue>
+### timeFormat: `string{:js}`[#timeFormat]
+[text](#text) 에 동적으로 전달되는 값이 Date일 때 사용되는 표시 형식.  
 
 ### verticalAlign: `'bottom'|'middle'|'top'{:js}`[#verticalAlign]
 수직 배치.  
@@ -63,8 +78,7 @@ Annotation 이름.\
 - `'middle'` 
 - `'top'` 
 
-`default: 'top'`  
-
+<DefaultValue value="'top'" contents=""></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
-`default: true`  
+<DefaultValue value="true" contents=""></DefaultValue>

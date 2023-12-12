@@ -10,6 +10,7 @@ const config = {
         type: 'category'
     },
     yAxis: {
+        // strictMax: 13
     },
     series: {
         type: 'area',
@@ -60,6 +61,7 @@ function setActions(container) {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

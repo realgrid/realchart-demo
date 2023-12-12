@@ -1,4 +1,4 @@
-## title
+## **title**
 차트 타이틀 설정 모델.
 ## Properties
 
@@ -8,16 +8,14 @@
 - `'left'` 
 - `'right'` 
 
-`default: 'center'`  
-
+<DefaultValue value="'center'" contents=""></DefaultValue>
 ### alignBase: `'chart'|'parent'|'plot'{:js}`[#alignBase]
 정렬 기준.  
 - `'chart'` 
-- `'parent'` 상위 모델이 존재하는 경우 상위 모델 영역 기준.\  상위가 없으면 기본값(대부분 'plot')과 동일.  ex) subtitle인 경우 title 기준.
+- `'parent'` 상위 모델이 존재하는 경우 상위 모델 영역 기준.    상위가 없으면 기본값(대부분 <Content type="expression" value="'plot'"></Content>)과 동일.  ex) subtitle인 경우 title 기준.
 - `'plot'` 
 
-`default: 'plot'`  
-
+<DefaultValue value="'plot'" contents=""></DefaultValue>
 ### backgroundStyle: `SVGStyles | string{:js}`[#backgroundStyle]
 배경 스타일 셋.  
 - `SVGStyles{:js}` 
@@ -30,8 +28,17 @@
 | fontSize | `string{:js}` | true |  
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+### gap: `number{:js}`[#gap]
+주 제목과 부 제목이 표시되는 영역과 차트 본체 등 과의 간격.
+
+주 제목이 표시되면 (부 제목의 값은 무시되고)주 제목의 값을 사용하고,
+부 제목만 표시될 때는 부 제목의 값을 사용한다.  
+<DefaultValue value="10" contents=""></DefaultValue>
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 
@@ -44,12 +51,14 @@
 | fontSize | `string{:js}` | true |  
 | fontStyle | `string{:js}` | true |  
 | fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
 | stroke | `string{:js}` | true |  
-| strokeWidth | `string{:js}` | true |
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
 ### text: `string{:js}`[#text]
 제목 텍스트.  
-`default: 'Title'`  
-
+<DefaultValue value="'Title'" contents=""></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
-`default: true`  
+<DefaultValue value="true" contents=""></DefaultValue>

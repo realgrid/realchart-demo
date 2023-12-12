@@ -1,41 +1,42 @@
 /**
  * @demo
- * 
+ *
  */
 const config = {
-    type: "line",
     options: {},
-    title: "Multiple Lines",
+    title: "보건용 마스크의 월별 수출입 현황",
     xAxis: {
-        title: "일일 Daily fat",
+        title: '월',
     },
     yAxis: {
-        title: "Vertical 수직축 Axis",
+        title: '수출량'
     },
     series: [{
-        name: 'Installation & Developers',
-        data: [43934, 48656, 65165, 81827, 112143, 142383,
-            171533, 165174, 155157, 161454, 154610]
-    }, {
-        name: 'Manufacturing',
-        data: [24916, 37941, 29742, 29851, 32490, 30282,
-            38121, 36885, 33726, 34243, 31050]
-    }, {
-        name: 'Sales & Distribution',
-        data: [11744, 30000, 16005, 19771, 20185, 24377,
-            32147, 30912, 29243, 29213, 25663]
-    }, {
-        name: 'Operations & Maintenance',
-        data: [null, null, null, null, null, null, null,
-            null, 11164, 11218, 10077]
-    }, {
-        name: 'Other',
-        data: [21908, 5548, 8105, 11248, 8989, 11816, 18274,
-            17300, 13053, 11906, 10073]
-    }],
+        name: '2021년',
+        type: 'line',
+        // lineType: 'spline',
+        marker: true,
+		data : mask_data.filter(d => d.연도 === 2021),
+		xField: '월',
+		yField: '보건용 마스크 (6307904020) 수출'
+    },{
+        name: '2022년',
+        type: 'line',
+        // lineType: 'spline',
+        marker: true,
+		data : mask_data.filter(d => d.연도 === 2022),
+		xField: '월',
+		yField: '보건용 마스크 (6307904020) 수출'
+    },{
+        name: '2023년',
+        type: 'line',
+        // lineType: 'spline',
+        marker: true,
+		data : mask_data.filter(d => d.연도 === 2023),
+		xField: '월',
+		yField: '보건용 마스크 (6307904020) 수출'
+    },]
 }
-
-let animate;
 let chart;
 
 function setActions(container) {
@@ -49,14 +50,15 @@ function setActions(container) {
 		false
 	);
 	createButton(container, 'Test', function (e) {
+		alert('hello');
 	});
 	createCheckBox(
 		container,
 		'Inverted',
 		function (e) {
-            config.inverted = _getChecked(e);
-            chart.load(config);
-        },
+			config.inverted = _getChecked(e);
+			chart.load(config);
+		},
 		false
 	);
 	createCheckBox(
@@ -64,7 +66,7 @@ function setActions(container) {
 		'X Reversed',
 		function (e) {
 			config.xAxis.reversed = _getChecked(e);
-			chart.load(config, animate);
+			chart.load(config);
 		},
 		false
 	);
@@ -73,25 +75,17 @@ function setActions(container) {
 		'Y Reversed',
 		function (e) {
 			config.yAxis.reversed = _getChecked(e);
-			chart.load(config, animate);
-		},
-		false
-	);
-	createCheckBox(
-		container,
-		'X Opposite',
-		function (e) {
-			config.xAxis.position = _getChecked(e) ? 'opposite' : '';
-			chart.load(config, animate);
+			chart.load(config);
 		},
 		false
 	);
 }
 
 function init() {
-    console.log('RealChart v' + RealChart.getVersion());
-    // RealChart.setDebugging(true);
+	console.log('RealChart v' + RealChart.getVersion());
+	// RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
-    chart = RealChart.createChart(document, 'realchart', config);
-    setActions('actions')
+	chart = RealChart.createChart(document, 'realchart', config);
+	setActions('actions');
 }

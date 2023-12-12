@@ -7,50 +7,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { isArray, isObject, isString, pickNum } from "../common/Common";
-import { Align, SVGStyleOrClass, _undefined, isNull } from "../common/Types";
+import { _undef } from "../common/Types";
+import { Annotation } from "./Annotation";
 import { PaneAxisMatrix } from "./Axis";
 import { Body } from "./Body";
 import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
-
-export class PaneTitle extends ChartItem {
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(public pane: Pane) {
-        super(pane.chart, true);
-    }
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    /**
-     * 제목 텍스트
-     * @config 
-     */
-    text: string;
-    align = Align.CENTER;
-    backgroundStyle: SVGStyleOrClass;
-
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    isVisible(): boolean {
-        return this.visible && !isNull(this.text);
-    }
-    
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    protected _doLoadSimple(source: any): boolean {
-        if (isString(source)) {
-            this.text = source;
-            return true;
-        }
-        return super._doLoadSimple(source);
-    }
-}
 
 export class PaneBody extends Body {
 
@@ -63,10 +25,9 @@ export class PaneBody extends Body {
     constructor(public pane: Pane) {
         super(pane.chart);
 
-        this.radius = _undefined;
-        this.centerX = _undefined;
-        this.centerY = _undefined;
-        this.startAngle = _undefined;
+        this.radius = _undef;
+        this.centerX = _undef;
+        this.centerY = _undef;
     }
 
     //-------------------------------------------------------------------------
@@ -92,7 +53,7 @@ export class Pane extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    title = new PaneTitle(this);
+    inverted: boolean;
     body = new PaneBody(this);
 
     //-------------------------------------------------------------------------
@@ -105,9 +66,6 @@ export class Pane extends ChartItem {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doLoad(source: any): void {
-        super._doLoad(source);
-    }
 }
 
 interface IRelativeSize {
@@ -168,6 +126,8 @@ export class Split extends ChartItem {
      * 배열로 지정하면 각 항목은 고정 크기 수자, 혹은 '*'로 끝나는 상대 크기.
      */
     cols: number | (number | `${number}*` | '*')[];
+    // TODO: axis가 존재하지 않는 경우의 pane간 간격.
+    gap = 0;
 
     // 실제 표시되는 pane 수.
     count(): number {
@@ -276,6 +236,13 @@ export class Split extends ChartItem {
     calcSizes(width: number, height: number): void {
         this._widths = this.$_calcSizes(width, this._widths);
         this._heights = this.$_calcSizes(height, this._heights);
+    }
+
+    getAnnotation(name: string): Annotation {
+        for (const pos in this._panes) {
+            const a = this._panes[pos].body.getAnnotation(name);
+            if (a) return a;
+        }
     }
 
     //-------------------------------------------------------------------------

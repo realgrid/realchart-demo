@@ -1,10 +1,5 @@
 ## RcChartControl
-            
-            
-            
-RealChart 컨트롤.
-
-            
+RealChart 컨트롤.
 
 
 
@@ -13,52 +8,48 @@ RealChart 컨트롤.
 ## Properties
 ### body: [RcBody](../classes/RcBody)[#body]
 차트 시리즈들이 그려지는 plotting 영역 모델.
-
 ### gauge: [RcChartGauge](../classes/RcChartGauge)[#gauge]
 첫번째 게이지.
-
 ### *`<readonly>`* gaugeType: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)[#gaugeType]
 기본 게이지 종류.\
 게이지에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
-
 ### inverted: [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)[#inverted]
 true면 x축과 y축을 뒤바꿔 표시한다.\
 즉, true면 x축이 수직, y축이 수평으로 배치된다.
-
 ### legend: [RcLegend](../classes/RcLegend)[#legend]
 차트 범례 모델.
-
 ### *`<readonly>`* polar: [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)[#polar]
-true면 차트가 극좌표계로 표시된다.
-기본은 직교좌표계이다.
+true면 차트가 [극좌표계](#극좌표계)로 표시된다.
+기본은 [직교좌표계](#직교좌표계)이다.
 극좌표계일 때,
 x축이 원호에, y축은 방사선에 위치하고, 아래의 제한 사항이 있다.
 1. x축은 첫번째 축 하나만 사용된다.
 2. axis.position 속성은 무시된다.
 3. chart, series의 inverted 속성이 무시된다.
 4. 극좌표계에 표시할 수 없는 series들은 표시되지 않는다.
-
 ### series: [RcChartSeries](../classes/RcChartSeries)[#series]
 첫번째 시리즈.
-
 ### subtitle: [RcSubtitle](../classes/RcSubtitle)[#subtitle]
 차트 sub 타이틀 모델.
-
 ### title: [RcTitle](../classes/RcTitle)[#title]
 차트 타이틀 모델.
-
 ### *`<readonly>`* type: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)[#type]
 기본 시리즈 종류.\
 시리즈에 type을 지정하지 않으면 이 속성 type의 시리즈로 생성된다.
-
 ### xAxis: [RcChartAxis](../classes/RcChartAxis)[#xAxis]
 첫번째 x 축.
-
 ### yAxis: [RcChartAxis](../classes/RcChartAxis)[#yAxis]
 첫번째 y 축.
 
-
 ## Methods
+### getAnnotation(name): RcAnnotation[#getAnnotation]
+Annotation 이름에 해당하는 Annotation 객체를 리턴한다.
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| name | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | Annotation 이름 |
 ### getGauge(name): [RcChartGauge](../classes/RcChartGauge)[#getGauge]
 게이지 이름에 해당하는 게이지 객체를 리턴한다.
 
@@ -115,3 +106,9 @@ name 매개변수가 문자열이면 지정한 이름의 y 축을,
 | ----------- | ----------- |
 | axis | [RcChartAxis](../classes/RcChartAxis) |
 | pos | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
+### setParam(param, value, redraw?): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#setParam]
+| Parameter | Type |
+| ----------- | ----------- |
+| param | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) |
+| value | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
+| redraw | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) |

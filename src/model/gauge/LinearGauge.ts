@@ -222,6 +222,12 @@ export abstract class LinearGaugeBase extends ValueGauge {
     calcedMinMax(): IMinMax {
         return this.scale.range();
     }
+
+    protected _doPrepareRender(chart: IChart): void {
+        super._doPrepareRender(chart);
+
+        this.label.prepareRender();
+    }
 }
 
 export enum LinearGaugeMarkerType {

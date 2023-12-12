@@ -53,6 +53,7 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         super._layoutMarkers(pts, width, height);
 
         const series = this.model;
+        const markerStyle = series.marker.style;
         const inverted = this._inverted;
         const yAxis = series._yAxisObj;
         const yLen = inverted ? width : height;
@@ -64,7 +65,8 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
             p.yLow = yOrg - yAxis.getPosition(yLen, p.lowValue);
         }
 
-        if (series.marker.visible) {
+        // maker를 표시하지 않도록 설정해도 hit testing을 위해 감춰진(opacity=0) marker를 그려야 한다.
+        // if (series.marker.visible) {
             const markers = this._markers;
     
             for (let i = 0, cnt = pts.length; i < cnt; i++) {
@@ -73,23 +75,19 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
                 let x: number;
                 let y: number;
 
-                if (p.isNull) {
-                    mv.visible = false;
+                if (inverted) {
+                    x = yAxis.getPosition(yLen, p.lowValue);
+                    y = markers.get(i).ty;
                 } else {
-                    mv.visible = true;
+                    x = p.xPos;
+                    y = p.yLow;
+                }
 
-                    if (inverted) {
-                        x = yAxis.getPosition(yLen, p.lowValue);
-                        y = markers.get(i).ty;
-                    } else {
-                        x = p.xPos;
-                        y = p.yLow;
-                    }
-    
-                    this._layoutMarker(mv, x, y);
+                if (mv && mv.setVis(!p.isNull && x >= 0 && x <= width && y >= 0 && y <= height)) {
+                    this._layoutMarker(mv, markerStyle, x, y);
                 }
             }
-        }
+        // }
     }
 
     protected _layoutLines(points: AreaRangeSeriesPoint[]): void {
@@ -117,6 +115,7 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
     }
 
     private $_layoutArea(area: PathElement, pts: IPointPos[], lowPts: IPointPos[]): void {
+        const series = this.model;
         const sb = new PathBuilder();
         let i = 0;
 
@@ -169,6 +168,11 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
             this._buildLines(lowPts2, 1, sb);
         }
         area.setPath(sb.end());
+
+        area.internalClearStyleAndClass();
+        series.color && area.setStyle('fill', series.color);
+        series.style && area.internalSetStyleOrClass(series.style);
+        series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
     }
 
     //-------------------------------------------------------------------------

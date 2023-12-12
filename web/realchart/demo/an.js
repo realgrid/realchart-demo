@@ -26,8 +26,8 @@ const config = {
             label: 'line guide'
         }, {
             type: 'range',
-            start: 3,
-            end: 6,
+            startValue: 3,
+            endValue: 6,
             label: {
                 text: 'range guide',
                 align: 'right',
@@ -80,6 +80,7 @@ function setActions(container) {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

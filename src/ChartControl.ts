@@ -11,6 +11,7 @@ import { RcControl, RcElement } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
 import { Align } from "./common/Types";
 import { ImageExporter } from "./export/ImageExporter";
+import { Annotation } from "./model/Annotation";
 import { Axis } from "./model/Axis";
 import { Chart, ExportOptions, ExportType, IChartEventListener } from "./model/Chart";
 import { ChartItem } from "./model/ChartItem";
@@ -47,8 +48,12 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     // IChartEventListener
     //-------------------------------------------------------------------------
-    onModelChanged(chart: Chart, item: ChartItem): void {
-        this.invalidateLayout();
+    onModelChanged(chart: Chart, item: ChartItem, tag: any): void {
+        if (item instanceof Annotation && tag === ChartItem.UPDATED) {
+            this._chartView.updateAnnotation(item);
+        } else {
+            this.invalidateLayout();
+        }
     }
 
     onVisibleChanged(chart: Chart, item: ChartItem): void {
@@ -144,9 +149,6 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    useImage(src: string): void {
-    }
-
     protected _doRender(bounds: IRect): void {
         const model = this._model;
         const view = this._chartView;

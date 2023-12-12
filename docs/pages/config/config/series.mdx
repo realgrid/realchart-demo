@@ -15,6 +15,10 @@
 포함된 시리즈들의 x값이 동일한 data point y값들을 비교해서 순위를 yValue로 재설정한다.
 ## [series[type=candlestick]](./series/candlestick)
 
+## [series[type=circlebar]](./series/circlebar)
+
+## [series[type=circlebargroup]](./series/circlebargroup)
+
 ## [series[type=dumbbell]](./series/dumbbell)
 BarRange 시리즈 변종.
 ## [series[type=equalizer]](./series/equalizer)
@@ -29,11 +33,14 @@ Bar 시리즈 변종.
 2. series의 minColor, maxColor 사이의 색으로 가져온다.
 3. series의 기본 색상과 흰색 사이의 색으로 가져온다.
 ## [series[type=histogram]](./series/histogram)
-
+각 bin은 하한값을 포함하고 상한값은 포함하지 않는다. 마지막 bin은 상한값을 포함한다.
+X축이 <Content type="expression" value="'linear'"></Content>이어야 한다.
 ## [series[type=arearange]](./series/arearange)
 
 ## [series[type=area]](./series/area)
+영역 시리즈.
 
+대부분 [<Content type="expression" value="'line'"></Content>](/config/config/series/line) 시리즈와 동일하고 라인 아래 부분을 별도의 색상으로 채운다.
 ## [series[type=areagroup]](./series/areagroup)
 
 ## [series[type=line]](./series/line)
@@ -53,7 +60,10 @@ Bar 시리즈 변종.
 ## [series[type=scatter]](./series/scatter)
 
 ## [series[type=treemap]](./series/treemap)
-
+1. 본래 하드 드라이브의 파일 분포 상태를 표시하기 위해 고안됨.
+2. node & link 스타일의 전통적 표시 방식은 공간을 많이 필요로 한다.
+3. 일정 표시 공간을 100% 사용한다.
+4. 초기 공간을 재귀적으로 나누어 가면서 구성한다.
 ## [series[type=vector]](./series/vector)
 
 ## [series[type=waterfall]](./series/waterfall)

@@ -11,22 +11,7 @@ import { LayerElement, RcElement } from "../../common/RcControl";
 import { LineElement } from "../../common/impl/PathElement";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { WaterfallSeries, WaterfallSeriesPoint } from "../../model/series/WaterfallSeries";
-import { BoxPointElement, RangedSeriesView } from "../SeriesView";
-
-class BarElement extends BoxPointElement {
-
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    layout(x: number, y: number): void {
-        this.setPath(SvgShapes.rect({
-            x: x - this.wPoint / 2,
-            y,
-            width: this.wPoint,
-            height: -this.hPoint
-        }));
-    }
-}
+import { BarElement, BoxPointElement, RangedSeriesView } from "../SeriesView";
 
 export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
 
@@ -38,6 +23,7 @@ export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
     private _lines: ElementPool<LineElement>;
     private _xPrev: number;
     private _wPrev: number;
+    private _rd: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -60,6 +46,12 @@ export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
         return p.low;
     }
 
+    protected _prepareSeries(doc: Document, model: WaterfallSeries): void {
+        super._prepareSeries(doc, model);
+
+        this._rd = +model.cornerRadius || 0;
+    }
+
     protected _preparePointViews(doc: Document, model: WaterfallSeries, points: WaterfallSeriesPoint[]): void {
         this.$_parepareBars(doc, model, points);
     }
@@ -70,7 +62,7 @@ export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
         view.wPoint = wPoint;
         view.hPoint = hPoint;
         y += hPoint;
-        view.layout(x, y);
+        view.layout(x, y, this._rd, this._rd);
         
         if (i > 0) {
             const line = this._lines.get(i - 1);
