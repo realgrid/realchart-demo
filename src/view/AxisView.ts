@@ -632,12 +632,12 @@ export class AxisView extends ChartElement<Axis> {
         if (!this._simpleMode) {
             const titleView = this._titleView;
             const scrollView = this._scrollView;
+            const labelSize = this._labelSize;
             let x = 0;
             let y = 0;
 
             // title
             if (titleView.visible) {
-                const labelSize = this._labelSize;
                 const off = +model.title.offset || 0;
                 const gap = +model.title.gap || 0;
     
@@ -740,6 +740,8 @@ export class AxisView extends ChartElement<Axis> {
                     }
                     titleView.translate(x, y);
                 }
+            } else {
+                y += opp ? 0 : len + labelSize;
             }
     
             // scrollbar
