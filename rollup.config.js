@@ -158,30 +158,32 @@ const rollup_report_config = {
     output: [{
         format: 'umd',
         name: namespace,
-        file: './web/realchart/lib/realchart.js'
+        file: `./dist/${npmdist}/dist/index.js`,
+    }, {
+        format: 'es',
+        name: namespace,
+        file: `./dist/${npmdist}/dist/index.esm.js`,
     }],
     plugins: [
-        modify({
+        process.env.BUILD !== "libdebug" && modify({
             '$Version': `${pkg.version}`,
-            '$LicenseType': 'ent',
+            '$LicenseType': 'enterprise',
             '$$LicenseCheck': '1',
             '$$ReportCheck': '1',
             '$ProductVersion': version
         }),
-        resolve(),
         commonjs(),
+        resolve(),
         exportDefault(),
-        terser(),
-        banner2(() => copyright),
+        process.env.BUILD !== "libdebug" && terser(),
+        process.env.BUILD !== "libdebug" && banner2(() => copyright),
+
         copy({
-            hook: 'writeBundle',
             targets: [
-                { src: './web/realchart/lib/realchart.js', dest: `./`, rename: `${filename}.min.js` },
-            ],
-            flatten: false
-        }),
-        del({
-            hook: "closeBundle"
+                { src: './web/realchart/styles/realchart-style.css', dest: `dist/${npmdist}/dist` },
+                { src: './license.txt', dest: `dist/${npmdist}`},
+                { src: './README.md', dest: `dist/${npmdist}`}
+              ]
         })
     ]
 };
