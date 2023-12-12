@@ -314,7 +314,6 @@ const config = {
           name: "검정고시",
           data: data.map((d) => d.GED),
         },
-
         {
           template: "series",
           name: "졸업생",
