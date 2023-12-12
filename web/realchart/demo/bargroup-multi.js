@@ -121,7 +121,6 @@ function setActions(container) {
 		},
 		false
 	);
-	
 }
 
 function init() {

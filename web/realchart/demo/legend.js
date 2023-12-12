@@ -86,7 +86,6 @@ function setActions(container) {
     //         return true;
     //     }
     // }, false)
-    
 }
 
 function init() {

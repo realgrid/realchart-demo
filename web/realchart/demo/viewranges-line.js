@@ -129,7 +129,6 @@ function setActions(container) {
 		},
 		'x'
 	);
-	
 }
 
 function init() {

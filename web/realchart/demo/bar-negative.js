@@ -98,7 +98,6 @@ function setActions(container) {
 		},
 		'auto'
 	);
-	
 }
 
 function init() {
