@@ -2,9 +2,13 @@
 dist/deploy/**
 dist/.npm/**
 !dist/.npm/package.json
+dist/.githubnpm/**
+!dist/.githubnpm/package.json
 
 dist/.npmdebug/**
 !dist/.npmdebug/package.json
+dist/.githubnpmdebug/**
+!dist/.githubnpmdebug/package.json
 
 out/**/**
 node_modules/**/**

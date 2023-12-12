@@ -1,0 +1,27 @@
+{
+  "name": "@wooritech/realchart",
+  "version": "0.9.26",
+  "description": "Wooritech charting library",
+  "main": "./dist/index",
+  "author": {
+    "name": "WooriTech",
+    "url": "",
+    "email": "support@realgrid.com"
+  },
+  "keywords": [
+    "realgrid",
+    "realchart",
+    "realtouch",
+    "chart",
+    "graphs",
+    "visualization",
+    "dataviz",
+    "data",
+    "charts",
+    "realreport"
+  ],
+  "files": [
+    "dist/**/*"
+  ],
+  "license": "license.txt"
+}
