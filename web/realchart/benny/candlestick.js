@@ -69,13 +69,25 @@ const config = {
     },
     series: {
         // pointStyleCallback: args => {return { fill: 'red', stroke: 'red'}},
-        pointStyleCallback: (args) => {
-            console.debug(args)
-            if (args.index > 0 && args.y > stockData[args.index - 1].highprc) {
-                return { fill: "var(--color-3)", stroke: "#000" };
+        pointStyleCallback: ({index, open, close}) => {
+            if (!index) {
+                return { fill: 'none', stroke: "#000" };
+            } else if (index && close > stockData[index - 1].closeprc) {
+                if (close > open) {
+                    return { fill: "var(--color-5)", stroke: "#000" };
+                } else {
+                    return { fill: "var(--color-3)", stroke: "#000" };
+                }
             } else {
-                return { fill: "var(--color-1)", stroke: "#000" };
+                if (close > open) {
+                    return { fill: "var(--color-7)", stroke: "#000" };
+                } else {
+                    return { fill: "var(--color-1)", stroke: "#000" };
+                }
             }
+        },
+        tooltip: {
+            text: '<b>종가: ${close}</b>'
         },
         padding: 1,
         pointPadding: 0.1,
