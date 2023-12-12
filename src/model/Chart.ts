@@ -300,46 +300,35 @@ export class ExportOptions extends ChartItem {
     /**
      * 내보내기 메뉴에 포함할 export type
      */
-    type = [ExportType.PNG, ExportType.JPEG];
+    menus = [ExportType.PNG, ExportType.JPEG];
     /**
      * 내보내기시 저장되는 파일명
      */
     fileName = 'realchart';
     /**
-     * 내보내기시 저장되는 파일명
+     * 너비, 지정한 너비에 맞춰 높이가 결정됩니다.
      */
-    width = 28;
+    width: number;
     /**
-     * 내보내기시 저장되는 파일명
+     * 이미지의 scale
      */
-    height = 28;
+    scale = 1;
     /**
-     * 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.
-     * @config
+     * 내보내기 실패시 api요청을 보낼 경로
      */
-    offsetX = -11;
+    url: string;
     /**
-     * 양수로 지정하면 안쪽으로 음수면 바깥쪽으로 밀어서 표시한다.
-     * @config
+     * true로 지정하면 내보내기 결과에 {@link AxisScrollBar}가 포함되지 않는다.
      */
-    offsetY = 20;
+    hideScrollbar = false;
     /**
-     * 이미지 경로.
-     * 
+     * true로 지정하면 내보내기 결과에 {@link SeriesNavigator}가 포함되지 않는다.
      */
-    imageUrl: string;
+    hideNavigator = false;
     /**
-     * false로 지정하면 내보내기 결과에 {@link AxisScrollBar}가 포함되지 않는다.
+     * true로 지정하면 내보내기 결과에 {@link ZoomButton}가 포함되지 않는다.
      */
-    includeScrollbar = true;
-    /**
-     * false로 지정하면 내보내기 결과에 {@link SeriesNavigator}가 포함되지 않는다.
-     */
-    includeNavigator = true;
-    /**
-     * false로 지정하면 내보내기 결과에 {@link ZoomButton}가 포함되지 않는다.
-     */
-    includeZoomButton = true;
+    hideZoomButton = false;
 
     //-------------------------------------------------------------------------
     // methods
@@ -386,6 +375,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _splitted: boolean;
     private _polar: boolean;
     private _gaugeOnly: boolean;
+    private _config: {[key: string]: any};
     colors: string[];
     assignTemplates: (target: any) => any;
 
@@ -541,6 +531,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     get seriesNavigator(): SeriesNavigator {
         return this._navigator;
+    }
+
+    get config(): {[key: string]: any}{
+        return this._config;
     }
 
     /**
@@ -719,6 +713,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         const sTime = 'load chart ' + Math.random() * 1000000;
         console.time(sTime);
 
+        this._config = source;
         // defaults
         this.$_loadTemplates(source.templates);
 

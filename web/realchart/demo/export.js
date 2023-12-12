@@ -14,9 +14,9 @@ const config = {
 		visible: true
 	},
 	options: {
-		// style: {
-		// 	 backgroundImage: 'url(../assets/mountain.jpeg)'
-		// }
+		style: {
+			 backgroundImage: 'url(../assets/mountain.jpeg)'
+		}
 	},
 	legend:{
 		visible: true,
@@ -192,39 +192,27 @@ function setActions(container) {
 			config.export.visible = _getChecked(e);
 			chart.load(config, animate);
 		}, true);
-	createCheckBox(container, 'export.includeNavigator', function (e) {
-			config.export.includeNavigator = _getChecked(e);
+	createCheckBox(container, 'export.hideNavigator', function (e) {
+			config.export.hideNavigator = _getChecked(e);
 			chart.load(config, animate);
-		}, true);
-	createCheckBox(container, 'export.includeScrollbar', function (e) {
-			config.export.includeScrollbar = _getChecked(e);
+		}, false);
+	createCheckBox(container, 'export.hideScrollbar', function (e) {
+			config.export.hideScrollbar = _getChecked(e);
 			chart.load(config, animate);
-		}, true);
-	createCheckBox(container, 'export.includeZoomButton', function (e) {
-			config.export.includeZoomButton = _getChecked(e);
+		}, false);
+	createCheckBox(container, 'export.hideZoomButton', function (e) {
+			config.export.hideZoomButton = _getChecked(e);
 			chart.load(config, animate);
-		}, true);
-	createCheckBox(container, 'export.imageUrl', function (e) {
-        config.export.imageUrl = _getChecked(e) ? 'url(../assets/mountain.jpeg)' : '';
-        chart.load(config);
-    }, false);
+		}, false);
 	line(container);
-	createListBox(container, "export.width", ['10', '28', '40', '60'], function (e) {
+	createListBox(container, "export.width", ['300', '450', '850', '1200'], function (e) {
         config.export.width = Number(_getValue(e));
         chart.load(config);
-    }, '28');
-	createListBox(container, "export.height", ['10', '28', '40', '60'], function (e) {
-        config.export.height = Number(_getValue(e));
+    }, '850');
+	createListBox(container, "export.scale", ['0.5', '0.8', '1', '1.3'], function (e) {
+        config.export.scale = Number(_getValue(e));
         chart.load(config);
-    }, '28');
-	createListBox(container, "export.offsetX", ['-20', '-11', '0', '10'], function (e) {
-        config.export.offsetX = Number(_getValue(e));
-        chart.load(config);
-    }, '-11');
-	createListBox(container, "export.offsetY", ['0', '11', '20', '30'], function (e) {
-        config.export.offsetY = Number(_getValue(e));
-        chart.load(config);
-    }, '20');
+    }, '1');
 }
 
 function init() {

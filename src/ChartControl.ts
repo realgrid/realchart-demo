@@ -127,14 +127,17 @@ export class ChartControl extends RcControl implements IChartEventListener {
 
     onMenuItemClick(dom: Element): void {
         const type = dom.id;
-        const {fileName, includeScrollbar, includeNavigator, includeZoomButton} = this._model.export;
-        switch(type) {
-            case ExportType.PNG:
-            case ExportType.JPEG:
-                new ImageExporter().export(this.dom(), {type, fileName, includeScrollbar, includeNavigator, includeZoomButton});
-                break;
-            default:
-                break;
+        const {fileName, width, scale, hideScrollbar, hideNavigator, hideZoomButton, url} = this._model.export;
+        try {
+            switch(type) {
+                case ExportType.PNG:
+                case ExportType.JPEG:
+                    new ImageExporter().export(this.dom(), {type, fileName, width, scale, hideScrollbar, hideNavigator, hideZoomButton, url}, this._model.config);
+                    break;
+                default:
+                    break;
+            }   
+        } catch (error) {
         }
     }
 
@@ -156,6 +159,8 @@ export class ChartControl extends RcControl implements IChartEventListener {
 
             if (model.export.visible) {
                 this._menuButton ? this.$_layoutContextMenu(model.export) : this.$_initExportMenu(model.export);
+            } else {
+                this.$_hideMenuButton();
             }
         }
         view.measure(this.doc(), model, bounds.width, bounds.height, 1);
@@ -182,6 +187,12 @@ export class ChartControl extends RcControl implements IChartEventListener {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+    private $_hideMenuButton() {
+        if (this._menuButton) {
+            this._menuButton.style.display = 'none';
+        }
+    }
+
     private $_initExportMenu(options: ExportOptions): void {
         const doc = this.doc();
         const dom = this.dom();
@@ -213,16 +224,17 @@ export class ChartControl extends RcControl implements IChartEventListener {
         const contextmenuButton = this._menuButton;
         const contextmenu = this._contextmenu;
 
-        contextmenuButton.style.top = options.offsetY + 'px';
-        contextmenuButton.style.left = rect.width - options.width + options.offsetX + 'px';
-        contextmenuButton.style.width = options.width + 'px';
-        contextmenuButton.style.height = options.height + 'px';
-        contextmenuButton.style.backgroundImage = options.imageUrl || '';
+        // 버튼의 오른쪽 여백
+        const marginRight = 11;
 
-        contextmenu.style.top = options.height + 'px';
+        contextmenuButton.style.display = 'block';
+        contextmenuButton.style.top = '20px';
+        contextmenuButton.style.left = rect.width - contextmenuButton.clientWidth - marginRight + 'px';
+
+        contextmenu.style.top = contextmenuButton.clientHeight + 'px';
 
         this._menuList.innerHTML = '';
-        options.type.forEach((type) => {
+        options.menus.forEach((type) => {
             const menuItem = doc.createElement('li');
             menuItem.classList.add('rct-contextmenu-item');
             menuItem.id = type;

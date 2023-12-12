@@ -6,7 +6,6 @@ const config = {
     options: {
         animatable: false
     },
-    export: true,
     title: "Line Big Data",
     xAxis: {
         tick: {

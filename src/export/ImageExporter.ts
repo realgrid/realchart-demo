@@ -13,21 +13,33 @@ export interface ImageExportOptions {
      */
     type?: 'png' | 'jpeg',
     /**
+     * 이미지 너비
+     */
+    width?: number;
+    /**
+     * scale
+     */
+    scale?: number;
+    /**
      * 내보내기시 저장되는 파일명
      */
     fileName?: string;
     /**
+     * 내보내기 실패시 api요청을 보낼 경로
+     */
+    url?: string;
+    /**
      * false로 지정하면 내보내기 결과에 {@link AxisScrollBar}가 포함되지 않는다.
      */
-    includeScrollbar?: boolean;
+    hideScrollbar?: boolean;
     /**
      * false로 지정하면 내보내기 결과에 {@link SeriesNavigator}가 포함되지 않는다.
      */
-    includeNavigator?: boolean;
+    hideNavigator?: boolean;
     /**
      * false로 지정하면 내보내기 결과에 {@link ZoomButton}가 포함되지 않는다.
      */
-    includeZoomButton?: boolean;
+    hideZoomButton?: boolean;
 }
 
 /**
@@ -57,32 +69,30 @@ export class ImageExporter {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    export(dom: HTMLElement, options?: ImageExportOptions): void {
+    export(dom: HTMLElement, options?: ImageExportOptions, config?: {[key: string]: any}): void {
         const type = options?.type || 'png';
         const fileName = options?.fileName || 'realchart';
         const rect = dom.getBoundingClientRect();
 
+        const scale = options.width ? options.width / rect.width : options.scale;
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
-        canvas.width = rect.width;
-        canvas.height = rect.height;
+        canvas.width = rect.width * scale;
+        canvas.height = rect.height * scale;
+        context.scale(scale, scale);
 
         const svgToImageAndDownload = () => {
             const svg = dom.querySelector('.rct-svg');
             const img = new Image();
-            img.width = svg.clientWidth;
-            img.height = svg.clientHeight;
             img.onload = function () {
-                context.drawImage(img, 0, 0);
+                context.drawImage(img, 0, 0, rect.width, rect.height);
 
                 const imageDataUrl = canvas.toDataURL(`image/${type}`);
 
                 const link = document.createElement('a');
-                document.body.appendChild(link);
                 link.href = imageDataUrl;
                 link.download = `${fileName}.${type}`;
                 link.click();
-                link.remove();
             };
 
             const cloneSvg = svg.cloneNode(true) as Element;
@@ -92,31 +102,10 @@ export class ImageExporter {
                 if (g.childElementCount === 0) g.remove();
             });
 
-            // tooltip
-            cloneSvg.querySelectorAll('.rct-tooltip').forEach((tooltip) => {
-                tooltip.remove();
-            });
-
-            // navigator
-            if (!options.includeNavigator) {
-                cloneSvg.querySelectorAll('.rct-navigator').forEach((navigator) => {
-                    navigator.remove();
-                });
-            }
-
-            // scrollbar
-            if (!options.includeScrollbar) {
-                cloneSvg.querySelectorAll('.rct-axis-scrollbar').forEach((scrollbar) => {
-                    scrollbar.remove();
-                });
-            }
-
-            // zoom button
-            if (!options.includeZoomButton) {
-                cloneSvg.querySelectorAll('.rct-reset-zoom').forEach((zoomButton) => {
-                    zoomButton.remove();
-                });
-            }
+            this.$_removeItems(cloneSvg, '.rct-tooltip');
+            options.hideNavigator && this.$_removeItems(cloneSvg, '.rct-navigator');
+            options.hideScrollbar && this.$_removeItems(cloneSvg, '.rct-axis-scrollbar');
+            options.hideZoomButton && this.$_removeItems(cloneSvg, '.rct-reset-zoom');
 
             // aria-label 제거
             this.$_removeAriaLabelRecursively(cloneSvg);
@@ -124,20 +113,39 @@ export class ImageExporter {
             // display none 제거
             this.$_removeHiddenElementsRecursively(cloneSvg);
 
-            this.$_imagesToBase64(cloneSvg, () => {
+            this.$_imagesToBase64(cloneSvg, async () => {
                 const stringSvg = new XMLSerializer().serializeToString(cloneSvg);
                 const index = stringSvg.indexOf('>');
                 const usedStyles = this.$_getUsedStyles(cloneSvg);
-                const utf8Bytes = new TextEncoder().encode(`
+                const stringDom = `
                 ${stringSvg.slice(0, index + 1)}
                 <style type="text/css">
                 ${usedStyles.join(' ')}
                 </style>
-                ${stringSvg.slice(index + 1)}`);
-
-                const base64Encoded = btoa(String.fromCharCode.apply(null, utf8Bytes));
-
-                img.src = 'data:image/svg+xml;base64,' + base64Encoded;
+                ${stringSvg.slice(index + 1)}`
+                const utf8Bytes = new TextEncoder().encode(stringDom);
+                let src: string;
+                try {
+                    src = 'data:image/svg+xml;base64,' + btoa(String.fromCharCode.apply(null, utf8Bytes));
+                } catch (error) {
+                    // const url = options.url || 'http://127.0.0.1:4080/api';
+                    const url = options.url || 'https://realchart-node-exporter.vercel.app/print.html';
+                    const response = await fetch(url, 
+                        {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            size: {width: rect.width, height: rect.height},
+                            options: options,
+                            config: config
+                          }),
+                        });
+                    const res = await response.json();
+                    src = 'data:image/png;base64,' + res.data;
+                }
+                img.src = src;
             });
         }
 
@@ -146,10 +154,8 @@ export class ImageExporter {
 
         if (backgroundImageUrl && backgroundImageUrl !== 'none') {
             const background = new Image();
-            background.width = rect.width;
-            background.height = rect.height;
             background.onload = function () {
-                context.drawImage(background, 0, 0);
+                context.drawImage(background, 0, 0, rect.width, rect.height);
                 svgToImageAndDownload();
             };
 
@@ -166,6 +172,12 @@ export class ImageExporter {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
+
+    private $_removeItems(svg: Element, selector: string): void {
+        svg.querySelectorAll(selector).forEach((zoomButton) => {
+            zoomButton.remove();
+        });
+    }
 
     private $_getUsedStyles(dom: Element): string[] {
         const usedStyles = [];
