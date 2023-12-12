@@ -6,14 +6,16 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isObject, isString, pickNum, pickNum3, pickProp } from "../common/Common";
+import { isArray, isNumber, isObject, isString, pickNum, pickProp } from "../common/Common";
 import { IRichTextDomain } from "../common/RichText";
 import { Align, DEG_RAD, ORG_ANGLE, SVGStyleOrClass, VerticalAlign, _undef, fixnum, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem, ChartTextOverflow, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
-import { IClusterable, IPlottingItem } from "./Series";
+import { DataPoint } from "./DataPoint";
+import { IClusterable, IPlottingItem, ISeries } from "./Series";
+import { ITooltipContext } from "./Tooltip";
 
 /**
  * @internal
@@ -1044,8 +1046,8 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     unit: string;
 
-    tooltipHeader = '<b>${x}</b>';
-    tooltipRow: '${series}:<b> ${yValue}</b>';
+    tooltipHeader = '<b>${name}</b>';
+    tooltipRow = '${series}:<b> ${yValue}</b>';
     tooltipFooter: string;
 
     isEmpty(): boolean {
@@ -1085,6 +1087,15 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     isArced(): boolean {
         return this.totalAngle > 0 && this.totalAngle < 360;
+    }
+
+    getVisibleSeries(): ISeries[] {
+        const series: ISeries[] = [];
+
+        this._series.forEach(ser => {
+            ser.visible && series.push(...ser.getVisibleSeries());
+        })
+        return series;
     }
 
     //-------------------------------------------------------------------------

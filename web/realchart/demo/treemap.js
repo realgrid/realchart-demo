@@ -13,9 +13,7 @@ const config = {
     },
     series: {
         type: 'treemap',
-        tooltip: {
-            text: 'id: ${id}<br>group: ${group}'
-        },
+        tooltipText: 'id: ${id}<br>group: ${group}',
         // startDir: 'vertical',
         algorithm: 'squarify',
         // algorithm: 'sliceDice',

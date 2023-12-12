@@ -22,9 +22,7 @@ const config = {
     series: {
         type: 'vector',
         radius: 10,
-        tooltip: {
-            text: 'length: ${length}<br>angle: ${angle}'
-        },
+        tooltipText: 'length: ${length}<br>angle: ${angle}',
         maxLength: 50,
         // arrowHead: 'open',
         style: {

@@ -9,9 +9,7 @@ const config = {
         series: {
             noClip: true,
             pointLabel: false,
-            tooltip: {
-                text: '${x}°: ${y}m/s',
-            }
+            tooltipText: '${x}°: ${y}m/s',
         }
     },
     options: {

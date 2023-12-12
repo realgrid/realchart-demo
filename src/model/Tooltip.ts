@@ -11,9 +11,10 @@ import { DatetimeFormatter } from "../common/DatetimeFormatter";
 import { NumberFormatter } from "../common/NumberFormatter";
 import { IRichTextDomain } from "../common/RichText";
 import { _undef } from "../common/Types";
+import { IChart } from "./Chart";
 import { ChartItem } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
-import { ISeries, Series } from "./Series";
+import { ISeries } from "./Series";
 
 export enum TooltipLevel {
     AUTO = 'auto',
@@ -22,15 +23,26 @@ export enum TooltipLevel {
     AXIS = 'axis'
 }
 
+export interface ITooltipContext {
+    getTooltipText(series: ISeries, point: DataPoint): string;
+    getTooltipParam(series: ISeries, point: DataPoint, param: string): string;
+}
+
+export interface ITooltipOwner {
+    chart: IChart;
+    getTooltipContext(level: TooltipLevel, series: ISeries, point: DataPoint): ITooltipContext;
+}
+
 /**
- * Series.tooltip 모델.
+ * Tooltip 설정 모델.
+ * 
+ * @config chart.tooltip
  */
 export class Tooltip extends ChartItem {
 
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
-    static readonly DEF_TEXT = '<b>${name}</b><br>${series}:<b> ${yValue}</b>';
     static readonly HIDE_DELAY = 700;
 
     //-------------------------------------------------------------------------
@@ -42,18 +54,20 @@ export class Tooltip extends ChartItem {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _series: Series;
+    private _ctx: ITooltipContext;
+    private _series: ISeries;
+    private _point: DataPoint;
     private _domain: IRichTextDomain = {
-        callback: (point: DataPoint, param: string): string => {
-            return this._series.getPointTooltip(point, param);
+        callback: (target: any, param: string): string => {
+            return this._ctx.getTooltipParam(this._series, this._point, param);
         },
     }
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(public series: ISeries) {
-        super(series.chart, true);
+    constructor(public owner: ITooltipOwner) {
+        super(owner.chart, true);
 
         this.numberFormat = ',#.##';
         this.timeFormat = 'yyyy-MM-dd';
@@ -133,12 +147,11 @@ export class Tooltip extends ChartItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getText(): string {
-        return this.text || Tooltip.DEF_TEXT;
+    setTarget(series: ISeries, point: DataPoint): ITooltipContext {
+        return this._ctx = this.owner.getTooltipContext(this.level, this._series = series, this._point = point);
     }
 
-    getTextDomain(series: Series): IRichTextDomain {
-        this._series = series;
+    getTextDomain(): IRichTextDomain {
         return this._domain;
     }
 

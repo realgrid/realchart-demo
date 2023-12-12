@@ -417,9 +417,7 @@ let config2 = {
     innerRadius: "40%",
     radius: "60%",
     centerY: "80%",
-    tooltip: {
-      text: "${x}, ${y}건"
-    },
+    tooltipText: "${x}, ${y}건",
     pointLabel: {
       visible: true,
       position: "outside",
@@ -455,9 +453,7 @@ const config = {
         },
       },
       innerRadius: "20%",
-      tooltip: {
-        text: "${x} ${y}%",
-      },
+      tooltipText: "${x} ${y}%",
       onPointClick: (args) => {
         const weather = args.series.name.split(" ")[1];
         const index = categories[args.xValue];

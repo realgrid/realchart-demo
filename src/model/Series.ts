@@ -21,7 +21,7 @@ import { ChartItem, FormattableText } from "./ChartItem";
 import { LineType } from "./ChartTypes";
 import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource, LegendItem } from "./Legend";
-import { Tooltip } from "./Tooltip";
+import { ITooltipContext, Tooltip } from "./Tooltip";
 import { CategoryAxis } from "./axis/CategoryAxis";
 
 export enum PointItemPosition {
@@ -175,6 +175,7 @@ export interface IPlottingItem {
 
     setCol(col: number): void;
     setRow(row: number): void;
+    getVisibleSeries(): ISeries[];
     getVisiblePoints(): DataPoint[];
     getLegendSources(list: ILegendSource[]): void;
     needAxes(): boolean;
@@ -342,6 +343,7 @@ export interface IClusterable {
 }
 
 export interface ISeriesGroup extends IPlottingItem {
+    layout: SeriesGroupLayout;
 }
 
 export interface ISeries extends IPlottingItem {
@@ -397,7 +399,7 @@ const AXIS_VALUE = {
 
 /**
  */
-export abstract class Series extends ChartItem implements ISeries, ILegendSource {
+export abstract class Series extends ChartItem implements ISeries, ILegendSource, ITooltipContext {
 
     //-------------------------------------------------------------------------
     // consts
@@ -410,6 +412,24 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     static _loadSeries(chart: IChart, src: any, defType?: string): Series {
         const cls = chart._getSeriesType(src.type) || chart._getSeriesType(defType || chart.type);
         return new cls(chart, src.name).load(src);
+    }
+
+    static getPointTooltipParam(series: Series, point: DataPoint, param: string): any {
+        switch (param) {
+            case 'series':
+                return series.displayName();
+            case 'name':
+                return series._xAxisObj.getXValue(point.xValue);
+            case 'x':
+                return series._xAxisObj.value2Tooltip(point.x || (series._xAxisObj instanceof CategoryAxis ? series._xAxisObj.getCategory(point.index) : point.xValue));
+            case 'xValue':
+                return series._xAxisObj.value2Tooltip(point[param]);
+            case 'y':
+            case 'yValue':
+                return series._yAxisObj.value2Tooltip(point[param]);
+            default:
+                return param in point ? point[param] : point.source?.[param];
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -452,7 +472,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this.name = name;
         this.pointLabel = this._createLabel(chart);
         this.trendline = new Trendline(this);
-        this.tooltip = new Tooltip(this);
 
         this._points = new DataPointCollection(this);
         this._pointArgs = this._createPointArgs();
@@ -465,6 +484,17 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
 
     protected _createLabel(chart: IChart): DataPointLabel {
         return new DataPointLabel(chart);
+    }
+
+    //-------------------------------------------------------------------------
+    // ITooltipContext
+    //-------------------------------------------------------------------------
+    getTooltipText(series: ISeries, point: DataPoint): string {
+        return this.tooltipText;
+    }
+
+    getTooltipParam(series: ISeries, point: DataPoint, param: string): any {
+        return Series.getPointTooltipParam(series as Series, point, param);
     }
 
     //-------------------------------------------------------------------------
@@ -499,12 +529,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * @config
      */
     readonly trendline: Trendline;
-    /**
-     * 데이터포인트 툴팁 설정 모델.
-     * 
-     * @config
-     */
-    readonly tooltip: Tooltip;
     /**
      * 분할 모드일 때 시리즈가 표시될 pane의 수평 위치.
      * 
@@ -635,6 +659,12 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     visibleInNavigator = false;
     /**
+     * 데이터포인트 툴팁 텍스트.
+     * 
+     * @config
+     */
+    tooltipText = '<b>${name}</b><br>${series}:<b> ${yValue}</b>';
+    /**
      * 데이터 point의 동적 스타일 콜백.
      * 
      * @config
@@ -757,6 +787,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getVisibleSeries(): ISeries[] {
+        return [this];
+    }
+
     needClip(polar: boolean): boolean {
         const no = (this.group ? this.group.noClip : this.noClip);
 
@@ -1039,26 +1073,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         if (this.pointLabel.styleCallback) {
             this._getPointCallbackArgs(this._pointArgs, p);
             return this.pointLabel.styleCallback(this._pointArgs);
-        }
-    }
-
-    getPointTooltip(point: DataPoint, param: string): any {
-        switch (param) {
-            case 'series':
-                return this.displayName();
-            case 'name':
-                return this._xAxisObj.getXValue(point.xValue);
-                // return this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : pickProp(point.x, point.xValue);
-                // return this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.xValue) : pickProp(point.x, point.xValue);
-            case 'x':
-                return this._xAxisObj.value2Tooltip(point.x || (this._xAxisObj instanceof CategoryAxis ? this._xAxisObj.getCategory(point.index) : point.xValue));
-            case 'xValue':
-                return this._xAxisObj.value2Tooltip(point[param]);
-            case 'y':
-            case 'yValue':
-                return this._yAxisObj.value2Tooltip(point[param]);
-            default:
-                return param in point ? point[param] : point.source?.[param];
         }
     }
 
@@ -1894,7 +1908,32 @@ export enum SeriesGroupLayout {
 
 /**
  */
-export abstract class SeriesGroup<T extends Series> extends ChartItem implements ISeriesGroup {
+export abstract class SeriesGroup<T extends Series> extends ChartItem implements ISeriesGroup, ITooltipContext {
+
+    //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    static collectTooltipText(tooltip: {tooltipHeader: string, tooltipRow: string, tooltipFooter: string}, series: ISeries[], point: DataPoint): string {
+        let s = tooltip.tooltipHeader || '';
+
+        if (tooltip.tooltipRow) {
+            let i = 0;
+            series.forEach(ser => {
+                if (s) s = s + '<br>';
+                s += tooltip.tooltipRow.replace('series', 'series.' + i++);
+            })
+        }
+        s += tooltip.tooltipFooter ? '<br>' + tooltip.tooltipFooter : '';
+        return s;
+    }
+
+    static inflateTooltipParam(series: ISeries[], ser: ISeries, point: DataPoint, param: string): string {
+        if (param.startsWith('series.')) {
+            ser = series[+param.substring(7)] || ser;
+            param = 'series';
+        }
+        return Series.getPointTooltipParam(ser as Series, point, param);
+    }
 
     //-------------------------------------------------------------------------
     // property fields
@@ -1928,6 +1967,17 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     //-------------------------------------------------------------------------
+    // ITooltipContext
+    //-------------------------------------------------------------------------
+    getTooltipText(series: ISeries, point: DataPoint): string {
+        return SeriesGroup.collectTooltipText(this, this._visibles, point);
+    }
+
+    getTooltipParam(series: ISeries, point: DataPoint, param: string): string {
+        return SeriesGroup.inflateTooltipParam(this._visibles, series, point, param);
+    }
+
+    //-------------------------------------------------------------------------
     // ISeriesGroup
     //-------------------------------------------------------------------------
     row: number;
@@ -1954,8 +2004,8 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     zOrder = 0;
     noClip: boolean;
 
-    tooltipHeader: string;
-    tooltipRow: string;
+    tooltipHeader = '<b>${name}</b>';
+    tooltipRow = '${series}:<b> ${yValue}</b>';
     tooltipFooter: string;
 
     get series(): T[] {
@@ -1985,6 +2035,10 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
 
     getBaseValue(axis: IAxis): number {
         return NaN;//axis.getBaseValue();
+    }
+
+    getVisibleSeries(): ISeries[] {
+        return this._visibles;
     }
 
     //-------------------------------------------------------------------------

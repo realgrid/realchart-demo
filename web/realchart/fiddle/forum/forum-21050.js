@@ -13,14 +13,14 @@ const config = {
 		location: 'plot',
 		align: 'right',
 	},
-	series: [
+    tooltip: {
+        offset: 30
+    },
+    series: [
 		{
 			name: '2019년도',
 			pointLabel: true,
 			data: [413340, 4295799, 4582903, 1504513, 1428640, 1495929],
-			tooltip: {
-				offset: 30
-			}
 		},
 		{
 			name: '2020년도',

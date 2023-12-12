@@ -81,9 +81,7 @@ const createSeries = (year) => {
         result.push({
             name: continent,
             type: 'bubble',
-            tooltip: {
-                text: 'country: ${country}<br>gdpPercap: ${x}<br>lifeExp: ${y}<br>pop: ${z}'
-            },
+            tooltipText: 'country: ${country}<br>gdpPercap: ${x}<br>lifeExp: ${y}<br>pop: ${z}',
             sizeMode: 'width',
             shape: 'rectangle',
             radius: 0.1,

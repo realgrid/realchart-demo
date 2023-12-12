@@ -27,9 +27,7 @@ const config = {
     {
       type: "arearange",
       name: "11월 최고,최저 기온",
-      tooltip: {
-        // text: "${x}<br>최저온도 ${y}, 최고온도 ${low}",
-      },
+    //   tooltipText: "${x}<br>최저온도 ${y}, 최고온도 ${low}",
       data: [
         [20.6, 17.2],
         [25.9, 18.7],

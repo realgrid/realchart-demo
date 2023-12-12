@@ -21,9 +21,7 @@ const config = {
         },
         data: [11, 22, 15, 9, 13, 27]
     }, {
-        tooltip: {
-            text: 'low: ${low}<br>y: ${y}<br>'
-        },
+        tooltipText: 'low: ${low}<br>y: ${y}<br>',
         type: 'errorbar',
         pointLabel: true,
         data: [[10, 12], [20, 23], [14, 16], [8, 11], [12, 14], [25, 26]],

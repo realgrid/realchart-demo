@@ -35,7 +35,6 @@ export class TooltipView extends RcElement {
     private _richText: SvgRichText;
 
     private _model: Tooltip;
-    private _series: Series;
     private _hideTimer: any;
     private _hideHandler = () => {
         this.$_hide();
@@ -67,17 +66,19 @@ export class TooltipView extends RcElement {
     // methods
     //-------------------------------------------------------------------------
     show(series: Series, point: DataPoint, x: number, y: number, animate: boolean): void {
+        const model = this._model = series.chart.tooltip;
+        const ctx = model.setTarget(series, point);
+
+        if (!ctx) return;
+
         const cw = this.control.contentWidth();
         const ch = this.control.contentHeight();
-        const model = this._model = series.tooltip;
         const tv = this._textView;
         const isInverted = series.chart.isInverted();
 
-        this._series = series;
-
         // text
-        this._richText.setFormat(model.getText());
-        this._richText.build(tv, NaN, NaN, point, model.getTextDomain(series));
+        this._richText.setFormat(ctx.getTooltipText(series, point));
+        this._richText.build(tv, NaN, NaN, null, model.getTextDomain());
 
         const r = tv.getBBounds();
         let w = Math.max(model.minWidth || 0, r.width + 8 * 2);

@@ -128,9 +128,7 @@ const config = {
             strokeWidth: '4px'
         },
         type: 'heatmap',
-        tooltip: {
-            text: `<t style="font-weight:bold">\${xValue}주차</t><br><b>평균온도: \${zValue}°C</b>`
-        },
+        tooltipText: `<t style="font-weight:bold">\${xValue}주차</t><br><b>평균온도: \${zValue}°C</b>`,
         data: [
             [0, 0, -6.8],
             [0, 1, -5.4],

@@ -54,9 +54,7 @@ const config = {
             pointLabel: false,
             xField: 'angle',
             yField: 'hits',
-            tooltip: {
-                text: '${x}°: ${y}hits',
-            }
+            tooltipText: '${x}°: ${y}hits',
         }
     },
     options: {

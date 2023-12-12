@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, mergeObj, pickProp3, assign, pickProp, isNumber } from "../common/Common";
+import { isArray, isObject, isString, mergeObj, pickProp3, assign, isNumber } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
 import { Align, SectionDir, VerticalAlign, _undef } from "../common/Types";
 import { AssetCollection } from "./Asset";
@@ -15,7 +15,7 @@ import { Body } from "./Body";
 import { ChartItem, n_char_item } from "./ChartItem";
 import { DataPoint } from "./DataPoint";
 import { ILegendSource, Legend } from "./Legend";
-import { IPlottingItem, ISeries, PlottingItemCollection, Series } from "./Series";
+import { IPlottingItem, ISeries, PlottingItemCollection, Series, SeriesGroup, SeriesGroupLayout } from "./Series";
 import { PaletteMode, ThemeCollection } from "./Theme";
 import { Subtitle, Title } from "./Title";
 import { CategoryAxis } from "./axis/CategoryAxis";
@@ -57,7 +57,7 @@ import { Annotation, AnnotationCollection } from "./Annotation";
 import { ShapeAnnotation } from "./annotation/ShapeAnnotation";
 import { CircleBarSeries, CircleBarSeriesGroup } from "./series/CircleBarSeries";
 import { Utils } from "../common/Utils";
-import { NumberFormatter } from "../common/NumberFormatter";
+import { ITooltipContext, ITooltipOwner, Tooltip, TooltipLevel } from "./Tooltip";
 
 export interface IChartProxy {
     getChartObject(model: any): object;
@@ -75,6 +75,7 @@ export interface IChart {
     xAxis: IAxis;
     yAxis: IAxis;
     subtitle: Subtitle;
+    tooltip: Tooltip;
     body: Body;
     split: Split;
     colors: string[];
@@ -322,7 +323,7 @@ export interface IChartEventListener {
  * 
  * @config chart
  */
-export class Chart extends RcEventProvider<IChartEventListener> implements IChart {
+export class Chart extends RcEventProvider<IChartEventListener> implements IChart, ITooltipOwner {
 
     //-------------------------------------------------------------------------
     // property fields
@@ -338,6 +339,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _title: Title;
     private _subtitle: Subtitle;
     private _legend: Legend;
+    private _tooltip: Tooltip;
     private _series: PlottingItemCollection;
     private _xAxes: AxisCollection;
     private _yAxes: AxisCollection;
@@ -369,6 +371,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._title = new Title(this);
         this._subtitle = new Subtitle(this);
         this._legend = new Legend(this);
+        this._tooltip = new Tooltip(this);
         this._split = new Split(this);
         this._series = new PlottingItemCollection(this);
         this._xAxes = new AxisCollection(this, true);
@@ -392,6 +395,42 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     animatable(): boolean {
         return this._options.animatable !== false;
+    }
+
+    //-------------------------------------------------------------------------
+    // ITooltipOwner
+    //-------------------------------------------------------------------------
+    getTooltipContext(level: TooltipLevel, series: ISeries, point: DataPoint): ITooltipContext {
+
+        // [주의] Axis class에서 SeriesGroup 등을 직접 참조할 수 없어서 여기서 생성한다.
+        class AxisContext {
+            series: ISeries[];
+            constructor(public axis: Axis) {
+                this.series = axis.getVisibleSeries();
+            }
+            getTooltipText(series: ISeries, point: DataPoint): string {
+                return SeriesGroup.collectTooltipText(this.axis, this.series, point);
+            }
+            getTooltipParam(series: ISeries, point: DataPoint, param: string): string {
+                return SeriesGroup.inflateTooltipParam(this.series, series, point, param);
+            }
+        }
+
+        if (level === TooltipLevel.AUTO) {
+            const g = series.group;
+            if (g && (g.layout === SeriesGroupLayout.OVERLAP || g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
+                level = TooltipLevel.GROUP;
+            } 
+        }
+
+        switch (level) {
+            case TooltipLevel.AXIS:
+                return new AxisContext((series as Series)._xAxisObj as Axis);
+            case TooltipLevel.GROUP:
+                return series.group as SeriesGroup<Series>;
+            default:
+                return series as Series;
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -495,6 +534,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     get legend(): Legend {
         return this._legend;
+    }
+
+    get tooltip(): Tooltip {
+        return this._tooltip;
     }
 
     get xAxis(): IAxis {
@@ -734,6 +777,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         // legend
         this._legend.load(source.legend);
+
+        // tooltip
+        this._tooltip.load(source.tooltip);
 
         // split
         this._split.load(source.split);
