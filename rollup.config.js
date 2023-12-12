@@ -153,6 +153,39 @@ const rollup_pub_config = {
     ]
 };
 
+const rollup_report_config = {
+    input: './out/realchart/js/src/main.js',
+    output: [{
+        format: 'umd',
+        name: namespace,
+        file: './web/realchart/lib/realchart.js'
+    }],
+    plugins: [
+        modify({
+            '$Version': `${pkg.version}`,
+            '$LicenseType': 'ent',
+            '$$LicenseCheck': '1',
+            '$$ReportCheck': '1',
+            '$ProductVersion': version
+        }),
+        resolve(),
+        commonjs(),
+        exportDefault(),
+        terser(),
+        banner2(() => copyright),
+        copy({
+            hook: 'writeBundle',
+            targets: [
+                { src: './web/realchart/lib/realchart.js', dest: `./`, rename: `${filename}.min.js` },
+            ],
+            flatten: false
+        }),
+        del({
+            hook: "closeBundle"
+        })
+    ]
+};
+
 const rollup_lib_config = {
     input: './out/realchart/js/src/main.js',
     output: [{
@@ -235,6 +268,9 @@ switch (process.env.BUILD) {
         break;
     case 'pub':
         rollup_config = rollup_pub_config;
+        break;
+    case 'report':
+        rollup_config = rollup_report_config;
         break;
     case 'lib':
     case 'libdebug':

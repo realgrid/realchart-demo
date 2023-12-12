@@ -1,6 +1,5 @@
 import {LicType, prodInfo} from './licinfo';
 
-declare const realChartLic: string;
 const _gk = "dkdl";
 
 class Base64 {
@@ -260,21 +259,31 @@ class Checker {
 
 export const $_lc = function () {
     const server = location.hostname;
+    let lc = '$$ReportCheck';
     let lic: string;
+    const errorMasage = lc === '1' ? '' : `RealChart를 사용하려면 도움말을 참조하세요.\nhttps://www.realchart.co.kr/`;
 
     try {
-        lic = realChartLic;
+        lic = lc === '1' ? window['realReportLic'] || window['R2DesignerLic'] : window['realChartLic'];
         if (!lic) {
-            throw new Error(`RealChart를 사용하려면 도움말을 참조하세요.\nhttps://www.realchart.co.kr/`);
+            throw new Error(errorMasage);
         }
     } catch(e) {
-        throw new Error(`RealChart를 사용하려면 도움말을 참조하세요.\nhttps://www.realchart.co.kr/`);
+        throw new Error(errorMasage);
     }
 
     const licInfo = Checker.decrypt(lic);
+
+    const product = lc === '1' ? 'RealReport' : 'RealChart';
     
-    if (licInfo.name != 'RealChart' || prodInfo.name !== "RealChart") {
-        throw new Error(`RealChart를 사용하려면 도움말을 참조하세요.\nhttps://www.realchart.co.kr/`);
+    if (product === 'RealChart') {
+        if (licInfo.name !== 'RealChart' || prodInfo.name !== "RealChart") {
+            throw new Error(errorMasage);
+        }
+    } else if (product === 'RealReport') {
+        if (licInfo.name !== 'RealReport' && licInfo.name !== 'R2Designer') {
+            throw new Error(errorMasage);
+        }
     }
     
     try {
@@ -282,14 +291,14 @@ export const $_lc = function () {
         const path = location.pathname.toLowerCase();
         
         if (prodInfo.license != LicType.Developer && !Checker.includedDomains(licServer, server.toLowerCase(), path)) {
-            throw new Error();
+            throw new Error(errorMasage);
         }
         
         const licType = licInfo.lic.toLowerCase();
 
         // javascript 버전에 따라 안되는 경우가 있을수 있다. 확인 필요.
         if (!Object.values(LicType).includes(licType as LicType)) {
-            throw new Error();
+            throw new Error(errorMasage);
         }
 
         prodInfo.code = licInfo.code;
@@ -306,7 +315,7 @@ export const $_lc = function () {
             }
         }
     } catch(e) {
-        throw new Error(`RealChart를 사용하려면 도움말을 참조하세요.\nhttps://www.realchart.co.kr/`);
+        throw new Error(errorMasage);
     }
     
     return true;
