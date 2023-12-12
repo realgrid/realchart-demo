@@ -14,6 +14,7 @@ const config = {
         text: '2023.01 ~ 12',
     },  
     tooltip: {
+        // visible: false,
         // level: 'axis'
     },
 	xAxis: {
