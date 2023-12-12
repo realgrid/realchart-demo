@@ -2004,8 +2004,30 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     zOrder = 0;
     noClip: boolean;
 
+    /**
+     * 그룹 툴팁의 위쪽에 표시되는 텍스트.\
+     * 
+     * tooltipHeader
+     * tooltipRow,
+     * tooltipRow,
+     * ...
+     * tooltipFooter
+     * 형태로 툴팁이 표시된다.
+     * 
+     * @config
+     */
     tooltipHeader = '<b>${name}</b>';
+    /**
+     * 그룹 툴팁에 각 시리즈별 표시되는 포인트 툴팁 텍스트.
+     * 
+     * @config
+     */
     tooltipRow = '${series}:<b> ${yValue}</b>';
+    /**
+     * 그룹 툴팁의 아래쪽에 표시되는 텍스트.
+     * 
+     * @config
+     */
     tooltipFooter: string;
 
     get series(): T[] {

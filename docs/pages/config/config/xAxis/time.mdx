@@ -135,6 +135,22 @@ minPadding도 적용되지 않는다.
 ### [title](./time/title)
 축 타이틀 설정 모델.  
 
+### tooltipFooter: `string{:js}`[#tooltipFooter]
+축에 포함된 시리즈들 툴팁의 아래쪽에 표시되는 텍스트.  
+
+### tooltipHeader: `string{:js}`[#tooltipHeader]
+축에 포함된 시리즈들 툴팁의 위쪽에 표시되는 텍스트.
+
+tooltipHeader
+tooltipRow,
+tooltipRow,
+...
+tooltipFooter
+형태로 툴팁이 표시된다.  
+<DefaultValue value="'<b>${name}</b>'" contents=""></DefaultValue>
+### tooltipRow: `string{:js}`[#tooltipRow]
+축에 포함된 각 시리즈별 표시되는 포인트 툴팁 텍스트.  
+<DefaultValue value="'${series}:<b>" contents="${yValue}</b>'"></DefaultValue>
 ### totalAngle: `number{:js}`[#totalAngle]
 Polar 차트에서 사용될 때 원호 전체 각도.
 0 ~ 360 사이의 값으로 지정해야 한다.
