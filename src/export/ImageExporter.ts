@@ -77,17 +77,24 @@ export class ImageExporter {
         const scale = options.width ? options.width / rect.width : options.scale;
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
-        canvas.width = rect.width * scale;
-        canvas.height = rect.height * scale;
-        context.scale(scale, scale);
+        canvas.width = rect.width;
+        canvas.height = rect.height;
 
         const svgToImageAndDownload = () => {
             const svg = dom.querySelector('.rct-svg');
             const img = new Image();
             img.onload = function () {
-                context.drawImage(img, 0, 0, rect.width, rect.height);
+                context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                const scaledWidth = canvas.width * scale;
+                const scaledHeight = canvas.height * scale;
+                const scaledCanvas = document.createElement('canvas');
+                const scaledContext = scaledCanvas.getContext('2d');
+                scaledCanvas.width = scaledWidth;
+                scaledCanvas.height = scaledHeight;
+                scaledContext.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, scaledWidth, scaledHeight);
 
-                const imageDataUrl = canvas.toDataURL(`image/${type}`);
+                const imageDataUrl = scaledCanvas.toDataURL(`image/${type}`);
 
                 const link = document.createElement('a');
                 link.href = imageDataUrl;
@@ -102,15 +109,12 @@ export class ImageExporter {
                 if (g.childElementCount === 0) g.remove();
             });
 
+            this.$_removeItems(cloneSvg, '.rct-feedbacks');
             this.$_removeItems(cloneSvg, '.rct-tooltip');
             options.hideNavigator && this.$_removeItems(cloneSvg, '.rct-navigator');
             options.hideScrollbar && this.$_removeItems(cloneSvg, '.rct-axis-scrollbar');
             options.hideZoomButton && this.$_removeItems(cloneSvg, '.rct-reset-zoom');
-
-            // aria-label 제거
             this.$_removeAriaLabelRecursively(cloneSvg);
-
-            // display none 제거
             this.$_removeHiddenElementsRecursively(cloneSvg);
 
             this.$_imagesToBase64(cloneSvg, async () => {
@@ -128,8 +132,8 @@ export class ImageExporter {
                 try {
                     src = 'data:image/svg+xml;base64,' + btoa(String.fromCharCode.apply(null, utf8Bytes));
                 } catch (error) {
-                    // const url = options.url || 'http://127.0.0.1:4080/api';
-                    const url = options.url || 'https://realchart-node-exporter.vercel.app/print.html';
+                    const url = options.url || 'http://127.0.0.1:4080/api';
+                    // const url = options.url || 'https://realchart-node-exporter.vercel.app/api';
                     const response = await fetch(url, 
                         {
                           method: 'POST',
@@ -155,7 +159,7 @@ export class ImageExporter {
         if (backgroundImageUrl && backgroundImageUrl !== 'none') {
             const background = new Image();
             background.onload = function () {
-                context.drawImage(background, 0, 0, rect.width, rect.height);
+                context.drawImage(background, 0, 0, canvas.width, canvas.height);
                 svgToImageAndDownload();
             };
 

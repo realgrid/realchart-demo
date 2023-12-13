@@ -80,11 +80,11 @@ function setActions(container) {
 			chart.load(config, animate);
 		}, false);
 	line(container);
-	createListBox(container, "export.width", ['300', '450', '850', '1200'], function (e) {
+	createListBox(container, "export.width", ['425', '850', '1275'], function (e) {
         config.export.width = Number(_getValue(e));
         chart.load(config);
     }, '850');
-	createListBox(container, "export.scale", ['0.5', '0.8', '1', '1.3'], function (e) {
+	createListBox(container, "export.scale", ['0.5', '1', '1.5'], function (e) {
         config.export.scale = Number(_getValue(e));
         chart.load(config);
     }, '1');
