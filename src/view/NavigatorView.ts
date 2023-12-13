@@ -193,8 +193,8 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
         if (model._vertical) {
             // TODO: 수직 배치가 필요한가?
         } else {
-            const x1 = zoom ? zoom.start * w / model.axisLen() : 0;
-            const x2 = zoom ? zoom.end * w / model.axisLen() : w;
+            const x1 = zoom ? (zoom.start - zoom.min) * w / model.axisLen() : 0;
+            const x2 = zoom ? (zoom.end - zoom.min) * w / model.axisLen() : w;
             // Utils.log('end', zoom ? zoom.end : w, x2);
 
             this._mask.setBounds(x1, 0, x2 - x1, h);

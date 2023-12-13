@@ -686,22 +686,27 @@ class CrosshairView extends PathElement {
 
         if (this._bar) {
             const len = axis._isHorz ? width : height;
-            let index = -1;
+            let xVal = -1;
 
             if (pv) {
-                index = pv.point.xValue;
+                xVal = pv.point.xValue;
             } else if (this._model.showAlways && axis instanceof CategoryAxis) {
                 if (axis.reversed) {
-                    index = axis.categoryAt(horz ? width - x : y);
+                    xVal = axis.xValueAt(horz ? width - x : y);
                 } else {
-                    index = axis.categoryAt(horz ? x : height - y);
+                    xVal = axis.xValueAt(horz ? x : height - y);
                 }
             }
 
             // TODO: scrolling
-            if (index >= 0) {
-                const p = axis.getPosition(len, index);
-                const w = axis.getUnitLength(len, index);
+            if (xVal >= 0) {
+                const p = axis.getPosition(len, xVal);
+                const w = axis.getUnitLength(len, xVal);
+
+                if (isNaN(p)) {
+                    debugger;
+                    console.log(axis.getPosition(len, xVal));
+                }
 
                 if (horz) {
                     pb.rect(p - w / 2, 0, w, height);
@@ -779,7 +784,7 @@ export class BodyView extends ChartElement<Body> {
     private _zoomButton: ZoomButton;
     // feedbacks
     private _feedbackContainer: LayerElement;
-    private _crosshairLines: ElementPool<CrosshairView>;
+    private _crosshairViews: ElementPool<CrosshairView>;
     private _focused: IPointView = null;
 
     private _inverted: boolean;
@@ -808,7 +813,7 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
         this.add(this._zoomButton = new ZoomButton(doc));
         
-        this._crosshairLines = new ElementPool(this._feedbackContainer, CrosshairView);
+        this._crosshairViews = new ElementPool(this._feedbackContainer, CrosshairView);
     }
 
     //-------------------------------------------------------------------------
@@ -849,7 +854,7 @@ export class BodyView extends ChartElement<Body> {
         // crosshair가 zoom이 반영된 것으로 계산하므로 다음 render까지 기다리게 해야한다.
         // TODO: _zoomRequested 필요 없는 깔끔한 방식 필요. 
         if (!this._zoomRequested) {
-            this._crosshairLines.forEach(v => {
+            this._crosshairViews.forEach(v => {
                 if (v.setVis(inBody)) {
                     v.layout(pv, p.x, p.y, w, h);
                 }
@@ -1191,7 +1196,7 @@ export class BodyView extends ChartElement<Body> {
     }
 
     private $_preppareCrosshairs(chart: IChart): void {
-        const views = this._crosshairLines;
+        const views = this._crosshairViews;
         const hairs: Crosshair[] = [];
 
         [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
