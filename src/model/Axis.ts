@@ -13,9 +13,7 @@ import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem, ChartTextOverflow, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
-import { DataPoint } from "./DataPoint";
 import { IClusterable, IPlottingItem, ISeries } from "./Series";
-import { ITooltipContext } from "./Tooltip";
 
 /**
  * @internal
@@ -26,13 +24,13 @@ export interface IAxis {
     
     row: number;
     col: number;
-    _vlen: number;
     _isX: boolean;
     _isHorz: boolean;
     _isOpposite: boolean;
     _isBetween: boolean;
 
     reversed: boolean;
+    _vlen: number;
     _zoom: IAxisZoom;
 
     isContinuous(): boolean;
@@ -908,13 +906,13 @@ export abstract class Axis extends ChartItem implements IAxis {
     _ticks: IAxisTick[];
     _markPoints: number[];
     _vlen: number;
+    _zoom: AxisZoom;
     _minPad = 0;
     _maxPad = 0;
     _values: number[] = [];
     protected _min: number;
     protected _max: number;
     protected _single: boolean;
-    _zoom: AxisZoom;
     _runPos: AxisPosition;
     _labelArgs: IAxisLabelArgs = {} as any;
 

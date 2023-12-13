@@ -629,7 +629,7 @@ export abstract class ContinuousAxis extends Axis {
     protected _createTick(length: number, index: number, step: number): IAxisTick {
         return {
             index,
-            pos: NaN,//this.getPosition(length, step),
+            pos: NaN,
             value: fixnum(step),
             label: this.label.getTick(index, step) || String(step)
         }
@@ -844,6 +844,7 @@ export abstract class ContinuousAxis extends Axis {
         // return Math.max(1, pickNum(length, 1));
         return pickNum(length, 1);
     }
+    
     private $_loadBreak(source: any): AxisBreak {
         if (isObject(source) && 'from' in source && 'to' in source) {
             return new AxisBreak(this).load(source) as AxisBreak;

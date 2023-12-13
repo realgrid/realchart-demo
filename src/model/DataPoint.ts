@@ -9,7 +9,7 @@
 import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4, assign } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { IValueRange, _undef } from "../common/Types";
-import { IAxis } from "./Axis";
+import { AxisZoom, IAxis } from "./Axis";
 import { ISeries } from "./Series";
 
 let __point_id__ = 0;
@@ -278,10 +278,51 @@ export class DataPointCollection {
     }
 
     getPoints(xAxis: IAxis, yAxis: IAxis): DataPoint[] {
-        const zoom = xAxis._zoom;
+        const zoom = xAxis._zoom as AxisZoom;
 
         if (zoom) {
-            return this._points.slice(Math.floor(zoom.start), Math.ceil(zoom.end) + 1);
+            let x1 = zoom.start;
+            let x2 = zoom.end;
+
+            if (xAxis.isContinuous()) {
+                const pts = this._points;
+                const len = pts.length;
+                let i = 0;
+                let p: DataPoint;
+                let prev: number;
+
+                prev = Number.MIN_VALUE;
+                for (; i < len - 1; i++) {
+                    p = pts[i];
+                    if (x1 >= prev && x1 < p.xValue + (pts[i + 1].xValue - p.xValue) / 2) {
+                        x1 = i;
+                        break;
+                    }
+                    prev = p.xValue;
+                }
+                if (x1 !== i) {
+                    x1 = len - 1;
+                }
+
+                prev = Number.MAX_VALUE;
+                for (i = len - 1; i > 0; i--) {
+                    p = pts[i];
+                    if (x2 < prev && x2 > p.xValue - (p.xValue - pts[i - 1].xValue) / 2) {
+                        x2 = i;
+                        break;
+                    }
+                    prev = p.xValue;
+                }
+                if (x2 !== i) {
+                    x2 = 0;
+                }
+                x1 = Math.max(x1 - 1, 0);
+                x2 = Math.min(x2 + 1, len - 1);
+            } else {
+                x1 = Math.floor(x1) - 1;
+                x2 = Math.ceil(x2);
+            }
+            return this._points.slice(x1, x2 + 1);
         } else {
             return this._points;
         }

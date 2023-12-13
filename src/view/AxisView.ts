@@ -249,7 +249,7 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
     _reversed: boolean;
     _szThumb: number;
 
-    private _max = 0;
+    private _len = 0;
     private _page = 0;
     private _pos = 0;
 
@@ -270,17 +270,18 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
         this._reversed = reversed;
 
         if (zoom) {
-            const max = zoom.max - zoom.min;
+            const len = zoom.max - zoom.min;
             const page = zoom.end - zoom.start;
     
-            this._max = Math.max(0, max);
-            this._page = Math.min(page, max);
-            this._pos = Math.min(max - page, Math.max(0, zoom.start));
+            this._len = Math.max(0, len);
+            this._page = Math.min(page, len);
+            this._pos = Math.min(zoom.min + len - page, Math.max(0, zoom.start));
         } else {
-            this._max = 0;
+            this._len = 0;
         }
     }
 
+    // ScrollTracker에서 호출한다.
     getZoomPos(pt: number): number {
         const zoom = this.model.axis._zoom;
         const len = (this._vertical ? this.height : this.width) - (this._vertical ? this._thumbView.height : this._thumbView.width);
@@ -288,10 +289,10 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
         if (this.model.axis.reversed) {
             // TODO
             pt = Math.max(0, Math.min(pt, len));
-            return pt * (zoom.max - zoom.min - (zoom.end - zoom.start)) / len;
+            return pt * (zoom.max - zoom.min - (zoom.end - zoom.start)) / len + zoom.min;
         } else {
             pt = Math.max(0, Math.min(pt, len));
-            return pt * (zoom.max - zoom.min - (zoom.end - zoom.start)) / len;
+            return pt * (zoom.max - zoom.min - (zoom.end - zoom.start)) / len + zoom.min;
         }
     }
 
@@ -310,11 +311,12 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
 
     protected _doLayout(param: any): void {
         const model = this.model;
+        const zoom = model.axis._zoom;
         const szThumb = this._szThumb = pickNum(model.minThumbSize, 32);
-        const max = this._max;
+        const len = this._len;
+        const fill = this._len === 0;
         const page = this._page;
-        const pos = this._pos;
-        const fill = this._max === 0;
+        const pos = fill ? 0 : this._pos - zoom.min;
         let w = this.width;
         let h = this.height;
 
@@ -323,26 +325,26 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
             this._trackView.setBounds(model.gap, 0, w, h);
             
             h -= szThumb;
-            const hPage = (fill || page === max ? h : h * page / max) + szThumb;
+            const hPage = (fill || page === len ? h : h * page / len) + szThumb;
 
             if (this._reversed) {
                 // TODO
-                this._thumbView.setBounds(model.gap + 1, fill ? 0 : (this.height - h * pos / max) - hPage, w - 2, hPage); 
+                this._thumbView.setBounds(model.gap + 1, fill ? 0 : (this.height - h * pos / len) - hPage, w - 2, hPage); 
             } else {
-                this._thumbView.setBounds(model.gap + 1, fill ? 0 : (this.height - h * pos / max) - hPage, w - 2, hPage); 
+                this._thumbView.setBounds(model.gap + 1, fill ? 0 : (this.height - h * pos / len) - hPage, w - 2, hPage); 
             }
         } else {
             h -= model.gap + model.gapFar;
             this._trackView.setBounds(0, model.gap, w, h);
             
             w -= szThumb;
-            const wPage = (fill || page === max ? w : w * page / max) + szThumb;
+            const wPage = (fill || page === len ? w : w * page / len) + szThumb;
 
             if (this._reversed) {
                 // TODO
-                this._thumbView.setBounds(fill ? 0 : w * pos / max, model.gap + 1, wPage, h - 2); 
+                this._thumbView.setBounds(fill ? 0 : w * pos / len, model.gap + 1, wPage, h - 2); 
             } else {
-                this._thumbView.setBounds(fill ? 0 : w * pos / max, model.gap + 1, wPage, h - 2); 
+                this._thumbView.setBounds(fill ? 0 : w * pos / len, model.gap + 1, wPage, h - 2); 
             }
         }
     }

@@ -214,10 +214,10 @@ export class CategoryAxis extends Axis {
         return this._cats[index];
     }
 
-    categoryAt(pos: number): number {
+    xValueAt(pos: number): number {
         for (let i = 2; i < this._pts.length - 1; i++) {
             if (pos >= this._pts[i - 1] && pos < this._pts[i]) {
-                return i - 2 + (this._zoom ? Math.floor(this._zoom.start) : 0); 
+                return (this._zoom ? this._zoom.start : this._min) + i - 2;
             }
         }
         return -1;
@@ -280,7 +280,7 @@ export class CategoryAxis extends Axis {
         this._cats = [];
         this._weights = [];
 
-        if (this._isPolar) {
+        if (this._isPolar || this._zoom) {
             this._minPad = this._maxPad = this._catPad = 0;
         } else {
             this._minPad = pickNum3(this.minPadding, this.padding, 0);
@@ -328,7 +328,7 @@ export class CategoryAxis extends Axis {
 
                 ticks.push({
                     index: i - 1,
-                    pos: NaN,//this.getPosition(length, v),
+                    pos: NaN,
                     value: v,
                     label: label.getTick(i - 1, c ? c.t : cats[i - 1]),
                 });
@@ -420,7 +420,7 @@ export class CategoryAxis extends Axis {
     }
 
     getXValue(value: number) {
-        return this.getCategory(value);
+        return this.getCategory(value - this._min);
     }
 
     //-------------------------------------------------------------------------

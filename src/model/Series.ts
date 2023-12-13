@@ -822,11 +822,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         });
     }
 
-    getXStart(): number {
+    private $_getXStart(): number {
         let s = this._xAxisObj.getValue(this.xStart);
         const v = !isNaN(s) ? s : this._xAxisObj.getValue(this.chart.options.xStart);
 
-        return this._xAxisObj._zoom ? v + Math.floor(this._xAxisObj._zoom.start) : v;
+        return this._xAxisObj._zoom ? Math.floor(this._xAxisObj._zoom.start) : v;
     }
 
     getXStep(): number {
@@ -866,7 +866,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     collectValues(axis: IAxis, vals: number[]): void {
         if (axis === this._xAxisObj) {
-            let x = this.getXStart() || 0;
+            let x = this.$_getXStart() || 0;
             let xStep: any = this.getXStep() || 1;
 
             if (isString(xStep)) xStep = xStep.trim();
