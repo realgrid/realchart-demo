@@ -128,6 +128,7 @@ export class ScrollTracker extends ChartDragTracker {
             p = v.svgToElement(x, y).x - this._startOff;
             p = v.getZoomPos(p);
             v.model.axis.zoom(p, p + this._zoomLen);
+            console.log(p);
         }
         return true;
     }
@@ -176,21 +177,21 @@ export class NavigatorHandleTracker extends ChartDragTracker {
     protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
         const view = this._view;
         const axis = view.model.axis();
-        const chart = axis.chart;
-        const inverted = chart.isInverted();
-        const len = view.model.axisLen();
-        const min = axis._zoom ? axis._zoom.min : axis.axisMin();
+
+        axis._prepareZoom();
+
         let p = view.svgToElement(x, y).x - this._startOff;
+        const len = axis._zoom.total();// view.model.axisLen();
+        const min = axis._zoom.min;//axisMin();
 
         if (this._handleView._vertical) {
             if (this._isStart) {
             } else {
             }
         } else {
+            // if (p < 750) debugger;
             if (this._isStart) {
                 if (p > 0) {
-                    // let v1 = axis.getValueAt(view.width, x);
-                    // axis.zoom(v1, NaN);
                     axis.zoom(p * len / view.width + min, NaN);
                 }
             } else {
@@ -211,6 +212,7 @@ export class NavigatorMaskTracker extends ChartDragTracker {
     private _view: NavigatorView;
     private _maskView: RcElement;
     private _startOff: number;
+    private _totalLen: number;
     private _zoomLen: number;
 
     //-------------------------------------------------------------------------
@@ -233,6 +235,7 @@ export class NavigatorMaskTracker extends ChartDragTracker {
         const p = v.elementToSvg(0, 0);
 
         this._startOff = this._view.model._vertical ? (yStart - p.y) : (xStart - p.x);
+        this._totalLen = axis._zoom.total();
         this._zoomLen = axis._zoom.length();
 
         return true;
@@ -243,13 +246,12 @@ export class NavigatorMaskTracker extends ChartDragTracker {
 
     protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
         const view = this._view;
-        const len = view.model.axisLen();
         const p = view.svgToElement(x, y).x - this._startOff;
 
         if (view.model._vertical) {
-            this.$_moveZoom(p * len / view.height);
+            this.$_moveZoom(p * this._totalLen / view.height);
         } else {
-            this.$_moveZoom(p * len / view.width);
+            this.$_moveZoom(p * this._totalLen / view.width);
         }
         return true;
     }
@@ -260,7 +262,7 @@ export class NavigatorMaskTracker extends ChartDragTracker {
     private $_moveZoom(p: number): void {
         const model = this._view.model;
 
-        p = Math.max(0, Math.min(p, model._naviChart.xAxis.length() - this._zoomLen)) + model.axis()._zoom.min;
+        p = Math.max(0, Math.min(p, this._totalLen - this._zoomLen)) + model.axis()._zoom.min;
         model.axis().zoom(p, p + this._zoomLen);
     }
 }   

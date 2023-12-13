@@ -856,17 +856,22 @@ export class AxisZoom {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(public axis: Axis, start: number, end: number) {
-        this.min = axis.axisMin();
-        this.max = axis.axisMax();
-        this.resize(start, end);
+    constructor(public axis: Axis) {
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    total(): number {
+        return this.max - this.min;
+    }
+
     length(): number {
         return this.end - this.start;
+    }
+
+    isFull(): boolean {
+        return this.start === this.min && this.end === this.max;
     }
     
     //-------------------------------------------------------------------------
@@ -875,6 +880,12 @@ export class AxisZoom {
     resize(start: number, end: number): boolean {
         start = isNaN(start) ? this.start : Math.max(this.min, Math.min(this.max, start));
         end = isNaN(end) ? this.end : Math.max(start, Math.min(this.max, end));
+
+        if (start > end) {
+            const t = start;
+            start = end;
+            end = t;
+        }
 
         // 최소 크기를 갖게 한다. #244 #245
         if ((start !== this.start || end !== this.end) && (end - start > (this.max - this.min) * 0.05)) {
@@ -1266,22 +1277,25 @@ export abstract class Axis extends ChartItem implements IAxis {
             this._changed();
         }
     }
-    
-    zoom(start: number, end: number): boolean {
-        if (start > end) {
-            const t = start;
-            start = end;
-            end = t;
-        }
+
+    _prepareZoom(): AxisZoom {
         if (!this._zoom) {
             // padding 없는 _min, _max를 계산하기 위해
-            this._zoom = new AxisZoom(this, NaN, NaN);
-            this.buildTicks(this._vlen);
-
-            if (isNaN(start)) start = this._min;
-            if (isNaN(end)) end = this._max;
+            this._zoom = new AxisZoom(this);
+            this.buildTicks(this._vlen);// this._zoomlen);
+            this._zoom.start = this._zoom.min = this._min;
+            this._zoom.end = this._zoom.max = this._max;
         }
-        if (this._zoom.resize(start, end)) {
+        return this._zoom;
+    }
+    
+    zoom(start: number, end: number): boolean {
+        const zoom = this._prepareZoom();
+
+        if (zoom.resize(start, end)) {
+            if (zoom.isFull()) {
+                this._zoom = null;
+            }
             this._changed();
             return true;
         }

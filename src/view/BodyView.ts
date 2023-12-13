@@ -979,10 +979,19 @@ export class BodyView extends ChartElement<Body> {
     }
     
     protected _doLayout(): void {
+        const chart = this.model.chart;
         const w = this.width;
         const h = this.height;
         const img = this._image;
 
+        // // axes
+        // chart._getXAxes().forEach(axis => {
+        //     axis._zoomlen = w;
+        // });
+        // chart._getYAxes().forEach(axis => {
+        //     axis._zoomlen = h;
+        // });
+        
         // background
         this._hitTester.resize(w, h);
         this._background.resize(w, h);

@@ -307,9 +307,13 @@ const config = {
   ],
   legend: true,
   xAxis: {
-    // type: "time"
+    // type: "time",
+    // padding: 0
   },
   yAxis: {},
+  body: {
+    zoomType: 'x'
+  },
   series: [
     {
       template: "series",

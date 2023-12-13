@@ -116,7 +116,6 @@ export class CategoryAxis extends Axis {
     private _map: {[key: string]: number} = {}; // data point의 축 위치를 찾기 위해 사용한다.
     private _catPad = 0;
     _pts: number[];
-    _vlen: number;
 
     //-------------------------------------------------------------------------
     // constructor

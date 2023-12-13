@@ -281,12 +281,12 @@ export class DataPointCollection {
         const zoom = xAxis._zoom as AxisZoom;
 
         if (zoom) {
+            const pts = this._points;
+            const len = pts.length;
             let x1 = zoom.start;
             let x2 = zoom.end;
 
             if (xAxis.isContinuous()) {
-                const pts = this._points;
-                const len = pts.length;
                 let i = 0;
                 let p: DataPoint;
                 let prev: number;
@@ -319,8 +319,8 @@ export class DataPointCollection {
                 x1 = Math.max(x1 - 1, 0);
                 x2 = Math.min(x2 + 1, len - 1);
             } else {
-                x1 = Math.floor(x1) - 1;
-                x2 = Math.ceil(x2);
+                x1 = Math.max(0, Math.floor(x1) - 1);
+                x2 = Math.min(Math.ceil(x2), len - 1);
             }
             return this._points.slice(x1, x2 + 1);
         } else {
