@@ -264,5 +264,6 @@ export class NavigatorMaskTracker extends ChartDragTracker {
 
         p = Math.max(0, Math.min(p, this._totalLen - this._zoomLen)) + model.axis()._zoom.min;
         model.axis().zoom(p, p + this._zoomLen);
+        console.log(p);
     }
 }   

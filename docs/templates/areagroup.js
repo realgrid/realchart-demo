@@ -8,7 +8,7 @@ export const config = {
     children: [
       {
         name: 'Installation & Developers',
-        marker: false,//{},
+        marker: {},
         data: [
            43934,  48656,  65165,
            81827, 112143, 142383,
