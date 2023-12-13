@@ -80,8 +80,9 @@ export class ImageExporter {
         canvas.width = rect.width;
         canvas.height = rect.height;
 
+        const cloneDom = dom.cloneNode(true) as HTMLElement;
+
         const svgToImageAndDownload = () => {
-            const svg = dom.querySelector('.rct-svg');
             const img = new Image();
             img.onload = function () {
                 context.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -102,25 +103,25 @@ export class ImageExporter {
                 link.click();
             };
 
-            const cloneSvg = svg.cloneNode(true) as Element;
-
             // 자식이 없는 g태그 제거
-            cloneSvg.querySelectorAll('g').forEach((g) => {
+            cloneDom.querySelectorAll('g').forEach((g) => {
                 if (g.childElementCount === 0) g.remove();
             });
 
-            this.$_removeItems(cloneSvg, '.rct-feedbacks');
-            this.$_removeItems(cloneSvg, '.rct-tooltip');
-            options.hideNavigator && this.$_removeItems(cloneSvg, '.rct-navigator');
-            options.hideScrollbar && this.$_removeItems(cloneSvg, '.rct-axis-scrollbar');
-            options.hideZoomButton && this.$_removeItems(cloneSvg, '.rct-reset-zoom');
-            this.$_removeAriaLabelRecursively(cloneSvg);
-            this.$_removeHiddenElementsRecursively(cloneSvg);
+            this.$_removeItems(cloneDom, '.rct-contextmenu-button');
+            this.$_removeItems(cloneDom, '.rct-feedbacks');
+            this.$_removeItems(cloneDom, '.rct-tooltip');
+            options.hideNavigator && this.$_removeItems(cloneDom, '.rct-navigator');
+            options.hideScrollbar && this.$_removeItems(cloneDom, '.rct-axis-scrollbar');
+            options.hideZoomButton && this.$_removeItems(cloneDom, '.rct-reset-zoom');
+            this.$_removeAriaLabelRecursively(cloneDom);
+            this.$_removeHiddenElementsRecursively(cloneDom);
 
-            this.$_imagesToBase64(cloneSvg, async () => {
-                const stringSvg = new XMLSerializer().serializeToString(cloneSvg);
+            const svg = cloneDom.querySelector('.rct-svg');
+            this.$_imagesToBase64(cloneDom, async () => {
+                const stringSvg = new XMLSerializer().serializeToString(svg);
                 const index = stringSvg.indexOf('>');
-                const usedStyles = this.$_getUsedStyles(cloneSvg);
+                const usedStyles = this.$_getUsedStyles(svg);
                 const stringDom = `
                 ${stringSvg.slice(0, index + 1)}
                 <style type="text/css">
@@ -128,33 +129,37 @@ export class ImageExporter {
                 </style>
                 ${stringSvg.slice(index + 1)}`
                 const utf8Bytes = new TextEncoder().encode(stringDom);
-                let src: string;
                 try {
-                    src = 'data:image/svg+xml;base64,' + btoa(String.fromCharCode.apply(null, utf8Bytes));
+                    img.src = 'data:image/svg+xml;base64,' + btoa(String.fromCharCode.apply(null, utf8Bytes));
                 } catch (error) {
                     const url = options.url || 'http://127.0.0.1:4080/api';
                     // const url = options.url || 'https://realchart-node-exporter.vercel.app/api';
-                    const response = await fetch(url, 
-                        {
-                          method: 'POST',
-                          headers: {
-                            'Content-Type': 'application/json',
-                          },
-                          body: JSON.stringify({
-                            size: {width: rect.width, height: rect.height},
-                            options: options,
-                            config: config
-                          }),
-                        });
-                    const res = await response.json();
-                    src = 'data:image/png;base64,' + res.data;
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          type: options.type,
+                          size: { width: rect.width, height: rect.height },
+                          dom: cloneDom.outerHTML,
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(({ data }) => {
+                        img.src = `data:image/png;base64,${data}`;
+                    })
+                    .catch(error => {
+                        // 오류 처리
+                        console.log('error');
+                        console.error('Error:', error);
+                    });
                 }
-                img.src = src;
             });
         }
 
         // control background
-        const backgroundImageUrl = window.getComputedStyle(dom).getPropertyValue('background-image');
+        const backgroundImageUrl = window.getComputedStyle(cloneDom).getPropertyValue('background-image');
 
         if (backgroundImageUrl && backgroundImageUrl !== 'none') {
             const background = new Image();
@@ -200,7 +205,6 @@ export class ImageExporter {
 				}
 			}
 		}
-
         return usedStyles;
     }
 
@@ -227,38 +231,47 @@ export class ImageExporter {
         }
     }
 
-    private $_imagesToBase64(elt: Element, callback: () => void) {
-
-        function imageToBase64(url: string, callback: (base64: any) => void) {
-            fetch(url)
-                .then(response => response.blob())
-                .then(blob => {
-                    return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(blob);
-                    });
+    private $_imagesToBase64(element: HTMLElement, callback: () => void) {
+        function imageToBase64(url: string): Promise<string> {
+            return fetch(url)
+            .then((response) => response.blob())
+            .then((blob) =>
+                new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result as string);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
                 })
-                .then(base64Image => {
-                    // 콜백 함수로 전달하여 이미지를 적용
-                    callback(base64Image);
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        const imageElements = elt.querySelectorAll('image');
-      
-        if (imageElements.length > 0) {
-            imageElements.forEach(imageElement => {
-                const imageUrl = imageElement.getAttribute('href');
-                imageUrl && imageToBase64(imageUrl, base64Image => {
-                    imageElement.setAttribute('href', base64Image);
-                    callback();
-                });
+            )
+            .catch((error) => {
+                console.error('Error:', error);
+                throw error;
             });
-        } else {
-            callback();
         }
+
+        const promises: Promise<void>[] = [];
+
+        const backgroundImageUrl = element.style.backgroundImage;
+        if (backgroundImageUrl && backgroundImageUrl !== 'none') {
+            const backgroundPromise = imageToBase64(backgroundImageUrl.replace(/^url\(["']?(.*?)["']?\)$/, '$1')).then((base64Image) => {
+                element.style.backgroundImage = `url(${base64Image})`;
+            });
+            promises.push(backgroundPromise);
+        }
+
+        const imageElements = element.querySelectorAll('image');
+        if (imageElements.length > 0) {
+            for (const imageElement of imageElements) {
+            const imageUrl = imageElement.getAttribute('href');
+            if (imageUrl) {
+                const promise = imageToBase64(imageUrl).then((base64Image) => {
+                    imageElement.setAttribute('href', base64Image);
+                });
+                promises.push(promise);
+            }
+            }
+        }
+
+        Promise.all(promises).then(() => callback());
     }
 }

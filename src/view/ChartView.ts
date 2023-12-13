@@ -1228,8 +1228,8 @@ export class ChartView extends LayerElement {
 
     pointerMoved(x: number, y: number, target: EventTarget): void {
         const body = this._model && this.bodyOf(target as any);// this._currBody;
-        const cl = (target as Element).classList;
-        const isContextMenu = cl.contains('rct-contextmenu-item') || cl.contains('rct-contextmenu-list');
+        const cl = (target as Element)?.classList;
+        const isContextMenu = cl?.value && (cl.contains('rct-contextmenu-item') || cl.contains('rct-contextmenu-list'));
 
         if (body) {
             const p = body.controlToElement(x, y);

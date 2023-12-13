@@ -4,10 +4,50 @@
  */
 const config = {
     options: {
-        animatable: false
+        animatable: false,
+        style: {
+            backgroundImage: 'url(../assets/mountain.jpeg)'
+       }
     },
     body: {
         zoomType: 'x',
+        annotations: [{
+            offsetX: 30,
+            offsetY: 25,
+            rotation: 5,
+            text: 'Annotation Sample',
+            style: {
+                fill: 'white'
+            },
+            backgroundStyle: {
+                fill: '#333',
+                padding: '3px 5px',
+                rx: 5,
+                fillOpacity: 0.7
+            }
+        }, 
+		{
+            offsetX: 260,
+            offsetY: 25,
+            rotation: -5,
+            text: 'Text',
+            style: {
+                fill: 'white'
+            },
+            backgroundStyle: {
+                padding: '3px 5px',
+                fill: 'blue',
+                rx: 5,
+                fillOpacity: 0.7
+            }
+        },{
+            type: 'image',
+            align: 'right',
+            offsetX: 50,
+            offsetY: 50,
+            width: 100,
+            imageUrl: '../assets/images/annotation.png'
+        }],
     },
     export: {
         visible: true
