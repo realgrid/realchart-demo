@@ -1,5 +1,5 @@
 {
-  "name": "@wooritech/realchart",
+  "name": "@realgrid/realchart",
   "version": "0.9.26",
   "description": "Wooritech charting library",
   "main": "./dist/index",
