@@ -11,6 +11,7 @@ import { RcElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
+import { DataPoint } from "../../model/DataPoint";
 import { CandlestickSeries, CandlestickSeriesPoint } from "../../model/series/CandlestickSeries";
 import { IPointView, RangedSeriesView, SeriesView } from "../SeriesView";
 
@@ -24,7 +25,7 @@ class StickView extends GroupElement implements IPointView {
     // private _back: RectElement;
     private _wickUpper: LineElement;
     private _wickLower: LineElement;
-    private _body: RectElement;
+    _body: RectElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -47,17 +48,13 @@ class StickView extends GroupElement implements IPointView {
         const yClose = y + h - h * (Math.max(p.openValue, p.closeValue) - p.lowValue) / len;
         const yBox = Math.min(yClose, yOpen);
         const hBox = Math.max(1, Math.abs(yOpen - yClose));
-        const fall = p.close < p.open;
-
-        this._body.setStyle('fill', fall ? '' : p.color);
+        const decline = p.close < p.open;
 
         // this._back.setBox(-w / 2, 0, w, h);
         this._wickUpper.setVLine(x, y, yClose);
         this._wickLower.setVLine(x, yOpen, h);
         this._body.setBox(-w / 2, yBox, w, hBox);
-        // this._body.setClass(fall ? 'rct-candlestick-point-fall' : '')
-
-        this.setBoolData('fall', fall);
+        this.setBoolData('decline', decline);
     }
 
     //-------------------------------------------------------------------------
@@ -106,6 +103,19 @@ export class CandlestickSeriesView extends RangedSeriesView<CandlestickSeries> {
             this._setPointStyle(box, model, p);
         })
     }
+
+    protected _setPointColor(v: RcElement, color: string): void {
+        (v as StickView)._body.setStyle('fill', color);
+        (v as StickView)._body.setStyle('stroke', color);
+    }
+
+    protected _setPointStyle(v: RcElement, model: CandlestickSeries, p: CandlestickSeriesPoint, styles?: any[]): void {
+        super._setPointStyle(v, model, p, styles);
+
+        if (p.closeValue < p.openValue && model.declineStyle) {
+            v.addStyleOrClass(model.declineStyle);
+        }
+     }
 
     protected _layoutPointView(box: StickView, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         if (wPoint < 0) debugger;

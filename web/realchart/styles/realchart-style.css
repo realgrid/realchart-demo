@@ -743,7 +743,7 @@
 .rct-candlestick-series .rct-point[data-focus] {
     fill-opacity: 0.5;
 }
-.rct-candlestick-series .rct-point[data-fall] {
+.rct-candlestick-series .rct-point[data-decline] {
     fill: #008;
     stroke: #008;
 }
@@ -753,26 +753,16 @@
 .rct-candlestick-point-wick {
     stroke: #003;
 }
-.rct-candlestick-point-fall {
-    fill: #008;
-    stroke: #008;
-}
 
 /** ohlc series */
 .rct-ohlc-series {
     stroke-width: 2;
 }
+.rct-ohlc-series .rct-point[data-decline] {
+    stroke: #00f;
+}
 .rct-ohlc-point-back {
     stroke: none;
-}
-/* .rct-ohlc-point-tick {
-    stroke: #003;
-}
-.rct-ohlc-point-bar {
-    stroke: #f00;
-} */
-.rct-ohlc-point-bar-fall {
-    stroke: #00f;
 }
 
 /** waterfall series */

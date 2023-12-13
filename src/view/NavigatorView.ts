@@ -226,11 +226,12 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
         }
 
         // y axis
-        if (this._yAxisView) {
-            this._yAxisView.measure(this.doc, model._naviChart.yAxis as Axis, w, h, 1);
-            this._yAxisView.resize(w, h);
-            this._yAxisView.layout();
-        }
+        this._yAxisView.setVis(false);
+        // if (this._yAxisView) {
+        //     this._yAxisView.measure(this.doc, model._naviChart.yAxis as Axis, w, h, 1);
+        //     this._yAxisView.resize(w, h);
+        //     this._yAxisView.layout();
+        // }
     }
 
     //-------------------------------------------------------------------------

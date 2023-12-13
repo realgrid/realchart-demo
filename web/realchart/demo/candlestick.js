@@ -23,6 +23,9 @@ const config = {
         highField: 'highprc',
         lowField: 'lowprc',
         closeField: 'closeprc',
+        // declineStyle: {
+        //     fill: 'red'
+        // },
         data: [{
             "openprc" : 22000,
             "highprc" : 22222,
@@ -30,7 +33,8 @@ const config = {
             "closeprc" : 21500,
             "trdvolume" : 14033,
             "trdamnt" : 324987500,
-            "date" : "2019-01-11"
+            "date" : "2019-01-11",
+            "color": "green"
     },{
             "openprc" : 21400,
             "highprc" : 21300,

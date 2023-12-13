@@ -15,8 +15,11 @@ const config = {
         type: 'ohlc',
         pointLabel: true,
         tooltipText: 'open: ${open}<br>High: ${high}<br>Low: ${low}<br>Close: ${close}',
+        // declineStyle: {
+        //     stroke: 'red'
+        // },
         data: [
-            [301, 348, 395, 465],
+            {low: 301, open: 348, close: 395, high: 465, color: 'green'},
             [353, 439, 480, 580],
             [262, 370, 317, 418],
             [302, 326, 371, 450],

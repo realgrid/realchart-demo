@@ -9,6 +9,7 @@
 import { pickNum, pickProp, assign } from "../../common/Common";
 import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
+import { SVGStyleOrClass } from "../../common/Types";
 import { DataPoint } from "../DataPoint";
 import { RangedSeries, Series } from "../Series";
 
@@ -72,7 +73,7 @@ export class CandlestickSeriesPoint extends DataPoint {
     protected _readObject(series: CandlestickSeries, v: any): void {
         super._readObject(series, v);
 
-        this.low = pickProp(v[series.lowField], v.row);
+        this.low = pickProp(v[series.lowField], v.low);
         this.open = pickProp(v[series.openField], v.open);
         this.close = pickProp(v[series.closeField], v.close);
         this.high = pickProp(v[series.highField], v.high);
@@ -93,19 +94,49 @@ export class CandlestickSeriesPoint extends DataPoint {
 export class CandlestickSeries extends RangedSeries {
 
     //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
-    lowField: string;
-    openField: string;
-    closeField: string;
-    highField: string;
-
-    //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // constructors
     //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 최저(low) 값을 지정하는 속성명이나 인덱스.\
+     * undefined이면, data point의 값이 array일 때는 항목 수가 5이상이면 1, 아니면 0, 객체이면 'low'.
+     * 
+     * @config
+     */
+    lowField: string;
+    /**
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 시작(open) 값을 지정하는 속성명이나 인덱스.\
+     * undefined이면, data point의 값이 array일 때는 항목 수가 5이상이면 2, 아니면 1, 객체이면 'open'.
+     * 
+     * @config
+     */
+    openField: string;
+    /**
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 종료(close) 값을 지정하는 속성명이나 인덱스.\
+     * undefined이면, data point의 값이 array일 때는 항목 수가 5이상이면 3, 아니면 2, 객체이면 'close'.
+     * 
+     * @config
+     */
+    closeField: string;
+    /**
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 최고(high) 값을 지정하는 속성명이나 인덱스.\
+     * undefined이면, data point의 값이 array일 때는 항목 수가 5이상이면 4, 아니면 3, 객체이면 'high'.
+     * 
+     * @config
+     */
+    highField: string;
+    /**
+     * 값이 하락한 데이터포인트에 적용되는 스타일셋.
+     * 
+     * @config
+     */
+    declineStyle: SVGStyleOrClass;
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
