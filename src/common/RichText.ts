@@ -387,32 +387,34 @@ export class SvgRichText {
             hMax = Math.max(h, hMax);
         }
         
-        // if (firsts[0]) {
-        //     firsts[0].setAttribute('x', '0');
-        // }
-        prev = lines[0][HEIGHT];
-        for (let i = 1; i < firsts.length; i++) {
-            if (firsts[i]) { // 중복된 <br>은 무시한다.
-                const span = view.insertElement(doc, 'tspan', firsts[i]);
-                let h = Math.floor(prev - view.getAscent(prev)) + view.getAscent(lines[i][HEIGHT]);
-                // let h = lines[i][HEIGHT];
+        if (cnt > 0) {
+            // if (firsts[0]) {
+            //     firsts[0].setAttribute('x', '0');
+            // }
+            prev = lines[0][HEIGHT];
+            for (let i = 1; i < firsts.length; i++) {
+                if (firsts[i]) { // 중복된 <br>은 무시한다.
+                    const span = view.insertElement(doc, 'tspan', firsts[i]);
+                    let h = Math.floor(prev - view.getAscent(prev)) + view.getAscent(lines[i][HEIGHT]);
+                    // let h = lines[i][HEIGHT];
 
-                // [CHECK] 이전 line 높이가 지금행보다 많이 큰 경우, 두 line이 겹치는 경우가 많다.
-                //         아래행을 조금 더 민다.
-                // if (dy > 0 && lines[i - 1][HEIGHT] >= h * 1.8) {
-                //     h = Math.floor(h * 1.1);
-                // } else {
-                //     h = Math.ceil(h);
-                // }
-                span.setAttribute('x', '0');
-                span.setAttribute('dy', String(h));
-                span.innerHTML = ZWSP;
-                prev = lines[i][HEIGHT];
+                    // [CHECK] 이전 line 높이가 지금행보다 많이 큰 경우, 두 line이 겹치는 경우가 많다.
+                    //         아래행을 조금 더 민다.
+                    // if (dy > 0 && lines[i - 1][HEIGHT] >= h * 1.8) {
+                    //     h = Math.floor(h * 1.1);
+                    // } else {
+                    //     h = Math.ceil(h);
+                    // }
+                    span.setAttribute('x', '0');
+                    span.setAttribute('dy', String(h));
+                    span.innerHTML = ZWSP;
+                    prev = lines[i][HEIGHT];
+                }
             }
-        }
 
-        view.layoutText(lines[0][HEIGHT]); // 첫 행의 높이를 전달한다.
-        // view.layoutText(hMax); // 가장 큰 높이의 행 높이를 전달한다. 맞나?
+            view.layoutText(lines[0][HEIGHT]); // 첫 행의 높이를 전달한다.
+            // view.layoutText(hMax); // 가장 큰 높이의 행 높이를 전달한다. 맞나?
+        } 
     }
 
     layout(view: TextElement, align: Align, width: number, height: number, padding: Sides): void {

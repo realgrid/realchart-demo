@@ -148,7 +148,7 @@ export class Tooltip extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     setTarget(series: ISeries, point: DataPoint): ITooltipContext {
-        return this._ctx = this.owner.getTooltipContext(this.level, this._series = series, this._point = point);
+        return this._ctx = this.visible && this.owner.getTooltipContext(this.level, this._series = series, this._point = point);
     }
 
     getTextDomain(): IRichTextDomain {

@@ -44,6 +44,23 @@ Pie 시리즈들의 그룹이고, [layout](#layout) 이 `fill` 이나 `stack` �
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |  
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+### tooltipFooter: `string{:js}`[#tooltipFooter]
+그룹 툴팁의 아래쪽에 표시되는 텍스트.  
+
+### tooltipHeader: `string{:js}`[#tooltipHeader]
+그룹 툴팁의 위쪽에 표시되는 텍스트.
+
+
+tooltipHeader
+tooltipRow,
+tooltipRow,
+...
+tooltipFooter
+형태로 툴팁이 표시된다.  
+<DefaultValue value="'<b>${name}</b>'" contents=""></DefaultValue>
+### tooltipRow: `string{:js}`[#tooltipRow]
+그룹 툴팁에 각 시리즈별 표시되는 포인트 툴팁 텍스트.  
+<DefaultValue value="'${series}:<b>" contents="${yValue}</b>'"></DefaultValue>
 ### visible: `boolean{:js}`[#visible]
 표시 여부.  
 <DefaultValue value="true" contents=""></DefaultValue>

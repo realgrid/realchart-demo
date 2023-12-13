@@ -149,11 +149,13 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             sb.move(pts[i].xPos, pts[i].yLow);
             sb.line(pts[i].xPos, pts[i].yPos);
             
-            i++;
-            while (i < pts.length) {
-                sb.line(pts[i].xPos, pts[i].yPos);
-                i++;
-            }
+            // i++;
+            // while (i < pts.length) {
+            //     sb.line(pts[i].xPos, pts[i].yPos);
+            //     i++;
+            // }
+
+            this._buildLines(pts, i + 1, sb);
 
             i = pts.length - 1;
             sb.line(pts[i].xPos, pts[i].yLow);
