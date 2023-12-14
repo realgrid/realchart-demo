@@ -96,4 +96,10 @@ export class PWTester {
     static async getModel(page: any): Promise<any> {
         return await page.evaluate('chart.$_p.model');
     }
+
+	static async sleep(time: number = 500): Promise<void> {
+		await new Promise((resolve) => setTimeout(resolve, time));
+	}
+
+	
 }
