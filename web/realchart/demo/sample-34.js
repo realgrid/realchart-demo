@@ -38,11 +38,17 @@ const config = {
           color: "red",
         },
       ],
-
       targetBar: {
         style: {
           fill: "red",
+          stroke: "red"
         },
+      },
+      actualBar: {
+        style: {
+          fill: "blue",
+          stroke: "blue"
+        }
       },
       label: {
         text: "Turbo Clock Speed <br>  vs AMD Ryzen 9 7950x",
