@@ -12,6 +12,7 @@ import { PathBuilder } from "../../common/PathBuilder";
 import { ClipRectElement, PathElement, RcElement } from "../../common/RcControl";
 import { IValueRange } from "../../common/Types";
 import { Utils } from "../../common/Utils";
+import { DataPoint } from "../../model/DataPoint";
 import { SeriesGroupLayout } from "../../model/Series";
 import { LinearAxis } from "../../model/axis/LinearAxis";
 import { AreaSeries, AreaSeriesPoint } from "../../model/series/LineSeries";
@@ -41,6 +42,15 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _collectVisPoints(model: AreaSeries): DataPoint[] {
+        const pts = super._collectVisPoints(model);
+        const g = model.group;
+
+        if (g && (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
+        }
+        return pts;
+    }
+
     protected _layoutLines(pts: AreaSeriesPoint[]): void {
         super._layoutLines(pts);
 
@@ -149,20 +159,19 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             sb.move(pts[i].xPos, pts[i].yLow);
             sb.line(pts[i].xPos, pts[i].yPos);
             
-            // i++;
-            // while (i < pts.length) {
-            //     sb.line(pts[i].xPos, pts[i].yPos);
-            //     i++;
-            // }
-
             this._buildLines(pts, i + 1, sb);
 
             i = pts.length - 1;
             sb.line(pts[i].xPos, pts[i].yLow);
 
-            while (i >= iSave) {
-                sb.line(pts[i].xPos, pts[i].yLow);
-                i--;
+            if (g.isFirstVisible(series)) {
+                while (i >= iSave) {
+                    sb.line(pts[i].xPos, pts[i].yLow);
+                    i--;
+                }
+            } else {
+                this._buildLines(pts.slice(iSave, i + 1).reverse().map(p => ({xPos: p.xPos, yPos: p.yLow})), 1, sb);
+                sb.line(pts[iSave].xPos, pts[iSave].yLow);
             }
         } else {
             sb.move(pts[i].xPos, yMin);

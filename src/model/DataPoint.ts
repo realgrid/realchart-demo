@@ -17,7 +17,7 @@ let __point_id__ = 0;
 export interface IPointPos {
     xPos: number;
     yPos: number;
-    isNull: boolean;
+    isNull?: boolean;
 }
 
 /**

@@ -2078,6 +2078,14 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         this._series.forEach(ser => ser.setRow(row));
     }
 
+    isFirstVisible(series: ISeries): boolean {
+        return series === this._visibles[0];
+    }
+
+    isLastVisible(series: ISeries): boolean {
+        return series === this._visibles[this._visibles.length - 1];
+    }
+
     // Axis에서 요청한다.
     collectValues(axis: IAxis, vals: number[]): void {
         if (this._visibles.length > 0) {

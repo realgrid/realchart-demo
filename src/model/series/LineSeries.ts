@@ -242,7 +242,7 @@ export class LineSeries extends LineSeriesBase {
         
     }
     getLineType(): LineType {
-        return this.lineType;
+        return (this.group instanceof LineSeriesGroup || this.group instanceof AreaSeriesGroup) ? this.group.lineType : this.lineType;
     }
 }
 
@@ -426,6 +426,12 @@ export class LineSeriesGroup extends SeriesGroup<LineSeries> {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 이 그룹에 포함된 시리즈들의 line 종류.
+     * 
+     * @config
+     */
+    lineType = LineType.DEFAULT;
     baseValue = 0;
 
     //-------------------------------------------------------------------------
@@ -456,6 +462,12 @@ export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 이 그룹에 포함된 시리즈들의 line 종류.
+     * 
+     * @config
+     */
+    lineType = LineType.DEFAULT;
     baseValue = 0;
 
     //-------------------------------------------------------------------------
