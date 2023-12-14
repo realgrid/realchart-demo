@@ -305,7 +305,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _simpleMode = false;
+    _simpleMode = false; // navigator에 들어가면 true
     protected _pointContainer: PointContainer;
     _labelContainer: PointLabelContainer;
     private _trendLineView: PathElement;

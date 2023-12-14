@@ -14,7 +14,7 @@ import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
 import { LineType } from "../ChartTypes";
-import { DataPoint } from "../DataPoint";
+import { DataPoint, IPointPos } from "../DataPoint";
 import { LegendItem } from "../Legend";
 import { DataPointLabel, MarkerVisibility, PointItemPosition, Series, SeriesGroup, SeriesMarker } from "../Series";
 import { LineLegendMarkerView } from "./legend/LineLegendMarkerView";
@@ -110,11 +110,9 @@ export abstract class LineSeriesBase extends Series {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    /**
-     * @config
-     */
-    marker: LineSeriesMarker = new LineSeriesMarker(this);
     private _shape: Shape;
+    private _disconnected: boolean;
+    _lines: PointLine[];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -122,6 +120,11 @@ export abstract class LineSeriesBase extends Series {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
+    marker: LineSeriesMarker = new LineSeriesMarker(this);
+
     /**
      * null인 y값을 {@link baseValue}로 간주한다.
      * 
@@ -138,6 +141,14 @@ export abstract class LineSeriesBase extends Series {
 
     getRadius(p: LineSeriesPoint): number {
         return pickNum(p.radius, this.marker.radius);
+    }
+
+    /**
+     * null, ranges를 모두 고려해야 한다.
+     */
+    prepareLines(): void {
+        this._disconnected = false;
+        this._lines = this._doPrepareLines(this._visPoints);
     }
 
     //-------------------------------------------------------------------------
@@ -181,12 +192,46 @@ export abstract class LineSeriesBase extends Series {
     // internal members
     //-------------------------------------------------------------------------
     abstract getLineType(): LineType;
+
+    protected _doPrepareLines(pts: DataPoint[]): PointLine[] {
+        const len = pts.length;
+        const lines = [];
+
+        if (this._runRanges) {
+            if (this._containsNull) {
+            } else {
+            }
+        } else {
+            if (this._containsNull) {
+                let i = 0;
+                
+                while (i < len) {
+                    while (pts[i].isNull) {
+                        i++;
+                    }
+
+                    const line: PointLine = [];
+
+                    while (i < len && !pts[i].isNull) {
+                        line.push(pts[i++])
+                    }
+                    line.length > 0 && lines.push(line);
+                }
+                this._disconnected = true;
+            } else {
+                lines.push(pts.slice());
+            }
+        }
+        return lines;
+    }
 }
 
 export enum LineStepDirection {
     FORWARD = 'forward',
     BACKWARD = 'backward'
 }
+
+export type PointLine = IPointPos[];
 
 /**
  * @config chart.series[type=line]
@@ -235,6 +280,9 @@ export class LineSeries extends LineSeriesBase {
     nullStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     _type(): string {
@@ -269,6 +317,7 @@ export class AreaSeries extends LineSeries {
     // fields
     //-------------------------------------------------------------------------
     private _base: number;
+    _areas: PointLine[];
 
     //-------------------------------------------------------------------------
     // property fields
@@ -289,6 +338,34 @@ export class AreaSeries extends LineSeries {
 
     protected _createPoint(source: any): DataPoint {
         return new AreaSeriesPoint(source);
+    }
+
+    prepareAreas(): void {
+        const lines = this._lines;
+        const g = this.group;
+        const areas = this._areas = [];
+
+        if (g) {
+        } else {
+            lines.forEach(pts => {
+                let area = pts.slice(0);
+                let p: IPointPos;
+
+                areas.push(area);
+
+                area = [];
+
+                p = (pts[pts.length - 1] as DataPoint).toPoint();
+                p.yPos = (pts[pts.length - 1] as AreaRangeSeriesPoint).yLow;
+                area.push(p);
+                
+                p = (pts[0] as DataPoint).toPoint();
+                p.yPos = (pts[0] as AreaRangeSeriesPoint).yLow;
+                area.push(p);
+
+                areas.push(area);
+            })
+        }
     }
 
     protected _doPrepareRender(): void {

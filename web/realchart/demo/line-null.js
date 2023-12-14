@@ -4,7 +4,7 @@
  */
 const config = {
     options: {},
-    title: "Line - Null Point",
+    title: "Line - Null Points",
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     },
@@ -15,8 +15,7 @@ const config = {
         // lineType: 'spline',
         pointLabel: true,
         data: [
-            // 5.2, 5.7, 7.9, 13.9, 18.2, 21.4, 25.0, 26.4, 22.8, 17.5, 12.1, 7.6
-            5.2, 5.7, 7.9, null, 18.2, 21.4, 25.0, 26.4, 22.8, 17.5, 12.1, 7.6
+            5.2, 5.7, 7.9, null, 18.2, 19.4, 24.0, null, 26.4, 25.8, 17.5, 12.1, 9.6, 11.9, 12.3, 13.7, 10.9
         ]
     }
 }

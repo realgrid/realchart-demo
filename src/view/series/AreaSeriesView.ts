@@ -12,10 +12,11 @@ import { PathBuilder } from "../../common/PathBuilder";
 import { ClipRectElement, PathElement, RcElement } from "../../common/RcControl";
 import { IValueRange } from "../../common/Types";
 import { Utils } from "../../common/Utils";
+import { LineType } from "../../model/ChartTypes";
 import { DataPoint } from "../../model/DataPoint";
 import { SeriesGroupLayout } from "../../model/Series";
 import { LinearAxis } from "../../model/axis/LinearAxis";
-import { AreaSeries, AreaSeriesPoint } from "../../model/series/LineSeries";
+import { AreaSeries, AreaSeriesPoint, PointLine } from "../../model/series/LineSeries";
 import { LineContainer, LineSeriesBaseView } from "./LineSeriesView";
 
 export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
@@ -57,6 +58,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         if (this._polar) {
             this._layoutPolar(this._area, pts);
         } else {
+            this.model.prepareAreas();
             this._layoutArea(this._area, pts);
         }
     }
@@ -134,9 +136,23 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     }
 
     protected _layoutArea(area: PathElement, pts: AreaSeriesPoint[]): void {
+        const series = this.model;
+        const sb = new PathBuilder();
+
+        // if (series._areas.length > 0) {
+        //     this.$_buildAreas(series._areas, sb);
+
+        //     area.setPath(sb.end(true));
+        //     area.unsetData('polar');
+        //     area.setBoolData('simple', this._simpleMode);
+        //     area.internalClearStyleAndClass();
+        //     series.color && area.setStyle('fill', series.color);
+        //     series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
+        //     return;
+        // }
+
         const w = this.width;
         const h = this.height;
-        const series = this.model;
         const lowArea = this._needBelow ? this._lowArea : void 0;
         const g = series.group;
         const inverted = series.chart.isInverted();
@@ -145,7 +161,6 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         const min = yAxis.axisMin();
         const base = series.getBaseValue(yAxis);
         const yMin = this.height - yAxis.getPosition(len, pickNum(Math.max(min, base), min));
-        const sb = new PathBuilder();
         let i = 0;
         let s: string;
 
@@ -271,5 +286,17 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         area.clearStyleAndClass();
         area.setStyle('fill', series.color);
         area.addStyleOrClass(series.style);
+    }
+
+    private $_buildAreas(lines: PointLine[], sb: PathBuilder): void {
+        const t = this.model.getLineType();
+
+        for (let i = 0; i < lines.length; i += 2) {
+            const line = lines[i * 2];
+            const line2 = lines[i * 2 + 1];
+
+            this._buildLine2(line, t, false, sb);
+            this._buildLine2(line2, LineType.DEFAULT, true, sb);
+        }
     }
 }

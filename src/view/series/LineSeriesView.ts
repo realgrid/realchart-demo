@@ -19,7 +19,7 @@ import { LineType } from "../../model/ChartTypes";
 import { DataPoint, IPointPos } from "../../model/DataPoint";
 import { PointItemPosition } from "../../model/Series";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
-import { LinePointLabel, LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection } from "../../model/series/LineSeries";
+import { LinePointLabel, LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection, PointLine } from "../../model/series/LineSeries";
 import { LineLegendMarkerView } from "../../model/series/legend/LineLegendMarkerView";
 import { LegendItemView } from "../LegendView";
 import { IPointView, SeriesView } from "../SeriesView";
@@ -115,6 +115,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     }
 
     protected _prepareSeries(doc: Document, model: T): void {
+        model.prepareLines();
         model instanceof LineSeries && this._prepareBelow(model);
         this._prepareRanges(model, model._runRanges);
         !this._simpleMode && this.$_prepareMarkers(model, this._visPoints as LineSeriesPoint[]);
@@ -371,8 +372,19 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     protected _layoutLines(pts: DataPoint[]): void {
         const series = this.model;
-        const needBelow = series instanceof LineSeries && this._needBelow;
         const sb = new PathBuilder();
+
+        if (series._lines.length > 0) {
+            this._buildLines2(series._lines, sb);
+            this._line.setPath(sb.end());
+            this._line.internalClearStyleAndClass();
+            this._line.setStyle('stroke', series.color);
+            this._line.addStyleOrClass(series.style);
+            Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
+            return;
+        }
+
+        const needBelow = series instanceof LineSeries && this._needBelow;
         let i = 0;
         let s: string;
 
@@ -452,6 +464,70 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         } else {
             this._drawLine(pts, from, sb);
         }
+    }
+
+    protected _buildLine2(line: PointLine, t: LineType, connected: boolean, sb: PathBuilder): void {
+        const m = this.model;
+
+        if (t === LineType.SPLINE) {
+            this._drawCurve2(line, connected, sb);
+        } else if (m instanceof LineSeries && t === LineType.STEP) {
+            this._drawStep2(line, connected, sb, m.stepDir);
+        } else {
+            this._drawLine2(line, connected , sb);
+        }
+    }
+
+    protected _buildLines2(lines: PointLine[], sb: PathBuilder): void {
+        if (!lines || lines.length < 1) return;
+
+        const m = this.model;
+        const t = m.getLineType();
+
+        if (t === LineType.SPLINE) {
+            this._drawCurves(lines, sb);
+        } else if (m instanceof LineSeries && t === LineType.STEP) {
+            this._drawSteps(lines, sb, m.stepDir);
+        } else {
+            this._drawLines(lines, sb);
+        }
+    }
+
+    private _drawLine2(pts: PointLine, connected: boolean, sb: PathBuilder): void {
+        sb.moveOrLine(connected, pts[0].xPos, pts[0].yPos);
+        for (let i = 1; i < pts.length; i++) {
+            sb.line(pts[i].xPos, pts[i].yPos);
+        }
+    }
+
+    private _drawLines(lines: PointLine[], sb: PathBuilder): void {
+        lines.forEach(line => this._drawLine2(line, false, sb));
+    }
+
+    private _drawStep2(pts: PointLine, connected: boolean, sb: PathBuilder, dir: LineStepDirection): void {
+        sb.moveOrLine(connected, pts[0].xPos, pts[0].yPos);
+        for (let i = 1; i < pts.length; i++) {
+            if (dir === LineStepDirection.BACKWARD) {
+                sb.line(pts[i - 1].xPos, pts[i].yPos);
+                sb.line(pts[i].xPos, pts[i].yPos);
+            } else {
+                sb.line(pts[i].xPos, pts[i - 1].yPos);
+                sb.line(pts[i].xPos, pts[i].yPos);
+            }
+        }
+    }
+
+    private _drawSteps(lines: PointLine[], sb: PathBuilder, dir: LineStepDirection): void {
+        lines.forEach(line => this._drawStep2(line, false, sb, dir));
+    }
+
+    private _drawCurve2(pts: PointLine, connected: boolean, sb: PathBuilder): void {
+        sb.moveOrLine(connected, pts[0].xPos, pts[0].yPos);
+        this.$_drawCurve(pts, 0, pts.length - 1, sb);
+    }
+
+    private _drawCurves(lines: PointLine[], sb: PathBuilder): void {
+        lines.forEach(line => this._drawCurve2(line, false, sb));
     }
 
     protected _drawLine(pts: IPointPos[], from: number, sb: PathBuilder): void {

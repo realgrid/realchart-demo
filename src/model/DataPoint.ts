@@ -18,6 +18,7 @@ export interface IPointPos {
     xPos: number;
     yPos: number;
     isNull?: boolean;
+    range?: IValueRange;
 }
 
 /**
@@ -146,6 +147,15 @@ export class DataPoint {
 
     getTooltipPos(): IPoint {
         return { x: this.xPos, y: this.yPos };
+    }
+
+    toPoint(): IPointPos {
+        return {
+            xPos: this.xPos,
+            yPos: this.yPos,
+            isNull: this.isNull,
+            range: this.range
+        };
     }
 
     //-------------------------------------------------------------------------

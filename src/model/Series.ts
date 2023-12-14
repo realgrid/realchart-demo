@@ -446,6 +446,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     protected _points: DataPointCollection;
     _runPoints: DataPoint[];
     _visPoints: DataPoint[];
+    _containsNull: boolean;
     _runRangeValue: 'x' | 'y' | 'z';
     _runRanges: IValueRange[];
     _minX: number;
@@ -811,12 +812,16 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     createPoints(source: any[]): DataPoint[] {
+        this._containsNull = false;
+
         return source.map((s, i) => {
             const p = this._createPoint(s);
 
             p.index = i;
             p.parse(this);
-            p.isNull ||= s == null || p.y == null;
+            if (p.isNull ||= s == null || p.y == null) {
+                this._containsNull = true;
+            }
             return p;
         });
     }
