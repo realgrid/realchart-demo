@@ -62,6 +62,7 @@ export function RealChartReact({
     document.getElementById("realchart").innerHTML = "";
     const chart = createChart(document, chartRef.current, config);
     setChart(chart);
+    window["chart"] = chart;
     setVersion(getVersion());
 
     if (editorRef) {
