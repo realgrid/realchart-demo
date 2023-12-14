@@ -193,10 +193,14 @@ export class NavigatorHandleTracker extends ChartDragTracker {
             if (this._isStart) {
                 if (p > 0) {
                     axis.zoom(p * len / view.width + min, NaN);
+                } else {
+                    axis.zoom(min, NaN);
                 }
             } else {
                 if (p > 0 && p < view.width) {
                     axis.zoom(NaN, p * len / view.width + min);
+                } else if (p >= view.width) {
+                    axis.zoom(NaN, axis._zoom.max);
                 }
             }
         }

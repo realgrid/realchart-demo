@@ -18,6 +18,7 @@ import { AxisView } from "./AxisView";
 import { createSeriesView } from "./BodyView";
 import { ChartElement } from "./ChartElement";
 import { SeriesView } from "./SeriesView";
+import { IPoint } from "../common/Point";
 
 export class NavigatorHandleView extends RcElement {
 
@@ -156,6 +157,10 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    svgToElement(x: number, y: number): IPoint {
+        return this.control.svgToElement(this._back, x, y);
+    }
+
     protected _doMeasure(doc: Document, model: SeriesNavigator, hintWidth: number, hintHeight: number, phase: number): ISize {
         const chart = model._naviChart as Chart;
         const series = chart.firstSeries;
