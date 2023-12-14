@@ -11,7 +11,10 @@ const config = {
 		text: "Subtitle"
 	},
 	export: {
-		visible: true
+		visible: true,
+		url: 'https://realchart-exporter.5r78gr15g8avq.ap-northeast-2.cs.amazonlightsail.com/api',
+		// url: 'https://realchart-node-exporter.vercel.app/api',
+		// url: 'http://localhost:4080/api',
 	},
 	options: {
 		style: {
