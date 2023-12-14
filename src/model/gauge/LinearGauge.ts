@@ -42,7 +42,7 @@ export class LinearGaugeLabel extends GaugeLabel {
 
         this.maxWidth = '30%';
         this.maxHeight = '30%';
-        this.gap = '5%';
+        this.gap = 10;// '5%';
     }
 
     //-------------------------------------------------------------------------

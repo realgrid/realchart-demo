@@ -363,11 +363,11 @@ export interface IValueRanges {
 
 /**
  * endValue는 포함되지 않는다. 즉, startValue <= v < endValue.
- * startValue를 지정하면 이전 range의 endValue를 startValue로 설정한다.
+ * fromValue를 지정하면 이전 range의 toValue를 fromValue로 설정한다.
  * 이전 범위가 없으면 min으로 지정된다.
- * endValue가 지정되지 않으면 max로 지정된다.
- * color가 설정되지 않거나, startValue와 endValue가 같은 범위는 포힘시키지 않는다.
- * startValue를 기준으로 정렬한다.
+ * toValue가 지정되지 않으면 max로 지정된다.
+ * color가 설정되지 않거나, fromValue와 toValue가 같은 범위는 포힘시키지 않는다.
+ * fromValue를 기준으로 정렬한다.
  */
 export const buildValueRanges = function (source: IValueRange[] | IValueRanges, min: number, max: number, inclusive = true, strict = true, fill = false, color?: string): IValueRange[] {
     let ranges: IValueRange[];

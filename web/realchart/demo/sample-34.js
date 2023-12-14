@@ -48,7 +48,7 @@ const config = {
         style: {
           fill: "blue",
           stroke: "blue"
-        }
+        },
       },
       label: {
         text: "Turbo Clock Speed <br>  vs AMD Ryzen 9 7950x",
@@ -141,6 +141,13 @@ const config = {
       label: {
         text: "CPU Mark <br>  vs AMD Ryzen 9 7950x",
       },
+      actualBar: {
+        styleCallback: args => {
+            if (args.value < args.gauge.get('targetValue')) {
+                return { fill: 'green' }
+            }
+        }
+      }
     },
     {
       type: "bullet",
@@ -163,6 +170,12 @@ const config = {
       label: {
         text: "price <br>  vs AMD Ryzen 9 7950x",
       },
+      actualBar: {
+        belowStyle: {
+            fill: "red",
+            stroke: "red"
+        }
+      }
     },
   ],
 };

@@ -15,6 +15,8 @@ import { RcAnimation } from "../common/RcAnimation";
 import { LayerElement, RcElement } from "../common/RcControl";
 import { IRect, Rectangle, toSize } from "../common/Rectangle";
 import { ISize } from "../common/Size";
+import { Align } from "../common/Types";
+import { LabelElement } from "../common/impl/LabelElement";
 import { LineElement } from "../common/impl/PathElement";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement, TextLayout } from "../common/impl/TextElement";
@@ -204,6 +206,9 @@ export abstract class ValueGaugeView<T extends ValueGauge> extends GaugeView<T> 
     }
 }
 
+export class ScaleLabelView extends LabelElement {
+}
+
 export abstract class ScaleView<T extends GaugeScale> extends ChartElement<T> {
 
     //-------------------------------------------------------------------------
@@ -213,7 +218,7 @@ export abstract class ScaleView<T extends GaugeScale> extends ChartElement<T> {
     protected _tickContainer: LayerElement;
     protected _ticks: ElementPool<LineElement>;
     protected _labelContainer: LayerElement;
-    protected _labels: ElementPool<TextElement>;
+    protected _labels: ElementPool<ScaleLabelView>;
     
     //-------------------------------------------------------------------------
     // constructor
@@ -225,7 +230,7 @@ export abstract class ScaleView<T extends GaugeScale> extends ChartElement<T> {
         this.add(this._tickContainer = new LayerElement(doc, 'rct-gauge-scale-ticks'));
         this._ticks = new ElementPool(this._tickContainer, LineElement);
         this.add(this._labelContainer = new LayerElement(doc, 'rct-gauge-scale-tick-labels'));
-        this._labels = new ElementPool(this._labelContainer, TextElement);
+        this._labels = new ElementPool(this._labelContainer, ScaleLabelView);
     }
 
     //-------------------------------------------------------------------------
@@ -255,6 +260,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
     protected _doMeasure(doc: Document, model: LinearGaugeScale, hintWidth: number, hintHeight: number, phase: number): ISize {
         const reversed = model._reversed;
         const vertical = model._vertical;
+        const labels = model.label;
         const steps = model._steps;
         const nStep = steps.length;
         let width = vertical ? model.gap : hintWidth;
@@ -271,23 +277,27 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
             height += model.tick.length;
         }
 
-        if (this._labelContainer.setVis(model.tickLabel.visible)) {
-            this._labelContainer.setStyleOrClass(model.tickLabel.style);
-            this._labels.prepare(nStep);
+        if (this._labelContainer.setVis(model.label.visible)) {
+            this._labelContainer.setStyleOrClass(model.label.style);
+            this._labels.prepare(nStep, v => {
+                v.setModel(doc, labels, null);
+            });
 
             if (nStep > 0) {
                 if (vertical) {
                     let w = 0;
                     this._labels.forEach((v, i) => {
                         // v.text = String(steps[reversed ? nStep - 1 - i : i]);
-                        v.text = String(steps[reversed ? i : nStep - 1 - i]);
+                        // v.text = String(steps[reversed ? i : nStep - 1 - i]);
+                        v.setText(labels.getText(steps[reversed ? i : nStep - 1 - i]));
                         w = Math.max(v.getBBounds().width);
                     })
                     width += w;
                 } else {
                     let h = 0;
                     this._labels.forEach((v, i) => {
-                        v.text = String(steps[reversed ? nStep - 1 - i : i]);
+                        // v.text = String(steps[reversed ? nStep - 1 - i : i]);
+                        v.setText(labels.getText(steps[reversed ? nStep - 1 - i : i]));
                         h = Math.max(v.getBBounds().height);
                     })
                     height += h;
@@ -342,7 +352,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
 
                 if (v.setVis(x - r.width / 2 > prev)) {
                     // v.anchor = i < steps.length - 1 ? TextAnchor.MIDDLE : TextAnchor.END;
-                    v.translate(x, y);
+                    v.layout(Align.CENTER).translate(x - r.width / 2, y);
                     prev = x + r.width / 2;
                 }
             });
@@ -354,9 +364,9 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
         const tick = m.tick;
         const steps = m._steps;
         const h = this.height / (steps.length - 1);
-        const opposite = m.position === GaugeItemPosition.OPPOSITE;
-        const len = opposite ? tick.length : -tick.length;
-        let x = opposite ? m.gap : width - m.gap;
+        const opp = m.position === GaugeItemPosition.OPPOSITE;
+        const len = opp ? tick.length : -tick.length;
+        let x = opp ? m.gap : width - m.gap;
         let y: number;
 
         // line
@@ -376,14 +386,19 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
 
         // labels
         if (this._labelContainer.visible) {
-            const anchor = opposite ? TextAnchor.START : TextAnchor.END;
-            x = opposite ? x + len : width - m.gap + len;
+            const anchor = opp ? TextAnchor.START : TextAnchor.END;
+            const align = opp ? Align.LEFT : Align.RIGHT;
+
+            x = opp ? x + len : width - m.gap + len;
 
             this._labels.forEach((v, i) => {
+                const r = v.getBBounds();
+                const x2 =  opp ? x : x - r.width;
+
                 y = m.getRate(steps[i]) * height;
-                v.anchor = anchor;
-                v.layout = i < steps.length - 1 ? TextLayout.MIDDLE : TextLayout.BOTTOM;
-                v.translate(x, y);
+                // v.anchor = anchor;
+                // v.layout = i < steps.length - 1 ? TextLayout.MIDDLE : TextLayout.BOTTOM;
+                v.layout(align).translate(x2, y - r.height / 2);
             });
         }
     }

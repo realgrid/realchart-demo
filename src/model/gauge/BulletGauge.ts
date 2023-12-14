@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { isObject, pickProp } from "../../common/Common";
 import { IPercentSize, IValueRange, RtPercentSize, SVGStyleOrClass, buildValueRanges, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
@@ -119,7 +120,6 @@ export class BulletTargetBar extends ChartItem {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    
     /**
      * 목표 bar 표시 여부.
      * 
@@ -128,13 +128,55 @@ export class BulletTargetBar extends ChartItem {
     '@config visible': any;
 }
 
+export interface IBulletGaugeArgs {
+    gauge: object;
+    value: number;
+}
+
 export class BulletActualBar extends ChartItem {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _args = {
+        gauge: null,
+        value: NaN
+    };
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(gauge: BulletGauge) {
+    constructor(public gauge: BulletGauge) {
         super(gauge.chart, true);
+    }
+
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * {@link value 현재 값}이 {@link targetValue 목표 값} 미만일 때 적용되는 스타일셋.
+     * 
+     * @config
+     */
+    belowStyle: SVGStyleOrClass;
+    /**
+     * {@link value 현재 값} 등을 기준으로 추가 적용되는 스타일을 리턴한다.
+     * 기본 설정을 따르게 하고 싶으면 undefined나 null을 리턴한다.
+     * 
+     * @config
+     */
+    styleCallback: (args: any) => SVGStyleOrClass;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getStyle(value: number): SVGStyleOrClass {
+        if (this.styleCallback) {
+            this._args.gauge = this.chart._proxy.getChartObject(this.gauge);
+            this._args.value = value;
+            const st = this.styleCallback(this._args)
+            if (isObject(st)) return st;
+        }
     }
 }
 
@@ -208,8 +250,8 @@ export class BulletGauge extends LinearGaugeBase {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getRanges(min: number, max: number): IValueRange[] {
-        return buildValueRanges(this.ranges, min, max, this.rangeInclusive);
+    getRanges(min: number, max: number, inclusive: boolean): IValueRange[] {
+        return buildValueRanges(this.ranges, min, max, pickProp(inclusive, this.rangeInclusive));
     }
 
     //-------------------------------------------------------------------------
@@ -247,8 +289,8 @@ export class BulletGaugeGroup extends LinearGaugeGroupBase<BulletGauge> {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getRanges(min: number, max: number): IValueRange[] {
-        return buildValueRanges(this.ranges, min, max, this.rangeInclusive);
+    getRanges(min: number, max: number, inclusive: boolean): IValueRange[] {
+        return buildValueRanges(this.ranges, min, max, pickProp(inclusive, this.rangeInclusive));
     }
 
     //-------------------------------------------------------------------------

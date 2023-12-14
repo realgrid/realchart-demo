@@ -8,14 +8,19 @@
 ## Config Properties
  | Name | Type | Description |   
  | --- | --- | --- | 
+ | [closeField](/config/config/series/candlestick#closefield) | `string{:js}` | json 객체나 배열로 전달되는 데이터포인트 정보에서 종료(close) 값을 지정하는 속성명이나 인덱스. |   
  | [col](/config/config/series/candlestick#col) | `number{:js}` | 분할 모드일 때 시리즈가 표시될 pane의 수직 위치. |   
  | [color](/config/config/series/candlestick#color) | `string{:js}` | 데이터 포인트 기본 색. |   
  | [colorField](/config/config/series/candlestick#colorfield) | `string{:js}` | undefined이면, data point의 값이 객체일 때 'color'. |   
  | [dataProp](/config/config/series/candlestick#dataprop) | `string{:js}` | undefined이면 'data'. |   
+ | [declineStyle](/config/config/series/candlestick#declinestyle) | `SVGStyles \| string{:js}` | 값이 하락한 데이터포인트에 적용되는 스타일셋. |   
+ | [highField](/config/config/series/candlestick#highfield) | `string{:js}` | json 객체나 배열로 전달되는 데이터포인트 정보에서 최고(high) 값을 지정하는 속성명이나 인덱스. |   
  | [label](/config/config/series/candlestick#label) | `string{:js}` | 이 시리즈를 나타내는 텍스트. |   
+ | [lowField](/config/config/series/candlestick#lowfield) | `string{:js}` | json 객체나 배열로 전달되는 데이터포인트 정보에서 최저(low) 값을 지정하는 속성명이나 인덱스. |   
  | [name](/config/config/series/candlestick#name) | `string{:js}` | 시리즈 이름. |   
  | [noClip](/config/config/series/candlestick#noclip) | `boolean{:js}` | true로 지정하면 body를 벗어난 data point 영역도 표시된다. |   
  | [onPointClick](/config/config/series/candlestick#onpointclick) | `PointClickCallback{:js}` | 데이터 point가 클릭될 때 발생하는 이벤트 콜백. |   
+ | [openField](/config/config/series/candlestick#openfield) | `string{:js}` | json 객체나 배열로 전달되는 데이터포인트 정보에서 시작(open) 값을 지정하는 속성명이나 인덱스. |   
  | [pointColors](/config/config/series/candlestick#pointcolors) | `boolean \| string[]{:js}` | 데이터 포인트별 색들을 지정한다. |   
  | [pointLabel](/config/config/series/candlestick/pointlabel) | `DataPointLabel{:js}` | 데이터포인트 label 설정 모델. |   
  | [pointPadding](/config/config/series/candlestick#pointpadding) | `number{:js}` | 이 시리즈의 point가 차지하는 영역 중에서 point bar 양쪽 끝에 채워지는 빈 영역의 크기. |   

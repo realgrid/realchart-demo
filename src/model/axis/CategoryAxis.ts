@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isString, pickNum, pickNum3, pickProp } from "../../common/Common";
+import { isArray, isNumber, isObject, isString, pickNum, pickNum3, pickProp } from "../../common/Common";
 import { DEG_RAD, PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { Axis, AxisGrid, AxisTick, AxisLabel, IAxisTick } from "../Axis";
@@ -437,11 +437,13 @@ export class CategoryAxis extends Axis {
                 let c: string;
                 let t: string;
 
-                if (cat == null) t = c = null;
-                else if (isString(cat)) t = c = cat;
-                else {
+                if (cat == null) {
+                    t = c = null;
+                } else if (isObject(cat)) {
                     c = pickProp(cat.name, cat.label);
                     t = pickProp(cat.label, cat.name);
+                } else {
+                    t = c = String(cat);
                 }
 
                 this._len += w;
@@ -462,6 +464,8 @@ export class CategoryAxis extends Axis {
         }
 
         this._map = {};
-        cats.forEach((cat, i) => this._map[cat.c] = i);
+        cats.forEach((cat, i) => {
+            if (cat.c != null) this._map[cat.c] = i}
+        );
     }
 }

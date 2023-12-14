@@ -557,7 +557,7 @@ export enum AxisLabelArrange {
 }
 
 export interface IAxisLabelArgs {
-    axis: object;//string | number;
+    axis: object;
     count: number;
     index: number;
     value: number;
@@ -679,7 +679,7 @@ export abstract class AxisLabel extends FormattableText {
      * 
      * @config
      */
-    styleCallback: (args: any) => SVGStyleOrClass;
+    styleCallback: (args: IAxisLabelArgs) => SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // methods

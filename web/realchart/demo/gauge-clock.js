@@ -16,9 +16,6 @@ const config = {
         type: 'clock',
         name: 'clock1',
         secondHand: {},
-        tickLabel: {
-            // step: 2
-        },
         label: {
             // position: 'bottom',
         }

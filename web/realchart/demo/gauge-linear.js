@@ -33,7 +33,6 @@ const config = {
             }, {
                 color: '#f40'
             }],
-            // tickLabel: true
         },
         ranges: [{
             toValue: 50,

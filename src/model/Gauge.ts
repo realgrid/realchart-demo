@@ -11,6 +11,7 @@ import { IPoint } from "../common/Point";
 import { IRichTextDomain } from "../common/RichText";
 import { ISize } from "../common/Size";
 import { DEG_RAD, IMinMax, IPercentSize, IValueRange, ORG_ANGLE, RtPercentSize, SVGStyleOrClass, buildValueRanges, calcPercent, fixnum, isNull, parsePercentSize } from "../common/Types";
+import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem, FormattableText } from "./ChartItem";
 import { Widget } from "./Widget";
@@ -589,6 +590,19 @@ export class GuageScaleTick extends ChartItem {
     length = 7;
 }
 
+export class GaugeScaleLabel extends FormattableText {
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getText(value: any): string {
+        if (Utils.isValidNumber(value)) {
+            return this._getText(null, value, Math.abs(value) > 1000, true);
+        }
+        return value;
+    }
+}
+
 /**
  * Gauge scale.
  */
@@ -615,7 +629,7 @@ export abstract class GaugeScale extends ChartItem {
 
         this.line = new ChartItem(gauge.chart, true);
         this.tick = new GuageScaleTick(this);
-        this.tickLabel = new ChartItem(gauge.chart, true);
+        this.label = new GaugeScaleLabel(gauge.chart, true);
     }
 
     //-------------------------------------------------------------------------
@@ -636,7 +650,7 @@ export abstract class GaugeScale extends ChartItem {
     /**
      * @config
      */
-    tickLabel: ChartItem;
+    label: GaugeScaleLabel;
     /**
      * @config
      */

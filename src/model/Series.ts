@@ -128,8 +128,7 @@ export class DataPointLabel extends FormattableText {
 
     getText(value: any): string {
         if (Utils.isValidNumber(value)) {
-            let s = this._getText(null, value, Math.abs(value) > 1000, true);
-            return s;
+            return this._getText(null, value, Math.abs(value) > 1000, true);
         }
         return value;
     }

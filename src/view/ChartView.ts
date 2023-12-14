@@ -550,12 +550,6 @@ class AxisSectionView extends SectionView {
 /**
  * @internal
  */
-class EmptyView extends GroupElement {
-}
-
-/**
- * @internal
- */
 export class CreditView extends ChartElement<Credits> {
 
     //-------------------------------------------------------------------------
@@ -604,7 +598,6 @@ export class ChartView extends LayerElement {
     private _model: Chart;
     _inverted = false;   // bar 시리즈 계열이 포함되면 true, x축이 수직, y축이 수평으로 그려진다.
 
-    _emptyView: EmptyView;
     private _titleSectionView: TitleSectionView;
     private _legendSectionView: LegendSectionView;
     private _plotContainer: LayerElement;
@@ -679,10 +672,6 @@ export class ChartView extends LayerElement {
     measure(doc: Document, model: Chart, hintWidth: number, hintHeight: number, phase: number): void {
         if (model) {
             model.prepareRender();
-        }
-        
-        if (this.$_checkEmpty(doc, model, hintWidth, hintHeight)) {
-            return;
         }
 
         const m = this._model = model;
@@ -771,11 +760,6 @@ export class ChartView extends LayerElement {
         const height = this.height;
         let w = width;
         let h = height;
-
-        if (this._emptyView?.visible) {
-            this._emptyView.resize(w, h);
-            return;
-        }
 
         const m = this._model;
         const polar = m.isPolar();
@@ -1301,20 +1285,6 @@ export class ChartView extends LayerElement {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_checkEmpty(doc: Document, m: Chart, hintWidth: number, hintHeight: number): boolean {
-        if (m && !m.isEmpty()) {
-            if (this._emptyView) {
-                this._emptyView.visible = false;
-            }
-        } else {
-            if (!this._emptyView) {
-                this._emptyView = new EmptyView(doc);
-            }
-            this._emptyView.resize(hintWidth, hintHeight);
-            return true;
-        }
-    }
-
     private $_preparePanes(doc: Document, split: Split): void {
         this._paneContainer.prepare(doc, split);
     }

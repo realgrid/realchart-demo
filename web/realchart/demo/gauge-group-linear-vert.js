@@ -98,7 +98,6 @@ const config = {
             }, {
                 color: '#f40'
             }],
-            // tickLabel: true
         },
         label: {
             text: 'Linear Gauges'

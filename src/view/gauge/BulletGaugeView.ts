@@ -71,71 +71,77 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
         const reversed = m.reversed;
         const vertical = this._vertical;
         const scale = group ? group.scale : m.scale;
+        const vActual = this._valueView;
+        const vTarget = this._targetView;
 
         if (this._barContainer.setVis(!scale.isEmpty())) {
-            const ranges = m.getRanges(scale._min, scale._max) || group?.getRanges(scale._min, scale._max);
+            const ranges = m.getRanges(scale._min, scale._max, false) || group?.getRanges(scale._min, scale._max, false);
 
             if (ranges) {
                 this._barContainer.setRect(r);
                 this._barViews.prepare(ranges.length);
 
                 if (vertical) {
-                    let y = reversed ? 0 : r.height;
-
                     this._barViews.forEach((v, i) => {
                         const range = ranges[i];
-                        const h = r.height * scale.getRate(range.toValue);
+                        const h = r.height * scale.getRate(range.toValue - range.fromValue);
+                        const y2 = r.height * scale.getRate(range.fromValue);
         
-                        v.setBounds(0, reversed ? y : y - h, r.width, h);
+                        v.setBounds(0, reversed ? y2 : r.height - y2 - h, r.width, h);
                         v.internalClearStyleAndClass();
                         v.setStyle('fill', range.color);
                         range.style && v.addStyleOrClass(range.style);
-                        // y += reversed ? h : -h;
                     });
                 } else {
-                    let x = reversed ? r.width : 0;
-
                     this._barViews.forEach((v, i) => {
                         const range = ranges[i];
-                        const w = r.width * scale.getRate(range.toValue);
+                        const w = r.width * scale.getRate(range.toValue - range.fromValue);
+                        const x2 = r.width * scale.getRate(range.fromValue);
         
-                        v.setBounds(reversed ? x - w : x, 0, w, r.height);
+                        v.setBounds(reversed ? r.width - w - x2 : x2, 0, w, r.height);
                         v.internalClearStyleAndClass();
                         v.setStyle('fill', range.color);
                         range.style && v.addStyleOrClass(range.style);
-                        // x += reversed ? -w : w;
                     });
                 }
             }
         }
 
         // value bar
-        if (this._valueView.setVis(!scale.isEmpty() && !isNaN(value))) {
+        if (vActual.setVis(!scale.isEmpty() && !isNaN(value))) {
+            vActual.setStyleOrClass(m.actualBar.style);
+            if (value < m.targetValue && m.actualBar.belowStyle) {
+                vActual.internalSetStyleOrClass(m.actualBar.belowStyle);
+            }
+            vActual.internalSetStyleOrClass(m.actualBar.getStyle(value));
+
             if (vertical) {
                 const h = r.height * scale.getRate(value);
                 const y = reversed ? r.y : r.y + r.height - h;
 
-                this._valueView.setBounds(r.x + r.width / 3, y, r.width / 3, h);
+                vActual.setBounds(r.x + r.width / 3, y, r.width / 3, h);
             } else {
                 const w = r.width * scale.getRate(value);
                 const x = reversed ? r.x + r.width - w : r.x;
     
-                this._valueView.setBounds(x, r.y + r.height / 3, w, r.height / 3);
+                vActual.setBounds(x, r.y + r.height / 3, w, r.height / 3);
             }
         }
 
         // target bar
-        if (this._targetView.setVis(!scale.isEmpty() && !isNaN(m.targetValue))) {
+        if (vTarget.setVis(!scale.isEmpty() && !isNaN(m.targetValue))) {
+            vTarget.setStyleOrClass(m.targetBar.style);
+
             if (vertical && r.width > 10) {
                 let y = r.height * scale.getRate(m.targetValue);
 
                 y = reversed ? r.y + y : r.y + r.height - y;
-                this._targetView.setBounds(r.x + 5, y - 1, r.width - 10, 3);
+                vTarget.setBounds(r.x + 5, y - 1, r.width - 10, 3);
             } else if (!vertical && r.height > 10) {
                 let x = r.width * scale.getRate(m.targetValue);
             
                 x = reversed ? (r.x + r.width - x) : (r.x + x);
-                this._targetView.setBounds(x - 1, r.y + 5, 3, r.height - 10);
+                vTarget.setBounds(x - 1, r.y + 5, 3, r.height - 10);
             }
         }
    }

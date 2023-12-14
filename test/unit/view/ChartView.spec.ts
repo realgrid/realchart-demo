@@ -29,31 +29,12 @@ import { ChartControl } from '../../../src/ChartControl';
         expect(cv).exist;
     });
 
-    it('measure empty', () => {
-        const cv = control.chartView();
-
-        cv.measure(control.doc(), null, 100, 100, 1);
-        expect(cv._emptyView).exist;
-        expect(cv._emptyView.visible).is.true;
-    })
-
-    it('measure - empty', () => {
-        const json = Tester.loadChartJson("chart-01");
-        const chart = new Chart(json);
-        const cv = control.chartView();
-
-        cv.measure(control.doc(), chart, 500, 500, 1);
-        expect(cv._emptyView).exist;
-        expect(chart.isEmpty()).is.true;
-    })
-
     it('measure', () => {
         const json = Tester.loadChartJson("bar-01");
         const chart = new Chart(json);
         const cv = control.chartView();
 
         cv.measure(control.doc(), chart, 500, 500, 1);
-        expect(cv._emptyView).not.exist;
         expect(chart.isEmpty()).is.false;
 
         expect(cv['_titleSectionView'].visible).is.true;

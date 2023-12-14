@@ -23,25 +23,6 @@ import { Chart } from '../../src/model/Chart';
         expect(control.chartView()).exist;
     });
 
-    it('render empty', () => {
-        const control = Tester.createControl();
-        const chartView = control.chartView();
-
-        control.testRender(true);
-        expect(chartView._emptyView.visible).is.true;
-    })
-
-    it('render empty series', () => {
-        const json = Tester.loadChartJson("chart-01");
-        const chart = new Chart(json);
-        const control = Tester.createControl();
-        const chartView = control.chartView();
-
-        control.model = chart;
-        control.testRender();
-        expect(chartView._emptyView.visible).is.true;
-    })
-
     it('render', () => {
         const json = Tester.loadChartJson("bar-01");
         const chart = new Chart(json);
@@ -50,6 +31,5 @@ import { Chart } from '../../src/model/Chart';
 
         control.model = chart;
         control.testRender();
-        expect(chartView._emptyView).not.exist;
     })
 });
