@@ -69,6 +69,9 @@ const config = {
       },
     },
   ],
+  tooltip: {
+    followPointer: true
+  }
 };
 
 let animate = false;
