@@ -1,8 +1,5 @@
 {
 	"ohlc": {
 		"title": "Ohlc"
-	},
-	"ohlc-null": {
-		"title": "Null Point"
 	}
 }

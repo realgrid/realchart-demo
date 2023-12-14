@@ -4,13 +4,20 @@ export const config = {
   legend: true,
   body: { style: { stroke: 'none' } },
   xAxis: {
-    label: { startStep: 0, step: 2 },
+    label: { startStep: 0, step: 2, style: {} },
     grid: { visible: true, endVisible: true },
     tick: true,
     title: { text: '수정구' },
     crosshair: true
   },
-  yAxis: { title: { text: '전체 인구수' } },
+  yAxis: {
+    title: { text: '전체 인구수' },
+    unit: '(명)',
+    label: {
+      lastText: '${label}<br>${axis.unit}',
+      lastStyle: { fontWeight: 'bold' }
+    }
+  },
   series: {
     pointLabel: { visible: true },
     onPointClick: args => { chart.series.updateData([["신흥1동", 100], ["신흥2동", 200]], true);},

@@ -1,6 +1,7 @@
 export const config = {
   title: 'Candlestick',
   options: {},
+  legend: true,
   xAxis: { type: 'category' },
   yAxis: { crosshair: true },
   series: {

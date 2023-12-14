@@ -1,6 +1,6 @@
 export const config = {
   templates: { gauge: { label: { numberFormat: '#00.#' } } },
-  options: { animatable: false, credits: {} },
+  options: { credits: {} },
   title: 'Linear Gauge Group',
   gauge: [
     {
@@ -12,7 +12,7 @@ export const config = {
         {
           name: 'gauge1',
           template: 'gauge',
-          value: 25.9509783655429,
+          value: 8.092207160055054,
           valueRim: { style: { fill: '#00aaff' } },
           label: {
             style: { fill: '#00aaff' },
@@ -22,7 +22,7 @@ export const config = {
         {
           name: 'gauge2',
           template: 'gauge',
-          value: 59.669510337686305,
+          value: 48.3935301843968,
           valueRim: { style: { fill: '#ffaa00' } },
           label: {
             style: { fill: '#ffaa00' },
@@ -32,7 +32,7 @@ export const config = {
         {
           name: 'gauge3',
           template: 'gauge',
-          value: 11.907777415346676,
+          value: 41.0850527917942,
           valueRim: { style: { fill: '#88cc00' } },
           label: {
             style: { fill: '#88cc00' },
@@ -42,7 +42,7 @@ export const config = {
         {
           name: 'gauge4',
           template: 'gauge',
-          value: 15.954752936291893,
+          value: 84.27051033161483,
           valueRim: { style: { fill: '#aa0000' } },
           label: {
             style: { fill: '#aa0000' },

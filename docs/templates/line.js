@@ -1,5 +1,5 @@
 export const config = {
-  options: { animatable: false },
+  options: {},
   title: 'Line Series 01',
   xAxis: { type: 'category' },
   yAxis: {},

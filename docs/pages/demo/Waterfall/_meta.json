@@ -1,8 +1,5 @@
 {
-	"barrange": {
+	"waterfall": {
 		"title": "Waterfall"
-	},
-	"waterfall-null": {
-		"title": "Null Point"
 	}
 }

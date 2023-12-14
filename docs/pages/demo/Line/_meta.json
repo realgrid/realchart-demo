@@ -11,9 +11,6 @@
 	"line-negative": {
 		"title": "Negative Line"
 	},
-	"line-null": {
-		"title": "Null Point"
-	},
 	"line-multi": {
 		"title": "Multiple Lines"
 	},

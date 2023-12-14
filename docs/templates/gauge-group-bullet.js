@@ -1,6 +1,6 @@
 export const config = {
   templates: { gauge: { label: { numberFormat: '#0.#' } } },
-  options: { animatable: false, credits: {} },
+  options: { credits: {} },
   title: 'Bullet Gauge Group',
   gauge: [
     {
@@ -12,7 +12,7 @@ export const config = {
         {
           name: 'gauge1',
           template: 'gauge',
-          value: 23.373089004261605,
+          value: 33.63965681035648,
           targetValue: 90,
           valueRim: { style: { fill: '#00aaff' } },
           label: {
@@ -23,7 +23,7 @@ export const config = {
         {
           name: 'gauge2',
           template: 'gauge',
-          value: 75.39442079716734,
+          value: 11.320950856698865,
           targetValue: 70,
           valueRim: { style: { fill: '#ffaa00' } },
           label: {
@@ -34,7 +34,7 @@ export const config = {
         {
           name: 'gauge3',
           template: 'gauge',
-          value: 41.31959169480768,
+          value: 53.55199295784803,
           targetValue: 75,
           valueRim: { style: { fill: '#88cc00' } },
           label: {
@@ -45,7 +45,7 @@ export const config = {
         {
           name: 'gauge4',
           template: 'gauge',
-          value: 84.24029943464961,
+          value: 95.86767407727588,
           targetValue: 88,
           valueRim: { style: { fill: '#aa0000' } },
           label: {

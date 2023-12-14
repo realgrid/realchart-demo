@@ -1,5 +1,5 @@
 export const config = {
-  options: { animatable: false, credits: {} },
+  options: { credits: {} },
   title: 'Linear Guages',
   gauge: [
     {

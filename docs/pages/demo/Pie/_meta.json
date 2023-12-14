@@ -2,9 +2,6 @@
 	"pie": {
 		"title": "Pie"
 	},
-	"pie-null": {
-		"title": "Null Point"
-	},
 	"pie-donut": {
 		"title": "Donut"
 	}
