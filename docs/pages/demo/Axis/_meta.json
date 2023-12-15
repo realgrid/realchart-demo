@@ -1,32 +1,62 @@
 {
 	"categoryaxis": {
-		"title": "Category Axis"
+		"title": "Category Axis",
+		"theme": {
+			"toc": false
+		}
 	},
 	"categoryaxis-var": {
-		"title": "Variable Category Axis"
+		"title": "Variable Category Axis",
+		"theme": {
+			"toc": false
+		}
 	},
 	"linearaxis": {
-		"title": "Linear Axis"
+		"title": "Linear Axis",
+		"theme": {
+			"toc": false
+		}
 	},
 	"logaxis": {
-		"title": "Log Axis"
+		"title": "Log Axis",
+		"theme": {
+			"toc": false
+		}
 	},
 	"timeaxis": {
-		"title": "Time Axis"
+		"title": "Time Axis",
+		"theme": {
+			"toc": false
+		}
 	},
 	"axis-break": {
-		"title": "Axis Breaks"
+		"title": "Axis Breaks",
+		"theme": {
+			"toc": false
+		}
 	},
 	"axis-label": {
-		"title": "Axis Labels"
+		"title": "Axis Labels",
+		"theme": {
+			"toc": false
+		}
 	},
 	"multiaxis": {
-		"title": "Multiple Axis"
+		"title": "Multiple Axis",
+		"theme": {
+			"toc": false
+		}
 	},
 	"axis-zoom": {
-		"title": "Zooming"
+		"title": "Zooming",
+		"theme": {
+			"toc": false
+		}
 	},
 	"series-navigator": {
-		"title": "Navigator"
+		"title": "Navigator",
+		"theme": {
+			"toc": false
+		}
 	}
 }

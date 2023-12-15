@@ -66,6 +66,11 @@ const annoLegendOffset = (data, name) => {
     return (yMax - strictMin - avgset[name]) / (yMax - strictMin) * chartHeight + (isLower ? padding : 0);
 }
 
+const offsetX = () => {
+    const labelSize = 30;
+    return document.getElementById('realchart').offsetWidth / 3 / 2 - labelSize;
+}
+
 const config = {
     type: 'line',
     templates: {
@@ -106,11 +111,11 @@ const config = {
             }
         },
         annoLegend: {
-            offsetX: 180,
+            align: 'center',
             style: {
                 fontSize: '14pt',
                 fontWeight: 'bold'
-            }
+            },
         },
         series: {
             marker: false,
@@ -147,7 +152,7 @@ const config = {
                         text: 'Biden',
                         style: {
                             fill: primary,
-                        }
+                        },
                     }, {
                         template: 'annoLegend',
                         offsetY: annoLegendOffset(data[i], 'Trump'),

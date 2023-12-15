@@ -1,8 +1,14 @@
 {
 	"pie": {
-		"title": "Pie"
+		"title": "Pie",
+		"theme": {
+			"toc": false
+		}
 	},
 	"pie-donut": {
-		"title": "Donut"
+		"title": "Donut",
+		"theme": {
+			"toc": false
+		}
 	}
 }

@@ -1,8 +1,14 @@
 {
 	"bubble": {
-		"title": "Bubble"
+		"title": "Bubble",
+		"theme": {
+			"toc": false
+		}
 	},
 	"bubble-multi": {
-		"title": "Multiple Bubble"
+		"title": "Multiple Bubble",
+		"theme": {
+			"toc": false
+		}
 	}
 }

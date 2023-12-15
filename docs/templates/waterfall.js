@@ -5,7 +5,7 @@ export const config = {
   yAxis: { title: 'Vertical 수직축 Axis' },
   series: {
     type: 'waterfall',
-    tooltip: { text: 'low: ${low}<br>save: ${save}' },
+    tooltipText: 'low: ${low}<br>save: ${save}',
     pointLabel: { visible: true, position: 'inside', effect: 'outline' },
     data: [
       { name: 'Start', y: 120000 },

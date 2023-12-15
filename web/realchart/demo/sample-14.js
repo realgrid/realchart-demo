@@ -1,4 +1,7 @@
 const config = {
+    options: {
+        credits: false,
+    },
     annotations: {
         text: 'IN 1952',
         offsetX: 180,
@@ -34,7 +37,7 @@ const config = {
             }
         },
         strictMin: 20,
-        strictMax: 120,
+        // strictMax: 120,
         tick: {
             stepInterval: 10,
         },
@@ -99,7 +102,6 @@ const createSeries = (year) => {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
-    RealChart.setLogging(true);
     config.series = createSeries(1952);
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

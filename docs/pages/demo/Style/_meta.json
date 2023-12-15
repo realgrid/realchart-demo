@@ -1,29 +1,56 @@
 {
 	"lineargradient": {
-		"title": "Linear Gradient"
+		"title": "Linear Gradient",
+		"theme": {
+			"toc": false
+		}
 	},
 	"radialgradient": {
-		"title": "Radial Gradient"
+		"title": "Radial Gradient",
+		"theme": {
+			"toc": false
+		}
 	},
 	"pattern-fill": {
-		"title": "Pattern Fill"
+		"title": "Pattern Fill",
+		"theme": {
+			"toc": false
+		}
 	},
 	"palette": {
-		"title": "Palette"
+		"title": "Palette",
+		"theme": {
+			"toc": false
+		}
 	},
 	"theme": {
-		"title": "Theme"
+		"title": "Theme",
+		"theme": {
+			"toc": false
+		}
 	},
 	"stylecallback": {
-		"title": "Style Callback"
+		"title": "Style Callback",
+		"theme": {
+			"toc": false
+		}
 	},
 	"viewranges-bar": {
-		"title": "View Ranges - Bar"
+		"title": "View Ranges - Bar",
+		"theme": {
+			"toc": false
+		}
 	},
 	"viewranges-line": {
-		"title": "View Ranges - Line"
+		"title": "View Ranges - Line",
+		"theme": {
+			"toc": false
+		}
 	},
 	"viewranges-area": {
-		"title": "View Ranges - Area"
+		"title": "View Ranges - Area",
+		"theme": {
+			"toc": false
+		}
 	}
 }

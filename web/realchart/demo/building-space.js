@@ -14,6 +14,7 @@ const buildingData = data.map(r => {
 })
 
 const config = {
+    height: 1200,
     templates: {
         yAxis: {
             grid: false,

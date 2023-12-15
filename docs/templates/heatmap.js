@@ -75,9 +75,7 @@ export const config = {
     ],
     style: { fill: 'red', stroke: 'black', strokeWidth: '4px' },
     type: 'heatmap',
-    tooltip: {
-      text: '<t style="font-weight:bold">${xValue}주차</t><br><b>평균온도: ${zValue}°C</b>'
-    },
+    tooltipText: '<t style="font-weight:bold">${xValue}주차</t><br><b>평균온도: ${zValue}°C</b>',
     data: [
       [ 0, 0, -6.8 ],  [ 0, 1, -5.4 ],  [ 0, 2, -4.5 ],  [ 0, 3, -3.9 ],
       [ 0, 4, -4 ],    [ 0, 5, -7.6 ],  [ 0, 6, -7 ],    [ 1, 0, -3.6 ],

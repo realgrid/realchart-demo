@@ -1,5 +1,8 @@
 {
 	"candlestick": {
-		"title": "Candlestick"
+		"title": "Candlestick",
+		"theme": {
+			"toc": false
+		}
 	}
 }

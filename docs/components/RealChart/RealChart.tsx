@@ -83,6 +83,9 @@ export function RealChartReact({
     setCode(JSON.parse(value));
   };
 
+  const _height = code['height'];
+  const height = _height ? typeof _height === 'number' ? _height + 'px' : _height : '500px';
+
   return (
     <Panel
       title={`RealChart ${version}`}
@@ -102,7 +105,7 @@ export function RealChartReact({
           id="realchart"
           ref={chartRef}
           className={classes.wrapper}
-          style={{ width: "100%", height: "500px" }}
+          style={{ width: "100%", height }}
         />
         
         {showEditor ? (

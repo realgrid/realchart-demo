@@ -1,5 +1,8 @@
 {
 	"errorbar": {
-		"title": "ErrorBar"
+		"title": "ErrorBar",
+		"theme": {
+			"toc": false
+		}
 	}
 }

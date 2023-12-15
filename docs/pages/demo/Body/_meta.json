@@ -1,17 +1,32 @@
 {
 	"trendline": {
-		"title": "Trendlines"
+		"title": "Trendlines",
+		"theme": {
+			"toc": false
+		}
 	},
 	"axis-guide": {
-		"title": "Guides"
+		"title": "Guides",
+		"theme": {
+			"toc": false
+		}
 	},
 	"crosshair": {
-		"title": "Crosshair"
+		"title": "Crosshair",
+		"theme": {
+			"toc": false
+		}
 	},
 	"body-background": {
-		"title": "Background"
+		"title": "Background",
+		"theme": {
+			"toc": false
+		}
 	},
 	"annotations": {
-		"title": "Annotations"
+		"title": "Annotations",
+		"theme": {
+			"toc": false
+		}
 	}
 }

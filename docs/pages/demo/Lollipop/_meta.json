@@ -1,5 +1,8 @@
 {
 	"lollipop": {
-		"title": "Lollipop"
+		"title": "Lollipop",
+		"theme": {
+			"toc": false
+		}
 	}
 }

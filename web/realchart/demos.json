@@ -1,4 +1,23 @@
 {
+    "Demo": {
+        "Column": "guide-image01",
+        "Line": "polls-biden-trump",
+        "Area": "population",
+        "Bubble": "sample-14",
+        "Candlestick": "candlestick",
+        "Split": "building-space",
+        "Polar Bar": "polar-baseball",
+        "Polar Scatter": "polar-scatter",
+        "Gauge": "gauge-group",
+        "Clock": "gauge-clock",
+        "Pie": "sample-30",
+        "Poll Pie": "poll-pie",
+        "Heatmap": "heatmap",
+        "Treemap": "treemap",
+        "Bar": "sample-01",
+        "Card": "sample-03",
+        "Percent Stack": "sample-13"
+    },
     "Basic": {
         "Basic": "basic"
     },

@@ -1,0 +1,104 @@
+{
+	"guide-image01": {
+		"title": "Column",
+		"theme": {
+			"toc": false
+		}
+	},
+	"polls-biden-trump": {
+		"title": "Line",
+		"theme": {
+			"toc": false
+		}
+	},
+	"population": {
+		"title": "Area",
+		"theme": {
+			"toc": false
+		}
+	},
+	"sample-14": {
+		"title": "Bubble",
+		"theme": {
+			"toc": false
+		}
+	},
+	"candlestick": {
+		"title": "Candlestick",
+		"theme": {
+			"toc": false
+		}
+	},
+	"building-space": {
+		"title": "Split",
+		"theme": {
+			"toc": false
+		}
+	},
+	"polar-baseball": {
+		"title": "Polar Bar",
+		"theme": {
+			"toc": false
+		}
+	},
+	"polar-scatter": {
+		"title": "Polar Scatter",
+		"theme": {
+			"toc": false
+		}
+	},
+	"gauge-group": {
+		"title": "Gauge",
+		"theme": {
+			"toc": false
+		}
+	},
+	"gauge-clock": {
+		"title": "Clock",
+		"theme": {
+			"toc": false
+		}
+	},
+	"sample-30": {
+		"title": "Pie",
+		"theme": {
+			"toc": false
+		}
+	},
+	"poll-pie": {
+		"title": "Poll Pie",
+		"theme": {
+			"toc": false
+		}
+	},
+	"heatmap": {
+		"title": "Heatmap",
+		"theme": {
+			"toc": false
+		}
+	},
+	"treemap": {
+		"title": "Treemap",
+		"theme": {
+			"toc": false
+		}
+	},
+	"sample-01": {
+		"title": "Bar",
+		"theme": {
+			"toc": false
+		}
+	},
+	"sample-03": {
+		"title": "Card",
+		"theme": {
+			"toc": false
+		}
+	},
+	"sample-13": {
+		"title": "Percent Stack",
+		"theme": {
+			"toc": false
+		}
+	}
+}

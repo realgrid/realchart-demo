@@ -11,7 +11,7 @@ export const config = {
       maxValue: 100,
       value: 81,
       targetValue: 90,
-      scale: { line: true },
+      scale: { line: true, label: { suffix: '%' } },
       ranges: [
         { toValue: 50, color: '#777' },
         { toValue: 70, color: '#aaa' }

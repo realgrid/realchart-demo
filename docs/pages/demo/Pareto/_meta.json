@@ -1,5 +1,8 @@
 {
 	"pareto": {
-		"title": "Pareto"
+		"title": "Pareto",
+		"theme": {
+			"toc": false
+		}
 	}
 }

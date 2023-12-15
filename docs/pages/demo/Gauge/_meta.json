@@ -1,35 +1,68 @@
 {
 	"gauge": {
-		"title": "Circle Gauge"
+		"title": "Circle Gauge",
+		"theme": {
+			"toc": false
+		}
 	},
 	"gauge-multi": {
-		"title": "Multiple Gauges"
+		"title": "Multiple Gauges",
+		"theme": {
+			"toc": false
+		}
 	},
 	"gauge-hand": {
-		"title": "Hand Gauges"
+		"title": "Hand Gauges",
+		"theme": {
+			"toc": false
+		}
 	},
 	"gauge-clock": {
-		"title": "Clock Gauge"
+		"title": "Clock Gauge",
+		"theme": {
+			"toc": false
+		}
 	},
 	"gauge-clock-multi": {
-		"title": "Multiple Clocks"
+		"title": "Multiple Clocks",
+		"theme": {
+			"toc": false
+		}
 	},
 	"gauge-bullet": {
-		"title": "Bullet Gauge"
+		"title": "Bullet Gauge",
+		"theme": {
+			"toc": false
+		}
 	},
 	"gauge-linear": {
-		"title": "Linear Gauge"
+		"title": "Linear Gauge",
+		"theme": {
+			"toc": false
+		}
 	},
 	"gauge-linear-vert": {
-		"title": "Linear Gauge - Vertical"
+		"title": "Linear Gauge - Vertical",
+		"theme": {
+			"toc": false
+		}
 	},
 	"gauge-group": {
-		"title": "Circle Gauge Group"
+		"title": "Circle Gauge Group",
+		"theme": {
+			"toc": false
+		}
 	},
 	"gauge-group-linear": {
-		"title": "Linear Gauge Group"
+		"title": "Linear Gauge Group",
+		"theme": {
+			"toc": false
+		}
 	},
 	"gauge-group-bullet": {
-		"title": "Bullet Gauge Group"
+		"title": "Bullet Gauge Group",
+		"theme": {
+			"toc": false
+		}
 	}
 }

@@ -1,5 +1,8 @@
 {
 	"waterfall": {
-		"title": "Waterfall"
+		"title": "Waterfall",
+		"theme": {
+			"toc": false
+		}
 	}
 }

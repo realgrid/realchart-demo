@@ -1,5 +1,8 @@
 {
 	"funnel": {
-		"title": "Funnel"
+		"title": "Funnel",
+		"theme": {
+			"toc": false
+		}
 	}
 }

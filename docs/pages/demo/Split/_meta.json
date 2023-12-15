@@ -1,14 +1,26 @@
 {
 	"split-wing-chart": {
-		"title": "Wing Chart"
+		"title": "Wing Chart",
+		"theme": {
+			"toc": false
+		}
 	},
 	"split-row-lines": {
-		"title": "Series Row"
+		"title": "Series Row",
+		"theme": {
+			"toc": false
+		}
 	},
 	"split-col-lines": {
-		"title": "Series Column"
+		"title": "Series Column",
+		"theme": {
+			"toc": false
+		}
 	},
 	"split-grid-lines": {
-		"title": "Series Grid"
+		"title": "Series Grid",
+		"theme": {
+			"toc": false
+		}
 	}
 }

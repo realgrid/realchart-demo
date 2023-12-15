@@ -1,5 +1,8 @@
 {
 	"vector": {
-		"title": "Vector"
+		"title": "Vector",
+		"theme": {
+			"toc": false
+		}
 	}
 }

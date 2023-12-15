@@ -1,5 +1,8 @@
 {
 	"dumbbell": {
-		"title": "Dumbbell"
+		"title": "Dumbbell",
+		"theme": {
+			"toc": false
+		}
 	}
 }

@@ -1,17 +1,32 @@
 {
 	"area": {
-		"title": "Area"
+		"title": "Area",
+		"theme": {
+			"toc": false
+		}
 	},
 	"area-multi": {
-		"title": "Multi Areas"
+		"title": "Multi Areas",
+		"theme": {
+			"toc": false
+		}
 	},
 	"areagroup": {
-		"title": "Area Group"
+		"title": "Area Group",
+		"theme": {
+			"toc": false
+		}
 	},
 	"area-negative": {
-		"title": "Area Negative"
+		"title": "Area Negative",
+		"theme": {
+			"toc": false
+		}
 	},
 	"areagroup-negative": {
-		"title": "Negative Areas"
+		"title": "Negative Areas",
+		"theme": {
+			"toc": false
+		}
 	}
 }

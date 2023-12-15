@@ -19,7 +19,8 @@ export const config = {
         closeprc: 21500,
         trdvolume: 14033,
         trdamnt: 324987500,
-        date: '2019-01-11'
+        date: '2019-01-11',
+        color: 'green'
       },
       {
         openprc: 21400,

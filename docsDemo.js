@@ -17,7 +17,7 @@ function createMetaJson() {
 		let demos = {}
 		map2.forEach((value2, key2) => {
 			// console.log(`${key}: ${value}`);
-			demos[value2] = {title: key2};
+			demos[value2] = {title: key2, theme: { toc: false }};
 		});
 		writeFileSync(`./docs/pages/demo/${key.replace(' ', '')}/_meta.json`, JSON.stringify(demos, null, '\t'));
 	});

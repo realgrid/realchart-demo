@@ -1,5 +1,8 @@
 {
 	"arearange": {
-		"title": "Area Range"
+		"title": "Area Range",
+		"theme": {
+			"toc": false
+		}
 	}
 }

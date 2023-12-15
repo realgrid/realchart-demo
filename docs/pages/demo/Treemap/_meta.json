@@ -1,8 +1,14 @@
 {
 	"treemap": {
-		"title": "Treemap"
+		"title": "Treemap",
+		"theme": {
+			"toc": false
+		}
 	},
 	"treemap-level": {
-		"title": "Treemap Leveled"
+		"title": "Treemap Leveled",
+		"theme": {
+			"toc": false
+		}
 	}
 }
