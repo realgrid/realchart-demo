@@ -2,12 +2,31 @@
  * @demo
  */
 const config = {
+  options: { animatable: false },
   templates: {
     gauge: {
       // width: '55%',
       height: 65,
       label: {
         width: "19%",
+      },
+      targetBar: {
+        style: {
+          fill: "#222",
+        },
+      },
+      actualBar: {
+        styleCallback: (args) => {
+          if (args.value > args.gauge.$_p.targetValue) {
+            return {
+              fill: "#0047AB",
+            };
+          } else {
+            return {
+              fill: "#ED254E",
+            };
+          }
+        },
       },
     },
   },
@@ -23,31 +42,21 @@ const config = {
       maxValue: 6,
       ranges: [
         {
-          fromValue: 0,
-          toValue: 1,
-          color: "green",
+          toValue: 3.5,
+          color: "#AFCBE6",
         },
         {
-          fromValue: 1,
-          toValue: 2,
-          color: "blue",
+          toValue: 4.5,
+          color: "#8DA9C4",
         },
         {
-          fromValue: 2,
-          toValue: 4,
-          color: "red",
+          toValue: 5.5,
+          color: "#7C98B3",
         },
       ],
-      targetBar: {
-        style: {
-          fill: "red",
-          stroke: "red"
-        },
-      },
-      actualBar: {
-        style: {
-          fill: "blue",
-          stroke: "blue"
+      scale: {
+        label: {
+          suffix: "GHz",
         },
       },
       label: {
@@ -59,19 +68,28 @@ const config = {
       name: "ClockSpeed",
       template: "gauge",
       value: 3.0,
-      top: 90,
+      top: 100,
       targetValue: 4.5,
       maxValue: 6,
       ranges: [
         {
-          toValue: 3,
-          color: "#666",
+          toValue: 2,
+          color: "#AFCBE6",
         },
         {
-          toValue: 4,
-          color: "#999",
+          toValue: 3.5,
+          color: "#8DA9C4",
+        },
+        {
+          toValue: 4.5,
+          color: "#7C98B3",
         },
       ],
+      scale: {
+        label: {
+          suffix: "GHz",
+        },
+      },
       label: {
         text: "Clock Speed <br>  vs AMD Ryzen 9 7950x",
       },
@@ -81,17 +99,21 @@ const config = {
       name: "PhysicalCores",
       template: "gauge",
       value: 24,
-      top: 160,
+      top: 180,
       targetValue: 16,
       maxValue: 32,
       ranges: [
         {
           toValue: 8,
-          color: "#666",
+          color: "#AFCBE6",
         },
         {
-          toValue: 12,
-          color: "#999",
+          toValue: 16,
+          color: "#8DA9C4",
+        },
+        {
+          toValue: 14,
+          color: "#7C98B3",
         },
       ],
       label: {
@@ -103,17 +125,21 @@ const config = {
       name: "CPUValue",
       template: "gauge",
       value: 104.4,
-      top: 230,
+      top: 260,
       targetValue: 116.8,
       maxValue: 150,
       ranges: [
         {
           toValue: 60,
-          color: "#666",
+          color: "#AFCBE6",
         },
         {
-          toValue: 80,
-          color: "#999",
+          toValue: 100,
+          color: "#8DA9C4",
+        },
+        {
+          toValue: 120,
+          color: "#7C98B3",
         },
       ],
       label: {
@@ -125,46 +151,47 @@ const config = {
       name: "CPUMark",
       template: "gauge",
       value: 59528,
-      top: 300,
+      top: 340,
       targetValue: 63188,
       maxValue: 80000,
       ranges: [
         {
-          toValue: 40000,
-          color: "#666",
+          toValue: 35000,
+          color: "#AFCBE6",
         },
         {
-          toValue: 60000,
-          color: "#999",
+          toValue: 50000,
+          color: "#8DA9C4",
+        },
+        {
+          toValue: 70000,
+          color: "#7C98B3",
         },
       ],
       label: {
         text: "CPU Mark <br>  vs AMD Ryzen 9 7950x",
       },
-      actualBar: {
-        styleCallback: args => {
-            if (args.value < args.gauge.get('targetValue')) {
-                return { fill: 'green' }
-            }
-        }
-      }
     },
     {
       type: "bullet",
       name: "price",
       template: "gauge",
       value: 569.97,
-      top: 370,
+      top: 420,
       targetValue: 540.99,
       maxValue: 1000,
       ranges: [
         {
           toValue: 200,
-          color: "#666",
+          color: "#AFCBE6",
         },
         {
           toValue: 400,
-          color: "#999",
+          color: "#8DA9C4",
+        },
+        {
+          toValue: 550,
+          color: "#7C98B3",
         },
       ],
       label: {
@@ -172,10 +199,10 @@ const config = {
       },
       actualBar: {
         belowStyle: {
-            fill: "red",
-            stroke: "red"
-        }
-      }
+          fill: "red",
+          stroke: "red",
+        },
+      },
     },
   ],
 };
