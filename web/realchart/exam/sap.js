@@ -1,162 +1,218 @@
-const pointLabel = {
-  visible: true,
-  numberFormat: '#.00',
-  suffix: '%',
-  position: 'inside',
-};
+const width = 1280;
+const padding = 40;
+const startYear = 2020;
 
-const appendX = (v, i) => {
-  const year = 2014 + Math.floor(i / 4);
+const quarters = Array(12).fill().map((_, i) => {
+  const year = startYear + Math.floor(i / 4);
   const q = i % 4;
-  return [`${year} Q${q + 1}`, v];
-};
+  return `${year} Q${q + 1}`;
+})
 
-const salesAlcohol = [92, 91, 94, 93, 90, 92, 98, 110, 143, 146, 143, 153.03].map(appendX);
-const salesJuice = [70, 75, 78, 85, 81, 88, 94, 100, 120, 114, 100, 102.01].map(appendX);
-const salesOthers = [80, 78, 82, 90, 100, 95, 114, 105, 100, 90, 78, 80.41].map(appendX);
+const salesCoke = [92, 91, 94, 93, 90, 92, 98, 110, 143, 146, 143, 153.03].map(v => v * 1.3);
+const salesCb = [70, 75, 78, 83, 83, 88, 94, 100, 120, 114, 120, 132.01].map(v => v*1.2);
+const salesOthers = [80, 78, 82, 90, 100, 95, 114, 105, 100, 90, 78, 80.41].map(v => v*1.3);
 
-const lineSeries = {
-  type: 'line',
-  marker: false,
-  style: {
-    strokeWidth: 4,
-  }
-}
+// colors
+const primary = '#219ebc';
+
+// const idx = year - startYear;
+// salesAlcohol.slice(idx * 4, (idx+1) * 4)
 const lines = [
-  { ...lineSeries, name: 'Alcohol', 
-    style: {
-      ...lineSeries.style,
-      stroke: 'var(--color-5)'
+    { 
+      template: 'series', 
+      type: 'line',
+      name: 'Coke', 
+      style: {
+        stroke: 'var(--color-5)'
+      },
+      data: salesCoke,
     },
-    data: salesAlcohol },
-  { ...lineSeries, name: 'Juice', data: salesJuice },
-  { ...lineSeries, name: 'Ohters', 
-    style: {
-      ...lineSeries.style,
-      stroke: 'var(--color-8)'
+    { 
+      template: 'series', 
+      type: 'line',
+      name: 'Carbone', 
+      style: {
+        stroke: 'var(--color-2)'
+      },
+      data: salesCb,
     },
-    data: salesOthers }
-]
+    { 
+      template: 'series', 
+      type: 'line',
+      name: 'Others', 
+      style: {
+        stroke: 'var(--color-8)'
+      },
+      data: salesOthers,
+    }
+  ];
 
 const lineConfig = {
+  options: {
+    credits: {
+      visible: false,
+    }
+  },
+  templates: {
+    series: {
+      marker: false,
+      pointLabel: {
+        visibleCallback: (args) => {
+          // console.debug(args);
+          // args.series
+          return args.count - 1 == args.index;
+        },
+        style: {
+          fill: '#999'
+        }
+      },
+      style: {
+        strokeWidth: 4,
+      }
+    },
+    xAxis: {
+      type: 'category',
+      categories: quarters,
+      line: false,
+      grid: false,
+      label: {
+        textCallback: ({index}) => {
+          const [year, q] = quarters[index].split(' ');
+          return q == 'Q1' ? `${q}<br>${year}` : q
+        },
+        style: {
+          // textAlign: 'left',
+          fontWeight: 700,
+          fontSize: '11pt',
+          fill: primary,
+          textAnchor: 'middle',
+        }
+      }
+      // padding: -0.5,
+    },
+    annoAmount: {
+      style: {
+        fontSize: '24pt',
+        fontWeight: 500,
+        fill: '#aaa'
+      }
+    },
+    annoLabel: {
+      style: {
+        fontSize: '12pt',
+        fontWeight: 500,
+        fill: primary,
+      }
+    }
+  },
+  body: {
+    annotations: [
+      {
+        template: 'annoAmount',
+        text: "71M",
+        offsetX: width * 0.33 + padding,
+        offsetY: -100,
+      },
+      {
+        template: 'annoLabel',
+        text: `Total Amount in ${startYear + 1}`,
+        offsetX: width * 0.33 + padding,
+        offsetY: -60,
+      },
+      {
+        template: 'annoAmount',
+        text: "94M",
+        offsetX: width * 0.66 + padding,
+        offsetY: -100,
+      },
+      {
+        template: 'annoLabel',
+        text: `Total Amount in ${startYear + 2}`,
+        offsetX: width * 0.66 + padding,
+        offsetY: -60,
+      }
+    ],
+  },
   legend: {
+    visible: true,
     // markerVisible: false,
     location: 'top',
-    alignBase: 'parent',
+    align: 'left',
+    // alignBase: 'parent',
     itemsAlign: 'start',
-    colors: ['--color-8'],
+    style: {
+      fontSize: '10pt',
+      fontWeigth: 700,
+      fill: primary,
+      strokeWidth: 4,
+    },
   },
   title: {
     align: 'left',
-    text: '3 Year Status for Product Categories',
+    text: '3 Year Status for<br>Zero Sugar Products',
     gap: 10,
-    backgroundStyle: {
-        fill: 'black',
-        rx: '3px'
-    },
     style: {
-        fill: '#fff',
+        fill: primary,
+        fontWeight: 700,
         fontSize: '20px',
         padding: '2px 5px',
     }
   },
   subtitle: {
     align: 'left',
-    text: 'North America AC, FC in mUSD',
+    text: 'unit: mUSD',
     style: {
-        fill: 'black',
+        fill: '#999',
         fontSize: '14px',
         fontWeight: 'bold',
         marginBottom: '10px'
     }
   },
   xAxis: {
+    template: 'xAxis',
     type: 'category',
-    line: false,
-    grid: false,
   },
   yAxis: {
     type: 'linear',
     grid: false,
     label: false,
-    minValue: 70,
+    strictMin: 70,
+    strictMax: 200,
     padding: 0,
   },
-  
-  series: lines
+  series: lines,
 }
 
-// North America Alchohol, AC, PL in mUSD 2014
+
+const generate = (max, ne = false) => {
+  return Array(4).fill().map(() => {
+    return Math.fround(0.5 + Math.random() * max) * (ne && Math.random() > 0.5 ? -1 : 1);
+  })
+}
+
 // compared to PY. Better Q1 Results.
-const data14 = [1, -1.2, -1, 1.2];
-const data15 = [1.2, 1.4, 1.2, 2.2];
+const data14 = generate(1, true);
+const data15 = generate(2, true);
+const data16 = generate(4);
 
-const dataA14 = [2.2, 2.3, 2.0, 3.1];
-const dataB14 = [1.0, 1.8, 1.5, 2.0];
+const dataA14 = generate(3);
+const dataB14 = generate(2);
 
-const dataA15 = [2.1, 2.2, 2.5, 2.4];
-const dataB15 = [1.2, 1.8, 2.2, 2.2];
+const dataA15 = generate(3);
+const dataB15 = generate(2);
 
-const data16 = [2.4, 4.5, 4.8, 5.1];
-
-const barXAxis = {
-  type: 'category',
-  line: false,
-  label: false,
-  grid: true,
-  // position: 'opposite'
-  style: {
-    // strokeDasharray: '0 1 0 1',
-  }
-}
-
-const barYAxis = {
-  type: 'linear',
-  line: false,
-  label: false,
-  grid: false,
-  strictMin: -2,
-  strictMax: 6,
-  padding: 0,
-}
-
-const bar = {
-  type: 'bar',
-  pointLabel: true,
-  style: {
-    "fill": "var(--color-7)",
-    "stroke": "var(--color-7)"
-  },
-  belowStyle: {
-    "fill": "var(--color-3)",
-    "stroke": "var(--color-3)"
-  },
-}
-
-const barA = {
-  ...bar,
-  style: {
-    fill: 'none',
-  },
-  pointWidth: 5,
-}
-
-const oldBar = {
-  type: 'bar',
-  pointLabel: false,
-  pointPadding: -1.4,
-  
-}
+const dataA16 = generate(5);
+const dataB16 = generate(4);
 
 const bar14 = {
-  ...bar,
-  xAxis: 2,
-  yAxis: 2,
+  template: 'bar',
+  xAxis: 3,
+  yAxis: 3,
   data: data14
 }
 
 const barA14 = {
-  ...barA,
+  template: 'barA',
   style: {
     fill: 'none',
     stroke: 'var(--color-5)',
@@ -165,7 +221,7 @@ const barA14 = {
 }
 
 const barB14 = {
-  ...oldBar,
+  template: 'barB',
   style: {
     fill: 'var(--color-5)',
     stroke: 'var(--color-5)',
@@ -174,20 +230,46 @@ const barB14 = {
 }
 
 const bar15 = {
-  ...bar,
-  xAxis: 3,
-  yAxis: 3,
+  template: 'bar',
+  xAxis: 4,
+  yAxis: 4,
   data: data15
 }
 
 const barA15 = {
-  ...barA,
+  template: 'barA',
   data: dataA15
 }
 
 const barB15 = {
-  ...oldBar,
+  template: 'barB',
   data: dataB15
+}
+
+const bar16 = {
+  template: 'bar',
+  xAxis: 5,
+  yAxis: 5,
+  data: data16
+}
+
+const color16 = 'var(--color-6)'
+const barA16 = {
+  template: 'barA',
+  style: {
+    fill: 'none',
+    stroke: color16,
+  },
+  data: dataA16
+}
+
+const barB16 = {
+  template: 'barB',
+  style: {
+    fill: color16,
+    stroke: color16,
+  },
+  data: dataB16
 }
 
 const bar14Group = {
@@ -210,10 +292,90 @@ const bar15Group = {
   ]
 }
 
-const cols = 2;
+const bar16Group = {
+  type: 'bar',
+  xAxis: 2,
+  yAxis: 2,
+  groupPadding: 0.2,
+  children: [
+    barA16, barB16,
+  ]
+}
+
+
+const cols = 3;
 const rows = 2;
-const config = {
+const barConfig = {
   title: false,
+  templates: {
+    xAxis: {
+      type: 'category',
+      line: !true,
+      label: !true,
+      grid: !true,
+      // position: 'opposite'
+      style: {
+        // strokeDasharray: '0 1 0 1',
+      }
+    },
+    yAxis: {
+      type: 'linear',
+      line: !true,
+      label: !true,
+      grid: {
+        visible: true,
+        style: {
+          // stroke: '#555',
+          strokeWidth: 2,
+        },
+        front: true,
+      },
+      strictMin: -2,
+      strictMax: 6,
+      padding: 0,
+    },
+    bar: {
+      type: 'bar',
+      pointLabel: {
+        visible: true,
+        // numberFormat: '#.00',
+        // suffix: '%',
+        // position: 'inside',
+        // style: {
+        //   fill: 'var(--color-7)'
+        // },
+        styleCallback: ({y}) => {
+          // return y < 0 ? { fill: 'var(--color-3)' } : null;
+          return y < 0 ? { fill: 'var(--color-3)' } : { fill: 'var(--color-7)'};
+        }
+      },
+      style: {
+        fill: 'var(--color-7)',
+        stroke: 'var(--color-7)'
+      },
+      belowStyle: {
+        fill: 'var(--color-3)',
+        stroke: 'var(--color-3)'
+      },
+    },
+    // target?
+    barA: {
+      template: 'bar',
+      style: {
+        fill: 'none',
+        strokeWidth: 2,
+      },
+      pointLabel: true,
+      pointWidth: 5,
+    },
+    // actual
+    barB: {
+      template: 'bar',
+      pointLabel: false,
+      pointPadding: -1.4,
+    },
+    
+  },
   // inverted: true,
   options: {
       // animatable: false
@@ -225,39 +387,41 @@ const config = {
   },
   legend: {
       visible: false,
-      align: 'left',
-      itemGap: 20,
-      markerGap: 10,
-      offsetX: 20,
-      style: {
-          marginRight: '20px'
-      }
   },
   xAxis: Array(rows).fill().reduce((acc, curr, i) => {
-    return acc.concat(Array(cols).fill(barXAxis).map((v, j) => {
-      v.row = i,
-      v.col = j;
-      return {...v}
+    return acc.concat(Array(cols).fill().map((_, j) => {
+      return {
+        template: 'xAxis',
+        row: i,
+        col: j,
+      };
     }));
   }, []),
   // yAxis: [pieYAxis, barYAxis],
   yAxis: Array(rows).fill().reduce((acc, curr, i) => {
-    return acc.concat(Array(cols).fill(barYAxis).map((v, j) => {
-      v.row = i,
-      v.col = j;
-      return {...v}
+    return acc.concat(Array(cols).fill().map((_, j) => {
+      return {
+        template: 'yAxis',
+        row: i,
+        col: j,
+      }
     }));
   }, []),
   series: [
     bar14Group,
     bar15Group,
+    bar16Group,
     bar14,
     bar15,
+    bar16,
   ]
 }
 
-const barConfig = {
+const config = {
   title: false,
+  templates: {
+
+  },
   xAxis: {
     type: 'category',
     line: false,
@@ -265,12 +429,12 @@ const barConfig = {
     label: false,
   },
   yAxis: {
-    ...barYAxis,
+    template: 'yAxis',
     // padding: 0.01,
     strictMin: -0.8,
   },
   series: {
-    ...bar,
+    template: 'bar',
     style: {
       fill: 'var(--color-5)',
       stroke: 'var(--color-5)',
@@ -316,10 +480,9 @@ function setActions(container) {
 function init() {
   console.log('RealChart v' + RealChart.getVersion());
   // RealChart.setDebugging(true);
-    RealChart.setLogging(true);
 
   linechart = RealChart.createChart(document, 'linechart', lineConfig);
-  groupchart = RealChart.createChart(document, 'realchart', config);
-  barchart = RealChart.createChart(document, 'bar16chart', barConfig);
+  // groupchart = RealChart.createChart(document, 'realchart', config);
+  barchart = RealChart.createChart(document, 'barchart', barConfig);
   setActions('actions')
 }
