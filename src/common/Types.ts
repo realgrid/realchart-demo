@@ -156,6 +156,7 @@ export interface SVGStyles {
     textAlign?: 'left' | 'center' | 'right';
 }
 
+export const FILL = 'fill';
 export type SVGStyleOrClass = SVGStyles | string;
 
 export const CAMEL2KEBAB = {
@@ -350,6 +351,7 @@ export interface IValueRange {
     color: string;
     label?: string;
     style?: SVGStyleOrClass;
+    areaStyle?: SVGStyleOrClass;
 }
 
 export interface IValueRanges {
@@ -359,6 +361,7 @@ export interface IValueRanges {
     colors: string[];
     labels?: string[];
     styles?: SVGStyleOrClass[];
+    areaStyles?: SVGStyleOrClass[];
 }
 
 /**

@@ -11,7 +11,7 @@ import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipRectElement, LayerElement, PathElement, RcElement } from "../../common/RcControl";
-import { Align, IValueRange, PI_2, SVGStyleOrClass } from "../../common/Types";
+import { Align, FILL, IValueRange, PI_2, SVGStyleOrClass, _undef } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
@@ -115,18 +115,19 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     }
 
     protected _prepareSeries(doc: Document, model: T): void {
-        model.prepareLines();
         model instanceof LineSeries && this._prepareBelow(model);
         this._prepareRanges(model, model._runRanges);
         !this._simpleMode && this.$_prepareMarkers(model, this._visPoints as LineSeriesPoint[]);
     }
 
     protected _renderSeries(width: number, height: number): void {
-        const series = this.model;
-
         this._lineContainer.invert(this._inverted, height);
         this._layoutMarkers(this._visPoints as LineSeriesPoint[], width, height);
-        this._layoutLines(this._visPoints as LineSeriesPoint[]);
+        this.model.prepareLines(this._visPoints as LineSeriesPoint[]);
+    }
+
+    protected _doAfterLayout(): void {
+        this._layoutLines();
     }
 
     protected _runShowEffect(firstTime: boolean): void {
@@ -150,7 +151,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     protected _doViewRateChanged(rate: number): void {
         this._layoutMarkers(this._visPoints as LineSeriesPoint[], this.width, this.height);
-        this._layoutLines(this._visPoints.slice() as LineSeriesPoint[]);
+        this._layoutLines();
     }
 
     //-------------------------------------------------------------------------
@@ -370,99 +371,58 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         })
     }
 
-    protected _layoutLines(pts: DataPoint[]): void {
+    protected _layoutLines(): void {
         const series = this.model;
-        const sb = new PathBuilder();
 
-        if (series._lines.length > 0) {
-            this._buildLines2(series._lines, sb);
-            this._line.setPath(sb.end());
-            this._line.internalClearStyleAndClass();
-            this._line.setStyle('stroke', series.color);
-            this._line.addStyleOrClass(series.style);
-            Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
-            return;
+        if (!this._lineContainer.setVis(series._lines.length > 0)) {
+            return; 
         }
 
+        const w = this.width;
+        const h = this.height;
+        const inverted = this._inverted;
         const needBelow = series instanceof LineSeries && this._needBelow;
-        let i = 0;
-        let s: string;
+        const s = this._buildLines2(series._lines);
 
-        while (i < pts.length) {
-            const p = pts[i++];
+        if (series._runRanges) {
+            this._rangeLines.forEach((line, i) => {
+                const range = series._runRanges[i];
 
-            if (!p.isNull) {
-                sb.move(p.xPos, p.yPos);
-                break;
-            }
-        }
-
-        this._linePts = pts;
-
-        if (i < pts.length) {
-            const inverted = this._inverted;
-            const w = this.width;
-            const h = this.height;
-
-            this._buildLines(pts, i, sb);
-            s = sb.end(this._polar);
-
-            // this._line.setPath(s);
-            // this._line.internalClearStyleAndClass();
-            // this._line.setStyle('stroke', series.color);
-            // this._line.addStyleOrClass(series.style);
-            // Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
-
-            if (series._runRanges) {
-                this._rangeLines.forEach((line, i) => {
-                    const range = series._runRanges[i];
-
-                    line.setPath(s);
-                    line.internalClearStyleAndClass();
-                    line.setStyle('stroke', range.color);
-                    line.addStyleOrClass(range.style);
-                    Dom.setImportantStyle(line.dom.style, 'fill', 'none');
-                    line.setClip(this._rangeClips[i]);
-                    this._clipRange(w, h, series._runRangeValue, range, this._rangeClips[i], inverted);
-                })
-            } else {
-                this._line.setPath(s);
-                this._line.internalClearStyleAndClass();
-                this._line.setStyle('stroke', series.color);
-                this._line.addStyleOrClass(series.style);
-                Dom.setImportantStyle(this._line.dom.style, 'fill', 'none');
-            }
-
-            if (needBelow) {
-                const axis = series._yAxisObj as ContinuousAxis;
-                const base = series.baseValue;// series.getBaseValue(axis);
-                
-                if (inverted) {
-                    this.$_resetClips(w, h, axis.getPosition(w, base), true);
-                } else {
-                    this.$_resetClips(w, h, h - axis.getPosition(h, base), false);
-                }
-    
-                this._lowLine.setPath(s);//this._line.path());
-                this._lowLine.internalClearStyleAndClass();
-                this._lowLine.setStyle('stroke', series.color);
-                this._lowLine.addStyleOrClass(series.style);
-                this._lowLine.addStyleOrClass(series.belowStyle);
-                Dom.setImportantStyle(this._lowLine.dom.style, 'fill', 'none');
-            }
-        }
-    }
-
-    protected _buildLines(pts: IPointPos[], from: number, sb: PathBuilder): void {
-        const m = this.model;
-        const t = m.getLineType();
-
-        if (t === LineType.SPLINE) {
-            this._drawCurve(pts, from - 1, sb);
-        } else if (m instanceof LineSeries && t === LineType.STEP) {
-            this._drawStep(pts, from, sb, m.stepDir);
+                line.setPath(s);
+                line.internalClearStyleAndClass();
+                line.internalSetStyle('stroke', range.color);
+                line.internalSetStyleOrClass(range.style);
+                Dom.setImportantStyle(line.dom.style, FILL, 'none');
+                line.setClip(this._rangeClips[i]);
+                this._clipRange(w, h, series._runRangeValue, range, this._rangeClips[i], inverted);
+            })
         } else {
-            this._drawLine(pts, from, sb);
+            const line = this._line;
+
+            line.setPath(s);
+            line.internalClearStyleAndClass();
+            line.internalSetStyle('stroke', series.color);
+            line.internalSetStyleOrClass(series.style);
+            Dom.setImportantStyle(line.dom.style, FILL, 'none');
+        }
+
+        if (needBelow) {
+            const lowLine = this._lowLine;
+            const axis = series._yAxisObj as ContinuousAxis;
+            const base = series.baseValue;// series.getBaseValue(axis);
+            
+            if (inverted) {
+                this.$_resetClips(w, h, axis.getPosition(w, base), true);
+            } else {
+                this.$_resetClips(w, h, h - axis.getPosition(h, base), false);
+            }
+
+            lowLine.setPath(s);
+            lowLine.internalClearStyleAndClass();
+            lowLine.internalSetStyle('stroke', series.color);
+            lowLine.internalSetStyleOrClass(series.style);
+            lowLine.internalSetStyleOrClass(series.belowStyle);
+            Dom.setImportantStyle(lowLine.dom.style, FILL, 'none');
         }
     }
 
@@ -472,17 +432,16 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         if (t === LineType.SPLINE) {
             this._drawCurve2(line, connected, sb);
         } else if (m instanceof LineSeries && t === LineType.STEP) {
-            this._drawStep2(line, connected, sb, m.stepDir);
+            this._drawStep2(line, connected, sb, connected ? m.backDir() : m.stepDir);
         } else {
             this._drawLine2(line, connected , sb);
         }
     }
 
-    protected _buildLines2(lines: PointLine[], sb: PathBuilder): void {
-        if (!lines || lines.length < 1) return;
-
+    protected _buildLines2(lines: PointLine[]): string {
         const m = this.model;
         const t = m.getLineType();
+        const sb = new PathBuilder();
 
         if (t === LineType.SPLINE) {
             this._drawCurves(lines, sb);
@@ -491,12 +450,15 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         } else {
             this._drawLines(lines, sb);
         }
+        return sb.end();
     }
 
     private _drawLine2(pts: PointLine, connected: boolean, sb: PathBuilder): void {
-        sb.moveOrLine(connected, pts[0].xPos, pts[0].yPos);
-        for (let i = 1; i < pts.length; i++) {
-            sb.line(pts[i].xPos, pts[i].yPos);
+        if (pts.length > 1) {
+            sb.moveOrLine(connected, pts[0].xPos, pts[0].yPos);
+            for (let i = 1; i < pts.length; i++) {
+                sb.line(pts[i].xPos, pts[i].yPos);
+            }
         }
     }
 
@@ -505,14 +467,16 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     }
 
     private _drawStep2(pts: PointLine, connected: boolean, sb: PathBuilder, dir: LineStepDirection): void {
-        sb.moveOrLine(connected, pts[0].xPos, pts[0].yPos);
-        for (let i = 1; i < pts.length; i++) {
-            if (dir === LineStepDirection.BACKWARD) {
-                sb.line(pts[i - 1].xPos, pts[i].yPos);
-                sb.line(pts[i].xPos, pts[i].yPos);
-            } else {
-                sb.line(pts[i].xPos, pts[i - 1].yPos);
-                sb.line(pts[i].xPos, pts[i].yPos);
+        if (pts.length > 1) {
+            sb.moveOrLine(connected, pts[0].xPos, pts[0].yPos);
+            for (let i = 1; i < pts.length; i++) {
+                if (dir === LineStepDirection.BACKWARD) {
+                    sb.line(pts[i - 1].xPos, pts[i].yPos);
+                    sb.line(pts[i].xPos, pts[i].yPos);
+                } else {
+                    sb.line(pts[i].xPos, pts[i - 1].yPos);
+                    sb.line(pts[i].xPos, pts[i].yPos);
+                }
             }
         }
     }
@@ -522,33 +486,14 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     }
 
     private _drawCurve2(pts: PointLine, connected: boolean, sb: PathBuilder): void {
-        sb.moveOrLine(connected, pts[0].xPos, pts[0].yPos);
-        this.$_drawCurve(pts, 0, pts.length - 1, sb);
+        if (pts.length > 1) {
+            sb.moveOrLine(connected, pts[0].xPos, pts[0].yPos);
+            this.$_drawCurve(pts, 0, pts.length - 1, sb);
+        }
     }
 
     private _drawCurves(lines: PointLine[], sb: PathBuilder): void {
         lines.forEach(line => this._drawCurve2(line, false, sb));
-    }
-
-    protected _drawLine(pts: IPointPos[], from: number, sb: PathBuilder): void {
-        const len = pts.length;
-        let i = from;
-
-        while (i < len) {
-            if (pts[i].isNull) {
-                do {
-                    i++;
-                } while (i < len && pts[i].isNull);
-
-                if (i < len) {
-                    sb.move(pts[i].xPos, pts[i].yPos);
-                    i++;
-                }
-            } else {
-                sb.line(pts[i].xPos, pts[i].yPos);
-                i++;
-            }
-        }
     }
     
     protected _drawCurve(pts: IPointPos[], from: number, sb: PathBuilder): void {
@@ -664,70 +609,21 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         sb.quad(prevX + tRight.x, prevY + tRight.y, pts[p].xPos, pts[p].yPos);
     }
 
-    protected _drawStep(pts: IPointPos[], from: number, sb: PathBuilder, dir: LineStepDirection): void {
-        const len = pts.length;
-        let i = from;
+    protected _buildAreas(lines: PointLine[], t1: LineType, t2?: LineType): string {
+        const sb = new PathBuilder();
 
-        while (i < len) {
-            if (pts[i].isNull) {
-                do {
-                    i++;
-                } while (i < len && pts[i].isNull);
+        t2 = t2 || t1;
 
-                if (i < len) {
-                    sb.move(pts[i].xPos, pts[i].yPos);
-                    i++;
-                }
-            } else {
-                if (dir === LineStepDirection.BACKWARD) {
-                    sb.line(pts[i - 1].xPos, pts[i].yPos);
-                    sb.line(pts[i].xPos, pts[i].yPos);
-                } else {
-                    sb.line(pts[i].xPos, pts[i - 1].yPos);
-                    sb.line(pts[i].xPos, pts[i].yPos);
-                }
-                i++
-            }
+        for (let i = 0; i < lines.length; i += 2) {
+            const line = lines[i];
+            const line2 = lines[i + 1];
+
+            this._buildLine2(line, t1, false, sb);
+            this._buildLine2(line2, t2, true, sb);
         }
+        return sb.end(true);
     }
 }
-
-// class MarkerView extends RcElement {
-
-//     //-------------------------------------------------------------------------
-//     // constructor
-//     //-------------------------------------------------------------------------
-//     private _size: number;
-//     private _shape: string;
-//     private _line: LineElement;
-//     private _marker: PathElement;
-
-//     //-------------------------------------------------------------------------
-//     // constructor
-//     //-------------------------------------------------------------------------
-//     constructor(doc: Document, size: number) {
-//         super(doc, SeriesView.LEGEND_MARKER);
-
-//         this._size = size;
-//         this.add(this._line = new LineElement(doc));
-//         this._line.setHLine(size / 2, 0, size * 2);
-//         this.add(this._marker = new PathElement(doc));
-//         this._marker.translate(size / 2, 0);
-//         this.setShape(Shape.CIRCLE, 12);
-//     }
-
-//     //-------------------------------------------------------------------------
-//     // methods
-//     //-------------------------------------------------------------------------
-//     setShape(value: string, size: number): void {
-//         if (value !== this._shape || size !== this._size) {
-//             this._shape = value;
-//             SvgShapes.setShape(this._marker, value as any, (this._size = size) / 2);   
-//             this._marker.translate(size / 2, 0);
-//             this._line.setHLine(size / 2, 0, size * 2);
-//         }
-//     }
-// }
 
 export class LineSeriesView extends LineSeriesBaseView<LineSeries> {
 

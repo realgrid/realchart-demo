@@ -7,9 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { Dom } from "../../common/Dom";
-import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement } from "../../common/RcControl";
-import { IPointPos } from "../../model/DataPoint";
+import { FILL } from "../../common/Types";
 import { AreaRangeSeries, AreaRangeSeriesPoint } from "../../model/series/LineSeries";
 import { LineContainer, LineSeriesBaseView } from "./LineSeriesView";
 
@@ -90,88 +89,27 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         // }
     }
 
-    protected _layoutLines(points: AreaRangeSeriesPoint[]): void {
-        super._layoutLines(points);
+    protected _layoutLines(): void {
+        super._layoutLines();
 
-        // low lines
-        const lowPts = points.map(p => {
-            return {xPos: p.xPos, yPos: p.yLow, isNull: p.isNull};
-        });
-        const pts = lowPts.slice().reverse();
-        const sb = new PathBuilder();
-        let i = 0;
-
-        while (i < pts.length && pts[i].isNull) {
-            i++;
-        }
-
-        sb.move(pts[i].xPos, pts[i].yPos);
-        this._buildLines(pts, i + 1, sb);
-
-        this._lowerLine.setPath(sb.end(false));
-        this._lowerLine.setStyle('stroke', this.model.color);
-
-        this.$_layoutArea(this._area, this._linePts, pts);
+        this.$_layoutArea(this._area);
     }
 
-    private $_layoutArea(area: PathElement, pts: IPointPos[], lowPts: IPointPos[]): void {
+    private $_layoutArea(area: PathElement): void {
         const series = this.model;
-        const sb = new PathBuilder();
-        let i = 0;
 
-        // sb.move(pts[0].xPos, upPts[0].yPos)
-        // this._buildLines(pts, 1, sb);
-        // sb.line(lowPts[0].xPos, lowPts[0].yPos);
-        // this._buildLines(lowPts, 1, sb);
-
-        while (i < pts.length && pts[i].isNull) {
-            i++;
+        if (!this._areaContainer.setVis(series._lines.length > 0)) {
+            return; 
         }
 
-        const len = pts.length;
-        let start = i++;
-        let end: number;
-        let pts2: IPointPos[];
-        let lowPts2: IPointPos[];
+        const s = this._buildAreas(series._lines, series.getLineType());
 
-        while (i < len) {
-            if (pts[i].isNull) {
-                end = i;
-
-                if (end > start) {
-                    pts2 = pts.slice(start, end);
-                    lowPts2 = lowPts.slice(len - end, len - start);
-    
-                    sb.move(pts2[0].xPos, pts2[0].yPos);
-                    this._buildLines(pts2, 1, sb);
-                    sb.line(lowPts2[0].xPos, lowPts2[0].yPos);
-                    this._buildLines(lowPts2, 1, sb);
-                }
-
-                while (i < len && pts[i].isNull) {
-                    i++;
-                }
-                start = i;
-            } else {
-                i++;
-            }
-        }
-
-        if (i > start) {
-            end = i;
-            pts2 = pts.slice(start, end);
-            lowPts2 = lowPts.slice(len - end, len - start);
-    
-            sb.move(pts2[0].xPos, pts2[0].yPos);
-            this._buildLines(pts2, 1, sb);
-            sb.line(lowPts2[0].xPos, lowPts2[0].yPos);
-            this._buildLines(lowPts2, 1, sb);
-        }
-        area.setPath(sb.end());
-
+        area.setPath(s);
+        area.unsetData('polar');
+        area.setBoolData('simple', this._simpleMode);
         area.internalClearStyleAndClass();
-        series.color && area.setStyle('fill', series.color);
-        series.style && area.internalSetStyleOrClass(series.style);
+        series.color && area.internalSetStyle(FILL, series.color);
+        this._setFill(area, series.style);
         series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
     }
 

@@ -6,17 +6,18 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
+import { isObject, isString, pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipRectElement, PathElement, RcElement } from "../../common/RcControl";
-import { IValueRange } from "../../common/Types";
+import { FILL, IValueRange, SVGStyleOrClass } from "../../common/Types";
 import { Utils } from "../../common/Utils";
+import { RectElement } from "../../common/impl/RectElement";
 import { LineType } from "../../model/ChartTypes";
 import { DataPoint } from "../../model/DataPoint";
 import { SeriesGroupLayout } from "../../model/Series";
 import { LinearAxis } from "../../model/axis/LinearAxis";
-import { AreaSeries, AreaSeriesPoint, PointLine } from "../../model/series/LineSeries";
+import { AreaSeries, AreaSeriesGroup, AreaSeriesPoint, PointLine } from "../../model/series/LineSeries";
 import { LineContainer, LineSeriesBaseView } from "./LineSeriesView";
 
 export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
@@ -50,17 +51,6 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         if (g && (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
         }
         return pts;
-    }
-
-    protected _layoutLines(pts: AreaSeriesPoint[]): void {
-        super._layoutLines(pts);
-
-        if (this._polar) {
-            this._layoutPolar(this._area, pts);
-        } else {
-            this.model.prepareAreas();
-            this._layoutArea(this._area, pts);
-        }
     }
 
     //-------------------------------------------------------------------------
@@ -100,7 +90,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             }
         } else {
             if (!areas) {
-                areas = this._rangeAreas = new ElementPool(this._areaContainer, PathElement);
+                areas = this._rangeAreas = new ElementPool(this._areaContainer, PathElement, 'rct-area-series-area');
             }
             areas.prepare(ranges.length);
 
@@ -120,6 +110,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     protected _renderSeries(width: number, height: number): void {
         super._renderSeries(width, height);
 
+        this.model.prepareAreas();
         this._areaContainer.invert(this._inverted, height);
     }
 
@@ -135,92 +126,30 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         }
     }
 
-    protected _layoutArea(area: PathElement, pts: AreaSeriesPoint[]): void {
+    protected _doAfterLayout(): void {
+        (this.model.group as AreaSeriesGroup)?.prepareLines(this.model);
+
+        super._doAfterLayout();
+    
+        if (this._polar) {
+            this._layoutPolar(this._area, this._visPoints as AreaSeriesPoint[]);
+        } else {
+            this.$_layoutArea(this._area);
+        }
+    }
+
+    private $_layoutArea(area: PathElement): void {
         const series = this.model;
-        const sb = new PathBuilder();
 
-        // if (series._areas.length > 0) {
-        //     this.$_buildAreas(series._areas, sb);
-
-        //     area.setPath(sb.end(true));
-        //     area.unsetData('polar');
-        //     area.setBoolData('simple', this._simpleMode);
-        //     area.internalClearStyleAndClass();
-        //     series.color && area.setStyle('fill', series.color);
-        //     series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
-        //     return;
-        // }
+        if (!this._areaContainer.setVis(series._areas.length > 0)) {
+            return; 
+        }
 
         const w = this.width;
         const h = this.height;
-        const lowArea = this._needBelow ? this._lowArea : void 0;
-        const g = series.group;
         const inverted = series.chart.isInverted();
-        const yAxis = series._yAxisObj;
-        const len = inverted ? this.width : this.height;
-        const min = yAxis.axisMin();
-        const base = series.getBaseValue(yAxis);
-        const yMin = this.height - yAxis.getPosition(len, pickNum(Math.max(min, base), min));
-        let i = 0;
-        let s: string;
-
-        while (i < pts.length && pts[i].isNull) {
-            i++;
-        }
-
-        if (g && (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
-            const iSave = i;
-
-            sb.move(pts[i].xPos, pts[i].yLow);
-            sb.line(pts[i].xPos, pts[i].yPos);
-            
-            this._buildLines(pts, i + 1, sb);
-
-            i = pts.length - 1;
-            sb.line(pts[i].xPos, pts[i].yLow);
-
-            if (g.isFirstVisible(series)) {
-                while (i >= iSave) {
-                    sb.line(pts[i].xPos, pts[i].yLow);
-                    i--;
-                }
-            } else {
-                this._buildLines(pts.slice(iSave, i + 1).reverse().map(p => ({xPos: p.xPos, yPos: p.yLow})), 1, sb);
-                sb.line(pts[iSave].xPos, pts[iSave].yLow);
-            }
-        } else {
-            sb.move(pts[i].xPos, yMin);
-            sb.line(pts[i].xPos, pts[i].yPos);
-
-            this._buildLines(pts, i + 1, sb);
-
-            const path = sb._path;
-
-            i = 6;
-            while (i < path.length) {
-                if (path[i] === 'M') {
-                    path.splice(i, 0, 'L', path[i - 2], yMin);
-                    i += 3;
-                    path.splice(i, 0, 'M', path[i + 1], yMin);
-                    path[i + 3] = 'L';
-                    i += 6;
-                } else if (path[i] === 'Q') {
-                    i += 4;
-                } else { // 'L'
-                    i += 3;
-                }
-            }
-
-            sb.line(path[path.length - 2] as number, yMin);
-        }
-
-        s = sb.end();
-        // area.unsetData('polar');
-        // area.setBoolData('simple', this._simpleMode);
-        // area.setPath(s);
-        // area.internalClearStyleAndClass();
-        // series.color && area.setStyle('fill', series.color);
-        // series.style && area.internalSetStyleOrClass(series.style);
+        const lowArea = this._needBelow ? this._lowArea : void 0;
+        const s = this._buildAreas(series._areas, series.getLineType());//, LineType.DEFAULT);
 
         if (series._runRanges) {
             this._rangeAreas.forEach((area, i) => {
@@ -229,17 +158,19 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
                 area.setBoolData('simple', this._simpleMode);
                 area.setPath(s);
                 area.internalClearStyleAndClass();
-                area.setStyle('fill', range.color);
-                area.addStyleOrClass(range.style);
+                area.internalSetStyle('fill', range.color);
+                this._setFill(area, range.style);
+                range.areaStyle && area.internalSetStyleOrClass(range.areaStyle);
                 area.setClip(this._rangeAreaClips[i]);
                 this._clipRange(w, h, series._runRangeValue, range, this._rangeAreaClips[i], inverted);
             })
         } else {
+            area.setPath(s);
             area.unsetData('polar');
             area.setBoolData('simple', this._simpleMode);
-            area.setPath(s);
             area.internalClearStyleAndClass();
-            series.color && area.setStyle('fill', series.color);
+            series.color && area.internalSetStyle(FILL, series.color);
+            this._setFill(area, series.style);
             series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
         }
 
@@ -247,9 +178,10 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             lowArea.setBoolData('simple', this._simpleMode);
             lowArea.setPath(s);
             lowArea.internalClearStyleAndClass();
-            series.color && lowArea.setStyle('fill', series.color);
-            series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
-            series.belowStyle && lowArea.internalSetStyleOrClass(series.belowStyle);
+            series.color && lowArea.internalSetStyle(FILL, series.color);
+            series.areaStyle && lowArea.internalSetStyleOrClass(series.areaStyle);
+            this._setFill(lowArea, series.belowStyle);
+            series.belowAreaStyle && lowArea.internalSetStyleOrClass(series.belowAreaStyle);
         }
     }
 
@@ -286,17 +218,5 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         area.clearStyleAndClass();
         area.setStyle('fill', series.color);
         area.addStyleOrClass(series.style);
-    }
-
-    private $_buildAreas(lines: PointLine[], sb: PathBuilder): void {
-        const t = this.model.getLineType();
-
-        for (let i = 0; i < lines.length; i += 2) {
-            const line = lines[i * 2];
-            const line2 = lines[i * 2 + 1];
-
-            this._buildLine2(line, t, false, sb);
-            this._buildLine2(line2, LineType.DEFAULT, true, sb);
-        }
     }
 }

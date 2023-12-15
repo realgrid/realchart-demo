@@ -1008,6 +1008,10 @@ export class BodyView extends ChartElement<Body> {
             v.resize(w, h);
             v.layout();
         })
+        // 그룹에 포함된 시리즈들 간의 관계 설정 후에 그리기가 필요한 경우가 있다.
+        this._seriesViews.forEach(v => {
+            v.afterLayout();
+        });
         
         if (!this._polar) {
             // axis grids

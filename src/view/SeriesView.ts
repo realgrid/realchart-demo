@@ -6,21 +6,23 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, assign } from "../common/Common";
+import { pickNum, assign, isObject, isString } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
 import { ClipRectElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
-import { IValueRange, _undef } from "../common/Types";
+import { FILL, IValueRange, SVGStyleOrClass, _undef } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { RectElement } from "../common/impl/RectElement";
 import { SvgShapes } from "../common/impl/SvgShape";
+import { LineType } from "../model/ChartTypes";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { ClusterableSeries, DataPointLabel, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
+import { PointLine } from "../model/series/LineSeries";
 import { ContentView } from "./ChartElement";
 import { LegendItemView } from "./LegendView";
 import { SeriesAnimation } from "./animation/SeriesAnimation";
@@ -432,6 +434,10 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     decoreateLegend(legendView: LegendItemView): void {
     }
 
+    afterLayout(): void {
+        this._doAfterLayout();
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -464,6 +470,9 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         }
         this._afterRender();
         this._animatable && !this._simpleMode && this._runShowEffect(!this.control.loaded);
+    }
+
+    protected _doAfterLayout(): void {
     }
 
     //-------------------------------------------------------------------------
@@ -657,6 +666,14 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
             } else {
                 clip.setBounds(0, h - Math.max(p1, p2), w, Math.abs(p2 - p1));
             }
+        }
+    }
+
+    protected _setFill(elt: RcElement, style: SVGStyleOrClass): void {
+        if (isObject(style) && style[FILL]) {
+            elt.internalSetStyle(FILL, style[FILL]);
+        } else if (isString(style)) {
+            elt.dom.classList.add(style);
         }
     }
 }
