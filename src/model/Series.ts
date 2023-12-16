@@ -1942,15 +1942,6 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    /**
-     * {@link layout}이 {@link SeriesGroupLayout.FILL}일 때 상대적 최대값.
-     * <br>
-     * 
-     * @default 100
-     * @config
-     */
-    layoutMax = 100;
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -1962,6 +1953,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
     _stackPoints: Map<number, DataPoint[]>;
+    _stacked: boolean;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -2068,6 +2060,18 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * {@link layout}이 {@link SeriesGroupLayout.FILL}일 때 상대적 최대값.
+     * <br>
+     * 
+     * @default 100
+     * @config
+     */
+    layoutMax = 100;
+
+    //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     abstract _type(): string;
@@ -2165,6 +2169,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     prepareRender(): void {
+        this._stacked = this.layout === SeriesGroupLayout.STACK || this.layout === SeriesGroupLayout.FILL;
         this._visibles = this._series.filter(ser => ser.visible).sort((s1, s2) => (+s1.zOrder || 0) - (+s2.zOrder || 0));
 
         super.prepareRender();

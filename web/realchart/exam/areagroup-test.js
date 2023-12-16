@@ -5,7 +5,9 @@
  */
 const config = {
     type: "area",
-    options: {},
+    options: {
+        animatable: false
+    },
     title: "Area Group Test",
     xAxis: {
         title: "일일 Daily fat",
@@ -14,7 +16,8 @@ const config = {
         title: "Vertical 수직축 Axis",
     },
     series: {
-        layout: 'fill',
+        // layout: 'fill',
+        layout: 'stack',
         children: [{
             name: 'Installation & Developers',
             marker: {},
@@ -63,7 +66,7 @@ function setActions(container) {
         chart.load(config, animate);
     }, 'default');
     createListBox(container, "Line Type", ['default', 'spline', 'step'], function (e) {
-        config.series.children.forEach(s => s.lineType = _getValue(e));
+        config.series.lineType = _getValue(e);
         chart.load(config, animate);
     }, 'default');
     createCheckBox(container, 'Point Marker', function (e) {

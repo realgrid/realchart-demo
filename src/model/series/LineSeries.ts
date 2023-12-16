@@ -111,7 +111,6 @@ export abstract class LineSeriesBase extends Series {
     // fields
     //-------------------------------------------------------------------------
     private _shape: Shape;
-    private _disconnected: boolean;
     _lines: PointLine[];
 
     //-------------------------------------------------------------------------
@@ -147,7 +146,6 @@ export abstract class LineSeriesBase extends Series {
      * null, ranges를 모두 고려해야 한다.
      */
     prepareLines(pts: LineSeriesPoint[]): void {
-        this._disconnected = false;
         this._lines = this._doPrepareLines(pts);
     }
 
@@ -201,18 +199,16 @@ export abstract class LineSeriesBase extends Series {
             let i = 0;
             
             while (i < len) {
-                while (pts[i].isNull) {
-                    i++;
-                }
-
                 const line: PointLine = [];
 
+                while (pts[i].isNull && i < len) {
+                    i++;
+                }
                 while (i < len && !pts[i].isNull) {
                     line.push(pts[i++])
                 }
                 line.length > 0 && lines.push(line);
             }
-            this._disconnected = true;
         } else {
             lines.push(pts.slice());
         }
@@ -340,29 +336,41 @@ export class AreaSeries extends LineSeries {
      * 미리 생성된 line들을 기준으로 area들을 생성한다.
      */
     prepareAreas(): void {
-        const lines = this._lines;
-        const areas = this._areas = [];
 
-        lines.forEach(pts => {
-            // 위 line.
-            let area = pts.slice(0);
-            let p: IPointPos;
+        function bottom(pts: PointLine): PointLine {
+            const area = [];
 
-            areas.push(area);
-
-            // 아래 선분을 추가한다.
-            area = [];
             if (pts.length > 0) {
-                p = (pts[pts.length - 1] as DataPoint).toPoint();
-                p.yPos = (pts[pts.length - 1] as AreaRangeSeriesPoint).yLow;
+                let p = (pts[pts.length - 1] as DataPoint).toPoint();
+                p.yPos = (pts[pts.length - 1] as AreaSeriesPoint).yLow;
                 area.push(p);
                 
                 p = (pts[0] as DataPoint).toPoint();
-                p.yPos = (pts[0] as AreaRangeSeriesPoint).yLow;
+                p.yPos = (pts[0] as AreaSeriesPoint).yLow || pts[0].yPos;
                 area.push(p);
             }
+            return area;
+        }
+
+        const g = this.group;
+        const lines = this._lines;
+        const areas = this._areas = [];
+
+        if (g && g._stacked) {//} g.layout === SeriesGroupLayout.FILL) {
+            // null로 분할된 line들을 area 하나로 묶는다.
+            const area = [].concat(...lines);
             areas.push(area);
-        })
+            // 아래 선분을 추가한다.
+            areas.push(bottom(area));
+        } else {
+            lines.forEach(pts => {
+                // 위 line.
+                const area = pts.slice(0);
+                areas.push(area);
+                // 아래 선분
+                areas.push(bottom(area));
+            });
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -372,18 +380,40 @@ export class AreaSeries extends LineSeries {
         return 'area';
     }
 
+    getBaseValue(axis: IAxis): number {
+        return axis._isX ? NaN : this._base;
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new AreaSeriesPoint(source);
+    }
+
+    protected _doPrepareLines(pts: DataPoint[]): PointLine[] {
+        // null이 포함된 line 정보도 필요하다.
+        if (this._containsNull && this.group && this.group._stacked) {
+            const len = pts.length;
+            const lines = [];
+            let i = 0;
+            
+            while (i < len) {
+                const isNull = pts[i].isNull;
+                const line: PointLine = [];
+
+                do {
+                    line.push(pts[i++]);
+                } while (i < len && pts[i].isNull == isNull);
+
+                lines.push(line);
+            }
+            return lines;
+        }
+        return super._doPrepareLines(pts);
     }
 
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
         this._base = pickNum(this.baseValue, this._yAxisObj.getBaseValue());
-    }
-
-    getBaseValue(axis: IAxis): number {
-        return axis._isX ? NaN : this._base;
     }
 }
 
@@ -598,7 +628,7 @@ export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
     prepareLines(series: AreaSeries): void {
         const layout = this.layout;
 
-        if (layout === SeriesGroupLayout.STACK || layout === SeriesGroupLayout.FILL) {
+        if (this._stacked) {
             const idx = this._visibles.indexOf(series);
 
             if (idx > 0) {
@@ -607,7 +637,6 @@ export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
                 const prevAreas = prev._areas;
 
                 for (let i = 0; i < areas.length; i += 2) {
-                    // areas[i + 1] = step ? prevAreas[i] : prevAreas[i].reverse();
                     areas[i + 1] = prevAreas[i].reverse();
                 }
             }
