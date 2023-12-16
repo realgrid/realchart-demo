@@ -63,8 +63,7 @@ import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
 import { LabelElement } from "../common/impl/LabelElement";
 import { CircleBarSeriesView } from "./series/CircleBarSeriesView";
-import { isObject, pickNum } from "../common/Common";
-import { relative } from "path";
+import { pickNum } from "../common/Common";
 
 const series_types = {
     'area': AreaSeriesView,

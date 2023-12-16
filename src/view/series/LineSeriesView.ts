@@ -22,7 +22,7 @@ import { ContinuousAxis } from "../../model/axis/LinearAxis";
 import { LinePointLabel, LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection, PointLine } from "../../model/series/LineSeries";
 import { LineLegendMarkerView } from "../../model/series/legend/LineLegendMarkerView";
 import { LegendItemView } from "../LegendView";
-import { IPointView, SeriesView } from "../SeriesView";
+import { IPointView, PointContainer, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
 export class LineMarkerView extends PathElement implements IPointView {
@@ -41,28 +41,7 @@ export class LineMarkerView extends PathElement implements IPointView {
     }
 }
 
-export class LineContainer extends LayerElement {
-
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    inverted = false;
-
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    invert(v: boolean, height: number): boolean {
-        if (v !== this.inverted) {
-            if (this.inverted = v) {
-                // TODO: 아래 PointContaier와 다르게 하고 있다. 그래서 ChartView.clipSeries도 다르게 해야 한다. 통일할 것!
-                this.setAttr('transform', `translate(${height},${height}) rotate(-90) scale(1,-1)`);
-                //this.setAttr('transform', `translate(0,${height}) rotate(90) scale(-1,1)`);
-            } else {
-                this.setAttr('transform', '');
-            }
-        }
-        return this.inverted;
-    }
+export class LineContainer extends PointContainer {
 }
 
 export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends SeriesView<T> {
@@ -169,9 +148,11 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
         if (this._needBelow) {
             if (!lowLine) {
-                this._lineContainer.insertChild(lowLine = this._lowLine = new PathElement(this.doc), this._line);
+                this._lineContainer.insertChild(lowLine = this._lowLine = new PathElement(this.doc, 'rct-line-series-line rct-line-series-line-below'), this._line);
                 this._upperClip = control.clipBounds();
                 this._lowerClip = control.clipBounds();
+                this._upperClip.setAttr(RcElement.ASSET_KEY, '1');
+                this._lowerClip.setAttr(RcElement.ASSET_KEY, '1');
             }
             this._line.setClip(this._upperClip);
             lowLine.setClip(this._lowerClip);
@@ -179,12 +160,14 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         } else {
             lowLine?.setClip();
             this._line.setClip();
+            this._upperClip?.remove();
+            this._lowerClip?.remove();
         }
     }
 
     protected _prepareRanges(model: T, ranges: IValueRange[]    ): void {
+        const clips = this._rangeClips;
         let lines = this._rangeLines;
-        let clips = this._rangeClips;
 
         if (!ranges) {
             if (lines) {
@@ -220,9 +203,9 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         if (clip = this._upperClip) {
             if (inverted) {
                 if (reversed) {
-                    clip.setBounds(x, h - base, h, w);                
+                    clip.setBounds(x, -base, h, w);                
                 } else {
-                    clip.setBounds(x, h - w, h, w - base);                
+                    clip.setBounds(x, -w, h, w - base);                
                 }
             } else {
                 if (reversed) {
@@ -235,9 +218,9 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         if (clip = this._lowerClip) {
             if (this._inverted) {
                 if (reversed) {
-                    clip.setBounds(x, h - w, h, w - base);                
+                    clip.setBounds(x, -w, h, w);       
                 } else {
-                    clip.setBounds(x, h - base, h, w);                
+                    clip.setBounds(x, -base, h, w - base);                
                 }
             } else {
                 if (reversed) {
@@ -306,7 +289,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const polared = !!polar;
         const yLen = inverted ? width : height;
         const xLen = polar ? polar.rd * PI_2 : inverted ? height : width;
-        const yOrg = height;
+        const yOrg = inverted ? 0 : height;
 
         pts.forEach((p, i) => {
             // const p = pts[i];
@@ -325,7 +308,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
                 if (inverted) {
                     px = yAxis.getPosition(yLen, p.yGroup);
-                    py = yOrg - xAxis.getPosition(xLen, p.xValue);
+                    py = height - xAxis.getPosition(xLen, p.xValue);
                 }
             }
 

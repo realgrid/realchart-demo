@@ -177,6 +177,10 @@ export abstract class RcControl extends RcWrappableObject {
         this.$_clearDefs(RcElement.ASSET_KEY);
     }
 
+    // clearClipDefs(): void {
+    //     this.$_clearDefs(RcElement.CLIP_KEY);
+    // }
+
     clearTemporaryDefs(): void {
         this.$_clearDefs(RcElement.TEMP_KEY);
     }
@@ -637,6 +641,7 @@ export class RcElement extends RcObject {
     static DEBUGGING = false;
     static TESTING = false;
     static ASSET_KEY = '_asset_';
+    // static CLIP_KEY = '_clip_';
     static TEMP_KEY = '_temp_';
 
     //-------------------------------------------------------------------------
@@ -1400,6 +1405,7 @@ export abstract class ClipElement extends RcElement {
 
         const id = this._id = Utils.uniqueKey() + '-';
         this.setAttr('id', id);
+        // this.setAttr(RcElement.CLIP_KEY, 1);
     }
 
 	//-------------------------------------------------------------------------

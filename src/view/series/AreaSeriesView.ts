@@ -6,18 +6,15 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isObject, isString, pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipRectElement, PathElement, RcElement } from "../../common/RcControl";
-import { FILL, IValueRange, SVGStyleOrClass } from "../../common/Types";
+import { FILL, IValueRange } from "../../common/Types";
 import { Utils } from "../../common/Utils";
-import { RectElement } from "../../common/impl/RectElement";
-import { LineType } from "../../model/ChartTypes";
 import { DataPoint } from "../../model/DataPoint";
 import { SeriesGroupLayout } from "../../model/Series";
 import { LinearAxis } from "../../model/axis/LinearAxis";
-import { AreaSeries, AreaSeriesGroup, AreaSeriesPoint, PointLine } from "../../model/series/LineSeries";
+import { AreaSeries, AreaSeriesGroup, AreaSeriesPoint } from "../../model/series/LineSeries";
 import { LineContainer, LineSeriesBaseView } from "./LineSeriesView";
 
 export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
@@ -118,10 +115,11 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         super._layoutMarkers(pts, width, height);
 
         const yAxis = this.model._yAxisObj;
-        const yOrg = height;
+        const yOrg = yAxis.reversed ? -width : height;
 
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
+            
             p.yLow = yOrg - yAxis.getPosition(height, p.yGroup - p.yValue);
         }
     }
@@ -149,7 +147,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         const h = this.height;
         const inverted = series.chart.isInverted();
         const lowArea = this._needBelow ? this._lowArea : void 0;
-        const s = this._buildAreas(series._areas, series.getLineType());//, LineType.DEFAULT);
+        const s = this._buildAreas(series._areas, series.getLineType());
 
         if (series._runRanges) {
             this._rangeAreas.forEach((area, i) => {

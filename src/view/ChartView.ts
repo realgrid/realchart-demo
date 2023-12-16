@@ -13,7 +13,6 @@ import { ClipRectElement, LayerElement, RcElement } from "../common/RcControl";
 import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { Align, AlignBase, SectionDir, VerticalAlign, _undef } from "../common/Types";
-import { GroupElement } from "../common/impl/GroupElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Annotation, AnnotationScope } from "../model/Annotation";
 import { Axis } from "../model/Axis";
@@ -23,7 +22,6 @@ import { LegendItem, LegendLocation } from "../model/Legend";
 import { Series } from "../model/Series";
 import { Split } from "../model/Split";
 import { Subtitle, SubtitlePosition, Title } from "../model/Title";
-import { LineSeriesBase } from "../model/series/LineSeries";
 import { AnnotationView } from "./AnnotationView";
 import { AxisScrollView, AxisView } from "./AxisView";
 import { AxisGuideContainer, BodyView, createAnnotationView } from "./BodyView";
@@ -616,7 +614,7 @@ export class ChartView extends LayerElement {
     private _historyView: HistoryView;
     private _tooltipView: TooltipView;
     private _seriesClip: ClipRectElement;
-    private _lineSeriesClip: ClipRectElement;
+    // private _lineSeriesClip: ClipRectElement;
 
     _org: IPoint;
     private _plotWidth: number;
@@ -1182,12 +1180,7 @@ export class ChartView extends LayerElement {
 
         function clip(v: RcElement): void {
             if (inverted) {
-                // TODO: 이런 구분은 없애야 한다!. LineContainer 참조.
-                if (line) {
-                    sc.setBounds(0, h - w, h, w);
-                } else {
-                    sc.setBounds(0, -w, h, w);
-                }
+                sc.setBounds(0, -w, h, w);
             } else {
                 sc.setBounds(0, 0, w, h);
             }
@@ -1195,8 +1188,7 @@ export class ChartView extends LayerElement {
         }
 
         const inverted = this._model.inverted && invertable;
-        const line = view && (view.parent as SeriesView<any>).model instanceof LineSeriesBase;
-        const sc = line ? this._lineSeriesClip : this._seriesClip;
+        const sc = this._seriesClip;
 
         // TODO: pane 단위로 -> body로 가야하나?
         view && clip(view);
@@ -1279,7 +1271,7 @@ export class ChartView extends LayerElement {
     //-------------------------------------------------------------------------
     protected _doAttached(parent: RcElement): void {
         this._seriesClip = this.control.clipBounds();
-        this._lineSeriesClip = this.control.clipBounds();
+        // this._lineSeriesClip = this.control.clipBounds();
     }
 
     //-------------------------------------------------------------------------

@@ -16,8 +16,8 @@ const config = {
         title: "Vertical 수직축 Axis",
     },
     series: {
-        // layout: 'fill',
-        layout: 'stack',
+        layout: 'fill',
+        // layout: 'stack',
         children: [{
             name: 'Installation & Developers',
             marker: {},

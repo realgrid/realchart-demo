@@ -312,6 +312,15 @@ export class AreaSeries extends LineSeries {
     //-------------------------------------------------------------------------
     private _base: number;
     _areas: PointLine[];
+    
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart);
+
+        this.marker.visible = false;
+    }
 
     //-------------------------------------------------------------------------
     // properties
@@ -346,12 +355,14 @@ export class AreaSeries extends LineSeries {
                 area.push(p);
                 
                 p = (pts[0] as DataPoint).toPoint();
-                p.yPos = (pts[0] as AreaSeriesPoint).yLow || pts[0].yPos;
+                console.log('$$$', (pts[0] as AreaSeriesPoint).yLow);
+                p.yPos = pickNum((pts[0] as AreaSeriesPoint).yLow, pts[0].yPos);
                 area.push(p);
             }
             return area;
         }
 
+        const inverted = this.chart.isInverted();
         const g = this.group;
         const lines = this._lines;
         const areas = this._areas = [];
@@ -626,11 +637,10 @@ export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
     // methods
     //-------------------------------------------------------------------------
     prepareLines(series: AreaSeries): void {
-        const layout = this.layout;
-
         if (this._stacked) {
             const idx = this._visibles.indexOf(series);
 
+            // 이전 시리즈의 line을 area의 아래쪽으로 재설정한다.
             if (idx > 0) {
                 const prev = this._visibles[idx - 1] as AreaSeries;
                 const areas = series._areas;
@@ -638,6 +648,10 @@ export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
 
                 for (let i = 0; i < areas.length; i += 2) {
                     areas[i + 1] = prevAreas[i].reverse();
+                }
+
+                // TODO: 양 끝이 null 처리...
+                if (this.layout === SeriesGroupLayout.STACK) {
                 }
             }
         }
