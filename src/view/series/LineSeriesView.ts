@@ -10,13 +10,14 @@ import { cos, sin } from "../../common/Common";
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
-import { ClipRectElement, LayerElement, PathElement, RcElement } from "../../common/RcControl";
+import { ClipRectElement, PathElement, RcElement } from "../../common/RcControl";
+import { ISize } from "../../common/Size";
 import { Align, FILL, IValueRange, PI_2, SVGStyleOrClass, _undef } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { LineType } from "../../model/ChartTypes";
-import { DataPoint, IPointPos } from "../../model/DataPoint";
+import { IPointPos } from "../../model/DataPoint";
 import { PointItemPosition } from "../../model/Series";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
 import { LinePointLabel, LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection, PointLine } from "../../model/series/LineSeries";
@@ -95,8 +96,12 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     protected _prepareSeries(doc: Document, model: T): void {
         model instanceof LineSeries && this._prepareBelow(model);
-        this._prepareRanges(model, model._runRanges);
         !this._simpleMode && this.$_prepareMarkers(model, this._visPoints as LineSeriesPoint[]);
+    }
+
+    protected _prepareViewRanges(model: T): void {
+        super._prepareViewRanges(model);
+        this._prepareRanges(model, model._runRanges);
     }
 
     protected _renderSeries(width: number, height: number): void {
@@ -165,7 +170,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         }
     }
 
-    protected _prepareRanges(model: T, ranges: IValueRange[]    ): void {
+    protected _prepareRanges(model: T, ranges: IValueRange[]): void {
         const clips = this._rangeClips;
         let lines = this._rangeLines;
 

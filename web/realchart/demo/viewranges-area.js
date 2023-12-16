@@ -28,7 +28,7 @@ const config = {
     },
 	title: 'View Ranges - Area',
 	options: {
-		// animatable: false
+		animatable: false
 	},
 	xAxis: {
 		title: '서울시',
@@ -45,7 +45,7 @@ const config = {
         baseValue: 0,
 		data: [155, 138, 122, 91, 104, 113, 123, 119, 125, 131],
         viewRangeValue: 'x',
-        viewRanges: x_ranges,//y_ranges,
+        viewRanges: x_ranges,
         style: {
             fillOpacity: 0.4
         }

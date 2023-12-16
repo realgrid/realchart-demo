@@ -960,7 +960,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
             }
         }
 
-        this.prepareViewRanges();
+        // this.prepareViewRanges();
 
         return visPoints;
     }
@@ -983,11 +983,13 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     prepareViewRanges(): void {
-        const rangeMinMax =  this._getRangeMinMax(this._runRangeValue = this.getViewRangeAxis());
+        const axis = this.viewRangeValue === 'x' ? this._xAxisObj : this._yAxisObj;
+        const min = axis.axisMin();
+        const max = axis.axisMax();
 
-        if (this._runRanges = buildValueRanges(this.viewRanges, rangeMinMax.min, rangeMinMax.max, false, false, true, this.color)) {
+        if (this._runRanges = buildValueRanges(this.viewRanges, min, max, false, false, true, this.color)) {
             this._visPoints.forEach((p, i) => {
-                this._setViewRange(p, this._runRangeValue);
+                this._setViewRange(p, this._runRangeValue = this.getViewRangeAxis());
             });
         } else {
             this._visPoints.forEach((p, i) => {

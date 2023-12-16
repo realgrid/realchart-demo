@@ -445,9 +445,14 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         // legend marker 색상이 필요하므로 prepareSeries()에서 먼저 처리한다.
     }
 
+    protected _prepareViewRanges(model: T): void {
+        model.prepareViewRanges();
+    }
+
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         this.setClip(void 0);
 
+        this._prepareViewRanges(model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, this);
 
         if (model.trendline.visible) {
@@ -654,7 +659,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
                     clip.setBounds(p1, -h, Math.abs(p2 - p1), h);
                 }
             } else {
-                clip.setBounds(0, w - Math.max(p1, p2), w, Math.abs(p2 - p1));
+                clip.setBounds(0, -Math.max(p1, p2), w, Math.abs(p2 - p1));
             }
         } else {
             if (isX) {
