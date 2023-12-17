@@ -14,6 +14,7 @@ import {
   useMantineTheme,
   createStyles,
   rem,
+  Checkbox,
 } from "@mantine/core";
 
 import { createChart, getVersion } from "realchart";
@@ -39,7 +40,29 @@ const useStyles = createStyles((theme) => ({
     borderBottom: '1px solid',
     borderBottomColor: theme.colors.gray[2],
   },
+  menu: {
+    gap: '16px',
+    padding: '10px',
+  },
+  button: {
+    // marginLeft: 'auto'
+  }
 }));
+
+const parseOptionsByConfig = (config: unknown): { inverted: boolean, polar: boolean, xReversed: boolean, yReversed: boolean } => {
+    const axisReversed = (axis: any | Array<any> | undefined) => {
+      if (axis instanceof Array && axis.length) {
+        return axis[0].reversed;
+      }
+      return !!axis?.reversed;
+    }
+    return {
+      inverted: !!config['inverted'], 
+      polar: !!config['polar'], 
+      xReversed: axisReversed(config['xAxis']), 
+      yReversed: axisReversed(config['yAxis']),
+    }
+}
 
 export function RealChartReact({
   config,
@@ -56,6 +79,12 @@ export function RealChartReact({
   const [code, setCode] = useState(config);
   const {classes} = useStyles();
   const [version, setVersion] = useState('');
+
+  const { inverted, polar, xReversed, yReversed } = parseOptionsByConfig(config);
+  const [invertedChecked, setInvertedChecked] = useState(inverted);
+  const [xReversedChecked, setXReversedChecked] = useState(xReversed);
+  const [yReversedChecked, setYReversedChecked] = useState(yReversed);
+  const [polarChecked, setPolarChecked] = useState(polar);
 
   useEffect(() => {
     if (!chartRef.current) return;
@@ -83,6 +112,45 @@ export function RealChartReact({
     setCode(JSON.parse(value));
   };
 
+  const applyChart = (option) => {
+    Object.assign(code, option)
+    chart.load(code);
+  }
+
+  const applyAxisReversed = (axisKey, reversed) => {
+    const axis = code[axisKey];
+    if (axis) {
+      if (axis instanceof Array) {
+        axis[0].reversed = reversed;
+      } else if(typeof axis == 'object') {
+        axis.reversed = reversed;
+      }
+      applyChart(code);
+    }
+  }
+
+  const onChangeInverted = (event) => {
+    const checked = event.currentTarget.checked;
+    setInvertedChecked(checked);
+    applyChart({ inverted: checked})
+  }
+
+  const onChangeXReversed = (event) => {
+    const checked = event.currentTarget.checked;
+    setXReversedChecked(checked);
+    applyAxisReversed('xAxis', checked);
+  }
+  const onChangeYReversed = (event) => {
+    const checked = event.currentTarget.checked;
+    setYReversedChecked(checked);
+    applyAxisReversed('yAxis', checked);
+  }
+  const onChangePolar = (event) => {
+    const checked = event.currentTarget.checked;
+    setPolarChecked(checked);
+    applyChart({ polar: checked})
+  }
+
   const _height = code['height'];
   const _width = code['width'];
 
@@ -96,33 +164,51 @@ export function RealChartReact({
       contentPadding="8px"
       headerActions={
         <>
-          <Button compact onClick={handleSave} variant="outline">
-            적용
-          </Button>
-          
         </>
       }
     >
+    <Grid>
+      <div
+        id="realchart"
+        ref={chartRef}
+        className={classes.wrapper}
+        style={{ width, height }}
+      />
+    </Grid>
+    <Grid className={classes.menu}>
+      <Checkbox label="Inverted" 
+        checked={invertedChecked}
+        onChange={onChangeInverted}
+      />
+      <Checkbox label="X Reversed"
+        checked={xReversedChecked}
+        onChange={onChangeXReversed}
+      />
+      <Checkbox label="Y Reversed"
+        checked={yReversedChecked}
+        onChange={onChangeYReversed}
+      />
+      <Checkbox label="Polar"
+        checked={polarChecked}
+        onChange={onChangePolar}
+      />
+      <Button compact hidden={!showEditor} className={classes.button} onClick={handleSave} variant="outline">
+        적용
+      </Button>
+    </Grid>
+    {showEditor ? (
       <Grid>
-        <div
-          id="realchart"
-          ref={chartRef}
-          className={classes.wrapper}
-          style={{ width, height }}
+        <Editor
+          height="400px"
+          language="json"
+          // options - https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor.IStandaloneEditorConstructionOptions.html
+          options={ { autoIndent: true } }
+          value={JSON.stringify(config, null, 2)}
+          onChange={onChangeEditor}
+          onMount={handleDidMount}
         />
-        
-        {showEditor ? (
-          <Editor
-            height="300px"
-            language="json"
-            // options - https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor.IStandaloneEditorConstructionOptions.html
-            options={ { autoIndent: true } }
-            value={JSON.stringify(config, null, 2)}
-            onChange={onChangeEditor}
-            onMount={handleDidMount}
-          />
-        ) : null}
       </Grid>
+    ) : null}
     </Panel>
   );
 }
