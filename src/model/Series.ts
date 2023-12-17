@@ -11,7 +11,7 @@ import { IPoint } from "../common/Point";
 import { RcElement } from "../common/RcControl";
 import { RcObject } from "../common/RcObject";
 import { IRichTextDomain } from "../common/RichText";
-import { Align, IPercentSize, IValueRange, IValueRanges, RtPercentSize, SVGStyleOrClass, VerticalAlign, _undef, buildValueRanges, calcPercent, parsePercentSize } from "../common/Types";
+import { Align, IPercentSize, IValueRange, IValueRanges, RtPercentSize, SVGStyleOrClass, _undef, buildValueRanges, calcPercent, parsePercentSize } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { RectElement } from "../common/impl/RectElement";
 import { Shape, Shapes } from "../common/impl/SvgShape";
@@ -206,7 +206,7 @@ export enum TrendType {
      * A logarithmic trendline can use negative and/or positive values.
      */
     LOGARITHMIC = 'logarithmic', 
-    // POLYNOMIAL = 'polynomial', // TODO: 구현할 것!
+    POLYNOMIAL = 'polynomial', // TODO: 구현할 것!
     /**
      * A curved line that is used with data sets that compare measurements that increase at a specific rate 
      * — for example, the acceleration of a race car at 1-second intervals. 
@@ -278,7 +278,7 @@ export class Trendline extends ChartItem {
         });
 
         // 기울기
-        const m = ((len * sxy) - (sx * sy)) / (len * sxx - (sx * sx));
+        const m = (len * sxy - sx * sy) / (len * sxx - sx * sx);
         // 절편
         const b = (sy - m * sx) / len;
 
@@ -300,106 +300,114 @@ export class Trendline extends ChartItem {
         const len = pts.length;
 
         if (len > 1) {
-            const logPts = pts.map(p => {
-                console.log(Math.log(p.xValue + 1));
-                // return { xValue: Math.log(p.xValue + 1), yValue: Math.log(p.yValue) };
-                return { xValue: p.xValue, yValue: Math.log(p.yValue) };
-            });
-            const line = this.$_calcLine(logPts);
-            const exponent = line.m;
-            const coefficient = Math.exp(line.b);
-            const x1 = pts[0].xValue;
+            const logPts = pts.map(p => ({ xValue: Math.log(p.xValue + 1), yValue: p.yValue }));
+            const {m, b} = this.$_calcLine(logPts);
+            const x1 = pts[0].xValue + 1;
             const x2 = pts[len - 1].xValue;
             const d = (x2 - x1) / 100;
 
             for (let x = x1; x <= x2; x += d) {
-                const y = coefficient * (x ** exponent);
+                const y = b + (Math.log(x) * m);
                 list.push({ x, y });
+                console.log(x, y);
             }
         }
     }
 
     private $_exponential(pts: DataPoint[], list: {x: number, y: number}[]): void {
-
-        function calcParam2(self: Trendline): {base: number} {
-            const logPts = pts.map(p => ({ xValue: Math.log(p.x), yValue: Math.log(p.y) }));
-
-            // 기존 선형 추세선 계산 함수를 사용하여 기울기(m) 및 절편(b) 계산
-            const linear = self.$_calcLine(logPts);
-
-            // 계산된 기울기와 절편을 사용하여 지수 추세선의 파라미터 계산
-            const base = Math.exp(linear.b);
-
-            return { base };
-        }        
-
         const len = pts.length;
 
         if (len > 1) {
-            const {base} = calcParam2(this);
+            const logPts = pts.map(p => ({ xValue: p.xValue + 1, yValue: Math.log(p.yValue) }));
+            const {m, b} = this.$_calcLine(logPts);
+            const base = Math.exp(b);
+            const x1 = pts[0].xValue + 1;
+            const x2 = pts[len - 1].xValue;
+            const d = (x2 - x1) / 100;
 
-            for (let x = pts[0].xValue; x <= len; x += 0.1) {
-                const y = base ** x;
+            for (let x = x1; x <= x2; x += d) {
+                const y = base * Math.exp(m * x);
                 list.push({ x, y });
             }
         }
     }
     
     private $_power(pts: DataPoint[], list: {x: number, y: number}[]): void {
-
-        function calcParam(): {exponent: number, coefficient: number} {
-            // x와 y의 로그를 취한 값의 합 계산
-            let sx = 0;
-            let sy = 0;
-            let sxy = 0;
-            let sxx = 0;
-
-            pts.forEach(p => {
-                sx += Math.log(p.xValue);
-                sy += Math.log(p.yValue);
-                sxy += Math.log(p.xValue) * Math.log(p.yValue);
-                sxx += (Math.log(p.xValue)) ** 2;
-            })
-
-            // 최소제곱법을 사용하여 기울기(a) 및 절편(b) 계산
-            const a = (len * sxy - sx * sy) / (len * sxx - sx ** 2);
-            const b = (sy - a * sxy) / len;
-
-            // 원래의 거듭제곱 함수의 지수로 변환
-            const exponent = a;
-            const coefficient = Math.exp(b);
-            return {exponent, coefficient}
-        }
-
         const len = pts.length;
 
         if (len > 1) {
-            const {exponent, coefficient} = calcParam();
+            const logPts = pts.map(p => ({ xValue: Math.log(p.xValue + 1), yValue: Math.log(p.yValue) }));
+            const {m, b} = this.$_calcLine(logPts);
+            // 원래의 거듭제곱 함수의 지수로 변환
+            const coeff = Math.exp(b);
+            const x1 = pts[0].xValue + 1;
+            const x2 = pts[len - 1].xValue;
+            const d = (x2 - x1) / 100;
 
-            for (let x = pts[0].xValue; x <= pts[len - 1].xValue; x += 0.1) {
-                const y = coefficient * (x ** exponent);
+            for (let x = x1; x <= x2; x += d) {
+                const y = coeff * (x ** m);
                 list.push({ x, y });
             }
         }
     }
 
-    private $_movingAverage(pts: DataPoint[], list: {x: number, y: number}[]): void {
-        const ma = this.movingAverage;
-        const length = pts.length;
-        const interval = Math.max(1, Math.min(length, ma.interval));
-        let index = interval - 1;
+    $_polynomial(pts: DataPoint[], list: {x: number, y: number}[]): void {
+        const len = pts.length;
 
-        while (index <= length) {
-            index = index + 1;
-
-            const slice = pts.slice(index - interval, index);
-            const sum = slice.reduce((a, c) => a + c.yValue, 0);
-
-            if (index <= length) {
-                list.push({x: pts[index - 1].xValue, y: sum / interval});
-            }
+        if (len > 1) {
         }
     }
+
+    // $_polynomial(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    //     const len = pts.length;
+
+    //     if (len > 1) {
+    //         const degree = 2;
+    //         // x의 각 차수에 대한 합계 배열 초기화
+    //         const sumX = new Array(2 * degree + 1).fill(0);
+
+    //         // 각 차수에 대한 합계 계산
+    //         for (const p of pts) {
+    //             const x = p.xValue;
+    //             const y = p.yValue;
+
+    //             for (let i = 0; i <= 2 * degree; i++) {
+    //                 sumX[i] += Math.pow(x, i);
+    //             }
+    //         }
+
+    //         // x와 y의 곱에 대한 합계 배열 초기화
+    //         const sumXY = new Array(degree + 1).fill(0);
+
+    //         // x와 y의 곱에 대한 합계 계산
+    //         for (const p of pts) {
+    //             const x = p.xValue;
+    //             const y = p.yValue;
+
+    //             for (let i = 0; i <= degree; i++) {
+    //                 sumXY[i] += Math.pow(x, i) * y;
+    //             }
+    //         }
+
+    //         // 계수 계산
+    //         const coefficients = [];
+    //         for (let i = 0; i <= degree; i++) {
+    //             coefficients.push(sumXY[i] / sumX[i]);
+    //         }
+
+    //         const x1 = pts[0].xValue;
+    //         const x2 = pts[len - 1].xValue;
+    //         const d = (x2 - x1) / 100;
+
+    //         for (let x = x1; x <= x2; x += d) {
+    //             let y = 0;
+    //             for (let i = 0; i <= degree; i++) {
+    //                 y += coefficients[i] * Math.pow(x, i);
+    //             }
+    //             list.push({x: x, y});
+    //         }
+    //     }
+    // }
 
     // TODO: (크기를 최소화해서) 구현할 것!
     // $_polynomial(pts: DataPoint[], list: {x: number, y: number}[]): void {
@@ -479,6 +487,23 @@ export class Trendline extends ChartItem {
     //     }
     // }
 
+    private $_movingAverage(pts: DataPoint[], list: {x: number, y: number}[]): void {
+        const ma = this.movingAverage;
+        const length = pts.length;
+        const interval = Math.max(1, Math.min(length, ma.interval));
+        let index = interval - 1;
+
+        while (index <= length) {
+            index = index + 1;
+
+            const slice = pts.slice(index - interval, index);
+            const sum = slice.reduce((a, c) => a + c.yValue, 0);
+
+            if (index <= length) {
+                list.push({x: pts[index - 1].xValue, y: sum / interval});
+            }
+        }
+    }
 }
 
 /**
