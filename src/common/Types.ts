@@ -478,6 +478,7 @@ export enum TextOverflow {
 }
 
 export enum HoveringScope {
+    AUTO = 'auto',
     /**
      * 시리즈의 개별 데이터포인트 단위로 hovering 효과 표시.
      * 

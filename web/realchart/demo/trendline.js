@@ -12,7 +12,11 @@ const config = {
         type: 'line',
         trendline: {
             visible: true,
-            type: 'movingAverage',
+            type: 'linear',
+            // type: 'logarithmic',
+            // type: 'exponential',
+            // type: 'power',
+            // type: 'movingAverage',
             movingAverage: {
                 interval: 4,
             }

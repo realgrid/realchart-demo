@@ -84,7 +84,7 @@ export class Globals {
      */
     static createChart(doc: Document, container: string | HTMLDivElement, config: any, animate = true): RcChartControl {
         const c =  new (RcChartControl as any)(new ChartControl(doc, container));
-        config && c.load(config, true);
+        c.load(config, true);
         return c;
     }
 }

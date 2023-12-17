@@ -195,9 +195,23 @@ export interface IPlottingItem {
 }
 
 export enum TrendType {
+    /**
+     * A best-fit straight line that is used with simple linear data sets. 
+     * Your data is linear if the pattern in its data points resembles a line. 
+     * A linear trendline usually shows that something is increasing or decreasing at a steady rate.
+     */
     LINEAR = 'linear',
+    /**
+     * A best-fit curved line that is most useful when the rate of change in the data increases or decreases quickly and then levels out. 
+     * A logarithmic trendline can use negative and/or positive values.
+     */
     LOGARITHMIC = 'logarithmic', 
-    POLYNOMIAL = 'polynomial', 
+    // POLYNOMIAL = 'polynomial', // TODO: 구현할 것!
+    /**
+     * A curved line that is used with data sets that compare measurements that increase at a specific rate 
+     * — for example, the acceleration of a race car at 1-second intervals. 
+     * You cannot create a power trendline if your data contains zero or negative values.
+     */
     POWER = 'power', 
     EXPONENTIAL = 'exponential', 
     MOVING_AVERAGE = 'movingAverage'
@@ -240,6 +254,7 @@ export class Trendline extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     protected _doPrepareRender(chart: IChart): void {
+        // (this['$_' + this.type] || this.$_linear).call(this, this.series._runPoints, this._points = []);
         (this['$_' + this.type] || this.$_linear).call(this, this.series._runPoints, this._points = []);
     }
 
@@ -249,45 +264,127 @@ export class Trendline extends ChartItem {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    $_linear(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    private $_calcLine(pts: {xValue: number, yValue: number}[]): {m: number, b: number} {
+        const len = pts.length;
+        let sx = 0;
+        let sy = 0;
+        let sxx = 0;
+        let sxy = 0;
+
+        pts.forEach(p => {
+            sx += p.xValue;
+            sy += p.yValue;
+            sxx += p.xValue * p.xValue;
+            sxy += p.xValue * p.yValue;
+        });
+
+        // 기울기
+        const m = ((len * sxy) - (sx * sy)) / (len * sxx - (sx * sx));
+        // 절편
+        const b = (sy - m * sx) / len;
+
+        return {m, b};
+    }
+
+    private $_linear(pts: DataPoint[], list: {x: number, y: number}[]): void {
         const len = pts.length;
 
         if (len > 1) {
-            let sx = 0;
-            let sy = 0;
-            let sxx = 0;
-            let syy = 0;
-            let sxy = 0;
+            const {m, b} = this.$_calcLine(pts);
 
-            pts.forEach(p => {
-                sx += p.xValue;
-                sy += p.yValue;
-                sxx += p.xValue * p.xValue;
-                syy += p.yValue + p.yValue;
-                sxy += p.xValue * p.yValue;
-            });
-
-            const slope  = ((len * sxy) - (sx * sy)) / (len * sxx - (sx * sx));
-            const intercept = (sy - slope * sx) / len;
-
-            list.push({x: pts[0].xValue, y: slope * pts[0].xValue + intercept});
-            list.push({x: pts[len - 1].xValue, y: slope * pts[len - 1].xValue + intercept});
+            list.push({x: pts[0].xValue, y: m * pts[0].xValue + b});
+            list.push({x: pts[len - 1].xValue, y: m * pts[len - 1].xValue + b});
         }
     }
 
-    $_logarithmic(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    private $_logarithmic(pts: DataPoint[], list: {x: number, y: number}[]): void {
+        const len = pts.length;
+
+        if (len > 1) {
+            const logPts = pts.map(p => {
+                console.log(Math.log(p.xValue + 1));
+                // return { xValue: Math.log(p.xValue + 1), yValue: Math.log(p.yValue) };
+                return { xValue: p.xValue, yValue: Math.log(p.yValue) };
+            });
+            const line = this.$_calcLine(logPts);
+            const exponent = line.m;
+            const coefficient = Math.exp(line.b);
+            const x1 = pts[0].xValue;
+            const x2 = pts[len - 1].xValue;
+            const d = (x2 - x1) / 100;
+
+            for (let x = x1; x <= x2; x += d) {
+                const y = coefficient * (x ** exponent);
+                list.push({ x, y });
+            }
+        }
     }
 
-    $_polynomial(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    private $_exponential(pts: DataPoint[], list: {x: number, y: number}[]): void {
+
+        function calcParam2(self: Trendline): {base: number} {
+            const logPts = pts.map(p => ({ xValue: Math.log(p.x), yValue: Math.log(p.y) }));
+
+            // 기존 선형 추세선 계산 함수를 사용하여 기울기(m) 및 절편(b) 계산
+            const linear = self.$_calcLine(logPts);
+
+            // 계산된 기울기와 절편을 사용하여 지수 추세선의 파라미터 계산
+            const base = Math.exp(linear.b);
+
+            return { base };
+        }        
+
+        const len = pts.length;
+
+        if (len > 1) {
+            const {base} = calcParam2(this);
+
+            for (let x = pts[0].xValue; x <= len; x += 0.1) {
+                const y = base ** x;
+                list.push({ x, y });
+            }
+        }
+    }
+    
+    private $_power(pts: DataPoint[], list: {x: number, y: number}[]): void {
+
+        function calcParam(): {exponent: number, coefficient: number} {
+            // x와 y의 로그를 취한 값의 합 계산
+            let sx = 0;
+            let sy = 0;
+            let sxy = 0;
+            let sxx = 0;
+
+            pts.forEach(p => {
+                sx += Math.log(p.xValue);
+                sy += Math.log(p.yValue);
+                sxy += Math.log(p.xValue) * Math.log(p.yValue);
+                sxx += (Math.log(p.xValue)) ** 2;
+            })
+
+            // 최소제곱법을 사용하여 기울기(a) 및 절편(b) 계산
+            const a = (len * sxy - sx * sy) / (len * sxx - sx ** 2);
+            const b = (sy - a * sxy) / len;
+
+            // 원래의 거듭제곱 함수의 지수로 변환
+            const exponent = a;
+            const coefficient = Math.exp(b);
+            return {exponent, coefficient}
+        }
+
+        const len = pts.length;
+
+        if (len > 1) {
+            const {exponent, coefficient} = calcParam();
+
+            for (let x = pts[0].xValue; x <= pts[len - 1].xValue; x += 0.1) {
+                const y = coefficient * (x ** exponent);
+                list.push({ x, y });
+            }
+        }
     }
 
-    $_power(pts: DataPoint[], list: {x: number, y: number}[]): void {
-    }
-
-    $_exponential(pts: DataPoint[], list: {x: number, y: number}[]): void {
-    }
-
-    $_movingAverage(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    private $_movingAverage(pts: DataPoint[], list: {x: number, y: number}[]): void {
         const ma = this.movingAverage;
         const length = pts.length;
         const interval = Math.max(1, Math.min(length, ma.interval));
@@ -304,6 +401,85 @@ export class Trendline extends ChartItem {
             }
         }
     }
+
+    // TODO: (크기를 최소화해서) 구현할 것!
+    // $_polynomial(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    //     // 행렬 전치
+    //     function transpose(matrix: number[][]) {
+    //         const rows = matrix.length;
+    //         const cols = matrix[0].length;
+        
+    //         // 빈 행렬 생성
+    //         const result = new Array(cols).fill(null).map(() => new Array(rows));
+        
+    //         // 전치 연산 수행
+    //         for (let i = 0; i < rows; i++) {
+    //             for (let j = 0; j < cols; j++) {
+    //                 result[j][i] = matrix[i][j];
+    //             }
+    //         }
+    //         return result;
+    //     }
+    //     // 행렬 곱
+    //     function multiply(matrixA: number[][], matrixB: number[][]) {
+    //         const rowsA = matrixA.length;
+    //         const colsA = matrixA[0].length;
+    //         const rowsB = matrixB.length;
+    //         const colsB = matrixB[0].length;
+        
+    //         // 결과 행렬 초기화
+    //         const result = new Array(rowsA).fill(null).map(() => new Array(colsB).fill(0));
+        
+    //         // 행렬 곱셈 수행
+    //         for (let i = 0; i < rowsA; i++) {
+    //             for (let j = 0; j < colsB; j++) {
+    //                 for (let k = 0; k < colsA; k++) {
+    //                     result[i][j] += matrixA[i][k] * matrixB[k][j];
+    //                 }
+    //             }
+    //         }
+    //         return result;
+    //     }
+    //     // lusolve
+    //     function lusolve(matrixA: number[][], matrixB: number[][]): number[][] {
+    //         // TODO: 
+    //         return;
+    //     }
+    //     // 다항식의 계수 계산
+    //     function fitPolynomial(): number[] {
+    //         const n = pts.length;
+    
+    //         // 행렬 방정식을 풀어 계수 계산
+    //         const xVals = pts.map(point => point.xValue);
+    //         const yVals = pts.map(point => point.yValue);
+    //         const mx = [];
+    
+    //         for (let i = 0; i <= degree; i++) {
+    //             mx.push(xVals.map(x => Math.pow(x, i)));
+    //         }
+    
+    //         const XT = transpose(mx);
+    //         const XTX = multiply(XT, mx);
+    //         const XTY = multiply(XT, [yVals]);
+    //         const coefficients = lusolve(XTX, XTY).map(x => x[0]);
+    
+    //         return coefficients;
+    //     }
+
+    //     const degree = 2;
+    //     const coefficients = fitPolynomial();
+
+    //     for (let x = 0; x <= 5; x += 0.1) {
+    //         let y = 0;
+    
+    //         for (let i = 0; i <= degree; i++) {
+    //             y += coefficients[i] * Math.pow(x, i);
+    //         }
+    
+    //         list.push({ x, y });
+    //     }
+    // }
+
 }
 
 /**

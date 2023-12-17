@@ -8,7 +8,7 @@
 
 import { isArray, isObject, isString, mergeObj, pickProp3, assign, isNumber } from "../common/Common";
 import { RcEventProvider } from "../common/RcObject";
-import { Align, SectionDir, VerticalAlign, _undef } from "../common/Types";
+import { Align, HoveringEffect, HoveringScope, SectionDir, VerticalAlign, _undef } from "../common/Types";
 import { AssetCollection } from "./Asset";
 import { Axis, AxisCollection, IAxis, PaneXAxisMatrix, PaneYAxisMatrix } from "./Axis";
 import { Body } from "./Body";
@@ -278,7 +278,7 @@ export class ChartOptions extends ChartItem {
      */
     animatable = true;
     /**
-     * x축 값이 설정되지 않은 시리즈 첫번째 데이터 point에 설정되는 x값.
+     * x축 값이 설정되지 않은 시리즈 첫번째 데이터 point에 설정되는 x값.\
      * 이 후에는 {@link xStep}씩 증가시키면서 설정한다.
      * 시리즈의 {@link Series.xStart}가 설정되면 그 값이 사용된다.
      * 
@@ -286,7 +286,7 @@ export class ChartOptions extends ChartItem {
      */
     xStart: any = 0;
     /**
-     * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
+     * x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.\
      * 첫번째 값은 {@link xStart}로 설정한다.
      * time 축일 때, 정수 값 대신 시간 단위('y', 'm', 'd', 'h', 'n', 's')로 지정할 수 있다.
      * 시리즈의 {@link Series.xStep}이 설정되면 그 값이 사용된다.
@@ -303,9 +303,12 @@ export class ChartOptions extends ChartItem {
     axisGap = 8;
     /**
      * 크레딧 모델.
+     * 
      * @config
      */
     credits = new Credits(null, true);
+    hoveringScope = HoveringScope.AUTO;
+    hoveringEffect = HoveringEffect.DEFAULT;
 
     //-------------------------------------------------------------------------
     // methods
