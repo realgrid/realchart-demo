@@ -254,7 +254,6 @@ export class Trendline extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     protected _doPrepareRender(chart: IChart): void {
-        // (this['$_' + this.type] || this.$_linear).call(this, this.series._runPoints, this._points = []);
         (this['$_' + this.type] || this.$_linear).call(this, this.series._runPoints, this._points = []);
     }
 
