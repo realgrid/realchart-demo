@@ -7,6 +7,7 @@ const pieData = Object.entries(catiMainData)
         return { label: key, value, color: colors[i] }
     });
 const config = {
+    height: 550,
     templates: {
         series: {
             // startAngle: -90,
@@ -39,8 +40,9 @@ const config = {
         { 
             text: `<t>긍정적으로 평가한다</t><br>
                 <b style="font-size:20pt">${catiMainData["긍정"]}</b>`,
-                offsetX: 580,
-                offsetY: 100,
+                offsetX: 160,
+                offsetY: 50,
+                align: 'center',
                 style: {
                     fill: colors[0],
                     textAlign: 'center',
@@ -49,8 +51,9 @@ const config = {
         { 
             text: `<t>부정적으로 평가한다</t><br>
                 <b style="font-size:30pt">${catiMainData["부정"]}</b>`,
-            offsetX: 50,
-            offsetY: 400,
+            offsetX: -250,
+            verticalAlign: 'bottom',
+            align: 'center',
             style: {
                 fill: colors[3],
                 textAlign: 'center',
@@ -60,8 +63,10 @@ const config = {
             imageUrl: '../assets/images/seoul.png',
             front: true,
             width: 260,
-            offsetX: 260,
-            offsetY: 180,
+            align: 'center',
+            verticalAlign: 'middle',
+            offsetX: -10,
+            offsetY: -25
         }
     ],
     // inverted: true,

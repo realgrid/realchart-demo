@@ -1,279 +1,393 @@
 export const config = {
-  title: 'Candlestick',
-  options: {},
-  legend: true,
-  xAxis: { type: 'category' },
-  yAxis: { crosshair: true },
+  title: {
+    text: 'WTI (Woori Tech Inc.)',
+    align: 'left',
+    style: { fill: '#666', fontWeight: 700 }
+  },
+  options: { credits: false },
+  body: { style: {} },
+  annotations: [
+    {
+      offsetX: 280,
+      offsetY: 3,
+      text: '81,400',
+      style: { fontSize: '16pt', fontWeight: 700, fill: '#000' }
+    },
+    {
+      offsetX: 355,
+      offsetY: 8,
+      text: '-1,200 (-0.01%)',
+      style: { fontSize: '12pt', fontWeight: 700, fill: 'var(--color-3)' }
+    }
+  ],
+  legend: false,
+  xAxis: {
+    type: 'time',
+    tick: { visible: false, stepInterval: '1w' },
+    label: {
+      visible: true,
+      textCallback: ({value}) => { const d = new Date(value); return d.toLocaleDateString('en-us', { day: 'numeric', month: 'short', year: 'numeric' }); }
+    }
+  },
+  yAxis: { crosshair: true, tick: { stepInterval: 1000 } },
   series: {
+    tooltipText: '<b>종가: ${close}</b>',
+    padding: 1,
+    pointPadding: 0.1,
     type: 'candlestick',
-    pointLabel: true,
+    pointLabel: false,
+    xField: 'date',
     openField: 'openprc',
     highField: 'highprc',
     lowField: 'lowprc',
     closeField: 'closeprc',
     data: [
       {
-        openprc: 22000,
-        highprc: 22222,
-        lowprc: 21400,
-        closeprc: 21500,
-        trdvolume: 14033,
-        trdamnt: 324987500,
-        date: '2019-01-11',
-        color: 'green'
+        date: '2021-04-01',
+        openprc: 82500,
+        highprc: 83000,
+        lowprc: 82000,
+        closeprc: 82900,
+        trdamnt: 18676461
       },
       {
-        openprc: 21400,
-        highprc: 21300,
-        lowprc: 21700,
-        closeprc: 21250,
-        trdvolume: 11608,
-        trdamnt: 266665250,
-        date: '2019-01-14'
+        date: '2021-04-02',
+        openprc: 84000,
+        highprc: 85200,
+        lowprc: 83900,
+        closeprc: 84800,
+        trdamnt: 22997538
       },
       {
-        openprc: 21630,
-        highprc: 22500,
-        lowprc: 21200,
-        closeprc: 22300,
-        trdvolume: 31502,
-        trdamnt: 713561800,
-        date: '2019-01-15'
+        date: '2021-04-05',
+        openprc: 85800,
+        highprc: 86000,
+        lowprc: 84800,
+        closeprc: 85400,
+        trdamnt: 16255990
       },
       {
-        openprc: 22000,
-        highprc: 22500,
-        lowprc: 21600,
-        closeprc: 22300,
-        trdvolume: 16853,
-        trdamnt: 383179850,
-        date: '2019-01-16'
+        date: '2021-04-06',
+        openprc: 86200,
+        highprc: 86200,
+        lowprc: 85100,
+        closeprc: 86000,
+        trdamnt: 19042023
       },
       {
-        openprc: 22850,
-        highprc: 23050,
-        lowprc: 22550,
-        closeprc: 22850,
-        trdvolume: 7571,
-        trdamnt: 172444650,
-        date: '2019-01-17'
+        date: '2021-04-07',
+        openprc: 86100,
+        highprc: 86200,
+        lowprc: 85400,
+        closeprc: 85600,
+        trdamnt: 17885538
       },
       {
-        openprc: 22850,
-        highprc: 22900,
-        lowprc: 22400,
-        closeprc: 22500,
-        trdvolume: 11942,
-        trdamnt: 269458200,
-        date: '2019-01-18'
+        date: '2021-04-08',
+        openprc: 85700,
+        highprc: 85700,
+        lowprc: 84100,
+        closeprc: 84700,
+        trdamnt: 19244259
       },
       {
-        openprc: 22450,
-        highprc: 22550,
-        lowprc: 21550,
-        closeprc: 21700,
-        trdvolume: 50060,
-        trdamnt: 1094399700,
-        date: '2019-01-21'
+        date: '2021-04-09',
+        openprc: 84700,
+        highprc: 84900,
+        lowprc: 83400,
+        closeprc: 83600,
+        trdamnt: 18193707
       },
       {
-        openprc: 21750,
-        highprc: 21950,
-        lowprc: 21550,
-        closeprc: 21700,
-        trdvolume: 23327,
-        trdamnt: 505653900,
-        date: '2019-01-22'
+        date: '2021-04-12',
+        openprc: 84100,
+        highprc: 84100,
+        lowprc: 83100,
+        closeprc: 83200,
+        trdamnt: 12915282
       },
       {
-        openprc: 21950,
-        highprc: 21950,
-        lowprc: 21500,
-        closeprc: 21700,
-        trdvolume: 11106,
-        trdamnt: 241429700,
-        date: '2019-01-23'
+        date: '2021-04-13',
+        openprc: 83000,
+        highprc: 84500,
+        lowprc: 82800,
+        closeprc: 84000,
+        trdamnt: 15238206
       },
       {
-        openprc: 21900,
-        highprc: 21900,
-        lowprc: 21550,
-        closeprc: 21650,
-        trdvolume: 10902,
-        trdamnt: 237351300,
-        date: '2019-01-24'
+        date: '2021-04-14',
+        openprc: 84000,
+        highprc: 84300,
+        lowprc: 83400,
+        closeprc: 84000,
+        trdamnt: 13794652
       },
       {
-        openprc: 21800,
-        highprc: 21850,
-        lowprc: 21300,
-        closeprc: 21800,
-        trdvolume: 17613,
-        trdamnt: 379367900,
-        date: '2019-01-25'
+        date: '2021-04-15',
+        openprc: 83700,
+        highprc: 84500,
+        lowprc: 83400,
+        closeprc: 84100,
+        trdamnt: 16377412
       },
       {
-        openprc: 21950,
-        highprc: 22150,
-        lowprc: 21650,
-        closeprc: 22050,
-        trdvolume: 13681,
-        trdamnt: 299266150,
-        date: '2019-01-28'
+        date: '2021-04-16',
+        openprc: 84700,
+        highprc: 84700,
+        lowprc: 83600,
+        closeprc: 83900,
+        trdamnt: 15429522
       },
       {
-        openprc: 22050,
-        highprc: 22400,
-        lowprc: 22050,
-        closeprc: 22350,
-        trdvolume: 13651,
-        trdamnt: 303871550,
-        date: '2019-01-29'
+        date: '2021-04-19',
+        openprc: 83800,
+        highprc: 84000,
+        lowprc: 83300,
+        closeprc: 83300,
+        trdamnt: 15287311
       },
       {
-        openprc: 22400,
-        highprc: 22400,
-        lowprc: 21900,
-        closeprc: 21900,
-        trdvolume: 11833,
-        trdamnt: 260954750,
-        date: '2019-01-30'
+        date: '2021-04-20',
+        openprc: 83300,
+        highprc: 84000,
+        lowprc: 83100,
+        closeprc: 83900,
+        trdamnt: 15521965
       },
       {
-        openprc: 21950,
-        highprc: 21950,
-        lowprc: 21550,
-        closeprc: 21700,
-        trdvolume: 16518,
-        trdamnt: 358109800,
-        date: '2019-02-01'
+        date: '2021-04-21',
+        openprc: 83300,
+        highprc: 83500,
+        lowprc: 82500,
+        closeprc: 82600,
+        trdamnt: 21636079
       },
       {
-        openprc: 21800,
-        highprc: 21850,
-        lowprc: 21500,
-        closeprc: 21750,
-        trdvolume: 9485,
-        trdamnt: 205373700,
-        date: '2019-02-04'
+        date: '2021-04-22',
+        openprc: 82900,
+        highprc: 83000,
+        lowprc: 82400,
+        closeprc: 82400,
+        trdamnt: 13934746
       },
       {
-        openprc: 21700,
-        highprc: 21800,
-        lowprc: 21450,
-        closeprc: 21600,
-        trdvolume: 10826,
-        trdamnt: 234154100,
-        date: '2019-02-05'
+        date: '2021-04-23',
+        openprc: 81900,
+        highprc: 82900,
+        lowprc: 81600,
+        closeprc: 82800,
+        trdamnt: 17805080
       },
       {
-        openprc: 21300,
-        highprc: 21550,
-        lowprc: 21000,
-        closeprc: 21500,
-        trdvolume: 15898,
-        trdamnt: 338072500,
-        date: '2019-02-06'
+        date: '2021-04-26',
+        openprc: 82900,
+        highprc: 83500,
+        lowprc: 82600,
+        closeprc: 83500,
+        trdamnt: 15489938
       },
       {
-        openprc: 21400,
-        highprc: 21450,
-        lowprc: 21100,
-        closeprc: 21450,
-        trdvolume: 15513,
-        trdamnt: 329680000,
-        date: '2019-02-07'
+        date: '2021-04-27',
+        openprc: 83200,
+        highprc: 83300,
+        lowprc: 82500,
+        closeprc: 82900,
+        trdamnt: 12941533
       },
       {
-        openprc: 21000,
-        highprc: 21750,
-        lowprc: 21000,
-        closeprc: 21500,
-        trdvolume: 8835,
-        trdamnt: 189128000,
-        date: '2019-02-08'
+        date: '2021-04-28',
+        openprc: 83200,
+        highprc: 83200,
+        lowprc: 82100,
+        closeprc: 82100,
+        trdamnt: 15596759
       },
       {
-        openprc: 21500,
-        highprc: 21550,
-        lowprc: 21300,
-        closeprc: 21450,
-        trdvolume: 5568,
-        trdamnt: 119232800,
-        date: '2019-02-12'
+        date: '2021-04-29',
+        openprc: 82400,
+        highprc: 82500,
+        lowprc: 81500,
+        closeprc: 81700,
+        trdamnt: 20000973
       },
       {
-        openprc: 21450,
-        highprc: 21500,
-        lowprc: 21000,
-        closeprc: 21300,
-        trdvolume: 14793,
-        trdamnt: 314701900,
-        date: '2019-02-13'
+        date: '2021-04-30',
+        openprc: 81900,
+        highprc: 82100,
+        lowprc: 81500,
+        closeprc: 81500,
+        trdamnt: 18673197
       },
       {
-        openprc: 21300,
-        highprc: 21700,
-        lowprc: 21100,
-        closeprc: 21600,
-        trdvolume: 13703,
-        trdamnt: 294467800,
-        date: '2019-02-14'
+        date: '2021-05-03',
+        openprc: 81000,
+        highprc: 82400,
+        lowprc: 81000,
+        closeprc: 81700,
+        trdamnt: 15710336
       },
       {
-        openprc: 21350,
-        highprc: 22200,
-        lowprc: 21350,
-        closeprc: 22050,
-        trdvolume: 19506,
-        trdamnt: 428998650,
-        date: '2019-02-15'
+        date: '2021-05-04',
+        openprc: 81900,
+        highprc: 82600,
+        lowprc: 81800,
+        closeprc: 82600,
+        trdamnt: 12532550
       },
       {
-        openprc: 22050,
-        highprc: 22250,
-        lowprc: 21800,
-        closeprc: 22100,
-        trdvolume: 10535,
-        trdamnt: 231930000,
-        date: '2019-02-18'
+        date: '2021-05-06',
+        openprc: 81700,
+        highprc: 82300,
+        lowprc: 81700,
+        closeprc: 82300,
+        trdamnt: 17047511
       },
       {
-        openprc: 22150,
-        highprc: 22300,
-        lowprc: 21750,
-        closeprc: 22050,
-        trdvolume: 7478,
-        trdamnt: 164174050,
-        date: '2019-02-19'
+        date: '2021-05-07',
+        openprc: 81800,
+        highprc: 82100,
+        lowprc: 81500,
+        closeprc: 81900,
+        trdamnt: 14154882
       },
       {
-        openprc: 22050,
-        highprc: 22600,
-        lowprc: 21750,
-        closeprc: 22450,
-        trdvolume: 31989,
-        trdamnt: 717825050,
-        date: '2019-02-20'
+        date: '2021-05-10',
+        openprc: 82300,
+        highprc: 83500,
+        lowprc: 81800,
+        closeprc: 83200,
+        trdamnt: 19385027
       },
       {
-        openprc: 22800,
-        highprc: 23000,
-        lowprc: 22600,
-        closeprc: 22750,
-        trdvolume: 43192,
-        trdamnt: 986617500,
-        date: '2019-02-21'
+        date: '2021-05-11',
+        openprc: 82500,
+        highprc: 82600,
+        lowprc: 81100,
+        closeprc: 81200,
+        trdamnt: 28996680
       },
       {
-        openprc: 22750,
-        highprc: 23050,
-        lowprc: 22500,
-        closeprc: 23000,
-        trdvolume: 18101,
-        trdamnt: 413611500,
-        date: '2019-02-22'
+        date: '2021-05-12',
+        openprc: 80800,
+        highprc: 81200,
+        lowprc: 79800,
+        closeprc: 80000,
+        trdamnt: 35812268
+      },
+      {
+        date: '2021-05-13',
+        openprc: 78900,
+        highprc: 79600,
+        lowprc: 78400,
+        closeprc: 78500,
+        trdamnt: 31490096
+      },
+      {
+        date: '2021-05-14',
+        openprc: 79000,
+        highprc: 80300,
+        lowprc: 78900,
+        closeprc: 80100,
+        trdamnt: 16450920
+      },
+      {
+        date: '2021-05-17',
+        openprc: 80800,
+        highprc: 80900,
+        lowprc: 79200,
+        closeprc: 79600,
+        trdamnt: 17740855
+      },
+      {
+        date: '2021-05-18',
+        openprc: 79600,
+        highprc: 80000,
+        lowprc: 79100,
+        closeprc: 79600,
+        trdamnt: 17494407
+      },
+      {
+        date: '2021-05-20',
+        openprc: 79400,
+        highprc: 79700,
+        lowprc: 79100,
+        closeprc: 79500,
+        trdamnt: 16541828
+      },
+      {
+        date: '2021-05-21',
+        openprc: 80100,
+        highprc: 81500,
+        lowprc: 79800,
+        closeprc: 80100,
+        trdamnt: 20961714
+      },
+      {
+        date: '2021-05-24',
+        openprc: 80100,
+        highprc: 80400,
+        lowprc: 79500,
+        closeprc: 79700,
+        trdamnt: 13398666
+      },
+      {
+        date: '2021-05-25',
+        openprc: 80000,
+        highprc: 80400,
+        lowprc: 79800,
+        closeprc: 79900,
+        trdamnt: 13628942
+      },
+      {
+        date: '2021-05-26',
+        openprc: 80400,
+        highprc: 80500,
+        lowprc: 79700,
+        closeprc: 79800,
+        trdamnt: 11984359
+      },
+      {
+        date: '2021-05-27',
+        openprc: 80000,
+        highprc: 80000,
+        lowprc: 79100,
+        closeprc: 79600,
+        trdamnt: 23198510
+      },
+      {
+        date: '2021-05-28',
+        openprc: 79800,
+        highprc: 80400,
+        lowprc: 79400,
+        closeprc: 80100,
+        trdamnt: 12360199
+      },
+      {
+        date: '2021-05-31',
+        openprc: 80300,
+        highprc: 80600,
+        lowprc: 79600,
+        closeprc: 80500,
+        trdamnt: 13321324
+      },
+      {
+        date: '2021-06-01',
+        openprc: 80500,
+        highprc: 81300,
+        lowprc: 80100,
+        closeprc: 80600,
+        trdamnt: 14058401
+      },
+      {
+        date: '2021-06-02',
+        openprc: 80400,
+        highprc: 81400,
+        lowprc: 80300,
+        closeprc: 80800,
+        trdamnt: 16414644
       }
-    ]
+    ],
+    declineStyle: { fill: 'var(--color-3)' },
+    style: { fill: 'var(--color-1)', stroke: 'black' }
   }
 }

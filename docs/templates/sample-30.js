@@ -1,4 +1,5 @@
 export const config = {
+  height: 550,
   type: 'pie',
   templates: {
     categories: [ '일반국도', '지방도', '특별광역시도', '시도', '군도', '고속국도', '기타' ],
@@ -382,8 +383,10 @@ export const config = {
         '부상신고자수': 61
       }
     ],
+    title: { alignBase: 'chart', style: { fontWeight: 700 } },
     detail: {
-      title: { text: '', alignBase: 'chart' },
+      templates: { title: { alignBase: 'chart', style: { fontWeight: 700 } } },
+      title: { template: 'title', text: '' },
       options: {},
       legend: { location: 'bottom' },
       series: {
@@ -408,6 +411,11 @@ export const config = {
       }
     },
     xAxis: { label: { visible: false } },
+    annoSubtitle: {
+      align: 'center',
+      offsetY: 30,
+      style: { fill: 'black', fontWeight: 700, fontSize: '20px' }
+    },
     series: {
       pointLabel: {
         visible: true,
@@ -419,7 +427,7 @@ export const config = {
       onPointClick: (args) => { const weather = args.series.name.split(" ")[1]; const { categories, data } = config.templates; const index = categories[args.xValue]; const datas = data.filter((d) => { return d["기상상태"] === weather && d["도로종류"] === index; }); const detailData = [ { name: "사망자수", y: datas[0].사망자수, }, { name: "중상자수", y: datas[0].중상자수, }, { name: "경상자수", y: datas[0].경상자수, }, ]; const { detail } = config.templates; detail.series.data = detailData; detail.title.text = `[${weather}] ${index} 사고 (${datas[0].사고건수}건)`; chart.load(detail, true); }
     }
   },
-  title: '기상상태에 따른 도로종류별 사고건수 현황',
+  title: { template: 'title', text: '기상상태에 따른 도로종류별 사고건수 현황' },
   split: {
     size: 1,
     visible: true,
@@ -427,40 +435,19 @@ export const config = {
     panes: [
       {
         body: {
-          annotations: [
-            {
-              offsetX: 90,
-              offsetY: 40,
-              text: '날씨: 맑음',
-              style: { fill: 'black', fontWeight: 'bold' }
-            }
-          ]
+          annotations: [ { template: 'annoSubtitle', text: '날씨: 맑음' } ]
         }
       },
       {
         col: 1,
         body: {
-          annotations: [
-            {
-              offsetX: 90,
-              offsetY: 40,
-              text: '날씨: 안개',
-              style: { fill: 'black', fontWeight: 'bold' }
-            }
-          ]
+          annotations: [ { template: 'annoSubtitle', text: '날씨: 안개' } ]
         }
       },
       {
         col: 2,
         body: {
-          annotations: [
-            {
-              offsetX: 95,
-              offsetY: 40,
-              text: '날씨: 눈',
-              style: { fill: 'black', fontWeight: 'bold' }
-            }
-          ]
+          annotations: [ { template: 'annoSubtitle', text: '날씨: 눈' } ]
         }
       }
     ]

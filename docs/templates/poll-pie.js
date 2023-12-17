@@ -1,4 +1,5 @@
 export const config = {
+  height: 550,
   templates: {
     series: {
       radius: '50%',
@@ -17,23 +18,27 @@ export const config = {
     {
       text: '<t>긍정적으로 평가한다</t><br>\n' +
         '                <b style="font-size:20pt">32.5</b>',
-      offsetX: 580,
-      offsetY: 100,
+      offsetX: 160,
+      offsetY: 50,
+      align: 'center',
       style: { fill: '#009D92', textAlign: 'center' }
     },
     {
       text: '<t>부정적으로 평가한다</t><br>\n' +
         '                <b style="font-size:30pt">60.4</b>',
-      offsetX: 50,
-      offsetY: 400,
+      offsetX: -250,
+      verticalAlign: 'bottom',
+      align: 'center',
       style: { fill: '#593219', textAlign: 'center' }
     },
     {
       imageUrl: '../assets/images/seoul.png',
       front: true,
       width: 260,
-      offsetX: 260,
-      offsetY: 180
+      align: 'center',
+      verticalAlign: 'middle',
+      offsetX: -10,
+      offsetY: -25
     }
   ],
   options: {},

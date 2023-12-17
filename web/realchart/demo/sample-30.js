@@ -397,16 +397,27 @@ const categories = [
 const clearW = [18348, 11157, 70134, 56074, 6486, 4382, 11204];
 const fogW = [34, 31, 11, 46, 8, 4, 10];
 const snowW = [178, 76, 315, 380, 48, 37, 81];
+const titleStyle = {
+  alignBase: "chart",
+  style: {
+    fontWeight: 700,
+  }
+};
 
 const config = {
+  height: 550,
   type: "pie",
   templates: {
     categories,
     data,
+    title: titleStyle,
     detail: {
+      templates: {
+        title: titleStyle
+      },
       title: {
+        template: 'title',
         text: "",
-        alignBase: "chart",
       },
       options: {
         // animatable: false,
@@ -443,6 +454,11 @@ const config = {
       label: {
         visible: false,
       },
+    },
+    annoSubtitle: {
+      align: 'center',
+      offsetY: 30,
+      style: { fill: 'black', fontWeight: 700, fontSize: '20px' }
     },
     series: {
       pointLabel: {
@@ -486,7 +502,10 @@ const config = {
       },
     },
   },
-  title: "기상상태에 따른 도로종류별 사고건수 현황",
+  title: {
+    template: 'title',
+    text: "기상상태에 따른 도로종류별 사고건수 현황",
+  },
   split: {
     size: 1,
     visible: true,
@@ -496,41 +515,35 @@ const config = {
         body: {
           annotations: [
             {
-              offsetX: 90,
-              offsetY: 40,
-              text: "날씨: 맑음",
-              style: { fill: "black", fontWeight: "bold" },
-            },
-          ],
-        },
+              template: 'annoSubtitle',
+              text: '날씨: 맑음',
+            }
+          ]
+        }
       },
       {
         col: 1,
         body: {
           annotations: [
             {
-              offsetX: 90,
-              offsetY: 40,
-              text: "날씨: 안개",
-              style: { fill: "black", fontWeight: "bold" },
-            },
-          ],
-        },
+              template: 'annoSubtitle',
+              text: '날씨: 안개',
+            }
+          ]
+        }
       },
       {
         col: 2,
         body: {
           annotations: [
             {
-              offsetX: 95,
-              offsetY: 40,
-              text: "날씨: 눈",
-              style: { fill: "black", fontWeight: "bold" },
-            },
-          ],
-        },
-      },
-    ],
+              template: 'annoSubtitle',
+              text: '날씨: 눈',
+            }
+          ]
+        }
+      }
+    ]
   },
   xAxis: [
     {

@@ -398,45 +398,47 @@ const clearW = [18348, 11157, 70134, 56074, 6486, 4382, 11204];
 const fogW = [34, 31, 11, 46, 8, 4, 10];
 const snowW = [178, 76, 315, 380, 48, 37, 81];
 
-let config2 = {
-  title: {
-    text: "",
-    alignBase: "chart",
-  },
-  options: {
-    // animatable: false,
-  },
-  legend: {
-    location: "bottom",
-  },
-  series: {
-    type: "pie",
-    totalAngle: 180,
-    startAngle: 270,
-    legendByPoint: true,
-    innerRadius: "40%",
-    radius: "60%",
-    centerY: "80%",
-    tooltipText: "${x}, ${y}건",
-    pointLabel: {
-      visible: true,
-      position: "outside",
-      distance: 30,
-      text: "${x}, ${y}건",
-      style: {},
-      visibleCallback: (args) => {
-        return args.yValue !== 0;
-      },
-    },
-    onPointClick: (args) => {
-      chart.load(config, true);
-    },
-    data: [],
-  },
-};
 const config = {
   type: "pie",
   templates: {
+    categories,
+    data,
+    detail: {
+      title: {
+        text: "",
+        alignBase: "chart",
+      },
+      options: {
+        // animatable: false,
+      },
+      legend: {
+        location: "bottom",
+      },
+      series: {
+        type: "pie",
+        totalAngle: 180,
+        startAngle: 270,
+        legendByPoint: true,
+        innerRadius: "40%",
+        radius: "60%",
+        centerY: "80%",
+        tooltipText: "${x}, ${y}건",
+        pointLabel: {
+          visible: true,
+          position: "outside",
+          distance: 30,
+          text: "${x}, ${y}건",
+          style: {},
+          visibleCallback: (args) => {
+            return args.yValue !== 0;
+          },
+        },
+        onPointClick: (args) => {
+          chart.load(config, true);
+        },
+        data: [],
+      },
+    },
     xAxis: {
       label: {
         visible: false,
@@ -446,19 +448,21 @@ const config = {
       pointLabel: {
         visible: true,
         textCallback: (args) => {
+          const { categories } = config.templates;
           return `${categories[args.xValue]} <br>${args.yValue}%`;
         },
         visibleCallback: (args) => {
-          return args.yValue > 5;
+          return args.yValue > 15;
         },
       },
       innerRadius: "20%",
       tooltipText: "${x} ${y}%",
       onPointClick: (args) => {
         const weather = args.series.name.split(" ")[1];
+        const { categories, data } = config.templates;
         const index = categories[args.xValue];
         const datas = data.filter((d) => {
-          return d.기상상태 === weather && d.도로종류 === index;
+          return d["기상상태"] === weather && d["도로종류"] === index;
         });
         const detailData = [
           {
@@ -474,21 +478,47 @@ const config = {
             y: datas[0].경상자수,
           },
         ];
-        config2.series.data = detailData;
-        config2.title.text = `[${weather}] ${index} 사고 (${datas[0].사고건수}건)`;
+        const { detail } = config.templates;
+        detail.series.data = detailData;
+        detail.title.text = `[${weather}] ${index} 사고 (${datas[0].사고건수}건)`;
 
-        chart.load(config2, true);
+        chart.load(detail, true);
       },
     },
   },
   title: "기상상태에 따른 도로종류별 사고건수 현황",
   split: {
     size: 1,
-    visible: !true,
-    cols: 1,
+    visible: true,
+    cols: 3,
     panes: [
       {
-        // col: 2,
+        body: {
+          annotations: [
+            {
+              offsetX: 90,
+              offsetY: 40,
+              text: "날씨: 맑음",
+              style: { fill: "black", fontWeight: "bold" },
+            },
+          ],
+        },
+      },
+      {
+        col: 1,
+        body: {
+          annotations: [
+            {
+              offsetX: 90,
+              offsetY: 40,
+              text: "날씨: 안개",
+              style: { fill: "black", fontWeight: "bold" },
+            },
+          ],
+        },
+      },
+      {
+        col: 2,
         body: {
           annotations: [
             {
@@ -507,16 +537,16 @@ const config = {
       template: "xAxis",
       categories: categories,
     },
-    // {
-    //   col: 1,
-    //   template: "xAxis",
-    //   categories: categories,
-    // },
-    // {
-    //   col: 2,
-    //   template: "xAxis",
-    //   categories: categories,
-    // },
+    {
+      col: 1,
+      template: "xAxis",
+      categories: categories,
+    },
+    {
+      col: 2,
+      template: "xAxis",
+      categories: categories,
+    },
   ],
   yAxis: {
     label: {
@@ -524,25 +554,25 @@ const config = {
     },
   },
   series: [
-    // {
-    //   template: "series",
-    //   name: "날씨: 맑음",
-    //   data: clearW.map((x) =>
-    //     Number(
-    //       ((x / clearW.reduce((acc, val) => acc + val, 0)) * 100).toFixed(2)
-    //     )
-    //   ),
-    // },
-    // {
-    //   xAxis: 1,
-    //   name: "날씨: 안개",
-    //   template: "series",
-    //   data: fogW.map((x) =>
-    //     Number(((x / fogW.reduce((acc, val) => acc + val, 0)) * 100).toFixed(2))
-    //   ),
-    // },
     {
-      // xAxis: 2,
+      template: "series",
+      name: "날씨: 맑음",
+      data: clearW.map((x) =>
+        Number(
+          ((x / clearW.reduce((acc, val) => acc + val, 0)) * 100).toFixed(2)
+        )
+      ),
+    },
+    {
+      xAxis: 1,
+      name: "날씨: 안개",
+      template: "series",
+      data: fogW.map((x) =>
+        Number(((x / fogW.reduce((acc, val) => acc + val, 0)) * 100).toFixed(2))
+      ),
+    },
+    {
+      xAxis: 2,
       name: "날씨: 눈",
       template: "series",
       data: snowW.map((x) =>
@@ -610,6 +640,7 @@ function setActions(container) {
 function init() {
   console.log("RealChart v" + RealChart.getVersion());
   // RealChart.setDebugging(true);
+    RealChart.setLogging(true);
 
   chart = RealChart.createChart(document, "realchart", config);
   setActions("actions");

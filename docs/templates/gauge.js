@@ -3,7 +3,7 @@ export const config = {
   title: 'Circle Guage',
   gauge: {
     name: 'gauge1',
-    value: 20.0903723555663,
+    value: 42.07540856769227,
     rim: {},
     valueRim: {
       ranges: [

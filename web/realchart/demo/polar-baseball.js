@@ -47,6 +47,7 @@ const hitsData = [
 ]
 
 const config = {
+    height: 600,
     polar: true,
     templates: {
         series: {
@@ -145,9 +146,10 @@ const config = {
         annotations: [
             {
                 imageUrl: 'http://localhost:6010/realchart/assets/images/baseball-player.png',
-                // align: 'right',
-                offsetX: 40,
-                offsetY: -30,
+                align: 'center',
+                verticalAlign: 'middle',
+                offsetX: -120,
+                // offsetY: -30,
                 width: 400
             }
         ]

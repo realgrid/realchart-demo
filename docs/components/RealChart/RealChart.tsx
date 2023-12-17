@@ -35,7 +35,7 @@ type RealChartConfig = unknown;
 const useStyles = createStyles((theme) => ({
   wrapper: {
     display: 'flex',
-    alignItems: 'center',
+    margin: '0 auto',
     borderBottom: '1px solid',
     borderBottomColor: theme.colors.gray[2],
   },
@@ -84,7 +84,10 @@ export function RealChartReact({
   };
 
   const _height = code['height'];
+  const _width = code['width'];
+
   const height = _height ? typeof _height === 'number' ? _height + 'px' : _height : '500px';
+  const width = _width ? typeof _width === 'number' ? _width + 'px' : _width : '100%';
 
   return (
     <Panel
@@ -105,7 +108,7 @@ export function RealChartReact({
           id="realchart"
           ref={chartRef}
           className={classes.wrapper}
-          style={{ width: "100%", height }}
+          style={{ width, height }}
         />
         
         {showEditor ? (
