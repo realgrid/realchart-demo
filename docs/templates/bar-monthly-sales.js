@@ -5,7 +5,7 @@ export const config = {
   subtitle: { visible: true, text: '1월부터 12월까지의 매출 변화 추적' },
   colorByPoint: false,
   options: {},
-  legend: { visible: true, location: 'bottom' },
+  legend: { visible: false },
   xAxis: {
     grid: { visible: true, endVisible: true },
     crosshair: true,

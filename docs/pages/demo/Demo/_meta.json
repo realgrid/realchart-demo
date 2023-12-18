@@ -1,6 +1,12 @@
 {
-	"guide-image01": {
-		"title": "Column",
+	"bar-monthly-sales": {
+		"title": "Bar",
+		"theme": {
+			"toc": false
+		}
+	},
+	"bar-stack": {
+		"title": "Bar Stack",
 		"theme": {
 			"toc": false
 		}
@@ -84,19 +90,19 @@
 		}
 	},
 	"sample-01": {
-		"title": "Bar",
+		"title": "Bar - Air Temp.",
 		"theme": {
 			"toc": false
 		}
 	},
 	"sample-03": {
-		"title": "Card",
+		"title": "Bar - Charge Off",
 		"theme": {
 			"toc": false
 		}
 	},
 	"sample-13": {
-		"title": "Percent Stack",
+		"title": "Bar Percent - CSP Market",
 		"theme": {
 			"toc": false
 		}

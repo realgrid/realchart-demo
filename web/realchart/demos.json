@@ -1,6 +1,7 @@
 {
     "Demo": {
-        "Column": "guide-image01",
+        "Bar": "bar-monthly-sales",
+        "Bar Stack": "bar-stack",
         "Line": "polls-biden-trump",
         "Area": "population",
         "Bubble": "sample-14",
@@ -14,9 +15,9 @@
         "Poll Pie": "poll-pie",
         "Heatmap": "heatmap",
         "Treemap": "treemap",
-        "Bar": "sample-01",
-        "Card": "sample-03",
-        "Percent Stack": "sample-13"
+        "Bar - Air Temp.": "sample-01",
+        "Bar - Charge Off": "sample-03",
+        "Bar Percent - CSP Market": "sample-13"
     },
     "Basic": {
         "Basic": "basic"

@@ -20,8 +20,8 @@ const config = {
 		// animatable: false
 	},
 	legend:{
-		visible: true,
-		location: "bottom"
+		visible: false,
+		// location: "bottom"
 	},
 	xAxis: {
         grid: {
@@ -83,15 +83,15 @@ const config = {
 		pointWidth: 30,
 		yAxis: 0,
 		data: [
-			[-130], // 1월은 -2°C
-			[-100], // 2월은 -1°C
-			[-50], // 3월은 1°C
-			[60], // 4월은 5°C
-			[70], // 5월은 10°C
-			[115], // 6월은 14°C
-			[90], // 7월은 16°C
-			[100], // 8월은 15°C
-			[120], // 9월은 10°C
+			[-130],
+			[-100],
+			[-50],
+			[60],
+			[70],
+			[115],
+			[90],
+			[100],
+			[120],
 			[130], 
 			[140], 
 		 	[160], 
