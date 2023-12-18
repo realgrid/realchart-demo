@@ -52,7 +52,6 @@ const config = {
     xAxis: [{
         template: 'xAxis',
         title: "Daily fat",
-        grid: true,
     }, {
         template: 'xAxis',
         title: "Daily fat2",

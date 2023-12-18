@@ -10,7 +10,7 @@ const config = {
             // align: 'center'
         }
     },
-    title: "Clock Guage",
+    title: "Clock Gauge",
     gauge: {
         // time: "2000-01-01T11:11:11",
         type: 'clock',

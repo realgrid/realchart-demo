@@ -10,7 +10,7 @@ const config = {
             // align: 'center'
         }
     },
-    title: "Linear Guages",
+    title: "Linear Gauges",
     gauge: [{
         type: 'linear',
         name: 'linear1',

@@ -26,7 +26,6 @@ const config = {
     xAxis: [{
         template: 'xAxis',
         title: "Daily fat",
-        grid: true,
         guide: [
             {
                 type: 'range',
