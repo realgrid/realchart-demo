@@ -1,6 +1,6 @@
 const config = {
   options: {},
-  title: "Circle Guage",
+  title: "Circle Gauge",
   gauge: {
     name: "gauge1",
     value: Math.random() * 100,
