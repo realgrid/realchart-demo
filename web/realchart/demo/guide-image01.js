@@ -4,6 +4,7 @@
  * Bar Series 기본 예제.
  */
 const config = {
+	height: 550,
 	type: 'bar',
 	title: {text : '월별 매출 현황 분석',
 	style: {

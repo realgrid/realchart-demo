@@ -1,4 +1,4 @@
-const bubble = [
+const data = [
     {"country": "Afghanistan", "continent": "Asia", "year": 1952, "lifeExp": 28.801, "pop": 8425333, "gdpPercap": 779.4453145},
     {"country": "Afghanistan", "continent": "Asia", "year": 1957, "lifeExp": 30.332, "pop": 9240934, "gdpPercap": 820.8530296},
     {"country": "Afghanistan", "continent": "Asia", "year": 1962, "lifeExp": 31.997, "pop": 10267083, "gdpPercap": 853.10071},

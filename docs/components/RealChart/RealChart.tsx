@@ -15,6 +15,7 @@ import {
   createStyles,
   rem,
   Checkbox,
+  Slider,
 } from "@mantine/core";
 
 import { createChart, getVersion } from "realchart";
@@ -175,6 +176,27 @@ export function RealChartReact({
         style={{ width, height }}
       />
     </Grid>
+    {code['actions']?.map((action) => {
+      if (action.type == 'slider') {
+        const { min, max, step, label, value } = action;
+        const onSliderChanged = (value) => {
+          action.action && action.action({value});
+        }
+        const marks = [min, max].map(v => { return {value: v, label: v.toString()}; });
+        return <Grid align={"center"}>
+          <Grid.Col span={2}>
+            <Text align={"right"}>{label}: </Text>
+          </Grid.Col>
+          <Grid.Col span={8}>
+            {/* <Text align={"left"}>{min}</Text> */}
+            <Slider min={min} max={max} step={step} marks={marks} defaultValue={value || min} color="blue" onChangeEnd={onSliderChanged}/>
+            {/* <Text align={"left"}>{max}</Text> */}
+          </Grid.Col>
+        </Grid>;
+      }
+
+    })}
+
     <Grid className={classes.menu}>
       <Checkbox label="Inverted" 
         checked={invertedChecked}

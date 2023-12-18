@@ -1,4 +1,5 @@
 export const config = {
+  height: 550,
   type: 'bar',
   title: { text: '월별 매출 현황 분석', style: { fontWeight: 'bold' } },
   subtitle: { visible: true, text: '1월부터 12월까지의 매출 변화 추적' },

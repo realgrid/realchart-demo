@@ -4,7 +4,8 @@
 
 
 const getData = (name, year) => {
-    const _data = data.filter(r => r['Country'] == name);
+    // const {data} = config;
+    const _data = config.data.filter(r => r['Country'] == name);
     const max = _data.reduce((max, row) => {
         return Math.max(max, row[year]);
     }, 0);
@@ -15,27 +16,87 @@ const getData = (name, year) => {
             Ratio: r[year.toString()] / max,
         };
     });
-    // const max = years.reduce((max, year) => {
-    //     return Math.max(max, row[year]);
-    // }, 0)
-    // return years.map(y => [y, row[y] / max ]);
-
 }
-
-const seriesData = 
+const cols = 
 { 
-    'Korea': getData('Korea, Rep.', 2023),
-    'China': getData('China', 2023),
-    'Japan': getData('Japan', 2023),
-    'Thailand': getData('Thailand', 2023),
-    'HongKong': getData('Hong Kong SAR, China', 2023),
-    'Mongolia': getData('Mongolia', 2023),
+    'Korea': 'Korea, Rep.',
+    'China': 'China',
+    'Japan': 'Japan',
+    'Thailand': 'Thailand',
+    'HongKong': 'Hong Kong SAR, China',
+    'Mongolia': 'Mongolia',
 };
 
-const countries = Object.keys(seriesData)
+// const seriesData = 
+// { 
+//     'Korea': getData('Korea, Rep.', 2023),
+//     'China': getData('China', 2023),
+//     'Japan': getData('Japan', 2023),
+//     'Thailand': getData('Thailand', 2023),
+//     'HongKong': getData('Hong Kong SAR, China', 2023),
+//     'Mongolia': getData('Mongolia', 2023),
+// };
+
+const countries = Object.keys(cols);
 const rows = countries.length;
 
+const createSeries = (year) => {
+    const { countries, getData, cols } = config.params;
+    return countries.map((c, i) => {
+        const data = getData(cols[c], year);
+        // ratio가 max인 age 구간
+        let max = 0;
+        let denseSection = '';
+        for (const row of data) {
+            const ratio = row['Ratio'];
+            if (ratio > max) {
+                max = ratio;
+                denseSection = row['Age'];
+            }
+        }
+        const denseAge = parseInt(denseSection.split('-')[0]);
+        // console.debug(c, denseAge)
+        const isOld = denseAge >= 50;
+        const primary = isOld ? '#ffd938bb' : '#91cc39bb';
+
+        return {
+            template: 'series',
+            xAxis: i,
+            yAxis: i,
+            data,
+            areaStyle: {
+                stroke: 'none'
+            },
+            style: {
+                fill: primary,
+                stroke: primary,
+            }
+        }
+    })
+}
+
 const config = {
+    data,
+    params: {
+        cols,
+        countries,
+        getData,
+        createSeries
+    },
+    actions: [
+        {
+            label: 'Year',
+            type: 'slider',
+            min: 2001,
+            max: 2023,
+            value: 2023,
+            step: 1,
+            action: ({value}) => {
+                config.series = config.params.createSeries(value);
+                chart.load(config);
+            },
+        }
+    ],
     type: 'area',
     templates: {
         xAxis: {
@@ -70,7 +131,6 @@ const config = {
             xField: 'Age',
             yField: 'Ratio',
             lineType: 'spline',
-            data,
             style: {
                 strokeWidth: 3,
             }
@@ -110,37 +170,6 @@ const config = {
             },
             row: i 
         }
-    }),
-    series: countries.map((c, i) => {
-        const data = seriesData[c];
-        // ratio가 max인 구간
-        let max = 0;
-        let denseSection = '';
-        for (const row of data) {
-            const ratio = row['Ratio'];
-            if (ratio > max) {
-                max = ratio;
-                denseSection = row['Age'];
-            }
-        }
-        const denseAge = parseInt(denseSection.split('-')[0]);
-        // console.debug(c, denseAge)
-        const isOld = denseAge >= 50;
-        const primary = isOld ? '#ffd938bb' : '#91cc39bb';
-
-        return {
-            template: 'series',
-            xAxis: i,
-            yAxis: i,
-            data,
-            areaStyle: {
-                stroke: 'none'
-            },
-            style: {
-                fill: primary,
-                stroke: primary,
-            }
-        }
     })
 }
 
@@ -179,7 +208,7 @@ function setActions(container) {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
-
+    config.series = createSeries(2023);
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')
 }
