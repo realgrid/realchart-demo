@@ -228,6 +228,7 @@ export class MovingAverage extends RcObject {
 
 /**
  * 시리즈 추세선.
+ * http://npmjs.com/package/regression
  */
 export class Trendline extends ChartItem {
 
@@ -254,7 +255,21 @@ export class Trendline extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     protected _doPrepareRender(chart: IChart): void {
-        (this['$_' + this.type] || this.$_linear).call(this, this.series._runPoints, this._points = []);
+        const series = this.series;
+        const minX = series._minX > 0 ? 0 : 1 - series._minX;
+        const minY = series._minY > 0 ? 0 : 1 - series._minY;
+        const pts = series._runPoints.filter(p => !p.isNull).map(p => {
+            return {
+                x: p.xValue + minX,
+                y: p.yValue + minY
+            };
+        });
+
+        (this['$_' + this.type] || this.$_linear).call(this, pts, this._points = []);
+        this._points.forEach(p => {
+            p.x -= minX;
+            p.y -= minY;
+        });
     }
 
     //-------------------------------------------------------------------------
@@ -263,85 +278,139 @@ export class Trendline extends ChartItem {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_calcLine(pts: {xValue: number, yValue: number}[]): {m: number, b: number} {
+    // private $_determintationCoeff(pts: {xValue: number, yValue: number}[], results: {x: number, y: number}[]): number {
+    //     const predicts: {x: number, y: number}[] = [];
+    //     const observas: {xValue: number, yValue: number}[] = [];
+
+    //     pts.forEach((p, i) => {
+    //         if (!isNaN(p.yValue)) {
+    //             observas.push(p);
+    //             predicts.push(results[i])
+    //         }
+    //     })
+
+    //     const sum = observas.reduce((a, o) => a + o.yValue, 0);
+    //     const mean = sum / observas.length;
+
+    //     const ssyy = observas.reduce((a, o) => {
+    //         const diff = o.yValue - mean;
+    //         return a + diff * diff;
+    //     }, 0);
+
+    //     const sse = observas.reduce((a, o, i) => {
+    //         const predict = predicts[i];
+    //         const residual = o.yValue - predict.y;
+    //         return a + residual * residual;
+    //     }, 0);
+
+    //     return 1 - sse / ssyy;
+    // }
+
+    private $_calcLine(pts: IPoint[]): {m: number, a: number} {
         const len = pts.length;
         let sx = 0;
         let sy = 0;
+        let sxy = 0;
         let sxx = 0;
+
+        pts.forEach(p => {
+            sx += p.x;
+            sy += p.y, 0;
+            sxy += p.x * p.y;
+            sxx += p.x * p.x;
+        });
+
+        const run = len * sxx - sx * sx;
+        const rise = len * sxy - sx * sy;
+        // 기울기
+        const m = run === 0 ? 0 : rise / run;
+        // 절편
+        const a = (sy - m * sx) / len;
+
+        return {m, a};
+    }
+
+    private $_calcLine2(pts: IPoint[]): {m: number, a: number} {
+        const len = pts.length;
+        let sx = 0;
+        let sy = 0;
+        let sxxy = 0;
+        let syy2 = 0;
+        let sxyy2 = 0;
         let sxy = 0;
 
         pts.forEach(p => {
-            sx += p.xValue;
-            sy += p.yValue;
-            sxx += p.xValue * p.xValue;
-            sxy += p.xValue * p.yValue;
+            sx += p.x;
+            sy += p.y;
+            sxxy = p.x * p.x * p.y;
+            syy2 = p.y * Math.log(p.y);
+            sxyy2 = p.x * p.y * Math.log(p.y);
+            sxy = p.x * p.y;
         });
 
-        // 기울기
-        const m = (len * sxy - sx * sy) / (len * sxx - sx * sx);
-        // 절편
-        const b = (sy - m * sx) / len;
+        const denomintaor = sy * sxxy - sxy * sxy;
+        const a = Math.exp((sxxy * syy2 - sxy * sxyy2) / denomintaor);
+        const m = (sy * sxyy2 - sxy * syy2) / denomintaor;
 
-        return {m, b};
+        return {m, a};
     }
 
-    private $_linear(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    private $_linear(pts: IPoint[], list: {x: number, y: number}[]): void {
         const len = pts.length;
 
         if (len > 1) {
-            const {m, b} = this.$_calcLine(pts);
+            const {m, a} = this.$_calcLine(pts);
 
-            list.push({x: pts[0].xValue, y: m * pts[0].xValue + b});
-            list.push({x: pts[len - 1].xValue, y: m * pts[len - 1].xValue + b});
+            list.push({x: pts[0].x, y: m * pts[0].x + a});
+            list.push({x: pts[len - 1].x, y: m * pts[len - 1].x + a});
         }
     }
 
-    private $_logarithmic(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    private $_logarithmic(pts: IPoint[], list: {x: number, y: number}[]): void {
         const len = pts.length;
 
         if (len > 1) {
-            const logPts = pts.map(p => ({ xValue: Math.log(p.xValue + 1), yValue: p.yValue }));
-            const {m, b} = this.$_calcLine(logPts);
-            const x1 = pts[0].xValue + 1;
-            const x2 = pts[len - 1].xValue;
+            const logPts = pts.map(p => ({ x: Math.log(p.x), y: pickNum(p.y, 0) }));
+            const {m, a} = this.$_calcLine(logPts);
+            const x1 = pts[0].x;
+            const x2 = pts[len - 1].x;
             const d = (x2 - x1) / 100;
 
             for (let x = x1; x <= x2; x += d) {
-                const y = b + (Math.log(x) * m);
+                const y = a + (Math.log(x) * m);
                 list.push({ x, y });
                 console.log(x, y);
             }
         }
     }
 
-    private $_exponential(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    private $_exponential(pts: IPoint[], list: {x: number, y: number}[]): void {
         const len = pts.length;
 
         if (len > 1) {
-            const logPts = pts.map(p => ({ xValue: p.xValue + 1, yValue: Math.log(p.yValue) }));
-            const {m, b} = this.$_calcLine(logPts);
-            const base = Math.exp(b);
-            const x1 = pts[0].xValue + 1;
-            const x2 = pts[len - 1].xValue;
+            const logPts = pts.map(p => ({ x: p.x, y: p.y }));
+            const {m, a} = this.$_calcLine2(logPts);
+            const x1 = pts[0].x;
+            const x2 = pts[len - 1].x;
             const d = (x2 - x1) / 100;
 
             for (let x = x1; x <= x2; x += d) {
-                const y = base * Math.exp(m * x);
+                const y = a * Math.exp(m * x);
                 list.push({ x, y });
             }
         }
     }
     
-    private $_power(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    private $_power(pts: IPoint[], list: {x: number, y: number}[]): void {
         const len = pts.length;
 
         if (len > 1) {
-            const logPts = pts.map(p => ({ xValue: Math.log(p.xValue + 1), yValue: Math.log(p.yValue) }));
-            const {m, b} = this.$_calcLine(logPts);
+            const logPts = pts.map(p => ({ x: Math.log(p.x), y: Math.log(p.y) }));
+            const {m, a} = this.$_calcLine(logPts);
             // 원래의 거듭제곱 함수의 지수로 변환
-            const coeff = Math.exp(b);
-            const x1 = pts[0].xValue + 1;
-            const x2 = pts[len - 1].xValue;
+            const coeff = Math.exp(a);
+            const x1 = pts[0].x;
+            const x2 = pts[len - 1].x;
             const d = (x2 - x1) / 100;
 
             for (let x = x1; x <= x2; x += d) {
@@ -351,10 +420,88 @@ export class Trendline extends ChartItem {
         }
     }
 
-    $_polynomial(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    $_polynomial(pts: IPoint[], list: {x: number, y: number}[]): void {
+
+        function gaussianElimintaion(pts: number[][], degree: number): number[] {
+            const matrix = pts;
+            const n = pts.length - 1;
+            const coeffs = [degree];
+
+            for (let i = 0; i < n; i++) {
+                let maxrow = i;
+
+                for (let j = i + 1; j < n; j++) {
+                    if (Math.abs(matrix[i][j]) > Math.abs(matrix[i][maxrow])) {
+                        maxrow = j;
+                    }
+                }
+
+                for (let k = i; k < n + 1; k++) {
+                    const t = matrix[k][i];
+                    matrix[k][i] = matrix[k][maxrow];
+                    matrix[k][maxrow] = t;
+                }
+
+                for (let j = i + 1; j < n; j++) {
+                    for (let k = n; k >= i; k--) {
+                        matrix[k][j] -= (matrix[k][i] * matrix[i][j]) / matrix[i][i];
+                    }
+                }
+            }
+
+            for (let j = n - 1; j >= 0; j--) {
+                let total = 0;
+
+                for (let k = j + 1; k < n; k++) {
+                    total += matrix[k][j] * coeffs[k];
+                }
+                coeffs[j] = (matrix[n][j] - total) / matrix[j][j];
+            }
+
+            return coeffs;
+        }
+
         const len = pts.length;
 
         if (len > 1) {
+            const degree = 2;
+            const lhs: number[] = [];
+            const rhs: number[][] = [];
+            let a = 0;
+            let b = 0;
+            const k = degree + 1;
+
+            for (let i = 0; i < k; i++) {
+                for (let l = 0; l < len; l++) {
+                    a += (pts[l].x ** i) * pts[l].y;
+                }
+
+                lhs.push(a);
+                a = 0;
+
+                const c: number[] = [];
+
+                for (let j = 0; j < k; j++) {
+                    for (let l = 0; l < len; l++) {
+                        b += pts[l].x ** (i + j);
+                    }
+                    c.push(b);
+                    b = 0;
+                }
+                rhs.push(c);
+            }
+            rhs.push(lhs);
+
+            const coeffs = gaussianElimintaion(rhs, k);
+            const x1 = pts[0].x;
+            const x2 = pts[len - 1].x;
+            const d = (x2 - x1) / 100;
+
+            for (let x = x1; x <= x2; x += d) {
+                const y = coeffs.reduce((sum, coeff, power) => sum + (coeff * (x ** power)), 0);
+                list.push({ x, y });
+            }
+
         }
     }
 
@@ -487,21 +634,18 @@ export class Trendline extends ChartItem {
     //     }
     // }
 
-    private $_movingAverage(pts: DataPoint[], list: {x: number, y: number}[]): void {
+    private $_movingAverage(pts: IPoint[], list: {x: number, y: number}[]): void {
         const ma = this.movingAverage;
         const length = pts.length;
         const interval = Math.max(1, Math.min(length, ma.interval));
-        let index = interval - 1;
+        let i = interval;
 
-        while (index <= length) {
-            index = index + 1;
+        while (i <= length) {
+            const slice = pts.slice(i - interval, i);
+            const sum = slice.reduce((a, c) => a + pickNum(c.y, 0), 0);
 
-            const slice = pts.slice(index - interval, index);
-            const sum = slice.reduce((a, c) => a + c.yValue, 0);
-
-            if (index <= length) {
-                list.push({x: pts[index - 1].xValue, y: sum / interval});
-            }
+            list.push({x: pts[i - 1].x, y: sum / interval});
+            i++;
         }
     }
 }
@@ -1048,8 +1192,6 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     prepareAfter(): void {
-        // DataPoint.xValue가 필요하다.
-        this.trendline.visible && this.trendline.prepareRender();
     }
 
     collectCategories(axis: IAxis): string[] {
@@ -1161,6 +1303,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         }
 
         // this.prepareViewRanges();
+        this.trendline.visible && this.trendline.prepareRender();
 
         return visPoints;
     }

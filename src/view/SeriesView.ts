@@ -548,11 +548,14 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         const xAxis = m._xAxisObj;
         const yAxis = m._yAxisObj;
         const pts = m.trendline._points.map(pt => ({x: xAxis.getPosition(xAxis._vlen, pt.x), y: yAxis._vlen - yAxis.getPosition(yAxis._vlen, pt.y)}));
-        const sb = new PathBuilder();
 
-        sb.move(pts[0].x, pts[0].y);
-        sb.lines(...pts);
-        this._trendLineView.setPath(sb.end(false));
+        if (this._trendLineView.setVis(pts.length > 1)) {
+            const sb = new PathBuilder();
+
+            sb.move(pts[0].x, pts[0].y);
+            sb.lines(...pts);
+            this._trendLineView.setPath(sb.end(false));
+        }
     }
 
     protected _layoutLabel(info: LabelLayoutInfo, w: number, h: number): void {
