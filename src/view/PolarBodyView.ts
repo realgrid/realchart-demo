@@ -11,7 +11,7 @@ import { ElementPool } from "../common/ElementPool";
 import { ClipCircleElement, LayerElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
 import { Align, PI_2 } from "../common/Types";
-import { ArcElement, ArcPolyElement, CircleElement, CircumElement } from "../common/impl/CircleElement";
+import { ArcPolyElement, CircleElement } from "../common/impl/CircleElement";
 import { LineElement, PolylineElement } from "../common/impl/PathElement";
 import { Axis, AxisLabel, AxisTick, IAxisTick } from "../model/Axis";
 import { Body } from "../model/Body";
@@ -449,7 +449,11 @@ export class PolarBodyView extends BodyView {
             }
             v.resize(rd * 2, rd * 2);
             v.layout();//.translate(x, y);
-        })
+        });
+        // 그룹에 포함된 시리즈들 간의 관계 설정 후에 그리기가 필요한 경우가 있다.
+        this._seriesViews.forEach(v => {
+            v.afterLayout();
+        });
 
         // axes
         this._xAxisView.layout(m.chart.yAxis as Axis, cx, cy, rd);

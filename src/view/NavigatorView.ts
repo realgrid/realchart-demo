@@ -221,6 +221,7 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
             this._seriesView.measure(this.doc, model._naviChart.firstSeries, w, h, 1);
             this._seriesView.resize(w, h);
             this._seriesView.layout();
+            this._seriesView.afterLayout();
         }
 
         // x axis

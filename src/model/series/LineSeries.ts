@@ -319,7 +319,7 @@ export class AreaSeries extends LineSeries {
     constructor(chart: IChart) {
         super(chart);
 
-        this.marker.visible = false;
+        this.marker.visible = chart.isPolar();
     }
 
     //-------------------------------------------------------------------------
@@ -355,7 +355,6 @@ export class AreaSeries extends LineSeries {
                 area.push(p);
                 
                 p = (pts[0] as DataPoint).toPoint();
-                console.log('$$$', (pts[0] as AreaSeriesPoint).yLow);
                 p.yPos = pickNum((pts[0] as AreaSeriesPoint).yLow, pts[0].yPos);
                 area.push(p);
             }

@@ -141,7 +141,7 @@
     --rct-font-family: AppleSDGothicNeo-Light, "HelveticaNeue", "Malgun Gothic", "맑은 고딕", sans-serif;
     --rct-font-size: 16px;
 
-    --rct-focus-border: red;
+    --rct-focus-border: black;
     --rct-text-fill: #333;
 
     --rct-title-fill: #333;
@@ -858,7 +858,7 @@
     stroke: white;
 }
 .rct-funnel-series .rct-point[data-focus] {
-    stroke: red;
+    stroke: black;
     stroke-width: 2px;
 }
 

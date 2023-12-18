@@ -11,7 +11,6 @@ import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipRectElement, PathElement, RcElement } from "../../common/RcControl";
-import { ISize } from "../../common/Size";
 import { Align, FILL, IValueRange, PI_2, SVGStyleOrClass, _undef } from "../../common/Types";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { Axis } from "../../model/Axis";
@@ -370,7 +369,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const h = this.height;
         const inverted = this._inverted;
         const needBelow = series instanceof LineSeries && this._needBelow;
-        const s = this._buildLines2(series._lines);
+        const s = this._buildLines2(series._lines, this._polar);
 
         if (series._runRanges) {
             this._rangeLines.forEach((line, i) => {
@@ -426,7 +425,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         }
     }
 
-    protected _buildLines2(lines: PointLine[]): string {
+    protected _buildLines2(lines: PointLine[], close: boolean): string {
         const m = this.model;
         const t = m.getLineType();
         const sb = new PathBuilder();
@@ -438,7 +437,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         } else {
             this._drawLines(lines, sb);
         }
-        return sb.end();
+        return sb.end(close);
     }
 
     private _drawLine2(pts: PointLine, connected: boolean, sb: PathBuilder): void {

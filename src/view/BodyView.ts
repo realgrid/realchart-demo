@@ -11,7 +11,7 @@ import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
 import { ClipRectElement, LayerElement, PathElement, RcControl, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
-import { Align, VerticalAlign, _undef, assert } from "../common/Types";
+import { Align, FILL, PI_2, VerticalAlign, _undef, assert } from "../common/Types";
 import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
@@ -27,7 +27,7 @@ import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
 import { Gauge, GaugeBase } from "../model/Gauge";
 import { ChartElement } from "./ChartElement";
 import { GaugeView } from "./GaugeView";
-import { IPointView, SeriesView } from "./SeriesView";
+import { BoxedSeriesView, IPointView, SeriesView } from "./SeriesView";
 import { CircleGaugeGroupView, CircleGaugeView } from "./gauge/CircleGaugeView";
 import { ClockGaugeView } from "./gauge/ClockGaugeView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
@@ -63,7 +63,9 @@ import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
 import { LabelElement } from "../common/impl/LabelElement";
 import { CircleBarSeriesView } from "./series/CircleBarSeriesView";
-import { pickNum } from "../common/Common";
+import { cos, pickNum, sin } from "../common/Common";
+import { ArcPolyElement } from "../common/impl/CircleElement";
+import { SectorElement } from "../common/impl/SectorElement";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -383,7 +385,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _line: LineElement;
+    private _line: RcElement;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -391,7 +393,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
     constructor(doc: Document, polar: boolean) {
         super(doc);
 
-        this.insertFirst(this._line = new LineElement(doc, 'rct-axis-guide-line'));
+        this.insertFirst(this._line = new (polar ? ArcPolyElement : LineElement)(doc, 'rct-axis-guide-line'));
     }
 
     //-------------------------------------------------------------------------
@@ -406,7 +408,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
     _doLayout(width: number, height: number): void {
         const m = this.model;
         const label = m.label;
-        const line = this._line;
+        const line = this._line as LineElement;
         const labelView = this._labelView.setVis(label.visible) && this._labelView;
         const rLabel = labelView.getBBounds();
         const xOff = pickNum(label.offsetX, 0);
@@ -481,10 +483,18 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
     }
 
     _doLayoutPolar(width: number, height: number, polar: IPolar): void {
-        const cx = width / 2;
-        const cy = height / 2;
-        const rd = Math.min(cx, cy);
+        const m = this.model;
+        const line = this._line as ArcPolyElement;
+        const labelView = this._labelView.setVis(m.label.visible) && this._labelView;
+        const start = m.axis.getStartAngle();
+        const p = m.axis.getPosition(polar.rd, m.value, true);
 
+        line.setArc(polar.cx, polar.cy, p, start, m.axis.getTotalAngle(), true);
+        line.setStyle(FILL, 'none');
+
+        if (labelView) {
+            labelView.translate(polar.cx + p * cos(polar.start), polar.cy + p * sin(polar.start));
+        }
     }
 }
 
@@ -493,15 +503,15 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _box: BoxElement;
+    private _box: BoxElement | SectorElement;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
+    constructor(doc: Document, polar: boolean) {
         super(doc);
 
-        this.insertFirst(this._box = new BoxElement(doc, 'rct-axis-guide-range'));
+        this.insertFirst(this._box = new (polar ? SectorElement : BoxElement)(doc, 'rct-axis-guide-range'));
     }
 
     //-------------------------------------------------------------------------
@@ -514,7 +524,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
     _doLayout(width: number, height: number): void {
         const m = this.model;
         const label = m.label;
-        const box = this._box;
+        const box = this._box as BoxElement;
         const start = Math.min(m.startValue, m.endValue);
         const end = Math.max(m.startValue, m.endValue);
         const labelView = this._labelView.setVis(label.visible) && this._labelView;
@@ -595,6 +605,31 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
     }
 
     _doLayoutPolar(width: number, height: number, polar: IPolar): void {
+        const m = this.model;
+        const sector = this._box as SectorElement;
+        const labelView = this._labelView.setVis(m.label.visible) && this._labelView;
+        const start = m.axis.getStartAngle();
+        const p1 = m.axis.getPosition(polar.rd, m.startValue, true);
+        const p2 = m.axis.getPosition(polar.rd, m.endValue, true);
+
+        // line.setArc(polar.cx, polar.cy, p, start, m.axis.getTotalAngle(), true);
+        // line.setStyle(FILL, 'none');
+
+        sector.setSector({
+            cx: polar.cx,
+            cy: polar.cy,
+            rx: p2,
+            ry: p2,
+            innerRadius: p1 / p2,
+            start: start,
+            angle: PI_2,
+            clockwise: true
+        });
+
+        if (labelView) {
+            const p = p1 + (p2 - p1) / 2;
+            labelView.translate(polar.cx + p * cos(polar.start), polar.cy + p * sin(polar.start));
+        }
     }
 }
 
@@ -630,7 +665,7 @@ export class AxisGuideContainer extends LayerElement {
     addAll(doc: Document, guides: AxisGuide[], polar: boolean): void {
         guides.forEach(g => {
             if (g instanceof AxisRangeGuide) {
-                let v = this._rangePool.pop() || new AxisGuideRangeView(doc);
+                let v = this._rangePool.pop() || new AxisGuideRangeView(doc, polar);
 
                 this.add(v);
                 v.prepare(doc, g)
@@ -981,19 +1016,10 @@ export class BodyView extends ChartElement<Body> {
     }
     
     protected _doLayout(): void {
-        const chart = this.model.chart;
         const w = this.width;
         const h = this.height;
         const img = this._image;
 
-        // // axes
-        // chart._getXAxes().forEach(axis => {
-        //     axis._zoomlen = w;
-        // });
-        // chart._getYAxes().forEach(axis => {
-        //     axis._zoomlen = h;
-        // });
-        
         // background
         this._hitTester.resize(w, h);
         this._background.resize(w, h);
