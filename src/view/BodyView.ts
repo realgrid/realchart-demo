@@ -822,7 +822,9 @@ export class BodyView extends ChartElement<Body> {
     // feedbacks
     private _feedbackContainer: LayerElement;
     private _crosshairViews: ElementPool<CrosshairView>;
+
     private _focused: IPointView = null;
+    private _focusBorder: PathElement;
 
     private _inverted: boolean;
     private _zoomRequested: boolean;
@@ -850,6 +852,7 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
         this.add(this._zoomButton = new ZoomButton(doc));
         
+        this._feedbackContainer.add(this._focusBorder = new  PathElement(doc, 'rct-focus-border'));
         this._crosshairViews = new ElementPool(this._feedbackContainer, CrosshairView);
     }
 
@@ -909,11 +912,11 @@ export class BodyView extends ChartElement<Body> {
     private $_setFocused(series: Series, p: IPointView): boolean {
         if (p != this._focused) {
             if (this._focused) {
-                (this._focused as any as RcElement).unsetData(SeriesView.DATA_FOUCS);
+                (this._focused as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, false);
             }
             this._focused = p;
             if (this._focused) {
-                (this._focused as any as RcElement).setData(SeriesView.DATA_FOUCS);
+                (this._focused as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, true);
                 this._owner.showTooltip(series, p.point, this);
             } else {
                 this._owner.hideTooltip();

@@ -59,8 +59,8 @@ export class LegendItemView extends ChartElement<LegendItem> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doMeasure(doc: Document, model: LegendItem, hintWidth: number, hintHeight: number, phase: number): ISize {
-        Dom.setData(this._label.dom, 'hidden', model.source.visible ? '' : 1);
-        Dom.setData(this._marker.dom, 'hidden', model.source.visible ? '' : 1);
+        this._label.setBoolData('hidden', !model.source.visible);
+        this._marker.setBoolData('hidden', !model.source.visible);
 
         this._label.text = model.text();
 

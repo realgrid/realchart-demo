@@ -17,7 +17,9 @@ import { LineType } from "../ChartTypes";
 import { DataPoint, IPointPos } from "../DataPoint";
 import { LegendItem } from "../Legend";
 import { DataPointLabel, MarkerVisibility, PointItemPosition, Series, SeriesGroup, SeriesGroupLayout, SeriesMarker } from "../Series";
+import { AreaLegendMarkerView } from "./legend/AreaLegendMarkerView";
 import { LineLegendMarkerView } from "./legend/LineLegendMarkerView";
+import { ShapeLegendMarkerView } from "./legend/ShapeLegendMarkerView";
 
 export class LineSeriesPoint extends DataPoint {
 
@@ -182,7 +184,7 @@ export abstract class LineSeriesBase extends Series {
     legendMarker(doc: Document, size: number): RcElement {
         const m = super.legendMarker(doc, size);
 
-        (m as LineLegendMarkerView).setShape(this.getShape(null), Math.min(+size || LegendItem.MARKER_SIZE, this.marker.radius * 2));
+        (m as ShapeLegendMarkerView).setShape(this.getShape(null), Math.min(+size || LegendItem.MARKER_SIZE, this.marker.radius * 2));
         return m;
     }
 
@@ -392,6 +394,10 @@ export class AreaSeries extends LineSeries {
 
     getBaseValue(axis: IAxis): number {
         return axis._isX ? NaN : this._base;
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return new AreaLegendMarkerView(doc, size);
     }
 
     protected _createPoint(source: any): DataPoint {

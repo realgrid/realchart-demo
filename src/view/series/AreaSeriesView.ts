@@ -15,6 +15,8 @@ import { DataPoint } from "../../model/DataPoint";
 import { SeriesGroupLayout } from "../../model/Series";
 import { LinearAxis } from "../../model/axis/LinearAxis";
 import { AreaSeries, AreaSeriesGroup, AreaSeriesPoint } from "../../model/series/LineSeries";
+import { AreaLegendMarkerView } from "../../model/series/legend/AreaLegendMarkerView";
+import { LegendItemView } from "../LegendView";
 import { LineContainer, LineSeriesBaseView } from "./LineSeriesView";
 
 export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
@@ -48,6 +50,15 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         if (g && (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
         }
         return pts;
+    }
+
+    decoreateLegend(legendView: LegendItemView): void {
+        super.decoreateLegend(legendView);
+
+        const cs = getComputedStyle(this._area.dom);
+        (legendView._marker as AreaLegendMarkerView)._area.setStyle('stroke', 'none');
+        (legendView._marker as AreaLegendMarkerView)._area.setStyle('fill', cs.fill);
+        (legendView._marker as AreaLegendMarkerView)._area.setStyle('fillOpacity', cs.fillOpacity);
     }
 
     //-------------------------------------------------------------------------

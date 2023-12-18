@@ -383,6 +383,7 @@
 } */
 .rct-legend-item-marker[data-hidden] {
     fill: #aaa !important;
+    stroke: #aaa !important;
 }
 
 /** plot area */
@@ -392,6 +393,10 @@
 }
 .rct-body-background[data-polar] {
     stroke: none;
+}
+.rct-focus-border {
+    stroke: black;
+    stroke-width: 1.5px;
 }
 
 /** axis */

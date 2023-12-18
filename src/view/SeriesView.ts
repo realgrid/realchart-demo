@@ -438,6 +438,13 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         this._doAfterLayout();
     }
 
+    /**
+     * hovering된 데이터포인트의 외곽 강조 border path.
+     */
+    getFocusBorder(p: DataPoint): string {
+        return;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
