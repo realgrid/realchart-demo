@@ -1009,6 +1009,7 @@
 
 /** tooltip */
 .rct-tooltip {
+    font-size: 0.8em;
     pointer-events: none;
     opacity: 0.9;
 }
