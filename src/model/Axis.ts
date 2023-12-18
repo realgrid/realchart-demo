@@ -528,7 +528,8 @@ export abstract class AxisTick extends AxisItem {
 
 export enum AxisLabelArrange {
     /**
-     * 아무것도 하지 않는다.
+     * label들이 겹치도록 놔둔다.
+     * // TODO: @{link overflow} 설정이 적용된다.
      * 
      * @config
      */

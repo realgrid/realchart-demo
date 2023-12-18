@@ -471,10 +471,10 @@ export class AxisView extends ChartElement<Axis> {
 
     prepareGuides(doc: Document, row: number, col: number, container: AxisGuideContainer, frontContainer: AxisGuideContainer): void {
         let guides = this.model.guides.filter(g => !g.front && g.canConstainedTo(row, col));
-        container.addAll(doc, guides);
+        container.addAll(doc, guides, false);
 
         guides = this.model.guides.filter(g => g.front && g.canConstainedTo(row, col));
-        frontContainer.addAll(doc, guides);
+        frontContainer.addAll(doc, guides, false);
     }
 
     showCrosshair(pos: number, text: string): void {
@@ -840,7 +840,8 @@ export class AxisView extends ChartElement<Axis> {
         const nView = views.length;
         const inc = Math.max(1, step) * Math.max(1, rows);
         const a = rotation || 0;
-        const arad = Math.abs(a) * Math.PI / 180;
+        const arad = Math.abs(a) * DEG_RAD;
+        const acute = arad < 35 * DEG_RAD;
         let overalpped = false;
 
         views.forEach(v => v.rotation = a);
@@ -858,7 +859,14 @@ export class AxisView extends ChartElement<Axis> {
                 if (a === 0 && views[i].getBBounds().width >= w) {
                     overalpped = true;
                     break;
-                } else if  (a !== 0 && (views[i].getBBounds().width + views[i].getBBounds().height) * cos(arad) >= w) {
+                } else if (acute && views[i].getBBounds().width * cos(arad) >= w) {
+                    overalpped = true;
+                    break;
+                } 
+                // 30도 이상의 둔각이면 text 높이를 기준으로 한다.
+                else if  (a !== 0 && views[i].getBBounds().height >= w) {
+                // } else if  (a !== 0 && views[i].getBBounds().width * cos(arad) >= w) {
+                // } else if  (a !== 0 && (views[i].getBBounds().width + views[i].getBBounds().height) * cos(arad) >= w) {
                     overalpped = true;
                     break;
                 }
@@ -943,6 +951,7 @@ export class AxisView extends ChartElement<Axis> {
                 });
                 // TODO: rotation이 적용됐는데도 overlapped이면 stepping을 한다.
                 if (this.$_checkOverlappedHorz(axis, views, width, step, rows, rotation)) {
+                    this.$_checkOverlappedHorz(axis, views, width, step, rows, rotation);
                     step = Math.max(2, step++);
                     views = this.$_applyStep(axis, views, step);
                     // rotation을 제거해도 문제없으면 제거한다.

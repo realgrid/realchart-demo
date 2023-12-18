@@ -388,7 +388,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
+    constructor(doc: Document, polar: boolean) {
         super(doc);
 
         this.insertFirst(this._line = new LineElement(doc, 'rct-axis-guide-line'));
@@ -481,6 +481,10 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
     }
 
     _doLayoutPolar(width: number, height: number, polar: IPolar): void {
+        const cx = width / 2;
+        const cy = height / 2;
+        const rd = Math.min(cx, cy);
+
     }
 }
 
@@ -591,7 +595,6 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
     }
 
     _doLayoutPolar(width: number, height: number, polar: IPolar): void {
-        debugger;
     }
 }
 
@@ -624,7 +627,7 @@ export class AxisGuideContainer extends LayerElement {
         assert(views.length === 0, 'GuideContainer.prepare');
     }
 
-    addAll(doc: Document, guides: AxisGuide[]): void {
+    addAll(doc: Document, guides: AxisGuide[], polar: boolean): void {
         guides.forEach(g => {
             if (g instanceof AxisRangeGuide) {
                 let v = this._rangePool.pop() || new AxisGuideRangeView(doc);
@@ -633,7 +636,7 @@ export class AxisGuideContainer extends LayerElement {
                 v.prepare(doc, g)
                 this._views.push(v);
             } else if (g instanceof AxisLineGuide) {
-                let v = this._linePool.pop() || new AxisGuideLineView(doc);
+                let v = this._linePool.pop() || new AxisGuideLineView(doc, polar);
 
                 this.add(v);
                 v.prepare(doc, g)

@@ -1,7 +1,8 @@
 /**
  * @demo
  *
- */const config = {
+ */
+const config = {
     options: {},
     title: '경기도 성남시 인구 현황',
     legend: true,
