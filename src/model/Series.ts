@@ -2265,10 +2265,9 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         let s = tooltip.tooltipHeader || '';
 
         if (tooltip.tooltipRow) {
-            let i = 0;
-            series.forEach(ser => {
+            series.forEach((ser, i) => {
                 if (s) s = s + '<br>';
-                s += tooltip.tooltipRow.replace('series', 'series.' + i++);
+                s += tooltip.tooltipRow.replace('series', 'series.' + i).replace(/\$\{/g, '${' + i + '.');
             })
         }
         s += tooltip.tooltipFooter ? '<br>' + tooltip.tooltipFooter : '';
@@ -2276,6 +2275,15 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     static inflateTooltipParam(series: ISeries[], ser: ISeries, point: DataPoint, param: string): string {
+        let i = param.indexOf('.');
+        let p = +param.substring(0, i);
+        
+        if (!isNaN(p)) {
+            ser = series[p];
+            point = (ser as Series)._visPoints[point.vindex];    
+            param = param.substring(i + 1);
+        }
+
         if (param.startsWith('series.')) {
             ser = series[+param.substring(7)] || ser;
             param = 'series';
@@ -2493,6 +2501,10 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
 
     canMaxPadding(axis: IAxis): boolean {
         return this.layout !== SeriesGroupLayout.FILL;
+    }
+
+    getVisPoints(p: DataPoint): DataPoint[] {
+        return this._visibles.map(ser => ser._visPoints[p.vindex]);
     }
 
     //-------------------------------------------------------------------------
