@@ -154,10 +154,6 @@ export class BubbleSeries extends MarkerSeries {
         return 'bubble';
     }
 
-    ignoreAxisBase(axis: IAxis): boolean {
-        return true;
-    }
-
     protected _createPoint(source: any): DataPoint {
         return new BubbleSeriesPoint(source);
     }

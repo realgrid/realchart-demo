@@ -183,10 +183,10 @@ export interface IPlottingItem {
     defaultYAxisType(): string;
     clusterable(): boolean;
     getBaseValue(axis: IAxis): number;
-    // axis에 설정된 baseValue를 무시하라!
-    canMinPadding(axis: IAxis): boolean; 
-    canMaxPadding(axis: IAxis): boolean; 
-    ignoreAxisBase(axis: IAxis): boolean;
+    // true면 baseValue로 지정된 값을 continuous axis의 최소/최대값으로 사용할 수 있다.
+    isBased(axis: IAxis): boolean;
+    canMinPadding(axis: IAxis, min: number): boolean; 
+    canMaxPadding(axis: IAxis, max: number): boolean; 
     collectCategories(axis: IAxis): string[];
     prepareRender(): void;
     prepareAfter(): void;
@@ -1099,27 +1099,30 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return this.label || this.name;
     }
 
-    ignoreAxisBase(axis: IAxis): boolean {
-        return false;
-    }
-
     canMixWith(other: IPlottingItem): boolean {
         return true;
     }
 
     /**
-     * BarSeries 계열처럼 base를 기준으로 표시하는 방향이 달라지는 경우 기준 값.
+     * bar series 계열이나 area series처럼 지정한 값을 기준으로 표시하는 방향이나 스타일이 달라지는 경우 기준 값.
      */
     getBaseValue(axis: IAxis): number {
         return NaN;
     }
 
-    canMinPadding(axis: IAxis): boolean {
-        return true;
+    // true면 baseValue로 지정된 값을 최소/최대값으로 사용할 수 있다.
+    isBased(axis: IAxis): boolean {
+        return false;
     }
 
-    canMaxPadding(axis: IAxis): boolean {
-        return true;
+    canMinPadding(axis: IAxis, min: number): boolean {
+        const base = this.getBaseValue(axis);
+        return isNaN(base) || !this.isBased(axis) || min < base;
+    }
+
+    canMaxPadding(axis: IAxis, max: number): boolean {
+        const base = this.getBaseValue(axis);
+        return isNaN(base) || !this.isBased(axis) || max > base;
     }
 
     hasMarker(): boolean {
@@ -2117,8 +2120,8 @@ export abstract class ClusterableSeries extends Series implements IClusterable {
 }
 
 /**
- * 'bar'와 같이 바닥이 필요한 시리즈.\
- * 바닥 값은 {@link baseValue}로 지정한다.
+ * 'bar'와 같이 y축 기준 위/아래 구분이 필요한 시리즈.\
+ * 구분하는 값은 {@link baseValue}로 지정한다.
  */
 export abstract class BasedSeries extends ClusterableSeries {
 
@@ -2168,6 +2171,10 @@ export abstract class BasedSeries extends ClusterableSeries {
     //-------------------------------------------------------------------------
     protected _getGroupBase(): number {
         return this.baseValue;
+    }
+
+    isBased(axis: IAxis): boolean {
+        return axis === this._yAxisObj;
     }
 }
 
@@ -2396,7 +2403,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     getBaseValue(axis: IAxis): number {
-        return NaN;//axis.getBaseValue();
+        return NaN;
     }
 
     getVisibleSeries(): ISeries[] {
@@ -2475,24 +2482,24 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         return cats;
     }
 
-    ignoreAxisBase(axis: IAxis): boolean {
-        for (const ser of this._visibles) {
-            if (ser.ignoreAxisBase(axis)) return true;
-        }
-    }
-
     getLegendSources(list: ILegendSource[]) {
         if (this.visibleInLegend !== false) {
             this._series.forEach(ser => ser.getLegendSources(list));
         }
     }
 
-    canMinPadding(axis: IAxis): boolean {
-        return true;
+    isBased(axis: IAxis): boolean {
+        return this._visibles[0] && this._visibles[0].isBased(axis);
     }
 
-    canMaxPadding(axis: IAxis): boolean {
-        return this.layout !== SeriesGroupLayout.FILL;
+    canMinPadding(axis: IAxis, min: number): boolean {
+        const base = this.getBaseValue(axis);
+        return isNaN(base) || !this.isBased(axis) || min < base;
+    }
+
+    canMaxPadding(axis: IAxis, max: number): boolean {
+        const base = this.getBaseValue(axis);
+        return (isNaN(base) || max > base || !this.isBased(axis)) && this.layout !== SeriesGroupLayout.FILL;
     }
 
     //-------------------------------------------------------------------------

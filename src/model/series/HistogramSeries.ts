@@ -112,10 +112,6 @@ export class HistogramSeries extends Series {
         return 'histogram';
     }
 
-    ignoreAxisBase(axis: IAxis): boolean {
-        return axis === this._xAxisObj;
-    }
-
     protected _createPoint(source: any): DataPoint {
         return new HistogramSeriesPoint(source);
     }
@@ -211,6 +207,10 @@ export class HistogramSeries extends Series {
 
     getBaseValue(axis: IAxis): number {
         return axis === this._yAxisObj ? this._base : NaN;
+    }
+
+    isBased(axis: IAxis): boolean {
+        return axis === this._yAxisObj;
     }
 
     protected _createLegendMarker(doc: Document, size: number): RcElement {

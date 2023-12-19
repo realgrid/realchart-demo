@@ -15,6 +15,7 @@ let config = {
       '백두산', '낙동강'
     ],
   },{
+    row: 1,
     linear: {
       visible: true
     }

@@ -101,8 +101,10 @@ const config = {
     ],
     "yAxis": [
       {
-        strictMin: 0,
-        maxValue: 35,
+        // strictMin: 0,
+        // maxValue: 35,
+        // startFit: 'value',
+        // "minPadding": 0,
         "visible": true,
         "type": "linear",
         "title": {
@@ -170,7 +172,7 @@ const config = {
           0,
           0
         ],
-        "baseValue": 0,
+        // "baseValue": 0,
         "nullAsBase": false,
         "belowStyle": {},
         "pointLabel": {
@@ -218,7 +220,7 @@ const config = {
           0,
           0
         ],
-        "baseValue": 0,
+        // "baseValue": 0,
         "nullAsBase": false,
         "belowStyle": {},
         "pointLabel": {
@@ -266,7 +268,7 @@ const config = {
           0,
           0
         ],
-        "baseValue": 0,
+        // "baseValue": 0,
         "nullAsBase": false,
         "belowStyle": {},
         "pointLabel": {

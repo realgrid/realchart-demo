@@ -122,10 +122,6 @@ export class VectorSeries extends Series {
         return 'vector';
     }
 
-    ignoreAxisBase(axis: IAxis): boolean {
-        return true;
-    }
-
     protected _createPoint(source: any): DataPoint {
         return new VectorSeriesPoint(source);
     }

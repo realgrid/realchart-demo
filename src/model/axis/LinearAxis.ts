@@ -140,7 +140,7 @@ export class ContinuousAxisTick extends AxisTick {
         const scale = Math.pow(10, Math.floor(Math.log10(step)));
         const steps: number[] = [];
 
-        if (!isNaN(axis.strictMin) && !isNaN(axis.strictMax)) {
+        if (!isNaN(axis._fixedMin) && !isNaN(axis._fixedMax)) {
             step = len / (count - 1);
         } else if (based && step / scale === 2.5 && floor(count * len / step) == count * len / step) {
             // if (based && step > 10 && step / scale === 2.5 && Math.floor(count * len / step) == count * len / step) {
@@ -149,8 +149,8 @@ export class ContinuousAxisTick extends AxisTick {
             step = this._step = ceil(step / scale) * scale;
         }
 
-        if (!isNaN(axis.strictMin)) {
-            min = axis.strictMin;
+        if (!isNaN(axis._fixedMin)) {
+            min = axis._fixedMax;
         } else if (!isNaN(baseVal)) { // min이 base 아래, max가 base 위에 있다.
             assert(min < baseVal && max > baseVal, "base error");
             count = Math.max(3, count);
@@ -379,6 +379,8 @@ export abstract class ContinuousAxis extends Axis {
     private _unitLen: number;
     _calcedMin: number;
     _calcedMax: number;
+    _fixedMin: number;
+    _fixedMax: number;
 
     private _runBreaks: AxisBreak[];
     private _sects: IAxisBreakSect[];
@@ -419,11 +421,12 @@ export abstract class ContinuousAxis extends Axis {
      */
     nullable = true;
     /**
+     * 시리즈에 baseValue가 지정되지 않은 경우 대신 사용되는 기본값.\
+     * // TODO: 또, 축 선을 표시하는 기준점(inner일 때)이 된다.
      * 
      * @config
      */
     baseValue: number;
-
     /**
      * {@link minPadding}, {@link maxPadding}이 설정되지 않았을 때 적용되는 기본값이다.
      * 
@@ -434,7 +437,7 @@ export abstract class ContinuousAxis extends Axis {
      * 첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
      * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.
      * {@link startFit}이 {@link AxitFit.TICK}일 때,
-     * data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
+     * data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 이 속성은 무시된다.
      * {@link strictMin}가 지정되거나, {@link minValue}가 계산된 최소값보다 작은 경우에도 이 속성은 무시된다.
      * 
      * @config
@@ -444,7 +447,7 @@ export abstract class ContinuousAxis extends Axis {
      * 마지막 tick 뒤쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
      * 이 값을 지정하지 않으면 {@link padding}에 지정된 값을 따른다.
      * {@link endFit}이 {@link AxitFit.TICK}일 때,
-     * data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다.
+     * data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 이 속성은 무시된다.
      * {@link strictMax}가 지정되거나, {@link maxValue}가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다.
      * 
      * @config
@@ -560,8 +563,9 @@ export abstract class ContinuousAxis extends Axis {
         let { min, max } = this._adjustMinMax(this._calcedMin = calcedMin, this._calcedMax = calcedMax);
         let baseVal = this._baseVal;
 
+        // baseValue가 지정되지 않고 0 위아래로 분포하면 0을 기준으로 한다.
         if (isNaN(baseVal) && min < 0 && max > 0) {
-            baseVal = 0;    // ?
+            baseVal = 0;
         } 
 
         if (based && tick.baseRange) {
@@ -576,7 +580,7 @@ export abstract class ContinuousAxis extends Axis {
             steps = tick._normalizeSteps(steps, min, max);
         }
 
-        if (!isNaN(this.strictMin) || !tick._strictEnds && this.getStartFit() === AxisFit.VALUE) {
+        if (!isNaN(this._fixedMin) || !tick._strictEnds && this.getStartFit() !== AxisFit.TICK) {
             while (steps.length > 1 && min > steps[0]) {
                 steps.shift();
             }
@@ -593,7 +597,7 @@ export abstract class ContinuousAxis extends Axis {
             }
             min = steps[0];
         }
-        if (!isNaN(this.strictMax) || !tick._strictEnds && this.getEndFit() === AxisFit.VALUE) {
+        if (!isNaN(this.strictMax) || !tick._strictEnds && this.getEndFit() !== AxisFit.TICK) {
             while (max < steps[steps.length - 1] && steps.length > 1) {
                 steps.pop();
             }
@@ -766,58 +770,88 @@ export abstract class ContinuousAxis extends Axis {
     // internal members
     //-------------------------------------------------------------------------
     protected _adjustMinMax(min: number, max: number): { min: number, max: number } {
-        let minFixed = this.isZoomed();
-        let maxFixed = this.isZoomed();
+        let minPadFixed = this.isZoomed();
+        let maxPadFixed = this.isZoomed();
+        let minFixed = true;
+        let maxFixed = true;
+        let minBase = NaN;
+        let maxBase = NaN;
 
         this._series.forEach(ser => {
             const base = ser.getBaseValue(this);
             
             if (!isNaN(base)) {
                 if (isNaN(this.minValue) && base <= min) {
-                    min = base;
-                    minFixed = true;
+                    if (ser.isBased(this)) {
+                        min = base;
+                    }
+                    // 최소값으로 지정하지 않더라도 base를 넘기지는 않게 한다.
+                    else {
+                        minBase = pickNum(Math.min(minBase, base), base);
+                    }
                 } else if (isNaN(this.maxValue) && base >= max) {
-                    max = base;
-                    maxFixed = true;
+                    if (ser.isBased(this)) {
+                        max = base;
+                    }
+                    // 최대값으로 지정하지 않더라도 base를 넘기지는 않게 한다.
+                    else {
+                        maxBase = pickNum(Math.max(maxBase, base), base);
+                    }
                 }
             }
-            if (!minFixed && !ser.canMinPadding(this)) {
-                minFixed = true;
+            if (!minPadFixed && minFixed && ser.canMinPadding(this, min)) {
+                minFixed = false;
             }
-            if (!maxFixed && !ser.canMaxPadding(this)) {
-                maxFixed = true;
+            if (!maxPadFixed && maxFixed && ser.canMaxPadding(this, max)) {
+                maxFixed = false;
             }
         })
+
+        minPadFixed ||= minFixed;
+        maxPadFixed ||= maxFixed;
+
+        this._fixedMin = this._fixedMax = NaN;
 
         let minPad = 0;
         let maxPad = 0;
 
         if (!isNaN(this.strictMin)) {
-            min = this.strictMin;
+            this._fixedMin = min = this.strictMin;
         } else {
             if (this.minValue < min) {
                 min = this.minValue;
-            } else if (!minFixed) {
+            } else if (minPadFixed) {
+                this._fixedMin = min;
+            } else {
                 minPad = pickNum3(this.minPadding, this.padding, 0);
             }
         }
 
         if (!isNaN(this.strictMax)) {
-            max = this.strictMax;
+            this._fixedMax = max = this.strictMax;
         } else {
             if (this.maxValue > max) {
                 max = this.maxValue;
-            } else if (!maxFixed) {
+            } else if (maxPadFixed) {
+                this._fixedMax = max;
+            } else {
                 maxPad = pickNum3(this.maxPadding, this.padding, 0);
             }
         }
 
         let len = Math.max(0, max - min);
+        let min2 = min - len * (this._minPad = minPad);
+        let max2 = max + len * (this._maxPad = maxPad);
 
-        min -= len * (this._minPad = minPad);
-        max += len * (this._maxPad = maxPad);
+        // line 시리즈처럼 isBased()는 아니지만 baseValue가 지정된 경우 baseValue를 건너가지 않도록 한다.
+        if (!isNaN(minBase) && minBase <= min && min2 < minBase) {
+            min2 = this._fixedMin = minBase;
+        }
+        if (!isNaN(maxBase) && maxBase >= max && max2 > maxBase) {
+            max2 = this._fixedMax = maxBase;
+        }
 
-        return { min, max };
+        return { min: min2, max: max2 };
     }
 
     protected $_calcUnitLength(length: number): number {

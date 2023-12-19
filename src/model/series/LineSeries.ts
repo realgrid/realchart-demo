@@ -233,6 +233,8 @@ export class LineSeries extends LineSeriesBase {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    private _base: number;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -248,18 +250,18 @@ export class LineSeries extends LineSeriesBase {
      */
     stepDir = LineStepDirection.FORWARD;
     /**
+     * y축 기준 위/아래 구분의 기준이 되는 값.
+     * 
+     * @config
+     */
+    baseValue = 0;
+    /**
      * true로 지정하면 y값이 지정되지 않은 null 포인터를 무시하고 다음 포인트에 연결한다.
      * false면 null 포인트에서 연결이 끊어진다.
      * 
      * @config
      */
     connectNullPoints = false; // TODO: 더 좋은 이름을 찾을 것! (HI: connectNulls, ignoreNulls, passthrouchNulls,...)
-    /**
-     * 위/아래 구분의 기준이 되는 값.
-     * 
-     * @config
-     */
-    baseValue = 0;
     /**
      * {@link baseValue} 혹은 y축의 baseValue보다 작은 쪽의 선들에 적용되는 스타일.
      * 
@@ -288,6 +290,16 @@ export class LineSeries extends LineSeriesBase {
     getLineType(): LineType {
         return (this.group instanceof LineSeriesGroup || this.group instanceof AreaSeriesGroup) ? this.group.lineType : this.lineType;
     }
+
+    getBaseValue(axis: IAxis): number {
+        return axis._isX ? NaN : this._base;
+    }
+
+    protected _doPrepareRender(): void {
+        super._doPrepareRender();
+
+        this._base = pickNum(this.baseValue, this._yAxisObj.getBaseValue());
+    }
 }
 
 export class AreaSeriesPoint extends LineSeriesPoint {
@@ -312,7 +324,6 @@ export class AreaSeries extends LineSeries {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _base: number;
     _areas: PointLine[];
     
     //-------------------------------------------------------------------------
@@ -321,7 +332,7 @@ export class AreaSeries extends LineSeries {
     constructor(chart: IChart) {
         super(chart);
 
-        this.marker.visible = chart.isPolar();
+        this.marker.visible = chart && chart.isPolar();
     }
 
     //-------------------------------------------------------------------------
@@ -392,10 +403,6 @@ export class AreaSeries extends LineSeries {
         return 'area';
     }
 
-    getBaseValue(axis: IAxis): number {
-        return axis._isX ? NaN : this._base;
-    }
-
     protected _createLegendMarker(doc: Document, size: number): RcElement {
         return new AreaLegendMarkerView(doc, size);
     }
@@ -424,12 +431,6 @@ export class AreaSeries extends LineSeries {
             return lines;
         }
         return super._doPrepareLines(pts);
-    }
-
-    protected _doPrepareRender(): void {
-        super._doPrepareRender();
-
-        this._base = pickNum(this.baseValue, this._yAxisObj.getBaseValue());
     }
 }
 

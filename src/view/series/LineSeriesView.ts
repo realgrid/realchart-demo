@@ -148,7 +148,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const control = this.control;
         let lowLine = this._lowLine;
 
-        this._needBelow = series.belowStyle && series._minY < series.baseValue; // series.getBaseValue(yAxis)
+        this._needBelow = series.belowStyle && series._minY < series.getBaseValue(series._yAxisObj);
 
         if (this._needBelow) {
             if (!lowLine) {
@@ -238,7 +238,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     private $_prepareMarkers(series: T, points: LineSeriesPoint[]): void {
         const needBelow = series instanceof LineSeries && this._needBelow;
-        const base = needBelow ? series.baseValue : NaN;
+        const base = needBelow ? series.getBaseValue(series._yAxisObj) : NaN;
         const marker = series.marker;
         const sts = [marker.style, null];
 
@@ -396,7 +396,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         if (needBelow) {
             const lowLine = this._lowLine;
             const axis = series._yAxisObj as ContinuousAxis;
-            const base = series.baseValue;// series.getBaseValue(axis);
+            const base = series.getBaseValue(axis);
             
             if (inverted) {
                 this.$_resetClips(w, h, axis.getPosition(w, base), true);

@@ -426,7 +426,7 @@ const config = {
     groupSum,
   },
   options: {
-    animatable: false,
+    // animatable: false,
   },
   title: "Treemap",
   xAxis: {},
