@@ -48,6 +48,19 @@ const hitsData = [
 
 const config = {
     height: 600,
+    actions: [
+        {
+            label: 'yAxis.type',
+            type: 'select',
+            data: ['linear', 'log'],
+            value: 'log',
+            action: ({value}) => {
+                config.yAxis.type = value;
+                config.yAxis.template = `${value}Axis`;
+                chart.load(config);
+            }
+        }
+    ],
     polar: true,
     templates: {
         series: {
@@ -56,6 +69,40 @@ const config = {
             xField: 'angle',
             yField: 'hits',
             tooltipText: '${x}°: ${y}hits',
+        },
+        logAxis: {
+            label: {
+                visible: true,
+                effect: 'outline',
+                outlineThickness: 5,
+                style: {
+                    fill: '#555',
+                },
+                firstText: '',
+            },
+            title: 'hits',
+            tick: { 
+                visible: false,
+                // stepInterval: 0.5,
+                // stepCount: 5,
+                steps: [0, Math.log10(5), Math.log10(10), Math.log10(20), Math.log10(30)]
+            },
+        },
+        linearAxis: {
+            label: {
+                visible: true,
+                effect: 'outline',
+                outlineThickness: 5,
+                style: {
+                    fill: '#555',
+                },
+                firstText: '',
+            },
+            tick: { 
+                visible: false,
+                // steps: [0, Math.log10(5), Math.log10(10), Math.log10(20), Math.log10(30)]
+            },
+
         }
     },
     options: {
@@ -120,27 +167,10 @@ const config = {
         }
     },
     yAxis: {
+        template: 'logAxis',
         type: 'log',
-        label: {
-            visible: true,
-            effect: 'outline',
-            outlineThickness: 5,
-            style: {
-                fill: '#555',
-            },
-            firstText: '',
-        },
-        title: 'hits',
-        grid: {
-            visible: true,
-            // startVisible: false,
-        },
-        tick: { 
-            visible: !true,
-            // stepInterval: 0.5,
-            // stepCount: 5,
-            steps: [0, Math.log10(5), Math.log10(10), Math.log10(20), Math.log10(30)]
-        },
+        // template: 'linearAxis',
+        // type: 'linear',
     },
     body: {
         annotations: [

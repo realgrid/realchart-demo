@@ -119,7 +119,6 @@ export function RealChartReact({
 
   const handleDidMount = (editor, monaco) => {
     // monaco.model.updateOptions({ tabSize: 2})
-    console.log({ monaco });
     editorRef.current = editor;
   };
 
@@ -184,6 +183,10 @@ export function RealChartReact({
       : _width
     : "100%";
 
+  const hasPieOrGauge = config['type'] == 'pie' || config['series']?.type == 'pie' 
+    || (config['series'] && config['series'] instanceof Array && config['series']?.some(m => m.type == 'pie'))
+    || config['gauge'];
+
   const sliders = code["actions"]?.filter(m => m.type == 'slider');
   const inputs = code["actions"]?.filter(m => m.type != 'slider');
   return (
@@ -228,7 +231,7 @@ export function RealChartReact({
         );
       })}
 
-      <Grid hidden={!inputs?.length} className={classes.menu} style={{paddingBottom: 0}}>
+      <Grid hidden={!inputs?.length} className={classes.menu} style={hasPieOrGauge ? {} : {paddingBottom: 0}}>
       {inputs?.map((action, idx) => {
         const { label, value, data } = action;
         switch (action.type) {
@@ -252,7 +255,7 @@ export function RealChartReact({
         }
       })}
       </Grid>
-      <Grid className={classes.menu}>
+      <Grid hidden={hasPieOrGauge} className={classes.menu}>
         <Checkbox
           label="Inverted"
           checked={invertedChecked}

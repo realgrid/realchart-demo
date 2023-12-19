@@ -7,7 +7,7 @@ export const config = {
       label: { width: '19%' },
       targetBar: { style: { fill: '#222' } },
       actualBar: {
-        styleCallback: (args) => { if (args.value > args.gauge.$_p.targetValue) { return { fill: "#0047AB", }; } else { return { fill: "#ED254E", }; } }
+        styleCallback: ({gauge, value}) => { if (value > gauge.get("targetValue")) { return { fill: "#0047AB", }; } else { return { fill: "#ED254E", }; } }
       }
     }
   },

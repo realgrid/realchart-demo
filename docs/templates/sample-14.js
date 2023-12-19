@@ -13638,6 +13638,7 @@ export const config = {
   yAxis: {
     title: { text: 'Life Expectancy', style: { fontWeight: 'bold' } },
     strictMin: 20,
+    strictMax: 90,
     tick: { stepInterval: 10 },
     grid: { visible: true, startVisible: false, endVisible: false }
   },

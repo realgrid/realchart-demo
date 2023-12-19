@@ -83,7 +83,7 @@ const config = {
             }
         },
         strictMin: 20,
-        // strictMax: 120,
+        strictMax: 90,
         tick: {
             stepInterval: 10,
         },

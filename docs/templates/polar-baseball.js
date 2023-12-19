@@ -1,5 +1,14 @@
 export const config = {
   height: 600,
+  actions: [
+    {
+      label: 'yAxis.type',
+      type: 'select',
+      data: [ 'linear', 'log' ],
+      value: 'log',
+      action: ({value}) => { config.yAxis.type = value; config.yAxis.template = `${value}Axis`; chart.load(config); }
+    }
+  ],
   polar: true,
   templates: {
     series: {
@@ -8,6 +17,36 @@ export const config = {
       xField: 'angle',
       yField: 'hits',
       tooltipText: '${x}°: ${y}hits'
+    },
+    logAxis: {
+      label: {
+        visible: true,
+        effect: 'outline',
+        outlineThickness: 5,
+        style: { fill: '#555' },
+        firstText: ''
+      },
+      title: 'hits',
+      tick: {
+        visible: false,
+        steps: [
+          0,
+          0.6989700043360189,
+          1,
+          1.3010299956639813,
+          1.4771212547196624
+        ]
+      }
+    },
+    linearAxis: {
+      label: {
+        visible: true,
+        effect: 'outline',
+        outlineThickness: 5,
+        style: { fill: '#555' },
+        firstText: ''
+      },
+      tick: { visible: false }
     }
   },
   options: { style: { paddingLeft: '100px' }, credits: false },
@@ -36,28 +75,7 @@ export const config = {
     line: { visible: true, style: { stroke: '#999' } },
     sectorLine: { style: { stroke: '#999' } }
   },
-  yAxis: {
-    type: 'log',
-    label: {
-      visible: true,
-      effect: 'outline',
-      outlineThickness: 5,
-      style: { fill: '#555' },
-      firstText: ''
-    },
-    title: 'hits',
-    grid: { visible: true },
-    tick: {
-      visible: false,
-      steps: [
-        0,
-        0.6989700043360189,
-        1,
-        1.3010299956639813,
-        1.4771212547196624
-      ]
-    }
-  },
+  yAxis: { template: 'logAxis', type: 'log' },
   body: {
     annotations: [
       {

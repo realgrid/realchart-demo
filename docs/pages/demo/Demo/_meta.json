@@ -54,19 +54,19 @@
 		}
 	},
 	"gauge-group": {
-		"title": "Gauge",
-		"theme": {
-			"toc": false
-		}
-	},
-	"sample-35": {
 		"title": "Gauge Group",
 		"theme": {
 			"toc": false
 		}
 	},
-	"sample-34": {
-		"title": "Bullet Gauge",
+	"sample-35": {
+		"title": "Multiple Gauges",
+		"theme": {
+			"toc": false
+		}
+	},
+	"bullet-gauges": {
+		"title": "Bullet Gauges",
 		"theme": {
 			"toc": false
 		}
