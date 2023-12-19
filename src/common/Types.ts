@@ -376,12 +376,12 @@ export const buildValueRanges = function (source: IValueRange[] | IValueRanges, 
     let ranges: IValueRange[];
     let prev: IValueRange;
 
-    if (isArray(source)) {
-        if (inclusive) {
-            min = Number.MIN_VALUE;
-            max = Number.MAX_VALUE;
-        }
+    if (inclusive) {
+        min = -Number.MAX_VALUE;
+        max = Number.MAX_VALUE;
+    }
 
+    if (isArray(source)) {
         ranges = [];
         source.forEach(src => {
             if (isObject(src) && isString(src.color)) {

@@ -16,7 +16,7 @@
     "libdebug": "rm -rf dist/.npmdebug/dist && tsc -p tsconfig.lib.json && rollup --config rollup.config.js --environment BUILD:libdebug && node version-check.js",
     "libdebug:report": "rm -rf dist/.githubnpmdebug/dist && tsc && rollup --config rollup.config.js --environment BUILD:reportdebug && node version-check.js",
     "bundle:e2e": "tsc && rollup --config rollup.config.js --environment BUILD:e2e",
-    "dbundle": "tsc && rollup --config rollup.config.js --environment BUILD:debug",
+    "dbundle": "echo 'tsc' $(tsc -v) && tsc && rollup --v && rollup --config rollup.config.js --environment BUILD:debug",
     "dbundle2": "tsc && rollup --config rollup.config.js --environment BUILD:debug && yarn test",
     "dbw": "rollup --config rollup.config.js --environment BUILD:debugw --watch",
     "pbundle": "tsc && rollup --config rollup.config.js --environment BUILD:prod",

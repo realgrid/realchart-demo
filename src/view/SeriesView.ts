@@ -453,7 +453,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     protected _prepareViewRanges(model: T): void {
-        model.prepareViewRanges();
+        // model.prepareViewRanges();
     }
 
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
@@ -648,6 +648,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         labelView.layout(labelView.textAlign()).translate(x, y);
     }
 
+    // viewRangeValue가 'x', 'y'인 경우에만 호출된다.
     protected _clipRange(w: number, h: number, rangeAxis: 'x' | 'y' | 'z', range: IValueRange, clip: ClipRectElement, inverted: boolean): void {
         if (inverted) {
             const t = w;
@@ -658,8 +659,8 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         const isX = rangeAxis === 'x';
         const axis = isX ? this.model._xAxisObj : this.model._yAxisObj;
         const reversed = axis.reversed;
-        const p1 = axis.getPosition(isX ? w : h, range.fromValue);
-        const p2 = axis.getPosition(isX ? w : h, range.toValue);
+        const p1 = axis.getPosition(isX ? w : h, Math.max(axis.axisMin(), range.fromValue));
+        const p2 = axis.getPosition(isX ? w : h, Math.min(axis.axisMax(), range.toValue));
 
         if (inverted) {
             if (isX) {
