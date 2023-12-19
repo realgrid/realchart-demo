@@ -174,6 +174,7 @@ function setActions(container) {
 		},
 		false
 	);
+	
 	createCodePenButton();
 }
 

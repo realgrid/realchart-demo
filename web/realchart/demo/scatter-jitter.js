@@ -92,6 +92,7 @@ function setActions(container) {
         config.series.forEach(ser => ser.jitterY = +_getValue(e));
         chart.load(config);
     }, '0');
+	
 }
 
 function init() {

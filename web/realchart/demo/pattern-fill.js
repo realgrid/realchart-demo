@@ -244,6 +244,7 @@ function setActions(container) {
 		},
 		'black'
 	);
+	
 	createCodePenButton();
 }
 

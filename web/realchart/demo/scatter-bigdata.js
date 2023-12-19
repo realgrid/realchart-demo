@@ -82,6 +82,7 @@ function setActions(container) {
         config.series[0].shape = _getValue(e);
         chart.load(config);
     }, 'circle');
+	
 }
 
 function init() {

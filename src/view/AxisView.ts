@@ -229,6 +229,7 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
     //-------------------------------------------------------------------------
     // consts
     //-------------------------------------------------------------------------
+    static readonly CLASS_NAME = 'rct-axis-scrollbar';
     static readonly TRACK_CLASS = 'rct-axis-scrollbar-track';
     static readonly THUMB_CLASS = 'rct-axis-scrollbar-thumb';
 

@@ -15,6 +15,7 @@ import { Gauge } from "../model/Gauge";
 import { Legend } from "../model/Legend";
 import { Series } from "../model/Series";
 import { Subtitle, Title } from "../model/Title";
+import { ImageExportOptions, ImageExporter } from "../export/ImageExporter";
 import { RcAnnotation, RcAreaRangeSeries, RcAreaSeries, RcBarRangeSeries, RcBarSeries, RcBellCurveSeries, RcBody, RcBoxPlotSeries, RcBubbleSeries, RcBulletGauge, RcCandlestickSeries, RcCategoryAxis, RcChartAxis, RcChartGauge, RcChartObject, RcChartSeries, RcCircleGauge, RcClockGauge, RcDumbbellSeries, RcEqualizerSeries, RcErrorBarSeries, RcFunnelSeries, RcGaugeGroup, RcHeatmapSeries, RcHistogramSeries, RcImageAnnotation, RcLegend, RcLineSeries, RcLinearAxis, RcLinearGauge, RcLogAxis, RcLollipopSeries, RcOhlcSeries, RcParetoSeries, RcPieSeries, RcScatterSeries, RcShapeAnnotation, RcSubtitle, RcTextAnnotation, RcTimeAxis, RcTitle, RcTreemapSeries, RcVectorSeries, RcWaterfallSeries } from "./RcChartModels";
 
 const axis_types = {
@@ -292,6 +293,10 @@ export class RcChartControl {
         this.$_p.scroll(axis.$_p as any, pos);
     }
 
+    exportImage(options?: ImageExportOptions) {
+        new ImageExporter().export(this.$_p.dom(), options)
+    }
+  
     setParam(param: string, value: any, redraw?: boolean): void {
         this.$_p.model?.setParam(param, value, redraw);
     }

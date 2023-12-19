@@ -82,7 +82,7 @@ function setActions(container) {
         RealChart.setDebugging(_getChecked(e));
         config.inverted = _getChecked(e);
         chart.load(config);
-    }, false);
+    }, false);   
 }
 
 function init() {

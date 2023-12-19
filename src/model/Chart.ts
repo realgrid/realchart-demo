@@ -70,6 +70,7 @@ export interface IChart {
     _xPaneAxes: PaneXAxisMatrix;
     _yPaneAxes: PaneYAxisMatrix;
     options: ChartOptions;
+    export: ExportOptions;
     first: IPlottingItem;
     firstSeries: Series;
     xAxis: IAxis;
@@ -315,6 +316,55 @@ export class ChartOptions extends ChartItem {
     //-------------------------------------------------------------------------
 }
 
+export enum ExportType {
+    /** @config */
+    PNG = 'png',
+    /** @config */
+    JPEG = 'jpeg',
+}
+
+export class ExportOptions extends ChartItem {
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * 내보내기 메뉴에 포함할 export type
+     */
+    menus = [ExportType.PNG, ExportType.JPEG];
+    /**
+     * 내보내기시 저장되는 파일명
+     */
+    fileName = 'realchart';
+    /**
+     * 너비, 지정한 너비에 맞춰 높이가 결정됩니다.
+     */
+    width: number;
+    /**
+     * 이미지의 scale
+     */
+    scale = 1;
+    /**
+     * 내보내기 실패시 api요청을 보낼 경로
+     */
+    url: string;
+    /**
+     * true로 지정하면 내보내기 결과에 {@link AxisScrollBar}가 포함되지 않는다.
+     */
+    hideScrollbar = false;
+    /**
+     * true로 지정하면 내보내기 결과에 {@link SeriesNavigator}가 포함되지 않는다.
+     */
+    hideNavigator = false;
+    /**
+     * true로 지정하면 내보내기 결과에 {@link ZoomButton}가 포함되지 않는다.
+     */
+    hideZoomButton = false;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+}
+
 export interface IChartEventListener {
     onModelChanged?(chart: Chart, item: ChartItem, tag?: any): void;
     onVisibleChanged?(chart: Chart, item: ChartItem): void;
@@ -353,12 +403,14 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _body: Body;
     private _annotations: AnnotationCollection;
     private _navigator: SeriesNavigator;
+    private _export: ExportOptions;
     private _params = {};
 
     private _inverted: boolean;
     private _splitted: boolean;
     private _polar: boolean;
     private _gaugeOnly: boolean;
+    private _config: {[key: string]: any};
     colors: string[];
     assignTemplates: (target: any) => any;
 
@@ -385,6 +437,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._body = new Body(this);
         this._annotations = new AnnotationCollection(this);
         this._navigator = new SeriesNavigator(this);
+        this._export = new ExportOptions(this, false);
 
         source && this.load(source);
     }
@@ -515,6 +568,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         return this._options;
     }
 
+    get export(): ExportOptions {
+        return this._export;
+    }
+
     get title(): Title {
         return this._title;
     }
@@ -569,6 +626,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     get seriesNavigator(): SeriesNavigator {
         return this._navigator;
+    }
+
+    get config(): {[key: string]: any}{
+        return this._config;
     }
 
     /**
@@ -752,6 +813,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         const sTime = 'load chart ' + Math.random() * 1000000;
         Utils.LOGGING && console.time(sTime);
 
+        this._config = source;
         // defaults
         this.$_loadTemplates(source.templates);
 
@@ -773,6 +835,9 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
         // options
         this._options.load(source.options);
+
+        // options
+        this._export.load(source.export);
 
         // titles
         this._title.load(source.title);
