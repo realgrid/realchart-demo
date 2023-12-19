@@ -1,7 +1,7 @@
 const config = {
     options: {
         credits: {
-            text: 'Source: Korea Cloud Opportunity Forecost by Industry, 2021-2025',
+            text: 'Source: Korea Cloud Opportunity Forecast by Industry, 2021-2025',
             url: 'https://www.idc.com/getdoc.jsp?containerId=AP47751622',
             align: 'left',
             offsetY: -15,

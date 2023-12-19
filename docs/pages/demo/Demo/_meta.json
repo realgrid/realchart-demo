@@ -126,7 +126,7 @@
 		}
 	},
 	"sample-13": {
-		"title": "Bar Percent - CSP Market",
+		"title": "Bar Percent - Cloud Market",
 		"theme": {
 			"toc": false
 		}
@@ -151,6 +151,12 @@
 	},
 	"series-navigator": {
 		"title": "Navigator",
+		"theme": {
+			"toc": false
+		}
+	},
+	"pattern-fill": {
+		"title": "Pattern Fill",
 		"theme": {
 			"toc": false
 		}

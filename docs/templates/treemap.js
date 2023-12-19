@@ -19,7 +19,7 @@ export const config = {
     },
     groupSum: 76961
   },
-  options: { animatable: false },
+  options: {},
   title: 'Treemap',
   xAxis: {},
   yAxis: {},

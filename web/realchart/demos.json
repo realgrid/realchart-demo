@@ -21,11 +21,12 @@
         "Treemap": "treemap",
         "Bar - Air Temp.": "sample-01",
         "Bar - Charge Off": "sample-03",
-        "Bar Percent - CSP Market": "sample-13",
+        "Bar Percent - Cloud Market": "sample-13",
         "View Ranges - Bar": "viewranges-bar",
         "View Ranges - Line": "viewranges-line",
         "View Ranges - Area": "viewranges-area",
-        "Navigator": "series-navigator"
+        "Navigator": "series-navigator",
+        "Pattern Fill": "pattern-fill"
     },
     "Basic": {
         "Basic": "basic"
