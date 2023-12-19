@@ -18,7 +18,7 @@ const config = {
       },
       actualBar: {
         styleCallback: (args) => {
-          if (args.value > args.gauge.$_p.targetValue) {
+          if (args.value > args.gauge.get("targetValue")) {
             return {
               fill: "#0047AB",
             };
