@@ -184,6 +184,7 @@ const config = {
             }
         ]
     },
+    tooltip: false,
     series: {
         // layout: 'stack',
         layout: 'overlap',
@@ -197,6 +198,7 @@ const config = {
                 stroke: 'none',
                 fill: '#bbb',
             },
+            tooltipText: '${x}°: ${y}hits',
         },
         {
             template: 'series',

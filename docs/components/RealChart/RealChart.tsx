@@ -45,7 +45,12 @@ const useStyles = createStyles((theme) => ({
   menu: {
     gap: "16px",
     padding: "10px",
-    alignItems: 'center'
+    alignItems: 'center',
+    // justifyContent: 'end',
+    borderBottom: '1px solid #eee'
+  },
+  menuDiv: {
+    display: 'contents'
   },
   button: {
     // marginLeft: 'auto'
@@ -235,6 +240,8 @@ export function RealChartReact({
       {inputs?.map((action, idx) => {
         const { label, value, data } = action;
         switch (action.type) {
+          case 'check': 
+            return <Checkbox key={idx} label={label} checked={value} onChange={(event) => { action.action({value: event.currentTarget.checked})}}/>
           case 'button':
             return <Button
               compact
@@ -255,27 +262,29 @@ export function RealChartReact({
         }
       })}
       </Grid>
-      <Grid hidden={hasPieOrGauge} className={classes.menu}>
-        <Checkbox
-          label="Inverted"
-          checked={invertedChecked}
-          onChange={onChangeInverted}
-        />
-        <Checkbox
-          label="X Reversed"
-          checked={xReversedChecked}
-          onChange={onChangeXReversed}
-        />
-        <Checkbox
-          label="Y Reversed"
-          checked={yReversedChecked}
-          onChange={onChangeYReversed}
-        />
-        <Checkbox
-          label="Polar"
-          checked={polarChecked}
-          onChange={onChangePolar}
-        />
+      <Grid className={classes.menu}>
+        <div className={classes.menuDiv} hidden={hasPieOrGauge}>
+          <Checkbox
+            label="Inverted"
+            checked={invertedChecked}
+            onChange={onChangeInverted}
+          />
+          <Checkbox
+            label="X Reversed"
+            checked={xReversedChecked}
+            onChange={onChangeXReversed}
+          />
+          <Checkbox
+            label="Y Reversed"
+            checked={yReversedChecked}
+            onChange={onChangeYReversed}
+          />
+          <Checkbox
+            label="Polar"
+            checked={polarChecked}
+            onChange={onChangePolar}
+          />
+        </div>
         <Button
           compact
           hidden={!showEditor}

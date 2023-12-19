@@ -80,7 +80,16 @@ export class ImageExporter {
         canvas.width = rect.width;
         canvas.height = rect.height;
 
+        const indicator = document.createElement('div');
+        indicator.classList.add('rct-export-indicator');
+        indicator.style.position = 'absolute';
+        indicator.style.width = '40px';
+        indicator.style.height = '40px';
+        indicator.style.top = (rect.height + 40) / 2 + 'px';
+        indicator.style.left = (rect.width + 40) / 2 + 'px';
+
         const cloneDom = dom.cloneNode(true) as HTMLElement;
+        dom.appendChild(indicator);
 
         const svgToImageAndDownload = () => {
             const img = new Image();
@@ -101,6 +110,7 @@ export class ImageExporter {
                 link.href = imageDataUrl;
                 link.download = `${fileName}.${type}`;
                 link.click();
+                indicator && indicator.remove();
             };
 
             // 자식이 없는 g태그 제거
@@ -132,6 +142,7 @@ export class ImageExporter {
                 try {
                     img.src = 'data:image/svg+xml;base64,' + btoa(String.fromCharCode.apply(null, utf8Bytes));
                 } catch (error) {
+                    
                     const url = options.url || 'https://realchart-exporter.5r78gr15g8avq.ap-northeast-2.cs.amazonlightsail.com/api';
                     fetch(url, {
                         method: 'POST',
@@ -150,16 +161,15 @@ export class ImageExporter {
                     })
                     .catch(error => {
                         // 오류 처리
+                        indicator && indicator.remove();
                         console.log('error');
                         console.error('Error:', error);
                     });
                 }
             });
-        }
-
-        // control background
-        const backgroundImageUrl = window.getComputedStyle(cloneDom).getPropertyValue('background-image');
-
+        };
+        
+        const backgroundImageUrl = cloneDom.style.backgroundImage;
         if (backgroundImageUrl && backgroundImageUrl !== 'none') {
             const background = new Image();
             background.onload = function () {

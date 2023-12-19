@@ -5,12 +5,44 @@
 
 const stockData = data.sort((a, b) => a.date > b.date).filter(r => r.date >= '2021-04-01')
 const config = {
+    actions: [
+        {
+            type: 'check',
+            label: 'Use StyleCallback',
+            action: ({value}) => {
+                config.series.template = value ? 'series' : '';
+                chart.load(config);
+            }
+        }
+    ],
     title: {
         text: 'WTI (Woori Tech Inc.)',
         align: 'left',
         style: {
             fill: '#666',
             fontWeight: 700,
+        }
+    },
+    templates: {
+        series: {
+          pointStyleCallback: (args) => {
+            const {index, open, close, series} = args;
+            if (!index) {
+                return { fill: 'none', stroke: "#000" };
+            } else if (index && close > series.get('data')[index-1].closeprc) {
+                if (close > open) {
+                    return { fill: "var(--color-5)", stroke: "#000" };
+                } else {
+                    return { fill: "var(--color-3)", stroke: "#000" };
+                }
+            } else {
+                if (close > open) {
+                    return { fill: "var(--color-7)", stroke: "#000" };
+                } else {
+                    return { fill: "var(--color-1)", stroke: "#000" };
+                }
+            }
+          },
         }
     },
     options: {
@@ -69,23 +101,7 @@ const config = {
     },
     series: {
         // pointStyleCallback: args => {return { fill: 'red', stroke: 'red'}},
-        // pointStyleCallback: ({index, open, close}) => {
-        //     if (!index) {
-        //         return { fill: 'none', stroke: "#000" };
-        //     } else if (index && close > stockData[index - 1].closeprc) {
-        //         if (close > open) {
-        //             return { fill: "var(--color-5)", stroke: "#000" };
-        //         } else {
-        //             return { fill: "var(--color-3)", stroke: "#000" };
-        //         }
-        //     } else {
-        //         if (close > open) {
-        //             return { fill: "var(--color-7)", stroke: "#000" };
-        //         } else {
-        //             return { fill: "var(--color-1)", stroke: "#000" };
-        //         }
-        //     }
-        // },
+        template: '',
         tooltipText: '<b>종가: ${close}</b>',
         padding: 1,
         pointPadding: 0.1,
