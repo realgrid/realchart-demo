@@ -1,5 +1,17 @@
 export const config = {
   height: 550,
+  actions: [
+		{ 
+			type: 'select',
+			label: 'Palette',
+			data: ['default', 'warm', 'cool', 'forest', 'gray', 'vintage', 'unicorn'], //.map(v => {return { value: v, label: v }}),
+			action: ({value}) => {
+				config.options.palette = value;
+				// "options.palette"
+				chart.load(config);
+			}
+		}
+	],
   type: 'bar',
   title: { text: '월별 매출 현황 분석', style: { fontWeight: 'bold' } },
   subtitle: { visible: true, text: '1월부터 12월까지의 매출 변화 추적' },
