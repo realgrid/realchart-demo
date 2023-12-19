@@ -115,24 +115,6 @@ let config = {
       <t style="font-size:20px;font-weight:normal">CPU Temperature</t>
       `,
       },
-      scale: {
-        visible: true,
-        line: {
-          style: {
-            stroke: "red",
-          },
-        },
-        tick: {
-          style: {
-            stroke: "red",
-          },
-        },
-        label: {
-          visible: !false,
-          fill: "red",
-          color: "red",
-        },
-      },
     },
     {
       template: "gauge",
