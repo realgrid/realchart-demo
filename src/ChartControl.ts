@@ -121,7 +121,7 @@ export class ChartControl extends RcControl implements IChartEventListener {
     }
 
     isMenuItem(dom: Element): boolean {
-        return !dom.isEqualNode(this._menuList) && this._menuList.contains(dom);
+        return this._menuList && !dom.isEqualNode(this._menuList) && this._menuList.contains(dom);
     }
 
     onMenuClick(dom: Element): void {
