@@ -43,7 +43,7 @@ const config = {
         title: "여자",
         // grid: false,
         tick: {
-            baseAxis: 0,
+            // baseAxis: 0,
             baseRange: true,
             length: 5,
             margin: 0
@@ -53,7 +53,7 @@ const config = {
         name: '남자',
         pointLabel: {
             visible: true,
-            numberFormat: 'a##0.00'
+            numberFormat: '##0.00'
         },
         data: [
             8.98, 7.52, 6.65, 5.72, 4.85,
@@ -113,7 +113,7 @@ function setActions(container) {
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
-    RealChart.setLogging(true);
+    // RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

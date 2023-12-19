@@ -24,13 +24,13 @@ export const config = {
     {
       row: 1,
       title: '여자',
-      tick: { baseAxis: 0, baseRange: true, length: 5, margin: 0 }
+      tick: { baseRange: true, length: 5, margin: 0 }
     }
   ],
   series: [
     {
       name: '남자',
-      pointLabel: { visible: true, numberFormat: 'a##0.00' },
+      pointLabel: { visible: true, numberFormat: '##0.00' },
       data: [
         8.98, 7.52, 6.65, 5.72,
         4.85, 3.71, 2.76, 2.07,
