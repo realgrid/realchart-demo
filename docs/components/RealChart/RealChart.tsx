@@ -36,34 +36,41 @@ type RealChartConfig = unknown;
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
-    display: 'flex',
-    margin: '0 auto',
-    borderBottom: '1px solid',
+    display: "flex",
+    margin: "0 auto",
+    borderBottom: "1px solid",
     borderBottomColor: theme.colors.gray[2],
   },
   menu: {
-    gap: '16px',
-    padding: '10px',
+    gap: "16px",
+    padding: "10px",
   },
   button: {
     // marginLeft: 'auto'
-  }
+  },
 }));
 
-const parseOptionsByConfig = (config: unknown): { inverted: boolean, polar: boolean, xReversed: boolean, yReversed: boolean } => {
-    const axisReversed = (axis: any | Array<any> | undefined) => {
-      if (axis instanceof Array && axis.length) {
-        return axis[0].reversed;
-      }
-      return !!axis?.reversed;
+const parseOptionsByConfig = (
+  config: unknown
+): {
+  inverted: boolean;
+  polar: boolean;
+  xReversed: boolean;
+  yReversed: boolean;
+} => {
+  const axisReversed = (axis: any | Array<any> | undefined) => {
+    if (axis instanceof Array && axis.length) {
+      return axis[0].reversed;
     }
-    return {
-      inverted: !!config['inverted'], 
-      polar: !!config['polar'], 
-      xReversed: axisReversed(config['xAxis']), 
-      yReversed: axisReversed(config['yAxis']),
-    }
-}
+    return !!axis?.reversed;
+  };
+  return {
+    inverted: !!config["inverted"],
+    polar: !!config["polar"],
+    xReversed: axisReversed(config["xAxis"]),
+    yReversed: axisReversed(config["yAxis"]),
+  };
+};
 
 export function RealChartReact({
   config,
@@ -78,15 +85,24 @@ export function RealChartReact({
   const editorRef = useRef(null);
   const [chart, setChart] = useState(null);
   const [code, setCode] = useState(config);
-  const {classes} = useStyles();
-  const [version, setVersion] = useState('');
+  const { classes } = useStyles();
+  const [version, setVersion] = useState("");
 
-  const { inverted, polar, xReversed, yReversed } = parseOptionsByConfig(config);
+  const { inverted, polar, xReversed, yReversed } =
+    parseOptionsByConfig(config);
   const [invertedChecked, setInvertedChecked] = useState(inverted);
   const [xReversedChecked, setXReversedChecked] = useState(xReversed);
   const [yReversedChecked, setYReversedChecked] = useState(yReversed);
   const [polarChecked, setPolarChecked] = useState(polar);
+  const [intervalId, setIntervalId] = useState();
 
+
+  useEffect(() => {
+  
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [intervalId]); 
   useEffect(() => {
     if (!chartRef.current) return;
     document.getElementById("realchart").innerHTML = "";
@@ -101,7 +117,7 @@ export function RealChartReact({
 
   const handleDidMount = (editor, monaco) => {
     // monaco.model.updateOptions({ tabSize: 2})
-    console.log({monaco})
+    console.log({ monaco });
     editorRef.current = editor;
   };
 
@@ -114,123 +130,166 @@ export function RealChartReact({
   };
 
   const applyChart = (option) => {
-    Object.assign(code, option)
+    Object.assign(code, option);
     chart.load(code);
-  }
+  };
 
   const applyAxisReversed = (axisKey, reversed) => {
     const axis = code[axisKey];
     if (axis) {
       if (axis instanceof Array) {
         axis[0].reversed = reversed;
-      } else if(typeof axis == 'object') {
+      } else if (typeof axis == "object") {
         axis.reversed = reversed;
       }
       applyChart(code);
     }
-  }
+  };
 
   const onChangeInverted = (event) => {
     const checked = event.currentTarget.checked;
     setInvertedChecked(checked);
-    applyChart({ inverted: checked})
-  }
+    applyChart({ inverted: checked });
+  };
 
   const onChangeXReversed = (event) => {
     const checked = event.currentTarget.checked;
     setXReversedChecked(checked);
-    applyAxisReversed('xAxis', checked);
-  }
+    applyAxisReversed("xAxis", checked);
+  };
   const onChangeYReversed = (event) => {
     const checked = event.currentTarget.checked;
     setYReversedChecked(checked);
-    applyAxisReversed('yAxis', checked);
-  }
+    applyAxisReversed("yAxis", checked);
+  };
   const onChangePolar = (event) => {
     const checked = event.currentTarget.checked;
     setPolarChecked(checked);
-    applyChart({ polar: checked})
-  }
+    applyChart({ polar: checked });
+  };
 
-  const _height = code['height'];
-  const _width = code['width'];
+  const _height = code["height"];
+  const _width = code["width"];
 
-  const height = _height ? typeof _height === 'number' ? _height + 'px' : _height : '500px';
-  const width = _width ? typeof _width === 'number' ? _width + 'px' : _width : '100%';
+  const height = _height
+    ? typeof _height === "number"
+      ? _height + "px"
+      : _height
+    : "500px";
+  const width = _width
+    ? typeof _width === "number"
+      ? _width + "px"
+      : _width
+    : "100%";
 
   return (
     <Panel
       title={`RealChart ${version}`}
       stackSpacing={0}
       contentPadding="8px"
-      headerActions={
-        <>
-        </>
-      }
+      headerActions={<></>}
     >
-    <Grid>
-      <div
-        id="realchart"
-        ref={chartRef}
-        className={classes.wrapper}
-        style={{ width, height }}
-      />
-    </Grid>
-    {code['actions']?.map((action) => {
-      if (action.type == 'slider') {
-        const { min, max, step, label, value } = action;
-        const onSliderChanged = (value) => {
-          action.action && action.action({value});
-        }
-        const marks = [min, max].map(v => { return {value: v, label: v.toString()}; });
-        return <Grid align={"center"}>
-          <Grid.Col span={2}>
-            <Text align={"right"}>{label}: </Text>
-          </Grid.Col>
-          <Grid.Col span={8}>
-            {/* <Text align={"left"}>{min}</Text> */}
-            <Slider min={min} max={max} step={step} marks={marks} defaultValue={value || min} color="blue" onChangeEnd={onSliderChanged}/>
-            {/* <Text align={"left"}>{max}</Text> */}
-          </Grid.Col>
-        </Grid>;
-      }
-
-    })}
-
-    <Grid className={classes.menu}>
-      <Checkbox label="Inverted" 
-        checked={invertedChecked}
-        onChange={onChangeInverted}
-      />
-      <Checkbox label="X Reversed"
-        checked={xReversedChecked}
-        onChange={onChangeXReversed}
-      />
-      <Checkbox label="Y Reversed"
-        checked={yReversedChecked}
-        onChange={onChangeYReversed}
-      />
-      <Checkbox label="Polar"
-        checked={polarChecked}
-        onChange={onChangePolar}
-      />
-      <Button compact hidden={!showEditor} className={classes.button} onClick={handleSave} variant="outline">
-        적용
-      </Button>
-    </Grid>
-    {showEditor ? (
       <Grid>
-        <Editor
-          height="400px"
-          language="json"
-          // options - https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor.IStandaloneEditorConstructionOptions.html
-          options={ { autoIndent: true } }
-          value={JSON.stringify(config, null, 2)}
-          onChange={onChangeEditor}
-          onMount={handleDidMount}
+        <div
+          id="realchart"
+          ref={chartRef}
+          className={classes.wrapper}
+          style={{ width, height }}
         />
       </Grid>
-    ) : null}
+      {code["actions"]?.map((action, idx) => {
+        if (action.type == "slider") {
+          const { min, max, step, label, value } = action;
+          const onSliderChanged = (value) => {
+            action.action && action.action({ value });
+          };
+          const marks = [min, max].map((v) => {
+            return { value: v, label: v.toString() };
+          });
+          return (
+            <Grid align={"center"} key={idx}>
+              <Grid.Col span={2}>
+                <Text align={"right"}>{label}: </Text>
+              </Grid.Col>
+              <Grid.Col span={8}>
+                {/* <Text align={"left"}>{min}</Text> */}
+                <Slider
+                  min={min}
+                  max={max}
+                  step={step}
+                  marks={marks}
+                  defaultValue={value || min}
+                  color="blue"
+                  onChangeEnd={onSliderChanged}
+                />
+                {/* <Text align={"left"}>{max}</Text> */}
+              </Grid.Col>
+            </Grid>
+          );
+        }
+      })}
+
+      <Grid className={classes.menu}>
+        <Checkbox
+          label="Inverted"
+          checked={invertedChecked}
+          onChange={onChangeInverted}
+        />
+        <Checkbox
+          label="X Reversed"
+          checked={xReversedChecked}
+          onChange={onChangeXReversed}
+        />
+        <Checkbox
+          label="Y Reversed"
+          checked={yReversedChecked}
+          onChange={onChangeYReversed}
+        />
+        <Checkbox
+          label="Polar"
+          checked={polarChecked}
+          onChange={onChangePolar}
+        />
+        <Button
+          compact
+          hidden={!showEditor}
+          className={classes.button}
+          onClick={handleSave}
+          variant="outline"
+        >
+          적용
+        </Button>
+        {code["actions"]?.map(
+          (action, idx) =>
+            action.type === "button" && (
+              <Button
+                compact
+                hidden={!showEditor}
+                className={classes.button}
+                onClick={() => {
+                  setIntervalId(action.action());
+                }}
+                variant="outline"
+                key={idx}
+              >
+                {action.label}
+              </Button>
+            )
+        )}
+      </Grid>
+      {showEditor ? (
+        <Grid>
+          <Editor
+            height="400px"
+            language="json"
+            // options - https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor.IStandaloneEditorConstructionOptions.html
+            options={{ autoIndent: true }}
+            value={JSON.stringify(config, null, 2)}
+            onChange={onChangeEditor}
+            onMount={handleDidMount}
+          />
+        </Grid>
+      ) : null}
     </Panel>
   );
 }
