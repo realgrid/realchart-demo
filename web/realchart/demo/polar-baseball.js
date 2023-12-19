@@ -186,8 +186,8 @@ const config = {
     },
     tooltip: false,
     series: {
-        layout: 'stack',
-        // layout: 'overlap',
+        // layout: 'stack',
+        layout: 'overlap',
         // noClip: false,
         groupPadding: 0,
         children: [

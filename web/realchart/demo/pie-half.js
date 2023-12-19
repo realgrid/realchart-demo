@@ -12,6 +12,30 @@ const config = {
                 config.legend.location = value;
                 chart.load(config);
             }
+        },
+        {
+            type: 'slider',
+            label: 'Total Angle',
+            min: 0,
+            max: 360,
+            step: 1,
+            value: 180,
+            action: ({value}) => {
+                config.series.totalAngle = value;
+                chart.load(config);
+            }
+        },
+        {
+            type: 'slider',
+            label: 'Start Angle',
+            min: 0,
+            max: 360,
+            value: 270,
+            step: 1,
+            action: ({value}) => {
+                config.series.startAngle = value;
+                chart.load(config);
+            }
         }
     ],
     title: {

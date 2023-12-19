@@ -39,7 +39,8 @@ const config = {
             label: 'Year',
             target: 'data',
             action: ({value}) => {
-                config.annotations.text = 'IN ' + value;
+                // config.annotations.text = 'IN ' + value;
+                config.title.text = `Gapminder Global Indicators IN ${value}`;
                 config.series = config.params.createSeries(value);
                 chart.load(config);
             }
@@ -48,18 +49,18 @@ const config = {
     options: {
         credits: false,
     },
-    annotations: {
-        text: 'IN 1952',
-        offsetX: 180,
-        offsetY: 24,
-        scope: 'container',
-        align: 'center',
-            style: {
-                fontWeight: 'bold',
-            },
-    },
+    // annotations: {
+    //     text: 'IN 1952',
+    //     offsetX: 180,
+    //     offsetY: 24,
+    //     scope: 'container',
+    //     align: 'center',
+    //         style: {
+    //             fontWeight: 'bold',
+    //         },
+    // },
     title: {
-        text: 'Gapminder Global Indicators',
+        text: 'Gapminder Global Indicators IN 1952',
         style: {
             fontWeight: 'bold'
         }

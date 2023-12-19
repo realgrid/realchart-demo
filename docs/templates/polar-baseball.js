@@ -89,7 +89,7 @@ export const config = {
   },
   tooltip: false,
   series: {
-    layout: 'stack',
+    layout: 'overlap',
     groupPadding: 0,
     children: [
       {

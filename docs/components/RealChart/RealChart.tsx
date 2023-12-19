@@ -283,7 +283,7 @@ export function RealChartReact({
           />
           <Checkbox
             style={isSplit ? { display: 'none' } : {}}
-            label={"Polar"}
+            label="Polar"
             checked={polarChecked}
             onChange={onChangePolar}
           />
