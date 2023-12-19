@@ -29,8 +29,11 @@ const config = {
         totalAngle: 180,
         startAngle: 270,
         legendByPoint: true,
-        radius: '60%',
+        radius: '70%',
         centerY: '80%',
+        innerRadius: '50%',
+        //innerText: 'Inner Title',
+        innerText: '<t style="fill:#002F5C;font-weight:bold;">Number of Mobile Users</t><br>in the world',
         pointLabel: {
             visible: true,
             text: '${y}',

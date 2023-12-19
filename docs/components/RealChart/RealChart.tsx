@@ -47,7 +47,7 @@ const useStyles = createStyles((theme) => ({
     padding: "10px",
     alignItems: 'center',
     // justifyContent: 'end',
-    borderBottom: '1px solid #eee'
+    // borderBottom: '1px solid #eee'
   },
   menuDiv: {
     display: 'contents'
@@ -192,6 +192,8 @@ export function RealChartReact({
     || (config['series'] && config['series'] instanceof Array && config['series']?.some(m => m.type == 'pie'))
     || config['gauge'];
 
+  const isSplit = config['split']?.visible || config['split'] === true;
+
   const sliders = code["actions"]?.filter(m => m.type == 'slider');
   const inputs = code["actions"]?.filter(m => m.type != 'slider');
   return (
@@ -280,7 +282,8 @@ export function RealChartReact({
             onChange={onChangeYReversed}
           />
           <Checkbox
-            label="Polar"
+            style={isSplit ? { display: 'none' } : {}}
+            label={"Polar"}
             checked={polarChecked}
             onChange={onChangePolar}
           />

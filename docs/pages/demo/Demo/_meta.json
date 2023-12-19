@@ -130,5 +130,29 @@
 		"theme": {
 			"toc": false
 		}
+	},
+	"viewranges-bar": {
+		"title": "View Ranges - Bar",
+		"theme": {
+			"toc": false
+		}
+	},
+	"viewranges-line": {
+		"title": "View Ranges - Line",
+		"theme": {
+			"toc": false
+		}
+	},
+	"viewranges-area": {
+		"title": "View Ranges - Area",
+		"theme": {
+			"toc": false
+		}
+	},
+	"series-navigator": {
+		"title": "Navigator",
+		"theme": {
+			"toc": false
+		}
 	}
 }

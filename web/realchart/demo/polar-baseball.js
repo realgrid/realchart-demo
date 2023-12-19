@@ -186,8 +186,8 @@ const config = {
     },
     tooltip: false,
     series: {
-        // layout: 'stack',
-        layout: 'overlap',
+        layout: 'stack',
+        // layout: 'overlap',
         // noClip: false,
         groupPadding: 0,
         children: [
@@ -198,7 +198,7 @@ const config = {
                 stroke: 'none',
                 fill: '#bbb',
             },
-            tooltipText: '${x}°: ${y}hits',
+            tooltipText: '${name}°: ${y}hits',
         },
         {
             template: 'series',

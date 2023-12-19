@@ -93,6 +93,7 @@ const config = {
             step: 1,
             action: ({value}) => {
                 config.series = config.params.createSeries(value);
+                config.title.text = `${value} East Asia Population`;
                 chart.load(config);
             },
         }

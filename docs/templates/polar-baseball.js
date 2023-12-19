@@ -89,7 +89,7 @@ export const config = {
   },
   tooltip: false,
   series: {
-    layout: 'overlap',
+    layout: 'stack',
     groupPadding: 0,
     children: [
       {
@@ -124,7 +124,7 @@ export const config = {
           { angle: -65, hits: 2 }
         ],
         style: { stroke: 'none', fill: '#bbb' },
-        tooltipText: '${x}°: ${y}hits'
+        tooltipText: '${name}°: ${y}hits'
       },
       {
         template: 'series',

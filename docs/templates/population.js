@@ -2776,7 +2776,7 @@ export const config = {
       max: 2023,
       value: 2023,
       step: 1,
-      action: ({value}) => { config.series = config.params.createSeries(value); chart.load(config); }
+      action: ({value}) => { config.series = config.params.createSeries(value); config.title.text = `${value} East Asia Population`; chart.load(config); }
     }
   ],
   type: 'area',
