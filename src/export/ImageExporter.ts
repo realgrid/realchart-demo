@@ -155,11 +155,9 @@ export class ImageExporter {
                     });
                 }
             });
-        }
-
-        // control background
-        const backgroundImageUrl = window.getComputedStyle(cloneDom).getPropertyValue('background-image');
-
+        };
+        
+        const backgroundImageUrl = cloneDom.style.backgroundImage;
         if (backgroundImageUrl && backgroundImageUrl !== 'none') {
             const background = new Image();
             background.onload = function () {
@@ -251,6 +249,7 @@ export class ImageExporter {
         const promises: Promise<void>[] = [];
 
         const backgroundImageUrl = element.style.backgroundImage;
+        console.log(backgroundImageUrl, '2');
         if (backgroundImageUrl && backgroundImageUrl !== 'none') {
             const backgroundPromise = imageToBase64(backgroundImageUrl.replace(/^url\(["']?(.*?)["']?\)$/, '$1')).then((base64Image) => {
                 element.style.backgroundImage = `url(${base64Image})`;
