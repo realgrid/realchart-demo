@@ -5,6 +5,18 @@
  */
 const config = {
 	height: 550,
+	actions: [
+		{ 
+			type: 'slider',
+			label: 'Palette',
+			markers: ['default', 'warm', 'cool', 'forest', 'gray', 'vintage', 'unicorn'],
+			action: ({value}) => {
+				config.options.palette = value;
+				// "options.palette"
+				chart.load(config);
+			}
+		}
+	],
 	type: 'bar',
 	title: {text : '월별 매출 현황 분석',
 	style: {
@@ -17,7 +29,7 @@ const config = {
 	},
 	colorByPoint: false,
 	options: {
-		// animatable: false
+		palette: 'default',
 	},
 	legend:{
 		visible: false,

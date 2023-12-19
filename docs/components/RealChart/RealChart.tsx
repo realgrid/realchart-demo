@@ -16,6 +16,7 @@ import {
   rem,
   Checkbox,
   Slider,
+  Select,
 } from "@mantine/core";
 
 import { createChart, getVersion } from "realchart";
@@ -182,6 +183,8 @@ export function RealChartReact({
       : _width
     : "100%";
 
+  const sliders = code["actions"]?.filter(m => m.type == 'slider');
+  const inputs = code["actions"]?.filter(m => m.type != 'slider');
   return (
     <Panel
       title={`RealChart ${version}`}
@@ -197,38 +200,57 @@ export function RealChartReact({
           style={{ width, height }}
         />
       </Grid>
-      {code["actions"]?.map((action, idx) => {
-        if (action.type == "slider") {
-          const { min, max, step, label, value } = action;
-          const onSliderChanged = (value) => {
-            action.action && action.action({ value });
-          };
-          const marks = [min, max].map((v) => {
-            return { value: v, label: v.toString() };
-          });
-          return (
-            <Grid align={"center"} key={idx}>
-              <Grid.Col span={2}>
-                <Text align={"right"}>{label}: </Text>
-              </Grid.Col>
-              <Grid.Col span={8}>
-                {/* <Text align={"left"}>{min}</Text> */}
-                <Slider
-                  min={min}
-                  max={max}
-                  step={step}
-                  marks={marks}
-                  defaultValue={value || min}
-                  color="blue"
-                  onChangeEnd={onSliderChanged}
-                />
-                {/* <Text align={"left"}>{max}</Text> */}
-              </Grid.Col>
-            </Grid>
-          );
-        }
+      {sliders?.map((action, idx) => {
+        const { min, max, step, label, value } = action;
+        const onSliderChanged = (value) => {
+          action.action && action.action({ value });
+        };
+        // const marks = [min, max].map((v) => {
+        //   return { value: v, label: v.toString() };
+        // });
+        return (
+          <Grid align={"center"} key={idx}>
+            <Grid.Col span={2}>
+              <Text align={"right"}>{label}: </Text>
+            </Grid.Col>
+            <Grid.Col span={8}>
+              <Slider
+                min={min}
+                max={max}
+                step={step}
+                defaultValue={value || min}
+                color="blue"
+                onChangeEnd={onSliderChanged}
+              />
+            </Grid.Col>
+          </Grid>
+        );
       })}
 
+      <Grid hidden={!inputs?.length} className={classes.menu}>
+      {inputs?.map((action, idx) => {
+        const { label, value, data } = action;
+        switch (action.type) {
+          case 'button':
+            return <Button
+              compact
+              hidden={!showEditor}
+              className={classes.button}
+              onClick={() => {
+                setIntervalId(action.action());
+              }}
+              variant="outline"
+              key={idx}
+            >
+              {action.label}
+            </Button>
+          case 'select': 
+              return <Select key={idx} label={label} data={data} defaultValue={data[0]}
+                size={"xs"}
+                onChange={(value) => { action.action({value})}} />
+        }
+      })}
+      </Grid>
       <Grid className={classes.menu}>
         <Checkbox
           label="Inverted"
@@ -259,23 +281,6 @@ export function RealChartReact({
         >
           적용
         </Button>
-        {code["actions"]?.map(
-          (action, idx) =>
-            action.type === "button" && (
-              <Button
-                compact
-                hidden={!showEditor}
-                className={classes.button}
-                onClick={() => {
-                  setIntervalId(action.action());
-                }}
-                variant="outline"
-                key={idx}
-              >
-                {action.label}
-              </Button>
-            )
-        )}
       </Grid>
       {showEditor ? (
         <Grid>
