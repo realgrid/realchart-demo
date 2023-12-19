@@ -33,11 +33,13 @@ RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.
 <DefaultValue value="true" contents=""></DefaultValue>
 ### xStart: `any{:js}`[#xStart]
 x축 값이 설정되지 않은 시리즈 첫번째 데이터 point에 설정되는 x값.
+
 이 후에는 [xStep](#xstep) 씩 증가시키면서 설정한다.
 시리즈의 [xStart](/config/config/options#xstart) 가 설정되면 그 값이 사용된다.  
 <DefaultValue value="0" contents=""></DefaultValue>
 ### xStep: `string | number{:js}`[#xStep]
 x축 값이 설정되지 않은 데이터 point에 지정되는 x값의 간격.
+
 첫번째 값은 [xStart](#xstart) 로 설정한다.
 time 축일 때, 정수 값 대신 시간 단위(<Content type="expression" value="'y', 'm', 'd', 'h', 'n', 's'"></Content>)로 지정할 수 있다.
 시리즈의 [xStep](/config/config/options#xstep) 이 설정되면 그 값이 사용된다.  
