@@ -50,7 +50,7 @@ const config = {
         }],
     },
     export: {
-        visible: true
+        visible: true,
     },
     title: "Line Big Data",
     xAxis: {

@@ -132,8 +132,7 @@ export class ImageExporter {
                 try {
                     img.src = 'data:image/svg+xml;base64,' + btoa(String.fromCharCode.apply(null, utf8Bytes));
                 } catch (error) {
-                    const url = options.url || 'http://127.0.0.1:4080/api';
-                    // const url = options.url || 'https://realchart-node-exporter.vercel.app/api';
+                    const url = options.url || 'https://realchart-exporter.5r78gr15g8avq.ap-northeast-2.cs.amazonlightsail.com/api';
                     fetch(url, {
                         method: 'POST',
                         headers: {
