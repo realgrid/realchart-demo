@@ -382,6 +382,22 @@ export class TreemapSeries extends Series {
         let sum = 0;
         const list: TreeNode[] = [];
 
+        if (nodes.length === 2) {
+            const isWider = dir === 1 ? w > h : w >= h;
+            if (isWider) {
+                nodes.forEach((node) => {
+                    node.setArea(x, y, w * node.value / total, h);
+                    x += node.width;
+                });
+            } else {
+                nodes.forEach((node) => {
+                    node.setArea(x, y, w, h * node.value / total);
+                    y += node.height;
+                });
+            }
+            return 0;
+        }
+
         while (nodes.length > 0) {
             let node: TreeNode;
             let wNode: number;
@@ -391,6 +407,7 @@ export class TreemapSeries extends Series {
 
             node = nodes.shift();
             sum += node.value;
+            
             pArea = sum * totalArea / total;
 
             if (dir === 1) {
@@ -400,6 +417,7 @@ export class TreemapSeries extends Series {
                 hNode = pArea / w;
                 wNode = w * node.value / sum;
             }
+
             rate = Math.max(wNode / hNode, hNode / wNode);
 
             if (nodes.length > 0 && rate > prevRate) {

@@ -1,11 +1,14 @@
 {
 	"boxplot": {
-		"title": "BoxPlot"
+		"title": "BoxPlot",
+		"theme": {
+			"toc": false
+		}
 	},
 	"boxplot-multi": {
-		"title": "Multiple BoxPlots"
-	},
-	"boxplot-null": {
-		"title": "Null Point"
+		"title": "Multiple BoxPlots",
+		"theme": {
+			"toc": false
+		}
 	}
 }

@@ -47,13 +47,14 @@ class StickView extends GroupElement implements IPointView {
         let y = 0;
         const yOpen = y + h - h * (Math.min(p.openValue, p.closeValue) - p.lowValue) / len;
         const yClose = y + h - h * (Math.max(p.openValue, p.closeValue) - p.lowValue) / len;
+        const decline = p.close < p.open;
 
         this._back.setBox(x1, 0, w, h);
         this._tickOpen.setHLine(yOpen, x1, x);
         this._tickClose.setHLine(yClose, x, this.width);
         this._bar.setVLine(x, y, y + h);
         //this._bar.setBounds(0, Math.min(yClose, yOpen), w, Math.max(1, Math.abs(yOpen - yClose)));
-        this._bar.setClass(p.close < p.open ? 'rct-ohlc-point-bar-fall' : 'rct-ohlc-point-bar')
+        this.setBoolData('decline', decline);
     }
 
     //-------------------------------------------------------------------------
@@ -102,6 +103,14 @@ export class OhlcSeriesView extends RangedSeriesView<OhlcSeries> {
         view.setBounds(x, y, wPoint, hPoint);
         view.layout();
     }
+
+    protected _setPointStyle(v: RcElement, model: OhlcSeries, p: OhlcSeriesPoint, styles?: any[]): void {
+        super._setPointStyle(v, model, p, styles);
+
+        if (p.closeValue < p.openValue && model.declineStyle) {
+            v.addStyleOrClass(model.declineStyle);
+        }
+     }
 
     //-------------------------------------------------------------------------
     // internal members

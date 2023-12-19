@@ -21,7 +21,10 @@ const config = {
         value: 81,
         targetValue: 90,
         scale: {
-            line: true
+            line: true,
+            label: {
+                suffix: '%'
+            }
         },
         ranges: [{
             toValue: 50,

@@ -16,9 +16,7 @@ const config = {
     },
     series: {
         type: 'waterfall',
-        tooltip: {
-            text: 'low: ${low}<br>save: ${save}'
-        },
+        tooltipText: 'low: ${low}<br>save: ${save}',
         pointLabel: {
             visible: true,
             position: 'inside',

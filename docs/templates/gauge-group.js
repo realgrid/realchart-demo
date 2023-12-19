@@ -1,6 +1,6 @@
 export const config = {
   templates: { gauge: { label: { numberFormat: '#00.#' } } },
-  options: { theme: 'dark', credits: {} },
+  options: { credits: {} },
   title: 'Circle Gauge Group',
   gauge: [
     {
@@ -8,41 +8,41 @@ export const config = {
         {
           name: 'gauge1',
           template: 'gauge',
-          value: 64.88659768315559,
+          value: 73.85082226608634,
           valueRim: { style: { fill: '#00aaff' } },
           label: {
             style: { fill: '#00aaff' },
-            text: "<t style='fill:gray'>게이지 101 -</t> ${value}"
+            text: "<t style='fill:gray'>Time -</t> ${value}"
           }
         },
         {
           name: 'gauge2',
           template: 'gauge',
-          value: 35.95332611256732,
+          value: 1.3144797273640485,
           valueRim: { style: { fill: '#ffaa00' } },
           label: {
             style: { fill: '#ffaa00' },
-            text: "<t style='fill:gray'>게이지 202 -</t> ${value}"
+            text: "<t style='fill:gray'>Run -</t> ${value}"
           }
         },
         {
           name: 'gauge3',
           template: 'gauge',
-          value: 63.46764976262742,
+          value: 83.2872321547108,
           valueRim: { style: { fill: '#88cc00' } },
           label: {
             style: { fill: '#88cc00' },
-            text: "<t style='fill:gray'>게이지 303 -</t> ${value}"
+            text: "<t style='fill:gray'>Walk -</t> ${value}"
           }
         },
         {
           name: 'gauge4',
           template: 'gauge',
-          value: 14.875815454623776,
-          valueRim: { style: { fill: '#aa0000' } },
+          value: 37.12489052562364,
+          valueRim: { style: { fill: 'var(--color-3)' } },
           label: {
-            style: { fill: '#aa0000' },
-            text: "<t style='fill:gray'>게이지 404 -</t> ${value}"
+            style: { fill: 'var(--color-3)' },
+            text: "<t style='fill:gray'>Kcal -</t> ${value}"
           }
         }
       ],

@@ -10,7 +10,7 @@ const config = {
             // align: 'center'
         }
     },
-    title: "Linear Guages",
+    title: "Linear Gauges",
     gauge: [{
         type: 'linear',
         name: 'linear1',
@@ -33,7 +33,6 @@ const config = {
             }, {
                 color: '#f40'
             }],
-            // tickLabel: true
         },
         ranges: [{
             toValue: 50,

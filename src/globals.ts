@@ -11,7 +11,6 @@ import { RcChartControl } from "./api/RcChartControl";
 import { RcDebug } from "./common/Common";
 import { RcControl, RcElement } from "./common/RcControl";
 import { Utils } from "./common/Utils";
-import { Chart } from "./model/Chart";
 
 // const clazz: any = RcChartControl;
 
@@ -48,6 +47,8 @@ export class Globals {
     }
     /**
      * true로 지정하면 라이브러리 내부 메시지를 출력한다.
+     * 
+     * @param logging 로그 메시지 표시 여부
      */
     static setLogging(logging: boolean): void {
         Utils.LOGGING = logging;
@@ -84,7 +85,7 @@ export class Globals {
      */
     static createChart(doc: Document, container: string | HTMLDivElement, config: any, animate = true): RcChartControl {
         const c =  new (RcChartControl as any)(new ChartControl(doc, container));
-        config && c.load(config, true);
+        c.load(config, true);
         return c;
     }
 }

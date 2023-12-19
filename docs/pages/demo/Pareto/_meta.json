@@ -1,8 +1,8 @@
 {
 	"pareto": {
-		"title": "Pareto"
-	},
-	"pareto-null": {
-		"title": "Null Point"
+		"title": "Pareto",
+		"theme": {
+			"toc": false
+		}
 	}
 }

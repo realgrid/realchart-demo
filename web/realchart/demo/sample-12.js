@@ -11,12 +11,10 @@ const config = {
         algorithm: 'squarify',
         alternate: false,
         groupMode: true,
+        tooltipText: 'group: ${group}<br>value: ${value}',
         pointLabel: {
             visible: true,
-            text: '${x}',
-            textCallback: (arg) => {
-                console.log(arg)
-            },
+            text: '${x}<br>${value}',
             effect: 'outline',
         },
         data: {}
@@ -70,7 +68,6 @@ const createData = () => {
         }))];
 
         industries.forEach((industry, index) => {
-            console.log(colors[index])
             result.push({ 'id': industry, 'name': industry, 'group': sector, 'color': colors[index]});
         });
     });

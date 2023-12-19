@@ -60,10 +60,10 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
             this._ticks.prepare(nStep);
         }
 
-        if (this._labelContainer.setVis(model.tickLabel.visible)) {
-            this._labelContainer.internalSetStyleOrClass(model.tickLabel.style);
+        if (this._labelContainer.setVis(model.label.visible)) {
+            this._labelContainer.internalSetStyleOrClass(model.label.style);
             this._labels.prepare(nStep, v => {
-                v.layout = TextLayout.MIDDLE;
+                // v.layout = TextLayout.MIDDLE;
             });
         }
 
@@ -74,13 +74,13 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
         const m = this.model;
         const steps = m._steps;
         const g = m.gauge as CircleGauge;
-        const opposite = m.position === GaugeItemPosition.OPPOSITE ? -1 : 1;
+        const opp = m.position === GaugeItemPosition.OPPOSITE ? -1 : 1;
         const gprops = g.props;
         const cx = this._center.x;
         const cy = this._center.y;
         const exts = this._exts;
         const rd = exts.scale;
-        const rd2 = rd + this.model.tick.length * opposite;
+        const rd2 = rd + this.model.tick.length * opp;
         const sweep = gprops._sweepRad;
         const start = gprops._startRad;
         const sum = g.maxValue - g.minValue;
@@ -106,15 +106,21 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
 
         // tick labels
         if (this._labelContainer.visible) {
-            this._labels.get(0).text = String(g.maxValue);
-            const rd = rd2 + this._labels.get(0).getBBounds().height * 0.5 * opposite;
+            // this._labels.get(0).text = String(g.maxValue);
+            this._labels.get(0).setText(String(g.maxValue));
+
+            const rd = rd2 + this._labels.get(0).getBBounds().height * 0.2 * opp;
 
             this._labels.forEach((v, i, count) => {
                 const a = m.getRate(steps[i]) * sweep + start;
 
-                x2 = cx + cos(a) * rd;
-                y2 = cy + sin(a) * rd;
-                v.text = String(fixnum(g.minValue + m.getRate(steps[i]) * sum));
+                // v.text = String(fixnum(g.minValue + m.getRate(steps[i]) * sum));
+                v.setText(String(fixnum(g.minValue + m.getRate(steps[i]) * sum)));
+
+                const r = v.getBBounds();
+
+                x2 = cx + cos(a) * (rd + r.width / 2 * opp) - r.width / 2;
+                y2 = cy + sin(a) * (rd + r.height / 2 * opp) - r.height / 2;
                 v.translate(x2, y2);
             });
         }

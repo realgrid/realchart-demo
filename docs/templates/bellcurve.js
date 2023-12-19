@@ -1,6 +1,7 @@
 export const config = {
   title: 'Bell Curve',
   options: {},
+  legend: true,
   xAxis: { name: 'baxis', title: 'X Axis' },
   yAxis: { title: 'Y Axis' },
   series: [

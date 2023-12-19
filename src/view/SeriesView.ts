@@ -6,21 +6,23 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, assign } from "../common/Common";
+import { pickNum, assign, isObject, isString } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
 import { ClipRectElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
-import { IValueRange, _undef } from "../common/Types";
+import { FILL, IValueRange, SVGStyleOrClass, _undef } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { RectElement } from "../common/impl/RectElement";
 import { SvgShapes } from "../common/impl/SvgShape";
+import { LineType } from "../model/ChartTypes";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { ClusterableSeries, DataPointLabel, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
+import { PointLine } from "../model/series/LineSeries";
 import { ContentView } from "./ChartElement";
 import { LegendItemView } from "./LegendView";
 import { SeriesAnimation } from "./animation/SeriesAnimation";
@@ -305,7 +307,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    _simpleMode = false;
+    _simpleMode = false; // navigator에 들어가면 true
     protected _pointContainer: PointContainer;
     _labelContainer: PointLabelContainer;
     private _trendLineView: PathElement;
@@ -432,6 +434,17 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     decoreateLegend(legendView: LegendItemView): void {
     }
 
+    afterLayout(): void {
+        this._doAfterLayout();
+    }
+
+    /**
+     * hovering된 데이터포인트의 외곽 강조 border path.
+     */
+    getFocusBorder(p: DataPoint): string {
+        return;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -439,9 +452,14 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         // legend marker 색상이 필요하므로 prepareSeries()에서 먼저 처리한다.
     }
 
+    protected _prepareViewRanges(model: T): void {
+        // model.prepareViewRanges();
+    }
+
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
         this.setClip(void 0);
 
+        this._prepareViewRanges(model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, this);
 
         if (model.trendline.visible) {
@@ -464,6 +482,9 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         }
         this._afterRender();
         this._animatable && !this._simpleMode && this._runShowEffect(!this.control.loaded);
+    }
+
+    protected _doAfterLayout(): void {
     }
 
     //-------------------------------------------------------------------------
@@ -534,11 +555,14 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         const xAxis = m._xAxisObj;
         const yAxis = m._yAxisObj;
         const pts = m.trendline._points.map(pt => ({x: xAxis.getPosition(xAxis._vlen, pt.x), y: yAxis._vlen - yAxis.getPosition(yAxis._vlen, pt.y)}));
-        const sb = new PathBuilder();
 
-        sb.move(pts[0].x, pts[0].y);
-        sb.lines(...pts);
-        this._trendLineView.setPath(sb.end(false));
+        if (this._trendLineView.setVis(pts.length > 1)) {
+            const sb = new PathBuilder();
+
+            sb.move(pts[0].x, pts[0].y);
+            sb.lines(...pts);
+            this._trendLineView.setPath(sb.end(false));
+        }
     }
 
     protected _layoutLabel(info: LabelLayoutInfo, w: number, h: number): void {
@@ -624,6 +648,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         labelView.layout(labelView.textAlign()).translate(x, y);
     }
 
+    // viewRangeValue가 'x', 'y'인 경우에만 호출된다.
     protected _clipRange(w: number, h: number, rangeAxis: 'x' | 'y' | 'z', range: IValueRange, clip: ClipRectElement, inverted: boolean): void {
         if (inverted) {
             const t = w;
@@ -634,18 +659,18 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         const isX = rangeAxis === 'x';
         const axis = isX ? this.model._xAxisObj : this.model._yAxisObj;
         const reversed = axis.reversed;
-        const p1 = axis.getPosition(isX ? w : h, range.fromValue);
-        const p2 = axis.getPosition(isX ? w : h, range.toValue);
+        const p1 = axis.getPosition(isX ? w : h, Math.max(axis.axisMin(), range.fromValue));
+        const p2 = axis.getPosition(isX ? w : h, Math.min(axis.axisMax(), range.toValue));
 
         if (inverted) {
             if (isX) {
                 if (reversed) {
-                    clip.setBounds(p2, w - h, Math.abs(p2 - p1), h);
+                    clip.setBounds(p2, -h, Math.abs(p2 - p1), h);
                 } else {
-                    clip.setBounds(p1, w - h, Math.abs(p2 - p1), h);
+                    clip.setBounds(p1, -h, Math.abs(p2 - p1), h);
                 }
             } else {
-                clip.setBounds(0, w - Math.max(p1, p2), w, Math.abs(p2 - p1));
+                clip.setBounds(0, -Math.max(p1, p2), w, Math.abs(p2 - p1));
             }
         } else {
             if (isX) {
@@ -657,6 +682,14 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
             } else {
                 clip.setBounds(0, h - Math.max(p1, p2), w, Math.abs(p2 - p1));
             }
+        }
+    }
+
+    protected _setFill(elt: RcElement, style: SVGStyleOrClass): void {
+        if (isObject(style) && style[FILL]) {
+            elt.internalSetStyle(FILL, style[FILL]);
+        } else if (isString(style)) {
+            elt.dom.classList.add(style);
         }
     }
 }

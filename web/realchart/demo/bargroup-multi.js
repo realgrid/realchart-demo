@@ -13,6 +13,10 @@ const config = {
     subtitle: {
         text: '2023.01 ~ 12',
     },  
+    tooltip: {
+        // visible: false,
+        // level: 'axis'
+    },
 	xAxis: {
 		title: '기업',
 		categories: ['A기업', 'B기업', 'C기업', 'D기업', 'E기업'],

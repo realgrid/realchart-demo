@@ -16,6 +16,10 @@ article code {
   font-size: 0.9rem !important;
 }
 
+nav:empty.nx-hidden {
+  display: none;
+}
+
 .nextra-sidebar-container a {
   padding-top: 0.1rem;
   padding-bottom: 0.1rem;

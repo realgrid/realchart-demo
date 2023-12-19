@@ -33,12 +33,12 @@ describe('Tooltip test', function() {
     beforeEach(() => {
         json = Object.assign({}, Tester.loadChartJson('axis'));
         chart = new Chart(json);
-        tooltip = new Tooltip(chart.firstSeries);
+        tooltip = new Tooltip({chart: null, getTooltipContext: null});
         tooltip.load(source);
     });
 
     it('init', () => {
-        const tooltip = new Tooltip(chart.firstSeries);
+        const tooltip = new Tooltip({chart: null, getTooltipContext: null});
 
         expect(tooltip).exist;
     });

@@ -1,26 +1,44 @@
 {
 	"bar": {
-		"title": "Bar"
+		"title": "Bar",
+		"theme": {
+			"toc": false
+		}
 	},
 	"bar-multi": {
-		"title": "Multi Bars"
+		"title": "Multi Bars",
+		"theme": {
+			"toc": false
+		}
 	},
 	"bargroup": {
-		"title": "Bar Group"
+		"title": "Bar Group",
+		"theme": {
+			"toc": false
+		}
 	},
 	"bargroup-multi": {
-		"title": "Multi Groups"
+		"title": "Multi Groups",
+		"theme": {
+			"toc": false
+		}
 	},
 	"bar-negative": {
-		"title": "Bar Negative"
-	},
-	"bar-null": {
-		"title": "Null Point"
+		"title": "Bar Negative",
+		"theme": {
+			"toc": false
+		}
 	},
 	"bargroup-negative": {
-		"title": "Negative Bars"
+		"title": "Negative Bars",
+		"theme": {
+			"toc": false
+		}
 	},
 	"bar-wing": {
-		"title": "Wing Chart"
+		"title": "Wing Chart",
+		"theme": {
+			"toc": false
+		}
 	}
 }

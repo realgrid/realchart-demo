@@ -1,11 +1,14 @@
 {
 	"pie": {
-		"title": "Pie"
-	},
-	"pie-null": {
-		"title": "Null Point"
+		"title": "Pie",
+		"theme": {
+			"toc": false
+		}
 	},
 	"pie-donut": {
-		"title": "Donut"
+		"title": "Donut",
+		"theme": {
+			"toc": false
+		}
 	}
 }

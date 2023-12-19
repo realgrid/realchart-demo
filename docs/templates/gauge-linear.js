@@ -1,6 +1,6 @@
 export const config = {
-  options: { animatable: false, credits: {} },
-  title: 'Linear Guages',
+  options: { credits: {} },
+  title: 'Linear Gauges',
   gauge: [
     {
       type: 'linear',

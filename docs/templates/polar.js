@@ -5,7 +5,7 @@ export const config = {
   xAxis: { categories: [ '성남시', '용인시', '수원시', '일산시', '화성시', '평택시' ] },
   yAxis: {
     label: true,
-    guide: [ { type: 'line', value: 5.5, style: { stroke: 'red' } } ]
+    guides: [ { type: 'line', value: 5.5, style: { stroke: 'red' } } ]
   },
   body: {},
   series: [

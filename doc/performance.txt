@@ -1,0 +1,2 @@
+1. stepInterval 설정이 잘못돼서 tick이 많이 생성되는 경우
+2.

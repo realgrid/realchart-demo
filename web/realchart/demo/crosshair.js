@@ -26,7 +26,7 @@ const config = {
     body: {
         annotations: [{
             name: 'anno',
-            text: '${crosshair.x;0;0;#.0}, ${crosshair.y;0;#.0}'
+            text: '${crosshair.x;0;#.0}, ${crosshair.y;0;#.0}'
         }]
     },
     series: { 

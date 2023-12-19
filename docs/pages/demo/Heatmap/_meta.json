@@ -1,11 +1,14 @@
 {
 	"heatmap": {
-		"title": "Heatmap"
+		"title": "Heatmap",
+		"theme": {
+			"toc": false
+		}
 	},
 	"heatmap-category": {
-		"title": "Heatmap Category"
-	},
-	"heatmap-null": {
-		"title": "Null Point"
+		"title": "Heatmap Category",
+		"theme": {
+			"toc": false
+		}
 	}
 }

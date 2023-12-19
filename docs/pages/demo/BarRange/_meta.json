@@ -1,11 +1,14 @@
 {
 	"barrange": {
-		"title": "Bar Range"
+		"title": "Bar Range",
+		"theme": {
+			"toc": false
+		}
 	},
 	"barrange-multi": {
-		"title": "Multiple Bar Ranges"
-	},
-	"barrange-null": {
-		"title": "Null Point"
+		"title": "Multiple Bar Ranges",
+		"theme": {
+			"toc": false
+		}
 	}
 }

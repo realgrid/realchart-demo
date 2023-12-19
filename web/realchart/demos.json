@@ -1,4 +1,27 @@
 {
+    "Demo": {
+        "Bar": "bar-monthly-sales",
+        "Bar Stack": "bar-stack",
+        "Line": "polls-biden-trump",
+        "Area": "population",
+        "Bubble": "sample-14",
+        "Candlestick": "candlestick",
+        "Split": "building-space",
+        "Polar Bar": "polar-baseball",
+        "Polar Scatter": "scatter-olympic",
+        "Gauge Group": "gauge-group",
+        "Multiple Gauges": "sample-35",
+        "Bullet Gauges": "bullet-gauges",
+        "Clock": "gauge-clock",
+        "Pie": "sample-30",
+        "Poll Pie": "poll-pie",
+        "Half Pie": "pie-half",
+        "Heatmap": "heatmap",
+        "Treemap": "treemap",
+        "Bar - Air Temp.": "sample-01",
+        "Bar - Charge Off": "sample-03",
+        "Bar Percent - CSP Market": "sample-13"
+    },
     "Basic": {
         "Basic": "basic"
     },
@@ -8,25 +31,21 @@
         "Bar Group": "bargroup",
         "Multi Groups": "bargroup-multi",
         "Bar Negative": "bar-negative",
-        "Null Point": "bar-null",
         "Negative Bars": "bargroup-negative",
         "Wing Chart": "bar-wing"
     },
     "BarRange": {
         "Bar Range": "barrange",
-        "Multiple Bar Ranges": "barrange-multi",
-        "Null Point": "barrange-null"
+        "Multiple Bar Ranges": "barrange-multi"
     },
     "Waterfall": {
-        "Waterfall": "barrange",
-        "Null Point": "waterfall-null"
+        "Waterfall": "waterfall"
     },
     "Line": {
         "Line": "line",
         "Spline": "line-spline",
         "Stepped Line": "line-step",
         "Negative Line": "line-negative",
-        "Null Point": "line-null",
         "Multiple Lines": "line-multi",
         "Line Group": "linegroup",
         "Negative Lines": "linegroup-negative",
@@ -38,16 +57,13 @@
         "Multi Areas": "area-multi",
         "Area Group": "areagroup",
         "Area Negative": "area-negative",
-        "Negative Areas": "areagroup-negative",
-        "Null Point": "area-null"
+        "Negative Areas": "areagroup-negative"
     },
     "AreaRange": {
-        "Area Range": "arearange",
-        "Null Point": "arearange-null"
+        "Area Range": "arearange"
     },
     "Pareto": {
-        "Pareto": "pareto",
-        "Null Point": "pareto-null"
+        "Pareto": "pareto"
     },
     "Scatter": {
         "Scatter": "scatter",
@@ -56,38 +72,30 @@
     },
     "Bubble": {
         "Bubble": "bubble",
-        "Multiple Bubble": "bubble-multi",
-        "Null Point": "bubble-null"
+        "Multiple Bubble": "bubble-multi"
     },
     "BoxPlot": {
         "BoxPlot": "boxplot",
-        "Multiple BoxPlots": "boxplot-multi",
-        "Null Point": "boxplot-null"
+        "Multiple BoxPlots": "boxplot-multi"
     },
     "Error Bar": {
-        "ErrorBar": "errorbar",
-        "Null Point": "errorbar-null"
+        "ErrorBar": "errorbar"
     },
     "Candlestick": {
-        "Candlestick": "candlestick",
-        "Null Point": "candlestick-null"
+        "Candlestick": "candlestick"
     },
     "Ohlc": {
-        "Ohlc": "ohlc",
-        "Null Point": "ohlc-null" 
+        "Ohlc": "ohlc"
     },
     "Lollipop": {
-        "Lollipop": "lollipop",
-        "Null Point": "lollipop-null"
+        "Lollipop": "lollipop"
     },
     "Dumbbell": {
-        "Dumbbell": "dumbbell",
-        "Null Point": "dumbbell-null"
+        "Dumbbell": "dumbbell"
     },
     "Equalizer": {
         "Equalizer": "equalizer",
-        "Multiple Equalizer": "equalizer-multi",
-        "Null Point": "equalizer-null"
+        "Multiple Equalizer": "equalizer-multi"
     },
     "Histogram": {
         "Histogram": "histogram"
@@ -97,13 +105,11 @@
         "Scatter & Bell Curve": "bellcurve-source"
     },
     "Vector": {
-        "Vector": "vector",
-        "Null Point": "vector-null"
+        "Vector": "vector"
     },
     "Heatmap": {
         "Heatmap": "heatmap",
-        "Heatmap Category": "heatmap-category",
-        "Null Point": "heatmap-null"
+        "Heatmap Category": "heatmap-category"
     },
     "Treemap": {
         "Treemap": "treemap",
@@ -111,7 +117,6 @@
     },
     "Pie": {
         "Pie": "pie",
-        "Null Point": "pie-null",
         "Donut": "pie-donut"
     },
     "Funnel": {

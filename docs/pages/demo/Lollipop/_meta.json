@@ -1,8 +1,8 @@
 {
 	"lollipop": {
-		"title": "Lollipop"
-	},
-	"lollipop-null": {
-		"title": "Null Point"
+		"title": "Lollipop",
+		"theme": {
+			"toc": false
+		}
 	}
 }

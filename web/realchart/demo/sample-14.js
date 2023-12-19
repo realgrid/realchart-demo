@@ -1,4 +1,53 @@
+const continents = [...new Set(data.map((value) => value.continent))];
+
+const createSeries = (year) => {
+    let result = [];
+    const { data, params: { continents } } = config;
+    const dataPerYear = data.filter((value) => value.year === year);
+
+    continents.forEach((continent, index) => {
+        result.push({
+            name: continent,
+            type: 'bubble',
+            tooltipText: 'country: ${country}<br>gdpPercap: ${x}<br>lifeExp: ${y}<br>pop: ${z}',
+            sizeMode: 'width',
+            shape: 'rectangle',
+            radius: 0.1,
+            data: dataPerYear.filter((value) => value.continent === continent).map((value) => {
+                if (value.country === 'Kuwait') return;
+                return {x: value.gdpPercap, y: value.lifeExp, z: value.pop, country: value.country}; 
+            })
+        });
+    });
+
+    return result;
+}
+
 const config = {
+    data,
+    params: {
+        continents,
+        createSeries,
+    },
+    actions: [
+        {
+            type: 'slider',
+            min: 1952,
+            max: 2007,
+            step: 5,
+            field: 'year',
+            label: 'Year',
+            target: 'data',
+            action: ({value}) => {
+                config.annotations.text = 'IN ' + value;
+                config.series = config.params.createSeries(value);
+                chart.load(config);
+            }
+        }
+    ],
+    options: {
+        credits: false,
+    },
     annotations: {
         text: 'IN 1952',
         offsetX: 180,
@@ -34,7 +83,7 @@ const config = {
             }
         },
         strictMin: 20,
-        strictMax: 120,
+        strictMax: 90,
         tick: {
             stepInterval: 10,
         },
@@ -71,37 +120,9 @@ function setActions(container) {
     }, 1952);
 }
 
-const createSeries = (year) => {
-    let result = [];
-    const continents = [...new Set(bubble.map((value) => value.continent))];
-
-    const data = bubble.filter((value) => value.year === year);
-
-    continents.forEach((continent, index) => {
-        result.push({
-            name: continent,
-            type: 'bubble',
-            tooltip: {
-                text: 'country: ${country}<br>gdpPercap: ${x}<br>lifeExp: ${y}<br>pop: ${z}'
-            },
-            sizeMode: 'width',
-            shape: 'rectangle',
-            radius: 0.1,
-            data: data.filter((value) => value.continent === continent).map((value) => {
-                if (value.country === 'Kuwait') return;
-                return {x: value.gdpPercap, y: value.lifeExp, z: value.pop, country: value.country}; 
-            })
-        });
-    });
-
-
-    return result;
-}
-
 function init() {
     console.log('RealChart v' + RealChart.getVersion());
     // RealChart.setDebugging(true);
-    RealChart.setLogging(true);
     config.series = createSeries(1952);
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

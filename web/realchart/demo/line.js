@@ -60,6 +60,14 @@ function setActions(container) {
         config.yAxis.reversed = _getChecked(e);
         chart.load(config, animate);
     }, false);
+    createCheckBox(container, 'Marker', function (e) {
+        config.series.marker = _getChecked(e);
+        chart.load(config, animate);
+    }, true);
+    createCheckBox(container, 'Point Label', function (e) {
+        config.series.pointLabel = _getChecked(e);
+        chart.load(config, animate);
+    }, true);
 }
 
 function init() {

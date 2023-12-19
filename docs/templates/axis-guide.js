@@ -1,5 +1,4 @@
 export const config = {
-  inverted: true,
   options: { animatable: false },
   title: 'Axis Guides',
   legend: true,
@@ -23,8 +22,8 @@ export const config = {
       {
         type: 'range',
         front: true,
-        start: 3,
-        end: 6,
+        startValue: 3,
+        endValue: 6,
         label: { text: 'range guide', align: 'right', style: { fill: 'red' } }
       }
     ]

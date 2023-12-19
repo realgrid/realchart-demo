@@ -10,6 +10,7 @@ export const config = {
       padding: 0,
       position: 'opposite',
       tick: { baseAxis: 0 },
+      grid: false,
       label: { suffix: '%' }
     }
   ],

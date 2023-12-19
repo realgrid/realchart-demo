@@ -1,11 +1,14 @@
 {
 	"bubble": {
-		"title": "Bubble"
+		"title": "Bubble",
+		"theme": {
+			"toc": false
+		}
 	},
 	"bubble-multi": {
-		"title": "Multiple Bubble"
-	},
-	"bubble-null": {
-		"title": "Null Point"
+		"title": "Multiple Bubble",
+		"theme": {
+			"toc": false
+		}
 	}
 }

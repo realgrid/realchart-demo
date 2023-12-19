@@ -12,7 +12,12 @@ const config = {
         type: 'line',
         trendline: {
             visible: true,
-            type: 'movingAverage',
+            type: 'linear',
+            // type: 'logarithmic',
+            // type: 'exponential',
+            // type: 'power',
+            // type: 'polynomial',
+            // type: 'movingAverage',
             movingAverage: {
                 interval: 4,
             }
@@ -31,6 +36,10 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createListBox(container, "trendline.type", ['linear', 'logarithmic', 'exponential', 'power', 'polynomial', 'movingAverage'], function (e) {
+        config.series.trendline.type = _getValue(e);
+        chart.load(config);
+    }, 'linear');
 }
 
 function init() {

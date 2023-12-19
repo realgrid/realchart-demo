@@ -1,8 +1,14 @@
 {
 	"legend": {
-		"title": "Legend"
+		"title": "Legend",
+		"theme": {
+			"toc": false
+		}
 	},
 	"legend-rows": {
-		"title": "Legend Rows"
+		"title": "Legend Rows",
+		"theme": {
+			"toc": false
+		}
 	}
 }

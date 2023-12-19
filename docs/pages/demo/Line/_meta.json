@@ -1,32 +1,56 @@
 {
 	"line": {
-		"title": "Line"
+		"title": "Line",
+		"theme": {
+			"toc": false
+		}
 	},
 	"line-spline": {
-		"title": "Spline"
+		"title": "Spline",
+		"theme": {
+			"toc": false
+		}
 	},
 	"line-step": {
-		"title": "Stepped Line"
+		"title": "Stepped Line",
+		"theme": {
+			"toc": false
+		}
 	},
 	"line-negative": {
-		"title": "Negative Line"
-	},
-	"line-null": {
-		"title": "Null Point"
+		"title": "Negative Line",
+		"theme": {
+			"toc": false
+		}
 	},
 	"line-multi": {
-		"title": "Multiple Lines"
+		"title": "Multiple Lines",
+		"theme": {
+			"toc": false
+		}
 	},
 	"linegroup": {
-		"title": "Line Group"
+		"title": "Line Group",
+		"theme": {
+			"toc": false
+		}
 	},
 	"linegroup-negative": {
-		"title": "Negative Lines"
+		"title": "Negative Lines",
+		"theme": {
+			"toc": false
+		}
 	},
 	"bump": {
-		"title": "Bump Chart"
+		"title": "Bump Chart",
+		"theme": {
+			"toc": false
+		}
 	},
 	"line-bigdata": {
-		"title": "대량 데이터(3000)"
+		"title": "대량 데이터(3000)",
+		"theme": {
+			"toc": false
+		}
 	}
 }

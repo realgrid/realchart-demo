@@ -52,8 +52,8 @@ export const config = {
         type: 'range',
         col: [ 0, 2 ],
         front: true,
-        start: 3,
-        end: 6,
+        startValue: 3,
+        endValue: 6,
         label: { text: 'range guide', align: 'right', style: { fill: 'red' } }
       }
     ]

@@ -56,7 +56,8 @@ export class ImageElement extends RcElement {
     //-------------------------------------------------------------------------
     setImage(url: string, width: number, height: number): boolean {
         if (url) {
-            this.setAttr('href', url);
+            // 이렇게 기존 'href'와 다른 지 check하지 않고 직접 setAttr()하면 계속 onload 이벤트가 발생한다. #332
+            this.url = url;
             this.resize(width, height);
             return true;
         }

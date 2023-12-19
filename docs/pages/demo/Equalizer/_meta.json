@@ -1,11 +1,14 @@
 {
 	"equalizer": {
-		"title": "Equalizer"
+		"title": "Equalizer",
+		"theme": {
+			"toc": false
+		}
 	},
 	"equalizer-multi": {
-		"title": "Multiple Equalizer"
-	},
-	"equalizer-null": {
-		"title": "Null Point"
+		"title": "Multiple Equalizer",
+		"theme": {
+			"toc": false
+		}
 	}
 }

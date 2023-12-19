@@ -1,7 +1,7 @@
 export const config = {
   type: 'line',
   options: {},
-  title: { text: 'Bump Chart', style: { marginBottom: '30px' } },
+  title: { text: 'Bump Chart', gap: 30, style: { marginBottom: '30px' } },
   xAxis: { title: '일일 Daily fat', type: 'category' },
   yAxis: { title: 'Vertical 수직축 Axis', tick: { steps: [ 0, 1, 2 ] } },
   series: {

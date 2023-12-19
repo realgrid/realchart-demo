@@ -10,10 +10,9 @@ import { ButtonElement } from "../common/ButtonElement";
 import { pickNum } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { ClipRectElement, LayerElement, RcElement } from "../common/RcControl";
-import { IRect, Rectangle } from "../common/Rectangle";
+import { IRect } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { Align, AlignBase, SectionDir, VerticalAlign, _undef } from "../common/Types";
-import { GroupElement } from "../common/impl/GroupElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Annotation, AnnotationScope } from "../model/Annotation";
 import { Axis } from "../model/Axis";
@@ -23,7 +22,6 @@ import { LegendItem, LegendLocation } from "../model/Legend";
 import { Series } from "../model/Series";
 import { Split } from "../model/Split";
 import { Subtitle, SubtitlePosition, Title } from "../model/Title";
-import { LineSeries, LineSeriesBase } from "../model/series/LineSeries";
 import { AnnotationView } from "./AnnotationView";
 import { AxisScrollView, AxisView } from "./AxisView";
 import { AxisGuideContainer, BodyView, createAnnotationView } from "./BodyView";
@@ -550,12 +548,6 @@ class AxisSectionView extends SectionView {
 /**
  * @internal
  */
-class EmptyView extends GroupElement {
-}
-
-/**
- * @internal
- */
 export class CreditView extends ChartElement<Credits> {
 
     //-------------------------------------------------------------------------
@@ -604,7 +596,6 @@ export class ChartView extends LayerElement {
     private _model: Chart;
     _inverted = false;   // bar 시리즈 계열이 포함되면 true, x축이 수직, y축이 수평으로 그려진다.
 
-    _emptyView: EmptyView;
     private _titleSectionView: TitleSectionView;
     private _legendSectionView: LegendSectionView;
     private _plotContainer: LayerElement;
@@ -623,7 +614,7 @@ export class ChartView extends LayerElement {
     private _historyView: HistoryView;
     private _tooltipView: TooltipView;
     private _seriesClip: ClipRectElement;
-    private _lineSeriesClip: ClipRectElement;
+    // private _lineSeriesClip: ClipRectElement;
 
     _org: IPoint;
     private _plotWidth: number;
@@ -679,10 +670,6 @@ export class ChartView extends LayerElement {
     measure(doc: Document, model: Chart, hintWidth: number, hintHeight: number, phase: number): void {
         if (model) {
             model.prepareRender();
-        }
-        
-        if (this.$_checkEmpty(doc, model, hintWidth, hintHeight)) {
-            return;
         }
 
         const m = this._model = model;
@@ -771,11 +758,6 @@ export class ChartView extends LayerElement {
         const height = this.height;
         let w = width;
         let h = height;
-
-        if (this._emptyView?.visible) {
-            this._emptyView.resize(w, h);
-            return;
-        }
 
         const m = this._model;
         const polar = m.isPolar();
@@ -1165,9 +1147,13 @@ export class ChartView extends LayerElement {
         this._tooltipView.close(true, false);
     }
 
-    showTooltip(series: Series, point: DataPoint, body: RcElement): void {
+    showTooltip(series: Series, point: DataPoint, body: RcElement, p: IPoint): void {
         const {x, y} = point.getTooltipPos();
-        this._tooltipView.show(series, point, x + body.tx, y + body.ty, true);
+        const isFollowPointer =  this._model.chart.tooltip.followPointer;
+        const tx = isFollowPointer ? p.x + body.tx : x + body.tx;
+        const ty = isFollowPointer ? p.y + body.ty : y + body.ty;
+
+        this._tooltipView.show(series, point, tx, ty, true);
     }
 
     hideTooltip(): void {
@@ -1198,12 +1184,7 @@ export class ChartView extends LayerElement {
 
         function clip(v: RcElement): void {
             if (inverted) {
-                // TODO: 이런 구분은 없애야 한다!. LineContainer 참조.
-                if (line) {
-                    sc.setBounds(0, h - w, h, w);
-                } else {
-                    sc.setBounds(0, -w, h, w);
-                }
+                sc.setBounds(0, -w, h, w);
             } else {
                 sc.setBounds(0, 0, w, h);
             }
@@ -1211,8 +1192,7 @@ export class ChartView extends LayerElement {
         }
 
         const inverted = this._model.inverted && invertable;
-        const line = view && (view.parent as SeriesView<any>).model instanceof LineSeriesBase;
-        const sc = line ? this._lineSeriesClip : this._seriesClip;
+        const sc = this._seriesClip;
 
         // TODO: pane 단위로 -> body로 가야하나?
         view && clip(view);
@@ -1298,26 +1278,12 @@ export class ChartView extends LayerElement {
     //-------------------------------------------------------------------------
     protected _doAttached(parent: RcElement): void {
         this._seriesClip = this.control.clipBounds();
-        this._lineSeriesClip = this.control.clipBounds();
+        // this._lineSeriesClip = this.control.clipBounds();
     }
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    private $_checkEmpty(doc: Document, m: Chart, hintWidth: number, hintHeight: number): boolean {
-        if (m && !m.isEmpty()) {
-            if (this._emptyView) {
-                this._emptyView.visible = false;
-            }
-        } else {
-            if (!this._emptyView) {
-                this._emptyView = new EmptyView(doc);
-            }
-            this._emptyView.resize(hintWidth, hintHeight);
-            return true;
-        }
-    }
-
     private $_preparePanes(doc: Document, split: Split): void {
         this._paneContainer.prepare(doc, split);
     }

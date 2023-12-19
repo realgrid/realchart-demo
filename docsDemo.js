@@ -17,7 +17,7 @@ function createMetaJson() {
 		let demos = {}
 		map2.forEach((value2, key2) => {
 			// console.log(`${key}: ${value}`);
-			demos[value2] = {title: key2};
+			demos[value2] = {title: key2, theme: { toc: false }};
 		});
 		writeFileSync(`./docs/pages/demo/${key.replace(' ', '')}/_meta.json`, JSON.stringify(demos, null, '\t'));
 	});
@@ -60,8 +60,14 @@ function createMetaJson() {
 
         if (typeof value !== 'object') continue;
         for (const [key2, value2] of Object.entries(value)) {
-            await page.goto(baseUrl + category + value2 + '.html');
-
+            try {
+                const url = baseUrl + category + value2 + '.html';
+                const res = await page.goto(url);
+                if (res.status() != 200) throw Error(`Not found page. ${url}`)
+            } catch(err) {
+                console.error(`\x1b[31m ${err.message}`);
+                continue;
+            }
             // callback 함수를 문자열로 변환하지 않을 경우 undefined로 반환됨
             const {config, callbacks} = await page.evaluate(() => {
                 let callbacks = [];

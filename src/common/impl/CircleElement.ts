@@ -82,3 +82,13 @@ export class ArcElement extends PathElement {
         ));
     }
 }
+
+export class ArcPolyElement extends ArcElement {
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    setPolyline(pts: number[]): void {
+        this.setPath(SvgShapes.lines(...pts));
+    }
+}

@@ -1,8 +1,8 @@
 {
-	"barrange": {
-		"title": "Waterfall"
-	},
-	"waterfall-null": {
-		"title": "Null Point"
+	"waterfall": {
+		"title": "Waterfall",
+		"theme": {
+			"toc": false
+		}
 	}
 }

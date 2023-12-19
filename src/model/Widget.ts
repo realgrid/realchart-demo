@@ -14,8 +14,6 @@ import { ChartItem } from "./ChartItem";
  * Widget 모델.
  * 기본적으로 plot 영역에 표시된다.
  * plot 영역에 표시될 때 {@link left}, {@link top} 등으로 위치를 지정할 수 있다.
- * 
- * @config chart.widget
  */
 export abstract class Widget extends ChartItem {
 

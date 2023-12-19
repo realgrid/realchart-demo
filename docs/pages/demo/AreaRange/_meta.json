@@ -1,8 +1,8 @@
 {
 	"arearange": {
-		"title": "Area Range"
-	},
-	"arearange-null": {
-		"title": "Null Point"
+		"title": "Area Range",
+		"theme": {
+			"toc": false
+		}
 	}
 }

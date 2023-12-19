@@ -163,7 +163,7 @@ export class SvgShapes {
         const cw = clockwise ? 1 : 0;
         const x1 = cos(start);
         const y1 = sin(start);
-        const x2 = cos(end -= circled ? (cw ? SECTOR_ERROR * 10 : -SECTOR_ERROR * 10) : 0);
+        const x2 = cos(end -= circled ? (cw ? SECTOR_ERROR : -SECTOR_ERROR) : 0);
         const y2 = sin(end);
         const path = [];
 

@@ -98,12 +98,6 @@ export class BubbleSeries extends MarkerSeries {
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
-    zField: string;
-    sizeMode = BubbleSizeMode.AREA;
-    minSize: RtPercentSize = 8;
-    maxSize: RtPercentSize = '20%';
-    colorByPoint = false;
-
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -120,6 +114,18 @@ export class BubbleSeries extends MarkerSeries {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 z 값을 지정하는 속성명이나 인덱스.\
+     * undefined이면, data point의 값이 array일 때는 항목 수가 3이상일 때 2, 객체이면 'z'.
+     * 
+     * @config
+     */
+    zField: string;
+    sizeMode = BubbleSizeMode.AREA;
+    minSize: RtPercentSize = 8;
+    maxSize: RtPercentSize = '20%';
+    colorByPoint = false;
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------

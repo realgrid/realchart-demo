@@ -9,8 +9,34 @@ const config = {
             categories: [
                 '0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-40', '40-45',
                 '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80+'
-            ]
-        }
+            ],
+            guide: [
+                {
+                    type: 'range',
+                    startValue: 0,
+                    endValue: 5,
+                    style: {
+                        fill: '#5272F2',
+                    }
+                },
+                {
+                    type: 'range',
+                    startValue: 5,
+                    endValue: 11,
+                    style: {
+                        fill: '#F8BDEB'
+                    }
+                },
+                {
+                    type: 'range',
+                    startValue: 11,
+                    endValue: 16,
+                    style: {
+                        fill: '#FBECB2'
+                    }
+                }
+            ],
+        },
     },
     inverted: true,
     title: "Bar Wing Chart",
@@ -25,11 +51,10 @@ const config = {
     },
     xAxis: [{
         template: 'xAxis',
-        title: "일일 Daily fat",
-        grid: true,
+        title: "Daily fat",
     }, {
         template: 'xAxis',
-        title: "일일 Daily fat2",
+        title: "Daily fat2",
         position: 'opposite',
     }],
     yAxis: {
@@ -41,11 +66,12 @@ const config = {
     series: {
         layout: 'overlap',
         children: [{
-            name: '남자',
+            name: 'Male',
             pointLabel: {
                 visible: true,
                 numberFormat: 'a##0.00'
             },
+            color: '#468B97',
             data: [
                 -8.98, -7.52, -6.65, -5.72, -4.85,
                 -3.71, -2.76, -2.07, -1.70, -1.47,
@@ -53,9 +79,9 @@ const config = {
                 -0.23, -0.15
             ]
         }, {
-            name: '여자',
+            name: 'Female',
             xAxis: 1,
-            color: '#ffaa00',
+            color: '#EF6262',
             pointLabel: {
                 visible: true,
                 numberFormat: '##0.00'

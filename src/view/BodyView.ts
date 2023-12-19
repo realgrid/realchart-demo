@@ -11,7 +11,7 @@ import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
 import { ClipRectElement, LayerElement, PathElement, RcControl, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
-import { Align, VerticalAlign, _undef, assert } from "../common/Types";
+import { Align, FILL, PI_2, VerticalAlign, _undef, assert } from "../common/Types";
 import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
@@ -27,7 +27,7 @@ import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
 import { Gauge, GaugeBase } from "../model/Gauge";
 import { ChartElement } from "./ChartElement";
 import { GaugeView } from "./GaugeView";
-import { IPointView, SeriesView } from "./SeriesView";
+import { BoxedSeriesView, IPointView, SeriesView } from "./SeriesView";
 import { CircleGaugeGroupView, CircleGaugeView } from "./gauge/CircleGaugeView";
 import { ClockGaugeView } from "./gauge/ClockGaugeView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
@@ -63,8 +63,9 @@ import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
 import { LabelElement } from "../common/impl/LabelElement";
 import { CircleBarSeriesView } from "./series/CircleBarSeriesView";
-import { isObject, pickNum } from "../common/Common";
-import { relative } from "path";
+import { cos, pickNum, sin } from "../common/Common";
+import { ArcPolyElement } from "../common/impl/CircleElement";
+import { SectorElement } from "../common/impl/SectorElement";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -384,15 +385,15 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _line: LineElement;
+    private _line: RcElement;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
+    constructor(doc: Document, polar: boolean) {
         super(doc);
 
-        this.insertFirst(this._line = new LineElement(doc, 'rct-axis-guide-line'));
+        this.insertFirst(this._line = new (polar ? ArcPolyElement : LineElement)(doc, 'rct-axis-guide-line'));
     }
 
     //-------------------------------------------------------------------------
@@ -407,7 +408,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
     _doLayout(width: number, height: number): void {
         const m = this.model;
         const label = m.label;
-        const line = this._line;
+        const line = this._line as LineElement;
         const labelView = this._labelView.setVis(label.visible) && this._labelView;
         const rLabel = labelView.getBBounds();
         const xOff = pickNum(label.offsetX, 0);
@@ -482,6 +483,18 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
     }
 
     _doLayoutPolar(width: number, height: number, polar: IPolar): void {
+        const m = this.model;
+        const line = this._line as ArcPolyElement;
+        const labelView = this._labelView.setVis(m.label.visible) && this._labelView;
+        const start = m.axis.getStartAngle();
+        const p = m.axis.getPosition(polar.rd, m.value, true);
+
+        line.setArc(polar.cx, polar.cy, p, start, m.axis.getTotalAngle(), true);
+        line.setStyle(FILL, 'none');
+
+        if (labelView) {
+            labelView.translate(polar.cx + p * cos(polar.start), polar.cy + p * sin(polar.start));
+        }
     }
 }
 
@@ -490,15 +503,15 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _box: BoxElement;
+    private _box: BoxElement | SectorElement;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
+    constructor(doc: Document, polar: boolean) {
         super(doc);
 
-        this.insertFirst(this._box = new BoxElement(doc, 'rct-axis-guide-range'));
+        this.insertFirst(this._box = new (polar ? SectorElement : BoxElement)(doc, 'rct-axis-guide-range'));
     }
 
     //-------------------------------------------------------------------------
@@ -511,7 +524,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
     _doLayout(width: number, height: number): void {
         const m = this.model;
         const label = m.label;
-        const box = this._box;
+        const box = this._box as BoxElement;
         const start = Math.min(m.startValue, m.endValue);
         const end = Math.max(m.startValue, m.endValue);
         const labelView = this._labelView.setVis(label.visible) && this._labelView;
@@ -592,7 +605,31 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
     }
 
     _doLayoutPolar(width: number, height: number, polar: IPolar): void {
-        debugger;
+        const m = this.model;
+        const sector = this._box as SectorElement;
+        const labelView = this._labelView.setVis(m.label.visible) && this._labelView;
+        const start = m.axis.getStartAngle();
+        const p1 = m.axis.getPosition(polar.rd, m.startValue, true);
+        const p2 = m.axis.getPosition(polar.rd, m.endValue, true);
+
+        // line.setArc(polar.cx, polar.cy, p, start, m.axis.getTotalAngle(), true);
+        // line.setStyle(FILL, 'none');
+
+        sector.setSector({
+            cx: polar.cx,
+            cy: polar.cy,
+            rx: p2,
+            ry: p2,
+            innerRadius: p1 / p2,
+            start: start,
+            angle: PI_2,
+            clockwise: true
+        });
+
+        if (labelView) {
+            const p = p1 + (p2 - p1) / 2;
+            labelView.translate(polar.cx + p * cos(polar.start), polar.cy + p * sin(polar.start));
+        }
     }
 }
 
@@ -625,16 +662,16 @@ export class AxisGuideContainer extends LayerElement {
         assert(views.length === 0, 'GuideContainer.prepare');
     }
 
-    addAll(doc: Document, guides: AxisGuide[]): void {
+    addAll(doc: Document, guides: AxisGuide[], polar: boolean): void {
         guides.forEach(g => {
             if (g instanceof AxisRangeGuide) {
-                let v = this._rangePool.pop() || new AxisGuideRangeView(doc);
+                let v = this._rangePool.pop() || new AxisGuideRangeView(doc, polar);
 
                 this.add(v);
                 v.prepare(doc, g)
                 this._views.push(v);
             } else if (g instanceof AxisLineGuide) {
-                let v = this._linePool.pop() || new AxisGuideLineView(doc);
+                let v = this._linePool.pop() || new AxisGuideLineView(doc, polar);
 
                 this.add(v);
                 v.prepare(doc, g)
@@ -686,22 +723,27 @@ class CrosshairView extends PathElement {
 
         if (this._bar) {
             const len = axis._isHorz ? width : height;
-            let index = -1;
+            let xVal = -1;
 
             if (pv) {
-                index = pv.point.xValue;
+                xVal = pv.point.xValue;
             } else if (this._model.showAlways && axis instanceof CategoryAxis) {
                 if (axis.reversed) {
-                    index = axis.categoryAt(horz ? width - x : y);
+                    xVal = axis.xValueAt(horz ? width - x : y);
                 } else {
-                    index = axis.categoryAt(horz ? x : height - y);
+                    xVal = axis.xValueAt(horz ? x : height - y);
                 }
             }
 
             // TODO: scrolling
-            if (index >= 0) {
-                const p = axis.getPosition(len, index);
-                const w = axis.getUnitLength(len, index);
+            if (xVal >= 0) {
+                const p = axis.getPosition(len, xVal);
+                const w = axis.getUnitLength(len, xVal);
+
+                if (isNaN(p)) {
+                    debugger;
+                    console.log(axis.getPosition(len, xVal));
+                }
 
                 if (horz) {
                     pb.rect(p - w / 2, 0, w, height);
@@ -736,7 +778,7 @@ export class ZoomButton extends ButtonElement {
 export interface IPlottingOwner {
 
     clipSeries(view: RcElement, view2: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
-    showTooltip(series: Series, point: DataPoint, body: RcElement): void;
+    showTooltip(series: Series, point: DataPoint, body: RcElement, p: IPoint): void;
     hideTooltip(): void;
 }
 
@@ -783,8 +825,10 @@ export class BodyView extends ChartElement<Body> {
     private _zoomButton: ZoomButton;
     // feedbacks
     private _feedbackContainer: LayerElement;
-    private _crosshairLines: ElementPool<CrosshairView>;
+    private _crosshairViews: ElementPool<CrosshairView>;
+
     private _focused: IPointView = null;
+    private _focusBorder: PathElement;
 
     private _inverted: boolean;
     private _zoomRequested: boolean;
@@ -812,7 +856,8 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
         this.add(this._zoomButton = new ZoomButton(doc));
         
-        this._crosshairLines = new ElementPool(this._feedbackContainer, CrosshairView);
+        this._feedbackContainer.add(this._focusBorder = new  PathElement(doc, 'rct-focus-border'));
+        this._crosshairViews = new ElementPool(this._feedbackContainer, CrosshairView);
     }
 
     //-------------------------------------------------------------------------
@@ -853,7 +898,7 @@ export class BodyView extends ChartElement<Body> {
         // crosshair가 zoom이 반영된 것으로 계산하므로 다음 render까지 기다리게 해야한다.
         // TODO: _zoomRequested 필요 없는 깔끔한 방식 필요. 
         if (!this._zoomRequested) {
-            this._crosshairLines.forEach(v => {
+            this._crosshairViews.forEach(v => {
                 if (v.setVis(inBody)) {
                     v.layout(pv, p.x, p.y, w, h);
                 }
@@ -861,22 +906,22 @@ export class BodyView extends ChartElement<Body> {
         }
 
         if (pv) {
-            this.$_setFocused(sv.model, pv);
+            this.$_setFocused(sv.model, pv, p);
         } else {
-            this.$_setFocused(null, null);
+            this.$_setFocused(null, null, p);
         }
         return inBody;
     }
 
-    private $_setFocused(series: Series, p: IPointView): boolean {
-        if (p != this._focused) {
+    private $_setFocused(series: Series, pv: IPointView, p: IPoint): boolean {
+        if (pv != this._focused || this.model.chart.tooltip.followPointer) {
             if (this._focused) {
-                (this._focused as any as RcElement).unsetData(SeriesView.DATA_FOUCS);
+                (this._focused as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, false);
             }
-            this._focused = p;
+            this._focused = pv;
             if (this._focused) {
-                (this._focused as any as RcElement).setData(SeriesView.DATA_FOUCS);
-                this._owner.showTooltip(series, p.point, this);
+                (this._focused as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, true);
+                this._owner.showTooltip(series, pv.point, this, p);
             } else {
                 this._owner.hideTooltip();
             }
@@ -998,6 +1043,10 @@ export class BodyView extends ChartElement<Body> {
             v.resize(w, h);
             v.layout();
         })
+        // 그룹에 포함된 시리즈들 간의 관계 설정 후에 그리기가 필요한 경우가 있다.
+        this._seriesViews.forEach(v => {
+            v.afterLayout();
+        });
         
         if (!this._polar) {
             // axis grids
@@ -1195,7 +1244,7 @@ export class BodyView extends ChartElement<Body> {
     }
 
     private $_preppareCrosshairs(chart: IChart): void {
-        const views = this._crosshairLines;
+        const views = this._crosshairViews;
         const hairs: Crosshair[] = [];
 
         [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {

@@ -1,11 +1,20 @@
 {
 	"scatter": {
-		"title": "Scatter"
+		"title": "Scatter",
+		"theme": {
+			"toc": false
+		}
 	},
 	"scatter-bigdata": {
-		"title": "Scatter - Many Points"
+		"title": "Scatter - Many Points",
+		"theme": {
+			"toc": false
+		}
 	},
 	"scatter-jitter": {
-		"title": "Scatter - Jittering"
+		"title": "Scatter - Jittering",
+		"theme": {
+			"toc": false
+		}
 	}
 }

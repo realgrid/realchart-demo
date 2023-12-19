@@ -1,5 +1,8 @@
 {
 	"basic": {
-		"title": "Basic"
+		"title": "Basic",
+		"theme": {
+			"toc": false
+		}
 	}
 }

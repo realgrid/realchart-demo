@@ -146,7 +146,7 @@ export class ChartPointerHandler implements IPointerHandler {
         // TODO: 대부분 다르게 나온다!
         // if (ev.target !== elt) return;
 
-        if (navigator.dblClick(elt)) {
+        if (navigator.visible && navigator.dblClick(elt)) {
             return;
         }
     }

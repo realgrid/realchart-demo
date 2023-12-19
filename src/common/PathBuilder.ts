@@ -84,6 +84,15 @@ export class PathBuilder {
         return this;
     }
 
+    moveOrLine(connected: boolean, x: number, y: number): PathBuilder {
+        if (connected) {
+            this._path.push('L', x, y);
+        } else {
+            this._path.push('M', x, y);
+        }
+        return this;
+    }
+
     vline(x: number, y1: number, y2: number): PathBuilder {
         this._path.push('M', x, y1, 'L', x, y2);
         return this;

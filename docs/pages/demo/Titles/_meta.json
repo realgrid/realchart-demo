@@ -1,5 +1,8 @@
 {
 	"titles": {
-		"title": "Titles"
+		"title": "Titles",
+		"theme": {
+			"toc": false
+		}
 	}
 }

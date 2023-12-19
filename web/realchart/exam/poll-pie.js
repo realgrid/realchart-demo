@@ -102,10 +102,7 @@ const config = {
     series: [
         {
             template: 'series',
-            tooltip: {
-                // visible: false,
-                text: '${x}'
-            },
+            tooltipText: '${x}',
             type: 'pie',
             colorField: 'color',
             data: pieData,

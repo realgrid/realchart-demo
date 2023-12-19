@@ -6,15 +6,17 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { ClipRectElement, PathElement, RcElement } from "../../common/RcControl";
-import { IValueRange } from "../../common/Types";
+import { FILL, IValueRange } from "../../common/Types";
 import { Utils } from "../../common/Utils";
+import { DataPoint } from "../../model/DataPoint";
 import { SeriesGroupLayout } from "../../model/Series";
 import { LinearAxis } from "../../model/axis/LinearAxis";
-import { AreaSeries, AreaSeriesPoint } from "../../model/series/LineSeries";
+import { AreaSeries, AreaSeriesGroup, AreaSeriesPoint } from "../../model/series/LineSeries";
+import { AreaLegendMarkerView } from "../../model/series/legend/AreaLegendMarkerView";
+import { LegendItemView } from "../LegendView";
 import { LineContainer, LineSeriesBaseView } from "./LineSeriesView";
 
 export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
@@ -41,14 +43,22 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _layoutLines(pts: AreaSeriesPoint[]): void {
-        super._layoutLines(pts);
+    protected _collectVisPoints(model: AreaSeries): DataPoint[] {
+        const pts = super._collectVisPoints(model);
+        const g = model.group;
 
-        if (this._polar) {
-            this._layoutPolar(this._area, pts);
-        } else {
-            this._layoutArea(this._area, pts);
+        if (g && (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
         }
+        return pts;
+    }
+
+    decoreateLegend(legendView: LegendItemView): void {
+        super.decoreateLegend(legendView);
+
+        const cs = getComputedStyle(this._area.dom);
+        (legendView._marker as AreaLegendMarkerView)._area.setStyle('stroke', 'none');
+        (legendView._marker as AreaLegendMarkerView)._area.setStyle('fill', cs.fill);
+        (legendView._marker as AreaLegendMarkerView)._area.setStyle('fillOpacity', cs.fillOpacity);
     }
 
     //-------------------------------------------------------------------------
@@ -88,7 +98,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             }
         } else {
             if (!areas) {
-                areas = this._rangeAreas = new ElementPool(this._areaContainer, PathElement);
+                areas = this._rangeAreas = new ElementPool(this._areaContainer, PathElement, 'rct-area-series-area');
             }
             areas.prepare(ranges.length);
 
@@ -108,6 +118,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     protected _renderSeries(width: number, height: number): void {
         super._renderSeries(width, height);
 
+        this.model.prepareAreas();
         this._areaContainer.invert(this._inverted, height);
     }
 
@@ -115,86 +126,39 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         super._layoutMarkers(pts, width, height);
 
         const yAxis = this.model._yAxisObj;
-        const yOrg = height;
+        const yOrg = yAxis.reversed ? -width : height;
 
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
+            
             p.yLow = yOrg - yAxis.getPosition(height, p.yGroup - p.yValue);
         }
     }
 
-    protected _layoutArea(area: PathElement, pts: AreaSeriesPoint[]): void {
+    protected _doAfterLayout(): void {
+        (this.model.group as AreaSeriesGroup)?.prepareLines(this.model);
+
+        super._doAfterLayout();
+    
+        if (this._polar) {
+            this._layoutPolar(this._area, this._visPoints as AreaSeriesPoint[]);
+        } else {
+            this.$_layoutArea(this._area);
+        }
+    }
+
+    private $_layoutArea(area: PathElement): void {
+        const series = this.model;
+
+        if (!this._areaContainer.setVis(series._areas.length > 0)) {
+            return; 
+        }
+
         const w = this.width;
         const h = this.height;
-        const series = this.model;
-        const lowArea = this._needBelow ? this._lowArea : void 0;
-        const g = series.group;
         const inverted = series.chart.isInverted();
-        const yAxis = series._yAxisObj;
-        const len = inverted ? this.width : this.height;
-        const min = yAxis.axisMin();
-        const base = series.getBaseValue(yAxis);
-        const yMin = this.height - yAxis.getPosition(len, pickNum(Math.max(min, base), min));
-        const sb = new PathBuilder();
-        let i = 0;
-        let s: string;
-
-        while (i < pts.length && pts[i].isNull) {
-            i++;
-        }
-
-        if (g && (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
-            const iSave = i;
-
-            sb.move(pts[i].xPos, pts[i].yLow);
-            sb.line(pts[i].xPos, pts[i].yPos);
-            
-            i++;
-            while (i < pts.length) {
-                sb.line(pts[i].xPos, pts[i].yPos);
-                i++;
-            }
-
-            i = pts.length - 1;
-            sb.line(pts[i].xPos, pts[i].yLow);
-
-            while (i >= iSave) {
-                sb.line(pts[i].xPos, pts[i].yLow);
-                i--;
-            }
-        } else {
-            sb.move(pts[i].xPos, yMin);
-            sb.line(pts[i].xPos, pts[i].yPos);
-
-            this._buildLines(pts, i + 1, sb);
-
-            const path = sb._path;
-
-            i = 6;
-            while (i < path.length) {
-                if (path[i] === 'M') {
-                    path.splice(i, 0, 'L', path[i - 2], yMin);
-                    i += 3;
-                    path.splice(i, 0, 'M', path[i + 1], yMin);
-                    path[i + 3] = 'L';
-                    i += 6;
-                } else if (path[i] === 'Q') {
-                    i += 4;
-                } else { // 'L'
-                    i += 3;
-                }
-            }
-
-            sb.line(path[path.length - 2] as number, yMin);
-        }
-
-        s = sb.end();
-        // area.unsetData('polar');
-        // area.setBoolData('simple', this._simpleMode);
-        // area.setPath(s);
-        // area.internalClearStyleAndClass();
-        // series.color && area.setStyle('fill', series.color);
-        // series.style && area.internalSetStyleOrClass(series.style);
+        const lowArea = this._needBelow ? this._lowArea : void 0;
+        const s = this._buildAreas(series._areas, series.getLineType());
 
         if (series._runRanges) {
             this._rangeAreas.forEach((area, i) => {
@@ -203,18 +167,19 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
                 area.setBoolData('simple', this._simpleMode);
                 area.setPath(s);
                 area.internalClearStyleAndClass();
-                area.setStyle('fill', range.color);
-                area.addStyleOrClass(range.style);
+                area.internalSetStyle('fill', range.color);
+                this._setFill(area, range.style);
+                range.areaStyle && area.internalSetStyleOrClass(range.areaStyle);
                 area.setClip(this._rangeAreaClips[i]);
                 this._clipRange(w, h, series._runRangeValue, range, this._rangeAreaClips[i], inverted);
             })
         } else {
+            area.setPath(s);
             area.unsetData('polar');
             area.setBoolData('simple', this._simpleMode);
-            area.setPath(s);
             area.internalClearStyleAndClass();
-            series.color && area.setStyle('fill', series.color);
-            series.style && area.internalSetStyleOrClass(series.style);
+            series.color && area.internalSetStyle(FILL, series.color);
+            this._setFill(area, series.style);
             series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
         }
 
@@ -222,9 +187,10 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
             lowArea.setBoolData('simple', this._simpleMode);
             lowArea.setPath(s);
             lowArea.internalClearStyleAndClass();
-            series.color && lowArea.setStyle('fill', series.color);
-            series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
-            series.belowStyle && lowArea.internalSetStyleOrClass(series.belowStyle);
+            series.color && lowArea.internalSetStyle(FILL, series.color);
+            series.areaStyle && lowArea.internalSetStyleOrClass(series.areaStyle);
+            this._setFill(lowArea, series.belowStyle);
+            series.belowAreaStyle && lowArea.internalSetStyleOrClass(series.belowAreaStyle);
         }
     }
 

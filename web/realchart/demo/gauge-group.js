@@ -12,7 +12,7 @@ const config = {
     },
     options: {
         // animatable: false,
-        theme: 'dark',
+        // theme: 'dark',
         credits: {
             // visible: false,
             // verticalAlign: 'top'
@@ -34,7 +34,7 @@ const config = {
                 style: {
                     fill: '#00aaff'
                 },
-                text: "<t style='fill:gray'>게이지 101 -</t> ${value}"
+                text: "<t style='fill:gray'>Time -</t> ${value}"
             }
         }, {
             name: 'gauge2',
@@ -49,7 +49,7 @@ const config = {
                 style: {
                     fill: '#ffaa00'
                 },
-                text: "<t style='fill:gray'>게이지 202 -</t> ${value}"
+                text: "<t style='fill:gray'>Run -</t> ${value}"
             }
         }, {
             name: 'gauge3',
@@ -64,7 +64,7 @@ const config = {
                 style: {
                     fill: '#88cc00'
                 },
-                text: "<t style='fill:gray'>게이지 303 -</t> ${value}"
+                text: "<t style='fill:gray'>Walk -</t> ${value}"
             }
         }, {
             name: 'gauge4',
@@ -72,14 +72,14 @@ const config = {
             value: Math.random() * 100,
             valueRim: {
                 style: {
-                    fill: '#aa0000'
+                    fill: 'var(--color-3)'
                 }
             },
             label: {
                 style: {
-                    fill: '#aa0000'
+                    fill: 'var(--color-3)'
                 },
-                text: "<t style='fill:gray'>게이지 404 -</t> ${value}"
+                text: "<t style='fill:gray'>Kcal -</t> ${value}"
             }
         }],
         innerRadius: '30%',
@@ -141,7 +141,6 @@ function setActions(container) {
 function init() {
     console.log(RealChart.getVersion());
     // RealChart.setDebugging(true);
-    RealChart.setLogging(true);
 
     chart = RealChart.createChart(document, 'realchart', config);
     setActions('actions')

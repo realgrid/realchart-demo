@@ -141,7 +141,7 @@
     --rct-font-family: AppleSDGothicNeo-Light, "HelveticaNeue", "Malgun Gothic", "맑은 고딕", sans-serif;
     --rct-font-size: 16px;
 
-    --rct-focus-border: red;
+    --rct-focus-border: black;
     --rct-text-fill: #333;
 
     --rct-title-fill: #333;
@@ -383,6 +383,7 @@
 } */
 .rct-legend-item-marker[data-hidden] {
     fill: #aaa !important;
+    stroke: #aaa !important;
 }
 
 /** plot area */
@@ -392,6 +393,10 @@
 }
 .rct-body-background[data-polar] {
     stroke: none;
+}
+.rct-focus-border {
+    stroke: black;
+    stroke-width: 1.5px;
 }
 
 /** axis */
@@ -743,7 +748,7 @@
 .rct-candlestick-series .rct-point[data-focus] {
     fill-opacity: 0.5;
 }
-.rct-candlestick-series .rct-point[data-fall] {
+.rct-candlestick-series .rct-point[data-decline] {
     fill: #008;
     stroke: #008;
 }
@@ -753,26 +758,16 @@
 .rct-candlestick-point-wick {
     stroke: #003;
 }
-.rct-candlestick-point-fall {
-    fill: #008;
-    stroke: #008;
-}
 
 /** ohlc series */
 .rct-ohlc-series {
     stroke-width: 2;
 }
+.rct-ohlc-series .rct-point[data-decline] {
+    stroke: #00f;
+}
 .rct-ohlc-point-back {
     stroke: none;
-}
-/* .rct-ohlc-point-tick {
-    stroke: #003;
-}
-.rct-ohlc-point-bar {
-    stroke: #f00;
-} */
-.rct-ohlc-point-bar-fall {
-    stroke: #00f;
 }
 
 /** waterfall series */
@@ -868,7 +863,7 @@
     stroke: white;
 }
 .rct-funnel-series .rct-point[data-focus] {
-    stroke: red;
+    stroke: black;
     stroke-width: 2px;
 }
 
@@ -1019,6 +1014,7 @@
 
 /** tooltip */
 .rct-tooltip {
+    font-size: 0.8em;
     pointer-events: none;
     opacity: 0.9;
 }

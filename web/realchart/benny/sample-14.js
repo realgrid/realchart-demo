@@ -76,21 +76,19 @@ function setActions(container) {
 
 const createSeries = (year) => {
     let result = [];
-    const continents = [...new Set(bubble.map((value) => value.continent))];
+    const continents = [...new Set(data.map((value) => value.continent))];
 
-    const data = bubble.filter((value) => value.year === year);
+    const dataPerYear = data.filter((value) => value.year === year);
 
     continents.forEach((continent, index) => {
         result.push({
             name: continent,
             type: 'bubble',
-            tooltip: {
-                text: 'country: ${country}<br>gdpPercap: ${x}<br>lifeExp: ${y}<br>pop: ${z}'
-            },
+            tooltipText: 'country: ${country}<br>gdpPercap: ${x}<br>lifeExp: ${y}<br>pop: ${z}',
             sizeMode: 'width',
             shape: 'rectangle',
             radius: 0.1,
-            data: data.filter((value) => value.continent === continent).map((value) => {
+            data: dataPerYear.filter((value) => value.continent === continent).map((value) => {
                 if (value.country === 'Kuwait') return;
                 return {x: value.gdpPercap, y: value.lifeExp, z: value.pop, country: value.country}; 
             })

@@ -1,8 +1,14 @@
 {
 	"bellcurve": {
-		"title": "Bell Curve"
+		"title": "Bell Curve",
+		"theme": {
+			"toc": false
+		}
 	},
 	"bellcurve-source": {
-		"title": "Scatter & Bell Curve"
+		"title": "Scatter & Bell Curve",
+		"theme": {
+			"toc": false
+		}
 	}
 }

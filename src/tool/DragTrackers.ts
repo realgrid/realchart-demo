@@ -9,7 +9,6 @@
 import { ChartControl } from "../ChartControl";
 import { DragTracker, RcElement } from "../common/RcControl";
 import { RectElement } from "../common/impl/RectElement";
-import { Axis } from "../model/Axis";
 import { AxisScrollView } from "../view/AxisView";
 import { BodyView } from "../view/BodyView";
 import { NavigatorHandleView, NavigatorView } from "../view/NavigatorView";
@@ -51,6 +50,7 @@ export class ZoomTracker extends ChartDragTracker {
     protected _doStart(eventTarget: Element, xStart: number, yStart: number, x: number, y: number): boolean {
         const cr = this.chart.getBounds();
         const br = this._body.getBounds();
+
         this._xStart = xStart - (br.x - cr.x);
         this._yStart = yStart - (br.y - cr.y);
         this._body.addFeedback(this._feedback = new RectElement(this.chart.doc(), 'rct-zoom-tracker'));
@@ -60,6 +60,7 @@ export class ZoomTracker extends ChartDragTracker {
     protected _doEnded(x: number, y: number): void {
         const cr = this.chart.getBounds();
         const br = this._body.getBounds();
+
         if (this._vertical) {
             y -= br.y - cr.y;
             this._body.setZoom(0, Math.min(this._yStart, y), this._body.width, Math.max(this._yStart, y));
@@ -73,6 +74,7 @@ export class ZoomTracker extends ChartDragTracker {
     protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
         const cr = this.chart.getBounds();
         const br = this._body.getBounds();
+
         if (this._vertical) {
             y -= br.y - cr.y;
             this._feedback.setBounds(0, Math.min(this._yStart, y), this._body.width, Math.abs(this._yStart - y));
@@ -126,6 +128,7 @@ export class ScrollTracker extends ChartDragTracker {
             p = v.svgToElement(x, y).x - this._startOff;
             p = v.getZoomPos(p);
             v.model.axis.zoom(p, p + this._zoomLen);
+            console.log(p);
         }
         return true;
     }
@@ -174,21 +177,30 @@ export class NavigatorHandleTracker extends ChartDragTracker {
     protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
         const view = this._view;
         const axis = view.model.axis();
-        const len = view.model.axisLen();
+
+        axis._prepareZoom();
+
         let p = view.svgToElement(x, y).x - this._startOff;
+        const len = axis._zoom.total();// view.model.axisLen();
+        const min = axis._zoom.min;//axisMin();
 
         if (this._handleView._vertical) {
             if (this._isStart) {
             } else {
             }
         } else {
+            // if (p < 750) debugger;
             if (this._isStart) {
                 if (p > 0) {
-                    axis.zoom(p * len / view.width, NaN);
+                    axis.zoom(p * len / view.width + min, NaN);
+                } else {
+                    axis.zoom(min, NaN);
                 }
             } else {
                 if (p > 0 && p < view.width) {
-                    axis.zoom(NaN, p * len / view.width);
+                    axis.zoom(NaN, p * len / view.width + min);
+                } else if (p >= view.width) {
+                    axis.zoom(NaN, axis._zoom.max);
                 }
             }
         }
@@ -204,6 +216,7 @@ export class NavigatorMaskTracker extends ChartDragTracker {
     private _view: NavigatorView;
     private _maskView: RcElement;
     private _startOff: number;
+    private _totalLen: number;
     private _zoomLen: number;
 
     //-------------------------------------------------------------------------
@@ -226,6 +239,7 @@ export class NavigatorMaskTracker extends ChartDragTracker {
         const p = v.elementToSvg(0, 0);
 
         this._startOff = this._view.model._vertical ? (yStart - p.y) : (xStart - p.x);
+        this._totalLen = axis._zoom.total();
         this._zoomLen = axis._zoom.length();
 
         return true;
@@ -236,13 +250,12 @@ export class NavigatorMaskTracker extends ChartDragTracker {
 
     protected _doDrag(target: Element, xPrev: number, yPrev: number, x: number, y: number): boolean {
         const view = this._view;
-        const len = view.model.axisLen();
         const p = view.svgToElement(x, y).x - this._startOff;
 
         if (view.model._vertical) {
-            this.$_moveZoom(p * len / view.height);
+            this.$_moveZoom(p * this._totalLen / view.height);
         } else {
-            this.$_moveZoom(p * len / view.width);
+            this.$_moveZoom(p * this._totalLen / view.width);
         }
         return true;
     }
@@ -251,7 +264,10 @@ export class NavigatorMaskTracker extends ChartDragTracker {
     // internal members
     //-------------------------------------------------------------------------
     private $_moveZoom(p: number): void {
-        p = Math.max(0, Math.min(p, this._view.model._naviChart.xAxis.length() - this._zoomLen));
-        this._view.model.axis().zoom(p, p + this._zoomLen);
+        const model = this._view.model;
+
+        p = Math.max(0, Math.min(p, this._totalLen - this._zoomLen)) + model.axis()._zoom.min;
+        model.axis().zoom(p, p + this._zoomLen);
+        // console.log(p, this._totalLen, this._zoomLen);
     }
-}
+}   

@@ -302,14 +302,23 @@ const config = {
     {
       type: "linearGradient",
       id: "gradient-1",
-      color: "red",
+      color: ["#ffcb43", "#ff6425"],
+      opacity: 0.8,
+      dir: "right",
     },
   ],
   legend: true,
   xAxis: {
-    // type: "time"
+    // type: "time",
+    // padding: 0
+    label: {
+      suffix: "년"
+    }
   },
   yAxis: {},
+  body: {
+    zoomType: 'x'
+  },
   series: [
     {
       template: "series",
@@ -319,7 +328,7 @@ const config = {
       yField: "total",
       style: {
         fill: "url(#gradient-1)",
-        stroke: "red",
+        stroke: "url(#gradient-1)",
       },
     },
   ],

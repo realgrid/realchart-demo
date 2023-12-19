@@ -14,10 +14,12 @@ import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
 import { LineType } from "../ChartTypes";
-import { DataPoint } from "../DataPoint";
+import { DataPoint, IPointPos } from "../DataPoint";
 import { LegendItem } from "../Legend";
-import { DataPointLabel, MarkerVisibility, PointItemPosition, Series, SeriesGroup, SeriesMarker } from "../Series";
+import { DataPointLabel, MarkerVisibility, PointItemPosition, Series, SeriesGroup, SeriesGroupLayout, SeriesMarker } from "../Series";
+import { AreaLegendMarkerView } from "./legend/AreaLegendMarkerView";
 import { LineLegendMarkerView } from "./legend/LineLegendMarkerView";
+import { ShapeLegendMarkerView } from "./legend/ShapeLegendMarkerView";
 
 export class LineSeriesPoint extends DataPoint {
 
@@ -110,11 +112,8 @@ export abstract class LineSeriesBase extends Series {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    /**
-     * @config
-     */
-    marker: LineSeriesMarker = new LineSeriesMarker(this);
     private _shape: Shape;
+    _lines: PointLine[];
 
     //-------------------------------------------------------------------------
     // constructor
@@ -122,6 +121,11 @@ export abstract class LineSeriesBase extends Series {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
+    marker: LineSeriesMarker = new LineSeriesMarker(this);
+
     /**
      * null인 y값을 {@link baseValue}로 간주한다.
      * 
@@ -138,6 +142,13 @@ export abstract class LineSeriesBase extends Series {
 
     getRadius(p: LineSeriesPoint): number {
         return pickNum(p.radius, this.marker.radius);
+    }
+
+    /**
+     * null, ranges를 모두 고려해야 한다.
+     */
+    prepareLines(pts: LineSeriesPoint[]): void {
+        this._lines = this._doPrepareLines(pts);
     }
 
     //-------------------------------------------------------------------------
@@ -173,7 +184,7 @@ export abstract class LineSeriesBase extends Series {
     legendMarker(doc: Document, size: number): RcElement {
         const m = super.legendMarker(doc, size);
 
-        (m as LineLegendMarkerView).setShape(this.getShape(null), Math.min(+size || LegendItem.MARKER_SIZE, this.marker.radius * 2));
+        (m as ShapeLegendMarkerView).setShape(this.getShape(null), Math.min(+size || LegendItem.MARKER_SIZE, this.marker.radius * 2));
         return m;
     }
 
@@ -181,12 +192,38 @@ export abstract class LineSeriesBase extends Series {
     // internal members
     //-------------------------------------------------------------------------
     abstract getLineType(): LineType;
+
+    protected _doPrepareLines(pts: DataPoint[]): PointLine[] {
+        const len = pts.length;
+        const lines = [];
+
+        if (this._containsNull) {
+            let i = 0;
+            
+            while (i < len) {
+                const line: PointLine = [];
+
+                while (pts[i].isNull && i < len) {
+                    i++;
+                }
+                while (i < len && !pts[i].isNull) {
+                    line.push(pts[i++])
+                }
+                line.length > 0 && lines.push(line);
+            }
+        } else {
+            lines.push(pts.slice());
+        }
+        return lines;
+    }
 }
 
 export enum LineStepDirection {
     FORWARD = 'forward',
     BACKWARD = 'backward'
 }
+
+export type PointLine = IPointPos[];
 
 /**
  * @config chart.series[type=line]
@@ -235,6 +272,13 @@ export class LineSeries extends LineSeriesBase {
     nullStyle: SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    backDir(): LineStepDirection {
+        return this.stepDir === LineStepDirection.BACKWARD ? LineStepDirection.FORWARD : LineStepDirection.BACKWARD;
+    }
+
+    //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     _type(): string {
@@ -242,7 +286,7 @@ export class LineSeries extends LineSeriesBase {
         
     }
     getLineType(): LineType {
-        return this.lineType;
+        return (this.group instanceof LineSeriesGroup || this.group instanceof AreaSeriesGroup) ? this.group.lineType : this.lineType;
     }
 }
 
@@ -269,9 +313,19 @@ export class AreaSeries extends LineSeries {
     // fields
     //-------------------------------------------------------------------------
     private _base: number;
+    _areas: PointLine[];
+    
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(chart: IChart) {
+        super(chart);
+
+        this.marker.visible = chart.isPolar();
+    }
 
     //-------------------------------------------------------------------------
-    // property fields
+    // properties
     //-------------------------------------------------------------------------
     /**
      * area 영역에 추가적으로 적용되는 스타일셋이나 class selector.
@@ -279,6 +333,57 @@ export class AreaSeries extends LineSeries {
      * @config
      */
     areaStyle: StyleProps;
+    /**
+     * base 아래쪽 area 영역에 추가적으로 적용되는 스타일셋이나 class selector.
+     * 
+     * @config
+     */
+    belowAreaStyle: StyleProps;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    /**
+     * 미리 생성된 line들을 기준으로 area들을 생성한다.
+     */
+    prepareAreas(): void {
+
+        function bottom(pts: PointLine): PointLine {
+            const area = [];
+
+            if (pts.length > 0) {
+                let p = (pts[pts.length - 1] as DataPoint).toPoint();
+                p.yPos = (pts[pts.length - 1] as AreaSeriesPoint).yLow;
+                area.push(p);
+                
+                p = (pts[0] as DataPoint).toPoint();
+                p.yPos = pickNum((pts[0] as AreaSeriesPoint).yLow, pts[0].yPos);
+                area.push(p);
+            }
+            return area;
+        }
+
+        const inverted = this.chart.isInverted();
+        const g = this.group;
+        const lines = this._lines;
+        const areas = this._areas = [];
+
+        if (g && g._stacked) {//} g.layout === SeriesGroupLayout.FILL) {
+            // null로 분할된 line들을 area 하나로 묶는다.
+            const area = [].concat(...lines);
+            areas.push(area);
+            // 아래 선분을 추가한다.
+            areas.push(bottom(area));
+        } else {
+            lines.forEach(pts => {
+                // 위 line.
+                const area = pts.slice(0);
+                areas.push(area);
+                // 아래 선분
+                areas.push(bottom(area));
+            });
+        }
+    }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -287,18 +392,44 @@ export class AreaSeries extends LineSeries {
         return 'area';
     }
 
+    getBaseValue(axis: IAxis): number {
+        return axis._isX ? NaN : this._base;
+    }
+
+    protected _createLegendMarker(doc: Document, size: number): RcElement {
+        return new AreaLegendMarkerView(doc, size);
+    }
+
     protected _createPoint(source: any): DataPoint {
         return new AreaSeriesPoint(source);
+    }
+
+    protected _doPrepareLines(pts: DataPoint[]): PointLine[] {
+        // null이 포함된 line 정보도 필요하다.
+        if (this._containsNull && this.group && this.group._stacked) {
+            const len = pts.length;
+            const lines = [];
+            let i = 0;
+            
+            while (i < len) {
+                const isNull = pts[i].isNull;
+                const line: PointLine = [];
+
+                do {
+                    line.push(pts[i++]);
+                } while (i < len && pts[i].isNull == isNull);
+
+                lines.push(line);
+            }
+            return lines;
+        }
+        return super._doPrepareLines(pts);
     }
 
     protected _doPrepareRender(): void {
         super._doPrepareRender();
 
         this._base = pickNum(this.baseValue, this._yAxisObj.getBaseValue());
-    }
-
-    getBaseValue(axis: IAxis): number {
-        return axis._isX ? NaN : this._base;
     }
 }
 
@@ -376,9 +507,24 @@ export class AreaRangeSeriesPoint extends AreaSeriesPoint {
 export class AreaRangeSeries extends LineSeriesBase {
 
     //-------------------------------------------------------------------------
-    // property fields
+    // fields
     //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // properties
+    //-------------------------------------------------------------------------
+    /**
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 낮은(low) 값을 지정하는 속성명이나 인덱스.\
+     * undefined이면, data point의 값이 array일 때는 항목 수가 3이상이면 1, 아니면 0, 객체이면 'low'.
+     * 
+     * @config
+     */
     lowField: string;
+    /**
+     * json 객체나 배열로 전달되는 데이터포인트 정보에서 높은(high) 값을 지정하는 속성명이나 인덱스.\
+     * undefined이면, data point의 값이 array일 때는 항목 수가 3이상이면 2, 아니면 1, 객체이면 'high'.
+     * 
+     * @config
+     */
     highField: string;
     /**
      * area 영역에 추가적으로 적용되는 스타일셋이나 class selector.\
@@ -394,6 +540,9 @@ export class AreaRangeSeries extends LineSeriesBase {
      */
     curved = false;
 
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -416,6 +565,25 @@ export class AreaRangeSeries extends LineSeriesBase {
             this._runPoints.forEach((p: AreaRangeSeriesPoint) => !p.isNull && vals.push(p.lowValue));
         }
     }
+
+    protected _doPrepareLines(pts: DataPoint[]): PointLine[] {
+        const lines = super._doPrepareLines(pts);
+        const lines2: PointLine[] = [];
+
+        // top line
+        lines.forEach(line => {
+            const line2: PointLine = [];
+
+            for (let i = line.length - 1; i >= 0; i--) {
+                const p = line[i] as AreaRangeSeriesPoint;
+                const pt = p.toPoint();
+                pt.yPos = p.yLow;
+                line2.push(pt);
+            }
+            lines2.push(line, line2);
+        })
+        return lines2;
+    }
 }
 
 /**
@@ -426,6 +594,12 @@ export class LineSeriesGroup extends SeriesGroup<LineSeries> {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 이 그룹에 포함된 시리즈들의 line 종류.
+     * 
+     * @config
+     */
+    lineType = LineType.DEFAULT;
     baseValue = 0;
 
     //-------------------------------------------------------------------------
@@ -456,7 +630,37 @@ export class AreaSeriesGroup extends SeriesGroup<AreaSeries> {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * 이 그룹에 포함된 시리즈들의 line 종류.
+     * 
+     * @config
+     */
+    lineType = LineType.DEFAULT;
     baseValue = 0;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    prepareLines(series: AreaSeries): void {
+        if (this._stacked) {
+            const idx = this._visibles.indexOf(series);
+
+            // 이전 시리즈의 line을 area의 아래쪽으로 재설정한다.
+            if (idx > 0) {
+                const prev = this._visibles[idx - 1] as AreaSeries;
+                const areas = series._areas;
+                const prevAreas = prev._areas;
+
+                for (let i = 0; i < areas.length; i += 2) {
+                    areas[i + 1] = prevAreas[i].reverse();
+                }
+
+                // TODO: 양 끝이 null 처리...
+                if (this.layout === SeriesGroupLayout.STACK) {
+                }
+            }
+        }
+    }
 
     //-------------------------------------------------------------------------
     // overriden members

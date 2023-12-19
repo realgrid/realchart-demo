@@ -6,14 +6,14 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isObject, isString, pickNum, pickNum3, pickProp } from "../common/Common";
+import { isArray, isNumber, isObject, isString, pickNum, pickProp } from "../common/Common";
 import { IRichTextDomain } from "../common/RichText";
 import { Align, DEG_RAD, ORG_ANGLE, SVGStyleOrClass, VerticalAlign, _undef, fixnum, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
 import { IChart } from "./Chart";
 import { ChartItem, ChartTextOverflow, FormattableText } from "./ChartItem";
 import { Crosshair } from "./Crosshair";
-import { IClusterable, IPlottingItem } from "./Series";
+import { IClusterable, IPlottingItem, ISeries } from "./Series";
 
 /**
  * @internal
@@ -24,13 +24,13 @@ export interface IAxis {
     
     row: number;
     col: number;
-    _vlen: number;
     _isX: boolean;
     _isHorz: boolean;
     _isOpposite: boolean;
     _isBetween: boolean;
 
     reversed: boolean;
+    _vlen: number;
     _zoom: IAxisZoom;
 
     isContinuous(): boolean;
@@ -528,7 +528,8 @@ export abstract class AxisTick extends AxisItem {
 
 export enum AxisLabelArrange {
     /**
-     * 아무것도 하지 않는다.
+     * label들이 겹치도록 놔둔다.
+     * // TODO: @{link overflow} 설정이 적용된다.
      * 
      * @config
      */
@@ -557,7 +558,7 @@ export enum AxisLabelArrange {
 }
 
 export interface IAxisLabelArgs {
-    axis: object;//string | number;
+    axis: object;
     count: number;
     index: number;
     value: number;
@@ -679,7 +680,7 @@ export abstract class AxisLabel extends FormattableText {
      * 
      * @config
      */
-    styleCallback: (args: any) => SVGStyleOrClass;
+    styleCallback: (args: IAxisLabelArgs) => SVGStyleOrClass;
 
     //-------------------------------------------------------------------------
     // methods
@@ -856,17 +857,22 @@ export class AxisZoom {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(public axis: Axis, start: number, end: number) {
-        this.min = axis.axisMin();
-        this.max = axis.axisMax();
-        this.resize(start, end);
+    constructor(public axis: Axis) {
     }
 
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    total(): number {
+        return this.max - this.min;
+    }
+
     length(): number {
         return this.end - this.start;
+    }
+
+    isFull(): boolean {
+        return this.start === this.min && this.end === this.max;
     }
     
     //-------------------------------------------------------------------------
@@ -875,6 +881,12 @@ export class AxisZoom {
     resize(start: number, end: number): boolean {
         start = isNaN(start) ? this.start : Math.max(this.min, Math.min(this.max, start));
         end = isNaN(end) ? this.end : Math.max(start, Math.min(this.max, end));
+
+        if (start > end) {
+            const t = start;
+            start = end;
+            end = t;
+        }
 
         // 최소 크기를 갖게 한다. #244 #245
         if ((start !== this.start || end !== this.end) && (end - start > (this.max - this.min) * 0.05)) {
@@ -906,13 +918,13 @@ export abstract class Axis extends ChartItem implements IAxis {
     _ticks: IAxisTick[];
     _markPoints: number[];
     _vlen: number;
+    _zoom: AxisZoom;
     _minPad = 0;
     _maxPad = 0;
     _values: number[] = [];
     protected _min: number;
     protected _max: number;
     protected _single: boolean;
-    _zoom: AxisZoom;
     _runPos: AxisPosition;
     _labelArgs: IAxisLabelArgs = {} as any;
 
@@ -1044,8 +1056,30 @@ export abstract class Axis extends ChartItem implements IAxis {
      */
     unit: string;
 
-    tooltipHeader = '<b>${x}</b>';
-    tooltipRow: '${series}:<b> ${yValue}</b>';
+    /**
+     * 축에 포함된 시리즈들 툴팁의 위쪽에 표시되는 텍스트.
+     * 
+     * tooltipHeader
+     * tooltipRow,
+     * tooltipRow,
+     * ...
+     * tooltipFooter
+     * 형태로 툴팁이 표시된다.
+     * 
+     * @config
+     */
+    tooltipHeader = '<b>${name}</b>';
+    /**
+     * 축에 포함된 각 시리즈별 표시되는 포인트 툴팁 텍스트.
+     * 
+     * @config
+     */
+    tooltipRow = '${series}:<b> ${yValue}</b>';
+    /**
+     * 축에 포함된 시리즈들 툴팁의 아래쪽에 표시되는 텍스트.
+     * 
+     * @config
+     */
     tooltipFooter: string;
 
     isEmpty(): boolean {
@@ -1085,6 +1119,15 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     isArced(): boolean {
         return this.totalAngle > 0 && this.totalAngle < 360;
+    }
+
+    getVisibleSeries(): ISeries[] {
+        const series: ISeries[] = [];
+
+        this._series.forEach(ser => {
+            ser.visible && series.push(...ser.getVisibleSeries());
+        })
+        return series;
     }
 
     //-------------------------------------------------------------------------
@@ -1235,22 +1278,25 @@ export abstract class Axis extends ChartItem implements IAxis {
             this._changed();
         }
     }
-    
-    zoom(start: number, end: number): boolean {
-        if (start > end) {
-            const t = start;
-            start = end;
-            end = t;
-        }
+
+    _prepareZoom(): AxisZoom {
         if (!this._zoom) {
             // padding 없는 _min, _max를 계산하기 위해
-            this._zoom = new AxisZoom(this, NaN, NaN);
-            this.buildTicks(this._vlen);
-
-            if (isNaN(start)) start = this._min;
-            if (isNaN(end)) end = this._max;
+            this._zoom = new AxisZoom(this);
+            this.buildTicks(this._vlen);// this._zoomlen);
+            this._zoom.start = this._zoom.min = this._min;
+            this._zoom.end = this._zoom.max = this._max;
         }
-        if (this._zoom.resize(start, end)) {
+        return this._zoom;
+    }
+    
+    zoom(start: number, end: number): boolean {
+        const zoom = this._prepareZoom();
+
+        if (zoom.resize(start, end)) {
+            if (zoom.isFull()) {
+                this._zoom = null;
+            }
             this._changed();
             return true;
         }

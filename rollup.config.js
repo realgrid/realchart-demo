@@ -216,9 +216,8 @@ const rollup_report_config = {
     commonjs(),
     resolve(),
     exportDefault(),
-    process.env.BUILD !== "reportdebug" && terser(),
+    // process.env.BUILD !== "reportdebug" && terser(),
     process.env.BUILD !== "reportdebug" && banner2(() => copyright),
-
     copy({
       targets: [
         {

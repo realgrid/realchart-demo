@@ -18,6 +18,7 @@ import { AxisView } from "./AxisView";
 import { createSeriesView } from "./BodyView";
 import { ChartElement } from "./ChartElement";
 import { SeriesView } from "./SeriesView";
+import { IPoint } from "../common/Point";
 
 export class NavigatorHandleView extends RcElement {
 
@@ -156,6 +157,10 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    svgToElement(x: number, y: number): IPoint {
+        return this.control.svgToElement(this._back, x, y);
+    }
+
     protected _doMeasure(doc: Document, model: SeriesNavigator, hintWidth: number, hintHeight: number, phase: number): ISize {
         const chart = model._naviChart as Chart;
         const series = chart.firstSeries;
@@ -193,8 +198,8 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
         if (model._vertical) {
             // TODO: 수직 배치가 필요한가?
         } else {
-            const x1 = zoom ? zoom.start * w / model.axisLen() : 0;
-            const x2 = zoom ? zoom.end * w / model.axisLen() : w;
+            const x1 = zoom ? (zoom.start - zoom.min) * w / zoom.total() : 0;// model.axisLen() : 0;
+            const x2 = zoom ? (zoom.end - zoom.min) * w / zoom.total() : w;// model.axisLen() : w;
             // Utils.log('end', zoom ? zoom.end : w, x2);
 
             this._mask.setBounds(x1, 0, x2 - x1, h);
@@ -216,6 +221,7 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
             this._seriesView.measure(this.doc, model._naviChart.firstSeries, w, h, 1);
             this._seriesView.resize(w, h);
             this._seriesView.layout();
+            this._seriesView.afterLayout();
         }
 
         // x axis
@@ -226,11 +232,12 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
         }
 
         // y axis
-        if (this._yAxisView) {
-            this._yAxisView.measure(this.doc, model._naviChart.yAxis as Axis, w, h, 1);
-            this._yAxisView.resize(w, h);
-            this._yAxisView.layout();
-        }
+        this._yAxisView.setVis(false);
+        // if (this._yAxisView) {
+        //     this._yAxisView.measure(this.doc, model._naviChart.yAxis as Axis, w, h, 1);
+        //     this._yAxisView.resize(w, h);
+        //     this._yAxisView.layout();
+        // }
     }
 
     //-------------------------------------------------------------------------

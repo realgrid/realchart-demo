@@ -1,8 +1,8 @@
 {
 	"dumbbell": {
-		"title": "Dumbbell"
-	},
-	"dumbbell-null": {
-		"title": "Null Point"
+		"title": "Dumbbell",
+		"theme": {
+			"toc": false
+		}
 	}
 }

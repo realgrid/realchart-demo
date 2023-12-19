@@ -20,12 +20,13 @@ const pollData = data.map(m => appendX(m));
 
 const primary = 'var(--color-1)';
 const secondary = '#bbb';
-const lineSeries = (m, i) => {
+const lineSeries = (m, i, position) => {
     const [key, values] = m;
     return {
         template: 'series',
         name: key,
         data: values,
+        pointLabel: { position },
         style: {
             stroke: i % 2 == 0 ? primary : secondary
         }
@@ -33,8 +34,10 @@ const lineSeries = (m, i) => {
 }
 
 const makeSeries = (data) => {
+    // const sum = (t, [y, v]) => t + v;
+    const high = data.Biden[0][1] > data.Trump[0][1] ? 0 : 1;
     return Object.entries(data).map((m, i) => {
-        return lineSeries(m, i);
+        return lineSeries(m, i, i == high ? 'head' : 'foot');
     })
 }
 

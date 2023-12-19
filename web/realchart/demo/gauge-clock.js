@@ -10,15 +10,12 @@ const config = {
             // align: 'center'
         }
     },
-    title: "Clock Guage",
+    title: "Clock Gauge",
     gauge: {
         // time: "2000-01-01T11:11:11",
         type: 'clock',
         name: 'clock1',
         secondHand: {},
-        tickLabel: {
-            // step: 2
-        },
         label: {
             // position: 'bottom',
         }

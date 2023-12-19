@@ -1,11 +1,20 @@
 {
 	"background": {
-		"title": "Background"
+		"title": "Background",
+		"theme": {
+			"toc": false
+		}
 	},
 	"series-navigator": {
-		"title": "Navigator"
+		"title": "Navigator",
+		"theme": {
+			"toc": false
+		}
 	},
 	"resize": {
-		"title": "Resize"
+		"title": "Resize",
+		"theme": {
+			"toc": false
+		}
 	}
 }

@@ -1,8 +1,8 @@
 {
 	"candlestick": {
-		"title": "Candlestick"
-	},
-	"candlestick-null": {
-		"title": "Null Point"
+		"title": "Candlestick",
+		"theme": {
+			"toc": false
+		}
 	}
 }

@@ -13,9 +13,7 @@ const config = {
     },
     series: {
         type: 'histogram',
-        tooltip: {
-            text: 'min: ${min}<br>max: ${max}'
-        },
+        tooltipText: 'min: ${min}<br>max: ${max}',
         pointLabel: true,
         data: [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3,
             4, 4.4, 3.9, 3.5, 3.8, 3.8, 3.4, 3.7, 3.6, 3.3, 3.4, 3, 3.4, 3.5, 3.4,

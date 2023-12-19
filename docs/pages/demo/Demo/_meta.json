@@ -1,0 +1,128 @@
+{
+	"bar-monthly-sales": {
+		"title": "Bar",
+		"theme": {
+			"toc": false
+		}
+	},
+	"bar-stack": {
+		"title": "Bar Stack",
+		"theme": {
+			"toc": false
+		}
+	},
+	"polls-biden-trump": {
+		"title": "Line",
+		"theme": {
+			"toc": false
+		}
+	},
+	"population": {
+		"title": "Area",
+		"theme": {
+			"toc": false
+		}
+	},
+	"sample-14": {
+		"title": "Bubble",
+		"theme": {
+			"toc": false
+		}
+	},
+	"candlestick": {
+		"title": "Candlestick",
+		"theme": {
+			"toc": false
+		}
+	},
+	"building-space": {
+		"title": "Split",
+		"theme": {
+			"toc": false
+		}
+	},
+	"polar-baseball": {
+		"title": "Polar Bar",
+		"theme": {
+			"toc": false
+		}
+	},
+	"scatter-olympic": {
+		"title": "Polar Scatter",
+		"theme": {
+			"toc": false
+		}
+	},
+	"gauge-group": {
+		"title": "Gauge Group",
+		"theme": {
+			"toc": false
+		}
+	},
+	"sample-35": {
+		"title": "Multiple Gauges",
+		"theme": {
+			"toc": false
+		}
+	},
+	"bullet-gauges": {
+		"title": "Bullet Gauges",
+		"theme": {
+			"toc": false
+		}
+	},
+	"gauge-clock": {
+		"title": "Clock",
+		"theme": {
+			"toc": false
+		}
+	},
+	"sample-30": {
+		"title": "Pie",
+		"theme": {
+			"toc": false
+		}
+	},
+	"poll-pie": {
+		"title": "Poll Pie",
+		"theme": {
+			"toc": false
+		}
+	},
+	"pie-half": {
+		"title": "Half Pie",
+		"theme": {
+			"toc": false
+		}
+	},
+	"heatmap": {
+		"title": "Heatmap",
+		"theme": {
+			"toc": false
+		}
+	},
+	"treemap": {
+		"title": "Treemap",
+		"theme": {
+			"toc": false
+		}
+	},
+	"sample-01": {
+		"title": "Bar - Air Temp.",
+		"theme": {
+			"toc": false
+		}
+	},
+	"sample-03": {
+		"title": "Bar - Charge Off",
+		"theme": {
+			"toc": false
+		}
+	},
+	"sample-13": {
+		"title": "Bar Percent - CSP Market",
+		"theme": {
+			"toc": false
+		}
+	}
+}
