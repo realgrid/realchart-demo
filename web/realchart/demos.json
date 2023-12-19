@@ -20,7 +20,8 @@
         "Treemap": "treemap",
         "Bar - Air Temp.": "sample-01",
         "Bar - Charge Off": "sample-03",
-        "Bar Percent - CSP Market": "sample-13"
+        "Bar Percent - CSP Market": "sample-13",
+        "Axis": "sample-36"
     },
     "Basic": {
         "Basic": "basic"

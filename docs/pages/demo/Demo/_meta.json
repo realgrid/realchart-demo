@@ -124,5 +124,11 @@
 		"theme": {
 			"toc": false
 		}
+	},
+	"sample-36": {
+		"title": "Axis",
+		"theme": {
+			"toc": false
+		}
 	}
 }

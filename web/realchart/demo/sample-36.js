@@ -24,12 +24,12 @@ let config = {
     },
     {
       type: "linear",
-      tick: { visible: true },
+      tick: { visible: true, stepInterval: 1 },
       row: 1,
     },
     {
       type: "time",
-      tick: { visible: true },
+      tick: { visible: true, stepInterval: "1m" },
       row: 2,
     },
     {
@@ -42,14 +42,33 @@ let config = {
     },
   ],
   yAxis: [
-    { tick: { visible: false } },
-    { row: 1, tick: { visible: false }, position: "opposite" },
-    { row: 2, tick: { visible: false } },
     {
-      row: 3,
-      tick: { visible: false },
-      position: "opposite",
+      template: "yAxis",
+      title: {
+        text: "category",
+      },
+    },
+    {
+      template: "yAxis",
+      row: 1,
+      title: {
+        text: "linear",
+      },
+    },
+    {
+      template: "yAxis",
+      row: 2,
+      title: {
+        text: "time",
+      },
+    },
+    {
       type: "log",
+      template: "yAxis",
+      row: 3,
+      title: {
+        text: "log",
+      },
     },
   ],
   tooltip: false,
@@ -60,6 +79,13 @@ let config = {
       style: {
         strokeWidth: "3px",
       },
+    },
+    yAxis: {
+      title: {
+        rotation: 0,
+      },
+      label: false,
+      tick: { visible: false },
     },
   },
   series: [
@@ -82,8 +108,8 @@ let config = {
       template: "series",
       lineType: "step",
       data: [7, 10, 8, 6.5, 15.3, 13, 10, 9.5, 11.5, 3.5],
-      xStart: "1994",
-      xStep: "1y",
+      xStart: "2023-01",
+      xStep: "1m",
       xAxis: 2,
       yAxis: 2,
     },
