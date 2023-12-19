@@ -249,7 +249,6 @@ export class ImageExporter {
         const promises: Promise<void>[] = [];
 
         const backgroundImageUrl = element.style.backgroundImage;
-        console.log(backgroundImageUrl, '2');
         if (backgroundImageUrl && backgroundImageUrl !== 'none') {
             const backgroundPromise = imageToBase64(backgroundImageUrl.replace(/^url\(["']?(.*?)["']?\)$/, '$1')).then((base64Image) => {
                 element.style.backgroundImage = `url(${base64Image})`;
