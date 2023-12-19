@@ -318,8 +318,8 @@ export class AreaSeries extends LineSeries {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(chart: IChart) {
-        super(chart);
+    constructor(chart: IChart, name?: string) {
+        super(chart, name);
 
         this.marker.visible = chart.isPolar();
     }
