@@ -3,6 +3,17 @@
  * 
  */
 const config = {
+    actions: [
+        {
+            type: 'select',
+            label: 'Legend.location',
+            data: ['bottom', 'top', 'right', 'left'],
+            action: ({value}) => {
+                config.legend.location = value;
+                chart.load(config);
+            }
+        }
+    ],
     title: {
         text: 'Number of Mobile Users in the World (Users In Millions)',
         alignBase: 'chart'

@@ -45,6 +45,7 @@ const useStyles = createStyles((theme) => ({
   menu: {
     gap: "16px",
     padding: "10px",
+    alignItems: 'center'
   },
   button: {
     // marginLeft: 'auto'
@@ -227,7 +228,7 @@ export function RealChartReact({
         );
       })}
 
-      <Grid hidden={!inputs?.length} className={classes.menu}>
+      <Grid hidden={!inputs?.length} className={classes.menu} style={{paddingBottom: 0}}>
       {inputs?.map((action, idx) => {
         const { label, value, data } = action;
         switch (action.type) {
@@ -245,7 +246,7 @@ export function RealChartReact({
               {action.label}
             </Button>
           case 'select': 
-              return <Select key={idx} label={label} data={data} defaultValue={data[0]}
+              return <Select key={idx} label={label} data={data} defaultValue={ value || data[0]}
                 size={"xs"}
                 onChange={(value) => { action.action({value})}} />
         }

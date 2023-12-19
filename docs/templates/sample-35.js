@@ -59,12 +59,7 @@ export const config = {
       template: 'gauge',
       name: 'temperature',
       value: 66,
-      scale: {
-        visible: true,
-        line: { style: { stroke: 'red' } },
-        tick: { style: { stroke: 'red' } },
-        label: { visible: true, fill: 'red', color: 'red' }
-      },
+      scale: { visible: true },
       left: 0,
       label: {
         text: '\n' +

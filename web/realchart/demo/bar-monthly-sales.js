@@ -7,9 +7,9 @@ const config = {
 	height: 550,
 	actions: [
 		{ 
-			type: 'slider',
+			type: 'select',
 			label: 'Palette',
-			markers: ['default', 'warm', 'cool', 'forest', 'gray', 'vintage', 'unicorn'],
+			data: ['default', 'warm', 'cool', 'forest', 'gray', 'vintage', 'unicorn'],
 			action: ({value}) => {
 				config.options.palette = value;
 				// "options.palette"

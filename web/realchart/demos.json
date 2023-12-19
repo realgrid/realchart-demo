@@ -15,6 +15,7 @@
         "Clock": "gauge-clock",
         "Pie": "sample-30",
         "Poll Pie": "poll-pie",
+        "Half Pie": "pie-half",
         "Heatmap": "heatmap",
         "Treemap": "treemap",
         "Bar - Air Temp.": "sample-01",
