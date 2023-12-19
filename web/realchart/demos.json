@@ -8,6 +8,7 @@
         "Candlestick": "candlestick",
         "Split": "building-space",
         "Polar Bar": "polar-baseball",
+        "Axis": "axis",
         "Polar Scatter": "scatter-olympic",
         "Gauge Group": "gauge-group",
         "Multiple Gauges": "sample-35",
@@ -20,8 +21,7 @@
         "Treemap": "treemap",
         "Bar - Air Temp.": "sample-01",
         "Bar - Charge Off": "sample-03",
-        "Bar Percent - CSP Market": "sample-13",
-        "Axis": "sample-36"
+        "Bar Percent - CSP Market": "sample-13"
     },
     "Basic": {
         "Basic": "basic"

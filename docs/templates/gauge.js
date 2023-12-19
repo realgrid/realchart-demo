@@ -1,9 +1,9 @@
 export const config = {
   options: { credits: {} },
-  title: 'Circle Guage',
+  title: 'Circle Gauge',
   gauge: {
     name: 'gauge1',
-    value: 55.17418517383981,
+    value: 21.40765303635237,
     rim: {},
     valueRim: {
       ranges: [
