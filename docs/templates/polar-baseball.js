@@ -87,6 +87,7 @@ export const config = {
       }
     ]
   },
+  tooltip: false,
   series: {
     layout: 'overlap',
     groupPadding: 0,
@@ -122,7 +123,8 @@ export const config = {
           { angle: -55, hits: 1 },
           { angle: -65, hits: 2 }
         ],
-        style: { stroke: 'none', fill: '#bbb' }
+        style: { stroke: 'none', fill: '#bbb' },
+        tooltipText: '${x}°: ${y}hits'
       },
       {
         template: 'series',

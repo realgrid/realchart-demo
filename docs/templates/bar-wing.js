@@ -8,7 +8,7 @@ export const config = {
         '45-49', '50-54', '55-59',
         '60-64', '65-69', '70-74',
         '75-79', '80+'
-      ]
+      ],
     }
   },
   inverted: true,
@@ -16,16 +16,17 @@ export const config = {
   options: {},
   legend: { itemGap: 20, backgroundStyle: { fill: 'none' } },
   xAxis: [
-    { template: 'xAxis', title: '일일 Daily fat', grid: true },
-    { template: 'xAxis', title: '일일 Daily fat2', position: 'opposite' }
+    { template: 'xAxis', title: 'Daily fat' },
+    { template: 'xAxis', title: 'Daily fat2', position: 'opposite' }
   ],
   yAxis: { title: 'Vertical 수직축 Axis', label: { numberFormat: 'a' } },
   series: {
     layout: 'overlap',
     children: [
       {
-        name: '남자',
+        name: 'Male',
         pointLabel: { visible: true, numberFormat: 'a##0.00' },
+        color: '#468B97',
         data: [
           -8.98, -7.52, -6.65,
           -5.72, -4.85, -3.71,
@@ -36,9 +37,9 @@ export const config = {
         ]
       },
       {
-        name: '여자',
+        name: 'Female',
         xAxis: 1,
-        color: '#ffaa00',
+        color: '#EF6262',
         pointLabel: { visible: true, numberFormat: '##0.00' },
         data: [
           8.84, 7.42, 6.57, 5.68,
