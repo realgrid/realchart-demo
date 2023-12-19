@@ -774,7 +774,7 @@ class ZoomButton extends ButtonElement {
 export interface IPlottingOwner {
 
     clipSeries(view: RcElement, view2: RcElement, x: number, y: number, w: number, h: number, invertable: boolean): void;
-    showTooltip(series: Series, point: DataPoint, body: RcElement): void;
+    showTooltip(series: Series, point: DataPoint, body: RcElement, p: IPoint): void;
     hideTooltip(): void;
 }
 
@@ -902,22 +902,22 @@ export class BodyView extends ChartElement<Body> {
         }
 
         if (pv) {
-            this.$_setFocused(sv.model, pv);
+            this.$_setFocused(sv.model, pv, p);
         } else {
-            this.$_setFocused(null, null);
+            this.$_setFocused(null, null, p);
         }
         return inBody;
     }
 
-    private $_setFocused(series: Series, p: IPointView): boolean {
-        if (p != this._focused) {
+    private $_setFocused(series: Series, pv: IPointView, p: IPoint): boolean {
+        if (pv != this._focused || this.model.chart.tooltip.followPointer) {
             if (this._focused) {
                 (this._focused as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, false);
             }
-            this._focused = p;
+            this._focused = pv;
             if (this._focused) {
                 (this._focused as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, true);
-                this._owner.showTooltip(series, p.point, this);
+                this._owner.showTooltip(series, pv.point, this, p);
             } else {
                 this._owner.hideTooltip();
             }
