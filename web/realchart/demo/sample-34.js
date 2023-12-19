@@ -2,6 +2,7 @@
  * @demo
  */
 const config = {
+  height: 600,
   options: { animatable: false },
   templates: {
     gauge: {
@@ -30,7 +31,7 @@ const config = {
       },
     },
   },
-  title: "Intel Core i9-13900K",
+  title: "Intel Core i9-13900K Performance",
   gauge: [
     {
       type: "bullet",
@@ -60,7 +61,7 @@ const config = {
         },
       },
       label: {
-        text: "Turbo Clock Speed <br>  vs AMD Ryzen 9 7950x",
+        text: "<t style='font-weight: bold'>Turbo Clock Speed</t> <br>  vs AMD Ryzen 9 7950x",
       },
     },
     {
@@ -91,7 +92,7 @@ const config = {
         },
       },
       label: {
-        text: "Clock Speed <br>  vs AMD Ryzen 9 7950x",
+        text: "<t style='font-weight: bold'>Clock Speed</t> <br>  vs AMD Ryzen 9 7950x",
       },
     },
     {
@@ -117,7 +118,7 @@ const config = {
         },
       ],
       label: {
-        text: "Physical Cores <br>  vs AMD Ryzen 9 7950x",
+        text: "<t style='font-weight: bold'>Physical Cores</t> <br>  vs AMD Ryzen 9 7950x",
       },
     },
     {
@@ -143,7 +144,7 @@ const config = {
         },
       ],
       label: {
-        text: "CPU Value <br>  vs AMD Ryzen 9 7950x",
+        text: "<t style='font-weight: bold'>CPU Value</t> <br>  vs AMD Ryzen 9 7950x",
       },
     },
     {
@@ -169,7 +170,7 @@ const config = {
         },
       ],
       label: {
-        text: "CPU Mark <br>  vs AMD Ryzen 9 7950x",
+        text: "<t style='font-weight: bold'>CPU Mark</t> <br>  vs AMD Ryzen 9 7950x",
       },
     },
     {
@@ -195,7 +196,7 @@ const config = {
         },
       ],
       label: {
-        text: "price <br>  vs AMD Ryzen 9 7950x",
+        text: "<t style='font-weight: bold'>price</t> <br>  vs AMD Ryzen 9 7950x",
       },
       actualBar: {
         belowStyle: {

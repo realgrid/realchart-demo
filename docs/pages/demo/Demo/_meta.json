@@ -65,6 +65,12 @@
 			"toc": false
 		}
 	},
+	"sample-34": {
+		"title": "Bullet Gauge",
+		"theme": {
+			"toc": false
+		}
+	},
 	"gauge-clock": {
 		"title": "Clock",
 		"theme": {
