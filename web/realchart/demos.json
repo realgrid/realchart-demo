@@ -26,7 +26,8 @@
         "View Ranges - Line": "viewranges-line",
         "View Ranges - Area": "viewranges-area",
         "Navigator": "series-navigator",
-        "Pattern Fill": "pattern-fill"
+        "Pattern Fill": "pattern-fill",
+        "layout Fill": "sample-32"
     },
     "Basic": {
         "Basic": "basic"

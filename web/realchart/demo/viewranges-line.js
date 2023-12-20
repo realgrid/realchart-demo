@@ -55,6 +55,7 @@ const config = {
             strokeWidth: '2px'
         }
 	},
+	tooltip: false,
 	ChartTextEffect: {
 		autoContrast: false,
 	},

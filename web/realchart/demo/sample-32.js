@@ -1090,6 +1090,10 @@ const getSum = (d) => {
 };
 const config = {
   type: "area",
+  params: {
+    data,
+    getSum
+  },
   title: "년도 별 제주도 외국인 관광객 현황",
   templates: {
     series: {

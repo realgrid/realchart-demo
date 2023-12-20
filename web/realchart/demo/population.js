@@ -99,6 +99,7 @@ const config = {
         }
     ],
     type: 'area',
+    tooltip: false,
     templates: {
         xAxis: {
             line: {

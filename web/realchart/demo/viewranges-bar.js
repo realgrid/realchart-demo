@@ -49,6 +49,7 @@ const config = {
             fillOpacity: 0.5
         }
 	},
+	tooltip: false,
 	ChartTextEffect: {
 		autoContrast: false,
 	},

@@ -90,6 +90,7 @@ const config = {
 			text: '전체 인구수'
 		},
 	},
+	tooltip: false,
 	series: [{
 		pointLabel: {
 			visible: true,

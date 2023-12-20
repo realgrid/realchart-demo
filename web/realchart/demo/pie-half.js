@@ -64,6 +64,7 @@ const config = {
             style: {
             }
         },
+        tooltipText: "${x} - ${y}",
         data: [ 
             { name: 'Lava', y: 50, color: '#002F5C'}, 
             { name: 'HP', y: 48, color: '#004987'},
@@ -73,7 +74,7 @@ const config = {
             { name: 'Samsung', y: 50, color: '#90B1D8'}, 
             { name: 'Redmi', y: 53, color: '#BBD2Ec'}, 
         ],
-    }
+    },
 }
 
 let animate = false;

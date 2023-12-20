@@ -434,7 +434,7 @@ const config = {
   series: {
     type: "treemap",
     name: "국가데이터맵",
-    tooltipText: "${name} : ${y} 건",
+    tooltipText: "${y} 건",
     algorithm: "squarify",
     pointLabel: {
       visible: true,
