@@ -827,6 +827,7 @@ export class BodyView extends ChartElement<Body> {
     private _crosshairViews: ElementPool<CrosshairView>;
 
     private _focused: IPointView = null;
+    private _focusedSeries: SeriesView<Series>;
     private _focusBorder: PathElement;
 
     private _inverted: boolean;
@@ -910,36 +911,32 @@ export class BodyView extends ChartElement<Body> {
         }
 
         if (pv) {
-            this.$_setFocused(sv.model, pv, p);
+            this.$_setFocused(sv, pv, p);
         } else {
             this.$_setFocused(null, null, p);
         }
         return inBody;
     }
 
-    private $_setFocused(series: Series, pv: IPointView, p: IPoint): boolean {
+    private $_setFocused(sv: SeriesView<Series>, pv: IPointView, p: IPoint): boolean {
         if (pv != this._focused || this.model.chart.tooltip.followPointer) {
-            if (this._focused) {
-                (this._focused as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, false);
+            if (pv != this._focused) {
+                if (this._focused) {
+                    this._focusedSeries.setFocusPoint(this._focused, null, this._focusBorder);
+                }
+                if (pv) {
+                    sv.setFocusPoint(pv, p, this._focusBorder);
+                }
             }
 
             this._focused = pv;
-            const border = pv?.getFocusBorder?.() || '';
+            this._focusedSeries = sv;
             
             if (this._focused) {
-                // focus border를 리턴하지 않으면 css를 활성 시킨다.
-                (this._focused as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, !border);
-                this._owner.showTooltip(series, pv.point, this, p);
+                this._owner.showTooltip(sv.model, pv.point, this, p);
             } else {
                 this._owner.hideTooltip();
             }
-
-            if (this._focused && border && !this._seriesMap.get(series)._animating()) {
-                this._focusBorder.setPath(border);
-            } else {
-                this._focusBorder.setPath('');
-            }
-
             return true;
         }
     }

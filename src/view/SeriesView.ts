@@ -9,6 +9,7 @@
 import { pickNum, assign, isObject, isString } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
+import { IPoint } from "../common/Point";
 import { RcAnimation } from "../common/RcAnimation";
 import { ClipRectElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { Rectangle } from "../common/Rectangle";
@@ -438,6 +439,19 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
 
     afterLayout(): void {
         this._doAfterLayout();
+    }
+
+    setFocusPoint(pv: IPointView, p: IPoint, fv: PathElement): void {
+        (pv as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, !!p);
+
+        // const s = pv?.getFocusBorder?.() || '';
+
+        // if (s && !this._animating()) {
+        //     fv.setPath(s);
+        //     fv.translate((pv as any as RcElement).tx, (pv as any as RcElement).ty);
+        // } else {
+        //     pv.setBoolData(SeriesView.DATA_FOUCS, !!fv);
+        // }
     }
 
     //-------------------------------------------------------------------------
