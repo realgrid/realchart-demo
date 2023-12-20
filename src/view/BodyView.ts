@@ -15,7 +15,6 @@ import { Align, FILL, PI_2, VerticalAlign, _undef, assert } from "../common/Type
 import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
-import { TextAnchor, TextLayout } from "../common/impl/TextElement";
 import { Axis, AxisGrid, AxisGuide, AxisLineGuide, AxisRangeGuide } from "../model/Axis";
 import { Body, IPolar } from "../model/Body";
 import { Chart, IChart } from "../model/Chart";
@@ -27,7 +26,7 @@ import { AxisBreak, LinearAxis } from "../model/axis/LinearAxis";
 import { Gauge, GaugeBase } from "../model/Gauge";
 import { ChartElement } from "./ChartElement";
 import { GaugeView } from "./GaugeView";
-import { BoxedSeriesView, IPointView, SeriesView } from "./SeriesView";
+import { IPointView, SeriesView } from "./SeriesView";
 import { CircleGaugeGroupView, CircleGaugeView } from "./gauge/CircleGaugeView";
 import { ClockGaugeView } from "./gauge/ClockGaugeView";
 import { AreaRangeSeriesView } from "./series/AreaRangeSeriesView";
@@ -898,9 +897,13 @@ export class BodyView extends ChartElement<Body> {
         // 새로운 zoom이 요청된 상태이고 아직 화면에 반영되지 않았다.
         // crosshair가 zoom이 반영된 것으로 계산하므로 다음 render까지 기다리게 해야한다.
         // TODO: _zoomRequested 필요 없는 깔끔한 방식 필요. 
+
+        const cl = (target as Element)?.classList;
+        const isContextMenu = cl?.value && (cl.contains('rct-contextmenu-item') || cl.contains('rct-contextmenu-list'));
+
         if (!this._zoomRequested) {
             this._crosshairViews.forEach(v => {
-                if (v.setVis(v.model.visible && inBody)) {
+                if (v.setVis(inBody && !isContextMenu)) {
                     v.layout(pv, p.x, p.y, w, h);
                 }
             });
