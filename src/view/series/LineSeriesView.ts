@@ -22,23 +22,19 @@ import { ContinuousAxis } from "../../model/axis/LinearAxis";
 import { LinePointLabel, LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection, PointLine } from "../../model/series/LineSeries";
 import { LineLegendMarkerView } from "../../model/series/legend/LineLegendMarkerView";
 import { LegendItemView } from "../LegendView";
-import { IPointView, PointContainer, SeriesView } from "../SeriesView";
+import { IPointView, PointContainer, PointElement, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-export class LineMarkerView extends PathElement implements IPointView {
+export class LineMarkerView extends PointElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    point: LineSeriesPoint;
     _radius: number;
 
     //-------------------------------------------------------------------------
-    // constructor
+    // methods
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS);
-    }
 }
 
 export class LineContainer extends PointContainer {

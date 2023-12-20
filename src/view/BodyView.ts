@@ -693,7 +693,7 @@ class CrosshairView extends PathElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _model: Crosshair;
+    model: Crosshair;
     private _bar: boolean;
 
     //-------------------------------------------------------------------------
@@ -709,15 +709,15 @@ class CrosshairView extends PathElement {
     // methods
     //-------------------------------------------------------------------------
     setModel(model: Crosshair): void {
-        if (model != this._model) {
-            this._model = model;
+        if (model != this.model) {
+            this.model = model;
             this._bar = model.isBar();
             this.setClass(this._bar ? 'rct-crosshair-bar' : 'rct-crosshair-line');
         }
     }
 
     layout(pv: IPointView, x: number, y: number, width: number, height: number): void {
-        const axis = this._model.axis;
+        const axis = this.model.axis;
         const horz = axis._isHorz;
         const pb = new PathBuilder();
 
@@ -727,7 +727,7 @@ class CrosshairView extends PathElement {
 
             if (pv) {
                 xVal = pv.point.xValue;
-            } else if (this._model.showAlways && axis instanceof CategoryAxis) {
+            } else if (this.model.showAlways && axis instanceof CategoryAxis) {
                 if (axis.reversed) {
                     xVal = axis.xValueAt(horz ? width - x : y);
                 } else {
@@ -751,7 +751,7 @@ class CrosshairView extends PathElement {
                     pb.rect(0, height - p - w / 2, width, w);
                 }
             }
-        } else if (pv || this._model.showAlways) {
+        } else if (pv || this.model.showAlways) {
             if (horz) {
                 pb.vline(x, 0, height);
             } else {
@@ -857,6 +857,7 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._zoomButton = new ZoomButton(doc));
         
         this._feedbackContainer.add(this._focusBorder = new  PathElement(doc, 'rct-focus-border'));
+        this._focusBorder.ignorePointer();
         this._crosshairViews = new ElementPool(this._feedbackContainer, CrosshairView);
     }
 
@@ -899,7 +900,7 @@ export class BodyView extends ChartElement<Body> {
         // TODO: _zoomRequested 필요 없는 깔끔한 방식 필요. 
         if (!this._zoomRequested) {
             this._crosshairViews.forEach(v => {
-                if (v.setVis(inBody)) {
+                if (v.setVis(v.model.visible && inBody)) {
                     v.layout(pv, p.x, p.y, w, h);
                 }
             });
@@ -918,13 +919,24 @@ export class BodyView extends ChartElement<Body> {
             if (this._focused) {
                 (this._focused as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, false);
             }
+
             this._focused = pv;
+            const border = pv?.getFocusBorder?.() || '';
+            
             if (this._focused) {
-                (this._focused as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, true);
+                // focus border를 리턴하지 않으면 css를 활성 시킨다.
+                (this._focused as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, !border);
                 this._owner.showTooltip(series, pv.point, this, p);
             } else {
                 this._owner.hideTooltip();
             }
+
+            if (this._focused && border && !this._seriesMap.get(series)._animating()) {
+                this._focusBorder.setPath(border);
+            } else {
+                this._focusBorder.setPath('');
+            }
+
             return true;
         }
     }
@@ -1088,7 +1100,7 @@ export class BodyView extends ChartElement<Body> {
             });
         }
 
-        this.$_preppareCrosshairs(this.chart());
+        this.$_prepareCrosshairs(this.chart());
 
         // gauges
         this._gaugeViews.forEach(v => {
@@ -1243,7 +1255,7 @@ export class BodyView extends ChartElement<Body> {
         views.forEach((v, i) => v.setModel(breaks[i]));
     }
 
-    private $_preppareCrosshairs(chart: IChart): void {
+    private $_prepareCrosshairs(chart: IChart): void {
         const views = this._crosshairViews;
         const hairs: Crosshair[] = [];
 
@@ -1252,7 +1264,7 @@ export class BodyView extends ChartElement<Body> {
         }));
 
         views.prepare(hairs.length, (v, i) => {
-            v.setModel(hairs[i])
+            v.setModel(hairs[i]);
         });
     }
 

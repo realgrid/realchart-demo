@@ -13,10 +13,10 @@ import { IRect } from "../../common/Rectangle";
 import { fixnum } from "../../common/Types";
 import { PointItemPosition } from "../../model/Series";
 import { FunnelSeries, FunnelSeriesPoint } from "../../model/series/FunnelSeries";
-import { IPointView, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
+import { IPointView, PointElement, PointLabelLine, PointLabelLineContainer, PointLabelView, SeriesView, WidgetSeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class FunnelSegment extends PathElement implements IPointView {
+class FunnelSegment extends PointElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -29,8 +29,8 @@ class FunnelSegment extends PathElement implements IPointView {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS);
+    getFocusBorder(): string {
+        return this.path();
     }
 }
 

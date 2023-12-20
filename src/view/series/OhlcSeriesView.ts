@@ -37,6 +37,10 @@ class StickView extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getFocusBorder(): string {
+        return;
+    }
+
     layout(): void {
         const p = this.point;
         const w = this.width;

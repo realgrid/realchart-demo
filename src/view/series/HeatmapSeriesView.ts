@@ -11,6 +11,7 @@ import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { Align, _undef } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
+import { SvgShapes } from "../../common/impl/SvgShape";
 import { HeatmapSeries, HeatmapSeriesPoint } from "../../model/series/HeatmapSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
@@ -27,6 +28,16 @@ class CellView extends RectElement implements IPointView {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, SeriesView.POINT_CLASS);
+    }
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    getFocusBorder(): string {
+        const r = this.getBBounds();
+        r.x = this.tx;
+        r.y = this.ty;
+        return SvgShapes.rect(r).join(' ');
     }
 }
 

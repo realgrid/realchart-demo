@@ -16,39 +16,39 @@ import { Legend } from "../model/Legend";
 import { Series } from "../model/Series";
 import { Subtitle, Title } from "../model/Title";
 import { ImageExportOptions, ImageExporter } from "../export/ImageExporter";
-import { RcAnnotation, RcAreaRangeSeries, RcAreaSeries, RcBarRangeSeries, RcBarSeries, RcBellCurveSeries, RcBody, RcBoxPlotSeries, RcBubbleSeries, RcBulletGauge, RcCandlestickSeries, RcCategoryAxis, RcChartAxis, RcChartGauge, RcChartObject, RcChartSeries, RcCircleGauge, RcClockGauge, RcDumbbellSeries, RcEqualizerSeries, RcErrorBarSeries, RcFunnelSeries, RcGaugeGroup, RcHeatmapSeries, RcHistogramSeries, RcImageAnnotation, RcLegend, RcLineSeries, RcLinearAxis, RcLinearGauge, RcLogAxis, RcLollipopSeries, RcOhlcSeries, RcParetoSeries, RcPieSeries, RcScatterSeries, RcShapeAnnotation, RcSubtitle, RcTextAnnotation, RcTimeAxis, RcTitle, RcTreemapSeries, RcVectorSeries, RcWaterfallSeries } from "./RcChartModels";
+import { RcAnnotation, RcBody, RcBulletGauge, RcChartAxis, RcChartGauge, RcChartObject, RcChartSeries, RcCircleGauge, RcClockGauge, RcImageAnnotation, RcLegend, RcLinearGauge, RcShapeAnnotation, RcSubtitle, RcTextAnnotation, RcTitle } from "./RcChartModels";
 
-const axis_types = {
-    'category': RcCategoryAxis,
-    'linear': RcLinearAxis,
-    'time': RcTimeAxis,
-    'log': RcLogAxis,
-}
-const series_types = {
-    'area': RcAreaSeries,
-    'arearange': RcAreaRangeSeries,
-    'bar': RcBarSeries,
-    'barrange': RcBarRangeSeries,
-    'bellcurve': RcBellCurveSeries,
-    'boxplot': RcBoxPlotSeries,
-    'bubble': RcBubbleSeries,
-    'candlestick': RcCandlestickSeries,
-    'dumbbell': RcDumbbellSeries,
-    'equalizer': RcEqualizerSeries,
-    'errorbar': RcErrorBarSeries,
-    'funnel': RcFunnelSeries,
-    'heatmap': RcHeatmapSeries,
-    'histogram': RcHistogramSeries,
-    'line': RcLineSeries,
-    'lollipop': RcLollipopSeries,
-    'ohlc': RcOhlcSeries,
-    'pareto': RcParetoSeries,
-    'pie': RcPieSeries,
-    'scatter': RcScatterSeries,
-    'treemap': RcTreemapSeries,
-    'vector': RcVectorSeries,
-    'waterfall': RcWaterfallSeries,
-};
+// const axis_types = {
+//     'category': RcCategoryAxis,
+//     'linear': RcLinearAxis,
+//     'time': RcTimeAxis,
+//     'log': RcLogAxis,
+// }
+// const series_types = {
+//     'area': RcAreaSeries,
+//     'arearange': RcAreaRangeSeries,
+//     'bar': RcBarSeries,
+//     'barrange': RcBarRangeSeries,
+//     'bellcurve': RcBellCurveSeries,
+//     'boxplot': RcBoxPlotSeries,
+//     'bubble': RcBubbleSeries,
+//     'candlestick': RcCandlestickSeries,
+//     'dumbbell': RcDumbbellSeries,
+//     'equalizer': RcEqualizerSeries,
+//     'errorbar': RcErrorBarSeries,
+//     'funnel': RcFunnelSeries,
+//     'heatmap': RcHeatmapSeries,
+//     'histogram': RcHistogramSeries,
+//     'line': RcLineSeries,
+//     'lollipop': RcLollipopSeries,
+//     'ohlc': RcOhlcSeries,
+//     'pareto': RcParetoSeries,
+//     'pie': RcPieSeries,
+//     'scatter': RcScatterSeries,
+//     'treemap': RcTreemapSeries,
+//     'vector': RcVectorSeries,
+//     'waterfall': RcWaterfallSeries,
+// };
 const gauge_types = {
     'circle': RcCircleGauge,
     'linear': RcLinearGauge,
@@ -67,11 +67,11 @@ function getObject(map: Map<any, any>, obj: ChartItem): RcChartObject {
 
         if (!p) {
             if (obj instanceof Series) {
-                p = new series_types[obj._type()](obj);
+                p = new (RcChartSeries as any)(obj);// series_types[obj._type()](obj);
+            } else if (obj instanceof Axis) {
+                p = new (RcChartAxis as any)(obj);// new axis_types[obj._type()](obj);
             } else if (obj instanceof Gauge) {
                 p = new gauge_types[obj._type()](obj);
-            } else if (obj instanceof Axis) {
-                p = new axis_types[obj._type()](obj);
             } else if (obj instanceof Annotation) {
                 p = new annotation_types[obj._type()](obj);
             } else if (obj instanceof Title) {

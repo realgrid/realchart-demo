@@ -11,6 +11,7 @@ import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { RcAnimation } from "../common/RcAnimation";
 import { ClipRectElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
+import { Rectangle } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { FILL, IValueRange, SVGStyleOrClass, _undef } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
@@ -29,6 +30,7 @@ import { SeriesAnimation } from "./animation/SeriesAnimation";
 
 export interface IPointView {
     point: DataPoint;
+    getFocusBorder?(): string;
 }
 
 export class PointLabelView extends LabelElement {
@@ -383,7 +385,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         return this._getPointPool().elementOf(elt) as any;
     }
 
-    findPointView(p: DataPoint): RcElement {
+    getPointView(p: DataPoint): RcElement {
         return this._getPointPool().find(v => (v as any).point === p);
     }
 
@@ -436,13 +438,6 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
 
     afterLayout(): void {
         this._doAfterLayout();
-    }
-
-    /**
-     * hovering된 데이터포인트의 외곽 강조 border path.
-     */
-    getFocusBorder(p: DataPoint): string {
-        return;
     }
 
     //-------------------------------------------------------------------------
@@ -539,7 +534,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         return pickNum(this._viewRate, 1);
     }
 
-    protected _animating(): boolean {
+    _animating(): boolean {
         return !isNaN(this._viewRate) || this._animations.length > 0;
     }
 
@@ -707,6 +702,10 @@ export abstract class PointElement extends PathElement implements IPointView {
     constructor(doc: Document) {
         super(doc, SeriesView.POINT_CLASS);
     }
+
+    getFocusBorder(): string {
+        return;
+    }
 }
 
 export abstract class BoxPointElement extends PointElement {
@@ -732,6 +731,10 @@ export class BarElement extends BoxPointElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    getFocusBorder(): string {
+        return SvgShapes.rect(Rectangle.create(this.getBBounds()).inflate(-1)).join(' ');
+    }
+
     layout(x: number, y: number, rTop: number, rBottom: number): void {
         this.setPath(SvgShapes.bar(
             x - this.wPoint / 2,

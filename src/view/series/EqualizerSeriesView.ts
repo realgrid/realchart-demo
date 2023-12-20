@@ -9,6 +9,7 @@
 import { ElementPool } from "../../common/ElementPool";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
+import { RectElement } from "../../common/impl/RectElement";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { DataPoint } from "../../model/DataPoint";
 import { EqualizerSeries } from "../../model/series/EqualizerSeries";
@@ -21,7 +22,7 @@ class BarElement extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     point: DataPoint;
 
-    private _backs = new ElementPool<PathElement>(this, PathElement);
+    private _back: RectElement; // for hit-testing
     private _segments = new ElementPool<PathElement>(this, PathElement);
     private _decimal = 0;
 
@@ -33,18 +34,21 @@ class BarElement extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     constructor(doc: Document) {
         super(doc, SeriesView.POINT_CLASS);
+
+        this.add(this._back = new RectElement(doc));
+        this._back.setStyle('fill', 'transparent'); // 'none'이면 hit-test가 안된다.
+        this._back.setStyle('stroke', 'none');
     }
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    prepareSegments(backs: boolean, total: number, count: number, decimal: number, backStyle: string): void {
+    getFocusBorder(): string {
+        return;
+    }
+
+    prepareSegments(total: number, count: number, decimal: number, backStyle: string): void {
         this._decimal = decimal;
-        this._backs
-            .prepare(backs ? total : 0)
-            .forEach((v, i) => {
-                v.setClass(backStyle);
-            });
         this._segments
             .prepare(Math.round(count))
             .forEach((v, i) => {
@@ -56,16 +60,13 @@ class BarElement extends GroupElement implements IPointView {
         const w = this.wPoint;
         const h = this.hPoint;
         const m = h < 0 ? Math.max : Math.min;
-        
+
         x -= w / 2;
         if (h < 0) {
             pts = pts.map(p => -p);
         }
 
-        // back steps
-        this._backs.forEach((step, i) => {
-            step.setPath(SvgShapes.rectangle(0, y - pts[i * 2], w, m(-1, (pts[i * 2] - pts[i * 2 + 1]))));
-        })
+        this._back.setBounds(x, y - h, w, h);
 
         // steps
         this._segments.forEach((step, i, count) => {
@@ -133,7 +134,6 @@ export class EqualizerSeriesView extends BoxedSeriesView<EqualizerSeries> {
     }
 
     private $_buildSegments(series: EqualizerSeries, len: number): void {
-        const backs = series.backSegments;
         const max = series._yAxisObj.axisMax();
         const segmented = series.segmented;
         const gap = series.segmentGap || 0;
@@ -181,7 +181,7 @@ export class EqualizerSeriesView extends BoxedSeriesView<EqualizerSeries> {
                     decimal = sz;
                 }
                 // bar.getStyle = model.getPointStyle(i);
-                bar.prepareSegments(backs, total, n, decimal, series.backStyle as string);
+                bar.prepareSegments(total, n, decimal, series.backStyle as string);
             }
         });
     }

@@ -9,9 +9,8 @@
 import { ElementPool } from "../../common/ElementPool";
 import { LayerElement, RcElement } from "../../common/RcControl";
 import { LineElement } from "../../common/impl/PathElement";
-import { SvgShapes } from "../../common/impl/SvgShape";
 import { WaterfallSeries, WaterfallSeriesPoint } from "../../model/series/WaterfallSeries";
-import { BarElement, BoxPointElement, RangedSeriesView } from "../SeriesView";
+import { BarElement, RangedSeriesView } from "../SeriesView";
 
 export class WaterfallSeriesView extends RangedSeriesView<WaterfallSeries> {
 

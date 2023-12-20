@@ -171,9 +171,9 @@ export abstract class RcAxisGuide extends RcChartObject {
 }
 
 /**
- * 차트 축 모델들의 기반 클래스.\
+ * 차트 축 모델.
  */
-export abstract class RcChartAxis extends RcChartObject {
+export class RcChartAxis extends RcChartObject {
 
     private _title: RcChartObject;
     private _line: RcChartObject;
@@ -263,20 +263,20 @@ export abstract class RcChartAxis extends RcChartObject {
     }
 }
 
-export class RcCategoryAxis extends RcChartAxis {
-}
+// export class RcCategoryAxis extends RcChartAxis {
+// }
 
-export abstract class RcContinuousAxis extends RcChartAxis {
-}
+// export abstract class RcContinuousAxis extends RcChartAxis {
+// }
 
-export class RcLinearAxis extends RcContinuousAxis {
-}
+// export class RcLinearAxis extends RcContinuousAxis {
+// }
 
-export class RcTimeAxis extends RcContinuousAxis {
-}
+// export class RcTimeAxis extends RcContinuousAxis {
+// }
 
-export class RcLogAxis extends RcContinuousAxis {
-}
+// export class RcLogAxis extends RcContinuousAxis {
+// }
 
 export class RcPointLabel extends RcChartAxis {
 }
@@ -295,7 +295,7 @@ export abstract class RcNamedObject extends RcChartObject {
 /**
  * 차트 시리즈 모델들의 기반 클래스.\
  */
-export abstract class RcChartSeries extends RcNamedObject {
+export class RcChartSeries extends RcNamedObject {
 
     private _pointLabel: RcChartObject;
     private _trendLine: RcChartObject;
@@ -335,195 +335,180 @@ export abstract class RcChartSeries extends RcNamedObject {
 }
 
 /**
- * 차트 시리즈그룹 모델들의 기반 클래스.
+ * 차트 시리즈그룹 모델.
  */
-export abstract class RcSeriesGroup extends RcNamedObject {
+export class RcSeriesGroup extends RcNamedObject {
 }
 
-export abstract class RcLineSeriesBase extends RcChartSeries {
-}
+// export abstract class RcLineSeriesBase extends RcChartSeries {
+// }
 
-/**
- * **'line'** 시리즈.
- * 
- * ```
- *  const config = {
- *      series: {
- *          type: 'line',
- *          lineType: 'step',
- *      }
- *  }
- * ```
- * 
- * @see {@link rc.RcAreaSeries}
- * @see {@link rc.RcBarSeries}
- */
-export class RcLineSeries extends RcLineSeriesBase {
-}
+// export class RcLineSeries extends RcLineSeriesBase {
+// }
 
-/**
- * **'area'** 시리즈.
- */
-export class RcAreaSeries extends RcChartSeries {
-}
+// /**
+//  * **'area'** 시리즈.
+//  */
+// export class RcAreaSeries extends RcChartSeries {
+// }
 
-/**
- * **'arearange'** 시리즈.
- */
-export class RcAreaRangeSeries extends RcChartSeries {
-}
+// /**
+//  * **'arearange'** 시리즈.
+//  */
+// export class RcAreaRangeSeries extends RcChartSeries {
+// }
 
-/**
- * **'bar'** 시리즈.
- * 
- * @see {@link rc.RcLineSeries}
- */
-export class RcBarSeries extends RcChartSeries {
-}
+// /**
+//  * **'bar'** 시리즈.
+//  * 
+//  * @see {@link rc.RcLineSeries}
+//  */
+// export class RcBarSeries extends RcChartSeries {
+// }
 
-/**
- * **'barrange'** 시리즈.
- */
-export class RcBarRangeSeries extends RcChartSeries {
-}
+// /**
+//  * **'barrange'** 시리즈.
+//  */
+// export class RcBarRangeSeries extends RcChartSeries {
+// }
 
-/**
- * **'bellcurve'** 시리즈.
- */
-export class RcBellCurveSeries extends RcChartSeries {
-}
+// /**
+//  * **'bellcurve'** 시리즈.
+//  */
+// export class RcBellCurveSeries extends RcChartSeries {
+// }
 
-/**
- * **'boxplot'** 시리즈.
- */
-export class RcBoxPlotSeries extends RcChartSeries {
-}
+// /**
+//  * **'boxplot'** 시리즈.
+//  */
+// export class RcBoxPlotSeries extends RcChartSeries {
+// }
 
-/**
- * **'bubble'** 시리즈.
- */
-export class RcBubbleSeries extends RcChartSeries {
-}
+// /**
+//  * **'bubble'** 시리즈.
+//  */
+// export class RcBubbleSeries extends RcChartSeries {
+// }
 
-/**
- * **'scatter'** 시리즈.
- */
-export class RcScatterSeries extends RcChartSeries {
-}
+// /**
+//  * **'scatter'** 시리즈.
+//  */
+// export class RcScatterSeries extends RcChartSeries {
+// }
 
-/**
- * **'candlestick'** 시리즈.
- */
-export class RcCandlestickSeries extends RcChartSeries {
-}
+// /**
+//  * **'candlestick'** 시리즈.
+//  */
+// export class RcCandlestickSeries extends RcChartSeries {
+// }
 
-/**
- * **'dumbbell'** 시리즈.
- */
-export class RcDumbbellSeries extends RcChartSeries {
-}
+// /**
+//  * **'dumbbell'** 시리즈.
+//  */
+// export class RcDumbbellSeries extends RcChartSeries {
+// }
 
-/**
- * **'equalizer'** 시리즈.
- */
-export class RcEqualizerSeries extends RcChartSeries {
-}
+// /**
+//  * **'equalizer'** 시리즈.
+//  */
+// export class RcEqualizerSeries extends RcChartSeries {
+// }
 
-/**
- * **'errorbar'** 시리즈.
- */
-export class RcErrorBarSeries extends RcChartSeries {
-}
+// /**
+//  * **'errorbar'** 시리즈.
+//  */
+// export class RcErrorBarSeries extends RcChartSeries {
+// }
 
-/**
- * **'funnel'** 시리즈.
- */
-export class RcFunnelSeries extends RcChartSeries {
-}
+// /**
+//  * **'funnel'** 시리즈.
+//  */
+// export class RcFunnelSeries extends RcChartSeries {
+// }
 
-/**
- * **'heatmap'** 시리즈.
- */
-export class RcHeatmapSeries extends RcChartSeries {
-}
+// /**
+//  * **'heatmap'** 시리즈.
+//  */
+// export class RcHeatmapSeries extends RcChartSeries {
+// }
 
-/**
- * **'treemap'** 시리즈.
- */
-export class RcTreemapSeries extends RcChartSeries {
-}
+// /**
+//  * **'treemap'** 시리즈.
+//  */
+// export class RcTreemapSeries extends RcChartSeries {
+// }
 
-/**
- * **'histogram'** 시리즈.
- */
-export class RcHistogramSeries extends RcChartSeries {
-}
+// /**
+//  * **'histogram'** 시리즈.
+//  */
+// export class RcHistogramSeries extends RcChartSeries {
+// }
 
-/**
- * **'lollipop'** 시리즈.
- */
-export class RcLollipopSeries extends RcChartSeries {
-}
+// /**
+//  * **'lollipop'** 시리즈.
+//  */
+// export class RcLollipopSeries extends RcChartSeries {
+// }
 
-/**
- * **'ohlc'** 시리즈.
- */
-export class RcOhlcSeries extends RcChartSeries {
-}
+// /**
+//  * **'ohlc'** 시리즈.
+//  */
+// export class RcOhlcSeries extends RcChartSeries {
+// }
 
-/**
- * **'pareto'** 시리즈.
- */
-export class RcParetoSeries extends RcChartSeries {
-}
+// /**
+//  * **'pareto'** 시리즈.
+//  */
+// export class RcParetoSeries extends RcChartSeries {
+// }
 
-/**
- * **'pie'** 시리즈.
- */
-export class RcPieSeries extends RcChartSeries {
-}
+// /**
+//  * **'pie'** 시리즈.
+//  */
+// export class RcPieSeries extends RcChartSeries {
+// }
 
-/**
- * **'vector'** 시리즈.
- */
-export class RcVectorSeries extends RcChartSeries {
-}
+// /**
+//  * **'vector'** 시리즈.
+//  */
+// export class RcVectorSeries extends RcChartSeries {
+// }
 
-/**
- * **'waterfall'** 시리즈.
- */
-export class RcWaterfallSeries extends RcChartSeries {
-}
+// /**
+//  * **'waterfall'** 시리즈.
+//  */
+// export class RcWaterfallSeries extends RcChartSeries {
+// }
 
-/**
- * **'bargroup'** 시리즈그룹.
- */
-export class RcBarSeriesGroup extends RcSeriesGroup {
-}
+// /**
+//  * **'bargroup'** 시리즈그룹.
+//  */
+// export class RcBarSeriesGroup extends RcSeriesGroup {
+// }
 
-/**
- * **'linegroup'** 시리즈그룹.
- */
-export class RcLineSeriesGroup extends RcSeriesGroup {
-}
+// /**
+//  * **'linegroup'** 시리즈그룹.
+//  */
+// export class RcLineSeriesGroup extends RcSeriesGroup {
+// }
 
-/**
- * **'areagroup'** 시리즈그룹.
- */
-export class RcAreaSeriesGroup extends RcSeriesGroup {
-}
+// /**
+//  * **'areagroup'** 시리즈그룹.
+//  */
+// export class RcAreaSeriesGroup extends RcSeriesGroup {
+// }
 
-/**
- * **'piegroup'** 시리즈그룹.
- */
-export class RcPieSeriesGroup extends RcSeriesGroup {
-}
+// /**
+//  * **'piegroup'** 시리즈그룹.
+//  */
+// export class RcPieSeriesGroup extends RcSeriesGroup {
+// }
 
-/**
- * **'bumpgroup'** 시리즈그룹.
- */
-export class RcBumpSeriesGroup extends RcSeriesGroup {
-}
+// /**
+//  * **'bumpgroup'** 시리즈그룹.
+//  */
+// export class RcBumpSeriesGroup extends RcSeriesGroup {
+// }
 
 /**
  * {@link RcChartGauge 차트 게이지}와 {@link RcGaugeGroup 게이지그룹} 모델들의 기반 클래스.
@@ -741,26 +726,26 @@ export class RcClockGauge extends RcChartGauge {
 export abstract class RcGaugeGroup extends RcChartGaugeBase {
 }
 
-/**
- * **'circle'** 게이지그룹.
- * {@link RcCircleGauge} 그룹 모델.
- */
-export class RcCircleGaugeGroup extends RcGaugeGroup {
-}
+// /**
+//  * **'circle'** 게이지그룹.
+//  * {@link RcCircleGauge} 그룹 모델.
+//  */
+// export class RcCircleGaugeGroup extends RcGaugeGroup {
+// }
 
-/**
- * **'linear'** 게이지그룹.
- * {@link RcLinearGauge} 그룹 모델.
- */
-export class RcLinearGaugeGroup extends RcGaugeGroup {
-}
+// /**
+//  * **'linear'** 게이지그룹.
+//  * {@link RcLinearGauge} 그룹 모델.
+//  */
+// export class RcLinearGaugeGroup extends RcGaugeGroup {
+// }
 
-/**
- * **'bullet'** 게이지그룹.
- * {@link RcBulletGauge} 그룹 모델.
- */
-export class RcBulletGaugeGroup extends RcGaugeGroup {
-}
+// /**
+//  * **'bullet'** 게이지그룹.
+//  * {@link RcBulletGauge} 그룹 모델.
+//  */
+// export class RcBulletGaugeGroup extends RcGaugeGroup {
+// }
 
 export class RcTitle extends RcChartObject {
 }
@@ -774,7 +759,7 @@ export class RcLegend extends RcChartObject {
 export class RcBody extends RcChartObject {
 }
 
-export abstract class RcAnnotation extends RcNamedObject {
+export class RcAnnotation extends RcNamedObject {
 
     update(): void {
         (this.$_p as Annotation).update();

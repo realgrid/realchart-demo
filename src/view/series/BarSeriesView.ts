@@ -27,7 +27,7 @@ class BarSectorView extends SectorElement implements IPointView {
     }
 
     //-------------------------------------------------------------------------
-    // fields
+    // IPointView
     //-------------------------------------------------------------------------
     point: DataPoint;
 }

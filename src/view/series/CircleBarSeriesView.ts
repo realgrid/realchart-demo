@@ -49,6 +49,6 @@ export abstract class CircleBarSeriesView extends BarSeriesViewBase<CircleBarSer
     }
 
     protected _layoutPointView(view: CircleBarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
-        view.layout(x, y - hPoint / 2, hPoint / 2);
+        view.layout(x, y - hPoint / 2, hPoint / 2 - 1);
     }
 }

@@ -142,6 +142,8 @@
     --rct-font-size: 16px;
 
     --rct-focus-border: black;
+    --rct-focus-stroke: black;
+    --rct-focus-stroke-width: 2px;
     --rct-text-fill: #333;
 
     --rct-title-fill: #333;
@@ -206,6 +208,7 @@
 }
 .rct-root[data-theme='dark'] {
     --rct-focus-border: yellow;
+    --rct-focus-stroke: yellow;
     --rct-text-fill: #fff;
 
     --rct-title-fill: #fff;
@@ -246,6 +249,7 @@
 }
 .rct-root[data-theme='real'] {
     --rct-focus-border: yellow;
+    --rct-focus-stroke: yellow;
     --rct-text-fill: #f0d9be;
 
     --rct-title-fill: #f0d9be;
@@ -395,6 +399,7 @@
     stroke: none;
 }
 .rct-focus-border {
+    fill: none !important;
     stroke: black;
     stroke-width: 1.5px;
 }
@@ -616,6 +621,12 @@
     fill: var(--color-12);
 }
 
+.rct-series .rct-point[data-focus] {
+    stroke: var(--rct-focus-stroke);
+    stroke-width: var(--rct-focus-stroke-width);
+    filter: brightness(115%);
+}
+
 /** rct-point 대신 여기에 지정해야 outline에 반영된다. */
 .rct-point-labels {
     font-size: var(--rct-point-label-font-size);
@@ -636,10 +647,6 @@
 .rct-bar-series {
     fill-opacity: 1;
 }
-.rct-bar-series .rct-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
-}
 
 /** circlebar series */
 .rct-circlebar-series .rct-point {
@@ -650,10 +657,6 @@
 .rct-barrange-series {
     fill-opacity: 0.85;
 }
-.rct-barrange-series .rct-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
-}
 
 /** line series */
 .rct-line-series-line {
@@ -663,9 +666,7 @@
     stroke-dasharray: none;
 }
 .rct-line-series .rct-point[data-focus] {
-    /* scale: 2; */
-    stroke: var(--rct-focus-border) !important;
-    stroke-width: 2px;
+    stroke-width: 3px;
 }
 
 /** area series */
@@ -714,10 +715,10 @@
 .rct-boxplot-series {
     stroke-width: 1;
 }
-.rct-boxplot-series .rct-point[data-focus] {
+/* .rct-boxplot-series .rct-point[data-focus] {
     stroke: var(--rct-focus-border);
     stroke-width: 2px;
-}
+} */
 .rct-boxplot-point-min {
     stroke: #333;
     stroke-width: 2;
@@ -805,20 +806,40 @@
 .rct-lollipop-point-marker {
     stroke: none;
 }
+.rct-lollipop-series .rct-point[data-focus] {
+    stroke: var(--rct-focus-stroke);
+    stroke-width: inherit;
+}
+.rct-lollipop-series .rct-point[data-focus] .rct-lollipop-point-marker {
+    stroke: var(--rct-focus-stroke);
+    stroke-width: var(--rct-focus-stroke-width);
+}
 
 /** dumbbell series */
 .rct-dumbbell-series {
-    stroke-width: 2px;
+    stroke-width: 3px;
 }
 .rct-dumbbell-point-marker {
     stroke: none;
+}
+.rct-dumbbell-series .rct-point[data-focus] {
+    stroke: var(--rct-focus-stroke);
+    stroke-width: inherit;
+}
+.rct-dumbbell-series .rct-point[data-focus] .rct-dumbbell-point-marker {
+    stroke: var(--rct-focus-stroke);
+    stroke-width: var(--rct-focus-stroke-width);
 }
 
 /** equalizer series */
 .rct-equalizer-series {
     fill-opacity: 0.9;
 }
+.rct-equalizer-series .rct-point[data-focus] {
+    filter: brightness(120%);
+}
 
+/** histogram */
 .rct-histogram-series .rct-point {
     stroke: white;
 }
@@ -835,18 +856,10 @@
 .rct-heatmap-series .rct-point {
     stroke: none;
 }
-.rct-heatmap-series .rct-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
-}
 
 /** treemap series */
 .rct-treemap-series .rct-point {
     stroke: white;
-}
-.rct-treemap-series .rct-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
 }
 
 /** pie series */

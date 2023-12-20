@@ -37,6 +37,10 @@ class BarElement extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    getFocusBorder(): string {
+        return;
+    }
+
     layout(): void {
         const rd = this.point.radius;
 

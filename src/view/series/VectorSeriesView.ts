@@ -9,10 +9,10 @@
 import { ElementPool } from "../../common/ElementPool";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { ArrowHead, VectorSeries, VectorSeriesPoint } from "../../model/series/VectorSeries";
-import { IPointView, SeriesView } from "../SeriesView";
+import { IPointView, PointElement, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
 
-class ArrowView extends PathElement implements IPointView {
+class ArrowView extends PointElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -22,10 +22,6 @@ class ArrowView extends PathElement implements IPointView {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document) {
-        super(doc, SeriesView.POINT_CLASS);
-    }
-
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------

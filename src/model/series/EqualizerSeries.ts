@@ -39,7 +39,6 @@ export class EqualizerSeries extends BasedSeries {
     segmentSize: RtPercentSize = 10;
     segmentGap = 4;
     segmented = false;
-    backSegments = false;
 
     //-------------------------------------------------------------------------
     // constructor

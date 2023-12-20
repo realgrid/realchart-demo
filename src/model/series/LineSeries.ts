@@ -403,6 +403,10 @@ export class AreaSeries extends LineSeries {
         return 'area';
     }
 
+    isBased(axis: IAxis): boolean {
+        return axis === this._yAxisObj;
+    }
+
     protected _createLegendMarker(doc: Document, size: number): RcElement {
         return new AreaLegendMarkerView(doc, size);
     }
