@@ -87,7 +87,7 @@ export const config = {
       }
     ]
   },
-  tooltip: false,
+  tooltip: { level: 'series' },
   series: {
     layout: 'overlap',
     groupPadding: 0,

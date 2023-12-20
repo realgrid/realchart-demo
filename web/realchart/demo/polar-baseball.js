@@ -184,7 +184,9 @@ const config = {
             }
         ]
     },
-    tooltip: false,
+    tooltip: {
+        level: 'series'
+    },
     series: {
         // layout: 'stack',
         layout: 'overlap',
