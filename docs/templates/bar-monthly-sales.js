@@ -69,6 +69,7 @@ export const config = {
   body: { zoomType: 'x' },
   series: [
     {
+      name: '월 매출',
       colorByPoint: true,
       pointLabel: true,
       pointWidth: 30,
