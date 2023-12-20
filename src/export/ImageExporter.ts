@@ -201,18 +201,22 @@ export class ImageExporter {
         const usedStyles = [];
         const styleSheets = (dom.ownerDocument || document).styleSheets;
 		for (const [key, value] of Object.entries(styleSheets)) {
-			for (let i = 0; i < value.cssRules.length; i++) {
-				const rule = value.cssRules[i] as CSSStyleRule;
-				let cssSelectorUsed = false;
-				try {
-					cssSelectorUsed = dom.querySelectorAll(rule.selectorText).length > 0;
-				} catch (error) {
-					console.error("Unable to check if CSS selector is used: " + rule.selectorText, error);
-				}
-				if (cssSelectorUsed) {
-					usedStyles.push(rule.cssText);
-				}
-			}
+            try {
+                for (let i = 0; i < value.cssRules.length; i++) {
+                    const rule = value.cssRules[i] as CSSStyleRule;
+                    let cssSelectorUsed = false;
+                    try {
+                        cssSelectorUsed = dom.querySelectorAll(rule.selectorText).length > 0;
+                    } catch (error) {
+                        console.error("Unable to check if CSS selector is used: " + rule.selectorText, error);
+                    }
+                    if (cssSelectorUsed) {
+                        usedStyles.push(rule.cssText);
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+            }
 		}
         return usedStyles;
     }

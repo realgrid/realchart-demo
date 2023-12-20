@@ -2266,6 +2266,9 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
 
         if (tooltip.tooltipRow) {
             series.forEach((ser, i) => {
+                if (point.vindex >= (ser as Series)._visPoints.length) {
+                    return;
+                };
                 if (s) s = s + '<br>';
                 s += tooltip.tooltipRow.replace('series', 'series.' + i).replace(/\$\{/g, '${' + i + '.');
             })
