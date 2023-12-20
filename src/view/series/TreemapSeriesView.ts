@@ -11,7 +11,6 @@ import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { Align } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
-import { SvgShapes } from "../../common/impl/SvgShape";
 import { DataPoint } from "../../model/DataPoint";
 import { TreeNode, TreemapSeries } from "../../model/series/TreemapSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
@@ -36,13 +35,6 @@ class NodeView extends RectElement implements IPointView {
     //-------------------------------------------------------------------------
     get point(): DataPoint {
         return this.node.point;
-    }
-
-    getFocusBorder(): string {
-        const r = this.getBBounds();
-        r.x = this.tx;
-        r.y = this.ty;
-        return SvgShapes.rect(r).join(' ');
     }
 
     //-------------------------------------------------------------------------

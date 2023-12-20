@@ -477,60 +477,60 @@ export enum TextOverflow {
     WRAP = 'wrap'
 }
 
-export enum HoveringScope {
-    AUTO = 'auto',
-    /**
-     * 시리즈의 개별 데이터포인트 단위로 hovering 효과 표시.
-     * 
-     * @config
-     */
-    SERIES = 'series',
-    /**
-     * 시리즈그룹에 포함된 동일한 x값을 갖는 데이터포인트들 모두 hovering 효과 표시.
-     * 
-     * @config
-     */
-    GROUP = 'group',
-    /**
-     * 같은 x축에 포함된 동일한 x값을 갖는 데이터포인트들 모두 hovering 효과 표시.
-     * 
-     * @config
-     */
-    AXIS = 'axis'
-}
+// export enum HoveringScope {
+//     AUTO = 'auto',
+//     /**
+//      * 시리즈의 개별 데이터포인트 단위로 hovering 효과 표시.
+//      * 
+//      * @config
+//      */
+//     SERIES = 'series',
+//     /**
+//      * 시리즈그룹에 포함된 동일한 x값을 갖는 데이터포인트들 모두 hovering 효과 표시.
+//      * 
+//      * @config
+//      */
+//     GROUP = 'group',
+//     /**
+//      * 같은 x축에 포함된 동일한 x값을 갖는 데이터포인트들 모두 hovering 효과 표시.
+//      * 
+//      * @config
+//      */
+//     AXIS = 'axis'
+// }
 
-export enum HoveringEffect {
-    /**
-     * hovering 효과를 실행하지 않는다.
-     * 
-     * @config
-     */
-    NONE = 'none',
-    /**
-     * 시리즈별 기본 hovering 효과를 실행한다.
-     * 
-     * @config
-     */
-    DEFAULT = 'default',
-    /**
-     * hovering된 데이터포인트(들)을 더 밝게 표시한다.
-     * 
-     * @config
-     */
-    BRIGHTEN = 'brighten',
-    /**
-     * hovering된 데이터포인트(들)을 기본 크기보다 조금 더 크게 표시한다.
-     * 
-     * @config
-     */
-    ENLARGE = 'enlarge',
-    /**
-     * hovering된 데이터포인트(들)의 경계를 도드라지게 표시한다.
-     * 
-     * @config
-     */
-    BORDER = 'border'
-}
+// export enum HoveringEffect {
+//     /**
+//      * hovering 효과를 실행하지 않는다.
+//      * 
+//      * @config
+//      */
+//     NONE = 'none',
+//     /**
+//      * 시리즈별 기본 hovering 효과를 실행한다.
+//      * 
+//      * @config
+//      */
+//     DEFAULT = 'default',
+//     /**
+//      * hovering된 데이터포인트(들)을 더 밝게 표시한다.
+//      * 
+//      * @config
+//      */
+//     BRIGHTEN = 'brighten',
+//     /**
+//      * hovering된 데이터포인트(들)을 기본 크기보다 조금 더 크게 표시한다.
+//      * 
+//      * @config
+//      */
+//     ENLARGE = 'enlarge',
+//     /**
+//      * hovering된 데이터포인트(들)의 경계를 도드라지게 표시한다.
+//      * 
+//      * @config
+//      */
+//     BORDER = 'border'
+// }
 
 export interface IAnnotationAnimation {
     type: string;

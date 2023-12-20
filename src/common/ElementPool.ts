@@ -247,18 +247,6 @@ export class ElementPool<T extends RcElement> extends RcObject {
         }
     }
 
-    // fadeout(element: T, removeDelay: number, startOpacity?: number): void {
-    //     if (element) {
-    //         element.fadeout(removeDelay, startOpacity);
-    //         this._pool.push(element);
-
-    //         const i = this._views.indexOf(element);
-    //         if (i >= 0) {
-    //             this._views.splice(i, 1);
-    //         }
-    //     }
-    // }
-
     forEach(visitor: (v: T, i?: number, count?: number) => void): void {
         const views = this._views;
 
@@ -288,6 +276,13 @@ export class ElementPool<T extends RcElement> extends RcObject {
         return this._views.map(callback);
     }
 
+    front(v: T): void {
+        v.front(this._views);
+    }
+
+    back(v: T): void {
+        v.back(this._views);
+    }
 
     //-------------------------------------------------------------------------
     // overriden members

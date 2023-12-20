@@ -141,7 +141,6 @@
     --rct-font-family: AppleSDGothicNeo-Light, "HelveticaNeue", "Malgun Gothic", "맑은 고딕", sans-serif;
     --rct-font-size: 16px;
 
-    --rct-focus-border: black;
     --rct-focus-stroke: black;
     --rct-focus-stroke-width: 2px;
     --rct-text-fill: #333;
@@ -207,7 +206,6 @@
     --rct-navigator-thumb-fill:#0098ff;
 }
 .rct-root[data-theme='dark'] {
-    --rct-focus-border: yellow;
     --rct-focus-stroke: yellow;
     --rct-text-fill: #fff;
 
@@ -248,7 +246,6 @@
     --rct-zoom-tracker-fill: #efefef40;
 }
 .rct-root[data-theme='real'] {
-    --rct-focus-border: yellow;
     --rct-focus-stroke: yellow;
     --rct-text-fill: #f0d9be;
 
@@ -397,11 +394,6 @@
 }
 .rct-body-background[data-polar] {
     stroke: none;
-}
-.rct-focus-border {
-    fill: none !important;
-    stroke: black;
-    stroke-width: 1.5px;
 }
 
 /** axis */
@@ -621,10 +613,27 @@
     fill: var(--color-12);
 }
 
+/** series */
+.rct-series {
+    opacity: inherit;
+    transition-property: opacity;
+    transition-duration: 1s;
+}
+.rct-series[data-unfocus] {
+    opacity: 0.3;
+}
 .rct-series .rct-point[data-focus] {
-    stroke: var(--rct-focus-stroke);
+    stroke: var(--rct-focus-stroke) !important;
     stroke-width: var(--rct-focus-stroke-width);
     filter: brightness(115%);
+}
+.rct-point-labels {
+    opacity: inherit;
+    transition-property: opacity;
+    transition-duration: 1s;
+}
+.rct-point-labels[data-unfocus] {
+    opacity: 0.3;
 }
 
 /** rct-point 대신 여기에 지정해야 outline에 반영된다. */
@@ -697,28 +706,15 @@
     stroke-width: 1px;
 }
 
-.rct-bubble-series .rct-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
-}
-
 /** scatter series */
 .rct-scatter-series {
     fill-opacity: 0.7;
-}
-.rct-scatter-series .data-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
 }
 
 /** boxplot series */
 .rct-boxplot-series {
     stroke-width: 1;
 }
-/* .rct-boxplot-series .rct-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
-} */
 .rct-boxplot-point-min {
     stroke: #333;
     stroke-width: 2;
@@ -774,10 +770,6 @@
 /** waterfall series */
 .rct-waterfall-series {
     fill-opacity: 0.85;
-}
-.rct-waterfall-series .rct-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
 }
 .rct-waterfall-point-negative {
     fill: #dd5500;

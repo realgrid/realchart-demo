@@ -828,7 +828,6 @@ export class BodyView extends ChartElement<Body> {
 
     private _focused: IPointView = null;
     private _focusedSeries: SeriesView<Series>;
-    private _focusBorder: PathElement;
 
     private _inverted: boolean;
     private _zoomRequested: boolean;
@@ -856,8 +855,6 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
         this.add(this._zoomButton = new ZoomButton(doc));
         
-        this._feedbackContainer.add(this._focusBorder = new  PathElement(doc, 'rct-focus-border'));
-        this._focusBorder.ignorePointer();
         this._crosshairViews = new ElementPool(this._feedbackContainer, CrosshairView);
     }
 
@@ -918,27 +915,57 @@ export class BodyView extends ChartElement<Body> {
         return inBody;
     }
 
-    private $_setFocused(sv: SeriesView<Series>, pv: IPointView, p: IPoint): boolean {
+    focusSeries(series: Series): void {
+        const sv = this._seriesMap.get(series);
+
+        if (sv !== this._focusedSeries) {
+            this._focusedSeries = sv;
+            this.$_setFocusHovering();
+        }
+    }
+
+    private $_setFocused(sv: SeriesView<Series>, pv: IPointView, p: IPoint): void {
         if (pv != this._focused || this.model.chart.tooltip.followPointer) {
             if (pv != this._focused) {
                 if (this._focused) {
-                    this._focusedSeries.setFocusPoint(this._focused, null, this._focusBorder);
+                    this._focusedSeries.setFocusPoint(this._focused, null);
                 }
                 if (pv) {
-                    sv.setFocusPoint(pv, p, this._focusBorder);
+                    sv.setFocusPoint(pv, p);
                 }
             }
 
             this._focused = pv;
-            this._focusedSeries = sv;
+            if (sv !== this._focusedSeries) {
+                this._focusedSeries && this.$_setFocusSeries(this._focusedSeries, false);
+                this._focusedSeries = sv;
+                this._focusedSeries && this.$_setFocusSeries(this._focusedSeries, true);
+            }
             
             if (this._focused) {
                 this._owner.showTooltip(sv.model, pv.point, this, p);
             } else {
                 this._owner.hideTooltip();
             }
-            return true;
         }
+        // this.$_setFocusHovering();
+    }
+
+    private $_setFocusSeries(sv: SeriesView<Series>, focused: boolean): void {
+        if (focused) {
+            sv.front(this._seriesViews);
+        } else {
+            sv.back(this._seriesViews);
+        }
+    }
+
+    private $_setFocusHovering(): void {
+        const sv = this._focusedSeries;
+
+        this._seriesViews.forEach(sv2 => {
+            sv2.setBoolData('unfocus', sv && sv2 !== sv);
+            sv2._labelContainer.setBoolData('unfocus', sv && sv2 !== sv);
+        })
     }
 
     seriesByDom(elt: Element): SeriesView<Series> {

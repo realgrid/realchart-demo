@@ -43,10 +43,6 @@ class BarElement extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getFocusBorder(): string {
-        return;
-    }
-
     prepareSegments(total: number, count: number, decimal: number, backStyle: string): void {
         this._decimal = decimal;
         this._segments

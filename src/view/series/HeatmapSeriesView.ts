@@ -33,12 +33,6 @@ class CellView extends RectElement implements IPointView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    getFocusBorder(): string {
-        const r = this.getBBounds();
-        r.x = this.tx;
-        r.y = this.ty;
-        return SvgShapes.rect(r).join(' ');
-    }
 }
 
 export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {

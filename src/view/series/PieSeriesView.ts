@@ -40,10 +40,6 @@ class SectorView extends SectorElement implements IPointView {
     setPieSector(labels: PointLabelContainer, lines: PointLabelLineContainer, newSector: ISectorShape): void {
         this._assignShape(newSector, false);
     }
-
-    getFocusBorder(): string {
-        return this.path();
-    }
 }
 
 export class PieSeriesView extends WidgetSeriesView<PieSeries> {

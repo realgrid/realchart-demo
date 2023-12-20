@@ -19,19 +19,16 @@ import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { RectElement } from "../common/impl/RectElement";
 import { SvgShapes } from "../common/impl/SvgShape";
-import { LineType } from "../model/ChartTypes";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { ClusterableSeries, DataPointLabel, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
-import { PointLine } from "../model/series/LineSeries";
 import { ContentView } from "./ChartElement";
 import { LegendItemView } from "./LegendView";
 import { SeriesAnimation } from "./animation/SeriesAnimation";
 
 export interface IPointView {
     point: DataPoint;
-    getFocusBorder?(): string;
 }
 
 export class PointLabelView extends LabelElement {
@@ -441,17 +438,17 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         this._doAfterLayout();
     }
 
-    setFocusPoint(pv: IPointView, p: IPoint, fv: PathElement): void {
-        (pv as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, !!p);
+    setFocusPoint(pv: IPointView, p: IPoint): void {
+        const focused = !!p;
 
-        // const s = pv?.getFocusBorder?.() || '';
+        if (this._needFocusOrder()) {
+            (pv as any as RcElement).setBoolData(SeriesView.DATA_FOUCS, focused);
+            focused ? this._getPointPool().front(pv as any) : this._getPointPool().back(pv as any);
+        }
+    }
 
-        // if (s && !this._animating()) {
-        //     fv.setPath(s);
-        //     fv.translate((pv as any as RcElement).tx, (pv as any as RcElement).ty);
-        // } else {
-        //     pv.setBoolData(SeriesView.DATA_FOUCS, !!fv);
-        // }
+    protected _needFocusOrder(): boolean {
+        return true;
     }
 
     //-------------------------------------------------------------------------
@@ -716,10 +713,6 @@ export abstract class PointElement extends PathElement implements IPointView {
     constructor(doc: Document) {
         super(doc, SeriesView.POINT_CLASS);
     }
-
-    getFocusBorder(): string {
-        return;
-    }
 }
 
 export abstract class BoxPointElement extends PointElement {
@@ -732,7 +725,7 @@ export abstract class BoxPointElement extends PointElement {
     hPoint: number;
 
     //-------------------------------------------------------------------------
-    // constructor
+    // IPointView
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // overriden members
@@ -745,10 +738,6 @@ export class BarElement extends BoxPointElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    getFocusBorder(): string {
-        return SvgShapes.rect(Rectangle.create(this.getBBounds()).inflate(-1)).join(' ');
-    }
-
     layout(x: number, y: number, rTop: number, rBottom: number): void {
         this.setPath(SvgShapes.bar(
             x - this.wPoint / 2,

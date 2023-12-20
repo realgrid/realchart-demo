@@ -29,9 +29,6 @@ class FunnelSegment extends PointElement implements IPointView {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    getFocusBorder(): string {
-        return this.path();
-    }
 }
 
 export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {

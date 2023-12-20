@@ -38,10 +38,6 @@ class BarElement extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    getFocusBorder(): string {
-        return;
-    }
-
     layout(): void {
         const w = this.width
         const h = this.height;

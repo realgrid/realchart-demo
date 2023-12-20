@@ -973,6 +973,14 @@ export class RcElement extends RcObject {
         this._rotation = angle;
     }
 
+    scale(s: number): RcElement {
+        if (this._scaleX !== s || this._scaleY !== s) {
+            this._scaleX = this._scaleY = s;
+            this._updateTransform();
+        }
+        return this;
+    }
+
     translate(x: number, y: number): RcElement {
         if (x !== this._translateX || y !== this._translateY) {
             if (Utils.isValidNumber(x)) this._translateX = x;
@@ -1293,6 +1301,30 @@ export class RcElement extends RcObject {
 
     contains(dom: Element): boolean {
         return this._dom.contains(dom);
+    }
+
+    front(siblings: RcElement[]): void {
+        const len = siblings.length;
+
+        if (len > 1 && this !== siblings[siblings.length - 1]) {
+            this._dom.remove();
+            this.parent.dom.appendChild(this._dom);
+        }
+    }
+
+    back(siblings: RcElement[]): void {
+        const len = siblings.length;
+
+        if (len > 1) {
+            const i = siblings.indexOf(this);
+        
+            this._dom.remove();
+            if (i < siblings.length - 1) {
+                this.parent.dom.insertBefore(this._dom, siblings[i + 1].dom);
+            } else {
+                this.parent.dom.appendChild(this._dom);
+            }
+        }
     }
 
     //-------------------------------------------------------------------------
