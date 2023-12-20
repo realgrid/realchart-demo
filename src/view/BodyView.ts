@@ -897,9 +897,13 @@ export class BodyView extends ChartElement<Body> {
         // 새로운 zoom이 요청된 상태이고 아직 화면에 반영되지 않았다.
         // crosshair가 zoom이 반영된 것으로 계산하므로 다음 render까지 기다리게 해야한다.
         // TODO: _zoomRequested 필요 없는 깔끔한 방식 필요. 
+
+        const cl = (target as Element)?.classList;
+        const isContextMenu = cl?.value && (cl.contains('rct-contextmenu-item') || cl.contains('rct-contextmenu-list'));
+
         if (!this._zoomRequested) {
             this._crosshairViews.forEach(v => {
-                if (v.setVis(inBody)) {
+                if (v.setVis(inBody && !isContextMenu)) {
                     v.layout(pv, p.x, p.y, w, h);
                 }
             });
