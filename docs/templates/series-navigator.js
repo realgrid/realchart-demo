@@ -7,14 +7,17 @@ export const config = {
   },
   body: { style: {} },
   xAxis: {
+    type: 'time',
     title: { visible: true, text: '연중 월' },
     padding: 0,
-    tick: { step: 20 },
+    tick: { stepInterval: '1m' },
     line: { style: { stroke: 'black', strokeWidth: 2 } },
-    grid: { endVisible: true }
+    grid: { endVisible: true },
+    label: { autoArrange: 'rotate' }
   },
   yAxis: { title: '총 가격(원)', line: true },
   series: {
+    name: '매출 합계',
     data: [
       { data: '2019-01-01', value: 0 },
       { data: '2019-01-02', value: 0 },
@@ -1539,7 +1542,9 @@ export const config = {
       { data: '2023-03-01', value: 26145689.9 },
       { data: '2023-03-02', value: 18578925 },
       { data: '2023-03-03', value: 37650704 }
-    ]
+    ],
+    xField: 'data',
+    yField: 'value'
   },
   seriesNavigator: { visible: true }
 }

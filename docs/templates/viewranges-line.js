@@ -31,5 +31,6 @@ export const config = {
     ],
     style: { strokeWidth: '2px' }
   },
+  tooltip: false,
   ChartTextEffect: { autoContrast: false }
 }

@@ -2780,6 +2780,7 @@ export const config = {
     }
   ],
   type: 'area',
+  tooltip: false,
   templates: {
     xAxis: {
       line: { visible: true, style: { stroke: '#ddd' } },

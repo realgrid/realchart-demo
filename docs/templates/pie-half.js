@@ -41,6 +41,7 @@ export const config = {
     innerRadius: '50%',
     innerText: '<t style="fill:#002F5C;font-weight:bold;">Number of Mobile Users</t><br>in the world',
     pointLabel: { visible: true, text: '${y}', style: {} },
+    tooltipText: '${x} - ${y}',
     data: [
       { name: 'Lava', y: 50, color: '#002F5C' },
       { name: 'HP', y: 48, color: '#004987' },
