@@ -23,6 +23,12 @@
 			"toc": false
 		}
 	},
+	"sample-32": {
+		"title": "Area Layout Fill",
+		"theme": {
+			"toc": false
+		}
+	},
 	"sample-14": {
 		"title": "Bubble",
 		"theme": {
@@ -157,12 +163,6 @@
 	},
 	"pattern-fill": {
 		"title": "Pattern Fill",
-		"theme": {
-			"toc": false
-		}
-	},
-	"sample-32": {
-		"title": "layout Fill",
 		"theme": {
 			"toc": false
 		}

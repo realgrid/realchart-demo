@@ -4,6 +4,7 @@
         "Bar Stack": "bar-stack",
         "Line": "polls-biden-trump",
         "Area": "population",
+        "Area Layout Fill": "sample-32",
         "Bubble": "sample-14",
         "Candlestick": "candlestick",
         "Split": "building-space",
@@ -26,8 +27,7 @@
         "View Ranges - Line": "viewranges-line",
         "View Ranges - Area": "viewranges-area",
         "Navigator": "series-navigator",
-        "Pattern Fill": "pattern-fill",
-        "layout Fill": "sample-32"
+        "Pattern Fill": "pattern-fill"
     },
     "Basic": {
         "Basic": "basic"
