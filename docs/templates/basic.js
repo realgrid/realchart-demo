@@ -20,7 +20,7 @@ export const config = {
   },
   series: {
     pointLabel: { visible: true },
-    onPointClick: args => { chart.series.updateData([["신흥1동", 100], ["신흥2동", 200]], true);},
+    onPointClick: (args) => { chart.series.updateData( [ ["신흥1동", 100], ["신흥2동", 200], ], true ); },
     data: [
       [ '신흥1동', 12904 ],
       [ '신흥2동', 19796 ],

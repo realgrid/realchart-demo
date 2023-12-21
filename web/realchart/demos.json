@@ -1,203 +1,203 @@
 {
-    "Demo": {
-        "Bar": "bar-monthly-sales",
-        "Bar Stack": "bar-stack",
-        "Line": "polls-biden-trump",
-        "Area": "population",
-        "Area Layout Fill": "sample-32",
-        "Bubble": "sample-14",
-        "Candlestick": "candlestick",
-        "Split": "building-space",
-        "Polar Bar": "polar-baseball",
-        "Axis": "axis",
-        "Polar Scatter": "scatter-olympic",
-        "Gauge Group": "gauge-group",
-        "Multiple Gauges": "sample-35",
-        "Bullet Gauges": "bullet-gauges",
-        "Clock": "gauge-clock",
-        "Pie": "sample-30",
-        "Poll Pie": "poll-pie",
-        "Half Pie": "pie-half",
-        "Heatmap": "heatmap",
-        "Treemap": "treemap",
-        "Bar - Air Temp.": "sample-01",
-        "Bar - Charge Off": "sample-03",
-        "Bar Percent - Cloud Market": "sample-13",
-        "View Ranges - Bar": "viewranges-bar",
-        "View Ranges - Line": "viewranges-line",
-        "View Ranges - Area": "viewranges-area",
-        "Navigator": "series-navigator",
-        "Pattern Fill": "pattern-fill"
-    },
-    "Basic": {
-        "Basic": "basic"
-    },
-    "Bar": {
-        "Bar": "bar",
-        "Multi Bars": "bar-multi",
-        "Bar Group": "bargroup",
-        "Multi Groups": "bargroup-multi",
-        "Bar Negative": "bar-negative",
-        "Negative Bars": "bargroup-negative",
-        "Wing Chart": "bar-wing"
-    },
-    "BarRange": {
-        "Bar Range": "barrange",
-        "Multiple Bar Ranges": "barrange-multi"
-    },
-    "Waterfall": {
-        "Waterfall": "waterfall"
-    },
-    "Line": {
-        "Line": "line",
-        "Spline": "line-spline",
-        "Stepped Line": "line-step",
-        "Negative Line": "line-negative",
-        "Multiple Lines": "line-multi",
-        "Line Group": "linegroup",
-        "Negative Lines": "linegroup-negative",
-        "Bump Chart": "bump",
-        "대량 데이터(3000)": "line-bigdata"
-    },
-    "Area": {
-        "Area": "area",
-        "Multi Areas": "area-multi",
-        "Area Group": "areagroup",
-        "Area Negative": "area-negative",
-        "Negative Areas": "areagroup-negative"
-    },
-    "AreaRange": {
-        "Area Range": "arearange"
-    },
-    "Pareto": {
-        "Pareto": "pareto"
-    },
-    "Scatter": {
-        "Scatter": "scatter",
-        "Scatter - Many Points": "scatter-bigdata",
-        "Scatter - Jittering": "scatter-jitter"
-    },
-    "Bubble": {
-        "Bubble": "bubble",
-        "Multiple Bubble": "bubble-multi"
-    },
-    "BoxPlot": {
-        "BoxPlot": "boxplot",
-        "Multiple BoxPlots": "boxplot-multi"
-    },
-    "Error Bar": {
-        "ErrorBar": "errorbar"
-    },
-    "Candlestick": {
-        "Candlestick": "candlestick"
-    },
-    "Ohlc": {
-        "Ohlc": "ohlc"
-    },
-    "Lollipop": {
-        "Lollipop": "lollipop"
-    },
-    "Dumbbell": {
-        "Dumbbell": "dumbbell"
-    },
-    "Equalizer": {
-        "Equalizer": "equalizer",
-        "Multiple Equalizer": "equalizer-multi"
-    },
-    "Histogram": {
-        "Histogram": "histogram"
-    },
-    "Bell Curve": {
-        "Bell Curve": "bellcurve",
-        "Scatter & Bell Curve": "bellcurve-source"
-    },
-    "Vector": {
-        "Vector": "vector"
-    },
-    "Heatmap": {
-        "Heatmap": "heatmap",
-        "Heatmap Category": "heatmap-category"
-    },
-    "Treemap": {
-        "Treemap": "treemap",
-        "Treemap Leveled": "treemap-level"
-    },
-    "Pie": {
-        "Pie": "pie",
-        "Donut": "pie-donut"
-    },
-    "Funnel": {
-        "Funnel": "funnel"
-    },
-    "Polar": {
-        "Polar": "polar",
-        "Polar - Variable Category": "polar-categoryvar",
-        "Polar - Scatter": "polar-scatter"
-    },
-    "Combination": {
-        "AreaRange & Line": "combo-arearange-line",
-        "Bar & Pie": "combo-bar-pie",
-        "Line & Lollipop": "combo-line-lollipop"
-    },
-    "Axis": {
-        "Category Axis": "categoryaxis",
-        "Variable Category Axis": "categoryaxis-var",
-        "Linear Axis": "linearaxis",
-        "Log Axis": "logaxis",
-        "Time Axis": "timeaxis",
-        "Axis Breaks": "axis-break",
-        "Axis Labels": "axis-label",
-        "Multiple Axis": "multiaxis",
-        "Zooming": "axis-zoom",
-        "Navigator": "series-navigator"
-    },
-    "Gauge": {
-        "Circle Gauge": "gauge",
-        "Multiple Gauges": "gauge-multi",
-        "Hand Gauges": "gauge-hand",
-        "Clock Gauge": "gauge-clock",
-        "Multiple Clocks": "gauge-clock-multi",
-        "Bullet Gauge": "gauge-bullet",
-        "Linear Gauge": "gauge-linear",
-        "Linear Gauge - Vertical": "gauge-linear-vert",
-        "Circle Gauge Group": "gauge-group",
-        "Linear Gauge Group": "gauge-group-linear",
-        "Bullet Gauge Group": "gauge-group-bullet"
-    },
-    "Titles": {
-        "Titles": "titles"
-    },
-    "Legends": {
-        "Legend": "legend",
-        "Legend Rows": "legend-rows"
-    },
-    "Body": {
-        "Trendlines": "trendline",
-        "Guides": "axis-guide",
-        "Crosshair": "crosshair",
-        "Background": "body-background",
-        "Annotations": "annotations"
-    }, 
-    "Split": {
-        "Wing Chart": "split-wing-chart",
-        "Series Row": "split-row-lines",
-        "Series Column": "split-col-lines",
-        "Series Grid": "split-grid-lines"
-    }, 
-    "Chart": {
-        "Background": "background",
-        "Navigator": "series-navigator",
-        "Resize": "resize"
-    },
-    "Style": {
-        "Linear Gradient": "lineargradient",
-        "Radial Gradient": "radialgradient",
-        "Pattern Fill": "pattern-fill",
-        "Palette": "palette",
-        "Theme": "theme",
-        "Style Callback": "stylecallback",
-        "View Ranges - Bar": "viewranges-bar",
-        "View Ranges - Line": "viewranges-line",
-        "View Ranges - Area": "viewranges-area"
-    }
+  "Basic": {
+    "Basic": "bar-monthly-sales"
+  },
+  "Bar": {
+    "Bar": "bar",
+    "Multi Bars": "bar-multi",
+    "Bar Group": "bargroup",
+    "Multi Groups": "bargroup-multi",
+    "Bar Negative": "bar-negative",
+    "Negative Bars": "bargroup-negative",
+    "Wing Chart": "bar-wing"
+  },
+  "BarRange": {
+    "Bar Range": "barrange",
+    "Multiple Bar Ranges": "barrange-multi"
+  },
+  "Waterfall": {
+    "Waterfall": "waterfall"
+  },
+  "Line": {
+    "Line": "line",
+    "Spline": "line-spline",
+    "Stepped Line": "line-step",
+    "Negative Line": "line-negative",
+    "Multiple Lines": "line-multi",
+    "Line Group": "linegroup",
+    "Negative Lines": "linegroup-negative",
+    "Bump Chart": "bump",
+    "대량 데이터(3000)": "line-bigdata"
+  },
+  "Area": {
+    "Area": "area",
+    "Multi Areas": "area-multi",
+    "Area Group": "areagroup",
+    "Area Negative": "area-negative",
+    "Negative Areas": "areagroup-negative"
+  },
+  "AreaRange": {
+    "Area Range": "arearange"
+  },
+  "Pareto": {
+    "Pareto": "pareto"
+  },
+  "Scatter": {
+    "Scatter": "scatter",
+    "Scatter - Many Points": "scatter-bigdata",
+    "Scatter - Jittering": "scatter-jitter"
+  },
+  "Bubble": {
+    "Bubble": "bubble",
+    "Multiple Bubble": "bubble-multi"
+  },
+  "BoxPlot": {
+    "BoxPlot": "boxplot",
+    "Multiple BoxPlots": "boxplot-multi"
+  },
+  "Error Bar": {
+    "ErrorBar": "errorbar"
+  },
+  "Candlestick": {
+    "Candlestick": "candlestick"
+  },
+  "Ohlc": {
+    "Ohlc": "ohlc"
+  },
+  "Lollipop": {
+    "Lollipop": "lollipop"
+  },
+  "Dumbbell": {
+    "Dumbbell": "dumbbell"
+  },
+  "Equalizer": {
+    "Equalizer": "equalizer",
+    "Multiple Equalizer": "equalizer-multi"
+  },
+  "Histogram": {
+    "Histogram": "histogram"
+  },
+  "Bell Curve": {
+    "Bell Curve": "bellcurve",
+    "Scatter & Bell Curve": "bellcurve-source"
+  },
+  "Vector": {
+    "Vector": "vector"
+  },
+  "Heatmap": {
+    "Heatmap": "heatmap",
+    "Heatmap Category": "heatmap-category"
+  },
+  "Treemap": {
+    "Treemap": "treemap",
+    "Treemap Leveled": "treemap-level"
+  },
+  "Pie": {
+    "Pie": "pie",
+    "Donut": "pie-donut"
+  },
+  "Funnel": {
+    "Funnel": "funnel"
+  },
+  "Polar": {
+    "Polar": "polar",
+    "Polar - Variable Category": "polar-categoryvar",
+    "Polar - Scatter": "polar-scatter"
+  },
+  "Combination": {
+    "AreaRange & Line": "combo-arearange-line",
+    "Bar & Pie": "combo-bar-pie",
+    "Line & Lollipop": "combo-line-lollipop"
+  },
+  "Axis": {
+    "Category Axis": "categoryaxis",
+    "Variable Category Axis": "categoryaxis-var",
+    "Linear Axis": "linearaxis",
+    "Log Axis": "logaxis",
+    "Time Axis": "timeaxis",
+    "Axis Breaks": "axis-break",
+    "Axis Labels": "axis-label",
+    "Multiple Axis": "multiaxis",
+    "Zooming": "axis-zoom",
+    "Navigator": "series-navigator"
+  },
+  "Gauge": {
+    "Circle Gauge": "gauge",
+    "Multiple Gauges": "gauge-multi",
+    "Hand Gauges": "gauge-hand",
+    "Clock Gauge": "gauge-clock",
+    "Multiple Clocks": "gauge-clock-multi",
+    "Bullet Gauge": "gauge-bullet",
+    "Linear Gauge": "gauge-linear",
+    "Linear Gauge - Vertical": "gauge-linear-vert",
+    "Circle Gauge Group": "gauge-group",
+    "Linear Gauge Group": "gauge-group-linear",
+    "Bullet Gauge Group": "gauge-group-bullet"
+  },
+  "Titles": {
+    "Titles": "titles"
+  },
+  "Legends": {
+    "Legend": "legend",
+    "Legend Rows": "legend-rows"
+  },
+  "Body": {
+    "Trendlines": "trendline",
+    "Guides": "axis-guide",
+    "Crosshair": "crosshair",
+    "Background": "body-background",
+    "Annotations": "annotations"
+  },
+  "Split": {
+    "Wing Chart": "split-wing-chart",
+    "Series Row": "split-row-lines",
+    "Series Column": "split-col-lines",
+    "Series Grid": "split-grid-lines"
+  },
+  "Chart": {
+    "Background": "background",
+    "Navigator": "series-navigator",
+    "Resize": "resize"
+  },
+  "Style": {
+    "Linear Gradient": "lineargradient",
+    "Radial Gradient": "radialgradient",
+    "Pattern Fill": "pattern-fill",
+    "Palette": "palette",
+    "Theme": "theme",
+    "Style Callback": "stylecallback",
+    "View Ranges - Bar": "viewranges-bar",
+    "View Ranges - Line": "viewranges-line",
+    "View Ranges - Area": "viewranges-area"
+  },
+  "Demo": {
+    "Bar": "bar-monthly-sales",
+    "Bar Stack": "bar-stack",
+    "Line": "polls-biden-trump",
+    "Area": "population",
+    "Area Layout Fill": "sample-32",
+    "Bubble": "sample-14",
+    "Candlestick": "candlestick",
+    "Split": "building-space",
+    "Polar Bar": "polar-baseball",
+    "Axis": "axis",
+    "Polar Scatter": "scatter-olympic",
+    "Gauge Group": "gauge-group",
+    "Multiple Gauges": "sample-35",
+    "Bullet Gauges": "bullet-gauges",
+    "Clock": "gauge-clock",
+    "Pie": "sample-30",
+    "Poll Pie": "poll-pie",
+    "Half Pie": "pie-half",
+    "Heatmap": "heatmap",
+    "Treemap": "treemap",
+    "Bar - Air Temp.": "sample-01",
+    "Bar - Charge Off": "sample-03",
+    "Bar Percent - Cloud Market": "sample-13",
+    "View Ranges - Bar": "viewranges-bar",
+    "View Ranges - Line": "viewranges-line",
+    "View Ranges - Area": "viewranges-area",
+    "Navigator": "series-navigator",
+    "Pattern Fill": "pattern-fill"
+  }
 }
