@@ -1,32 +1,28 @@
-## RcChartAxis
+## RcShapeAnnotation
 ### Extends
-- [RcChartObject](../classes/RcChartObject)
-차트 축 모델.
+- [RcAnnotation](../classes/RcAnnotation)
 
 
 
-
+## Config Properties
+ | Name | Type | Description |   
+ | --- | --- | --- | 
+ | [align](/config/config/annotation/shape#align) | `'center'\|'left'\|'right'{:js}` | 수평 배치. |   
+ | [front](/config/config/annotation/shape#front) | `boolean{:js}` | true로 지정하면 시리즈들 위에 표시된다. |   
+ | [height](/config/config/annotation/shape#height) | `string \| number{:js}` | Annotation 높이. |   
+ | [name](/config/config/annotation/shape#name) | `string{:js}` | Annotation 이름. |   
+ | [rotation](/config/config/annotation/shape#rotation) | `number{:js}` | 회전 각도. |   
+ | [scope](/config/config/annotation/shape#scope) | `AnnotationScope{:js}` | 차트 모델에서 지정된 annotationd의 표시 기준 영역. |   
+ | [shape](/config/config/annotation/shape#shape) | `Shape{:js}` | Shape 종류. |   
+ | [style](/config/config/annotation/shape#style) | `SVGStyles \| string{:js}` | 스타일셋 혹은 class selector. |   
+ | [verticalAlign](/config/config/annotation/shape#verticalalign) | `'bottom'\|'middle'\|'top'{:js}` | 수직 배치. |   
+ | [visible](/config/config/annotation/shape#visible) | `boolean{:js}` | 표시 여부. |   
+ | [width](/config/config/annotation/shape#width) | `string \| number{:js}` | Annotation 너비. |
 
 ## Properties
-### crosshair: [RcChartObject](../classes/RcChartObject)[#crosshair]
-크로스헤어 설정 모델.
-### grid: [RcChartObject](../classes/RcChartObject)[#grid]
-축 그리드 설정 모델.
-### isEmpty: [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)[#isEmpty]
-시리즈 연결 여부.\
-연결된 시리즈가 하나도 없으면 true.
-### isX: [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)[#isX]
-x축이면 true.
-### label: [RcChartObject](../classes/RcChartObject)[#label]
-tick label 설정 모델.
-### line: [RcChartObject](../classes/RcChartObject)[#line]
-축 선 설정 모델.
-### tick: [RcChartObject](../classes/RcChartObject)[#tick]
-tick 선 설정 모델.
-### title: [RcChartObject](../classes/RcChartObject)[#title]
-축 타이틀 설정 모델.
-### xy: 'x' \| 'y'[#xy]
-축 방향.
+### name: [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)[#name]
+config에서 설정해된 name을 리턴한다.\
+최초 설정한 이름은 변경할 수 없다.
 
 ## Methods
 ### get(prop): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#get]
@@ -50,8 +46,6 @@ Utils.log(chart.axis.get('title.text'));
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | '**.**'으로 구분되는 속성 경로. |
-### resetZoom(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#resetZoom]
-줌 상태를 제거하고 모든 데이터포인트들이 표시되도록 한다.
 ### set(prop, value, redraw): [RcChartObject](../classes/RcChartObject)[#set]
 지정한 속성의 값(들)을 설정한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다.\
@@ -106,12 +100,4 @@ chart.getSeries('ser02').toggle('visible');
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 이름 |
 | redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
-### zoom(start, end): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#zoom]
-지정한 영역에 포함된 데이터포인트들만 표시되도록 한다.
-
-
-
-| Parameter | Type | Description |
-| ----------- | ----------- | ----------- |
-| start | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | 영역의 시작 값. |
-| end | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) | 영역의 끝 값. 영역에는 포함되지 않는다. |
+### update(): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#update]

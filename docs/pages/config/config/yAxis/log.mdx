@@ -3,6 +3,7 @@
 ## Properties
 
 ### baseValue: `number{:js}`[#baseValue]
+시리즈에 baseValue가 지정되지 않은 경우 대신 사용되는 기본값.  
 
 ### [crosshair](./log/crosshair)
 RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
@@ -42,7 +43,7 @@ plot 영역이나 먼저 표시되는 축 사이의 여백 크기.
 ### maxPadding: `number{:js}`[#maxPadding]
 마지막 tick 뒤쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
 이 값을 지정하지 않으면 [padding](#padding) 에 지정된 값을 따른다. [endFit](#endfit) 이 [TICK](/docs/api/classes/TICK) 일 때,
-data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다. [strictMax](#strictmax) 가 지정되거나, [maxValue](#maxvalue) 가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다.  
+data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격이 존재한다면 이 속성은 무시된다. [strictMax](#strictmax) 가 지정되거나, [maxValue](#maxvalue) 가 계산된 최대값보다 큰 경우에도 이 속성은 무시된다.  
 
 ### maxValue: `number{:js}`[#maxValue]
 명시적으로 지정하는 최대값.  
@@ -56,7 +57,7 @@ data point의 최대값과 마지막 tick 사이에 이미 그 이상의 간격�
 ### minPadding: `number{:js}`[#minPadding]
 첫번째 tick 앞쪽에 추가되는 최소 여백을 축 길이에 대한 상대값으로 지정한다.
 이 값을 지정하지 않으면 [padding](#padding) 에 지정된 값을 따른다. [startFit](#startfit) 이 [TICK](/docs/api/classes/TICK) 일 때,
-data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 무시된다. [strictMin](#strictmin) 가 지정되거나, [minValue](#minvalue) 가 계산된 최소값보다 작은 경우에도 이 속성은 무시된다.  
+data point의 최소값과 첫번째 tick 사이에 이미 그 이상의 간격이 존재한다면 이 속성은 무시된다. [strictMin](#strictmin) 가 지정되거나, [minValue](#minvalue) 가 계산된 최소값보다 작은 경우에도 이 속성은 무시된다.  
 
 ### minValue: `number{:js}`[#minValue]
 명시적으로 지정하는 최소값.  
