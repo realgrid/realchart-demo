@@ -17,6 +17,7 @@ import {
   Checkbox,
   Slider,
   Select,
+  Flex,
 } from "@mantine/core";
 
 import { createChart, getVersion } from "realchart";
@@ -24,6 +25,7 @@ import { useEffect, useRef, useState } from "react";
 import "node_modules/realchart/dist/realchart-style.css";
 import Editor from "@monaco-editor/react";
 import { Panel } from "../Panels";
+import { Codepen } from "../Codepen/Codepen";
 
 /**
  * DOM API 사용 문제
@@ -45,16 +47,19 @@ const useStyles = createStyles((theme) => ({
   menu: {
     gap: "16px",
     padding: "10px",
-    alignItems: 'center',
+    alignItems: "center",
     // justifyContent: 'end',
     // borderBottom: '1px solid #eee'
   },
   menuDiv: {
-    display: 'contents'
+    display: "contents",
   },
   button: {
     // marginLeft: 'auto'
   },
+  label: {
+    fontSize: "0.875rem"
+  }
 }));
 
 const parseOptionsByConfig = (
@@ -103,13 +108,15 @@ export function RealChartReact({
   const [polarChecked, setPolarChecked] = useState(polar);
   const [intervalId, setIntervalId] = useState();
 
-
   useEffect(() => {
-  
+    console.log;
+  }, [config]);
+  useEffect(() => {
     return () => {
       clearInterval(intervalId);
     };
-  }, [intervalId]); 
+  }, [intervalId]);
+
   useEffect(() => {
     if (!chartRef.current) return;
     document.getElementById("realchart").innerHTML = "";
@@ -188,14 +195,18 @@ export function RealChartReact({
       : _width
     : "100%";
 
-  const hasPieOrGauge = config['type'] == 'pie' || config['series']?.type == 'pie' 
-    || (config['series'] && config['series'] instanceof Array && config['series']?.some(m => m.type == 'pie'))
-    || config['gauge'];
+  const hasPieOrGauge =
+    config["type"] == "pie" ||
+    config["series"]?.type == "pie" ||
+    (config["series"] &&
+      config["series"] instanceof Array &&
+      config["series"]?.some((m) => m.type == "pie")) ||
+    config["gauge"];
 
-  const isSplit = config['split']?.visible || config['split'] === true;
+  const isSplit = config["split"]?.visible || config["split"] === true;
 
-  const sliders = code["actions"]?.filter(m => m.type == 'slider');
-  const inputs = code["actions"]?.filter(m => m.type != 'slider');
+  const sliders = code["actions"]?.filter((m) => m.type == "slider");
+  const inputs = code["actions"]?.filter((m) => m.type != "slider");
   return (
     <Panel
       title={`RealChart ${version}`}
@@ -238,31 +249,61 @@ export function RealChartReact({
         );
       })}
 
-      <Grid hidden={!inputs?.length} className={classes.menu} style={hasPieOrGauge ? {} : {paddingBottom: 0}}>
-      {inputs?.map((action, idx) => {
-        const { label, value, data } = action;
-        switch (action.type) {
-          case 'check': 
-            return <Checkbox key={idx} label={label} checked={value} onChange={(event) => { action.action({value: event.currentTarget.checked})}}/>
-          case 'button':
-            return <Button
-              compact
-              hidden={!showEditor}
-              className={classes.button}
-              onClick={() => {
-                setIntervalId(action.action());
-              }}
-              variant="outline"
-              key={idx}
-            >
-              {action.label}
-            </Button>
-          case 'select': 
-              return <Select key={idx} label={label} data={data} defaultValue={ value || data[0]}
-                size={"xs"}
-                onChange={(value) => { action.action({value})}} />
-        }
-      })}
+      <Grid
+        hidden={!inputs?.length}
+        className={classes.menu}
+        style={hasPieOrGauge ? {} : { paddingBottom: 0 }}
+      >
+        {inputs?.map((action, idx) => {
+          const { label, value, data } = action;
+          switch (action.type) {
+            case "check":
+              return (
+                <Checkbox
+                  key={idx}
+                  label={label}
+                  defaultChecked={value}
+                  onChange={(event) => {
+                    action.action({ value: event.currentTarget.checked });
+                  }}
+                />
+              );
+            case "button":
+              return (
+                <Button
+                  compact
+                  hidden={!showEditor}
+                  className={classes.button}
+                  onClick={() => {
+                    setIntervalId(action.action());
+                  }}
+                  variant="outline"
+                  key={idx}
+                >
+                  {action.label}
+                </Button>
+              );
+            case "select":
+              return (
+                <Flex
+                  align={"center"}
+                  wrap={"wrap"}
+                  direction={"row"}
+                  gap={"md"}>
+                  <label className={classes.label}>{label}</label>
+                  <Select
+                    key={idx}
+                    data={data}
+                    defaultValue={value || data[0]}
+                    size={"xs"}
+                    onChange={(value) => {
+                      action.action({ value });
+                    }}
+                  />
+                </Flex>
+              );
+          }
+        })}
       </Grid>
       <Grid className={classes.menu}>
         <div className={classes.menuDiv} hidden={hasPieOrGauge}>
@@ -282,12 +323,13 @@ export function RealChartReact({
             onChange={onChangeYReversed}
           />
           <Checkbox
-            style={isSplit ? { display: 'none' } : {}}
+            style={isSplit ? { display: "none" } : {}}
             label="Polar"
             checked={polarChecked}
             onChange={onChangePolar}
           />
         </div>
+
         <Button
           compact
           hidden={!showEditor}
@@ -297,6 +339,7 @@ export function RealChartReact({
         >
           적용
         </Button>
+        {/* <Codepen config={config} /> */}
       </Grid>
       {showEditor ? (
         <Grid>
