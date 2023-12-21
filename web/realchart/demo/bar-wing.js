@@ -1,7 +1,10 @@
 /**
  * @demo
  * 
- * Bar Series 기본 예제.
+ * Bar Wing 예제
+ * 그룹 시리즈의 overlap layout으로 split모드 없이 wing 차트 모양을 내는 예제.
+ * male은 data는 음수로 구성되어 있다.
+ * axis는 그룹의 axis를 따른다. 두 번째 axis는 모양만 내는 것.
  */
 const config = {
     templates: {
@@ -39,7 +42,7 @@ const config = {
         },
     },
     inverted: true,
-    title: "Bar Wing Chart",
+    title: "Bar Wing Chart (No Split)",
     options: {
         // animatable: false
     },
@@ -69,7 +72,7 @@ const config = {
             name: 'Male',
             pointLabel: {
                 visible: true,
-                numberFormat: 'a##0.00'
+                numberFormat: '##0.00'
             },
             color: '#468B97',
             data: [
@@ -80,7 +83,6 @@ const config = {
             ]
         }, {
             name: 'Female',
-            xAxis: 1,
             color: '#EF6262',
             pointLabel: {
                 visible: true,
