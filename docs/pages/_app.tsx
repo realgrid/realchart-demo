@@ -3,6 +3,7 @@ import {
   ColorSchemeProvider,
   MantineProvider,
 } from "@mantine/core";
+import { Analytics } from '@vercel/analytics/react';
 import type { AppProps } from "next/app";
 import { useState } from "react";
 import { theme } from "../lib/theme";
@@ -29,6 +30,7 @@ export default function App({ Component, pageProps }: AppProps) {
         theme={{ ...theme, colorScheme }}
       >
         <Component {...pageProps} />
+        <Analytics />
       </MantineProvider>
     </ColorSchemeProvider>
   );
