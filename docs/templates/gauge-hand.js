@@ -33,7 +33,7 @@ export const config = {
         offsetY: 30,
         style: { fontWeight: 'bold', fontSize: '30px' }
       },
-      value: 7.368561323562228
+      value: 43.0766530253121
     },
     {
       template: 'gauge',
@@ -47,7 +47,7 @@ export const config = {
       hand: { visible: true, length: '80%', style: { fill: 'blue' } },
       pin: { visible: true, style: { stroke: 'blue' } },
       label: false,
-      value: 96.07618258364357
+      value: 29.978699869211354
     },
     {
       template: 'gauge',
@@ -65,7 +65,7 @@ export const config = {
         offsetY: 40,
         style: { fontWeight: 'bold', fontSize: '30px' }
       },
-      value: 64.6343619736903
+      value: 35.59797377548486
     },
     {
       template: 'gauge',
@@ -92,7 +92,7 @@ export const config = {
       hand: { visible: true, offset: '15%', length: '95%' },
       pin: true,
       label: false,
-      value: 83.50052261966232
+      value: 20.814515782444907
     },
     {
       template: 'gauge',
@@ -109,7 +109,7 @@ export const config = {
       },
       pin: { visible: true, style: { stroke: '#080', fill: '#0f0' } },
       label: false,
-      value: 1.9177371804907972
+      value: 71.33697089578719
     },
     {
       template: 'gauge',
@@ -122,7 +122,7 @@ export const config = {
       hand: true,
       pin: true,
       label: false,
-      value: 38.17467319611727
+      value: 66.49748282178392
     }
   ]
 }

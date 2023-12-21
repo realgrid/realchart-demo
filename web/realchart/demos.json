@@ -1,6 +1,6 @@
 {
   "Basic": {
-    "Basic": "bar-monthly-sales"
+    "Basic": "basic-bar"
   },
   "Bar": {
     "Bar": "bar",
@@ -201,3 +201,4 @@
     "Pattern Fill": "pattern-fill"
   }
 }
+
