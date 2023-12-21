@@ -128,6 +128,6 @@ function init() {
     // RealChart.setDebugging(true);
     RealChart.setLogging(true);
 
-    chart = RealChart.createChart(document, 'realchart', config);
+    chart = RealChart.createChart(document, 'realchart', config, false);
     setActions('actions')
 }

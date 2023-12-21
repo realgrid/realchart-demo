@@ -108,9 +108,7 @@ export function RealChartReact({
   const [polarChecked, setPolarChecked] = useState(polar);
   const [intervalId, setIntervalId] = useState();
 
-  useEffect(() => {
-    console.log;
-  }, [config]);
+
   useEffect(() => {
     return () => {
       clearInterval(intervalId);
@@ -322,12 +320,16 @@ export function RealChartReact({
             checked={yReversedChecked}
             onChange={onChangeYReversed}
           />
-          <Checkbox
-            style={isSplit ? { display: "none" } : {}}
-            label="Polar"
-            checked={polarChecked}
-            onChange={onChangePolar}
-          />
+          {
+            code["polar"] && 
+            <Checkbox
+              style={isSplit ? { display: "none" } : {}}
+              label="Polar"
+              checked={polarChecked}
+              onChange={onChangePolar}
+            />
+
+          }
         </div>
 
         <Button
