@@ -420,63 +420,67 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
         if (this.vertical()) {
             const p = m.axis.getPosition(width, m.value, true);
 
-            line.setVLineC(p, 0, height);
+            if (labelView.setVis(line.setVis(!isNaN(p)))) {
+                line.setVLineC(p, 0, height);
 
-            if (labelView) {
-                switch (label.align) {
-                    case Align.CENTER:
-                        x = p - rLabel.width / 2 + xOff;
-                        break;
-                    case Align.RIGHT:
-                        x = p + xOff;
-                        break;
-                    default:
-                        x = p - rLabel.width - xOff;
-                        break;
-                }
-    
-                switch (label.verticalAlign) {
-                    case VerticalAlign.BOTTOM:
-                        y = height - rLabel.height - yOff;
-                        break;
-    
-                    case VerticalAlign.MIDDLE:
-                        y = (height - rLabel.height) / 2 - yOff;
-                        break;
-    
-                    default:
-                        y = yOff;
-                        break;
+                if (labelView) {
+                    switch (label.align) {
+                        case Align.CENTER:
+                            x = p - rLabel.width / 2 + xOff;
+                            break;
+                        case Align.RIGHT:
+                            x = p + xOff;
+                            break;
+                        default:
+                            x = p - rLabel.width - xOff;
+                            break;
+                    }
+        
+                    switch (label.verticalAlign) {
+                        case VerticalAlign.BOTTOM:
+                            y = height - rLabel.height - yOff;
+                            break;
+        
+                        case VerticalAlign.MIDDLE:
+                            y = (height - rLabel.height) / 2 - yOff;
+                            break;
+        
+                        default:
+                            y = yOff;
+                            break;
+                    }
                 }
             }
         } else {
             const p = height - m.axis.getPosition(height, m.value, true);
 
-            line.setHLineC(p, 0, width);
+            if (labelView.setVis(line.setVis(!isNaN(p)))) {
+                line.setHLineC(p, 0, width);
 
-            if (labelView) {
-                switch (label.align) {
-                    case Align.CENTER:
-                        x = (width - rLabel.width) / 2 - xOff;
-                        break;
-                    case Align.RIGHT:
-                        x = width - rLabel.width - xOff;
-                        break;
-                    default:
-                        x = xOff;
-                        break;
-                }
-    
-                switch (label.verticalAlign) {
-                    case VerticalAlign.BOTTOM:
-                        y = p + yOff;
-                        break;
-                    case VerticalAlign.MIDDLE:
-                        y = p - rLabel.height / 2 - yOff;
-                        break;
-                    default:
-                        y = p - rLabel.height - yOff;
-                        break;
+                if (labelView) {
+                    switch (label.align) {
+                        case Align.CENTER:
+                            x = (width - rLabel.width) / 2 - xOff;
+                            break;
+                        case Align.RIGHT:
+                            x = width - rLabel.width - xOff;
+                            break;
+                        default:
+                            x = xOff;
+                            break;
+                    }
+        
+                    switch (label.verticalAlign) {
+                        case VerticalAlign.BOTTOM:
+                            y = p + yOff;
+                            break;
+                        case VerticalAlign.MIDDLE:
+                            y = p - rLabel.height / 2 - yOff;
+                            break;
+                        default:
+                            y = p - rLabel.height - yOff;
+                            break;
+                    }
                 }
             }
         }
@@ -520,6 +524,8 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
     //-------------------------------------------------------------------------
     prepare(doc: Document, model: AxisRangeGuide): void {
         super.prepare(doc, model);
+
+        this._box.setStyleOrClass(model.style);
     }
 
     _doLayout(width: number, height: number): void {
@@ -536,10 +542,11 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
         if (this.vertical()) {
             const x1 = m.axis.getPosition(width, start, true);
             const x2 = m.axis.getPosition(width, end, true);
-            let x: number;
-            let y: number;
 
-            if (box.setVis(x2 !== x1)) {
+            if (!isNaN(x1) && !isNaN(x2) && labelView.setVis(box.setVis(x2 !== x1))) {
+                let x: number;
+                let y: number;
+    
                 switch (label.align) {
                     case Align.CENTER:
                         x = x1 + (x2 - x1 - rLabel.width) / 2 + xOff;
@@ -567,41 +574,43 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
                 box.setBox(x1, 0, x2, height);
                 labelView && labelView.translate(Math.max(0, Math.min(width, x)), y);
             }
-
         } else {
             const y1 = height - m.axis.getPosition(height, start, true);
             const y2 = height - m.axis.getPosition(height, end, true);
-            let x: number;
-            let y: number;
 
-            switch (label.align) {
-                case Align.CENTER:
-                    x = (width - rLabel.width) / 2 - xOff;
-                    break;
-                case Align.RIGHT:
-                    x = width - rLabel.width - xOff;
-                    break;
-                default:
-                    x = xOff;
-                    break;
+            if (!isNaN(y1) && !isNaN(y2) && labelView.setVis(box.setVis(y1 !== y2))) {
+                let x: number;
+                let y: number;
+    
+                switch (label.align) {
+                    case Align.CENTER:
+                        x = (width - rLabel.width) / 2 - xOff;
+                        break;
+                    case Align.RIGHT:
+                        x = width - rLabel.width - xOff;
+                        break;
+                    default:
+                        x = xOff;
+                        break;
+                }
+    
+                switch (label.verticalAlign) {
+                    case VerticalAlign.BOTTOM:
+                        y = y1 - rLabel.height - yOff;
+                        break;
+    
+                    case VerticalAlign.MIDDLE:
+                        y = y2 + (y1 - y2 - rLabel.height) / 2 - yOff;
+                        break;
+    
+                    default:
+                        y = y2 + yOff;
+                        break;
+                }
+    
+                labelView && labelView.translate(x, y);
+                box.setBox(0, y2, width, y1);
             }
-
-            switch (label.verticalAlign) {
-                case VerticalAlign.BOTTOM:
-                    y = y1 - rLabel.height - yOff;
-                    break;
-
-                case VerticalAlign.MIDDLE:
-                    y = y2 + (y1 - y2 - rLabel.height) / 2 - yOff;
-                    break;
-
-                default:
-                    y = y2 + yOff;
-                    break;
-            }
-
-            labelView && labelView.translate(x, y);
-            box.setBox(0, y2, width, y1);
         }
     }
 
@@ -650,7 +659,7 @@ export class AxisGuideContainer extends LayerElement {
         const views = this._views as (AxisGuideLineView | AxisGuideRangeView)[];
 
         // 뒤쪽에서 부터 pool로 return 시킨다.
-        for (let i = views.length - 1; i >= 0; i--) {
+        while (views.length) {
             const v = views.pop();
 
             v.remove();
@@ -665,18 +674,15 @@ export class AxisGuideContainer extends LayerElement {
 
     addAll(doc: Document, guides: AxisGuide[], polar: boolean): void {
         guides.forEach(g => {
+            let v: AxisGuideView<AxisGuide>;
+
             if (g instanceof AxisRangeGuide) {
-                let v = this._rangePool.pop() || new AxisGuideRangeView(doc, polar);
-
-                this.add(v);
-                v.prepare(doc, g)
-                this._views.push(v);
+                v = this._rangePool.pop() || new AxisGuideRangeView(doc, polar);
             } else if (g instanceof AxisLineGuide) {
-                let v = this._linePool.pop() || new AxisGuideLineView(doc, polar);
-
-                this.add(v);
-                v.prepare(doc, g)
+                v = this._linePool.pop() || new AxisGuideLineView(doc, polar);
             }
+            this.add(v);
+            v.prepare(doc, g)
         });
     }
 

@@ -8,57 +8,79 @@ const config = {
     options: {
         animatable: false
     },
-    title: "Axis Guides",
+    title: "X Axis Guides",
     legend: true,
     xAxis: {
-        // type: 'category',
+        type: 'linear',
         tick: true,
-        // position: 'apposite'
-        // position: 'base',
-        // baseAxis: 1,
         title: 'X Axis',
-        grid: true
+        grid: true,
+        guides: [{
+            type: 'line',
+            value: 2.4,
+            label: {
+                text: 'line guide'
+            },
+            style: {
+                stroke: 'red',
+                strokeDasharray: '3',
+            }
+        }, {
+            type: 'range',
+            startValue: 5.4,
+            endValue: 8.3,
+            label: {
+                text: 'range guide'
+            },
+            style: {
+                fill: '#008800'
+            }
+        }, {
+            type: 'range',
+            startValue: 0.2,
+            endValue: 0.9,
+            style: {
+                fill: '#0000ff'
+            }
+        }]
     },
     yAxis: {
         tick: true,
         title: 'Y Axis',
-        guides: [{
-            type: 'line',
-            visible: false,
-            // front: true,
-            value: 12,
-            label: {
-                text: 'line guide',
-                effect: 'background',
-                style: {
-                    fill: 'white',
-                },
-                backgroundStyle: {
-                    fill: 'black',
-                    padding: '2px 5px',
-                    // rx: 3
-                }
-            },
-            style: {
-                stroke: 'blue',
-                strokeDasharray: '4'
-            }
-        }, {
-            type: 'range',
-            front: true,
-            startValue: 3,
-            endValue: 6,
-            style: {
-                fill: '#008800'
-            },
-            label: {
-                text: 'range guide',
-                align: 'right',
-                style: {
-                    fill: 'red'
-                }
-            }
-        }]
+        // guides: [{
+        //     type: 'line',
+        //     visible: false,
+        //     // front: true,
+        //     value: 12,
+        //     label: {
+        //         text: 'line guide',
+        //         effect: 'background',
+        //         style: {
+        //             fill: 'white',
+        //         },
+        //         backgroundStyle: {
+        //             fill: 'black',
+        //             padding: '2px 5px',
+        //             // rx: 3
+        //         }
+        //     },
+        //     style: {
+        //         stroke: 'blue',
+        //         strokeDasharray: '4'
+        //     }
+        // }, {
+        //     type: 'range',
+        //     front: true,
+        //     startValue: 3,
+        //     endValue: 6,
+        //     label: {
+        //         text: 'range guide',
+        //         align: 'right',
+        //         style: {
+        //             fill: 'red'
+        //         }
+        //     }
+        // }]
     },
     series: {
         pointLabel: {
@@ -70,14 +92,7 @@ const config = {
             style: {
             },
         },
-        data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['def', 9], 
-            ['지리산', 14.3], 
-            ['zzz', 13],
-            ['낙동강', 12.5]
-        ],
+        data: [7, 11, 9, 14.3, 12.5, 8, 10, 3.5, 7.3, 8.8, 12.3],
         style: {
             // fill: 'yellow'
         }

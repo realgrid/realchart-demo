@@ -425,7 +425,7 @@ export class AxisLineGuide extends AxisGuide {
 }
 
 /**
- * range -> zone ?
+ * [주의] realchart-style.css에 fill-opacity가 0.2로 설정되어 있다.
  */
 export class AxisRangeGuide extends AxisGuide {
 

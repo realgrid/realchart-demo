@@ -438,7 +438,8 @@
 }
 .rct-axis-guide-range {
     stroke: none;
-    fill: #0088ff40;
+    fill: #0088ff;
+    fill-opacity: 0.2;
 }
 .rct-axis-scrollbar-track {
     fill: var(--rct-axis-scrollbar-track-fill);
