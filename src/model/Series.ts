@@ -1935,6 +1935,14 @@ export abstract class WidgetSeries extends Series {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    canMinPadding(axis: IAxis, min: number): boolean {
+        return false;
+    }
+
+    canMaxPadding(axis: IAxis, max: number): boolean {
+        return false;
+    }
+
     protected _doLoad(src: any): void {
         super._doLoad(src);
 
