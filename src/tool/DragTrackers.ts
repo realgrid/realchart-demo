@@ -165,7 +165,7 @@ export class NavigatorHandleTracker extends ChartDragTracker {
         const v = this._handleView;
         const p = v.elementToSvg(0, 0);
 
-        this._startOff = v._vertical ? (yStart - p.y) : (xStart - p.x);
+        this._startOff = v._vertical ? (yStart - p.y - (v.height / 2)) : (xStart - p.x - (v.width / 2));
         this._handleView.setBoolData('select', true);
         return true;
     }

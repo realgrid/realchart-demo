@@ -65,8 +65,8 @@ export class NavigatorHandleView extends RcElement {
             pb.polygon(sz + 1, 0, 1, -sz, 1, sz);
             this._shape.setPath(pb.end());
 
-            this._w = width;
-            this._h = height;
+            this._w = this.width = width;
+            this._h = this.height = height;
             this._vertical = vertical;
         }
     }
