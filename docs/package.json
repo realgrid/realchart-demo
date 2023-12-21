@@ -21,13 +21,14 @@
     "@mantine/next": "^6.0.19",
     "@monaco-editor/react": "^4.5.2",
     "@tabler/icons-react": "^2.34.0",
+    "@vercel/analytics": "^1.1.1",
     "common-tags": "^1.8.2",
     "next": "^13.4.19",
     "nextra": "^2.12.3",
     "nextra-theme-docs": "^2.12.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "realchart": "^0.9.27",
+    "realchart": "^0.9.28",
     "tmp": "^0.2.1"
   },
   "devDependencies": {
