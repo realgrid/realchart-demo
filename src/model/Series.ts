@@ -895,10 +895,14 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     zOrder = 0;
     /**
+     * 그룹에 포함되면 그룹 설정을 따른다.
+     * 
      * @config
      */
     xAxis: string | number;
     /**
+     * 그룹에 포함되면 그룹 설정을 따른다.
+     * 
      * @config
      */
     yAxis: string | number;
@@ -2350,10 +2354,14 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
      */
     layout = SeriesGroupLayout.DEFAULT;
     /**
+     * 이 그룹에 포함된 시리즈들은 자신의 설정 대신 이 설정을 따른다.
+     * 
      * @config
      */
     xAxis: string | number;
     /**
+     * 이 그룹에 포함된 시리즈들은 자신의 설정 대신 이 설정을 따른다.
+     * 
      * @config
      */
     yAxis: string | number;
