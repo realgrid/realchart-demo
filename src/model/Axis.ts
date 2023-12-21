@@ -567,7 +567,7 @@ export interface IAxisLabelArgs {
 /**
  * [겹치는 경우가 발생할 때]
  * 1. step이 0보다 큰 값으로 설정되면 반영한다.
- * 2. staggerRows가 0보다 큰 값으로 설정되면 반영한다.
+ * 2. rows가 0보다 큰 값으로 설정되면 반영한다.
  * 3. rotation이 0이 아닌 명시적 값으로 설정되면 반영한다.
  * 4. 1~3 모두 설정되지 않은 경우 autoArrange 설정에 따라 자동 배치한다.
  * 5. 배치 후 공간을 초과하는 label은 wrap 속성에 따라 줄나누기를 하거나, 
@@ -620,6 +620,12 @@ export abstract class AxisLabel extends FormattableText {
      */
     rows = 0;
     /**
+     * {@link autoArrange} {@link AxisLabelArrange.ROWS}로 자동 정렬되는 경우 최대 행 수.
+     * 이 행 수 이상이 필요한 경우 label 간격을 두어 표시한다.
+     * // TODO: 구현할 것!
+     */
+    maxRows = 3;
+    /**
      * 수평 축일 때, tick label 표시 회전 각도.
      * -90 ~ 90 사이의 각도로 지정할 수 있다.
      * 
@@ -627,9 +633,8 @@ export abstract class AxisLabel extends FormattableText {
      */
     rotation: number;
     /**
+     * 기본 설정이나 {@link step}, {@link rows}, {@link rotation} 속성들을 명시적으로 설정한 경우에도
      * label들이 본래 차지하는 공간을 초과할 때,
-     * {@link step}이나 {@link rows}가 1 이상으로 설정되지 않고,
-     * {@link rotation}이 0이 아닌 명시적 값으로도 설정되지 않은 경우,
      * label들을 재배치하는 방식을 지정한다.
      * 
      * @config

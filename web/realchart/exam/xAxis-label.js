@@ -85,8 +85,8 @@ const config = {
       "2023-01-26",
     ],
     label: {
-      // step: 1,
-      autoArrange: 'rotate'
+    //   step: 1,
+      autoArrange: 'step'
     }
   },
   yAxis: {},

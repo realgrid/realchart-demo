@@ -464,7 +464,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
-        // 혹시 남아있는 animation용 clip을 제거한다. (pointer들의 clip은 pointContainer에서 지정한다.)
+        // 혹시 남아있는 animation용 clip을 제거한다. (pointer들의 clip은 pointContainer에서 지정한다.) #365
         if (!this._animating()) {
             this.setClip();
         }
