@@ -948,6 +948,9 @@ export class BodyView extends ChartElement<Body> {
                 this._focusedSeries && this.$_setFocusSeries(this._focusedSeries, false);
                 this._focusedSeries = sv;
                 this._focusedSeries && this.$_setFocusSeries(this._focusedSeries, true);
+                if (this.chart().options.seriesHovering) {
+                    this.$_setFocusHovering();
+                }
             }
             
             if (this._focused) {
@@ -956,13 +959,12 @@ export class BodyView extends ChartElement<Body> {
                 this._owner.hideTooltip();
             }
         }
-        // this.$_setFocusHovering();
     }
 
     private $_setFocusSeries(sv: SeriesView<Series>, focused: boolean): void {
         if (focused) {
             sv.front(this._seriesViews);
-        } else {
+        } else if (sv && sv.parent) {
             sv.back(this._seriesViews);
         }
     }

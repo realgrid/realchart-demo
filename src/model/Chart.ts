@@ -308,8 +308,10 @@ export class ChartOptions extends ChartItem {
      * @config
      */
     credits = new Credits(null, true);
-    // hoveringScope = HoveringScope.AUTO;
-    // hoveringEffect = HoveringEffect.DEFAULT;
+    /**
+     * 데이터포인트에 마우스가 올라가면 나머지 시리즈들을 반투명 처리해서 연결된 데이터포인터의 시리즈를 강조한다.
+     */
+    seriesHovering = false;
 
     //-------------------------------------------------------------------------
     // methods

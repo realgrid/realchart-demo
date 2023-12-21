@@ -288,6 +288,10 @@ export class Legend extends Widget {
      * @config
      */
     useTextColor: boolean;
+    /**
+     * 시리즈가 연결된 범례 아이템에 마우스가 올라가면 나머지 시리즈들을 반투명 처리해서 연결된 시리즈를 강조한다.
+     */
+    seriesHovering = true;
 
     items(): LegendItem[] {
         return this._items.slice(0);

@@ -1207,11 +1207,17 @@ export class ChartView extends LayerElement {
     }
 
     pointerMoved(x: number, y: number, target: EventTarget): void {
+        const elt = target as Element;
         const body = this._model && this.bodyOf(target as any);// this._currBody;
-        const cl = (target as Element)?.classList;
+        const cl = elt?.classList;
         const isContextMenu = cl?.value && (cl.contains('rct-contextmenu-item') || cl.contains('rct-contextmenu-list'));
 
-        if (body) {
+        if (this._legendSectionView._legendView.contains(elt)) {
+            const item = this._legendSectionView._legendView.legendByDom(elt);
+            if (item && item.legend.seriesHovering && item.source as Series) {
+                body.focusSeries(item.source as Series);
+            } 
+        } else if (body) {
             const p = body.controlToElement(x, y);
             const inBody = body.pointerMoved(p, target);
             
