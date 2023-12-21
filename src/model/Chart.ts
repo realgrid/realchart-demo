@@ -672,7 +672,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     }
 
     isPolar(): boolean {
-        return this._polar;
+        return this._polar && this._series.seriesCount() > 0; // #353
     }
 
     isWidget(): boolean {

@@ -1621,6 +1621,10 @@ export class PlottingItemCollection  {
         return this._series.slice(0);
     }
 
+    seriesCount(): number {
+        return this._series.length;
+    }
+
     needAxes(): boolean {
         if (this._visibles.find(item => item.needAxes())) {
             return true;
