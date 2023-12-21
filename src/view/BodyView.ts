@@ -1188,8 +1188,10 @@ export class BodyView extends ChartElement<Body> {
 
         this._series = series;
         views.forEach(v => {
-            v.remove();
-            v._labelContainer.remove();
+            if (series.indexOf(v.model) < 0) {
+                v.remove();
+                v._labelContainer.remove();
+            }
         });
         views.length = 0;
 
@@ -1197,8 +1199,10 @@ export class BodyView extends ChartElement<Body> {
             const v = map.get(ser) || createSeriesView(doc, ser);
 
             v._setChartOptions(inverted, this._animatable);
-            this._seriesContainer.add(v);
-            this._labelContainer.add(v._labelContainer);
+            if (!v.parent) {
+                this._seriesContainer.add(v);
+                this._labelContainer.add(v._labelContainer);
+            }
 
             map.set(ser, v);
             views.push(v);

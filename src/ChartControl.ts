@@ -9,7 +9,6 @@
 import { isObject } from "./common/Common";
 import { RcControl, RcElement } from "./common/RcControl";
 import { IRect } from "./common/Rectangle";
-import { Align } from "./common/Types";
 import { ImageExporter } from "./export/ImageExporter";
 import { Annotation } from "./model/Annotation";
 import { Axis } from "./model/Axis";

@@ -177,10 +177,6 @@ export abstract class RcControl extends RcWrappableObject {
         this.$_clearDefs(RcElement.ASSET_KEY);
     }
 
-    // clearClipDefs(): void {
-    //     this.$_clearDefs(RcElement.CLIP_KEY);
-    // }
-
     clearTemporaryDefs(): void {
         this.$_clearDefs(RcElement.TEMP_KEY);
     }

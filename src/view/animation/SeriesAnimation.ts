@@ -99,22 +99,22 @@ export class RevealAnimation extends SeriesAnimation {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _createAnimation(v: SeriesView<Series>, options: IRevealAnimation): Animation {
-        const cr = this.$_clipRect(v);
+    protected _createAnimation(sv: SeriesView<Series>, options: IRevealAnimation): Animation {
+        const cr = this.$_clipRect(sv);
         let ani: Animation;
 
         switch (options && options.from) {
             case 'top':
-                ani = this.$_top(v, cr, options);
+                ani = this.$_top(sv, cr, options);
                 break;
             case 'bottom':
-                ani = this.$_bottom(v, cr, options);
+                ani = this.$_bottom(sv, cr, options);
                 break;
             case 'right':
-                ani = this.$_right(v, cr, options);
+                ani = this.$_right(sv, cr, options);
                 break;
             default:
-                ani = this.$_left(v, cr, options);
+                ani = this.$_left(sv, cr, options);
                 break;
         }
 
@@ -150,7 +150,7 @@ export class RevealAnimation extends SeriesAnimation {
             }
         }
 
-        return vClip.setTemporary();
+        return vClip;
     }
 
     private $_left(v: SeriesView<Series>, cr: RcElement, options: IRevealAnimation): Animation {

@@ -374,6 +374,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         const i = this._animations.indexOf(ani);
         i >= 0 && this._animations.splice(i, 1);
 
+        // label들을 표시하기 위해
         this._invalidate();
     }
 
@@ -463,7 +464,10 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     protected _doMeasure(doc: Document, model: T, hintWidth: number, hintHeight: number, phase: number): ISize {
-        this.setClip(void 0);
+        // 혹시 남아있는 animation용 clip을 제거한다. (pointer들의 clip은 pointContainer에서 지정한다.)
+        if (!this._animating()) {
+            this.setClip();
+        }
 
         this._prepareViewRanges(model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, this);

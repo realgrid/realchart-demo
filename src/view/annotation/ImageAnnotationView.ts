@@ -9,7 +9,6 @@
 import { toSize } from "../../common/Rectangle";
 import { ISize } from "../../common/Size";
 import { ImageElement } from "../../common/impl/ImageElement";
-import { RectElement } from "../../common/impl/RectElement";
 import { ImageAnnotation } from "../../model/annotation/ImageAnnotation";
 import { AnnotationView } from "../AnnotationView";
 

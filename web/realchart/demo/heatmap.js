@@ -82,13 +82,11 @@ const config = {
             '51주',
             '52주',
         ],
-        grid: true,
 
     },
     yAxis: {
         title: '요일',
         categories: ['일', '월', '화', '수', '목', '금', '토'],
-        grid: true
     },
     series: {
         viewRangeValue: 'z',
@@ -128,7 +126,7 @@ const config = {
             strokeWidth: '4px'
         },
         type: 'heatmap',
-        tooltipText: `<t style="font-weight:bold">\${xValue}주차</t><br><b>평균온도: \${zValue}°C</b>`,
+        tooltipText: `<t style="font-weight:bold">\${xValue}차</t><br><b>평균온도: \${zValue}°C</b>`,
         data: [
             [0, 0, -6.8],
             [0, 1, -5.4],

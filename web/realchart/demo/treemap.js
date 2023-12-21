@@ -490,14 +490,14 @@ function setActions(container) {
     },
     false
   );
-  // createCheckBox(container, 'X Reversed', function (e) {
-  //     config.xAxis.reversed = _getChecked(e);
-  //     chart.load(config, animate);
-  // }, false);
-  // createCheckBox(container, 'Y Reversed', function (e) {
-  //     config.yAxis.reversed = _getChecked(e);
-  //     chart.load(config, animate);
-  // }, false);
+  createCheckBox(container, 'X Reversed', function (e) {
+      config.xAxis.reversed = _getChecked(e);
+      chart.load(config, animate);
+  }, false);
+  createCheckBox(container, 'Y Reversed', function (e) {
+      config.yAxis.reversed = _getChecked(e);
+      chart.load(config, animate);
+  }, false);
 }
 
 function init() {

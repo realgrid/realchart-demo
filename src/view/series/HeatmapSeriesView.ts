@@ -90,7 +90,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         const series = this.model;
         const inverted = series.chart.isInverted();
         const labels = series.pointLabel;
-        const labelOff = labels.getOffset();
+        // const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
@@ -104,14 +104,12 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
 
             if (cell.setVis(!p.isNull)) {
                 const wUnit = xAxis.getUnitLength(xLen, p.xValue);
-                const wPoint = wUnit;
                 const hUnit = yAxis.getUnitLength(yLen, p.yValue);
-                const hPoint = hUnit;
                 let x = (p.xPos = xAxis.getPosition(xLen, p.xValue)) - wUnit / 2;
                 let y = (p.yPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
                 let labelView: PointLabelView;
     
-                cell.setBounds(x, y, wPoint, hPoint);
+                cell.setBounds(x, y, wUnit, hUnit);
                 // cell.setStyle('fill', color.brighten(1 - p.heatValue / series._heatMax).toString());
     
                 // label
@@ -122,16 +120,16 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
                         y = xLen - xAxis.getPosition(xLen, p.xValue);
                         x = org;
                         y -= r.height / 2;
-                        x += yAxis.getPosition(yLen, p.yValue);// - r.width / 2;
+                        x += yAxis.getPosition(yLen, p.yValue);
                     } else {
-                        x += wPoint / 2;// (wPoint - r.width) / 2;
-                        y += (hPoint - r.height) / 2;
+                        x += wUnit / 2;
+                        y += (hUnit - r.height) / 2;
                     }
     
                     x -= r.width / 2;
                     labelView.layout(Align.CENTER).translate(x, y);
                 }
             }
-       });
+        });
     }
 }
