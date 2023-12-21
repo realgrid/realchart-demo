@@ -169,7 +169,8 @@ export class AxisGridView extends ChartElement<AxisGrid> {
                     vis = true;
                 }
                 if (line.setVis(true)) {
-                    line.setVLineC(pts[i], 0, h);
+                    // line.setVLineC(pts[i], 0, h);
+                    line.setVLine(pts[i], 0, h);
                 }
             });
         } else {
@@ -184,7 +185,8 @@ export class AxisGridView extends ChartElement<AxisGrid> {
                     vis = true;
                 }
                 if (line.setVis(vis)) {
-                    line.setHLineC(h - pts[i], 0, w);
+                    // line.setHLineC(h - pts[i], 0, w); // TODO: grid line과 pointer가 1 정도 틀어진다. #369
+                    line.setHLine(h - pts[i], 0, w);
                 }
             });
         }
