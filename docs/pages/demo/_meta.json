@@ -1,7 +1,4 @@
 {
-	"Demo": {
-		"title": "Demo"
-	},
 	"Basic": {
 		"title": "Basic"
 	},
@@ -103,5 +100,8 @@
 	},
 	"Style": {
 		"title": "Style"
+	},
+	"Demo": {
+		"title": "Demo"
 	}
 }

@@ -7,6 +7,13 @@ export const config = {
   yAxis: [ { title: 'Scatter Y' }, { position: 'opposite', title: 'Bell Y' } ],
   series: [
     {
+      type: 'bellcurve',
+      source: 'scatter',
+      xAxis: 1,
+      yAxis: 1,
+      areaStyle: { fillOpacity: '0.3' }
+    },
+    {
       type: 'scatter',
       name: 'scatter',
       data: [
@@ -24,7 +31,6 @@ export const config = {
         2.8, 2.8, 2.6,   3, 3.4, 3.1,   3, 3.1, 3.1, 3.1, 2.7, 3.2,
         3.3,   3, 2.5,   3, 3.4,   3
       ]
-    },
-    { type: 'bellcurve', source: 'scatter', xAxis: 1, yAxis: 1 }
+    }
   ]
 }
