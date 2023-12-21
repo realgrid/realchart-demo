@@ -400,9 +400,9 @@ const data = [
 ];
 const groupMaxValues = {};
 // 그룹별 합계를 저장할 객체
-const groupSum = data.reduce((acc, curr)=>{
-    return curr.value + acc
-}, 0)
+const groupSum = data.reduce((acc, curr) => {
+  return curr.value + acc;
+}, 0);
 
 // 그룹별로 순회하면서 최대 값 업데이트
 data.forEach((item) => {
@@ -441,8 +441,10 @@ const config = {
       textCallback: (args) => {
         const { groupMaxValues, groupSum } = config.vars;
         if (groupMaxValues[args.group].value === args.yValue) {
-           const percent =  (args.yValue / groupSum) * 100;
-          return groupMaxValues[args.group].title + "<br>" + percent.toFixed(2) + "%";
+          const percent = (args.yValue / groupSum) * 100;
+          return (
+            groupMaxValues[args.group].title + "<br>" + percent.toFixed(2) + "%"
+          );
         } else {
           return " ";
         }
@@ -490,22 +492,32 @@ function setActions(container) {
     },
     false
   );
-  createCheckBox(container, 'X Reversed', function (e) {
+  createCheckBox(
+    container,
+    "X Reversed",
+    function (e) {
       config.xAxis.reversed = _getChecked(e);
       chart.load(config, animate);
-  }, false);
-  createCheckBox(container, 'Y Reversed', function (e) {
+    },
+    false
+  );
+  createCheckBox(
+    container,
+    "Y Reversed",
+    function (e) {
       config.yAxis.reversed = _getChecked(e);
       chart.load(config, animate);
-  }, false);
+    },
+    false
+  );
 }
 
 function init() {
   console.log("RealChart v" + RealChart.getVersion());
   // RealChart.setDebugging(true);
-    RealChart.setLogging(true);
+  RealChart.setLogging(true);
   // 그룹별 최대 값 저장을 위한 객체
 
-  chart = RealChart.createChart(document, "realchart", config,false);
+  chart = RealChart.createChart(document, "realchart", config, false);
   setActions("actions");
 }
