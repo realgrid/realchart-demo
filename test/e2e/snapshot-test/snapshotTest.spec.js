@@ -33,7 +33,9 @@ for (let i = 0; i < configs.length; i++) {
         const page = await browser.newPage();
         await page.goto(snapshotTestPage);
         
-        await page.evaluate(`chart.load(${configs[i].config}, false)`);
+        await page.evaluate(`
+        const config = ${configs[i].config};
+        chart.load(config, false)`);
 
         const snapshot = await page.locator('#realchart').screenshot();
         await expect(snapshot).toMatchSnapshot(configs[i].name + '.png', {maxDiffPixels: 1});
