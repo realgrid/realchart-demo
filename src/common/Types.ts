@@ -450,7 +450,7 @@ export const buildValueRanges = function (source: IValueRange[] | IValueRanges, 
         let prev = min;
 
         while (i < ranges.length) {
-            if (ranges[i].fromValue < prev) {
+            if (ranges[i].fromValue > prev) {
                 ranges.splice(i, 0, {
                     fromValue: prev,
                     toValue: ranges[i].fromValue,
