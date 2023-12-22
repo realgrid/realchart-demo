@@ -1299,12 +1299,26 @@ export class RcElement extends RcObject {
         return this._dom.contains(dom);
     }
 
-    front(siblings: RcElement[]): void {
+    front(siblings: RcElement[], group?: RcElement[]): void {
+        const p = this.parent._dom;
+        const dom = this._dom;
         const len = siblings.length;
 
-        if (len > 1 && this !== siblings[siblings.length - 1]) {
-            this._dom.remove();
-            this.parent.dom.appendChild(this._dom);
+        if (group) {
+            const last = group.sort((v1, v2) => siblings.indexOf(v1) - siblings.indexOf(v2))[group.length - 1];
+            if (this !== last) {
+                dom.remove();
+                if (last === siblings[len - 1]) {
+                    p.appendChild(dom);
+                } else {
+                    p.insertBefore(dom, siblings[siblings.indexOf(last) + 1].dom)
+                }
+            }
+        } else {
+            if (len > 1 && this !== siblings[len - 1]) {
+                dom.remove();
+                p.appendChild(dom);
+            }
         }
     }
 

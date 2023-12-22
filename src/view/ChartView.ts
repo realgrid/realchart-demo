@@ -1241,13 +1241,13 @@ export class ChartView extends LayerElement {
                 if (this._legendSectionView._legendView.contains(elt)) {
                     const item = this._hoverItem = this._legendSectionView._legendView.legendByDom(elt);
                     if (item && item.legend.seriesHovering && item.source as Series) {
-                        body.focusSeries(item.source as Series);
+                        body.hoverSeries(item.source as Series);
                     } 
                 }
             }
 
             if (prevItem instanceof LegendItem && !(this._hoverItem instanceof LegendItem)) {
-                body.focusSeries(null);
+                body.hoverSeries(null);
             }
         }
     }

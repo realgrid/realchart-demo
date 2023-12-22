@@ -923,17 +923,9 @@ export class BodyView extends ChartElement<Body> {
         return inBody;
     }
 
-    focusedSeries(): SeriesView<Series> {
-        return this._focusedSeries;
-    }
-
-    focusSeries(series: Series): void {
+    hoverSeries(series: Series): void {
         const sv = this._seriesMap.get(series);
-
-        if (sv !== this._focusedSeries) {
-            this._focusedSeries = sv;
-            this.$_setFocusHovering();
-        }
+        this.$_hoverSeries(sv);
     }
 
     private $_setFocused(sv: SeriesView<Series>, pv: IPointView, p: IPoint): void {
@@ -953,7 +945,7 @@ export class BodyView extends ChartElement<Body> {
                 this._focusedSeries = sv;
                 this._focusedSeries && this.$_setFocusSeries(this._focusedSeries, true);
                 if (this.chart().options.seriesHovering) {
-                    this.$_setFocusHovering();
+                    this.$_hoverSeries(sv);
                 }
             }
             
@@ -967,15 +959,17 @@ export class BodyView extends ChartElement<Body> {
 
     private $_setFocusSeries(sv: SeriesView<Series>, focused: boolean): void {
         if (focused) {
-            sv.front(this._seriesViews);
+            if (sv.model.group) {
+                sv.front(this._seriesViews, this._seriesViews.filter(sv2 => sv2.model.group === sv.model.group));
+            } else {
+                sv.front(this._seriesViews);
+            }
         } else if (sv && sv.parent) {
             sv.back(this._seriesViews);
         }
     }
 
-    private $_setFocusHovering(): void {
-        const sv = this._focusedSeries;
-
+    private $_hoverSeries(sv: SeriesView<Series>): void {
         this._seriesViews.forEach(sv2 => {
             sv2.setBoolData('unfocus', sv && sv2 !== sv);
             sv2._labelContainer.setBoolData('unfocus', sv && sv2 !== sv);

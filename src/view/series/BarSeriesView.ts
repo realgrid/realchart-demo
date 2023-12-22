@@ -14,6 +14,7 @@ import { SectorElement } from "../../common/impl/SectorElement";
 import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { DataPoint } from "../../model/DataPoint";
+import { SeriesGroupLayout } from "../../model/Series";
 import { BarSeries, BarSeriesBase } from "../../model/series/BarSeries";
 import { BarElement, BoxedSeriesView, IPointView, LabelLayoutInfo, PointElement, SeriesView } from "../SeriesView";
 
@@ -167,6 +168,10 @@ export class BarSeriesView extends BarSeriesViewBase<BarSeries> {
     //-------------------------------------------------------------------------
     protected _createBarPool(container: RcElement): ElementPool<PointElement> {
         return new ElementPool(container, BarElement);
+    }
+
+    needFronting(): boolean {
+        return this.model.group?._stacked || this.model.group?.layout == SeriesGroupLayout.OVERLAP;
     }
 
     protected _prepareSeries(doc: Document, model: BarSeries): void {
