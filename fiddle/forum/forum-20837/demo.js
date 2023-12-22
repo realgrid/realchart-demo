@@ -26,4 +26,8 @@ const config = {
     autoContrast: false
   }
 };
-const chart = RealChart.createChart(document, 'realchart', config);
+let animate = false;
+let chart;
+function init() {
+  chart = RealChart.createChart(document, 'realchart', config);
+}

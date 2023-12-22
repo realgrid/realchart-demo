@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
   options: {
     animatable: false
@@ -48,4 +52,4 @@ const config = {
     }]
   }]
 };
-const chart = RealChart.createChart(document, 'realchart', config);
+RealChart.createChart(document, 'realchart', config);

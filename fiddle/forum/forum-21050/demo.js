@@ -32,4 +32,8 @@ const config = {
     data: [459931, 4201860, 5498483, 1472529, 1316482, 1421999]
   }]
 };
-const chart = RealChart.createChart(document, 'realchart', config);
+let animate = false;
+let chart;
+function init() {
+  chart = RealChart.createChart(document, 'realchart', config);
+}
