@@ -15,7 +15,7 @@ import { Align, FILL, PI_2, VerticalAlign, _undef, assert } from "../common/Type
 import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
-import { Axis, AxisGrid, AxisGuide, AxisLineGuide, AxisRangeGuide } from "../model/Axis";
+import { Axis, AxisGrid, AxisGridRows, AxisGuide, AxisLineGuide, AxisRangeGuide } from "../model/Axis";
 import { Body, IPolar } from "../model/Body";
 import { Chart, IChart } from "../model/Chart";
 import { Crosshair } from "../model/Crosshair";
@@ -643,6 +643,23 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
     }
 }
 
+export class AxisGridRowContainer extends LayerElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    private _rowPool: RectElement[] = [];
+    private _rowViews: RectElement[] = [];
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    prepare(): void {
+        this._rowPool.push(...this._rowViews);
+        this._rowViews.length = 0;
+    }
+}
+
 export class AxisGuideContainer extends LayerElement {
 
     //-------------------------------------------------------------------------
@@ -656,20 +673,18 @@ export class AxisGuideContainer extends LayerElement {
     // methods
     //-------------------------------------------------------------------------
     prepare(): void {
-        const views = this._views as (AxisGuideLineView | AxisGuideRangeView)[];
+        const views = this._views;
 
         // 뒤쪽에서 부터 pool로 return 시킨다.
         while (views.length) {
-            const v = views.pop();
+            const v = views.pop().remove();
 
-            v.remove();
             if (v instanceof AxisGuideRangeView) {
                 this._rangePool.push(v);
             } else {
-                this._linePool.push(v);
+                this._linePool.push(v as any);
             }
         }
-        assert(views.length === 0, 'GuideContainer.prepare');
     }
 
     addAll(doc: Document, guides: AxisGuide[], polar: boolean): void {
@@ -778,7 +793,7 @@ export class ZoomButton extends ButtonElement {
     constructor(doc: Document) {
         super(doc, 'Reset Zoom', ZoomButton.CLASS_NAME);
 
-        this.visible = false;
+        this.setVis(false);
     }
 }
 
@@ -804,6 +819,7 @@ export class BodyView extends ChartElement<Body> {
     private _hitTester: RectElement;
     private _background: RectElement;
     private _image: ImageElement;
+    private _gridRowContainer: AxisGridRowContainer;
     private _gridContainer: LayerElement;
     protected _gridViews = new Map<Axis, AxisGridView>();
     private _breakViews: AxisBreakView[] = [];
@@ -852,6 +868,7 @@ export class BodyView extends ChartElement<Body> {
         this._hitTester.setStyle('fill', 'transparent');
         this.add(this._background = new RectElement(doc, 'rct-body-background'));
         this.add(this._image = new ImageElement(doc, 'rct-body-image'));
+        this.add(this._gridRowContainer = new AxisGridRowContainer(doc, 'rct-grid-rows'));
         this.add(this._gridContainer = new LayerElement(doc, 'rct-grids'));
         this.add(this._guideContainer = new AxisGuideContainer(doc, 'rct-guides'));
         this.add(this._annotationContainer = new LayerElement(doc, 'rct-annotations'));
@@ -878,6 +895,7 @@ export class BodyView extends ChartElement<Body> {
     }
 
     prepareGuideContainers(): void {
+        this._gridRowContainer.prepare();
         this._guideContainer.prepare();
         this._frontGuideContainer.prepare();
     }
@@ -930,9 +948,11 @@ export class BodyView extends ChartElement<Body> {
 
     private $_setFocused(sv: SeriesView<Series>, pv: IPointView, p: IPoint): void {
         if (pv != this._focused || this.model.chart.tooltip.followPointer) {
+            let fs = this._focusedSeries;
+
             if (pv != this._focused) {
                 if (this._focused) {
-                    this._focusedSeries.setFocusPoint(this._focused, null);
+                    fs.setFocusPoint(this._focused, null);
                 }
                 if (pv) {
                     sv.setFocusPoint(pv, p);
@@ -940,10 +960,10 @@ export class BodyView extends ChartElement<Body> {
             }
 
             this._focused = pv;
-            if (sv !== this._focusedSeries) {
-                this._focusedSeries && this.$_setFocusSeries(this._focusedSeries, false);
-                this._focusedSeries = sv;
-                this._focusedSeries && this.$_setFocusSeries(this._focusedSeries, true);
+            if (sv !== fs) {
+                fs && this.$_focusSeries(fs, false);
+                fs = this._focusedSeries = sv;
+                fs && this.$_focusSeries(fs, true);
                 if (this.chart().options.seriesHovering) {
                     this.$_hoverSeries(sv);
                 }
@@ -957,7 +977,7 @@ export class BodyView extends ChartElement<Body> {
         }
     }
 
-    private $_setFocusSeries(sv: SeriesView<Series>, focused: boolean): void {
+    private $_focusSeries(sv: SeriesView<Series>, focused: boolean): void {
         if (focused) {
             if (sv.model.group) {
                 sv.front(this._seriesViews, this._seriesViews.filter(sv2 => sv2.model.group === sv.model.group));
@@ -1010,8 +1030,8 @@ export class BodyView extends ChartElement<Body> {
         const inverted = chart.isInverted();
         const xAxis = chart.xAxis;
         const len = inverted ? this.height : this.width;
-        let v1 = xAxis.getValueAt(len, inverted ? len - y2 : x1);
-        let v2 = xAxis.getValueAt(len, inverted ? len - y1 : x2);
+        const v1 = xAxis.getValueAt(len, inverted ? len - y2 : x1);
+        const v2 = xAxis.getValueAt(len, inverted ? len - y1 : x2);
 
         if (xAxis.zoom(v1, v2)) {
             this._zoomRequested = true;

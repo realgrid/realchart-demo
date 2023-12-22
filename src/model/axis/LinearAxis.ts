@@ -150,7 +150,7 @@ export class ContinuousAxisTick extends AxisTick {
         }
 
         if (!isNaN(axis._fixedMin)) {
-            min = axis._fixedMax;
+            min = axis._fixedMin;
         } else if (!isNaN(baseVal)) { // min이 base 아래, max가 base 위에 있다.
             assert(min < baseVal && max > baseVal, "base error");
             count = Math.max(3, count);

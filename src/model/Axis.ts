@@ -219,6 +219,30 @@ export class AxisTitle extends AxisItem {
 }
 
 /**
+ * 축 그리드 사이에 생성된 영역 표시 설정 모델.
+ * 
+ * @config
+ */
+export class AxisGridRows extends AxisItem {
+
+    //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    /**
+     * 각 row를 칠(fill)하는 데 사용되는 색상 스타일들을 지정한다.\
+     * 칠하지 않는 영역은 null로 지정하면 되고, 개수가 모자라면 반복된다.
+     */
+    colors: string[];
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    enabled(): boolean {
+        return Array.isArray(this.colors) && this.colors.length > 0;
+    }
+}
+
+/**
  * Axis tick의 위치에 수평 혹은 수직선으로 plot 영역을 구분 표시한다.\
  * {@link visible} 기본값이 undefined인데,
  * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
@@ -228,8 +252,23 @@ export class AxisTitle extends AxisItem {
 export class AxisGrid extends AxisItem {
 
     //-------------------------------------------------------------------------
+    // constructor
+    //-------------------------------------------------------------------------
+    constructor(axis: Axis) {
+        super(axis, null);
+
+        this.rows = new AxisGridRows(this.axis);
+        this.endVisible = !axis._isX;
+    }
+
+    //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    /**
+     * @config
+     */
+    rows: AxisGridRows;
+
     /**
      * 시작 값에 표시되는 그리드 선을 표시할 지 여부.
      * 
@@ -243,15 +282,6 @@ export class AxisGrid extends AxisItem {
      * @config
      */
     endVisible: boolean;
-
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    constructor(axis: Axis) {
-        super(axis, null);
-
-        this.endVisible = !axis._isX;
-    }
 
     //-------------------------------------------------------------------------
     // methods
