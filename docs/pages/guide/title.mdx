@@ -1,6 +1,24 @@
 # 타이틀
 
+차트 내용을 요약하는 제목 및 부제목을 차트 상단에 표시할 수 있다.
+
 ## 설정
+
+차트 설정의 최상위 [title](/config/config/title), [subtitle](/config/config/subtitle) 항목으로 각각 설정한다.
+'**title**'은 지정하지 않으면 기본 텍스트 "**Title**"이 상단 중앙에 표시된다.
+'**subtitle**'은 지정하지 않으면 표시되지 않는다.
+
+```
+const config = {
+    title: {
+        text: '... 현황'
+    },
+    subtitle: {
+        visible: 'true',
+        text: 'Sub-Title'
+    }
+};
+```
 
 ### See Also
 

@@ -8,10 +8,37 @@ RealChart를 포함한 차팅 툴은 기본적으로 2차원 평면 위에 데�
 
 ## 설정
 
-차트 설정에서 두 축은 각각 'xAxis', 'yAxis' 이름으로 포함된다.
-특별히 지정하지 않으면 y축은 'linear', x축은 시리즈 종류에 따라 자동 설정된다.
+차트 설정에서 두 축은 각각 '**xAxis**', '**yAxis**' 이름으로 설정하고, 축의 종류는 '**type**' 속성으로 지정한다.
+특별히 지정하지 않으면 y축은 '**linear**', x축은 시리즈 종류에 따라 자동 설정되지만, 명시적으로 종류를 지정하는 것이 좋다.
+
+```
+const config = {
+    xAxis: {
+        type: 'time'
+    },
+    yAxis:  {
+        type: 'linear'
+    }
+}
+```
+
+###### 시리즈별 기본 x축 종류
+
+| 시리즈 | x축 |
+|------|------|
+| [bar], [waterfall], [candlestick], [lollipop], [dumbbell], [equalizer], [heatmap] | [category](/config/config/xAxis/category) |
+| [line]을 포함한 나머지 | [linear](/config/config/xAxis/linear) |
 
 ### See Also
 
 - [시리즈 개요](/series)
 - [API 개요](/docs)
+
+[bar]: /config/config/series/bar
+[waterfall]: /config/config/series/waterfall
+[candlestick]: /config/config/series/candlestick
+[lollipop]: /config/config/series/lollipop
+[dumbbell]: /config/config/series/dumbbell
+[equalizer]: /config/config/series/equalizer
+[heatmap]: /config/config/series/heatmap
+[line]: /config/config/series/line

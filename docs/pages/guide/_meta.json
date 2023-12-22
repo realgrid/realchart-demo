@@ -4,7 +4,7 @@
     "dev-guide": "개발 가이드",
     "getting-started": "시작 - 첫번째 차트 생성하기",
     "axes": "축(Axes)",
-    "series": "차트 시리즈(Series)",
+    "series": "시리즈(Series)",
     "gauges": "게이지(Gauges)",
     "annotations": "어노테이션(Annotations)",
     "title": "Title",
