@@ -62,10 +62,6 @@ const config = {
 		title: '월별 매출액 (단위: 백만 원)',
 		// reversed: true,
 		// baseValue: -1
-		break : {
-			from : 90,
-			to: 100
-		},
 		guide: [
 			{ type: 'line', 
 			value: -72, 

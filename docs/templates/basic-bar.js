@@ -10,12 +10,6 @@ export const config = {
         'unicorn'
       ],
       action: ({ value }) => { config.options.palette = value; chart.load(config); }
-    },
-    {
-      type: 'check',
-      label: 'Color By Point',
-      value: false,
-      action: ({ value }) => { config.series[0].colorByPoint = value; chart.load(config);}
     }
   ],
   type: 'bar',
@@ -35,6 +29,8 @@ export const config = {
   series: [
     {
       name: '월 매출',
+      colorByPoint: true,
+      pointLabel: true,
       pointWidth: 30,
       yAxis: 0,
       data: [

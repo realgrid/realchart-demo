@@ -11,12 +11,34 @@ export const config = {
       ]
     }
   },
-  inverted: true,
-  title: 'Bar Wing Chart',
+  title: 'Bar Wing Chart (No Split)',
   options: {},
   legend: { itemGap: 20, backgroundStyle: { fill: 'none' } },
   xAxis: [
-    { template: 'xAxis', title: 'Daily fat' },
+    {
+      template: 'xAxis',
+      title: 'Daily fat',
+      guide: [
+        {
+          type: 'range',
+          startValue: 0,
+          endValue: 5,
+          style: { fill: 'red' }
+        },
+        {
+          type: 'range',
+          startValue: 5,
+          endValue: 11,
+          style: { fill: 'blue' }
+        },
+        {
+          type: 'range',
+          startValue: 11,
+          endValue: 16,
+          style: { fill: 'green' }
+        }
+      ]
+    },
     { template: 'xAxis', title: 'Daily fat2', position: 'opposite' }
   ],
   yAxis: { title: 'Vertical 수직축 Axis', label: { numberFormat: 'a' } },
@@ -38,7 +60,6 @@ export const config = {
       },
       {
         name: 'Female',
-        xAxis: 1,
         color: '#EF6262',
         pointLabel: { visible: true, numberFormat: '##0.00' },
         data: [

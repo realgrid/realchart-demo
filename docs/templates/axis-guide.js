@@ -24,6 +24,7 @@ export const config = {
         front: true,
         startValue: 3,
         endValue: 6,
+        style: { fill: '#008800' },
         label: { text: 'range guide', align: 'right', style: { fill: 'red' } }
       }
     ]

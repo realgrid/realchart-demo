@@ -13,32 +13,6 @@ const config = {
                 '0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-40', '40-45',
                 '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80+'
             ],
-            guide: [
-                {
-                    type: 'range',
-                    startValue: 0,
-                    endValue: 5,
-                    style: {
-                        fill: 'red', //'#5272F2',
-                    }
-                },
-                {
-                    type: 'range',
-                    startValue: 5,
-                    endValue: 11,
-                    style: {
-                        fill: 'blue', //'#F8BDEB'
-                    }
-                },
-                {
-                    type: 'range',
-                    startValue: 11,
-                    endValue: 16,
-                    style: {
-                        fill: 'green', //'#FBECB2'
-                    }
-                }
-            ],
         },
     },
     // inverted: true,
@@ -55,6 +29,32 @@ const config = {
     xAxis: [{
         template: 'xAxis',
         title: "Daily fat",
+        guide: [
+            {
+                type: 'range',
+                startValue: 0,
+                endValue: 5,
+                style: {
+                    fill: 'red', //'#5272F2',
+                }
+            },
+            {
+                type: 'range',
+                startValue: 5,
+                endValue: 11,
+                style: {
+                    fill: 'blue', //'#F8BDEB'
+                }
+            },
+            {
+                type: 'range',
+                startValue: 11,
+                endValue: 16,
+                style: {
+                    fill: 'green', //'#FBECB2'
+                }
+            }
+        ],
     }, {
         template: 'xAxis',
         title: "Daily fat2",
