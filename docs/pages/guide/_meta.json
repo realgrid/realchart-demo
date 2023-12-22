@@ -2,6 +2,16 @@
     "index": "RealChart 개요",
     "install": "RealChart 설치",
     "dev-guide": "개발 가이드",
+    "getting-started": "시작 - 첫번째 차트 생성하기",
+    "axes": "축(Axes)",
+    "series": "차트 시리즈(Series)",
+    "gauges": "게이지(Gauges)",
+    "annotations": "어노테이션(Annotations)",
+    "title": "Title",
+    "legend": "범례(Legend)",
+    "style": "스타일",
+    "split": "분할 모드(Split)",
+    "exporting": "내보내기(Exporting)",
     "---": {
         "type": "separator",
         "title": "More"
