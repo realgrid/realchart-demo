@@ -22,4 +22,8 @@ const config = {
     data: [['신흥1동', 155], ['신흥2동', 138], ['신흥3동', 122], ['태평1동', 133], ['태평2동', 114], ['태평3동', 113], ['태평4동', 123]]
   }
 };
-const chart = RealChart.createChart(document, 'realchart', config);
+let animate = false;
+let chart;
+function init() {
+  chart = RealChart.createChart(document, 'realchart', config);
+}

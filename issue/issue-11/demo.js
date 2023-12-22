@@ -1,3 +1,7 @@
+/**
+ * @demo
+ * 
+ */
 const config = {
   options: {},
   title: "Bar Group",
@@ -46,4 +50,4 @@ const config = {
     }]
   }]
 };
-const chart = RealChart.createChart(document, 'realchart', config);
+RealChart.createChart(document, 'realchart', config);
