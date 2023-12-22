@@ -206,6 +206,7 @@ export abstract class GaugeBase extends Widget {
 
 /**
  * 게이지 모델.
+ * @config chart.gauge[base]
  */
 export abstract class Gauge extends GaugeBase {
 

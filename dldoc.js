@@ -614,9 +614,13 @@ class MDGenerater {
     if (optionsStr) {
       const options = {};
       optionsStr.split(',').forEach(option => {
-        const [key, value] = option.split('=');
-        if (key && value) {
-          options[key] = value.replace(/["']/g, '');
+        try {
+          const [key, value] = option.split('=');
+          if (key) {
+            options[key] = value?.replace(/["']/g, '') ?? true;
+          }
+        } catch(err) {
+          console.error(err, {option});
         }
       });
       // result.push(options);
@@ -799,7 +803,7 @@ class MDGenerater {
               value = em.value;
               if (typeof value == 'string' ) value = `'${value}'`;
             } else {
-              console.warn(`[WARN] EnumMember @config may not set.`, value)
+              // console.warn(`[WARN] EnumMember @config may not set.`, value);
             }
           }
         } else {
@@ -901,7 +905,7 @@ class MDGenerater {
    * 이 후, property 생성에서 참조하는 confg정보는 재귀 처리한다.
    */
   _setChartContent(dconf) {
-    const { name, root, opt, label, type, props, content } = dconf;
+    const { name, root, opt, label, type, base, props, content } = dconf;
     if (root != 'chart') return;
 
     let subtitle = '';
@@ -913,9 +917,10 @@ class MDGenerater {
       subtitleText += `[type=${type}]`;  
       subtitle = `## [${subtitleText}](./${opt}/${type})`
     }
+    console.debug(`${!!base} ${name}, ${opt}.${type}`)
     const _content = `${this._styleContent(content)}\n`;
     
-    if (MDGenerater.TYPE_ELEMENTS.indexOf(opt) >= 0 && !type) 
+    if (MDGenerater.TYPE_ELEMENTS.includes(opt) && !base && !type) 
       return console.warn(`[WARN] ${name} type missed.`);
 
     if (opt) {
@@ -932,7 +937,7 @@ class MDGenerater {
     
     // 속성 추가
     if (props) {
-      const keys = [opt, type].filter(v => v);
+      const keys = [opt, base ? 'base' : type].filter(v => v);
       // chart면 키가 없음...
 
       const propContents = this._makeProps({ keys , props });
@@ -979,6 +984,17 @@ class MDGenerater {
         this._saveFile(`${path}/${key}`, value);
       }
     });
+    const meta = Object.keys(docMap)
+    .filter(key => !key.startsWith('_'))
+    .sort((a, b) => {
+       return b == 'base' ? 1 : a > b ? 1 : -1;
+    }).reduce((agg, key) => {
+      return Object.assign(agg, { [key]: key });
+    }, {})
+    // console.debug(path, meta);
+    path.split('/').length == 5 &&
+      fs.existsSync(path) && 
+      fs.writeFileSync(`${path}/_meta.json`, JSON.stringify(meta) , { encoding: 'utf-8'});
   }
 
   run() {

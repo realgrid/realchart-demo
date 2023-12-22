@@ -741,6 +741,7 @@ const AXIS_VALUE = {
 }
 
 /**
+ * @config chart.series[base]
  */
 export abstract class Series extends ChartItem implements ISeries, ILegendSource, ITooltipContext {
 

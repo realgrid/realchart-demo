@@ -1,0 +1,56 @@
+## **annotation**
+Annotation 모델.
+## Properties
+
+### align: `'center'|'left'|'right'{:js}`[#align]
+수평 배치.  
+- `'center'` 
+- `'left'` 
+- `'right'` 
+
+<DefaultValue value="'left'" contents=""></DefaultValue>
+### front: `boolean{:js}`[#front]
+<Content type="keyword" value="true"></Content>로 지정하면 시리즈들 위에 표시된다.  
+<DefaultValue value="false" contents=""></DefaultValue>
+### name: `string{:js}`[#name]
+Annotation 이름.
+
+동적으로 Annotation을 다루기 위해서는 반드시 지정해야 한다.  
+
+### rotation: `number{:js}`[#rotation]
+회전 각도.
+
+0 ~ 360 사이의 값으로 지정한다.  
+
+### scope[#scope]
+차트 모델에서 지정된 annotationd의 표시 기준 영역.  
+
+
+<DefaultValue value="AnnotationScope.CHART" contents=""></DefaultValue>
+### style: `SVGStyles | string{:js}`[#style]
+스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+### verticalAlign: `'bottom'|'middle'|'top'{:js}`[#verticalAlign]
+수직 배치.  
+- `'bottom'` 
+- `'middle'` 
+- `'top'` 
+
+<DefaultValue value="'top'" contents=""></DefaultValue>
+### visible: `boolean{:js}`[#visible]
+표시 여부.  
+<DefaultValue value="true" contents=""></DefaultValue>

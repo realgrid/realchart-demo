@@ -22,6 +22,7 @@ export enum AnnotationScope {
 
 /**
  * Annotation 모델.
+ * @config chart.annotation[base]
  */
 export abstract class Annotation extends ChartItem {
 
