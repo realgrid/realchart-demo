@@ -141,7 +141,8 @@
     --rct-font-family: AppleSDGothicNeo-Light, "HelveticaNeue", "Malgun Gothic", "맑은 고딕", sans-serif;
     --rct-font-size: 16px;
 
-    --rct-focus-border: red;
+    --rct-focus-stroke: black;
+    --rct-focus-stroke-width: 2px;
     --rct-text-fill: #333;
 
     --rct-title-fill: #333;
@@ -179,7 +180,7 @@
     /* polar */
     --rct-polar-xaxis-grid-line-stroke: #ccc;
     --rct-polar-yaxis-grid-line-stroke: #ccc;
-    --rct-polar-axis-label-fill: #555;
+    --rct-polar-axis-labels-fill: #555;
 
     /* circle gauge */
     --rct-circle-gauge-back-fill: #ededed;
@@ -205,7 +206,7 @@
     --rct-navigator-thumb-fill:#0098ff;
 }
 .rct-root[data-theme='dark'] {
-    --rct-focus-border: yellow;
+    --rct-focus-stroke: yellow;
     --rct-text-fill: #fff;
 
     --rct-title-fill: #fff;
@@ -232,7 +233,7 @@
     /* polar */
     --rct-polar-xaxis-grid-line-stroke: #ccc;
     --rct-polar-yaxis-grid-line-stroke: #fff;
-    --rct-polar-axis-label-fill: #fff;
+    --rct-polar-axis-labels-fill: #fff;
 
     /* circle gauge */
     --rct-circle-gauge-back-fill: #515151;
@@ -245,7 +246,7 @@
     --rct-zoom-tracker-fill: #efefef40;
 }
 .rct-root[data-theme='real'] {
-    --rct-focus-border: yellow;
+    --rct-focus-stroke: yellow;
     --rct-text-fill: #f0d9be;
 
     --rct-title-fill: #f0d9be;
@@ -272,7 +273,7 @@
     /* polar */
     --rct-polar-xaxis-grid-line-stroke: #ccc;
     --rct-polar-yaxis-grid-line-stroke: #f0d9be;
-    --rct-polar-axis-label-fill: #f0d9be;
+    --rct-polar-axis-labels-fill: #f0d9be;
 
     /* circle gauge */
     --rct-circle-gauge-back-fill: #515151;
@@ -383,6 +384,7 @@
 } */
 .rct-legend-item-marker[data-hidden] {
     fill: #aaa !important;
+    stroke: #aaa !important;
 }
 
 /** plot area */
@@ -436,7 +438,8 @@
 }
 .rct-axis-guide-range {
     stroke: none;
-    fill: #0088ff40;
+    fill: #0088ff;
+    fill-opacity: 0.2;
 }
 .rct-axis-scrollbar-track {
     fill: var(--rct-axis-scrollbar-track-fill);
@@ -452,6 +455,9 @@
 .rct-polar-xaxis-line {
     stroke: #333;
 }
+.rct-polar-xaxis-sector-line {
+    stroke: #555;
+}
 .rct-polar-xaxis-grid-line {
     stroke: var(--rct-polar-xaxis-grid-line-stroke)
 }
@@ -461,8 +467,8 @@
 .rct-polar-yaxis-grid-line {
     stroke: var(--rct-polar-yaxis-grid-line-stroke)
 }
-.rct-polar-axis-label {
-    fill: var(--rct-polar-axis-label-fill)
+.rct-polar-axis-labels {
+    fill: var(--rct-polar-axis-labels-fill)
 }
 
 /** series */
@@ -608,6 +614,29 @@
     fill: var(--color-12);
 }
 
+/** series */
+.rct-series {
+    opacity: inherit;
+    transition-property: opacity;
+    transition-duration: 0.9s;
+}
+.rct-series[data-unfocus] {
+    opacity: 0.2;
+}
+.rct-series .rct-point[data-focus] {
+    stroke: var(--rct-focus-stroke) !important;
+    stroke-width: var(--rct-focus-stroke-width);
+    filter: brightness(115%);
+}
+.rct-point-labels {
+    opacity: inherit;
+    transition-property: opacity;
+    transition-duration: 0.9s;
+}
+.rct-point-labels[data-unfocus] {
+    opacity: 0.3;
+}
+
 /** rct-point 대신 여기에 지정해야 outline에 반영된다. */
 .rct-point-labels {
     font-size: var(--rct-point-label-font-size);
@@ -628,10 +657,6 @@
 .rct-bar-series {
     fill-opacity: 1;
 }
-.rct-bar-series .rct-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
-}
 
 /** circlebar series */
 .rct-circlebar-series .rct-point {
@@ -642,10 +667,6 @@
 .rct-barrange-series {
     fill-opacity: 0.85;
 }
-.rct-barrange-series .rct-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
-}
 
 /** line series */
 .rct-line-series-line {
@@ -655,9 +676,7 @@
     stroke-dasharray: none;
 }
 .rct-line-series .rct-point[data-focus] {
-    /* scale: 2; */
-    stroke: var(--rct-focus-border) !important;
-    stroke-width: 2px;
+    stroke-width: 3px;
 }
 
 /** area series */
@@ -688,27 +707,14 @@
     stroke-width: 1px;
 }
 
-.rct-bubble-series .rct-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
-}
-
 /** scatter series */
 .rct-scatter-series {
     fill-opacity: 0.7;
-}
-.rct-scatter-series .data-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
 }
 
 /** boxplot series */
 .rct-boxplot-series {
     stroke-width: 1;
-}
-.rct-boxplot-series .rct-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
 }
 .rct-boxplot-point-min {
     stroke: #333;
@@ -740,7 +746,7 @@
 .rct-candlestick-series .rct-point[data-focus] {
     fill-opacity: 0.5;
 }
-.rct-candlestick-series .rct-point[data-fall] {
+.rct-candlestick-series .rct-point[data-decline] {
     fill: #008;
     stroke: #008;
 }
@@ -750,35 +756,21 @@
 .rct-candlestick-point-wick {
     stroke: #003;
 }
-.rct-candlestick-point-fall {
-    fill: #008;
-    stroke: #008;
-}
 
 /** ohlc series */
 .rct-ohlc-series {
     stroke-width: 2;
 }
+.rct-ohlc-series .rct-point[data-decline] {
+    stroke: #00f;
+}
 .rct-ohlc-point-back {
     stroke: none;
-}
-/* .rct-ohlc-point-tick {
-    stroke: #003;
-}
-.rct-ohlc-point-bar {
-    stroke: #f00;
-} */
-.rct-ohlc-point-bar-fall {
-    stroke: #00f;
 }
 
 /** waterfall series */
 .rct-waterfall-series {
     fill-opacity: 0.85;
-}
-.rct-waterfall-series .rct-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
 }
 .rct-waterfall-point-negative {
     fill: #dd5500;
@@ -807,20 +799,40 @@
 .rct-lollipop-point-marker {
     stroke: none;
 }
+.rct-lollipop-series .rct-point[data-focus] {
+    stroke: var(--rct-focus-stroke);
+    stroke-width: inherit;
+}
+.rct-lollipop-series .rct-point[data-focus] .rct-lollipop-point-marker {
+    stroke: var(--rct-focus-stroke);
+    stroke-width: var(--rct-focus-stroke-width);
+}
 
 /** dumbbell series */
 .rct-dumbbell-series {
-    stroke-width: 2px;
+    stroke-width: 3px;
 }
 .rct-dumbbell-point-marker {
     stroke: none;
+}
+.rct-dumbbell-series .rct-point[data-focus] {
+    stroke: var(--rct-focus-stroke);
+    stroke-width: inherit;
+}
+.rct-dumbbell-series .rct-point[data-focus] .rct-dumbbell-point-marker {
+    stroke: var(--rct-focus-stroke);
+    stroke-width: var(--rct-focus-stroke-width);
 }
 
 /** equalizer series */
 .rct-equalizer-series {
     fill-opacity: 0.9;
 }
+.rct-equalizer-series .rct-point[data-focus] {
+    filter: brightness(120%);
+}
 
+/** histogram */
 .rct-histogram-series .rct-point {
     stroke: white;
 }
@@ -837,18 +849,10 @@
 .rct-heatmap-series .rct-point {
     stroke: none;
 }
-.rct-heatmap-series .rct-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
-}
 
 /** treemap series */
 .rct-treemap-series .rct-point {
     stroke: white;
-}
-.rct-treemap-series .rct-point[data-focus] {
-    stroke: var(--rct-focus-border);
-    stroke-width: 2px;
 }
 
 /** pie series */
@@ -865,7 +869,7 @@
     stroke: white;
 }
 .rct-funnel-series .rct-point[data-focus] {
-    stroke: red;
+    stroke: black;
     stroke-width: 2px;
 }
 
@@ -1016,12 +1020,15 @@
 
 /** tooltip */
 .rct-tooltip {
+    font-size: 0.8em;
     pointer-events: none;
     opacity: 0.9;
 }
 .rct-tooltip-back {
     fill: white;
-    stroke: #ccc;
+}
+.rct-tooltip-tail {
+    fill: white;
 }
 .rct-tooltip-text {
     fill: #333;
