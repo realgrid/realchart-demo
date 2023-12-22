@@ -19,6 +19,17 @@ body {
 </style>
 <link href="https://unpkg.com/realchart/dist/realchart-style.css" rel="stylesheet">
 <script type="text/javascript" src="https://unpkg.com/realchart"></script>
+<script type="text/javascript">
+	window.addEventListener('DOMContentLoaded', function () {
+		try {
+			init();
+		} catch (err) {
+			alert(err);
+			console.error(err);
+		}
+	});	
+	
+</script>
 </head>
 <body>
 	<div id="realchart"></div>

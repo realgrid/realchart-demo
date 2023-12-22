@@ -21,6 +21,17 @@
     </style>
     <link href="../../styles/realchart-style.css" rel="stylesheet" />
     <script type="text/javascript" src="../../lib/realchart.js"></script>
+	<script type="text/javascript">
+		window.addEventListener('DOMContentLoaded', function () {
+			try {
+				init();
+			} catch (err) {
+				alert(err);
+				console.error(err);
+			}
+		});	
+		
+	</script>
   </head>
   <body>
     <div id="realchart"></div>
