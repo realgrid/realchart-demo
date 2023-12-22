@@ -5,6 +5,8 @@ const config = {
             backgroundColor: '#363A46'
         }
     },
+    xAxis: {},
+    yAxis: {},
     series: {
         type: 'treemap',
         startDir: 'vertical',
@@ -35,6 +37,33 @@ function setActions(container) {
     createButton(container, 'Test', function(e) {
         alert('hello');
     });
+    createCheckBox(
+        container,
+        "Inverted",
+        function (e) {
+          config.inverted = _getChecked(e);
+          chart.load(config, animate);
+        },
+        false
+      );
+      createCheckBox(
+        container,
+        "X Reversed",
+        function (e) {
+          config.xAxis.reversed = _getChecked(e);
+          chart.load(config, animate);
+        },
+        false
+      );
+      createCheckBox(
+        container,
+        "Y Reversed",
+        function (e) {
+          config.yAxis.reversed = _getChecked(e);
+          chart.load(config, animate);
+        },
+        false
+      );
     createCheckBox(container, 'series.alternate', function (e) {
         config.series.alternate = _getChecked(e);
         chart.load(config, animate);
