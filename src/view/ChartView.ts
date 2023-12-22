@@ -17,6 +17,7 @@ import { TextAnchor, TextElement } from "../common/impl/TextElement";
 import { Annotation, AnnotationScope } from "../model/Annotation";
 import { Axis } from "../model/Axis";
 import { Chart, Credits } from "../model/Chart";
+import { ChartItem } from "../model/ChartItem";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem, LegendLocation } from "../model/Legend";
 import { Series } from "../model/Series";
@@ -619,6 +620,7 @@ export class ChartView extends LayerElement {
     _org: IPoint;
     private _plotWidth: number;
     private _plotHeight: number;
+    private _hoverItem: ChartItem;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1211,13 +1213,11 @@ export class ChartView extends LayerElement {
         const body = this._model && this.bodyOf(target as any);// this._currBody;
         const cl = elt?.classList;
         const isContextMenu = cl?.value && (cl.contains('rct-contextmenu-item') || cl.contains('rct-contextmenu-list'));
+        let prevItem = this._hoverItem;
 
-        if (this._legendSectionView._legendView.contains(elt)) {
-            const item = this._legendSectionView._legendView.legendByDom(elt);
-            if (item && item.legend.seriesHovering && item.source as Series) {
-                body.focusSeries(item.source as Series);
-            } 
-        } else if (body) {
+        this._hoverItem = null;
+
+        if (body) {
             const p = body.controlToElement(x, y);
             const inBody = body.pointerMoved(p, target);
             
@@ -1235,6 +1235,19 @@ export class ChartView extends LayerElement {
                         av.hideCrosshiar();
                     }
                 })
+            }
+
+            if (!this._hoverItem) {
+                if (this._legendSectionView._legendView.contains(elt)) {
+                    const item = this._hoverItem = this._legendSectionView._legendView.legendByDom(elt);
+                    if (item && item.legend.seriesHovering && item.source as Series) {
+                        body.focusSeries(item.source as Series);
+                    } 
+                }
+            }
+
+            if (prevItem instanceof LegendItem && !(this._hoverItem instanceof LegendItem)) {
+                body.focusSeries(null);
             }
         }
     }

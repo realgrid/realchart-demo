@@ -923,6 +923,10 @@ export class BodyView extends ChartElement<Body> {
         return inBody;
     }
 
+    focusedSeries(): SeriesView<Series> {
+        return this._focusedSeries;
+    }
+
     focusSeries(series: Series): void {
         const sv = this._seriesMap.get(series);
 
