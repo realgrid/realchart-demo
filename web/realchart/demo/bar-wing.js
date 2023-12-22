@@ -72,7 +72,7 @@ const config = {
             name: 'Male',
             pointLabel: {
                 visible: true,
-                numberFormat: '##0.00'
+                numberFormat: 'a##0.00'
             },
             color: '#468B97',
             data: [
