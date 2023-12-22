@@ -108,6 +108,8 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
     //-------------------------------------------------------------------------
     private $_renderLeafs(width: number, height: number): void {
         const series = this.model;
+        const xAxis = series._xAxisObj;
+        const yAxis = series._yAxisObj
         const inverted = series.chart.isInverted();
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
@@ -137,6 +139,8 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
             v.node = m;
             v.setStyle('fill', c.brighten(m.index / count).toString());
 
+            if (xAxis.reversed) m.x = xLen - m.x - m.width;
+            if (yAxis.reversed) m.y = yLen - m.y - m.height;
             if (inverted) m.y = m.y - yLen;
             v.render();
 
