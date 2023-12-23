@@ -25,7 +25,7 @@ import { Split } from "../model/Split";
 import { Subtitle, SubtitlePosition, Title } from "../model/Title";
 import { AnnotationView } from "./AnnotationView";
 import { AxisScrollView, AxisView } from "./AxisView";
-import { AxisGuideContainer, BodyView, createAnnotationView } from "./BodyView";
+import { AxisGridRowContainer, AxisGuideContainer, BodyView, createAnnotationView } from "./BodyView";
 import { ChartElement, SectionView } from "./ChartElement";
 import { HistoryView } from "./HistoryView";
 import { LegendView } from "./LegendView";
@@ -382,17 +382,17 @@ class AxisSectionView extends SectionView {
     prepare(doc: Document, axes: Axis[], guideContainer: AxisGuideContainer, frontGuideContainer: AxisGuideContainer): void {
         const views = this.views;
         let i = views.length;
+        let v: AxisView;
 
         while (views.length < axes.length) {
-            const v = new AxisView(doc);
-
+            v = new AxisView(doc);
             if (axes[i++].visible) {
                 this.add(v);
             }
             views.push(v);
         }
         while (views.length > axes.length) {
-            const v = views.pop();
+            v = views.pop();
             v.parent && v.remove();
         }
 
@@ -459,6 +459,10 @@ class AxisSectionView extends SectionView {
                 return v._scrollView;
             }
         }
+    }
+
+    prepareGridRows(doc: Document, container: AxisGridRowContainer): void {
+        container.addAll(doc, this.views.map(v => v.model));
     }
 
     //-------------------------------------------------------------------------
@@ -1324,6 +1328,7 @@ export class ChartView extends LayerElement {
     }
 
     private $_prepareAxes(doc: Document, m: Chart): void {
+        const rowContainer = this._currBody._gridRowContainer;
         const guideContainer = this._currBody._guideContainer;
         const frontContainer = this._currBody._frontGuideContainer;
         const need = !m.isPolar() && m.needAxes();
@@ -1338,6 +1343,7 @@ export class ChartView extends LayerElement {
                 v.visible = false;
             }
         }
+        rowContainer.prepare();
     }
 
     private $_measurePlot(doc: Document, m: Chart, w: number, h: number, phase: number): void {
@@ -1425,6 +1431,7 @@ export class ChartView extends LayerElement {
             
             if (asv.visible) {
                 asv.measure(doc, m, w, h, phase);
+                asv.prepareGridRows(doc, this._bodyView._gridRowContainer);
             }
         }
 

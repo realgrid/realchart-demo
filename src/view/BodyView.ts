@@ -15,7 +15,7 @@ import { Align, FILL, PI_2, VerticalAlign, _undef, assert } from "../common/Type
 import { ImageElement } from "../common/impl/ImageElement";
 import { LineElement } from "../common/impl/PathElement";
 import { BoxElement, RectElement } from "../common/impl/RectElement";
-import { Axis, AxisGrid, AxisGridRows, AxisGuide, AxisLineGuide, AxisRangeGuide } from "../model/Axis";
+import { Axis, AxisGrid, AxisGuide, AxisLineGuide, AxisRangeGuide, IAxisGridRow } from "../model/Axis";
 import { Body, IPolar } from "../model/Body";
 import { Chart, IChart } from "../model/Chart";
 import { Crosshair } from "../model/Crosshair";
@@ -62,9 +62,10 @@ import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
 import { LabelElement } from "../common/impl/LabelElement";
 import { CircleBarSeriesView } from "./series/CircleBarSeriesView";
-import { cos, pickNum, sin } from "../common/Common";
+import { cos, isArray, pickNum, sin } from "../common/Common";
 import { ArcPolyElement } from "../common/impl/CircleElement";
 import { SectorElement } from "../common/impl/SectorElement";
+import { SvgShapes } from "../common/impl/SvgShape";
 
 const series_types = {
     'area': AreaSeriesView,
@@ -648,16 +649,52 @@ export class AxisGridRowContainer extends LayerElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _rowPool: RectElement[] = [];
-    private _rowViews: RectElement[] = [];
+    private _views = new ElementPool(this, PathElement);
+    private _rows: IAxisGridRow[];
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     prepare(): void {
-        this._rowPool.push(...this._rowViews);
-        this._rowViews.length = 0;
+        this._rows = [];
     }
+
+    addAll(doc: Document, axes: Axis[]): void {
+        const rows: IAxisGridRow[] = this._rows;
+
+        axes.forEach(axis => {
+            if (axis.grid.rows.isEnabled()) {
+                rows.push(...axis.grid.rows.getRows());
+            }
+        });
+    }
+
+    layout(width: number, height: number, polar: boolean): void {
+        const rows = this._rows;
+
+        this._views.prepare(rows.length);
+
+        this._views.forEach((v, i) => {
+            const row = rows[i];
+
+            if (row.axis._isHorz) {
+                const x1 = row.axis.getPosition(width, row.from, false);
+                const x2 = row.axis.getPosition(width, row.to, false);
+
+                v.setPath(SvgShapes.rectangle(x1, 0, x2 - x1, height));
+            } else {
+                const y1 = row.axis.getPosition(height, row.from, false);
+                const y2 = row.axis.getPosition(height, row.to, false);
+
+                v.setPath(SvgShapes.rectangle(0, height - y1, width, y1 - y2));
+            }
+            v.setStyle('fill', row.color);
+        })
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
 }
 
 export class AxisGuideContainer extends LayerElement {
@@ -819,7 +856,7 @@ export class BodyView extends ChartElement<Body> {
     private _hitTester: RectElement;
     private _background: RectElement;
     private _image: ImageElement;
-    private _gridRowContainer: AxisGridRowContainer;
+    _gridRowContainer: AxisGridRowContainer;
     private _gridContainer: LayerElement;
     protected _gridViews = new Map<Axis, AxisGridView>();
     private _breakViews: AxisBreakView[] = [];
@@ -895,7 +932,6 @@ export class BodyView extends ChartElement<Body> {
     }
 
     prepareGuideContainers(): void {
-        this._gridRowContainer.prepare();
         this._guideContainer.prepare();
         this._frontGuideContainer.prepare();
     }
@@ -1153,6 +1189,7 @@ export class BodyView extends ChartElement<Body> {
                 c._views.forEach(v => v.layout(w, h));
                 c.setClip(this._guideClip);
             });
+            this._gridRowContainer.layout(w, h, false);
         }
 
         this.$_prepareCrosshairs(this.chart());

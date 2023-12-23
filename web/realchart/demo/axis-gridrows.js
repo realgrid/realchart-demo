@@ -3,18 +3,26 @@
  * 
  */
 const config = {
-    title: "Vector Series",
+    title: "Axis GridRows",
     xAxis: {
         title: 'X Axis',
-        // minValue: 0,
-        // maxValue: 100
+        grid: {
+            rows: [null, '#ff000020'],
+            // rows: ['#ff000020', null]
+        }
     },
     yAxis: {
         title: 'Y Axis',
+        grid: {
+            rows: [null, '#00ff8820'],
+            // rows: ['#00ff8820', null]
+        }
+    },
+    body: {
     },
     series: {
+        color: '#0044ff',
         type: 'vector',
-        tooltipText: 'length: ${length}<br>angle: ${angle}',
         // arrowHead: 'open',
         data: [
             [5, 5, 190, 18],
@@ -379,7 +387,7 @@ const config = {
             [95, 90, 15, 333],
             [95, 95, 10, 342]        ],
         style: {
-            // stroke: 'red'
+            stroke: 'red'
         }
     }
 }

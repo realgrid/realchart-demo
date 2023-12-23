@@ -21,7 +21,7 @@ import { TextElement } from "../common/impl/TextElement";
 import { Axis, AxisGuide, AxisLabel, AxisLabelArrange, AxisPosition, AxisScrollBar, AxisTick, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { Crosshair } from "../model/Crosshair";
-import { AxisGuideContainer, AxisGuideView } from "./BodyView";
+import { AxisGridRowContainer, AxisGuideContainer, AxisGuideView } from "./BodyView";
 import { BoundableElement, ChartElement } from "./ChartElement";
 
 /**

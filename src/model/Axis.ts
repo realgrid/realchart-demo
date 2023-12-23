@@ -122,7 +122,7 @@ export enum AxisTitleAlign {
 /**
  * 축 타이틀 설정 모델.
  * 
- * @config
+ * @config chart.axis.title
  */
 export class AxisTitle extends AxisItem {
 
@@ -218,10 +218,17 @@ export class AxisTitle extends AxisItem {
     }
 }
 
+export interface IAxisGridRow {
+    axis: Axis;
+    from: number;
+    to: number;
+    color: string;
+}
+
 /**
  * 축 그리드 사이에 생성된 영역 표시 설정 모델.
  * 
- * @config
+ * @config chart.axis.grid.rows
  */
 export class AxisGridRows extends AxisItem {
 
@@ -237,8 +244,64 @@ export class AxisGridRows extends AxisItem {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    enabled(): boolean {
+    isEnabled(): boolean {
         return Array.isArray(this.colors) && this.colors.length > 0;
+    }
+
+    getRows(): IAxisGridRow[] {
+        const axis = this.axis;
+        const ticks = axis._ticks;
+        const colors = this.colors;
+        const n = colors.length;
+        const rows: IAxisGridRow[] = [];
+        let c = 0;
+
+        if (ticks[0].value > axis.axisMin()) {
+            if (colors[c % n]) {
+                rows.push({
+                    axis,
+                    from: axis.axisMin(),
+                    to: ticks[0].value,
+                    color: colors[c % n]
+                })
+            }
+            c++;
+        }
+        for (let i = 1; i < ticks.length; i++, c++) {
+            if (colors[c % n]) {
+                rows.push({
+                    axis,
+                    from: ticks[i - 1].value,
+                    to: ticks[i].value,
+                    color: colors[c % n]
+                })
+            }
+        }
+        if (ticks[ticks.length - 1].value < axis.axisMax()) {
+            if (colors[c % n]) {
+                rows.push({
+                    axis,
+                    from: ticks[ticks.length - 1].value,
+                    to: axis.axisMax(),
+                    color: colors[c % n]
+                })
+            }
+        }
+        return rows;
+    }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    protected _doLoadSimple(source: any): boolean {
+        if (isString(source)) {
+            this.colors = [source, null];
+            return true;
+        } else if (isArray(source)) {
+            this.colors = source;
+            return true;
+        }
+        return super._doLoadSimple(source);
     }
 }
 
@@ -247,7 +310,7 @@ export class AxisGridRows extends AxisItem {
  * {@link visible} 기본값이 undefined인데,
  * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
  * 
- * @config
+ * @config chart.axis.grid
  */
 export class AxisGrid extends AxisItem {
 
@@ -268,7 +331,6 @@ export class AxisGrid extends AxisItem {
      * @config
      */
     rows: AxisGridRows;
-
     /**
      * 시작 값에 표시되는 그리드 선을 표시할 지 여부.
      * 
