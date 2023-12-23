@@ -2,7 +2,7 @@
     "index": "RealChart 개요",
     "install": "RealChart 설치",
     "dev-guide": "개발 가이드",
-    "getting-started": "시작 - 첫번째 차트 생성하기",
+    "tutorial": "Tutorial",
     "axes": "축(Axes)",
     "series": "시리즈(Series)",
     "gauges": "게이지(Gauges)",

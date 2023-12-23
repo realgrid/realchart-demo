@@ -67,6 +67,27 @@ export abstract class BarSeriesBase extends BasedSeries {
 }
 
 /**
+ * Bar 시리즈.<br/>
+ * 
+ * 수평 또는 수직 막대로 여러 값들을 **비교**하는 데 사용한다.
+ * 막대의 길이가 y값을 표시한다. 기본 x축은 [category](/config/config/xAxis/category)이다.<br/>
+ * 
+ * *{@link data}는 아래 형식들로 전달할 수 있다.
+ * 
+ * ###### 단일 값 및 값 배열
+ * |형식|설명|
+ * |---|---|
+ * |y|단일 숫자면 y값.|
+ * |[y]|값 하나인 배열이면 y값.|
+ * |[x, y]|두 값 배열이면 순서대로 x, y값|
+ * |[...]|시리즈 속성 값이 숫자인 경우 {@link xField}는 x값의 index. {@link yField}는 y값의 index.|
+
+ * ###### json 배열
+*  |Series 속성|설명|
+ * |---|---|
+ * |{@link xField}|x 값. 기본값은 **'x'**.|
+ * |{@link yField}|y 값. 기본값은 **'y'**.|
+ * 
  * @config chart.series[type=bar]
  */
 export class BarSeries extends BarSeriesBase {

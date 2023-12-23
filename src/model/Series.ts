@@ -928,6 +928,12 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      */
     colorField: string;
     /**
+     * 데이터포인터들을 생성하는 데 사용되는 값 목록.
+     * 
+     * @config
+     */
+    data: any;
+    /**
      * undefined이면 'data'.
      * 
      * @config

@@ -226,6 +226,28 @@ export enum LineStepDirection {
 export type PointLine = IPointPos[];
 
 /**
+ * Line 시리즈.<br/>
+ * 
+ * 주로 시간이나 다른 변수에 의한 데이터의 **변화** 또는 **경향**(pattern)을 보여주는 데 사용한다.
+ * 각 시점에 표시되는 데이터포인트 마커들을 연결한 선으로 표시되며,
+ * 기본 x축은 [linear](/config/config/xAxis/linear)이다.<br/>
+ * 
+ * *{@link data}는 아래 형식들로 전달할 수 있다.
+ * 
+ * ###### 단일 값 및 값 배열
+ * |형식|설명|
+ * |---|---|
+ * |y|단일 숫자면 y값.|
+ * |[y]|값 하나인 배열이면 y값.|
+ * |[x, y]|두 값 배열이면 순서대로 x, y값|
+ * |[...]|시리즈 속성 값이 숫자인 경우 {@link xField}는 x값의 index. {@link yField}는 y값의 index.|
+
+ * ###### json 배열
+*  |Series 속성|설명|
+ * |---|---|
+ * |{@link xField}|x 값. 기본값은 **'x'**.|
+ * |{@link yField}|y 값. 기본값은 **'y'**.|
+ * 
  * @config chart.series[type=line]
  */
 export class LineSeries extends LineSeriesBase {
