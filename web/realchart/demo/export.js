@@ -18,7 +18,7 @@ const config = {
 	},
 	options: {
 		style: {
-			 backgroundImage: 'url(../assets/mountain.jpeg)'
+			 backgroundImage: 'url(../assets/images/mountain.jpeg)'
 		}
 	},
 	legend:{

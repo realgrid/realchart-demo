@@ -6,7 +6,7 @@ const config = {
     options: {
         animatable: false,
         style: {
-            backgroundImage: 'url(../assets/mountain.jpeg)'
+            backgroundImage: 'url(../assets/images/mountain.jpeg)'
        }
     },
     body: {

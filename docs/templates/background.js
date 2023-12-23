@@ -1,6 +1,6 @@
 export const config = {
   title: 'Chart Background',
-  options: { style: { backgroundImage: 'url(../assets/mountain.jpeg)' } },
+  options: { style: { backgroundImage: 'url(../assets/images/mountain.jpeg)' } },
   xAxis: {
     categories: [ '쓰리엠', '아디다스', '디즈니', '이마트', '메리어트', '시세이도' ],
     title: { text: '일일 Daily fat' },

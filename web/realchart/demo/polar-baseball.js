@@ -175,7 +175,7 @@ const config = {
     body: {
         annotations: [
             {
-                imageUrl: 'http://localhost:6010/realchart/assets/images/baseball-player.png',
+                imageUrl: '../assets/images/baseball-player.png',
                 align: 'center',
                 verticalAlign: 'middle',
                 offsetX: -120,

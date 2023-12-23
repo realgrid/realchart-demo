@@ -3,7 +3,7 @@ export const config = {
   xAxis: { title: 'X Axis' },
   yAxis: { title: 'Y Axis' },
   body: {
-    image: { url: '../assets/mountain.jpeg', style: { opacity: 0.2 } },
+    image: { url: '../assets/images/mountain.jpeg', style: { opacity: 0.2 } },
     style: { fill: 'none' }
   },
   series: {

@@ -14,7 +14,7 @@ const config = {
     },
     body: {
         image: {
-            url: '../assets/mountain.jpeg',
+            url: '../assets/images/mountain.jpeg',
             style: {
                 opacity: 0.2
             }
@@ -410,7 +410,7 @@ function setActions(container) {
         chart.load(config);
     }, 'none');
     createCheckBox(container, 'body.image', function (e) {
-        config.body.image.url = _getChecked(e) ? '../assets/mountain.jpeg' : '';
+        config.body.image.url = _getChecked(e) ? '../assets/images/mountain.jpeg' : '';
         chart.load(config);
     }, true);
 }
