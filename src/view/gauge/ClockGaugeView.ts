@@ -198,7 +198,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
 
             this._tickLabelViews.get(0).text = '12';
             rd2 = rd1 - ((this.model.tick.length + this.model.tickLabel.offset) || 0);
-            rd2 -= this._tickLabelViews.get(0).getBBounds().height * 0.5;
+            rd2 -= this._tickLabelViews.get(0).getBBox().height * 0.5;
 
             this._tickLabelViews.forEach((v, i, cnt) => {
                 v.text = String(i === 0 ? 12 : i * step);

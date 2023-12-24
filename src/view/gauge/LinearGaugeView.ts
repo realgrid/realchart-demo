@@ -66,14 +66,14 @@ class BandView extends ChartElement<GaugeRangeBand> {
                 let w = 0;
                 this._labels.forEach((v, i) => {
                     v.text = String(vals[i]);
-                    w = Math.max(v.getBBounds().width);
+                    w = Math.max(v.getBBox().width);
                 })
                 width += w;
             } else {
                 let h = 0;
                 this._labels.forEach((v, i) => {
                     v.text = String(vals[i]);
-                    h = Math.max(v.getBBounds().height);
+                    h = Math.max(v.getBBox().height);
                 })
                 height += h;
             }
@@ -311,7 +311,7 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
             tv.text = m.label.text;
             m.label.buildSvg(tv, null, NaN, NaN, m, null);
 
-            const rText = this._textView.getBBounds();
+            const rText = this._textView.getBBox();
             const h = rText.height + m.label.getGap(height);
             r.y += h;
             r.height -= h;

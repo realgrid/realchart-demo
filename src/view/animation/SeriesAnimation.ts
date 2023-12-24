@@ -21,12 +21,12 @@ export abstract class SeriesAnimation {
         new RevealAnimation(series, options);
     }
 
-    static fadeIn(series: SeriesView<Series>): void {
-        new StyleAnimation(series, {prop: 'opacity', start: '0', end: '1'});
-    }
-
     static grow(series: SeriesView<Series>, endHandler?: RcAnimationEndHandler): void {
         new GrowAnimation(series, endHandler);
+    }
+
+    static fadeIn(series: SeriesView<Series>): void {
+        new StyleAnimation(series, {prop: 'opacity', start: '0', end: '1'});
     }
 
     //-------------------------------------------------------------------------

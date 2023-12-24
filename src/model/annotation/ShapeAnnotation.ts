@@ -114,10 +114,10 @@ export class ShapeAnnotation extends SizableAnnotation {
             const series = this._series = ser.series as Series;
             const xAxis = series._xAxisObj;
             const yAxis = series._yAxisObj;
-            const x1 = xAxis.getPosition(wDomain, this._xRange[0]);
-            const x2 = xAxis.getPosition(wDomain, this._xRange[1]);
-            const y1 = yAxis.getPosition(hDomain, this._yRange[0]);
-            const y2 = yAxis.getPosition(hDomain, this._yRange[1]);
+            const x1 = xAxis.getPos(wDomain, this._xRange[0]);
+            const x2 = xAxis.getPos(wDomain, this._xRange[1]);
+            const y1 = yAxis.getPos(hDomain, this._yRange[0]);
+            const y2 = yAxis.getPos(hDomain, this._yRange[1]);
 
             this._x = Math.min(x1, x2);
             this._y = Math.max(y1, y2);

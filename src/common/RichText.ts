@@ -418,7 +418,7 @@ export class SvgRichText {
     }
 
     layout(view: TextElement, align: Align, width: number, height: number, padding: Sides): void {
-        const r = view.getBBounds();
+        const r = view.getBBox();
         let x: number;
         let y = Math.max(padding.top, padding.top + (height - r.height) / 2);
 
@@ -429,7 +429,7 @@ export class SvgRichText {
                 break;
             case Align.RIGHT:
                 view.anchor = TextAnchor.END;
-                x = view.getBBounds().width - padding.right;
+                x = view.getBBox().width - padding.right;
                 break;
             default:
                 view.anchor = TextAnchor.START;

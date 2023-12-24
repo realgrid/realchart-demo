@@ -260,7 +260,7 @@ class PolarXAxisView extends PolarAxisView {
                 if (view.setVis(i % step === 0)) {
                     const tick = ticks[i];
     
-                    const r = view.getBBounds();
+                    const r = view.getBBox();
                     const p = start + tick.pos;
                     const x = cx + cos(p) * (rd2 + r.width / 2) - r.width / 2;
                     const y = cy + sin(p) * (rd2 + r.height / 2) - r.height / 2;
@@ -379,13 +379,13 @@ class PolarYAxisView extends PolarAxisView {
             if (other.isArced()) {
                 const start = other.getStartAngle();
                 this._labelViews.forEach((view, i) => {
-                    const x = cx + cos(start) * (ticks[i].pos) - (view.getBBounds().width / 2);
-                    const y = cy + sin(start) * (ticks[i].pos) - (view.getBBounds().height / 2);
+                    const x = cx + cos(start) * (ticks[i].pos) - (view.getBBox().width / 2);
+                    const y = cy + sin(start) * (ticks[i].pos) - (view.getBBox().height / 2);
                     view.setContrast(null).translate(x, y);
                 });
             } else {
                 this._labelViews.forEach((view, i) => {
-                    view.setContrast(null).translate(cx + 2, cy - ticks[i].pos - view.getBBounds().height / 2);
+                    view.setContrast(null).translate(cx + 2, cy - ticks[i].pos - view.getBBox().height / 2);
                 });
             }
         }

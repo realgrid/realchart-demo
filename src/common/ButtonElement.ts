@@ -52,7 +52,7 @@ export class ButtonElement extends RcElement {
 
         const cs = getComputedStyle(this._back.dom);
         const paddings = new Sides().applyPadding(cs);
-        const r = this._textView.getBBounds();
+        const r = this._textView.getBBox();
 
         this._back.rect = {
             x: 0,

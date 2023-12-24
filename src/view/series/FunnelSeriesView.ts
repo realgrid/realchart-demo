@@ -210,7 +210,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
                     // labelView.anchor = TextAnchor.START; // 기본이 MIDDLE이다.
 
                     if (line.setVis(!labelInside)) {
-                        const rSeg = seg.getBBounds();
+                        const rSeg = seg.getBBox();
                         let lx = p.xPos;
                         let ly = p.yPos;
 
@@ -235,7 +235,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
     }
 
     private $_layoutLabel(labelView: PointLabelView, rSeg: IRect, line: PointLabelLine, off: number, dist: number, x: number, y: number): void {
-        const r = labelView.getBBounds();
+        const r = labelView.getBBox();
         
         x += rSeg.width / 2;
         line.setLine(new PathBuilder().move(0, 0).line(dist, 0).end());
@@ -246,7 +246,7 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
     }
 
     private $_layoutLabelInner(labelView: PointLabelView, x: number, y: number): void {
-        const r = labelView.getBBounds();
+        const r = labelView.getBBox();
     
         labelView.translate(x - r.width / 2, y - r.height / 2);
     }

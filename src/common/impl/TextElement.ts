@@ -136,7 +136,7 @@ export class TextElement extends RcElement {
     }
 
     layoutText(lineHeight?: number): void {
-        const r = this.getBBounds();
+        const r = this.getBBox();
         const ascent = this.getAscent(isNaN(lineHeight) ? r.height : lineHeight);
         let y: number;
 
@@ -233,7 +233,7 @@ export class TextElement extends RcElement {
         return changed;
     }
 
-    getBBounds(): IRect {
+    getBBox(): IRect {
         if (this._dirty || this._styleDirty) {
             this._bounds = (this.dom as SVGGraphicsElement).getBBox();
             this._dirty = this._styleDirty = false;

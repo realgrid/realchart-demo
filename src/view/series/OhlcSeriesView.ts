@@ -138,19 +138,19 @@ export class OhlcSeriesView extends RangedSeriesView<OhlcSeries> {
             const p = box.point;
 
             if (box.setVis(!p.isNull)) {
-                const wUnit = xAxis.getUnitLength(width, p.xValue);
+                const wUnit = xAxis.getUnitLen(width, p.xValue);
                 const wPoint = series.getPointWidth(wUnit);
-                const x = (p.xPos = xAxis.getPosition(width, p.xValue)) - wPoint / 2;
-                const y = p.yPos = yOrg - yAxis.getPosition(height, p.yValue) * vr;
+                const x = (p.xPos = xAxis.getPos(width, p.xValue)) - wPoint / 2;
+                const y = p.yPos = yOrg - yAxis.getPos(height, p.yValue) * vr;
                 const w = wPoint;
-                const h = Math.abs(yOrg - yAxis.getPosition(height, p.lowValue) - y) * vr;
+                const h = Math.abs(yOrg - yAxis.getPos(height, p.lowValue) - y) * vr;
                 let view: PointLabelView;
     
                 box.setBounds(x, y, w, h);
                 box.layout();
     
                 if (labelViews && (view = labelViews.get(p, 0))) {
-                    const r = view.getBBounds();
+                    const r = view.getBBox();
                     view.translate(x + (w - r.width) / 2, y - r.height - labelOff);
                 }
             }

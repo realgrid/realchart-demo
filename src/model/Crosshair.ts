@@ -135,7 +135,7 @@ export class Crosshair extends ChartItem {
     }
 
     getFlag(length: number, pos: number): string {
-        const v = this.axis.getAxisValueAt(length, pos);
+        const v = this.axis.axisValueAt(length, pos);
 
         if (v instanceof Date) {
             return DatetimeFormatter.getFormatter(this.timeFormat).toStr(new Date(v), this.chart.startOfWeek);

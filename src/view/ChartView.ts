@@ -586,7 +586,7 @@ export class CreditView extends ChartElement<Credits> {
         this._textView.text = model.text;
 
         this.setCursor(model.url ? 'pointer' : '');
-        return this._textView.getBBounds();
+        return this._textView.getBBox();
     }
 }
 

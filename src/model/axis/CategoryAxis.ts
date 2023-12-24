@@ -382,9 +382,9 @@ export class CategoryAxis extends Axis {
         }
     }
 
-    getPosition(length: number, value: number): number {
+    getPos(length: number, value: number): number {
         const pts = this._pts;
-        const v = Math.floor(value - this._min + 0.5);// (value - this._min) >> 0;
+        const v = Math.floor(value - this._min + 0.5);
         const p = pts[v + 1] + (pts[v + 2] - pts[v + 1]) * (value - Math.floor(value + 0.5) + 0.5);
 
         // if (this._isPolar) {
@@ -395,7 +395,7 @@ export class CategoryAxis extends Axis {
         // }
     }
 
-    getValueAt(length: number, pos: number): number {
+    valueAt(length: number, pos: number): number {
         if (this.reversed) {
             pos = length - pos;
         }
@@ -406,8 +406,9 @@ export class CategoryAxis extends Axis {
         }
     }
 
-    getUnitLength(length: number, value: number): number {
-        const v = Math.max(this._min, Math.min(this._max, Math.floor(value - this._min)));
+    getUnitLen(length: number, value: number): number {
+        const v = Math.floor(value - this._min + 0.5);
+        //const v = Math.max(this._min, Math.min(this._max, Math.floor(value - this._min)));
 
         return (this._pts[v + 2] - this._pts[v + 1]);
     }

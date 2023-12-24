@@ -67,7 +67,7 @@ export class ImageElement extends RcElement {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    getBBounds(): IRect {
+    getBBox(): IRect {
         if (this._dirty) {
             this._bounds = (this.dom as SVGGraphicsElement).getBBox();
             this._dirty = false;

@@ -297,18 +297,18 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             let py: number;
 
             if (polar) {
-                const a = polar.start + xAxis.getPosition(xLen, p.xValue);
-                const y = yAxis.getPosition(polar.rd, p.yGroup) * vr;
+                const a = polar.start + xAxis.getPos(xLen, p.xValue);
+                const y = yAxis.getPos(polar.rd, p.yGroup) * vr;
 
                 px = p.xPos = polar.cx + y * cos(a);
                 py = p.yPos = polar.cy + y * sin(a);
             } else {
-                px = p.xPos = xAxis.getPosition(xLen, p.xValue);
-                py = p.yPos = yOrg - yAxis.getPosition(yLen, p.yGroup);
+                px = p.xPos = xAxis.getPos(xLen, p.xValue);
+                py = p.yPos = yOrg - yAxis.getPos(yLen, p.yGroup);
 
                 if (inverted) {
-                    px = yAxis.getPosition(yLen, p.yGroup);
-                    py = height - xAxis.getPosition(xLen, p.xValue);
+                    px = yAxis.getPos(yLen, p.yGroup);
+                    py = height - xAxis.getPos(xLen, p.xValue);
                 }
             }
 
@@ -319,7 +319,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                 this._layoutMarker(mv, markerStyle, px, py);
 
                 if (lv) {
-                    const r = lv.getBBounds();
+                    const r = lv.getBBox();
 
                     lv.visible = true;
                     lv.setContrast(null);
@@ -395,9 +395,9 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             const base = series.getBaseValue(axis);
             
             if (inverted) {
-                this.$_resetClips(w, h, axis.getPosition(w, base), true);
+                this.$_resetClips(w, h, axis.getPos(w, base), true);
             } else {
-                this.$_resetClips(w, h, h - axis.getPosition(h, base), false);
+                this.$_resetClips(w, h, h - axis.getPos(h, base), false);
             }
 
             lowLine.setPath(s);

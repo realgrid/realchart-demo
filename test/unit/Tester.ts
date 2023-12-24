@@ -38,7 +38,7 @@ export class Tester {
         RcElement.TESTING = true;
         RcElement.DEBUGGING = true;
 
-        TextElement.prototype.getBBounds = TextElement.prototype.getBBoundsTest;
+        TextElement.prototype.getBBox = TextElement.prototype.getBBoundsTest;
 
         const container = document.getElementById(CHART_CONTROL_ID) as HTMLDivElement;
         container.style.width = (width || 700) + 'px';

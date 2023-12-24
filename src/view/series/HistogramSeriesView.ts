@@ -69,7 +69,7 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
         const yAxis = series._yAxisObj;
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
-        const yBase = yAxis.getPosition(yLen, series.getBaseValue(yAxis));
+        const yBase = yAxis.getPos(yLen, series.getBaseValue(yAxis));
         const org = inverted ? 0 : height;;
         const info: LabelLayoutInfo = labelViews && assign(this._labelInfo, {
             inverted,
@@ -79,9 +79,9 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
 
         this._getPointPool().forEach((pointView: BarElement, i) => {
             const p = pointView.point as HistogramSeriesPoint;
-            const x1 = xAxis.getPosition(xLen, p.min);
-            const x2 = xAxis.getPosition(xLen, p.max);
-            const yVal = yAxis.getPosition(yLen, p.yValue);
+            const x1 = xAxis.getPos(xLen, p.min);
+            const x2 = xAxis.getPos(xLen, p.max);
+            const yVal = yAxis.getPos(yLen, p.yValue);
             const w = (x2 - x1) + (x2 > x1 ? -1 : 1);
             const h = yVal - yBase;
             let x = x1 + (x2 - x1) / 2;
@@ -98,7 +98,7 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
                     y = xLen - x;
                     x = org;
                     p.yPos = y;
-                    p.xPos = x += yAxis.getPosition(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
+                    p.xPos = x += yAxis.getPos(yLen, p.yGroup); // stack/fill일 때 org와 다르다.
                 }
 
                 info.pointView = pointView;
@@ -130,10 +130,10 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
 
         this._bars.forEach((bar, i) => {
             const p = bar.point as HistogramSeriesPoint;
-            const x1 = xAxis.getPosition(width, p.min);
-            const x2 = xAxis.getPosition(width, p.max);
+            const x1 = xAxis.getPos(width, p.min);
+            const x2 = xAxis.getPos(width, p.max);
             const x = x1 + (x2 - x1) / 2;
-            const h = yAxis.getPosition(height, bar.point.yValue) * vr;
+            const h = yAxis.getPos(height, bar.point.yValue) * vr;
             const w = Math.max(1, x2 - x1 - 1);
 
             p.xPos = x;

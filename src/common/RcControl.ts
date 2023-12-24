@@ -189,10 +189,6 @@ export abstract class RcControl extends RcWrappableObject {
         elt && this._root.add(elt);
     }
 
-    removeElement(elt: RcElement): void {
-        this._root.removeChild(elt);
-    }
-
     setPointerHandler(handler: IPointerHandler): void {
         this._pointerHandler = handler;
     }
@@ -842,19 +838,6 @@ export class RcElement extends RcObject {
         return child;
     }
 
-    removeChild(child: RcElement): void {
-        if (child && child._parent === this) {//} child._dom.parentNode === this._dom) {
-            this._dom.removeChild(child._dom);
-            child._parent = null;
-            child._doDetached(this);
-        }
-    }
-
-    remove(): RcElement {
-        this._parent && this._parent.removeChild(this);
-        return this;
-    }
-
     appendElement(doc: Document, tag: string): SVGElement {
         const elt = doc.createElementNS(SVGNS, tag);
         this._dom.appendChild(elt);
@@ -866,6 +849,15 @@ export class RcElement extends RcObject {
         this._dom.insertBefore(elt, before);
         return elt;
     }   
+
+    remove(): RcElement {
+        if (this._parent) {
+            this._parent._dom.removeChild(this._dom);
+            this._parent = null;
+            this._doDetached(this);
+        }
+        return this;
+    }
 
     getAttr(attr: string): any {
         return this._dom.getAttribute(attr);
@@ -925,7 +917,7 @@ export class RcElement extends RcObject {
         return { width: this.width, height: this.height };
     }
 
-    getBBounds(): IRect {
+    getBBox(): IRect {
         return (this._dom as SVGGraphicsElement).getBBox();
     }
 

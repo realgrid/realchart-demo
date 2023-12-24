@@ -112,17 +112,17 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
                 let y: number;
 
                 if (polar) {
-                    const a = polar.start + xAxis.getPosition(PI_2, p.xValue);
-                    const py = yAxis.getPosition(polar.rd, p.yValue);
+                    const a = polar.start + xAxis.getPos(PI_2, p.xValue);
+                    const py = yAxis.getPos(polar.rd, p.yValue);
     
                     x = p.xPos = polar.cx + py * cos(a);
                     y = p.yPos = polar.cy + py * sin(a);
                 } else {
-                    x = p.xPos = xAxis.getPosition(xLen, p.xValue);
-                    y = p.yPos = yOrg - yAxis.getPosition(yLen, p.yValue);
+                    x = p.xPos = xAxis.getPos(xLen, p.xValue);
+                    y = p.yPos = yOrg - yAxis.getPos(yLen, p.yValue);
                     if (inverted) {
-                        x = yAxis.getPosition(yLen, p.yGroup);
-                        y = yOrg - xAxis.getPosition(xLen, p.xValue);
+                        x = yAxis.getPos(yLen, p.yGroup);
+                        y = yOrg - xAxis.getPos(xLen, p.xValue);
                     }
                 }
     

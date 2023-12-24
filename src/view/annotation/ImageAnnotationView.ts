@@ -42,7 +42,7 @@ export class ImageAnnotationView extends AnnotationView<ImageAnnotation> {
         this._imageView.url = this.model.imageUrl;
         this._imageView.resize(sz.width, sz.height);
 
-        return toSize(this._imageView.getBBounds());
+        return toSize(this._imageView.getBBox());
     }
 
     protected _doLayout(param: any): void {

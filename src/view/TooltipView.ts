@@ -85,7 +85,7 @@ export class TooltipView extends RcElement {
         this._richText.setFormat(ctx.getTooltipText(series, point));
         this._richText.build(tv, NaN, NaN, null, model.getTextDomain());
 
-        const r = tv.getBBounds();
+        const r = tv.getBBox();
         let w = Math.max(model.minWidth || 0, r.width + 8 * 2);
         let h = Math.max(model.minHeight || 0, r.height + 6 * 2);
 
@@ -190,7 +190,7 @@ export class TooltipView extends RcElement {
         ];
 
         const tv = this._textView;
-        const r = tv.getBBounds();
+        const r = tv.getBBox();
 
         tv.translate(x + (w - r.width) / 2, y + (h - r.height + topHeight) / 2);
         this._top.setPath(topPath);

@@ -131,7 +131,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
             
-            p.yLow = yOrg - yAxis.getPosition(height, p.yGroup - p.yValue);
+            p.yLow = yOrg - yAxis.getPos(height, p.yGroup - p.yValue);
         }
     }
 
@@ -200,7 +200,7 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
         const yAxis = series._yAxisObj;
         const base = yAxis instanceof LinearAxis ? series.getBaseValue(yAxis) : NaN;
         const len = this.height;
-        const y = yAxis.getPosition(len, Utils.isNotEmpty(base) ? base : yAxis.axisMax());
+        const y = yAxis.getPos(len, Utils.isNotEmpty(base) ? base : yAxis.axisMax());
         const sb = new PathBuilder();
 
         if (g && (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {

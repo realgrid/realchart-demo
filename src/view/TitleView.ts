@@ -53,7 +53,7 @@ export class TitleView extends BoundableElement<Title> {
         this._richText.setFormat(model.text);
         this._richText.build(this._textView, hintWidth, hintHeight, null, null);
 
-        return toSize(this._textView.getBBounds());
+        return toSize(this._textView.getBBox());
     }
 
     protected _doLayout(): void {

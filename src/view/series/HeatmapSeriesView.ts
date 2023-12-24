@@ -11,7 +11,6 @@ import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { Align, _undef } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
-import { SvgShapes } from "../../common/impl/SvgShape";
 import { HeatmapSeries, HeatmapSeriesPoint } from "../../model/series/HeatmapSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
@@ -29,10 +28,6 @@ class CellView extends RectElement implements IPointView {
     constructor(doc: Document) {
         super(doc, SeriesView.POINT_CLASS);
     }
-
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
 }
 
 export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
@@ -68,7 +63,12 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     }
 
     protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.reveal(this);
+        // firstTime && SeriesAnimation.reveal(this);
+        firstTime && SeriesAnimation.grow(this);
+    }
+
+    protected _doViewRateChanged(rate: number): void {
+        this.$_layoutCells(this.width, this.height);
     }
 
     //-------------------------------------------------------------------------
@@ -89,7 +89,8 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     protected $_layoutCells(width: number, height: number): void {
         const series = this.model;
         const inverted = series.chart.isInverted();
-        const labels = series.pointLabel;
+        const vr = this._getViewRate();
+        // const labels = series.pointLabel;
         // const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj;
@@ -98,15 +99,16 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         const xLen = inverted ? height : width;
         const org = inverted ? 0 : height;
         // const color = new Color(this._getColor());
+        console.log('LAYOUT CELLS', vr);
 
         this._cells.forEach(cell => {
             const p = cell.point as HeatmapSeriesPoint;
 
             if (cell.setVis(!p.isNull)) {
-                const wUnit = xAxis.getUnitLength(xLen, p.xValue);
-                const hUnit = yAxis.getUnitLength(yLen, p.yValue);
-                let x = (p.xPos = xAxis.getPosition(xLen, p.xValue)) - wUnit / 2;
-                let y = (p.yPos = org - yAxis.getPosition(yLen, p.yValue)) - hUnit / 2;
+                const wUnit = xAxis.getUnitLen(xLen, p.xValue) * vr;
+                const hUnit = yAxis.getUnitLen(yLen, p.yValue) * vr;
+                let x = (p.xPos = xAxis.getPos(xLen, p.xValue)) - wUnit / 2;
+                let y = (p.yPos = org - yAxis.getPos(yLen, p.yValue)) - hUnit / 2;
                 let labelView: PointLabelView;
     
                 cell.setBounds(x, y, wUnit, hUnit);
@@ -114,13 +116,11 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
     
                 // label
                 if (labelViews && (labelView = labelViews.get(p, 0))) {
-                    const r = labelView.getBBounds();
+                    const r = labelView.getBBox();
     
                     if (inverted) {
-                        y = xLen - xAxis.getPosition(xLen, p.xValue);
-                        x = org;
-                        y -= r.height / 2;
-                        x += yAxis.getPosition(yLen, p.yValue);
+                        y = xLen - xAxis.getPos(xLen, p.xValue) - r.height / 2;
+                        x = org + yAxis.getPos(yLen, p.yValue);
                     } else {
                         x += wUnit / 2;
                         y += (hUnit - r.height) / 2;

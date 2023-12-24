@@ -61,7 +61,7 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
 
-            p.yLow = yOrg - yAxis.getPosition(yLen, p.lowValue);
+            p.yLow = yOrg - yAxis.getPos(yLen, p.lowValue);
         }
 
         // maker를 표시하지 않도록 설정해도 hit testing을 위해 감춰진(opacity=0) marker를 그려야 한다.
@@ -75,7 +75,7 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
                 let y: number;
 
                 if (inverted) {
-                    x = yAxis.getPosition(yLen, p.lowValue);
+                    x = yAxis.getPos(yLen, p.lowValue);
                     y = markers.get(i).ty;
                 } else {
                     x = p.xPos;

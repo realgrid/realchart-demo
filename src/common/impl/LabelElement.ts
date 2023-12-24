@@ -102,7 +102,7 @@ export class LabelElement extends GroupElement {
     }
 
     layout(align: Align): LabelElement {
-        const r = this._text.getBBounds();
+        const r = this._text.getBBox();
         // TODO: 높이 너비를 지정할 수 있다.
         const w = r.width;
         const h = r.height;

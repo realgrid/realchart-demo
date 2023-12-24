@@ -22,9 +22,9 @@ export class ContinuousAxisGrid extends AxisGrid {
         const axis = this.axis;
 
         if (axis.hasBreak()) {
-            return axis._ticks.filter(tick => !axis.isBreak(tick.value)).map(tick => axis.getPosition(length, tick.value));
+            return axis._ticks.filter(tick => !axis.isBreak(tick.value)).map(tick => axis.getPos(length, tick.value));
         } else {
-            return axis._ticks.map(tick => axis.getPosition(length, tick.value));
+            return axis._ticks.map(tick => axis.getPos(length, tick.value));
         }
     }
 }
@@ -736,7 +736,7 @@ export abstract class ContinuousAxis extends Axis {
         return steps;
     }
 
-    getPosition(length: number, value: number): number {
+    getPos(length: number, value: number): number {
         if (this._runBreaks) {
             const sect = this._sects.find(s => value < s.to) || this._lastSect;
             const p = sect.len * (value - sect.from) / (sect.to - sect.from);
@@ -753,7 +753,7 @@ export abstract class ContinuousAxis extends Axis {
         }
     }
 
-    getValueAt(length: number, pos: number): number {
+    valueAt(length: number, pos: number): number {
         if (this._isHorz) {
             if (this.reversed) pos = length - pos;
         } else {
@@ -775,7 +775,7 @@ export abstract class ContinuousAxis extends Axis {
         }
     }
 
-    getUnitLength(length: number, value: number): number {
+    getUnitLen(length: number, value: number): number {
         if (isNaN(this._unitLen)) {
             this._unitLen = this.$_calcUnitLength(length);
         }

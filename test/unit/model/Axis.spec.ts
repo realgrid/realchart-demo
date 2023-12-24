@@ -18,12 +18,12 @@ class AxisImpl extends Axis {
     _type(): string { return 'test'; }
     protected _doPrepareRender(): void {}
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] { return [];}
-    getPosition(length: number, value: number): number { return 0; }
-    getUnitLength(length: number): number { return 0; }
+    getPos(length: number, value: number): number { return 0; }
+    getUnitLen(length: number): number { return 0; }
     axisMin(): number { return; }
     axisMax(): number { return; }
     isContinuous(): boolean { return false }
-    getValueAt(length: number, pos: number): number { return; }
+    valueAt(length: number, pos: number): number { return; }
 }
 
 /**

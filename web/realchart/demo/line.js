@@ -18,6 +18,7 @@ const config = {
         marker: true,
         pointLabel: true,
         data: [
+            [-1.1, 7], 
             ['home', 7], 
             ['sky', 11], 
             ['카눈', 8], 

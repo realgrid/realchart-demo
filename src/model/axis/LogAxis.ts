@@ -105,9 +105,9 @@ export class LogAxis extends ContinuousAxis {
     /**
      * 내부에서는 log 값들을 사용하고...
      */
-    getPosition(length: number, value: number): number {
+    getPos(length: number, value: number): number {
         value = value > 0 ? log10(value) : -1;
-        return super.getPosition(length, value);
+        return super.getPos(length, value);
     }
 
     protected _doCalcluateRange(values: number[]): { min: number; max: number; } {

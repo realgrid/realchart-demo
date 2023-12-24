@@ -290,7 +290,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
                         // v.text = String(steps[reversed ? nStep - 1 - i : i]);
                         // v.text = String(steps[reversed ? i : nStep - 1 - i]);
                         v.setText(labels.getText(steps[reversed ? i : nStep - 1 - i]));
-                        w = Math.max(v.getBBounds().width);
+                        w = Math.max(v.getBBox().width);
                     })
                     width += w;
                 } else {
@@ -298,7 +298,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
                     this._labels.forEach((v, i) => {
                         // v.text = String(steps[reversed ? nStep - 1 - i : i]);
                         v.setText(labels.getText(steps[reversed ? nStep - 1 - i : i]));
-                        h = Math.max(v.getBBounds().height);
+                        h = Math.max(v.getBBox().height);
                     })
                     height += h;
                 }
@@ -347,7 +347,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
             y = opposite ? 0 : y + len;
             
             this._labels.forEach((v, i) => {
-                const r = v.getBBounds();
+                const r = v.getBBox();
                 x = m.getRate(steps[i]) * width;
 
                 if (v.setVis(x - r.width / 2 > prev)) {
@@ -392,7 +392,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
             x = opp ? x + len : width - m.gap + len;
 
             this._labels.forEach((v, i) => {
-                const r = v.getBBounds();
+                const r = v.getBBox();
                 const x2 =  opp ? x : x - r.width;
 
                 y = m.getRate(steps[i]) * height;
@@ -425,7 +425,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
         v.text = label.text;
         label.buildSvg(v, null, width, height, m, label._domain);
 
-        return toSize(v.getBBounds());
+        return toSize(v.getBBox());
     }
 
     //-------------------------------------------------------------------------
@@ -464,7 +464,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
 
         // 아래쪽으로 넘치지 않게 한다.
         if (!this._vertical && (label._runPos === 'left' || label._runPos === 'right') && scale.visible && scale.position === GaugeItemPosition.OPPOSITE) {
-            const r = labelView.getBBounds();
+            const r = labelView.getBBox();
             if (labelView.ty + r.height > this.height) {
                 labelView.translateY(Math.max(0, this.height - r.height));
             }
@@ -498,7 +498,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
             labelView.text = label.text;
             label.buildSvg(labelView, null, pickNum(w, wMax), pickNum(h, hMax), m, label._domain);
 
-            const rText = labelView.getBBounds();
+            const rText = labelView.getBBox();
 
             if (vert) {
                 rLabel.height = pickNum(h, rText.height);
@@ -534,7 +534,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
     protected _renderLabel(m: ValueGauge, label: LinearGaugeLabel, view: TextElement, value: number): void {
         if (view.visible) {
             const r = this._rLabel;
-            const rText = view.getBBounds();
+            const rText = view.getBBox();
             let x = r.x;
             let y = r.y;
             let w: number;

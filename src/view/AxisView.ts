@@ -69,7 +69,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
         this._richText.setFormat(model.text);
         this._richText.build(this._textView, hintWidth, hintHeight, null, null);
 
-        const sz = toSize(this._textView.getBBounds());
+        const sz = toSize(this._textView.getBBox());
 
         if (!model.axis._isHorz && this._angle !== 0) {
             const w = sz.width;
@@ -182,7 +182,7 @@ export class AxisLabelView extends LabelElement {
 
     rotatedHeight(): number {
         const d = this.rotation * DEG_RAD;
-        const r = this.getBBounds();
+        const r = this.getBBox();
 
         return Math.abs(cos(d) * r.height) + Math.abs(sin(d) * r.width);
     }
@@ -213,7 +213,7 @@ class CrosshairFlagView extends RcElement {
         if (text !== this._text.text) {
             this._text.text = text;
 
-            const r = this._text.getBBounds();
+            const r = this._text.getBBox();
             const pb = new PathBuilder();
             const w = Math.max(model.flag.minWidth || 0, r.width + 8);
 
@@ -488,7 +488,7 @@ export class AxisView extends ChartElement<Axis> {
         cv.setVis(true);
 
         cv.setText(this.model.crosshair, text);
-        const r = cv.getBBounds();
+        const r = cv.getBBox();
 
         if (this.model._isHorz) {
             cv.translate(pos - r.width / 2, this.model.tick.length);
@@ -857,15 +857,15 @@ export class AxisView extends ChartElement<Axis> {
 
             // [주의] 끝 차투리는 무시한다.
             if (j === i + inc) {
-                if (a === 0 && views[i].getBBounds().width >= w) {
+                if (a === 0 && views[i].getBBox().width >= w) {
                     overalpped = true;
                     break;
-                } else if (acute && views[i].getBBounds().width * cos(arad) >= w) {
+                } else if (acute && views[i].getBBox().width * cos(arad) >= w) {
                     overalpped = true;
                     break;
                 } 
                 // 30도 이상의 둔각이면 text 높이를 기준으로 한다.
-                else if  (a !== 0 && views[i].getBBounds().height >= w) {
+                else if  (a !== 0 && views[i].getBBox().height >= w) {
                 // } else if  (a !== 0 && views[i].getBBounds().width * cos(arad) >= w) {
                 // } else if  (a !== 0 && (views[i].getBBounds().width + views[i].getBBounds().height) * cos(arad) >= w) {
                     overalpped = true;
@@ -978,7 +978,7 @@ export class AxisView extends ChartElement<Axis> {
             }
 
             views.forEach(v => {
-                pts[v.row] = Math.max(pts[v.row], rotated ? v.rotatedHeight() : v.getBBounds().height);
+                pts[v.row] = Math.max(pts[v.row], rotated ? v.rotatedHeight() : v.getBBox().height);
             })
 
             pts.unshift(0);
@@ -994,9 +994,9 @@ export class AxisView extends ChartElement<Axis> {
                     sz = Math.max(sz, views[i].rotatedHeight());
                 }
             } else {
-                sz = views[0].getBBounds().height;
+                sz = views[0].getBBox().height;
                 for (let i = 1; i < views.length; i++) {
-                    sz = Math.max(sz, views[i].getBBounds().height);
+                    sz = Math.max(sz, views[i].getBBox().height);
                 }
             }
         }
@@ -1015,7 +1015,7 @@ export class AxisView extends ChartElement<Axis> {
                 h += axis.getLabelLength(height, views[i].value);
             }
 
-            if (views[i].getBBounds().height >= h) {
+            if (views[i].getBBox().height >= h) {
                 return true;
             }
         }
@@ -1040,10 +1040,10 @@ export class AxisView extends ChartElement<Axis> {
             }
         }
 
-        let sz = views[0].getBBounds().width;
+        let sz = views[0].getBBox().width;
 
         for (let i = 1; i < views.length; i++) {
-            sz = Math.max(sz, views[i].getBBounds().width);
+            sz = Math.max(sz, views[i].getBBox().width);
         }
         return sz;
     }
@@ -1056,7 +1056,7 @@ export class AxisView extends ChartElement<Axis> {
             if (v.visible) {
                 const rot = v.rotation;
                 const a = rot * DEG_RAD;
-                const r = v.getBBounds();
+                const r = v.getBBox();
                 let x = ticks[v.index].pos;
                 let y = opp ? (h - gap - r.height - pts[v.row]) : (gap + pts[v.row]);
     
@@ -1093,7 +1093,7 @@ export class AxisView extends ChartElement<Axis> {
     
         views.forEach((v, i) => {
             if (v.visible) {
-                const r = v.getBBounds();
+                const r = v.getBBox();
                 const x2 = opp ? x : between ? (w - r.width) / 2 : x - r.width;
     
                 v.setContrast(null).layout(align).translate(x2, h - ticks[i].pos - r.height / 2);

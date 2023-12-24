@@ -117,11 +117,11 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
 
         this._sectors.forEach((view, i) => {
             const p = view.point;
-            const yVal = yAxis.getPosition(polar.rd, p.yValue) * vr;
-            let yGroup = yAxis.getPosition(polar.rd, p.yGroup) * vr;
-            const wUnit = xAxis.getUnitLength(totalAngle, p.xValue);
+            const yVal = yAxis.getPos(polar.rd, p.yValue) * vr;
+            let yGroup = yAxis.getPos(polar.rd, p.yGroup) * vr;
+            const wUnit = xAxis.getUnitLen(totalAngle, p.xValue);
             const wPoint = series.getPointWidth(wUnit);
-            let a = polar.start + xAxis.getPosition(totalAngle, p.xValue);
+            let a = polar.start + xAxis.getPos(totalAngle, p.xValue);
     
             view.setSector({
                 cx: polar.cx, 
@@ -140,7 +140,7 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
 
             // label
             if (labelViews && (labelInfo.labelView = labelViews.get(p, 0))) {
-                const r = labelInfo.labelView.getBBounds();
+                const r = labelInfo.labelView.getBBox();
 
                 labelInfo.labelView.layout(Align.CENTER).translate(x - r.width / 2, yGroup - r.height / 2);
             }

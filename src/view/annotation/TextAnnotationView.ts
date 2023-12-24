@@ -54,7 +54,7 @@ export class TextAnnotationView extends AnnotationView<TextAnnotation> {
         this._richText.setFormat(model.text);
         this._richText.build(tv, hintWidth, hintHeight, null, model._domain);
 
-        return toSize(this._textView.getBBounds());
+        return toSize(this._textView.getBBox());
     }
 
     protected _doLayout(param: any): void {

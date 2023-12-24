@@ -49,6 +49,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
             if (this._polar) {
                 SeriesAnimation.grow(this);
             } else {
+                // SeriesAnimation.grow(this);
                 SeriesAnimation.reveal(this);
             }
         }
@@ -82,8 +83,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
         const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj;
         const polar = this._polar = (series.chart as Chart).body.getPolar(xAxis);
-        const polared = !!polar;
-        const vr = polar ? this._getViewRate() : 1;
+        const vr = this._getViewRate();
         const jitterX = series.jitterX;
         const jitterY = series.jitterY;
         const labels = series.pointLabel;
@@ -110,21 +110,21 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                 let y: number;
 
                 if (polar) {
-                    const a = polar.start + xAxis.getPosition(PI_2, xJitter);
-                    const py = yAxis.getPosition(polar.rd, yJitter) * vr;
+                    const a = polar.start + xAxis.getPos(PI_2, xJitter);
+                    const py = yAxis.getPos(polar.rd, yJitter) * vr;
     
                     x = p.xPos = polar.cx + py * cos(a);
                     y = p.yPos = polar.cy + py * sin(a);
                 } else {
-                    x = p.xPos = xAxis.getPosition(xLen, xJitter);
-                    y = p.yPos = yOrg - yAxis.getPosition(yLen, yJitter);
+                    x = p.xPos = xAxis.getPos(xLen, xJitter);
+                    y = p.yPos = yOrg - yAxis.getPos(yLen, yJitter);
                     if (inverted) {
-                        x = yAxis.getPosition(yLen, yJitter);
-                        y = yOrg - xAxis.getPosition(xLen, xJitter);
+                        x = yAxis.getPos(yLen, yJitter);
+                        y = yOrg - xAxis.getPos(xLen, xJitter);
                     }
                 }
 
-                if (mv.setVis(polared || !needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
+                if (mv.setVis(!!polar || !needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
                     switch (s) {
                         case 'square':
                         case 'diamond':

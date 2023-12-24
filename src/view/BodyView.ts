@@ -412,14 +412,14 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
         const label = m.label;
         const line = this._line as LineElement;
         const labelView = this._labelView.setVis(label.visible) && this._labelView;
-        const rLabel = labelView.getBBounds();
+        const rLabel = labelView.getBBox();
         const xOff = pickNum(label.offsetX, 0);
         const yOff = pickNum(label.offsetY, 0);
         let x: number;
         let y: number;
 
         if (this.vertical()) {
-            const p = m.axis.getPosition(width, m.value);
+            const p = m.axis.getPos(width, m.value);
 
             if (labelView.setVis(line.setVis(!isNaN(p)))) {
                 line.setVLineC(p, 0, height);
@@ -453,7 +453,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
                 }
             }
         } else {
-            const p = height - m.axis.getPosition(height, m.value);
+            const p = height - m.axis.getPos(height, m.value);
 
             if (labelView.setVis(line.setVis(!isNaN(p)))) {
                 line.setHLineC(p, 0, width);
@@ -493,7 +493,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
         const line = this._line as ArcPolyElement;
         const labelView = this._labelView.setVis(m.label.visible) && this._labelView;
         const start = m.axis.getStartAngle();
-        const p = m.axis.getPosition(polar.rd, m.value);
+        const p = m.axis.getPos(polar.rd, m.value);
 
         line.setArc(polar.cx, polar.cy, p, start, m.axis.getTotalAngle(), false);
         line.setStyle(FILL, 'none');
@@ -536,13 +536,13 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
         const start = Math.min(m.startValue, m.endValue);
         const end = Math.max(m.startValue, m.endValue);
         const labelView = this._labelView.setVis(label.visible) && this._labelView;
-        const rLabel = labelView.getBBounds();
+        const rLabel = labelView.getBBox();
         const xOff = pickNum(label.offsetX, 0);
         const yOff = pickNum(label.offsetY, 0);
 
         if (this.vertical()) {
-            const x1 = m.axis.getPosition(width, start);
-            const x2 = m.axis.getPosition(width, end);
+            const x1 = m.axis.getPos(width, start);
+            const x2 = m.axis.getPos(width, end);
 
             if (!isNaN(x1) && !isNaN(x2) && labelView.setVis(box.setVis(x2 !== x1))) {
                 let x: number;
@@ -576,8 +576,8 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
                 labelView && labelView.translate(Math.max(0, Math.min(width, x)), y);
             }
         } else {
-            const y1 = height - m.axis.getPosition(height, start);
-            const y2 = height - m.axis.getPosition(height, end);
+            const y1 = height - m.axis.getPos(height, start);
+            const y2 = height - m.axis.getPos(height, end);
 
             if (!isNaN(y1) && !isNaN(y2) && labelView.setVis(box.setVis(y1 !== y2))) {
                 let x: number;
@@ -620,8 +620,8 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
         const sector = this._box as SectorElement;
         const labelView = this._labelView.setVis(m.label.visible) && this._labelView;
         const start = m.axis.getStartAngle();
-        const p1 = m.axis.getPosition(polar.rd, m.startValue);
-        const p2 = m.axis.getPosition(polar.rd, m.endValue);
+        const p1 = m.axis.getPos(polar.rd, m.startValue);
+        const p2 = m.axis.getPos(polar.rd, m.endValue);
 
         // line.setArc(polar.cx, polar.cy, p, start, m.axis.getTotalAngle(), true);
         // line.setStyle(FILL, 'none');
@@ -678,13 +678,13 @@ export class AxisGridRowContainer extends LayerElement {
             const row = rows[i];
 
             if (row.axis._isHorz) {
-                const x1 = row.axis.getPosition(width, row.from);
-                const x2 = row.axis.getPosition(width, row.to);
+                const x1 = row.axis.getPos(width, row.from);
+                const x2 = row.axis.getPos(width, row.to);
 
                 v.setPath(SvgShapes.rectangle(x1, 0, x2 - x1, height));
             } else {
-                const y1 = row.axis.getPosition(height, row.from);
-                const y2 = row.axis.getPosition(height, row.to);
+                const y1 = row.axis.getPos(height, row.from);
+                const y2 = row.axis.getPos(height, row.to);
 
                 v.setPath(SvgShapes.rectangle(0, height - y1, width, y1 - y2));
             }
@@ -796,12 +796,12 @@ class CrosshairView extends PathElement {
 
             // TODO: scrolling
             if (xVal >= 0) {
-                const p = axis.getPosition(len, xVal);
-                const w = axis.getUnitLength(len, xVal);
+                const p = axis.getPos(len, xVal);
+                const w = axis.getUnitLen(len, xVal);
 
                 if (isNaN(p)) {
                     debugger;
-                    console.log(axis.getPosition(len, xVal));
+                    console.log(axis.getPos(len, xVal));
                 }
 
                 if (horz) {
@@ -1066,8 +1066,8 @@ export class BodyView extends ChartElement<Body> {
         const inverted = chart.isInverted();
         const xAxis = chart.xAxis;
         const len = inverted ? this.height : this.width;
-        const v1 = xAxis.getValueAt(len, inverted ? len - y2 : x1);
-        const v2 = xAxis.getValueAt(len, inverted ? len - y1 : x2);
+        const v1 = xAxis.valueAt(len, inverted ? len - y2 : x1);
+        const v2 = xAxis.valueAt(len, inverted ? len - y1 : x2);
 
         if (xAxis.zoom(v1, v2)) {
             this._zoomRequested = true;
@@ -1206,7 +1206,7 @@ export class BodyView extends ChartElement<Body> {
 
         // zoom button
         if (this._zoomButton.visible) {
-            this._zoomButton.translate(w - this._zoomButton.getBBounds().width - 10, 10);
+            this._zoomButton.translate(w - this._zoomButton.getBBox().width - 10, 10);
         }
     }
 

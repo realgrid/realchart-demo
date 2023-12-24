@@ -342,6 +342,10 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         return null;
     }
 
+    defaultAnimation(): string {
+        return 'reveal';
+    }
+
     setViewRate(rate: number): void {
         if ((!isNaN(rate) || !isNaN(this._viewRate)) && rate !== this._viewRate) {
             this._viewRate = rate;
@@ -564,7 +568,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         const m = this.model;
         const xAxis = m._xAxisObj;
         const yAxis = m._yAxisObj;
-        const pts = m.trendline._points.map(pt => ({x: xAxis.getPosition(xAxis._vlen, pt.x), y: yAxis._vlen - yAxis.getPosition(yAxis._vlen, pt.y)}));
+        const pts = m.trendline._points.map(pt => ({x: xAxis.getPos(xAxis._vlen, pt.x), y: yAxis._vlen - yAxis.getPos(yAxis._vlen, pt.y)}));
 
         if (this._trendLineView.setVis(pts.length > 1)) {
             const sb = new PathBuilder();
@@ -584,7 +588,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         }
 
         const below = info.reversed ? hPoint <= 0 : hPoint < 0;
-        const r = labelView.getBBounds();
+        const r = labelView.getBBox();
         let inner = true;
 
         if (inverted) {
@@ -669,8 +673,8 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         const isX = rangeAxis === 'x';
         const axis = isX ? this.model._xAxisObj : this.model._yAxisObj;
         const reversed = axis.reversed;
-        const p1 = axis.getPosition(isX ? w : h, Math.max(axis.axisMin(), range.fromValue));
-        const p2 = axis.getPosition(isX ? w : h, Math.min(axis.axisMax(), range.toValue));
+        const p1 = axis.getPos(isX ? w : h, Math.max(axis.axisMin(), range.fromValue));
+        const p2 = axis.getPos(isX ? w : h, Math.min(axis.axisMax(), range.toValue));
 
         if (inverted) {
             if (isX) {
@@ -807,9 +811,9 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const xLen = inverted ? height : width;
         const yOrg = inverted ? 0 : height;
         const min = yAxis.axisMin();
-        const yMin = yAxis.getPosition(yLen, min);
+        const yMin = yAxis.getPos(yLen, min);
         const base = series.getBaseValue(yAxis);
-        const yBase = pickNum(yAxis.getPosition(yLen, Math.max(min, base)), yMin);
+        const yBase = pickNum(yAxis.getPos(yLen, Math.max(min, base)), yMin);
         const based = !isNaN(base);
         const info: LabelLayoutInfo = labelViews && assign(this._labelInfo, {
             inverted,
@@ -822,17 +826,17 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
             const p = (pv as any as IPointView).point;
 
             if (pv.setVis(!p.isNull)) {
-                const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
+                const wUnit = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
                 const wPoint = series.getPointWidth(wUnit);
-                const yVal = yAxis.getPosition(yLen, p.yValue) - yBase;
-                const yGroup = (yAxis.getPosition(yLen, p.yGroup) - yBase - yVal) * vr;
+                const yVal = yAxis.getPos(yLen, p.yValue) - yBase;
+                const yGroup = (yAxis.getPos(yLen, p.yGroup) - yBase - yVal) * vr;
                 const hPoint = yVal * vr;
                 let x: number;
                 let y: number;
 
-                x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
+                x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
                 p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-                p.yPos = y = yOrg - yAxis.getPosition(yLen, p.yGroup) * vr;
+                p.yPos = y = yOrg - yAxis.getPos(yLen, p.yGroup) * vr;
 
                 // 아래에서 위로 올라가는 animation을 위해 기준 지점을 전달한다.
                 this._layoutPointView(pv, i, x, yOrg - yBase - yGroup, wPoint, hPoint);
@@ -840,14 +844,14 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
                 // [주의] tooltip이 p.xPos, p.yPos를 사용한다. label이 미표시여도 계산한다.
                 if (inverted) {
                     // y = xLen - xAxis.getPosition(xLen, p.xValue) - wUnit / 2; // 위에서 아래로 내려갈 때
-                    y = xLen - xAxis.getPosition(xLen, p.xValue) + wUnit / 2;
+                    y = xLen - xAxis.getPos(xLen, p.xValue) + wUnit / 2;
                     x = yOrg;
                     p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
                     // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
                     if (based) {
-                        p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr; // stack/fill일 때 org와 다르다.
+                        p.xPos = x += yAxis.getPos(yLen, p.yGroup) * vr; // stack/fill일 때 org와 다르다.
                     } else {
-                        p.xPos = x += yAxis.getPosition(yLen, p.yGroup * vr);
+                        p.xPos = x += yAxis.getPos(yLen, p.yGroup * vr);
                     }
                 }
 
@@ -894,26 +898,26 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
             const p = (pv as any as IPointView).point;
 
             if (pv.setVis(!p.isNull)) {
-                const wUnit = xAxis.getUnitLength(xLen, p.xValue) * (1 - wPad);
+                const wUnit = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
                 const wPoint = series.getPointWidth(wUnit);
-                const yVal = yAxis.getPosition(yLen, p.yValue);
-                const hPoint = (yVal - yAxis.getPosition(yLen, this._getLowValue(p))) * vr;
-                let x = xAxis.getPosition(xLen, p.xValue) - wUnit / 2;
+                const yVal = yAxis.getPos(yLen, p.yValue);
+                const hPoint = (yVal - yAxis.getPos(yLen, this._getLowValue(p))) * vr;
+                let x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
                 let y = org;
 
                 p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-                p.yPos = y -= yAxis.getPosition(yLen, p.yGroup) * vr;
+                p.yPos = y -= yAxis.getPos(yLen, p.yGroup) * vr;
 
                 this._layoutPointView(pv, i, x, y, wPoint, hPoint);
 
                 // [주의] tooltip이 p.xPos, p.yPos를 사용한다. label이 미표시여도 계산한다.
                 if (inverted) {
                     // y = xLen - xAxis.getPosition(xLen, p.xVAlue) - wUnit / 2; // 위에서 아래로 내려갈 때
-                    y = xLen - xAxis.getPosition(xLen, p.xValue) + wUnit / 2;
+                    y = xLen - xAxis.getPos(xLen, p.xValue) + wUnit / 2;
                     x = org;
                     // p.yPos = y += series.getPointPos(wUnit) + wPoint / 2;
                     p.yPos = y -= series.getPointPos(wUnit) + wPoint / 2;
-                    p.xPos = x += yAxis.getPosition(yLen, p.yGroup) * vr;
+                    p.xPos = x += yAxis.getPos(yLen, p.yGroup) * vr;
                 }
 
                 // labels
@@ -993,7 +997,7 @@ export abstract class MarkerSeriesView<T extends MarkerSeries> extends SeriesVie
     protected abstract _getAutoPos(overflowed: boolean): PointItemPosition;
 
     protected _layoutLabelView(labelView: PointLabelView, pos: PointItemPosition, off: number, radius: number, x: number, y: number): void {
-        let r = labelView.getBBounds();
+        let r = labelView.getBBox();
 
         if (pos === PointItemPosition.AUTO) {
             pos = this._getAutoPos(r.width >= radius * 2 * 0.9);

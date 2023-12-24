@@ -51,15 +51,15 @@ export interface IAxis {
     /**
      * 값(축 상 위치)에 해당하는 픽셀 위치.
      */
-    getPosition(length: number, value: number): number;
-    getValueAt(length: number, pos: number): number;
-    getAxisValueAt(length: number, pos: number): any;
+    getPos(length: number, value: number): number;
+    valueAt(length: number, pos: number): number;
+    axisValueAt(length: number, pos: number): any;
     /**
      * 값(축 상 위치)에 해당하는 축 단위 픽셀 크기. 
      * <br>
      * 값에 따라 크기가 다를 수도 있다.
      */
-    getUnitLength(length: number, value: number): number;
+    getUnitLen(length: number, value: number): number;
 
     value2Tooltip(value: number): any;
 
@@ -1194,10 +1194,10 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     abstract isContinuous(): boolean;
-    abstract getValueAt(length: number, pos: number): number;
+    abstract valueAt(length: number, pos: number): number;
 
-    getAxisValueAt(length: number, pos: number): any {
-        return this.getValueAt(length, pos);
+    axisValueAt(length: number, pos: number): any {
+        return this.valueAt(length, pos);
     }
 
     getStartAngle(): number {
@@ -1332,7 +1332,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     calcPoints(length: number, phase: number): void {
-        this._ticks.forEach(t => t.pos = this.getPosition(length, t.value));
+        this._ticks.forEach(t => t.pos = this.getPos(length, t.value));
     }
 
     /**
@@ -1343,11 +1343,11 @@ export abstract class Axis extends ChartItem implements IAxis {
      * @param length axis view length
      * @param value 값
      */
-    abstract getPosition(length: number, value: number): number;
-    abstract getUnitLength(length: number, value: number): number;
+    abstract getPos(length: number, value: number): number;
+    abstract getUnitLen(length: number, value: number): number;
 
     getLabelLength(length: number, value: number): number {
-        return this.getUnitLength(length, value);
+        return this.getUnitLen(length, value);
     }
 
     getValue(value: any): number {

@@ -109,7 +109,7 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
             // this._labels.get(0).text = String(g.maxValue);
             this._labels.get(0).setText(String(g.maxValue));
 
-            const rd = rd2 + this._labels.get(0).getBBounds().height * 0.2 * opp;
+            const rd = rd2 + this._labels.get(0).getBBox().height * 0.2 * opp;
 
             this._labels.forEach((v, i, count) => {
                 const a = m.getRate(steps[i]) * sweep + start;
@@ -117,7 +117,7 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
                 // v.text = String(fixnum(g.minValue + m.getRate(steps[i]) * sum));
                 v.setText(String(fixnum(g.minValue + m.getRate(steps[i]) * sum)));
 
-                const r = v.getBBounds();
+                const r = v.getBBox();
 
                 x2 = cx + cos(a) * (rd + r.width / 2 * opp) - r.width / 2;
                 y2 = cy + sin(a) * (rd + r.height / 2 * opp) - r.height / 2;
@@ -417,7 +417,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
                 // (this._getGroupView() as CircleGaugeGroupView).layoutChildLabel(this);
                 this.$_layoutGroupedLabel(m, tv, exts);
             } else {
-                const r = tv.getBBounds();
+                const r = tv.getBBox();
                 const off = m.label.getOffset(this.width, this.height);
     
                 tv.translate(center.x + off.x, center.y - r.height / 2 + off.y);
@@ -492,8 +492,8 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     }
 
     private $_layoutGroupedLabel(m: CircleGauge, tv: TextElement, exts: ICircularGaugeExtents): void {
-        const rText = tv.getBBounds();
-        const rBack = this._rimView.getBBounds();
+        const rText = tv.getBBox();
+        const rBack = this._rimView.getBBox();
         // const off = m.label.getOffset(this.width, this.height);
         const gap = +(m.group as CircleGaugeGroup).labelGap || 0;
 

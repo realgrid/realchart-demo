@@ -538,8 +538,8 @@ export class TimeAxis extends ContinuousAxis {
         return new Date(value);
     }
 
-    getAxisValueAt(length: number, pos: number): any {
-        return new Date(this.getValueAt(length, pos));
+    axisValueAt(length: number, pos: number): any {
+        return new Date(this.valueAt(length, pos));
     }
 
     value2Tooltip(value: number): any {

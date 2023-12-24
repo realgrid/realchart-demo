@@ -218,7 +218,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         let labelView: PointLabelView;
 
         if (this._textView.visible) {
-            const tr = this._textView.getBBounds();
+            const tr = this._textView.getBBox();
             this._textView.translate(cx, cy - tr.height / 2);
         }
 
@@ -287,7 +287,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     }
     
     private $_layoutLabel(p: PieSeriesPoint, view: PointLabelView, line: PointLabelLine, off: number, dist: number, sliceOff: number, cw: boolean): void {
-        const r = view.getBBounds();
+        const r = view.getBBox();
         const a = p.startAngle + p.angle / 2;
         let cx = this._cx;
         let cy = this._cy;
@@ -330,7 +330,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     }
 
     private $_layoutLabelInner(p: PieSeriesPoint, view: PointLabelView, off: number, dist: number, sliceOff: number): void {
-        const r = view.getBBounds();
+        const r = view.getBBox();
         const inner = this._rdInner * this._rd;
         const rd = inner > 0 ? inner + (this._rd - inner) / 2 : this._rd * 0.7;
         const a = p.startAngle + p.angle / 2;

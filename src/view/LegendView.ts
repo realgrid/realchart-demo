@@ -64,18 +64,18 @@ export class LegendItemView extends ChartElement<LegendItem> {
 
         this._label.text = model.text();
 
-        const rMarker = this._marker.setVis(model.legend.markerVisible) ? this._marker.getBBounds() : Rectangle.Empty;
-        const sz = toSize(this._label.getBBounds());
+        const rMarker = this._marker.setVis(model.legend.markerVisible) ? this._marker.getBBox() : Rectangle.Empty;
+        const sz = toSize(this._label.getBBox());
         this._gap = pickNum(model.legend.markerGap, 0);
 
         return Size.create(rMarker.width + this._gap + sz.width, Math.max(rMarker.height, sz.height));
     }
 
     protected _doLayout(): void {
-        const rMarker = this._marker.visible ? this._marker.getBBounds() : Rectangle.Empty;
+        const rMarker = this._marker.visible ? this._marker.getBBox() : Rectangle.Empty;
 
         this._marker.visible && this._marker.translate(0, (this.height - rMarker.height) / 2);
-        this._label.translate(rMarker.width + this._gap, (this.height - this._label.getBBounds().height) / 2);
+        this._label.translate(rMarker.width + this._gap, (this.height - this._label.getBBox().height) / 2);
     }
 }
 
