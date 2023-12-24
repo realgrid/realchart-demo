@@ -298,19 +298,24 @@ export class CategoryAxis extends Axis {
         const steps = (this.tick as CategoryAxisTick).step || 1;
         const ticks: IAxisTick[] = [];
 
-        // [주의] 0보다 작을 수 없다.
-        min = Math.max(0, Math.floor(min));
-        max = Math.max(min, Math.ceil(max));
+        min = Math.floor(min + 0.5);
+        max = Math.ceil(max - 0.5);
 
-        while (cats.length <= max) {
-            cats.push(String(cats.length));
+        let len = max - min + 1;
+
+        for (let i = -1; i >= min; i--) {
+            cats.unshift(String(i));
+            weights.unshift(1);
+        }
+        while (cats.length < len) {
+            cats.push(String(cats.length + min));
             weights.push(1);
         }
 
-        cats = this._cats = cats.slice(min, max + 1);
-        weights = weights.slice(min, max + 1);
+        cats = this._cats = cats.slice(0, len);
+        weights = weights.slice(0, len);
 
-        const len = this._len = this._minPad + this._maxPad + weights.reduce((a, c) => a + c, 0);
+        len = this._len = this._minPad + this._maxPad + weights.reduce((a, c) => a + c, 0);
 
         if (len > 0) {
             // const step = this._step = this.categoryStep || 1;
@@ -378,10 +383,9 @@ export class CategoryAxis extends Axis {
     }
 
     getPosition(length: number, value: number): number {
-        value -= this._min;
-        value += 0.5;
-        const v = Math.floor(value);
-        const p = this._pts[v + 1] + (this._pts[v + 2] - this._pts[v + 1]) * (value - v);
+        const pts = this._pts;
+        const v = Math.floor(value - this._min + 0.5);// (value - this._min) >> 0;
+        const p = pts[v + 1] + (pts[v + 2] - pts[v + 1]) * (value - Math.floor(value + 0.5) + 0.5);
 
         // if (this._isPolar) {
         //     // length는 원주, 각도를 리턴한다.
