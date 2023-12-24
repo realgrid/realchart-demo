@@ -8,10 +8,26 @@
 
 import { isArray, isObject, pickNum, pickNum3, assign, ceil, floor, log10 } from "../../common/Common";
 import { IPercentSize, RtPercentSize, assert, calcPercent, fixnum, parsePercentSize } from "../../common/Types";
-import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick } from "../Axis";
+import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick, AxisGrid } from "../Axis";
 import { IChart } from "../Chart";
 import { DataPoint } from "../DataPoint";
 import { SeriesGroup, SeriesGroupLayout } from "../Series";
+
+export class ContinuousAxisGrid extends AxisGrid {
+
+    //-------------------------------------------------------------------------
+    // overriden methods
+    //-------------------------------------------------------------------------
+    getPoints(length: number): number[] {
+        const axis = this.axis;
+
+        if (axis.hasBreak()) {
+            return axis._ticks.filter(tick => !axis.isBreak(tick.value)).map(tick => axis.getPosition(length, tick.value));
+        } else {
+            return axis._ticks.map(tick => axis.getPosition(length, tick.value));
+        }
+    }
+}
 
 export class ContinuousAxisTick extends AxisTick {
 
@@ -529,6 +545,10 @@ export abstract class ContinuousAxis extends Axis {
 
     isBased(): boolean {
         return !!(this.tick as ContinuousAxisTick)._baseAxis;
+    }
+
+    protected _createGrid(): AxisGrid {
+        return new ContinuousAxisGrid(this);
     }
 
     protected _createTickModel(): AxisTick {

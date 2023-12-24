@@ -8,11 +8,11 @@
 
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { Axis, AxisLabel, AxisTick, IAxisTick } from '../../../src/model/Axis';
-import { CategoryAxisTick } from '../../../src/model/axis/CategoryAxis';
+import { Axis, AxisGrid, AxisLabel, AxisTick, IAxisTick } from '../../../src/model/Axis';
 
 class AxisImpl extends Axis {
 
+    protected _createGrid(): AxisGrid { return }
     protected _createTickModel(): AxisTick { return }
     protected _createLabelModel(): AxisLabel { return }
     _type(): string { return 'test'; }

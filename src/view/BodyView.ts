@@ -419,7 +419,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
         let y: number;
 
         if (this.vertical()) {
-            const p = m.axis.getPosition(width, m.value, true);
+            const p = m.axis.getPosition(width, m.value);
 
             if (labelView.setVis(line.setVis(!isNaN(p)))) {
                 line.setVLineC(p, 0, height);
@@ -453,7 +453,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
                 }
             }
         } else {
-            const p = height - m.axis.getPosition(height, m.value, true);
+            const p = height - m.axis.getPosition(height, m.value);
 
             if (labelView.setVis(line.setVis(!isNaN(p)))) {
                 line.setHLineC(p, 0, width);
@@ -493,9 +493,9 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
         const line = this._line as ArcPolyElement;
         const labelView = this._labelView.setVis(m.label.visible) && this._labelView;
         const start = m.axis.getStartAngle();
-        const p = m.axis.getPosition(polar.rd, m.value, true);
+        const p = m.axis.getPosition(polar.rd, m.value);
 
-        line.setArc(polar.cx, polar.cy, p, start, m.axis.getTotalAngle(), true);
+        line.setArc(polar.cx, polar.cy, p, start, m.axis.getTotalAngle(), false);
         line.setStyle(FILL, 'none');
 
         if (labelView) {
@@ -541,8 +541,8 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
         const yOff = pickNum(label.offsetY, 0);
 
         if (this.vertical()) {
-            const x1 = m.axis.getPosition(width, start, true);
-            const x2 = m.axis.getPosition(width, end, true);
+            const x1 = m.axis.getPosition(width, start);
+            const x2 = m.axis.getPosition(width, end);
 
             if (!isNaN(x1) && !isNaN(x2) && labelView.setVis(box.setVis(x2 !== x1))) {
                 let x: number;
@@ -576,8 +576,8 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
                 labelView && labelView.translate(Math.max(0, Math.min(width, x)), y);
             }
         } else {
-            const y1 = height - m.axis.getPosition(height, start, true);
-            const y2 = height - m.axis.getPosition(height, end, true);
+            const y1 = height - m.axis.getPosition(height, start);
+            const y2 = height - m.axis.getPosition(height, end);
 
             if (!isNaN(y1) && !isNaN(y2) && labelView.setVis(box.setVis(y1 !== y2))) {
                 let x: number;
@@ -620,8 +620,8 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
         const sector = this._box as SectorElement;
         const labelView = this._labelView.setVis(m.label.visible) && this._labelView;
         const start = m.axis.getStartAngle();
-        const p1 = m.axis.getPosition(polar.rd, m.startValue, true);
-        const p2 = m.axis.getPosition(polar.rd, m.endValue, true);
+        const p1 = m.axis.getPosition(polar.rd, m.startValue);
+        const p2 = m.axis.getPosition(polar.rd, m.endValue);
 
         // line.setArc(polar.cx, polar.cy, p, start, m.axis.getTotalAngle(), true);
         // line.setStyle(FILL, 'none');
@@ -678,13 +678,13 @@ export class AxisGridRowContainer extends LayerElement {
             const row = rows[i];
 
             if (row.axis._isHorz) {
-                const x1 = row.axis.getPosition(width, row.from, false);
-                const x2 = row.axis.getPosition(width, row.to, false);
+                const x1 = row.axis.getPosition(width, row.from);
+                const x2 = row.axis.getPosition(width, row.to);
 
                 v.setPath(SvgShapes.rectangle(x1, 0, x2 - x1, height));
             } else {
-                const y1 = row.axis.getPosition(height, row.from, false);
-                const y2 = row.axis.getPosition(height, row.to, false);
+                const y1 = row.axis.getPosition(height, row.from);
+                const y2 = row.axis.getPosition(height, row.to);
 
                 v.setPath(SvgShapes.rectangle(0, height - y1, width, y1 - y2));
             }

@@ -8,7 +8,7 @@
 
 import { expect } from 'chai';
 import { beforeEach, describe, it } from 'mocha';
-import { Axis, AxisLabel, AxisTick, IAxisTick } from '../../../src/model/Axis';
+import { Axis, AxisGrid, AxisLabel, AxisTick, IAxisTick } from '../../../src/model/Axis';
 import { Tester } from '../Tester';
 import { Chart } from '../../../src/model/Chart';
 import { Utils } from '../../../src/common/Utils';
@@ -67,6 +67,7 @@ const source = {
 }
 
 class AxisImpl extends Axis {
+    protected _createGrid(): AxisGrid { return }
     protected _createTickModel(): AxisTick { return }
     protected _createLabelModel(): AxisLabel { return new LinearAxisLabel(this); }
     _type(): string { return type; }

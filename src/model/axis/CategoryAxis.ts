@@ -6,12 +6,11 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isObject, isString, pickNum, pickNum3, pickProp } from "../../common/Common";
+import { isArray, isNumber, isObject, pickNum, pickNum3, pickProp } from "../../common/Common";
 import { DEG_RAD, PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { Axis, AxisGrid, AxisTick, AxisLabel, IAxisTick } from "../Axis";
 import { IChart } from "../Chart";
-import { DataPoint } from "../DataPoint";
 import { IPlottingItem } from "../Series";
 
 export enum CategoryTickPosition {
@@ -71,6 +70,9 @@ class CategoryAxisGrid extends AxisGrid {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
     getPoints(): number[] {
         const apts = (this.axis as CategoryAxis)._pts;
         const n = (this.axis as CategoryAxis)._ticks.length;
@@ -94,7 +96,7 @@ class CategoryAxisGrid extends AxisGrid {
  * 3. 각 카테고리 영역의 크기는 {@link categoryStep} 설정값에 따라 기본적으로 동일하게 배분되고, 
  *    카테고리 영역 중간점이 카테고리 값의 위치가 된다.
  *    {@link categories} 속성으로 카테고리를 지정할 때, 상대적 크기를 width로 지정해서 각 카테고리의 값을 다르게 표시할 수 있다.
- * 4. tick mark나 label은 기본적으로 카테고리 값 위치에 표시된다.
+ * 4. tick mark나 label은 기본적으로 카테고리 값 위치(카테고리 중앙)에 표시된다.
  *    tick mark는 카테고리 양끝에 표시될 수 있다.
  * 
  * @config chart.xAxis[type=category]
@@ -296,8 +298,9 @@ export class CategoryAxis extends Axis {
         const steps = (this.tick as CategoryAxisTick).step || 1;
         const ticks: IAxisTick[] = [];
 
-        min = Math.floor(min);
-        max = Math.ceil(max);
+        // [주의] 0보다 작을 수 없다.
+        min = Math.max(0, Math.floor(min));
+        max = Math.max(min, Math.ceil(max));
 
         while (cats.length <= max) {
             cats.push(String(cats.length));
@@ -374,10 +377,9 @@ export class CategoryAxis extends Axis {
         }
     }
 
-    getPosition(length: number, value: number, point = true): number {
+    getPosition(length: number, value: number): number {
         value -= this._min;
-        // data point view는 카테고리 중앙을 기준으로 표시한다.
-        if (point) value += 0.5;//this._step / 2;
+        value += 0.5;
         const v = Math.floor(value);
         const p = this._pts[v + 1] + (this._pts[v + 2] - this._pts[v + 1]) * (value - v);
 
@@ -395,13 +397,13 @@ export class CategoryAxis extends Axis {
         }
         for (let i = 1; i < this._pts.length - 1; i++) {
             if (pos >= this._pts[i] && pos < this._pts[i + 1]) {
-                return this._min + i - 1;
+                return this._min + i - 0.5;
             }
         }
     }
 
     getUnitLength(length: number, value: number): number {
-        const v = Math.floor(value - this._min);
+        const v = Math.max(this._min, Math.min(this._max, Math.floor(value - this._min)));
 
         return (this._pts[v + 2] - this._pts[v + 1]);
     }

@@ -51,7 +51,7 @@ export interface IAxis {
     /**
      * 값(축 상 위치)에 해당하는 픽셀 위치.
      */
-    getPosition(length: number, value: number, point?: boolean): number;
+    getPosition(length: number, value: number): number;
     getValueAt(length: number, pos: number): number;
     getAxisValueAt(length: number, pos: number): any;
     /**
@@ -312,7 +312,7 @@ export class AxisGridRows extends AxisItem {
  * 
  * @config chart.axis.grid
  */
-export class AxisGrid extends AxisItem {
+export abstract class AxisGrid extends AxisItem {
 
     //-------------------------------------------------------------------------
     // constructor
@@ -353,15 +353,7 @@ export class AxisGrid extends AxisItem {
         else return this.visible == null ? !this.axis._isX : this.visible;
     }
 
-    getPoints(length: number): number[] {
-        const axis = this.axis;
-
-        if (axis.hasBreak()) {
-            return axis._ticks.filter(tick => !axis.isBreak(tick.value)).map(tick => axis.getPosition(length, tick.value, false));
-        } else {
-            return axis._ticks.map(tick => axis.getPosition(length, tick.value, false));
-        }
-    }
+    abstract getPoints(length: number): number[];
             
     //-------------------------------------------------------------------------
     // overriden members
@@ -1350,9 +1342,8 @@ export abstract class Axis extends ChartItem implements IAxis {
      * 
      * @param length axis view length
      * @param value 값
-     * @param point 포인트가 너비를 갖는 경우 포인트 중심 위치를 기준으로 한다. (category axis)
      */
-    abstract getPosition(length: number, value: number, point?: boolean): number;
+    abstract getPosition(length: number, value: number): number;
     abstract getUnitLength(length: number, value: number): number;
 
     getLabelLength(length: number, value: number): number {
@@ -1444,9 +1435,7 @@ export abstract class Axis extends ChartItem implements IAxis {
         this._single = min === max;
     }
 
-    protected _createGrid(): AxisGrid {
-        return new AxisGrid(this);
-    }
+    protected abstract _createGrid(): AxisGrid;
 
     private $_loadGuides(source: any[]): void {
         for (let i = 0; i < source.length; i++) {
