@@ -208,7 +208,7 @@ export abstract class RcAnimation {
         }
 
         try {
-            if (this._doUpdate(rate) === false) {
+            if (!this._canUpdate() || this._doUpdate(rate) === false) {
                 this._stop();
             }
         } finally {
@@ -271,6 +271,10 @@ export abstract class RcAnimation {
     }
 
     protected _doStop(): void {
+    }
+
+    protected _canUpdate(): boolean {
+        return true;
     }
 
     protected abstract _doUpdate(rate: number): boolean;

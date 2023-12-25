@@ -942,6 +942,11 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         this._navigator.visible && this._navigator.prepareRender();
     }
 
+    afterRender(): void {
+        this._xAxes.afterRender();
+        this._yAxes.afterRender();
+    }
+
     // 여러번 호출될 수 있다.
     layoutAxes(width: number, height: number, inverted: boolean, phase: number): void {
         this._xAxes.$_buildTicks(inverted ? height : width);

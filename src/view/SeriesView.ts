@@ -12,20 +12,20 @@ import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
 import { RcAnimation } from "../common/RcAnimation";
 import { ClipRectElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
-import { Rectangle } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { FILL, IValueRange, SVGStyleOrClass, _undef } from "../common/Types";
 import { GroupElement } from "../common/impl/GroupElement";
 import { LabelElement } from "../common/impl/LabelElement";
 import { RectElement } from "../common/impl/RectElement";
 import { SvgShapes } from "../common/impl/SvgShape";
+import { Axis } from "../model/Axis";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { ClusterableSeries, DataPointLabel, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
 import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { ContentView } from "./ChartElement";
 import { LegendItemView } from "./LegendView";
-import { SeriesAnimation } from "./animation/SeriesAnimation";
+import { PrevAnimation, SeriesAnimation } from "./animation/SeriesAnimation";
 
 export interface IPointView {
     point: DataPoint;
@@ -316,6 +316,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     protected _visPoints: DataPoint[];
     private _viewRate = NaN;
     private _posRate = NaN;
+    protected _prevRate = NaN;
     _animations: Animation[] = [];
 
     //-------------------------------------------------------------------------
@@ -350,7 +351,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     setViewRate(rate: number): void {
         if ((!isNaN(rate) || !isNaN(this._viewRate)) && rate !== this._viewRate) {
             this._viewRate = rate;
-            if (isNaN(rate) && isNaN(this._posRate)) {
+            if (isNaN(rate) && isNaN(this._posRate) && isNaN(this._prevRate)) {
                 this.control.invalidateLayout();
             } else {
                 this._doViewRateChanged(rate);
@@ -361,10 +362,21 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     setPosRate(rate: number): void {
         if ((!isNaN(rate) || !isNaN(this._posRate)) && rate !== this._posRate) {
             this._posRate = rate;
-            if (isNaN(rate) && isNaN(this._viewRate)) {
+            if (isNaN(rate) && isNaN(this._viewRate) && isNaN(this._prevRate)) {
                 this.control.invalidateLayout();
             } else {
                 this._doPosRateChanged(rate);
+            }
+        }
+    }
+
+    setPrevRate(rate: number): void {
+        if ((!isNaN(rate) || !isNaN(this._prevRate)) && rate !== this._prevRate) {
+            this._prevRate = rate;
+            if (isNaN(rate) && isNaN(this._viewRate) && isNaN(this._prevRate)) {
+                this.control.invalidateLayout();
+            } else {
+                this._doPrevRateChanged(rate);
             }
         }
     }
@@ -377,6 +389,9 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     protected _doPosRateChanged(rate: number): void {
+    }
+
+    protected _doPrevRateChanged(rate: number): void {
     }
 
     _animationStarted(ani: Animation): void {
@@ -485,6 +500,10 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
             this.setClip();
         }
 
+        if ((this.model._xAxisObj as Axis)._seriesChanged) {
+            this._savePrevs();
+        }
+
         this._prepareViewRanges(model);
         !this._lazyPrepareLabels() && this._labelContainer.prepare(doc, this);
 
@@ -506,11 +525,15 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         if (this._trendLineView && this._trendLineView.visible) {
             this.$_renderTrendline();       
         }
-        this._afterRender();
         this._animatable && !this._simpleMode && this._runShowEffect(!this.control.loaded);
     }
 
     protected _doAfterLayout(): void {
+        if ((this.model._xAxisObj as Axis)._seriesChanged) {
+            new PrevAnimation(this, () => {
+                this.control.invalidateLayout();
+            });
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -570,7 +593,6 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     protected _lazyPrepareLabels(): boolean { return false; }
-    protected _afterRender(): void {}
     protected _getShowAnimation(): RcAnimation { return }
     protected _runShowEffect(firstTime: boolean): void {
         //this._getShowAnimation()?.run(this);
@@ -718,6 +740,9 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
             elt.dom.classList.add(style);
         }
     }
+
+    protected _savePrevs(): void {
+    }
 }
 
 export abstract class PointElement extends PathElement implements IPointView {
@@ -733,6 +758,12 @@ export abstract class PointElement extends PathElement implements IPointView {
     constructor(doc: Document) {
         super(doc, SeriesView.POINT_CLASS);
     }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    savePrevs(): void {
+    }
 }
 
 export abstract class BoxPointElement extends PointElement {
@@ -743,6 +774,8 @@ export abstract class BoxPointElement extends PointElement {
     labelViews: PointLabelView[] = [];
     wPoint: number;
     hPoint: number;
+    wSave: number;
+    xSave: number;
 
     //-------------------------------------------------------------------------
     // IPointView
@@ -751,6 +784,11 @@ export abstract class BoxPointElement extends PointElement {
     // overriden members
     //-------------------------------------------------------------------------
     public abstract layout(x: number, y: number, rTop: number, rBottom: number): void;
+
+    savePrevs(): void {
+        this.wSave = this.wPoint;
+        this.xSave = this.x;
+    }
 }
 
 export class BarElement extends BoxPointElement {
@@ -759,6 +797,7 @@ export class BarElement extends BoxPointElement {
     // overriden members
     //-------------------------------------------------------------------------
     layout(x: number, y: number, rTop: number, rBottom: number): void {
+        this.x = x;
         this.setPath(SvgShapes.bar(
             x - this.wPoint / 2,
             y,
@@ -797,6 +836,10 @@ export abstract class ClusterableSeriesView<T extends Series> extends SeriesView
         this._layoutPointViews(this.width, this.height);
     }
 
+    protected _savePrevs(): void {
+        this._getPointPool().forEach(v => v['savePrevs']());
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -810,6 +853,13 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doPrevRateChanged(rate: number): void {
+        if (rate == 0) {
+            this._layoutPointViews(this.width, this.height);
+        }
+        this.control.invalidateLayout();
+    }
+
     protected _layoutPointViews(width: number, height: number): void {
         const series = this.model;
         const inverted = this._inverted;
@@ -833,22 +883,30 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
             labelPos: series.getLabelPosition(labels.position),
             labelOff: series.getLabelOff(labels.getOffset())
         });
+        const pr = this._prevRate;
 
-        this._getPointPool().forEach((pv: RcElement, i) => {
+        this._getPointPool().forEach((pv: BoxPointElement, i) => {
             const p = (pv as any as IPointView).point;
 
             if (pv.setVis(!p.isNull)) {
                 const wUnit = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
-                const wPoint = series.getPointWidth(wUnit);
+                let wPoint = series.getPointWidth(wUnit);
                 const yVal = yAxis.getPos(yLen, p.yValue) - yBase;
                 const yGroup = (yAxis.getPos(yLen, p.yGroup) - yBase - yVal) * vr;
                 const hPoint = yVal * vr;
-                let x: number;
-                let y: number;
+                let x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
+                let y = yOrg - yAxis.getPos(yLen, p.yGroup) * vr;
 
-                x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
-                p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-                p.yPos = y = yOrg - yAxis.getPos(yLen, p.yGroup) * vr;
+                if (!isNaN(pr + pv.wSave)) {
+                    wPoint = pv.wSave + (wPoint - pv.wSave) * pr;
+                } 
+                x += series.getPointPos(wUnit) + wPoint / 2;;                
+                if (!isNaN(pr + pv.xSave)) {
+                    x = pv.xSave + (x - pv.xSave) * pr;
+                }
+
+                p.xPos = x;
+                p.yPos = y;
 
                 // 아래에서 위로 올라가는 animation을 위해 기준 지점을 전달한다.
                 this._layoutPointView(pv, i, x, yOrg - yBase - yGroup, wPoint, hPoint);

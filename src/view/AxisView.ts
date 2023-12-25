@@ -21,8 +21,9 @@ import { TextElement } from "../common/impl/TextElement";
 import { Axis, AxisGuide, AxisLabel, AxisLabelArrange, AxisPosition, AxisScrollBar, AxisTick, AxisTitle, AxisTitleAlign, AxisZoom, IAxisTick } from "../model/Axis";
 import { ChartItem } from "../model/ChartItem";
 import { Crosshair } from "../model/Crosshair";
-import { AxisGridRowContainer, AxisGuideContainer, AxisGuideView } from "./BodyView";
+import { AxisGuideContainer, AxisGuideView } from "./BodyView";
 import { BoundableElement, ChartElement } from "./ChartElement";
+import { AxisAnimation } from "./animation/AxisAnimation";
 
 /**
  * @internal
@@ -386,6 +387,10 @@ export class AxisView extends ChartElement<Axis> {
     _frontGuideViews: AxisGuideView<AxisGuide>[];
     _crosshairView: CrosshairFlagView;
 
+    _prevMin: number;
+    _prevMax: number;
+    _viewRate: number;
+
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
@@ -509,6 +514,21 @@ export class AxisView extends ChartElement<Axis> {
     }
 
     scroll(pos: number): void {
+    }
+
+    checkExtents(): boolean {
+        if (!isNaN(this._prevMax) && this._prevMax !== this.model.axisMax() ||
+            !isNaN(this._prevMin) && this._prevMin !== this.model.axisMin()) {
+
+            return true;
+        }
+    }
+
+    setViewRate(rate: number): void {
+        if (rate !== this._viewRate) {
+            this._viewRate = rate;
+            this.control.invalidateLayout();
+        }
     }
 
     //-------------------------------------------------------------------------

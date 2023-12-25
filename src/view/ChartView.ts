@@ -537,6 +537,9 @@ class AxisSectionView extends SectionView {
                             v.translate(this.dir === SectionDir.RIGHT ? p : w - p - v.mw, y);
                             p += v.mw + this._gap;
                         }
+
+                        if (v.model.animatable && v.checkExtents()) {
+                        }
                     }
                 });
     
@@ -674,10 +677,6 @@ export class ChartView extends LayerElement {
     // methods
     //-------------------------------------------------------------------------
     measure(doc: Document, model: Chart, hintWidth: number, hintHeight: number, phase: number): void {
-        if (model) {
-            model.prepareRender();
-        }
-
         const m = this._model = model;
         const polar = m.isPolar();
         const credit = m.options.credits;

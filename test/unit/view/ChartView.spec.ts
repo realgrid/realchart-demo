@@ -34,6 +34,7 @@ import { ChartControl } from '../../../src/ChartControl';
         const chart = new Chart(json);
         const cv = control.chartView();
 
+        chart.prepareRender();
         cv.measure(control.doc(), chart, 500, 500, 1);
         expect(chart.isEmpty()).is.false;
 

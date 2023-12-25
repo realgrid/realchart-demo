@@ -192,6 +192,7 @@ export interface IPlottingItem {
     prepareAfter(): void;
     collectValues(axis: IAxis, vals: number[]): void;
     pointValuesPrepared(axis: IAxis): void;
+    seriesChanged(): boolean;
 }
 
 export enum TrendType {
@@ -1141,6 +1142,10 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     }
 
     setShape(shape: Shape): void {}
+
+    seriesChanged(): boolean {
+        return false;
+    }
 
     //-------------------------------------------------------------------------
     // methods
@@ -2339,6 +2344,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     _yAxisObj: IAxis;
     _stackPoints: Map<number, DataPoint[]>;
     _stacked: boolean;
+    private _seriesChanged = false;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -2544,6 +2550,10 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
         return this._visibles.map(ser => ser._visPoints[p.vindex]);
     }
 
+    seriesChanged(): boolean {
+        return this._seriesChanged;
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -2562,8 +2572,11 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
     }
 
     prepareRender(): void {
+        const prev = this._visibles;
+
         this._stacked = this.layout === SeriesGroupLayout.STACK || this.layout === SeriesGroupLayout.FILL;
         this._visibles = this._series.filter(ser => ser.visible).sort((s1, s2) => (+s1.zOrder || 0) - (+s2.zOrder || 0));
+        this._seriesChanged = !Utils.equalArrays(prev, this._visibles);
 
         super.prepareRender();
     }

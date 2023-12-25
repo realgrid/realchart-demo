@@ -164,10 +164,12 @@ export class ChartControl extends RcControl implements IChartEventListener {
             } else {
                 this.$_hideMenuButton();
             }
+            model.prepareRender();
         }
         view.measure(this.doc(), model, bounds.width, bounds.height, 1);
         view.setRect(bounds);
         view.layout();
+        model && model.afterRender();
     }
 
     protected _doRenderBackground(elt: HTMLDivElement, root: RcElement, width: number, height: number): void {

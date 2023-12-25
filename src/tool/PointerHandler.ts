@@ -126,6 +126,7 @@ export class ChartPointerHandler implements IPointerHandler {
                 }
             } else {
                 legend.source.visible = !legend.source.visible;
+                chart.bodyView().hoverSeries(legend.source.visible ? legend.source as Series : null);
             }
         } else if (series = chart.seriesByDom(elt)) {
             series.clicked(elt)

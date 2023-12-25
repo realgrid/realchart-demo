@@ -184,6 +184,8 @@ export class BarSeriesView extends BarSeriesViewBase<BarSeries> {
     protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
         view.wPoint = wPoint;
         view.hPoint = hPoint;
+        if (isNaN(x)) debugger;
+        if (isNaN(y)) debugger;
         view.layout(x, y, this._rdTop, this._rdBottom);
     }
 }

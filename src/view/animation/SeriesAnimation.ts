@@ -207,7 +207,12 @@ export abstract class PointAnimation extends RcAnimation {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _doStop(): void {
+    protected _canUpdate(): boolean {
+        return this._series.parent instanceof RcElement;
+    }
+
+    protected _stop(): void {
+        super._stop();
         this._series = null;
     }
 }
@@ -227,19 +232,12 @@ export class GrowAnimation extends PointAnimation {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doUpdate(rate: number): boolean {
-        if (this._series.parent) {
-            this._series.setViewRate(rate);
-            return true;
-        }
-        return false;
+        this._series.setViewRate(rate);
+        return true;
     }
 
     protected _doStop(): void {
-        // animation 기간 중 제거됐을 수 있다.
-        if (this._series.parent) {
-            this._series.setViewRate(NaN);
-        }
-        super._doStop();
+        this._series.setViewRate(NaN);
     }
 }
 
@@ -252,18 +250,28 @@ export class SpreadAnimation extends PointAnimation {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doUpdate(rate: number): boolean {
-        if (this._series.parent) {
-            this._series.setPosRate(rate);
-            return true;
-        }
-        return false;
+        this._series.setPosRate(rate);
+        return true;
     }
 
     protected _doStop(): void {
-        // animation 기간 중 제거됐을 수 있다.
-        if (this._series.parent) {
-            this._series.setPosRate(NaN);
-        }
-        super._doStop();
+        this._series.setPosRate(NaN);
+    }
+}
+
+export class PrevAnimation extends PointAnimation {
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    duration = 500;
+
+    protected _doUpdate(rate: number): boolean {
+        this._series.setPrevRate(rate);
+        return true;
+    }
+
+    protected _doStop(): void {
+        this._series.setPrevRate(NaN);
     }
 }

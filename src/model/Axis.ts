@@ -1018,6 +1018,8 @@ export abstract class Axis extends ChartItem implements IAxis {
     protected _single: boolean;
     _runPos: AxisPosition;
     _labelArgs: IAxisLabelArgs = {} as any;
+    _prevSeries: IPlottingItem[];
+    _seriesChanged = false;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1172,6 +1174,7 @@ export abstract class Axis extends ChartItem implements IAxis {
      * @config
      */
     tooltipFooter: string;
+    animatable = true;
 
     isEmpty(): boolean {
         return this._series.length < 1;
@@ -1269,6 +1272,19 @@ export abstract class Axis extends ChartItem implements IAxis {
         const series = this._series;
         const vals: number[] = this._values;
 
+        if (this._isX && this._prevSeries) {
+            if (!(this._seriesChanged = !Utils.equalArrays(series, this._prevSeries))) {
+                for (const s of series) {
+                    if (s.seriesChanged()) {
+                        this._seriesChanged = true;
+                        break;
+                    }
+                }
+            }
+        } else {
+            this._seriesChanged = false;
+        }
+
         if (this._zoom) {
             this._range = { min: this._zoom.start, max: this._zoom.end };
         } else {
@@ -1323,6 +1339,11 @@ export abstract class Axis extends ChartItem implements IAxis {
                 });
             }
         }
+    }
+
+    afterRender(): void {
+        this._seriesChanged = false;
+        this._prevSeries = this._series;
     }
 
     buildTicks(length: number): void {
@@ -1547,6 +1568,10 @@ export class AxisCollection {
 
     prepareRender(): void {
         this._items.forEach(axis => axis.prepareRender());
+    }
+
+    afterRender(): void {
+        this._items.forEach(axis => axis.afterRender());
     }
 
     // Chart.layoutAxes 에서만 호출

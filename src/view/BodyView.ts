@@ -1144,6 +1144,7 @@ export class BodyView extends ChartElement<Body> {
                 this._owner.clipSeries(v.getClipContainer(), v.getClipContainer2(), 0, 0, w, h, v.invertable());
             }
             v.resize(w, h);
+            v.translate(0, 0);
             v.layout();
         })
         // 그룹에 포함된 시리즈들 간의 관계 설정 후에 그리기가 필요한 경우가 있다.

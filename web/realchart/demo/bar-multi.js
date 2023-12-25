@@ -26,8 +26,6 @@ const config = {
         // strictMax: 161
 	},
 	series: [
-		{
-		children: [
 			{
 				pointWidth: 2,
 				pointLabel: {
@@ -65,8 +63,6 @@ const config = {
 				// colorByPoint: true,
 				data: [ 60, 100, 70,67,28]
 			}
-		]
-	}
 	],
 };
 
