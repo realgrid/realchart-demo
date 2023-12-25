@@ -315,6 +315,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     protected _legendMarker: RcElement;
     protected _visPoints: DataPoint[];
     private _viewRate = NaN;
+    private _posRate = NaN;
     _animations: Animation[] = [];
 
     //-------------------------------------------------------------------------
@@ -349,7 +350,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     setViewRate(rate: number): void {
         if ((!isNaN(rate) || !isNaN(this._viewRate)) && rate !== this._viewRate) {
             this._viewRate = rate;
-            if (isNaN(rate)) {
+            if (isNaN(rate) && isNaN(this._posRate)) {
                 this.control.invalidateLayout();
             } else {
                 this._doViewRateChanged(rate);
@@ -357,7 +358,15 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         }
     }
 
-    setPositionRate(rate: number): void {
+    setPosRate(rate: number): void {
+        if ((!isNaN(rate) || !isNaN(this._posRate)) && rate !== this._posRate) {
+            this._posRate = rate;
+            if (isNaN(rate) && isNaN(this._viewRate)) {
+                this.control.invalidateLayout();
+            } else {
+                this._doPosRateChanged(rate);
+            }
+        }
     }
 
     isPointVisible(p: DataPoint): boolean {
@@ -365,6 +374,9 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     protected _doViewRateChanged(rate: number): void {
+    }
+
+    protected _doPosRateChanged(rate: number): void {
     }
 
     _animationStarted(ani: Animation): void {
@@ -554,7 +566,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     _animating(): boolean {
-        return !isNaN(this._viewRate) || this._animations.length > 0;
+        return !isNaN(this._viewRate) || !isNaN(this._posRate) || this._animations.length > 0;
     }
 
     protected _lazyPrepareLabels(): boolean { return false; }

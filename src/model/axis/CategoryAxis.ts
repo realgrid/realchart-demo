@@ -117,6 +117,8 @@ export class CategoryAxis extends Axis {
     // private _step = 1;
     private _map: {[key: string]: number} = {}; // data point의 축 위치를 찾기 위해 사용한다.
     private _catPad = 0;
+    private _catMin: number;
+    private _catMax: number;
     _pts: number[];
 
     //-------------------------------------------------------------------------
@@ -161,6 +163,16 @@ export class CategoryAxis extends Axis {
      * @config
      */
     categories: any[];
+    /**
+     * weigth 필드를 제공하는 시리즈.
+     * // TODO: 구현할 것!
+     */
+    weightSeries: string;
+    /**
+     * weightSeries data에서 weight를 제공하는 필드.
+     * // TODO: 구현할 것! (시리즈가 아니라 여기서 지정한 게 맞나?)
+     */
+    wieghtField: number | string;
     // /** 
     //  * 카테고리 하나의 값 크기.
     //  */
@@ -218,7 +230,7 @@ export class CategoryAxis extends Axis {
     xValueAt(pos: number): number {
         for (let i = 2; i < this._pts.length - 1; i++) {
             if (pos >= this._pts[i - 1] && pos < this._pts[i]) {
-                return (this._zoom ? this._zoom.start : this._min) + i - 2;
+                return (this._zoom ? this._zoom.start : this._catMin) + i - 2;
             }
         }
         return -1;
@@ -297,9 +309,11 @@ export class CategoryAxis extends Axis {
         let weights = this._weights = this._categories.map(cat => cat.w);
         const steps = (this.tick as CategoryAxisTick).step || 1;
         const ticks: IAxisTick[] = [];
+        const minSave = min;
+        const maxSave = max;
 
-        min = Math.floor(min + 0.5);
-        max = Math.ceil(max - 0.5);
+        min = this._catMin = Math.floor(min + 0.5);
+        max = this._catMax = Math.ceil(max - 0.5);
 
         let len = max - min + 1;
 
@@ -344,7 +358,7 @@ export class CategoryAxis extends Axis {
             this._pts = [];
         }
 
-        this._setMinMax(min, max);
+        this._setMinMax(minSave, maxSave);
         return ticks;
     }
 
@@ -384,7 +398,7 @@ export class CategoryAxis extends Axis {
 
     getPos(length: number, value: number): number {
         const pts = this._pts;
-        const v = Math.floor(value - this._min + 0.5);
+        const v = Math.floor(value - this._catMin + 0.5);
         const p = pts[v + 1] + (pts[v + 2] - pts[v + 1]) * (value - Math.floor(value + 0.5) + 0.5);
 
         // if (this._isPolar) {
@@ -401,14 +415,13 @@ export class CategoryAxis extends Axis {
         }
         for (let i = 1; i < this._pts.length - 1; i++) {
             if (pos >= this._pts[i] && pos < this._pts[i + 1]) {
-                return this._min + i - 0.5;
+                return this._catMin + i - 0.5;
             }
         }
     }
 
     getUnitLen(length: number, value: number): number {
-        const v = Math.floor(value - this._min + 0.5);
-        //const v = Math.max(this._min, Math.min(this._max, Math.floor(value - this._min)));
+        const v = Math.floor(value - this._catMin + 0.5);
 
         return (this._pts[v + 2] - this._pts[v + 1]);
     }
@@ -426,7 +439,7 @@ export class CategoryAxis extends Axis {
     }
 
     getXValue(value: number) {
-        return this.getCategory(value - this._min);
+        return this.getCategory(value - this._catMin);
     }
 
     //-------------------------------------------------------------------------

@@ -25,6 +25,10 @@ export abstract class SeriesAnimation {
         new GrowAnimation(series, endHandler);
     }
 
+    static spread(series: SeriesView<Series>, endHandler?: RcAnimationEndHandler): void {
+        new SpreadAnimation(series, endHandler);
+    }
+
     static fadeIn(series: SeriesView<Series>): void {
         new StyleAnimation(series, {prop: 'opacity', start: '0', end: '1'});
     }
@@ -242,14 +246,14 @@ export class GrowAnimation extends PointAnimation {
 /**
  * 원점 등에 포인트들을 모아 놓은 후 위치를 원복시킨다.
  */
-export class UnfoldAnimation extends PointAnimation {
+export class SpreadAnimation extends PointAnimation {
 
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
     protected _doUpdate(rate: number): boolean {
         if (this._series.parent) {
-            this._series.setPositionRate(rate);
+            this._series.setPosRate(rate);
             return true;
         }
         return false;
@@ -258,7 +262,7 @@ export class UnfoldAnimation extends PointAnimation {
     protected _doStop(): void {
         // animation 기간 중 제거됐을 수 있다.
         if (this._series.parent) {
-            this._series.setPositionRate(NaN);
+            this._series.setPosRate(NaN);
         }
         super._doStop();
     }

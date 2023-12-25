@@ -49,8 +49,8 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
             if (this._polar) {
                 SeriesAnimation.grow(this);
             } else {
-                // SeriesAnimation.grow(this);
-                SeriesAnimation.reveal(this);
+                SeriesAnimation.grow(this);
+                // SeriesAnimation.reveal(this);
             }
         }
     }
