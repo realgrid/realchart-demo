@@ -352,7 +352,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         if ((!isNaN(rate) || !isNaN(this._viewRate)) && rate !== this._viewRate) {
             this._viewRate = rate;
             if (isNaN(rate) && isNaN(this._posRate) && isNaN(this._prevRate)) {
-                this.control.invalidateLayout();
+                this.invalidate();
             } else {
                 this._doViewRateChanged(rate);
             }
@@ -363,7 +363,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         if ((!isNaN(rate) || !isNaN(this._posRate)) && rate !== this._posRate) {
             this._posRate = rate;
             if (isNaN(rate) && isNaN(this._viewRate) && isNaN(this._prevRate)) {
-                this.control.invalidateLayout();
+                this.invalidate();
             } else {
                 this._doPosRateChanged(rate);
             }
@@ -374,7 +374,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         if ((!isNaN(rate) || !isNaN(this._prevRate)) && rate !== this._prevRate) {
             this._prevRate = rate;
             if (isNaN(rate) && isNaN(this._viewRate) && isNaN(this._prevRate)) {
-                this.control.invalidateLayout();
+                this.invalidate();
             } else {
                 this._doPrevRateChanged(rate);
             }
@@ -535,7 +535,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     protected _doAfterLayout(): void {
         if ((this.model._xAxisObj as Axis)._seriesChanged) {
             new PrevAnimation(this, () => {
-                this.control.invalidateLayout();
+                this.invalidate();
             });
         }
     }
@@ -861,7 +861,7 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         if (rate == 0) {
             this._layoutPointViews(this.width, this.height);
         }
-        this.control.invalidateLayout();
+        this.invalidate();
     }
 
     protected _layoutPointViews(width: number, height: number): void {
@@ -870,11 +870,11 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const vr = this._getViewRate();
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
-        const yAxis = series._yAxisObj;
+        const xAxis = series._xAxisObj as Axis;
+        const yAxis = series._yAxisObj as Axis;
         const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
-        const yLen = inverted ? width : height;
-        const xLen = inverted ? height : width;
+        const yLen = yAxis.prev(inverted ? width : height);
+        const xLen = xAxis.prev(inverted ? height : width);
         const yOrg = inverted ? 0 : height;
         const min = yAxis.axisMin();
         const yMin = yAxis.getPos(yLen, min);
@@ -1108,7 +1108,7 @@ class ZombiAnimation extends RcAnimation {
         if (this.series) {
             this.series._zombie = null;
             this.series._zombieAni = null;
-            this.series.control.invalidateLayout();
+            this.series.invalidate();
             this.series = null;
         }
     }

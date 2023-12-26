@@ -148,7 +148,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             if (view !== v) {
                 this.$_slice(view, true, true);
             }
-            !this.model.autoSlice && this.control.invalidateLayout();
+            !this.model.autoSlice && this.invalidate();
         }
     }
 

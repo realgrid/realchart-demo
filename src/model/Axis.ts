@@ -1020,6 +1020,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     _labelArgs: IAxisLabelArgs = {} as any;
     _prevSeries: IPlottingItem[];
     _seriesChanged = false;
+    _prevRate: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1433,6 +1434,14 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     getXValue(value: number): any {
         return value;
+    }
+
+    setPrevRate(rate: number): void {
+        this._prevRate = rate;
+    }
+
+    prev(len: number): number {
+        return isNaN(this._prevRate) ? len : len * this._prevRate;
     }
 
     //-------------------------------------------------------------------------

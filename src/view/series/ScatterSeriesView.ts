@@ -81,7 +81,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
         const inverted = this._inverted;
         const needClip = series.needClip(false);
         const xAxis = series._xAxisObj as Axis;
-        const yAxis = series._yAxisObj;
+        const yAxis = series._yAxisObj as Axis;
         const polar = this._polar = (series.chart as Chart).body.getPolar(xAxis);
         const vr = this._getViewRate();
         const jitterX = series.jitterX;
@@ -90,8 +90,8 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
         const labelPos = labels.position;
         const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
-        const yLen = inverted ? width : height;
-        const xLen = inverted ? height : width;
+        const yLen = yAxis.prev(inverted ? width : height);
+        const xLen = xAxis.prev(inverted ? height : width);
         const yOrg = height;
         let labelView: PointLabelView;
         let r: IRect;

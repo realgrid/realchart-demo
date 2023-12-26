@@ -829,6 +829,19 @@ export class RcElement extends RcObject {
         return child;
     }
 
+    insertAfter(child: RcElement, after: RcElement): RcElement {
+        if (child && child._parent !== this) {
+            child._parent = this;
+            if (after._dom.nextSibling) {
+                this._dom.insertBefore(child._dom, after._dom.nextSibling);
+            } else {
+                this._dom.appendChild(child._dom);
+            }
+            child._doAttached(this);
+        }
+        return child;
+    }
+
     insertFirst(child: RcElement): RcElement {
         if (child && child._parent !== this) {
             child._parent = this;
@@ -1327,6 +1340,14 @@ export class RcElement extends RcObject {
                 this.parent.dom.appendChild(this._dom);
             }
         }
+    }
+
+    invalidate(): void {
+        this.control.invalidateLayout();
+    }
+
+    sort(children: RcElement[]): void {
+        children.forEach(v => this._dom.appendChild(v._dom));
     }
 
     //-------------------------------------------------------------------------

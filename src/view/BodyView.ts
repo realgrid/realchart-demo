@@ -171,7 +171,7 @@ export class AxisGridView extends ChartElement<AxisGrid> {
                 }
                 if (line.setVis(true)) {
                     // line.setVLineC(pts[i], 0, h);
-                    line.setVLine(pts[i], 0, h);
+                    line.setVLine(axis.prev(pts[i]), 0, h);
                 }
             });
         } else {
@@ -187,7 +187,7 @@ export class AxisGridView extends ChartElement<AxisGrid> {
                 }
                 if (line.setVis(vis)) {
                     // line.setHLineC(h - pts[i], 0, w); // TODO: grid line과 pointer가 1 정도 틀어진다. #369
-                    line.setHLine(h - pts[i], 0, w);
+                    line.setHLine(h - axis.prev(pts[i]), 0, w);
                 }
             });
         }
@@ -1274,6 +1274,8 @@ export class BodyView extends ChartElement<Body> {
             views.push(v);
             v.prepareSeries(doc, ser);
         });
+        this._seriesContainer.sort(views);
+        views.forEach(v => this._labelContainer.dom.appendChild(v._labelContainer.dom));
     }
 
     protected _prepareGauges(doc: Document, chart: IChart, gauges: GaugeBase[]): void {

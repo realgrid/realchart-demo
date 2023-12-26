@@ -90,10 +90,10 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
         const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj as Axis;
-        const yAxis = series._yAxisObj;
+        const yAxis = series._yAxisObj as Axis;
         const polar = this._polar = (series.chart as Chart).body.getPolar(xAxis);
-        const yLen = inverted ? width : height;
-        const xLen = inverted ? height : width;
+        const yLen = yAxis.prev(inverted ? width : height);
+        const xLen = xAxis.prev(inverted ? height : width);
         const zAxis = series._xAxisObj._vlen < series._yAxisObj._vlen ? series._xAxisObj : series._yAxisObj;
         const len = zAxis._vlen;
         const {min, max} = series.getPixelMinMax(len);

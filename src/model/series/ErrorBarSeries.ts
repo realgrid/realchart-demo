@@ -9,6 +9,7 @@
 import { pickNum, pickProp, pickProp3, assign } from "../../common/Common";
 import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
+import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
 import { RangedSeries, Series } from "../Series";
 
@@ -113,6 +114,11 @@ export class ErrorBarSeries extends RangedSeries {
 
     protected _getBottomValue(p: ErrorBarSeriesPoint): number {
         return p.lowValue;
+    }
+
+    getBaseValue(axis: IAxis): number {
+        // TODO: 연결된 시리즈(bar)의 설정을 따른다.
+        return axis === this._yAxisObj ? 0 : NaN;
     }
 
     protected _createLegendMarker(doc: Document, size: number): RcElement {

@@ -38,6 +38,11 @@ class BarElement extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    savePrevs(): void {
+        // this.wSave = this.wPoint;
+        // this.xSave = this.x;
+    }
+
     layout(): void {
         const w = this.width
         const h = this.height;

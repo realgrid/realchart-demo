@@ -35,6 +35,7 @@ import { PolarBodyView } from "./PolarBodyView";
 import { SeriesView } from "./SeriesView";
 import { TitleView } from "./TitleView";
 import { TooltipView } from "./TooltipView";
+import { AxisAnimation } from "./animation/AxisAnimation";
 
 /**
  * @internal
@@ -538,8 +539,7 @@ class AxisSectionView extends SectionView {
                             p += v.mw + this._gap;
                         }
 
-                        if (v.model.animatable && v.checkExtents()) {
-                        }
+                        v.checkExtents();
                     }
                 });
     

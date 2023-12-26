@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { cos, pickNum, sin } from "../common/Common";
+import { cos, pickNum, pickProp, sin } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { PathElement, RcElement } from "../common/RcControl";
@@ -387,9 +387,9 @@ export class AxisView extends ChartElement<Axis> {
     _frontGuideViews: AxisGuideView<AxisGuide>[];
     _crosshairView: CrosshairFlagView;
 
+    _prevModel: Axis;
     _prevMin: number;
     _prevMax: number;
-    _viewRate: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -516,18 +516,26 @@ export class AxisView extends ChartElement<Axis> {
     scroll(pos: number): void {
     }
 
-    checkExtents(): boolean {
-        if (!isNaN(this._prevMax) && this._prevMax !== this.model.axisMax() ||
-            !isNaN(this._prevMin) && this._prevMin !== this.model.axisMin()) {
+    checkExtents(): void {
+        const prev = this._prevModel;
+        const m = this.model;
 
-            return true;
-        }
-    }
+        this._prevModel = m;
 
-    setViewRate(rate: number): void {
-        if (rate !== this._viewRate) {
-            this._viewRate = rate;
-            this.control.invalidateLayout();
+        if (!prev || prev === m) {
+            const min = this._prevMin;
+            const max = this._prevMax;
+    
+            this._prevMin = m.axisMin();
+            this._prevMax = m.axisMax();
+    
+            if (!isNaN(max) && this._prevMax !== max || !isNaN(min) && this._prevMin !== min) {
+                if (m.animatable) {
+                    new AxisAnimation(this, min, max, () => {
+                        this.invalidate();
+                    });
+                }
+            }
         }
     }
 
@@ -1069,6 +1077,7 @@ export class AxisView extends ChartElement<Axis> {
     }
 
     private $_layoutLabelsHorz(views: ElementPool<AxisLabelView>, ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, gap: number): void {
+        const m = this.model;
         const align = Align.CENTER;
         const pts = this._labelRowPts;
 
@@ -1077,7 +1086,7 @@ export class AxisView extends ChartElement<Axis> {
                 const rot = v.rotation;
                 const a = rot * DEG_RAD;
                 const r = v.getBBox();
-                let x = ticks[v.index].pos;
+                let x = m.prev(ticks[v.index].pos);
                 let y = opp ? (h - gap - r.height - pts[v.row]) : (gap + pts[v.row]);
     
                 if (rot < -15 && rot >= -90) {
@@ -1108,6 +1117,7 @@ export class AxisView extends ChartElement<Axis> {
     }
 
     private $_layoutLabelsVert(views: ElementPool<AxisLabelView>, ticks: IAxisTick[], between: boolean, opp: boolean, w: number, h: number, len: number): void {
+        const m = this.model;
         const align = opp ? Align.LEFT : between ? Align.CENTER : Align.RIGHT;
         const x = opp ? len : w - len;
     
@@ -1116,7 +1126,7 @@ export class AxisView extends ChartElement<Axis> {
                 const r = v.getBBox();
                 const x2 = opp ? x : between ? (w - r.width) / 2 : x - r.width;
     
-                v.setContrast(null).layout(align).translate(x2, h - ticks[i].pos - r.height / 2);
+                v.setContrast(null).layout(align).translate(x2, h - m.prev(ticks[i].pos) - r.height / 2);
             }
         });
     }

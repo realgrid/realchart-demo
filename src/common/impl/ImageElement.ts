@@ -33,7 +33,7 @@ export class ImageElement extends RcElement {
         // this.setAttr('preserveAspectRatio', 'none');
         this.dom.onload = () => {
             this._dirty = true;
-            this.control.invalidateLayout();
+            this.invalidate();
         }
     }
 

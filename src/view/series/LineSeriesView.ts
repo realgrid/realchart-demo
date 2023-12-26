@@ -284,11 +284,11 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
         const labelOff = labels.getOffset();
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj as Axis;
-        const yAxis = series._yAxisObj;
+        const yAxis = series._yAxisObj as Axis;
         const polar = this._polar = (series.chart as Chart).body.getPolar(xAxis);
         const polared = !!polar;
-        const yLen = inverted ? width : height;
-        const xLen = polar ? polar.rd * PI_2 : inverted ? height : width;
+        const yLen = yAxis.prev(inverted ? width : height);
+        const xLen = xAxis.prev(polar ? polar.rd * PI_2 : inverted ? height : width);
         const yOrg = inverted ? 0 : height;
 
         pts.forEach((p, i) => {
