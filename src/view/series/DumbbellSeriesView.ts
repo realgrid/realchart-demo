@@ -12,9 +12,9 @@ import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { DumbbellSeries, DumbbellSeriesPoint } from "../../model/series/DumbbellSeries";
-import { IPointView, RangedSeriesView, SeriesView } from "../SeriesView";
+import { IPointView, RangeElement, RangedSeriesView, SeriesView } from "../SeriesView";
 
-class BarView extends GroupElement implements IPointView {
+class BarView extends RangeElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields

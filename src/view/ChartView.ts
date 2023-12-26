@@ -524,6 +524,8 @@ class AxisSectionView extends SectionView {
 
                 views.forEach(v => {
                     if (v.visible) {
+                        v.checkExtents();
+
                         if (this.isHorz) {
                             v.resize(w, v.mh);
                         } else {
@@ -538,8 +540,6 @@ class AxisSectionView extends SectionView {
                             v.translate(this.dir === SectionDir.RIGHT ? p : w - p - v.mw, y);
                             p += v.mw + this._gap;
                         }
-
-                        v.checkExtents();
                     }
                 });
     

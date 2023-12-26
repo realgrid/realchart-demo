@@ -8,12 +8,11 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
-import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { ErrorBarSeries, ErrorBarSeriesPoint } from "../../model/series/ErrorBarSeries";
-import { IPointView, RangedSeriesView, SeriesView } from "../SeriesView";
+import { IPointView, RangeElement, RangedSeriesView, SeriesView } from "../SeriesView";
 
-class BarElement extends GroupElement implements IPointView {
+class BarElement extends RangeElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -38,11 +37,6 @@ class BarElement extends GroupElement implements IPointView {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    savePrevs(): void {
-        // this.wSave = this.wPoint;
-        // this.xSave = this.x;
-    }
-
     layout(): void {
         const w = this.width
         const h = this.height;

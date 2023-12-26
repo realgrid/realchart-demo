@@ -11,6 +11,7 @@ import { PathElement, RcElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { RectElement } from "../../common/impl/RectElement";
 import { SvgShapes } from "../../common/impl/SvgShape";
+import { Axis } from "../../model/Axis";
 import { DataPoint } from "../../model/DataPoint";
 import { EqualizerSeries } from "../../model/series/EqualizerSeries";
 import { BoxedSeriesView, IPointView, SeriesView } from "../SeriesView";
@@ -28,6 +29,8 @@ class BarElement extends GroupElement implements IPointView {
 
     wPoint: number;
     hPoint: number;
+    wSave: number;
+    xSave: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -74,6 +77,14 @@ class BarElement extends GroupElement implements IPointView {
             }
         })
     }
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    savePrevs(): void {
+        this.wSave = this.wPoint;
+        this.xSave = this.x;
+    }
 }
 
 export class EqualizerSeriesView extends BoxedSeriesView<EqualizerSeries> {
@@ -105,17 +116,26 @@ export class EqualizerSeriesView extends BoxedSeriesView<EqualizerSeries> {
     }        
 
     protected _layoutPointViews(width: number, height: number): void {
-        const len = (this._inverted ? width : height) * this._getViewRate();
+        const len = (this.model._yAxisObj as Axis).prev(this._inverted ? width : height) * this._getViewRate();
 
         this.$_buildSegments(this.model, len);
 
         super._layoutPointViews(width, height);
     }
 
-    protected _layoutPointView(view: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
-        view.wPoint = wPoint;
-        view.hPoint = hPoint;
-        view.layout(this._pts, x, y);
+    protected _layoutPointView(pv: BarElement, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
+        const pr = this._prevRate;
+
+        if (!isNaN(pr + pv.wSave)) {
+            wPoint = pv.wSave + (wPoint - pv.wSave) * pr;
+        } 
+        if (!isNaN(pr + pv.xSave)) {
+            x = pv.xSave + (x - pv.xSave) * pr;
+        }
+
+        pv.wPoint = wPoint;
+        pv.hPoint = hPoint;
+        pv.layout(this._pts, x, y);
     }
 
     //-------------------------------------------------------------------------

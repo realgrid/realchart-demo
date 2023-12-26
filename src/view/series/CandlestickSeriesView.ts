@@ -11,11 +11,10 @@ import { RcElement } from "../../common/RcControl";
 import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
-import { DataPoint } from "../../model/DataPoint";
 import { CandlestickSeries, CandlestickSeriesPoint } from "../../model/series/CandlestickSeries";
-import { IPointView, RangedSeriesView, SeriesView } from "../SeriesView";
+import { IPointView, RangeElement, RangedSeriesView, SeriesView } from "../SeriesView";
 
-class StickView extends GroupElement implements IPointView {
+class StickView extends RangeElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields

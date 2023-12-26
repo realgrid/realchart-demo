@@ -813,6 +813,23 @@ export class BarElement extends BoxPointElement {
     }
 }
 
+export abstract class RangeElement extends GroupElement {
+
+    //-------------------------------------------------------------------------
+    // fields
+    //-------------------------------------------------------------------------
+    wSave: number;
+    xSave: number;
+
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    savePrevs(): void {
+        this.wSave = this.width;
+        this.xSave = this.x;
+    }
+}
+
 export abstract class ClusterableSeriesView<T extends Series> extends SeriesView<T> {
 
     //-------------------------------------------------------------------------
@@ -950,6 +967,13 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
     //-------------------------------------------------------------------------
     protected abstract _getLowValue(p: DataPoint): number;
 
+    protected _doPrevRateChanged(rate: number): void {
+        if (rate == 0) {
+            this._layoutPointViews(this.width, this.height);
+        }
+        this.invalidate();
+    }
+
     protected _layoutPointViews(width: number, height: number): void {
         const series = this.model;
         const inverted = series.chart.isInverted();
@@ -967,20 +991,29 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
             labelPos: series.getLabelPosition(labels.position),
             labelOff: series.getLabelOff(labels.getOffset())
         });
+        const pr = this._prevRate;
 
-        this._getPointPool().forEach((pv, i) => {
+        this._getPointPool().forEach((pv: BoxPointElement, i) => {
             const p = (pv as any as IPointView).point;
 
             if (pv.setVis(!p.isNull)) {
                 const wUnit = xAxis.getUnitLen(xLen, p.xValue) * (1 - wPad);
-                const wPoint = series.getPointWidth(wUnit);
+                let wPoint = series.getPointWidth(wUnit);
                 const yVal = yAxis.getPos(yLen, p.yValue);
                 const hPoint = (yVal - yAxis.getPos(yLen, this._getLowValue(p))) * vr;
                 let x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
-                let y = org;
+                let y = org - yAxis.getPos(yLen, p.yGroup) * vr;
 
-                p.xPos = x += series.getPointPos(wUnit) + wPoint / 2;
-                p.yPos = y -= yAxis.getPos(yLen, p.yGroup) * vr;
+                if (!isNaN(pr + pv.wSave)) {
+                    wPoint = pv.wSave + (wPoint - pv.wSave) * pr;
+                } 
+                x += series.getPointPos(wUnit) + wPoint / 2;
+                if (!isNaN(pr + pv.xSave)) {
+                    x = pv.xSave + (x - pv.xSave) * pr;
+                }
+
+                p.xPos = x;
+                p.yPos = y;
 
                 this._layoutPointView(pv, i, x, y, wPoint, hPoint);
 

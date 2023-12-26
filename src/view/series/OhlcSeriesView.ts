@@ -13,9 +13,9 @@ import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
 import { OhlcSeries, OhlcSeriesPoint } from "../../model/series/OhlcSeries";
-import { IPointView, PointLabelView, RangedSeriesView, SeriesView } from "../SeriesView";
+import { IPointView, PointLabelView, RangeElement, RangedSeriesView, SeriesView } from "../SeriesView";
 
-class StickView extends GroupElement implements IPointView {
+class StickView extends RangeElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields

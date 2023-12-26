@@ -12,9 +12,9 @@ import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
 import { BoxPlotSeries, BoxPlotSeriesPoint } from "../../model/series/BoxPlotSeries";
-import { IPointView, RangedSeriesView, SeriesView } from "../SeriesView";
+import { IPointView, RangeElement, RangedSeriesView, SeriesView } from "../SeriesView";
 
-class BoxView extends GroupElement implements IPointView {
+class BoxView extends RangeElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
