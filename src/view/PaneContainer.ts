@@ -496,6 +496,7 @@ export class PaneContainer extends LayerElement {
             v.prepareRender(doc, chart);
             // guides - axis view에서 guide view들을 추가할 수 있도록 초기화한다.
             v.prepareGuideContainers();
+            v._gridRowContainer.prepare();
         });
     }
 
