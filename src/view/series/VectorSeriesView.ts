@@ -110,17 +110,26 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
         const head = series.arrowHead;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj;
+        const inverted = this._inverted;
+        const yLen = inverted ? width : height;
+        const xLen = inverted ? height : width;
+        const vr = this._getViewRate();
+        const org = inverted ? 0 : height;
+
+        this._pointContainer.invert(inverted, height);
 
         this._arrows.forEach(v => {
             const p = v.point;
 
             if (v.setVis(!p.isNull)) {
-                const x = p.xPos = xAxis.getPos(this.width, p.xValue);
-                const y = p.yPos = this.height - yAxis.getPos(this.height, p.yValue);
+                const wUnit = xAxis.getUnitLen(xLen, p.xValue) * vr;
+                const hUnit = yAxis.getUnitLen(yLen, p.yValue) * vr;
+                let x = (p.xPos = xAxis.getPos(xLen, p.xValue)) - wUnit / 2;
+                let y = (p.yPos = org - yAxis.getPos(yLen, p.yValue)) - hUnit / 2;
     
                 v.translate(x, y);
                 v.layout(head, p.angleValue + start, false);
-            }
+            };
         });
     }
 
