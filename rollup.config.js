@@ -209,8 +209,6 @@ const rollup_report_config = {
       modify({
         $Version: `${pkg.version}`,
         $LicenseType: "enterprise",
-        $$LicenseCheck: "1",
-        $$ReportCheck: "1",
         $ProductVersion: version,
       }),
     commonjs(),
