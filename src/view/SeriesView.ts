@@ -10,7 +10,7 @@ import { pickNum, assign, isObject, isString } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
-import { RcAnimation } from "../common/RcAnimation";
+import { RcAnimation, createAnimation } from "../common/RcAnimation";
 import { ClipRectElement, LayerElement, PathElement, RcElement } from "../common/RcControl";
 import { ISize, Size } from "../common/Size";
 import { FILL, IValueRange, SVGStyleOrClass, _undef } from "../common/Types";
@@ -486,6 +486,10 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
+    protected _doAttached(parent: RcElement): void {
+        createAnimation(this.dom, 'opacity', 0, 1, 300, null);
+    }
+
     protected _prepareStyleOrClass(model: T): void {
         // legend marker 색상이 필요하므로 prepareSeries()에서 먼저 처리한다.
     }
