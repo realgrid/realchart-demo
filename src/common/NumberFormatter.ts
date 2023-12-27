@@ -6,6 +6,8 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { maxv } from "./Common";
+
 const ZERO = '0'.charCodeAt(0);
 const SHARP = '#'.charCodeAt(0);
 const COMMA = ','.charCodeAt(0);
@@ -151,7 +153,7 @@ export class NumberFormatter {
 				}
 			}
 
-			options.minimumIntegerDigits = Math.max(1, options.minimumIntegerDigits);
+			options.minimumIntegerDigits = maxv(1, options.minimumIntegerDigits);
             if (!options.maximumFractionDigits) delete options.maximumFractionDigits;
 			return options;
 		}

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, pickProp3, assign } from "../../common/Common";
+import { pickNum, pickProp, pickProp3, assign, maxv } from "../../common/Common";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { DataPoint } from "../DataPoint";
@@ -76,7 +76,7 @@ export class DumbbellSeriesPoint extends DataPoint {
         super._readObject(series, v);
 
         this.low = pickProp(v[series.lowField], v.low);
-        this.y = pickProp3(v[series.yField], v.y, v.value);
+        this.y = pickProp3(series._yFielder(v), v.y, v.value);
     }
 
     protected _readSingle(v: any): void {
@@ -125,7 +125,7 @@ export class DumbbellSeries extends ClusterableSeries {
     }
 
     getLabelOff(off: number): number {
-        return super.getLabelOff(off) + Math.max(0, this.marker.radius);
+        return super.getLabelOff(off) + maxv(0, this.marker.radius);
     }
 
     protected _createPoint(source: any): DataPoint {

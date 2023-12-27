@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { copyObj, pickNum } from "../../common/Common";
+import { copyObj, maxv, pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { LayerElement, RcElement } from "../../common/RcControl";
 import { IRect, createRect } from "../../common/Rectangle";
@@ -66,14 +66,14 @@ class BandView extends ChartElement<GaugeRangeBand> {
                 let w = 0;
                 this._labels.forEach((v, i) => {
                     v.text = String(vals[i]);
-                    w = Math.max(v.getBBox().width);
+                    w = maxv(v.getBBox().width);
                 })
                 width += w;
             } else {
                 let h = 0;
                 this._labels.forEach((v, i) => {
                     v.text = String(vals[i]);
-                    h = Math.max(v.getBBox().height);
+                    h = maxv(v.getBBox().height);
                 })
                 height += h;
             }
@@ -322,8 +322,8 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
         m._labelWidth = m._labelHeight = 0;
         this._gaugeViews.forEach((v, i) => {
             const sz = (v as LinearGaugeBaseView<G>).measureLabelSize(m.get(i), width, height);
-            m._labelWidth = Math.max(m._labelWidth, sz.width);
-            m._labelHeight = Math.max(m._labelHeight, sz.height);
+            m._labelWidth = maxv(m._labelWidth, sz.width);
+            m._labelHeight = maxv(m._labelHeight, sz.height);
         })
 
         const rBody = copyObj(r) as IRect;

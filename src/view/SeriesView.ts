@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, assign, isObject, isString } from "../common/Common";
+import { pickNum, assign, isObject, isString, absv, maxv, minv } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
@@ -712,28 +712,28 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         const isX = rangeAxis === 'x';
         const axis = isX ? this.model._xAxisObj : this.model._yAxisObj;
         const reversed = axis.reversed;
-        const p1 = axis.getPos(isX ? w : h, Math.max(axis.axisMin(), range.fromValue));
-        const p2 = axis.getPos(isX ? w : h, Math.min(axis.axisMax(), range.toValue));
+        const p1 = axis.getPos(isX ? w : h, maxv(axis.axisMin(), range.fromValue));
+        const p2 = axis.getPos(isX ? w : h, minv(axis.axisMax(), range.toValue));
 
         if (inverted) {
             if (isX) {
                 if (reversed) {
-                    clip.setBounds(p2, -h, Math.abs(p2 - p1), h);
+                    clip.setBounds(p2, -h, absv(p2 - p1), h);
                 } else {
-                    clip.setBounds(p1, -h, Math.abs(p2 - p1), h);
+                    clip.setBounds(p1, -h, absv(p2 - p1), h);
                 }
             } else {
-                clip.setBounds(0, -Math.max(p1, p2), w, Math.abs(p2 - p1));
+                clip.setBounds(0, -maxv(p1, p2), w, absv(p2 - p1));
             }
         } else {
             if (isX) {
                 if (reversed) {
-                    clip.setBounds(p2, 0, Math.abs(p2 - p1), h);
+                    clip.setBounds(p2, 0, absv(p2 - p1), h);
                 } else {
-                    clip.setBounds(p1, 0, Math.abs(p2 - p1), h);
+                    clip.setBounds(p1, 0, absv(p2 - p1), h);
                 }
             } else {
-                clip.setBounds(0, h - Math.max(p1, p2), w, Math.abs(p2 - p1));
+                clip.setBounds(0, h - maxv(p1, p2), w, absv(p2 - p1));
             }
         }
     }
@@ -886,18 +886,19 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const series = this.model;
         const inverted = this._inverted;
         const vr = this._getViewRate();
+        const pr = this._prevRate;
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj as Axis;
-        const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
+        const wPad = xAxis.unitPad();
         const yLen = yAxis.prev(inverted ? width : height);
         const xLen = xAxis.prev(inverted ? height : width);
         const yOrg = inverted ? 0 : height;
         const min = yAxis.axisMin();
         const yMin = yAxis.getPos(yLen, min);
         const base = series.getBaseValue(yAxis);
-        const yBase = pickNum(yAxis.getPos(yLen, Math.max(min, base)), yMin);
+        const yBase = pickNum(yAxis.getPos(yLen, maxv(min, base)), yMin);
         const based = !isNaN(base);
         const info: LabelLayoutInfo = labelViews && assign(this._labelInfo, {
             inverted,
@@ -905,7 +906,6 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
             labelPos: series.getLabelPosition(labels.position),
             labelOff: series.getLabelOff(labels.getOffset())
         });
-        const pr = this._prevRate;
 
         this._getPointPool().forEach((pv: BoxPointElement, i) => {
             const p = (pv as any as IPointView).point;
@@ -979,11 +979,12 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
         const series = this.model;
         const inverted = series.chart.isInverted();
         const vr = this._getViewRate();
+        const pr = this._prevRate;
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
+        const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj;
-        const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
+        const wPad = xAxis.unitPad();
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
         const org = inverted ? 0 : height;;
@@ -992,7 +993,6 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
             labelPos: series.getLabelPosition(labels.position),
             labelOff: series.getLabelOff(labels.getOffset())
         });
-        const pr = this._prevRate;
 
         this._getPointPool().forEach((pv: BoxPointElement, i) => {
             const p = (pv as any as IPointView).point;

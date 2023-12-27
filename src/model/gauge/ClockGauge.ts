@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isString, pickProp } from "../../common/Common";
+import { isString, minv, pickProp } from "../../common/Common";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem, FormattableText } from "../ChartItem";
@@ -357,7 +357,7 @@ export class ClockGauge extends Gauge {
     }
 
     getExtendts(gaugeWidth: number, gaugeHeight: number): {cx: number, cy: number, rd: number} {
-        const r = Math.min(gaugeWidth, gaugeHeight);
+        const r = minv(gaugeWidth, gaugeHeight);
 
         return {
             cx: calcPercent(this._centerXDim, gaugeWidth, gaugeWidth / 2),

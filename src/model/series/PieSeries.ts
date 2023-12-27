@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, assign } from "../../common/Common";
+import { pickNum, assign, minv, maxv } from "../../common/Common";
 import { DEG_RAD, IPercentSize, ORG_ANGLE, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { FormattableText } from "../ChartItem";
 import { DataPoint } from "../DataPoint";
@@ -182,7 +182,7 @@ export class PieSeries extends RadialSeries {
         super._doPrepareRender();
 
         let start = pickNum(this.startAngle % 360, 0);
-        let total = Math.max(0, Math.min(360, pickNum(this.totalAngle, 360)));
+        let total = maxv(0, minv(360, pickNum(this.totalAngle, 360)));
 
         this._startRad = ORG_ANGLE + DEG_RAD * start;
         this._totalRad = DEG_RAD * total;
@@ -234,7 +234,7 @@ export class PieSeriesGroup extends SeriesGroup<PieSeries> {
     // methods
     //-------------------------------------------------------------------------
     getPolarSize(width: number, height: number): number {
-        return calcPercent(this._polarDim, Math.min(width, height));
+        return calcPercent(this._polarDim, minv(width, height));
     }
 
     getInnerRadius(rd: number): number {

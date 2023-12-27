@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, pickNum, pickNum3, assign, ceil, floor, log10 } from "../../common/Common";
+import { isArray, isObject, pickNum, pickNum3, assign, ceil, floor, log10, maxv, minv } from "../../common/Common";
 import { IPercentSize, RtPercentSize, assert, calcPercent, fixnum, parsePercentSize } from "../../common/Types";
 import { Axis, AxisItem, AxisTick, AxisLabel, IAxisTick, AxisGrid } from "../Axis";
 import { IChart } from "../Chart";
@@ -169,7 +169,7 @@ export class ContinuousAxisTick extends AxisTick {
             min = axis._fixedMin;
         } else if (!isNaN(baseVal)) { // min이 base 아래, max가 base 위에 있다.
             assert(min < baseVal && max > baseVal, "base error");
-            count = Math.max(3, count);
+            count = maxv(3, count);
 
             while (true) {
                 const n = ceil((baseVal - min) / step) + ceil((max - baseVal) / step) + 1; // +1은 base
@@ -245,7 +245,7 @@ export class ContinuousAxisTick extends AxisTick {
             return isNaN(min) ? [] : [min];
         }
 
-        let count = Math.max(1, floor(length / pixels)) + 1;
+        let count = maxv(1, floor(length / pixels)) + 1;
         let step = len / (count - 1);
         const scale = Math.pow(10, Math.floor(log10(step)));
         const multiples = this._getStepMultiples(scale);
@@ -270,7 +270,7 @@ export class ContinuousAxisTick extends AxisTick {
 
         if (!isNaN(base)) { // min이 base 아래, max가 base 위에 있다.
             assert(min <= base && max >= base, "base error");
-            count = Math.max(3, count);
+            count = maxv(3, count);
 
             // 계산된 개수보다 많아지면 줄인다.
             while (i < multiples.length) {
@@ -534,7 +534,7 @@ export abstract class ContinuousAxis extends Axis {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    isContinuous(): boolean {
+    continuous(): boolean {
         return true;
     }
 
@@ -555,7 +555,7 @@ export abstract class ContinuousAxis extends Axis {
         return new ContinuousAxisTick(this);
     }
 
-    protected _createLabelModel(): AxisLabel {
+    protected _createLabel(): AxisLabel {
         return new LinearAxisLabel(this);
     }
 
@@ -807,7 +807,7 @@ export abstract class ContinuousAxis extends Axis {
                     }
                     // 최소값으로 지정하지 않더라도 base를 넘기지는 않게 한다.
                     else {
-                        minBase = pickNum(Math.min(minBase, base), base);
+                        minBase = pickNum(minv(minBase, base), base);
                     }
                 } else if (isNaN(this.maxValue) && base >= max) {
                     if (ser.isBased(this)) {
@@ -815,7 +815,7 @@ export abstract class ContinuousAxis extends Axis {
                     }
                     // 최대값으로 지정하지 않더라도 base를 넘기지는 않게 한다.
                     else {
-                        maxBase = pickNum(Math.max(maxBase, base), base);
+                        maxBase = pickNum(maxv(maxBase, base), base);
                     }
                 }
             }
@@ -859,7 +859,7 @@ export abstract class ContinuousAxis extends Axis {
             }
         }
 
-        let len = Math.max(0, max - min);
+        let len = maxv(0, max - min);
         let min2 = min - len * (this._minPad = minPad);
         let max2 = max + len * (this._maxPad = maxPad);
 
@@ -893,14 +893,14 @@ export abstract class ContinuousAxis extends Axis {
         let min = vals[1] - vals[0];
 
         for (let i = 2; i < vals.length; i++) {
-            min = Math.min(vals[i] - vals[i - 1]);
+            min = minv(vals[i] - vals[i - 1]);
         }
 
         // 이 축에 연결된 clsuterable 시리즈들의 point 최소 간격.
         length *= min / (this._max - this._min);
 
         // [주의] polar인 경우 1보다 작을 수 있다.
-        // return Math.max(1, pickNum(length, 1));
+        // return maxv(1, pickNum(length, 1));
         return pickNum(length, 1);
     }
     

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { cos, sin } from "../../common/Common";
+import { absv, cos, sin } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { RcElement } from "../../common/RcControl";
@@ -254,7 +254,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                     ry: rd,
                     innerRadius: rdInner,
                     start: start,
-                    angle: Math.abs(p.angle),
+                    angle: absv(p.angle),
                     clockwise: series.clockwise
                 });
     

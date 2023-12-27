@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isFunc, isObject, isString, pickNum, pickProp, pickProp3 } from "../common/Common";
+import { absv, isArray, isFunc, isObject, isString, maxv, minv, pickNum, pickProp, pickProp3 } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { RcElement } from "../common/RcControl";
 import { RcObject } from "../common/RcObject";
@@ -21,7 +21,7 @@ import { ChartItem, FormattableText } from "./ChartItem";
 import { LineType } from "./ChartTypes";
 import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource, LegendItem } from "./Legend";
-import { ITooltipContext, Tooltip } from "./Tooltip";
+import { ITooltipContext } from "./Tooltip";
 import { CategoryAxis } from "./axis/CategoryAxis";
 
 export enum PointItemPosition {
@@ -128,7 +128,7 @@ export class DataPointLabel extends FormattableText {
 
     getText(value: any): string {
         if (Utils.isValidNumber(value)) {
-            return this._getText(null, value, Math.abs(value) > 1000, true);
+            return this._getText(null, value, absv(value) > 1000, true);
         }
         return value;
     }
@@ -432,7 +432,7 @@ export class Trendline extends ChartItem {
                 let maxrow = i;
 
                 for (let j = i + 1; j < n; j++) {
-                    if (Math.abs(matrix[i][j]) > Math.abs(matrix[i][maxrow])) {
+                    if (absv(matrix[i][j]) > absv(matrix[i][maxrow])) {
                         maxrow = j;
                     }
                 }
@@ -638,7 +638,7 @@ export class Trendline extends ChartItem {
     private $_movingAverage(pts: IPoint[], list: {x: number, y: number}[]): void {
         const ma = this.movingAverage;
         const length = pts.length;
-        const interval = Math.max(1, Math.min(length, ma.interval));
+        const interval = maxv(1, minv(length, ma.interval));
         let i = interval;
 
         while (i <= length) {
@@ -696,7 +696,9 @@ export interface ISeries extends IPlottingItem {
     group: ISeriesGroup;
 
     xField: string | number;
-    yField: string | number;
+    yField: string | number | Function;
+    _xFielder: (src: any) => any;
+    _yFielder: (src: any) => any;
     colorField: string | number;
 
     color: string;
@@ -789,6 +791,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     group: SeriesGroup<Series>;
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
+    _xFielder: (src: any) => any;
+    _yFielder: (src: any) => any;
     protected _points: DataPointCollection;
     _runPoints: DataPoint[];
     _visPoints: DataPoint[];
@@ -921,7 +925,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * 
      * @config
      */
-    yField: string | number;
+    yField: string | number | Function;
     /**
      * undefined이면, data point의 값이 객체일 때 'color'.
      * 
@@ -1499,22 +1503,34 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return true;
     }
 
-    protected _getField(axis: IAxis): any {
-        return axis === this._xAxisObj ? this.xField : this.yField;
-    }
+    // protected _getField(axis: IAxis): any {
+    //     return axis === this._xAxisObj ? this.xField : this.yField;
+    // }
 
     _colorByPoint(): boolean {
         return false;
     }
 
+    protected _createFilder(f: any): (v: any) => any {
+        return isFunc(f) ? (v => f(v)) :  isString(f) ? v => v[f] : v => _undef;
+    }
+
+    protected _createFielders(): void {
+        this._xFielder = this._createFilder(this.xField);
+        this._yFielder = this._createFilder(this.yField);
+    }
+
     protected _doLoad(src: any): void {
         super._doLoad(src);
+        this._createFielders();
 
+        const t = console.time('load points');
         const data = this._loadData(src);
 
         if (isArray(data) && data.length > 0) {
             this._doLoadPoints(data);
         }
+        console.timeEnd('load points');
     }
 
     protected _loadData(src: any): any {
@@ -2020,7 +2036,7 @@ export abstract class RadialSeries extends WidgetSeries {
     // methods
     //-------------------------------------------------------------------------
     getRadius(plotWidth: number, plotHeight: number): number {
-        return calcPercent(this._radiusDim, Math.min(plotWidth, plotHeight));
+        return calcPercent(this._radiusDim, minv(plotWidth, plotHeight));
     }
 
     //-------------------------------------------------------------------------
@@ -2712,7 +2728,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
             for (const pts of map.values()) {
                 let sum = 0;
                 for (const p of pts) {
-                    sum += Math.abs(p.yValue) || 0;
+                    sum += absv(p.yValue) || 0;
                 }
 
                 let prev = 0;

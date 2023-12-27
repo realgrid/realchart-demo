@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { Color } from "../../common/Color";
-import { isArray, isObject, assign } from "../../common/Common";
+import { isArray, isObject, assign, maxv } from "../../common/Common";
 import { toStr } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { ChartItem } from "../ChartItem";
@@ -281,7 +281,7 @@ export class TreemapSeries extends Series {
                 node.children.forEach((node, i) => {
                     node.index = i;
                 });
-                levels = Math.max(levels, node.level() + 1 + 1);
+                levels = maxv(levels, node.level() + 1 + 1);
             } else {
                 leafs.push(node);
                 node.value = node.point ? node.point.yValue : 0;
@@ -422,7 +422,7 @@ export class TreemapSeries extends Series {
                 wNode = w * node.value / sum;
             }
 
-            rate = Math.max(wNode / hNode, hNode / wNode);
+            rate = maxv(wNode / hNode, hNode / wNode);
 
             if (nodes.length > 0 && rate > prevRate) {
                 nodes.unshift(node);

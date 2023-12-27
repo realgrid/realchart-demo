@@ -6,10 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../common/Common";
+import { maxv, pickNum } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { RcElement } from "../common/RcControl";
-import { ZERO_RECT, toSize } from "../common/Rectangle";
+import { RECT_Z, toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
@@ -67,15 +67,15 @@ export class LegendItemView extends ChartElement<LegendItem> {
 
         this._label.text = model.text();
 
-        const rMarker = this._marker.setVis(model.legend.markerVisible) ? this._marker.getBBox() : ZERO_RECT;
+        const rMarker = this._marker.setVis(model.legend.markerVisible) ? this._marker.getBBox() : RECT_Z;
         const sz = toSize(this._label.getBBox());
         this._gap = pickNum(model.legend.markerGap, 0);
 
-        return Size.create(rMarker.width + this._gap + sz.width, Math.max(rMarker.height, sz.height));
+        return Size.create(rMarker.width + this._gap + sz.width, maxv(rMarker.height, sz.height));
     }
 
     protected _doLayout(): void {
-        const rMarker = this._marker.visible ? this._marker.getBBox() : ZERO_RECT;
+        const rMarker = this._marker.visible ? this._marker.getBBox() : RECT_Z;
 
         this._back.setBounds(0, 0, this.width, this.height);
         this._marker.visible && this._marker.trans(0, (this.height - rMarker.height) / 2);
@@ -257,10 +257,10 @@ export class LegendView extends BoundableElement<Legend> {
                 let hRow = 0;
                 views.forEach(v => {
                     hRow += v.mh;
-                    wRow = Math.max(wRow, v.mw);
+                    wRow = maxv(wRow, v.mw);
                 })
                 hRow += itemGap * (views.length - 1);
-                h = Math.max(h, hRow);
+                h = maxv(h, hRow);
                 w += wRow;
                 sizes.push(wRow);
             });
@@ -291,10 +291,10 @@ export class LegendView extends BoundableElement<Legend> {
                 let hRow = 0;
                 views.forEach(v => {
                     wRow += v.mw;
-                    hRow = Math.max(hRow, v.mh);
+                    hRow = maxv(hRow, v.mh);
                 })
                 wRow += itemGap * (views.length - 1);
-                w = Math.max(w, wRow);
+                w = maxv(w, wRow);
                 h += hRow;
                 sizes.push(hRow);
             });

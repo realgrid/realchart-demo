@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isObject, isString, pickNum, assign } from "../../common/Common";
+import { isArray, isNumber, isObject, isString, pickNum, assign, maxv } from "../../common/Common";
 import { DatetimeFormatter } from "../../common/DatetimeFormatter";
 import { AxisLabel, AxisTick } from "../Axis";
 import { IChart } from "../Chart";
@@ -138,7 +138,7 @@ export class TimeAxisTick extends ContinuousAxisTick {
         const axis = this.axis as TimeAxis;
         const calcedMin = new Date(axis._calcedMin);
         let count = Math.floor(length / this.stepPixels) + 1;
-        let step = Math.max(1, Math.floor(len / (count - 1)));
+        let step = maxv(1, Math.floor(len / (count - 1)));
         const multiples = this._getStepMultiples(step);
         const scale = time_scales[this.scale];
 
@@ -465,7 +465,7 @@ export class TimeAxis extends ContinuousAxis {
         return new TimeAxisTick(this);
     }
 
-    protected _createLabelModel(): AxisLabel {
+    protected _createLabel(): AxisLabel {
         return new TimeAxisLabel(this);
     }
 

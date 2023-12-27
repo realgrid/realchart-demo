@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartControl } from "../ChartControl";
+import { absv } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { DragTracker, IPointerHandler } from "../common/RcControl";
 import { DataPoint } from "../model/DataPoint";
@@ -80,7 +81,7 @@ export class ChartPointerHandler implements IPointerHandler {
                 // dragging && this.$_stopDragTracker(dom, x, y, true);
             } else if (dragging) {
                 this.$_doDrag(ev, dom, x, y);
-            } else if (!this._dragTracker && (Math.abs(this._clickX - x) > DRAG_THRESHOLD || Math.abs(this._clickY - y) > DRAG_THRESHOLD)) {
+            } else if (!this._dragTracker && (absv(this._clickX - x) > DRAG_THRESHOLD || absv(this._clickY - y) > DRAG_THRESHOLD)) {
                 this.$_startMove(ev, dom, x, y);
             } else if (this._dragTracker && !dragging) {
                 this.$_startMove(ev, dom, x, y);

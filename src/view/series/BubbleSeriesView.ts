@@ -14,11 +14,8 @@ import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { PointItemPosition } from "../../model/Series";
 import { BubbleSeries, BubbleSeriesPoint } from "../../model/series/BubbleSeries";
-import { MarkerSeriesPointView, MarkerSeriesView, PointLabelView } from "../SeriesView";
+import { MarkerSeriesView, PointLabelView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
-
-class MarkerView extends MarkerSeriesPointView<BubbleSeriesPoint> {
-}
 
 /**
  * @internal 

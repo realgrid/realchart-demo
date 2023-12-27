@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isObject, isString, pickNum, pickProp } from "../common/Common";
+import { isArray, isNumber, isObject, isString, maxv, minv, pickNum, pickProp } from "../common/Common";
 import { IRichTextDomain } from "../common/RichText";
 import { Align, DEG_RAD, ORG_ANGLE, SVGStyleOrClass, VerticalAlign, _undef, fixnum, isNull } from "../common/Types";
 import { Utils } from "../common/Utils";
@@ -33,7 +33,7 @@ export interface IAxis {
     _vlen: number;
     _zoom: IAxisZoom;
 
-    isContinuous(): boolean;
+    continuous(): boolean;
     getBaseValue(): number;
     axisMax(): number;
     axisMin(): number;
@@ -101,8 +101,8 @@ export class AxisLine extends AxisItem {
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(axis: Axis) {
-        super(axis, axis._isX);
+    constructor(axis: Axis, visible: boolean) {
+        super(axis, visible && axis._isX);
     }
 
     //-------------------------------------------------------------------------
@@ -234,53 +234,72 @@ export class AxisGridRows extends AxisItem {
     /**
      * 각 row를 칠(fill)하는 데 사용되는 색상 스타일들을 지정한다.\
      * 칠하지 않는 영역은 null로 지정하면 되고, 개수가 모자라면 반복된다.
+     * 
+     * @config
      */
     colors: string[];
+    /**
+     * axis의 baseValue 이전 영역을 칠(fill)하는 데 사용되는 색상.\
+     * {@link colors} 설정에 따른 칠 이 전에 칠해진다.
+     * 
+     * @config
+     */
+    belowColor: string;
 
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    isEnabled(): boolean {
-        return Array.isArray(this.colors) && this.colors.length > 0;
-    }
-
     getRows(): IAxisGridRow[] {
         const axis = this.axis;
-        const ticks = axis._ticks;
         const colors = this.colors;
-        const n = colors.length;
+        const n = colors ? colors.length : 0;
         const rows: IAxisGridRow[] = [];
-        let c = 0;
 
-        if (ticks[0].value > axis.axisMin()) {
-            if (colors[c % n]) {
+        if (this.belowColor) {
+            if (axis.axisMin() < axis.getBaseValue()) {
                 rows.push({
                     axis,
                     from: axis.axisMin(),
-                    to: ticks[0].value,
-                    color: colors[c % n]
-                })
-            }
-            c++;
-        }
-        for (let i = 1; i < ticks.length; i++, c++) {
-            if (colors[c % n]) {
-                rows.push({
-                    axis,
-                    from: ticks[i - 1].value,
-                    to: ticks[i].value,
-                    color: colors[c % n]
-                })
+                    to: axis.getBaseValue(),
+                    color: this.belowColor
+                });
             }
         }
-        if (ticks[ticks.length - 1].value < axis.axisMax()) {
-            if (colors[c % n]) {
-                rows.push({
-                    axis,
-                    from: ticks[ticks.length - 1].value,
-                    to: axis.axisMax(),
-                    color: colors[c % n]
-                })
+
+        if (n > 0) {
+            const ticks = axis._ticks;
+            let c = 0;
+
+            if (ticks[0].value > axis.axisMin()) {
+                if (colors[c % n]) {
+                    rows.push({
+                        axis,
+                        from: axis.axisMin(),
+                        to: ticks[0].value,
+                        color: colors[c % n]
+                    })
+                }
+                c++;
+            }
+            for (let i = 1; i < ticks.length; i++, c++) {
+                if (colors[c % n]) {
+                    rows.push({
+                        axis,
+                        from: ticks[i - 1].value,
+                        to: ticks[i].value,
+                        color: colors[c % n]
+                    })
+                }
+            }
+            if (ticks[ticks.length - 1].value < axis.axisMax()) {
+                if (colors[c % n]) {
+                    rows.push({
+                        axis,
+                        from: ticks[ticks.length - 1].value,
+                        to: axis.axisMax(),
+                        color: colors[c % n]
+                    })
+                }
             }
         }
         return rows;
@@ -962,8 +981,8 @@ export class AxisZoom {
     // methods
     //-------------------------------------------------------------------------
     resize(start: number, end: number): boolean {
-        start = isNaN(start) ? this.start : Math.max(this.min, Math.min(this.max, start));
-        end = isNaN(end) ? this.end : Math.max(start, Math.min(this.max, end));
+        start = isNaN(start) ? this.start : maxv(this.min, minv(this.max, start));
+        end = isNaN(end) ? this.end : maxv(start, minv(this.max, end));
 
         if (start > end) {
             const t = start;
@@ -1024,10 +1043,11 @@ export abstract class Axis extends ChartItem implements IAxis {
         this._isX = isX;
         this.name = name;
         this.title = new AxisTitle(this);
-        this.line = new AxisLine(this);
-        this.sectorLine = new AxisLine(this);
+        this.line = new AxisLine(this, true);
+        this.sectorLine = new AxisLine(this, true);
+        this.baseLine = new AxisLine(this, false);
         this.tick = this._createTickModel();
-        this.label = this._createLabelModel();
+        this.label = this._createLabel();
         this.grid = this._createGrid();
     }
 
@@ -1055,6 +1075,13 @@ export abstract class Axis extends ChartItem implements IAxis {
      * @config
      */
     readonly sectorLine: AxisLine;
+    /**
+     * base value 위치에 표시되는 선분 설정 모델.\
+     * 기본적으로 표시되지 않는다.
+     * 
+     * @config
+     */
+    readonly baseLine: AxisLine;
     /**
      * @config
      */
@@ -1190,7 +1217,7 @@ export abstract class Axis extends ChartItem implements IAxis {
         return this._max;
     }
 
-    abstract isContinuous(): boolean;
+    abstract continuous(): boolean;
     abstract valueAt(length: number, pos: number): number;
 
     axisValueAt(length: number, pos: number): any {
@@ -1202,7 +1229,7 @@ export abstract class Axis extends ChartItem implements IAxis {
     }
 
     getTotalAngle(): number {
-        return DEG_RAD * Math.max(0, Math.min(360, pickNum(this.totalAngle, 360)));
+        return DEG_RAD * maxv(0, minv(360, pickNum(this.totalAngle, 360)));
     }
 
     isArced(): boolean {
@@ -1218,11 +1245,15 @@ export abstract class Axis extends ChartItem implements IAxis {
         return series;
     }
 
+    unitPad(): number {
+        return 0;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
     protected abstract _createTickModel(): AxisTick;
-    protected abstract _createLabelModel(): AxisLabel;
+    protected abstract _createLabel(): AxisLabel;
     protected abstract _doPrepareRender(): void;
     protected abstract _doBuildTicks(min: number, max: number, length: number): IAxisTick[];
 
@@ -1488,8 +1519,8 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     protected _doCalcluateRange(values: number[]): { min: number, max: number } {
         return {
-            min: values.length > 0 ? fixnum(Math.min(...values) || 0) : NaN,
-            max: values.length > 0 ?  fixnum(Math.max(...values) || 0) : NaN
+            min: values.length > 0 ? fixnum(minv(...values) || 0) : NaN,
+            max: values.length > 0 ?  fixnum(maxv(...values) || 0) : NaN
         };
     }
 }

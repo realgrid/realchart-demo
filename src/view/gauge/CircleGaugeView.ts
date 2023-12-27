@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { cos, pickNum, sin } from "../../common/Common";
+import { cos, minv, pickNum, sin } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { IPoint } from "../../common/Point";
@@ -350,7 +350,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
     protected _renderGauge(width: number, height: number): void {
         const m = this.model;
         const center = m.getCenter(width, height);
-        const exts = m.getExtents(Math.min(width, height));
+        const exts = m.getExtents(minv(width, height));
 
         this.$_renderBackground(m, center, exts);
         this._renderValue();
@@ -527,7 +527,7 @@ export class CircleGaugeGroupView extends GaugeGroupView<CircleGauge, CircleGaug
         const doc = this.doc;
         const m = this.model;
         const center = m.getCenter(width, height);
-        const exts = m.getExtents(Math.min(width, height));
+        const exts = m.getExtents(minv(width, height));
 
         m.setChildExtents(exts);
         width = height = exts.radius * 2;

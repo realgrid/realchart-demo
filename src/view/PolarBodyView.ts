@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { cos, sin } from "../common/Common";
+import { absv, cos, sin } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { ClipCircleElement, LayerElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
@@ -276,7 +276,7 @@ class PolarXAxisView extends PolarAxisView {
             });
             // 마지막이 겹치는 지 확인한다.
             if (count > 2) {
-                if (Math.abs(ticks[count - 1].pos - ticks[count - 2].pos) < PI_2 / 24) {
+                if (absv(ticks[count - 1].pos - ticks[count - 2].pos) < PI_2 / 24) {
                     this._labelViews.get(count - 1).setVis(false);
                 }
             }

@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { maxv, minv } from "../../common/Common";
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
@@ -44,15 +45,15 @@ class StickView extends RangeElement implements IPointView {
         const x = 0;//this.width / 2;
         const x1 = -w / 2;
         let y = 0;
-        const yOpen = y + h - h * (Math.min(p.openValue, p.closeValue) - p.lowValue) / len;
-        const yClose = y + h - h * (Math.max(p.openValue, p.closeValue) - p.lowValue) / len;
+        const yOpen = y + h - h * (minv(p.openValue, p.closeValue) - p.lowValue) / len;
+        const yClose = y + h - h * (maxv(p.openValue, p.closeValue) - p.lowValue) / len;
         const decline = p.close < p.open;
 
         this._back.setBox(x1, 0, w, h);
         this._tickOpen.setHLine(yOpen, x1, x);
         this._tickClose.setHLine(yClose, x, this.width);
         this._bar.setVLine(x, y, y + h);
-        //this._bar.setBounds(0, Math.min(yClose, yOpen), w, Math.max(1, Math.abs(yOpen - yClose)));
+        //this._bar.setBounds(0, minv(yClose, yOpen), w, maxv(1, absv(yOpen - yClose)));
         this.setBoolData('decline', decline);
     }
 

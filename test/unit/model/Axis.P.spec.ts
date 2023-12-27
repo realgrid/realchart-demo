@@ -69,7 +69,7 @@ const source = {
 class AxisImpl extends Axis {
     protected _createGrid(): AxisGrid { return }
     protected _createTickModel(): AxisTick { return }
-    protected _createLabelModel(): AxisLabel { return new LinearAxisLabel(this); }
+    protected _createLabel(): AxisLabel { return new LinearAxisLabel(this); }
     _type(): string { return type; }
     protected _doPrepareRender(): void {}
     protected _doBuildTicks(min: number, max: number, length: number): IAxisTick[] { return [];}
@@ -77,7 +77,7 @@ class AxisImpl extends Axis {
     getUnitLen(length: number): number { return 0; }
     axisMin(): number { return; }
     axisMax(): number { return; }
-    isContinuous(): boolean { return false }
+    continuous(): boolean { return false }
     valueAt(length: number, pos: number): number { return; }
 }
 

@@ -61,7 +61,7 @@ export class BarRangeSeriesPoint extends DataPoint {
         super._readObject(series, v);
 
         this.low = pickProp(v[series.lowField], v.low);
-        this.y = pickProp3(v[series.yField], v.y, v.value);
+        this.y = pickProp3(series._yFielder(v), v.y, v.value);
     }
 
     protected _readSingle(v: any): void {

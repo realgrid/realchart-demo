@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, pickProp3, assign } from "../../common/Common";
+import { pickNum, pickProp, pickProp3, assign, maxv } from "../../common/Common";
 import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
 import { IAxis } from "../Axis";
@@ -62,7 +62,7 @@ export class VectorSeriesPoint extends DataPoint {
 
         this.length = pickProp(v[series.lengthField], v.length);
         this.angle = pickProp(v[series.angleField], v.angle);
-        this.y = pickProp3(v[series.yField], v.y, v.value);
+        this.y = pickProp3(series._yFielder(v), v.y, v.value);
     }
 
     protected _readSingle(v: any): void {
@@ -138,7 +138,7 @@ export class VectorSeries extends Series {
         if (pts.length > 0) {
             const len = this.maxLength;
             const org = this.origin;
-            const max = pts.map(p => p.length).reduce((r, c) => Math.max(r, c));
+            const max = pts.map(p => p.length).reduce((r, c) => maxv(r, c));
     
             pts.forEach(p => {
                 const f = p.length / max;

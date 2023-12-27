@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { cos, sin } from "../../common/Common";
+import { absv, cos, sin } from "../../common/Common";
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
@@ -515,7 +515,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     private $_drawCurve(pts: IPointPos[], start: number, end: number, sb: PathBuilder): void {
         let p = start;
 
-        if (Math.abs(end - start) === 1) {
+        if (absv(end - start) === 1) {
             sb.line(pts[p + 1].xPos, pts[p + 1].yPos);
             return;
         }

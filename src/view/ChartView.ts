@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ButtonElement } from "../common/ButtonElement";
-import { pickNum } from "../common/Common";
+import { maxv, pickNum } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { ClipRectElement, LayerElement, RcElement } from "../common/RcControl";
 import { IRect } from "../common/Rectangle";
@@ -35,7 +35,6 @@ import { PolarBodyView } from "./PolarBodyView";
 import { SeriesView } from "./SeriesView";
 import { TitleView } from "./TitleView";
 import { TooltipView } from "./TooltipView";
-import { AxisAnimation } from "./animation/AxisAnimation";
 
 /**
  * @internal
@@ -95,12 +94,12 @@ class TitleSectionView extends SectionView {
         switch (sub.position) {
             case SubtitlePosition.LEFT:
             case SubtitlePosition.RIGHT:
-                height = Math.max(hTitle, hSub);
+                height = maxv(hTitle, hSub);
                 width = wTitle + titleGap + wSub;
                 break;
             default:
                 height = hTitle + titleGap + hSub;
-                width = Math.max(width, wTitle + wSub);
+                width = maxv(width, wTitle + wSub);
                 break;
         }
 
@@ -133,9 +132,9 @@ class TitleSectionView extends SectionView {
                 }
             };
             const calcYs = () => {
-                const h = Math.max(this._hTitle, this._hSub);
-                yTitle = Math.max(yTitle, yTitle + getY(title, h, this._hTitle));
-                ySub = Math.max(ySub, ySub + getY(sub, h, this._hSub));
+                const h = maxv(this._hTitle, this._hSub);
+                yTitle = maxv(yTitle, yTitle + getY(title, h, this._hTitle));
+                ySub = maxv(ySub, ySub + getY(sub, h, this._hSub));
             };
             const getX = (model: Title, w: number, wTitle: number): number => {
                 switch (model.align) {
@@ -148,8 +147,8 @@ class TitleSectionView extends SectionView {
                 }
             };
             const calcXs = () => {
-                xTitle = Math.max(xTitle, xTitle + getX(title, dTitle, this._wTitle));
-                xSub = Math.max(xSub, xSub + getX(sub, dSub, this._wSub));
+                xTitle = maxv(xTitle, xTitle + getX(title, dTitle, this._wTitle));
+                xSub = maxv(xSub, xSub + getX(sub, dSub, this._wSub));
             };
             const gap = pickNum(sub.titleGap, 0);
             let yTitle = 0;
@@ -169,10 +168,10 @@ class TitleSectionView extends SectionView {
                             xSub = xTitle + this._wTitle + gap;
                             switch (sub.align) {
                                 case Align.CENTER:
-                                    xSub = Math.max(xSub, xSub + (dSub - this._wTitle - this._wSub) / 2);
+                                    xSub = maxv(xSub, xSub + (dSub - this._wTitle - this._wSub) / 2);
                                     break;
                                 case Align.RIGHT:
-                                    xSub = Math.max(xSub, pSub + dSub - this._wSub);
+                                    xSub = maxv(xSub, pSub + dSub - this._wSub);
                                     break;
                             }
                             calcYs();
@@ -503,8 +502,8 @@ class AxisSectionView extends SectionView {
                     w2 += (views.length - 1) * this._gap;
                 }
 
-                w = Math.max(w, w2);
-                h = Math.max(h, h2);
+                w = maxv(w, w2);
+                h = maxv(h, h2);
             }
         })
 

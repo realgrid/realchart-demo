@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { maxv, minv } from "../common/Common";
 import { createAnimation } from "../common/RcAnimation";
 import { PathElement, RcControl, RcElement } from "../common/RcControl";
 import { SvgRichText } from "../common/RichText";
@@ -86,8 +87,8 @@ export class TooltipView extends RcElement {
         this._richText.build(tv, NaN, NaN, null, model.getTextDomain());
 
         const r = tv.getBBox();
-        let w = Math.max(model.minWidth || 0, r.width + 8 * 2);
-        let h = Math.max(model.minHeight || 0, r.height + 6 * 2);
+        let w = maxv(model.minWidth || 0, r.width + 8 * 2);
+        let h = maxv(model.minHeight || 0, r.height + 6 * 2);
 
         // 시리즈 색은 동적일 수 있다.
         //this._top.setData('index', (series.index % PALETTE_LEN) as any);
@@ -99,20 +100,20 @@ export class TooltipView extends RcElement {
         let translate = 0;
         if (isInverted) {
             h += this._topHeight;
-            translate = (y - h / 2) - Math.max(0, Math.min(y - h / 2, ch - h));
+            translate = (y - h / 2) - maxv(0, minv(y - h / 2, ch - h));
             this.drawTooltip(0, -this._topHeight / 2, w, h, TooltipPosition.RIGHT, translate);
             x = x + model.offset;
             y = y - h / 2, dur, false;
         } else {
             h += this._topHeight;
-            translate = (x - w / 2) - Math.max(0, Math.min(x - w / 2, cw - w));
+            translate = (x - w / 2) - maxv(0, minv(x - w / 2, cw - w));
             this.drawTooltip(0, -this._topHeight, w, h, TooltipPosition.TOP, translate);
             x = x - w / 2;
             y = y - h - model.offset;
         };
 
-        x = Math.max(0, Math.min(x, cw - w));
-        y = Math.max(0, Math.min(y, ch - h));
+        x = maxv(0, minv(x, cw - w));
+        y = maxv(0, minv(y, ch - h));
         this.transEx(x, y, dur, false);
 
         if (dur === 0) {

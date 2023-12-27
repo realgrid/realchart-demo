@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { absv } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
@@ -215,8 +216,8 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
                         let ly = p.yPos;
 
                         if (!isNaN(seg.ny)) { // neck에 걸친 segment
-                            if (Math.abs(seg.ny) > rSeg.height / 2) {
-                                lx -= (seg.nx1 * rSeg.height / 2) / Math.abs(seg.ny);
+                            if (absv(seg.ny) > rSeg.height / 2) {
+                                lx -= (seg.nx1 * rSeg.height / 2) / absv(seg.ny);
                             }
                         } else if (!isNaN(seg.nx1)) { // 사디리꼴
                             lx -= (seg.nx1 * rSeg.height / 2) / rSeg.height;

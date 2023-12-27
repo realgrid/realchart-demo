@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
+import { RcObject } from "./RcObject";
 import { Align, ISides, Path, SVGStyleOrClass, _undef, getCssProp, isNull, pixel, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
@@ -31,7 +31,7 @@ export interface IPointerHandler {
  *
  * Control base.
  */
-export abstract class RcControl extends RcWrappableObject {
+export abstract class RcControl extends RcObject {//} RcWrappableObject {
 
     //-------------------------------------------------------------------------
     // consts
@@ -55,7 +55,7 @@ export abstract class RcControl extends RcWrappableObject {
     private _htmlRoot: HTMLDivElement;
     private _svg: SVGSVGElement;
     private _defs: SVGDefsElement;
-    private _back: RcElement;
+    // private _back: RcElement;
     private _root: RootElement;
 
     private _pointerHandler: IPointerHandler;
@@ -330,24 +330,24 @@ export abstract class RcControl extends RcWrappableObject {
         return { x: x + br.x - cr.x, y: y + br.y - cr.y };
     }
 
-    // TODO: svg 크기에서 '%'제거
-    //       svg 복사본 생성: 외부 스타일 내부로 가져오기
-    test(canvas: HTMLCanvasElement): void {
-        const svg = this._svg.outerHTML;
-        const image = new Image();
-        const ctx = canvas.getContext("2d");
+    // // TODO: svg 크기에서 '%'제거
+    // //       svg 복사본 생성: 외부 스타일 내부로 가져오기
+    // test(canvas: HTMLCanvasElement): void {
+    //     const svg = this._svg.outerHTML;
+    //     const image = new Image();
+    //     const ctx = canvas.getContext("2d");
 
-        document.body.appendChild(image);
+    //     document.body.appendChild(image);
 
-        image.width = 850;
-        image.height = 550;
-        // image.src = `data:image/svg+xml;base64,${window.btoa(unescape(encodeURIComponent(svg)))}`;
-        // image.src = `data:image/svg+xml;base64,${window.btoa(encodeURIComponent(svg))}`;
-        image.src = `data:image/svg+xml;charset=utf-8,&lt;${svg}`;
-        image.onload = () => {
-            ctx.drawImage(image, 0, 0);
-        };
-    }
+    //     image.width = 850;
+    //     image.height = 550;
+    //     // image.src = `data:image/svg+xml;base64,${window.btoa(unescape(encodeURIComponent(svg)))}`;
+    //     // image.src = `data:image/svg+xml;base64,${window.btoa(encodeURIComponent(svg))}`;
+    //     image.src = `data:image/svg+xml;charset=utf-8,&lt;${svg}`;
+    //     image.onload = () => {
+    //         ctx.drawImage(image, 0, 0);
+    //     };
+    // }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -616,7 +616,7 @@ export abstract class RcControl extends RcWrappableObject {
 
 const TEXT_ALIGN = 'textAlign';
 
-export type RtControlOrWrapper = RcControl | RcWrapper<RcControl>;
+// export type RtControlOrWrapper = RcControl | RcWrapper<RcControl>;
 
 /**
  * @internal

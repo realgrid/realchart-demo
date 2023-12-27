@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { assign, isArray, isObject, isString, pickNum } from "./Common";
+import { assign, isArray, isObject, isString, maxv, minv, pickNum } from "./Common";
 import { locale } from "./RcLocale";
 
 export const _undef = void 0; // 불필요
@@ -401,8 +401,8 @@ export const buildValueRanges = function (source: IValueRange[] | IValueRanges, 
                        .filter(r => r.toValue >= min && r.fromValue < max);
         if (strict) {
             ranges.forEach(r => {
-                r.fromValue = Math.max(r.fromValue, min);
-                r.toValue = Math.min(r.toValue, max);
+                r.fromValue = maxv(r.fromValue, min);
+                r.toValue = minv(r.toValue, max);
             })
         }
     } else if (isObject(source) && isArray(source.colors) && source.colors.length > 0) {
@@ -421,8 +421,8 @@ export const buildValueRanges = function (source: IValueRange[] | IValueRanges, 
                 ranges.push({
                     fromValue: steps[i],
                     toValue: steps[i + 1],
-                    color: colors[Math.min(i, colors.length - 1)],
-                    style: styles ? styles[Math.min(i, styles.length - 1)] : _undef
+                    color: colors[minv(i, colors.length - 1)],
+                    style: styles ? styles[minv(i, styles.length - 1)] : _undef
                 });
             }
 
@@ -436,8 +436,8 @@ export const buildValueRanges = function (source: IValueRange[] | IValueRanges, 
                 ranges.push({
                     fromValue: from,
                     toValue: from += step,
-                    color: colors[Math.min(i, colors.length - 1)],
-                    style: styles ? styles[Math.min(i, styles.length - 1)] : _undef
+                    color: colors[minv(i, colors.length - 1)],
+                    style: styles ? styles[minv(i, styles.length - 1)] : _undef
                 });
                 i++;
             }

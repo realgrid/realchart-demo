@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNumber, isObject, pickNum, pickNum3, pickProp } from "../../common/Common";
+import { isArray, isNumber, isObject, minv, pickNum, pickNum3, pickProp } from "../../common/Common";
 import { DEG_RAD, PI_2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { Axis, AxisGrid, AxisTick, AxisLabel, IAxisTick } from "../Axis";
@@ -240,10 +240,6 @@ export class CategoryAxis extends Axis {
         return 0;
     }
 
-    categoryPad(): number {
-        return this._catPad;
-    }
-
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -251,7 +247,11 @@ export class CategoryAxis extends Axis {
         return 'category';
     }
 
-    isContinuous(): boolean {
+    unitPad(): number {
+        return this._catPad;
+    }
+
+    continuous(): boolean {
         return false;
     }
 
@@ -263,7 +263,7 @@ export class CategoryAxis extends Axis {
         return new CategoryAxisTick(this);
     }
 
-    protected _createLabelModel(): AxisLabel {
+    protected _createLabel(): AxisLabel {
         return new CategoryAxisLabel(this);
     }
 
@@ -284,7 +284,7 @@ export class CategoryAxis extends Axis {
         let a = +this.startOffset;
 
         if (a > 0) {
-            start -= Math.min(a, 1) * this._categories[0].w * PI_2 / this._len;
+            start -= minv(a, 1) * this._categories[0].w * PI_2 / this._len;
         }
         return start;
     }

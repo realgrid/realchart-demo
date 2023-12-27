@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { minv } from "../../common/Common";
 import { RcElement } from "../../common/RcControl";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
@@ -86,7 +87,7 @@ export class ScatterSeries extends MarkerSeries {
     legendMarker(doc: Document, size: number): RcElement {
         const m = super.legendMarker(doc, size);
 
-        (m as ShapeLegendMarkerView).setShape(this.getShape(null), Math.min(+size || LegendItem.MARKER_SIZE, this.radius * 2));
+        (m as ShapeLegendMarkerView).setShape(this.getShape(null), minv(+size || LegendItem.MARKER_SIZE, this.radius * 2));
         return m;
     }
 }

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, assign } from "./Common";
+import { isArray, assign, minv, maxv, absv } from "./Common";
 
 const __epoch = new Date().getTime();
 
@@ -264,13 +264,13 @@ export class Utils {
 	}
 
 	static pad(value: number, len?: number, c?: string): string {
-		len = Math.max(len || 2, 1);
+		len = maxv(len || 2, 1);
         c = c || '0';
 		return new Array(len - String(value).length + 1).join(c) + value;
 	}
 
 	static pad16(value: number, len?: number, c?: string): string {
-		len = Math.max(len || 2, 1);
+		len = maxv(len || 2, 1);
         c = c || '0';
 		return new Array(len - value.toString(16).length + 1).join(c) + value.toString(16);
 	}
@@ -412,7 +412,7 @@ export class Utils {
     // }
 
     // static hex(value: number, len = 2, c = "0") {
-    //     len = Math.max(len || 2, 1);
+    //     len = maxv(len || 2, 1);
     //     const s = value.toString(16);
 
     //     c = c || "0";
@@ -490,7 +490,7 @@ export class Utils {
         const day = d.getDate();
         d.setDate(1);
         d.setMonth(d.getMonth() + delta);
-        d.setDate(Math.min(day, Utils.month_days[Utils.isLeapYear(d.getFullYear()) ? 1 : 0][d.getMonth()]));
+        d.setDate(minv(day, Utils.month_days[Utils.isLeapYear(d.getFullYear()) ? 1 : 0][d.getMonth()]));
         return d;
     }
 
@@ -700,11 +700,11 @@ export class Utils {
     }
 
     static clamp(v: number, min: number, max: number): number {
-        return Math.max(min, Math.min(max, v));
+        return maxv(min, minv(max, v));
     }
 
     static makeIntArray(from: number, to: number): number[] {
-        const arr = new Array<number>(Math.max(0, to - from));
+        const arr = new Array<number>(maxv(0, to - from));
 
         for (let i = from; i < to; i++) {
             arr[i - from] = i;
@@ -798,7 +798,7 @@ export class Utils {
     }
 
     static scaleNumber(value: number, symbols: string[], force: boolean): { value: number, symbol: string } {
-        const abs = Math.abs(value);
+        const abs = absv(value);
         
         if (abs >= 1000) {
             let i = symbols.length - 1;

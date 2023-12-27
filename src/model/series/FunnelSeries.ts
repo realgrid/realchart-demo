@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { maxv } from "../../common/Common";
 import { ISize } from "../../common/Size";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize2 } from "../../common/Types";
 import { Utils } from "../../common/Utils";
@@ -88,8 +89,8 @@ export class FunnelSeries extends WidgetSeries {
     //-------------------------------------------------------------------------
     getSize(plotWidth: number, plotHeight: number): ISize {
         return {
-            width: Math.max(plotWidth * 0.1, calcPercent(this._widthDim, plotWidth)),
-            height: Math.max(plotHeight * 0.1, calcPercent(this._heightDim, plotHeight))
+            width: maxv(plotWidth * 0.1, calcPercent(this._widthDim, plotWidth)),
+            height: maxv(plotHeight * 0.1, calcPercent(this._heightDim, plotHeight))
         };
     }
 

@@ -136,7 +136,6 @@
 .rct-control[data-theme='real'] {
 	--rct-background: #264653;
 }
-
 .rct-root {
     --rct-font-family: AppleSDGothicNeo-Light, "HelveticaNeue", "Malgun Gothic", "맑은 고딕", sans-serif;
     --rct-font-size: 16px;
@@ -285,7 +284,6 @@
     /** zoom tracker */
     --rct-zoom-tracker-fill: #efefef40;
 }
-
 
 /** control */
 .rct-control {

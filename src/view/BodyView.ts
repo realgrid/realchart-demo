@@ -62,7 +62,7 @@ import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
 import { LabelElement } from "../common/impl/LabelElement";
 import { CircleBarSeriesView } from "./series/CircleBarSeriesView";
-import { cos, isArray, pickNum, sin } from "../common/Common";
+import { cos, isArray, maxv, minv, pickNum, sin } from "../common/Common";
 import { ArcPolyElement } from "../common/impl/CircleElement";
 import { SectorElement } from "../common/impl/SectorElement";
 import { SvgShapes } from "../common/impl/SvgShape";
@@ -533,8 +533,8 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
         const m = this.model;
         const label = m.label;
         const box = this._box as BoxElement;
-        const start = Math.min(m.startValue, m.endValue);
-        const end = Math.max(m.startValue, m.endValue);
+        const start = minv(m.startValue, m.endValue);
+        const end = maxv(m.startValue, m.endValue);
         const labelView = this._labelView.setVis(label.visible) && this._labelView;
         const rLabel = labelView.getBBox();
         const xOff = pickNum(label.offsetX, 0);
@@ -573,7 +573,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
                 }
     
                 box.setBox(x1, 0, x2, height);
-                labelView && labelView.trans(Math.max(0, Math.min(width, x)), y);
+                labelView && labelView.trans(maxv(0, minv(width, x)), y);
             }
         } else {
             const y1 = height - m.axis.getPos(height, start);
@@ -657,15 +657,13 @@ export class AxisGridRowContainer extends LayerElement {
     //-------------------------------------------------------------------------
     prepare(): void {
         this._rows = [];
-    }
+    }   
 
     addAll(doc: Document, axes: Axis[]): void {
         const rows: IAxisGridRow[] = this._rows;
 
         axes.forEach(axis => {
-            if (axis.grid.rows.isEnabled()) {
-                rows.push(...axis.grid.rows.getRows());
-            }
+            rows.push(...axis.grid.rows.getRows());
         });
     }
 
@@ -858,6 +856,7 @@ export class BodyView extends ChartElement<Body> {
     private _image: ImageElement;
     _gridRowContainer: AxisGridRowContainer;
     private _gridContainer: LayerElement;
+    private _baseContainer: LayerElement;
     protected _gridViews = new Map<Axis, AxisGridView>();
     private _breakViews: AxisBreakView[] = [];
     private _seriesContainer: LayerElement;
@@ -904,15 +903,16 @@ export class BodyView extends ChartElement<Body> {
         this.add(this._hitTester = new RectElement(doc));
         this._hitTester.setFill('transparent');
         this.add(this._background = new RectElement(doc, 'rct-body-background'));
-        this.add(this._image = new ImageElement(doc, 'rct-body-image'));
-        this.add(this._gridRowContainer = new AxisGridRowContainer(doc, 'rct-grid-rows'));
-        this.add(this._gridContainer = new LayerElement(doc, 'rct-grids'));
-        this.add(this._guideContainer = new AxisGuideContainer(doc, 'rct-guides'));
+        this.add(this._image = new ImageElement(doc, true, 'rct-body-image'));
+        this.add(this._gridRowContainer = new AxisGridRowContainer(doc, 'rct-axis-grid-rows'));
+        this.add(this._gridContainer = new LayerElement(doc, 'rct-axis-grids'));
+        this.add(this._baseContainer = new LayerElement(doc, 'rct-axis-bases'));
+        this.add(this._guideContainer = new AxisGuideContainer(doc, 'rct-axis-guides'));
         this.add(this._annotationContainer = new LayerElement(doc, 'rct-annotations'));
         this.add(this._seriesContainer = new LayerElement(doc, 'rct-series-container'));
         this.add(this._axisBreakContainer = new LayerElement(doc, 'rct-axis-breaks'));
         this.add(this._labelContainer = new LayerElement(doc, 'rct-label-container'));
-        this.add(this._frontGuideContainer = new AxisGuideContainer(doc, 'rct-front-guides'));
+        this.add(this._frontGuideContainer = new AxisGuideContainer(doc, 'rct-front-axis-guides'));
         this.add(this._frontAnnotationContainer = new LayerElement(doc, 'rct-front-annotations'));
         this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
         this.add(this._zoomButton = new ZoomButton(doc));
@@ -1230,14 +1230,16 @@ export class BodyView extends ChartElement<Body> {
             }
         }
 
-        [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
-            if (needAxes && axis.grid.isVisible(false) && !views.has(axis)) {
-                const v = new AxisGridView(doc);
-
-                views.set(axis, v);
-                container.add(v);
-            }
-        }));
+        if (needAxes) {
+            [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
+                if (axis.grid.isVisible(false) && !views.has(axis)) {
+                    const v = new AxisGridView(doc);
+    
+                    views.set(axis, v);
+                    container.add(v);
+                }
+            }));
+        }
     }
 
     protected _prepareSeries(doc: Document, chart: IChart, series: Series[]): void {

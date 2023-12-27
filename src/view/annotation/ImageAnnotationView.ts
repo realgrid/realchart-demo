@@ -30,7 +30,7 @@ export class ImageAnnotationView extends AnnotationView<ImageAnnotation> {
     constructor(doc: Document) {
         super(doc, ImageAnnotationView.CLASS_NAME);
 
-        this.add(this._imageView = new ImageElement(doc));
+        this.add(this._imageView = new ImageElement(doc, false));
     }
 
     //-------------------------------------------------------------------------

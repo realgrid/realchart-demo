@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, assign } from "../../common/Common";
+import { pickNum, pickProp, assign, maxv, minv } from "../../common/Common";
 import { DataPoint } from "../DataPoint";
 import { IPlottingItem, Series } from "../Series";
 
@@ -147,8 +147,8 @@ export class HeatmapSeries extends Series {
 
         (this._runPoints as HeatmapSeriesPoint[]).forEach(p => {
             if (!isNaN(p.heatValue)) {
-                this._heatMin = Math.min(this._heatMin, p.heatValue);
-                this._heatMax = Math.max(this._heatMax, p.heatValue);
+                this._heatMin = minv(this._heatMin, p.heatValue);
+                this._heatMax = maxv(this._heatMax, p.heatValue);
             }
         })
     }

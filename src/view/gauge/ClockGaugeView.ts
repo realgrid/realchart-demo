@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { cos, sin } from "../../common/Common";
+import { absv, cos, maxv, sin } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { RcAnimation } from "../../common/RcAnimation";
@@ -91,7 +91,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
         this._tickViews.prepare(model.tick.visible ? 12 : 0);
         this._minorTickViews.prepare(model.minorTick.visible ? 12 * 4 : 0);
 
-        const cnt = Math.round(12 / Math.max(1, (Math.floor(model.tickLabel.step) || 1)));
+        const cnt = Math.round(12 / maxv(1, (Math.floor(model.tickLabel.step) || 1)));
         this._tickLabelViews.prepare(model.tickLabel.visible ? cnt : 0, v => {
             v.layout = TextLayout.MIDDLE;
         });
@@ -110,7 +110,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
                 this._runner = setInterval(() => {
                     const prev = this._prevSec;
                     this.$_renderHands(this.model, this._exts);
-                    if (Math.abs(prev - this._prevSec) >= 1) {
+                    if (absv(prev - this._prevSec) >= 1) {
                         if (this._secondView.visible && m.chart.animatable() && m.secondHand.animatable) {
                             this.$_moveSecond(prev);
                         }

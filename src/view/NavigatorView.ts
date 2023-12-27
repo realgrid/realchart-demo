@@ -19,6 +19,7 @@ import { createSeriesView } from "./BodyView";
 import { ChartElement } from "./ChartElement";
 import { SeriesView } from "./SeriesView";
 import { IPoint } from "../common/Point";
+import { minv } from "../common/Common";
 
 export class NavigatorHandleView extends RcElement {
 
@@ -49,7 +50,7 @@ export class NavigatorHandleView extends RcElement {
     //-------------------------------------------------------------------------
     layout(width: number, height: number, vertical: boolean): void {
         if (width !== this._w || height !== this._h || vertical !== this._vertical) {
-            let sz = Math.min(width, height) * 1.3;
+            let sz = minv(width, height) * 1.3;
             const pb = new PathBuilder();
     
             this._back.rect = {

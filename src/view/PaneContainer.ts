@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { maxv } from "../common/Common";
 import { LayerElement, RcControl } from "../common/RcControl";
 import { ISize } from "../common/Size";
 import { _undef } from "../common/Types";
@@ -265,11 +266,11 @@ class AxisContainer extends SectionView {
 
         if (this._isHorz) {
             this.sections.forEach(sec => {
-                height = Math.max(height, sec.measure(doc, chart, hintWidth, hintHeight, phase).height);
+                height = maxv(height, sec.measure(doc, chart, hintWidth, hintHeight, phase).height);
             });
         } else {
             this.sections.forEach(sec => {
-                width = Math.max(width, sec.measure(doc, chart, hintWidth, hintHeight, phase).width);
+                width = maxv(width, sec.measure(doc, chart, hintWidth, hintHeight, phase).width);
             });
         }
         return { width, height };

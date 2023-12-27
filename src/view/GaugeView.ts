@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isNumber, pickNum, pickProp, assign } from "../common/Common";
+import { isNumber, pickNum, pickProp, assign, maxv, minv } from "../common/Common";
 import { Dom } from "../common/Dom";
 import { ElementPool } from "../common/ElementPool";
 import { NumberFormatter } from "../common/NumberFormatter";
@@ -193,7 +193,7 @@ export abstract class ValueGaugeView<T extends ValueGauge> extends GaugeView<T> 
     abstract _renderValue(): void;
 
     protected _getValue(m: ValueGauge): number {
-        return Math.max(m.minValue, Math.min(m.maxValue, pickNum(this._runValue, m.value)));
+        return maxv(m.minValue, minv(m.maxValue, pickNum(this._runValue, m.value)));
     }
 
     protected _checkValueAnimation(): void {
@@ -290,7 +290,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
                         // v.text = String(steps[reversed ? nStep - 1 - i : i]);
                         // v.text = String(steps[reversed ? i : nStep - 1 - i]);
                         v.setText(labels.getText(steps[reversed ? i : nStep - 1 - i]));
-                        w = Math.max(v.getBBox().width);
+                        w = maxv(v.getBBox().width);
                     })
                     width += w;
                 } else {
@@ -298,7 +298,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
                     this._labels.forEach((v, i) => {
                         // v.text = String(steps[reversed ? nStep - 1 - i : i]);
                         v.setText(labels.getText(steps[reversed ? nStep - 1 - i : i]));
-                        h = Math.max(v.getBBox().height);
+                        h = maxv(v.getBBox().height);
                     })
                     height += h;
                 }
@@ -466,7 +466,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
         if (!this._vertical && (label._runPos === 'left' || label._runPos === 'right') && scale.visible && scale.position === GaugeItemPosition.OPPOSITE) {
             const r = labelView.getBBox();
             if (labelView.ty + r.height > this.height) {
-                labelView.transY(Math.max(0, this.height - r.height));
+                labelView.transY(maxv(0, this.height - r.height));
             }
         }
     }
@@ -502,11 +502,11 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
 
             if (vert) {
                 rLabel.height = pickNum(h, rText.height);
-                rBand.height = Math.max(0, rBand.height - (rLabel.height + gap));
+                rBand.height = maxv(0, rBand.height - (rLabel.height + gap));
             } else {
                 rLabel.width = pickNum(w, rText.width);
                 this._wLabel = m.group ? (m.group as LinearGaugeGroupBase<any>)._labelWidth : rLabel.width;
-                rBand.width = Math.max(0, rBand.width - (this._wLabel + gap));
+                rBand.width = maxv(0, rBand.width - (this._wLabel + gap));
             }
 
             switch (pos) {
@@ -551,13 +551,13 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
                 case 'right':
                     x = this.width - r.width;
                     view.anchor = TextAnchor.START;
-                    y += Math.max(0, (r.height - rText.height) / 2);
+                    y += maxv(0, (r.height - rText.height) / 2);
                     break;
 
                 default:
                     view.anchor = TextAnchor.END;
                     x += this._wLabel;
-                    y += Math.max(0, (r.height - rText.height) / 2);
+                    y += maxv(0, (r.height - rText.height) / 2);
                     break;
             }
             view.trans(x, y);
@@ -584,7 +584,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
             if (this._vertical) {
                 x = 0;
                 y = rBand.y;
-                rBand.width = Math.max(0, rBand.width - sz.width);
+                rBand.width = maxv(0, rBand.width - sz.width);
 
                 if (scale.position === GaugeItemPosition.OPPOSITE) {
                     x = rBand.x + rBand.width;
@@ -598,7 +598,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
                 }
             } else {
                 x = rBand.x;
-                rBand.height = Math.max(0, rBand.height - sz.height);
+                rBand.height = maxv(0, rBand.height - sz.height);
 
                 if (scale.position === GaugeItemPosition.OPPOSITE) {
                     if (label._runVert) {

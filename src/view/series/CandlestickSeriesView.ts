@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { absv, maxv, minv } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { LineElement } from "../../common/impl/PathElement";
@@ -42,10 +43,10 @@ class StickView extends RangeElement implements IPointView {
         const len = p.highValue - p.lowValue;
         const x = 0;
         let y = 0;
-        const yOpen = y + h - h * (Math.min(p.openValue, p.closeValue) - p.lowValue) / len;
-        const yClose = y + h - h * (Math.max(p.openValue, p.closeValue) - p.lowValue) / len;
-        const yBox = Math.min(yClose, yOpen);
-        const hBox = Math.max(1, Math.abs(yOpen - yClose));
+        const yOpen = y + h - h * (minv(p.openValue, p.closeValue) - p.lowValue) / len;
+        const yClose = y + h - h * (maxv(p.openValue, p.closeValue) - p.lowValue) / len;
+        const yBox = minv(yClose, yOpen);
+        const hBox = maxv(1, absv(yOpen - yClose));
         const decline = p.close < p.open;
 
         // this._back.setBox(-w / 2, 0, w, h);

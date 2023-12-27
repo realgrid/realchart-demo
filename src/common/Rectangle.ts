@@ -17,7 +17,7 @@ export interface IRect {
 	height: number;
 }
 
-export const ZERO_RECT: IRect = Object.freeze({
+export const RECT_Z: IRect = Object.freeze({
     x: 0, y: 0, width: 0, height: 0
 });
 
@@ -29,21 +29,21 @@ export function toSize(r: IRect): ISize {
     return { width: r.width, height: r.height };
 }
 
-export const equalsRect = function (r1: IRect, r2: IRect): boolean {
-    if (r1 === r2) return true;
-    if (r1 && r2) {
-        return r1.x === r2.x && r1.y === r2.y && r1.width === r2.width && r1.height === r2.height;
-    }
-    return false;
-}
+// export const equalsRect = function (r1: IRect, r2: IRect): boolean {
+//     if (r1 === r2) return true;
+//     if (r1 && r2) {
+//         return r1.x === r2.x && r1.y === r2.y && r1.width === r2.width && r1.height === r2.height;
+//     }
+//     return false;
+// }
 
-export function isValidRect(r: IRect): boolean {
-	return !isNaN(r.x) && !isNaN(r.y) && !isNaN(r.width) && !isNaN(r.height);
-}
+// export function isValidRect(r: IRect): boolean {
+// 	return !isNaN(r.x) && !isNaN(r.y) && !isNaN(r.width) && !isNaN(r.height);
+// }
 
-export const intersectsRect = function (r1: IRect, r2: IRect): boolean {
-	return !(r1.y >= r2.y + r2.height || r2.y >= r1.y + r1.height || r1.x >= r2.x + r1.width || r2.x >= r1.x + r1.width);
-}
+// export const intersectsRect = function (r1: IRect, r2: IRect): boolean {
+// 	return !(r1.y >= r2.y + r2.height || r2.y >= r1.y + r1.height || r1.x >= r2.x + r1.width || r2.x >= r1.x + r1.width);
+// }
 
 
 // /** @internal */
@@ -256,10 +256,10 @@ export const intersectsRect = function (r1: IRect, r2: IRect): boolean {
 // 	union(r: Rectangle): Rectangle {
 //         const r2 = this.clone();
         
-// 		r2.left = Math.min(this.x, r.x);
-// 		r2.right = Math.max(this.right, r.right);
-// 		r2.top = Math.min(this.y, r.y);
-// 		r2.bottom = Math.max(this.bottom, r.bottom);
+// 		r2.left = minv(this.x, r.x);
+// 		r2.right = maxv(this.right, r.right);
+// 		r2.top = minv(this.y, r.y);
+// 		r2.bottom = maxv(this.bottom, r.bottom);
 // 		return r2;
 //     }
     

@@ -68,7 +68,7 @@ class BarElement extends GroupElement implements IPointView {
 
         // steps
         this._segments.forEach((step, i, count) => {
-            // Math.min(-1, ): 0에 가까운 값이면 svg가 line을 표시하지 않는다.(TODO: 다르 방법?)
+            // minv(-1, ): 0에 가까운 값이면 svg가 line을 표시하지 않는다.(TODO: 다르 방법?)
             if (i === count - 1 && this._decimal > 0) {
                 step.setPath(SvgShapes.rectangle(x, y - pts[i * 2], w, h < 0 ? m(1, this._decimal) : m(-1, -this._decimal)));
             } else {

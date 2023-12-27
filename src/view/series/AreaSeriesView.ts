@@ -43,15 +43,6 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
-    protected _collectVisPoints(model: AreaSeries): DataPoint[] {
-        const pts = super._collectVisPoints(model);
-        const g = model.group;
-
-        if (g && (g.layout === SeriesGroupLayout.STACK || g.layout === SeriesGroupLayout.FILL)) {
-        }
-        return pts;
-    }
-
     decoreateLegend(legendView: LegendItemView): void {
         super.decoreateLegend(legendView);
 
