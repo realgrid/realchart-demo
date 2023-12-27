@@ -679,8 +679,12 @@ class MDGenerater {
 
     keys.push(name);
     const _key = keys.join('.');
-    const _content = `## **${name}**\n` + this._makeProps({ keys, props: classMap.props });
+    const _content = [
+      `## **${name}**`, 
+      this._styleContent(classMap.content), 
+      this._makeProps({ keys, props: classMap.props })].join('\n');
     docMap[name] = { _key , ...docMap[name], _content };
+    
 
     // this._writeJsonFile('./docs/.tdout/' + [...keys, Date.now()].join('.') + '.json', this.docMap);
     const subtitle = keys.pop();
