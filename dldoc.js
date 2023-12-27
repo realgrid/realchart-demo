@@ -917,13 +917,12 @@ class MDGenerater {
       subtitleText += `[type=${type}]`;  
       subtitle = `## [${subtitleText}](./${opt}/${type})`
     }
-    console.debug(`${!!base} ${name}, ${opt}.${type}`)
     const _content = `${this._styleContent(content)}\n`;
     
     if (MDGenerater.TYPE_ELEMENTS.includes(opt) && !base && !type) 
       return console.warn(`[WARN] ${name} type missed.`);
 
-    if (opt) {
+    if (!base && opt) {
       // if (!this.docMap[opt]) 
       //   this.docMap[opt] = { _key: opt, _content: ''};
       
@@ -937,7 +936,8 @@ class MDGenerater {
     
     // 속성 추가
     if (props) {
-      const keys = [opt, base ? 'base' : type].filter(v => v);
+
+      const keys = [base ? 'base' : '', opt, type].filter(v => v);
       // chart면 키가 없음...
 
       const propContents = this._makeProps({ keys , props });
@@ -986,9 +986,7 @@ class MDGenerater {
     });
     const meta = Object.keys(docMap)
     .filter(key => !key.startsWith('_'))
-    .sort((a, b) => {
-       return b == 'base' ? 1 : a > b ? 1 : -1;
-    }).reduce((agg, key) => {
+    .reduce((agg, key) => {
       return Object.assign(agg, { [key]: key });
     }, {})
     // console.debug(path, meta);
@@ -1008,7 +1006,10 @@ class MDGenerater {
 
   saveFile() {
     const root = 'docs/pages/config/config';
+    // clear
+    fs.existsSync(root) && fs.rmSync(root, { recursive: true, force: true });
     this._saveFile(root, this.docMap);
+    fs.copyFileSync('docs/pages/config/config._meta.json', `${root}/_meta.json`);
   }
 
   exportModel() {

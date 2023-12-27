@@ -22,8 +22,9 @@ const config: DocsThemeConfig = {
     // defaultMenuCollapseLevel: 10000,
     titleComponent({ title: _title, type,  route }) {
       if (route.indexOf('/config/config') >= 0) {
+        const [opt] = route.split('/').slice(3);
         const [title] = route.split('/').slice(-1);
-        let prefix = ['Axis', 'series', 'gauge', 'annotation'].some(v => title.indexOf(v) >= 0 ) ? '[]' : '';
+        let prefix = ['Axis', 'series', 'gauge', 'annotation'].some(v => opt == title && opt?.indexOf(v) >= 0 ) ? '[]' : '';
         return <>{title}{prefix}</>;
       } else if (type == 'separator') {
         return <>{_title}</>;

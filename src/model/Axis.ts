@@ -121,8 +121,6 @@ export enum AxisTitleAlign {
 
 /**
  * 축 타이틀 설정 모델.
- * 
- * @config chart.axis.title
  */
 export class AxisTitle extends AxisItem {
 
@@ -227,8 +225,6 @@ export interface IAxisGridRow {
 
 /**
  * 축 그리드 사이에 생성된 영역 표시 설정 모델.
- * 
- * @config chart.axis.grid.rows
  */
 export class AxisGridRows extends AxisItem {
 
@@ -309,8 +305,6 @@ export class AxisGridRows extends AxisItem {
  * Axis tick의 위치에 수평 혹은 수직선으로 plot 영역을 구분 표시한다.\
  * {@link visible} 기본값이 undefined인데,
  * visible이 undefined나 null로 지정되면, 축 위치에 따라 visible 여부가 결정된다.
- * 
- * @config chart.axis.grid
  */
 export abstract class AxisGrid extends AxisItem {
 
@@ -988,8 +982,7 @@ export class AxisZoom {
 
 /**
  * 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.
- * @config chart.xAxis[base]
- * @config chart.yAxis[base]
+ * @config chart.axis[base]
  */
 export abstract class Axis extends ChartItem implements IAxis {
 

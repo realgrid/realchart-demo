@@ -49,6 +49,14 @@ nav:empty.nx-hidden {
   border-style: solid;
 }
 
+.nextra-content h4 {
+  font-size: 0.8rem;
+}
+
+.nextra-content h5 {
+  font-size: 0.7rem;
+}
+
 :is(html[class~=dark] .nextra-content h3) {
   border-color: hsl(var(--nextra-primary-hue)100% 94%/.1);
 }

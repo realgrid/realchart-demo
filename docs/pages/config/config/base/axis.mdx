@@ -1,20 +1,20 @@
-## **yAxis**
+## **axis**
 차트에서 축을 명식적으로 지정하지 않으면, 첫번째 시리즈에 합당한 축이 기본 생성된다.
 ## Properties
 
-### [crosshair](./base/crosshair)
+### [crosshair](./axis/crosshair)
 RealReport-Chart 라이브러리 클래스 모델의 최상위 base 클래스.  
 
-### [grid](./base/grid)
+### [grid](./axis/grid)
 Axis tick의 위치에 수평 혹은 수직선으로 plot 영역을 구분 표시한다.
- [visible](/config/config/axis#visible) 기본값이 <Content type="keyword" value="undefined"></Content>인데,
+  기본값이 <Content type="keyword" value="undefined"></Content>인데,
 visible이 <Content type="keyword" value="undefined"></Content>나 <Content type="keyword" value="null"></Content>로 지정되면, 축 위치에 따라 visible 여부가 결정된다.  
 
-### [guides](./base/guides)
+### [guides](./axis/guides)
 기본적으로 이 축에 연결된 모든 body에 모두 표시된다.
 col, row를 지정해서 특정 body에만 표시되도록 할 수 있다.  
 
-### [label](./base/label)
+### [label](./axis/label)
 [겹치는 경우가 발생할 때]
 1. step이 0보다 큰 값으로 설정되면 반영한다.
 2. rows가 0보다 큰 값으로 설정되면 반영한다.
@@ -23,7 +23,7 @@ col, row를 지정해서 특정 body에만 표시되도록 할 수 있다.
 5. 배치 후 공간을 초과하는 label은 wrap 속성에 따라 줄나누기를 하거나, 
    ellipsis(<Content type="expression" value="'...'"></Content>)로 처리해서 표시한다.  
 
-### [line](./base/line)
+### [line](./axis/line)
 축 선(line) 설정 모델.  
 
 ### marginFar: `number{:js}`[#marginFar]
@@ -51,12 +51,12 @@ plot 영역이나 먼저 표시되는 축 사이의 여백 크기.
 ### reversed: `boolean{:js}`[#reversed]
 <Content type="keyword" value="true"></Content>면 반대 방향으로 point 위치들이 지정된다.  
 <DefaultValue value="false" contents=""></DefaultValue>
-### [scrollBar](./base/scrollBar)
+### [scrollBar](./axis/scrollBar)
 축 스크롤바 모델.
 
 축 스크롤 상태를 표시하고, 사용자가 스크롤 범위나 위치를 변경할 수 있다.  
 
-### [sectorLine](./base/sectorLine)
+### [sectorLine](./axis/sectorLine)
 축 선(line) 설정 모델.  
 
 ### startAngle: `number{:js}`[#startAngle]
@@ -79,10 +79,10 @@ Polar 차트에서 사용될 때 시작 각도.
 | strokeDasharray | `string{:js}` | true |  
 | strokeWidth | `string{:js}` | true |  
 | textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
-### [tick](./base/tick)
+### [tick](./axis/tick)
 축에 표시되는 tick 위치와 표시 마크에 관한 설정 모델.  
 
-### [title](./base/title)
+### [title](./axis/title)
 축 타이틀 설정 모델.  
 
 ### tooltipFooter: `string{:js}`[#tooltipFooter]
