@@ -50,11 +50,15 @@ nav:empty.nx-hidden {
 }
 
 .nextra-content h4 {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+}
+
+.nextra-content li h4 {
+  margin-top: 0;
 }
 
 .nextra-content h5 {
-  font-size: 0.7rem;
+  font-size: 0.8rem;
 }
 
 :is(html[class~=dark] .nextra-content h3) {

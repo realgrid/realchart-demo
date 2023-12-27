@@ -98,7 +98,7 @@ export function doclink(text: string, vars: any = {}): string {
         page = `/${keyword}`
     } 
     // self.property
-    else if (keyword == sep) {
+    else if (!keyword.startsWith('Rc') && keyword == sep) {
         page = `#${keyword}`;
     } 
     else {
@@ -128,7 +128,7 @@ export function doclink(text: string, vars: any = {}): string {
             case 'rc':
             case 'realchart':
             default:
-                const [cls, prop] = keys;
+                const [cls, prop] = keys.length ? keys : [keyword];
                 page = `/docs/api/classes/${cls}${prop ? '#' + prop : ''}`;
         }
     }
