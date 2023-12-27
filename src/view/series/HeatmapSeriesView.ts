@@ -88,7 +88,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
 
     protected $_layoutCells(width: number, height: number): void {
         const series = this.model;
-        const inverted = series.chart.isInverted();
+        const inverted = this._inverted;
         const vr = this._getViewRate();
         // const labels = series.pointLabel;
         // const labelOff = labels.getOffset();
@@ -99,7 +99,6 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         const xLen = inverted ? height : width;
         const org = inverted ? 0 : height;
         // const color = new Color(this._getColor());
-        console.log('LAYOUT CELLS', vr);
 
         this._cells.forEach(cell => {
             const p = cell.point as HeatmapSeriesPoint;
@@ -107,9 +106,11 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
             if (cell.setVis(!p.isNull)) {
                 const wUnit = xAxis.getUnitLen(xLen, p.xValue) * vr;
                 const hUnit = yAxis.getUnitLen(yLen, p.yValue) * vr;
-                let x = (p.xPos = xAxis.getPos(xLen, p.xValue)) - wUnit / 2;
-                let y = (p.yPos = org - yAxis.getPos(yLen, p.yValue)) - hUnit / 2;
+                let x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
+                let y = org - yAxis.getPos(yLen, p.yValue) - hUnit / 2;
                 let labelView: PointLabelView;
+                p.xPos = inverted ? org + yAxis.getPos(yLen, p.yValue) : x + (wUnit / 2);
+                p.yPos = inverted ? xLen - xAxis.getPos(xLen, p.xValue) + (wUnit / 2): y + (hUnit / 2);
     
                 cell.setBounds(x, y, wUnit, hUnit);
                 // cell.setStyle('fill', color.brighten(1 - p.heatValue / series._heatMax).toString());

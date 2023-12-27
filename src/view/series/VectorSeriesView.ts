@@ -124,8 +124,10 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
             if (v.setVis(!p.isNull)) {
                 const wUnit = xAxis.getUnitLen(xLen, p.xValue) * vr;
                 const hUnit = yAxis.getUnitLen(yLen, p.yValue) * vr;
-                let x = (p.xPos = xAxis.getPos(xLen, p.xValue)) - wUnit / 2;
-                let y = (p.yPos = org - yAxis.getPos(yLen, p.yValue)) - hUnit / 2;
+                let x = xAxis.getPos(xLen, p.xValue) - wUnit / 2;
+                let y = org - yAxis.getPos(yLen, p.yValue) - hUnit / 2;
+                p.xPos = inverted ? org + yAxis.getPos(yLen, p.yValue) : x + (wUnit / 2);
+                p.yPos = inverted ? xLen - xAxis.getPos(xLen, p.xValue) + (wUnit / 2): y + (hUnit / 2);
     
                 v.translate(x, y);
                 v.layout(head, p.angleValue + start, false);

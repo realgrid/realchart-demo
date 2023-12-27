@@ -115,16 +115,18 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
                     const a = polar.start + xAxis.getPos(PI_2, p.xValue);
                     const py = yAxis.getPos(polar.rd, p.yValue);
     
-                    x = p.xPos = polar.cx + py * cos(a);
-                    y = p.yPos = polar.cy + py * sin(a);
+                    x = polar.cx + py * cos(a);
+                    y = polar.cy + py * sin(a);
                 } else {
-                    x = p.xPos = xAxis.getPos(xLen, p.xValue);
-                    y = p.yPos = yOrg - yAxis.getPos(yLen, p.yValue);
+                    x = xAxis.getPos(xLen, p.xValue);
+                    y = yOrg - yAxis.getPos(yLen, p.yValue);
                     if (inverted) {
                         x = yAxis.getPos(yLen, p.yGroup);
                         y = yOrg - xAxis.getPos(xLen, p.xValue);
                     }
                 }
+                p.xPos = x;
+                p.yPos = y;
     
                 if (mv.setVis(!needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
                     path = SvgShapes.circle(0, 0, sz);

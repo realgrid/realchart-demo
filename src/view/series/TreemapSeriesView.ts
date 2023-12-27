@@ -110,7 +110,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
         const series = this.model;
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj
-        const inverted = series.chart.isInverted();
+        const inverted = this._inverted;
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
         const yLen = inverted ? width : height;
@@ -144,8 +144,10 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
             if (inverted) m.y = m.y - yLen;
             v.render();
 
-            let x = p.xPos = m.x + m.width / 2;
-            let y = p.yPos = m.y + m.height / 2;
+            let x = m.x + m.width / 2;
+            let y = m.y + m.height / 2;
+            p.xPos = inverted ? -m.y - (m.height / 2) : x;
+            p.yPos = inverted ? xLen - m.x - (m.width / 2) : y;
 
             // label
             if (labelViews && (labelView = labelViews.get(p, 0))) {
