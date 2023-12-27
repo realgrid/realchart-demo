@@ -46,7 +46,7 @@ export class ImageAnnotationView extends AnnotationView<ImageAnnotation> {
     }
 
     protected _doLayout(param: any): void {
-        this._imageView.translate(this._paddings.left, this._paddings.top);
+        this._imageView.trans(this._paddings.left, this._paddings.top);
 
         super._doLayout(param);
     }

@@ -142,7 +142,7 @@ export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSe
             if (labelViews && (labelInfo.labelView = labelViews.get(p, 0))) {
                 const r = labelInfo.labelView.getBBox();
 
-                labelInfo.labelView.layout(Align.CENTER).translate(x - r.width / 2, yGroup - r.height / 2);
+                labelInfo.labelView.layout(Align.CENTER).trans(x - r.width / 2, yGroup - r.height / 2);
             }
         })
     }

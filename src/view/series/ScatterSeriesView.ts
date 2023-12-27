@@ -59,7 +59,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
         const color = model.color;
         const count = points.length;
 
-        this._pointContainer.setStyle('fill', color);
+        this._pointContainer.setFill(color);
 
         this._markers.prepare(count, (mv, i) => {
             const p = mv.point = points[i];
@@ -139,7 +139,7 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                             break;
                     }
                     mv.setPath(path);
-                    mv.translate(x, y);
+                    mv.trans(x, y);
     
                     // label
                     if (lv) {

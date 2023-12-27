@@ -89,7 +89,7 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
         
                         v.setBounds(0, reversed ? y2 : r.height - y2 - h, r.width, h);
                         v.internalClearStyleAndClass();
-                        v.setStyle('fill', range.color);
+                        v.setFill(range.color);
                         range.style && v.addStyleOrClass(range.style);
                     });
                 } else {
@@ -100,7 +100,7 @@ export class BulletGaugeView extends LinearGaugeBaseView<BulletGauge> {
         
                         v.setBounds(reversed ? r.width - w - x2 : x2, 0, w, r.height);
                         v.internalClearStyleAndClass();
-                        v.setStyle('fill', range.color);
+                        v.setFill(range.color);
                         range.style && v.addStyleOrClass(range.style);
                     });
                 }

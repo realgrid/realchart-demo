@@ -202,7 +202,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
 
             this._tickLabelViews.forEach((v, i, cnt) => {
                 v.text = String(i === 0 ? 12 : i * step);
-                v.translate(cx + cos(a) * rd2, cy + sin(a) * rd2);
+                v.trans(cx + cos(a) * rd2, cy + sin(a) * rd2);
                 a += astep;
             })
         }
@@ -216,9 +216,9 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
             model.label.buildSvg(labelView, null, NaN, NaN, null, null);
 
             if (model.label.position === 'bottom') {
-                labelView.translate(cx, cy + rd2 / 2);
+                labelView.trans(cx, cy + rd2 / 2);
             } else {
-                labelView.translate(cx, cy - rd2 / 2);
+                labelView.trans(cx, cy - rd2 / 2);
             }
         }
     }
@@ -254,7 +254,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
             len = hand.getLength(rd - this._rimThick);
             pb.rect(-hand.thickness / 2, -len, hand.thickness, len);
             handView.internalSetStyleOrClass(hand.style);
-            handView.setPath(pb.close(true)).translate(cx, cy).rotate(a * RAD_DEG);
+            handView.setPath(pb.close(true)).trans(cx, cy).rotate(a * RAD_DEG);
         }
 
         // minute hand
@@ -265,7 +265,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
             len = hand.getLength(rd - this._rimThick);
             pb.rect(-hand.thickness / 2, -len, hand.thickness, len);
             handView.internalSetStyleOrClass(hand.style);
-            handView.setPath(pb.close(true)).translate(cx, cy).rotate(a * RAD_DEG);
+            handView.setPath(pb.close(true)).trans(cx, cy).rotate(a * RAD_DEG);
         }
 
         // second hand
@@ -280,7 +280,7 @@ export class ClockGaugeView extends GaugeView<ClockGauge> {
             len = hand.getLength(rd - this._rimThick);
             pb.rect(-hand.thickness / 2, -len, hand.thickness, len);
             handView.internalSetStyleOrClass(hand.style);
-            handView.setPath(pb.close(true)).translate(cx, cy).rotate(a * RAD_DEG);
+            handView.setPath(pb.close(true)).trans(cx, cy).rotate(a * RAD_DEG);
             this._prevSec = s;
         }
     }

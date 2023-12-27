@@ -9,11 +9,10 @@
 import { Dom } from "../../common/Dom";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
-import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
 import { OhlcSeries, OhlcSeriesPoint } from "../../model/series/OhlcSeries";
-import { IPointView, PointLabelView, RangeElement, RangedSeriesView, SeriesView } from "../SeriesView";
+import { IPointView, RangeElement, RangedSeriesView, SeriesView } from "../SeriesView";
 
 class StickView extends RangeElement implements IPointView {
 
@@ -66,7 +65,7 @@ class StickView extends RangeElement implements IPointView {
         this.add(this._bar = new LineElement(doc));
         this.add(this._back = new RectElement(doc, 'rct-ohlc-point-back'));
 
-        Dom.setImportantStyle(this._back.dom.style, 'fill', 'transparent'); // for hit testing
+        this._back.setTransparent();
     }
 }
 
@@ -120,40 +119,6 @@ export class OhlcSeriesView extends RangedSeriesView<OhlcSeries> {
             const p = box.point = points[i];
 
             this._setPointStyle(box, model, p);
-        })
-    }
-
-    private $_layoutSticks(width: number, height: number): void {
-        const series = this.model;
-        const inverted = this._inverted;
-        const vr = this._getViewRate();
-        const labels = series.pointLabel;
-        const labelOff = labels.getOffset();
-        const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
-        const yAxis = series._yAxisObj;
-        const yOrg = this.height;
-
-        this._sticks.forEach((box, i) => {
-            const p = box.point;
-
-            if (box.setVis(!p.isNull)) {
-                const wUnit = xAxis.getUnitLen(width, p.xValue);
-                const wPoint = series.getPointWidth(wUnit);
-                const x = (p.xPos = xAxis.getPos(width, p.xValue)) - wPoint / 2;
-                const y = p.yPos = yOrg - yAxis.getPos(height, p.yValue) * vr;
-                const w = wPoint;
-                const h = Math.abs(yOrg - yAxis.getPos(height, p.lowValue) - y) * vr;
-                let view: PointLabelView;
-    
-                box.setBounds(x, y, w, h);
-                box.layout();
-    
-                if (labelViews && (view = labelViews.get(p, 0))) {
-                    const r = view.getBBox();
-                    view.translate(x + (w - r.width) / 2, y - r.height - labelOff);
-                }
-            }
         })
     }
 }

@@ -92,7 +92,7 @@ export class TooltipView extends RcElement {
         // 시리즈 색은 동적일 수 있다.
         //this._top.setData('index', (series.index % PALETTE_LEN) as any);
         // TODO: point별로 색상이 다를 수 있다.
-        this._top.setStyle('fill', series._calcedColor);
+        this._top.setFill(series._calcedColor);
 
         const dur = this.getStyle('visibility') === 'visible' ? 300 : 0;
 
@@ -113,7 +113,7 @@ export class TooltipView extends RcElement {
 
         x = Math.max(0, Math.min(x, cw - w));
         y = Math.max(0, Math.min(y, ch - h));
-        this.translateEx(x, y, dur, false);
+        this.transEx(x, y, dur, false);
 
         if (dur === 0) {
             this.setStyle('visibility', 'visible');
@@ -192,7 +192,7 @@ export class TooltipView extends RcElement {
         const tv = this._textView;
         const r = tv.getBBox();
 
-        tv.translate(x + (w - r.width) / 2, y + (h - r.height + topHeight) / 2);
+        tv.trans(x + (w - r.width) / 2, y + (h - r.height + topHeight) / 2);
         this._top.setPath(topPath);
         this._back.setPath(backPath);
     }

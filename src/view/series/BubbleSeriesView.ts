@@ -129,7 +129,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
                 if (mv.setVis(!needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
                     path = SvgShapes.circle(0, 0, sz);
                     mv.setPath(path);
-                    mv.translate(x, y);
+                    mv.trans(x, y);
     
                     // label
                     if (lv) {

@@ -127,7 +127,7 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
                 let x = (p.xPos = xAxis.getPos(xLen, p.xValue)) - wUnit / 2;
                 let y = (p.yPos = org - yAxis.getPos(yLen, p.yValue)) - hUnit / 2;
     
-                v.translate(x, y);
+                v.trans(x, y);
                 v.layout(head, p.angleValue + start, false);
             };
         });

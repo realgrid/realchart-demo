@@ -3,45 +3,41 @@
  * 
  */
 const config = {
+    type: 'ohlc',
     options: {},
-    title: "Lollipop Series",
+    title: "Multiple Ohlc",
     xAxis: {
         type: 'category',
-        grid: true
     },
     yAxis: {
-        title: 'Y Axis',
+        yBase: null
     },
-    series: {
-        type: 'lollipop',
-        pointLabel: {
-            visible: true,
-            // offset: 10,
-            // text: '<b style="fill:red">${x}</b>',
-            // effect: 'outline',// 'background',
-            style: {
-                fill: 'black'
-            },
-        },
+    series: [{
+        pointLabel: true,
+        tooltipText: 'open: ${open}<br>High: ${high}<br>Low: ${low}<br>Close: ${close}',
+        // declineStyle: {
+        //     stroke: 'red'
+        // },
         data: [
-            ['home', 7], 
-            ['sky', 11], 
-            ['def', 9], 
-            ['소홍', 10], 
-            ['지리산', 14.3], 
-            ['zzz', 13],
-            ['낙동강', 12.5]
+            {low: 301, open: 348, close: 395, high: 465, color: 'green'},
+            [353, 439, 480, 580],
+            [262, 370, 317, 418],
+            [302, 326, 371, 450],
+            [336, 382, 364, 420],
+            [341, 356, 381, 430],
         ],
-        style: {
-            // fill: 'yellow'
-        },
-        marker: {
-            style: {
-                // fill: 'red',
-                // stroke: 'red',
-            }
-        }
-    }
+    }, {
+        pointLabel: true,
+        tooltipText: 'open: ${open}<br>High: ${high}<br>Low: ${low}<br>Close: ${close}',
+        data: [
+            {low: 301, open: 348, close: 395, high: 465, color: 'green'},
+            [353, 439, 480, 580],
+            [262, 370, 317, 418],
+            [302, 326, 371, 450],
+            [336, 382, 364, 420],
+            [341, 356, 381, 430],
+        ],
+    }]
 }
 
 let chart;

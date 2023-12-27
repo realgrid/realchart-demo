@@ -214,7 +214,7 @@ export class PolylineElement extends PathElement {
     constructor(doc: Document, styleName?: string) {
         super(doc, styleName);
 
-        this.setStyle('fill', 'none');
+        this.setFill('none');
     }
     
     //-------------------------------------------------------------------------
@@ -230,7 +230,7 @@ export class PolylineElement extends PathElement {
     resetStyles(styles: any): boolean {
         const r = super.resetStyles(styles);
 
-        this.setStyle('fill', 'none');
+        this.setFill('none');
         return r;
     }
 }

@@ -451,8 +451,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     protected _setModelColor(color: string): void {
-        this.internalSetStyle('fill', color);
-        this.internalSetStyle('stroke', color);
+        this.setColor(color);
     }
 
     protected _legendColorProp(): string {
@@ -487,7 +486,10 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doAttached(parent: RcElement): void {
-        createAnimation(this.dom, 'opacity', 0, 1, 300, null);
+        // 로딩 후에 새로 추가된 경우 효과.
+        if (this.control.loaded) {
+            createAnimation(this.dom, 'opacity', 0, 1, 500, null);
+        }
     }
 
     protected _prepareStyleOrClass(model: T): void {
@@ -529,7 +531,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         if (this._trendLineView && this._trendLineView.visible) {
             this.$_renderTrendline();       
         }
-        this._animatable && !this._simpleMode && this._runShowEffect(!this.control.loaded);
+        this._animatable && !this._simpleMode && this._runShowEffect(!this.control.loaded && this.chart().loadAnimatable());
     }
 
     protected _doAfterLayout(): void {
@@ -555,8 +557,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     protected _setPointColor(v: RcElement, color: string): void {
-        v.internalSetStyle('fill', color);
-        v.internalSetStyle('stroke', color);
+        v.setColor(color);
     }
 
     protected _setPointStyle(v: RcElement, model: T,  p: DataPoint, styles?: any[]): void {
@@ -585,7 +586,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
 
     protected _labelViews(): PointLabelContainer {
         this._labelContainer.setVis(this.model.isPointLabelsVisible() && !this._animating());
-        return this._labelContainer.visible && this._labelContainer;
+        return this._labelContainer.visible ? this._labelContainer : _undef;
     }
 
     protected _getViewRate(): number {
@@ -593,7 +594,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     _animating(): boolean {
-        return !isNaN(this._viewRate) || !isNaN(this._posRate) || this._animations.length > 0;
+        return !isNaN(this._viewRate) || !isNaN(this._posRate) || !isNaN(this._prevRate) || this._animations.length > 0;
     }
 
     protected _lazyPrepareLabels(): boolean { return false; }
@@ -697,7 +698,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         }
 
         labelView.setContrast(inner && info.pointView.dom);
-        labelView.layout(labelView.textAlign()).translate(x, y);
+        labelView.layout(labelView.textAlign()).trans(x, y);
     }
 
     // viewRangeValue가 'x', 'y'인 경우에만 호출된다.
@@ -1112,9 +1113,9 @@ export abstract class MarkerSeriesView<T extends MarkerSeries> extends SeriesVie
         if (labelView.setVis(pos != null)) {
             x -= r.width / 2;
             if (pos === PointItemPosition.INSIDE) {
-                labelView.translate(x, y - r.height / 2);
+                labelView.trans(x, y - r.height / 2);
             } else if (pos) {
-                labelView.translate(x, y - radius - r.height - off);
+                labelView.trans(x, y - radius - r.height - off);
             }
         }
     }

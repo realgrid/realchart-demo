@@ -90,11 +90,11 @@ export class HistoryView extends LayerElement {
 
         for (let i = 0; i < cnt; i++) {
             views[i].text = items[i].name;
-            views[i].translateX(x);
+            views[i].transX(x);
 
             if (i < cnt - 1) {
                 x += views[i].width + gap;
-                seps[i].translateX(x);
+                seps[i].transX(x);
                 x += seps[i].width + gap;
             }
         }

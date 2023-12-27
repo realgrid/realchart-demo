@@ -85,6 +85,7 @@ export class ChartControl extends RcControl implements IChartEventListener {
                 this._model.addListener(this);
                 this._model.assets.register(this.doc(), this);
             }
+            this.loaded = false;
             this.invalidateLayout();
         }
     }
@@ -97,10 +98,10 @@ export class ChartControl extends RcControl implements IChartEventListener {
     // methods
     //-------------------------------------------------------------------------
     load(config: any, loadAnimation = false): void {
-        this.loaded = !loadAnimation; 
         this.clearAssetDefs();
         // this.clearClipDefs();
         this.model = new Chart(config);
+        this.model._loadAnimatable = loadAnimation;
     }
 
     refresh(now: boolean): void {
@@ -166,6 +167,7 @@ export class ChartControl extends RcControl implements IChartEventListener {
             }
             model.prepareRender();
         }
+        if (!this.loaded) view.clean();
         view.measure(this.doc(), model, bounds.width, bounds.height, 1);
         view.setRect(bounds);
         view.layout();

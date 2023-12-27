@@ -8,7 +8,6 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
-import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { RectElement } from "../../common/impl/RectElement";
 import { CandlestickSeries, CandlestickSeriesPoint } from "../../model/series/CandlestickSeries";
@@ -104,8 +103,7 @@ export class CandlestickSeriesView extends RangedSeriesView<CandlestickSeries> {
     }
 
     protected _setPointColor(v: RcElement, color: string): void {
-        (v as StickView)._body.setStyle('fill', color);
-        (v as StickView)._body.setStyle('stroke', color);
+        (v as StickView)._body.setColor(color);
     }
 
     protected _setPointStyle(v: RcElement, model: CandlestickSeries, p: CandlestickSeriesPoint, styles?: any[]): void {
@@ -117,7 +115,6 @@ export class CandlestickSeriesView extends RangedSeriesView<CandlestickSeries> {
      }
 
     protected _layoutPointView(box: StickView, i: number, x: number, y: number, wPoint: number, hPoint: number): void {
-        if (wPoint < 0) debugger;
         box.setBounds(x, y, wPoint, hPoint);
         box.layout();
     } 

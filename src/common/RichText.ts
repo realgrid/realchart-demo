@@ -437,7 +437,7 @@ export class SvgRichText {
                 break;
         }
 
-        view.translate(x, y);
+        view.trans(x, y);
     }
 
 	//-------------------------------------------------------------------------

@@ -16,7 +16,7 @@ const config = {
         }
     ],
     title: {
-        text: 'WTI (Woori Tech Inc.)',
+        text: 'Multiple Candlestick',
         align: 'left',
         style: {
             fill: '#666',
@@ -25,24 +25,6 @@ const config = {
     },
     templates: {
         series: {
-          pointStyleCallback: (args) => {
-            const {index, open, close, series} = args;
-            if (!index) {
-                return { fill: 'none', stroke: "#000" };
-            } else if (index && close > series.get('data')[index-1].closeprc) {
-                if (close > open) {
-                    return { fill: "var(--color-5)", stroke: "#000" };
-                } else {
-                    return { fill: "var(--color-3)", stroke: "#000" };
-                }
-            } else {
-                if (close > open) {
-                    return { fill: "var(--color-7)", stroke: "#000" };
-                } else {
-                    return { fill: "var(--color-1)", stroke: "#000" };
-                }
-            }
-          },
         }
     },
     options: {
@@ -75,7 +57,6 @@ const config = {
             }
         }
     ],
-    legend: !true,
     xAxis: {
         type: 'time',
         tick: {
@@ -93,13 +74,12 @@ const config = {
         }
     },
     yAxis: {
-        crosshair: true,
         tick: {
             stepInterval: 1000,
         }
         // position: 'opposite'
     },
-    series: {
+    series: [{
         // pointStyleCallback: args => {return { fill: 'red', stroke: 'red'}},
         template: '',
         tooltipText: '<b>종가: ${close}</b>',
@@ -113,14 +93,20 @@ const config = {
         lowField: 'lowprc',
         closeField: 'closeprc',
         data: stockData,
-        declineStyle: {
-            fill: 'var(--color-3)'
-        },
-		style: {
-			fill: 'var(--color-1)',
-			stroke: 'black'
-		}
-    }
+    }, {
+        template: '',
+        tooltipText: '<b>종가: ${close}</b>',
+        padding: 1,
+        pointPadding: 0.1,
+        type: 'candlestick',
+        pointLabel: !true,
+        xField: 'date',
+        openField: 'openprc',
+        highField: 'highprc',
+        lowField: 'lowprc',
+        closeField: 'closeprc',
+        data: stockData,
+    }]
 }
 
 let chart;

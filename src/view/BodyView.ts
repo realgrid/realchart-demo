@@ -216,11 +216,11 @@ export class AxisBreakView extends RcElement {
         super(doc, 'rct-axis-break');
 
         this.add(this._mask = new PathElement(doc));
-        this._mask.setStyle('stroke', 'none');
+        this._mask.setStroke('none');
         this.add(this._upLine = new PathElement(doc));
-        this._upLine.setStyle('fill', 'none');
+        this._upLine.setFill('none');
         this.add(this._downLine = new PathElement(doc));
-        this._downLine.setStyle('fill', 'none');
+        this._downLine.setFill('none');
     }
 
     //-------------------------------------------------------------------------
@@ -485,7 +485,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
                 }
             }
         }
-        labelView && labelView.translate(x, y);
+        labelView && labelView.trans(x, y);
     }
 
     _doLayoutPolar(width: number, height: number, polar: IPolar): void {
@@ -499,7 +499,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
         line.setStyle(FILL, 'none');
 
         if (labelView) {
-            labelView.translate(polar.cx + p * cos(polar.start), polar.cy + p * sin(polar.start));
+            labelView.trans(polar.cx + p * cos(polar.start), polar.cy + p * sin(polar.start));
         }
     }
 }
@@ -573,7 +573,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
                 }
     
                 box.setBox(x1, 0, x2, height);
-                labelView && labelView.translate(Math.max(0, Math.min(width, x)), y);
+                labelView && labelView.trans(Math.max(0, Math.min(width, x)), y);
             }
         } else {
             const y1 = height - m.axis.getPos(height, start);
@@ -609,7 +609,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
                         break;
                 }
     
-                labelView && labelView.translate(x, y);
+                labelView && labelView.trans(x, y);
                 box.setBox(0, y2, width, y1);
             }
         }
@@ -639,7 +639,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
 
         if (labelView) {
             const p = p1 + (p2 - p1) / 2;
-            labelView.translate(polar.cx + p * cos(polar.start), polar.cy + p * sin(polar.start));
+            labelView.trans(polar.cx + p * cos(polar.start), polar.cy + p * sin(polar.start));
         }
     }
 }
@@ -688,7 +688,7 @@ export class AxisGridRowContainer extends LayerElement {
 
                 v.setPath(SvgShapes.rectangle(0, height - y1, width, y1 - y2));
             }
-            v.setStyle('fill', row.color);
+            v.setFill(row.color);
         })
     }
 
@@ -902,7 +902,7 @@ export class BodyView extends ChartElement<Body> {
 
         this._owner = owner;
         this.add(this._hitTester = new RectElement(doc));
-        this._hitTester.setStyle('fill', 'transparent');
+        this._hitTester.setFill('transparent');
         this.add(this._background = new RectElement(doc, 'rct-body-background'));
         this.add(this._image = new ImageElement(doc, 'rct-body-image'));
         this.add(this._gridRowContainer = new AxisGridRowContainer(doc, 'rct-grid-rows'));
@@ -1144,7 +1144,7 @@ export class BodyView extends ChartElement<Body> {
                 this._owner.clipSeries(v.getClipContainer(), v.getClipContainer2(), 0, 0, w, h, v.invertable());
             }
             v.resize(w, h);
-            v.translate(0, 0);
+            v.trans(0, 0);
             v.layout();
         })
         // 그룹에 포함된 시리즈들 간의 관계 설정 후에 그리기가 필요한 경우가 있다.
@@ -1166,15 +1166,15 @@ export class BodyView extends ChartElement<Body> {
 
                 if (axis._isHorz) {
                     if (axis.reversed) {
-                        v.translate(w - m._sect.pos, 0);
+                        v.trans(w - m._sect.pos, 0);
                     } else {
-                        v.translate(m._sect.pos, 0);
+                        v.trans(m._sect.pos, 0);
                     }
                 } else {
                     if (axis.reversed) {
-                        v.translate(0, m._sect.pos);
+                        v.trans(0, m._sect.pos);
                     } else {
-                        v.translate(0, h - m._sect.pos - m._sect.len);
+                        v.trans(0, h - m._sect.pos - m._sect.len);
                     }
                 }
                 v.layout(w, h, m.axis._isHorz);
@@ -1199,7 +1199,7 @@ export class BodyView extends ChartElement<Body> {
         this._gaugeViews.forEach(v => {
             // this._owner.clipSeries(v.getClipContainer(), 0, 0, w, h, v.invertable());
             v.resizeByMeasured();
-            v.layout().translatep(v.getPosition(w, h));
+            v.layout().transp(v.getPosition(w, h));
         });
 
         // annotations
@@ -1207,7 +1207,7 @@ export class BodyView extends ChartElement<Body> {
 
         // zoom button
         if (this._zoomButton.visible) {
-            this._zoomButton.translate(w - this._zoomButton.getBBox().width - 10, 10);
+            this._zoomButton.trans(w - this._zoomButton.getBBox().width - 10, 10);
         }
     }
 
@@ -1255,7 +1255,7 @@ export class BodyView extends ChartElement<Body> {
         this._series = series;
         views.forEach(v => {
             if (series.indexOf(v.model) < 0) {
-                v.remove();
+                this.control.loaded ? v.removeLater(200) : v.remove();
                 v._labelContainer.remove();
             }
         });
@@ -1264,7 +1264,7 @@ export class BodyView extends ChartElement<Body> {
         series.forEach(ser => {
             const v = map.get(ser) || createSeriesView(doc, ser);
 
-            v._setChartOptions(inverted, this._animatable);
+            v._setChartOptions(inverted, this._animatable, chart.loadAnimatable());
             if (!v.parent) {
                 this._seriesContainer.add(v);
                 this._labelContainer.add(v._labelContainer);
@@ -1301,7 +1301,7 @@ export class BodyView extends ChartElement<Body> {
             map.set(g, v);
             views.push(v);
             v.prepareGauge(doc, g);
-            v._setChartOptions(inverted, this._animatable);
+            v._setChartOptions(inverted, this._animatable, chart.loadAnimatable());
         });
     }
 
@@ -1370,7 +1370,7 @@ export class BodyView extends ChartElement<Body> {
     protected _layoutAnnotations(inverted: boolean, w: number, h: number): void {
         this._annotationViews.forEach(v => {
             v.resizeByMeasured();
-            v.layout().translatep(v.model.getPosition(inverted, 0, 0, w, h, v.width, v.height));
+            v.layout().transp(v.model.getPosition(inverted, 0, 0, w, h, v.width, v.height));
         });
     }
 }

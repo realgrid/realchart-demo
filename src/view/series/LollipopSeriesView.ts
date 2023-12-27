@@ -22,7 +22,8 @@ class BarElement extends GroupElement implements IPointView {
     point: LollipopSeriesPoint;
 
     private _line: LineElement;
-    private _marker: PathElement;
+    _marker: PathElement;
+    xSave: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -42,7 +43,13 @@ class BarElement extends GroupElement implements IPointView {
 
         this._line.setVLineC(0, 0, this.height);
         SvgShapes.setShape(this._marker, this.point.shape, rd, rd);
-        this._marker.translate(-rd, -rd);
+        this._marker.trans(-rd, -rd);
+    }
+    //-------------------------------------------------------------------------
+    // overriden members
+    //-------------------------------------------------------------------------
+    savePrevs(): void {
+        this.xSave = this.tx;
     }
 }
 
@@ -80,6 +87,8 @@ export class LollipopSeriesView extends BoxedSeriesView<LollipopSeries> {
     // internal members
     //-------------------------------------------------------------------------
     private $_parepareBars(doc: Document, model: LollipopSeries, points: LollipopSeriesPoint[]): void {
+        const sts = model.marker.style;
+
         if (!this._bars) {
             this._bars = new ElementPool(this._pointContainer, BarElement);
         }
@@ -87,6 +96,7 @@ export class LollipopSeriesView extends BoxedSeriesView<LollipopSeries> {
             const p = v.point = points[i];
 
             this._setPointStyle(v, model, p);
+            sts && v._marker.setStyleOrClass(sts);
         });
     }
 }

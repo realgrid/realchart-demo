@@ -41,7 +41,7 @@ export class NavigatorHandleView extends RcElement {
         this.add(this._back = new RectElement(doc));
         this.add(this._shape = new PathElement(doc));
         
-        this._shape.setStyle('fill', 'white');
+        this._shape.setFill('white');
     }
 
     //-------------------------------------------------------------------------
@@ -209,9 +209,9 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
             this._thumbView.setBounds(x1, h, x2 - x1, 6);
 
             this._startHandle.layout(h / 3, h / 3, false)
-            this._startHandle.translate(x1, h + 3);
+            this._startHandle.trans(x1, h + 3);
             this._endHandle.layout(h / 3, h / 3, false);
-            this._endHandle.translate(x2, h + 3);
+            this._endHandle.trans(x2, h + 3);
         }
 
         // TODO: reversed

@@ -10,6 +10,7 @@ import { Color } from "../../common/Color";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { Align, _undef } from "../../common/Types";
+import { Utils } from "../../common/Utils";
 import { RectElement } from "../../common/impl/RectElement";
 import { HeatmapSeries, HeatmapSeriesPoint } from "../../model/series/HeatmapSeries";
 import { IPointView, PointLabelView, SeriesView } from "../SeriesView";
@@ -99,7 +100,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
         const xLen = inverted ? height : width;
         const org = inverted ? 0 : height;
         // const color = new Color(this._getColor());
-        console.log('LAYOUT CELLS', vr);
+        Utils.log('LAYOUT CELLS', vr);
 
         this._cells.forEach(cell => {
             const p = cell.point as HeatmapSeriesPoint;
@@ -127,7 +128,7 @@ export class HeatmapSeriesView extends SeriesView<HeatmapSeries> {
                     }
     
                     x -= r.width / 2;
-                    labelView.layout(Align.CENTER).translate(x, y);
+                    labelView.layout(Align.CENTER).trans(x, y);
                 }
             }
         });

@@ -46,7 +46,7 @@ export class ShapeAnnotationView extends AnnotationView<ShapeAnnotation> {
     }
 
     protected _doLayout(param: any): void {
-        this._shapeView.translate(this._paddings.left, this._paddings.top);
+        this._shapeView.trans(this._paddings.left, this._paddings.top);
 
         super._doLayout(param);
     }

@@ -121,7 +121,7 @@ class CircularScaleView extends ScaleView<CircleGaugeScale> {
 
                 x2 = cx + cos(a) * (rd + r.width / 2 * opp) - r.width / 2;
                 y2 = cy + sin(a) * (rd + r.height / 2 * opp) - r.height / 2;
-                v.translate(x2, y2);
+                v.trans(x2, y2);
             });
         }
     }
@@ -193,7 +193,7 @@ class BandView extends ChartElement<GaugeRangeBand> {
                 clockwise
             });
             v.internalClearStyleAndClass();
-            v.setStyle('fill', ranges[i].color);
+            v.setFill(ranges[i].color);
             ranges[i].style && v.addStyleOrClass(ranges[i].style);
             start += angle;
         });
@@ -381,7 +381,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
                 range.style && valueView.addStyleOrClass(range.style);
             }
             if (rim.stroked) {
-                valueView.setStyle('fill', 'none');
+                valueView.setFill('none');
                 valueView.setStyle('strokeWidth', pixel(thick));
             }
 
@@ -402,7 +402,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         if (this._handView) {
             const a = (props._handRad + props._sweepRad * rate) * RAD_DEG;
 
-            this._handView.render(m.hand, exts.radius).translatep(center).rotate(m.clockwise ? a : -a);
+            this._handView.render(m.hand, exts.radius).transp(center).rotate(m.clockwise ? a : -a);
         }
 
         // label
@@ -420,7 +420,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
                 const r = tv.getBBox();
                 const off = m.label.getOffset(this.width, this.height);
     
-                tv.translate(center.x + off.x, center.y - r.height / 2 + off.y);
+                tv.trans(center.x + off.x, center.y - r.height / 2 + off.y);
             }
         }
     }
@@ -487,7 +487,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
 
         // pin
         if (this._pinView) {
-            this._pinView.render(m.pin, r).translate(center.x, center.y);
+            this._pinView.render(m.pin, r).trans(center.x, center.y);
         }
     }
 
@@ -498,7 +498,7 @@ export class CircleGaugeView extends CircularGaugeView<CircleGauge> {
         const gap = +(m.group as CircleGaugeGroup).labelGap || 0;
 
         tv.anchor = TextAnchor.END;
-        tv.translate(rBack.x + rBack.width / 2 - gap, rBack.y + (exts.radius - exts.inner - rText.height) / 2);
+        tv.trans(rBack.x + rBack.width / 2 - gap, rBack.y + (exts.radius - exts.inner - rText.height) / 2);
     }
 }
 
@@ -538,6 +538,6 @@ export class CircleGaugeGroupView extends GaugeGroupView<CircleGauge, CircleGaug
             v.layout();
         })
 
-        container.translate(center.x - exts.radius, center.y - exts.radius);
+        container.trans(center.x - exts.radius, center.y - exts.radius);
     }
 }

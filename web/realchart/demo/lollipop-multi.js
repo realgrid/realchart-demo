@@ -4,7 +4,7 @@
  */
 const config = {
     options: {},
-    title: "Lollipop Series",
+    title: "Multiple Lollipop",
     xAxis: {
         type: 'category',
         grid: true
@@ -12,7 +12,7 @@ const config = {
     yAxis: {
         title: 'Y Axis',
     },
-    series: {
+    series: [{
         type: 'lollipop',
         pointLabel: {
             visible: true,
@@ -37,11 +37,28 @@ const config = {
         },
         marker: {
             style: {
-                // fill: 'red',
+                fill: 'red',
                 // stroke: 'red',
             }
         }
-    }
+    }, {
+        type: 'lollipop',
+        pointLabel: {
+            visible: true,
+            style: {
+                fill: 'black'
+            },
+        },
+        data: [
+            ['home', 17], 
+            ['sky', 21], 
+            ['def', 19], 
+            ['소홍', 15], 
+            ['지리산', 19.3], 
+            ['zzz', 18],
+            ['낙동강', 21.5]
+        ],
+    }]
 }
 
 let chart;

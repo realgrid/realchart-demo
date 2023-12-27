@@ -40,7 +40,7 @@ export abstract class AnnotationView<T extends Annotation> extends BoundableElem
     // overriden members
     //-------------------------------------------------------------------------
     protected _setBackgroundStyle(back: RectElement): void {
-        back.setStyle('fill', 'none');
+        back.setFill('none');
     }
 
     protected _doLayout(param: any): void {

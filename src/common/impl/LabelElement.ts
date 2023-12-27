@@ -139,11 +139,11 @@ export class LabelElement extends GroupElement {
                 this._text.anchor = TextAnchor.START;
         }
 
-        this._text.translate(x, y);
+        this._text.trans(x, y);
         if (this._outline) {
             this._outline.anchor = this._text.anchor;
             this._outline.setAttr('y', this._text.getAttr('y'));
-            this._outline.translate(x, y);
+            this._outline.trans(x, y);
         }
         return this;
     }

@@ -8,13 +8,12 @@
 
 import { ElementPool } from "../../common/ElementPool";
 import { PathElement, RcElement } from "../../common/RcControl";
-import { GroupElement } from "../../common/impl/GroupElement";
 import { LineElement } from "../../common/impl/PathElement";
 import { SvgShapes } from "../../common/impl/SvgShape";
 import { DumbbellSeries, DumbbellSeriesPoint } from "../../model/series/DumbbellSeries";
 import { IPointView, RangeElement, RangedSeriesView, SeriesView } from "../SeriesView";
 
-class BarView extends RangeElement implements IPointView {
+class BarElement extends RangeElement implements IPointView {
 
     //-------------------------------------------------------------------------
     // fields
@@ -49,15 +48,15 @@ class BarView extends RangeElement implements IPointView {
 
         if (p.color) {
             this._line.setStyle('stroke', p.color);
-            this._hmarker.setStyle('fill', p.color);
-            this._lmarker.setStyle('fill', p.color);
+            this._hmarker.setFill(p.color);
+            this._lmarker.setFill(p.color);
         }
 
         this._line.setVLineC(x, y, h);
         SvgShapes.setShape(this._hmarker, p.shape, rd, rd);
         SvgShapes.setShape(this._lmarker, p.shape, rd, rd);
-        this._hmarker.translate(x - rd, y - rd);
-        this._lmarker.translate(x - rd, h - rd);
+        this._hmarker.trans(x - rd, y - rd);
+        this._lmarker.trans(x - rd, h - rd);
     }
 }
 
@@ -66,7 +65,7 @@ export class DumbbellSeriesView extends RangedSeriesView<DumbbellSeries> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
-    private _bars = new ElementPool(this._pointContainer, BarView);
+    private _bars = new ElementPool(this._pointContainer, BarElement);
 
     //-------------------------------------------------------------------------
     // constructor
@@ -94,7 +93,7 @@ export class DumbbellSeriesView extends RangedSeriesView<DumbbellSeries> {
         })
     }
 
-    protected _layoutPointView(bar: BarView, index: number, x: number, y: number, wPoint: number, hPoint: number): void {
+    protected _layoutPointView(bar: BarElement, index: number, x: number, y: number, wPoint: number, hPoint: number): void {
         bar.setBounds(x - wPoint / 2, y, wPoint, hPoint);
         bar.layout();
     }

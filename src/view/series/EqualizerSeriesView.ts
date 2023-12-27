@@ -39,8 +39,7 @@ class BarElement extends GroupElement implements IPointView {
         super(doc, SeriesView.POINT_CLASS);
 
         this.add(this._back = new RectElement(doc));
-        this._back.setStyle('fill', 'transparent'); // 'none'이면 hit-test가 안된다.
-        this._back.setStyle('stroke', 'none');
+        this._back.setTransparent();
     }
 
     //-------------------------------------------------------------------------

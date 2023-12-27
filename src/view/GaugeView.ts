@@ -13,7 +13,7 @@ import { NumberFormatter } from "../common/NumberFormatter";
 import { IPoint } from "../common/Point";
 import { RcAnimation } from "../common/RcAnimation";
 import { LayerElement, RcElement } from "../common/RcControl";
-import { IRect, Rectangle, toSize } from "../common/Rectangle";
+import { IRect, createRect, toSize } from "../common/Rectangle";
 import { ISize } from "../common/Size";
 import { Align } from "../common/Types";
 import { LabelElement } from "../common/impl/LabelElement";
@@ -121,7 +121,7 @@ export abstract class GaugeView<T extends GaugeBase> extends ContentView<T> {
 
         this._renderGauge(w, h);
         
-        this._contentContainer.translate(pads.left, pads.top);
+        this._contentContainer.trans(pads.left, pads.top);
     }
 
     //-------------------------------------------------------------------------
@@ -352,7 +352,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
 
                 if (v.setVis(x - r.width / 2 > prev)) {
                     // v.anchor = i < steps.length - 1 ? TextAnchor.MIDDLE : TextAnchor.END;
-                    v.layout(Align.CENTER).translate(x - r.width / 2, y);
+                    v.layout(Align.CENTER).trans(x - r.width / 2, y);
                     prev = x + r.width / 2;
                 }
             });
@@ -398,7 +398,7 @@ export class LinearScaleView extends ScaleView<LinearGaugeScale> {
                 y = m.getRate(steps[i]) * height;
                 // v.anchor = anchor;
                 // v.layout = i < steps.length - 1 ? TextLayout.MIDDLE : TextLayout.BOTTOM;
-                v.layout(align).translate(x2, y - r.height / 2);
+                v.layout(align).trans(x2, y - r.height / 2);
             });
         }
     }
@@ -466,7 +466,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
         if (!this._vertical && (label._runPos === 'left' || label._runPos === 'right') && scale.visible && scale.position === GaugeItemPosition.OPPOSITE) {
             const r = labelView.getBBox();
             if (labelView.ty + r.height > this.height) {
-                labelView.translateY(Math.max(0, this.height - r.height));
+                labelView.transY(Math.max(0, this.height - r.height));
             }
         }
     }
@@ -480,7 +480,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
     protected abstract _renderBand(m: ValueGauge, r: IRect, value: number): void;
 
     protected _measureGauge(m: ValueGauge, label: LinearGaugeLabel, labelView: TextElement, value: number, vertical: boolean, width: number, height: number): void {
-        const rBand = this._rBand = Rectangle.create(0, 0, width, height);
+        const rBand = this._rBand = createRect(0, 0, width, height);
 
         this._vertical = m.group ? false : pickProp(vertical, height > width);
 
@@ -492,7 +492,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
             let h = vert ? label.getHeight(height) : height;
             const wMax = vert ? width : label.getMaxWidth(width);
             const hMax = vert ? label.getMaxHeight(height) : height;
-            const rLabel = this._rLabel = Rectangle.create(0, 0, width, height);
+            const rLabel = this._rLabel = createRect(0, 0, width, height);
 
             label.setText(m.getLabel(label, label.animatable ? value : m.value));
             labelView.text = label.text;
@@ -560,7 +560,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
                     y += Math.max(0, (r.height - rText.height) / 2);
                     break;
             }
-            view.translate(x, y);
+            view.trans(x, y);
         }
    }
 
@@ -612,7 +612,7 @@ export abstract class LinearGaugeBaseView<T extends LinearGaugeBase> extends Val
                     y = rBand.y + rBand.height;
                 }
             }
-            scaleView.resizeByMeasured().layout().translate(x, y);
+            scaleView.resizeByMeasured().layout().trans(x, y);
         }
     }
 }
@@ -651,9 +651,9 @@ export abstract class GaugeGroupView<G extends ValueGauge, T extends GaugeGroup<
         this._gaugeViews = this._createPool(this._gaugeContainer);
     }
 
-    _setChartOptions(inverted: boolean, animatable: boolean): void {
-        super._setChartOptions(inverted, animatable);
-        this._gaugeViews.forEach(v => v._setChartOptions(inverted, animatable));
+    _setChartOptions(inverted: boolean, animatable: boolean, loadAnimatable: boolean): void {
+        super._setChartOptions(inverted, animatable, loadAnimatable);
+        this._gaugeViews.forEach(v => v._setChartOptions(inverted, animatable, loadAnimatable));
     }
 
     protected _prepareGauge(doc: Document, model: T): void {    

@@ -618,7 +618,7 @@
 .rct-series {
     opacity: inherit;
     transition-property: opacity;
-    transition-duration: 0.9s;
+    transition-duration: 0.7s;
 }
 .rct-series[data-unfocus] {
     opacity: 0.2;
@@ -631,7 +631,7 @@
 .rct-point-labels {
     opacity: inherit;
     transition-property: opacity;
-    transition-duration: 0.9s;
+    transition-duration: 0.7s;
 }
 .rct-point-labels[data-unfocus] {
     opacity: 0.3;

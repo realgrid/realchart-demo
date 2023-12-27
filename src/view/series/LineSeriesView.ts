@@ -266,7 +266,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
         markerStyle && mv.internalSetStyleOrClass(markerStyle);
         SvgShapes.setShape(mv, series.getShape(p), rd, rd);
-        mv.translate(x -= rd, y -= rd);
+        mv.trans(x -= rd, y -= rd);
     }
 
     protected _layoutMarkers(pts: LineSeriesPoint[], width: number, height: number): void {
@@ -346,7 +346,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                             px -= r.width / 2 + alignOff;
                             break;
                     }
-                    lv.layout(textAlign).translate(px, py);
+                    lv.layout(textAlign).trans(px, py);
                 }
             } else if (lv) {
                 lv.setVis(false);

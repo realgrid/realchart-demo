@@ -332,9 +332,9 @@ export class Utils {
 		}
     }
     
-    static cast(obj: any, clazz: any): any {
-        return obj instanceof clazz ? obj : null;
-    }
+    // static cast(obj: any, clazz: any): any {
+    //     return obj instanceof clazz ? obj : null;
+    // }
     
     static irandom(min: number, max?: number): number {
         if (max !== undefined) {
@@ -347,17 +347,17 @@ export class Utils {
         }
     }
     
-    static irandomExcept(except: number, min: number, max?: number): number {
-        if (except === 0 && min === 1 && isNaN(max)) {
-            throw new Error(`Invalid irandom2`);
-        }
-        while (true) {
-            const i = this.irandom(min, max);
-            if (i !== except) {
-                return i;
-            }
-        }
-    }
+    // static irandomExcept(except: number, min: number, max?: number): number {
+    //     if (except === 0 && min === 1 && isNaN(max)) {
+    //         throw new Error(`Invalid irandom2`);
+    //     }
+    //     while (true) {
+    //         const i = this.irandom(min, max);
+    //         if (i !== except) {
+    //             return i;
+    //         }
+    //     }
+    // }
 
     static brandom(): boolean {
         return Math.random() > 0.5 ? true : false;
@@ -407,17 +407,17 @@ export class Utils {
         return isNaN(n) ? 0 : n;
     }
 
-    static toEven(v: number): number {
-        return (v & 1) ? v + 1 : v;
-    }
+    // static toEven(v: number): number {
+    //     return (v & 1) ? v + 1 : v;
+    // }
 
-    static hex(value: number, len = 2, c = "0") {
-        len = Math.max(len || 2, 1);
-        const s = value.toString(16);
+    // static hex(value: number, len = 2, c = "0") {
+    //     len = Math.max(len || 2, 1);
+    //     const s = value.toString(16);
 
-        c = c || "0";
-        return new Array(len - s.length + 1).join(c) + s;
-    }
+    //     c = c || "0";
+    //     return new Array(len - s.length + 1).join(c) + s;
+    // }
 
     static toStr(value: any): string {
         if (Number.isNaN(value)) {

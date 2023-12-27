@@ -84,7 +84,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
     }
 
     protected _setPointColor(v: RcElement, color: string): void {
-        v.internalSetStyle('fill', color);
+        v.setFill(color);
     }
 
     protected _prepareSeries(doc: Document, model: PieSeries): void {
@@ -131,7 +131,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                 const v = this._sectors.find(s => s.point.sliced);
 
                 if (v) {
-                    v.translate(0, 0);
+                    v.trans(0, 0);
                     this.$_slice(v, true, false);
                 }
             });
@@ -219,7 +219,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
 
         if (this._textView.visible) {
             const tr = this._textView.getBBox();
-            this._textView.translate(cx, cy - tr.height / 2);
+            this._textView.trans(cx, cy - tr.height / 2);
         }
 
         if (this._circle.visible = this._sectors.isEmpty) {
@@ -241,7 +241,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                     dx += cos(a) * sliceOff;
                     dy += sin(a) * sliceOff;
                 }
-                sector.translate(dx, dy).setVis(true);
+                sector.trans(dx, dy).setVis(true);
     
                 const a = p.startAngle + p.angle / 2;
                 p.xPos = cx + cos(a) * (sliceOff + rd * 0.7);
@@ -314,7 +314,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             //line.setPath(pb.move(x1, y1).lines(x2, y2, x3, y2).end())
             line.setLine(new PathBuilder().move(0, 0).quad(x2 - x1, y2 - y1, x3 - x1, y2 - y1).end())
             line.move(x1, y1); // 위치 정보 저장.
-            !view.isDomAnimating() && line.translate(x1 + dx, y1 + dy);
+            !view.isDomAnimating() && line.trans(x1 + dx, y1 + dy);
         }
 
         // text
@@ -326,7 +326,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
             y2 -= r.height / 2;
         }
         view.move(x3, y2); // 위치 정보 저장.
-        !view.isDomAnimating() && view.layout(Align.CENTER).translate(x3 + dx, y2 + dy);
+        !view.isDomAnimating() && view.layout(Align.CENTER).trans(x3 + dx, y2 + dy);
     }
 
     private $_layoutLabelInner(p: PieSeriesPoint, view: PointLabelView, off: number, dist: number, sliceOff: number): void {
@@ -341,7 +341,7 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
 
         x = this._cx + cos(a) * (sliceOff + rd);
         y = this._cy + sin(a) * (sliceOff + rd);
-        view.layout(Align.CENTER).translate(x - r.width / 2, y - r.height / 2);
+        view.layout(Align.CENTER).trans(x - r.width / 2, y - r.height / 2);
     }
 
     private $_slice(view: SectorView, sliced: boolean, needLayout: boolean): void {
@@ -351,9 +351,9 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
         const a = p.startAngle + p.angle / 2;
 
         if (p.sliced = sliced) {
-            view.translateEx(cos(a) * this._slicedOff, sin(a) * this._slicedOff, dur);
+            view.transEx(cos(a) * this._slicedOff, sin(a) * this._slicedOff, dur);
         } else {
-            view.translateEx(0, 0, dur);
+            view.transEx(0, 0, dur);
         }
 
         const labelViews = this._labelViews();
@@ -379,22 +379,22 @@ export class PieSeriesView extends WidgetSeriesView<PieSeries> {
                     let tx = labelView.tx;
                     let ty = labelView.ty;
     
-                    labelView.translate(labelView.x, labelView.y);
-                    labelView.translateEx(tx, ty, dur);
+                    labelView.trans(labelView.x, labelView.y);
+                    labelView.transEx(tx, ty, dur);
     
                     if (lineView) {
                         tx = lineView.tx;
                         ty = lineView.ty;
-                        lineView.translate(lineView.x, lineView.y);
-                        lineView.translateEx(tx, ty, dur);
+                        lineView.trans(lineView.x, lineView.y);
+                        lineView.transEx(tx, ty, dur);
                     }
                 } else {
-                    labelView.translate(labelView.tx, labelView.ty);
-                    labelView.translateEx(labelView.x, labelView.y, dur);
+                    labelView.trans(labelView.tx, labelView.ty);
+                    labelView.transEx(labelView.x, labelView.y, dur);
         
                     if (lineView) {
-                        lineView.translate(lineView.tx, lineView.ty);
-                        lineView.translateEx(lineView.x, lineView.y, dur);
+                        lineView.trans(lineView.tx, lineView.ty);
+                        lineView.transEx(lineView.x, lineView.y, dur);
                     }
                 }
             }

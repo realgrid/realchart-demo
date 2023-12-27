@@ -884,7 +884,12 @@ export abstract class ContinuousAxis extends Axis {
         })
 
         const isX = this._isX;
-        const vals = pts.map(p => isX ? p.xValue : p.yValue).sort((v1, v2) => v1 - v2);
+        let vals = pts.map(p => isX ? p.xValue : p.yValue).sort((v1, v2) => v1 - v2);
+        for (let i = vals.length - 1; i > 0; i--) {
+            if (vals[i] === vals[i - 1]) {
+                vals.splice(i, 1);
+            }
+        }
         let min = vals[1] - vals[0];
 
         for (let i = 2; i < vals.length; i++) {

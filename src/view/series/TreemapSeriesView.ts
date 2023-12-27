@@ -9,6 +9,7 @@
 import { Color } from "../../common/Color";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
+import { createRect } from "../../common/Rectangle";
 import { Align } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
 import { DataPoint } from "../../model/DataPoint";
@@ -40,8 +41,17 @@ class NodeView extends RectElement implements IPointView {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
-    render(): void {
-        this.setRect(this.node);
+    render(vr: number): void {
+        if (vr !== 1) {
+            const r = Object.assign({}, this.node);
+            r.width *= vr;
+            r.height *= vr;
+            r.x += (this.node.width - r.width) / 2;
+            r.y += (this.node.height - r.height) / 2;
+            this.setRect(r);
+        } else {
+            this.setRect(this.node);
+        }
     }
 }
 
@@ -100,7 +110,16 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
     }
 
     protected _runShowEffect(firstTime: boolean): void {
-        firstTime && SeriesAnimation.reveal(this);
+        // firstTime && SeriesAnimation.reveal(this);
+        firstTime && SeriesAnimation.grow(this);
+    }
+
+    protected _doViewRateChanged(rate: number): void {
+        if (this._rootView) {
+            this.$_renderGroups(this.width, this.height);
+        } else {
+            this.$_renderLeafs(this.width, this.height);
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -111,7 +130,8 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
         const xAxis = series._xAxisObj;
         const yAxis = series._yAxisObj
         const inverted = series.chart.isInverted();
-        const labels = series.pointLabel;
+        const vr = this._getViewRate();
+        // const labels = series.pointLabel;
         const labelViews = this._labelViews();
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
@@ -120,7 +140,7 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
         let labelView: PointLabelView;
 
         // buildMap()으로 leafs가 결정돼야 한다.
-        labelViews.prepare(this.doc, this);
+        labelViews?.prepare(this.doc, this);
 
         this._nodeViews.prepare(leafs.length, (v, i, count) => {
             const m = leafs[i];
@@ -137,12 +157,12 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
             }
 
             v.node = m;
-            v.setStyle('fill', c.brighten(m.index / count).toString());
+            v.setFill(c.brighten(m.index / count).toString());
 
             if (xAxis.reversed) m.x = xLen - m.x - m.width;
             if (yAxis.reversed) m.y = yLen - m.y - m.height;
             if (inverted) m.y = m.y - yLen;
-            v.render();
+            v.render(vr);
 
             let x = p.xPos = m.x + m.width / 2;
             let y = p.yPos = m.y + m.height / 2;
@@ -162,7 +182,8 @@ export class TreemapSeriesView extends SeriesView<TreemapSeries> {
                         y -= r.height / 2;
                     }
 
-                    labelView.layout(Align.CENTER).translate(x, y);
+                    labelView.setContrast(v.dom);
+                    labelView.layout(Align.CENTER).trans(x, y);
                 }
             }
         })
