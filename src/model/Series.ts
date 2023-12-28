@@ -223,7 +223,7 @@ export class MovingAverage extends RcObject {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    interval: number = 5;
+    interval = 2;
     type: 'simple' | 'weighted' | 'exponential' | 'triangualr' = 'simple';
 }
 
