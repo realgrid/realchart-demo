@@ -917,6 +917,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         yAxes.collectValues();
         xAxes.collectReferentsValues();
         yAxes.collectReferentsValues();
+        yAxes.collectRanges();
         xAxes.prepareRender();
         yAxes.prepareRender();
 

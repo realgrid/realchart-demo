@@ -67,7 +67,7 @@ export class DataPoint {
     yValue: number;     // y 좌표상의 value
     yRate: number;      // 전체 point 합 내에서 비율(백분율)
 
-    visible = true;     // 시리지에는 표시되지 않지만 legend에는 표시된다.
+    visible = true;     // 시리즈에는 표시되지 않지만 legend에는 표시된다.
     color: string;
     xPos: number;
     yPos: number;

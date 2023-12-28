@@ -7,6 +7,7 @@ const config = {
     xAxis: {
     },
     yAxis: {
+        startFit: 'value'
     },
     series: {
         // type: 'line',

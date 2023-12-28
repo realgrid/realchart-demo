@@ -551,7 +551,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     protected abstract _renderSeries(width: number, height: number): void;
 
     protected _collectVisPoints(model: T): DataPoint[] {
-        return model.collectVisibles();
+        return model._visPoints;// collectVisibles();
     }
 
     private $_setColorIndex(v: RcElement, p: DataPoint): void {

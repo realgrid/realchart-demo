@@ -1280,6 +1280,12 @@ export abstract class Axis extends ChartItem implements IAxis {
         })
     }
 
+    collectRanges(): void {
+        this._series.forEach(item => {
+            item.collectRanges(this._values);
+        })
+    }
+
     collectReferentsValues(): void {
         this._series.forEach(item => {
             item.pointValuesPrepared(this);
@@ -1597,6 +1603,10 @@ export class AxisCollection {
 
     collectValues(): void {
         this._items.forEach(axis => axis.collectValues());
+    }
+
+    collectRanges(): void {
+        this._items.forEach(axis => axis.collectRanges());
     }
 
     collectReferentsValues(): void {
