@@ -23,6 +23,7 @@ class NodeView extends RectElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     node: TreeNode;
+    saveVal: number;
 
     //-------------------------------------------------------------------------
     // constructor

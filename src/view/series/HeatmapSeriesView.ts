@@ -22,6 +22,7 @@ class CellView extends RectElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     point: HeatmapSeriesPoint;
+    saveVal: number;
 
     //-------------------------------------------------------------------------
     // constructor

@@ -106,6 +106,10 @@ export class DataPoint {
         return 1;
     }
 
+    getValue(): number {
+        return this.yValue;
+    }
+
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
@@ -156,6 +160,13 @@ export class DataPoint {
             isNull: this.isNull,
             range: this.range
         };
+    }
+
+    setValue(value: any): boolean {
+        if (value !== this.yValue) {
+            this.yValue = value;
+            return true;
+        }
     }
 
     //-------------------------------------------------------------------------

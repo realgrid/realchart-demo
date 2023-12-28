@@ -22,6 +22,7 @@ class BarElement extends GroupElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     point: DataPoint;
+    saveVal: number;
 
     private _back: RectElement; // for hit-testing
     private _segments = new ElementPool<PathElement>(this, PathElement);

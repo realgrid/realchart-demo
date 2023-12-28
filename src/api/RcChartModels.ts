@@ -328,7 +328,29 @@ export class RcChartSeries extends RcNamedObject {
         const p = (this.$_p as Series).getPointAt(xValue);
         return p ? p.yValue : _undef;
     }
+    
+    setValueAt(xValue: number, yValue: number): void {
+        const p = (this.$_p as Series).getPointAt(xValue);
+        if (p) {
+            (this.$_p as Series).setValueAt(xValue, yValue);
+        }
+    }
 
+    getPoint(keys: any): any {
+        return (this.$_p as Series).getPoint(keys);
+    }
+
+    updatePoint(keys: any, values: any): void {
+        (this.$_p as Series).updatePoint(keys, values);
+    }
+
+    /**
+     * 시리즈 data 원본을 변경한다.\
+     * [주의] x축이 카테고리 축이고, x축의 categories 속성이 명시적으로 설정되지 않았다면,
+     * 이 함수 호출 후 카테고리가 변경될 수 있다.
+     * 
+     * @param data 원본 데이터포인트 값 배열.
+     */
     updateData(data: any): void {
         (this.$_p as Series).updateData(data);
     }

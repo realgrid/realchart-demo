@@ -61,6 +61,9 @@ function setActions(container) {
     createButton(container, "Test", function (e) {
         alert("hello");
     });
+    createButton(container, "Update", function (e) {
+        chart.series.updateData([175, 188, 152, 173, 134, 123, 153])
+    });
     createCheckBox(
         container,
         "ColorByPoint",

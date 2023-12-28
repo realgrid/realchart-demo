@@ -1333,13 +1333,30 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return m.visible === true;
     }
 
+    getPointAt(xValue: number): DataPoint {
+        return this._points.pointAt(xValue);
+    }
+
+    setValueAt(xValue: number, yValue: number): boolean {
+        const p = this._points.pointAt(xValue);
+        
+        if (p.yValue !== yValue) {
+            p.yValue = yValue;
+            this._changed();
+            return true;
+        }
+    }
+
+    getPoint(keys: any): DataPoint {
+        return;
+    }
+ 
+    updatePoint(keys: any, values: any): void {
+    }
+
     updateData(data: any): void {
         this._points.load(data);
         this._changed();
-    }
-
-    getPointAt(xValue: number): DataPoint {
-        return this._points.pointAt(xValue);
     }
     
     //-------------------------------------------------------------------------
@@ -2590,11 +2607,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
 
         if (!isNaN(base)) {
             for (const pts of map.values()) {
-                let sum = 0;
-                for (const p of pts) {
-                    sum += absv(p.yValue) || 0;
-                }
-
+                const sum = pts.reduce((sum, p) => sum + (absv(p.yValue) || 0), 0);
                 let prev = 0;
                 let nprev = 0;
                 
@@ -2611,11 +2624,9 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
             }
         } else {
             for (const pts of map.values()) {
-                let sum = 0;
-                for (const p of pts) {
-                    sum += p.yValue || 0;
-                }
+                const sum = pts.reduce((sum, p) => sum + (p.yValue || 0), 0);
                 let prev = 0;
+
                 for (const p of pts) {
                     prev = p.yGroup = (p.yValue || 0) / sum * max + prev;
                 }

@@ -22,26 +22,17 @@ import { Axis } from "../model/Axis";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { ClusterableSeries, DataPointLabel, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
-import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { ContentView } from "./ChartElement";
 import { LegendItemView } from "./LegendView";
 import { PrevAnimation, SeriesAnimation } from "./animation/SeriesAnimation";
 
 export interface IPointView {
     point: DataPoint;
+    saveVal: number;
 }
 
 export class PointLabelView extends LabelElement {
 
-    //-------------------------------------------------------------------------
-    // consts
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // static members
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -54,19 +45,6 @@ export class PointLabelView extends LabelElement {
     constructor(doc: Document) {
         super(doc, 'rct-point-label');
     }
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-	//-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
 }
 
 export class PointLabelContainer extends LayerElement {
@@ -534,6 +512,9 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
             // this._trendLineView.setAttr('clip-path', this._pointContainer.getAttr('clip-path'));
         }
         this._animatable && !this._simpleMode && this._runShowEffect(!this.control.loaded && this.chart().loadAnimatable());
+        this._getPointPool().forEach((pv: any) => {
+            pv.saveVal = pv.point.getValue()
+        });
     }
 
     protected _doAfterLayout(): void {
@@ -772,6 +753,7 @@ export abstract class PointElement extends PathElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     point: DataPoint;
+    saveVal: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -807,6 +789,8 @@ export abstract class BoxPointElement extends PointElement {
     public abstract layout(x: number, y: number, rTop: number, rBottom: number): void;
 
     savePrevs(): void {
+        super.savePrevs();
+
         this.wSave = this.wPoint;
         this.xSave = this.x;
     }
@@ -835,6 +819,8 @@ export abstract class RangeElement extends GroupElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    point: DataPoint;
+    saveVal: number;
     wSave: number;
     xSave: number;
 
@@ -1079,6 +1065,7 @@ export class MarkerSeriesPointView<T extends DataPoint> extends PathElement impl
     // fields
     //-------------------------------------------------------------------------
     point: T;
+    saveVal: number;
 
     //-------------------------------------------------------------------------
     // constructor

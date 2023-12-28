@@ -26,6 +26,7 @@ class SectorView extends SectorElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     point: PieSeriesPoint;
+    saveVal: number;
 
     //-------------------------------------------------------------------------
     // constructor

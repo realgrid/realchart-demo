@@ -31,6 +31,7 @@ class BarSectorView extends SectorElement implements IPointView {
     // IPointView
     //-------------------------------------------------------------------------
     point: DataPoint;
+    saveVal: number;
 }
 
 export abstract class BarSeriesViewBase<T extends BarSeriesBase> extends BoxedSeriesView<T> {
