@@ -699,6 +699,7 @@ export interface ISeries extends IPlottingItem {
     yField: string | number | Function;
     _xFielder: (src: any) => any;
     _yFielder: (src: any) => any;
+    _colorFielder: (src: any) => any;
     colorField: string | number;
 
     color: string;
@@ -793,6 +794,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     _yAxisObj: IAxis;
     _xFielder: (src: any) => any;
     _yFielder: (src: any) => any;
+    _colorFielder: (src: any) => any;
     protected _points: DataPointCollection;
     _runPoints: DataPoint[];
     _visPoints: DataPoint[];
@@ -1518,19 +1520,20 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     protected _createFielders(): void {
         this._xFielder = this._createFilder(this.xField);
         this._yFielder = this._createFilder(this.yField);
+        this._colorFielder = this._createFilder(this.colorField);
     }
 
     protected _doLoad(src: any): void {
         super._doLoad(src);
         this._createFielders();
 
-        const t = console.time('load points');
+        // const t = console.time('load points');
         const data = this._loadData(src);
 
         if (isArray(data) && data.length > 0) {
             this._doLoadPoints(data);
         }
-        console.timeEnd('load points');
+        // console.timeEnd('load points');
     }
 
     protected _loadData(src: any): any {

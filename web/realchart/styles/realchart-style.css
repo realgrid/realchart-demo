@@ -151,6 +151,7 @@
 
     --rct-axis-title-fill: #333;
     --rct-axis-line-stroke: #aaa;
+    --rct-axis-baseline-stroke: #333;
     --rct-axis-tick-stroke: #555;
     --rct-axis-label-fill: #555;
     --rct-axis-grid-line-stroke: #ddd;
@@ -215,6 +216,7 @@
     
     --rct-axis-title-fill: #fff;
     --rct-axis-line-stroke: #fff;
+    --rct-axis-baseline-stroke: #fff;
     --rct-axis-tick-stroke: #fff;
     --rct-axis-label-fill: #fff;
     --rct-axis-grid-line-stroke: #fff;
@@ -404,6 +406,10 @@
 }
 .rct-axis-line {
     stroke: var(--rct-axis-line-stroke);
+    stroke-width: 1px;
+}
+.rct-axis-baseline {
+    stroke: var(--rct-axis-baseline-stroke);
     stroke-width: 1px;
 }
 .rct-axis-tick {

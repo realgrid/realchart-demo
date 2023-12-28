@@ -660,6 +660,8 @@ export class RcElement extends RcObject {
     protected _styles: any = {};
     protected _styleDirty = false;
 
+    tag: any;
+
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------

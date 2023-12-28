@@ -203,7 +203,7 @@ export class DataPoint {
         } else {
             this.x = pickProp4(series._xFielder(v), v.x, v.name, v.label);
             this.y = pickProp3(series._yFielder(v), v.y, v.value);
-            this.color = pickProp(v[series.colorField], v.color);
+            this.color = pickProp(series._colorFielder(v), v.color);
         }
     }
 

@@ -15,6 +15,14 @@ const config = {
 	},
 	yAxis: {
 		title: '최대 심박수 (thalachh)',
+        baseValue: 0,
+        baseLine: {
+            visible: true,
+            style: {
+                strokeWidth: '2px',
+                strokeDasharray: '3'
+            }
+        }
 	},
 	series: [
 		{

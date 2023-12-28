@@ -856,8 +856,9 @@ export class BodyView extends ChartElement<Body> {
     private _image: ImageElement;
     _gridRowContainer: AxisGridRowContainer;
     private _gridContainer: LayerElement;
+    private _gridViews = new Map<Axis, AxisGridView>();
     private _baseContainer: LayerElement;
-    protected _gridViews = new Map<Axis, AxisGridView>();
+    private _baseViews = new Map<Axis, LineElement>();
     private _breakViews: AxisBreakView[] = [];
     private _seriesContainer: LayerElement;
     private _labelContainer: LayerElement;
@@ -1096,6 +1097,7 @@ export class BodyView extends ChartElement<Body> {
             v.measure(doc, this._series[i], hintWidth, hintHeight, phase);
         })
 
+        // axes
         if (!this._polar) {
             // axis grids
             this.$_prepareGrids(doc, chart);
@@ -1159,6 +1161,18 @@ export class BodyView extends ChartElement<Body> {
                 v.layout();
             }
 
+            // base line
+            for (const v of this._baseViews.values()) {
+                const axis = v.tag as Axis;
+
+                v.setStyleOrClass(axis.baseLine.style);
+                if (axis._isHorz) { // axis horz
+                    v.setVLine(axis.getPos(w, axis.getBaseValue()), 0, h);
+                } else {
+                    v.setHLine(axis.getPos(h, axis.getBaseValue()), 0, w);
+                }
+            }
+
             // axis breaks
             this._breakViews.forEach(v => {
                 const m = v._model;
@@ -1220,23 +1234,39 @@ export class BodyView extends ChartElement<Body> {
 
     private $_prepareGrids(doc: Document, chart: Chart): void {
         const needAxes = chart.needAxes();
-        const container = this._gridContainer;
-        const views = this._gridViews;
+        const gridContainer = this._gridContainer;
+        const gridMap = this._gridViews;
+        const baseContainer = this._baseContainer;
+        const baseMap = this._baseViews;
 
-        for (const axis of views.keys()) {
+        for (const axis of gridMap.keys()) {
             if (!needAxes || !chart.containsAxis(axis) || !axis.grid.isVisible(false)) {
-                views.get(axis).remove();
-                views.delete(axis);
+                gridMap.get(axis).remove();
+                gridMap.delete(axis);
+            }
+        }
+
+        for (const axis of baseMap.keys()) {
+            if (!needAxes || !chart.containsAxis(axis) || !axis.baseLine.visible || !axis.isBaseVisible()) {
+                baseMap.get(axis).remove();
+                baseMap.delete(axis);
             }
         }
 
         if (needAxes) {
             [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
-                if (axis.grid.isVisible(false) && !views.has(axis)) {
+                if (axis.grid.isVisible(false) && !gridMap.has(axis)) {
                     const v = new AxisGridView(doc);
     
-                    views.set(axis, v);
-                    container.add(v);
+                    gridMap.set(axis, v);
+                    gridContainer.add(v);
+                }
+                if (axis.baseLine.visible && axis.isBaseVisible() && !baseMap.has(axis)) {
+                    const v = new LineElement(doc, 'rct-axis-baseline');
+    
+                    baseMap.set(axis, v);
+                    baseContainer.add(v);
+                    v.tag = axis;
                 }
             }));
         }

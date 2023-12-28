@@ -256,7 +256,7 @@ export class AxisGridRows extends AxisItem {
         const rows: IAxisGridRow[] = [];
 
         if (this.belowColor) {
-            if (axis.axisMin() < axis.getBaseValue()) {
+            if (axis.isBaseVisible()) {
                 rows.push({
                     axis,
                     from: axis.axisMin(),
@@ -1263,6 +1263,10 @@ export abstract class Axis extends ChartItem implements IAxis {
 
     isBased(): boolean {
         return false;
+    }
+
+    isBaseVisible(): boolean {
+        return this.axisMin() < this.getBaseValue();
     }
 
     disconnect(): void {
