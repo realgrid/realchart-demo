@@ -529,7 +529,9 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         this._labelViews();
         this._renderSeries(this.width, this.height);
         if (this._trendLineView && this._trendLineView.visible) {
-            this.$_renderTrendline();       
+            this.$_renderTrendline(this._inverted);       
+            // this._trendLineView.setAttr('transform', this._pointContainer.getAttr('transform'));
+            // this._trendLineView.setAttr('clip-path', this._pointContainer.getAttr('clip-path'));
         }
         this._animatable && !this._simpleMode && this._runShowEffect(!this.control.loaded && this.chart().loadAnimatable());
     }
@@ -603,11 +605,25 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         //this._getShowAnimation()?.run(this);
     }
 
-    private $_renderTrendline(): void {
+    private $_renderTrendline(inverted: boolean): void {
         const m = this.model;
         const xAxis = m._xAxisObj;
         const yAxis = m._yAxisObj;
-        const pts = m.trendline._points.map(pt => ({x: xAxis.getPos(xAxis._vlen, pt.x), y: yAxis._vlen - yAxis.getPos(yAxis._vlen, pt.y)}));
+        const yLen = yAxis._vlen;
+        const xLen = xAxis._vlen;
+        const pts = m.trendline._points.map(pt => {
+            let x: number;
+            let y: number;
+
+            if (inverted) {
+                y = xLen - xAxis.getPos(xLen, pt.x);
+                x = yAxis.getPos(yLen, pt.y);
+            } else {
+                x = xAxis.getPos(xLen, pt.x);
+                y = yLen - yAxis.getPos(yLen, pt.y);
+            }
+            return {x, y};
+        });
 
         if (this._trendLineView.setVis(pts.length > 1)) {
             const sb = new PathBuilder();

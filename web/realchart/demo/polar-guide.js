@@ -7,7 +7,7 @@ const config = {
     options: {
         // animatable: false
     },
-    title: "Polar Chart",
+    title: "Polar Axis Guides",
     xAxis: {
         categories: [
             '성남시', '용인시', '수원시', '일산시', '화성시', '평택시'
@@ -17,6 +17,22 @@ const config = {
     yAxis: {
         // line: true,
         label: true,
+        guides: [{
+            type: 'line',
+            value: 5.5,
+            // label: 'line',
+            style: {
+                stroke: 'red'
+            }
+        }, {
+            type: 'range',
+            front: true,
+            startValue: 11,
+            endValue: 14,
+            style: {
+                fill: '#008800'
+            },
+        }]
     },
     body: {
     },

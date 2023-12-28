@@ -40,6 +40,14 @@ function setActions(container) {
         config.inverted = _getChecked(e);
         chart.load(config);
     }, false);
+    createCheckBox(container, 'X Reversed', function (e) {
+        config.xAxis.reversed = _getChecked(e);
+        chart.load(config);
+    }, false);
+    createCheckBox(container, 'Y Reversed', function (e) {
+        config.yAxis.reversed = _getChecked(e);
+        chart.load(config);
+    }, false);
     createListBox(container, "trendline.type", ['linear', 'logarithmic', 'exponential', 'power', 'polynomial', 'movingAverage'], function (e) {
         config.series.trendline.type = _getValue(e);
         chart.load(config);
