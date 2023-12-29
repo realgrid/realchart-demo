@@ -78,6 +78,8 @@ interface IRelativeSize {
  * axis는 {@link Axis.row row}, {@link Axis.col col} 속성으로 위치를 지정한다.
  * 시리즈는 {@link Series.row row}, {@link Series.col col} 속성으로 지정하거나, 아니면 axis 위치에 따라 자동으로 결정된다.
  * 시리즈그룹은 {@link SeriesGroup.row row}, {@link SeriesGroup.col col} 속성으로 지정하거나, 아니면 axis 위치에 따라 자동으로 결정된다.
+ * 
+ * @config chart.split
  */
 export class Split extends ChartItem {
 

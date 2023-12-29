@@ -1,15 +1,15 @@
 {
   "options": "options",
+  "base": "base",
   "xAxis": "xAxis",
   "yAxis": "yAxis",
   "series": "series",
   "gauge": "gauge",
   "annotation": "annotation",
-  "body": "body",
-  "legend": "legend",
-  "widget": "widget",
   "title": "title",
   "subtitle": "subtitle",
-  "tooltip": "tooltip",
-  "base": "base"
+  "body": "body",
+  "split": "split",
+  "legend": "legend",
+  "tooltip": "tooltip"
 }

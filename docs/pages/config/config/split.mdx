@@ -1,0 +1,29 @@
+## **split**
+다중 분할 panes.
+
+각 pane에 해당하는 x, y축이 반드시 존재해야 한다.
+axis는 [row row](/config/config/axis#row row) , [col col](/config/config/axis#col col) 속성으로 위치를 지정한다.
+시리즈는 [row row](/config/config/series#row row) , [col col](/config/config/series#col col) 속성으로 지정하거나, 아니면 axis 위치에 따라 자동으로 결정된다.
+시리즈그룹은 [row](/docs/api/classes/row) , [col](/docs/api/classes/col) 속성으로 지정하거나, 아니면 axis 위치에 따라 자동으로 결정된다.
+## Properties
+
+### style: `SVGStyles | string{:js}`[#style]
+스타일셋 혹은 class selector.  
+- `SVGStyles{:js}` 
+
+| Name | Type | Optional |  
+| ----- | ----- | ----- |  
+| fill | `string{:js}` | true |  
+| fillOpacity | `string{:js}` | true |  
+| fontFamily | `string{:js}` | true |  
+| fontSize | `string{:js}` | true |  
+| fontStyle | `string{:js}` | true |  
+| fontWeight | `string{:js}` | true |  
+| rx | `string{:js}` | true |  
+| stroke | `string{:js}` | true |  
+| strokeDasharray | `string{:js}` | true |  
+| strokeWidth | `string{:js}` | true |  
+| textAlign | `'center' \| 'left' \| 'right'{:js}` | true |
+### visible: `boolean{:js}`[#visible]
+표시 여부.  
+<DefaultValue value="true" contents=""></DefaultValue>
