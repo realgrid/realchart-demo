@@ -471,7 +471,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
     private _drawCurve2(pts: PointLine, connected: boolean, sb: PathBuilder): void {
         if (pts.length > 1) {
             sb.moveOrLine(connected, pts[0].xPos, pts[0].yPos);
-            this.$_drawCurve(pts, 0, pts.length - 1, sb);
+            this._drawSpline(pts, 0, pts.length - 1, sb);
         }
     }
 
@@ -490,7 +490,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
             while (i < len) {
                 if (pts[i].isNull) {
                     if (i - 1 > start) {
-                        this.$_drawCurve(pts, start, i - 1, sb);
+                        this._drawSpline(pts, start, i - 1, sb);
                     }
                     do {
                         i++;
@@ -507,89 +507,9 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                 }
             }
             if (i - 1 > start) {
-                this.$_drawCurve(pts, start, i - 1, sb);
+                this._drawSpline(pts, start, i - 1, sb);
             }
         }
-    }
-
-    private $_drawCurve(pts: IPointPos[], start: number, end: number, sb: PathBuilder): void {
-        let p = start;
-
-        if (absv(end - start) === 1) {
-            sb.line(pts[p + 1].xPos, pts[p + 1].yPos);
-            return;
-        }
-
-        const tension = 0.23;
-        const tLeft = { x: 0, y: 0 };
-        const tRight = { x: 0, y: 0 };
-        const v1 = { x: 0, y: 0 };
-        const v2 = { x: pts[p + 1].xPos - pts[p].xPos, y: pts[p + 1].yPos - pts[p].yPos };
-        const p1 = { x: 0, y: 0 };
-        const p2 = { x: 0, y: 0 };
-        const mp = { x: 0, y: 0 };
-        let tan = { x: 0, y: 0 };
-        let len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
-
-        v2.x /= len;
-        v2.y /= len;
-
-        let tFactor = (pts[p + 1].xPos - pts[p].xPos)
-        let prevX = pts[p].xPos;
-        let prevY = pts[p].yPos;
-
-        for (++p; p != end; p++) {
-            v1.x = -v2.x;
-            v1.y = -v2.y;
-
-            v2.x = pts[p + 1].xPos - pts[p].xPos;
-            v2.y = pts[p + 1].yPos - pts[p].yPos;
-
-            len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
-            v2.x /= len;
-            v2.y /= len;
-
-            if (v2.x < v1.x) {
-                tan.x = v1.x - v2.x;
-                tan.y = v1.y - v2.y;
-            } else {
-                tan.x = v2.x - v1.x;
-                tan.y = v2.y - v1.y;
-            }
-
-            const tlen = Math.sqrt(tan.x * tan.x + tan.y * tan.y);
-            tan.x /= tlen;
-            tan.y /= tlen;
-
-            if (v1.y * v2.y >= 0) {
-                tan = { x: 1, y: 0 };
-            }
-
-            tLeft.x = -tan.x * tFactor * tension;
-            tLeft.y = -tan.y * tFactor * tension;
-
-            if (p === start + 1) {
-                sb.quad(pts[p].xPos + tLeft.x, pts[p].yPos + tLeft.y, pts[p].xPos, pts[p].yPos);
-            } else {
-                p1.x = prevX + tRight.x;
-                p1.y = prevY + tRight.y;
-                p2.x = pts[p].xPos + tLeft.x;
-                p2.y = pts[p].yPos + tLeft.y;
-                mp.x = (p1.x + p2.x) / 2;
-                mp.y = (p1.y + p2.y) / 2;
-
-                sb.quad(p1.x, p1.y, mp.x, mp.y);
-                sb.quad(p2.x, p2.y, pts[p].xPos, pts[p].yPos);
-            }
-
-            tFactor = (pts[p + 1].xPos - pts[p].xPos);
-            tRight.x = tan.x * tFactor * tension;
-            tRight.y = tan.y * tFactor * tension;
-            prevX = pts[p].xPos;
-            prevY = pts[p].yPos;
-        }
-
-        sb.quad(prevX + tRight.x, prevY + tRight.y, pts[p].xPos, pts[p].yPos);
     }
 
     protected _buildAreas(lines: PointLine[], t1: LineType, t2?: LineType): string {

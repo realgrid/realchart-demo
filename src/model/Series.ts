@@ -280,6 +280,13 @@ export class Trendline extends ChartItem {
      * @config
      */
     movingInterval = 2;
+    /**
+     * true로 지정하면 spline 곡선으로 지점들을 연결한다.\
+     * 지정하지 않으면 {@link type}이 'logarithmic', 'exponential', 'power'일 때 곡선으로 그린다.
+     * 
+     * @config
+     */
+    curved: boolean;
 
     //-------------------------------------------------------------------------
     // methods
@@ -302,6 +309,10 @@ export class Trendline extends ChartItem {
             p.x -= minX;
             p.y -= minY;
         });
+    }
+
+    isCurved(): boolean {
+        return this.curved === true || (this.curved == null && (this.type === TrendType.EXPONENTIAL || this.type === TrendType.LOGARITHMIC || this.type === TrendType.POWER));
     }
 
     //-------------------------------------------------------------------------

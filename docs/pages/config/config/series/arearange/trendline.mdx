@@ -2,6 +2,11 @@
 시리즈 추세선 모델.
 ## Properties
 
+### curved: `boolean{:js}`[#curved]
+<Content type="keyword" value="true"></Content>로 지정하면 spline 곡선으로 지점들을 연결한다.
+
+지정하지 않으면 [type](#type) 이 <Content type="expression" value="'logarithmic', 'exponential', 'power'"></Content>일 때 곡선으로 그린다.  
+
 ### movingInterval: `number{:js}`[#movingInterval]
 이동 평균 유형의 계산 간격.  
 <DefaultValue value="2" contents=""></DefaultValue>

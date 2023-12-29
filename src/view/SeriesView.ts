@@ -508,8 +508,6 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         this._renderSeries(this.width, this.height);
         if (this._trendLineView && this._trendLineView.visible) {
             this.$_renderTrendline(this._inverted);       
-            // this._trendLineView.setAttr('transform', this._pointContainer.getAttr('transform'));
-            // this._trendLineView.setAttr('clip-path', this._pointContainer.getAttr('clip-path'));
         }
         this._animatable && !this._simpleMode && this._runShowEffect(!this.control.loaded && this.chart().loadAnimatable());
         this._getPointPool().forEach((pv: any) => {
@@ -586,6 +584,89 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         //this._getShowAnimation()?.run(this);
     }
 
+    protected _drawSpline(pts: {xPos: number, yPos: number}[], start: number, end: number, sb: PathBuilder): void {
+        let p = start;
+
+        if (end < 0) {
+            end = pts.length - 1;
+        }
+        if (absv(end - start) === 1) {
+            sb.line(pts[p + 1].xPos, pts[p + 1].yPos);
+            return;
+        }
+
+        const tension = 0.23;
+        const tLeft = { x: 0, y: 0 };
+        const tRight = { x: 0, y: 0 };
+        const v1 = { x: 0, y: 0 };
+        const v2 = { x: pts[p + 1].xPos - pts[p].xPos, y: pts[p + 1].yPos - pts[p].yPos };
+        const p1 = { x: 0, y: 0 };
+        const p2 = { x: 0, y: 0 };
+        const mp = { x: 0, y: 0 };
+        let tan = { x: 0, y: 0 };
+        let len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+
+        v2.x /= len;
+        v2.y /= len;
+
+        let tFactor = (pts[p + 1].xPos - pts[p].xPos)
+        let prevX = pts[p].xPos;
+        let prevY = pts[p].yPos;
+
+        for (++p; p != end; p++) {
+            v1.x = -v2.x;
+            v1.y = -v2.y;
+
+            v2.x = pts[p + 1].xPos - pts[p].xPos;
+            v2.y = pts[p + 1].yPos - pts[p].yPos;
+
+            len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+            v2.x /= len;
+            v2.y /= len;
+
+            if (v2.x < v1.x) {
+                tan.x = v1.x - v2.x;
+                tan.y = v1.y - v2.y;
+            } else {
+                tan.x = v2.x - v1.x;
+                tan.y = v2.y - v1.y;
+            }
+
+            const tlen = Math.sqrt(tan.x * tan.x + tan.y * tan.y);
+            tan.x /= tlen;
+            tan.y /= tlen;
+
+            if (v1.y * v2.y >= 0) {
+                tan = { x: 1, y: 0 };
+            }
+
+            tLeft.x = -tan.x * tFactor * tension;
+            tLeft.y = -tan.y * tFactor * tension;
+
+            if (p === start + 1) {
+                sb.quad(pts[p].xPos + tLeft.x, pts[p].yPos + tLeft.y, pts[p].xPos, pts[p].yPos);
+            } else {
+                p1.x = prevX + tRight.x;
+                p1.y = prevY + tRight.y;
+                p2.x = pts[p].xPos + tLeft.x;
+                p2.y = pts[p].yPos + tLeft.y;
+                mp.x = (p1.x + p2.x) / 2;
+                mp.y = (p1.y + p2.y) / 2;
+
+                sb.quad(p1.x, p1.y, mp.x, mp.y);
+                sb.quad(p2.x, p2.y, pts[p].xPos, pts[p].yPos);
+            }
+
+            tFactor = (pts[p + 1].xPos - pts[p].xPos);
+            tRight.x = tan.x * tFactor * tension;
+            tRight.y = tan.y * tFactor * tension;
+            prevX = pts[p].xPos;
+            prevY = pts[p].yPos;
+        }
+
+        sb.quad(prevX + tRight.x, prevY + tRight.y, pts[p].xPos, pts[p].yPos);
+    }
+
     private $_renderTrendline(inverted: boolean): void {
         const m = this.model;
         const xAxis = m._xAxisObj;
@@ -610,7 +691,12 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
             const sb = new PathBuilder();
 
             sb.move(pts[0].x, pts[0].y);
-            sb.lines(...pts);
+
+            if (this.model.trendline.isCurved()) {
+                this._drawSpline(pts.map(p => ({xPos: p.x, yPos: p.y })), 0, -1, sb);
+            } else {
+                sb.lines(...pts);
+            }
             this._trendLineView.setPath(sb.end(false));
         }
     }
