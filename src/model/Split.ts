@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, pickNum } from "../common/Common";
+import { isArray, isObject, isString, maxv, pickNum } from "../common/Common";
 import { _undef } from "../common/Types";
 import { Annotation } from "./Annotation";
 import { PaneAxisMatrix } from "./Axis";
@@ -167,8 +167,8 @@ export class Split extends ChartItem {
     //-------------------------------------------------------------------------
     protected _doLoadSimple(source: any): boolean {
         if (isArray(source) && source.length > 0) {
-            this.rows = Math.max(1, +source[0]);
-            this.cols = Math.max(1, pickNum(+source[1], this.rows));
+            this.rows = maxv(1, +source[0]);
+            this.cols = maxv(1, pickNum(+source[1], this.rows));
             if (this.rows > 0 && this.cols > 0) {
                 this.$_parsePanes(this.rows, this.cols);
                 this.visible = true;

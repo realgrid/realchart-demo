@@ -34,6 +34,12 @@ const config = {
         ],
         style: {
             // fill: 'yellow'
+        },
+        marker: {
+            style: {
+                // fill: 'red',
+                // stroke: 'red',
+            }
         }
     }
 }

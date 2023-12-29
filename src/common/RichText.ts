@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "./Common";
+import { maxv, pickNum } from "./Common";
 import { DatetimeFormatter } from "./DatetimeFormatter";
 import { NumberFormatter } from "./NumberFormatter";
 import { Sides } from "./Sides";
@@ -375,7 +375,7 @@ export class SvgRichText {
                 
                 w += r.width;
                 span[WIDTH] = r.width;
-                h = Math.max(h, span[HEIGHT] = r.height);
+                h = maxv(h, span[HEIGHT] = r.height);
 
                 if (!first) first = span;
             }
@@ -383,8 +383,8 @@ export class SvgRichText {
             firsts.push(first);
             widths.push(w);
             line[HEIGHT] = h * hLine;
-            wMax = Math.max(w, wMax);
-            hMax = Math.max(h, hMax);
+            wMax = maxv(w, wMax);
+            hMax = maxv(h, hMax);
         }
         
         if (cnt > 0) {
@@ -420,7 +420,7 @@ export class SvgRichText {
     layout(view: TextElement, align: Align, width: number, height: number, padding: Sides): void {
         const r = view.getBBox();
         let x: number;
-        let y = Math.max(padding.top, padding.top + (height - r.height) / 2);
+        let y = maxv(padding.top, padding.top + (height - r.height) / 2);
 
         switch (align) {
             case Align.CENTER:
@@ -437,7 +437,7 @@ export class SvgRichText {
                 break;
         }
 
-        view.translate(x, y);
+        view.trans(x, y);
     }
 
 	//-------------------------------------------------------------------------

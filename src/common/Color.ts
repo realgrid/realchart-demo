@@ -25,19 +25,19 @@ export class Color {
         return new Color(color).getContrast(darkColor, brightColor);
     }
 
-    static interpolate(c1: number, c2: number, delta: number): number {
-        const r1 = (c1 & 0xff0000) >> 16;
-        const g1 = (c1 & 0xff00) >> 8;
-        const b1 = c1 & 0xff;
-        const r2 = (c2 & 0xff0000) >> 16;
-        const g2 = (c2 & 0xff00) >> 8;
-        const b2 = c2 & 0xff;
+    // static interpolate(c1: number, c2: number, delta: number): number {
+    //     const r1 = (c1 & 0xff0000) >> 16;
+    //     const g1 = (c1 & 0xff00) >> 8;
+    //     const b1 = c1 & 0xff;
+    //     const r2 = (c2 & 0xff0000) >> 16;
+    //     const g2 = (c2 & 0xff00) >> 8;
+    //     const b2 = c2 & 0xff;
 
-        const r = r1 + (r2 - r1) * delta;
-        const g = g1 + (g2 - g1) * delta;
-        const b = b1 + (b2 - b1) * delta;
-        return (r << 16) + (g << 8) + b;
-    }
+    //     const r = r1 + (r2 - r1) * delta;
+    //     const g = g1 + (g2 - g1) * delta;
+    //     const b = b1 + (b2 - b1) * delta;
+    //     return (r << 16) + (g << 8) + b;
+    // }
 
     //-------------------------------------------------------------------------
     // fields

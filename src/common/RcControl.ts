@@ -6,14 +6,13 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { RcObject, RcWrappableObject, RcWrapper } from "./RcObject";
+import { RcObject } from "./RcObject";
 import { Align, ISides, Path, SVGStyleOrClass, _undef, getCssProp, isNull, pixel, throwFormat } from "./Types";
 import { Dom } from "./Dom";
 import { locale } from "./RcLocale";
 import { SVGNS, isObject, isString, pickProp, assign } from "./Common";
 import { Utils } from "./Utils";
-import { IRect, Rectangle } from "./Rectangle";
-import { Shape, SvgShapes } from "./impl/SvgShape";
+import { IRect } from "./Rectangle";
 import { ISize } from "./Size";
 import { IPoint } from "./Point";
 import { $_lc } from "./LicChecker";
@@ -32,7 +31,7 @@ export interface IPointerHandler {
  *
  * Control base.
  */
-export abstract class RcControl extends RcWrappableObject {
+export abstract class RcControl extends RcObject {//} RcWrappableObject {
 
     //-------------------------------------------------------------------------
     // consts
@@ -56,7 +55,7 @@ export abstract class RcControl extends RcWrappableObject {
     private _htmlRoot: HTMLDivElement;
     private _svg: SVGSVGElement;
     private _defs: SVGDefsElement;
-    private _back: RcElement;
+    // private _back: RcElement;
     private _root: RootElement;
 
     private _pointerHandler: IPointerHandler;
@@ -331,24 +330,24 @@ export abstract class RcControl extends RcWrappableObject {
         return { x: x + br.x - cr.x, y: y + br.y - cr.y };
     }
 
-    // TODO: svg 크기에서 '%'제거
-    //       svg 복사본 생성: 외부 스타일 내부로 가져오기
-    test(canvas: HTMLCanvasElement): void {
-        const svg = this._svg.outerHTML;
-        const image = new Image();
-        const ctx = canvas.getContext("2d");
+    // // TODO: svg 크기에서 '%'제거
+    // //       svg 복사본 생성: 외부 스타일 내부로 가져오기
+    // test(canvas: HTMLCanvasElement): void {
+    //     const svg = this._svg.outerHTML;
+    //     const image = new Image();
+    //     const ctx = canvas.getContext("2d");
 
-        document.body.appendChild(image);
+    //     document.body.appendChild(image);
 
-        image.width = 850;
-        image.height = 550;
-        // image.src = `data:image/svg+xml;base64,${window.btoa(unescape(encodeURIComponent(svg)))}`;
-        // image.src = `data:image/svg+xml;base64,${window.btoa(encodeURIComponent(svg))}`;
-        image.src = `data:image/svg+xml;charset=utf-8,&lt;${svg}`;
-        image.onload = () => {
-            ctx.drawImage(image, 0, 0);
-        };
-    }
+    //     image.width = 850;
+    //     image.height = 550;
+    //     // image.src = `data:image/svg+xml;base64,${window.btoa(unescape(encodeURIComponent(svg)))}`;
+    //     // image.src = `data:image/svg+xml;base64,${window.btoa(encodeURIComponent(svg))}`;
+    //     image.src = `data:image/svg+xml;charset=utf-8,&lt;${svg}`;
+    //     image.onload = () => {
+    //         ctx.drawImage(image, 0, 0);
+    //     };
+    // }
 
     //-------------------------------------------------------------------------
     // overriden members
@@ -617,7 +616,7 @@ export abstract class RcControl extends RcWrappableObject {
 
 const TEXT_ALIGN = 'textAlign';
 
-export type RtControlOrWrapper = RcControl | RcWrapper<RcControl>;
+// export type RtControlOrWrapper = RcControl | RcWrapper<RcControl>;
 
 /**
  * @internal
@@ -648,8 +647,8 @@ export class RcElement extends RcObject {
     private _width: number;
     private _height: number;
     private _zIndex = 0;
-    private _translateX: number;
-    private _translateY: number;
+    private _tx: number;
+    private _ty: number;
     private _scaleX = 1;
     private _scaleY = 1;
     private _rotation = 0;
@@ -660,6 +659,8 @@ export class RcElement extends RcObject {
     protected _styleName: string;
     protected _styles: any = {};
     protected _styleDirty = false;
+
+    tag: any;
 
     //-------------------------------------------------------------------------
     // fields
@@ -722,7 +723,7 @@ export class RcElement extends RcObject {
     }
 
     get tx(): number {
-        return this._translateX;
+        return this._tx;
     }
 
     get y(): number {
@@ -736,7 +737,7 @@ export class RcElement extends RcObject {
     }
 
     get ty(): number {
-        return this._translateY;
+        return this._ty;
     }
 
     get width(): number {
@@ -911,19 +912,19 @@ export class RcElement extends RcObject {
     }
 
     setBounds(x: number, y: number, width: number, height: number): RcElement {
-        this.translate(x, y);
+        this.trans(x, y);
         this.resize(width, height);
         return this;
     }
 
     setRect(rect: IRect): RcElement {
-        this.translate(rect.x, rect.y);
+        this.trans(rect.x, rect.y);
         this.resize(rect.width, rect.height);
         return this;
     }
 
     getRect(): IRect {
-        return Rectangle.create(this._translateX, this._translateY, this.width, this.height);
+        return {x: this._tx, y: this._ty, width: this.width, height: this.height };
     }
 
     getSize(): ISize {
@@ -982,27 +983,27 @@ export class RcElement extends RcObject {
         return this;
     }
 
-    translate(x: number, y: number): RcElement {
-        if (x !== this._translateX || y !== this._translateY) {
-            if (Utils.isValidNumber(x)) this._translateX = x;
-            if (Utils.isValidNumber(y)) this._translateY = y;
+    trans(x: number, y: number): RcElement {
+        if (x !== this._tx || y !== this._ty) {
+            if (Utils.isValidNumber(x)) this._tx = x;
+            if (Utils.isValidNumber(y)) this._ty = y;
             this._updateTransform();
         }
         return this;
     }
 
-    translatep(p: IPoint): RcElement {
-        return this.translate(p.x, p.y);
+    transp(p: IPoint): RcElement {
+        return this.trans(p.x, p.y);
     }
 
-    translateEx(x: number, y: number, duration = 0, invalidate = true): RcElement {
-        x = Utils.isNumber(x) ? x : this._translateX;
-        y = Utils.isNumber(y) ? y : this._translateY;
+    transEx(x: number, y: number, duration = 0, invalidate = true): RcElement {
+        x = Utils.isNumber(x) ? x : this._tx;
+        y = Utils.isNumber(y) ? y : this._ty;
 
-        if (x !== this._translateX || y !== this._translateY) {
+        if (x !== this._tx || y !== this._ty) {
             if (duration > 0) {
                 const ani = this._dom.animate([
-                    { transform: `translate(${this._translateX}px,${this._translateY}px)` },
+                    { transform: `translate(${this._tx}px,${this._ty}px)` },
                     { transform: `translate(${x}px,${y}px)` }
                 ], {
                     duration: duration,
@@ -1012,27 +1013,27 @@ export class RcElement extends RcObject {
                     ani.addEventListener('finish', () => this.control?.invalidateLayout());
                 }
             }
-            this._translateX = x;
-            this._translateY = y;
+            this._tx = x;
+            this._ty = y;
             this._updateTransform();
         }
         return this;
     }
 
-    translateX(x: number): RcElement {
-        if (x !== this._translateX) {
+    transX(x: number): RcElement {
+        if (x !== this._tx) {
             if (Utils.isValidNumber(x)) {
-                this._translateX = x;
+                this._tx = x;
                 this._updateTransform();
             }
         }
         return this;
     }
 
-    translateY(y: number): RcElement {
-        if (y !== this._translateY) {
+    transY(y: number): RcElement {
+        if (y !== this._ty) {
             if (Utils.isValidNumber(y)) {
-                this._translateY = y;
+                this._ty = y;
                 this._updateTransform();
             }
         }
@@ -1206,6 +1207,28 @@ export class RcElement extends RcObject {
         }
     }
 
+    setColor(color: string): void {
+        (this.dom as SVGElement | HTMLElement).style['fill'] = 
+        (this.dom as SVGElement | HTMLElement).style['stroke'] = 
+        this._styles['fill'] = 
+        this._styles['stroke'] = color;
+    }
+
+    setFill(color: string): void {
+        (this.dom as SVGElement | HTMLElement).style['fill'] = 
+        this._styles['fill'] = color;
+    }
+
+    setStroke(color: string): void {
+        (this.dom as SVGElement | HTMLElement).style['stroke'] = 
+        this._styles['stroke'] = color;
+    }
+
+    setTransparent(): void {
+        (this.dom as SVGElement | HTMLElement).style.setProperty('fill', 'transparent', 'important');
+        (this.dom as SVGElement | HTMLElement).style.setProperty('stroke', 'none', 'important');
+    }
+
     textAlign(): Align {
         return this._styles[TEXT_ALIGN];
     }
@@ -1372,8 +1395,8 @@ export class RcElement extends RcObject {
 
     getTransform(): string {
         const dom = this._dom;
-        let tx = this._translateX;
-        let ty = this._translateY;
+        let tx = this._tx;
+        let ty = this._ty;
 
         // translate
         let tf = [];

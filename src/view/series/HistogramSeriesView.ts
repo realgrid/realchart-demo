@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { assign } from "../../common/Common";
+import { assign, maxv } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { RcElement } from "../../common/RcControl";
 import { SvgShapes } from "../../common/impl/SvgShape";
@@ -134,7 +134,7 @@ export class HistogramSeriesView extends ClusterableSeriesView<HistogramSeries> 
             const x2 = xAxis.getPos(width, p.max);
             const x = x1 + (x2 - x1) / 2;
             const h = yAxis.getPos(height, bar.point.yValue) * vr;
-            const w = Math.max(1, x2 - x1 - 1);
+            const w = maxv(1, x2 - x1 - 1);
 
             p.xPos = x;
             p.yPos = y - h;

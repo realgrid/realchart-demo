@@ -19,6 +19,7 @@ import { createSeriesView } from "./BodyView";
 import { ChartElement } from "./ChartElement";
 import { SeriesView } from "./SeriesView";
 import { IPoint } from "../common/Point";
+import { minv } from "../common/Common";
 
 export class NavigatorHandleView extends RcElement {
 
@@ -41,7 +42,7 @@ export class NavigatorHandleView extends RcElement {
         this.add(this._back = new RectElement(doc));
         this.add(this._shape = new PathElement(doc));
         
-        this._shape.setStyle('fill', 'white');
+        this._shape.setFill('white');
     }
 
     //-------------------------------------------------------------------------
@@ -49,7 +50,7 @@ export class NavigatorHandleView extends RcElement {
     //-------------------------------------------------------------------------
     layout(width: number, height: number, vertical: boolean): void {
         if (width !== this._w || height !== this._h || vertical !== this._vertical) {
-            let sz = Math.min(width, height) * 1.3;
+            let sz = minv(width, height) * 1.3;
             const pb = new PathBuilder();
     
             this._back.rect = {
@@ -209,9 +210,9 @@ export class NavigatorView extends ChartElement<SeriesNavigator> {
             this._thumbView.setBounds(x1, h, x2 - x1, 6);
 
             this._startHandle.layout(h / 3, h / 3, false)
-            this._startHandle.translate(x1, h + 3);
+            this._startHandle.trans(x1, h + 3);
             this._endHandle.layout(h / 3, h / 3, false);
-            this._endHandle.translate(x2, h + 3);
+            this._endHandle.trans(x2, h + 3);
         }
 
         // TODO: reversed

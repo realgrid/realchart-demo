@@ -129,7 +129,7 @@ export class VectorSeriesView extends SeriesView<VectorSeries> {
                 p.xPos = inverted ? org + yAxis.getPos(yLen, p.yValue) : x + (wUnit / 2);
                 p.yPos = inverted ? xLen - xAxis.getPos(xLen, p.xValue) + (wUnit / 2): y + (hUnit / 2);
     
-                v.translate(x, y);
+                v.trans(x, y);
                 v.layout(head, p.angleValue + start, false);
             };
         });

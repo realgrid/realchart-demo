@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isArrayEx, isString } from "../../common/Common";
+import { absv, isArray, isArrayEx, isString, maxv, minv } from "../../common/Common";
 import { IPoint } from "../../common/Point";
 import { ISize } from "../../common/Size";
 import { Shape } from "../../common/impl/SvgShape";
@@ -119,9 +119,9 @@ export class ShapeAnnotation extends SizableAnnotation {
             const y1 = yAxis.getPos(hDomain, this._yRange[0]);
             const y2 = yAxis.getPos(hDomain, this._yRange[1]);
 
-            this._x = Math.min(x1, x2);
-            this._y = Math.max(y1, y2);
-            return { width: Math.abs(x1 - x2), height: Math.abs(y1 - y2)};
+            this._x = minv(x1, x2);
+            this._y = maxv(y1, y2);
+            return { width: absv(x1 - x2), height: absv(y1 - y2)};
         }
         return super.getSize(wDomain, hDomain);
     }

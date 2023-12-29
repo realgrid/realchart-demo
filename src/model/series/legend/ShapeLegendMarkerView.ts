@@ -46,7 +46,7 @@ export class ShapeLegendMarkerView extends RcElement {
     //-------------------------------------------------------------------------
     protected _renderShape(size: number): void {
         SvgShapes.setShape(this._marker, this._shape as any, size / 2, size / 2);   
-        this._marker.translate(this._markerOffset(size), 0);
+        this._marker.trans(this._markerOffset(size), 0);
     }
 
     protected _markerOffset(size: number): number {

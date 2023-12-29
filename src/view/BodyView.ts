@@ -62,7 +62,7 @@ import { ImageAnnotationView } from "./annotation/ImageAnnotationView";
 import { ShapeAnnotationView } from "./annotation/ShapeAnnotationView";
 import { LabelElement } from "../common/impl/LabelElement";
 import { CircleBarSeriesView } from "./series/CircleBarSeriesView";
-import { cos, isArray, pickNum, sin } from "../common/Common";
+import { cos, isArray, maxv, minv, pickNum, sin } from "../common/Common";
 import { ArcPolyElement } from "../common/impl/CircleElement";
 import { SectorElement } from "../common/impl/SectorElement";
 import { SvgShapes } from "../common/impl/SvgShape";
@@ -216,11 +216,11 @@ export class AxisBreakView extends RcElement {
         super(doc, 'rct-axis-break');
 
         this.add(this._mask = new PathElement(doc));
-        this._mask.setStyle('stroke', 'none');
+        this._mask.setStroke('none');
         this.add(this._upLine = new PathElement(doc));
-        this._upLine.setStyle('fill', 'none');
+        this._upLine.setFill('none');
         this.add(this._downLine = new PathElement(doc));
-        this._downLine.setStyle('fill', 'none');
+        this._downLine.setFill('none');
     }
 
     //-------------------------------------------------------------------------
@@ -485,7 +485,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
                 }
             }
         }
-        labelView && labelView.translate(x, y);
+        labelView && labelView.trans(x, y);
     }
 
     _doLayoutPolar(width: number, height: number, polar: IPolar): void {
@@ -499,7 +499,7 @@ export class AxisGuideLineView extends AxisGuideView<AxisLineGuide> {
         line.setStyle(FILL, 'none');
 
         if (labelView) {
-            labelView.translate(polar.cx + p * cos(polar.start), polar.cy + p * sin(polar.start));
+            labelView.trans(polar.cx + p * cos(polar.start), polar.cy + p * sin(polar.start));
         }
     }
 }
@@ -533,8 +533,8 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
         const m = this.model;
         const label = m.label;
         const box = this._box as BoxElement;
-        const start = Math.min(m.startValue, m.endValue);
-        const end = Math.max(m.startValue, m.endValue);
+        const start = minv(m.startValue, m.endValue);
+        const end = maxv(m.startValue, m.endValue);
         const labelView = this._labelView.setVis(label.visible) && this._labelView;
         const rLabel = labelView.getBBox();
         const xOff = pickNum(label.offsetX, 0);
@@ -573,7 +573,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
                 }
     
                 box.setBox(x1, 0, x2, height);
-                labelView && labelView.translate(Math.max(0, Math.min(width, x)), y);
+                labelView && labelView.trans(maxv(0, minv(width, x)), y);
             }
         } else {
             const y1 = height - m.axis.getPos(height, start);
@@ -609,7 +609,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
                         break;
                 }
     
-                labelView && labelView.translate(x, y);
+                labelView && labelView.trans(x, y);
                 box.setBox(0, y2, width, y1);
             }
         }
@@ -639,7 +639,7 @@ export class AxisGuideRangeView extends AxisGuideView<AxisRangeGuide> {
 
         if (labelView) {
             const p = p1 + (p2 - p1) / 2;
-            labelView.translate(polar.cx + p * cos(polar.start), polar.cy + p * sin(polar.start));
+            labelView.trans(polar.cx + p * cos(polar.start), polar.cy + p * sin(polar.start));
         }
     }
 }
@@ -657,15 +657,13 @@ export class AxisGridRowContainer extends LayerElement {
     //-------------------------------------------------------------------------
     prepare(): void {
         this._rows = [];
-    }
+    }   
 
     addAll(doc: Document, axes: Axis[]): void {
         const rows: IAxisGridRow[] = this._rows;
 
         axes.forEach(axis => {
-            if (axis.grid.rows.isEnabled()) {
-                rows.push(...axis.grid.rows.getRows());
-            }
+            rows.push(...axis.grid.rows.getRows());
         });
     }
 
@@ -688,7 +686,7 @@ export class AxisGridRowContainer extends LayerElement {
 
                 v.setPath(SvgShapes.rectangle(0, height - y1, width, y1 - y2));
             }
-            v.setStyle('fill', row.color);
+            v.setFill(row.color);
         })
     }
 
@@ -858,7 +856,9 @@ export class BodyView extends ChartElement<Body> {
     private _image: ImageElement;
     _gridRowContainer: AxisGridRowContainer;
     private _gridContainer: LayerElement;
-    protected _gridViews = new Map<Axis, AxisGridView>();
+    private _gridViews = new Map<Axis, AxisGridView>();
+    private _baseContainer: LayerElement;
+    private _baseViews = new Map<Axis, LineElement>();
     private _breakViews: AxisBreakView[] = [];
     private _seriesContainer: LayerElement;
     private _labelContainer: LayerElement;
@@ -902,17 +902,18 @@ export class BodyView extends ChartElement<Body> {
 
         this._owner = owner;
         this.add(this._hitTester = new RectElement(doc));
-        this._hitTester.setStyle('fill', 'transparent');
+        this._hitTester.setFill('transparent');
         this.add(this._background = new RectElement(doc, 'rct-body-background'));
-        this.add(this._image = new ImageElement(doc, 'rct-body-image'));
-        this.add(this._gridRowContainer = new AxisGridRowContainer(doc, 'rct-grid-rows'));
-        this.add(this._gridContainer = new LayerElement(doc, 'rct-grids'));
-        this.add(this._guideContainer = new AxisGuideContainer(doc, 'rct-guides'));
+        this.add(this._image = new ImageElement(doc, true, 'rct-body-image'));
+        this.add(this._gridRowContainer = new AxisGridRowContainer(doc, 'rct-axis-grid-rows'));
+        this.add(this._gridContainer = new LayerElement(doc, 'rct-axis-grids'));
+        this.add(this._baseContainer = new LayerElement(doc, 'rct-axis-bases'));
+        this.add(this._guideContainer = new AxisGuideContainer(doc, 'rct-axis-guides'));
         this.add(this._annotationContainer = new LayerElement(doc, 'rct-annotations'));
         this.add(this._seriesContainer = new LayerElement(doc, 'rct-series-container'));
         this.add(this._axisBreakContainer = new LayerElement(doc, 'rct-axis-breaks'));
         this.add(this._labelContainer = new LayerElement(doc, 'rct-label-container'));
-        this.add(this._frontGuideContainer = new AxisGuideContainer(doc, 'rct-front-guides'));
+        this.add(this._frontGuideContainer = new AxisGuideContainer(doc, 'rct-front-axis-guides'));
         this.add(this._frontAnnotationContainer = new LayerElement(doc, 'rct-front-annotations'));
         this.add(this._feedbackContainer = new LayerElement(doc, 'rct-feedbacks'));
         this.add(this._zoomButton = new ZoomButton(doc));
@@ -1096,6 +1097,7 @@ export class BodyView extends ChartElement<Body> {
             v.measure(doc, this._series[i], hintWidth, hintHeight, phase);
         })
 
+        // axes
         if (!this._polar) {
             // axis grids
             this.$_prepareGrids(doc, chart);
@@ -1144,7 +1146,7 @@ export class BodyView extends ChartElement<Body> {
                 this._owner.clipSeries(v.getClipContainer(), v.getClipContainer2(), 0, 0, w, h, v.invertable());
             }
             v.resize(w, h);
-            v.translate(0, 0);
+            v.trans(0, 0);
             v.layout();
         })
         // 그룹에 포함된 시리즈들 간의 관계 설정 후에 그리기가 필요한 경우가 있다.
@@ -1159,6 +1161,18 @@ export class BodyView extends ChartElement<Body> {
                 v.layout();
             }
 
+            // base line
+            for (const v of this._baseViews.values()) {
+                const axis = v.tag as Axis;
+
+                v.setStyleOrClass(axis.baseLine.style);
+                if (axis._isHorz) { // axis horz
+                    v.setVLine(axis.getPos(w, axis.getBaseValue()), 0, h);
+                } else {
+                    v.setHLine(axis.getPos(h, axis.getBaseValue()), 0, w);
+                }
+            }
+
             // axis breaks
             this._breakViews.forEach(v => {
                 const m = v._model;
@@ -1166,15 +1180,15 @@ export class BodyView extends ChartElement<Body> {
 
                 if (axis._isHorz) {
                     if (axis.reversed) {
-                        v.translate(w - m._sect.pos, 0);
+                        v.trans(w - m._sect.pos, 0);
                     } else {
-                        v.translate(m._sect.pos, 0);
+                        v.trans(m._sect.pos, 0);
                     }
                 } else {
                     if (axis.reversed) {
-                        v.translate(0, m._sect.pos);
+                        v.trans(0, m._sect.pos);
                     } else {
-                        v.translate(0, h - m._sect.pos - m._sect.len);
+                        v.trans(0, h - m._sect.pos - m._sect.len);
                     }
                 }
                 v.layout(w, h, m.axis._isHorz);
@@ -1199,7 +1213,7 @@ export class BodyView extends ChartElement<Body> {
         this._gaugeViews.forEach(v => {
             // this._owner.clipSeries(v.getClipContainer(), 0, 0, w, h, v.invertable());
             v.resizeByMeasured();
-            v.layout().translatep(v.getPosition(w, h));
+            v.layout().transp(v.getPosition(w, h));
         });
 
         // annotations
@@ -1207,7 +1221,7 @@ export class BodyView extends ChartElement<Body> {
 
         // zoom button
         if (this._zoomButton.visible) {
-            this._zoomButton.translate(w - this._zoomButton.getBBox().width - 10, 10);
+            this._zoomButton.trans(w - this._zoomButton.getBBox().width - 10, 10);
         }
     }
 
@@ -1220,24 +1234,42 @@ export class BodyView extends ChartElement<Body> {
 
     private $_prepareGrids(doc: Document, chart: Chart): void {
         const needAxes = chart.needAxes();
-        const container = this._gridContainer;
-        const views = this._gridViews;
+        const gridContainer = this._gridContainer;
+        const gridMap = this._gridViews;
+        const baseContainer = this._baseContainer;
+        const baseMap = this._baseViews;
 
-        for (const axis of views.keys()) {
+        for (const axis of gridMap.keys()) {
             if (!needAxes || !chart.containsAxis(axis) || !axis.grid.isVisible(false)) {
-                views.get(axis).remove();
-                views.delete(axis);
+                gridMap.get(axis).remove();
+                gridMap.delete(axis);
             }
         }
 
-        [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
-            if (needAxes && axis.grid.isVisible(false) && !views.has(axis)) {
-                const v = new AxisGridView(doc);
-
-                views.set(axis, v);
-                container.add(v);
+        for (const axis of baseMap.keys()) {
+            if (!needAxes || !chart.containsAxis(axis) || !axis.baseLine.visible || !axis.isBaseVisible()) {
+                baseMap.get(axis).remove();
+                baseMap.delete(axis);
             }
-        }));
+        }
+
+        if (needAxes) {
+            [chart._getXAxes(), chart._getYAxes()].forEach(axes => axes.forEach(axis => {
+                if (axis.grid.isVisible(false) && !gridMap.has(axis)) {
+                    const v = new AxisGridView(doc);
+    
+                    gridMap.set(axis, v);
+                    gridContainer.add(v);
+                }
+                if (axis.baseLine.visible && axis.isBaseVisible() && !baseMap.has(axis)) {
+                    const v = new LineElement(doc, 'rct-axis-baseline');
+    
+                    baseMap.set(axis, v);
+                    baseContainer.add(v);
+                    v.tag = axis;
+                }
+            }));
+        }
     }
 
     protected _prepareSeries(doc: Document, chart: IChart, series: Series[]): void {
@@ -1255,7 +1287,7 @@ export class BodyView extends ChartElement<Body> {
         this._series = series;
         views.forEach(v => {
             if (series.indexOf(v.model) < 0) {
-                v.remove();
+                this.control.loaded ? v.removeLater(200) : v.remove();
                 v._labelContainer.remove();
             }
         });
@@ -1264,7 +1296,7 @@ export class BodyView extends ChartElement<Body> {
         series.forEach(ser => {
             const v = map.get(ser) || createSeriesView(doc, ser);
 
-            v._setChartOptions(inverted, this._animatable);
+            v._setChartOptions(inverted, this._animatable, chart.loadAnimatable());
             if (!v.parent) {
                 this._seriesContainer.add(v);
                 this._labelContainer.add(v._labelContainer);
@@ -1301,7 +1333,7 @@ export class BodyView extends ChartElement<Body> {
             map.set(g, v);
             views.push(v);
             v.prepareGauge(doc, g);
-            v._setChartOptions(inverted, this._animatable);
+            v._setChartOptions(inverted, this._animatable, chart.loadAnimatable());
         });
     }
 
@@ -1370,7 +1402,7 @@ export class BodyView extends ChartElement<Body> {
     protected _layoutAnnotations(inverted: boolean, w: number, h: number): void {
         this._annotationViews.forEach(v => {
             v.resizeByMeasured();
-            v.layout().translatep(v.model.getPosition(inverted, 0, 0, w, h, v.width, v.height));
+            v.layout().transp(v.model.getPosition(inverted, 0, 0, w, h, v.width, v.height));
         });
     }
 }

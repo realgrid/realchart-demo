@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, assign } from "../../common/Common";
+import { pickNum, pickProp, assign, minv } from "../../common/Common";
 import { IPoint } from "../../common/Point";
 import { RcElement } from "../../common/RcControl";
 import { Align, SVGStyleOrClass, StyleProps } from "../../common/Types";
@@ -184,7 +184,7 @@ export abstract class LineSeriesBase extends Series {
     legendMarker(doc: Document, size: number): RcElement {
         const m = super.legendMarker(doc, size);
 
-        (m as ShapeLegendMarkerView).setShape(this.getShape(null), Math.min(+size || LegendItem.MARKER_SIZE, this.marker.radius * 2));
+        (m as ShapeLegendMarkerView).setShape(this.getShape(null), minv(+size || LegendItem.MARKER_SIZE, this.marker.radius * 2));
         return m;
     }
 

@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { absv } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { PathBuilder } from "../../common/PathBuilder";
 import { PathElement, RcElement } from "../../common/RcControl";
@@ -215,8 +216,8 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
                         let ly = p.yPos;
 
                         if (!isNaN(seg.ny)) { // neck에 걸친 segment
-                            if (Math.abs(seg.ny) > rSeg.height / 2) {
-                                lx -= (seg.nx1 * rSeg.height / 2) / Math.abs(seg.ny);
+                            if (absv(seg.ny) > rSeg.height / 2) {
+                                lx -= (seg.nx1 * rSeg.height / 2) / absv(seg.ny);
                             }
                         } else if (!isNaN(seg.nx1)) { // 사디리꼴
                             lx -= (seg.nx1 * rSeg.height / 2) / rSeg.height;
@@ -239,15 +240,15 @@ export class FunnelSeriesView extends WidgetSeriesView<FunnelSeries> {
         
         x += rSeg.width / 2;
         line.setLine(new PathBuilder().move(0, 0).line(dist, 0).end());
-        line.translate(x, y);
+        line.trans(x, y);
 
         x += dist+ off;
-        labelView.translate(x, y - r.height / 2);
+        labelView.trans(x, y - r.height / 2);
     }
 
     private $_layoutLabelInner(labelView: PointLabelView, x: number, y: number): void {
         const r = labelView.getBBox();
     
-        labelView.translate(x - r.width / 2, y - r.height / 2);
+        labelView.trans(x - r.width / 2, y - r.height / 2);
     }
 }

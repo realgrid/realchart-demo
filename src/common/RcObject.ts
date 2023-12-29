@@ -105,62 +105,62 @@ export abstract class RcObject {
     }
 }
 
-export abstract class RcWrappableObject extends RcObject {
+// export abstract class RcWrappableObject extends RcObject {
 
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    protected _wrapper: any;
+//     //-------------------------------------------------------------------------
+//     // fields
+//     //-------------------------------------------------------------------------
+//     protected _wrapper: any;
 
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-    wrapper(): any {
-        return this._wrapper;
-    }
+//     //-------------------------------------------------------------------------
+//     // properties
+//     //-------------------------------------------------------------------------
+//     wrapper(): any {
+//         return this._wrapper;
+//     }
 
-    wrapperOrThis(): any {
-        return this._wrapper || this;
-    }
+//     wrapperOrThis(): any {
+//         return this._wrapper || this;
+//     }
 
-    //-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    createWrapper<T>(clazz: { new(): T}): T {
-        const w = this._wrapper = new clazz();
-        w['$_c'] = this;
-        return w;
-    } 
+//     //-------------------------------------------------------------------------
+//     // methods
+//     //-------------------------------------------------------------------------
+//     createWrapper<T>(clazz: { new(): T}): T {
+//         const w = this._wrapper = new clazz();
+//         w['$_c'] = this;
+//         return w;
+//     } 
 
-    setWrapper<T>(wrapper: T): T {
-        this._wrapper = wrapper;
-        wrapper['$_c'] = this;
-        return wrapper;
-    } 
+//     setWrapper<T>(wrapper: T): T {
+//         this._wrapper = wrapper;
+//         wrapper['$_c'] = this;
+//         return wrapper;
+//     } 
 
-    isWrapper(w: any): boolean {
-        return w === this._wrapper;
-    }
-}
+//     isWrapper(w: any): boolean {
+//         return w === this._wrapper;
+//     }
+// }
 
-export abstract class RcWrapper<T extends RcWrappableObject>  extends RcObject {
+// export abstract class RcWrapper<T extends RcWrappableObject>  extends RcObject {
 
-    //-------------------------------------------------------------------------
-    // fields
-    //-------------------------------------------------------------------------
-    protected $_c: T;
+//     //-------------------------------------------------------------------------
+//     // fields
+//     //-------------------------------------------------------------------------
+//     protected $_c: T;
 
-    //-------------------------------------------------------------------------
-    // constructor
-    //-------------------------------------------------------------------------
-    protected _doDestory(): void {
-        this.$_c = null;
-    }
+//     //-------------------------------------------------------------------------
+//     // constructor
+//     //-------------------------------------------------------------------------
+//     protected _doDestory(): void {
+//         this.$_c = null;
+//     }
 
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
-}
+//     //-------------------------------------------------------------------------
+//     // internal members
+//     //-------------------------------------------------------------------------
+// }
 
 export abstract class RcEventProvider<T> extends RcObject {
 
@@ -210,15 +210,15 @@ export abstract class RcEventProvider<T> extends RcObject {
     }
 }
 
-export interface IEventArgs {
-}
+// export interface IEventArgs {
+// }
 
-/**
- * @internal
- * 
- * {@link RtListControl} 및 {@link RtDataSource} 이벤트 콜백 형식.
- * <br>
- * 여러 값이 포함된 단일 매개변수로 호출된다.
- */
-export type RcEventHandler<T extends IEventArgs> = (args?: T) => void;
-export type RcSimpleEventhandler = (arg: any) => void;
+// /**
+//  * @internal
+//  * 
+//  * {@link RtListControl} 및 {@link RtDataSource} 이벤트 콜백 형식.
+//  * <br>
+//  * 여러 값이 포함된 단일 매개변수로 호출된다.
+//  */
+// export type RcEventHandler<T extends IEventArgs> = (args?: T) => void;
+// export type RcSimpleEventhandler = (arg: any) => void;

@@ -60,7 +60,7 @@ export class ButtonElement extends RcElement {
             width: r.width + paddings.left + paddings.right,
             height: r.height + paddings.top + paddings.bottom
         };
-        this._textView.translate(r.width / 2 + paddings.left, paddings.top);
+        this._textView.trans(r.width / 2 + paddings.left, paddings.top);
     }
 
     click(): boolean {

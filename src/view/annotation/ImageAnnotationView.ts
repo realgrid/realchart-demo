@@ -30,7 +30,7 @@ export class ImageAnnotationView extends AnnotationView<ImageAnnotation> {
     constructor(doc: Document) {
         super(doc, ImageAnnotationView.CLASS_NAME);
 
-        this.add(this._imageView = new ImageElement(doc));
+        this.add(this._imageView = new ImageElement(doc, false));
     }
 
     //-------------------------------------------------------------------------
@@ -46,7 +46,7 @@ export class ImageAnnotationView extends AnnotationView<ImageAnnotation> {
     }
 
     protected _doLayout(param: any): void {
-        this._imageView.translate(this._paddings.left, this._paddings.top);
+        this._imageView.trans(this._paddings.left, this._paddings.top);
 
         super._doLayout(param);
     }

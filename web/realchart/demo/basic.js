@@ -48,8 +48,8 @@ const config = {
             // },
         },
         onPointClick: (args) => {
-            //alert(JSON.stringify(args));
-            chart.series.updateData(
+            // alert(JSON.stringify(args));
+            args.series.updateData(
                 [
                     ["신흥1동", 100],
                     ["신흥2동", 200],

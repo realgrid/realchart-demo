@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject } from "../common/Common";
+import { isArray, isObject, minv } from "../common/Common";
 import { IPercentSize, RtPercentSize, _undef, calcPercent, parsePercentSize } from "../common/Types";
 import { Annotation, AnnotationCollection } from "./Annotation";
 import { Axis } from "./Axis";
@@ -207,13 +207,13 @@ export class Body extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     calcRadius(width: number, height: number): number {
-        return calcPercent(this._radiusDim, Math.min(width, height));
+        return calcPercent(this._radiusDim, minv(width, height));
     }
 
     setPolar(width: number, height: number): Body {
         this._cx = calcPercent(this._cxDim, width);
         this._cy = calcPercent(this._cyDim, height);
-        this._rd = calcPercent(this._radiusDim, Math.min(width, height));
+        this._rd = calcPercent(this._radiusDim, minv(width, height));
         return this;
     }
 

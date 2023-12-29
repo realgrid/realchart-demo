@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, assign } from "../../common/Common";
+import { pickNum, pickProp, assign, maxv, minv } from "../../common/Common";
 import { IPercentSize, RtPercentSize, calcPercent, parsePercentSize } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
@@ -182,8 +182,8 @@ export class BubbleSeries extends MarkerSeries {
 
         this._runPoints.forEach((p: BubbleSeriesPoint) => {
             if (!p.isNull && !isNaN(p.zValue)) {
-                this._zMin = Math.min(this._zMin, p.zValue);
-                this._zMax = Math.max(this._zMax, p.zValue);
+                this._zMin = minv(this._zMin, p.zValue);
+                this._zMax = maxv(this._zMax, p.zValue);
             }
         })
         this._noSize = this._zMin === this._zMax;

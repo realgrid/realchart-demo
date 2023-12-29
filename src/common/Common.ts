@@ -23,6 +23,9 @@ export const cos = Math.cos;
 export const sin = Math.sin;
 export const pow10 = function (v: number): number { return Math.pow(10, v); };
 export const log10 = Math.log10;
+export const minv = Math.min;
+export const maxv = Math.max;
+export const absv = Math.abs;
 export const pickNum = function(v1: any, v2: any): number {
     v1 = parseFloat(v1);
     return !isNaN(v1) ? v1 : parseFloat(v2);

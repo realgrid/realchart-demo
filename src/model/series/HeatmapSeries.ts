@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, pickProp, assign } from "../../common/Common";
+import { pickNum, pickProp, assign, maxv, minv } from "../../common/Common";
 import { DataPoint } from "../DataPoint";
 import { IPlottingItem, Series } from "../Series";
 
@@ -81,6 +81,9 @@ export class HeatmapSeriesPoint extends DataPoint {
 }
 
 /**
+ * heatmap 시리즈.\
+ * 차트나 split pane에 하나의 heatmap만 존재할 수 있다.
+ * 
  * [셀 색상]
  * 1. color-axis가 연결되면 거기에서 색을 가져온다.
  * 2. series의 minColor, maxColor 사이의 색으로 가져온다.
@@ -116,6 +119,7 @@ export class HeatmapSeries extends Series {
     }
 
     canMixWith(other: IPlottingItem): boolean {
+        // 차트나 split pane에 하나의 heatmap만 존재할 수 있다.
         return false;
     }
 
@@ -143,8 +147,8 @@ export class HeatmapSeries extends Series {
 
         (this._runPoints as HeatmapSeriesPoint[]).forEach(p => {
             if (!isNaN(p.heatValue)) {
-                this._heatMin = Math.min(this._heatMin, p.heatValue);
-                this._heatMax = Math.max(this._heatMax, p.heatValue);
+                this._heatMin = minv(this._heatMin, p.heatValue);
+                this._heatMax = maxv(this._heatMax, p.heatValue);
             }
         })
     }

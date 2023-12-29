@@ -6,6 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
+import { maxv } from "../../common/Common";
 import { IPercentSize, IValueRange, RtPercentSize, buildValueRanges, calcPercent, parsePercentSize } from "../../common/Types";
 import { IChart } from "../Chart";
 import { ChartItem } from "../ChartItem";
@@ -484,7 +485,7 @@ export class CircleGauge extends CircularGauge {
 
         // scale 기준으로 위치를 잡으므로 항상 필요하다.
         // if (scale.visible) {
-            exts.scaleTick = Math.max(1, scale.tick.length || 0);
+            exts.scaleTick = maxv(1, scale.tick.length || 0);
             exts.scaleLabel = 16;
 
             switch (scale.position) {

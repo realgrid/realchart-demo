@@ -6,10 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { copyObj, pickNum } from "../../common/Common";
+import { copyObj, maxv, pickNum } from "../../common/Common";
 import { ElementPool } from "../../common/ElementPool";
 import { LayerElement, RcElement } from "../../common/RcControl";
-import { IRect, Rectangle } from "../../common/Rectangle";
+import { IRect, createRect } from "../../common/Rectangle";
 import { ISize } from "../../common/Size";
 import { IValueRange } from "../../common/Types";
 import { RectElement } from "../../common/impl/RectElement";
@@ -66,14 +66,14 @@ class BandView extends ChartElement<GaugeRangeBand> {
                 let w = 0;
                 this._labels.forEach((v, i) => {
                     v.text = String(vals[i]);
-                    w = Math.max(v.getBBox().width);
+                    w = maxv(v.getBBox().width);
                 })
                 width += w;
             } else {
                 let h = 0;
                 this._labels.forEach((v, i) => {
                     v.text = String(vals[i]);
-                    h = Math.max(v.getBBox().height);
+                    h = maxv(v.getBBox().height);
                 })
                 height += h;
             }
@@ -116,7 +116,7 @@ class BandView extends ChartElement<GaugeRangeBand> {
                 }
                 
                 v.internalClearStyleAndClass();
-                v.setStyle('fill', range.color);
+                v.setFill(range.color);
                 range.style && v.addStyleOrClass(range.style);
                 p += w;
             });
@@ -134,9 +134,9 @@ class BandView extends ChartElement<GaugeRangeBand> {
         let v = this._labels.get(0);
 
         if (vert) {
-            v.translate(p, 0);
+            v.trans(p, 0);
         } else {
-            v.translate(0, p);
+            v.trans(0, p);
         }
 
         for (let i = 1; i <= ranges.length; i++) {
@@ -144,9 +144,9 @@ class BandView extends ChartElement<GaugeRangeBand> {
             const v = this._labels.get(i);
 
             if (vert) {
-                v.translate(p, xy);
+                v.trans(p, xy);
             } else {
-                v.translate(xy, p);
+                v.trans(xy, p);
             }
         }
     }
@@ -214,24 +214,24 @@ export class LinearGaugeView extends LinearGaugeBaseView<LinearGauge> {
 
             if (this._vertical) {
                 if (band.position === GaugeItemPosition.INSIDE) {
-                    bandView.translate(r.x, r.y);
+                    bandView.trans(r.x, r.y);
                 } else if (band.position === GaugeItemPosition.OPPOSITE) {
-                    bandView.translate(r.x + r.width - sz.width, r.y);
+                    bandView.trans(r.x + r.width - sz.width, r.y);
                     r.width -= sz.width + gap;
                 } else {
-                    bandView.translate(r.x, r.y);
+                    bandView.trans(r.x, r.y);
                     r.width -= sz.width + gap;
                     r.x += sz.width + gap;
                 }
             } else {
                 if (band.position === GaugeItemPosition.INSIDE) {
-                    bandView.translate(r.x, r.y);
+                    bandView.trans(r.x, r.y);
                 } else if (band.position === GaugeItemPosition.OPPOSITE) {
-                    bandView.translate(r.x, r.y);
+                    bandView.trans(r.x, r.y);
                     r.height -= sz.height + gap;
                     r.y += sz.height + gap;
                 } else {
-                    bandView.translate(r.x, r.y + r.height - sz.height);
+                    bandView.trans(r.x, r.y + r.height - sz.height);
                     r.height -= sz.height + gap;
                 }
             }
@@ -305,7 +305,7 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
     protected _doRenderGauges(container: RcElement, views: ElementPool<LinearGaugeBaseView<G>>, width: number, height: number): void {
         const m = this.model;
         const tv = this._textView;
-        const r = Rectangle.create(0, 0, width, height);
+        const r = createRect(0, 0, width, height);
 
         if (tv.visible) {
             tv.text = m.label.text;
@@ -316,14 +316,14 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
             r.y += h;
             r.height -= h;
 
-            tv.translate(this.width / 2, 0);
+            tv.trans(this.width / 2, 0);
         }
 
         m._labelWidth = m._labelHeight = 0;
         this._gaugeViews.forEach((v, i) => {
             const sz = (v as LinearGaugeBaseView<G>).measureLabelSize(m.get(i), width, height);
-            m._labelWidth = Math.max(m._labelWidth, sz.width);
-            m._labelHeight = Math.max(m._labelHeight, sz.height);
+            m._labelWidth = maxv(m._labelWidth, sz.width);
+            m._labelHeight = maxv(m._labelHeight, sz.height);
         })
 
         const rBody = copyObj(r) as IRect;
@@ -386,7 +386,7 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
                 // TODO
             }
 
-            scaleView.resizeByMeasured().layout().translate(x, y);
+            scaleView.resizeByMeasured().layout().trans(x, y);
         }
     }
 
@@ -408,7 +408,7 @@ export abstract class LinearGaugeGroupBaseView<G extends LinearGaugeBase, T exte
             v.measure(doc, model.get(i), w, h, 0);
             v.resize(w, h);
             v.layout();
-            v.translate(x, y);
+            v.trans(x, y);
 
             y += h + model.itemGap;
         });
@@ -476,7 +476,7 @@ export class LinearGaugeGroupView extends LinearGaugeGroupBaseView<LinearGauge, 
                 // TODO
             }
 
-            bandView.resizeByMeasured().layout().translate(x, y);
+            bandView.resizeByMeasured().layout().trans(x, y);
         }
     }
 

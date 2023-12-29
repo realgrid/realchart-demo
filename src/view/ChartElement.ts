@@ -267,12 +267,14 @@ export abstract class ContentView<T extends ChartItem> extends ChartElement<T> {
     //-------------------------------------------------------------------------
     protected _inverted = false;
     protected _animatable = true;
+    protected _loadAnimatable = true;
 
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    _setChartOptions(inverted: boolean, animatable: boolean): void {
+    _setChartOptions(inverted: boolean, animatable: boolean, loadAnimatable: boolean): void {
         this._inverted = inverted;
         this._animatable = animatable;
+        this._loadAnimatable = loadAnimatable;
     }
 }

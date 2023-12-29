@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { Color } from "../../common/Color";
-import { isArray, isObject, assign } from "../../common/Common";
+import { isArray, isObject, assign, maxv } from "../../common/Common";
 import { toStr } from "../../common/Types";
 import { Utils } from "../../common/Utils";
 import { ChartItem } from "../ChartItem";
@@ -198,6 +198,9 @@ export enum TreemapAlgorithm {
 }
 
 /**
+ * treemap 시리즈.\
+ * 차트나 split pane에 하나의 treemap만 존재할 수 있다.
+ * 
  * 1. 본래 하드 드라이브의 파일 분포 상태를 표시하기 위해 고안됨.
  * 2. node & link 스타일의 전통적 표시 방식은 공간을 많이 필요로 한다.
  * 3. 일정 표시 공간을 100% 사용한다.
@@ -278,7 +281,7 @@ export class TreemapSeries extends Series {
                 node.children.forEach((node, i) => {
                     node.index = i;
                 });
-                levels = Math.max(levels, node.level() + 1 + 1);
+                levels = maxv(levels, node.level() + 1 + 1);
             } else {
                 leafs.push(node);
                 node.value = node.point ? node.point.yValue : 0;
@@ -300,7 +303,7 @@ export class TreemapSeries extends Series {
 
         (this[this.algorithm] || this.squarify).call(this, this._roots, width, height, vertical);
         this._levels = levels;
-        Utils.log('levels', this._levels);
+        // Utils.log('levels', this._levels);
         return { roots: this._roots, leafs: this._leafs };
     }
 
@@ -316,6 +319,7 @@ export class TreemapSeries extends Series {
     }
 
     canMixWith(other: IPlottingItem): boolean {
+        // 차트나 split pane에 하나의 treemap만 존재할 수 있다.
         return false;
     }
 
@@ -418,7 +422,7 @@ export class TreemapSeries extends Series {
                 wNode = w * node.value / sum;
             }
 
-            rate = Math.max(wNode / hNode, hNode / wNode);
+            rate = maxv(wNode / hNode, hNode / wNode);
 
             if (nodes.length > 0 && rate > prevRate) {
                 nodes.unshift(node);

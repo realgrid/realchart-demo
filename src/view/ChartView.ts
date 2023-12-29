@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ButtonElement } from "../common/ButtonElement";
-import { pickNum } from "../common/Common";
+import { maxv, pickNum } from "../common/Common";
 import { IPoint, Point } from "../common/Point";
 import { ClipRectElement, LayerElement, RcElement } from "../common/RcControl";
 import { IRect } from "../common/Rectangle";
@@ -35,7 +35,6 @@ import { PolarBodyView } from "./PolarBodyView";
 import { SeriesView } from "./SeriesView";
 import { TitleView } from "./TitleView";
 import { TooltipView } from "./TooltipView";
-import { AxisAnimation } from "./animation/AxisAnimation";
 
 /**
  * @internal
@@ -95,12 +94,12 @@ class TitleSectionView extends SectionView {
         switch (sub.position) {
             case SubtitlePosition.LEFT:
             case SubtitlePosition.RIGHT:
-                height = Math.max(hTitle, hSub);
+                height = maxv(hTitle, hSub);
                 width = wTitle + titleGap + wSub;
                 break;
             default:
                 height = hTitle + titleGap + hSub;
-                width = Math.max(width, wTitle + wSub);
+                width = maxv(width, wTitle + wSub);
                 break;
         }
 
@@ -133,9 +132,9 @@ class TitleSectionView extends SectionView {
                 }
             };
             const calcYs = () => {
-                const h = Math.max(this._hTitle, this._hSub);
-                yTitle = Math.max(yTitle, yTitle + getY(title, h, this._hTitle));
-                ySub = Math.max(ySub, ySub + getY(sub, h, this._hSub));
+                const h = maxv(this._hTitle, this._hSub);
+                yTitle = maxv(yTitle, yTitle + getY(title, h, this._hTitle));
+                ySub = maxv(ySub, ySub + getY(sub, h, this._hSub));
             };
             const getX = (model: Title, w: number, wTitle: number): number => {
                 switch (model.align) {
@@ -148,8 +147,8 @@ class TitleSectionView extends SectionView {
                 }
             };
             const calcXs = () => {
-                xTitle = Math.max(xTitle, xTitle + getX(title, dTitle, this._wTitle));
-                xSub = Math.max(xSub, xSub + getX(sub, dSub, this._wSub));
+                xTitle = maxv(xTitle, xTitle + getX(title, dTitle, this._wTitle));
+                xSub = maxv(xSub, xSub + getX(sub, dSub, this._wSub));
             };
             const gap = pickNum(sub.titleGap, 0);
             let yTitle = 0;
@@ -169,10 +168,10 @@ class TitleSectionView extends SectionView {
                             xSub = xTitle + this._wTitle + gap;
                             switch (sub.align) {
                                 case Align.CENTER:
-                                    xSub = Math.max(xSub, xSub + (dSub - this._wTitle - this._wSub) / 2);
+                                    xSub = maxv(xSub, xSub + (dSub - this._wTitle - this._wSub) / 2);
                                     break;
                                 case Align.RIGHT:
-                                    xSub = Math.max(xSub, pSub + dSub - this._wSub);
+                                    xSub = maxv(xSub, pSub + dSub - this._wSub);
                                     break;
                             }
                             calcYs();
@@ -261,8 +260,8 @@ class TitleSectionView extends SectionView {
                     }
                     break;
             }
-            vTitle.resizeByMeasured().layout().translate(xTitle, yTitle);
-            vSub.resizeByMeasured().layout().translate(xSub, ySub);
+            vTitle.resizeByMeasured().layout().trans(xTitle, yTitle);
+            vSub.resizeByMeasured().layout().trans(xSub, ySub);
 
         } else if (dTitle > 0 || dSub > 0) {
             const m = dTitle ? title : sub;
@@ -283,7 +282,7 @@ class TitleSectionView extends SectionView {
                     x += (d - w) / 2;
                     break;
             }
-            v.translate(x, 0);
+            v.trans(x, 0);
         }
     }
 }
@@ -350,7 +349,7 @@ class LegendSectionView extends SectionView {
                 break;
         }
 
-        view.resize(w, h).translate(x, y);
+        view.resize(w, h).trans(x, y);
         view.layout();
     }
 }
@@ -466,6 +465,10 @@ class AxisSectionView extends SectionView {
         container.addAll(doc, this.views.map(v => v.model));
     }
 
+    clean(): void {
+        this.views.forEach(v => v.clean());
+    }
+
     //-------------------------------------------------------------------------
     // overriden members
     //-------------------------------------------------------------------------
@@ -499,8 +502,8 @@ class AxisSectionView extends SectionView {
                     w2 += (views.length - 1) * this._gap;
                 }
 
-                w = Math.max(w, w2);
-                h = Math.max(h, h2);
+                w = maxv(w, w2);
+                h = maxv(h, h2);
             }
         })
 
@@ -534,10 +537,10 @@ class AxisSectionView extends SectionView {
                         v.layout();
             
                         if (this.isHorz) {
-                            v.translate(x, this.dir === SectionDir.TOP ? h - p - v.mh : p);
+                            v.trans(x, this.dir === SectionDir.TOP ? h - p - v.mh : p);
                             p += v.mh + this._gap;
                         } else {
-                            v.translate(this.dir === SectionDir.RIGHT ? p : w - p - v.mw, y);
+                            v.trans(this.dir === SectionDir.RIGHT ? p : w - p - v.mw, y);
                             p += v.mw + this._gap;
                         }
                     }
@@ -676,6 +679,13 @@ export class ChartView extends LayerElement {
     //-------------------------------------------------------------------------
     // methods
     //-------------------------------------------------------------------------
+    // chart가 새로 load된 후 호출된다.
+    clean(): void {
+        for (const asv in this._axisSectionMap) {
+            this._axisSectionMap[asv].clean();
+        }
+    }
+
     measure(doc: Document, model: Chart, hintWidth: number, hintHeight: number, phase: number): void {
         const m = this._model = model;
         const polar = m.isPolar();
@@ -856,7 +866,7 @@ export class ChartView extends LayerElement {
         if (vNavi.visible) {
             y -= hNavi;
             // vNavi.layout().translateY(yLegend - hNavi + vNavi.model.gap);
-            vNavi.layout().translateY(y + vNavi.model.gap);
+            vNavi.layout().transY(y + vNavi.model.gap);
         }
 
         let wCenter = 0;
@@ -866,7 +876,7 @@ export class ChartView extends LayerElement {
         let rPlot: IRect;
 
         if (this._paneContainer.visible) {
-            this._paneContainer.resize(w, h).translate(x, yTitle + hTitle);
+            this._paneContainer.resize(w, h).trans(x, yTitle + hTitle);
             this._paneContainer.layout();
             hPlot = h;
             wPlot = w;
@@ -946,7 +956,7 @@ export class ChartView extends LayerElement {
             }
 
             if (vNavi.visible) {
-                vNavi.layout().translateX(x);
+                vNavi.layout().transX(x);
             }
 
             const org = this._org = Point.create(x, y);
@@ -956,22 +966,22 @@ export class ChartView extends LayerElement {
 
             if (!polar) {
                 if ((asv = axisMap[SectionDir.LEFT]) && asv.visible) {
-                    asv.translate(org.x - asv.mw, org.y - asv.height);
+                    asv.trans(org.x - asv.mw, org.y - asv.height);
                 }
                 if ((asv = axisMap[SectionDir.RIGHT]) && asv.visible) {
-                    asv.translate(org.x + w, org.y - asv.height);
+                    asv.trans(org.x + w, org.y - asv.height);
                 }
                 if (wCenter > 0) {
-                    asvCenter.translate(org.x + (w - wCenter) / 2, org.y - asvCenter.height);
+                    asvCenter.trans(org.x + (w - wCenter) / 2, org.y - asvCenter.height);
                 }
                 if ((asv = axisMap[SectionDir.BOTTOM]) && asv.visible) {
-                    asv.translate(org.x, org.y);
+                    asv.trans(org.x, org.y);
                 }
                 if ((asv = axisMap[SectionDir.TOP]) && asv.visible) {
-                    asv.translate(org.x, org.y - h - asv.height);
+                    asv.trans(org.x, org.y - h - asv.height);
                 }
                 if (hMiddle > 0) {
-                    asvMiddle.translate(org.x, org.y - (h - hMiddle) / 2 - hMiddle);
+                    asvMiddle.trans(org.x, org.y - (h - hMiddle) / 2 - hMiddle);
                 }
             }
 
@@ -983,7 +993,7 @@ export class ChartView extends LayerElement {
             y = org.y - this._plotHeight;
 
             this._currBody.resize(wPlot, hPlot);
-            this._currBody.layout().translate(x, y);
+            this._currBody.layout().trans(x, y);
             rPlot = this._currBody.getRect();
             this._currBody._seriesViews.forEach(v => {
                 if (v.needDecoreateLegend()) {
@@ -1026,14 +1036,14 @@ export class ChartView extends LayerElement {
                     cx = width - vCredit.width - xOff;
                     break;
             }
-            vCredit.translate(cx, cy);
+            vCredit.trans(cx, cy);
         }
 
         wPlot += wCenter;
 
         // title
         if (vTitle.visible) {
-            vTitle.layout({xPlot: x, wPlot, wChart: width}).translate(0, yTitle);
+            vTitle.layout({xPlot: x, wPlot, wChart: width}).trans(0, yTitle);
         }
 
         // legend
@@ -1144,7 +1154,7 @@ export class ChartView extends LayerElement {
                     y = 0;
                 }
             }
-            vLegend.translate(x, y);
+            vLegend.trans(x, y);
         }
 
         this.$_layoutAnnotations(this._inverted, width, height, rPlot);
@@ -1543,7 +1553,7 @@ export class ChartView extends LayerElement {
             }
 
             v.resizeByMeasured();
-            v.layout().translatep(v.model.getPosition(inverted, x, y, w, h, v.width, v.height));
+            v.layout().transp(v.model.getPosition(inverted, x, y, w, h, v.width, v.height));
         });
     }
 }

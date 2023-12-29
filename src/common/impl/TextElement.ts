@@ -10,6 +10,7 @@ import { ELLIPSIS, SVGStyleOrClass, _undef } from '../Types';
 import { RcElement } from '../RcControl';
 import { IRect } from '../Rectangle';
 import { Color } from '../Color';
+import { maxv, minv } from '../Common';
 
 export enum TextAnchor {
     START = 'start',
@@ -167,8 +168,8 @@ export class TextElement extends RcElement {
     }
 
     calcRangeWidth(start = 0, end = Number.MAX_SAFE_INTEGER): number {
-        start = Math.max(0, start);
-        end = Math.min(this._text.length, end);
+        start = maxv(0, start);
+        end = minv(this._text.length, end);
         return end > start ? (this.dom as SVGTextElement).getSubStringLength(start, end - start) : 0;
     }
 

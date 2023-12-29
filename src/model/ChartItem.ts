@@ -291,7 +291,7 @@ export abstract class ChartText extends ChartItem {
      * 
      * @config
      */
-    autoContrast = true;// true;
+    autoContrast = true;
     
     get outlineThickness(): number {
         return this._outlineThickness;

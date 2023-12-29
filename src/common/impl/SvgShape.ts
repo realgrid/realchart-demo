@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { cos, sin } from '../Common';
+import { absv, cos, minv, sin } from '../Common';
 import { PathElement } from '../RcControl';
 import { IRect } from '../Rectangle';
 import { PathValue, fixAngle } from '../Types';
@@ -76,8 +76,8 @@ export class SvgShapes {
     static bar(x: number, y: number, width: number, height: number, rTop: number, rBottom: number): PathValue[] {
         if (rTop > 0) {
             if (rBottom > 0) {
-                rTop = Math.min(-height / 2, width / 2, rTop);
-                rBottom = Math.min(-height / 2, width / 2, rBottom);
+                rTop = minv(-height / 2, width / 2, rTop);
+                rBottom = minv(-height / 2, width / 2, rBottom);
                 return [
                     'M', x, y - rBottom,
                     'v', height + rBottom + rTop,
@@ -91,7 +91,7 @@ export class SvgShapes {
                     'Z'
                 ];
             } else {
-                rTop = Math.min(-height / 2, width / 2, rTop);
+                rTop = minv(-height / 2, width / 2, rTop);
                 return [
                     'M', x, y,
                     'v', height + rTop,
@@ -103,7 +103,7 @@ export class SvgShapes {
                 ];
             }
         } else if (rBottom > 0) {
-            rBottom = Math.min(-height / 2, width / 2, rBottom);
+            rBottom = minv(-height / 2, width / 2, rBottom);
             return [
                 'M', x, y - rBottom,
                 'v', height + rBottom,
@@ -128,7 +128,7 @@ export class SvgShapes {
 
     // 정사각형
     static square(x: number, y: number, width: number, height: number): PathValue[] {
-        const sz = Math.min(width, height);
+        const sz = minv(width, height);
 
         x += (width - sz) / 2;
         y += (height - sz) / 2;
@@ -157,7 +157,7 @@ export class SvgShapes {
 
     // TODO: 개선할 것!
     static arc(cx: number, cy: number, rx: number, ry: number, start: number, end: number, clockwise: boolean, close = false): PathValue[] {
-        const len = fixAngle(Math.abs(end - start));
+        const len = fixAngle(absv(end - start));
         const circled = 2 * PI - len < SECTOR_ERROR * 10;
         const long = len - PI < SECTOR_ERROR * 10 ? 0 : 1;
         const cw = clockwise ? 1 : 0;
@@ -193,7 +193,7 @@ export class SvgShapes {
 
     // TODO: 개선할 것!
     static sector(cx: number, cy: number, rx: number, ry: number, rInner: number, start: number, end: number, clockwise: boolean): PathValue[] {
-        const len = fixAngle(Math.abs(end - start));
+        const len = fixAngle(absv(end - start));
         const circled = 2 * PI - len < SECTOR_ERROR;
         let long = len - PI < SECTOR_ERROR ? 0 : 1;
         const cw = clockwise ? 1 : 0;
@@ -317,7 +317,7 @@ export class SvgShapes {
                 break;
 
             default:
-                path = SvgShapes.circle(rx, ry, Math.min(rx, ry));
+                path = SvgShapes.circle(rx, ry, minv(rx, ry));
                 break;
         }
         target.setPath(path);

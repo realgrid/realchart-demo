@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "./Common";
+import { maxv, minv, pickNum } from "./Common";
 import { fixnum, newObject } from "./Types";
 
 const pow = Math.pow;
@@ -201,7 +201,7 @@ export abstract class RcAnimation {
     private _timer: any;
     private _handler = () => {
         const dt = +new Date() - this._started - this.delay;
-        let rate = Math.min(1, Math.max(0, fixnum(dt / this.duration)));
+        let rate = minv(1, maxv(0, fixnum(dt / this.duration)));
 
         if (this._easing) {
             rate = this._easing(rate);

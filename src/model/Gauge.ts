@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isObject, isString, pickNum, pickProp } from "../common/Common";
+import { absv, isArray, isObject, isString, maxv, minv, pickNum, pickProp } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { IRichTextDomain } from "../common/RichText";
 import { ISize } from "../common/Size";
@@ -598,7 +598,7 @@ export class GaugeScaleLabel extends FormattableText {
     //-------------------------------------------------------------------------
     getText(value: any): string {
         if (Utils.isValidNumber(value)) {
-            return this._getText(null, value, Math.abs(value) > 1000, true);
+            return this._getText(null, value, absv(value) > 1000, true);
         }
         return value;
     }
@@ -694,7 +694,7 @@ export abstract class GaugeScale extends ChartItem {
     //-------------------------------------------------------------------------
     buildSteps(length: number, value: number, target = NaN): number[] {
         target = pickNum(target, value);
-        const {min, max} = this._adjustMinMax(Math.min(value, target), Math.max(value, target));
+        const {min, max} = this._adjustMinMax(minv(value, target), maxv(value, target));
         return this._steps = this._buildSteps(length, min, max);
     }
 
@@ -704,7 +704,7 @@ export abstract class GaugeScale extends ChartItem {
     }
 
     getRate(value: number): number {
-        return (Math.max(this._min, value) - this._min) / (this._max - this._min);
+        return (maxv(this._min, value) - this._min) / (this._max - this._min);
     }
 
     //-------------------------------------------------------------------------
@@ -720,8 +720,8 @@ export abstract class GaugeScale extends ChartItem {
             max = g.maxValue;
         }
 
-        this._min = Math.min(min, max);
-        this._max = Math.max(max, min);
+        this._min = minv(min, max);
+        this._max = maxv(max, min);
         return { min: this._min, max: this._max };
     }
 
@@ -731,14 +731,14 @@ export abstract class GaugeScale extends ChartItem {
         let max = g.maxValue;
 
         if (isNaN(min)) {
-            min = Math.min(...values);
+            min = minv(...values);
         }
         if (isNaN(max)) {
-            max = Math.max(...values);
+            max = maxv(...values);
         }
 
-        this._min = Math.min(min, max);
-        this._max = Math.max(max, min);
+        this._min = minv(min, max);
+        this._max = maxv(max, min);
         return { min: this._min, max: this._max };
     }
 
@@ -1212,7 +1212,7 @@ class CircularProps {
 
     getExtents(gaugeSize: number): ICircularGaugeExtents {
         const radius = calcPercent(this._radiusDim, gaugeSize, gaugeSize / 2);
-        const inner = Math.min(radius, this._innerDim ? calcPercent(this._innerDim, radius) : 0);
+        const inner = minv(radius, this._innerDim ? calcPercent(this._innerDim, radius) : 0);
         const middle = inner + (radius - inner) / 2;
         const value = this._valueDim ? calcPercent(this._valueDim, middle) : middle;
 
@@ -1221,7 +1221,7 @@ class CircularProps {
 
     prepareAngles(startAngle: number, sweepAngle: number): void {
         const start = pickNum(startAngle % 360, 0);
-        const sweep = Math.max(0, Math.min(360, pickNum(sweepAngle, 360)));
+        const sweep = maxv(0, minv(360, pickNum(sweepAngle, 360)));
 
         this._startRad = ORG_ANGLE + DEG_RAD * start;
         this._handRad = DEG_RAD * start;

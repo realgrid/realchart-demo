@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum, assign, isObject, isString } from "../common/Common";
+import { pickNum, assign, isObject, isString, absv, maxv, minv } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { IPoint } from "../common/Point";
@@ -22,26 +22,17 @@ import { Axis } from "../model/Axis";
 import { DataPoint } from "../model/DataPoint";
 import { LegendItem } from "../model/Legend";
 import { ClusterableSeries, DataPointLabel, MarkerSeries, PointItemPosition, Series, WidgetSeries, WidgetSeriesPoint } from "../model/Series";
-import { CategoryAxis } from "../model/axis/CategoryAxis";
 import { ContentView } from "./ChartElement";
 import { LegendItemView } from "./LegendView";
 import { PrevAnimation, SeriesAnimation } from "./animation/SeriesAnimation";
 
 export interface IPointView {
     point: DataPoint;
+    saveVal: number;
 }
 
 export class PointLabelView extends LabelElement {
 
-    //-------------------------------------------------------------------------
-    // consts
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // static members
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // property fields
-    //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
@@ -54,19 +45,6 @@ export class PointLabelView extends LabelElement {
     constructor(doc: Document) {
         super(doc, 'rct-point-label');
     }
-
-    //-------------------------------------------------------------------------
-    // properties
-    //-------------------------------------------------------------------------
-	//-------------------------------------------------------------------------
-    // methods
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // overriden members
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    // internal members
-    //-------------------------------------------------------------------------
 }
 
 export class PointLabelContainer extends LayerElement {
@@ -451,8 +429,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     protected _setModelColor(color: string): void {
-        this.internalSetStyle('fill', color);
-        this.internalSetStyle('stroke', color);
+        this.setColor(color);
     }
 
     protected _legendColorProp(): string {
@@ -487,7 +464,10 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     // overriden members
     //-------------------------------------------------------------------------
     protected _doAttached(parent: RcElement): void {
-        createAnimation(this.dom, 'opacity', 0, 1, 300, null);
+        // 로딩 후에 새로 추가된 경우 효과.
+        if (this.control.loaded) {
+            createAnimation(this.dom, 'opacity', 0, 1, 500, null);
+        }
     }
 
     protected _prepareStyleOrClass(model: T): void {
@@ -527,9 +507,14 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         this._labelViews();
         this._renderSeries(this.width, this.height);
         if (this._trendLineView && this._trendLineView.visible) {
-            this.$_renderTrendline();       
+            this.$_renderTrendline(this._inverted);       
+            // this._trendLineView.setAttr('transform', this._pointContainer.getAttr('transform'));
+            // this._trendLineView.setAttr('clip-path', this._pointContainer.getAttr('clip-path'));
         }
-        this._animatable && !this._simpleMode && this._runShowEffect(!this.control.loaded);
+        this._animatable && !this._simpleMode && this._runShowEffect(!this.control.loaded && this.chart().loadAnimatable());
+        this._getPointPool().forEach((pv: any) => {
+            pv.saveVal = pv.point.getValue()
+        });
     }
 
     protected _doAfterLayout(): void {
@@ -547,7 +532,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     protected abstract _renderSeries(width: number, height: number): void;
 
     protected _collectVisPoints(model: T): DataPoint[] {
-        return model.collectVisibles();
+        return model._visPoints;// collectVisibles();
     }
 
     private $_setColorIndex(v: RcElement, p: DataPoint): void {
@@ -555,8 +540,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     protected _setPointColor(v: RcElement, color: string): void {
-        v.internalSetStyle('fill', color);
-        v.internalSetStyle('stroke', color);
+        v.setColor(color);
     }
 
     protected _setPointStyle(v: RcElement, model: T,  p: DataPoint, styles?: any[]): void {
@@ -585,7 +569,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
 
     protected _labelViews(): PointLabelContainer {
         this._labelContainer.setVis(this.model.isPointLabelsVisible() && !this._animating());
-        return this._labelContainer.visible && this._labelContainer;
+        return this._labelContainer.visible ? this._labelContainer : _undef;
     }
 
     protected _getViewRate(): number {
@@ -593,7 +577,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
     }
 
     _animating(): boolean {
-        return !isNaN(this._viewRate) || !isNaN(this._posRate) || this._animations.length > 0;
+        return !isNaN(this._viewRate) || !isNaN(this._posRate) || !isNaN(this._prevRate) || this._animations.length > 0;
     }
 
     protected _lazyPrepareLabels(): boolean { return false; }
@@ -602,11 +586,25 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         //this._getShowAnimation()?.run(this);
     }
 
-    private $_renderTrendline(): void {
+    private $_renderTrendline(inverted: boolean): void {
         const m = this.model;
         const xAxis = m._xAxisObj;
         const yAxis = m._yAxisObj;
-        const pts = m.trendline._points.map(pt => ({x: xAxis.getPos(xAxis._vlen, pt.x), y: yAxis._vlen - yAxis.getPos(yAxis._vlen, pt.y)}));
+        const yLen = yAxis._vlen;
+        const xLen = xAxis._vlen;
+        const pts = m.trendline._points.map(pt => {
+            let x: number;
+            let y: number;
+
+            if (inverted) {
+                y = xLen - xAxis.getPos(xLen, pt.x);
+                x = yAxis.getPos(yLen, pt.y);
+            } else {
+                x = xAxis.getPos(xLen, pt.x);
+                y = yLen - yAxis.getPos(yLen, pt.y);
+            }
+            return {x, y};
+        });
 
         if (this._trendLineView.setVis(pts.length > 1)) {
             const sb = new PathBuilder();
@@ -697,7 +695,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         }
 
         labelView.setContrast(inner && info.pointView.dom);
-        labelView.layout(labelView.textAlign()).translate(x, y);
+        labelView.layout(labelView.textAlign()).trans(x, y);
     }
 
     // viewRangeValue가 'x', 'y'인 경우에만 호출된다.
@@ -711,28 +709,28 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         const isX = rangeAxis === 'x';
         const axis = isX ? this.model._xAxisObj : this.model._yAxisObj;
         const reversed = axis.reversed;
-        const p1 = axis.getPos(isX ? w : h, Math.max(axis.axisMin(), range.fromValue));
-        const p2 = axis.getPos(isX ? w : h, Math.min(axis.axisMax(), range.toValue));
+        const p1 = axis.getPos(isX ? w : h, maxv(axis.axisMin(), range.fromValue));
+        const p2 = axis.getPos(isX ? w : h, minv(axis.axisMax(), range.toValue));
 
         if (inverted) {
             if (isX) {
                 if (reversed) {
-                    clip.setBounds(p2, -h, Math.abs(p2 - p1), h);
+                    clip.setBounds(p2, -h, absv(p2 - p1), h);
                 } else {
-                    clip.setBounds(p1, -h, Math.abs(p2 - p1), h);
+                    clip.setBounds(p1, -h, absv(p2 - p1), h);
                 }
             } else {
-                clip.setBounds(0, -Math.max(p1, p2), w, Math.abs(p2 - p1));
+                clip.setBounds(0, -maxv(p1, p2), w, absv(p2 - p1));
             }
         } else {
             if (isX) {
                 if (reversed) {
-                    clip.setBounds(p2, 0, Math.abs(p2 - p1), h);
+                    clip.setBounds(p2, 0, absv(p2 - p1), h);
                 } else {
-                    clip.setBounds(p1, 0, Math.abs(p2 - p1), h);
+                    clip.setBounds(p1, 0, absv(p2 - p1), h);
                 }
             } else {
-                clip.setBounds(0, h - Math.max(p1, p2), w, Math.abs(p2 - p1));
+                clip.setBounds(0, h - maxv(p1, p2), w, absv(p2 - p1));
             }
         }
     }
@@ -755,6 +753,7 @@ export abstract class PointElement extends PathElement implements IPointView {
     // fields
     //-------------------------------------------------------------------------
     point: DataPoint;
+    saveVal: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -790,6 +789,8 @@ export abstract class BoxPointElement extends PointElement {
     public abstract layout(x: number, y: number, rTop: number, rBottom: number): void;
 
     savePrevs(): void {
+        super.savePrevs();
+
         this.wSave = this.wPoint;
         this.xSave = this.x;
     }
@@ -818,6 +819,8 @@ export abstract class RangeElement extends GroupElement {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    point: DataPoint;
+    saveVal: number;
     wSave: number;
     xSave: number;
 
@@ -885,18 +888,19 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
         const series = this.model;
         const inverted = this._inverted;
         const vr = this._getViewRate();
+        const pr = this._prevRate;
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
         const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj as Axis;
-        const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
+        const wPad = xAxis.unitPad();
         const yLen = yAxis.prev(inverted ? width : height);
         const xLen = xAxis.prev(inverted ? height : width);
         const yOrg = inverted ? 0 : height;
         const min = yAxis.axisMin();
         const yMin = yAxis.getPos(yLen, min);
         const base = series.getBaseValue(yAxis);
-        const yBase = pickNum(yAxis.getPos(yLen, Math.max(min, base)), yMin);
+        const yBase = pickNum(yAxis.getPos(yLen, maxv(min, base)), yMin);
         const based = !isNaN(base);
         const info: LabelLayoutInfo = labelViews && assign(this._labelInfo, {
             inverted,
@@ -904,7 +908,6 @@ export abstract class BoxedSeriesView<T extends ClusterableSeries> extends Clust
             labelPos: series.getLabelPosition(labels.position),
             labelOff: series.getLabelOff(labels.getOffset())
         });
-        const pr = this._prevRate;
 
         this._getPointPool().forEach((pv: BoxPointElement, i) => {
             const p = (pv as any as IPointView).point;
@@ -978,11 +981,12 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
         const series = this.model;
         const inverted = series.chart.isInverted();
         const vr = this._getViewRate();
+        const pr = this._prevRate;
         const labels = series.pointLabel;
         const labelViews = this._labelViews();
-        const xAxis = series._xAxisObj;
+        const xAxis = series._xAxisObj as Axis;
         const yAxis = series._yAxisObj;
-        const wPad = xAxis instanceof CategoryAxis ? xAxis.categoryPad() * 2 : 0;
+        const wPad = xAxis.unitPad();
         const yLen = inverted ? width : height;
         const xLen = inverted ? height : width;
         const org = inverted ? 0 : height;;
@@ -991,7 +995,6 @@ export abstract class RangedSeriesView<T extends ClusterableSeries> extends Clus
             labelPos: series.getLabelPosition(labels.position),
             labelOff: series.getLabelOff(labels.getOffset())
         });
-        const pr = this._prevRate;
 
         this._getPointPool().forEach((pv: BoxPointElement, i) => {
             const p = (pv as any as IPointView).point;
@@ -1062,6 +1065,7 @@ export class MarkerSeriesPointView<T extends DataPoint> extends PathElement impl
     // fields
     //-------------------------------------------------------------------------
     point: T;
+    saveVal: number;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -1112,9 +1116,9 @@ export abstract class MarkerSeriesView<T extends MarkerSeries> extends SeriesVie
         if (labelView.setVis(pos != null)) {
             x -= r.width / 2;
             if (pos === PointItemPosition.INSIDE) {
-                labelView.translate(x, y - r.height / 2);
+                labelView.trans(x, y - r.height / 2);
             } else if (pos) {
-                labelView.translate(x, y - radius - r.height - off);
+                labelView.trans(x, y - radius - r.height - off);
             }
         }
     }

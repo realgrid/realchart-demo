@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { cos, pickNum, pickProp, sin } from "../common/Common";
+import { absv, cos, maxv, minv, pickNum, pickProp, sin } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { PathBuilder } from "../common/PathBuilder";
 import { PathElement, RcElement } from "../common/RcControl";
@@ -82,7 +82,7 @@ export class AxisTitleView extends BoundableElement<AxisTitle> {
 
     protected _doLayout(isHorz: boolean): void {
         // text
-        this._textView.translateY(this._margins.top + this._paddings.top);
+        this._textView.transY(this._margins.top + this._paddings.top);
         // this._textView.translate(this._paddings.left, this._paddings.top);
 
         // rotation
@@ -178,14 +178,14 @@ export class AxisLabelView extends LabelElement {
     //     const d = this.rotation * DEG_RAD;
     //     const r = this.getBBounds();
 
-    //     return Math.abs(sin(d) * r.height) + Math.abs(cos(d) * r.width);
+    //     return absv(sin(d) * r.height) + absv(cos(d) * r.width);
     // }
 
     rotatedHeight(): number {
         const d = this.rotation * DEG_RAD;
         const r = this.getBBox();
 
-        return Math.abs(cos(d) * r.height) + Math.abs(sin(d) * r.width);
+        return absv(cos(d) * r.height) + absv(sin(d) * r.width);
     }
 }
 
@@ -216,11 +216,11 @@ class CrosshairFlagView extends RcElement {
 
             const r = this._text.getBBox();
             const pb = new PathBuilder();
-            const w = Math.max(model.flag.minWidth || 0, r.width + 8);
+            const w = maxv(model.flag.minWidth || 0, r.width + 8);
 
             pb.rect(0, 0, w, r.height + 4);
             this._back.setPath(pb.end());
-            this._text.translate(w / 2, 2);
+            this._text.trans(w / 2, 2);
         }
     }
 }
@@ -275,9 +275,9 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
             const len = zoom.max - zoom.min;
             const page = zoom.end - zoom.start;
     
-            this._len = Math.max(0, len);
-            this._page = Math.min(page, len);
-            this._pos = Math.min(zoom.min + len - page, Math.max(0, zoom.start));
+            this._len = maxv(0, len);
+            this._page = minv(page, len);
+            this._pos = minv(zoom.min + len - page, maxv(0, zoom.start));
         } else {
             this._len = 0;
         }
@@ -290,10 +290,10 @@ export class AxisScrollView extends ChartElement<AxisScrollBar> {
 
         if (this.model.axis.reversed) {
             // TODO
-            pt = Math.max(0, Math.min(pt, len));
+            pt = maxv(0, minv(pt, len));
             return pt * (zoom.max - zoom.min - (zoom.end - zoom.start)) / len + zoom.min;
         } else {
-            pt = Math.max(0, Math.min(pt, len));
+            pt = maxv(0, minv(pt, len));
             return pt * (zoom.max - zoom.min - (zoom.end - zoom.start)) / len + zoom.min;
         }
     }
@@ -484,6 +484,7 @@ export class AxisView extends ChartElement<Axis> {
     }
 
     showCrosshair(pos: number, text: string): void {
+        const m = this.model;
         let cv = this._crosshairView;
         let x: number;
 
@@ -491,26 +492,24 @@ export class AxisView extends ChartElement<Axis> {
             this.add(cv = this._crosshairView = new CrosshairFlagView(this.doc));
         }
         cv.setVis(true);
+        cv.setText(m.crosshair, text);
 
-        cv.setText(this.model.crosshair, text);
         const r = cv.getBBox();
 
-        if (this.model._isHorz) {
-            cv.translate(pos - r.width / 2, this.model.tick.length);
+        if (m._isHorz) {
+            cv.trans(pos - r.width / 2, m.tick.length);
         } else {
-            if (this.model._runPos === AxisPosition.OPPOSITE) {
-                x = Math.min(0, this.width - r.width);
+            if (m._runPos === AxisPosition.OPPOSITE) {
+                x = minv(0, this.width - r.width);
             } else {
-                x = Math.max(0, this.width - this.model.tick.length - r.width);
+                x = maxv(0, this.width - m.tick.length - r.width);
             }
-            cv.translate(x, pos - r.height / 2);
+            cv.trans(x, pos - r.height / 2);
         }
     }
 
     hideCrosshiar(): void {
-        if (this._crosshairView && this._crosshairView.visible) {
-            this._crosshairView.setVis(false);
-        }
+        this._crosshairView && this._crosshairView.setVis(false);
     }
 
     scroll(pos: number): void {
@@ -518,11 +517,10 @@ export class AxisView extends ChartElement<Axis> {
 
     checkExtents(): void {
         const prev = this._prevModel;
-        const m = this.model;
+        const m = this._prevModel = this.model;
 
-        this._prevModel = m;
-
-        if (!prev || prev === m) {
+        // chart를 새로 로드할 때는 실행하지 않는다.
+        if ((!prev || prev === m) && this.control.loaded) {
             const min = this._prevMin;
             const max = this._prevMax;
     
@@ -537,6 +535,11 @@ export class AxisView extends ChartElement<Axis> {
                 }
             }
         }
+    }
+
+    clean(): void {
+        this._prevMax = this._prevMin = NaN;
+        this._prevModel = null;
     }
 
     //-------------------------------------------------------------------------
@@ -639,12 +642,12 @@ export class AxisView extends ChartElement<Axis> {
             if (horz) {
                 this._markViews.forEach((v, i) => {
                     v.resize(1, markLen);
-                    v.layout().translate(markPts[i], opp ? h - markLen : 0);
+                    v.layout().trans(markPts[i], opp ? h - markLen : 0);
                 })
             } else {
                 this._markViews.forEach((v, i) => {
                     v.resize(markLen, 1);
-                    v.layout().translate(opp ? 0 : w - markLen, h - markPts[i]);
+                    v.layout().trans(opp ? 0 : w - markLen, h - markPts[i]);
                 })
             }
         }
@@ -705,7 +708,7 @@ export class AxisView extends ChartElement<Axis> {
                         }
                     }
                     
-                    titleView.translate(x, y);
+                    titleView.trans(x, y);
                     y += titleView.height;
 
                 } else {
@@ -769,7 +772,7 @@ export class AxisView extends ChartElement<Axis> {
                             }
                         }
                     }
-                    titleView.translate(x, y);
+                    titleView.trans(x, y);
                 }
             } else {
                 y += opp ? 0 : len + labelSize;
@@ -778,10 +781,10 @@ export class AxisView extends ChartElement<Axis> {
             // scrollbar
             if (scrollView?.visible) {
                 if (horz) {
-                    scrollView.translate(0, y).resize(this.width, scrollView.mh);
+                    scrollView.trans(0, y).resize(this.width, scrollView.mh);
                     scrollView.setScroll(model._zoom, model.reversed);
                 } else {
-                    scrollView.translate(0, 0).resize(scrollView.mw, this.height);
+                    scrollView.trans(0, 0).resize(scrollView.mw, this.height);
                     scrollView.setScroll(model._zoom, model.reversed);
                 }
                 scrollView.layout();
@@ -867,9 +870,9 @@ export class AxisView extends ChartElement<Axis> {
 
     private $_checkOverlappedHorz(axis: Axis, views: AxisLabelView[], width: number, step: number, rows: number, rotation: number): boolean {
         const nView = views.length;
-        const inc = Math.max(1, step) * Math.max(1, rows);
+        const inc = maxv(1, step) * maxv(1, rows);
         const a = rotation || 0;
-        const arad = Math.abs(a) * DEG_RAD;
+        const arad = absv(a) * DEG_RAD;
         const acute = arad < 35 * DEG_RAD;
         let overalpped = false;
 
@@ -906,7 +909,7 @@ export class AxisView extends ChartElement<Axis> {
 
     private $_applyStep(axis: Axis, views: AxisLabelView[], step: number): AxisLabelView[] {
         const m = axis.label;
-        const start = Math.max(0, m.startStep || 0);
+        const start = maxv(0, m.startStep || 0);
             
         views.forEach(v => v.index = -1);
         for (let i = start; i < views.length; i += step) {
@@ -981,7 +984,7 @@ export class AxisView extends ChartElement<Axis> {
                 // TODO: rotation이 적용됐는데도 overlapped이면 stepping을 한다.
                 if (this.$_checkOverlappedHorz(axis, views, width, step, rows, rotation)) {
                     this.$_checkOverlappedHorz(axis, views, width, step, rows, rotation);
-                    step = Math.max(2, step++);
+                    step = maxv(2, step++);
                     views = this.$_applyStep(axis, views, step);
                     // rotation을 제거해도 문제없으면 제거한다.
                     if (this.$_checkOverlappedHorz(axis, views, width, step, rows, 0)) {
@@ -1006,7 +1009,7 @@ export class AxisView extends ChartElement<Axis> {
             }
 
             views.forEach(v => {
-                pts[v.row] = Math.max(pts[v.row], rotated ? v.rotatedHeight() : v.getBBox().height);
+                pts[v.row] = maxv(pts[v.row], rotated ? v.rotatedHeight() : v.getBBox().height);
             })
 
             pts.unshift(0);
@@ -1019,12 +1022,12 @@ export class AxisView extends ChartElement<Axis> {
             if (!isNaN(rotation) && rotation != 0) {
                 sz = views[0].rotatedHeight();
                 for (let i = 1; i < views.length; i++) {
-                    sz = Math.max(sz, views[i].rotatedHeight());
+                    sz = maxv(sz, views[i].rotatedHeight());
                 }
             } else {
                 sz = views[0].getBBox().height;
                 for (let i = 1; i < views.length; i++) {
-                    sz = Math.max(sz, views[i].getBBox().height);
+                    sz = maxv(sz, views[i].getBBox().height);
                 }
             }
         }
@@ -1033,7 +1036,7 @@ export class AxisView extends ChartElement<Axis> {
 
     private $_checkOverlappedVert(axis: Axis, views: AxisLabelView[], height: number, step: number): boolean {
         const nView = views.length;
-        const inc = Math.max(1, step);
+        const inc = maxv(1, step);
 
         views.forEach(v => v.rotation = 0);
 
@@ -1052,7 +1055,7 @@ export class AxisView extends ChartElement<Axis> {
     private $_measureLabelsVert(axis: Axis, height: number): number {
         const m = axis.label;
         let views = this._labelViews._internalItems();
-        let step = Math.max(1, +m.step >> 0);
+        let step = maxv(1, +m.step >> 0);
         const overalpped = this.$_checkOverlappedVert(axis, views, height, step);
 
         if (!overalpped) {
@@ -1071,7 +1074,7 @@ export class AxisView extends ChartElement<Axis> {
         let sz = views[0].getBBox().width;
 
         for (let i = 1; i < views.length; i++) {
-            sz = Math.max(sz, views[i].getBBox().width);
+            sz = maxv(sz, views[i].getBBox().width);
         }
         return sz;
     }
@@ -1111,7 +1114,7 @@ export class AxisView extends ChartElement<Axis> {
                     x -= r.width / 2;
                     v.setRotation(r.width / 2, 0, opp ? -rot : rot);
                 }   
-                v.setContrast(null).layout(align).translate(x, y);
+                v.setContrast(null).layout(align).trans(x, y);
             }
         });
     }
@@ -1126,7 +1129,7 @@ export class AxisView extends ChartElement<Axis> {
                 const r = v.getBBox();
                 const x2 = opp ? x : between ? (w - r.width) / 2 : x - r.width;
     
-                v.setContrast(null).layout(align).translate(x2, h - m.prev(ticks[i].pos) - r.height / 2);
+                v.setContrast(null).layout(align).trans(x2, h - m.prev(ticks[i].pos) - r.height / 2);
             }
         });
     }

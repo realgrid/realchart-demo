@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { ChartControl } from "../ChartControl";
+import { absv, maxv, minv } from "../common/Common";
 import { DragTracker, RcElement } from "../common/RcControl";
 import { RectElement } from "../common/impl/RectElement";
 import { AxisScrollView } from "../view/AxisView";
@@ -63,10 +64,10 @@ export class ZoomTracker extends ChartDragTracker {
 
         if (this._vertical) {
             y -= br.y - cr.y;
-            this._body.setZoom(0, Math.min(this._yStart, y), this._body.width, Math.max(this._yStart, y));
+            this._body.setZoom(0, minv(this._yStart, y), this._body.width, maxv(this._yStart, y));
         } else {
             x -= br.x - cr.x;
-            this._body.setZoom(Math.min(this._xStart, x), 0, Math.max(this._xStart, x), this._body.height);
+            this._body.setZoom(minv(this._xStart, x), 0, maxv(this._xStart, x), this._body.height);
         }
         this._feedback.remove();
     }
@@ -77,10 +78,10 @@ export class ZoomTracker extends ChartDragTracker {
 
         if (this._vertical) {
             y -= br.y - cr.y;
-            this._feedback.setBounds(0, Math.min(this._yStart, y), this._body.width, Math.abs(this._yStart - y));
+            this._feedback.setBounds(0, minv(this._yStart, y), this._body.width, absv(this._yStart - y));
         } else {
             x -= br.x - cr.x;
-            this._feedback.setBounds(Math.min(this._xStart, x), 0, Math.abs(this._xStart - x), this._body.height);
+            this._feedback.setBounds(minv(this._xStart, x), 0, absv(this._xStart - x), this._body.height);
         }
         return true;
     }
@@ -266,7 +267,7 @@ export class NavigatorMaskTracker extends ChartDragTracker {
     private $_moveZoom(p: number): void {
         const model = this._view.model;
 
-        p = Math.max(0, Math.min(p, this._totalLen - this._zoomLen)) + model.axis()._zoom.min;
+        p = maxv(0, minv(p, this._totalLen - this._zoomLen)) + model.axis()._zoom.min;
         model.axis().zoom(p, p + this._zoomLen);
         // console.log(p, this._totalLen, this._zoomLen);
     }

@@ -29,9 +29,21 @@ export class TypeDocNextra {
     //     '\n',
     // ]
     public getSee(see: string[]) {
+        
+        /**
+         * console.debug(see);
+         * [
+            ' - ',
+            '[RcCircleGauge](#RcCircleGauge)',
+            '\n',
+            ' - ',
+            '[RcBulletGauge](#RcBulletGauge)',
+            '\n'
+            ]
+         */
+        
         return see?.length 
-            ? `\n${heading('See Also', 3)}\n
-            ${see.join('')}`
+            ? `\n${heading('See Also', 3)}\n${see.map((s, i) => i % 3 == 1 ? heading(s, 4) : s).join('')}`
             : '';
     }
 

@@ -17,13 +17,6 @@ const config = {
     yAxis: {
         // line: true,
         label: true,
-        guides: [{
-            type: 'line',
-            value: 5.5,
-            style: {
-                stroke: 'red'
-            }
-        }]
     },
     body: {
     },

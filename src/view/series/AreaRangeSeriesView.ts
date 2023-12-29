@@ -92,10 +92,8 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
     protected _layoutLines(): void {
         super._layoutLines();
 
-        this.$_layoutArea(this._area);
-    }
-
-    private $_layoutArea(area: PathElement): void {
+        // layout area
+        const area = this._area;
         const series = this.model;
 
         if (!this._areaContainer.setVis(series._lines.length > 0)) {
@@ -108,7 +106,7 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         area.unsetData('polar');
         area.setBoolData('simple', this._simpleMode);
         area.internalClearStyleAndClass();
-        series.color && area.internalSetStyle(FILL, series.color);
+        series.color && area.setFill(series.color);
         this._setFill(area, series.style);
         series.areaStyle && area.internalSetStyleOrClass(series.areaStyle);
     }

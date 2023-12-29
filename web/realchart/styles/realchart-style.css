@@ -136,7 +136,6 @@
 .rct-control[data-theme='real'] {
 	--rct-background: #264653;
 }
-
 .rct-root {
     --rct-font-family: AppleSDGothicNeo-Light, "HelveticaNeue", "Malgun Gothic", "맑은 고딕", sans-serif;
     --rct-font-size: 16px;
@@ -152,6 +151,7 @@
 
     --rct-axis-title-fill: #333;
     --rct-axis-line-stroke: #aaa;
+    --rct-axis-baseline-stroke: #333;
     --rct-axis-tick-stroke: #555;
     --rct-axis-label-fill: #555;
     --rct-axis-grid-line-stroke: #ddd;
@@ -216,6 +216,7 @@
     
     --rct-axis-title-fill: #fff;
     --rct-axis-line-stroke: #fff;
+    --rct-axis-baseline-stroke: #fff;
     --rct-axis-tick-stroke: #fff;
     --rct-axis-label-fill: #fff;
     --rct-axis-grid-line-stroke: #fff;
@@ -285,7 +286,6 @@
     /** zoom tracker */
     --rct-zoom-tracker-fill: #efefef40;
 }
-
 
 /** control */
 .rct-control {
@@ -406,6 +406,10 @@
 }
 .rct-axis-line {
     stroke: var(--rct-axis-line-stroke);
+    stroke-width: 1px;
+}
+.rct-axis-baseline {
+    stroke: var(--rct-axis-baseline-stroke);
     stroke-width: 1px;
 }
 .rct-axis-tick {
@@ -618,7 +622,7 @@
 .rct-series {
     opacity: inherit;
     transition-property: opacity;
-    transition-duration: 0.9s;
+    transition-duration: 0.7s;
 }
 .rct-series[data-unfocus] {
     opacity: 0.2;
@@ -631,7 +635,7 @@
 .rct-point-labels {
     opacity: inherit;
     transition-property: opacity;
-    transition-duration: 0.9s;
+    transition-duration: 0.7s;
 }
 .rct-point-labels[data-unfocus] {
     opacity: 0.3;

@@ -14,11 +14,8 @@ import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { PointItemPosition } from "../../model/Series";
 import { BubbleSeries, BubbleSeriesPoint } from "../../model/series/BubbleSeries";
-import { MarkerSeriesPointView, MarkerSeriesView, PointLabelView } from "../SeriesView";
+import { MarkerSeriesView, PointLabelView } from "../SeriesView";
 import { SeriesAnimation } from "../animation/SeriesAnimation";
-
-class MarkerView extends MarkerSeriesPointView<BubbleSeriesPoint> {
-}
 
 /**
  * @internal 
@@ -131,7 +128,7 @@ export class BubbleSeriesView extends MarkerSeriesView<BubbleSeries> {
                 if (mv.setVis(!needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
                     path = SvgShapes.circle(0, 0, sz);
                     mv.setPath(path);
-                    mv.translate(x, y);
+                    mv.trans(x, y);
     
                     // label
                     if (lv) {

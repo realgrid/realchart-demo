@@ -131,7 +131,7 @@ export class Crosshair extends ChartItem {
     // methods
     //-------------------------------------------------------------------------
     isBar(): boolean {
-        return !this.axis.isContinuous() && this.type === CrosshairType.AUTO;
+        return !this.axis.continuous() && this.type === CrosshairType.AUTO;
     }
 
     getFlag(length: number, pos: number): string {

@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isFunc, isObject, isString, pickNum, pickProp, pickProp3 } from "../common/Common";
+import { absv, isArray, isFunc, isObject, isString, maxv, minv, pickNum, pickProp, pickProp3 } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { RcElement } from "../common/RcControl";
 import { RcObject } from "../common/RcObject";
@@ -21,7 +21,7 @@ import { ChartItem, FormattableText } from "./ChartItem";
 import { LineType } from "./ChartTypes";
 import { DataPoint, DataPointCollection } from "./DataPoint";
 import { ILegendSource, LegendItem } from "./Legend";
-import { ITooltipContext, Tooltip } from "./Tooltip";
+import { ITooltipContext } from "./Tooltip";
 import { CategoryAxis } from "./axis/CategoryAxis";
 
 export enum PointItemPosition {
@@ -128,7 +128,7 @@ export class DataPointLabel extends FormattableText {
 
     getText(value: any): string {
         if (Utils.isValidNumber(value)) {
-            return this._getText(null, value, Math.abs(value) > 1000, true);
+            return this._getText(null, value, absv(value) > 1000, true);
         }
         return value;
     }
@@ -191,6 +191,7 @@ export interface IPlottingItem {
     prepareRender(): void;
     prepareAfter(): void;
     collectValues(axis: IAxis, vals: number[]): void;
+    collectRanges(vals: number[]): void;
     pointValuesPrepared(axis: IAxis): void;
     seriesChanged(): boolean;
 }
@@ -223,7 +224,7 @@ export class MovingAverage extends RcObject {
     //-------------------------------------------------------------------------
     // properties
     //-------------------------------------------------------------------------
-    interval: number = 5;
+    interval = 2;
     type: 'simple' | 'weighted' | 'exponential' | 'triangualr' = 'simple';
 }
 
@@ -279,34 +280,6 @@ export class Trendline extends ChartItem {
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
-    // private $_determintationCoeff(pts: {xValue: number, yValue: number}[], results: {x: number, y: number}[]): number {
-    //     const predicts: {x: number, y: number}[] = [];
-    //     const observas: {xValue: number, yValue: number}[] = [];
-
-    //     pts.forEach((p, i) => {
-    //         if (!isNaN(p.yValue)) {
-    //             observas.push(p);
-    //             predicts.push(results[i])
-    //         }
-    //     })
-
-    //     const sum = observas.reduce((a, o) => a + o.yValue, 0);
-    //     const mean = sum / observas.length;
-
-    //     const ssyy = observas.reduce((a, o) => {
-    //         const diff = o.yValue - mean;
-    //         return a + diff * diff;
-    //     }, 0);
-
-    //     const sse = observas.reduce((a, o, i) => {
-    //         const predict = predicts[i];
-    //         const residual = o.yValue - predict.y;
-    //         return a + residual * residual;
-    //     }, 0);
-
-    //     return 1 - sse / ssyy;
-    // }
-
     private $_calcLine(pts: IPoint[]): {m: number, a: number} {
         const len = pts.length;
         let sx = 0;
@@ -327,31 +300,6 @@ export class Trendline extends ChartItem {
         const m = run === 0 ? 0 : rise / run;
         // 절편
         const a = (sy - m * sx) / len;
-
-        return {m, a};
-    }
-
-    private $_calcLine2(pts: IPoint[]): {m: number, a: number} {
-        const len = pts.length;
-        let sx = 0;
-        let sy = 0;
-        let sxxy = 0;
-        let syy2 = 0;
-        let sxyy2 = 0;
-        let sxy = 0;
-
-        pts.forEach(p => {
-            sx += p.x;
-            sy += p.y;
-            sxxy = p.x * p.x * p.y;
-            syy2 = p.y * Math.log(p.y);
-            sxyy2 = p.x * p.y * Math.log(p.y);
-            sxy = p.x * p.y;
-        });
-
-        const denomintaor = sy * sxxy - sxy * sxy;
-        const a = Math.exp((sxxy * syy2 - sxy * sxyy2) / denomintaor);
-        const m = (sy * sxyy2 - sxy * syy2) / denomintaor;
 
         return {m, a};
     }
@@ -380,24 +328,6 @@ export class Trendline extends ChartItem {
             for (let x = x1; x <= x2; x += d) {
                 const y = a + (Math.log(x) * m);
                 list.push({ x, y });
-                console.log(x, y);
-            }
-        }
-    }
-
-    private $_exponential(pts: IPoint[], list: {x: number, y: number}[]): void {
-        const len = pts.length;
-
-        if (len > 1) {
-            const logPts = pts.map(p => ({ x: p.x, y: p.y }));
-            const {m, a} = this.$_calcLine2(logPts);
-            const x1 = pts[0].x;
-            const x2 = pts[len - 1].x;
-            const d = (x2 - x1) / 100;
-
-            for (let x = x1; x <= x2; x += d) {
-                const y = a * Math.exp(m * x);
-                list.push({ x, y });
             }
         }
     }
@@ -421,6 +351,49 @@ export class Trendline extends ChartItem {
         }
     }
 
+    private $_calcLine2(pts: IPoint[]): {m: number, a: number} {
+        const len = pts.length;
+        let sx = 0;
+        let sy = 0;
+        let sxxy = 0;
+        let syy2 = 0;
+        let sxyy2 = 0;
+        let sxy = 0;
+
+        pts.forEach(p => {
+            sx += p.x;
+            sy += p.y;
+            sxxy += p.x * p.x * p.y;
+            syy2 += p.y * Math.log(p.y);
+            sxyy2 += p.x * p.y * Math.log(p.y);
+            sxy += p.x * p.y;
+        });
+
+        const denomintaor = sy * sxxy - sxy * sxy;
+        const a = Math.exp((sxxy * syy2 - sxy * sxyy2) / denomintaor);
+        const m = (sy * sxyy2 - sxy * syy2) / denomintaor;
+
+        return {m, a};
+    }
+
+    private $_exponential(pts: IPoint[], list: {x: number, y: number}[]): void {
+        const len = pts.length;
+
+        if (len > 1) {
+            const logPts = pts.map(p => ({ x: p.x, y: p.y }));
+            const {m, a} = this.$_calcLine2(logPts);
+            const coeff = a;
+            const x1 = pts[0].x;
+            const x2 = pts[len - 1].x;
+            const d = (x2 - x1) / 100;
+
+            for (let x = x1; x <= x2; x += d) {
+                const y = coeff * Math.exp(m * x);
+                list.push({ x, y });
+            }
+        }
+    }
+
     $_polynomial(pts: IPoint[], list: {x: number, y: number}[]): void {
 
         function gaussianElimintaion(pts: number[][], degree: number): number[] {
@@ -432,7 +405,7 @@ export class Trendline extends ChartItem {
                 let maxrow = i;
 
                 for (let j = i + 1; j < n; j++) {
-                    if (Math.abs(matrix[i][j]) > Math.abs(matrix[i][maxrow])) {
+                    if (absv(matrix[i][j]) > absv(matrix[i][maxrow])) {
                         maxrow = j;
                     }
                 }
@@ -506,139 +479,10 @@ export class Trendline extends ChartItem {
         }
     }
 
-    // $_polynomial(pts: DataPoint[], list: {x: number, y: number}[]): void {
-    //     const len = pts.length;
-
-    //     if (len > 1) {
-    //         const degree = 2;
-    //         // x의 각 차수에 대한 합계 배열 초기화
-    //         const sumX = new Array(2 * degree + 1).fill(0);
-
-    //         // 각 차수에 대한 합계 계산
-    //         for (const p of pts) {
-    //             const x = p.xValue;
-    //             const y = p.yValue;
-
-    //             for (let i = 0; i <= 2 * degree; i++) {
-    //                 sumX[i] += Math.pow(x, i);
-    //             }
-    //         }
-
-    //         // x와 y의 곱에 대한 합계 배열 초기화
-    //         const sumXY = new Array(degree + 1).fill(0);
-
-    //         // x와 y의 곱에 대한 합계 계산
-    //         for (const p of pts) {
-    //             const x = p.xValue;
-    //             const y = p.yValue;
-
-    //             for (let i = 0; i <= degree; i++) {
-    //                 sumXY[i] += Math.pow(x, i) * y;
-    //             }
-    //         }
-
-    //         // 계수 계산
-    //         const coefficients = [];
-    //         for (let i = 0; i <= degree; i++) {
-    //             coefficients.push(sumXY[i] / sumX[i]);
-    //         }
-
-    //         const x1 = pts[0].xValue;
-    //         const x2 = pts[len - 1].xValue;
-    //         const d = (x2 - x1) / 100;
-
-    //         for (let x = x1; x <= x2; x += d) {
-    //             let y = 0;
-    //             for (let i = 0; i <= degree; i++) {
-    //                 y += coefficients[i] * Math.pow(x, i);
-    //             }
-    //             list.push({x: x, y});
-    //         }
-    //     }
-    // }
-
-    // TODO: (크기를 최소화해서) 구현할 것!
-    // $_polynomial(pts: DataPoint[], list: {x: number, y: number}[]): void {
-    //     // 행렬 전치
-    //     function transpose(matrix: number[][]) {
-    //         const rows = matrix.length;
-    //         const cols = matrix[0].length;
-        
-    //         // 빈 행렬 생성
-    //         const result = new Array(cols).fill(null).map(() => new Array(rows));
-        
-    //         // 전치 연산 수행
-    //         for (let i = 0; i < rows; i++) {
-    //             for (let j = 0; j < cols; j++) {
-    //                 result[j][i] = matrix[i][j];
-    //             }
-    //         }
-    //         return result;
-    //     }
-    //     // 행렬 곱
-    //     function multiply(matrixA: number[][], matrixB: number[][]) {
-    //         const rowsA = matrixA.length;
-    //         const colsA = matrixA[0].length;
-    //         const rowsB = matrixB.length;
-    //         const colsB = matrixB[0].length;
-        
-    //         // 결과 행렬 초기화
-    //         const result = new Array(rowsA).fill(null).map(() => new Array(colsB).fill(0));
-        
-    //         // 행렬 곱셈 수행
-    //         for (let i = 0; i < rowsA; i++) {
-    //             for (let j = 0; j < colsB; j++) {
-    //                 for (let k = 0; k < colsA; k++) {
-    //                     result[i][j] += matrixA[i][k] * matrixB[k][j];
-    //                 }
-    //             }
-    //         }
-    //         return result;
-    //     }
-    //     // lusolve
-    //     function lusolve(matrixA: number[][], matrixB: number[][]): number[][] {
-    //         // TODO: 
-    //         return;
-    //     }
-    //     // 다항식의 계수 계산
-    //     function fitPolynomial(): number[] {
-    //         const n = pts.length;
-    
-    //         // 행렬 방정식을 풀어 계수 계산
-    //         const xVals = pts.map(point => point.xValue);
-    //         const yVals = pts.map(point => point.yValue);
-    //         const mx = [];
-    
-    //         for (let i = 0; i <= degree; i++) {
-    //             mx.push(xVals.map(x => Math.pow(x, i)));
-    //         }
-    
-    //         const XT = transpose(mx);
-    //         const XTX = multiply(XT, mx);
-    //         const XTY = multiply(XT, [yVals]);
-    //         const coefficients = lusolve(XTX, XTY).map(x => x[0]);
-    
-    //         return coefficients;
-    //     }
-
-    //     const degree = 2;
-    //     const coefficients = fitPolynomial();
-
-    //     for (let x = 0; x <= 5; x += 0.1) {
-    //         let y = 0;
-    
-    //         for (let i = 0; i <= degree; i++) {
-    //             y += coefficients[i] * Math.pow(x, i);
-    //         }
-    
-    //         list.push({ x, y });
-    //     }
-    // }
-
     private $_movingAverage(pts: IPoint[], list: {x: number, y: number}[]): void {
         const ma = this.movingAverage;
         const length = pts.length;
-        const interval = Math.max(1, Math.min(length, ma.interval));
+        const interval = maxv(1, minv(length, ma.interval));
         let i = interval;
 
         while (i <= length) {
@@ -696,7 +540,10 @@ export interface ISeries extends IPlottingItem {
     group: ISeriesGroup;
 
     xField: string | number;
-    yField: string | number;
+    yField: string | number | Function;
+    _xFielder: (src: any) => any;
+    _yFielder: (src: any) => any;
+    _colorFielder: (src: any) => any;
     colorField: string | number;
 
     color: string;
@@ -789,6 +636,9 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
     group: SeriesGroup<Series>;
     _xAxisObj: IAxis;
     _yAxisObj: IAxis;
+    _xFielder: (src: any) => any;
+    _yFielder: (src: any) => any;
+    _colorFielder: (src: any) => any;
     protected _points: DataPointCollection;
     _runPoints: DataPoint[];
     _visPoints: DataPoint[];
@@ -921,7 +771,7 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
      * 
      * @config
      */
-    yField: string | number;
+    yField: string | number | Function;
     /**
      * undefined이면, data point의 값이 객체일 때 'color'.
      * 
@@ -1205,6 +1055,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         this._yAxisObj = this.group ? this.group._yAxisObj : this.chart._connectSeries(this, false);
         this._calcedColor = void 0;
         this._runPoints = this._points.getPoints(this._xAxisObj, this._yAxisObj);
+        this._visPoints = this._runPoints.filter(p => p.visible);
+
         this.pointLabel.prepareRender();
 
         super.prepareRender();
@@ -1273,8 +1125,8 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         }
     }
 
-    collectVisibles(): DataPoint[] {
-        const visPoints = this._visPoints = this._runPoints.filter(p => p.visible);
+    collectRanges(vals: number[]): void {
+        const visPoints = this._visPoints;
         const len = visPoints.length;
 
         if (len > 0) {
@@ -1311,20 +1163,30 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 }
             }
 
-            args.yMin = this._minY = minY;
-            args.yMax = this._maxY = maxY;
-            args.xMin = this._minX = minX;
-            args.xMax = this._maxX = maxX;
+            this._minY = minY;
+            this._maxY = maxY;
+            this._minX = minX;
+            this._maxX = maxX;
+
+            if (this.trendline.visible) {
+                this.trendline.prepareRender();
+                const pts = this.trendline._points.map(p => p.y).sort((y1, y2) => y1 - y2);
+                this._minY = Math.min(this._minY, pts[0]);
+                this._maxY = Math.max(this._maxY, pts[pts.length - 1]);
+            }
+
+            args.yMin = this._minY;
+            args.yMax = this._maxY;
+            args.xMin = this._minX;
+            args.xMax = this._maxX;
             if (hasZ) {
                 args.zMin = this._minZ = minZ;
                 args.zMax = this._maxZ = maxZ;
             }
         }
 
-        this.$_prepareViewRanges();
-        this.trendline.visible && this.trendline.prepareRender();
-
-        return visPoints;
+        this.$_prepareViewRanges(visPoints);
+        vals.push(this._minY, this._maxY);
     }
 
     protected _getRangeMinMax(axis: 'x' | 'y' | 'z'): { min: number, max: number } {
@@ -1344,16 +1206,16 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return { min, max }; 
     }
 
-    private $_prepareViewRanges(): void {
+    private $_prepareViewRanges(points: DataPoint[]): void {
         const vAxis = this._runRangeValue = this.getViewRangeAxis();
         const {min, max} = this._getRangeMinMax(vAxis);
 
         if (this._runRanges = buildValueRanges(this.viewRanges, min, max, false, false, true, this.color)) {
-            this._visPoints.forEach((p, i) => {
+            points.forEach((p, i) => {
                 this._setViewRange(p, vAxis);
             });
         } else {
-            this._visPoints.forEach((p, i) => {
+            points.forEach((p, i) => {
                 p.range = _undef;
             });
         }
@@ -1471,13 +1333,30 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return m.visible === true;
     }
 
+    getPointAt(xValue: number): DataPoint {
+        return this._points.pointAt(xValue);
+    }
+
+    setValueAt(xValue: number, yValue: number): boolean {
+        const p = this._points.pointAt(xValue);
+        
+        if (p.yValue !== yValue) {
+            p.yValue = yValue;
+            this._changed();
+            return true;
+        }
+    }
+
+    getPoint(keys: any): DataPoint {
+        return;
+    }
+ 
+    updatePoint(keys: any, values: any): void {
+    }
+
     updateData(data: any): void {
         this._points.load(data);
         this._changed();
-    }
-
-    getPointAt(xValue: number): DataPoint {
-        return this._points.pointAt(xValue);
     }
     
     //-------------------------------------------------------------------------
@@ -1499,22 +1378,35 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
         return true;
     }
 
-    protected _getField(axis: IAxis): any {
-        return axis === this._xAxisObj ? this.xField : this.yField;
-    }
+    // protected _getField(axis: IAxis): any {
+    //     return axis === this._xAxisObj ? this.xField : this.yField;
+    // }
 
     _colorByPoint(): boolean {
         return false;
     }
 
+    protected _createFilder(f: any): (v: any) => any {
+        return isFunc(f) ? (v => f(v)) :  isString(f) ? v => v[f] : v => _undef;
+    }
+
+    protected _createFielders(): void {
+        this._xFielder = this._createFilder(this.xField);
+        this._yFielder = this._createFilder(this.yField);
+        this._colorFielder = this._createFilder(this.colorField);
+    }
+
     protected _doLoad(src: any): void {
         super._doLoad(src);
+        this._createFielders();
 
+        // const t = console.time('load points');
         const data = this._loadData(src);
 
         if (isArray(data) && data.length > 0) {
             this._doLoadPoints(data);
         }
+        // console.timeEnd('load points');
     }
 
     protected _loadData(src: any): any {
@@ -2020,7 +1912,7 @@ export abstract class RadialSeries extends WidgetSeries {
     // methods
     //-------------------------------------------------------------------------
     getRadius(plotWidth: number, plotHeight: number): number {
-        return calcPercent(this._radiusDim, Math.min(plotWidth, plotHeight));
+        return calcPercent(this._radiusDim, minv(plotWidth, plotHeight));
     }
 
     //-------------------------------------------------------------------------
@@ -2514,6 +2406,11 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
             }
         }
     }
+    collectRanges(vals: number[]): void {
+        this._visibles.forEach(ser => {
+            ser.collectRanges(vals);
+        })
+    }
 
     pointValuesPrepared(axis: IAxis): void {
         this._series.forEach(ser => ser.pointValuesPrepared(axis));
@@ -2710,11 +2607,7 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
 
         if (!isNaN(base)) {
             for (const pts of map.values()) {
-                let sum = 0;
-                for (const p of pts) {
-                    sum += Math.abs(p.yValue) || 0;
-                }
-
+                const sum = pts.reduce((sum, p) => sum + (absv(p.yValue) || 0), 0);
                 let prev = 0;
                 let nprev = 0;
                 
@@ -2731,11 +2624,9 @@ export abstract class SeriesGroup<T extends Series> extends ChartItem implements
             }
         } else {
             for (const pts of map.values()) {
-                let sum = 0;
-                for (const p of pts) {
-                    sum += p.yValue || 0;
-                }
+                const sum = pts.reduce((sum, p) => sum + (p.yValue || 0), 0);
                 let prev = 0;
+
                 for (const p of pts) {
                     prev = p.yGroup = (p.yValue || 0) / sum * max + prev;
                 }

@@ -91,6 +91,7 @@ export interface IChart {
     isInverted(): boolean;
     isSplitted(): boolean;
     animatable(): boolean;
+    loadAnimatable(): boolean;
 
     seriesByName(series: string): Series;
     axisByName(axis: string): Axis;
@@ -415,6 +416,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
     private _config: {[key: string]: any};
     colors: string[];
     assignTemplates: (target: any) => any;
+    _loadAnimatable = true;
 
     //-------------------------------------------------------------------------
     // constructor
@@ -453,6 +455,10 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
 
     animatable(): boolean {
         return this._options.animatable !== false;
+    }
+
+    loadAnimatable(): boolean {
+        return this._loadAnimatable;
     }
 
     //-------------------------------------------------------------------------
@@ -911,6 +917,7 @@ export class Chart extends RcEventProvider<IChartEventListener> implements IChar
         yAxes.collectValues();
         xAxes.collectReferentsValues();
         yAxes.collectReferentsValues();
+        yAxes.collectRanges();
         xAxes.prepareRender();
         yAxes.prepareRender();
 

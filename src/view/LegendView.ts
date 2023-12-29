@@ -6,11 +6,10 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { pickNum } from "../common/Common";
-import { Dom } from "../common/Dom";
+import { maxv, pickNum } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { RcElement } from "../common/RcControl";
-import { Rectangle, toSize } from "../common/Rectangle";
+import { RECT_Z, toSize } from "../common/Rectangle";
 import { ISize, Size } from "../common/Size";
 import { RectElement } from "../common/impl/RectElement";
 import { TextAnchor, TextElement } from "../common/impl/TextElement";
@@ -29,6 +28,7 @@ export class LegendItemView extends ChartElement<LegendItem> {
     //-------------------------------------------------------------------------
     // fields
     //-------------------------------------------------------------------------
+    _back: RectElement;
     _marker: RcElement;
     _label: TextElement;
     _gap: number;
@@ -39,6 +39,9 @@ export class LegendItemView extends ChartElement<LegendItem> {
     constructor(doc: Document) {
         super(doc, 'rct-legend-item');
 
+        this.add(this._back = new RectElement(doc));
+        this._back.setFill('transparent');
+        this._back.setStroke('none');
         // this.add(this._marker = RectElement.create(doc, 'rct-legend-item-marker', 0, 0, 12, 12, 6));
         this.add(this._label = new TextElement(doc, 'rct-legend-item-label'));
         this._label.anchor = TextAnchor.START;
@@ -64,18 +67,19 @@ export class LegendItemView extends ChartElement<LegendItem> {
 
         this._label.text = model.text();
 
-        const rMarker = this._marker.setVis(model.legend.markerVisible) ? this._marker.getBBox() : Rectangle.Empty;
+        const rMarker = this._marker.setVis(model.legend.markerVisible) ? this._marker.getBBox() : RECT_Z;
         const sz = toSize(this._label.getBBox());
         this._gap = pickNum(model.legend.markerGap, 0);
 
-        return Size.create(rMarker.width + this._gap + sz.width, Math.max(rMarker.height, sz.height));
+        return Size.create(rMarker.width + this._gap + sz.width, maxv(rMarker.height, sz.height));
     }
 
     protected _doLayout(): void {
-        const rMarker = this._marker.visible ? this._marker.getBBox() : Rectangle.Empty;
+        const rMarker = this._marker.visible ? this._marker.getBBox() : RECT_Z;
 
-        this._marker.visible && this._marker.translate(0, (this.height - rMarker.height) / 2);
-        this._label.translate(rMarker.width + this._gap, (this.height - this._label.getBBox().height) / 2);
+        this._back.setBounds(0, 0, this.width, this.height);
+        this._marker.visible && this._marker.trans(0, (this.height - rMarker.height) / 2);
+        this._label.trans(rMarker.width + this._gap, (this.height - this._label.getBBox().height) / 2);
     }
 }
 
@@ -161,12 +165,11 @@ export class LegendView extends BoundableElement<Legend> {
             const color = v.model.source.legendColor();
 
             // [주의] source가 getComputedStyle()로 색상을 가져온다. measure 시점에는 안된다.
-            v._marker.setStyle('fill', color);
-            v._marker.setStyle('stroke', color);
+            v._marker.setColor(color);
             if (textColor && v.model.source.visible) {
-                v._label.setStyle('fill', color);
+                v._label.setFill(color);
             } else {
-                v._label.setStyle('fill', '');
+                v._label.setFill('');
             }
             v.resizeByMeasured().layout();
         });
@@ -180,7 +183,7 @@ export class LegendView extends BoundableElement<Legend> {
                     else y += this.height - sum; 
                 }
                 views.forEach(v => {
-                    v.translate(x, y);
+                    v.trans(x, y);
                     y += v.height + itemGap;
                 })
                 x += sizes[i] + lineGap;
@@ -192,7 +195,7 @@ export class LegendView extends BoundableElement<Legend> {
                     else x += this.width - sum; 
                 }
                 views.forEach(v => {
-                    v.translate(x, y);
+                    v.trans(x, y);
                     x += v.width + itemGap;
                 })
                 y += sizes[i] + lineGap;
@@ -254,10 +257,10 @@ export class LegendView extends BoundableElement<Legend> {
                 let hRow = 0;
                 views.forEach(v => {
                     hRow += v.mh;
-                    wRow = Math.max(wRow, v.mw);
+                    wRow = maxv(wRow, v.mw);
                 })
                 hRow += itemGap * (views.length - 1);
-                h = Math.max(h, hRow);
+                h = maxv(h, hRow);
                 w += wRow;
                 sizes.push(wRow);
             });
@@ -288,10 +291,10 @@ export class LegendView extends BoundableElement<Legend> {
                 let hRow = 0;
                 views.forEach(v => {
                     wRow += v.mw;
-                    hRow = Math.max(hRow, v.mh);
+                    hRow = maxv(hRow, v.mh);
                 })
                 wRow += itemGap * (views.length - 1);
-                w = Math.max(w, wRow);
+                w = maxv(w, wRow);
                 h += hRow;
                 sizes.push(hRow);
             });

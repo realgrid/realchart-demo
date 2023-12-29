@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { RcElement } from '../RcControl';
-import { IRect, Rectangle } from '../Rectangle';
+import { RECT_Z, IRect } from '../Rectangle';
 import { _undef } from '../Types';
 
 export class ImageElement extends RcElement {
@@ -22,14 +22,15 @@ export class ImageElement extends RcElement {
     // fields
     //-------------------------------------------------------------------------
     private _dirty = true;
-    private _bounds: IRect = Rectangle.Empty;
+    private _bounds: IRect = RECT_Z;
 
     //-------------------------------------------------------------------------
     // constructor
     //-------------------------------------------------------------------------
-    constructor(doc: Document, styleName?: string) {
+    constructor(doc: Document, full: boolean, styleName?: string) {
         super(doc, styleName, 'image');
 
+        full && this.setAttr("preserveAspectRatio", "xMidYMid slice");
         // this.setAttr('preserveAspectRatio', 'none');
         this.dom.onload = () => {
             this._dirty = true;

@@ -246,7 +246,7 @@ function doclink(text, vars = {}) {
   let page = "";
   if (!keys.length && subpaths.includes(keyword)) {
     page = `/${keyword}`;
-  } else if (keyword == sep) {
+  } else if (!keyword.startsWith("Rc") && keyword == sep) {
     page = `#${keyword}`;
   } else {
     switch (sep) {
@@ -272,7 +272,7 @@ function doclink(text, vars = {}) {
       case "rc":
       case "realchart":
       default:
-        const [cls, prop] = keys;
+        const [cls, prop] = keys.length ? keys : [keyword];
         page = `/docs/api/classes/${cls}${prop ? "#" + prop : ""}`;
     }
   }
@@ -752,8 +752,7 @@ var TypeDocNextra = class {
   getSee(see) {
     return (see == null ? void 0 : see.length) ? `
 ${heading("See Also", 3)}
-
-            ${see.join("")}` : "";
+${see.map((s, i) => i % 3 == 1 ? heading(s, 4) : s).join("")}` : "";
   }
   getClassHeading(c) {
     const exts = c.extends ? `${heading("Extends", 3)}

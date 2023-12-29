@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4, assign } from "../common/Common";
+import { isArray, isNone, isObject, pickNum, pickProp, pickProp3, pickProp4, assign, maxv, minv, absv } from "../common/Common";
 import { IPoint } from "../common/Point";
 import { IValueRange, _undef } from "../common/Types";
 import { AxisZoom, IAxis } from "./Axis";
@@ -67,7 +67,7 @@ export class DataPoint {
     yValue: number;     // y 좌표상의 value
     yRate: number;      // 전체 point 합 내에서 비율(백분율)
 
-    visible = true;     // 시리지에는 표시되지 않지만 legend에는 표시된다.
+    visible = true;     // 시리즈에는 표시되지 않지만 legend에는 표시된다.
     color: string;
     xPos: number;
     yPos: number;
@@ -91,11 +91,11 @@ export class DataPoint {
     // properties
     //-------------------------------------------------------------------------
     get yAbs(): number {
-        return Math.abs(this.yValue);
+        return absv(this.yValue);
     }
 
     get xAbs(): number {
-        return Math.abs(this.xValue);
+        return absv(this.xValue);
     }
 
     ariaHint(): string {
@@ -104,6 +104,10 @@ export class DataPoint {
 
     labelCount(): number {
         return 1;
+    }
+
+    getValue(): number {
+        return this.yValue;
     }
 
     //-------------------------------------------------------------------------
@@ -158,6 +162,13 @@ export class DataPoint {
         };
     }
 
+    setValue(value: any): boolean {
+        if (value !== this.yValue) {
+            this.yValue = value;
+            return true;
+        }
+    }
+
     //-------------------------------------------------------------------------
     // internal members
     //-------------------------------------------------------------------------
@@ -201,9 +212,9 @@ export class DataPoint {
         if (v == null) {
             this.isNull = true;
         } else {
-            this.x = pickProp4(v[series.xField], v.x, v.name, v.label);
-            this.y = pickProp3(v[series.yField], v.y, v.value);
-            this.color = pickProp(v[series.colorField], v.color);
+            this.x = pickProp4(series._xFielder(v), v.x, v.name, v.label);
+            this.y = pickProp3(series._yFielder(v), v.y, v.value);
+            this.color = pickProp(series._colorFielder(v), v.color);
         }
     }
 
@@ -296,7 +307,7 @@ export class DataPointCollection {
             let x1 = zoom.start;
             let x2 = zoom.end;
 
-            if (xAxis.isContinuous()) {
+            if (xAxis.continuous()) {
                 let i = 0;
                 let p: DataPoint;
                 let prev: number;
@@ -326,11 +337,11 @@ export class DataPointCollection {
                 if (x2 !== i) {
                     x2 = 0;
                 }
-                x1 = Math.max(x1 - 1, 0);
-                x2 = Math.min(x2 + 1, len - 1);
+                x1 = maxv(x1 - 1, 0);
+                x2 = minv(x2 + 1, len - 1);
             } else {
-                x1 = Math.max(0, Math.floor(x1) - 1);
-                x2 = Math.min(Math.ceil(x2), len - 1);
+                x1 = maxv(0, Math.floor(x1) - 1);
+                x2 = minv(Math.ceil(x2), len - 1);
             }
             return this._points.slice(x1, x2 + 1);
         } else {

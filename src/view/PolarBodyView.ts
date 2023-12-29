@@ -6,7 +6,7 @@
 // All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////
 
-import { cos, sin } from "../common/Common";
+import { absv, cos, sin } from "../common/Common";
 import { ElementPool } from "../common/ElementPool";
 import { ClipCircleElement, LayerElement, RcElement } from "../common/RcControl";
 import { ISize } from "../common/Size";
@@ -217,7 +217,7 @@ class PolarXAxisView extends PolarAxisView {
         // line
         if (vLine.setVis(model.line.visible)) {
             vLine.setStyleOrClass(model.line.style);
-            vLine.setStyle('fill', 'none');
+            vLine.setFill('none');
         }
 
         // sector lines
@@ -265,7 +265,7 @@ class PolarXAxisView extends PolarAxisView {
                     const x = cx + cos(p) * (rd2 + r.width / 2) - r.width / 2;
                     const y = cy + sin(p) * (rd2 + r.height / 2) - r.height / 2;
         
-                    view.layout(align).translate(x, y);
+                    view.layout(align).trans(x, y);
 
                     // TODO: label을 회전 시킬 때...?
                     // const x = cx + cos(p) * (rd2 + r.width / 2);// - (cos(p) * (r.width / 2));
@@ -276,7 +276,7 @@ class PolarXAxisView extends PolarAxisView {
             });
             // 마지막이 겹치는 지 확인한다.
             if (count > 2) {
-                if (Math.abs(ticks[count - 1].pos - ticks[count - 2].pos) < PI_2 / 24) {
+                if (absv(ticks[count - 1].pos - ticks[count - 2].pos) < PI_2 / 24) {
                     this._labelViews.get(count - 1).setVis(false);
                 }
             }
@@ -360,7 +360,7 @@ class PolarYAxisView extends PolarAxisView {
     
                 if (circular) {
                     view.setArc(cx, cy, pos, start, total, true);
-                    view.setStyle('fill', 'none');
+                    view.setFill('none');
                 } else if (view instanceof PolylineElement) {
                     const start = axis.getStartAngle();
                     const pts: number[] = [];
@@ -381,11 +381,11 @@ class PolarYAxisView extends PolarAxisView {
                 this._labelViews.forEach((view, i) => {
                     const x = cx + cos(start) * (ticks[i].pos) - (view.getBBox().width / 2);
                     const y = cy + sin(start) * (ticks[i].pos) - (view.getBBox().height / 2);
-                    view.setContrast(null).translate(x, y);
+                    view.setContrast(null).trans(x, y);
                 });
             } else {
                 this._labelViews.forEach((view, i) => {
-                    view.setContrast(null).translate(cx + 2, cy - ticks[i].pos - view.getBBox().height / 2);
+                    view.setContrast(null).trans(cx + 2, cy - ticks[i].pos - view.getBBox().height / 2);
                 });
             }
         }
