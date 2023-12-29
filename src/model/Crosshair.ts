@@ -13,6 +13,9 @@ import { SVGStyleOrClass, _undef } from "../common/Types";
 import { IAxis } from "./Axis";
 import { ChartItem } from "./ChartItem";
 
+/**
+ * 크로스헤어 표시 방식.
+ */
 export enum CrosshairType {
     /**
      * 카테고리 축이면 bar, 연속 축이면 line으로 표시한다.
@@ -25,7 +28,13 @@ export enum CrosshairType {
      * 
      * @config
      */
-    LINE = 'line'
+    LINE = 'line',
+    // /**
+    //  * 항상 bar로 표시한다.
+    //  * 
+    //  * @config
+    //  */
+    // BAR = 'bar'
 }
 
 /**
@@ -132,6 +141,7 @@ export class Crosshair extends ChartItem {
     //-------------------------------------------------------------------------
     isBar(): boolean {
         return !this.axis.continuous() && this.type === CrosshairType.AUTO;
+        // return this.type === CrosshairType.BAR || !this.axis.continuous() && this.type === CrosshairType.AUTO;
     }
 
     getFlag(length: number, pos: number): string {

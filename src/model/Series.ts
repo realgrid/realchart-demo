@@ -1152,6 +1152,11 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                     // isNull은 유지하면서 p.y 값이 재설정될 수 있도록 한다.
                     // let val = p.isNull ? NaN : axis.getValue(p.y);
                     let val = p.y == null ? NaN : axis.getValue(p.y);
+
+                    if (isNaN(val)) {
+                        debugger;
+                        val = axis.getValue(p.y);
+                    }
         
                     if (!isNaN(val)) {
                         p.yGroup = p.yValue = val;
@@ -1187,18 +1192,21 @@ export abstract class Series extends ChartItem implements ISeries, ILegendSource
                 
                 p.vindex = i;
 
-                if (p.yValue > maxY) maxY = p.yValue;
+                if (isNaN(maxY) && !isNaN(p.yValue)) minY = maxY = p.yValue;
+                else if (p.yValue > maxY) maxY = p.yValue;
                 else if (p.yValue < minY) minY = p.yValue;
 
-                if (p.xValue > maxX) maxX = p.xValue;
+                if (isNaN(maxX) && !isNaN(p.xValue)) minX = maxX = p.xValue;
+                else if (p.xValue > maxX) maxX = p.xValue;
                 else if (p.xValue < minX) minX = p.xValue;
             }
 
             if (hasZ) {
                 for (let i = 1; i < len; i++) {
                     const v = visPoints[i].zValue;
-    
-                    if (v > maxZ) maxZ = v;
+                    
+                    if (isNaN(maxZ) && !isNaN(v)) minZ = maxZ = v;
+                    else if (v > maxZ) maxZ = v;
                     else if (v < minZ) minZ = v;
                 }
             }

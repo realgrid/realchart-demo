@@ -110,8 +110,8 @@ export class LogAxis extends ContinuousAxis {
         return super.getPos(length, value);
     }
 
-    protected _doCalcluateRange(values: number[]): { min: number; max: number; } {
-        const v = super._doCalcluateRange(values);
+    protected _doCalculateRange(values: number[]): { min: number; max: number; } {
+        const v = super._doCalculateRange(values);
 
         v.min = log10(v.min);
         v.max = log10(v.max);

@@ -1323,7 +1323,7 @@ export abstract class Axis extends ChartItem implements IAxis {
         if (this._zoom) {
             this._range = { min: this._zoom.start, max: this._zoom.end };
         } else {
-            this._range = this._doCalcluateRange(vals);
+            this._range = this._doCalculateRange(vals);
         }
 
         // clustering (x축에서만 가능)
@@ -1527,7 +1527,7 @@ export abstract class Axis extends ChartItem implements IAxis {
         }
     }
 
-    protected _doCalcluateRange(values: number[]): { min: number, max: number } {
+    protected _doCalculateRange(values: number[]): { min: number, max: number } {
         return {
             min: values.length > 0 ? fixnum(minv(...values) || 0) : NaN,
             max: values.length > 0 ?  fixnum(maxv(...values) || 0) : NaN

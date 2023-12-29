@@ -511,7 +511,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         }
         this._animatable && !this._simpleMode && this._runShowEffect(!this.control.loaded && this.chart().loadAnimatable());
         this._getPointPool().forEach((pv: any) => {
-            pv.saveVal = pv.point.getValue()
+            pv.saveVal = pv.point ? pv.point.getValue() : NaN;
         });
     }
 
