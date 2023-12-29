@@ -11,7 +11,6 @@ import { PathBuilder } from "../../common/PathBuilder";
 import { ClipRectElement, PathElement, RcElement } from "../../common/RcControl";
 import { FILL, IValueRange } from "../../common/Types";
 import { Utils } from "../../common/Utils";
-import { DataPoint } from "../../model/DataPoint";
 import { SeriesGroupLayout } from "../../model/Series";
 import { LinearAxis } from "../../model/axis/LinearAxis";
 import { AreaSeries, AreaSeriesGroup, AreaSeriesPoint } from "../../model/series/LineSeries";
@@ -116,13 +115,15 @@ export class AreaSeriesView extends LineSeriesBaseView<AreaSeries> {
     protected _layoutMarkers(pts: AreaSeriesPoint[], width: number, height: number): void {
         super._layoutMarkers(pts, width, height);
 
+        const inverted = this._inverted;
         const yAxis = this.model._yAxisObj;
-        const yOrg = yAxis.reversed ? -width : height;
+        const yLen = inverted ? width : height;
+        const yOrg = inverted ? 0 : height;
 
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
             
-            p.yLow = yOrg - yAxis.getPos(height, p.yGroup - p.yValue);
+            p.yLow = yOrg - yAxis.getPos(yLen, p.yGroup - p.yValue);
         }
     }
 

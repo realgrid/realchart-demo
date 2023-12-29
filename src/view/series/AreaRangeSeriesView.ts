@@ -8,7 +8,6 @@
 
 import { Dom } from "../../common/Dom";
 import { PathElement } from "../../common/RcControl";
-import { FILL } from "../../common/Types";
 import { AreaRangeSeries, AreaRangeSeriesPoint } from "../../model/series/LineSeries";
 import { LineContainer, LineSeriesBaseView } from "./LineSeriesView";
 
@@ -56,7 +55,7 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
         const inverted = this._inverted;
         const yAxis = series._yAxisObj;
         const yLen = inverted ? width : height;
-        const yOrg = height;
+        const yOrg = inverted ? 0 : height;
 
         for (let i = 0, cnt = pts.length; i < cnt; i++) {
             const p = pts[i];
@@ -66,26 +65,26 @@ export class AreaRangeSeriesView extends LineSeriesBaseView<AreaRangeSeries> {
 
         // maker를 표시하지 않도록 설정해도 hit testing을 위해 감춰진(opacity=0) marker를 그려야 한다.
         // if (series.marker.visible) {
-            const markers = this._markers;
-    
-            for (let i = 0, cnt = pts.length; i < cnt; i++) {
-                const p = pts[i];
-                const mv = markers.get(i + cnt);
-                let x: number;
-                let y: number;
+        const markers = this._markers;
 
-                if (inverted) {
-                    x = yAxis.getPos(yLen, p.lowValue);
-                    y = markers.get(i).ty;
-                } else {
-                    x = p.xPos;
-                    y = p.yLow;
-                }
+        for (let i = 0, cnt = pts.length; i < cnt; i++) {
+            const p = pts[i];
+            const mv = markers.get(i + cnt);
+            let x: number;
+            let y: number;
 
-                if (mv && mv.setVis(!p.isNull && x >= 0 && x <= width && y >= 0 && y <= height)) {
-                    this._layoutMarker(mv, markerStyle, x, y);
-                }
+            if (inverted) {
+                x = yAxis.getPos(yLen, p.lowValue);
+                y = markers.get(i).ty + series.getRadius(p);
+            } else {
+                x = p.xPos;
+                y = p.yLow;
             }
+
+            if (mv && mv.setVis(!p.isNull && x >= 0 && x <= width && y >= 0 && y <= height)) {
+                this._layoutMarker(mv, markerStyle, x, y);
+            }
+        }
         // }
     }
 

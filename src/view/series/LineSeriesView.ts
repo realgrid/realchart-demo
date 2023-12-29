@@ -16,10 +16,9 @@ import { SvgShapes } from "../../common/impl/SvgShape";
 import { Axis } from "../../model/Axis";
 import { Chart } from "../../model/Chart";
 import { LineType } from "../../model/ChartTypes";
-import { IPointPos } from "../../model/DataPoint";
 import { PointItemPosition } from "../../model/Series";
 import { ContinuousAxis } from "../../model/axis/LinearAxis";
-import { LinePointLabel, LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection, PointLine } from "../../model/series/LineSeries";
+import { IPointPos, LinePointLabel, LineSeries, LineSeriesBase, LineSeriesPoint, LineStepDirection, PointLine } from "../../model/series/LineSeries";
 import { LineLegendMarkerView } from "../../model/series/legend/LineLegendMarkerView";
 import { LegendItemView } from "../LegendView";
 import { IPointView, PointContainer, PointElement, SeriesView } from "../SeriesView";
@@ -300,17 +299,19 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                 const a = polar.start + xAxis.getPos(xLen, p.xValue);
                 const y = yAxis.getPos(polar.rd, p.yGroup) * vr;
 
-                px = p.xPos = polar.cx + y * cos(a);
-                py = p.yPos = polar.cy + y * sin(a);
+                px = p.px = polar.cx + y * cos(a);
+                py = p.py = polar.cy + y * sin(a);
             } else {
-                px = p.xPos = xAxis.getPos(xLen, p.xValue);
-                py = p.yPos = yOrg - yAxis.getPos(yLen, p.yGroup);
+                px = p.px = xAxis.getPos(xLen, p.xValue);
+                py = p.py = yOrg - yAxis.getPos(yLen, p.yGroup);
 
                 if (inverted) {
                     px = yAxis.getPos(yLen, p.yGroup);
                     py = height - xAxis.getPos(xLen, p.xValue);
                 }
             }
+            p.xPos = px;
+            p.yPos = py;
 
             const mv = this._markers.get(i);
             const lv = labelViews && labelViews.get(p, 0);
@@ -438,9 +439,9 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     private _drawLine2(pts: PointLine, connected: boolean, sb: PathBuilder): void {
         if (pts.length > 1) {
-            sb.moveOrLine(connected, pts[0].xPos, pts[0].yPos);
+            sb.moveOrLine(connected, pts[0].px, pts[0].py);
             for (let i = 1; i < pts.length; i++) {
-                sb.line(pts[i].xPos, pts[i].yPos);
+                sb.line(pts[i].px, pts[i].py);
             }
         }
     }
@@ -451,14 +452,14 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     private _drawStep2(pts: PointLine, connected: boolean, sb: PathBuilder, dir: LineStepDirection): void {
         if (pts.length > 1) {
-            sb.moveOrLine(connected, pts[0].xPos, pts[0].yPos);
+            sb.moveOrLine(connected, pts[0].px, pts[0].py);
             for (let i = 1; i < pts.length; i++) {
                 if (dir === LineStepDirection.BACKWARD) {
-                    sb.line(pts[i - 1].xPos, pts[i].yPos);
-                    sb.line(pts[i].xPos, pts[i].yPos);
+                    sb.line(pts[i - 1].px, pts[i].py);
+                    sb.line(pts[i].px, pts[i].py);
                 } else {
-                    sb.line(pts[i].xPos, pts[i - 1].yPos);
-                    sb.line(pts[i].xPos, pts[i].yPos);
+                    sb.line(pts[i].px, pts[i - 1].py);
+                    sb.line(pts[i].px, pts[i].py);
                 }
             }
         }
@@ -470,7 +471,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
 
     private _drawCurve2(pts: PointLine, connected: boolean, sb: PathBuilder): void {
         if (pts.length > 1) {
-            sb.moveOrLine(connected, pts[0].xPos, pts[0].yPos);
+            sb.moveOrLine(connected, pts[0].px, pts[0].py);
             this._drawSpline(pts, 0, pts.length - 1, sb);
         }
     }
@@ -499,7 +500,7 @@ export abstract class LineSeriesBaseView<T extends LineSeriesBase> extends Serie
                     start = i;
 
                     if (i < len) {
-                        sb.move(pts[i].xPos, pts[i].yPos);
+                        sb.move(pts[i].px, pts[i].py);
                         i++;
                     }
                 } else {

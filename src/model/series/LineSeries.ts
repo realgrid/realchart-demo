@@ -9,25 +9,57 @@
 import { pickNum, pickProp, assign, minv } from "../../common/Common";
 import { IPoint } from "../../common/Point";
 import { RcElement } from "../../common/RcControl";
-import { Align, SVGStyleOrClass, StyleProps } from "../../common/Types";
+import { Align, IValueRange, SVGStyleOrClass, StyleProps } from "../../common/Types";
 import { Shape } from "../../common/impl/SvgShape";
 import { IAxis } from "../Axis";
 import { IChart } from "../Chart";
 import { LineType } from "../ChartTypes";
-import { DataPoint, IPointPos } from "../DataPoint";
+import { DataPoint } from "../DataPoint";
 import { LegendItem } from "../Legend";
 import { DataPointLabel, MarkerVisibility, PointItemPosition, Series, SeriesGroup, SeriesGroupLayout, SeriesMarker } from "../Series";
 import { AreaLegendMarkerView } from "./legend/AreaLegendMarkerView";
 import { LineLegendMarkerView } from "./legend/LineLegendMarkerView";
 import { ShapeLegendMarkerView } from "./legend/ShapeLegendMarkerView";
 
+export interface IPointPos {
+    px: number;
+    py: number;
+    isNull?: boolean;
+    range?: IValueRange;
+}
+
 export class LineSeriesPoint extends DataPoint {
+
+    //-------------------------------------------------------------------------
+    // static members
+    //-------------------------------------------------------------------------
+    // static swap(pts: IPointPos[]): IPointPos[] {
+    //     const list = [];
+    //     for (let i = 0; i < pts.length; i++) {
+    //         list.push({xPos: pts[i].px, yPos: pts[i].py});
+    //     }
+    //     return list;
+    // }
 
     //-------------------------------------------------------------------------
     // property fields
     //-------------------------------------------------------------------------
     radius: number;
     shape: Shape;
+    px: number;
+    py: number;
+
+    //-------------------------------------------------------------------------
+    // methods
+    //-------------------------------------------------------------------------
+    toPoint(): IPointPos {
+        return {
+            px: this.px,
+            py: this.py,
+            isNull: this.isNull,
+            range: this.range
+        };
+    }
 }
 
 /**
@@ -193,7 +225,7 @@ export abstract class LineSeriesBase extends Series {
     //-------------------------------------------------------------------------
     abstract getLineType(): LineType;
 
-    protected _doPrepareLines(pts: DataPoint[]): PointLine[] {
+    protected _doPrepareLines(pts: LineSeriesPoint[]): PointLine[] {
         const len = pts.length;
         const lines = [];
 
@@ -385,18 +417,17 @@ export class AreaSeries extends LineSeries {
             const area = [];
 
             if (pts.length > 0) {
-                let p = (pts[pts.length - 1] as DataPoint).toPoint();
-                p.yPos = (pts[pts.length - 1] as AreaSeriesPoint).yLow;
+                let p = (pts[pts.length - 1] as LineSeriesPoint).toPoint();
+                p.py = (pts[pts.length - 1] as AreaSeriesPoint).yLow;
                 area.push(p);
                 
-                p = (pts[0] as DataPoint).toPoint();
-                p.yPos = pickNum((pts[0] as AreaSeriesPoint).yLow, pts[0].yPos);
+                p = (pts[0] as LineSeriesPoint).toPoint();
+                p.py = pickNum((pts[0] as AreaSeriesPoint).yLow, pts[0].py);
                 area.push(p);
             }
             return area;
         }
 
-        const inverted = this.chart.isInverted();
         const g = this.group;
         const lines = this._lines;
         const areas = this._areas = [];
@@ -437,7 +468,7 @@ export class AreaSeries extends LineSeries {
         return new AreaSeriesPoint(source);
     }
 
-    protected _doPrepareLines(pts: DataPoint[]): PointLine[] {
+    protected _doPrepareLines(pts: LineSeriesPoint[]): PointLine[] {
         // null이 포함된 line 정보도 필요하다.
         if (this._containsNull && this.group && this.group._stacked) {
             const len = pts.length;
@@ -593,7 +624,7 @@ export class AreaRangeSeries extends LineSeriesBase {
         }
     }
 
-    protected _doPrepareLines(pts: DataPoint[]): PointLine[] {
+    protected _doPrepareLines(pts: LineSeriesPoint[]): PointLine[] {
         const lines = super._doPrepareLines(pts);
         const lines2: PointLine[] = [];
 
@@ -604,7 +635,7 @@ export class AreaRangeSeries extends LineSeriesBase {
             for (let i = line.length - 1; i >= 0; i--) {
                 const p = line[i] as AreaRangeSeriesPoint;
                 const pt = p.toPoint();
-                pt.yPos = p.yLow;
+                pt.py = p.yLow;
                 line2.push(pt);
             }
             lines2.push(line, line2);

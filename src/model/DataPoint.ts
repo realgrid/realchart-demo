@@ -14,13 +14,6 @@ import { ISeries } from "./Series";
 
 let __point_id__ = 0;
 
-export interface IPointPos {
-    xPos: number;
-    yPos: number;
-    isNull?: boolean;
-    range?: IValueRange;
-}
-
 /**
  * 데이터 포인트를 표시할 수 없는 값을 설정하면 null로 간주한다.
  * 
@@ -31,17 +24,6 @@ export interface IPointPos {
  * [x, y]
  */
 export class DataPoint {
-
-    //-------------------------------------------------------------------------
-    // static members
-    //-------------------------------------------------------------------------
-    static swap(pts: IPointPos[]): IPointPos[] {
-        const list = [];
-        for (let i = 0; i < pts.length; i++) {
-            list.push({xPos: pts[i].yPos, yPos: pts[i].xPos});
-        }
-        return list;
-    }
 
     //-------------------------------------------------------------------------
     // property fields
@@ -151,15 +133,6 @@ export class DataPoint {
 
     getTooltipPos(): IPoint {
         return { x: this.xPos, y: this.yPos };
-    }
-
-    toPoint(): IPointPos {
-        return {
-            xPos: this.xPos,
-            yPos: this.yPos,
-            isNull: this.isNull,
-            range: this.range
-        };
     }
 
     setValue(value: any): boolean {

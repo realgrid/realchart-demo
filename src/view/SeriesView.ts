@@ -584,14 +584,14 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         //this._getShowAnimation()?.run(this);
     }
 
-    protected _drawSpline(pts: {xPos: number, yPos: number}[], start: number, end: number, sb: PathBuilder): void {
+    protected _drawSpline(pts: {px: number, py: number}[], start: number, end: number, sb: PathBuilder): void {
         let p = start;
 
         if (end < 0) {
             end = pts.length - 1;
         }
         if (absv(end - start) === 1) {
-            sb.line(pts[p + 1].xPos, pts[p + 1].yPos);
+            sb.line(pts[p + 1].px, pts[p + 1].py);
             return;
         }
 
@@ -599,7 +599,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         const tLeft = { x: 0, y: 0 };
         const tRight = { x: 0, y: 0 };
         const v1 = { x: 0, y: 0 };
-        const v2 = { x: pts[p + 1].xPos - pts[p].xPos, y: pts[p + 1].yPos - pts[p].yPos };
+        const v2 = { x: pts[p + 1].px - pts[p].px, y: pts[p + 1].py - pts[p].py };
         const p1 = { x: 0, y: 0 };
         const p2 = { x: 0, y: 0 };
         const mp = { x: 0, y: 0 };
@@ -609,16 +609,16 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
         v2.x /= len;
         v2.y /= len;
 
-        let tFactor = (pts[p + 1].xPos - pts[p].xPos)
-        let prevX = pts[p].xPos;
-        let prevY = pts[p].yPos;
+        let tFactor = (pts[p + 1].px - pts[p].px)
+        let prevX = pts[p].px;
+        let prevY = pts[p].py;
 
         for (++p; p != end; p++) {
             v1.x = -v2.x;
             v1.y = -v2.y;
 
-            v2.x = pts[p + 1].xPos - pts[p].xPos;
-            v2.y = pts[p + 1].yPos - pts[p].yPos;
+            v2.x = pts[p + 1].px - pts[p].px;
+            v2.y = pts[p + 1].py - pts[p].py;
 
             len = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
             v2.x /= len;
@@ -644,27 +644,27 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
             tLeft.y = -tan.y * tFactor * tension;
 
             if (p === start + 1) {
-                sb.quad(pts[p].xPos + tLeft.x, pts[p].yPos + tLeft.y, pts[p].xPos, pts[p].yPos);
+                sb.quad(pts[p].px + tLeft.x, pts[p].py + tLeft.y, pts[p].px, pts[p].py);
             } else {
                 p1.x = prevX + tRight.x;
                 p1.y = prevY + tRight.y;
-                p2.x = pts[p].xPos + tLeft.x;
-                p2.y = pts[p].yPos + tLeft.y;
+                p2.x = pts[p].px + tLeft.x;
+                p2.y = pts[p].py + tLeft.y;
                 mp.x = (p1.x + p2.x) / 2;
                 mp.y = (p1.y + p2.y) / 2;
 
                 sb.quad(p1.x, p1.y, mp.x, mp.y);
-                sb.quad(p2.x, p2.y, pts[p].xPos, pts[p].yPos);
+                sb.quad(p2.x, p2.y, pts[p].px, pts[p].py);
             }
 
-            tFactor = (pts[p + 1].xPos - pts[p].xPos);
+            tFactor = (pts[p + 1].px - pts[p].px);
             tRight.x = tan.x * tFactor * tension;
             tRight.y = tan.y * tFactor * tension;
-            prevX = pts[p].xPos;
-            prevY = pts[p].yPos;
+            prevX = pts[p].px;
+            prevY = pts[p].py;
         }
 
-        sb.quad(prevX + tRight.x, prevY + tRight.y, pts[p].xPos, pts[p].yPos);
+        sb.quad(prevX + tRight.x, prevY + tRight.y, pts[p].px, pts[p].py);
     }
 
     private $_renderTrendline(inverted: boolean): void {
@@ -693,7 +693,7 @@ export abstract class SeriesView<T extends Series> extends ContentView<T> {
             sb.move(pts[0].x, pts[0].y);
 
             if (this.model.trendline.isCurved()) {
-                this._drawSpline(pts.map(p => ({xPos: p.x, yPos: p.y })), 0, -1, sb);
+                this._drawSpline(pts.map(p => ({px: p.x, py: p.y })), 0, -1, sb);
             } else {
                 sb.lines(...pts);
             }
