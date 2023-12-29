@@ -53,6 +53,11 @@ function setActions(container) {
         config.series.trendline.type = _getValue(e);
         chart.load(config);
     }, 'linear');
+    createListBox(container, "trendline.curved", ['', 'true', 'false'], function (e) {
+        const v = _getValue(e);
+        config.series.trendline.curved = v === 'true' ? true : v === 'false' ? false : undefined;
+        chart.load(config);
+    }, 'linear');
 }
 
 function init() {
