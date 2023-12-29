@@ -2,6 +2,15 @@
 축 그리드 사이에 생성된 영역 표시 설정 모델.
 ## Properties
 
+### belowColor: `string{:js}`[#belowColor]
+axis의 baseValue 이전 영역을 칠(fill)하는 데 사용되는 색상.
+ [colors](#colors) 설정에 따른 칠 이 전에 칠해진다.  
+
+### colors: `string[]{:js}`[#colors]
+각 row를 칠(fill)하는 데 사용되는 색상 스타일들을 지정한다.
+
+칠하지 않는 영역은 <Content type="keyword" value="null"></Content>로 지정하면 되고, 개수가 모자라면 반복된다.  
+
 ### style: `SVGStyles | string{:js}`[#style]
 스타일셋 혹은 class selector.  
 - `SVGStyles{:js}` 

@@ -125,7 +125,7 @@ Slice animation duration.
 지정하지 않거나 잘못된 값이면 360으로 계산된다.  
 <DefaultValue value="360" contents=""></DefaultValue>
 ### [trendline](./pie/trendline)
-시리즈 추세선.  
+시리즈 추세선 모델.  
 
 ### viewRangeValue: `'z' | 'x' | 'y'{:js}`[#viewRangeValue]
 ranges가 적용되는 값.
@@ -170,7 +170,7 @@ time 축일 때, 정수 값 대신 시간 단위(<Content type="expression" valu
 ### yAxis: `string | number{:js}`[#yAxis]
 그룹에 포함되면 그룹 설정을 따른다.  
 
-### yField: `string | number{:js}`[#yField]
+### yField: `string | number | Function{:js}`[#yField]
 json 객체나 배열로 전달되는 데이터포인트 정보에서 y 값을 지정하는 속성명이나 인덱스.
 
 <Content type="keyword" value="undefined"></Content>이면, data point의 값이 array일 때는 1, 객체이면 <Content type="expression" value="'y'"></Content>.  

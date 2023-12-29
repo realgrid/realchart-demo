@@ -40,6 +40,10 @@ Utils.log(chart.axis.get('title.text'));
 | Parameter | Type | Description |
 | ----------- | ----------- | ----------- |
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | '**.**'으로 구분되는 속성 경로. |
+### getPoint(keys): [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any)[#getPoint]
+| Parameter | Type |
+| ----------- | ----------- |
+| keys | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
 ### getValueAt(xValue): [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)[#getValueAt]
 xValue에 해당하는 데이터포인터의 yValue를 리턴한다.
 
@@ -88,6 +92,11 @@ JSON 객체로 지정한 속성들의 값을 설정한다.\
 | ----------- | ----------- | ----------- |
 | props | [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | 여러 설정 값들이 지정된 JSON 객체 |
 | redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
+### setValueAt(xValue, yValue): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#setValueAt]
+| Parameter | Type |
+| ----------- | ----------- |
+| xValue | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
+| yValue | [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) |
 ### toggle(prop, redraw): [RcChartObject](../classes/RcChartObject)[#toggle]
 Boolean 타입의 설정값을 변경한다.\
 지정 가능한 설정 값 목록은 [Configuration API 페이지](/config)에서 확인할 수 있다. 
@@ -103,6 +112,17 @@ chart.getSeries('ser02').toggle('visible');
 | prop | [string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | 설정 속성 이름 |
 | redraw=`true` | [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | true로 지정하면 chart를 다시 그린다.                false로 지정하고 여러 설정 후에 [render](/docs/api/classes/RcChartControl#render)를 호출해서 다시 그리게 할 수도 있다. |
 ### updateData(data): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#updateData]
+시리즈 data 원본을 변경한다.\
+[주의] x축이 카테고리 축이고, x축의 categories 속성이 명시적으로 설정되지 않았다면,
+이 함수 호출 후 카테고리가 변경될 수 있다.
+
+
+
+| Parameter | Type | Description |
+| ----------- | ----------- | ----------- |
+| data | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) | 원본 데이터포인트 값 배열. |
+### updatePoint(keys, values): [void](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined)[#updatePoint]
 | Parameter | Type |
 | ----------- | ----------- |
-| data | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
+| keys | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
+| values | [any](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any) |
