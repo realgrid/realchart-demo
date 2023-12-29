@@ -113,16 +113,19 @@ export class ScatterSeriesView extends MarkerSeriesView<ScatterSeries> {
                     const a = polar.start + xAxis.getPos(PI_2, xJitter);
                     const py = yAxis.getPos(polar.rd, yJitter) * vr;
     
-                    x = p.xPos = polar.cx + py * cos(a);
-                    y = p.yPos = polar.cy + py * sin(a);
+                    x = polar.cx + py * cos(a);
+                    y = polar.cy + py * sin(a);
                 } else {
-                    x = p.xPos = xAxis.getPos(xLen, xJitter);
-                    y = p.yPos = yOrg - yAxis.getPos(yLen, yJitter);
+                    x = xAxis.getPos(xLen, xJitter);
+                    y = yOrg - yAxis.getPos(yLen, yJitter);
                     if (inverted) {
                         x = yAxis.getPos(yLen, yJitter);
                         y = yOrg - xAxis.getPos(xLen, xJitter);
                     }
                 }
+
+                p.xPos = x;
+                p.yPos = y;
 
                 if (mv.setVis(!!polar || !needClip || x >= 0 && x <= width && y >= 0 && y <= height)) {
                     switch (s) {
